@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.1 2001/05/12 23:03:19 cegger Exp $
+/* $Id: mansync.h,v 1.2 2004/06/04 22:41:16 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -26,14 +26,12 @@
 
    -----------------------------------------------------------------------
 
-   There are currently three methods of doing the above:
+   There is currently one method of doing the above:
 
-   MANSYNC_CHILD: A child process, periodically signalling the parent to flush
-   MANSYNC_PTHREAD: A new thread which periodically flushes the framebuffer
-   MANSYNC_ALARM: (for completeness) An alarm is set up to signal flushes
+   MANSYNC_TASK: A task which periodically flushes the framebuffer
 
    A target wishing to use mansync should open mansync with _ggiAddDL()
-   in it's own GGIdlinit().
+   in it's own GGIopen().
    It must pass a pointer to a _ggi_opmansync structure as the argument
    to _ggiAddDL(), and must define the following macros:
 
