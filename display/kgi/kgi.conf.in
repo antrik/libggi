@@ -1,0 +1,5 @@
+# Mapping file for config-strings to accel libraries
+# config-name			library_name
+# ------------			--------------------------
+
+kgi-mach64			default/kgi/mach64.@DLLEXT@
