@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:01:52 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/03/14 11:45:27 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -111,6 +111,9 @@ int _ggi_x_do_blit(ggi_x_priv *priv, int x, int y, int w, int h)
 	} else 
 #endif
 	{
+		/* Sync before starting a new blit so we don't flood the
+		   X server with Put requests. */
+		XSync(priv->xwin.x.display, 0);
 		XPutImage(priv->xwin.x.display, priv->xwin.window,
 			  priv->xwin.x.gc,
 			  priv->ximage, 
