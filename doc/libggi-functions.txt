@@ -55,7 +55,7 @@ Return value
     the number of 'open' `ggiInit` calls, if there has been more than
     one call to `ggiInit`.  As `ggiInit` and `ggiExit` must be used in
     properly nested pairs, e.g. the first `ggiExit` after two
-    `ggiInit`s will return `1`.
+    `ggiInit`'s will return `1`.
 
 `<0`
     :man:`ggi-error(3)`, especially if more `ggiExit` calls have been done than
@@ -157,7 +157,7 @@ Description
 `ggiOpen` opens a visual.  The visual is specified as a display
 string, followed by `NULL`.  If only `NULL` is specified, the default
 display target is opened, which means first examining `GGI_DISPLAY`,
-then invoking `display-auto(7)`.  The other arguments are for internal
+then invoking :man:`display-auto(7)`.  The other arguments are for internal
 purposes only, such as :p:`argptr`, used to pass driver-specific,
 non-textual information to the driver.
 
@@ -548,7 +548,7 @@ when using the multiple buffering function of LibGGI.
 
 
 `ggiSetWriteFrame` sets the frame for write operations such as
-`ggiPuts` and `ggiHLine`.
+:man:`ggiPuts(3)` and :man:`ggiPutHLine(3)`.
 
 
 `ggiSetReadFrame` sets the frame for read operations, like
@@ -846,12 +846,12 @@ undefined on read.
 
 The `ggiGammaMax` function is used in order to find out how many
 readable and writeable entries are in the map (returned in the
-integers referenced by :p:`maxwrite` and :p:`maxread`).  This must be
+integers referenced by :p:`max_w` and :p:`max_r`).  This must be
 done once for each channel.  The parameter :p:`bitmeaning` should be
-set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
+set to the bit meaning (e.g. `GGI_BM_TYPE_COLOR` | `GGI_BM_SUB_BLUE`) of
 the channel of which you are inquiring.  If `ggiGammaMax` returns an
 :man:`ggi-error(3)`, you cannot set the gamma map on this visual. 
-If `ggiGammaMax` succeeds, but :p:`maxwrite` is -1 on return, this means
+If `ggiGammaMax` succeeds, but :p:`max_w` is -1 on return, this means
 that `ggiSetGamma` will work, but that `ggiSetGammaMap` will not.
 
 
