@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.2 2002/06/20 13:14:30 cegger Exp $
+/* $Id: misc.c,v 1.3 2002/07/08 22:44:08 skids Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -128,6 +128,7 @@ void _ggi_x_build_vilist(ggi_visual *vis) {
 					    ScreenOfDisplay(priv->disp,
 							    via->screen)))
 		    goto swap;
+		if (via->visualid > vib->visualid) goto swap;
 		viidx++;
 		continue;
 	swap:
