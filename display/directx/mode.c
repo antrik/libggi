@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/08/25 07:47:45 pekberg Exp $
+/* $Id: mode.c,v 1.13 2004/08/25 08:25:24 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -64,7 +64,7 @@ directx_acquire(ggi_resource * res, uint32 actype)
 		return 0;
 	}
 	EnterCriticalSection(&priv->cs);
-	dbuf->write = priv->lpSurfaceAdd;
+	dbuf->write = priv->lpSurfaceAdd[dbuf->frame];
 	dbuf->read = dbuf->write;
 	LeaveCriticalSection(&priv->cs);
 
