@@ -2,7 +2,7 @@
 
 TOOL=$1
 
-have_version=`$TOOL --version | head -1 | sed -e 's;[A-Za-z() ]*; ;'`
+have_version=`$TOOL --version | head -n 1 | sed -e 's;[A-Za-z() ]*; ;'`
 wanted_version=$2
 required_version=$wanted_version
 
