@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.18 2004/11/27 20:03:30 soyt Exp $
+/* $Id: color.c,v 1.19 2005/01/20 21:20:37 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -43,15 +43,15 @@ int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 
 int GGI_color_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colmap)
 {
-		if (start == GGI_PALETTE_DONTCARE) start = 0;
+	if (start == GGI_PALETTE_DONTCARE) start = 0;
 		
-		if (  (start < 0)
-		   || (start+len > COLOR_PALPRIV(vis)->numcols)) 
-		{
-			return GGI_ENOSPACE;
-		}
+	if (  (start < 0)
+	   || (start+len > COLOR_PALPRIV(vis)->numcols)) 
+	{
+		return GGI_ENOSPACE;
+	}
 
-		return LIBGGI_PAL(vis)->setPalette(vis, start, len, colmap);
+	return LIBGGI_PAL(vis)->setPalette(vis, start, len, colmap);
 }
 
 /* ---------------------------------------------------------------------- */
