@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.4 2002/12/05 16:38:35 cegger Exp $
+/* $Id: shm.c,v 1.5 2002/12/05 17:55:08 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -63,7 +63,7 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 			if (priv->opmansync) MANSYNC_cont(vis);
 			return 0;
 		}
-	} else if (tryflag != 2) { 
+	} else if (tryflag != 2) {
 		ggLock(priv->xliblock);
 	}
 	priv->flush_cmap(vis);		/* Update the palette/gamma */
@@ -75,14 +75,14 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 	    (LIBGGI_APPBUFS(vis)[vis->w_frame_num]->resource->curactype))) {
 		/* Flush all requested data */
 		if (tryflag != 2) {
-                        GGI_X_CLEAN(vis, x, y, w, h);
-                        y = GGI_X_WRITE_Y;
-                } /* else it's a non-translated exposure event. */
+			GGI_X_CLEAN(vis, x, y, w, h);
+			y = GGI_X_WRITE_Y;
+		} /* else it's a non-translated exposure event. */
 		XShmPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage,
 			  x, y, x, y, w, h, 0);
 	} else {
 		/* Just flush the intersection with the dirty region */
-	  	int x2, y2;
+		int x2, y2;
 
 		if (priv->dirtytl.x > priv->dirtybr.x) goto clean;
 		if (x > priv->dirtybr.x) goto clean;
@@ -213,6 +213,7 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 			/* The shmid has already been removed, see below. */
 			priv->fb = NULL;
 		}
+		ggUnlock(_ggi_global_lock); /* Exiting protected section */
 		return GGI_ENOMEM;
 	} else {
 		/* Take the shmid away so noone else can get it. */
