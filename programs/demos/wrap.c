@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.6 2002/10/10 17:06:14 cegger Exp $
+/* $Id: wrap.c,v 1.7 2002/10/31 22:04:36 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -75,6 +75,7 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 #endif
 	size_t bufsize;
 	char text[128];
+	char envtext[182+14];
 
 	/* initialize the connection
 	 */
@@ -119,9 +120,12 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 	 */
 	sprintf(text, "display-ipc:-input -socket=%s -semid=%d -shmid=%d",
 		client->socket, client->semid, client->shmid);
-	setenv("GGI_DISPLAY", text, 1);
+	sprintf(envtext, "GGI_DISPLAY=%s",text);
+	putenv(envtext);
+
 	ggiSPrintMode(text, mode);
-	setenv("GGI_DEFMODE", text, 1);
+	sprintf(envtext, "GGI_DEFMODE=%s",text);
+	putenv(envtext);
 	client->pid = fork();
 	if (client->pid == -1) {
 		perror("fork");

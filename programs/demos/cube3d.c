@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
+/* $Id: cube3d.c,v 1.4 2002/10/31 22:01:21 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -668,6 +668,7 @@ int main(int argc, char **argv)
 	for(x=0;x<6;x++)
 	{
 		char text[1024];
+		char envtext[1024];
 		int memlen;
 
 		/* First check for arguments.
@@ -716,10 +717,15 @@ int main(int argc, char **argv)
 		the_textures[x].mapper=PatNomap;
 		CheckDB(&the_textures[x]);
 
-		sprintf(text,"display-memory:-input:keyfile:%d:%d:%s",memlen,x,"/dev/null");
-		setenv("GGI_DISPLAY",text,1);
-		ggiSPrintMode(text,&submode[x]);
-		setenv("GGI_DEFMODE",text,1);
+		sprintf(text,"display-memory:-input:keyfile:%d:%d:%s",
+			memlen,x,"/dev/null");
+		sprintf(envtext, "GGI_DISPLAY=%s", text);
+		putenv(envtext);
+
+		ggiSPrintMode(text, &submode[x]);
+		sprintf(envtext, "GGI_DEFMODE=%s", text);
+		putenv(envtext);
+
 		if (progarg<argc) {
 			printf("face %d execing: %s\n",x,argv[progarg]);
 			the_textures[x].pid=spawn_bg(argv[progarg++]);
