@@ -8,7 +8,7 @@
 <refentry id="ref-struct-ggi-mode">
 <refmeta>
 <refentrytitle><structname>ggi_mode</structname></refentrytitle>
-<manvolnum>9ggi</manvolnum>
+<manvolnum>3ggi</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -228,7 +228,7 @@ for graphtype) if a specific value isn't required.
 <refentry id="ref-struct-ggi-color">
 <refmeta>
 <refentrytitle><structname>ggi_color</structname></refentrytitle>
-<manvolnum>9ggi</manvolnum>
+<manvolnum>3ggi</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -332,7 +332,7 @@ pointer arithmetics with <type>ggi_pixel</type>s.
 
 <refmeta>
 <refentrytitle><structname>ggi_pixelformat</structname></refentrytitle>
-<manvolnum>9ggi</manvolnum>
+<manvolnum>3ggi</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -448,7 +448,7 @@ Use the <function>ggiGetPixelFormat</function> function.
 
 <refmeta>
 <refentrytitle><structname>ggi_directbuffer</structname></refentrytitle>
-<manvolnum>9ggi</manvolnum>
+<manvolnum>3ggi</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
