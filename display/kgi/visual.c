@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2002/11/04 21:32:41 cegger Exp $
+/* $Id: visual.c,v 1.5 2003/01/06 11:49:04 redmondp Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -32,7 +32,7 @@
 
 static const gg_option optlist[] =
 {
-	{ "device", "/dev/graphic" }
+	{ "device", "/dev/graphic,/dev/kgi/graphic" }
 };
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
