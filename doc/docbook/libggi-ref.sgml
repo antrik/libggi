@@ -86,7 +86,8 @@ The default target is specified using a target-spec:
 <arg choice=opt>:<replaceable/targetargs/</arg>
 </cmdsynopsis>
 
-where <replaceable/targetname/ is the <link linkend="targets"/name of the target/,
+where <replaceable/targetname/ is the <link
+linkend="libggi-ref"/name of the target/,
 and <replaceable/targetargs/ are any target-specific arguments.
 </para>
 
@@ -123,7 +124,7 @@ targets are tried in order until one works:
 <listitem>
 <para>
 <envar>GGI_INPUT_<replaceable/target/</envar> specifies extra <link
-linkend="inputs">LibGII input sources</link> and/or filters for visuals 
+linkend="libgii-ref">LibGII input sources</link> and/or filters for visuals 
 using <replaceable/target/.
 </para>
 

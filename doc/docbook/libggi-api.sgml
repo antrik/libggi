@@ -11,5 +11,4 @@
 &libggi-api-misc;
 &libggi-api-db;
 &libggi-api-events;
-&libggi-api-structs;
 </reference>

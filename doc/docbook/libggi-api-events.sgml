@@ -135,8 +135,9 @@ usage.
 <para>
 Advanced management of input sources is accomplished by detaching
 the input from the visual and using LibGII functions on the separate
-visual handle (see <xref linkend="ggiDetachInput">)  This is encouraged,
-for example, when joining inputs from multiple visuals, because
+visual handle (see <link linkend="ggiGetInput">ggiDetachInput</link>).
+This is encouraged, for example, when joining inputs from multiple
+visuals, because
 when two visuals share the same joined input, you cannot
 ggiClose both of the visuals (a fatal error will result, because 
 closing the first visual closes both of the joined inputs and leaves
@@ -151,7 +152,7 @@ the second closed visual with a stale input handle.)
 <simplelist TYPE=inline>
 <member><xref linkend="giiSetEventMask"></member>
 <member><xref linkend="giiEventPoll"></member>
-<member><xref linkend="ggiDetachInput"></member>
+<member><link linkend="ggiGetInput">ggiDetachInput</link></member>
 </simplelist>
 
 </refsect1>
@@ -216,7 +217,7 @@ is closed, the input will remain unaffected.
 <title>See Also</title>
 
 <simplelist TYPE="inline">
-<member><xref linkend="giiSplitInput"></member>
+<member><link linkend="giiOpen">giiSplitInput</link></member>
 </simplelist>
 
 </refsect1>
