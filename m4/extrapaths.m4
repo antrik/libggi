@@ -43,6 +43,7 @@ if test -n "$use_extra_libs" && \
      fi
    done
    IFS=$ac_save_ifs
+   LDFLAGS="$LDFLAGS $extra_libraries"
 fi
 
 AC_SUBST(extra_includes)
