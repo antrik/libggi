@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.4 2002/07/09 11:08:46 cegger Exp $
+/* $Id: misc.c,v 1.5 2002/07/09 13:05:32 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -93,26 +93,89 @@ static int _ggi_x_is_better_screen(Screen *than, Screen *this) {
 	return 0;
 }
 
+
+/* return 1, if vi is unique */
+static int _ggi_x_visual_is_unique(ggi_visual *vis, int viidx_cmp)
+{
+	int viidx;
+	ggi_x_priv *priv;
+	XVisualInfo *via, *vib;
+	priv = LIBGGI_PRIVATE(vis);
+
+	via = priv->visual + viidx_cmp;
+
+	for (viidx = 0; viidx < priv->nvisuals; viidx++) {
+		vib = priv->visual + viidx;
+
+		if (vib == NULL) continue;
+		if (vib->class != via->class) continue;
+		if (vib->depth != via->depth) continue;
+		if (vib->visualid >= via->visualid) continue;
+
+		GGIDPRINT_MISC("visual %X duplicates %X\n",
+			via->visualid, vib->visualid);
+		return 0;
+	}	/* for */
+
+	return 1;
+}	/* _ggi_x_visual_is_unique */
+
+
 /* We cross index and pre-sort the various informational items;
  * This reduces code complexity in checkmode.
  */
-void _ggi_x_build_vilist(ggi_visual *vis) {
+void _ggi_x_build_vilist(ggi_visual *vis)
+{
 	int viidx, more;
+	int nvisuals;
 	ggi_x_priv *priv;
 	priv = LIBGGI_PRIVATE(vis);
 
+	nvisuals = priv->nvisuals;
 	for (viidx = 0; viidx < priv->nvisuals; viidx++) {
 		ggi_x_vi *vi;
 		int bufidx;
-		
+
+		/* There are duplicate visuals in multihead configurations.
+		 * So we have to make sure that the visual list is unique to
+		 * avoid an endless loop in _ggi_x_build_vilist().
+		 */
+		if (!_ggi_x_visual_is_unique(vis, viidx)) {
+			nvisuals--;
+			continue;
+		}	/* if */
+
 		vi = priv->vilist + viidx;
 		vi->vi = priv->visual + viidx;
 
 		for (bufidx = 0; bufidx < priv->nbufs; bufidx++) {
-			if (priv->buflist[bufidx].depth == vi->vi->depth) 
+			if (priv->buflist[bufidx].depth == vi->vi->depth)
 				vi->buf = priv->buflist + bufidx;
 		}
 	}
+
+	do {
+		ggi_x_vi *tmp;
+		if (priv->nvisuals == nvisuals) break;
+
+		GGIDPRINT_MISC("downsize the visual list to %i visuals\n",
+				nvisuals);
+
+		/* We free the unused visuals by downsizing
+		 * the allocated memory.
+		 */
+		tmp = realloc(priv->vilist, sizeof(ggi_x_vi) * nvisuals);
+		if (tmp == NULL) {
+			/* reallocation failed, although we downsize?
+			 * There must be something wrong in the kernel VM.
+			 */
+			GGIDPRINT("downsizing using realloc() failed!\n");
+		}	/* if */
+		priv->nvisuals = nvisuals;
+		priv->vilist = tmp;
+
+		LIBGGI_APPASSERT(priv->nvisuals > 0, "nvisuals shouldn't be 0");
+	} while(0);
 
 	/* Bubblesort priv->vilist from least-to-most desirable visuals */
  more:
@@ -133,7 +196,7 @@ void _ggi_x_build_vilist(ggi_visual *vis) {
 		    goto swap;
 
 		/* Don't swap visuals by visualid, because when they are
-		 * reswapped above again and causing another endless loop.
+		 * reswapped by above again and causing another endless loop.
 		 */
 		viidx++;
 		continue;
@@ -153,6 +216,19 @@ void _ggi_x_build_vilist(ggi_visual *vis) {
  */
 ggi_graphtype _ggi_x_scheme_vs_class(ggi_graphtype gt, ggi_x_vi *vi) {
 	ggi_graphtype size, depth;
+
+	if (!vi) {
+		fprintf(stderr, "vi == %p\n", vi);
+		return GT_INVALID;
+	}	/* if */
+	if (!vi->vi) {
+		fprintf(stderr, "vi->vi == %p\n", vi->vi);
+		return GT_INVALID;
+	}	/* if */
+	if (!vi->vi->depth) {
+		fprintf(stderr, "vi->vi->depth == %i\n", vi->vi->depth);
+		return GT_INVALID;
+	}	/* if */
 
 	if (!vi || !vi->vi || !vi->vi->depth) return GT_INVALID;
 	depth = vi->vi->depth;
