@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = include ggi display default extensions programs doc m4
 
-ggiconfdatadir = @ggi_confdir@
+ggiconfdatadir = $(sysconfdir)/@ggi_confdir@
 ggiconfdata_DATA = libggi.conf
 
 noinst_PROGRAMS = patchlib

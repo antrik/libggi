@@ -1,5 +1,5 @@
 # Mapping file for suggest-strings to libraries
-.root: @ggi_libdir@/ggi
+.root: @libdir@/ggi
 #
 # suggest_name			library_name			versions
 # ------------			--------------------------	--------

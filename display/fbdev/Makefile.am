@@ -9,7 +9,7 @@ fbdev_la_SOURCES = visual.c mode.c pan.c color.c
 
 sublibdir = $(libdir)/ggi/display
 
-fbdevconfdir = @ggi_confdir@/targets
+fbdevconfdir = $(sysconfdir)/@ggi_confdir@/targets
 fbdevconf_DATA = fbdev.conf
 
 EXTRA_DIST = EXPSYMS

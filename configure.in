@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.5 2001/06/24 19:33:11 skids Exp $
+dnl $Id: configure.in,v 1.6 2001/07/03 20:18:40 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -774,16 +774,13 @@ dnl Bah! autoconf hasn't set prefix to it's default value yet!
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-eval foo="$libdir"
-eval ggi_libdir="$foo"
-eval ggi_confdir="$sysconfdir/ggi"
+eval ggi_confdir="ggi"
 
-AC_SUBST(ggi_libdir)
 AC_SUBST(ggi_confdir)
 AC_DEFINE_UNQUOTED(GGITAGLEN,$TAGLEN)
 AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
 AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
-AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$ggi_confdir")
+AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$sysconfdir/$ggi_confdir")
 
 if test "x$use_threads" = "xpthread"; then
   AC_DEFINE(USE_THREADS)

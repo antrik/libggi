@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.1 2001/05/12 23:03:39 cegger Exp $
+/* $Id: cube3d.c,v 1.2 2001/07/03 20:18:40 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -997,6 +997,6 @@ int main(int argc, char **argv)
 		shmctl(shmid[x],IPC_RMID, NULL);
 	}
 	ggiClose(vis);
-	ggiExit();	
+	ggiExit();
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.1 2001/05/12 23:03:29 cegger Exp $
+/* $Id: checkmode.c,v 1.2 2001/07/03 20:18:40 cegger Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -494,11 +494,11 @@ void usage(char * s)
 	       " < for lower graphtypes\n"
 	       " ^ for lower x AND y resolution\n"
 	       " v for higher x AND y resolution\n"
-	       " * for different virtual size (broken GGI_AUTO handling??)\n"
+	       " * for different virtual size (broken GGI_AUTO handling ??)\n"
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.1 2001/05/12 23:03:29 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.2 2001/07/03 20:18:40 cegger Exp $\n");
 	exit(0);
 }
 
