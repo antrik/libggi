@@ -1,4 +1,4 @@
-/* $Id: ati_mach64.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: ati_mach64.h,v 1.3 2003/05/04 21:08:04 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 and rage pro acceleration for fbdev target
@@ -138,8 +138,10 @@ static inline uint32 aty_ld_le32(int regindex,const struct ati_mach64_priv *priv
     /* Should be cleanly optimized by compiler */
     if (regindex >= 0x400) {
         regindex -= 0x400;
+#warning FIXME: This is not 64bit safe
         return ((volatile uint32*)(priv->regbase))[regindex/4];
     } else {
+#warning FIXME: This is not 64bit safe
         return *((volatile uint32*)(priv->regaddr[regindex/4]));
     };
 }
@@ -149,8 +151,10 @@ static inline void aty_st_le32(int regindex, uint32 val,const struct ati_mach64_
     /* Should be cleanly optimized by compiler */
     if (regindex >= 0x400) {
         regindex -= 0x400;
+#warning FIXME: This is not 64bit safe
 	((volatile uint32*)(priv->regbase))[regindex/4]=val;
     } else {
+#warning FIXME: This is not 64bit safe
 	*((volatile uint32*)(priv->regaddr[regindex/4]))=val;
     };
 }
