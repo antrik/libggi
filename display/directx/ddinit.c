@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.7 2003/10/07 16:07:21 cegger Exp $
+/* $Id: ddinit.c,v 1.8 2003/10/07 18:42:22 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -51,16 +51,10 @@ static int ClipActive = 0;
 static MINMAXINFO MaxSize;
 RECT DestWinPos, SrcWinPos;
 
-DisplayMode DisplayModes[MAX_DISPLAYMODES];
-int nDisplayModes = 0;
-
 int CreatePrimary(void);
 int CreateBackup(void);
 int GetDesc(directx_priv *priv);
 void ReleaseAllObjects(void);
-
-static HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd,
-						 LPVOID Context);
 
 
 long FAR PASCAL
@@ -306,7 +300,6 @@ DDInitThread(LPVOID lpParm)
 
 	DirectDrawCreate(NULL, &lpdd, NULL);
 	IDirectDraw_QueryInterface(lpdd, &IID_IDirectDraw4, (LPVOID *) & lpddext);
-	IDirectDraw_EnumDisplayModes(lpdd, 0, NULL, NULL, EnumDisplayModesCallback);
 	ReleaseSemaphore(hSem, 1, NULL);
 	Active = 1;
 
@@ -366,14 +359,29 @@ HRESULT DDChangeMode(directx_priv * priv, DDCMS * ddcms)
 	return SendMessage(hWnd, WM_DDCHANGEMODE, 0, (LPARAM) ddcms);
 }
 
+static void GetScreenParams(int *depth, int *width, int *height)
+{
+	HWND wnd = GetDesktopWindow();
+	HDC dc = GetDC(wnd);
+	*depth = GetDeviceCaps(dc, BITSPIXEL);
+	*width = GetDeviceCaps(dc, HORZRES);
+	*height = GetDeviceCaps(dc, VERTRES);
+	ReleaseDC(wnd, dc);
+}
+
 int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 {
 	uint8 i;
 	uint8 err = 0;
-	uint8 modefound;
+	int depth, width, height, defwidth, defheight;
+	ggi_graphtype deftype;
+
+	GetScreenParams(&depth, &width, &height);
+	defwidth = width * 9 / 10;
+	defheight = height * 9 / 10;
 
 	/* handle AUTO */
-	_GGIhandle_ggiauto(mode, 640, 480);
+	_GGIhandle_ggiauto(mode, defwidth, defheight);
 
 	if (mode->frames < 1) {
 		err = -1;
@@ -383,53 +391,44 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 		mode->frames = 1;
 	}
 
-	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
-		HWND wnd = GetDesktopWindow();
-		HDC dc = GetDC(wnd);
-		int depth = GetDeviceCaps(dc, BITSPIXEL);
-		ReleaseDC(wnd, dc);
-		switch (depth) {
-		case 1:
-			mode->graphtype = GT_1BIT;
-			break;
-		case 2:
-			mode->graphtype = GT_2BIT;
-			break;
-		case 4:
-			mode->graphtype = GT_4BIT;
-			break;
-		case 8:
-			mode->graphtype = GT_8BIT;
-			break;
-		case 15:
-			mode->graphtype = GT_15BIT;
-			break;
-		case 16:
-			mode->graphtype = GT_16BIT;
-			break;
-		case 24:
-			mode->graphtype = GT_24BIT;
-			break;
-		case 32:
-			mode->graphtype = GT_32BIT;
-			break;
-		}
-	}
-
-	modefound = 0;
-	for (i = 0; i < nDisplayModes; i++) {
-		if (DisplayModes[i].width == mode->visible.x
-		    && DisplayModes[i].height == mode->visible.y
-		    && DisplayModes[i].bpp == GT_SIZE(mode->graphtype))
-		{
-			modefound = 1;
-		}
-	}
-
-	if (!modefound) {
-		mode->visible.x = 640;
-		mode->visible.y = 480;
+	switch (depth) {
+	case 1:
+		mode->graphtype = GT_1BIT;
+		break;
+	case 2:
+		mode->graphtype = GT_2BIT;
+		break;
+	case 4:
+		mode->graphtype = GT_4BIT;
+		break;
+	case 8:
+		mode->graphtype = GT_8BIT;
+		break;
+	case 15:
+		mode->graphtype = GT_15BIT;
+		break;
+	case 16:
 		mode->graphtype = GT_16BIT;
+		break;
+	case 24:
+		mode->graphtype = GT_24BIT;
+		break;
+	case 32:
+		mode->graphtype = GT_32BIT;
+		break;
+	}
+
+	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
+		mode->graphtype = deftype;
+	}
+
+	if (!(mode->visible.x > 0 && mode->visible.y > 0 &&
+		mode->visible.x <= width && mode->visible.y <= height &&
+		GT_SIZE(mode->graphtype) == depth))
+	{
+		mode->visible.x = defwidth;
+		mode->visible.y = defheight;
+		mode->graphtype = deftype;
 		err = -1;
 	}
 
@@ -455,21 +454,6 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 				0, 0, mode->visible.x, mode->visible.y);
 
 	return err;
-}
-
-
-static HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd, LPVOID Context)
-{
-	if (nDisplayModes == MAX_DISPLAYMODES - 1)
-		return DDENUMRET_CANCEL;
-
-	DisplayModes[nDisplayModes].width = pddsd->dwWidth;
-	DisplayModes[nDisplayModes].height = pddsd->dwHeight;
-	DisplayModes[nDisplayModes].bpp = pddsd->ddpfPixelFormat.dwRGBBitCount;
-
-	nDisplayModes++;
-
-	return DDENUMRET_OK;
 }
 
 
