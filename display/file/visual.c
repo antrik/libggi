@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/10/31 14:25:00 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/03 13:01:15 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -71,7 +71,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGINVAL;
 	}
 
-	priv = FILE_PRIV(vis) = malloc(sizeof(ggi_file_priv));
+	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_file_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
