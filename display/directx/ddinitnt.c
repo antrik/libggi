@@ -1,9 +1,9 @@
-/* $Id: ddinitnt.c,v 1.1 2001/05/12 23:01:58 cegger Exp $
+/* $Id: ddinitnt.c,v 1.2 2001/06/26 02:33:12 fortinj Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
 
-   Copyright (C) 1999-2000 John Fortin	[fortinj@ibm.net]
+   Copyright (C) 1999-2000 John Fortin  [fortinj@ibm.net]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -181,44 +181,45 @@ int CreatePrimary(void)
 		exit(-1);
 	}			/* End if */
 	IDirectDraw_CreateClipper(lpddext, 0, &pClipper, NULL);
-	IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
-	IDirectDrawSurface_SetClipper(lppdds, pClipper);
-	IDirectDrawClipper_Release(pClipper);
-	pddsd.dwSize = sizeof(pddsd);
-	return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+        IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
+        IDirectDrawSurface_SetClipper(lppdds, pClipper);
+        IDirectDrawClipper_Release(pClipper);
+        pddsd.dwSize = sizeof(pddsd);
+        return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 }
 
 int GetDesc(directx_priv * priv)
 {
-	pddsd.dwSize = sizeof(pddsd);
+        pddsd.dwSize = sizeof(pddsd);
 
-	IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+        IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 
-	priv->hWnd = hWnd;
-	priv->pitch = pddsd.lPitch;
-	priv->maxX = pddsd.dwWidth;
-	priv->maxY = pddsd.dwHeight;
-	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-	priv->BPP = priv->ColorDepth / 8;
-	priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
-	priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
-	priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
-	return 0;
+        priv->hWnd = hWnd;
+        priv->pitch = pddsd.lPitch;
+        priv->maxX = pddsd.dwWidth;
+        priv->maxY = pddsd.dwHeight;
+        priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
+        priv->BPP = priv->ColorDepth / 8;
+/*      priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
+        priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
+        priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
+*/
+        return 0;
 }
 
 int CreateBackup(void)
 {
-	HRESULT rc;
-	char message[100];
+        HRESULT rc;
+        char message[100];
 
-	memset(&bddsd, 0, sizeof(bddsd));
-	bddsd.dwSize = sizeof(bddsd);
-	bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
-	    | DDSD_PIXELFORMAT;
-	bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-	bddsd.dwWidth = pddsd.dwWidth;
-	bddsd.dwHeight = pddsd.dwHeight;
-	bddsd.lPitch = pddsd.lPitch;
+        memset(&bddsd, 0, sizeof(bddsd));
+        bddsd.dwSize = sizeof(bddsd);
+        bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
+            | DDSD_PIXELFORMAT;
+        bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+        bddsd.dwWidth = pddsd.dwWidth;
+        bddsd.dwHeight = pddsd.dwHeight;
+        bddsd.lPitch = pddsd.lPitch;
 
 /* Set up the pixel format */
 	ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
