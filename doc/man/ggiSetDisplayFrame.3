@@ -64,12 +64,11 @@ Right:
 
 .nb
 .nf
-displayframe = writeframe;
-writeframe = nextframe;
-ggiSetWriteFrame(vis, writeframe);
-ggiSetDisplayFrame(vis, displayframe);
+ggiSetWriteFrame(vis, framenr);
 
 /* render here */
+
+ggiSetDisplayFrame(vis, framenr);
 .fi
 
 .SH SEE ALSO
