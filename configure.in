@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.132 2004/10/08 11:47:18 cegger Exp $
+dnl $Id: configure.in,v 1.133 2004/10/08 12:05:58 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -968,7 +968,7 @@ if test "x$build_x_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
-  TESTSUBDIRS="$TESTSUBDIRS X"
+  TESTSUBDIRS="$TESTSUBDIRS display.x"
   build_x_target="yes"
   AC_MSG_RESULT(yes)
 
