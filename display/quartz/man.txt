@@ -9,7 +9,7 @@ Synopsis
 
 ::
 
-  display-quartz:	[-physz==<sizex>,<sizey>[dpi]]
+  display-quartz:	[-physz==<sizex>,<sizey>[dpi]] [-nomansync]
 
 
 Description
@@ -33,6 +33,12 @@ Options
     which case, they represent resolution in dots-per-inch. Yes, there
     are two equals signs there, for reasons of compatibility with other
     targets.
+
+``-nomansync``
+    Use of the mansync helper library to periodically flush contents
+    to the screen is disabled. This, of course, will result in
+    incorrect behaviour of applications that use syncronous
+    mode.
 
 
 Features
