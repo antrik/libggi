@@ -7,6 +7,7 @@
 display-file: [-flushcmd=<command>] [-flushframe=<n>]
               [-flushtime=<t>] <filename>
 .fi
+
 .SH DESCRIPTION
 Renders an image into a file.  The file can be a framebuffer device
 (e.g. \fB/dev/fb0\fR), in which case a reasonable representation of the
@@ -34,6 +35,7 @@ looks typically like:
 .nf
 ppmtogif foo.ppm > foo.%04d.gif
 .fi
+
 The command is passed through a \fBprintf(3)\fR which has the current
 count of saved frames as an argument (or rather as 10 arguments to
 allow a few more complex commands).

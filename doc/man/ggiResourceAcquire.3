@@ -12,6 +12,7 @@ int ggiResourceRelease(ggi_resource_t res);
 
 int ggiResourceMustAcquire(ggi_resource_t res);
 .fi
+
 .SH DESCRIPTION
 \fBggiResourceAcquire\fR acquires (locks) a LibGGI resource, typically a
 DirectBuffer (see examples below).  The \fBactype\fR indicates the
@@ -55,5 +56,6 @@ if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0) {
 /* Release DirectBuffer when done with it. */
 ggiResourceRelease(dbuf->resource);
 .fi
+
 .SH SEE ALSO
 \fBggi_directbuffer(3)\fR

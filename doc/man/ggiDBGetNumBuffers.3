@@ -10,6 +10,7 @@ int  ggiDBGetNumBuffers(ggi_visual_t vis);
 
 const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis, int bufnum);
 .fi
+
 .SH DESCRIPTION
 Dependent on the visual and runtime environment found, applications
 may be granted direct access to hardware and/or library internal
@@ -125,5 +126,6 @@ for(i = 0; i < numbufs; i++) {
 
       /* Check pixel format, be portable... */
 .fi
+
 .SH SEE ALSO
 \fBggi_directbuffer(3)\fR, \fBggiResourceAcquire(3)\fR

@@ -10,6 +10,7 @@ ggi_visual_t ggiOpen(const char *display, ...);
 
 int ggiClose(ggi_visual_t vis);
 .fi
+
 .SH DESCRIPTION
 \fBggiOpen\fR opens a visual.  The visual is specified as a display
 string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
@@ -40,6 +41,7 @@ if(vis==NULL) {
 
 ggiClose(vis);
 .fi
+
 Open and closing a memory visual:
 
 .nb
@@ -54,5 +56,6 @@ if(memvis==NULL) {
 
 ggiClose(memvis);
 .fi
+
 .SH SEE ALSO
 \fBggiInit(3)\fR

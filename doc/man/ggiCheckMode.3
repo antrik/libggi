@@ -18,6 +18,7 @@ int ggiCheckGraphMode(ggi_visual_t visual, int x, int y,
 int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize,
                        int frames, ggi_graphtype type, ggi_mode *md);
 .fi
+
 .SH DESCRIPTION
 \fBggiCheckMode\fR checks whether or not the given mode will work on the
 visual.  If it does not work, it will modify the values of passed
@@ -109,5 +110,6 @@ else {
       ggiSetMode(vis, &sug_mode);
 }
 .fi
+
 .SH SEE ALSO
 \fBggiOpen(3)\fR, \fBggiSetMode(3)\fR, \fBggi_mode(3)\fR

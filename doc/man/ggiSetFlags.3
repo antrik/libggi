@@ -16,6 +16,7 @@ ggi_flags ggiGetFlags(ggi_visual_t vis);
 #define ggiRemoveFlags(vis,flags) \e
               ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
 .fi
+
 .SH DESCRIPTION
 \fBggiSetFlags\fR sets the specified flags (bitwise
 OR'd together) on a visual.
@@ -97,6 +98,7 @@ ggiAddFlags(vis, GGIFLAG_ASYNC);      /* switches to asynchronous mode */
 ggiFlush(vis);                        /* updates the screen */
 ggiRemoveFlags(vis, GGIFLAG_ASYNC);   /* switches to synchronous mode */
 .fi
+
 .SH TIDY BUFFER MODE
 Some visuals allow applications to manage their own dirty regions when
 using the directbuffer.

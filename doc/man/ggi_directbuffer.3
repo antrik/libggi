@@ -30,6 +30,7 @@ typedef struct {
       } buffer;
 } ggi_directbuffer;
 .fi
+
 .SH DESCRIPTION
 The \fBggi_directbuffer\fR structure contains information on
 target-dependent buffers to allow applications to access them
@@ -56,6 +57,7 @@ directly.
   layout == blPixelLinearBuffer
 */
 .fi
+
 .RE
 .TP
 \fBframe\fR
@@ -147,6 +149,7 @@ typedef struct {
       ggi_pixelformat *pixelformat;   /* format of the pixels         */
 } ggi_pixellinearbuffer;
 .fi
+
 A linear buffer is a region in the application's virtual memory
 address space. A pixel with the pixel coordinates (\fBx\fR, \fBy\fR) is
 assigned a pixel number according to the following formula:
@@ -155,6 +158,7 @@ assigned a pixel number according to the following formula:
 .nf
 pixel_number = (origin_y + y) * stride + origin_x + x;
 .fi
+
 In any case both \fBx\fR and \fBy\fR must not be negative, and less than the
 buffer's width and height respectively. For top-left-origin screen
 coordinates, \fBstride\fR and \fBorigin_y\fR will both be positive. For
@@ -176,6 +180,7 @@ typedef struct {
       ggi_pixelformat *pixelformat;   /* format of the pixels         */
 } ggi_pixelplanarbuffer;
 .fi
+
 .SH SAMPLE LINEAR BUFFER
 .nb
 .nf
@@ -185,6 +190,7 @@ typedef struct {
       ggi_pixelformat *pixelformat[4];/* format of the pixels         */
 } ggi_samplelinearbuffer;
 .fi
+
 .SH SAMPLE PLANAR BUFFER
 .nb
 .nf
@@ -194,6 +200,7 @@ typedef struct {
       ggi_pixelformat *pixelformat[4];/* format of the pixels         */
 } ggi_sampleplanarbuffer;
 .fi
+
 .SH EXTENDED BUFFER
 TODO : write something here.
 .SH SEE ALSO

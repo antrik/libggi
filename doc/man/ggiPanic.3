@@ -9,6 +9,7 @@
 
 void ggiPanic(const char *format, ...);
 .fi
+
 .SH DESCRIPTION
 \fBggiPanic\fR shuts down the application, closing all visuals, with
 \fBprintf(3)\fR-style reporting to stderr, taking a format string and
@@ -29,3 +30,4 @@ if (my_important_struct->magic != MAGIC) {
       ggiPanic("Fatal error: structure is corrupted\en");
 }
 .fi
+

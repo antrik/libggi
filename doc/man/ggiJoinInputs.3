@@ -26,6 +26,7 @@ gii_input_t ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
 #define ggiRemoveEventMask(vis,mask)  \e
               ggiSetEventMask((vis), ggiGetEventMask((vis)) & ~(mask))
 .fi
+
 .SH DESCRIPTION
 LibGGI provides input facilities through an auxiliary library, LibGII.
 Each LibGGI visual internally contains a \fBgii_input_t\fR input, and all
