@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2004/09/20 12:42:27 pekberg Exp $
+/* $Id: mode.c,v 1.4 2004/09/20 12:54:29 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -197,7 +197,7 @@ static void testcase4(const char *desc)
 
 	if (mode.size.x == GGI_AUTO) {
 		printfailure(
-			"ggiCheckMode: expected return value: not GGI_AUTO\n"
+			"ggiCheckMode: size.x: expected return value: not GGI_AUTO\n"
 					"actual return value: GGI_AUTO\n");
 		ggiClose(vis);
 		ggiExit();
@@ -206,7 +206,7 @@ static void testcase4(const char *desc)
 
 	if (mode.size.y == GGI_AUTO) {
 		printfailure(
-			"ggiCheckMode: expected return value: not GGI_AUTO\n"
+			"ggiCheckMode: size.y: expected return value: not GGI_AUTO\n"
 					"actual return value: GGI_AUTO\n");
 		ggiClose(vis);
 		ggiExit();
@@ -222,7 +222,7 @@ static void testcase4(const char *desc)
 	}
 
 	printfailure(
-		"ggiSetMode: expected return value: GGI_OK or GGI_ENOMATCH\n"
+		"ggiSetMode: err: expected return value: GGI_OK or GGI_ENOMATCH\n"
 				"actual return value: %i\n", err);
 	return;
 }
