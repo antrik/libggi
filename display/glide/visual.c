@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:07 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/10/31 21:55:21 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -194,7 +194,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Prevent 3DFX splash-screen from being displayed */
 	if (getenv("FX_GLIDE_NO_SPLASH") == NULL) {
-		setenv("FX_GLIDE_NO_SPLASH", "1", 0);
+		putenv("FX_GLIDE_NO_SPLASH=1");
 	}
 
 	grGlideInit();
