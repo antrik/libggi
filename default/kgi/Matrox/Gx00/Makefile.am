@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:default"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 Gx00_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 Gx00_la_LDFLAGS = $(extra_libraries) -module -no-undefined \

@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:vgl"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.vgl"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 vgl_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lvgl
 vgl_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

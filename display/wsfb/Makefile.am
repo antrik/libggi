@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:wsfb"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.wsfb"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 wsfb_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 wsfb_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

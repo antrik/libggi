@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:memory"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.memory"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 memory_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 memory_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

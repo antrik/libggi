@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:file"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.file"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 file_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 file_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

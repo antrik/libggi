@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:kgi"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.kgi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 kgi_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 kgi_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

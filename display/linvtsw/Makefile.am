@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:linvtsw"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.linvtsw"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 linvtsw_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 linvtsw_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:mansync"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.mansync"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 mansync_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 mansync_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

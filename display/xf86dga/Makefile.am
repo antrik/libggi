@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:xf86dga"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.xf86dga"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
 xf86dga_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
 	$(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS) $(x_helper_xf86dga_libs) $(x_helper_xf86vm_libs)

@@ -1,4 +1,4 @@
-AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:directx"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.directx"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 directx_la_LIBADD = $(top_builddir)/ggi/libggi.la \
 	-lddraw -lgdi32
