@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2003/12/06 19:11:10 cegger Exp $
+/* $Id: crossblit.c,v 1.7 2004/10/31 13:48:37 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -29,10 +29,9 @@
 */
 
 #include <string.h>
-#include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include "lin8lib.h"
+#include <ggi/internal/ggi_debug.h>
+
 
 
 /* Default fallback */

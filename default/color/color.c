@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/06/27 18:54:43 cegger Exp $
+/* $Id: color.c,v 1.10 2004/10/31 13:48:36 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -28,6 +28,7 @@
 
 #include <string.h>
 #include "color.h"
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)

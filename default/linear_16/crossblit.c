@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.14 2004/09/13 10:50:22 cegger Exp $
+/* $Id: crossblit.c,v 1.15 2004/10/31 13:48:36 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -33,6 +33,7 @@
 
 #include <string.h>
 #include "lin16lib.h"
+#include <ggi/internal/ggi_debug.h>
 
 /* Default fallback to lower GGI primitive functions (slow).
  */

@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.10 2004/10/18 07:59:00 pekberg Exp $
+/* $Id: clip.c,v 1.11 2004/10/31 13:48:36 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/triple-int.h>
 
 #ifdef HAVE_UNISTD_H
