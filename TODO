@@ -15,13 +15,14 @@ Due : ????-??-??
 * why is directfb drawing on only every other pixel column? (was DFB bug)
 * use config file instead of static accel_strings array in fbdev
 * enable DirectFB
-- change way that pixela/pixel stubs are selected (above item breaks current.)
-  (in progress)
 - KGI-target (compiling framework, probably only working with Matrox Cards)
 - make Xlib a helper target for X
-- Make XF86DGA working with XF86 3.x and XF86 4.x working
+- Make XF86DGA working with XF86 3.x and XF86 4.x
 - improve modelist.inc
 - documentate tele-target in libggi/doc/targets.txt
+- add display-auto to separate OS dependent auto-detect routines from
+  libggi core
+- remove pre-gii typedefs from <ggi/types.h>
 
 
 ------------------------------------------
@@ -31,6 +32,8 @@ Version : 3.0.0
 Due : ????-??-??
 
 - A working full-featured KGI-target
+- change way that pixela/pixel stubs are selected (above item breaks current.)
+  (in progress)
 - enhance config file system: aliases, in-file option strings, wildcards
 - finish long-term plan
 - implement API additions
