@@ -56,7 +56,7 @@ A: Lots. But first of all, make sure everything is working fine by running
 Q: The tests don't work right - what should I do ?
 
 A: This is a difficult question, as LibGGI works in so many environments,
-   and they all have their own surprises. If possible, plaese try to make it
+   and they all have their own surprises. If possible, please try to make it
    work under the X target first. Start up a standard X server (_not_ XGGI)
    that works with your hardware. Open an xterm and run the demo from there.
    Unless you don't have the X target configured it should work. If it does
@@ -115,12 +115,14 @@ A: LibGGI usually automatically associates a suitable set of inputs to each
    visual it opens, like the native X inputs, the linux console layer, etc.
    With GGI_INPUT, you can ask LibGGI to add more inputs. Have a look at the
    LibGII documentation on how inputs are specified. GGI_INPUT is for LibGGI
-   what GII_INPUT for LibGII.
+   what GII_INPUT for LibGII. Note, that GGI_INPUT mostly works only in
+   conjunction with the -noinput target option. See the display-<target>(7)
+   manual pages for more info.
 
 Q: Some LibGGI application won't let me specify the mode it should run in.
 
 A: If it is well written, a LibGGI application will honour GGI_DEFMODE.
-   doc/env.txt describes how to use that variable. Note, that this does not
+   libggi(7) describes how to use that variable. Note, that this does not
    always help. Some applications have specific needs that cause them to
    override some or all elements of the mode.
 
@@ -129,6 +131,6 @@ Q: I have a problem with a LibGGI application. When reporting it to the
    out ?
 
 A: Yes. LibGGI has strong internal debugging features. they are enabled
-   using the LIBGGI_DEBUG environment variable. Usually setting it to 255
+   using the GGI_DEBUG environment variable. Usually setting it to 255
    (i.e. all logging) is the best choice, if you don't already have a fair
    idea about what is going on.
