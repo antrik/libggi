@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.6 2004/06/02 21:38:17 cegger Exp $
+/* $Id: flying_ggis.c,v 1.7 2004/09/08 20:04:28 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -152,8 +152,7 @@ static void translate_hline(int x, int y, int w, uint8 *data)
 	uint16 *buf2 = (uint16 *) trans_buffer;
 	uint32 *buf4 = (uint32 *) trans_buffer;
 
-	switch ((GT_SIZE(vis_mode.graphtype) + 7) / 8) {
-
+	switch (GT_ByPP(vis_mode.graphtype)) {
 	case 1:
 		for (; ww > 0; ww--) {
 			*buf1++ = lookup[*data++];
