@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.11 2003/01/23 03:02:09 skids Exp $
+/* $Id: misc.c,v 1.12 2003/03/18 20:30:36 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -38,8 +38,8 @@
 /* return 1 if an X11 Visual (cthis) has a "better" pixelformat (than than)
  * "this" is a C++ keyword, so we use "cthis" instead. 
  */
-static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis) {
-
+static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
+{
 	/* prefer color to grayscale */
 	if (((than->class==StaticGray) || (than->class==GrayScale))
 	    && 
@@ -70,6 +70,9 @@ static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis) {
 	if ((than->class==TrueColor)  && (cthis->class==DirectColor)) return 1;
 	if ((cthis->class==TrueColor)  && (than->class==DirectColor)) return -1;
 
+	/* don't swap equal visuals */
+	if (cthis->class == than->class) return -1;
+
 	/* More? */
 	return 0;
 }
@@ -78,6 +81,7 @@ static int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
 {
 	if (!DoesBackingStore(than) && DoesBackingStore(cthis)) return 1;
 	if (DoesBackingStore(than) && !DoesBackingStore(cthis)) return -1;
+
 	if (than->width * than->height < cthis->width * cthis->height)
 		return 1;
 	if (than->width * than->height > cthis->width * cthis->height)
@@ -89,6 +93,9 @@ static int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
 
 	if (than->ndepths < cthis->ndepths) return 1;
 	if (than->ndepths > cthis->ndepths) return 0;
+
+	/* don't swap equal visuals */
+	if (cthis->ndepths == than->ndepths) return -1;
 
 	/* More? */
 	return 0;
@@ -154,17 +161,19 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 		vib = (priv->vilist + viidx + 1)->vi;
 
 		restmp = _ggi_x_is_better_fmt(vib, via);
-		if (restmp > 0) goto swap;
-		else if (restmp == 0) {
-		  restmp = 
-		    _ggi_x_is_better_screen(ScreenOfDisplay(priv->disp,
-							    vib->screen),
-					    ScreenOfDisplay(priv->disp,
+		if (restmp > 0) {
+			goto swap;
+		} else if (restmp == 0) {
+			restmp = _ggi_x_is_better_screen(ScreenOfDisplay(priv->disp,
+						vib->screen), ScreenOfDisplay(priv->disp,
 							    via->screen));
-		  if (restmp > 0) goto swap;
-		  else if (restmp == 0) {
-		    if (via->visualid > vib->visualid) goto swap;
-		  }
+			if (restmp > 0) {
+				goto swap;
+			} else if (restmp == 0) {
+				if (via->visualid > vib->visualid) {
+					goto swap;
+				}
+			}
 		}
 		viidx++;
 		continue;
