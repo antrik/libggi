@@ -1,4 +1,4 @@
-/* $Id: darwin.c,v 1.1 2004/01/29 13:49:33 cegger Exp $
+/* $Id: darwin.c,v 1.2 2004/10/11 21:36:23 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI - Set of default targets for Darwin.
@@ -31,7 +31,7 @@
 
 static struct ggi_auto_Target targetList[] =
 {
-	{ "display-x", "-noshm", probe_X  },
+	{ "display-x", NULL, probe_X  },
 	{ "display-aa", NULL, probe_AA },
 };
 
