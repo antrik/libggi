@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2002/10/27 18:26:25 skids Exp $
+/* $Id: mode.c,v 1.6 2004/01/30 18:41:57 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -152,7 +152,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 		/* Set up DirectBuffer(s) */
 		for (i = 0; i<tm->frames; i++) {
 			if (LIBGGI_FB_SIZE(tm) >
-				(VGLDisplay->Xsize*VGLDisplay->Ysize*
+				(unsigned)(VGLDisplay->Xsize*VGLDisplay->Ysize*
 					pixelBytes)) {
 				fprintf(stderr, "display-vgl: framebuffer too large! (%d > %d*%d*%d)\n",
 					LIBGGI_FB_SIZE(tm),
