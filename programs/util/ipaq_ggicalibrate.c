@@ -222,12 +222,12 @@ static int do_calibration(int fd)
 				if ((rv =
 				     read(fd, &ts_ev,
 					  sizeof(TS_EVENT))) == -1) {
-					usleep(100);
+					ggUSleep(100);
 					drawPlus(screenCalPos[k].x,
 						 screenCalPos[k].y, 0);
 					continue;
 				} else if (rv != sizeof(TS_EVENT)) {
-					usleep(100);
+					ggUSleep(100);
 					drawPlus(screenCalPos[k].x,
 						 screenCalPos[k].y, 0);
 					continue;
