@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.12 2004/05/27 11:10:58 pekberg Exp $
+/* $Id: clip2d.c,v 1.13 2004/05/27 11:30:11 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -246,6 +246,7 @@ static void generate_clipdb(void)
 			fprintf(f, " }\n");
 	}
 	fprintf(f, "};\n");
+	fclose(f);
 }
 #endif
 
