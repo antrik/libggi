@@ -356,7 +356,7 @@ yet, otherwise there is a key to be consumed.
 </para>
 
 <para>
-For a fuller definition of characters, see <xref linkend="gii-keysym">.
+For a fuller definition of characters, see <xref linkend="ref-struct-gii-key-event">.
 </para>
 
 </refsect1>
