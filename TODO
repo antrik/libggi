@@ -15,8 +15,8 @@ Due : ????-??-??
 
 + Verify and fix cross-compilation to other architectures
 
-- update build system to libtool 2.0, make use of latest
-  autotools features
+* update build system to libtool 2.0, make use of latest
+  autotools features (Christoph Egger)
 
 - add support for non-gcc compilers
 
