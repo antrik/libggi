@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.23 2004/08/23 12:17:31 pekberg Exp $
+/* $Id: ddinit.c,v 1.24 2004/08/24 18:43:48 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -31,17 +31,18 @@
 #include <process.h>
 
 static void DDCreateClass(directx_priv *priv);
-static int DDCreateWindow(directx_priv *priv);
-static int DDCreateThread(directx_priv *priv);
-static int DDCreateSurface(directx_priv *priv);
+static int DDCreateWindow(ggi_visual *vis);
+static int DDCreateThread(ggi_visual *vis);
+static int DDCreateSurface(directx_priv *priv, DWORD vw, DWORD vh);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
 
 long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-int DDInit(directx_priv *priv)
+int DDInit(ggi_visual *vis)
 {
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
   /* get the application instance */
   priv->hInstance = GetModuleHandle(NULL);
 
@@ -50,11 +51,11 @@ int DDInit(directx_priv *priv)
 
   if (priv->hParent) {
     /* create the window */
-    if (!DDCreateWindow(priv))
+    if (!DDCreateWindow(vis))
       return 0;
   } else {
     /* start the event loop here */
-    if (!DDCreateThread(priv)) {
+    if (!DDCreateThread(vis)) {
       DDShutdown(priv);
       return 0;
     }
@@ -93,13 +94,15 @@ void DDShutdown(directx_priv *priv)
 
 void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
 
-int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP)
+int DDChangeMode(directx_priv *priv,
+	DWORD virtw, DWORD virth,
+	DWORD width, DWORD height, DWORD BPP)
 {
   /* destroy any existing surface */
   DDDestroySurface(priv);
 
   /* recreate the primary surface and back storage */
-  if (!DDCreateSurface(priv))
+  if (!DDCreateSurface(priv, virtw, virth))
     return 0;
 
   /* set the new window size */
@@ -115,14 +118,31 @@ int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP)
   return 1;
 }
 
-void DDRedraw(directx_priv * priv, int x, int y, int w, int h)
+void DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 {
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
   RECT SrcWinPos, DestWinPos;
   SrcWinPos.left = x;
   SrcWinPos.right = x + w;
   SrcWinPos.top = y;
   SrcWinPos.bottom = y + h;
   DestWinPos = SrcWinPos;
+  DestWinPos.right -= vis->origin_x;
+  if (DestWinPos.right <= 0)
+    return;
+  DestWinPos.bottom -= vis->origin_y;
+  if (DestWinPos.bottom <= 0)
+    return;
+  DestWinPos.left -= vis->origin_x;
+  if (DestWinPos.left < 0) {
+    SrcWinPos.left -= DestWinPos.left;
+    DestWinPos.left = 0;
+  }
+  DestWinPos.top -= vis->origin_y;
+  if (DestWinPos.top < 0) {
+    SrcWinPos.top -= DestWinPos.top;
+    DestWinPos.top = 0;
+  }
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.left);
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
   /* draw the stored image on the primary surface */
@@ -130,10 +150,15 @@ void DDRedraw(directx_priv * priv, int x, int y, int w, int h)
 			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
 }
 
-void DDRedrawAll(directx_priv * priv)
+void DDRedrawAll(ggi_visual *vis)
 {
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
   RECT SrcWinPos, DestWinPos;
   GetClientRect(priv->hWnd, &SrcWinPos);
+  SrcWinPos.left += vis->origin_x;
+  SrcWinPos.top += vis->origin_y;
+  SrcWinPos.right += vis->origin_x;
+  SrcWinPos.bottom += vis->origin_y;
   GetClientRect(priv->hWnd, &DestWinPos);
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.left);
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
@@ -399,8 +424,12 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	LPCREATESTRUCT lpcs;
 	PAINTSTRUCT ps;
 	HDC hdc;
-	directx_priv *priv =
-		(directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
+	ggi_visual *vis =
+		(ggi_visual *)GetWindowLong(hWnd, GWL_USERDATA);
+	directx_priv *priv = NULL;
+
+	if(vis)
+		priv = LIBGGI_PRIVATE(vis);
 
 	switch (message) {
 
@@ -410,7 +439,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			PostMessage(hWnd, message, wParam, lParam);
 			return 0;
 		}
-		DDRedrawAll(priv);
+		DDRedrawAll(vis);
 		EnterCriticalSection(&priv->redrawcs);
 		priv->redraw = 1;
 		LeaveCriticalSection(&priv->redrawcs);
@@ -436,7 +465,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if(message == WM_PAINT)
 			hdc = BeginPaint(hWnd, &ps);
-		DDRedrawAll(priv);
+		DDRedrawAll(vis);
 		if(message == WM_PAINT)
 			EndPaint(hWnd, &ps);
 		LeaveCriticalSection(&priv->cs);
@@ -510,8 +539,9 @@ static void DDCreateClass(directx_priv *priv)
 
 /* create the GGI window */
 
-static int DDCreateWindow(directx_priv *priv)
+static int DDCreateWindow(ggi_visual *vis)
 {
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
   int w = 640, h = 480; /* default window size */
   int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
 		  /* toplevel flags */
@@ -538,7 +568,7 @@ static int DDCreateWindow(directx_priv *priv)
   priv->hWnd = CreateWindowEx(0, NAME, TITLE, ws_flags,
 			      CW_USEDEFAULT, 0, w, h,
 			      priv->hParent, NULL,
-			      priv->hInstance, priv);
+			      priv->hInstance, vis);
   if (!priv->hWnd) {
     if (priv->hCursor) DestroyCursor(priv->hCursor);
     priv->hCursor = NULL;
@@ -562,10 +592,11 @@ static unsigned __stdcall
 DDEventLoop(void *lpParm)
 {
   MSG msg;
-  directx_priv *priv = (directx_priv*)lpParm;
+  ggi_visual *vis = (ggi_visual *)lpParm;
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
 
   /* create the window */
-  if (!DDCreateWindow(priv)) {
+  if (!DDCreateWindow(vis)) {
     SetEvent(priv->hInit);
     return 0;
   }
@@ -580,15 +611,17 @@ DDEventLoop(void *lpParm)
   return msg.wParam;
 }
 
-static int DDCreateThread(directx_priv *priv)
+static int DDCreateThread(ggi_visual *vis)
 {
+  directx_priv *priv = LIBGGI_PRIVATE(vis);
   unsigned ThreadID;
   priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
 #ifdef __CYGWIN__
-  priv->hThreadID = CreateThread(NULL, 0, DDEventLoop, priv, 0,
-				 &ThreadID);
+  priv->hThreadID = CreateThread(NULL, 0,
+	(LPTHREAD_START_ROUTINE)DDEventLoop, vis, 0,
+	(LPDWORD)&ThreadID);
 #else
-  priv->hThreadID = (HANDLE)_beginthreadex(NULL, 0, DDEventLoop, priv, 0,
+  priv->hThreadID = (HANDLE)_beginthreadex(NULL, 0, DDEventLoop, vis, 0,
 					   &ThreadID);
 #endif
   if (priv->hThreadID) {
@@ -603,7 +636,7 @@ static int DDCreateThread(directx_priv *priv)
 
 /* initialize and finalize the primary surface and back storage */
 
-static int DDCreateSurface(directx_priv *priv)
+static int DDCreateSurface(directx_priv *priv, DWORD virtw, DWORD virth)
 {
   HRESULT hr;
   LPDIRECTDRAWCLIPPER pClipper;
@@ -635,9 +668,9 @@ static int DDCreateSurface(directx_priv *priv)
   bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
     | DDSD_PIXELFORMAT;
   bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  bddsd.dwWidth = pddsd.dwWidth;
-  bddsd.dwHeight = pddsd.dwHeight;
-  bddsd.lPitch = pddsd.lPitch;
+  bddsd.dwWidth = virtw;
+  bddsd.dwHeight = virth;
+  bddsd.lPitch = virtw * (pddsd.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
 
   /* set up the pixel format */
   ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
@@ -659,10 +692,10 @@ static int DDCreateSurface(directx_priv *priv)
   IDirectDrawSurface2_Unlock(priv->lpbdds, bddsd.lpSurface);
 
   /* set private mode parameters */
-  priv->maxX = pddsd.dwWidth;
-  priv->maxY = pddsd.dwHeight;
+  priv->maxX = virtw;
+  priv->maxY = virth;
   priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-  priv->BPP = priv->ColorDepth / 8;
+  priv->BPP = (priv->ColorDepth + 7) / 8;
   priv->pitch = priv->maxX * priv->BPP;
 
   return 1;

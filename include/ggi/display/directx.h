@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.7 2004/03/25 10:28:32 pekberg Exp $
+/* $Id: directx.h,v 1.8 2004/08/24 18:43:48 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -63,6 +63,8 @@ ggifunc_drawline                GGI_directx_drawline;
 
 /*ggifunc_putc                  GGI_directx16_putc;*/
 /*ggifunc_putc                  GGI_directx32_putc;*/
+
+ggifunc_setorigin               GGI_directx_setorigin;
 
 typedef struct directx_priv
 {

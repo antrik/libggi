@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2004/03/25 10:28:32 pekberg Exp $
+/* $Id: visual.c,v 1.16 2004/08/24 18:43:48 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -147,11 +147,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	    priv->hParent = GetDesktopWindow();
 	}
 
-        if (!DDInit(priv)) {
+        if (!DDInit(vis)) {
 		err = GGI_ENODEVICE;
 		goto err3;
         }
-
 
         ggigii.hWnd = priv->hWnd;
         ggigii.hInstance = priv->hInstance;
@@ -184,8 +183,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         vis->opdisplay->checkmode = GGI_directx_checkmode;
         vis->opdisplay->flush = GGI_directx_flush;
         vis->opdisplay->getapi = GGI_directx_getapi;
+        vis->opdraw->setorigin = GGI_directx_setorigin;
 
-	*dlret = GGI_DL_OPDISPLAY;
+	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return GGI_OK;
 
 err3:

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/08/23 12:17:31 pekberg Exp $
+/* $Id: mode.c,v 1.11 2004/08/24 18:43:48 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -93,7 +93,7 @@ int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	EnterCriticalSection(&priv->cs);
-	DDRedraw(priv, x, y, w, h);
+	DDRedraw(vis, x, y, w, h);
 	LeaveCriticalSection(&priv->cs);
 	return 0;
 }
@@ -218,11 +218,11 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 		err = -1;
 	}
 
-	if (mode->virt.x != mode->visible.x) {
+	if (mode->virt.x < mode->visible.x) {
 		mode->virt.x = mode->visible.x;
 		err = -1;
 	}       
-	if (mode->virt.y != mode->visible.y) {
+	if (mode->virt.y < mode->visible.y) {
 		mode->virt.y = mode->visible.y;
 		err = -1;
 	}
@@ -269,10 +269,8 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DDChangeMode(priv, mode->visible.x, mode->visible.y, priv->BPP * 8);
-
-	mode->virt.x = mode->visible.x;
-	mode->virt.y = mode->visible.y;
+	DDChangeMode(priv, mode->virt.x, mode->virt.y,
+		mode->visible.x, mode->visible.y, priv->BPP * 8);
 
 	vis->d_frame_num = 0;
 	vis->r_frame_num = 0;
@@ -349,5 +347,16 @@ int GGI_directx_getmode(ggi_visual * vis, ggi_mode * tm)
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 	LeaveCriticalSection(&priv->cs);
 
+	return 0;
+}
+
+int GGI_directx_setorigin(ggi_visual *vis, int x, int y)
+{
+	if (x < 0) return GGI_EARGINVAL;
+	if (y < 0) return GGI_EARGINVAL;
+	if (x > LIBGGI_VIRTX(vis) - LIBGGI_X(vis)) return GGI_EARGINVAL;
+	if (y > LIBGGI_VIRTY(vis) - LIBGGI_Y(vis)) return GGI_EARGINVAL;
+	vis->origin_x = x;
+	vis->origin_y = y;
 	return 0;
 }
