@@ -12,7 +12,7 @@ quartz_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
-EXTRA_DIST = EXPSYMS
+EXTRA_DIST = EXPSYMS quartz.h
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.4 2004/12/29 10:13:22 cegger Exp $
+/* $Id: quartz.h,v 1.5 2005/01/18 19:41:13 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -28,30 +28,12 @@
 #ifndef _GGI_DISPLAY_QUARTZ_H
 #define _GGI_DISPLAY_QUARTZ_H
 
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/gii.h>
 
-#include <ggi/input/quartz.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <Carbon/Carbon.h>
 
 #include <ggi/display/mansync.h>
-
-
-ggifunc_checkmode	GGI_quartz_checkmode;
-ggifunc_getmode		GGI_quartz_getmode;
-ggifunc_setmode		GGI_quartz_setmode;
-
-ggifunc_getapi		GGI_quartz_getapi;
-ggifunc_setflags	GGI_quartz_setflags;
-ggifunc_setpalvec	GGI_quartz_setpalvec;
-ggifunc_flush		GGI_quartz_flush;
-ggifunc_gcchanged	GGI_quartz_gcchanged;
-
-ggifunc_setgamma	GGI_quartz_setgamma;
-ggifunc_getgamma	GGI_quartz_getgamma;
-ggifunc_setgammamap	GGI_quartz_setgammamap;
-ggifunc_getgammamap	GGI_quartz_getgammamap;
 
 
 typedef struct {

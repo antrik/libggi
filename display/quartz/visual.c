@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/12/30 20:22:51 cegger Exp $
+/* $Id: visual.c,v 1.5 2005/01/18 19:40:34 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -29,8 +29,8 @@
 #include <string.h>
 
 #include "config.h"
+#include "quartz.h"
 #include <ggi/internal/ggi_debug.h>
-#include <ggi/display/quartz.h>
 #include <ggi/input/quartz.h>
 
 static const gg_option optlist[] =

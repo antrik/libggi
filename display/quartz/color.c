@@ -1,9 +1,9 @@
-/* $Id: color.c,v 1.1 2004/12/27 20:50:33 cegger Exp $
+/* $Id: color.c,v 1.2 2005/01/18 19:40:34 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
 
-   Copyright (C) 2002 Christoph Egger
+   Copyright (C) 2004-2005 Christoph Egger
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -31,7 +31,7 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/display/quartz.h>
+#include "quartz.h"
 #include <ggi/internal/ggi_debug.h>
 
 

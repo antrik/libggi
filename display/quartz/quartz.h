@@ -1,9 +1,9 @@
-/* $Id: gc.c,v 1.2 2005/01/18 19:40:34 cegger Exp $
+/* $Id: quartz.h,v 1.1 2005/01/18 19:40:34 cegger Exp $
 ******************************************************************************
 
-   Display quartz : color management
+   Display-quartz: internal headers
 
-   Copyright (C) 2002 Christoph Egger
+   Copyright (C) 2004-2005 Christoph Egger
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,36 +25,27 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef _GGI_QUARTZ_H
+#define _GGI_QUARTZ_H
 
-#include "config.h"
-#include "quartz.h"
-#include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/ggi-dl.h>
+#include <ggi/display/quartz.h>
 
 
-void GGI_quartz_gcchanged(ggi_visual *vis, int mask)
-{
-	ggi_quartz_priv *priv;
+ggifunc_checkmode	GGI_quartz_checkmode;
+ggifunc_getmode		GGI_quartz_getmode;
+ggifunc_setmode		GGI_quartz_setmode;
 
-	priv = QUARTZ_PRIV(vis);
+ggifunc_getapi		GGI_quartz_getapi;
+ggifunc_setflags	GGI_quartz_setflags;
+ggifunc_setpalvec	GGI_quartz_setpalvec;
+ggifunc_flush		GGI_quartz_flush;
+ggifunc_gcchanged	GGI_quartz_gcchanged;
 
-#if 0
-	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggiSetGCClipping(vis,
-				LIBGGI_GC(vis)->cliptl.x,
-				LIBGGI_GC(vis)->cliptl.y,
-				LIBGGI_GC(vis)->clipbr.x,
-				LIBGGI_GC(vis)->clipbr.y);
-	}	/* if */
+ggifunc_setgamma	GGI_quartz_setgamma;
+ggifunc_getgamma	GGI_quartz_getgamma;
+ggifunc_setgammamap	GGI_quartz_setgammamap;
+ggifunc_getgammamap	GGI_quartz_getgammamap;
 
-	if ((mask & GGI_GCCHANGED_FG)) {
-		ggiSetGCForeground(vis, LIBGGI_GC_FGCOLOR(vis));
-	}	/* if */
-	if ((mask & GGI_GCCHANGED_BG)) {
-		ggiSetGCBackground(vis, LIBGGI_GC_BGCOLOR(vis));
-	}	/* if */
-#endif
 
-}	/* GGI_quartz_gcchanged */
+#endif /* _GGI_QUARTZ_H */

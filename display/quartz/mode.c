@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/12/30 22:20:47 cegger Exp $
+/* $Id: mode.c,v 1.6 2005/01/18 19:40:34 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/display/quartz.h>
+#include "quartz.h"
 #include <ggi/internal/ggi_debug.h>
 
 #include "../common/pixfmt-setup.inc"
@@ -38,6 +38,7 @@
 #include "../common/gt-auto.inc"
 
 #include <ggi/input/quartz.h>
+
 
 
 int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
