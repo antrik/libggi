@@ -33,6 +33,9 @@ In this section, targets are named using their canonical suggest strings
 <group>
  <arg><option/-inroot/</arg>
  <arg><option>-inwin=<replaceable/winid/</option></arg>
+ <arg><option/-noinput/</arg>
+ <arg><option/-nocursor/</arg>
+ <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -42,7 +45,10 @@ In this section, targets are named using their canonical suggest strings
 <arg choice=plain/:/
 <group>
  <arg><option/-inroot/</arg>
+ <arg><option/-noinput/</arg>
+ <arg><option/-nocursor/</arg>
  <arg><option>-inwin=<replaceable/winid/</option></arg>
+ <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -86,23 +92,59 @@ be turned off in order to leave the window.
 
 <variableList>
  <varlistentry>
- <term><replaceable/display/</term>
- <listitem><para>
- The X display to connect to, otherwise defaults to the display
- specified in <envar/DISPLAY/
- </para></listitem>
- </varlistentry>
- 
- <varlistentry>
  <term><option/-inroot/</term>
  <listitem><para>
  Run in root window
  </para></listitem>
  </varlistentry>
+
  <varlistentry>
  <term><option>-inwin=<replaceable/winid/</option></term>
  <listitem><para>
- Run in already-existing window with id <replaceable/winid/
+ Run in already-existing window with id <replaceable/winid/.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option/-noinput/</term>
+ <listitem><para>
+ X events sent to the window are not captured and merged with any other
+ LibGII input sources.  This allows one to take input from raw devices without 
+ receiving duplicate events should X also be configured to use the device.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option/-nocursor/</term>
+ <listitem><para>
+ Normal behavior of display-x and display-xlib is to create a small dot
+ mouse cursor pixmap which is visible when the mouse is positioned over the
+ window containing the visual.  This goes away when using mouse grabbing 
+ as described above, but otherwise can get in the way of mouse cursors 
+ implemented by the application.  With this option, the X 
+ mouse cursor will be invisible when it is over the visual.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will override the physical screen size reported by the
+ X server, which affects applications which wish to remain resolution
+ independent.  <replaceable/sizex/,<replaceable/sizey/ are the x,y 
+ size of the entire screen (not just the X window containing the visual) 
+ in millimeters, unless the optional <replacable/dpi/ 
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ Yes, there are two equals signs there, for reasons of compatibility with
+ other targets.
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><replaceable/display/</term>
+ <listitem><para>
+ The X display to connect to, otherwise defaults to the display
+ specified in <envar/DISPLAY/
  </para></listitem>
  </varlistentry>
 </variableList>
@@ -146,6 +188,11 @@ be turned off in order to leave the window.
 <cmdsynopsis>
 <command/display-dga/
 <arg choice=plain/:/
+<group>
+ <arg><option/-noinput/</arg>
+ <arg><option/-nocursor/</arg>
+ <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+</group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -165,9 +212,51 @@ to be able to mmap <filename>/dev/mem</filename>.
 
 <refsect1>
 <title/Options/
-<para>
-The X display to connect to can be optionally specified.
-Otherwise the display in <envar/DISPLAY/ is used.
+<variableList>
+ <varlistentry>
+ <term><option/-noinput/</term>
+ <listitem><para>
+ XF86DGA events sent to the window are not captured and merged with any other
+ LibGII input sources.  This allows one to take input from raw devices without 
+ receiving duplicate events should X also be configured to use the device.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option/-nocursor/</term>
+ <listitem><para>
+ Normal behavior of display-x and display-xlib is to create a small dot
+ mouse cursor pixmap which is visible when the mouse is positioned over the
+ window containing the visual.  This can get in the way of mouse cursors 
+ implemented by the application.  With this option, you will not see an X 
+ mouse cursor when it is over the visual.
+ </para></listitem>
+ </varlistentry>
+</variableList>
+
+ <varlistentry>
+ <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will override the physical screen size reported by the
+ X server, which affects applications which wish to remain resolution
+ independent.  <replaceable/sizex/,<replaceable/sizey/ are the x,y 
+ size of the screen in millimeters, unless the optional <replacable/dpi/ 
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ Yes, there are two equals signs there, for reasons of compatibility with
+ other targets.
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><replaceable/display/</term>
+ <listitem><para>
+ The X display to connect to, otherwise defaults to the display
+ specified in <envar/DISPLAY/
+ </para></listitem>
+ </varlistentry>
+
+</variableList>
+
 </para>
 
 <para>
@@ -259,6 +348,7 @@ AA-lib options may be specified using the the <envar/AA_OPTS/ variable.
  </group>
 </group>
 <arg><option>-novt</option></arg>
+<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 <arg><replaceable/framebuffer/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -321,6 +411,17 @@ Same as both <option/-nokbd/ and <option/-nomouse/.
 Disable virtual console support.
 </para></listitem>
 </varlistentry>
+
+ <varlistentry>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will provide a physical screen size for applications which 
+ wish to remain resolution independent.  
+ <replaceable/sizex/,<replaceable/sizey/ are the x,y 
+ size of the screen in millimeters, unless the optional <replacable/dpi/ 
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ </para></listitem> 
+ </varlistentry>
 
 </variablelist>
 
@@ -535,6 +636,7 @@ drawing-primitives.</member>
 <command/display-memory/
 <arg choice=plain/:/
 <arg><option>-input</option></arg>
+<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 <group>
  <arg>shmid:<replaceable/sid/</arg>
  <arg>keyfile:<replaceable/size/:<replaceable/id/:<replaceable/fname/</arg>
@@ -578,6 +680,18 @@ things like GGI multiplexers.
 </para>
 </listitem>
 </varlistentry>
+
+ <varlistentry>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will provide a physical screen size for applications which
+ wish to remain resolution independent.  
+ <replaceable/sizex/,<replaceable/sizey/ are the x,y
+ size of the screen in millimeters, unless the optional <replacable/dpi/
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ </para></listitem>
+</varlistentry>
+
 
 <varlistentry>
 <term>shmid:<replaceable/sid/</term>
@@ -635,7 +749,9 @@ checks can or will be made that a certain mode fits into it.
 <refsynopsisdiv>
 <cmdsynopsis>
 <command/display-svgalib/
+<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 </cmdsynopsis>
+
 </refsynopsisdiv>
 
 
@@ -648,6 +764,25 @@ VGA-compatible graphics card.</para>
 <para>You may need to be root in order to have IO permissions to drive
 the VGA device.</para>
 
+</refsect1>
+
+<refsect1>
+<title/Options/
+
+<variablelist>
+
+<varlistentry>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will provide a physical screen size for applications which
+ wish to remain resolution independent.  
+ <replaceable/sizex/,<replaceable/sizey/ are the x,y
+ size of the screen in millimeters, unless the optional <replacable/dpi/
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ </para></listitem>
+ </varlistentry>
+
+</variablelist>
 </refsect1>
 
 <refsect1>
@@ -677,8 +812,14 @@ addressing.</member>
 <cmdsynopsis>
 <command/display-vcsa/
 <arg choice=plain/:/
+<arg><option>-noinput</option></arg>
+<group choice=optmult>
+  <arg><option>-nokbd</option></arg>
+  <arg><option>-nomouse</option></arg>
+</group>
 <arg><option>-shade</option></arg>
 <arg><option>-ascii</option></arg>
+<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
 <arg><replaceable/vcsa device/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -700,11 +841,23 @@ to render text modes onto the console.
 <variableList>
 
 <varlistentry>
-<term><replaceable/vcsa device/</term>
+<term><option/-nokbd/</term>
 <listitem><para>
-The filename of the device file, defaulting to
-<filename>/dev/vcsa</filename> which draws on the current virtual
-console.
+Do not open any libraries for keyboard input.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option/-nomouse/</term>
+<listitem><para>
+Do not open any libraries for mouse input.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option/-noinput/</term>
+<listitem><para>
+Same as both <option/-nokbd/ and <option/-nomouse/.
 </para></listitem>
 </varlistentry>
 
@@ -725,6 +878,26 @@ effect.  This makes a big improvement if using (some might say abusing
 The <option/-ascii/ option limits the color mapping to only using ASCII
 characters.  The default mode uses IBM special characters (the solid
 block mainly, and others when using <option/-shade/).
+</para></listitem>
+</varlistentry>
+
+ <varlistentry>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <listitem><para>
+ This option will provide a physical screen size for applications which
+ wish to remain resolution independent.  
+ <replaceable/sizex/,<replaceable/sizey/ are the x,y
+ size of the screen in millimeters, unless the optional <replacable/dpi/
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ </para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><replaceable/vcsa device/</term>
+<listitem><para>
+The filename of the device file, defaulting to
+<filename>/dev/vcsa</filename> which draws on the current virtual
+console.
 </para></listitem>
 </varlistentry>
 
