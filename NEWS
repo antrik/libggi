@@ -1,6 +1,28 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
-New in 2:2:0 (2.0.2): 2002-12-??
+New in 2:3:0 (2.0.3): 2003-03-19
+* X-target:
+  - Fixed a bug, where a ggiFlush() call was missed, which makes
+    directbuffer content visible when releasing it.
+  - Fixed a clipping bug, causing to let disappear characters or
+    whole strings.
+  - Fixed clipping on multiple frames.
+  - Add -keepcursor option, which keeps the default cursor.
+  - Fixed crash when used 8bit characters
+  - Fixed endless loop when X11 server provides only and only
+    the same sort of X visuals
+* Demo: Improved pageflip demo to test all primitives in a
+  multi-frame environment
+* merged some compiler fixes from the OpenBSD ports tree
+* fixed a crash, when a drawing primitive (i.e. a line) crossed
+  _two_ borders of the clipping rectangle
+* added 64bit fixes to wrap and cube3d demos
+* minor improvements to checkmode and struct check tool
+  (important for target developers though)
+* manpage fixes
+^L
+
+New in 2:2:0 (2.0.2): 2002-12-26
 * Misc bugfixes (see ChangeLog)
 * Huge documentation updates
 * Major build system update
