@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.146 2004/10/28 07:14:07 pekberg Exp $
+dnl $Id: configure.in,v 1.147 2004/11/03 21:53:10 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1328,6 +1328,8 @@ if test "x$use_debug" = "xyes"; then
   fi
 fi
 
+dnl the gcc-builtin __PRETTY_FUNCTION__ is a non portable GNU extension
+dnl but is used throughout the regression tests.
 dnl only a few gcc-compatible compilers support __PRETTY_FUNCTION__
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
