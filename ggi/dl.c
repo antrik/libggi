@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.7 2004/01/29 17:37:50 cegger Exp $
+/* $Id: dl.c,v 1.8 2004/09/08 18:54:11 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -80,7 +80,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 		*nameptr = '\0';
 	}
 
-	hand.entry = ggGetSymbolAddress(hand.handle, symname);
+	hand.entry = (ggifunc_dlentry*)ggGetSymbolAddress(hand.handle, symname);
 	GGIDPRINT_LIBS("&(%s) = %p\n", symname, hand.entry);
 	if (hand.entry == NULL) {
 		ggFreeModule(hand.handle);
