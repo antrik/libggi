@@ -1,4 +1,4 @@
-/* $Id: xf86dga.h,v 1.3 2003/12/13 23:51:52 cegger Exp $
+/* $Id: xf86dga.h,v 1.4 2005/01/31 18:34:42 cegger Exp $
 ******************************************************************************
 
    XFree86 Direct Graphics Access target for LibGGI
@@ -59,51 +59,52 @@ typedef struct {
 	unsigned depth;
 	unsigned size;
 
-	Colormap cmap2; /* We need two colormaps to work around a bug
-			   in XFree86 DGA... */
-	int     activecmap;
-	int     pixperframe;
-	void   *fb;
-	int     stride;
-	int     bank_size;
-	int     mem_size;
-	int	deinited;
+	Colormap cmap2;		/* We need two colormaps to work around a bug
+				   in XFree86 DGA... */
+	int activecmap;
+	int pixperframe;
+	void *fb;
+	int stride;
+	int bank_size;
+	int mem_size;
+	int deinited;
 
 	/* Non accelerated functions */
-	ggifunc_drawbox	*drawbox;
-	ggifunc_copybox	*copybox;
+	ggifunc_drawbox *drawbox;
+	ggifunc_copybox *copybox;
 } ggidga_priv;
 
 /* The XF86DGA functions */
 #ifdef GGI_INTERNAL_XF86DGA
-Bool _ggi_XF86DGAQueryExtension(Display *dpy, int *event_basep,
+Bool _ggi_XF86DGAQueryExtension(Display * dpy, int *event_basep,
 				int *error_basep);
-Bool _ggi_XF86DGAQueryVersion(Display* dpy, int* majorVersion,
-			      int* minorVersion);
-Bool _ggi_XF86VidModeSetClientVersion(Display *dpy);
-Bool _ggi_XF86DGASetViewPort(Display* dpy, int screen, int x, int y);
-Bool _ggi_XF86DGAInstallColormap(Display* dpy, int screen, Colormap cmap);
-Bool _ggi_XF86DGAQueryDirectVideo(Display *dpy, int screen, int *flags);
-int  _ggi_XF86DGADirectVideo(Display *dis, int screen, int enable);
-int  _ggi_XF86DGAGetVideo(Display *dis, int screen, char **addr,
-			  int *width, int *bank, int *ram);
+Bool _ggi_XF86DGAQueryVersion(Display * dpy, int *majorVersion,
+			      int *minorVersion);
+Bool _ggi_XF86VidModeSetClientVersion(Display * dpy);
+Bool _ggi_XF86DGASetViewPort(Display * dpy, int screen, int x, int y);
+Bool _ggi_XF86DGAInstallColormap(Display * dpy, int screen, Colormap cmap);
+Bool _ggi_XF86DGAQueryDirectVideo(Display * dpy, int screen, int *flags);
+int _ggi_XF86DGADirectVideo(Display * dis, int screen, int enable);
+int _ggi_XF86DGAGetVideo(Display * dis, int screen, char **addr,
+			 int *width, int *bank, int *ram);
 void _ggi_XF86DGAUnmap(void);
-Bool _ggi_XF86DGACopyArea(Display* dpy, int screen, Drawable d, GC gc,
+Bool _ggi_XF86DGACopyArea(Display * dpy, int screen, Drawable d, GC gc,
 			  int src_x, int src_y,
 			  unsigned int width, unsigned int height,
 			  int dst_x, int dst_y);
-Bool _ggi_XF86DGAFillRectangle(Display* dpy, int screen, Drawable d, GC gc,
-			       int x, int y,
-			       unsigned int width, unsigned int height);
+Bool _ggi_XF86DGAFillRectangle(Display * dpy, int screen, Drawable d,
+			       GC gc, int x, int y, unsigned int width,
+			       unsigned int height);
 
-Bool _ggi_XF86VidModeQueryExtension(Display *dpy, int *event_basep,
+Bool _ggi_XF86VidModeQueryExtension(Display * dpy, int *event_basep,
 				    int *error_basep);
-Bool _ggi_XF86VidModeQueryVersion(Display* dpy, int* majorVersion,
-				  int* minorVersion);
-Bool _ggi_XF86VidModeGetAllModeLines(Display* dpy, int screen, int* modecount,
-				     XF86VidModeModeInfo ***modelinesPtr);
-Bool _ggi_XF86VidModeSwitchToMode(Display* dpy, int screen,
-				  XF86VidModeModeInfo* modeline);
+Bool _ggi_XF86VidModeQueryVersion(Display * dpy, int *majorVersion,
+				  int *minorVersion);
+Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
+				     int *modecount,
+				     XF86VidModeModeInfo *** modelinesPtr);
+Bool _ggi_XF86VidModeSwitchToMode(Display * dpy, int screen,
+				  XF86VidModeModeInfo * modeline);
 #else
 #define _ggi_XF86DGAQueryExtension	XF86DGAQueryExtension
 #define _ggi_XF86DGAQueryVersion	XF86DGAQueryVersion
@@ -125,16 +126,16 @@ Bool _ggi_XF86VidModeSwitchToMode(Display* dpy, int screen,
 
 /* prototypes
  */
-ggifunc_getmode		GGI_xf86dga_getmode;
-ggifunc_setmode		GGI_xf86dga_setmode;
-ggifunc_checkmode	GGI_xf86dga_checkmode;
-ggifunc_getapi		GGI_xf86dga_getapi;
-ggifunc_setflags	GGI_xf86dga_setflags;
+ggifunc_getmode GGI_xf86dga_getmode;
+ggifunc_setmode GGI_xf86dga_setmode;
+ggifunc_checkmode GGI_xf86dga_checkmode;
+ggifunc_getapi GGI_xf86dga_getapi;
+ggifunc_setflags GGI_xf86dga_setflags;
 
-ggifunc_setPalette	GGI_xf86dga_setPalette;
+ggifunc_setPalette GGI_xf86dga_setPalette;
 
-ggifunc_drawbox		GGI_xf86dga_drawbox;
-ggifunc_copybox		GGI_xf86dga_copybox;
+ggifunc_drawbox GGI_xf86dga_drawbox;
+ggifunc_copybox GGI_xf86dga_copybox;
 
 void _GGI_xf86dga_freedbs(ggi_visual *);
 
@@ -144,4 +145,4 @@ void _GGI_xf86dga_freedbs(ggi_visual *);
 { if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) { \
 	XFlush(priv->x.display); } }
 
-#endif /* _GGI_DISPLAY_XF86DGA_H */
+#endif				/* _GGI_DISPLAY_XF86DGA_H */

@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.4 2004/11/27 16:42:18 soyt Exp $
+/* $Id: modelist.inc,v 1.5 2005/01/31 18:34:42 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -32,59 +32,61 @@
 #endif
 
 #ifdef WANT_CHECKONEBPP
-static int _GGIcheckonebpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
+static int _GGIcheckonebpp(ggi_visual * vis, ggi_mode * tm,
+			   ggi_modelistmode * gm)
 {
-	int i=0, bestw=0, besth=0;
-	int wantw=tm->visible.x, wanth=tm->visible.y;
-	for (i=0; gm[i].bpp != 0; i++) {
-		DPRINT_MODE("_GGIcheckonebpp, checking: %dx%d, wanting: %dx%d, gm[i].gt=%d, tm->graphtype=%d, bestw=%d, besth=%d\n",
-				       gm[i].x, gm[i].y, wantw, wanth,
-                                       gm[i].gt, tm->graphtype, bestw, besth);
+	int i = 0, bestw = 0, besth = 0;
+	int wantw = tm->visible.x, wanth = tm->visible.y;
+	for (i = 0; gm[i].bpp != 0; i++) {
+		DPRINT_MODE
+		    ("_GGIcheckonebpp, checking: %dx%d, wanting: %dx%d, gm[i].gt=%d, tm->graphtype=%d, bestw=%d, besth=%d\n",
+		     gm[i].x, gm[i].y, wantw, wanth, gm[i].gt,
+		     tm->graphtype, bestw, besth);
 		if (gm[i].gt != tm->graphtype) {
-			DPRINT_MODE("_GGIcheckonebpp, wanted: 0x%x, skipping 0x%x\n",
-				       tm->graphtype,  gm[i].gt);
+			DPRINT_MODE
+			    ("_GGIcheckonebpp, wanted: 0x%x, skipping 0x%x\n",
+			     tm->graphtype, gm[i].gt);
 			continue;
 		}
 		if ((gm[i].x == wantw || wantw == GGI_AUTO) &&
 		    (gm[i].y == wanth || wanth == GGI_AUTO)) {
-			tm->visible.x=gm[i].x;
-			tm->visible.y=gm[i].y;
+			tm->visible.x = gm[i].x;
+			tm->visible.y = gm[i].y;
 			return 0;
 		}
-		if (((gm[i].x >= bestw &&
-		      bestw <= wantw)
+		if (((gm[i].x >= bestw && bestw <= wantw)
 		     || wantw == GGI_AUTO
 		     || (bestw >= wantw && gm[i].x >= wantw)) &&
-		    ((gm[i].y >= besth &&
-		      besth <= wanth)
+		    ((gm[i].y >= besth && besth <= wanth)
 		     || wanth == GGI_AUTO
 		     || (besth >= wanth && gm[i].y >= wanth))) {
 			DPRINT_MODE("_GGIcheckonebpp, best: %dx%d\n",
-				       gm[i].x, gm[i].y);
+				    gm[i].x, gm[i].y);
 			bestw = gm[i].x;
 			besth = gm[i].y;
 		}
 	}
 	if (bestw == 0)
 		return 1;
-	tm->visible.x=bestw;
-	tm->visible.y=besth;
+	tm->visible.x = bestw;
+	tm->visible.y = besth;
 	return GGI_ENOMATCH;
 }
 #endif
 
 #ifdef WANT_GETHIGHBPP
-static int _GGIgethighbpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
+static int _GGIgethighbpp(ggi_visual * vis, ggi_mode * tm,
+			  ggi_modelistmode * gm)
 {
-	int i=0, bestw=0, besth=0, bestbpp=0, bestgt=GT_AUTO;
-	int wantw=tm->visible.x, wanth=tm->visible.y,
-		wantbpp=GT_DEPTH(tm->graphtype);
-	for (i=0; gm[i].bpp != 0; i++) {
+	int i = 0, bestw = 0, besth = 0, bestbpp = 0, bestgt = GT_AUTO;
+	int wantw = tm->visible.x, wanth = tm->visible.y,
+	    wantbpp = GT_DEPTH(tm->graphtype);
+	for (i = 0; gm[i].bpp != 0; i++) {
 		if (((gm[i].x >= bestw &&
 		      bestw <= wantw) || wantw == GGI_AUTO) &&
 		    ((gm[i].y >= besth &&
 		      besth <= wanth) || wanth == GGI_AUTO) &&
-		     (gm[i].bpp >= bestbpp && bestbpp <= wantbpp)) {
+		    (gm[i].bpp >= bestbpp && bestbpp <= wantbpp)) {
 			bestw = gm[i].x;
 			besth = gm[i].y;
 			bestbpp = gm[i].bpp;
@@ -92,21 +94,23 @@ static int _GGIgethighbpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
 			continue;
 		}
 	}
-	tm->visible.x=bestw;
-	tm->visible.y=besth;
-	tm->graphtype=bestgt;
-	
+	tm->visible.x = bestw;
+	tm->visible.y = besth;
+	tm->graphtype = bestgt;
+
 	return 0;
 
 }
 #endif
 
 #ifdef WANT_CHECKAUTOBPP
-static int _GGIcheckautobpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
+static int _GGIcheckautobpp(ggi_visual * vis, ggi_mode * tm,
+			    ggi_modelistmode * gm)
 {
-	int i=0, ret=0, bestw=0, besth=0, bestbpp=0, bestgt=GT_AUTO, gotmode=0;
-	int wantw=tm->visible.x, wanth=tm->visible.y;
-	for (i=0; gm[i].bpp != 0; i++) {
+	int i = 0, ret = 0, bestw = 0, besth = 0, bestbpp = 0, bestgt =
+	    GT_AUTO, gotmode = 0;
+	int wantw = tm->visible.x, wanth = tm->visible.y;
+	for (i = 0; gm[i].bpp != 0; i++) {
 		if ((gm[i].x == wantw || wantw == GGI_AUTO) &&
 		    (gm[i].y == wanth || wanth == GGI_AUTO)) {
 			if (gm[i].bpp >= bestbpp) {
@@ -114,13 +118,13 @@ static int _GGIcheckautobpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
 				besth = gm[i].y;
 				bestbpp = gm[i].bpp;
 				bestgt = gm[i].gt;
-				gotmode=1;
+				gotmode = 1;
 			}
 		}
 		if (gotmode)
 			continue;
 		if (((gm[i].x >= bestw &&
-		     bestw <= wantw) || wantw == GGI_AUTO) &&
+		      bestw <= wantw) || wantw == GGI_AUTO) &&
 		    ((gm[i].y >= besth &&
 		      besth <= wanth) || wanth == GGI_AUTO) &&
 		    gm[i].bpp >= bestbpp) {
@@ -135,10 +139,10 @@ static int _GGIcheckautobpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
 	} else {
 		ret = -1;
 	}
-	tm->visible.x=bestw;
-	tm->visible.y=besth;
-	tm->graphtype=bestgt;
-	
+	tm->visible.x = bestw;
+	tm->visible.y = besth;
+	tm->graphtype = bestgt;
+
 	return ret;
 }
 #endif

@@ -1,4 +1,4 @@
-/* $Id: modelist.h,v 1.1 2001/05/12 23:03:19 cegger Exp $
+/* $Id: modelist.h,v 1.2 2005/01/31 18:34:42 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -31,10 +31,10 @@
 #include <ggi/internal/ggi-dl.h>
 
 typedef struct {
-	short          x, y;
-	ggi_graphtype  gt;
-	short          bpp;
-	char           ismodex;
+	short x, y;
+	ggi_graphtype gt;
+	short bpp;
+	char ismodex;
 } ggi_modelistmode;
 
-#endif /* _GGI_DISPLAY_MODELIST_H */
+#endif				/* _GGI_DISPLAY_MODELIST_H */

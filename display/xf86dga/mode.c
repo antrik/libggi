@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2004/11/27 16:42:30 soyt Exp $
+/* $Id: mode.c,v 1.23 2005/01/31 18:34:42 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -206,7 +206,8 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	/* First, check if the mode can be set */
 	err = GGI_xf86dga_checkmode(vis, tm);
-	if (err != 0) return err;
+	if (err != 0)
+		return err;
 
 	priv = DGA_PRIV(vis);
 
@@ -245,7 +246,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 				    vinfo.visual, AllocAll);
 
 		DPRINT("%d-bit visual: X-lib colormap allocated %x.\n",
-			  GT_DEPTH(tm->graphtype), priv->x.cmap);
+		       GT_DEPTH(tm->graphtype), priv->x.cmap);
 	} else {
 		priv->x.cmap = 0;
 		priv->cmap2 = 0;
@@ -270,14 +271,16 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		    1 << GT_DEPTH(tm->graphtype);
 		priv->activecmap = 0;
 
-		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(sizeof(ggi_color) *
-						    LIBGGI_PAL(vis)->clut.size);
+		LIBGGI_PAL(vis)->clut.data =
+		    _ggi_malloc(sizeof(ggi_color) *
+				LIBGGI_PAL(vis)->clut.size);
 
 		/* Set an initial palette. */
 		ggiSetColorfulPalette(vis);
 	}
 
-	priv->pixperframe = GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
+	priv->pixperframe =
+	    GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
 	vis->d_frame_num = 0;
 
 	_GGI_xf86dga_freedbs(vis);
@@ -317,8 +320,8 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
 		    = LIBGGI_PIXFMT(vis);
 		DPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
-			       LIBGGI_APPBUFS(vis)[i]->read,
-			       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
+			    LIBGGI_APPBUFS(vis)[i]->read,
+			    LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
 	}
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (tm->frames - 1);
@@ -359,7 +362,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 			return GGI_EFATAL;
 		} else {
 			DPRINT_MODE("Success in loading %s (%s)\n",
-				       sugname, args);
+				    sugname, args);
 		}
 	}
 
@@ -490,8 +493,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 
 	if ((signed)
 	    (GT_ByPPP(priv->stride * tm->virt.y * tm->frames,
-	    tm->graphtype)) > priv->mem_size * 1024)
-	{
+		      tm->graphtype)) > priv->mem_size * 1024) {
 		tm->frames = priv->mem_size * 1024 /
 		    GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
 		err = -1;
@@ -513,9 +515,9 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 
 	if (!err) {
 		err = _ggi_physz_figure_size(tm,
-					priv->x.physzflags,
-					&(priv->x.physz), SCREENDPIX,
-					SCREENDPIY, SCREENW, SCREENH);
+					     priv->x.physzflags,
+					     &(priv->x.physz), SCREENDPIX,
+					     SCREENDPIY, SCREENW, SCREENH);
 	}
 #undef SCREENWMM
 #undef SCREENW
