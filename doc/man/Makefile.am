@@ -111,6 +111,8 @@ man_MANS = \
  ggiUnmapPixel.3	\
  ggiUnpackPixels.3	\
  ggi_color.3	\
+ ggi_colormap.3	\
+ ggi_colormap_region.3	\
  ggi_coord.3	\
  ggi_directbuffer.3	\
  ggi_graphtype.3	\
