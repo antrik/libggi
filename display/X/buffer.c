@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.17 2004/09/13 10:40:26 cegger Exp $
+/* $Id: buffer.c,v 1.18 2004/09/13 10:42:49 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -222,8 +222,8 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 				ZPixmap,	/* format */
 				0,		/* offset */
 				priv->fb,	/* data */
-				(unsigned)vis->mode->virt.x, 
-				(unsigned)vis->mode->virt.y * LIBGGI_MODE(vis)->frames,
+				(unsigned)LIBGGI_VIRTX(vis), 
+				(unsigned)LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames,
 				8,		/* bitmap_pad*/
 				0);
 	if (priv->ximage == NULL) {
@@ -257,7 +257,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 		LIBGGI_APPBUFS(vis)[i]->type
 		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
 		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write
-		  = priv->fb + i * vis->mode->virt.y * 
+		  = priv->fb + i * LIBGGI_VIRTY(vis) * 
 		  priv->ximage->bytes_per_line;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
