@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.8 2004/02/14 22:30:47 cegger Exp $
+/* $Id: x.h,v 1.9 2004/09/09 12:41:44 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -111,7 +111,7 @@ typedef struct {
 
 	GC           gc, tempgc;
 
-	Cursor      cursor;
+	Cursor      oldcursor, cursor;
 	ggi_x_createcursor	createcursor;	/* overload init .drawable */
 	XFontStruct *textfont;
 	XImage	    *fontimg;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2004/09/09 12:17:56 cegger Exp $
+/* $Id: visual.c,v 1.30 2004/09/09 12:41:44 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -196,9 +196,11 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		if (priv->parentwin == root) 
 			XSetWindowColormap(priv->disp, priv->parentwin,
 					   DefaultColormap(priv->disp,screen));
-		wa.cursor = None;
+		wa.cursor = priv->oldcursor;
 		XChangeWindowAttributes(priv->disp, priv->parentwin, 
 					CWCursor, &wa);
+		if (priv->oldcursor != None)
+			XFreeCursor(priv->disp, priv->oldcursor);
 	} else {
 		/* Don't destroy window, when not created */
 		if (priv->parentwin != 0) XDestroyWindow(priv->disp, priv->parentwin);

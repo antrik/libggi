@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.18 2004/02/14 13:45:37 cegger Exp $
+/* $Id: misc.c,v 1.19 2004/09/09 12:41:44 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -475,7 +475,12 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 
 	priv = GGIX_PRIV(vis);
 
-	if (priv->cursor) XFreeCursor(priv->disp, priv->cursor);
+	if (priv->cursor != None) {
+		if (priv->oldcursor != None) {
+			XFreeCursor(priv->disp, priv->cursor);
+		}
+		priv->oldcursor = priv->cursor;
+	}
 
 	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
 		     (int *)&dummy, (int *)&dummy, &dummy, &dummy);
@@ -486,8 +491,8 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 					   &black, &white, 1, 1);
 	wa.cursor = priv->cursor;
 	XChangeWindowAttributes(priv->disp, priv->parentwin, CWCursor, &wa); 
-        XFreePixmap(priv->disp, crsrpix);
-        XFreePixmap(priv->disp, crsrmask);
+	XFreePixmap(priv->disp, crsrpix);
+	XFreePixmap(priv->disp, crsrmask);
 }
 
 
@@ -515,7 +520,12 @@ void _ggi_x_create_invisible_cursor (ggi_visual *vis)
 
 	priv = GGIX_PRIV(vis);
 
-	if (priv->cursor) XFreeCursor(priv->disp, priv->cursor);
+	if (priv->cursor != None) {
+		if (priv->oldcursor != None) {
+			XFreeCursor(priv->disp, priv->cursor);
+		}
+		priv->oldcursor = priv->cursor;
+	}
 
 	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
                      (int *)&dummy, (int *)&dummy, &dummy, &dummy);
