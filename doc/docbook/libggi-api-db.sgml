@@ -151,6 +151,16 @@ for(i = 0; i < numbufs; i++)
 </example>
 
 </refsect1>
+
+<refsect1>
+<title/See Also/
+<simplelist TYPE=inline>
+<member><xref linkend="ref-struct-ggi-directbuffer"></member>
+<member><xref linkend="api-ggiresourceacquire"></member>
+
+</simplelist>
+</refsect1>
+
 </refentry>
 
 

@@ -1,844 +1,183 @@
-
-<sect1 id="visual">
-
-<title/Visuals/
-
-<para>
-A visual is simply a thing you can draw on. For example, a virtual console in
-fullscreen mode, an X window, an invisible memory area, or a printer. It is
-identified by its handle of type <type/ggi_visual_t/, which is given to all
-drawing functions to indicate which visual to operate on.
-</para>
-
-<para>
-Each visual is completely independent of other visuals. You can open different
-visuals to display on multiple monitors and/or in multiple windows or to
-work on "virtual" graphics devices like in-memory pixmaps or even PPM files
-on disk.
-</para>
-
-<para>
-A visual may also encompass any inputs that are associated with the
-underlying graphics device.  For example, an X window visual usually
-receives input from the X keyboard and pointer.
-</para>
-
-<para>
-Most LibGGI functions are passed a visual returned by
-<function/ggiOpen/ to know on which display they should
-operate on.
-</para>
-
-<para>
-<type/ggi_visual_t/ is opaque to the user. Do not try to access
-any part of the structure directly. It may change without notice.
-</para>
-
-</sect1>
-
-<sect1 id="libggi-mode">
-<title/Mode management/
-
-<para>
-A mode describes the graphical characteristics of a visual, such as its
-visible and virtual dimensions in pixels, and the number of colors.
-After opening the visual, you must set a mode before you can do anything
-useful with it, such as drawing.
-</para>
-
-<para>
-A mode in LibGGI is defined by the following in
-<filename>ggi/ggi.h</filename>:
-
-<programlisting format="linespecific">
-typedef struct { sint16   x, y; } ggi_coord;
-
-typedef struct          /* requested by user and changed by driver	*/
-{
-        uint32          frames;         /* frames needed                */
-        ggi_coord       visible;        /* vis. pixels, may change slightly */
-        ggi_coord       virt;           /* virtual pixels, may change   */
-        ggi_coord       size;           /* size of visible in mm        */
-        ggi_graphtype   graphtype;      /* which mode ?                 */
-        ggi_coord       dpp;            /* dots per pixel               */
-} ggi_mode;
-</programlisting>
-</para>
-
-<para>
-You usually don't need to manipulate this structure yourself, if you
-want to set a mode, but it is necessary if you want to find out the mode
-actually being set.
-</para>
-
-<variablelist>
-
-<varlistentry>
-<term><structname/ggi_coord/</term>
-<listitem><para>
-<structname/ggi_coord/ represents any 2D coordinate or dimension as
-<structfield/x/,<structfield/y/ pixels.
-</para></listitem>
-</varlistentry>
-
-<varlistentry id="ggi-mode-frames">
-<term><structfield/frames/</term>
-<listitem>
-<para>
-Multiple buffering is the allocation of multiple framebuffers and
-drawing on/reading/displaying them independently.  Applications use
-multiple buffering to prepare an image offscreen and switching display
-to it when it is done drawing.  Each buffer is called a frame in LibGGI.
-</para>
-<para>
-Use of <link linkend="frames">multiple buffering</link> is specified in
-the <structfield/frames/ member of the <structname/ggi_mode/ struct, as
-the number of screen buffers needed.
-</para>
-</listitem>
-</varlistentry>
-
-
-<varlistentry id="ggi-mode-visible">
-<term><structfield/visible/</term>
-<listitem>
-<para>
-The visible area is the subset of the virtual area that is visible to
-the user.  <structfield/visible/ specifies the size of this area or the
-screen resolution.  
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry id="ggi-mode-virtual">
-<term><structfield/virtual/</term>
-<listitem>
-<para>
-The virtual area is the available drawing area of a visual.
-<structfield/virtual/ specifies the size of this area for each frame.
-(If all of the drawing area is to be visible on the screen, then
-<structfield/visible/ is equal to <structfield/virtual/.)
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry id="ggi-mode-dpp">
-<term><structfield/dpp/</term>
-<listitem>
-<para>
-A pixel, or 'picture element' refers to a small rectangular part of an image. 
-It has some attributes associated, e.g. a certain color, texture etc, which
-are assumed to be constant over the whole area covered by it. All pixels
-are assumed to have the same shape and size. A pixel is the smallest
-element of a picture that can be controlled independently of the other
-pixels in its attributes.
-</para>
-
-<para>
-A 'dot' is the smallest unit that can be addressed for an image.  For uniform
-pixels this may be the pixel itself; for textured pixels, such as
-character glyphs, a dot is a pixel of the texture which
-is assumed to be uniform. We will use this to refer to sub-pixel
-coordinates, e.g. for a graphical pointer in text mode. As with pixels,
-dots are assumed to have the same shape, size, color and intensity over
-the whole area covered.  They have only a uniform texture.
-</para>
-
-<para>
-Most LibGGI functions and structures use <emphasis/pixels/ rather than
-dots.  This makes a difference for text modes, because a character is
-treated as one pixel, but consists of a <property/dpp.x/ *
-<property/dpp.y/ sized matrix of dots.
-</para>
-</listitem>
-</varlistentry>
-<para>
-<structfield/dpp/ specifies the number of dots per pixel.  For graphic
-modes, it is 1x1 by definition.  In text modes, it represents the font
-size.
-</para></listitem>
-</varlistentry>
-
-</variablelist>
-
-<para>
-The value of <symbol/GGI_AUTO/ may also be set to any of these fields, 
-except <structfield/graphtype/ which may be set to <symbol/GT_AUTO/,
-to indicate to the mode-setting and mode-checking functions to recommend
-a real value to the LibGGI application.
-</para>
-
-</sect1>
-
-<sect1 id="ggi-graphtype">
-<title><type/ggi_graphtype/</title>
-
-<para>
-<type/ggi_graphtype/ specifies the graphic type. 
-There are four sets of information, packed into <type/ggi_graphtype/
-using the indicated macros.
-</para>
-
-<variablelist>
-
-<varlistentry>
-<term><property/depth/</term>
-<listitem>
-<para>
-Number of significant bits (i.e. those that represent the actual color
-or some other property of the <link linkend="pixel"/pixel/)
-</para>
-
-<para>
-Macros: <literal/GT_DEPTH(gt)/, <literal/GT_SETDEPTH(gt,depth)/
-</para>
-
-</listitem>
-</varlistentry>
-
-
-
-<varlistentry>
-<term><property/size/</term>
-<listitem>
-
-<para>
-Number of physical bits per pixel, or its access size.  Bits that are
-not significant bits (whose number is specified by <property/depth/
-above) are padding.
-</para>
-
-<para>
-Macros: <literal/GT_SIZE(gt)/, <literal/GT_SETSIZE(gt,size)/
-</para>
-
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><property/scheme/</term>
-
-<listitem><para>
-One of:
-
-<variablelist>
-
-<varlistentry>
-<term><symbol/GT_TEXT/</term>
-<listitem><para/text modes/</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_TRUECOLOR/</term>
-<listitem><para/pixel is a direct RGB value/</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_GREYSCALE/</term>
-<listitem><para/no color (!!!)/</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_PALETTE/</term>
-<listitem><para/each pixel is an index to a colormap/</listitem>
-</varlistentry>
-
-</variablelist></para>
-
-<para>
-Macros: <literal/GT_SCHEME(gt)/, <literal/GT_SETSCHEME(gt,subscheme)/
-</para>
-
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><property/subscheme/</term>
-<listitem><para>
-Miscellaneous information about the pixel.  Any of 
-the following flags are bitwise-or'd together:
-
-<variablelist>
-
-<varlistentry>
-<term><symbol/GT_SUB_REVERSE_ENDIAN/</term>
-<listitem><para>
-This is only relevant for modes where a bitfield (such as the red,
-green or blue component of pixels) crosses a byte boundary. For
-example the green component in common 15- and 16-bit modes does
-this.  This flags means that after composing a pixel according to
-the masks/shifts in <structname/ggi_pixelformat/ the pixel should
-be byteswapped.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_SUB_HIGHBIT_RIGHT/</term>
-<listitem><para>
-This is only relevant for modes where more than one pixel is contained
-in each byte and means that the high bit/bits corresponds to the
-rightmost pixel.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_SUB_PACKED_GETPUT/</term>
-<listitem><para>
-Normally ggiGet/Put* buffers use <literal/((GT_SIZE(gt)+7)&amp;(~7))/ bits
-per pixel. This flag requests that they use exactly
-<literal/GT_SIZE(gt)/ bits per pixel instead. Thus it's only relevant
-for modes where the pixelsize is not a multiple of 8 bits.
-</para></listitem>
-</varlistentry>
-
-</variablelist></para>
-
-<para>
-Macros: <literal/GT_SUBSCHEME(gt)/, <literal/GT_SETSUBSCHEME(gt,subscheme)/
-</para>
-
-</listitem>
-</varlistentry>
-
-</variablelist>
-
-
-<para>
-Applications can set any of these fields to GT_AUTO when setting or
-checking a mode to get a recommended value.
-</para>
-
-<para>
-There are also macros which are aliases for some common <type/ggi_graphtype/s:
-
-<variablelist>
-
-<varlistentry>
-<term><symbol/GT_AUTO/</term>
-<listitem><para>
-Equivalent to <symbol/GGI_AUTO/ for graphic types.  It indicates that
-any value may be taken. 
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_TEXT16/</term>
-<term><symbol/GT_TEXT32/</term>
-<listitem>
-<para/Text modes with word- and longword-aligned characters and attributes/
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_1BIT/</term>
-<term><symbol/GT_4BIT/</term>
-<term><symbol/GT_8BIT/</term>
-<listitem><para/Palettized modes with respective number of bits per
-pixel/</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_15BIT/</term>
-<term><symbol/GT_16BIT/</term>
-<listitem><para>
-Truecolor modes with an access size of 16 bits.
-<symbol/GT_15BIT/ uses 5 bits for each color component,
-while <symbol/GT_16BIT/ uses an additional 1 bit for green.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><symbol/GT_24BIT/</term>
-<term><symbol/GT_32BIT/</term>
-<listitem><para>
-Truecolor modes with the a depth of 24 bits.  <symbol/GT_24BIT/ uses an
-access size of 24 bits while <symbol/GT_32BIT/ uses an access size of 32
-bits.
-</para></listitem>
-</varlistentry>
-
-</variablelist>
-</para>
-
-</sect1>
-
-<sect1 id="ggi-auto">
-<title/GGI_AUTO replacement recommendations/
-
-<para>
-When <symbol/GGI_AUTO/ is encountered in a parameter, it is replaced
-with corresponding values specified by <envar>GGI_DEFMODE</envar> variable.
-</para>
-
-<para>
-If the corresponding value is not found in <envar>GGI_DEFMODE</envar>
-or that value is also <symbol/GGI_AUTO/, then it is up to the driver to
-select a reasonable value <link linkend="mode-negotiation">
-satisfying as many of the given contraints</link> as 
-possible.  The following are some recommendations:
-
-<itemizedlist>
-
-<listitem><para>
-If a visible size is given but no virtual, the lowest reasonable (taking
-alignment and accelleration constraints into account) should be used.
-</para></listitem>
-
-<listitem><para>
-If either visible <replaceable/x/ or <replaceable/y/ is given, the other
-one should give a <replaceable/x//<replaceable/y/ ratio close to that of
-the screen size, normally about 4/3.
-</para></listitem>
-
-<listitem><para>
-If a virtual size is given but no visible size, the highest possible
-visible size is selected.
-</para></listitem>
-
-<listitem><para>
-If no size is given, the driver uses some builtin default.
-</para></listitem>
-
-<listitem><para>
-If the graphtype is unspecified, the highest possible graphtype that
-meets the geometry constraints is set or suggested.
-</para></listitem>
-
-<listitem><para>
-<structfield/dpp.x/ and <structfield/dpp.y/ will be 1 for graphics. For
-text modes the largest possible <structfield/dpp.x/ and
-<structfield/dpp.y/ (the most fine-grained font) should be used.
-</para></listitem>
-
-<listitem>
-<para><structfield/frames/ will be 1 if not specified. 
-</para></listitem>
-
-</itemizedlist>
-</para>
-
-<note><para>
-The rules above are only <emphasis/recommendations/ (which are hoped to
-best capture user expectations) to the driver implementer and in no way
-guaranteed. 
-</para></note>
-
-</sect1>
-
-<sect1 id="ggi-color">
-<title><type/ggi_color/</title>
-
-<para>
-The <structname/ggi_color/ struct specifies a RGB color.  It has 16 bit
-wide entries for red (<structfield/.r/), green (<structfield/.g/), and
-blue (<structfield/.b/) values. It also has an alpha value
-(<structfield/.a/) which is unused in LibGGI, but allow LibGGI
-extensions to store an alpha value there.
-</para>
-
-<para>
-Please scale your palette values as necessary.
-</para>
-
-</sect1>
-
-<sect1 id="ggi-pixel">
-<title><type/ggi_pixel/</title>
-
-<para>
-For drawing operations, LibGGI uses a pixelvalue, which is 
-the hardware-dependent representation of a <link linkend="pixel"/pixel/.
-The pixelvalue is represented by the type <type/ggi_pixel/.
-</para>
-
-<para>
-A pixelvalue is usually obtained from a <structname/ggi_color/ by 
-<link linkend="ggiMapColor"><function/ggiMapColor/</link> or read from
-the visual by <link linkend="ggiDrawPixel"><function/ggiGetPixel/</link>.
-</para>
-
-<para>
-The relationship between a <structname/ggi_color/ and its associated
-<type/ggi_pixel/ value does not change unless you change the visual or
-the mode or the <link linkend="palette"/palette/ for palettized modes.
-</para>
-
-<para>
-You can also do calculations with <type/ggi_pixel/ values.  Their format is
-defined in <xref linkend="ggi-pixelformat">.
-</para>
-
-</sect1>
-
-
-<sect1 id="ggi-pixelformat">
-<title><structname/ggi_pixelformat/</title>
-
-
-<para>
-The <structname/ggi_pixelformat/ structure describes the format of a
-<type/ggi_pixel/.  An application would use this if it wanted to
-directly output pixelvalues, rather than calling <link
-linkend="ggiMapColor"><function/ggiMapColor/</link> or 
-<function/ggiPackColors/ to convert a
-<structname/ggi_color/ to a <type/ggi_pixel/ value.  
-</para>
-
-<para>
-Other than the parameters of a <type/ggi_graphtype/ that you can
-specifically request at mode setting, there is no other way to change
-the parameters of <structname/ggi_pixelformat/.  An application must not
-assume the presence of any particular pixelformat.  If the application
-cannot handle a particular pixelformat, it should fall back on
-<function/ggiMapColor/, <function/ggiPackColors/ or 
-<link linkend="ggiCrossBlit"><function/ggiCrossBlit/</link>.
-</para>
+<refentry id="ref-struct-ggi-pixelformat">
+
+<refmeta>
+<refentrytitle><structname/ggi_pixelformat/</refentrytitle>
+<manvolnum/9ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggi_pixelformat/
+<refpurpose/LibGGI pixel format description/
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>#include &lt;ggi/ggi.h&gt;
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title/Description/
 
 <programlisting>
-/* Pixelformat for ggiGet/Put* buffers and pixellinearbuffers */
 typedef struct {
-        int             depth;          /* Number of significant bits */
-        int             size;           /* Physical size in bits */
+	int		depth;		/* Number of significant bits */
+	int		size;		/* Physical size in bits */
 
-        /*
-         * Simple and common things first :
-         *
-         * Usage of the mask/shift pairs:
-         * If new_value is the _sizeof(ggi_pixel)*8bit_ value of the thing
-         * you want to set, you do
-         *
-         * *pointer &= ~???_mask;               // Mask out old bits
-         * *pointer |= (new_value>>shift) & ???_mask;
-         *
-         * The reason to use 32 bit and "downshifting" is alignment
-         * and extensibility. You can easily adjust to other datasizes
-         * with a simple addition ...
-         */
+	/* 
+	 * Simple and common things first :
+	 * 
+	 * Usage of the mask/shift pairs:
+	 * If new_value is the _sizeof(ggi_pixel)*8bit_ value of the thing 
+	 * you want to set, you do
+	 *
+	 * *pointer &= ~???_mask; 		// Mask out old bits 
+	 * *pointer |= (new_value>>shift) & ???_mask;
+	 * 
+	 * The reason to use 32 bit and "downshifting" is alignment
+	 * and extensibility. You can easily adjust to other datasizes
+	 * with a simple addition ...
+	 */
+	
+	/* Simple colors:
+	 */
+	ggi_pixel	red_mask;	/* Bitmask of red bits */
+	int		red_shift;	/* Shift  for red bits */
 
-        /* Simple colors:
-         */
-        ggi_pixel       red_mask;       /* Bitmask of red bits */
-        int             red_shift;      /* Shift  for red bits */
+	ggi_pixel	green_mask;	/* Bitmask of green bits */
+	int		green_shift;	/* Shift  for green bits */
 
-        ggi_pixel       green_mask;     /* Bitmask of green bits */
-        int             green_shift;    /* Shift  for green bits */
+	ggi_pixel	blue_mask;	/* Bitmask of blue bits */
+	int		blue_shift;	/* Shift  for blue bits */
 
-        ggi_pixel       blue_mask;      /* Bitmask of blue bits */
-        int             blue_shift;     /* Shift  for blue bits */
+	/* A few common attributes :
+	 */
+	ggi_pixel	alpha_mask;	/* Bitmask of alphachannel bits */
+	int		alpha_shift;	/* Shift  for alpha bits */
 
-        /* A few common attributes :
-         */
-        ggi_pixel       alpha_mask;     /* Bitmask of alphachannel bits */
-        int             alpha_shift;    /* Shift  for alpha bits */
+	ggi_pixel	clut_mask;	/* Bitmask of bits for the clut */
+	int		clut_shift;	/* Shift  for bits for the clut*/
 
-        ggi_pixel       clut_mask;      /* Bitmask of bits for the clut */
-        int             clut_shift;     /* Shift  for bits for the clut*/
+	ggi_pixel	fg_mask;	/* Bitmask of foreground color */
+	int		fg_shift;	/* Shift  for foreground color */
 
-        ggi_pixel       fg_mask;        /* Bitmask of foreground color */
-        int             fg_shift;       /* Shift  for foreground color */
+	ggi_pixel	bg_mask;	/* Bitmask of background color */
+	int		bg_shift;	/* Shift  for background color */
 
-        ggi_pixel       bg_mask;        /* Bitmask of background color */
-        int             bg_shift;       /* Shift  for background color */
+	ggi_pixel	texture_mask;	/* Bitmask of the texture (for
+					   textmodes - the actual character) */
+	int		texture_shift;	/* Shift  for texture */
 
-        ggi_pixel       texture_mask;   /* Bitmask of the texture (for
-                                           textmodes - the actual character)
-*/
-        int             texture_shift;  /* Shift  for texture */
+	/*
+	 * Now if this doesn't suffice you might want to parse the following
+	 * to find out what each bit does:
+	 */
 
-</programlisting>
+	uint32		bitmeaning[sizeof(ggi_pixel)*8];
 
-<para> 
-The above is used to describe a pixel simply.  More detailed information, if
-required, can be obtained from the following fields.  See
-<filename>ggi/ggi.h</filename> for a listing of bitmeanings.
+	uint32		flags;		/* Pixelformat flags */
 
-<programlisting>
-        /*
-         * Now if this doesn't suffice you might want to parse the following
-         * to find out what each bit does:
-         */
-
-        uint32          bitmeaning[sizeof(ggi_pixel)*8];
-
-        /* Shall we keep those ?
-         */
-        uint32          flags;          /* Pixelformat flags */
-
-        uint32          stdformat;      /* Standard format identifier */
-        /* This one has only one use for the usermode application:
-         * To quickly check, if two buffers are identical. If both
-         * stdformats are the same and _NOT_ 0 (which means "WEIRD"),
-         * you may use things like memcpy between them which will have
-         * the desired effect ...
-         */
-
+	uint32		stdformat;	/* Standard format identifier */
+	/* This one has only one use for the usermode application:
+	 * To quickly check, if two buffers are identical. If both
+	 * stdformats are the same and _NOT_ 0 (which means "WEIRD"),
+	 * you may use things like memcpy between them which will have
+	 * the desired effect ...
+	 */
+	
 } ggi_pixelformat;
 
 /* Pixelformat flags */
-#define GGI_PF_REVERSE_ENDIAN   0x01
-#define GGI_PF_HIGHBIT_RIGHT    0x02
-#define GGI_PF_HAM              0x04
-#define GGI_PF_EXTENDED         0x08
+#define GGI_PF_REVERSE_ENDIAN	0x01
+#define GGI_PF_HIGHBIT_RIGHT	0x02
+#define GGI_PF_HAM		0x04
+#define GGI_PF_EXTENDED		0x08
 </programlisting>
+
+</refsect1>
+
+</refentry>
+
+<refentry id="ref-struct-ggi-directbuffer">
+
+<refmeta>
+<refentrytitle><structname/ggi_directbuffer/</refentrytitle>
+<manvolnum/9ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggi_directbuffer/
+<refname/ggi_pixellinearbuffer/
+<refname/ggi_pixelplanarbuffer/
+<refname/ggi_samplelinearbuffer/
+<refname/ggi_sampleplanarbuffer/
+
+<refpurpose/LibGGI direct buffer structure description/
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>#include &lt;ggi/ggi.h&gt;
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title/Description/
+
+<para>The <structname/ggi_directbuffer/ structure contains information on
+target-dependent buffers to allow applications to access them directly.
 </para>
-
-<para>
-<structfield/depth/ and <structfield/size/ are same as the depth and access
-size information specified in the <type/ggi_graphtype/.
-</para>
-<para>
-<structfield/clut_mask/ is used in GT_PALETTE modes, indicating which bits
-correspond to an index to the CLUT (color look-up table).
-</para>
-<para>
-<structfield/fg_mask/, <structfield/bg_mask/, and <structfield/texture_mask/
-are for text modes only, indicating the parts of the text-mode character.
-</para>
-
-<sect1 id="directbuffer">
-<title>DirectBuffer</title>
-
-<para>
-Dependent on the visual and runtime environment found,
-applications may be granted direct access to hardware and/or
-library internal buffers. This may significantly enhance
-performance for certain pixel oriented applications or libraries.
-</para>
-
-<para>
-The DirectBuffer is a mechanism in which a LibGGI program can use to
-determine all the characteristics of these buffers (typically the
-framebuffer), including the method of addressing, the stride, alignment
-requirements, and endianness.
-</para>
-
-<para>
-However, use not conforming to this specification will have undefined
-effects and may cause data loss or corruption, program malfunction or
-abnormal program termination. So you don't really want to do this.
-</para>
-
-<sect2 id="db-types">
-<title>Types of Buffers</title>
-
-<para>
-Only the framebuffer is defined currently.
-</para>
-
-<sect3 id="db-framebuffer">
-<title>Framebuffer</title>
-
-<para>
-A frame buffer may be organized as several distinct buffers.
-Each buffer may have a different layout. This means both the
-addressing scheme to be used as well as the addressing
-parameters may differ from buffer to buffer.
-</para>
-
-<para>
-A framebuffer is denoted by
-<structfield/ggi_directbuffer.type/==<symbol/GGI_DB_NORMAL/.
-Each frame has its own buffer, and its number is indicated in
-<structfield/ggi_directbuffer.frame/.
-</para>
-
-</sect3>
-
-</sect2>
-
-<sect2 id="db-layouts">
-<title/Buffer layouts/
-
-<para>
-LibGGI currently has support for pixel-linear buffers, bit-planar buffers,
-and interleaved planar buffers.
-</para>
-
-<sect3 id="db-pixellinear">
-<title/Pixel Linear Buffer/
-
-<para>
-A linear buffer is a region in the application's virtual memory address
-space. A pixel with the pixel coordinates (<replaceable/x/,<replaceable/y/)
-is assigned a pixel number according to the following formula:
-
-<property/pixel_number/ = (<property/origin_y/ + <property/y/) * 
-<property/stride/ + <property/origin_x/ + <property/x/;
-</para>
-
-<para>
-In any case both <property/x/ and <property/y/ must not be negative,
-<property/x/ must be less than <property/size_x/ and <property/y/ must be
-less than <property/size_y/. For top-left-origin screen coordinates,
-<property/stride/ and <property/origin_y/ will both be positive. For
-bottom-left-origin screen coordinates, <property/stride/ and
-<property/origin_y/ will both be negative. This will result in the correct
-pixel number with the same formula in both cases. The pixel number will be
-used to address the pixel.
-</para>
-
-<para>
-A certain number of bits is stored per pixel, and this is
-indicated in the <structfield/ggi_pixelformat.access/ field.
-For some visuals, the buffer might not be in host CPU native format and
-swapping operations need to be performed before writes or after reads.
-</para>
-
-</sect3>
-</sect2>
-
-<sect2 id="db-access">
-<title>Accessing the Buffer</title>
-
-<para>
-Read and write access to the buffer is done using load and store
-instructions of the host CPU.  The <structfield/access/ and and
-<structfield/align/ members of <structname/ggi_directbuffer/ structure
-specify additional restrictions.
-</para>
-
-<para>
-Read operations should be performed using the <property/read/ buffer and write
-operations should be performed using the <property/write/ buffer. These might
-be the same, but need not. If they are, read/write may be done to either
-buffer. Please note, that either read or write may be <symbol/NULL/. These are
-write-only or read-only buffers, which might be caused by hardware
-limitations. Such buffers are not suited to do Read-Modify-Write operations,
-so take care.
-</para>
-
-<para>
-More importantly, certain DirectBuffers need to be explicitly acquired
-(i.e. locked) before using them (i.e. accessing their pointers).  
-Such a situation may arise if the underlying visual supports mixed
-acceleration and framebuffer access, but they cannot occur at the same
-time.  In that case, LibGGI needs to be informed when the application is using the
-framebuffer.  An acquire is done by using 
-
-<link linkend="ggiResourceAcquire"><function/ggiResourceAcquire/</>
-
-and it is released by calling <function/ggiResourceRelease/.
-
-</para>
-
-<para>
-You can determine whether the DirectBuffer needs to be acquired by using
-<function/ggiResourceMustAcquire/.
-</para>
-
-<para>
-Be aware that the <structfield/read/, <structfield/write/ and <structfield/stride/
-fields of the DirectBuffer may be changed by an acquire, and that they may be
-<symbol/NULL/ or invalid when the DirectBuffer is not acquired.
-</para>
-
-
-
-<sect3 id="db-paged">
-<title>Paged Buffers</title>
-
-<para>
-Paged buffers are indicated with <property/page_size/ != 0 in
-<structname/ggi_directbuffer/.
-</para>
-
-<para>
-Successive access to addresses <property/addr0/ and <property/addr1/ of
-either read or write buffers with
-
-<property/addr0/ / <property/page_size/  !=  
-<property/addr1/ / <property/page_size/
-
-may be very expensive compared to successive accesses with
-
-<property/addr0/ / <property/page_size/  ==  
-<property/addr1/ / <property/page_size/.
-</para>
-
-<para>
-On i386 the penalty will be about 1500 cycles plus 4 cycles per
-to be remapped. Because of this, block transfer operations might
-become very inefficient for paged buffers. If there are two
-different buffers provided for read and write operations,
-you should do successive reads from one and do successive writes
-to the other. If not, it is recommended to copy pagewise into
-a temporary buffer and then to copy this temporary buffer
-back to screen.
-</para>
-
-</sect3>
-</sect2>
-
-<sect2 id="db-struct">
-<title>DirectBuffer Structures</title>
 
 <programlisting>
-typedef enum {
-        blPixelLinearBuffer,
-        blPixelPlanarBuffer,
-        blExtended,
-
-        blLastBufferLayout
-} ggi_bufferlayout;
-
-typedef struct {
-        int             stride;         /* bytes per row                */
-        ggi_pixelformat *pixelformat;   /* format of the pixels         */
-} ggi_pixellinearbuffer;
-
-typedef struct {
-        int             next_line;      /* bytes until next line        */
-        int             next_plane;     /* bytes until next plane       */
-        ggi_pixelformat *pixelformat;   /* format of the pixels ???     */
-        /* shouldn't that rather describe the _planes_, then ??? becka  */
-} ggi_pixelplanarbuffer;
-
 /* Buffer types */
-#define GGI_DB_NORMAL           0x0001  /* "frame" is valid when set */
-#define GGI_DB_EXTENDED         0x0002
-#define GGI_DB_MULTI_LEFT       0x0004
-#define GGI_DB_MULTI_RIGHT      0x0008
+#define GGI_DB_NORMAL		0x0001  /* "frame" is valid when set */
+#define GGI_DB_EXTENDED		0x0002
+#define GGI_DB_MULTI_LEFT	0x0004
+#define GGI_DB_MULTI_RIGHT	0x0008
 
 /* Flags that may be or'ed with the buffer type */
-#define GGI_DB_SIMPLE_PLB       0x00010000
+#define GGI_DB_SIMPLE_PLB	0x01000000
 /* GGI_DB_SIMPLE_PLB means that the buffer has the following properties:
-      type=GGI_DB_NORMAL
-      read=write
-      layout=blPixelLinearBuffer
+      type == GGI_DB_NORMAL
+      read == write
+      noaccess == 0
+      align == 0
+      layout == blPixelLinearBuffer
 */
 
-
 typedef struct {
-        uint32          type;           /* buffer type */
-        int             frame;          /* framenumber (GGI_DB_NORMAL) */
+	uint32		type;		/* buffer type */
+	int		frame;		/* framenumber (GGI_DB_NORMAL) */
+ 
+	/*	access info	*/
+	ggi_resource_t	resource;	/* If non-NULL you must acquire the
+					   buffer before using it */
+	void		*read;		/* buffer address for reads	*/
+	void		*write;		/* buffer address for writes	*/
+	unsigned int	page_size;	/* zero for true linear buffers	*/
 
-        /*      access info     */
-        void            *read;          /* buffer address for reads     */
-        void            *write;         /* buffer address for writes    */
-        unsigned int    page_size;      /* zero for true linear buffers */
+	uint32		noaccess;	
+	/* bitfield. bit x set means you may _not_ access this DB at the
+	   width of 2^x bytes. Usually 0, but _check_ it. */
 
-        uint32          noaccess;
-        /* bitfield. bit x set means you may _not_ access this DB at the
-           width of 2^x bytes. Usually 0, but _check_ it. */
+	uint32		align;
+	/* bitfield. bit x set means you may only access this DB at the
+	   width of 2^x bytes, when the access is aligned to a multiple
+	   of 2^x. Note that bit 0 is a bit bogus here, but it should
+	   be always 0, as then ((noaccess|align)==0) is a quick check
+	   for "no restrictions". */
 
-        uint32          align;
-        /* bitfield. bit x set means you may only access this DB at the
-           width of 2^x bytes, when the access is aligned to a multiple
-           of 2^x. Note that bit 0 is a bit bogus here, but it should
-           be always 0, as then ((noaccess|align)==0) is a quick check
-           for "no restrictions". */
+	ggi_bufferlayout	layout;
 
-        ggi_bufferlayout        layout;
-
-        /* The actual buffer info. Depends on layout. */
-        union {
-                ggi_pixellinearbuffer plb;
-                ggi_pixelplanarbuffer plan;
-
-                void *extended;
-        } buffer;
+	/* The actual buffer info. Depends on layout. */
+	union {
+		ggi_pixellinearbuffer plb;
+		ggi_pixelplanarbuffer plan;
+		ggi_samplelinearbuffer slb;
+		ggi_sampleplanarbuffer splan;
+		void *extended;
+	} buffer;
 } ggi_directbuffer;
-
 </programlisting>
 
 <variablelist>
@@ -867,11 +206,54 @@ to see which member of use.</para>
 </varlistentry>
 </variablelist>
 
-<para> 
-Please see <xref linkend="ggi-pixelformat"> for information on
-<structname/ggi_pixelformat/ struct, which describes the format of the
-pixels for pixel-linear buffers.
-</para>
+</refsect1>
 
-</sect2>
-</sect1>
+<refsect1>
+<title/Buffer layouts/
+
+<programlisting>
+typedef enum {
+	blPixelLinearBuffer,
+	blPixelPlanarBuffer,
+	blExtended,
+	blSampleLinearBuffer,
+	blSamplePlanarBuffer,
+
+	blLastBufferLayout
+} ggi_bufferlayout;
+
+typedef struct {
+	int		stride;		/* bytes per row		*/
+	ggi_pixelformat *pixelformat;	/* format of the pixels		*/
+} ggi_pixellinearbuffer;
+
+typedef struct {
+	int		next_line;	/* bytes until next line	*/
+	int		next_plane;	/* bytes until next plane	*/
+	ggi_pixelformat *pixelformat;	/* format of the pixels		*/
+} ggi_pixelplanarbuffer;
+
+typedef struct {
+	int		num_pixels;	/* how many pixelformats	*/
+	int		stride;		/* bytes per row		*/
+	ggi_pixelformat *pixelformat[4];/* format of the pixels		*/
+} ggi_samplelinearbuffer;
+
+typedef struct {
+	int		next_line[3];	/* bytes until next line	*/
+	int		next_plane[3];	/* bytes until next plane	*/
+	ggi_pixelformat *pixelformat[4];/* format of the pixels		*/
+} ggi_sampleplanarbuffer;
+</programlisting>
+
+</refsect1>
+
+<refsect1>
+<title/See Also/
+<simplelist TYPE=inline>
+<member><xref linkend="ref-struct-ggi-pixelformat"></member>
+<member><xref linkend="api-ggidbgetbuffer"></member>
+</simplelist>
+</refsect1>
+
+</refentry>
