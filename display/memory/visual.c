@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2002/10/06 10:16:45 cegger Exp $
+/* $Id: visual.c,v 1.9 2002/10/09 22:10:25 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -250,11 +250,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			priv->buffer.plan.next_plane = strtoul(idx, &idx, 10);
 			if (*idx != ',') {
 				priv->buffer.plan.next_line = 0;
-				goto skiprest;
+			} 
+			else {
+				idx++;
+				priv->buffer.plan.next_line = 
+				  strtoul(idx, &idx, 10);
 			}
-			idx++;
-			priv->buffer.plan.next_line = strtoul(idx, &idx, 10);
-		skiprest:
 		}
 		else { 
 			if (*idx != '\0') 
