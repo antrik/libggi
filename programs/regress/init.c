@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.5 2004/09/10 16:44:21 cegger Exp $
+/* $Id: init.c,v 1.6 2004/10/15 10:36:45 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -95,7 +95,7 @@ static void testcase3(const char *desc)
 
 	vis = ggiOpen(NULL);
 	if (vis == NULL) {
-		printfailure("ggiOpen: Couldn\'t open default visual.");
+		printfailure("ggiOpen: Couldn\'t open default visual.\n");
 		return;
 	}
 
@@ -178,7 +178,7 @@ static void testcase5(const char *desc)
 
 	vis = ggiOpen(NULL);
 	if (vis == NULL) {
-		printfailure("ggiOpen: Attempt 1: Couldn\'t open default visual.");
+		printfailure("ggiOpen: Attempt 1: Couldn\'t open default visual.\n");
 		return;
 	}
 
@@ -193,7 +193,7 @@ static void testcase5(const char *desc)
 
 	vis = ggiOpen(NULL);
 	if (vis == NULL) {
-		printfailure("ggiOpen: Attempt 2: Couldn\'t open default visual again.");
+		printfailure("ggiOpen: Attempt 2: Couldn\'t open default visual again.\n");
 		return;
 	}
 
@@ -235,14 +235,14 @@ static void testcase6(const char *desc)
 
 	vis2 = ggiOpen(NULL);
 	if (vis2 == NULL) {
-		printfailure("ggiOpen: visual 2: Couldn\'t open default visual again.");
+		printfailure("ggiOpen: visual 2: Couldn\'t open default visual again.\n");
 		return;
 	}
 
 
 	vis = ggiOpen(NULL);
 	if (vis == NULL) {
-		printfailure("ggiOpen: visual 1: Attempt 1: Couldn\'t open default visual.");
+		printfailure("ggiOpen: visual 1: Attempt 1: Couldn\'t open default visual.\n");
 		return;
 	}
 
@@ -257,7 +257,7 @@ static void testcase6(const char *desc)
 
 	vis = ggiOpen(NULL);
 	if (vis == NULL) {
-		printfailure("ggiOpen: visual 1: Attempt 2: Couldn\'t open default visual.");
+		printfailure("ggiOpen: visual 1: Attempt 2: Couldn\'t open default visual.\n");
 		return;
 	}
 
