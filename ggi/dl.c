@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.10 2004/10/31 13:15:00 cegger Exp $
+/* $Id: dl.c,v 1.11 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -49,7 +49,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	ggi_dlhandle hand;
 	char symname[GGI_SYMNAME_MAX+1], *nameptr;
 
-	GGIDPRINT_LIBS("_ggiLoadDL(\"%s\", 0x%x) called \n", filename, type);
+	DPRINT_LIBS("_ggiLoadDL(\"%s\", 0x%x) called \n", filename, type);
 
 	hand.name = NULL;
 	hand.usecnt = 0;
@@ -59,9 +59,9 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	} else {
 		hand.handle = ggLoadModule(filename, 0);
 	}
-	GGIDPRINT_LIBS("hand.handle=%p\n", hand.handle);
+	DPRINT_LIBS("hand.handle=%p\n", hand.handle);
 	if (hand.handle == NULL) {
-		GGIDPRINT_LIBS("Error loading module %s\n", filename);
+		DPRINT_LIBS("Error loading module %s\n", filename);
 		return GGI_ENOFILE;
 	}
 
@@ -82,7 +82,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	}
 
 	hand.entry = (ggifunc_dlentry*)ggGetSymbolAddress(hand.handle, symname);
-	GGIDPRINT_LIBS("&(%s) = %p\n", symname, hand.entry);
+	DPRINT_LIBS("&(%s) = %p\n", symname, hand.entry);
 	if (hand.entry == NULL) {
 		ggFreeModule(hand.handle);
 		return GGI_ENOFUNC;
@@ -92,9 +92,9 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	hand.entry(GGIFUNC_open, (void**)&hand.open);
 	hand.entry(GGIFUNC_exit, (void**)&hand.exit);
 	hand.entry(GGIFUNC_close, (void**)&hand.close);
-	GGIDPRINT_LIBS("hand.open = %p\n", hand.open);
-	GGIDPRINT_LIBS("hand.exit = %p\n", hand.exit);
-	GGIDPRINT_LIBS("hand.close = %p\n", hand.close);
+	DPRINT_LIBS("hand.open = %p\n", hand.open);
+	DPRINT_LIBS("hand.exit = %p\n", hand.exit);
+	DPRINT_LIBS("hand.close = %p\n", hand.close);
 
 	*dlh = malloc(sizeof(**dlh));
 	if (*dlh == NULL) {
@@ -116,25 +116,25 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 	int err;
 	const char *filename;
 
-	GGIDPRINT_LIBS("_ggiProbeDL(%p, \"%s\", \"%s\", %p, 0x%x) called\n",
+	DPRINT_LIBS("_ggiProbeDL(%p, \"%s\", \"%s\", %p, 0x%x) called\n",
 			vis, name, args ? args : "(null)", argptr, type);
 
 	filename = ggMatchConfig(_ggiConfigHandle, name, NULL);
 	if (filename == NULL) {
-		GGIDPRINT_LIBS("LibGGI: no config entry for sublib: %s\n",
+		DPRINT_LIBS("LibGGI: no config entry for sublib: %s\n",
 				name);
 		return GGI_ENOMATCH;
 	}
 
 	err = _ggiLoadDL(filename, GGI_SYMNAME_PREFIX, type, dlh);
-	GGIDPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, *dlh);
+	DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, *dlh);
 	if (err) return err;
 
 	dlh[0]->type = type;
 	dlh[0]->visual = vis;
 
 	err = dlh[0]->open(vis, *dlh, args, argptr, dlret);
-	GGIDPRINT_LIBS("%d = dlh[0]->open(%p, %p, \"%s\", %p, %d) - %s\n",
+	DPRINT_LIBS("%d = dlh[0]->open(%p, %p, \"%s\", %p, %d) - %s\n",
 		       err, vis, *dlh, args ? args : "(null)", argptr, *dlret,
 		       filename);
 	if (err) {
@@ -160,11 +160,11 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
 	int err;
 
 	err = _ggiLoadDL(filename, symprefix, GGI_DLTYPE_EXTENSION, &dlh);
-	GGIDPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
+	DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
 	if (err) return NULL;
 	
 	err = dlh->open(vis, dlh, args, argptr, &dlret);
-	GGIDPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d) - %s\n",
+	DPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d) - %s\n",
 		       err, vis, dlh, args ? args : "(null)", argptr, dlret,
 		       filename);
 	if (err) {
@@ -199,7 +199,7 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 	uint32 dlret = 0;
 	int err;
 
-	GGIDPRINT_LIBS("_ggiAddDL(%p, \"%s\", \"%s\", 0x%x) called\n",
+	DPRINT_LIBS("_ggiAddDL(%p, \"%s\", \"%s\", 0x%x) called\n",
 		       vis, name, args ? args : "(null)", type);
 
 	err = _ggiProbeDL(vis, name, args, argptr, type, &dlh, &dlret);
@@ -292,14 +292,14 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 		libnext = GG_SLIST_NEXT(libtmp, dllist);
 
 		if (libtmp->handle->usecnt <= 0) {
-			GGIDPRINT_LIBS("Disposing \"%s\"\n",
+			DPRINT_LIBS("Disposing \"%s\"\n",
 				       libtmp->handle->name);
 
 			*libprev = GG_SLIST_NEXT(libtmp, dllist);
 			if (libtmp->handle->close) {
 				libtmp->handle->close(vis, libtmp->handle);
 			}
-			GGIDPRINT_LIBS("Closing handle: 0x%x\n",
+			DPRINT_LIBS("Closing handle: 0x%x\n",
 				       libtmp->handle->handle);
 			ggFreeModule(libtmp->handle->handle);
 
@@ -310,7 +310,7 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 				prev = &GG_SLIST_NEXT(tmp, dllist);
 			}
 			if (!tmp) {
-				GGIDPRINT_LIBS("Error: handle not in master list.\n");
+				DPRINT_LIBS("Error: handle not in master list.\n");
 			}
 			*prev = GG_SLIST_NEXT(tmp, dllist);
 			free(tmp);
@@ -328,7 +328,7 @@ void _ggiZapDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 {
 	ggi_dlhandle_l *tmp, *next;
 
-	GGIDPRINT_LIBS("_ggiZapDL(%p, %p) called\n", vis, lib);
+	DPRINT_LIBS("_ggiZapDL(%p, %p) called\n", vis, lib);
 
 	for (tmp = *lib; tmp; tmp = GG_SLIST_NEXT(tmp, dllist)) {
 		tmp->handle->usecnt--;

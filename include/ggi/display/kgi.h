@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.15 2004/09/22 20:14:09 nsouch Exp $
+/* $Id: kgi.h,v 1.16 2004/11/27 16:42:45 soyt Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -175,7 +175,7 @@ union ggi_accel {
 			a->t.current = 0;               \
 			touch -= ts;                    \
 		}                                       \
-		GGIDPRINT("touching 0x%.8x", touch*4);  \
+		DPRINT("touching 0x%.8x", touch*4);  \
 		a->t.buffer[touch] = 1;                 \
 	}                                               \
 	else if (a->t.current >= ts) {                  \

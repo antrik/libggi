@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.11 2004/10/31 13:48:36 cegger Exp $
+/* $Id: clip.c,v 1.12 2004/11/27 16:41:53 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -335,7 +335,7 @@ static int _ggi_clip2d_3(ggi_visual *vis,
 				x = res[0];
 			}
 		} else { /* OC_BOTTOM */
-			LIBGGI_ASSERT((code & OC_BOTTOM), "unknown outcode\n");
+			LIB_ASSERT((code & OC_BOTTOM), "unknown outcode\n");
 			y = LIBGGI_GC(vis)->clipbr.y - 1;
 			if (!xmajor) {
 				/* x = *_x0 + FloorDiv(dx*(y - *_y0)*2 + dy,
@@ -542,7 +542,7 @@ static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
 						      2*dy);
 			}
 		} else { /* OC_BOTTOM */
-			LIBGGI_ASSERT((code & OC_BOTTOM), "unknown outcode\n");
+			LIB_ASSERT((code & OC_BOTTOM), "unknown outcode\n");
 			y = LIBGGI_GC(vis)->clipbr.y - 1;
 			if (xmajor) {
 				if (slope) {

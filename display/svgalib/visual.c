@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2004/11/24 13:44:38 cegger Exp $
+/* $Id: visual.c,v 1.19 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -204,7 +204,7 @@ switchreq(void *arg)
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
 
-	GGIDPRINT_MISC("display-svga: switched_away() called\n");
+	DPRINT_MISC("display-svga: switched_away() called\n");
 		
 	_giiEventBlank(&ev, sizeof(gii_cmd_event));
 
@@ -226,7 +226,7 @@ switchback(void *arg)
 	ggi_visual *vis = arg;
 	gii_event ev;
 
-	GGIDPRINT_MISC("display-svga: switched_back() called\n");
+	DPRINT_MISC("display-svga: switched_back() called\n");
 
 	_giiEventBlank(&ev, sizeof(gii_expose_event));
 
@@ -238,7 +238,7 @@ switchback(void *arg)
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
 	_giiSafeAdd(vis->input, &ev);
-	GGIDPRINT_MISC("svga: EXPOSE sent.\n");
+	DPRINT_MISC("svga: EXPOSE sent.\n");
 
 	_ggi_svgalib_setmode(SVGA_PRIV(vis)->gfxmode);
 	do_setpalette(vis);
@@ -251,14 +251,14 @@ GGI_svga_sendevent(ggi_visual *vis, gii_event *ev)
 {
 	svga_priv *priv = SVGA_PRIV(vis);
 
-	GGIDPRINT_MISC("GGI_svga_sendevent() called\n");
+	DPRINT_MISC("GGI_svga_sendevent() called\n");
 
 	if (ev->any.type != evCommand) {
 		return GGI_EEVUNKNOWN;
 	}
 	switch (ev->cmd.code) {
 	case GGICMD_ACKNOWLEDGE_SWITCH:
-		GGIDPRINT_MISC("display-svga: switch acknowledge\n");
+		DPRINT_MISC("display-svga: switch acknowledge\n");
 		if (priv->switchpending) {
 			priv->doswitch(vis);
 			return 0;
@@ -268,12 +268,12 @@ GGI_svga_sendevent(ggi_visual *vis, gii_event *ev)
 		}
 		break;
 	case GGICMD_NOHALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-svga: nohalt on\n");
+		DPRINT_MISC("display-svga: nohalt on\n");
 		priv->dohalt = 0;
 		priv->autoswitch = 0;
 		break;
 	case GGICMD_HALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-svga: halt on\n");
+		DPRINT_MISC("display-svga: halt on\n");
 		priv->dohalt = 1;
 		priv->autoswitch = 1;
 		if (priv->switchpending) {
@@ -297,7 +297,7 @@ static int do_cleanup(ggi_visual *vis)
 {
 	svga_priv *priv = SVGA_PRIV(vis);
 
-	GGIDPRINT("display-svga: GGIdlcleanup start.\n");
+	DPRINT("display-svga: GGIdlcleanup start.\n");
 
 	/* Restore to text mode */
 	_ggi_svgalib_setmode(TEXT);
@@ -321,7 +321,7 @@ static int do_cleanup(ggi_visual *vis)
 	
 	usagecounter--;
 
-	GGIDPRINT("display-svga: GGIdlcleanup done.\n");
+	DPRINT("display-svga: GGIdlcleanup done.\n");
 	return 0;
 }
 
@@ -475,7 +475,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (vtswarg.refcount > 1) {
 		/* No inputs unless we're first */
-		GGIDPRINT_MISC("display-svga: linvtsw refcount: %d\n",
+		DPRINT_MISC("display-svga: linvtsw refcount: %d\n",
 			       vtswarg.refcount); 
 		priv->inputs = 0;
 	}

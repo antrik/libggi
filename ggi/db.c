@@ -1,4 +1,4 @@
-/* $Id: db.c,v 1.4 2004/10/31 13:15:00 cegger Exp $
+/* $Id: db.c,v 1.5 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    DirectBuffer handling.
@@ -60,7 +60,7 @@ ggi_directbuffer *_ggi_db_get_new(void)
 */
 void _ggi_db_free(ggi_directbuffer *db)
 {
-	LIBGGI_ASSERT(db != NULL, "_ggi_db_free: db is NULL");
+	LIB_ASSERT(db != NULL, "_ggi_db_free: db is NULL");
 	
 	free(db);
 }
@@ -72,8 +72,8 @@ void _ggi_db_free(ggi_directbuffer *db)
 */
 int _ggi_db_add_buffer(ggi_db_list *dbl, ggi_directbuffer *buf)
 {
-	LIBGGI_ASSERT(dbl != NULL, "_ggi_db_add_buffer: list is NULL");
-	LIBGGI_ASSERT(buf != NULL, "_ggi_db_add_buffer: buffer is NULL");
+	LIB_ASSERT(dbl != NULL, "_ggi_db_add_buffer: list is NULL");
+	LIB_ASSERT(buf != NULL, "_ggi_db_add_buffer: buffer is NULL");
 
 	dbl->num++;
 	dbl->bufs = _ggi_realloc(dbl->bufs, sizeof(ggi_directbuffer *) * dbl->num);
@@ -89,8 +89,8 @@ int _ggi_db_add_buffer(ggi_db_list *dbl, ggi_directbuffer *buf)
 */
 int _ggi_db_del_buffer(ggi_db_list *dbl, int idx)
 {
-	LIBGGI_ASSERT(dbl != NULL, "_ggi_db_del_buffer: list is NULL");
-	LIBGGI_ASSERT(dbl->num > 0, "_ggi_db_del_buffer: called for empty list");
+	LIB_ASSERT(dbl != NULL, "_ggi_db_del_buffer: list is NULL");
+	LIB_ASSERT(dbl->num > 0, "_ggi_db_del_buffer: called for empty list");
 
 	dbl->num--;
 	memmove(dbl->bufs+idx, dbl->bufs+idx+1, (dbl->num-idx)*sizeof(ggi_directbuffer));

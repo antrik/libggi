@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/06 22:48:26 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/11/27 16:42:18 soyt Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -39,18 +39,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_auto_priv *priv;
 	ggi_visual **_vis;
 
-	GGIDPRINT_LIBS("display-auto: Starting\n");
+	DPRINT_LIBS("display-auto: Starting\n");
 
-	LIBGGI_ASSERT(argptr != NULL, "Detected invalid pointer");
+	LIB_ASSERT(argptr != NULL, "Detected invalid pointer");
 
 	_vis = (ggi_visual **)argptr;
 
 	priv = calloc((size_t)(1), sizeof(ggi_auto_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
-	GGIDPRINT("display-auto: Find optimal target.\n");
+	DPRINT("display-auto: Find optimal target.\n");
 	*_vis = _GGI_auto_findOptimalTarget(priv);
-	GGIDPRINT("display-auto: Found optimal target: %p\n", *_vis);
+	DPRINT("display-auto: Found optimal target: %p\n", *_vis);
 
 	free(priv);
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/06 22:48:32 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/27 16:42:30 soyt Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -192,19 +192,19 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	GGIDPRINT_MISC("display-DGA starting.\n");
+	DPRINT_MISC("display-DGA starting.\n");
 
-	GGIDPRINT_MISC("display-DGA wants display %s.\n", args);
+	DPRINT_MISC("display-DGA wants display %s.\n", args);
 
 	disp = XOpenDisplay(args);
 	if (disp == NULL)
 		return GGI_ENODEVICE;
 
-	GGIDPRINT("display-DGA has display %s.\n", args);
+	DPRINT("display-DGA has display %s.\n", args);
 
 	err = GGI_ENODEVICE;
 	_ggi_XF86DGAQueryVersion(disp, &x, &y);
-	GGIDPRINT("display-DGA version %d.%d\n", x, y);
+	DPRINT("display-DGA version %d.%d\n", x, y);
 	if (x < 1) {
 		fprintf(stderr, "Your XF86DGA is too old (%d.%d).\n", x,
 			y);
@@ -212,7 +212,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	}
 
 	_ggi_XF86VidModeQueryVersion(disp, &x, &y);
-	GGIDPRINT("XF86VidMode version %d.%d\n", x, y);
+	DPRINT("XF86VidMode version %d.%d\n", x, y);
 
 	_ggi_XF86DGAQueryDirectVideo(disp, DefaultScreen(disp), &dgafeat);
 	if (!(dgafeat & XF86DGADirectPresent)) {
@@ -256,7 +256,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		goto out_destroylock;
 	}
 
-	GGIDPRINT("fb: %p, stride: %d, bank_size: %d, mem_size: %d\n",
+	DPRINT("fb: %p, stride: %d, bank_size: %d, mem_size: %d\n",
 		  priv->fb, priv->stride, priv->bank_size, priv->mem_size);
 
 	if (priv->bank_size != priv->mem_size * 1024) {
@@ -273,7 +273,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 	priv->size = _GGI_xf86dga_getbpp(priv);
 
-	GGIDPRINT_MISC("Virtwidth: %d, depth: %d, size: %d\n",
+	DPRINT_MISC("Virtwidth: %d, depth: %d, size: %d\n",
 		       priv->width, priv->depth, priv->size);
 
 	DGA_PRIV(vis) = priv;
@@ -300,7 +300,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 						 (priv->depth <=
 						  8) ? GT_PALETTE :
 						 GT_TRUECOLOR, priv->size);
-		GGIDPRINT_MISC("Found mode: %dx%d\n", priv->modes[x].x,
+		DPRINT_MISC("Found mode: %dx%d\n", priv->modes[x].x,
 			       priv->modes[x].y);
 	}
 	priv->modes[priv->num_modes].bpp = 0;
@@ -330,7 +330,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		_args.gglock = priv->x.xliblock;
 
 		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
-			GGIDPRINT_MISC("Unable to open xwin inputlib\n");
+			DPRINT_MISC("Unable to open xwin inputlib\n");
 			do_cleanup(vis);
 			return GGI_ENODEVICE;
 		}

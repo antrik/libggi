@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.6 2004/10/31 13:48:36 cegger Exp $
+/* $Id: gamma.c,v 1.7 2004/11/27 16:41:52 soyt Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -66,7 +66,7 @@ int GGI_color_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 	if ((vis->gamma->maxwrite_r < 0) ||
 	    (vis->gamma->maxwrite_g < 0) ||
 	    (vis->gamma->maxwrite_b < 0)) {
-		GGIDPRINT("vis %p missing ggiSetGamma implementation.\n");
+		DPRINT("vis %p missing ggiSetGamma implementation.\n");
 		return GGI_ENOFUNC;
 	}
 

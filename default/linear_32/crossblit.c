@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.11 2004/11/05 07:54:54 cegger Exp $
+/* $Id: crossblit.c,v 1.12 2004/11/27 16:41:57 soyt Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -45,7 +45,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 *dstptr;
 	int stride;
 
-	GGIDPRINT_DRAW("linear-32: fallback to slow crossblit.\n");
+	DPRINT_DRAW("linear-32: fallback to slow crossblit.\n");
 
 	LIBGGIGetPixel(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
@@ -84,7 +84,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	int tmpw;
 
-	GGIDPRINT_DRAW("linear-32: DB-accelerating crossblit.\n");
+	DPRINT_DRAW("linear-32: DB-accelerating crossblit.\n");
 	
 	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*4;
 	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*4;
@@ -119,7 +119,7 @@ cb4to32(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	uint32 conv_tab[16];
 
-	GGIDPRINT_DRAW("linear-32: cb4to32.\n");
+	DPRINT_DRAW("linear-32: cb4to32.\n");
 
 	do {
 		unsigned int i;
@@ -215,7 +215,7 @@ cb8to32(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	uint32 conv_tab[256];
 
-	GGIDPRINT_DRAW("linear-32: crossblit_8_to_32.\n");
+	DPRINT_DRAW("linear-32: crossblit_8_to_32.\n");
 
 	/* Creates the conversion table. A bit simplistic approach, perhaps?
 	 */
@@ -428,7 +428,7 @@ static inline void cb24to32(ggi_visual *src, int sx, int sy, int w, int h,
 	uint8 *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-32: cb24to32.\n");
+	DPRINT_DRAW("linear-32: cb24to32.\n");
 
 	build_masktab(src, dst, shifts, shifts + 32, shifts + 64, 
 		      shifts, 1, 0, masks, 56, 1, 0, &nl, &nr);
@@ -613,7 +613,7 @@ static inline void cb16to32(ggi_visual *src, int sx, int sy, int w, int h,
 	uint16 *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-32: cb16to32.\n");
+	DPRINT_DRAW("linear-32: cb16to32.\n");
 
 	build_masktab(src, dst, shifts, shifts + 32, shifts + 64,
 		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
@@ -763,7 +763,7 @@ static inline void cb32to32(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 *stoprow, *dstp, *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-32: cb32to32.\n");
+	DPRINT_DRAW("linear-32: cb32to32.\n");
 
 	build_masktab(src, dst, shifts, shifts + 32, shifts + 64, 
 		      shifts, 1, 0, masks, 64, 1, 0, &nl, &nr);

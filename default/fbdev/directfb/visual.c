@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/11/06 22:48:20 cegger Exp $
+/* $Id: visual.c,v 1.20 2004/11/27 16:41:54 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -87,7 +87,7 @@ static int do_cleanup(ggi_visual *vis)
 	struct directfb_priv *priv = NULL;
 	int i;
 
-	GGIDPRINT_MISC("fbdev-directfb: Starting cleanup\n");
+	DPRINT_MISC("fbdev-directfb: Starting cleanup\n");
 
 	if (fbdevpriv != NULL) {
 		priv = DIRECTFB_PRIV(vis);
@@ -145,7 +145,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GraphicsDevice *dfb_device;
 	GraphicsDriver *dfb_driver;
 
-	GGIDPRINT("GGIopen for DirectFB started!\n");
+	DPRINT("GGIopen for DirectFB started!\n");
 
 	priv = calloc(sizeof(struct directfb_priv), 1);
 	if (priv == NULL) return GGI_ENOMEM;
@@ -232,7 +232,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		break;
 	default:
 		/* priv->videomode.format = DSPF_UNKNOWN; */
-		GGIDPRINT("DirectFB: Unknown Core Surface Format\n");
+		DPRINT("DirectFB: Unknown Core Surface Format\n");
 		do_cleanup(vis);
 		return GGI_ENOFUNC;
 	};
@@ -270,7 +270,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Load the DirectFB driver module. */
 	dir = opendir(driver_dir);
 	if (!dir) {
-		GGIDPRINT( "Could not open DirectFB driver directory `%s'!\n", 
+		DPRINT( "Could not open DirectFB driver directory `%s'!\n", 
 			   driver_dir );
 		do_cleanup(vis);
 		return GGI_ENOFUNC;
@@ -294,21 +294,21 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		sprintf(buf, "%s/%s", driver_dir, entry->d_name);
 
-		GGIDPRINT("Opening '%s'.\n", buf);
+		DPRINT("Opening '%s'.\n", buf);
 
 		handle = dlopen(buf, RTLD_LAZY);
 		if (handle) {
 			void (*dfbfunc)(void);
 			char *ptr = strstr(entry->d_name, "directfb_");
 			if (ptr == NULL) {
-				GGIDPRINT("Bad .so filename '%s'.\n", buf);
+				DPRINT("Bad .so filename '%s'.\n", buf);
 				dlclose(handle);
 				continue;
 			}
 			ptr[strlen(ptr) - 3] = '\0';
 			dfbfunc = dlsym(handle, ptr);
 			if (!dfbfunc) {
-				GGIDPRINT("No main dlsym in '%s'.\n", buf);
+				DPRINT("No main dlsym in '%s'.\n", buf);
 				dlclose(handle);
 				continue;
 			}
@@ -317,28 +317,28 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			  (GraphicsDriverFuncs *)dfb_config->mouse_protocol;
 			dfb_config->mouse_protocol = NULL;
 			if (!dfb_driver->funcs) {
-				GGIDPRINT("No driver_funcs '%s'.\n", buf);
+				DPRINT("No driver_funcs '%s'.\n", buf);
 				dlclose(handle);
 				continue;
 			}
-			GGIDPRINT("Trying driver at "
+			DPRINT("Trying driver at "
 				  "%p...\n", dfb_driver->funcs);
 			if (dfb_driver->funcs->Probe) {
 				if (dfb_driver->funcs->Probe(dfb_device)) {
 					/* TODO: ensure all functions exist. */
-				  	GGIDPRINT("driver_probe success for "
+				  	DPRINT("driver_probe success for "
 						  "`%s'\n", buf);
 					break;
 				}
 				else {
-					GGIDPRINT("driver_probe failed for "
+					DPRINT("driver_probe failed for "
 						  "`%s'!\n", buf );
 				}
 			} else {
-				GGIDPRINT( "No driver_probe in `%s'!\n", buf );
+				DPRINT( "No driver_probe in `%s'!\n", buf );
 			}
 		} else {
-			GGIDPRINT("dlopen failed for `%s'!\n", buf );
+			DPRINT("dlopen failed for `%s'!\n", buf );
 			continue;
 		}
 		dlclose(handle);
@@ -379,7 +379,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (dfb_driver->funcs->InitDriver(dfb_device, &(dfb_device->funcs), 
 					  dfb_device->driver_data)) {
-		GGIDPRINT("DirectFB init_driver function failed\n");
+		DPRINT("DirectFB init_driver function failed\n");
 		/* Prevent deinit functions from being called */
 		dfb_driver->funcs = NULL; 
 		do_cleanup(vis);
@@ -390,7 +390,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 					  &(dfb_device->shared->device_info), 
 					  dfb_device->driver_data, 
 					  dfb_device->device_data)) {
-		GGIDPRINT("DirectFB init_device function failed\n");
+		DPRINT("DirectFB init_device function failed\n");
 		/* Prevent close_device from being called. */
 		dfb_driver->funcs->CloseDriver(dfb_device, 
 					      dfb_device->driver_data);

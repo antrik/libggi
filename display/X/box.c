@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.10 2004/11/03 08:36:01 cegger Exp $
+/* $Id: box.c,v 1.11 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -38,7 +38,7 @@ int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	priv->slave->opdraw->drawbox(priv->slave, x, y, w, h);
@@ -51,7 +51,7 @@ int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	priv->slave->opdraw->putbox(priv->slave, x, y, w, h, data);
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
@@ -64,7 +64,7 @@ int GGI_X_getbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	/* Slave is always up to date */
 	return (priv->slave->opdraw->getbox(priv->slave, x, y, w, h, data));
@@ -76,7 +76,7 @@ int GGI_X_copybox_slave(ggi_visual *vis, int x, int y,
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	priv->slave->opdraw->copybox(priv->slave, x, y, w, h, nx, ny);
 	LIBGGICLIP_COPYBOX(vis,x,y,w,h,nx,ny);
@@ -89,7 +89,7 @@ int GGI_X_drawbox_slave_draw(ggi_visual *vis, int x, int y, int w, int h)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	GGI_X_CLEAN(vis, x, y, w, h);
@@ -109,7 +109,7 @@ int GGI_X_copybox_slave_draw(ggi_visual *vis, int x, int y,
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
+	LIB_ASSERT(priv->slave != NULL, "GGIX_PRIV(vis)->slave == NULL");
 
 	LIBGGICLIP_COPYBOX(vis,x,y,w,h,nx,ny);
 	/* XCopyArea will generate appropriate expose events, 

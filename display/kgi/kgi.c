@@ -1,4 +1,4 @@
-/* $Id: kgi.c,v 1.16 2004/09/22 21:37:43 nsouch Exp $
+/* $Id: kgi.c,v 1.17 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
 
@@ -130,7 +130,7 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		fprintf(stderr, "failed to identify to mapper\n");
 		return errno;
 	}
-	GGIDPRINT("identified to mapper %s-%i.%i.%i-%i\n",
+	DPRINT("identified to mapper %s-%i.%i.%i-%i\n",
 		  cb.result.mapper,
 		  cb.result.mapper_version.major,
 		  cb.result.mapper_version.minor,
@@ -309,7 +309,7 @@ kgi_error_t kgiSetDisplayOrigin(kgi_context_t *ctx, kgi_u_t x, kgi_u_t y)
 
 void kgiPrintImageMode(kgi_image_mode_t *mode)
 {
-	GGIDPRINT_MODE("%ix%i (%ix%i) \n", mode->size.x, mode->size.y, 
+	DPRINT_MODE("%ix%i (%ix%i) \n", mode->size.x, mode->size.y, 
 		       mode->virt.x, mode->virt.y);
 }
 
@@ -328,11 +328,11 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		return errno;
 	}
 
-	GGIDPRINT_MISC("resource %i (%s) is ", cb.result.resource, cb.result.name);
+	DPRINT_MISC("resource %i (%s) is ", cb.result.resource, cb.result.name);
 	switch (cb.result.type & KGI_RT_MASK) {
 
 	case KGI_RT_MMIO:
-		GGIDPRINT_MISC("MMIO: window %i, size %i, align %.8x, "
+		DPRINT_MISC("MMIO: window %i, size %i, align %.8x, "
 			"access %.8x\n",
 			cb.result.info.mmio.window,
 			cb.result.info.mmio.size,
@@ -341,18 +341,18 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		break;
 
 	case KGI_RT_ACCEL:
-		GGIDPRINT_MISC("ACCEL: recommended are %i buffers of size %i\n",
+		DPRINT_MISC("ACCEL: recommended are %i buffers of size %i\n",
 			cb.result.info.accel.buffers,
 			cb.result.info.accel.buffer_size);
 		break;
 
 	case KGI_RT_SHMEM:
-		GGIDPRINT_MISC("SHMEM: (maximum) aperture size %i\n",
+		DPRINT_MISC("SHMEM: (maximum) aperture size %i\n",
 			cb.result.info.shmem.aperture_size);
 		break;
 
 	default:
-		GGIDPRINT_MISC("of unknown type\n");
+		DPRINT_MISC("of unknown type\n");
 	}
 	return KGI_EOK;
 }

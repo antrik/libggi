@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/11/06 22:48:31 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    Teletarget.
@@ -104,15 +104,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fprintf(stderr, "... connection established.\n");
 
 	/* set up GII */
-	GGIDPRINT_MISC("gii starting\n");
+	DPRINT_MISC("gii starting\n");
 
 	/* first allocate a new gii_input descriptor */
 	if ((priv->input = _giiInputAlloc()) == NULL) {
-		GGIDPRINT_MISC("giiInputAlloc failure.\n");
+		DPRINT_MISC("giiInputAlloc failure.\n");
 		GGIclose(vis, dlh);
 		return GGI_ENOMEM;
 	}
-	GGIDPRINT_MISC("gii input=%p\n", priv->input);
+	DPRINT_MISC("gii input=%p\n", priv->input);
 
 	/* now fill in the blanks */
 	priv->input->priv = priv;

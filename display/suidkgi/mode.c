@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2004/11/14 15:47:47 cegger Exp $
+/* $Id: mode.c,v 1.4 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-SUID
@@ -45,7 +45,7 @@ int GGI_suidkgi_setorigin(ggi_visual *vis,int x,int y)
 	where.x=x;
 	where.y=y;
 
-	GGIDPRINT("GGIsetorigin:\n");
+	DPRINT("GGIsetorigin:\n");
 
 	if ((err=GGI_suidkgi_kgicommand(vis,CHIP_SETVISFRAME,&where)) != 0) {
 		return err;
@@ -62,7 +62,7 @@ int GGI_suidkgi_setsplitline(ggi_visual *vis,int y)
 {
 	if (y<0 || y > LIBGGI_Y(vis)) return GGI_ENOSPACE;
 
-	GGIDPRINT("GGIsetsplitline:\n");
+	DPRINT("GGIsetsplitline:\n");
 	return GGI_suidkgi_kgicommand(vis,CHIP_SETSPLITLINE,y);
 }
 #endif
@@ -88,7 +88,7 @@ static void _GGIgetmmio(ggi_visual *vis)
 	}
 
 	size=64*1024;	/* FIXME ! Was _ggiSetupMode(vis); */
-	GGIDPRINT("Calculated size=%d bytes\n",size);
+	DPRINT("Calculated size=%d bytes\n",size);
 
 	if (size <= 0) 
 		return;
@@ -99,16 +99,16 @@ static void _GGIgetmmio(ggi_visual *vis)
 	get_primary_fb(&regsize,&regpsize,&regpstart);
 	
 	if (regpsize!=regsize)
-		GGIDPRINT("Banked framebuffer (%x!=%x) - not implemented !\n",
+		DPRINT("Banked framebuffer (%x!=%x) - not implemented !\n",
 		       regpsize,regsize);
 
 	if (size>regsize)
-		GGIDPRINT("Total framebuffer too small ??? (%x>%x)"
+		DPRINT("Total framebuffer too small ??? (%x>%x)"
 		       "Will probably fail.\n",
 		       size,regsize);
 
 	if (size>regpsize) {
-		GGIDPRINT("Single bank too small. (%x>%x)"
+		DPRINT("Single bank too small. (%x>%x)"
 		       "Cutting down - will probably fail.\n",
 		       size,regpsize);
 		size=regpsize;
@@ -126,7 +126,7 @@ static void _GGIgetmmio(ggi_visual *vis)
 	LIBGGI_FB_R_STRIDE(vis) = LIBGGI_FB_W_STRIDE(vis) =
 		GT_ByPPP(LIBGGI_VIRTX(vis), LIBGGI_GT(vis));
 
-	GGIDPRINT("Linear FB=%p\n",LIBGGI_CURWRITE(vis));
+	DPRINT("Linear FB=%p\n",LIBGGI_CURWRITE(vis));
 	if (LIBGGI_CURWRITE(vis) == (void *)(-1)) {
 		LIBGGI_CURWRITE(vis)=LIBGGI_CURREAD(vis)=NULL;
 		priv->mmap_length=0;
@@ -163,7 +163,7 @@ static int _GGIdomode(ggi_visual *vis)
 			return GGI_EFATAL;	/* Error */
 		}
 
-		GGIDPRINT("display-suid - attempting %s (%s)\n",sug.name,sug.args);
+		DPRINT("display-suid - attempting %s (%s)\n",sug.name,sug.args);
 		err = _ggiOpenDL(vis, sug.name, sug.args, NULL);
 		if (err) {
 			fprintf(stderr,"display-suidkgi: Can't find an appropriate "
@@ -171,7 +171,7 @@ static int _GGIdomode(ggi_visual *vis)
 					sug.name,sug.args);
 			/* return err; */
 		} else {
-			GGIDPRINT("Success in loading %s (%s)\n",sug.name,sug.args);
+			DPRINT("Success in loading %s (%s)\n",sug.name,sug.args);
 		}
 	} while (sug.id!=0);
 
@@ -284,7 +284,7 @@ int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
 	mode_ggi2kgi(tm,&kgimode);
 
 	if (vis==NULL) {
-		GGIDPRINT("Visual==NULL\n");
+		DPRINT("Visual==NULL\n");
 		return GGI_EARGINVAL;
 	}
 	
@@ -304,10 +304,10 @@ int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
 	}
 #endif
 
-	GGIDPRINT_CORE("DRIVER_SETGRAPHMODE:\n");
+	DPRINT_CORE("DRIVER_SETGRAPHMODE:\n");
 	err=GGI_suidkgi_kgicommand(vis,DRIVER_SETGRAPHMODE,&kgimode);
 	if (err) {
-		GGIDPRINT("%d=GGI_suidkgi_kgicommand(vis,DRIVER_SETGRAPHMODE,%p)\n",err,tm);
+		DPRINT("%d=GGI_suidkgi_kgicommand(vis,DRIVER_SETGRAPHMODE,%p)\n",err,tm);
 		return err;
 	}
 	mode_kgi2ggi(&kgimode,tm);
@@ -324,7 +324,7 @@ int GGI_suidkgi_checkmode(ggi_visual *vis,ggi_mode *tm)
 	if (vis==NULL)
 		return GGI_EARGINVAL;
 	
-	GGIDPRINT("DRIVER_TESTMODE:\n");
+	DPRINT("DRIVER_TESTMODE:\n");
 	mode_ggi2kgi(tm,&km);
 	rc=GGI_suidkgi_kgicommand(vis,DRIVER_TESTMODE,&km);
 	mode_kgi2ggi(&km,tm);
@@ -336,11 +336,11 @@ int GGI_suidkgi_getmode(ggi_visual *vis,ggi_mode *tm)
 	kgi_modereq km;
 	int rc;
 
-	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
+	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
 		return GGI_EARGINVAL;
 	
-	GGIDPRINT("DRIVER_GETGRAPHMODE:\n");
+	DPRINT("DRIVER_GETGRAPHMODE:\n");
 	rc=GGI_suidkgi_kgicommand(vis,DRIVER_GETGRAPHMODE,&km);
 	mode_kgi2ggi(&km,tm);
 	return rc;

@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.21 2004/11/25 16:56:41 cegger Exp $
+/* $Id: internal.c,v 1.22 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -249,11 +249,11 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 	char *ptr = (char *)pixfmtstr;
 	unsigned long nbits;
 
-	LIBGGI_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
-	LIBGGI_ASSERT(r_mask != NULL, "r_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(g_mask != NULL, "g_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(b_mask != NULL, "b_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(a_mask != NULL, "a_mask doesn't have to be NULL");
+	LIB_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
+	LIB_ASSERT(r_mask != NULL, "r_mask doesn't have to be NULL");
+	LIB_ASSERT(g_mask != NULL, "g_mask doesn't have to be NULL");
+	LIB_ASSERT(b_mask != NULL, "b_mask doesn't have to be NULL");
+	LIB_ASSERT(a_mask != NULL, "a_mask doesn't have to be NULL");
 
 	*r_mask = *g_mask = *b_mask = *a_mask = 0;
 
@@ -295,7 +295,7 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 			break;
 
 		default:
-			GGIDPRINT("_ggi_parse_pixfmtstr: Detected invalid character: %c\n",
+			DPRINT("_ggi_parse_pixfmtstr: Detected invalid character: %c\n",
 					*ptr);
 			goto err0;
 		}
@@ -321,9 +321,9 @@ err0:
 int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags)
 {
-	LIBGGI_ASSERT(vis != NULL, "Invalid visual");
-	LIBGGI_ASSERT(pixfmtstr != NULL, "Invalid string pointer");
-	LIBGGI_ASSERT(pixfmtstr_len > 0, "Invalid string length");
+	LIB_ASSERT(vis != NULL, "Invalid visual");
+	LIB_ASSERT(pixfmtstr != NULL, "Invalid string pointer");
+	LIB_ASSERT(pixfmtstr_len > 0, "Invalid string length");
 
 	if ((flags != GGI_PIXFMT_GRAPHTYPE)
 	   && (flags != GGI_PIXFMT_CHANNEL)
@@ -352,7 +352,7 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 
 		while (pixfmtstr_len != 0) {
 			pixfmtstr_len--;
-			LIBGGI_ASSERT(pixfmtstr_len > 0,
+			LIB_ASSERT(pixfmtstr_len > 0,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
 
 			switch(pixfmt->bitmeaning[idx] & 0x00ffff00) {
@@ -388,9 +388,9 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 				       256-(pixfmt->bitmeaning[idx] & 0xff)
 				       );
 #endif
-			LIBGGI_ASSERT(tmp < pixfmtstr_len,
+			LIB_ASSERT(tmp < pixfmtstr_len,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
-			LIBGGI_ASSERT(tmp <= pixfmtstr_len,
+			LIB_ASSERT(tmp <= pixfmtstr_len,
 				"Off-by-one bug: Not even room for string termination.");
 
 			pixfmtstr_len -= tmp;
@@ -398,7 +398,7 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 			idx--;
 			if (idx < 0) break;
 		}
-		LIBGGI_ASSERT(pixfmtstr_len >= 1, "Off-by-one bug! No room for string termination.");
+		LIB_ASSERT(pixfmtstr_len >= 1, "Off-by-one bug! No room for string termination.");
 		*ptr = '\0';
 
 	} else {
@@ -406,7 +406,7 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 		size_t tmp;
 
 		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u", GT_SIZE(LIBGGI_GT(vis)));
-		LIBGGI_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
+		LIB_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
 #else
 		sprintf(pixfmtstr, "%u", GT_SIZE(LIBGGI_GT(vis)));
 #endif
@@ -441,7 +441,7 @@ int _ggi_match_palette(ggi_color *pal, int pal_len, const ggi_color *col)
 		}
 	}
 
-	GGIDPRINT_COLOR("match-color: %02x%02x%02x -> %02x%02x%02x (%d).\n",
+	DPRINT_COLOR("match-color: %02x%02x%02x -> %02x%02x%02x (%d).\n",
 		     col->r >> 8, col->g >> 8, col->b >> 8,
 		     pal[closest].r >> 8, pal[closest].g >> 8,
 		     pal[closest].b >> 8, closest);

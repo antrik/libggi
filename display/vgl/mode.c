@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/14 15:47:49 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -117,7 +117,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	if (ioctl(0, FBIO_FINDMODE, &modeinfo))
 		return -1;
 
-	GGIDPRINT("Setting VGLlib mode %d (0x%x)\n",
+	DPRINT("Setting VGLlib mode %d (0x%x)\n",
 			modeinfo.vi_mode, modeinfo.vi_mode);
 
 	/* Terminate any current mode before initialising another */
@@ -136,7 +136,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 		modenum = _IO('V', modeinfo.vi_mode - M_VESA_BASE);
 
 	if ((err = VGLInit(modenum)) != 0) {
-		GGIDPRINT("display-vgl: setting mode 0x%x failed with error %d\n",
+		DPRINT("display-vgl: setting mode 0x%x failed with error %d\n",
 			modeinfo.vi_mode, err);
 		return GGI_EFATAL;
 	}
@@ -207,7 +207,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 		break;
 
 	case GT_TRUECOLOR:
-		GGIDPRINT_MODE("display-vgl: RGB %d:%d:%d offsets %d:%d:%d\n",
+		DPRINT_MODE("display-vgl: RGB %d:%d:%d offsets %d:%d:%d\n",
 			priv->modeinfo.vi_pixel_fsizes[VGL_RED_INDEX],
 			priv->modeinfo.vi_pixel_fsizes[VGL_GREEN_INDEX],
 			priv->modeinfo.vi_pixel_fsizes[VGL_BLUE_INDEX],
@@ -247,7 +247,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 				sugname, args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT("Success in loading %s (%s)\n", sugname, args);
+			DPRINT("Success in loading %s (%s)\n", sugname, args);
 		}
 	}
 
@@ -355,7 +355,7 @@ int GGI_vgl_checkmode(ggi_visual *vis, ggi_mode *tm)
 /************************/
 int GGI_vgl_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
+	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
 		return GGI_EARGINVAL;
 

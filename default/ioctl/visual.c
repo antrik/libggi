@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/11/06 22:48:20 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/27 16:41:56 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -56,7 +56,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
  	if (mygc == MAP_FAILED) mygc = NULL;
 	else LIBGGI_GC(visual) = mygc;
-	GGIDPRINT("Signature: %x\n",*(int *)LIBGGI_GC(visual));
+	DPRINT("Signature: %x\n",*(int *)LIBGGI_GC(visual));
 #endif
 	/* This is only an "override library". It will try to override
 	 * functions which it thinks the Accelerator can do better.

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.5 2004/11/26 21:35:34 cegger Exp $
+/* $Id: draw.c,v 1.6 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -126,18 +126,18 @@ GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	int i;
 
-	LIBGGI_APPASSERT(colormap != NULL,
+	APP_ASSERT(colormap != NULL,
 			 "ggiSetPalette() called with NULL colormap!");
 
 	if (start == GGI_PALETTE_DONTCARE) start = 0;
 
 	if (maxlen > 256) {
-		GGIDPRINT("display-vgl: incorrect palette maxlen (%d)\n", maxlen);
+		DPRINT("display-vgl: incorrect palette maxlen (%d)\n", maxlen);
 		return GGI_ENOSPACE;
 	}
 
 	if (start < 0 || start+len > maxlen) {
-		GGIDPRINT("display-vgl: incorrect palette len (%d)\n", maxlen);
+		DPRINT("display-vgl: incorrect palette len (%d)\n", maxlen);
 		return GGI_ENOSPACE;
 	}
 
@@ -154,7 +154,7 @@ GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap
 
 	VGLSetPalette(priv->vgl_palred, priv->vgl_palgreen, priv->vgl_palblue);
 
-	GGIDPRINT("display-vgl: Palette set, ok (0x%x, 0x%x, 0x%x)\n",
+	DPRINT("display-vgl: Palette set, ok (0x%x, 0x%x, 0x%x)\n",
 			start, len, maxlen);
 
 	return 0;

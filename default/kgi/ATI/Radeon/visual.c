@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/11/14 15:47:42 cegger Exp $
+/* $Id: visual.c,v 1.14 2004/11/27 16:41:56 soyt Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -296,7 +296,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* If the mode is compatible, use the 3D engine */ 
 	if (use3d) {	
-		GGIDPRINT("Using 3D engine.\n");
+		DPRINT("Using 3D engine.\n");
 		vis->opdraw->drawline     = GGI_kgi_radeon_drawline_3d;
 		vis->opdraw->drawbox      = GGI_kgi_radeon_drawbox_3d;
 		vis->opdraw->copybox      = GGI_kgi_radeon_copybox_3d;
@@ -306,7 +306,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		 * The base KGI code will send -1 or a large enough swatch.
 		 */
 		if (KGI_PRIV(vis)->swatch_size >= 0) {
-			GGIDPRINT("Accelerating Put* functions.\n");
+			DPRINT("Accelerating Put* functions.\n");
 			vis->opdraw->putc        = GGI_kgi_radeon_putc_3d;
 			vis->opdraw->puts        = GGI_kgi_radeon_puts_3d;
 			vis->opdraw->putbox      = GGI_kgi_radeon_putbox_3d;
@@ -316,7 +316,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		KGI_PRIV(vis)->rwframes_changed = rwframes_changed_3d;
 	} else {
-		GGIDPRINT("Using 2D GUI engine.\n");
+		DPRINT("Using 2D GUI engine.\n");
 		vis->opdraw->drawline     = GGI_kgi_radeon_drawline_2d;
 		vis->opdraw->drawbox      = GGI_kgi_radeon_drawbox_2d;
 		vis->opdraw->copybox      = GGI_kgi_radeon_copybox_2d;

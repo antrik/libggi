@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:48:31 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/27 16:42:27 soyt Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -94,12 +94,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (! *args) break;
 
 		if (strncmp(args, "-usedb:", 7) == 0) {
-			GGIDPRINT_MISC("display-tile: Enabling DB\n");
+			DPRINT_MISC("display-tile: Enabling DB\n");
 			priv->use_db = 1;
 			args += 7; continue;
 		}
 		if (strncmp(args, "-nodb:", 6) == 0) {
-			GGIDPRINT_MISC("display-tile: Disabling DB\n");
+			DPRINT_MISC("display-tile: Disabling DB\n");
 			priv->use_db = 0;
 			args += 6; continue;
 		}
@@ -141,7 +141,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			strcpy(target, "auto");
 		}
 
-		GGIDPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
+		DPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
 			i, target, sx, sy, vx, vy);
 
 		if (! (priv->vislist[i].vis = ggiOpen(target,NULL)) ) {

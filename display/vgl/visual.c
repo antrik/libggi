@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/13 15:56:27 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/11/27 16:42:29 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -58,7 +58,7 @@ static int _GGIcheckvglmodes(ggi_visual *vis)
 	int i;
 	vgl_priv *priv = VGL_PRIV(vis);
 
-	GGIDPRINT_MISC("display-vgl: Checking modes\n");
+	DPRINT_MISC("display-vgl: Checking modes\n");
 
 	for (i=1; i <= M_VESA_MODE_MAX; i++) {
 		modeinfo.vi_mode = i;
@@ -94,13 +94,13 @@ static int _GGIcheckvglmodes(ggi_visual *vis)
 			sgmode->gt = GT_CONSTRUCT(bpp, (bpp <= 8) ?
 			      GT_PALETTE : GT_TRUECOLOR, size);
 
-			GGIDPRINT_MISC("display-vgl: found mode %dx%dx%d %d\n",
+			DPRINT_MISC("display-vgl: found mode %dx%dx%d %d\n",
 				sgmode->x, sgmode->y, sgmode->bpp, size);
 		}
 	}
 
 	if (modes == 0) {
-		GGIDPRINT_MISC("display-vgl: no mode!\n");
+		DPRINT_MISC("display-vgl: no mode!\n");
 		return GGI_ENOMATCH;
 	} else {
 		priv->availmodes = realloc(priv->availmodes,
@@ -114,7 +114,7 @@ static int _GGIcheckvglmodes(ggi_visual *vis)
 static int 
 GGI_vgl_sendevent(ggi_visual *vis, gii_event *ev)
 {
-	GGIDPRINT_MISC("GGI_vgl_sendevent() called\n");
+	DPRINT_MISC("GGI_vgl_sendevent() called\n");
 
 	if (ev->any.type != evCommand) {
 		return GGI_EEVUNKNOWN;
@@ -123,7 +123,7 @@ GGI_vgl_sendevent(ggi_visual *vis, gii_event *ev)
 #ifdef notyet
 	switch (ev->cmd.code) {
 	case GGICMD_ACKNOWLEDGE_SWITCH:
-		GGIDPRINT_MISC("display-vgl: switch acknowledge\n");
+		DPRINT_MISC("display-vgl: switch acknowledge\n");
 		if (priv->switchpending) {
 			priv->doswitch(vis);
 			return 0;
@@ -133,12 +133,12 @@ GGI_vgl_sendevent(ggi_visual *vis, gii_event *ev)
 		}
 		break;
 	case GGICMD_NOHALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-vgl: nohalt on\n");
+		DPRINT_MISC("display-vgl: nohalt on\n");
 		priv->dohalt = 0;
 		priv->autoswitch = 0;
 		break;
 	case GGICMD_HALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-vgl: halt on\n");
+		DPRINT_MISC("display-vgl: halt on\n");
 		priv->dohalt = 1;
 		priv->autoswitch = 1;
 		if (priv->switchpending) {
@@ -230,12 +230,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (args) {
 		if (strncmp(args, "-usedb:", 7) == 0) {
-			GGIDPRINT_MISC("display-vgl: Enabling DB\n");
+			DPRINT_MISC("display-vgl: Enabling DB\n");
 			priv->vgl_use_db = 1;
 			args += 7;
 		}
 		if (strncmp(args, "-nodb:", 6) == 0) {
-			GGIDPRINT_MISC("display-vgl: Disabling DB\n");
+			DPRINT_MISC("display-vgl: Disabling DB\n");
 			priv->vgl_use_db = 0;
 			args += 6;
 		}
@@ -299,7 +299,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 
 error:
-	GGIDPRINT("display-vgl: open failed (%d)\n", error);
+	DPRINT("display-vgl: open failed (%d)\n", error);
 	return error;
 }
 

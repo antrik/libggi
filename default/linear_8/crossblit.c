@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.7 2004/10/31 13:48:37 cegger Exp $
+/* $Id: crossblit.c,v 1.8 2004/11/27 16:42:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -44,7 +44,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	uint8 *dstptr;
 	int stride;
 
-	GGIDPRINT_DRAW("linear-8: fallback to slow crossblit.\n");
+	DPRINT_DRAW("linear-8: fallback to slow crossblit.\n");
 
 	LIBGGIGetPixel(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
@@ -83,7 +83,7 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	uint8 conv_tab[256];
 
-	GGIDPRINT_DRAW("linear-8: crossblit_8_to_8.\n");
+	DPRINT_DRAW("linear-8: crossblit_8_to_8.\n");
 
 	/* Creates the conversion table. A bit simplistic approach, perhaps?
 	 */
@@ -138,7 +138,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 
-	GGIDPRINT_DRAW("linear-8: DB-accelerating crossblit.\n");
+	DPRINT_DRAW("linear-8: DB-accelerating crossblit.\n");
 	
 	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
 	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx;

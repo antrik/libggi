@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.9 2004/11/06 22:48:30 cegger Exp $
+/* $Id: visual.m,v 1.10 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -91,7 +91,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	NSAutoreleasePool *pool;
 
-	GGIDPRINT_MISC("display-quartz coming up.\n");
+	DPRINT_MISC("display-quartz coming up.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -185,7 +185,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		inp = giiOpen("cocoa", &_args, NULL);
 		if (inp == NULL) {
-			GGIDPRINT_MISC("Unable to open cocoa inputlib\n");
+			DPRINT_MISC("Unable to open cocoa inputlib\n");
 			err = GGI_ENODEVICE;
 			fprintf(stderr, "Unable to open cocoa inputlib\n");
 			goto out;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/06 22:48:23 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/11/27 16:42:13 soyt Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -71,10 +71,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			(((LIBGGI_VIRTX(vis) * LIBGGI_VIRTY(vis))
 			  & ~(MMAP_PAGE_SIZE - 1)) + MMAP_PAGE_SIZE);
 
-		GGIDPRINT("afb is this big: %d\n",__localafb_len);
-		GGIDPRINT("dfb is this big: %d\n",__localdfb_len);
-		GGIDPRINT("rfb is this big: %d\n",__localrfb_len);
-		GGIDPRINT("wfb is this big: %d\n",__localwfb_len);
+		DPRINT("afb is this big: %d\n",__localafb_len);
+		DPRINT("dfb is this big: %d\n",__localdfb_len);
+		DPRINT("rfb is this big: %d\n",__localrfb_len);
+		DPRINT("wfb is this big: %d\n",__localwfb_len);
 	} else {
 		ggiPanic("linmm_banked: NULL mode provided...\n");
 		return GGI_ENOFUNC;
@@ -162,7 +162,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 					     at all. */
 	}
 
-	GGIDPRINT("afb=%p, dfb=%p, rfb=%p, wfb=%p\n",
+	DPRINT("afb=%p, dfb=%p, rfb=%p, wfb=%p\n",
 		  __localafb, __localdfb, __localrfb, __localwfb);
 
 	/* Linear framebuffer setup */

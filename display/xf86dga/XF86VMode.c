@@ -1,4 +1,4 @@
-/* $Id: XF86VMode.c,v 1.11 2004/10/31 15:16:43 cegger Exp $
+/* $Id: XF86VMode.c,v 1.12 2004/11/27 16:42:29 soyt Exp $
 
 This is a modified version of the XF86VMode API functions for use
 internally by the LibGGI xf86dga target.  Mods by Marcus Sundberg and
@@ -262,7 +262,7 @@ static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
 	}
 
 	*modecount = rep.modecount;
-	GGIDPRINT("XF86VidMode extension found %i modelines\n",
+	DPRINT("XF86VidMode extension found %i modelines\n",
 		  rep.modecount);
 
 	if (!(modelines = (XF86VidModeModeInfo **) Xcalloc(rep.modecount,

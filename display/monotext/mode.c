@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/14 15:47:46 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -84,7 +84,7 @@ static int do_dbstuff(ggi_visual *vis)
 	priv->fb_size = LIBGGI_FB_SIZE(LIBGGI_MODE(vis));
 	priv->fb_ptr  = malloc((size_t)(priv->fb_size));
 	
-	GGIDPRINT_MODE("display-monotext: fb=%p size=%d\n", 
+	DPRINT_MODE("display-monotext: fb=%p size=%d\n", 
 		       priv->fb_ptr, priv->fb_size);
 
 	if (priv->fb_ptr == NULL) {
@@ -148,7 +148,7 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 				" %s (%s) library.\n", libname, libargs);
 			return GGI_EFATAL;
 		}
-		GGIDPRINT_LIBS("Success in loading %s (%s)\n", libname,
+		DPRINT_LIBS("Success in loading %s (%s)\n", libname,
 			       libargs);
 	}
 
@@ -187,7 +187,7 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 	
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
-	GGIDPRINT_MODE("display-monotext: Attempting to setmode on parent "
+	DPRINT_MODE("display-monotext: Attempting to setmode on parent "
 		       "visual...\n");
 
 	return _ggi_monotextOpen(vis);
@@ -198,11 +198,11 @@ int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
 	int err;
 
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
-		GGIDPRINT_MODE("display-monotext: vis/mode == NULL\n");
+		DPRINT_MODE("display-monotext: vis/mode == NULL\n");
 		return GGI_EARGINVAL;
 	}
 	
-	GGIDPRINT_MODE("display-monotext: setmode %dx%d (gt=%d)\n",
+	DPRINT_MODE("display-monotext: setmode %dx%d (gt=%d)\n",
 		       mode->visible.x, mode->visible.y, mode->graphtype);
 
 	if ((err = ggiCheckMode(vis, mode)) != 0) {
@@ -214,12 +214,12 @@ int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 	
 	if ((err = do_setmode(vis, mode)) != 0) {
-		GGIDPRINT_MODE("display-monotext: setmode failed (%d)\n",
+		DPRINT_MODE("display-monotext: setmode failed (%d)\n",
 			       err);
 		return err;
 	}
 
-	GGIDPRINT_MODE("display-monotext: setmode succeeded\n", vis, mode);
+	DPRINT_MODE("display-monotext: setmode succeeded\n", vis, mode);
 
 	return 0;
 }
@@ -240,7 +240,7 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 
 	if (((mode->visible.x % totw)  != 0) ||
 	    ((mode->visible.y % toth) != 0)) {
-		GGIDPRINT_MODE("display-monotext: visible size is not a "
+		DPRINT_MODE("display-monotext: visible size is not a "
 			       "multiple of the target size.\n");
 		return GGI_ENOMATCH;
 	}
@@ -249,7 +249,7 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 	sq_y = mode->visible.y / toth;
 
 	if (sq_x <= 0 || sq_y <= 0) {
-		GGIDPRINT_MODE("display-monotext: visible size is not a "
+		DPRINT_MODE("display-monotext: visible size is not a "
 			       "multiple of the target size.\n");
 		return GGI_ENOMATCH;
 	}
@@ -268,11 +268,11 @@ int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 	int err = 0;
 
 	if ((vis == NULL) || (mode == NULL)) {
-		GGIDPRINT_MODE("display-monotext: vis/mode == NULL\n");
+		DPRINT_MODE("display-monotext: vis/mode == NULL\n");
 		return GGI_EARGINVAL;
 	}
 
-	GGIDPRINT_MODE("display-monotext: checkmode %dx%d (gt=%d)\n",
+	DPRINT_MODE("display-monotext: checkmode %dx%d (gt=%d)\n",
 		  mode->visible.x, mode->visible.y, mode->graphtype);
 
 	/* Handle GGI_AUTO */
@@ -342,7 +342,7 @@ int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_monotext_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	GGIDPRINT_MODE("display-monotext: getmode.\n");
+	DPRINT_MODE("display-monotext: getmode.\n");
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

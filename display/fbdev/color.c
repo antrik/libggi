@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.11 2004/11/27 00:05:58 cegger Exp $
+/* $Id: color.c,v 1.12 2004/11/27 16:42:19 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -104,7 +104,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 
 	if (priv->fix.visual == FB_VISUAL_DIRECTCOLOR) {
 
-		GGIDPRINT("display-fbdev: trying gamma.\n");
+		DPRINT("display-fbdev: trying gamma.\n");
 
 		priv->gamma.maxwrite_r = priv->gamma.maxread_r = 
 			1 << priv->var.red.length;
@@ -129,7 +129,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 		vis->gamma = &(priv->gamma);
 	} else {
 
-		GGIDPRINT("display-fbdev: trying palette.\n");
+		DPRINT("display-fbdev: trying palette.\n");
 
 		len = 1 << priv->var.bits_per_pixel;
 		LIBGGI_PAL(vis)->clut.size = len * 2;
@@ -146,7 +146,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 	cmap.transp = NULL;
 	
 	if (ioctl(LIBGGI_FD(vis), FBIOGETCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: GETCMAP failed.\n");
+		DPRINT_COLOR("display-fbdev: GETCMAP failed.\n");
 		free(cmap.red);
 		goto bail;
 	} 
@@ -155,7 +155,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 
 	if (vis->gamma != NULL) {
 
-		GGIDPRINT_COLOR("display-fbdev: Saved gamma (len=%d/%d/%d).\n",
+		DPRINT_COLOR("display-fbdev: Saved gamma (len=%d/%d/%d).\n",
 				priv->gamma.maxread_r, priv->gamma.maxread_g,
 				priv->gamma.maxread_b);
 
@@ -171,7 +171,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 		vis->opcolor->setgammamap = GGI_fbdev_setgammamap;
 	}
 	else {
-		GGIDPRINT_COLOR("display-fbdev: Saved palette (len=%d).\n", 
+		DPRINT_COLOR("display-fbdev: Saved palette (len=%d).\n", 
 				len);
 		while (len--) {
 			priv->orig_cmap[len].r = cmap.red[len];
@@ -209,7 +209,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
 	
 	ggi_color* src = (ggi_color*)colormap;
 	
-	GGIDPRINT_COLOR("display-fbdev: SetPalette(%d,%d)\n", start, size);
+	DPRINT_COLOR("display-fbdev: SetPalette(%d,%d)\n", start, size);
 	
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
 
@@ -229,7 +229,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
 	}
 
 	if (fbdev_doioctl(vis, FBIOPUTCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.");
+		DPRINT_COLOR("display-fbdev: PUTCMAP failed.");
 		return -1;
 	}
 
@@ -276,7 +276,7 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 	} while (i++ < len);
 
 	if (fbdev_doioctl(vis, FBIOPUTCMAP, &gam) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.");
+		DPRINT_COLOR("display-fbdev: PUTCMAP failed.");
 		return -1;
 	}
 	return 0;

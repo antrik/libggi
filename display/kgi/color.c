@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/11/14 15:47:45 cegger Exp $
+/* $Id: color.c,v 1.10 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -43,10 +43,10 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	kgic_ilut_set_request_t ilut;
 	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
-	LIBGGI_APPASSERT(colormap != NULL,
+	APP_ASSERT(colormap != NULL,
 			 "GGI_kgi_setPalette() - colormap == NULL");
 
-	GGIDPRINT_COLOR("display-kgi: SetPalVec(%d,%d)\n", start, len);
+	DPRINT_COLOR("display-kgi: SetPalVec(%d,%d)\n", start, len);
 	
 	if (start == (size_t)GGI_PALETTE_DONTCARE) {
 		start = 0;
@@ -73,7 +73,7 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	}
 
 	if (ioctl(KGI_CTX(vis).mapper.fd, KGIC_RESOURCE_CLUT_SET, &ilut) < 0) {
-		GGIDPRINT_COLOR("display-kgi: PUTCMAP failed.");
+		DPRINT_COLOR("display-kgi: PUTCMAP failed.");
 		return -1;
 	}
 

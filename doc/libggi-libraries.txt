@@ -172,7 +172,7 @@ user, which affect the behaviour of LibGGI:
 
 `GGI_DEBUGSYNC`
     Turn on synchronous debugging output, flushing the output buffers
-    before returning from `GGIDPRINT` calls.
+    before returning from `DPRINT` calls.
 
 `GGI_CONFDIR`
     Override compiled-in path to global config files (Win32 only,

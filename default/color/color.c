@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.15 2004/11/26 21:35:31 cegger Exp $
+/* $Id: color.c,v 1.16 2004/11/27 16:41:52 soyt Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -70,11 +70,11 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 	int pal_len;
 	int i, r, g, b;
 
-	LIBGGI_ASSERT(LIBGGI_PAL(vis) != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)==NULL");
+	LIB_ASSERT(LIBGGI_PAL(vis) != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)==NULL");
 
 	pal = LIBGGI_PAL(vis)->clut.data;
 
-	LIBGGI_ASSERT(pal != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)->clut.data==NULL");
+	LIB_ASSERT(pal != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)->clut.data==NULL");
 
 	r = col->r;
 	g = col->g;
@@ -117,7 +117,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 		}
 	}
 
-	GGID2(GGIDPRINT_COLOR(
+	GGID2(DPRINT_COLOR(
 		"PAL_mapcolor(%p): %04x%04x%04x -> %04x%04x%04x (%d)\n",
 		vis, r, g, b, pal[closest].r, pal[closest].g, pal[closest].b,
 		closest));
@@ -136,7 +136,7 @@ ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
 
-	GGID2(GGIDPRINT_COLOR("TRUE16_mapcolor_4to7(%p, "
+	GGID2(DPRINT_COLOR("TRUE16_mapcolor_4to7(%p, "
 			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
 			      vis, col->r, col->g, col->b));
 
@@ -144,7 +144,7 @@ ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
 	  ((col->g >> priv->green_unmap) & priv->green_mask) |
 	  ((col->b >> priv->blue_unmap) & priv->blue_mask);
 
-	GGID2(GGIDPRINT_COLOR("TRUE16_mapcolor_4to7 returning 0x%x\n", ret));
+	GGID2(DPRINT_COLOR("TRUE16_mapcolor_4to7 returning 0x%x\n", ret));
 
 	return ret;
 }
@@ -154,7 +154,7 @@ ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
 
-	GGID2(GGIDPRINT_COLOR("TRUE_mapcolor(%p, "
+	GGID2(DPRINT_COLOR("TRUE_mapcolor(%p, "
 			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
 			      vis, col->r, col->g, col->b));
 
@@ -162,7 +162,7 @@ ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
 	  (SSHIFT(col->g, priv->green_map) & priv->green_mask) |
 	  (SSHIFT(col->b, priv->blue_map) & priv->blue_mask);
 
-	GGID2(GGIDPRINT_COLOR("TRUE_mapcolor returning 0x%x\n", ret));
+	GGID2(DPRINT_COLOR("TRUE_mapcolor returning 0x%x\n", ret));
 
 	return ret;
 }
@@ -171,7 +171,7 @@ ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 
-	GGID2(GGIDPRINT_COLOR("GREY_mapcolor(%p, "
+	GGID2(DPRINT_COLOR("GREY_mapcolor(%p, "
 			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
 			      vis, col->r, col->g, col->b));
 
@@ -179,7 +179,7 @@ ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 	ret = (col->r*82 + col->g*124 + col->b*50)
 		>> COLOR_GREYPRIV(vis)->shift;
 
-	GGID2(GGIDPRINT_COLOR("GREY_mapcolor returning 0x%x\n", ret));
+	GGID2(DPRINT_COLOR("GREY_mapcolor returning 0x%x\n", ret));
 
 	return ret;
 }
@@ -190,9 +190,9 @@ ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 
 int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
-	LIBGGI_ASSERT(LIBGGI_PAL(vis) != NULL, 
+	LIB_ASSERT(LIBGGI_PAL(vis) != NULL, 
 			"PAL_unmappixel with LIBGGI_PAL(vis)==NULL");
-	LIBGGI_ASSERT(LIBGGI_PAL(vis)->clut.data != NULL, 
+	LIB_ASSERT(LIBGGI_PAL(vis)->clut.data != NULL, 
 			"PAL_unmappixel with LIBGGI_PAL(vis)->clut.data==NULL");
 	
 	if (pixel >= (unsigned)COLOR_PALPRIV(vis)->numcols)

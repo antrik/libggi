@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:48:31 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -54,7 +54,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
-	GGIDPRINT("display-trueemu: GGIclose start.\n");
+	DPRINT("display-trueemu: GGIclose start.\n");
 
 	if (priv->fb_ptr != NULL) {
 		GGI_trueemu_resetmode(vis);
@@ -69,7 +69,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	free(priv);
 	free(LIBGGI_GC(vis));
 
-	GGIDPRINT("display-trueemu: GGIclose done.\n");
+	DPRINT("display-trueemu: GGIclose done.\n");
 
 	return 0;
 }
@@ -83,7 +83,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	char target[1024];
 	int err = GGI_ENOMEM;
 
-	GGIDPRINT("display-trueemu: GGIopen start.\n");
+	DPRINT("display-trueemu: GGIopen start.\n");
 
 	/* handle arguments */
 	memcpy(options, optlist, sizeof(options));
@@ -148,9 +148,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->fb_ptr = NULL;
 
 	/* parse the results */
-	GGIDPRINT("trueemu: parent is '%s'.\n", options[OPT_PARENT].result);
-	GGIDPRINT("trueemu: dither is '%s'.\n", options[OPT_DITHER].result);
-	GGIDPRINT("trueemu: model  is '%s'.\n", options[OPT_MODEL].result);
+	DPRINT("trueemu: parent is '%s'.\n", options[OPT_PARENT].result);
+	DPRINT("trueemu: dither is '%s'.\n", options[OPT_DITHER].result);
+	DPRINT("trueemu: model  is '%s'.\n", options[OPT_MODEL].result);
 	ggiParseMode(options[OPT_PARENT].result, &priv->mode);
 
 	switch (options[OPT_DITHER].result[0]) {
@@ -173,7 +173,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				"'%s'.\n", options[OPT_MODEL].result);
 	}
 
-	GGIDPRINT("display-trueemu: opening target: %s\n", target);
+	DPRINT("display-trueemu: opening target: %s\n", target);
 	priv->parent = ggiOpen(target, NULL);
 	if (priv->parent == NULL) {
 		fprintf(stderr,
@@ -213,7 +213,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->flush = GGI_trueemu_flush;
 	vis->opdisplay->setflags = GGI_trueemu_setflags;
 	
-	GGIDPRINT("display-trueemu: GGIopen succeeded.\n");
+	DPRINT("display-trueemu: GGIopen succeeded.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2004/11/06 22:48:29 cegger Exp $
+/* $Id: visual.c,v 1.24 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -61,7 +61,7 @@ static ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 	{
 		if (priv->inputbuffer->buffer[priv->inputoffset++]!=MEMINPMAGIC)
 		{
-			GGIDPRINT_MISC("OUT OF SYNC in meminput !\n");
+			DPRINT_MISC("OUT OF SYNC in meminput !\n");
 			priv->inputoffset=0;	/* Try to resync */
 			return 0;
 		}
@@ -131,7 +131,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_memory_priv *priv;
 	gg_option options[NUM_OPTS];
 
-	GGIDPRINT_MISC("display-memory coming up.\n");
+	DPRINT_MISC("display-memory coming up.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -167,15 +167,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (args && *args)	/* We have parameters. Analyze them. */
 	{
-		GGIDPRINT("display-memory has args.\n");
+		DPRINT("display-memory has args.\n");
 #ifdef HAVE_SHM
 		if (strncmp(args,"shmid:",6)==0)
 		{
 			sscanf(args+6,"%i",&(priv->shmid));
-			GGIDPRINT("display-memory has shmid-arg:%d.\n",
+			DPRINT("display-memory has shmid-arg:%d.\n",
 				priv->shmid);
 			priv->memptr=shmat(priv->shmid,NULL,0);
-			GGIDPRINT("display-memory: shmat at %p.\n",
+			DPRINT("display-memory: shmat at %p.\n",
 				priv->memptr);
 			if (priv->memptr!=(void *)-1) 
 			{
@@ -184,7 +184,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				{
 					priv->inputbuffer=priv->memptr;
 					priv->memptr=(char *)priv->memptr+INPBUFSIZE;
-					GGIDPRINT("display-memory: moved mem to %p for input-buffer.\n",
+					DPRINT("display-memory: moved mem to %p for input-buffer.\n",
 						priv->memptr);
 				}
 			}
@@ -196,15 +196,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			char filename[1024];
 
 			sscanf(args+8,"%u:%c:%s",&size,&id,filename);
-			GGIDPRINT("display-memory has keyfile-arg:%d:%c:%s.\n",
+			DPRINT("display-memory has keyfile-arg:%d:%c:%s.\n",
 				size,id,filename);
 
 			priv->shmid=shmget(ftok(filename,id), size, IPC_CREAT|0666);
-			GGIDPRINT("display-memory has shmid:%d.\n",
+			DPRINT("display-memory has shmid:%d.\n",
 				priv->shmid);
 
 			priv->memptr=shmat(priv->shmid,NULL,0);
-			GGIDPRINT("display-memory: shmat at %p.\n",
+			DPRINT("display-memory: shmat at %p.\n",
 				priv->memptr);
 			if (priv->memptr!=(void *)-1) 
 			{
@@ -213,7 +213,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				{
 					priv->inputbuffer=priv->memptr;
 					priv->memptr=(char *)priv->memptr+INPBUFSIZE;
-					GGIDPRINT("display-memory: moved mem to %p for input-buffer.\n",
+					DPRINT("display-memory: moved mem to %p for input-buffer.\n",
 						priv->memptr);
 				}
 			}
@@ -290,16 +290,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inputbuffer->frames=
 		priv->inputbuffer->visframe=0;
 
-		GGIDPRINT_MISC("Adding gii to shmem-memtarget\n");
+		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 
 		/* First allocate a new gii_input descriptor. */
 
 		if (NULL==(inp=_giiInputAlloc()))
 		{
-			GGIDPRINT_MISC("giiInputAlloc failure.\n");
+			DPRINT_MISC("giiInputAlloc failure.\n");
 			goto out;
 		}
-		GGIDPRINT_MISC("gii inp=%p\n",inp);
+		DPRINT_MISC("gii inp=%p\n",inp);
 
 		/* Now fill in the blanks. */
 

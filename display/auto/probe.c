@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.4 2004/10/31 14:25:00 cegger Exp $
+/* $Id: probe.c,v 1.5 2004/11/27 16:42:18 soyt Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -73,7 +73,7 @@ ggi_visual_t _GGI_auto_findOptimalTarget(ggi_auto_priv *priv)
 				_ggi_setup_display(display, target, sizeof(display));
 
 				if (target->probe->option[j] != NULL) {
-					GGIDPRINT("display-auto: option = %s\n",
+					DPRINT("display-auto: option = %s\n",
 						target->probe->option[j]);
 
 					ggstrlcat(display, ":", sizeof(display));

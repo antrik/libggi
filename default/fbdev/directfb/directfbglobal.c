@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.11 2004/11/14 15:47:42 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.12 2004/11/27 16:41:54 soyt Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -71,7 +71,7 @@ volatile void *dfb_gfxcard_map_mmio( GraphicsDevice *device,
   addr = mmap( NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED,
 	       dfb_fbdev->fd, device->shared->fix.smem_len + offset );
   if ((int)(addr) == -1) {
-    GGIDPRINT("default-fbdev-directfb: Could not mmap MMIO region "
+    DPRINT("default-fbdev-directfb: Could not mmap MMIO region "
 	      "(offset %d, length %d)!\n", offset, length);
     return NULL;
   }
@@ -87,7 +87,7 @@ void dfb_gfxcard_unmap_mmio( GraphicsDevice *device,
     length = device->shared->fix.mmio_len;
 
   if (munmap( (void*) addr, length ) < 0)
-    GGIDPRINT( "default-fbdev-directfb: Could not unmap MMIO region "
+    DPRINT( "default-fbdev-directfb: Could not unmap MMIO region "
 	       "at %p (length %d)!\n", addr, length );
 }
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/13 15:56:21 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/11/27 16:42:20 soyt Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -131,16 +131,16 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	char	name[GGI_MAX_APILEN];
 	char	args[GGI_MAX_APILEN];
 	
-	GGIDPRINT("display-ipc: _GGIdomode: called\n");
+	DPRINT("display-ipc: _GGIdomode: called\n");
 
 	_ggiZapMode(vis, 0);
 
-	GGIDPRINT("display-ipc: _GGIdomode: zap\n");
+	DPRINT("display-ipc: _GGIdomode: zap\n");
 
 	if ((err=alloc_fb(vis,mode)) != 0)
 		return err;
 
-	GGIDPRINT("display-ipc: _GGIdomode: got framebuffer memory\n");
+	DPRINT("display-ipc: _GGIdomode: got framebuffer memory\n");
 
 	for(i=1; 0==GGI_ipc_getapi(vis, i, name, args); i++) {
 		err = _ggiOpenDL(vis, name, args, NULL);
@@ -149,7 +149,7 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 				"%s (%s) library.\n", name, args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT_LIBS("Success in loading %s (%s)\n",
+			DPRINT_LIBS("Success in loading %s (%s)\n",
 				name, args);
 		}
 	}
@@ -165,9 +165,9 @@ int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
 
-	GGIDPRINT("display-ipc: GGIsetmode: called\n");
+	DPRINT("display-ipc: GGIsetmode: called\n");
 
-	LIBGGI_APPASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
+	APP_ASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
 	
 	if ((err=ggiCheckMode(vis, mode)) != 0)	return err;
 
@@ -175,7 +175,7 @@ int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
 	err=_GGIdomode(vis, mode);
-	GGIDPRINT("display-ipc: GGIsetmode: domode=%d\n",err);
+	DPRINT("display-ipc: GGIsetmode: domode=%d\n",err);
 	if (err)
 		return err;
 
@@ -190,7 +190,7 @@ int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
-	GGIDPRINT("display-ipc:GGIsetmode: change indicated\n",err);
+	DPRINT("display-ipc:GGIsetmode: change indicated\n",err);
 
 	return 0;
 }
@@ -257,7 +257,7 @@ int GGI_ipc_checkmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_ipc_getmode(ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_mode mymode;
-	GGIDPRINT("display-ipc: GGIgetmode(%p,%p)\n", vis, mode);
+	DPRINT("display-ipc: GGIgetmode(%p,%p)\n", vis, mode);
 
 	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 	if (IPC_PRIV(vis)->inputbuffer) {
@@ -275,7 +275,7 @@ int GGI_ipc_getmode(ggi_visual *vis, ggi_mode *mode)
 
 int _GGI_ipc_resetmode(ggi_visual *vis)
 {
-	GGIDPRINT("display-ipc: GGIresetmode(%p)\n", vis);
+	DPRINT("display-ipc: GGIresetmode(%p)\n", vis);
 
 	_GGIfreedbs(vis);
 
@@ -293,7 +293,7 @@ int GGI_ipc_setflags(ggi_visual *vis,ggi_flags flags)
 
 int GGI_ipc_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
-	GGIDPRINT("ipc setpalette.\n");
+	DPRINT("ipc setpalette.\n");
 	              
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
 		

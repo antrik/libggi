@@ -1,4 +1,4 @@
-/* $Id: giievents.c,v 1.4 2004/11/06 12:49:53 cegger Exp $
+/* $Id: giievents.c,v 1.5 2004/11/27 16:42:17 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -130,12 +130,12 @@ ggi_event_mask GII_aa_poll(gii_input_t inp, void *arg)
 	ggi_event_mask evmask = 0;
 	unsigned int aatype;
 
-	GGIDPRINT_EVENTS("GII_aa_poll\n");
+	DPRINT_EVENTS("GII_aa_poll\n");
 
 	if (!priv->context) return 0;
 
 	while ((aatype = aa_getevent(priv->context, 0)) != AA_NONE) {
-		GGIDPRINT_EVENTS("AA: got event %x\n", aatype);
+		DPRINT_EVENTS("AA: got event %x\n", aatype);
 
 		if (aatype == AA_MOUSE)	{
 			evmask |= do_mouse(inp, priv);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/11/14 15:47:48 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -205,7 +205,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	priv->height = mode->virt.y;
 
 	if ((err = GGI_tele_getpixelfmt(vis, format)) != 0) {
-	  GGIDPRINT_MODE("GGI_tele_setmode: FAILED to set Pixelformat! (%d)\n",
+	  DPRINT_MODE("GGI_tele_setmode: FAILED to set Pixelformat! (%d)\n",
 			 err);
 	  return err;
 	}
@@ -218,7 +218,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 				"%s (%s) library.\n", libname, libargs);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT_MODE("display-tele: Success in loading "
+			DPRINT_MODE("display-tele: Success in loading "
 				"%s (%s)\n", libname, libargs);
 		}
 	}
@@ -280,7 +280,7 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	mode->size.x = mode->size.y = GGI_AUTO;
 
 	/* pass check onto server */
-	GGIDPRINT_MODE("GGI_tele_checkmode: Sending check request...\n");
+	DPRINT_MODE("GGI_tele_checkmode: Sending check request...\n");
 
 	w = tclient_new_event(priv->client, &ev, TELE_CMD_CHECK,
 			      sizeof(TeleCmdOpenData), 0);
@@ -305,11 +305,11 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	/* get reply */
-	GGIDPRINT_MODE("GGI_tele_checkmode: Waiting for reply...\n");
+	DPRINT_MODE("GGI_tele_checkmode: Waiting for reply...\n");
 
 	tele_receive_reply(vis, &ev, TELE_CMD_CHECK, ev.sequence);
 
-	GGIDPRINT_MODE("GGI_tele_checkmode: REPLY %d...\n", (int) w->error);
+	DPRINT_MODE("GGI_tele_checkmode: REPLY %d...\n", (int) w->error);
 
 	mode->graphtype = (uint32) w->graphtype;
 	mode->frames    = (uint32) w->frames;
@@ -351,7 +351,7 @@ int GGI_tele_setorigin(ggi_visual *vis, int x, int y)
 
 
 	if ((x < 0) || (y < 0) || (x > max_x) || (y > max_y)) {
-		GGIDPRINT("display-tele: setorigin out of range:"
+		DPRINT("display-tele: setorigin out of range:"
 			"(%d,%d) > (%d,%d)\n", x, y, max_x, max_y);
 		return GGI_ENOSPACE;
 	}

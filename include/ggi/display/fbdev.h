@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.6 2004/02/14 22:30:47 cegger Exp $
+/* $Id: fbdev.h,v 1.7 2004/11/27 16:42:45 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -154,12 +154,12 @@ static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
 		conmap.framebuffer = priv->fbnum;
 		if (ioctl(LIBGGI_FD(vis), FBIOPUT_CON2FBMAP, &conmap) != 0) {
 			err = errno;
-			GGIDPRINT_MISC("FBIOPUT_CON2FBMAP failed for vis: %p\n", vis);
+			DPRINT_MISC("FBIOPUT_CON2FBMAP failed for vis: %p\n", vis);
 			ggUnlock(priv->lock);
 			errno = err;
 			return -1;
 		}
-		GGIDPRINT_MISC("FBIOPUT_CON2FBMAP vis: %p, vt: %d, fb: %d\n",
+		DPRINT_MISC("FBIOPUT_CON2FBMAP vis: %p, vt: %d, fb: %d\n",
 			       vis, priv->vtnum, priv->fbnum);
 		ret = ioctl(LIBGGI_FD(vis), req, arg);
 		err = errno;

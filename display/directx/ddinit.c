@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.41 2004/11/02 08:44:54 pekberg Exp $
+/* $Id: ddinit.c,v 1.42 2004/11/27 16:42:18 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -75,7 +75,7 @@ DDShutdown(directx_priv *priv)
 
 	/* destroy the window and the surface */
 	if (priv->hWnd && !priv->hParent) {
-		GGIDPRINT("display-directx: End session\n");
+		DPRINT("display-directx: End session\n");
 		PostThreadMessage(priv->nThreadID, WM_DDEND, 0, 0);
 	}
 	DDDestroySurface(priv);
@@ -93,7 +93,7 @@ DDShutdown(directx_priv *priv)
 	if (priv->hThread &&
 	    WaitForSingleObject(priv->hThread, 2000) != WAIT_OBJECT_0) {
 		/* asta la vista, baby */
-		GGIDPRINT("display-directx: "
+		DPRINT("display-directx: "
 			  "Terminating helper thread harshly\n");
 		TerminateThread(priv->hThread, 0);
 	}
@@ -209,7 +209,7 @@ accept:
 	mm->besty = sd->dwHeight;
 	mm->bits  = sd->ddpfPixelFormat.dwRGBBitCount;
 next:
-	GGIDPRINT_MODE(msg, sd->dwWidth, sd->dwHeight,
+	DPRINT_MODE(msg, sd->dwWidth, sd->dwHeight,
 		sd->ddpfPixelFormat.dwRGBBitCount);
 	return DDENUMRET_OK;
 }
@@ -747,7 +747,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (priv->inp) {
 			gii_event ev;
 
-			GGIDPRINT("display-directx: tell inputlib about "
+			DPRINT("display-directx: tell inputlib about "
 				  "new system parameters\n");
 
 			ev.cmd.size = sizeof(gii_cmd_event);
@@ -882,7 +882,7 @@ DDEventLoop(void *lpParm)
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.hwnd == NULL && msg.message == WM_DDEND) {
 			/* Use PostThreadMessage to get here */
-			GGIDPRINT("display-directx: Ending session, "
+			DPRINT("display-directx: Ending session, "
 				  "destroying window.\n");
 			DestroyWindow(priv->hWnd);
 			break;
@@ -895,13 +895,13 @@ DDEventLoop(void *lpParm)
 					"No lParam for WM_DDFULLSCREEN\n");
 				exit(1);
 			}
-			GGIDPRINT_MODE("Set coop level\n");
+			DPRINT_MODE("Set coop level\n");
 			dxfull->hr = IDirectDraw2_SetCooperativeLevel(
 				dxfull->priv->lpddext, dxfull->priv->hWnd,
 				DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 			if (FAILED(dxfull->hr))
-				GGIDPRINT_MODE("failed %x\n", dxfull->hr);
-			GGIDPRINT_MODE("directx: Set fullscreen mode "
+				DPRINT_MODE("failed %x\n", dxfull->hr);
+			DPRINT_MODE("directx: Set fullscreen mode "
 				"(%i,%i) size %d\n",
 				dxfull->mode->visible.x,
 				dxfull->mode->visible.y,
@@ -912,7 +912,7 @@ DDEventLoop(void *lpParm)
 				dxfull->mode->visible.y,
 				GT_SIZE(dxfull->mode->graphtype), 0, 0);
 			if (FAILED(dxfull->hr))
-				GGIDPRINT_MODE("directx: failed %x\n",
+				DPRINT_MODE("directx: failed %x\n",
 					dxfull->hr);
 			SetEvent(dxfull->event);
 			continue;
@@ -921,7 +921,7 @@ DDEventLoop(void *lpParm)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	GGIDPRINT("display-directx: Helper thread terminating\n");
+	DPRINT("display-directx: Helper thread terminating\n");
 
 #ifndef __CYGWIN__
 	_endthreadex(msg.wParam);
@@ -964,7 +964,7 @@ int DDChangePalette(ggi_visual *vis)
 	int x;
 	static PALETTEENTRY pal[256];
 
-	LIBGGI_ASSERT(priv->lpddp, "No palette!\n");
+	LIB_ASSERT(priv->lpddp, "No palette!\n");
 
 	if (start >= stop)
 		return 0;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/11/13 15:56:21 cegger Exp $
+/* $Id: visual.c,v 1.20 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -63,13 +63,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (args) {
 		args = ggParseOptions((char*)args, options, KGI_NUM_OPTS);
 		if (args == NULL) {
-			GGIDPRINT_LIBS("Error in arguments\n");
+			DPRINT_LIBS("Error in arguments\n");
 			goto err_freepriv;
 		}
 	}
 	
 	if(kgiInit(&KGI_CTX(vis), "ggi", &version, options) != KGI_EOK){
-		GGIDPRINT_LIBS("Unable to initialize kgi\n");
+		DPRINT_LIBS("Unable to initialize kgi\n");
 		goto err_freegc;
 	}
 
@@ -110,7 +110,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			KGI_CTX(vis).mapper.graphic);
 #endif
 		if ((inp = giiOpen(eventname, NULL)) == NULL) {
-			GGIDPRINT_MISC("Unable to open KII inputlib\n");
+			DPRINT_MISC("Unable to open KII inputlib\n");
 			goto err_freegc;
 		}
 		

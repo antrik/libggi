@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/14 15:47:48 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/27 16:42:27 soyt Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -152,7 +152,7 @@ static int _GGIdomode(ggi_visual *vis)
 				sugname, args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT("Success in loading %s (%s)\n", sugname, args);
+			DPRINT("Success in loading %s (%s)\n", sugname, args);
 		}
 	}
 
@@ -260,7 +260,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 		if(priv->use_db)
 			sugmode.frames = 1;
 
-		GGIDPRINT("Setting mode for visual #%d...\n", i);
+		DPRINT("Setting mode for visual #%d...\n", i);
 
 		/* Set mode mantra from lib/libggi/mode.c.  Be careful here.
 		   See GGIcheckmode() for why we do this. */
@@ -271,7 +271,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 			return err;
 		}
 
-		GGIDPRINT("Success setting mode for visual #%d\n", i);
+		DPRINT("Success setting mode for visual #%d\n", i);
 
 		if(!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */

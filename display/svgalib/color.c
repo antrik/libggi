@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2004/11/24 13:31:11 cegger Exp $
+/* $Id: color.c,v 1.11 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -40,7 +40,7 @@ GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *
 	int *vgaptr;
 	size_t i;
 
-	LIBGGI_APPASSERT(colormap != NULL,
+	APP_ASSERT(colormap != NULL,
 			 "GGI_svga_setPalette() - colormap == NULL");
 
 	memcpy(LIBGGI_PAL(vis)->clut.data, colormap, len*sizeof(ggi_color));

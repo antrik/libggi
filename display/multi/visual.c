@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/11/06 22:48:30 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -78,7 +78,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		cur = malloc(sizeof(MultiVis));
 		if (cur == NULL) continue;
 
-		GGIDPRINT("display-multi: opening sub #%d: %s\n",
+		DPRINT("display-multi: opening sub #%d: %s\n",
 			priv->vis_num+1, target);
 
 		cur->vis = ggiOpen(target, NULL);

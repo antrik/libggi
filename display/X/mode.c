@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.38 2004/11/18 13:39:44 mooz Exp $
+/* $Id: mode.c,v 1.39 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -55,7 +55,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	int		idx;
 	ggi_x_vi	*best;
 
-	LIBGGI_APPASSERT(vis != NULL, "GGIcheckmode: vis == NULL");
+	APP_ASSERT(vis != NULL, "GGIcheckmode: vis == NULL");
 
 	priv = GGIX_PRIV(vis);
 
@@ -89,9 +89,9 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 
 	/* We have a successful mode :-) Adjust the values in tm. */
 	tm->graphtype = _ggi_x_scheme_vs_class(tm->graphtype, best);
-	LIBGGI_APPASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
+	APP_ASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
 	if (_ggi_x_fit_geometry(vis, tm, best, tm) != GGI_OK) {
-		GGIDPRINT("This should not happen\n");
+		DPRINT("This should not happen\n");
 	}
 	return GGI_OK;
 
@@ -125,9 +125,9 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	if (best == NULL) goto suggest2;
 
 	tm->graphtype = _ggi_x_scheme_vs_class(tm->graphtype, best);
-	LIBGGI_APPASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
+	APP_ASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
 	if (_ggi_x_fit_geometry(vis, tm, best, tm) != GGI_OK) {
-		GGIDPRINT("This should not happen\n");
+		DPRINT("This should not happen\n");
 	}
 	return -1;
 
@@ -157,7 +157,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	}
 	if (best == NULL) goto suggest3;
 	tm->graphtype = _ggi_x_scheme_vs_class(GGI_AUTO, best);
-	LIBGGI_APPASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
+	APP_ASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
 	_ggi_x_fit_geometry(vis, tm, best, tm);
 	return -1;
 
@@ -180,7 +180,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 		return -1;
 	}
 	tm->graphtype = _ggi_x_scheme_vs_class(GGI_AUTO, best);
-	LIBGGI_APPASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
+	APP_ASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
 	_ggi_x_fit_geometry(vis, tm, best, tm);
 	return -1;
 }
@@ -194,19 +194,19 @@ int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 
 	priv = GGIX_PRIV(vis);
 
-	GGIDPRINT_MODE("X (checkmode_normal): mlfuncs.validate = %p\n",
+	DPRINT_MODE("X (checkmode_normal): mlfuncs.validate = %p\n",
 			priv->mlfuncs.validate);
 	if (priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
-			GGIDPRINT_MODE("X: mlfuncs.validate failed: %i\n",
+			DPRINT_MODE("X: mlfuncs.validate failed: %i\n",
 				priv->cur_mode);
 			/* An error occured */
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
 		}	/* if */
-		GGIDPRINT_MODE("X: mlfuncs.validate successful: %i\n",
+		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 			priv->cur_mode);
 	}	/* if */
 
@@ -227,7 +227,7 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 			(unsigned int *)&w, (unsigned int *)&h,
 			&dummy, &depth))
 	{
-		GGIDPRINT_MODE("X (checkmode_fixed):"
+		DPRINT_MODE("X (checkmode_fixed):"
 				"no reply from X11 server\n");
 		return GGI_EEVNOTARGET;
 	}
@@ -243,19 +243,19 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		tm->visible.y = h;
 	}
 
-	GGIDPRINT_MODE("X (checkmode_fixed): mlfuncs.validate = %p\n",
+	DPRINT_MODE("X (checkmode_fixed): mlfuncs.validate = %p\n",
 			priv->mlfuncs.validate);
 	if (priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
-			GGIDPRINT_MODE("X: mlfuncs.validate failed: %i\n",
+			DPRINT_MODE("X: mlfuncs.validate failed: %i\n",
 					priv->cur_mode);
 			/* An error occured */
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
 		}	/* if */
-		GGIDPRINT_MODE("X: mlfuncs.validate successful: %i\n",
+		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 				priv->cur_mode);
 	}	/* if */
 
@@ -276,7 +276,7 @@ static int ggi_x_load_mode_libs(ggi_visual *vis)
 				sugname, args);
                         return err;
                 } else {
-		  	GGIDPRINT_LIBS("X: GGIsetmode: success in loading "
+		  	DPRINT_LIBS("X: GGIsetmode: success in loading "
 				       "%s (%s)\n", sugname, args);
 		}
         }
@@ -325,7 +325,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	ggi_x_priv      *priv;
 	int destroychild, destroyparent, createchild, createparent;
 
-	GGIDPRINT("GGI_X_setmode_normal(%p, %p) called\n",vis,tm);
+	DPRINT("GGI_X_setmode_normal(%p, %p) called\n",vis,tm);
 
 	priv = GGIX_PRIV(vis);
 
@@ -333,7 +333,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
 	priv->viidx = viidx;
 
-	GGIDPRINT("* viidx = %i\n", priv->viidx);
+	DPRINT("* viidx = %i\n", priv->viidx);
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
@@ -344,11 +344,11 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	_ggi_x_build_pixfmt(vis, tm, vi); /* Fill in ggi_pixelformat */
 
 	/* Restore original mode */
-	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
+	DPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
 			priv->mlfuncs.restore);
 	if (priv->mlfuncs.restore != NULL) {
 		err = priv->mlfuncs.restore(vis);
-		GGIDPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
+		DPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
 				err);
 		if (err) goto err0;
 	}	/* if */
@@ -383,22 +383,22 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 				    0, 0);
 	_ggi_x_dress_parentwin(vis, tm);
 
-	GGIDPRINT_MODE("X: Prepare to resize.\n");
+	DPRINT_MODE("X: Prepare to resize.\n");
 	XResizeWindow(priv->disp,priv->parentwin,
 			(unsigned int)tm->visible.x,
 			(unsigned int)tm->visible.y);
-	GGIDPRINT_MODE("X: About to map parent (%p)\n", priv->parentwin);
+	DPRINT_MODE("X: About to map parent (%p)\n", priv->parentwin);
 
 	/* Map window. */
-	GGIDPRINT_MODE("X: Parent win: Map Input\n");
+	DPRINT_MODE("X: Parent win: Map Input\n");
 	XSelectInput(priv->disp, priv->parentwin, ExposureMask);
-	GGIDPRINT_MODE("X: Parent win: Raise Mapping\n");
+	DPRINT_MODE("X: Parent win: Raise Mapping\n");
 	XMapRaised(priv->disp, priv->parentwin);
-	GGIDPRINT_MODE("X: Parent win: Map requested\n");
+	DPRINT_MODE("X: Parent win: Map requested\n");
 
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
-	GGIDPRINT_MODE("X: Window Mapped\n");
+	DPRINT_MODE("X: Window Mapped\n");
 
 	/* We let the parent window listen for the keyboard.
 	 * this allows to have the windowmanager decide about keyboard 
@@ -411,16 +411,16 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 		     KeymapStateMask | KeyPressMask | KeyReleaseMask);
 
 oldparent:
-	GGIDPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
+	DPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
 
 	ggi_x_load_mode_libs(vis);
 	_ggi_x_load_slaveops(vis);
-	GGIDPRINT("* viidx = %i\n", priv->viidx);
+	DPRINT("* viidx = %i\n", priv->viidx);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
 		if (err) {
 			/* xlib lock is still acquired here - unlock before exiting */
-			GGIDPRINT("priv->createfb failed.\n");
+			DPRINT("priv->createfb failed.\n");
 			ggUnlock(priv->xliblock);
 			goto err0;
 		}
@@ -428,7 +428,7 @@ oldparent:
 
 	_ggi_x_free_colormaps(vis);
 	XSync(priv->disp, 0);
-	GGIDPRINT("Create colormap.\n");
+	DPRINT("Create colormap.\n");
 	_ggi_x_create_colormaps(vis, vi);
 
 	/* Create the child window */
@@ -440,7 +440,7 @@ oldparent:
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap | CWBorderPixel, 
 				  &attrib);
-	GGIDPRINT_MODE("X: About to map child\n");
+	DPRINT_MODE("X: About to map child\n");
 
 	/* Have the parent window tell the WM its children have colormaps */
 	XSetWMColormapWindows(priv->disp, priv->parentwin, &(priv->win), 1);
@@ -451,7 +451,7 @@ oldparent:
 
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
-	GGIDPRINT_MODE("X: Window Mapped\n");
+	DPRINT_MODE("X: Window Mapped\n");
 
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
@@ -474,7 +474,7 @@ oldparent:
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
 			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
-	GGIDPRINT_MODE("X GCs allocated.\n");
+	DPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (frees old cursor) */
 	if (priv->createcursor) priv->createcursor(vis);
@@ -485,20 +485,20 @@ oldparent:
 
 	ggUnlock(priv->xliblock);
 
-	GGIDPRINT_MODE("X: Sync\n");
+	DPRINT_MODE("X: Sync\n");
 	XSync(priv->disp, 0);
-	GGIDPRINT_MODE("X: Sync done\n");
+	DPRINT_MODE("X: Sync done\n");
 
 	if (priv->createdrawable) {
 		err = priv->createdrawable(vis);
 		if (err) goto err1;
 	}
 
-	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.enter = %p\n",
+	DPRINT_MODE("X (setmode_normal): mlfuncs.enter = %p\n",
 			priv->mlfuncs.enter);
 	if (priv->mlfuncs.enter != NULL) {
 		err = priv->mlfuncs.enter(vis, priv->cur_mode);
-		GGIDPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
+		DPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
 				err);
 		if (err) goto err1;
 	}	/* if */
@@ -508,7 +508,7 @@ oldparent:
 		gii_event ev;
 		gii_xwin_cmddata_setparam data;
 
-		GGIDPRINT_MODE("X (setmode_normal): tell inputlib about new window\n");
+		DPRINT_MODE("X (setmode_normal): tell inputlib about new window\n");
 
 		ev.cmd.size = sizeof(gii_cmd_event);
 		ev.cmd.type = evCommand;
@@ -530,14 +530,14 @@ oldparent:
 	}
 
 
-	GGIDPRINT_MODE("X (setmode_normal): set dirty region\n");
+	DPRINT_MODE("X (setmode_normal): set dirty region\n");
 
 	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
 	priv->dirtytl.x = 1; priv->dirtybr.x = 0;
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
-	GGIDPRINT_MODE("X (setmode_normal): return code = %i\n", err);
+	DPRINT_MODE("X (setmode_normal): return code = %i\n", err);
 	return err;
 
 err1:
@@ -559,7 +559,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	XVisualInfo	*vi;
 	ggi_x_priv      *priv;
 
-	GGIDPRINT("GGI_X_setmode_fixed(%p, %p) called\n",vis,tm);
+	DPRINT("GGI_X_setmode_fixed(%p, %p) called\n",vis,tm);
 		
 	priv = GGIX_PRIV(vis);
 
@@ -602,7 +602,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		err = priv->createfb(vis);
 		if (err) {
 			/* xlib lock is still acquired here - unlock before exiting */
-			GGIDPRINT("priv->createfb failed.\n");
+			DPRINT("priv->createfb failed.\n");
 			ggUnlock(priv->xliblock);
 			goto err0;
 		}
@@ -615,11 +615,11 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	attrib.colormap = priv->cmap;
 	attribmask = CWBackingStore;
 	if (priv->win == root) {
-		GGIDPRINT_MODE("X (setmode_fixed): mlfuncs.restore = %p\n",
+		DPRINT_MODE("X (setmode_fixed): mlfuncs.restore = %p\n",
 			priv->mlfuncs.restore);
 		if (priv->mlfuncs.restore != NULL) {
 			err = priv->mlfuncs.restore(vis);
-			GGIDPRINT_MODE("X: mlfuncs.restore retcode = %i\n",
+			DPRINT_MODE("X: mlfuncs.restore retcode = %i\n",
 					err);
 			if (err) goto err0;
 		}	/* if */
@@ -633,7 +633,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 				  (unsigned)tm->virt.y, 0,
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap, &attrib);
-	GGIDPRINT_MODE("X: About to map child\n");
+	DPRINT_MODE("X: About to map child\n");
 
 	/* Have the parent window tell the WM its children have colormaps */
 	XSetWMColormapWindows(priv->disp, priv->parentwin, &(priv->win), 1);
@@ -644,7 +644,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
-	GGIDPRINT_MODE("X: Window Mapped\n");
+	DPRINT_MODE("X: Window Mapped\n");
 
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
@@ -668,7 +668,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
 			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
-	GGIDPRINT_MODE("X GCs allocated.\n");
+	DPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (destroys old one) */
 	if (priv->createcursor) priv->createcursor(vis);
@@ -679,20 +679,20 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	ggUnlock(priv->xliblock);
 
-	GGIDPRINT_MODE("X: Sync\n");
+	DPRINT_MODE("X: Sync\n");
 	XSync(priv->disp, 0);
-	GGIDPRINT_MODE("X: Sync done\n");
+	DPRINT_MODE("X: Sync done\n");
 
 	if (priv->createdrawable) {
 		err = priv->createdrawable(vis);
 		if (err) goto err1;
 	}
 
-	GGIDPRINT_MODE("X (setmode_fixed): mlfuncs.enter = %p\n",
+	DPRINT_MODE("X (setmode_fixed): mlfuncs.enter = %p\n",
 		priv->mlfuncs.enter);
 	if (priv->mlfuncs.enter != NULL) {
 		err = priv->mlfuncs.enter(vis, priv->cur_mode);
-		GGIDPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
+		DPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
 				err);
 		if (err) goto err1;
 	}	/* if */
@@ -702,7 +702,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		gii_event ev;
 		gii_xwin_cmddata_setparam data;
 
-		GGIDPRINT_MODE("X (setmode_fixed): tell inputlib about new window\n");
+		DPRINT_MODE("X (setmode_fixed): tell inputlib about new window\n");
 
 		ev.cmd.size = sizeof(gii_cmd_event);
 		ev.cmd.type = evCommand;
@@ -723,14 +723,14 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		giiEventSend(priv->inp, &ev);
 	}
 
-	GGIDPRINT_MODE("X (setmode_fixed): set dirty region\n");
+	DPRINT_MODE("X (setmode_fixed): set dirty region\n");
 
 	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
 	priv->dirtytl.x = 1; priv->dirtybr.x = 0;
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
-	GGIDPRINT_MODE("X (setmode_fixed): return code = %i\n", err);
+	DPRINT_MODE("X (setmode_fixed): return code = %i\n", err);
 	return err;
 
 err1:
@@ -745,7 +745,7 @@ err0:
 /************************/
 int GGI_X_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL, "GGIgetmode: Visual == NULL");
+	APP_ASSERT(vis != NULL, "GGIgetmode: Visual == NULL");
 
 	/* We assume the mode in the visual to be o.k. */
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
@@ -759,7 +759,7 @@ int _ggi_x_resize(ggi_visual_t vis, int w, int h, ggi_event *ev)
 {
 	ggi_cmddata_switchrequest *swreq;
 
-	GGIDPRINT_DRAW("_ggi_x_resize(%p, %dx%d, %p) called\n",
+	DPRINT_DRAW("_ggi_x_resize(%p, %dx%d, %p) called\n",
 		       vis, w, h, ev);
 
 	if ((LIBGGI_X(vis) == w) &&

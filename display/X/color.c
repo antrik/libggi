@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.16 2004/11/27 00:05:56 cegger Exp $
+/* $Id: color.c,v 1.17 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -74,7 +74,7 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
 	_ggi_smart_match_palettes(LIBGGI_PAL(vis)->clut.data, len, X_pal, len);
 
 	for (i=0; i < len; i++) {
-		GGIDPRINT_COLOR("Smart alloc %03d: X=%02x%02x%02x "
+		DPRINT_COLOR("Smart alloc %03d: X=%02x%02x%02x "
 		             " GGI=%02x%02x%02x  (orig: %02x%02x%02x)\n", i, 
 			     X_pal[i].r >> 8, X_pal[i].g >> 8, X_pal[i].b >> 8, 
 			     LIBGGI_PAL(vis)->clut.data[i].r >> 8, 
@@ -94,7 +94,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 
 	priv = GGIX_PRIV(vis);
 
-	LIBGGI_ASSERT(priv->cmap, "No cmap!\n");
+	LIB_ASSERT(priv->cmap, "No cmap!\n");
 
 	if (LIBGGI_PAL(vis)->rw_start >= LIBGGI_PAL(vis)->rw_stop) return 0;
 	if (LIBGGI_PAL(vis)->clut.data) {
@@ -141,10 +141,10 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	
-	GGIDPRINT_COLOR("GGI_X_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
+	DPRINT_COLOR("GGI_X_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
 			vis, start, len, colormap->r,colormap->g ,colormap->b);
 
-	LIBGGI_APPASSERT(colormap != NULL,
+	APP_ASSERT(colormap != NULL,
 			 "ggiSetPalette() called with NULL colormap!");
 
 	if (colormap == NULL) return GGI_EARGINVAL;
@@ -173,7 +173,7 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 		LIBGGI_PAL(vis)->rw_stop  = start+len;
 	}
 
-	GGIDPRINT_COLOR("X setPalette success\n");
+	DPRINT_COLOR("X setPalette success\n");
 
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) _ggi_x_flush_cmap(vis);
 
@@ -270,14 +270,14 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		vis->gamma->maxread_g = vis->gamma->maxread_b = 0;
 	vis->gamma->gamma_r = vis->gamma->gamma_g = vis->gamma->gamma_b = 1.0;
 
-	GGIDPRINT_MODE("_ggi_x_create_colormaps(%p, %p) called\n",
+	DPRINT_MODE("_ggi_x_create_colormaps(%p, %p) called\n",
 			vis, vi);
 	
 		
 	if (vi->class == PseudoColor || vi->class == GrayScale ||
 	    vi->class == StaticColor || vi->class == StaticGray)
 	{
-		GGIDPRINT_MODE("Colormap needed\n");	
+		DPRINT_MODE("Colormap needed\n");	
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
@@ -311,17 +311,17 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 
 		LIBGGI_PAL(vis)->rw_start = 256;
 		LIBGGI_PAL(vis)->rw_stop  = 0;
-		GGIDPRINT_MODE("X: copied default colormap into (%x)\n",
+		DPRINT_MODE("X: copied default colormap into (%x)\n",
 			       priv->cmap);
 		return;
 	} else if (vi->class != DirectColor) {
-		LIBGGI_APPASSERT(vi->class == TrueColor, "Unknown class!\n");
+		APP_ASSERT(vi->class == TrueColor, "Unknown class!\n");
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocNone);
 		if (priv->cmap == None) return;
 		if (vi->class != TrueColor) return;
 	} else {
-		GGIDPRINT("Filmed on location in DirectColor\n");
+		DPRINT("Filmed on location in DirectColor\n");
 		vis->opcolor->setgammamap = GGI_X_setgammamap;
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
@@ -341,7 +341,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	if (priv->ncols < vis->gamma->maxread_b)
 		priv->ncols = vis->gamma->maxread_b;
 	priv->ncols = 1 << priv->ncols;
-	LIBGGI_APPASSERT(priv->ncols > 0, "X: Spurious Pixel Format");
+	APP_ASSERT(priv->ncols > 0, "X: Spurious Pixel Format");
 
 	/* Fill the colormap with the original colors (or just read) */
 	priv->gammamap = calloc((size_t)priv->ncols, sizeof(XColor));
@@ -398,5 +398,5 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 
 	if (vi->class != DirectColor) return;
 	XStoreColors(priv->disp, priv->cmap, priv->gammamap, priv->gamma.len);
-	GGIDPRINT_MODE("X: copied default colormap into (%x)\n", priv->cmap);
+	DPRINT_MODE("X: copied default colormap into (%x)\n", priv->cmap);
 }

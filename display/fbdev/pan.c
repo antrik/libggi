@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.6 2004/11/13 15:56:20 cegger Exp $
+/* $Id: pan.c,v 1.7 2004/11/27 16:42:19 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -43,12 +43,12 @@ int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
 	int err = 0;
 
 	if ((priv->fix.xpanstep == 0) && (priv->fix.ypanstep == 0)) {
-		GGIDPRINT("display-fbdev: panning not supported.\n");
+		DPRINT("display-fbdev: panning not supported.\n");
 		return -1;
 	}
 	
 	if ((x < 0) || (y < 0) || (x > max_x) || (y > max_y)) {
-		GGIDPRINT("display-fbdev: panning out of range:"
+		DPRINT("display-fbdev: panning out of range:"
 			"(%d,%d) > (%d,%d)\n", x, y, max_x, max_y);
 		return GGI_EARGINVAL;
 	}
@@ -66,7 +66,7 @@ int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
 	err = fbdev_doioctl(vis, FBIOPAN_DISPLAY, &priv->var); 
 	
 	if (err) {
-		GGIDPRINT("display-fbdev: PAN_DISPLAY failed.\n");
+		DPRINT("display-fbdev: PAN_DISPLAY failed.\n");
 		return err;
 	}
 

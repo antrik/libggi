@@ -1,4 +1,4 @@
-INCLUDES = -DBUILDING_LIBGGI -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -DPKG_NAME='"LibGGI"' DBUILDING_LIBGGI -I$(top_srcdir)/include $(extra_includes)
 libggi_la_LIBADD = -lgii -lgg
 
 lib_LTLIBRARIES = libggi.la

@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.25 2004/10/31 13:15:00 cegger Exp $
+/* $Id: init.c,v 1.26 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -179,7 +179,7 @@ int ggiInit(void)
 	str = getenv("GGI_DEBUG");
 	if (str != NULL) {
 		_ggiDebug |= atoi(str) & GGIDEBUG_ALL;
-		GGIDPRINT_CORE("%s Debugging=%d\n",
+		DPRINT_CORE("%s Debugging=%d\n",
 			       GGIDEBUG_ISSYNC ? "sync" : "async",
 			       _ggiDebug);
 	}
@@ -221,7 +221,7 @@ int ggiExit(void)
 {
 	ggi_extension *tmp, *next;
 
-	GGIDPRINT_CORE("ggiExit called\n");
+	DPRINT_CORE("ggiExit called\n");
 	if (!_ggiLibIsUp) return GGI_ENOTALLOC;
 
 	if (_ggiLibIsUp > 1) {
@@ -229,7 +229,7 @@ int ggiExit(void)
 		return _ggiLibIsUp;
 	}
 
-	GGIDPRINT_CORE("ggiExit: really destroying.\n");
+	DPRINT_CORE("ggiExit: really destroying.\n");
 	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
 		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual));
 	}
@@ -248,7 +248,7 @@ int ggiExit(void)
 	giiExit();
 	_ggiLibIsUp = 0;
 
-	GGIDPRINT_CORE("ggiExit: done!\n");
+	DPRINT_CORE("ggiExit: done!\n");
 	return 0;
 }
 
@@ -256,7 +256,7 @@ void ggiPanic(const char *format,...)
 {
 	va_list ap;
 
-	GGIDPRINT_CORE("ggiPanic called\n");
+	DPRINT_CORE("ggiPanic called\n");
 
 	va_start(ap,format);
 	vfprintf(stderr,format,ap);
@@ -295,7 +295,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	if (!_ggiLibIsUp) return NULL;
 
-	GGIDPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
+	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
 
 	if (driver == NULL) {
 		void *ret;
@@ -330,7 +330,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	argptr=va_arg(drivers,void *);
 	va_end(drivers);
 
-	GGIDPRINT_CORE("Loading driver %s\n",driver);
+	DPRINT_CORE("Loading driver %s\n",driver);
 
 	do {
 		if (ggParseTarget((char *)driver,target,1024) == NULL) {
@@ -361,14 +361,14 @@ ggi_visual *ggiOpen(const char *driver,...)
 		GG_SLIST_INSERT_HEAD(&_ggiVisuals.visual, vis, vislist);
 		_ggiVisuals.visuals++;
 		ggUnlock(_ggiVisuals.mutex);
-		GGIDPRINT_CORE("ggiOpen: returning %p\n", vis);
+		DPRINT_CORE("ggiOpen: returning %p\n", vis);
 	} else {
 		_ggiDestroyVisual(vis);
-		GGIDPRINT_CORE("ggiOpen: failure\n");
+		DPRINT_CORE("ggiOpen: failure\n");
 		return NULL;
 	}
 
-	GGIDPRINT_CORE("Loading extra inputs/filters for %s\n",driver);
+	DPRINT_CORE("Loading extra inputs/filters for %s\n",driver);
 
 	inplist=NULL;
 
@@ -380,7 +380,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	mangle_variable(str);
 	if (!inplist) { 
 		inplist = getenv(str);
-		GGIDPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
+		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
 	}
 
 #ifdef HAVE_SNPRINTF
@@ -391,13 +391,13 @@ ggi_visual *ggiOpen(const char *driver,...)
 	mangle_variable(str);
 	if (!inplist) {
 		inplist = getenv(str);
-		GGIDPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
+		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
 	}
 
 	strcpy(str,"GGI_INPUT");
 	if (!inplist) {
 		inplist = getenv(str);
-		GGIDPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
+		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
 	}
 
 	if (inplist) {
@@ -416,7 +416,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 		vis->input = giiOpen("null", NULL);
 		if (vis->input == NULL) {
 			/* Something is wrong here - bail out */
-			GGIDPRINT_CORE("Cannot open input-null\n");
+			DPRINT_CORE("Cannot open input-null\n");
 			ggiClose(vis);
 			return NULL;
 		}
@@ -433,11 +433,11 @@ int ggiClose(ggi_visual *visual)
 {
 	ggi_visual *vis,*pvis=NULL;
 
-	GGIDPRINT_CORE("ggiClose(\"%p\") called\n", visual);
+	DPRINT_CORE("ggiClose(\"%p\") called\n", visual);
 
 	if (!_ggiLibIsUp) return GGI_ENOTALLOC;
 
-	GGIDPRINT_CORE("ggiClose: closing\n");
+	DPRINT_CORE("ggiClose: closing\n");
 
 	vis = GG_SLIST_FIRST(&_ggiVisuals.visual);
 	while (vis != NULL) {
@@ -462,7 +462,7 @@ int ggiClose(ggi_visual *visual)
 
 	_ggiDestroyVisual(vis);
 
-	GGIDPRINT_CORE("ggiClose: done!\n");
+	DPRINT_CORE("ggiClose: done!\n");
 
 	return 0;
 }
@@ -480,13 +480,13 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 {
 	ggi_extension *tmp, *ext;
 
-	GGIDPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
+	DPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
 		       name, size, change);
 	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
 		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 			if (strcmp(tmp->name, name) == 0) {
 				tmp->initcount++;
-				GGIDPRINT_CORE("ggiExtensionRegister: accepting copy #%d of extension %s\n",
+				DPRINT_CORE("ggiExtensionRegister: accepting copy #%d of extension %s\n",
 					       tmp->initcount,tmp->name);
 				return tmp->id;
 			}
@@ -508,7 +508,7 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 		GG_TAILQ_INSERT_HEAD(&_ggiExtension, ext, extlist);
 	}
 
-	GGIDPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
+	DPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
 
 	ext->id = numextensions;
 	numextensions++;
@@ -527,20 +527,20 @@ int ggiExtensionUnregister(ggi_extid id)
 {
 	ggi_extension *tmp;
 
-	GGIDPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
+	DPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
 	if (GG_TAILQ_EMPTY(&_ggiExtension)) return GGI_ENOTALLOC;
 
 	GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 		if (tmp->id != id) continue;
 		if (--tmp->initcount) {
-			GGIDPRINT_CORE("ggiExtensionUnregister: removing #%d copy of extension %s\n", tmp->initcount+1, tmp->name);
+			DPRINT_CORE("ggiExtensionUnregister: removing #%d copy of extension %s\n", tmp->initcount+1, tmp->name);
 			/* Removed copy */
 			return 0;	
 		}
 
 		GG_TAILQ_REMOVE(&_ggiExtension, tmp, extlist);
 
-		GGIDPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
+		DPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
 			       tmp->name);
 
 		free(tmp);
@@ -566,7 +566,7 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 {
 	ggi_extension *tmp = NULL;
 
-	GGIDPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
+	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
 
 	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
 		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
@@ -586,7 +586,7 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 		memset(&vis->extlist[vis->numknownext], 0,
 		       extsize*(id + 1U - vis->numknownext));
 		vis->numknownext = id + 1U;
-		GGIDPRINT_CORE("ggiExtensionAttach: ExtList now at %p (%d)\n",
+		DPRINT_CORE("ggiExtensionAttach: ExtList now at %p (%d)\n",
 			       vis->extlist, vis->numknownext);
 	}
 
@@ -609,7 +609,7 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 */
 int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 {
-	GGIDPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
+	DPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
 
 	if (vis->numknownext <= id || LIBGGI_EXTAC(vis, id) == 0) {
 	     	return GGI_EARGINVAL;
@@ -629,11 +629,11 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 {
 	ggi_extension *tmp = NULL;
 
-	GGIDPRINT_CORE("ggiIndicateChange(%p, 0x%x) called\n",
+	DPRINT_CORE("ggiIndicateChange(%p, 0x%x) called\n",
 		       vis, whatchanged);
 
 	/* Tell all attached extensions on this visual */
-	GGIDPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
+	DPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
 		       whatchanged, vis);
 
 	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {

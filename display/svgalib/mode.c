@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2004/11/24 13:44:38 cegger Exp $
+/* $Id: mode.c,v 1.25 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -128,7 +128,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	char modestr[64];
 	char *colors;
 
-	GGIDPRINT("SVGAlib trying for bitdepth %d, %d.\n", tm->graphtype, GT_DEPTH(tm->graphtype));
+	DPRINT("SVGAlib trying for bitdepth %d, %d.\n", tm->graphtype, GT_DEPTH(tm->graphtype));
 	/* See GGI_svga_checkmode() for details... */
 	switch(tm->graphtype) {
 	case GT_1BIT : colors = "2"; break;
@@ -149,10 +149,10 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	sprintf(modestr, "G%dx%dx%s",
 		tm->visible.x, tm->visible.y, colors);
 #endif
-	GGIDPRINT("SVGAlib trying modeline=%s.\n", modestr);
+	DPRINT("SVGAlib trying modeline=%s.\n", modestr);
 
  	modenum = vga_getmodenumber(modestr);
-	GGIDPRINT("SVGAlib modeline=%s returns modenum=%d.\n", modestr, modenum);
+	DPRINT("SVGAlib modeline=%s returns modenum=%d.\n", modestr, modenum);
 
 	return modenum;
 }
@@ -174,7 +174,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	if (_ggi_svgalib_setmode(modenum) != 0) return GGI_EFATAL;
 
 	modeinfo = vga_getmodeinfo(modenum);
-	GGIDPRINT("Setting SVGAlib mode number %d.\n", modenum);
+	DPRINT("Setting SVGAlib mode number %d.\n", modenum);
 
 	/* Set requested mode for visual. */
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
@@ -228,7 +228,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	/* DirectBuffers */
 	_GGI_svga_freedbs(vis);
 	priv->frame_size = tm->virt.x * tm->virt.y * modeinfo->bytesperpixel;
-	GGIDPRINT("Setting up DirectBuffers, islinear=%d, frame_size=%d, frames=%d\n",
+	DPRINT("Setting up DirectBuffers, islinear=%d, frame_size=%d, frames=%d\n",
 		  priv->islinear, priv->frame_size, LIBGGI_MODE(vis)->frames);
 	for (i=0; priv->islinear && (i < tm->frames); i++) {
 		ggi_directbuffer *buf;
@@ -250,7 +250,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 		buf->buffer.plb.stride = modeinfo->linewidth;
 		buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
-		GGIDPRINT("Setting up DirectBuffer %d, stride=%d\n",
+		DPRINT("Setting up DirectBuffer %d, stride=%d\n",
 			i, buf->buffer.plb.stride);
 
 		err = vga_claimvideomemory(priv->frame_size * tm->frames);
@@ -279,7 +279,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 				sugname, args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT("Success in loading %s (%s)\n",
+			DPRINT("Success in loading %s (%s)\n",
 				  sugname, args);
 		}
 	}
@@ -394,7 +394,7 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 int GGI_svga_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
+	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
 		return GGI_EARGINVAL;
 

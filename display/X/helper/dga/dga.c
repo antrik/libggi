@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.7 2004/11/06 22:48:25 cegger Exp $
+/* $Id: dga.c,v 1.8 2004/11/27 16:42:15 soyt Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -80,7 +80,7 @@ priv->modes[i].gt = GT_CONSTRUCT(modes[i].depth, ggigt, modes[i].bitsPerPixel);
 #warning handle this case
 			break;
 		}
-		GGIDPRINT_MISC("Found mode: %dx%d\n",
+		DPRINT_MISC("Found mode: %dx%d\n",
 			       priv->modes[i].x, priv->modes[i].y);
         }
 	return GGI_OK;
@@ -108,7 +108,7 @@ static int ggi_xdga_enter_mode(ggi_visual *vis, int num) {
 	if (dev != NULL) XFree(dev);
 
 	if ((num+1) > priv->modes_num) {
-		GGIDPRINT("helper-x-dga: Bug somewhere -- bad mode index.\n");
+		DPRINT("helper-x-dga: Bug somewhere -- bad mode index.\n");
 		return GGI_ENODEVICE;
 	}
 
@@ -178,7 +178,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv = GGIX_PRIV(vis);
 
 	XF86DGAQueryVersion(priv->disp, &i, &j);
-	GGIDPRINT("display-DGA version %d.%d\n", i, j);
+	DPRINT("display-DGA version %d.%d\n", i, j);
 	if (i < 1) {
 		fprintf(stderr, "Your XF86DGA is too old (%d.%d).\n", i, j);
 		return GGI_ENODEVICE;

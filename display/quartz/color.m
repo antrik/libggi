@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.8 2004/11/27 00:05:59 cegger Exp $
+/* $Id: color.m,v 1.9 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -42,7 +42,7 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colo
 
 	priv = QUARTZ_PRIV(vis);
 
-	GGIDPRINT("quartz setpalette.\n");
+	DPRINT("quartz setpalette.\n");
 
 	fprintf(stderr, "setpalvec (1)\n");
 	if (start == GGI_PALETTE_DONTCARE) {

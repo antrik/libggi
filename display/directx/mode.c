@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2004/11/26 21:35:33 cegger Exp $
+/* $Id: mode.c,v 1.30 2004/11/27 16:42:18 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -45,7 +45,7 @@ directx_acquire(ggi_resource *res, uint32 actype)
 	directx_priv *priv;
 	int bufnum;
 
-	GGIDPRINT_MISC("directx_acquire(%p, 0x%x) called\n", res, actype);
+	DPRINT_MISC("directx_acquire(%p, 0x%x) called\n", res, actype);
 
 	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE)) {
 		return GGI_EARGINVAL;
@@ -72,7 +72,7 @@ directx_acquire(ggi_resource *res, uint32 actype)
 	res->curactype |= actype;
 	res->count++;
 
-	GGIDPRINT_MISC("directx_acquire - success, count: %d\n",
+	DPRINT_MISC("directx_acquire - success, count: %d\n",
 		       res->count);
 
 	return 0;
@@ -81,7 +81,7 @@ directx_acquire(ggi_resource *res, uint32 actype)
 static int
 directx_release(ggi_resource *res)
 {
-	GGIDPRINT_MISC("directx_release(%p) called\n", res);
+	DPRINT_MISC("directx_release(%p) called\n", res);
 
 	if (res->count < 1)
 		return GGI_ENOTALLOC;
@@ -240,7 +240,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 	else if (mode->virt.y == GGI_AUTO)
 		mode->virt.y = mode->visible.y;
 
-	GGIDPRINT_MODE("directx: visible (%i,%i) virt (%i,%i) size (%i,%i)\n",
+	DPRINT_MODE("directx: visible (%i,%i) virt (%i,%i) size (%i,%i)\n",
 		mode->visible.x, mode->visible.y,
 		mode->virt.x, mode->virt.y,
 		mode->size.x, mode->size.y);
@@ -289,7 +289,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 				     width, height);
 	LeaveCriticalSection(&priv->cs);
 
-	GGIDPRINT_MODE
+	DPRINT_MODE
 	    ("display-directx: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
 	     mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y,
 	     mode->frames, mode->graphtype);
@@ -364,7 +364,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat =
 		    LIBGGI_PIXFMT(vis);
 
-		GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
+		DPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
 			       LIBGGI_APPBUFS(vis)[i]->read,
 			       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
 	}
@@ -385,7 +385,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 				"%s (%s) library\n", libname, libargs);
 			return rc;
 		}
-		GGIDPRINT("Success in loading %s (%s)\n",
+		DPRINT("Success in loading %s (%s)\n",
 			  libname, libargs);
 	}
 	vis->opdraw->setorigin = GGI_directx_setorigin;
@@ -418,7 +418,7 @@ GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
-	LIBGGI_APPASSERT(vis != NULL,
+	APP_ASSERT(vis != NULL,
 			 "directx: GGIgetmode: Visual == NULL");
 
 	EnterCriticalSection(&priv->cs);
@@ -435,11 +435,11 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 
-	GGIDPRINT_COLOR(
+	DPRINT_COLOR(
 	"GGI_directx_setpalvec(%p, %d, %d, {%d, %d, %d}) called\n",
 	vis, start, len, colormap->r,colormap->g ,colormap->b);
 
-	LIBGGI_APPASSERT(colormap != NULL,
+	APP_ASSERT(colormap != NULL,
 		"ggiSetPalette() called with NULL colormap!");
 
 	if (((int)start) == GGI_PALETTE_DONTCARE) {
@@ -468,7 +468,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 		LIBGGI_PAL(vis)->rw_stop  = start+len;
 	}
 
-	GGIDPRINT_COLOR("directx setPalette success\n");
+	DPRINT_COLOR("directx setPalette success\n");
 
 /*	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))*/
 		DDChangePalette(vis);

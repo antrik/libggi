@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/13 15:56:23 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -90,7 +90,7 @@ static int do_dbstuff(ggi_visual *vis)
 	priv->fb_size = priv->frame_size * LIBGGI_MODE(vis)->frames;
 	priv->fb_ptr  = malloc((size_t)priv->fb_size);
 	
-	GGIDPRINT_MODE("display-palemu: fb=%p size=%d frame=%d\n", 
+	DPRINT_MODE("display-palemu: fb=%p size=%d frame=%d\n", 
 		priv->fb_ptr, priv->fb_size, priv->frame_size);
 
 	if (priv->fb_ptr == NULL) {
@@ -165,7 +165,7 @@ static int do_setmode(ggi_visual *vis)
 			return GGI_EFATAL;
 		}
 
-		GGIDPRINT("Success in loading %s (%s)\n", libname, libargs);
+		DPRINT("Success in loading %s (%s)\n", libname, libargs);
 	}
 
 
@@ -220,7 +220,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int err;
 
-	GGIDPRINT_MODE("display-palemu: setmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-palemu: setmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -242,11 +242,11 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	priv->mode.frames  = 1;
 
 	if ((err = do_setmode(vis)) != 0) {
-		GGIDPRINT_MODE("display-palemu: setmode failed (%d).\n", err);
+		DPRINT_MODE("display-palemu: setmode failed (%d).\n", err);
 		return err;
 	}
 
-	GGIDPRINT_MODE("display-palemu: Attempting to setmode on parent "
+	DPRINT_MODE("display-palemu: Attempting to setmode on parent "
 		"visual...\n");
 
 	if ((err = _ggi_palemu_Open(vis)) != 0) {
@@ -259,7 +259,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);
 
-	GGIDPRINT_MODE("display-palemu: setmode succeeded.\n");
+	DPRINT_MODE("display-palemu: setmode succeeded.\n");
 
 	return 0;
 }
@@ -268,7 +268,7 @@ int GGI_palemu_resetmode(ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	GGIDPRINT("display-palemu: GGIresetmode(%p)\n", vis);
+	DPRINT("display-palemu: GGIresetmode(%p)\n", vis);
 
 	if (priv->fb_ptr != NULL) {
 
@@ -289,7 +289,7 @@ int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 	ggi_mode par_mode;
 	int tmperr, err = 0;
 
-	GGIDPRINT_MODE("display-palemu: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-palemu: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -374,7 +374,7 @@ int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = -1;
 	}
 	
-	GGIDPRINT_MODE("display-palemu: result %d %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-palemu: result %d %dx%d#%dx%dF%d[0x%02x]\n",
 			err, mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -384,11 +384,11 @@ int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_palemu_getmode(ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
-		GGIDPRINT_MODE("display-palemu: vis/mode == NULL\n");
+		DPRINT_MODE("display-palemu: vis/mode == NULL\n");
 		return GGI_EARGINVAL;
 	}
 	
-	GGIDPRINT_MODE("display-palemu: getmode.\n");
+	DPRINT_MODE("display-palemu: getmode.\n");
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

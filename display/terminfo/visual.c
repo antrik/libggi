@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/06 22:48:31 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/27 16:42:27 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -208,7 +208,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	term_type = options[OPT_TERM].result;
 	if ((*term_type) == '\0') term_type = NULL;
 
-	GGIDPRINT("display-terminfo: initializing %s on %s.\n", term_type, ( ( *term_path == '\0' ) ? "stdin/stdout" : term_path ));
+	DPRINT("display-terminfo: initializing %s on %s.\n", term_type, ( ( *term_path == '\0' ) ? "stdin/stdout" : term_path ));
 
 	priv = (struct TIhooks *)malloc(sizeof(struct TIhooks));
 	if (priv == NULL) return GGI_ENOMEM;
@@ -265,11 +265,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			COLOR_WHITE
 		};
 		int j;
-		GGIDPRINT("display-terminfo: terminal supports %d colors\n", COLORS);
-		GGIDPRINT("display-terminfo: initializing %d - 1 color pairs\n", COLOR_PAIRS);
+		DPRINT("display-terminfo: terminal supports %d colors\n", COLORS);
+		DPRINT("display-terminfo: initializing %d - 1 color pairs\n", COLOR_PAIRS);
 		for ( i = 1 ; i < COLOR_PAIRS ; i++ ) {
 			if ( init_pair(i, COLORS - ( i % COLORS ) - 1, i / COLORS) == ERR ) {
-				GGIDPRINT("display-terminfo: error initializing color pair %d to %d,%d\n", i, COLORS - ( i % COLORS ) - 1, i / COLORS);
+				DPRINT("display-terminfo: error initializing color pair %d to %d,%d\n", i, COLORS - ( i % COLORS ) - 1, i / COLORS);
 				fprintf(stderr, "display-terminfo: error initializing colors\n");
 				break;
 			}
@@ -285,17 +285,17 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 	} else {
-		GGIDPRINT("display-terminfo: terminal lacks color support\n");
+		DPRINT("display-terminfo: terminal lacks color support\n");
 	}
 	construct_charmap(priv->charmap);
 #if ( NCURSES_MOUSE_VERSION == 1 ) 
-	GGIDPRINT("display-terminfo: mouse support is enabled\n");
+	DPRINT("display-terminfo: mouse support is enabled\n");
 	mousemask(REPORT_MOUSE_POSITION | BUTTON1_PRESSED | BUTTON1_RELEASED |
 			BUTTON2_PRESSED | BUTTON2_RELEASED | BUTTON3_PRESSED |
 			BUTTON3_RELEASED | BUTTON4_PRESSED | BUTTON4_RELEASED,
 			NULL);
 #else
-	GGIDPRINT("display-terminfo: mouse support is disabled\n");
+	DPRINT("display-terminfo: mouse support is disabled\n");
 #endif
 
 	/* mode management */

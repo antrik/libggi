@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.15 2004/10/31 13:48:36 cegger Exp $
+/* $Id: crossblit.c,v 1.16 2004/11/27 16:41:57 soyt Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -46,7 +46,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	uint16 *dstptr;
 	int stride;
 
-	GGIDPRINT_DRAW("linear-16: Fallback to slow crossblit.\n");
+	DPRINT_DRAW("linear-16: Fallback to slow crossblit.\n");
 
 	LIBGGIGetPixel(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
@@ -83,7 +83,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 
-	GGIDPRINT_DRAW("linear-16: direct memcpy crossblit.\n");
+	DPRINT_DRAW("linear-16: direct memcpy crossblit.\n");
 	
 	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*2;
 	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
@@ -110,7 +110,7 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	uint16 conv_tab[16];
 
-	GGIDPRINT_DRAW("linear-16: cb4to16.\n");
+	DPRINT_DRAW("linear-16: cb4to16.\n");
 
 	do {
 		unsigned int i;
@@ -206,7 +206,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	uint16 conv_tab[256];
 
-	GGIDPRINT_DRAW("linear-16: cb8to16.\n");
+	DPRINT_DRAW("linear-16: cb8to16.\n");
 
 	/* Create a conversion table. */
 	do {
@@ -418,7 +418,7 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 	uint8 *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-16: cb24to16.\n");
+	DPRINT_DRAW("linear-16: cb24to16.\n");
 
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 40, 1, 0, &nl, &nr);
@@ -556,7 +556,7 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 	uint16 *stoprow, *dstp, *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-16: cb16to16.\n");
+	DPRINT_DRAW("linear-16: cb16to16.\n");
 
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 32, 1, 0, &nl, &nr);
@@ -675,7 +675,7 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 *srcp;
 	int dstride, sstride;
 	
-	GGIDPRINT_DRAW("linear-16: cb32to16.\n");
+	DPRINT_DRAW("linear-16: cb32to16.\n");
 
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
@@ -894,7 +894,7 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	uint16 *stoprow, *dstp, *srcp;
 	int dstride, sstride, i;
 
-	GGIDPRINT_DRAW("linear-16: cb16to16_64bitc.\n");
+	DPRINT_DRAW("linear-16: cb16to16_64bitc.\n");
 
 	if (sizeof(char *) == 8) {
 		stab = sbuf + (8 - (((uint64)sbuf) % 8));
@@ -1022,7 +1022,7 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	uint32 *srcp;
 	int dstride, sstride, i;
 
-	GGIDPRINT_DRAW("linear-16: cb32to16_64bitc.\n");
+	DPRINT_DRAW("linear-16: cb32to16_64bitc.\n");
 
 	if (sizeof(char *) == 8) {
 		stab = sbuf + (8 - (((uint64)sbuf) % 8));
@@ -1242,7 +1242,7 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	uint16 *stoprow, *dstp, *srcp;
 	int dstride, sstride, i;
 
-	GGIDPRINT_DRAW("linear-16: cb16to16_mmx.\n");
+	DPRINT_DRAW("linear-16: cb16to16_mmx.\n");
 
 	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
 
@@ -1395,7 +1395,7 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 *srcp;
 	int dstride, sstride, i, right;
 	
-	GGIDPRINT_DRAW("linear-16: cb32to16_mmx.\n");
+	DPRINT_DRAW("linear-16: cb32to16_mmx.\n");
 
 	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
 

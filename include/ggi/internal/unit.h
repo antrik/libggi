@@ -1,4 +1,4 @@
-/* $Id: unit.h,v 1.3 2004/10/31 12:49:25 cegger Exp $
+/* $Id: unit.h,v 1.4 2004/11/27 16:42:46 soyt Exp $
 ******************************************************************************
 
    LibGGI core - conversion between units
@@ -33,15 +33,15 @@ static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 			const ggi_coord *dpp)
 {
 #if 0
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+	LIB_ASSERT(dpp != NULL, "Invalid argument");
+	LIB_ASSERT(dpp != NULL, "Invalid argument");
+	LIB_ASSERT(dpi != NULL, "Invalid argument");
+	LIB_ASSERT(dpi != NULL, "Invalid argument");
+	LIB_ASSERT(pix != NULL, "Invalid argument");
+	LIB_ASSERT(pix != NULL, "Invalid argument");
 
-	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
-	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
+	LIB_ASSERT(dpp->x != 0, "Division by zero");
+	LIB_ASSERT(dpp->y != 0, "Division by zero");
 #endif
 	pix->x = dpi->x / dpp->x;
 	pix->y = dpi->y / dpp->y;
@@ -54,15 +54,15 @@ static inline void _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 			const ggi_coord *dpp)
 {
 #if 0
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+	LIB_ASSERT(dpp != NULL, "Invalid argument");
+	LIB_ASSERT(dpp != NULL, "Invalid argument");
+	LIB_ASSERT(dpi != NULL, "Invalid argument");
+	LIB_ASSERT(dpi != NULL, "Invalid argument");
+	LIB_ASSERT(pix != NULL, "Invalid argument");
+	LIB_ASSERT(pix != NULL, "Invalid argument");
 
-	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
-	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
+	LIB_ASSERT(dpp->x != 0, "Division by zero");
+	LIB_ASSERT(dpp->y != 0, "Division by zero");
 #endif
 	dpi->x = pix->x / dpp->x;
 	dpi->y = pix->y / dpp->y;

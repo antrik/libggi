@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.7 2004/11/14 15:47:47 cegger Exp $
+/* $Id: palemu.c,v 1.8 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -155,7 +155,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 
-	GGIDPRINT("display-palemu: Open %dx%d#%dx%d\n", LIBGGI_X(vis), 
+	DPRINT("display-palemu: Open %dx%d#%dx%d\n", LIBGGI_X(vis), 
 		LIBGGI_Y(vis), LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 
 
@@ -163,11 +163,11 @@ int _ggi_palemu_Open(ggi_visual *vis)
 	
 	rc = ggiSetMode(priv->parent, &priv->mode);
 	if (rc < 0) {
-		GGIDPRINT("display-palemu: Couldn't set parent mode.\n");
+		DPRINT("display-palemu: Couldn't set parent mode.\n");
 		return rc;
 	}
 
-	GGIDPRINT("display-palemu: parent is %d/%d\n",
+	DPRINT("display-palemu: parent is %d/%d\n",
 		GT_DEPTH(priv->mode.graphtype), 
 		GT_SIZE(priv->mode.graphtype));
 	
@@ -189,7 +189,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 		break;
 		
 	default:
-		GGIDPRINT("Unsupported pixel size '%d'.\n",
+		DPRINT("Unsupported pixel size '%d'.\n",
 			GT_SIZE(priv->mode.graphtype));
 		return GGI_ENOMATCH;
 	}

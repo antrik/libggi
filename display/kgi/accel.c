@@ -1,4 +1,4 @@
-/* $Id: accel.c,v 1.2 2002/11/04 21:32:41 cegger Exp $
+/* $Id: accel.c,v 1.3 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
 
@@ -37,7 +37,7 @@ ggi_accel_t *GGI_kgi_map_accelerator(ggi_visual_t vis, kgi_u_t resource,
 	err = kgiSetupMmapAccel(&KGI_CTX(vis), resource, 
 				min, max, buffers, priority);
 
-	GGIDPRINT("setup err: %d\n", err);
+	DPRINT("setup err: %d\n", err);
 	
 	if (err != KGI_EOK)
 		return NULL;
@@ -51,7 +51,7 @@ ggi_accel_t *GGI_kgi_map_accelerator(ggi_visual_t vis, kgi_u_t resource,
 				 PROT_READ | PROT_WRITE, MAP_SHARED,
 				 KGI_CTX(vis).mapper.fd, 0);
 
-	GGIDPRINT("mmap buffer: %d\n", accel->u32.buffer);
+	DPRINT("mmap buffer: %d\n", accel->u32.buffer);
 	
 	if (accel->u32.buffer == MAP_FAILED) {
 	

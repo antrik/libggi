@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/25 15:27:12 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -80,8 +80,8 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 	int retval;
 	ggi_mode oldmode;
 
-	LIBGGI_APPASSERT(vis != NULL, "ggiSetMode: vis == NULL");
-	LIBGGI_APPASSERT(tm != NULL,  "ggiSetMode: tm == NULL");
+	APP_ASSERT(vis != NULL, "ggiSetMode: vis == NULL");
+	APP_ASSERT(tm != NULL,  "ggiSetMode: tm == NULL");
 
 #ifdef DEBUG
 	if ((_ggiDebug & GGIDEBUG_CORE)
@@ -93,14 +93,14 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 #endif
 	ggLock(vis->mutex);
 
-	GGIDPRINT_MODE("ggiSetMode: trying (vis %dx%d virt %dx%d)\n",
+	DPRINT_MODE("ggiSetMode: trying (vis %dx%d virt %dx%d)\n",
 		    tm->visible.x,tm->visible.y,tm->virt.x,tm->virt.y);
 	_ggiCheck4Defaults(tm);
                
 	memcpy(&oldmode, tm, sizeof(ggi_mode));
-	GGIDPRINT_MODE("ggiSetMode: trying2 (vis %dx%d virt %dx%d)\n",
+	DPRINT_MODE("ggiSetMode: trying2 (vis %dx%d virt %dx%d)\n",
 		tm->visible.x,tm->visible.y,tm->virt.x,tm->virt.y);
-	GGIDPRINT_MODE("ggiSetMode: calling %p\n",vis->opdisplay->setmode);
+	DPRINT_MODE("ggiSetMode: calling %p\n",vis->opdisplay->setmode);
 
 	retval=vis->opdisplay->setmode(vis,tm);
 
@@ -112,14 +112,14 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 		int i;
 		ggi_color col;
 
-		GGIDPRINT_CORE("ggiSetMode: set to frame 0, origin = {0,0}\n");
+		DPRINT_CORE("ggiSetMode: set to frame 0, origin = {0,0}\n");
 		ggiSetDisplayFrame(vis, 0);
 		ggiSetReadFrame(vis, 0);
 		ggiSetOrigin(vis,0,0);
-		GGIDPRINT_CORE("ggiSetMode: set GC\n");
+		DPRINT_CORE("ggiSetMode: set GC\n");
 		/* Set clipping rectangle to the full (virtual) screen */
 		ggiSetGCClipping(vis,0,0,tm->virt.x,tm->virt.y);
-		GGIDPRINT_CORE("ggiSetMode: success (vis %dx%d virt %dx%d)\n",
+		DPRINT_CORE("ggiSetMode: success (vis %dx%d virt %dx%d)\n",
 			    tm->visible.x,tm->visible.y,tm->virt.x,tm->virt.y);
 		/* Set foreground and background to black */
 		col.r = 0;
@@ -129,22 +129,22 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 		ggiSetGCBackground(vis, ggiMapColor(vis, &col));
 		/* Clear frames to black */
 		for (i = 0; i < tm->frames; i++) {
-			GGIDPRINT_CORE("ggiSetMode: SetWriteFrame %d\n", i);
+			DPRINT_CORE("ggiSetMode: SetWriteFrame %d\n", i);
 			ggiSetWriteFrame(vis, i);
 #ifdef DEBUG
 			if (vis->w_frame) {
-				GGIDPRINT_CORE("ggiSetMode: frame address: "
+				DPRINT_CORE("ggiSetMode: frame address: "
 					       "%p\n", vis->w_frame->write);
 			}
 #endif
-			GGIDPRINT_CORE("ggiSetMode: FillScreen %d\n", i);
+			DPRINT_CORE("ggiSetMode: FillScreen %d\n", i);
 			ggiFillscreen(vis);
 		}
 		ggiSetWriteFrame(vis, 0);
 		ggiFlush(vis);
 	}
 
-	GGIDPRINT_CORE("ggiSetMode: done!\n");
+	DPRINT_CORE("ggiSetMode: done!\n");
 	ggUnlock(vis->mutex);
 
 	return retval;
@@ -156,10 +156,10 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 
 int ggiCheckMode(ggi_visual *vis,ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL, "ggiCheckMode: vis == NULL");
-	LIBGGI_APPASSERT(tm != NULL,  "ggiCheckMode: tm == NULL");
+	APP_ASSERT(vis != NULL, "ggiCheckMode: vis == NULL");
+	APP_ASSERT(tm != NULL,  "ggiCheckMode: tm == NULL");
 
-	GGIDPRINT_CORE("ggiCheckMode(%p, %p) called\n", vis, tm);
+	DPRINT_CORE("ggiCheckMode(%p, %p) called\n", vis, tm);
 
 	_ggiCheck4Defaults(tm);
 	return vis->opdisplay->checkmode(vis,tm);
@@ -171,10 +171,10 @@ int ggiCheckMode(ggi_visual *vis,ggi_mode *tm)
 
 int ggiGetMode(ggi_visual *vis,ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL, "ggiGetMode: vis != NULL");
-	LIBGGI_APPASSERT(tm != NULL,  "ggiGetMode: tm != NULL");
+	APP_ASSERT(vis != NULL, "ggiGetMode: vis != NULL");
+	APP_ASSERT(tm != NULL,  "ggiGetMode: tm != NULL");
 
-	GGIDPRINT_CORE("ggiGetMode(%p, %p) called\n", vis, tm);
+	DPRINT_CORE("ggiGetMode(%p, %p) called\n", vis, tm);
 
 	return vis->opdisplay->getmode(vis,tm);
 }
@@ -189,7 +189,7 @@ int ggiSetTextMode(ggi_visual *vis,int cols,int rows,
 {
 	ggi_mode mode;
 	
-	GGIDPRINT_CORE("ggiSetTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x) called\n",
+	DPRINT_CORE("ggiSetTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x) called\n",
 		    cols, rows, vcols, vrows, fontsizex, fontsizey, type);
 	
 	mode.frames    = GGI_AUTO;
@@ -217,7 +217,7 @@ int ggiCheckTextMode(ggi_visual *vis,int cols,int rows,
 	int rc;
 	ggi_mode mode;
         
-	GGIDPRINT_CORE("ggiCheckTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x, %p) called\n",
+	DPRINT_CORE("ggiCheckTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x, %p) called\n",
 		    vis, cols, rows, vcols, vrows, fontsizex, fontsizey,
 		    type, md);
 	
@@ -243,7 +243,7 @@ int ggiSetGraphMode(ggi_visual *vis,int xsize,int ysize,
 		    int xvirtual,int yvirtual,ggi_graphtype type)
 {
 	ggi_mode mode;
-	GGIDPRINT_CORE("ggiSetGraphMode(%p, %d, %d, %d, %d, 0x%x) called\n",
+	DPRINT_CORE("ggiSetGraphMode(%p, %d, %d, %d, %d, 0x%x) called\n",
 		    vis, xsize, ysize, xvirtual, yvirtual, type);
 	
 	mode.frames    = GGI_AUTO;
@@ -268,7 +268,7 @@ int ggiCheckGraphMode(ggi_visual *visual,int xsize,int ysize,
 	int rc;
 	ggi_mode mode;
 	
-	GGIDPRINT_CORE("ggiCheckGraphMode(%p, %d, %d, %d, %d, 0x%x, %p) called\n",
+	DPRINT_CORE("ggiCheckGraphMode(%p, %d, %d, %d, %d, 0x%x, %p) called\n",
 		    visual, xsize, ysize, xvirtual, yvirtual, type, md);
 	
 	mode.frames    = GGI_AUTO;
@@ -293,7 +293,7 @@ int ggiSetSimpleMode(ggi_visual *vis, int xsize, int ysize, int frames,
 		     ggi_graphtype type)
 {
 	ggi_mode mode;
-	GGIDPRINT_CORE("ggiSetSimpleMode(%p, %d, %d, %d, 0x%x) called\n",
+	DPRINT_CORE("ggiSetSimpleMode(%p, %d, %d, %d, 0x%x) called\n",
 		    vis, xsize, ysize, frames, type);
 	
 	mode.frames    = frames;
@@ -316,7 +316,7 @@ int ggiCheckSimpleMode(ggi_visual *visual, int xsize, int ysize, int frames,
 	int rc;
 	ggi_mode mode;
 	
-	GGIDPRINT_CORE("ggiCheckSimpleMode(%p, %d, %d, %d, 0x%x, %p) called\n",
+	DPRINT_CORE("ggiCheckSimpleMode(%p, %d, %d, %d, 0x%x, %p) called\n",
 		    visual, xsize, ysize, frames, type, md);
 	
 	mode.frames    = frames;
@@ -466,7 +466,7 @@ int ggiParseMode(const char * s, ggi_mode * m)
 
 	if (s == NULL) s = "";
 
-	GGIDPRINT_CORE("ggiParseMode(\"%s\", %p) called\n", s, m);
+	DPRINT_CORE("ggiParseMode(\"%s\", %p) called\n", s, m);
 
 	*m = _ggiDefaultMode;
 
@@ -610,7 +610,7 @@ int ggiParseMode(const char * s, ggi_mode * m)
 	int negative=0;  /* negative flag for positions */
 	int xposition=0;
 	int yposition=0;
-	GGIDPRINT_CORE("ggiParseMode(%p, %p) called\n", s, m);
+	DPRINT_CORE("ggiParseMode(%p, %p) called\n", s, m);
 	*m = _ggiDefaultMode;
 #define SKIPSPACE   while ( (*s!='\000') && (isspace((uint8)*s)) ) s++;
 /* scan the integer from the string pointer s */
@@ -827,12 +827,12 @@ int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,
 	ggi_coord size, res;
 	ggi_mode tmp;
 
-	GGIDPRINT_MODE("_ggi_physz_figure_visible(%p) called\n",
+	DPRINT_MODE("_ggi_physz_figure_visible(%p) called\n",
 			mode);
 
-	LIBGGI_ASSERT(mode != NULL, "Invalid mode");
-	LIBGGI_ASSERT(screen_size != NULL, "Invalid screen size");
-	LIBGGI_ASSERT(screen_res != NULL, "Invalid screen resolution");
+	LIB_ASSERT(mode != NULL, "Invalid mode");
+	LIB_ASSERT(screen_size != NULL, "Invalid screen size");
+	LIB_ASSERT(screen_res != NULL, "Invalid screen resolution");
 
 	memset(&tmp, GGI_AUTO, sizeof(tmp));
 
@@ -885,11 +885,11 @@ int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,
 	}
 
 
-	GGIDPRINT_MODE("_ggi_physz_figure_visible: mode dpp (%i,%i), size (%i,%i)\n",
+	DPRINT_MODE("_ggi_physz_figure_visible: mode dpp (%i,%i), size (%i,%i)\n",
 			mode->dpp.x, mode->dpp.y,
 			mode->size.x, mode->size.y);
 
-	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
+	DPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
 			tmp.visible.x, tmp.visible.y, mode->virt.x, mode->virt.y);
 
 	if ((mode->virt.x != GGI_AUTO)
@@ -910,7 +910,7 @@ int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,
 	if ((mode->visible.x != GGI_AUTO && mode->visible.x != tmp.visible.x)
 	  || (mode->visible.y != GGI_AUTO && mode->visible.y != tmp.visible.y))
 	{
-		GGIDPRINT_MODE("_ggi_physz_figure_visible: "
+		DPRINT_MODE("_ggi_physz_figure_visible: "
 			"physical size (%i,%i) doesn't match (%i,%i)\n",
 			mode->size.x, mode->size.y, mode->visible.x, mode->visible.y);
 
@@ -921,9 +921,9 @@ int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,
 	mode->visible = tmp.visible;
 	mode->virt = tmp.virt;
 
-	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
+	DPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
 			mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y);
-	GGIDPRINT_MODE("_ggi_physz_figure_visible: leaving\n");
+	DPRINT_MODE("_ggi_physz_figure_visible: leaving\n");
 
 	return GGI_OK;
 }
@@ -987,7 +987,7 @@ int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, const ggi_coord *op_sz
 	if ((mode->size.x != xsize && mode->size.x != GGI_AUTO) ||
 	    (mode->size.y != ysize && mode->size.y != GGI_AUTO))
 	{
-		GGIDPRINT_MODE("_ggi_physz_figure_size: "
+		DPRINT_MODE("_ggi_physz_figure_size: "
 			"physical size (%i,%i) doesn't match (%i,%i)\n",
 			xsize, ysize, mode->size.x, mode->size.y);
 		err = GGI_ENOMATCH;

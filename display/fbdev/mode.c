@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2004/11/13 15:56:20 cegger Exp $
+/* $Id: mode.c,v 1.21 2004/11/27 16:42:19 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -261,18 +261,18 @@ get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
 			    (timing->xres_virtual == var->xres_virtual ||
 			     var->xres_virtual == 0)) {
 				/* yres_virtual doesn't matter. */
-				GGIDPRINT_MODE("display-fbdev: found exact match.\n");
+				DPRINT_MODE("display-fbdev: found exact match.\n");
 				ret = 0;
 				goto found_mode;
 			}
 			if (timing->bits_per_pixel == var->bits_per_pixel ||
 			    var->bits_per_pixel == FB_BPP_AUTO) {
-				GGIDPRINT_MODE("display-fbdev: found match with xres_virtual = %d.\n",
+				DPRINT_MODE("display-fbdev: found match with xres_virtual = %d.\n",
 					       timing->xres_virtual);
 				ret = 0;
 				besttiming = timing;
 			} else if (besttiming == NULL || ret == 1) {
-				GGIDPRINT_MODE("display-fbdev: found first match (exact res) %dx%d.\n",
+				DPRINT_MODE("display-fbdev: found first match (exact res) %dx%d.\n",
 					       timing->xres, timing->yres);
 				ret = 0;
 				besttiming = timing;
@@ -280,14 +280,14 @@ get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
 		} else if ((timing->xres >= var->xres || var->xres == 0) &&
 			   (timing->yres >= var->yres || var->yres == 0)) {
 			if (besttiming == NULL) {
-				GGIDPRINT_MODE("display-fbdev: found first match (bigger res) %dx%d.\n",
+				DPRINT_MODE("display-fbdev: found first match (bigger res) %dx%d.\n",
 					       timing->xres, timing->yres);
 				ret = 1;
 				besttiming = timing;
 			} else if (timing->xres <= besttiming->xres &&
 				   timing->yres <= besttiming->yres &&
 				   ret == 1) {
-				GGIDPRINT_MODE("display-fbdev: found better match (bigger res) %dx%d.\n",
+				DPRINT_MODE("display-fbdev: found better match (bigger res) %dx%d.\n",
 					       timing->xres, timing->yres);
 				ret = 1;
 				besttiming = timing;
@@ -297,7 +297,7 @@ get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
 	}
 	if (besttiming) {
 		timing = besttiming;
-		GGIDPRINT_MODE("display-fbdev: Using best match %dx%d.\n",
+		DPRINT_MODE("display-fbdev: Using best match %dx%d.\n",
 			       timing->xres, timing->yres);
 		goto found_mode;
 	}
@@ -373,7 +373,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR)
 			{
 				err = GGI_EFATAL;
-				GGIDPRINT_MODE("display-fbdev: GT_GREYSCALE mode failed\n");
+				DPRINT_MODE("display-fbdev: GT_GREYSCALE mode failed\n");
 			}
 			break;
 
@@ -386,7 +386,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR)
 			{
 				err = GGI_EFATAL;
-				GGIDPRINT_MODE("display-fbdev: GT_PALETTE mode failed\n");
+				DPRINT_MODE("display-fbdev: GT_PALETTE mode failed\n");
 			}
 			break;
 
@@ -400,7 +400,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			     priv->fix.visual != FB_VISUAL_DIRECTCOLOR))
 			{
 				err = GGI_EFATAL;
-				GGIDPRINT_MODE("display-fbdev: GT_TRUECOLOR mode failed\n");
+				DPRINT_MODE("display-fbdev: GT_TRUECOLOR mode failed\n");
 			}
 			break;
 		
@@ -412,14 +412,14 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	}
 	
 	if (err) {
-		GGIDPRINT_MODE("display-fbdev: Santa passed us by :-(\n");
+		DPRINT_MODE("display-fbdev: Santa passed us by :-(\n");
 	} else {
-		GGIDPRINT_MODE("display-fbdev: Change mode OK.\n");
+		DPRINT_MODE("display-fbdev: Change mode OK.\n");
 	}
 
 	if (! err && (priv->fix.ypanstep == 0) && (mode->frames > 1)) {
 		mode->frames = 1;
-		GGIDPRINT_MODE("display-fbdev: cannot do vertical panning "
+		DPRINT_MODE("display-fbdev: cannot do vertical panning "
 				"-- frames reduced to 1.\n");
 	}
 
@@ -483,7 +483,7 @@ static int do_mmap(ggi_visual *vis)
 	priv->mmap_size = priv->fix.smem_len;
 #endif
 	
-	GGIDPRINT_MODE("display-fbdev: frame_size=0x%x fb_size=0x%x "
+	DPRINT_MODE("display-fbdev: frame_size=0x%x fb_size=0x%x "
 		    "mmap_size=0x%x\n", priv->frame_size,
 		    priv->fb_size, priv->mmap_size);
 
@@ -491,7 +491,7 @@ static int do_mmap(ggi_visual *vis)
 			    PROT_READ | PROT_WRITE, 
 			    MAP_SHARED, LIBGGI_FD(vis), 0);
 
-	GGIDPRINT_MODE("display-fbdev: FB_PTR=%p\n", priv->fb_ptr);
+	DPRINT_MODE("display-fbdev: FB_PTR=%p\n", priv->fb_ptr);
 
 	if (priv->fb_ptr == MAP_FAILED) {
 		priv->fb_ptr = NULL;
@@ -514,7 +514,7 @@ static int do_mmap(ggi_visual *vis)
 		break;
 
 	case GT_TRUECOLOR:
-		GGIDPRINT_MODE("fbdev: RGB %d:%d:%d offsets %d:%d:%d\n",
+		DPRINT_MODE("fbdev: RGB %d:%d:%d offsets %d:%d:%d\n",
 			priv->var.red.length, priv->var.green.length,
 			priv->var.blue.length, priv->var.red.offset,
 			priv->var.green.offset, priv->var.blue.offset);
@@ -606,7 +606,7 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 
 	for (id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL)) {
-			GGIDPRINT_LIBS("display-fbdev: Error opening the "
+			DPRINT_LIBS("display-fbdev: Error opening the "
 				       "%s (%s) library.\n", libname, libargs);
 			if (id < 4) {
 				fprintf(stderr, 
@@ -619,7 +619,7 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			priv->have_accel = 1;
 		}
 
-		GGIDPRINT_LIBS("Success in loading %s (%s)\n",
+		DPRINT_LIBS("Success in loading %s (%s)\n",
 			       libname, libargs);
 	}
 	if (!priv->have_accel) LIBGGI_GC(vis) = priv->normalgc;
@@ -634,7 +634,7 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
-	GGIDPRINT_MODE("display-fbdev: do_setmode SUCCESS\n");
+	DPRINT_MODE("display-fbdev: do_setmode SUCCESS\n");
 
 	return 0;
 }
@@ -648,7 +648,7 @@ int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 	err = do_checkmode(vis, mode, &var);
         if (err != 0) return err;
 
-	GGIDPRINT_MODE("display-fbdev: setmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-fbdev: setmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -659,7 +659,7 @@ int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 	err = do_setmode(vis, &var);
 	if (err != 0) return err;
 
-	GGIDPRINT_MODE("display-fbdev: setmode success.\n");
+	DPRINT_MODE("display-fbdev: setmode success.\n");
 
 	return 0;
 }
@@ -754,7 +754,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;
 	} else if (priv->orig_fix.ypanstep == 0 && mode->frames > 1) {
-		GGIDPRINT_MODE("display-fbdev: %d frames but no vertical panning\n", mode->frames);
+		DPRINT_MODE("display-fbdev: %d frames but no vertical panning\n", mode->frames);
 		mode->frames = 1;
 		err = -1;
 	}
@@ -769,7 +769,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	/* Try to get the timing from the standard database */
 	ret = get_timing(vis, var, mode->frames);
 	if (ret < 0) {
-		GGIDPRINT_MODE("display-fbdev: unable to find timing for mode\n");
+		DPRINT_MODE("display-fbdev: unable to find timing for mode\n");
 		if (priv->need_timings &&
 		    (var->xres != priv->orig_var.xres ||
 		     var->yres != priv->orig_var.yres)) {
@@ -785,7 +785,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 
 	/* Check mode with framebuffer */
 	if (fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, var) < 0) {
-		GGIDPRINT_MODE("display-fbdev: FB_ACTIVATE_TEST failed\n");
+		DPRINT_MODE("display-fbdev: FB_ACTIVATE_TEST failed\n");
 		err = -1;
 	}
 
@@ -801,7 +801,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	     GT_SIZE(mode->graphtype) != GT_SIZE(oldmode.graphtype)) ||
 	    (GT_SCHEME(oldmode.graphtype) &&
 	     GT_SCHEME(mode->graphtype) != GT_SCHEME(oldmode.graphtype))) {
-		GGIDPRINT_MODE("display-fbdev: checkmode error\n");
+		DPRINT_MODE("display-fbdev: checkmode error\n");
 		err = -1;
 	}
 
@@ -826,7 +826,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 		err = -1;
 	}
 
-	GGIDPRINT_MODE("display-fbdev: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-fbdev: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -839,7 +839,7 @@ int GGI_fbdev_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
 	struct fb_var_screeninfo var;
 
-	GGIDPRINT_MODE("display-fbdev: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-fbdev: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -850,7 +850,7 @@ int GGI_fbdev_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_fbdev_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	GGIDPRINT_MODE("display-fbdev: getmode\n");
+	DPRINT_MODE("display-fbdev: getmode\n");
 	
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

@@ -747,7 +747,7 @@ display/my_target/color.c::
     ggi_fbdev_priv      *priv = LIBGGI_PRIVATE(vis);
     my_target_palette   *pal  = (my_target_palette*)(LIBGGI_PAL(vis)->priv);
     
-    GGIDPRINT_COLOR("my_target setpalette.(%d,%d) %d\n",
+    DPRINT_COLOR("my_target setpalette.(%d,%d) %d\n",
                     start,size,LIBGGI_PAL(vis)->clut.size);
 	
     /*

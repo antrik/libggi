@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.4 2004/10/31 13:15:00 cegger Exp $
+/* $Id: colormap.c,v 1.5 2004/11/27 16:42:44 soyt Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -64,9 +64,9 @@ int _ggiColormapGetRW(ggi_visual_t vis, size_t *start, size_t *end)
 {
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
-	LIBGGI_ASSERT(start != NULL, "NULL pointer bug!");
-	LIBGGI_ASSERT(end != NULL, "NULL pointer bug!");
-	LIBGGI_ASSERT(map->getRW != _ggiColormapGetRW, "forever loop bug detected!");
+	LIB_ASSERT(start != NULL, "NULL pointer bug!");
+	LIB_ASSERT(end != NULL, "NULL pointer bug!");
+	LIB_ASSERT(map->getRW != _ggiColormapGetRW, "forever loop bug detected!");
 
 	return map->getRW(vis, start, end);
 }	/* _ggiColormapGetRW */
@@ -100,9 +100,9 @@ int _ggiColormapGetRO(ggi_visual_t vis, size_t *start, size_t *end)
 {
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
-	LIBGGI_ASSERT(start != NULL, "NULL pointer bug!");
-	LIBGGI_ASSERT(end != NULL, "NULL pointer bug!");
-	LIBGGI_ASSERT(map->getRO != _ggiColormapGetRO, "forever loop bug detected!");
+	LIB_ASSERT(start != NULL, "NULL pointer bug!");
+	LIB_ASSERT(end != NULL, "NULL pointer bug!");
+	LIB_ASSERT(map->getRO != _ggiColormapGetRO, "forever loop bug detected!");
 
 	return map->getRO(vis, start, end);
 }	/* _ggiColormapGetRO */
@@ -124,7 +124,7 @@ ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
 
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
-	LIBGGI_ASSERT(color != NULL, "NULL pointer bug!");
+	LIB_ASSERT(color != NULL, "NULL pointer bug!");
 
 	switch (region) {
 	case GGI_COLORMAP_RW_REGION:
@@ -201,8 +201,8 @@ int _ggiColormapMatchByColor(ggi_visual_t vis, const ggi_color *color1,
 				const ggi_color *color2,
 				enum ggi_colormap_region region)
 {
-	LIBGGI_ASSERT(color1 != NULL, "NULL pointer bug!");
-	LIBGGI_ASSERT(color2 != NULL, "NULL pointer bug!");
+	LIB_ASSERT(color1 != NULL, "NULL pointer bug!");
+	LIB_ASSERT(color2 != NULL, "NULL pointer bug!");
 
 	return LIBGGI_PAL(vis)->matchByColor(vis, color1,
 					color2, region);

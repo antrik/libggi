@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/11/06 22:48:29 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -59,7 +59,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	char target[1024] = "";
 	int  val;
 
-	GGIDPRINT("display-monotext: GGIdlinit start.\n");
+	DPRINT("display-monotext: GGIdlinit start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -73,7 +73,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* open the parent visual */
-	GGIDPRINT("display-monotext: opening target: %s\n", args);
+	DPRINT("display-monotext: opening target: %s\n", args);
 	
 	if (args != NULL) {
 		if (ggParseTarget((char *) args, target, 1024) == NULL) {
@@ -137,7 +137,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->flush     = GGI_monotext_flush;
 	vis->opdisplay->setflags  = GGI_monotext_setflags;
 	
-	GGIDPRINT("display-monotext: GGIdlinit succeeded.\n");
+	DPRINT("display-monotext: GGIdlinit succeeded.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
@@ -147,7 +147,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
-	GGIDPRINT("display-monotext: GGIdlcleanup start.\n");
+	DPRINT("display-monotext: GGIdlcleanup start.\n");
 
 	if (priv->fb_ptr != NULL) {
 		_ggi_monotextClose(vis);
@@ -164,7 +164,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	free(priv);
 	free(LIBGGI_GC(vis));
 
-	GGIDPRINT("display-monotext: GGIdlcleanup done.\n");
+	DPRINT("display-monotext: GGIdlcleanup done.\n");
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.3 2004/10/31 13:15:00 cegger Exp $
+/* $Id: probe.c,v 1.4 2004/11/27 16:42:45 soyt Exp $
 ******************************************************************************
 
    LibGGI core - probe for targets.
@@ -37,15 +37,15 @@ ggi_visual_t _ggiProbeTarget(void)
 	ggi_dlhandle *dlh = NULL;
 	ggi_visual_t vis = NULL;
 
-	GGIDPRINT_CORE("Launch display-auto\n");
+	DPRINT_CORE("Launch display-auto\n");
 	err = _ggiProbeDL(NULL, "display-auto", NULL, &vis, 0,
 			  &dlh, &dlret);
 	if (err) {
-		GGIDPRINT_CORE("display-auto failed\n");
+		DPRINT_CORE("display-auto failed\n");
 		return NULL;
 	}
 
-	GGIDPRINT_CORE("Unload display-auto\n");
+	DPRINT_CORE("Unload display-auto\n");
 	ggFreeModule(dlh->handle);
 	free(dlh);
 

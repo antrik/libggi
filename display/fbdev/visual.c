@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2004/11/14 20:18:06 cegger Exp $
+/* $Id: visual.c,v 1.26 2004/11/27 16:42:19 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -122,7 +122,7 @@ switchreq(void *arg)
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
 
-	GGIDPRINT_MISC("display-fbdev: switchreq(%p) called\n", vis);
+	DPRINT_MISC("display-fbdev: switchreq(%p) called\n", vis);
 
 	_giiEventBlank(&ev, sizeof(gii_cmd_event));
 
@@ -145,7 +145,7 @@ switching(void *arg)
 	ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
-	GGIDPRINT_MISC("display-fbdev: switching(%p) called\n", vis);
+	DPRINT_MISC("display-fbdev: switching(%p) called\n", vis);
 
 	priv->ismapped = 0;
 	priv->switchpending = 0;
@@ -165,7 +165,7 @@ switchback(void *arg)
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	gii_event ev;
 
-	GGIDPRINT_MISC("display-fbdev: switched_back(%p) called\n", vis);
+	DPRINT_MISC("display-fbdev: switched_back(%p) called\n", vis);
 
 	_giiEventBlank(&ev, sizeof(gii_expose_event));
 
@@ -177,7 +177,7 @@ switchback(void *arg)
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
 	_giiSafeAdd(vis->input, &ev);
-	GGIDPRINT_MISC("fbdev: EXPOSE sent.\n");
+	DPRINT_MISC("fbdev: EXPOSE sent.\n");
 
 #if 0
 	if (refcount > 1) {
@@ -205,14 +205,14 @@ GGI_fbdev_sendevent(ggi_visual *vis, gii_event *ev)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
-	GGIDPRINT_MISC("GGI_fbdev_sendevent() called\n");
+	DPRINT_MISC("GGI_fbdev_sendevent() called\n");
 
 	if (ev->any.type != evCommand) {
 		return GGI_EEVUNKNOWN;
 	}
 	switch (ev->cmd.code) {
 	case GGICMD_ACKNOWLEDGE_SWITCH:
-		GGIDPRINT_MISC("display-fbdev: switch acknowledge\n");
+		DPRINT_MISC("display-fbdev: switch acknowledge\n");
 		if (priv->switchpending) {
 			priv->doswitch(vis);
 			return 0;
@@ -222,12 +222,12 @@ GGI_fbdev_sendevent(ggi_visual *vis, gii_event *ev)
 		}
 		break;
 	case GGICMD_NOHALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-fbdev: nohalt on\n");
+		DPRINT_MISC("display-fbdev: nohalt on\n");
 		priv->dohalt = 0;
 		priv->autoswitch = 0;
 		break;
 	case GGICMD_HALT_ON_UNMAP:
-		GGIDPRINT_MISC("display-fbdev: halt on\n");
+		DPRINT_MISC("display-fbdev: halt on\n");
 		priv->dohalt = 1;
 		priv->autoswitch = 1;
 		if (priv->switchpending) {
@@ -257,7 +257,7 @@ GGI_fbdev_idleaccel(ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
-	GGIDPRINT_DRAW("GGI_fbdev_idleaccel(%p) called \n", vis);
+	DPRINT_DRAW("GGI_fbdev_idleaccel(%p) called \n", vis);
 	
 	if (priv->idleaccel) return priv->idleaccel(vis);
 
@@ -272,7 +272,7 @@ static int do_cleanup(ggi_visual *vis)
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
 
-	GGIDPRINT("display-fbdev: GGIdlcleanup start.\n");
+	DPRINT("display-fbdev: GGIdlcleanup start.\n");
 
 	if (LIBGGI_FD(vis) >= 0) {
 #if 0
@@ -312,7 +312,7 @@ static int do_cleanup(ggi_visual *vis)
 	}
 	ggUnlock(_ggi_global_lock);
 
-	GGIDPRINT("display-fbdev: GGIdlcleanup done.\n");
+	DPRINT("display-fbdev: GGIdlcleanup done.\n");
 
 	return 0;
 }
@@ -337,7 +337,7 @@ get_fbdev(void)
 
 	if (ioctl(fd, VT_GETSTATE, &qry_stat) == 0) {
 		map.console = qry_stat.v_active;
-		GGIDPRINT_MISC("display-fbdev: Using VT %d.\n", map.console);
+		DPRINT_MISC("display-fbdev: Using VT %d.\n", map.console);
 	} else {
 		perror("display-fbdev: ioctl(VT_GETSTATE) failed");
 		close(fd);
@@ -365,7 +365,7 @@ get_fbdev(void)
 
 	if (fb >= 32) {
 		/* Not found */
-		GGIDPRINT_MISC("display-fbdev: Could not find a framebuffer "
+		DPRINT_MISC("display-fbdev: Could not find a framebuffer "
 			       "device with read permission.\n");
 		return DEFAULT_FBNUM;
 	}
@@ -378,7 +378,7 @@ get_fbdev(void)
 
 	close(fd);
 
-	GGIDPRINT_MISC("display-fbdev: Determined VT %d is on FB %d\n",
+	DPRINT_MISC("display-fbdev: Determined VT %d is on FB %d\n",
 		       map.console, map.framebuffer);
 
 	return map.framebuffer;
@@ -423,13 +423,13 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 	 */
 	infile = fopen(name, "r");
 	if (infile == NULL) {
-		GGIDPRINT_MODE("display-fbdev: Unable to open: %s\n", name);
+		DPRINT_MODE("display-fbdev: Unable to open: %s\n", name);
 		return GGI_ENOFILE;
 	}
 
 	/* Scan for all modes.
 	 */
-	GGIDPRINT_MODE("display-fbdev: Parsing modedb: %s\n", name);
+	DPRINT_MODE("display-fbdev: Parsing modedb: %s\n", name);
 	while (!feof(infile)) {
 		/* EOF ? */
 		if (NULL == fgets(buffer, sizeof(buffer), infile)) break;
@@ -446,7 +446,7 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 		 */
 		if (0 == strncmp(bufp, "mode", 4)) {
 			memset(&timing, 0, sizeof(timing));
-			GGIDPRINT_MODE("display-fbdev:   begin: %s",
+			DPRINT_MODE("display-fbdev:   begin: %s",
 				       bufp+4);
 			continue;
 		} else if (0 == strncmp(bufp, "geometry", 8)) {
@@ -521,7 +521,7 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 		} else if (0 == strncmp(bufp, "endmode", 7) &&
 			   timing.pixclock /* Valid timing entry ? */ &&
 			   timing.xres && timing.yres) {
-			GGIDPRINT_MODE("display-fbdev:   got %dx%d mode\n",
+			DPRINT_MODE("display-fbdev:   got %dx%d mode\n",
 				       timing.xres, timing.yres);
 			curtim->next = malloc(sizeof(timing));
 			if (!curtim->next) {
@@ -555,7 +555,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gg_option options[NUM_OPTS];
 	ggi_fbdev_priv *priv;
 
-	GGIDPRINT("display-fbdev: GGIdlinit start.\n");
+	DPRINT("display-fbdev: GGIdlinit start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -581,7 +581,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
-	GGIDPRINT("display-fbdev: Got private mem.\n");
+	DPRINT("display-fbdev: Got private mem.\n");
 	LIBGGI_PRIVATE(vis) = priv;
 
 	priv->fb_ptr = NULL;
@@ -610,7 +610,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		fbnum = get_fbdev();
 	}
 
-	GGIDPRINT("display-fbdev: Parsing input options.\n");
+	DPRINT("display-fbdev: Parsing input options.\n");
 
 	priv->inputs = FBDEV_INP_KBD | FBDEV_INP_MOUSE;
 
@@ -628,7 +628,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		novt = 1;
 	}
 
-	GGIDPRINT("display-fbdev: Parsing physz options.\n");
+	DPRINT("display-fbdev: Parsing physz options.\n");
 	do {
 		int err;
 		err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
@@ -639,7 +639,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	} while (0);
 
-	GGIDPRINT("display-fbdev: Setting up locks.\n");
+	DPRINT("display-fbdev: Setting up locks.\n");
 	ggLock(_ggi_global_lock);
 	if (refcount == 0) {
 		_ggi_fbdev_lock = ggLockCreate();
@@ -791,13 +791,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (rc == 0 && iskgi== KGICON_PROBE_MAGIC) {
 			struct kgi_driver info;
 
-			GGIDPRINT_MISC("display-fbdev: Detected KGI driver.\n");
+			DPRINT_MISC("display-fbdev: Detected KGI driver.\n");
 			priv->iskgi = 1;
 			priv->need_timings = 0;
 
 			rc = ioctl(LIBGGI_FD(vis), DRIVER_GETINFO, &info);
 			if (!rc) {
-				GGIDPRINT_MISC("display-fbdev: KGI driver by %s, type %s, version %08x.\n",
+				DPRINT_MISC("display-fbdev: KGI driver by %s, type %s, version %08x.\n",
 					       info.manufact, info.model,
 					       info.version);
 			}
@@ -852,7 +852,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-	GGIDPRINT("display-fbdev: GGIdlinit success.\n");
+	DPRINT("display-fbdev: GGIdlinit success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

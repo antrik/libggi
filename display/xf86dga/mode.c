@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/11/14 15:47:50 cegger Exp $
+/* $Id: mode.c,v 1.22 2004/11/27 16:42:30 soyt Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -244,14 +244,14 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 				    DefaultRootWindow(priv->x.display),
 				    vinfo.visual, AllocAll);
 
-		GGIDPRINT("%d-bit visual: X-lib colormap allocated %x.\n",
+		DPRINT("%d-bit visual: X-lib colormap allocated %x.\n",
 			  GT_DEPTH(tm->graphtype), priv->x.cmap);
 	} else {
 		priv->x.cmap = 0;
 		priv->cmap2 = 0;
 	}
 
-	GGIDPRINT("Ready, now taking crash course!\n");
+	DPRINT("Ready, now taking crash course!\n");
 
 	flags = XF86DGADirectGraphics | XF86DGADirectMouse |
 	    ((priv->dgafeat & XF86DGAAccelPresent) ? XF86DGADoAccel : 0);
@@ -316,7 +316,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		    = GT_ByPPP(priv->stride, tm->graphtype);
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
 		    = LIBGGI_PIXFMT(vis);
-		GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
+		DPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
 			       LIBGGI_APPBUFS(vis)[i]->read,
 			       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
 	}
@@ -358,7 +358,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 			/* In our special case, fail is always fatal. */
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT_MODE("Success in loading %s (%s)\n",
+			DPRINT_MODE("Success in loading %s (%s)\n",
 				       sugname, args);
 		}
 	}
@@ -397,7 +397,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 	int err = 0;
 
 	if (vis == NULL) {
-		GGIDPRINT("Visual==NULL\n");
+		DPRINT("Visual==NULL\n");
 		return GGI_EARGINVAL;
 	}
 
@@ -532,7 +532,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 /************************/
 int GGI_xf86dga_getmode(ggi_visual * vis, ggi_mode * tm)
 {
-	GGIDPRINT("In GGI_xf86dga_getmode(%p,%p)\n", vis, tm);
+	DPRINT("In GGI_xf86dga_getmode(%p,%p)\n", vis, tm);
 	if (vis == NULL)
 		return GGI_EARGINVAL;
 

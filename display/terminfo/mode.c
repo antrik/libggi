@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/13 15:56:25 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/27 16:42:27 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -130,7 +130,7 @@ static int _GGI_terminfo_loadstubs(ggi_visual *vis)
 					args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT("display-terminfo: Loaded %s (%s)\n", sugname, args);
+			DPRINT("display-terminfo: Loaded %s (%s)\n", sugname, args);
 		}
 	}
 
@@ -178,7 +178,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	priv = TERMINFO_PRIV(vis);
 
-	GGIDPRINT("display-terminfo: setmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+	DPRINT("display-terminfo: setmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
 		tm->graphtype,
 		tm->visible.x, tm->visible.y,
 		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,
@@ -187,7 +187,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 	status = GGI_terminfo_checkmode(vis, tm);
 	if ( status ) return status;
 
-	GGIDPRINT("display-terminfo: approved mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+	DPRINT("display-terminfo: approved mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
 		tm->graphtype,
 		tm->visible.x, tm->visible.y,
 		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,
@@ -271,7 +271,7 @@ int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 int GGI_terminfo_getmode(ggi_visual *vis, ggi_mode *tm)
 {
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
-	GGIDPRINT("display-terminfo: getmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+	DPRINT("display-terminfo: getmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
 		tm->graphtype,
 		tm->visible.x, tm->visible.y,
 		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,

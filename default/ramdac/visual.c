@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/26 21:35:33 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/27 16:42:13 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Generic RAMDAC via IOCTL driver
@@ -47,7 +47,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	int err;
 
-	GGIDPRINT("generic-ramdac: Init.\n");
+	DPRINT("generic-ramdac: Init.\n");
 
 	vis->palette = malloc(256*sizeof(ggi_color));
 	if (vis->palette == NULL) return GGI_ENOMEM;

@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.7 2004/11/06 22:48:25 cegger Exp $
+/* $Id: dbe.c,v 1.8 2004/11/27 16:42:15 soyt Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -42,7 +42,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	rc = XdbeQueryExtension(priv->disp, &major_version, &minor_version);
 	if (rc != True) return GGI_ENOFUNC;
 
-	GGIDPRINT_LIBS("X: DOUBLE-BUFFER: DBE version %i.%i\n",
+	DPRINT_LIBS("X: DOUBLE-BUFFER: DBE version %i.%i\n",
 			major_version, minor_version);
 
 

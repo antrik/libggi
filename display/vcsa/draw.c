@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.5 2004/11/14 15:47:48 cegger Exp $
+/* $Id: draw.c,v 1.6 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -42,14 +42,14 @@ int GGI_vcsa_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel p)
 	unsigned short buf[4];
 	
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
-		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
+		DPRINT_DRAW("display-vcsa: seek failed.\n");
 		return GGI_ENOSPACE;
 	}
 
 	buf[0] = (unsigned short) p;
 
 	if (write(LIBGGI_FD(vis), buf, 2) != 2) {
-		GGIDPRINT_DRAW("display-vcsa: write failed.\n");
+		DPRINT_DRAW("display-vcsa: write failed.\n");
 		return -1;
 	}
 
@@ -72,7 +72,7 @@ int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 		w = 256;
 
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
-		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
+		DPRINT_DRAW("display-vcsa: seek failed.\n");
 		return GGI_ENOSPACE;
 	}
 
@@ -83,7 +83,7 @@ int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	w *= 2;
 
 	if (write(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
-		GGIDPRINT_DRAW("display-vcsa: write failed.\n");
+		DPRINT_DRAW("display-vcsa: write failed.\n");
 		return -1;
 	}
 
@@ -122,14 +122,14 @@ int GGI_vcsa_puthline(ggi_visual *vis, int x, int y, int w, void *buf)
 
 
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
-		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
+		DPRINT_DRAW("display-vcsa: seek failed.\n");
 		return -1;
 	}
 
 	w *= 2;
 
 	if (write(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
-		GGIDPRINT_DRAW("display-vcsa: write failed.\n");
+		DPRINT_DRAW("display-vcsa: write failed.\n");
 		return -1;
 	}
 
@@ -164,14 +164,14 @@ int GGI_vcsa_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 
 
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
-		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
+		DPRINT_DRAW("display-vcsa: seek failed.\n");
 		return -1;
 	}
 
 	w *= 2;
 
 	if (read(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
-		GGIDPRINT_DRAW("display-vcsa: read failed.\n");
+		DPRINT_DRAW("display-vcsa: read failed.\n");
 		return -1;
 	}
 
@@ -189,12 +189,12 @@ int GGI_vcsa_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *p)
 	unsigned short buf[4];
 	
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
-		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
+		DPRINT_DRAW("display-vcsa: seek failed.\n");
 		return -1;
 	}
 
 	if (read(LIBGGI_FD(vis), buf, 2) != 2) {
-		GGIDPRINT_DRAW("display-vcsa: read failed.\n");
+		DPRINT_DRAW("display-vcsa: read failed.\n");
 		return -1;
 	}
 

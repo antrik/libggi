@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2004/11/14 15:47:45 cegger Exp $
+/* $Id: mode.c,v 1.24 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -163,7 +163,7 @@ int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 
 	db = _ggi_db_find_frame(vis, num);
 
-	GGIDPRINT("Setting write frame: %p found\n", db);
+	DPRINT("Setting write frame: %p found\n", db);
 
 	if (db == NULL) return GGI_ENOSPACE;
 
@@ -212,7 +212,7 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
 		if (! accel) {
 
-			GGIDPRINT("Didn't find an accelerator\n");
+			DPRINT("Didn't find an accelerator\n");
 			return GGI_ENOTFOUND;
 		}
 
@@ -251,7 +251,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	ggi_kgi_priv *priv;
 
 	if (vis == NULL) {
-		GGIDPRINT("Visual==NULL\n");
+		DPRINT("Visual==NULL\n");
 		return GGI_EARGINVAL;
 	}
 
@@ -261,10 +261,10 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	if (err) return err;
 
 	if(kgiSetMode(&KGI_CTX(vis)) != KGI_EOK){
-		GGIDPRINT_LIBS("Unable to set mode \n");
+		DPRINT_LIBS("Unable to set mode \n");
 		return GGI_ENOMATCH;
 	}
-	GGIDPRINT_LIBS("Mode set\n");
+	DPRINT_LIBS("Mode set\n");
 
 	if(LIBGGI_APPLIST(vis)->num){
 		for (i = 0; i < LIBGGI_APPLIST(vis)->num; ++i) {
@@ -278,11 +278,11 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
 	if (! fb) {
-		GGIDPRINT_LIBS("No framebuffer resource available\n");
+		DPRINT_LIBS("No framebuffer resource available\n");
 		return GGI_ENOTFOUND;
 	}
 
-	GGIDPRINT("Found fb as resource %d\n", fb->resource);
+	DPRINT("Found fb as resource %d\n", fb->resource);
 
 	kgiSetupMmapFB(&KGI_CTX(vis), fb->resource);
 
@@ -292,7 +292,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 			KGI_CTX(vis).mapper.fd, 0);
 
 	if (priv->fb == MAP_FAILED){
-		GGIDPRINT_LIBS("Unable to map the framebuffer\n");
+		DPRINT_LIBS("Unable to map the framebuffer\n");
 		return -1;
 	}
 
@@ -301,7 +301,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), tm->graphtype);
 
-	GGIDPRINT_LIBS("Pixelformat set\n");
+	DPRINT_LIBS("Pixelformat set\n");
 
 	fb_ptr = priv->fb;
 
@@ -364,7 +364,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		priv->swatch = fb_ptr + sizeof(font)*8;
 		priv->swatch_size -= sizeof(font)*8;
 		
-		GGIDPRINT("Font at %p, %i byte swatch at %p.\n", 
+		DPRINT("Font at %p, %i byte swatch at %p.\n", 
 			  priv->font, priv->swatch_size, priv->swatch);
 
 		install_font((uint8 *)priv->font);
@@ -382,11 +382,11 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	for(id = 1; 0 == GGI_kgi_getapi(vis, id, sugname, args); ++id){
 		if(_ggiOpenDL(vis, sugname, args, NULL)){
-			GGIDPRINT_LIBS("kgi: can't open %s\n", sugname);
+			DPRINT_LIBS("kgi: can't open %s\n", sugname);
 			if (id < 4) return GGI_EFATAL;
 			else continue;
 		}
-		GGIDPRINT_LIBS("kgi: loaded %s\n", sugname);
+		DPRINT_LIBS("kgi: loaded %s\n", sugname);
 	}
 
 	/* Palette */
@@ -507,26 +507,26 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 		mode.virt.y = tm->virt.y;
 	}
 
-	GGIDPRINT("%d, %d, %d, %d\n", mode.size.x, mode.size.y, mode.virt.x, mode.virt.y);
+	DPRINT("%d, %d, %d, %d\n", mode.size.x, mode.size.y, mode.virt.x, mode.virt.y);
 
 	/* hack: kgi doesn't allow multiple mode checks */
 	kgiUnsetMode(&KGI_CTX(vis));
 
 	if(kgiSetImages(&KGI_CTX(vis), 1) != KGI_EOK){
-		GGIDPRINT_LIBS("Unable to set images\n");
+		DPRINT_LIBS("Unable to set images\n");
 		return -1;
 	}
 	if(kgiSetImageMode(&KGI_CTX(vis), 0, &mode) != KGI_EOK){
-		GGIDPRINT_LIBS("Unable to set image mode\n");
+		DPRINT_LIBS("Unable to set image mode\n");
 		return -1;
 	}
 	if(kgiCheckMode(&KGI_CTX(vis)) != KGI_EOK){
-		GGIDPRINT_LIBS("Unable to check mode\n");
+		DPRINT_LIBS("Unable to check mode\n");
 		return -1;
 	}
 	memset(&mode, 0, sizeof(kgi_image_mode_t));
 	if (kgiGetImageMode(&KGI_CTX(vis), 0, &mode)) {
-		GGIDPRINT_LIBS("Unable to get mode\n");
+		DPRINT_LIBS("Unable to get mode\n");
 		return GGI_EFATAL;
 	}
 	kgiPrintImageMode(&mode);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2004/11/06 22:48:28 cegger Exp $
+/* $Id: visual.c,v 1.17 2004/11/27 16:42:20 soyt Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -65,7 +65,7 @@ static ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 		if (priv->inputbuffer->buffer[priv->inputoffset++]
 		   != MEMINPMAGIC)
 		{
-			GGIDPRINT_MISC("OUT OF SYNC in shm input !\n");
+			DPRINT_MISC("OUT OF SYNC in shm input !\n");
 			priv->inputoffset=0;	/* Try to resync */
 			return 0;
 		}	/* if */
@@ -139,7 +139,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gg_option options[NUM_OPTS];
 	struct sockaddr_un address;
 
-	GGIDPRINT_MISC("display-ipc coming up.\n");
+	DPRINT_MISC("display-ipc coming up.\n");
 	memcpy(options, optlist, sizeof(options));
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -158,13 +158,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->inputoffset = 0;		/* Setup offset. */
 
 	if (!args) {
-		GGIDPRINT("display-ipc: required arguments missing\n");
+		DPRINT("display-ipc: required arguments missing\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
 	args = ggParseOptions((char *) args, options, NUM_OPTS);
 	if (args == NULL) {
-		GGIDPRINT("display-ipc: error in arguments.\n");
+		DPRINT("display-ipc: error in arguments.\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
@@ -180,7 +180,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	   && !options[OPT_SEMID].result[0]
 	   && !options[OPT_SHMID].result[0])
 	{
-		GGIDPRINT("display-ipc: required arguments missing\n");
+		DPRINT("display-ipc: required arguments missing\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
@@ -188,11 +188,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	   && sscanf(options[OPT_SEMID].result,"%d", &(priv->semid))
 	   && sscanf(options[OPT_SHMID].result,"%d", &(priv->shmid))))
 	{
-		GGIDPRINT("display-ipc: argument format error\n");
+		DPRINT("display-ipc: argument format error\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
-	GGIDPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n",
+	DPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n",
 		   address.sun_path, priv->semid, priv->shmid);
 	address.sun_family = AF_UNIX;
 	if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1
@@ -200,14 +200,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		sizeof(struct sockaddr_un)) == -1
 	   || (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
 	{
-		GGIDPRINT("display-ipc initialization failed : %s\n", strerror(errno));
+		DPRINT("display-ipc initialization failed : %s\n", strerror(errno));
 		return GGI_ENODEVICE;
 	}	/* if */
 
 	if (options[OPT_INPUT].result[0]) {
 		priv->inputbuffer=priv->memptr;
 		priv->memptr=(char *)priv->memptr+INPBUFSIZE;
-		GGIDPRINT("display-ipc: moved mem to %p for input-buffer.\n",
+		DPRINT("display-ipc: moved mem to %p for input-buffer.\n",
 			priv->memptr);
 	}	/* if */
 
@@ -228,15 +228,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inputbuffer->frames	=
 		priv->inputbuffer->visframe	= 0;
 
-		GGIDPRINT_MISC("Adding gii to shmem-memtarget\n");
+		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 
 		/* First allocate a new gii_input descriptor. */
 
 		if (NULL==(inp=_giiInputAlloc())) {
-			GGIDPRINT_MISC("giiInputAlloc failure.\n");
+			DPRINT_MISC("giiInputAlloc failure.\n");
 			goto out;
 		}	/* if */
-		GGIDPRINT_MISC("gii inp=%p\n",inp);
+		DPRINT_MISC("gii inp=%p\n",inp);
 
 		/* Now fill in the blanks. */
       

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:48:20 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/27 16:41:55 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -65,7 +65,7 @@ static int mga_g400_release(ggi_resource *res)
 
 static int mga_g400_idleaccel(ggi_visual *vis)
 {
-	GGIDPRINT_DRAW("mga_g400_idleaccel(%p) called \n", vis);
+	DPRINT_DRAW("mga_g400_idleaccel(%p) called \n", vis);
 
 	mga_waitidle(FBDEV_PRIV(vis)->mmioaddr);
 	
@@ -81,7 +81,7 @@ static int do_cleanup(ggi_visual *vis)
 	struct mga_g400_priv *priv = NULL;
 	int i;
 
-	GGIDPRINT_MISC("mga_g400: Starting cleanup\n");
+	DPRINT_MISC("mga_g400: Starting cleanup\n");
 
 	if (fbdevpriv != NULL) {
 		priv = MGA_G400_PRIV(vis);
@@ -106,7 +106,7 @@ static int do_cleanup(ggi_visual *vis)
 	mga_waitidle(fbdevpriv->mmioaddr);
 
 	munmap((void*)fbdevpriv->mmioaddr, fbdevpriv->orig_fix.mmio_len);
-	GGIDPRINT_MISC("mga_g400: Unmapped MMIO\n");
+	DPRINT_MISC("mga_g400: Unmapped MMIO\n");
 
 	/* Free DB resource structures */
 	for (i = LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -154,7 +154,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				   fd, (signed)fbdevpriv->orig_fix.smem_len);
 	if (fbdevpriv->mmioaddr == MAP_FAILED) {
 		/* Can't mmap() MMIO region - bail out */
-		GGIDPRINT_LIBS("mga-g400: Unable to map MMIO region: %s\n"
+		DPRINT_LIBS("mga-g400: Unable to map MMIO region: %s\n"
 			       "          fd: %d, len: %ld, offset: %ld\n",
 			       strerror(errno), fd,
 			       fbdevpriv->orig_fix.mmio_len,
@@ -164,7 +164,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_ENODEVICE;
 	}
 
-	GGIDPRINT_MISC("mga-g400: Mapped MMIO region at %p\n",
+	DPRINT_MISC("mga-g400: Mapped MMIO region at %p\n",
 		       fbdevpriv->mmioaddr);
 
 	/* Set up DirectBuffers */
@@ -225,7 +225,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fontlen = 256*8;
 	priv->fontoffset = fbdevpriv->orig_fix.smem_len - fontlen;
 	priv->fontoffset &= ~127; /* Align */
-	GGIDPRINT_MISC("mga-g400: usedmemend: %ld, fontoffset: %ld\n",
+	DPRINT_MISC("mga-g400: usedmemend: %ld, fontoffset: %ld\n",
 		       usedmemend, priv->fontoffset);
 	if (usedmemend <= priv->fontoffset) {
 		memcpy((uint8*)fbdevpriv->fb_ptr + priv->fontoffset,
@@ -234,12 +234,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->charadd = FWIDTH*FHEIGHT;
 		vis->opdraw->putc = GGI_mga_g400_fastputc;
 		vis->opdraw->puts = GGI_mga_g400_fastputs;
-		GGIDPRINT_MISC("mga-g400: Using fast chars\n");
+		DPRINT_MISC("mga-g400: Using fast chars\n");
 	} else {
 		priv->fontoffset = 0;
 		vis->opdraw->putc = GGI_mga_g400_putc;
 		vis->opdraw->puts = GGI_mga_g400_puts;
-		GGIDPRINT_MISC("mga-g400: Using slow chars\n");
+		DPRINT_MISC("mga-g400: Using slow chars\n");
 	}
 
 	/* Save previous function pointers */

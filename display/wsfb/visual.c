@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/06 22:48:32 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/11/27 16:42:29 soyt Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -37,7 +37,7 @@ static int do_cleanup(ggi_visual *vis)
 	int rc = 0;
 	wsfb_priv *priv = WSFB_PRIV(vis);
 
-	GGIDPRINT("do_cleanup\n");
+	DPRINT("do_cleanup\n");
 
 	if (vis->input != NULL) {
 		giiClose(vis->input);
@@ -53,7 +53,7 @@ static int do_cleanup(ggi_visual *vis)
 			priv->mode = WSDISPLAYIO_MODE_EMUL;
 			rc = ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode);
 			if (rc == -1) {
-				GGIDPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
+				DPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
 					priv->devname, strerror(errno));
 			}	/* if */
 		}	/* if */
@@ -61,7 +61,7 @@ static int do_cleanup(ggi_visual *vis)
 		munmap(priv->base, priv->mapsize);
 		rc = ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->ocmap);
 		if (rc < 0) {
-			GGIDPRINT("ioctl WSDISPLAYIO_PUTCMAP error: %s %s\n",
+			DPRINT("ioctl WSDISPLAYIO_PUTCMAP error: %s %s\n",
 				priv->devname, strerror(errno));
 		}	/* if */
 		close(priv->fd);
@@ -83,12 +83,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	wsfb_priv *priv = NULL;
 	int error = 0, i;
 
-	GGIDPRINT("GGIopen\n");
+	DPRINT("GGIopen\n");
 	
 	ggLock(_ggi_global_lock); /* Entering protected section */
 	if (usagecounter > 0) {
 		ggUnlock(_ggi_global_lock);
-		GGIDPRINT("display-wsfb: You can only open this target "
+		DPRINT("display-wsfb: You can only open this target "
 			"once in an application.\n");
 		error = GGI_EBUSY;
 		goto error;
@@ -118,7 +118,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->fd = open(priv->devname, O_RDWR);
 	if (priv->fd < 0) {
-		GGIDPRINT("fd open error: %s %s\n",
+		DPRINT("fd open error: %s %s\n",
 			priv->devname, strerror(errno));
 		error = GGI_ENODEVICE;
 		goto error;
@@ -126,13 +126,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	if (ioctl(priv->fd, WSDISPLAYIO_GINFO, &priv->info) == -1) {
-		GGIDPRINT("ioctl WSDISPLAYIO_GINFO error: %s %s\n",
+		DPRINT("ioctl WSDISPLAYIO_GINFO error: %s %s\n",
 			priv->devname, strerror(errno));
 		error = GGI_ENODEVICE;
 		goto error;
 	}
 	if (ioctl(priv->fd, WSDISPLAYIO_GTYPE, &priv->wstype) == -1) {
-		GGIDPRINT("ioctl WSDISPLAYIO_GTYPE error: %s %s\n",
+		DPRINT("ioctl WSDISPLAYIO_GTYPE error: %s %s\n",
 			priv->devname, strerror(errno));
 		error = GGI_ENODEVICE;
 		goto error;
@@ -142,18 +142,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  */
 #ifdef WSDISPLAYIO_LINEBYTES
 	if (ioctl(priv->fd, WSDISPLAYIO_LINEBYTES, &priv->linebytes) == -1) {
-		GGIDPRINT("ioctl WSDISPLAYIO_LINEBYTES error: %s %s\n",
+		DPRINT("ioctl WSDISPLAYIO_LINEBYTES error: %s %s\n",
 			priv->devname, strerror(errno));
 		error = GGI_ENODEVICE;
 		goto error;
 	}
 #endif
 
-	GGIDPRINT("info: depth: %d height: %d width: %d\n",
+	DPRINT("info: depth: %d height: %d width: %d\n",
 		priv->info.depth, priv->info.height, priv->info.width);
 
 	if (ioctl(priv->fd, WSDISPLAYIO_GMODE, &priv->origmode) == -1) {
-		GGIDPRINT("ioctl WSDISPLAYIO_GMODE ERROR: %s %s\n",
+		DPRINT("ioctl WSDISPLAYIO_GMODE ERROR: %s %s\n",
 			priv->devname, strerror(errno));
 		error = GGI_ENODEVICE;
 		goto error;
@@ -164,7 +164,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->origmode == 0) {
 		priv->mode = WSDISPLAYIO_MODE_MAPPED;
 		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
-			GGIDPRINT("ioctl WSDISPLAYIO_SMODE ERROR: %s %s\n",
+			DPRINT("ioctl WSDISPLAYIO_SMODE ERROR: %s %s\n",
 				priv->devname, strerror(errno));
 			error = GGI_ENODEVICE;
 			goto error;
@@ -182,7 +182,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Open keyboard and mouse input */
 	vis->input = giiOpen("stdin:ansikey", NULL);
 	if (vis->input == NULL) {
-		GGIDPRINT(
+		DPRINT(
 "display-wsfb: Unable to open stdin input, try running with '-nokbd'.\n");
 			do_cleanup(vis);
 			error = GGI_ENODEVICE;
@@ -198,7 +198,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 
 error:
-	GGIDPRINT("display-wsfb: open failed (%s %s)\n",
+	DPRINT("display-wsfb: open failed (%s %s)\n",
 		priv->devname, strerror(errno));
 	return error;
 }
@@ -206,7 +206,7 @@ error:
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	GGIDPRINT("GGIclose\n");
+	DPRINT("GGIclose\n");
 	return do_cleanup(vis);
 }
 
@@ -216,7 +216,7 @@ int GGIdl_wsfb(int func, void **funcptr);
 
 int GGIdl_wsfb(int func, void **funcptr)
 {
-	GGIDPRINT("GGIdl_wsfb\n");
+	DPRINT("GGIdl_wsfb\n");
 	switch (func) {
 	case GGIFUNC_open:
 		*funcptr = (void *)GGIopen;

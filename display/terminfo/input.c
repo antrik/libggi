@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.3 2004/10/31 14:25:04 cegger Exp $
+/* $Id: input.c,v 1.4 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -41,7 +41,7 @@
 
 static int translate_key(int key, uint32 *modifiers)
 {
-	GGIDPRINT("terminfo: TRANSLATEKEY %04x\n", key);
+	DPRINT("terminfo: TRANSLATEKEY %04x\n", key);
 
 	*modifiers = 0;
 

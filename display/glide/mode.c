@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/11/14 15:47:45 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/11/27 16:42:20 soyt Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -103,7 +103,7 @@ static int glide_acquire(ggi_resource *res, uint32 actype)
 	GrBuffer_t buffer;
 	GrLfbInfo_t inf;
 
-	GGIDPRINT_MISC("glide_acquire(%p, 0x%x) called\n", res, actype);
+	DPRINT_MISC("glide_acquire(%p, 0x%x) called\n", res, actype);
 
 	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE)) {
 		return GGI_EARGINVAL;
@@ -166,7 +166,7 @@ static int glide_acquire(ggi_resource *res, uint32 actype)
 	res->curactype |= actype;
 	res->count++;
 
-	GGIDPRINT_MISC("glide_acquire - success, count: %d\n", res->count);
+	DPRINT_MISC("glide_acquire - success, count: %d\n", res->count);
 
 	return 0;
 }
@@ -179,7 +179,7 @@ static int glide_release(ggi_resource *res)
 	int bufnum;
 	GrBuffer_t buffer;
 
-	GGIDPRINT_MISC("glide_release(%p) called\n", res);
+	DPRINT_MISC("glide_release(%p) called\n", res);
 
 	if (res->count < 1) return GGI_ENOTALLOC;
 
@@ -317,12 +317,12 @@ res2glideres(glide_priv *priv, ggi_mode *mode,
 	for (i = 0; glide_resolutions[i].x != 0; i++) {
 		if (glide_resolutions[i].x * glide_resolutions[i].y * 4
 		    > priv->fbmem) {
-			GGIDPRINT_MODE("res2glideres: breaking on nomem\n");
+			DPRINT_MODE("res2glideres: breaking on nomem\n");
 			break;
 		}
 		if (glide_resolutions[i].y * GGIGLIDE_MINFREQ
 		    > priv->maxhfreq * 1000) {
-			GGIDPRINT_MODE("res2glideres: breaking on highfreq\n");
+			DPRINT_MODE("res2glideres: breaking on highfreq\n");
 			break;
 		}
 			
@@ -367,7 +367,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 	if (rc < 0) return rc;
 
 	if (res2glideres(priv, mode, &resolution) != 0) {
-		LIBGGI_ASSERT(0, "Invalid Glide resolution!");
+		LIB_ASSERT(0, "Invalid Glide resolution!");
 	}
 	freq = getglidefreq(priv, mode);
 
@@ -375,11 +375,11 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 		grSstWinClose();
 	}
 	
-	GGIDPRINT_MODE("resolution: 0x%02x, freq: 0x%02x\n", resolution, freq);
+	DPRINT_MODE("resolution: 0x%02x, freq: 0x%02x\n", resolution, freq);
 	if (grSstWinOpen(0, resolution, freq,
 			 GR_COLORFORMAT_ABGR, GR_ORIGIN_UPPER_LEFT, 2, 0)
 	    != FXTRUE) {
-		GGIDPRINT_MODE("FAIL!!!");
+		DPRINT_MODE("FAIL!!!");
 		return GGI_ENOMATCH;
 	}
 
@@ -412,7 +412,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 		priv->bytes_per_pixel = 4;
 		break;
 	default:
-		LIBGGI_ASSERT(0, "Glide: Illegal mode!");
+		LIB_ASSERT(0, "Glide: Illegal mode!");
 	}
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
@@ -463,7 +463,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 				= inf.strideInBytes;
 			LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
 				= LIBGGI_PIXFMT(vis);
-			GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i, 
+			DPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i, 
 				       LIBGGI_APPBUFS(vis)[i]->read,
 				       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
 		}
@@ -485,7 +485,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 				"%s (%s) library\n", libname, libargs);
 			return err;
 		}
-		GGIDPRINT ("Success in loading %s (%s)\n", libname, libargs);
+		DPRINT ("Success in loading %s (%s)\n", libname, libargs);
 	}
 	
 	/* Drawing functions */
@@ -544,7 +544,7 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 	GrScreenResolution_t resolution; /* Dummy */
 	int err = 0;
 
-	LIBGGI_APPASSERT(vis != NULL, "glide: Visual NULL in GGIcheckmode");
+	APP_ASSERT(vis != NULL, "glide: Visual NULL in GGIcheckmode");
 
 	/* handle AUTO */
 	_GGIhandle_ggiauto(mode, 640, 480);
@@ -593,7 +593,7 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 */
 int GGI_glide_getmode(ggi_visual *vis, ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL,
+	APP_ASSERT(vis != NULL,
 		"display-glide: GGIgetmode: Visual == NULL");
 	
 	/* We assume the mode in the visual to be OK 

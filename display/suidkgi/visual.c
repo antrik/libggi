@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/14 15:47:47 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-SUID: initialization
@@ -112,16 +112,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	LIBGGI_CURREAD(vis)=NULL;
 
 	if (iopl(3)) {perror("iopl");exit(2); }
-	GGIDPRINT("IOPL is here.\n");
+	DPRINT("IOPL is here.\n");
   
 	if (-1 == (priv->dev_mem = _suidtarget_dev_mem = open("/dev/mem",O_RDWR))) { perror("opening /dev/mem");exit(3); }
 	memptr=mmap(NULL,64*1024,PROT_READ|PROT_WRITE,MAP_SHARED,priv->dev_mem,0xa0000);
-	GGIDPRINT("Have mmap at %p.\n",memptr);
+	DPRINT("Have mmap at %p.\n",memptr);
 
 /*	law_base=0xf3000000; */
-	if (suidkgi_init_module()) {GGIDPRINT("Init has failed. Tough luck.\n");exit(1); }
+	if (suidkgi_init_module()) {DPRINT("Init has failed. Tough luck.\n");exit(1); }
 
-	GGIDPRINT("Init was o.k.\n");
+	DPRINT("Init was o.k.\n");
 	signal(SIGSEGV,get_killed);
 	signal(SIGINT,get_killed);
 	signal(SIGTERM,get_killed);
@@ -135,9 +135,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	mode.visible.y=mode.virt.y=25;
 	mode.dpp.x = 8;mode.dpp.y =16;
 	x=GGI_suidkgi_checkmode(vis,&mode);
-	GGIDPRINT("TESTMODE1 says %d.\n",x);
+	DPRINT("TESTMODE1 says %d.\n",x);
 	x=GGI_suidkgi_setmode(vis,&mode);
-	GGIDPRINT("SETMODE1 says %d.\n",x);
+	DPRINT("SETMODE1 says %d.\n",x);
 #endif
 
 #undef TESTING_THE_SUID_TARGET
@@ -157,9 +157,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	mode.visible.y=mode.virt.y=200;
 	mode.dpp.x    =mode.dpp.y =1;
 	x=ggiCheckMode(vis,&mode);
-	GGIDPRINT("TESTMODE3 says %d.\n",x);
+	DPRINT("TESTMODE3 says %d.\n",x);
 	x=ggiSetMode(vis,&mode);
-	GGIDPRINT("SETMODE3 says %d.\n",x);
+	DPRINT("SETMODE3 says %d.\n",x);
 
 	sleep(1);
 
@@ -181,15 +181,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	mode.visible.y=mode.virt.y=25;
 	mode.dpp.x = 8;mode.dpp.y =16;
 	x=GGI_suidkgi_checkmode(vis,&mode);
-	GGIDPRINT("TESTMODE4 says %d.\n",x);
+	DPRINT("TESTMODE4 says %d.\n",x);
 	x=GGI_suidkgi_setmode(vis,&mode);
-	GGIDPRINT("SETMODE4 says %d.\n",x);
+	DPRINT("SETMODE4 says %d.\n",x);
 
 	sleep(1);
 
 	suidkgi_cleanup_module();
 
-	GGIDPRINT("Cleanup went well.\n");
+	DPRINT("Cleanup went well.\n");
 	close(priv->dev_mem);
 	exit(1);
 #endif
@@ -211,7 +211,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_mode mode;
 	int x;
 	
-	LIBGGI_ASSERT(priv != NULL, "display-suidkgi: priv == NULL");
+	LIB_ASSERT(priv != NULL, "display-suidkgi: priv == NULL");
 
 	if (priv->is_up) {
 #if 1
@@ -222,9 +222,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		mode.visible.y=mode.virt.y=25;
 		mode.dpp.x = 9;mode.dpp.y =14;
 		x=GGI_suidkgi_checkmode(vis,&mode);
-		GGIDPRINT("TESTMODE1 says %d.\n",x);
+		DPRINT("TESTMODE1 says %d.\n",x);
 		x=GGI_suidkgi_setmode(vis,&mode);
-		GGIDPRINT("SETMODE1 says %d.\n",x);
+		DPRINT("SETMODE1 says %d.\n",x);
 #endif
 		
 /*		suidkgi_cleanup_module(); */
@@ -234,7 +234,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 			priv->vt_fd = -1;
 		}
 
-		GGIDPRINT("Cleanup went well.\n");
+		DPRINT("Cleanup went well.\n");
 		close(priv->dev_mem);
 		priv->is_up=0;
 	}

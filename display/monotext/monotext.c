@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.7 2004/11/14 15:47:46 cegger Exp $
+/* $Id: monotext.c,v 1.8 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-monotext
@@ -72,7 +72,7 @@ static void setup_templates(ggi_coord accuracy)
 
 	int a, x, y;
 
-	GGIDPRINT("Calculating character templates...\n");
+	DPRINT("Calculating character templates...\n");
 
 	for (a=32; a <= 126; a++)
 	for (y=0; y < accuracy.y; y++)
@@ -125,7 +125,7 @@ static void setup_rgb2grey_table(uint8 *map)
 {
 	int r, g, b, i;
 
-	GGIDPRINT("Calculating rgb->greyscale table...\n");
+	DPRINT("Calculating rgb->greyscale table...\n");
 
 	for (r=0; r < 32; r++)
 	for (g=0; g < 32; g++)
@@ -441,7 +441,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 
 	priv->size = LIBGGI_MODE(vis)->visible;
 
-	GGIDPRINT("display-monotext: Open (size=%dx%d accuracy=%dx%d "
+	DPRINT("display-monotext: Open (size=%dx%d accuracy=%dx%d "
 		"squish=%dx%d)\n", priv->size.x, priv->size.y,
 		priv->accuracy.x, priv->accuracy.y,
 		  priv->squish.x, priv->squish.y);
@@ -460,7 +460,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
 		(unsigned)(priv->parent_gt));
 	if (rc < 0) {
-		GGIDPRINT("Couldn't set child graphic mode.\n");
+		DPRINT("Couldn't set child graphic mode.\n");
 		return rc;
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/06 22:48:28 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -63,7 +63,7 @@ static int do_cleanup(ggi_visual *vis)
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
 
-	GGIDPRINT("display-lcd823: do_cleanup start.\n");
+	DPRINT("display-lcd823: do_cleanup start.\n");
 
 	_GGI_lcd823_free_dbs(vis);
 
@@ -90,7 +90,7 @@ static int do_cleanup(ggi_visual *vis)
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-	GGIDPRINT("display-lcd823: do_cleanup done.\n");
+	DPRINT("display-lcd823: do_cleanup done.\n");
 
 	return 0;
 }
@@ -104,7 +104,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_lcd823_priv *priv;
 	int size;
 
-	GGIDPRINT("display-lcd823: GGIopen start.\n");
+	DPRINT("display-lcd823: GGIopen start.\n");
 
 	LCD823_PRIV(vis) = priv = malloc(sizeof(ggi_lcd823_priv));
 	if (priv == NULL) {
@@ -166,7 +166,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-	GGIDPRINT("display-lc823: GGIopen success.\n");
+	DPRINT("display-lc823: GGIopen success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

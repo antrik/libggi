@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.5 2004/10/31 14:25:05 cegger Exp $
+/* $Id: trueemu.c,v 1.6 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -912,11 +912,11 @@ int _ggi_trueemu_Open(ggi_visual *vis)
 	/* Set the parent mode */
 	err = ggiSetMode(priv->parent, &priv->mode);
 	if (err < 0) {
-		GGIDPRINT_MODE("display-trueemu: Couldn't set parent mode.\n");
+		DPRINT_MODE("display-trueemu: Couldn't set parent mode.\n");
 		return err;
 	}
 
-	GGIDPRINT_MODE("display-trueemu: parent is %d/%d\n",
+	DPRINT_MODE("display-trueemu: parent is %d/%d\n",
 		       GT_DEPTH(priv->mode.graphtype),
 		       GT_SIZE(priv->mode.graphtype));
 

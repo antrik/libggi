@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/11/14 15:47:50 cegger Exp $
+/* $Id: color.c,v 1.8 2004/11/27 16:42:30 soyt Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -41,7 +41,7 @@ int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,
 
 	size_t end = start + size;
 
-	GGIDPRINT_COLOR
+	DPRINT_COLOR
 	    ("GGI_xf86dga_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
 	     vis, start, size, colormap->r, colormap->g, colormap->b);
 

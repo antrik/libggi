@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/31 13:15:00 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/27 16:42:45 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -41,7 +41,7 @@
 
 static int _default_error(void)
 {
-        GGIDPRINT_MISC("_default_error() called\n");
+        DPRINT_MISC("_default_error() called\n");
 	return GGI_ENOFUNC;
 }
 

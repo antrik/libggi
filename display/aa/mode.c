@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/11/14 15:47:43 cegger Exp $
+/* $Id: mode.c,v 1.17 2004/11/27 16:42:17 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -86,7 +86,7 @@ static int _GGIdomode(ggi_visual *vis)
 			/* In our special case, fail is always fatal. */
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT("Success in loading %s (%s)\n",sugname,args);
+			DPRINT("Success in loading %s (%s)\n",sugname,args);
 		}
 	}
 
@@ -250,7 +250,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 
 	err = _GGIcursorycheckmode(vis, tm);
 	if (err) {
-		GGIDPRINT_MODE("display-aa: setmode: cursory checkmode failed\n");
+		DPRINT_MODE("display-aa: setmode: cursory checkmode failed\n");
 		return err;
 	}
 
@@ -282,7 +282,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 
 	priv->context = aa_autoinit(&ap);
 	if(!priv->context) {
-		GGIDPRINT_MODE("display-aa: setmode: aa_autoinit failed\n");
+		DPRINT_MODE("display-aa: setmode: aa_autoinit failed\n");
 		/* If user is negotiating with setmode, assume: */
 		tm->visible.x = tm->virt.x = 80*AA_SCRMULT_X;
 		tm->visible.y = tm->virt.y = 25*AA_SCRMULT_Y;
@@ -302,7 +302,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 		tm->visible.y = tm->virt.y = ny;
 	}
 	if(err)	{	
-		GGIDPRINT_MODE("display-aa: setmode: AAlib returned different"
+		DPRINT_MODE("display-aa: setmode: AAlib returned different"
 				"mode than requested, failing\n");
 		aa_close(priv->context);
 		return GGI_ENOMATCH;
@@ -369,7 +369,7 @@ int GGI_aa_checkmode(ggi_visual *vis,ggi_mode *tm)
 			ny = aa_imgheight(c);
 			aa_close(c);
 		} else {
-			GGIDPRINT_MODE("display-aa: checkmode: aa_autoinit failed\n");
+			DPRINT_MODE("display-aa: checkmode: aa_autoinit failed\n");
 			/* Last ditch attempt */
 			nx = 80*AA_SCRMULT_X;
 			ny = 25*AA_SCRMULT_Y;
@@ -393,7 +393,7 @@ int GGI_aa_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 int GGI_aa_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-	GGIDPRINT("In GGI_aa_getmode(%p,%p)\n",vis,tm);
+	DPRINT("In GGI_aa_getmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
 		return GGI_EARGINVAL;
 	

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/11/26 21:35:35 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/11/27 16:42:29 soyt Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -45,7 +45,7 @@ static int do_mmap(ggi_visual *);
 int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	//struct wsfb_priv *priv = WSFB_PRIV(vis);
-	GGIDPRINT("GGI_wsfb_getapi called\n");
+	DPRINT("GGI_wsfb_getapi called\n");
 
 	*arguments = '\0';
 	switch(num) {
@@ -83,18 +83,18 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 	//int pixelBytes;
 
 	if (vis == NULL) {
-		GGIDPRINT("vis == NULL");
+		DPRINT("vis == NULL");
 		return GGI_EARGINVAL;
 	}
 
-	GGIDPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
+	DPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
 		tm->visible.x, tm->visible.y,
 		tm->virt.x, tm->virt.y,
 		tm->frames, tm->graphtype);
 
 	err = GGI_wsfb_checkmode(vis, tm);
 	if (err) {
-		GGIDPRINT("error from checkmode during GGI_wsfb_setmode\n");
+		DPRINT("error from checkmode during GGI_wsfb_setmode\n");
 		return err;
 	}
 
@@ -190,7 +190,7 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 #if 0
 	int err = 0;
 
-	GGIDPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
+	DPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
 		tm->visible.x, tm->visible.y,
 		tm->virt.x, tm->virt.y,
 		tm->frames, tm->graphtype);
@@ -220,9 +220,9 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 /************************/
 int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL, "GGIgetmode(wsfb): Visual == NULL");
+	APP_ASSERT(vis != NULL, "GGIgetmode(wsfb): Visual == NULL");
 
-	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
+	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
 	return 0;
@@ -235,7 +235,7 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colorma
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
-	GGIDPRINT_COLOR("display-wsfb: SetPalVec(%d,%d)\n", start, len);
+	DPRINT_COLOR("display-wsfb: SetPalVec(%d,%d)\n", start, len);
 	
 	if (start == GGI_PALETTE_DONTCARE) {
 		start = 0;
@@ -257,7 +257,7 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colorma
 	}
 
 	if (ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->cmap) < 0) {
-		GGIDPRINT_COLOR("display-wsfb: PUTCMAP failed.");
+		DPRINT_COLOR("display-wsfb: PUTCMAP failed.");
 		return -1;
 	}
 
@@ -274,7 +274,7 @@ do_mmap(ggi_visual *vis)
 	ggi_directbuffer *buf;
 
 	if (ioctl(priv->fd, WSDISPLAYIO_GETCMAP, &priv->ocmap) < 0) {
-		GGIDPRINT("getcmap failed\n");
+		DPRINT("getcmap failed\n");
 		return -1;
 	}
 	priv->cmap.red   = (char *)malloc(256);
@@ -285,7 +285,7 @@ do_mmap(ggi_visual *vis)
 		priv->fd, priv->Base);
 
 	if (priv->base == (void *)-1) {
-		GGIDPRINT("mmap failed: %s %s\n",
+		DPRINT("mmap failed: %s %s\n",
 			priv->devname, strerror(errno));
 		return GGI_ENODEVICE;
 	}

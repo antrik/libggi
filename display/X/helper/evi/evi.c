@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.7 2004/11/06 22:48:26 cegger Exp $
+/* $Id: evi.c,v 1.8 2004/11/27 16:42:15 soyt Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -50,7 +50,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	xpriv->evilist = priv;
 
-	GGIDPRINT("Xevi found %i visuals:\n", priv->nevi);
+	DPRINT("Xevi found %i visuals:\n", priv->nevi);
 	i = 0;
 	while (i < priv->nevi) {
 		ExtendedVisualInfo *ptr = priv->evi + i;
@@ -64,7 +64,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 				id = (xpriv->vilist + j)->vi->visualid;
 				if (id  == ptr->core_visual_id) {
-					GGIDPRINT("Visual %x is an overlay/"
+					DPRINT("Visual %x is an overlay/"
 						  "underlay, disabled.\n", id);
 					(xpriv->vilist + j)->flags |=
 						GGI_X_VI_NON_FB;
@@ -75,7 +75,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 #warning decide what to do about conflicts here
 
-		GGIDPRINT("ID: %x screen: %i level: %i transp:"
+		DPRINT("ID: %x screen: %i level: %i transp:"
 			  "%x/%x cmaps: %i/%i (%i conflicts.)\n",
 			  ptr->core_visual_id, ptr->screen, ptr->level,
 			  ptr->transparency_type,

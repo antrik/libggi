@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.27 2004/11/14 19:49:50 cegger Exp $
+/* $Id: misc.c,v 1.28 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -129,7 +129,7 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 		ggi_x_vi *tmp;
 		if (priv->nvisuals == nvisuals) break;
 
-		GGIDPRINT_MISC("downsize the visual list to %i visuals\n",
+		DPRINT_MISC("downsize the visual list to %i visuals\n",
 				nvisuals);
 
 		/* We free the unused visuals by downsizing
@@ -140,12 +140,12 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 			/* reallocation failed, although we downsize?
 			 * There must be something wrong in the kernel VM.
 			 */
-			GGIDPRINT("downsizing using realloc() failed!\n");
+			DPRINT("downsizing using realloc() failed!\n");
 		}	/* if */
 		priv->nvisuals = nvisuals;
 		priv->vilist = tmp;
 
-		LIBGGI_APPASSERT(priv->nvisuals > 0, "nvisuals shouldn't be 0");
+		APP_ASSERT(priv->nvisuals > 0, "nvisuals shouldn't be 0");
 	} while(0);
 
 	/* Bubblesort priv->vilist from least-to-most desirable visuals */
@@ -264,7 +264,7 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 	int 		res = GGI_OK;
 	unsigned int 	w, h, screenw, screenh, screenwmm, screenhmm;
 
-	LIBGGI_APPASSERT(vis != NULL, "GGIcheckmode: vis == NULL");
+	APP_ASSERT(vis != NULL, "GGIcheckmode: vis == NULL");
 
 	priv = GGIX_PRIV(vis);
 
@@ -289,7 +289,7 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 		/* Don't resize an explicitly requested window */ 
 		Window dummywin;
 		unsigned int dummy;
-		LIBGGI_APPASSERT(priv->parentwin, "no parent here... bad.");
+		APP_ASSERT(priv->parentwin, "no parent here... bad.");
 		XGetGeometry(priv->disp, priv->parentwin, &dummywin,
 			     (int *)&dummy, (int *)&dummy,
 			     &w, &h, &dummy, &dummy);
@@ -301,7 +301,7 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 		h = screenh * 9 / 10;
 	}
 
-	LIBGGI_APPASSERT(w && h, "Bad max w/h.");
+	APP_ASSERT(w && h, "Bad max w/h.");
 
 	if (tm->visible.x == GGI_AUTO) {
 		if (tm->virt.x == GGI_AUTO) {

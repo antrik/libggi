@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/11/13 15:56:22 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -142,7 +142,7 @@ static int do_setmode(ggi_visual *vis)
 			return GGI_EFATAL;
 		}
 
-		GGIDPRINT_LIBS("Success in loading %s (%s)\n",
+		DPRINT_LIBS("Success in loading %s (%s)\n",
 			       libname, libargs);
 	}
 
@@ -162,7 +162,7 @@ static int do_setmode(ggi_visual *vis)
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
-	GGIDPRINT_MODE("display-lcd823: do_setmode SUCCESS\n");
+	DPRINT_MODE("display-lcd823: do_setmode SUCCESS\n");
 
 	return 0;
 }
@@ -207,7 +207,7 @@ int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 
-	GGIDPRINT_MODE("display-lcd823: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-lcd823: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -247,7 +247,7 @@ int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
 	}
 	mode->size.x = mode->size.y = GGI_AUTO;
 
-	GGIDPRINT_MODE("display-lcd823: result %d %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-lcd823: result %d %dx%d#%dx%dF%d[0x%02x]\n",
 		       err, mode->visible.x, mode->visible.y,
 		       mode->virt.x, mode->virt.y, 
 		       mode->frames, mode->graphtype);
@@ -258,7 +258,7 @@ int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_lcd823_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	GGIDPRINT_MODE("display-lcd823: getmode\n");
+	DPRINT_MODE("display-lcd823: getmode\n");
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

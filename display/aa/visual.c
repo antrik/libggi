@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:38:07 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/27 16:42:17 soyt Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -87,7 +87,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = GGI_ENOMEM;
 	gg_option options[NUM_OPTS];
 	
-	GGIDPRINT_LIBS("display-aa: Starting\n");
+	DPRINT_LIBS("display-aa: Starting\n");
 
 	memcpy(options, optlist, sizeof(options));
 	
@@ -149,16 +149,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	do {
 		gii_input *inp;
-		GGIDPRINT_MISC("display-aa: gii starting\n");
+		DPRINT_MISC("display-aa: gii starting\n");
 
 		/* First allocate a new gii_input descriptor. */
 		inp = _giiInputAlloc();
 		if (inp == NULL) {
-			GGIDPRINT_MISC("display-aa: _giiInputAlloc failed\n");
+			DPRINT_MISC("display-aa: _giiInputAlloc failed\n");
 			GGIclose(vis, dlh);
 			return GGI_ENOMEM;
 		}
-		GGIDPRINT_MISC("display-aa: gii inp=%p\n",inp);
+		DPRINT_MISC("display-aa: gii inp=%p\n",inp);
 
 		/* Now fill in the blanks. */
 		inp->priv = priv; /* We need that in GII_aa_poll() */
@@ -178,7 +178,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Now join the new event source in. */
 		vis->input = giiJoinInputs(vis->input,inp);
 		
-		GGIDPRINT_MISC("display-aa: input joined into %p\n",
+		DPRINT_MISC("display-aa: input joined into %p\n",
 			       vis->input);
 	} while(0);
 

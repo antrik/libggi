@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/06 22:48:30 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -50,7 +50,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	GGIDPRINT("display-palemu: GGIclose start.\n");
+	DPRINT("display-palemu: GGIclose start.\n");
 
 	if (priv->fb_ptr != NULL) {
 		GGI_palemu_resetmode(vis);
@@ -65,7 +65,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	free(priv);
 	free(LIBGGI_GC(vis));
 
-	GGIDPRINT("display-palemu: GGIclose done.\n");
+	DPRINT("display-palemu: GGIclose done.\n");
 
 	return 0;
 }
@@ -79,7 +79,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	char target[1024];
 	int err = GGI_ENOMEM;
 
-	GGIDPRINT("display-palemu: GGIopen start.\n");
+	DPRINT("display-palemu: GGIopen start.\n");
 
 	/* handle arguments */
 	memcpy(options, optlist, sizeof(options));
@@ -135,11 +135,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flags  = 0;
 	priv->fb_ptr = NULL;
 
-	GGIDPRINT("display-palemu: parent mode is '%s'\n",
+	DPRINT("display-palemu: parent mode is '%s'\n",
 		  options[OPT_PARENT].result);
 	ggiParseMode(options[OPT_PARENT].result, &priv->mode);
 
-	GGIDPRINT("display-palemu: opening target: %s\n", target);
+	DPRINT("display-palemu: opening target: %s\n", target);
 	priv->parent = ggiOpen(target, NULL);
 	if (priv->parent == NULL) {
 		fprintf(stderr,
@@ -179,7 +179,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->flush = GGI_palemu_flush;
 	vis->opdisplay->setflags = GGI_palemu_setflags;
 
-	GGIDPRINT("display-palemu: GGIopen succeeded.\n");
+	DPRINT("display-palemu: GGIopen succeeded.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

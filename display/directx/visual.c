@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2004/11/06 22:48:27 cegger Exp $
+/* $Id: visual.c,v 1.30 2004/11/27 16:42:19 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -111,7 +111,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	GGIGII ggigii;
 	gg_option options[NUM_OPTS];
 
-	GGIDPRINT("DirectX-target starting\n");
+	DPRINT("DirectX-target starting\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -201,7 +201,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 		inp = giiOpen("directx", &ggigii, NULL);
 		if (inp == NULL) {
-			GGIDPRINT_MISC("Unable to open directx inputlib\n");
+			DPRINT_MISC("Unable to open directx inputlib\n");
 			GGIclose(vis, dlh);
 			err = GGI_ENODEVICE;
 			goto err3;

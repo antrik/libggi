@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/14 20:18:06 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/11/27 16:42:20 soyt Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -88,7 +88,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gii_input *inp;
 	int err;
 	
-	GGIDPRINT("GLIDE-lib starting\n");
+	DPRINT("GLIDE-lib starting\n");
 
 	if (args != NULL) {
 		currentcard = strtol(args, NULL, 0);

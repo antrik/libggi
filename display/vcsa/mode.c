@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/11/13 15:56:26 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -66,7 +66,7 @@ int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	GGIDPRINT_MODE("display-vcsa: setmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-vcsa: setmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -84,7 +84,7 @@ int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
 			return GGI_EFATAL;
 		}
 
-		GGIDPRINT_LIBS("Success in loading %s (%s)\n", libname, libargs);
+		DPRINT_LIBS("Success in loading %s (%s)\n", libname, libargs);
 	}
 
 	/* setup drawing primitives */
@@ -103,7 +103,7 @@ int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
 	/* indicate API change */
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
-	GGIDPRINT_MODE("display-vcsa: setmode Success.\n");
+	DPRINT_MODE("display-vcsa: setmode Success.\n");
 
 	return 0;
 }
@@ -120,7 +120,7 @@ int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 	int err;
 
-	GGIDPRINT_MODE("display-vcsa: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-vcsa: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -186,7 +186,7 @@ int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
 	err = _ggi_physz_figure_size(mode, priv->physzflags, &(priv->physz),
 				0, 0, mode->visible.x, mode->visible.y);
 		
-	GGIDPRINT_MODE("display-vcsa: result %d %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("display-vcsa: result %d %dx%d#%dx%dF%d[0x%02x]\n",
 			err, mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -195,7 +195,7 @@ int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_vcsa_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	GGIDPRINT_MODE("display-vcsa: getmode\n");
+	DPRINT_MODE("display-vcsa: getmode\n");
 	
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

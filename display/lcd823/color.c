@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/11/14 15:47:45 cegger Exp $
+/* $Id: color.c,v 1.6 2004/11/27 16:42:21 soyt Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -40,7 +40,7 @@ GGI_lcd823_setPalette(ggi_visual *vis, size_t start, size_t size, const ggi_colo
 	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	size_t i;
 
-	GGIDPRINT_COLOR("GGI_lcd823_setPalette(%p, %d, %d)\n", vis, start, size);
+	DPRINT_COLOR("GGI_lcd823_setPalette(%p, %d, %d)\n", vis, start, size);
 
 	if (start < 0 || start+size > nocols) {
 		return GGI_ENOSPACE;

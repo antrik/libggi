@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.40 2004/11/14 15:47:43 cegger Exp $
+/* $Id: visual.c,v 1.41 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -224,7 +224,7 @@ skip3:
 	free(priv);
  skip:
 	if (LIBGGI_GC(vis) != NULL) free(LIBGGI_GC(vis));
-	GGIDPRINT_MISC("X-target closed\n");
+	DPRINT_MISC("X-target closed\n");
 	return 0;
 }
 
@@ -267,13 +267,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->xliblock = lock;
 
 	/* Obtain the X11 display handle */
-	GGIDPRINT_MISC("X: want display %s\n", args);
+	DPRINT_MISC("X: want display %s\n", args);
 	disp = XOpenDisplay(args);
 	if (disp == NULL) goto out;
-	GGIDPRINT_MISC("X: have display %s\n", DisplayString(disp));
-	GGIDPRINT_MISC("X: number of screens on this display: %i\n",
+	DPRINT_MISC("X: have display %s\n", DisplayString(disp));
+	DPRINT_MISC("X: number of screens on this display: %i\n",
 			ScreenCount(disp));
-	GGIDPRINT_MISC("X: defaultscreen on this display: %i\n",
+	DPRINT_MISC("X: defaultscreen on this display: %i\n",
 			DefaultScreen(disp));
 	priv->disp = disp;
 
@@ -288,10 +288,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	tmpstr = extname;						\
 	XQueryExtension(disp, tmpstr, &tmp1, &tmp2, &tmp3);		\
 	if (tmp1) {							\
-		GGIDPRINT_MISC("%s X extension found\n", tmpstr);	\
+		DPRINT_MISC("%s X extension found\n", tmpstr);	\
 		priv->use_Xext |= flag;					\
 	} else {							\
-		GGIDPRINT_MISC("no %s extension\n", tmpstr);		\
+		DPRINT_MISC("no %s extension\n", tmpstr);		\
 	}
 	
 	GGI_X_CHECK_XEXT("Extended-Visual-Information",	GGI_X_USE_EVI);
@@ -340,7 +340,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			XWindowAttributes wa;
 			priv->parentwin = priv->win =
 				strtol(options[OPT_INWIN].result, NULL, 0);
-			GGIDPRINT_MISC("X: using window id 0x%x\n", 
+			DPRINT_MISC("X: using window id 0x%x\n", 
 				       priv->parentwin);
 			vi_mask = VisualScreenMask;
 			XGetWindowAttributes(priv->disp, priv->parentwin, &wa);
@@ -365,14 +365,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdisplay->checkmode = GGI_X_checkmode_fixed;
 		vis->opdisplay->setmode = GGI_X_setmode_fixed;
 
-		GGIDPRINT_MISC("X: using root window of screen %u\n", 
+		DPRINT_MISC("X: using root window of screen %u\n", 
 			       vi_template.screen);
 	}
 
 	priv->visual = XGetVisualInfo(priv->disp, vi_mask, 
 				      &vi_template, &priv->nvisuals);
 	if (priv->visual == NULL || priv->nvisuals <= 0) {
-		GGIDPRINT("X: No acceptable X11 visuals.\n");
+		DPRINT("X: No acceptable X11 visuals.\n");
 		err = GGI_ENOFUNC;
 		goto out;
 	}
@@ -382,7 +382,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->buflist = XListPixmapFormats(disp, &(priv->nbufs));
 	if (priv->buflist == NULL) goto out;
 
-	GGIDPRINT_MISC("X: Sort/complete visual list.\n");
+	DPRINT_MISC("X: Sort/complete visual list.\n");
 	_ggi_x_build_vilist(vis);	/* Sorts/completes vilist */
 
 
@@ -415,7 +415,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 
-	GGIDPRINT_MISC("X: Load X extensions.\n");
+	DPRINT_MISC("X: Load X extensions.\n");
 
 	/* Order is important here -- XCloseDisplay has sharp hooks! */
 
@@ -439,7 +439,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		tmp2 += !(priv->vilist[tmp1++].flags && GGI_X_VI_NON_FB);
 	}
 	if (!tmp2) {
-		GGIDPRINT("X: No acceptable X11 visuals.\n");
+		DPRINT("X: No acceptable X11 visuals.\n");
 		err = GGI_ENOFUNC;
 		goto out;
 	}
@@ -483,18 +483,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  nomansync:
 	if (options[OPT_NOACCEL].result[0] != 'n') {
 		if (priv->createfb == NULL) {
-			GGIDPRINT("X: No rendering path!\n");
+			DPRINT("X: No rendering path!\n");
 			err = GGI_ENODEVICE;
 			goto out;
 		}
-		GGIDPRINT("disabling drawable\n");
+		DPRINT("disabling drawable\n");
 		priv->createdrawable = NULL;
 	}
 
 	if (priv->createdrawable != NULL) {
 		priv->textfont = XLoadQueryFont(disp, "fixed");
 		if (priv->textfont != NULL) {
-			GGIDPRINT_MISC("Xlib: using font with "
+			DPRINT_MISC("Xlib: using font with "
 				       "dimension %dx%d\n",
 				       priv->textfont->max_bounds.width,
 				       priv->textfont->max_bounds.ascent
@@ -518,10 +518,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.gglock = lock;
                 
 		inp = giiOpen("xwin", &_args, NULL);
-		GGIDPRINT_MISC("X: giiOpen returned with %p\n", inp);
+		DPRINT_MISC("X: giiOpen returned with %p\n", inp);
 
 		if (inp == NULL) {
-			GGIDPRINT_MISC("Unable to open xwin inputlib\n");
+			DPRINT_MISC("Unable to open xwin inputlib\n");
 			GGIclose(vis, dlh);
 			return GGI_ENODEVICE;
 		}
@@ -542,7 +542,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	GGIDPRINT_MISC("X-target fully up\n");
+	DPRINT_MISC("X-target fully up\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
@@ -555,8 +555,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	LIBGGI_ASSERT(vis != NULL, "GGIexit: vis == NULL");
-	LIBGGI_ASSERT(GGIX_PRIV(vis) != NULL, "GGIexit: GGIX_PRIV(vis) == NULL");
+	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL");
+	LIB_ASSERT(GGIX_PRIV(vis) != NULL, "GGIexit: GGIX_PRIV(vis) == NULL");
 
 	if (GGIX_PRIV(vis)->opmansync) {
 		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/11/13 15:56:22 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/11/27 16:42:22 soyt Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -96,7 +96,7 @@ int GGI_libkgi_idleaccel(ggi_visual *vis)
 
   fprintf(stderr, "GGI_libkgi_idleaccel\n");
 
-        GGIDPRINT_DRAW("GGI_libkgi_idleaccel(%p) called \n", vis);
+        DPRINT_DRAW("GGI_libkgi_idleaccel(%p) called \n", vis);
         
         if (priv->idleaccel) return priv->idleaccel(vis);
 
@@ -105,7 +105,7 @@ int GGI_libkgi_idleaccel(ggi_visual *vis)
 
 int GGI_libkgi_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-        GGIDPRINT_MODE("display-libkgi: getmode\n");
+        DPRINT_MODE("display-libkgi: getmode\n");
         
         memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
@@ -119,11 +119,11 @@ int GGI_libkgi_checkmode(ggi_visual *vis, ggi_mode *mode)
 	struct ggiGA_resource_props rend;
 	ggiGA_resource_handle motor_h, carb_h;
 
-        GGIDPRINT_MODE("display-libkgi: checkmode\n");
+        DPRINT_MODE("display-libkgi: checkmode\n");
 
 	/* Make sure LibGAlloc is attached. */
 	if (!LIBKGI_PRIV(vis)->galloc_loaded) {
-		GGIDPRINT("Attaching LibGAlloc\n");
+		DPRINT("Attaching LibGAlloc\n");
 		err = ggiGAAttach(vis);
 		if (err) {
 			fprintf(stderr, "Eek, couldn't attach LibGAlloc.\n");
@@ -178,7 +178,7 @@ int GGI_libkgi_checkmode(ggi_visual *vis, ggi_mode *mode)
 	       sizeof(ggi_mode));
         if (err != 0) return err;
 
-        GGIDPRINT_MODE("display-libkgi: setmode success.\n");
+        DPRINT_MODE("display-libkgi: setmode success.\n");
 
         return 0;
 }
@@ -190,11 +190,11 @@ int GGI_libkgi_setmode(ggi_visual *vis, ggi_mode *mode)
 	struct ggiGA_resource_props rend;
 	ggiGA_resource_handle motor_h, carb_h;
 
-        GGIDPRINT_MODE("display-libkgi: setmode\n");
+        DPRINT_MODE("display-libkgi: setmode\n");
 
 	/* Make sure LibGAlloc is attached. */
 	if (!(LIBKGI_PRIV(vis)->galloc_loaded)) {
-		GGIDPRINT("Attaching LibGAlloc\n");
+		DPRINT("Attaching LibGAlloc\n");
 		err = ggiGAAttach(vis);
 		if (err) {
 			fprintf(stderr, "Eek, couldn't attach LibGAlloc.\n");
@@ -254,7 +254,7 @@ int GGI_libkgi_setmode(ggi_visual *vis, ggi_mode *mode)
 	       sizeof(ggi_mode));
         if (err != 0) return err;
 
-        GGIDPRINT_MODE("display-libkgi: setmode success.\n");
+        DPRINT_MODE("display-libkgi: setmode success.\n");
 
         return 0;
 }
@@ -272,7 +272,7 @@ static int do_cleanup(ggi_visual *vis)
         /* We may be called more than once due to the LibGG cleanup stuff */
         if (priv == NULL) return 0;
 
-        GGIDPRINT("display-libkgi: GGIdlcleanup start.\n");
+        DPRINT("display-libkgi: GGIdlcleanup start.\n");
 
         if (LIBGGI_FD(vis) >= 0) close(LIBGGI_FD(vis));
 
@@ -295,7 +295,7 @@ static int do_cleanup(ggi_visual *vis)
         }
         ggUnlock(_ggi_global_lock);
 
-        GGIDPRINT("display-libkgi: GGIdlcleanup done.\n");
+        DPRINT("display-libkgi: GGIdlcleanup done.\n");
 
         return 0;
 }
@@ -313,7 +313,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 */
 	ggiGAInit();
 
-        GGIDPRINT("display-libkgi: GGIdlinit start.\n");
+        DPRINT("display-libkgi: GGIdlinit start.\n");
 
         memcpy(options, optlist, sizeof(options));
         if (args) {
@@ -337,7 +337,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	sprintf(priv->suggest, "foodrv");
 
-        GGIDPRINT("display-libkgi: Parsing physz options.\n");
+        DPRINT("display-libkgi: Parsing physz options.\n");
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			       &(priv->physzflags), &(priv->physz)); 
 	if (err != GGI_OK) {
@@ -355,7 +355,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	LIBGGI_FD(vis) = priv->ctx.mapper.fd;
 #endif
 
-        GGIDPRINT("display-libkgi: Setting up locks.\n");
+        DPRINT("display-libkgi: Setting up locks.\n");
         ggLock(_ggi_global_lock);
         if (refcount == 0) {
                 _ggi_libkgi_lock = ggLockCreate();
@@ -420,7 +420,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         /* Register cleanup handler */
         ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-        GGIDPRINT("display-libkgi: GGIdlinit success.\n");
+        DPRINT("display-libkgi: GGIdlinit success.\n");
 
         *dlret = GGI_DL_OPDISPLAY;
         return 0;

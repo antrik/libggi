@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.5 2004/11/14 15:47:48 cegger Exp $
+/* $Id: events.c,v 1.6 2004/11/27 16:42:26 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -46,13 +46,13 @@ static void handle_telecmd_event(ggi_tele_priv *priv, TeleEvent *ev)
 	    (priv->wait_type != ev->type) ||
 	    (priv->wait_sequence != ev->sequence)) {
 		
-		GGIDPRINT_MISC("display-tele: UNEXPECTED CMD EVENT "
+		DPRINT_MISC("display-tele: UNEXPECTED CMD EVENT "
 		            "(type=0x%08x seq=0x%08x)\n",
 			    ev->type, ev->sequence);
 		return;
 	}
 
-	GGIDPRINT_EVENTS("display-tele: GOT REPLY (type=0x%08lx "
+	DPRINT_EVENTS("display-tele: GOT REPLY (type=0x%08lx "
 		      "seq=0x%08lx)\n", ev->type, ev->sequence);
 
 	memcpy(priv->wait_event, ev, ev->size * sizeof(long));
@@ -64,7 +64,7 @@ static int translate_to_ggi(gii_input *inp, gii_event *ev, TeleEvent *tv)
 	ggi_tele_priv *priv = (ggi_tele_priv *) inp->priv;
 	
 	if ((tv->type & TELE_EVENT_TYPE_MASK) != TELE_INP_BASE) {
-		GGIDPRINT_MISC("display-tele: unrecognised event from "
+		DPRINT_MISC("display-tele: unrecognised event from "
 			    "server (0x%08x).\n", tv->type);
 		return GGI_EEVUNKNOWN;
 	}
@@ -165,7 +165,7 @@ static int translate_to_ggi(gii_input *inp, gii_event *ev, TeleEvent *tv)
 		}
 	}
 	
-	GGIDPRINT_MISC("display-tele: unknown input event (0x%08x).\n",
+	DPRINT_MISC("display-tele: unknown input event (0x%08x).\n",
 		    tv->type);
 	return GGI_EEVUNKNOWN;
 }
@@ -185,7 +185,7 @@ gii_event_mask GII_tele_poll(gii_input *inp, void *arg)
 
 	int err;
 
-	GGIDPRINT_EVENTS("display-tele: poll event.\n");
+	DPRINT_EVENTS("display-tele: poll event.\n");
 
   	if (! priv->connected) {
   		return 0;
@@ -199,11 +199,11 @@ gii_event_mask GII_tele_poll(gii_input *inp, void *arg)
 			TELE_HANDLE_SHUTDOWN;
 
 		} else if (err < 0) {
-			GGIDPRINT_EVENTS("tclient_read: ZERO\n");
+			DPRINT_EVENTS("tclient_read: ZERO\n");
 			return 0;
 		}
 		
-		GGIDPRINT_EVENTS("display-tele: got event (type=0x%08x "
+		DPRINT_EVENTS("display-tele: got event (type=0x%08x "
 			"seq=0x%08x)\n", (int) th_ev.type,
 			(int) th_ev.sequence);
 
@@ -234,7 +234,7 @@ int tele_receive_reply(ggi_visual *vis, TeleEvent *ev,
 	priv->wait_type  = type;
 	priv->wait_sequence = seq;
 
-	GGIDPRINT_EVENTS("display-tele: WAITING FOR (type=0x%08lx "
+	DPRINT_EVENTS("display-tele: WAITING FOR (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
 
 	for (;;) {
@@ -251,7 +251,7 @@ int tele_receive_reply(ggi_visual *vis, TeleEvent *ev,
 		ggUSleep(MINSLEEPTIME);
 	}
 
-	GGIDPRINT_EVENTS("display-tele: WAIT OVER (type=0x%08lx "
+	DPRINT_EVENTS("display-tele: WAIT OVER (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
 
 	priv->wait_event = NULL;

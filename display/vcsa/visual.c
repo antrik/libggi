@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/13 15:56:26 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/27 16:42:28 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -103,7 +103,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int vt = -1;
 	int err = GGI_ENOMEM;
 
-	GGIDPRINT_MISC("display-vcsa: GGIdlinit start.\n");
+	DPRINT_MISC("display-vcsa: GGIdlinit start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -145,7 +145,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* now open the vcsa device */
-	GGIDPRINT_MISC("display-vcsa: Using file `%s'.\n", filename);
+	DPRINT_MISC("display-vcsa: Using file `%s'.\n", filename);
 
 	LIBGGI_FD(vis) = open(filename, O_RDWR);
 
@@ -222,7 +222,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->getapi    = GGI_vcsa_getapi;
 	vis->opdisplay->setflags  = GGI_vcsa_setflags;
 
-	GGIDPRINT_MISC("display-vcsa: GGIdlinit success.\n");
+	DPRINT_MISC("display-vcsa: GGIdlinit success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
@@ -241,7 +241,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
-	GGIDPRINT_MISC("display-vcsa: GGIdlcleanup start.\n");
+	DPRINT_MISC("display-vcsa: GGIdlcleanup start.\n");
 
 	if (LIBGGI_FD(vis) >= 0) {
 		GGI_vcsa_resetmode(vis);
@@ -258,7 +258,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	free(LIBGGI_GC(vis));
 	free(priv);
 
-	GGIDPRINT_MISC("display-vcsa: GGIdlcleanup done.\n");
+	DPRINT_MISC("display-vcsa: GGIdlcleanup done.\n");
 
 	return 0;
 }

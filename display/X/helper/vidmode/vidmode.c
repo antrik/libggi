@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.13 2004/11/13 15:56:18 cegger Exp $
+/* $Id: vidmode.c,v 1.14 2004/11/27 16:42:16 soyt Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -101,7 +101,7 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 	ggi_x_vidmode *vidmode;
 	int i;
 
-	GGIDPRINT_MODE("ggi_xvidmode_getmodelist\n");
+	DPRINT_MODE("ggi_xvidmode_getmodelist\n");
 
 	priv = GGIX_PRIV(vis);
 
@@ -120,7 +120,7 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 	}
 	
 	if(vidmode == NULL) {
-	  GGIDPRINT_MODE("\tggi_x_vidmode allocation failed\n");
+	  DPRINT_MODE("\tggi_x_vidmode allocation failed\n");
 	  goto error_mem;
 	}
   
@@ -138,26 +138,26 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 	if (!XF86VidModeGetAllModeLines
 	    (priv->disp, priv->vilist[priv->viidx].vi->screen,
 	     &(priv->modes_num), &(vidmode->modes))) {
-		GGIDPRINT_MODE("\tXF86VidModeGetAllModeLines failed\n");
+		DPRINT_MODE("\tXF86VidModeGetAllModeLines failed\n");
 		goto error_device;
 	}
 	if (vidmode->modes == NULL) {
-		GGIDPRINT_MODE("\tNo modes found (empty mode array).\n");
+		DPRINT_MODE("\tNo modes found (empty mode array).\n");
 		goto error_device;
 	}
 	if (priv->modes_num <= 0) {
-		GGIDPRINT_MODE("\tNo modes found (mode number <= 0).\n");
+		DPRINT_MODE("\tNo modes found (mode number <= 0).\n");
 		goto error_device;
 	}
 
 	priv->modes = calloc(sizeof(ggi_modelistmode),
 				(size_t)(priv->modes_num));
 	if (priv->modes == NULL) {
-		GGIDPRINT_MODE("\tNo enough memory.\n");
+		DPRINT_MODE("\tNo enough memory.\n");
 		goto error_mem;
 	}
 
-	GGIDPRINT_MODE("\t# modes: %d\n",priv->modes_num);
+	DPRINT_MODE("\t# modes: %d\n",priv->modes_num);
 
 	for (i = 0; i < priv->modes_num; i++) {
 		priv->modes[i].x = vidmode->modes[i]->hdisplay;
@@ -165,7 +165,7 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 		priv->modes[i].bpp =
 		    priv->vilist[priv->viidx].buf->depth;
 		priv->modes[i].gt = gt;
-		GGIDPRINT_MODE("Found mode: %dx%d %dbpp\n",
+		DPRINT_MODE("Found mode: %dx%d %dbpp\n",
 			       priv->modes[i].x, priv->modes[i].y,
 			       priv->modes[i].bpp);
 	}
@@ -197,59 +197,59 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 
 	priv = GGIX_PRIV(vis);
 	
-	GGIDPRINT_MODE("ggi_xvidmode_enter_mode (mode # %d, actual mode #: %d)\n",
+	DPRINT_MODE("ggi_xvidmode_enter_mode (mode # %d, actual mode #: %d)\n",
 		       num, priv->cur_mode);
 
 	vidmode = (ggi_x_vidmode*)priv->modes_priv;
 
 	if((!num) && 
 	   (vidmode->validation_flag < 0)) {
-	       GGIDPRINT_MODE
+	       DPRINT_MODE
 	         ("helper-x-vidmode: No suitable mode found.\n");
 	       return GGI_OK;
 	}
 
 	if (num >= priv->modes_num) {
-		GGIDPRINT_MODE
+		DPRINT_MODE
 		    ("helper-x-vidmode: .Bug somewhere -- bad mode index.\n");
 		return GGI_ENODEVICE;
 	}
 
-	GGIDPRINT_MODE
+	DPRINT_MODE
 	    ("\tXF86VidModeSwitchToMode(%x, %d, %x) %d called with:",
 	     priv->disp, priv->vilist[priv->viidx].vi->screen, vidmode->modes[num], DefaultScreen(priv->disp));
 
-	GGIDPRINT_MODE("\tmodes[%d]:\n", num);
-	GGIDPRINT_MODE("\tdotclock    %d\n", vidmode->modes[num]->dotclock);
-	GGIDPRINT_MODE("\thdisplay    %d\n", vidmode->modes[num]->hdisplay);
-	GGIDPRINT_MODE("\thsyncstart  %d\n", vidmode->modes[num]->hsyncstart);
-	GGIDPRINT_MODE("\thsyncend    %d\n", vidmode->modes[num]->hsyncend);
-	GGIDPRINT_MODE("\thtotal      %d\n", vidmode->modes[num]->htotal);
-	GGIDPRINT_MODE("\tvdisplay    %d\n", vidmode->modes[num]->vdisplay);
-	GGIDPRINT_MODE("\tvsyncstart  %d\n", vidmode->modes[num]->vsyncstart);
-	GGIDPRINT_MODE("\tvsyncend    %d\n", vidmode->modes[num]->vsyncend);
-	GGIDPRINT_MODE("\tvtotal      %d\n", vidmode->modes[num]->vtotal);
-	GGIDPRINT_MODE("\tflags       %d\n", vidmode->modes[num]->flags);
-	GGIDPRINT_MODE("\tprivsize    %d\n", vidmode->modes[num]->privsize);
-	GGIDPRINT_MODE("\tprivate     %x\n", vidmode->modes[num]->private);
+	DPRINT_MODE("\tmodes[%d]:\n", num);
+	DPRINT_MODE("\tdotclock    %d\n", vidmode->modes[num]->dotclock);
+	DPRINT_MODE("\thdisplay    %d\n", vidmode->modes[num]->hdisplay);
+	DPRINT_MODE("\thsyncstart  %d\n", vidmode->modes[num]->hsyncstart);
+	DPRINT_MODE("\thsyncend    %d\n", vidmode->modes[num]->hsyncend);
+	DPRINT_MODE("\thtotal      %d\n", vidmode->modes[num]->htotal);
+	DPRINT_MODE("\tvdisplay    %d\n", vidmode->modes[num]->vdisplay);
+	DPRINT_MODE("\tvsyncstart  %d\n", vidmode->modes[num]->vsyncstart);
+	DPRINT_MODE("\tvsyncend    %d\n", vidmode->modes[num]->vsyncend);
+	DPRINT_MODE("\tvtotal      %d\n", vidmode->modes[num]->vtotal);
+	DPRINT_MODE("\tflags       %d\n", vidmode->modes[num]->flags);
+	DPRINT_MODE("\tprivsize    %d\n", vidmode->modes[num]->privsize);
+	DPRINT_MODE("\tprivate     %x\n", vidmode->modes[num]->private);
 
 	XMoveWindow(priv->disp, priv->parentwin, 0, 0);
 
-	GGIDPRINT_MODE("Unlock mode switching\n");
+	DPRINT_MODE("Unlock mode switching\n");
 	/* Unlock mode switching */
 	XF86VidModeLockModeSwitch(priv->disp,
 				  priv->vilist[priv->viidx].vi->screen, 
 				  False);
 		
-	GGIDPRINT_MODE("Switching to mode %d\n", num);
+	DPRINT_MODE("Switching to mode %d\n", num);
 	if (!XF86VidModeSwitchToMode(priv->disp,
 				     priv->vilist[priv->viidx].vi->screen,
 				     vidmode->modes[num])) {
-	  GGIDPRINT_MODE("XF86VidModeSwitchToMode failed.\n");
+	  DPRINT_MODE("XF86VidModeSwitchToMode failed.\n");
 	  return GGI_ENODEVICE;
 	}
 	
-	GGIDPRINT_MODE("Setting viewport\n");
+	DPRINT_MODE("Setting viewport\n");
 	/* 
 	 * Here we translate window origin to Root window origin 
 	 * in order to get the viewport centered on the window.
@@ -265,7 +265,7 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 			       x,
 			       y);
 	
-	GGIDPRINT_MODE("Lock mode switching\n");
+	DPRINT_MODE("Lock mode switching\n");
 	/* Lock mode switching */
 	XF86VidModeLockModeSwitch(priv->disp,
 				  priv->vilist[priv->viidx].vi->screen,
@@ -285,19 +285,19 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	ggi_x_vidmode *vidmode;
 
 
-	GGIDPRINT_MODE("ggi_xvidmode_validate_mode: %x %x\n", priv,
+	DPRINT_MODE("ggi_xvidmode_validate_mode: %x %x\n", priv,
 		       priv->modes);
 
-	GGIDPRINT_MODE("\tmode number:%d of %d\n", num + 1,
+	DPRINT_MODE("\tmode number:%d of %d\n", num + 1,
 		       priv->modes_num);
 	if ((priv->modes_num < 1) && (!priv->modes_num))
 		ggi_xvidmode_getmodelist(vis);
 
-	GGIDPRINT_MODE("\trequested mode: depth:%d  bpp:%d w:%d y:%d\n",
+	DPRINT_MODE("\trequested mode: depth:%d  bpp:%d w:%d y:%d\n",
 		       GT_DEPTH(maxed->graphtype),
 		       GT_ByPP(maxed->graphtype), maxed->visible.x,
 		       maxed->visible.y);
-	GGIDPRINT_MODE("\tavailable mode: bpp:%d w:%d h:%d\n",
+	DPRINT_MODE("\tavailable mode: bpp:%d w:%d h:%d\n",
 		       priv->modes[num + 1].bpp, priv->modes[num + 1].x,
 		       priv->modes[num + 1].y);
 	
@@ -311,7 +311,7 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	      (maxed->visible.y == priv->modes[num + 1].y) &&
 	      (GT_DEPTH(maxed->graphtype) ==
 	       (unsigned) priv->modes[num + 1].bpp)) {	
-	      GGIDPRINT_MODE("\tvalid mode: bpp:%d w:%d h:%d\n",
+	      DPRINT_MODE("\tvalid mode: bpp:%d w:%d h:%d\n",
 			     priv->modes[num + 1].bpp, priv->modes[num + 1].x,
 			     priv->modes[num + 1].y);
 	      /* Mode found */
@@ -340,7 +340,7 @@ static int ggi_xvidmode_restore_mode(ggi_visual * vis)
 	ggi_x_priv    *priv    = GGIX_PRIV(vis);
 	ggi_x_vidmode *vidmode = (ggi_x_vidmode*)priv->modes_priv;
 
-	GGIDPRINT_MODE("ggi_xvidmode_restore_mode\n");
+	DPRINT_MODE("ggi_xvidmode_restore_mode\n");
 
 	/* Unlock mode switching */
 	XF86VidModeLockModeSwitch(priv->disp,
@@ -369,10 +369,10 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	priv = GGIX_PRIV(vis);
 
 	if (!XF86VidModeQueryVersion(priv->disp, &x, &y)) {
-	        GGIDPRINT_MODE("\tXF86VidModeQueryVersion failed\n");
+	        DPRINT_MODE("\tXF86VidModeQueryVersion failed\n");
 		return GGI_ENOFUNC;
 	}
-	GGIDPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", 
+	DPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", 
 		       x, y);
 
 	/*

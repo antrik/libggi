@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.7 2004/11/13 15:56:24 cegger Exp $
+/* $Id: mode.m,v 1.8 2004/11/27 16:42:25 soyt Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -134,7 +134,7 @@ static int _ggi_load_mode_libs(ggi_visual *vis)
 	char	name[GGI_MAX_APILEN];
 	char	args[GGI_MAX_APILEN];
 
-	GGIDPRINT("display-quartz: _ggi_load_mode_libs: called\n");
+	DPRINT("display-quartz: _ggi_load_mode_libs: called\n");
 
 	_ggiZapMode(vis, 0);
 	for(i=1; 0 == GGI_quartz_getapi(vis, i, name, args); i++) {
@@ -144,7 +144,7 @@ static int _ggi_load_mode_libs(ggi_visual *vis)
 				"%s (%s) library.\n", name, args);
 			return GGI_EFATAL;
 		} else {
-			GGIDPRINT_LIBS("Success in loading %s (%s)\n",
+			DPRINT_LIBS("Success in loading %s (%s)\n",
 				name, args);
 		}	/* if */
 	}	/* for */
@@ -270,9 +270,9 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	priv = QUARTZ_PRIV(vis);
 
-	GGIDPRINT("display-quartz: GGIsetmode: called\n");
+	DPRINT("display-quartz: GGIsetmode: called\n");
 
-	LIBGGI_APPASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
+	APP_ASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
 
 	if ((err = ggiCheckMode(vis, mode)) != 0) return err;
 
@@ -324,11 +324,11 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	err = _ggi_load_mode_libs(vis);
-	GGIDPRINT("display-quartz: GGIsetmode: domode=%d\n",err);
+	DPRINT("display-quartz: GGIsetmode: domode=%d\n",err);
 	if (err) return err;
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
-	GGIDPRINT("display-quartz: GGIsetmode: change indicated\n",err);
+	DPRINT("display-quartz: GGIsetmode: change indicated\n",err);
 
 	return 0;
 }	/* GGI_quartz_setmode */
@@ -337,7 +337,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_mode mymode;
-	GGIDPRINT("display-quartz: GGIgetmode(%p,%p)\n", vis, mode);
+	DPRINT("display-quartz: GGIgetmode(%p,%p)\n", vis, mode);
 
 	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 	memcpy(mode, &mymode, sizeof(ggi_mode));

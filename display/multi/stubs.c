@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.9 2004/11/27 00:05:58 cegger Exp $
+/* $Id: stubs.c,v 1.10 2004/11/27 16:42:24 soyt Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -38,7 +38,7 @@ void GGI_multi_gcchanged(ggi_visual *vis, int mask)
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 
-	GGIDPRINT("display-multi: GCCHANGED %d\n", mask);
+	DPRINT("display-multi: GCCHANGED %d\n", mask);
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
 		ggi_gc *gc = LIBGGI_GC(vis);

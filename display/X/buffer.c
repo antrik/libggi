@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.21 2004/11/14 20:18:05 cegger Exp $
+/* $Id: buffer.c,v 1.22 2004/11/27 16:42:14 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -181,9 +181,9 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 
 	priv = GGIX_PRIV(vis);
 
-	GGIDPRINT("viidx = %i\n", priv->viidx);
+	DPRINT("viidx = %i\n", priv->viidx);
 
-	GGIDPRINT_MODE("X: Creating vanilla XImage client-side buffer\n");
+	DPRINT_MODE("X: Creating vanilla XImage client-side buffer\n");
 
 	_ggi_x_free_ximage(vis);
 
@@ -289,7 +289,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	/* The core doesn't init this soon enough for us. */
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
 
-	GGIDPRINT_MODE("X: XImage %p and slave visual %p share buffer at %p\n",
+	DPRINT_MODE("X: XImage %p and slave visual %p share buffer at %p\n",
 		       priv->ximage, priv->slave, priv->fb);
 
 	return GGI_OK;
@@ -303,7 +303,7 @@ static int GGI_X_flush_draw(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("X: TRYLOCK fail (in flush_draw)!\n");
+			DPRINT_MISC("X: TRYLOCK fail (in flush_draw)!\n");
 			return 0;
 		}
 	} else if (tryflag != 2) { 
@@ -409,7 +409,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("X: TRYLOCK fail (in flush_ximage_child)!\n");
+			DPRINT_MISC("X: TRYLOCK fail (in flush_ximage_child)!\n");
 			if (priv->opmansync) MANSYNC_cont(vis);
 			return 0;
 		}

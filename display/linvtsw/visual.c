@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/11/14 15:47:45 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/27 16:42:22 soyt Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -175,7 +175,7 @@ release_vt(void *arg)
 
 	if (vt_switched_away) return;
 
-	GGIDPRINT_MISC("acknowledging VT-switch\n");
+	DPRINT_MISC("acknowledging VT-switch\n");
 	while (curr) {
 		if (curr->args.switching) {
 			curr->args.switching(curr->args.funcarg);
@@ -199,7 +199,7 @@ switching_handler(int signo)
 	sigprocmask(SIG_BLOCK, &newset, &oldset);
 	
 	if (vt_switched_away) {
-		GGIDPRINT_MISC("acquire_vt START\n");
+		DPRINT_MISC("acquire_vt START\n");
 
 		/* Acknowledge the VT */
 		ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
@@ -213,12 +213,12 @@ switching_handler(int signo)
 
 		vt_switched_away = 0;
 
-		GGIDPRINT_MISC("acquire_vt DONE\n");
+		DPRINT_MISC("acquire_vt DONE\n");
 	} else {
-		GGIDPRINT_MISC("release_vt START\n");
+		DPRINT_MISC("release_vt START\n");
 
 		if (switchpending) {
-			GGIDPRINT_MISC("release already pending\n");
+			DPRINT_MISC("release already pending\n");
 			goto handler_out;
 		}
 
@@ -230,7 +230,7 @@ switching_handler(int signo)
 				/* Suspend program until switch back */
 				sigset_t tmpset = oldset;
 
-				GGIDPRINT_MISC("release_vt SUSPEND\n");
+				DPRINT_MISC("release_vt SUSPEND\n");
 
 				sigdelset(&tmpset, SWITCHSIG);
 				sigprocmask(SIG_SETMASK, &tmpset, NULL);
@@ -239,7 +239,7 @@ switching_handler(int signo)
 					/* Note: we rely on the acquire signal
 					   interrupting us  */
 					pause();
-				GGIDPRINT_MISC("release_vt INTERRUPTED\n");
+				DPRINT_MISC("release_vt INTERRUPTED\n");
 				}
 			}
 		} else {
@@ -251,7 +251,7 @@ switching_handler(int signo)
 			}
 		}
 
-		GGIDPRINT_MISC("release_vt DONE\n");
+		DPRINT_MISC("release_vt DONE\n");
 	}
   handler_out:
 	sigprocmask(SIG_SETMASK, &oldset, NULL);
@@ -312,7 +312,7 @@ vtswitch_open(ggi_visual *vis)
 		}
 		dodetach = 1;
 	} else if (ioctl(fd, VT_GETSTATE, &vt_state) != 0) {
-		GGIDPRINT_MISC("L/vtswitch: VT_GETSTATE failed\n");
+		DPRINT_MISC("L/vtswitch: VT_GETSTATE failed\n");
 		close(fd);
 		fd = open("/dev/console", O_WRONLY);
 		if (fd < 0) {
@@ -330,7 +330,7 @@ vtswitch_open(ggi_visual *vis)
 	if (dodetach) {
 		/* Detach from our old controlling tty. */
 		int res = ioctl(fd, TIOCNOTTY);	
-		GGIDPRINT_MISC("L/vtswitch: TIOCNOTTY = %d\n", res);
+		DPRINT_MISC("L/vtswitch: TIOCNOTTY = %d\n", res);
 	}
 	close(fd);
 
@@ -405,7 +405,7 @@ vtswitch_open(ggi_visual *vis)
 		}
 	}
 
-	GGIDPRINT_MISC("L/vtswitch: Using VT %d.\n", vthandling.vtnum);
+	DPRINT_MISC("L/vtswitch: Using VT %d.\n", vthandling.vtnum);
 	
 	if (vthandling.onconsole) {
 		/* Disable normal text on the console */
@@ -434,7 +434,7 @@ vtswitch_open(ggi_visual *vis)
 		return GGI_ENODEVICE;
 	}
 	
-	GGIDPRINT_MISC("L/vtswitch: open OK.\n");
+	DPRINT_MISC("L/vtswitch: open OK.\n");
 
 	return 0;
 }
@@ -460,7 +460,7 @@ vtswitch_close(ggi_visual *vis)
 		vtfd = -1;
 	}
 
-	GGIDPRINT_MISC("L/vtswitch: close OK.\n");
+	DPRINT_MISC("L/vtswitch: close OK.\n");
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -473,7 +473,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		ggiPanic("Target tried to use linvtsw helper in a wrong way!\n");
 	}
 
-	GGIDPRINT_MISC("L/vtswitch: GGIdlinit(%p,...) called\n", vis);
+	DPRINT_MISC("L/vtswitch: GGIdlinit(%p,...) called\n", vis);
 
 	myargs->vtnum = -1;
 
@@ -487,7 +487,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	ggUnlock(_ggi_global_lock);
 
-	GGIDPRINT_MISC("L/vtswitch: have private mutex\n");
+	DPRINT_MISC("L/vtswitch: have private mutex\n");
 
 	ggLock(vt_lock);
 	err = vt_add_vis(vis, myargs);
