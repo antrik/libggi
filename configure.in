@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.150 2004/11/11 13:55:36 cegger Exp $
+dnl $Id: configure.in,v 1.151 2004/11/13 13:20:49 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1317,7 +1317,11 @@ if test "x$use_debug" = "xyes"; then
   if test "x$ac_cv_prog_cc_g" = "xyes"; then
     CFLAGS="$CFLAGS -g"
   fi
-  if test "$ac_cv_c_compiler_gnu" = "yes"; then
+fi
+
+if test "$ac_cv_c_compiler_gnu" = "yes"; then
+    GGI_CC_CHECK4_OPTION([std=gnu99])
+
     # Common warning flags
     CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
@@ -1329,13 +1333,13 @@ if test "x$use_debug" = "xyes"; then
       CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
     fi
 
-    # Buggy warning flag
+     # Buggy warning flag
     # CFLAGS="$CFLAGS -Wconversion"
 
     # Super advanced (only used for building releases)
     # CFLAGS="$CFLAGS -Werror"
-  fi
 fi
+
 
 dnl the gcc-builtin __PRETTY_FUNCTION__ is a non portable GNU extension
 dnl but is used throughout the regression tests.
