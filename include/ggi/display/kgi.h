@@ -35,6 +35,14 @@
 #include <ggi/internal/ggi-dl.h>
 
 /*
+ * KGI display options
+ */
+enum {
+	KGI_OPT_DEVICE = 0,
+	KGI_NUM_OPTS
+};
+
+/*
  * KGI communication
  */
 typedef struct
@@ -49,7 +57,7 @@ typedef struct
 } kgi_context_t;
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
-		    const kgi_version_t *version);
+		    const kgi_version_t *version, const gg_option *options);
 kgi_error_t kgiSetImages(kgi_context_t *ctx, kgi_u_t images);
 kgi_error_t kgiSetImageMode(kgi_context_t *ctx, kgi_u_t image,
 			    const kgi_image_mode_t *mode);

@@ -8,7 +8,7 @@
 #include <ggi/display/kgi.h>
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
-	const kgi_version_t *version)
+	const kgi_version_t *version, const gg_option *options)
 {
 	union {
 		kgic_mapper_identify_request_t	request;
@@ -26,10 +26,11 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 
 	memset(ctx, 0, sizeof(*ctx));
 
-	ctx->mapper.fd = open("/dev/graphic", O_RDWR);
+	ctx->mapper.fd = open(options[KGI_OPT_DEVICE].result, O_RDWR);
 	if (ctx->mapper.fd < 0) {
 
-		perror("failed to open /dev/graphic: ");
+		fprintf(stderr, "failed to open device %s\n",
+			options[KGI_OPT_DEVICE].result);
 		return -KGI_INVAL;
 	}
 
@@ -41,7 +42,7 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 
 	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_IDENTIFY, &cb)) {
 
-		perror("failed to identify to mapper");
+		fprintf(stderr, "failed to identify to mapper\n");
 		return errno;
 	}
 	printf("identified to mapper %s-%i.%i.%i-%i\n",

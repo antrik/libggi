@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/07/29 15:45:32 fspacek Exp $
+/* $Id: visual.c,v 1.3 2002/10/22 06:37:20 redmondp Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -29,10 +29,16 @@
 
 #include <ggi/display/kgi.h>
 
+static const gg_option optlist[] =
+{
+	{ "device", "/dev/graphic" }
+};
+
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
 	kgi_version_t version = { 0, 0, 1, 0 };
+	gg_option options[KGI_NUM_OPTS];
 
 	LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_kgi_priv));
 	if(LIBGGI_PRIVATE(vis) == NULL)
@@ -42,7 +48,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if(LIBGGI_GC(vis) == NULL)
 		goto err_freepriv;
 	
-	if(kgiInit(&KGI_CTX(vis), "ggi", &version) != KGI_EOK){
+	memcpy(options, optlist, sizeof(options));
+	if (args) {
+		args = ggParseOptions((char*)args, options, KGI_NUM_OPTS);
+		if (args == NULL) {
+			GGIDPRINT_LIBS("Error in arguments\n");
+			goto err_freepriv;
+		}
+	}
+	
+	if(kgiInit(&KGI_CTX(vis), "ggi", &version, options) != KGI_EOK){
 		GGIDPRINT_LIBS("Unable to initialize kgi\n");
 		goto err_freegc;
 	}
