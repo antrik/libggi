@@ -22,17 +22,24 @@ These functions are used for selecting or getting the current buffers,
 when using the multiple buffering function of LibGGI.
 
 \fBggiSetDisplayFrame\fR sets the frame that gets displayed.
+
 \fBggiSetWriteFrame\fR sets the frame for write operations such as
 \fBggiPuts\fR and \fBggiHLine\fR.
+
 \fBggiSetReadFrame\fR sets the frame for read operations, like
 \fBggiGetPixel\fR and the \fBggiCrossBlit\fR source.
+
 \fBggiGetDisplayFrame\fR reports the frame currently displayed.
+
 \fBggiGetWriteFrame\fR reports the frame currently written to.
+
 \fBggiSetReadFrame\fR reports the frame currently read from.
+
 Frames are numbered from 0 to the number of frames requested minus 1.
 .SH RETURN VALUE
 The \fBggiSet*Frame\fR functions return \fB0\fR if they succeed, and \fB<0\fR if
 they fail.
+
 The \fBggiGet*Frame\fR functions never fail.
 .SH WORKING WITH FRAMES
 Write something useful here.

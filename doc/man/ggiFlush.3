@@ -12,8 +12,10 @@ int ggiFlushRegion(ggi_visual_t vis, int x, int y, int w, int h);
 .SH DESCRIPTION
 \fBggiFlush\fR waits for the visual to finish pending accelerator
 commands, and in some targets, it refreshes the framebuffer.
+
 \fBggiFlushRegion\fR performs the flush function only in the specified
 region if it would improve performance.
+
 These functions are not needed if the visual is in synchronous mode.
 .SH RETURN VALUE
 No meaningful return value.

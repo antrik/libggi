@@ -25,11 +25,13 @@ read access to the resource
 write access to the resource
 .PP
 \fBggiResourceRelease\fR releases (unlocks) an already-acquired resource.
+
 \fBggiResourceMustAcquire\fR determines whether or not the specified
 resource needs to be acquired before using.
 .SH RETURN VALUE
 \fBggiResourceAcquire\fR and \fBggiResourceRelease\fR return \fB0\fR on success,
 \fB<0\fR on failure.
+
 \fBggiResourceMustAcquire\fR is simply a macro that returns true if the
 resource must be explicitly acquired and released, or false if not.
 However, it is still safe to call \fBggiResourceAcquire\fR or

@@ -27,8 +27,10 @@ abnormal program termination. So you don't really want to do this.
 \fBggiDBGetNumBuffers\fR returns the number of DirectBuffers available to
 the application.  \fBggiDBGetBuffer\fR obtains the DirectBuffer at the
 specified position.
+
 Use \fBggiDBGetBuffer\fR to obtain the DirectBuffers at 0 to n-1, where n
 is the number returned by \fBggiDBGetNumBuffers\fR.
+
 Pixel-linear buffers have \fBtype==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL\fR.
 You're on your own now.
 
@@ -41,6 +43,7 @@ or invalid when the DirectBuffer is not acquired.
 .SH RETURN VALUE
 \fBggiDBGetNumBuffers\fR returns the number of DirectBuffers
 available. \fB0\fR indicates that no DirectBuffers are available.
+
 \fBggiDBGetBuffer\fR returns a pointer to a DirectBuffer structure.
 .SH TYPES OF BUFFERS
 Only the framebuffer is defined currently. Other types of buffers,

@@ -18,9 +18,12 @@ ggi_flags ggiGetFlags(ggi_visual_t vis);
 .SH DESCRIPTION
 \fBggiSetFlags\fR sets the specified flags (bitwise
 OR'd together) on a visual.
+
 \fBggiGetFlags\fR obtains the flags currently in effect.
+
 \fBggiAddFlags\fR and \fBggiRemoveFlags\fR are macros that set or unset the
 specified flags.
+
 Flags are used to alter a visual's underlying behavior.  All flags
 default to an unset value.  Flags which are not supported by a given
 visual will remain unset even when an attempt is made to raise them.
@@ -35,6 +38,7 @@ of this writing there are no such cases.  On visuals where certain
 flags are unsupported but are inconsequential, these functions will
 return a successful return code, but will not actually set or clear
 the flag.
+
 \fBggiGetFlags\fR returns the current flags.  This can be used by the
 curious to check whether a flag is being silently ignored as per
 above.
@@ -66,6 +70,7 @@ mode, so LibGGI fakes one by periodically calling
 take about half the execution time of a program.  So using
 synchronous mode can \fIreally\fR slow things
 down.
+
 However, the synchronous mode is the default, because it is  what
 most programmers expect.
 In either mode, all operations are guaranteed to be performed in the
@@ -107,6 +112,7 @@ GGIFLAG_TIDYBUF, visuals do not synchronize the screen at all when
 the write frame's directbuffer lock is held or upon its release.
 However, in this mode, \fBggiFlushRegion(3)\fR will always cause
 the requested region of the screen to be updated.
+
 Note that this means that, as long as the lock is held, affected
 regions may also have to be flushed (and thus, should be flushed)
 after normal drawing primitives are called.

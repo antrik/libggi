@@ -84,6 +84,7 @@ note, that either read or write may be \fBNULL\fR. These are
 write-only or read-only buffers, which might be caused by hardware
 limitations. Such buffers are not suited to do Read-Modify-Write
 operations, so take care.
+
 Be aware that these fields may be changed by an acquire, and that
 they may be \fBNULL\fR or invalid when the DirectBuffer is not
 acquired.
@@ -91,10 +92,12 @@ acquired.
 .TP
 \fBpage_size\fR
 indicates a Paged buffer if not \fB0\fR.
+
 Successive access to addresses \fBaddr0\fR and \fBaddr1\fR of either read
 or write buffers with \fBaddr0\fR/\fBpage_size\fR != \fBaddr1\fR/\fBpage_size\fR
 may be very expensive compared to successive accesses with
 \fBaddr0\fR/\fBpage_size\fR == \fBaddr1\fR/\fBpage_size\fR.
+
 On i386 the penalty will be about 1500 cycles plus 4 cycles per to
 be remapped. Because of this, block transfer operations might
 become very inefficient for paged buffers. If there are two
@@ -140,6 +143,7 @@ typedef struct {
 A linear buffer is a region in the application's virtual memory
 address space. A pixel with the pixel coordinates (\fBx\fR, \fBy\fR) is
 assigned a pixel number according to the following formula:
+
 .nb
 pixel_number = (origin_y + y) * stride + origin_x + x;
 .fi
@@ -150,6 +154,7 @@ bottom-left-origin screen coordinates, \fBstride\fR and \fBorigin_y\fR will
 both be negative. This will result in the correct pixel number with
 the same formula in both cases. The pixel number will be used to
 address the pixel.
+
 A certain number of bits is stored per pixel, and this is indicated in
 the \fBggi_pixelformat.access\fR field.  For some visuals, the buffer
 might not be in host CPU native format and swapping operations need to

@@ -15,12 +15,14 @@ int ggiFPrintMode(FILE *s, ggi_mode *m);
 .fi
 .SH DESCRIPTION
 \fBggiParseMode\fR parses a string into a \fBggi_mode\fR.
+
 The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a
 human-readable form.  \fBggiSPrintMode\fR outputs to a preallocated string
 buffer, \fBggiFPrintMode\fR outputs to a stdio \fBFILE\fR, and \fBggiPrintMode\fR
 outputs to standard output.  These functions correspond to
 \fBsprintf(3)\fR, \fBfprintf(3)\fR and \fBprintf(3)\fR
 respectively.
+
 The format of the string used by these functions is exactly the same
 as the one used in the \fBGGI_DEFMODE\fR environment variable decribed in
 \fBlibggi(7)\fR.

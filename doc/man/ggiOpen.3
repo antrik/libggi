@@ -15,12 +15,14 @@ string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
 display target is opened.  The other arguments are for internal
 purposes only, such as \fBargptr\fR, used to pass driver-specific,
 non-textual information to the driver.
+
 \fBggiClose\fR releases and destroys an open visual.  This will close X
 windows, return consoles to text-mode, etc.
 .SH RETURN VALUE
 \fBggiOpen\fR returns the opened visual or \fBNULL\fR for error.  The
 \fBggi_visual_t\fR is opaque to the programmer and should only be used
 through GGI functions.
+
 \fBggiClose\fR returns \fB0\fR for OK, otherwise an error code.
 .SH EXAMPLES
 Open and closing default visual:

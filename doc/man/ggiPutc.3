@@ -20,11 +20,13 @@ supported, with no internationalization features.  All more complex
 character functions go beyond the scope of this base library.
 
 \fBggiPutc\fR puts a single character on a graphical visual.
+
 \fBggiPuts\fR puts multiple characters (from a C-style null-terminated
 string) at once. No special handling is applied to control characters
 like CR or LF. The associated glyph for control characters will be
 displayed. ggiPuts also only clips text at the clipping rectangle and
 does not wrap text.
+
 \fBggiGetCharSize\fR obtains the size of the character cell, in pixels.
 This function allows the application to correctly position the text
 output. Character size must always be checked and application should

@@ -8,6 +8,7 @@ cube3d
 .SH DESCRIPTION
 \fBcube3d\fR is a LibGGI "middleend", that allows to run up to 6 LibGGI
 applications on one screen, mapped to the six sides of a cube.
+
 The programs program1 to program6 are invoked and mapped to the cube
 sides after the 3d program itself has started. You can interleave the
 program names with size parameters of the form -xxx,yyy that will ask
@@ -26,6 +27,7 @@ application to run.
 You should as well set \fBGGI_DEFMODE\fR to a mode with the same color
 organization like the one 3d itself is running on, and the mode, 3d
 believes it should run in, as specified with a size parameter.
+
 Once \fBcube3d\fR is invoked, the program will display the cube with the
 six other applications mapped to it. But you will probably only see
 application number 1 (and maybe 3 from behind), as this is the way the

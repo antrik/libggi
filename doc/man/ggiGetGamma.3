@@ -28,6 +28,7 @@ referred to as "directcolor".
 map entries for some channels than others, values for the upper
 indices of the map in the shallow channels are ignored on write, and
 undefined on read.
+
 The \fBggiGammaMax\fR function is used in order to find out how many
 readable and writeable entries are in the map (returned in the
 integers referenced by \fBmaxwrite\fR and \fBmaxread\fR).  This must be
@@ -37,6 +38,7 @@ the channel of which you are inquiring.  If \fBggiGammaMax\fR returns an
 error, you cannot set the gamma map on this visual.  If \fBggiGammaMax\fR
 succeeds, but \fBmaxwrite\fR is -1 on return, this means that
 \fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
+
 \fBggiSetGamma\fR and \fBggiGetGamma\fR sets or gets the gamma correction for
 the visual according to the usual curve associated with the given
 values for each channel, which should be positive.

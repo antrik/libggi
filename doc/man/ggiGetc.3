@@ -12,6 +12,7 @@ int ggiKbhit(ggi_visual_t vis);
 .SH DESCRIPTION
 \fBggiGetc\fR gets a character from the keyboard, and blocks if there is
 no key immediately available.
+
 \fBggiKbhit\fR checks if a key has been hit on the keyboard.  This does
 not consume the key.  It is used for easy porting of old DOS
 applications.
@@ -24,7 +25,9 @@ wait for a key, use the \fBggiGetc\fR call.
 .SH RETURN VALUE
 \fBggiKbhit\fR returns \fB0\fR if no key has been received yet, otherwise
 there is a key to be consumed.
+
 \fBggiGetc\fR returns a Unicode character in canonical form.
+
 For a fuller definition of characters, see \fBgii_key_event(3)\fR.
 .SH SEE ALSO
 \fBggiEventPoll(3)\fR

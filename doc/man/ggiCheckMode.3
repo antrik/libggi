@@ -23,13 +23,17 @@ visual.  If it does not work, it will modify the values of passed
 \fBggi_mode\fR structure so that the mode works.  This mode negotiation
 allows the application to discover modes that are both supported by
 the visual and suitable to the application.
+
 \fBggiCheckTextMode\fR checks whether the text mode with the given visible
 and virtual dimensions and the font size is supported.
+
 \fBggiCheckGraphMode\fR checks whether the graphics mode with the given
 visible and virtual dimensions and type is supported.
+
 \fBggiCheckSimpleMode\fR checks whether the graphics mode with the given
 visible dimensions, type, and number of buffers is supported.  This is
 used in lieu of \fBggiCheckGraphMode\fR if multiple buffering is desired.
+
 For \fBggiCheckTextMode\fR, \fBggiCheckGraphMode\fR and \fBggiCheckSimpleMode\fR,
 \fBsuggested_mode\fR is either \fBNULL\fR or a pointer to a \fBggi_mode\fR
 which will be filled in with the negotiated mode parameters.
@@ -38,6 +42,7 @@ For \fBggiCheckTextMode\fR and \fBggiCheckGraphMode\fR, a return of \fB0\fR mean
 that the corresponding set mode call for this mode would
 succeed. Otherwise, the mode given cannot be set. In this case,
 \fBsuggested_mode\fR is changed to the suggested mode.
+
 If the only modifications made to the structure is replacing
 \fBGGI_AUTO\fR or \fBGT_AUTO\fR value, the functions return success.
 .SH RULES FOR MODE NEGOTIATION
@@ -46,8 +51,10 @@ any of the members of \fBtm\fR, these are filled in with the
 recommended values.  The values could be to a maximum, preferred, or
 \fBGGI_DEFMODE\fR resolution, and will be compatible with any other
 constraints.
+
 An application that does not care about a specific paramater should
 always specify \fBGGI_AUTO\fR or \fBGT_AUTO\fR for it.
+
 The resulting mode is guaranteed to be valid; if not, the application
 can assume that it cannot set any mode on the given visual and give
 up.
@@ -80,6 +87,7 @@ adjusted down and not the graphtype. This assumes, that if you
 request true-color, you really want that and not so badly the
 resolution you requested. If this is not the case, you can still
 retry with another graphtype or \fBGT_AUTO\fR.
+
 If graphtype is changed, it is adjusted in ascending order if
 possible: e.g. 1->4->8->15->16->24/32 bit. So you always get a mode
 which can do more than you requested. Only when no better modes are

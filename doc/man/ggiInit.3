@@ -12,16 +12,19 @@ int ggiExit(void);
 .SH DESCRIPTION
 \fBggiInit\fR initalizes the library. This function must be called before
 using other LibGGI functions; otherwise the results will be undefined.
+
 \fBggiExit\fR uninitializes the library (after being initalized by
 \fBggiInit\fR) and automatically cleanup if necessary.  This should be
 called after an application is finished with the library.  If any GGI
 functions are called after the library has been uninitialized, the
 results will be undefined.
+
 \fBggiInit\fR allows multiple invocations.  A reference count is
 maintained, and to completely uninitialize the library, \fBggiExit\fR must
 be called as many times as \fBggiInit\fR has been called beforehand.
 .SH RETURN VALUE
 \fBggiInit\fR returns \fB0\fR for OK, otherwise an error code.
+
 \fBggiExit\fR returns:
 .TP
 \fB0\fR

@@ -21,19 +21,23 @@ exits.
 a PPM file (has the extension \fB.ppm\fR), then the image will be
 generated at \fBggiClose\fR time.  Otherwise the file is a custom
 \fIGGIFILE\fR format and is generated continuously.
+
 The \fBdisplay-file\fR target can be used to generate movies from running
 LibGGI applications. To do this, set \fB-flushcmd\fR to a shell command
 to execute at the times given by one of the two other parameters. This
 looks typically like:
+
 .nb
 ppmtogif foo.ppm > foo.%04d.gif
 .fi
 The command is passed through a \fBprintf(3)\fR which has the current
 count of saved frames as an argument (or rather as 10 arguments to
 allow a few more complex commands).
+
 This shell command is either executed at every \fBn\fR-th invocation
 of ggiFlush or every \fBt\fR seconds, where \fBt\fR can have fractional
 components (specified as decimal).
+
 Note, that the invocation of the shell command will slow down the
 program, so make sure you use a reasonable value, if you use the
 \fB-flushtime\fR argument.
