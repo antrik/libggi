@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.89 2003/08/04 05:41:18 cegger Exp $
+dnl $Id: configure.in,v 1.90 2003/09/16 21:18:23 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1230,8 +1230,12 @@ case "$host" in
 	OBJCCOMPILE="$CCCOMPILE"
         AC_SUBST(OBJC)
         AC_SUBST(OBJCFLAGS)
-	dnl automake 1.6.x complains about that
-        dnl AC_SUBST(OBJCDEPMODE)
+	dnl automake 1.6.x doesn't like
+	dnl this OBJCDEPMODE, but it is required
+	dnl to make compile the quartz target
+	dnl with automake 1.7.x
+	dnl So it's better to ignore the warning.
+        AC_SUBST(OBJCDEPMODE)
 	AC_SUBST(OBJCCOMPILE)
         ;;
 esac
