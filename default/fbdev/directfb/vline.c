@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: vline.c,v 1.2 2002/03/23 05:50:24 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for the fbdev target
@@ -44,7 +44,9 @@ int GGI_directfb_drawvline(ggi_visual *vis, int x, int y, int h)
 	dfbobj.w = 1;
 	dfbobj.h = h;
 
-	priv->gfxcard.FillRectangle(&dfbobj);
+	priv->device.funcs.FillRectangle(priv->device.driver_data,
+					 priv->device.device_data,
+					 &dfbobj);
 
 	vis->accelactive = 1;
 

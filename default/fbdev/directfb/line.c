@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: line.c,v 1.2 2002/03/23 05:50:24 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver Acceleration for the fbdev target
@@ -47,7 +47,9 @@ int GGI_directfb_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
 	dfbobj.x2 = x2;
 	dfbobj.y2 = y2;
 
-	priv->gfxcard.DrawLine(&dfbobj);
+	priv->device.funcs.DrawLine(priv->device.driver_data,
+				    priv->device.device_data,
+				    &dfbobj);
 
 	vis->accelactive = 1;
 

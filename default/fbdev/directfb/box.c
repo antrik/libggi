@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2001/08/23 03:11:09 skids Exp $
+/* $Id: box.c,v 1.3 2002/03/23 05:50:24 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for the fbdev target
@@ -44,7 +44,9 @@ int GGI_directfb_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 		dfbobj.y = y;
 		dfbobj.h = h;
 		dfbobj.w = w;
-		priv->gfxcard.FillRectangle(&dfbobj);
+		priv->device.funcs.FillRectangle(priv->device.driver_data,
+						 priv->device.device_data,
+						 &dfbobj);
 
 		vis->accelactive = 1;
 	}
@@ -69,7 +71,9 @@ int GGI_directfb_fillscreen(ggi_visual *vis)
 	dfbobj.h = virty;
 	dfbobj.w = virtx;
 
-	priv->gfxcard.FillRectangle(&dfbobj);
+	priv->device.funcs.FillRectangle(priv->device.driver_data,
+					 priv->device.device_data,
+					 &dfbobj);
 
 	vis->accelactive = 1;
 

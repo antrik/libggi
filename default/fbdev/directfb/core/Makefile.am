@@ -1,1 +1,2 @@
-EXTRA_DIST = reactor.h
+SUBDIRS = fusion
+EXTRA_DIST = coretypes.h fbdev.h

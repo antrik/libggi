@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.4 2001/08/24 03:14:02 skids Exp $
+/* $Id: ggidirectfb.h,v 1.5 2002/03/23 05:50:24 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -29,46 +29,31 @@
 #define _GGIFBDEV_DIRECTFB_H
 
 #include <unistd.h>
+#include <sys/mman.h>
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 
-#include <directfb-internal/directfb_version.h>
+#define FUSION_FAKE
 
-#ifdef _FBDEV_DIRECTFB_GLOBALS
+#define directfb_major_version fbdev_directfb_major_version_bogus
+#define directfb_minor_version fbdev_directfb_minor_version_bogus
+#define directfb_micro_version fbdev_directfb_micro_version_bogus
+#define directfb_binary_age    fbdev_directfb_binary_age_bogus
+#define directfb_interface_age fbdev_directfb_interface_age_bogus
+#ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
 # define extern
-# define directfb_major_version directfb_major_version = DIRECTFB_MAJOR_VERSION
-# define directfb_minor_version directfb_minor_version = DIRECTFB_MINOR_VERSION
-# define directfb_micro_version directfb_micro_version = DIRECTFB_MICRO_VERSION
-# define directfb_binary_age    directfb_binary_age    = DIRECTFB_BINARY_AGE
-# define directfb_interface_age directfb_interface_age = DIRECTFB_INTERFACE_AGE
 # include <directfb.h>
 # undef extern
-# undef directfb_major_version
-# undef directfb_minor_version
-# undef directfb_micro_version
-# undef directfb_binary_age
-# undef directfb_interface_age
 #else
-#  define directfb_major_version fbdev_directfb_major_version_bogus
-#  define directfb_minor_version fbdev_directfb_minor_version_bogus
-#  define directfb_micro_version fbdev_directfb_micro_version_bogus
-#  define directfb_binary_age    fbdev_directfb_binary_age_bogus
-#  define directfb_interface_age fbdev_directfb_interface_age_bogus
-# ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
-#  define extern
-#  include <directfb.h>
-#  undef extern
-# else
-#  include <directfb.h>
-# endif
-#  undef directfb_major_version
-#  undef directfb_minor_version
-#  undef directfb_micro_version
-#  undef directfb_binary_age
-#  undef directfb_interface_age
-#  undef extern
+# include <directfb.h>
 #endif
+#undef directfb_major_version
+#undef directfb_minor_version
+#undef directfb_micro_version
+#undef directfb_binary_age
+#undef directfb_interface_age
+#undef extern
 
 #ifdef _FBDEV_DIRECTFB_GLOBALS
 # define extern
@@ -89,25 +74,76 @@
 #endif
 
 #include <directfb-internal/core/coretypes.h>
+#include <directfb-internal/core/gfxcard.h>
+#include <directfb-internal/core/fusion/list.h>
+#include <directfb-internal/core/fusion/fusion_types.h>
+
+
+/* These structures are lurking in a .c file so we must provide. */
+
+typedef struct {
+  FusionLink            link;
+
+  GraphicsDriverFuncs  *funcs;
+
+  int                   abi_version;
+} GraphicsDriver;
+
+typedef struct {
+  struct fb_fix_screeninfo fix;
+
+  GraphicsDriverInfo    driver_info;
+  GraphicsDeviceInfo    device_info;
+  void                 *device_data;
+
+  FusionSkirmish        lock;
+
+  SurfaceManager       *surface_manager;
+
+  /*
+   * Points to the current state of the graphics card.
+   */
+  CardState            *state;
+} GraphicsDeviceShared;
+
+struct _GraphicsDevice {
+  GraphicsDeviceShared *shared;
+
+  GraphicsDriver       *driver;
+  void                 *driver_data;
+  void                 *device_data; /* copy of shared->device_data */
+
+  GraphicsDeviceFuncs   funcs;
+
+  /* framebuffer address and size */
+  struct {
+    unsigned int     length;
+    void            *base;
+  } framebuffer;
+};
 
 #ifdef _FBDEV_DIRECTFB_GLOBALS
 # define extern
-# include <directfb-internal/core/gfxcard.h>
+# define dfb_fbdev dfb_fbdev = NULL
+# include <directfb-internal/core/fbdev.h>
+# undef dfb_fbdev
 # undef extern
 #else
-# define card fbdev_directfb_dfb_card_bogus
+# define dfb_fbdev fbdev_directfb_dfb_fbdev_bogus
 # ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
 #  define extern
-#  include <directfb-internal/core/gfxcard.h>
+#  include <directfb-internal/core/fbdev.h>
 #  undef extern
 # else
-#  include <directfb-internal/core/gfxcard.h>
+#  include <directfb-internal/core/fbdev.h>
 # endif
-# undef card
+# undef dfb_fbdev
 #endif
 
 #include <directfb-internal/core/state.h>
 #include <directfb-internal/core/surfaces.h>
+
+#undef FUSION_FAKE
 
 #ifndef MAP_FAILED
 #define MAP_FAILED ((void*)-1)
@@ -118,29 +154,31 @@
 #define FHEIGHT	8
 
 struct fbdev_directfb_global {
-  GfxCard	**dfb_card_ptr;
   DFBConfig	**dfb_config_ptr;
-  unsigned int *dfb_major_version;
-  unsigned int *dfb_minor_version;
-  unsigned int *dfb_micro_version;
-  unsigned int *dfb_binary_age;
-  unsigned int *dfb_interface_age;
+  FBDev		**dfb_fbdev_ptr;
 };
 
 struct directfb_priv {
-  struct fbdev_directfb_global globals;
-  DFBConfig	dfbconfig;
-  CardState	dfbstate;
-  GfxDriver	gfxdriver;
-  GfxCard	gfxcard;
-  SurfaceBuffer	corebuffer;
-  CoreSurface	coresurface;
+  struct fbdev_directfb_global	globals;
+
+  DFBConfig			dfbconfig;
+
+  FBDev				fbdev;
+  FBDevShared			fbdevshared;
+  VideoMode			videomode;
+
+  GraphicsDevice		device;
+  GraphicsDriver		driver;
+  GraphicsDeviceShared		deviceshared;
+  CardState			cardstate;
+  CoreSurface			coresurface;
+  SurfaceBuffer			corebuffer;
+
   ggi_pixel	oldfg;
   ggi_pixel	oldbg;
   CoreSurface	*oldsource;
+
 };
-
-
 
 /* Update GC components if needed */
 static inline void
@@ -150,80 +188,79 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
 		  int virtx, int yadd, DFBAccelerationMask accel)
 		  
 {
-  CardState *dfbstate;
+  CardState *cardstate;
   DFBConfig *dfb_config;
   int newfg, newbg, newclip, newsource;
 
-  GGIDPRINT("gcupdate called\n");
-
-  dfbstate = &(priv->dfbstate);
+  cardstate = &(priv->cardstate);
   dfb_config = &(priv->dfbconfig);
 
   newfg = (gc->fg_color != priv->oldfg)
-    || (dfbstate->drawingflags != DSDRAW_NOFX)
-    || (dfbstate->blittingflags != DSBLIT_NOFX);
+    || (cardstate->drawingflags != DSDRAW_NOFX)
+    || (cardstate->blittingflags != DSBLIT_NOFX);
   newbg = (gc->bg_color != priv->oldbg)
     || (dfb_config->layer_bg_mode != DLBM_COLOR);
   newclip = 
-    (gc->cliptl.x != dfbstate->clip.x1) ||
-    (gc->clipbr.x != dfbstate->clip.x2) ||
-    (gc->cliptl.y != dfbstate->clip.y1) ||
-    (gc->clipbr.y != dfbstate->clip.y2);
-  newsource = (dfbstate->source == priv->oldsource);
+    (gc->cliptl.x != cardstate->clip.x1) ||
+    (gc->clipbr.x != cardstate->clip.x2) ||
+    (gc->cliptl.y != cardstate->clip.y1) ||
+    (gc->clipbr.y != cardstate->clip.y2);
+  newsource = (cardstate->source != priv->oldsource);
   
   if (! (newfg || newbg || newclip || newsource)) return;
 
   if (newclip) {
-    GGIDPRINT("updating clip\n");
-    dfbstate->modified |= SMF_CLIP;
-    dfbstate->clip.x1 = gc->cliptl.x; 
-    dfbstate->clip.x2 = gc->clipbr.x;
-    dfbstate->clip.y1 = gc->cliptl.y; 
-    dfbstate->clip.y2 = gc->clipbr.y;
+    cardstate->modified |= SMF_CLIP;
+    cardstate->clip.x1 = gc->cliptl.x; 
+    cardstate->clip.x2 = gc->clipbr.x;
+    cardstate->clip.y1 = gc->cliptl.y; 
+    cardstate->clip.y2 = gc->clipbr.y;
   }
 
   if (newfg) {
     ggi_color newfgcolor;
 
-    GGIDPRINT("updating fbcolor\n");
-
-    dfbstate->modified |= SMF_COLOR;
+    cardstate->modified |= SMF_COLOR;
     ggiUnmapPixel(vis, gc->fg_color, &newfgcolor);
-    dfbstate->color.a = 0; /* ?? */
-    dfbstate->color.r = (uint8)(newfgcolor.r >> 8);
-    dfbstate->color.g = (uint8)(newfgcolor.g >> 8);
-    dfbstate->color.b = (uint8)(newfgcolor.b >> 8);
-    if (dfbstate->drawingflags != DSDRAW_NOFX) {
-      dfbstate->drawingflags = DSDRAW_NOFX;
-      dfbstate->modified |= SMF_DRAWING_FLAGS;
+    cardstate->color.a = 0; /* ?? */
+    cardstate->color.r = (uint8)(newfgcolor.r >> 8);
+    cardstate->color.g = (uint8)(newfgcolor.g >> 8);
+    cardstate->color.b = (uint8)(newfgcolor.b >> 8);
+    if (cardstate->drawingflags != DSDRAW_NOFX) {
+      cardstate->drawingflags = DSDRAW_NOFX;
+      cardstate->modified |= SMF_DRAWING_FLAGS;
     }
-    if (dfbstate->blittingflags != DSBLIT_NOFX) {
-      dfbstate->blittingflags = DSBLIT_NOFX;
-      dfbstate->modified |= SMF_BLITTING_FLAGS;
+    if (cardstate->blittingflags != DSBLIT_NOFX) {
+      cardstate->blittingflags = DSBLIT_NOFX;
+      cardstate->modified |= SMF_BLITTING_FLAGS;
     }
 
   }
 
   if (newbg) {
     ggi_color newbgcolor;
-    GGIDPRINT("updating bgcolor\n");
+
     ggiUnmapPixel(vis, gc->bg_color, &newbgcolor);
     dfb_config->layer_bg_color.a = 0; /* ?? */
     dfb_config->layer_bg_color.r = (uint8)(newbgcolor.r >> 8);
     dfb_config->layer_bg_color.g = (uint8)(newbgcolor.g >> 8);
     dfb_config->layer_bg_color.b = (uint8)(newbgcolor.b >> 8);
     /* Force reread of the layer color.  Inefficient? */
-    dfbstate->modified |= SMF_DESTINATION;
+    cardstate->modified |= SMF_DESTINATION;
     priv->oldbg = gc->bg_color;
     dfb_config->layer_bg_mode = DLBM_COLOR;
   }
 
   if (newsource) {
-    dfbstate->modified = SMF_SOURCE;
+    cardstate->modified = SMF_SOURCE;
+    priv->oldsource = cardstate->source;
   }
 
-  priv->gfxcard.SetState(dfbstate, accel);
-
+  priv->device.funcs.SetState(priv->device.driver_data,
+			      priv->device.device_data,
+			      &(priv->device.funcs),
+			      &(priv->cardstate),
+			      accel);
 }
 
 #define DIRECTFB_PRIV(vis) ((struct directfb_priv*)FBDEV_PRIV(vis)->accelpriv)
