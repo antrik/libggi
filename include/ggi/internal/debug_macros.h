@@ -35,35 +35,158 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define DEBUG_ALL	0x7fffffff
-#define DEBUG_SYNC	0x80000000
+#define DEBUG_ALL	0x0fffffff /* Allowed fields mask */
+#define DEBUG_ENABLED	0x80000000 /* debug enabled        */
+#define DEBUG_SYNC	0x40000000 /* debug sync           */
+#define DEBUG_LEVEL     0x30000000 /* debug level mask     */
+
+#define DEBUG_0         0x00000000
+#define DEBUG_1         0x10000000
+#define DEBUG_2         0x20000000
+#define DEBUG_3         0x30000000
+
+#define DEBUG_NOTICE   " "
+#define DEBUG_WARNING  "!! Warning: "
+#define DEBUG_ERROR    "** Error: "
+#define DEBUG_CRITICAL "*** Critical: "
+
 #define DEBUG_INFO	 __FILE__,__PRETTY_FUNCTION__,__LINE__
 
 #ifdef  DEBUG
 
-#define DPRINTIF(debugvar, mask) do {             \
-    if (debugvar & mask) {                        \
-	    va_list args;                         \
-	    fprintf(stderr, "[" DEBUG_NAMESPACE "] ");   \
-	    va_start(args, form);                 \
-	    vfprintf(stderr, form, args);         \
-	    va_end(args);                         \
-	    if (debugvar & DEBUG_SYNC) fflush(stderr);     \
-    }                                             \
+#ifndef DLEVEL
+# define DLEVEL 3
+#endif
+
+#define DMESSAGE(state, severity, level, field) do {                         \
+    if ((state&field) && ((state&DEBUG_LEVEL) >= level)) {                   \
+	    va_list args;                                                    \
+	    fprintf(stderr, "[" DEBUG_NAMESPACE "] " severity);              \
+	    va_start(args, fmt);                                          \
+	    vfprintf(stderr, fmt, args);                                  \
+	    va_end(args);                                                    \
+	    if (state & DEBUG_SYNC) fflush(stderr);                          \
+    }                                                                        \
 } while(0)
 
-#define LIB_ASSERT(x,str) do { if (!(x)) { \
-	fprintf(stderr,"[" DEBUG_NAMESPACE "] %s:%s:%d: INTERNAL ERROR: %s\n",DEBUG_INFO,str); \
-	exit(1); } } while(0)
+/*
+static inline void _dmessage(unsigned int state,
+			     const char * severity,
+			     unsigned int level,
+			     unsigned int fields,
+			     const char * fmt, ...) {
+	if ((state&field) && ((state&DEBUG_LEVEL) >= level)) {
+		va_list args;
+		fprintf(stderr, "[" DEBUG_NAMESPACE "] %s", severity);
+		va_start(args, fmt);
+		vfprintf(stderr, fmt, args);
+		va_end(args);
+		if (state & DEBUG_SYNC) fflush(stderr);                          
+	}
+}
+*/
 
-#define APP_ASSERT(x,str) do { if (!(x)) { \
-	fprintf(stderr,"[" DEBUG_NAMESPACE "] %s:%s:%d: APPLICATION ERROR: %s\n",DEBUG_INFO,str); \
-	exit(1); } } while(0)
+#if DLEVEL >= 0
+# define DNOTICE0(state, field)  DMESSAGE(state, DEBUG_NOTICE,  DEBUG_0, field)
+# define DWARNING0(state, field) DMESSAGE(state, DEBUG_WARNING, DEBUG_0, field)
+# define DERROR0(state, field)   DMESSAGE(state, DEBUG_ERROR,   DEBUG_0, field)
+#else
+# define DNOTICE0(state, field)  do{}while(0)
+# define DWARNING0(state, field) do{}while(0)
+# define DERROR0(state, field)   do{}while(0)
+#endif /* DLEVEL 0 */
+#if DLEVEL >= 1
+# define DNOTICE1(state, field)  DMESSAGE(state, DEBUG_NOTICE,  DEBUG_1, field)
+# define DWARNING1(state, field) DMESSAGE(state, DEBUG_WARNING, DEBUG_1, field)
+# define DERROR1(state, field)   DMESSAGE(state, DEBUG_ERROR,   DEBUG_1, field)
+#else
+# define DNOTICE1(state, field)  do{}while(0)
+# define DWARNING1(state, field) do{}while(0)
+# define DERROR1(state, field)   do{}while(0)
+#endif /* DLEVEL 1 */
+#if DLEVEL >= 2
+# define DNOTICE2(state, field)  DMESSAGE(state, DEBUG_NOTICE,  DEBUG_2, field)
+# define DWARNING2(state, field) DMESSAGE(state, DEBUG_WARNING, DEBUG_2, field)
+# define DERROR2(state, field)   DMESSAGE(state, DEBUG_ERROR,   DEBUG_2, field)
+#else
+# define DNOTICE2(state, field)  do{}while(0)
+# define DWARNING2(state, field) do{}while(0)
+# define DERROR2(state, field)   do{}while(0)
+#endif /* DLEVEL 2 */
+#if DLEVEL >= 3
+# define DNOTICE3(state, field)  DMESSAGE(state, DEBUG_NOTICE,  DEBUG_3, field)
+# define DWARNING3(state, field) DMESSAGE(state, DEBUG_WARNING, DEBUG_3, field)
+# define DERROR3(state, field)   DMESSAGE(state, DEBUG_ERROR,   DEBUG_3, field)
+#else
+# define DNOTICE3(state, field)  do{}while(0)
+# define DWARNING3(state, field) do{}while(0)
+# define DERROR3(state, field)   do{}while(0)
+#endif /* DLEVEL 3 */
+
+/* This macro will eventually be renamed... */
+#define DPRINTIF DNOTICE0
+
+#define LIB_ASSERT(cond, msg) do {                                           \
+    if (!(cond)) {                                                           \
+	fprintf(stderr,                                                      \
+		"[" DEBUG_NAMESPACE "] %s:%s:%d: INTERNAL ERROR: %s\n",      \
+		DEBUG_INFO, msg);                                            \
+	exit(1); }                                                           \
+} while(0)
+
+
+#define APP_ASSERT(cond, msg) do {                                           \
+    if (!(cond)) {                                                           \
+	fprintf(stderr,                                                      \
+		"[" DEBUG_NAMESPACE "] %s:%s:%d: APPLICATION ERROR: %s\n",   \
+		DEBUG_INFO, msg);                                            \
+	exit(1); }                                                           \
+} while(0)
+
+/* */
 
 #else   /* DEBUG */
 
-#define DPRINTIF(mask)    do{}while(0)
-#define LIB_ASSERT(x,str) do{}while(0)
-#define APP_ASSERT(x,str) do{}while(0)
+#define DNOTICE0(state, field)  do{}while(0)
+#define DWARNING0(state, field) do{}while(0)
+#define DERROR0(state, field)   do{}while(0)
+
+#define DNOTICE1(state, field)  do{}while(0)
+#define DWARNING1(state, field) do{}while(0)
+#define DERROR1(state, field)   do{}while(0)
+
+#define DNOTICE2(state, field)  do{}while(0)
+#define DWARNING2(state, field) do{}while(0)
+#define DERROR2(state, field)   do{}while(0)
+
+#define DNOTICE3(state, field)  do{}while(0)
+#define DWARNING3(state, field) do{}while(0)
+#define DERROR3(state, field)   do{}while(0)
+
+#define LIB_ASSERT(x,str)                 do{}while(0)
+#define APP_ASSERT(x,str)                 do{}while(0)
 
 #endif  /* DEBUG */
+
+#define MAKE_DEBUG(var) \
+static inline void DPRINT   (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DERROR   (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DWARNING (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DCRITICAL(const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }
+
+#define MAKE_DEBUG_FUNCS(sfx,var,val) \
+static inline void DPRINT_##sfx     (const char*fmt,...){DNOTICE0(var,val);}\
+static inline void DPRINT_##sfx##1  (const char*fmt,...){DNOTICE1(var,val);}\
+static inline void DPRINT_##sfx##2  (const char*fmt,...){DNOTICE2(var,val);}\
+static inline void DPRINT_##sfx##3  (const char*fmt,...){DNOTICE3(var,val);}\
+static inline void DWARNING_##sfx   (const char*fmt,...){DWARNING0(var,val);}\
+static inline void DWARNING_##sfx##1(const char*fmt,...){DWARNING1(var,val);}\
+static inline void DWARNING_##sfx##2(const char*fmt,...){DWARNING2(var,val);}\
+static inline void DWARNING_##sfx##3(const char*fmt,...){DWARNING3(var,val);}\
+static inline void DERROR_##sfx     (const char*fmt,...){DERROR0(var,val);}\
+static inline void DERROR_##sfx##1  (const char*fmt,...){DERROR1(var,val);}\
+static inline void DERROR_##sfx##2  (const char*fmt,...){DERROR2(var,val);}\
+static inline void DERROR_##sfx##3  (const char*fmt,...){DERROR3(var,val);}\
+
+/* Compatibility */
+#define DPRINTIF(state, field) DMESSAGE(state,DEBUG_NOTICE,DEBUG_0,field)
