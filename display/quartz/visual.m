@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.1 2002/12/22 12:59:38 cegger Exp $
+/* $Id: visual.m,v 1.2 2003/07/06 18:18:43 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -56,6 +56,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	[ priv->GGIApp terminate:priv->window ];
 
+	[ pool release ];
+
 	/* Restore original screen resolution/bpp */
 	CGDisplaySwitchToMode (priv->display_id, priv->save_mode);
 	CGDisplayRelease (priv->display_id);
@@ -72,8 +74,6 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	free(LIBGGI_GC(vis));
 	LIBGGI_PRIVATE(vis) = NULL;
 	LIBGGI_GC(vis) = NULL;
-
-	[ pool release ];
 
 	return 0;
 }	/* GGIclose */
@@ -126,6 +126,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->GGIApp = NSApp;
 	priv->window = [ priv->GGIApp keyWindow ];
+	if (priv->window == NULL) priv->window = [ priv->GGIApp mainWindow ];
+	if (priv->window == NULL) goto out;
 
 	/* Initialize the video settings; this data persists between mode switches */
 	priv->display_id = CGMainDisplayID();
@@ -162,16 +164,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_input *inp;
-		gii_inputcocoa_arg args;
+		gii_inputcocoa_arg _args;
 
-		args.GGIApp = NSApp;
-		args.window = priv->window;
+		_args.GGIApp = NSApp;
+		_args.window = priv->window;
 #if 0
-		args.gglock = lock;
+		_args.gglock = lock;
 #endif
 		fprintf(stderr, "giiOpen(cocoa)\n");
 
-		inp = giiOpen("cocoa", &args, NULL);
+		inp = giiOpen("cocoa", &_args, NULL);
 		if (inp == NULL) {
 			GGIDPRINT_MISC("Unable to open cocoa inputlib\n");
 			err = GGI_ENODEVICE;
@@ -213,6 +215,8 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }     /* GGIexit */
 
 
+
+int GGIdl_quartz(int func, void **funcptr);
 
 int GGIdl_quartz(int func, void **funcptr)
 {
