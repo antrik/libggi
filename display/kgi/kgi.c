@@ -208,16 +208,17 @@ kgi_error_t kgiSetDisplayOrigin(kgi_context_t *ctx, kgi_u_t x, kgi_u_t y)
 		kgic_origin_set_request_t	request;
 		kgic_origin_set_result_t	result;
 	} cb;
-	
+
 	cb.request.image = -1;
 	cb.request.resource = 2;
 	cb.request.x = x;
 	cb.request.y = y;
-	
+
 	err = ioctl(ctx->mapper.fd, KGIC_RESOURCE_ORIGIN_SET, &cb)
 		? errno : KGI_EOK;
+	return err;
 }
-*/	
+*/
 
 void kgiPrintImageMode(kgi_image_mode_t *mode)
 {
