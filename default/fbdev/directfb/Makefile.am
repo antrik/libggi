@@ -16,7 +16,7 @@ directfbglobal_la_SOURCES = directfbglobal.c
 
 sublibdir = $(libdir)/ggi/default/fbdev/directfb
 
-EXTRA_DIST = EXPSYMS ggidirecfb.h
+EXTRA_DIST = EXPSYMS ggidirectfb.h
 
 
 
