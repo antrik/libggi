@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
+/* $Id: evi.c,v 1.4 2004/02/23 14:24:54 pekberg Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -106,6 +106,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return GGI_OK;
 }
 
+EXPORTFUNC
 int GGIdl_helper_x_evi(int func, void **funcptr);
 
 int GGIdl_helper_x_evi(int func, void **funcptr)

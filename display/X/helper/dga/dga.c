@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.3 2003/07/13 00:40:12 cegger Exp $
+/* $Id: dga.c,v 1.4 2004/02/23 14:24:53 pekberg Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -205,6 +205,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_helper_x_dga(int func, void **funcptr);
 
 int GGIdl_helper_x_dga(int func, void **funcptr)

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2003/02/15 22:15:26 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/02/23 14:25:27 pekberg Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -210,6 +210,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+EXPORTFUNC
+int GGIdl_wsfb(int func, void **funcptr);
 
 int GGIdl_wsfb(int func, void **funcptr)
 {

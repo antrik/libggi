@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:25:25 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: initialization
@@ -76,6 +76,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
+
+EXPORTFUNC
+int GGIdl_vgagl(int func, void **funcptr);
 
 int GGIdl_vgagl(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.15 2004/01/29 15:00:48 cegger Exp $
+/* $Id: init.c,v 1.16 2004/02/23 14:25:28 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -38,9 +38,9 @@
 
 
 /* Exported variables */
-EXPORTVAR uint32      _ggiDebugState   = 0;
-EXPORTVAR int         _ggiDebugSync    = 0;
-EXPORTVAR void       *_ggi_global_lock = NULL;
+uint32                _ggiDebugState   = 0;
+int                   _ggiDebugSync    = 0;
+void                 *_ggi_global_lock = NULL;
 
 /* Global variables */
 void                 *_ggiConfigHandle = NULL;

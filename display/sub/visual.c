@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:25:16 pekberg Exp $
 ******************************************************************************
 
    Display-sub
@@ -116,6 +116,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_sub(int func, void **funcptr);
 
 int GGIdl_sub(int func, void **funcptr)

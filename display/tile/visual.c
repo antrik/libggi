@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2003/07/06 10:25:24 cegger Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:25:24 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -260,6 +260,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+EXPORTFUNC
 int GGIdl_tile(int func, void **funcptr);
 
 int GGIdl_tile(int func, void **funcptr)

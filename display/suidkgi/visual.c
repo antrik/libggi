@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:25:16 pekberg Exp $
 ******************************************************************************
 
    Display-SUID: initialization
@@ -251,6 +251,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 		
+
+EXPORTFUNC
+int GGIdl_suidkgi(int func, void **funcptr);
 
 int GGIdl_suidkgi(int func, void **funcptr)
 {

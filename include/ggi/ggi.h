@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.7 2003/07/06 10:36:55 cegger Exp $
+/* $Id: ggi.h,v 1.8 2004/02/23 14:25:30 pekberg Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -35,6 +35,7 @@
 
 #include <ggi/types.h>
 #include <ggi/gii.h>
+#include <ggi/ggi-defs.h>
 
 #include <stdio.h>     /* need FILE for ggiFPrintMode */
 
@@ -366,33 +367,34 @@ __BEGIN_DECLS
 
 /* Get the master config dir
  */
-const char *ggiGetConfDir(void);
+GGIAPIFUNC const char *ggiGetConfDir(void);
 
 /* Enter and leave the library
  */
-int  ggiInit(void);
-int  ggiExit(void);
-void ggiPanic(const char *format,...);
+GGIAPIFUNC int  ggiInit(void);
+GGIAPIFUNC int  ggiExit(void);
+GGIAPIFUNC void ggiPanic(const char *format,...);
 
 /* Open a new visual - use display `NULL' for the default visual
  */
-ggi_visual_t ggiOpen(const char *display,...);
-int          ggiClose(ggi_visual_t vis);
+GGIAPIFUNC ggi_visual_t ggiOpen(const char *display,...);
+GGIAPIFUNC int          ggiClose(ggi_visual_t vis);
 
 /* Get/Set info
  */
-int        ggiSetFlags(ggi_visual_t vis,ggi_flags flags);
-ggi_flags  ggiGetFlags(ggi_visual_t vis);
+GGIAPIFUNC int        ggiSetFlags(ggi_visual_t vis,ggi_flags flags);
+GGIAPIFUNC ggi_flags  ggiGetFlags(ggi_visual_t vis);
 #define ggiAddFlags(vis,flags)  \
 		ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
 #define ggiRemoveFlags(vis,flags)  \
 		ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
-const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
+GGIAPIFUNC const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
 
 /* DB functions
  */
-int  ggiDBGetNumBuffers(ggi_visual_t vis);
-const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis, int bufnum);
+GGIAPIFUNC int  ggiDBGetNumBuffers(ggi_visual_t vis);
+GGIAPIFUNC const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis,
+						  int bufnum);
 
 /* Resource functions
  */
@@ -401,151 +403,167 @@ const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis, int bufnum);
 #define ggiResourceRelease(res) \
 	(((res) == NULL) ? 0 : ggiResourceFastRelease((res)))
 #define ggiResourceMustAcquire(res)	((res) != NULL)
-int ggiResourceFastAcquire(ggi_resource_t res, uint32 actype);
-int ggiResourceFastRelease(ggi_resource_t res);
+GGIAPIFUNC int ggiResourceFastAcquire(ggi_resource_t res, uint32 actype);
+GGIAPIFUNC int ggiResourceFastRelease(ggi_resource_t res);
 
 /* Library management
  */
 #define GGI_MAX_APILEN	1024
-int ggiGetAPI(ggi_visual_t vis, int num, char *apiname, char *arguments);
+GGIAPIFUNC int ggiGetAPI(ggi_visual_t vis, int num,
+			 char *apiname, char *arguments);
 #define GGI_CHG_APILIST 0x00000001
 #define GGI_CHG_ACCELSYNC 0x00000002
-int ggiIndicateChange(ggi_visual_t vis, int whatchanged);
+GGIAPIFUNC int ggiIndicateChange(ggi_visual_t vis, int whatchanged);
 
 /* Mode management
  */
-int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
-int ggiGetMode(ggi_visual_t visual,ggi_mode *tm);
-int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
+GGIAPIFUNC int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
+GGIAPIFUNC int ggiGetMode(ggi_visual_t visual,ggi_mode *tm);
+GGIAPIFUNC int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
 
-int ggiSetTextMode(ggi_visual_t visual,int cols,int rows,
-		   int vcols,int vrows,int fontx,int fonty,
-		   ggi_graphtype type);
-int ggiCheckTextMode(ggi_visual_t visual,int cols,int rows,
-		     int vcols,int vrows, int fontx,int fonty,
-		     ggi_graphtype type, ggi_mode *suggested_mode);
+GGIAPIFUNC int ggiSetTextMode(ggi_visual_t visual,int cols,int rows,
+			      int vcols,int vrows,int fontx,int fonty,
+			      ggi_graphtype type);
+GGIAPIFUNC int ggiCheckTextMode(ggi_visual_t visual,int cols,int rows,
+			        int vcols,int vrows, int fontx,int fonty,
+			        ggi_graphtype type, ggi_mode *suggested_mode);
 
-int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
-		    int xv,int yv,ggi_graphtype type);
-int ggiCheckGraphMode(ggi_visual_t visual, int x, int y,
-		      int xv, int yv, ggi_graphtype type,
-		      ggi_mode *suggested_mode);
+GGIAPIFUNC int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
+			       int xv,int yv,ggi_graphtype type);
+GGIAPIFUNC int ggiCheckGraphMode(ggi_visual_t visual, int x, int y,
+			         int xv, int yv, ggi_graphtype type,
+			         ggi_mode *suggested_mode);
 
-int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
-		     ggi_graphtype type);
-int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
-		       ggi_graphtype type, ggi_mode *md);
+GGIAPIFUNC int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize,
+				int frames, ggi_graphtype type);
+GGIAPIFUNC int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize,
+				  int frames, ggi_graphtype type,
+				  ggi_mode *md);
 
 /* Print all members of the mode struct
  */
-int ggiSPrintMode(char *s, ggi_mode *m);
-int ggiFPrintMode(FILE *s, ggi_mode *m);
+GGIAPIFUNC int ggiSPrintMode(char *s, ggi_mode *m);
+GGIAPIFUNC int ggiFPrintMode(FILE *s, ggi_mode *m);
 #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
 /* Fill a mode struct from the text string s
  */
-int ggiParseMode(const char *s, ggi_mode *m);
+GGIAPIFUNC int ggiParseMode(const char *s, ggi_mode *m);
 
 
 /* Flush all pending operations to the display device
  */
 
 /* Normal flush */
-int ggiFlush(ggi_visual_t vis);
+GGIAPIFUNC int ggiFlush(ggi_visual_t vis);
 /* Flush only the specified region if it would improve performance */
-int ggiFlushRegion(ggi_visual_t vis, int x, int y, int w, int h);
+GGIAPIFUNC int ggiFlushRegion(ggi_visual_t vis, int x, int y, int w, int h);
 
 /* Graphics context
  */
-int ggiSetGCForeground(ggi_visual_t vis,ggi_pixel  color);
-int ggiGetGCForeground(ggi_visual_t vis,ggi_pixel *color);
-int ggiSetGCBackground(ggi_visual_t vis,ggi_pixel  color);
-int ggiGetGCBackground(ggi_visual_t vis,ggi_pixel *color);
-int ggiSetGCClipping(ggi_visual_t vis,int  left,int  top,int  right,int  bottom);
-int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,int *right,int *bottom);
+GGIAPIFUNC int ggiSetGCForeground(ggi_visual_t vis,ggi_pixel  color);
+GGIAPIFUNC int ggiGetGCForeground(ggi_visual_t vis,ggi_pixel *color);
+GGIAPIFUNC int ggiSetGCBackground(ggi_visual_t vis,ggi_pixel  color);
+GGIAPIFUNC int ggiGetGCBackground(ggi_visual_t vis,ggi_pixel *color);
+GGIAPIFUNC int ggiSetGCClipping(ggi_visual_t vis,int  left,int  top,
+				int  right,int  bottom);
+GGIAPIFUNC int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,
+				int *right,int *bottom);
 
 /* Color palette manipulation
  */
-ggi_pixel ggiMapColor(ggi_visual_t vis,ggi_color *col);
-int ggiUnmapPixel(ggi_visual_t vis,ggi_pixel pixel,ggi_color *col);
+GGIAPIFUNC ggi_pixel ggiMapColor(ggi_visual_t vis,ggi_color *col);
+GGIAPIFUNC int ggiUnmapPixel(ggi_visual_t vis,ggi_pixel pixel,ggi_color *col);
 
-int ggiPackColors(ggi_visual_t vis,void *buf,ggi_color *cols,int len);
-int ggiUnpackPixels(ggi_visual_t vis,void *buf,ggi_color *cols,int len);
+GGIAPIFUNC int ggiPackColors(ggi_visual_t vis,void *buf,ggi_color *cols,
+			     int len);
+GGIAPIFUNC int ggiUnpackPixels(ggi_visual_t vis,void *buf,ggi_color *cols,
+			       int len);
 
-int ggiGetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
-int ggiSetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
-int ggiSetColorfulPalette(ggi_visual_t vis);
+GGIAPIFUNC int ggiGetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+GGIAPIFUNC int ggiSetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+GGIAPIFUNC int ggiSetColorfulPalette(ggi_visual_t vis);
 
 #define GGI_PALETTE_DONTCARE  -1
 
 /* Gamma map manipulation
  */
-int ggiGetGamma(ggi_visual_t vis,ggi_float *r,ggi_float *g,ggi_float *b);
-int ggiSetGamma(ggi_visual_t vis,ggi_float r,ggi_float g,ggi_float b);
+GGIAPIFUNC int ggiGetGamma(ggi_visual_t vis,
+			   ggi_float *r,ggi_float *g,ggi_float *b);
+GGIAPIFUNC int ggiSetGamma(ggi_visual_t vis,
+			   ggi_float  r,ggi_float  g,ggi_float  b);
 
-int ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
-int ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+GGIAPIFUNC int ggiGetGammaMap(ggi_visual_t vis,int s,int len,
+			      ggi_color *gammamap);
+GGIAPIFUNC int ggiSetGammaMap(ggi_visual_t vis,int s,int len,
+			      ggi_color *gammamap);
 
-int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
+GGIAPIFUNC int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning,
+			   int *max_r, int *max_w);
 
 /* Origin handling
  */
-int ggiSetOrigin(ggi_visual_t vis,int x,int y);
-int ggiGetOrigin(ggi_visual_t vis,int *x,int *y);
+GGIAPIFUNC int ggiSetOrigin(ggi_visual_t vis,int x,int y);
+GGIAPIFUNC int ggiGetOrigin(ggi_visual_t vis,int *x,int *y);
 
 /* Frame handling
  */
-int ggiSetDisplayFrame(ggi_visual_t vis, int frameno);
-int ggiSetReadFrame(ggi_visual_t vis, int frameno);
-int ggiSetWriteFrame(ggi_visual_t vis, int frameno);
+GGIAPIFUNC int ggiSetDisplayFrame(ggi_visual_t vis, int frameno);
+GGIAPIFUNC int ggiSetReadFrame(ggi_visual_t vis, int frameno);
+GGIAPIFUNC int ggiSetWriteFrame(ggi_visual_t vis, int frameno);
 
-int ggiGetDisplayFrame(ggi_visual_t vis);
-int ggiGetReadFrame(ggi_visual_t vis);
-int ggiGetWriteFrame(ggi_visual_t vis);
+GGIAPIFUNC int ggiGetDisplayFrame(ggi_visual_t vis);
+GGIAPIFUNC int ggiGetReadFrame(ggi_visual_t vis);
+GGIAPIFUNC int ggiGetWriteFrame(ggi_visual_t vis);
 
 /* Generic drawing routines 
  */
-int ggiFillscreen(ggi_visual_t vis);
+GGIAPIFUNC int ggiFillscreen(ggi_visual_t vis);
 
-int ggiDrawPixel(ggi_visual_t vis,int x,int y);
-int ggiPutPixel(ggi_visual_t vis,int x,int y,ggi_pixel pixel);
-int ggiGetPixel(ggi_visual_t vis,int x,int y,ggi_pixel *pixel);
+GGIAPIFUNC int ggiDrawPixel(ggi_visual_t vis,int x,int y);
+GGIAPIFUNC int ggiPutPixel(ggi_visual_t vis,int x,int y,ggi_pixel pixel);
+GGIAPIFUNC int ggiGetPixel(ggi_visual_t vis,int x,int y,ggi_pixel *pixel);
 
-int ggiDrawLine(ggi_visual_t vis,int x,int y,int xe,int ye);
-int ggiDrawHLine(ggi_visual_t vis,int x,int y,int w);
-int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
-int ggiGetHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+GGIAPIFUNC int ggiDrawLine(ggi_visual_t vis,int x,int y,int xe,int ye);
+GGIAPIFUNC int ggiDrawHLine(ggi_visual_t vis,int x,int y,int w);
+GGIAPIFUNC int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+GGIAPIFUNC int ggiGetHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
 
-int ggiDrawVLine(ggi_visual_t vis,int x,int y,int h);
-int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
-int ggiGetVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+GGIAPIFUNC int ggiDrawVLine(ggi_visual_t vis,int x,int y,int h);
+GGIAPIFUNC int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+GGIAPIFUNC int ggiGetVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
 
-int ggiDrawBox(ggi_visual_t vis,int x,int y,int w,int h);
-int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
-int ggiGetBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
-int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,int nx,int ny);
-int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
-		 ggi_visual_t dst,int dx,int dy);
+GGIAPIFUNC int ggiDrawBox(ggi_visual_t vis,int x,int y,int w,int h);
+GGIAPIFUNC int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+GGIAPIFUNC int ggiGetBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+GGIAPIFUNC int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,
+			  int nx,int ny);
+GGIAPIFUNC int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
+			    ggi_visual_t dst,int dx,int dy);
 
 /* Text drawing routines 
 */
-int ggiPutc(ggi_visual_t vis,int x,int y,char c);
-int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
-int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
+GGIAPIFUNC int ggiPutc(ggi_visual_t vis,int x,int y,char c);
+GGIAPIFUNC int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
+GGIAPIFUNC int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
 
 /* Event handling
  */
-gii_event_mask	ggiEventPoll(ggi_visual_t vis, gii_event_mask mask,
-			     struct timeval *t);
-int 		ggiEventsQueued(ggi_visual_t vis, gii_event_mask mask);
-int		ggiEventRead(ggi_visual_t vis, gii_event *ev,
-			     gii_event_mask mask);
-int		ggiSetEventMask(ggi_visual_t vis, gii_event_mask evm);
-gii_event_mask	ggiGetEventMask(ggi_visual_t vis);
-int		ggiEventSend(ggi_visual_t vis, gii_event *ev);
-#define		ggiGetInput(vis)	ggiJoinInputs(vis, NULL)
-gii_input_t	ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
-gii_input_t	ggiDetachInput(ggi_visual_t vis);
+GGIAPIFUNC gii_event_mask	ggiEventPoll(ggi_visual_t vis,
+					     gii_event_mask mask,
+					     struct timeval *t);
+GGIAPIFUNC int 			ggiEventsQueued(ggi_visual_t vis,
+						gii_event_mask mask);
+GGIAPIFUNC int			ggiEventRead(ggi_visual_t vis, gii_event *ev,
+					     gii_event_mask mask);
+GGIAPIFUNC int			ggiSetEventMask(ggi_visual_t vis,
+						gii_event_mask evm);
+GGIAPIFUNC gii_event_mask	ggiGetEventMask(ggi_visual_t vis);
+GGIAPIFUNC int			ggiEventSend(ggi_visual_t vis, gii_event *ev);
+#define				ggiGetInput(vis)   ggiJoinInputs(vis, NULL)
+GGIAPIFUNC gii_input_t		ggiJoinInputs(ggi_visual_t vis,
+					      gii_input_t inp);
+GGIAPIFUNC gii_input_t		ggiDetachInput(ggi_visual_t vis);
                           
 #define ggiAddEventMask(vis,mask)  \
 		ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
@@ -554,8 +572,8 @@ gii_input_t	ggiDetachInput(ggi_visual_t vis);
 
 /* Convenience functions */
 
-int ggiKbhit(ggi_visual_t vis);
-int ggiGetc(ggi_visual_t vis);
+GGIAPIFUNC int ggiKbhit(ggi_visual_t vis);
+GGIAPIFUNC int ggiGetc(ggi_visual_t vis);
 
 __END_DECLS
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/02/23 14:25:22 pekberg Exp $
 ******************************************************************************
 
    Teletarget.
@@ -169,6 +169,7 @@ int GGI_tele_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 }
 
 
+EXPORTFUNC
 int GGIdl_tele(int func, void **funcptr);
 
 int GGIdl_tele(int func, void **funcptr)

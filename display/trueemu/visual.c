@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/02/23 14:25:24 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -238,6 +238,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_trueemu(int func, void **funcptr);
 
 int GGIdl_trueemu(int func, void **funcptr)

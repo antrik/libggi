@@ -1,4 +1,4 @@
-/* $Id: debug.h,v 1.3 2003/01/27 18:06:45 cegger Exp $
+/* $Id: debug.h,v 1.4 2004/02/23 14:25:30 pekberg Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -32,18 +32,14 @@
 #include <stdio.h>
 #include <ggi/types.h>
 #include <ggi/gg.h>
+#include <ggi/ggi-defs.h>
 
 
 __BEGIN_DECLS
 
 /* Exported variables */
-#ifdef BUILDING_LIBGGI
-extern uint32     _ggiDebugState;
-extern int        _ggiDebugSync;
-#else
-IMPORTVAR uint32  _ggiDebugState;
-IMPORTVAR int     _ggiDebugSync;
-#endif
+GGIAPIVAR uint32     _ggiDebugState;
+GGIAPIVAR int        _ggiDebugSync;
 
 __END_DECLS
 

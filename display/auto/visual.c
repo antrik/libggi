@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2004/01/29 13:49:33 cegger Exp $
+/* $Id: visual.c,v 1.2 2004/02/23 14:24:55 pekberg Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -68,6 +68,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_auto(int func, void **funcptr);
 
 int GGIdl_auto(int func, void **funcptr)

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:44 soyt Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:24:51 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Generic RAMDAC via IOCTL driver
@@ -80,6 +80,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+EXPORTFUNC
+int GGIdl_ramdac(int func, void **funcptr);
 
 int GGIdl_ramdac(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/05 22:13:42 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/02/23 14:24:48 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -75,6 +75,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
+EXPORTFUNC
 int GGIdl_linear_4_r(int func, void **funcptr);
 
 int GGIdl_linear_4_r(int func, void **funcptr)

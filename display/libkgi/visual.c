@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/02/14 13:45:38 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/02/23 14:24:59 pekberg Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -430,6 +430,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
         return do_cleanup(vis);
 }
+
+EXPORTFUNC
+int GGIdl_kgilib(int func, void **funcptr);
 
 int GGIdl_kgilib(int func, void **funcptr)
 {

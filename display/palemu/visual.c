@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/02/23 14:25:15 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -202,6 +202,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_palemu(int func, void **funcptr);
 
 int GGIdl_palemu(int func, void **funcptr)

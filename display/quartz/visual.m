@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.4 2004/02/14 13:45:39 cegger Exp $
+/* $Id: visual.m,v 1.5 2004/02/23 14:25:15 pekberg Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -232,6 +232,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 
+EXPORTFUNC
 int GGIdl_quartz(int func, void **funcptr);
 
 int GGIdl_quartz(int func, void **funcptr)

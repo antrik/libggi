@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.15 2004/02/05 09:34:58 cegger Exp $
+/* $Id: shm.c,v 1.16 2004/02/23 14:24:54 pekberg Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -392,6 +392,7 @@ skip:
 	return 0;
 }
 
+EXPORTFUNC
 int GGIdl_helper_x_shm(int func, void **funcptr);
 
 int GGIdl_helper_x_shm(int func, void **funcptr)

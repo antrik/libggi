@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/07/13 06:55:56 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/02/23 14:24:42 pekberg Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -275,6 +275,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_mga_g400(int func, void **funcptr);
 
 int GGIdl_mga_g400(int func, void **funcptr)

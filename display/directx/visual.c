@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/02/14 13:45:37 cegger Exp $
+/* $Id: visual.c,v 1.14 2004/02/23 14:24:55 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -188,6 +188,7 @@ err0:
 
 
 
+EXPORTFUNC
 int GGIdl_directx(int func, void **funcptr);
 
 int GGIdl_directx(int func, void **funcptr)

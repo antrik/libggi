@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2004/02/14 13:45:38 cegger Exp $
+/* $Id: visual.c,v 1.16 2004/02/23 14:25:14 pekberg Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -328,6 +328,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_memory(int func, void **funcptr);
 
 int GGIdl_memory(int func, void **funcptr)

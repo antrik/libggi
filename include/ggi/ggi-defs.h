@@ -1,9 +1,9 @@
-/* $Id: ggi-unix.h,v 1.2 2004/02/23 14:25:30 pekberg Exp $
+/* $Id: ggi-defs.h,v 1.1 2004/02/23 14:25:30 pekberg Exp $
 ******************************************************************************
 
-   LibGGI UNIX-specific API header file
+   LibGGI API header file
  
-   Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2004      Peter Ekberg		[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,19 +25,18 @@
 ******************************************************************************
 */
               
-#ifndef _GGI_GGI_UNIX_H
-#define _GGI_GGI_UNIX_H
+#ifndef _GGI_GGI_DEFS_H
+#define _GGI_GGI_DEFS_H
 
-#include <ggi/ggi.h>
+#include <ggi/system.h>
 
 
-__BEGIN_DECLS
+#ifdef BUILDING_LIBGGI
+# define GGIAPIFUNC EXPORTFUNC
+# define GGIAPIVAR  EXPORTVAR
+#else
+# define GGIAPIFUNC IMPORTFUNC
+# define GGIAPIVAR  IMPORTVAR
+#endif
 
-/* Wait for filedescriptors and LibGGI events the the same time */
-GGIAPIFUNC int ggiEventSelect(ggi_visual_t vis, ggi_event_mask *mask, int n,
-			      fd_set *readfds, fd_set *writefds,
-			      fd_set *exceptfds, struct timeval *timeout);
-
-__END_DECLS
-
-#endif /* GGI_GGI_UNIX_H */
+#endif /* _GGI_GGI_DEFS_H */

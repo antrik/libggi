@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/12/04 23:06:02 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/02/23 14:24:57 pekberg Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -246,6 +246,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+EXPORTFUNC
+int GGIdl_glide(int func, void **funcptr);
 
 int GGIdl_glide(int func, void **funcptr)
 {

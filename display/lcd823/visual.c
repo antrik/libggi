@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.3 2004/02/23 14:24:58 pekberg Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -177,6 +177,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+EXPORTFUNC
+int GGIdl_lcd823(int func, void **funcptr);
 
 int GGIdl_lcd823(int func, void **funcptr)
 {

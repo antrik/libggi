@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/02/14 13:45:40 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/02/23 14:25:28 pekberg Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -373,6 +373,7 @@ static int GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_xf86dga(int func, void **funcptr);
 
 int GGIdl_xf86dga(int func, void **funcptr)

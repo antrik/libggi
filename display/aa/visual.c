@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/01/26 23:07:08 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/02/23 14:24:55 pekberg Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -210,6 +210,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
 int GGIdl_aa(int func, void **funcptr);
 
 int GGIdl_aa(int func, void **funcptr)

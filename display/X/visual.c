@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2004/02/14 13:45:37 cegger Exp $
+/* $Id: visual.c,v 1.26 2004/02/23 14:24:52 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -546,6 +546,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+EXPORTFUNC
 int GGIdl_X(int func, void **funcptr);
 
 int GGIdl_X(int func, void **funcptr)

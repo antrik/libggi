@@ -26,6 +26,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+EXPORTFUNC
+int GGIdl_directfbglobal(int func, void **funcptr);
+
 int GGIdl_directfbglobal(int func, void **funcptr)
 {
 	switch (func) {

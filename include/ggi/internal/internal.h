@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.12 2004/02/14 13:45:40 cegger Exp $
+/* $Id: internal.h,v 1.13 2004/02/23 14:25:30 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -35,6 +35,8 @@
 #include <ggi/internal/plat.h>
 #include <ggi/internal/debug.h>
 #include <ggi/internal/structs.h>
+#include <ggi/ggi-defs.h>
+
 
 /*
 ******************************************************************************
@@ -44,118 +46,124 @@
 
 __BEGIN_DECLS
 /* Exported variables */
-#ifdef BUILDING_LIBGGI
-extern void *_ggi_global_lock;
-#else
-IMPORTVAR void *_ggi_global_lock;
-#endif
+GGIAPIVAR void *_ggi_global_lock;
 
 /* conf.c */
 extern void *_ggiConfigHandle;
 
 /* db.c */
-ggi_directbuffer *_ggi_db_get_new(void);
-void _ggi_db_free(ggi_directbuffer * db);
-int _ggi_db_add_buffer(ggi_db_list * dbl, ggi_directbuffer * buf);
-int _ggi_db_del_buffer(ggi_db_list * dbl, int idx);
-int _ggi_db_move_buffer(ggi_db_list * dst, ggi_db_list * src, int idx);
-ggi_directbuffer *_ggi_db_find_frame(ggi_visual * vis, int frameno);
+GGIAPIFUNC ggi_directbuffer *_ggi_db_get_new(void);
+GGIAPIFUNC void _ggi_db_free(ggi_directbuffer * db);
+GGIAPIFUNC int _ggi_db_add_buffer(ggi_db_list * dbl, ggi_directbuffer * buf);
+GGIAPIFUNC int _ggi_db_del_buffer(ggi_db_list * dbl, int idx);
+GGIAPIFUNC int _ggi_db_move_buffer(ggi_db_list * dst, ggi_db_list * src,
+				   int idx);
+GGIAPIFUNC ggi_directbuffer *_ggi_db_find_frame(ggi_visual * vis,
+						int frameno);
 
 /* dl.c */
-ggi_dlhandle *_ggiAddExtDL(ggi_visual * vis, const char *filename,
-			   const char *args, void *argptr,
-			   const char *symprefix);
-int _ggiOpenDL(ggi_visual * vis, const char *name,
-	       const char *args, void *argptr);
-void _ggiExitDL(ggi_visual * vis, ggi_dlhandle_l * lib);
-void _ggiZapDL(ggi_visual * vis, ggi_dlhandle_l ** lib);
-int _ggiAddDL(ggi_visual * vis, const char *drv, const char *args,
-	      void *argptr, int type);
-int _ggiProbeDL(ggi_visual * vis, const char * name,
+GGIAPIFUNC ggi_dlhandle *_ggiAddExtDL(ggi_visual * vis, const char *filename,
+				      const char *args, void *argptr,
+				      const char *symprefix);
+GGIAPIFUNC int _ggiOpenDL(ggi_visual * vis, const char *name,
+			  const char *args, void *argptr);
+GGIAPIFUNC void _ggiExitDL(ggi_visual * vis, ggi_dlhandle_l * lib);
+GGIAPIFUNC void _ggiZapDL(ggi_visual * vis, ggi_dlhandle_l ** lib);
+GGIAPIFUNC int _ggiAddDL(ggi_visual * vis, const char *drv, const char *args,
+			 void *argptr, int type);
+GGIAPIFUNC int _ggiProbeDL(ggi_visual * vis, const char * name,
 		const char * args, void * argptr,
 		int type, ggi_dlhandle ** dlh, uint32 * dlret);
 
 /* internal.c */
-int _ggi_countbits(uint32 val);
-int _ggi_mask2shift(uint32 mask);
+GGIAPIFUNC int _ggi_countbits(uint32 val);
+GGIAPIFUNC int _ggi_mask2shift(uint32 mask);
 
 #define GGI_PIXFMT_GRAPHTYPE	0
 #define GGI_PIXFMT_CHANNEL	1
 #define GGI_PIXFMT_ALPHA_USED	2
-void _ggi_build_pixfmt(ggi_pixelformat * pixfmt);
-int _ggi_parse_pixfmtstr(const char *pixfmtstr,
+GGIAPIFUNC void _ggi_build_pixfmt(ggi_pixelformat * pixfmt);
+GGIAPIFUNC int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 		char separator, char **endptr,
 		size_t pixfmtstr_len,
 		ggi_pixel *r_mask, ggi_pixel *g_mask,
 		ggi_pixel *b_mask, ggi_pixel *a_mask);
-int _ggi_build_pixfmtstr(ggi_visual * vis, char *pixfmtstr,
+GGIAPIFUNC int _ggi_build_pixfmtstr(ggi_visual * vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags);
 
-int _ggi_match_palette(ggi_color * pal, int pal_len, ggi_color * col);
-ggifunc_setreadframe _ggi_default_setreadframe;
-ggifunc_setwriteframe _ggi_default_setwriteframe;
-void _ggi_build_palette(ggi_color * pal, int num);
-void _ggi_smart_match_palettes(ggi_color * pal, int size,
+GGIAPIFUNC int _ggi_match_palette(ggi_color * pal, int pal_len,
+				  ggi_color * col);
+GGIAPIFUNC ggifunc_setreadframe _ggi_default_setreadframe;
+GGIAPIFUNC ggifunc_setwriteframe _ggi_default_setwriteframe;
+GGIAPIFUNC void _ggi_build_palette(ggi_color * pal, int num);
+GGIAPIFUNC void _ggi_smart_match_palettes(ggi_color * pal, int size,
 			       ggi_color * ref_pal, int ref_size);
 
 /* mode.c */
-void _ggiSetDefaultMode(const char *str);
+GGIAPIFUNC void _ggiSetDefaultMode(const char *str);
 
 #define GGI_PHYSZ_OVERRIDE	1
 #define GGI_PHYSZ_DPI		2
-int _ggi_physz_parse_option(const char *optstr, int *physzflag, ggi_coord * physz);
-int _ggi_physz_figure_visible(ggi_mode *mode);
-int _ggi_physz_figure_size(ggi_mode * mode, int physzflag, ggi_coord * op_sz,
-		      int dpix, int dpiy, int dsx, int dsy);
+GGIAPIFUNC int _ggi_physz_parse_option(const char *optstr, int *physzflag,
+				       ggi_coord * physz);
+GGIAPIFUNC int _ggi_physz_figure_visible(ggi_mode *mode);
+GGIAPIFUNC int _ggi_physz_figure_size(ggi_mode * mode, int physzflag,
+				      ggi_coord * op_sz, int dpix, int dpiy,
+				      int dsx, int dsy);
 
 /* probe.c */
-ggi_visual_t _ggiProbeTarget(void);
+GGIAPIFUNC ggi_visual_t _ggiProbeTarget(void);
 
 /* stubs.c */
-int _ggiInternFlush(ggi_visual * vis, int x, int y, int w, int h,
-		    int tryflag);
-int _ggiPutPixelNC(ggi_visual * vis, int x, int y, ggi_pixel p);
-int _ggiDrawPixelNC(ggi_visual * vis, int x, int y);
-int _ggiDrawHLineNC(ggi_visual * vis, int x, int y, int w);
-int _ggiDrawVLineNC(ggi_visual * vis, int x, int y, int h);
-int _ggiIdleAccel(ggi_visual * vis);
-int _ggiSendKGICommand(ggi_visual * vis, int cmd, void *arg);
+GGIAPIFUNC int _ggiInternFlush(ggi_visual * vis, int x, int y, int w, int h,
+			       int tryflag);
+GGIAPIFUNC int _ggiPutPixelNC(ggi_visual * vis, int x, int y, ggi_pixel p);
+GGIAPIFUNC int _ggiDrawPixelNC(ggi_visual * vis, int x, int y);
+GGIAPIFUNC int _ggiDrawHLineNC(ggi_visual * vis, int x, int y, int w);
+GGIAPIFUNC int _ggiDrawVLineNC(ggi_visual * vis, int x, int y, int h);
+GGIAPIFUNC int _ggiIdleAccel(ggi_visual * vis);
+GGIAPIFUNC int _ggiSendKGICommand(ggi_visual * vis, int cmd, void *arg);
 
 /* unit.h */
 #include <ggi/internal/unit.h>
 
 /* visual.c */
-void *_ggi_malloc(size_t siz);
-void *_ggi_calloc(size_t siz);
-void *_ggi_realloc(void *ptr, size_t siz);
-void _ggi_mem_error(void);
-int _ggi_alloc_drvpriv(void);
-void _ggi_free_drvpriv(int id);
-void _ggiZapMode(ggi_visual * vis, int zapall);
+GGIAPIFUNC void *_ggi_malloc(size_t siz);
+GGIAPIFUNC void *_ggi_calloc(size_t siz);
+GGIAPIFUNC void *_ggi_realloc(void *ptr, size_t siz);
+GGIAPIFUNC void _ggi_mem_error(void);
+GGIAPIFUNC int _ggi_alloc_drvpriv(void);
+GGIAPIFUNC void _ggi_free_drvpriv(int id);
+GGIAPIFUNC void _ggiZapMode(ggi_visual * vis, int zapall);
 
-ggi_visual *_ggiNewVisual(void);
-void _ggiDestroyVisual(ggi_visual * vis);
+GGIAPIFUNC ggi_visual *_ggiNewVisual(void);
+GGIAPIFUNC void _ggiDestroyVisual(ggi_visual * vis);
 
-enum gg_swartype _ggiGetSwarType(void);
+GGIAPIFUNC enum gg_swartype _ggiGetSwarType(void);
 
 /* colormap.c */
-size_t _ggiColormapGetPrivsize(ggi_visual_t vis);
-int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end);
-int _ggiColormapGetRW(ggi_visual_t vis, size_t * start, size_t * end);
-int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end);
-int _ggiColormapGetRO(ggi_visual_t vis, size_t * start, size_t * end);
+GGIAPIFUNC size_t _ggiColormapGetPrivsize(ggi_visual_t vis);
+GGIAPIFUNC int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end);
+GGIAPIFUNC int _ggiColormapGetRW(ggi_visual_t vis,
+				 size_t * start, size_t * end);
+GGIAPIFUNC int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end);
+GGIAPIFUNC int _ggiColormapGetRO(ggi_visual_t vis,
+				 size_t * start, size_t * end);
 
-int _ggiColormapSetPalette(ggi_visual_t vis, size_t start,
-			   size_t size, const ggi_color * cmap);
-ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color * color,
-				enum ggi_colormap_region region);
-ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
-			      enum ggi_colormap_region region);
-int _ggiColormapMatchByColor(ggi_visual_t vis, const ggi_color * color1,
-			     const ggi_color * color2,
-			     enum ggi_colormap_region region);
-int _ggiColormapMatchByIdx(ggi_visual_t vis, size_t idx1, size_t idx2,
-			   enum ggi_colormap_region region);
+GGIAPIFUNC int _ggiColormapSetPalette(ggi_visual_t vis, size_t start,
+				      size_t size, const ggi_color * cmap);
+GGIAPIFUNC ssize_t _ggiColormapFindByColor(ggi_visual_t vis,
+					   const ggi_color * color,
+					   enum ggi_colormap_region region);
+GGIAPIFUNC ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
+					 enum ggi_colormap_region region);
+GGIAPIFUNC int _ggiColormapMatchByColor(ggi_visual_t vis,
+					const ggi_color * color1,
+					const ggi_color * color2,
+					enum ggi_colormap_region region);
+GGIAPIFUNC int _ggiColormapMatchByIdx(ggi_visual_t vis,
+				      size_t idx1, size_t idx2,
+				      enum ggi_colormap_region region);
 
 __END_DECLS
 
