@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.3 2003/05/03 16:48:24 cegger Exp $
+/* $Id: inputdump.c,v 1.4 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -31,8 +31,7 @@
 
 #include <ggi/ggi.h>
 
-/* From giik2str.c */
-const char *giik2str(uint32 giik, int issym);
+#include "giik2str.h"
 
 static struct timeval start_time;
 static int firstevent = 1;
@@ -51,7 +50,7 @@ static int placement = 0;
 
 typedef struct mydev_info
 {
-	int origin;
+	uint32 origin;
 	int known;
 
 	gii_cmddata_getdevinfo DI;
@@ -244,9 +243,9 @@ static void calc_placement(ggi_coord *c)
 	}
 }
 
-static mydev_info *find_input_device(int origin)
+static mydev_info *find_input_device(uint32 origin)
 {
-	int i, j;
+	unsigned int i, j;
 
 	if ((origin == GII_EV_ORIGIN_NONE) ||
 	    (origin & GII_EV_ORIGIN_SENDEVENT)) {
@@ -350,8 +349,11 @@ static void show_key(gii_key_event *ev)
 		if ((b == GII_BUTTON_NIL) || (b >= MAX_NR_BUT)) 
 			return;
 
-		cur_dev->buttons[b] = (ev->type == evKeyRelease) ? 
-					-1 : ev->label;
+		if (ev->type == evKeyRelease) {
+			cur_dev->buttons[b] = -1;
+		} else {
+			cur_dev->buttons[b] = ev->label;
+		}
 
 		draw_inp_buttons(cur_dev);
 	}

@@ -1,4 +1,4 @@
-/* $Id: monitest.h,v 1.1 2001/05/12 23:03:51 cegger Exp $
+/* $Id: monitest.h,v 1.2 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Monitest common declarations
@@ -22,3 +22,9 @@ extern ggi_pixel white, black, red, green, blue, yellow, magenta, cyan;
 
 /* Returns non-zero when the user requested 'break' */
 int waitabit(ggi_visual_t vis);
+
+
+void testpattern(ggi_visual_t vis);
+void resolution(ggi_visual_t vis);
+void flatpanel(ggi_visual_t vis);
+

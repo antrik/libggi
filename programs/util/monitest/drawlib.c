@@ -1,4 +1,4 @@
-/* $Id: drawlib.c,v 1.2 2003/05/03 16:47:17 cegger Exp $
+/* $Id: drawlib.c,v 1.3 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Monitest drawing library: fields with stripes and stars, circle.
@@ -16,6 +16,7 @@
 */
 
 #include <ggi/ggi.h>
+#include "drawlib.h"
 
 #define ASSERT(x) do {}while (0)
 

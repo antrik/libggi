@@ -1,4 +1,4 @@
-/* $Id: resolution.c,v 1.1 2001/05/12 23:03:53 cegger Exp $
+/* $Id: resolution.c,v 1.2 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Monitest resolution test
@@ -22,111 +22,125 @@
 
 void resolution(ggi_visual_t vis)
 {
-	unsigned int xmax, ymax;
+	int xmax, ymax;
 	ggi_mode currmode;
 
-	ggiGetMode(vis,&currmode);
+	ggiGetMode(vis, &currmode);
 	xmax = currmode.visible.x;
 	ymax = currmode.visible.y;
-	
+
 	ggiSetGCForeground(vis, blue);
-	ggiDrawBox(vis,0,0, xmax, ymax);
+	ggiDrawBox(vis, 0, 0, xmax, ymax);
 
-	stripevert(vis,0,0, xmax-1, ymax-1, black, white,1);
+	stripevert(vis, 0, 0, xmax - 1, ymax - 1,
+		   black, white, 1);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	stripevert(vis,0,0, xmax-1, ymax-1, black, white,2);
+	stripevert(vis, 0, 0, xmax - 1, ymax - 1,
+		   black, white, 2);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	stripevert(vis,0,0, xmax-1, ymax-1, black, white,3);
+	stripevert(vis, 0, 0, xmax - 1, ymax - 1,
+		   black, white, 3);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	stripevert(vis,0,0, xmax-1, ymax-1, black, white,4);
+	stripevert(vis, 0, 0, xmax - 1, ymax - 1,
+		   black, white, 4);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	stripehor(vis,0,0, xmax-1, ymax-1, black, white,1);
+	stripehor(vis, 0, 0, xmax - 1, ymax - 1, black, white, 1);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	stripehor(vis,0,0, xmax-1, ymax-1, black, white,2);
+	stripehor(vis, 0, 0, xmax - 1, ymax - 1, black, white, 2);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	starone(vis,0,0, xmax-1, ymax-1, black, white);
+	starone(vis, 0, 0, xmax - 1, ymax - 1, black, white);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	starfive(vis,0,0, xmax-1, ymax-1, white, black);
+	starfive(vis, 0, 0, xmax - 1, ymax - 1, white, black);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
-	startwoten(vis,0,0, xmax-1, ymax-1, white, black);
+	startwoten(vis, 0, 0, xmax - 1, ymax - 1, white, black);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 
 	ggiSetGCForeground(vis, black);
-	ggiDrawBox(vis,0,0, xmax, ymax);
+	ggiDrawBox(vis, 0, 0, xmax, ymax);
 
-	stripevert(vis, 1*xmax/16,2*ymax/8, 3*xmax/16-1,3*ymax/8-1,
-		   black, red,4);
-	stripevert(vis, 3*xmax/16,2*ymax/8, 5*xmax/16-1,3*ymax/8-1,
-		   black, red,3);
-	stripevert(vis, 5*xmax/16,2*ymax/8, 7*xmax/16-1,3*ymax/8-1,
-		   black, red,2);
-	stripevert(vis, 7*xmax/16,2*ymax/8, 9*xmax/16-1,3*ymax/8-1,
-		   black, red,1);
-	stripevert(vis, 9*xmax/16,2*ymax/8,11*xmax/16-1,3*ymax/8-1,
-		   black, red,2);
-	stripevert(vis,11*xmax/16,2*ymax/8,13*xmax/16-1,3*ymax/8-1,
-		   black, red,3);
-	stripevert(vis,13*xmax/16,2*ymax/8,15*xmax/16-1,3*ymax/8-1,
-		   black, red,4);
-	stripevert(vis, 1*xmax/16,3*ymax/8, 3*xmax/16-1,4*ymax/8-1,
-		   black, green,4);
-	stripevert(vis, 3*xmax/16,3*ymax/8, 5*xmax/16-1,4*ymax/8-1,
-		   black, green,3);
-	stripevert(vis, 5*xmax/16,3*ymax/8, 7*xmax/16-1,4*ymax/8-1,
-		   black, green,2);
-	stripevert(vis, 7*xmax/16,3*ymax/8, 9*xmax/16-1,4*ymax/8-1,
-		   black, green,1);
-	stripevert(vis, 9*xmax/16,3*ymax/8,11*xmax/16-1,4*ymax/8-1,
-		   black, green,2);
-	stripevert(vis,11*xmax/16,3*ymax/8,13*xmax/16-1,4*ymax/8-1,
-		   black, green,3);
-	stripevert(vis,13*xmax/16,3*ymax/8,15*xmax/16-1,4*ymax/8-1,
-		   black, green,4);
-	stripevert(vis, 1*xmax/16,4*ymax/8, 3*xmax/16-1,5*ymax/8-1,
-		   black, blue,4);
-	stripevert(vis, 3*xmax/16,4*ymax/8, 5*xmax/16-1,5*ymax/8-1,
-		   black, blue,3);
-	stripevert(vis, 5*xmax/16,4*ymax/8, 7*xmax/16-1,5*ymax/8-1,
-		   black, blue,2);
-	stripevert(vis, 7*xmax/16,4*ymax/8, 9*xmax/16-1,5*ymax/8-1,
-		   black, blue,1);
-	stripevert(vis, 9*xmax/16,4*ymax/8,11*xmax/16-1,5*ymax/8-1,
-		   black, blue,2);
-	stripevert(vis,11*xmax/16,4*ymax/8,13*xmax/16-1,5*ymax/8-1,
-		   black, blue,3);
-	stripevert(vis,13*xmax/16,4*ymax/8,15*xmax/16-1,5*ymax/8-1,
-		   black, blue,4);
-	stripevert(vis, 1*xmax/16,5*ymax/8, 3*xmax/16-1,6*ymax/8-1,
-		   black, white,4);
-	stripevert(vis, 3*xmax/16,5*ymax/8, 5*xmax/16-1,6*ymax/8-1,
-		   black, white,3);
-	stripevert(vis, 5*xmax/16,5*ymax/8, 7*xmax/16-1,6*ymax/8-1,
-		   black, white,2);
-	stripevert(vis, 7*xmax/16,5*ymax/8, 9*xmax/16-1,6*ymax/8-1,
-		   black, white,1);
-	stripevert(vis, 9*xmax/16,5*ymax/8,11*xmax/16-1,6*ymax/8-1,
-		   black, white,2);
-	stripevert(vis,11*xmax/16,5*ymax/8,13*xmax/16-1,6*ymax/8-1,
-		   black, white,3);
-	stripevert(vis,13*xmax/16,5*ymax/8,15*xmax/16-1,6*ymax/8-1,
-		   black, white,4);
+	stripevert(vis, 1 * xmax / 16, 2 * ymax / 8, 3 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 4);
+	stripevert(vis, 3 * xmax / 16, 2 * ymax / 8, 5 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 3);
+	stripevert(vis, 5 * xmax / 16, 2 * ymax / 8, 7 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 2);
+	stripevert(vis, 7 * xmax / 16, 2 * ymax / 8, 9 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 1);
+	stripevert(vis, 9 * xmax / 16, 2 * ymax / 8, 11 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 2);
+	stripevert(vis, 11 * xmax / 16, 2 * ymax / 8, 13 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 3);
+	stripevert(vis, 13 * xmax / 16, 2 * ymax / 8, 15 * xmax / 16 - 1,
+		   3 * ymax / 8 - 1, black, red, 4);
+	stripevert(vis, 1 * xmax / 16, 3 * ymax / 8, 3 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 4);
+	stripevert(vis, 3 * xmax / 16, 3 * ymax / 8, 5 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 3);
+	stripevert(vis, 5 * xmax / 16, 3 * ymax / 8, 7 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 2);
+	stripevert(vis, 7 * xmax / 16, 3 * ymax / 8, 9 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 1);
+	stripevert(vis, 9 * xmax / 16, 3 * ymax / 8, 11 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 2);
+	stripevert(vis, 11 * xmax / 16, 3 * ymax / 8, 13 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 3);
+	stripevert(vis, 13 * xmax / 16, 3 * ymax / 8, 15 * xmax / 16 - 1,
+		   4 * ymax / 8 - 1, black, green, 4);
+	stripevert(vis, 1 * xmax / 16, 4 * ymax / 8, 3 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 4);
+	stripevert(vis, 3 * xmax / 16, 4 * ymax / 8, 5 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 3);
+	stripevert(vis, 5 * xmax / 16, 4 * ymax / 8, 7 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 2);
+	stripevert(vis, 7 * xmax / 16, 4 * ymax / 8, 9 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 1);
+	stripevert(vis, 9 * xmax / 16, 4 * ymax / 8, 11 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 2);
+	stripevert(vis, 11 * xmax / 16, 4 * ymax / 8, 13 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 3);
+	stripevert(vis, 13 * xmax / 16, 4 * ymax / 8, 15 * xmax / 16 - 1,
+		   5 * ymax / 8 - 1, black, blue, 4);
+	stripevert(vis, 1 * xmax / 16, 5 * ymax / 8, 3 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 4);
+	stripevert(vis, 3 * xmax / 16, 5 * ymax / 8, 5 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 3);
+	stripevert(vis, 5 * xmax / 16, 5 * ymax / 8, 7 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 2);
+	stripevert(vis, 7 * xmax / 16, 5 * ymax / 8, 9 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 1);
+	stripevert(vis, 9 * xmax / 16, 5 * ymax / 8, 11 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 2);
+	stripevert(vis, 11 * xmax / 16, 5 * ymax / 8, 13 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 3);
+	stripevert(vis, 13 * xmax / 16, 5 * ymax / 8, 15 * xmax / 16 - 1,
+		   6 * ymax / 8 - 1, black, white, 4);
 	ggiFlush(vis);
-	if (waitabit(vis)) return;
+	if (waitabit(vis))
+		return;
 }

@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.2 2001/05/13 19:49:18 cegger Exp $
+/* $Id: monitest.c,v 1.3 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -56,26 +56,26 @@
 ggi_visual_t vis;
 static int kgidevice;
 ggi_graphtype type;
-int sx,sy;
+int sx, sy;
 
 ggi_pixel white, black, red, green, blue, yellow, magenta, cyan;
 
-void usage(const char *prog)
+static void usage(const char *prog)
 {
-	fprintf(stderr,"Usage:\n\n"
-		       "%s <bpp> <xsize> <ysize>\n\n"
-		       "Default: %s 8 320 200\n",prog,prog);
+	fprintf(stderr, "Usage:\n\n"
+		"%s <bpp> <xsize> <ysize>\n\n"
+		"Default: %s 8 320 200\n", prog, prog);
 	exit(1);
 }
 
-int waitabit(ggi_visual_t vis)
+int waitabit(ggi_visual_t _vis)
 {
 	int key;
-	key = ggiGetc(vis);
+	key = ggiGetc(_vis);
 
 	if (toupper(key) == 'Q') {
 		/* Q pressed */
-		ggiClose(vis);
+		ggiClose(_vis);
 		ggiExit();
 		exit(1);
 	} else if (key == GIIUC_Escape || toupper(key) == 'B') {
@@ -85,207 +85,255 @@ int waitabit(ggi_visual_t vis)
 }
 
 
-void setcolors(void)
+static void setcolors(void)
 {
 	/* just set the needed colour names */
 	ggi_color col;
 
-	col.r=0xFFFF; col.g=0xFFFF; col.b=0xFFFF;
-	white=ggiMapColor(vis,&col);
+	col.r = 0xFFFF;
+	col.g = 0xFFFF;
+	col.b = 0xFFFF;
+	white = ggiMapColor(vis, &col);
 
-	col.r=0xFFFF; col.g=0xFFFF; col.b=0x0000;
-	yellow=ggiMapColor(vis,&col);
+	col.r = 0xFFFF;
+	col.g = 0xFFFF;
+	col.b = 0x0000;
+	yellow = ggiMapColor(vis, &col);
 
-	col.r=0xFFFF; col.g=0x0000; col.b=0xFFFF;
-	magenta=ggiMapColor(vis,&col);
+	col.r = 0xFFFF;
+	col.g = 0x0000;
+	col.b = 0xFFFF;
+	magenta = ggiMapColor(vis, &col);
 
-	col.r=0xFFFF; col.g=0x0000; col.b=0x0000;
-	red=ggiMapColor(vis,&col);
+	col.r = 0xFFFF;
+	col.g = 0x0000;
+	col.b = 0x0000;
+	red = ggiMapColor(vis, &col);
 
-	col.r=0x0000; col.g=0xFFFF; col.b=0xFFFF;
-	cyan=ggiMapColor(vis,&col);
+	col.r = 0x0000;
+	col.g = 0xFFFF;
+	col.b = 0xFFFF;
+	cyan = ggiMapColor(vis, &col);
 
-	col.r=0x0000; col.g=0xFFFF; col.b=0x0000;
-	green=ggiMapColor(vis,&col);
+	col.r = 0x0000;
+	col.g = 0xFFFF;
+	col.b = 0x0000;
+	green = ggiMapColor(vis, &col);
 
-	col.r=0x0000; col.g=0x0000; col.b=0xFFFF;
-	blue=ggiMapColor(vis,&col);
+	col.r = 0x0000;
+	col.g = 0x0000;
+	col.b = 0xFFFF;
+	blue = ggiMapColor(vis, &col);
 
-	col.r=0x0000; col.g=0x0000; col.b=0x0000;
-	black=ggiMapColor(vis,&col);
+	col.r = 0x0000;
+	col.g = 0x0000;
+	col.b = 0x0000;
+	black = ggiMapColor(vis, &col);
 }
 
 
-void testpattern(ggi_visual_t vis);
-void resolution(ggi_visual_t vis);
-void flatpanel(ggi_visual_t vis);
-
-
-void convergence(ggi_visual_t vis)
+static void convergence(ggi_visual_t _vis)
 {
 #define PARTSHOR 16
 #define PARTSVERT 12
-#define PARTX(x) ((x)*(xmax-1)/PARTSHOR)
-#define PARTWIDTH (xmax/PARTSHOR)
-#define PARTY(y) ((y)*(ymax-1)/PARTSVERT)
-#define PARTHEIGHT (ymax/PARTSVERT)
+#define PARTX(x) (signed)((x)*(xmax-1)/PARTSHOR)
+#define PARTWIDTH (signed)(xmax/PARTSHOR)
+#define PARTY(y) (signed)((y)*(ymax-1)/PARTSVERT)
+#define PARTHEIGHT (signed)(ymax/PARTSVERT)
 
-	unsigned int i,j,k,xmax,ymax;
+	unsigned int i, j, k, xmax, ymax;
 	unsigned int f[3];
 	ggi_mode currmode;
 
-	ggiGetMode(vis,&currmode);
+	ggiGetMode(_vis, &currmode);
 	xmax = currmode.visible.x;
 	ymax = currmode.visible.y;
 
-	f[0]=red; 
-	f[1]=green;
-	f[2]=blue;
+	f[0] = red;
+	f[1] = green;
+	f[2] = blue;
 
-	for (k=0;k<4;k++){
-		ggiSetGCForeground(vis,black);
-		ggiFillscreen(vis);
-		for (i=0;i<=PARTSHOR;i++){
-			for (j=0;j<=PARTSVERT;j++){
-				ggiSetGCForeground(vis,f[(i+j+k)%3]);
-				ggiDrawHLine(vis,PARTX(i),PARTY(j),PARTWIDTH/2);
-				ggiDrawVLine(vis,PARTX(i),PARTY(j),PARTHEIGHT/2);
-				ggiDrawHLine(vis,PARTX(i)-PARTWIDTH/2,
-					     PARTY(j),PARTWIDTH/2);
-				ggiDrawVLine(vis,PARTX(i),PARTY(j)-PARTHEIGHT/2,
-					     PARTHEIGHT/2);
+	for (k = 0; k < 4; k++) {
+		ggiSetGCForeground(_vis, black);
+		ggiFillscreen(_vis);
+		for (i = 0; i <= PARTSHOR; i++) {
+			for (j = 0; j <= PARTSVERT; j++) {
+				ggiSetGCForeground(_vis,
+						   f[(i + j + k) % 3]);
+				ggiDrawHLine(_vis, PARTX(i), PARTY(j),
+					     PARTWIDTH / 2);
+				ggiDrawVLine(_vis, PARTX(i), PARTY(j),
+					     PARTHEIGHT / 2);
+				ggiDrawHLine(_vis,
+					     PARTX(i) - PARTWIDTH / 2,
+					     PARTY(j), PARTWIDTH / 2);
+				ggiDrawVLine(_vis, PARTX(i),
+					     PARTY(j) - PARTHEIGHT / 2,
+					     PARTHEIGHT / 2);
 			}
 		}
-		ggiFlush(vis);
-		if (waitabit(vis)) return;
+		ggiFlush(_vis);
+		if (waitabit(_vis))
+			return;
 	}
 }
 
 
-void moiree(ggi_visual_t vis)
+static void moiree(ggi_visual_t _vis)
 {
-	unsigned int xmax,ymax;
+	int xmax, ymax;
 	ggi_mode currmode;
 
-	ggiGetMode(vis,&currmode);
+	ggiGetMode(_vis, &currmode);
 	xmax = currmode.visible.x;
 	ymax = currmode.visible.y;
-	stripevert(vis,0,0,xmax-1,ymax-1,black,white,1); ggiFlush(vis);
-	if (waitabit(vis)) return;
-	stripevert(vis,0,0,xmax-1,ymax-1,red,white,1);   ggiFlush(vis);
-	if (waitabit(vis)) return;
-	stripevert(vis,0,0,xmax-1,ymax-1,green,white,1); ggiFlush(vis);
-	if (waitabit(vis)) return;
-	stripevert(vis,0,0,xmax-1,ymax-1,blue,white,1);  ggiFlush(vis);
-	if (waitabit(vis)) return;
+	stripevert(_vis, 0, 0, xmax - 1, ymax - 1,
+		   black, white, 1);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	stripevert(_vis, 0, 0, xmax - 1, ymax - 1,
+		   red, white, 1);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	stripevert(_vis, 0, 0, xmax - 1, ymax - 1,
+		   green, white, 1);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	stripevert(_vis, 0, 0, xmax - 1, ymax - 1,
+		   blue, white, 1);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
 
-	dotone(vis,0,0,xmax-1,ymax-1,black,white); ggiFlush(vis);
-	if (waitabit(vis)) return;
-	dotone(vis,0,0,xmax-1,ymax-1,red,white);   ggiFlush(vis);
-	if (waitabit(vis)) return;
-	dotone(vis,0,0,xmax-1,ymax-1,green,white); ggiFlush(vis);
-	if (waitabit(vis)) return;
-	dotone(vis,0,0,xmax-1,ymax-1,blue,white);  ggiFlush(vis);
-	if (waitabit(vis)) return;
+	dotone(_vis, 0, 0, xmax - 1, ymax - 1, black, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	dotone(_vis, 0, 0, xmax - 1, ymax - 1, red, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	dotone(_vis, 0, 0, xmax - 1, ymax - 1, green, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	dotone(_vis, 0, 0, xmax - 1, ymax - 1, blue,
+	       white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
 
-	chessboardone(vis,0,0,xmax-1,ymax-1,black,white);ggiFlush(vis);
-	if (waitabit(vis)) return;
-	chessboardone(vis,0,0,xmax-1,ymax-1,red,white);  ggiFlush(vis);
-	if (waitabit(vis)) return;
-	chessboardone(vis,0,0,xmax-1,ymax-1,green,white);ggiFlush(vis);
-	if (waitabit(vis)) return;
-	chessboardone(vis,0,0,xmax-1,ymax-1,blue,white); ggiFlush(vis);
-	if (waitabit(vis)) return;
+	chessboardone(_vis, 0, 0, xmax - 1, ymax - 1, black, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	chessboardone(_vis, 0, 0, xmax - 1, ymax - 1, red, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	chessboardone(_vis, 0, 0, xmax - 1, ymax - 1, green, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
+	chessboardone(_vis, 0, 0, xmax - 1, ymax - 1, blue, white);
+	ggiFlush(_vis);
+	if (waitabit(_vis))
+		return;
 }
 
+#if 0	/* defined but not used */
+char *helptext = {
+	"GGI screntest program               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.3 2003/07/05 14:04:25 cegger Exp $               \n"
+	    "h:   this help screen               \n"
+	    "q:   quit this testscreen           \n" ""
+};
 
-char * helptext ={
-  "GGI screntest program               \n"
-  "(c) H. Niemann, $Id: monitest.c,v 1.2 2001/05/13 19:49:18 cegger Exp $               \n"
-  "h:   this help screen               \n"
-  "q:   quit this testscreen           \n"
-  ""};
-
-int help(void)
+static int help(void)
 {
 	ggi_mode currmode;
 
-	ggiGetMode(vis,&currmode);
+	ggiGetMode(vis, &currmode);
 
-	ggiGraphTextLongPuts(vis,currmode.visible.x/2,currmode.visible.y/2,
-			0,0,GGI_TEXT_CENTER,helptext);
+	ggiGraphTextLongPuts(vis, currmode.visible.x / 2,
+			     currmode.visible.y / 2, 0, 0, GGI_TEXT_CENTER,
+			     helptext);
 	waitabit(vis);
 	return 0;
 }
+#endif
 
 
-
-const ggi_coord resolutions[]= { 
-	{320,200},
-	{320,240},
-	{320,350}, /* EGA text */
-	{360,400}, /* VGA text */
-	{400,300},
-	{480,300},
-	{512,384},
-	{640,200}, /* EGA */
-	{640,350}, /* EGA */
-	{640,400},
-	{640,480},
-	{720,350}, /* MDA text */
-	{720,400}, /* VGA text */
-	{800,600},
-	{1024,768},
-	{1152,864},
-	{1280,1024},
-	{1600,1200},
-	{0,0}          /* End mark!! */
+const ggi_coord resolutions[] = {
+	{320, 200},
+	{320, 240},
+	{320, 350},		/* EGA text */
+	{360, 400},		/* VGA text */
+	{400, 300},
+	{480, 300},
+	{512, 384},
+	{640, 200},		/* EGA */
+	{640, 350},		/* EGA */
+	{640, 400},
+	{640, 480},
+	{720, 350},		/* MDA text */
+	{720, 400},		/* VGA text */
+	{800, 600},
+	{1024, 768},
+	{1152, 864},
+	{1280, 1024},
+	{1600, 1200},
+	{0, 0}			/* End mark!! */
 };
 
-const ggi_graphtype graphtypes[]={
+const ggi_graphtype graphtypes[] = {
 	/* can't handle textmode yet */
-	GT_1BIT,                /*  1 bpp graphics              */
-	GT_4BIT,                /*  4 bpp graphics              */
-	GT_8BIT,                /*  8 bpp graphics              */
-	GT_15BIT,               /* 15 bpp graphics              */
-	GT_16BIT,               /* 16 bpp graphics              */
-	GT_24BIT,               /* 24 bpp graphics              */
-	GT_32BIT,               /* 24 bpp word aligned          */
+	GT_1BIT,		/*  1 bpp graphics              */
+	GT_4BIT,		/*  4 bpp graphics              */
+	GT_8BIT,		/*  8 bpp graphics              */
+	GT_15BIT,		/* 15 bpp graphics              */
+	GT_16BIT,		/* 16 bpp graphics              */
+	GT_24BIT,		/* 24 bpp graphics              */
+	GT_32BIT,		/* 24 bpp word aligned          */
 	GT_INVALID
 };
 
-int resindex=-1;      /* 'base' resolution of the mode set */
-int gtindex=-1;       /* graphtype, i.e. bit depth         */
-int xres=GGI_AUTO;    /* visual resolution, might be different */
-int yres=GGI_AUTO;    /* from the mode list */
+int resindex = -1;		/* 'base' resolution of the mode set */
+int gtindex = -1;		/* graphtype, i.e. bit depth         */
+int xres = GGI_AUTO;		/* visual resolution, might be different */
+int yres = GGI_AUTO;		/* from the mode list */
 
-int guessmode(void)
+static int guessmode(void)
 {
 /* try to guess the mode you're in and set resindex and gtindex  */
 /* done on startup.                                              */
 /* I could set up a certain mode at startup, but I don't want to */
 
 	ggi_mode currmode;
-	
-	int i; 
-	
-	ggiGetMode(vis,&currmode);
+
+	int i;
+
+	ggiGetMode(vis, &currmode);
 	fprintf(stderr, "Current mode is %dx%d %d/%d.\n",
 		currmode.visible.x, currmode.visible.y,
 		GT_DEPTH(currmode.graphtype), GT_SIZE(currmode.graphtype));
-	
+
 
 	xres = currmode.visible.x;
 	yres = currmode.visible.y;
-	
+
 	/* find most possible resolution */
-	resindex = 0; /* if everything else fails: assume first mode:320x200 */
+	resindex = 0;		/* if everything else fails: assume first mode:320x200 */
 	i = 0;
-	while (resolutions[i].x != 0){
+	while (resolutions[i].x != 0) {
 		/* for now: only test exact match */
-		if ((xres == resolutions[i].x) && (yres == resolutions[i].y)){
+		if ((xres == resolutions[i].x)
+		    && (yres == resolutions[i].y)) {
 			resindex = i;
-			fprintf(stderr,"Detected resolution %d: %dx%d.\n",
+			fprintf(stderr, "Detected resolution %d: %dx%d.\n",
 				resindex,
 				resolutions[resindex].x,
 				resolutions[resindex].y);
@@ -295,8 +343,8 @@ int guessmode(void)
 	/* find mode you're in */
 	gtindex = -1;
 	i = 0;
-	while (graphtypes[i] != GT_INVALID){
-		if (graphtypes[i] == currmode.graphtype){
+	while (graphtypes[i] != GT_INVALID) {
+		if (graphtypes[i] == currmode.graphtype) {
 			gtindex = i;
 			fprintf(stderr, "Detected graphtype %d/%d\n",
 				GT_DEPTH(graphtypes[gtindex]),
@@ -305,31 +353,31 @@ int guessmode(void)
 		}
 		i++;
 	}
-	if (gtindex == -1){
+	if (gtindex == -1) {
 		return -1;
-	}     
+	}
 	return 0;
 }
 
 
-int changeresmenu(void)
+static int changeresmenu(void)
 {
-	struct menu cm ;
-	static int select = 0;
-       
+	struct menu cm;
+	static int _select = 0;
+
 	ggi_mode suggmode;
-	
+
 	char s[32];
 	char nextmodeline[100];
 	char prevmodeline[100];
-	
+
 	char nextgtline[100];
 	char prevgtline[100];
 
 	char bottom[100];
 
-	int nextresindex,prevresindex;
-	int nextgtindex,prevgtindex;
+	int nextresindex, prevresindex;
+	int nextgtindex, prevgtindex;
 
 	nextresindex = prevresindex = 0;
 	nextgtindex = prevgtindex = 0;
@@ -340,31 +388,30 @@ int changeresmenu(void)
 
 	cm.lastentry = 8;
 	cm.entry[0].text = "1 Increase X";
-        cm.entry[1].text = "2 Decrease X";
-        cm.entry[2].text = "3 Increase Y";
-        cm.entry[3].text = "4 Decrease Y";
+	cm.entry[1].text = "2 Decrease X";
+	cm.entry[2].text = "3 Increase Y";
+	cm.entry[3].text = "4 Decrease Y";
 	cm.entry[8].text = "9 Back";
 
-	sprintf(bottom,"  ");
-	
+	sprintf(bottom, "  ");
+
 	for (;;) {
 
-		nextresindex = resindex+1; 
-		if (resolutions[nextresindex].x==0){
+		nextresindex = resindex + 1;
+		if (resolutions[nextresindex].x == 0) {
 			nextresindex--;
-		}
-		;
-		prevresindex = resindex-1;
-		if (prevresindex<0){
+		};
+		prevresindex = resindex - 1;
+		if (prevresindex < 0) {
 			prevresindex = 0;
 		}
-		
-		nextgtindex = gtindex+1;
-		if (graphtypes[nextgtindex]==GT_INVALID){
+
+		nextgtindex = gtindex + 1;
+		if (graphtypes[nextgtindex] == GT_INVALID) {
 			nextgtindex--;
 		}
-		prevgtindex = gtindex-1;
-		if (prevgtindex<0){
+		prevgtindex = gtindex - 1;
+		if (prevgtindex < 0) {
 			prevgtindex = 0;
 		}
 		sprintf(cm.entry[4].text = nextgtline,
@@ -375,45 +422,47 @@ int changeresmenu(void)
 			"6 Decrease depth: %d/%d",
 			GT_DEPTH(graphtypes[prevgtindex]),
 			GT_SIZE(graphtypes[prevgtindex]));
-		sprintf(cm.entry[6].text = nextmodeline,"7 next res.:  %dx%d",
+		sprintf(cm.entry[6].text =
+			nextmodeline, "7 next res.:  %dx%d",
 			resolutions[nextresindex].x,
 			resolutions[nextresindex].y);
-		sprintf(cm.entry[7].text = prevmodeline,"8 prev. res.: %dx%d",
+		sprintf(cm.entry[7].text =
+			prevmodeline, "8 prev. res.: %dx%d",
 			resolutions[prevresindex].x,
 			resolutions[prevresindex].y);
 
-		
-		sprintf(s,"current: %4dx%3dx%d/%d",xres,yres,
+
+		sprintf(s, "current: %4dx%3dx%d/%d", xres, yres,
 			GT_DEPTH(graphtypes[gtindex]),
 			GT_SIZE(graphtypes[gtindex]));
-		
+
 		cm.toptext = s;
 		cm.bottomtext = bottom;
-		
+
 		calculate_menu(&cm);
 		center_menu(&cm);
 
-		/*sleep(1);*/
+		/*sleep(1); */
 		testpattern(vis);
 		ggiFlush(vis);
-		switch(select = do_menu(&cm,select)){
-		case 0: 
-			xres +=1; 
+		switch (_select = do_menu(&cm, _select)) {
+		case 0:
+			xres += 1;
 			break;
 		case 1:
-			xres -=1;
+			xres -= 1;
 			break;
 		case 2:
-			yres +=1;
+			yres += 1;
 			break;
 		case 3:
-			yres -=1;
+			yres -= 1;
 			break;
 		case 4:
-			gtindex =nextgtindex;
+			gtindex = nextgtindex;
 			break;
 		case 5:
-			gtindex =prevgtindex;
+			gtindex = prevgtindex;
 			break;
 		case 6:
 			resindex = nextresindex;
@@ -425,29 +474,31 @@ int changeresmenu(void)
 			xres = resolutions[resindex].x;
 			yres = resolutions[resindex].y;
 			break;
-		case 8: case -1:
-			testpattern(vis); /* clear menu */
-			return(0);
+		case 8:
+		case -1:
+			testpattern(vis);	/* clear menu */
+			return (0);
 		default:
 			ggiPanic("Internal error, wrong menu selection");
 		}
 		/* try mode */
-		if (ggiCheckSimpleMode(vis, xres, yres, 1, graphtypes[gtindex],
-				       &suggmode) != 0){
+		if (ggiCheckSimpleMode
+		    (vis, xres, yres, 1, graphtypes[gtindex],
+		     &suggmode) != 0) {
 			/* failed */
-			sprintf(bottom,"mode set failed");
+			sprintf(bottom, "mode set failed");
 		} else {
 			if (ggiSetSimpleMode(vis, xres, yres, 1,
 					     graphtypes[gtindex]) != 0) {
-				fprintf(stderr,"Set may not fail!!\n");
+				fprintf(stderr, "Set may not fail!!\n");
 			} else {
-				sprintf(bottom,"mode set succeded");
+				sprintf(bottom, "mode set succeded");
 			}
-			/*sleep(1);*/
-			/*ggiFlush(vis);*/
+			/*sleep(1); */
+			/*ggiFlush(vis); */
 		}
-		setcolors();  /* necessary when depth changed */
-		
+		setcolors();	/* necessary when depth changed */
+
 	}
 	/* never get here */
 	return 0;
@@ -455,12 +506,12 @@ int changeresmenu(void)
 
 
 
-int mainmenu(void)
+static int mainmenu(void)
 {
-	struct menu mainm ;
-	static int select = 0;
+	struct menu mainm;
+	static int _select = 0;
 
-	default_menu(&mainm,vis);
+	default_menu(&mainm, vis);
 	mainm.w.title = " * Main menu * ";
 
 	mainm.entry[0].text = "1 Geometry and Colors";
@@ -482,12 +533,12 @@ int mainmenu(void)
 	mainm.bottomtext = "and press <return>";
 
 	calculate_menu(&mainm);
-	
-	for (;;){
-		center_menu(&mainm);  
-                        /* if resolution changes, we must recenter */
-		switch(select = do_menu(&mainm,select)){
-		case 0: 
+
+	for (;;) {
+		center_menu(&mainm);
+		/* if resolution changes, we must recenter */
+		switch (_select = do_menu(&mainm, _select)) {
+		case 0:
 			testpattern(vis);
 			waitabit(vis);
 			break;
@@ -514,7 +565,8 @@ int mainmenu(void)
 				return 0;
 			}
 			break;
-		case 7: case -1:
+		case 7:
+		case -1:
 			return 0;
 			break;
 		default:
@@ -524,40 +576,40 @@ int mainmenu(void)
 	return 0;
 }
 
-      
-int main(int argc,char **argv)
+
+int main(int argc, char **argv)
 {
 	const char *prog = argv[0];
 	ggi_mode mo;
-	
+
 	if (argc == 1) {
 		ggiParseMode("", &mo);
-	} else if (argc == 2){
-		ggiParseMode(argv[1],&mo);
-	}  else {
+	} else if (argc == 2) {
+		ggiParseMode(argv[1], &mo);
+	} else {
 		usage(prog);
 		return 1;
 	}
-	
-	
+
+
 	if (ggiInit() < 0) {
 		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
 		exit(1);
 	}
 
-	vis = ggiOpen(NULL); /* Null gives the default visual */
+	vis = ggiOpen(NULL);	/* Null gives the default visual */
 	if (vis == NULL) {
 		ggiPanic("unable to open default visual, exiting.\n");
 	}
 
-	ggiSetFlags(vis,GGIFLAG_ASYNC);
-	
+	ggiSetFlags(vis, GGIFLAG_ASYNC);
+
 	printf("Trying mode ");
 	ggiPrintMode(&mo);
 	printf("\n");
 
 	ggiCheckMode(vis, &mo);
-	/*ggiCheckTextMode(vis,80,25,80,25,9,14,GT_TEXT16,&mo,NULL);*/
+	/*ggiCheckTextMode(vis,80,25,80,25,9,14,GT_TEXT16,&mo,NULL); */
 
 	printf("Suggested mode ");
 	ggiPrintMode(&mo);
@@ -572,9 +624,9 @@ int main(int argc,char **argv)
 
 	setcolors();
 
-	if (guessmode() != 0){
+	if (guessmode() != 0) {
 		fprintf(stderr,
-	     "Warning: Could not guess mode, probably not a standard mode\n");
+			"Warning: Could not guess mode, probably not a standard mode\n");
 	}
 
 	testpattern(vis);
@@ -583,7 +635,7 @@ int main(int argc,char **argv)
 
 	ggiClose(vis);
 
-	ggiExit();	
+	ggiExit();
 
 	return 0;
 }

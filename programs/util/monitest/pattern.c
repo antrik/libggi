@@ -1,4 +1,4 @@
-/* $Id: pattern.c,v 1.1 2001/05/12 23:03:51 cegger Exp $
+/* $Id: pattern.c,v 1.2 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Monitest core pattern routine
@@ -42,7 +42,7 @@ void testpattern(ggi_visual_t vis)
 
 	int xleft;
 	int xright;
-	int reddish, bluish, greenish, grey;
+	ggi_pixel reddish, bluish, greenish, grey;
 	int x, c;
 
 	char s[255];

@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.1 2001/05/12 23:03:46 cegger Exp $
+/* $Id: giik2str.c,v 1.2 2003/07/05 14:04:25 cegger Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -30,11 +30,12 @@
 
 #include <ggi/events.h>
 
+#include "giik2str.h"
+
 /* Hey, this function never claimed to be threadsafe... */
 static char retbuffer[32]; /* More than enough to hold an hex 32bit int */
 
-const char *
-giik2str(uint32 giik, int issym)
+const char *giik2str(uint32 giik, int issym)
 {
 	switch (giik) {
 	case GIIK_F0:	return "GIIK_F0";
@@ -257,7 +258,7 @@ giik2str(uint32 giik, int issym)
 	default:
 		if (giik >= 32 && giik < 256) {
 			/* Handle sym/label here */
-			if (!issym) giik = toupper(giik);
+			if (!issym) giik = toupper((int)giik);
 			switch (giik) {
 			case GIIUC_Space:	return "GIIUC_Space";
 			case GIIUC_Exclamation:	return "GIIUC_Exclamation";
