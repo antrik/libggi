@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.3 2002/07/08 22:44:08 skids Exp $
+/* $Id: misc.c,v 1.4 2002/07/09 11:08:46 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -85,6 +85,9 @@ static int _ggi_x_is_better_screen(Screen *than, Screen *this) {
 	if (than->mwidth * than->mheight > this->mwidth * this->mheight)
 		return 0;
 
+	if (than->ndepths < this->ndepths) return 1;
+	if (than->ndepths > this->ndepths) return 0;
+
 	/* More? */
 
 	return 0;
@@ -128,7 +131,10 @@ void _ggi_x_build_vilist(ggi_visual *vis) {
 					    ScreenOfDisplay(priv->disp,
 							    via->screen)))
 		    goto swap;
-		if (via->visualid > vib->visualid) goto swap;
+
+		/* Don't swap visuals by visualid, because when they are
+		 * reswapped above again and causing another endless loop.
+		 */
 		viidx++;
 		continue;
 	swap:
@@ -140,7 +146,6 @@ void _ggi_x_build_vilist(ggi_visual *vis) {
 		viidx++;
 	}
 	if (more) goto more;
-
 }
 
 /* This will return GT_INVALID if vi doesn't match gt.
