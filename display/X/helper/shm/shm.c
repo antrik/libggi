@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.19 2004/09/09 17:53:30 cegger Exp $
+/* $Id: shm.c,v 1.20 2004/09/13 09:29:27 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -247,7 +247,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 		LIBGGI_APPBUFS(vis)[i]->type
 		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
 		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
-		  priv->fb + i * LIBGGI_MODE(vis)->virt.y * 
+		  priv->fb + i * LIBGGI_VIRTY(vis) * 
                   priv->ximage->bytes_per_line;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
@@ -283,7 +283,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 	sprintf(target + i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
-		priv->ximage->bytes_per_line * LIBGGI_MODE(vis)->virt.y,
+		priv->ximage->bytes_per_line * LIBGGI_VIRTY(vis),
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
