@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.34 2004/10/11 18:53:44 cegger Exp $
+/* $Id: visual.c,v 1.35 2004/10/28 16:16:42 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -172,9 +172,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->freefb) priv->freefb(vis);
 
 	/* Exit any initialized helper libs if called from GGIopen. */
-	if (vis->extlib) {
-		_ggiExitDL(vis, vis->extlib);
-		_ggiZapDL(vis, &vis->extlib);
+	if (!GG_SLIST_EMPTY(&vis->extlib)) {
+		_ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
+		_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
 	}
 
 	if (priv->win != priv->parentwin) {

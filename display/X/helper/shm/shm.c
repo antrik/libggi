@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.21 2004/09/13 10:40:30 cegger Exp $
+/* $Id: shm.c,v 1.22 2004/10/28 16:16:43 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -350,9 +350,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->freefb) priv->freefb(vis);
 
 	/* Exit any initialized helper libs if called from GGIopen. */
-	if (vis->extlib) {
-		_ggiExitDL(vis, vis->extlib);
-		_ggiZapDL(vis, &vis->extlib);
+	if (!GG_SLIST_EMPTY(&vis->extlib)) {
+		_ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
+		_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
 	}
 
 	if (priv->win != priv->parentwin) {
