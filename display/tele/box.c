@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: box.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -35,8 +35,6 @@
 #define MAX_PIXELS(vis)		\
 	TELE_MAXIMUM_RAW(TeleCmdGetPutData) / BYTES_PER_PIXEL(vis)
 
-
-
 int GGI_tele_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_tele_priv *priv = TELE_PRIV(vis);
@@ -72,7 +70,6 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 	TeleEvent ev;
 
 	int err;
-
 
 	if ((x < 0) || (y < 0)
 	  || (x >= LIBGGI_MODE(vis)->virt.x)
@@ -122,10 +119,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	int xstep, ystep;
 	int curx;
 
-
-
-	LIBGGICLIP_PUTBOX(vis, x,y, w,h, buf, srcwidth, );
-
+	LIBGGICLIP_PUTBOX(vis, x,y, w,h, src, srcwidth, );
 
 	xstep = w;
 	ystep = (MAX_PIXELS(vis) / w);
@@ -138,7 +132,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	curx = 0;
 
 	while (h > 0) {
-		int j, err;
+		int i, j, err;
 
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
@@ -155,12 +149,11 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 		dest = (uint8 *)(p->pixel);
 
-		for(j = 0; j < hh; ++j) {
+		for (j = 0; j < hh; j++)
 		  memcpy(&(dest[j * ww * BYTES_PER_PIXEL(vis)]),
-			&(src[(j*stride + curx)]),
-				ww * BYTES_PER_PIXEL(vis));
-		}	/* for */
-
+			 &(src[j * stride +
+			       (curx) * BYTES_PER_PIXEL(vis)]),
+			 ww * BYTES_PER_PIXEL(vis));
 
 		err = tclient_write(priv->client, &ev);
 
@@ -197,8 +190,6 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 	int xstep, ystep;
 	int curx;
-
-	GGIDPRINT_MODE("getbox %dx%d\n", w, h);
 
 	if ((x < 0) || (y < 0) ||
 	    (x+w > LIBGGI_MODE(vis)->virt.x) ||
@@ -248,10 +239,6 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 		src = (uint8 *)p->pixel;
 
-		GGIDPRINT_MODE("GETBOX: First 10 byte recv: %d %d %d %d %d  %d %d %d %d %d\n",
-			src[0], src[1], src[2], src[3], src[4],
-			src[5], src[6], src[7], src[8], src[9]);
-
 		for(j = 0; j < hh; ++j) {
 		  memcpy(&(dest[(j*stride + curx)]),
 			&(src[j * ww * BYTES_PER_PIXEL(vis)]),
@@ -279,9 +266,8 @@ int GGI_tele_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
                        ggi_visual *vis, int dx, int dy)
 { 
 	int err = 0;
-	uint8 *packed_buf;
+	ggi_pixel * packed_buf;
 	ggi_color * buf;
- 
 
 	LIBGGICLIP_XYWH(src, sx,sy, w,h);
 	LIBGGICLIP_XYWH(vis, dx,dy, w,h);
@@ -307,7 +293,7 @@ int GGI_tele_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	ggiUnpackPixels(src, packed_buf, buf, w * h);
 	ggiPackColors(vis, packed_buf, buf, w * h);
 
-	err = ggiPutBox(vis, dx, dy, w, h, buf);
+	err = ggiPutBox(vis, dx, dy, w, h, packed_buf);
 
 	free(packed_buf);
 	free(buf);

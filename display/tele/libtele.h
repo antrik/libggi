@@ -1,4 +1,4 @@
-/* $Id: libtele.h,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: libtele.h,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    libtele.h
@@ -103,6 +103,7 @@ typedef enum tele_event_type
 
 	TELE_CMD_CHECK,		/* check mode */
 	TELE_CMD_OPEN,		/* open window / set mode */
+	TELE_CMD_GETPIXELFMT,   /* request mode info from the client */
 	TELE_CMD_CLOSE,		/* close window / reset mode */
 	TELE_CMD_FLUSH,		/* flush data */
 
@@ -192,6 +193,24 @@ typedef struct tele_cmd_open_data
 	} size;
 
 } TeleCmdOpenData;
+
+typedef struct tele_cmd_pixelfmt_data
+{
+  T_Long depth;
+  T_Long size;
+
+  T_Long red_mask;
+  T_Long green_mask;
+  T_Long blue_mask;
+  T_Long alpha_mask;
+  T_Long clut_mask;
+  T_Long fg_mask;
+  T_Long bg_mask;
+  T_Long texture_mask;
+
+  T_Long flags;
+  T_Long stdformat;
+} TeleCmdPixelFmtData;
 
 typedef struct tele_cmd_getput_data
 {

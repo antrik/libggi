@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: draw.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -53,7 +53,6 @@ int GGI_tele_drawline(struct ggi_visual *vis, int x,int y, int xe,int ye)
 	TeleEvent ev;
 
 	int err;
-
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_DRAWLINE,
 			      sizeof(TeleCmdDrawLineData), 0);
@@ -110,9 +109,7 @@ int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 	int err;
 
-
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
-
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_DRAWBOX,
 			      sizeof(TeleCmdDrawBoxData), 0);
@@ -141,9 +138,7 @@ int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h,
 
 	int err;
 
-
 	LIBGGICLIP_COPYBOX(vis, x,y,w,h, nx,ny);
-
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_COPYBOX,
 			      sizeof(TeleCmdCopyBoxData), 0);

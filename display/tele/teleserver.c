@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: teleserver.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -403,6 +403,48 @@ static void perf_OPEN(TeleUser *u, TeleEvent *ev)
 	}
 }
 
+static void perf_GETPIXELFMT(TeleUser *u, TeleEvent *ev)
+{
+	TeleCmdPixelFmtData *d = (TeleCmdPixelFmtData *) ev->data;
+	T_Long reply_sequence;
+	int err;
+	
+	ggi_pixelformat * format;
+	format = ggiGetPixelFormat(vis);
+
+	reply_sequence = ev->sequence;
+	tserver_new_event(u, ev, TELE_CMD_GETPIXELFMT,
+			  sizeof(TeleCmdPixelFmtData), 0);
+	ev->sequence = reply_sequence;
+
+	/* send result back to client */
+
+	d = (TeleCmdPixelFmtData *)ev->data;
+
+	d->depth          = (T_Long) format->depth;
+	d->size           = (T_Long) format->size;
+	
+	d->red_mask       = (T_Long) format->red_mask;
+	d->green_mask     = (T_Long) format->green_mask;
+	d->blue_mask      = (T_Long) format->blue_mask;
+	d->alpha_mask     = (T_Long) format->alpha_mask;
+	d->clut_mask      = (T_Long) format->clut_mask;
+	d->fg_mask        = (T_Long) format->fg_mask;
+	d->bg_mask        = (T_Long) format->bg_mask;
+	d->texture_mask   = (T_Long) format->texture_mask;
+	d->flags          = (T_Long) format->flags;
+	d->stdformat      = (T_Long) format->stdformat;
+
+	err = tserver_write(u, ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		/* Client has gone away */
+
+		close_connection(1);
+		return;
+	}
+}
+
 static void perf_CLOSE(TeleUser *u)
 {
 	fprintf(stderr, "Client closed.\n");
@@ -420,7 +462,7 @@ static void perf_FLUSH(TeleUser *u)
 static void perf_PUTBOX(TeleUser *u, TeleCmdGetPutData *d)
 {
 	/* Put a pixel matrix */
-	uint8 *src = (uint8 *)d->pixel;
+	ggi_pixel *src = (ggi_pixel *)d->pixel;
 
 	if ((d->x < 0) || (d->y < 0) ||
 	    (d->x + d->width  > vis_mode.virt.x) ||
@@ -629,6 +671,10 @@ static void handle_command(TeleUser *u)
 		case TELE_CMD_OPEN:
 			perf_OPEN(u, &ev);
 			break;
+		
+	        case TELE_CMD_GETPIXELFMT:
+		        perf_GETPIXELFMT(u, &ev);
+                        break;
 
 		case TELE_CMD_CLOSE:
 			perf_CLOSE(u);

@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: text.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -42,7 +42,6 @@ int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)
 	TeleCmdGetCharSizeData *p;
 	TeleEvent ev;
 	int err;
-
 
         p = tclient_new_event(priv->client, &ev, TELE_CMD_GETCHARSIZE,
 				sizeof(TeleCmdGetCharSizeData), 0);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
+/* $Id: mode.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -81,19 +81,60 @@ int GGI_tele_resetmode(ggi_visual *vis)
 	return tclient_write(priv->client, &ev);
 }
 
+int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
+{
+  ggi_tele_priv *priv = TELE_PRIV(vis);
+  int err;
+  TeleEvent ev;
+  TeleCmdPixelFmtData *d;
+
+  d = tclient_new_event(priv->client, &ev, TELE_CMD_GETPIXELFMT, 
+			sizeof(TeleCmdPixelFmtData), 0);
+
+  err = tclient_write(priv->client, &ev);
+  
+  if (err == TELE_ERROR_SHUTDOWN) {
+    TELE_HANDLE_SHUTDOWN;
+  } else if (err < 0) {
+    return err;
+  }
+  
+  /* get reply */
+  err = tele_receive_reply(vis, &ev, TELE_CMD_GETPIXELFMT, ev.sequence);
+
+  format->depth         = (int)d->depth;
+  format->size          = (int)d->size;
+  format->red_mask      = (ggi_pixel)d->red_mask;
+  format->green_mask    = (ggi_pixel)d->green_mask;
+  format->blue_mask     = (ggi_pixel)d->blue_mask;
+  format->alpha_mask    = (ggi_pixel)d->alpha_mask;
+  format->clut_mask     = (ggi_pixel)d->clut_mask;
+  format->fg_mask       = (ggi_pixel)d->fg_mask;
+  format->bg_mask       = (ggi_pixel)d->bg_mask;
+  format->texture_mask  = (ggi_pixel)d->texture_mask;
+  format->flags         = (uint32)d->flags;
+  format->stdformat     = (uint32)d->stdformat;
+
+  _ggi_build_pixfmt(format);
+
+  return err;
+}
+
 int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdOpenData *w;
 	TeleEvent ev;
 
+	ggi_pixelformat * format;
+
 	char libname[200], libargs[200];
 	int id, err;
-
-
+	
+	
 	/* if window already open, close it */
 	if (priv->mode_up) {
-		GGI_tele_resetmode(vis);
+	        GGI_tele_resetmode(vis);
 	}
 
         if ((err = GGI_tele_checkmode(vis, mode)) != 0) {
@@ -102,23 +143,9 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
-	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
-
-	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
-	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
-
-	/* load libraries */
-	for (id=1; 0==GGI_tele_getapi(vis, id, libname, libargs); id++) {
-		err = _ggiOpenDL(vis, libname, libargs, NULL);
-		if (err) {
-			fprintf(stderr,"display-tele: Can't open the "
-				"%s (%s) library.\n", libname, libargs);
-			return GGI_EFATAL;
-		} else {
-			GGIDPRINT_MODE("display-tele: Success in loading "
-				"%s (%s)\n", libname, libargs);
-		}
-	}
+	format = LIBGGI_PIXFMT(vis);
+	memset(format, 0, sizeof(ggi_pixelformat));
+	_ggi_build_pixfmt(format);	
 
 	/* set up palette */
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
@@ -127,42 +154,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 		vis->opcolor->setpalvec = GGI_tele_setpalvec;
 	}
 
-	/* override stuff */
-	vis->opdraw->putpixel_nc=GGI_tele_putpixel_nc;
-	vis->opdraw->putpixel=GGI_tele_putpixel;
-	vis->opdraw->puthline=GGI_tele_puthline;
-	vis->opdraw->putvline=GGI_tele_putvline;
-	vis->opdraw->putbox=GGI_tele_putbox;
-
-	vis->opdraw->getpixel=GGI_tele_getpixel;
-	vis->opdraw->gethline=GGI_tele_gethline;
-	vis->opdraw->getvline=GGI_tele_getvline;
-	vis->opdraw->getbox=GGI_tele_getbox;
-
-	vis->opdraw->drawpixel_nc=GGI_tele_drawpixel_nc;
-	vis->opdraw->drawpixel=GGI_tele_drawpixel;
-	vis->opdraw->drawhline_nc=GGI_tele_drawhline_nc;
-	vis->opdraw->drawhline=GGI_tele_drawhline;
-	vis->opdraw->drawvline_nc=GGI_tele_drawvline_nc;
-	vis->opdraw->drawvline=GGI_tele_drawvline;
-	vis->opdraw->drawline=GGI_tele_drawline;
-	vis->opdraw->drawbox=GGI_tele_drawbox;
-	vis->opdraw->copybox=GGI_tele_copybox;
-#if 0
-	vis->opdraw->crossblit=GGI_tele_crossblit;
-#endif
-
-	vis->opdraw->putc=GGI_tele_putc;
-	vis->opdraw->puts=GGI_tele_puts;
-	vis->opdraw->getcharsize=GGI_tele_getcharsize;
-
-	vis->opdraw->setorigin=GGI_tele_setorigin;
-
-
 	/* send open window request */
-
-	GGIDPRINT_MODE("display-tele: Sending open request...\n");
-
 	w = tclient_new_event(priv->client, &ev, TELE_CMD_OPEN,
 			      sizeof(TeleCmdOpenData), 0);
 
@@ -187,11 +179,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	/* receive reply */
-	GGIDPRINT_MODE("display-tele: Waiting for reply...\n");
-
 	tele_receive_reply(vis, &ev, TELE_CMD_OPEN, ev.sequence);
-
-	GGIDPRINT_MODE("display-tele: REPLY %d...\n", (int) w->error);
 
 	if (! w->error) {
 		priv->mode_up = 1;
@@ -211,7 +199,55 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	priv->width  = mode->virt.x;
 	priv->height = mode->virt.y;
 
-	return w->error;
+	if ((err = GGI_tele_getpixelfmt(vis, format)) != 0) {
+	  GGIDPRINT_MODE("GGI_tele_setmode: FAILED to set Pixelformat! (%d)\n",
+			 err);
+	  return err;
+	}
+
+	/* load libraries */
+	for (id=1; 0==GGI_tele_getapi(vis, id, libname, libargs); id++) {
+		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		if (err) {
+			fprintf(stderr,"display-tele: Can't open the "
+				"%s (%s) library.\n", libname, libargs);
+			return GGI_EFATAL;
+		} else {
+			GGIDPRINT_MODE("display-tele: Success in loading "
+				"%s (%s)\n", libname, libargs);
+		}
+	}
+
+	/* override stuff */
+	vis->opdraw->putpixel_nc=GGI_tele_putpixel_nc;
+	vis->opdraw->putpixel=GGI_tele_putpixel;
+	vis->opdraw->puthline=GGI_tele_puthline;
+	vis->opdraw->putvline=GGI_tele_putvline;
+	vis->opdraw->putbox=GGI_tele_putbox;
+
+	vis->opdraw->getpixel=GGI_tele_getpixel;
+	vis->opdraw->gethline=GGI_tele_gethline;
+	vis->opdraw->getvline=GGI_tele_getvline;
+	vis->opdraw->getbox=GGI_tele_getbox;
+
+	vis->opdraw->drawpixel_nc=GGI_tele_drawpixel_nc;
+	vis->opdraw->drawpixel=GGI_tele_drawpixel;
+	vis->opdraw->drawhline_nc=GGI_tele_drawhline_nc;
+	vis->opdraw->drawhline=GGI_tele_drawhline;
+	vis->opdraw->drawvline_nc=GGI_tele_drawvline_nc;
+	vis->opdraw->drawvline=GGI_tele_drawvline;
+	vis->opdraw->drawline=GGI_tele_drawline;
+	vis->opdraw->drawbox=GGI_tele_drawbox;
+	vis->opdraw->copybox=GGI_tele_copybox;
+	vis->opdraw->crossblit=GGI_tele_crossblit;
+
+	vis->opdraw->putc=GGI_tele_putc;
+	vis->opdraw->puts=GGI_tele_puts;
+	vis->opdraw->getcharsize=GGI_tele_getcharsize;
+
+	vis->opdraw->setorigin=GGI_tele_setorigin;
+
+	return err;
 }
 
 int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
@@ -281,7 +317,7 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	mode->dpp.x     = (sint16) w->dot.width;
 	mode->dpp.y     = (sint16) w->dot.height;
 
-	return w->error;
+	return 0; /* w->error; */
 }
 
 int GGI_tele_getmode(ggi_visual *vis, ggi_mode *mode)

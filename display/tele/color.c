@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:27 cegger Exp $
+/* $Id: color.c,v 1.2 2002/09/06 09:25:20 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -45,9 +45,6 @@ int GGI_tele_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cols)
 	TeleEvent ev;
 
 	int no_cols, err;
-
-
-	GGIDPRINT("display-tele: setpalette(start=%d, len=%d)\n", start, len);
 
 	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE) {
 		return -1;
