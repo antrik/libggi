@@ -1,5 +1,5 @@
 SUBDIRS = @TESTSUBDIRS@
-EXTRA_SUBDIRS = display.aa display.mansync display.palemu \
+DIST_SUBDIRS = display.aa display.mansync display.palemu \
 		display.tile display.trueemu display.x
 
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
