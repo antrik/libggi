@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/11/27 16:42:13 soyt Exp $
+/* $Id: color.c,v 1.7 2004/11/27 20:03:30 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Generic RAMDAC via IOCTL driver
@@ -43,8 +43,6 @@ int GGI_ramdac_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *c
 {
 	int nocols = 256;
 
-	LIB_ASSERT(colormap != NULL, "colormap == NULL");
-
 	if (start == GGI_PALETTE_DONTCARE) {
 		start = 0;
 	}
@@ -64,8 +62,6 @@ int GGI_ramdac_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *c
 
 int GGI_ramdac_getpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	LIB_ASSERT(colormap != NULL, "colormap == NULL");
-
 	if (start < 0 || start+len > 256)
 		return GGI_ENOSPACE;
 

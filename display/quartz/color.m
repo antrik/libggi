@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.9 2004/11/27 16:42:25 soyt Exp $
+/* $Id: color.m,v 1.10 2004/11/27 20:03:31 soyt Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -54,8 +54,6 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colo
 	}	/* if */
 
 	fprintf(stderr, "setpalvec (2)\n");
-
-	if (colormap == NULL) return GGI_EARGINVAL;
 
 	if (start+len > priv->ncols || start < 0)
 		return GGI_ENOSPACE;

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.6 2004/11/27 16:42:28 soyt Exp $
+/* $Id: draw.c,v 1.7 2004/11/27 20:03:31 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -125,9 +125,6 @@ GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap
 	vgl_priv *priv = VGL_PRIV(vis);
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	int i;
-
-	APP_ASSERT(colormap != NULL,
-			 "ggiSetPalette() called with NULL colormap!");
 
 	if (start == GGI_PALETTE_DONTCARE) start = 0;
 

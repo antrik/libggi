@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2004/11/27 16:42:18 soyt Exp $
+/* $Id: mode.c,v 1.31 2004/11/27 20:03:31 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -439,9 +439,6 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 	"GGI_directx_setpalvec(%p, %d, %d, {%d, %d, %d}) called\n",
 	vis, start, len, colormap->r,colormap->g ,colormap->b);
 
-	APP_ASSERT(colormap != NULL,
-		"ggiSetPalette() called with NULL colormap!");
-
 	if (((int)start) == GGI_PALETTE_DONTCARE) {
 		start = 10;
 		if (start+len > 256)
@@ -450,8 +447,6 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 			start = 0;
 	}
 
-	if (colormap == NULL)
-		return GGI_EARGREQ;
 /*	if (((int)(start+len) > 246) || (start < 10) )
 		return GGI_EARGINVAL;*/
 

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.9 2004/11/27 00:06:03 cegger Exp $
+/* $Id: stubs.c,v 1.10 2004/11/27 20:03:32 soyt Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/internal.h>
+#include <ggi/internal/ggi_debug.h>
 
 #undef putc
 
@@ -105,22 +106,49 @@ int _ggiSendKGICommand(ggi_visual *vis,int cmd,void *arg)
 /* Palette, colors, etc...
  */
 int ggiSetPalette(ggi_visual *vis,int s,int len,const ggi_color *cmap)
-{ return vis->opcolor->setpalvec(vis,s,len,cmap); }
+{ 
+  APP_ASSERT(cmap != NULL, "ggiSetPalette() called with NULL colormap.");
+  if (cmap == NULL) return GGI_EARGINVAL;
+  return vis->opcolor->setpalvec(vis,s,len,cmap); 
+}
 
 int ggiGetPalette(ggi_visual *vis,int s,int len,ggi_color *cmap)
-{ return vis->opcolor->getpalvec(vis,s,len,cmap); }
+{ 
+  APP_ASSERT(!( (cmap == NULL) && (len > 0)),
+             "ggiGetPalette() called with NULL colormap when len>0.");
+  if ( (cmap == NULL) && (len > 0)) return GGI_EARGREQ;
+  return vis->opcolor->getpalvec(vis,s,len,cmap); 
+}
 
 ggi_pixel ggiMapColor(ggi_visual *vis, const ggi_color *col)
-{ return vis->opcolor->mapcolor(vis,col); }
+{ 
+  APP_ASSERT(col != NULL, "ggiMapColor() called with NULL color.");
+  if (col == NULL) return GGI_EARGINVAL;
+  return vis->opcolor->mapcolor(vis,col); 
+}
 
 int ggiUnmapPixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
-{ return vis->opcolor->unmappixel(vis,pixel,col); }
+{ 
+  APP_ASSERT(col != NULL, "ggiUnmapPixel() called with NULL color.");
+  if (col == NULL) return GGI_EARGINVAL;
+  return vis->opcolor->unmappixel(vis,pixel,col);
+}
 
 int ggiPackColors(ggi_visual *vis,void *buf,const ggi_color *cols,int len)
-{ return vis->opcolor->packcolors(vis,buf,cols,len); }
+{ 
+  APP_ASSERT(!( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ),
+             "ggiUnpackPixels() called with NULL pixel-buffer or color-buffer when len>0.");
+  if ( ( (cols == NULL) || (buf == NULL) && (len > 0)) ) return GGI_EARGREQ;
+  return vis->opcolor->packcolors(vis,buf,cols,len);
+}
 
 int ggiUnpackPixels(ggi_visual *vis,const void *buf,ggi_color *cols,int len)
-{ return vis->opcolor->unpackpixels(vis,buf,cols,len); }
+{ 
+  APP_ASSERT(!( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ),
+             "ggiUnpackPixels() called with NULL pixel-buffer or color-buffer when len>0.");
+  if ( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ) return GGI_EARGREQ;
+  return vis->opcolor->unpackpixels(vis,buf,cols,len);
+}
 
 
 int ggiSetColorfulPalette(ggi_visual *vis)
