@@ -455,8 +455,8 @@ Synopsis
 
   #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
-  int ggiSPrintMode(char *s, ggi_mode *m);
-  int ggiFPrintMode(FILE *s, ggi_mode *m);
+  int ggiSPrintMode(char *s, const ggi_mode *m);
+  int ggiFPrintMode(FILE *s, const ggi_mode *m);
 
 
 Description

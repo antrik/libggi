@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.8 2004/02/23 14:25:30 pekberg Exp $
+/* $Id: ggi.h,v 1.9 2004/11/25 15:27:13 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -442,8 +442,8 @@ GGIAPIFUNC int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize,
 
 /* Print all members of the mode struct
  */
-GGIAPIFUNC int ggiSPrintMode(char *s, ggi_mode *m);
-GGIAPIFUNC int ggiFPrintMode(FILE *s, ggi_mode *m);
+GGIAPIFUNC int ggiSPrintMode(char *s, const ggi_mode *m);
+GGIAPIFUNC int ggiFPrintMode(FILE *s, const ggi_mode *m);
 #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
 /* Fill a mode struct from the text string s

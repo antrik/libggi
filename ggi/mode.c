@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/05 07:57:38 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/25 15:27:12 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -336,7 +336,7 @@ int ggiCheckSimpleMode(ggi_visual *visual, int xsize, int ysize, int frames,
 /* print mode      */
 /*******************/
 
-int ggiSPrintMode(char *s, ggi_mode *m)
+int ggiSPrintMode(char *s, const ggi_mode *m)
 {
 	int n;
 	
@@ -382,7 +382,7 @@ int ggiSPrintMode(char *s, ggi_mode *m)
 	return 0;
 }
 
-int ggiFPrintMode(FILE *s, ggi_mode *m)
+int ggiFPrintMode(FILE *s, const ggi_mode *m)
 {
 	char buf[256];
 
