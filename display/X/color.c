@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.19 2005/03/02 20:11:28 pekberg Exp $
+/* $Id: color.c,v 1.20 2005/03/03 11:26:51 mooz Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -99,6 +99,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 	if (LIBGGI_PAL(vis)->rw_start >= LIBGGI_PAL(vis)->rw_stop) return 0;
 	if (LIBGGI_PAL(vis)->clut.data) {
 		size_t x;
+		int    err;
 		XColor xcol;
 
 		for (x = LIBGGI_PAL(vis)->rw_start; x < LIBGGI_PAL(vis)->rw_stop; x++) {
@@ -107,7 +108,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 			xcol.blue  = LIBGGI_PAL(vis)->clut.data[x].b;
 			xcol.pixel = x;
 			xcol.flags = DoRed | DoGreen | DoBlue;
-			XStoreColor(priv->disp, priv->cmap, &xcol);
+			err = XStoreColor(priv->disp, priv->cmap, &xcol);
 		}
 		LIBGGI_PAL(vis)->rw_start = priv->ncols;
 		LIBGGI_PAL(vis)->rw_stop  = 0;
@@ -241,7 +242,10 @@ void _ggi_x_free_colormaps(ggi_visual *vis)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	if (priv->cmap != None)   XFreeColormap(priv->disp,priv->cmap);
+	/* XFreeColormap uninstall the specified colormap */
+	/* is "an installed map for a screen". So no need */
+	/* theorically to call XUninstallColormap.        */
+	if (priv->cmap != None)	XFreeColormap(priv->disp,priv->cmap);
 	if (priv->cmap2 != None)  XFreeColormap(priv->disp,priv->cmap2);
 	if (LIBGGI_PAL(vis)->clut.data != NULL) {
 		free(LIBGGI_PAL(vis)->clut.data);
@@ -313,6 +317,9 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		LIBGGI_PAL(vis)->rw_stop  = 0;
 		DPRINT_MODE("X: copied default colormap into (%x)\n",
 			       priv->cmap);
+
+		/* Install colormap */
+		XInstallColormap(priv->disp, priv->cmap);
 		return;
 	} else if (vi->class != DirectColor) {
 		APP_ASSERT(vi->class == TrueColor, "Unknown class!\n");
@@ -330,6 +337,8 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		vis->gamma->maxwrite_g = 1 << _ggi_countbits(fmt->green_mask);
 		vis->gamma->maxwrite_b = 1 << _ggi_countbits(fmt->blue_mask);
 	}
+        /* Install colormap */
+        XInstallColormap(priv->disp, priv->cmap);
 
 	vis->opcolor->getgammamap = GGI_X_getgammamap;
 	vis->gamma->maxread_r = _ggi_countbits(fmt->red_mask);
