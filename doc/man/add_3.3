@@ -1,0 +1,48 @@
+.TH "add_3" 3 "2004-10-21" "libggi-current" GGI
+.SH NAME
+\fBadd_3\fR, \fBsub_3\fR, \fBmul_3\fR, \fBdivmod_3\fR : Binary arithmentic triple-int operations
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/internal/triple-int.h>
+
+unsigned *add_3(unsigned l[3], unsigned r[3]);
+unsigned *sub_3(unsigned l[3], unsigned r[3]);
+
+unsigned *mul_3(unsigned l[3], unsigned r[3]);
+unsigned *divmod_3(unsigned a[3], unsigned b[3],
+      unsigned q[3], unsigned r[3]);
+.fi
+
+.SH DESCRIPTION
+\fBadd_3\fR adds \fBr\fR to \fBl\fR. Equivalent to l+=r.
+
+\fBsub_3\fR subtracts \fBr\fR from \fBl\fR. Equivalent to l-=r.
+
+\fBmul_3\fR multiplies \fBr\fR with \fBl\fR. Equivalent to l*=r.
+
+\fBdivmod_3\fR calculates the quotient \fBq\fR and the remainder \fBr\fR of \fBa\fR/\fBb\fR
+such that \fBa\fR = \fBq\fR * \fBb\fR + \fBr\fR. Equivalent to r=a%b,q=a/b.
+.SH RETURN VALUE
+\fBadd_3\fR, \fBsub_3\fR and \fBmul_3\fR all return a pointer to \fBl\fR which has
+been updated in place.
+
+'divmod_3` returns a pointer to the quotient \fBq\fR.
+.SH EXAMPLES
+Some binary arithmetic operations on \fBtriple-ints\fR:
+
+.nb
+.nf
+unsigned x[3], y[3], q[3], r[3];
+
+assign_int_3(x, 4);
+assign_int_3(y, 5);
+add_3(x, y);          /* x == 9 */
+assign_int_3(q, 3);
+sub_3(x, q);          /* x == 6 */
+mul_3(x, q);          /* x == 18 */
+divmod_3(x, y, q, r); /* q == 3, r == 3 */
+.fi
+
+.SH SEE ALSO
+\fBtriple-int(7)\fR, \fBassign_int_3(3)\fR

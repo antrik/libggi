@@ -1,0 +1,59 @@
+.TH "sign_3" 3 "2004-10-21" "libggi-current" GGI
+.SH NAME
+\fBsign_3\fR, \fBbits_3\fR, \fBeq0_3\fR, \fBgt0_3\fR, \fBge0_3\fR, \fBlt0_3\fR, \fBle0_3\fR : triple-int properties
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/internal/triple-int.h>
+
+int sign_3(unsigned x[3]);
+
+int bits_3(unsigned x[3]);
+
+int eq0_3(unsigned x[3]);
+int gt0_3(unsigned x[3]);
+int ge0_3(unsigned x[3]);
+int lt0_3(unsigned x[3]);
+int le0_3(unsigned x[3]);
+.fi
+
+.SH DESCRIPTION
+\fBsign_3\fR checks the sign of \fBx\fR.
+
+\fBbits_3\fR counts the number of significant bits of \fBx\fR. I.e.
+leading zeros in a positive value and leading ones in a negative value
+are not counted.
+
+\fBeq0_3\fR, \fBgt0_3\fR, \fBge0_3\fR, \fBlt0_3\fR and \fBle0_3\fR tests the relation
+between \fBx\fR and zero. \fBeq0_3\fR tests if \fBx\fR is equal to zero, \fBgt0_3\fR if
+\fBx\fR is greater than zero, \fBge0_3\fR if \fBx\fR is greater than or equal to
+zero, \fBlt0_3\fR if \fBx\fR is less than zero and last but not least \fBle0_3\fR
+tests if \fBx\fR is less than or equal to zero.
+.SH RETURN VALUE
+\fBsign_3\fR returns -1 for negative values, 0 for zero values and 1 for
+positive values.
+
+\fBbits_3\fR returns 0 for \fBx\fR equal to 0 or -1, 1 for \fBx\fR equal to 1 and
+-2, 2 for \fBx\fR equal to 2, 3, -3 and -4 etc.
+
+\fBeq0_3\fR, \fBgt0_3\fR, \fBge0_3\fR, \fBlt0_3\fR and \fBle0_3\fR all returns non-zero if
+the relation is true, and zero otherwise.
+.SH EXAMPLES
+Some \fBtriple-int\fR tests:
+
+.nb
+.nf
+unsigned x[3];
+
+assign_int_3(x, 5);
+ASSERT(sign_3(x) == 1);
+ASSERT(bits_3(x) == 3);
+ASSERT(!eq0_3(x));
+ASSERT(gt0_3(x));
+ASSERT(ge0_3(x));
+ASSERT(!lt0_3(x));
+ASSERT(!le0_3(x));
+.fi
+
+.SH SEE ALSO
+\fBtriple-int(7)\fR, \fBassign_int_3(3)\fR

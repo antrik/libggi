@@ -1,0 +1,38 @@
+.TH "eq_3" 3 "2004-10-21" "libggi-current" GGI
+.SH NAME
+\fBeq_3\fR, \fBge_3\fR : triple-int comparisons
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/internal/triple-int.h>
+
+int eq_3(unsigned l[3], unsigned r[3]);
+int ge_3(unsigned l[3], unsigned r[3]);
+.fi
+
+.SH DESCRIPTION
+\fBeq_3\fR tests if \fBl\fR and \fBr\fR are equal. Equivalent to l==r.
+
+\fBge_3\fR tests if \fBl\fR is greater than or equal to \fBl\fR. Equivalent to l>=r.
+.SH RETURN VALUE
+\fBeq_3\fR and \fBge_3\fR returns non-zero if the relation is true,
+and zero otherwise.
+.SH EXAMPLES
+Some \fBtriple-int\fR comparisons:
+
+.nb
+.nf
+unsigned x[3], y[3], z[3];
+
+assign_int_3(x, 5);
+assign_int_3(y, 6);
+assign_int_3(z, 6);
+ASSERT(!eq_3(x, y));
+ASSERT(eq_3(y, z));
+ASSERT(ge_3(x, y));
+ASSERT(ge_3(y, z));
+ASSERT(!ge_3(y, x));
+.fi
+
+.SH SEE ALSO
+\fBtriple-int(7)\fR, \fBassign_int_3(3)\fR

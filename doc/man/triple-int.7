@@ -1,0 +1,26 @@
+.TH "triple-int" 7 "2004-10-21" "libggi-current" GGI
+.SH NAME
+\fBtriple-int\fR : triple-int General Information
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/internal/triple-int.h>
+.fi
+
+.SH DESCRIPTION
+\fBtriple-int\fR is a collection of math routines that operates on an
+array of 3 unsigned intergers, treating them as a single integer
+with triple precision.
+
+\fBtriple-int\fR uses a 2-complement representation for negative values.
+
+The most significant part of the \fBtriple-int\fR is stored at the
+highest index in the array representation.
+.SH SEE ALSO
+\fBassign_3(3)\fR, \fBassign_int_3(3)\fR, \fBassign_unsigned_3(3)\fR,
+\fBsign_3(3)\fR, \fBbits_3(3)\fR, \fBeq0_3(3)\fR, \fBgt0_3(3)\fR,
+\fBge0_3(3)\fR, \fBlt0_3(3)\fR, \fBle0_3(3)\fR,
+\fBeq_3(3)\fR, \fBge_3(3)\fR,
+\fBinvert_3(3)\fR, \fBlshift_3(3)\fR, \fBrshift_3(3)\fR,
+\fBinc_3(3)\fR, \fBdec_3(3)\fR, \fBnegate_3(3)\fR, \fBabs_3(3)\fR,
+\fBadd_3(3)\fR, \fBsub_3(3)\fR, \fBmul_3(3)\fR, \fBdivmod_3(3)\fR
