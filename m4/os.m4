@@ -31,6 +31,9 @@ case "${host_os}" in
   solaris*)
 	os="os_solaris"
 	;;
+  aix*)
+	os="os_aix"
+	;;
   *)
 	os="os_default"
         ;;
@@ -47,6 +50,7 @@ AM_CONDITIONAL(OS_LINUX, test $os = "os_linux")
 AM_CONDITIONAL(OS_NETBSD, test $os = "os_netbsd")
 AM_CONDITIONAL(OS_OPENBSD, test $os = "os_openbsd")
 AM_CONDITIONAL(OS_SOLARIS, test $os = "os_solaris")
+AM_CONDITIONAL(OS_AIX, test $os = "os_aix")
 AM_CONDITIONAL(OS_DEFAULT, test $os = "os_default")
 
 ])
