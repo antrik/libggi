@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/01/31 20:56:05 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/09/12 20:35:59 cegger Exp $
 ******************************************************************************
 
    Display-multi: mode management
@@ -39,7 +39,7 @@
 
 int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err;
 
@@ -67,7 +67,7 @@ int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 static int try_checkmode(ggi_visual *vis, ggi_mode *tm, int count)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err;
 
@@ -97,7 +97,7 @@ int GGI_multi_checkmode(ggi_visual *vis, ggi_mode *tm)
 
 int GGI_multi_getmode(ggi_visual *vis, ggi_mode *tm)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 
 	return ggiGetMode(priv->vis_list->vis, tm);
 }
@@ -105,7 +105,7 @@ int GGI_multi_getmode(ggi_visual *vis, ggi_mode *tm)
 
 int GGI_multi_setflags(ggi_visual *vis,ggi_flags flags)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 
 	int err=0;
@@ -124,7 +124,7 @@ int GGI_multi_setflags(ggi_visual *vis,ggi_flags flags)
 
 int GGI_multi_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
