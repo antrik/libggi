@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.33 2005/02/10 21:47:25 cegger Exp $
+/* $Id: misc.c,v 1.34 2005/02/18 16:28:26 orzo Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -670,12 +670,14 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 
 	fmt = LIBGGI_PIXFMT(vis);
 
-	/* XXX: what does bitmap_unit mean?  I put 8 here, but I don't
-	 * know if that's always the right value. */
 #if 0
-	img0->bitmap_unit = BitmapUnit(priv->disp);	/* quant. of scanline 8, 16, 32 */
-	img0->bitmap_pad = BitmapPad(priv->disp);	/* 8, 16, 32 either XY or ZPixmap */
+	img0->bitmap_unit = BitmapUnit(priv->disp);	
+		/* quant. of scanline 8, 16, 32 */
+	img0->bitmap_pad = BitmapPad(priv->disp);	
+		/* 8, 16, 32 either XY or ZPixmap */
 #endif
+	/* Empirical results suggest it's best to put 0 in the 
+	 * bitmap_unit field. */
 	img0->bitmap_unit = img0->bitmap_pad = 0;
 	DPRINT_MISC("bitmap_unit = %i\n", img0->bitmap_unit);
 	DPRINT_MISC("bitmap_pad = %i\n", img0->bitmap_pad);
@@ -691,7 +693,7 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 	/* XInitImage() will calculate this one, if we set it to 0.
 	 * But we do not trust XInitImage() to calculate it right.
 	 */
-	img0->bytes_per_line = ((w * fmt->size + 7) / 8);  /* accelarator to next line */
+	img0->bytes_per_line = ((w * fmt->size + 7) / 8);  
 
 	if( XInitImage(img0) ) {
 		free(img0);

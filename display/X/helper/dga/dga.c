@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.12 2005/02/10 18:06:18 cegger Exp $
+/* $Id: dga.c,v 1.13 2005/02/18 16:28:27 orzo Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -33,6 +33,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <X11/extensions/xf86dga.h>
 #include <string.h>
+#include <ggi/input/xf86dga.h>
 
 static int ggi_xdga_getmodelist(ggi_visual *vis) {
 	ggi_x_priv *priv;
@@ -107,6 +108,8 @@ static int ggi_xdga_restore_mode(ggi_visual *vis)
 	priv->priv = XDGASetMode(priv->disp, screen, 0);
 	if (priv->priv != NULL) XFree(priv->priv); /* Docs not explicit */
 
+	/* TODO: cleanup input */
+
 	return GGI_OK;
 }
 
@@ -172,6 +175,27 @@ static int ggi_xdga_enter_mode(ggi_visual *vis, int num) {
 
 #endif
 
+
+	/* Set up input */
+	{
+		gii_inputxf86dga_arg dga_args;
+		gii_input_t inp;
+
+		dga_args.disp = priv->disp;
+		dga_args.screen = priv->vilist[priv->viidx].vi->screen;
+		inp = giiOpen( "dga", &dga_args, NULL );
+		//if( vis->input != NULL )
+		//	giiClose(vis->input);
+		vis->input = inp;
+
+		/* TODO: 
+		 * handle devinfo events in order to save origins so
+		 * that we can do proper cleanup in restore_mode
+		 */
+
+	}
+
+	
 	DPRINT_MODE("leaving helper-x-dga setmode.\n");
 	return GGI_OK;
 }

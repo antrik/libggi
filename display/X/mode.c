@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.45 2005/02/10 16:42:42 orzo Exp $
+/* $Id: mode.c,v 1.46 2005/02/18 16:28:26 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -570,11 +570,7 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 
 	rc = GGI_X_checkmode_internal(vis, tm, &vi_idx);
 
-	/* The mlfuncs.validate() hook is deprecated.  Instead,
-	 * overload priv->cm_adjust or priv->cm_adapt or 
-	 * opdisplay->checkmode()
-	 * XXX: Start of deprecated code. */
-	if (priv->mlfuncs.validate != NULL) {
+	if (rc==GGI_OK && priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
 			DPRINT_MODE("X: mlfuncs.validate failed: %i\n",
@@ -582,8 +578,9 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 			/* An error occured */
 			rc = priv->cur_mode;
 			priv->cur_mode = 0;
-			return rc;
+			/* return rc; */
 		}	
+#if 0
 		else {
 		  if(auto_virt) {
 		    tm->virt.x = GGI_AUTO;
@@ -593,10 +590,10 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 		  _ggi_x_fit_geometry(vis, tm, priv->vilist + vi_idx, tm);
 		  rc = GGI_OK;
 		}        /* if */
+#endif
 		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 			priv->cur_mode);
 	}	/* if */
-	/* XXX: End of depricated code. */
 
 	return rc;
 		
@@ -1313,31 +1310,6 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	}
 
 
-	if (priv->gc)
-		XFreeGC(priv->disp, priv->gc);
-	priv->gc = XCreateGC(priv->disp, priv->win, 0, 0);
-	XSetGraphicsExposures(priv->disp, priv->gc, True);
-
-	if (priv->textfont) {
-		XSetFont(priv->disp, priv->gc, priv->textfont->fid);
-	}
-
-	if (priv->tempgc)
-		XFreeGC(priv->disp, priv->tempgc);
-	priv->tempgc = XCreateGC(priv->disp, priv->win, 0, 0);
-	XSetGraphicsExposures(priv->disp, priv->tempgc, True);
-
-	if (priv->ok_to_resize) {
-		if (priv->textfont)
-			XSetFont(priv->disp, priv->tempgc,
-				 priv->textfont->fid);
-	}
-
-	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0,
-			 LIBGGI_VIRTX(vis),
-			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
-	DPRINT_MODE("X GCs allocated.\n");
-
 	/* Create a cursor (frees old cursor) */
 	if (priv->createcursor)
 		priv->createcursor(vis);
@@ -1368,6 +1340,31 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		if (err)
 			goto err1;
 	}
+
+
+	/* Setup priv->gc and priv->tempgc ... */
+	if (priv->gc)
+		XFreeGC(priv->disp, priv->gc);
+	priv->gc = XCreateGC(priv->disp, priv->drawable, 0, 0);
+	XSetGraphicsExposures(priv->disp, priv->gc, True);
+
+	if (priv->textfont) {
+		XSetFont(priv->disp, priv->gc, priv->textfont->fid);
+	}
+
+	if (priv->tempgc)
+		XFreeGC(priv->disp, priv->tempgc);
+	priv->tempgc = XCreateGC(priv->disp, priv->drawable, 0, 0);
+	XSetGraphicsExposures(priv->disp, priv->tempgc, True);
+	if (priv->ok_to_resize) {
+		if (priv->textfont)
+			XSetFont(priv->disp, priv->tempgc,
+				 priv->textfont->fid);
+	}
+	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0,
+			 LIBGGI_VIRTX(vis),
+			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
+	DPRINT_MODE("X GCs allocated.\n");
 
 	/* if */
 	/* Tell inputlib about the new window */
