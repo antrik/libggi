@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/04/04 14:31:53 mooz Exp $
+/* $Id: visual.c,v 1.18 2004/09/10 22:01:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -118,7 +118,7 @@ static void
 switchreq(void *arg)
 {
 	ggi_visual *vis = arg;
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
 
@@ -143,7 +143,7 @@ static void
 switching(void *arg)
 {
 	ggi_visual *vis = arg;
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	GGIDPRINT_MISC("display-fbdev: switching(%p) called\n", vis);
 
@@ -203,7 +203,7 @@ switchback(void *arg)
 static int 
 GGI_fbdev_sendevent(ggi_visual *vis, gii_event *ev)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	GGIDPRINT_MISC("GGI_fbdev_sendevent() called\n");
 
@@ -266,7 +266,7 @@ GGI_fbdev_idleaccel(ggi_visual *vis)
 
 static int do_cleanup(ggi_visual *vis)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_fbdev_timing *curtim;
 
 	/* We may be called more than once due to the LibGG cleanup stuff */
@@ -300,7 +300,7 @@ static int do_cleanup(ggi_visual *vis)
 		free(prevtim);
 	}
 	free(priv);
-	LIBGGI_PRIVATE(vis) = NULL;
+	FBDEV_PRIV(vis) = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -569,7 +569,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	LIBGGI_PRIVATE(vis) = priv = calloc(1, sizeof(ggi_fbdev_priv));
+	FBDEV_PRIV(vis) = priv = calloc(1, sizeof(ggi_fbdev_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}

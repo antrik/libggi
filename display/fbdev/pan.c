@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.3 2004/08/24 19:13:32 cegger Exp $
+/* $Id: pan.c,v 1.4 2004/09/10 22:01:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -37,7 +37,7 @@
 
 int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	int max_x = LIBGGI_VIRTX(vis) - LIBGGI_X(vis);
 	int max_y = LIBGGI_VIRTY(vis) - LIBGGI_Y(vis);
 	int err = 0;

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/04/04 14:31:52 mooz Exp $
+/* $Id: color.c,v 1.7 2004/09/10 22:01:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -50,7 +50,7 @@ static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
 
 /* Restore and free palette/gamma entries.  Called before changing modes. */
 void GGI_fbdev_color_reset(ggi_visual *vis) {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	if (LIBGGI_PAL(vis)->clut.data == NULL) return; /* New visual. */
 
@@ -86,7 +86,7 @@ void GGI_fbdev_color_reset(ggi_visual *vis) {
 
 void GGI_fbdev_color_setup(ggi_visual *vis)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	struct fb_cmap cmap;
 	int len;
 
@@ -202,7 +202,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size, 
 			       const ggi_color *colormap)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	struct fb_cmap cmap;
 	
 	int len = (int)size;
@@ -249,7 +249,7 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 	struct fb_cmap gam;
 	int i;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = FBDEV_PRIV(vis);
 	if (colormap == NULL) return -1;
 	if (vis->gamma == NULL) return -2; /* Wrong GT if not hooked */
 	if (start >= priv->gamma.len) return -1;
@@ -290,7 +290,7 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 	ggi_fbdev_priv *priv;
 	int i;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = FBDEV_PRIV(vis);
 	if (colormap == NULL) return -1;
 	if (vis->gamma == NULL) return -2;
 	if (vis->gamma->map == NULL) return -1;

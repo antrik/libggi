@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/09/10 20:22:16 cegger Exp $
+/* $Id: mode.c,v 1.17 2004/09/10 22:01:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -86,7 +86,7 @@ int GGI_fbdev_kgicommand(ggi_visual *vis, int cmd,void *args)
 
 int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	int size = GT_SIZE(LIBGGI_GT(vis));
 
 	*arguments = '\0';
@@ -245,7 +245,7 @@ var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 static int
 get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	struct ggi_fbdev_timing *timing, *besttiming;
 	int ret = 1;
 
@@ -329,7 +329,7 @@ get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
 
 static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);
 	ggi_graphtype gt = mode->graphtype;
 	int err;
@@ -432,7 +432,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 
 static int do_mmap(ggi_visual *vis)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_graphtype gt;
 	int xres_in_bytes;
 	int i;
@@ -583,7 +583,7 @@ static int do_mmap(ggi_visual *vis)
 
 static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
@@ -667,7 +667,7 @@ int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_fbdev_mode_reset(ggi_visual *vis)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	if (priv->fb_ptr != NULL) {
 		_GGI_free_dbs(vis);
@@ -687,7 +687,7 @@ int GGI_fbdev_mode_reset(ggi_visual *vis)
 static int
 do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 {
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_graphtype gt = mode->graphtype;
 	ggi_mode oldmode = *mode;
 	int xdpp, ydpp;
