@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.23 2004/08/08 20:55:15 cegger Exp $
+/* $Id: clip2d.c,v 1.24 2004/08/26 07:41:26 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -402,6 +402,22 @@ static void testcase9(const char *desc)
 }
 
 
+static void testcase10(const char *desc)
+{
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
+
+	ggiSetGCClipping(vis, 10, 10, MODE_SIZE_X, MODE_SIZE_Y);
+	checkresult(
+		INT_MIN+1, INT_MIN,
+		10, 10,
+		10, 10,
+		10, 10,
+		1, 1);
+	ggiSetGCClipping(vis, 0, 0, MODE_SIZE_X, MODE_SIZE_Y);
+}
+
+
 #if 0
 #define DBSIZE (1000)
 static void generate_clipdb(void)
@@ -471,15 +487,16 @@ int main(int argc, char * const argv[])
 		  "to bottom right (INT_MAX/INT_MAX).");
 	testcase3("Check clipping of bottom right (140000/70000) to upper left (0/0).");
 	testcase4("Tests longest possible diagonal line that succeeds - "
-		  "with delta of 32768 on 32 bit archs.");
+		  "dx = 32768 and dy = 32768 on 32 bit arches.");
 	testcase5("Tests shortest possible line that fails - "
-		  "with delta of 32768 on 32 bit arches.");
+		  "dx = 32768 and dy = 32769 on 32 bit arches.");
 	testcase6("dx == INT_MIN (or INT_MAX+1) generates divide by zero. "
 		  "The same goes for dy.");
 	testcase7("Check if clipping is resistent against overflows.");
 	testcase8("Check if the clipping endpoint is really on the actual line "
 		  "for a bunch of lines.");
 	testcase9("Check algorithm on a line within the clipping area.");
+	testcase10("Tests line that fails even if doubling the precision.");
 
 	rc = ggiClose(vis);
 
