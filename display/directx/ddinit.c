@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.19 2004/03/09 08:52:35 pekberg Exp $
+/* $Id: ddinit.c,v 1.20 2004/03/09 08:54:22 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -453,6 +453,8 @@ DDEventLoop(LPVOID lpParm)
   }
 
   SetEvent(priv->hInit);
+
+  SetForegroundWindow(priv->hWnd);
 
   while (GetMessage(&msg, priv->hWnd, 0, 0)) {
     TranslateMessage(&msg);
