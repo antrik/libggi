@@ -35,7 +35,7 @@ In this section, targets are named using their canonical suggest strings
  <arg><option>-inwin=<replaceable/winid/</option></arg>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+ <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -48,7 +48,7 @@ In this section, targets are named using their canonical suggest strings
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
  <arg><option>-inwin=<replaceable/winid/</option></arg>
- <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+ <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -127,13 +127,13 @@ be turned off in order to leave the window.
  </varlistentry>
 
  <varlistentry>
- <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will override the physical screen size reported by the
  X server, which affects applications which wish to remain resolution
  independent.  <replaceable/sizex/,<replaceable/sizey/ are the x,y 
  size of the entire screen (not just the X window containing the visual) 
- in millimeters, unless the optional <replacable/dpi/ 
+ in millimeters, unless the optional <replaceable/dpi/ 
  string is affixed, in which case, they represent resolution in dots-per-inch.
  Yes, there are two equals signs there, for reasons of compatibility with
  other targets.
@@ -191,7 +191,7 @@ be turned off in order to leave the window.
 <group>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+ <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -212,7 +212,7 @@ to be able to mmap <filename>/dev/mem</filename>.
 
 <refsect1>
 <title/Options/
-<variableList>
+<variablelist>
  <varlistentry>
  <term><option/-noinput/</term>
  <listitem><para>
@@ -232,15 +232,14 @@ to be able to mmap <filename>/dev/mem</filename>.
  mouse cursor when it is over the visual.
  </para></listitem>
  </varlistentry>
-</variableList>
 
  <varlistentry>
- <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will override the physical screen size reported by the
  X server, which affects applications which wish to remain resolution
  independent.  <replaceable/sizex/,<replaceable/sizey/ are the x,y 
- size of the screen in millimeters, unless the optional <replacable/dpi/ 
+ size of the screen in millimeters, unless the optional <replaceable/dpi/ 
  string is affixed, in which case, they represent resolution in dots-per-inch.
  Yes, there are two equals signs there, for reasons of compatibility with
  other targets.
@@ -255,7 +254,7 @@ to be able to mmap <filename>/dev/mem</filename>.
  </para></listitem>
  </varlistentry>
 
-</variableList>
+</variablelist>
 
 </para>
 
@@ -348,7 +347,7 @@ AA-lib options may be specified using the the <envar/AA_OPTS/ variable.
  </group>
 </group>
 <arg><option>-novt</option></arg>
-<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+<arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 <arg><replaceable/framebuffer/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -413,12 +412,12 @@ Disable virtual console support.
 </varlistentry>
 
  <varlistentry>
- <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will provide a physical screen size for applications which 
  wish to remain resolution independent.  
  <replaceable/sizex/,<replaceable/sizey/ are the x,y 
- size of the screen in millimeters, unless the optional <replacable/dpi/ 
+ size of the screen in millimeters, unless the optional <replaceable/dpi/ 
  string is affixed, in which case, they represent resolution in dots-per-inch.
  </para></listitem> 
  </varlistentry>
@@ -636,7 +635,7 @@ drawing-primitives.</member>
 <command/display-memory/
 <arg choice=plain/:/
 <arg><option>-input</option></arg>
-<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+<arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 <group>
  <arg>shmid:<replaceable/sid/</arg>
  <arg>keyfile:<replaceable/size/:<replaceable/id/:<replaceable/fname/</arg>
@@ -682,12 +681,12 @@ things like GGI multiplexers.
 </varlistentry>
 
  <varlistentry>
- <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will provide a physical screen size for applications which
  wish to remain resolution independent.  
  <replaceable/sizex/,<replaceable/sizey/ are the x,y
- size of the screen in millimeters, unless the optional <replacable/dpi/
+ size of the screen in millimeters, unless the optional <replaceable/dpi/
  string is affixed, in which case, they represent resolution in dots-per-inch.
  </para></listitem>
 </varlistentry>
@@ -749,7 +748,7 @@ checks can or will be made that a certain mode fits into it.
 <refsynopsisdiv>
 <cmdsynopsis>
 <command/display-svgalib/
-<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+<arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </cmdsynopsis>
 
 </refsynopsisdiv>
@@ -772,12 +771,12 @@ the VGA device.</para>
 <variablelist>
 
 <varlistentry>
- <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will provide a physical screen size for applications which
  wish to remain resolution independent.  
  <replaceable/sizex/,<replaceable/sizey/ are the x,y
- size of the screen in millimeters, unless the optional <replacable/dpi/
+ size of the screen in millimeters, unless the optional <replaceable/dpi/
  string is affixed, in which case, they represent resolution in dots-per-inch.
  </para></listitem>
  </varlistentry>
@@ -813,13 +812,13 @@ addressing.</member>
 <command/display-vcsa/
 <arg choice=plain/:/
 <arg><option>-noinput</option></arg>
-<group choice=optmult>
+<group choice=opt>
   <arg><option>-nokbd</option></arg>
   <arg><option>-nomouse</option></arg>
 </group>
 <arg><option>-shade</option></arg>
 <arg><option>-ascii</option></arg>
-<arg><option>-physz=<replaceable/sizex/</option>,<replaceable/sizey/<replacable/dpi/</option></arg>
+<arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 <arg><replaceable/vcsa device/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -882,12 +881,12 @@ block mainly, and others when using <option/-shade/).
 </varlistentry>
 
  <varlistentry>
- <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replacable/dpi/</option></term>
+ <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will provide a physical screen size for applications which
  wish to remain resolution independent.  
  <replaceable/sizex/,<replaceable/sizey/ are the x,y
- size of the screen in millimeters, unless the optional <replacable/dpi/
+ size of the screen in millimeters, unless the optional <replaceable/dpi/
  string is affixed, in which case, they represent resolution in dots-per-inch.
  </para></listitem>
 </varlistentry>
