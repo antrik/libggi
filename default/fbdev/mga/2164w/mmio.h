@@ -1,4 +1,4 @@
-/* $Id: mmio.h,v 1.2 2003/05/04 22:04:53 cegger Exp $
+/* $Id: mmio.h,v 1.3 2003/05/04 22:08:03 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -70,7 +70,7 @@ mga_waitfifo(volatile uint8 *mmioaddr, int space)
 #ifdef GGI_LITTLE_ENDIAN
 	while (mga_in8(mmioaddr, FIFOSTATUS) < (unsigned)space) {
 #else
-	while ((mga_in32(mmioaddr, FIFOSTATUS) & 0xff) < (unsinged)space) {
+	while ((mga_in32(mmioaddr, FIFOSTATUS) & 0xff) < (unsigned)space) {
 #endif
 	}
 }
