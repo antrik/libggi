@@ -27,7 +27,7 @@ Options
 ``-physz==<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
     Quartz, which affects applications which wish to remain resolution
-    independent.  :p:`sizex`,:p:`sizey` are the x,y size of the entire
+    independent.  :p:`sizex`, :p:`sizey` are the x,y size of the entire
     screen (not just the Carbon Window containing the visual) in
     millimeters, unless the optional ``dpi`` string is affixed, in
     which case, they represent resolution in dots-per-inch. Yes, there

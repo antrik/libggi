@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2004/12/28 15:45:30 cegger Exp $
+/* $Id: mode.c,v 1.3 2004/12/29 11:01:20 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -622,14 +622,19 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 {
+	ggi_quartz_priv *priv;
 	int err;
+
+	priv = QUARTZ_PRIV(vis);
 
 	DPRINT_MODE("GGI_quartz_setmode: called\n");
 	APP_ASSERT(vis != NULL, "GGI_quartz_setmode: Visual == NULL");
 
 	if ((err = ggiCheckMode(vis, mode)) != 0) return err;
 
-	if (QUARTZ_PRIV(vis)->fullscreen) {
+	if (priv->opmansync) MANSYNC_ignore(vis);
+
+	if (priv->fullscreen) {
 		err = GGI_quartz_setmode_fullscreen(vis, mode);
 	} else {
 		err = GGI_quartz_setmode_windowed(vis, mode);
@@ -643,6 +648,8 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	_GGIallocdbs(vis);
+
+	if (priv->opmansync) MANSYNC_cont(vis);
 
 	DPRINT_MODE("GGI_quartz_setmode returns = %i\n", err);
 
@@ -662,11 +669,23 @@ int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_quartz_setflags(ggi_visual *vis, ggi_flags flags)
 {
+	ggi_quartz_priv *priv;
+
 	DPRINT_MISC("GGI_quartz_setflags(%p,%p)\n", (void *)vis, flags);
 
+	priv = QUARTZ_PRIV(vis);
+	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
+		ggiFlush(vis);
+
 	LIBGGI_FLAGS(vis) = flags;
-	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
-	return 0;
+	/* Unknown flags don't take. */
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC;
+
+	if (priv->opmansync) {
+		MANSYNC_SETFLAGS(vis, flags);
+	}
+
+	return GGI_OK;
 }	/* GGI_quartz_setflags */
 
 
@@ -683,9 +702,13 @@ int GGI_quartz_flush(ggi_visual *vis,
 
 	priv = QUARTZ_PRIV(vis);
 
+	if (priv->opmansync) MANSYNC_ignore(vis);
+
 	bounds = CGRectMake(x, y, w, h);
 
 	CGContextDrawImage(priv->context, bounds, priv->image);
 	CGContextFlush(priv->context);
+
+	if (priv->opmansync) MANSYNC_cont(vis);
 	return 0;
 }	/* GGI_quartz_flush */

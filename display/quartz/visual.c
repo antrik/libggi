@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2004/12/28 21:26:59 cegger Exp $
+/* $Id: visual.c,v 1.3 2004/12/29 11:01:20 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -37,12 +37,14 @@ static const gg_option optlist[] =
 {
 	{ "physz", "0,0" },
 	{ "noinput", "no" },
+	{ "nomansync", "no" },
 	{ "fullscreen", "no" },
 };
 
 #define OPT_PHYSZ	0
 #define OPT_NOINPUT	1
-#define OPT_FULLSCREEN	2
+#define OPT_NOMANSYNC	2
+#define OPT_FULLSCREEN	3
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -75,6 +77,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	CGDisplayRestoreColorSyncSettings ();
 
 	if (vis->gamma) free(vis->gamma);
+	if (priv->opmansync) free(priv->opmansync);
 	free(priv);
 	free(LIBGGI_GC(vis));
 	vis->gamma = NULL;
@@ -129,10 +132,24 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				&(priv->physz));
 	if (err != GGI_OK) goto out;
 
+	if (tolower((uint8)options[OPT_NOMANSYNC].result[0]) == 'n') {
+		priv->opmansync = malloc(sizeof(_ggi_opmansync));
+		if (priv->opmansync == NULL) {
+			err = GGI_ENOMEM;
+			goto out;
+		}	/* if */
+		err = _ggiAddDL(vis, "helper-mansync", NULL, priv->opmansync, 0);
+		if (err != GGI_OK) {
+			fprintf(stderr,
+				"display-quartz: Cannot load required helper-mansync!\n");
+			goto out;
+		}	/* if */
+	}	/* if */
+
 	/* windowed mode is default */
 	if (tolower((uint8)options[OPT_FULLSCREEN].result[0]) != 'n') {
 		/* switch over to fullscreen mode, if possible */
-		DPRINT_CORE("turn on fullscreen mode");
+		DPRINT_MISC("turn on fullscreen mode");
 		priv->fullscreen = 1;
 	}
 
@@ -225,6 +242,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inp = NULL;
 	}	/* if */
 
+
+	if (priv->opmansync) {
+		MANSYNC_init(vis);
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_start(vis);
+		}	/* if */
+	}	/* if */
+
+
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
@@ -244,11 +270,18 @@ err0:
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-#if 0
-	if (QUARTZ_PRIV(vis)->opmansync) MANSYNC_deinit(vis);
-#endif
+	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
+	LIB_ASSERT(QUARTZ_PRIV(vis) != NULL, "GGIexit: QUARTZ_PRIV(vis) == NULL\n");
+
+	if (QUARTZ_PRIV(vis)->opmansync) {
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_stop(vis);
+		}
+		MANSYNC_deinit(vis);
+	}
+
 	return 0;
-}     /* GGIexit */
+}	/* GGIexit */
 
 
 
