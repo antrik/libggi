@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2003/07/05 22:13:42 cegger Exp $
+/* $Id: crossblit.c,v 1.7 2004/09/13 10:52:15 cegger Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -932,7 +932,7 @@ int GGI_lin24_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 	PREPARE_FB(src);
 
-	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	switch (GT_SIZE(LIBGGI_GT(src))) {
 	case 1:
 		/* TODO */
 	case 2:
@@ -955,17 +955,17 @@ int GGI_lin24_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
 		return 0;
 	notsame:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb16to24(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 24:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb24to24(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 32:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to24(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;

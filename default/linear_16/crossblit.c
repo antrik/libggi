@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.13 2004/03/01 21:04:57 skids Exp $
+/* $Id: crossblit.c,v 1.14 2004/09/13 10:50:22 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -833,7 +833,7 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 	PREPARE_FB(src);
 
-	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	switch (GT_SIZE(LIBGGI_GT(src))) {
 	case 1:
 		/* TODO */
 	case 2:
@@ -856,17 +856,17 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
 		return 0;
 	notsame:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb16to16(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 24:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb24to16(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 32:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to16(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
@@ -1181,7 +1181,7 @@ int GGI_lin16_crossblit_64bitc(ggi_visual *src, int sx, int sy, int w, int h,
 
 	PREPARE_FB(src);
 
-	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	switch (GT_SIZE(LIBGGI_GT(src))) {
 	case 1:
 		/* TODO */
 	case 2:
@@ -1204,17 +1204,17 @@ int GGI_lin16_crossblit_64bitc(ggi_visual *src, int sx, int sy, int w, int h,
 		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
 		return 0;
 	notsame:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb16to16_64bitc(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 24:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb24to16(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 32:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to16_64bitc(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
@@ -1570,7 +1570,7 @@ int GGI_lin16_crossblit_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 
 	PREPARE_FB(src);
 
-	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	switch (GT_SIZE(LIBGGI_GT(src))) {
 	case 1:
 		/* TODO */
 	case 2:
@@ -1593,17 +1593,17 @@ int GGI_lin16_crossblit_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
 		return 0;
 	notsame:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb16to16_mmx(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 24:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb24to16(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
 	case 32:
-		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to16_mmx(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
 		return 0;
