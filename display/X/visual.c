@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.42 2005/01/06 22:56:19 cegger Exp $
+/* $Id: visual.c,v 1.43 2005/01/14 09:38:11 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -33,6 +33,7 @@
 #include <ctype.h>
 
 #include "config.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/11/27 17:43:41 cegger Exp $
+/* $Id: mode.c,v 1.17 2005/01/14 09:38:14 pekberg Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -27,6 +27,7 @@
 */
 
 #include "config.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
 

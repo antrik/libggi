@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.22 2004/11/27 16:42:44 soyt Exp $
+/* $Id: internal.c,v 1.23 2005/01/14 09:38:14 pekberg Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -26,6 +26,7 @@
 */
 
 #include "config.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
 

@@ -1,4 +1,4 @@
-/* $Id: suidbridge.c,v 1.2 2004/11/13 15:56:24 cegger Exp $
+/* $Id: suidbridge.c,v 1.3 2005/01/14 09:38:14 pekberg Exp $
 ******************************************************************************
 
    Display-SUID: suid suidbrige
@@ -31,6 +31,7 @@
 #include <sys/fcntl.h>
 
 #include <kgi/module.h>
+#include <ggi/internal/gg_replace.h>
 
 #define	KGI_8x8_FONT
 #define	KGI_8x14_FONT

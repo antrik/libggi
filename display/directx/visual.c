@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2005/01/03 13:07:42 pekberg Exp $
+/* $Id: visual.c,v 1.32 2005/01/14 09:38:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -28,6 +28,7 @@
 */
 
 #include "config.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/directx.h>

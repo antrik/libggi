@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.8 2004/11/27 16:42:12 soyt Exp $
+/* $Id: crossblit.c,v 1.9 2005/01/14 09:38:11 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -30,6 +30,7 @@
 
 #include <string.h>
 #include "lin8lib.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi_debug.h>
 
 

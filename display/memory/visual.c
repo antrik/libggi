@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2005/01/03 14:38:45 cegger Exp $
+/* $Id: visual.c,v 1.26 2005/01/14 09:38:13 pekberg Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -32,6 +32,7 @@
 
 #include "config.h"
 #include <ggi/display/memory.h>
+#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi_debug.h>
 
 static const gg_option optlist[] =
