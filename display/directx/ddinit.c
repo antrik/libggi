@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.37 2004/09/24 11:09:09 pekberg Exp $
+/* $Id: ddinit.c,v 1.38 2004/09/24 11:10:14 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -734,7 +734,7 @@ DDCreateClass(directx_priv *priv)
 	switch (priv->cursortype) {
 	case 0:
 		wc.hCursor = CreateCursor(priv->hInstance,
-					  16, 16, /* hot spot x, y */
+					  15, 16, /* hot spot x, y */
 					  32, 32, /* size x, y */
 					  ANDmaskInvCursor, /* masks */
 					  XORmaskInvCursor);
@@ -742,7 +742,7 @@ DDCreateClass(directx_priv *priv)
 		break;
 	case 1:
 		wc.hCursor = CreateCursor(priv->hInstance,
-					  16, 16, /* hot spot x, y */
+					  15, 16, /* hot spot x, y */
 					  32, 32, /* size x, y */
 					  ANDmaskDotCursor, /* masks */
 					  XORmaskDotCursor);
