@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.9 2004/08/25 07:47:46 pekberg Exp $
+/* $Id: directx.h,v 1.10 2004/09/03 07:55:13 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -104,5 +104,7 @@ typedef struct directx_priv
 	LPDIRECTDRAWSURFACE lpbdds[GGI_DISPLAY_DIRECTX_FRAMES];
 	char *lpSurfaceAdd[GGI_DISPLAY_DIRECTX_FRAMES];
 } directx_priv;
+
+#define GGIDIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
 
 #endif /* _GGI_DISPLAY_DIRECTX_H */
