@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.17 2004/07/31 08:23:32 cegger Exp $
+/* $Id: internal.c,v 1.18 2004/09/08 18:54:48 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -331,7 +331,7 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 	}
 
 	/* Now, we can assume there's at least room
-	 * for the terminating \0. 
+	 * for the terminating \0.
 	 */
 
 	if (flags & GGI_PIXFMT_CHANNEL) {
@@ -378,11 +378,11 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 				idx--;
 			}
 #ifdef HAVE_SNPRINTF
-			tmp = snprintf(ptr, pixfmtstr_len, "%d",
+			tmp = snprintf(ptr, pixfmtstr_len, "%u",
 				       256-(pixfmt->bitmeaning[idx] & 0xff)
 				       );
 #else
-			tmp = sprintf(ptr, "%d", 
+			tmp = sprintf(ptr, "%u",
 				       256-(pixfmt->bitmeaning[idx] & 0xff)
 				       );
 #endif
@@ -403,10 +403,10 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 #ifdef HAVE_SNPRINTF
 		size_t tmp;
 
-		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%d", GT_SIZE(LIBGGI_GT(vis)));
+		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u", GT_SIZE(LIBGGI_GT(vis)));
 		LIBGGI_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
 #else
-		sprintf(pixfmtstr, "%d", GT_SIZE(LIBGGI_GT(vis)));
+		sprintf(pixfmtstr, "%u", GT_SIZE(LIBGGI_GT(vis)));
 #endif
 	}
 
