@@ -20,8 +20,10 @@
 <command>display-memory</command>
 <arg choice="plain">:</arg>
 <arg><option>-input</option></arg>
+<arg><option>-noblank</option></arg>
 <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
 <arg><option>-pixfmt=<replaceable>format_string</replaceable></option></arg>
+<arg><option>-layout=<replaceable>fstride</replaceable>[plb<replaceable>lstride</replaceable>|plan<replaceable>pstride</replaceable>,<replaceable>plstride</replaceable>]</option></arg>
 <group>
  <arg>shmid:<replaceable>sid</replaceable></arg>
  <arg>keyfile:<replaceable>size</replaceable>:<replaceable>id</replaceable>:<replaceable>fname</replaceable></arg>
@@ -68,6 +70,19 @@ be used for things like GGI multiplexers.
 </varlistentry>
 
 <varlistentry>
+<term><replaceable>-noblank</replaceable></term>
+<listitem>
+
+<para>
+If the <option>-noblank</option> option is set, the framebuffer will
+not be filled with solid black when the mode of the visual is set.  This
+is useful for preserving data from other sources when using a preallocated
+area of memory as a framebuffer.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
 <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
 <listitem><para>
 This option will provide a physical screen size for applications which
@@ -89,6 +104,36 @@ pixel is unused padding, followed by 5 bits of green, then 5 bits of blue and
 finally 5 bits of red, with the remaining high bits, if any, being unused pad.
 A more formal description of this format string will be provided (and more 
 strings accepted) in future LibGGI releases.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-layout=<replaceable>fstride</replaceable>[plb<replaceable>lstride</replaceable>|plan<replaceable>pstride</replaceable>,<replaceable>plstride</replaceable>]</option>
+</term>
+<listitem><para>
+This option will provide a non-default framebuffer layout explicitly.
+The <replaceable>fstride</replaceable> parameter denotes the number of 
+bytes between frames in the framebuffer, and will default to the size of 
+the virtual screen in bytes if nonpresent or set to 0.  Following fstride, 
+the string "plb" denotes a linear packed-pixel framebuffer, or the 
+string "plan" instead denotes a planar framebuffer.  The packed-pixel 
+framebuffer layout is the default.  If the string "plb" is present, 
+a horizontal stride <replaceable>lstride</replaceable>may appear, denoting
+the number of bytes that elapse between the beginning of one line and the
+next.  This will default to the size of a horizontal line in bytes if
+nonpresent or set to zero.  If the string "plan" is present, up to two
+numbers, comma separated, may appear after the string.  The first number,
+<replaceable>pstride</replaceable>denotes the number of bytes which elapse
+between the beginning of one plane and the next.  This will default to
+the minimum integral number of bytes that may contain one bitplane of the 
+virtual screen if nonpresent or set to zero.  The second number, 
+<replaceable>plstride</replaceable>denotes the number of bytes that 
+elapse between the beginning of one bitplane-line and the next.  This will 
+default to the minimum integral number of bytes which may contain one 
+bitplane-line of the virtual screen if nonpresent or set to zero.
+</para>
+<para>
+More strings and format parameters may accepted in future LibGGI releases.
 </para></listitem>
 </varlistentry>
 

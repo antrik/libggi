@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2002/04/30 23:03:03 skids Exp $
+/* $Id: visual.c,v 1.6 2002/05/22 04:21:47 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -36,13 +36,16 @@ static const gg_option optlist[] =
 {
 	{ "input", "" },
 	{ "physz", "0,0" },
-	{ "pixfmt", "" }
-
+	{ "pixfmt", "" },
+	{ "layout", "no"},
+	{ "noblank", "no"}
 };
 
 #define OPT_INPUT	0
 #define OPT_PHYSZ	1
 #define OPT_PIXFMT	2
+#define OPT_LAYOUT	3
+#define OPT_NOBLANK	4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -108,7 +111,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
 	/* Allocate descriptor for screen memory */
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_memory_priv));
+	priv = LIBGGI_PRIVATE(vis) = calloc(1,sizeof(ggi_memory_priv));
 	if (!priv) {
 		free(LIBGGI_GC(vis));
 		return GGI_ENOMEM;
@@ -231,6 +234,40 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
+	/* Explicit layout for preallocated buffers with nontrivial layouts. */
+	if (options[OPT_LAYOUT].result[0] != 'n') {
+		char *idx;
+		priv->fstride = strtoul(options[OPT_LAYOUT].result, &idx, 10);
+		if (strncmp(idx, "plb", 3) == 0) {
+			priv->layout = blPixelLinearBuffer;
+			idx += 3;
+			priv->buffer.plb.stride = strtoul(idx, NULL, 10);
+		}
+		else if (strncmp(idx, "plan", 4) == 0) {
+			priv->layout = blPixelPlanarBuffer;
+			idx += 4;
+			priv->buffer.plan.next_plane = strtoul(idx, &idx, 10);
+			if (*idx != ',') {
+				priv->buffer.plan.next_line = 0;
+				goto skiprest;
+			}
+			idx++;
+			priv->buffer.plan.next_line = strtoul(idx, &idx, 10);
+		skiprest:
+		}
+		else { 
+			if (*idx != '\0') 
+				fprintf(stderr, "bad layout params\n");
+			priv->layout = blPixelLinearBuffer;
+			priv->buffer.plb.stride = 0;
+		}
+	}
+
+	/* Do not blank the framebuffer on SetMode.
+	 * (Preserves data in prealloced memory area.) 
+	 */
+	priv->noblank = (options[OPT_NOBLANK].result[0] == 'n');
+
 	vis->opdisplay->flush=GGI_memory_flush; 
 	vis->opdisplay->getmode=GGI_memory_getmode;
 	vis->opdisplay->setmode=GGI_memory_setmode;
@@ -263,7 +300,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Now fill in the blanks. */
 
 		inp->priv=priv;	/* We need that in poll() */
-		priv->inputbuffer->writeoffset=0;	/* Not too good, but ... */
+		priv->inputbuffer->writeoffset=0; /* Not too good, but ... */
 		inp->targetcan= emAll;
 		inp->GIIseteventmask(inp,inp->targetcan);
 		inp->maxfd=0;	/* This is polled. */

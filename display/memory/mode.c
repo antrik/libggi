@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2002/04/30 23:03:03 skids Exp $
+/* $Id: mode.c,v 1.5 2002/05/22 04:21:47 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -38,13 +38,26 @@
 #include "../common/ggi-auto.inc"
 #include "../common/gt-auto.inc"
 
+/* Used to prevent ggiSetMode core code from destroying data
+ * by calling fillscreen when -noblank option is specified.
+ */
+static int _strawman_fillscreen(ggi_visual *vis) {
+	if (vis->w_frame_num == vis->mode->frames - 1) 
+		vis->opdraw->fillscreen = MEMORY_PRIV(vis)->oldfillscreen;
+	return GGI_OK;
+}
+
+static int _dummy_setdisplayframe(ggi_visual *vis, int frame) {
+	return GGI_OK;
+}
+
 static void _GGIfreedbs(ggi_visual *vis) 
 {
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
-		if (MEMORY_PRIV(vis)->memtype==MT_MALLOC)
-			free(LIBGGI_APPBUFS(vis)[i]->write);
+		if ((i= 0) && (MEMORY_PRIV(vis)->memtype==MT_MALLOC))
+			free(LIBGGI_APPBUFS(vis)[0]->write);
 		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
 	}
@@ -56,17 +69,42 @@ static void _GGIfreedbs(ggi_visual *vis)
  */
 static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 {
+	int i;
 	char *fbaddr;
 	ggi_memory_priv *priv;
+	int fstride, lstride, pstride, size;
 
 	priv = MEMORY_PRIV(vis);
+
+	size = GT_SIZE(mode->graphtype);
+
+	pstride = 0; /* Silence, GCC. */
+
+	if (priv->layout == blPixelPlanarBuffer) {
+		lstride = priv->buffer.plan.next_line ?
+			priv->buffer.plan.next_line : 
+			(mode->virt.x + 7) / 8;
+		pstride = priv->buffer.plan.next_plane ?
+			priv->buffer.plan.next_plane : 
+			(lstride * mode->virt.y);
+		if (pstride > lstride)
+			fstride = (pstride * GT_DEPTH(mode->graphtype));
+		else 
+			fstride = lstride * mode->virt.y;
+		fstride = priv->fstride ? priv->fstride : fstride;
+	}
+	else {
+		lstride = priv->buffer.plb.stride ?
+			priv->buffer.plb.stride : 
+			(mode->virt.x * size + 7) / 8;
+		fstride = priv->fstride ? 
+			priv->fstride : (lstride * mode->virt.y);
+	}
 
 	_GGIfreedbs(vis);
 
 	if (priv->memtype==MT_MALLOC) {
-
-		fbaddr = malloc(LIBGGI_FB_SIZE(mode));
-
+		fbaddr = malloc(fstride * mode->frames);
 		if (! fbaddr) {
 			GGIDPRINT("Out of memory!");
 			return -1;
@@ -85,14 +123,37 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	/* Set up directbuffer */
-	_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
-	LIBGGI_APPBUFS(vis)[0]->frame = 0;
-	LIBGGI_APPBUFS(vis)[0]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-	LIBGGI_APPBUFS(vis)[0]->read = LIBGGI_APPBUFS(vis)[0]->write = fbaddr;
-	LIBGGI_APPBUFS(vis)[0]->layout = blPixelLinearBuffer;
-	LIBGGI_APPBUFS(vis)[0]->buffer.plb.stride
-		= ((GT_SIZE(mode->graphtype) * mode->virt.x)+7) / 8;
-	LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+	if (priv->layout == blPixelLinearBuffer) {
+		for (i = 0; i < mode->frames; i++) {
+			ggi_directbuffer *buf;
+			_ggi_db_add_buffer(LIBGGI_APPLIST(vis),
+					   _ggi_db_get_new());
+			buf = LIBGGI_APPBUFS(vis)[i];
+			buf->frame = i;
+			buf->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+			buf->read = buf->write = fbaddr + fstride * i;
+			buf->layout = blPixelLinearBuffer;
+			buf->buffer.plb.stride = lstride;
+			buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+		}
+	}
+	else {
+		for (i = 0; i < mode->frames; i++) {
+			ggi_directbuffer *buf;
+			_ggi_db_add_buffer(LIBGGI_APPLIST(vis),
+					   _ggi_db_get_new());
+			buf = LIBGGI_APPBUFS(vis)[i];
+			buf->frame = i;
+			buf->type = GGI_DB_NORMAL;
+			buf->read = buf->write = fbaddr + fstride * i;
+			buf->layout = blPixelPlanarBuffer;
+			buf->buffer.plan.next_line = lstride;
+			buf->buffer.plan.next_plane = pstride;
+			buf->buffer.plan.pixelformat = LIBGGI_PIXFMT(vis);
+		}
+	}
+	LIBGGI_APPLIST(vis)->first_targetbuf
+        	= LIBGGI_APPLIST(vis)->last_targetbuf - (mode->frames-1);
 
 	/* Set up palette */
 	if (vis->palette) {
@@ -101,7 +162,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
 		vis->palette = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
-					sizeof(ggi_color));
+					   sizeof(ggi_color));
 	}
 	
 	return 0;
@@ -126,7 +187,10 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
-
+	  	if (MEMORY_PRIV(vis)->layout == blPixelPlanarBuffer) {
+			sprintf(apiname, "generic-planar");
+			return 0;
+		}
 		sprintf(apiname, "generic-linear-%d%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
@@ -176,6 +240,14 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	vis->opgc->gcchanged = NULL; /* kick _default_error off hook. */
+	vis->opdraw->setdisplayframe	= _dummy_setdisplayframe;
+	vis->opdraw->setreadframe	= _ggi_default_setreadframe;
+	vis->opdraw->setwriteframe	= _ggi_default_setwriteframe;
+
+	if (MEMORY_PRIV(vis)->noblank) {
+		MEMORY_PRIV(vis)->oldfillscreen = vis->opdraw->fillscreen;
+		vis->opdraw->fillscreen = _strawman_fillscreen;
+	}
 	
 	return 0;
 }
@@ -252,10 +324,10 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = -1;
 	}
 
-	if (mode->frames != 1 && mode->frames != GGI_AUTO) {
+	if (mode->frames < 1) {
 		err = -1;
+		mode->frames = 1;
 	}
-	mode->frames = 1;
 
 	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
 	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
