@@ -42,6 +42,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * Low level Objects -- sharable by many GGI Project lowlevel libraries
  */
 
+#ifdef HAVE_STDINT_H	/* This header provides uint32_t */
+#include <stdint.h>
+#endif
+
 /* Position/size of a lowlevel object on the screen. 
  */
 struct ggi_ll_pos {
@@ -360,7 +364,7 @@ typedef struct ggi_ll_math_gc * ggi_ll_math_gc_t;
  * memory/runtime overhead.
  */
 #define GGI_LL_OBJ(NUM_ATTRIBS) \
-        u_int32_t map;                                              \
+        uint32_t map;                                              \
         void *ptrs[NUM_ATTRIBS + 3];
         /* ptrs always contains { NULL, NULL, NULL, ...data... } */
 
