@@ -313,6 +313,32 @@ GGI_DISPLAY=file:/dev/fb1
 GGI_DISPLAY=multi:(X):(file:-flushcmd="ppmtogif bla.ppm >bla.%04d.gif":-flushframe=1:bla.ppm)
 
 
+
+==============
+DirectX (Win32)
+==============
+
+Description
++++++++++++
+
+Used for Win32 DirectX port of libGGI.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Environment variables
++++++++++++++++++++++
+
+GGI_DISPLAY=directx
+GGI_DISPLAY=directxnt (for NT4 systems)
+GGI_DISPLAY=display-directx
+GGI_DISPLAY=display-directxnt (for NT4 systems)
+GGI_DEFMODE=800x600[GT_16BIT]
+
+
 ============
 glide-target
 ============
