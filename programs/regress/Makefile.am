@@ -8,6 +8,6 @@ LDADD = ${top_builddir}/ggi/libggi.la
 
 EXTRA_PROGRAMS =
 man_MANS =
-noinst_PROGRAMS = clip2d init input mode pixfmt triple-int
+noinst_PROGRAMS = clip2d init input mapcolor mode pixfmt triple-int
 
 EXTRA_DIST = $(man_MANS) testsuite.inc.c clipdb.inc.c
