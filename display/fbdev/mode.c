@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2005/02/03 00:19:23 cegger Exp $
+/* $Id: mode.c,v 1.23 2005/02/03 18:12:53 orzo Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -55,8 +55,14 @@ extern void GGI_fbdev_color_free(ggi_visual *vis);
 extern void GGI_fbdev_color_setup(ggi_visual *vis);
 int GGI_fbdev_mode_reset(ggi_visual *vis);
 
-static int
-do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var);
+#include <ggi/display/modelist.h>
+
+#define WANT_GENERIC_CHECKMODE
+#include "../common/modelist.inc"
+
+static 
+int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
+                            struct ggi_fbdev_timing **timing_);
 
 static void _GGI_free_dbs(ggi_visual *vis) 
 {
@@ -208,6 +214,28 @@ ggimode2var(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	}
 }
 
+static void
+timing2var( struct ggi_fbdev_timing *timing, struct fb_var_screeninfo *var,
+		int frames )
+{
+	var->xres = timing->xres;
+	var->yres = timing->yres;
+	if (var->xres_virtual == 0) var->xres_virtual = timing->xres_virtual;
+	if (var->yres_virtual == 0) var->yres_virtual = var->yres * frames;
+	if (var->bits_per_pixel == FB_BPP_AUTO) {
+		var->bits_per_pixel = timing->bits_per_pixel;
+	}
+
+	var->pixclock	  = timing->pixclock;
+	var->right_margin = timing->right_margin;
+	var->left_margin  = timing->left_margin;
+	var->upper_margin = timing->upper_margin;
+	var->lower_margin = timing->lower_margin;
+	var->hsync_len    = timing->hsync_len;
+	var->vsync_len    = timing->vsync_len;
+	var->sync         = timing->sync;
+	var->vmode        = timing->vmode;
+}
 
 static void
 var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
@@ -217,6 +245,17 @@ var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 	mode->visible.y = var->yres;
 	mode->virt.x = var->xres_virtual;
 	mode->virt.y = var->yres_virtual;
+
+	/* All display-fbdev modes are fullscreen, so we will just
+	 * put the framebuffer's fullscreen dimensions into the
+	 * size field. */
+	if( (signed)var->width >= 0 )
+		mode->size.x = var->width;
+	if( (signed)var->height >= 0 )
+		mode->size.y = var->height;
+	DPRINT_LIBS("var2ggimode stored size (%i, %i)\n", 
+			mode->size.x, mode->size.y );
+
 	if (frames) {
 		mode->virt.y /= frames;
 	}
@@ -238,94 +277,11 @@ var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 		GT_SETDEPTH(mode->graphtype, var->red.length
 			    + var->green.length + var->blue.length);
 	}
+            
 }
 
 
 #define SKIPWHITE(ptr) while(*(ptr)==' '||*(ptr)=='\t'||*(ptr)=='\n'){(ptr)++;}
-
-static int
-get_timing(ggi_visual *vis, struct fb_var_screeninfo *var, int frames)
-{
-	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
-	struct ggi_fbdev_timing *timing, *besttiming;
-	int ret = 1;
-
-	/* Scan for the wanted mode.
-	 */
-	besttiming = NULL;
-	timing = priv->timings;
-	while (timing) {
-		if ((timing->xres == var->xres || var->xres == 0) &&
-		    (timing->yres == var->yres || var->yres == 0)) {
-			if ((timing->bits_per_pixel == var->bits_per_pixel ||
-			     var->bits_per_pixel == FB_BPP_AUTO) &&
-			    (timing->xres_virtual == var->xres_virtual ||
-			     var->xres_virtual == 0)) {
-				/* yres_virtual doesn't matter. */
-				DPRINT_MODE("display-fbdev: found exact match.\n");
-				ret = 0;
-				goto found_mode;
-			}
-			if (timing->bits_per_pixel == var->bits_per_pixel ||
-			    var->bits_per_pixel == FB_BPP_AUTO) {
-				DPRINT_MODE("display-fbdev: found match with xres_virtual = %d.\n",
-					       timing->xres_virtual);
-				ret = 0;
-				besttiming = timing;
-			} else if (besttiming == NULL || ret == 1) {
-				DPRINT_MODE("display-fbdev: found first match (exact res) %dx%d.\n",
-					       timing->xres, timing->yres);
-				ret = 0;
-				besttiming = timing;
-			}
-		} else if ((timing->xres >= var->xres || var->xres == 0) &&
-			   (timing->yres >= var->yres || var->yres == 0)) {
-			if (besttiming == NULL) {
-				DPRINT_MODE("display-fbdev: found first match (bigger res) %dx%d.\n",
-					       timing->xres, timing->yres);
-				ret = 1;
-				besttiming = timing;
-			} else if (timing->xres <= besttiming->xres &&
-				   timing->yres <= besttiming->yres &&
-				   ret == 1) {
-				DPRINT_MODE("display-fbdev: found better match (bigger res) %dx%d.\n",
-					       timing->xres, timing->yres);
-				ret = 1;
-				besttiming = timing;
-			}
-		}
-		timing = timing->next;
-	}
-	if (besttiming) {
-		timing = besttiming;
-		DPRINT_MODE("display-fbdev: Using best match %dx%d.\n",
-			       timing->xres, timing->yres);
-		goto found_mode;
-	}
-
-	return GGI_ENOTFOUND;
-
-  found_mode:
-	var->xres = timing->xres;
-	var->yres = timing->yres;
-	if (var->xres_virtual == 0) var->xres_virtual = timing->xres_virtual;
-	if (var->yres_virtual == 0) var->yres_virtual = var->yres * frames;
-	if (var->bits_per_pixel == FB_BPP_AUTO) {
-		var->bits_per_pixel = timing->bits_per_pixel;
-	}
-
-	var->pixclock	  = timing->pixclock;
-	var->right_margin = timing->right_margin;
-	var->left_margin  = timing->left_margin;
-	var->upper_margin = timing->upper_margin;
-	var->lower_margin = timing->lower_margin;
-	var->hsync_len    = timing->hsync_len;
-	var->vsync_len    = timing->vsync_len;
-	var->sync         = timing->sync;
-	var->vmode        = timing->vmode;
-
-	return ret;
-}
 
 
 static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
@@ -338,7 +294,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	/* If we already have set a mode, restore the old palette
 	 * or gamma settings before setting a new one. 
 	 */
-	GGI_fbdev_color0(vis);
+	//GGI_fbdev_color0(vis);
 	GGI_fbdev_color_free(vis);
 
 	/* We need this to set virtual resolution correct */
@@ -645,10 +601,19 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	struct fb_var_screeninfo var;
+	struct ggi_fbdev_timing *timing;
 	int err;
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
-	err = do_checkmode(vis, mode, &var);
+	err = _GGI_fbdev_do_checkmode( vis, mode, &timing );
         if (err != 0) return err;
+
+	/* Construct var from timing and mode and priv->orig_var */
+	var = priv->orig_var;
+	var.nonstd = 0;
+	var.xoffset = var.yoffset = 0;
+	ggimode2var(vis, mode, &var);
+	timing2var(timing, &var, mode->frames );
 
 	DPRINT_MODE("display-fbdev: setmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
@@ -685,17 +650,58 @@ int GGI_fbdev_mode_reset(ggi_visual *vis)
 	return 0;
 }
 
-
-static int
-do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
+/* Convert the fbdev specific ggi_fbdev_timing structure
+ * into a generic ggi_mode structure suitable for 
+ * passing as suggested mode to _GGI_generic_mode_update()
+ */
+static
+void _GGI_fbdev_checkmode_adapt( ggi_mode * m, 
+				struct ggi_fbdev_timing * timing,
+				ggi_fbdev_priv * priv ) 
 {
-	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
-	ggi_graphtype gt = mode->graphtype;
-	ggi_mode oldmode = *mode;
+	m->visible.x = timing->xres;
+	m->visible.y = timing->yres;
+	m->virt.x = timing->xres_virtual;
+	m->virt.y = timing->yres_virtual;
+
+	/* In the future we may want to support smaller than fullscreen
+	 * visuals to emulate unsupported modes.  If so, we'll need to
+	 * handle size in the adjust function since it depends on the 
+	 * requested resolution... Something like this:
+	_ggi_physz_figure_size(sug, priv->physzflags, 
+				     &(priv->physz),
+				(signed)(DPI(width, x)),
+				(signed)(DPI(height,y)), 
+				sug->visible.x, sug->visible.y);
+	*/
+	/* For now, let's just use the framebuffer's values for the
+	 * size of the whole screen...
+	 * Note: the cast is neccessary because orig_var.width has an
+	 * unsigned type! */
+	m->size.x = ((signed)priv->orig_var.width <= 0 ) 
+		? GGI_AUTO : priv->orig_var.width;
+	m->size.y = ((signed)priv->orig_var.height <= 0 ) 
+		?  GGI_AUTO : priv->orig_var.height;
+
+	/* handled by the adjust function: 
+	 * frames, graphtype, dpp 
+	 */
+}
+
+/* Adjust suggested mode sug to match against
+ * requested mode req for generic modecheck. 
+ */
+static
+void _GGI_fbdev_checkmode_adjust( ggi_mode *req,
+				  ggi_mode *sug,
+				  ggi_fbdev_priv *priv )
+{
+
+	ggi_graphtype gt = req->graphtype;
 	int xdpp, ydpp;
 	int maxframes;
-	int err = 0, ret;
 
+	/* graphtype... */
 	/* Handle GGI_AUTO first */
 	if (gt == GT_AUTO) {
 #ifdef FB_TYPE_TEXT
@@ -742,111 +748,148 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 		}
 	}
 
-	mode->graphtype = _GGIhandle_gtauto(gt);
+	sug->graphtype = _GGIhandle_gtauto(gt);
 
-	xdpp = (GT_SCHEME(mode->graphtype) == GT_TEXT) ? FB_KLUDGE_FONTX : 1;
-	ydpp = (GT_SCHEME(mode->graphtype) == GT_TEXT) ? FB_KLUDGE_FONTY : 1;
-	if ((mode->dpp.x != xdpp && mode->dpp.x != GGI_AUTO) ||
-	    (mode->dpp.y != ydpp && mode->dpp.y != GGI_AUTO)) {
-		err = -1;
+	/* dpp... */
+	xdpp = (GT_SCHEME(sug->graphtype) == GT_TEXT) ? FB_KLUDGE_FONTX : 1;
+	ydpp = (GT_SCHEME(sug->graphtype) == GT_TEXT) ? FB_KLUDGE_FONTY : 1;
+
+	sug->dpp.x = xdpp;
+	sug->dpp.y = ydpp;
+
+	/* frames... */
+	sug->frames = req->frames;
+	if (sug->frames == GGI_AUTO) {
+		sug->frames = 1;
+	} else if (priv->orig_fix.ypanstep == 0 && sug->frames > 1) {
+		DPRINT_MODE("display-fbdev: "
+			    "%d frames but no vertical panning\n", sug->frames);
+		sug->frames = 1;
 	}
-	mode->dpp.x = xdpp;
-	mode->dpp.y = ydpp;
-
-	if (mode->frames == GGI_AUTO) {
-		mode->frames = 1;
-	} else if (priv->orig_fix.ypanstep == 0 && mode->frames > 1) {
-		DPRINT_MODE("display-fbdev: %d frames but no vertical panning\n", mode->frames);
-		mode->frames = 1;
-		err = -1;
-	}
-
-	*var = priv->orig_var;
-
-	var->nonstd = 0;
-	var->xoffset = var->yoffset = 0;
-
-	ggimode2var(vis, mode, var);
-
-	/* Try to get the timing from the standard database */
-	ret = get_timing(vis, var, mode->frames);
-	if (ret < 0) {
-		DPRINT_MODE("display-fbdev: unable to find timing for mode\n");
-		if (priv->need_timings &&
-		    (var->xres != priv->orig_var.xres ||
-		     var->yres != priv->orig_var.yres)) {
-			var2ggimode(vis, &priv->orig_var, mode, mode->frames);
-			return GGI_ENOMATCH;
-		}
-	} else if (ret != 0) {
-		err = -1;
-	}
-
-	/* Just check the mode */
-	var->activate = FB_ACTIVATE_TEST;
-
-	/* Check mode with framebuffer */
-	if (fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, var) < 0) {
-		DPRINT_MODE("display-fbdev: FB_ACTIVATE_TEST failed\n");
-		err = -1;
-	}
-
-	var2ggimode(vis, var, mode, mode->frames);
-
-	if ((oldmode.visible.x && mode->visible.x != oldmode.visible.x) ||
-	    (oldmode.visible.y && mode->visible.y != oldmode.visible.y) ||
-	    (oldmode.virt.x && mode->virt.x != oldmode.virt.x) ||
-	    (oldmode.virt.y && mode->virt.y != oldmode.virt.y) ||
-	    (GT_DEPTH(oldmode.graphtype) &&
-	     GT_DEPTH(mode->graphtype) != GT_DEPTH(oldmode.graphtype)) ||
-	    (GT_SIZE(oldmode.graphtype) &&
-	     GT_SIZE(mode->graphtype) != GT_SIZE(oldmode.graphtype)) ||
-	    (GT_SCHEME(oldmode.graphtype) &&
-	     GT_SCHEME(mode->graphtype) != GT_SCHEME(oldmode.graphtype))) {
-		DPRINT_MODE("display-fbdev: checkmode error\n");
-		err = -1;
-	}
-
-#define DPI(dim, d) \
-	((priv->orig_var.dim <= 0) ? 0 : \
-	 (mode->visible.d * mode->dpp.d * 254 / priv->orig_var.dim / 10))
-
-	if (!err) {
-		err = _ggi_physz_figure_size(mode, priv->physzflags, &(priv->physz),
-					(signed)(DPI(width, x)),
-					(signed)(DPI(height,y)), 
-					mode->visible.x, mode->visible.y);
-	}
-
-#undef DPI
 
 	maxframes = priv->orig_fix.smem_len /
-		(mode->virt.x * mode->virt.y *
-		 GT_ByPP(mode->graphtype));
-	if (mode->frames > maxframes) {
-		mode->frames = maxframes;
-		err = -1;
+		(sug->virt.x * sug->virt.y *
+		 GT_ByPP(sug->graphtype));
+	if (sug->frames > maxframes) {
+		sug->frames = maxframes;
 	}
 
-	DPRINT_MODE("display-fbdev: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
-			mode->visible.x, mode->visible.y,
-			mode->virt.x, mode->virt.y, 
-			mode->frames, mode->graphtype);
 
-	return err;
 }
 
 
-int GGI_fbdev_checkmode(ggi_visual *vis, ggi_mode *mode)
+/* Iterate over the timings list obtained from thefb.modes 
+ * file and search for the best matching mode. 
+ */
+static 
+int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
+                            struct ggi_fbdev_timing **timing_)
 {
-	struct fb_var_screeninfo var;
 
 	DPRINT_MODE("display-fbdev: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	return do_checkmode(vis, mode, &var);
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
+
+	ggi_checkmode_t * cm =
+        _GGI_generic_checkmode_create();
+	
+
+	/* This puts the contents of mode into cm->req */
+	_GGI_generic_checkmode_init( cm, mode );
+
+	struct ggi_fbdev_timing *timing; /* iteration variable */
+
+	/* Keep track of the previous node while we iterate in order to 
+	 * delete bad modes from our list. */
+	struct ggi_fbdev_timing *prev = NULL;
+
+	/* The first timing will be saved in case all nodes are deleted.
+	 * We will use this as a fallback mode suggestion since it was 
+	 * ostensibly obtained by querying the framebuffer for the current 
+	 * mode. */
+	struct ggi_fbdev_timing *saved_timing;
+	saved_timing = priv->timings;
+
+	saved_timing = priv->timings;
+	timing = priv->timings;
+	while( timing )  {
+
+		/* Convert timing structure to a suggested mode */
+		_GGI_fbdev_checkmode_adapt( mode, timing, priv );
+
+		/* Use the requested mode to tailor the suggestion */
+		_GGI_fbdev_checkmode_adjust( &cm->req, mode, priv );
+
+
+		/* construct structure for passing to ioctl */
+		struct fb_var_screeninfo var;
+		var =  priv->orig_var;
+		var.nonstd = 0;
+		var.xoffset = var.yoffset = 0;
+		ggimode2var( vis, mode, &var );
+		timing2var( timing, &var, mode->frames );
+
+
+		/* Check mode with framebuffer */
+		var.activate = FB_ACTIVATE_TEST; /* just check */
+		if (fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, &var) >= 0) {
+			/* The framebuffer seems to like it, so suggest 
+			 * it as a valid mode to the checkmode API. */
+			var2ggimode(vis, &var, mode, mode->frames);
+			_GGI_generic_checkmode_update( cm, mode, timing );
+		}
+		else {
+			/* The framebuffer didn't like this mode, so
+			 * let's delete it from the timings list... */
+			struct ggi_fbdev_timing *next;
+			next = timing->next;
+			if( timing == priv->timings ) 
+				priv->timings = next;
+			else
+				prev->next = next;
+			/* if it's the saved_timing, it will be freed
+			 * later after we are certain we haven't freed
+			 * the entire list... */
+			if( timing != saved_timing )
+				free( timing );
+			timing = next;
+			continue;
+		}
+		prev = timing;
+		timing = timing->next;
+	}
+
+	if( priv->timings == NULL )
+	{
+		/* No good modes.. perhaps the docs for ggiCheckMode should
+		 * specify a return value for when this seems to be the case.
+		 * Let's suggest the saved_timing... */
+		DPRINT_MODE( "Error! FB_ACTIVATE_TEST failed for all modes\n" );
+		_GGI_fbdev_checkmode_adapt( mode, saved_timing, priv );
+		_GGI_fbdev_checkmode_adjust( &cm->req, mode, priv );
+		_GGI_generic_checkmode_update( cm, mode, saved_timing );
+		/* ...and restore it to the list. */
+		saved_timing->next = NULL;
+		priv->timings = saved_timing;
+		/* QUESTION: If the saved_timing mode just happens to
+		 * match the reqested mode, _GGI_generic_checkmode_finish
+		 * will return success.  Is this the proper behavior? */
+	}
+	else if( saved_timing != priv->timings )
+		free( saved_timing );
+
+	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)timing_);
+
+	_GGI_generic_checkmode_destroy( cm );
+	return err;
+}
+
+int GGI_fbdev_checkmode(ggi_visual *vis, ggi_mode *mode)
+{
+	return _GGI_fbdev_do_checkmode( vis, mode, NULL );
 }
 
 
