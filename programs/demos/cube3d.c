@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.16 2004/11/13 15:56:27 cegger Exp $
+/* $Id: cube3d.c,v 1.17 2005/02/23 14:13:49 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -31,14 +31,20 @@
 
 /* A little math for the 3d stuff not much ...
  */
+#define _USE_MATH_DEFINES
 #include <math.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 /* For autoconf inline support */
 #include "config.h"
 
 /* We do shm here !
  */
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #ifdef HAVE_SYS_IPC_H
 #include <sys/ipc.h>

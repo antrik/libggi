@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.154 2005/02/19 00:57:34 orzo Exp $
+dnl $Id: configure.in,v 1.155 2005/02/23 14:13:48 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -924,9 +924,9 @@ AC_CHECK_LIB(kgimon,set_monitor,
 INSTDEMOS=""
 
 AC_MSG_CHECKING(if we should build the cube3d program)
-if test "x$ac_cv_header_unistd_h" = "xyes" \
-	-a "x$ac_cv_func_putenv" = "xyes" \
-	-a \( \( "x$ac_cv_header_signal_h" = "xyes" \
+if test "x$ac_cv_func_putenv" = "xyes" \
+	-a \( \( "x$ac_cv_header_unistd_h" = "xyes" \
+		 -a "x$ac_cv_header_signal_h" = "xyes" \
 	         -a "x$ac_cv_func_fork" = "xyes" \
 	         -a "x$ac_cv_func_kill" = "xyes" \
 		 -a "x$ac_cv_header_sys_shm_h" = "xyes" \
