@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2003/06/12 12:11:34 cegger Exp $
+/* $Id: mode.c,v 1.19 2003/06/27 12:58:25 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -186,8 +186,24 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 
 int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 {
+	ggi_x_priv *priv;
 	int dummy;
-	return(GGI_X_checkmode_internal(vis, tm, &dummy));
+	int rc;
+	rc = GGI_X_checkmode_internal(vis, tm, &dummy);
+
+	priv = GGIX_PRIV(vis);
+
+	if (priv->mlfuncs.validate != NULL) {
+		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
+		if (priv->cur_mode < 0) {
+			/* An error occured */
+			dummy = priv->cur_mode;
+			priv->cur_mode = 0;
+			return dummy;
+		}	/* if */
+	}	/* if */
+
+	return rc;
 }
 
 int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
@@ -320,6 +336,13 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	}
 	if (!createparent) goto oldparent;
 
+
+	if (priv->mlfuncs.restore != NULL) {
+		err = priv->mlfuncs.restore(vis);
+		if (err) goto err0;
+	}	/* if */
+
+
 	/* Parent windows are merely clipping frames, just use defaults. */
 
 #warning all this could probably use more error checking
@@ -428,6 +451,11 @@ oldparent:
 		err = priv->createdrawable(vis);
 		if (err) goto err1;
 	}
+
+	if (priv->mlfuncs.enter != NULL) {
+		err = priv->mlfuncs.enter(vis, priv->cur_mode);
+		if (err) goto err1;
+	}	/* if */
 
 	/* Tell inputlib about the new window */
 	if (priv->inp) {

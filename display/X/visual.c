@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2003/06/12 14:56:58 cegger Exp $
+/* $Id: visual.c,v 1.21 2003/06/27 12:58:25 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -313,9 +313,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	    options[OPT_INWIN].result[3] != 't' ||
 	    options[OPT_INWIN].result[4] != '\0'
 	    ) {
-		/* DGA and Vidmode are only for root-window visuals */
-		priv->use_Xext &= ~GGI_X_USE_DGA;
-		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
+		/* DGA and Vidmode are exclusive to each other
+		 * Most people prefer DGA over VidMode,
+		 * when both available. This is handled below.
+		 */
+
 		vis->opdisplay->checkmode = GGI_X_checkmode_normal;
 		vis->opdisplay->setmode = GGI_X_setmode_normal;
 		if (options[OPT_INWIN].result[0] != 'n') {
@@ -471,12 +473,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (priv->createdrawable != NULL) {
 		priv->textfont = XLoadQueryFont(disp, "fixed");
-		if (priv->textfont != NULL)
-                	GGIDPRINT_MISC("Xlib: using font with "
+		if (priv->textfont != NULL) {
+			GGIDPRINT_MISC("Xlib: using font with "
 				       "dimension %dx%d\n",
 				       priv->textfont->max_bounds.width,
 				       priv->textfont->max_bounds.ascent
 				       + priv->textfont->max_bounds.descent);
+		}
         }
 
 	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
