@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/10/31 14:25:03 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/03 13:26:04 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -69,7 +69,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = GGI_ENOMEM;
 
 	/* initialize */
-	priv = TELE_PRIV(vis) = malloc(sizeof(ggi_tele_priv));
+	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_tele_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
