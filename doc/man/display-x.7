@@ -4,11 +4,11 @@
 .SH SYNOPSIS
 .nb
 .nf
-display-x: [ [-screen=<screenidx>] | [-inwin=<winid>|root] ] [-noinput]
-           [-nocursor] [-keepcursor] [-physz==<sizex>,<sizey>[dpi]]
-           [-nobuffer] [-noaccel] [-nomansync] [-noshm]
-           [-fullscreen] [-nodga] [-novidmode]
-           [-nodbe] [-noevi] [<display>]
+display-x: [ [-inwin=<winid|root] | [-screen=<screenidx>] ]
+           [-fullscreen] [-keepcursor] [-noaccel] [-nobuffer]
+           [-nocursor] [-nodbe] [-nodga] [-noevi] [-noinput]
+           [-nomansync] [-noshm] [-novidmode] [-physz==<sizex>,<sizey>[dpi]]
+           [<display>]
 .fi
 
 .SH DESCRIPTION
@@ -33,13 +33,6 @@ The X display to connect to, otherwise defaults to the display
 specified in \fBDISPLAY\fR.
 
 .TP
-\fB-screen=<screenidx>\fR
-The screen to run on.  Normally the biggest/deepest screen
-compatible with the requested mode will be chosen; with this
-option only the screen specified by \fBscreenidx\fR will be
-considered.
-
-.TP
 \fB-fullscreen\fR
 Turns on the fullscreen mode. Default mode is the windowed mode.
 In fullscreen mode, the dga helper is tried first if not disabled
@@ -48,21 +41,56 @@ tried. When this fails, then the target falls back to the windowed
 mode. Note, the -inwin option has no effect with fullscreen.
 
 .TP
-\fB-inwin=<winid>|root\fR
-Run in already-existing window with id \fBwinid\fR.  This can be
-used to embed a LibGGI application into an X11 application.  The
-value should be an X11 window ID expressed as a "0x" prefixed
-hexadecimal number.  The special string "root" will cause the
-application to run in the root window of the selected screen (or
-the default screen if no explicit selection has been made.)  Note
-that in the root window, you may need to explictly select a LibGII
-input source using the \fBGGI_INPUT\fR environment variable as the
-window manager will absorb all events sent to the root window.
-Some features (currently frames and virtual areas) may not work in
-root windows.  On the other hand, when using the root window other
-features like direct framebuffer access and video hardware mode
-selection may be available which are not available when the
-application is running in a normal window.
+\fB-noaccel\fR
+All rendering is performed in the client-side backbuffer, and then
+sent to the server; no server-side accelerated graphics
+operations are used.  This will signifigantly slow down certain
+graphics applications, but for applications that use directbuffer
+and asyncronous mode extensively the effect will not be
+noticeable.  The only real reason to use this option, however, is
+to eliminate artifacts caused by incorrectly implemented X11
+hardware drivers.
+
+.TP
+\fB-nobuffer\fR
+No client-side backbuffer is kept.  This may result in lost data
+when the LibGGI application is obscured by other windows.  This
+data loss can be minimized by enabling backing store in the X11
+server.  Using this option will cause operations which must read
+back framebuffer data to be much slower, but on the other hand can
+result in a slight speed gain for certain graphics primitives.  It
+is best used when resources are severely limited on the client
+side, and with applications that do not perform frequent ggiPut*
+operations.
+Note, with this option evExpose events are passed to the
+application (Otherwise, they are internally grabbed to update the
+backbuffer).
+
+.TP
+\fB-nodbe\fR
+Use of the X11 DBE extension to provide buffered frame support is
+disabled.
+.RS
+\fBNote:\fR
+Currently DBE extension support has not been completed.
+.RE
+
+.TP
+\fB-nodga\fR
+Use of the XFree86-DGA extension to provide direct framebuffer access
+is disabled.  Some implementations of the XFree86-DGA extension may cause
+system lockups.  Use this option to prevent such occurrances.
+.RS
+\fBNote:\fR
+Currently XFree86-DGA support has not been integrated into the 
+display-X target.  To use DGA, see the older display-dga target.
+.RE
+
+.TP
+\fB-noevi\fR
+Use of the X11 Extended Visual Information extension to identify
+visuals which are exclusively used for overlay/underlay is
+disabled.
 
 .TP
 \fB-noinput\fR
@@ -84,43 +112,6 @@ unaltered.  If both options are supplied, the latter takes
 precedence.
 
 .TP
-\fB-physz==<sizex>,<sizey>[dpi]\fR
-This option will override the physical screen size reported by the
-X server, which affects applications which wish to remain
-resolution independent.  \fBsizex\fR,:p:\fBsizey\fR are the x,y size of
-the entire screen (not just the X window containing the visual) in
-millimeters, unless the optional \fBdpi\fR string is affixed, in
-which case, they represent resolution in dots-per-inch. Yes, there
-are two equals signs there, for reasons of compatibility with
-other targets.
-
-.TP
-\fB-nobuffer\fR
-No client-side backbuffer is kept.  This may result in lost data
-when the LibGGI application is obscured by other windows.  This
-data loss can be minimized by enabling backing store in the X11
-server.  Using this option will cause operations which must read
-back framebuffer data to be much slower, but on the other hand can
-result in a slight speed gain for certain graphics primitives.  It
-is best used when resources are severely limited on the client
-side, and with applications that do not perform frequent ggiPut*
-operations.
-Note, with this option evExpose events are passed to the
-application (Otherwise, they are internally grabbed to update the
-backbuffer).
-
-.TP
-\fB-noaccel\fR
-All rendering is performed in the client-side backbuffer, and then
-sent to the server; no server-side accelerated graphics
-operations are used.  This will signifigantly slow down certain
-graphics applications, but for applications that use directbuffer
-and asyncronous mode extensively the effect will not be
-noticeable.  The only real reason to use this option, however, is
-to eliminate artifacts caused by incorrectly implemented X11
-hardware drivers.
-
-.TP
 \fB-nomansync\fR
 Use of the mansync helper library to periodically flush backbuffer
 contents to the X11 server is disabled.  This, of course, will
@@ -136,15 +127,21 @@ of the MIT-SHM extension is disabled automatically if it appears
 to be nonfunctional.
 
 .TP
-\fB-nodga\fR
-Use of the XFree86-DGA extension to provide direct framebuffer access
-is disabled.  Some implementations of the XFree86-DGA extension may cause
-system lockups.  Use this option to prevent such occurrances.
-.RS
-\fBNote:\fR
-Currently XFree86-DGA support has not been integrated into the 
-display-X target.  To use DGA, see the older display-dga target.
-.RE
+\fB-inwin=<winid>|root\fR
+Run in already-existing window with id \fBwinid\fR.  This can be
+used to embed a LibGGI application into an X11 application.  The
+value should be an X11 window ID expressed as a "0x" prefixed
+hexadecimal number.  The special string "root" will cause the
+application to run in the root window of the selected screen (or
+the default screen if no explicit selection has been made.)  Note
+that in the root window, you may need to explictly select a LibGII
+input source using the \fBGGI_INPUT\fR environment variable as the
+window manager will absorb all events sent to the root window.
+Some features (currently frames and virtual areas) may not work in
+root windows.  On the other hand, when using the root window other
+features like direct framebuffer access and video hardware mode
+selection may be available which are not available when the
+application is running in a normal window.
 
 .TP
 \fB-novidmode\fR
@@ -157,19 +154,22 @@ Currently Vidmode support has not been completed.
 .RE
 
 .TP
-\fB-nodbe\fR
-Use of the X11 DBE extension to provide buffered frame support is
-disabled.
-.RS
-\fBNote:\fR
-Currently DBE extension support has not been completed.
-.RE
+\fB-physz==<sizex>,<sizey>[dpi]\fR
+This option will override the physical screen size reported by the
+X server, which affects applications which wish to remain
+resolution independent.  \fBsizex\fR,:p:\fBsizey\fR are the x,y size of
+the entire screen (not just the X window containing the visual) in
+millimeters, unless the optional \fBdpi\fR string is affixed, in
+which case, they represent resolution in dots-per-inch. Yes, there
+are two equals signs there, for reasons of compatibility with
+other targets.
 
 .TP
-\fB-noevi\fR
-Use of the X11 Extended Visual Information extension to identify
-visuals which are exclusively used for overlay/underlay is
-disabled.
+\fB-screen=<screenidx>\fR
+The screen to run on.  Normally the biggest/deepest screen
+compatible with the requested mode will be chosen; with this
+option only the screen specified by \fBscreenidx\fR will be
+considered.
 
 .PP
 .SH "CLIFF NOTES" ON NEW X TARGET

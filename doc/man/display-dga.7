@@ -4,7 +4,7 @@
 .SH SYNOPSIS
 .nb
 .nf
-display-dga: [-noinput] [-nocursor] [-physz==>sizex>,<sizey>[dpi]]
+display-dga: [-nocursor] [-noinput] [-physz==>sizex>,<sizey>[dpi]]
              [<display>]
 .fi
 
@@ -15,11 +15,9 @@ framebuffer support, the program must be run as root for this target
 to be able to mmap \fB/dev/mem\fR.
 .SH OPTIONS
 .TP
-\fB-noinput\fR
-XF86DGA events sent to the window are not captured and merged with
-any other LibGII input sources.  This allows one to take input
-from raw devices without receiving duplicate events should X also
-be configured to use the device.
+\fBdisplay\fR
+The X display to connect to, otherwise defaults to the display
+specified in \fBDISPLAY\fR.
 
 .TP
 \fB-nocursor\fR
@@ -31,6 +29,13 @@ this option, you will not see an X mouse cursor when it is over
 the visual.
 
 .TP
+\fB-noinput\fR
+XF86DGA events sent to the window are not captured and merged with
+any other LibGII input sources.  This allows one to take input
+from raw devices without receiving duplicate events should X also
+be configured to use the device.
+
+.TP
 \fB-physz==<sizex>,<sizey>[dpi]\fR
 This option will override the physical screen size reported by the
 X server, which affects applications which wish to remain
@@ -39,11 +44,6 @@ of the screen in millimeters, unless the optional \fBdpi\fR string
 is affixed, in which case, they represent resolution in
 dots-per-inch.  Yes, there are two equals signs there, for reasons
 of compatibility with other targets.
-
-.TP
-\fBdisplay\fR
-The X display to connect to, otherwise defaults to the display
-specified in \fBDISPLAY\fR.
 
 .PP
 .SH ENVIRONMENT VARIABLES

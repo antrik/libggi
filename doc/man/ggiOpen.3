@@ -14,7 +14,8 @@ int ggiClose(ggi_visual_t vis);
 .SH DESCRIPTION
 \fBggiOpen\fR opens a visual.  The visual is specified as a display
 string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
-display target is opened.  The other arguments are for internal
+display target is opened, which means first examining \fBGGI_DISPLAY\fR,
+then invoking \fBdisplay-auto(7)\fR.  The other arguments are for internal
 purposes only, such as \fBargptr\fR, used to pass driver-specific,
 non-textual information to the driver.
 
@@ -58,4 +59,4 @@ ggiClose(memvis);
 .fi
 
 .SH SEE ALSO
-\fBggiInit(3)\fR
+\fBdisplay-auto(7)\fR, \fBggiInit(3)\fR, \fBlibggi(7)\fR

@@ -14,6 +14,13 @@ producing identical output on multiple visuals.
 The argument to \fBdisplay-multi\fR is a colon- (\fB:\fR) separated list of
 target specs to draw on.  Because target specs can (and often do)
 contain colons, they need to be enclosed in parentheses.
+.TP
+\fBtarget-spec\fR
+Specifies the target which to draw on (the \fIparent\fR target).  This
+defaults to automatic selection (just like using
+\fBggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
+
+.PP
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer never supported.
