@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/05/04 13:46:35 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -448,7 +448,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-int GGIdl_ati_mach64(int func, void **funcptr)
+int GGIdl_mach64(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
