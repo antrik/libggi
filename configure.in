@@ -1,14 +1,16 @@
-dnl $Id: configure.in,v 1.140 2004/10/23 14:21:23 cegger Exp $
+dnl $Id: configure.in,v 1.141 2004/10/23 14:44:45 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.59])
+AC_PREREQ(2.59)
 
-AC_INIT(include/ggi/ggi.h)
+AC_INIT
+AC_CONFIG_SRCDIR([include/ggi/ggi.h])
 
 AM_INIT_AUTOMAKE(libggi,2.2.0,-)
 
 AM_MAINTAINER_MODE
-AM_DISABLE_STATIC
+_LT_SET_OPTION([disable-static])
+
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -110,9 +112,10 @@ AC_PROG_RANLIB
 dnl Make Objective-C work with automake 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)
 
-AC_LIBTOOL_DLOPEN
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+_LT_SET_OPTION([dlopen])
+_LT_SET_OPTION([win32-dll])
+
+LT_INIT()
 
 dnl ========================================================================
 dnl Generate libtool
@@ -342,7 +345,11 @@ AC_C_INLINE
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
-AC_STRUCT_ST_RDEV
+AC_CHECK_MEMBERS([struct stat.st_rdev],[AC_DEFINE(HAVE_ST_RDEV, 1,
+			    [Define to 1 if your `struct stat' has `st_rdev'.
+			     Deprecated, use `HAVE_STRUCT_STAT_ST_RDEV'
+			     instead.])])
+
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_TYPE_SIGNAL
@@ -355,16 +362,14 @@ dnl Define HAVE_SOCKLEN_T if found.
 if test "$ac_cv_header_sys_socket_h" = "yes"; then
 
 	AC_MSG_CHECKING([whether socklen_t is available])
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
 		#include <sys/socket.h>
 		#ifdef HAVE_SYS_UN_H
 		#include <sys/un.h>
-		#endif], [socklen_t len;],
-		[AC_MSG_RESULT(yes)
+		#endif]], [[socklen_t len;]])],[AC_MSG_RESULT(yes)
 		AC_DEFINE([HAVE_SOCKLEN_T], [1],
-			[Define if socklen_t type is supported.])],
-		[AC_MSG_RESULT(no)])
+			[Define if socklen_t type is supported.])],[AC_MSG_RESULT(no)])
 fi
 
 dnl ========================================================================
@@ -419,21 +424,17 @@ if test "x$do_noswar" = "xyes"; then
 fi
 
 AC_MSG_CHECKING(if LibGII build detected working int64)
-AC_TRY_CPP([
+AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
 #include <ggi/system.h>
 #ifdef GG_HAVE_INT64
 #else
 #error No 64-bit ints - this line makes compilation fail...
 #endif
-],
-
-dnl do test for do_64bitc == "build" here.
+]])],[dnl do test for do_64bitc == "build" here.
   if test "x$do_64bitc" = "xauto"; then
     do_64bitc="yes"
   fi
-  AC_MSG_RESULT(yes),
-
-  AC_MSG_RESULT(no)
+  AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
   if test "x$do_64bitc" = "xyes"; then
     AC_MSG_ERROR(Cannot build 64bit C SWAR against 32-bit LibGG)
   fi
@@ -445,7 +446,7 @@ dnl do test for do_64bitc == "build" here.
   fi
   do_64bitc="no"
   do_vis="no"
-  do_mvi="no")
+  do_mvi="no"])
 
 if test "x$do_64bitc" = "xyes"; then 
    AC_DEFINE([DO_SWAR_64BITC], [1],
@@ -571,14 +572,10 @@ AC_CHECK_LIB(socket, connect,
     SAVELIBS="$LIBS"
     AC_MSG_CHECKING([for connect in -lwsock32])
     LIBS="$LIBS -lwsock32"
-    AC_TRY_LINK(
-      [#include <winsock.h>],
-      [connect(0, NULL, 42);],
-      bsdsock_libs="$bsdsock_libs -lwsock32"
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <winsock.h>]], [[connect(0, NULL, 42);]])],[bsdsock_libs="$bsdsock_libs -lwsock32"
       ac_cv_func_connect=yes
-      AC_MSG_RESULT(yes),
-      AC_MSG_RESULT(no)
-    )
+      AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
+    ])
     LIBS="$SAVELIBS"
   )
 )
@@ -695,13 +692,11 @@ dnl includes (/usr/X11R6/include on most systems).
     then
 	if test "x$ac_cv_header_X11_extensions_xf86vmstr_h" != "xno"; then
 	AC_MSG_CHECKING(whether dga is working)
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <X11/Xlibint.h>
 #include <X11/extensions/xf86vmstr.h>
 #include <X11/extensions/Xext.h>
-	    ],[xXF86VidModeSetClientVersionReq *req;],
-	    [AC_MSG_RESULT(yes)],
-	    [AC_MSG_RESULT(no)
+	    ]], [[xXF86VidModeSetClientVersionReq *req;]])],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
 	    build_dga_target="no"])
 	fi
     fi
@@ -740,15 +735,14 @@ fi
 
 if test "x$build_fbdev_target" != "xno"; then
   AC_CHECK_HEADER(linux/fb.h,
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <linux/fb.h>
-],[
+]], [[
 struct fb_fix_screeninfo *fix;
 fix->accel = 0;
-],
-      AC_DEFINE([HAVE_NEW_FBDEV], [1],
-		[Define if struct fb_fix_screeninfo has an 'accel' member.])
-      have_new_fbdev=yes),
+]])],[AC_DEFINE(HAVE_NEW_FBDEV, 1,
+		Define if struct fb_fix_screeninfo has an 'accel' member.)
+      have_new_fbdev=yes],[]),
     build_fbdev_target="no")
 fi
 
@@ -767,23 +761,23 @@ if test "x$build_libkgi_driver" != "xno"; then
 fi
 
 if test "x$build_kgi_target" != "xno"; then
-   AC_TRY_COMPILE([
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include "kgi/config.h"
 #include <kgi/system.h>
 #include <kgi/kgi.h>
-   ],[
+   ]], [[
 kgi_u32_t i;
-   ], build_kgi_target="yes", build_kgi_target="no"
-   )
+   ]])],[build_kgi_target="yes"],[build_kgi_target="no"
+   ])
 fi
 
 if test "x$build_quartz_target" != "xno"; then
   AC_CHECK_HEADER(ApplicationServices/ApplicationServices.h,
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <ApplicationServices/ApplicationServices.h>
-],[
+]], [[
 CGDirectDisplayID id;
-], foo=bar), build_quartz_target="no")
+]])],[foo=bar],[]), build_quartz_target="no")
 fi
 
 if test "x$build_glide_target" != "xno"; then
@@ -889,13 +883,12 @@ dnl check for Unix domain sockets.
 dnl Define HAVE_UNIX_DOMAIN_SOCKET if found.
 AC_MSG_CHECKING(whether UNIX domain sockets are supported)
 AC_CACHE_VAL(ggi_cv_have_unix_domain_socket,
-[AC_TRY_COMPILE([
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
 #ifdef HAVE_SYS_UN_H
 #include <sys/un.h>
-#endif], [struct sockaddr_un unix_addr;],
-    ggi_cv_have_unix_domain_socket=yes, ggi_cv_have_unix_domain_socket=no)])
+#endif]], [[struct sockaddr_un unix_addr;]])],[ggi_cv_have_unix_domain_socket=yes],[ggi_cv_have_unix_domain_socket=no])])
 AC_MSG_RESULT($ggi_cv_have_unix_domain_socket)
 if test $ggi_cv_have_unix_domain_socket = yes ; then
   AC_DEFINE([HAVE_UNIX_DOMAIN_SOCKET], [1],
@@ -1322,7 +1315,7 @@ if test "x$use_debug" = "xyes"; then
   if test "x$ac_cv_prog_cc_g" = "xyes"; then
     CFLAGS="$CFLAGS -g"
   fi
-  if test "$ac_cv_prog_gcc" = "yes"; then
+  if test "$ac_cv_c_compiler_gnu" = "yes"; then
     # Common warning flags
     CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
@@ -1341,14 +1334,14 @@ if test "x$use_debug" = "xyes"; then
 fi
 
 dnl only a few gcc-compatible compilers support __PRETTY_FUNCTION__
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
-],[
+]], [[
 int main(void) {
   printf("Hello, %s !\n", __PRETTY_FUNCTION__);
   return 0;
 }
-], [], [CFLAGS="$CFLAGS -D__PRETTY_FUNCTION__=\\\"?\\\""])
+]])],[],[CFLAGS="$CFLAGS -D__PRETTY_FUNCTION__=\\\"?\\\""])
 
 # Check for darwin at the very end and set up the Objective C compiler
 # We do this here so that we get the full CFLAGS into OBJCFLAGS
@@ -1445,10 +1438,9 @@ AC_DEFINE_UNQUOTED([GGICONFFILE],"$ggi_conffile", [Name of LibGGI master config 
 AC_DEFINE_UNQUOTED([GGICONFDIR],"$PATHTAG$static_sysconfdir/$ggi_subdir",
 				[Tag plus path to config dir])
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
-AC_OUTPUT(
-Makefile
+AC_CONFIG_FILES([Makefile
 ggi/Makefile
 include/Makefile
 include/ggi/Makefile
@@ -1553,7 +1545,8 @@ display/libkgi/libkgi.conf
 dist/Makefile
 dist/rpm/Makefile
 dist/rpm/libggi.spec
-)
+])
+AC_OUTPUT
 
 dnl Removed dirs
 dnl display/suidkgi/Makefile
