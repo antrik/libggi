@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/06/04 11:41:14 pekberg Exp $
+/* $Id: visual.c,v 1.18 2004/09/04 06:11:19 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -329,7 +329,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 #ifdef HAVE_SHM
 	case MT_SHMKEYFILE:
 		if(MEMORY_PRIV(vis)->inputbuffer)
-			shmdt(MEMORY_PRIV(vis)->inputbuffer);
+			shmdt((void *)MEMORY_PRIV(vis)->inputbuffer);
 		else
 			shmdt(MEMORY_PRIV(vis)->memptr);
 #if !defined(HAVE_SYS_SHM_H)
@@ -339,7 +339,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		break;
 	case MT_SHMID:
 		if(MEMORY_PRIV(vis)->inputbuffer)
-			shmdt(MEMORY_PRIV(vis)->inputbuffer);
+			shmdt((void *)MEMORY_PRIV(vis)->inputbuffer);
 		else
 			shmdt(MEMORY_PRIV(vis)->memptr);
 	  	break;
