@@ -8,3 +8,5 @@ noinst_PROGRAMS = inputdump #ggicalibrate #tunemode
 inputdump_SOURCES = giik2str.c inputdump.c #ggicalibrate.c #tunemode.c
 
 inputdump_LDADD = ${top_builddir}/ggi/libggi.la -lgii
+
+EXTRA_DIST = giik2str.h
