@@ -1,0 +1,86 @@
+<refentry id="ggiSetDisplayFrame">
+
+<refmeta>
+<refentrytitle><function/ggiSetDisplayFrame/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiSetDisplayFrame/
+<refname/ggiSetWriteFrame/
+<refname/ggiSetReadFrame/
+<refname/ggiGetDisplayFrame/
+<refname/ggiGetWriteFrame/
+<refname/ggiGetReadFrame/
+<refpurpose>Set or get the current frame for display, writing and reading
+</refpurpose></refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+<funcprototype>
+<funcdef>int <function/ggiSetDisplayFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int <parameter/frameno/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiSetWriteFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int <parameter/frameno/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiSetReadFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int <parameter/frameno/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiGetDisplayFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiGetWriteFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiGetReadFrame/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>These functions are used for selecting or getting the current
+buffers, when using the <link linkend="frames">multiple buffering</link>
+function of LibGGI.
+</para>
+
+<para><function/ggiSetDisplayFrame/ sets the frame that gets displayed.  </para>
+<para>
+<function/ggiSetWriteFrame/ sets the frame for write operations such as
+<function/ggiPuts/ and <function/ggiHLine/.
+</para>
+<para>
+<function/ggiSetReadFrame/ sets the frame for read operations, like
+<function/ggiGetPixel/ and the <function/ggiCrossBlit/ source.
+</para>
+<para><function/ggiGetDisplayFrame/ reports the frame currently displayed.  </para>
+<para><function/ggiGetWriteFrame/ reports the frame currently written to.  </para>
+<para><function/ggiSetReadFrame/ reports the frame currently read from.</para>
+
+<para>
+Frames are numbered from 0 to the number of frames requested - 1.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>The <function/ggiSet*Frame/ functions return <ReturnValue/0/ if they
+succeed, and <ReturnValue><0</ReturnValue> if they fail.
+</para>
+<para>The <function/ggiGet*Frame/ functions never fail.
+</para>
+
+</refsect1>
+</refentry>
