@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.13 2003/07/06 13:41:09 cegger Exp $
+/* $Id: shm.c,v 1.14 2003/07/06 14:08:54 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -82,7 +82,7 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 			y = GGI_X_WRITE_Y;
 		} /* else it's a non-translated exposure event. */
 		XShmPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage,
-			  x, y, x, y, w, h, 0);
+			  x, y, x, y, (unsigned)w, (unsigned)h, 0);
 	} else {
 		/* Just flush the intersection with the dirty region */
 		int x2, y2;
@@ -103,7 +103,8 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 		if ((w <= 0) || (h <= 0)) goto clean;
 
 		XShmPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage,
-			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y, w, h, 0);
+			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y,
+			  (unsigned)w, (unsigned)h, 0);
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
 
@@ -180,18 +181,18 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	myshminfo = priv->priv;
 
 	priv->ximage = XShmCreateImage(priv->disp,
-				       priv->vilist[priv->viidx].vi->visual, 
-				       priv->vilist[priv->viidx].vi->depth,
-				       ZPixmap,		/* format */
-				       NULL,		/* data */
-				       myshminfo,	/* shm object */
-				       LIBGGI_VIRTX(vis), 
-				       LIBGGI_VIRTY(vis) * vis->mode->frames);
+				priv->vilist[priv->viidx].vi->visual, 
+				(unsigned)priv->vilist[priv->viidx].vi->depth,
+				ZPixmap,		/* format */
+				NULL,		/* data */
+				myshminfo,	/* shm object */
+				(unsigned)LIBGGI_VIRTX(vis), 
+				(unsigned)(LIBGGI_VIRTY(vis) * vis->mode->frames));
 
 	myshminfo->shmid = 
 		shmget(IPC_PRIVATE,
-		       priv->ximage->bytes_per_line * 
-		       LIBGGI_VIRTY(vis) * vis->mode->frames,
+		       (unsigned)(priv->ximage->bytes_per_line * 
+		       LIBGGI_VIRTY(vis) * vis->mode->frames),
 		       IPC_CREAT | 0777);
 	
 	priv->fb = myshminfo->shmaddr = priv->ximage->data =
