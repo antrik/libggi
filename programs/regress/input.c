@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.2 2004/08/08 20:55:15 cegger Exp $
+/* $Id: input.c,v 1.3 2004/08/08 21:01:55 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -26,6 +26,32 @@
 ggi_visual_t vis;
 ggi_mode mode;
 gii_input_t inp;
+
+
+static int precase(void)
+{
+	if (dontrun) return 0;
+
+	ggiInit();
+
+	vis = ggiOpen(NULL);
+
+	ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
+
+	ggiSetMode(vis, &mode);
+
+	return 0;
+}
+
+static int postcase(void)
+{
+	if (dontrun) return 0;
+
+	ggiClose(vis);
+	ggiExit();
+
+	return 0;
+}
 
 
 static void testcase1(const char *desc)
@@ -68,22 +94,19 @@ static void testcase2(const char *desc)
 
 int main(int argc, char * const argv[])
 {
+	int rc;
+
 	parseopts(argc, argv);
 	printdesc("Regression testsuite visual <-> input association\n\n");
 
-	ggiInit();
-
-	vis = ggiOpen(NULL);
-
-	ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
-
-	ggiSetMode(vis, &mode);
+	rc = precase();
+	if (rc != 0) exit(rc);
 
 	testcase1("Check that input detaches from visual correctly.");
 	testcase2("Check that input attaches to visual correctly.");
 
-	ggiClose(vis);
-	ggiExit();
+	rc = postcase();
+	if (rc != 0) exit(rc);
 
 	printsummary();
 
