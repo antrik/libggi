@@ -126,8 +126,8 @@ dfb_layers_add( DisplayLayer *layer )
 
 
 DFBResult dfb_surface_create(int width, int height, 
-			     DFBSurfacePixelFormat format,
-			     CoreSurfacePolicy policy,
+			     int format,
+			     int policy,
 			     DFBSurfaceCapabilities caps, 
 			     CoreSurface **surface
 			     )
