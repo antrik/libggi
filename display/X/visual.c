@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2003/07/06 10:25:21 cegger Exp $
+/* $Id: visual.c,v 1.23 2003/11/09 13:24:18 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -41,6 +41,7 @@ static const gg_option optlist[] =
 {
 	{ "screen", "no" },
 	{ "inwin",  "no" },
+	{ "fullscreen", "no" },
 	{ "noinput", "no" },
 	{ "nocursor", "no" },
 	{ "noshm", "no"},
@@ -56,17 +57,18 @@ static const gg_option optlist[] =
 
 #define OPT_SCREEN	0
 #define OPT_INWIN	1
-#define OPT_NOINPUT	2
-#define OPT_NOCURSOR	3
-#define OPT_NOSHM	4
-#define OPT_NODBE	5
-#define OPT_NODGA	6
-#define OPT_NOVIDMODE	7
-#define OPT_NOACCEL	8
-#define OPT_NOMANSYNC	9
-#define OPT_NOBUFFER	10
-#define OPT_PHYSZ	11
-#define OPT_KEEPCURSOR	12
+#define OPT_FULLSCREEN	2
+#define OPT_NOINPUT	3
+#define OPT_NOCURSOR	4
+#define OPT_NOSHM	5
+#define OPT_NODBE	6
+#define OPT_NODGA	7
+#define OPT_NOVIDMODE	8
+#define OPT_NOACCEL	9
+#define OPT_NOMANSYNC	10
+#define OPT_NOBUFFER	11
+#define OPT_PHYSZ	12
+#define OPT_KEEPCURSOR	13
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -285,14 +287,23 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (tmp1) {							\
 		GGIDPRINT_MISC("%s X extension found\n", tmpstr);	\
 		priv->use_Xext |= flag;					\
-	}								\
-	else GGIDPRINT_MISC("no %s extension\n", tmpstr)
+	} else {							\
+		GGIDPRINT_MISC("no %s extension\n", tmpstr);		\
+	}
 	
 	GGI_X_CHECK_XEXT("Extended-Visual-Information",	GGI_X_USE_EVI);
 	GGI_X_CHECK_XEXT("MIT-SHM",			GGI_X_USE_SHM);
 	GGI_X_CHECK_XEXT("DOUBLE-BUFFER",		GGI_X_USE_DBE);
 	GGI_X_CHECK_XEXT("XFree86-DGA",			GGI_X_USE_DGA);
 	GGI_X_CHECK_XEXT("XFree86-VidModeExtension",	GGI_X_USE_VIDMODE);
+
+	if (options[OPT_FULLSCREEN].result[0] == 'n') {
+		priv->use_Xext &= ~GGI_X_USE_DGA;
+		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
+	} else {
+		/* Turn off inwin option, when we go to fullscreen */
+		options[OPT_INWIN].result[0] = 'n';
+	}
 
 	/* Turn off extensions which the user does not want */
 	if (options[OPT_NOSHM].result[0] != 'n') 
