@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.36 2005/01/13 22:46:50 cegger Exp $
+/* $Id: init.c,v 1.37 2005/01/13 23:15:39 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -88,31 +88,12 @@ int ggiInit(void)
 	err = _ggiSwarInit();
 	if (err) return err;
 
-	err = giiInit();
-	if (err) {
-		fprintf(stderr, "LibGGI: unable to initialize LibGII\n");
-		return err;
-	}
-
 	err = ggiExtensionInit();
 	if (err) {
 		fprintf(stderr, "LibGGI: unable to initialize extension manager\n");
-		return err;
+		goto err0;
 	}
 
-	if ((_ggiVisuals.mutex = ggLockCreate()) == NULL) {
-		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
-		giiExit();
-		_ggiLibIsUp--;
-		return GGI_EUNKNOWN;
-	}
-	if ((_ggi_global_lock = ggLockCreate()) == NULL) {
-		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
-		ggLockDestroy(_ggiVisuals.mutex);
-		giiExit();
-		_ggiLibIsUp--;
-		return GGI_EUNKNOWN;
-	}
 	_ggiVisuals.visuals = 0;
 	GG_SLIST_INIT(&_ggiVisuals.visual);
 
@@ -120,7 +101,7 @@ int ggiInit(void)
 	if (str != NULL) {
 		_ggiDebug |= DEBUG_SYNC;
 	}
-	
+
 	str = getenv("GGI_DEBUG");
 	if (str != NULL) {
 		_ggiDebug |= atoi(str) & DEBUG_ALL;
@@ -128,37 +109,64 @@ int ggiInit(void)
 				DEBUG_ISSYNC ? "sync" : "async",
 				_ggiDebug);
 	}
-	
+
 	str = getenv("GGI_DEFMODE");
 	if (str != NULL) {
 		_ggiSetDefaultMode(str);
 	}
 
+	err = giiInit();
+	if (err) {
+		fprintf(stderr, "LibGGI: unable to initialize LibGII\n");
+		goto err1;
+	}
+
+	_ggiVisuals.mutex = ggLockCreate();
+	if (_ggiVisuals.mutex == NULL) {
+		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
+		err = GGI_EUNKNOWN;
+		goto err2;
+	}
+	_ggi_global_lock = ggLockCreate();
+	if (_ggi_global_lock == NULL) {
+		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
+		err = GGI_EUNKNOWN;
+		goto err3;
+	}
+
+
 	confdir = ggiGetConfDir();
 	conffile = malloc(strlen(confdir) + 1 + strlen(GGICONFFILE)+1);
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
-	} else {
-#ifdef HAVE_SNPRINTF
-		snprintf(conffile, strlen(confdir) + strlen(GGICONFFILE) + 2,
-			"%s/%s", confdir, GGICONFFILE);
-#else
-		sprintf(conffile, "%s/%s", confdir, GGICONFFILE);
-#endif
-		err = ggLoadConfig(conffile, &_ggiConfigHandle);
-		if (err == GGI_OK) {
-			free(conffile);
-			return GGI_OK;
-		}
-		fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
-		free(conffile);
+		err = GGI_ENOMEM;
+		goto err4;
 	}
 
-	ggLockDestroy(_ggiVisuals.mutex);
+	/* Note, sprintf() is safe here since conffile is dynamically
+	 * allocated
+	 */
+	sprintf(conffile, "%s/%s", confdir, GGICONFFILE);
+
+	err = ggLoadConfig(conffile, &_ggiConfigHandle);
+	free(conffile);
+	if (err == GGI_OK) {
+		DPRINT_CORE("ggiInit() successfull\n");
+		return GGI_OK;
+	}
+	fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
+
+
+err4:
 	ggLockDestroy(_ggi_global_lock);
+err3:
+	ggLockDestroy(_ggiVisuals.mutex);
+err2:
 	giiExit();
 	_ggiLibIsUp--;
-
+err1:
+	ggiExtensionExit();
+err0:
 	return err;
 }
 
