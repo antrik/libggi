@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.14 2005/02/10 04:55:20 orzo Exp $
+/* $Id: box.c,v 1.15 2005/02/10 18:49:54 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -148,6 +148,7 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 
 #warning 1,2,4-bit support needed.
 	ximg = _ggi_x_create_ximage( vis, (char*)data, w, h );
+	if (ximg == NULL) return GGI_ENOMEM;
 
 	y = GGI_X_WRITE_Y;
 
