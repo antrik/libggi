@@ -1,4 +1,4 @@
-/* $Id: debug.h,v 1.1 2001/05/12 23:03:25 cegger Exp $
+/* $Id: debug.h,v 1.2 2002/10/09 21:53:55 cegger Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -73,14 +73,14 @@ __END_DECLS
 #define GGIDPRINT_LIBS(args...)   if (_ggiDebugState & GGIDEBUG_LIBS) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
 #define GGIDPRINT_EVENTS(args...) if (_ggiDebugState & GGIDEBUG_EVENTS) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
 #else /* DEBUG */
-#define GGIDPRINT(form,args...)		do{}while(0)
-#define GGIDPRINT_CORE(form,args...)	do{}while(0)
-#define GGIDPRINT_MODE(form,args...)	do{}while(0)
-#define GGIDPRINT_COLOR(form,args...)	do{}while(0)
-#define GGIDPRINT_DRAW(form,args...)	do{}while(0)
-#define GGIDPRINT_MISC(form,args...)	do{}while(0)
-#define GGIDPRINT_LIBS(form,args...)	do{}while(0)
-#define GGIDPRINT_EVENTS(form,args...)	do{}while(0)
+#define GGIDPRINT(args...)		do{}while(0)
+#define GGIDPRINT_CORE(args...)		do{}while(0)
+#define GGIDPRINT_MODE(args...)		do{}while(0)
+#define GGIDPRINT_COLOR(args...)	do{}while(0)
+#define GGIDPRINT_DRAW(args...)		do{}while(0)
+#define GGIDPRINT_MISC(args...)		do{}while(0)
+#define GGIDPRINT_LIBS(args...)		do{}while(0)
+#define GGIDPRINT_EVENTS(args...)	do{}while(0)
 #endif /* DEBUG */
 
 #else /* __GNUC__ */
