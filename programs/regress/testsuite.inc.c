@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.3 2004/08/26 11:20:53 cegger Exp $
+/* $Id: testsuite.inc.c,v 1.4 2004/09/14 08:27:19 pekberg Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -67,6 +67,18 @@ static void printdesc(const char *desc)
 static void printteststart(const char *file, const char *funcname,
 		int expected, const char *description)
 {
+	const char *fp;
+	int upcount = 0;
+	while (strncmp("../", file, 3) == 0) {
+		file += 3;
+		++upcount;
+	}
+	while (--upcount > 0) {
+		fp = strchr(file, '/');
+		if (!fp)
+			break;
+		file = fp + 1;
+	}
 	if (verbose) {
 		printf("%s: %s: %s\n", file, funcname, description);
 	}
