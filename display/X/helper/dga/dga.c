@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.10 2005/02/07 19:25:09 cegger Exp $
+/* $Id: dga.c,v 1.11 2005/02/09 06:28:43 orzo Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -6,6 +6,7 @@
    Copyright (C) 1997-1998 Steve Cheng		[steve@ggi-project.org]
    Copyright (C) 1999-2000 Marcus Sundberg	[marcus@ggi-project.org]
    Copyright (C) 2002      Brian S. Julin	[bri@tull.umassp.edu]
+   Copyright (C) 2005      Joseph Crayne	[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -111,9 +112,9 @@ static int ggi_xdga_enter_mode(ggi_visual *vis, int num) {
 	XDGAMode *modes;
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	int screen = priv->vilist[priv->viidx].vi->screen;
-	Window child_return;
-	Window root;
-	int x, y;
+	/* Window child_return; */
+	/* Window root; */
+	/* int x, y; */
 
 
 	dev = priv->priv;
@@ -267,13 +268,12 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode)
 
 			/* Let the checkmode API decide if its the best so 
 			 * far. */
-			_GGI_generic_checkmode_update( cm, mode,
-					       (void *)i );
+			_GGI_generic_checkmode_update( cm, mode, i );
 			no_modes = 0; /* false, we have a mode now */
 		}
 	}
 
-	err = _GGI_generic_checkmode_finish( cm, mode, (void**)&i );
+	err = _GGI_generic_checkmode_finish( cm, mode, &i );
 	_GGI_generic_checkmode_destroy(cm);
 
 	if( no_modes ) return GGI_ENOMATCH;
