@@ -12,3 +12,6 @@ linear_4_r_la_SOURCES = color.c copybox.c hline.c pixel.c pixela.c visual.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin4rlib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

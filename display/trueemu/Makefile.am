@@ -12,3 +12,6 @@ trueemu_la_SOURCES = blit24.c blit32.c frames.c mode.c stubs.c trueemu.c \
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS genblit.c
+
+MAINTAINERCLEANFILES = Makefile.in
+

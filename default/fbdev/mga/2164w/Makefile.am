@@ -12,3 +12,6 @@ m2164w_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/mga
 
 EXTRA_DIST = EXPSYMS m2164w.h mmio.h regs.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

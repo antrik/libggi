@@ -14,3 +14,6 @@ kgilibconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 kgilibconf_DATA = libkgi.conf
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

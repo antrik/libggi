@@ -11,3 +11,6 @@ vgl_la_SOURCES = draw.c mode.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

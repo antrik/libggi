@@ -1,3 +1,6 @@
 SUBDIRS = ATI Matrox
 
 DIST_SUBDIRS = ATI Matrox
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -10,3 +10,6 @@ pseudo_stubs_la_SOURCES = visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

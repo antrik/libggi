@@ -10,3 +10,6 @@ EXTRA_monitest_SOURCES = kgitune.c
 
 EXTRA_DIST = drawlib.h ggicolors.h ggitext.h kgitune.h menu.h monitest.h \
 	window.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -11,3 +11,6 @@ glide_la_SOURCES = box.c fb.c gtext.c line.c mode.c pixel.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

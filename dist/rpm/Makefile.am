@@ -13,3 +13,5 @@ dist-hook: $(DIST_GENERATED)
 		cp $$f $(distdir) || exit 1 ; \
 	done
 
+MAINTAINERCLEANFILES = Makefile.in
+

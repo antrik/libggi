@@ -11,3 +11,6 @@ palemu_la_SOURCES = color.c draw.c frames.c mode.c palemu.c text.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -16,3 +16,6 @@ auto_la_SOURCES = probe.c visual.c $(os_src) $(target_src)
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST += EXPSYMS target/target.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -12,3 +12,6 @@ helper_x_dbe_la_SOURCES = dbe.c
 sublibdir = $(libdir)/$(ggi_subdir)/helper
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

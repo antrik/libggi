@@ -13,3 +13,6 @@ linvtsw_la_SOURCES = visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

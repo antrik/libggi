@@ -11,3 +11,6 @@ aa_la_SOURCES = color.c giievents.c mode.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

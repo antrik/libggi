@@ -10,3 +10,6 @@ libggi_la_LDFLAGS = $(extra_libraries) -version-info 2:2:0 -no-undefined \
 	-export-symbols $(srcdir)/EXPSYMS
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -11,3 +11,6 @@ lcd823_la_SOURCES = visual.c mode.c color.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

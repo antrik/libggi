@@ -8,3 +8,6 @@ man_MANS =
 noinst_PROGRAMS = mansync
 
 EXTRA_DIST = $(man_MANS)
+
+MAINTAINERCLEANFILES = Makefile.in
+

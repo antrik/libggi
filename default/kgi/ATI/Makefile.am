@@ -1,3 +1,6 @@
 SUBDIRS = Mach64 Radeon
 
 DIST_SUBDIRS = Mach64 Radeon
+
+MAINTAINERCLEANFILES = Makefile.in
+

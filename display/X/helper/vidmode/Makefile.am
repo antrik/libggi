@@ -12,3 +12,6 @@ helper_x_vidmode_la_SOURCES = vidmode.c
 sublibdir = $(libdir)/$(ggi_subdir)/helper
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -12,3 +12,6 @@ stubs_la_SOURCES = box.c copybox.c crossblit.c fillscreen.c gtext.c hline.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS stublib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

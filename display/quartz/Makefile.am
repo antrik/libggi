@@ -13,5 +13,8 @@ quartz_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+
 AM_CPPFLAGS = -no-cpp-precomp -I/System/Library/Frameworks -DDEBUG_NAMESPACE='"libggi.display.quartz"'
 

@@ -23,3 +23,6 @@ cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 
 EXTRA_DIST = cube3d.txt demo.txt banner.inc.c
+
+MAINTAINERCLEANFILES = Makefile.in
+

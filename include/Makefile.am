@@ -1,1 +1,4 @@
 SUBDIRS = ggi
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -10,3 +10,6 @@ noinst_PROGRAMS = checkmode showaccel findleaks \
 showaccel_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 
 EXTRA_DIST = speed.sh
+
+MAINTAINERCLEANFILES = Makefile.in
+

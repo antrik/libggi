@@ -12,3 +12,6 @@ directx_la_SOURCES = ddinit.c mode.c visual.c dxguid.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS ddinit.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

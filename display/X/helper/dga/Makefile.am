@@ -12,3 +12,6 @@ helper_x_dga_la_SOURCES = dga.c
 sublibdir = $(libdir)/$(ggi_subdir)/helper
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

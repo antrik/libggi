@@ -7,3 +7,6 @@ ggiinclude_HEADERS = auto.h \
 	ipc.h memory.h tele.h file.h \
 	aa.h monotext.h vcsa.h \
 	directx.h quartz.h vgl.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

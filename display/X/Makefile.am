@@ -15,3 +15,6 @@ X_la_SOURCES = pixel.c hline.c vline.c box.c line.c fillscreen.c gtext.c \
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

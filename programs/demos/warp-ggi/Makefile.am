@@ -6,3 +6,6 @@ noinst_PROGRAMS = warp
 warp_SOURCES = color.c dowarp.c main.c readpcx.c readtga.c
 
 EXTRA_DIST = rawpict.h warp.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

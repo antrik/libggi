@@ -12,3 +12,6 @@ helper_x_evi_la_SOURCES = evi.c
 sublibdir = $(libdir)/$(ggi_subdir)/helper
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

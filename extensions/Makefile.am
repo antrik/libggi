@@ -1,1 +1,4 @@
 SUBDIRS = test
+
+MAINTAINERCLEANFILES = Makefile.in
+

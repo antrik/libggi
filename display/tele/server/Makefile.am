@@ -17,3 +17,7 @@ ${top_builddir}/display/tele/server/libtele.c: ${top_builddir}/display/tele/serv
 ${top_builddir}/display/tele/server/libtele.h:
 	rm -f ${top_builddir}/display/tele/server/libtele.h
 	ln -s ${top_srcdir}/display/tele/libtele.h ${top_builddir}/display/tele/server/libtele.h
+
+CLEANFILES = libtele.c libtele.h
+MAINTAINERCLEANFILES = Makefile.in
+

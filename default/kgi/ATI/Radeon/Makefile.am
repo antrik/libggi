@@ -11,3 +11,6 @@ radeon_la_SOURCES = visual.c box.c line.c gc.c gtext.c crossblit.c
 sublibdir = $(libdir)/$(ggi_subdir)/default/kgi
 
 EXTRA_DIST = EXPSYMS radeon_accel.h radeon_cce.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -20,3 +20,6 @@ EXTRA_xf86dga_la_SOURCES = XF86DGA.c XF86VMode.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS extutil.h xf86dga.h xf86dgastr.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -12,3 +12,6 @@ helper_x_shm_la_SOURCES = shm.c
 sublibdir = $(libdir)/$(ggi_subdir)/helper
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -12,3 +12,6 @@ mach64_la_SOURCES = box.c copybox.c crossblit.c gc.c gtext.c hline.c line.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/ati
 
 EXTRA_DIST = EXPSYMS mach64.h ati_mach64.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

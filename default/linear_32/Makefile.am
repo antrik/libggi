@@ -12,3 +12,6 @@ linear_32_la_SOURCES = box.c copybox.c crossblit.c hline.c line.c pixel.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin32lib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

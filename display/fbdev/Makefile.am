@@ -14,3 +14,6 @@ fbdevconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 fbdevconf_DATA = fbdev.conf
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

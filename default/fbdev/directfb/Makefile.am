@@ -22,3 +22,6 @@ sublibdir = $(libdir)/ggi/default/fbdev/directfb
 EXTRA_DIST = EXPSYMS EXPSYMS.global ggidirectfb.h
 
 DIST_SUBDIRS = core
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -11,3 +11,6 @@ color_la_SOURCES = color.c pack.c gamma.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS color.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

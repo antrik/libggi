@@ -15,3 +15,6 @@ kgiconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 kgiconf_DATA = kgi.conf
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

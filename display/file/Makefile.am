@@ -11,3 +11,6 @@ file_la_SOURCES = fileio.c mode.c ppm.c visual.c
 sublibdir = $(libdir)/ggi/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+

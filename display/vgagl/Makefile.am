@@ -11,3 +11,6 @@ vgagl_la_SOURCES = box.c fillscreen.c hline.c pixel.c visual.c vline.c
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS vgaglvis.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

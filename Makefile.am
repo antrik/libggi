@@ -8,6 +8,8 @@ ggiconfdata_DATA = libggi.conf
 noinst_PROGRAMS = patchlib
 
 DISTCLEANFILES = libggi.conf
+MAINTAINERCLEANFILES = Makefile.in acinclude.m4 aclocal.m4 config.h.in \
+	configure genlibtool
 
 EXTRA_DIST = ChangeLog.1999 ChangeLog FAQ INSTALL.autoconf \
 	autogen.sh checkversion.sh genlibtool genlibtool.in

@@ -11,3 +11,6 @@ planar_la_SOURCES = pixel.c pixela.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS pllib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -155,3 +155,6 @@ man_MANS = \
            divmod_3.3
 
 EXTRA_DIST = $(man_MANS)
+
+MAINTAINERCLEANFILES = Makefile.in
+

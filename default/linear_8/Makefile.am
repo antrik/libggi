@@ -12,3 +12,6 @@ linear_8_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin8lib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

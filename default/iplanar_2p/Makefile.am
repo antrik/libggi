@@ -11,3 +11,6 @@ iplanar_2p_la_SOURCES = pixel.c pixela.c visual.c
 sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS ipl2lib.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

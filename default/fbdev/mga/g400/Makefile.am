@@ -12,3 +12,6 @@ mga_g400_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/mga
 
 EXTRA_DIST = EXPSYMS mga_g400.h mmio.h regs.h
+
+MAINTAINERCLEANFILES = Makefile.in
+

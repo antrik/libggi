@@ -12,3 +12,6 @@ svgalib_la_SOURCES = box.c color.c frames.c hline.c mode.c pixel.c visual.c \
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
+
+MAINTAINERCLEANFILES = Makefile.in
+
