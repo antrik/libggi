@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.25 2004/10/31 14:24:52 cegger Exp $
+/* $Id: misc.c,v 1.26 2004/11/14 19:38:30 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -195,11 +195,11 @@ ggi_graphtype _ggi_x_scheme_vs_class(ggi_graphtype gt, ggi_x_vi *vi) {
 	ggi_graphtype size, depth;
 
 	if (!vi) {
-		fprintf(stderr, "vi == %p\n", vi);
+		fprintf(stderr, "vi == %p\n", (void *)vi);
 		return GT_INVALID;
 	}	/* if */
 	if (!vi->vi) {
-		fprintf(stderr, "vi->vi == %p\n", vi->vi);
+		fprintf(stderr, "vi->vi == %p\n", (void *)vi->vi);
 		return GT_INVALID;
 	}	/* if */
 	if (!vi->vi->depth) {
