@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/02/15 21:19:40 cegger Exp $
+/* $Id: visual.c,v 1.5 2003/02/15 22:15:26 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -34,6 +34,7 @@ static int usagecounter = 0;
 
 static int do_cleanup(ggi_visual *vis)
 {
+	int rc = 0;
 	wsfb_priv *priv = WSFB_PRIV(vis);
 
 	GGIDPRINT("do_cleanup\n");
@@ -41,35 +42,39 @@ static int do_cleanup(ggi_visual *vis)
 	if (vis->input != NULL) {
 		giiClose(vis->input);
 		vis->input = NULL;
-	}
+	}	/* if */
 
 	if (priv->availmodes != NULL) {
 		free(priv->availmodes);
-	}
+	}	/* if */
 
-	if (priv->origmode == 0) {
-		priv->mode = WSDISPLAYIO_MODE_EMUL;
-		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
-			GGIDPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
+	if (priv->fd >= 0) {
+		if (priv->origmode == 0) {
+			priv->mode = WSDISPLAYIO_MODE_EMUL;
+			rc = ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode);
+			if (rc == -1) {
+				GGIDPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
+					priv->devname, strerror(errno));
+			}	/* if */
+		}	/* if */
+
+		munmap(priv->base, priv->mapsize);
+		rc = ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->ocmap);
+		if (rc < 0) {
+			GGIDPRINT("ioctl WSDISPLAYIO_PUTCMAP error: %s %s\n",
 				priv->devname, strerror(errno));
-		}
-	}
-
-	munmap(priv->base, priv->mapsize);
-	if(ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->ocmap) < 0) {
-		GGIDPRINT("ioctl WSDISPLAYIO_PUTCMAP error: %s %s\n",
-			priv->devname, strerror(errno));
-	}
-	close(priv->fd);
+		}	/* if */
+		close(priv->fd);
+	}	/* if */
 
 	free(LIBGGI_GC(vis));
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
-	
+
 	usagecounter--;
 
 	return 0;
-}
+}	/* do_cleanup */
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -93,7 +98,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 	ggCleanupForceExit();
-    
+
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
 		usagecounter--;
@@ -112,10 +117,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->devname = strdup("/dev/ttyC0");
 
 	priv->fd = open(priv->devname, O_RDWR);
-
 	if (priv->fd < 0) {
 		GGIDPRINT("fd open error: %s %s\n",
 			priv->devname, strerror(errno));
+		error = GGI_ENODEVICE;
 		goto error;
 	}
 
@@ -123,11 +128,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (ioctl(priv->fd, WSDISPLAYIO_GINFO, &priv->info) == -1) {
 		GGIDPRINT("ioctl WSDISPLAYIO_GINFO error: %s %s\n",
 			priv->devname, strerror(errno));
+		error = GGI_ENODEVICE;
 		goto error;
 	}
 	if (ioctl(priv->fd, WSDISPLAYIO_GTYPE, &priv->wstype) == -1) {
 		GGIDPRINT("ioctl WSDISPLAYIO_GTYPE error: %s %s\n",
 			priv->devname, strerror(errno));
+		error = GGI_ENODEVICE;
 		goto error;
 	}
 
@@ -137,6 +144,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (ioctl(priv->fd, WSDISPLAYIO_LINEBYTES, &priv->linebytes) == -1) {
 		GGIDPRINT("ioctl WSDISPLAYIO_LINEBYTES error: %s %s\n",
 			priv->devname, strerror(errno));
+		error = GGI_ENODEVICE;
 		goto error;
 	}
 #endif
@@ -147,6 +155,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (ioctl(priv->fd, WSDISPLAYIO_GMODE, &priv->origmode) == -1) {
 		GGIDPRINT("ioctl WSDISPLAYIO_GMODE ERROR: %s %s\n",
 			priv->devname, strerror(errno));
+		error = GGI_ENODEVICE;
 		goto error;
 	}
 
@@ -157,6 +166,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
 			GGIDPRINT("ioctl WSDISPLAYIO_SMODE ERROR: %s %s\n",
 				priv->devname, strerror(errno));
+			error = GGI_ENODEVICE;
 			goto error;
 		}
 	}
