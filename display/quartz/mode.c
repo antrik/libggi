@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2004/12/27 20:50:33 cegger Exp $
+/* $Id: mode.c,v 1.2 2004/12/28 15:45:30 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -82,7 +82,7 @@ static int _ggi_quartz_load_mode_libs(ggi_visual *vis)
 			sugname, args);
 			return err;
 		} else {
-			DPRINT_LIBS("GGIsetmode: success in loading "
+			DPRINT_LIBS("GGI_quartz_setmode: success in loading "
 				"%s (%s)\n", sugname, args);
 		}
 	}
@@ -110,7 +110,7 @@ static int _ggi_load_slaveops(ggi_visual *vis)
 	ggi_quartz_priv *priv;
 	priv = QUARTZ_PRIV(vis);
 
-	DPRINT("load slave ops");
+	DPRINT_MODE("load slave ops");
 	LIB_ASSERT(priv->memvis != NULL, "there is no backbuffer\n");
 
 	vis->opcolor->mapcolor = priv->memvis->opcolor->mapcolor;
@@ -191,11 +191,11 @@ static void _GGIallocdbs(ggi_visual *vis)
 	/* We assume, LIBGGI_MODE(vis) structure has already been filled */
 	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
-	DPRINT("_GGIallocdbs: allocate %lu bytes for framebuffer\n",
+	DPRINT_MODE("_GGIallocdbs: allocate %lu bytes for framebuffer\n",
 		(unsigned long)priv->fb_size);
 	priv->fb = malloc(priv->fb_size);
 	if (priv->fb == NULL) {
-		DPRINT("_GGIallocdbs: framebuffer allocation failed\n");
+		DPRINT_MODE("_GGIallocdbs: framebuffer allocation failed\n");
 		goto err0;
 	}
 
@@ -223,15 +223,15 @@ static void _GGIallocdbs(ggi_visual *vis)
 #endif
 
 #if 0
-	DPRINT("_GGIallocdbs: open memory target (%s) with pre-allocated buffer\n",
+	DPRINT_MODE("_GGIallocdbs: open memory target (%s) with pre-allocated buffer\n",
 		target);
 	priv->memvis = ggiOpen(target, priv->fb);
 	if (priv->memvis == NULL) {
-		DPRINT("_GGIallocdbs: opening memory visual for backbuffer failed\n");
+		DPRINT_MODE("_GGIallocdbs: opening memory visual for backbuffer failed\n");
 		goto err1;
 	}
 
-	DPRINT("Set mode for backbuffer\n");
+	DPRINT_MODE("Set mode for backbuffer\n");
 	if (ggiSetMode(priv->memvis, &tm) < 0) {
 		goto err2;
 	}
@@ -521,7 +521,7 @@ static void _create_menu(ggi_visual *vis)
 {
 	MenuRef windMenu;
 
-	DPRINT_MISC("Create Menu\n");
+	DPRINT_MODE("Create Menu\n");
 
 	/* Clear Menu Bar */
 	ClearMenuBar();
@@ -549,7 +549,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 
 	_GGIfreedbs(vis);
 
-	DPRINT("GGI_quartz_setmode_windowed: framebuffer size = GT_ByPPP(%i * %i * %i, %i)\n",
+	DPRINT_MODE("GGI_quartz_setmode_windowed: framebuffer size = GT_ByPPP(%i * %i * %i, %i)\n",
 		mode->visible.x, mode->visible.y, mode->frames, GT_SIZE(mode->graphtype));
 	priv->fb_size = GT_ByPPP(mode->visible.x * mode->visible.y * mode->frames,
 				mode->graphtype);
@@ -557,7 +557,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 
 	if (priv->theWindow != NULL) {
 		/* Happens when we re-set the mode */
-		DPRINT_MISC("Re-Set the window\n");
+		DPRINT_MODE("Re-Set the window\n");
 		HideWindow(priv->theWindow);
 		ChangeWindowAttributes(priv->theWindow,
 			~priv->windowAttrs, priv->windowAttrs);
@@ -568,7 +568,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 		_create_menu(vis);
 #endif
 
-		DPRINT_MISC("Create the window\n");
+		DPRINT_MODE("Create the window\n");
 		CreateNewWindow(kDocumentWindowClass, priv->windowAttrs,
 				&priv->winRect, &priv->theWindow);
 		if (priv->theWindow == NULL) {
@@ -589,12 +589,12 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 
 		if (priv->inp == NULL) {
 			/* Install event handler */
-			DPRINT("Install event handler\n");
+			DPRINT_MODE("Do not install event handler\n");
 		} else {
 			gii_event ev;
 			gii_quartz_cmddata_setparam data;
 
-			fprintf(stderr, "update input-quartz\n");
+			DPRINT_MODE("update input-quartz event handler\n");
 			data.theWindow = priv->theWindow;
 
 			ev.cmd.size = sizeof(gii_cmd_event);
@@ -611,7 +611,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 		}
 	}
 
-	DPRINT_MISC("Show the window\n");
+	DPRINT_MODE("Show the window\n");
 	SetThemeWindowBackground(priv->theWindow, kThemeBrushModelessDialogBackgroundActive, TRUE);
 	RepositionWindow(priv->theWindow, NULL, kWindowCenterOnMainScreen);
 	ShowWindow(priv->theWindow);
@@ -624,7 +624,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	int err;
 
-	DPRINT("GGI_quartz_setmode: called\n");
+	DPRINT_MODE("GGI_quartz_setmode: called\n");
 	APP_ASSERT(vis != NULL, "GGI_quartz_setmode: Visual == NULL");
 
 	if ((err = ggiCheckMode(vis, mode)) != 0) return err;
@@ -644,7 +644,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	_GGIallocdbs(vis);
 
-	DPRINT("GGI_quartz_setmode returns = %i\n", err);
+	DPRINT_MODE("GGI_quartz_setmode returns = %i\n", err);
 
 	return err;
 }
@@ -652,7 +652,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	DPRINT("display-quartz: GGIgetmode(%p,%p)\n", vis, mode);
+	DPRINT_MISC("GGI_quartz_getmode(%p,%p)\n", vis, mode);
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
@@ -662,6 +662,8 @@ int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_quartz_setflags(ggi_visual *vis, ggi_flags flags)
 {
+	DPRINT_MISC("GGI_quartz_setflags(%p,%p)\n", (void *)vis, flags);
+
 	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 	return 0;
