@@ -1,4 +1,4 @@
-.TH "ggi_directbuffer" 3 "2004-10-15" "libggi-current" GGI
+.TH "ggi_directbuffer" 3 "2004-11-13" "libggi-current" GGI
 .SH NAME
 \fBggi_directbuffer\fR, \fBggi_pixellinearbuffer\fR, \fBggi_pixelplanarbuffer\fR, \fBggi_samplelinearbuffer\fR, \fBggi_sampleplanarbuffer\fR : LibGGI direct buffer structure description
 .SH SYNOPSIS
@@ -36,7 +36,7 @@ The \fBggi_directbuffer\fR structure contains information on
 target-dependent buffers to allow applications to access them
 directly.
 .SH STRUCTURE MEMBERS
-\fBtype\fR
+\fItype\fR
 .RS
 .nb
 .nf
@@ -60,12 +60,12 @@ directly.
 
 .RE
 .TP
-\fBframe\fR
+\fIframe\fR
 is the frame number as used in multiple buffering.  Note that each
 frame can export more than one DirectBuffer.
 
 .TP
-\fBresource\fR
+\fIresource\fR
 is a pointer to a lowlevel resource. Certain DirectBuffers need to
 be explicitly acquired (i.e. locked) before using them
 (i.e. accessing their pointers).  Such a situation may arise if
@@ -80,12 +80,12 @@ using \fBggiResourceMustAcquire(3)\fR.  An acquire is done by using
 \fBggiResourceRelease(3)\fR.
 
 .TP
-\fBread\fR, \fBwrite\fR
+\fIread\fR, \fIwrite\fR
 are the addresses where the buffer is mapped to the application.
 Read and write access to the buffer is done using load and store
 instructions of the host CPU. Read operations should be performed
-using the \fBread\fR buffer and write operations should be performed
-using the \fBwrite\fR buffer. These might be the same, but need
+using the \fIread\fR buffer and write operations should be performed
+using the \fIwrite\fR buffer. These might be the same, but need
 not. If they are, read/write may be done to either buffer. Please
 note, that either read or write may be \fBNULL\fR. These are
 write-only or read-only buffers, which might be caused by hardware
@@ -97,7 +97,7 @@ they may be \fBNULL\fR or invalid when the DirectBuffer is not
 acquired.
 
 .TP
-\fBpage_size\fR
+\fIpage_size\fR
 indicates a Paged buffer if not \fB0\fR.
 
 Successive access to addresses \fBaddr0\fR and \fBaddr1\fR of either read
@@ -115,13 +115,13 @@ temporary buffer and then to copy this temporary buffer back to
 screen.
 
 .TP
-\fBnoaccess\fR
+\fInoaccess\fR
 is a bitfield specifying an access restriction. When bit x is set,
 you may not access this DirectBuffer at the width of 2^x bytes. It
 is usually 0, but check it.
 
 .TP
-\fBalign\fR
+\fIalign\fR
 is a bitfield specifying another access restriction.  When bit x
 is set, you may only access this DirectBuffer at the width of 2^x
 bytes, when the access is aligned to a multiple of 2^x. Note that
@@ -129,14 +129,14 @@ bit 0 is a bit bogus here, but it should be always 0, as then
 ((noaccess|align)==0) is a quick check for "no restrictions".
 
 .TP
-\fBlayout\fR
+\fIlayout\fR
 is an enumeration specifying the buffer addressing scheme.
 Possible values are \fBblPixelLinearBuffer\fR, \fBblPixelPlanarBuffer\fR,
 \fBblExtended\fR, \fBblSampleLinearBuffer\fR and \fBblSamplePlanarBuffer\fR.
 See below for their definition.
 
 .TP
-\fBbuffer\fR
+\fIbuffer\fR
 is a union of all buffer info.  Check the \fBlayout\fR member to see
 which member of use.
 
