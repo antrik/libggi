@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.32 2004/09/12 20:58:46 cegger Exp $
+/* $Id: mode.c,v 1.33 2004/09/13 09:04:56 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -754,8 +754,9 @@ int _ggi_x_resize(ggi_visual_t vis, int w, int h, ggi_event *ev)
 	GGIDPRINT_DRAW("_ggi_x_resize(%p, %dx%d, %p) called\n",
 		       vis, w, h, ev);
 
-	if (LIBGGI_MODE(vis)->visible.x == w &&
-	    LIBGGI_MODE(vis)->visible.y == h) {
+	if ((LIBGGI_X(vis) == w) &&
+	    (LIBGGI_Y(vis) == h))
+	{
 		return 1;
 	}
 
