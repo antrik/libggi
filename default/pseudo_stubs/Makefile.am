@@ -7,3 +7,5 @@ sublib_LTLIBRARIES = pseudo_stubs.la
 pseudo_stubs_la_SOURCES = visual.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/default
+
+EXTRA_DIST = EXPSYMS
