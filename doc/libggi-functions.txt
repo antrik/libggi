@@ -2065,7 +2065,7 @@ the input will remain unaffected.
 See Also
 --------
 
-:man:`giiOpen(3)`
+:man:`ggiJoinInputs(3)`, :man:`giiOpen(3)`
 
 
 
