@@ -66,10 +66,10 @@ IV) Notes:
 	  have one. In that case, copy this file to a separate directory, if
 	  you specify the MSVC include dir in the --with-extra-includes
 	  argument, you will bring in too many of the MSVC headers.
-	- The configure script sometimes has problems due to what seems to
-	  be a race in cygwin. Try again if you get this or a similar error:
+	- The configure script sometimes terminates early due to bash bugs.
+	  Try again if you get this or a similar error:
 	  configure: error: invalid package name: extra-includes
-	  Or even better, debug the problem and post a fix the cygwin ML.
+	  The bash people are informed of the problem.
 	- Set GGI_DEFMODE=wxh (ie. export GGI_DEFMODE=800x600)
 		See libggi/doc/env.txt for more details.
 	- Run some demos under the programs directory.
