@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.1 2004/05/03 22:39:41 cegger Exp $
+/* $Id: common.inc.c,v 1.2 2004/05/04 16:43:41 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -19,6 +19,10 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+
+
+#define MIN(a, b)	(a < b) ? (a) : (b)
+#define MAX(a, b)	(a > b) ? (a) : (b)
 
 
 /* global variables */

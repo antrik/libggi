@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.6 2004/05/04 12:47:13 pekberg Exp $
+/* $Id: clip2d.c,v 1.7 2004/05/04 16:43:41 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -136,8 +136,8 @@ static void testcase2(void)
 
 	int x0_expect = 0;
 	int y0_expect = 0;
-	int x1_expect = min(MODE_SIZE_X, MODE_SIZE_Y) - 1;
-	int y1_expect = min(MODE_SIZE_X, MODE_SIZE_Y) - 1;
+	int x1_expect = MIN(MODE_SIZE_X, MODE_SIZE_Y) - 1;
+	int y1_expect = MIN(MODE_SIZE_X, MODE_SIZE_Y) - 1;
 	int clip_first_expect = 1;
 	int clip_last_expect = 1;
 	int ret_expect = 1;
