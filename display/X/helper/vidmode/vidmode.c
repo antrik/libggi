@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
+/* $Id: vidmode.c,v 1.4 2003/11/27 18:24:58 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -143,12 +143,10 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 				      ggi_mode * maxed)
 {
-	ggi_x_priv *priv;
+	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	GGIDPRINT_MODE("ggi_xvidmode_validate_mode: %x %x\n", priv,
 		       priv->modes);
-
-	priv = GGIX_PRIV(vis);
 
 	GGIDPRINT_MODE("\tmode number:%d of %d\n", num + 1,
 		       priv->modes_num);
