@@ -65,4 +65,3 @@ Options
 Features
 --------
 
-- DirectBuffer always available.
