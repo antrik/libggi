@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.2 2001/07/10 15:10:00 cegger Exp $
+/* $Id: slimy.c,v 1.3 2003/05/20 12:51:28 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ggi/ggi.h>
+#include <time.h>
 #include <math.h>
 
 #ifndef M_PI
@@ -33,6 +34,11 @@ static signed long int *sx, *sy;
 
 static int width;	        /* Visible screen width, in pixels  */
 static int height;	        /* Visible screen height, in pixels */
+
+int show_fps = 0;
+
+static ggi_color black={0x0000,0x0000,0x0000};
+
 
 void fail(char *reason) {
 	fprintf(stderr, "%s", reason); 
@@ -208,7 +214,10 @@ void CloseGraphics(void) {
 }
 
 void RunSpinner(void) {
-  	struct timeval tv={0,0};
+	struct timeval tv = {0,0};
+	double	fps = .0;
+	int	quit = 0, frames = 0;
+	time_t	tt;
 	int		a, x, y, xdir, ydir, adir, vx, vy, vxdir, vydir;
 	int		z, g;
 	ggi_color	e[4], c[4], d[4] = {{0,0,0},{0,127,255},{255,127,0},{255,255,255}};
@@ -228,7 +237,15 @@ void RunSpinner(void) {
 	adir = 7;
 	g = 0;
 	a = 0;
+	tt = time(NULL);
 	do {
+		if (ggiKbhit(disp)) {
+			int key = ggiGetc(disp);
+			if ((key == 'f') || (key == 'F'))
+				show_fps = !show_fps;
+			else
+				quit = 1;
+		}
 		draw_rotation(a, x, y, vx, vy);
 		a = (a + adir) & 1023;
 		if (!(rand() & 1023)) adir = -adir;
@@ -263,8 +280,23 @@ void RunSpinner(void) {
 		}
 		SmoothPalette(e);
 		g = ((g + 1) & 63);
+
+		if ((time(NULL) - tt) != 0) fps = frames / (time(NULL) - tt);
+
+		if (show_fps) {
+			char str[18];
+			ggi_pixel _bg;
+			sprintf(str,"FPS : %f", fps);
+			ggiGetGCBackground(disp, &_bg);
+			ggiSetGCBackground(disp, ggiMapColor(disp, &black));
+			ggiPuts(disp,0,0,str);
+			ggiSetGCBackground(disp, _bg);
+		}
+
 		ggiFlush(disp);
-	} while (!ggiEventPoll(disp,emKeyPress,&tv));
+		frames++;
+	} while (!quit);
+	printf(" %f fps\n", fps);
 }
 
 int main (int argc, char **argv) {
