@@ -1,10 +1,10 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:59 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/06/26 02:34:59 fortinj Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
 
-   Copyright (C) 1999 John Fortin	[fortinj@ibm.net]
-   Copyright (C) 2000 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 1999 John Fortin       [fortinj@ibm.net]
+   Copyright (C) 2000 Marcus Sundberg   [marcus@ggi-project.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -35,79 +35,79 @@
 
 
 typedef struct {
-	HANDLE hWnd;
-	HINSTANCE hInstance;
+        HANDLE hWnd;
+        HINSTANCE hInstance;
 } GGIGII, *lpGGIGII;
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+                        const char *args, void *argptr, uint32 *dlret)
 {
-	directx_priv *priv;
-	GGIGII ggigii;
+        directx_priv *priv;
+        GGIGII ggigii;
 
-	GGIDPRINT("DirectX-target starting\n");
+        GGIDPRINT("DirectX-target starting\n");
 
-	priv = malloc(sizeof(directx_priv));
-	if (priv == NULL) {
-		return GGI_ENOMEM;
-	}
-	if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
-		free(priv);
-		return GGI_ENOMEM;
-	}
-	if (!DDInit(priv)) {
-		free(LIBGGI_GC(vis));
-		free(priv);
-		return GGI_ENODEVICE;
-	}
-	LIBGGI_PRIVATE(vis) = priv;
+        priv = malloc(sizeof(directx_priv));
+        if (priv == NULL) {
+                return GGI_ENOMEM;
+        }
+        if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
+                free(priv);
+                return GGI_ENOMEM;
+        }
+        if (!DDInit(priv)) {
+                free(LIBGGI_GC(vis));
+                free(priv);
+                return GGI_ENODEVICE;
+        }
+        LIBGGI_PRIVATE(vis) = priv;
 
-	ggigii.hWnd = priv->hWnd;
-	ggigii.hInstance = priv->hInstance;
+        ggigii.hWnd = priv->hWnd;
+        ggigii.hInstance = priv->hInstance;
 
-	vis->input = giiOpen("input-dxinput", &ggigii, NULL);
+        vis->input = giiOpen("directx", &ggigii, NULL);
 
-	vis->opdisplay->setmode = GGI_directx_setmode;
-	vis->opdisplay->getmode = GGI_directx_getmode;
-	vis->opdisplay->checkmode = GGI_directx_checkmode;
-	vis->opdisplay->flush = GGI_directx_flush;
+        vis->opdisplay->setmode = GGI_directx_setmode;
+        vis->opdisplay->getmode = GGI_directx_getmode;
+        vis->opdisplay->checkmode = GGI_directx_checkmode;
+        vis->opdisplay->flush = GGI_directx_flush;
 
-	*dlret = GGI_DL_OPDISPLAY;
-	return 0;
+        *dlret = GGI_DL_OPDISPLAY;
+        return 0;
 }
 
 
 int GGIdlcleanup(ggi_visual * vis)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+        directx_priv *priv = LIBGGI_PRIVATE(vis);
 
 #if 0
-	DDShutdown();
+        DDShutdown();
 #endif
-	free(priv);
+        free(priv);
 
-	return 0;
+        return 0;
 }
 
 
 int GGIdl_directx(int func, void **funcptr)
 {
-	switch (func) {
-	case GGIFUNC_open:
-		*funcptr = GGIopen;
-		return 0;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return 0;
-	case GGIFUNC_close:
-		*funcptr = GGIclose;
-		return 0;
-	default:
-		*funcptr = NULL;
-	}
+        switch (func) {
+        case GGIFUNC_open:
+                *funcptr = GGIopen;
+                return 0;
+        case GGIFUNC_exit:
+                *funcptr = NULL;
+                return 0;
+        case GGIFUNC_close:
+                *funcptr = NULL;
+                return 0;
+        default:
+                *funcptr = NULL;
+        }
 
-	return GGI_ENOTFOUND;
+        return GGI_ENOTFOUND;
 }
 
 #include <ggi/internal/ggidlinit.h>
