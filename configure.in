@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.119 2004/05/10 09:44:52 pekberg Exp $
+dnl $Id: configure.in,v 1.120 2004/05/21 20:15:16 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1305,11 +1305,14 @@ CFLAGS="$CFLAGS -D_REENTRANT -D_THREAD_SAFE"
 
 if test "x$use_debug" = "xyes"; then
   CFLAGS="$CFLAGS -DDEBUG"
+  if test "x$ac_cv_prog_cc_g" = "xyes"; then
+    CFLAGS="$CFLAGS -g"
+  fi
   if test "$ac_cv_prog_gcc" = "yes"; then
     # Common warning flags
-    CFLAGS="$CFLAGS -g -Wall -Wpointer-arith -Wsign-compare"
+    CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
-    CFLAGS="$CFLAGS -Wmissing-prototypes -Wreturn-types -Wshadow"
+    CFLAGS="$CFLAGS -Wmissing-prototypes -Wreturn-type -Wshadow"
 
     # Advanced warning flags
     CFLAGS="$CFLAGS -Wnested-externs -Wredundant-decls"
