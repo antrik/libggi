@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:01:33 cegger Exp $
+/* $Id: color.c,v 1.2 2001/06/03 22:16:28 skids Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -159,16 +159,99 @@ int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 	return 0;
 }
 
-int GGI_color_TRUE_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
+int GGI_color_TRUE_unmappixel_gte8(ggi_visual *vis, ggi_pixel pixel, 
+				   ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
 
 	col->r = DOSHIFT(pixel & priv->red_mask,
 			 priv->red_unmap);
+	col->r |= col->r >> priv->red_nbits;
 	col->g = DOSHIFT(pixel & priv->green_mask,
 			 priv->green_unmap);
+	col->g |= col->g >> priv->green_nbits;
 	col->b = DOSHIFT(pixel & priv->blue_mask,
 			 priv->blue_unmap);
+	col->b |= col->b >> priv->blue_nbits;
+
+	return 0;
+}
+
+int GGI_color_TRUE_unmappixel_gte4(ggi_visual *vis, ggi_pixel pixel, 
+				   ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	col->r = DOSHIFT(pixel & priv->red_mask,
+			 priv->red_unmap);
+	col->r |= col->r >> priv->red_nbits;
+	col->r |= col->r >> (priv->red_nbits << 1);
+	col->g = DOSHIFT(pixel & priv->green_mask,
+			 priv->green_unmap);
+	col->g |= col->g >> priv->green_nbits;
+	col->g |= col->g >> (priv->green_nbits << 1);
+	col->b = DOSHIFT(pixel & priv->blue_mask,
+			 priv->blue_unmap);
+	col->b |= col->b >> priv->blue_nbits;
+	col->b |= col->b >> (priv->blue_nbits << 1);
+
+	return 0;
+}
+
+
+int GGI_color_TRUE_unmappixel_gte2(ggi_visual *vis, ggi_pixel pixel, 
+				   ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	col->r = DOSHIFT(pixel & priv->red_mask,
+			 priv->red_unmap);
+	col->r |= col->r >> priv->red_nbits;
+	col->r |= col->r >> (priv->red_nbits << 1);
+	col->r |= col->r >> (priv->red_nbits << 2);
+	col->g = DOSHIFT(pixel & priv->green_mask,
+			 priv->green_unmap);
+	col->g |= col->g >> priv->green_nbits;
+	col->g |= col->g >> (priv->green_nbits << 1);
+	col->g |= col->g >> (priv->green_nbits << 2);
+	col->b = DOSHIFT(pixel & priv->blue_mask,
+			 priv->blue_unmap);
+	col->b |= col->b >> priv->blue_nbits;
+	col->b |= col->b >> (priv->blue_nbits << 1);
+	col->b |= col->b >> (priv->blue_nbits << 2);
+
+	return 0;
+}
+
+/* For the rare but extremely painful cases. */
+int GGI_color_TRUE_unmappixel_gte1(ggi_visual *vis, ggi_pixel pixel, 
+				   ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	if (priv->red_nbits != 1) {
+		col->r = DOSHIFT(pixel & priv->red_mask,
+				 priv->red_unmap);
+		col->r |= col->r >> priv->red_nbits;
+		col->r |= col->r >> (priv->red_nbits << 1);
+		col->r |= col->r >> (priv->red_nbits << 2);
+	} else col->r = (pixel & priv->red_mask) ? 0xffff : 0x0000;
+
+	if (priv->green_nbits != 1) {
+		col->g = DOSHIFT(pixel & priv->green_mask,
+				 priv->green_unmap);
+		col->g |= col->g >> priv->green_nbits;
+		col->g |= col->g >> (priv->green_nbits << 1);
+		col->g |= col->g >> (priv->green_nbits << 2);
+	} else col->g = (pixel & priv->green_mask) ? 0xffff : 0x0000;
+
+	if (priv->blue_nbits != 1) {
+		col->b = DOSHIFT(pixel & priv->blue_mask,
+				 priv->blue_unmap);
+		col->b |= col->b >> priv->blue_nbits;
+		col->b |= col->b >> (priv->blue_nbits << 1);
+		col->b |= col->b >> (priv->blue_nbits << 2);
+	} else col->b = (pixel & priv->blue_mask) ? 0xffff : 0x0000;
 
 	return 0;
 }

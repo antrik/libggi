@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.1 2001/05/12 23:01:33 cegger Exp $
+/* $Id: color.h,v 1.2 2001/06/03 22:16:28 skids Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -36,7 +36,10 @@ ggifunc_mapcolor	GGI_color_TRUE_mapcolor;
 ggifunc_mapcolor	GGI_color_GREY_mapcolor;
 
 ggifunc_unmappixel	GGI_color_PAL_unmappixel;
-ggifunc_unmappixel	GGI_color_TRUE_unmappixel;
+ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte8;
+ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte4;
+ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte2;
+ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte1;
 ggifunc_unmappixel	GGI_color_GREY_unmappixel;
 
 ggifunc_packcolors	GGI_color_L1_packcolors;
@@ -59,12 +62,15 @@ typedef struct {
 	int red_map;
 	int red_unmap;
 	int red_mask;
+	int red_nbits;
 	int green_map;
 	int green_unmap;
 	int green_mask;
+	int green_nbits;
 	int blue_map;
 	int blue_unmap;
 	int blue_mask;
+	int blue_nbits;
 } color_truepriv;
 
 typedef struct {

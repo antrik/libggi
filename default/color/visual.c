@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:32 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/06/03 22:16:28 skids Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -41,6 +41,19 @@ static int calc_total(ggi_pixel mask)
 }
 
 
+static int calc_nbits(ggi_pixel mask)
+{
+	int nbits;
+
+	while (!(mask & 0x0001)) mask >>= 1;
+
+	for (nbits=0; mask != 0; mask >>= 1, nbits++) {
+	}
+
+	return nbits;
+}
+
+
 static void do_setup_color_info(ggi_visual *vis)
 {
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR) {
@@ -52,12 +65,15 @@ static void do_setup_color_info(ggi_visual *vis)
 		priv->red_map     = redtot - 16;
 		priv->red_unmap   = 16 - redtot;
 		priv->red_mask    = LIBGGI_PIXFMT(vis)->red_mask;
+		priv->red_nbits     = calc_nbits(priv->red_mask);
 		priv->green_map   = greentot - 16;
 		priv->green_unmap = 16 - greentot;
 		priv->green_mask  = LIBGGI_PIXFMT(vis)->green_mask;
+		priv->green_nbits   = calc_nbits(priv->green_mask);
 		priv->blue_map    = bluetot - 16;
 		priv->blue_unmap  = 16 - bluetot;
 		priv->blue_mask   = LIBGGI_PIXFMT(vis)->blue_mask;
+		priv->blue_nbits    = calc_nbits(priv->blue_mask);
 	} else if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE ||
 		   GT_SCHEME(LIBGGI_GT(vis)) == GT_STATIC_PALETTE) {
 		color_palpriv *priv = vis->colorpriv;
@@ -93,7 +109,23 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		case GT_TRUECOLOR:
 			vis->opcolor->mapcolor   = GGI_color_TRUE_mapcolor;
-			vis->opcolor->unmappixel = GGI_color_TRUE_unmappixel;
+			if (COLOR_TRUEPRIV(vis)->red_nbits >= 8 &&
+			    COLOR_TRUEPRIV(vis)->green_nbits >= 8 &&
+			    COLOR_TRUEPRIV(vis)->blue_nbits >= 8)
+				vis->opcolor->unmappixel = 
+					GGI_color_TRUE_unmappixel_gte8;
+			else if (COLOR_TRUEPRIV(vis)->red_nbits >= 4 &&
+				 COLOR_TRUEPRIV(vis)->green_nbits >= 4 &&
+				 COLOR_TRUEPRIV(vis)->blue_nbits >= 4)
+					vis->opcolor->unmappixel = 
+						GGI_color_TRUE_unmappixel_gte4;
+			else if (COLOR_TRUEPRIV(vis)->red_nbits >= 2 &&
+				 COLOR_TRUEPRIV(vis)->green_nbits >= 2 &&
+				 COLOR_TRUEPRIV(vis)->blue_nbits >= 2)
+					vis->opcolor->unmappixel = 
+						GGI_color_TRUE_unmappixel_gte2;
+			else vis->opcolor->unmappixel = 
+				GGI_color_TRUE_unmappixel_gte1;
 			break;
 
 		case GT_GREYSCALE:
