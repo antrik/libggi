@@ -25,6 +25,7 @@ Due : 2001-1[12]-??
   the user or not, unless '--with-gii' is specified by the user itself.
   This simplifies compiling libggi on a machine with no root-permissions.
 * disable libKGI target, because it's currently a "proof-of-concept"
+- BUGFIX: tile-over-Xlib produces colors with blue characteristics!
 
 ------------------------------------------
 Next major release
