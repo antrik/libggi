@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.36 2002/06/12 03:53:58 skids Exp $
+dnl $Id: configure.in,v 1.37 2002/07/29 15:52:31 fspacek Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -120,9 +120,9 @@ build_ipc_target=$enableval)
 dnl AC_ARG_ENABLE(suidkgi,
 dnl [  --enable-suidkgi        build the suidkgi target],
 dnl build_suidkgi_target=$enableval)
-dnl AC_ARG_ENABLE(kgi,
-dnl [  --disable-kgi           don't build the kgi target],
-dnl build_kgi_target=$enableval)
+AC_ARG_ENABLE(kgi,
+[  --disable-kgi           don't build the kgi target],
+build_kgi_target=$enableval)
 AC_ARG_ENABLE(libkgi,
 [  --disable-libkgi           don't build the libkgi target],
 build_libkgi_target=$enableval)
@@ -419,6 +419,15 @@ if test "x$build_libkgi_driver" != "xno"; then
   AC_CHECK_LIB(galloc, ggiGAInit, foo=bar, build_libkgi_target="no")
 fi
 
+if test "x$build_kgi_target" != "xno"; then
+  AC_CHECK_HEADER(kgi/kgi.h,
+    AC_TRY_COMPILE([
+#include <kgi/kgi.h>
+],[
+kgi_u32_t i;
+], foo=bar), build_kgi_target="no")
+fi
+
 if test "x$build_glide_target" != "xno"; then
   if test "x$ac_cv_header_glide_h" = "xno" -a \
 	  "x$ac_cv_header_glide_glide_h" = "xno"; then
@@ -560,15 +569,15 @@ if test "x$build_libkgi_target" = "xno"; then
    AC_MSG_RESULT(yes)
 fi
 
-dnl AC_MSG_CHECKING(if we should build kgi      target)
-dnl if test "x$build_kgi_target" = "xno"; then
-dnl   AC_MSG_RESULT(no)
-dnl else
-dnl   DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
-dnl   DEFAULTSUBDIRS="$DEFAULTSUBDIRS linmm_banked ramdac ioctl"
-dnl   build_kgi_target="yes"
-dnl   AC_MSG_RESULT(yes)
-dnl fi
+AC_MSG_CHECKING(if we should build kgi      target)
+if test "x$build_kgi_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
+  DEFAULTSUBDIRS="$DEFAULTSUBDIRS"
+  build_kgi_target="yes"
+  AC_MSG_RESULT(yes)
+fi
 
 AC_MSG_CHECKING(if we should build aa       target)
 if test "x$build_aa_target" = "xno"; then
@@ -906,6 +915,7 @@ display/fbdev/Makefile
 display/file/Makefile
 display/glide/Makefile
 display/ipc/Makefile
+display/kgi/Makefile
 display/lcd823/Makefile
 display/libkgi/Makefile
 display/linvtsw/Makefile
@@ -965,6 +975,7 @@ doc/man/Makefile
 m4/Makefile
 libggi.conf
 display/fbdev/fbdev.conf
+display/kgi/kgi.conf
 display/libkgi/libkgi.conf
 dist/Makefile
 dist/rpm/Makefile
