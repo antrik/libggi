@@ -13,6 +13,7 @@ man_MANS = \
  display-monotext.7	\
  display-multi.7	\
  display-palemu.7	\
+ display-quartz.7	\
  display-sub.7	\
  display-svgalib.7	\
  display-tele.7	\
