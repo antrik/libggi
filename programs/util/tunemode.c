@@ -165,16 +165,13 @@ void parse_file(char *name)
 		} else if (strcmp(token, "VENDORNAME") == 0) {
 			token = strtok(NULL, "\" ");
 			verb(1, "Manufacturer : %s\n");
-			strncpy(mondesc.manufact, token,
+			ggstrlcpy(mondesc.manufact, token,
 				sizeof(mondesc.manufact));
-			mondesc.manufact[sizeof(mondesc.manufact) - 1] =
-			    '\0';
 		} else if (strcmp(token, "MODELNAME") == 0) {
 			token = strtok(NULL, "\" ");
 			verb(1, "Model : %s\n");
-			strncpy(mondesc.model, token,
+			ggstrlcpy(mondesc.model, token,
 				sizeof(mondesc.model));
-			mondesc.model[sizeof(mondesc.model) - 1] = '\0';
 		} else if (strcmp(token, "BANDWIDTH") == 0) {
 			puts(token = strtok(NULL, "-"));
 		} else if (strcmp(token, "HORIZSYNC") == 0) {

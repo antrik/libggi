@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2004/09/10 22:01:37 cegger Exp $
+/* $Id: visual.c,v 1.19 2004/09/12 21:48:32 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -595,9 +595,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (strlen(options[OPT_DEV].result)) {
 		devfile = options[OPT_DEV].result;
 	} else if (getenv("FRAMEBUFFER") != NULL) {
-		strncpy(devicename, getenv("FRAMEBUFFER"), MAX_DEV_LEN);
-		/* Make sure string is terminated */
-		devicename[MAX_DEV_LEN] = '\0';
+		ggstrlcpy(devicename, getenv("FRAMEBUFFER"), sizeof(devicename));
 		devfile = devicename;
 	} else {
 		fbnum = get_fbdev();
