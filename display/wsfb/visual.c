@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/02/14 17:51:38 fries Exp $
+/* $Id: visual.c,v 1.4 2003/02/15 21:19:40 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -130,11 +130,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			priv->devname, strerror(errno));
 		goto error;
 	}
+
+/* WSDISPLAYIO_LINEBYTES is not available under NetBSD
+ */
+#ifdef WSDISPLAYIO_LINEBYTES
 	if (ioctl(priv->fd, WSDISPLAYIO_LINEBYTES, &priv->linebytes) == -1) {
 		GGIDPRINT("ioctl WSDISPLAYIO_LINEBYTES error: %s %s\n",
 			priv->devname, strerror(errno));
 		goto error;
 	}
+#endif
 
 	GGIDPRINT("info: depth: %d height: %d width: %d\n",
 		priv->info.depth, priv->info.height, priv->info.width);
