@@ -1,9 +1,9 @@
-/* $Id: quartz.h,v 1.2 2004/02/14 22:30:47 cegger Exp $
+/* $Id: quartz.h,v 1.3 2004/12/27 22:42:06 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
 
-   Copyright (C) 2002 Christoph Egger
+   Copyright (C) 2004 Christoph Egger
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -31,9 +31,9 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/gii.h>
 
-#include <ggi/input/cocoa.h>
+#include <ggi/input/quartz.h>
 #include <ApplicationServices/ApplicationServices.h>
-#include <Cocoa/Cocoa.h>
+#include <Carbon/Carbon.h>
 
 ggifunc_checkmode	GGI_quartz_checkmode;
 ggifunc_getmode		GGI_quartz_getmode;
@@ -54,11 +54,23 @@ ggifunc_getgammamap	GGI_quartz_getgammamap;
 typedef struct {
 	PHYSZ_DATA
 
-	NSApplication	*GGIApp;
-	NSWindow	*window;	/* Cocoa window */
+	int fullscreen;
+
+	WindowRef theWindow;
+	WindowGroupRef winGroup;
+
+	Rect winRect;	/* size of the window containing the displayed image (including padding) */
+	WindowAttributes windowAttrs;
+
+	CGContextRef context;
+	CGDataProviderRef dataProviderRef;
+	CGImageRef image;
+
+	ggi_visual *memvis;
 
 	size_t stride;
 	uint8 *fb;
+	size_t fb_size;
 
 	/* 0 == main display (only support single display) */
 	CGDirectDisplayID  display_id;
