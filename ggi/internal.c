@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.8 2002/09/08 21:37:48 soyt Exp $
+/* $Id: internal.c,v 1.9 2002/09/29 15:25:55 skids Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -55,8 +55,8 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 
 	revendian = (pixfmt->flags & GGI_PF_REVERSE_ENDIAN);
 
-	for (i = 0; i < pixfmt->depth; i++) {
-		int bitmask = (1<<i);
+	for (i = 0; i < pixfmt->size; i++) {
+		ggi_pixel bitmask = (1<<i);
 		int colsize = 0, h;
 
 		if (pixfmt->clut_mask & bitmask) {
@@ -245,7 +245,7 @@ void _ggi_pixfmtstr (ggi_visual *vis, char* str, int flags)
 
 		pixfmt = LIBGGI_PIXFMT(vis);
 		alpha_or_pad = (flags & 2) ? 'a' : 'p';
-		idx = pixfmt->depth - 1;
+		idx = pixfmt->size - 1;
 		if (idx > 31) return; /* paranoia never hurts. */
 		ptr = str;
 
