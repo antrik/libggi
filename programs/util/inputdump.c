@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.7 2004/06/17 17:20:29 pekberg Exp $
+/* $Id: inputdump.c,v 1.8 2004/06/17 18:18:02 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -20,6 +20,7 @@
 
    USAGE:  inputdump  [ --mode <mode> ]  [ --target <target> ]
                       [ --input <input> ]  [ --long ]  [ --short ]
+                      [ --no-pmove ]
 
 ******************************************************************************
 */
@@ -712,6 +713,7 @@ static void usage(void)
 		"    -i --input     <input spec>\n"
 		"    -s --short\n"
 		"    -l --long\n"
+		"    -p --no-pmove\n"
 		"    -h --help\n\n");
 }
 
