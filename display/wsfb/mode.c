@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2003/02/14 17:51:38 fries Exp $
+/* $Id: mode.c,v 1.4 2003/02/15 21:21:59 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -48,27 +48,27 @@ int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	GGIDPRINT("GGI_wsfb_getapi called\n");
 
 	switch(num) {
-		case 0:
-			strcpy(apiname, "display-wsfb");
-			strcpy(arguments, "");
-			return 0;
-		case 1:
-			strcpy(apiname, "generic-stubs");
-			strcpy(arguments, "");
-			return 0;
-		case 2:
-			strcpy(apiname, "generic-color");
-			strcpy(arguments, "");
-			return 0;
-		case 3:
-			sprintf(apiname, "generic-linear-%d%s", 
-				GT_SIZE(LIBGGI_GT(vis)),
-				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
+	case 0:
+		strcpy(apiname, "display-wsfb");
+		strcpy(arguments, "");
+		return 0;
+	case 1:
+		strcpy(apiname, "generic-stubs");
+		strcpy(arguments, "");
+		return 0;
+	case 2:
+		strcpy(apiname, "generic-color");
+		strcpy(arguments, "");
+		return 0;
+	case 3:
+		sprintf(apiname, "generic-linear-%d%s", 
+			GT_SIZE(LIBGGI_GT(vis)),
+			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 				? "-r" : "");
-			strcpy(arguments, "");
-			return 0;
-		default:
-			break;
+		strcpy(arguments, "");
+		return 0;
+	default:
+		break;
 	}
 			
 	return -1;
@@ -102,9 +102,9 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 	}
 
 	switch(tm->graphtype) {
-		case GT_8BIT : break;
-		default:
-			return -1;
+	case GT_8BIT : break;
+	default:
+		return -1;
 	}
 	if ((GT_SCHEME(tm->graphtype) == GT_PALETTE)) {
 		int nocols = 1 << GT_DEPTH(tm->graphtype);
@@ -132,7 +132,6 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 		}
 	}
    
-
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
@@ -164,16 +163,19 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 	else if(tm->virt.y != priv->info.height && tm->virt.y != GGI_AUTO)
 		err = -1;
 
-	if(tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT)
-		err = -1;	
+	if(tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT) {
+		err = -1;
+	}
 
-	if(tm->frames != GGI_AUTO && tm->frames != 1)
+	if(tm->frames != GGI_AUTO && tm->frames != 1) {
 		err = -1;
+	}
 
-	if(tm->dpp.x != GGI_AUTO && tm->dpp.x != 1)
+	if(tm->dpp.x != GGI_AUTO && tm->dpp.x != 1) {
 		err = -1;
-	else if(tm->dpp.y != GGI_AUTO && tm->dpp.y != 1)
+	} else if(tm->dpp.y != GGI_AUTO && tm->dpp.y != 1) {
 		err = -1;
+	}
 
 	tm->visible.x = tm->virt.x = priv->info.width;
 	tm->visible.y = tm->virt.y = priv->info.height;
@@ -212,7 +214,6 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 		err = -1;
 	}
  
-
 	return err;
 #endif
 }
@@ -292,8 +293,7 @@ do_mmap(ggi_visual *vis)
 		return -1;
 	}
 
-
-	fprintf(stderr,"mmap offset: 0x%lx\n",priv->base);
+	fprintf(stderr,"mmap offset: %p\n", priv->base);
 
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
