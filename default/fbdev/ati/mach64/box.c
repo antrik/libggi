@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: box.c,v 1.2 2003/05/03 16:39:18 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 acceleration for fbdev target
@@ -46,7 +46,6 @@ int GGI_ati_mach64_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 int GGI_ati_mach64_fillscreen(ggi_visual *vis)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
 	int virtx = LIBGGI_VIRTX(vis);
 	int virty = LIBGGI_VIRTY(vis);
 

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: gtext.c,v 1.2 2003/05/03 16:39:18 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -65,7 +65,7 @@ int GGI_ati_mach64_getcharsize(ggi_visual *vis, int *width, int *height)
 int GGI_ati_mach64_putc(ggi_visual *vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-	int count,hostwrites;
+	int hostwrites;
 	uint32 *cdat;
 
 	/* Tell the engine what we want to do. */

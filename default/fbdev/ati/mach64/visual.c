@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/05/04 13:46:35 cegger Exp $
+/* $Id: visual.c,v 1.3 2003/05/03 16:39:18 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -243,7 +243,6 @@ static int do_cleanup(ggi_visual *vis)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct ati_mach64_priv *priv = NULL;
-	int i;
 
 	GGIDPRINT_MISC("ati_mach64: Starting cleanup\n");
 
