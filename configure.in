@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.68 2002/12/08 19:20:53 cegger Exp $
+dnl $Id: configure.in,v 1.69 2002/12/09 12:08:59 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -629,6 +629,25 @@ dnl includes (/usr/X11R6/include on most systems).
 		X11/extensions/xf86vmode.h)
     CFLAGS="$cflags_old"
     CPPFLAGS="$cppflags_old"
+
+    x_helper_xf86dga_libs=""
+    x_helper_xf86vm_libs=""
+
+    AC_CHECK_LIB(Xxf86dga_pic, XF86DGAQueryVersion,
+	x_helper_xf86dga_libs="-lXxf86dga_pic",
+	AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion,
+		x_helper_xf86dga_libs="-lXxf86dga",
+  		ac_cv_header_X11_extensions_xf86dga_h=no,
+		[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ]),
+	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+
+    AC_CHECK_LIB(Xxf86vm_pic, XF86VidModeSwitchToMode,
+	x_helper_xf86vm_libs="-lXxf86vm_pic",
+	AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode,
+		x_helper_xf86vm_libs="-lXxf86vm",
+		ac_cv_header_X11_extensions_xf86vmode_h=no,
+		[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ]),
+	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
   fi
 fi
 
@@ -751,17 +770,12 @@ AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
 if test "x$build_dga_target" != "xno"; then
   AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
   if test "x$internal_xf86dga" = "xyes"; then
-    xf86dga_libs=""
     AC_DEFINE(GGI_INTERNAL_XF86DGA)
   else
-    AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion, foo=bar,
-	build_dga_target="no",
-	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
-    AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode, foo=bar,
-	build_dga_target="no",
-	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
-    # _pix suffix is required on pa-risc plattforms
-    xf86dga_libs="-lXxf86dga_pic -lXxf86vm_pic"
+	if test "x$ac_cv_header_X11_extensions_xf86dga_h" != "xyes" -o \
+		"x$ac_cv_header_X11_extensions_xf86vmode_h" != "xyes"; then
+		build_dga_target="no"
+	fi
   fi
   ], build_dga_target="no")
 fi
@@ -1127,7 +1141,8 @@ AC_SUBST(FBDEVSUBDIRS)
 
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
-AC_SUBST(xf86dga_libs)
+AC_SUBST(x_helper_xf86vm_libs)
+AC_SUBST(x_helper_xf86dga_libs)
 AC_SUBST(directfb_driver_dir)
 
 dnl Program specific substitutions
