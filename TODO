@@ -26,14 +26,15 @@ Due : ????-??-??
 
 [Common issues]
 
-- Alter all ggiSetPalette implementations as per mailinglist discussion
+* Alter all ggiSetPalette implementations as per mailinglist discussion
   of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
+  (Vincent Cruz)
 * remove obseleted Xlib target (Christoph)
 - libKGI-target (compiling framework)
 + improve modelist.inc
 - allow physz params to determine window size when visible == GGI_AUTO
 * add display-auto to separate OS dependent auto-detect routines from
-  libggi core
+  libggi core (Christoph)
 - formalize pixelformat strings (e.g. "r5b5g5p1") and provide
   parser/construction functions for them in the LibGGI internal interface.
   Some code for this is already in LibBuf CVS.
@@ -59,7 +60,7 @@ New X Target:
 - Re-implement old display-X emulated setorigin for root windows and
   for buggy WMs with faulty colormap handling code.
 - See if colormap can be force-installed under some buggy WMs.
-- Only basic Colormap management has been implemented.
+- colormap: add RW support.
 - Turn off hidden virtual area flushing when no backing store is 
   available.
 - Get upstream to fix stuff (Solid-fill ops into backing store, for 
