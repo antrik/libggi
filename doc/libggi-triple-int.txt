@@ -198,9 +198,9 @@ Synopsis
 Description
 -----------
 
-`eq_3` tests if `l` and `r` are equal.
+`eq_3` tests if `l` and `r` are equal. Equivalent to l==r.
 
-`ge_3` tests if `l` is greater than or equal to `l`.
+`ge_3` tests if `l` is greater than or equal to `l`. Equivalent to l>=r.
 
 
 Return value
@@ -257,12 +257,12 @@ Synopsis
 Description
 -----------
 
-`invert_3` inverts all bits of `x`.
+`invert_3` inverts all bits of `x`. Equivalent to x=~x.
 
-`lshift_3` shifts `l` to the left by `r` bits.
+`lshift_3` shifts `l` to the left by `r` bits. Equivalent to l<<=r.
 
 `rshift_3` shifts `l` to the left by `r` bits. This shift is
-arithmetic, so the sign of `l` is kept as is.
+arithmetic, so the sign of `l` is kept as is. Equivalent to l>>=r.
 
 
 Return value
@@ -318,13 +318,13 @@ Synopsis
 Description
 -----------
 
-`inc_3` increments `x` by one.
+`inc_3` increments `x` by one. Equivalent to ++x.
 
-`dec_3` decrements `x` by one.
+`dec_3` decrements `x` by one. Equivalent to --x.
 
-`negate_3` negates `x`.
+`negate_3` negates `x`. Equivalent to x=-x.
 
-`abs_3` takes the absolute value of `x`.
+`abs_3` takes the absolute value of `x`. Equivalent to x=x<0?-x:x.
 
 
 Return value
