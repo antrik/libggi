@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.141 2004/10/23 14:44:45 cegger Exp $
+dnl $Id: configure.in,v 1.142 2004/10/23 17:46:25 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -125,7 +125,7 @@ AC_MSG_NOTICE([======= Running genlibtool now =======])
 dnl Safe confdefs.h
 cp ./confdefs.h ./conf.bak
 
-$SHELL ./genlibtool --quiet
+$SHELL ${srcdir}/genlibtool --quiet
 
 dnl Restore confdefs.h
 if test ! -f ./confdefs.h; then
