@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.6 2003/07/06 10:25:21 cegger Exp $
+/* $Id: box.c,v 1.7 2003/07/13 08:28:49 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -224,7 +224,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + ximg->xoffset * 2;
+		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 2;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 2; j += 2) {
@@ -237,7 +237,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	}
 	else if (ximg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + ximg->xoffset * 4;
+		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 4;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 4; j += 4) {
@@ -255,7 +255,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 
 	noswab:
 
-		ximgptr = ximg->data + 
+		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		while (h--) {
 			memcpy(data, ximgptr,

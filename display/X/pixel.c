@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
+/* $Id: pixel.c,v 1.4 2003/07/13 08:28:49 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -192,14 +192,14 @@ int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 	
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + 
+		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		*((uint8 *)pixel) = *(ximgptr + 1);
 		*((uint8 *)pixel + 1) = *(ximgptr);
 	}
 	else if (ximg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + 
+		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		*((uint8 *)pixel) = *(ximgptr + 3);
 		*((uint8 *)pixel + 1) = *(ximgptr + 2);
@@ -210,7 +210,7 @@ int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 		uint8 *ximgptr;
 
 	noswab:
-		ximgptr = ximg->data + 
+		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		memcpy(pixel, ximgptr, (size_t)ximg->bits_per_pixel/8);
 	}
