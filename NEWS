@@ -1,5 +1,44 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2.1.0: 2004-11-30:
+- Documentation updates
+- removed obseleted Xlib target
+- added new GGIFLAG_TIDYBUF flag. It is intended for applications
+  using directbuffer and having their own dirty-region
+  management. Currently only supported by the X-target.
+- KGI target improvements
+    - added Matrox Gx00 accelerator sublib
+    - added devfs support
+    - added multiple frame support
+    - merged improvements from the FreeBSD ports tree
+- fbdev gammamap support
+- added the -fullscreen option to the X-target
+- added the -physz option to the ipc-target
+- Major DirectX target improvements
+        - added -noinput and -physz options by Christoph Egger. Tested by Albert Graef.
+        - fix cursor stuff, added -keepcursor and -nocursor options (patch from Albert Graef)
+        - disable maximize button on GGI-on-DX window (patch from Albert Graef)
+        - remove stuff in WindowProc made obselete by the above two items (patch from Albert Graef)
+        - move the globals in ddinit.c into private data structure (patch from Albert Graef)
+        - merge the two targets into one (directxnt has been renamed to directx and is now the *one* directx target)
+          (patch from Albert Graf)
+        - fix a couple of bugs and race conditions (patch from Albert Graef)
+        - added -inwin option (patch from Albert Graef)
+        - added support for virtual size != visible size.
+        - added support for panning (ggiSetOrigin)
+        - added support for up to 16 frames.
+        - added support for asynchronous mode (no background updates when active).
+        - added support for fullscreen and mode switching.
+        - preliminary support for palettized modes.
+- display-auto has been added. It replaces the 5 years old linux specific target autodetection and handles it OS dependend
+- works on Windows using MinGW w/o requiring special Makefiles.
+- a pseudo-stubs target has been added by Peter Ekberg. It does effectively nothing, but gives extensions
+  a way to have one target that stands for all targets that passes all operations to their parent visuals.
+  libggiwmh and libggimisc make palemu and trueemu working with it w/o having a target for each of them.
+- display-mansync has been reworked by Peter Ekberg. It now uses the platform independent task scheduler.
+- added a new macro: GT_ByPPP which is basically GT_ByPP but for packed pixels and it takes two arguments.
+^L
+
 New in 2.0.7: 2004-11-30:
 * minor buildsystem update
 * eliminate lvalue assignments. Fixes problems with latest gcc versions
