@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.10 2003/07/05 22:13:41 cegger Exp $
+/* $Id: crossblit.c,v 1.11 2004/03/01 17:21:35 skids Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1340,8 +1340,8 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 
                                    ".Lout%=:\n\t"
                                    "emms\n\t"
-				   : "=qom" (dstp), "=qom" (srcp), "=q" (dummy)
-				   : "qom" (dstp), "qom" (srcp), "q" (tab)
+				   : "=q" (dstp), "=q" (srcp), "=q" (dummy)
+				   : "q" (dstp), "q" (srcp), "q" (tab)
 				   : "cc", "memory");
 				}
 			}
@@ -1506,8 +1506,8 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 
                                     ".Lout%=:\n\t"
                                    "emms\n\t"
-				   : "=qom" (dstp), "=qom" (srcp), "=q" (dummy)
-				   : "qom" (dstp), "qom" (srcp), "q" (tab)
+				   : "=q" (dstp), "=q" (srcp), "=q" (dummy)
+				   : "q" (dstp), "q" (srcp), "q" (tab)
 				   : "cc", "memory");
 				}
 			}
