@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2002/07/05 05:38:04 skids Exp $
+/* $Id: visual.c,v 1.8 2002/10/06 10:16:45 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/display/memory.h>
 
 static const gg_option optlist[] =
@@ -139,7 +140,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (args && *args)	/* We have parameters. Analyze them. */
 	{
 		GGIDPRINT("display-memory has args.\n");
-#ifdef HAVE_SHM
+#ifdef HAVE_SYS_SHM_H
 		if (strncmp(args,"shmid:",6)==0)
 		{
 			sscanf(args+6,"%i",&(priv->shmid));
@@ -328,7 +329,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	case MT_MALLOC:
 	case MT_EXTERN:	/* Nothing to be done. */
 	  	break;
-#ifdef HAVE_SHM		
+#ifdef HAVE_SYS_SHM_H
 	case MT_SHMKEYFILE: /* FIXME ? Should we RMID the area ? */
 	case MT_SHMID: 
 	  	shmdt(MEMORY_PRIV(vis)->memptr);
