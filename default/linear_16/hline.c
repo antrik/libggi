@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: hline.c,v 1.2 2002/10/10 07:08:04 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -83,7 +83,7 @@ int GGI_lin16_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	uint16 *buf16 = buffer;
 	uint8  *mem;
 
-	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf16, );
+	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf16, *1);
 	PREPARE_FB(vis);
 
 	mem = (uint8 *)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x*2;
