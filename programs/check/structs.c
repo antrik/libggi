@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: structs.c,v 1.5 2004/09/08 19:26:22 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -39,7 +39,7 @@ static ggi_visual_t visual;
 /* Leftover. Up to now, we have only one struct test, but we might want
  * to revive that ...
  */
-struct test 
+static struct test
 {	char *name;
 	void (*func)(void);
 	int active;
@@ -236,7 +236,7 @@ static int setup_mode(void)
 			printf("Does not need to be acquired\n");
 		}
 
-		printf("Mapped at read:%p, write:%p (paged %d)\n",
+		printf("Mapped at read:%p, write:%p (paged %u)\n",
 		       buf->read, buf->write, buf->page_size);
 		switch (buf->layout) {
 			case blPixelLinearBuffer: 

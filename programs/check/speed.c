@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: speed.c,v 1.5 2004/09/08 19:26:22 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -26,15 +26,15 @@
 #include <time.h>
 #endif
 
-struct {
+static struct {
 	ggi_visual_t vis;
 	int sx,sy,vx,vy;
 } mode;
 
 /**********************************************************************/
 
-struct tms timer;
-double u_time, s_time;
+static struct tms timer;
+static double u_time, s_time;
 
 /* A few simple timing routines. Note that this is Unixish and might need
  * autoconfiguration later ...
@@ -73,7 +73,7 @@ static void time_stop(void)
 
 /* The pixelvalue for the color white.
  */
-ggi_pixel white_pixel;
+static ggi_pixel white_pixel;
 
 /* Print the name of the currently excuting test in the top left corner.
  */
@@ -423,7 +423,7 @@ static void CopyBox(void)
 
 /* List of tests.
  */
-struct test 
+static struct test 
 {	char *name;
 	void (*func)(void);
 	int active;
@@ -529,7 +529,7 @@ static int setup_mode(void)
 	map[0].g=0xFFFF;
 	map[0].b=0xFFFF;
 	white_pixel=ggiMapColor(mode.vis, &map[0]);
-	printf("white=%d\n",white_pixel);
+	printf("white=%u\n",white_pixel);
 
 	return 0;
 }

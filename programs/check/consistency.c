@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
+/* $Id: consistency.c,v 1.6 2004/09/08 19:26:22 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -27,13 +27,14 @@
  * This is useful for quick-checks, while for fixing things, it is often
  * more useful to get _all_ error messages.
  */
-enum flags {
-	BREAK_UNCONSISTENT=1,	/* Stop consistency tests, when a few failures have been recorded */
+static enum flags {
+	BREAK_UNCONSISTENT=1,	/* Stop consistency tests
+				   when a few failures have been recorded */
 } flags = 0;
 
 /* Global data about the opened visual and the mode on it.
  */
-struct {
+static struct {
 	ggi_visual_t vis;
 	int sx,sy,vx,vy;
 } mode;
@@ -42,7 +43,7 @@ struct {
 
 /* The pixelvalue of the color "white".
  */
-ggi_pixel white_pixel, black_pixel;
+static ggi_pixel white_pixel, black_pixel;
 
 /* Print the name of the currently running test in the top left corner
  */
@@ -57,13 +58,13 @@ static void TestName(const char *name)
  */
 static int getnumpixels(int x1,int y1,int x2,int y2)
 {
-	int x,y,c; 
+	int x,y,c;
 	ggi_pixel pix;
 	c=0;
 	for (y=y1; y <= y2; y++) {
 		for (x=x1; x <= x2; x++) {
-	  		ggiGetPixel(mode.vis, x, y, &pix);
-	  		if (pix != 0) c++;
+			ggiGetPixel(mode.vis, x, y, &pix);
+			if (pix != 0) c++;
 		}
 	}
 	return c;
@@ -78,11 +79,11 @@ static int getnumpixels(int x1,int y1,int x2,int y2)
  */
 static void drawrandom(int x1,int y1,int x2,int y2)
 {
-	int x,y; 
+	int x,y;
 	srand(RANDSEED);
 	for (y=y1; y<=y2; y++) {
 		for (x=x1; x<=x2; x++) {
-	  		if (rand()&1) ggiDrawPixel(mode.vis,x,y);
+			if (rand()&1) ggiDrawPixel(mode.vis,x,y);
 		}
 	}
 }
@@ -98,8 +99,8 @@ static int checkrandom(int x1,int y1,int x2,int y2)
 	srand(RANDSEED);
 	for (y=y1; y<=y2; y++) {
 		for (x=x1; x<=x2; x++) {
-	  		ggiGetPixel(mode.vis, x, y, &pix);
-	  		if (!pix != !(rand()&1)) return 1;
+			ggiGetPixel(mode.vis, x, y, &pix);
+			if (!pix != !(rand()&1)) return 1;
 		}
 	}
 	return 0;
@@ -116,7 +117,7 @@ static void BasicConsistency(void)
 
 	fprintf(stderr,"Consistency: Testing GC color get/set ... ");
 
-	pass=1; 
+	pass=1;
 	for(x=1;x!=0;x<<=1) {
 		ggiSetGCForeground(mode.vis, (ggi_pixel)x);
 		ggiGetGCForeground(mode.vis,&rc);
@@ -134,18 +135,18 @@ static void BasicConsistency(void)
 	c=0;
 	for (y=0;y<mode.vy;y++) {
 		for (x=0;x<mode.vx;x++)	{
-	  		ggiGetPixel(mode.vis, x, y, &pix);
-	  		if (pix != 0) {
-	  			fprintf(stderr,
+			ggiGetPixel(mode.vis, x, y, &pix);
+			if (pix != 0) {
+				fprintf(stderr,
 					"Warning: Screen not blank at %d,%d (%x)\n",
 					x,y,pix);
-	  			c++;
-	  			if (c > 16) {
-		  			fprintf(stderr, "Error: Screen not blank or GetPixel not working. Consitency checks useless.\n");
+				c++;
+				if (c > 16) {
+					fprintf(stderr, "Error: Screen not blank or GetPixel not working. Consitency checks useless.\n");
 					y=mode.vy;
-		  			break;
-	  			}
-	  		}
+					break;
+				}
+			}
 		}
 	}
 }
@@ -250,13 +251,13 @@ static int CheckLine(ggi_visual_t vis,int x1,int y1,int x2,int y2)
 		cx=(x1*xx+x2*(max-xx)+max/2)/max;
 		cy=(y1*xx+y2*(max-xx)+max/2)/max;
 		ggiGetPixel (vis, cx, cy, &pix);
-	  	if (pix == 0) { 
-	  		fprintf(stderr,
+		if (pix == 0) {
+			fprintf(stderr,
 				"Line: Unset pixel %d,%d in line(%d,%d,%d,%d).\n",
 				cx,cy,x1,y1,x2,y2);
 			fail = 1;
 			if (flags&BREAK_UNCONSISTENT) break;
-	  	}
+		}
 		ggiDrawPixel(vis,cx,cy);
 	}
 	if ((pix = getnumpixels(0,0,120,120)) != black_pixel) {
@@ -280,7 +281,7 @@ static void Line(void)
 
 	fprintf(stderr,"Consistency: Testing Line ... ");
 	failcnt=0;
-	
+
 	ggiSetGCForeground(mode.vis, black_pixel);
 	ggiFillscreen(mode.vis);
 
@@ -413,7 +414,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -432,7 +433,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -451,7 +452,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -470,7 +471,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -489,7 +490,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -508,7 +509,7 @@ static void CopyBox(void)
 	ggiFillscreen(mode.vis);
 
 	for (x=0;x<32;x++) {
-		for (y=0;y<32;y++) { 
+		for (y=0;y<32;y++) {
 			ggiSetGCForeground(mode.vis, black_pixel);
 			ggiFillscreen(mode.vis);
 			ggiSetGCForeground(mode.vis,white_pixel);
@@ -527,12 +528,12 @@ static void CopyBox(void)
 /* This is an array of all available tests. It is used for parameter
  * checking and contains which checks to run.
  */
-struct test 
+static struct test
 {	char *name;
 	void (*func)(void);
 	int active;
 } tests[]=
-{	{"BasicConsistency", BasicConsistency, 1},	
+{	{"BasicConsistency", BasicConsistency, 1},
 		/* Enabled by default to keep it from stupid tries when
 		   getpixel is broken. */
 	{"ColorWrap",	ColorWrap,	0},
@@ -563,9 +564,9 @@ static void usage(const char *prog)
 static void list_tests(void)
 {
 	int testnum;
-	
+
 	fprintf(stderr,"Available tests are :\n");
-	
+
 	for (testnum=0;tests[testnum].name;testnum++)
 	{
 		fprintf(stderr,"--%s\n",tests[testnum].name);
@@ -602,7 +603,7 @@ static int parse_args(int argc,char **argv)
 			usage(argv[0]);
 			return 1;
 		}
-	}	
+	}
 
 	return 0;
 }
@@ -665,7 +666,7 @@ main(int argc,char **argv)
 	}
 
 	if (setup_mode()) return 2;
-	
+
 	for (testnum=0;tests[testnum].name;testnum++) {
 		if (!tests[testnum].active) continue;
 		TestName(tests[testnum].name);
@@ -673,7 +674,7 @@ main(int argc,char **argv)
 	}
 
 	ggiClose(mode.vis);
-	ggiExit();	
+	ggiExit();
 
 	return 0;
 }
