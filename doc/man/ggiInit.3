@@ -10,10 +10,10 @@ int ggiInit(void);
 int ggiExit(void);
 .fi
 .SH DESCRIPTION
-\fBggiInit\fR initalizes the library. This function must be called before
+\fBggiInit\fR initializes the library. This function must be called before
 using other LibGGI functions; otherwise the results will be undefined.
 
-\fBggiExit\fR uninitializes the library (after being initalized by
+\fBggiExit\fR uninitializes the library (after being initialized by
 \fBggiInit\fR) and automatically cleanup if necessary.  This should be
 called after an application is finished with the library.  If any GGI
 functions are called after the library has been uninitialized, the
@@ -48,7 +48,7 @@ Initialize and uninitialize LibGGI:
 
 .nb
 if (ggiInit() < 0) {
-    fprintf(stderr, "Cannot initalize LibGGI!\n");
+    fprintf(stderr, "Cannot initialize LibGGI!\n");
     exit(1);
 }
 
