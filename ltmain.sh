@@ -1082,6 +1082,17 @@ compiler."
 	continue
 	;;
 
+      -pthread)
+	case $host in
+	*-*-openbsd*)
+	  deplibs="$deplibs $arg"
+	  ;;
+	*)
+	  continue
+	  ;;
+	esac
+	;;
+
       -module)
 	module=yes
 	continue
@@ -1520,6 +1531,9 @@ compiler."
 	  else
 	    newdlfiles="$newdlfiles $deplib"
 	  fi
+	  continue
+	  ;;
+	-pthread)
 	  continue
 	  ;;
 	%DEPLIBS%)
