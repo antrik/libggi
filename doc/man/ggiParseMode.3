@@ -1,4 +1,4 @@
-.TH "ggiParseMode" 3 "2004-11-21" "libggi-current" GGI
+.TH "ggiParseMode" 3 "2004-11-25" "libggi-current" GGI
 .SH NAME
 \fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
 .SH SYNOPSIS
@@ -11,8 +11,8 @@ int ggiParseMode(const char *s, ggi_mode *m);
 
 #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
-int ggiSPrintMode(char *s, ggi_mode *m);
-int ggiFPrintMode(FILE *s, ggi_mode *m);
+int ggiSPrintMode(char *s, const ggi_mode *m);
+int ggiFPrintMode(FILE *s, const ggi_mode *m);
 .fi
 
 .SH DESCRIPTION
