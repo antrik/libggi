@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.10 2004/12/01 23:08:23 cegger Exp $
+/* $Id: box.c,v 1.11 2005/03/11 09:03:30 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -142,6 +142,9 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf
 
 		uint8 *dest;
 
+		if (curx + ww > w)
+			ww = w - curx;
+
 		p = tclient_new_event(priv->client, &ev, TELE_CMD_PUTBOX,
 				      sizeof(TeleCmdGetPutData)-4,
 				      (signed)(ww*hh*BYTES_PER_PIXEL(vis)));
@@ -220,6 +223,9 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		int hh = (h < ystep) ? h : ystep;
 
 		uint8 *src;
+
+		if (curx + ww > w)
+			ww = w - curx;
 
 		p = tclient_new_event(priv->client, &ev, TELE_CMD_GETBOX,
 				      sizeof(TeleCmdGetPutData)-4,
