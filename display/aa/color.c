@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
+/* $Id: color.c,v 1.4 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Palette functions for AA target.
@@ -31,26 +31,22 @@
 #include <string.h>
 
 
-int GGI_aa_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_aa_setPalette(ggi_visual_t vis,size_t start,size_t size, const ggi_color *colormap)
 {
-        ggi_aa_priv *priv = LIBGGI_PRIVATE(vis);
-	int x;
+	aa_palette   *pal  = (aa_palette*)(LIBGGI_PAL(vis)->priv);
+	ggi_color    *dest = LIBGGI_PAL(vis)->clut + start;
+	ggi_color    *src  = (ggi_color*)colormap;
+	size_t       end = start + size;
 
-	GGIDPRINT_COLOR("AA setpalette.\n");
-
-	if (start == GGI_PALETTE_DONTCARE) start = 0;
-
-	if (colormap==NULL || start+len > (1<<GT_DEPTH(LIBGGI_GT(vis)))) {
-		return -1;
+	GGIDPRINT_COLOR("AA setpalette.(%d,%d) %d\n",start,size,LIBGGI_PAL(vis)->size);
+	
+	for (; start<end; ++start, ++dest) {
+		*dest = *(src++);
+	
+		aa_setpalette(*pal, start, dest->r>>8,
+			                   dest->g>>8, 
+			                   dest->b>>8 );
 	}
-
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
-
-       	for (x=start; x<start+len; x++) {
-		aa_setpalette(priv->pal, x, vis->palette[x].r>>8,
-			      vis->palette[x].g>>8, 
-			      vis->palette[x].b>>8 );
-	}
-
+		
 	return 0;
 }

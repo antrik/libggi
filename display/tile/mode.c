@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/10/27 18:26:25 skids Exp $
+/* $Id: mode.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -202,7 +202,7 @@ static int _GGIdomode(ggi_visual *vis)
 	vis->opcolor->unmappixel=GGI_tile_unmappixel;
 	vis->opcolor->setpalvec=GGI_tile_setpalvec;
 	vis->opcolor->getpalvec=GGI_tile_getpalvec;
-
+	
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;

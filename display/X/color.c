@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2003/09/16 21:39:11 cegger Exp $
+/* $Id: color.c,v 1.10 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -67,23 +67,23 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
 		X_pal[i].g = xcol.green;
 		X_pal[i].b = xcol.blue;
 
-		vis->palette[i] = G_pal[i] = cols[i];
+		LIBGGI_PAL(vis)->clut[i] = G_pal[i] = cols[i];
 	}
 
-	_ggi_smart_match_palettes(vis->palette, len, X_pal, len);
+	_ggi_smart_match_palettes(LIBGGI_PAL(vis)->clut, len, X_pal, len);
 
 	for (i=0; i < len; i++) {
 		GGIDPRINT_COLOR("Smart alloc %03d: X=%02x%02x%02x "
 		             " GGI=%02x%02x%02x  (orig: %02x%02x%02x)\n", i, 
-			     X_pal[i].r >> 8, X_pal[i].g >> 8, 
-			     X_pal[i].b >> 8, vis->palette[i].r >> 8, 
-			     vis->palette[i].g >> 8, vis->palette[i].b >> 8,
-			     G_pal[i].r >> 8, G_pal[i].g >> 8, 
-			     G_pal[i].b >> 8);
+			     X_pal[i].r >> 8, X_pal[i].g >> 8, X_pal[i].b >> 8, 
+			     LIBGGI_PAL(vis)->clut[i].r >> 8, 
+			     LIBGGI_PAL(vis)->clut[i].g >> 8,
+			     LIBGGI_PAL(vis)->clut[i].b >> 8,
+			     G_pal[i].r >> 8, G_pal[i].g >> 8, G_pal[i].b >> 8);
 	}
 
-	priv->cmap_first = 0;
-	priv->cmap_last  = len;
+	LIBGGI_PAL(vis)->rw_start = 0;
+	LIBGGI_PAL(vis)->rw_stop  = len;
 
 	return 0;
 }
@@ -95,21 +95,21 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 
 	LIBGGI_ASSERT(priv->cmap, "No cmap!\n");
 
-	if (priv->cmap_first >= priv->cmap_last) return 0;
-	if (vis->palette) {
-		int x;
+	if (LIBGGI_PAL(vis)->rw_start >= LIBGGI_PAL(vis)->rw_stop) return 0;
+	if (LIBGGI_PAL(vis)->clut) {
+		size_t x;
 		XColor xcol;
 
-		for (x = priv->cmap_first; x < priv->cmap_last; x++) {
-			xcol.red   = vis->palette[x].r;
-			xcol.green = vis->palette[x].g;
-			xcol.blue  = vis->palette[x].b;
+		for (x = LIBGGI_PAL(vis)->rw_start; x < LIBGGI_PAL(vis)->rw_stop; x++) {
+			xcol.red   = LIBGGI_PAL(vis)->clut[x].r;
+			xcol.green = LIBGGI_PAL(vis)->clut[x].g;
+			xcol.blue  = LIBGGI_PAL(vis)->clut[x].b;
 			xcol.pixel = x;
 			xcol.flags = DoRed | DoGreen | DoBlue;
 			XStoreColor(priv->disp, priv->cmap, &xcol);
 		}
-		priv->cmap_first = priv->ncols;
-		priv->cmap_last = 0;
+		LIBGGI_PAL(vis)->rw_start = priv->ncols;
+		LIBGGI_PAL(vis)->rw_stop  = 0;
 		goto set;
 	}
 	if (priv->gammamap) {
@@ -136,40 +136,39 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 	return 0;
 }
 
-int GGI_X_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	ggi_x_priv *priv = LIBGGI_PRIVATE(vis);
 	
-	GGIDPRINT_COLOR("GGI_X_setpalvec(%p, %d, %d, {%d, %d, %d}) called\n",
+	GGIDPRINT_COLOR("GGI_X_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
 			vis, start, len, colormap->r,colormap->g ,colormap->b);
 
 	LIBGGI_APPASSERT(colormap != NULL,
 			 "ggiSetPalette() called with NULL colormap!");
 
-	if (start == GGI_PALETTE_DONTCARE) {
-		if (len > priv->ncols) {
-			return -1;
-		}
-
+	if (((int)start) == GGI_PALETTE_DONTCARE) {
 		if (COLOR_THRESHOLD(len, priv->ncols)) {
-			return _ggi_smart_allocate(vis, len, colormap);
+			return _ggi_smart_allocate(vis, len, (ggi_color*)colormap);
 		}
 
 		start = priv->ncols - len;
 	}
 
-	if (colormap == NULL || start+len > priv->ncols || start < 0) return -1;
+	if ( (colormap == NULL) || 
+			 ((int)(start+len) > priv->ncols ) || 
+	     (start < 0) ) return -1;
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	LIBGGI_PAL(vis)->size = len;
+	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, len*sizeof(ggi_color));
 
-	if (start < priv->cmap_first) {
-		priv->cmap_first = start;
+	if (start < LIBGGI_PAL(vis)->rw_start) {
+		LIBGGI_PAL(vis)->rw_start = start;
 	}
-	if (start+len > priv->cmap_last) {
-		priv->cmap_last  = start+len;
+	if ( (start+len) > LIBGGI_PAL(vis)->rw_stop) {
+		LIBGGI_PAL(vis)->rw_stop  = start+len;
 	}
 
-	GGIDPRINT_COLOR("X setpalvec success\n");
+	GGIDPRINT_COLOR("X setPalette success\n");
 
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) _ggi_x_flush_cmap(vis);
 
@@ -222,7 +221,7 @@ int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	if (colormap==NULL) return -1;
 	if (start >= priv->ncols) return -1;
 	if (start < 0) return -1;
-	if (len > (priv->ncols - start)) return -1;
+	if (len > priv->ncols) return -1;
 
 	i = 0;
 	do {
@@ -241,10 +240,8 @@ void _ggi_x_free_colormaps(ggi_visual *vis)
 
 	if (priv->cmap != None)   XFreeColormap(priv->disp,priv->cmap);
 	if (priv->cmap2 != None)  XFreeColormap(priv->disp,priv->cmap2);
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
-	}
+	if (LIBGGI_PAL(vis)->clut) free(LIBGGI_PAL(vis)->clut);
+  LIBGGI_PAL(vis)->clut = NULL;
 	if (priv->gammamap != NULL) free(priv->gammamap);
 	priv->gammamap = NULL;
 }
@@ -268,15 +265,21 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		vis->gamma->maxread_g = vis->gamma->maxread_b = 0;
 	vis->gamma->gamma_r = vis->gamma->gamma_g = vis->gamma->gamma_b = 1.0;
 
+	GGIDPRINT_MODE("_ggi_x_create_colormaps(%p, %p) called\n",
+			vis, vi);
+	
+		
 	if (vi->class == PseudoColor || vi->class == GrayScale ||
 	    vi->class == StaticColor || vi->class == StaticGray)
 	{
+		GGIDPRINT_MODE("Colormap needed\n");	
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
-		priv->ncols = 1 << vi->depth;
-		vis->palette = _ggi_malloc(sizeof(ggi_color) * priv->ncols);
-		if (vis->palette == NULL) {
+		priv->ncols = LIBGGI_PAL(vis)->size = 1 << vi->depth;
+		LIBGGI_PAL(vis)->clut = _ggi_malloc(sizeof(ggi_color) * LIBGGI_PAL(vis)->size);
+		
+		if (LIBGGI_PAL(vis)->clut == NULL) {
 			XFreeColormap(priv->disp, priv->cmap);
 			priv->cmap = None;
 			return;
@@ -293,16 +296,16 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 				XStoreColor(priv->disp, priv->cmap, &xcell);
 			}
 
-			vis->palette[i].r = xcell.red;
-			vis->palette[i].g = xcell.green;
-			vis->palette[i].b = xcell.blue;
+			LIBGGI_PAL(vis)->clut[i].r = xcell.red;
+			LIBGGI_PAL(vis)->clut[i].g = xcell.green;
+			LIBGGI_PAL(vis)->clut[i].b = xcell.blue;
 		}
 		if (vi->class == PseudoColor || vi->class == GrayScale) {
-			vis->opcolor->setpalvec = GGI_X_setpalvec;
+			LIBGGI_PAL(vis)->setPalette = GGI_X_setPalette;
 		}
 
-		priv->cmap_first=256;
-		priv->cmap_last=0;
+		LIBGGI_PAL(vis)->rw_start = 256;
+		LIBGGI_PAL(vis)->rw_stop  = 0;
 		GGIDPRINT_MODE("X: copied default colormap into (%x)\n",
 			       priv->cmap);
 		return;

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:08 cegger Exp $
+/* $Id: color.c,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -27,37 +27,39 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 
 #include <ggi/display/lcd823.h>
 
 
 int
-GGI_lcd823_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+GGI_lcd823_setPalette(ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
-	ggi_lcd823_priv *priv = LIBGGI_PRIVATE(vis);
-	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
-	int i;
+	uint16          *pal  = (uint16*)(LIBGGI_PAL(vis)->priv);
+	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
+	size_t i;
 
-	GGIDPRINT_COLOR("GGI_lcd823_setpalvec(%p, %d, %d)\n", vis, start, len);
+	GGIDPRINT_COLOR("GGI_lcd823_setPalette(%p, %d, %d)\n", vis, start, size);
 
-	if (start == GGI_PALETTE_DONTCARE) {
-		start = 0;
-	}
-
-	if ((start < 0) || (len < 0) || (start+len > nocols)) {
+	if (start+size > nocols) {
 		return -1;
 	}
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	memcpy(vis->palette+start, colormap, size*sizeof(ggi_color));
 
-	for (i = 0; i < len; i ++) {
-		     priv->pal[i+start] =
+	for (i = 0; i < size; i ++) {
+		     pal[i+start] =
 			     ((colormap[i].b >> 12) & 0x000f) |
 			     ((colormap[i].g >> 8) & 0x00f0) |
 			     ((colormap[i].r >> 4) & 0x0f00);
 	}
-	ioctl(LIBGGI_FD(vis), 3, &priv->pal);
+	ioctl(LIBGGI_FD(vis), 3, &pal);
 
 	return 0;
+}
+
+size_t GGI_lcd823_getPrivSize(ggi_visual_t vis)
+{
+  return (256 * sizeof(uint16));
 }

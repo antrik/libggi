@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/07/06 10:25:21 cegger Exp $
+/* $Id: mode.c,v 1.5 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -66,8 +66,20 @@ static int _GGIdomode(ggi_visual *vis)
 
 	_ggiZapMode(vis, 0);
 
-	if(!vis->palette)
-		vis->palette = _ggi_malloc(256*sizeof(ggi_color));
+	if(LIBGGI_PAL(vis)->priv){
+		free(LIBGGI_PAL(vis)->priv);
+		LIBGGI_PAL(vis)->priv = NULL;
+	}			
+		
+	LIBGGI_PAL(vis)->priv = _ggi_malloc(sizeof(aa_palette));
+		
+	if(LIBGGI_PAL(vis)->clut){
+		free(LIBGGI_PAL(vis)->clut);
+		LIBGGI_PAL(vis)->clut = NULL;			
+	}
+		
+	LIBGGI_PAL(vis)->clut = _ggi_malloc(256*sizeof(ggi_color));
+	LIBGGI_PAL(vis)->size     = 256;	
 
 	for(id=1;0==GGI_aa_getapi(vis,id,sugname,args);id++) {
 		err = _ggiOpenDL(vis, sugname, args, NULL);
@@ -81,8 +93,9 @@ static int _GGIdomode(ggi_visual *vis)
 		}
 	}
 
-	vis->opcolor->setpalvec=GGI_aa_setpalvec;
-
+  LIBGGI_PAL(vis)->getPrivSize = GGI_aa_getPrivSize;
+  LIBGGI_PAL(vis)->setPalette  = GGI_aa_setPalette;
+	
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;
@@ -91,7 +104,8 @@ static int _GGIdomode(ggi_visual *vis)
 int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_aa_priv *priv = AA_PRIV(vis);
-	
+	aa_palette  *pal  = (aa_palette*)(LIBGGI_PAL(vis)->priv);
+		
 	if (tryflag == 0) {
 		if (ggTryLock(priv->aalock))
 			return 0;
@@ -99,11 +113,12 @@ int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 		ggLock(priv->aalock);
 	}
 	
-	aa_renderpalette(priv->context, priv->pal, &aa_defrenderparams, 
-		x / AA_SCRMULT_X,
-		y / AA_SCRMULT_Y,
-		(x + w + AA_SCRMULT_X-1) / AA_SCRMULT_X,
-		(y + h + AA_SCRMULT_Y-1) / AA_SCRMULT_Y);
+	aa_renderpalette(priv->context, *pal, &aa_defrenderparams, 
+									 x / AA_SCRMULT_X,
+									 y / AA_SCRMULT_Y,
+									 (x + w + AA_SCRMULT_X-1) / AA_SCRMULT_X,
+									 (y + h + AA_SCRMULT_Y-1) / AA_SCRMULT_Y);
+	
 	aa_flush(priv->context);
 
 	ggUnlock(priv->aalock);
@@ -402,4 +417,12 @@ int GGI_aa_setflags(ggi_visual *vis,ggi_flags flags)
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
+}
+
+/*************************/
+/* get private cmap size */
+/*************************/
+size_t GGI_aa_getPrivSize(ggi_visual_t vis)
+{
+ 	return sizeof(aa_palette);
 }

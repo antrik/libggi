@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.2 2003/07/06 08:24:54 cegger Exp $
+/* $Id: file.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -108,13 +108,12 @@ extern int GGI_file_resetmode(ggi_visual *vis);
 /* LibGGI Interface
  */
  
-ggifunc_getmode		GGI_file_getmode;
-ggifunc_setmode		GGI_file_setmode;
-ggifunc_checkmode	GGI_file_checkmode;
-ggifunc_getapi		GGI_file_getapi;
-ggifunc_setflags	GGI_file_setflags;
-ggifunc_setpalvec	GGI_file_setpalvec;
-
+ggifunc_getmode			GGI_file_getmode;
+ggifunc_setmode			GGI_file_setmode;
+ggifunc_checkmode		GGI_file_checkmode;
+ggifunc_getapi			GGI_file_getapi;
+ggifunc_setflags		GGI_file_setflags;
+ggifunc_setPalette	GGI_file_setPalette;
 
 /**************************************************************************
 

@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.4 2002/05/22 13:10:19 skids Exp $
+/* $Id: memory.h,v 1.5 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -40,12 +40,12 @@
 #include <sys/shm.h>
 #endif
 
-ggifunc_getmode		GGI_memory_getmode;
-ggifunc_setmode		GGI_memory_setmode;
-ggifunc_getapi		GGI_memory_getapi;
-ggifunc_checkmode	GGI_memory_checkmode;
-ggifunc_setflags	GGI_memory_setflags;
-ggifunc_setpalvec	GGI_memory_setpalvec;
+ggifunc_getmode			GGI_memory_getmode;
+ggifunc_setmode			GGI_memory_setmode;
+ggifunc_getapi			GGI_memory_getapi;
+ggifunc_checkmode		GGI_memory_checkmode;
+ggifunc_setflags		GGI_memory_setflags;
+ggifunc_setPalette	GGI_memory_setPalette;
 
 enum memtype { 
 	MT_MALLOC, 	/* No parameters  : memory is malloced */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2002/10/27 18:26:24 skids Exp $
+/* $Id: mode.c,v 1.10 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -183,21 +183,22 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
 	/* Palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+	if (LIBGGI_PAL(vis)->clut) {
+		free(LIBGGI_PAL(vis)->clut);
+		LIBGGI_PAL(vis)->clut = NULL;
 	}
-	if (priv->savepalette) {
-		free(priv->savepalette);
-		priv->savepalette = NULL;
+	if (LIBGGI_PAL(vis)->priv) {
+		free(LIBGGI_PAL(vis)->priv);
+		LIBGGI_PAL(vis)->priv = NULL;
 	}
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
 		int len = 1 << GT_DEPTH(tm->graphtype);
 
-		vis->palette = malloc(len * sizeof(ggi_color));
-		if (vis->palette == NULL) return GGI_EFATAL;
-		priv->savepalette = malloc(sizeof(int) * (len*3));
-		if (priv->savepalette == NULL) return GGI_EFATAL;
+		LIBGGI_PAL(vis)->size = len;
+		LIBGGI_PAL(vis)->clut = malloc(len * sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut == NULL) return GGI_EFATAL;
+		LIBGGI_PAL(vis)->priv = malloc(sizeof(int) * (len*3));
+		if (LIBGGI_PAL(vis)->priv == NULL) return GGI_EFATAL;
 
 		/* Set an initial palette. */
 		ggiSetColorfulPalette(vis);
@@ -308,7 +309,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	}
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
-		vis->opcolor->setpalvec = GGI_svga_setpalvec;
+	        LIBGGI_PAL(vis)->setPalette  = GGI_svga_setPalette;
+		LIBGGI_PAL(vis)->getPrivSize = GGI_svga_getPrivSize;
 	}
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);

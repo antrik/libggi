@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.5 2003/07/05 22:13:40 cegger Exp $
+/* $Id: color.h,v 1.6 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -56,6 +56,7 @@ ggifunc_unpackpixels	GGI_color_L3_unpackpixels;
 ggifunc_unpackpixels	GGI_color_L4_unpackpixels;
 
 ggifunc_getpalvec	GGI_color_getpalvec;
+ggifunc_setpalvec	GGI_color_setpalvec;
 ggifunc_getgamma	GGI_color_getgamma;	
 ggifunc_setgamma	GGI_color_setgamma;	
 

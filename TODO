@@ -59,6 +59,7 @@ New X Target:
 - Re-implement old display-X emulated setorigin for root windows and
   for buggy WMs with faulty colormap handling code.
 - See if colormap can be force-installed under some buggy WMs.
+- Only basic Colormap management has been implemented.
 - Turn off hidden virtual area flushing when no backing store is 
   available.
 - Get upstream to fix stuff (Solid-fill ops into backing store, for 

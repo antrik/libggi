@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
+/* $Id: mode.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -120,13 +120,14 @@ static int do_dbstuff(ggi_visual *vis)
 	}
 
 	/* Set up palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+	if (LIBGGI_PAL(vis)->clut) {
+ 		free(LIBGGI_PAL(vis)->clut);
+ 		LIBGGI_PAL(vis)->clut = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		vis->palette = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis))) *
-					sizeof(ggi_color));
+		LIBGGI_PAL(vis)->clut = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis))) *
+ 																				sizeof(ggi_color));
+ 		LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
 
 	return 0;
@@ -191,7 +192,9 @@ static int do_setmode(ggi_visual *vis)
 	vis->opdraw->fillscreen=GGI_palemu_fillscreen;
 
 	vis->opdraw->setorigin=GGI_palemu_setorigin;
-	vis->opcolor->setpalvec=GGI_palemu_setpalvec;
+
+	/* colormap initialization */
+ 	LIBGGI_PAL(vis)->setPalette = GGI_palemu_setPalette;
 
 	vis->opdraw->setreadframe=GGI_palemu_setreadframe;
 	vis->opdraw->setwriteframe=GGI_palemu_setwriteframe;
@@ -229,7 +232,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	priv->mode.visible = mode->visible;
 	priv->mode.virt    = mode->virt;
 	priv->mode.dpp     = mode->dpp;
-        priv->mode.size    = mode->size;
+  priv->mode.size    = mode->size;
 	priv->mode.frames  = 1;
 
 	if ((err = do_setmode(vis)) != 0) {

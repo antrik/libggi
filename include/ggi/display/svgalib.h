@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.3 2001/06/24 16:45:12 skids Exp $
+/* $Id: svgalib.h,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -67,8 +67,8 @@ ggifunc_setreadframe	GGI_svga_setreadframe;
 ggifunc_setwriteframe	GGI_svga_setwriteframe;
 ggifunc_setdisplayframe	GGI_svga_setdisplayframe;
 
-ggifunc_setpalvec	GGI_svga_setpalvec;
-
+ggifunc_setPalette	GGI_svga_setPalette;
+size_t GGI_svga_getPrivSize(ggi_visual_t);
 
 /* We must use a wrapper around vga_setmode() because SVGAlib messes
    with terminal settings. */
@@ -78,7 +78,6 @@ int _ggi_svgalib_setmode(int mode);
 typedef struct svga_priv {
 	ggi_modelistmode *availmodes;
 	uint8	         *memorigin;
-	int		 *savepalette;
 	uint32	pixperframe;
 	int	islinear;
 	int	ismodex;

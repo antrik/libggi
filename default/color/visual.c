@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/07/05 22:13:40 cegger Exp $
+/* $Id: visual.c,v 1.5 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -105,6 +105,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			vis->opcolor->mapcolor   = GGI_color_PAL_mapcolor;
 			vis->opcolor->unmappixel = GGI_color_PAL_unmappixel;
 			vis->opcolor->getpalvec  = GGI_color_getpalvec;
+			vis->opcolor->setpalvec  = GGI_color_setpalvec;
 			break;
 
 		case GT_TRUECOLOR:

@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: tile.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -78,9 +78,9 @@ ggifunc_setorigin	GGI_tile_setorigin;
 
 ggifunc_mapcolor	GGI_tile_mapcolor;
 ggifunc_unmappixel	GGI_tile_unmappixel;
-ggifunc_setpalvec	GGI_tile_setpalvec;
-ggifunc_getpalvec	GGI_tile_getpalvec;
 
+ggifunc_setpalvec	GGI_tile_setpalvec;
+ggifunc_setpalvec	GGI_tile_getpalvec;
 
 #define MAX_VISUALS 256		/* This is an outrage! */
 

@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.2 2003/11/13 17:12:57 cegger Exp $
+/* $Id: ipc.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -40,13 +40,13 @@
 #include <sys/un.h>
 #include <sys/shm.h>
 
-ggifunc_flush           GGI_ipc_flush;
-ggifunc_getmode		GGI_ipc_getmode;
-ggifunc_setmode		GGI_ipc_setmode;
-ggifunc_getapi		GGI_ipc_getapi;
-ggifunc_checkmode	GGI_ipc_checkmode;
-ggifunc_setflags	GGI_ipc_setflags;
-ggifunc_setpalvec	GGI_ipc_setpalvec;
+ggifunc_flush            GGI_ipc_flush;
+ggifunc_getmode		 GGI_ipc_getmode;
+ggifunc_setmode		 GGI_ipc_setmode;
+ggifunc_getapi		 GGI_ipc_getapi;
+ggifunc_checkmode	 GGI_ipc_checkmode;
+ggifunc_setflags	 GGI_ipc_setflags;
+ggifunc_setPalette       GGI_ipc_setPalette;
 
 typedef struct
 {

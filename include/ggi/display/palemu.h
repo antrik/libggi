@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.2 2003/07/06 10:35:39 cegger Exp $
+/* $Id: palemu.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -157,7 +157,7 @@ ggifunc_copybox		GGI_palemu_copybox;
 ggifunc_crossblit	GGI_palemu_crossblit;
 ggifunc_fillscreen	GGI_palemu_fillscreen;
 ggifunc_setorigin	GGI_palemu_setorigin;
-ggifunc_setpalvec	GGI_palemu_setpalvec;
+ggifunc_setPalette	GGI_palemu_setPalette;
 
 ggifunc_setdisplayframe	GGI_palemu_setdisplayframe;
 ggifunc_setreadframe	GGI_palemu_setreadframe;

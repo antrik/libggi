@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:12 cegger Exp $
+/* $Id: color.c,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -32,41 +32,31 @@
 #include <ggi/display/monotext.h>
 
 
-int GGI_monotext_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_monotext_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_color *src = (ggi_color*)colormap;
+	size_t    end = start + size - 1;
 
-	GGIDPRINT("display-monotext: SetPalVec(%d,%d)\n", start, len);
-	
-	if (start == GGI_PALETTE_DONTCARE) {
-		start = 0;
-	}
-
-	if ((start < 0) || (len < 0) || (start+len > 256)) {
-		return -1;
-	}
-
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
-	
-	if (len > 0) {
+ 	GGIDPRINT("display-monotext: SetPalette(%d,%d)\n", start, size);
+		
+	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+		
+	if (end > start) {
 		UPDATE_MOD(priv, 0, 0, priv->size.x, priv->size.y);
 	}
+	
+	for (; start<=end; ++start, ++src) {
 
-	for (; len > 0; len--, start++, colormap++) {
+		int r = (src->r >> 11) & 0x1f;
+ 		int g = (src->g >> 11) & 0x1f;
+ 		int b = (src->b >> 11) & 0x1f;
+			
+		priv->colormap[start] = *src;
 
-		int r = (colormap->r >> 11) & 0x1f;
-		int g = (colormap->g >> 11) & 0x1f;
-		int b = (colormap->b >> 11) & 0x1f;
-
-		priv->colormap[start] = *colormap;
-
-		priv->greymap[start] = 
-			priv->rgb_to_grey[(r << 10) | (g << 5) | b];
+		priv->greymap[start] = priv->rgb_to_grey[(r << 10) | (g << 5) | b];
 	}
 	
 	UPDATE_SYNC;
 	return 0;
 }
-
-
-

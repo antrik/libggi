@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2003/11/09 13:01:07 cegger Exp $
+/* $Id: mode.c,v 1.22 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -99,7 +99,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	best = NULL;
 	w = h = idx = 0;
 	while (idx < priv->nvisuals) {
-	  	ggi_x_vi	*cthis;
+	  ggi_x_vi	*cthis;
 		ggi_mode	dummy;
 
 		dummy.visible.x = dummy.visible.y = 0;
@@ -317,13 +317,15 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	ggi_x_priv      *priv;
 	int destroychild, destroyparent, createchild, createparent;
 
+	GGIDPRINT("GGI_X_setmode_normal(%p, %p) called\n",vis,tm);
+		
 	priv = GGIX_PRIV(vis);
 
 	if ((err=GGI_X_checkmode_internal(vis,tm,&viidx))) return err;
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
 	priv->viidx = viidx;
 
-	GGIDPRINT("viidx = %i\n", priv->viidx);
+	GGIDPRINT("* viidx = %i\n", priv->viidx);
 
 	ggLock(priv->xliblock);
 
@@ -395,7 +397,7 @@ oldparent:
 
 	ggi_x_load_mode_libs(vis);
 	_ggi_x_load_slaveops(vis);
-	GGIDPRINT("viidx = %i\n", priv->viidx);
+	GGIDPRINT("* viidx = %i\n", priv->viidx);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
 		if (err) {
@@ -408,6 +410,7 @@ oldparent:
 
 	_ggi_x_free_colormaps(vis);
 	XSync(priv->disp, 0);
+	GGIDPRINT("Create colormap.\n");
 	_ggi_x_create_colormaps(vis, vi);
 
 	/* Create the child window */
@@ -523,6 +526,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	XVisualInfo	*vi;
 	ggi_x_priv      *priv;
 
+	GGIDPRINT("GGI_X_setmode_fixed(%p, %p) called\n",vis,tm);
+		
 	priv = GGIX_PRIV(vis);
 
         XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,

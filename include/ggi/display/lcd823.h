@@ -1,4 +1,4 @@
-/* $Id: lcd823.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: lcd823.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -36,7 +36,8 @@ ggifunc_checkmode	GGI_lcd823_checkmode;
 ggifunc_getapi		GGI_lcd823_getapi;
 ggifunc_setflags	GGI_lcd823_setflags;
 		
-ggifunc_setpalvec	GGI_lcd823_setpalvec;
+ggifunc_setPalette	GGI_lcd823_setPalette;
+size_t GGI_lcd823_getPrivSize(ggi_visual_t);
 ggifunc_setorigin	GGI_lcd823_setorigin;
 ggifunc_setdisplayframe	GGI_lcd823_setdisplayframe;
 
@@ -47,8 +48,6 @@ typedef struct {
 	void *fb_ptr;
 	long  fb_size;
 	long  frame_size;
-
-	uint16 pal[256];
 } ggi_lcd823_priv;
 
 #define LCD823_PRIV(vis) ((ggi_lcd823_priv *)LIBGGI_PRIVATE(vis))

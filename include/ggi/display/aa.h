@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.1 2001/05/12 23:03:19 cegger Exp $
+/* $Id: aa.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -34,14 +34,15 @@
 #include <ggi/display/mansync.h>
 
 
-ggifunc_flush		GGI_aa_flush;
+ggifunc_flush			GGI_aa_flush;
 ggifunc_getmode		GGI_aa_getmode;
 ggifunc_setmode		GGI_aa_setmode;
 ggifunc_checkmode	GGI_aa_checkmode;
 ggifunc_getapi 		GGI_aa_getapi;
 ggifunc_setflags	GGI_aa_setflags;
 
-ggifunc_setpalvec	GGI_aa_setpalvec;
+ggifunc_setPalette	GGI_aa_setPalette;
+size_t GGI_aa_getPrivSize(ggi_visual_t);
 
 giifunc_eventpoll	GII_aa_poll;
 /*
@@ -63,7 +64,6 @@ giifunc_sendevent	GII_aa_sendevent;
 
 typedef struct { 
 	aa_context *context;
-	aa_palette pal;
 	
 	_ggi_opmansync *opmansync;
 	void *aalock;

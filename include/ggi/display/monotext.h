@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: monotext.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -92,7 +92,7 @@ ggifunc_crossblit	GGI_monotext_crossblit;
 ggifunc_fillscreen	GGI_monotext_fillscreen;
 
 ggifunc_setorigin	GGI_monotext_setorigin;
-ggifunc_setpalvec	GGI_monotext_setpalvec;
+ggifunc_setPalette	GGI_monotext_setPalette;
 
 typedef struct ggi_monotext_priv {
 	ggi_visual_t parent;

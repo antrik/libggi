@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.4 2003/09/29 04:48:31 skids Exp $
+/* $Id: fbdev.h,v 1.5 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -98,7 +98,7 @@ typedef struct {
 	uint16 *blues;
 	ggi_gammastate gamma;
 	ggi_color *orig_cmap;	/* used to restore pre-GGI settings */
-
+	
 	/* Original mode on framebuffer */
 	struct fb_var_screeninfo orig_var;
 	struct fb_fix_screeninfo orig_fix;

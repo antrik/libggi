@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/07/06 10:25:22 cegger Exp $
+/* $Id: mode.c,v 1.5 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -227,12 +227,14 @@ static int _ggi_getmmap(ggi_visual *vis)
 	LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+  if (LIBGGI_PAL(vis)->clut) {
+ 		free(LIBGGI_PAL(vis)->clut);
+ 		LIBGGI_PAL(vis)->clut = NULL;
 	}
+	
 	if (GT_SCHEME(gt) == GT_PALETTE) {
-		vis->palette = _ggi_malloc(sizeof(ggi_color) * priv->num_cols);
+		LIBGGI_PAL(vis)->clut = _ggi_malloc(sizeof(ggi_color) * priv->num_cols);
+		LIBGGI_PAL(vis)->size = priv->num_cols;
 	}
 	
 	return 0;
@@ -312,7 +314,7 @@ static int _ggi_domode(ggi_visual *vis)
 	}
 
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		vis->opcolor->setpalvec = GGI_file_setpalvec;
+		LIBGGI_PAL(vis)->setPalette = GGI_file_setPalette;
 	}
 	vis->opdisplay->flush = GGI_file_flush;
 	
@@ -465,36 +467,25 @@ int GGI_file_setflags(ggi_visual *vis, ggi_flags flags)
 	return 0;
 }
 
-int GGI_file_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
-	ggi_file_priv *priv = FILE_PRIV(vis);
-
-	uint8 *file_pal = priv->file_mmap + priv->offset_pal;
-
+ 	ggi_file_priv *priv     = FILE_PRIV(vis);
+ 	uint8         *file_pal = priv->file_mmap + priv->offset_pal;
+ 	ggi_color     *dest     = LIBGGI_PAL(vis)->clut + start;
+ 	ggi_color     *src      = (ggi_color*)colormap;	
+	size_t        end       = start + size;
 
 	GGIDPRINT("display-file: setpalette.\n");
-
-	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE)
-		return -1;
-
-	if (start == -1) {
-		start = 0;
-	}
-
-	if (colormap==NULL || (start+len) > priv->num_cols) {
-		return -1;
-	}
-                        
+    
 	file_pal += start * 3;
 
-	for (; len > 0; len--, start++, colormap++) {
-
-		vis->palette[start] = *colormap;
+ 	for (; start<size; ++start, ++src, ++dest) {
+		*dest = *src;
 		
 		if (priv->flags & FILEFLAG_RAW) {
-			*file_pal++ = colormap->r >> 8;
-			*file_pal++ = colormap->g >> 8;
-			*file_pal++ = colormap->b >> 8;
+			*(file_pal++) = dest->r >> 8;
+ 			*(file_pal++) = dest->g >> 8;
+ 			*(file_pal++) = dest->b >> 8;
 		}
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.3 2003/07/06 10:35:39 cegger Exp $
+/* $Id: tele.h,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    TELE target.
@@ -76,7 +76,7 @@ ggifunc_setmode		GGI_tele_setmode;
 ggifunc_checkmode	GGI_tele_checkmode;
 ggifunc_flush		GGI_tele_flush;
 
-ggifunc_setpalvec	GGI_tele_setpalvec;
+ggifunc_setPalette	GGI_tele_setPalette;
 ggifunc_putpixel_nc	GGI_tele_putpixel_nc;
 ggifunc_putpixel	GGI_tele_putpixel;
 ggifunc_puthline	GGI_tele_puthline;

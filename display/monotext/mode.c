@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/07/06 10:25:23 cegger Exp $
+/* $Id: mode.c,v 1.5 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -107,13 +107,13 @@ static int do_dbstuff(ggi_visual *vis)
 	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+	if (LIBGGI_PAL(vis)->clut) {
+ 		free(LIBGGI_PAL(vis)->clut);
+ 		LIBGGI_PAL(vis)->clut = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		vis->palette = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
-					   sizeof(ggi_color));
+		LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
+ 		LIBGGI_PAL(vis)->clut = _ggi_malloc(LIBGGI_PAL(vis)->size * sizeof(ggi_color));
 	}
 
 	return 0;
@@ -184,7 +184,8 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 	vis->opdraw->fillscreen=GGI_monotext_fillscreen;
 
 	vis->opdraw->setorigin=GGI_monotext_setorigin;
-	vis->opcolor->setpalvec=GGI_monotext_setpalvec;
+	
+	LIBGGI_PAL(vis)->setPalette=GGI_monotext_setPalette;
 	
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 

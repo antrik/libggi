@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2003/09/29 05:38:51 cegger Exp $
+/* $Id: visual.c,v 1.14 2003/12/13 21:12:02 mooz Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -186,12 +186,12 @@ switchback(void *arg)
 #endif
 
 	/* See notes about palette member reuse in color.c */
-	if (vis->opcolor->setpalvec != NULL)
+	if ((LIBGGI_PAL(vis)->setPalette != NULL) && (vis->opcolor->setpalvec != NULL))
 		vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)), 
-					vis->palette);
+					LIBGGI_PAL(vis)->clut);
 	else if (vis->opcolor->setgammamap != NULL)
 		vis->opcolor->setgammamap(vis, 0, vis->gamma->len, 
-					  vis->palette);
+					  LIBGGI_PAL(vis)->clut);
 
 	if (priv->fix.xpanstep != 0 || priv->fix.ypanstep != 0) {
 		fbdev_doioctl(vis, FBIOPAN_DISPLAY, &priv->var);

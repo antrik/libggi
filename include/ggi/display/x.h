@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.6 2003/06/12 11:52:08 cegger Exp $
+/* $Id: x.h,v 1.7 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -58,39 +58,39 @@ typedef int (*ggi_modelist_validate)(ggi_visual *vis, int num,
 typedef struct {
   ggi_modelist_getlist	getlist;  /* Get/sort modelist, store original mode. */
   ggi_modelist_restore	restore;  /* Restore original mode and free list.    */
-  ggi_modelist_enter	enter;	  /* Enter given mode (called by setmode).   */
+  ggi_modelist_enter		enter;	  /* Enter given mode (called by setmode).   */
   ggi_modelist_validate validate; /* Check/complete a ggi_mode structure 
-				     based on a given mode. */
+				     												 based on a given mode. */
 } ggi_modelist_funcs;
 
 /* A structure for management of visual information */
 typedef struct {
-  XVisualInfo 		*vi;
-  void			*evi;		/* ExtendedVisualInfo if Xevi found */
-  XPixmapFormatValues   *buf;		/* Buffer/wire format 		    */
-  unsigned int 		flags;
+  XVisualInfo					*vi;
+  void								*evi;		/* ExtendedVisualInfo if Xevi found */
+  XPixmapFormatValues	*buf;		/* Buffer/wire format               */
+  unsigned int 				 flags;
 #define GGI_X_VI_NON_FB 1
 } ggi_x_vi;
 
-typedef int (*ggi_x_createfb)(ggi_visual *vis);		/* MMAP/alloc fb/db  */
-typedef void (*ggi_x_freefb)(ggi_visual *vis);		/* clean up fb/db    */
-typedef int (*ggi_x_createdrawable)(ggi_visual *vis);	/* prepare renderer  */
-typedef void (*ggi_x_createcursor)(ggi_visual *vis);	/* load mouse sprite */
+typedef int  (*ggi_x_createfb)(ggi_visual *vis);				/* MMAP/alloc fb/db  */
+typedef void (*ggi_x_freefb)(ggi_visual *vis);					/* clean up fb/db    */
+typedef int  (*ggi_x_createdrawable)(ggi_visual *vis);	/* prepare renderer  */
+typedef void (*ggi_x_createcursor)(ggi_visual *vis);		/* load mouse sprite */
 
 
 typedef struct {
-	Display			*disp;		/* One display per instance  */
+	Display	*disp;		/* One display per instance  */
 
-	_ggi_opmansync		*opmansync;	/* mansync helper hooks      */
-	ggi_coord		dirtytl,dirtybr; /* Simple dirty region	     */
-	int			fullflush;      /* Flush all visible area?   */
+	_ggi_opmansync *opmansync;			 /* mansync helper hooks     */
+	ggi_coord			  dirtytl,dirtybr; /* Simple dirty region	     */
+	int							fullflush;       /* Flush all visible area?  */
 
 	/* Pixelformat and colorspace management */
-	int			viidx;		/* currently active visual   */
-  	ggi_x_vi                *vilist;       	/* Sorted list of visuals    */
-  	void                    *evilist;	/* master handle for XFree() */
-	XVisualInfo		*visual;	/* master handle for XFree() */
-	int			nvisuals;
+	int			       viidx;			/* currently active visual   */
+  ggi_x_vi      *vilist;    /* Sorted list of visuals    */
+  void          *evilist;		/* master handle for XFree() */
+	XVisualInfo		*visual;		/* master handle for XFree() */
+	int			       nvisuals;
 	XPixmapFormatValues     *buflist;	/* master handle for XFree() */
 	int                     nbufs;
 
@@ -103,10 +103,8 @@ typedef struct {
 
 	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
 	int         activecmap;
-	int         ncols;	/* Number of colors in the colormap */
-	int         cmap_first; /* For sharing pallete */ 
-	int	    cmap_last;  /* For sharing pallete */ 
-	XColor      *gammamap;
+	int         ncols;			/* Number of colors in the colormap */
+	XColor      	*gammamap;
 	ggi_gammastate gamma;
 
 	GC           gc, tempgc;
@@ -124,25 +122,25 @@ typedef struct {
 	int         wintype;
 	Window      parentwin, win;
 
-	unsigned char		*fb;		/* direct access */
-  	ggi_x_createfb		createfb;	/* overload init .fb */
-  	ggi_x_freefb		freefb;		/* overload init .fb */
-	Drawable		drawable;	/* Xlib/accel access */
+	unsigned char		*fb;				/* direct access */
+  ggi_x_createfb	 createfb;	/* overload init .fb */
+  ggi_x_freefb		 freefb;		/* overload init .fb */
+	Drawable				 drawable;	/* Xlib/accel access */
 	ggi_x_createdrawable	createdrawable;	/* overload init .drawable */
 
-	XImage	      		*ximage;
-	ggi_visual 		*slave;
+	XImage	    *ximage;
+	ggi_visual	*slave;
 
 	/* Modelist management */
-	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads */
-	ggi_modelistmode	*modes;		/* modelist helper modes     */
-	void		 	*modes_priv;	/* DGA or VideoMode modelist */
-	int			cur_mode;	/* Current used mode from the modelist */
-	int			modes_num;	/* number of modes in list.  */
+	ggi_modelist_funcs	 mlfuncs;			/* modelist helper overloads */
+	ggi_modelistmode		*modes;				/* modelist helper modes     */
+	void		 						*modes_priv;	/* DGA or VideoMode modelist */
+	int									 cur_mode;		/* Current used mode from the modelist */
+	int									 modes_num;		/* number of modes in list.  */
 
 	gii_input   *inp;
 
-	void			*priv; 		/* for extra handles (dga) */
+	void	*priv; 		/* for extra handles (dga) */
 
 	/* Hooks to ferry a few core ops w/o using symbol tables */
 	ggifunc_resacquire	*acquire;
@@ -153,7 +151,7 @@ typedef struct {
 	   how to unhook MIT-SHM's XCloseDisplay hook so we can close it 
 	   gracefully.
 	*/
-        void			(*shmhack_free_cmaps)(ggi_visual *vis);	
+	void			(*shmhack_free_cmaps)(ggi_visual *vis);	
 	ggifunc_checkmode	*shmhack_checkmode_fixed;
 } ggi_x_priv;
 
@@ -312,7 +310,7 @@ ggifunc_getcharsize	GGI_X_getcharsize_font;
 
 /* color.c protos */
 int _ggi_x_flush_cmap (ggi_visual *vis);
-ggifunc_setpalvec	GGI_X_setpalvec;
+ggifunc_setPalette	GGI_X_setPalette;
 ggifunc_setgammamap	GGI_X_setgammamap;
 ggifunc_getgammamap	GGI_X_getgammamap;
 

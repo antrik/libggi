@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2003/11/13 17:13:59 cegger Exp $
+/* $Id: mode.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -76,13 +76,13 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+	if(LIBGGI_PAL(vis)->clut) {
+ 		free(LIBGGI_PAL(vis)->clut);
+ 		LIBGGI_PAL(vis)->clut = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		vis->palette = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
-					sizeof(ggi_color));
+		LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
+ 		LIBGGI_PAL(vis)->clut = _ggi_malloc(LIBGGI_PAL(vis)->size * sizeof(ggi_color));
 	}
 	
 	return 0;
@@ -153,7 +153,7 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		vis->opcolor->setpalvec = GGI_ipc_setpalvec;
+		LIBGGI_PAL(vis)->setPalette = GGI_ipc_setPalette;
 	}
 	
 	return 0;
@@ -289,14 +289,11 @@ int GGI_ipc_setflags(ggi_visual *vis,ggi_flags flags)
 	return 0;
 }
 
-int GGI_ipc_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_ipc_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	GGIDPRINT("ipc setpalette.\n");
-	if (start == -1) start = 0;
-	if (colormap==NULL || start+len > (1<<GT_DEPTH(LIBGGI_GT(vis))))
-		return -1;
-                        
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color)); 
-
+	              
+	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+		
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2003/07/06 10:25:23 cegger Exp $
+/* $Id: color.c,v 1.6 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    TELE target.
@@ -39,29 +39,29 @@
 #define MAX_COLORS  TELE_MAXIMUM_TLONG(TeleCmdSetPaletteData)
 
 
-int GGI_tele_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cols)
+int GGI_tele_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *cols)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdSetPaletteData *c;
 	TeleEvent ev;
 
-	int no_cols, err;
+	size_t no_cols;
+
+	int err;
+
+	int len = (int)size;
 
 	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE) {
 		return -1;
 	}
 
-	if (start == GGI_PALETTE_DONTCARE) {
-		start = 0;
-	}
-
 	no_cols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
-	if (cols==NULL || (start+len) > no_cols) {
+	if (cols==NULL || (start+size) > no_cols) {
 		return -1;
 	}
 
-	memcpy(vis->palette+start, cols, len*sizeof(ggi_color)); 
+	memcpy(LIBGGI_PAL(vis)->clut+start, cols, size*sizeof(ggi_color)); 
 
 
 	/* send palette to the server */

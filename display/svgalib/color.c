@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/09/08 21:37:46 soyt Exp $
+/* $Id: color.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -35,7 +35,7 @@
 
 
 int
-GGI_svga_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	svga_priv *priv = LIBGGI_PRIVATE(vis);
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
@@ -43,17 +43,13 @@ GGI_svga_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	int i;
 
 	LIBGGI_APPASSERT(colormap != NULL,
-			 "GGI_svga_setpalvec() - colormap == NULL");
+			 "GGI_svga_setPallete() - colormap == NULL");
 
-	if (start == GGI_PALETTE_DONTCARE) start = 0;
+	memcpy(LIBGGI_PAL(vis)->clut, colormap, len*sizeof(ggi_color));
 
-	if (start < 0 || start+len > maxlen) return -1;
+	vgaptr = LIBGGI_PAL(vis)->priv + start*3;
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
-
-	vgaptr = priv->savepalette + start*3;
-
-	/* vga_setpalvec() takes 6-bit r,g,b,
+	/* vga_setPalette() takes 6-bit r,g,b,
 	   so we need to scale ggi_color's 16-bit values. */
 	for (i = 0; i < len; i++) {
 		*vgaptr = colormap->r >> 10;
@@ -67,7 +63,12 @@ GGI_svga_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 
 	if (!SVGA_PRIV(vis)->ismapped) return 0;
 
-	vga_setpalvec(start, len, priv->savepalette + start*3);
+	vga_setpalvec(start, len, ((int*)LIBGGI_PAL(vis)->priv) + start*3);
 
 	return 0;
+}
+
+size_t GGI_svga_getPrivSize(ggi_visual_t vis)
+{
+  return (3 * LIBGGI_PAL(vis)->size * sizeof(int));
 }

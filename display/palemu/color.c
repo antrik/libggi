@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:15 cegger Exp $
+/* $Id: color.c,v 1.2 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -32,30 +32,27 @@
 #include <ggi/display/palemu.h>
 
 
-int GGI_palemu_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_palemu_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	ggi_color       *src  = (ggi_color*)colormap;
+	size_t          end   = start + len;
 
-	GGIDPRINT("display-palemu: SetPalVec(%d,%d)\n", start, len);
+ 	GGIDPRINT("display-palemu: SetPalette(%d,%d)\n", start, len);
 	
-	if (start == GGI_PALETTE_DONTCARE) {
-		start = 0;
-	}
-
-	if ((start < 0) || (len < 0) || (start+len > 256)) {
+	if (len > 256) {
 		return -1;
 	}
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
-
-	if (len > 0) {
+	memcpy(LIBGGI_PAL(vis)->clut+start, src, len*sizeof(ggi_color));
+	/*	
+	if (end > start) {
 		UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	}
-
-	for (; len > 0; len--, start++, colormap++) {
-
-		priv->palette[start] = *colormap;
-		priv->lookup[start] = ggiMapColor(priv->parent, colormap);
+	*/
+	for (; start < end; ++start, ++src) {
+		priv->palette[start] = *src;
+		priv->lookup[start] = ggiMapColor(priv->parent, src);
 	}
 	
 	return 0;

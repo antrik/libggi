@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.6 2003/12/11 23:44:20 cegger Exp $
+/* $Id: internal.h,v 1.7 2003/12/13 21:12:04 mooz Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -119,6 +119,25 @@ void _ggiDestroyVisual(ggi_visual *vis);
 
 enum gg_swartype _ggiGetSwarType(void);
 
+/* colormap.c */
+size_t _ggiColormapGetPrivsize(ggi_visual_t vis);
+int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end);
+int _ggiColormapGetRW(ggi_visual_t vis, size_t *start, size_t *end);
+int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end);
+int _ggiColormapGetRO(ggi_visual_t vis, size_t *start, size_t *end);
+
+int _ggiColormapSetPalette(ggi_visual_t vis, size_t start,
+													 size_t size, const ggi_color *cmap);
+ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
+																enum ggi_colormap_region region);
+ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
+															enum ggi_colormap_region region);
+int _ggiColormapMatchByColor(ggi_visual_t vis, const ggi_color *color1,
+														 const ggi_color *color2,
+														 enum ggi_colormap_region region);
+int _ggiColormapMatchByIdx(ggi_visual_t vis, size_t idx1, size_t idx2,
+												   enum ggi_colormap_region region);
+
 __END_DECLS
 
 
@@ -185,5 +204,7 @@ __END_DECLS
 
 #define LIBGGI_R_PLAN(vis)	((vis)->r_frame->buffer.plan)
 #define LIBGGI_W_PLAN(vis)	((vis)->w_frame->buffer.plan)
+
+#define LIBGGI_PAL(vis)		((vis)->palette)
 
 #endif /* _GGI_INTERNAL_H */

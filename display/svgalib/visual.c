@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2003/11/16 22:01:52 cegger Exp $
+/* $Id: visual.c,v 1.6 2003/12/13 21:12:03 mooz Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -176,7 +176,7 @@ do_setpalette(ggi_visual *vis)
 	ggi_graphtype gt = LIBGGI_MODE(vis)->graphtype;
 	int len = 1 << GT_DEPTH(gt);
 
-	vga_setpalvec(0, len, SVGA_PRIV(vis)->savepalette);
+	vga_setpalvec(0, len, LIBGGI_PAL(vis)->priv);
 }
 
 
@@ -307,7 +307,6 @@ static int do_cleanup(ggi_visual *vis)
 		giiClose(vis->input);
 		vis->input = NULL;
 	}
-	if (priv->savepalette) free(priv->savepalette);
 
 	if (priv) {
 		if (priv->availmodes != NULL) {

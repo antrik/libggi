@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.5 2003/09/16 20:57:42 cegger Exp $
+/* $Id: structs.h,v 1.6 2003/12/13 21:12:04 mooz Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -80,6 +80,49 @@ typedef struct ggi_gc
 
 } ggi_gc;
 
+/* Colormap */
+enum ggi_colormap_region {
+	GGI_COLORMAP_RW_REGION		= 0,
+	GGI_COLORMAP_RO_REGION		= 1,
+	GGI_COLORMAP_RW_RO_REGION	= 2
+};
+
+typedef struct ggi_colormap {
+		size_t size;		/* 0 means, no CLUT available */
+		ggi_color *clut;	/* color lookup table */
+		
+		size_t rw_start;	/* start index of r/w indeces */
+		size_t rw_stop;		/* end index of r/w indices */
+		size_t ro_start;	/* start index of r/o indices */
+		size_t ro_stop;		/* end index of r/o indices */
+		
+		void *priv;		/* hook for target specific data */
+		
+		/* Function hooks for target specific operations */
+		
+		/* Returns the size of the void *priv */
+		size_t (*getPrivSize)(ggi_visual_t vis);
+		
+		int (*setRW)(ggi_visual_t vis, size_t start, size_t end);
+		int (*setRO)(ggi_visual_t vis, size_t start, size_t end);
+		int (*getRW)(ggi_visual_t vis, size_t *start, size_t *end);
+		int (*getRO)(ggi_visual_t vis, size_t *start, size_t *end);
+		
+		/* sets the palette and automatically determine the rw/ro start/end indeces */
+		ggifunc_setPalette* setPalette;
+		
+		ssize_t (*findByColor)(ggi_visual_t vis, const ggi_color *color,
+				       enum ggi_colormap_region region);
+		ssize_t (*findByIdx)(ggi_visual_t vis, size_t idx,
+				     enum ggi_colormap_region region);
+		int (*matchByColor)(ggi_visual_t vis,
+				    const ggi_color *color1,
+				    const ggi_color *color2,
+				    enum ggi_colormap_region region);
+		int (*matchByIdx)(ggi_visual_t vis, size_t idx1, size_t idx2,
+				  enum ggi_colormap_region region);
+} ggi_colormap;
+ 
 /* Gamma state structure. */
 typedef struct ggi_gammastate
 {
@@ -200,7 +243,12 @@ typedef struct ggi_visual {
 	ggi_directbuffer *w_frame;	/* linear-* libraries */
 
 	ggi_gc		 *gc;		/* Graphics context */
+#if 0
 	ggi_color	 *palette;	/* Current palette */
+#else
+	ggi_colormap *palette; /* Current palette */
+#endif
+	
 	ggi_mode	 *mode;		/* Current mode */
 	ggi_pixelformat	 *pixfmt;	/* Format of the pixels */
 	struct gii_input *input;	/* Input handle for visual */
