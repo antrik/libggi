@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/02/14 13:45:37 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/09/08 11:11:18 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -89,7 +89,7 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
 	int size = GT_SIZE(LIBGGI_GT(vis));
 
-	strcpy(arguments, "");
+	*arguments = '\0';
 
 	switch(num) {
 
@@ -371,7 +371,10 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 #endif
 			    priv->fix.visual == FB_VISUAL_TRUECOLOR ||
 			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR)
+			{
 				err = GGI_EFATAL;
+				GGIDPRINT_MODE("display-fbdev: GT_GREYSCALE mode failed\n");
+			}
 			break;
 
 		case GT_PALETTE:
