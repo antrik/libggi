@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.6 2003/01/16 00:33:39 skids Exp $
+/* $Id: radeon_accel.h,v 1.7 2003/01/29 01:17:45 skids Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -63,7 +63,7 @@ typedef struct
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
                 uint32 txoffset;
-		uint32 txblend;
+		uint32 txcblend;
                 cce_type0_header_t h3;
                 pp_tex_size_t tex_size;
                 pp_txpitch_t txpitch;
@@ -75,7 +75,7 @@ typedef struct
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
                 uint32 txoffset;
-		uint32 txblend;
+		uint32 txcblend;
                 cce_type0_header_t h3;
                 pp_tex_size_t tex_size;
                 pp_txpitch_t txpitch;
@@ -89,7 +89,15 @@ typedef struct
 		cce_type0_header_t h2;
 		cce_scissor_t default_sc_bot_right;
 	} gui2d_ctx;
-
+#define RADEON_TEXT_CTX 6
+	struct {
+                cce_type0_header_t h1;
+                uint32 pp_cntl;
+                cce_type0_header_t h2;
+                pp_txformat_t txformat;
+                uint32 txoffset;
+		uint32 txcblend;
+	} text_ctx;
 } radeon_context_t;
 
 #define RADEON_CONTEXT(vis) ((radeon_context_t *)KGI_ACCEL_PRIV(vis))
@@ -141,6 +149,9 @@ do {									\
       break;								\
     case RADEON_GUI2D_CTX:						\
       RADEON_WRITEPACKET(vis, (RADEON_CONTEXT(vis)->gui2d_ctx));	\
+      break;								\
+    case RADEON_TEXT_CTX:						\
+      RADEON_WRITEPACKET(vis, (RADEON_CONTEXT(vis)->text_ctx));		\
       break;								\
     default: break; }}							\
   RADEON_CONTEXT(vis)->ctx_loaded = whatctx;				\

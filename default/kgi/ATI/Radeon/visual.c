@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/01/16 00:33:39 skids Exp $
+/* $Id: visual.c,v 1.5 2003/01/29 01:17:46 skids Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -76,7 +76,7 @@ static int rwframes_changed_3d(ggi_visual *vis) {
 		(char *)(vis->w_frame->write) - (char*)(KGI_PRIV(vis)->fb);
 
 	memset(&packet, 0, sizeof(packet));
-	packet.h1.base_index = PP_TXOFFSET_2 >> 2;
+	packet.h1.base_index = PP_TXOFFSET_1 >> 2;
 	packet.h1.count = 0;
 	packet.txoffset = ctx->copybox_ctx.txoffset;
 	packet.h2.base_index = RB3D_COLOROFFSET >> 2;
@@ -209,8 +209,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	ctx->copybox_ctx.h1.base_index = PP_CNTL >> 2;
 	ctx->copybox_ctx.h1.count = 0;
-	ctx->copybox_ctx.pp_cntl = 0x00004042; /* Enable texture 2 */
-	ctx->copybox_ctx.h2.base_index = PP_TXFORMAT_2 >> 2;
+	ctx->copybox_ctx.pp_cntl = 0x00002022; /* Enable texture 0 */
+	ctx->copybox_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
 	ctx->copybox_ctx.h2.count = 2;
         switch (GT_DEPTH(LIBGGI_GT(vis))) {
         case 8:  ctx->copybox_ctx.txformat.txformat = 2; break;
@@ -220,8 +220,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         }
         ctx->copybox_ctx.txformat.non_power2 = 1;
 	ctx->copybox_ctx.txoffset = 0;
-	ctx->copybox_ctx.txblend = 0x00803800;
-	ctx->copybox_ctx.h3.base_index = PP_TEX_SIZE_2 >> 2;
+	ctx->copybox_ctx.txcblend = 0x00803000;
+	ctx->copybox_ctx.h3.base_index = PP_TEX_SIZE_1 >> 2;
 	ctx->copybox_ctx.h3.count = 1;
 	ctx->copybox_ctx.tex_size.usize = LIBGGI_VIRTX(vis);
 	ctx->copybox_ctx.tex_size.vsize = LIBGGI_VIRTY(vis);
@@ -230,16 +230,29 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	ctx->put_ctx.h1.base_index = PP_CNTL >> 2;
 	ctx->put_ctx.h1.count = 0;
-	ctx->put_ctx.pp_cntl = 0x00004042; /* Enable texture 2 */
-	ctx->put_ctx.h2.base_index = PP_TXFORMAT_2 >> 2;
+	ctx->put_ctx.pp_cntl = 0x00002022; /* Enable texture 2 */
+	ctx->put_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
 	ctx->put_ctx.h2.count = 2;
 	ctx->put_ctx.txformat = ctx->copybox_ctx.txformat;
 	ctx->put_ctx.txoffset = 0;
-	ctx->put_ctx.txblend = 0x00803800;
-	ctx->put_ctx.h3.base_index = PP_TEX_SIZE_2 >> 2;
+	ctx->put_ctx.txcblend = 0x00803000;
+	ctx->put_ctx.h3.base_index = PP_TEX_SIZE_1 >> 2;
 	ctx->put_ctx.h3.count = 1;
 	ctx->put_ctx.tex_size.usize = ctx->put_ctx.tex_size.vsize = 0;
 	ctx->put_ctx.txpitch.txpitch = 0;
+
+	ctx->text_ctx.h1.base_index = PP_CNTL >> 2;
+	ctx->text_ctx.h1.count = 0;
+	ctx->text_ctx.pp_cntl = 0x00002022; /* Enable texture 2 */
+	ctx->text_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
+	ctx->text_ctx.h2.count = 2;
+        ctx->text_ctx.txformat.txformat = 0;
+        ctx->text_ctx.txformat.non_power2 = 0;
+	ctx->text_ctx.txformat.txwidth = 0xb;
+	ctx->text_ctx.txformat.txheight = 0x3;
+	ctx->text_ctx.txoffset = 
+	  (char *)KGI_PRIV(vis)->font - (char *)KGI_PRIV(vis)->fb;
+	ctx->text_ctx.txcblend = 0x000c3080;
 
 	if (use3d) RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
 	else RADEON_RESTORE_CTX(vis, RADEON_GUI2D_CTX);

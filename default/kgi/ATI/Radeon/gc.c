@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.2 2003/01/16 00:33:39 skids Exp $
+/* $Id: gc.c,v 1.3 2003/01/29 01:17:45 skids Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -37,6 +37,25 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 		ggiUnmapPixel(vis, LIBGGI_GC_FGCOLOR(vis), &col);
 		memset(&packet, 0, sizeof(packet));
 		packet.h.base_index = RE_SOLID_COLOR >> 2;
+		packet.h.count = 0;
+		col.a >>= 8;
+		col.r >>= 8;
+		col.g >>= 8;
+		col.b >>= 8;
+		packet.val = (uint32)col.a << 24 | (uint32)col.r << 16 | 
+		  (uint32)col.g << 8 | (uint32)col.b;
+		RADEON_WRITEPACKET(vis, packet);
+	}
+	if (mask & GGI_GCCHANGED_BG) {
+		ggi_color col;
+		struct {
+	  		cce_type0_header_t h;
+			uint32 val;
+		} packet;
+
+		ggiUnmapPixel(vis, LIBGGI_GC_BGCOLOR(vis), &col);
+		memset(&packet, 0, sizeof(packet));
+		packet.h.base_index = PP_TFACTOR_1 >> 2;
 		packet.h.count = 0;
 		col.a >>= 8;
 		col.r >>= 8;
