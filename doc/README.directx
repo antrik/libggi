@@ -1,4 +1,4 @@
-README for Win32 port of libGGI.
+README for Windows port of LibGGI.
 Created: 8 Jul 2001 by John Fortin (fortinj@attglobal.net)
 Updated: 2 Nov 2004 by Peter Ekberg (peda@lysator.liu.se)
 
@@ -67,6 +67,8 @@ IV) Notes:
 		See libggi/doc/env.txt for more details.
 	- Run some demos under the programs directory.
 	- The file C:\foo can by default be accessed as /cygdrive/c/foo
+	- Avoid building in a directory with spaces such as
+	  /cygdrive/c/Documents and Settings/username.
 
 
 
@@ -134,3 +136,5 @@ IV) Notes:
 	  prompt instead.
 	  http://sourceforge.net/tracker/index.php?func=detail&aid=946191&group_id=2435&atid=102435
 	- The file C:\foo can by default be accessed as /c/foo in MSYS.
+	- Avoid building in a directory with spaces such as
+	  /c/Documents and Settings/username.
