@@ -13,8 +13,8 @@
 </refmeta>
 
 <refnamediv>
-<refname>ggiInit</refname>
-<refname>ggiExit</refname>
+<refname id="ggiInit">ggiInit</refname>
+<refname id="ggiExit">ggiExit</refname>
 <refpurpose>Initialize and uninitialize LibGGI</refpurpose>
 </refnamediv>
 
@@ -144,7 +144,7 @@ ggiExit();
 </refmeta>
 
 <refnamediv>
-<refname>ggiPanic</refname>
+<refname id="ggiPanic">ggiPanic</refname>
 <refpurpose>Exit LibGGI programs for fatal errors</refpurpose>
 </refnamediv>
 
@@ -213,8 +213,8 @@ if (my_important_struct-&gt;magic != MAGIC) {
 </refmeta>
 
 <refnamediv>
-<refname>ggiOpen</refname>
-<refname>ggiClose</refname>
+<refname id="ggiOpen">ggiOpen</refname>
+<refname id="ggiClose">ggiClose</refname>
 <refpurpose>Open and close a visual</refpurpose>
 </refnamediv>
 
@@ -335,10 +335,10 @@ ggiClose(memvis);
 </refmeta>
 
 <refnamediv>
-<refname>ggiCheckMode</refname>
-<refname>ggiCheckTextMode</refname>
-<refname>ggiCheckGraphMode</refname>
-<refname>ggiCheckSimpleMode</refname>
+<refname id="ggiCheckMode">ggiCheckMode</refname>
+<refname id="ggiCheckTextMode">ggiCheckTextMode</refname>
+<refname id="ggiCheckGraphMode">ggiCheckGraphMode</refname>
+<refname id="ggiCheckSimpleMode">ggiCheckSimpleMode</refname>
 <refpurpose>Check or negotiate a text/graphics mode on a visual</refpurpose>
 </refnamediv>
 
@@ -573,11 +573,11 @@ else {
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetMode</refname>
-<refname>ggiSetTextMode</refname>
-<refname>ggiSetGraphMode</refname>
-<refname>ggiSetSimpleMode</refname>
-<refname>ggiGetMode</refname>
+<refname id="ggiSetMode">ggiSetMode</refname>
+<refname id="ggiSetTextMode">ggiSetTextMode</refname>
+<refname id="ggiSetGraphMode">ggiSetGraphMode</refname>
+<refname id="ggiSetSimpleMode">ggiSetSimpleMode</refname>
+<refname id="ggiGetMode">ggiGetMode</refname>
 <refpurpose>Set or get a mode on a visual</refpurpose>
 </refnamediv>
 
@@ -695,10 +695,10 @@ Also we don't need ggiGetMode in vis->opdisplay, do we?  </comment>
 </refmeta>
 
 <refnamediv>
-<refname>ggiParseMode</refname>
-<refname>ggiPrintMode</refname>
-<refname>ggiSPrintMode</refname>
-<refname>ggiFPrintMode</refname>
+<refname id="ggiParseMode">ggiParseMode</refname>
+<refname id="ggiPrintMode">ggiPrintMode</refname>
+<refname id="ggiSPrintMode">ggiSPrintMode</refname>
+<refname id="ggiFPrintMode">ggiFPrintMode</refname>
 <refpurpose>Parse and print formatted strings specifying LibGGI modes</refpurpose>
 </refnamediv>
 
@@ -808,12 +808,12 @@ For most applications there will be no need for testing
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetDisplayFrame</refname>
-<refname>ggiSetWriteFrame</refname>
-<refname>ggiSetReadFrame</refname>
-<refname>ggiGetDisplayFrame</refname>
-<refname>ggiGetWriteFrame</refname>
-<refname>ggiGetReadFrame</refname>
+<refname id="ggiSetDisplayFrame">ggiSetDisplayFrame</refname>
+<refname id="ggiSetWriteFrame">ggiSetWriteFrame</refname>
+<refname id="ggiSetReadFrame">ggiSetReadFrame</refname>
+<refname id="ggiGetDisplayFrame">ggiGetDisplayFrame</refname>
+<refname id="ggiGetWriteFrame">ggiGetWriteFrame</refname>
+<refname id="ggiGetReadFrame">ggiGetReadFrame</refname>
 <refpurpose>Set or get the current frame for display, writing and reading</refpurpose>
 </refnamediv>
 
@@ -931,10 +931,10 @@ The <function>ggiSet*Frame</function> functions return
 </refmeta>
 
 <refnamediv>
-<refname>ggiMapColor</refname>
-<refname>ggiUnmapPixel</refname>
-<refname>ggiPackColors</refname>
-<refname>ggiUnpackPixels</refname>
+<refname id="ggiMapColor">ggiMapColor</refname>
+<refname id="ggiUnmapPixe">ggiUnmapPixel</refname>
+<refname id="ggiPackColors">ggiPackColors</refname>
+<refname id="ggiUnpackPixels">ggiUnpackPixels</refname>
 <refpurpose>Convert from ggi_color(s) to ggi_pixel(s) and vice versa</refpurpose>
 </refnamediv>
 
@@ -1054,8 +1054,8 @@ error code.
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetPalette</refname>
-<refname>ggiGetPalette</refname>
+<refname id="ggiSetPalette">ggiSetPalette</refname>
+<refname id="ggiGetPalette">ggiGetPalette</refname>
 <refpurpose>Manipulate the palette of a visual</refpurpose>
 </refnamediv>
 
@@ -1150,7 +1150,7 @@ the return code will indicate whether there is a readable CLUT.
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetColorfulPalette</refname>
+<refname id="ggiSetColorfulPalette">ggiSetColorfulPalette</refname>
 <refpurpose>Set a palette with a full range of all colors</refpurpose>
 </refnamediv>
 
@@ -1210,11 +1210,11 @@ the first entry changed.  Negative values indicate error (codes).
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetGammaMap</refname>
-<refname>ggiGetGammaMap</refname>
-<refname>ggiSetGamma</refname>
-<refname>ggiGetGamma</refname>
-<refname>ggiGammaMax</refname>
+<refname id="ggiSetGammaMap">ggiSetGammaMap</refname>
+<refname id="ggiGetGammaMap">ggiGetGammaMap</refname>
+<refname id="ggiSetGamma">ggiSetGamma</refname>
+<refname id="ggiGetGamma">ggiGetGamma</refname>
+<refname id="ggiGammaMax">ggiGammaMax</refname>
 <refpurpose>Manipulate the gamma maps and the gamma correction of a visual</refpurpose>
 </refnamediv>
 
@@ -1325,7 +1325,7 @@ error code.
 </refmeta>
 
 <refnamediv>
-<refname>ggiGetPixelFormat</refname>
+<refname id="ggiGetPixelFormat">ggiGetPixelFormat</refname>
 <refpurpose>Get a structure describing the format of a pixelvalue from a visual</refpurpose>
 </refnamediv>
 
@@ -1389,10 +1389,10 @@ that is returned.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetGCForeground</refname>
-<refname>ggiGetGCForeground</refname>
-<refname>ggiSetGCBackground</refname>
-<refname>ggiGetGCBackground</refname>
+<refname id="ggiSetGCForeground">ggiSetGCForeground</refname>
+<refname id="ggiGetGCForeground">ggiGetGCForeground</refname>
+<refname id="ggiSetGCBackground">ggiSetGCBackground</refname>
+<refname id="ggiGetGCBackground">ggiGetGCBackground</refname>
 <refpurpose>Set or get the foreground and background colors used in drawing
 operations in a visual</refpurpose>
 </refnamediv>
@@ -1466,8 +1466,8 @@ All four functions <returnvalue>0</returnvalue> for OK.
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetGCClipping</refname>
-<refname>ggiGetGCClipping</refname>
+<refname id="ggiSetGCClipping">ggiSetGCClipping</refname>
+<refname id="ggiGetGCClipping">ggiGetGCClipping</refname>
 <refpurpose>Set or get the clipping rectangle for a visual</refpurpose>
 </refnamediv>
 
@@ -1537,9 +1537,9 @@ current clipping rectangle.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiDrawPixel</refname>
-<refname>ggiPutPixel</refname>
-<refname>ggiGetPixel</refname>
+<refname id="ggiDrawPixel">ggiDrawPixel</refname>
+<refname id="ggiPutPixel">ggiPutPixel</refname>
+<refname id="ggiGetPixel">ggiGetPixel</refname>
 <refpurpose>Draw, put, and get a single pixel from a visual</refpurpose>
 </refnamediv>
 
@@ -1598,9 +1598,9 @@ indicate success.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiDrawHLine</refname>
-<refname>ggiPutHLine</refname>
-<refname>ggiGetHLine</refname>
+<refname id="ggiDrawHLine">ggiDrawHLine</refname>
+<refname id="ggiPutHLine">ggiPutHLine</refname>
+<refname id="ggiGetHLine">ggiGetHLine</refname>
 <refpurpose>Draw, put, and get a horizontal line from a visual</refpurpose>
 </refnamediv>
 
@@ -1687,9 +1687,9 @@ indicate success.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiDrawVLine</refname>
-<refname>ggiPutVLine</refname>
-<refname>ggiGetVLine</refname>
+<refname id="ggiDrawVLine">ggiDrawVLine</refname>
+<refname id="ggiPutVLine">ggiPutVLine</refname>
+<refname id="ggiGetVLine">ggiGetVLine</refname>
 <refpurpose>Draw, put, and get a vertical line from a visual</refpurpose>
 </refnamediv>
 
@@ -1772,9 +1772,9 @@ with pixels.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiDrawBox</refname>
-<refname>ggiPutBox</refname>
-<refname>ggiGetBox</refname>
+<refname id="ggiDrawBox">ggiDrawBox</refname>
+<refname id="ggiPutBox">ggiPutBox</refname>
+<refname id="ggiGetBox">ggiGetBox</refname>
 <refpurpose>Draw, put, and get a rectangle from a visual</refpurpose>
 </refnamediv>
 
@@ -1861,7 +1861,7 @@ indicate success.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiFillscreen</refname>
+<refname id="ggiFillscreen">ggiFillscreen</refname>
 <refpurpose>Fills the entire virtual screen</refpurpose>
 </refnamediv>
 
@@ -1903,7 +1903,7 @@ success.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiDrawLine</refname>
+<refname id="ggiDrawLine">ggiDrawLine</refname>
 <refpurpose>Draw a line on a visual</refpurpose>
 </refnamediv>
 
@@ -1959,7 +1959,7 @@ success.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiCopyBox</refname>
+<refname id="ggiCopyBox">ggiCopyBox</refname>
 <refpurpose>Copy a rectangular area</refpurpose>
 </refnamediv>
 
@@ -2024,7 +2024,7 @@ when the read frame is not the same as the write frame.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiCrossBlit</refname>
+<refname id="ggiCrossBlit">ggiCrossBlit</refname>
 <refpurpose>Copy a rectangular area between two visuals</refpurpose>
 </refnamediv>
 
@@ -2092,8 +2092,8 @@ This function does not perform stretching.
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetOrigin</refname>
-<refname>ggiGetOrigin</refname>
+<refname id="ggiSetOrigin">ggiSetOrigin</refname>
+<refname id="ggiGetOrigin">ggiGetOrigin</refname>
 <refpurpose>Set and get origin of virtual screen</refpurpose>
 </refnamediv>
 
@@ -2189,9 +2189,9 @@ for(i = 0; i &lt; virt_y-visible_y; i++) {
 </refmeta>
 
 <refnamediv>
-<refname>ggiPutc</refname>
-<refname>ggiPuts</refname>
-<refname>ggiGetCharSize</refname>
+<refname id="ggiPutc">ggiPutc</refname>
+<refname id="ggiPuts">ggiPuts</refname>
+<refname id="ggiGetCharSize">ggiGetCharSize</refname>
 <refpurpose>Draw one or more characters on visual</refpurpose>
 </refnamediv>
 
@@ -2294,10 +2294,10 @@ linkend="ref-struct-ggi-color">pixels</link> by definition and the
 </refmeta>
 
 <refnamediv>
-<refname>ggiSetFlags</refname>
-<refname>ggiGetFlags</refname>
-<refname>ggiAddFlags</refname>
-<refname>ggiRemoveFlags</refname>
+<refname id="ggiSetFlags">ggiSetFlags</refname>
+<refname id="ggiGetFlags">ggiGetFlags</refname>
+<refname id="ggiAddFlags">ggiAddFlags</refname>
+<refname id="ggiRemoveFlags">ggiRemoveFlags</refname>
 <refpurpose>Set or get flags affecting operation on a visual</refpurpose>
 </refnamediv>
 
@@ -2535,8 +2535,8 @@ not actually need to do so and probably should not, as it reduces portability.
 </refmeta>
 
 <refnamediv>
-<refname>ggiFlush</refname>
-<refname>ggiFlushRegion</refname>
+<refname id="ggiFlush">ggiFlush</refname>
+<refname id="ggiFlushRegion">ggiFlushRegion</refname>
 <refpurpose>Flush pending output</refpurpose>
 </refnamediv>
 
@@ -2602,9 +2602,9 @@ No meaningful return value.
 </refmeta>
 
 <refnamediv>
-<refname>ggiResourceAcquire</refname>
-<refname>ggiResourceRelease</refname>
-<refname>ggiResourceMustAcquire</refname>
+<refname id="ggiResourceAcquire">ggiResourceAcquire</refname>
+<refname id="ggiResourceRelease">ggiResourceRelease</refname>
+<refname id="ggiResourceMustAcquire">ggiResourceMustAcquire</refname>
 <refpurpose>Acquire and release a LibGGI resource</refpurpose>
 </refnamediv>
 
@@ -2724,8 +2724,8 @@ ggiResourceRelease(dbuf-&gt;resource);
 </refmeta>
 
 <refnamediv>
-<refname>ggiDBGetNumBuffers</refname>
-<refname>ggiDBGetBuffer</refname>
+<refname id="ggiDBGetNumBuffers">ggiDBGetNumBuffers</refname>
+<refname id="ggiDBGetBuffer">ggiDBGetBuffer</refname>
 <refpurpose>Get DirectBuffers from a visual</refpurpose>
 </refnamediv>
 
@@ -2931,17 +2931,17 @@ for(i = 0; i &lt; numbufs; i++)
 </refmeta>
 
 <refnamediv>
-<refname>ggiJoinInputs</refname>
+<refname id="ggiJoinInputs">ggiJoinInputs</refname>
 
-<refname>ggiEventPoll</refname>
-<refname>ggiEventSelect</refname>
-<refname>ggiEventsQueued</refname>
-<refname>ggiEventRead</refname>
+<refname id="ggiEventPoll">ggiEventPoll</refname>
+<refname id="ggiEventSelect">ggiEventSelect</refname>
+<refname id="ggiEventsQueued">ggiEventsQueued</refname>
+<refname id="ggiEventRead">ggiEventRead</refname>
 
-<refname>ggiSetEventMask</refname>
-<refname>ggiGetEventMask</refname>
-<refname>ggiAddEventMask</refname>
-<refname>ggiRemoveEventMask</refname>
+<refname id="ggiSetEventMask">ggiSetEventMask</refname>
+<refname id="ggiGetEventMask">ggiGetEventMask</refname>
+<refname id="ggiAddEventMask">ggiAddEventMask</refname>
+<refname id="ggiRemoveEventMask">ggiRemoveEventMask</refname>
 
 <refpurpose>Event management for LibGGI visual</refpurpose>
 </refnamediv>
@@ -3074,8 +3074,8 @@ visual with a stale input handle.)  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiGetInput</refname>
-<refname id="api-test-ggidetachinput">ggiDetachInput</refname>
+<refname id="ggiGetInput">ggiGetInput</refname>
+<refname id="ggiDetachInput">ggiDetachInput</refname>
 <refpurpose>Functions to translate from GGI visuals to GII input</refpurpose>
 </refnamediv>
 
@@ -3134,7 +3134,7 @@ the visual handle is closed, the input will remain unaffected.
 </refmeta>
 
 <refnamediv>
-<refname>ggiEventSend</refname>
+<refname id="ggiSendEvent">ggiEventSend</refname>
 <refpurpose>Send commands and events to a LibGGI visual</refpurpose>
 </refnamediv>
 
@@ -3194,8 +3194,8 @@ The latter is the default.  </para>
 </refmeta>
 
 <refnamediv>
-<refname>ggiGetc</refname>
-<refname>ggiKbhit</refname>
+<refname id="ggiGetc">ggiGetc</refname>
+<refname id="ggiKbhit">ggiKbhit</refname>
 <refpurpose>Convenience functions for simplistic keyboard input</refpurpose>
 </refnamediv>
 

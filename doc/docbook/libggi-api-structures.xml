@@ -13,9 +13,9 @@
 </refmeta>
 
 <refnamediv>
-<refname>ggi_mode</refname>
-<refname>ggi_coord</refname>
-<refname>ggi_graphtype</refname>
+<refname id="ggi_mode">ggi_mode</refname>
+<refname id="ggi_coord">ggi_coord</refname>
+<refname id="ggi_graphtype">ggi_graphtype</refname>
 <refpurpose>LibGGI mode description</refpurpose>
 </refnamediv>
 
@@ -233,8 +233,8 @@ for graphtype) if a specific value isn't required.
 </refmeta>
 
 <refnamediv>
-<refname>ggi_color</refname>
-<refname>ggi_pixel</refname>
+<refname id="ggi_color">ggi_color</refname>
+<refname id="ggi_pixel">ggi_pixel</refname>
 <refpurpose>LibGGI color description</refpurpose>
 </refnamediv>
 
@@ -337,7 +337,7 @@ pointer arithmetics with <type>ggi_pixel</type>s.
 </refmeta>
 
 <refnamediv>
-<refname>ggi_pixelformat</refname>
+<refname id="ggi_pixelformat">ggi_pixelformat</refname>
 <refpurpose>LibGGI pixel format description</refpurpose>
 </refnamediv>
 
@@ -453,11 +453,11 @@ Use the <function>ggiGetPixelFormat</function> function.
 </refmeta>
 
 <refnamediv>
-<refname>ggi_directbuffer</refname>
-<refname>ggi_pixellinearbuffer</refname>
-<refname>ggi_pixelplanarbuffer</refname>
-<refname>ggi_samplelinearbuffer</refname>
-<refname>ggi_sampleplanarbuffer</refname>
+<refname id="ggi_directbuffer">ggi_directbuffer</refname>
+<refname id="ggi_pixellinearbuffer">ggi_pixellinearbuffer</refname>
+<refname id="ggi_pixelplanarbuffer">ggi_pixelplanarbuffer</refname>
+<refname id="ggi_samplelinearbuffer">ggi_samplelinearbuffer</refname>
+<refname id="ggi_sampleplanarbuffer">ggi_sampleplanarbuffer</refname>
 
 <refpurpose>LibGGI direct buffer structure description</refpurpose>
 </refnamediv>
