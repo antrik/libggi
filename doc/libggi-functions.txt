@@ -1354,7 +1354,7 @@ Description
 
 
 When using a larger virtual area, you can pan the visible area over
-the virtual one to do scrolling. Some targets have extemely efficient
+the virtual one to do scrolling. Some targets have extremely efficient
 means to do this (i.e. they do it in hardware).
 
 
@@ -1365,7 +1365,7 @@ specific number of `frames` when setting a mode.
 
 This call takes *dot* coordinates (see :man:`ggi_mode(3)`), not pixel
 coordinates as all other drawing primitives do. There is no difference
-in graphics modes because by definition *dpp* is 1x1, but in text
+in graphic modes because by definition *dpp* is 1x1, but in text
 modes the application can do smooth scrolling.
 
 
