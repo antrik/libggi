@@ -289,7 +289,7 @@ recommended values.  The values could be to a maximum, preferred, or
 constraints.
 
 
-An application that does not care about a specific paramater should
+An application that does not care about a specific parameter should
 always specify `GGI_AUTO` or `GT_AUTO` for it.
 
 
