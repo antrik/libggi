@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.5 2003/07/05 22:13:42 cegger Exp $
+/* $Id: crossblit.c,v 1.6 2003/12/06 19:11:10 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -129,7 +129,7 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 	}
 }
 
-/* Blitting bewteen identical visuals
+/* Blitting between identical visuals
  */
 static inline void
 crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
