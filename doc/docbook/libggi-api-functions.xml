@@ -1393,7 +1393,7 @@ that is returned.  </para>
 <refname id="ggiGetGCForeground">ggiGetGCForeground</refname>
 <refname id="ggiSetGCBackground">ggiSetGCBackground</refname>
 <refname id="ggiGetGCBackground">ggiGetGCBackground</refname>
-<refpurpose>Set or get the foreground and background colors used in drawing
+<refpurpose>Set or get the foreground or background color used in drawing
 operations in a visual</refpurpose>
 </refnamediv>
 
