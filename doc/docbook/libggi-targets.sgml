@@ -191,7 +191,7 @@ be turned off in order to leave the window.
 <group>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
+ <arg><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
