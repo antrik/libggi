@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:24:57 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/09/12 20:16:11 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -217,7 +217,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		= priv->hwconf.SSTs[currentcard].sstBoard.VoodooConfig.fbRam
 		* 1024 * 1024;
 	priv->setmodesuccess = 0;
-	LIBGGI_PRIVATE(vis) = priv;
+	MONOTEXT_PRIV(vis) = priv;
 
 	/* Has mode management */
 	vis->opdisplay->flush = GGI_glide_flush;
@@ -233,7 +233,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	glide_priv *priv = LIBGGI_PRIVATE(vis);
+	glide_priv *priv = MONOTEXT_PRIV(vis);
 
 	giiClose(vis->input);
 	vis->input = NULL;
