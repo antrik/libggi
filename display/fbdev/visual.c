@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/06/16 22:52:53 ggibecka Exp $
+/* $Id: visual.c,v 1.4 2001/06/17 04:35:53 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -94,7 +94,7 @@ static const gg_option optlist[] =
 	{ "nomouse", "no" },
 	{ "noinput", "no" },  /* shorthand for nokbd + nomouse */
 	{ "novt",    "no" },
-	{ "physz",    "no" },
+	{ "physz",   "0,0" },
 	{ ":dev",    ""}
 };
 
