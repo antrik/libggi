@@ -1,11 +1,30 @@
-.TH "display-quartz" 7 "2004-10-17" "libggi-current" GGI
+.TH "display-quartz" 7 "2004-12-27" "libggi-current" GGI
 .SH NAME
 \fBdisplay-quartz\fR : Display using Quartz2D on Mac OSX
 .SH SYNOPSIS
 .nb
 .nf
-display-quartz
+display-quartz:       [-physz==<sizex>,<sizey>[dpi]]
 .fi
 
 .SH DESCRIPTION
-Use MacOS X Quartz for display.
+Uses MacOS X Quartz/Carbon API for display.
+
+MacOS X 10.2.8 is required.
+.SH OPTIONS
+.TP
+\fB'-physz==<sizex>,<sizey>[dpi]'\fR
+This option will override the physical screen size reported by the
+Quartz, which affects applications which wish to remain resolution
+independent.  \fIsizex\fR,:p:\fBsizey\fR are the x,y size of the entire
+screen (not just the Carbon Window containing the visual) in
+millimeters, unless the optional \fB'dpi'\fR string is affixed, in
+which case, they represent resolution in dots-per-inch. Yes, there
+are two equals signs there, for reasons of compatibility with other
+targets.
+
+.PP
+.SH FEATURES
+.IP \(bu 4
+Directbuffer
+.PP
