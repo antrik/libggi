@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2003/12/13 21:12:02 mooz Exp $
+/* $Id: mode.c,v 1.6 2004/01/21 23:53:16 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -473,7 +473,6 @@ int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_c
  	uint8         *file_pal = priv->file_mmap + priv->offset_pal;
  	ggi_color     *dest     = LIBGGI_PAL(vis)->clut + start;
  	ggi_color     *src      = (ggi_color*)colormap;	
-	size_t        end       = start + size;
 
 	GGIDPRINT("display-file: setpalette.\n");
     
