@@ -413,7 +413,8 @@ given visible and virtual dimensions and type is supported.
 </para>
 
 <para>
-<function>ggiCheckSimpleMode</function> checks wheter the graphics mode with the
+<function>ggiCheckSimpleMode</function> checks whether the graphics
+mode with the
 given visible dimensions, type, and number of buffers is supported.
 This is used in lieu of <function>ggiCheckGraphMode</function> if multiple
 buffering is desired.
