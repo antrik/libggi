@@ -1,0 +1,1137 @@
+2001-07-10 18:20  soyt
+
+	* doc/man/: Makefile.am, display-vgl.7ggi: added display-vgl
+	manpage
+
+2001-07-10 18:12  soyt
+
+	* doc/docbook/libggi-ref-targets.sgml: bug fix in vgl doc
+
+2001-07-10 18:04  soyt
+
+	* doc/docbook/libggi-ref-targets.sgml: added display-vgl
+
+2001-07-10 17:03  cegger
+
+	* doc/targets.txt: added VGL-target description from Nicolas Souchu
+
+2001-07-10 15:10  cegger
+
+	* display/aa/color.c, display/xf86dga/mode.c,
+	display/xf86dga/visual.c, programs/check/checkmode.c,
+	programs/demos/cube3d.c, programs/demos/slimy.c: fixed compiler
+	warnings reported by Thayne
+
+2001-07-10 13:29  soyt
+
+	* doc/man/: Makefile.am, display-aa.7ggi, display-dga.7ggi,
+	display-directx.7ggi, display-fbdev.7ggi, display-file.7ggi,
+	display-glide.7ggi, display-memory.7ggi, display-monotext.7ggi,
+	display-multi.7ggi, display-palemu.7ggi, display-sub.7ggi,
+	display-svgalib.7ggi, display-tile.7ggi, display-trueemu.7ggi,
+	display-vcsa.7ggi, display-x.7ggi, display-xlib.7ggi,
+	ggiCheckGraphMode.3ggi, ggiCheckMode.3ggi, ggiCheckSimpleMode.3ggi,
+	ggiCheckTextMode.3ggi, ggiCopyBox.3ggi, ggiCrossBlit.3ggi,
+	ggiDBGetBuffer.3ggi, ggiDetachInput.3ggi, ggiDrawBox.3ggi,
+	ggiDrawHLine.3ggi, ggiDrawLine.3ggi, ggiDrawPixel.3ggi,
+	ggiDrawVLine.3ggi, ggiEventPoll.3ggi, ggiEventSelect.3ggi,
+	ggiEventSend.3ggi, ggiFillscreen.3ggi, ggiFlush.3ggi,
+	ggiGetInput.3ggi, ggiGetPixelFormat.3ggi, ggiGetc.3ggi,
+	ggiInit.3ggi, ggiMapColor.3ggi, ggiOpen.3ggi, ggiPanic.3ggi,
+	ggiParseMode.3ggi, ggiPutc.3ggi, ggiResourceAcquire.3ggi,
+	ggiSetColorfulPalette.3ggi, ggiSetDisplayFrame.3ggi,
+	ggiSetFlags.3ggi, ggiSetGCClipping.3ggi, ggiSetGCForeground.3ggi,
+	ggiSetGamma.3ggi, ggiSetGraphMode.3ggi, ggiSetMode.3ggi,
+	ggiSetOrigin.3ggi, ggiSetPalette.3ggi, ggiSetSimpleMode.3ggi,
+	ggiSetTextMode.3ggi: updated manpages
+
+2001-07-10 09:32  soyt
+
+	* doc/docbook/libggi-ref-targets.sgml: Manpages fixes and directx
+	addition
+
+2001-07-10 05:22  thayne
+
+	* configure.in: AM_PROG_LIBTOOL and AM_DISABLE_STATIC are
+	deprecated - use 'AC_' names.
+
+2001-07-09 14:49  thayne
+
+	* ltconfig, m4/libtool.m4: libtool 1.4 has moved tests from
+	ltconfig to libtool.m4.  Delete unecessary ltconfig and update
+	libtool.m4.
+
+2001-07-09 13:14  cegger
+
+	* display/svgalib/visual.c: add debugging code when exiting
+
+2001-07-09 01:49  fortinj
+
+	* doc/targets.txt: 
+	Add DirectX (Win32) target description.
+
+2001-07-09 01:39  fortinj
+
+	* doc/README.directx: 
+	
+	New readme file for Win32 DirectX Target.
+
+2001-07-08 18:30  soyt
+
+	* doc/docbook/libggi-ref-targets.sgml: added input and target
+	reference.
+
+2001-07-07 19:57  cegger
+
+	* default/color/Makefile.am, default/fbdev/mga/2164w/Makefile.am,
+	default/fbdev/mga/g400/Makefile.am, default/ilbm/Makefile.am,
+	default/ioctl/Makefile.am, default/iplanar_2p/Makefile.am,
+	default/kgi/Makefile.am, default/linear_1/Makefile.am,
+	default/linear_16/Makefile.am, default/linear_1_r/Makefile.am,
+	default/linear_2/Makefile.am, default/linear_24/Makefile.am,
+	default/linear_32/Makefile.am, default/linear_4/Makefile.am,
+	default/linear_4_r/Makefile.am, default/linear_8/Makefile.am,
+	default/linmm_banked/Makefile.am, default/planar/Makefile.am,
+	default/ramdac/Makefile.am, default/stubs/Makefile.am,
+	default/text_16/Makefile.am, default/text_32/Makefile.am,
+	display/X/Makefile.am, display/Xlib/Makefile.am,
+	display/aa/Makefile.am, display/directx/Makefile.am,
+	display/glide/Makefile.am, display/ipc/Makefile.am,
+	display/kgi/Makefile.am, display/lcd823/Makefile.am,
+	display/linvtsw/Makefile.am, display/mansync/Makefile.am,
+	display/memory/Makefile.am, display/monotext/Makefile.am,
+	display/multi/Makefile.am, display/palemu/Makefile.am,
+	display/sub/Makefile.am, display/suidkgi/Makefile.am,
+	display/svgalib/Makefile.am, display/tele/Makefile.am,
+	display/terminfo/Makefile.am, display/tile/Makefile.am,
+	display/trueemu/Makefile.am, display/vcsa/Makefile.am,
+	display/vgagl/Makefile.am, display/vgl/Makefile.am,
+	display/xf86dga/Makefile.am: replace /ggi/ by //
+
+2001-07-07 15:02  thayne
+
+	* ltmain.sh: Fixing bug in libtool 1.4 where it won't find
+	interdependency libraries during install to a packaging dir
+
+2001-07-07 11:19  cegger
+
+	* display/fbdev/Makefile.am: typo fix
+
+2001-07-07 09:42  thayne
+
+	* Makefile.am, configure.in, libggi.conf.in,
+	display/fbdev/Makefile.am: Closed one more bug that I introduced
+	into configure.in.  This should now allow late substitution of vars
+	during build and install, staticly code paths where they should be,
+	maintain variables like ${exec_libdir} derived from other variables
+	such as ${prefix}, fully expand recursive variables - such as
+	${exec_libdir}, peel grapes, and change the furnace filter when
+	required.
+
+2001-07-07 08:07  thayne
+
+	* config.guess, config.sub, ltmain.sh: Update to libtool 1.4
+
+2001-07-03 20:18  cegger
+
+	* Makefile.am, configure.in, libggi.conf.in,
+	display/fbdev/Makefile.am, programs/check/checkmode.c,
+	programs/demos/cube3d.c: merged confdir fixes from Thayne Harbaugh
+
+2001-06-30 09:53  soyt
+
+	* doc/docbook/: libggi-api-control.sgml, libggi-api-events.sgml,
+	libggi-api-mode.sgml: reference fixes
+
+2001-06-29 15:32  soyt
+
+	* doc/docbook/libggi-api-mode.sgml: documentation fixes
+	(validation+bug)
+
+2001-06-26 02:34  fortinj
+
+	* display/directx/visual.c: 
+	Sync visual.c with my 'Good' version. JEF
+
+2001-06-26 02:34  fortinj
+
+	* display/directx/mode.c: 
+	Sync mode.c with my 'Good' version. JEF
+
+2001-06-26 02:33  fortinj
+
+	* display/directx/ddinitnt.c: 
+	Sync ddinitnt.c with my 'Good' version. JEF
+
+2001-06-26 02:32  fortinj
+
+	* display/directx/ddinit.c: 
+	Sync ddinit.c with my 'good' version.  JEF
+
+2001-06-26 02:23  fortinj
+
+	* include/ggi/display/directx.h: 
+	Sync header with my 'good' version
+
+2001-06-24 19:33  skids
+
+	* configure.in, display/xf86dga/XF86VMode.c,
+	display/xf86dga/mode.c, display/xf86dga/visual.c,
+	include/ggi/display/xf86dga.h: 
+	Updated internal XF86VMode implementation Reactivated internal DGA
+	implementation in build system Added -physz and -noinput options
+	handling Someone with 3.3.x xlibs please fix compile by applying
+	appropriate defines
+
+2001-06-24 16:45  skids
+
+	* display/svgalib/Makefile.am, display/svgalib/box.c,
+	display/svgalib/frames.c, display/svgalib/hline.c,
+	display/svgalib/mode.c, display/svgalib/pixel.c,
+	display/svgalib/vline.c, include/ggi/display/svgalib.h: 
+	John McCutchan's patch + more changes for frames support.  This is
+	untested, other than compiling, not segfaulting, and making funny
+	patterns on my Radeon (which is to be expected).  John will be
+	finishing it up tomorrow.
+
+2001-06-22 16:57  soyt
+
+	* doc/docbook/: libggi-api-events.sgml, libggi-api.sgml: doc update
+	: fixes + propagation of Brian's changes
+
+2001-06-21 23:36  ggibecka
+
+	* configure.in: Disable using the internal DGA implementation by
+	default. It's even more wrong than the external. DGA still not
+	quite functional, but doesn't hang anymore - drawing still wrong.
+
+2001-06-21 19:09  skids
+
+	* doc/docbook/libggi-events.sgml, doc/man/Makefile.am,
+	doc/man/ggiDetachInput.3ggi, doc/man/ggiGetInput.3ggi, ggi/EXPSYMS,
+	ggi/events.c, include/ggi/ggi.h: 
+	Added ggiDetachInput and ggiGetInput -- note: doc changes need to
+	be propagated to new doc files.
+
+2001-06-20 23:47  skids
+
+	* display/: X/visual.c, Xlib/visual.c: 
+	All that work for such a trivial fix... It appears that calling
+	XSetWindowColormap on the root window does not change the
+	DefaultColormap, so this is the obvious "right thing to do". 
+	Still, it appears that some wm's interfere with 8bpp -inroot,
+	probably by calling XSetWindowColormap on the root window when you
+	move your cursor off to it.
+
+2001-06-20 22:54  skids
+
+	* programs/demos/saver.c: 
+	Quash warning due to time.h not included.
+
+2001-06-20 22:52  ggibecka
+
+	* default/fbdev/mga/g400/: regs.h, visual.c: Fix up SRCORG and
+	DSTORG. DirectFB messes with those and failing demos will cause
+	very ugly effects. I should probably rather do it at startup,
+	though. Now you have to start/end a LibGGI app to fix your console.
+
+2001-06-20 09:24  cegger
+
+	* default/: color/Makefile.am, ioctl/Makefile.am,
+	iplanar_2p/Makefile.am, kgi/Makefile.am, linear_16/Makefile.am,
+	linear_1_r/Makefile.am, linear_2/Makefile.am,
+	linear_24/Makefile.am, linear_32/Makefile.am, linear_4/Makefile.am,
+	linear_4_r/Makefile.am, linear_8/Makefile.am,
+	linmm_banked/Makefile.am, ramdac/Makefile.am, stubs/Makefile.am:
+	made Makefile.am-files more human-readable on 80 column
+	text-displays
+
+2001-06-19 13:23  cegger
+
+	* include/ggi/internal/Makefile.am: we install debug.h, because it
+	provides LIB_APPASSERT(). Not installing it may brake some
+	applications
+
+2001-06-17 16:13  skids
+
+	* display/fbdev/visual.c: 
+	Always issue panning ioctl on vc switchback, drivers do not
+	faithfully restore it
+
+2001-06-17 09:15  cegger
+
+	* programs/check/consistency.c: fixed compiler warning
+
+2001-06-17 09:08  cegger
+
+	* programs/demos/pageflip.c: fixed compiler warning
+
+2001-06-17 09:02  cegger
+
+	* programs/demos/wrap.c: fixed compiler warnings; don't use C++
+	comments
+
+2001-06-17 08:56  cegger
+
+	* display/terminfo/visual.c: fixed token at end of #endif directive
+
+2001-06-17 08:54  cegger
+
+	* display/ipc/visual.c: compiler warning fixes; don't use C++
+	comments
+
+2001-06-17 04:46  skids
+
+	* display/fbdev/mode.c: 
+	Additional error message Don't call _ggi_figure_physz until mode is
+	valid Don't ever unset err in checkmode.
+
+2001-06-17 04:35  skids
+
+	* display/fbdev/visual.c: 
+	Supply correct default value for physz
+
+2001-06-17 04:34  skids
+
+	* ggi/internal.c: 
+	Caught a case in _ggi_figure_physz and removed implicit decl of
+	toupper
+
+2001-06-17 01:58  ggibecka
+
+	* configure.in, default/fbdev/mga/Makefile.am,
+	default/fbdev/mga/g400/.cvsignore, default/fbdev/mga/g400/EXPSYMS,
+	default/fbdev/mga/g400/Makefile.am, default/fbdev/mga/g400/box.c,
+	default/fbdev/mga/g400/copybox.c,
+	default/fbdev/mga/g400/crossblit.c, default/fbdev/mga/g400/gtext.c,
+	default/fbdev/mga/g400/hline.c, default/fbdev/mga/g400/line.c,
+	default/fbdev/mga/g400/mga_g400.h, default/fbdev/mga/g400/mmio.h,
+	default/fbdev/mga/g400/regs.h, default/fbdev/mga/g400/visual.c,
+	default/fbdev/mga/g400/vline.c, display/fbdev/fbdev.conf.in: Added
+	separate G400 target for fbdev accel.  Seems it was only a matter
+	of a larger bitmask. Maybe I could just have patched the MGA2164
+	sources, but I like it better this way - we should add more accel
+	drivers anyway.
+
+2001-06-16 22:52  ggibecka
+
+	* display/fbdev/visual.c: Added more debugging code to better
+	diagnose fbdev startup problems.  added new class for the G400 - it
+	doesn't work right with the mga driver.
+
+2001-06-16 22:51  ggibecka
+
+	* ggi/internal.c: Avoid to erraneously fail when no physz options
+	were given at all.
+
+2001-06-15 09:46  soyt
+
+	* doc/docbook/: libggi-api-blit.sgml, libggi-api-char.sgml,
+	libggi-api-control.sgml, libggi-api-db.sgml,
+	libggi-api-drawing.sgml, libggi-api-events.sgml,
+	libggi-api-frames.sgml, libggi-api-misc.sgml, libggi-api-mode.sgml,
+	libggi-api-origin.sgml, libggi-api-pixel.sgml,
+	libggi-api-visual.sgml, libggi-api.sgml, libggi.sgml: new
+	documentation files
+
+2001-06-13 18:01  cegger
+
+	* include/ggi/internal/Makefile.am: don't install debug headers
+
+2001-06-11 18:43  cegger
+
+	* libggi.conf.in: libggimisc doesn't come with libggi anymore
+
+2001-06-03 22:16  skids
+
+	* default/color/: color.c, color.h, visual.c: 
+	Correct unmappixel, keeping relatively optimized
+
+2001-06-03 06:42  cegger
+
+	* include/ggi/types.h: added GA_ByPP macro to extract the
+	"BytesPerPixel" info from a ggi_graphtype
+
+2001-05-31 21:55  skids
+
+	* display/X/mode.inc, display/X/visual.c, display/Xlib/visual.c,
+	display/fbdev/mode.c, display/fbdev/visual.c,
+	display/memory/visual.c, display/svgalib/mode.c,
+	display/svgalib/visual.c, display/vcsa/mode.c,
+	display/vcsa/visual.c, ggi/EXPSYMS, ggi/internal.c,
+	include/ggi/display/fbdev.h, include/ggi/display/svgalib.h,
+	include/ggi/display/vcsa.h, include/ggi/display/xcommon.h,
+	include/ggi/internal/internal.h: 
+	Added physz support and unified some handling of unordered options
+
+2001-05-31 21:54  skids
+
+	* display/terminfo/: TIvisual.h, mode.c, visual.c: 
+	Added physz option and fixed bug causing segfault on close/open
+
+2001-05-26 00:00  skids
+
+	* programs/demos/textdemo.c: 
+	Made independent on terminal size/charcell size
+
+2001-05-25 23:18  skids
+
+	* include/ggi/internal/structs.h: 
+	fixed typo in comments
+
+2001-05-25 19:56  stefan
+
+	* display/ipc/visual.c, programs/demos/wrap.c: got the ipc target
+	kinda working. We really have to investigate serialized access
+	now...
+
+2001-05-23 17:46  cegger
+
+	* display/X/visual.c, display/X/visual.inc, display/Xlib/visual.c,
+	doc/targets.txt: added -nocursor option from Tijs van Bakel
+
+2001-05-16 03:19  stefan
+
+	* display/ipc/visual.c: some fixes for the ipc target
+
+2001-05-16 03:17  stefan
+
+	* programs/demos/: Makefile.am, wrap.c: add test/demo program for
+	the ipc target. Unfortunately it doesn't quite work yet.
+
+2001-05-13 19:49  cegger
+
+	* programs/util/monitest/monitest.c: fixed compiler warnings
+
+2001-05-13 08:13  cegger
+
+	* display/ipc/.cvsignore: ignore autogenerated files
+
+2001-05-13 03:29  stefan
+
+	* configure.in, libggi.conf.in, display/Makefile.am,
+	display/ipc/EXPSYMS, display/ipc/Makefile.am, display/ipc/mode.c,
+	display/ipc/visual.c, include/ggi/display/ipc.h,
+	programs/util/inputdump.c: initial checkin of the ipc target
+
+2001-05-13 01:30  skids
+
+	* programs/check/speed.c: 
+	Bandaid for different libc headers, courtesy of the bovine one
+
+2001-05-12 23:03  cegger
+
+	* programs/demos/pageflip.c, programs/demos/slimy.c,
+	programs/demos/cube3d.c, programs/demos/saver.c,
+	programs/demos/stars.c, programs/demos/textdemo.c,
+	programs/demos/warp-ggi/.cvsignore,
+	programs/demos/warp-ggi/color.c, programs/demos/warp-ggi/rawpict.h,
+	programs/demos/warp-ggi/Makefile.am,
+	programs/demos/warp-ggi/dowarp.c, programs/demos/warp-ggi/main.c,
+	programs/demos/warp-ggi/readpcx.c, programs/demos/warp-ggi/warp.h,
+	programs/demos/warp-ggi/README, programs/demos/warp-ggi/readtga.c,
+	programs/util/.cvsignore, programs/util/Makefile.am,
+	programs/util/mycircle.inc, programs/util/giik2str.c,
+	programs/util/tunemode.c, programs/util/inputdump.c,
+	programs/util/monitest/.cvsignore,
+	programs/util/monitest/drawlib.c, programs/util/monitest/drawlib.h,
+	programs/util/monitest/ggicolors.h,
+	programs/util/monitest/ggitext.c, programs/util/monitest/ggitext.h,
+	programs/util/monitest/menu.c, programs/util/monitest/menu.h,
+	programs/util/monitest/monitest.h,
+	programs/util/monitest/pattern.c,
+	programs/util/monitest/Makefile.am,
+	programs/util/monitest/flatpanel.c,
+	programs/util/monitest/kgitune.c, programs/util/monitest/kgitune.h,
+	programs/util/monitest/resolution.c,
+	programs/util/monitest/window.c, programs/util/monitest/window.h,
+	programs/util/monitest/monitest.c,
+	programs/util/monitest/monitest.sgml,
+	programs/util/monitest/mousedemo.c, scripts/bindist.head,
+	scripts/.cvsignore, scripts/configure, scripts/doinstall,
+	scripts/ggiinstall: Initial revision
+
+2001-05-12 23:03  cegger
+
+	* programs/demos/pageflip.c, programs/demos/slimy.c,
+	programs/demos/cube3d.c, programs/demos/saver.c,
+	programs/demos/stars.c, programs/demos/textdemo.c,
+	programs/demos/warp-ggi/.cvsignore,
+	programs/demos/warp-ggi/color.c, programs/demos/warp-ggi/rawpict.h,
+	programs/demos/warp-ggi/Makefile.am,
+	programs/demos/warp-ggi/dowarp.c, programs/demos/warp-ggi/main.c,
+	programs/demos/warp-ggi/readpcx.c, programs/demos/warp-ggi/warp.h,
+	programs/demos/warp-ggi/README, programs/demos/warp-ggi/readtga.c,
+	programs/util/.cvsignore, programs/util/Makefile.am,
+	programs/util/mycircle.inc, programs/util/giik2str.c,
+	programs/util/tunemode.c, programs/util/inputdump.c,
+	programs/util/monitest/.cvsignore,
+	programs/util/monitest/drawlib.c, programs/util/monitest/drawlib.h,
+	programs/util/monitest/ggicolors.h,
+	programs/util/monitest/ggitext.c, programs/util/monitest/ggitext.h,
+	programs/util/monitest/menu.c, programs/util/monitest/menu.h,
+	programs/util/monitest/monitest.h,
+	programs/util/monitest/pattern.c,
+	programs/util/monitest/Makefile.am,
+	programs/util/monitest/flatpanel.c,
+	programs/util/monitest/kgitune.c, programs/util/monitest/kgitune.h,
+	programs/util/monitest/resolution.c,
+	programs/util/monitest/window.c, programs/util/monitest/window.h,
+	programs/util/monitest/monitest.c,
+	programs/util/monitest/monitest.sgml,
+	programs/util/monitest/mousedemo.c, scripts/bindist.head,
+	scripts/.cvsignore, scripts/configure, scripts/doinstall,
+	scripts/ggiinstall: initial import
+
+2001-05-12 23:00  cegger
+
+	* acconfig.h, install-sh, missing, INSTALL.autoconf, mkinstalldirs,
+	patchlib.c, config.guess, config.sub, configure.in, ltmain.sh,
+	.cvsignore, FAQ, libggi.conf.in, ChangeLog.1999, Makefile.am,
+	autogen.sh, ltconfig, INSTALL, README, ChangeLog, NEWS,
+	default/.cvsignore, default/Makefile.am, default/color/.cvsignore,
+	default/color/EXPSYMS, default/color/gamma.c, default/color/pack.c,
+	default/color/visual.c, default/color/Makefile.am,
+	default/color/color.c, default/color/color.h,
+	default/common/.cvsignore, default/common/Makefile.am,
+	default/common/clip.c, default/common/linear-line.c,
+	default/fbdev/.cvsignore, default/fbdev/Makefile.am,
+	default/fbdev/mga/.cvsignore, default/fbdev/mga/Makefile.am,
+	default/fbdev/mga/2164w/.cvsignore,
+	default/fbdev/mga/2164w/EXPSYMS, default/fbdev/mga/2164w/box.c,
+	default/fbdev/mga/2164w/gtext.c, default/fbdev/mga/2164w/m2164w.h,
+	default/fbdev/mga/2164w/visual.c,
+	default/fbdev/mga/2164w/Makefile.am,
+	default/fbdev/mga/2164w/copybox.c,
+	default/fbdev/mga/2164w/crossblit.c,
+	default/fbdev/mga/2164w/hline.c, default/fbdev/mga/2164w/line.c,
+	default/fbdev/mga/2164w/mmio.h, default/fbdev/mga/2164w/regs.h,
+	default/fbdev/mga/2164w/vline.c, default/ilbm/.cvsignore,
+	default/ilbm/EXPSYMS, default/ilbm/Makefile.am,
+	default/ilbm/ilbmlib.h, default/ilbm/pixel.c,
+	default/ilbm/pixela.c, default/ilbm/visual.c,
+	default/ioctl/.cvsignore, default/ioctl/EXPSYMS,
+	default/ioctl/Makefile.am, default/ioctl/box.c,
+	default/ioctl/copybox.c, default/ioctl/ioctllib.h,
+	default/ioctl/line.c, default/ioctl/visual.c,
+	default/iplanar_2p/.cvsignore, default/iplanar_2p/EXPSYMS,
+	default/iplanar_2p/Makefile.am, default/iplanar_2p/ipl2lib.h,
+	default/iplanar_2p/pixel.c, default/iplanar_2p/pixela.c,
+	default/iplanar_2p/visual.c, default/kgi/.cvsignore,
+	default/kgi/EXPSYMS, default/kgi/Makefile.am, default/kgi/box.c,
+	default/kgi/copybox.c, default/kgi/line.c, default/kgi/visual.c,
+	default/linear_1/color.c, default/linear_1/.cvsignore,
+	default/linear_1/EXPSYMS, default/linear_1/Makefile.am,
+	default/linear_1/gtext.c, default/linear_1/hline.c,
+	default/linear_1/lin1lib.h, default/linear_1/pixel.c,
+	default/linear_1/pixela.c, default/linear_1/visual.c,
+	default/linear_1/vline.c, default/linear_16/.cvsignore,
+	default/linear_16/EXPSYMS, default/linear_16/box.c,
+	default/linear_16/copybox.c, default/linear_16/fillscreen.c,
+	default/linear_16/hline.c, default/linear_16/lin16lib.h,
+	default/linear_16/line.c, default/linear_16/pixel.c,
+	default/linear_16/pixela.c, default/linear_16/visual.c,
+	default/linear_16/vline.c, default/linear_16/Makefile.am,
+	default/linear_16/crossblit.c, default/linear_1_r/.cvsignore,
+	default/linear_1_r/EXPSYMS, default/linear_1_r/Makefile.am,
+	default/linear_1_r/gtext.c, default/linear_1_r/lin1rlib.h,
+	default/linear_1_r/pixel.c, default/linear_1_r/pixela.c,
+	default/linear_1_r/visual.c, default/linear_2/.cvsignore,
+	default/linear_2/EXPSYMS, default/linear_2/Makefile.am,
+	default/linear_2/lin2lib.h, default/linear_2/pixel.c,
+	default/linear_2/pixela.c, default/linear_2/visual.c,
+	default/linear_24/copybox.c, default/linear_24/fillscreen.c,
+	default/linear_24/.cvsignore, default/linear_24/EXPSYMS,
+	default/linear_24/Makefile.am, default/linear_24/box.c,
+	default/linear_24/crossblit.c, default/linear_24/hline.c,
+	default/linear_24/lin24lib.h, default/linear_24/pixel.c,
+	default/linear_24/pixela.c, default/linear_24/visual.c,
+	default/linear_24/vline.c, default/linear_32/box.c,
+	default/linear_32/copybox.c, default/linear_32/.cvsignore,
+	default/linear_32/EXPSYMS, default/linear_32/Makefile.am,
+	default/linear_32/crossblit.c, default/linear_32/fillscreen.c,
+	default/linear_32/hline.c, default/linear_32/lin32lib.h,
+	default/linear_32/line.c, default/linear_32/pixel.c,
+	default/linear_32/pixela.c, default/linear_32/visual.c,
+	default/linear_32/vline.c, default/linear_4/copybox.c,
+	default/linear_4/.cvsignore, default/linear_4/EXPSYMS,
+	default/linear_4/Makefile.am, default/linear_4/color.c,
+	default/linear_4/hline.c, default/linear_4/lin4lib.h,
+	default/linear_4/pixel.c, default/linear_4/pixela.c,
+	default/linear_4/visual.c, default/linear_4/vline.c,
+	default/linear_4_r/.cvsignore, default/linear_4_r/EXPSYMS,
+	default/linear_4_r/Makefile.am, default/linear_4_r/color.c,
+	default/linear_4_r/copybox.c, default/linear_4_r/hline.c,
+	default/linear_4_r/lin4rlib.h, default/linear_4_r/pixel.c,
+	default/linear_4_r/pixela.c, default/linear_4_r/visual.c,
+	default/linear_4_r/vline.c, default/linear_8/box.c,
+	default/linear_8/copybox.c, default/linear_8/fillscreen.c,
+	default/linear_8/gtext.c, default/linear_8/.cvsignore,
+	default/linear_8/EXPSYMS, default/linear_8/Makefile.am,
+	default/linear_8/crossblit.c, default/linear_8/hline.c,
+	default/linear_8/lin8lib.h, default/linear_8/line.c,
+	default/linear_8/pixel.c, default/linear_8/pixela.c,
+	default/linear_8/visual.c, default/linear_8/vline.c,
+	default/linmm_banked/.cvsignore, default/linmm_banked/EXPSYMS,
+	default/linmm_banked/Makefile.am,
+	default/linmm_banked/README.linmm_banked,
+	default/linmm_banked/hline.c, default/linmm_banked/linmm_banked.h,
+	default/linmm_banked/pixel.c, default/linmm_banked/visual.c,
+	default/linmm_banked/vline.c, default/planar/.cvsignore,
+	default/planar/EXPSYMS, default/planar/pixel.c,
+	default/planar/pixela.c, default/planar/pllib.h,
+	default/planar/Makefile.am, default/planar/visual.c,
+	default/ramdac/.cvsignore, default/ramdac/EXPSYMS,
+	default/ramdac/Makefile.am, default/ramdac/color.c,
+	default/ramdac/visual.c, default/stubs/.cvsignore,
+	default/stubs/EXPSYMS, default/stubs/crossblit.c,
+	default/stubs/fillscreen.c, default/stubs/gtext.c,
+	default/stubs/hline.c, default/stubs/stublib.h,
+	default/stubs/visual.c, default/stubs/Makefile.am,
+	default/stubs/box.c, default/stubs/copybox.c, default/stubs/line.c,
+	default/stubs/pixel.c, default/stubs/vline.c,
+	default/text_16/.cvsignore, default/text_16/EXPSYMS,
+	default/text_16/Makefile.am, default/text_16/color.c,
+	default/text_16/gtext.c, default/text_16/pixel.c,
+	default/text_16/pixela.c, default/text_16/t16lib.h,
+	default/text_16/visual.c, default/text_32/.cvsignore,
+	default/text_32/EXPSYMS, default/text_32/Makefile.am,
+	default/text_32/color.c, default/text_32/gtext.c,
+	default/text_32/pixel.c, default/text_32/pixela.c,
+	default/text_32/t32lib.h, default/text_32/visual.c,
+	display/.cvsignore, display/Makefile.am, display/X/.cvsignore,
+	display/X/mode.c, display/X/EXPSYMS, display/X/mode.inc,
+	display/X/Makefile.am, display/X/color.c, display/X/color.inc,
+	display/X/visual.c, display/Xlib/.cvsignore, display/Xlib/EXPSYMS,
+	display/Xlib/Makefile.am, display/Xlib/box.c, display/Xlib/color.c,
+	display/Xlib/fillscreen.c, display/Xlib/gtext.c,
+	display/Xlib/hline.c, display/Xlib/line.c, display/Xlib/mode.c,
+	display/Xlib/pixel.c, display/Xlib/visual.c, display/Xlib/vline.c,
+	display/aa/.cvsignore, display/aa/giievents.c, display/aa/visual.c,
+	display/aa/EXPSYMS, display/aa/Makefile.am, display/aa/color.c,
+	display/aa/mode.c, display/common/.cvsignore,
+	display/common/Makefile.am, display/common/ggi-auto.inc,
+	display/common/gt-auto.inc, display/common/modelist.inc,
+	display/common/pixfmt-setup.inc, display/directx/EXPSYMS,
+	display/directx/Makefile.am, display/directx/ddinit.c,
+	display/directx/ddinit.h, display/directx/ddinitnt.c,
+	display/directx/mode.c, display/directx/.cvsignore,
+	display/directx/visual.c, display/fbdev/.cvsignore,
+	display/fbdev/visual.c, display/fbdev/EXPSYMS,
+	display/fbdev/Makefile.am, display/fbdev/color.c,
+	display/fbdev/fbdev.conf.in, display/fbdev/mode.c,
+	display/fbdev/pan.c, display/file/.cvsignore, display/file/EXPSYMS,
+	display/file/Makefile.am, display/file/fileio.c,
+	display/file/mode.c, display/file/ppm.c, display/file/visual.c,
+	display/glide/.cvsignore, display/glide/README.glide,
+	display/glide/box.c, display/glide/fb.c, display/glide/EXPSYMS,
+	display/glide/Makefile.am, display/glide/gtext.c,
+	display/glide/line.c, display/glide/mode.c, display/glide/pixel.c,
+	display/glide/visual.c, display/kgi/.cvsignore,
+	display/kgi/EXPSYMS, display/kgi/Makefile.am, display/kgi/events.c,
+	display/kgi/mode.c, display/kgi/visual.c,
+	display/lcd823/.cvsignore, display/lcd823/EXPSYMS,
+	display/lcd823/Makefile.am, display/lcd823/color.c,
+	display/lcd823/mode.c, display/lcd823/visual.c,
+	display/linvtsw/.cvsignore, display/linvtsw/EXPSYMS,
+	display/linvtsw/Makefile.am, display/linvtsw/visual.c,
+	display/mansync/.cvsignore, display/mansync/EXPSYMS,
+	display/mansync/Makefile.am, display/mansync/alarm.c,
+	display/mansync/child.c, display/mansync/mansync.c,
+	display/mansync/pthread.c, display/mansync/visual.c,
+	display/memory/.cvsignore, display/memory/EXPSYMS,
+	display/memory/mode.c, display/memory/Makefile.am,
+	display/memory/visual.c, display/monotext/.cvsignore,
+	display/monotext/EXPSYMS, display/monotext/README,
+	display/monotext/color.c, display/monotext/font_data.h,
+	display/monotext/draw.c, display/monotext/mode.c,
+	display/monotext/Makefile.am, display/monotext/monotext.c,
+	display/monotext/text.c, display/monotext/visual.c,
+	display/multi/.cvsignore, display/multi/EXPSYMS,
+	display/multi/Makefile.am, display/multi/mode.c,
+	display/multi/stubs.c, display/multi/visual.c,
+	display/palemu/.cvsignore, display/palemu/EXPSYMS,
+	display/palemu/README, display/palemu/color.c,
+	display/palemu/draw.c, display/palemu/frames.c,
+	display/palemu/mode.c, display/palemu/Makefile.am,
+	display/palemu/palemu.c, display/palemu/text.c,
+	display/palemu/visual.c, display/sub/.cvsignore,
+	display/sub/EXPSYMS, display/sub/mode.c, display/sub/stubs.c,
+	display/sub/Makefile.am, display/sub/visual.c,
+	display/suidkgi/.cvsignore, display/suidkgi/clut.inc,
+	display/suidkgi/font.inc, display/suidkgi/ibm-cp437.08x08.inc,
+	display/suidkgi/ibm-cp437.08x14.inc,
+	display/suidkgi/ibm-cp437.09x16.inc, display/suidkgi/EXPSYMS,
+	display/suidkgi/ibm-cp437.inc, display/suidkgi/suidhook.h,
+	display/suidkgi/mode.c, display/suidkgi/visual.c,
+	display/suidkgi/Makefile.am, display/suidkgi/suidbridge.c,
+	display/svgalib/.cvsignore, display/svgalib/BUGS,
+	display/svgalib/EXPSYMS, display/svgalib/mode.c,
+	display/svgalib/vline.c, display/svgalib/Makefile.am,
+	display/svgalib/box.c, display/svgalib/color.c,
+	display/svgalib/hline.c, display/svgalib/pixel.c,
+	display/svgalib/visual.c, display/tele/.cvsignore,
+	display/tele/EXPSYMS, display/tele/Makefile.server,
+	display/tele/box.c, display/tele/color.c, display/tele/draw.c,
+	display/tele/libtele.h, display/tele/text.c, display/tele/events.c,
+	display/tele/mode.c, display/tele/visual.c,
+	display/tele/Makefile.am, display/tele/teleserver.c,
+	display/tele/libtele.c, display/terminfo/.cvsignore,
+	display/terminfo/color.c, display/terminfo/EXPSYMS,
+	display/terminfo/TIvisual.h, display/terminfo/ncurses.c,
+	display/terminfo/visual.c, display/terminfo/Makefile.am,
+	display/terminfo/input.c, display/terminfo/mode.c,
+	display/tile/.cvsignore, display/tile/EXPSYMS, display/tile/README,
+	display/tile/color.c, display/tile/frames.c, display/tile/mode.c,
+	display/tile/Makefile.am, display/tile/line.c,
+	display/tile/stubs.c, display/tile/visual.c,
+	display/trueemu/.cvsignore, display/trueemu/EXPSYMS,
+	display/trueemu/README, display/trueemu/blit24.c,
+	display/trueemu/blit32.c, display/trueemu/frames.c,
+	display/trueemu/genblit.c, display/trueemu/mode.c,
+	display/trueemu/stubs.c, display/trueemu/Makefile.am,
+	display/trueemu/trueemu.c, display/trueemu/visual.c,
+	display/vcsa/.cvsignore, display/vcsa/EXPSYMS,
+	display/vcsa/color.c, display/vcsa/Makefile.am,
+	display/vcsa/draw.c, display/vcsa/mode.c, display/vcsa/visual.c,
+	display/vgagl/.cvsignore, display/vgagl/EXPSYMS,
+	display/vgagl/Makefile.am, display/vgagl/box.c,
+	display/vgagl/copybox.c, display/vgagl/fillscreen.c,
+	display/vgagl/pixel.c, display/vgagl/vgaglvis.h,
+	display/vgagl/visual.c, display/vgagl/vline.c,
+	display/vgagl/hline.c, display/xf86dga/.cvsignore,
+	display/xf86dga/EXPSYMS, display/xf86dga/XF86VMode.c,
+	display/xf86dga/xf86dga.h, display/xf86dga/xf86dgastr.h,
+	display/xf86dga/mode.c, display/xf86dga/XF86DGA.c,
+	display/xf86dga/visual.c, display/vgl/.cvsignore,
+	display/vgl/EXPSYMS, display/vgl/Makefile.am, display/vgl/draw.c,
+	display/vgl/visual.c, display/xf86dga/Makefile.am,
+	display/xf86dga/accel.c, display/xf86dga/color.c,
+	display/xf86dga/extutil.h, display/vgl/README, display/vgl/mode.c,
+	doc/.cvsignore, doc/Makefile.am, doc/targets.txt, doc/bdgtgp.txt,
+	doc/env.txt, doc/docbook/libggi-blit.sgml,
+	doc/docbook/libggi-char.sgml, doc/docbook/libggi-frames.sgml,
+	doc/docbook/libggi-visual.sgml, doc/docbook/libggi-control.sgml,
+	doc/docbook/libggi-events.sgml, doc/docbook/.cvsignore,
+	doc/docbook/libggi-mode.sgml, doc/docbook/libggi-origin.sgml,
+	doc/docbook/Makefile.am, doc/docbook/README,
+	doc/docbook/README.sgml, doc/docbook/ggi.dsl, doc/docbook/ggi.sgml,
+	doc/docbook/libggi-book.sgml, doc/docbook/libggi-db.sgml,
+	doc/docbook/libggi-env.sgml, doc/docbook/libggi-faq.sgml,
+	doc/docbook/libggi-misc.sgml, doc/docbook/libggi-pixel.sgml,
+	doc/docbook/libggi-drawing.sgml, doc/docbook/libggi-targets.sgml,
+	doc/man/.cvsignore, doc/man/ggiAddFlags.3ggi,
+	doc/man/ggiCheckGraphMode.3ggi, doc/man/ggiCheckMode.3ggi,
+	doc/man/ggiCheckSimpleMode.3ggi, doc/man/ggiCheckTextMode.3ggi,
+	doc/man/ggiClose.3ggi, doc/man/ggiCopyBox.3ggi,
+	doc/man/ggiCrossBlit.3ggi, doc/man/ggiDBGetNumBuffers.3ggi,
+	doc/man/ggiDrawPixel.3ggi, doc/man/ggiExit.3ggi,
+	doc/man/ggiFlushRegion.3ggi, doc/man/ggiGetBox.3ggi,
+	doc/man/ggiGetDisplayFrame.3ggi, doc/man/ggiGetFlags.3ggi,
+	doc/man/ggiGetGCBackground.3ggi, doc/man/ggiGetGCClipping.3ggi,
+	doc/man/ggiGetGCForeground.3ggi, doc/man/ggiGetGamma.3ggi,
+	doc/man/ggiGetGammaMap.3ggi, doc/man/ggiGetHLine.3ggi,
+	doc/man/ggiGetMode.3ggi, doc/man/ggiGetOrigin.3ggi,
+	doc/man/ggiGetPalette.3ggi, doc/man/ggiGetPixel.3ggi,
+	doc/man/ggiGetReadFrame.3ggi, doc/man/ggiGetVLine.3ggi,
+	doc/man/ggiGetWriteFrame.3ggi, doc/man/ggiInit.3ggi,
+	doc/man/ggiPackColors.3ggi, doc/man/ggiPutBox.3ggi,
+	doc/man/ggiPutHLine.3ggi, doc/man/ggiPutPixel.3ggi,
+	doc/man/ggiPutVLine.3ggi, doc/man/ggiPuts.3ggi,
+	doc/man/ggiRemoveFlags.3ggi, doc/man/ggiResourceMustAcquire.3ggi,
+	doc/man/ggiResourceRelease.3ggi, doc/man/ggiSetGCBackground.3ggi,
+	doc/man/ggiSetGammaMap.3ggi, doc/man/ggiSetReadFrame.3ggi,
+	doc/man/ggiSetSimpleMode.3ggi, doc/man/ggiSetTextMode.3ggi,
+	doc/man/ggiSetWriteFrame.3ggi, doc/man/ggiUnmapPixel.3ggi,
+	doc/man/ggiUnpackPixels.3ggi, doc/man/libggi.7ggi,
+	doc/man/Makefile.am, doc/man/ggiDBGetBuffer.3ggi,
+	doc/man/ggiDrawBox.3ggi, doc/man/ggiDrawHLine.3ggi,
+	doc/man/ggiDrawLine.3ggi, doc/man/ggiDrawVLine.3ggi,
+	doc/man/ggiEventPoll.3ggi, doc/man/ggiFillscreen.3ggi,
+	doc/man/ggiFlush.3ggi, doc/man/ggiGetPixelFormat.3ggi,
+	doc/man/ggiGetc.3ggi, doc/man/ggiMapColor.3ggi,
+	doc/man/ggiOpen.3ggi, doc/man/ggiPanic.3ggi,
+	doc/man/ggiParseMode.3ggi, doc/man/ggiPutc.3ggi,
+	doc/man/ggiResourceAcquire.3ggi,
+	doc/man/ggiSetColorfulPalette.3ggi,
+	doc/man/ggiSetDisplayFrame.3ggi, doc/man/ggiSetFlags.3ggi,
+	doc/man/ggiSetGCClipping.3ggi, doc/man/ggiSetGCForeground.3ggi,
+	doc/man/ggiAddEventMask.3ggi, doc/man/ggiEventRead.3ggi,
+	doc/man/ggiEventSend.3ggi, doc/man/ggiEventsQueued.3ggi,
+	doc/man/ggiFPrintMode.3ggi, doc/man/ggiGetEventMask.3ggi,
+	doc/man/ggiJoinInputs.3ggi, doc/man/ggiKbhit.3ggi,
+	doc/man/ggiPrintMode.3ggi, doc/man/ggiRemoveEventMask.3ggi,
+	doc/man/ggiSPrintMode.3ggi, doc/man/ggiSetEventMask.3ggi,
+	doc/man/ggiSetGamma.3ggi, doc/man/ggiSetGraphMode.3ggi,
+	doc/man/ggiSetMode.3ggi, doc/man/ggiSetOrigin.3ggi,
+	doc/man/ggiSetPalette.3ggi, extensions/.cvsignore,
+	extensions/Makefile.am, extensions/test/.cvsignore,
+	extensions/test/exttest1.c, extensions/test/Makefile.am,
+	extensions/test/test1.c, extensions/test/test1.h,
+	extensions/test/test2.c, extensions/test/test2.h, ggi/.cvsignore,
+	ggi/db.c, ggi/internal.c, ggi/mode.c, ggi/dl.c, ggi/EXPSYMS,
+	ggi/Makefile.am, ggi/events.c, ggi/gc.c, ggi/init.c, ggi/stubs.c,
+	ggi/unix.c, ggi/visual.c, include/.cvsignore, include/Makefile.am,
+	include/ggi/.cvsignore, include/ggi/Makefile.am,
+	include/ggi/ggi-unix.h, include/ggi/ggi.h, include/ggi/ggi_ext.h,
+	include/ggi/types.h, include/ggi/default/.cvsignore,
+	include/ggi/default/Makefile.am, include/ggi/default/genkgi.h,
+	include/ggi/display/.cvsignore, include/ggi/display/aa.h,
+	include/ggi/display/glide.h, include/ggi/display/mansync.h,
+	include/ggi/display/modelist.h, include/ggi/display/x.h,
+	include/ggi/display/fbdev.h, include/ggi/display/file.h,
+	include/ggi/display/memory.h, include/ggi/display/monotext.h,
+	include/ggi/display/multi.h, include/ggi/display/palemu.h,
+	include/ggi/display/sub.h, include/ggi/display/tele.h,
+	include/ggi/display/Makefile.am, include/ggi/display/directx.h,
+	include/ggi/display/lcd823.h, include/ggi/display/linvtsw.h,
+	include/ggi/display/svgalib.h, include/ggi/display/tile.h,
+	include/ggi/display/trueemu.h, include/ggi/display/vcsa.h,
+	include/ggi/display/xcommon.h, include/ggi/display/vgl.h,
+	include/ggi/display/xf86dga.h, include/ggi/display/xlib.h,
+	include/ggi/internal/.cvsignore, include/ggi/internal/internal.h,
+	include/ggi/internal/plat.h, include/ggi/internal/Makefile.am,
+	include/ggi/internal/dltypes.h, include/ggi/internal/structs.h,
+	include/ggi/internal/debug.h, include/ggi/internal/ggi-dl.h,
+	include/ggi/internal/ggidlinit.h,
+	include/ggi/internal/ggilibinit.h,
+	include/ggi/internal/font/.cvsignore,
+	include/ggi/internal/font/8x8,
+	include/ggi/internal/font/Makefile.am, m4/dllext.m4, m4/libtool.m4,
+	m4/.cvsignore, m4/Makefile.am, m4/extrapaths.m4,
+	programs/.cvsignore, programs/Makefile.am,
+	programs/check/.cvsignore, programs/check/Makefile.am,
+	programs/check/speed.c, programs/check/speed.sh,
+	programs/check/checkmode.c, programs/check/consistency.c,
+	programs/check/findleaks.c, programs/check/showaccel.c,
+	programs/check/showaccel2.c, programs/check/structs.c,
+	programs/demos/.cvsignore, programs/demos/Makefile.am,
+	programs/demos/cube3d.6, programs/demos/demo.c,
+	programs/demos/flying_ggis.c: Initial revision
+
+2001-05-12 23:00  cegger
+
+	* acconfig.h, install-sh, missing, INSTALL.autoconf, mkinstalldirs,
+	patchlib.c, config.guess, config.sub, configure.in, ltmain.sh,
+	.cvsignore, FAQ, libggi.conf.in, ChangeLog.1999, Makefile.am,
+	autogen.sh, ltconfig, INSTALL, README, ChangeLog, NEWS,
+	default/.cvsignore, default/Makefile.am, default/color/.cvsignore,
+	default/color/EXPSYMS, default/color/gamma.c, default/color/pack.c,
+	default/color/visual.c, default/color/Makefile.am,
+	default/color/color.c, default/color/color.h,
+	default/common/.cvsignore, default/common/Makefile.am,
+	default/common/clip.c, default/common/linear-line.c,
+	default/fbdev/.cvsignore, default/fbdev/Makefile.am,
+	default/fbdev/mga/.cvsignore, default/fbdev/mga/Makefile.am,
+	default/fbdev/mga/2164w/.cvsignore,
+	default/fbdev/mga/2164w/EXPSYMS, default/fbdev/mga/2164w/box.c,
+	default/fbdev/mga/2164w/gtext.c, default/fbdev/mga/2164w/m2164w.h,
+	default/fbdev/mga/2164w/visual.c,
+	default/fbdev/mga/2164w/Makefile.am,
+	default/fbdev/mga/2164w/copybox.c,
+	default/fbdev/mga/2164w/crossblit.c,
+	default/fbdev/mga/2164w/hline.c, default/fbdev/mga/2164w/line.c,
+	default/fbdev/mga/2164w/mmio.h, default/fbdev/mga/2164w/regs.h,
+	default/fbdev/mga/2164w/vline.c, default/ilbm/.cvsignore,
+	default/ilbm/EXPSYMS, default/ilbm/Makefile.am,
+	default/ilbm/ilbmlib.h, default/ilbm/pixel.c,
+	default/ilbm/pixela.c, default/ilbm/visual.c,
+	default/ioctl/.cvsignore, default/ioctl/EXPSYMS,
+	default/ioctl/Makefile.am, default/ioctl/box.c,
+	default/ioctl/copybox.c, default/ioctl/ioctllib.h,
+	default/ioctl/line.c, default/ioctl/visual.c,
+	default/iplanar_2p/.cvsignore, default/iplanar_2p/EXPSYMS,
+	default/iplanar_2p/Makefile.am, default/iplanar_2p/ipl2lib.h,
+	default/iplanar_2p/pixel.c, default/iplanar_2p/pixela.c,
+	default/iplanar_2p/visual.c, default/kgi/.cvsignore,
+	default/kgi/EXPSYMS, default/kgi/Makefile.am, default/kgi/box.c,
+	default/kgi/copybox.c, default/kgi/line.c, default/kgi/visual.c,
+	default/linear_1/color.c, default/linear_1/.cvsignore,
+	default/linear_1/EXPSYMS, default/linear_1/Makefile.am,
+	default/linear_1/gtext.c, default/linear_1/hline.c,
+	default/linear_1/lin1lib.h, default/linear_1/pixel.c,
+	default/linear_1/pixela.c, default/linear_1/visual.c,
+	default/linear_1/vline.c, default/linear_16/.cvsignore,
+	default/linear_16/EXPSYMS, default/linear_16/box.c,
+	default/linear_16/copybox.c, default/linear_16/fillscreen.c,
+	default/linear_16/hline.c, default/linear_16/lin16lib.h,
+	default/linear_16/line.c, default/linear_16/pixel.c,
+	default/linear_16/pixela.c, default/linear_16/visual.c,
+	default/linear_16/vline.c, default/linear_16/Makefile.am,
+	default/linear_16/crossblit.c, default/linear_1_r/.cvsignore,
+	default/linear_1_r/EXPSYMS, default/linear_1_r/Makefile.am,
+	default/linear_1_r/gtext.c, default/linear_1_r/lin1rlib.h,
+	default/linear_1_r/pixel.c, default/linear_1_r/pixela.c,
+	default/linear_1_r/visual.c, default/linear_2/.cvsignore,
+	default/linear_2/EXPSYMS, default/linear_2/Makefile.am,
+	default/linear_2/lin2lib.h, default/linear_2/pixel.c,
+	default/linear_2/pixela.c, default/linear_2/visual.c,
+	default/linear_24/copybox.c, default/linear_24/fillscreen.c,
+	default/linear_24/.cvsignore, default/linear_24/EXPSYMS,
+	default/linear_24/Makefile.am, default/linear_24/box.c,
+	default/linear_24/crossblit.c, default/linear_24/hline.c,
+	default/linear_24/lin24lib.h, default/linear_24/pixel.c,
+	default/linear_24/pixela.c, default/linear_24/visual.c,
+	default/linear_24/vline.c, default/linear_32/box.c,
+	default/linear_32/copybox.c, default/linear_32/.cvsignore,
+	default/linear_32/EXPSYMS, default/linear_32/Makefile.am,
+	default/linear_32/crossblit.c, default/linear_32/fillscreen.c,
+	default/linear_32/hline.c, default/linear_32/lin32lib.h,
+	default/linear_32/line.c, default/linear_32/pixel.c,
+	default/linear_32/pixela.c, default/linear_32/visual.c,
+	default/linear_32/vline.c, default/linear_4/copybox.c,
+	default/linear_4/.cvsignore, default/linear_4/EXPSYMS,
+	default/linear_4/Makefile.am, default/linear_4/color.c,
+	default/linear_4/hline.c, default/linear_4/lin4lib.h,
+	default/linear_4/pixel.c, default/linear_4/pixela.c,
+	default/linear_4/visual.c, default/linear_4/vline.c,
+	default/linear_4_r/.cvsignore, default/linear_4_r/EXPSYMS,
+	default/linear_4_r/Makefile.am, default/linear_4_r/color.c,
+	default/linear_4_r/copybox.c, default/linear_4_r/hline.c,
+	default/linear_4_r/lin4rlib.h, default/linear_4_r/pixel.c,
+	default/linear_4_r/pixela.c, default/linear_4_r/visual.c,
+	default/linear_4_r/vline.c, default/linear_8/box.c,
+	default/linear_8/copybox.c, default/linear_8/fillscreen.c,
+	default/linear_8/gtext.c, default/linear_8/.cvsignore,
+	default/linear_8/EXPSYMS, default/linear_8/Makefile.am,
+	default/linear_8/crossblit.c, default/linear_8/hline.c,
+	default/linear_8/lin8lib.h, default/linear_8/line.c,
+	default/linear_8/pixel.c, default/linear_8/pixela.c,
+	default/linear_8/visual.c, default/linear_8/vline.c,
+	default/linmm_banked/.cvsignore, default/linmm_banked/EXPSYMS,
+	default/linmm_banked/Makefile.am,
+	default/linmm_banked/README.linmm_banked,
+	default/linmm_banked/hline.c, default/linmm_banked/linmm_banked.h,
+	default/linmm_banked/pixel.c, default/linmm_banked/visual.c,
+	default/linmm_banked/vline.c, default/planar/.cvsignore,
+	default/planar/EXPSYMS, default/planar/pixel.c,
+	default/planar/pixela.c, default/planar/pllib.h,
+	default/planar/Makefile.am, default/planar/visual.c,
+	default/ramdac/.cvsignore, default/ramdac/EXPSYMS,
+	default/ramdac/Makefile.am, default/ramdac/color.c,
+	default/ramdac/visual.c, default/stubs/.cvsignore,
+	default/stubs/EXPSYMS, default/stubs/crossblit.c,
+	default/stubs/fillscreen.c, default/stubs/gtext.c,
+	default/stubs/hline.c, default/stubs/stublib.h,
+	default/stubs/visual.c, default/stubs/Makefile.am,
+	default/stubs/box.c, default/stubs/copybox.c, default/stubs/line.c,
+	default/stubs/pixel.c, default/stubs/vline.c,
+	default/text_16/.cvsignore, default/text_16/EXPSYMS,
+	default/text_16/Makefile.am, default/text_16/color.c,
+	default/text_16/gtext.c, default/text_16/pixel.c,
+	default/text_16/pixela.c, default/text_16/t16lib.h,
+	default/text_16/visual.c, default/text_32/.cvsignore,
+	default/text_32/EXPSYMS, default/text_32/Makefile.am,
+	default/text_32/color.c, default/text_32/gtext.c,
+	default/text_32/pixel.c, default/text_32/pixela.c,
+	default/text_32/t32lib.h, default/text_32/visual.c,
+	display/.cvsignore, display/Makefile.am, display/X/.cvsignore,
+	display/X/mode.c, display/X/EXPSYMS, display/X/mode.inc,
+	display/X/Makefile.am, display/X/color.c, display/X/color.inc,
+	display/X/visual.c, display/Xlib/.cvsignore, display/Xlib/EXPSYMS,
+	display/Xlib/Makefile.am, display/Xlib/box.c, display/Xlib/color.c,
+	display/Xlib/fillscreen.c, display/Xlib/gtext.c,
+	display/Xlib/hline.c, display/Xlib/line.c, display/Xlib/mode.c,
+	display/Xlib/pixel.c, display/Xlib/visual.c, display/Xlib/vline.c,
+	display/aa/.cvsignore, display/aa/giievents.c, display/aa/visual.c,
+	display/aa/EXPSYMS, display/aa/Makefile.am, display/aa/color.c,
+	display/aa/mode.c, display/common/.cvsignore,
+	display/common/Makefile.am, display/common/ggi-auto.inc,
+	display/common/gt-auto.inc, display/common/modelist.inc,
+	display/common/pixfmt-setup.inc, display/directx/EXPSYMS,
+	display/directx/Makefile.am, display/directx/ddinit.c,
+	display/directx/ddinit.h, display/directx/ddinitnt.c,
+	display/directx/mode.c, display/directx/.cvsignore,
+	display/directx/visual.c, display/fbdev/.cvsignore,
+	display/fbdev/visual.c, display/fbdev/EXPSYMS,
+	display/fbdev/Makefile.am, display/fbdev/color.c,
+	display/fbdev/fbdev.conf.in, display/fbdev/mode.c,
+	display/fbdev/pan.c, display/file/.cvsignore, display/file/EXPSYMS,
+	display/file/Makefile.am, display/file/fileio.c,
+	display/file/mode.c, display/file/ppm.c, display/file/visual.c,
+	display/glide/.cvsignore, display/glide/README.glide,
+	display/glide/box.c, display/glide/fb.c, display/glide/EXPSYMS,
+	display/glide/Makefile.am, display/glide/gtext.c,
+	display/glide/line.c, display/glide/mode.c, display/glide/pixel.c,
+	display/glide/visual.c, display/kgi/.cvsignore,
+	display/kgi/EXPSYMS, display/kgi/Makefile.am, display/kgi/events.c,
+	display/kgi/mode.c, display/kgi/visual.c,
+	display/lcd823/.cvsignore, display/lcd823/EXPSYMS,
+	display/lcd823/Makefile.am, display/lcd823/color.c,
+	display/lcd823/mode.c, display/lcd823/visual.c,
+	display/linvtsw/.cvsignore, display/linvtsw/EXPSYMS,
+	display/linvtsw/Makefile.am, display/linvtsw/visual.c,
+	display/mansync/.cvsignore, display/mansync/EXPSYMS,
+	display/mansync/Makefile.am, display/mansync/alarm.c,
+	display/mansync/child.c, display/mansync/mansync.c,
+	display/mansync/pthread.c, display/mansync/visual.c,
+	display/memory/.cvsignore, display/memory/EXPSYMS,
+	display/memory/mode.c, display/memory/Makefile.am,
+	display/memory/visual.c, display/monotext/.cvsignore,
+	display/monotext/EXPSYMS, display/monotext/README,
+	display/monotext/color.c, display/monotext/font_data.h,
+	display/monotext/draw.c, display/monotext/mode.c,
+	display/monotext/Makefile.am, display/monotext/monotext.c,
+	display/monotext/text.c, display/monotext/visual.c,
+	display/multi/.cvsignore, display/multi/EXPSYMS,
+	display/multi/Makefile.am, display/multi/mode.c,
+	display/multi/stubs.c, display/multi/visual.c,
+	display/palemu/.cvsignore, display/palemu/EXPSYMS,
+	display/palemu/README, display/palemu/color.c,
+	display/palemu/draw.c, display/palemu/frames.c,
+	display/palemu/mode.c, display/palemu/Makefile.am,
+	display/palemu/palemu.c, display/palemu/text.c,
+	display/palemu/visual.c, display/sub/.cvsignore,
+	display/sub/EXPSYMS, display/sub/mode.c, display/sub/stubs.c,
+	display/sub/Makefile.am, display/sub/visual.c,
+	display/suidkgi/.cvsignore, display/suidkgi/clut.inc,
+	display/suidkgi/font.inc, display/suidkgi/ibm-cp437.08x08.inc,
+	display/suidkgi/ibm-cp437.08x14.inc,
+	display/suidkgi/ibm-cp437.09x16.inc, display/suidkgi/EXPSYMS,
+	display/suidkgi/ibm-cp437.inc, display/suidkgi/suidhook.h,
+	display/suidkgi/mode.c, display/suidkgi/visual.c,
+	display/suidkgi/Makefile.am, display/suidkgi/suidbridge.c,
+	display/svgalib/.cvsignore, display/svgalib/BUGS,
+	display/svgalib/EXPSYMS, display/svgalib/mode.c,
+	display/svgalib/vline.c, display/svgalib/Makefile.am,
+	display/svgalib/box.c, display/svgalib/color.c,
+	display/svgalib/hline.c, display/svgalib/pixel.c,
+	display/svgalib/visual.c, display/tele/.cvsignore,
+	display/tele/EXPSYMS, display/tele/Makefile.server,
+	display/tele/box.c, display/tele/color.c, display/tele/draw.c,
+	display/tele/libtele.h, display/tele/text.c, display/tele/events.c,
+	display/tele/mode.c, display/tele/visual.c,
+	display/tele/Makefile.am, display/tele/teleserver.c,
+	display/tele/libtele.c, display/terminfo/.cvsignore,
+	display/terminfo/color.c, display/terminfo/EXPSYMS,
+	display/terminfo/TIvisual.h, display/terminfo/ncurses.c,
+	display/terminfo/visual.c, display/terminfo/Makefile.am,
+	display/terminfo/input.c, display/terminfo/mode.c,
+	display/tile/.cvsignore, display/tile/EXPSYMS, display/tile/README,
+	display/tile/color.c, display/tile/frames.c, display/tile/mode.c,
+	display/tile/Makefile.am, display/tile/line.c,
+	display/tile/stubs.c, display/tile/visual.c,
+	display/trueemu/.cvsignore, display/trueemu/EXPSYMS,
+	display/trueemu/README, display/trueemu/blit24.c,
+	display/trueemu/blit32.c, display/trueemu/frames.c,
+	display/trueemu/genblit.c, display/trueemu/mode.c,
+	display/trueemu/stubs.c, display/trueemu/Makefile.am,
+	display/trueemu/trueemu.c, display/trueemu/visual.c,
+	display/vcsa/.cvsignore, display/vcsa/EXPSYMS,
+	display/vcsa/color.c, display/vcsa/Makefile.am,
+	display/vcsa/draw.c, display/vcsa/mode.c, display/vcsa/visual.c,
+	display/vgagl/.cvsignore, display/vgagl/EXPSYMS,
+	display/vgagl/Makefile.am, display/vgagl/box.c,
+	display/vgagl/copybox.c, display/vgagl/fillscreen.c,
+	display/vgagl/pixel.c, display/vgagl/vgaglvis.h,
+	display/vgagl/visual.c, display/vgagl/vline.c,
+	display/vgagl/hline.c, display/xf86dga/.cvsignore,
+	display/xf86dga/EXPSYMS, display/xf86dga/XF86VMode.c,
+	display/xf86dga/xf86dga.h, display/xf86dga/xf86dgastr.h,
+	display/xf86dga/mode.c, display/xf86dga/XF86DGA.c,
+	display/xf86dga/visual.c, display/vgl/.cvsignore,
+	display/vgl/EXPSYMS, display/vgl/Makefile.am, display/vgl/draw.c,
+	display/vgl/visual.c, display/xf86dga/Makefile.am,
+	display/xf86dga/accel.c, display/xf86dga/color.c,
+	display/xf86dga/extutil.h, display/vgl/README, display/vgl/mode.c,
+	doc/.cvsignore, doc/Makefile.am, doc/targets.txt, doc/bdgtgp.txt,
+	doc/env.txt, doc/docbook/libggi-blit.sgml,
+	doc/docbook/libggi-char.sgml, doc/docbook/libggi-frames.sgml,
+	doc/docbook/libggi-visual.sgml, doc/docbook/libggi-control.sgml,
+	doc/docbook/libggi-events.sgml, doc/docbook/.cvsignore,
+	doc/docbook/libggi-mode.sgml, doc/docbook/libggi-origin.sgml,
+	doc/docbook/Makefile.am, doc/docbook/README,
+	doc/docbook/README.sgml, doc/docbook/ggi.dsl, doc/docbook/ggi.sgml,
+	doc/docbook/libggi-book.sgml, doc/docbook/libggi-db.sgml,
+	doc/docbook/libggi-env.sgml, doc/docbook/libggi-faq.sgml,
+	doc/docbook/libggi-misc.sgml, doc/docbook/libggi-pixel.sgml,
+	doc/docbook/libggi-drawing.sgml, doc/docbook/libggi-targets.sgml,
+	doc/man/.cvsignore, doc/man/ggiAddFlags.3ggi,
+	doc/man/ggiCheckGraphMode.3ggi, doc/man/ggiCheckMode.3ggi,
+	doc/man/ggiCheckSimpleMode.3ggi, doc/man/ggiCheckTextMode.3ggi,
+	doc/man/ggiClose.3ggi, doc/man/ggiCopyBox.3ggi,
+	doc/man/ggiCrossBlit.3ggi, doc/man/ggiDBGetNumBuffers.3ggi,
+	doc/man/ggiDrawPixel.3ggi, doc/man/ggiExit.3ggi,
+	doc/man/ggiFlushRegion.3ggi, doc/man/ggiGetBox.3ggi,
+	doc/man/ggiGetDisplayFrame.3ggi, doc/man/ggiGetFlags.3ggi,
+	doc/man/ggiGetGCBackground.3ggi, doc/man/ggiGetGCClipping.3ggi,
+	doc/man/ggiGetGCForeground.3ggi, doc/man/ggiGetGamma.3ggi,
+	doc/man/ggiGetGammaMap.3ggi, doc/man/ggiGetHLine.3ggi,
+	doc/man/ggiGetMode.3ggi, doc/man/ggiGetOrigin.3ggi,
+	doc/man/ggiGetPalette.3ggi, doc/man/ggiGetPixel.3ggi,
+	doc/man/ggiGetReadFrame.3ggi, doc/man/ggiGetVLine.3ggi,
+	doc/man/ggiGetWriteFrame.3ggi, doc/man/ggiInit.3ggi,
+	doc/man/ggiPackColors.3ggi, doc/man/ggiPutBox.3ggi,
+	doc/man/ggiPutHLine.3ggi, doc/man/ggiPutPixel.3ggi,
+	doc/man/ggiPutVLine.3ggi, doc/man/ggiPuts.3ggi,
+	doc/man/ggiRemoveFlags.3ggi, doc/man/ggiResourceMustAcquire.3ggi,
+	doc/man/ggiResourceRelease.3ggi, doc/man/ggiSetGCBackground.3ggi,
+	doc/man/ggiSetGammaMap.3ggi, doc/man/ggiSetReadFrame.3ggi,
+	doc/man/ggiSetSimpleMode.3ggi, doc/man/ggiSetTextMode.3ggi,
+	doc/man/ggiSetWriteFrame.3ggi, doc/man/ggiUnmapPixel.3ggi,
+	doc/man/ggiUnpackPixels.3ggi, doc/man/libggi.7ggi,
+	doc/man/Makefile.am, doc/man/ggiDBGetBuffer.3ggi,
+	doc/man/ggiDrawBox.3ggi, doc/man/ggiDrawHLine.3ggi,
+	doc/man/ggiDrawLine.3ggi, doc/man/ggiDrawVLine.3ggi,
+	doc/man/ggiEventPoll.3ggi, doc/man/ggiFillscreen.3ggi,
+	doc/man/ggiFlush.3ggi, doc/man/ggiGetPixelFormat.3ggi,
+	doc/man/ggiGetc.3ggi, doc/man/ggiMapColor.3ggi,
+	doc/man/ggiOpen.3ggi, doc/man/ggiPanic.3ggi,
+	doc/man/ggiParseMode.3ggi, doc/man/ggiPutc.3ggi,
+	doc/man/ggiResourceAcquire.3ggi,
+	doc/man/ggiSetColorfulPalette.3ggi,
+	doc/man/ggiSetDisplayFrame.3ggi, doc/man/ggiSetFlags.3ggi,
+	doc/man/ggiSetGCClipping.3ggi, doc/man/ggiSetGCForeground.3ggi,
+	doc/man/ggiAddEventMask.3ggi, doc/man/ggiEventRead.3ggi,
+	doc/man/ggiEventSend.3ggi, doc/man/ggiEventsQueued.3ggi,
+	doc/man/ggiFPrintMode.3ggi, doc/man/ggiGetEventMask.3ggi,
+	doc/man/ggiJoinInputs.3ggi, doc/man/ggiKbhit.3ggi,
+	doc/man/ggiPrintMode.3ggi, doc/man/ggiRemoveEventMask.3ggi,
+	doc/man/ggiSPrintMode.3ggi, doc/man/ggiSetEventMask.3ggi,
+	doc/man/ggiSetGamma.3ggi, doc/man/ggiSetGraphMode.3ggi,
+	doc/man/ggiSetMode.3ggi, doc/man/ggiSetOrigin.3ggi,
+	doc/man/ggiSetPalette.3ggi, extensions/.cvsignore,
+	extensions/Makefile.am, extensions/test/.cvsignore,
+	extensions/test/exttest1.c, extensions/test/Makefile.am,
+	extensions/test/test1.c, extensions/test/test1.h,
+	extensions/test/test2.c, extensions/test/test2.h, ggi/.cvsignore,
+	ggi/db.c, ggi/internal.c, ggi/mode.c, ggi/dl.c, ggi/EXPSYMS,
+	ggi/Makefile.am, ggi/events.c, ggi/gc.c, ggi/init.c, ggi/stubs.c,
+	ggi/unix.c, ggi/visual.c, include/.cvsignore, include/Makefile.am,
+	include/ggi/.cvsignore, include/ggi/Makefile.am,
+	include/ggi/ggi-unix.h, include/ggi/ggi.h, include/ggi/ggi_ext.h,
+	include/ggi/types.h, include/ggi/default/.cvsignore,
+	include/ggi/default/Makefile.am, include/ggi/default/genkgi.h,
+	include/ggi/display/.cvsignore, include/ggi/display/aa.h,
+	include/ggi/display/glide.h, include/ggi/display/mansync.h,
+	include/ggi/display/modelist.h, include/ggi/display/x.h,
+	include/ggi/display/fbdev.h, include/ggi/display/file.h,
+	include/ggi/display/memory.h, include/ggi/display/monotext.h,
+	include/ggi/display/multi.h, include/ggi/display/palemu.h,
+	include/ggi/display/sub.h, include/ggi/display/tele.h,
+	include/ggi/display/Makefile.am, include/ggi/display/directx.h,
+	include/ggi/display/lcd823.h, include/ggi/display/linvtsw.h,
+	include/ggi/display/svgalib.h, include/ggi/display/tile.h,
+	include/ggi/display/trueemu.h, include/ggi/display/vcsa.h,
+	include/ggi/display/xcommon.h, include/ggi/display/vgl.h,
+	include/ggi/display/xf86dga.h, include/ggi/display/xlib.h,
+	include/ggi/internal/.cvsignore, include/ggi/internal/internal.h,
+	include/ggi/internal/plat.h, include/ggi/internal/Makefile.am,
+	include/ggi/internal/dltypes.h, include/ggi/internal/structs.h,
+	include/ggi/internal/debug.h, include/ggi/internal/ggi-dl.h,
+	include/ggi/internal/ggidlinit.h,
+	include/ggi/internal/ggilibinit.h,
+	include/ggi/internal/font/.cvsignore,
+	include/ggi/internal/font/8x8,
+	include/ggi/internal/font/Makefile.am, m4/dllext.m4, m4/libtool.m4,
+	m4/.cvsignore, m4/Makefile.am, m4/extrapaths.m4,
+	programs/.cvsignore, programs/Makefile.am,
+	programs/check/.cvsignore, programs/check/Makefile.am,
+	programs/check/speed.c, programs/check/speed.sh,
+	programs/check/checkmode.c, programs/check/consistency.c,
+	programs/check/findleaks.c, programs/check/showaccel.c,
+	programs/check/showaccel2.c, programs/check/structs.c,
+	programs/demos/.cvsignore, programs/demos/Makefile.am,
+	programs/demos/cube3d.6, programs/demos/demo.c,
+	programs/demos/flying_ggis.c: initial import
+
