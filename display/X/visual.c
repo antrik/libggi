@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/06/20 23:47:12 skids Exp $
+/* $Id: visual.c,v 1.5 2001/07/31 08:15:25 cegger Exp $
 ******************************************************************************
 
    Display-X: initialization
@@ -216,7 +216,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 						    priv->xwin.x.screen),
 				   (options[OPT_NOCURSOR].result[0] == 'n'));
 
-	for(i = 0; i<8; i++) {
+	for(i = 0; i < X_FRAME_MAXNUM; i++) {
 		priv->ximage_list[i] = NULL;
 #ifdef HAVE_SHM
 		priv->shminfo[i].shmid = -1;

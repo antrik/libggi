@@ -1,4 +1,4 @@
-/* $Id: mode.inc,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: mode.inc,v 1.3 2001/07/31 08:15:25 cegger Exp $
 ******************************************************************************
 
    Mode management for display-X and display-Xlib.
@@ -335,7 +335,8 @@ int GGI_X_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 			return 0;
 #ifdef GGI_X_TARGET
                 case 3:
-			sprintf(apiname, "generic-linear-%d",  GT_SIZE(LIBGGI_MODE(vis)->graphtype));
+			sprintf(apiname, "generic-linear-%d",
+				GT_SIZE(LIBGGI_MODE(vis)->graphtype));
 			return 0;
 #endif /* GGI_X_TARGET */
 	}
@@ -539,7 +540,7 @@ int GGI_X_setmode(ggi_visual *vis, ggi_mode *tm)
 			priv->shminfo[i].shmid =
 				shmget(IPC_PRIVATE, (unsigned int)
 				       (tm->virt.x*tm->virt.y
-					* GT_SIZE(tm->graphtype) + 7) / 8,
+					* GT_ByPP(tm->graphtype)),
 				       IPC_CREAT | 0777);
 
 			fbaddr = priv->shminfo[i].shmaddr
@@ -586,9 +587,8 @@ int GGI_X_setmode(ggi_visual *vis, ggi_mode *tm)
 #endif	/* HAVE_SHM */
 	{
 		for (i = 0; i < tm->frames; i++) {
-			void *fbaddr = _ggi_malloc((tm->virt.x * tm->virt.y
-						    * GT_SIZE(tm->graphtype)
-						    + 7) / 8);
+			void *fbaddr = _ggi_malloc(tm->virt.x * tm->virt.y
+						    * GT_ByPP(tm->graphtype));
 			GGIDPRINT_MODE("X: Buffer allocated %p\n", fbaddr);
 
 			priv->ximage_list[i] = XCreateImage(
