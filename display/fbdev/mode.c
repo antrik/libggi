@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2005/02/09 06:34:12 orzo Exp $
+/* $Id: mode.c,v 1.26 2005/02/14 19:26:55 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -790,6 +790,13 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_checkmode_t * cm;
 
+	struct ggi_fbdev_timing *timing; /* iteration variable */
+
+	/* Keep track of the previous node while we iterate in order to 
+	 * delete bad modes from our list. */
+	struct ggi_fbdev_timing *prev = NULL;
+	struct ggi_fbdev_timing *saved_timing;
+
 
 	cm = _GGI_generic_checkmode_create();
 	
@@ -803,22 +810,15 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 	/* This puts the contents of mode into cm->req */
 	_GGI_generic_checkmode_init( cm, mode );
 
-	struct ggi_fbdev_timing *timing; /* iteration variable */
-
-	/* Keep track of the previous node while we iterate in order to 
-	 * delete bad modes from our list. */
-	struct ggi_fbdev_timing *prev = NULL;
-
 	/* The first timing will be saved in case all nodes are deleted.
 	 * We will use this as a fallback mode suggestion since it was 
 	 * ostensibly obtained by querying the framebuffer for the current 
 	 * mode. */
-	struct ggi_fbdev_timing *saved_timing;
 	saved_timing = priv->timings;
 
-	saved_timing = priv->timings;
 	timing = priv->timings;
 	while( timing )  {
+		struct fb_var_screeninfo var;
 
 		/* Convert timing structure to a suggested mode */
 		_GGI_fbdev_checkmode_adapt( mode, timing, priv );
@@ -828,7 +828,6 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 
 
 		/* construct structure for passing to ioctl */
-		struct fb_var_screeninfo var;
 		var =  priv->orig_var;
 		var.nonstd = 0;
 		var.xoffset = var.yoffset = 0;
