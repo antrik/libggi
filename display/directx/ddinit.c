@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.27 2004/09/03 07:56:26 pekberg Exp $
+/* $Id: ddinit.c,v 1.28 2004/09/10 18:48:24 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -80,12 +80,17 @@ void DDShutdown(directx_priv *priv)
     /* asta la vista, baby */
     TerminateThread(priv->hThreadID, 0);
 
+  /* Get rid of the window class if we registered it */
+  if (priv->wndclass)
+    UnregisterClass((LPCTSTR)priv->wndclass, priv->hInstance);
+
   /* get rid of the cursor if we created one */
   if (priv->hCursor) DestroyCursor(priv->hCursor);
 
   if (priv->hInit) CloseHandle(priv->hInit);
 
   priv->hWnd = NULL;
+  priv->wndclass = 0;
   priv->hThreadID = NULL;
   priv->hCursor = NULL;
   priv->hInit = NULL;
@@ -553,7 +558,7 @@ static void DDCreateClass(directx_priv *priv)
   wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
   wc.lpszMenuName = NAME;
   wc.lpszClassName = NAME;
-  RegisterClass(&wc);
+  priv->wndclass = RegisterClass(&wc);
 }
 
 /* create the GGI window */

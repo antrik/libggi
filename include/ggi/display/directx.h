@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.10 2004/09/03 07:55:13 pekberg Exp $
+/* $Id: directx.h,v 1.11 2004/09/10 18:48:24 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -82,6 +82,7 @@ typedef struct directx_priv
 
         HANDLE hWnd, hParent;
         HANDLE hInstance;
+        ATOM wndclass;
         long pitch;
         long maxX;
         long maxY;
