@@ -1,4 +1,4 @@
-/* $Id: warp.h,v 1.1 2001/05/12 23:03:42 cegger Exp $
+/* $Id: warp.h,v 1.2 2003/07/05 11:35:58 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -42,5 +42,18 @@ struct warp {
    sint32 ctable [1024];
    sint32 sintable [1024+256];
 };
+
+
+/* Defined in dowarp.c */
+
+extern struct warp *initWarp (uint32 width, uint32 height, uint32 pixsize,
+                              void *source, uint32 srclinelen);
+extern void disposeWarp (struct warp *w);
+extern void doWarp8bpp  (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
+extern void doWarp16bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
+extern void doWarp24bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
+extern void doWarp32bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
+
+
 
 #endif   /* WARP_H */
