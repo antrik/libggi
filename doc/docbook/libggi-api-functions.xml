@@ -1200,6 +1200,7 @@ changed.  Negative values indicate error (codes).
 <refname>ggiGetGammaMap</refname>
 <refname>ggiSetGamma</refname>
 <refname>ggiGetGamma</refname>
+<refname>ggiGammaMax</refname>
 <refpurpose>Manipulate the gamma maps and the gamma correction of a visual</refpurpose>
 </refnamediv>
 
@@ -1239,6 +1240,14 @@ changed.  Negative values indicate error (codes).
 <paramdef>ggi_float *<parameter>b</parameter></paramdef>
 </funcprototype>
 
+<funcprototype>
+<funcdef>int <function>ggiGammaMax</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>uint32<parameter>bitmeaning</parameter></paramdef>
+<paramdef>int *<parameter>maxread</parameter></paramdef>
+<paramdef>int *<parameter>maxwrite</parameter></paramdef>
+</funcprototype>
+
 </funcsynopsis>
 </refsynopsisdiv>
 
@@ -1247,30 +1256,47 @@ changed.  Negative values indicate error (codes).
 
 <para>
 <!-- From Andrew: -->
-Some truecolor modes on some hardware can use the DAC's palette to lookup
-the values before sending to the monitor.  Generally this is used for gamma
-correction by filling the lookup table with a curve, hence the name "gamma
-map", but it could be used for other things e.g. special effects in games.
+Some modes on some hardware can use a per-channel palette to lookup the values 
+before sending to the monitor.  Generally this is used for gamma correction 
+by filling the lookup table with a curve, hence the name "gamma map", but it 
+could be used for other things e.g. special effects in games.  Truecolor
+modes with gamma maps are sometimes referred to as "directcolor".
 </para>
 
 <para>
 <function>ggiSetGammaMap</function> and
-<function>ggiGetGammaMap</function> sets or gets the
+<function>ggiGetGammaMap</function> set or get the
 gamma map, for <parameter>len</parameter> colors starting at
-<parameter>s</parameter>.
+<parameter>s</parameter>.  In the event that there are more map 
+entries for some channels than others, values for the upper indices 
+of the map in the shallow channels are ignored on write, and undefined 
+on read.
 </para>
-
+<para>
+The <function>ggiGammaMap</function> function is used in order to find 
+out how many readable and writeable entries are in the map (returned in 
+the integers referenced by <parameter>maxwrite</parameter> and 
+<parameter>maxread</parameter>).  This must be done once for each channel.
+The parameter <parameter>bitmeaning</parameter> should be set to the
+bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of the channel
+of which you are inquiring.  If <function>ggiGammaMap</function> 
+returns an error, you cannot set the gamma map on this visual.  If 
+<function>ggiGammaMap</function> succeeds, but <parameter>maxwrite</parameter> 
+is -1 on return, this means that <function>ggiSetGamma</function> will work, 
+but that <function>ggiSetGammaMap</function> will not.  
+</para>
 <para>
 <function>ggiSetGamma</function> and <function>ggiGetGamma</function>
-sets or gets the gamma
-correction for the visual.
+sets or gets the gamma correction for the visual according to the usual
+curve associated with the given values for each channel, which should 
+be positive.
 </para>
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para>All four functions <returnvalue>0</returnvalue> for OK, otherwise an
+<para>All five functions <returnvalue>0</returnvalue> for OK, otherwise an
 error code.
 </para>
 
