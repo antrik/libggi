@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.1 2004/01/29 13:49:33 cegger Exp $
+/* $Id: probe.c,v 1.2 2004/01/29 14:27:22 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -33,14 +33,14 @@
 #include <ggi/display/auto.h>
 
 static inline void _ggi_setup_display(char *display,
-				struct ggi_auto_Target *target)
+				struct ggi_auto_Target *target, size_t display_size)
 {
-	ggstrlcpy(display, target->display, sizeof(display));
+	ggstrlcpy(display, target->display, display_size);
 
 	if (target->os_options != NULL) {
-		ggstrlcat(display, ":", sizeof(display));
+		ggstrlcat(display, ":", display_size);
 		ggstrlcat(display, target->os_options,
-				sizeof(display));
+				display_size);
 	}
 
 	return;
@@ -69,7 +69,7 @@ ggi_visual_t _GGI_auto_findOptimalTarget(ggi_auto_priv *priv)
 				goto probe_default;
 
 			for (j = 0; j < target->probe->num_options; j++) {
-				_ggi_setup_display(display, target);
+				_ggi_setup_display(display, target, sizeof(display));
 
 				if (target->probe->option[j] != NULL) {
 					fprintf(stderr, "option = %s\n",
@@ -89,7 +89,7 @@ ggi_visual_t _GGI_auto_findOptimalTarget(ggi_auto_priv *priv)
 		}
 
 	probe_default:
-		_ggi_setup_display(display, target);
+		_ggi_setup_display(display, target, sizeof(display));
 
 		ggDPrintf(1, "LibGGI", "Try to use %s...\n", display);
 		vis = ggiOpen(display, NULL);
