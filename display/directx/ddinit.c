@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.18 2004/02/12 19:01:34 pekberg Exp $
+/* $Id: ddinit.c,v 1.19 2004/03/09 08:52:35 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -327,6 +327,11 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     ggUnlock(priv->lock);
     EndPaint(hWnd, &ps);
     return 0;
+
+  case WM_CLOSE:
+    if (!priv->hParent)
+      exit(1);
+    break;
 
   }
   return DefWindowProc(hWnd, message, wParam, lParam);
