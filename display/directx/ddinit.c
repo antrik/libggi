@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.12 2003/10/08 08:51:16 cegger Exp $
+/* $Id: ddinit.c,v 1.13 2003/10/10 05:35:07 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -30,29 +30,25 @@
 #include "ddinit.h"
 
 
-LPDIRECTDRAW lpdd = NULL;
-LPDIRECTDRAW4 lpddext = NULL;
-LPDIRECTDRAWSURFACE4 lppdds = NULL;
-LPDIRECTDRAWSURFACE4 lpbdds = NULL;
-LPDIRECTDRAWCLIPPER pClipper;
-DDSURFACEDESC2 pddsd;
-DDSURFACEDESC2 bddsd;
-DDPIXELFORMAT ddpf;
-HWND hWnd;
-HINSTANCE hInstance;
-HANDLE hSem;
-HANDLE hThreadID;
-char *lpSurfaceAdd;
-static int Active = 0;
-static int PtrActive = 1;
-static int ClipActive = 0;
-static MINMAXINFO MaxSize;
-RECT DestWinPos, SrcWinPos;
+static int CreatePrimary(directx_priv * priv);
+static int CreateBackup(directx_priv * priv);
+static void ReleaseAllObjects(directx_priv * priv);
 
-int CreatePrimary(void);
-int CreateBackup(void);
-int GetDesc(directx_priv *priv);
-void ReleaseAllObjects(void);
+
+typedef struct DDChangeModeStruct
+{
+	DWORD width;
+	DWORD height;
+	DWORD BPP;
+} DDCMS, *LPDDCMS;
+
+typedef struct DDMessageBoxStruct
+{
+	HWND hWnd;
+	LPCTSTR text;
+	LPCTSTR caption;
+	UINT type;
+} DDMBS, *LPDDMBS;
 
 
 long FAR PASCAL
@@ -63,51 +59,41 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	DDMBS DDMessage;
 	DDCMS ddcms;
 	gii_event giiev;
+	directx_priv *priv =
+	  (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
 
 
 	switch (message) {
 
-	case WM_ACTIVATEAPP:
-		/* Pause if minimized or not the top window */
-		Active = 1;
-		return 0;
-
-	case WM_KILLFOCUS:
-		PtrActive = 1;
-		Active = 0;
-		return 0;
-
-	case WM_SETFOCUS:
-		Active = 1;
-		return 0;
-
-	case WM_GETMINMAXINFO:
-
-		((LPMINMAXINFO) lParam)->ptMaxSize.x = MaxSize.ptMaxSize.x;
-		((LPMINMAXINFO) lParam)->ptMaxSize.y = MaxSize.ptMaxSize.y;
-		return 0;
-
 	case WM_MOVE:
-		GetClientRect(hWnd, &SrcWinPos);
-		GetClientRect(hWnd, &DestWinPos);
-		ClientToScreen(hWnd, (POINT *) & DestWinPos.left);
-		ClientToScreen(hWnd, (POINT *) & DestWinPos.right);
+		ggLock(priv->lock);
+		GetClientRect(hWnd, &priv->SrcWinPos);
+		GetClientRect(hWnd, &priv->DestWinPos);
+		ClientToScreen(hWnd, (POINT *) & priv->DestWinPos.left);
+		ClientToScreen(hWnd, (POINT *) & priv->DestWinPos.right);
+		ggUnlock(priv->lock);
 		return 0;
 
 
 	case WM_TIMER:
-		redraw();
+		ggLock(priv->lock);
+		DDRedraw(priv);
+		ggUnlock(priv->lock);
 		return 0;
 
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		redraw();
+		ggLock(priv->lock);
+		DDRedraw(priv);
+		ggUnlock(priv->lock);
 		EndPaint(hWnd, &ps);
 		return 0;
 
 	case WM_DESTROY:
 		/* Clean up and close the app */
-		ReleaseAllObjects();
+		ggLock(priv->lock);
+		ReleaseAllObjects(priv);
+		ggUnlock(priv->lock);
 		PostQuitMessage(0);
 		return 0;
 
@@ -118,109 +104,88 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_DDCHANGEMODE:
 		ddcms = *(LPDDCMS) lParam;
-		ReleaseAllObjects();
-		IDirectDraw_SetCooperativeLevel(lpddext, hWnd, DDSCL_NORMAL);
-		CreatePrimary();
-		CreateBackup();
-		MaxSize.ptMaxSize.x = ddcms.width + 8;
-		MaxSize.ptMaxSize.y = ddcms.height + 28;
+		/* GGI_directx_setmode already holds the lock here */
+		ReleaseAllObjects(priv);
+		IDirectDraw_SetCooperativeLevel(priv->lpddext, hWnd, DDSCL_NORMAL);
+		CreatePrimary(priv);
+		CreateBackup(priv);
+		/* temporarily release the lock so that WM_MOVE can be
+		   processed */
+		ggUnlock(priv->lock);
 		MoveWindow(hWnd, 50, 50, ddcms.width + 8, ddcms.height + 28, TRUE);
-		ShowWindow(hWnd, SW_SHOWNORMAL);
 		SetTimer(hWnd, 1, 33, NULL);
+		ShowWindow(hWnd, SW_SHOWNORMAL);
+		ggLock(priv->lock);
 		return 0;
 
-	case WM_MOUSEMOVE:
-		if (PtrActive && Active) {
-			PtrActive = 0;
-			while (ShowCursor(FALSE) >= 0);
-		}	/* if */
-		break;
-
-	case WM_NCMOUSEMOVE:
-		if (!PtrActive) {
-			PtrActive = 1;
-			while (ShowCursor(TRUE) < 0);
-		}	/* if */
-		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void ReleaseAllObjects(void)
+static HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption)
 {
-	if (lpbdds != NULL) {
-		IDirectDraw_Release(lpbdds);
-		lpbdds = NULL;
+	DDMBS MessageData;
+
+	MessageData.hWnd = hWnd;
+	MessageData.text = text;
+	MessageData.caption = caption;
+	MessageData.type = MB_OK;
+	SendMessage(hWnd, WM_DDMESSAGEBOX, 0, (LPARAM) & MessageData);
+
+	return 0;
+}
+
+static void ReleaseAllObjects(directx_priv * priv)
+{
+	if (priv->lpbdds != NULL) {
+		IDirectDraw_Release(priv->lpbdds);
+		priv->lpbdds = NULL;
 	}
-	if (lppdds != NULL) {
-		IDirectDraw_Release(lppdds);
-		lppdds = NULL;
+	if (priv->lppdds != NULL) {
+		IDirectDraw_Release(priv->lppdds);
+		priv->lppdds = NULL;
 	}
 }
 
-int CreatePrimary(void)
+static int CreatePrimary(directx_priv * priv)
 {
 	HRESULT hr;
 	LPDIRECTDRAWCLIPPER pClipper;
 	char errstr[50];
-
+	DDSURFACEDESC pddsd;
 
 	memset(&pddsd, 0, sizeof(pddsd));
 	pddsd.dwSize = sizeof(pddsd);
 	pddsd.dwFlags = DDSD_CAPS;
 	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	hr = IDirectDraw_CreateSurface(lpddext, &pddsd, &lppdds, NULL);
+	hr = IDirectDraw_CreateSurface(priv->lpddext, &pddsd, &priv->lppdds, NULL);
 	if (hr != 0) {
 		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
-		DDMessageBox(hWnd, errstr, "Primary Surface");
+		DDMessageBox(priv->hWnd, errstr, "Primary Surface");
 		exit(-1);
 	}	/* if */
-	IDirectDraw_CreateClipper(lpddext, 0, &pClipper, NULL);
-	IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
-	IDirectDrawSurface_SetClipper(lppdds, pClipper);
+	IDirectDraw_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
+	IDirectDrawClipper_SetHWnd(pClipper, 0, priv->hWnd);
+	IDirectDrawSurface_SetClipper(priv->lppdds, pClipper);
 	IDirectDrawClipper_Release(pClipper);
 	pddsd.dwSize = sizeof(pddsd);
-	return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
-}
-
-int GetDesc(directx_priv * priv)
-{
-	pddsd.dwSize = sizeof(pddsd);
-
-	IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
-
-	priv->hWnd = hWnd;
-
-/*	priv->pitch = pddsd.lPitch; */
-
-	priv->maxX = pddsd.dwWidth;
-	priv->maxY = pddsd.dwHeight;
-	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-	priv->BPP = priv->ColorDepth / 8;
-	priv->pitch = priv->maxX * priv->BPP;
-
-/*	priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
-	priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
-	priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
-*/
 	return 0;
 }
 
-int CreateBackup(void)
+static int CreateBackup(directx_priv * priv)
 {
         HRESULT rc;
         char message[100];
+	DDSURFACEDESC pddsd, bddsd;
+
+	pddsd.dwSize = sizeof(pddsd);
+	IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
 
         memset(&bddsd, 0, sizeof(bddsd));
         bddsd.dwSize = sizeof(bddsd);
         bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
-            | DDSD_LPSURFACE | DDSD_PIXELFORMAT;
+            | DDSD_PIXELFORMAT;
         bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-        lpSurfaceAdd = (char *) malloc(pddsd.dwWidth * pddsd.dwHeight
-                              * pddsd.ddpfPixelFormat.dwRGBBitCount / 8);
-        ZeroMemory(lpSurfaceAdd, (DWORD) (pddsd.dwWidth * pddsd.dwHeight
-                             * pddsd.ddpfPixelFormat.dwRGBBitCount / 8));
-        bddsd.lpSurface = lpSurfaceAdd;
         bddsd.dwWidth = pddsd.dwWidth;
         bddsd.dwHeight = pddsd.dwHeight;
         bddsd.lPitch = pddsd.lPitch;
@@ -234,72 +199,274 @@ int CreateBackup(void)
 	bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
 	bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
 
-	rc = IDirectDraw_CreateSurface(lpddext, &bddsd, &lpbdds, NULL);
+	rc = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
 	if (rc) {
 		sprintf(message, "CreateBackup error : %ld. Exiting", rc & 0xffff);
-		DDMessageBox(hWnd, message, "Backup");
+		DDMessageBox(priv->hWnd, message, "Backup");
 		exit(-1);
 	}
+	IDirectDrawSurface2_Lock(priv->lpbdds, NULL, &bddsd, DDLOCK_SURFACEMEMORYPTR, NULL);
+	priv->lpSurfaceAdd = (char *) bddsd.lpSurface;
+	IDirectDrawSurface2_Unlock(priv->lpbdds, bddsd.lpSurface);
+
 	return rc;
 }
+
+static DWORD WINAPI DDInitThread(LPVOID lpParm);
 
 HANDLE
 DDInit(directx_priv * priv)
 {
 	DWORD ThreadID;
 
-	hSem = CreateSemaphore(NULL, 0, 1, NULL);
-	hThreadID = CreateThread(NULL, 0, DDInitThread, (LPVOID) priv, 0,
-				 &ThreadID);
-	if (hThreadID) {
-		WaitForSingleObject(hSem, INFINITE);
+	priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
+	priv->hThreadID = CreateThread(NULL, 0, DDInitThread, (LPVOID) priv, 0,
+				       &ThreadID);
+	if (priv->hThreadID) {
+		WaitForSingleObject(priv->hInit, INFINITE);
 	}
-	priv->hWnd = hWnd;
-	priv->hInstance = hInstance;
-	return hThreadID;
+	return priv->hThreadID;
 }
 
-DWORD WINAPI
+/* cursors */
+
+static BYTE ANDmaskInvCursor[] = 
+{ 
+    0xff, 0xff, 0xff, 0xff,   // line 1
+    0xff, 0xff, 0xff, 0xff,   // line 2
+    0xff, 0xff, 0xff, 0xff,   // line 3
+    0xff, 0xff, 0xff, 0xff,   // line 4
+
+    0xff, 0xff, 0xff, 0xff,   // line 5
+    0xff, 0xff, 0xff, 0xff,   // line 6
+    0xff, 0xff, 0xff, 0xff,   // line 7
+    0xff, 0xff, 0xff, 0xff,   // line 8
+
+    0xff, 0xff, 0xff, 0xff,   // line 9
+    0xff, 0xff, 0xff, 0xff,   // line 10
+    0xff, 0xff, 0xff, 0xff,   // line 11
+    0xff, 0xff, 0xff, 0xff,   // line 12
+
+    0xff, 0xff, 0xff, 0xff,   // line 13
+    0xff, 0xff, 0xff, 0xff,   // line 14
+    0xff, 0xff, 0xff, 0xff,   // line 15
+    0xff, 0xff, 0xff, 0xff,   // line 16
+
+    0xff, 0xff, 0xff, 0xff,   // line 17
+    0xff, 0xff, 0xff, 0xff,   // line 18
+    0xff, 0xff, 0xff, 0xff,   // line 19
+    0xff, 0xff, 0xff, 0xff,   // line 20
+
+    0xff, 0xff, 0xff, 0xff,   // line 21
+    0xff, 0xff, 0xff, 0xff,   // line 22
+    0xff, 0xff, 0xff, 0xff,   // line 23
+    0xff, 0xff, 0xff, 0xff,   // line 24
+
+    0xff, 0xff, 0xff, 0xff,   // line 25
+    0xff, 0xff, 0xff, 0xff,   // line 26
+    0xff, 0xff, 0xff, 0xff,   // line 27
+    0xff, 0xff, 0xff, 0xff,   // line 28
+
+    0xff, 0xff, 0xff, 0xff,   // line 29
+    0xff, 0xff, 0xff, 0xff,   // line 30
+    0xff, 0xff, 0xff, 0xff,   // line 31
+    0xff, 0xff, 0xff, 0xff    // line 32
+};
+ 
+static BYTE XORmaskInvCursor[] = 
+{ 
+    0x00, 0x00, 0x00, 0x00,   // line 1
+    0x00, 0x00, 0x00, 0x00,   // line 2
+    0x00, 0x00, 0x00, 0x00,   // line 3
+    0x00, 0x00, 0x00, 0x00,   // line 4
+
+    0x00, 0x00, 0x00, 0x00,   // line 5
+    0x00, 0x00, 0x00, 0x00,   // line 6
+    0x00, 0x00, 0x00, 0x00,   // line 7
+    0x00, 0x00, 0x00, 0x00,   // line 8
+
+    0x00, 0x00, 0x00, 0x00,   // line 9
+    0x00, 0x00, 0x00, 0x00,   // line 10
+    0x00, 0x00, 0x00, 0x00,   // line 11
+    0x00, 0x00, 0x00, 0x00,   // line 12
+
+    0x00, 0x00, 0x00, 0x00,   // line 13
+    0x00, 0x00, 0x00, 0x00,   // line 14
+    0x00, 0x00, 0x00, 0x00,   // line 15
+    0x00, 0x00, 0x00, 0x00,   // line 16
+
+    0x00, 0x00, 0x00, 0x00,   // line 17
+    0x00, 0x00, 0x00, 0x00,   // line 18
+    0x00, 0x00, 0x00, 0x00,   // line 19
+    0x00, 0x00, 0x00, 0x00,   // line 20
+
+    0x00, 0x00, 0x00, 0x00,   // line 21
+    0x00, 0x00, 0x00, 0x00,   // line 22
+    0x00, 0x00, 0x00, 0x00,   // line 23
+    0x00, 0x00, 0x00, 0x00,   // line 24
+
+    0x00, 0x00, 0x00, 0x00,   // line 25
+    0x00, 0x00, 0x00, 0x00,   // line 26
+    0x00, 0x00, 0x00, 0x00,   // line 27
+    0x00, 0x00, 0x00, 0x00,   // line 28
+
+    0x00, 0x00, 0x00, 0x00,   // line 29
+    0x00, 0x00, 0x00, 0x00,   // line 30
+    0x00, 0x00, 0x00, 0x00,   // line 31
+    0x00, 0x00, 0x00, 0x00    // line 32
+};
+
+static BYTE ANDmaskDotCursor[] = 
+{ 
+    0xff, 0xff, 0xff, 0xff,   // line 1
+    0xff, 0xff, 0xff, 0xff,   // line 2
+    0xff, 0xff, 0xff, 0xff,   // line 3
+    0xff, 0xff, 0xff, 0xff,   // line 4
+
+    0xff, 0xff, 0xff, 0xff,   // line 5
+    0xff, 0xff, 0xff, 0xff,   // line 6
+    0xff, 0xff, 0xff, 0xff,   // line 7
+    0xff, 0xff, 0xff, 0xff,   // line 8
+
+    0xff, 0xff, 0xff, 0xff,   // line 9
+    0xff, 0xff, 0xff, 0xff,   // line 10
+    0xff, 0xff, 0xff, 0xff,   // line 11
+    0xff, 0xff, 0xff, 0xff,   // line 12
+
+    0xff, 0xff, 0xff, 0xff,   // line 13
+    0xff, 0xff, 0xff, 0xff,   // line 14
+    0xff, 0xff, 0xff, 0xff,   // line 15
+    0xff, 0xfe, 0xff, 0xff,   // line 16
+
+    0xff, 0xfd, 0x7f, 0xff,   // line 17
+    0xff, 0xfe, 0xff, 0xff,   // line 18
+    0xff, 0xff, 0xff, 0xff,   // line 19
+    0xff, 0xff, 0xff, 0xff,   // line 20
+
+    0xff, 0xff, 0xff, 0xff,   // line 21
+    0xff, 0xff, 0xff, 0xff,   // line 22
+    0xff, 0xff, 0xff, 0xff,   // line 23
+    0xff, 0xff, 0xff, 0xff,   // line 24
+
+    0xff, 0xff, 0xff, 0xff,   // line 25
+    0xff, 0xff, 0xff, 0xff,   // line 26
+    0xff, 0xff, 0xff, 0xff,   // line 27
+    0xff, 0xff, 0xff, 0xff,   // line 28
+
+    0xff, 0xff, 0xff, 0xff,   // line 29
+    0xff, 0xff, 0xff, 0xff,   // line 30
+    0xff, 0xff, 0xff, 0xff,   // line 31
+    0xff, 0xff, 0xff, 0xff    // line 32
+};
+ 
+static BYTE XORmaskDotCursor[] = 
+{ 
+    0x00, 0x00, 0x00, 0x00,   // line 1
+    0x00, 0x00, 0x00, 0x00,   // line 2
+    0x00, 0x00, 0x00, 0x00,   // line 3
+    0x00, 0x00, 0x00, 0x00,   // line 4
+
+    0x00, 0x00, 0x00, 0x00,   // line 5
+    0x00, 0x00, 0x00, 0x00,   // line 6
+    0x00, 0x00, 0x00, 0x00,   // line 7
+    0x00, 0x00, 0x00, 0x00,   // line 8
+
+    0x00, 0x00, 0x00, 0x00,   // line 9
+    0x00, 0x00, 0x00, 0x00,   // line 10
+    0x00, 0x00, 0x00, 0x00,   // line 11
+    0x00, 0x00, 0x00, 0x00,   // line 12
+
+    0x00, 0x00, 0x00, 0x00,   // line 13
+    0x00, 0x00, 0x00, 0x00,   // line 14
+    0x00, 0x00, 0x00, 0x00,   // line 15
+    0x00, 0x01, 0x00, 0x00,   // line 16
+
+    0x00, 0x02, 0x80, 0x00,   // line 17
+    0x00, 0x01, 0x00, 0x00,   // line 18
+    0x00, 0x00, 0x00, 0x00,   // line 19
+    0x00, 0x00, 0x00, 0x00,   // line 20
+
+    0x00, 0x00, 0x00, 0x00,   // line 21
+    0x00, 0x00, 0x00, 0x00,   // line 22
+    0x00, 0x00, 0x00, 0x00,   // line 23
+    0x00, 0x00, 0x00, 0x00,   // line 24
+
+    0x00, 0x00, 0x00, 0x00,   // line 25
+    0x00, 0x00, 0x00, 0x00,   // line 26
+    0x00, 0x00, 0x00, 0x00,   // line 27
+    0x00, 0x00, 0x00, 0x00,   // line 28
+
+    0x00, 0x00, 0x00, 0x00,   // line 29
+    0x00, 0x00, 0x00, 0x00,   // line 30
+    0x00, 0x00, 0x00, 0x00,   // line 31
+    0x00, 0x00, 0x00, 0x00    // line 32
+};
+ 
+static DWORD WINAPI
 DDInitThread(LPVOID lpParm)
 {
 	WNDCLASS wc;
 	MSG msg;
+	directx_priv *priv = (directx_priv*)lpParm;
 
-	Active = 0;
-	hInstance = GetModuleHandle(NULL);
+	priv->hInstance = GetModuleHandle(NULL);
 
 	wc.style = 0;
 	wc.lpfnWndProc = WindowProc;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE("DirectX.ico"));
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hInstance = priv->hInstance;
+	wc.hIcon = LoadIcon(priv->hInstance, MAKEINTRESOURCE("DirectX.ico"));
+	switch (priv->cursortype) {
+	case 0:
+		wc.hCursor = CreateCursor(priv->hInstance,
+					  16, 16, /* hot spot x, y */
+					  32, 32, /* size x, y */ 
+					  ANDmaskInvCursor, /* masks */
+					  XORmaskInvCursor);
+		priv->hCursor = wc.hCursor;
+		break;
+	case 1:
+		wc.hCursor = CreateCursor(priv->hInstance,
+					  16, 16, /* hot spot x, y */
+					  32, 32, /* size x, y */ 
+					  ANDmaskDotCursor, /* masks */
+					  XORmaskDotCursor);
+		priv->hCursor = wc.hCursor;
+		break;
+	default:
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		priv->hCursor = NULL;
+		break;
+	}
 	wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName = NAME;
 	wc.lpszClassName = NAME;
 	RegisterClass(&wc);
 
 	/* Create a window */
-	hWnd = CreateWindowEx(0,
+	priv->hWnd = CreateWindowEx(0,
 			      NAME,
 			      TITLE,
-			      WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX,
+			      WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX,
 			      0,
 			      0,
 			      640 + 8,
 			      480 + 28,
 			      NULL,
 			      NULL,
-			      hInstance,
+			      priv->hInstance,
 			      NULL);
-	if (!hWnd)
+	if (!priv->hWnd) {
+		if (priv->hCursor) DestroyCursor(priv->hCursor);
 		return FALSE;
+	}
+	SetWindowLong(priv->hWnd, GWL_USERDATA, (DWORD)priv);
+	ShowWindow(priv->hWnd, SW_HIDE);
 
-	DirectDrawCreate(NULL, &lpdd, NULL);
-	IDirectDraw_QueryInterface(lpdd, &IID_IDirectDraw4, (LPVOID *) & lpddext);
-	ReleaseSemaphore(hSem, 1, NULL);
-	Active = 1;
+	DirectDrawCreate(NULL, &priv->lpdd, NULL);
+	IDirectDraw_QueryInterface(priv->lpdd, &IID_IDirectDraw2, (LPVOID *) & priv->lpddext);
+	SetEvent(priv->hInit);
 
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
@@ -309,15 +476,14 @@ DDInitThread(LPVOID lpParm)
 	return msg.wParam;
 }
 
-HRESULT redraw(void)
+HRESULT DDRedraw(directx_priv * priv)
 {
-
-	IDirectDrawSurface_Blt(lppdds, &DestWinPos,
-			       lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
+	IDirectDrawSurface_Blt(priv->lppdds, &priv->DestWinPos,
+			       priv->lpbdds, &priv->SrcWinPos, DDBLT_WAIT, NULL);
 	return 0;
 }
 
-int DXChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
+int DDChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
 {
 	DDCMS ddcms;
 	char message[100];
@@ -328,14 +494,37 @@ int DXChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
 	ddcms.BPP = BPP;
 
 
-	rc = DDChangeMode(priv, &ddcms);
+	rc = SendMessage(priv->hWnd, WM_DDCHANGEMODE, 0, (LPARAM) &ddcms);
 	if (rc) {
 		sprintf(message, "ChangeMode failed with rc= %d\n",
 			rc & 0xffff);
-		DDMessageBox(hWnd, message, "INFO");
+		DDMessageBox(priv->hWnd, message, "INFO");
 	} else {
-		GetDesc(priv);
+		DDSURFACEDESC pddsd;
+
+		pddsd.dwSize = sizeof(pddsd);
+		IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
+
+		priv->maxX = pddsd.dwWidth;
+		priv->maxY = pddsd.dwHeight;
+		priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
+		priv->BPP = priv->ColorDepth / 8;
+		priv->pitch = priv->maxX * priv->BPP;
 	}
 
+	return rc;
+}
+
+HRESULT DDShutdown(directx_priv * priv)
+{
+	HRESULT rc = SendMessage(priv->hWnd, WM_DESTROY, 0, (LPARAM) NULL);
+	if (priv->hThreadID) {
+	  /* wait for the event loop to finish */
+	  if (WaitForSingleObject(priv->hThreadID, 100) != WAIT_OBJECT_0) {
+	    /* asta la vista, baby */
+	    TerminateThread(priv->hThreadID, 0);
+	  }
+	}
+	priv->hThreadID = NULL;
 	return rc;
 }

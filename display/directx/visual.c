@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2003/10/07 20:24:57 cegger Exp $
+/* $Id: visual.c,v 1.9 2003/10/10 05:35:07 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -44,11 +44,15 @@ typedef struct {
 static const gg_option optlist[] =
 {
         { "noinput", "no" },
-        { "physz", "0,0" }
+	{ "nocursor", "no" },
+        { "physz", "0,0" },
+	{ "keepcursor", "no"}
 };
 
 #define OPT_NOINPUT	0
-#define OPT_PHYSZ	1
+#define OPT_NOCURSOR	1
+#define OPT_PHYSZ	2
+#define OPT_KEEPCURSOR	3
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -57,7 +61,10 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = DIRECTX_PRIV(vis);
 
-	DDShutdown();
+	DDShutdown(priv);
+	CloseHandle(priv->hInit);
+	if (priv->hCursor) DestroyCursor(priv->hCursor);
+	ggLockDestroy(priv->lock);
 	free(priv);
 
 	return 0;
@@ -85,11 +92,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENOMEM;
 		goto err1;
         }
-        if (!DDInit(priv)) {
-		err = GGI_ENODEVICE;
-		goto err2;
-        }
+
+	memset(priv, 0, sizeof(directx_priv));
         LIBGGI_PRIVATE(vis) = priv;
+
+	priv->lock = ggLockCreate();
+	if (priv->lock == NULL) goto err2;
 
 	if (args) {
 		args = ggParseOptions((char *) args, options, NUM_OPTS);
@@ -98,13 +106,25 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				"arguments.\n");
 		}
 	}
-
+        
 	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
 			&(priv->physzflags), &(priv->physz)))
 	{
 		err = GGI_EARGINVAL;
-		goto err2;
+		goto err3;
 	}
+
+	if (options[OPT_KEEPCURSOR].result[0] == 'n') {
+		priv->cursortype = (options[OPT_NOCURSOR].result[0] == 'n') ?
+		  1 : 0; 
+	} else {
+		priv->cursortype = 2;
+	}
+
+        if (!DDInit(priv)) {
+		err = GGI_ENODEVICE;
+		goto err3;
+        }
 
 
         ggigii.hWnd = priv->hWnd;
@@ -118,7 +138,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			GGIDPRINT_MISC("Unable to open directx inputlib\n");
 			GGIclose(vis, dlh);
 			err = GGI_ENODEVICE;
-			goto err2;
+			goto err3;
 		}
 
 		priv->inp = inp;
@@ -136,6 +156,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return GGI_OK;
 
+err3:
+	ggLockDestroy(priv->lock);
 err2:
 	free(LIBGGI_GC(vis));
 err1:

@@ -8,9 +8,7 @@ Synopsis
 
 ::
 
-  display-directx:	[ [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
-
-  display-directxnt:	[ [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
+  display-directx:	[ [-keepcursor] [-nocursor] [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
 
 
 Description
@@ -19,11 +17,16 @@ Description
 
 Used for Win32 DirectX port of libGGI.
 
-Use `display-directxnt` on NT4 and Win2k systems.
-
 
 Options
 -------
+
+``keep-cursor``
+    Shows the standard arrow cursor in the window, instead of the default
+    dot cursor.
+
+``no-cursor``
+    No cursor is displayed in the window.
 
 ``-noinput``
     DirectX events sent to the window are not captured and merged with

@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.5 2003/10/08 08:51:16 cegger Exp $
+/* $Id: ddinit.h,v 1.6 2003/10/10 05:35:07 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -33,50 +33,13 @@
 #define NAME			"GGI-on-DX"
 #define TITLE			"GGI-on-DX"
 #define WM_DDMESSAGEBOX		0x7FFF
-#define WM_DDPUTPIXEL		0x7FFE
-#define WM_DDDRAWLINE		0x7FFD
-#define WM_DDCHANGEMODE		0x7FFC
-#define MAX_DISPLAYMODES	100
-
-typedef struct DisplayMode
-{
-	uint32 width;
-	uint32 height;
-	uint32 bpp;
-} DisplayMode, *LPDisplayMode;
-
-typedef struct DDChangeModeStruct
-{
-	DWORD width;
-	DWORD height;
-	DWORD BPP;
-} DDCMS, *LPDDCMS;
-
-typedef struct DDMessageBoxStruct
-{
-	HWND hWnd;
-	LPCTSTR text;
-	LPCTSTR caption;
-	UINT type;
-} DDMBS, *LPDDMBS;
-
+#define WM_DDCHANGEMODE		0x7FFE
 
 __BEGIN_DECLS
 
 HANDLE DDInit(directx_priv *);
-HRESULT DDShutdown(void);
-DWORD WINAPI DDInitThread(LPVOID lpParm);
-HRESULT redraw(void);
-int DDDrawLine(directx_priv *priv, int x0, int y0, int x1, int y1,
-	       ggi_pixel pix);
-int DDPutPixel(directx_priv *priv, int x, int y, ggi_pixel pix);
-int DXGetPixel(directx_priv *priv, int x, int y, ggi_pixel *color);
-int DXChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP);
-HRESULT DDChangeMode(directx_priv *priv, DDCMS * ddcms);
-int DDCheckMode(ggi_visual *vis, ggi_mode *mode);
-char *DDLock(void);
-HRESULT DDUnlock(void);
-HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption);
-void GetScreenParams(int *depth, int *width, int *height);
+HRESULT DDShutdown(directx_priv *);
+HRESULT DDRedraw(directx_priv *);
+int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP);
 
 __END_DECLS

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2003/10/08 08:51:16 cegger Exp $
+/* $Id: mode.c,v 1.6 2003/10/10 05:35:07 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -41,6 +41,7 @@ directx_acquire(ggi_resource * res, uint32 actype)
 {
 	ggi_directbuffer *dbuf;
 	ggi_visual *vis;
+	directx_priv *priv;
 	int bufnum;
 
 	GGIDPRINT_MISC("directx_acquire(%p, 0x%x) called\n", res, actype);
@@ -49,6 +50,7 @@ directx_acquire(ggi_resource * res, uint32 actype)
 		return GGI_EARGINVAL;
 	}
 	vis = res->priv;
+	priv = LIBGGI_PRIVATE(vis);
 	dbuf = res->self;
 	bufnum = dbuf->frame;
 
@@ -61,8 +63,10 @@ directx_acquire(ggi_resource * res, uint32 actype)
 		res->count++;
 		return 0;
 	}
-	dbuf->write = DDLock();
+	ggLock(priv->lock);
+	dbuf->write = priv->lpSurfaceAdd;
 	dbuf->read = dbuf->write;
+	ggUnlock(priv->lock);
 
 	res->curactype |= actype;
 	res->count++;
@@ -75,9 +79,6 @@ directx_acquire(ggi_resource * res, uint32 actype)
 static int
 directx_release(ggi_resource * res)
 {
-	ggi_directbuffer *dbuf;
-	ggi_visual *vis;
-
 	GGIDPRINT_MISC("directx_release(%p) called\n", res);
 
 	if (res->count < 1)
@@ -85,21 +86,15 @@ directx_release(ggi_resource * res)
 
 	res->count--;
 
-	if (res->count > 0)
-		return 0;
-
-	vis = res->priv;
-	dbuf = res->self;
-
-
-	DDUnlock();
-
 	return 0;
 }
 
 int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 {
-	redraw();
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	ggLock(priv->lock);
+	DDRedraw(priv);
+	ggUnlock(priv->lock);
 	return 0;
 }
 
@@ -128,9 +123,21 @@ int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments
 }
 
 
+static void GetScreenParams(int *depth, int *width, int *height)
+{
+	HWND wnd = GetDesktopWindow();
+	HDC dc = GetDC(wnd);
+	*depth = GetDeviceCaps(dc, BITSPIXEL);
+	*width = GetDeviceCaps(dc, HORZRES);
+	*height = GetDeviceCaps(dc, VERTRES);
+	ReleaseDC(wnd, dc);
+}
+
+
 
 int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 {
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	uint8 i;
 	uint8 err = 0;
 	int depth, width, height, defwidth, defheight;
@@ -215,9 +222,12 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	mode->dpp.x = mode->dpp.y = 1;
 
 	if (err) return err;
-	err = _ggi_figure_physz(mode, DIRECTX_PRIV(vis)->physzflags,
-				&(DIRECTX_PRIV(vis)->physz),
+
+	ggLock(priv->lock);
+	err = _ggi_figure_physz(mode, priv->physzflags,
+				&priv->physz,
 				0, 0, mode->visible.x, mode->visible.y);
+	ggUnlock(priv->lock);
                 
 	return err;
 }
@@ -235,6 +245,9 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 	if (ret != 0) {
 		return -1;
 	}
+
+	ggLock(priv->lock);
+
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
@@ -243,7 +256,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DXChangeMode(priv, mode->visible.x, mode->visible.y, priv->BPP * 8);
+	DDChangeMode(priv, mode->visible.x, mode->visible.y, priv->BPP * 8);
 
 	mode->virt.x = mode->visible.x;
 	mode->virt.y = mode->visible.y;
@@ -258,8 +271,10 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		ggi_resource *res;
 
 		res = malloc(sizeof(ggi_resource));
-		if (res == NULL)
+		if (res == NULL) {
+			ggUnlock(priv->lock);
 			return GGI_EFATAL;
+		}
 		LIBGGI_APPLIST(vis)->last_targetbuf
 		    = _ggi_db_add_buffer(LIBGGI_APPLIST(vis),
 					 _ggi_db_get_new());
@@ -285,13 +300,15 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 	vis->r_frame = LIBGGI_APPBUFS(vis)[0];
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
 
-	LIBGGI_CURWRITE(vis) = DDLock();
-	LIBGGI_CURREAD(vis) = DDLock();
+	LIBGGI_CURWRITE(vis) = priv->lpSurfaceAdd;
+	LIBGGI_CURREAD(vis) = priv->lpSurfaceAdd;
 
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (mode->frames - 1);
 
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
+
+	ggUnlock(priv->lock);
 
 	for (id = 1; GGI_directx_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL) != 0) {
