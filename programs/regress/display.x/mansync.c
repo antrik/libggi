@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.2 2004/10/08 12:00:23 cegger Exp $
+/* $Id: mansync.c,v 1.3 2004/10/08 20:43:29 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI display-x - mansync.
@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include <ggi/internal/internal.h>
+#include <ggi/display/x.h>
 #include <ggi/ggi.h>
 
 #include <string.h>
@@ -65,6 +66,26 @@ static void testcase1(const char *desc)
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
 #endif
 
+	/* Now check, if mansync is actually running
+	 * - note, we are in sync mode here.
+	 */
+
+	/* stop mansync. If it runs as it should,
+	 * we don't fail with an assertion here */
+	ret = MANSYNC_stop(vis);
+	if (ret != 0) {
+		printfailure("BUG: mansync not running - forgot to call "
+			"MANSYNC_start(vis) right after MANSYNC_init(vis)?\n");
+		goto exit_testcase;
+	}
+
+	/* now restart it */
+	ret = MANSYNC_start(vis);
+	if (ret != 0) {
+		printfailure("BUG: mansync couldn't be relaunched\n");
+		goto exit_testcase;
+	}
+
 	ggiParseMode("", &mode);
 	ggiCheckMode(vis, &mode);
 
@@ -104,7 +125,6 @@ static void testcase1(const char *desc)
 		goto exit_testcase;
 	}
 
-
 	/* ... and now draw something.
 	 */
 	pixel_color = ggiMapColor(vis, &color_color);
@@ -114,7 +134,6 @@ static void testcase1(const char *desc)
 
 	ggiResourceRelease(dbuf->resource);
 
-	ggiGetc(vis);
 
 exit_testcase:
 	ggiClose(vis);
@@ -135,7 +154,7 @@ int main(int argc, char * const argv[])
 	rc = ggiInit();
 	if (rc < 0) ggiPanic("Couldn't initialize libggi");
 
-	testcase1("See, if mansync is used in SYNC mode - sets up the mode the same way as XGGI does");
+	testcase1("See, if mansync actually runs in SYNC mode - sets up the mode the same way as XGGI does");
 
 	printsummary();
 
