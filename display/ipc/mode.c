@@ -1,7 +1,7 @@
-/* $Id: mode.c,v 1.7 2004/04/04 14:31:54 mooz Exp $
+/* $Id: mode.c,v 1.8 2004/08/01 14:46:46 cegger Exp $
 ******************************************************************************
 
-   Display memory : mode management
+   display-ipc : mode management
 
    Copyright (C) 1997 Jason McMullan	[jmcc@ggi-project.org]
    Copyright (C) 1998 Steve Cheng	[steve@ggi-project.org]

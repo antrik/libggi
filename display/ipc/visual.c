@@ -1,7 +1,7 @@
-/* $Id: visual.c,v 1.11 2004/02/23 14:24:57 pekberg Exp $
+/* $Id: visual.c,v 1.12 2004/08/01 14:46:46 cegger Exp $
 ******************************************************************************
 
-   Display-memory: mode management
+   display-ipc: transfer drawing commands to other processes
 
    Copyright (C) 2001 Stefan Seefeld	[stefan@berlin-consortium.org]
 
