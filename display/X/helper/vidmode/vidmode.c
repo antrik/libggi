@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.14 2004/11/27 16:42:16 soyt Exp $
+/* $Id: vidmode.c,v 1.15 2005/01/01 22:54:29 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -29,29 +29,11 @@
 */
 
 #include "config.h"
+#include <string.h>
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <X11/extensions/xf86vmode.h>
-
-/*
- * The requested mode must be one of the available X modes.
- * We should search for the highest closest mode, then
- * create a window with the found mode. And finally
- * reparent priv->parent_win to the newly created window. But
- * we don't do this because the behaviour of XReparentWindow 
- * changes from one window manager to an other. This technique 
- * works well under KDE, icewm, xfce, twm. But it failed under
- * gnome (priv->parent_win overrideride_ridect attribute was set
- * to True), and under window maker (the children didn't get 
- * mapped).
- *
- * Frameless windows should be handled by libggiwmh via ICCM.
- * (for the case where the mode dimensions are equal to root 
- * window ones).
- *
- * I hate Window Managers :)
- */
 
 /*
  *  Private vimode structure
@@ -270,8 +252,6 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 	XF86VidModeLockModeSwitch(priv->disp,
 				  priv->vilist[priv->viidx].vi->screen,
 				  True);
-
-
 	
 	GGI_X_MAYBE_SYNC(vis);
 	
@@ -283,8 +263,8 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 {
 	ggi_x_priv    *priv    = GGIX_PRIV(vis);
 	ggi_x_vidmode *vidmode;
-
-
+	int delta_x, delta_y, min_delta_x, min_delta_y, min_x, min_y;
+	
 	DPRINT_MODE("ggi_xvidmode_validate_mode: %x %x\n", priv,
 		       priv->modes);
 
@@ -307,24 +287,111 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	 * First pass : Check for correct mode 
 	 */
 	do {
-	  if ((maxed->visible.x == priv->modes[num + 1].x) &&
-	      (maxed->visible.y == priv->modes[num + 1].y) &&
-	      (GT_DEPTH(maxed->graphtype) ==
-	       (unsigned) priv->modes[num + 1].bpp)) {	
-	      DPRINT_MODE("\tvalid mode: bpp:%d w:%d h:%d\n",
-			     priv->modes[num + 1].bpp, priv->modes[num + 1].x,
-			     priv->modes[num + 1].y);
-	      /* Mode found */
-	      vidmode->validation_flag = 1;
-	      return (num + 1);
-	  }
+		if ((maxed->visible.x == priv->modes[num + 1].x) &&
+		    (maxed->visible.y == priv->modes[num + 1].y) &&
+		    (GT_DEPTH(maxed->graphtype) == 
+		     (unsigned) priv->modes[num + 1].bpp)) {
+		
+			DPRINT_MODE("\tvalid mode: bpp:%d w:%d h:%d\n",
+				    priv->modes[num + 1].bpp, 
+				    priv->modes[num + 1].x,
+				    priv->modes[num + 1].y);
+			/* Mode found */
+			vidmode->validation_flag = 1;
 
-	  ++num;
+			/* No need to build mode */
+			return (num + 1);
+		}
+
+		++num;
 	} while(num < priv->modes_num);
 
 	/*
-	 * No second pass (see comment at the begining of the file)
+	 * Second pass : Find next closest mode
 	 */
+	min_x = delta_x = min_y = delta_y = -1;
+	min_delta_x = priv->modes[0].x - maxed->visible.x;
+	min_delta_y = priv->modes[0].y - maxed->visible.y;
+	for(num = 0; num < priv->modes_num; ++num) {
+		if(GT_DEPTH(maxed->graphtype) == 
+		   (unsigned) priv->modes[num].bpp) {
+
+			delta_x = priv->modes[num].x - maxed->visible.x;
+			if(delta_x >= 0) {
+				if(delta_x <= min_delta_x) {
+					min_delta_x = delta_x;
+					min_x       = num;
+				}
+			}
+
+			delta_y = priv->modes[num].y - maxed->visible.y;
+			if(delta_y >= 0) {
+				if(delta_y <= min_delta_y) {
+					min_delta_y = delta_y;
+					min_y       = num;
+				}
+			}
+		}
+	}
+
+	DPRINT_MODE("\tmin x valid mode: #%d bpp:%d w:%d h:%d\n",
+		    min_x,
+		    priv->modes[min_x].bpp, priv->modes[min_x].x,
+		    priv->modes[min_x].y);
+	
+	DPRINT_MODE("\tmin y valid mode: #%d bpp:%d w:%d h:%d\n",
+		    min_y,
+		    priv->modes[min_y].bpp, priv->modes[min_y].x,
+		    priv->modes[min_y].y);
+
+	if((min_x > 0) && (min_y > 0)) {
+	        int      err;
+		ggi_mode mode;
+
+		if(min_delta_x < min_delta_y) {
+			if(priv->modes[min_x].y >= maxed->visible.y) {
+				num = min_x;
+			}
+			else {
+				num = min_y;
+			}
+		}
+		else {
+			if(priv->modes[min_y].x >= maxed->visible.x) {
+				num = min_y;
+			}
+			else {
+				num = min_x;
+			}
+	  	}
+
+	  	DPRINT_MODE("\tclosest valid mode: bpp:%d w:%d h:%d\n",
+			    priv->modes[num].bpp, priv->modes[num].x,
+			    priv->modes[num].y);
+
+		vidmode->validation_flag = 0;
+	  	
+		/* Build mode */  	  
+	
+		maxed->visible.x = priv->modes[num].x;
+		maxed->visible.y = priv->modes[num].y;
+		
+		/*
+		switch (priv->modes[num].bpp) {
+			case  1:	maxed->graphtype = GT_1BIT; break;
+			case  2:	maxed->graphtype = GT_2BIT;  break;
+			case  4:	maxed->graphtype = GT_4BIT;  break;
+			case  8:	maxed->graphtype = GT_8BIT;  break;
+			case 15:	maxed->graphtype = GT_15BIT; break;
+			case 16:	maxed->graphtype = GT_16BIT; break;
+			case 24:	maxed->graphtype = GT_24BIT; break;
+			case 32:	maxed->graphtype = GT_32BIT; break;
+			default:	maxed->graphtype = GT_INVALID;
+		}
+		*/
+		       
+		return num;
+	}
 
 	/* No valid mode found */
 	vidmode->validation_flag = -1;

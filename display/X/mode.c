@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.39 2004/11/27 16:42:14 soyt Exp $
+/* $Id: mode.c,v 1.40 2005/01/01 22:54:28 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -190,6 +190,10 @@ int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 	ggi_x_priv *priv;
 	int dummy;
 	int rc;
+	unsigned char auto_virt;
+	
+	auto_virt = ((tm->virt.x == GGI_AUTO) && (tm->virt.y == GGI_AUTO));
+	
 	rc = GGI_X_checkmode_internal(vis, tm, &dummy);
 
 	priv = GGIX_PRIV(vis);
@@ -205,7 +209,15 @@ int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
-		}	/* if */
+		}	
+		else {
+		  if(auto_virt) {
+		    tm->virt.x = GGI_AUTO;
+		    tm->virt.y = GGI_AUTO;
+		  }
+
+		  _ggi_x_fit_geometry(vis, tm, priv->vilist + dummy, tm);
+		}        /* if */
 		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 			priv->cur_mode);
 	}	/* if */
@@ -219,6 +231,8 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	Window root;
 	int w, h;
 	unsigned int depth, dummy;
+	int vi_idx;
+	unsigned char auto_virt;
 
 	priv = GGIX_PRIV(vis);
 
@@ -237,7 +251,9 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	if ((tm->visible.x != w) || (tm->visible.y != h))
 		return GGI_EARGINVAL;
 
-	dummy = GGI_X_checkmode_internal(vis, tm, (int *)&dummy);
+	auto_virt = ((tm->virt.x == GGI_AUTO) && (tm->virt.y == GGI_AUTO));
+
+	dummy = GGI_X_checkmode_internal(vis, tm, &vi_idx);
 	if ((dummy != GGI_OK) || (tm->visible.x != w) || (tm->visible.y != h)) {
 		tm->visible.x = w;
 		tm->visible.y = h;
@@ -254,7 +270,15 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
-		}	/* if */
+		}
+		else {
+		  if(auto_virt) {
+		    tm->virt.x = GGI_AUTO;
+		    tm->virt.y = GGI_AUTO;
+		  }
+
+		  _ggi_x_fit_geometry(vis, tm, priv->vilist + vi_idx, tm);
+		}        /* if */
 		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 				priv->cur_mode);
 	}	/* if */
