@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.6 2001/07/03 20:18:40 cegger Exp $
+dnl $Id: configure.in,v 1.7 2001/07/07 09:42:12 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -16,6 +16,7 @@ dnl Set some defaults
 PATHTAG="pAtHTAg"
 TAGLEN="7"
 ggi_conffile="libggi.conf"
+ggi_subdir="ggi"
 
 use_debug="yes"
 
@@ -774,13 +775,34 @@ dnl Bah! autoconf hasn't set prefix to it's default value yet!
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-eval ggi_confdir="ggi"
+dnl Use static_* to substitute into files where values shouldn't
+dnl dynamicly change.  Makefiles need to be able to dynamicly change
+dnl paths between build and install and shouldn't use these static_*.
+dnl Files that will be installed must always show the final location where
+dnl they will reside and should use these static_* values.
+dnl Ensure that all static_* are fully expanded.
 
-AC_SUBST(ggi_confdir)
+eval static_libdir="$libdir"
+old_val=""
+until test "$static_libdir" = "$old_val"; do
+	old_val="$static_libdir"
+	eval static_libdir="$static_libdir"
+done
+
+eval static_sysconfdir="$sysconfdir"
+old_val=""
+until test "$static_sysconfdir" = "$old_val"; do
+      old_val="$static_sysconfdir"
+      eval static_sysconfdir="$static_sysconfdir"
+done
+
+AC_SUBST(ggi_subdir)
+AC_SUBST(static_libdir)
+AC_SUBST(static_sysconfdir)
 AC_DEFINE_UNQUOTED(GGITAGLEN,$TAGLEN)
 AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
 AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
-AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$sysconfdir/$ggi_confdir")
+AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$static_sysconfdir/$ggi_subdir")
 
 if test "x$use_threads" = "xpthread"; then
   AC_DEFINE(USE_THREADS)

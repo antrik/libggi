@@ -7,9 +7,9 @@ sublib_LTLIBRARIES = fbdev.la
 
 fbdev_la_SOURCES = visual.c mode.c pan.c color.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = ${libdir)/$(ggi_subdir)/display
 
-fbdevconfdir = $(sysconfdir)/@ggi_confdir@/targets
+fbdevconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 fbdevconf_DATA = fbdev.conf
 
 EXTRA_DIST = EXPSYMS
