@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.21 2004/06/02 05:09:37 cegger Exp $
+/* $Id: clip2d.c,v 1.22 2004/07/28 09:25:20 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -27,7 +27,7 @@
 
 #include "../../default/common/clip.c"
 
-#include "common.inc.c"
+#include "testsuite.inc.c"
 #include "clipdb.inc.c"
 
 #define MIN(a, b)	(a < b) ? (a) : (b)

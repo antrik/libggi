@@ -7,4 +7,4 @@ EXTRA_PROGRAMS =
 man_MANS =
 noinst_PROGRAMS = clip2d pixfmt
 
-EXTRA_DIST = $(man_MANS) common.inc.c clipdb.inc.c
+EXTRA_DIST = $(man_MANS) testsuite.inc.c clipdb.inc.c

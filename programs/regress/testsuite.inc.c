@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.6 2004/06/02 05:00:45 cegger Exp $
+/* $Id: testsuite.inc.c,v 1.1 2004/07/28 09:25:20 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests

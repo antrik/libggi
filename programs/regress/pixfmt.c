@@ -1,4 +1,4 @@
-/* $Id: pixfmt.c,v 1.4 2004/06/02 05:00:46 cegger Exp $
+/* $Id: pixfmt.c,v 1.5 2004/07/28 09:25:20 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI pixelformat operations.
@@ -22,7 +22,7 @@
 
 #include <string.h>
 
-#include "common.inc.c"
+#include "testsuite.inc.c"
 
 
 static void testcase1(const char *desc)
