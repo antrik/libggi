@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/10/09 06:58:14 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/10/11 19:09:51 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -257,6 +257,9 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 
 	if (priv->use_db) {
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_stop(vis);
+		}
 		MANSYNC_deinit(vis);
 	}
 
