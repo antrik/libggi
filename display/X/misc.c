@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.34 2005/02/18 16:28:26 orzo Exp $
+/* $Id: misc.c,v 1.35 2005/02/22 09:17:49 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -654,15 +654,7 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 	img0->format = ZPixmap;    /* XYBitmap, XYPixmap, ZPixmap */
 	img0->data = data;         /* pointer to image data */
 
-#if 0
-#ifdef GGI_LITTLE_ENDIAN
-        img0->byte_order = LSBFirst;
-        img0->bitmap_bit_order = LSBFirst;
-#else
-        img0->byte_order = MSBFirst;
-        img0->bitmap_bit_order = MSBFirst;
-#endif
-#endif
+	/* Take Bit and Byte order information from the Xserver */
 	img0->byte_order = ImageByteOrder(priv->disp);
 	img0->bitmap_bit_order = BitmapBitOrder(priv->disp);
 	DPRINT_MISC("byte order = %i\n", img0->byte_order);
