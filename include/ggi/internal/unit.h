@@ -1,4 +1,4 @@
-/* $Id: unit.h,v 1.1 2004/02/14 13:45:40 cegger Exp $
+/* $Id: unit.h,v 1.2 2004/10/14 11:01:33 cegger Exp $
 ******************************************************************************
 
    LibGGI core - conversion between units
@@ -29,27 +29,16 @@
 #include <ggi/internal/internal.h>
 
 
-static inline void _ggi_unit_dpi2mm(ggi_coord *mm, const ggi_coord *dpi)
-{
-	mm->x = dpi->x * 254 / 10;
-	mm->y = dpi->y * 254 / 10;
-
-	return;
-}
-
-
-static inline void _ggi_unit_mm2dpi(ggi_coord *dpi, const ggi_coord *mm)
-{
-	dpi->x = mm->x * 10 / 254;
-	dpi->y = mm->y * 10 / 254;
-
-	return;
-}
-
-
 static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 			const ggi_coord *dpp)
 {
+	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
+	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+
 	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
 	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
 
@@ -63,6 +52,13 @@ static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 static inline void _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 			const ggi_coord *dpp)
 {
+	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
+	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
+	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
+
 	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
 	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
 
@@ -72,36 +68,3 @@ static inline void _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 	return;
 }
 
-
-static inline void _ggi_unit_mm2pix(ggi_coord *pix, const ggi_coord *mm,
-			const ggi_coord *dpp)
-{
-	ggi_coord dpi;
-
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
-	LIBGGI_ASSERT(mm != NULL, "Invalid argument");
-	LIBGGI_ASSERT(mm != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
-	LIBGGI_ASSERT(pix != NULL, "Invalid argument");
-
-	_ggi_unit_mm2dpi(&dpi, mm);
-	_ggi_unit_dpi2pix(pix, &dpi, dpp);
-
-	return;
-}
-
-
-static inline void _ggi_unit_pix2mm(ggi_coord *mm, const ggi_coord *pix,
-			const ggi_coord *dpp)
-{
-	ggi_coord dpi;
-
-	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
-	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
-
-	_ggi_unit_pix2dpi(&dpi, pix, dpp);
-	_ggi_unit_dpi2mm(mm, &dpi);
-
-	return;
-}

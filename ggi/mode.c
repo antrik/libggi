@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/20 19:13:45 pekberg Exp $
+/* $Id: mode.c,v 1.9 2004/10/14 11:01:33 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -805,36 +805,88 @@ int _ggi_physz_parse_option(const char *optstr, int *physzflag, ggi_coord *physz
 }
 
 
-int _ggi_physz_figure_visible(ggi_mode *mode)
+int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,
+				int physzflag, const ggi_coord *screen_size,
+				const ggi_coord *screen_res)
 {
+	/* This function validates/suggests values in mode->size to
+	 * designate the physical screen size in millimeters.
+	 *
+	 * mode->dpp is assumed to already contain valid values.
+	 * def_x and def_y are the default visible sizes from the target
+	 * private area
+	 *
+	 * screen_size is the screen size in dpi, if physzflag is
+	 * GGI_PHYSZ_DPI, otherwise screen_size is in mm.
+	 *
+	 * screen_res is the screen size in pixels or 0 on fullscreen
+	 * targets.
+	 */
+
+	ggi_coord size, res;
 	ggi_mode tmp;
 
 	GGIDPRINT_MODE("_ggi_physz_figure_visible(%p) called\n",
 			mode);
 
 	LIBGGI_ASSERT(mode != NULL, "Invalid mode");
+	LIBGGI_ASSERT(screen_size != NULL, "Invalid screen size");
+	LIBGGI_ASSERT(screen_res != NULL, "Invalid screen resolution");
 
 	memset(&tmp, GGI_AUTO, sizeof(tmp));
 
+	size = *screen_size;
+	res = *screen_res;
 
-	if ((mode->visible.x != GGI_AUTO)
-	  && (mode->visible.y != GGI_AUTO))
+	if ((mode->visible.x == GGI_AUTO)
+	   && (mode->virt.x == GGI_AUTO)
+	   && (mode->size.x == GGI_AUTO))
 	{
-		return GGI_OK;
+		tmp.visible.x = tmp.virt.x = def_x;
+
+	} else if ((mode->visible.x == GGI_AUTO) && (mode->virt.x == GGI_AUTO)) {
+		if (size.x == GGI_AUTO) size.x = mode->size.x;
+		if (res.x == GGI_AUTO) res.x = def_x;
+
+		if (physzflag & GGI_PHYSZ_DPI) {
+			tmp.visible.x = (mode->size.x * 254 / 10) * size.x / mode->dpp.x;
+		} else {
+			tmp.visible.x = mode->size.x * res.x / size.x;
+		}
+	} else if (mode->visible.x == GGI_AUTO) {
+		tmp.visible.x = mode->virt.x;
+
+	} else if (mode->virt.x == GGI_AUTO) {
+		tmp.virt.x = mode->visible.x;
 	}
+
+
+	if ((mode->visible.y == GGI_AUTO)
+	   && (mode->virt.y == GGI_AUTO)
+	   && (mode->size.y == GGI_AUTO))
+	{
+		tmp.visible.y = tmp.virt.y = def_y;
+
+	} else if ((mode->visible.y == GGI_AUTO) && (mode->virt.y == GGI_AUTO)) {
+		if (size.y == GGI_AUTO) size.y = mode->size.y;
+		if (res.y == GGI_AUTO) res.y = def_y;
+
+		if (physzflag & GGI_PHYSZ_DPI) {
+			tmp.visible.y = (mode->size.y * 254 / 10) * size.y / mode->dpp.y;
+		} else {
+			tmp.visible.y = mode->size.y * res.y / size.y;
+		}
+	} else if (mode->visible.y == GGI_AUTO) {
+		tmp.visible.y = mode->virt.y;
+
+	} else if (mode->virt.y == GGI_AUTO) {
+		tmp.virt.y = mode->visible.y;
+	}
+
 
 	GGIDPRINT_MODE("_ggi_physz_figure_visible: mode dpp (%i,%i), size (%i,%i)\n",
 			mode->dpp.x, mode->dpp.y,
 			mode->size.x, mode->size.y);
-
-	if (mode->dpp.x == GGI_AUTO) return GGI_OK;
-	if (mode->dpp.y == GGI_AUTO) return GGI_OK;
-	if (mode->size.x == GGI_AUTO) return GGI_OK;
-	if (mode->size.y == GGI_AUTO) return GGI_OK;
-
-	/* Now convert mm into pixel */
-	_ggi_unit_mm2pix(&(tmp.visible), &(mode->size),
-			&(mode->dpp));
 
 	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
 			tmp.visible.x, tmp.visible.y, mode->virt.x, mode->virt.y);
@@ -853,7 +905,20 @@ int _ggi_physz_figure_visible(ggi_mode *mode)
 	if (tmp.visible.x <= 0) tmp.visible.x = 0;
 	if (tmp.visible.y <= 0) tmp.visible.y = 0;
 
+
+	if ((mode->visible.x != GGI_AUTO && mode->visible.x != tmp.visible.x)
+	  || (mode->visible.y != GGI_AUTO && mode->visible.y != tmp.visible.y))
+	{
+		GGIDPRINT_MODE("_ggi_physz_figure_visible: "
+			"physical size (%i,%i) doesn't match (%i,%i)\n",
+			mode->size.x, mode->size.y, mode->visible.x, mode->visible.y);
+
+		return GGI_ENOMATCH;
+	}
+
+
 	mode->visible = tmp.visible;
+	mode->virt = tmp.virt;
 
 	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
 			mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y);
