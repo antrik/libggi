@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.36 2004/10/31 14:24:52 cegger Exp $
+/* $Id: mode.c,v 1.37 2004/11/14 16:10:48 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -223,8 +223,9 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	priv = GGIX_PRIV(vis);
 
 	if (! XGetGeometry(priv->disp, priv->parentwin, &root,
-		     (int *)&dummy, (int *)&dummy,
-		     &w, &h, &dummy, &depth))
+			(int *)&dummy, (int *)&dummy,
+			(unsigned int *)&w, (unsigned int *)&h,
+			&dummy, &depth))
 	{
 		GGIDPRINT_MODE("X (checkmode_fixed):"
 				"no reply from X11 server\n");
@@ -564,7 +565,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	priv = GGIX_PRIV(vis);
 
         XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
-		     &w, &h, &dummy, &dummy);
+		(unsigned int *)&w, (unsigned int *)&h,
+		(unsigned int *)&dummy, (unsigned int *)&dummy);
 
 	if (tm->visible.x == GGI_AUTO) tm->visible.x = w;
 	if (tm->visible.y == GGI_AUTO) tm->visible.y = h;
