@@ -5,26 +5,42 @@ Status symbols
 * completed
 
 ------------------------------------------
-Next release
+Next minor release (BUGFIX release)
 ------------------------------------------
-Version : 2.1.0
-Due : ????-??-??
+Version : 2.0.2
+Due : 2001-1[12]-??
 
 - cleanup demo building and installation
 - bring improved code in showaccel demo to showaccel2 demo
 * why is directfb drawing on only every other pixel column? (was DFB bug)
 * use config file instead of static accel_strings array in fbdev
 * enable DirectFB
-- KGI-target (compiling framework, probably only working with Matrox Cards)
-- make Xlib a helper target for X
 - Make XF86DGA working with XF86 3.x and XF86 4.x
+- Verify and fix cross-compilation to other architectures
+- Fix libtool to create shared libs instead of static ones
+  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
+  run GGI on Linux/MIPS boxes.
+- The default value of the configure option '--with-gii' should always be
+  the same as the '--prefix' one, independent if '--prefix' is specified by
+  the user or not, unless '--with-gii' is specified by the user itself.
+  This simplifies compiling libggi on a machine with no root-permissions.
+* disable libKGI target, because it's currently a "proof-of-concept"
+
+------------------------------------------
+Next major release
+------------------------------------------
+Version : 2.1.0
+Due : ????-??-??
+
+- libKGI-target (compiling framework, probably only working with Matrox Cards)
+- make Xlib a helper target for X
 - improve modelist.inc
 - documentate tele-target in libggi/doc/targets.txt
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
 
 ------------------------------------------
-Over-Next release
+Over-Next major release
 ------------------------------------------
 Version : 3.0.0
 Due : ????-??-??
