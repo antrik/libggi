@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2003/10/07 18:16:13 cegger Exp $
+/* $Id: visual.c,v 1.6 2003/10/07 18:45:34 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -52,6 +52,18 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
+
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	directx_priv *priv = DIRECTX_PRIV(vis);
+
+#if 0
+	DDShutdown();
+#endif
+	free(priv);
+
+	return 0;
+}
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -134,18 +146,6 @@ err0:
 	return err;
 }
 
-
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
-{
-	directx_priv *priv = DIRECTX_PRIV(vis);
-
-#if 0
-	DDShutdown();
-#endif
-	free(priv);
-
-	return 0;
-}
 
 
 int GGIdl_directx(int func, void **funcptr);
