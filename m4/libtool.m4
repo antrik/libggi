@@ -1372,21 +1372,8 @@ EOF
         $CC $output_objdir/$soname-exp '$lt_cv_cc_dll_switch' -Wl,-e,'$dll_entry' -o $output_objdir/$soname '$ltdll_obj'$libobjs $deplibs $compiler_flags'
     else
       # Ignore export-symbols file.
-      case $host_os in
-      cygwin*)
-	archive_expsym_cmds="$ltdll_cmds"'
-	  $DLLTOOL --as=$AS --dllname $soname --exclude-symbols '$dll_exclude_symbols' --output-def $output_objdir/$soname-def '$ltdll_obj'$libobjs~
-	  $DLLWRAP --as=$AS --dlltool-name $DLLTOOL --dllname $soname --output-lib $output_objdir/$libname.dll.a --def $output_objdir/$soname-def '$ltdll_obj'$libobjs $deplibs $compiler_flags~
-	  $CC -shared $libobjs $deplibs $compiler_flags -o $soname~
-	  mv -f $soname $output_objdir/$soname'
-	  ;;
-      *)
-	archive_expsym_cmds="$ltdll_cmds"'
-	  $DLLTOOL --as=$AS --dllname $soname --exclude-symbols '$dll_exclude_symbols' --output-def $output_objdir/$soname-def '$ltdll_obj'$libobjs~
-	  $DLLWRAP --as=$AS --dlltool-name $DLLTOOL --dllname $soname --output-lib $output_objdir/$libname.dll.a --def $output_objdir/$soname-def '$ltdll_obj'$libobjs $deplibs $compiler_flags~
-	  mv -f $soname $output_objdir/$soname'
-	  ;;
-      esac
+      archive_expsym_cmds="$ltdll_cmds"'
+	$CC -shared -Xlinker --exclude-symbols -Xlinker '$dll_exclude_symbols' '$ltdll_obj'$libobjs $deplibs $compiler_flags -o $output_objdir/$soname -Wl,--out-implib,$output_objdir/$libname.dll.a -Wl,--output-def,$output_objdir/$soname-def'
     fi
     ;;
 
