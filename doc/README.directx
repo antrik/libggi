@@ -22,6 +22,10 @@ I) Software needed:
 	you need from it is a couple of header files. Exactly which ones have
 	not been determined at the time of this writing.
 
+	Note, use UNIX style text files in Cygwin and cvs provided by Cygwin.
+	If you use some Win32 native version of cvs, it is likely to use
+	DOS style text files, in which case Cygwin needs to use that as well.
+
 II) Compilation:
 
 	- from libggi directory
