@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/08/17 12:06:30 cegger Exp $
+/* $Id: mode.c,v 1.17 2004/08/17 16:44:12 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -158,17 +158,16 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
         	= LIBGGI_APPLIST(vis)->last_targetbuf - (mode->frames-1);
 
 	/* Set up palette */
-	/* Set up palette */ 
- 	if (LIBGGI_PAL(vis)->clut.data) {
- 		free(LIBGGI_PAL(vis)->clut.data);
- 		LIBGGI_PAL(vis)->clut.data = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
 		LIBGGI_PAL(vis)->clut.data = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
- 					   	sizeof(ggi_color));
- 		LIBGGI_PAL(vis)->clut.size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
+					   	sizeof(ggi_color));
+		LIBGGI_PAL(vis)->clut.size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
-	
+
 	return 0;
 }
 
