@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.134 2004/10/10 12:19:39 cegger Exp $
+dnl $Id: configure.in,v 1.135 2004/10/17 11:28:48 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1307,6 +1307,16 @@ if test "x$use_debug" = "xyes"; then
     # CFLAGS="$CFLAGS -Werror"
   fi
 fi
+
+dnl only a few gcc-compatible compilers support __PRETTY_FUNCTION__
+AC_TRY_COMPILE([
+#include <stdio.h>
+],[
+int main(void) {
+  printf("Hello, %s !\n", __PRETTY_FUNCTION__);
+  return 0;
+}
+], [], [CFLAGS="$CFLAGS -D__PRETTY_FUNCTION__=\\\"?\\\""])
 
 # Check for darwin at the very end and set up the Objective C compiler
 # We do this here so that we get the full CFLAGS into OBJCFLAGS
