@@ -125,12 +125,16 @@ dfb_layers_add( DisplayLayer *layer )
 }
 
 
-DFBResult dfb_surface_create(int width, int height, 
-			     int format,
-			     int policy,
-			     DFBSurfaceCapabilities caps, 
-			     CoreSurface **surface
-			     )
+/*
+ * like surface_create, but with preallocated system memory that won't be
+ * freed on surface destruction
+ */
+DFBResult dfb_surface_create( int                      width,
+                              int                      height,
+                              DFBSurfacePixelFormat    format,
+                              CoreSurfacePolicy        policy,
+                              DFBSurfaceCapabilities   caps,
+                              CoreSurface            **surface )
 {
   /* Used for overlays only */
   return -1;

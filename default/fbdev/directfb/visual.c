@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2002/03/23 05:50:24 skids Exp $
+/* $Id: visual.c,v 1.13 2002/07/05 09:00:38 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -169,7 +169,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	   Potentially damaging, make into option */
 	if (!_ggiDebugState) {
 		dfb_config->quiet = 1;
+#if 0
+		/* no_debug no longer exists in the structure */
 		dfb_config->no_debug = 1;
+#endif
 	}
 
 	/* Link the global dfb_fbdev (and our local mask) to point to our 
