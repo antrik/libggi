@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2003/07/06 10:25:22 cegger Exp $
+/* $Id: visual.c,v 1.12 2003/09/29 04:48:31 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -111,7 +111,8 @@ static const gg_option optlist[] =
 #define MAX_DEV_LEN	63
 #define DEFAULT_FBNUM	0
 
-extern int GGI_fbdev_resetmode(ggi_visual *vis);
+extern int GGI_fbdev_mode_reset(ggi_visual *vis);
+extern void GGI_fbdev_color_reset(ggi_visual *vis);
 
 static void
 switchreq(void *arg)
@@ -157,42 +158,6 @@ switching(void *arg)
 #endif
 }
 
-
-static void
-do_setpalette(ggi_visual *vis)
-{
-	ggi_graphtype gt = LIBGGI_MODE(vis)->graphtype;
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
-	ggi_color *colormap;
-	struct fb_cmap cmap;
-	int len, i;
-
-	if (GT_SCHEME(gt) != GT_PALETTE) return;
-
-	len = 1 << GT_DEPTH(gt);
-	cmap.start  = 0;
-	cmap.len    = len;
-	cmap.red    = priv->reds;
-	cmap.green  = priv->greens;
-	cmap.blue   = priv->blues;
-	cmap.transp = NULL;
-	colormap = vis->palette;
-
-	for (i = 0; i < len; i++) {
-		priv->reds[i]   = colormap[i].r;
-		priv->greens[i] = colormap[i].g;
-		priv->blues[i]  = colormap[i].b;
-	}
-
-	if (fbdev_doioctl(vis, FBIOPUTCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.");
-	} else {
-		GGIDPRINT_COLOR("display-fbdev: restored palette for %p\n",
-				vis);
-	}
-}
-
-
 static void
 switchback(void *arg)
 {
@@ -219,7 +184,15 @@ switchback(void *arg)
 		fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, &priv->var);
 	}
 #endif
-	do_setpalette(vis);
+
+	/* See notes about palette member reuse in color.c */
+	if (vis->opcolor->setpalvec != NULL)
+		vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)), 
+					vis->palette);
+	else if (vis->opcolor->setgammamap != NULL)
+		vis->opcolor->setgammamap(vis, 0, vis->gamma->len, 
+					  vis->palette);
+
 	if (priv->fix.xpanstep != 0 || priv->fix.ypanstep != 0) {
 		fbdev_doioctl(vis, FBIOPAN_DISPLAY, &priv->var);
 	}
@@ -291,69 +264,6 @@ GGI_fbdev_idleaccel(ggi_visual *vis)
 	return 0;
 }
 
-
-static void 
-save_palette(ggi_visual *vis)
-{
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
-	struct fb_cmap cmap;
-	int len;
-
-	if ((priv->orig_var.bits_per_pixel < 1) || 
-	    (priv->orig_var.bits_per_pixel > 8)) {
-		priv->orig_reds = NULL;
-		return;
-	}
-	len = 1 << priv->orig_var.bits_per_pixel;
-	
-	priv->orig_reds = malloc(sizeof(uint16)*len*3);
-	if (priv->orig_reds == NULL) {
-		return;
-	}
-
-	cmap.start = 0;
-	cmap.len   = len;
-	cmap.red   = priv->orig_reds;
-	cmap.green = priv->orig_greens = priv->orig_reds + len;
-	cmap.blue  = priv->orig_blues  = priv->orig_greens + len;
-	cmap.transp = NULL;
-
-	if (ioctl(LIBGGI_FD(vis), FBIOGETCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: GETCMAP failed.\n");
-	} else {
-		GGIDPRINT_COLOR("display-fbdev: Saved palette (len=%d).\n",
-				cmap.len);
-	}
-}
-
-
-static void 
-restore_palette(ggi_visual *vis)
-{
-	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
-	struct fb_cmap cmap;
-
-	if (priv->orig_reds == NULL) return;
-	
-	cmap.start  = 0;
-	cmap.len    = 1 << priv->orig_var.bits_per_pixel;
-	cmap.red    = priv->orig_reds;
-	cmap.green  = priv->orig_greens;
-	cmap.blue   = priv->orig_blues;
-	cmap.transp = NULL;
-
-	if (ioctl(LIBGGI_FD(vis), FBIOPUTCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.\n");
-	} else {
-		GGIDPRINT_COLOR("display-fbdev: Restored palette (len=%d).\n", 
-				cmap.len);
-	}
-
-	free(priv->orig_reds);
-	priv->orig_reds = NULL;
-}
-
-
 static int do_cleanup(ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
@@ -370,9 +280,8 @@ static int do_cleanup(ggi_visual *vis)
 		ioctl(LIBGGI_FD(vis), FBIOPUT_CON2FBMAP, &origconmap);
 #endif
 #endif
-		GGI_fbdev_resetmode(vis);
-		restore_palette(vis);
-		close(LIBGGI_FD(vis));
+		GGI_fbdev_color_reset(vis);
+		GGI_fbdev_mode_reset(vis);
 	}
 
 	if (vis->input != NULL) {
@@ -660,7 +569,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(ggi_fbdev_priv));
+	LIBGGI_PRIVATE(vis) = priv = calloc(sizeof(ggi_fbdev_priv), 1);
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
@@ -669,8 +578,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->fb_ptr = NULL;
 	priv->need_timings = 1;
 	priv->flags = 0;
-
-	priv->orig_reds = NULL;
 
 	priv->dohalt = 1;
 	priv->autoswitch = 1;
@@ -899,7 +806,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		do_cleanup(vis);
 		return GGI_ENODEVICE;
 	}
-	save_palette(vis);
 
 	LIBGGI_GC(vis) = priv->normalgc = malloc(sizeof(ggi_gc));
 	if (priv->normalgc == NULL) {

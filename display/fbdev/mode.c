@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2003/07/06 10:25:22 cegger Exp $
+/* $Id: mode.c,v 1.12 2003/09/29 04:48:31 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -50,8 +50,9 @@
 #define FB_KLUDGE_FONTX	 8
 #define FB_KLUDGE_FONTY	16
 
-
-extern int GGI_fbdev_resetmode(ggi_visual *vis);
+extern void GGI_fbdev_color_reset(ggi_visual *vis);
+extern void GGI_fbdev_color_setup(ggi_visual *vis);
+int GGI_fbdev_mode_reset(ggi_visual *vis);
 
 static int
 do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var);
@@ -332,6 +333,11 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	ggi_graphtype gt = mode->graphtype;
 	int err;
 
+	/* If we already have set a mode, restore the old pallette
+	 * or gamma settings before setting a new one. 
+	 */
+	GGI_fbdev_color_reset(vis);
+
 	/* We need this to set virtual resolution correct */
 	ggimode2var(vis, mode, var);
 
@@ -404,7 +410,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	} else {
 		GGIDPRINT_MODE("display-fbdev: Change mode OK.\n");
 	}
-	
+
 	if (! err && (priv->fix.ypanstep == 0) && (mode->frames > 1)) {
 		mode->frames = 1;
 		GGIDPRINT_MODE("display-fbdev: cannot do vertical panning "
@@ -573,7 +579,6 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 {
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
 	char libname[256], libargs[256];
-	ggi_graphtype gt;
 	int err, id;
 
 	err = do_change_mode(vis, var);
@@ -613,21 +618,10 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	if (!priv->have_accel) LIBGGI_GC(vis) = priv->normalgc;
 	vis->accelactive = 0;
 
-	/* Set up palette */
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
-	}
-	gt = LIBGGI_GT(vis);
-	if ((GT_SCHEME(gt) == GT_PALETTE) || (GT_SCHEME(gt) == GT_TEXT)) {
-	    	int nocols = 1 << GT_DEPTH(gt);
+	GGI_fbdev_color_setup(vis);
+	if (vis->opcolor->setpalvec) ggiSetColorfulPalette(vis);
+	if (vis->opcolor->setgammamap) ggiSetGamma(vis, 1.0, 1.0, 1.0);
 
-		vis->palette = _ggi_malloc(nocols * sizeof(ggi_color));
-		vis->opcolor->setpalvec = GGI_fbdev_setpalvec;
-		/* Initialize palette */
-		ggiSetColorfulPalette(vis);
-	}
-	
 	vis->opdraw->setorigin = GGI_fbdev_setorigin;
 	vis->opdraw->setdisplayframe = GGI_fbdev_setdisplayframe;
 
@@ -664,7 +658,7 @@ int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_fbdev_resetmode(ggi_visual *vis)
+int GGI_fbdev_mode_reset(ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
 

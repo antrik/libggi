@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.3 2003/07/05 20:35:01 cegger Exp $
+/* $Id: fbdev.h,v 1.4 2003/09/29 04:48:31 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -42,7 +42,6 @@ ggifunc_checkmode	GGI_fbdev_checkmode;
 ggifunc_getapi		GGI_fbdev_getapi;
 ggifunc_setflags	GGI_fbdev_setflags;
 		
-ggifunc_setpalvec	GGI_fbdev_setpalvec;
 ggifunc_setorigin	GGI_fbdev_setorigin;
 ggifunc_setdisplayframe	GGI_fbdev_setdisplayframe;
 
@@ -88,18 +87,21 @@ typedef struct {
 	struct fb_var_screeninfo var;
 	struct fb_fix_screeninfo fix;
 
-	uint16 reds[256];
-	uint16 greens[256];
-	uint16 blues[256];
-	
+
+	/* We shadow vis->palette in this format as well, as
+	 * it is what fbdev uses.  Note palette and gamma are
+	 * mutually exclusive in the fbdev API, so gamma reuses
+	 * the palette values.
+	 */
+	uint16 *reds;
+	uint16 *greens;
+	uint16 *blues;
+	ggi_gammastate gamma;
+	ggi_color *orig_cmap;	/* used to restore pre-GGI settings */
+
 	/* Original mode on framebuffer */
 	struct fb_var_screeninfo orig_var;
 	struct fb_fix_screeninfo orig_fix;
-	
-	/* Save original palette here if it exists */
-	uint16 *orig_reds;
-	uint16 *orig_greens;
-	uint16 *orig_blues;
 
 	/* VT switching and inputs */
 	int dohalt;
