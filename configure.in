@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.55 2002/10/27 05:09:38 skids Exp $
+dnl $Id: configure.in,v 1.56 2002/10/31 22:42:01 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -330,7 +330,8 @@ AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
-	herror connect sigpending fork snprintf strncat strncpy)
+	herror connect gethostbyname sigpending fork \
+	snprintf strncat strncpy)
 
 
 dnl ========================================================================
@@ -499,6 +500,13 @@ connect(0, NULL, 42);
   )
   LIBS="$SAVELIBS"
 fi
+
+if test "x$ac_cv_func_gethostbyname" = "xyes"; then
+  AC_CHECK_LIB(c, gethostbyname, ,
+    AC_CHECK_LIB(nsl, gethostbyname, bsdsock_libs="$bsdsock_libs -lnsl")
+  )
+fi
+
 
 AC_CHECK_LIB(kgimon,set_monitor,
   monitest_extrasrc="kgitune.c"
