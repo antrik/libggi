@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.17 2004/02/12 00:59:06 agraef Exp $
+/* $Id: ddinit.c,v 1.18 2004/02/12 19:01:34 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -460,14 +460,17 @@ DDEventLoop(LPVOID lpParm)
 static int DDCreateThread(directx_priv *priv)
 {
   DWORD ThreadID;
+  priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
   priv->hThreadID = CreateThread(NULL, 0, DDEventLoop, (LPVOID)priv, 0,
 				 &ThreadID);
-  priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
   if (priv->hThreadID) {
     WaitForSingleObject(priv->hInit, INFINITE);
     return 1;
-  } else
+  } else {
+    CloseHandle(priv->hInit);
+    priv->hInit = NULL;
     return 0;
+  }
 }
 
 /* initialize and finalize the primary surface and back storage */
