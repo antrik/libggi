@@ -65,3 +65,6 @@ Options
 Features
 --------
 
+- DirectBuffer
+- Multiple frames (up to 16)
+- Panning
