@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/06/17 08:54:21 cegger Exp $
+/* $Id: visual.c,v 1.5 2001/07/31 13:13:41 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -32,56 +32,68 @@
 
 static const gg_option optlist[] =
 {
-  { "socket", "" },
-  { "semid", "" },
-  { "shmid", "" },
-  { "input", "" }
+	{ "socket", "" },
+	{ "semid", "" },
+	{ "shmid", "" },
+	{ "input", "" }
 };
 
 #define OPT_INPUT	3
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
+
 ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 {
-  ggi_ipc_priv *priv=inp->priv;
-  ggi_event ev;
-  int rc=0;
+	ggi_ipc_priv *priv=inp->priv;
+	ggi_event ev;
+	int rc=0;
   
-  while(priv->inputoffset!=priv->inputbuffer->writeoffset)
-    {
-      if (priv->inputbuffer->buffer[priv->inputoffset++]!=MEMINPMAGIC)
-	{
-	  GGIDPRINT_MISC("OUT OF SYNC in shm input !\n");
-	  priv->inputoffset=0;	/* Try to resync */
-	  return 0;
-	}
-      memcpy(&ev, &(priv->inputbuffer->buffer[priv->inputoffset]),
-	     priv->inputbuffer->buffer[priv->inputoffset]);
-      _giiEvQueueAdd(inp, &ev);
-      priv->inputoffset += ev.any.size;
-      rc |= 1<<ev.any.type;
-      if (priv->inputoffset >= INPBUFSIZE-sizeof(ggi_event)-sizeof(priv->inputbuffer->writeoffset)-10) {
-	priv->inputoffset=0;
-      }
-    }
-  return rc;
-}
+	while(priv->inputoffset!=priv->inputbuffer->writeoffset) {
+		if (priv->inputbuffer->buffer[priv->inputoffset++]
+		   != MEMINPMAGIC)
+		{
+			GGIDPRINT_MISC("OUT OF SYNC in shm input !\n");
+			priv->inputoffset=0;	/* Try to resync */
+			return 0;
+		}	/* if */
+
+		memcpy(&ev, &(priv->inputbuffer->buffer[priv->inputoffset]),
+			priv->inputbuffer->buffer[priv->inputoffset]);
+
+		_giiEvQueueAdd(inp, &ev);
+		priv->inputoffset += ev.any.size;
+		rc |= 1 << ev.any.type;
+		if (priv->inputoffset >= INPBUFSIZE - sizeof(ggi_event)
+		    - sizeof(priv->inputbuffer->writeoffset) - 10)
+		{
+			priv->inputoffset=0;
+		}	/* if */
+	}	/* while */
+	return rc;
+}	/* GII_ipc_poll */
+
 
 int GII_ipc_send(gii_input_t inp, ggi_event *event)
 {
-  ggi_ipc_priv *priv=inp->priv;
-  int size;
+	ggi_ipc_priv *priv=inp->priv;
+	int size;
   
-  priv->inputbuffer->buffer[priv->inputbuffer->writeoffset++]=MEMINPMAGIC;
-  memcpy(&(priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]),  event,size=event->any.size);
-  priv->inputbuffer->writeoffset+=size;
-  if (priv->inputbuffer->writeoffset>=INPBUFSIZE-sizeof(ggi_event)-sizeof(priv->inputbuffer->writeoffset)-10)
-    priv->inputbuffer->writeoffset=0;
-  priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]=MEMINPMAGIC-1;	/* "break"-symbol */
+	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset++] = MEMINPMAGIC;
+	memcpy(&(priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]),
+		event,size=event->any.size);
+
+	priv->inputbuffer->writeoffset += size;
+	if (priv->inputbuffer->writeoffset >= INPBUFSIZE - sizeof(ggi_event)
+	   - sizeof(priv->inputbuffer->writeoffset) - 10)
+	{
+		priv->inputbuffer->writeoffset=0;
+	}	/* if */
+	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]=MEMINPMAGIC-1;	/* "break"-symbol */
   
-  return 0;
-}
+	return 0;
+}	/* GII_ipc_send */
+
 
 int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 		  int tryflag)
@@ -103,152 +115,161 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 	write(priv->sockfd, buffer, 1 + 4*sizeof(int));
 
 	return 0;
-}
+}	/* GGI_ipc_flush */
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, void *argptr, uint32 *dlret)
+
+
+static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+		   const char *args, void *argptr, uint32 *dlret)
 {
-  ggi_ipc_priv *priv;
-  gg_option options[NUM_OPTS];
-  struct sockaddr_un address;
+	ggi_ipc_priv *priv;
+	gg_option options[NUM_OPTS];
+	struct sockaddr_un address;
 
-  GGIDPRINT_MISC("display-ipc coming up.\n");
-  memcpy(options, optlist, sizeof(options));
+	GGIDPRINT_MISC("display-ipc coming up.\n");
+	memcpy(options, optlist, sizeof(options));
 
-  LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
-  if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
+	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
-  /* Allocate descriptor for screen memory */
-  priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_ipc_priv));
-  if (!priv)
-    {
-      free(LIBGGI_GC(vis));
-      return GGI_ENOMEM;
-    }
+	/* Allocate descriptor for screen memory */
+	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_ipc_priv));
 
-  priv->inputbuffer = NULL;	/* Default to no input */
-  priv->inputoffset = 0;		/* Setup offset. */
+	if (!priv) {
+		free(LIBGGI_GC(vis));
+		return GGI_ENOMEM;
+	}	/* if */
 
-  if (!args)
-    {
-      GGIDPRINT("display-ipc: required arguments missing\n");
-      return GGI_EARGREQ;
-    }
-  args = ggParseOptions((char *) args, options, NUM_OPTS);
-  if (args == NULL)
-    {
-      GGIDPRINT("display-ipc: error in arguments.\n");
-      return GGI_EARGREQ;
-    }
-  if (!options[0].result[0] &&
-      !options[1].result[0] &&
-      !options[2].result[0])
-    {
-      GGIDPRINT("display-ipc: required arguments missing\n");
-      return GGI_EARGREQ;
-    }
-  if (!(sscanf(options[0].result,"%s", address.sun_path) &&
-	sscanf(options[1].result,"%d", &(priv->semid)) &&
-	sscanf(options[2].result,"%d", &(priv->shmid))))
-    {
-      GGIDPRINT("display-ipc: argument format error\n");
-      return GGI_EARGREQ;
-    }
-  GGIDPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n", address.sun_path, priv->semid, priv->shmid);
-  address.sun_family = AF_UNIX;
-  if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1 ||
-	connect(priv->sockfd, (const struct sockaddr *)(&address),
-		sizeof(struct sockaddr_un)) == -1 ||
-      (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
-    {
-      GGIDPRINT("display-ipc initialization failed : %s\n", strerror(errno));
-      return GGI_ENODEVICE;
-    }
-  if (options[OPT_INPUT].result[0])
-    {
-      priv->inputbuffer=priv->memptr;
-      priv->memptr=(char *)priv->memptr+INPBUFSIZE;
-      GGIDPRINT("display-ipc: moved mem to %p for input-buffer.\n", priv->memptr);
-    }
+	priv->inputbuffer = NULL;	/* Default to no input */
+	priv->inputoffset = 0;		/* Setup offset. */
 
-  vis->opdisplay->flush     = GGI_ipc_flush;
-  vis->opdisplay->getmode   = GGI_ipc_getmode;
-  vis->opdisplay->setmode   = GGI_ipc_setmode;
-  vis->opdisplay->getapi    = GGI_ipc_getapi;
-  vis->opdisplay->checkmode = GGI_ipc_checkmode;
-  vis->opdisplay->setflags  = GGI_ipc_setflags;
-  
-  if (priv->inputbuffer)
-    {
-      gii_input *inp;
-      
-      priv->inputbuffer->visx=
-	priv->inputbuffer->visy=
-	priv->inputbuffer->virtx=
-	priv->inputbuffer->virty=
-	priv->inputbuffer->frames=
-	priv->inputbuffer->visframe=0;
-      GGIDPRINT_MISC("Adding gii to shmem-memtarget\n");
+	if (!args) {
+		GGIDPRINT("display-ipc: required arguments missing\n");
+		return GGI_EARGREQ;
+	}	/* if */
 
-      /* First allocate a new gii_input descriptor. */
+	args = ggParseOptions((char *) args, options, NUM_OPTS);
+	if (args == NULL) {
+		GGIDPRINT("display-ipc: error in arguments.\n");
+		return GGI_EARGREQ;
+	}	/* if */
 
-      if (NULL==(inp=_giiInputAlloc()))
+	if (!options[0].result[0]
+	   && !options[1].result[0]
+	   && !options[2].result[0])
 	{
-	  GGIDPRINT_MISC("giiInputAlloc failure.\n");
-	  goto out;
-	}
-      GGIDPRINT_MISC("gii inp=%p\n",inp);
+		GGIDPRINT("display-ipc: required arguments missing\n");
+		return GGI_EARGREQ;
+	}	/* if */
 
-      /* Now fill in the blanks. */
-      
-      inp->priv=priv;	/* We need that in poll() */
-      priv->inputbuffer->writeoffset=0;	/* Not too good, but ... */
-      inp->targetcan= emAll;
-      inp->GIIseteventmask(inp,inp->targetcan);
-      inp->maxfd=0;	/* This is polled. */
-      inp->flags|=GII_FLAGS_HASPOLLED;
-      
-      inp->GIIeventpoll=GII_ipc_poll;
-      inp->GIIsendevent=GII_ipc_send;
-      
-      /* Now join the new event source in. */
-      vis->input=giiJoinInputs(vis->input,inp);
-    out:
-      while(0){};
-    }
+	if (!(sscanf(options[0].result,"%s", address.sun_path)
+	   && sscanf(options[1].result,"%d", &(priv->semid))
+	   && sscanf(options[2].result,"%d", &(priv->shmid))))
+	{
+		GGIDPRINT("display-ipc: argument format error\n");
+		return GGI_EARGREQ;
+	}	/* if */
+
+	GGIDPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n",
+		   address.sun_path, priv->semid, priv->shmid);
+	address.sun_family = AF_UNIX;
+	if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1
+	   || connect(priv->sockfd, (const struct sockaddr *)(&address),
+		sizeof(struct sockaddr_un)) == -1
+	   || (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
+	{
+		GGIDPRINT("display-ipc initialization failed : %s\n", strerror(errno));
+		return GGI_ENODEVICE;
+	}	/* if */
+
+	if (options[OPT_INPUT].result[0]) {
+		priv->inputbuffer=priv->memptr;
+		priv->memptr=(char *)priv->memptr+INPBUFSIZE;
+		GGIDPRINT("display-ipc: moved mem to %p for input-buffer.\n",
+			priv->memptr);
+	}	/* if */
+
+	vis->opdisplay->flush     = GGI_ipc_flush;
+	vis->opdisplay->getmode   = GGI_ipc_getmode;
+	vis->opdisplay->setmode   = GGI_ipc_setmode;
+	vis->opdisplay->getapi    = GGI_ipc_getapi;
+	vis->opdisplay->checkmode = GGI_ipc_checkmode;
+	vis->opdisplay->setflags  = GGI_ipc_setflags;
   
-  *dlret = GGI_DL_OPDISPLAY;
-  return 0;
-}
+	if (priv->inputbuffer) {
+		gii_input *inp;
+      
+		priv->inputbuffer->visx		=
+		priv->inputbuffer->visy		=
+		priv->inputbuffer->virtx	=
+		priv->inputbuffer->virty	=
+		priv->inputbuffer->frames	=
+		priv->inputbuffer->visframe	= 0;
+
+		GGIDPRINT_MISC("Adding gii to shmem-memtarget\n");
+
+		/* First allocate a new gii_input descriptor. */
+
+		if (NULL==(inp=_giiInputAlloc())) {
+			GGIDPRINT_MISC("giiInputAlloc failure.\n");
+			goto out;
+		}	/* if */
+		GGIDPRINT_MISC("gii inp=%p\n",inp);
+
+		/* Now fill in the blanks. */
+      
+		inp->priv = priv;	/* We need that in poll() */
+		priv->inputbuffer->writeoffset = 0;	/* Not too good, but ... */
+
+		inp->targetcan= emAll;
+		inp->GIIseteventmask(inp,inp->targetcan);
+		inp->maxfd = 0;		/* This is polled. */
+		inp->flags |= GII_FLAGS_HASPOLLED;
+      
+		inp->GIIeventpoll = GII_ipc_poll;
+		inp->GIIsendevent = GII_ipc_send;
+      
+		/* Now join the new event source in. */
+		vis->input=giiJoinInputs(vis->input,inp);
+  out:
+		while(0){};
+	}	/* if */
+  
+	*dlret = GGI_DL_OPDISPLAY;
+	return 0;
+
+}	/* GGIopen */
 
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-  _GGI_ipc_resetmode(vis);
-  shmdt(IPC_PRIV(vis)->memptr); 
-  free(LIBGGI_PRIVATE(vis));
-  free(LIBGGI_GC(vis));
-  return 0;
-}
+	_GGI_ipc_resetmode(vis);
+	shmdt(IPC_PRIV(vis)->memptr); 
+	free(LIBGGI_PRIVATE(vis));
+	free(LIBGGI_GC(vis));
+
+	return 0;
+}	/* GGIclose */
 
 
 int GGIdl_ipc(int func, void **funcptr)
 {
-  switch (func)
-    {
-    case GGIFUNC_open:
-      *funcptr = GGIopen;
-      return 0;
-    case GGIFUNC_exit:
-      *funcptr = NULL;
-      return 0;
-    case GGIFUNC_close:
-      *funcptr = GGIclose;
-      return 0;
-    default:
-      *funcptr = NULL;
-    }
+	switch (func) {
+	case GGIFUNC_open:
+		*funcptr = GGIopen;
+		return 0;
+	case GGIFUNC_exit:
+		*funcptr = NULL;
+		return 0;
+	case GGIFUNC_close:
+		*funcptr = GGIclose;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}	/* switch */
   
-  return GGI_ENOTFOUND;
-}
+	return GGI_ENOTFOUND;
+}	/* GGIdl_ipc */
+
 
 #include <ggi/internal/ggidlinit.h>
