@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.26 2004/11/27 16:42:16 soyt Exp $
+/* $Id: shm.c,v 1.27 2004/12/25 15:52:12 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -288,7 +288,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 #ifdef HAVE_SNPRINTF
-	snprintf(target + i, GGI_MAX_APILEN, ":-layout=%iplb%i:-physz=%i,%i:pointer",
+	snprintf(target + i, GGI_MAX_APILEN - i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
 		priv->ximage->bytes_per_line * LIBGGI_VIRTY(vis),
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
