@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.7 2003/01/14 01:39:56 skids Exp $
+/* $Id: buffer.c,v 1.8 2003/01/21 00:11:58 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -35,6 +35,13 @@
 #include <ggi/display/x.h>
 
 int GGI_X_db_acquire(ggi_resource_t res, uint32 actype) {
+	ggi_visual *vis;
+	vis = res->priv;
+	if ((LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) &&
+	    (vis->w_frame->resource == res) && 
+	    (actype & GGI_ACTYPE_WRITE)) {
+		if (GGIX_PRIV(vis)->opmansync) MANSYNC_stop(vis);
+	}
 	res->curactype = actype;
 	res->count++;
 	return 0;
@@ -44,7 +51,13 @@ int GGI_X_db_release(ggi_resource_t res) {
 	ggi_visual *vis;
 	vis = res->priv;
 	if ((vis->w_frame->resource == res) && 
-	    (res->curactype & GGI_ACTYPE_WRITE)) ggiFlush(vis);
+	    (res->curactype & GGI_ACTYPE_WRITE)) {
+		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
+			if (GGIX_PRIV(vis)->opmansync) MANSYNC_start(vis);
+		} else {
+			ggiFlush(vis);
+		}
+	}
 	res->curactype = 0;
 	res->count--;
 	return 0;
@@ -94,13 +107,37 @@ int GGI_X_setreadframe_slave(ggi_visual *vis, int num) {
 int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
 	int err;
 	ggi_x_priv *priv;
+	ggi_directbuffer *db;
+
+	db = _ggi_db_find_frame(vis, num);
+
+        if (db == NULL) {
+                return -1;
+        }
 	
 	priv = GGIX_PRIV(vis);
-
-	ggiFlush(vis); /* Dirty region doesn't span frames. */
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
+		if (priv->opmansync && (GGI_ACTYPE_WRITE & 
+					(vis->w_frame->resource->curactype ^
+					 db->resource->curactype))) {
+			vis->w_frame_num = num;
+			vis->w_frame = db;
+			if (GGI_ACTYPE_WRITE & db->resource->curactype) 
+				MANSYNC_stop(vis);
+			else {
+				MANSYNC_start(vis);
+			}
+		} else {
+			vis->w_frame_num = num;
+			vis->w_frame = db;
+		}
+	} else {
+	  	ggiFlush(vis);
+		vis->w_frame_num = num;
+		vis->w_frame = db;
+	}
+        /* Dirty region doesn't span frames. */
         priv->dirtytl.x = 1; priv->dirtybr.x = 0;
-	err = _ggi_default_setwriteframe(vis, num);
-	if (err) return err;
 	err = priv->slave->opdraw->setwriteframe(priv->slave, num);
 	return err;
 }
@@ -225,6 +262,9 @@ int _ggi_x_create_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
 
+	/* The core doesn't init this soon enough for us. */
+	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+
 	GGIDPRINT_MODE("X: XImage %p and slave visual %p share buffer at %p\n",
 		       priv->ximage, priv->slave, priv->fb);
 
@@ -338,8 +378,10 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
-
+	int mansync;
+	
 	if (priv->opmansync) MANSYNC_ignore(vis);
+	mansync = 1; /* Do we call MANSYNC_cont later? By default, yes. */
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
@@ -355,8 +397,8 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	/* Flush any pending Xlib operations. */
 	XSync(priv->disp, 0);
 
-	if (priv->fullflush || (GGI_ACTYPE_WRITE &
-	    (LIBGGI_APPBUFS(vis)[vis->w_frame_num]->resource->curactype))) {
+	if (priv->fullflush || 
+	    (GGI_ACTYPE_WRITE & vis->w_frame->resource->curactype)) {
 		/* Flush all requested data */
 		if (tryflag != 2) {
 			GGI_X_CLEAN(vis, x, y, w, h);
@@ -364,7 +406,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 		} /* else it's a non-translated exposure event. */
 		XPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage, 
 			  x, y, x, y, w, h);
-		
+		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) mansync = 0;
 	} else {
 		/* Just flush the intersection with the dirty region */
  	  	int x2, y2;
@@ -393,7 +435,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	XFlush(priv->disp);
  clean:
 	if (tryflag != 2) ggUnlock(priv->xliblock);
-	if (priv->opmansync) MANSYNC_cont(vis);
+	if (priv->opmansync && mansync) MANSYNC_cont(vis);
 	return 0;
 }
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2002/12/18 08:09:22 cegger Exp $
+/* $Id: visual.c,v 1.14 2003/01/21 00:11:58 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -137,8 +137,14 @@ static int GGI_X_setflags(ggi_visual *vis, ggi_flags flags) {
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC)) 
 		ggiFlush(vis);
 	LIBGGI_FLAGS(vis) = flags;
-	if (priv->opmansync) MANSYNC_SETFLAGS(vis,flags);
-	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unknown flags don't take. */
+	/* Unknown flags don't take. */
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF; 
+	if (priv->opmansync) {
+		MANSYNC_SETFLAGS(vis,flags);
+		if ((flags & GGIFLAG_TIDYBUF) && 
+		    (vis->w_frame->resource->curactype & GGI_ACTYPE_WRITE))
+			MANSYNC_stop(vis);
+	}
 	return GGI_OK;
 }
 

@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.9 2002/12/18 08:09:23 cegger Exp $
+/* $Id: shm.c,v 1.10 2003/01/21 00:11:58 skids Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -71,8 +71,8 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 	/* Flush any pending Xlib operations. */
 	XSync(priv->disp, 0);
 
-	if (priv->fullflush || (GGI_ACTYPE_WRITE &
-	    (LIBGGI_APPBUFS(vis)[vis->w_frame_num]->resource->curactype))) {
+	if (priv->fullflush || 
+	    (GGI_ACTYPE_WRITE & (vis->w_frame->resource->curactype))) {
 		/* Flush all requested data */
 		if (tryflag != 2) {
 			GGI_X_CLEAN(vis, x, y, w, h);
@@ -251,6 +251,9 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
 
+        /* The core doesn't init this soon enough for us. */
+        vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+
 	/* We assume vis->mode structure has already been filled out */
 	memcpy(&tm, vis->mode, sizeof(ggi_mode));
 
@@ -276,7 +279,7 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 #else
 	priv->ximage->byte_order = MSBFirst;
 	priv->ximage->bitmap_bit_order = MSBFirst;
-#endif
+#endif	
 
 	vis->opdisplay->flush		= GGI_XSHM_flush_ximage_child;
 
