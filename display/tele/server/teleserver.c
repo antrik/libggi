@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.3 2005/01/25 11:57:45 pekberg Exp $
+/* $Id: teleserver.c,v 1.4 2005/03/11 08:57:53 pekberg Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -489,8 +489,8 @@ static void perf_GETBOX(TeleUser *u, TeleEvent *ev)
 	uint8 *dest;
 
 	if ((d->x < 0) || (d->y < 0) ||
-	    (d->x + d->width  >= vis_mode.virt.x) ||
-	    (d->y + d->height >= vis_mode.virt.y))
+	    (d->x + d->width  > vis_mode.virt.x) ||
+	    (d->y + d->height > vis_mode.virt.y))
 	{
 		fprintf(stderr, "teleserver: ILLEGAL GETBOX.\n");
 		return;
