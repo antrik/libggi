@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.4 2004/05/25 21:44:34 cegger Exp $
+/* $Id: common.inc.c,v 1.5 2004/05/27 08:44:19 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -47,7 +47,7 @@ static void printteststart(const char *file, const char *funcname, int expected)
 #define printassert(x, fmt...)	\
 	if (!(x)) {		\
 		printf(fmt);	\
-		fflush(stdout));\
+		fflush(stdout);\
 		num_asserterrors++;	\
 	}
 
