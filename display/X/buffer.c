@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.25 2005/02/10 04:55:20 orzo Exp $
+/* $Id: buffer.c,v 1.26 2005/03/14 14:00:47 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -155,7 +155,11 @@ void _ggi_x_freefb(ggi_visual *vis) {
 	if (priv->slave) ggiClose(priv->slave);
 	priv->slave = NULL;
 	if (priv->ximage) {
+#ifndef HAVE_XINITIMAGE
+		XFree(priv->ximage);
+#else
 		free(priv->ximage);
+#endif
 		free(priv->fb);
 	}
 	else if (priv->fb) free(priv->fb);

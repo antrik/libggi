@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.35 2005/02/22 09:17:49 cegger Exp $
+/* $Id: misc.c,v 1.36 2005/03/14 14:00:47 pekberg Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -632,6 +632,33 @@ noswab:
 }
 
 
+#ifndef HAVE_XINITIMAGE
+XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
+{
+	ggi_x_priv *priv;
+	XImage *img0;
+
+	priv = GGIX_PRIV(vis);
+
+	img0 = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
+			    (unsigned)LIBGGI_PIXFMT(vis)->depth,
+			    ZPixmap, 0,
+			    data, (unsigned)w, (unsigned)h, 8, 0);
+
+	if (img0 == NULL) {
+		DPRINT_MISC("XCreateImage failed\n");
+		return NULL;
+	}
+
+	/* Take Bit and Byte order information from the Xserver */
+	img0->byte_order = ImageByteOrder(priv->disp);
+	img0->bitmap_bit_order = BitmapBitOrder(priv->disp);
+	DPRINT_MISC("byte order = %i\n", img0->byte_order);
+	DPRINT_MISC("bit order = %i\n", img0->bitmap_bit_order);
+
+	return img0;
+}
+#else /* HAVE_XINITIMAGE */
 /* Allocates and initializes an XImage struct.
  * This function was written because XCreateImage() is not
  * DGA compatible as it requires a visual.
@@ -695,4 +722,4 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 
 	return img0;
 }
-
+#endif /* HAVE_XINITIMAGE */

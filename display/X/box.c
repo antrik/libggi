@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.15 2005/02/10 18:49:54 cegger Exp $
+/* $Id: box.c,v 1.16 2005/03/14 14:00:47 pekberg Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -158,7 +158,11 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 
 	/* XXX: These routines could be optimized to avoid memory
 	 * allocation. */
-	free(ximg); 
+#ifndef HAVE_XINITIMAGE
+	XFree(ximg);
+#else
+	free(ximg);
+#endif
 
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);

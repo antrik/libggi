@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.155 2005/02/23 14:13:48 pekberg Exp $
+dnl $Id: configure.in,v 1.156 2005/03/14 14:00:38 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -645,6 +645,14 @@ dnl includes (/usr/X11R6/include on most systems).
 	CFLAGS="$CFLAGS -I$x_includes"
 	CPPFLAGS="$CPPFLAGS -I$x_includes"
     fi
+
+    dnl XInitImage is not available on X11R5.
+    dnl Should the dga and/or xf86dga targets be disabled if
+    dnl XInitImage is not found?
+    libs_old="$LIBS"
+    LIBS="$LIBS $X_LIBS -lXext -lX11 $X_EXTRA_LIBS"
+    AC_CHECK_FUNCS(XInitImage)
+    LIBS="$libs_old"
 
     AC_CHECK_HEADERS(X11/extensions/xf86dga.h	\
 		X11/extensions/Xdbe.h		\
