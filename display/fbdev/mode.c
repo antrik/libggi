@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/09/08 11:11:18 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/09/10 20:22:16 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -584,7 +584,7 @@ static int do_mmap(ggi_visual *vis)
 static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 {
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
 	err = do_change_mode(vis, var);
@@ -603,7 +603,8 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	priv->idleaccel = NULL;
 	vis->needidleaccel = 1; /* Temp hack until we work out the */
 	vis->accelactive = 0;   /* new changed() traversal for renderers */
-	for(id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
+
+	for (id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL)) {
 			GGIDPRINT_LIBS("display-fbdev: Error opening the "
 				       "%s (%s) library.\n", libname, libargs);
