@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.16 2004/02/23 14:24:54 pekberg Exp $
+/* $Id: shm.c,v 1.17 2004/09/09 16:40:04 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -187,12 +187,12 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 				NULL,		/* data */
 				myshminfo,	/* shm object */
 				(unsigned)LIBGGI_VIRTX(vis), 
-				(unsigned)(LIBGGI_VIRTY(vis) * vis->mode->frames));
+				(unsigned)(LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames));
 
 	myshminfo->shmid = 
 		shmget(IPC_PRIVATE,
 		       (unsigned)(priv->ximage->bytes_per_line * 
-		       LIBGGI_VIRTY(vis) * vis->mode->frames),
+		       LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames),
 		       IPC_CREAT | 0777);
 	
 	priv->fb = myshminfo->shmaddr = priv->ximage->data =
@@ -231,7 +231,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 
 
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
-	for (i = 0; i < vis->mode->frames; i++) {
+	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
 		db = _ggi_db_get_new();
 		if (!db) {
 			_ggi_xshm_free_ximage(vis);
@@ -244,7 +244,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 		LIBGGI_APPBUFS(vis)[i]->type
 		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
 		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
-		  priv->fb + i * vis->mode->virt.y * 
+		  priv->fb + i * LIBGGI_MODE(vis)->virt.y * 
                   priv->ximage->bytes_per_line;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
@@ -260,14 +260,14 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
 
 		LIBGGI_APPLIST(vis)->first_targetbuf
-		  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
+		  = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames-1);
 	}
 
 	/* The core doesn't init this soon enough for us. */
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
 
 	/* We assume vis->mode structure has already been filled out */
-	memcpy(&tm, vis->mode, sizeof(ggi_mode));
+	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
 	/* Make sure we do not fail due to physical size constraints,
 	 * which are meaningless on a memory visual.
@@ -280,9 +280,9 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 	sprintf(target + i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
-		priv->ximage->bytes_per_line * vis->mode->virt.y,
+		priv->ximage->bytes_per_line * LIBGGI_MODE(vis)->virt.y,
 		priv->ximage->bytes_per_line,
-		vis->mode->size.x, vis->mode->size.y);
+		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
 	priv->slave = ggiOpen(target, priv->fb);
 	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
