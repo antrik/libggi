@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.1 2001/05/12 23:03:35 cegger Exp $
+/* $Id: demo.c,v 1.2 2002/05/11 01:48:25 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -947,7 +947,7 @@ int main(int argc, char **argv)
 
 	/* Palette Test. We do some colorcycling here.
 	 */
-	if (depth <= 8) {
+	if (GT_SCHEME(mode.graphtype) == GT_PALETTE) {
 		ggi_color cols[512];
 
 		TestName("Palette ");
@@ -966,6 +966,47 @@ int main(int argc, char **argv)
 		}
 
 		ggiSetPalette(vis, 0, 1<<depth, pal);
+	}
+	if (!ggiGammaMax(vis, GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED, &i, &i)) {
+		ggi_float gr, gb, gg;
+		TestName("Gamma ");
+		waitabit();
+
+		TestStart();
+		for (gr = gb = gg = 1.0; 
+		     (gr > 0.0) && (TestTime() < 10); 
+		     gr -= 0.02) {
+			gb = gg = gr;
+			ggiSetGamma(vis, gr, gb, gg);
+			ggiFlush(vis);
+			ggUSleep(20000);
+			if (ggiKbhit(vis)) break;
+		}
+		for (gr = 0.1; 
+		     (gr < 1.0) && (TestTime() < 10); 
+		     gr += 0.02) {
+			ggiSetGamma(vis, gr, 0.1, 0.1);
+			ggiFlush(vis);
+			ggUSleep(20000);
+			if (ggiKbhit(vis)) break;
+		}
+		for (gb = 0.1; 
+		     (gb < 1.0) && (TestTime() < 10); 
+		     gb += 0.02) {
+			ggiSetGamma(vis, 1.0, gb, 0.1);
+			ggiFlush(vis);
+			ggUSleep(20000);
+			if (ggiKbhit(vis)) break;
+		}
+		for (gg = 0.1; 
+		     (gg < 1.0) && (TestTime() < 10); 
+		     gg += 0.02) {
+			ggiSetGamma(vis, 1.0, 1.0, gg);
+			ggiFlush(vis);
+			ggUSleep(20000);
+			if (ggiKbhit(vis)) break;
+		}
+		ggiSetGamma(vis, 1.0, 1.0, 1.0);
 	}
 
 	TestName("That's all folks");
