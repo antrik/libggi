@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.6 2002/12/05 20:03:30 cegger Exp $
+/* $Id: buffer.c,v 1.7 2003/01/14 01:39:56 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -43,7 +43,7 @@ int GGI_X_db_acquire(ggi_resource_t res, uint32 actype) {
 int GGI_X_db_release(ggi_resource_t res) {
 	ggi_visual *vis;
 	vis = res->priv;
-	if ((vis->w_frame->resource == res) & 
+	if ((vis->w_frame->resource == res) && 
 	    (res->curactype & GGI_ACTYPE_WRITE)) ggiFlush(vis);
 	res->curactype = 0;
 	res->count--;
