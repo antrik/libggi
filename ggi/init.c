@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.5 2002/10/20 20:35:49 skids Exp $
+/* $Id: init.c,v 1.6 2002/12/03 18:29:35 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -307,6 +307,8 @@ ggi_visual *ggiOpen(const char *driver,...)
 	if (strcmp(driver,"auto")==0) {
 
 		void *ret;
+
+		ggDPrintf(1, "LibGGI", "No certain target specified.\n");
 		
 		/* Try the X display.. */
 		cp=getenv("DISPLAY");
@@ -317,6 +319,8 @@ ggi_visual *ggiOpen(const char *driver,...)
 #else
 			strcat(str, cp);
 #endif
+
+			ggDPrintf(1, "LibGGI", "Try to use X target...\n");
 			ret = ggiOpen(str,NULL);
 			if (ret != NULL)
 				return ret;
@@ -324,22 +328,26 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 #if 0
 		/* Try the KGI console.. */
+		ggDPrintf(1, "LibGGI", "Try to use KGI target (KGI console)...\n");
 		ret=ggiOpen("display-KGI:/dev/graphic",NULL);
 		if (ret != NULL)
 			return ret;
 #endif
 		
 		/* Try the framebuffer console.. */
+		ggDPrintf(1, "LibGGI", "Try to use fbdev target (framebuffer console)...\n");
 		ret = ggiOpen("display-fbdev", NULL);
 		if (ret != NULL)
 			return ret;
 
 		/* Try svgalib target.. */
+		ggDPrintf(1, "LibGGI", "Try to use svgalib target...\n");
 		ret = ggiOpen("display-svga",NULL);
 		if (ret != NULL)
 			return ret;
 
 		/* Try AAlib target.. */
+		ggDPrintf(1, "LibGGI", "Try to use AAlib target...\n");
 		ret = ggiOpen("display-aa",NULL);
 		if (ret != NULL)
 			return ret;
