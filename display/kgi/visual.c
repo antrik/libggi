@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2003/12/19 23:07:51 nsouch Exp $
+/* $Id: visual.c,v 1.12 2003/12/20 00:04:27 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -126,7 +126,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 		
-static
+
+int GGIdl_kgi(int func, void **funcptr);
+
 int GGIdl_kgi(int func, void **funcptr)
 {
 	switch (func) {
