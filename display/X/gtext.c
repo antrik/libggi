@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.6 2003/07/13 08:28:49 cegger Exp $
+/* $Id: gtext.c,v 1.7 2004/01/30 13:09:56 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -66,7 +66,6 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 	databg = malloc((size_t)(w * h * priv->fontimg->bits_per_pixel)/8);
 	if (!databg) { free(datafg); free(colors); return -1; }
 
-
 	/* This looks overcomplicated, but is more ready to be 
 	 * adapted to 1,2,4-bit.  In fact will already work for 
 	 * certain width fonts.
@@ -100,8 +99,8 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 	}
 
 	GGI_X_CLEAN(vis, x, y, w, h);
-	free(datafg);
 	priv->slave->opdraw->putbox(priv->slave, x, y, w, h, datafg);
+	free(datafg);
 	free(databg);
 
 
