@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.23 2001/08/22 11:51:06 cegger Exp $
+dnl $Id: configure.in,v 1.24 2001/08/22 11:59:27 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -395,7 +395,7 @@ fi
 
 if test "x$build_directfb_renderer" != "xno"; then
   AC_CHECK_HEADER(directfb-internal/directfb_version.h,
-	foo=bar, build_directfb_target="no")
+	foo=bar, build_directfb_renderer="no")
 fi
 
 if test "x$build_genkgi_driver" != "xno"; then
