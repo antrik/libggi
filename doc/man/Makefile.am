@@ -1,5 +1,6 @@
 man_MANS = \
  cube3d.1	\
+ demo.1	\
  display-aa.7	\
  display-auto.7	\
  display-dga.7	\
@@ -21,6 +22,7 @@ man_MANS = \
  display-vcsa.7	\
  display-vgl.7	\
  display-x.7	\
+ ggi-demo.1	\
  ggiAddEventMask.3	\
  ggiAddFlags.3	\
  ggiCheckGraphMode.3	\

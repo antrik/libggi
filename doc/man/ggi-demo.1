@@ -1,0 +1,40 @@
+.TH "ggi-demo" 1 "2003-04-02" "libggi-current" GGI
+.SH NAME
+\fBggi-demo\fR, \fBdemo\fR : GGI demonstration and example program
+.SH SYNOPSIS
+.nb
+.nf
+ggi-demo [--clip] [--noninteractive] [--target <target>]
+         <xsize>x<ysize>[#<virtx>x<virty>]['['<bpp>']']
+.fi
+
+.SH DESCRIPTION
+The \fBggi-demos\fR are intended to quickly test \fBGGI\fR and demonstrate
+its capabilities.
+.SH OPTIONS
+.TP
+\fB-h\fR
+display this help and exit
+
+.TP
+\fB--clip\fR
+Enables clipping
+
+.TP
+\fB--noninteractive\fR
+Enables noninteractive mode. Doesn't require to hit any key.
+
+.TP
+\fB--target <target>\fR
+Same effect as the \fBGGI_DISPLAY\fR environment variable.
+
+.TP
+\fB<xsize>x<ysize>[#<virtx>x<virty>]['['<bpp>']']\fR
+Same effect as the \fBGGI_DEFMODE\fR environment varialbe.
+
+.PP
+.SH ENVIRONMENT VARIABLES
+Environment variables that are common to all GGI programs are described in
+the \fBlibggi(7)\fR manual.
+.SH SEE ALSO
+\fBmonitest(1)\fR, \fBlibggi(7)\fR, \fBggiParseMode(3)\fR
