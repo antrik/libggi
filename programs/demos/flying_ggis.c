@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.7 2004/09/08 20:04:28 cegger Exp $
+/* $Id: flying_ggis.c,v 1.8 2004/09/12 10:08:06 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -379,7 +379,7 @@ int main(int argc, char **argv)
 		if (CMPOPT(argv[i], "-h", "--help", 0)) {
 		    
 			show_usage(argv[0]);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		}
 
 		if (CMPOPT(argv[i], "-m", "--mode", 1)) {
@@ -426,7 +426,7 @@ int main(int argc, char **argv)
 #undef CMPOPT
 
 		fprintf(stderr, "Unknown option '%s'\n", argv[i]);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 
@@ -452,7 +452,7 @@ int main(int argc, char **argv)
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
         vis = ggiOpen(target_str, NULL);
