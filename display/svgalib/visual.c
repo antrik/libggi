@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/02/23 14:25:16 pekberg Exp $
+/* $Id: visual.c,v 1.9 2004/08/07 18:41:23 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -93,7 +93,7 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ       0
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-void _GGI_svga_freedbs(ggi_visual *vis) {
+static void _GGI_svga_freedbs(ggi_visual *vis) {
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -336,7 +336,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #ifdef HAVE_VTSTUFF
 	struct vt_mode temp_vtmode;
 #endif
-	int i, err;
+	unsigned int i;
+	int err;
 
 	memcpy(options, optlist, sizeof(options));
         if (args != NULL) {
@@ -419,7 +420,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_ENOMEM;
 	}
 	priv = LIBGGI_PRIVATE(vis);
-	priv->savepalette = NULL;
+	LIBGGI_PAL(vis)->priv = NULL;
 	priv->inputs = INP_KBD | INP_MOUSE;
 	priv->dohalt = 1;
 	priv->autoswitch = 1;
