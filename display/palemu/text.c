@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
+/* $Id: text.c,v 1.4 2004/09/03 18:42:01 cegger Exp $
 ******************************************************************************
 
    Display-palemu: text
@@ -52,7 +52,7 @@ int GGI_palemu_putc(ggi_visual *vis, int x, int y, char c)
 #if 0
 int GGI_palemu_getcharsize(ggi_visual *vis, int *width, int *height)
 {
-	ggi_palemu_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	return ggiGetCharSize(priv->parent, width, height);
 }
