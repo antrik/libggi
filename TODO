@@ -17,7 +17,7 @@ Due : ????-??-??
 + Verify and fix cross-compilation to other architectures
 * Check for building and installing demos, checks and utils requiring
   special headers/libs. (Peter Ekberg)
-+ Merge checks for libggi programs into stable tree
+* Merge checks for libggi programs into stable tree (Christoph Egger)
 + Fix libtool to create shared libs instead of static ones
   on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
   run GGI on Linux/MIPS boxes.
