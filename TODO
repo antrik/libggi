@@ -30,7 +30,9 @@ Building issues:
 
 Documentation related stuff:
 
-- documentate tele-target in libggi/doc/targets.txt and via XML.
+- document tele-target in libggi/doc/targets.txt and via XML.
+- make sure all Get/Put function manpages make it easy to understand contents
+  of *buf, if only by mentioning ggiUnPackPixels/ggiPackColors
 
 Target specific issues:
 
