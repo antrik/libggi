@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.10 2003/01/21 00:11:58 skids Exp $
+/* $Id: shm.c,v 1.11 2003/02/09 00:10:19 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -43,10 +43,13 @@ static int      (*oldshmerrorhandler)(Display *, XErrorEvent *);
 
 static int shmerrorhandler (Display * disp, XErrorEvent * event)
 {
-        if (event->error_code == BadAccess) shmerror = 1;
-        else oldshmerrorhandler(disp, event);
+	if (event->error_code == BadAccess) {
+		shmerror = 1;
+	} else {
+		oldshmerrorhandler(disp, event);
+	}
 
-        return 0;
+	return 0;
 }
 
 int GGI_XSHM_flush_ximage_child(ggi_visual *vis, 
@@ -161,6 +164,8 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	int i;
 	XShmSegmentInfo *myshminfo;
+	ggi_directbuffer *db;
+
 
 	i = 0; /* ??? Cranky GCC */
 
@@ -205,7 +210,7 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	if (shmerror) {
 		if (priv->ximage) {
 			/* Seems OK to destroy image before fb for SHM */
-			XDestroyImage(priv->ximage); 
+			XDestroyImage(priv->ximage);
 			priv->ximage = NULL;
 		}
 		if (priv->fb != NULL) {
@@ -220,15 +225,20 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 		/* Take the shmid away so noone else can get it. */
 		shmctl(myshminfo->shmid, IPC_RMID, 0);
 		GGIDPRINT_MODE("X: ShmImage #%d allocated\n", i);
-		
 	}
 	ggUnlock(_ggi_global_lock); /* Exiting protected section */
 
-#warning alloc returncode checking needed here.
+
+	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 	for (i = 0; i < vis->mode->frames; i++) {
+		db = _ggi_db_get_new();
+		if (!db) {
+			_ggi_xshm_free_ximage(vis);
+			return GGI_ENOMEM;
+		}
+
 		LIBGGI_APPLIST(vis)->last_targetbuf
-		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis),
-				       _ggi_db_get_new());
+		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis), db);
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
 		LIBGGI_APPBUFS(vis)[i]->type
 		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
@@ -247,12 +257,13 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 		LIBGGI_APPBUFS(vis)[i]->resource->release = priv->release;
 		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
 		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
-        }
-	LIBGGI_APPLIST(vis)->first_targetbuf
-	  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
 
-        /* The core doesn't init this soon enough for us. */
-        vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+		LIBGGI_APPLIST(vis)->first_targetbuf
+		  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
+	}
+
+	/* The core doesn't init this soon enough for us. */
+	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
 
 	/* We assume vis->mode structure has already been filled out */
 	memcpy(&tm, vis->mode, sizeof(ggi_mode));
@@ -279,7 +290,7 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 #else
 	priv->ximage->byte_order = MSBFirst;
 	priv->ximage->bitmap_bit_order = MSBFirst;
-#endif	
+#endif
 
 	vis->opdisplay->flush		= GGI_XSHM_flush_ximage_child;
 
@@ -298,11 +309,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv = GGIX_PRIV(vis);
 
-        if (XShmQueryExtension(priv->disp) != True) return GGI_ENOFUNC;
-        if (XShmQueryVersion(priv->disp, &major, &minor, &pixmaps)
-            != True) return GGI_ENOFUNC;
+	if (XShmQueryExtension(priv->disp) != True) return GGI_ENOFUNC;
+	if (XShmQueryVersion(priv->disp, &major, &minor, &pixmaps)
+	    != True) return GGI_ENOFUNC;
 
-	GGIDPRINT_LIBS("X: SHM version %i.%i %s pixmap support\n", 
+	GGIDPRINT_LIBS("X: SHM version %i.%i %s pixmap support\n",
 		       major, minor, pixmaps ? "with" : "without");
 
 	priv->createfb = _ggi_xshm_create_ximage;
@@ -346,7 +357,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		Window root;
 		int screen;
 		XSetWindowAttributes wa;
-		
+
 		screen = priv->vilist[priv->viidx].vi->screen;
 		XGetGeometry(priv->disp, priv->parentwin, &root, (int *)&dummy,
 			     (int *)&dummy, &dummy, &dummy, &dummy, &dummy);
