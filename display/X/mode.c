@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/06/12 03:53:59 skids Exp $
+/* $Id: mode.c,v 1.4 2002/06/26 17:57:59 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -334,11 +334,13 @@ oldparent:
 
 	/* Create the child window */
 	attrib.colormap = priv->cmap;
+	attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 	priv->win = XCreateWindow(priv->disp, priv->parentwin,
 				  0, 0, tm->virt.x, 
 				  tm->virt.y * (tm->frames + 1), 0,
 				  vi->depth, InputOutput,
-				  vi->visual, CWColormap, &attrib);
+				  vi->visual, CWColormap | CWBorderPixel, 
+				  &attrib);
 	GGIDPRINT_MODE("X: About to map child\n");
 
 	/* Have the parent window tell the WM its children have colormaps */
