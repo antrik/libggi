@@ -1,4 +1,4 @@
-/* $Id: lin16lib.h,v 1.3 2002/10/20 20:35:49 skids Exp $
+/* $Id: lin16lib.h,v 1.4 2002/10/28 04:57:04 skids Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -63,6 +63,13 @@ ggifunc_putbox		GGI_lin16_putbox;
 # define HAVE_LIN16_SWAR
 # endif
 ggifunc_crossblit	GGI_lin16_crossblit_mmx;
+#endif
+
+#ifdef DO_SWAR_64BITC
+# ifndef HAVE_LIN16_SWAR
+# define HAVE_LIN16_SWAR
+# endif
+ggifunc_crossblit	GGI_lin16_crossblit_64bitc;
 #endif
 
 #ifndef HAVE_LIN16_SWAR

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/10/20 20:35:49 skids Exp $
+/* $Id: visual.c,v 1.3 2002/10/28 04:57:04 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -77,6 +77,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #ifdef DO_SWAR_NONE
 	if (swar & GG_SWAR_NONE) 
 		vis->opdraw->crossblit	= GGI_lin16_crossblit;
+#endif
+#ifdef DO_SWAR_64BITC
+	if (swar & GG_SWAR_64BITC)
+		vis->opdraw->crossblit	= GGI_lin16_crossblit_64bitc;
 #endif
 #ifdef DO_SWAR_MMX
 	if (swar & GG_SWAR_MMX) 

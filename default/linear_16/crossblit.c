@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2002/10/20 22:13:51 cegger Exp $
+/* $Id: crossblit.c,v 1.7 2002/10/28 04:57:04 skids Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -312,7 +312,7 @@ static inline void build_masktab(ggi_visual *src, ggi_visual *dst,
 				 int maskpost, int *nl, int *nr) {
 	int i, j;
 
-	for (i = 0; i < masklen * sskip; i += sskip) mask[i] = 0;
+	for (i = 0; i < masklen * mskip; i += mskip) mask[i] = 0;
 	for (i = 0; i < 16 * sskip; i += sskip)
 		rshift[i] = bshift[i] = gshift[i] = -1;
 
@@ -403,6 +403,7 @@ if (stmp <= 15) {						\
 		}
 	*nr = j - *nl - 1;
 	mask[j * mskip] = 0;
+
 }
 
 /* 24 bit to 16 bit crossblitting.
@@ -880,6 +881,353 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 #endif
 
+#ifdef DO_SWAR_64BITC
+
+/* 16 bit to 16 bit crossblitting using 64Bit C SWAR.
+ */
+static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w, 
+				   int h, ggi_visual *dst, int dx, int dy) {
+	char sbuf[48 * 4 + 7], *stab;
+	char mbuf[48 * 8 + 7], *mtab;
+	int nl, nr;
+	uint16 *stoprow, *dstp, *srcp;
+	int dstride, sstride, i;
+
+	GGIDPRINT_DRAW("linear-16: cb16to16_64bitc.\n");
+
+	if (sizeof(char *) == 8) {
+		stab = sbuf + (8 - (((uint64)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint64)mbuf) % 8));
+	}
+	else {
+		stab = sbuf + (8 - (((uint32)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint32)mbuf) % 8));
+	}
+
+	build_masktab(src, dst, (sint32 *)stab, 
+		      (sint32 *)(stab + 64), 
+		      (sint32 *)(stab + 128),
+		      (sint32 *)stab, 1, 0,
+		      (ggi_pixel *)(mtab), 32, 2, 3, &nl, &nr);
+
+	for (i = 0; i < 32; i++) {
+		uint64 val;
+		val = *((ggi_pixel *)mtab + i * 2) & 0xffff;
+		val |= val << 16;
+		val |= val << 32;
+		*((uint64 *)mtab + i) = val;
+	}
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/2;
+
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+		
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			ggi_pixel tmp, cache;
+
+			if ((stopcol > dstp + 3) && 
+			    !((sizeof(char *) == 8) ?
+			      ((uint64)dstp % 8) : ((uint32)dstp % 8))) {
+				while (stopcol > dstp + 3) {
+					uint64 tmp64, cache64;
+
+					tmp64 = 0;
+					cache64 = *((uint64 *)srcp);
+					i = 0;
+
+					while (*((uint64 *)mtab + i)) {
+						tmp64 |= (cache64 << 
+							*((sint32 *)stab + i)) &
+						  *((uint64 *)mtab + i);
+						if (!*((sint32 *)stab + i)) 
+							goto doright64;
+						i++;
+					}
+					if (!*((sint32 *)stab + i)) 
+						goto doright64;
+				done64:
+					*((uint64 *)dstp) = tmp64;
+					dstp+=4;
+					srcp+=4;
+					continue;
+					
+				doright64:
+					i++;
+					while (*((uint64 *)mtab + i)) {
+						tmp64 |= (cache64 >>
+							*((sint32 *)stab + i)) &
+						  *((uint64 *)mtab + i);
+						i++;
+					}
+					goto done64;
+				}
+			}
+
+			tmp = 0;
+			cache = *srcp;
+			i = 0;
+
+			while (*((uint64 *)mtab + i)) {
+				tmp |= (cache << 
+					*((sint32 *)stab + i)) &
+				  *((ggi_pixel *)mtab + i * 2);
+				if (!*((sint32 *)stab + i)) 
+				  goto doright;
+				i++;
+			}
+			if (!*((sint32 *)stab + i)) 
+			  goto doright;
+		done:
+			*dstp = tmp;
+			dstp++;
+			srcp++;
+			continue;
+
+		doright:
+			i++;
+			while (*((uint64 *)mtab + i)) {
+				tmp |= (cache >>
+					*((sint32 *)stab + i)) &
+				  *((ggi_pixel *)mtab + i * 2);
+				i++;
+			}
+			goto done;
+		}
+		dstp += dstride;
+		srcp += sstride;
+	}			
+}
+
+/* 32 bit to 16 bit crossblitting using 64bit C SWAR.
+ */
+static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w, 
+				   int h, ggi_visual *dst, int dx, int dy) {
+	char sbuf[48 * 4 + 7], *stab;
+	char mbuf[48 * 8 + 7], *mtab;
+	int nl, nr;
+	uint16 *stoprow, *dstp;
+	uint32 *srcp;
+	int dstride, sstride, i;
+
+	GGIDPRINT_DRAW("linear-16: cb32to16_64bitc.\n");
+
+	if (sizeof(char *) == 8) {
+		stab = sbuf + (8 - (((uint64)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint64)mbuf) % 8));
+	}
+	else {
+		stab = sbuf + (8 - (((uint32)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint32)mbuf) % 8));
+	}
+
+	build_masktab(src, dst, (sint32 *)stab, 
+		      (sint32 *)(stab + 64), 
+		      (sint32 *)(stab + 128),
+		      (sint32 *)stab, 1, 0,
+		      (ggi_pixel *)(mtab), 48, 2, 3, &nl, &nr);
+
+	for (i = 0; i < 32; i++) {
+		uint64 val;
+		val = *((ggi_pixel *)mtab + i * 2) & 0xffff;
+		val |= val << 32;
+		*((uint64 *)mtab + i) = val;
+	}
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/4;
+		
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+	
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+		
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			uint32 tmp;
+			ggi_pixel cache;
+
+			if ((stopcol > dstp + 3) && 
+			    !((sizeof(char *) == 8) ?
+			      ((uint64)dstp % 8) : ((uint32)dstp % 8))) {
+				while (stopcol > dstp + 3) {
+					uint64 tmpa64, tmpb64;
+					uint64 cachea64, cacheb64;
+
+					tmpa64 = 0;
+					tmpb64 = 0;
+					cachea64 = *((uint64 *)srcp);
+					cacheb64 = *((uint64 *)srcp + 1);
+					i = 0;
+
+					while (*((uint64 *)mtab + i)) {
+						tmpa64 |= (cachea64 << 
+							   *((int *)stab+i)) &
+						  *((uint64 *)mtab + i);
+						tmpb64 |= (cacheb64 << 
+							   *((int *)stab+i)) &
+						  *((uint64 *)mtab + i);
+						if (!*((int *)stab + i)) 
+							goto doright64;
+						i++;
+					}
+					if (!*((int *)stab + i)) 
+						goto doright64;
+				done64:
+#ifdef GGI_LITTLE_ENDIAN
+					tmpa64 |= tmpa64 >> 16;
+					tmpa64 &= 0x00000000ffffffff;
+					tmpa64 |= tmpb64 << 32;
+					tmpb64 &= 0x0000ffff00000000;
+					tmpa64 |= tmpb64 << 16;
+					*((uint64 *)dstp) = tmpa64;
+#else
+					tmpb64 |= tmpa64 >> 16;
+					tmpb64 &= 0x00000000ffffffff;
+					tmpb64 |= tmpa64 << 32;
+					tmpa64 &= 0x0000ffff00000000;
+					tmpb64 |= tmpa64 << 16;
+					*((uint64 *)dstp) = tmpb64;
+#endif
+					dstp+=4;
+					srcp+=4;
+					continue;
+					
+				doright64:
+					i++;
+					while (*((uint64 *)mtab + i)) {
+						tmpa64 |= (cachea64 >>
+							   *((int *)stab+i)) &
+						  *((uint64 *)mtab + i);
+						tmpb64 |= (cacheb64 >>
+							   *((int *)stab+i)) &
+						  *((uint64 *)mtab + i);
+						i++;
+					}
+					goto done64;
+				}
+			}
+
+			tmp = 0;
+			cache = *srcp;
+			i = 0;
+
+			while (*((uint64 *)mtab + i)) {
+				tmp |= (cache << 
+					*((int *)stab + i)) &
+				  *((ggi_pixel *)mtab + i * 2);
+				if (!*((int *)stab + i)) 
+				  goto doright;
+				i++;
+			}
+			if (!*((int *)stab + i)) 
+			  goto doright;
+		done:
+			*dstp = tmp;
+			dstp++;
+			srcp++;
+			continue;
+
+		doright:
+			i++;
+			while (*((uint64 *)mtab + i)) {
+				tmp |= (cache >>
+					*((int *)stab + i)) &
+				  *((ggi_pixel *)mtab + i * 2);
+				i++;
+			}
+			goto done;
+		}
+
+		dstp += dstride;
+		srcp += sstride;
+	}
+
+}
+
+/* Main function hook for 64bit C SWAR -- does some common-case preprocessing 
+ * and dispatches to one of the above functions.
+ */
+int GGI_lin16_crossblit_64bitc(ggi_visual *src, int sx, int sy, int w, int h, 
+			    ggi_visual *dst, int dx, int dy)
+{
+	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	PREPARE_FB(dst);
+
+	/* Check if src read buffer is also a blPixelLinearBuffer. */
+	if (src->r_frame == NULL) goto fallback;
+	if (src->r_frame->layout != blPixelLinearBuffer) goto fallback;
+
+	/* No optimizations yet for reverse endian and other such weirdness */
+	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+
+	PREPARE_FB(src);
+
+	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	case 1:
+		/* TODO */
+	case 2:
+		/* TODO */
+		goto fallback;
+	case 4:
+		if (w * h > 15) cb4to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 8:
+		if (w * h > 255) cb8to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 16:
+		if (!dst->w_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		if (dst->w_frame->buffer.plb.pixelformat->stdformat !=
+		    src->r_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
+		return 0;
+	notsame:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb16to16_64bitc(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 24:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb24to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 32:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb32to16_64bitc(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	default:
+		break;
+	}
+	
+ fallback:
+	fallback(src, sx, sy, w, h, dst, dx, dy);
+	return 0;
+}
+
+#endif
+
+
 #ifdef DO_SWAR_MMX
 
 /* 16 bit to 16 bit crossblitting using MMX SWAR.
@@ -891,7 +1239,7 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	uint16 *stoprow, *dstp, *srcp;
 	int dstride, sstride, i;
 
-	GGIDPRINT_DRAW("linear-16: cb16to16.\n");
+	GGIDPRINT_DRAW("linear-16: cb16to16_mmx.\n");
 
 	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
 
@@ -1044,7 +1392,7 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 *srcp;
 	int dstride, sstride, i, right;
 	
-	GGIDPRINT_DRAW("linear-16: cb32to16.\n");
+	GGIDPRINT_DRAW("linear-16: cb32to16_mmx.\n");
 
 	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
 
