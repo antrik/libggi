@@ -93,11 +93,11 @@ typedef ggi_accel_t *ggifunc_map_accel(ggi_visual_t vis, kgi_u_t resource,
 ggifunc_getmode		GGI_kgi_getmode;
 ggifunc_setmode		GGI_kgi_setmode;
 ggifunc_checkmode	GGI_kgi_checkmode;
-ggifunc_getapi 		GGI_kgi_getapi;
+ggifunc_getapi		GGI_kgi_getapi;
 ggifunc_setflags        GGI_kgi_setflags;
 
-ggifunc_setpalvec	GGI_kgi_setpalvec;
-
+ggifunc_setPalette	GGI_kgi_setPalette;
+size_t GGI_kgi_getPrivSize(ggi_visual_t);
 ggifunc_map_accel       GGI_kgi_map_accelerator;
 
 #define KGI_PRIV(vis) ((ggi_kgi_priv *)LIBGGI_PRIVATE(vis))
@@ -107,7 +107,7 @@ ggifunc_map_accel       GGI_kgi_map_accelerator;
 typedef struct {
 	/* KGI context used to communicate with KGI */
 	kgi_context_t ctx;
-	
+
 	/* Framebuffer information */
 	kgi_u8_t *fb;
 	kgi_u8_t *swatch;
@@ -120,7 +120,7 @@ typedef struct {
 	/* Options */
 	int use3d;
 	kgi_size_t swatch_size;
-	
+
 	/* Accelerator mapping functionality */
 	ggifunc_map_accel *map_accel;
 
@@ -147,7 +147,7 @@ union ggi_accel {
 		kgi_##t##_t *buffer;   \
 		kgi_u_t current;       \
 	} t
-	
+
 	BUFFER_TYPE(u32);
 	BUFFER_TYPE(s32);
 	BUFFER_TYPE(u16);

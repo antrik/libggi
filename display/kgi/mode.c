@@ -290,7 +290,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
 	if (! fb) {
-		GGIDPRINT_LIBS("No framebuffer resource available");
+		GGIDPRINT_LIBS("No framebuffer resource available\n");
 		return -1;
 	}
 
@@ -304,7 +304,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 			KGI_CTX(vis).mapper.fd, 0);
 
 	if (priv->fb == MAP_FAILED){
-		GGIDPRINT_LIBS("Unable to map the frambuffer\n");
+		GGIDPRINT_LIBS("Unable to map the framebuffer\n");
 		return -1;
 	}
 
@@ -351,7 +351,9 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 				return GGI_EARGINVAL;
 			}
 			if (priv->swatch_size > avail) {
-				fprintf(stderr, "No space for swatch\n");
+				fprintf(stderr, "No space for swatch:"
+					" need %d have %d\n",
+					priv->swatch_size, avail);
 				return GGI_ENOMEM;
 			}
 		}
@@ -363,7 +365,10 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 			}
 			if (GGI_KGI_MINSWATCH + GGI_KGI_FONTSIZE > 
 			    priv->swatch_size) {
-				fprintf(stderr, "No space for swatch\n");
+				fprintf(stderr, "No space for swatch:"
+					" need %d have %d\n",
+					GGI_KGI_MINSWATCH + GGI_KGI_FONTSIZE,
+					priv->swatch_size);
 				return GGI_EARGINVAL;
 			}
 		}
