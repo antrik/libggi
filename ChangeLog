@@ -1,28 +1,219 @@
-2001-07-10 18:20  soyt
+2001-08-11 19:25  cegger
+
+	* doc/docbook/Makefile.am: updated to make "make dist" working
+
+2001-08-11 18:46  cegger
+
+	* configure.in: updated version number
+
+2001-08-11 18:29  skids
+
+	* doc/: docbook/libggi-api-runtime.sgml,
+	docbook/libggi-api-structs.sgml, docbook/libggi-api.sgml,
+	docbook/libggi-control.sgml, docbook/libggi-db.sgml,
+	docbook/libggi-drawing.sgml, docbook/libggi-env.sgml,
+	docbook/libggi-frames.sgml, docbook/libggi-mode.sgml,
+	docbook/libggi-pixel.sgml, docbook/libggi-targets.sgml,
+	docbook/libggi-visual.sgml, man/display-aa.7ggi,
+	man/display-dga.7ggi, man/display-directx.7ggi,
+	man/display-fbdev.7ggi, man/display-file.7ggi,
+	man/display-glide.7ggi, man/display-memory.7ggi,
+	man/display-monotext.7ggi, man/display-multi.7ggi,
+	man/display-palemu.7ggi, man/display-sub.7ggi,
+	man/display-svgalib.7ggi, man/display-tile.7ggi,
+	man/display-trueemu.7ggi, man/display-vcsa.7ggi,
+	man/display-vgl.7ggi, man/display-x.7ggi, man/ggiCheckMode.3ggi,
+	man/ggiCopyBox.3ggi, man/ggiCrossBlit.3ggi,
+	man/ggiDBGetBuffer.3ggi, man/ggiDrawBox.3ggi,
+	man/ggiDrawHLine.3ggi, man/ggiDrawLine.3ggi, man/ggiDrawPixel.3ggi,
+	man/ggiDrawVLine.3ggi, man/ggiEventPoll.3ggi,
+	man/ggiEventSend.3ggi, man/ggiFillscreen.3ggi, man/ggiFlush.3ggi,
+	man/ggiGetInput.3ggi, man/ggiGetPixelFormat.3ggi, man/ggiGetc.3ggi,
+	man/ggiInit.3ggi, man/ggiMapColor.3ggi, man/ggiOpen.3ggi,
+	man/ggiPanic.3ggi, man/ggiParseMode.3ggi, man/ggiPutc.3ggi,
+	man/ggiResourceAcquire.3ggi, man/ggiSetColorfulPalette.3ggi,
+	man/ggiSetDisplayFrame.3ggi, man/ggiSetFlags.3ggi,
+	man/ggiSetGCClipping.3ggi, man/ggiSetGCForeground.3ggi,
+	man/ggiSetGamma.3ggi, man/ggiSetMode.3ggi, man/ggiSetOrigin.3ggi,
+	man/ggiSetPalette.3ggi: 
+	Quicky doc updates to keep missing material accessible.
+
+2001-08-11 16:40  cegger
+
+	* NEWS: updated NEWS file
+
+2001-08-11 09:25  skids
+
+	* doc/docbook/: libggi-blit.sgml, libggi-char.sgml,
+	libggi-control.sgml, libggi-db.sgml, libggi-drawing.sgml,
+	libggi-events.sgml, libggi-frames.sgml, libggi-misc.sgml,
+	libggi-mode.sgml, libggi-origin.sgml, libggi-pixel.sgml,
+	libggi-targets.sgml, libggi-visual.sgml: 
+	Phase 1 of doc convergence: removed stuff from old files which is
+	already in the new files.  Phase 2 will be to figure out where to
+	put the rest.
+
+2001-08-10 23:36  skids
+
+	* display/: common/modelist.inc, svgalib/mode.c: 
+	from smoke: cleanups, better debug, deactivate broken part of
+	frames support.
+
+2001-08-10 23:04  skids
+
+	* doc/docbook/libggi-ref-targets.sgml: 
+	Fix -physz docs, in correct copy of file this time.
+
+2001-08-10 22:38  skids
+
+	* doc/docbook/libggi-targets.sgml: 
+	Fix dga physz option format descriptor
+
+2001-08-08 18:27  jtaylor
+
+	* ChangeLog, display/svgalib/color.c: Added missing #include
+	<string.h>
+
+2001-07-31 09:13  cegger
+
+	* display/ipc/visual.c: use K&R codingstyle
+
+2001-07-31 08:55  cegger
+
+	* programs/demos/wrap.c: use K&R coding style
+
+2001-07-31 05:01  cegger
+
+	* display/: tile/mode.c, vgl/mode.c: fix: calculate stride value
+	correctly
+
+2001-07-31 05:01  cegger
+
+	* display/palemu/palemu.c: snall cleanup: use GT_ByPP macro instead
+	of (GT_SIZE() + 7) / 8
+
+2001-07-31 04:37  cegger
+
+	* display/fbdev/mode.c: snall cleanup: use GT_ByPP macro instead of
+	(GT_SIZE() + 7) / 8
+
+2001-07-31 04:15  cegger
+
+	* display/X/: mode.inc, visual.c: cleanup: use X_FRAME_MAXNUM
+	instead of hardcoded value + use GT_ByPP macro instead of
+	(GT_SIZE() + 7) / 8
+
+2001-07-31 04:13  cegger
+
+	* include/ggi/display/x.h: small cleanup: use X_FRAME_NUM instead
+	of hardcoded values
+
+2001-07-29 17:32  cegger
+
+	* programs/util/monitest/monitest.sgml: justified paragraphs +
+	spelling fixes
+
+2001-07-26 06:13  cegger
+
+	* NEWS: added missing release-notes of version 2beta4
+
+2001-07-19 09:35  cegger
+
+	* doc/env.txt: spelling fix
+
+2001-07-19 03:44  thayne
+
+	* Makefile.am, configure.in: Add structure for
+	distributions/packages.  Put in spec files for building RPM's.
+
+2001-07-18 13:05  thayne
+
+	* configure.in: Fix building against an uninstalled libgii that
+	might be built with $(top_builddir) != $(top_srcdir) while still
+	allowing for the case where they might be the same.
+
+2001-07-18 08:33  adamel
+
+	* configure.in: $top_builddir is not set in configure, but we know
+	libtool is always in cwd.
+
+2001-07-16 13:52  thayne
+
+	* configure.in: This is a safer way to use libtool
+
+2001-07-16 13:40  thayne
+
+	* configure.in: Wrap detection of libgii with libtool so that
+	building against an uninstalled libgii will work.
+	
+	I'm concerned that this might cause problems depending on how an
+	uninstalled libgii is used and how it might be later installed.
+
+2001-07-16 10:48  thayne
+
+	* configure.in, display/X/Makefile.am,
+	include/ggi/display/Makefile.am: Revert back to AM_DISABLE_STATIC
+	and AM_PROG_LIBTOOL to fix "LIBTOOL not set in configure.in"
+	problem.  Add some missing files to some Makefile.am - without this
+	files aren't packaged using "make dist" targets.
+
+2001-07-13 05:51  soyt
+
+	* doc/: docbook/libggi-ref-targets.sgml,
+	docbook/libggi-targets.sgml, man/display-aa.7ggi,
+	man/display-dga.7ggi, man/display-directx.7ggi,
+	man/display-fbdev.7ggi, man/display-file.7ggi,
+	man/display-glide.7ggi, man/display-memory.7ggi,
+	man/display-monotext.7ggi, man/display-multi.7ggi,
+	man/display-palemu.7ggi, man/display-sub.7ggi,
+	man/display-svgalib.7ggi, man/display-tile.7ggi,
+	man/display-trueemu.7ggi, man/display-vcsa.7ggi,
+	man/display-vgl.7ggi, man/display-x.7ggi: Brian's change
+	propagation + fixes. manpages regenerated
+
+2001-07-12 18:43  skids
+
+	* doc/docbook/libggi-targets.sgml: 
+	Added docs for -physz option, other undocumented options.  Probably
+	broke doc build.
+
+2001-07-12 15:55  cegger
+
+	* display/vgl/mode.c: build fix from David J. Hughes
+
+2001-07-10 14:59  cegger
+
+	* configure.in: update version number
+
+2001-07-10 14:35  soyt
+
+	* ChangeLog: libggi and libgii ChangeLogs : Here we go\!
+
+2001-07-10 14:20  soyt
 
 	* doc/man/: Makefile.am, display-vgl.7ggi: added display-vgl
 	manpage
 
-2001-07-10 18:12  soyt
+2001-07-10 14:12  soyt
 
 	* doc/docbook/libggi-ref-targets.sgml: bug fix in vgl doc
 
-2001-07-10 18:04  soyt
+2001-07-10 14:04  soyt
 
 	* doc/docbook/libggi-ref-targets.sgml: added display-vgl
 
-2001-07-10 17:03  cegger
+2001-07-10 13:03  cegger
 
 	* doc/targets.txt: added VGL-target description from Nicolas Souchu
 
-2001-07-10 15:10  cegger
+2001-07-10 11:10  cegger
 
 	* display/aa/color.c, display/xf86dga/mode.c,
 	display/xf86dga/visual.c, programs/check/checkmode.c,
 	programs/demos/cube3d.c, programs/demos/slimy.c: fixed compiler
 	warnings reported by Thayne
 
-2001-07-10 13:29  soyt
+2001-07-10 09:29  soyt
 
 	* doc/man/: Makefile.am, display-aa.7ggi, display-dga.7ggi,
 	display-directx.7ggi, display-fbdev.7ggi, display-file.7ggi,
@@ -45,79 +236,79 @@
 	ggiSetOrigin.3ggi, ggiSetPalette.3ggi, ggiSetSimpleMode.3ggi,
 	ggiSetTextMode.3ggi: updated manpages
 
-2001-07-10 09:32  soyt
+2001-07-10 05:32  soyt
 
 	* doc/docbook/libggi-ref-targets.sgml: Manpages fixes and directx
 	addition
 
-2001-07-10 05:22  thayne
+2001-07-10 01:22  thayne
 
 	* configure.in: AM_PROG_LIBTOOL and AM_DISABLE_STATIC are
 	deprecated - use 'AC_' names.
 
-2001-07-09 14:49  thayne
+2001-07-09 10:49  thayne
 
 	* ltconfig, m4/libtool.m4: libtool 1.4 has moved tests from
 	ltconfig to libtool.m4.  Delete unecessary ltconfig and update
 	libtool.m4.
 
-2001-07-09 13:14  cegger
+2001-07-09 09:14  cegger
 
 	* display/svgalib/visual.c: add debugging code when exiting
 
-2001-07-09 01:49  fortinj
+2001-07-08 21:49  fortinj
 
 	* doc/targets.txt: 
 	Add DirectX (Win32) target description.
 
-2001-07-09 01:39  fortinj
+2001-07-08 21:39  fortinj
 
 	* doc/README.directx: 
 	
 	New readme file for Win32 DirectX Target.
 
-2001-07-08 18:30  soyt
+2001-07-08 14:30  soyt
 
 	* doc/docbook/libggi-ref-targets.sgml: added input and target
 	reference.
 
-2001-07-07 19:57  cegger
+2001-07-07 15:57  cegger
 
 	* default/color/Makefile.am, default/fbdev/mga/2164w/Makefile.am,
-	default/fbdev/mga/g400/Makefile.am, default/ilbm/Makefile.am,
-	default/ioctl/Makefile.am, default/iplanar_2p/Makefile.am,
-	default/kgi/Makefile.am, default/linear_1/Makefile.am,
-	default/linear_16/Makefile.am, default/linear_1_r/Makefile.am,
-	default/linear_2/Makefile.am, default/linear_24/Makefile.am,
-	default/linear_32/Makefile.am, default/linear_4/Makefile.am,
-	default/linear_4_r/Makefile.am, default/linear_8/Makefile.am,
-	default/linmm_banked/Makefile.am, default/planar/Makefile.am,
-	default/ramdac/Makefile.am, default/stubs/Makefile.am,
-	default/text_16/Makefile.am, default/text_32/Makefile.am,
-	display/X/Makefile.am, display/Xlib/Makefile.am,
-	display/aa/Makefile.am, display/directx/Makefile.am,
-	display/glide/Makefile.am, display/ipc/Makefile.am,
-	display/kgi/Makefile.am, display/lcd823/Makefile.am,
-	display/linvtsw/Makefile.am, display/mansync/Makefile.am,
-	display/memory/Makefile.am, display/monotext/Makefile.am,
-	display/multi/Makefile.am, display/palemu/Makefile.am,
-	display/sub/Makefile.am, display/suidkgi/Makefile.am,
-	display/svgalib/Makefile.am, display/tele/Makefile.am,
-	display/terminfo/Makefile.am, display/tile/Makefile.am,
-	display/trueemu/Makefile.am, display/vcsa/Makefile.am,
-	display/vgagl/Makefile.am, display/vgl/Makefile.am,
-	display/xf86dga/Makefile.am: replace /ggi/ by //
+	default/ilbm/Makefile.am, default/ioctl/Makefile.am,
+	default/iplanar_2p/Makefile.am, default/kgi/Makefile.am,
+	default/linear_1/Makefile.am, default/linear_16/Makefile.am,
+	default/linear_1_r/Makefile.am, default/linear_2/Makefile.am,
+	default/linear_24/Makefile.am, default/linear_32/Makefile.am,
+	default/linear_4/Makefile.am, default/linear_4_r/Makefile.am,
+	default/linear_8/Makefile.am, default/linmm_banked/Makefile.am,
+	default/planar/Makefile.am, default/ramdac/Makefile.am,
+	default/stubs/Makefile.am, default/text_16/Makefile.am,
+	default/text_32/Makefile.am, display/X/Makefile.am,
+	display/Xlib/Makefile.am, display/aa/Makefile.am,
+	display/directx/Makefile.am, display/glide/Makefile.am,
+	display/ipc/Makefile.am, display/kgi/Makefile.am,
+	display/lcd823/Makefile.am, display/linvtsw/Makefile.am,
+	display/mansync/Makefile.am, display/memory/Makefile.am,
+	display/monotext/Makefile.am, display/multi/Makefile.am,
+	display/palemu/Makefile.am, display/sub/Makefile.am,
+	display/suidkgi/Makefile.am, display/svgalib/Makefile.am,
+	display/tele/Makefile.am, display/terminfo/Makefile.am,
+	display/tile/Makefile.am, display/trueemu/Makefile.am,
+	display/vcsa/Makefile.am, display/vgagl/Makefile.am,
+	display/vgl/Makefile.am, display/xf86dga/Makefile.am: replace /ggi/
+	by //
 
-2001-07-07 15:02  thayne
+2001-07-07 11:02  thayne
 
 	* ltmain.sh: Fixing bug in libtool 1.4 where it won't find
 	interdependency libraries during install to a packaging dir
 
-2001-07-07 11:19  cegger
+2001-07-07 07:19  cegger
 
 	* display/fbdev/Makefile.am: typo fix
 
-2001-07-07 09:42  thayne
+2001-07-07 05:42  thayne
 
 	* Makefile.am, configure.in, libggi.conf.in,
 	display/fbdev/Makefile.am: Closed one more bug that I introduced
@@ -128,52 +319,52 @@
 	${exec_libdir}, peel grapes, and change the furnace filter when
 	required.
 
-2001-07-07 08:07  thayne
+2001-07-07 04:07  thayne
 
 	* config.guess, config.sub, ltmain.sh: Update to libtool 1.4
 
-2001-07-03 20:18  cegger
+2001-07-03 16:18  cegger
 
 	* Makefile.am, configure.in, libggi.conf.in,
 	display/fbdev/Makefile.am, programs/check/checkmode.c,
 	programs/demos/cube3d.c: merged confdir fixes from Thayne Harbaugh
 
-2001-06-30 09:53  soyt
+2001-06-30 05:53  soyt
 
 	* doc/docbook/: libggi-api-control.sgml, libggi-api-events.sgml,
 	libggi-api-mode.sgml: reference fixes
 
-2001-06-29 15:32  soyt
+2001-06-29 11:32  soyt
 
 	* doc/docbook/libggi-api-mode.sgml: documentation fixes
 	(validation+bug)
 
-2001-06-26 02:34  fortinj
+2001-06-25 22:34  fortinj
 
 	* display/directx/visual.c: 
 	Sync visual.c with my 'Good' version. JEF
 
-2001-06-26 02:34  fortinj
+2001-06-25 22:34  fortinj
 
 	* display/directx/mode.c: 
 	Sync mode.c with my 'Good' version. JEF
 
-2001-06-26 02:33  fortinj
+2001-06-25 22:33  fortinj
 
 	* display/directx/ddinitnt.c: 
 	Sync ddinitnt.c with my 'Good' version. JEF
 
-2001-06-26 02:32  fortinj
+2001-06-25 22:32  fortinj
 
 	* display/directx/ddinit.c: 
 	Sync ddinit.c with my 'good' version.  JEF
 
-2001-06-26 02:23  fortinj
+2001-06-25 22:23  fortinj
 
 	* include/ggi/display/directx.h: 
 	Sync header with my 'good' version
 
-2001-06-24 19:33  skids
+2001-06-24 15:33  skids
 
 	* configure.in, display/xf86dga/XF86VMode.c,
 	display/xf86dga/mode.c, display/xf86dga/visual.c,
@@ -183,7 +374,7 @@
 	handling Someone with 3.3.x xlibs please fix compile by applying
 	appropriate defines
 
-2001-06-24 16:45  skids
+2001-06-24 12:45  skids
 
 	* display/svgalib/Makefile.am, display/svgalib/box.c,
 	display/svgalib/frames.c, display/svgalib/hline.c,
@@ -194,18 +385,18 @@
 	patterns on my Radeon (which is to be expected).  John will be
 	finishing it up tomorrow.
 
-2001-06-22 16:57  soyt
+2001-06-22 12:57  soyt
 
 	* doc/docbook/: libggi-api-events.sgml, libggi-api.sgml: doc update
 	: fixes + propagation of Brian's changes
 
-2001-06-21 23:36  ggibecka
+2001-06-21 19:36  ggibecka
 
 	* configure.in: Disable using the internal DGA implementation by
 	default. It's even more wrong than the external. DGA still not
 	quite functional, but doesn't hang anymore - drawing still wrong.
 
-2001-06-21 19:09  skids
+2001-06-21 15:09  skids
 
 	* doc/docbook/libggi-events.sgml, doc/man/Makefile.am,
 	doc/man/ggiDetachInput.3ggi, doc/man/ggiGetInput.3ggi, ggi/EXPSYMS,
@@ -213,7 +404,7 @@
 	Added ggiDetachInput and ggiGetInput -- note: doc changes need to
 	be propagated to new doc files.
 
-2001-06-20 23:47  skids
+2001-06-20 19:47  skids
 
 	* display/: X/visual.c, Xlib/visual.c: 
 	All that work for such a trivial fix... It appears that calling
@@ -223,19 +414,12 @@
 	probably by calling XSetWindowColormap on the root window when you
 	move your cursor off to it.
 
-2001-06-20 22:54  skids
+2001-06-20 18:54  skids
 
 	* programs/demos/saver.c: 
 	Quash warning due to time.h not included.
 
-2001-06-20 22:52  ggibecka
-
-	* default/fbdev/mga/g400/: regs.h, visual.c: Fix up SRCORG and
-	DSTORG. DirectFB messes with those and failing demos will cause
-	very ugly effects. I should probably rather do it at startup,
-	though. Now you have to start/end a LibGGI app to fix your console.
-
-2001-06-20 09:24  cegger
+2001-06-20 05:24  cegger
 
 	* default/: color/Makefile.am, ioctl/Makefile.am,
 	iplanar_2p/Makefile.am, kgi/Makefile.am, linear_16/Makefile.am,
@@ -246,85 +430,77 @@
 	made Makefile.am-files more human-readable on 80 column
 	text-displays
 
-2001-06-19 13:23  cegger
+2001-06-19 09:23  cegger
 
 	* include/ggi/internal/Makefile.am: we install debug.h, because it
 	provides LIB_APPASSERT(). Not installing it may brake some
 	applications
 
-2001-06-17 16:13  skids
+2001-06-17 12:13  skids
 
 	* display/fbdev/visual.c: 
 	Always issue panning ioctl on vc switchback, drivers do not
 	faithfully restore it
 
-2001-06-17 09:15  cegger
+2001-06-17 05:15  cegger
 
 	* programs/check/consistency.c: fixed compiler warning
 
-2001-06-17 09:08  cegger
+2001-06-17 05:08  cegger
 
 	* programs/demos/pageflip.c: fixed compiler warning
 
-2001-06-17 09:02  cegger
+2001-06-17 05:02  cegger
 
 	* programs/demos/wrap.c: fixed compiler warnings; don't use C++
 	comments
 
-2001-06-17 08:56  cegger
+2001-06-17 04:56  cegger
 
 	* display/terminfo/visual.c: fixed token at end of #endif directive
 
-2001-06-17 08:54  cegger
+2001-06-17 04:54  cegger
 
 	* display/ipc/visual.c: compiler warning fixes; don't use C++
 	comments
 
-2001-06-17 04:46  skids
+2001-06-17 00:46  skids
 
 	* display/fbdev/mode.c: 
 	Additional error message Don't call _ggi_figure_physz until mode is
 	valid Don't ever unset err in checkmode.
 
-2001-06-17 04:35  skids
+2001-06-17 00:35  skids
 
 	* display/fbdev/visual.c: 
 	Supply correct default value for physz
 
-2001-06-17 04:34  skids
+2001-06-17 00:34  skids
 
 	* ggi/internal.c: 
 	Caught a case in _ggi_figure_physz and removed implicit decl of
 	toupper
 
-2001-06-17 01:58  ggibecka
+2001-06-16 21:58  ggibecka
 
 	* configure.in, default/fbdev/mga/Makefile.am,
-	default/fbdev/mga/g400/.cvsignore, default/fbdev/mga/g400/EXPSYMS,
-	default/fbdev/mga/g400/Makefile.am, default/fbdev/mga/g400/box.c,
-	default/fbdev/mga/g400/copybox.c,
-	default/fbdev/mga/g400/crossblit.c, default/fbdev/mga/g400/gtext.c,
-	default/fbdev/mga/g400/hline.c, default/fbdev/mga/g400/line.c,
-	default/fbdev/mga/g400/mga_g400.h, default/fbdev/mga/g400/mmio.h,
-	default/fbdev/mga/g400/regs.h, default/fbdev/mga/g400/visual.c,
-	default/fbdev/mga/g400/vline.c, display/fbdev/fbdev.conf.in: Added
-	separate G400 target for fbdev accel.  Seems it was only a matter
-	of a larger bitmask. Maybe I could just have patched the MGA2164
-	sources, but I like it better this way - we should add more accel
-	drivers anyway.
+	display/fbdev/fbdev.conf.in: Added separate G400 target for fbdev
+	accel.	Seems it was only a matter of a larger bitmask. Maybe I
+	could just have patched the MGA2164 sources, but I like it better
+	this way - we should add more accel drivers anyway.
 
-2001-06-16 22:52  ggibecka
+2001-06-16 18:52  ggibecka
 
 	* display/fbdev/visual.c: Added more debugging code to better
 	diagnose fbdev startup problems.  added new class for the G400 - it
 	doesn't work right with the mga driver.
 
-2001-06-16 22:51  ggibecka
+2001-06-16 18:51  ggibecka
 
 	* ggi/internal.c: Avoid to erraneously fail when no physz options
 	were given at all.
 
-2001-06-15 09:46  soyt
+2001-06-15 05:46  soyt
 
 	* doc/docbook/: libggi-api-blit.sgml, libggi-api-char.sgml,
 	libggi-api-control.sgml, libggi-api-db.sgml,
@@ -334,25 +510,25 @@
 	libggi-api-visual.sgml, libggi-api.sgml, libggi.sgml: new
 	documentation files
 
-2001-06-13 18:01  cegger
+2001-06-13 14:01  cegger
 
 	* include/ggi/internal/Makefile.am: don't install debug headers
 
-2001-06-11 18:43  cegger
+2001-06-11 14:43  cegger
 
 	* libggi.conf.in: libggimisc doesn't come with libggi anymore
 
-2001-06-03 22:16  skids
+2001-06-03 18:16  skids
 
 	* default/color/: color.c, color.h, visual.c: 
 	Correct unmappixel, keeping relatively optimized
 
-2001-06-03 06:42  cegger
+2001-06-03 02:42  cegger
 
 	* include/ggi/types.h: added GA_ByPP macro to extract the
 	"BytesPerPixel" info from a ggi_graphtype
 
-2001-05-31 21:55  skids
+2001-05-31 17:55  skids
 
 	* display/X/mode.inc, display/X/visual.c, display/Xlib/visual.c,
 	display/fbdev/mode.c, display/fbdev/visual.c,
@@ -364,62 +540,62 @@
 	include/ggi/internal/internal.h: 
 	Added physz support and unified some handling of unordered options
 
-2001-05-31 21:54  skids
+2001-05-31 17:54  skids
 
 	* display/terminfo/: TIvisual.h, mode.c, visual.c: 
 	Added physz option and fixed bug causing segfault on close/open
 
-2001-05-26 00:00  skids
+2001-05-25 20:00  skids
 
 	* programs/demos/textdemo.c: 
 	Made independent on terminal size/charcell size
 
-2001-05-25 23:18  skids
+2001-05-25 19:18  skids
 
 	* include/ggi/internal/structs.h: 
 	fixed typo in comments
 
-2001-05-25 19:56  stefan
+2001-05-25 15:56  stefan
 
 	* display/ipc/visual.c, programs/demos/wrap.c: got the ipc target
 	kinda working. We really have to investigate serialized access
 	now...
 
-2001-05-23 17:46  cegger
+2001-05-23 13:46  cegger
 
 	* display/X/visual.c, display/X/visual.inc, display/Xlib/visual.c,
 	doc/targets.txt: added -nocursor option from Tijs van Bakel
 
-2001-05-16 03:19  stefan
+2001-05-15 23:19  stefan
 
 	* display/ipc/visual.c: some fixes for the ipc target
 
-2001-05-16 03:17  stefan
+2001-05-15 23:17  stefan
 
 	* programs/demos/: Makefile.am, wrap.c: add test/demo program for
 	the ipc target. Unfortunately it doesn't quite work yet.
 
-2001-05-13 19:49  cegger
+2001-05-13 15:49  cegger
 
 	* programs/util/monitest/monitest.c: fixed compiler warnings
 
-2001-05-13 08:13  cegger
+2001-05-13 04:13  cegger
 
 	* display/ipc/.cvsignore: ignore autogenerated files
 
-2001-05-13 03:29  stefan
+2001-05-12 23:29  stefan
 
 	* configure.in, libggi.conf.in, display/Makefile.am,
 	display/ipc/EXPSYMS, display/ipc/Makefile.am, display/ipc/mode.c,
 	display/ipc/visual.c, include/ggi/display/ipc.h,
 	programs/util/inputdump.c: initial checkin of the ipc target
 
-2001-05-13 01:30  skids
+2001-05-12 21:30  skids
 
 	* programs/check/speed.c: 
 	Bandaid for different libc headers, courtesy of the bovine one
 
-2001-05-12 23:03  cegger
+2001-05-12 19:03  cegger
 
 	* programs/demos/pageflip.c, programs/demos/slimy.c,
 	programs/demos/cube3d.c, programs/demos/saver.c,
@@ -451,7 +627,7 @@
 	scripts/.cvsignore, scripts/configure, scripts/doinstall,
 	scripts/ggiinstall: Initial revision
 
-2001-05-12 23:03  cegger
+2001-05-12 19:03  cegger
 
 	* programs/demos/pageflip.c, programs/demos/slimy.c,
 	programs/demos/cube3d.c, programs/demos/saver.c,
@@ -483,7 +659,7 @@
 	scripts/.cvsignore, scripts/configure, scripts/doinstall,
 	scripts/ggiinstall: initial import
 
-2001-05-12 23:00  cegger
+2001-05-12 19:00  cegger
 
 	* acconfig.h, install-sh, missing, INSTALL.autoconf, mkinstalldirs,
 	patchlib.c, config.guess, config.sub, configure.in, ltmain.sh,
@@ -809,7 +985,7 @@
 	programs/demos/cube3d.6, programs/demos/demo.c,
 	programs/demos/flying_ggis.c: Initial revision
 
-2001-05-12 23:00  cegger
+2001-05-12 19:00  cegger
 
 	* acconfig.h, install-sh, missing, INSTALL.autoconf, mkinstalldirs,
 	patchlib.c, config.guess, config.sub, configure.in, ltmain.sh,
@@ -1135,7 +1311,3 @@
 	programs/demos/cube3d.6, programs/demos/demo.c,
 	programs/demos/flying_ggis.c: initial import
 
-2001-08-08	15:25:00	jtaylor
-
-	display/tele/color.c: Added missing #include <string.h>
-	
