@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2003/07/06 10:25:22 cegger Exp $
+/* $Id: visual.c,v 1.8 2003/11/13 17:13:59 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -35,10 +35,15 @@ static const gg_option optlist[] =
 	{ "socket", "" },
 	{ "semid", "" },
 	{ "shmid", "" },
-	{ "input", "" }
+	{ "input", "" },
+	{ "physz", "0,0" }
 };
 
+#define OPT_SOCKET	0
+#define OPT_SEMID	1
+#define OPT_SHMID	2
 #define OPT_INPUT	3
+#define OPT_PHYSZ	4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -155,17 +160,25 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}	/* if */
 
-	if (!options[0].result[0]
-	   && !options[1].result[0]
-	   && !options[2].result[0])
+	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
+			     &(priv->physzflags), &(priv->physz)))
+	{
+		free(priv);
+		free(LIBGGI_GC(vis));
+		return GGI_EARGINVAL;   
+        }	/* if */
+
+	if (!options[OPT_SOCKET].result[0]
+	   && !options[OPT_SEMID].result[0]
+	   && !options[OPT_SHMID].result[0])
 	{
 		GGIDPRINT("display-ipc: required arguments missing\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
-	if (!(sscanf(options[0].result,"%s", address.sun_path)
-	   && sscanf(options[1].result,"%d", &(priv->semid))
-	   && sscanf(options[2].result,"%d", &(priv->shmid))))
+	if (!(sscanf(options[OPT_SOCKET].result,"%s", address.sun_path)
+	   && sscanf(options[OPT_SEMID].result,"%d", &(priv->semid))
+	   && sscanf(options[OPT_SHMID].result,"%d", &(priv->shmid))))
 	{
 		GGIDPRINT("display-ipc: argument format error\n");
 		return GGI_EARGREQ;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/10/27 18:26:23 skids Exp $
+/* $Id: mode.c,v 1.3 2003/11/13 17:13:59 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -243,6 +243,11 @@ int GGI_ipc_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = -1;
 	}
 	mode->size.x = mode->size.y = GGI_AUTO;
+
+	if (err) return err;
+	err = _ggi_figure_physz(mode, IPC_PRIV(vis)->physzflags,
+				&(IPC_PRIV(vis)->physz),
+				0, 0, mode->visible.x, mode->visible.y);
 
 	return err;	
 }
