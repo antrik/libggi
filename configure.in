@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.64 2002/11/28 00:20:41 cegger Exp $
+dnl $Id: configure.in,v 1.65 2002/11/28 14:11:37 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -273,7 +273,11 @@ sys/socket.h netinet/in.h netdb.h windows.h ddraw.h vgl.h)
 dnl ========================================================================
 dnl LibGII must be built
 
-gii_missing_part=no
+if test "x$ac_cv_header_ggi_gii_h" != "xyes"; then
+  AC_MSG_ERROR([Either wrong include path is used or LibGII is
+		not properly installed on the system. You need LibGII for building
+		LibGGI. Please compile LibGII first.])
+fi
 
 dnl Testing libs should use libtool but doesn't - grrrr!
 dnl This isn't a problem during the build because libtool is always used.
@@ -283,18 +287,17 @@ CC="$SHELL ./libtool $CC"
 save_LDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS -lgg"
 AC_CHECK_LIB(gii,giiInit,
-  AC_CHECK_LIB(gii,giiEventsQueued,
+  AC_CHECK_LIB(gg,ggGetSwarType,
 	foo=bar,
-	AC_MSG_ERROR(You have an obsolete LibGII version installed!)
+	AC_MSG_ERROR([You have an obsolete LibGII version installed!])
   ),
-  gii_missing_part=yes
+  AC_MSG_ERROR([LibGII is not properly installed on the system.
+		You need LibGII for building LibGGI. Please compile
+		LibGII first.])
 )
 CC="$save_CC"
 LDFLAGS="$save_LDFLAGS"
 
-if test "$ac_cv_header_ggi_gii_h" != "yes"; then
-  gii_missing_part=yes
-fi
 
 dnl ========================================================================
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -310,7 +313,7 @@ dnl Define HAVE_SOCKETLEN_T if found.
 if test "$ac_cv_header_sys_socket_h" = "yes"; then
 
 	AC_MSG_CHECKING([whether socklen_t is available])
-	AC_TRY_COMPILE([   
+	AC_TRY_COMPILE([
 		#include <sys/types.h>
 		#include <sys/socket.h>
 		#ifdef HAVE_SYS_UN_H
@@ -1264,10 +1267,3 @@ dnl  display/suidkgi/Makefile
 dnl  default/ramdac/Makefile
 dnl  default/linmm_banked/Makefile
 dnl  default/ioctl/Makefile
-
-if test "$gii_missing_part" = "yes"; then 
-  AC_MSG_WARN([
-LibGII is not properly installed on the system. You need LibGII for
-building LibGGI. Please compile LibGII first.
-])
-fi
