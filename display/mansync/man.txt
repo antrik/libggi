@@ -1,0 +1,69 @@
+sync mode emulation
+~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-mansync
+
+Synopis
+-------
+
+::
+
+  display-mansync
+
+
+Description
+-----------
+
+Helper library for the implementation of SYNC mode on targets which are
+inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
+
+A target wishing to use mansync should open mansync with _ggiAddDL()
+in it's own GGIopen().
+It must pass a pointer to a _ggi_opmansync structure as the argument
+to _ggiAddDL(), and must define the following macros::
+
+  MANSYNC_init(vis)
+  MANSYNC_deinit(vis)
+  MANSYNC_start(vis)
+  MANSYNC_stop(vis)
+  MANSYNC_ignore(vis)
+  MANSYNC_cont(vis)
+
+which is supposed to call the functions in _ggi_opmansync respectively.
+
+Mansync provides the following functions::
+
+  int _GGI_mansync_init(vis);
+  int _GGI_mansync_deinit(vis);
+	Initialize/deinitialize mansync for given visual.
+
+  int _GGI_mansync_start(vis);
+  int _GGI_mansync_stop(vis);
+	Start/stop mansync handling. (process,thread,etc.)
+	You don't need to explicitly call these;
+	MANSYNC_SETFLAGS does it for you.
+
+  int _GGI_mansync_ignore(vis);
+  int _GGI_mansync_cont(vis);
+	Temporarily start/stop mansync, e.g. during mode set.
+	It is o.k. to use them even if mansync has not been started.
+
+  MANSYNC_SETFLAGS(vis,flags)
+	mansync management in ggiSetFlags().
+
+(The above functions return 0 if successful, -1 if not.)
+
+Please see display/X, display/aa or display/tile to see how mansync is
+used.  The functions should be transparent enough.
+
+
+Environment variables
+---------------------
+
+`GGI_MANSYNC_FPS`
+    This variable specifies the framerate for targets emulating
+    synchronous mode. The default is 20fps.  If you are experiencing
+    problems with the X target over relatively slow remote connections
+    it might be due to connection overload. You might want to try with
+    a lower `GGI_MANSYNC_FPS` setting.
+
