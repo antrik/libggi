@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2003/09/16 21:02:45 cegger Exp $
+/* $Id: color.c,v 1.9 2003/09/16 21:39:11 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -343,6 +343,10 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		return;
 	}
 
+
+	priv->gamma.start = 0;
+	priv->gamma.len = priv->ncols;
+
 	i = j = 0;
 	do {
 		priv->gammamap[j].pixel = 
@@ -368,7 +372,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	vis->gamma->maxread_g = 1 << vis->gamma->maxread_g;
 	vis->gamma->maxread_b = 1 << vis->gamma->maxread_b;
 
-	XQueryColors(priv->disp, defcmap, priv->gammamap, priv->ncols);
+	XQueryColors(priv->disp, defcmap, priv->gammamap, priv->gamma.len);
 
 	/* This accomplishes the documented behavior of ggiSetGammaMap
 	 * by preventing aliasing of lower order color channel values.
@@ -385,6 +389,6 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		priv->gammamap[i].flags |= DoBlue;
 
 	if (vi->class != DirectColor) return;
-	XStoreColors(priv->disp, priv->cmap, priv->gammamap, priv->ncols);
+	XStoreColors(priv->disp, priv->cmap, priv->gammamap, priv->gamma.len);
 	GGIDPRINT_MODE("X: copied default colormap into (%x)\n", priv->cmap);
 }
