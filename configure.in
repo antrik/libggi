@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.14 2001/07/18 17:05:58 thayne Exp $
+dnl $Id: configure.in,v 1.15 2001/07/19 07:44:45 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -896,6 +896,9 @@ doc/man/Makefile
 m4/Makefile
 libggi.conf
 display/fbdev/fbdev.conf
+dist/Makefile
+dist/rpm/Makefile
+dist/rpm/libggi.spec
 )
 
 dnl Removed dirs
