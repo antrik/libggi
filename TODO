@@ -112,7 +112,7 @@ Due : ????-??-??
   aliases, in-file option strings, wildcards
 - make use of libgii's enhanced dl system:
   allow single library to serve multiple suggest strings
-
+  (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
 
 [Target specific issues]
 
