@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.122 2004/05/28 13:10:35 pekberg Exp $
+dnl $Id: configure.in,v 1.123 2004/06/03 05:56:45 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -72,7 +72,7 @@ build_ipc_target="auto"
 build_tele_target="auto"
 
 dnl Helpers
-build_mansync_helper="auto"
+build_mansync_helper="yes"
 build_vgagl_helper="auto"
 build_linvtsw_helper="auto"
 
@@ -154,6 +154,9 @@ dnl build_suidkgi_target=$enableval)
 AC_ARG_ENABLE(memory,
 [  --disable-memory        don't build the memory target],
 build_memory_target=$enableval)
+AC_ARG_ENABLE(mansync,
+[  --disable-mansync       don't build the mansync helper],
+build_mansync_target=$enableval)
 AC_ARG_ENABLE(dga,
 [  --disable-dga           don't build the dga target],
 build_dga_target=$enableval)
@@ -249,10 +252,6 @@ build_linvtsw_helper=$enableval)
 GII_INST_PATH
 GII_UNINST_PATH
 
-AC_ARG_ENABLE(threads,
-[  --enable-threads        use threads for mansync],
-use_threads=$enableval)
-
 AC_ARG_ENABLE(debug,
 [  --disable-debug         don't build with run-time debugging (speed freaks)],
 use_debug=$enableval)
@@ -333,7 +332,6 @@ AC_TYPE_SIGNAL
 
 GGI_DLLEXT
 GGI_CHECKOS
-GGI_THREADLIBS
 
 dnl check for socklen_t
 dnl Define HAVE_SOCKLEN_T if found.
@@ -574,20 +572,6 @@ DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r lin
 XSUBDIRS=""
 FBDEVSUBDIRS=""
 
-AC_MSG_CHECKING(if we should use pthreads for mansync)
-if test "x$use_threads" = "xpthread"; then 
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-
-AC_MSG_CHECKING(if we should use win32 threads for mansync)
-if test "x$use_threads" = "xwin32"; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-
 memory_dependent="x"
 if test "x$build_memory_target" = "xno"; then
   AC_MSG_WARN(the following targets depend on the memory target)
@@ -596,10 +580,7 @@ if test "x$build_memory_target" = "xno"; then
 fi
 
 mansync_dependent="x aa tile palemu trueemu"
-AC_MSG_CHECKING(if we should build mansync helper)
-if test "x$ac_cv_func_fork" = "xno" -a "x$use_threads" = "xno"; then
-  build_mansync_helper=no
-fi
+AC_MSG_CHECKING(if we should build the mansync helper)
 if test "x$build_mansync_helper" = "xno"; then
   AC_MSG_RESULT(no)
   AC_MSG_WARN(the following targets depend on the mansync helper)
