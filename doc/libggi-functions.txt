@@ -660,7 +660,7 @@ Return value
 `ggiMapColor` returns a :man:`ggi_pixel(3)`.
 
 
-`ggiUnmapPixel`, `ggiPackColors`, and `ggiUnpackPixels` returns `0`
+`ggiUnmapPixel`, `ggiPackColors` and `ggiUnpackPixels` returns `0`
 for OK, otherwise an error code.
 
 
