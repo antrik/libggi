@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:08 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/09/20 07:30:52 adamel Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -228,16 +228,16 @@ int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
 	}
 	mode->frames = 1;
 
-	if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
-	    (tm->dpp.y != 1 && tm->dpp.y != GGI_AUTO)) {
+	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
+	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
 		err = -1;
 	}
-	tm->dpp.x = tm->dpp.y = 1;
+	mode->dpp.x = mode->dpp.y = 1;
 
-	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
+	if (mode->size.x != GGI_AUTO || mode->size.y != GGI_AUTO) {
 		err = -1;
 	}
-	tm->size.x = tm->size.y = GGI_AUTO;
+	mode->size.x = mode->size.y = GGI_AUTO;
 
 	GGIDPRINT_MODE("display-lcd823: result %d %dx%d#%dx%dF%d[0x%02x]\n",
 		       err, mode->visible.x, mode->visible.y,
