@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.17 2004/11/27 16:42:14 soyt Exp $
+/* $Id: color.c,v 1.18 2005/03/02 14:36:32 pekberg Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -137,7 +137,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 	return 0;
 }
 
-int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
+int GGI_X_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	
@@ -306,7 +306,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 			LIBGGI_PAL(vis)->clut.data[i].b = xcell.blue;
 		}
 		if (vi->class == PseudoColor || vi->class == GrayScale) {
-			LIBGGI_PAL(vis)->setPalette = GGI_X_setPalette;
+			vis->opcolor->setpalvec = GGI_X_setpalvec;
 		}
 
 		LIBGGI_PAL(vis)->rw_start = 256;

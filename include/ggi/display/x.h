@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.15 2005/02/10 04:55:21 orzo Exp $
+/* $Id: x.h,v 1.16 2005/03/02 14:36:33 pekberg Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -330,7 +330,7 @@ ggifunc_getcharsize	GGI_X_getcharsize_font;
 
 /* color.c protos */
 int _ggi_x_flush_cmap (ggi_visual *vis);
-ggifunc_setPalette	GGI_X_setPalette;
+ggifunc_setpalvec	GGI_X_setpalvec;
 ggifunc_setgammamap	GGI_X_setgammamap;
 ggifunc_getgammamap	GGI_X_getgammamap;
 
