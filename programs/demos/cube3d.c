@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.8 2003/10/08 13:56:11 cegger Exp $
+/* $Id: cube3d.c,v 1.9 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -16,6 +16,11 @@
 ******************************************************************************
 */
 
+/* Include the LibGGI declarations.
+ */
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
+
 /* Include the necessary headers used for e.g. error-reporting.
  */
 #include <stdio.h>
@@ -27,11 +32,6 @@
 /* A little math for the 3d stuff not much ...
  */
 #include <math.h>
-
-/* Include the LibGGI declarations.
- */
-#include <ggi/gii.h>
-#include <ggi/ggi.h>
 
 /* We do shm here !
  */

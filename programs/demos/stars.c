@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.2 2003/07/05 13:00:56 cegger Exp $
+/* $Id: stars.c,v 1.3 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -35,12 +35,12 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
-#include <ggi/ggi.h>
 
 ggi_visual_t vis = NULL, dgavis = NULL;
 static ggi_pixel lookup[256];

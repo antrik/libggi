@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.1 2001/05/12 23:03:10 cegger Exp $
+/* $Id: exttest1.c,v 1.2 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Test extension test.
@@ -26,10 +26,10 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-
 #include <ggi/ggi.h>
 #include <ggi/ggi_ext.h>
+
+#include <stdio.h>
 
 #include "test1.h"
 #include "test2.h"

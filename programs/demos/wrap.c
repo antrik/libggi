@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.10 2003/07/05 13:00:56 cegger Exp $
+/* $Id: wrap.c,v 1.11 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -16,6 +16,15 @@
 ******************************************************************************
 */
 
+/* For autoconf inline support */
+#include "config.h"
+
+/* Include the LibGGI declarations.
+ */
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
+#include <ggi/ggi-unix.h>
+
 /* Include the necessary headers used for e.g. error-reporting.
  */
 #include <stdio.h>
@@ -23,23 +32,24 @@
 #include <string.h>
 #include <time.h>
 #include <limits.h>
-
-/* Include the LibGGI declarations.
- */
-#include <ggi/gii.h>
-#include <ggi/ggi.h>
-#include <ggi/ggi-unix.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <sys/socket.h>
+#ifndef __WIN32__
+# include <sys/socket.h>
+#else
+# ifdef HAVE_WINSOCK2_H
+#  include <winsock2.h>
+# endif
+# ifdef HAVE_WINSOCK_H
+#  include <winsock.h>
+# endif
+# undef HAVE_SOCKLEN_T
+#endif
 #include <sys/un.h>
 #include <signal.h>
 #include <errno.h>
-
-/* For autoconf inline support */
-#include "config.h"
 
 
 /* GNU Hurd hasn't defined it.

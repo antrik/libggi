@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.5 2004/01/08 21:27:12 skids Exp $
+/* $Id: pageflip.c,v 1.6 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -32,10 +32,10 @@
 # define srandom	srand
 #endif
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <ggi/ggi.h>
 #include <math.h>
 
 ggi_color black = { 0x0000, 0x0000, 0x0000 };

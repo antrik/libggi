@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.6 2003/07/06 10:25:23 cegger Exp $
+/* $Id: teleserver.c,v 1.7 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -37,14 +37,14 @@
 */
 
 
+#include <ggi/ggi.h>
+
+#include "libtele.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <ggi/ggi.h>
-
-#include "libtele.h"
 
 
 #define VERSION_STRING  "teleserver 0.8 (c) 1998 Andrew Apted"

@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.3 2003/07/05 13:00:56 cegger Exp $
+/* $Id: textdemo.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -15,10 +15,14 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <string.h>
-
-#include <ggi/ggi.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 ggi_visual_t vis;
 

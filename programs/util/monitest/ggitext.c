@@ -1,4 +1,4 @@
-/* $Id: ggitext.c,v 1.1 2001/05/12 23:03:50 cegger Exp $
+/* $Id: ggitext.c,v 1.2 2004/02/02 19:22:01 cegger Exp $
 ******************************************************************************
 
    Implementation of ggitext: routines for formatted text output
@@ -15,6 +15,7 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <stdlib.h>     /* malloc */
 #include <stdio.h>      /* printf, only debugging */
 

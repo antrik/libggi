@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
+/* $Id: ipc.h,v 1.4 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -35,10 +35,32 @@
 #define INPBUFSIZE	8192
 #define MEMINPMAGIC	'M'
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <sys/shm.h>
+#ifdef __WIN32__
+# ifdef HAVE_WINSOCK2_H
+#   include <winsock2.h>
+# endif
+# ifdef HAVE_WINSOCK_H
+#   include <winsock.h>
+# endif
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
+#ifndef __WIN32__
+# ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+# endif
+#endif
+
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
+
+#ifdef HAVE_SYS_SHM_H
+# include <sys/shm.h>
+#endif
 
 ggifunc_flush            GGI_ipc_flush;
 ggifunc_getmode		 GGI_ipc_getmode;

@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.1 2001/05/12 23:02:37 cegger Exp $
+/* $Id: frames.c,v 1.2 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: frame handling
@@ -25,11 +25,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/trueemu.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <ggi/display/trueemu.h>
 
 
 int GGI_trueemu_setreadframe(ggi_visual *vis, int num)

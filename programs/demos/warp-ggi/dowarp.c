@@ -1,4 +1,4 @@
-/* $Id: dowarp.c,v 1.2 2003/07/05 11:35:58 cegger Exp $
+/* $Id: dowarp.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -22,9 +22,9 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <sys/types.h>
 #include <stdlib.h>
-#include <ggi/ggi.h>
 
 #include "rawpict.h"
 #include "warp.h"

@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.3 2003/07/04 23:36:57 cegger Exp $
+/* $Id: structs.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -25,11 +25,11 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <ggi/ggi.h>
 
 
 static ggi_visual_t visual;

@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.7 2003/07/06 10:25:23 cegger Exp $
+/* $Id: text.c,v 1.8 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -26,16 +26,16 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include "libtele.h"
 #include <ggi/display/tele.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 
 int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)

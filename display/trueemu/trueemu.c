@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: trueemu.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -25,13 +25,13 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/trueemu.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 
 /**************************************************

@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.4 2003/07/12 06:29:10 cegger Exp $
+/* $Id: findleaks.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -15,11 +15,11 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <ggi/ggi.h>
 
 #define _get_ggi_alloced() 0
 

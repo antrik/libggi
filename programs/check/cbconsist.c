@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.10 2003/08/24 15:42:42 cegger Exp $
+/* $Id: cbconsist.c,v 1.11 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -26,12 +26,16 @@
  *    and to throw out bad marks from task scheduling.
  */
 
+#include "config.h"
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#include <ggi/ggi.h>
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#endif
 
 struct cbcstate_s;
 typedef struct cbcstate_s cbcstate;

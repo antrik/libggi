@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: mode.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -26,11 +26,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/trueemu.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <ggi/display/trueemu.h>
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/gt-auto.inc"

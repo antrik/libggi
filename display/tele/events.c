@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: events.c,v 1.3 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -25,14 +25,14 @@
 ******************************************************************************
 */
 
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/tele.h>
+
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 
 #define MINSLEEPTIME  (20*1000)  /* microseconds */

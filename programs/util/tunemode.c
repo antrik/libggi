@@ -13,6 +13,13 @@
  *
  */
 
+/* NEVER do this in your own programs. They will break without warning. */
+
+#include <kgi/kgi.h>
+#include <kgi/kgi_commands.h>
+
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,13 +30,6 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 
-
-/* NEVER do this in your own programs. They will break without warning. */
-
-#include <kgi/kgi.h>
-#include <kgi/kgi_commands.h>
-
-#include <ggi/ggi.h>
 
 /* We want to draw circles, but not use LibGGI2D.
  */

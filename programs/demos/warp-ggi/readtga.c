@@ -1,4 +1,4 @@
-/* $Id: readtga.c,v 1.2 2003/07/05 11:35:58 cegger Exp $
+/* $Id: readtga.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -24,10 +24,10 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ggi/ggi.h>
 #include "rawpict.h"
 
 #include "config.h"

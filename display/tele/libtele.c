@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.7 2003/10/12 10:01:00 cegger Exp $
+/* $Id: libtele.c,v 1.8 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -30,6 +30,20 @@
 #include <ggi/internal/plat.h>
 #include <ggi/gg.h>
 
+#include <ggi/ggi.h>
+
+#include "libtele.h"
+
+#ifdef __WIN32__
+# ifdef HAVE_WINSOCK2_H
+#   include <winsock2.h>
+# endif
+# ifdef HAVE_WINSOCK_H
+#   include <winsock.h>
+# endif
+# undef HAVE_HERROR
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -38,24 +52,29 @@
 #include <fcntl.h>
 #include <signal.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
 #endif
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
+
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
 #endif
-#ifdef HAVE_NETDB_H
-# include <netdb.h>
+
+#ifndef __WIN32__
+# ifdef HAVE_SYS_SOCKET_H
+#   include <sys/socket.h>
+# endif
+# ifdef HAVE_NETINET_IN_H
+#   include <netinet/in.h>
+# endif
+# ifdef HAVE_NETDB_H
+#   include <netdb.h>
+# endif
 #endif
+
 #ifdef HAVE_SYS_UN_H
 # include <sys/un.h>
 #endif
-
-#include <ggi/ggi.h>
-
-#include "libtele.h"
 
 #ifdef GGI_BIG_ENDIAN
 # define MY_ENDIAN	TELE_BIG_ENDIAN

@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.4 2003/07/05 13:00:56 cegger Exp $
+/* $Id: saver.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -15,13 +15,17 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/ggi.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-
-#include <ggi/ggi.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 /* The time in minutes till activation
  */

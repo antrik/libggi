@@ -1,4 +1,4 @@
-/* $Id: blit24.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: blit24.c,v 1.3 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : blit24
@@ -25,13 +25,13 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/trueemu.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 
 /**************************************************

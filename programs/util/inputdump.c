@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.4 2003/07/05 14:04:25 cegger Exp $
+/* $Id: inputdump.c,v 1.5 2004/02/02 19:22:01 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -24,12 +24,12 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#include <ggi/ggi.h>
 
 #include "giik2str.h"
 

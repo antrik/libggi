@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.2 2003/07/05 13:00:56 cegger Exp $
+/* $Id: flying_ggis.c,v 1.3 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -26,6 +26,8 @@
 # define random		rand
 #endif
 
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,8 +36,6 @@
 #include <time.h>
 #include <math.h>
 #include <sys/time.h>
-
-#include <ggi/ggi.h>
 
 
 #define fixed  sint32   /* 16.16 */

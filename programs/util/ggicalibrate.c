@@ -4,6 +4,8 @@
  * based on xcalibrate from Charles Flynn
  */
 
+#include <ggi/ggi.h>
+
 #define SCANCHAR 1
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,8 +19,6 @@
 #include <sys/ioctl.h>
 
 #include <assert.h>
-
-#include <ggi/ggi.h>
 
 typedef struct {
 	ushort x;

@@ -1,4 +1,4 @@
-/* $Id: mousedemo.c,v 1.1 2001/05/12 23:03:55 cegger Exp $
+/* $Id: mousedemo.c,v 1.2 2004/02/02 19:22:02 cegger Exp $
 ******************************************************************************
 
    Written in 1998 by Andreas Beck	[becka@ggi-project.org]
@@ -13,15 +13,15 @@
 ******************************************************************************
 */
 
+/* Include the LibGGI declarations.
+ */
+#include <ggi/ggi.h>
+
 /* Include the necessary headers used for e.g. error-reporting.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/* Include the LibGGI declarations.
- */
-#include <ggi/ggi.h>
 
 ggi_visual_t vis;
 

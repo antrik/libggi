@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.4 2003/07/05 13:00:56 cegger Exp $
+/* $Id: slimy.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -13,9 +13,9 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ggi/ggi.h>
 #include <time.h>
 #include <math.h>
 

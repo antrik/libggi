@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.4 2003/07/04 23:36:57 cegger Exp $
+/* $Id: consistency.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -15,12 +15,12 @@
 ******************************************************************************
 */
 
+#include <ggi/ggi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
-#include <ggi/ggi.h>
 
 
 /* If this flag is set, break out early when inconsitencies are detected.

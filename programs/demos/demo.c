@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.13 2003/07/05 13:00:56 cegger Exp $
+/* $Id: demo.c,v 1.14 2004/02/02 19:22:00 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -30,6 +30,10 @@
 # define srandom	srand
 #endif
 
+/* Include the LibGGI declarations.
+ */
+#include <ggi/ggi.h>
+
 /* Include the necessary headers used for e.g. error-reporting.
  */
 #include <stdio.h>
@@ -37,10 +41,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-
-/* Include the LibGGI declarations.
- */
-#include <ggi/ggi.h>
 
 /* We are running on a single primary visual which is made accessible
  * globally so subroutines like "waitabit" can access it.

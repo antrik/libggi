@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2003/12/13 21:12:03 mooz Exp $
+/* $Id: color.c,v 1.7 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -25,15 +25,15 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include "libtele.h"
 #include <ggi/display/tele.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 #define MAX_COLORS  TELE_MAXIMUM_TLONG(TeleCmdSetPaletteData)

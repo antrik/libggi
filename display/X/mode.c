@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2004/01/08 21:18:44 skids Exp $
+/* $Id: mode.c,v 1.24 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -29,14 +29,14 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 #include <ggi/display/mansync.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /*

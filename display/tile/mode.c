@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
+/* $Id: mode.c,v 1.5 2004/02/02 19:21:59 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -26,12 +26,13 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/tile.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include <ggi/display/tile.h>
 
 #include "../common/gt-auto.inc"
 
