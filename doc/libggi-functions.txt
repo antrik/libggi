@@ -396,7 +396,7 @@ Description
 -----------
 
 `ggiSetMode` sets any mode (text or graphics).  It also performs mode
-negotiation like `ggiCheckMode`, but if any non-`GGI_AUTO`/`GT_AUTO`
+negotiation like :man:`ggiCheckMode(3)`, but if any non-`GGI_AUTO`/`GT_AUTO`
 parameters are changed from the original mode, the new mode will not
 be silently set.
 
@@ -420,6 +420,14 @@ Return value
 The mode setting functions return `0` if the mode is set successfully,
 otherwise an error code.
 
+
+Notes
+-----
+
+Do not set a mode before checking it. You may be able to set up
+a certain mode on one target, but not other targets.
+
+See the example in :man:`ggiCheckMode(3)`
 
 
 See Also
