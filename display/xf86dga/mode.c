@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/09/08 20:38:20 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/09/08 20:56:53 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -494,7 +494,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 	    (tm->frames * (GT_ByPPP(priv->stride, tm->graphtype))
 	     * tm->virt.y) > priv->mem_size * 1024) {
 		tm->frames = priv->mem_size * 1024 /
-		    (((GT_SIZE(tm->graphtype) * priv->stride + 7) / 8)
+		    (GT_ByPPP(priv->stride, tm->graphtype)
 		     * tm->virt.y);
 		err = -1;
 	}
