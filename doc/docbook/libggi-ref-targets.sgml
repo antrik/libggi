@@ -1,6 +1,14 @@
 <reference id="libggi-ref-targets"><title>Targets reference</title>
 <refentry id="display-x">
 
+
+<refmeta>
+<refentrytitle><systemitem/display-x/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+
 <refnamediv>
 <refname><systemitem/display-x/</refname>
 <refname><systemitem/display-xlib/</refname>
@@ -119,6 +127,12 @@ be turned off in order to leave the window.
 
 <refentry id="display-dga">
 
+<refmeta>
+<refentrytitle><systemitem/display-dga/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-dga/</refname>
 <refpurpose/Display using XFree86-DGA extension/
@@ -180,6 +194,12 @@ privileges!
 
 <refentry id="display-aa">
 
+<refmeta>
+<refentrytitle><systemitem/display-aa/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-aa/</refname>
 <refpurpose/Display using AAlib/
@@ -223,6 +243,12 @@ AA-lib options may be specified using the the <envar/AA_OPTS/ variable.
 
 
 <refentry id="display-fbdev">
+
+<refmeta>
+<refentrytitle><systemitem/display-fbdev/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-fbdev/</refname>
@@ -337,6 +363,12 @@ Disable virtual console support.
 
 <refentry id="display-file">
 
+<refmeta>
+<refentrytitle><systemitem/display-file/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-file/</refname>
 <refpurpose/Render display into image file/
@@ -424,7 +456,55 @@ command.
 </refentry>
 
 
+<refentry id="display-directx">
+
+<refmeta>
+<refentrytitle><systemitem/display-directx/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname><systemitem/display-directx/</refname>
+<refpurpose/DirectX (WIN32)/
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command/display-directx/
+<arg choice=plain/:/
+</cmdsynopsis>
+
+<cmdsynopsis>
+<command/display-directxnt/
+<arg choice=plain/:/
+</cmdsynopsis>
+
+</refsynopsisdiv>
+
+<refsect1>
+<title/Description/
+
+<para>
+Used for Win32 DirectX port of libGGI.
+</para>
+
+<para>
+Use <command/display-directxnt/ on NT4 system.
+</para>
+
+</refsect1>
+
+</refentry>
+
+
 <refentry id="display-glide">
+
+<refmeta>
+<refentrytitle><systemitem/display-glide/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-glide/</refname>
@@ -506,6 +586,12 @@ drawing-primitives.</member>
 
 
 <refentry id="display-memory">
+
+<refmeta>
+<refentrytitle><systemitem/display-memory/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-memory/</refname>
@@ -609,6 +695,12 @@ checks can or will be made that a certain mode fits into it.
 
 <refentry id="display-svgalib">
 
+<refmeta>
+<refentrytitle><systemitem/display-svgalib/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-svgalib/</refname>
 <refpurpose/Display fullscreen using SVGAlib/
@@ -649,6 +741,12 @@ addressing.</member>
 
 
 <refentry id="display-vcsa">
+
+<refmeta>
+<refentrytitle><systemitem/display-vcsa/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-vcsa/</refname>
@@ -730,6 +828,12 @@ block mainly, and others when using <option/-shade/).
 
 <refentry id="display-monotext">
 
+<refmeta>
+<refentrytitle><systemitem/display-monotext/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-monotext/</refname>
 <refpurpose/Emulate palettized modes on text-mode visuals/
@@ -798,6 +902,12 @@ value.
 
 <refentry id="display-multi">
 
+<refmeta>
+<refentrytitle><systemitem/display-multi/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-multi/</refname>
 <refpurpose/Duplicate visual operations onto multiple visuals/
@@ -845,6 +955,12 @@ do) contain colons, they need to be enclosed in parentheses.
 </refentry>
 
 <refentry id="display-palemu">
+
+<refmeta>
+<refentrytitle><systemitem/display-palemu/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-palemu/</refname>
@@ -910,6 +1026,12 @@ defaults to automatic selection (just like using
 </refentry>
  
 <refentry id="display-tile">
+
+<refmeta>
+<refentrytitle><systemitem/display-tile/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
 
 <refnamediv>
 <refname><systemitem/display-tile/</refname>
@@ -1044,6 +1166,12 @@ tile which maps the whole screen.
 
 <refentry id="display-trueemu">
 
+<refmeta>
+<refentrytitle><systemitem/display-trueemu/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-trueemu/</refname>
 <refpurpose/Emulate truecolor modes/
@@ -1140,6 +1268,13 @@ set).</para></listitem>
 </refentry>
 
 <refentry id="display-sub">
+
+<refmeta>
+<refentrytitle><systemitem/display-sub/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
 <refnamediv>
 <refname><systemitem/display-sub/</refname>
 <refpurpose/Make a child visual that is a window to the parent/
