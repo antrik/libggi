@@ -6,6 +6,8 @@ Copyright (c) 1999  Marcus Sundberg [marcus@ggi-project.org]
 
 */
 
+#include <unistd.h>
+
 /* THIS IS NOT AN X CONSORTIUM STANDARD */
 
 /* Defines */
@@ -283,7 +285,6 @@ Bool _ggi_XF86DGAFillRectangle(Display* dpy, int screen, Drawable d, GC gc,
 #include <X11/Xmd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <fcntl.h>
 #if defined(ISC) 
 # define HAS_SVR3_MMAP

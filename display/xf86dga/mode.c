@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2003/07/06 10:25:24 cegger Exp $
+/* $Id: mode.c,v 1.7 2003/12/13 23:52:17 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -235,6 +235,9 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 			 PseudoColor : TrueColor, &vinfo);
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
+		free(LIBGGI_PAL(vis)->priv);
+		LIBGGI_PAL(vis)->priv = NULL;
+
 		priv->x.cmap = XCreateColormap(priv->x.display,
 					       DefaultRootWindow(priv->x.
 								 display),
@@ -373,7 +376,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	/* color */
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
-		vis->opcolor->setpalvec = GGI_xf86dga_setpalvec;
+		LIBGGI_PAL(vis)->setPalette = GGI_xf86dga_setPalette;
 	}
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);

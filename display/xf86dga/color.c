@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: color.c,v 1.3 2003/12/13 23:52:17 cegger Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -31,29 +31,47 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xf86dga.h>
 
-int GGI_xf86dga_setpalvec(ggi_visual *vis, int start, int len,
-			  ggi_color *colormap) 
+
+int GGI_xf86dga_setPalette(ggi_visual *vis, size_t start, size_t size,
+			   const ggi_color *colormap)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	XColor xcol;
-	int i;
+	size_t i;
 
-	if (start == GGI_PALETTE_DONTCARE) start = 0;
+	size_t end = start + size;
 
-	if (colormap == NULL || start+len > DGA_PRIV(vis)->x.nocols) return -1;
+	GGIDPRINT_COLOR("GGI_xf86dga_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
+			vis, start, size, colormap->r, colormap->g, colormap->b);
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	if (colormap == NULL ||
+	    end > (size_t)(DGA_PRIV(vis)->x.nocols))
+	{
+		return -1;
+	}	/* if */
+
+	LIBGGI_PAL(vis)->size = size;
+	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+
+	if (start < LIBGGI_PAL(vis)->rw_start) {
+		LIBGGI_PAL(vis)->rw_start = start;
+	}
+	if (end > LIBGGI_PAL(vis)->rw_stop) {
+		LIBGGI_PAL(vis)->rw_stop = end;
+	}
 
 	ggLock(priv->x.xliblock);
 
-	for(i = start; i<start+len; i++) {
-		xcol.red  =vis->palette[i].r;
-		xcol.green=vis->palette[i].g;
-		xcol.blue =vis->palette[i].b;
-		xcol.pixel=i;
-		xcol.flags= DoRed | DoGreen | DoBlue ;
-		XStoreColor(priv->x.display, priv->x.cmap,&xcol);
-		XStoreColor(priv->x.display, priv->cmap2,&xcol);
+	for(i = LIBGGI_PAL(vis)->rw_start; i < LIBGGI_PAL(vis)->rw_stop;
+		++i)
+	{
+		xcol.red   = LIBGGI_PAL(vis)->clut[i].r;
+		xcol.green = LIBGGI_PAL(vis)->clut[i].g;
+		xcol.blue  = LIBGGI_PAL(vis)->clut[i].b;
+		xcol.pixel = i;
+		xcol.flags = DoRed | DoGreen | DoBlue ;
+		XStoreColor(priv->x.display, priv->x.cmap, &xcol);
+		XStoreColor(priv->x.display, priv->cmap2, &xcol);
 	}
 
 	/* Work around a nasty DGA bug */

@@ -1,4 +1,4 @@
-/* $Id: xf86dga.h,v 1.2 2001/06/24 19:33:12 skids Exp $
+/* $Id: xf86dga.h,v 1.3 2003/12/13 23:51:52 cegger Exp $
 ******************************************************************************
 
    XFree86 Direct Graphics Access target for LibGGI
@@ -131,7 +131,7 @@ ggifunc_checkmode	GGI_xf86dga_checkmode;
 ggifunc_getapi		GGI_xf86dga_getapi;
 ggifunc_setflags	GGI_xf86dga_setflags;
 
-ggifunc_setpalvec	GGI_xf86dga_setpalvec;
+ggifunc_setPalette	GGI_xf86dga_setPalette;
 
 ggifunc_drawbox		GGI_xf86dga_drawbox;
 ggifunc_copybox		GGI_xf86dga_copybox;
