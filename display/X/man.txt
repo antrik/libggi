@@ -132,7 +132,7 @@ Options
     hexadecimal number.  The special string "root" will cause the
     application to run in the root window of the selected screen (or
     the default screen if no explicit selection has been made.)  Note
-    that in the root window, you may need to explictly select a LibGII
+    that in the root window, you may need to explicitly select a LibGII
     input source using the `GGI_INPUT` environment variable as the
     window manager will absorb all events sent to the root window.
     Some features (currently frames and virtual areas) may not work in
