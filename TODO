@@ -107,7 +107,9 @@ New X Target:
   and they will tell you that dbe allows you to create double-buffer
   areas for windows.  This would be used to implement frames, instead
   of "para-virtual area" like we do now, as an enhancement to giving
-  each frame its own window.
+  each frame its own window. Set the frame being displayed to the
+  frontbuffer, the write frame to the backbuffer.
+  If display frame == write frame, render onto dbe's expose buffer.
 - dga helper for new display-X: allow -inwin=root visuals to use dga,
   and overload the normal operations with dga acceleration.  This can
   only be done after vidmode support.
