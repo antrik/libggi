@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2004/03/12 13:00:20 pekberg Exp $
+/* $Id: visual.c,v 1.2 2004/03/13 13:53:53 cegger Exp $
 ******************************************************************************
 
    Generic library for pseudo targets
@@ -31,7 +31,7 @@
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32 *dlret)
 {
-	*dlret = 0;
+	*dlret = GGI_DL_OPDRAW;
 	return 0;
 }
 
