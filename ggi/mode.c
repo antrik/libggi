@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/08 18:56:31 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/20 12:39:44 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -863,7 +863,7 @@ int _ggi_physz_figure_visible(ggi_mode *mode)
 }
 
 
-int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, ggi_coord *op_sz, 
+int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, const ggi_coord *op_sz, 
 			int dpix, int dpiy, int dsx, int dsy)
 {
 

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.15 2004/09/15 18:50:32 cegger Exp $
+/* $Id: internal.h,v 1.16 2004/09/20 12:39:44 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -108,7 +108,8 @@ GGIAPIFUNC int _ggi_physz_parse_option(const char *optstr, int *physzflag,
 				       ggi_coord * physz);
 GGIAPIFUNC int _ggi_physz_figure_visible(ggi_mode *mode);
 GGIAPIFUNC int _ggi_physz_figure_size(ggi_mode * mode, int physzflag,
-				      ggi_coord * op_sz, int dpix, int dpiy,
+				      const ggi_coord * op_sz,
+				      int dpix, int dpiy,
 				      int dsx, int dsy);
 
 /* probe.c */
