@@ -1,4 +1,4 @@
-.TH "ggiGetGamma" 3 "2004-11-11" "libggi-current" GGI
+.TH "ggiGetGamma" 3 "2004-11-15" "libggi-current" GGI
 .SH NAME
 \fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
 .SH SYNOPSIS
@@ -42,12 +42,12 @@ integers referenced by \fImaxwrite\fR and \fImaxread\fR).  This must be
 done once for each channel.  The parameter \fIbitmeaning\fR should be
 set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
 the channel of which you are inquiring.  If \fBggiGammaMax\fR returns an
-error, you cannot set the gamma map on this visual.  If \fBggiGammaMax\fR
-succeeds, but \fImaxwrite\fR is -1 on return, this means that
-\fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
+\fBggi-error(3)\fR, you cannot set the gamma map on this visual. 
+If \fBggiGammaMax\fR succeeds, but \fImaxwrite\fR is -1 on return, this means
+that \fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
 
 \fBggiSetGamma\fR and \fBggiGetGamma\fR sets or gets the gamma correction for
 the visual according to the usual curve associated with the given
 values for each channel, which should be positive.
 .SH RETURN VALUE
-All five functions \fB0\fR for OK, otherwise an error code.
+All five functions \fB0\fR for OK, otherwise an \fBggi-error(3)\fR code.

@@ -1,4 +1,4 @@
-.TH "ggiSetFlags" 3 "2004-11-11" "libggi-current" GGI
+.TH "ggiSetFlags" 3 "2004-11-15" "libggi-current" GGI
 .SH NAME
 \fBggiSetFlags\fR, \fBggiGetFlags\fR, \fBggiAddFlags\fR, \fBggiRemoveFlags\fR : Set or get flags affecting operation on a visual
 .SH SYNOPSIS
@@ -38,13 +38,13 @@ i.e. right after \fBggiOpen(3)\fR.
 .RE
 .SH RETURN VALUE
 \fBggiSetFlags\fR, \fBggiAddFlags\fR, and \fBggiRemoveFlags\fR return \fB0\fR on
-success, \fB<0\fR on failure.  This will only happen if the failure of a
-target to support the addition or removal of a flag will cause the
-target to behave in a way that the application is not expecting.  As
-of this writing there are no such cases.  On visuals where certain
-flags are unsupported but are inconsequential, these functions will
-return a successful return code, but will not actually set or clear
-the flag.
+success, an \fBggi-error(3)\fR code on failure.  This will only
+happen if the failure of a target to support the addition or
+removal of a flag will cause the target to behave in a way that
+the application is not expecting.  As of this writing there are no
+such cases.  On visuals where certain flags are unsupported but are
+inconsequential, these functions will return a successful return
+code, but will not actually set or clear the flag.
 
 \fBggiGetFlags\fR returns the current flags.  This can be used by the
 curious to check whether a flag is being silently ignored as per

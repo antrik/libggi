@@ -1,4 +1,4 @@
-.TH "ggiSetPalette" 3 "2004-11-11" "libggi-current" GGI
+.TH "ggiSetPalette" 3 "2004-11-15" "libggi-current" GGI
 .SH NAME
 \fBggiSetPalette\fR, \fBggiGetPalette\fR : Manipulate the palette of a visual
 .SH SYNOPSIS
@@ -27,11 +27,12 @@ and should be used if possible.
 \fIcmap\fR.
 .SH RETURN VALUE
 \fBggiSetPalette\fR returns the number of the first entry changed.
-\fB<0\fR indicate error.
+\fB<0\fR indicate an \fBggi-error(3)\fR.
 
-\fBggiGetPalette\fR returns \fB0\fR for OK, otherwise an error code. When
-called with len=0 this function will not automatically succeed, but
-the return code will indicate whether there is a readable CLUT.
+\fBggiGetPalette\fR returns \fB0\fR for OK, otherwise an \fBggi-error(3)\fR
+code. When called with len=0 this function will not automatically
+succeed, but the return code will indicate whether there is a
+readable CLUT.
 .SH PALETTE IN GGI
 Write something useful here.
 .SH SEE ALSO

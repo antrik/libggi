@@ -1,4 +1,4 @@
-.TH "ggiMapColor" 3 "2004-11-11" "libggi-current" GGI
+.TH "ggiMapColor" 3 "2004-11-15" "libggi-current" GGI
 .SH NAME
 \fBggiMapColor\fR, \fBggiUnmapPixel\fR, \fBggiPackColors\fR, \fBggiUnpackPixels\fR : Convert from ggi_color(s) to ggi_pixel(s) and vice versa
 .SH SYNOPSIS
@@ -41,6 +41,6 @@ efficiency purposes.
 \fBggiMapColor\fR returns a \fBggi_pixel(3)\fR.
 
 \fBggiUnmapPixel\fR, \fBggiPackColors\fR and \fBggiUnpackPixels\fR returns \fB0\fR
-for OK, otherwise an error code.
+for OK, otherwise an \fBggi-error(3)\fR code.
 .SH SEE ALSO
 \fBggiGetPixelFormat(3)\fR, \fBggi_color(3)\fR, \fBggi_pixelformat(3)\fR
