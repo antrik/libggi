@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: line.c,v 1.2 2004/10/15 10:25:26 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Arbitrary lines for display-X
@@ -34,6 +34,8 @@ int GGI_X_drawline_slave(ggi_visual *vis,int x1, int y1, int x2, int y2)
 	int dummy;
 	priv = GGIX_PRIV(vis);
 
+	LIBGGI_ASSERT(priv->slave->opdraw->drawline != NULL, "Null pointer bug");
+
         priv->slave->opdraw->drawline(priv->slave, x1, y1, x2, y2);
 	if (!_ggi_clip2d(vis,&x1,&y1,&x2,&y2,&dummy,&dummy)) return GGI_OK;
         GGI_X_DIRTY(vis, x1, y1, x2-x1, y2-y1);
@@ -44,6 +46,8 @@ int GGI_X_drawline_slave_draw(ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
+
+	LIBGGI_ASSERT(priv->slave->opdraw->drawline != NULL, "Null pointer bug");
 
         priv->slave->opdraw->drawline(priv->slave, x1, y1, x2, y2);
 	y1 = (y1 + LIBGGI_VIRTY(vis) * vis->w_frame_num);
