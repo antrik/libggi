@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:vcsa"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:vcsa"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 vcsa_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 vcsa_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

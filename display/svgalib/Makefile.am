@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:svgalib"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:svgalib"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 svgalib_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lvga
 svgalib_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:tele"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:tele"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 tele_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg $(bsdsock_libs)
 tele_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

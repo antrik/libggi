@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:palemu"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:palemu"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 palemu_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 palemu_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

@@ -1,4 +1,5 @@
 SUBDIRS = @TESTSUBDIRS@
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:regress"'
 DIST_SUBDIRS = display.aa display.mansync display.palemu \
 		display.tile display.trueemu display.x
 

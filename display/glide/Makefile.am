@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:glide"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:glide"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 glide_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lglide2x -lm
 glide_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

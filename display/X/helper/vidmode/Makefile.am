@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:X"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:X"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
 helper_x_vidmode_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
 	$(X_LIBS) $(x_helper_xf86vm_libs) -lX11 -lXext $(X_EXTRA_LIBS)

@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:libkgi"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:libkgi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 kgilib_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lgalloc
 kgilib_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

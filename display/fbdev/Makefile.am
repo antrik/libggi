@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:fbdev"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:fbdev"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 fbdev_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 fbdev_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

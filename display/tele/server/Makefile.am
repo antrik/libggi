@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:tele"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:tele"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 
 bin_PROGRAMS = ggiteleserver

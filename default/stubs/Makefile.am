@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"LibGGI:default"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 stubs_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 stubs_la_LDFLAGS = $(extra_libraries) -module -no-undefined \

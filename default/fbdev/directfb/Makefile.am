@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"LibGGI:default"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:default"'
 SUBDIRS = core
 
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)

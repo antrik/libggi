@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:trueemu"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:trueemu"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 trueemu_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 trueemu_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

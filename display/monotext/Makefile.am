@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:monotext"'
+AM_CFLAGS = -DDEBUG_NAMESPACE='"libggi:display:monotext"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 monotext_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lm
 monotext_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

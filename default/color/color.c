@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.16 2004/11/27 16:41:52 soyt Exp $
+/* $Id: color.c,v 1.17 2004/11/27 18:45:48 soyt Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -117,10 +117,10 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 		}
 	}
 
-	GGID2(DPRINT_COLOR(
+	DPRINT2_COLOR(
 		"PAL_mapcolor(%p): %04x%04x%04x -> %04x%04x%04x (%d)\n",
 		vis, r, g, b, pal[closest].r, pal[closest].g, pal[closest].b,
-		closest));
+		closest);
 
 	return closest;
 }
@@ -136,16 +136,16 @@ ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
 
-	GGID2(DPRINT_COLOR("TRUE16_mapcolor_4to7(%p, "
-			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
-			      vis, col->r, col->g, col->b));
-
+	DPRINT2_COLOR("TRUE16_mapcolor_4to7(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
+	
 	ret = ((col->r >> priv->red_unmap) & priv->red_mask) |
 	  ((col->g >> priv->green_unmap) & priv->green_mask) |
 	  ((col->b >> priv->blue_unmap) & priv->blue_mask);
 
-	GGID2(DPRINT_COLOR("TRUE16_mapcolor_4to7 returning 0x%x\n", ret));
-
+	DPRINT2_COLOR("TRUE16_mapcolor_4to7 returning 0x%x\n", ret);
+	
 	return ret;
 }
 
@@ -154,33 +154,33 @@ ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
 
-	GGID2(DPRINT_COLOR("TRUE_mapcolor(%p, "
-			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
-			      vis, col->r, col->g, col->b));
+	DPRINT2_COLOR("TRUE_mapcolor(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
 
 	ret = (SSHIFT(col->r, priv->red_map) & priv->red_mask) |
 	  (SSHIFT(col->g, priv->green_map) & priv->green_mask) |
 	  (SSHIFT(col->b, priv->blue_map) & priv->blue_mask);
 
-	GGID2(DPRINT_COLOR("TRUE_mapcolor returning 0x%x\n", ret));
-
+	DPRINT2_COLOR("TRUE_mapcolor returning 0x%x\n", ret);
+	
 	return ret;
 }
 
 ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
-
-	GGID2(DPRINT_COLOR("GREY_mapcolor(%p, "
-			      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
-			      vis, col->r, col->g, col->b));
-
+	
+	DPRINT2_COLOR("GREY_mapcolor(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
+	
 	/* NB: This formula is not very good... */
 	ret = (col->r*82 + col->g*124 + col->b*50)
 		>> COLOR_GREYPRIV(vis)->shift;
 
-	GGID2(DPRINT_COLOR("GREY_mapcolor returning 0x%x\n", ret));
-
+	DPRINT2_COLOR("GREY_mapcolor returning 0x%x\n", ret);
+	
 	return ret;
 }
 
