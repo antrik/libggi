@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/09/22 20:09:36 nsouch Exp $
+/* $Id: mode.c,v 1.22 2004/11/13 15:56:21 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -231,7 +231,7 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		break;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *mode)
@@ -473,7 +473,7 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 		break;
 
 	default:
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	mode.frames = 1;	

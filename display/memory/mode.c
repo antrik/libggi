@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2004/10/31 14:25:01 cegger Exp $
+/* $Id: mode.c,v 1.23 2004/11/13 15:56:23 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -107,7 +107,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 		fbaddr = malloc((size_t)(fstride * mode->frames));
 		if (! fbaddr) {
 			GGIDPRINT("Out of memory!");
-			return -1;
+			return GGI_ENOMEM;
 		}
 	} else {
 		fbaddr = priv->memptr;
@@ -185,7 +185,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 
 	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT)
-			return -1;
+			return GGI_ENOMATCH;
 
 		strcpy(apiname, "generic-color");
 		return 0;
@@ -206,7 +206,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)

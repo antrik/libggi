@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:48:21 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/13 15:56:18 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -97,7 +97,7 @@ static int origin_changed(ggi_visual *vis) {
 
         db = _ggi_db_find_frame(vis, vis->d_frame_num);
 
-        if (db == NULL) return -1;
+        if (db == NULL) return GGI_ENOTFOUND;
 
 	gt = LIBGGI_GT(vis);
 
@@ -139,7 +139,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return -1;
 
 	if (!(ctx = (radeon_context_t*)malloc(sizeof(*ctx))))
-		return -1;
+		return GGI_ENOMEM;
 	
 	/* setup the accel_priv */
 	KGI_ACCEL_PRIV(vis) = ctx;

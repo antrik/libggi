@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/10/31 14:25:05 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/11/13 15:56:26 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -73,7 +73,7 @@ int GGI_trueemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static int do_dbstuff(ggi_visual *vis)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/10/31 14:25:02 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/11/13 15:56:23 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -69,7 +69,7 @@ int GGI_monotext_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -242,7 +242,7 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 	    ((mode->visible.y % toth) != 0)) {
 		GGIDPRINT_MODE("display-monotext: visible size is not a "
 			       "multiple of the target size.\n");
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	
 	sq_x = mode->visible.x / totw;
@@ -251,12 +251,12 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 	if (sq_x <= 0 || sq_y <= 0) {
 		GGIDPRINT_MODE("display-monotext: visible size is not a "
 			       "multiple of the target size.\n");
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	if (mode->visible.x / priv->accuracy.x / sq_x != totw ||
 	    mode->visible.y / priv->accuracy.y / sq_y != toth) {
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	return 0;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/12 20:55:23 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/11/13 15:56:27 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -68,7 +68,7 @@ int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		break;
 	}
 			
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
@@ -95,13 +95,13 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 	err = GGI_wsfb_checkmode(vis, tm);
 	if (err) {
 		GGIDPRINT("error from checkmode during GGI_wsfb_setmode\n");
-		return -1;
+		return err;
 	}
 
 	switch(tm->graphtype) {
 	case GT_8BIT : break;
 	default:
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if ((GT_SCHEME(tm->graphtype) == GT_PALETTE)) {
 		int nocols = 1 << GT_DEPTH(tm->graphtype);

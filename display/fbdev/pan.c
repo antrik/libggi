@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.5 2004/10/31 15:16:42 cegger Exp $
+/* $Id: pan.c,v 1.6 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -81,7 +81,7 @@ int GGI_fbdev_setdisplayframe(ggi_visual *vis, int num)
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOMATCH;
         }
         vis->d_frame_num = num;
 

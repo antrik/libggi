@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2004/10/31 15:16:42 cegger Exp $
+/* $Id: color.c,v 1.9 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -252,8 +252,7 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 	priv = FBDEV_PRIV(vis);
 	if (colormap == NULL) return -1;
 	if (vis->gamma == NULL) return -2; /* Wrong GT if not hooked */
-	if (start >= priv->gamma.len) return -1;
-	if (start < 0) return -1;
+	if (start < 0 || start >= priv->gamma.len) return -1;
 	if (len > (priv->gamma.len - start)) return -1;
 
 	gam.start = start;
@@ -294,8 +293,7 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 	if (colormap == NULL) return -1;
 	if (vis->gamma == NULL) return -2;
 	if (vis->gamma->map == NULL) return -1;
-	if (start >= vis->gamma->len) return -1;
-	if (start < 0) return -1;
+	if (start < 0 || start >= vis->gamma->len) return -1;
 	if (len > (vis->gamma->len - start)) return -1;
 
 	i = 0;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/10/31 14:25:04 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/11/13 15:56:26 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -119,7 +119,7 @@ int GGI_tile_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 		case 2:
 			if(!TILE_PRIV(vis)->use_db)
-				return -1;
+				return GGI_ENOMATCH;
 
 			if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
 				sprintf(apiname, "generic-text-%u",
@@ -134,7 +134,7 @@ int GGI_tile_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 

@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.15 2004/09/12 10:02:42 cegger Exp $
+/* $Id: cube3d.c,v 1.16 2004/11/13 15:56:27 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -566,7 +566,7 @@ static int spawn_bg(char *what)
 
 	pid = fork();
 	if (pid == -1)
-		return -1;
+		return pid;
 	if (pid == 0) {
 		execlp("/bin/sh", "/bin/sh", "-c", what, (void *) NULL);
 		exit(127);

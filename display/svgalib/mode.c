@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2004/09/13 11:12:24 cegger Exp $
+/* $Id: mode.c,v 1.20 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -109,7 +109,7 @@ int GGI_svga_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 		case 3:
 			if(SVGA_PRIV(vis)->ismodex)
-				return -1;
+				return GGI_ENOMATCH;
 			
 			if(SVGA_PRIV(vis)->isbanked) {
 				strcpy(apiname, "helper-vgagl");
@@ -122,7 +122,7 @@ int GGI_svga_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 	}
 			
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static int GGI_svga_make_modeline(ggi_mode *tm)
@@ -141,7 +141,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	case GT_16BIT: colors = "64K"; break;
 	case GT_24BIT : colors = "16M"; break;
 	case GT_32BIT : colors = "16M32"; break;
-	default: return -1;
+	default: return GGI_ENOMATCH;
 	}
 
 	/* Form a SVGAlib mode number */

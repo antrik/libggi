@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/09/08 19:52:02 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -37,7 +37,7 @@ int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_sub_setmode(ggi_visual *vis,ggi_mode *tm)

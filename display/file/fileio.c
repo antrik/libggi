@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.3 2003/07/06 10:25:22 cegger Exp $
+/* $Id: fileio.c,v 1.4 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -47,7 +47,7 @@ int _ggi_file_create_file(ggi_visual *vis, char *filename)
 
 	if (LIBGGI_FD(vis) < 0) {
 		perror("display-file: Unable to create file");
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	priv->buf_len = 0;

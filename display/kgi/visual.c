@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2004/11/06 22:48:28 cegger Exp $
+/* $Id: visual.c,v 1.19 2004/11/13 15:56:21 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -128,7 +128,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  err_freepriv:
 	free(KGI_PRIV(vis));
 	     
-	return -1;
+	return GGI_ENOMEM;
 }
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)

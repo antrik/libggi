@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.1 2004/09/29 13:49:54 cegger Exp $
+/* $Id: teleserver.c,v 1.2 2004/11/13 15:56:25 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -256,7 +256,7 @@ static int translate_to_tele(TeleUser *u, TeleEvent *g, ggi_event *ev)
 		}
 	}
 
-	return -1;   /* unknown event */
+	return GGI_EEVUNKNOWN;   /* unknown event */
 }
 
 

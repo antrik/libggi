@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.4 2004/10/31 14:25:03 cegger Exp $
+/* $Id: color.m,v 1.5 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -55,7 +55,8 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 	fprintf(stderr, "setpalvec (2)\n");
 
-	if (colormap == NULL || start+len > priv->ncols || start < 0) return -1;
+	if (colormap == NULL || start+len > priv->ncols || start < 0)
+		return -1;
 
 	fprintf(stderr, "setpalvec (3)\n");
 
@@ -136,7 +137,7 @@ int GGI_quartz_getgamma(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_flo
 		&dummy, &dummy, (CGGammaValue *)g,
 		&dummy, &dummy, (CGGammaValue *)b) )
 	{
-		return -1;
+		return GGI_ENOMATCH;
 	}	/* if */
 
 	return 0;
@@ -159,8 +160,7 @@ int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	priv = QUARTZ_PRIV(vis);
 
 	if (colormap == NULL) return -1;
-	if (start >= vis->gamma->len) return -1;
-	if (start < 0) return -1;
+	if (start < 0 || start >= vis->gamma->len) return -1;
 	if (len > (vis->gamma->len - start)) return -1;
 
 	/* Extract gamma values into separate tables,

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/06 22:48:29 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/13 15:56:22 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -277,7 +277,7 @@ get_newcons(int fd)
 	    vtnum <= 0) {
 		fprintf(stderr,
 "L/vtswitch: Unable to get a new virtual console\n");
-		return -1;
+		return GGI_ENODEVICE;
 	}
 	
 	return vtnum;
@@ -389,7 +389,7 @@ vtswitch_open(ggi_visual *vis)
 		fprintf(stderr, "L/vtswitch: unable to get current console\n");
 		close(vtfd);
 		vtfd = -1;
-		return -1;
+		return GGI_ENODEVICE;
 	}
 	origvtnum = vt_state.v_active;
         if (vthandling.vtnum != vt_state.v_active) {
@@ -397,7 +397,7 @@ vtswitch_open(ggi_visual *vis)
 			fprintf(stderr, nopermstring);
 			close(vtfd);
 			vtfd = -1;
-			return -1;
+			return GGI_ENODEVICE;
 		}
 		while (ioctl(vtfd, VT_WAITACTIVE,
 			     vthandling.vtnum) < 0) {
@@ -431,7 +431,7 @@ vtswitch_open(ggi_visual *vis)
 		restore_vt();
 		close(vtfd);
 		vtfd = -1;
-		return -1;
+		return GGI_ENODEVICE;
 	}
 	
 	GGIDPRINT_MISC("L/vtswitch: open OK.\n");

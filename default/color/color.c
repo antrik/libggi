@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.11 2004/11/13 12:20:32 cegger Exp $
+/* $Id: color.c,v 1.12 2004/11/13 15:56:17 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -33,7 +33,8 @@
 
 int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 {
-	if (start < 0 || start+len > COLOR_PALPRIV(vis)->numcols) return -1;
+	if (start < 0 || start+len > COLOR_PALPRIV(vis)->numcols)
+		return -1;
 
 	memcpy(colmap, LIBGGI_PAL(vis)->clut.data+start, len*sizeof(ggi_color));
 
@@ -190,11 +191,12 @@ ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, ggi_color *col)
 int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	LIBGGI_ASSERT(LIBGGI_PAL(vis) != NULL, 
-								"PAL_unmappixel with LIBGGI_PAL(vis)==NULL");
+			"PAL_unmappixel with LIBGGI_PAL(vis)==NULL");
 	LIBGGI_ASSERT(LIBGGI_PAL(vis)->clut.data != NULL, 
-								"PAL_unmappixel with LIBGGI_PAL(vis)->clut.data==NULL");
+			"PAL_unmappixel with LIBGGI_PAL(vis)->clut.data==NULL");
 	
-	if (pixel >= (unsigned)COLOR_PALPRIV(vis)->numcols) return -1;
+	if (pixel >= (unsigned)COLOR_PALPRIV(vis)->numcols)
+		return -1;
 	
 	*col = LIBGGI_PAL(vis)->clut.data[pixel];
 		

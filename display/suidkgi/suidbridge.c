@@ -1,4 +1,4 @@
-/* $Id: suidbridge.c,v 1.1 2001/05/12 23:02:24 cegger Exp $
+/* $Id: suidbridge.c,v 1.2 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    Display-SUID: suid suidbrige
@@ -177,7 +177,7 @@ inline int kgi_check_mode(struct kgi_display *dpy, struct kgi_mode *mode,
 	DEBUG2("checkmode entered\n");
 	if (mode->request.frames >= NR_FB) {
 
-		return -ENOMEM;
+		return GGI_ENOMEM;
 	}
 
 	return (dpy->check_mode)(dpy, mode, cmd);
@@ -243,7 +243,7 @@ static int graph_driver_command(struct kgi_graphic *graph, kgi_uint cmd, kgi_uin
 #if 0
 		if (mmapcnt[mydevice.id - MAX_NR_CONSOLES]) {
 
-			return -EBUSY;
+			return GGI_EBUSY;
 		}
 #endif
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/06 22:48:32 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/13 15:56:26 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -76,7 +76,7 @@ static int which_console(void)
 
 	if (fd < 0) {
 		perror("display-vcsa: cannot open /dev/tty");
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	if (ioctl(fd, VT_GETSTATE, &vtinfo) != 0) {
@@ -84,7 +84,7 @@ static int which_console(void)
 		fprintf(stderr, "display-vcsa: (You need to be running "
 			"directly on a virtual console).\n");
 		close(fd);
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	close(fd);

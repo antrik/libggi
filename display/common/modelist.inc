@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.2 2001/08/11 03:36:40 skids Exp $
+/* $Id: modelist.inc,v 1.3 2004/11/13 15:56:19 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -69,7 +69,7 @@ static int _GGIcheckonebpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
 		return 1;
 	tm->visible.x=bestw;
 	tm->visible.y=besth;
-	return -1;
+	return GGI_ENOMATCH;
 }
 #endif
 

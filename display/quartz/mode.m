@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.6 2004/10/31 14:25:03 cegger Exp $
+/* $Id: mode.m,v 1.7 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -60,7 +60,7 @@ int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 	}	/* switch */
 
-	return -1;
+	return GGI_ENOMATCH;
 }	/* GGI_quartz_getapi */
 
 

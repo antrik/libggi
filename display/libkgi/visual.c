@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/06 22:48:29 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/11/13 15:56:22 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -79,7 +79,7 @@ int GGI_libkgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
                 return 0;
         }
 
-        return -1;
+        return GGI_ENOMATCH;
 }
 
 int GGI_libkgi_setflags(ggi_visual *vis, ggi_flags flags)

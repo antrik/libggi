@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/06 22:48:32 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/13 15:56:27 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -101,7 +101,7 @@ static int _GGIcheckvglmodes(ggi_visual *vis)
 
 	if (modes == 0) {
 		GGIDPRINT_MISC("display-vgl: no mode!\n");
-		return -1;
+		return GGI_ENOMATCH;
 	} else {
 		priv->availmodes = realloc(priv->availmodes,
 					   (modes+1)*sizeof(ggi_modelistmode));

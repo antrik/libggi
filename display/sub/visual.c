@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/06 22:48:30 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/13 15:56:24 cegger Exp $
 ******************************************************************************
 
    Display-sub
@@ -38,7 +38,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (! argptr) {
 		fprintf(stderr, "display-sub needs pointer to real visual as argument.\n");
-		return -1;
+		return GGI_EARGREQ;
 	}
 
 	priv = malloc(sizeof(ggi_sub_priv));

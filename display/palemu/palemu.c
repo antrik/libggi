@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.5 2004/10/31 14:25:03 cegger Exp $
+/* $Id: palemu.c,v 1.6 2004/11/13 15:56:23 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -190,7 +190,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 	default:
 		GGIDPRINT("Unsupported pixel size '%d'.\n",
 			GT_SIZE(priv->mode.graphtype));
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/12 20:30:15 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/11/13 15:56:22 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -81,7 +81,7 @@ int GGI_lcd823_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 

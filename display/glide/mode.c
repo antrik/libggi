@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/18 17:21:02 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -237,7 +237,7 @@ int GGI_glide_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 	
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 /* The minimum frequency glide can do */
@@ -378,7 +378,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 			 GR_COLORFORMAT_ABGR, GR_ORIGIN_UPPER_LEFT, 2, 0)
 	    != FXTRUE) {
 		GGIDPRINT_MODE("FAIL!!!");
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	/* Fill in ggi_pixelformat */

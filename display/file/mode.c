@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/10/31 14:25:00 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -163,7 +163,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 	if (priv->file_mmap == MAP_FAILED) {
 		perror("display-file: mmap failed");
 		close(LIBGGI_FD(vis));
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	priv->fb_ptr = priv->file_mmap + priv->offset_image;
@@ -206,7 +206,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 
 		if (priv->fb_ptr == NULL) {
 			GGIDPRINT_MODE("display-file: Out of memory!");
-			return -1;
+			return GGI_ENOMEM;
 		}
 	}
 
@@ -264,14 +264,14 @@ int GGI_file_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 
 	case 3: if (GT_SCHEME(gt) == GT_TEXT) {
-			return -1;
+			return GGI_ENOMATCH;
 		}
 
 		strcpy(apiname, "generic-color");
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static void _ggi_freedbs(ggi_visual *vis) 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/10/31 14:25:06 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/11/13 15:56:26 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -54,7 +54,7 @@ int GGI_vcsa_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)

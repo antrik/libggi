@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/06 12:49:53 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/13 15:56:19 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -47,12 +47,12 @@ int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 			return 0;
 		case 3:
 			if (LIBGGI_GT(vis) != GT_8BIT)
-				return -1;
+				return GGI_ENOMATCH;
 
 			sprintf(apiname, "generic-linear-8");
 			return 0;
 	}
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -305,7 +305,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 		GGIDPRINT_MODE("display-aa: setmode: AAlib returned different"
 				"mode than requested, failing\n");
 		aa_close(priv->context);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	/* Set up pixelformat */

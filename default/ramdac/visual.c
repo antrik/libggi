@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/11/06 22:48:24 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/13 15:56:18 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Generic RAMDAC via IOCTL driver
@@ -53,10 +53,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (vis->palette == NULL) return GGI_ENOMEM;
 
 	if ((GT_SCHEME(LIBGGI_GT(vis)) != GT_TRUECOLOR) &&
-	    (GT_DEPTH(LIBGGI_GT(vis)) > 8)) {
+	    (GT_DEPTH(LIBGGI_GT(vis)) > 8))
+	{
 		fprintf(stderr, "generic-ramdac: too many colors (%d)\n",
 			1 << GT_DEPTH(LIBGGI_GT(vis)));
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	err = _ggiSendKGICommand(vis, (int)RAMDAC_GETCLUT, vis->palette);

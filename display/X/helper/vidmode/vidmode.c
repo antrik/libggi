@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.12 2004/11/06 22:48:26 cegger Exp $
+/* $Id: vidmode.c,v 1.13 2004/11/13 15:56:18 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -329,7 +329,7 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	/* No valid mode found */
 	vidmode->validation_flag = -1;
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 /*

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2004/10/31 15:16:42 cegger Exp $
+/* $Id: mode.c,v 1.20 2004/11/13 15:56:20 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -179,7 +179,7 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		break;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -774,7 +774,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 		    (var->xres != priv->orig_var.xres ||
 		     var->yres != priv->orig_var.yres)) {
 			var2ggimode(vis, &priv->orig_var, mode, mode->frames);
-			return -1;
+			return GGI_ENOMATCH;
 		}
 	} else if (ret != 0) {
 		err = -1;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/10/31 14:25:03 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/11/13 15:56:25 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -55,14 +55,14 @@ static int GGI_tele_getapi(ggi_visual *vis, int num,
 			return 0;
 
 		case 2: if (GT_SCHEME(gt) == GT_TEXT) {
-				return -1;
+				return GGI_ENOMATCH;
 			}
 
 			strcpy(apiname, "generic-color");
 			return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_tele_resetmode(ggi_visual *vis)

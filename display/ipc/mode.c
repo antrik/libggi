@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/10/31 14:25:00 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/13 15:56:21 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -116,13 +116,13 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 
 	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT)
-			return -1;
+			return GGI_ENOMATCH;
 
 		strcpy(apiname, "generic-color");
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)

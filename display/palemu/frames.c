@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.2 2004/01/31 20:56:05 cegger Exp $
+/* $Id: frames.c,v 1.3 2004/11/13 15:56:23 cegger Exp $
 ******************************************************************************
 
    Display-palemu: frame handling
@@ -54,7 +54,7 @@ int GGI_palemu_setdisplayframe(ggi_visual *vis, int num)
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOMATCH;
         }
 
         vis->d_frame_num = num;

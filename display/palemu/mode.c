@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/10/31 14:25:03 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/13 15:56:23 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -72,7 +72,7 @@ int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -95,7 +95,7 @@ static int do_dbstuff(ggi_visual *vis)
 
 	if (priv->fb_ptr == NULL) {
 		fprintf(stderr, "display-palemu: Out of memory.\n");
-		return -1;
+		return GGI_ENOMEM;
 	}
 
         /* clear all frames */
@@ -385,7 +385,7 @@ int GGI_palemu_getmode(ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
 		GGIDPRINT_MODE("display-palemu: vis/mode == NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 	
 	GGIDPRINT_MODE("display-palemu: getmode.\n");

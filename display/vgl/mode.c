@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/10/31 14:25:07 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/13 15:56:26 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -75,7 +75,7 @@ int GGI_vgl_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			break;
 	}
 			
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
@@ -107,7 +107,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	case GT_15BIT:
 	case GT_24BIT:
 	default:
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	modeinfo.vi_width = tm->visible.x;

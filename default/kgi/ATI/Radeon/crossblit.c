@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2004/09/13 10:47:47 cegger Exp $
+/* $Id: crossblit.c,v 1.4 2004/11/13 15:56:18 cegger Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -195,7 +195,7 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 	} pkt3;
 
 	tmp = malloc(w * sizeof(ggi_color));
-	if (tmp == NULL) return -1;
+	if (tmp == NULL) return GGI_ENOMEM;
 
 	y2 = 0;
 
@@ -312,9 +312,9 @@ static inline int blit3d_get(ggi_visual *src, ggi_visual *dst,
 	} pkt3;
 
 	tmp = malloc(w * sizeof(ggi_color));
-	if (tmp == NULL) return -1;
+	if (tmp == NULL) return GGI_ENOMEM;
 	tmp2 = malloc(wg);
-	if (tmp2 == NULL) { free(tmp); return -1; }
+	if (tmp2 == NULL) { free(tmp); return GGI_ENOMEM; }
 
 	y2 = 0;
 

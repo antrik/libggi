@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2004/11/02 08:44:54 pekberg Exp $
+/* $Id: mode.c,v 1.27 2004/11/13 15:56:20 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -120,7 +120,7 @@ GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments)
 		return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -314,7 +314,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	ret = do_checkmode(vis, mode);
 	if (ret != 0) {
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	EnterCriticalSection(&priv->cs);

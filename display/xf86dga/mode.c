@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2004/10/31 15:16:43 cegger Exp $
+/* $Id: mode.c,v 1.20 2004/11/13 15:56:27 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -170,7 +170,7 @@ static int _GGI_xf86dga_findmode(ggi_visual * vis, int visible_x,
 		}
 
 	/* mode not found */
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 
@@ -193,7 +193,7 @@ int GGI_xf86dga_getapi(ggi_visual * vis, int num, char *apiname,
 			GT_SIZE(LIBGGI_GT(vis)));
 		return 0;
 	}
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 

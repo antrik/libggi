@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/10/31 14:25:04 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/13 15:56:25 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -108,13 +108,13 @@ int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 			switch (LIBGGI_GT(vis)) {
 				case GT_TEXT16: strcpy(apiname, "generic-text-16"); break;
 				case GT_TEXT32: strcpy(apiname, "generic-text-32"); break;
-				default: return -1;
+				default: return GGI_ENOMATCH;
 			}
 
 			return 0;
 	}
 
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 static int _GGI_terminfo_loadstubs(ggi_visual *vis)
