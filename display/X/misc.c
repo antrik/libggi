@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.19 2004/09/09 12:41:44 cegger Exp $
+/* $Id: misc.c,v 1.20 2004/09/09 13:03:39 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -288,11 +288,11 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 	if ((priv->parentwin != None) && (priv->parentwin == priv->win)) { 
 		/* Don't resize an explicitly requested window */ 
 		Window dummywin;
-                int dummy;
-                unsigned udummy;
+		unsigned int dummy;
 		LIBGGI_APPASSERT(priv->parentwin, "no parent here... bad.");
-                XGetGeometry(priv->disp, priv->parentwin, &dummywin,
-			     &dummy, &dummy, &w, &h, &udummy, &udummy);
+		XGetGeometry(priv->disp, priv->parentwin, &dummywin,
+			     (int *)&dummy, (int *)&dummy,
+			     &w, &h, &dummy, &dummy);
 	}
 	else if (priv->win == None) { /* Not a root window */
 		/* Don't create a window who's handles/borders are offscreen */
@@ -482,8 +482,9 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 		priv->oldcursor = priv->cursor;
 	}
 
-	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
-		     (int *)&dummy, (int *)&dummy, &dummy, &dummy);
+	XGetGeometry(priv->disp, priv->parentwin, &root,
+		     (int *)&dummy, (int *)&dummy,
+		     &dummy, &dummy, &dummy, &dummy);
             
 	crsrpix = XCreateBitmapFromData(priv->disp, root, crspdat, 3, 3);
 	crsrmask = XCreateBitmapFromData(priv->disp, root, crsmdat, 3, 3);
@@ -527,8 +528,9 @@ void _ggi_x_create_invisible_cursor (ggi_visual *vis)
 		priv->oldcursor = priv->cursor;
 	}
 
-	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
-                     (int *)&dummy, (int *)&dummy, &dummy, &dummy);
+	XGetGeometry(priv->disp, priv->parentwin, &root,
+		     (int *)&dummy, (int *)&dummy,
+		     &dummy, &dummy, &dummy, &dummy);
             
 	crsrpix = XCreateBitmapFromData(priv->disp, root, crspdat, 1, 1);
 	crsrmask = XCreateBitmapFromData(priv->disp, root, crsmdat, 1, 1);
