@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/09/12 20:35:59 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/10/28 21:19:59 cegger Exp $
 ******************************************************************************
 
    Display-multi: mode management
@@ -46,18 +46,20 @@ int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)
 	err = ggiCheckMode(vis, tm);
 	if (err) return err;
 
-	for (cur = priv->vis_list; cur != NULL; cur = cur->next) {
+	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
 		err = ggiSetMode(cur->vis, tm);
 		if (err != 0) {
-			if (cur == priv->vis_list) return err;
+			if (cur == GG_SLIST_FIRST(&priv->vis_list))
+				return err;
 			return GGI_EFATAL;
 		}
 		if (ggiSetMode(cur->vis, tm) != 0) err = -1;
 	}
 
 	/* We hope that the pixelformat is the same on all child visuals */
-	memcpy(LIBGGI_PIXFMT(vis), ggiGetPixelFormat(priv->vis_list->vis),
-	       sizeof(ggi_pixelformat));
+	memcpy(LIBGGI_PIXFMT(vis),
+		ggiGetPixelFormat(GG_SLIST_FIRST(&priv->vis_list)->vis),
+		sizeof(ggi_pixelformat));
 
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
 
@@ -77,7 +79,7 @@ static int try_checkmode(ggi_visual *vis, ggi_mode *tm, int count)
 		return GGI_EFATAL;
 	}
 
-	for (cur = priv->vis_list; cur != NULL; cur = cur->next) {
+	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
 		err = ggiCheckMode(cur->vis, tm);
 		if (err) {
 			try_checkmode(vis, tm, count);
@@ -99,7 +101,7 @@ int GGI_multi_getmode(ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 
-	return ggiGetMode(priv->vis_list->vis, tm);
+	return ggiGetMode(GG_SLIST_FIRST(&priv->vis_list)->vis, tm);
 }
 
 
@@ -110,7 +112,7 @@ int GGI_multi_setflags(ggi_visual *vis,ggi_flags flags)
 
 	int err=0;
 
-	for (cur=priv->vis_list; cur != NULL; cur=cur->next) {
+	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
 		if (ggiSetFlags(cur->vis, flags) != 0) err = -1;
 	}
 
@@ -128,7 +130,7 @@ int GGI_multi_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	MultiVis *cur;
 	int err = 0;
 
-	for (cur = priv->vis_list; cur != NULL; cur = cur->next) {
+	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
 		if (_ggiInternFlush(cur->vis, x, y, w, h, tryflag) != 0) {
 			err = -1;
 		}

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/09/12 20:07:50 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/10/28 21:19:59 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -61,7 +61,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	priv->vis_num  = 0;
-	priv->vis_list = NULL;
+	GG_SLIST_INIT(&priv->vis_list);
 
 	err = GGI_EARGINVAL;
 	for (;;) {
@@ -90,9 +90,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		/* add to head */
-
-		cur->next = priv->vis_list;
-		priv->vis_list = cur;
+		GG_SLIST_INSERT_HEAD(&priv->vis_list, cur, visuals);
 		priv->vis_num++;
 
 		/* Add giiInputs, if we have them. */
@@ -173,13 +171,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 
   out_freeall:
-	cur = priv->vis_list;
-	while (cur != NULL) {
-		MultiVis *temp;
-		temp = cur->next;
-		free(cur);	
-		cur = temp;
+	while (!GG_SLIST_EMPTY(&priv->vis_list)) {
+		MultiVis *temp = GG_SLIST_FIRST(&priv->vis_list);
+		GG_SLIST_REMOVE_HEAD(&priv->vis_list, visuals);
+		free(temp);
 	}
+
   out_freepriv:
 	free(priv);
 
@@ -190,8 +187,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  * So we just use recursion to traverse to the end of the list and then destroy
  * the visuals while backtracking.
  */
-static void destroyvisuals(MultiVis *cur) {
-	if (cur) destroyvisuals(cur->next);
+static void destroyvisuals(MultiVis *cur)
+{
+	if (cur) destroyvisuals(GG_SLIST_NEXT(cur, visuals));
 	else return;
 	cur->vis->input = NULL;
 	ggiClose(cur->vis);
@@ -203,7 +201,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_multi_priv *mm = GGIMULTI_PRIV(vis);
 
 	giiClose(vis->input);
-	destroyvisuals(mm->vis_list);
+	destroyvisuals(GG_SLIST_FIRST(&mm->vis_list));
 	mm->vis_num=0;
 
 	free(mm);

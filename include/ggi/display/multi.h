@@ -1,4 +1,4 @@
-/* $Id: multi.h,v 1.2 2003/07/06 10:35:39 cegger Exp $
+/* $Id: multi.h,v 1.3 2004/10/28 21:20:00 cegger Exp $
 ******************************************************************************
 
    Display-multi: definitions
@@ -81,7 +81,7 @@ ggifunc_getpalvec	GGI_multi_getpalvec;
 
 typedef struct multi_vis
 {
-	struct multi_vis *next;
+	GG_SLIST_ENTRY(multi_vis) visuals;
 
 	ggi_visual *vis;
 
@@ -92,7 +92,7 @@ typedef struct multi_vis
 typedef struct {
 	int vis_num;
 
-	MultiVis *vis_list;
+	GG_SLIST_HEAD(, multi_vis) vis_list;
 
 	/* ... global info here */
 
