@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
+/* $Id: monotext.c,v 1.3 2003/07/13 06:39:36 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -46,7 +46,7 @@ static uint8 ascii_template[256*4*4];
 static uint8 greyblock_to_ascii[65536];
 
 
-static inline int count_bits(uint8 *ch, int x, int y, int w, int h)
+static inline int count_bits(unsigned char *ch, int x, int y, int w, int h)
 {
 	int cx, cy;
 	int result=0;
@@ -76,7 +76,7 @@ static void setup_templates(ggi_coord accuracy)
 	for (x=0; x < accuracy.x; x++) {
 
 		ascii_template[(a-32)*16 + y*accuracy.x + x] =
-			count_bits(& font_data[(a-32)*8], x*box_w, y*box_h,
+			count_bits(&(font_data[(a-32)*8]), x*box_w, y*box_h,
 				   box_w, box_h) * 255 / (box_w*box_h);
 	}
 }
