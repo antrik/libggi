@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/12 19:41:52 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/09/12 20:48:22 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -38,7 +38,7 @@
 
 int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
-	ggi_tile_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i, width, height;
 	int nx, ny, nw, nh;
 	ggi_visual_t currvis;
@@ -217,7 +217,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 	err = GGI_tile_checkmode(vis, tm);
 	if (err) return err;
 	
-	priv=LIBGGI_PRIVATE(vis);
+	priv = TILE_PRIV(vis);
 
 	depth = GT_SIZE(tm->graphtype);
 
@@ -329,7 +329,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 /**********************************/
 int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 {
-	ggi_tile_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_mode sugmode;
 	int err, i;
 

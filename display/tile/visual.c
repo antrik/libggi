@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:25:24 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/09/12 20:48:22 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -66,7 +66,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}
 
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_tile_priv));
+	priv = TILE_PRIV(vis) = malloc(sizeof(ggi_tile_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -224,7 +224,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_tile_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
 
 	if (priv->use_db) {
@@ -251,7 +251,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_tile_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
 
 	if (priv->use_db) {
 		MANSYNC_deinit(vis);
