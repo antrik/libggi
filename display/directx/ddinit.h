@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: ddinit.h,v 1.3 2003/10/06 21:33:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -72,7 +72,7 @@ int DDPutPixel(directx_priv *priv, int x, int y, ggi_pixel pix);
 int DXGetPixel(directx_priv *priv, int x, int y, ggi_pixel *color);
 int DXChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP);
 HRESULT DDChangeMode(directx_priv *priv, DDCMS * ddcms);
-int DDCheckMode(ggi_mode * tm);
+int DDCheckMode(ggi_visual *vis, ggi_mode *mode);
 char *DDLock(void);
 HRESULT DDUnlock(void);
 HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption);

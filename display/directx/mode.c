@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
+/* $Id: mode.c,v 1.4 2003/10/06 21:33:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -33,6 +33,7 @@
 
 #include "ddinit.h"
 
+#include "../common/pixfmt-setup.inc"
 
 static int
 directx_acquire(ggi_resource * res, uint32 actype)
@@ -132,56 +133,13 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 	int i, id, ret;
 	char libname[256], libargs[256];
 
-	ret = GGI_directx_checkmode(vis, mode);
-	if (ret > 0) {
+	ret = ggiCheckMode(vis, mode);
+	if (ret != 0) {
 		return -1;
 	}
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
-	LIBGGI_PIXFMT(vis)->depth = GT_DEPTH(mode->graphtype);
-	LIBGGI_PIXFMT(vis)->size = priv->BPP * 8;
-	LIBGGI_PIXFMT(vis)->size = GT_SIZE(mode->graphtype);
-
-	mode->frames = 1;
-
-	switch (mode->graphtype) {
-
-	case GT_8BIT:
-		break;
-
-	case GT_15BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask = ((1 << 5) - 1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1 << 5) - 1) << 5;
-		LIBGGI_PIXFMT(vis)->red_mask = ((1 << 5) - 1) << (5 + 5);
-		break;
-
-	case GT_16BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask = ((1 << 5) - 1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1 << 6) - 1) << 5;
-		LIBGGI_PIXFMT(vis)->red_mask = ((1 << 5) - 1) << (5 + 6);
-		break;
-
-	case GT_24BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask = ((1 << 8) - 1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1 << 8) - 1) << 8;
-		LIBGGI_PIXFMT(vis)->red_mask = ((1 << 8) - 1) << (8 + 8);
-		break;
-
-	case GT_32BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask = ((1 << 8) - 1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1 << 8) - 1) << 8;
-		LIBGGI_PIXFMT(vis)->red_mask = ((1 << 8) - 1) << (8 + 8);
-		break;
-
-	case GT_CONSTRUCT(32, GT_TRUECOLOR, 32):
-		LIBGGI_PIXFMT(vis)->blue_mask = ((1 << 8) - 1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1 << 8) - 1) << 8;
-		LIBGGI_PIXFMT(vis)->red_mask = ((1 << 8) - 1) << (8 + 8);
-		break;
-
-	default:
-		LIBGGI_ASSERT(0, "DirectX: Illegal mode!");
-	}
+	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
 
 	priv->BPP = mode->graphtype / 8;
 
@@ -256,7 +214,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * tm)
 {
 	int rc;
-	rc = DDCheckMode(tm);
+	rc = DDCheckMode(vis, tm);
 	return rc;
 }
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
+/* $Id: visual.c,v 1.4 2003/10/06 21:33:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -41,74 +41,132 @@ typedef struct {
 } GGIGII, *lpGGIGII;
 
 
+static const gg_option optlist[] =
+{
+        { "noinput", "no" },
+        { "physz", "0,0" }
+};
+
+#define OPT_NOINPUT	0
+#define OPT_PHYSZ	1
+
+#define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+
+
+
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
                         const char *args, void *argptr, uint32 *dlret)
 {
-        directx_priv *priv;
-        GGIGII ggigii;
+	int err = GGI_OK;
+	directx_priv *priv;
+	GGIGII ggigii;
+	gg_option options[NUM_OPTS];
 
-        GGIDPRINT("DirectX-target starting\n");
+	GGIDPRINT("DirectX-target starting\n");
 
-        priv = malloc(sizeof(directx_priv));
-        if (priv == NULL) {
-                return GGI_ENOMEM;
-        }
+	memcpy(options, optlist, sizeof(options));
+
+	priv = malloc(sizeof(directx_priv));
+	if (priv == NULL) {
+		err = GGI_ENOMEM;
+		goto err0;
+	}
         if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
-                free(priv);
-                return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err1;
         }
         if (!DDInit(priv)) {
-                free(LIBGGI_GC(vis));
-                free(priv);
-                return GGI_ENODEVICE;
+		err = GGI_ENODEVICE;
+		goto err2;
         }
         LIBGGI_PRIVATE(vis) = priv;
+
+	if (args) {
+		args = ggParseOptions((char *) args, options, NUM_OPTS);
+		if (args == NULL) {
+			fprintf(stderr, "display-memory: error in "
+				"arguments.\n");
+		}
+	}
+        
+	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
+			&(priv->physzflags), &(priv->physz)))
+	{
+		err = GGI_EARGINVAL;
+		goto err2;
+	}
+
 
         ggigii.hWnd = priv->hWnd;
         ggigii.hInstance = priv->hInstance;
 
-        vis->input = giiOpen("directx", &ggigii, NULL);
+        if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
+		gii_input *inp;
+
+		inp = giiOpen("directx", &ggigii, NULL);
+		if (inp == NULL) {
+			GGIDPRINT_MISC("Unable to open directx inputlib\n");
+			GGIclose(vis, dlh);
+			err = GGI_ENODEVICE;
+			goto err2;
+		}
+
+		priv->inp = inp;
+		/* Now join the new event source in. */
+		vis->input = giiJoinInputs(vis->input, inp);
+	} else {
+		priv->inp = NULL;
+	}
 
         vis->opdisplay->setmode = GGI_directx_setmode;
         vis->opdisplay->getmode = GGI_directx_getmode;
         vis->opdisplay->checkmode = GGI_directx_checkmode;
         vis->opdisplay->flush = GGI_directx_flush;
 
-        *dlret = GGI_DL_OPDISPLAY;
-        return 0;
+	*dlret = GGI_DL_OPDISPLAY;
+	return GGI_OK;
+
+err2:
+	free(LIBGGI_GC(vis));
+err1:
+	free(priv);
+err0:
+	return err;
 }
 
 
-int GGIdlcleanup(ggi_visual * vis)
+static int GGIclose(ggi_visual * vis)
 {
-        directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = DIRECTX_PRIV(vis);
 
 #if 0
-        DDShutdown();
+	DDShutdown();
 #endif
-        free(priv);
+	free(priv);
 
-        return 0;
+	return 0;
 }
 
+
+int GGIdl_directx(int func, void **funcptr);
 
 int GGIdl_directx(int func, void **funcptr)
 {
-        switch (func) {
-        case GGIFUNC_open:
-                *funcptr = GGIopen;
-                return 0;
-        case GGIFUNC_exit:
-                *funcptr = NULL;
-                return 0;
-        case GGIFUNC_close:
-                *funcptr = NULL;
-                return 0;
-        default:
-                *funcptr = NULL;
-        }
+	switch (func) {
+	case GGIFUNC_open:
+		*funcptr = GGIopen;
+		return 0;
+	case GGIFUNC_exit:
+		*funcptr = NULL;
+		return 0;
+	case GGIFUNC_close:
+		*funcptr = GGIclose;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}
 
-        return GGI_ENOTFOUND;
+	return GGI_ENOTFOUND;
 }
 
 #include <ggi/internal/ggidlinit.h>

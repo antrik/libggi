@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
+/* $Id: ddinit.c,v 1.4 2003/10/06 21:33:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -28,6 +28,8 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "ddinit.h"
+
+#include "../common/ggi-auto.inc"
 
 
 LPDIRECTDRAW lpdd = NULL;
@@ -357,71 +359,66 @@ HRESULT DDChangeMode(directx_priv * priv, DDCMS * ddcms)
         return SendMessage(hWnd, WM_DDCHANGEMODE, 0, (LPARAM) ddcms);
 }
 
-int DDCheckMode(ggi_mode * mode)
+int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 {
-        uint8 i, err;
+        uint8 i;
+	uint8 err = 0;
         uint8 modefound;
 
-        err = 0;
+	/* handle AUTO */
+	_GGIhandle_ggiauto(mode, 640, 480);
 
-        if (mode->frames == GGI_AUTO) {
-                mode->frames = 1;
-        } else if (mode->frames < 1) {
-                err = -1;
-                mode->frames = 1;
-        } else if (mode->frames > 2) {
-                err = -1;
-                mode->frames = 1;
-        }
-        if (mode->visible.x == GGI_AUTO && mode->visible.y == GGI_AUTO) {
-                mode->visible.x = 640;
-                mode->visible.y = 480;
-        }
-        if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
-                mode->graphtype = GT_16BIT;
-        }
-        modefound = 0;
-        for (i = 0; i < nDisplayModes; i++) {
-                if (DisplayModes[i].width == mode->visible.x
-                    && DisplayModes[i].height == mode->visible.y
-                    && DisplayModes[i].bpp == GT_SIZE(mode->graphtype)) {
-                        modefound = 1;
-                }
-        }
+	if (mode->frames < 1) {
+		err = -1;
+		mode->frames = 1;
+	} else if (mode->frames > 2) {
+		err = -1;
+		mode->frames = 1;
+	}
 
-        if (!modefound) {
-                mode->visible.x = 640;
-                mode->visible.y = 480;
-                mode->graphtype = GT_16BIT;
-                err = -1;
-        }
-        if (mode->virt.x == GGI_AUTO) {
-                mode->virt.x = mode->visible.x;
-        }
-        if (mode->virt.y == GGI_AUTO) {
-                mode->virt.y = mode->visible.y;
-        }
-        if (mode->virt.x != mode->visible.x) {
-                mode->virt.x = mode->visible.x;
-                err = -1;
-        }
-        if (mode->virt.y != mode->visible.y) {
-                mode->virt.y = mode->visible.y;
-                err = -1;
-        }
+	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
+		mode->graphtype = GT_16BIT;
+	}
 
-/*      if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
-            (tm->dpp.y != 1 && tm->dpp.y != GGI_AUTO)) {
-                err = -1;
-        }
-        tm->dpp.x = tm->dpp.y = 1;
+	modefound = 0;
+	for (i = 0; i < nDisplayModes; i++) {
+		if (DisplayModes[i].width == mode->visible.x
+		    && DisplayModes[i].height == mode->visible.y
+		    && DisplayModes[i].bpp == GT_SIZE(mode->graphtype))
+		{
+			modefound = 1;
+		}
+	}
 
-        if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
-                err = -1;
-        }
-        tm->size.x = tm->size.y = GGI_AUTO;
-*/
-        return err;
+	if (!modefound) {
+		mode->visible.x = 640;
+		mode->visible.y = 480;
+		mode->graphtype = GT_16BIT;
+		err = -1;
+	}
+
+	if (mode->virt.x != mode->visible.x) {
+		mode->virt.x = mode->visible.x;
+		err = -1;
+	}
+	if (mode->virt.y != mode->visible.y) {
+		mode->virt.y = mode->visible.y;
+		err = -1;
+	}
+
+	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
+	   (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
+	{
+		err = -1;
+	}
+	mode->dpp.x = mode->dpp.y = 1;
+
+	if (err) return err;
+	err = _ggi_figure_physz(mode, DIRECTX_PRIV(vis)->physzflags,
+				&(DIRECTX_PRIV(vis)->physz),
+				0, 0, mode->visible.x, mode->visible.y);
+
+	return err;
 }
 
 
