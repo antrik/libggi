@@ -10,6 +10,6 @@ tele_la_SOURCES = box.c color.c draw.c events.c mode.c text.c visual.c \
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
-EXTRA_DIST = EXPSYMS libtele.h Makefile.server
+EXTRA_DIST = EXPSYMS libtele.h
 
 SUBDIRS = server
