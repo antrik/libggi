@@ -30,6 +30,13 @@ have to perform those yourself. All it does for you is providing a
 virtual visual within an existing one, which is convenient to allow
 for window system canvases to be about any GGI program.
 
+.. important::
+
+   It is possible to have `0`, `0` as upper,left corner. But beware,
+   `0` means `GGI_AUTO` and therefore it may get overridden by
+   `GGI_DEFMODE` environment variable. In this case, you may get
+   undesired results.
+
 
 Options
 -------
