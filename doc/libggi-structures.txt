@@ -87,7 +87,7 @@ Structure Members
 	- `GT_SUBSAMPLE_S_YCRBR`
 	- `GT_NIL`
 
-    `subscheme` ( access via `GT_SUBSCHEME(gt)` , `GT_SETSUBSCHEME(gt,x)` )
+    `subscheme` ( access via `GT_SUBSCHEME(gt)`, `GT_SETSUBSCHEME(gt,x)` )
 	One of:
 	
 	- `GT_SUB_REVERSE_ENDIAN`
