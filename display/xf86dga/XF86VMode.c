@@ -1,4 +1,4 @@
-/* $Id: XF86VMode.c,v 1.13 2005/01/29 08:51:28 cegger Exp $
+/* $Id: XF86VMode.c,v 1.14 2005/01/29 08:54:16 cegger Exp $
 
 This is a modified version of the XF86VMode API functions for use
 internally by the LibGGI xf86dga target.  Mods by Marcus Sundberg and
@@ -80,7 +80,8 @@ static char *xf86vidmode_extension_name = XF86VIDMODENAME;
  *                                                                           *
  *****************************************************************************/
 
-static int close_display();
+static XEXT_GENERATE_CLOSE_DISPLAY(close_display, xf86vidmode_info)
+
 static /* const */ XExtensionHooks xf86vidmode_extension_hooks = {
 	NULL,			/* create_gc */
 	NULL,			/* copy_gc */
@@ -99,17 +100,32 @@ static XEXT_GENERATE_FIND_DISPLAY(find_display, xf86vidmode_info,
 				  xf86vidmode_extension_name,
 				  &xf86vidmode_extension_hooks, 0, NULL)
 
-static XEXT_GENERATE_CLOSE_DISPLAY(close_display, xf86vidmode_info)
-
-
 /*****************************************************************************
  *                                                                           *
  *		    public XFree86-VidMode Extension routines                *
  *                                                                           *
  *****************************************************************************/
-static Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
-					   int *event_basep,
-					   int *error_basep)
+/* prototypes added to suppress compiler warnings */
+Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
+				    int *event_basep, int *error_basep);
+Bool _ggi_XF86VidModeSetClientVersion(Display * dpy);
+Bool _ggi_XF86VidModeQueryVersion(Display * dpy, int *majorVersion,
+				  int *minorVersion);
+Bool _ggi_XF86VidModeSetGamma(Display * dpy,
+			      int screen, XF86VidModeGamma * Gamma);
+Bool _ggi_XF86VidModeGetGamma(Display * dpy,
+			      int screen, XF86VidModeGamma * Gamma);
+Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
+				     int *modecount,
+				     XF86VidModeModeInfo *** modelinesPtr);
+Bool _ggi_XF86VidModeSwitchToMode(Display * dpy, int screen,
+				  XF86VidModeModeInfo * modeline);
+Bool _ggi_XF86VidModeLockModeSwitch(Display * dpy, int screen, int lock);
+Bool _ggi_XF86VidModeSetViewPort(Display * dpy, int screen, int x, int y);
+
+
+Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
+				    int *event_basep, int *error_basep)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 
@@ -123,7 +139,7 @@ static Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
 }
 
 
-static Bool _ggi_XF86VidModeSetClientVersion(Display * dpy)
+Bool _ggi_XF86VidModeSetClientVersion(Display * dpy)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeSetClientVersionReq *req;
@@ -142,8 +158,8 @@ static Bool _ggi_XF86VidModeSetClientVersion(Display * dpy)
 }
 
 
-static Bool _ggi_XF86VidModeQueryVersion(Display * dpy, int *majorVersion,
-					 int *minorVersion)
+Bool _ggi_XF86VidModeQueryVersion(Display * dpy, int *majorVersion,
+				  int *minorVersion)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeQueryVersionReply rep;
@@ -169,8 +185,8 @@ static Bool _ggi_XF86VidModeQueryVersion(Display * dpy, int *majorVersion,
 	return True;
 }
 
-static Bool _ggi_XF86VidModeSetGamma(Display * dpy,
-				     int screen, XF86VidModeGamma * Gamma)
+Bool _ggi_XF86VidModeSetGamma(Display * dpy,
+			      int screen, XF86VidModeGamma * Gamma)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeSetGammaReq *req;
@@ -191,8 +207,8 @@ static Bool _ggi_XF86VidModeSetGamma(Display * dpy,
 }
 
 
-static Bool _ggi_XF86VidModeGetGamma(Display * dpy,
-				     int screen, XF86VidModeGamma * Gamma)
+Bool _ggi_XF86VidModeGetGamma(Display * dpy,
+			      int screen, XF86VidModeGamma * Gamma)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeGetGammaReply rep;
@@ -220,10 +236,9 @@ static Bool _ggi_XF86VidModeGetGamma(Display * dpy,
 
 /* We don't need XF86VidModeGetModeLine */
 
-static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
-					    int *modecount,
-					    XF86VidModeModeInfo ***
-					    modelinesPtr)
+Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
+				     int *modecount,
+				     XF86VidModeModeInfo *** modelinesPtr)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeGetAllModeLinesReply rep;
@@ -414,8 +429,8 @@ static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
  * bother with those functions.  
  */
 
-static Bool _ggi_XF86VidModeSwitchToMode(Display * dpy, int screen,
-					 XF86VidModeModeInfo * modeline)
+Bool _ggi_XF86VidModeSwitchToMode(Display * dpy, int screen,
+				  XF86VidModeModeInfo * modeline)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeSwitchToModeReq *req;
@@ -497,8 +512,7 @@ static Bool _ggi_XF86VidModeSwitchToMode(Display * dpy, int screen,
 }
 
 
-static Bool _ggi_XF86VidModeLockModeSwitch(Display * dpy, int screen,
-					   int lock)
+Bool _ggi_XF86VidModeLockModeSwitch(Display * dpy, int screen, int lock)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeLockModeSwitchReq *req;
@@ -517,8 +531,7 @@ static Bool _ggi_XF86VidModeLockModeSwitch(Display * dpy, int screen,
 }
 
 
-static Bool _ggi_XF86VidModeSetViewPort(Display * dpy, int screen,
-					int x, int y)
+Bool _ggi_XF86VidModeSetViewPort(Display * dpy, int screen, int x, int y)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 	xXF86VidModeSetViewPortReq *req;

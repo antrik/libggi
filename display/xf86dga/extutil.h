@@ -1,4 +1,4 @@
-/* $Id: extutil.h,v 1.4 2005/01/29 08:51:28 cegger Exp $ */
+/* $Id: extutil.h,v 1.5 2005/01/29 08:54:16 cegger Exp $ */
 /*
  * $XConsortium: extutil.h,v 1.15 94/10/07 15:36:33 kaleb Exp $
  *
@@ -186,8 +186,10 @@ extern XExtDisplayInfo *XextFindDisplay(
  * something that is called many, many times would be bad.
  */
 #define XEXT_GENERATE_FIND_DISPLAY(proc,extinfo,extname,hooks,nev,data) \
-XExtDisplayInfo *proc (dpy) \
-    register Display *dpy; \
+XExtDisplayInfo *proc \
+    ( \
+    register Display *dpy \
+    ) \
 { \
     XExtDisplayInfo *dpyinfo; \
     if (!extinfo) { if (!(extinfo = XextCreateExtension())) return NULL; } \
@@ -197,20 +199,24 @@ XExtDisplayInfo *proc (dpy) \
 }
 
 #define XEXT_GENERATE_CLOSE_DISPLAY(proc,extinfo) \
-int proc (dpy, codes) \
-    Display *dpy; \
-    XExtCodes *codes; \
+int proc \
+    ( \
+    Display *dpy, \
+    XExtCodes *codes \
+    ) \
 { \
     return XextRemoveDisplay (extinfo, dpy); \
 }
 
 #define XEXT_GENERATE_ERROR_STRING(proc,extname,nerr,errl) \
-char *proc (dpy, code, codes, buf, n) \
-    Display  *dpy; \
-    int code; \
-    XExtCodes *codes; \
-    char *buf; \
-    int n; \
+char *proc \
+    ( \
+    Display  *dpy, \
+    int code, \
+    XExtCodes *codes, \
+    char *buf, \
+    int n \
+    ) \
 {  \
     code -= codes->first_error;  \
     if (code >= 0 && code < nerr) { \

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/01/29 08:51:28 cegger Exp $
+/* $Id: visual.c,v 1.15 2005/01/29 08:54:16 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -163,7 +163,7 @@ static int do_cleanup(ggi_visual * vis)
 	free(DGA_PRIV(vis));
 	free(LIBGGI_GC(vis));
 
-	DGA_PRIV(vis) = NULL;
+	LIBGGI_PRIVATE(vis) = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *) do_cleanup, vis);
 
@@ -277,7 +277,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("Virtwidth: %d, depth: %d, size: %d\n",
 		    priv->width, priv->depth, priv->size);
 
-	DGA_PRIV(vis) = priv;
+	LIBGGI_PRIVATE(vis) = (void *) priv;
 
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *) do_cleanup, vis);
@@ -326,8 +326,10 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		_args.win = DefaultRootWindow(priv->x.display);
 		_args.ptralwaysrel = 1;
 		_args.wait = 0;
-		_args.exposefunc = _args.exposearg
-		    = _args.resizefunc = _args.resizearg = NULL;
+		_args.exposefunc = NULL;
+		_args.exposearg = NULL;
+		_args.resizefunc = NULL;
+		_args.resizearg = NULL;
 		_args.gglock = priv->x.xliblock;
 
 		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
