@@ -261,7 +261,7 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 	switch (cb.result.type & KGI_RT_MASK) {
 
 	case KGI_RT_MMIO:
-		printf("MMIO: window %i, size %i, align %.8x, "
+		printf("MMIO: window %li, size %li, align %.8x, "
 			"access %.8x\n",
 			cb.result.info.mmio.window,
 			cb.result.info.mmio.size,
@@ -270,13 +270,13 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		break;
 
 	case KGI_RT_ACCEL:
-		printf("ACCEL: recommended are %i buffers of size %i\n",
+		printf("ACCEL: recommended are %i buffers of size %li\n",
 			cb.result.info.accel.buffers,
 			cb.result.info.accel.buffer_size);
 		break;
 
 	case KGI_RT_SHMEM:
-		printf("SHMEM: (maximum) aperture size %i\n",
+		printf("SHMEM: (maximum) aperture size %li\n",
 			cb.result.info.shmem.aperture_size);
 		break;
 
