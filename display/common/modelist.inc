@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.7 2005/02/06 13:03:31 cegger Exp $
+/* $Id: modelist.inc,v 1.8 2005/02/08 10:28:15 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -336,11 +336,12 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 				   void *mode_extra)
 {
 	int ret;
-	int maxamize_x, maxamize_y;
+	int maxamize_x, maxamize_y, maxamize_depth;
 
 	/* make the default to maximize the resolution... */
 	maxamize_x = (cm->req.visible.x == GGI_AUTO);
 	maxamize_y = (cm->req.visible.y == GGI_AUTO);
+	maxamize_depth = ( cm->req.graphtype == GT_AUTO);
 
 	/* First time... nothing to compare. */
 	if( cm->sug.visible.x == GGI_AUTO )  {
@@ -362,6 +363,12 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		else
 			cm->req.visible.x = cm->sug.visible.y;
 	}
+	if( maxamize_depth ) {
+		if( GT_DEPTH(p->graphtype) > GT_DEPTH(cm->sug.graphtype) )
+			cm->req.graphtype = p->graphtype;
+		else
+			cm->req.graphtype = cm->sug.graphtype;
+	}
 
 	ret =_GGI_default_mode_cmp(&cm->req, p, &cm->sug);
 
@@ -382,6 +389,8 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		cm->req.visible.x = GGI_AUTO;
 	if (maxamize_y)
 		cm->req.visible.y = GGI_AUTO;
+	if( maxamize_depth ) 
+		cm->req.graphtype = GT_AUTO;
 }
 
 static
