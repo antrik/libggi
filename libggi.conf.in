@@ -40,6 +40,7 @@ display-trueemu			display/trueemu.@DLLEXT@
 display-vcsa			display/vcsa.@DLLEXT@
 helper-mansync			display/mansync.@DLLEXT@
 helper-linux-vtswitch		display/linvtsw.@DLLEXT@
+display-wsfb			display/wsfb.@DLLEXT@
 
 # Display abbreviations
 kgi				display/kgi.@DLLEXT@
@@ -68,6 +69,7 @@ tele				display/tele.@DLLEXT@
 tile				display/tile.@DLLEXT@
 trueemu				display/trueemu.@DLLEXT@
 vcsa				display/vcsa.@DLLEXT@
+wsfb				display/wsfb.@DLLEXT@
 
 # Stubs library - generic drawing code goes here
 generic-stubs			default/stubs.@DLLEXT@

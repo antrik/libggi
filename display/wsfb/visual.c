@@ -1,0 +1,268 @@
+/* $Id: visual.c,v 1.1 2003/02/13 19:44:25 fries Exp $
+******************************************************************************
+
+   LibGGI wsfb(3) target
+
+   Copyright (C) 2003 Todd T. Fries <todd@openbsd.org>
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include "config.h"
+#include <ggi/internal/ggi-dl.h>
+
+#include <ggi/display/wsfb.h>
+
+static int usagecounter = 0;
+
+static int do_mmap(ggi_visual *);
+
+static int do_cleanup(ggi_visual *vis)
+{
+	wsfb_priv *priv = WSFB_PRIV(vis);
+
+	GGIDPRINT("do_cleanup\n");
+
+	if (vis->input != NULL) {
+		giiClose(vis->input);
+		vis->input = NULL;
+	}
+
+	if (priv->availmodes != NULL) {
+		free(priv->availmodes);
+	}
+
+	if (priv->origmode == 0) {
+		priv->mode = WSDISPLAYIO_MODE_EMUL;
+		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
+			GGIDPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
+				priv->devname, strerror(errno));
+			return 1;
+		}
+	}
+
+	munmap(priv->base, priv->mapsize);
+	close(priv->fd);
+
+	free(LIBGGI_GC(vis));
+
+	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
+	
+	usagecounter--;
+
+	return 0;
+}
+
+
+static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+			const char *args, void *argptr, uint32 *dlret)
+{
+	wsfb_priv *priv = NULL;
+	int error = 0, i;
+
+	GGIDPRINT("GGIopen\n");
+	
+	ggLock(_ggi_global_lock); /* Entering protected section */
+	if (usagecounter > 0) {
+		ggUnlock(_ggi_global_lock);
+		GGIDPRINT("display-wsfb: You can only open this target "
+			"once in an application.\n");
+		error = GGI_EBUSY;
+		goto error;
+	}
+	usagecounter++;
+	ggUnlock(_ggi_global_lock); /* Exiting protected section */
+
+	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
+	ggCleanupForceExit();
+    
+	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	if (LIBGGI_GC(vis) == NULL) {
+		usagecounter--;
+		error = GGI_ENOMEM;
+		goto error;
+	}
+	WSFB_PRIV(vis) = malloc(sizeof(struct wsfb_priv));
+	if (WSFB_PRIV(vis) == NULL) {
+		do_cleanup(vis);
+		error = GGI_ENOMEM;
+		goto error;
+	}
+	priv = WSFB_PRIV(vis);
+	memset(priv, 0, sizeof(*priv));
+
+	priv->devname = strdup("/dev/ttyC0");
+
+	priv->fd = open(priv->devname, O_RDWR);
+
+	if (priv->fd < 0) {
+		GGIDPRINT("fd open error: %s %s\n",
+			priv->devname, strerror(errno));
+		goto error;
+	}
+
+
+	if (ioctl(priv->fd, WSDISPLAYIO_GINFO, &priv->info) == -1) {
+		GGIDPRINT("ioctl WSDISPLAYIO_GINFO error: %s %s\n",
+			priv->devname, strerror(errno));
+		goto error;
+	}
+	if (ioctl(priv->fd, WSDISPLAYIO_GTYPE, &priv->wstype) == -1) {
+		GGIDPRINT("ioctl WSDISPLAYIO_GTYPE error: %s %s\n",
+			priv->devname, strerror(errno));
+		goto error;
+	}
+	if (ioctl(priv->fd, WSDISPLAYIO_LINEBYTES, &priv->linebytes) == -1) {
+		GGIDPRINT("ioctl WSDISPLAYIO_LINEBYTES error: %s %s\n",
+			priv->devname, strerror(errno));
+		goto error;
+	}
+
+	printf("info: depth: %d height: %d width: %d\n",
+		priv->info.depth, priv->info.height, priv->info.width);
+
+	if (ioctl(priv->fd, WSDISPLAYIO_GMODE, &priv->origmode) == -1) {
+		GGIDPRINT("ioctl WSDISPLAYIO_GMODE ERROR: %s %s\n",
+			priv->devname, strerror(errno));
+		goto error;
+	}
+
+	// printf("original mode: 0x%x\n", priv->origmode);
+
+	if (priv->origmode == 0) {
+		priv->mode = WSDISPLAYIO_MODE_MAPPED;
+		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
+			GGIDPRINT("ioctl WSDISPLAYIO_SMODE ERROR: %s %s\n",
+				priv->devname, strerror(errno));
+			goto error;
+		}
+	}
+
+	priv->size = priv->info.height * priv->info.width;	
+	priv->Base = 0;
+
+	/* Round to the nearest page */
+
+	priv->pagemask = getpagesize() - 1;
+	priv->mapsize = ((int)priv->size  + priv->pagemask) & ~(priv->pagemask);
+
+	do_mmap(vis);
+
+	/* show some data */
+	for(i=0; i<priv->size/4/16; i++) {
+		priv->base[i]=i*2;
+	}
+
+	/* Open keyboard and mouse input */
+	vis->input = giiOpen("stdin:ansikey", NULL);
+	if (vis->input == NULL) {
+		GGIDPRINT(
+"display-wsfb: Unable to open stdin input, try running with '-nokbd'.\n");
+			do_cleanup(vis);
+			error = GGI_ENODEVICE;
+			goto error;
+	}
+
+	vis->opdisplay->getmode		= GGI_wsfb_getmode;
+	vis->opdisplay->setmode		= GGI_wsfb_setmode;
+	vis->opdisplay->getapi		= GGI_wsfb_getapi;
+	vis->opdisplay->checkmode	= GGI_wsfb_checkmode;
+
+	*dlret = GGI_DL_OPDISPLAY;
+	return 0;
+
+error:
+	GGIDPRINT("display-wsfb: open failed (%s %s)\n",
+		priv->devname, strerror(errno));
+	return error;
+}
+
+
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	GGIDPRINT("GGIclose\n");
+	return do_cleanup(vis);
+}
+
+
+int GGIdl_wsfb(int func, void **funcptr)
+{
+	GGIDPRINT("GGIdl_wsfb\n");
+	switch (func) {
+	case GGIFUNC_open:
+		*funcptr = GGIopen;
+		return 0;
+	case GGIFUNC_exit:
+		*funcptr = NULL;
+		return 0;
+	case GGIFUNC_close:
+		*funcptr = GGIclose;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}
+
+	return GGI_ENOTFOUND;
+}
+
+static int
+do_mmap(ggi_visual *vis)
+{
+	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
+        ggi_mode *mode = LIBGGI_MODE(vis);
+        ggi_graphtype gt = mode->graphtype;
+	ggi_directbuffer *buf;
+
+	
+	priv->base = mmap(0, priv->mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
+		priv->fd, priv->Base);
+
+	if (priv->base == (void *)-1) {
+		GGIDPRINT("mmap failed: %s %s\n",
+			priv->devname, strerror(errno));
+		return -1;
+	}
+
+
+	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+	LIBGGI_PIXFMT(vis)->size  = GT_SIZE(gt);
+	LIBGGI_PIXFMT(vis)->depth = GT_DEPTH(gt);
+
+	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+
+	_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
+
+	buf = LIBGGI_APPBUFS(vis)[0];
+
+	buf->frame = 0;
+	buf->type  = GGI_DB_SIMPLE_PLB|GGI_DB_NORMAL;
+	buf->read  = (uint8 *) priv->base;
+	buf->write = buf->read;
+
+	buf->layout = blPixelPlanarBuffer;
+
+	buf->buffer.plb.stride = priv->linebytes;
+	buf->buffer.plan.pixelformat = LIBGGI_PIXFMT(vis);
+
+	return 0;
+}
+
+
+#include <ggi/internal/ggidlinit.h>

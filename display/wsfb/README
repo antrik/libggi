@@ -1,0 +1,16 @@
+// README //
+
+The wsfb GGI display device is the GGI display backend for the wsfb
+interface. Please see wsdisplay(4) on an OpenBSD system (I expect this will
+work with NetBSD as well).
+
+$ export GGI_DISPLAY=display-wsfb
+
+Currently, I am working on getting an 8bit display working on OpenBSD/sparc.
+
+Sofar, things seem to work ok, but GGI never draws anything and has alot
+of generic errors being called.
+
+At least the framebuffer is mmap'ed correctly, as can be evidenced by the
+short for(i.. loop that draws on the top 1/16th of the screen some numerical
+data, but getting GGI to draw to this memory is eluding me at present.
