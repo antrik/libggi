@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/05/25 19:56:14 stefan Exp $
+/* $Id: visual.c,v 1.4 2001/06/17 08:54:21 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -83,19 +83,26 @@ int GII_ipc_send(gii_input_t inp, ggi_event *event)
   return 0;
 }
 
-int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
+		  int tryflag)
 {
-  char buffer[32];
-  ggi_ipc_priv *priv = LIBGGI_PRIVATE(vis);
-  ggi_pixel pixel;
-  if (priv->sockfd == -1) return 0;
-  buffer[0] = 'F'; // may be some day we want to send something other than flush messages...
-  memcpy(buffer + 1, &x, sizeof(int));
-  memcpy(buffer + 1 + sizeof(int), &y, sizeof(int));
-  memcpy(buffer + 1 + 2*sizeof(int), &w, sizeof(int));
-  memcpy(buffer + 1 + 3*sizeof(int), &h, sizeof(int));
-  write(priv->sockfd, buffer, 1 + 4*sizeof(int));
-  return 0;
+	char buffer[32];
+	ggi_ipc_priv *priv = LIBGGI_PRIVATE(vis);
+
+	if (priv->sockfd == -1) return 0;
+
+	/* may be some day we want to send something
+	 * other than flush messages...
+	 */
+	buffer[0] = 'F';
+	memcpy(buffer + 1, &x, sizeof(int));
+	memcpy(buffer + 1 + sizeof(int), &y, sizeof(int));
+	memcpy(buffer + 1 + 2*sizeof(int), &w, sizeof(int));
+	memcpy(buffer + 1 + 3*sizeof(int), &h, sizeof(int));
+
+	write(priv->sockfd, buffer, 1 + 4*sizeof(int));
+
+	return 0;
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, void *argptr, uint32 *dlret)
@@ -149,7 +156,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, 
   GGIDPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n", address.sun_path, priv->semid, priv->shmid);
   address.sun_family = AF_UNIX;
   if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1 ||
-      connect(priv->sockfd, &address, sizeof(struct sockaddr_un)) == -1 ||
+	connect(priv->sockfd, (const struct sockaddr *)(&address),
+		sizeof(struct sockaddr_un)) == -1 ||
       (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
     {
       GGIDPRINT("display-ipc initialization failed : %s\n", strerror(errno));
