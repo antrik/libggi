@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.108 2004/02/25 10:13:58 pekberg Exp $
+dnl $Id: configure.in,v 1.109 2004/02/28 17:22:27 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -946,11 +946,14 @@ else
   AC_MSG_RESULT(no)
 fi
 
+# noinst_PROGRAMS in programs/util
 OPTUTILS=""
+# EXTRA_PROGRAMS in programs/util
+EXTRAUTILS=""
 
 AC_MSG_CHECKING(if we should build the tunemode program)
-if test "x$build_kgi_target" = "xyes"; then
-  OPTUTILS="$OPTUTILS tunemode\$(EXEEXT)"
+if test "x$ac_cv_header_kgimon_h" = "xyes"; then
+  EXTRAUTILS="$EXTRAUTILS tunemode\$(EXEEXT)"
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
