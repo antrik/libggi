@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:58 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/09/12 20:30:15 cegger Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -58,7 +58,7 @@ GGI_lcd823_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 
 static int do_cleanup(ggi_visual *vis)
 {
-	ggi_lcd823_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_lcd823_priv *priv = LCD823_PRIV(vis);
 
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
@@ -82,7 +82,7 @@ static int do_cleanup(ggi_visual *vis)
 	}
 
 	free(priv);
-	LIBGGI_PRIVATE(vis) = NULL;
+	LCD823_PRIV(vis) = NULL;
 
 	if (LIBGGI_GC(vis)) {
 		free(LIBGGI_GC(vis));
@@ -106,7 +106,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	GGIDPRINT("display-lcd823: GGIopen start.\n");
 
-	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(ggi_lcd823_priv));
+	LCD823_PRIV(vis) = priv = malloc(sizeof(ggi_lcd823_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}

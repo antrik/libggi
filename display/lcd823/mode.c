@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/12 19:29:12 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/12 20:30:15 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -87,7 +87,7 @@ int GGI_lcd823_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 static int do_mmap(ggi_visual *vis)
 {
-	ggi_lcd823_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_lcd823_priv *priv = LCD823_PRIV(vis);
 	ggi_graphtype gt = LIBGGI_GT(vis);
 	int xres_in_bytes = XRES;
 	int i;
