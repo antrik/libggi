@@ -94,4 +94,4 @@ generic-mmio 			default/mmio.@DLLEXT@
 generic-ioctl 			default/ioctl.@DLLEXT@
 
 # Fbdev accels
-.include @static_libdir@/@ggi_subdir@/targets/fbdev.conf
+.include @static_sysconfdir@/@ggi_subdir@/targets/fbdev.conf
