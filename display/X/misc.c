@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.12 2003/03/18 20:30:36 cegger Exp $
+/* $Id: misc.c,v 1.13 2003/03/30 13:23:20 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -258,7 +258,8 @@ case cls: return(GT_CONSTRUCT(depth, scheme, size))
  * Note this function may be called with tm == suggest.
  */
 int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm, 
-			ggi_x_vi *vi, ggi_mode *suggest) {
+			ggi_x_vi *vi, ggi_mode *suggest)
+{
 	ggi_x_priv     *priv;
 	int 		res = GGI_OK;
 	unsigned int 	w, h, screenw, screenh, screenwmm, screenhmm;
@@ -304,11 +305,11 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 
 	if (tm->visible.x == GGI_AUTO) {
 		suggest->visible.x = (tm->virt.x == GGI_AUTO) ? w : tm->virt.x;
-		if (suggest->visible.x > w) suggest->visible.x = w;
+		if ((unsigned)suggest->visible.x > w) suggest->visible.x = w;
 	}
 	if (tm->visible.y == GGI_AUTO) {
 		suggest->visible.y = (tm->virt.y == GGI_AUTO) ? h : tm->virt.y;
-		if (suggest->visible.x > w) suggest->visible.x = w;
+		if ((unsigned)suggest->visible.x > w) suggest->visible.x = w;
 	}
 	if (tm->virt.x == GGI_AUTO) 
 		suggest->virt.x = (suggest->visible.x+3) & ~3;
@@ -438,16 +439,26 @@ void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc,
 	free(xrect);
 }
 
-void _ggi_x_create_dot_cursor (ggi_visual *vis) {
+void _ggi_x_create_dot_cursor (ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	Pixmap crsrpix, crsrmask;
-	XColor black = { 0, 0x0, 0x0, 0x0 };
-	XColor white = { 0, 0xffff, 0xffff, 0xffff };
 	char crspdat[] = { 0xf8, 0xfa, 0xf8 };
 	char crsmdat[] = { 0xfa, 0xff, 0xfa };
 	unsigned int dummy;
 	Window root;
 	XSetWindowAttributes wa;
+
+	XColor black = {
+		0, 0x0, 0x0, 0x0,
+		DoRed | DoGreen | DoBlue,
+		0
+	};
+	XColor white = {
+		0, 0xffff, 0xffff, 0xffff,
+		DoRed | DoGreen | DoBlue,
+		0
+	};
 
 	priv = GGIX_PRIV(vis);
 
@@ -467,16 +478,27 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis) {
 }
 
 
-void _ggi_x_create_invisible_cursor (ggi_visual *vis) {
+void _ggi_x_create_invisible_cursor (ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	Pixmap crsrpix, crsrmask;
-	XColor black = { 0, 0x0, 0x0, 0x0 };
-	XColor white = { 0, 0xffff, 0xffff, 0xffff };
 	char crspdat[] = { 0 };
 	char crsmdat[] = { 0 };
 	unsigned int dummy;
 	Window root;
 	XSetWindowAttributes wa;
+
+	XColor black = {
+		0, 0x0, 0x0, 0x0,
+		DoRed | DoGreen | DoBlue,
+		0
+	};
+	XColor white = {
+		0, 0xffff, 0xffff, 0xffff,
+		DoRed | DoGreen | DoBlue,
+		0
+	};
+
 
 	priv = GGIX_PRIV(vis);
 
