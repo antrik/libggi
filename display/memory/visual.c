@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2003/07/06 10:25:23 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/01/31 22:36:45 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -336,7 +336,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	switch(MEMORY_PRIV(vis)->memtype) {
 	case MT_MALLOC:
 	case MT_EXTERN:	/* Nothing to be done. */
-	  	break;
+		break;
 #ifdef HAVE_SYS_SHM_H
 	case MT_SHMKEYFILE: /* FIXME ? Should we RMID the area ? */
 	case MT_SHMID: 
