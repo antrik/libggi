@@ -37,8 +37,10 @@ from Kaleb S. KEITHLEY.
 /* THIS IS NOT AN X CONSORTIUM STANDARD */
 
 #define _POSIX_C_SOURCE	199309L
+#if !defined (__OpenBSD__)
 #define _POSIX_SOURCE
 #define _XOPEN_SOURCE	500L
+#endif
 #define _BSD_SOURCE
 #define _SVID_SOURCE  
 #define FUNCPROTO	15
