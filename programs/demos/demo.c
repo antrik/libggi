@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.8 2003/01/22 16:52:59 cegger Exp $
+/* $Id: demo.c,v 1.9 2003/01/27 04:06:50 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -1029,7 +1029,8 @@ int main(int argc, char **argv)
 
 	dbuf_tidy:
 
-		if (!ggiAddFlags(vis, GGIFLAG_TIDYBUF)) {
+		ggiAddFlags(vis, GGIFLAG_TIDYBUF);
+		if (ggiGetFlags(vis) & GGIFLAG_TIDYBUF) {
 			TestName("Directbuffer (with GGIFLAG_TIDYBUF flag)");
 			waitabit();
 			TestStart();
@@ -1038,31 +1039,6 @@ int main(int argc, char **argv)
 			dx = (100 < vx) ? 100 : vx;
 			dy = (100 < vy) ? 100 : vy;
 
-			while ((TestTime() < 10) && (i < numplanes)) {
-				for (y = 0; (TestTime() < 15) && (y < dy); y++) {
-					uint8 *linestart;
-					linestart = (uint8 *)dbuf->write + 
-					  stride2 * i + stride * y;
-					x = 0;
-					if (ggiKbhit(vis)) goto dbuf_end;
-					while (x < dx * GT_SIZE(type)/wordsize) {
-						switch(wordsize) {
-						case 32:
-						  *((uint32 *)linestart+x) = random();
-						  break;
-						case 16:
-						  *((uint16 *)linestart+x) = random();
-						  break;
-						case 8:
-						  *(linestart+x) = random();
-						  break;
-						}
-						x++;
-					}
-				}
-				i++;
-			}
-
 			c = 0;
 			while (TestTime() < 10) {
 				uint8 *linestart;
@@ -1070,8 +1046,10 @@ int main(int argc, char **argv)
 				if (ggiKbhit(vis)) goto dbuf_end;
 
 				i = random() % numplanes;
-				y = random() % dy;
-				x = random() % (dx * GT_SIZE(type)/wordsize);
+				y = (vy - dy) / 2 + random() % dy;
+				x = (vx - dx) / 2 + random() % dx;
+				x *= GT_SIZE(type);
+				x /= wordsize;
 
 				linestart = (uint8 *)dbuf->write + 
 				  stride2 * i + stride * y;
@@ -1124,6 +1102,7 @@ int main(int argc, char **argv)
 	 */
 	
 	ggiSetFlags(vis,GGIFLAG_ASYNC);
+	if (!(ggiGetFlags(vis) & GGIFLAG_ASYNC)) goto palette;
 	
 	TestName("Async mode");
 	waitabit();
@@ -1150,6 +1129,7 @@ int main(int argc, char **argv)
 		if (ggiKbhit(vis)) break;
 	}
 
+ palette:
 	/* Palette Test. We do some colorcycling here.
 	 */
 	if (GT_SCHEME(mode.graphtype) == GT_PALETTE) {
