@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/08/09 19:21:28 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/08/17 12:06:30 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -57,7 +57,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
-		if ((i= 0) && (MEMORY_PRIV(vis)->memtype==MT_MALLOC))
+		if ((0==i) && (MEMORY_PRIV(vis)->memtype==MT_MALLOC))
 			free(LIBGGI_APPBUFS(vis)[0]->write);
 		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
@@ -176,7 +176,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
-	strcpy(arguments,"");
+	*arguments = '\0';
 
 	switch(num) { 
 
@@ -193,7 +193,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 
 	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d",
+			sprintf(apiname, "generic-text-%u",
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
@@ -201,7 +201,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 			sprintf(apiname, "generic-planar");
 			return 0;
 		}
-		sprintf(apiname, "generic-linear-%d%s", 
+		sprintf(apiname, "generic-linear-%u%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
