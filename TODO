@@ -10,13 +10,11 @@ Next minor release (BUGFIX release)
 Version : 2.0.2
 Due : 200?-??-??
 
-- cleanup demo building and installation
+Building issues:
+- cleanup demo building and installation. That means, that demos requring
+  a special header/input device like ggicalibrate should only be built,
+  if possible.
 - bring improved code in showaccel demo to showaccel2 demo
-- documentate tele-target in libggi/doc/targets.txt
-* why is directfb drawing on only every other pixel column? (was DFB bug)
-* use config file instead of static accel_strings array in fbdev (Brian)
-* enable DirectFB (Brian)
-- Make XF86DGA working with XF86 3.x and XF86 4.x
 - Verify and fix cross-compilation to other architectures
 - Fix libtool to create shared libs instead of static ones
   on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
@@ -26,15 +24,30 @@ Due : 200?-??-??
   the user or not, unless '--with-gii' itself is specified by the user.
   This simplifies compiling libggi on a machine with no root-permissions.
   (Christoph)
+
+Documentation related stuff:
+
+- documentate tele-target in libggi/doc/targets.txt and via XML.
+
+Target specific issues:
+
+* use config file instead of static accel_strings array in fbdev (Brian)
+- alter fbdev.conf appropriately for selected accel sublibs
+* why is directfb drawing on only every other pixel column? (was DFB bug)
+* enable DirectFB (Brian)
 * disable libKGI target, because it's currently a "proof-of-concept"
   (Brian)
-- BUGFIX: tile-over-Xlib produces colors with blue characteristics!
-  The bug appears, when using the directbuffer, that tile provides.
-  That means, disabling the db, colors appear correctly.	  
 - BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
-  the RGBA colorspace. Verify, that X and Xlib handle that case correctly.
-  That might also solve the above tile-over-Xlib issue.
-- alter fbdev.conf appropriately for selected accel sublibs
+  the RGBA colorspace. This causes colors being wrongly handled. The
+  result on the screen are colors with blue characteristics. The bug
+  is reproduceable when running apps using tile-over-Xlib with directbuffers
+  respectively simply running apps on Xlib. The bug disappears by
+  disabling the directbuffer using tile-over-Xlib.
+- Make XF86DGA working with XF86 3.x and XF86 4.x
+  (Brian is working on a new X target, that hopefully fixes all these X issues.)
+
+Common issues:
+
 - Alter all gcchanged functions so that unknown flags are not set, as
   an indication that they are not supported by the target yet.
 - Make sure all target flush functions clip appropriately.  Brian has
