@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.1 2004/10/01 12:41:58 pekberg Exp $
+/* $Id: pointer.c,v 1.2 2004/10/01 17:12:18 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -38,10 +38,8 @@ main(int argc, char **argv)
 	int err;
 	int rx = 0, ry = 0;
 	int ax = 0, ay = 0;
-	int dx = 0, dy = 0;
-	int rdx = 0, rdy = 0;
-	int adx = 0, ady = 0;
 	int ch_x, ch_y;
+	int quit = 0;
 	ggi_pixel white;
 	ggi_pixel black;
 	ggi_color color;
@@ -85,39 +83,47 @@ main(int argc, char **argv)
 
 	ggiAddEventMask(vis, emPtrRelative | emPtrAbsolute);
 
-	while (ggiEventPoll(vis, emAll, NULL)) {
-		ggi_event event;
-		char t = ' ';
-		ggiEventRead(vis, &event, emAll);
+	while (!quit) {
+		int n;
 
-		if (event.any.type == evPtrRelative) {
-			rdx = event.pmove.x;
-			rdy = event.pmove.y;
-			rx += event.pmove.x;
-			ry += event.pmove.y;
-			t = 'R';
+		ggiEventPoll(vis, emAll, NULL);
+
+		n = ggiEventsQueued(vis, emAll);
+
+		while (n--) {
+			ggi_event event;
+			ggiEventRead(vis, &event, emAll);
+	
+			if (event.any.type == evPtrRelative) {
+				rx += event.pmove.x;
+				ry += event.pmove.y;
+				sprintf(tmpstr, " rel(%-4d,%-4d)   ",
+					rx, ry);
+				ggiPuts(vis, 0, 1 * ch_y, tmpstr);
+				sprintf(tmpstr, "diff(%-4d,%-4d)   ",
+					rx-ax, ry-ay);
+				ggiPuts(vis, 0, 2 * ch_y, tmpstr);
+			}
+	
+			else if (event.any.type == evPtrAbsolute) {
+				ax = event.pmove.x;
+				ay = event.pmove.y;
+				sprintf(tmpstr, " abs(%-4d,%-4d)   ",
+					ax, ay);
+				ggiPuts(vis, 0, 0 * ch_y, tmpstr);
+				sprintf(tmpstr, "diff(%-4d,%-4d)   ",
+					rx-ax, ry-ay);
+				ggiPuts(vis, 0, 2 * ch_y, tmpstr);
+			}
+			
+			else if (event.any.type == evKeyPress) {
+				quit = 1;
+				break;
+			}
+
+			else
+				continue;
 		}
-
-		else if (event.any.type == evPtrAbsolute) {
-			adx = event.pmove.x - ax;
-			ady = event.pmove.y - ay;
-			ax = event.pmove.x;
-			ay = event.pmove.y;
-			t = 'A';
-		}
-		
-		else if (event.any.type == evKeyPress)
-			break;
-
-		if (t == ' ')
-			continue;
-
-		sprintf(tmpstr, "%c rel(%-4d,%-4d) "
-			"abs(%-4d,%-4d) diff(%-3d,%-3d)   ",
-			t, rx, ry, ax, ay, rx-ax, ry-ay);
-		dx = rx-ax;
-		dy = ry-ay;
-		ggiPuts(vis, 0, t == 'R' ? ch_y : 0, tmpstr);
 		ggiFlush(vis);
 	}
 
