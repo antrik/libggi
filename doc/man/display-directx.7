@@ -1,4 +1,4 @@
-.TH "display-directx" 7 "2004-11-04" "libggi-current" GGI
+.TH "display-directx" 7 "2004-11-08" "libggi-current" GGI
 .SH NAME
 \fBdisplay-directx\fR : DirectX (WIN32)
 .SH SYNOPSIS
@@ -65,4 +65,24 @@ DirectBuffer
 Multiple frames (up to 16)
 .IP \(bu 4
 Panning
+.PP
+.SH BUGS
+.IP \(bu 4
+On palettized windowed modes (i.e. not with -fullscreen) the first and
+last 10 entries of the palette are reserved by Windows and will not
+behave correctly. Even with the -fullscreen option, palettized modes
+can have problems with the first and the last entry, depending on what
+version of Windows is running.
+.IP \(bu 4
+Can not draw directly in video ram, instead uses a intermediate buffer
+that is copied to video ram at regular intervals.
+.IP \(bu 4
+The rate at which the above copy happens is fixed at 30Hz, and cannot
+be controlled by the user. The environment variable \fB'MANSYNC_FPS'\fR
+should probably be used.
+.IP \(bu 4
+Does not fall back to fullscreen if -fullscreen is not specified. That
+should ideally happen when the requested graphics mode is incompatible
+with the current Windows graphics mode and a matching fullscreen mode
+is there.
 .PP
