@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2004/08/17 16:44:12 cegger Exp $
+/* $Id: mode.c,v 1.18 2004/09/08 21:03:55 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -73,11 +73,9 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	int i;
 	char *fbaddr;
 	ggi_memory_priv *priv;
-	int fstride, lstride, pstride, size;
+	int fstride, lstride, pstride;
 
 	priv = MEMORY_PRIV(vis);
-
-	size = GT_SIZE(mode->graphtype);
 
 	pstride = 0; /* Silence, GCC. */
 
@@ -97,7 +95,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	else {
 		lstride = priv->buffer.plb.stride ?
 			priv->buffer.plb.stride : 
-			(mode->virt.x * size + 7) / 8;
+			(int)GT_ByPPP(mode->virt.x, mode->graphtype);
 		fstride = priv->fstride ? 
 			priv->fstride : (lstride * mode->virt.y);
 	}
