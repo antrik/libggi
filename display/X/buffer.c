@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.10 2003/05/02 05:49:49 cegger Exp $
+/* $Id: buffer.c,v 1.11 2003/05/08 06:22:13 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -169,8 +169,8 @@ void _ggi_x_free_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-int _ggi_x_create_ximage(ggi_visual *vis) {
-
+int _ggi_x_create_ximage(ggi_visual *vis)
+{
 	char target[256];
 	ggi_mode tm;
 	ggi_x_priv *priv;
@@ -192,6 +192,12 @@ int _ggi_x_create_ximage(ggi_visual *vis) {
 
 	/* We assume vis->mode structure has already been filled out */
 	memcpy(&tm, vis->mode, sizeof(ggi_mode));
+
+
+	/* Make sure we do not fail due to physical size constraints,
+	 * which are meaningless on a memory visual.
+	 */
+	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
 	i += sprintf(target, "display-memory:-noblank:-pixfmt=");
