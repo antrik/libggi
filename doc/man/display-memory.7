@@ -84,15 +84,26 @@ releases.
 \fBshmid:<sid>\fR
 use existing shared memory ID \fBsid\fR
 
+On win32, \fBsid\fR is the HANDLE returned by a call to
+\fBCreateFileMapping\fR in decimal form.
+
 .TP
 \fBkeyfile:<size>:<id>:<fname>\fR
 create a new shm segment with id \fBftok(fname,id)\fR of size
 \fBsize\fR (preferred method !). See \fBftok(3)\fR.
 
+On win32, the newly created shared memory mapping has the object
+name: \fBggi-display-memory-shm:<fname>:<ascid>\fR, where all
+backslashes have been converted to forward slashes in \fBfname\fR
+and \fBascid\fR is the ascii value of \fBid\fR in decimal form.
+If this object does already exist (and is a file mapping) it will
+be used, so two apps can share memory by using the same
+\fBkeyfile\fR arguments on win32.
+
 .TP
 \fBpointer\fR
 use the memory pointed to by \fBargptr\fR (only available to
-applications calling \fBggiOpen\fR.
+applications calling \fBggiOpen\fR).
 
 .PP
 .RS
