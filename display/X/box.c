@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.12 2004/12/01 23:08:06 cegger Exp $
+/* $Id: box.c,v 1.13 2004/12/27 22:55:09 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -150,7 +150,7 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 #warning 1,2,4-bit support needed.
 	ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
 			    (unsigned)LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
-			    data, (unsigned)w, (unsigned)h, 8, 0);
+			    (char *)data, (unsigned)w, (unsigned)h, 8, 0);
 	y = GGI_X_WRITE_Y;
 
 #ifdef GGI_LITTLE_ENDIAN
