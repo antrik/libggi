@@ -7,3 +7,5 @@ LibGGI Documentation
 .. include:: libggi-structures.txt
 
 .. include:: libggi-libraries.txt
+
+.. include:: libggi-triple-int.txt

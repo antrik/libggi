@@ -1,0 +1,421 @@
+triple-int Functions
+====================
+
+
+triple-int General Information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 triple-int
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+
+Description
+-----------
+
+`triple-int` is a collection of math routines that operates on an
+array of 3 unsigned intergers, treating them as as a single integer
+with triple precision.
+
+`triple-int` uses a 2-complement representation for negative values.
+
+The most significant part of the `triple-int` is stored at the
+highest index in the array representation.
+
+
+See Also
+--------
+:man:`assign_3(3)`, :man:`assign_int_3(3)`, :man:`assign_unsigned_3(3)`,
+:man:`sign_3(3)`, :man:`bits_3(3)`, :man:`eq0_3(3)`, :man:`gt0_3(3)`,
+:man:`ge0_3(3)`, :man:`lt0_3(3)`, :man:`le0_3(3)`,
+:man:`eq_3(3)`, :man:`ge_3(3)`,
+:man:`invert_3(3)`, :man:`lshift_3(3)`, :man:`rshift_3(3)`,
+:man:`inc_3(3)`, :man:`dec_3(3)`, :man:`negate_3(3)`, :man:`abs_3(3)`,
+:man:`add_3(3)`, :man:`sub_3(3)`, :man:`mul_3(3)`, :man:`divmod_3(3)`,
+
+
+
+
+Initialize a triple-int
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 assign_3 assign_int_3 assign_unsigned_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  unsigned *assign_3(unsigned l[3], unsigned r[3]);
+
+  unsigned *assign_int_3(unsigned l[3], int r);
+
+  unsigned *assign_unsigned_3(unsigned l[3], unsigned r);
+
+
+Description
+-----------
+
+`assign_3` assigns the value of one existing triple-int `r` to another
+triple-int.
+
+`assign_int_3` and `assign_unsigned_3` assignes the argument `r` to
+the least significant possition of the `triple-int`. `assign_int_3`
+extends the sign, while `assign_unsigned_3` does not.
+
+
+Return value
+------------
+
+`assign_3`, `assign_int_3` and `assign_unsigned_3` all return a pointer
+to the freshly assigned `triple-int`.
+    
+
+Examples
+--------
+
+Assign some values to `triple-int`s::
+
+  unsigned x[3], y[3], z[3];
+
+  assign_int_3(x, -42);
+  assign_unsigned_3(y, 17);
+  assign_3(z, x);
+
+
+See Also
+--------
+
+:man:`triple-int(7)`
+
+
+
+
+triple-int properties
+~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 sign_3 bits_3 eq0_3 gt0_3 ge0_3 lt0_3 le0_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  int sign_3(unsigned x[3]);
+
+  int bits_3(unsigned x[3]);
+
+  int eq0_3(unsigned x[3]);
+  int gt0_3(unsigned x[3]);
+  int ge0_3(unsigned x[3]);
+  int lt0_3(unsigned x[3]);
+  int le0_3(unsigned x[3]);
+
+
+Description
+-----------
+
+`sign_3` checks the sign of `x`.
+
+`bits_3` counts the number of significant bits of `x`. I.e.
+leading zeros in a positive value and leading ones in a negative value
+are not counted.
+
+`eq0_3`, `gt0_3`, `ge0_3`, `lt0_3` and `le0_3` tests the relation
+between `x` and zero. `eq0_3` tests if `x` is equal to zero, `gt0_3` if
+`x` is greater than zero, `ge0_3` if `x` is greater than or equal to
+zero, `lt0_3` if `x` is less than zero and last but not least `le0_3`
+tests if ´x´ is less than or equal to zero.
+
+
+Return value
+------------
+
+`sign_3` returns -1 for negative values, 0 for zero values and 1 for
+positive values.
+
+`bits_3` returns 0 for `x` equal to 0 or -1, 1 for `x` equal to 1 and
+-2, 2 for `x` equal to 2, 3, -3 and -4 etc.
+
+`eq0_3`, `gt0_3`, `ge0_3`, `lt0_3` and `le0_3` all returns non-zero if
+the relation is true, and zero otherwise.
+
+
+Examples
+--------
+
+Some `triple-int` tests::
+
+  unsigned x[3];
+
+  assign_int_3(x, 5);
+  ASSERT(sign_3(x) == 1);
+  ASSERT(bits_3(x) == 3);
+  ASSERT(!eq0_3(x));
+  ASSERT(gt0_3(x));
+  ASSERT(ge0_3(x));
+  ASSERT(!lt0_3(x));
+  ASSERT(!le0_3(x));
+
+
+See Also
+--------
+
+:man:`triple-int(7)`, :man:`assign_int_3(3)`
+
+
+
+
+triple-int comparisons
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 eq_3 ge_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  int eq_3(unsigned l[3], unsigned r[3]);
+  int ge_3(unsigned l[3], unsigned r[3]);
+
+
+Description
+-----------
+
+`eq_3` tests if `l` and `r` are equal.
+
+`ge_3` tests if `l` is greater than or equal to `l`.
+
+
+Return value
+------------
+
+`eq_3` and `ge_3` returns non-zero if the relation is true,
+and zero otherwise.
+
+
+Examples
+--------
+
+Some `triple-int` comparisons::
+
+  unsigned x[3], y[3], z[3];
+
+  assign_int_3(x, 5);
+  assign_int_3(y, 6);
+  assign_int_3(z, 6);
+  ASSERT(!eq_3(x, y));
+  ASSERT(eq_3(y, z));
+  ASSERT(ge_3(x, y));
+  ASSERT(ge_3(y, z));
+  ASSERT(!ge_3(y, x));
+
+
+See Also
+--------
+
+:man:`triple-int(7)`, :man:`assign_int_3(3)`
+
+
+
+
+Bitwise triple-int operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 invert_3 lshift_3 rshift_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  unsigned *invert_3(unsigned x[3]);
+
+  unsigned *lshift_3(unsigned l[3], unsigned r);
+  unsigned *rshift_3(unsigned l[3], unsigned r);
+
+
+Description
+-----------
+
+`invert_3` inverts all bits of `x`.
+
+`lshift_3` shifts `l` to the left by `r` bits.
+
+`rshift_3` shifts `l` to the left by `r` bits. This shift is
+arithmetic, so the sign of `l` is kept as is.
+
+
+Return value
+------------
+
+`invert_3` returns a pointer to `x` which has been updated in place.
+
+Both `lshift_3` and `rshift_3` return a pointer to `l` which has
+been updated in place.
+
+
+Examples
+--------
+
+Some bitwise operations on `triple-int`s::
+
+  unsigned x[3];
+
+  assign_int_3(x, -4);
+  invert_3(x);     /* x is now 3 */
+  lshift_3(x, 42); /* x is now 3*2^42, if that fits in a triple-int */
+  rshift_3(x, 17); /* x is now 3*2^25 */
+
+
+See Also
+--------
+
+:man:`triple-int(7)`, :man:`assign_int_3(3)`
+
+
+
+
+Unary arithmetic triple-int operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 inc_3 dec_3 negate_3 abs_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  unsigned *inc_3(unsigned x[3]);
+  unsigned *dec_3(unsigned x[3]);
+
+  unsigned *negate_3(unsigned x[3]);
+  unsigned *abs_3(unsigned x[3]);
+
+
+Description
+-----------
+
+`inc_3` increments `x` by one.
+
+`dec_3` decrements `x` by one.
+
+`negate_3` negates `x`.
+
+`abs_3` takes the absolute value of `x`.
+
+
+Return value
+------------
+
+`inc_3`, `dec_3`, `negate_3` and `abs_3` all return a pointer
+to `x` which has been updated in place.
+
+
+Examples
+--------
+
+Some unary arithmetic operations on `triple-int`s::
+
+  unsigned x[3];
+
+  assign_int_3(x, 44);
+  negate_3(x);  /* x is now -44 */
+  inc_3(x);     /* x is now -43 */
+  abs_3(x);     /* x is now 43 */
+  dec_3(x);     /* x is now 42 */
+
+
+See Also
+--------
+
+:man:`triple-int(7)`, :man:`assign_int_3(3)`
+
+
+
+
+Binary arithmentic triple-int operations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 add_3 sub_3 mul_3 divmod_3
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/internal/triple-int.h>
+
+  unsigned *add_3(unsigned l[3], unsigned r[3]);
+  unsigned *sub_3(unsigned l[3], unsigned r[3]);
+
+  unsigned *mul_3(unsigned l[3], unsigned r[3]);
+  unsigned *divmod_3(unsigned a[3], unsigned b[3],
+  	unsigned q[3], unsigned r[3]);
+
+
+Description
+-----------
+
+`add_3` adds `r` to `l`. Equivalent to l+=r.
+
+`sub_3` subtracts `r` from `l`. Equivalent to l-=r.
+
+`mul_3` multiplies `r` with `l`. Equivalent to l*=r.
+
+`divmod_3` calculates the quotient `q` and the remainder `r` of `a`/`b`
+such that `a` = `q` * `b` + `r`. Equivalent to r=a%b,q=a/b.
+
+
+Return value
+------------
+
+`add_3`, `sub_3` and `mul_3` all return a pointer to `l` which has
+been updated in place.
+
+'divmod_3` returns a pointer to the quotient `q`.
+
+
+Examples
+--------
+
+Some binary arithmetic operations on `triple-int`s::
+
+  unsigned x[3], y[3], q[3], r[3];
+
+  assign_int_3(x, 4);
+  assign_int_3(y, 5);
+  add_3(x, y);          /* x == 9 */
+  assign_int_3(q, 3);
+  sub_3(x, q);          /* x == 6 */
+  mul_3(x, q);          /* x == 18 */
+  divmod_3(x, y, q, r); /* q == 3, r == 3 */
+
+
+See Also
+--------
+
+:man:`triple-int(7)`, :man:`assign_int_3(3)`
