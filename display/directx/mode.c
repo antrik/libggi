@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/09/15 20:14:39 pekberg Exp $
+/* $Id: mode.c,v 1.22 2004/09/15 20:29:21 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -279,7 +279,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DDChangeMode(priv, mode->frames, mode->virt.x, mode->virt.y,
+	DDChangeMode(vis, mode->frames, mode->virt.x, mode->virt.y,
 		     mode->visible.x, mode->visible.y);
 
 	vis->d_frame_num = 0;
@@ -380,6 +380,8 @@ GGI_directx_setorigin(ggi_visual *vis, int x, int y)
 		return GGI_EARGINVAL;
 	vis->origin_x = x;
 	vis->origin_y = y;
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)
+		DDRedrawAll(vis);
 	return 0;
 }
 

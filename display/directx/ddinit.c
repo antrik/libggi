@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.34 2004/09/15 19:44:04 pekberg Exp $
+/* $Id: ddinit.c,v 1.35 2004/09/15 20:29:21 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -122,10 +122,11 @@ DDShutdown(directx_priv *priv)
 void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
 
 int
-DDChangeMode(directx_priv *priv, int frames,
+DDChangeMode(ggi_visual *vis, int frames,
 	     DWORD virtw, DWORD virth,
 	     DWORD width, DWORD height)
 {
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* destroy any existing surface */
 	DDDestroySurface(priv);
 
@@ -138,7 +139,8 @@ DDChangeMode(directx_priv *priv, int frames,
 
 	/* set a timer to have the window refreshed at regular intervals,
 	   and show the window */
-	priv->timer_id = SetTimer(priv->hWnd, 1, 33, NULL);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))
+		priv->timer_id = SetTimer(priv->hWnd, 1, 33, NULL);
 	ShowWindow(priv->hWnd, SW_SHOWNORMAL);
 	if (priv->hParent == NULL)
 		SetForegroundWindow(priv->hWnd);
@@ -451,6 +453,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPCREATESTRUCT lpcs;
 	PAINTSTRUCT ps;
+	RECT dirty;
 	HDC hdc;
 	ggi_visual *vis = (ggi_visual *) GetWindowLong(hWnd, GWL_USERDATA);
 	directx_priv *priv = NULL;
@@ -476,8 +479,21 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		if (wParam != 1)
 			break;
-		/* TODO: return 0 if async mode. */
-		/* Fall through */
+		if (!TryEnterCriticalSection(&priv->cs)) {
+			int redraw = 0;
+			EnterCriticalSection(&priv->redrawcs);
+			redraw = priv->redraw;
+			priv->redraw = 0;
+			LeaveCriticalSection(&priv->redrawcs);
+			if (redraw)
+				/* spin */
+				PostMessage(hWnd, WM_USER, wParam, lParam);
+			return 0;
+		}
+		DDRedrawAll(vis);
+		LeaveCriticalSection(&priv->cs);
+		return 0;
+
 	case WM_PAINT:
 		if (!TryEnterCriticalSection(&priv->cs)) {
 			int redraw = 0;
@@ -490,11 +506,31 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				PostMessage(hWnd, WM_USER, wParam, lParam);
 			return 0;
 		}
-		if (message == WM_PAINT)
+		if (GetUpdateRect(hWnd, &dirty, FALSE)) {
+			/* I have a back buffer to update from,
+			 * no need to involve the application...
+			if (priv->inp) {
+				gii_event ev;
+
+				ev.any.size = sizeof(gii_expose_event);
+				ev.any.type = evExpose;
+				ev.any.target = priv->inp->origin;
+				ev.expose.x = vis->origin_x + dirty.left;
+				ev.expose.y = vis->origin_y + dirty.top;
+				ev.expose.w = dirty.right - dirty.left;
+				ev.expose.h = dirty.bottom - dirty.top;
+
+				giiEventSend(priv->inp, &ev);
+			}
+			*/
 			hdc = BeginPaint(hWnd, &ps);
-		DDRedrawAll(vis);
-		if (message == WM_PAINT)
+			DDRedraw(vis,
+				vis->origin_x + ps.rcPaint.left,
+				vis->origin_y + ps.rcPaint.top,
+				ps.rcPaint.right - ps.rcPaint.left,
+				ps.rcPaint.bottom - ps.rcPaint.top);
 			EndPaint(hWnd, &ps);
+		}
 		LeaveCriticalSection(&priv->cs);
 		return 0;
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2004/09/15 20:14:39 pekberg Exp $
+/* $Id: visual.c,v 1.24 2004/09/15 20:29:21 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -57,6 +57,26 @@ static const gg_option optlist[] = {
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
+
+static int
+GGI_directx_setflags(ggi_visual *vis, ggi_flags flags)
+{
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+
+	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
+		ggiFlush(vis);
+	/* Clear out unknown flags */
+	LIBGGI_FLAGS(vis) = flags & GGIFLAG_ASYNC;
+
+	if(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) {
+		if (priv->timer_id)
+			KillTimer(priv->hWnd, priv->timer_id);
+		priv->timer_id = 0;
+	}
+	else
+		priv->timer_id = SetTimer(priv->hWnd, 1, 33, NULL);
+	return GGI_OK;
+}
 
 static int
 GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
@@ -185,6 +205,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 	vis->opdisplay->setmode = GGI_directx_setmode;
 	vis->opdisplay->getmode = GGI_directx_getmode;
+	vis->opdisplay->setflags = GGI_directx_setflags;
 	vis->opdisplay->checkmode = GGI_directx_checkmode;
 	vis->opdisplay->flush = GGI_directx_flush;
 	vis->opdisplay->getapi = GGI_directx_getapi;
