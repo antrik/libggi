@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:24:40 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/08/17 08:32:28 cegger Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -144,7 +144,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	if (! (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT)) {
-		switch ((GT_SIZE(LIBGGI_GT(vis)) + 7) / 8) {
+		switch (GT_ByPP(LIBGGI_GT(vis))) {
 		case 1: vis->opcolor->packcolors   = GGI_color_L1_packcolors;
 			vis->opcolor->unpackpixels = GGI_color_L1_unpackpixels;
 			break;
