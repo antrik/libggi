@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.22 2005/03/05 23:04:50 cegger Exp $
+/* $Id: color.c,v 1.23 2005/03/05 23:27:32 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -285,7 +285,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
-		priv->ncols = LIBGGI_PAL(vis)->clut.size = priv->visual[priv->viidx].colormap_size;
+		priv->ncols = LIBGGI_PAL(vis)->clut.size = vi->colormap_size;
 		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(sizeof(ggi_color) * LIBGGI_PAL(vis)->clut.size);
 		
 		if (LIBGGI_PAL(vis)->clut.data == NULL) {
@@ -322,12 +322,13 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		XInstallColormap(priv->disp, priv->cmap);
 		return;
 	} else if (vi->class != DirectColor) {
-		APP_ASSERT(vi->class == TrueColor, "Unknown class!\n");
+		LIB_ASSERT(vi->class == TrueColor, "Unknown class!\n");
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocNone);
 		if (priv->cmap == None) return;
 		if (vi->class != TrueColor) return;
 	} else {
+		LIB_ASSERT(vi->class == DirectColor, "Unknown class!\n");
 		DPRINT("Filmed on location in DirectColor\n");
 		vis->opcolor->setgammamap = GGI_X_setgammamap;
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
