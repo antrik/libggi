@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2004/02/23 14:24:55 pekberg Exp $
+/* $Id: visual.c,v 1.3 2004/09/13 17:50:58 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -50,6 +50,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GGIDPRINT("display-auto: Find optimal target.\n");
 	*_vis = _GGI_auto_findOptimalTarget(priv);
 	GGIDPRINT("display-auto: Found optimal target: %p\n", *_vis);
+
+	free(priv);
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
