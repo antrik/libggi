@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/07/13 06:50:45 cegger Exp $
+/* $Id: gtext.c,v 1.3 2004/08/17 08:36:34 cegger Exp $
 ******************************************************************************
 
    Linear 1 character drawing (high-bit-right)
@@ -34,7 +34,7 @@ int GGI_lin1r_putc(ggi_visual *vis, int x, int y, char c)
 	int h=8, stride, rev;
 
 	uint8 *src, *dest;
-	uint8 mask, mask0, mask1;
+	uint8 mask, mask0, mask1 = 0;
 	int shift0, shift1;
 
 	if ((x   >= LIBGGI_GC(vis)->clipbr.x)  || 
