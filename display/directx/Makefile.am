@@ -4,7 +4,7 @@ directx_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg -lgii \
 directx_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 	-avoid-version -export-symbols $(srcdir)/EXPSYMS
 
-sublib_LTLIBRARIES = directx.la directxnt.la
+sublib_LTLIBRARIES = directx.la
 
 directx_la_SOURCES = ddcommon.c ddinit.c mode.c visual.c
 
