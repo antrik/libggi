@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/06/03 05:30:48 pekberg Exp $
+/* $Id: mode.c,v 1.10 2004/09/08 11:17:48 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -48,7 +48,7 @@ static void _GGI_palemu_freedbs(ggi_visual *vis)
 
 int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	strcpy(arguments, "");
+	*arguments = '\0';
 
 	switch(num) {
 
@@ -58,7 +58,7 @@ int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	case 1: strcpy(apiname, "generic-stubs");
 		return 0;
 
-	case 2: sprintf(apiname, "generic-linear-%d%s",
+	case 2: sprintf(apiname, "generic-linear-%u%s",
 			GT_DEPTH(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;

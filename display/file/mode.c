@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/04/04 14:31:54 mooz Exp $
+/* $Id: mode.c,v 1.8 2004/09/08 11:13:15 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -244,7 +244,7 @@ int GGI_file_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
 
-	strcpy(arguments,"");
+	*arguments = '\0';
 
 	switch(num) { 
 
@@ -255,11 +255,11 @@ int GGI_file_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 		
 	case 2: if (GT_SCHEME(gt) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d", GT_SIZE(gt));
+			sprintf(apiname, "generic-text-%u", GT_SIZE(gt));
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%d%s", GT_SIZE(gt),
+		sprintf(apiname, "generic-linear-%u%s", GT_SIZE(gt),
 			(gt & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
 

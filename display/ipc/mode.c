@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/08/01 14:46:46 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/08 11:14:31 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -93,7 +93,7 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
-	strcpy(arguments,"");
+	*arguments = '\0';
 
 	switch(num) { 
 
@@ -104,12 +104,12 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		return 0;
 		
 	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d",
+			sprintf(apiname, "generic-text-%u",
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%d%s", 
+		sprintf(apiname, "generic-linear-%u%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
