@@ -1,0 +1,32 @@
+Display using AAlib
+~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-aa
+
+Synopsis
+--------
+
+::
+
+  display-aalib
+
+
+Description
+-----------
+
+Uses the `AA-lib`__, an ASCII art library, for output and input.
+
+__ http://aa-project.sourceforge.net/aalib/
+
+Environment variables
+---------------------
+
+AA-lib options may be specified using the the `AA_OPTS` variable.
+
+
+Features
+--------
+
+- DirectBuffer always available
+- Unaccelerated
+- Currently, only supports 8-bit palettized modes

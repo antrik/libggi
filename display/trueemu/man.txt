@@ -1,0 +1,52 @@
+Emulate truecolor modes
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-trueemu
+
+
+Synopsis
+--------
+
+::
+
+  display-trueemu : [-parent=<mode>] [-dither=<dither>]
+		    [-model=<model>] <target-spec>
+
+Description
+-----------
+
+Emulates truecolor modes (`GT_TRUECOLOR`) on another target which can
+only do palette modes or truecolor modes of different sizes/depths.
+Uses dithering and special palettes to get the highest possible
+quality.
+
+
+Options
+-------
+
+``-parent=<mode>``
+    Force the parent target to use a specific :p:`mode`, specified as a
+    standard LibGGI mode string (see :man:`libggi(7)`\ ).
+
+``-dither=<dither>``
+    Specifies the amount of dithering.  Legal values are 0, 2 and 4,
+    defaulting to 4. When the target is running, ``Ctrl-Alt-d``
+    changes the dithering level.
+
+``-model=<model>``
+    Color model to use (only when the parent is palettized).  Legal
+    values are rgb, cube and pastel.  Default depends on the parent
+    mode. When the target is running, ``Ctrl-Alt-p`` changes the
+    current color model.
+
+:p:`target-spec`
+    Specifies the target which to draw on (the *parent* target).  This
+    defaults to automatic selection (just like using ``ggiOpen(NULL)``
+    when `GGI_DISPLAY` is not set).
+
+
+Features
+--------
+
+- DirectBuffer never supported.
+- Unaccelerated.

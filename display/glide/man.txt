@@ -1,0 +1,52 @@
+Display using Glide library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-glide
+
+
+Synopsis
+--------
+
+::
+
+  display-glide:<card>
+
+
+Description
+------------
+
+Uses the Glide library to display fullscreen on a 3DFX graphics card.
+
+
+Options
+-------
+
+
+The 3DFX :p:`card` to use can be optionally specified as a cardinal
+number minus one.  (e.g. `0` means the first card, `1` the second,
+
+
+Environment variables
+---------------------
+
+`GGI_GLIDE_MAXFREQ`
+    specifies the maximum update frequency your monitor can handle (in
+    Hz). Default is 70Hz.
+
+`GGI_GLIDE_MAXHFREQ`
+    specifies the maximum horizontal frequency your monitor can handle
+    (in kHz). Default is 48kHz.
+
+`GGI_GLIDE_HALTONSWITCH`
+    if this is set applications will be halted on console
+    switchaway. The default is to continue running.
+
+
+Features
+--------
+
+
+- DirectBuffer never available.
+- Accelerated, one of the fastest targets when it comes to
+  drawing-primitives.
+- Multiple frames.

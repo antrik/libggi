@@ -1,0 +1,97 @@
+Forwards the display over a network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-tele
+
+
+Synopsis
+--------
+
+::
+
+  display-tele: <host>[:port]
+
+
+Description
+-----------
+
+
+The tele target forwards the display over a network via TCP to a
+remote host.
+
+
+A `ggiteleserver` must be running on the remote host where the final
+display resides. A normal GGI applications will then use the tele
+target to forward all graphic operations to the machine running the
+teleserver.
+
+
+Options
+-------
+
+The first argument to `display-tele` is the hostname to connect to
+(the display server). The second optional argument is the port on
+which the server is listening. The default port is 27780.
+
+
+Features
+--------
+
+- DirectBuffer never supported.
+- Accelerated if the remote display is.
+
+
+See Also
+--------
+
+:man:`ggiteleserver(1)`
+
+
+
+GGI display server
+~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 1 ggiteleserver
+
+
+Synopsis
+--------
+
+::
+
+  ggiteleserver [-V|--version] [-h|--help] [-t <target>] [-d <display>]
+
+
+Description
+-----------
+
+`ggiteleserver` starts a display server for GGI and listen for display
+operations on a TCP socket. A GGI application can then forward display
+operations to this server with the `display-tele` target. The server
+will use the default output.
+
+
+Options
+-------
+
+
+``-V``, ``--version``
+    Print the program version and exit.
+
+``-h``, ``--help``
+    Print options and exit.
+
+``-t <target>``
+    Use the specified :p:`target` as display. It overrides the value
+    of `GGI_DISPLAY`.
+
+``-d <display>``
+    TODO what is that?
+
+The default port is 27780.
+
+
+See Also
+--------
+
+:man:`display-tele(7)`

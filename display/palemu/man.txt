@@ -1,0 +1,39 @@
+Emulate palettized modes on visuals of other mode schemes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-palemu
+
+Synopsis
+--------
+
+::
+
+  display-palemu: [-parent=<mode>] <target-spec>
+
+
+Description
+-----------
+
+
+Emulates palettized modes (`GT_PALETTE`) on another target which can
+only do truecolor/greyscale/text modes or palettized modes of higher
+depth.
+
+
+Options
+-------
+
+``-parent=<mode>``
+    Force the parent target to use a specific mode, specified as a standard 
+    LibGGI mode string (see :man:`libggi(7)`\ ).
+
+:p:`target-spec`
+    Specifies the target which to draw on (the *parent* target).  This
+    defaults to automatic selection (just like using
+    ``ggiOpen(NULL)`` when `GGI_DISPLAY` is not set).
+
+Features
+--------
+
+- DirectBuffer never supported.
+- Unaccelerated.

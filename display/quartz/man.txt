@@ -1,0 +1,20 @@
+Display on a Mac OS X
+~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-macosx
+
+
+Synopsis
+--------
+
+::
+
+  display-macosx
+
+
+Description
+-----------
+
+Use MacOS X Quartz for display.
+
+

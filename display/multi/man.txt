@@ -1,0 +1,36 @@
+Duplicate visual operations onto multiple visuals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-multi
+
+
+Synopsis
+--------
+
+::
+
+  display-multi <:targetspec> ...
+
+
+Description
+-----------
+
+
+Duplicates all drawing operations onto multiple *child* targets, thus
+producing identical output on multiple visuals.
+
+
+Options
+-------
+
+The argument to `display-multi` is a colon- (``:``) separated list of
+target specs to draw on.  Because target specs can (and often do)
+contain colons, they need to be enclosed in parentheses.
+
+
+Features
+--------
+
+
+- DirectBuffer never supported.
+- Unaccelerated.

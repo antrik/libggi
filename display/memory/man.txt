@@ -1,0 +1,109 @@
+Display on buffer in main memory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-memory
+
+Synopsis
+--------
+
+::
+
+  display-memory: [-input] [-noblank] [-physz=<sizex>,<sizey>[dpi]]
+		  [-pixfmt=<format_string>]
+		  [-layout=<fstride>[[plb<lstride>]|[plan<pstride>,<plstride>]]]
+		  [ [shmid:<sid> ] | [keyfile:<size>:<id>:<fname>] | pointer ]
+
+
+Description
+-----------
+
+Emulates a linear framebuffer in main memory. The framebuffer can be a
+shared memory segment, an area specified by the application, or an
+area allocated by `display-memory` itself.
+
+
+Options
+-------
+
+``-input``
+    If the ``-input`` option is set, an input buffer of `INPBUFSIZE`
+    (default is 8192 bytes) as #define'd in `ggi/display/memory.h` is
+    allocated at the start of the requested memory area.
+
+    When running on shared memory, this option enables you to to give
+    input (using :man:`giiEventSend(3)`\ ) to other processes sharing
+    that segment. This technique is demonstrated in :man:`cube3d(1)`
+    and can be used for things like GGI multiplexers.
+
+``-noblank``
+    If the ``-noblank`` option is set, the framebuffer will not be
+    filled with solid black when the mode of the visual is set.  This
+    is useful for preserving data from other sources when using a
+    preallocated area of memory as a framebuffer.
+
+``-physz=<sizex>,<sizey>[dpi]``
+    This option will provide a physical screen size for applications
+    which wish to remain resolution independent.  :p:`sizex`,
+    :p:`sizey` are the x,y size of the screen in millimeters, unless
+    the optional ``dpi`` string is affixed, in which case, they
+    represent resolution in dots-per-inch.
+
+``-pixfmt=<format_string>``
+    This option will provide a non-default pixel format explicitly.
+    Currently the accepted format of :p:`format_string` is something
+    like ``"r5b5g5p1"``, which would specify a pixel where the low bit
+    of the pixel is unused padding, followed by 5 bits of green, then
+    5 bits of blue and finally 5 bits of red, with the remaining high
+    bits, if any, being unused pad. A more formal description of this
+    format string will be provided (and more strings accepted) in
+    future LibGGI releases.
+
+``[-layout=<fstride>[[plb<lstride>]|[plan<pstride>,<plstride>]]]``
+    This option will provide a non-default framebuffer layout
+    explicitly.  The :p:`fstride` parameter denotes the number of
+    bytes between frames in the framebuffer, and will default to the
+    size of the virtual screen in bytes if nonpresent or set to 0.
+    Following fstride, the string ``plb`` denotes a linear
+    packed-pixel framebuffer, or the string ``plan`` instead denotes a
+    planar framebuffer.  The packed-pixel framebuffer layout is the
+    default.  If the string ``plb`` is present, a horizontal stride
+    :p:`lstride` may appear, denoting the number of bytes that elapse
+    between the beginning of one line and the next.  This will default
+    to the size of a horizontal line in bytes if nonpresent or set to
+    zero.  If the string "plan" is present, up to two numbers, comma
+    separated, may appear after the string.  The first number,
+    :p:`pstride` denotes the number of bytes which elapse between the
+    beginning of one plane and the next.  This will default to the
+    minimum integral number of bytes that may contain one bitplane of
+    the virtual screen if nonpresent or set to zero.  The second
+    number, :p:`plstride` denotes the number of bytes that elapse
+    between the beginning of one bitplane-line and the next.  This
+    will default to the minimum integral number of bytes which may
+    contain one bitplane-line of the virtual screen if nonpresent or
+    set to zero.
+
+    More strings and format parameters may accepted in future LibGGI
+    releases.
+
+``shmid:<sid>``
+    use existing shared memory ID :p:`sid`
+
+``keyfile:<size>:<id>:<fname>``
+    create a new shm segment with id ``ftok(fname,id)`` of size
+    :p:`size` (preferred method !). See :man:`ftok(3)`.
+
+``pointer``
+    use the memory pointed to by :p:`argptr` (only available to
+    applications calling `ggiOpen`.
+
+.. important::
+
+    If you specify a memory area to use - be sure it's big enough as
+    no checks can or will be made that a certain mode fits into it.
+
+
+Features
+--------
+
+- DirectBuffer support always available.
+- Unaccelerated.

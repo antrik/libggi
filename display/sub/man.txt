@@ -1,0 +1,33 @@
+Make a child visual that is a window to the parent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-sub
+
+
+Description
+-----------
+
+Creates a "child" visual within a "parent". This can be thought of as
+a window and the `display-sub` target is intended for simple windowing
+systems.
+
+No textual arguments, since this target can only be used by
+applications. :p:`argptr` must contain the parent visual.
+
+The sub target behaves a bit special with respect to (i.e. abuses the
+semantics of :) the :man:`ggiSetMode(3)` call. It uses the "visible"
+size for the top left corner position of the window within the visual,
+and the "virtual" size for window width and height.  Note, that
+moving/resizing the window does *not* cause any drawing action.  You
+have to perform those yourself. All it does for you is providing a
+virtual visual within an existing one, which is convenient to allow
+for window system canvases to be about any GGI program.
+
+
+Features
+--------
+
+- DirectBuffer not supported.
+
+- Accelerated to the point of the parent. Calls are mapped through
+  with modified clipping and coordinates.

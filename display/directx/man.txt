@@ -1,0 +1,22 @@
+DirectX (WIN32)
+~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-directx display-directxnt
+
+Synopsis
+--------
+
+::
+
+  display-directx
+
+  display-directxnt
+
+
+Description
+-----------
+
+
+Used for Win32 DirectX port of libGGI.
+
+Use `display-directxnt` on NT4 system.

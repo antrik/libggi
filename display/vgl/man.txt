@@ -1,0 +1,46 @@
+FreeBSD/i386 console display
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-vgl
+
+
+Synopsis
+--------
+
+::
+
+  display-vgl:[-nodb|-usedb]
+
+
+Description
+-----------
+
+
+Displays on the FreeBSD/i386 console. 16 and 32bit direct color
+support with the latest FreeBSD vgl(3) library (FreeBSD > R5.0 and a
+patch is available for FreeBSD R4.x series).
+
+Like VGL, the vgl-display depends on the current VGA/VESA modes and
+you must load the vesa.ko module to get advanced modes (higher than
+680x480x8).
+
+
+Options
+-------
+
+``-nodb``
+    Don't use directbuffer.
+
+``-usedb``
+    Make use of directbuffer.
+
+
+Features
+--------
+  
+- True color support is best with directbuffer. Your board must
+  provide VESA 2.1 compliance to use directbuffer. If it's an old S3
+  board, use the s3.ko module to access it's framebuffer (FreeBSD >
+  R5.0).
+
+- Unaccelerated (VESA).
