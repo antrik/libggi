@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/02/23 14:24:45 pekberg Exp $
+/* $Id: visual.c,v 1.6 2004/10/27 19:11:53 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -31,7 +31,7 @@
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
-	enum gg_swartype swar;
+	gg_swartype swar;
 	/* Frame handling
 	 */
 
