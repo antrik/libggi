@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.4 2003/07/05 13:00:56 cegger Exp $
+/* $Id: pageflip.c,v 1.5 2004/01/08 21:27:12 skids Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 		ggiParseMode(argv[1], &mode);
 	} else {
 		ggiParseMode("", &mode);
-		mode.frames = 2;
+		if (mode.frames < 2) mode.frames = 2;
 	}
 
 	if (ggiSetMode(vis, &mode)) {
