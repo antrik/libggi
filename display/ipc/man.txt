@@ -14,7 +14,7 @@ Synopsis
 Description
 -----------
 
-Transfers drawing commands through sockets to other processes.
+Uses a shared memory segment for inter-process communication.
 Expects the client to specify the socket, semid and shmid options.
 
 Options
