@@ -526,12 +526,12 @@ ggiClose(memvis);
 <example><title>Try a 320x200x8 mode</title>
 <programlisting>
 err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
-                        &amp;sug_mode, NULL);
+                        &amp;sug_mode);
 if(err) {
         <replaceable>/* Check if returned mode is ok... */</replaceable>
 }
 else {
-        ggiSetMode(&amp;sug_mode);
+        ggiSetMode(vis, &amp;sug_mode);
 }
 </programlisting>
 </example>
