@@ -1280,7 +1280,7 @@ set).</para></listitem>
 
 <refnamediv>
 <refname><systemitem/display-vgl/</refname>
-<refpurpose/FreeBSD/i386 console display/
+<refpurpose>FreeBSD/i386 console display</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -1323,8 +1323,9 @@ Don't use directbuffer.
 
 <varlistentry>
 <term><option>-usedb</option></term>
-<listitem><para>
+<listitem><para>Make use of directbuffer.
 </para>
+</listitem>
 </varlistentry>
 </variablelist>
 
