@@ -72,9 +72,9 @@ Description
 -----------
 
 `ggiteleserver` starts a display server for GGI and listen for display
-operations on a TCP socket. A GGI application can then forward display
-operations to this server with the `display-tele` target. The server
-will use the default output.
+operations on a TCP socket or a Unix domain socket. A GGI application
+can then forward display operations to this server with the
+`display-tele` target. The server will use the default output.
 
 
 Options
