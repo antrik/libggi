@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.5 2002/09/08 21:37:47 soyt Exp $
+/* $Id: box.c,v 1.6 2002/10/09 22:20:15 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -25,6 +25,8 @@
 
 ******************************************************************************
 */
+
+#include <string.h>
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
@@ -120,7 +122,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	int xstep, ystep;
 	int curx;
 
-	LIBGGICLIP_PUTBOX(vis, x,y, w,h, src, srcwidth, );
+	LIBGGICLIP_PUTBOX(vis, x,y, w,h, src, srcwidth, * 1);
 
 	xstep = w;
 	ystep = (MAX_PIXELS(vis) / w);
