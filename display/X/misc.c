@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.14 2003/04/02 15:20:21 cegger Exp $
+/* $Id: misc.c,v 1.15 2003/05/20 12:41:44 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -365,8 +365,8 @@ int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype cthis) {
 	return 0;
 }
 
-void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi) {
-
+void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi)
+{
 	ggi_pixelformat *fmt;
 
 	fmt = LIBGGI_PIXFMT(vis);
@@ -381,7 +381,8 @@ void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi) {
 	fmt->size  = GT_SIZE(tm->graphtype);
 
 	if (vi->class == StaticColor || vi->class == PseudoColor ||
-	    vi->class == StaticGray || vi->class == GrayScale) {
+	    vi->class == StaticGray || vi->class == GrayScale)
+	{
 		fmt->clut_mask = (1 << vi->depth) - 1;
 	} else {
 		fmt->clut_mask = 0;
@@ -391,13 +392,14 @@ void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi) {
 }
 
 /* Make a newly created parent window presentable */
-void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm) {
+void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
+{
 	XSizeHints      hint;
 	ggi_x_priv      *priv;
 	char *name = "GGI-on-X";
-	
+
 	priv = GGIX_PRIV(vis);
-	
+
 	/* Fill in hint structure. */
 	hint.x = hint.y         = 0;
 	hint.width              = tm->visible.x;
@@ -414,7 +416,8 @@ void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm) {
 }
 
 void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc, 
-		       int x, int y, int w, int h) {
+		       int x, int y, int w, int h)
+{
 	XRectangle *xrect;
 	int i, frames, virty;
 
@@ -422,11 +425,10 @@ void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc,
 	if (vis != NULL) {
 		frames = vis->mode->frames;
 		virty = LIBGGI_VIRTY(vis);
-	}
-	else {
+	} else {
 		frames = 1;
 		virty = 0;
-	}		
+	}
 
 	xrect = malloc(frames * sizeof(XRectangle));
 	if (xrect == NULL) return;
@@ -465,7 +467,7 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 	if (priv->cursor) XFreeCursor(priv->disp, priv->cursor);
 
 	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
-                     (int *)&dummy, (int *)&dummy, &dummy, &dummy);
+		     (int *)&dummy, (int *)&dummy, &dummy, &dummy);
             
 	crsrpix = XCreateBitmapFromData(priv->disp, root, crspdat, 3, 3);
 	crsrmask = XCreateBitmapFromData(priv->disp, root, crsmdat, 3, 3);
@@ -517,7 +519,8 @@ void _ggi_x_create_invisible_cursor (ggi_visual *vis)
         XFreePixmap(priv->disp, crsrmask);
 }
 
-void _ggi_x_readback_fontdata (ggi_visual *vis) {
+void _ggi_x_readback_fontdata (ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	Pixmap fontpix;
 	char str[256];
@@ -527,7 +530,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis) {
 	priv = GGIX_PRIV(vis);
 
 	w = priv->textfont->max_bounds.width;
-        h = priv->textfont->max_bounds.ascent
+	h = priv->textfont->max_bounds.ascent
 	  + priv->textfont->max_bounds.descent;
 
 	if (priv->fontimg) XDestroyImage(priv->fontimg);
@@ -542,7 +545,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis) {
 	XSetForeground(priv->disp, pixgc, 0);
 
 	XFillRectangle(priv->disp, fontpix, pixgc, 
-		       0, 0, w * 256, h);
+			0, 0, w * 256, h);
 	XSetForeground(priv->disp, pixgc, ~0);
 	for (i = 0; i < 256; i++) str[i] = i;
 	XDrawString(priv->disp, fontpix, pixgc, 

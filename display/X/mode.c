@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2003/05/08 14:52:49 cegger Exp $
+/* $Id: mode.c,v 1.17 2003/05/20 12:41:44 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -323,6 +323,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	GGIDPRINT_MODE("X: Prepare to resize.\n");
 	XResizeWindow(priv->disp,priv->parentwin,tm->visible.x,tm->visible.y);
 	GGIDPRINT_MODE("X: About to map parent\n");
+
 	/* Map window. */
 	XSelectInput(priv->disp, priv->parentwin, ExposureMask);
 	XMapRaised(priv->disp, priv->parentwin);
@@ -330,7 +331,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
-	
+
 	/* Parent window doesn't listen for input. */
 	XSelectInput(priv->disp, priv->parentwin, 0);
 
@@ -371,11 +372,11 @@ oldparent:
 	/* Map window. */
 	XSelectInput(priv->disp, priv->win, ExposureMask);
 	XMapWindow(priv->disp, priv->win);
-	
+
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
-	
+
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
 		     KeyPressMask | KeyReleaseMask |
@@ -518,14 +519,14 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap, &attrib);
 	GGIDPRINT_MODE("X: About to map child\n");
-	
+
 	/* Have the parent window tell the WM its children have colormaps */
 	XSetWMColormapWindows(priv->disp, priv->parentwin, &(priv->win), 1);
 
 	/* Map window. */
 	XSelectInput(priv->disp, priv->win, ExposureMask);
 	XMapWindow(priv->disp, priv->win);
-	
+
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
