@@ -1,3 +1,3 @@
 SUBDIRS = man
 
-EXTRA_DIST = bdgtgp.txt env.txt targets.txt
+EXTRA_DIST = README.directx bdgtgp.txt env.txt targets.txt
