@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2002/10/09 22:10:25 skids Exp $
+/* $Id: visual.c,v 1.10 2003/05/03 16:16:19 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -69,7 +69,10 @@ ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 		_giiEvQueueAdd(inp, &ev);
 		priv->inputoffset += ev.any.size;
 		rc |= 1<<ev.any.type;
-		if (priv->inputoffset >= INPBUFSIZE-sizeof(ggi_event)-sizeof(priv->inputbuffer->writeoffset)-10) {
+		if (priv->inputoffset >= (signed)(INPBUFSIZE 
+			- sizeof(ggi_event)
+			- sizeof(priv->inputbuffer->writeoffset)-10)) 
+		{
 			priv->inputoffset=0;
 		}
 	}
@@ -85,8 +88,12 @@ int GII_memory_send(gii_input_t inp, ggi_event *event)
 	memcpy(&(priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]),
 		event,size=event->any.size);
 	priv->inputbuffer->writeoffset+=size;
-	if (priv->inputbuffer->writeoffset>=INPBUFSIZE-sizeof(ggi_event)-sizeof(priv->inputbuffer->writeoffset)-10)
+	if (priv->inputbuffer->writeoffset >= (signed)(INPBUFSIZE 
+		- sizeof(ggi_event)
+		- sizeof(priv->inputbuffer->writeoffset)-10))
+	{
 		priv->inputbuffer->writeoffset=0;
+	}
 	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]=MEMINPMAGIC-1;	/* "break"-symbol */
 
 	return 0;

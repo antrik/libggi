@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
+/* $Id: color.c,v 1.4 2003/05/03 16:18:19 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -68,8 +68,8 @@ int GGI_tele_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cols)
 
 	for (; len > 0; ) {
 
-		int i;
-		int num = len;
+		unsigned int i;
+		unsigned int num = len;
 
 		if (num > MAX_COLORS) {
 			num = MAX_COLORS;
@@ -81,7 +81,7 @@ int GGI_tele_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cols)
 		c->start = start;
 		c->len   = num;
 
-		for (i=0; i < num; i++) {
+		for (i = 0; i < num; i++) {
 			c->colors[i] = ((cols->r & 0xff00) << 8) |
 				       ((cols->g & 0xff00)     ) |
 				       ((cols->b & 0xff00) >> 8);

@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.4 2002/09/06 18:00:10 cegger Exp $
+/* $Id: teleserver.c,v 1.5 2003/05/03 16:21:53 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -494,7 +494,7 @@ static void perf_GETBOX(TeleUser *u, TeleEvent *ev)
 	}	/* if */
 
 	if ((d->width * d->height * d->bpp) >
-	    ((ev->size - ev->rawstart) * sizeof(long)))
+	    ((ev->size - ev->rawstart) * (signed)sizeof(long)))
 	{
 		fprintf(stderr, "teleserver: NOT ENOUGH ROOM FOR GETBOX.\n");
 		return;

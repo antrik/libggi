@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.5 2002/10/09 22:22:25 cegger Exp $
+/* $Id: text.c,v 1.6 2003/05/03 16:20:27 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -82,7 +82,7 @@ int GGI_tele_puts(ggi_visual *vis, int x, int y, const char * s)
 	TeleCmdPutStrData *p;
 	TeleEvent ev;
 	int err = 0;
-	int i = 0;
+	unsigned int i = 0;
 
 	T_Long * data;
 
@@ -98,8 +98,9 @@ int GGI_tele_puts(ggi_visual *vis, int x, int y, const char * s)
 
 	data = (T_Long *)(p->text);
 
-	for (i=0 ; i <= strlen(s); ++i)	/* Copy the trailing \0! */
+	for (i = 0 ; i <= strlen(s); ++i) {	/* Copy the trailing \0! */
 		data[i] = (T_Long)(s[i]);
+	}
 
 	err = tclient_write(priv->client, &ev);
 

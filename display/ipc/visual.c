@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2001/07/31 13:13:41 cegger Exp $
+/* $Id: visual.c,v 1.6 2003/05/03 16:13:31 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -64,8 +64,8 @@ ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 		_giiEvQueueAdd(inp, &ev);
 		priv->inputoffset += ev.any.size;
 		rc |= 1 << ev.any.type;
-		if (priv->inputoffset >= INPBUFSIZE - sizeof(ggi_event)
-		    - sizeof(priv->inputbuffer->writeoffset) - 10)
+		if (priv->inputoffset >= (signed)(INPBUFSIZE - sizeof(ggi_event)
+		    - sizeof(priv->inputbuffer->writeoffset) - 10))
 		{
 			priv->inputoffset=0;
 		}	/* if */
@@ -84,8 +84,9 @@ int GII_ipc_send(gii_input_t inp, ggi_event *event)
 		event,size=event->any.size);
 
 	priv->inputbuffer->writeoffset += size;
-	if (priv->inputbuffer->writeoffset >= INPBUFSIZE - sizeof(ggi_event)
-	   - sizeof(priv->inputbuffer->writeoffset) - 10)
+	if (priv->inputbuffer->writeoffset
+	  >= (signed)(INPBUFSIZE - sizeof(ggi_event)
+		- sizeof(priv->inputbuffer->writeoffset) - 10))
 	{
 		priv->inputbuffer->writeoffset=0;
 	}	/* if */
