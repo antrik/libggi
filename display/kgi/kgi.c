@@ -197,6 +197,7 @@ kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource)
     
 	err = ioctl(ctx->mapper.fd, KGIC_MAPPER_MMAP_SETUP, &cb)
 		? errno : KGI_EOK;
+	return err;
 }
 
 /*
