@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.11 2004/12/01 23:08:26 cegger Exp $
+/* $Id: stubs.c,v 1.12 2004/12/10 23:46:11 neiljp Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -138,7 +138,7 @@ int ggiPackColors(ggi_visual *vis,void *buf,const ggi_color *cols,int len)
 { 
   APP_ASSERT(!( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ),
              "ggiUnpackPixels() called with NULL pixel-buffer or color-buffer when len>0.");
-  if ( ( (cols == NULL) || (buf == NULL) && (len > 0)) ) return GGI_EARGREQ;
+  if ( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ) return GGI_EARGREQ;
   return vis->opcolor->packcolors(vis,buf,cols,len);
 }
 
