@@ -27,6 +27,12 @@ The argument to `display-multi` is a colon- (``:``) separated list of
 target specs to draw on.  Because target specs can (and often do)
 contain colons, they need to be enclosed in parentheses.
 
+:p:`target-spec`
+    Specifies the target which to draw on (the *parent* target).  This
+    defaults to automatic selection (just like using
+    ``ggiOpen(NULL)`` when `GGI_DISPLAY` is not set).
+
+
 
 Features
 --------
