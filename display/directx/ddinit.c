@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.30 2004/09/13 10:05:55 pekberg Exp $
+/* $Id: ddinit.c,v 1.31 2004/09/13 10:12:00 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -796,27 +796,23 @@ DDDestroySurface(directx_priv *priv)
 static void
 DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
 {
-	if (!priv->hParent) {
-		EnterCriticalSection(&priv->sizingcs);
-		priv->xmin = width;
-		priv->ymin = height;
-		priv->xmax = width;
-		priv->ymax = height;
-		priv->xstep = 1;
-		priv->ystep = 1;
-		LeaveCriticalSection(&priv->sizingcs);
-		int ws_style = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
-		RECT r;
-		GetWindowRect(priv->hWnd, &r);
-		r.right = r.left + width;
-		r.bottom = r.top + height;
-		AdjustWindowRectEx(&r, ws_style, 0, 0);
-		width = r.right - r.left;
-		height = r.bottom - r.top;
-		if (r.left < 0)
-			r.left = 0;
-		if (r.top < 0)
-			r.top = 0;
-		MoveWindow(priv->hWnd, r.left, r.top, width, height, TRUE);
-	}
+	int ws_style = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
+	RECT r1, r2;
+	if (priv->hParent)
+		return;
+	EnterCriticalSection(&priv->sizingcs);
+	priv->xmin = width;
+	priv->ymin = height;
+	priv->xmax = width;
+	priv->ymax = height;
+	priv->xstep = 1;
+	priv->ystep = 1;
+	LeaveCriticalSection(&priv->sizingcs);
+	GetWindowRect(priv->hWnd, &r1);
+	r2 = r1;
+	AdjustWindowRectEx(&r2, ws_style, FALSE, 0);
+	MoveWindow(priv->hWnd, r1.left, r1.top,
+		   width + (r2.right - r2.left) - (r1.right - r1.left),
+		   height + (r2.bottom - r2.top) - (r1.bottom - r1.top),
+		   TRUE);
 }
