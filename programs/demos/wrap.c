@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.4 2001/07/31 12:55:48 cegger Exp $
+/* $Id: wrap.c,v 1.5 2002/08/02 22:37:41 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -40,6 +40,14 @@
 
 /* For autoconf inline support */
 #include "config.h"
+
+
+/* GNU Hurd hasn't defined it.
+ */
+#ifndef PATH_MAX
+#define PATH_MAX	255
+#endif
+
 
 struct client_t
 {
