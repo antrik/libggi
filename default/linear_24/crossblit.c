@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2002/09/29 19:27:41 skids Exp $
+/* $Id: crossblit.c,v 1.4 2002/10/10 07:10:16 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -265,6 +265,7 @@ crossblit_8_to_24(ggi_visual *src, int sx, int sy, int w, int h,
 		 * compiler hence unroll manually.
 		 */
 		switch (w & 0x7) {
+		default:
 			for (; i > 0; i--) {
 			case 0x0: put24pixel(dstp, conv_tab[*srcp]);
 				dstp += 3;
