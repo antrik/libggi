@@ -27,6 +27,10 @@
 <refsect1>
 <title>Description</title>
 
+<para>The mode structure describes a visual configuration given by
+its size and other graphic properties.
+</para>
+
 <programlisting>
 typedef struct { sint16 x, y; } ggi_coord;
 </programlisting>
@@ -38,16 +42,174 @@ typedef uint32 ggi_graphtype;
 <programlisting>
 typedef struct
 {
-        sint32          frames;         /* frames needed                    */
-        ggi_coord       visible;        /* vis. pixels, may change slightly */
-        ggi_coord       virt;           /* virtual pixels, may change       */
-        ggi_coord       size;           /* size of visible in mm            */
-        ggi_graphtype   graphtype;      /* which mode ?                     */
-        ggi_coord       dpp;            /* dots per pixel                   */
+        sint32          frames;
+        ggi_coord       visible;
+        ggi_coord       virt;
+        ggi_coord       size;
+        ggi_graphtype   graphtype;
+        ggi_coord       dpp;
 } ggi_mode;
 </programlisting>
 
 </refsect1>
+
+<refsect1>
+<title>Structure Members</title>
+
+<variablelist>
+
+<varlistentry>
+<term><structfield>frames</structfield></term>
+<listitem><para>
+The number of frames. Some displays have multi-buffer capabilites
+(double-buffering, triple-buffering...). See libggi <link
+linkend="api-ggisetdisplayframe">frame-related functions</link> for
+information on working with multiple frames.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield>visible</structfield></term>
+<listitem><para>
+The size of the visible area. This is what the user will see.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield>virt</structfield></term>
+<listitem><para>
+The virtual size of the visual. It can be larger (but not smaller)
+than the visible area, in which case only a part of it is displayed.
+It is useful for scrolling or backing up portions of screen efficiently.
+See <link linkend="api-ggisetorigin"><function>ggi[Set|Get]Origin</function>
+functions</link> for more.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield>size</structfield></term>
+<listitem><para>???
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield>graphtype</structfield></term>
+<listitem><para>
+It holds information on the type of display.  libggi defines macros to
+construct graphtypes values or access individual field.
+</para>
+   <variablelist>
+
+   <varlistentry>
+   <term><structfield>depth</structfield>
+   ( <symbol>GT_DEPTH</symbol>(gt), <symbol>GT_SETDEPTH</symbol>(gt,x) )
+   </term>
+   <listitem>
+   <para>
+   The number of significant bits holding color
+   information.
+   </para></listitem>
+   </varlistentry>
+
+   <varlistentry>
+   <term><structfield>size</structfield>
+   ( <symbol>GT_SIZE</symbol>(gt), <symbol>GT_SETSIZE</symbol>(gt,x) )
+   </term>
+   <listitem>
+   <para>
+   The actual size (in bits) of a pixel.
+   For instance, on a 32 bits X server the pixel size is 32 but the
+   depth is only 24 (8bits RGB channels, 8 unused).
+   </para></listitem>
+   </varlistentry>
+
+   <varlistentry>
+   <term><structfield>scheme</structfield>
+   ( <symbol>GT_SCHEME</symbol>(gt),
+   <symbol>GT_SETSCHEME</symbol>(gt,x) )</term>
+   <listitem>
+   <para>The following schemes are available :
+   </para>
+
+   <simplelist>
+   <member><symbol>GT_TEXT</symbol> : text mode only</member>
+   <member><symbol>GT_TRUECOLOR</symbol> : </member>
+   <member><symbol>GT_GREYSCALE</symbol> : pixels represent level of gray</member>
+   <member><symbol>GT_PALETTE</symbol> : pixels are entries in a CLUT (Color Look-Up Table)</member>
+   <member><symbol>GT_STATIC_PALETTE</symbol></member>
+   <member><symbol>GT_SUBSAMPLE_YUV</symbol></member>
+   <member><symbol>GT_SUBSAMPLE_U_YCRBR</symbol></member>
+   <member><symbol>GT_SUBSAMPLE_S_YCRBR</symbol></member>
+   <member><symbol>GT_NIL</symbol></member>
+   </simplelist>
+
+   </listitem>
+   </varlistentry>
+   
+   <varlistentry>
+   <term><structfield>subscheme</structfield>
+   ( <symbol>GT_SUBSCHEME</symbol>(gt),
+   <symbol>GT_SETSUBSCHEME</symbol>(gt,x) )
+   </term>
+   <listitem>
+   <para>????
+   </para>
+
+   <simplelist>
+   <member><symbol>GT_SUB_REVERSE_ENDIAN</symbol></member>
+   <member><symbol>GT_SUB_HIGHBIT_RIGHT</symbol></member>
+   <member><symbol>GT_SUB_PACKED_GETPUT</symbol></member>
+   </simplelist>
+
+   </listitem>
+   </varlistentry>
+   
+   
+
+   </variablelist>
+
+   <para>
+   Graphtypes can be constructed directly or via the
+   <symbol>GT_CONSTRUCT</symbol>(depth,scheme,size) macro.
+   The following common graphtypes are defined :
+   </para>
+
+   <simplelist>
+   <member><symbol>GT_TEXT16</symbol></member>
+   <member><symbol>GT_TEXT32</symbol></member>
+   <member><symbol>GT_1BIT</symbol></member>
+   <member><symbol>GT_2BIT</symbol></member>
+   <member><symbol>GT_4BIT</symbol></member>
+   <member><symbol>GT_8BIT</symbol></member>
+   <member><symbol>GT_15BIT</symbol></member>
+   <member><symbol>GT_16BIT</symbol></member>
+   <member><symbol>GT_24BIT</symbol></member>
+   <member><symbol>GT_32BIT</symbol></member>
+   <member><symbol>GT_AUTO</symbol></member>
+   <member><symbol>GT_INVALID</symbol></member>
+   </simplelist>
+
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term><structfield>dpp</structfield></term>
+<listitem><para>
+It stands for dot-per-pixel.
+</para></listitem>
+</varlistentry>
+
+
+</variablelist>
+
+<para>When filling a mode structure for setting a visual, any field
+can be assigned <symbol>GGI_AUTO</symbol> (<symbol>GT_AUTO</symbol>
+for graphtype) if a specific value isn't required.
+</para>
+
+</refsect1>
+
 
 <refsect1>
 <title>See Also</title>
@@ -92,23 +254,62 @@ typedef struct { uint16 r,g,b,a; }   ggi_color;
 typedef uint32   ggi_pixel;
 </programlisting>
 
-<para>Colors in ggi are described genericaly through this structure.
-16 bit channels are used to ensure a sufficient precision for most
-displays.
+<para>Colors in ggi are described genericaly through the
+display-independent <structname>ggi_color</structname> structure. 16
+bit channels are used to ensure sufficient precision most displays.
 </para>
 
-<para>Note that GGI drawing functions use ggi_pixels instead. Use
-<function>ggiMapColor</function> to convert ggi_colors to ggi_pixels.
+<para><type>ggi_pixel</type>s are display-dependent pixel values.
+They are used by all GGI drawing primitives for efficiency.
+Use <function>ggiMapColor</function> to convert ggi_colors to
+ggi_pixels.
 </para>
+
+</refsect1>
+
+<refsect1>
+<title>Structure members</title>
 
 <para>
 <structfield>r</structfield>, <structfield>g</structfield> and
 <structfield>b</structfield> correspond respectively to the red, green
-and blue channels.  . The <structfield>a</structfield>(alpha) field is
-mainly there for padding and it is not used by libggi. Setting this
-value has no effect in libggi itself, and it will most probably not be
-unmaped correctly from ggi_pixels. However, some extensions might make
-use of it, in which case you should refer to their documentation.
+and blue channels.  Since libggi does not deal with alpha compositing,
+the <structfield>a</structfield>(alpha) field is mainly there for
+padding and it is not used by libggi. Setting this value has no effect
+in libggi itself, and it will most probably not be unmaped correctly
+from <type>ggi_pixel</type>s. However, some extensions might make use
+of it, in which case you should refer to their documentation.  </para>
+
+<para>
+<type>ggi_pixel</type>s format depends on the actual display and mode.
+For those who want to operate directly on pixel values, this format
+is describe in the <structname>ggi_pixelformat</structname> structure.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Pixel Arrays</title>
+
+<para>Although individual pixels are kept into 32 bits
+<type>ggi_pixel</type>, arrays of pixels, as used in
+<function>ggi[Get¦Put]*</function> functions,
+<function>ggiPackColors</function> and
+<function>ggiUnpackPixels</function>, are stored in the display
+specific format, thus packed according to the actual pixel size.  This
+size is given by the <symbol>GT_SIZE</symbol> macro for
+<type>graphtype</type> or the <structfield>size</structfield> field of
+the <structname>ggi_pixelformat</structname> structure.  </para>
+
+<para>The buffers provided to these functions must be big enough
+to store or read enough pixels. Although it is safe to use 32 bits
+per pixel, the optimum size (in bits) can be calculated by multiplying
+the number of pixel by their size. Don't forget to round up to a
+multiple of 8 to get the number of bytes.
+</para>
+
+<para>If you want to access such buffers directly, do not use
+pointer arithmetics with <type>ggi_pixel</type>s.
 </para>
 
 </refsect1>
@@ -118,8 +319,8 @@ use of it, in which case you should refer to their documentation.
 
 <simplelist type="inline">
 <member><xref linkend="api-ggimapcolor"/></member>
+<member><xref linkend="ref-struct-ggi-mode"/></member>
 <member><xref linkend="ref-struct-ggi-pixelformat"/></member>
-
 </simplelist>
 
 </refsect1>
