@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.16 2005/02/07 17:03:48 mooz Exp $
+/* $Id: vidmode.c,v 1.17 2005/02/09 17:20:02 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -234,11 +234,9 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode *m, XF86VidModeModeInfo *vidmod
 					ggi_x_priv *priv )
 {
 	int screen = priv->vilist[priv->viidx].vi->screen;
-
+	
 	m->visible.x = vidmode->hdisplay;
 	m->visible.y = vidmode->vdisplay;
-	m->virt.x = GGI_AUTO;
-	m->virt.y = GGI_AUTO;
 
 	m->dpp.x = 1;
 	m->dpp.y = 1;
@@ -265,6 +263,8 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode *m, XF86VidModeModeInfo *vidmod
 #undef SCREENH
 #undef SCREENDPIX
 #undef SCREENDPIY
+		DPRINT_MODE("\tphysz size: %d %d\n",m->size.x, m->size.y);
+		
 }
 
 #include <ggi/display/modelist.h>
@@ -339,6 +339,24 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	  min_y       = num;
 	}
       }
+
+      /* Debug display */
+      DPRINT_MODE("\tmodes[%d]:\n", num);
+      DPRINT_MODE("\tdotclock    %d\n", vidmode->modes[num]->dotclock);
+      DPRINT_MODE("\thdisplay    %d\n", vidmode->modes[num]->hdisplay);
+      DPRINT_MODE("\thsyncstart  %d\n", vidmode->modes[num]->hsyncstart);
+      DPRINT_MODE("\thsyncend    %d\n", vidmode->modes[num]->hsyncend);
+      DPRINT_MODE("\thtotal      %d\n", vidmode->modes[num]->htotal);
+      DPRINT_MODE("\tvdisplay    %d\n", vidmode->modes[num]->vdisplay);
+      DPRINT_MODE("\tvsyncstart  %d\n", vidmode->modes[num]->vsyncstart);
+      DPRINT_MODE("\tvsyncend    %d\n", vidmode->modes[num]->vsyncend);
+      DPRINT_MODE("\tvtotal      %d\n", vidmode->modes[num]->vtotal);
+      DPRINT_MODE("\tflags       %d\n", vidmode->modes[num]->flags);
+      DPRINT_MODE("\tprivsize    %d\n", vidmode->modes[num]->privsize);
+      DPRINT_MODE("\tprivate     %x\n", vidmode->modes[num]->private);
+      DPRINT_MODE("\tdx: %d dy: %d\n",   delta_x, delta_y);
+      DPRINT_MODE("\tmx: %d my: %d\n\n", min_x,   min_y);
+
     }
 
     if((min_x > 0) && (min_y > 0)) {
@@ -378,11 +396,11 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
       vidmode->validation_flag = 0;
 
       ggi_vidmode_checkmode_adapt(mode, vidmode->modes[num], priv);
-      _GGI_generic_checkmode_update(cm, mode, (void *)num );
-      err = _GGI_generic_checkmode_finish(cm, mode, (void**)&num );
+      _GGI_generic_checkmode_update(cm, mode, num );
+      err = _GGI_generic_checkmode_finish(cm, mode, &num );
       _GGI_generic_checkmode_destroy(cm);
 
-      return num;
+      return num-1;
     }
   }
   
