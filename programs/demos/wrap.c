@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.5 2002/08/02 22:37:41 cegger Exp $
+/* $Id: wrap.c,v 1.6 2002/10/10 17:06:14 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -45,7 +45,11 @@
 /* GNU Hurd hasn't defined it.
  */
 #ifndef PATH_MAX
-#define PATH_MAX	255
+# ifdef _POSIX_PATH_MAX
+#  define PATH_MAX _POSIX_PATH_MAX
+# else
+#  define PATH_MAX 4096	/* Should be enough for most systems */
+# endif
 #endif
 
 
@@ -64,7 +68,11 @@ typedef struct client_t client_t;
 void init_client(client_t *client, ggi_mode *mode, const char *command)
 {
 	struct sockaddr_un address;
+#ifdef HAVE_SOCKLEN_T
 	socklen_t len;
+#else
+	int len;
+#endif
 	size_t bufsize;
 	char text[128];
 
