@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2004/04/05 23:11:32 ggibecka Exp $
+/* $Id: mode.c,v 1.27 2004/07/28 09:33:14 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -397,7 +397,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	 * those cases where we don't have a parent.
 	 */
 	XSelectInput(priv->disp, priv->parentwin,
-		     KeyPressMask | KeyReleaseMask);
+		     KeymapStateMask | KeyPressMask | KeyReleaseMask);
 
 oldparent:
 	GGIDPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
@@ -444,7 +444,7 @@ oldparent:
 
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
-		     KeyPressMask | KeyReleaseMask |
+		     KeymapStateMask | KeyPressMask | KeyReleaseMask |
 		     ButtonPressMask | ButtonReleaseMask |
 		     EnterWindowMask | LeaveWindowMask |
 		     ExposureMask | PointerMotionMask);
@@ -627,7 +627,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
-		     KeyPressMask | KeyReleaseMask |
+		     KeymapStateMask | KeyPressMask | KeyReleaseMask |
 		     ButtonPressMask | ButtonReleaseMask |
 		     EnterWindowMask | LeaveWindowMask |
 		     ExposureMask | PointerMotionMask);
