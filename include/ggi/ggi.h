@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.1 2001/05/12 23:03:18 cegger Exp $
+/* $Id: ggi.h,v 1.2 2001/06/21 19:09:27 skids Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -506,7 +506,9 @@ int		ggiEventRead(ggi_visual_t vis, gii_event *ev,
 int		ggiSetEventMask(ggi_visual_t vis, gii_event_mask evm);
 gii_event_mask	ggiGetEventMask(ggi_visual_t vis);
 int		ggiEventSend(ggi_visual_t vis, gii_event *ev);
+#define		ggiGetInput(vis)	ggiJoinInputs(vis, NULL)
 gii_input_t	ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
+gii_input_t	ggiDetachInput(ggi_visual_t vis);
                           
 #define ggiAddEventMask(vis,mask)  \
 		ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))

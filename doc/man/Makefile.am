@@ -27,6 +27,7 @@ man_MANS = ggiAddFlags.3ggi ggiCheckGraphMode.3ggi ggiCheckMode.3ggi \
 	ggiAddEventMask.3ggi ggiEventPoll.3ggi ggiEventRead.3ggi \
 	ggiEventSend.3ggi ggiEventsQueued.3ggi ggiGetEventMask.3ggi \
 	ggiRemoveEventMask.3ggi ggiSetEventMask.3ggi ggiJoinInputs.3ggi \
+	ggiDetachInput.3ggi ggiGetInput.3ggi \
 	ggiGetc.3ggi ggiKbhit.3ggi \
 	libggi.7ggi
 

@@ -39,6 +39,7 @@ ggiCopyBox
 ggiCrossBlit
 ggiDBGetBuffer
 ggiDBGetNumBuffers
+ggiDetachInput
 ggiDrawBox
 ggiDrawHLine
 ggiDrawLine

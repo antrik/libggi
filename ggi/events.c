@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: events.c,v 1.2 2001/06/21 19:09:27 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. Events handling.
@@ -64,14 +64,20 @@ int ggiEventSend(ggi_visual *vis, gii_event *ev)
 }
 
 
-/* This can also be used to query the vis->input member.
- */
+/* This can also be used to query the vis->input member. */
 gii_input_t ggiJoinInputs(ggi_visual *vis, gii_input_t inp)
 {
 	if (vis->input == NULL) {
 		return (vis->input = inp);
 	}
 	return (vis->input = giiJoinInputs(vis->input, inp));
+}
+
+gii_input_t ggiDetachInput(ggi_visual *vis) {
+	gii_input_t ret;
+	ret = vis->input;
+	vis->input = NULL;
+	return(ret);
 }
 
 int ggiKbhit(ggi_visual_t vis)
