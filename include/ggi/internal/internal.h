@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.3 2002/05/11 01:16:15 skids Exp $
+/* $Id: internal.h,v 1.4 2002/05/24 21:47:10 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -77,6 +77,9 @@ int _ggiAddDL(ggi_visual *vis, const char *drv, const char *args,
 int _ggi_countbits(uint32 val);
 int _ggi_mask2shift(uint32 mask);
 void _ggi_build_pixfmt(ggi_pixelformat *pixfmt);
+void _ggi_pixfmtstr(ggi_visual *vis, char* str, int flags);
+/* _ggi_pixfmtstr flags: 1 == break down channels */
+/*                       2 == report alpha as pad */
 int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col);
 ggifunc_setreadframe _ggi_default_setreadframe;
 ggifunc_setwriteframe _ggi_default_setwriteframe;
