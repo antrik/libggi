@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.8 2004/09/13 12:04:54 pekberg Exp $
+/* $Id: findleaks.c,v 1.9 2004/09/13 12:13:10 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -94,12 +94,11 @@ static long get_size(void)
 static void inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
 {
 	printf(info);
-#if 0
-	printf("Check memory stats now!\n");
-#endif
 	fprintf(stderr, "inform_mem(): not implemented for your platform\n");
+	printf("Check memory stats now, then press any key\n");
 	fflush(stdout);
 	fflush(stderr);
+	getchar();
 }
 #endif
 
