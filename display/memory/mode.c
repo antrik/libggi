@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2002/10/27 18:26:24 skids Exp $
+/* $Id: mode.c,v 1.7 2003/02/07 01:18:52 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -181,8 +181,14 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 
 	case 1: strcpy(apiname, "generic-stubs");
 		return 0;
-		
-	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+
+	case 2: if (GT_SCHEME(LIBGGI_MODE(vis)->graphtype) == GT_TEXT)
+			return -1;
+
+		strcpy(apiname, "generic-color");
+		return 0;
+
+	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
 			sprintf(apiname, "generic-text-%d",
 				GT_SIZE(mode->graphtype));
 			return 0;
@@ -196,11 +202,6 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
 
-	case 3: if (GT_SCHEME(LIBGGI_MODE(vis)->graphtype) == GT_TEXT)
-			return -1;
-
-		strcpy(apiname, "generic-color");
-		return 0;
 	}
 
 	return -1;
