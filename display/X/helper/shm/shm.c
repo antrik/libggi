@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.27 2004/12/25 15:52:12 cegger Exp $
+/* $Id: shm.c,v 1.28 2005/01/06 23:08:22 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -195,9 +195,9 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 		       (unsigned)(priv->ximage->bytes_per_line * 
 		       LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames),
 		       IPC_CREAT | 0777);
-	
-	priv->fb = myshminfo->shmaddr = priv->ximage->data =
-		shmat(myshminfo->shmid,0,0);
+
+	priv->fb = shmat(myshminfo->shmid,0,0);
+	myshminfo->shmaddr = priv->ximage->data = (char *)priv->fb;
 	DPRINT_MODE("X: MIT-SHM: shmat success at %p.\n", priv->fb);
 
 	myshminfo->readOnly = False;
