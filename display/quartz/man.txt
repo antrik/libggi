@@ -1,7 +1,7 @@
-Display on a Mac OS X
-~~~~~~~~~~~~~~~~~~~~~
+Display using Quartz2D on Mac OSX
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 7 display-macosx
+.. manpage:: 7 display-quartz
 
 
 Synopsis
@@ -9,7 +9,7 @@ Synopsis
 
 ::
 
-  display-macosx
+  display-quartz
 
 
 Description
