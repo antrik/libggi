@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2004/04/04 14:31:42 mooz Exp $
+/* $Id: color.c,v 1.9 2004/06/27 18:54:43 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -53,9 +53,9 @@ int GGI_color_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 
 /* ---------------------------------------------------------------------- */
 
-/* This could be optimized using TINN:
-compgeo.math.uwaterloo.ca/~cccg01/proceedings/short/chang-53914.ps.gz
-*/
+/* This could be much optimized using the hybrid K-D tree:
+ * http://www5.informatik.uni-erlangen.de/vampire/stuff/zinsser_vmv03.pdf
+ */
 
 ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
 {
