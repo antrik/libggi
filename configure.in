@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.152 2004/12/14 13:43:59 pekberg Exp $
+dnl $Id: configure.in,v 1.153 2004/12/29 22:18:14 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1086,6 +1086,7 @@ fi
 AC_MSG_CHECKING(if we should build quartz   target)
 if test "x$build_quartz_target" != "xno"; then
    DISPLAYSUBDIRS="$DISPLAYSUBDIRS quartz"
+   TESTSUBDIRS="$TESTSUBDIRS display.quartz"
    build_quartz_target="yes"
    AC_MSG_RESULT(yes)
 else
@@ -1540,6 +1541,7 @@ programs/regress/Makefile
 programs/regress/display.aa/Makefile
 programs/regress/display.mansync/Makefile
 programs/regress/display.palemu/Makefile
+programs/regress/display.quartz/Makefile
 programs/regress/display.tile/Makefile
 programs/regress/display.trueemu/Makefile
 programs/regress/display.x/Makefile
