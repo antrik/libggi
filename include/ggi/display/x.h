@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.3 2002/06/12 03:53:59 skids Exp $
+/* $Id: x.h,v 1.4 2002/12/15 16:00:39 ggibecka Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -208,18 +208,14 @@ if (priv->dirtytl.x >= _x && priv->dirtybr.x <= _x + _w-1) {		\
   if (priv->dirtytl.y >= _y && priv->dirtybr.y <= _y + _h-1) {		\
     priv->dirtytl.x = 1; priv->dirtybr.x = 0; break; }			\
   if ((priv->dirtybr.y < _y) || (priv->dirtytl.y > _y + _h-1)) break;	\
-  if ((priv->dirtybr.y < _y + _h-1) && (priv->dirtytl.y > _y)) break;	\
-  if (priv->dirtytl.y < _y) priv->dirtybr.y = _y;			\
-  if (priv->dirtybr.y > _y + _h-1) priv->dirtytl.y = _y + _h-1;		\
-  break;								\
-} else if (priv->dirtytl.x >= _x && priv->dirtybr.x <= _x + _w-1) {	\
-  if (priv->dirtytl.x >= _x && priv->dirtybr.x <= _x + _w-1) {		\
-    priv->dirtytl.x = 1; priv->dirtybr.x = 0; break; }			\
+  if ((priv->dirtybr.y > _y + _h-1) && (priv->dirtytl.y < _y)) break;	\
+  if (priv->dirtytl.y < _y) priv->dirtybr.y = _y-1;			\
+  if (priv->dirtybr.y > _y + _h-1) priv->dirtytl.y = _y + _h;		\
+} else if (priv->dirtytl.y >= _y && priv->dirtybr.y <= _y + _h-1) {	\
   if ((priv->dirtybr.x < _x) || (priv->dirtytl.x > _x + _w-1)) break;	\
-  if ((priv->dirtybr.x < _x + _w-1) && (priv->dirtytl.x > _x)) break;	\
-  if (priv->dirtytl.x < _x) priv->dirtybr.x = _x;		        \
-  if (priv->dirtybr.x > _x + _w-1) priv->dirtytl.x = _x + _w-1;		\
-  break;								\
+  if ((priv->dirtybr.x > _x + _w-1) && (priv->dirtytl.x < _x)) break;	\
+  if (priv->dirtytl.x < _x) priv->dirtybr.x = _x-1;		        \
+  if (priv->dirtybr.x > _x + _w-1) priv->dirtytl.x = _x + _w;		\
 }} while (0)
 #define GGI_X_SYNC(_vis) XFlush(GGIX_PRIV(_vis)->disp);
 #define GGI_X_MAYBE_SYNC(_vis) \
