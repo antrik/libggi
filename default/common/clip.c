@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.8 2004/05/05 22:08:04 aldot Exp $
+/* $Id: clip.c,v 1.9 2004/09/15 10:29:23 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -183,6 +183,7 @@ static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
 						      2*dy);
 			}
 		} else { /* OC_BOTTOM */
+			LIBGGI_ASSERT((code & OC_BOTTOM), "unknown outcode\n");
 			y = LIBGGI_GC(vis)->clipbr.y - 1;
 			if (xmajor) {
 				if (slope) {
