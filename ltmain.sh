@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.137 2005/01/24 07:46:16) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.141 2005/01/26 17:53:24) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.137 2005/01/24 07:46:16) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.141 2005/01/26 17:53:24) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.137 2005/01/24 07:46:16"
-package_revision=1.1667.2.137
+TIMESTAMP=" 1.1667.2.141 2005/01/26 17:53:24"
+package_revision=1.1667.2.141
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -835,8 +835,8 @@ Otherwise, only FILE itself is deleted using RM."
   # sed scripts:
   my_sed_single_opt='1s/^\(..\).*$/\1/;q'
   my_sed_single_rest='1s/^..\(.*\)$/\1/;q'
-  my_sed_long_opt='1s/^\(--[^=]*\)=.*/\1/;q'
-  my_sed_long_arg='1s/^--[^=]*=//'
+  my_sed_long_opt='1s/^\(-[^=]*\)=.*/\1/;q'
+  my_sed_long_arg='1s/^-[^=]*=//'
 
   # Shorthand for --mode=foo, only valid as the first argument
   case $1 in
@@ -3047,7 +3047,7 @@ func_mode_link ()
 	    # These systems don't actually have a C library (as such)
 	    test "X$arg" = "X-lc" && continue
 	    ;;
-	  *-*-openbsd* | *-*-freebsd*)
+	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly*)
 	    # Do not include libc due to us having libc/libc_r.
 	    test "X$arg" = "X-lc" && continue
 	    ;;
@@ -3058,7 +3058,7 @@ func_mode_link ()
 	  esac
 	elif test "X$arg" = "X-lc_r"; then
 	 case $host in
-	 *-*-openbsd* | *-*-freebsd*)
+	 *-*-openbsd* | *-*-freebsd* | *-*-dragonfly*)
 	   # Do not include libc_r directly, use -pthread flag.
 	   continue
 	   ;;
@@ -3240,11 +3240,12 @@ func_mode_link ()
 	;;
 
       # -64, -mips[0-9] enable 64-bit mode on the SGI compiler
+      # -r[0-9][0-9]* specifies the processor on the SGI compiler
       # -xarch=*, -xtarget=* enable 64-bit mode on the Sun compiler
       # +DA*, +DD* enable 64-bit mode on the HP compiler
       # -q* pass through compiler args for the IBM compiler
       # -m* pass through architecture-specific compiler args for GCC
-      -64|-mips[0-9]|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*)
+      -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*)
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
         compile_command="$compile_command $arg"
@@ -4952,7 +4953,7 @@ func_mode_link ()
 	  *-*-netbsd*)
 	    # Don't link with libc until the a.out ld.so is fixed.
 	    ;;
-	  *-*-openbsd* | *-*-freebsd*)
+	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly*)
 	    # Do not include libc due to us having libc/libc_r.
 	    test "X$arg" = "X-lc" && continue
 	    ;;
