@@ -21,11 +21,10 @@ Targets
 Targets are devices which LibGGI can render to.  See doc/targets.txt for more
 details.
 
-	+ fbdev: fbcon framebuffer devices, DirectFB, and kgicon
+	+ fbdev: fbcon framebuffer devices, DirectFB
 	+ vcsa: Linux text console
 
 	+ X: X Window System
-	+ Xlib: X Window alternate method; uses X for primitives
 	+ XF86DGA: XFree86 server Direct Graphics Access
 
 	+ AA: AAlib, an ASCII-Art renderer
@@ -46,13 +45,12 @@ details.
 	+ Sub-target: Visual-within-a-visual
 
 	+ Tele: remote LibGGI
-	+ suidkgi: use KGI drivers in userspace, setuid root
 
 
 Requirements
 ============
 
-* LibGG 0.7 or later (included in LibGII).
+* LibGG 0.8 or later (included in LibGII).
 * LibGII 0.8 or later.
 * Most likely GNU Make.
 * Fbcon Linux kernel if using display-fbdev target.
