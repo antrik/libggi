@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/09/12 19:56:57 cegger Exp $
+/* $Id: visual.c,v 1.20 2004/09/13 08:22:05 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -98,7 +98,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         }
 
 	memset(priv, 0, sizeof(directx_priv));
-        GGIDIRECTX_PRIV(vis) = priv;
+        LIBGGI_PRIVATE(vis) = priv;
 
 	InitializeCriticalSection(&priv->cs);
 	InitializeCriticalSection(&priv->redrawcs);
