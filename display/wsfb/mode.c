@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/11/13 15:56:27 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/11/14 15:47:49 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -84,7 +84,7 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	if (vis == NULL) {
 		GGIDPRINT("vis == NULL");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	GGIDPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
@@ -140,7 +140,7 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 
 /**********************************/
 /* check any mode (text/graphics) */
-/* return -1 on any error, but set things to what should be working values */
+/* return < 0 on any error, but set things to what should be working values */
 /**********************************/
 int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
@@ -148,30 +148,30 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 	int err = 0;
 
 	if (vis == NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	if(tm->visible.x != priv->info.width && tm->visible.x != GGI_AUTO)
-		err = -1;
+		err = GGI_ENOMATCH;
 	else if(tm->virt.x != priv->info.width && tm->virt.x != GGI_AUTO)
-		err = -1;
+		err = GGI_ENOMATCH;
 
 	if(tm->visible.y != priv->info.height && tm->visible.y != GGI_AUTO)
-		err = -1;
+		err = GGI_ENOMATCH;
 	else if(tm->virt.y != priv->info.height && tm->virt.y != GGI_AUTO)
-		err = -1;
+		err = GGI_ENOMATCH;
 
 	if(tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if(tm->frames != GGI_AUTO && tm->frames != 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if(tm->dpp.x != GGI_AUTO && tm->dpp.x != 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	} else if(tm->dpp.y != GGI_AUTO && tm->dpp.y != 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	tm->visible.x = tm->virt.x = priv->info.width;
@@ -196,7 +196,7 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 		tm->frames, tm->graphtype);
 
 	if (vis==NULL || tm==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	if(tm->virt.x==GGI_AUTO) tm->virt.x = tm->visible.x;
 	if(tm->virt.y==GGI_AUTO) tm->virt.y = tm->visible.y;
@@ -242,7 +242,7 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	}
 
 	if ((start < 0) || (len < 0) || (start+len > nocols)) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
@@ -287,7 +287,7 @@ do_mmap(ggi_visual *vis)
 	if (priv->base == (void *)-1) {
 		GGIDPRINT("mmap failed: %s %s\n",
 			priv->devname, strerror(errno));
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	fprintf(stderr,"mmap offset: %p\n", priv->base);

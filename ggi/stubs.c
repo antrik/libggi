@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.4 2002/09/08 21:37:48 soyt Exp $
+/* $Id: stubs.c,v 1.5 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -163,7 +163,7 @@ int  ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
 
 int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)
 {
-	if (!vis->gamma) return -1;
+	if (!vis->gamma) return GGI_EARGINVAL;
 	switch(bitmeaning) {
 	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
 	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y0:
@@ -195,7 +195,7 @@ int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)
 	}
 	if (vis->gamma->maxwrite_r | vis->gamma->maxwrite_g | 
 	    vis->gamma->maxwrite_b) return GGI_OK;
-	else return -1; /* Read-only gammamap */
+	else return GGI_ENOMATCH; /* Read-only gammamap */
 }
 
 /* Origin

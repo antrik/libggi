@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/11/13 15:56:20 cegger Exp $
+/* $Id: color.c,v 1.10 2004/11/14 15:47:44 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -250,10 +250,10 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 	int i;
 
 	priv = FBDEV_PRIV(vis);
-	if (colormap == NULL) return -1;
-	if (vis->gamma == NULL) return -2; /* Wrong GT if not hooked */
-	if (start < 0 || start >= priv->gamma.len) return -1;
-	if (len > (priv->gamma.len - start)) return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+	if (vis->gamma == NULL) return GGI_ENOMATCH; /* Wrong GT if not hooked */
+	if (start < 0 || start >= priv->gamma.len) return GGI_ENOSPACE;
+	if (len > (priv->gamma.len - start)) return GGI_ENOSPACE;
 
 	gam.start = start;
 	gam.len = len;
@@ -290,11 +290,11 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 	int i;
 
 	priv = FBDEV_PRIV(vis);
-	if (colormap == NULL) return -1;
-	if (vis->gamma == NULL) return -2;
-	if (vis->gamma->map == NULL) return -1;
-	if (start < 0 || start >= vis->gamma->len) return -1;
-	if (len > (vis->gamma->len - start)) return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+	if (vis->gamma == NULL) return GGI_ENOMATCH; /* wrong GT if not hooked */
+	if (vis->gamma->map == NULL) return GGI_EARGINVAL;
+	if (start < 0 || start >= vis->gamma->len) return GGI_ENOSPACE;
+	if (len > (vis->gamma->len - start)) return GGI_ENOSPACE;
 
 	i = 0;
 	do {

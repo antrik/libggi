@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/11/13 15:56:20 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/11/14 15:47:44 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -173,6 +173,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 
 static int _ggi_getmmap(ggi_visual *vis)
 {
+	int rc = GGI_OK;
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
 	ggi_graphtype gt = LIBGGI_GT(vis);
@@ -190,16 +191,18 @@ static int _ggi_getmmap(ggi_visual *vis)
 
 	/* create file */
 	
-	if (_ggi_file_create_file(vis, priv->filename) < 0) {
-		return -1;
+	rc = _ggi_file_create_file(vis, priv->filename);
+	if (rc < 0) {
+		return rc;
 	}
 
 
 	/* map the file into memory */
 
 	if (priv->flags & FILEFLAG_RAW) {
-		if (_ggi_rawstuff(vis) < 0) {
-			return -1;
+		rc = _ggi_rawstuff(vis);
+		if (rc < 0) {
+			return rc;
 		}
 	} else {
 		priv->fb_ptr = malloc((size_t)priv->fb_size);
@@ -327,7 +330,7 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 	int err;
 
 	if (vis==NULL || mode==NULL || LIBGGI_MODE(vis)==NULL) {
-		return -1;
+		return GGI_EARGINVAL;
 	}
 	
 	GGIDPRINT_MODE("display-file: setmode %dx%d#%dx%dF%d[0x%02x]\n",
@@ -450,7 +453,7 @@ int GGI_file_getmode(ggi_visual *vis, ggi_mode *mode)
 	GGIDPRINT("display-file: GGIgetmode(%p,%p)\n", vis, mode);
 
 	if (vis==NULL || mode==NULL || LIBGGI_MODE(vis)==NULL) {
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));

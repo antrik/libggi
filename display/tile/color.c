@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2004/10/30 09:39:29 cegger Exp $
+/* $Id: color.c,v 1.3 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -41,9 +41,12 @@ int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i < priv->numvis; i++)
-		if(ggiSetPalette(priv->vislist[i].vis, start, len, colormap))
-			return -1;
+	int rc;
+
+	for (i = 0; i < priv->numvis; i++) {
+		rc = ggiSetPalette(priv->vislist[i].vis, start, len, colormap);
+		if (rc < 0) return rc;
+	}
 
 	return 0;
 }

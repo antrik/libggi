@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.5 2004/11/13 15:56:24 cegger Exp $
+/* $Id: color.m,v 1.6 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -47,7 +47,7 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 	fprintf(stderr, "setpalvec (1)\n");
 	if (start == GGI_PALETTE_DONTCARE) {
 		if (len > priv->ncols) {
-			return -1;
+			return GGI_ENOSPACE;
 		}	/* if */
 
 		start = priv->ncols - len;
@@ -55,8 +55,10 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 	fprintf(stderr, "setpalvec (2)\n");
 
-	if (colormap == NULL || start+len > priv->ncols || start < 0)
-		return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+
+	if (start+len > priv->ncols || start < 0)
+		return GGI_ENOSPACE;
 
 	fprintf(stderr, "setpalvec (3)\n");
 
@@ -159,9 +161,9 @@ int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 
 	priv = QUARTZ_PRIV(vis);
 
-	if (colormap == NULL) return -1;
-	if (start < 0 || start >= vis->gamma->len) return -1;
-	if (len > (vis->gamma->len - start)) return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+	if (start < 0 || start >= vis->gamma->len) return GGI_ENOSPACE;
+	if (len > (vis->gamma->len - start)) return GGI_ENOSPACE;
 
 	/* Extract gamma values into separate tables,
 	 * convert to floats between 0.0 and 1.0
@@ -213,10 +215,9 @@ int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	CGTableCount actualSize;
 	int i;
 
-	if (colormap==NULL) return -1;
-	if (start >= vis->gamma->len) return -1;
-	if (start < 0) return -1;
-	if (len > (vis->gamma->len - start)) return -1;
+	if (colormap==NULL) return GGI_EARGINVAL;
+	if (start < 0 || start >= vis->gamma->len) return GGI_ENOSPACE;
+	if (len > (vis->gamma->len - start)) return GGI_ENOSPACE;
 
 
 	if ( CGDisplayNoErr != CGGetDisplayTransferByTable
@@ -226,7 +227,7 @@ int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	}	/* if */
 
 	if ((unsigned)len < actualSize) len = actualSize;
-	if (len < start) return -1;
+	if (len < start) return GGI_ENOSPACE;
 
 	/* Pack tables into one array, with values from 0 to 65535 */
 	i = 0;

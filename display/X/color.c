@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.14 2004/10/31 14:24:52 cegger Exp $
+/* $Id: color.c,v 1.15 2004/11/14 15:47:43 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -48,7 +48,7 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
 	priv = GGIX_PRIV(vis);
 	screen = priv->vilist[priv->viidx].vi->screen;
 			
-	if (len > 256) return -1;
+	if (len > 256) return GGI_ENOSPACE;
 
 	/* read X's palette */
 
@@ -147,6 +147,8 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 	LIBGGI_APPASSERT(colormap != NULL,
 			 "ggiSetPalette() called with NULL colormap!");
 
+	if (colormap == NULL) return GGI_EARGINVAL;
+
 	if (((int)start) == GGI_PALETTE_DONTCARE) {
 		if (COLOR_THRESHOLD(len, priv->ncols)) {
 			return _ggi_smart_allocate(vis, len, (ggi_color*)colormap);
@@ -155,9 +157,11 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 		start = priv->ncols - len;
 	}
 
-	if ( (colormap == NULL) || 
-			 ((int)(start+len) > priv->ncols ) || 
-	     (start < 0) ) return -1;
+	if ( ((int)(start+len) > priv->ncols )
+	    || (start < 0) )
+	{
+		return GGI_ENOSPACE;
+	}
 
 	LIBGGI_PAL(vis)->clut.size = len;
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
@@ -182,12 +186,11 @@ int GGI_X_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	int i;
 
 	priv = GGIX_PRIV(vis);
-	if (priv->vilist[priv->viidx].vi->class != DirectColor) return -2;
+	if (priv->vilist[priv->viidx].vi->class != DirectColor) return GGI_ENOMATCH;
 
-	if (colormap == NULL) return -1;
-	if (start >= priv->gamma.len) return -1;
-	if (start < 0) return -1;
-	if (len > (priv->gamma.len - start)) return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+	if (start < 0 || start >= priv->gamma.len) return GGI_ENOSPACE;
+	if (len > (priv->gamma.len - start)) return GGI_ENOSPACE;
 
 	i = 0;
 	do {
@@ -217,12 +220,11 @@ int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 
 	priv = GGIX_PRIV(vis);
 	if (priv->vilist[priv->viidx].vi->class != TrueColor &&
-	    priv->vilist[priv->viidx].vi->class != DirectColor) return -2;
+	    priv->vilist[priv->viidx].vi->class != DirectColor) return GGI_ENOMATCH;
 
-	if (colormap==NULL) return -1;
-	if (start >= priv->ncols) return -1;
-	if (start < 0) return -1;
-	if (len > priv->ncols) return -1;
+	if (colormap==NULL) return GGI_EARGINVAL;
+	if (start < 0 || start >= priv->ncols) return GGI_ENOSPACE;
+	if (len > priv->ncols) return GGI_ENOSPACE;
 
 	i = 0;
 	do {

@@ -1,4 +1,4 @@
-/* $Id: pixfmt-setup.inc,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: pixfmt-setup.inc,v 1.2 2004/11/14 15:47:44 cegger Exp $
 ******************************************************************************
 
    Set up vis->pixfmt for 'default' modes when the target doesn't care. 
@@ -82,5 +82,5 @@ static int setup_pixfmt(ggi_pixelformat *pixfmt, ggi_graphtype gt)
 		" (0x%08x)\n"
 		"Please report this error to the target maintainer", gt);
 
-	return -1; /* Avoid compiler warning */
+	return GGI_ENOMATCH; /* Avoid compiler warning */
 }

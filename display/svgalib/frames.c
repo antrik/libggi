@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.1 2001/06/24 16:45:12 skids Exp $
+/* $Id: frames.c,v 1.2 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    SVGA target: frame handling functions
@@ -31,7 +31,7 @@ int
 GGI_svga_setreadframe(ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 	vis->r_frame_num = num;
 	
@@ -42,7 +42,7 @@ int
 GGI_svga_setwriteframe(ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 	vis->w_frame_num = num;
 	
@@ -53,7 +53,7 @@ int
 GGI_svga_setdisplayframe(ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 	vis->d_frame_num = num;
 	

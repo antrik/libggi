@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/11/06 22:48:31 cegger Exp $
+/* $Id: visual.c,v 1.14 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -159,7 +159,7 @@ static int _GGIchecksvgamodes(ggi_visual *vis)
 	}
 
 	if (modes == 0) {
-		return -1;
+		return GGI_ENOMATCH;
 	} else {
 		priv->availmodes = realloc(priv->availmodes,
 					   (modes+1)*sizeof(ggi_modelistmode));

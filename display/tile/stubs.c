@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.3 2004/10/30 09:39:30 cegger Exp $
+/* $Id: stubs.c,v 1.4 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -642,5 +642,5 @@ int GGI_tile_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 			x - cliptl.x, y - cliptl.y, col);
 	}
 
-	return -1;
+	return GGI_ENOSPACE;
 }

@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.2 2004/10/30 09:39:30 cegger Exp $
+/* $Id: frames.c,v 1.3 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -34,7 +34,7 @@ int GGI_tile_setdisplayframe_db(ggi_visual *vis, int num)
 	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
 	if (db == NULL) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	vis->d_frame_num = num;
@@ -47,9 +47,12 @@ int GGI_tile_setdisplayframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i < priv->numvis; i++)
-		if(ggiSetDisplayFrame(priv->vislist[i].vis, num))
-			return -1;
+	int rc;
+
+	for(i = 0; i < priv->numvis; i++) {
+		rc = ggiSetDisplayFrame(priv->vislist[i].vis, num);
+		if (rc < 0) return rc;
+	}
 
 	return 0;
 }
@@ -58,9 +61,12 @@ int GGI_tile_setreadframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i < priv->numvis; i++)
-		if(ggiSetReadFrame(priv->vislist[i].vis, num))
-			return -1;
+	int rc;
+
+	for(i = 0; i < priv->numvis; i++) {
+		rc = ggiSetReadFrame(priv->vislist[i].vis, num);
+		if (rc < 0) return rc;
+	}
 
 	return 0;
 }
@@ -69,9 +75,12 @@ int GGI_tile_setwriteframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i < priv->numvis; i++)
-		if(ggiSetWriteFrame(priv->vislist[i].vis, num))
-			return -1;
+	int rc;
+
+	for(i = 0; i < priv->numvis; i++) {
+		rc = ggiSetWriteFrame(priv->vislist[i].vis, num);
+		if (rc < 0) return rc;
+	}
 
 	return 0;
 }

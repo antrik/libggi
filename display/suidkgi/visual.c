@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/11/06 22:48:30 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    Display-SUID: initialization
@@ -211,9 +211,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_mode mode;
 	int x;
 	
-	if (! priv) {
-		return -1;
-	}
+	LIBGGI_ASSERT(priv != NULL, "display-suidkgi: priv == NULL");
 
 	if (priv->is_up) {
 #if 1

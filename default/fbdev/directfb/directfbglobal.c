@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.10 2004/11/06 22:48:20 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.11 2004/11/14 15:47:42 cegger Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -215,7 +215,7 @@ DFBResult dfb_surface_create( int                      width,
                               CoreSurface            **surface )
 {
   /* Used for overlays only */
-  return -1;
+  return GGI_ENOFUNC;
 }
 
 CoreWindowStack* dfb_windowstack_new( DisplayLayer *layer )

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.3 2004/10/31 14:25:07 cegger Exp $
+/* $Id: draw.c,v 1.4 2004/11/14 15:47:49 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -133,12 +133,12 @@ GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 
 	if (maxlen > 256) {
 		GGIDPRINT("display-vgl: incorrect palette maxlen (%d)\n", maxlen);
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	if (start < 0 || start+len > maxlen) {
 		GGIDPRINT("display-vgl: incorrect palette len (%d)\n", maxlen);
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	/* XXX Why should we modify vis from here? */

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2004/09/12 20:27:24 cegger Exp $
+/* $Id: color.c,v 1.9 2004/11/14 15:47:45 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -53,7 +53,7 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	}
 
 	if ((start < 0) || (len < 0) || (start+len > nocols)) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	memcpy(LIBGGI_PAL(vis)->clut.data, colormap, len*sizeof(ggi_color));

@@ -1,4 +1,4 @@
-/* $Id: pack.c,v 1.3 2004/09/13 08:31:50 cegger Exp $
+/* $Id: pack.c,v 1.4 2004/11/14 15:47:42 cegger Exp $
 ******************************************************************************
 
    Generic color packing
@@ -298,7 +298,7 @@ GGIunpackpixels(...)
 	}
 	break;
 	default:
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	
 	return 0;

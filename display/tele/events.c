@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.4 2004/10/31 14:25:03 cegger Exp $
+/* $Id: events.c,v 1.5 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -66,7 +66,7 @@ static int translate_to_ggi(gii_input *inp, gii_event *ev, TeleEvent *tv)
 	if ((tv->type & TELE_EVENT_TYPE_MASK) != TELE_INP_BASE) {
 		GGIDPRINT_MISC("display-tele: unrecognised event from "
 			    "server (0x%08x).\n", tv->type);
-		return -1;
+		return GGI_EEVUNKNOWN;
 	}
 	
 	_giiEventBlank(ev, sizeof(gii_event));
@@ -133,7 +133,7 @@ static int translate_to_ggi(gii_input *inp, gii_event *ev, TeleEvent *tv)
 			int i;
 
 			if (d->count > 32) {
-				return -1;
+				return GGI_ENOSPACE;
 			}
 			
 			ev->any.size = sizeof(gii_val_event);
@@ -167,7 +167,7 @@ static int translate_to_ggi(gii_input *inp, gii_event *ev, TeleEvent *tv)
 	
 	GGIDPRINT_MISC("display-tele: unknown input event (0x%08x).\n",
 		    tv->type);
-	return -1;
+	return GGI_EEVUNKNOWN;
 }
 
 

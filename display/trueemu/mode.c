@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/11/13 15:56:26 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -329,7 +329,7 @@ int GGI_trueemu_getmode(ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
 		GGIDPRINT("display-trueemu: vis/mode == NULL\n");
-		return -1;
+		return GGI_ENOSPACE;
 	}
 	
 	GGIDPRINT("display-trueemu: getmode.\n");

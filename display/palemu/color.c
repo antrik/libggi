@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/11/13 15:56:23 cegger Exp $
+/* $Id: color.c,v 1.8 2004/11/14 15:47:46 cegger Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -43,7 +43,7 @@ int GGI_palemu_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_
  	GGIDPRINT("display-palemu: SetPalette(%d,%d)\n", start, len);
 	
 	if (start < 0 || start + len > 256) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, src, len*sizeof(ggi_color));

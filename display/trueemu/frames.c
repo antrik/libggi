@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.2 2004/02/02 19:22:00 cegger Exp $
+/* $Id: frames.c,v 1.3 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: frame handling
@@ -56,7 +56,7 @@ int GGI_trueemu_setdisplayframe(ggi_visual *vis, int num)
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOSPACE;
         }
 
         vis->d_frame_num = num;

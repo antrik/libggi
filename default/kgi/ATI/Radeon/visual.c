@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/13 15:56:18 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/14 15:47:42 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -136,7 +136,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (!(accel = KGI_PRIV(vis)->map_accel(vis, 1, 0, 
 		RADEON_BUFFER_SIZE_ORDER, RADEON_BUFFER_NUM, 0)))
-		return -1;
+		return GGI_ENODEVICE;
 
 	if (!(ctx = (radeon_context_t*)malloc(sizeof(*ctx))))
 		return GGI_ENOMEM;

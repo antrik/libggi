@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/10/31 15:16:43 cegger Exp $
+/* $Id: color.c,v 1.7 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -45,8 +45,10 @@ int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,
 	    ("GGI_xf86dga_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
 	     vis, start, size, colormap->r, colormap->g, colormap->b);
 
-	if (colormap == NULL || end > (size_t) (DGA_PRIV(vis)->x.nocols)) {
-		return -1;
+	if (colormap == NULL) return GGI_EARGINVAL;
+
+	if (end > (size_t) (DGA_PRIV(vis)->x.nocols)) {
+		return GGI_ENOSPACE;
 	}
 	/* if */
 	LIBGGI_PAL(vis)->clut.size = size;

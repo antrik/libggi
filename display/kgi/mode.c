@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2004/11/13 15:56:21 cegger Exp $
+/* $Id: mode.c,v 1.23 2004/11/14 15:47:45 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -143,7 +143,7 @@ int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
 
 	db = _ggi_db_find_frame(vis, num);
 
-        if (db == NULL) return -1;
+        if (db == NULL) return GGI_ENOSPACE;
 
         vis->r_frame_num = num;
         vis->r_frame = db;
@@ -165,7 +165,7 @@ int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 
 	GGIDPRINT("Setting write frame: %p found\n", db);
 
-	if (db == NULL) return -1;
+	if (db == NULL) return GGI_ENOSPACE;
 
 	vis->w_frame_num = num;
 	vis->w_frame = db;
@@ -213,7 +213,7 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		if (! accel) {
 
 			GGIDPRINT("Didn't find an accelerator\n");
-			return -1;
+			return GGI_ENOTFOUND;
 		}
 
 		space = strchr(accel->name, ' ');
@@ -262,7 +262,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	if(kgiSetMode(&KGI_CTX(vis)) != KGI_EOK){
 		GGIDPRINT_LIBS("Unable to set mode \n");
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	GGIDPRINT_LIBS("Mode set\n");
 
@@ -279,7 +279,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
 	if (! fb) {
 		GGIDPRINT_LIBS("No framebuffer resource available\n");
-		return -1;
+		return GGI_ENOTFOUND;
 	}
 
 	GGIDPRINT("Found fb as resource %d\n", fb->resource);

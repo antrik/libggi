@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/13 15:56:22 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/11/14 15:47:45 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -113,7 +113,7 @@ vt_del_vis(ggi_visual *vis)
 	while (curr->vis != vis) {
 		prev = curr;
 		curr = curr->next;
-		if (curr == NULL) return -1;
+		if (curr == NULL) return GGI_ENOTFOUND;
 	}
 	if (prev == NULL) {
 		vtvisuals = curr->next;
@@ -308,7 +308,7 @@ vtswitch_open(ggi_visual *vis)
 	} else if (vthandling.forcenew) {
 		if ((vthandling.vtnum = get_newcons(fd)) < 0) {
 			close(fd);
-			return -1;
+			return vthandling.vtnum;
 		}
 		dodetach = 1;
 	} else if (ioctl(fd, VT_GETSTATE, &vt_state) != 0) {

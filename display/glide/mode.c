@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/11/13 15:56:20 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/11/14 15:47:45 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -354,6 +354,7 @@ res2glideres(glide_priv *priv, ggi_mode *mode,
 		
 int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 {
+	int rc = GGI_OK;
 	glide_priv *priv = GLIDE_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	GrScreenResolution_t resolution;
@@ -362,7 +363,8 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 	int id;
 	int i;
 
-	if (GGI_glide_checkmode(vis, mode)) return -1;
+	rc = GGI_glide_checkmode(vis, mode);
+	if (rc < 0) return rc;
 
 	if (res2glideres(priv, mode, &resolution) != 0) {
 		LIBGGI_ASSERT(0, "Invalid Glide resolution!");
@@ -552,29 +554,29 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 	if (tm->frames == GGI_AUTO) {
 		tm->frames = 1;
 	} else if (tm->frames < 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 		tm->frames = 1;
 	} else if (tm->frames > 2) {
-		err = -1;
+		err = GGI_ENOMATCH;
 		tm->frames = 2;
 	}
 
 	if (res2glideres(GLIDE_PRIV(vis), tm, &resolution) != 0) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if (tm->virt.x < tm->visible.x) {
 		tm->virt.x = tm->visible.x;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 	if (tm->virt.y < tm->visible.y) {
 		tm->virt.y = tm->visible.y;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
 	    (tm->dpp.y != 1 && tm->dpp.y != GGI_AUTO)) {
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 	tm->dpp.x = tm->dpp.y = 1;
 	if (err) return err;
@@ -591,7 +593,8 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 */
 int GGI_glide_getmode(ggi_visual *vis, ggi_mode *tm)
 {
-	LIBGGI_APPASSERT(vis != NULL, "glide: GGIgetmode: Visual == NULL");
+	LIBGGI_APPASSERT(vis != NULL,
+		"display-glide: GGIgetmode: Visual == NULL");
 	
 	/* We assume the mode in the visual to be OK 
 	*/

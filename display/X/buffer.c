@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.19 2004/10/31 14:24:52 cegger Exp $
+/* $Id: buffer.c,v 1.20 2004/11/14 15:47:43 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -115,7 +115,7 @@ int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
 	db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOSPACE;
         }
 	
 	priv = GGIX_PRIV(vis);

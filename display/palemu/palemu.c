@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.6 2004/11/13 15:56:23 cegger Exp $
+/* $Id: palemu.c,v 1.7 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -151,6 +151,7 @@ int _ggi_palemu_Flush(ggi_visual *vis)
 
 int _ggi_palemu_Open(ggi_visual *vis)
 {
+	int rc;
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 
@@ -160,10 +161,10 @@ int _ggi_palemu_Open(ggi_visual *vis)
 
 	/* set the parent mode */
 	
-	if (ggiSetMode(priv->parent, &priv->mode) < 0) {
-
+	rc = ggiSetMode(priv->parent, &priv->mode);
+	if (rc < 0) {
 		GGIDPRINT("display-palemu: Couldn't set parent mode.\n");
-		return -1;
+		return rc;
 	}
 
 	GGIDPRINT("display-palemu: parent is %d/%d\n",

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/13 15:56:19 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/11/14 15:47:43 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -286,7 +286,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 		/* If user is negotiating with setmode, assume: */
 		tm->visible.x = tm->virt.x = 80*AA_SCRMULT_X;
 		tm->visible.y = tm->virt.y = 25*AA_SCRMULT_Y;
-		return -1;
+		return GGI_ENODEVICE;
 	}
 
 	nx = aa_imgwidth(AA_PRIV(vis)->context);
@@ -395,7 +395,7 @@ int GGI_aa_getmode(ggi_visual *vis,ggi_mode *tm)
 {
 	GGIDPRINT("In GGI_aa_getmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 	
 	/* We assume the mode in the visual to be o.k. */
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));

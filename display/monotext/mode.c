@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/13 15:56:23 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/14 15:47:46 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -199,7 +199,7 @@ int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
 		GGIDPRINT_MODE("display-monotext: vis/mode == NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 	
 	GGIDPRINT_MODE("display-monotext: setmode %dx%d (gt=%d)\n",
@@ -269,7 +269,7 @@ int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 	if ((vis == NULL) || (mode == NULL)) {
 		GGIDPRINT_MODE("display-monotext: vis/mode == NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	GGIDPRINT_MODE("display-monotext: checkmode %dx%d (gt=%d)\n",

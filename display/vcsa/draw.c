@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.4 2004/10/31 14:25:06 cegger Exp $
+/* $Id: draw.c,v 1.5 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -43,7 +43,7 @@ int GGI_vcsa_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel p)
 	
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
 		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	buf[0] = (unsigned short) p;
@@ -73,7 +73,7 @@ int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 
 	if (VCSA_SEEK(vis, priv, x, y) < 0) {
 		GGIDPRINT_DRAW("display-vcsa: seek failed.\n");
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	for (i=0; i < w; i++) {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/13 15:56:26 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -309,8 +309,8 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
-	if(_GGIdomode(vis))
-		return -1;
+	err = _GGIdomode(vis);
+	if (err != 0) return err;
 
 	if(priv->use_db) {
 		for(i = 0; i<tm->frames; i++)
@@ -441,7 +441,7 @@ int GGI_tile_setorigin(ggi_visual *vis,int x,int y)
 
 	if ( x<0 || x> mode->virt.x-mode->visible.x ||
 	     y<0 || y> mode->virt.y-mode->visible.y )
-	     return -1;
+	     return GGI_ENOSPACE;
 
 	vis->origin_x=x;
 	vis->origin_y=y;

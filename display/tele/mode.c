@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/11/13 15:56:25 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -330,7 +330,7 @@ int GGI_tele_getmode(ggi_visual *vis, ggi_mode *mode)
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 
 	if (! priv->mode_up) {
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
@@ -353,7 +353,7 @@ int GGI_tele_setorigin(ggi_visual *vis, int x, int y)
 	if ((x < 0) || (y < 0) || (x > max_x) || (y > max_y)) {
 		GGIDPRINT("display-tele: setorigin out of range:"
 			"(%d,%d) > (%d,%d)\n", x, y, max_x, max_y);
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	d = tclient_new_event(priv->client, &ev, TELE_CMD_SETORIGIN,

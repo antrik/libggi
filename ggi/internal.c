@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.19 2004/10/31 13:15:00 cegger Exp $
+/* $Id: internal.c,v 1.20 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -454,7 +454,7 @@ int _ggi_default_setreadframe(ggi_visual *vis, int num)
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOSPACE;
         }
 
         vis->r_frame_num = num;
@@ -468,7 +468,7 @@ int _ggi_default_setwriteframe(ggi_visual *vis, int num)
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
         if (db == NULL) {
-                return -1;
+                return GGI_ENOSPACE;
         }
 
         vis->w_frame_num = num;

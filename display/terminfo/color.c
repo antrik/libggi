@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/09/13 08:55:21 cegger Exp $
+/* $Id: color.c,v 1.6 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -222,9 +222,9 @@ static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
 int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 {
 	switch (LIBGGI_GT(vis)) {
-		case GT_TEXT16: return paint_ncurses_window16(vis, win, width, height);
-		case GT_TEXT32: return paint_ncurses_window32(vis, win, width, height);
-		default: return -1;
+	case GT_TEXT16: return paint_ncurses_window16(vis, win, width, height);
+	case GT_TEXT32: return paint_ncurses_window32(vis, win, width, height);
+	default: return GGI_ENOMATCH;
 	}
 }
 
@@ -232,36 +232,38 @@ int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, ggi_color *col)
 {
 	switch (LIBGGI_GT(vis)) {
-		case GT_TEXT16: {
-			long distance;
-			int current;
-			long closest_distance=(1<<(GGI_COLOR_PRECISION+1))*3;
-			int closest=0;
-			for ( current = 0 ; current < 16 ; current++ ) {
-				distance = abs(col->r - vga16_palette[current].r);
-				distance += abs(col->g - vga16_palette[current].g);
-				distance += abs(col->b - vga16_palette[current].b);
-				if ( distance <= closest_distance ) {
-					closest = current;
-				}
+	case GT_TEXT16: {
+		long distance;
+		int current;
+		long closest_distance=(1<<(GGI_COLOR_PRECISION+1))*3;
+		int closest=0;
+		for ( current = 0 ; current < 16 ; current++ ) {
+			distance = abs(col->r - vga16_palette[current].r);
+			distance += abs(col->g - vga16_palette[current].g);
+			distance += abs(col->b - vga16_palette[current].b);
+			if ( distance <= closest_distance ) {
+				closest = current;
 			}
-			return (closest<<8)|219;
 		}
-		/* FIXME text32 support needed, but text32 pixel bitmapping may change soon */
-		default: return -1;
+		return (closest<<8)|219;
+	}
+	/* FIXME text32 support needed, but text32 pixel bitmapping may change soon */
+	default:
+		return GGI_ENOMATCH;
 	}
 }
 
 int GGI_terminfo_unmappixel(ggi_visual *vis, ggi_pixel pix, ggi_color *col)
 {
 	switch (LIBGGI_GT(vis)) {
-		case GT_TEXT16: {
-			pix = ( pix >> 8 ) & 0x0F;
-			memcpy(col, &vga16_palette[pix%16], sizeof(ggi_color));
-			return 0;
-		}
-		/* FIXME text32 support needed, but text32 pixel bitmapping may change soon */
-		default: return -1;
+	case GT_TEXT16: {
+		pix = ( pix >> 8 ) & 0x0F;
+		memcpy(col, &vga16_palette[pix%16], sizeof(ggi_color));
+		return 0;
+	}
+	/* FIXME text32 support needed, but text32 pixel bitmapping may change soon */
+	default:
+		return GGI_ENOMATCH;
 	}
 }
 #endif

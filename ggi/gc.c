@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.3 2004/09/13 09:30:34 cegger Exp $
+/* $Id: gc.c,v 1.4 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. GC handling
@@ -69,7 +69,7 @@ int ggiSetGCClipping(ggi_visual_t vis,int left,int top,int right,int bottom)
 	    (bottom > LIBGGI_VIRTY(vis)) ||
 	    (left>right) || 
 	    (top>bottom)) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	LIBGGI_GC(vis)->cliptl.x = left;

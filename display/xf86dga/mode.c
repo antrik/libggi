@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2004/11/13 15:56:27 cegger Exp $
+/* $Id: mode.c,v 1.21 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -70,7 +70,7 @@ static int GGI_xf86dga_setdisplayframe(ggi_visual * vis, int num)
 	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
 	if (db == NULL) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	vis->d_frame_num = num;
@@ -88,7 +88,7 @@ static int GGI_xf86dga_setwriteframe(ggi_visual * vis, int num)
 	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
 	if (db == NULL) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	vis->w_frame_num = num;
@@ -107,7 +107,7 @@ static int GGI_xf86dga_setorigin(ggi_visual * vis, int x, int y)
 
 	if (x < 0 || x > mode->virt.x - mode->visible.x ||
 	    y < 0 || y > mode->virt.y - mode->visible.y) {
-		return -1;
+		return GGI_ENOSPACE;
 	}
 
 	_ggi_XF86DGASetViewPort(priv->x.display, priv->x.screen,
@@ -205,8 +205,8 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 
 	/* First, check if the mode can be set */
-	if (GGI_xf86dga_checkmode(vis, tm))
-		return -1;
+	err = GGI_xf86dga_checkmode(vis, tm);
+	if (err != 0) return err;
 
 	priv = DGA_PRIV(vis);
 
@@ -398,7 +398,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 
 	if (vis == NULL) {
 		GGIDPRINT("Visual==NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	priv = DGA_PRIV(vis);
@@ -534,10 +534,10 @@ int GGI_xf86dga_getmode(ggi_visual * vis, ggi_mode * tm)
 {
 	GGIDPRINT("In GGI_xf86dga_getmode(%p,%p)\n", vis, tm);
 	if (vis == NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	if (LIBGGI_MODE(vis) == NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/11/13 15:56:26 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/11/14 15:47:49 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -296,7 +296,7 @@ int GGI_vgl_checkmode(ggi_visual *vis, ggi_mode *tm)
 	int ret, err = 0;
 
 	if (vis==NULL || tm==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	if (tm->visible.x == GGI_AUTO)
 		tm->visible.x = tm->virt.x;
@@ -357,7 +357,7 @@ int GGI_vgl_getmode(ggi_visual *vis,ggi_mode *tm)
 {
 	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
 	return 0;
@@ -382,7 +382,7 @@ int GGI_vgl_setorigin(ggi_visual *vis,int x,int y)
 
 	if ( x<0 || x> mode->virt.x-mode->visible.x ||
 	     y<0 || y> mode->virt.y-mode->visible.y )
-	     return -1;
+	     return GGI_ENOSPACE;
 
 	if (VGLPanScreen(VGLDisplay, x, y))
 		return -1;

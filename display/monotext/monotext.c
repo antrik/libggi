@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.6 2004/10/31 14:25:02 cegger Exp $
+/* $Id: monotext.c,v 1.7 2004/11/14 15:47:46 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -434,6 +434,7 @@ int _ggi_monotextFlush(ggi_visual *vis)
 
 int _ggi_monotextOpen(ggi_visual *vis)
 {
+	int rc;
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	ggi_coord child_size;
@@ -455,12 +456,12 @@ int _ggi_monotextOpen(ggi_visual *vis)
 	priv->red_gamma = priv->green_gamma = priv->blue_gamma = 1.0;
 
 	/* set the parent mode */
-	if (ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
+	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		(unsigned)(priv->parent_gt)) < 0)
-	{
+		(unsigned)(priv->parent_gt));
+	if (rc < 0) {
 		GGIDPRINT("Couldn't set child graphic mode.\n");
-		return -1;
+		return rc;
 	}
 
   	/* now calculate the conversion */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/06 22:48:21 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/14 15:47:43 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -64,10 +64,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	** 0 the framebuffer) */
 	if (!(accel = KGI_PRIV(vis)->map_accel(vis, 2, 0,
 		GX00_BUFFER_SIZE_ORDER, GX00_BUFFER_NUM, 0)))
-		return -1;
+		return GGI_ENODEVICE;
 
 	if (!(ctx = (Gx00_context_t*)malloc(sizeof(*ctx))))
-		return -1;
+		return GGI_ENOMEM;
 
 	/* setup the accel_priv data structures */
 	KGI_ACCEL_PRIV(vis) = ctx;

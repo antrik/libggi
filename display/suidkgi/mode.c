@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2004/09/13 08:50:19 cegger Exp $
+/* $Id: mode.c,v 1.3 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    Display-SUID
@@ -60,7 +60,7 @@ int GGI_suidkgi_setorigin(ggi_visual *vis,int x,int y)
 #if 0
 int GGI_suidkgi_setsplitline(ggi_visual *vis,int y)
 {
-	if (y<0 || y > LIBGGI_Y(vis)) return -1;
+	if (y<0 || y > LIBGGI_Y(vis)) return GGI_ENOSPACE;
 
 	GGIDPRINT("GGIsetsplitline:\n");
 	return GGI_suidkgi_kgicommand(vis,CHIP_SETSPLITLINE,y);
@@ -160,7 +160,7 @@ static int _GGIdomode(ggi_visual *vis)
 		if (err!=0) {
 			fprintf(stderr,"display-suidkgi: Failed getting suggestion %d err=%x\n",
 				       sug.id,err);
-			return -1;	/* Error */
+			return GGI_EFATAL;	/* Error */
 		}
 
 		GGIDPRINT("display-suid - attempting %s (%s)\n",sug.name,sug.args);
@@ -285,7 +285,7 @@ int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
 
 	if (vis==NULL) {
 		GGIDPRINT("Visual==NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 	
 	/* Temporary */
@@ -300,7 +300,7 @@ int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
 	/* Setup new VT 
 	*/
 	priv->vt_fd = vtswitch_open(vis); if (priv->vt_fd < 0) {
-		return -1;
+		return GGI_ENODEVICE;
 	}
 #endif
 
@@ -322,7 +322,7 @@ int GGI_suidkgi_checkmode(ggi_visual *vis,ggi_mode *tm)
 	int rc;
 	
 	if (vis==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 	
 	GGIDPRINT("DRIVER_TESTMODE:\n");
 	mode_ggi2kgi(tm,&km);
@@ -338,7 +338,7 @@ int GGI_suidkgi_getmode(ggi_visual *vis,ggi_mode *tm)
 
 	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
-		return -1;
+		return GGI_EARGINVAL;
 	
 	GGIDPRINT("DRIVER_GETGRAPHMODE:\n");
 	rc=GGI_suidkgi_kgicommand(vis,DRIVER_GETGRAPHMODE,&km);

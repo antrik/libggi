@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.26 2004/09/14 08:13:33 pekberg Exp $
+/* $Id: clip2d.c,v 1.27 2004/11/14 15:47:50 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -58,7 +58,7 @@ static int checkresult(int x0, int y0, int x1, int y1,
 		printfailure("expected return value: \"%i\"\n"
 			"actual return value: \"%i\"\n",
 			ret_expect, ret);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (ret == 0)
 		goto success;
@@ -67,37 +67,37 @@ static int checkresult(int x0, int y0, int x1, int y1,
 		printfailure("expected x0 value: \"%i\"\n"
 			"actual x0 value: \"%i\"\n",
 			x0_expect, x0);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (x1 != x1_expect) {
 		printfailure("expected x1 value: \"%i\"\n"
 			"actual x1 value: \"%i\"\n",
 			x1_expect, x1);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (y0 != y0_expect) {
 		printfailure("expected y0 value: \"%i\"\n"
 			"actual y0 value: \"%i\"\n",
 			y0_expect, y0);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (y1 != y1_expect) {
 		printfailure("expected y1 value: \"%i\"\n"
 			"actual y1 value: \"%i\"\n",
 			y1_expect, y1);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (clip_first != clip_first_expect) {
 		printfailure("expected clip_first value: \"%i\"\n"
 			"actual clip_first value: \"%i\"\n",
 			clip_first_expect, clip_first);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 	if (clip_last != clip_last_expect) {
 		printfailure("expected clip_last value: \"%i\"\n"
 			"actual clip_last value: \"%i\"\n",
 			clip_last_expect, clip_last);
-		return -1;
+		return GGI_ENOMATCH;
 	}
 
 success:
@@ -350,7 +350,7 @@ static int endpoint_checker(int dx, int dy)
 			printfailure("point (%i,%i) expected pixel value 0x%x\n"
 				"point (%i,%i) actual pixel value 0x%x\n",
 				x0t, y0t, white, x0t, y0t, pixel);
-			return -1;
+			return GGI_ENOMATCH;
 		}
 	}
 

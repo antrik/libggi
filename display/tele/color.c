@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/11/13 15:56:25 cegger Exp $
+/* $Id: color.c,v 1.10 2004/11/14 15:47:48 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -51,14 +51,16 @@ int GGI_tele_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_c
 
 	int len = (int)size;
 
+	if (cols == NULL) return GGI_EARGINVAL;
+
 	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE) {
 		return GGI_ENOMATCH;
 	}
 
 	no_cols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
-	if (cols==NULL || (start+size) > no_cols) {
-		return -1;
+	if ((start+size) > no_cols) {
+		return GGI_ENOSPACE;
 	}
 
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, cols, size*sizeof(ggi_color)); 

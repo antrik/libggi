@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.39 2004/11/06 22:48:25 cegger Exp $
+/* $Id: visual.c,v 1.40 2004/11/14 15:47:43 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -89,7 +89,7 @@ static int GGI_X_getapi(ggi_visual *vis,int num,
 		strcpy(apiname, "generic-color");
 		return 0;
 	}
-	return -1;
+	return GGI_ENOMATCH;
 }
 
 void GGI_X_gcchanged(ggi_visual *vis, int mask)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/11/13 15:56:24 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/11/14 15:47:47 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -79,9 +79,11 @@ int GGI_sub_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 {
+	int rc;
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	if (ggiSetFlags(priv->parent, flags)) return -1;
+	rc = ggiSetFlags(priv->parent, flags);
+	if (rc < 0) return rc;
 
 	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
