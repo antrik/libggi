@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: modelist.inc,v 1.2 2001/08/11 03:36:40 skids Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -37,6 +37,9 @@ static int _GGIcheckonebpp(ggi_visual *vis,ggi_mode *tm, ggi_modelistmode *gm)
 	int i=0, bestw=0, besth=0;
 	int wantw=tm->visible.x, wanth=tm->visible.y;
 	for (i=0; gm[i].bpp != 0; i++) {
+		GGIDPRINT_MODE("_GGIcheckonebpp, checking: %dx%d, wanting: %dx%d, gm[i].gt=%d, tm->graphtype=%d, bestw=%d, besth=%d\n",
+				       gm[i].x, gm[i].y, wantw, wanth,
+                                       gm[i].gt, tm->graphtype, bestw, besth);
 		if (gm[i].gt != tm->graphtype) {
 			GGIDPRINT_MODE("_GGIcheckonebpp, wanted: 0x%x, skipping 0x%x\n",
 				       tm->graphtype,  gm[i].gt);

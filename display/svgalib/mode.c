@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2001/06/24 16:45:12 skids Exp $
+/* $Id: mode.c,v 1.4 2001/08/11 03:36:40 skids Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -130,6 +130,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	char modestr[64];
 	char *colors;
 
+	GGIDPRINT("SVGAlib trying for bitdepth %d, %d.\n", tm->graphtype, GT_DEPTH(tm->graphtype));
 	/* See GGI_svga_checkmode() for details... */
 	switch(tm->graphtype) {
 	case GT_1BIT : colors = "2"; break;
@@ -144,8 +145,10 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 
 	/* Form a SVGAlib mode number */
 	sprintf(modestr, "G%dx%dx%s", tm->visible.x, tm->visible.y, colors);
+	GGIDPRINT("SVGAlib trying modeline=%s.\n", modestr);
 
  	modenum = vga_getmodenumber(modestr);
+	GGIDPRINT("SVGAlib modeline=%s returns modenum=%d.\n", modestr, modenum);
 
 	return modenum;
 }
@@ -169,6 +172,9 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	modeinfo = vga_getmodeinfo(modenum);
 	GGIDPRINT("Setting SVGAlib mode number %d.\n", modenum);
 
+	/* Set requested mode for visual. */
+	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
+
 	/* Palette */
 	if (vis->palette) {
 		free(vis->palette);
@@ -186,7 +192,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 		priv->savepalette = malloc(sizeof(int) * (len*3));
 		if (priv->savepalette == NULL) return GGI_EFATAL;
 
-		/* Set an initial palette */
+		/* Set an initial palette. */
 		ggiSetColorfulPalette(vis);
 	}
 
@@ -217,27 +223,31 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	/* DirectBuffers */
 	_GGI_svga_freedbs(vis);
 	priv->frame_size = tm->virt.x * tm->virt.y * modeinfo->bytesperpixel;
+	GGIDPRINT("Setting up DirectBuffers, islinear=%d, frame_size=%d, frames=%d\n",
+		  priv->islinear, priv->frame_size, LIBGGI_MODE(vis)->frames);
 	for (i=0; priv->islinear && (i < LIBGGI_MODE(vis)->frames); i++) {
 		ggi_directbuffer *buf;
 
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
-		if (!i) {
-			LIBGGI_APPBUFS(vis)[0]->read = 
-				LIBGGI_APPBUFS(vis)[0]->write =
-			  vga_getgraphmem();
+		
+		buf = LIBGGI_APPBUFS(vis)[i];
+		
+		if (0 == i) {
+		  buf->read = vga_getgraphmem();
+		  buf->write = buf->read;
 		}
 
-		buf = LIBGGI_APPBUFS(vis)[i];
-		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type = 
-		  	GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
-			LIBGGI_APPBUFS(vis)[0]->read + i * priv->frame_size;
-		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = 
-			modeinfo->linewidth;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
-			= LIBGGI_PIXFMT(vis);
+		buf->frame = i;
+		buf->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		buf->read = LIBGGI_APPBUFS(vis)[0]->read + i * priv->frame_size;
+		buf->write = buf->read;
+		buf->layout = blPixelLinearBuffer;
+		buf->buffer.plb.stride = modeinfo->linewidth;
+		buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+
+		GGIDPRINT("Setting up DirectBuffer %d, stride=%d\n",
+		  i, buf->buffer.plb.stride);
+		
 		err = vga_claimvideomemory(priv->frame_size * tm->frames);
 		if (err)
 		{
@@ -254,8 +264,6 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 #if 0
 	vga_setlogicalwidth((tm->virt.x*GT_SIZE(tm->graphtype)/8);
 #endif
-
-	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
 	_ggiZapMode(vis, 0);
 
@@ -330,7 +338,7 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	} else if ((ret =
 		    _GGIcheckonebpp(vis, tm, SVGA_PRIV(vis)->availmodes))
 		   != 0) {
-		err = -1;
+ 		err = -1;
 		if (ret == 1)
 			_GGIgethighbpp(vis, tm, SVGA_PRIV(vis)->availmodes);
 	}
@@ -351,9 +359,12 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 		tm->virt.y = tm->visible.y;
 		err = -1;
 	}
- 
+
+	if (tm->frames == GGI_AUTO) {
+	  tm->frames = 1;
+	}
 	/* Only support frames when we can support linear access 
-	 * and we have enough video memory */
+	 * and we have enough video memory. */
 	if (!(vmi->flags & CAPABLE_LINEAR)
 			&& (vmi->memory < (vmi->bytesperpixel * tm->virt.x * 
 					   tm->virt.y * tm->frames)))
