@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.41 2004/11/27 16:42:14 soyt Exp $
+/* $Id: visual.c,v 1.42 2005/01/06 22:56:19 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -162,6 +162,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	DPRINT_MISC("GGIclose(%p, %p) called\n", vis, dlh);
+
 	if (priv == NULL) goto skip;
 	if (priv->disp == NULL) goto skip2;
 
@@ -170,9 +172,11 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->slave) ggiClose(priv->slave);
 	priv->slave = NULL;
 
+	DPRINT_MISC("GGIclose: call freefb hook\n");
 	if (priv->freefb) priv->freefb(vis);
 
 	/* Exit any initialized helper libs if called from GGIopen. */
+	DPRINT_MISC("GGIclose: close any helpers\n");
 	if (!GG_SLIST_EMPTY(&vis->extlib)) {
 		_ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
 		_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
@@ -190,6 +194,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		Window root;
 		int screen;
 		XSetWindowAttributes wa;
+
+		DPRINT_MISC("GGIclose: special cleanup for -inwin and root windows\n");
 		
 		screen = priv->vilist[priv->viidx].vi->screen;
 		XGetGeometry(priv->disp, priv->parentwin, &root, (int *)&dummy,
@@ -208,21 +214,35 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	}
 
 skip3:
+	DPRINT_MISC("GGIclose: free colormaps\n");
 	_ggi_x_free_colormaps(vis);
 
+	DPRINT_MISC("GGIclose: free cursor\n");
 	if (priv->cursor != None)   XFreeCursor(priv->disp,priv->cursor);
+
+	DPRINT_MISC("GGIclose: free font\n");
 	if (priv->textfont != None) XFreeFont(priv->disp, priv->textfont);
 	if (priv->fontimg)	    XDestroyImage(priv->fontimg);
+
+	DPRINT_MISC("GGIclose: free X visual and buffers\n");
 	if (priv->visual)           XFree(priv->visual);
 	if (priv->buflist)	    XFree(priv->buflist);
+
+	DPRINT_MISC("GGIclose: close display\n");
 	if (priv->disp)		    XCloseDisplay(priv->disp);
+
+	DPRINT_MISC("GGIclose: free visual and mode list\n");
 	if (priv->vilist)	    free(priv->vilist);
 	if (priv->modes)	    free(priv->modes);
+
+	DPRINT_MISC("GGIclose: free mansync\n");
 	if (priv->opmansync)	    free(priv->opmansync);
  skip2:
+	DPRINT_MISC("GGIclose: destroy xliblock\n");
 	if (priv->xliblock)	    ggLockDestroy(priv->xliblock);
 	free(priv);
  skip:
+	DPRINT_MISC("GGIclose: free GC\n");
 	if (LIBGGI_GC(vis) != NULL) free(LIBGGI_GC(vis));
 	DPRINT_MISC("X-target closed\n");
 	return 0;
