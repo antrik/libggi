@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.14 2004/06/01 09:44:06 pekberg Exp $
+/* $Id: clip2d.c,v 1.15 2004/06/01 09:49:32 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -139,7 +139,7 @@ static void testcase2(void)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -161,7 +161,7 @@ static void testcase3(void)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -192,7 +192,7 @@ static void testcase5(void)
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
 	checkresult(
 		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta + 1,
@@ -209,7 +209,7 @@ static void testcase6(void)
 	 * and the same goes for dy.
 	 */
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
 	if(checkresult(
 		INT_MIN,          0,
