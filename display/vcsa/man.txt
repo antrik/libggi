@@ -8,8 +8,8 @@ Synopsis
 
 ::
 
-  display-vcsa : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-shade]
-		   [-ascii] [-physz=<sizex>,<sizey>[dpi]] [<vcsa device>]
+  display-vcsa : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-ascii]
+		   [-physz=<sizex>,<sizey>[dpi]] [-shade] [<vcsa device>]
 
 
 Description
@@ -31,16 +31,16 @@ Options
 ``-noinput``
     Same as both ``-nokbd`` and ``-nomouse``.
 
+``-ascii``
+    The ``-ascii`` option limits the color mapping to only using ASCII
+    characters.  The default mode uses IBM special characters (the
+    solid block mainly, and others when using ``-shade``).
+
 ``-shade``
     The ``-shade`` option turns on *shading mode*, which changes the
     color mapping so that it chooses characters which emulate a
     shading effect.  This makes a big improvement if using (some might
     say abusing :) the vcsa target for graphical purposes.
-
-``-ascii``
-    The ``-ascii`` option limits the color mapping to only using ASCII
-    characters.  The default mode uses IBM special characters (the
-    solid block mainly, and others when using ``-shade``).
 
 ``-physz=<sizex>,<sizey>[dpi]``
     This option will provide a physical screen size for applications
