@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.2 2002/01/27 09:18:29 cegger Exp $
+/* $Id: libtele.c,v 1.3 2002/08/18 19:50:56 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -677,7 +677,8 @@ int tserver_init(TeleServer *s, int display)
 	s->endianness = MY_ENDIAN;
 
 	if (s->inet) {
-		fprintf(stderr, "tserver: Creating inet socket...\n");
+		fprintf(stderr, "tserver: Creating inet socket [%d]\n",
+				TELE_PORT_BASE + display);
 
 		me_in.sin_family      = AF_INET;
 		me_in.sin_port        = htons(TELE_PORT_BASE + display);
