@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:24:55 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/09/12 19:55:50 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -59,11 +59,11 @@ void _GGI_aa_freedbs(ggi_visual *vis)
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_aa_priv *priv;
+	ggi_aa_priv *priv = AA_PRIV(vis);
 
 	_GGI_aa_freedbs(vis);
 
-	if ((priv = LIBGGI_PRIVATE(vis)) != NULL) {
+	if (priv != NULL) {
 		if (priv->context) {
 			aa_uninitmouse(priv->context);
 			aa_uninitkbd(priv->context);
@@ -71,7 +71,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		}
 		free(priv->opmansync);		
 		ggLockDestroy(priv->aalock);
-		free(LIBGGI_PRIVATE(vis));
+		free(priv);
 	}
 
 	free(LIBGGI_GC(vis));
@@ -140,7 +140,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freelock;
 	}
 
-	LIBGGI_PRIVATE(vis) = priv;
+	AA_PRIV(vis) = priv;
 
 	MANSYNC_init(vis);
 

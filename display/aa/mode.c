@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/12 19:23:58 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/09/12 19:55:50 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -254,7 +254,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 		return err;
 	}
 
-	priv=LIBGGI_PRIVATE(vis);
+	priv = AA_PRIV(vis);
 
 	MANSYNC_ignore(vis);
 
