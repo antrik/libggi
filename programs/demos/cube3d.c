@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.11 2004/06/06 20:00:09 pekberg Exp $
+/* $Id: cube3d.c,v 1.12 2004/06/06 20:07:01 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -944,10 +944,11 @@ int main(int argc, char **argv)
 		/* Check, if textures have changed properties. */
 		for (x = 0; x < the_scene.numpolys; x++) {
 			ggiGetMode(memvis[x], &submode[x]);
-			if (the_textures[x].filex !=
-			    submode[x].visible.x ||
-			    the_textures[x].filey !=
-			    submode[x].visible.y) {
+			if (submode[x].frames != 0 &&
+			    (the_textures[x].filex !=
+			     submode[x].visible.x ||
+			     the_textures[x].filey !=
+			     submode[x].visible.y)) {
 				ggiSetMode(memvis[x], &submode[x]);
 				if (GT_SCHEME(submode[x].graphtype) ==
 				    GT_PALETTE) {
