@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.1 2001/05/12 23:03:37 cegger Exp $
+/* $Id: pageflip.c,v 1.2 2001/06/17 09:08:28 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <ggi/ggi.h>
 
 ggi_color black  = { 0x0000, 0x0000, 0x0000 };
