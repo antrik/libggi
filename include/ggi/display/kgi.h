@@ -29,9 +29,12 @@
 #define _GGI_DISPLAY_KGI_H
 
 #include <stdlib.h>
-#include <kgi/system.h>
+
+#ifndef __FreeBSD__
+#  include <kgi/system.h>
+#  include <kgi/cmd.h>
+#endif
 #include <kgi/kgi.h>
-#include <kgi/cmd.h>
 
 #include <ggi/internal/ggi-dl.h>
 

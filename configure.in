@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.86 2003/05/09 22:08:04 cegger Exp $
+dnl $Id: configure.in,v 1.87 2003/05/19 12:34:39 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -758,8 +758,10 @@ fi
 
 if test "x$build_kgi_target" != "xno"; then
    AC_TRY_COMPILE([
-#include "kgi/config.h"
-#include <kgi/system.h>
+#ifndef __FreeBSD__
+#  include "kgi/config.h"
+#  include <kgi/system.h>
+#endif
 #include <kgi/kgi.h>
    ],[
 kgi_u32_t i;
