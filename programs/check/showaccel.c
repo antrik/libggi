@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.7 2004/09/08 19:18:28 cegger Exp $
+/* $Id: showaccel.c,v 1.8 2005/01/25 11:50:43 pekberg Exp $
 ******************************************************************************
 
    showaccel.c
@@ -39,8 +39,12 @@
 #include <ggi/gg.h>
 
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 
 #include "config.h"
 

@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.9 2004/10/18 14:24:21 pekberg Exp $
+/* $Id: flying_ggis.c,v 1.10 2005/01/25 11:50:43 pekberg Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -33,10 +33,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <time.h>
 #include <math.h>
+#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 
 #include "banner.inc.c"
 
