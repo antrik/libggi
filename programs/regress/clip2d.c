@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.25 2004/08/27 09:25:42 pekberg Exp $
+/* $Id: clip2d.c,v 1.26 2004/09/14 08:13:33 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -499,6 +499,7 @@ int main(int argc, char * const argv[])
 	testcase10("Tests line that fails even if doubling the precision.");
 
 	rc = ggiClose(vis);
+	ggiExit();
 
 	printsummary();
 
