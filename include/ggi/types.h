@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.6 2004/09/08 20:08:57 cegger Exp $
+/* $Id: types.h,v 1.7 2004/09/08 20:17:54 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -84,7 +84,7 @@ typedef uint32 ggi_graphtype;
 #define GT_DEPTH(x)		(((x) & GT_DEPTH_MASK) >> GT_DEPTH_SHIFT)
 #define GT_SIZE(x)		(((x) & GT_SIZE_MASK) >> GT_SIZE_SHIFT)
 #define GT_ByPP(x)		((GT_SIZE(x) + 7) / 8)
-#define GT_ByPPP(w,x)		((w * (GT_SIZE(x)) + 7) / 8)
+#define GT_ByPPP(w,x)		(((w) * (GT_SIZE(x)) + 7) / 8)
 #define GT_SUBSCHEME(x)		((x) & GT_SUBSCHEME_MASK)
 #define GT_SCHEME(x)		((x) & GT_SCHEME_MASK)
 
