@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.20 2004/06/02 05:00:45 cegger Exp $
+/* $Id: clip2d.c,v 1.21 2004/06/02 05:09:37 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -380,6 +380,19 @@ static void testcase8(const char *desc)
 }
 
 
+static void testcase9(const char *desc)
+{
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+
+	checkresult(
+		MODE_SIZE_X/4, MODE_SIZE_Y/4,
+		MODE_SIZE_X/2, MODE_SIZE_Y/2,
+		MODE_SIZE_X/4, MODE_SIZE_Y/4,
+		MODE_SIZE_X/2, MODE_SIZE_Y/2,
+		1, 1);
+}
+
+
 #if 0
 #define DBSIZE (1000)
 static void generate_clipdb(void)
@@ -457,6 +470,7 @@ int main(int argc, char * const argv[])
 	testcase7("Check if clipping is resistent against overflows.");
 	testcase8("Check if the clipping endpoint is really on the actual line "
 		  "for a bunch of lines.");
+	testcase9("Check algorithm on a line within the clipping area.");
 
 	rc = ggiClose(vis);
 
