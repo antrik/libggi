@@ -1,1 +1,1 @@
-SUBDIRS = mga
+SUBDIRS = mga directfb

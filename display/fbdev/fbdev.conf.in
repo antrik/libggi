@@ -8,3 +8,6 @@ tgt-fbdev-mga-g400		default/fbdev/mga/mga_g400.@DLLEXT@
 
 # KGIcon drivers
 tgt-fbdev-kgicon-generic	default/fbdev/kgi/genkgi.@DLLEXT@
+
+#DirectFB Driver
+tgt-fbdev-directfb		default/fbdev/directfb/directfb.@DLLEXT@

@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.16 2001/08/11 22:46:16 cegger Exp $
+dnl $Id: configure.in,v 1.17 2001/08/14 03:29:48 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -866,6 +866,7 @@ default/kgi/Makefile
 default/linear_1/Makefile
 default/linear_1_r/Makefile
 default/linear_2/Makefile
+default/fbdev/directfb/Makefile
 default/linear_4/Makefile
 default/linear_4_r/Makefile
 default/linear_8/Makefile

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2001/06/17 16:13:18 skids Exp $
+/* $Id: visual.c,v 1.6 2001/08/14 03:29:48 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -138,30 +138,31 @@ static accel_info accel_strings[] = {
 	{ NULL, 0, 0 },			/* Sun leo/zx			*/
 	{ NULL, 0, 0 },			/* IMS Twin Turbo		*/
 	{ NULL, 0, 0 },			/* 3Dlabs Permedia 2		*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
+	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
 	},				/* Matrox MGA2064W (Millenium)	*/
 	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
 	},				/* Matrox MGA1064SG (Mystique)	*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
-	},				/* Matrox MGA2164W (Millenium II) */
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
-	},				/* Matrox MGA2164W (Millenium II AGP)*/
-/* 20 */{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
-	},				/* Matrox G100 (Productiva G100) */
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
-	},				/* Matrox G200 (Myst, Mill, ...) */
+	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
+	},	   			/* Matrox MGA2164W (Millenium II) */
+	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
+	},	   			/* Matrox MGA2164W (Millenium II AGP)*/
+/* 20 */ 
+	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
+	},	        		/* Matrox G100 (Productiva G100) */
+	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
+	},	        		/* Matrox G200 (Myst, Mill, ...) */
 	{ NULL, 0, 0 },			/* Sun cgfourteen		*/
 	{ NULL, 0, 0 },			/* Sun bwtwo			*/
 	{ NULL, 0, 0 },			/* Sun cgthree			*/
 	{ NULL, 0, 0 },			/* Sun tcx			*/
 	{ "mga-g400", 1, GGI_FBDEV_4BPP_REV
 	},				/* Matrox G400			*/
-	{ NULL, 0, 0 },			/* nVidia RIVA 128		*/
-	{ NULL, 0, 0 },			/* nVidia RIVA TNT		*/
-	{ NULL, 0, 0 },			/* nVidia RIVA TNT2		*/
+	{ "directfb", 1, 0 },		/* nVidia RIVA 128              */
+	{ "directfb", 1, 0 },		/* nVidia RIVA TNT              */
+	{ "directfb", 1, 0 },		/* nVidia RIVA TNT2             */
 /* 30 */{ NULL, 0, 0 },			/* C&T 6555x			*/
-	{ NULL, 0, 0 },			/* 3Dfx Banshee			*/
-	{ NULL, 0, 0 }			/* ATI Rage128 family		*/
+	{ "directfb", 1, 0 },		/* 3Dfx Banshee			*/
+	{ "directfb", 1, 0 }		/* ATI Rage128 family		*/
 };
 
 #define NUM_ACCELS	(sizeof(accel_strings)/sizeof(accel_info))
