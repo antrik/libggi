@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:49 cegger Exp $
+/* $Id: visual.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -89,6 +89,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
+
+int GGIdl_stubs(int func, void **funcptr);
 
 int GGIdl_stubs(int func, void **funcptr)
 {

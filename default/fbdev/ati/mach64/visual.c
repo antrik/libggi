@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/05/03 16:39:18 cegger Exp $
+/* $Id: visual.c,v 1.4 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -36,7 +36,7 @@
      *  Generic Mach64 routines
      */
 
-void ati_mach64_reset_engine(const struct ati_mach64_priv *priv)
+static void ati_mach64_reset_engine(const struct ati_mach64_priv *priv)
 {
     /* reset engine */
     aty_st_le32(GEN_TEST_CNTL,
@@ -50,7 +50,8 @@ void ati_mach64_reset_engine(const struct ati_mach64_priv *priv)
                           BUS_FIFO_ERR_ACK, priv);
 }
 
-static void ati_mach64_reset_GTC_3D_engine(const struct ati_mach64_priv *priv)
+static void
+ati_mach64_reset_GTC_3D_engine(const struct ati_mach64_priv *priv)
 {
         aty_st_le32(SCALE_3D_CNTL, 0xc0, priv);
         usleep(GTC_3D_RESET_DELAY);
@@ -60,7 +61,7 @@ static void ati_mach64_reset_GTC_3D_engine(const struct ati_mach64_priv *priv)
         usleep(GTC_3D_RESET_DELAY);
 }
 
-void ati_mach64_init_engine(ggi_visual *vis)
+static void ati_mach64_init_engine(ggi_visual *vis)
 {
     uint32 pitch_value;
     int bpp,depth;
@@ -185,7 +186,7 @@ void ati_mach64_init_engine(ggi_visual *vis)
     wait_for_fifo(4, priv);
     aty_st_le32(SCALE_3D_CNTL, 0, priv);
     aty_st_le32(Z_CNTL, 0, priv);
-    aty_st_le32(CRTC_INT_CNTL, aty_ld_le32(CRTC_INT_CNTL, priv) & ~0x20, priv);
+    aty_st_le32(CRTC_INT_CNTL, aty_ld_le32(CRTC_INT_CNTL, priv) & ~0x20U, priv);
     aty_st_le32(GUI_TRAJ_CNTL, 0x100023, priv);
 
     /* Set fifo size to 192. */
@@ -294,7 +295,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct ati_mach64_priv *priv;
 	unsigned long usedmemend;
-	int fontlen;
+	size_t fontlen;
 	int pixbytes;
 	int fd = LIBGGI_FD(vis);
 	int i;
@@ -317,7 +318,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	fbdevpriv->mmioaddr = mmap(NULL, fbdevpriv->orig_fix.mmio_len,
 				   PROT_READ | PROT_WRITE, MAP_SHARED,
-				   fd, fbdevpriv->orig_fix.smem_len);
+				   fd, (signed)fbdevpriv->orig_fix.smem_len);
 	if (fbdevpriv->mmioaddr == MAP_FAILED) {
 		/* Can't mmap() MMIO region - bail out */
 		GGIDPRINT_LIBS("ati-mach64: Unable to map MMIO region: %s\n"
@@ -446,6 +447,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+int GGIdl_mach64(int func, void **funcptr);
 
 int GGIdl_mach64(int func, void **funcptr)
 {

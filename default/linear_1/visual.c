@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: visual.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-left)
@@ -70,6 +70,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
+
+int GGIdl_linear_1(int func, void **funcptr);
 
 int GGIdl_linear_1(int func, void **funcptr)
 {

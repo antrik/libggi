@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: copybox.c,v 1.2 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -52,10 +52,10 @@ int GGI_ati_mach64_copybox(ggi_visual *vis, int x, int y, int w, int h,
 		set_dp_src(priv,FRGD_SRC_BLIT);
 		set_dst_cntl(priv,direction);
 		wait_for_fifo(4,priv);
-		aty_st_le32(SRC_Y_X, (x << 16) | y, priv);
-		aty_st_le32(SRC_HEIGHT1_WIDTH1, (w << 16) | h, priv);
-		aty_st_le32(DST_Y_X, (dstx << 16) | dsty, priv);
-    		aty_st_le32(DST_HEIGHT_WIDTH, (w << 16) | h, priv);
+		aty_st_le32(SRC_Y_X, (unsigned)(x << 16) | y, priv);
+		aty_st_le32(SRC_HEIGHT1_WIDTH1, (unsigned)(w << 16) | h, priv);
+		aty_st_le32(DST_Y_X, (unsigned)(dstx << 16) | dsty, priv);
+    		aty_st_le32(DST_HEIGHT_WIDTH, (unsigned)(w << 16) | h, priv);
 
 		vis->accelactive = 1;
 	}

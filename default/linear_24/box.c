@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2001/05/12 23:01:42 cegger Exp $
+/* $Id: box.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -102,12 +102,12 @@ int GGI_lin24_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 
 	/* Optimized full-width case */
 	if (w == destwidth && x == 0) {
-		memcpy(dest, src, w*h);
+		memcpy(dest, src, (size_t)(w*h));
 		return 0;
 	}
 	
 	while (h > 0) {
-		memcpy(dest, src, w);
+		memcpy(dest, src, (size_t)(w));
 		dest += destwidth;
 		src += srcwidth;
 		h--;

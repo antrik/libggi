@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.5 2002/11/16 19:06:30 skids Exp $
+/* $Id: crossblit.c,v 1.6 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -100,7 +100,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	w *= 3;
 
 	for (; h != 0; h--) {
-		memcpy(dstp, srcp, w);
+		memcpy(dstp, srcp, (size_t)(w));
 		srcp += srcstride;
 		dstp += dststride;
 	}
@@ -123,7 +123,7 @@ cb4to24(ggi_visual *src, int sx, int sy, int w, int h,
 	GGIDPRINT_DRAW("linear-24: cb4to24.\n");
 
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 16; i++) {
 			ggi_color col;
 
@@ -246,7 +246,7 @@ cb8to24(ggi_visual *src, int sx, int sy, int w, int h,
 	/* Creates the conversion table. A bit simplistic approach, perhaps?
 	 */
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 256; i++) {
 			ggi_color col;
 

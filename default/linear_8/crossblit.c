@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.4 2002/11/16 19:06:30 skids Exp $
+/* $Id: crossblit.c,v 1.5 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -31,6 +31,8 @@
 #include <string.h>
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+
+#include "lin8lib.h"
 
 
 /* Default fallback */
@@ -87,7 +89,7 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 	/* Creates the conversion table. A bit simplistic approach, perhaps?
 	 */
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 256; i++) {
 			ggi_color col;
 
@@ -143,7 +145,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx;
 
 	for (; h != 0; h--) {
-		memcpy(dstp, srcp, w);
+		memcpy(dstp, srcp, (size_t)(w));
 		srcp += srcstride;
 		dstp += dststride;
 	}

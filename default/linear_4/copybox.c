@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2001/05/12 23:01:43 cegger Exp $
+/* $Id: copybox.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    LibGGI linear 4 - copybox
@@ -60,7 +60,7 @@ GGI_lin4_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 			if (left) {
 				*(dest-1) = (*(dest-1) & 0xF0) | *(src-1);
 			}
-			memmove(dest, src, w/2);
+			memmove(dest, src, (size_t)(w/2));
 			if (right) {
 				*(dest+w) = (*(dest+w) & 0x0F)
 					| (*(src+w) << 4);
@@ -77,7 +77,7 @@ GGI_lin4_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 			if (left) {
 				*(dest-1) = (*(dest-1) & 0xF0) | *(src-1);
 			}
-			memmove(dest, src, w/2);
+			memmove(dest, src, (size_t)(w/2));
 			if (right) {
 				*(dest+w) = (*(dest+w) & 0x0F)
 					| (*(src+w) << 4);

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2003/05/03 16:34:36 cegger Exp $
+/* $Id: color.c,v 1.6 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -73,7 +73,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
 	}
 
 	pal_len = priv->numcols;
-	closest_dist = (1 << 31);
+	closest_dist = (1U << 31U);
 
 	for (i=0; i < pal_len; i++) {
 #ifndef ABS

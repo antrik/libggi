@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/05/12 23:01:49 cegger Exp $
+/* $Id: gtext.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -44,7 +44,7 @@ static inline int
 GGIblit2c(ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
 {
 	int xp,bp;
-	int color;
+	ggi_pixel color;
 
 	/* Clipping is done via the PutPixel call ... we should pre-clip */
 

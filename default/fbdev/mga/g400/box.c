@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: box.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -46,8 +46,9 @@ int GGI_mga_g400_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 		} else {
 			mga_waitfifo(mmioaddr, 2);
 		}
-		mga_out32(mmioaddr, (RS16(x + w) << 16) | RS16(x), FXBNDRY);
-		mga_out32(mmioaddr, (RS16(y) << 16) | RS16(h),
+		mga_out32(mmioaddr, (unsigned)(RS16(x + w) << 16) | RS16(x),
+			  FXBNDRY);
+		mga_out32(mmioaddr, (unsigned)(RS16(y) << 16) | RS16(h),
 			  YDSTLEN | EXECUTE);
 
 		vis->accelactive = 1;
@@ -74,8 +75,8 @@ int GGI_mga_g400_fillscreen(ggi_visual *vis)
 	} else {
 		mga_waitfifo(mmioaddr, 2);
 	}
-	mga_out32(mmioaddr, RS16(virtx) << 16, FXBNDRY);
-	mga_out32(mmioaddr, (RS16(yadd) << 16) | RS16(virty + yadd),
+	mga_out32(mmioaddr, (unsigned)RS16(virtx) << 16, FXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(RS16(yadd) << 16) | RS16(virty + yadd),
 		  YDSTLEN | EXECUTE);
 
 	vis->accelactive = 1;

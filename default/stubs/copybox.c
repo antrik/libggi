@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: copybox.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -50,7 +50,7 @@ do_copy(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 int
 GGI_stubs_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	int size;
+	size_t size;
 
 	LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
 

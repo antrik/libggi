@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/10/17 04:33:42 skids Exp $
+/* $Id: visual.c,v 1.5 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -131,7 +131,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct mga_g400_priv *priv;
 	unsigned long usedmemend;
-	int fontlen;
+	size_t fontlen;
 	int pixbytes;
 	int fd = LIBGGI_FD(vis);
 	int i;
@@ -151,7 +151,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	fbdevpriv->mmioaddr = mmap(NULL, fbdevpriv->orig_fix.mmio_len,
 				   PROT_READ | PROT_WRITE, MAP_SHARED,
-				   fd, fbdevpriv->orig_fix.smem_len);
+				   fd, (signed)fbdevpriv->orig_fix.smem_len);
 	if (fbdevpriv->mmioaddr == MAP_FAILED) {
 		/* Can't mmap() MMIO region - bail out */
 		GGIDPRINT_LIBS("mga-g400: Unable to map MMIO region: %s\n"
@@ -274,6 +274,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+int GGIdl_mga_g400(int func, void **funcptr);
 
 int GGIdl_mga_g400(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: copybox.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    LibGGI linear 8 - copybox
@@ -44,13 +44,13 @@ GGI_lin8_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 		src  = (uint8 *)LIBGGI_CURREAD(vis)  + y*stride  + x;
 		dest = (uint8 *)LIBGGI_CURWRITE(vis) + ny*stride + nx;
 		for (line=0; line < h; line++, src += stride, dest += stride) {
-			memmove(dest, src, w);
+			memmove(dest, src, (size_t)(w));
 		}
 	} else {
 		src  = (uint8 *)LIBGGI_CURREAD(vis)  + (y+h-1)*stride  + x;
 		dest = (uint8 *)LIBGGI_CURWRITE(vis) + (ny+h-1)*stride + nx;
 		for (line=0; line < h; line++, src -= stride, dest -= stride) {
-			memmove(dest, src, w);
+			memmove(dest, src, (size_t)(w));
 		}
 	}
 

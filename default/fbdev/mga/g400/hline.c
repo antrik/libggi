@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: hline.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -51,8 +51,8 @@ int GGI_mga_g400_drawhline(ggi_visual *vis, int x, int y, int w)
 		mga_waitfifo(mmioaddr, 2);
 	}
 	/* y has been shifted above */
-	mga_out32(mmioaddr, RS16(x) | y, XYSTRT);
-	mga_out32(mmioaddr, RS16(x + w-1) | y, XYEND | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)RS16(x) | y, XYSTRT);
+	mga_out32(mmioaddr, (unsigned)RS16(x + w-1) | y, XYEND | EXECUTE);
 
 	vis->accelactive = 1;
 

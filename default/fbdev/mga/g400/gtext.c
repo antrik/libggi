@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: gtext.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -78,8 +78,10 @@ drawbox(ggi_visual *vis, int x, int y, int w)
 	} else {
 		mga_waitfifo(mmioaddr, 2);
 	}
-	mga_out32(mmioaddr, (RS16(x + w) << 16) | RS16(x), FXBNDRY);
-	mga_out32(mmioaddr, (RS16(y) << 16) | FHEIGHT, YDSTLEN | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)(RS16(x + w) << 16) | RS16(x), 
+		  FXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(RS16(y) << 16) | FHEIGHT,
+		  YDSTLEN | EXECUTE);
 
 	vis->accelactive = 1;
 }
@@ -155,8 +157,10 @@ int GGI_mga_g400_fastputc(ggi_visual *vis, int x, int y, char c)
 	}
 	mga_out32(mmioaddr, RS27(ar3), AR3);
 	mga_out32(mmioaddr, RS18(ar3 + priv->charadd - 1), AR0);
-	mga_out32(mmioaddr, (RS16(x + FWIDTH - 1) << 16) | RS16(x), FXBNDRY);
-	mga_out32(mmioaddr, (RS16(y) << 16) | FHEIGHT, YDSTLEN | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)(RS16(x + FWIDTH - 1) << 16) | RS16(x),
+		  FXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(RS16(y) << 16) | FHEIGHT,
+		  YDSTLEN | EXECUTE);
    
 	vis->accelactive = 1;
 
@@ -193,8 +197,9 @@ int GGI_mga_g400_fastputs(ggi_visual *vis, int x, int y, const char *str)
 			mga_waitfifo(mmioaddr, 3);
 		}
 		mga_out32(mmioaddr, RS27(ar3), AR3);
-		mga_out32(mmioaddr, (RS16(y) << 16) | FHEIGHT, YDSTLEN);
-		mga_out32(mmioaddr, (RS16(x + FWIDTH - 1) << 16) | RS16(x),
+		mga_out32(mmioaddr, (unsigned)(RS16(y) << 16) | FHEIGHT, 
+			  YDSTLEN);
+		mga_out32(mmioaddr, (unsigned)(RS16(x + FWIDTH - 1) << 16) | RS16(x),
 			  FXBNDRY | EXECUTE);
 
 		str++;

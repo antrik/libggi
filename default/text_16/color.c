@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: color.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -52,16 +52,17 @@ static ggi_color ansi_16_colors[16] =
 
 ggi_pixel GGI_t16_mapcolor(ggi_visual *vis, ggi_color *col)
 {
-	int index;
+	/* index shadows index() declared in <strings.h> */
+	int _index;
 
-	index = _ggi_match_palette(ansi_16_colors, 16, col);
+	_index = _ggi_match_palette(ansi_16_colors, 16, col);
 
 	/* Now put this color into the *foreground* part of the text
 	 * pixel, and choose a character that is as solid as possible.
 	 */
 
-	return (index == 0) ? 0x20 /* space */ :
-		((index << 8) | 0xdb /* block */ );
+	return (_index == 0) ? 0x20 /* space */ :
+		((_index << 8) | 0xdb /* block */ );
 }
 
 /* Map pixel to color

@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: copybox.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -89,8 +89,10 @@ int GGI_mga_g400_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	mga_out32(mmioaddr, RS24(begin), AR3);
 	mga_out32(mmioaddr, RS22(ar5), AR5);
 #endif
-	mga_out32(mmioaddr, (RS16(dstx + w) << 16) | RS16(dstx), FXBNDRY);
-	mga_out32(mmioaddr, (RS16(dsty) << 16) | RS16(h), YDSTLEN | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)(RS16(dstx + w) << 16) | RS16(dstx),
+		  FXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(RS16(dsty) << 16) | RS16(h), 
+		  YDSTLEN | EXECUTE);
 
 	vis->accelactive = 1;
 

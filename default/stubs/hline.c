@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2002/10/09 22:27:34 cegger Exp $
+/* $Id: hline.c,v 1.3 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -84,7 +84,7 @@ int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 	for (; w > 0; w--, x++, src += 3) {
 		LIBGGIPutPixelNC(vis, x, y,
-				 src[0] | (src[1] << 8) | (src[2] << 16));
+			(unsigned)(src[0] | (src[1] << 8U) | (src[2] << 16U)));
 	}
 
 	return 0;

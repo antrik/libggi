@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.5 2003/02/03 17:11:54 ggibecka Exp $
+/* $Id: clip.c,v 1.6 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -72,22 +72,22 @@ y ---------------------
   */
 static int FloorDiv(int a, int b)
 {
-	int floor;
+	int _floor;
 	if (b>0) {
 		if (a>0) {
 			return a /b;
 		} else {
-			floor = -((-a)/b);
+			_floor = -((-a)/b);
 			if ((-a)%b != 0)
-				floor--;
+				_floor--;
 		}
-		return floor;
+		return _floor;
 	} else {
 		if (a>0) {
-			floor = -(a/(-b));
+			_floor = -(a/(-b));
 			if (a%(-b) != 0)
-				floor--;
-			return floor;
+				_floor--;
+			return _floor;
 		} else {
 			return (-a)/(-b);
 		}

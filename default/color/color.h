@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.4 2002/09/29 19:27:41 skids Exp $
+/* $Id: color.h,v 1.5 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -64,15 +64,15 @@ typedef struct {
 	 */
 	int red_map;
 	int red_unmap;
-	int red_mask;
+	ggi_pixel red_mask;
 	int red_nbits;
 	int green_map;
 	int green_unmap;
-	int green_mask;
+	ggi_pixel green_mask;
 	int green_nbits;
 	int blue_map;
 	int blue_unmap;
-	int blue_mask;
+	ggi_pixel blue_mask;
 	int blue_nbits;
 } color_truepriv;
 

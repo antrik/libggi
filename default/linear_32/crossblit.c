@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.5 2002/11/11 22:07:39 skids Exp $
+/* $Id: crossblit.c,v 1.6 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -117,7 +117,7 @@ cb4to32(ggi_visual *src, int sx, int sy, int w, int h,
 	GGIDPRINT_DRAW("linear-32: cb4to32.\n");
 
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 16; i++) {
 			ggi_color col;
 
@@ -215,7 +215,7 @@ cb8to32(ggi_visual *src, int sx, int sy, int w, int h,
 	/* Creates the conversion table. A bit simplistic approach, perhaps?
 	 */
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 256; i++) {
 			ggi_color col;
 

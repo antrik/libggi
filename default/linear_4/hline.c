@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: hline.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -51,7 +51,7 @@ do_drawhline(ggi_visual *vis, int x, int y, int w)
 		w--;
 	}
 	
-	memset(fb, fg, w/2);
+	memset(fb, fg, (size_t)(w/2));
 
 	/* Dangling right pixel. */
 	if (w & 0x01) {
@@ -89,7 +89,7 @@ int GGI_lin4_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	
 	/* Might as well take the memcpy speed up (multiple byte copy). */
 	if (!(x & 0x01)) {
-		memcpy(fb,buf,w>>1);
+		memcpy(fb,buf, (size_t)(w>>1));
 		if (w & 0x01)
 			*(fb+(w>>1)) = ( *(fb+(w>>1)) & 0x0F)
 				| (*((uint8 *)buf+(w>>1)) << 4);
@@ -132,7 +132,7 @@ int GGI_lin4_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 	 * byte will hold an extraneous pixel.  No big deal. */
 	
 	if (!(x & 0x01)) {
-		memcpy(buf, fb, (w>>1) + (w & 0x01));
+		memcpy(buf, fb, (size_t)((w>>1) + (w & 0x01)));
 		return 0;
 	}
 	

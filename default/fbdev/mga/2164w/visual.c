@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/08/30 23:06:39 skids Exp $
+/* $Id: visual.c,v 1.3 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -95,7 +95,7 @@ static int do_cleanup(ggi_visual *vis)
 	   Manual says we should write to byte 0 to terminate DMA sequence,
 	   but it doesn't say whether a 8 bit access is required, or if any
 	   access will do. We play it safe here... */
-	mga_out8(fbdevpriv->mmioaddr, priv->origopmode&0xff, OPMODE);
+	mga_out8(fbdevpriv->mmioaddr, priv->origopmode & 0xff, OPMODE);
 	mga_out16(fbdevpriv->mmioaddr, priv->origopmode, OPMODE);
 	mga_waitidle(fbdevpriv->mmioaddr);
 
@@ -125,7 +125,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct m2164w_priv *priv;
 	unsigned long usedmemend;
-	int fontlen;
+	size_t fontlen;
 	int pixbytes;
 	int fd = LIBGGI_FD(vis);
 	int i;
@@ -145,7 +145,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	fbdevpriv->mmioaddr = mmap(NULL, fbdevpriv->orig_fix.mmio_len,
 				   PROT_READ | PROT_WRITE, MAP_SHARED,
-				   fd, fbdevpriv->orig_fix.smem_len);
+				   fd, (signed)fbdevpriv->orig_fix.smem_len);
 	if (fbdevpriv->mmioaddr == MAP_FAILED) {
 		/* Can't mmap() MMIO region - bail out */
 		GGIDPRINT_LIBS("mga-2164w: Unable to map MMIO region: %s\n"
@@ -268,6 +268,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+int GGIdl_m2164w(int func, void **funcptr);
 
 int GGIdl_m2164w(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.1 2001/05/12 23:01:36 cegger Exp $
+/* $Id: crossblit.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -85,8 +85,10 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 	mga_out32(mmioaddr, RS18(w-1), AR0);
 	mga_out32(mmioaddr, 0, AR3);
 	mga_out32(mmioaddr, 0, AR5);
-	mga_out32(mmioaddr, (RS16(dx + w - 1) << 16) | RS16(dx), FXBNDRY);
-	mga_out32(mmioaddr, (RS16(dy) << 16) | RS16(h), YDSTLEN | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)(RS16(dx + w - 1) << 16) | RS16(dx), 
+		  FXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(RS16(dy) << 16) | RS16(h),
+		  YDSTLEN | EXECUTE);
 
 	dst->accelactive = 1;
 

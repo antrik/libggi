@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/09/29 19:27:41 skids Exp $
+/* $Id: visual.c,v 1.4 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -177,7 +177,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	return 0;
 }
-		
+
+
+int GGIdl_color(int func, void **funcptr);
 
 int GGIdl_color(int func, void **funcptr)
 {

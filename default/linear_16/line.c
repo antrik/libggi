@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: line.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -24,6 +24,8 @@
 
 ******************************************************************************
 */
+
+#include "lin16lib.h"
 
 #define FBTYPE uint16
 #define GGIdrawline	GGI_lin16_drawline

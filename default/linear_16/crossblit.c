@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.9 2003/05/24 18:03:49 cegger Exp $
+/* $Id: crossblit.c,v 1.10 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -90,7 +90,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	w *= 2;		/* Use width in bytes. */
 
 	for (; h != 0; h--) {
-		memcpy(dstp, srcp, w);
+		memcpy(dstp, srcp, (size_t)(w));
 		srcp += srcstride;
 		dstp += dststride;
 	}
@@ -112,7 +112,7 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 	GGIDPRINT_DRAW("linear-16: cb4to16.\n");
 
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 16; i++) {
 			ggi_color col;
 
@@ -209,7 +209,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 	/* Create a conversion table. */
 	do {
-		int i;
+		unsigned int i;
 		for (i = 0; i < 256; i++) {
 			ggi_color col;
 

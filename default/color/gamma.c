@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.4 2002/09/08 21:37:42 soyt Exp $
+/* $Id: gamma.c,v 1.5 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -36,6 +36,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include "color.h"
 
 int GGI_color_getgamma(ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
 {

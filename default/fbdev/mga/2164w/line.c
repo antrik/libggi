@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2001/05/12 23:01:36 cegger Exp $
+/* $Id: line.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -52,8 +52,9 @@ int GGI_m2164w_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
 	} else {
 		mga_waitfifo(mmioaddr, 2);
 	}
-	mga_out32(mmioaddr, RS16(x) | (RS16(y) << 16), XYSTRT);
-	mga_out32(mmioaddr, RS16(x2) | (RS16(y2) << 16), XYEND | EXECUTE);
+	mga_out32(mmioaddr, (unsigned)RS16(x) | (RS16(y) << 16), XYSTRT);
+	mga_out32(mmioaddr, (unsigned)RS16(x2) | (RS16(y2) << 16),
+		  XYEND | EXECUTE);
 
 	vis->accelactive = 1;
 

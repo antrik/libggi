@@ -1,4 +1,4 @@
-/* $Id: mmio.h,v 1.3 2003/05/04 22:08:03 cegger Exp $
+/* $Id: mmio.h,v 1.4 2003/07/05 22:13:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -118,14 +118,15 @@ mga_setcol(volatile uint8 *mmioaddr, ggi_mode *mode, ggi_pixel pixelfg,
 static inline void
 mga_setclip(volatile uint8 *mmioaddr, ggi_gc *gc, int virtx, int yadd)
 {
-	int topy = gc->cliptl.y + yadd, boty = (gc->clipbr.y-1) + yadd;
+	int topy = gc->cliptl.y + yadd;
+	int boty = (gc->clipbr.y-1) + yadd;
 
 	mga_waitfifo(mmioaddr, 3);
-	mga_out32(mmioaddr, (gc->cliptl.x & 0x07FF)
-		  | (((gc->clipbr.x-1) & 0x07FF) << 16), CXBNDRY);
-	mga_out32(mmioaddr, (virtx * topy)
+	mga_out32(mmioaddr, ((unsigned)gc->cliptl.x & 0x07FF)
+		  | ((((unsigned)gc->clipbr.x-1) & 0x07FF) << 16), CXBNDRY);
+	mga_out32(mmioaddr, (unsigned)(virtx * topy)
 		  & 0x00FFFFFF, YTOP);
-	mga_out32(mmioaddr, (virtx * boty)
+	mga_out32(mmioaddr, (unsigned)(virtx * boty)
 		  & 0x00FFFFFF, YBOT);
 }
 

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/05/03 16:39:18 cegger Exp $
+/* $Id: gtext.c,v 1.3 2003/07/05 22:13:40 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -41,19 +41,19 @@
  * engine copies the data from video ram
  */
 
-static inline void draw_char(int hostwrites, uint32 *cdat,
-                             struct ati_mach64_priv *priv)
+static inline void draw_char(int hostwrites, uint32 * cdat,
+			     struct ati_mach64_priv *priv)
 {
-    /* feed a character to the engine */
-    while (hostwrites>0) {
-        wait_for_fifo(1,priv);
-        aty_st_le32(HOST_DATA0,*cdat,priv);
-        cdat++;
-        hostwrites--;
-    };
+	/* feed a character to the engine */
+	while (hostwrites > 0) {
+		wait_for_fifo(1, priv);
+		aty_st_le32(HOST_DATA0, *cdat, priv);
+		cdat++;
+		hostwrites--;
+	};
 }
 
-int GGI_ati_mach64_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_ati_mach64_getcharsize(ggi_visual * vis, int *width, int *height)
 {
 	/* The stubs' font is 8x8, so that is what we return */
 	*width = FWIDTH;
@@ -62,127 +62,138 @@ int GGI_ati_mach64_getcharsize(ggi_visual *vis, int *width, int *height)
 	return 0;
 }
 
-int GGI_ati_mach64_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_ati_mach64_putc(ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int hostwrites;
 	uint32 *cdat;
 
 	/* Tell the engine what we want to do. */
-	set_dp_src(priv,MONO_SRC_HOST | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
+	set_dp_src(priv,
+		   MONO_SRC_HOST | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
 	/* Auto update x position */
-	set_dst_cntl(priv,DST_LAST_PEL | DST_Y_TOP_TO_BOTTOM |
-                     DST_X_LEFT_TO_RIGHT | DST_X_TILE);
-	hostwrites=(FWIDTH*FHEIGHT+31)/32;
+	set_dst_cntl(priv, DST_LAST_PEL | DST_Y_TOP_TO_BOTTOM |
+		     DST_X_LEFT_TO_RIGHT | DST_X_TILE);
+	hostwrites = (FWIDTH * FHEIGHT + 31) / 32;
 	/* Set destination location */
-	wait_for_fifo(2,priv);
-	aty_st_le32(DST_Y_X,x << 16 | y,priv);
-    	aty_st_le32(DST_HEIGHT_WIDTH,(FWIDTH<<16)|FHEIGHT,priv); /* Initiates operation. */
+	wait_for_fifo(2, priv);
+	aty_st_le32(DST_Y_X, (unsigned) x << 16 | y, priv);
+	aty_st_le32(DST_HEIGHT_WIDTH, (FWIDTH << 16) | FHEIGHT, priv);	/* Initiates operation. */
 
-    	/* Feed the data to the engine */
-    	cdat = (uint32 *)(priv->font + c * FHEIGHT);
-    	draw_char(hostwrites,cdat,priv);
+	/* Feed the data to the engine */
+	cdat = (uint32 *) (priv->font + c * FHEIGHT);
+	draw_char(hostwrites, cdat, priv);
 	return 0;
 }
 
-int GGI_ati_mach64_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-	int count,hostwrites;
+	int count, hostwrites;
 	uint32 *cdat;
 
 	/* Tell the engine what we want to do. */
-	set_dp_src(priv,MONO_SRC_HOST | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
+	set_dp_src(priv,
+		   MONO_SRC_HOST | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
 	/* Auto update x position */
-	set_dst_cntl(priv,DST_LAST_PEL | DST_Y_TOP_TO_BOTTOM |
-                     DST_X_LEFT_TO_RIGHT | DST_X_TILE);
+	set_dst_cntl(priv, DST_LAST_PEL | DST_Y_TOP_TO_BOTTOM |
+		     DST_X_LEFT_TO_RIGHT | DST_X_TILE);
 	/* Set destination location */
-	wait_for_fifo(2,priv);
-	aty_st_le32(DST_Y_X,x << 16 | y,priv);
-	aty_st_le32(DST_HEIGHT,FHEIGHT,priv);
+	wait_for_fifo(2, priv);
+	aty_st_le32(DST_Y_X, (unsigned) x << 16 | y, priv);
+	aty_st_le32(DST_HEIGHT, FHEIGHT, priv);
 
-	hostwrites=(FWIDTH*FHEIGHT+31)/32;
-	count=0;
-	while (*str!=0) {
-    	    wait_for_fifo(1,priv);
-    	    aty_st_le32(DST_WIDTH,FWIDTH,priv); /* Initiates operation. */
+	hostwrites = (FWIDTH * FHEIGHT + 31) / 32;
+	count = 0;
+	while (*str != 0) {
+		wait_for_fifo(1, priv);
+		aty_st_le32(DST_WIDTH, FWIDTH, priv);	/* Initiates operation. */
 
-    	    /* Feed the data to the engine */
-    	    cdat = (uint32 *)(priv->font + *str * FHEIGHT);
-    	    draw_char(hostwrites,cdat,priv);
+		/* Feed the data to the engine */
+		cdat = (uint32 *) (priv->font + *str * FHEIGHT);
+		draw_char(hostwrites, cdat, priv);
 
-    	    count++;
-    	    str++;
+		count++;
+		str++;
 	};
 	return count;
 };
 
-int GGI_ati_mach64_fastputc(ggi_visual *vis, int x, int y, char c)
+int GGI_ati_mach64_fastputc(ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-	uint32 pitch,pix_width;
+	uint32 pitch, pix_width;
 
 	/* Tell the engine what we want to do. */
-	set_dp_src(priv,MONO_SRC_BLIT | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
+	set_dp_src(priv,
+		   MONO_SRC_BLIT | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
 	/* Auto update x position */
-	set_dst_cntl(priv,DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT | DST_X_TILE);
+	set_dst_cntl(priv,
+		     DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT |
+		     DST_X_TILE);
 	/* Set destination location */
-	wait_for_fifo(4,priv);
-	aty_st_le32(DST_Y_X,x << 16 | y,priv);
-	aty_st_le32(DST_HEIGHT,FHEIGHT,priv);
+	wait_for_fifo(4, priv);
+	aty_st_le32(DST_Y_X, (unsigned)x << 16 | y, priv);
+	aty_st_le32(DST_HEIGHT, FHEIGHT, priv);
 	/* Set the source location & pixel depth */
-	aty_st_le32(SRC_Y_X,0,priv);
-	pix_width=aty_ld_le32(DP_PIX_WIDTH,priv);
-        aty_st_le32(DP_PIX_WIDTH,(pix_width & 0xfffff0ff) | SRC_1BPP,priv);
+	aty_st_le32(SRC_Y_X, 0, priv);
+	pix_width = aty_ld_le32(DP_PIX_WIDTH, priv);
+	aty_st_le32(DP_PIX_WIDTH, (pix_width & 0xfffff0ff) | SRC_1BPP,
+		    priv);
 
-	pitch=aty_ld_le32(SRC_OFF_PITCH,priv) & 0xffc00000;
-    	wait_for_fifo(5,priv);
+	pitch = aty_ld_le32(SRC_OFF_PITCH, priv) & 0xffc00000;
+	wait_for_fifo(5, priv);
 	aty_st_le32(SRC_OFF_PITCH,
-		    pitch|((priv->fontoffset/8) + c),priv);
-	aty_st_le32(SRC_HEIGHT1_WIDTH1,FWIDTH*FHEIGHT<<16|1,priv);
-    	aty_st_le32(DST_WIDTH,FWIDTH,priv); /* Initiates operation. */
-	aty_st_le32(SRC_OFF_PITCH,pitch,priv);
-	aty_st_le32(DP_PIX_WIDTH,pix_width,priv);
+		    pitch | ((priv->fontoffset / 8) + c), priv);
+	aty_st_le32(SRC_HEIGHT1_WIDTH1, FWIDTH * FHEIGHT << 16 | 1, priv);
+	aty_st_le32(DST_WIDTH, FWIDTH, priv);	/* Initiates operation. */
+	aty_st_le32(SRC_OFF_PITCH, pitch, priv);
+	aty_st_le32(DP_PIX_WIDTH, pix_width, priv);
 	vis->accelactive = 1;
 	return 0;
 }
 
 
-int GGI_ati_mach64_fastputs(ggi_visual *vis, int x, int y, const char *str)
+int GGI_ati_mach64_fastputs(ggi_visual * vis, int x, int y,
+			    const char *str)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int count;
-	uint32 pitch,pix_width;
+	uint32 pitch, pix_width;
 
 	/* Tell the engine what we want to do. */
-	set_dp_src(priv,MONO_SRC_BLIT | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
+	set_dp_src(priv,
+		   MONO_SRC_BLIT | FRGD_SRC_FRGD_CLR | BKGD_SRC_BKGD_CLR);
 	/* Auto update x position */
-	set_dst_cntl(priv,DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT | DST_X_TILE);
+	set_dst_cntl(priv,
+		     DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT |
+		     DST_X_TILE);
 	/* Set destination location */
-	wait_for_fifo(5,priv);
-	aty_st_le32(DST_Y_X,x << 16 | y,priv);
-	aty_st_le32(DST_HEIGHT,FHEIGHT,priv);
+	wait_for_fifo(5, priv);
+	aty_st_le32(DST_Y_X, (unsigned)x << 16 | y, priv);
+	aty_st_le32(DST_HEIGHT, FHEIGHT, priv);
 	/* Set the source location & pixel depth */
-	aty_st_le32(SRC_HEIGHT1,1,priv);
-	aty_st_le32(SRC_Y_X,0,priv);
-	pix_width=aty_ld_le32(DP_PIX_WIDTH,priv);
-        aty_st_le32(DP_PIX_WIDTH,(pix_width & 0xfffff0ff) | SRC_1BPP,priv);
+	aty_st_le32(SRC_HEIGHT1, 1, priv);
+	aty_st_le32(SRC_Y_X, 0, priv);
+	pix_width = aty_ld_le32(DP_PIX_WIDTH, priv);
+	aty_st_le32(DP_PIX_WIDTH, (pix_width & 0xfffff0ff) | SRC_1BPP,
+		    priv);
 
-	count=0;
-	pitch=aty_ld_le32(SRC_OFF_PITCH,priv) & 0xffc00000;
-	while (*str!=0) {
-    	    wait_for_fifo(3,priv);
-	    aty_st_le32(SRC_OFF_PITCH,
-			pitch|((priv->fontoffset/8) + *str),priv);
-	    aty_st_le32(SRC_WIDTH1,FWIDTH*FHEIGHT,priv);
-    	    aty_st_le32(DST_WIDTH,FWIDTH,priv); /* Initiates operation. */
+	count = 0;
+	pitch = aty_ld_le32(SRC_OFF_PITCH, priv) & 0xffc00000;
+	while (*str != 0) {
+		wait_for_fifo(3, priv);
+		aty_st_le32(SRC_OFF_PITCH,
+			    pitch | ((priv->fontoffset / 8) + *str), priv);
+		aty_st_le32(SRC_WIDTH1, FWIDTH * FHEIGHT, priv);
+		aty_st_le32(DST_WIDTH, FWIDTH, priv);	/* Initiates operation. */
 
-    	    count++;
-    	    str++;
+		count++;
+		str++;
 	};
-	wait_for_fifo(2,priv);
-	aty_st_le32(SRC_OFF_PITCH,pitch,priv);
-	aty_st_le32(DP_PIX_WIDTH,pix_width,priv);
+	wait_for_fifo(2, priv);
+	aty_st_le32(SRC_OFF_PITCH, pitch, priv);
+	aty_st_le32(DP_PIX_WIDTH, pix_width, priv);
 	vis->accelactive = 1;
 	return count;
 }
