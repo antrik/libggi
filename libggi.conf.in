@@ -14,6 +14,7 @@ helper-x-vidmode		helper/helper_x_vidmode.@DLLEXT@
 helper-x-dga			helper/helper_x_dga.@DLLEXT@
 display-xlib			display/Xlib.@DLLEXT@
 display-dga			display/xf86dga.@DLLEXT@
+display-xf86dga			display/xf86dga.@DLLEXT@
 display-svga			display/svgalib.@DLLEXT@
 display-svgalib			display/svgalib.@DLLEXT@
 helper-vgagl			display/vgagl.@DLLEXT@
@@ -47,6 +48,7 @@ suidkgi				display/suidkgi.@DLLEXT@
 x				display/X.@DLLEXT@
 xlib				display/Xlib.@DLLEXT@
 dga				display/xf86dga.@DLLEXT@
+xf86dga				display/xf86dga.@DLLEXT@
 svga				display/svgalib.@DLLEXT@
 vgl				display/vgl.@DLLEXT@
 aa				display/aa.@DLLEXT@
