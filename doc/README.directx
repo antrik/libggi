@@ -1,6 +1,6 @@
 README for Win32 port of libGGI.
 Created: 8 Jul 2001 by John Fortin (fortinj@attglobal.net)
-Updated: 17 Aug 2004 by Peter Ekberg (peda@lysator.liu.se)
+Updated: 3 Sep 2004 by Peter Ekberg (peda@lysator.liu.se)
 
 
 Quick Installation Guide for Cygwin
@@ -9,10 +9,9 @@ Quick Installation Guide for Cygwin
 I) Software needed:
 
 	- Cygwin for Win32 (www.cygwin.com)
-	    (Installing all packages from setup.exe is recommended)	
-	- Automake (Select from cygwin install)
-	- Autoconf (select form cygwin install)
-	- Perl for Cygwin (needed for automake, select from cygwin install)
+	    (Installing all packages from setup.exe is perhaps overkill, but
+	     will work. A minimum set of needed packages has not been
+	     determined at the time of this writing)
 	- DirectX SDK 7.0 or newer (optional)
 
 	The DirectX SDK is optional, but needed for the directx target to work.
@@ -22,39 +21,58 @@ I) Software needed:
 	the only file needed is the ddraw.h file, see the notes below for
 	a possible workaround to downloading 200MB if you have MSVC.
 
-	Note, use UNIX style text files in Cygwin and cvs provided by Cygwin.
-	If you use some Win32 native version of cvs, it is likely to use
-	DOS style text files, in which case Cygwin needs to use that as well.
+II) Installing from CVS:
 
-II) Compilation:
+	If you have a release of libggi (or a snapshot) you can skip ahead to
+	section III.
 
-	- from libggi directory
-		WANT_AUTOMAKE_VER=1.8.5 WANT_AUTOCONF_VER=2.59 ./autogen.sh
-		./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
-		make
-		make install
-	- core dlls will be installed into /usr/bin, import libraries into
-	  /usr/lib and headers into /usr/include/ggi. Target libraries will
-	  be installed into /usr/lib/ggi and the configuration into
-	  /usr/etc/ggi.
+	You'll need the development series of autotools, i.e. the two packages
+	automake-devel and autoconf-devel. I have installed the autotools
+	wrapper scripts (i.e. the automake and autoconf packages), and this
+	guide assumes the wrapper scripts are present. Install the needed
+	packages from the Cygwin install.
 
-III) Notes:
+	Note, use UNIX style text files in Cygwin and the cvs program provided
+	by Cygwin. If you want use some Win32 native version of cvs (such as
+	wincvs), it is likely to use DOS style text files, in which case Cygwin
+	needs to use that as well. Using DOS style text files in Cygwin might
+	break things in mysterious ways, so you're on your own if you use them.
 
-	- libGII must be build prior to libGGI
-	- The version numbers for WANT_AUTOMAKE_VER and WANT_AUTOCONF_VER
-	  can be determined by running automake and autoconf with the
-	  --version switch. Use the latest available version.
+	Now generate the configure script with:
+
+	  WANT_AUTOMAKE_VER=1.8.5 WANT_AUTOCONF_VER=2.59 ./autogen.sh
+
+	The version numbers for WANT_AUTOMAKE_VER and WANT_AUTOCONF_VER can be
+	determined by running automake and autoconf with the --version switch.
+	Use the latest available versions.
+
+III) Compilation:
+
+	From the libggi directory, issue the following commands:
+
+	  ./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+	  make
+	  make install
+
+	The core libggi dlls will be installed into /usr/bin, import libraries
+	into /usr/lib and headers into /usr/include/ggi. Target libraries will
+	be installed into /usr/lib/ggi and the configuration into /usr/etc/ggi.
+
+IV) Notes:
+
+	- libgii must be built and installed prior to building libggi
 	- You might be able to get the ddraw.h file from a (newish) MSVC
 	  installation (MSVC 6.0 is probably not new enough), if you should
 	  have one. In that case, copy this file to a separate directory, if
 	  you specify the MSVC include dir in the --with-extra-includes
 	  argument, you will bring in too many of the MSVC headers.
-	- The configure script sometimes has problems. Try throwing in
-	  extra spaces if you get this or a similar error:
+	- The configure script sometimes has problems due to what seems to
+	  be a race in cygwin. Try again if you get this or a similar error:
 	  configure: error: invalid package name: extra-includes
+	  Or even better, debug the problem and post a fix the cygwin ML.
 	- Set GGI_DEFMODE=wxh (ie. export GGI_DEFMODE=800x600)
 		See libggi/doc/env.txt for more details.
-	- Run some demos under the programs dir.
+	- Run some demos under the programs directory.
 	- The file C:\foo can by default be accessed as /cygdrive/c/foo
 
 
@@ -64,8 +82,6 @@ Quick Installation Guide for MinGW
 
 I) Software needed:
 
-	- Something that can generate the configure script (using autogen.sh).
-	  Usually any unix like thingy, such as cygwin, will do the trick.
 	- MSYS and MinGW (http://www.mingw.org/)
 	- DirectX SDK 7.0 or newer
 
@@ -75,21 +91,33 @@ I) Software needed:
 	the only file needed is the ddraw.h file, see the notes below for
 	a possible workaround to downloading 200MB if you have MSVC.
 
-II) Compilation:
+II) Installing from CVS:
 
-	- from libggi directory (the configure script needs to have been
-	  created with autogen.sh, see section I)
-		./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
-		make
-		make install
-	- core dlls will be installed into /usr/bin, import libraries into
-	  /usr/lib and headers into /usr/include/ggi. Target libraries will
-	  be installed into /usr/lib/ggi and the configuration into
-	  /usr/etc/ggi.
+	If you have a release of libggi (or a snapshot) you can skip ahead to
+	section III.
 
-III) Notes:
+	You'll need to somehow generate the configure script when installing
+	from CVS. It is not unlikely that the msys-automake and msys-autoconf
+	packages can be used to generate the configure script, but that is
+	untested at the time of this writing. What has been tested is to
+	generate the configure script on Cygwin (or any decent unix). See the
+	Quick Installation Guide for Cygwin for details.
 
-	- libGII must be build prior to libGGI
+III) Compilation:
+
+	From the libggi directory, issue the following commands:
+
+	  ./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+	  make
+	  make install
+
+	The core libggi dlls will be installed into /usr/bin, import libraries
+	into /usr/lib and headers into /usr/include/ggi. Target libraries will
+	be installed into /usr/lib/ggi and the configuration into /usr/etc/ggi.
+
+IV) Notes:
+
+	- libgii must be built and installed prior to building libggi
 	- You might be able to get the ddraw.h file from a (newish) MSVC
 	  installation (MSVC 6.0 is probably not new enough), if you should
 	  have one. In that case, copy this file to a separate directory, if
@@ -107,7 +135,7 @@ III) Notes:
 	- Set GGI_DEFMODE=wxh (ie. "set GGI_DEFMODE=800x600")
 		See libggi/doc/env.txt for more details.
 	- Run some demos, they are found in the .libs subdirs in the
-	  directories under the programs directory)
+	  directories under the programs directory.
 	- If you are using a unix shell (and not the windows command prompt),
 	  you can use the generated scripts instead of the .exe files in the
 	  .libs subdirs, and the environment variables above should be set
