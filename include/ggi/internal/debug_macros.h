@@ -62,8 +62,8 @@
     if ((state&field) && ((state&DEBUG_LEVEL) >= level)) {                   \
 	    va_list args;                                                    \
 	    fprintf(stderr, "[" DEBUG_NAMESPACE "] " severity);              \
-	    va_start(args, fmt);                                          \
-	    vfprintf(stderr, fmt, args);                                  \
+	    va_start(args, form);                                          \
+	    vfprintf(stderr, form, args);                                  \
 	    va_end(args);                                                    \
 	    if (state & DEBUG_SYNC) fflush(stderr);                          \
     }                                                                        \
@@ -74,12 +74,12 @@ static inline void _dmessage(unsigned int state,
 			     const char * severity,
 			     unsigned int level,
 			     unsigned int fields,
-			     const char * fmt, ...) {
+			     const char * form, ...) {
 	if ((state&field) && ((state&DEBUG_LEVEL) >= level)) {
 		va_list args;
 		fprintf(stderr, "[" DEBUG_NAMESPACE "] %s", severity);
-		va_start(args, fmt);
-		vfprintf(stderr, fmt, args);
+		va_start(args, form);
+		vfprintf(stderr, form, args);
 		va_end(args);
 		if (state & DEBUG_SYNC) fflush(stderr);                          
 	}
@@ -124,7 +124,7 @@ static inline void _dmessage(unsigned int state,
 #endif /* DLEVEL 3 */
 
 /* This macro will eventually be renamed... */
-#define DPRINTIF DNOTICE0
+/* #define DPRINTIF DNOTICE0 */
 
 #define LIB_ASSERT(cond, msg) do {                                           \
     if (!(cond)) {                                                           \
@@ -169,26 +169,26 @@ static inline void _dmessage(unsigned int state,
 #endif  /* DEBUG */
 
 #define MAKE_DEBUG(var) \
-static inline void DPRINT   (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
-static inline void DERROR   (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
-static inline void DWARNING (const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }\
-static inline void DCRITICAL(const char*fmt,...){ DNOTICE0(var,DEBUG_ENABLED); }
+static inline void DPRINT   (const char*form,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DERROR   (const char*form,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DWARNING (const char*form,...){ DNOTICE0(var,DEBUG_ENABLED); }\
+static inline void DCRITICAL(const char*form,...){ DNOTICE0(var,DEBUG_ENABLED); }
 
 #define MAKE_DEBUG_FUNCS(sfx,var,val) \
-static inline void DPRINT_##sfx     (const char*fmt,...){DNOTICE0(var,val);}\
-static inline void DPRINT_##sfx##1  (const char*fmt,...){DNOTICE1(var,val);}\
-static inline void DPRINT_##sfx##2  (const char*fmt,...){DNOTICE2(var,val);}\
-static inline void DPRINT_##sfx##3  (const char*fmt,...){DNOTICE3(var,val);}\
-static inline void DWARNING_##sfx   (const char*fmt,...){DWARNING0(var,val);}\
-static inline void DWARNING_##sfx##1(const char*fmt,...){DWARNING1(var,val);}\
-static inline void DWARNING_##sfx##2(const char*fmt,...){DWARNING2(var,val);}\
-static inline void DWARNING_##sfx##3(const char*fmt,...){DWARNING3(var,val);}\
-static inline void DERROR_##sfx     (const char*fmt,...){DERROR0(var,val);}\
-static inline void DERROR_##sfx##1  (const char*fmt,...){DERROR1(var,val);}\
-static inline void DERROR_##sfx##2  (const char*fmt,...){DERROR2(var,val);}\
-static inline void DERROR_##sfx##3  (const char*fmt,...){DERROR3(var,val);}\
+static inline void DPRINT_##sfx     (const char*form,...){DNOTICE0(var,val);}\
+static inline void DPRINT_##sfx##1  (const char*form,...){DNOTICE1(var,val);}\
+static inline void DPRINT_##sfx##2  (const char*form,...){DNOTICE2(var,val);}\
+static inline void DPRINT_##sfx##3  (const char*form,...){DNOTICE3(var,val);}\
+static inline void DWARNING_##sfx   (const char*form,...){DWARNING0(var,val);}\
+static inline void DWARNING_##sfx##1(const char*form,...){DWARNING1(var,val);}\
+static inline void DWARNING_##sfx##2(const char*form,...){DWARNING2(var,val);}\
+static inline void DWARNING_##sfx##3(const char*form,...){DWARNING3(var,val);}\
+static inline void DERROR_##sfx     (const char*form,...){DERROR0(var,val);}\
+static inline void DERROR_##sfx##1  (const char*form,...){DERROR1(var,val);}\
+static inline void DERROR_##sfx##2  (const char*form,...){DERROR2(var,val);}\
+static inline void DERROR_##sfx##3  (const char*form,...){DERROR3(var,val);}\
 
-#if 0	/* disabled due to re-declaration */
+
 /* Compatibility */
+
 #define DPRINTIF(state, field) DMESSAGE(state,DEBUG_NOTICE,DEBUG_0,field)
-#endif
