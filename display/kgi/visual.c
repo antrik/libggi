@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2004/09/12 20:27:24 cegger Exp $
+/* $Id: visual.c,v 1.16 2004/09/22 20:22:46 nsouch Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -26,12 +26,13 @@
 
 ******************************************************************************
 */
+#include "config.h"
+
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "kgi/config.h"
 #include <ggi/display/kgi.h>
 
 static const gg_option optlist[] =
@@ -48,6 +49,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	kgi_version_t version = { 0, 0, 1, 0 };
 	gg_option options[KGI_NUM_OPTS];
 	gii_input *inp;
+	char *eventname[32];
 
 	KGI_PRIV(vis) = calloc(1, sizeof(ggi_kgi_priv));
 	if (KGI_PRIV(vis) == NULL)
@@ -95,15 +97,26 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->getapi    = GGI_kgi_getapi;
 	vis->opdisplay->setflags  = GGI_kgi_setflags;
 
-        if (tolower((int)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
-                if ((inp = giiOpen("kii", &args, NULL)) == NULL) {
-                        GGIDPRINT_MISC("Unable to open KII inputlib\n");
+	/* If GGI_INPUT or GII_INPUT is set, it overrides the default
+	 * behaviour of KGI display: let GGI open the input. Otherwise,
+	 * try to open the /dev/event corresponding to ower /dev/graphic
+	 */
+	if (tolower((int)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
+#ifdef HAVE_SNPRINTF
+		snprintf(eventname, 32, "kii:-device=/dev/event%i",
+			 KGI_CTX(vis).mapper.graphic);
+#else
+		sprintf(eventname, "kii:-device=/dev/event%i",
+			KGI_CTX(vis).mapper.graphic);
+#endif
+		if ((inp = giiOpen(eventname, NULL)) == NULL) {
+			GGIDPRINT_MISC("Unable to open KII inputlib\n");
 			goto err_freegc;
-                }
-
-                /* Now join the new event source in. */
-                vis->input = giiJoinInputs(vis->input, inp);
-        }
+		}
+		
+		/* Now join the new event source in. */
+		vis->input = giiJoinInputs(vis->input, inp);
+	}
 
 	KGI_PRIV(vis)->ilut_touched = 1;
 
