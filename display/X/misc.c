@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.10 2003/01/20 18:28:57 skids Exp $
+/* $Id: misc.c,v 1.11 2003/01/23 03:02:09 skids Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -403,12 +403,30 @@ void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm) {
 			       None, NULL, 0, &hint);
 }
 
-void _ggi_x_set_xclip (Display *disp, GC gc, int x, int y, int w, int h) {
-	XRectangle xrect;
+void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc, 
+		       int x, int y, int w, int h) {
+	XRectangle *xrect;
+	int i, frames, virty;
 
-	xrect.x = x; xrect.width = w;
-	xrect.y = y; xrect.height = h;
-	XSetClipRectangles(disp, gc, 0, 0, &xrect, 1, Unsorted);
+
+	if (vis != NULL) {
+		frames = vis->mode->frames;
+		virty = LIBGGI_VIRTY(vis);
+	}
+	else {
+		frames = 1;
+		virty = 0;
+	}		
+
+	xrect = malloc(frames * sizeof(XRectangle));
+	if (xrect == NULL) return;
+
+	for (i = 0; i < frames; i++) {
+		xrect[i].x = x; xrect[i].width = w;
+		xrect[i].y = y + i * virty; xrect[i].height = h;
+	}
+	XSetClipRectangles(disp, gc, 0, 0, xrect, frames, Unsorted);
+	free(xrect);
 }
 
 void _ggi_x_create_dot_cursor (ggi_visual *vis) {
@@ -489,7 +507,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis) {
 
 	pixgc = XCreateGC(priv->disp, priv->win, 0, 0);
 	XSetFont(priv->disp, pixgc, priv->textfont->fid);
-	_ggi_x_set_xclip(priv->disp, pixgc, 0, 0, w * 256, h);
+	_ggi_x_set_xclip(NULL, priv->disp, pixgc, 0, 0, w * 256, h);
 	XSetForeground(priv->disp, pixgc, 0);
 
 	XFillRectangle(priv->disp, fontpix, pixgc, 

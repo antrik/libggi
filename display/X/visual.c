@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2003/01/22 03:22:39 skids Exp $
+/* $Id: visual.c,v 1.17 2003/01/23 03:02:11 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -112,7 +112,7 @@ void GGI_X_gcchanged(ggi_visual *vis, int mask) {
  noslave:
 	if ((mask & GGI_GCCHANGED_CLIP)) {
 		ggLock(priv->xliblock);
-		_ggi_x_set_xclip(priv->disp, priv->gc,
+		_ggi_x_set_xclip(vis, priv->disp, priv->gc,
 				 LIBGGI_GC(vis)->cliptl.x, 
 				 LIBGGI_GC(vis)->cliptl.y,
 				 LIBGGI_GC(vis)->clipbr.x -
