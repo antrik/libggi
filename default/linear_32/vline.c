@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2001/05/12 23:01:43 cegger Exp $
+/* $Id: vline.c,v 1.2 2002/10/10 07:12:35 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -66,7 +66,7 @@ int GGI_lin32_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	uint32 *ptr, *buf32 = buffer;
 	int stride = LIBGGI_FB_W_STRIDE(vis)/4;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf32, );
+	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf32, *1);
 	PREPARE_FB(vis);
 
 	ptr = ((uint32 *)LIBGGI_CURWRITE(vis)) + y*stride + x;
