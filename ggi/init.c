@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.31 2005/01/13 19:34:32 cegger Exp $
+/* $Id: init.c,v 1.32 2005/01/13 20:54:00 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -67,7 +67,9 @@ gg_swartype     swars_selected    = 0;
 #define FOREACH_EXTENSION(n)	GG_TAILQ_FOREACH(n, &_ggiExtension, extlist)
 #define ADD_EXTENSION(n)	GG_TAILQ_INSERT_TAIL(&_ggiExtension, n, extlist)
 #define REMOVE_EXTENSION(n)	GG_TAILQ_REMOVE(&_ggiExtension, n, extlist)
-#define HAVE_EXTENSIONS		GG_TAILQ_EMPTY(&_ggiExtension)
+#define HAVE_NO_EXTENSIONS	GG_TAILQ_EMPTY(&_ggiExtension)
+#define HAVE_EXTENSIONS		(!GG_TAILQ_EMPTY(&_ggiExtension))
+
 
 
 /* 
@@ -252,7 +254,7 @@ int ggiExit(void)
 		REMOVE_EXTENSION(tmp);
 		free(tmp);
 	}
-	LIB_ASSERT(HAVE_EXTENSIONS, "ggi extension list not empty at shutdown\n");
+	LIB_ASSERT(HAVE_NO_EXTENSIONS, "ggi extension list not empty at shutdown\n");
 
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
@@ -492,7 +494,7 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 
 	DPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
 		       name, size, change);
-	if (!HAVE_EXTENSIONS) {
+	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
 			if (strcmp(tmp->name, name) == 0) {
 				tmp->initcount++;
@@ -534,7 +536,7 @@ int ggiExtensionUnregister(ggi_extid id)
 	ggi_extension *tmp;
 
 	DPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
-	if (HAVE_EXTENSIONS) return GGI_ENOTALLOC;
+	if (HAVE_NO_EXTENSIONS) return GGI_ENOTALLOC;
 
 	FOREACH_EXTENSION(tmp) {
 		if (tmp->id != id) continue;
@@ -574,7 +576,7 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 
 	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
 
-	if (!HAVE_EXTENSIONS) {
+	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
 			if (tmp->id == id) break;
 		}
@@ -642,7 +644,7 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 	DPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
 		       whatchanged, vis);
 
-	if (!HAVE_EXTENSIONS) {
+	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
 			if (tmp->id < vis->numknownext &&
 			    LIBGGI_EXTAC(vis, tmp->id))
