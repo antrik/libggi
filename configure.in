@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.137 2004/10/18 21:12:33 cegger Exp $
+dnl $Id: configure.in,v 1.138 2004/10/18 22:21:27 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
@@ -350,6 +350,17 @@ if test "$ac_cv_header_sys_socket_h" = "yes"; then
 fi
 
 dnl ========================================================================
+dnl Checks for library functions.
+
+AC_FUNC_ALLOCA
+AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
+	random herror gethostbyname sigpending fork kill \
+	snprintf strncat strncpy)
+
+dnl ========================================================================
 dnl LibGII must be built
 
 if test "x$ac_cv_header_ggi_gii_h" != "xyes"; then
@@ -362,7 +373,7 @@ dnl Testing libs should use libtool but doesn't - grrrr!
 dnl This isn't a problem during the build because libtool is always used.
 dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
 save_CC="$CC"
-CC="$SHELL ./libtool $CC"
+CC="$SHELL ./libtool --mode=link $CC"
 AC_CHECK_LIB(gii,giiInit,
   AC_CHECK_LIB(gg,ggGetSwarType,
 	foo=bar,
@@ -374,17 +385,6 @@ AC_CHECK_LIB(gii,giiInit,
 )
 CC="$save_CC"
 
-
-dnl ========================================================================
-dnl Checks for library functions.
-
-AC_FUNC_ALLOCA
-AC_FUNC_MEMCMP
-AC_FUNC_MMAP
-AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
-	random herror gethostbyname sigpending fork kill \
-	snprintf strncat strncpy)
 
 
 dnl ========================================================================
@@ -702,7 +702,7 @@ if test "x$build_aa_target" != "xno"; then
 	dnl This isn't a problem during build because libtool is always used.
 	dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
 	save_CC="$CC"
-	CC="$SHELL ./libtool $CC"
+	CC="$SHELL ./libtool --mode=link $CC"
 	AC_CHECK_LIB(aa, aa_autoinit, foo=bar, build_aa_target="no")
 	CC="$save_CC",
 	build_aa_target="no")
