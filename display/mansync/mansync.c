@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.6 2004/10/04 12:38:45 pekberg Exp $
+/* $Id: mansync.c,v 1.7 2004/10/08 12:31:08 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -48,6 +48,8 @@ struct mansync_hook {
 	int isasync;
 	int ignore;
 	struct gg_task task;
+
+	int running;
 };
 
 
@@ -63,10 +65,10 @@ static int _GGI_mansync_task(struct gg_task *task)
 {
 	ggi_visual *vis = task->hook;
 
-	if(MANSYNC_IGNORE(vis))
+	if (MANSYNC_IGNORE(vis))
 		return 0;
 
-	if(MANSYNC_ISASYNC(vis))
+	if (MANSYNC_ISASYNC(vis))
 		return 0;
 
 #warning Want to call ggiFlush for threaded ggTask implementations, but that hangs display-x on signal based ggTask.
@@ -107,29 +109,31 @@ int _GGI_mansync_start(ggi_visual *vis)
 
 	GGIDPRINT("_GGI_mansync_start() (MANSYNC_TASK) called.\n");
 
-	if(!MANSYNC_ISASYNC(vis))
+	if (!MANSYNC_ISASYNC(vis))
 		return -1;
 
 	str = getenv("GGI_MANSYNC_FPS");
-	if(str)
+	if (str)
 		fpsrate = atoi(str);
 
-	if(fpsrate <= 0)
+	if (fpsrate <= 0)
 		fpsrate = MANSYNC_FPS;
 
 	tick = ggTimeBase();
 	MANSYNC_TASK(vis).pticks = 1000000 / (tick * fpsrate);
-	if(MANSYNC_TASK(vis).pticks <= 0)
+	if (MANSYNC_TASK(vis).pticks <= 0)
 		MANSYNC_TASK(vis).pticks = 1;
-	if(MANSYNC_TASK(vis).pticks >= GG_SCHED_TICK_WRAP)
+	if (MANSYNC_TASK(vis).pticks >= GG_SCHED_TICK_WRAP)
 		MANSYNC_TASK(vis).pticks = GG_SCHED_TICK_WRAP - 1;
 	MANSYNC_TASK(vis).ncalls = 0;
 	MANSYNC_ISASYNC(vis) = 0;
 	MANSYNC_IGNORE(vis) = 0;
 
-	if(ggAddTask(&MANSYNC_TASK(vis)))
+	if (ggAddTask(&MANSYNC_TASK(vis))) {
 		return -1;
+	}
 
+	MANSYNC_HOOK(vis)->running = 1;
 	return 0;
 }
 
@@ -138,7 +142,10 @@ int _GGI_mansync_stop(ggi_visual *vis)
 {
 	GGIDPRINT("_GGI_mansync_stop() (MANSYNC_TASK) called.\n");
 
-	if(MANSYNC_ISASYNC(vis))
+	LIBGGI_ASSERT(MANSYNC_HOOK(vis)->running,
+		"Can't stop mansync without starting it first");
+
+	if (MANSYNC_ISASYNC(vis))
 		return -1;
 
 	MANSYNC_ISASYNC(vis) = 1;
@@ -156,7 +163,7 @@ int _GGI_mansync_stop(ggi_visual *vis)
 
 int _GGI_mansync_ignore(ggi_visual *vis)
 {
-	if(MANSYNC_IGNORE(vis))
+	if (MANSYNC_IGNORE(vis))
 		return -1;
 
 	MANSYNC_IGNORE(vis) = 1;
@@ -169,7 +176,7 @@ int _GGI_mansync_cont(ggi_visual *vis)
 	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)
 		return -1;
 
-	if(!MANSYNC_IGNORE(vis))
+	if (!MANSYNC_IGNORE(vis))
 		return -1;
 
 	MANSYNC_IGNORE(vis) = 0;
