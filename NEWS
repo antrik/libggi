@@ -1,5 +1,11 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2.0.7: 2004-11-30:
+* minor buildsystem update
+* eliminate lvalue assignments. Fixes problems with latest gcc versions
+* Use more length bounded string operations
+^L
+
 New in 2.0.6: 2004-09-14:
 * build system:
   - Prepend with GII include path when --with-uninst-gii is specified via configure
