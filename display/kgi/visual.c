@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:08 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/07/29 15:45:32 fspacek Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -27,46 +27,47 @@
 ******************************************************************************
 */
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-
-#include <kgi/kgi_commands.h>
-#include <ggi/internal/ggi-dl.h>
-
-void _ignore_SIGBUS(int unused)
-{ 
-	signal(SIGBUS,_ignore_SIGBUS);
-	sleep(1);	/* Ignore the SIGBUSes */
-}
+#include <ggi/display/kgi.h>
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
-	LIBGGI_FD(vis) = open(args,O_RDWR);
-	if (LIBGGI_FD(vis) < 0) {
-		return GGI_ENODEVICE;
+	kgi_version_t version = { 0, 0, 1, 0 };
+
+	LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_kgi_priv));
+	if(LIBGGI_PRIVATE(vis) == NULL)
+		return GGI_ENOMEM;
+
+	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	if(LIBGGI_GC(vis) == NULL)
+		goto err_freepriv;
+	
+	if(kgiInit(&KGI_CTX(vis), "ggi", &version) != KGI_EOK){
+		GGIDPRINT_LIBS("Unable to initialize kgi\n");
+		goto err_freegc;
 	}
 
+	/* accel sublib private data */
+	KGI_ACCEL_PRIV(vis) = NULL;
+
+	KGI_PRIV(vis)->map_accel = GGI_kgi_map_accelerator;
+
 	/* Has mode management */
-	vis->opdisplay->getmode=GGIgetmode;
-	vis->opdisplay->setmode=GGIsetmode;
-	vis->opdisplay->checkmode=GGIcheckmode;
-	vis->opdisplay->kgicommand=GGIkgicommand;
-	vis->opdisplay->setflags=GGIsetflags;
-
-	/* Has Event management */
-	vis->opdisplay->eventpoll=GGIeventpoll;
-	vis->opdisplay->eventread=GGIeventread;
-	vis->opdisplay->seteventmask=GGIseteventmask;
-
-	vis->opdraw->setorigin=GGIsetorigin;
-
-	/* temporary hack to do away with the SIGBUS ... */
-	signal(SIGBUS,_ignore_SIGBUS);
+	vis->opdisplay->getmode   = GGI_kgi_getmode;
+	vis->opdisplay->setmode   = GGI_kgi_setmode;
+	vis->opdisplay->checkmode = GGI_kgi_checkmode;
+	vis->opdisplay->getapi    = GGI_kgi_getapi;
+	vis->opdisplay->setflags  = GGI_kgi_setflags;
 
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return 0;
+
+ err_freegc:
+	free(LIBGGI_GC(vis));
+ err_freepriv:
+	free(LIBGGI_PRIVATE(vis));
+	     
+	return -1;
 }
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:08 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/07/29 15:45:31 fspacek Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -25,184 +25,328 @@
 ******************************************************************************
 */
 
+#include <ggi/display/kgi.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
+#include <string.h>
 #include <sys/mman.h>
 
-#include <ggi/internal/ggi-dl.h>
+#include "../common/pixfmt-setup.inc"
+#include "../common/gt-auto.inc"
 
-#include <kgi/ioctl.h>
-
-#ifndef MAP_FAILED
-#define MAP_FAILED ((void*)-1)
-#endif
-
-
-int GGIkgicommand(ggi_visual *vis,int cmd,void *args)
+static ggi_graphtype image_mode_to_graphtype(kgi_image_mode_t *mode)
 {
-	return ioctl(LIBGGI_FD(vis),cmd,args);
+	int bits, i;
+
+	if (!mode) 
+		return GT_INVALID;
+		
+	if (mode->flags & KGI_IF_TEXT16)
+		return GT_TEXT16;
+		
+	bits = 0;
+	for (i = 0; mode->bpfa[i] && (i < __KGI_MAX_NR_ATTRIBUTES); i++)
+		bits += mode->bpfa[i];
+		
+	switch (bits) {
+
+	case 1:  return GT_1BIT;
+	case 2:  return GT_2BIT;
+	case 4:  return GT_4BIT;
+	case 8:  return GT_8BIT;
+	case 15: return GT_15BIT;
+	case 16: return GT_16BIT;
+	case 24: return GT_24BIT;
+	case 32: return GT_32BIT;
+	}
+	
+	return GT_INVALID;
 }
 
 
-int GGIsetorigin(ggi_visual *vis,int x,int y)
+/*
+int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
 {
-	ggi_coord where;
+	GGIDPRINT("setting display frame %d\n", num);
 
-	int err;
+	kgiSetDisplayOrigin(&KGI_CTX(vis), 0, num*LIBGGI_MODE(vis)->visible.y);
 
-	CHECKXY(vis,x,y);
-
-	where.x=x;
-	where.y=y;
-
-	if ((err=GGIkgicommand(vis,CHIP_SETVISFRAME,&where) != 0)
-		return err;
-
-	vis->origin_x=x;
-	vis->origin_y=y;
+	vis->d_frame_num = num;
 	
 	return 0;
 }
+*/
 
-int GGIsetsplitline(ggi_visual *vis,int y)
+int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	if (y<0 || y>LIBGGI_MODE(vis)->visible.y) return -1;
+	switch(num){
+	case 0:
+		strcpy(apiname, "display-kgi");
+		strcpy(arguments, "");
+		return 0;
+	case 1:
+		strcpy(apiname, "generic-stubs");
+		strcpy(arguments, "");
+		return 0;
+	case 2:
+		strcpy(apiname, "generic-color");
+		strcpy(arguments, "");
+		return 0;
+	case 3:
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+			sprintf(apiname, "generic-text-%d",
+				GT_SIZE(LIBGGI_GT(vis)));
+		}
+		else {
+			sprintf(apiname, "generic-linear-%d%s",
+				GT_SIZE(LIBGGI_GT(vis)),
+				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT)
+				? "-r" : "");
+		}
+		strcpy(arguments, "");
+		return 0;
+	case 4:
+	{
+		const kgic_mapper_resource_info_result_t *accel;
+		int name_size;
+		char *space;
 
-	return GGIkgicommand(vis,CHIP_SETSPLITLINE,(void *)y);
-}
-
-/*
- * _Attempt_ to get the default framebuffer.. 
- */
-static void _GGIgetmmio(ggi_visual *vis)
-{
-	int size=LIBGGI_MODE(vis)->virt.x*LIBGGI_MODE(vis)->virt.y;
-
-	if (LIBGGI_FB_LINEAR(vis)!=NULL) {
-		munmap(LIBGGI_FB_LINEAR(vis),LIBGGI_FB_LINEAR_SIZE(vis));
-		LIBGGI_FB_LINEAR(vis)=NULL;
-		LIBGGI_FB_LINEAR_SIZE(vis)=0;
-	}
-
-	size=_ggiSetupMode(vis);
-	GGIDPRINT("Calculated size=%d bytes\n",size);
-
-	if (size <= 0) 
-		return;
-
-	LIBGGI_FB_LINEAR_SIZE(vis)=size;	
-	LIBGGI_FB_LINEAR(vis)=mmap(NULL,
-                     size,
-                     PROT_READ|PROT_WRITE,
-                     MAP_SHARED,
-                     LIBGGI_FD(vis),
-	             MMAP_TYPE_MMIO|MMAP_PER_REGION_TYPE|MMAP_FRAMEBUFFER);
-
-	GGIDPRINT("Linear FB=%p\n",LIBGGI_FB_LINEAR(vis));
-	if (LIBGGI_FB_LINEAR(vis) == MAP_FAILED) {
-		LIBGGI_FB_LINEAR(vis)=NULL;
-		LIBGGI_FB_LINEAR_SIZE(vis)=0;
-	}
-}
-
-static int _GGIdomode(ggi_visual *vis)
-{
-	int err;
-	ggi_suggest sug;
-
-	_GGIgetmmio(vis);
-
-	err=(_ggiOpenDL(vis,"generic-stubs","")==NULL);
-	if (err) {
-		fprintf(stderr,"display-KGI: Can't load the \"generic-stubs\" "
-			       "library\n");
-	}
+		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
+		if (! accel) {
 		
-	vis->opdraw->setorigin=GGIsetorigin;
-
-	sug.id=0;
-	do {
-		err=GGIkgicommand(vis,GRAPHICS_GETSUGGEST,&sug);
-		if (err!=0) {
-			fprintf(stderr,"display-KGI: Failed getting suggestion %d\n",
-				       sug.id);
-			perror("display-KGI");
-			return -1;	/* Error */
+			GGIDPRINT("Didn't find an accelerator\n");
+			return -1;
 		}
-
-		GGIDPRINT("display-KGI - attempting %s (%s)\n",sug.name,sug.args);
-		err=(_ggiOpenDL(vis,sug.name,sug.args)==NULL);
-		if (err) {
-			fprintf(stderr,"display-KGI: Can't find an appropriate "
-				       "library for %s (%s)\n",
-					sug.name,sug.args);
-			return err;
-		} else {
-			GGIDPRINT("Success in loading %s (%s)\n",sug.name,sug.args);
-		}
-	} while (sug.id!=0);
-
-	return 0;
+		
+		space = strchr(accel->name, ' ');
+		if (space)
+			name_size = space - accel->name;
+		else
+			name_size = strlen(accel->name);
+		
+		strcpy(apiname, "kgi-");
+		strncat(apiname, accel->name, name_size);
+		strcpy(arguments, "");
+		
+		return 0;
+	}
+	default:
+		break;
+	}
+	
+	return -1;
 }
 
-int GGIsetmode(ggi_visual *vis,ggi_mode *tm)
-{ 
-	int err;
 
-	if (vis==NULL) {
+int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
+{
+	const kgic_mapper_resource_info_result_t *fb;
+	int id, i;
+	char sugname[256], args[256];
+	int err;
+	kgi_u8_t *fb_ptr;
+
+	if (vis == NULL) {
 		GGIDPRINT("Visual==NULL\n");
 		return -1;
 	}
-	
-	/* Temporary */
-	if (LIBGGI_FB_LINEAR(vis)!=NULL) {	/* Unmap mem - it might be invalid after mode-change */
-		munmap(LIBGGI_FB_LINEAR(vis),LIBGGI_FB_LINEAR_SIZE(vis));
-		LIBGGI_FB_LINEAR(vis)=NULL;
+
+	err = GGI_kgi_checkmode(vis, tm);
+	if(err)
+		return err;
+
+	if(kgiSetMode(&KGI_CTX(vis)) != KGI_EOK){
+		GGIDPRINT_LIBS("Unable to set mode \n");
+		return -1;
 	}
+	GGIDPRINT_LIBS("Mode set\n");
+
+	if(LIBGGI_APPLIST(vis)->num){
+		for (i = 0; i < LIBGGI_APPLIST(vis)->num; ++i) {
+			_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
+			_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
+		}
+	}
+	
+	if(KGI_PRIV(vis)->fb)
+		munmap(KGI_PRIV(vis)->fb, KGI_PRIV(vis)->fb_size);
+
+	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
+	if (! fb) {
+		GGIDPRINT_LIBS("No framebuffer resource available");
+		return -1;
+	}
+
+	GGIDPRINT("Found fb as resource %d", fb->resource);
+
+	kgiSetupMmapFB(&KGI_CTX(vis), fb->resource);
+
+	KGI_PRIV(vis)->fb_size = fb->info.mmio.size;
+	KGI_PRIV(vis)->fb = mmap(NULL, KGI_PRIV(vis)->fb_size,
+				 PROT_READ | PROT_WRITE, MAP_SHARED,
+				 KGI_CTX(vis).mapper.fd, 0);
+
+	if (KGI_PRIV(vis)->fb == MAP_FAILED){
+		GGIDPRINT_LIBS("Unable to map the frambuffer\n");
+		return -1;
+	}
+
+	*LIBGGI_MODE(vis) = *tm;
+	
+	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+	setup_pixfmt(LIBGGI_PIXFMT(vis), tm->graphtype);
+
+	GGIDPRINT_LIBS("Pixelformat set\n");
+
+	fb_ptr = KGI_PRIV(vis)->fb;
+	for (i = 0; i < tm->frames; ++i) {
+	
+		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
+		LIBGGI_APPBUFS(vis)[i]->frame = i;
+		LIBGGI_APPBUFS(vis)[i]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		LIBGGI_APPBUFS(vis)[i]->read = fb_ptr;
+		LIBGGI_APPBUFS(vis)[i]->write = fb_ptr;
+		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = 
+			(GT_SIZE(tm->graphtype)*tm->virt.x + 7) / 8;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = 
+			LIBGGI_PIXFMT(vis);
+		
+		fb_ptr += LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride*tm->virt.y;
+	}
+
+	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+
 	_ggiZapMode(vis, 0);
 
-	GGIkgicommand(vis,DRIVER_RELEASEMODE,NULL);
-	err=GGIkgicommand(vis,DRIVER_SETMODE,tm);
-	if (err) {
-		GGIDPRINT("%d=GGIkgicommand(%d,DRIVER_SETMODE,%p)\n",err,LIBGGI_FD(vis),tm);
-		return err;
+	for(id = 1; 0 == GGI_kgi_getapi(vis, id, sugname, args); ++id){
+		if(_ggiOpenDL(vis, sugname, args, NULL)){
+			GGIDPRINT_LIBS("kgi: can't open %s\n", sugname);
+			
+			if (id < 4)
+				return GGI_EFATAL;
+			else
+				continue;
+		}
+		GGIDPRINT_LIBS("kgi: loaded %s\n", sugname);
 	}
-	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
-	return _GGIdomode(vis);
+	if(GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE){
+		vis->palette = _ggi_malloc(sizeof(ggi_color) * 256);
+		vis->opcolor->setpalvec = GGI_kgi_setpalvec;
+	}
+
+	ggiIndicateChange(vis, GGI_CHG_APILIST);
+
+	return 0;
 }
 
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGIcheckmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
-	if (vis==NULL)
+	kgi_image_mode_t mode;
+
+	if (vis == NULL)
 		return -1;
+
+	memset(&mode, 0, sizeof(kgi_image_mode_t));
+
+	/* Take care of automatic graphtype selection */
+	tm->graphtype = _GGIhandle_gtauto(tm->graphtype);
+
+	switch (GT_SCHEME(tm->graphtype)) {
 	
-	return GGIkgicommand(vis,DRIVER_TESTMODE,tm);
+	case GT_TEXT:
+		mode.flags |= KGI_IF_TEXT16;
+		break;
+		
+	case GT_TRUECOLOR:
+		mode.fam |= KGI_AM_COLORS;
+		mode.bpfa[0] = GT_DEPTH(tm->graphtype) / 3;
+		mode.bpfa[1] = GT_DEPTH(tm->graphtype) / 3 +
+			       GT_DEPTH(tm->graphtype) % 3;
+		mode.bpfa[2] = GT_DEPTH(tm->graphtype) / 3;
+		mode.bpfa[3] = GT_SIZE(tm->graphtype) - GT_DEPTH(tm->graphtype);
+		if (mode.bpfa[3])
+			mode.fam |= KGI_AM_APPLICATION;
+		break;
+	
+	case GT_PALETTE:
+	case GT_STATIC_PALETTE:	
+		mode.fam |= KGI_AM_COLOR_INDEX;
+		mode.bpfa[0] = GT_SIZE(tm->graphtype);
+		break;
+
+	default:
+		return -1;
+	}
+
+	mode.frames = 1;	
+	mode.size.x = tm->visible.x;
+	mode.size.y = tm->visible.y;
+	mode.virt.x = tm->virt.x;
+	mode.virt.y = tm->virt.y;
+
+	GGIDPRINT("%d, %d, %d, %d\n", mode.size.x, mode.size.y, mode.virt.x, mode.virt.y);
+
+	/* hack: kgi doesn't allow multiple mode checks */
+	kgiUnsetMode(&KGI_CTX(vis));
+
+	if(kgiSetImages(&KGI_CTX(vis), 1) != KGI_EOK){
+		GGIDPRINT_LIBS("Unable to set images\n");
+		return -1;
+	}
+	if(kgiSetImageMode(&KGI_CTX(vis), 0, &mode) != KGI_EOK){
+		GGIDPRINT_LIBS("Unable to set image mode\n");
+		return -1;
+	}
+	if(kgiCheckMode(&KGI_CTX(vis)) != KGI_EOK){
+		GGIDPRINT_LIBS("Unable to check mode\n");
+		return -1;
+	}
+	GGI_kgi_getmode(vis, tm);
+	
+	return 0;
 }
 
 /************************/
 /* get the current mode */
 /************************/
-int GGIgetmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *tm)
 {
-	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
-	if (vis==NULL)
-		return -1;
+	kgi_image_mode_t mode;
 	
-	return GGIkgicommand(vis,DRIVER_GETMODE,tm);
+	GGIDPRINT("In GGI_kgi_getmode(%p,%p)\n",vis,tm);
+	if (vis == NULL)
+		return -1;
+
+	memset(&mode, 0, sizeof(kgi_image_mode_t));
+	kgiGetImageMode(&KGI_CTX(vis), 0, &mode);
+	kgiPrintImageMode(&mode);
+
+	tm->graphtype = image_mode_to_graphtype(&mode);
+	tm->frames = 1;
+	tm->visible.x = mode.size.x;
+	tm->visible.y = mode.size.y;
+	tm->virt.x = mode.virt.x;
+	tm->virt.y = mode.virt.y;
+	tm->size.x = GGI_AUTO;
+	tm->size.y = GGI_AUTO;
+	tm->dpp.x = 1;
+	tm->dpp.y = 1;
+	
+	return 0;
 }
 
 /*************************/
 /* set the current flags */
 /*************************/
-int GGIsetflags(ggi_visual *vis,ggi_flags flags)
+int GGI_kgi_setflags(ggi_visual *vis,ggi_flags flags)
 {
-	LIBGGI_FLAGS(vis)=flags;
+	LIBGGI_FLAGS(vis) = flags;
 	return 0;
 }
