@@ -102,12 +102,12 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		fprintf(stderr, "failed to identify to mapper\n");
 		return errno;
 	}
-	printf("identified to mapper %s-%i.%i.%i-%i\n",
-		cb.result.mapper,
-		cb.result.mapper_version.major,
-		cb.result.mapper_version.minor,
-		cb.result.mapper_version.patch,
-		cb.result.mapper_version.extra);
+	GGIDPRINT("identified to mapper %s-%i.%i.%i-%i\n",
+		  cb.result.mapper,
+		  cb.result.mapper_version.major,
+		  cb.result.mapper_version.minor,
+		  cb.result.mapper_version.patch,
+		  cb.result.mapper_version.extra);
 	ctx->mapper.resources =
 		cb.result.resources;
 
@@ -208,7 +208,10 @@ kgiGetResource(kgi_context_t *ctx, kgi_u_t start, kgi_resource_type_t type)
 	do {
 		err = ioctl(ctx->mapper.fd, KGIC_MAPPER_RESOURCE_INFO, &cb);
 
-		if (!err && (cb.result.type & KGI_RT_MASK) == type)
+		if (!err && 
+		    ((cb.result.type) == type ||
+		     (((cb.result.type & KGI_RT_MASK) == KGI_RT_MMIO) &&
+		      ((cb.result.type & type) == type))))
 			return &cb.result;
 
 		++cb.request.resource;
