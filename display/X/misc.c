@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.29 2005/02/07 07:27:06 orzo Exp $
+/* $Id: misc.c,v 1.30 2005/02/09 06:09:02 orzo Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -41,7 +41,7 @@
  */
 int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
 {
-	DPRINT_MODE( "_ggi_x_is_better_fmt() entered.\n");
+	/* DPRINT_MODE( "_ggi_x_is_better_fmt() entered.\n"); */
 
 	/* prefer color to grayscale */
 	if (((than->class==StaticGray) || (than->class==GrayScale))

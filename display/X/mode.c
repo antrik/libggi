@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.42 2005/02/08 10:02:04 cegger Exp $
+/* $Id: mode.c,v 1.43 2005/02/09 06:09:02 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -240,8 +240,6 @@ int _GGI_X_checkmode_compare_visuals( ggi_mode *requested,
 	vib = priv->vilist[vib_num].vi;
 
 	do {
-		/* Crash here!  Program exits mysteriously instead of
-		 * arriving at _is_better_fmt like it should! */
 		tmp = _ggi_x_is_better_fmt(via, vib);
 		DPRINT_MODE( "_ggi_x_is_better_fmt() returns %i\n", tmp);
 		if( tmp != 0 ) break;
@@ -277,7 +275,7 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 
 	cm = _GGI_generic_checkmode_create();
 
-	cm->user_cmp = _GGI_X_checkmode_compare_visuals;
+	cm->user_cmp = (ggi_user_cmp *)_GGI_X_checkmode_compare_visuals;
 	cm->user_param = priv;
 
 	_GGI_generic_checkmode_init( cm, tm );
@@ -289,10 +287,10 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 		
 		_GGI_X_checkmode_adapt( tm, vi, priv );
 		_GGI_X_checkmode_adjust( &cm->req, tm, priv );
-		_GGI_generic_checkmode_update( cm, tm, (void *)i );
+		_GGI_generic_checkmode_update( cm, tm, i );
 	}
 
-	i = _GGI_generic_checkmode_finish( cm, tm, (void**) viidx );
+	i = _GGI_generic_checkmode_finish( cm, tm, viidx );
 	_GGI_generic_checkmode_destroy( cm );
 	return i;
 
@@ -679,7 +677,13 @@ static void _ggi_x_load_slaveops(ggi_visual *vis) {
 	vis->opdraw->fillscreen		= GGI_X_fillscreen_slave;
 }
 
-#if 0
+#if USE_OLD_SETMODE
+/**************************************************
+ *                                                *
+ *             START OF OLD SETMODE               *
+ *                                                *
+ **************************************************/
+
 int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 {
 	int err, viidx;
@@ -965,8 +969,9 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
 		if (err) {
-			/* xlib lock is still acquired here - unlock before exiting */
 			DPRINT("priv->createfb failed.\n");
+			/* xlib lock is still acquired here 
+			 * - unlock before exiting */
 			ggUnlock(priv->xliblock);
 			goto err0;
 		}
@@ -1054,12 +1059,13 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	DPRINT_MODE("X (setmode_fixed): mlfuncs.enter = %p\n",
 		priv->mlfuncs.enter);
+
 	if (priv->mlfuncs.enter != NULL) {
 		err = priv->mlfuncs.enter(vis, priv->cur_mode);
 		DPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
 				err);
 		if (err) goto err1;
-	}	/* if */
+	}
 
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
@@ -1103,61 +1109,53 @@ err0:
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return err;
 }
-#endif 
+
+int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
+{
+	ggi_x_priv * priv  = GGIX_PRIV(vis);
+	if(priv->ok_to_resize)
+		return GGI_X_setmode_normal(vis, tm);
+	else
+		return GGI_X_setmode_fixed(vis, tm);
+}
+
+/**************************************************
+ *                                                *
+ *             END OF OLD SETMODE                 *
+ *                                                *
+ **************************************************/
+
+#else
 
 
 int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 {
-	/* Normal and Fixed variables */
 	int err, viidx;
 	XEvent event;
 	XSetWindowAttributes attrib;
+	XWindowAttributes attrib2;
 	XVisualInfo *vi;
 	ggi_x_priv *priv;
 
-	/* not ok_to_resize only */
-	int w, h, dummy;
-	Window root;
-	unsigned long attribmask;
+	Window root = 0;
 
-	/* ok_to_resize  only */
+	/* attribmask is used for ChangeAttributes to turn on 
+	 * Backing store or not. */
+	unsigned long attribmask = 0;
+
 	int destroychild, destroyparent, createchild, createparent;
 
 	priv = GGIX_PRIV(vis);
 
-#if 0
-	if (priv->ok_to_resize) {
-		DPRINT("GGI_X_setmode_normal(%p, %p) called\n", vis, tm);
-		if ((err = GGI_X_checkmode_internal(vis, tm, &viidx)))
-			return err;
-	} else {
-		DPRINT("GGI_X_setmode_fixed(%p, %p) called\n", vis, tm);
-		XGetGeometry(priv->disp, priv->parentwin, &root, &dummy,
-			     &dummy, (unsigned int *) &w,
-			     (unsigned int *) &h, (unsigned int *) &dummy,
-			     (unsigned int *) &dummy);
+	/* Get the root window if we are running -inwin. */
+	if( priv->parentwin != None ) {
+		XGetWindowAttributes( priv->disp, priv->parentwin, &attrib2);
+		root = attrib2.root;
+	} else 
+		root = None;
 
-		if (tm->visible.x == GGI_AUTO)
-			tm->visible.x = w;
-		if (tm->visible.y == GGI_AUTO)
-			tm->visible.y = h;
-		if ((tm->visible.x != w) || (tm->visible.y != h))
-			return GGI_EARGINVAL;
-
-		err = GGI_X_checkmode_internal(vis, tm, &viidx);
-		if ((err != GGI_OK) || (tm->visible.x != w)
-		    || (tm->visible.y != h)) {
-			tm->visible.x = w;
-			tm->visible.y = h;
-		}
-		if (err)
-			return err;
-
-	}
-#else
 	if ((err = GGI_X_checkmode_internal(vis, tm, &viidx)))
 		return err;
-#endif
 
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
 	priv->viidx = viidx;
@@ -1170,24 +1168,8 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	ggLock(priv->xliblock);
 
 	vi = (priv->vilist + viidx)->vi;
-	DPRINT("* visual id = 0x%X\n", vi->visualid);
 
 	_ggi_x_build_pixfmt(vis, tm, vi);	/* Fill in ggi_pixelformat */
-
-	if (priv->ok_to_resize) {
-		/* Restore original mode */
-		DPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
-			    priv->mlfuncs.restore);
-		if (priv->mlfuncs.restore != NULL) {
-			err = priv->mlfuncs.restore(vis);
-			DPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
-				    err);
-			if (err)
-				goto err0;
-		}
-		/* if */
-
-	}
 
 	destroychild = destroyparent = 1;
 	createchild = createparent = 1;
@@ -1197,7 +1179,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		destroychild = 0;
 
 	if( ! priv->ok_to_resize ) {
-		/* Cleanup question: is this check neccessary? */
+		/* XXX: Cleanup question: is this check neccessary? */
 		destroychild = destroychild && priv->win != priv->parentwin;
 		destroyparent = 0;
 		createparent = 0;
@@ -1211,9 +1193,10 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	if ( createparent ) {
 
-		/* Parent windows are merely clipping frames, just use defaults. */
+		/* Parent windows are merely clipping frames, 
+		 * just use defaults. */
 
-#warning all this could probably use more error checking
+		/* XXX: all this could probably use more error checking */
 
 		priv->parentwin =
 		    XCreateSimpleWindow(priv->disp,
@@ -1281,68 +1264,79 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	_ggi_x_create_colormaps(vis, vi);
 
 
-	attrib.colormap = priv->cmap;
-
+	/* XXX: does attribmask ever get CWBorderPixel ORed in?
+	 * and is it neccessary to set the border pixel? */
 	if (priv->ok_to_resize)
 		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
-	else {
-		attribmask = CWBackingStore;
-		if (priv->win == root) {
-			DPRINT_MODE
-			    ("X (setmode_fixed): mlfuncs.restore = %p\n",
-			     priv->mlfuncs.restore);
-			if (priv->mlfuncs.restore != NULL) {
-				err = priv->mlfuncs.restore(vis);
-				DPRINT_MODE
-				    ("X: mlfuncs.restore retcode = %i\n",
-				     err);
-				if (err)
-					goto err0;
-			}
-			/* if */
-			attribmask = CWColormap;
-			goto nochild;
-		}
+
+	/* XXX: attribmask maybe should have CWColormap ORed in
+	 * as well.  As it is, that attribute is ignored in the
+	 * later call to XChangeWindowAttributes() in the case
+	 * that we are not running with -inwin=root */
+	attribmask = CWBackingStore;
+	attrib.colormap = priv->cmap;
+
+	DPRINT_MODE ("X (setmode): mlfuncs.restore = %p\n",
+	     priv->mlfuncs.restore);
+
+	if (priv->mlfuncs.restore != NULL) {
+		err = priv->mlfuncs.restore(vis);
+		DPRINT_MODE ("X: mlfuncs.restore retcode = %i\n", err);
+		if (err) goto err0;
 	}
 
-	if (priv->ok_to_resize)
+	if( !priv->ok_to_resize && priv->win == root ) {
+		/* Turn off CWBackingStore for -inwin=root.
+		 * XXX: We are setting CWColormap, do we only
+		 * want this for -inwin=root? */
+		attribmask = CWColormap;
+	}
+	else {
+
+		unsigned long win_attribmask;
+		unsigned win_width;
+
+		/* XXX: our priv->win width is multiplied by the number
+		 * of frames only if we are allowed to resize.  Is this
+		 * proper??? */
+		win_width = (unsigned) tm->virt.x;
+		win_width *=  priv->ok_to_resize ? tm->frames : 1;
+
+		win_attribmask = CWColormap;
+		win_attribmask |= priv->ok_to_resize ? CWBorderPixel : 0;
+
 		priv->win = XCreateWindow(priv->disp, priv->parentwin,
 					  0, 0, (unsigned) tm->virt.x,
-					  (unsigned) tm->virt.y *
-					  tm->frames, 0, vi->depth,
+					  win_width,
+					   0, vi->depth,
 					  InputOutput, vi->visual,
-					  CWColormap | CWBorderPixel,
+					  win_attribmask, 
 					  &attrib);
-	else
-		priv->win = XCreateWindow(priv->disp, priv->parentwin,
-					  0, 0, (unsigned) tm->virt.x,
-					  (unsigned) tm->virt.y, 0,
-					  vi->depth, InputOutput,
-					  vi->visual, CWColormap, &attrib);
 
-	DPRINT_MODE("X: About to map child\n");
+		DPRINT_MODE("X: About to map child\n");
 
-	/* Have the parent window tell the WM its children have colormaps */
-	XSetWMColormapWindows(priv->disp, priv->parentwin, &(priv->win),
-			      1);
+		/* Have the parent window tell the WM its children have 
+		 * colormaps */
+		XSetWMColormapWindows(priv->disp, priv->parentwin, 
+				&(priv->win), 1);
 
-	/* Map window. */
-	XSelectInput(priv->disp, priv->win, ExposureMask);
-	XMapWindow(priv->disp, priv->win);
+		/* Map window. */
+		XSelectInput(priv->disp, priv->win, ExposureMask);
+		XMapWindow(priv->disp, priv->win);
 
-	/* Wait for window to become mapped */
-	XNextEvent(priv->disp, &event);
-	DPRINT_MODE("X: Window Mapped\n");
+		/* Wait for window to become mapped */
+		XNextEvent(priv->disp, &event);
+		DPRINT_MODE("X: Window Mapped\n");
 
-	/* Select input events to listen for */
-	XSelectInput(priv->disp, priv->win,
-		     KeymapStateMask | KeyPressMask | KeyReleaseMask |
-		     ButtonPressMask | ButtonReleaseMask |
-		     EnterWindowMask | LeaveWindowMask |
-		     ExposureMask | PointerMotionMask);
+		/* Select input events to listen for */
+		XSelectInput(priv->disp, priv->win,
+			     KeymapStateMask | KeyPressMask | KeyReleaseMask |
+			     ButtonPressMask | ButtonReleaseMask |
+			     EnterWindowMask | LeaveWindowMask |
+			     ExposureMask | PointerMotionMask);
 
+	}
 
-      nochild:
 
 	if (priv->gc)
 		XFreeGC(priv->disp, priv->gc);
@@ -1376,13 +1370,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	/* Turn on backing store (unless root window) */
 	attrib.backing_store = Always;
-
-	if (priv->ok_to_resize)
-		XChangeWindowAttributes(priv->disp, priv->win,
-					CWBackingStore, &attrib);
-	else
-		XChangeWindowAttributes(priv->disp, priv->win, attribmask,
-					&attrib);
+	XChangeWindowAttributes(priv->disp, priv->win, attribmask, &attrib);
 
 	ggUnlock(priv->xliblock);
 
@@ -1412,8 +1400,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		gii_event ev;
 		gii_xwin_cmddata_setparam data;
 
-		DPRINT_MODE
-		    ("X (setmode): tell inputlib about new window\n");
+		DPRINT_MODE("X (setmode): tell inputlib about new window\n");
 
 		ev.cmd.size = sizeof(gii_cmd_event);
 		ev.cmd.type = evCommand;
@@ -1448,13 +1435,16 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	return err;
 
-      err1:
+err1:
 	priv->freefb(vis);
-      err0:
+err0:
 	if (priv->opmansync)
 		MANSYNC_cont(vis);
 	return err;
 }
+
+#endif 
+
 
 
 
