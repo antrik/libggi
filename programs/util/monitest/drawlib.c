@@ -1,4 +1,4 @@
-/* $Id: drawlib.c,v 1.3 2003/07/05 14:04:25 cegger Exp $
+/* $Id: drawlib.c,v 1.4 2004/09/08 17:51:02 cegger Exp $
 ******************************************************************************
 
    Monitest drawing library: fields with stripes and stars, circle.
@@ -42,7 +42,7 @@ int circle(ggi_visual_t vis,int xcenter,int ycenter,int radius)
 		sd = od-x-x-1;
 		y++;
 		md = od;
-		if (abs(sd) < abs(od)) {
+		if ((abs(sd)) < (abs(od))) {
 			x--;
 			md = sd;
 		}

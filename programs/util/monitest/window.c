@@ -1,4 +1,4 @@
-/* $Id: window.c,v 1.1 2001/05/12 23:03:53 cegger Exp $
+/* $Id: window.c,v 1.2 2004/09/08 17:51:03 cegger Exp $
 ******************************************************************************
 
    Universal window for LibGGI
@@ -18,7 +18,7 @@
 #include "window.h"
 #include "ggicolors.h"
 
-struct window _defaultwindow = {
+static struct window _defaultwindow = {
 	NULL,		/* no reasonable default visual possible */
 	10,10,200,150,	/* small window should fit everywhere */
 	GGI_BLACK,	/* background */

@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.2 2004/02/02 19:22:01 cegger Exp $
+/* $Id: menu.c,v 1.3 2004/09/08 17:51:03 cegger Exp $
 ******************************************************************************
 
    Universal menu for ggi
@@ -21,7 +21,7 @@
 #include "menu.h"
 #include "ggitext.h"
 
-struct menu _defaultmenu = {
+static struct menu _defaultmenu = {
 #ifdef setwindow
 	{NULL,
 	10,10,100,100,           /* size */
@@ -262,8 +262,7 @@ int do_menu(struct menu * m , int selected)
 					ggiFlush(m->w.vis); 
 					/* just to make sure */
 					return (selected);
-					/* never get here */
-					break;
+					break; /* never get here */
 				case GIIUC_Escape:
 					ggiFlush(m->w.vis); 
 					/* just to make sure */

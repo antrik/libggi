@@ -1,4 +1,4 @@
-/* $Id: ggitext.c,v 1.2 2004/02/02 19:22:01 cegger Exp $
+/* $Id: ggitext.c,v 1.3 2004/09/08 17:51:03 cegger Exp $
 ******************************************************************************
 
    Implementation of ggitext: routines for formatted text output
@@ -125,7 +125,7 @@ int ggiGraphTextPuts(ggi_visual_t vis,
 		posy += (height-txheight);break;
 	case GGI_TEXT_TOP | GGI_TEXT_BOTTOM:
 		return -1 ; /* not implemented */
-		break; 
+		break; /* never get here */
 	default:
 		return -1 ; /* not implemented */
 		break; /* never get here */
@@ -282,7 +282,7 @@ int ggiGraphTextLongPuts(ggi_visual_t vis,
 		posy += (height-txheight);break;
 	case GGI_TEXT_TOP | GGI_TEXT_BOTTOM:
 		return -1 ; /* not implemented */
-		break; 
+		break; /* never get here */
 	default:
 		return -1 ; /* not implemented */
 		break; /* never get here */

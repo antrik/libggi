@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.5 2004/05/21 20:09:07 aldot Exp $
+/* $Id: monitest.c,v 1.6 2004/09/08 17:51:03 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -53,10 +53,8 @@
 #define kgitune(x)	do{}while(0)
 #endif
 
-ggi_visual_t vis;
+static ggi_visual_t vis;
 static int kgidevice;
-ggi_graphtype type;
-int sx, sy;
 
 ggi_pixel white, black, red, green, blue, yellow, magenta, cyan;
 
@@ -247,7 +245,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.5 2004/05/21 20:09:07 aldot Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.6 2004/09/08 17:51:03 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -267,7 +265,7 @@ static int help(void)
 #endif
 
 
-const ggi_coord resolutions[] = {
+static const ggi_coord resolutions[] = {
 	{320, 200},
 	{320, 240},
 	{320, 350},		/* EGA text */
@@ -289,7 +287,7 @@ const ggi_coord resolutions[] = {
 	{0, 0}			/* End mark!! */
 };
 
-const ggi_graphtype graphtypes[] = {
+static const ggi_graphtype graphtypes[] = {
 	/* can't handle textmode yet */
 	GT_1BIT,		/*  1 bpp graphics              */
 	GT_4BIT,		/*  4 bpp graphics              */
@@ -301,10 +299,10 @@ const ggi_graphtype graphtypes[] = {
 	GT_INVALID
 };
 
-int resindex = -1;		/* 'base' resolution of the mode set */
-int gtindex = -1;		/* graphtype, i.e. bit depth         */
-int xres = GGI_AUTO;		/* visual resolution, might be different */
-int yres = GGI_AUTO;		/* from the mode list */
+static int resindex = -1;		/* 'base' resolution of the mode set */
+static int gtindex = -1;		/* graphtype, i.e. bit depth         */
+static int xres = GGI_AUTO;		/* visual resolution, might be different */
+static int yres = GGI_AUTO;		/* from the mode list */
 
 static int guessmode(void)
 {
@@ -317,7 +315,7 @@ static int guessmode(void)
 	int i;
 
 	ggiGetMode(vis, &currmode);
-	fprintf(stderr, "Current mode is %dx%d %d/%d.\n",
+	fprintf(stderr, "Current mode is %dx%d %u/%u.\n",
 		currmode.visible.x, currmode.visible.y,
 		GT_DEPTH(currmode.graphtype), GT_SIZE(currmode.graphtype));
 
@@ -346,7 +344,7 @@ static int guessmode(void)
 	while (graphtypes[i] != GT_INVALID) {
 		if (graphtypes[i] == currmode.graphtype) {
 			gtindex = i;
-			fprintf(stderr, "Detected graphtype %d/%d\n",
+			fprintf(stderr, "Detected graphtype %u/%u\n",
 				GT_DEPTH(graphtypes[gtindex]),
 				GT_SIZE(graphtypes[gtindex]));
 			break;
@@ -415,11 +413,11 @@ static int changeresmenu(void)
 			prevgtindex = 0;
 		}
 		sprintf(cm.entry[4].text = nextgtline,
-			"5 Increase depth: %d/%d",
+			"5 Increase depth: %u/%u",
 			GT_DEPTH(graphtypes[nextgtindex]),
 			GT_SIZE(graphtypes[nextgtindex]));
 		sprintf(cm.entry[5].text = prevgtline,
-			"6 Decrease depth: %d/%d",
+			"6 Decrease depth: %u/%u",
 			GT_DEPTH(graphtypes[prevgtindex]),
 			GT_SIZE(graphtypes[prevgtindex]));
 		sprintf(cm.entry[6].text =
@@ -432,7 +430,7 @@ static int changeresmenu(void)
 			resolutions[prevresindex].y);
 
 
-		sprintf(s, "current: %4dx%3dx%d/%d", xres, yres,
+		sprintf(s, "current: %4dx%3dx%u/%u", xres, yres,
 			GT_DEPTH(graphtypes[gtindex]),
 			GT_SIZE(graphtypes[gtindex]));
 
@@ -500,8 +498,7 @@ static int changeresmenu(void)
 		setcolors();	/* necessary when depth changed */
 
 	}
-	/* never get here */
-	return 0;
+	return 0; /* never get here */
 }
 
 
@@ -568,12 +565,12 @@ static int mainmenu(void)
 		case 7:
 		case -1:
 			return 0;
-			break;
+			break; /* never get here */
 		default:
 			ggiPanic("Internal error, wrong menu selection");
 		}
 	}
-	return 0;
+	return 0; /* never get here */
 }
 
 
