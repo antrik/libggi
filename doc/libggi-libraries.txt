@@ -260,3 +260,4 @@ See Also
 .. include:: ../display/monotext/man.txt
 .. include:: ../display/sub/man.txt
 .. include:: ../display/trueemu/man.txt
+.. include:: ../display/auto/man.txt

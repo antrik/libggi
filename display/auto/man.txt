@@ -17,8 +17,8 @@ Description
 It provides OS dependent target autodetection.
 
 It is automatically invoked when you open a default
-target with ggiOpen(). It unloads itself automatically
-before ggiOpen() returns back to the application,
+target with `ggiOpen()`. It unloads itself automatically
+before `ggiOpen()` returns back to the application,
 successful or not.
 
 It probes several targets. It tries the next
@@ -34,7 +34,7 @@ Say, you're on a remote session and open a default target.
 Say, the X-target is tried first. It fails, because the
 shm extension is only locally usable.
 So it tries the X-target again, but this time with the
--noshm option. This should work then.
+`-noshm` option. This should work then.
 
 Say, you are on a console, no X available. The X-target
 will fail (after some retries). If you are on Linux,
