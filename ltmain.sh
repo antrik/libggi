@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.141 2005/01/26 17:53:24) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.149 2005/02/01 17:44:27) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.141 2005/01/26 17:53:24) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.149 2005/02/01 17:44:27) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.141 2005/01/26 17:53:24"
-package_revision=1.1667.2.141
+TIMESTAMP=" 1.1667.2.149 2005/02/01 17:44:27"
+package_revision=1.1667.2.149
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1025,7 +1025,8 @@ _LT_EOF
 # Need a lot of goo to handle *both* DLLs and import libs
 # Has to be a shell function in order to 'eat' the argument
 # that is supplied when $file_magic_command is called.
-func_win32_libid () {
+func_win32_libid ()
+{
   $opt_debug
   win32_libid_type="unknown"
   win32_fileres=`file -L $1 2>/dev/null`
@@ -1067,7 +1068,8 @@ func_win32_libid () {
 # Only attempt this if the compiler in the base compile
 # command doesn't match the default compiler.
 # arg is usually of the form 'gcc ...'
-func_infer_tag () {
+func_infer_tag ()
+{
     $opt_debug
     if test -n "$available_tags" && test -z "$tagname"; then
       CC_quoted=
@@ -1122,7 +1124,8 @@ func_infer_tag () {
 # func_generate_dlsyms outputname originator pic_p
 # Extract symbols from dlprefiles and create ${outputname}S.o with
 # a dlpreopen symbol table.
-func_generate_dlsyms () {
+func_generate_dlsyms ()
+{
     $opt_debug
     my_outputname="$1"
     my_originator="$2"
@@ -1356,7 +1359,8 @@ static const void *lt_preloaded_setup() {
 }
 
 # func_extract_an_archive dir oldlib
-func_extract_an_archive () {
+func_extract_an_archive ()
+{
     $opt_debug
     f_ex_an_ar_dir="$1"; shift
     f_ex_an_ar_oldlib="$1"
@@ -1396,7 +1400,8 @@ func_extract_an_archive () {
 
 
 # func_extract_archives gentop oldlib ...
-func_extract_archives () {
+func_extract_archives ()
+{
     $opt_debug
     my_gentop="$1"; shift
     my_oldlibs=${1+"$@"}

@@ -1485,7 +1485,7 @@ AC_CACHE_CHECK([if $compiler supports -c -o file.$ac_objext],
    rmdir conftest
    $RM conftest*
 ])
-_LT_DECL([compiler_c_o], [lt_cv_prog_compiler_c_o], [1],
+_LT_TAGDECL([compiler_c_o], [lt_cv_prog_compiler_c_o], [1],
 	[Does compiler simultaneously support -c and -o options?])
 ])# _LT_COMPILER_C_O
 
@@ -1795,7 +1795,7 @@ cygwin* | mingw* | pw32*)
       ;;
     pw32*)
       # pw32 DLLs use 'pw' prefix rather than 'lib'
-      library_names_spec='`$ECHO ${libname} | sed -e 's/^lib/pw/'``$ECHO ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
+      library_names_spec='`$ECHO ${libname} | sed -e 's/^lib/pw/'``$ECHO ${release} | $SED -e 's/[[.]]/-/g'`${versuffix}${shared_ext}'
       ;;
     esac
     ;;
@@ -1874,7 +1874,7 @@ freebsd* | dragonfly*)
   freebsd2*)
     shlibpath_overrides_runpath=yes
     ;;
-  freebsd3.[01]* | freebsdelf3.[01]*)
+  freebsd3.[[01]]* | freebsdelf3.[[01]]*)
     shlibpath_overrides_runpath=yes
     hardcode_into_libs=yes
     ;;
@@ -2769,9 +2769,6 @@ symcode='[[BCDEGRST]]'
 # Regexp to match symbols that can be accessed directly from C.
 sympat='\([[_A-Za-z]][[_A-Za-z0-9]]*\)'
 
-# Transform the above into a raw symbol and a C symbol.
-symxfrm='\1 \2\3 \3'
-
 # Define system-specific variables.
 case $host_os in
 aix*)
@@ -2824,8 +2821,11 @@ esac
 # Try without a prefix underscore, then with it.
 for ac_symprfx in "" "_"; do
 
+  # Transform symcode, sympat, and symprfx into a raw symbol and a C symbol.
+  symxfrm="\\1 $ac_symprfx\\2 \\2"
+
   # Write the raw and C identifiers.
-  lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*\($ac_symprfx\)$sympat$opt_cr$/$symxfrm/p'"
+  lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*$ac_symprfx$sympat$opt_cr$/$symxfrm/p'"
 
   # Check to see that the pipe works correctly.
   pipe_works=no
@@ -3427,6 +3427,11 @@ m4_if([$1], [CXX], [
       fi
       ;;
 
+    unicos*)
+      _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+      _LT_TAGVAR(lt_prog_compiler_can_build_shared, $1)=no
+      ;;
+
     uts4*)
       _LT_TAGVAR(lt_prog_compiler_pic, $1)='-pic'
       _LT_TAGVAR(lt_prog_compiler_static, $1)='-Bstatic'
@@ -3650,21 +3655,28 @@ _LT_EOF
       if $LD --help 2>&1 | $EGREP ': supported targets:.* elf' > /dev/null \
 	 && test "$tmp_diet" = no
       then
-	tmp_archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-	# Portland Group f77 and f90 compilers require an additonal -fpic
-	if test "$CC" = "pgf77" -o "$CC" = "pgf90"; then
-	   tmp_archive_cmds="$tmp_archive_cmds -fpic"
-	 fi
-	_LT_TAGVAR(archive_cmds, $1)="$tmp_archive_cmds"
+	tmp_addflag=
+	case $CC,$host_cpu in
+	pgf77* | pgf90* )		# Portland Group f77 and f90 compilers
+	  tmp_addflag=' -fpic' ;;
+	ecc*,ia64* | icc*,ia64*)	# Intel C compiler on ia64
+	  tmp_addflag=' -i_dynamic' ;;
+	efc*,ia64* | ifort*,ia64*)	# Intel Fortran compiler on ia64
+	  tmp_addflag=' -i_dynamic -nofor_main' ;;
+	ifc* | ifort*)			# Intel Fortran compiler
+	  tmp_addflag=' -nofor_main' ;;
+	esac
+
+	_LT_TAGVAR(archive_cmds, $1)='$CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
         case `$LD -v 2>&1` in
-          *\ [01].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
+          *\ [[01]].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
           *\ 2.11.93.0.2\ *) supports_anon_versioning=yes ;; # RH7.3 ...
           *\ 2.11.92.0.12\ *) supports_anon_versioning=yes ;; # Mandrake 8.2 ...
           *\ 2.11.*) ;; # other 2.11 versions
           *) supports_anon_versioning=yes ;;
         esac
         if test "x$supports_anon_versioning" = xyes; then
-          _LT_TAGVAR(archive_expsym_cmds, $1)='$ECHO "{ global:" > $output_objdir/$libname.ver~cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~$ECHO "local: *; };" >> $output_objdir/$libname.ver~$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+          _LT_TAGVAR(archive_expsym_cmds, $1)='$ECHO "{ global:" > $output_objdir/$libname.ver~cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~$ECHO "local: *; };" >> $output_objdir/$libname.ver~$CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
         else
           _LT_TAGVAR(archive_expsym_cmds, $1)=$_LT_TAGVAR(archive_cmds, $1)
         fi
@@ -3794,7 +3806,7 @@ _LT_EOF
       _LT_TAGVAR(link_all_deplibs, $1)=yes
 
       if test "$GCC" = yes; then
-	case $host_os in aix4.[012]|aix4.[012].*)
+	case $host_os in aix4.[[012]]|aix4.[[012]].*)
 	# We only want to do this on AIX 4.2 and lower, the check
 	# below for broken collect2 doesn't work under 4.3+
 	  collect2name=`${CC} -print-prog-name=collect2`
@@ -4750,7 +4762,7 @@ if test "$_lt_caught_CXX_error" != yes; then
         _LT_TAGVAR(link_all_deplibs, $1)=yes
 
         if test "$GXX" = yes; then
-          case $host_os in aix4.[012]|aix4.[012].*)
+          case $host_os in aix4.[[012]]|aix4.[[012]].*)
           # We only want to do this on AIX 4.2 and lower, the check
           # below for broken collect2 doesn't work under 4.3+
   	  collect2name=`${CC} -print-prog-name=collect2`
@@ -4949,7 +4961,7 @@ if test "$_lt_caught_CXX_error" != yes; then
         esac
         ;;
 
-      freebsd[12]*)
+      freebsd[[12]]*)
         # C++ shared libraries reported to be fairly broken before
 	# switch to ELF
         _LT_TAGVAR(ld_shlibs, $1)=no
@@ -5153,8 +5165,12 @@ if test "$_lt_caught_CXX_error" != yes; then
 		_LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 		;;
 	      *)  # Version 8.0 or newer
-	        _LT_TAGVAR(archive_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
-		_LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+	        tmp_idyn=
+	        case $host_cpu in
+		  ia64*) tmp_idyn=' -i_dynamic';;
+		esac
+	        _LT_TAGVAR(archive_cmds, $1)='$CC -shared'"$tmp_idyn"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+		_LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared'"$tmp_idyn"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 		;;
 	    esac
 	    _LT_TAGVAR(archive_cmds_need_lc, $1)=no
@@ -5382,7 +5398,7 @@ if test "$_lt_caught_CXX_error" != yes; then
   	    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
   	    _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
   	    case $host_os in
-  	      solaris2.[0-5] | solaris2.[0-5].*) ;;
+  	      solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
   	      *)
   	        # The C++ compiler is used as linker so we must use $wl
   	        # flag to pass the commands to the underlying system
@@ -5818,7 +5834,7 @@ _LT_TAGVAR(objext, $1)=$objext
 lt_simple_compile_test_code="class foo {}\n"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='public class conftest { public static void main(String[] argv) {}; }\n'
+lt_simple_link_test_code='public class conftest { public static void main(String[[]] argv) {}; }\n'
 
 # ltmain only uses $CC for tagged configurations so make sure $CC is set.
 _LT_TAG_COMPILER
