@@ -1,6 +1,6 @@
 # Generated from ltmain.in; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.53 2004/11/01 18:18:37) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.55 2004/11/03 14:07:35) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.53 2004/11/01 18:18:37) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.55 2004/11/03 14:07:35) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.53 2004/11/01 18:18:37"
-package_revision=1.1667.2.53
+TIMESTAMP=" 1.1667.2.55 2004/11/03 14:07:35"
+package_revision=1.1667.2.55
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -6083,6 +6083,7 @@ EOF
 #include <malloc.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <ctype.h>
 #include <string.h>
 #include <sys/stat.h>
 
@@ -6214,7 +6215,7 @@ basename (const char *name)
 
 #if defined (HAVE_DOS_BASED_FILE_SYSTEM)
   /* Skip over the disk name in MSDOS pathnames. */
-  if (isalpha (name[0]) && name[1] == ':')
+  if (isalpha ((unsigned char)name[0]) && name[1] == ':')
     name += 2;
 #endif
 
@@ -6269,7 +6270,7 @@ find_executable (const char* wrapper)
 
   /* Absolute path? */
 #if defined (HAVE_DOS_BASED_FILE_SYSTEM)
-  if (isalpha (wrapper[0]) && wrapper[1] == ':')
+  if (isalpha ((unsigned char)wrapper[0]) && wrapper[1] == ':')
   {
     concat_name = xstrdup (wrapper);
     if (check_executable(concat_name))
