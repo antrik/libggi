@@ -31,13 +31,13 @@ AC_ARG_WITH([uninst-gii],
    fi
    if test -d "$gii_top_builddir" -a -d "$gii_top_srcdir" ; then
      if test "$gii_top_builddir" = "$gii_top_srcdir" ; then
-       CFLAGS="$CFLAGS -I$gii_top_builddir/include"
-       CPPFLAGS="$CPPFLAGS -I$gii_top_builddir/include"
+       CFLAGS="-I$gii_top_builddir/include $CFLAGS"
+       CPPFLAGS="-I$gii_top_builddir/include $CPPFLAGS"
      else
-       CFLAGS="$CFLAGS -I$gii_top_srcdir/include -I$gii_top_builddir/include"
-       CPPFLAGS="$CPPFLAGS -I$gii_top_srcdir/include -I$gii_top_builddir/include"
+       CFLAGS="-I$gii_top_srcdir/include -I$gii_top_builddir/include $CFLAGS"
+       CPPFLAGS="-I$gii_top_srcdir/include -I$gii_top_builddir/include $CPPFLAGS"
      fi
-     LDFLAGS="$LDFLAGS -L$gii_top_builddir/gg -L$gii_top_builddir/gii"
+     LDFLAGS="-L$gii_top_builddir/gg -L$gii_top_builddir/gii $LDFLAGS"
    fi
 ]])
 
