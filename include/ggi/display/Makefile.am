@@ -5,4 +5,4 @@ ggiinclude_HEADERS = sub.h tile.h multi.h trueemu.h palemu.h \
 	libkgi.h kgi.h fbdev.h glide.h lcd823.h svgalib.h \
 	ipc.h memory.h tele.h file.h \
 	aa.h monotext.h vcsa.h \
-	directx.h vgl.h
+	directx.h quartz.h vgl.h
