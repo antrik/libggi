@@ -243,6 +243,7 @@ See Also
 
 .. include:: ../programs/util/monitest/monitest.txt
 .. include:: ../programs/demos/cube3d.txt
+.. include:: ../programs/demos/demo.txt
 
 .. include:: ../display/aa/man.txt
 .. include:: ../display/auto/man.txt
