@@ -1,17 +1,20 @@
-/*
- * tunemode.c - Author 1998 Andreas Beck   becka@ggi-project.org
- *
- * User mode program for timing-list-driver. Allows interactive adjust-
- * ment of modes.
- *
- *   This software is placed in the public domain and can be used freely
- *   for any purpose. It comes without any kind of warranty, either
- *   expressed or implied, including, but not limited to the implied
- *   warranties of merchantability or fitness for a particular purpose.
- *   Use it at your own risk. the author is not responsible for any damage
- *   or consequences raised by use or inability to use this program.
- *
- */
+/* $Id: tunemode.c,v 1.5 2004/09/18 10:41:21 cegger Exp $
+***********************************************************************
+
+   Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
+
+   User mode program for timing-list-driver. Allows interactive adjust-
+   ment of modes.
+
+   This software is placed in the public domain and can be used freely
+   for any purpose. It comes without any kind of warranty, either
+   expressed or implied, including, but not limited to the implied
+   warranties of merchantability or fitness for a particular purpose.
+   Use it at your own risk. the author is not responsible for any damage
+   or consequences raised by use or inability to use this program.
+
+***********************************************************************
+*/
 
 /* NEVER do this in your own programs. They will break without warning. */
 

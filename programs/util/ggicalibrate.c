@@ -1,8 +1,14 @@
-/*
- * h3600 GGI calibration Application
- * Author: Tobias Hunger
- * based on xcalibrate from Charles Flynn
- */
+/* $Id: ggicalibrate.c,v 1.5 2004/09/18 10:37:59 cegger Exp $
+******************************************************************************
+
+   h3600 GGI calibration Application
+   based on xcalibrate from Charles Flynn
+
+   Written in 2001 by Tobias Hunger
+
+******************************************************************************
+*/
+
 
 #include <ggi/ggi.h>
 
