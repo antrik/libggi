@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2004/09/15 20:29:21 pekberg Exp $
+/* $Id: mode.c,v 1.23 2004/09/20 19:24:42 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -34,7 +34,6 @@
 #include "ddinit.h"
 
 #include "../common/pixfmt-setup.inc"
-#include "../common/ggi-auto.inc"
 
 static int
 directx_acquire(ggi_resource *res, uint32 actype)
@@ -142,7 +141,7 @@ int
 GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
-	uint8 err = 0;
+	int err = 0;
 	int depth, width, height, sizex, sizey, defwidth, defheight;
 	ggi_graphtype deftype;
 
@@ -157,14 +156,47 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 		defheight = height * 9 / 10;
 	}
 
-	/* handle AUTO */
-	_GGIhandle_ggiauto(mode, defwidth, defheight);
+	if (mode->frames == GGI_AUTO)
+		mode->frames = 1;
+
+	if (mode->dpp.x == GGI_AUTO)
+		mode->dpp.x = 1;
+
+	if (mode->dpp.y == GGI_AUTO)
+		mode->dpp.y = 1;
+
+	if (mode->visible.x==GGI_AUTO
+		&& mode->virt.x==GGI_AUTO
+		&& mode->size.x==GGI_AUTO)
+		mode->visible.x = mode->virt.x = defwidth;
+	else if (mode->visible.x==GGI_AUTO && mode->virt.x==GGI_AUTO)
+		mode->visible.x = mode->virt.x = mode->size.x * width / sizex;
+	else if (mode->visible.x == GGI_AUTO)
+		mode->visible.x = mode->virt.x;
+	else if (mode->virt.x == GGI_AUTO)
+		mode->virt.x = mode->visible.x;
+
+	if (mode->visible.y==GGI_AUTO
+		&& mode->virt.y==GGI_AUTO
+		&& mode->size.y==GGI_AUTO)
+		mode->visible.y = mode->virt.y = defheight;
+	else if (mode->visible.y==GGI_AUTO && mode->virt.y==GGI_AUTO)
+		mode->visible.y = mode->virt.y = mode->size.y * height / sizey;
+	else if (mode->visible.y == GGI_AUTO)
+		mode->visible.y = mode->virt.y;
+	else if (mode->virt.y == GGI_AUTO)
+		mode->virt.y = mode->visible.y;
+
+	GGIDPRINT_MODE("directx: visible (%i,%i) virt (%i,%i) size (%i,%i)\n",
+		mode->visible.x, mode->visible.y,
+		mode->virt.x, mode->virt.y,
+		mode->size.x, mode->size.y);
 
 	if (mode->frames < 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 		mode->frames = 1;
 	} else if (mode->frames > GGI_DISPLAY_DIRECTX_FRAMES) {
-		err = -1;
+		err = GGI_ENOMATCH;
 		mode->frames = GGI_DISPLAY_DIRECTX_FRAMES;
 	}
 
@@ -195,7 +227,7 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 		break;
 	default:
 		deftype = GT_AUTO;
-		err = -1;
+		err = GGI_ENOMATCH;
 		break;
 	}
 
@@ -212,27 +244,25 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 		      && mode->visible.y == defheight)))) {
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if (GT_SIZE(mode->graphtype) != (unsigned) depth) {
 		mode->graphtype = deftype;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
 	if (mode->virt.x < mode->visible.x) {
 		mode->virt.x = mode->visible.x;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 	if (mode->virt.y < mode->visible.y) {
 		mode->virt.y = mode->visible.y;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}
 
-	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
-	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
-		err = -1;
-	}
+	if (mode->dpp.x != 1 || mode->dpp.y != 1)
+		err = GGI_ENOMATCH;
 	mode->dpp.x = mode->dpp.y = 1;
 
 	if (err)
