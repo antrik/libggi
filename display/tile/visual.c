@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/10/31 14:25:04 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/11/03 13:32:18 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -68,8 +68,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}
 
-	priv = TILE_PRIV(vis) = malloc(sizeof(ggi_tile_priv));
+	priv = malloc(sizeof(ggi_tile_priv));
 	if (priv == NULL) return GGI_ENOMEM;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
