@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.10 2003/01/27 23:28:25 skids Exp $
+/* $Id: demo.c,v 1.11 2003/02/01 05:30:36 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -506,6 +506,19 @@ int main(int argc, char **argv)
 		if (ggiKbhit(vis)) break;
 	}
 	printf("Puts(): %d strings\n", i);
+	ggiSetGCBackground(vis, black);	
+	ggiSetGCForeground(vis, white);	
+	i = 25;
+	ggiPutc(vis, i, i, 'P'); i+= 10;
+	ggiPutc(vis, i, i, 'u'); i+= 10;
+	ggiPutc(vis, i, i, 't'); i+= 10;
+	ggiPutc(vis, i, i, 'c'); i+= 10;
+	ggiPutc(vis, i, i, ' '); i+= 10;
+	ggiPutc(vis, i, i, 'T'); i+= 10;
+	ggiPutc(vis, i, i, 'e'); i+= 10;
+	ggiPutc(vis, i, i, 's'); i+= 10;
+	ggiPutc(vis, i, i, 't'); i+= 10;
+
 
 	/* Check the colormapping code. Draw four horizontal bars in red/green
 	 * blue and grey.
@@ -763,6 +776,15 @@ int main(int argc, char **argv)
 
 	for(y=10; y<vy; y++) {
 		ggiPutHLine(vis, 0, y, vx, put_buf);
+	}
+
+	/* The same with vlines.
+	 */
+	TestName("Vline Put");
+	waitabit();
+
+	for(x=0; x<vx; x++) {
+		ggiPutVLine(vis, x, 10, vy - 10, put_buf);
 	}
 
 	/* The same with boxes.
