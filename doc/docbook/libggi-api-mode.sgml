@@ -33,7 +33,7 @@ ggi_visual_t <parameter/visual/,
 int <parameter/cols/, int <parameter/rows/, 
 int <parameter/vcols/, int <parameter/vrows/, 
 int <parameter/fontx/, int <parameter/fonty/, 
-ggi_mode *<parameter/suggested_mode/, <replaceable/.../
+ggi_mode *<parameter/suggested_mode/
 </paramdef>
 </funcprototype>
 
@@ -44,7 +44,7 @@ ggi_visual_t <parameter/visual/,
 int <parameter/x/, int <parameter/y/, 
 int <parameter/xv/, int <parameter/yv/, 
 ggi_graphtype <parameter/type/, 
-ggi_mode *<parameter/suggested_mode/, <replaceable/.../
+ggi_mode *<parameter/suggested_mode/
 </paramdef>
 </funcprototype>
 
@@ -267,7 +267,8 @@ else {
 ggi_visual_t <parameter/visual/, 
 int <parameter/cols/, int <parameter/rows/, 
 int <parameter/vcols/, int <parameter/vrows/, 
-int <parameter/fontx/, int <parameter/fonty/
+int <parameter/fontx/, int <parameter/fonty/,
+ggi_graphtype <parameter/type/
 </paramdef>
 </funcprototype>
 

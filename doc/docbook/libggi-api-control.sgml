@@ -143,7 +143,7 @@ ggiExit();
 <funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
 
 <funcprototype>
-<funcdef>int <function>ggiPanic</function></funcdef>
+<funcdef>void <function>ggiPanic</function></funcdef>
 <paramdef>
 const char *<parameter/format/, 
 <replaceable/.../

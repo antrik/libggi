@@ -10,6 +10,7 @@
 <refname/ggiJoinInputs/
 
 <refname/ggiEventPoll/
+<refname/ggiEventSelect/
 <refname/ggiEventsQueued/
 <refname/ggiEventRead/
 
@@ -41,6 +42,19 @@ gii_event_mask <parameter/mask/,
 struct timeval *<parameter/t/
 </paramdef>
 </funcprototype>
+
+
+
+<funcprototype>
+<funcdef>int <function/giiEventSelect/</funcdef>
+<paramdef>
+ggi_visual_t<parameter/vis/, gii_event_mask *<parameter/mask/,
+int <parameter/n/,
+fd_set *<parameter/readfds/, fd_set *<parameter/writefds/, fd_set *<parameter/exceptfds/,
+struct timeval *<parameter/timeout/
+</paramdef>
+</funcprototype>
+
 
 <funcprototype>
 <funcdef>int <function/ggiEventsQueued/</funcdef>
