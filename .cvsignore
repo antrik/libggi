@@ -5,3 +5,4 @@ aclocal.m4
 config.h.in
 stamp-h.in
 .glimpse_*
+autom4te.cache
