@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.6 2002/05/17 22:56:37 skids Exp $
+/* $Id: internal.c,v 1.7 2002/05/24 21:46:44 skids Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -227,6 +227,60 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		}
 		break;
 	}
+}
+
+/* Generate a string representing the pixelformat e.g. r5g6b5.
+   This can be used for dl loading or for passing pixfmt through 
+   stringified/user-accessible interfaces.   Note these strings
+   don't use the same format as GGI_DB_STD_*, though it would be
+   nice if we could change GGI_DB_STD_* and depricate old values. */
+/* TODO: flesh this out                                       */
+void _ggi_pixfmtstr (ggi_visual *vis, char* str, int flags)
+{
+	if (flags & 1) {
+		char alpha_or_pad, *ptr;
+		ggi_pixelformat *pixfmt;
+		int idx;
+
+		pixfmt = LIBGGI_PIXFMT(vis);
+		alpha_or_pad = (flags & 2) ? 'a' : 'p';
+		idx = pixfmt->depth - 1;
+		if (idx > 31) return; /* paranoia never hurts. */
+		ptr = str;
+
+		while (1) {
+			switch(pixfmt->bitmeaning[idx] & 0x00ffff00) {
+			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
+				*(ptr++) = 'r';
+				break;
+			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
+				*(ptr++) = 'g';
+				break;
+			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
+				*(ptr++) = 'b';
+				break;
+			      case GGI_BM_TYPE_ATTRIB | GGI_BM_SUB_ALPHA:
+				*(ptr++) = alpha_or_pad;
+				break;
+			      default:
+				*(ptr++) = 'p';
+				break;
+			}
+			while ((pixfmt->bitmeaning[idx] & 0x00ffff00) ==
+			       (pixfmt->bitmeaning[idx - 1] & 0x00ffff00)) {
+			  if (idx == 0) break;
+			  idx--;
+			}
+			ptr += sprintf(ptr, "%d", 
+				       256-(pixfmt->bitmeaning[idx] & 0xff)
+				       );
+			idx--;
+			if (idx < 0) break;
+
+		}
+		*ptr = '\0';
+	}
+	else sprintf(str, "%d", GT_SIZE(LIBGGI_GT(vis)));
 }
 
 int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col)

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.2 2002/05/17 22:56:37 skids Exp $
+/* $Id: stubs.c,v 1.3 2002/05/24 21:46:44 skids Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -68,18 +68,18 @@ int ggiGetAPI(ggi_visual_t vis, int num, char *apiname, char *arguments)
 int ggiFlush(ggi_visual *vis)
 {
         return vis->opdisplay->flush(vis, 0, 0,
-				     LIBGGI_X(vis), LIBGGI_Y(vis), 1);
+				     LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis), 1);
 }
 
 int ggiFlushRegion(ggi_visual *vis, int x, int y, int w, int h)
 {
 	/* Do sanity check here so targets can assume correct values */
 	if (x < 0) x = 0;
-	else if (x > LIBGGI_X(vis)) return GGI_EARGINVAL;
+	else if (x > LIBGGI_VIRTX(vis)) return GGI_EARGINVAL;
 	if (y < 0) y = 0;
-	else if (y > LIBGGI_Y(vis)) return GGI_EARGINVAL;
-	if (x + w > LIBGGI_X(vis)) w = LIBGGI_X(vis) - x;
-	if (y + h > LIBGGI_Y(vis)) h = LIBGGI_Y(vis) - y;
+	else if (y > LIBGGI_VIRTY(vis)) return GGI_EARGINVAL;
+	if (x + w > LIBGGI_VIRTX(vis)) w = LIBGGI_VIRTX(vis) - x;
+	if (y + h > LIBGGI_VIRTY(vis)) h = LIBGGI_VIRTY(vis) - y;
 
 	return vis->opdisplay->flush(vis, x, y, w, h, 1);
 }
