@@ -4,7 +4,7 @@
 #define _FBDEV_DIRECTFB_GLOBALS
 #include "ggidirectfb.h"
 
-/* Needed for crusty memory_virtual function */
+/* Needed for memory_virtual/memory_physical functions */
 static void *ggi_fbdev_dfb_framebuffer_base; 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -88,6 +88,18 @@ void dfb_gfxcard_unmap_mmio( GraphicsDevice *device,
 	       "at %p (length %d)!\n", addr, length );
 }
 
+ModuleDirectory dfb_graphics_drivers;
+
+void dfb_modules_register(ModuleDirectory *directory,
+                      	  unsigned int     abi_version,
+                          const char      *name,
+                          const void      *funcs )
+{
+	/* Abuse unused field in a global to retreive 
+	   driver-library-local pointer */
+	(GraphicsDriverFuncs *)(dfb_config->mouse_protocol) = funcs;
+}
+
 void dfb_graphics_register_module( GraphicsDriverFuncs *funcs )
 {
 	/* Abuse unused field in a global to retreive 
@@ -95,7 +107,18 @@ void dfb_graphics_register_module( GraphicsDriverFuncs *funcs )
 	(GraphicsDriverFuncs *)(dfb_config->mouse_protocol) = funcs;
 }
 
-void *dfb_gfxcard_memory_virtual( unsigned int offset )
+unsigned long
+dfb_gfxcard_memory_physical(GraphicsDevice *device, unsigned int offset )
+{
+  /* Only used by ATI for blended rectangles, won't need until libbuf/libblt,
+   * but must provide valid pointer as it's initialized in the ATI DFB driver's
+   * init function. 
+   */
+	return (unsigned long)((__u8*)(dfb_fbdev->shared->fix.smem_start) + 
+			       offset);
+}
+
+void *dfb_gfxcard_memory_virtual( GraphicsDevice *device, unsigned int offset )
 {
   /* Only used by ATI for blended rectangles, won't need until libbuf/libblt,
    * but must provide valid pointer as it's initialized in the ATI DFB driver's
@@ -120,13 +143,27 @@ void dfb_sort_triangle( DFBTriangle *tri )
 
 CoreSurface       *dfb_layer_surface( const DisplayLayer *layer ) 
 { 
-  return NULL; /* Used for overlays only */ 
+	return NULL; /* Used for overlays only */ 
+}
+
+DFBResult errno2dfb( int erno ) {
+	return DFB_FAILURE;
+}
+
+void dfb_surface_flip_buffers( CoreSurface *surface ) {
+	/* Used for special features. */ 
+}
+
+VideoMode *
+dfb_system_current_mode()
+{
+	return NULL; /* Used only in Matrox BES */
 }
 
 DFBResult          dfb_layer_flip_buffers( DisplayLayer *layer,
 					   DFBSurfaceFlipFlags flags )
 { 
-  return DFB_OK; /* Used for overlays only (Matrox BES) */ 
+	return DFB_OK; /* Used for overlays only (Matrox BES) */ 
 }
 
 typedef void * DisplayLayerFuncs;
@@ -138,6 +175,11 @@ void dfb_layers_register( GraphicsDevice    *device,
 }
 
 DFBResult dfb_fbdev_wait_vsync() {
+  /* Only works with a DFB-specific kernel patch anyway. */
+  return 0;
+}
+
+DFBResult dfb_system_wait_vsync() {
   /* Only works with a DFB-specific kernel patch anyway. */
   return 0;
 }
@@ -182,7 +224,8 @@ CoreWindowStack* dfb_windowstack_new( DisplayLayer *layer )
 
 FusionResult reactor_attach (FusionReactor *reactor,
                      React          react,
-                     void          *ctx)
+                     void          *ctx, 
+		     Reaction      *reaction)
 {
   /* Only Matrox BES uses this.  Will find out more someday. */
   return FUSION_SUCCESS;
