@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.7 2003/07/13 07:00:54 cegger Exp $
+/* $Id: cube3d.c,v 1.8 2003/10/08 13:56:11 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -775,7 +775,7 @@ int main(int argc, char **argv)
 		CheckDB(&the_textures[x]);
 
 		sprintf(text, "display-memory:-input:keyfile:%lu:%d:%s",
-			memlen, x, "/dev/null");
+			(unsigned long)memlen, x, "/dev/null");
 		sprintf(envtext, "GGI_DISPLAY=%s", text);
 		putenv(envtext);
 
@@ -790,7 +790,7 @@ int main(int argc, char **argv)
 			printf("GGI_DEFMODE=\"%s\"\n", text);
 			sprintf(text,
 				"display-memory:-input:keyfile:%lu:%d:%s",
-				memlen, x, "/dev/null");
+				(unsigned long)memlen, x, "/dev/null");
 			printf("GGI_DISPLAY=%s\n", text);
 		}
 	}
