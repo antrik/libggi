@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/02/26 23:00:28 aldot Exp $
+/* $Id: mode.c,v 1.6 2004/09/08 18:56:31 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -368,11 +368,11 @@ int ggiSPrintMode(char *s, ggi_mode *m)
 	}
 
 	if (GT_DEPTH(m->graphtype) != GT_AUTO) {
-		sprintf(s, "%d%n", GT_DEPTH(m->graphtype), &n);
+		sprintf(s, "%u%n", GT_DEPTH(m->graphtype), &n);
 		s += n;
 	}
 	if (GT_SIZE(m->graphtype) != GT_AUTO) {
-		sprintf(s, "/%d%n", GT_SIZE(m->graphtype), &n);
+		sprintf(s, "/%u%n", GT_SIZE(m->graphtype), &n);
 		s += n;
 	}
 
