@@ -8,10 +8,11 @@ Status symbols
 Next minor release (BUGFIX release)
 ------------------------------------------
 Version : 2.0.2
-Due : 2001-1[12]-??
+Due : 200?-??-??
 
 - cleanup demo building and installation
 - bring improved code in showaccel demo to showaccel2 demo
+- documentate tele-target in libggi/doc/targets.txt
 * why is directfb drawing on only every other pixel column? (was DFB bug)
 * use config file instead of static accel_strings array in fbdev
 * enable DirectFB
@@ -21,13 +22,17 @@ Due : 2001-1[12]-??
   on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
   run GGI on Linux/MIPS boxes.
 - The default value of the configure option '--with-gii' should always be
-  the same as the '--prefix' one, independent if '--prefix' is specified by
-  the user or not, unless '--with-gii' is specified by the user itself.
+  the one of the '--prefix' option, independent if '--prefix' is specified by
+  the user or not, unless '--with-gii' itself is specified by the user.
   This simplifies compiling libggi on a machine with no root-permissions.
 * disable libKGI target, because it's currently a "proof-of-concept"
 - BUGFIX: tile-over-Xlib produces colors with blue characteristics!
   The bug appears, when using the directbuffer, that tile provides.
   That means, disabling the db, colors appear correctly.	  
+- BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
+  the RGBA colorspace. Verify, that X and Xlib handle that case correctly.
+  That might also solve the above tile-over-Xlib issue.
+
 
 ------------------------------------------
 Next major release
@@ -38,9 +43,9 @@ Due : ????-??-??
 - libKGI-target (compiling framework, probably only working with Matrox Cards)
 - make Xlib a helper target for X
 - improve modelist.inc
-- documentate tele-target in libggi/doc/targets.txt
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
+
 
 ------------------------------------------
 Over-Next major release
