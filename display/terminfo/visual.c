@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:32 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/31 21:54:40 skids Exp $
 ******************************************************************************
 
    Terminfo target
@@ -31,6 +31,18 @@
 #include <string.h>
 
 #include "TIvisual.h"
+
+static const gg_option optlist[] =
+{
+	{ ":path",	"" },
+	{ ":term",	"" },
+	{ "physz",	"0,0" },
+};
+
+#define OPT_PATH	0
+#define OPT_TERM	1
+#define OPT_PHYSZ	2
+#define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
 void _GGI_terminfo_freedbs(ggi_visual *vis) {
 	int i;
@@ -175,31 +187,34 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32 *dlret)
 {
 	struct TIhooks *priv;
+	gg_option options[NUM_OPTS];
 	char *term_type;
 	char *term_path;
-	char *finger;
-	int i;
+	int i, err;
 
-	term_type = NULL;
-	if ( args == NULL ) {
-		term_path = alloca(1);
-		*term_path = '\0';
-	} else {
-		term_path = alloca(strlen(args) + 1);
-	}
-
-	for ( finger = term_path ; *finger != '\0' ; finger++ ) {
-		if ( *finger == ':' ) {
-			*finger = '\0';
-			term_type = finger + 1;
-			break;
+        memcpy(options, optlist, sizeof(options));
+	if (args != NULL) {
+		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		if (args == NULL) {
+			fprintf(stderr, "display-x: error in arguments.\n");
+			return GGI_EARGINVAL;
 		}
-	}
+        }
+	term_path = options[OPT_PATH].result;
+	term_type = options[OPT_TERM].result;
+	if ((*term_type) == '\0') term_type = NULL;
 
 	GGIDPRINT("display-terminfo: initializing %s on %s.\n", term_type, ( ( *term_path == '\0' ) ? "stdin/stdout" : term_path ));
 
 	priv = (struct TIhooks *)malloc(sizeof(struct TIhooks));
 	if (priv == NULL) return GGI_ENOMEM;
+
+	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+			       &(priv->physzflags), &(priv->physz)); 
+	if (err != GGI_OK) {
+	  free(priv);
+	  return err;
+	}
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
@@ -212,8 +227,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->virgin = 1;
 
 	if ( *term_path == '\0' ) {
-		priv->f_in = fdopen(fileno(stdin), "r");
-		priv->f_out = fdopen(fileno(stdout), "w");
+		priv->f_in = fdopen(dup(fileno(stdin)), "r");
+		priv->f_out = fdopen(dup(fileno(stdout)), "w");
 	} else {
 		priv->f_in = priv->f_out = fopen(term_path, "rw");
 	}

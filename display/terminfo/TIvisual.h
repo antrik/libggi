@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.1 2001/05/12 23:02:32 cegger Exp $
+/* $Id: TIvisual.h,v 1.2 2001/05/31 21:54:40 skids Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -60,6 +60,8 @@ struct TIhooks {
 	chtype color16_table[256];
 	chtype charmap[256];
 	ggi_visual *vis;
+	int physzflags;
+	ggi_coord physz;
 };
 
 /* Prototypes

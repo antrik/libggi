@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:33 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/05/31 21:54:40 skids Exp $
 ******************************************************************************
 
    Terminfo target
@@ -241,18 +241,17 @@ int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 	tm->dpp.x = xdpp;
 	tm->dpp.y = ydpp;
 
-	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
-		err = -1;
-	}
-	tm->size.x = tm->size.y = GGI_AUTO;
-
 	_terminfo_select_screen(priv->scr);
-	if (tm->visible.x != COLS || tm->visible.y != LINES) {
+	if ((tm->visible.x != COLS  && tm->visible.x != GGI_AUTO) || 
+	    (tm->visible.y != LINES && tm->visible.y != GGI_AUTO)) {
 		err = -1;
 	}
 	tm->visible.x = COLS;
 	tm->visible.y = LINES;
 	_terminfo_release_screen();
+
+	if (tm->virt.x == GGI_AUTO) tm->virt.x = tm->visible.x;
+	if (tm->virt.y == GGI_AUTO) tm->virt.y = tm->visible.y;
 
 	if (tm->virt.x < tm->visible.x) {
 		tm->virt.x = tm->visible.x;
@@ -263,6 +262,10 @@ int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 		err = -1;
 	}
 
+	err = _ggi_figure_physz(tm, priv->physzflags, &(priv->physz),
+				0, 0, tm->visible.x, tm->visible.y);
+
+	if (tm->graphtype == GT_TEXT) tm->graphtype = GT_TEXT32;
 	if (tm->graphtype != GT_TEXT16 && tm->graphtype != GT_TEXT32) {
 		tm->graphtype = GT_TEXT16;
 		err = -1;
