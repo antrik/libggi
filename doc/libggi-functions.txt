@@ -90,6 +90,7 @@ Exit LibGGI programs for fatal errors
 
 .. manpage:: 3 ggiPanic
 
+
 Synopsis
 --------
 
@@ -503,6 +504,7 @@ Set or get the current frame for display, writing and reading
 
 .. manpage:: 3 ggiSetDisplayFrame ggiSetWriteFrame ggiSetReadFrame ggiGetDisplayFrame ggiGetWriteFrame ggiGetReadFrame
 
+
 Synopsis
 --------
 
@@ -652,7 +654,6 @@ See Also
 Manipulate the palette of a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiSetPalette ggiGetPalette
 
 
@@ -767,6 +768,7 @@ Manipulate the gamma maps and the gamma correction of a visual
 
 .. manpage:: 3 ggiGetGamma ggiSetGamma ggiGetGammaMap ggiSetGammaMap ggiGammaMax 
 
+
 Synopsis
 --------
 
@@ -876,8 +878,8 @@ See Also
 Set or get the foreground or background color used in drawing operations in a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiSetGCForeground ggiGetGCForeground ggiSetGCBackground ggiGetGCBackground
+
 
 Synopsis
 --------
@@ -967,7 +969,6 @@ Both functions `0` for OK, ggiSetGCClipping returns an error.
 Draw, put, and get a single pixel from a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiDrawPixel ggiPutPixel ggiGetPixel
 
 
@@ -1003,7 +1004,6 @@ All three functions return `0` to indicate success.
 
 Draw, put, and get a horizontal line from a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiDrawHLine ggiPutHLine ggiGetHLine
 
@@ -1054,7 +1054,6 @@ See Also
 
 Draw, put, and get a vertical line from a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiDrawVLine ggiPutVLine ggiGetVLine
 
@@ -1107,7 +1106,6 @@ See Also
 Draw, put, and get a rectangle from a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiDrawBox ggiPutBox ggiGetBox
 
 
@@ -1159,7 +1157,6 @@ See Also
 Fill the entire virtual screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiFillscreen
 
 
@@ -1193,7 +1190,6 @@ This function returns `0` to indicate success.
 
 Draw a line on a visual
 ~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiDrawLine
 
@@ -1234,7 +1230,6 @@ See Also
 
 Copy a rectangular area
 ~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiCopyBox
 
@@ -1328,7 +1323,6 @@ See Also
 Set and get origin of virtual screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiSetOrigin ggiGetOrigin
 
 
@@ -1402,7 +1396,6 @@ Pan from the top to the bottom of the virtual screen::
 Draw one or more characters on visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiPutc ggiPuts ggiGetCharSize
 
 
@@ -1472,7 +1465,6 @@ Return value
 
 Set or get flags affecting operation on a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiSetFlags ggiGetFlags ggiAddFlags ggiRemoveFlags
 
@@ -1680,7 +1672,6 @@ See Also
 Flush pending output
 ~~~~~~~~~~~~~~~~~~~~
 
-
 .. manpage:: 3 ggiFlush ggiFlushRegion
 
 
@@ -1811,7 +1802,6 @@ See Also
 
 Get DirectBuffers from a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 .. manpage:: 3 ggiDBGetNumBuffers ggiDBGetBuffer
 
