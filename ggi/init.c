@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.39 2005/02/09 09:09:01 cegger Exp $
+/* $Id: init.c,v 1.40 2005/02/09 09:27:37 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -136,8 +136,8 @@ int ggiInit(void)
 
 
 	confdir = ggiGetConfDir();
-	/* 2 additional bytes for \0 and one more for the slash */
-	conffile = malloc(strlen(confdir) + 1 + strlen(GGICONFFILE)+1 + 1);
+	/* two extra bytes needed. One for the slash and one for the terminator (\0) */
+	conffile = malloc(strlen(confdir) + 1 + strlen(GGICONFFILE)+1);
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
 		err = GGI_ENOMEM;
