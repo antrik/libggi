@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2003/01/23 03:02:11 skids Exp $
+/* $Id: visual.c,v 1.18 2003/03/19 11:51:38 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -360,7 +360,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->buflist = XListPixmapFormats(disp, &(priv->nbufs));
 	if (priv->buflist == NULL) goto out;
 
+	GGIDPRINT_MISC("X: Sort/complete visual list.\n");
 	_ggi_x_build_vilist(vis);	/* Sorts/completes vilist */
+
 
 	/* Parse physical size options */
 	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
@@ -389,6 +391,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->use_Xext &= ~flag;			\
 		goto abort_label;				\
 	}
+
+
+	GGIDPRINT_MISC("X: Load X extensions.\n");
 
 	/* Order is important here -- XCloseDisplay has sharp hooks! */
 
