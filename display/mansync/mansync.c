@@ -1,10 +1,11 @@
-/* $Id: mansync.c,v 1.4 2004/03/08 00:58:17 skids Exp $
+/* $Id: mansync.c,v 1.5 2004/06/03 05:34:15 pekberg Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
    inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
 
-   Copyright (C) 1998 Marcus Sundberg  [marcus@ggi-project.org]
+   Copyright (C) 2004  Peter Ekberg  [peda@lysator.liu.se]
+   Copyright (C) 1998  Steve Cheng   [steve@ggi-project.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -30,12 +31,145 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/mansync.h>
 
-#ifdef USE_THREADS
-# ifdef HAVE_PTHREAD_H
-#  include "pthread.c"
-# else
-#  include "win32thread.c"
-# endif
-#else
-# include "child.c"
+#include <stdlib.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
 #endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
+#include <ggi/gg.h>
+
+
+/* Hook structure to helperpriv of mansync visual. */
+
+struct mansync_hook {
+	int isasync;
+	int ignore;
+	struct gg_task task;
+};
+
+
+#undef MANSYNC_ISASYNC
+#define MANSYNC_PRIV(vis)	(vis->helperpriv)
+#define MANSYNC_HOOK(vis)	((struct mansync_hook *)MANSYNC_PRIV(vis))
+#define MANSYNC_ISASYNC(vis)	(MANSYNC_HOOK(vis)->isasync)
+#define MANSYNC_IGNORE(vis)	(MANSYNC_HOOK(vis)->ignore)
+#define MANSYNC_TASK(vis)	(MANSYNC_HOOK(vis)->task)
+
+
+static int _GGI_mansync_task(struct gg_task *task)
+{
+	ggi_visual *vis = task->hook;
+
+	if(MANSYNC_IGNORE(vis))
+		return 0;
+
+	if(MANSYNC_ISASYNC(vis))
+		return 0;
+
+	ggiFlush(vis);
+	return 0;
+}
+
+
+int _GGI_mansync_init(ggi_visual *vis)
+{
+	MANSYNC_PRIV(vis) = _ggi_malloc(sizeof(struct mansync_hook));
+	memset(&MANSYNC_TASK(vis), 0, sizeof(struct gg_task));
+	MANSYNC_ISASYNC(vis) = 1; /* Yes, this SHOULD be initialized to 1. */
+	MANSYNC_IGNORE(vis) = 1;
+	MANSYNC_TASK(vis).cb = _GGI_mansync_task;
+	MANSYNC_TASK(vis).hook = vis;
+	return 0;
+}
+
+
+int _GGI_mansync_deinit(ggi_visual *vis)
+{
+	_GGI_mansync_stop(vis);
+
+	free(MANSYNC_PRIV(vis));
+	MANSYNC_PRIV(vis) = NULL;
+
+	return 0;
+}
+
+
+int _GGI_mansync_start(ggi_visual *vis)
+{
+	int fpsrate = 0;
+	char *str;
+	int tick;
+
+	GGIDPRINT("_GGI_mansync_start() (MANSYNC_TASK) called.\n");
+
+	if(!MANSYNC_ISASYNC(vis))
+		return -1;
+
+	str = getenv("GGI_MANSYNC_FPS");
+	if(str)
+		fpsrate = atoi(str);
+
+	if(fpsrate <= 0)
+		fpsrate = MANSYNC_FPS;
+
+	tick = ggTimeBase();
+	MANSYNC_TASK(vis).pticks = 1000000 / (tick * fpsrate);
+	if(MANSYNC_TASK(vis).pticks <= 0)
+		MANSYNC_TASK(vis).pticks = 1;
+	if(MANSYNC_TASK(vis).pticks >= GG_SCHED_TICK_WRAP)
+		MANSYNC_TASK(vis).pticks = GG_SCHED_TICK_WRAP - 1;
+	MANSYNC_TASK(vis).ncalls = 0;
+	MANSYNC_ISASYNC(vis) = 0;
+	MANSYNC_IGNORE(vis) = 0;
+
+	if(ggAddTask(&MANSYNC_TASK(vis)))
+		return -1;
+
+	return 0;
+}
+
+
+int _GGI_mansync_stop(ggi_visual *vis)
+{
+	GGIDPRINT("_GGI_mansync_stop() (MANSYNC_TASK) called.\n");
+
+	if(MANSYNC_ISASYNC(vis))
+		return -1;
+
+	MANSYNC_ISASYNC(vis) = 1;
+	MANSYNC_IGNORE(vis) = 1;
+
+	return ggDelTask(&MANSYNC_TASK(vis));
+}
+
+
+/* Tasks can't be arbitrarily suspended so these functions
+ * just sets a flag so that the task handler does nothing.
+ * Can't add/del the task as cont/ignore can be called from
+ * within flush, which is called from the task handler.
+ */
+
+int _GGI_mansync_ignore(ggi_visual *vis)
+{
+	if(MANSYNC_IGNORE(vis))
+		return -1;
+
+	MANSYNC_IGNORE(vis) = 1;
+	return 0;
+}
+
+
+int _GGI_mansync_cont(ggi_visual *vis)
+{
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)
+		return -1;
+
+	if(!MANSYNC_IGNORE(vis))
+		return -1;
+
+	MANSYNC_IGNORE(vis) = 0;
+	return 0;
+}
