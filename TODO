@@ -7,25 +7,35 @@ Status symbols
 ------------------------------------------
 Next release
 ------------------------------------------
-Version : 2.0.1
-Due : 2001-08-26
+Version : 2.1.0
+Due : ????-??-??
 
-* Move the build process to a 3-number versioning scheme. (eric)
-* Change makefile so that the sgml files don't go in the
-  tarballs. (eric)
 - cleanup demo building and installation
 - bring improved code in showaccel demo to showaccel2 demo
-* directfb off by default
-* fix building of directfb libraries. Confirmed by Brian. (christoph)
-* fix broken "make distcheck" for directfb. (thayne, christoph)
+* why is directfb drawing on only every other pixel column? (was DFB bug)
+* use config file instead of static accel_strings array in fbdev
+* enable DirectFB
+- change way that pixela/pixel stubs are selected (above item breaks current.)
+- KGI-target (compiling framework, probably only working with Matrox Cards)
+- make Xlib a helper target for X
+- Make XF86DGA working with XF86 3.x and XF86 4.x working
+
+
+------------------------------------------
+Over-Next release
+------------------------------------------
+Version : 3.0.0
+Due : ????-??-??
+
+- A working full-featured KGI-target
+- finish long-term plan
+- implement API additions
+
 
 ------------------------------------------
 Long-term plan
 ------------------------------------------
 
-* why is directfb drawing on only every other pixel column? (was DFB bug)
-* use config file instead of static accel_strings array in fbdev
-- change way that pixela/pixel stubs are selected (above item breaks current.)
 - improve modelist.inc
 - improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
 - enhance config file system: aliases, in-file option strings, wildcards
@@ -40,7 +50,8 @@ Things that will induce API additions
 - Figure out all the caveats for cloning a visual and add core support 
 	and a ggiClone API function.
 
+
 ------------------------------------------
-Non backward-compatible chnages
+Non backward-compatible changes
 ------------------------------------------
 None currently planned
