@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2003/01/23 03:02:10 skids Exp $
+/* $Id: mode.c,v 1.13 2003/03/30 13:22:19 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -76,7 +76,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 		if (_ggi_x_fit_geometry(vis, tm, cthis, &dummy) != GGI_OK) 
 			continue;
 
-		if ((dummy.visible.x * dummy.visible.y) < (w * h))
+		if ((unsigned)(dummy.visible.x * dummy.visible.y) < (w * h))
 			continue;
 
 		best = cthis;
@@ -113,7 +113,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 			continue;
 		_ggi_x_fit_geometry(vis, tm, cthis, &dummy);
 
-		if ((dummy.visible.x * dummy.visible.y) < (w * h))
+		if ((unsigned)(dummy.visible.x * dummy.visible.y) < (w * h))
 			continue;
 
 		best = cthis;
