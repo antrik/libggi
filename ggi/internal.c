@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.20 2004/11/14 15:47:50 cegger Exp $
+/* $Id: internal.c,v 1.21 2004/11/25 16:56:41 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -415,7 +415,7 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 	return GGI_OK;
 }
 
-int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col)
+int _ggi_match_palette(ggi_color *pal, int pal_len, const ggi_color *col)
 {
 	int i, closest=0;
 	int r = col->r, g = col->g, b = col->b;

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.21 2004/10/31 12:45:10 cegger Exp $
+/* $Id: internal.h,v 1.22 2004/11/25 16:56:42 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -92,7 +92,7 @@ GGIAPIFUNC int _ggi_build_pixfmtstr(ggi_visual * vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags);
 
 GGIAPIFUNC int _ggi_match_palette(ggi_color * pal, int pal_len,
-				  ggi_color * col);
+				  const ggi_color * col);
 GGIAPIFUNC ggifunc_setreadframe _ggi_default_setreadframe;
 GGIAPIFUNC ggifunc_setwriteframe _ggi_default_setwriteframe;
 GGIAPIFUNC void _ggi_build_palette(ggi_color * pal, int num);

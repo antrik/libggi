@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.13 2004/11/14 15:47:42 cegger Exp $
+/* $Id: color.c,v 1.14 2004/11/25 16:56:30 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -61,7 +61,7 @@ int GGI_color_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
  * http://www5.informatik.uni-erlangen.de/vampire/stuff/zinsser_vmv03.pdf
  */
 
-ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	color_palpriv *priv = COLOR_PALPRIV(vis);
 	ggi_color *pal;
@@ -131,7 +131,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
  * optimizations are for older CPUs and likely don't make much difference 
  * on CPUs which implement branch prediction.
  */
-ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
@@ -149,7 +149,7 @@ ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, ggi_color *col)
 	return ret;
 }
 
-ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
@@ -167,7 +167,7 @@ ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, ggi_color *col)
 	return ret;
 }
 
-ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 

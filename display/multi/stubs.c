@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.5 2004/10/31 14:25:02 cegger Exp $
+/* $Id: stubs.c,v 1.6 2004/11/25 16:56:32 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -371,7 +371,7 @@ int GGI_multi_getcharsize(ggi_visual *vis, int *width, int *height)
 }
 
 
-ggi_pixel GGI_multi_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_multi_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	ggi_visual *cvis = GG_SLIST_FIRST(&priv->vis_list)->vis;

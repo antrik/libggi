@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2004/10/31 14:25:06 cegger Exp $
+/* $Id: color.c,v 1.5 2004/11/25 16:56:40 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: color mapping
@@ -96,7 +96,7 @@ static ggi_pixel vcsa_ascii_pixels[7 * NUM_INTENS] =
 };
 
 
-ggi_pixel GGI_vcsa_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_vcsa_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 	ggi_color outer;

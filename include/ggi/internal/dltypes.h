@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.3 2004/05/21 20:09:06 aldot Exp $
+/* $Id: dltypes.h,v 1.4 2004/11/25 16:56:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -83,7 +83,7 @@ typedef int (ggifunc_setdisplayframe)(struct ggi_visual *vis, int num);
 typedef int (ggifunc_setreadframe)(struct ggi_visual *vis, int num);
 typedef int (ggifunc_setwriteframe)(struct ggi_visual *vis, int num);
 
-typedef ggi_pixel (ggifunc_mapcolor)(struct ggi_visual *vis,ggi_color *color);
+typedef ggi_pixel (ggifunc_mapcolor)(struct ggi_visual *vis,const ggi_color *color);
 typedef int (ggifunc_unmappixel)(struct ggi_visual *vis,ggi_pixel pixel,ggi_color *color);
 typedef int (ggifunc_packcolors)(struct ggi_visual *vis,void *buf,ggi_color *colors,int len);
 typedef int (ggifunc_unpackpixels)(struct ggi_visual *vis,void *buf,ggi_color *colors,int len);

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.5 2004/11/14 15:47:50 cegger Exp $
+/* $Id: stubs.c,v 1.6 2004/11/25 16:56:41 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -110,7 +110,7 @@ int ggiSetPalette(ggi_visual *vis,int s,int len,ggi_color *cmap)
 int ggiGetPalette(ggi_visual *vis,int s,int len,ggi_color *cmap)
 { return vis->opcolor->getpalvec(vis,s,len,cmap); }
 
-ggi_pixel ggiMapColor(ggi_visual *vis,ggi_color *col)
+ggi_pixel ggiMapColor(ggi_visual *vis, const ggi_color *col)
 { return vis->opcolor->mapcolor(vis,col); }
 
 int ggiUnmapPixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2003/05/03 16:36:12 cegger Exp $
+/* $Id: color.c,v 1.3 2004/11/25 16:56:31 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -56,7 +56,7 @@ static ggi_color ansi_16_colors[16] =
  * !!! FIXME: TEXT32 can really do 256 colors.
  */
 
-ggi_pixel GGI_t32_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_t32_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	int i;
 	int closest=0;

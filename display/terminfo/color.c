@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/11/14 15:47:48 cegger Exp $
+/* $Id: color.c,v 1.7 2004/11/25 16:56:39 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -229,7 +229,7 @@ int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 }
 
 #if 0
-ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, ggi_color *col)
+ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, const ggi_color *col)
 {
 	switch (LIBGGI_GT(vis)) {
 	case GT_TEXT16: {

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.2 2004/09/08 19:52:17 cegger Exp $
+/* $Id: stubs.c,v 1.3 2004/11/25 16:56:39 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -330,7 +330,7 @@ int GGI_sub_setgamma(ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b)
 	return ggiSetGamma(priv->parent,r,g,b);
 } 
 
-ggi_pixel GGI_sub_mapcolor(ggi_visual *vis,ggi_color *col)
+ggi_pixel GGI_sub_mapcolor(ggi_visual *vis,const ggi_color *col)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
