@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/09/13 08:35:58 cegger Exp $
+/* $Id: visual.c,v 1.18 2004/10/31 13:59:58 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -167,7 +167,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	dfb_config->layer_bg_mode = DLBM_COLOR;
 	/* TODO: dfb_config->matrox_sgram = 1;  
 	   Potentially damaging, make into option */
-	if (!_ggiDebugState) {
+
+	if (!_ggiDebug) {
 		dfb_config->quiet = 1;
 #if 0
 		/* no_debug no longer exists in the structure */
