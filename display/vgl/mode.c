@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/01/30 18:41:57 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/08/10 16:39:31 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -336,7 +336,7 @@ int GGI_vgl_checkmode(ggi_visual *vis, ggi_mode *tm)
 		}
 		tm->frames = 1;
 	} else {
-		tm->frames = 0;
+		tm->frames = 1;
 	}
 
 	if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
