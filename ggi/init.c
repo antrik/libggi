@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.32 2005/01/13 20:54:00 cegger Exp $
+/* $Id: init.c,v 1.33 2005/01/13 21:04:28 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -296,11 +296,13 @@ static void mangle_variable(char *str)
  */
 ggi_visual *ggiOpen(const char *driver,...)
 {
+#define MAX_TARGET_LEN	1024
+
 	va_list drivers;
 	ggi_visual *vis;
 	char *cp, *inplist;
-	char str[1024];
-	char target[1024];
+	char str[MAX_TARGET_LEN];
+	char target[MAX_TARGET_LEN];
 	int  success=0;
 	void *argptr;
 	static int globalopencount=0;
@@ -311,7 +313,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	if (driver == NULL) {
 		void *ret;
-		
+
 		/* If GGI_DISPLAY is set, use it. Fall back to "auto" 
 		 * otherwise.
 		 */
@@ -345,7 +347,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	DPRINT_CORE("Loading driver %s\n",driver);
 
 	do {
-		if (ggParseTarget((char *)driver,target,1024) == NULL) {
+		if (ggParseTarget((char *)driver,target,MAX_TARGET_LEN) == NULL) {
 			break;
 		}
 
@@ -353,7 +355,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 			fprintf(stderr, "LibGGI: Missing target descriptor !\n");
 			break;
 		}
-		
+
 		cp=strchr(target, ':');
 
 		if (cp != NULL) {
@@ -385,7 +387,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	inplist=NULL;
 
 #ifdef HAVE_SNPRINTF
-	snprintf(str, 1024, "GGI_INPUT_%s_%d", target, ++globalopencount);
+	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s_%d", target, ++globalopencount);
 #else
 	sprintf(str, "GGI_INPUT_%s_%d", target, ++globalopencount);
 #endif
@@ -396,7 +398,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	}
 
 #ifdef HAVE_SNPRINTF
-	snprintf(str, 1024, "GGI_INPUT_%s", target);
+	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s", target);
 #else
 	sprintf(str, "GGI_INPUT_%s", target);
 #endif
@@ -433,8 +435,9 @@ ggi_visual *ggiOpen(const char *driver,...)
 			return NULL;
 		}
 	}
-	
+
 	return vis;
+#undef MAX_TARGET_LEN
 }
 	
 /* ggiClose
