@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.5 2004/06/02 11:25:25 pekberg Exp $
+/* $Id: flying_ggis.c,v 1.6 2004/06/02 21:38:17 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -507,15 +507,16 @@ int main(int argc, char **argv)
 
 			if (ev.any.type == evKeyPress) {
 				switch (ev.key.sym) {
-					case GIIUC_Escape:
-					case 'q': case 'Q':
-					case 'x': case 'X':
-						done=1;
-						break;
-					case 's': case 'S':
-						async = !async;
-						ggiSetFlags(vis, async ? GGIFLAG_ASYNC : 0);
-						break;
+				case GIIUC_Escape:
+				case 'q': case 'Q':
+				case 'x': case 'X':
+					done=1;
+					break;
+				case 's': case 'S':
+					async = !async;
+					ggiSetFlags(vis,
+						async ? GGIFLAG_ASYNC : 0);
+					break;
 				}
 			}
 
