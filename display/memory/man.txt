@@ -8,9 +8,9 @@ Synopsis
 
 ::
 
-  display-memory: [-input] [-noblank] [-physz=<sizex>,<sizey>[dpi]]
-		  [-pixfmt=<format_string>]
+  display-memory: [-input] [-noblank]
 		  [-layout=<fstride>[[plb<lstride>]|[plan<pstride>,<plstride>]]]
+		  [-physz=<sizex>,<sizey>[dpi]] [-pixfmt=<format_string>]
 		  [ [shmid:<sid> ] | [keyfile:<size>:<id>:<fname>] | pointer ]
 
 
