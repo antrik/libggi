@@ -1,4 +1,4 @@
-/* $Id: libkgi.h,v 1.1 2001/11/04 22:54:08 skids Exp $
+/* $Id: libkgi.h,v 1.2 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Display-LibKGI private structures and internal values
@@ -69,6 +69,8 @@ ggifunc_crossblit	GGI_libkgi_crossblit;
 
 /* Visual-specific private data */
 typedef struct {	
+	PHYSZ_DATA
+
 	/* Framebuffer info */
 	char   *accel;
 	int	have_accel;
@@ -83,8 +85,7 @@ typedef struct {
 	int	galloc_loaded;  /* Have we loaded LibGAlloc sublib yet? */
 	void	*lock;		/* Pointer to the libkgi common lock */
 	int	*refcount;	/* Pointer to the refcount */
-	int	physzflags;
-	ggi_coord	physz;
+
 	char suggest [256 /* FIXME */];
 } ggi_libkgi_priv;
 

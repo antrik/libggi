@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.7 2003/12/13 21:12:03 mooz Exp $
+/* $Id: x.h,v 1.8 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -79,18 +79,20 @@ typedef void (*ggi_x_createcursor)(ggi_visual *vis);		/* load mouse sprite */
 
 
 typedef struct {
+	PHYSZ_DATA
+
 	Display	*disp;		/* One display per instance  */
 
-	_ggi_opmansync *opmansync;			 /* mansync helper hooks     */
-	ggi_coord			  dirtytl,dirtybr; /* Simple dirty region	     */
-	int							fullflush;       /* Flush all visible area?  */
+	_ggi_opmansync *opmansync;	/* mansync helper hooks     */
+	ggi_coord  dirtytl,dirtybr;	/* Simple dirty region */
+	int fullflush;			/* Flush all visible area?  */
 
 	/* Pixelformat and colorspace management */
-	int			       viidx;			/* currently active visual   */
-  ggi_x_vi      *vilist;    /* Sorted list of visuals    */
-  void          *evilist;		/* master handle for XFree() */
-	XVisualInfo		*visual;		/* master handle for XFree() */
-	int			       nvisuals;
+	int viidx;			/* currently active visual   */
+	ggi_x_vi *vilist;		/* Sorted list of visuals    */
+	void *evilist;			/* master handle for XFree() */
+	XVisualInfo *visual;		/* master handle for XFree() */
+	int nvisuals;
 	XPixmapFormatValues     *buflist;	/* master handle for XFree() */
 	int                     nbufs;
 
@@ -103,7 +105,7 @@ typedef struct {
 
 	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
 	int         activecmap;
-	int         ncols;			/* Number of colors in the colormap */
+	int         ncols;		/* Number of colors in the colormap */
 	XColor      	*gammamap;
 	ggi_gammastate gamma;
 
@@ -116,27 +118,26 @@ typedef struct {
 
 	void        *xliblock;
 
-	int         physzflags;
-	ggi_coord   physz;
-
 	int         wintype;
 	Window      parentwin, win;
 
 	unsigned char		*fb;				/* direct access */
-  ggi_x_createfb	 createfb;	/* overload init .fb */
-  ggi_x_freefb		 freefb;		/* overload init .fb */
-	Drawable				 drawable;	/* Xlib/accel access */
+
+	ggi_x_createfb	 createfb;	/* overload init .fb */
+	ggi_x_freefb	 freefb;	/* overload init .fb */
+
+	Drawable	 drawable;	/* Xlib/accel access */
 	ggi_x_createdrawable	createdrawable;	/* overload init .drawable */
 
 	XImage	    *ximage;
 	ggi_visual	*slave;
 
 	/* Modelist management */
-	ggi_modelist_funcs	 mlfuncs;			/* modelist helper overloads */
-	ggi_modelistmode		*modes;				/* modelist helper modes     */
-	void		 						*modes_priv;	/* DGA or VideoMode modelist */
-	int									 cur_mode;		/* Current used mode from the modelist */
-	int									 modes_num;		/* number of modes in list.  */
+	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads */
+	ggi_modelistmode	*modes;		/* modelist helper modes     */
+	void		 	*modes_priv;	/* DGA or VideoMode modelist */
+	int	cur_mode;			/* Current used mode from the modelist */
+	int	 modes_num;			/* number of modes in list.  */
 
 	gii_input   *inp;
 

@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.1 2002/12/22 12:59:38 cegger Exp $
+/* $Id: quartz.h,v 1.2 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -52,8 +52,7 @@ ggifunc_getgammamap	GGI_quartz_getgammamap;
 
 
 typedef struct {
-	int		physzflags;
-	ggi_coord	physz;
+	PHYSZ_DATA
 
 	NSApplication	*GGIApp;
 	NSWindow	*window;	/* Cocoa window */

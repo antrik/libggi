@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.3 2003/07/06 10:35:39 cegger Exp $
+/* $Id: vcsa.h,v 1.4 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -34,14 +34,13 @@
 /* Visual-private data */
 
 typedef struct {	
+	PHYSZ_DATA
+
 	int width;
 	int height;
 
 	int inputs;
 	int flags;
-
-	int physzflags;
-	ggi_coord physz;
 
 } ggi_vcsa_priv;
 

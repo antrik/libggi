@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.5 2003/10/25 08:50:33 cegger Exp $
+/* $Id: directx.h,v 1.6 2004/02/14 22:30:46 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -66,8 +66,8 @@ ggifunc_drawline                GGI_directx_drawline;
 
 typedef struct directx_priv
 {
-	int physzflags;
-	ggi_coord physz;
+	PHYSZ_DATA
+
 	int cursortype;
 	HCURSOR hCursor;
 	UINT timer_id;

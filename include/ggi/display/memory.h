@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.6 2004/02/05 09:34:59 cegger Exp $
+/* $Id: memory.h,v 1.7 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -63,12 +63,12 @@ typedef struct {
 } inpbuffer;
 
 typedef struct {
+	PHYSZ_DATA
+
 	enum memtype   	memtype;
 	void	       *memptr;
 	inpbuffer      *inputbuffer;
 	int		inputoffset;
-	int		physzflags;
-	ggi_coord	physz;
 	ggi_pixel	r_mask, g_mask, b_mask, a_mask;
 	int		fstride;
 	int		noblank;

@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.5 2003/12/13 21:12:03 mooz Exp $
+/* $Id: fbdev.h,v 1.6 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -70,6 +70,8 @@ typedef struct ggi_fbdev_timing {
 
 /* Visual-specific private data */
 typedef struct {	
+	PHYSZ_DATA
+
 	/* Framebuffer info */
 	void *fb_ptr;
 	long  fb_size;
@@ -125,8 +127,7 @@ typedef struct {
 	/* Misc */
 	void	*lock;		/* Pointer to the fbdev common lock */
 	int	*refcount;	/* Pointer to the refcount */
-	int	physzflags;
-	ggi_coord	physz;
+
 } ggi_fbdev_priv;
 
 #define FBDEV_PRIV(vis) ((ggi_fbdev_priv *)LIBGGI_PRIVATE(vis))

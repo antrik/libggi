@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.4 2003/12/13 21:12:03 mooz Exp $
+/* $Id: svgalib.h,v 1.5 2004/02/14 22:30:47 cegger Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -76,6 +76,8 @@ int _ggi_svgalib_setmode(int mode);
 
 
 typedef struct svga_priv {
+	PHYSZ_DATA
+
 	ggi_modelistmode *availmodes;
 	uint8	         *memorigin;
 	uint32	pixperframe;
@@ -89,9 +91,7 @@ typedef struct svga_priv {
 	int	ismapped;
 	ggi_linvtsw_func *doswitch;
 	int	gfxmode;
-	int	physzflags;
 	int	frame_size;
-	ggi_coord	physz;
 } svga_priv;
 
 #define SVGA_PRIV(vis) ((svga_priv*)LIBGGI_PRIVATE(vis))

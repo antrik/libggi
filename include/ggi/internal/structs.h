@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.7 2003/12/14 10:13:49 cegger Exp $
+/* $Id: structs.h,v 1.8 2004/02/14 22:30:12 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -147,6 +147,14 @@ typedef struct ggi_resource {
 	int	count;		/* Usage counter */
 	uint32	curactype;	/* Current access type */
 } ggi_resource;
+
+
+/* Variables needed to support physical units like
+ * dpi and mm in a target (optional, stored in target-private area)
+ */
+#define PHYSZ_DATA		\
+	int physzflags;		\
+	ggi_coord physz;	\
 
 
 /*
