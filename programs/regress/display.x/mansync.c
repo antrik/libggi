@@ -1,0 +1,137 @@
+/* $Id: mansync.c,v 1.1 2004/10/08 11:49:34 cegger Exp $
+******************************************************************************
+
+   This is a regression-test for LibGGI display-x - mansync.
+
+   Written in 2004 by Christoph Egger
+
+   This software is placed in the public domain and can be used freely
+   for any purpose. It comes without any kind of warranty, either
+   expressed or implied, including, but not limited to the implied
+   warranties of merchantability or fitness for a particular purpose.
+   Use it at your own risk. the author is not responsible for any damage
+   or consequences raised by use or inability to use this program.
+
+******************************************************************************
+*/
+
+
+#include "config.h"
+#include <ggi/internal/internal.h>
+#include <ggi/ggi.h>
+
+#include <string.h>
+
+#include "../testsuite.inc.c"
+
+
+/* We do shm here !
+ */
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <signal.h>
+
+
+static void testcase1(const char *desc)
+{
+	int ret;
+	unsigned int j, size;
+	ggi_visual_t vis;
+	ggi_mode mode;
+	const ggi_directbuffer *dbuf = NULL;
+	ggi_pixel pixel_color;
+	ggi_color color_color;
+
+
+	color_color.r = 0x0000;
+	color_color.g = 0xffff;
+	color_color.b = 0xffff;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+
+	vis = ggiOpen("display-x", NULL);
+	if (vis == NULL) {
+		printfailure("Couldn't open display-x");
+		return;
+	}
+
+	ggiParseMode("", &mode);
+	ggiCheckMode(vis, &mode);
+
+	ret = ggiSetMode(vis, &mode);
+	if (ret != GGI_OK) {
+		printfailure("expected return value: \"%i\"\n"
+			"actual return value: \"%i\"\n",
+			GGI_OK, ret);
+		goto exit_testcase;
+	}
+
+	ret = -1;
+	size = GT_SIZE(mode.graphtype);
+	for (j = 0;
+		(dbuf = ggiDBGetBuffer(vis, j)) != NULL;
+	     j++)
+	{
+		if ((dbuf->type & GGI_DB_SIMPLE_PLB)
+		    && ((8*dbuf->buffer.plb.stride) % size) == 0)
+		{
+			/* found */
+			ret = GGI_OK;
+			break;
+		}
+	}
+
+	if (ret != GGI_OK) {
+		printfailure("This mode and target has no suitable DirectBuffer\n");
+		goto exit_testcase;
+	}
+
+	if (ggiResourceAcquire(dbuf->resource,
+			GGI_ACTYPE_WRITE | GGI_ACTYPE_READ)
+	   != 0)
+	{
+		printfailure("Unable to acquire DirectBuffer\n");
+		goto exit_testcase;
+	}
+
+
+	/* ... and now draw something. If mansync runs,
+	 * you should see something
+	 */
+	pixel_color = ggiMapColor(vis, &color_color);
+	ggiSetGCForeground(vis, pixel_color);
+	ggiFillscreen(vis);
+
+
+	ggiResourceRelease(dbuf->resource);
+
+	ggiGetc(vis);
+
+exit_testcase:
+	ggiClose(vis);
+	ggiExit();
+
+	printsuccess();
+	return;
+}
+
+
+int main(int argc, char * const argv[])
+{
+	int rc;
+
+	parseopts(argc, argv);
+	printdesc("Regression testsuite for display-x(7).\n\n");
+
+	rc = ggiInit();
+	if (rc < 0) ggiPanic("Couldn't initialize libggi");
+
+	testcase1("See, if mansync is used in SYNC mode - sets up the mode the same way as XGGI does");
+
+	printsummary();
+
+	return 0;
+}
