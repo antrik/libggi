@@ -1,4 +1,4 @@
-/* $Id: ati_mach64.h,v 1.4 2003/07/05 22:13:40 cegger Exp $
+/* $Id: ati_mach64.h,v 1.5 2004/08/25 21:28:18 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 and rage pro acceleration for fbdev target
@@ -206,6 +206,6 @@ static inline void draw_rect(struct ati_mach64_priv *priv,
 	wait_for_fifo(2, priv);
 	aty_st_le32(DST_Y_X, (unsigned)(x << 16) | y, priv);
 	aty_st_le32(DST_HEIGHT_WIDTH, (unsigned)(w << 16) | h, priv);
-};
+}
 
 #endif	/* _GGIFBDEV_ATI_MACH64_H */

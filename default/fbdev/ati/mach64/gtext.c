@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2003/07/05 22:13:40 cegger Exp $
+/* $Id: gtext.c,v 1.4 2004/08/25 21:27:50 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -117,7 +117,7 @@ int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 		str++;
 	};
 	return count;
-};
+}
 
 int GGI_ati_mach64_fastputc(ggi_visual * vis, int x, int y, char c)
 {
