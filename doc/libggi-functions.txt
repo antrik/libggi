@@ -1021,8 +1021,8 @@ height is one pixel.
 
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
-must be correctly allocated), depending on the case. See
-`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+must be correctly allocated), respectively. See
+`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
 with pixels.
 
 
@@ -1074,8 +1074,8 @@ of the line is one pixel.
 
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
-must be correctly allocated), depending on the case. See
-`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+must be correctly allocated), respectively. See
+`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
 with pixels.
 
 
@@ -1126,8 +1126,8 @@ direction.
 
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
-must be correctly allocated), depending on the case. See
-`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+must be correctly allocated), respectively. See
+`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
 with pixels.
 
 
