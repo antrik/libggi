@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.5 2004/04/02 16:02:47 ggibecka Exp $
+/* $Id: showaccel.c,v 1.6 2004/05/14 14:13:06 aldot Exp $
 ******************************************************************************
 
    showaccel.c
@@ -24,11 +24,11 @@
    GGI_DISPLAY="x"    ./showaccel  Ratio :   134479 :   114610 = 1.173362
    GGI_DISPLAY="xlib" ./showaccel  Ratio :   226929 :    23071 = 9.836115
 
-   What you can derive from the above example is: 
+   What you can derive from the above example is:
 
    Ratios of up to around 1.2 are not indicating a significant drawing
    acceleration. This is just calling overhead
-   Running over xlib _dramatically_ shows another kind of "calling overhead", 
+   Running over xlib _dramatically_ shows another kind of "calling overhead",
    as the xlib target produces a network call for each primitive call.
    So be careful when interpreting the results.
 
@@ -36,7 +36,7 @@
 */
 
 #include <ggi/ggi.h>
-#include <ggi/gg.h> 
+#include <ggi/gg.h>
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -61,7 +61,7 @@ static int randnum(int max)
 
 static inline int slow_drawbox(int x,int y,int w,int h)
 {
-	while(h--) ggiDrawHLine(vis,x,y++,w); 
+	while(h--) ggiDrawHLine(vis,x,y++,w);
 	return 0;
 }
 
@@ -85,6 +85,10 @@ int main(int argc, char *argv[])
 	/* The visible screen sizes
 	 */
 	int sx,sy;
+
+	/* The font size
+	 */
+	int tx,ty;
 
 	/* The palette and wanted color table.
 	 */
@@ -125,6 +129,10 @@ int main(int argc, char *argv[])
 			sy=mode.visible.y;
 		}
 
+		/* Get size of visible character cell
+		 */
+		ggiGetCharSize(vis, &tx, &ty);
+
 		/* Clear the screen
 		 */
 		ggiSetGCForeground(vis,0);
@@ -132,25 +140,25 @@ int main(int argc, char *argv[])
 
 		/* Set up a colorful palette.
 		 */
-		for(c=0;c<256;c++) { 
+		for(c=0;c<256;c++) {
 			pal[c].r=c*256;
 			pal[c].g=256*(255-c);
 			pal[c].b=(128-abs(128-c))*7*64;
 		}
-		/* And send it to the visual. In case we are in a 
+		/* And send it to the visual. In case we are in a
 		 * non-palettized mode, this simply fails.
 		 */
 		ggiSetPalette(vis,0,256,pal);
 
 		/* However this call ensures, that we always get a set of
-		 * "handles" for the colors we want. This makes programs 
+		 * "handles" for the colors we want. This makes programs
 		 * designed for use with 8 bit palette mode run on the
 		 * other graphtypes as well. You just get back the color
 		 * value to use for the closest available color.
 		 */
 		for(c=0;c<256;c++)
 			paletteval[c]=ggiMapColor(vis,&pal[c]);
-     
+
 		/* Set foreground to color 255 (red) and print the headlines.
 		 */
 		ggiSetGCForeground(vis,paletteval[255]);
@@ -160,10 +168,10 @@ int main(int argc, char *argv[])
 		/* Set up the counters for both methods.
 		 */
 		c1=c2=0;
-   
+
 		/* Do a million runs max.
 		 */
-		for(y=0;y<1000000;y++) { 
+		for(y=0;y<1000000;y++) {
 
 			/* Set some arbitrary foreground color
 			 */
@@ -181,23 +189,23 @@ int main(int argc, char *argv[])
 			 * mind for slow systems. Eventually use whole seconds.
 			 */
 			if ((tv.tv_usec/100000)&1) {
-				ggiDrawBox(vis, randnum(sx/4),randnum(sy/2-10)+10,
-						randnum(sx/4),randnum(sy/2-10));
+				ggiDrawBox(vis, randnum(sx/4),randnum(sy/2-ty)+ty,
+						randnum(sx/4),randnum(sy/2-ty));
 				c1++;
 			} else {
-				slow_drawbox(randnum(sx/4)+sx/2,randnum(sy/2-10)+10,
-			     		     randnum(sx/4)     ,randnum(sy/2-10));
+				slow_drawbox(randnum(sx/4)+sx/2,randnum(sy/2-ty)+ty,
+					     randnum(sx/4)     ,randnum(sy/2-ty));
 				c2++;
 			}
 
-			/* If we have drawmn a significant amount of boxes,
-			 * give an intermediate estimate, to keep the user 
+			/* If we have drawn a significant amount of boxes,
+			 * give an intermediate estimate, to keep the user
 			 * happy and give an indication of how long it will
 			 * take, or when to break things.
 			 */
 			if ((y&1023)==0) {
 				char str[20];
-				
+
 				/* Select red again.
 				*/
 				ggiSetGCForeground(vis,paletteval[255]);
@@ -208,7 +216,7 @@ int main(int argc, char *argv[])
 				ggiPuts(vis,sx  /4,0,str);
 				sprintf(str,"%8d",c2);
 				ggiPuts(vis,sx*3/4,0,str);
-				
+
 				/* In case the user hit a key, he wants to quit.
 				 */
 				if (ggiKbhit(vis)) break;
