@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.8 2003/01/21 00:11:58 skids Exp $
+/* $Id: buffer.c,v 1.9 2003/01/21 01:36:50 ggibecka Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -377,8 +377,8 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 			     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
-	priv = GGIX_PRIV(vis);
 	int mansync;
+	priv = GGIX_PRIV(vis);
 	
 	if (priv->opmansync) MANSYNC_ignore(vis);
 	mansync = 1; /* Do we call MANSYNC_cont later? By default, yes. */
