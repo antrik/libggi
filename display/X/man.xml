@@ -26,6 +26,7 @@
  <arg><option>-inwin=<replaceable>winid|root</replaceable></option></arg>
  <arg><option>-noinput</option></arg>
  <arg><option>-nocursor</option></arg>
+ <arg><option>-keepcursor</option></arg>
  <arg><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
  <arg><option>-nobuffer</option></arg>
  <arg><option>-noaccel</option></arg>
@@ -116,14 +117,17 @@ grabbing must be turned off in order to leave the window.
  </varlistentry>
 
  <varlistentry>
- <term><option>-nocursor</option></term>
+ <term><option>-nocursor</option></term> and
+ <term><option>-keepcursor</option></term>
  <listitem><para>
  Normal behavior of display-x is to create a small dot
  mouse cursor pixmap which is visible when the mouse is positioned over the
  window containing the visual.  This goes away when using mouse grabbing 
  as described above, but otherwise can get in the way of mouse cursors 
- implemented by the application.  With this option, the X 
- mouse cursor will be invisible when it is over the visual.
+ implemented by the application.  With the former option, the X 
+ mouse cursor will be invisible when it is over the visual, with the
+ latter, the cursor from the root window is used unaltered.  If both options
+ are supplied, the latter takes precedence.
  </para></listitem>
  </varlistentry>
  
