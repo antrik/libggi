@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/12/22 10:15:26 cegger Exp $
+/* $Id: visual.c,v 1.4 2002/12/22 10:25:44 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -58,34 +58,23 @@ int GGI_libkgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
         switch(num) {
         case 0:
-		strcpy(apiname, "display-libkgi");
+                sprintf(apiname, "display-libkgi");
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 1:
-#ifdef HAVE_SNPRINTF
-		snprintf(apiname, GGI_MAX_APILEN, "display-libkgi-%s", 
+                sprintf(apiname, "display-libkgi-%s", 
 			LIBKGI_PRIV(vis)->suggest);
-#else
-		sprintf(apiname, "display-libkgi-%s", 
-			LIBKGI_PRIV(vis)->suggest);
-#endif
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 2:
-		strcpy(apiname, "generic-stubs");
+                strcpy(apiname, "generic-stubs");
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 3:
-#ifdef HAVE_SNPRINTF
-		snprintf(apiname, GGI_MAX_APILEN,
-			"generic-linear-%d",GT_DEPTH(LIBGGI_GT(vis)));
-#else
-		sprintf(apiname, "generic-linear-%d",GT_DEPTH(LIBGGI_GT(vis)));
-#endif
+                sprintf(apiname, "generic-linear-%d",GT_DEPTH(LIBGGI_GT(vis)));
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
-        case 4:
-		strcpy(apiname, "generic-color");
+        case 4: strcpy(apiname, "generic-color");
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         }
