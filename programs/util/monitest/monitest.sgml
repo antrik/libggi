@@ -35,27 +35,26 @@ programming, and writing drivers is too time consuming currently.
 <p>
 Why is there this documentation?
 <p>
-I wanted to check out the sgmltools package, and I start to like it.
-And because it is good to know what a program is supposed to do.
+I wanted to check out the sgmltools package, and I start to like it. And
+because it is good to know what a program is supposed to do.
 
 <sect>Features
 
 <p>
-<tt/Monitest/ is intended to test ggi drivers (during development) and 
-the optical quality of monitors (later). Don't be too disappointed
-if you find a weakness in your monitor, mine is probably worse than 
-yours ...
+<tt/Monitest/ is intended to test ggi drivers (during development) and the
+optical quality of monitors (later). Don't be too disappointed if you find
+a weakness in your monitor, mine is probably worse than yours ...
 <p>
-The main feature is a test screen like broadcast in former days 
-before 24 hour TV programs. It is used to test geometry and resolution
-of the monitor.
+The main feature is a test screen like broadcast in former days before 24
+hour TV programs. It is used to test geometry and resolution of the
+monitor.
 <p>
 Also included are several test screens for testing moiree effects, the
 horizontal and vertical screen resolution, and colour convergence.
 <p>
-You will be able to switch resolution on the fly, to find out interactively
-what modes the driver supports and how much of this your card/monitor
-can do with acceptable quality.
+You will be able to switch resolution on the fly, to find out
+interactively what modes the driver supports and how much of this your
+card/monitor can do with acceptable quality.
 
 
 <sect>Usage
@@ -63,7 +62,8 @@ can do with acceptable quality.
 <p>
 <sect1>Command line options
 <p>
-Normally <tt/monitest/ is invoked withot parameters or a ggi-style mode string.
+Normally <tt/monitest/ is invoked without parameters or a ggi-style mode
+string.
 <p>
 <tt/montest 640x480/
 <p>
@@ -71,12 +71,11 @@ Normally <tt/monitest/ is invoked withot parameters or a ggi-style mode string.
 <p>
 There is currently one main menu and one submenu for resolution change.
 <p>
-Navigation is done with the arrow keys, selection by pressing the Return key.
-The mouse does not work yet. Sorry.
+Navigation is done with the arrow keys, selection by pressing the Return
+key. The mouse does not work yet. Sorry.
 <p>
-The individual screens are stepped through by pressing the space bar,
-the program can be quit anytime by pressing the q key.
-
+The individual screens are stepped through by pressing the space bar, the
+program can be quit anytime by pressing the q key.
 
 
 <sect>Pattern description
@@ -84,32 +83,31 @@ the program can be quit anytime by pressing the q key.
 <p>
 <sect1>Testpattern
 <p>
-The basic grid is white on black and has sixteen times twelve fields.
-On a tube with 4:3 ratio each one should be square, even if the pixel
-size of the screen does not have 4:3 ratio.
-The lines are one pixel wide. They should be straight, even in the corners,
-and not have coloured borders.
+The basic grid is white on black and has sixteen times twelve fields. On a
+tube with 4:3 ratio each one should be square, even if the pixel size of
+the screen does not have 4:3 ratio. The lines are one pixel wide. They
+should be straight, even in the corners, and not have coloured borders.
 <p>
 There is a big circle in the middle and smaller circles in each corner.
 They are round pixelwise, so they should be circles if the screen size
-ratio (width:height of visible area) is equal to the pixel ratio. It usually
-should be 4:3. So the best sizes for testing are 320x240, 640x480, 800x600
-and up.
+ratio (width:height of visible area) is equal to the pixel ratio. It
+usually should be 4:3. So the best sizes for testing are 320x240, 640x480,
+800x600 and up.
 <p>
 In each corner there is one box with vertical stripes. These are one pixel
 wide, with one pixel distance, so you get maximum signal frequency and can
 see how well your monitor and video card handle the dotclock.
 <p>
-The middle field has eight solid blocks with the eight colours, i.e 
-all combinations of the red, green and blue signals turned on and off. Below
+The middle field has eight solid blocks with the eight colours, i.e all
+combinations of the red, green and blue signals turned on and off. Below
 it there are four fields with vertical stripes as in the corners, but in
-white and the three basic colours red, green and blue.
-Below it there is a bar with these four colours red, blue, green and white
-blending from full intensity (left) to zero intensity (right), i.e. black.
+white and the three basic colours red, green and blue. Below it there is a
+bar with these four colours red, blue, green and white blending from full
+intensity (left) to zero intensity (right), i.e. black.
 <p>
-In the middle the current resolution is printed. Maybe horizontal and vertical 
-frequency will be printed too, if I can get the information, which is not
-(yet) implemented in the LibGGI API.
+In the middle the current resolution is printed. Maybe horizontal and
+vertical frequency will be printed too, if I can get the information,
+which is not (yet) implemented in the LibGGI API.
 
 <sect1>Convergence
 <p>
@@ -118,24 +116,25 @@ Convergence means how well the red, green and blue picture are aligned.
 This is tested by painting a grid of red, green and blue + signs. They
 should be aligned properly where they touch. Usually they don't :-<
 <p>
-There are four patterns like this, rotating the colours. Press space to switch
-forward, or press q to quit anytime.
+There are four patterns like this, rotating the colours. Press space to
+switch forward, or press q to quit anytime.
+
 <sect1>Resolution
 <p>
 Once again there are several screens, press space to step thru them.
 <itemize>
-<item> Vertical white stripes with width 1, 2, 3 and 4 pixels. See what 
-the highest dotclock is the monitor can handle.
-<item> Horizontal stripes with width 1 and 2 pixels. See how well 
-  the scan lines are separated.
-<item> Three stars of black lines on white, with a width and space
- (at the sceen borders) of 1 and 1, 1 and 5, 2 and 10 respectively.
- Watch for colour changes, and once again you can see the maximum frequency
- your monitor can do.
-<item> Vertical bars in red, blue, green and white, with the width
-  of 4, 3, 2, 1, 2, 3 and 4 pixels for bar and space. See whether there is
-a difference in resolution between the colours. And watch, again, for the
-alignment.
+<item> Vertical white stripes with width 1, 2, 3 and 4 pixels. See what
+ the highest dotclock is the monitor can handle.
+<item> Horizontal stripes with width 1 and 2 pixels. See how well the scan
+ lines are separated.
+<item> Three stars of black lines on white, with a width and space (at the
+ sceen borders) of 1 and 1, 1 and 5, 2 and 10 respectively. Watch for
+ colour changes, and once again you can see the maximum frequency your
+ monitor can do.
+<item> Vertical bars in red, blue, green and white, with the width of 4,
+ 3, 2, 1, 2, 3 and 4 pixels for bar and space. See whether there is a
+ difference in resolution between the colours. And watch, again, for the
+ alignment.
 </itemize>
 
 <sect1>Moiree
@@ -143,42 +142,41 @@ alignment.
 I don't know whether these tests work, my monitor is rather good in this
 respect. Please gimme some feedback!
 <p>
-If there is interference between the monitor mask and a grid displayed on the
-monitor, a change of colours can be seen, and is sometimes very annoying.
-There are three tests present, each one comes in the four colour 
+If there is interference between the monitor mask and a grid displayed on
+the monitor, a change of colours can be seen, and is sometimes very
+annoying. There are three tests present, each one comes in the four colour
 combinations black, red, green and blue on white background.
 <p>
 <itemize>
 <item> Vertical stripes, one dot wide, with one dot space.
-<item> white dots on colour ground, spaced two and two. Run testscreen with
- a really low resolution to see what I mean :-)
+<item> white dots on colour ground, spaced two and two. Run testscreen
+ with a really low resolution to see what I mean :-)
 <item> A chessboard.
 </itemize>
 
 <sect1>Flat panel test
 <p>
-This test allows you to drag a coloured rectangle around, looking for 
+This test allows you to drag a coloured rectangle around, looking for
 pixels that are always on or off, which is, as far as I know, the most
 common failure of flat panels.
 <p>
 The rectange is moved using the mouse or the arrow keys.
 <p>
 The color of the rectange can be changed by pressing the primary mouse
-button (usually the left one) or &lt;Space&gt;, cycling through
-(black, red, green, blue, white) or by pressing a number between 0 and 4 
-or the first letter of the colour (b is blue).
+button (usually the left one) or &lt;Space&gt;, cycling through (black,
+red, green, blue, white) or by pressing a number between 0 and 4 or the
+first letter of the colour (b is blue).
 <p>
 Dragging with the second button pressed changes the size of the rectangle.
 <p>
 Every other key terminates this test.
 
 <sect>Bugs and limitations
-
 <p>
 <itemize>
-<item> If you switch depth, the program might crash badly. This will be 
-solved once I figure out mode checking or using a target that (opposed to the 
-X targets) supports that.
+<item> If you switch depth, the program might crash badly. This will be
+solved once I figure out mode checking or using a target that (opposed to
+the X targets) supports that.
 <item> Anything else?
 </itemize>
 
