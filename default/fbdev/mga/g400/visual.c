@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/02/23 14:24:42 pekberg Exp $
+/* $Id: visual.c,v 1.8 2004/09/13 09:08:13 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -221,7 +221,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Accelerate fonts if possible */
 	priv->font = (uint8 *)(font);
 	usedmemend = LIBGGI_MODE(vis)->frames *
-		fbdevpriv->fix.line_length * LIBGGI_MODE(vis)->virt.y;
+		fbdevpriv->fix.line_length * LIBGGI_VIRTY(vis);
 	fontlen = 256*8;
 	priv->fontoffset = fbdevpriv->orig_fix.smem_len - fontlen;
 	priv->fontoffset &= ~127; /* Align */
