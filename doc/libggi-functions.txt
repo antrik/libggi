@@ -569,8 +569,28 @@ The `ggiGet*Frame` functions never fail.
 Working with frames
 -------------------
 
-Write something useful here.
+People report about heavy flickering, they can't solve.
 
+This is because they display the frame *during* rendering.
+Unless you know what you do, never set the same frame to write
+and display mode.
+
+Wrong (causes flickering)::
+
+  ggiSetWriteFrame(vis, framenr);
+  ggiSetDisplayFrame(vis, framenr);
+
+  /* render here */
+
+
+Right::
+
+  displayframe = writeframe;
+  writeframe = nextframe;
+  ggiSetWriteFrame(vis, writeframe);
+  ggiSetDisplayFrame(vis, displayframe);
+
+  /* render here */
 
 
 See Also
