@@ -231,8 +231,8 @@ Synopsis
 		        int xv, int yv, ggi_graphtype type,
 		        ggi_mode *suggested_mode);
 
-  int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
-		         ggi_graphtype type, ggi_mode *md);
+  int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize,
+			 int frames, ggi_graphtype type, ggi_mode *md);
 
 
 Description
