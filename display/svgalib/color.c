@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/11/24 13:27:51 cegger Exp $
+/* $Id: color.c,v 1.10 2004/11/24 13:31:11 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -38,14 +38,14 @@ int
 GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	int *vgaptr;
-	int i;
+	size_t i;
 
 	LIBGGI_APPASSERT(colormap != NULL,
 			 "GGI_svga_setPalette() - colormap == NULL");
 
 	memcpy(LIBGGI_PAL(vis)->clut.data, colormap, len*sizeof(ggi_color));
 
-	vgaptr = LIBGGI_PAL(vis)->priv + start*3;
+	vgaptr = (int *)((uint8 *)LIBGGI_PAL(vis)->priv + start*3);
 
 	/* vga_setPalette() takes 6-bit r,g,b,
 	   so we need to scale ggi_color's 16-bit values. */
