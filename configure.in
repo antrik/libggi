@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.148 2004/11/03 21:58:11 aldot Exp $
+dnl $Id: configure.in,v 1.149 2004/11/11 13:40:13 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -297,6 +297,14 @@ dnl options to 'configure'.
 GGI_EXTRA_PATHS
 
 
+dnl
+dnl ========================================================================
+dnl Checks for platform specificas
+
+GGI_CHECK_STRING_FUNCS
+GGI_CC_CHECK4_OPTION([pedantic])
+GGI_CHECK_IMPLICIT_DECLARATIONS
+
 dnl ========================================================================
 dnl Checks for header files.
 
@@ -375,8 +383,7 @@ AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
-	random herror gethostbyname sigpending fork kill \
-	snprintf strncat strncpy)
+	random herror gethostbyname sigpending fork kill)
 
 dnl ========================================================================
 dnl LibGII must be built
@@ -1311,7 +1318,6 @@ if test "x$use_debug" = "xyes"; then
     CFLAGS="$CFLAGS -g"
   fi
   if test "$ac_cv_c_compiler_gnu" = "yes"; then
-    CFLAGS="$CFLAGS -pedantic"
     # Common warning flags
     CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
@@ -1319,7 +1325,9 @@ if test "x$use_debug" = "xyes"; then
 
     # Advanced warning flags
     CFLAGS="$CFLAGS -Wnested-externs -Wredundant-decls"
-    CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
+    if test "x$cc_has_werror_implicit_function_declaration" != "xyes"; then
+      CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
+    fi
 
     # Buggy warning flag
     # CFLAGS="$CFLAGS -Wconversion"
