@@ -1,4 +1,4 @@
-<refentry id="ggiCheckMode">
+<refentry id="api-ggicheckmode">
 
 <refmeta>
 <refentrytitle><function/ggiCheckMode/</refentrytitle>
@@ -224,8 +224,8 @@ else {
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkend="ggiOpen"></member>
-<member><xref linkend="ggiSetMode"></member>
+<member><xref linkend="api-ggiopen"></member>
+<member><xref linkend="api-ggisetmode"></member>
 </simplelist>
 
 </refsect1>
@@ -236,7 +236,7 @@ else {
 
 
 
-<refentry ID="ggiSetMode">
+<refentry ID="api-ggisetmode">
 
 <refmeta>
 <refentrytitle><function/ggiSetMode/</refentrytitle>
@@ -347,15 +347,15 @@ Also we don't need ggiGetMode in vis->opdisplay, do we?
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkEnd="ggiOpen"></member>
-<member><xref linkEnd="ggiCheckMode"></member>
+<member><xref linkend="api-ggiopen"></member>
+<member><xref linkend="api-ggicheckmode"></member>
 </simplelist>
 
 </refsect1>
 </refentry>
 
 
-<refentry id="ggiParseMode">
+<refentry id="api-ggiparsemode">
 
 <refmeta>
 <refentrytitle><function/ggiParseMode/</refentrytitle>

@@ -1,4 +1,4 @@
-<refentry ID="ggiSetFlags">
+<refentry ID="api-ggisetflags">
 <refmeta>
 <refentrytitle><function/ggiSetFlags/</refentrytitle>
 <manvolnum/3ggi/
@@ -86,7 +86,7 @@ effect.
 </para>
 <para>
 To make sure that all pending graphics operations are actually done and
-the screen is updated, you need to call <link linkend="ggiFlush">
+the screen is updated, you need to call <link linkend="api-ggiflush">
 <function/ggiFlush/</link>.  This call is not needed in synchronous mode.)
 </para>
 </listitem>
@@ -132,15 +132,13 @@ ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member>
-<xref linkend="ggiFlush">
-</member>
+<member><xref linkend="api-ggiflush"></member>
 </simplelist>
 
 </refsect1>
 </refentry>
 
-<refentry ID="ggiFlush">
+<refentry ID="api-ggiflush">
 <refmeta>
 <refentrytitle><function/ggiFlush/</refentrytitle>
 <manvolnum/3ggi/
@@ -199,15 +197,13 @@ No meaningful return value.
 <refsect1>
 <title>See Also</title>
 <simplelist TYPE=inline>
-<member>
-<xref linkEnd="ggiSetFlags">
-</member>
+<member><xref linkend="api-ggisetflags"></member>
 </simplelist>
 </refsect1>
 
 </refentry>
 
-<refentry id="ggiResourceAcquire">
+<refentry id="api-ggiresourceacquire">
 <refmeta>
 <refentrytitle><function/ggiResourceAcquire/</refentrytitle>
 <manvolnum/3ggi/

@@ -15,7 +15,7 @@
 
 <answer>
 <para>
-See <link linkend="libggi-intro">the introduction to LibGGI</link>.
+See <link linkend="ggi-chapter-whatisggi">the introduction to LibGGI</link>.
 </para>
 
 <para>
@@ -386,7 +386,7 @@ second doesn't help you much, does it? :(
 
 <para>
 If you really want to sleep, the best way is to simply turn off SYNC
-mode (see <xref linkend="ggiSetFlags">).
+mode (see <xref linkend="api-ggisetflags">).
 </para>
 </answer>
 

@@ -1,4 +1,4 @@
-<refentry ID="ggiCopyBox">
+<refentry ID="api-ggicopybox">
 
 <refmeta>
 <refentrytitle><function/ggiCopyBox/</refentrytitle>
@@ -52,16 +52,14 @@ not the same as the write frame.
 <refsect1>
 <title>See Also</title>
 <simplelist TYPE=inline>
-<member>
-<xref linkEnd="ggiCrossBlit">
-</member>
+<member><xref linkend="api-ggicrossblit"></member>
 </simplelist>
 </refsect1>
 
 </refentry>
 
 
-<refentry ID="ggiCrossBlit">
+<refentry ID="api-ggicrossblit">
 
 <refmeta>
 <refentrytitle><function/ggiCrossBlit/</refentrytitle>
@@ -118,7 +116,7 @@ This function does not perform stretching.
 <title>See Also</title>
 <simplelist TYPE=inline>
 <member>
-<xref linkEnd="ggiCopyBox">
+<xref linkend="api-ggicopybox">
 </member>
 </simplelist>
 </refsect1>

@@ -1,4 +1,4 @@
-<refentry id="ggiInit">
+<refentry id="api-ggiinit">
 
 <refmeta>
 <refentrytitle><function/ggiInit/</refentrytitle>
@@ -126,7 +126,7 @@ ggiExit();
 
 
 
-<refentry id="ggiPanic">
+<refentry id="api-ggipanic">
 
 <refmeta>
 <refentrytitle><function/ggiPanic/</refentrytitle>

@@ -1,4 +1,4 @@
-<refentry id="ggiOpen">
+<refentry id="api-ggiopen">
 
 <refmeta>
 <refentrytitle><function/ggiOpen/</refentrytitle>
@@ -118,7 +118,7 @@ ggiClose(memvis);
 <title/See Also/
 
 <simplelist>
-<member><xref linkend="ggiInit"></member>
+<member><xref linkend="api-ggiinit"></member>
 
 <!-- !!! link to libggi(7) -->
 

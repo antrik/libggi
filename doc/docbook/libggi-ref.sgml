@@ -1,5 +1,5 @@
-<reference id="libggi-ref"><title>LibGGI Reference</title>
-<refentry id="libggi-introduction">
+<reference id="ggi-reference-libggi"><title>LibGGI Reference</title>
+<refentry id="ref-libggi">
 <refmeta>
 <refentrytitle><systemitem/libggi/</refentrytitle>
 <manvolnum/7ggi/
@@ -74,7 +74,7 @@ target.  This setting is overriden by the <envar/GGI_DISPLAY/ variable.
 <listitem>
 <para>
 Specifies the default target used when the application calls 
-<link linkend="ggiOpen"><function/ggiOpen/</link>
+<link linkend="api-ggiopen"><function/ggiOpen/</link>
 with <symbol/NULL/ argument.
 </para>
   
@@ -86,8 +86,7 @@ The default target is specified using a target-spec:
 <arg choice=opt>:<replaceable/targetargs/</arg>
 </cmdsynopsis>
 
-where <replaceable/targetname/ is the <link
-linkend="libggi-ref"/name of the target/,
+where <replaceable/targetname/ is the name of the target,
 and <replaceable/targetargs/ are any target-specific arguments.
 </para>
 
@@ -124,7 +123,7 @@ targets are tried in order until one works:
 <listitem>
 <para>
 <envar>GGI_INPUT_<replaceable/target/</envar> specifies extra <link
-linkend="libgii-ref">LibGII input sources</link> and/or filters for visuals 
+linkend="ref-libgii">LibGII input sources</link> and/or filters for visuals 
 using <replaceable/target/.
 </para>
 
@@ -141,7 +140,7 @@ and separating them with semicolons:
 <para>
 The inputs specified by 
 <envar>GGI_INPUT_<replaceable/target/_<replaceable/n/</envar> are only
-opened at the <replaceable/n/th call of <link linkend="ggiOpen">
+opened at the <replaceable/n/th call of <link linkend="api-ggiopen">
 <function/ggiOpen/</link>.
 This is used for misbehaving applications that do not allow the user to
 specify inputs for the different targets that it opens.

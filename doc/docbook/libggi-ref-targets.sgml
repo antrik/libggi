@@ -1,5 +1,4 @@
-<refentry id="display-x">
-
+<refentry id="ref-display-x">
 
 <refmeta>
 <refentrytitle><systemitem/display-x/</refentrytitle>
@@ -50,7 +49,7 @@
 <para>
 <systemitem/display-x/ opens an X window and emulates a linear
 framebuffer which is blitted to the X server with the
-<function/XPutImage/ function. In <link linkend="ggiSetFlags">
+<function/XPutImage/ function. In <link linkend="api-ggisetflags">
 asynchronous mode</link> this is done when <function/ggiFlush/ is called, and
 in synchronous mode it is done periodically in the background (with the
 framerate specified by <link linkend="GGI-MANSYNC-FPS">
@@ -168,7 +167,7 @@ be turned off in order to leave the window.
 </refentry>
 
 
-<refentry id="display-dga">
+<refentry id="ref-display-dga">
 
 <refmeta>
 <refentrytitle><systemitem/display-dga/</refentrytitle>
@@ -290,7 +289,7 @@ to be able to mmap <filename>/dev/mem</filename>.
 
 
 
-<refentry id="display-aa">
+<refentry id="ref-display-aa">
 
 <refmeta>
 <refentrytitle><systemitem/display-aa/</refentrytitle>
@@ -340,7 +339,7 @@ AA-lib options may be specified using the the <envar/AA_OPTS/ variable.
 
 
 
-<refentry id="display-fbdev">
+<refentry id="ref-display-fbdev">
 
 <refmeta>
 <refentrytitle><systemitem/display-fbdev/</refentrytitle>
@@ -471,7 +470,7 @@ string is affixed, in which case, they represent resolution in dots-per-inch.
 
 
 
-<refentry id="display-file">
+<refentry id="ref-display-file">
 
 <refmeta>
 <refentrytitle><systemitem/display-file/</refentrytitle>
@@ -566,7 +565,7 @@ command.
 </refentry>
 
 
-<refentry id="display-directx">
+<refentry id="ref-display-directx">
 
 <refmeta>
 <refentrytitle><systemitem/display-directx/</refentrytitle>
@@ -608,7 +607,7 @@ Use <command/display-directxnt/ on NT4 system.
 </refentry>
 
 
-<refentry id="display-glide">
+<refentry id="ref-display-glide">
 
 <refmeta>
 <refentrytitle><systemitem/display-glide/</refentrytitle>
@@ -695,7 +694,7 @@ drawing-primitives.</member>
 
 
 
-<refentry id="display-memory">
+<refentry id="ref-display-memory">
 
 <refmeta>
 <refentrytitle><systemitem/display-memory/</refentrytitle>
@@ -750,7 +749,7 @@ is allocated at the start of the requested memory area.
 
 <para>
 When running on shared memory, this option enables you to to give input
-(using <link linkend="ggiEventPoll"><function/giiSendEvent/</link>) 
+(using <link linkend="api-ggieventpoll"><function/giiSendEvent/</link>) 
 to other processes sharing that segment.  This
 technique is demonstrated in <application/cube3d/ and can be used for
 things like GGI multiplexers.
@@ -815,7 +814,7 @@ checks can or will be made that a certain mode fits into it.
 
 
 
-<refentry id="display-svgalib">
+<refentry id="ref-display-svgalib">
 
 <refmeta>
 <refentrytitle><systemitem/display-svgalib/</refentrytitle>
@@ -882,7 +881,7 @@ addressing.</member>
 
 
 
-<refentry id="display-vcsa">
+<refentry id="ref-display-vcsa">
 
 <refmeta>
 <refentrytitle><systemitem/display-vcsa/</refentrytitle>
@@ -1009,7 +1008,7 @@ console.
 
 
 
-<refentry id="display-monotext">
+<refentry id="ref-display-monotext">
 
 <refmeta>
 <refentrytitle><systemitem/display-monotext/</refentrytitle>
@@ -1083,7 +1082,7 @@ value.
 
 
 
-<refentry id="display-multi">
+<refentry id="ref-display-multi">
 
 <refmeta>
 <refentrytitle><systemitem/display-multi/</refentrytitle>
@@ -1137,7 +1136,7 @@ do) contain colons, they need to be enclosed in parentheses.
 
 </refentry>
 
-<refentry id="display-palemu">
+<refentry id="ref-display-palemu">
 
 <refmeta>
 <refentrytitle><systemitem/display-palemu/</refentrytitle>
@@ -1208,7 +1207,7 @@ defaults to automatic selection (just like using
  
 </refentry>
  
-<refentry id="display-tile">
+<refentry id="ref-display-tile">
 
 <refmeta>
 <refentrytitle><systemitem/display-tile/</refentrytitle>
@@ -1347,7 +1346,7 @@ tile which maps the whole screen.
 
 
 
-<refentry id="display-trueemu">
+<refentry id="ref-display-trueemu">
 
 <refmeta>
 <refentrytitle><systemitem/display-trueemu/</refentrytitle>
@@ -1453,7 +1452,7 @@ set).</para></listitem>
 
 
 
-<refentry id="display-vgl">
+<refentry id="ref-display-vgl">
 
 <refmeta>
 <refentrytitle><systemitem/display-vgl/</refentrytitle>
@@ -1535,7 +1534,7 @@ S3 board, use the s3.ko module to access it's framebuffer (FreeBSD > R5.0).
 
 
 
-<refentry id="display-sub">
+<refentry id="ref-display-sub">
 
 <refmeta>
 <refentrytitle><systemitem/display-sub/</refentrytitle>
@@ -1562,7 +1561,7 @@ visual.
 
 <para>
 The sub target behaves a bit special with respect to (i.e. abuses the
-semantics of :) the <link linkend="ggiSetMode"><function/ggiSetMode/
+semantics of :) the <link linkend="api-ggisetmode"><function/ggiSetMode/
 </link> call.  It uses the "visible" size for the top left corner
 position of the window within the visual, and the "virtual" size for
 window width and height.  Note, that moving/resizing the window does

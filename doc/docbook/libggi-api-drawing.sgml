@@ -1,4 +1,4 @@
-<refentry id="ggiSetGCForeground">
+<refentry id="api-ggisetgcforeground">
 
 <refmeta>
 <refentrytitle><function/ggiSetGCForeground/</refentrytitle>
@@ -60,7 +60,7 @@ drawing text.
 </refsect1>
 </refentry>
 
-<refentry id="ggiSetGCClipping">
+<refentry id="api-ggisetgcclipping">
 
 <refmeta>
 <refentrytitle><function/ggiSetGCClipping/</refentrytitle>
@@ -127,7 +127,7 @@ rectangle.
 </refsect1>
 </refentry>
 
-<refentry ID="ggiDrawPixel">
+<refentry ID="api-ggidrawpixel">
 
 <refmeta>
 <refentrytitle><function/ggiDrawPixel/</refentrytitle>
@@ -189,7 +189,7 @@ Draw, put, or get a single pixelvalue at (<parameter/x/,<parameter/y/).
 </refentry>
 
 
-<refentry ID="ggiDrawHLine">
+<refentry ID="api-ggidrawhline">
 
 <refmeta>
 <refentrytitle><function/ggiDrawHLine/</refentrytitle>
@@ -250,16 +250,16 @@ is one pixel.
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkEnd="ggiDrawVLine"></member>
-<member><xref linkEnd="ggiDrawBox"></member>
-<member><xref linkEnd="ggiDrawLine"></member>
+<member><xref linkEnd="api-ggidrawvline"></member>
+<member><xref linkEnd="api-ggidrawbox"></member>
+<member><xref linkEnd="api-ggidrawline"></member>
 </simplelist>
 
 </refsect1>
 </refentry>
 
 
-<refentry ID="ggiDrawVLine">
+<refentry ID="api-ggidrawvline">
 
 <refmeta>
 <refentrytitle><function/ggiDrawVLine/</refentrytitle>
@@ -319,15 +319,15 @@ The width of the line is one pixel.
 <refsect1>
 <title>See Also</title>
 <simplelist TYPE=inline>
-<member><xref linkEnd="ggiDrawHLine"></member>
-<member><xref linkEnd="ggiDrawBox"></member>
-<member><xref linkEnd="ggiDrawLine"></member>
+<member><xref linkend="api-ggidrawhline"></member>
+<member><xref linkend="api-ggidrawbox"></member>
+<member><xref linkend="api-ggidrawline"></member>
 </simplelist>
 </refsect1>
 </refentry>
 
 
-<refentry ID="ggiDrawBox">
+<refentry ID="api-ggidrawbox">
 
 <refmeta>
 <refentrytitle><function/ggiDrawBox/</refentrytitle>
@@ -393,16 +393,16 @@ positive y direction.
 <refsect1>
 <title>See Also</title>
 <simplelist TYPE=inline>
-<member><xref linkEnd="ggiDrawHLine"></member>
-<member><xref linkEnd="ggiDrawVLine"></member>
-<member><xref linkEnd="ggiDrawLine"></member>
+<member><xref linkend="api-ggidrawhline"></member>
+<member><xref linkend="api-ggidrawvline"></member>
+<member><xref linkend="api-ggidrawline"></member>
 </simplelist>
 
 </refsect1>
 </refentry>
 
 
-<refentry ID="ggiFillscreen">
+<refentry ID="api-ggifillscreen">
 
 <refmeta>
 <refentrytitle><function/ggiFillscreen/</refentrytitle>
@@ -445,7 +445,7 @@ more efficient than the corresponding call to <function/ggiDrawBox/.
 </refentry>
 
 
-<refentry ID="ggiDrawLine">
+<refentry ID="api-ggidrawline">
 
 <refmeta>
 <refentrytitle><function/ggiDrawLine/</refentrytitle>
@@ -490,8 +490,8 @@ pixel set is no more than 0.5 pixels off the place it should be.
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkEnd="ggiDrawHLine"></member>
-<member><xref linkEnd="ggiDrawVLine"></member>
+<member><xref linkend="api-ggidrawhline"></member>
+<member><xref linkend="api-ggidrawvline"></member>
 </simplelist>
 
 </refsect1>

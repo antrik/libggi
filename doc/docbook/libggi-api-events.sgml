@@ -1,4 +1,4 @@
-<refentry id="ggiEventPoll">
+<refentry id="api-ggieventpoll">
 
 <refmeta>
 <refentrytitle><function/ggiEventPoll/</refentrytitle>
@@ -118,7 +118,7 @@ all LibGII functions are available to manipulate and process inputs.
 The LibGGI versions provided of most LibGII functions simply take a 
 <type/ggi_visual_t/ rather than <type/gii_input_t/ for convenience
 during everyday usage.  Events are LibGII types.  All other semantics 
-are the same; see <xref linkend="libgii"> for details.
+are the same; see <xref linkend="ref-libgii"> for details.
 </para>
 
 <important><para>
@@ -135,7 +135,7 @@ usage.
 <para>
 Advanced management of input sources is accomplished by detaching
 the input from the visual and using LibGII functions on the separate
-visual handle (see <link linkend="ggiGetInput">ggiDetachInput</link>).
+visual handle (see <link linkend="api-ggigetinput">ggiDetachInput</link>).
 This is encouraged, for example, when joining inputs from multiple
 visuals, because
 when two visuals share the same joined input, you cannot
@@ -150,9 +150,9 @@ the second closed visual with a stale input handle.)
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkend="giiSetEventMask"></member>
-<member><xref linkend="giiEventPoll"></member>
-<member><link linkend="ggiGetInput">ggiDetachInput</link></member>
+<member><xref linkend="api-giiseteventmask"></member>
+<member><xref linkend="api-giieventpoll"></member>
+<member><xref linkend="api-ggigetinput"></member>
 </simplelist>
 
 </refsect1>
@@ -160,7 +160,7 @@ the second closed visual with a stale input handle.)
 </refentry>
 
 
-<refentry id="ggiGetInput">
+<refentry id="api-ggigetinput">
 
 <refmeta>
 <refentrytitle><function/ggiGetInput/</refentrytitle>
@@ -170,7 +170,7 @@ the second closed visual with a stale input handle.)
 
 <refnamediv>
 <refname/ggiGetInput/
-<refname/ggiDetachInput/
+<refname id="api-test-ggidetachinput">ggiDetachInput</refname>
 <refpurpose/Functions to translate from GGI visuals to GII input</refpurpose>
 </refnamediv>
 
@@ -217,7 +217,7 @@ is closed, the input will remain unaffected.
 <title>See Also</title>
 
 <simplelist TYPE="inline">
-<member><link linkend="giiOpen">giiSplitInput</link></member>
+<member><xref linkend="api-giiopen"></member>
 </simplelist>
 
 </refsect1>
@@ -225,7 +225,7 @@ is closed, the input will remain unaffected.
 </refentry>
 
 
-<refentry id="ggiEventSend">
+<refentry id="api-ggieventsend">
 
 <refmeta>
 <refentrytitle><function/ggiEventSend/</refentrytitle>
@@ -257,8 +257,7 @@ gii_event *<parameter/ev/
 <title>Description</title>
 
 <para>
-<function/ggiEventSend/ injects an event into the queue.  See
-<xref linkend="giiEventSend"> for details.
+<function/ggiEventSend/ injects an event into the queue.
 </para>
 
 </refsect1>
@@ -281,8 +280,8 @@ To disable this behavior, use a command event with code
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member><xref linkend="ggiEventPoll"></member>
-<member><xref linkend="giiEventSend"></member>
+<member><xref linkend="api-ggieventpoll"></member>
+<member><xref linkend="api-giieventsend"></member>
 </simplelist>
 
 </refsect1>
@@ -291,7 +290,7 @@ To disable this behavior, use a command event with code
 
 
 
-<refentry id="ggiGetc">
+<refentry id="api-ggigetc">
 
 <refmeta>
 <refentrytitle><function/ggiGetc/</refentrytitle>
@@ -366,7 +365,7 @@ For a fuller definition of characters, see <xref linkend="gii-keysym">.
 <title/See Also/
 
 <simplelist TYPE=inline>
-<member><xref linkend="ggiEventPoll"></member>
+<member><xref linkend="api-ggieventpoll"></member>
 </simplelist>
 
 </refsect1>

@@ -1,4 +1,4 @@
-<refentry id="ggiDBGetBuffer">
+<refentry id="api-ggidbgetbuffer">
 
 <refmeta>
 <refentrytitle><function/ggiDBGetBuffer/</refentrytitle>
@@ -51,7 +51,7 @@ DirectBuffers where <function/ggiResourceMustAcquire/ is true need to be
 'acquired' (i.e. locked) before using.  An acquire is done by using
 <function/ggiResourceAcquire/ and is released by calling
 <function/ggiResourceRelease/.  
-(See <xref linkend="ggiResourceAcquire">.)
+(See <xref linkend="api-ggiresourceacquire">.)
 
 Beware that the <structfield/read/, <structfield/write/ and
 <structfield/stride/ fields of the DirectBuffer may be changed by an

@@ -1,4 +1,4 @@
-<refentry id="ggiMapColor">
+<refentry id="api-ggimapcolor">
 
 <refmeta>
 <refentrytitle><function/ggiMapColor/</refentrytitle>
@@ -99,7 +99,7 @@ error code.
 </refentry>
 
 
-<refentry ID="ggiSetPalette">
+<refentry ID="api-ggisetpalette">
 
 <refmeta>
 <refentrytitle><function/ggiSetPalette/</refentrytitle>
@@ -181,9 +181,7 @@ is a readable CLUT.  </para>
 <title>See Also</title>
 
 <simplelist TYPE=inline>
-<member>
-<xref linkEnd="ggiSetColorfulPalette">
-</member>
+<member><xref linkend="api-ggisetcolorfulpalette"></member>
 </simplelist>
 
 </refsect1>
@@ -191,7 +189,7 @@ is a readable CLUT.  </para>
 </refentry>
 
 
-<refentry ID="ggiSetColorfulPalette">
+<refentry ID="api-ggisetcolorfulpalette">
 <refmeta>
 <refentrytitle><function/ggiSetColorfulPalette/</refentrytitle>
 <manvolnum/3ggi/
@@ -245,16 +243,14 @@ changed.  Negative values indicate error (codes).
 <refsect1>
 <title>See Also</title>
 <simplelist TYPE=inline>
-<member>
-<xref linkEnd="ggiSetPalette">
-</member>
+<member><xref linkend="api-ggisetpalette"></member>
 </simplelist>
 
 </refsect1>
 </refentry>
 
 
-<refentry id="ggiSetGamma">
+<refentry id="api-ggisetgamma">
 
 <refmeta>
 <refentrytitle><function/ggiSetGamma/</refentrytitle>
@@ -345,7 +341,7 @@ error code. </para>
 </refsect1>
 </refentry>
 
-<refentry id="ggiGetPixelFormat">
+<refentry id="api-ggigetpixelformat">
 
 <refmeta>
 <refentrytitle><function/ggiGetPixelFormat/</refentrytitle>
