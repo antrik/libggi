@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.15 2004/11/14 15:47:43 cegger Exp $
+/* $Id: color.c,v 1.16 2004/11/27 00:05:56 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -180,7 +180,7 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 	return 0;
 }
 
-int GGI_X_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_X_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	ggi_x_priv *priv;
 	int i;

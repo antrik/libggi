@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.8 2004/11/26 22:17:46 cegger Exp $
+/* $Id: stubs.c,v 1.9 2004/11/27 00:06:03 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -158,7 +158,7 @@ int  ggiSetGamma(ggi_visual_t vis,ggi_float  r,ggi_float  g,ggi_float  b)
 int  ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
 { return vis->opcolor->getgammamap(vis,s,len,gammamap); }
 
-int  ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
+int  ggiSetGammaMap(ggi_visual_t vis,int s,int len,const ggi_color *gammamap)
 { return vis->opcolor->setgammamap(vis,s,len,gammamap); }
 
 int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)

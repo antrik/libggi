@@ -819,7 +819,7 @@ Synopsis
 			int s, int len, ggi_color *gammamap);
 
   int ggiSetGammaMap(ggi_visual_t vis,
-			int s, int len, ggi_color *gammamap);
+			int s, int len, const ggi_color *gammamap);
 
   int ggiGammaMax(ggi_visual_t vis,
 			uint32 bitmeaning, int *max_r, int *max_w);

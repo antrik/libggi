@@ -1,4 +1,4 @@
-.TH "ggiGetGamma" 3 "2004-11-26" "libggi-current" GGI
+.TH "ggiGetGamma" 3 "2004-11-27" "libggi-current" GGI
 .SH NAME
 \fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
 .SH SYNOPSIS
@@ -16,7 +16,7 @@ int ggiGetGammaMap(ggi_visual_t vis,
                       int s, int len, ggi_color *gammamap);
 
 int ggiSetGammaMap(ggi_visual_t vis,
-                      int s, int len, ggi_color *gammamap);
+                      int s, int len, const ggi_color *gammamap);
 
 int ggiGammaMax(ggi_visual_t vis,
                       uint32 bitmeaning, int *max_r, int *max_w);

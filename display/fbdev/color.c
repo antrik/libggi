@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2004/11/14 15:47:44 cegger Exp $
+/* $Id: color.c,v 1.11 2004/11/27 00:05:58 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -41,7 +41,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis);
 static int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len, 
 				 ggi_color *colormap);
 static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len, 
-				 ggi_color *colormap);
+				 const ggi_color *colormap);
 static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t end, 
 			       const ggi_color *colormap);
 static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
@@ -243,7 +243,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
  *
  */
 static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len, 
-				 ggi_color *colormap)
+				 const ggi_color *colormap)
 {
 	ggi_fbdev_priv *priv;
 	struct fb_cmap gam;

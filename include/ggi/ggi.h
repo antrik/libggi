@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.13 2004/11/26 22:17:46 cegger Exp $
+/* $Id: ggi.h,v 1.14 2004/11/27 00:06:04 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -496,7 +496,7 @@ GGIAPIFUNC int ggiSetGamma(ggi_visual_t vis,
 GGIAPIFUNC int ggiGetGammaMap(ggi_visual_t vis,int s,int len,
 			      ggi_color *gammamap);
 GGIAPIFUNC int ggiSetGammaMap(ggi_visual_t vis,int s,int len,
-			      ggi_color *gammamap);
+			      const ggi_color *gammamap);
 
 GGIAPIFUNC int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning,
 			   int *max_r, int *max_w);

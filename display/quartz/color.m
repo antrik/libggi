@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.7 2004/11/26 21:35:34 cegger Exp $
+/* $Id: color.m,v 1.8 2004/11/27 00:05:59 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -146,7 +146,7 @@ int GGI_quartz_getgamma(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_flo
 }	/* GGI_quartz_getgamma */
 
 
-int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	int i;
 	ggi_quartz_priv *priv;

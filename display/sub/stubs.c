@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.4 2004/11/26 21:35:34 cegger Exp $
+/* $Id: stubs.c,v 1.5 2004/11/27 00:06:00 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -299,7 +299,7 @@ int GGI_sub_copybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 **	Simple "call parent" functions
 */
 
-int GGI_sub_setgammamap(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_sub_setgammamap(ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
