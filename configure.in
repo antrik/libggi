@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.115 2004/05/03 22:41:33 cegger Exp $
+dnl $Id: configure.in,v 1.116 2004/05/05 05:54:20 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -22,9 +22,6 @@ ggi_conffile="libggi.conf"
 ggi_subdir="ggi"
 
 use_debug="yes"
-
-use_threads="no"
-THREADLIBS=""
 
 sublib_libs=""
 dynload_libs="-lgii -lgg"
@@ -294,7 +291,7 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
 AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
-sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
+sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
 sys/socket.h netinet/in.h netdb.h windows.h linux/h3600_ts.h \
@@ -323,32 +320,36 @@ if test "x$ac_cv_header_sys_shm_h" != "xyes"; then
 fi
 
 dnl ========================================================================
-dnl -pthread is necessary if gii compiled with threads
+dnl Checks for typedefs, structures, and compiler characteristics.
 
-have_pthreads=no
-if test "x$use_threads" != "xno"; then
-  AC_MSG_CHECKING(for pthread library)
-  TMP_SAVE_LIBS=$LIBS
-  if test $host_os = "freebsd5.1" -o \
-          $host_os = "freebsd4.10"; then
-    _pthread="-pthread"
-  else
-    _pthread="-lpthread"
-  fi
-  LIBS="$LIBS $_pthread"
-  AC_TRY_LINK([
-#include "confdefs.h"
-#define __C_ASM_H /* fix for retarded Digital Unix headers */
-#include <pthread.h>],[
-void foo(void)
-{
-pthread_exit (0);
-}
-],
-    have_pthreads=yes
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no)
-  LIBS=$TMP_SAVE_LIBS)
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_OFF_T
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_STRUCT_ST_RDEV
+AC_HEADER_TIME
+AC_STRUCT_TM
+AC_TYPE_SIGNAL
+
+GGI_DLLEXT
+GGI_CHECKOS
+GGI_THREADLIBS
+
+dnl check for socklen_t
+dnl Define HAVE_SOCKLEN_T if found.
+if test "$ac_cv_header_sys_socket_h" = "yes"; then
+
+	AC_MSG_CHECKING([whether socklen_t is available])
+	AC_TRY_COMPILE([
+		#include <sys/types.h>
+		#include <sys/socket.h>
+		#ifdef HAVE_SYS_UN_H
+		#include <sys/un.h>
+		#endif], [socklen_t len;],
+		[AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SOCKLEN_T)],
+		[AC_MSG_RESULT(no)])
 fi
 
 dnl ========================================================================
@@ -366,7 +367,7 @@ dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
 save_CC="$CC"
 CC="$SHELL ./libtool $CC"
 save_LDFLAGS="$LDFLAGS"
-LDFLAGS="$LDFLAGS -lgg"
+LDFLAGS="$LDFLAGS -lgg $THREADLIBS"
 AC_CHECK_LIB(gii,giiInit,
   AC_CHECK_LIB(gg,ggGetSwarType,
 	foo=bar,
@@ -379,38 +380,6 @@ AC_CHECK_LIB(gii,giiInit,
 CC="$save_CC"
 LDFLAGS="$save_LDFLAGS"
 
-
-dnl ========================================================================
-dnl Checks for typedefs, structures, and compiler characteristics.
-
-AC_C_CONST
-AC_C_INLINE
-AC_TYPE_OFF_T
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
-AC_STRUCT_ST_RDEV
-AC_HEADER_TIME
-AC_STRUCT_TM
-AC_TYPE_SIGNAL
-
-GGI_DLLEXT
-GGI_CHECKOS
-
-dnl check for socklen_t
-dnl Define HAVE_SOCKLEN_T if found.
-if test "$ac_cv_header_sys_socket_h" = "yes"; then
-
-	AC_MSG_CHECKING([whether socklen_t is available])
-	AC_TRY_COMPILE([
-		#include <sys/types.h>
-		#include <sys/socket.h>
-		#ifdef HAVE_SYS_UN_H
-		#include <sys/un.h>
-		#endif], [socklen_t len;],
-		[AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SOCKLEN_T)],
-		[AC_MSG_RESULT(no)])
-fi
 
 dnl ========================================================================
 dnl Checks for library functions.
@@ -612,7 +581,7 @@ FBDEVSUBDIRS=""
 use_threads_orig="$use_threads"
 
 AC_MSG_CHECKING(if we should use pthreads for mansync)
-if test "$have_pthreads" = "yes" -a "x$use_threads" != "xno"; then 
+if test "$have_pthread" = "yes" -a "x$use_threads" != "xno"; then 
   AC_TRY_CPP([
 #include <features.h>
 #if !defined(__linux__)
@@ -1354,7 +1323,6 @@ esac
 dnl ========================================================================
 dnl Write output
 
-AC_SUBST(THREADLIBS)
 AC_SUBST(sublib_libs)
 AC_SUBST(dynload_libs)
 AC_SUBST(bsdsock_libs)
@@ -1408,12 +1376,6 @@ AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
 AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
 AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$static_sysconfdir/$ggi_subdir")
 
-if test "x$use_threads" != "xno"; then
-  AC_DEFINE(USE_THREADS)
-  if test "x$use_threads" = "xpthread"; then
-    THREADLIBS="-lpthread"
-  fi
-fi
 
 AM_CONFIG_HEADER(config.h)
 
