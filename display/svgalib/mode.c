@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/11/14 15:47:47 cegger Exp $
+/* $Id: mode.c,v 1.22 2004/11/24 13:25:00 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -33,7 +33,7 @@
 #include <termios.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/svgalib.h>
 
 #include "../common/pixfmt-setup.inc"
