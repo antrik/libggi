@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/09/13 08:37:14 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/09/13 10:57:48 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -138,7 +138,7 @@ static int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
 	/* FIXME AAlib can do greyscale but LibGGI has no rendering libs
 	 * for it ! */
 #if 0
-	ggi_graphtype gt;
+	ggi_graphtype gt = tm->graphtype;
 	if(GT_SIZE(gt) != 8) {
 		if(GT_SIZE(gt) != GT_AUTO) err = -1;
 		GT_SETSIZE(gt, 8);
@@ -148,7 +148,7 @@ static int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
 		if(GT_DEPTH(gt) != GT_AUTO) err = -1;
 		GT_SETDEPTH(gt, 8);
 	}
-	
+
 	switch(GT_SCHEME(gt)) {
 	case GT_GREYSCALE:
 		/* Okay at both 4-bit and 8-bit */
