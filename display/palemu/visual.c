@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/09/03 18:47:02 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/09/12 20:37:05 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -119,7 +119,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (LIBGGI_GC(vis) == NULL) {
 		return GGI_ENOMEM;
 	}
-	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(*priv));
+	PALEMU_PRIV(vis) = priv = malloc(sizeof(*priv));
 	if (priv == NULL) {
 		goto out_freegc;
 	}
