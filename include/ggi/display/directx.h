@@ -1,9 +1,9 @@
-/* $Id: directx.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: directx.h,v 1.2 2001/06/26 02:23:56 fortinj Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
 
-   Copyright (C) 1999 John Fortin	[fortinj@ibm.net]
+   Copyright (C) 1999 John Fortin       [fortinj@ibm.net]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -33,45 +33,46 @@
 #include <ddraw.h>
 
 
-ggifunc_getmode			GGI_directx_getmode;
-ggifunc_setmode			GGI_directx_setmode;
-ggifunc_checkmode		GGI_directx_checkmode;
-/*ggifunc_getapi		GGI_directx_getapi;*/
-ggifunc_flush			GGI_directx_flush;
+ggifunc_getmode                 GGI_directx_getmode;
+ggifunc_setmode                 GGI_directx_setmode;
+ggifunc_checkmode               GGI_directx_checkmode;
+/*ggifunc_getapi                GGI_directx_getapi;*/
+ggifunc_flush                   GGI_directx_flush;
 
-/*ggifunc_setreadframe		GGI_directx_setreadframe;*/
-/*ggifunc_setwriteframe		GGI_directx_setwriteframe;*/
-/*ggifunc_setdisplayframe	GGI_directx_setdisplayframe;*/
+/*ggifunc_setreadframe          GGI_directx_setreadframe;*/
+/*ggifunc_setwriteframe         GGI_directx_setwriteframe;*/
+/*ggifunc_setdisplayframe       GGI_directx_setdisplayframe;*/
 
-/*ggifunc_fillscreen		GGI_directx_fillscreen;*/
+/*ggifunc_fillscreen            GGI_directx_fillscreen;*/
 
-ggifunc_drawpixel		GGI_directx_drawpixel;
-ggifunc_putpixel		GGI_directx_putpixel;
-ggifunc_getpixel		GGI_directx_getpixel;
+ggifunc_drawpixel               GGI_directx_drawpixel;
+ggifunc_putpixel                GGI_directx_putpixel;
+ggifunc_getpixel                GGI_directx_getpixel;
 
-ggifunc_drawline		GGI_directx_drawline;
-/*ggifunc_drawhline		GGI_directx_drawhline;*/
-/*ggifunc_drawvline		GGI_directx_drawvline;*/
-/*ggifunc_puthline		GGI_directx_puthline;*/
-/*ggifunc_putvline		GGI_directx_putvline;*/
-/*ggifunc_gethline		GGI_directx_gethline;*/
-/*ggifunc_getvline		GGI_directx_getvline;*/
+ggifunc_drawline                GGI_directx_drawline;
+/*ggifunc_drawhline             GGI_directx_drawhline;*/
+/*ggifunc_drawvline             GGI_directx_drawvline;*/
+/*ggifunc_puthline              GGI_directx_puthline;*/
+/*ggifunc_putvline              GGI_directx_putvline;*/
+/*ggifunc_gethline              GGI_directx_gethline;*/
+/*ggifunc_getvline              GGI_directx_getvline;*/
 
-/*ggifunc_drawbox		GGI_directx_drawbox;*/
-/*ggifunc_putbox		GGI_directx_putbox;*/
-/*ggifunc_getbox		GGI_directx_getbox;*/
+/*ggifunc_drawbox               GGI_directx_drawbox;*/
+/*ggifunc_putbox                GGI_directx_putbox;*/
+/*ggifunc_getbox                GGI_directx_getbox;*/
 
-/*ggifunc_putc			GGI_directx16_putc;*/
-/*ggifunc_putc			GGI_directx32_putc;*/
+/*ggifunc_putc                  GGI_directx16_putc;*/
+/*ggifunc_putc                  GGI_directx32_putc;*/
 
 typedef struct directx_priv
 {
-	HANDLE hWnd;
-	long pitch;
-	long maxX;
-	long maxY;
-	DWORD ColorDepth;
-	char BPP;
+        HANDLE hWnd;
+        HANDLE hInstance;
+        long pitch;
+        long maxX;
+        long maxY;
+        DWORD ColorDepth;
+        char BPP;
 } directx_priv;
 
 #define DIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
