@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2001/06/17 04:46:51 skids Exp $
+/* $Id: mode.c,v 1.4 2001/07/31 08:37:58 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -770,7 +770,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 
 	maxframes = priv->orig_fix.smem_len /
 		(mode->virt.x * mode->virt.y *
-		 ((GT_SIZE(mode->graphtype)+7) / 8));
+		 GT_ByPP(mode->graphtype));
 	if (mode->frames > maxframes) {
 		mode->frames = maxframes;
 		err = -1;
