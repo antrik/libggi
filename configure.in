@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.93 2003/10/29 17:31:22 cegger Exp $
+dnl $Id: configure.in,v 1.94 2003/11/09 00:17:46 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -849,6 +849,8 @@ if test "x$build_terminfo_target" != "xno"; then
 	terminfolibs="-l$curseslib",
 	build_terminfo_target=no)
   fi
+  AC_CHECK_LIB($curseslib, mvwaddchnstr,
+	foo=bar, build_terminfo_target=no)
 fi
 
 if test "x$build_vcsa_target" != "xno"; then
