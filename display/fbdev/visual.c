@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2003/09/29 04:48:31 skids Exp $
+/* $Id: visual.c,v 1.13 2003/09/29 05:38:51 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -569,7 +569,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	LIBGGI_PRIVATE(vis) = priv = calloc(sizeof(ggi_fbdev_priv), 1);
+	LIBGGI_PRIVATE(vis) = priv = calloc(1, sizeof(ggi_fbdev_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
