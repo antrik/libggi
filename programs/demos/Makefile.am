@@ -18,7 +18,7 @@ pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm
 stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
+wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(bsdsock_libs)
 cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 
