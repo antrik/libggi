@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2004/12/27 20:50:33 cegger Exp $
+/* $Id: visual.c,v 1.2 2004/12/28 21:26:59 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -220,10 +220,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Now join the new event source in. */
 		vis->input = giiJoinInputs(vis->input, inp);
 	} else {
+
+		DPRINT_MISC("no input handling\n");
 		priv->inp = NULL;
 	}	/* if */
-
-	priv->inp = NULL;
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
