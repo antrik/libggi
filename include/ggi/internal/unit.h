@@ -1,4 +1,4 @@
-/* $Id: unit.h,v 1.2 2004/10/14 11:01:33 cegger Exp $
+/* $Id: unit.h,v 1.3 2004/10/31 12:49:25 cegger Exp $
 ******************************************************************************
 
    LibGGI core - conversion between units
@@ -32,6 +32,7 @@
 static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 			const ggi_coord *dpp)
 {
+#if 0
 	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
 	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
 	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
@@ -41,7 +42,7 @@ static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 
 	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
 	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
-
+#endif
 	pix->x = dpi->x / dpp->x;
 	pix->y = dpi->y / dpp->y;
 
@@ -52,6 +53,7 @@ static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 static inline void _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 			const ggi_coord *dpp)
 {
+#if 0
 	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
 	LIBGGI_ASSERT(dpp != NULL, "Invalid argument");
 	LIBGGI_ASSERT(dpi != NULL, "Invalid argument");
@@ -61,7 +63,7 @@ static inline void _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 
 	LIBGGI_ASSERT(dpp->x != 0, "Division by zero");
 	LIBGGI_ASSERT(dpp->y != 0, "Division by zero");
-
+#endif
 	dpi->x = pix->x / dpp->x;
 	dpi->y = pix->y / dpp->y;
 
