@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/27 16:41:54 soyt Exp $
+/* $Id: visual.c,v 1.13 2005/03/11 20:08:18 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -282,7 +282,7 @@ static int do_cleanup(ggi_visual *vis)
 	}*/
 
 	free(priv);
-	ATI_MACH64_PRIV(vis) = NULL;
+	FBDEV_PRIV(vis)->accelpriv = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -314,7 +314,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
-	ATI_MACH64_PRIV(vis) = priv;
+	FBDEV_PRIV(vis)->accelpriv = priv;
 
 
 	fbdevpriv->mmioaddr = mmap(NULL, fbdevpriv->orig_fix.mmio_len,

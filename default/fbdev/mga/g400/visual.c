@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/27 16:41:55 soyt Exp $
+/* $Id: visual.c,v 1.13 2005/03/11 20:08:20 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -117,7 +117,7 @@ static int do_cleanup(ggi_visual *vis)
 	}
 
 	free(priv);
-	MGA_G400_PRIV(vis) = NULL;
+	FBDEV_PRIV(vis)->accelpriv = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -259,7 +259,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	  /* vis->opdraw->crossblit = GGI_mga_g400_crossblit; */
 	}
 
-	MGA_G400_PRIV(vis) = priv;
+	FBDEV_PRIV(vis)->accelpriv = priv;
 
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);

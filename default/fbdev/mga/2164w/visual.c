@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/11/27 16:41:55 soyt Exp $
+/* $Id: visual.c,v 1.11 2005/03/11 20:08:19 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -113,7 +113,7 @@ static int do_cleanup(ggi_visual *vis)
 	}
 
 	free(priv);
-	M2164W_PRIV(vis) = NULL;
+	FBDEV_PRIV(vis)->accelpriv = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -255,7 +255,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->crossblit = GGI_m2164w_crossblit;
 	}
 
-	M2164W_PRIV(vis) = priv;
+	FBDEV_PRIV(vis)->accelpriv = priv;
 
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
