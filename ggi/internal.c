@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.5 2002/05/11 01:10:46 skids Exp $
+/* $Id: internal.c,v 1.6 2002/05/17 22:56:37 skids Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -45,41 +45,6 @@ int _ggi_mask2shift(uint32 mask)
 	if (shift == 32) shift = 0;
 
 	return shift;
-}
-
-int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)
-{
-	if (!vis->gamma) return -1;
-	switch(bitmeaning) {
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y0:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y1:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y2:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y3:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y4:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y5:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y6:
-		if (max_w) *max_w = vis->gamma->maxwrite_r;
-		if (max_r) *max_r = vis->gamma->maxread_r;
-		break;
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U0:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U1:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U2:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U3:
-		if (max_w) *max_w = vis->gamma->maxwrite_g;
-		if (max_r) *max_r = vis->gamma->maxread_g;
-		break;
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V0:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V1:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V2:
-	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V3:
-		if (max_w) *max_w = vis->gamma->maxwrite_b;
-		if (max_r) *max_r = vis->gamma->maxread_b;
-		break;
-	}
-	return GGI_OK;
 }
 
 void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)

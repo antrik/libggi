@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: stubs.c,v 1.2 2002/05/17 22:56:37 skids Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -160,6 +160,42 @@ int  ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
 int  ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
 { return vis->opcolor->setgammamap(vis,s,len,gammamap); }
 
+int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)
+{
+	if (!vis->gamma) return -1;
+	switch(bitmeaning) {
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y0:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y1:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y2:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y3:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y4:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y5:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_Y6:
+		if (max_w) *max_w = vis->gamma->maxwrite_r;
+		if (max_r) *max_r = vis->gamma->maxread_r;
+		break;
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U0:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U1:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U2:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_U3:
+		if (max_w) *max_w = vis->gamma->maxwrite_g;
+		if (max_r) *max_r = vis->gamma->maxread_g;
+		break;
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V0:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V1:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V2:
+	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_V3:
+		if (max_w) *max_w = vis->gamma->maxwrite_b;
+		if (max_r) *max_r = vis->gamma->maxread_b;
+		break;
+	}
+	if (vis->gamma->maxwrite_r | vis->gamma->maxwrite_g | 
+	    vis->gamma->maxwrite_b) return GGI_OK;
+	else return -1; /* Read-only gammamap */
+}
 
 /* Origin
  */
