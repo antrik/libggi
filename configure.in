@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.27 2001/08/25 10:59:08 thayne Exp $
+dnl $Id: configure.in,v 1.28 2001/08/25 11:46:03 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -917,6 +917,7 @@ default/planar/Makefile
 default/iplanar_2p/Makefile
 default/fbdev/Makefile
 default/fbdev/directfb/Makefile
+default/fbdev/directfb/core/Makefile
 default/fbdev/mga/Makefile
 default/fbdev/mga/2164w/Makefile
 default/fbdev/mga/g400/Makefile

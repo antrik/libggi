@@ -1,3 +1,5 @@
+SUBDIRS = core
+
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 directfb_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 directfb_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
@@ -18,6 +20,4 @@ sublibdir = $(libdir)/ggi/default/fbdev/directfb
 
 EXTRA_DIST = EXPSYMS ggidirectfb.h
 
-
-
-
+DIST_SUBDIRS = core
