@@ -58,7 +58,7 @@ used.  The functions should be transparent enough.
 
 .. important::
 
-You're responsible for locking your own visual, not mansync!
+    You're responsible for locking your own visual, not mansync!
 
 
 Environment variables
