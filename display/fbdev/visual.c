@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2001/08/14 03:29:48 skids Exp $
+/* $Id: visual.c,v 1.7 2001/08/24 01:39:40 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -140,7 +140,7 @@ static accel_info accel_strings[] = {
 	{ NULL, 0, 0 },			/* 3Dlabs Permedia 2		*/
 	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
 	},				/* Matrox MGA2064W (Millenium)	*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
+	{ "directfb", 1, 0
 	},				/* Matrox MGA1064SG (Mystique)	*/
 	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
 	},	   			/* Matrox MGA2164W (Millenium II) */

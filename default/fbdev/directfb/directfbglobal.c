@@ -28,6 +28,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   return 0;
 }
 
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+  return 0;
+}
+
+
 int GGIdl_directfbglobal(int func, void **funcptr)
 {
 	switch (func) {
@@ -38,7 +44,7 @@ int GGIdl_directfbglobal(int func, void **funcptr)
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = NULL;
+		*funcptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/08/23 03:11:09 skids Exp $
+/* $Id: visual.c,v 1.5 2001/08/24 01:39:40 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -338,7 +338,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-        DIRECTFB_PRIV(vis)->gfxdriver.DeInit();
 	return do_cleanup(vis);
 }
 

@@ -14,8 +14,8 @@ Due : 2001-08-26
 * Change makefile so that the sgml files don't go in the
   tarballs. (eric)
 - cleanup demo building and installation
-- directfb off by default
-- fix building of directfb libraries
+* directfb off by default
+- fix building of directfb libraries (and breakage of make distcheck)
 
 ------------------------------------------
 Long-term plan
