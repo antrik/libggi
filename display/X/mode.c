@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.40 2005/01/01 22:54:28 mooz Exp $
+/* $Id: mode.c,v 1.41 2005/02/07 07:27:06 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -8,6 +8,7 @@
    Copyright (C) 1998      Steve Cheng		[steve@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
    Copyright (C) 2002      Brian S. Julin	[bri@tull.umassp.edu]
+   Copyright (C) 2005	   Joseph Crayne	[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -39,12 +40,272 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Rounds up to a multiple of 4 */
+#define FourMultiple(x) ( (x + 3) & ~3 )
+
+
+/* Convert the ggi_x_vi structure to a ggi_mode structure
+ * suitable for pasing as suggested mode to _GGI_generic_mode_update()
+ *
+ * This function sets:
+ * 	m->dpp
+ * 	m->gt
+ * 	m->visible ( checkmode_adjust() will adjust this downward )
+ *
+ * These are set strangely and will be corrected by checkmode_adjust():
+ * 	m->virt ( the size of the screen in pixels )
+ * 	m->size ( the size of the screen in milimeters )
+ *
+ * Left undefined: ( checkmode_adjust() will set them )
+ * 	m->frames
+ */
+static
+void _GGI_X_checkmode_adapt( ggi_mode * m,
+			     ggi_x_vi * vi,
+			     ggi_x_priv * priv )
+{
+
+	int class2scheme[12] = {
+		StaticGray, GT_STATIC_PALETTE,
+		GrayScale, GT_GREYSCALE,
+		StaticColor, GT_STATIC_PALETTE,
+		PseudoColor, GT_PALETTE,
+		TrueColor, GT_TRUECOLOR,
+		DirectColor, GT_TRUECOLOR };
+	
+	int i;
+	int screenw, screenh, screenwmm, screenhmm;
+	Window dummywin;
+	unsigned dummy, w, h;
+
+
+	screenw = DisplayWidth(priv->disp, vi->vi->screen);
+	screenh = DisplayHeight(priv->disp, vi->vi->screen);
+	screenwmm = DisplayWidthMM(priv->disp, vi->vi->screen);
+	screenhmm = DisplayHeightMM(priv->disp, vi->vi->screen);
+
+	/* Let's store this physical size data for the benifit 
+	 * of _GGI_X_checkmode_adjust() which will calculate 
+	 * the proper values after the visible.x and visible.y 
+	 * are known for certain. */
+	m->virt.x = screenw;
+	m->virt.y = screenh;
+	m->size.x = screenwmm;
+	m->size.y = screenhmm;
+	
+	
+	/* Graphtype...
+	 * First use our table to look up the scheme */
+	for( i = 0; vi->vi->class != class2scheme[i] && i<12; i+=2 );
+	i++;
+	if( i==13 ) /* 13 is unlucky */
+		m->graphtype = GT_INVALID;
+	else 
+		m->graphtype = GT_CONSTRUCT(vi->vi->depth, 
+				class2scheme[i], 
+				vi->buf->bits_per_pixel);
+
+
+	/* Now dpp, this is simple.. */
+	m->dpp.x = 1;
+	m->dpp.y = 1;
+
+	/* Now m->visible.  We'll compute the max values now
+	 * and adjust them down later in _GGI_X_checkmode_adjust() */
+
+	if( priv->parentwin != None && priv->parentwin == priv->win ) {
+		/* Don't resize an explicitly requested window */
+		XGetGeometry(priv->disp, priv->parentwin, 
+				&dummywin, 
+				(int *) &dummy, (int *) &dummy,
+				&w, &h,
+				&dummy, &dummy );
+		m->visible.x = w;
+		m->visible.y = h;
+	}
+	else if( priv->win == None ) {
+		/* Not a root window...
+		 * Don't create a window who's handles/borders are offscreen */
+		m->visible.x = screenw * 9 / 10;
+		m->visible.y = screenh * 9 / 10;
+
+		/* We only support virtual widths that are multiples
+		 * of four, so let's make it likely that the visible 
+		 * width will equal the virtual one. */
+		m->visible.x = FourMultiple( m->visible.x );
+	}
+	else {
+		/* Root window or fullscreen.. */
+		m->visible.x = screenw;
+		m->visible.y = screenh;
+	}
+	
+}
+
+/* Adjust our suggested mode sug to make it more closely match
+ * the requested mode req for _GGI_generic_modecheck_update().
+ * It is expects:
+ * 	sug->visible is set to maximum values
+ * 	sug->virt    is set to screen size in pixels
+ * 	sug->size    is set to screen size in milimeters
+ *
+ * It set's the following fields:
+ * 	sug->visible (anything reasonable unless ok_to_resize is false)
+ * 	sug->frames  (anything resonable)
+ * 	sug->virt    (anything reasonable so long as x is a multiple of 4)
+ * 	sug->size    (this part is less flexible ;)
+ */
+static
+void _GGI_X_checkmode_adjust( ggi_mode *req,
+			      ggi_mode *sug,
+			      ggi_x_priv *priv )
+{
+	int reqx, reqy;
+	int screenw, screenh, screenwmm, screenhmm;
+	
+	/* Physical size data curtesy of _GGI_X_checkmode_adapt() */
+	screenw = sug->virt.x;
+	screenh = sug->virt.y;
+	screenwmm = sug->size.x;
+	screenhmm = sug->size.y;
+
+	/* If they specified width or height in either visible
+	 * or virt fields, let's store that. */
+	reqx = req->visible.x != GGI_AUTO  
+		? req->visible.x 
+		: req->virt.x;
+	reqy = req->visible.y != GGI_AUTO  
+		? req->visible.y 
+		: req->virt.y;
+
+	/* Let's fixup our resolution to match what they want 
+	 * if we can.  It's assumed that sug->visible is 
+	 * maximized on entry to this function. */
+	if( priv->ok_to_resize && reqx != GGI_AUTO && reqx < sug->visible.x )
+		sug->visible.x = reqx;
+	if( priv->ok_to_resize && reqy != GGI_AUTO && reqy < sug->visible.y )
+		sug->visible.y = reqy;
+
+	/* Minimums for the virtual dimensions... */
+	sug->virt.x = FourMultiple( sug->visible.x );
+	sug->virt.y = sug->visible.y;
+
+	/* This time, lets give precedence to the virt field... */
+	reqx = req->virt.x != GGI_AUTO  
+		? req->virt.x
+		: req->visible.x;
+	reqy = req->virt.y != GGI_AUTO  
+		? req->virt.y
+		: req->visible.y;
+
+	/* ... so we can try to please them virtually. */
+	if( reqx != GGI_AUTO && reqx > sug->virt.x )
+		sug->virt.x = reqx;
+	if( reqy != GGI_AUTO && reqy > sug->virt.y )
+		sug->virt.y = reqy;
+
+	
+#define SCREENPIX ( screenwmm<=0 ?  0 :  screenw * 254 / screenwmm / 10 )
+#define SCREENPIY ( screenhmm<=0 ?  0 :  screenh * 254 / screenhmm / 10 )
+
+	/* Now for size... */
+	_ggi_physz_figure_size( sug, priv->physzflags, &(priv->physz),
+				(signed) SCREENPIX,
+				(signed) SCREENPIY,
+				(signed) screenw, (signed) screenh );
+
+	/* Want frames? You bet! */
+	sug->frames = 
+		req->frames==GGI_AUTO ? 1 : req->frames;
+}
+
+/* If two modes are equivelent as far as the generic checkmode
+ * compare is concerned, then we will use this function to
+ * distinguish which is "better".  Returns negative if the first
+ * argument is prefered, positive for the other, and zero for
+ * neutral.
+ */
+static 
+int _GGI_X_checkmode_compare_visuals( ggi_mode *requested,
+				      int via_num,
+				      int vib_num,
+				      ggi_x_priv *priv )
+{
+	int tmp;
+	XVisualInfo *via, *vib;
+
+	DPRINT_MODE( "Falling back on compare_visuals()...\n");
+
+	via = priv->vilist[via_num].vi;
+	vib = priv->vilist[vib_num].vi;
+
+	do {
+		/* Crash here!  Program exits mysteriously instead of
+		 * arriving at _is_better_fmt like it should! */
+		tmp = _ggi_x_is_better_fmt(via, vib);
+		DPRINT_MODE( "_ggi_x_is_better_fmt() returns %i\n", tmp);
+		if( tmp != 0 ) break;
+
+		tmp = _ggi_x_is_better_screen( ScreenOfDisplay(priv->disp, 
+							       via->screen),
+					       ScreenOfDisplay(priv->disp, 
+							       vib->screen) );
+		DPRINT_MODE( "_ggi_x_is_better_screen() returns %i\n", tmp);
+		if( tmp != 0 ) break;
+
+		tmp = via->visualid - vib->visualid;
+
+		DPRINT_MODE( "<is_better_visualid> returns %i\n", tmp);
+
+	} while(0);
+
+	DPRINT_MODE( "compare_visuals() returns %i\n", tmp);
+	return tmp;
+}
+
+#include <ggi/display/modelist.h>
+#define WANT_GENERIC_CHECKMODE
+#include "../common/modelist.inc"
+
+static
+int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
+{
+	int i;
+	ggi_checkmode_t * cm;
+	ggi_x_vi * vi;
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+
+	cm = _GGI_generic_checkmode_create();
+
+	cm->user_cmp = _GGI_X_checkmode_compare_visuals;
+	cm->user_param = priv;
+
+	_GGI_generic_checkmode_init( cm, tm );
+
+	for(i=0, vi= priv->vilist; i < priv->nvisuals; i++, vi++ ) {
+
+		if( vi->flags & GGI_X_VI_NON_FB ) 
+			continue;
+		
+		_GGI_X_checkmode_adapt( tm, vi, priv );
+		_GGI_X_checkmode_adjust( &cm->req, tm, priv );
+		_GGI_generic_checkmode_update( cm, tm, (void *)i );
+	}
+
+	i = _GGI_generic_checkmode_finish( cm, tm, (void**) viidx );
+	_GGI_generic_checkmode_destroy( cm );
+	return i;
+
+}
+
+
 
 /*
  * "this" is a C++ keyword, so we use "cthis" instead.
  */
 
 
+#if 0
 /*
  * Check mode
  */
@@ -184,7 +445,9 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	_ggi_x_fit_geometry(vis, tm, best, tm);
 	return -1;
 }
+#endif
 
+#if 0
 int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_x_priv *priv;
@@ -285,6 +548,82 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	return dummy;
 }
+#endif
+
+int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
+{
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+
+	int auto_virt, rc, vi_idx;
+
+	auto_virt = ((tm->virt.x == GGI_AUTO) && (tm->virt.y == GGI_AUTO));
+
+#if 0
+	/* made unneccessary by new checkmode code */
+	if( ! priv->ok_to_resize ) {
+		if (! XGetGeometry(priv->disp, priv->parentwin, &root,
+				(int *)&dummy, (int *)&dummy,
+				(unsigned int *)&w, (unsigned int *)&h,
+				&dummy, &depth))
+		{
+			DPRINT_MODE("X (checkmode_fixed):"
+					"no reply from X11 server\n");
+			return GGI_EEVNOTARGET;
+		}
+
+		if (tm->visible.x == GGI_AUTO) tm->visible.x = w;
+		if (tm->visible.y == GGI_AUTO) tm->visible.y = h;
+		if ((tm->visible.x != w) || (tm->visible.y != h))
+			return GGI_EARGINVAL;
+	}
+#endif
+	rc = GGI_X_checkmode_internal(vis, tm, &vi_idx);
+
+#if 0
+	/* made unneccessary by new checkmode code */
+	if ( !priv->ok_to_resize &&
+	     ( (rc != GGI_OK) ||
+	       (tm->visible.x != w) || 
+	       (tm->visible.y != h) ) ) {
+
+		tm->visible.x = w;
+		tm->visible.y = h;
+
+		DPRINT_MODE("X (checkmode_fixed): mlfuncs.validate = %p\n",
+				priv->mlfuncs.validate);
+	}
+	else {
+		DPRINT_MODE("X (checkmode_normal): mlfuncs.validate = %p\n",
+				priv->mlfuncs.validate);
+
+	}
+
+#endif
+	if (priv->mlfuncs.validate != NULL) {
+		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
+		if (priv->cur_mode < 0) {
+			DPRINT_MODE("X: mlfuncs.validate failed: %i\n",
+				priv->cur_mode);
+			/* An error occured */
+			rc = priv->cur_mode;
+			priv->cur_mode = 0;
+			return rc;
+		}	
+		else {
+		  if(auto_virt) {
+		    tm->virt.x = GGI_AUTO;
+		    tm->virt.y = GGI_AUTO;
+		  }
+
+		  _ggi_x_fit_geometry(vis, tm, priv->vilist + vi_idx, tm);
+		}        /* if */
+		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
+			priv->cur_mode);
+	}	/* if */
+
+	return rc;
+		
+}
 
 static int ggi_x_load_mode_libs(ggi_visual *vis)
 {
@@ -340,6 +679,7 @@ static void _ggi_x_load_slaveops(ggi_visual *vis) {
 	vis->opdraw->fillscreen		= GGI_X_fillscreen_slave;
 }
 
+#if 0
 int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 {
 	int err, viidx;
@@ -763,6 +1103,358 @@ err0:
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return err;
 }
+#endif 
+
+
+int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
+{
+	/* Normal and Fixed variables */
+	int err, viidx;
+	XEvent event;
+	XSetWindowAttributes attrib;
+	XVisualInfo *vi;
+	ggi_x_priv *priv;
+
+	/* not ok_to_resize only */
+	int w, h, dummy;
+	Window root;
+	unsigned long attribmask;
+
+	/* ok_to_resize  only */
+	int destroychild, destroyparent, createchild, createparent;
+
+	priv = GGIX_PRIV(vis);
+
+#if 0
+	if (priv->ok_to_resize) {
+		DPRINT("GGI_X_setmode_normal(%p, %p) called\n", vis, tm);
+		if ((err = GGI_X_checkmode_internal(vis, tm, &viidx)))
+			return err;
+	} else {
+		DPRINT("GGI_X_setmode_fixed(%p, %p) called\n", vis, tm);
+		XGetGeometry(priv->disp, priv->parentwin, &root, &dummy,
+			     &dummy, (unsigned int *) &w,
+			     (unsigned int *) &h, (unsigned int *) &dummy,
+			     (unsigned int *) &dummy);
+
+		if (tm->visible.x == GGI_AUTO)
+			tm->visible.x = w;
+		if (tm->visible.y == GGI_AUTO)
+			tm->visible.y = h;
+		if ((tm->visible.x != w) || (tm->visible.y != h))
+			return GGI_EARGINVAL;
+
+		err = GGI_X_checkmode_internal(vis, tm, &viidx);
+		if ((err != GGI_OK) || (tm->visible.x != w)
+		    || (tm->visible.y != h)) {
+			tm->visible.x = w;
+			tm->visible.y = h;
+		}
+		if (err)
+			return err;
+
+	}
+#else
+	if ((err = GGI_X_checkmode_internal(vis, tm, &viidx)))
+		return err;
+#endif
+
+	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
+	priv->viidx = viidx;
+
+	DPRINT("* viidx = %i\n", priv->viidx);
+
+	if (priv->opmansync)
+		MANSYNC_ignore(vis);
+
+	ggLock(priv->xliblock);
+
+	vi = (priv->vilist + viidx)->vi;
+
+	_ggi_x_build_pixfmt(vis, tm, vi);	/* Fill in ggi_pixelformat */
+
+	if (priv->ok_to_resize) {
+		/* Restore original mode */
+		DPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
+			    priv->mlfuncs.restore);
+		if (priv->mlfuncs.restore != NULL) {
+			err = priv->mlfuncs.restore(vis);
+			DPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
+				    err);
+			if (err)
+				goto err0;
+		}
+		/* if */
+
+	}
+
+	destroychild = destroyparent = 1;
+	createchild = createparent = 1;
+	if (priv->parentwin == None)
+		destroyparent = 0;
+	if (priv->win == None)
+		destroychild = 0;
+
+	if( ! priv->ok_to_resize ) {
+		/* Cleanup question: is this check neccessary? */
+		destroychild = destroychild && priv->win != priv->parentwin;
+		destroyparent = 0;
+		createparent = 0;
+	}
+
+	if( destroychild )
+		XDestroyWindow(priv->disp, priv->win);
+
+	if (destroyparent) 
+		XDestroyWindow(priv->disp, priv->parentwin);
+
+	if ( createparent ) {
+
+		/* Parent windows are merely clipping frames, just use defaults. */
+
+#warning all this could probably use more error checking
+
+		priv->parentwin =
+		    XCreateSimpleWindow(priv->disp,
+					RootWindow(priv->disp, vi->screen),
+					0, 0,
+					(unsigned int) tm->visible.x,
+					(unsigned int) tm->visible.y, 0,
+					0, 0);
+		_ggi_x_dress_parentwin(vis, tm);
+
+		DPRINT_MODE("X: Prepare to resize.\n");
+		XResizeWindow(priv->disp, priv->parentwin,
+			      (unsigned int) tm->visible.x,
+			      (unsigned int) tm->visible.y);
+		DPRINT_MODE("X: About to map parent (%p)\n",
+			    priv->parentwin);
+
+		/* Map window. */
+		DPRINT_MODE("X: Parent win: Map Input\n");
+		XSelectInput(priv->disp, priv->parentwin, ExposureMask);
+		DPRINT_MODE("X: Parent win: Raise Mapping\n");
+		XMapRaised(priv->disp, priv->parentwin);
+		DPRINT_MODE("X: Parent win: Map requested\n");
+
+		/* Wait for window to become mapped */
+		XNextEvent(priv->disp, &event);
+		DPRINT_MODE("X: Window Mapped\n");
+
+		/* We let the parent window listen for the keyboard.
+		 * this allows to have the windowmanager decide about keyboard 
+		 * focus as usual.
+		 * The child window listens for the rest.
+		 * Note, that the child window also listens for the keyboard for
+		 * those cases where we don't have a parent.
+		 */
+		XSelectInput(priv->disp, priv->parentwin,
+			     KeymapStateMask | KeyPressMask |
+			     KeyReleaseMask);
+
+	}
+
+	DPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
+
+	ggi_x_load_mode_libs(vis);
+	_ggi_x_load_slaveops(vis);
+
+	DPRINT("* viidx = %i\n", priv->viidx);
+
+	if (priv->createfb != NULL) {
+		err = priv->createfb(vis);
+		if (err) {
+			/* xlib lock is still acquired here 
+			 * - unlock before exiting */
+			DPRINT("priv->createfb failed.\n");
+			ggUnlock(priv->xliblock);
+			goto err0;
+		}
+	}
+
+	_ggi_x_free_colormaps(vis);
+	XSync(priv->disp, 0);
+
+	DPRINT("Create colormap.\n");
+	_ggi_x_create_colormaps(vis, vi);
+
+
+	attrib.colormap = priv->cmap;
+
+	if (priv->ok_to_resize)
+		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
+	else {
+		attribmask = CWBackingStore;
+		if (priv->win == root) {
+			DPRINT_MODE
+			    ("X (setmode_fixed): mlfuncs.restore = %p\n",
+			     priv->mlfuncs.restore);
+			if (priv->mlfuncs.restore != NULL) {
+				err = priv->mlfuncs.restore(vis);
+				DPRINT_MODE
+				    ("X: mlfuncs.restore retcode = %i\n",
+				     err);
+				if (err)
+					goto err0;
+			}
+			/* if */
+			attribmask = CWColormap;
+			goto nochild;
+		}
+	}
+
+	if (priv->ok_to_resize)
+		priv->win = XCreateWindow(priv->disp, priv->parentwin,
+					  0, 0, (unsigned) tm->virt.x,
+					  (unsigned) tm->virt.y *
+					  tm->frames, 0, vi->depth,
+					  InputOutput, vi->visual,
+					  CWColormap | CWBorderPixel,
+					  &attrib);
+	else
+		priv->win = XCreateWindow(priv->disp, priv->parentwin,
+					  0, 0, (unsigned) tm->virt.x,
+					  (unsigned) tm->virt.y, 0,
+					  vi->depth, InputOutput,
+					  vi->visual, CWColormap, &attrib);
+
+	DPRINT_MODE("X: About to map child\n");
+
+	/* Have the parent window tell the WM its children have colormaps */
+	XSetWMColormapWindows(priv->disp, priv->parentwin, &(priv->win),
+			      1);
+
+	/* Map window. */
+	XSelectInput(priv->disp, priv->win, ExposureMask);
+	XMapWindow(priv->disp, priv->win);
+
+	/* Wait for window to become mapped */
+	XNextEvent(priv->disp, &event);
+	DPRINT_MODE("X: Window Mapped\n");
+
+	/* Select input events to listen for */
+	XSelectInput(priv->disp, priv->win,
+		     KeymapStateMask | KeyPressMask | KeyReleaseMask |
+		     ButtonPressMask | ButtonReleaseMask |
+		     EnterWindowMask | LeaveWindowMask |
+		     ExposureMask | PointerMotionMask);
+
+
+      nochild:
+
+	if (priv->gc)
+		XFreeGC(priv->disp, priv->gc);
+	priv->gc = XCreateGC(priv->disp, priv->win, 0, 0);
+	XSetGraphicsExposures(priv->disp, priv->gc, True);
+
+	if (priv->textfont) {
+		XSetFont(priv->disp, priv->gc, priv->textfont->fid);
+	}
+
+	if (priv->tempgc)
+		XFreeGC(priv->disp, priv->tempgc);
+	priv->tempgc = XCreateGC(priv->disp, priv->win, 0, 0);
+	XSetGraphicsExposures(priv->disp, priv->tempgc, True);
+
+	if (priv->ok_to_resize) {
+		if (priv->textfont)
+			XSetFont(priv->disp, priv->tempgc,
+				 priv->textfont->fid);
+	}
+
+	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0,
+			 LIBGGI_VIRTX(vis),
+			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
+	DPRINT_MODE("X GCs allocated.\n");
+
+	/* Create a cursor (frees old cursor) */
+	if (priv->createcursor)
+		priv->createcursor(vis);
+
+
+	/* Turn on backing store (unless root window) */
+	attrib.backing_store = Always;
+
+	if (priv->ok_to_resize)
+		XChangeWindowAttributes(priv->disp, priv->win,
+					CWBackingStore, &attrib);
+	else
+		XChangeWindowAttributes(priv->disp, priv->win, attribmask,
+					&attrib);
+
+	ggUnlock(priv->xliblock);
+
+	DPRINT_MODE("X: Sync\n");
+	XSync(priv->disp, 0);
+	DPRINT_MODE("X: Sync done\n");
+
+	if (priv->createdrawable) {
+		err = priv->createdrawable(vis);
+		if (err)
+			goto err1;
+	}
+
+	DPRINT_MODE("X (setmode): mlfuncs.enter = %p\n",
+		    priv->mlfuncs.enter);
+
+	if (priv->mlfuncs.enter != NULL) {
+		err = priv->mlfuncs.enter(vis, priv->cur_mode);
+		DPRINT_MODE("X: mlfuncs.enter retcode = %i\n", err);
+		if (err)
+			goto err1;
+	}
+
+	/* if */
+	/* Tell inputlib about the new window */
+	if (priv->inp) {
+		gii_event ev;
+		gii_xwin_cmddata_setparam data;
+
+		DPRINT_MODE
+		    ("X (setmode): tell inputlib about new window\n");
+
+		ev.cmd.size = sizeof(gii_cmd_event);
+		ev.cmd.type = evCommand;
+		ev.cmd.target = priv->inp->origin;
+		ev.cmd.code = GII_CMDCODE_XWINSETPARAM;
+		data.win = priv->win;
+		if (data.win == None) {
+			data.win = priv->parentwin;
+		}
+		data.ptralwaysrel = 0;
+		data.parentwin = priv->parentwin;
+
+		/* Assure aligned memory access. Some platforms
+		 * (i.e. NetBSD/sparc64) rely on this.
+		 */
+		memcpy(ev.cmd.data, &data,
+		       sizeof(gii_xwin_cmddata_setparam));
+
+		giiEventSend(priv->inp, &ev);
+	}
+
+	DPRINT_MODE("X (setmode): set dirty region\n");
+
+	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
+	priv->dirtytl.x = 1;
+	priv->dirtybr.x = 0;
+
+	if (priv->opmansync)
+		MANSYNC_cont(vis);
+
+	DPRINT_MODE("X (setmode): return code = %i\n", err);
+
+	return err;
+
+      err1:
+	priv->freefb(vis);
+      err0:
+	if (priv->opmansync)
+		MANSYNC_cont(vis);
+	return err;
+}
+
+
 
 /************************/
 /* get the current mode */

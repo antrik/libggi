@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.4 2004/09/13 09:23:49 cegger Exp $
+/* $Id: fillscreen.c,v 1.5 2005/02/07 07:27:06 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -28,11 +28,13 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
+#include <ggi/internal/ggi_debug.h>
 
 int GGI_X_fillscreen_slave(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	DPRINT("X_fillscreen_slave enter!\n");
 	if (LIBGGI_GC(vis)->cliptl.x > 0
 	    || LIBGGI_GC(vis)->cliptl.y > 0
 	    || LIBGGI_GC(vis)->clipbr.x < LIBGGI_VIRTX(vis)
@@ -53,10 +55,27 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
+	XGCValues gcValue;
+	GC gc;
+
+	DPRINT("X_fillscreen_slave_draw enter!\n");
 
 	ggLock(priv->xliblock);
-	XSetWindowBackground(priv->disp, priv->drawable,
+	/*
+	 * XSetWindowBackground(priv->disp, priv->drawable,
 			     LIBGGI_GC(vis)->fg_color);
+*/
+	
+	int screen =  priv->vilist[priv->viidx].vi->screen;
+
+	gcValue.foreground =
+		BlackPixel( priv->disp, screen );
+	gcValue.background =
+		BlackPixel( priv->disp, screen );
+	gcValue.function   = GXcopy;
+
+	gc = XCreateGC(priv->disp, priv->win,
+	 	GCForeground | GCBackground | GCFunction, &gcValue);
 
 	if (LIBGGI_GC(vis)->cliptl.x > 0
 	    || LIBGGI_GC(vis)->cliptl.y > 0
@@ -64,22 +83,40 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 	    || LIBGGI_GC(vis)->clipbr.y < LIBGGI_VIRTY(vis)) {
 		int y;
 
+		DPRINT("X_fillscreen_slave_draw small clip!\n");
 		GGI_X_CLEAN(vis, 
 			    LIBGGI_GC(vis)->cliptl.x, LIBGGI_GC(vis)->cliptl.y,
 			    LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
 			    LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y);
+		DPRINT("X_fillscreen_slave_draw calling opdraw->fillscreen\n");
 		priv->slave->opdraw->fillscreen(priv->slave);
 		y = LIBGGI_GC(vis)->cliptl.y;
 		y = GGI_X_WRITE_Y;
+		DPRINT("X_fillscreen_slave_draw calling XClearArea\n");
+		XFillRectangle(priv->disp, priv->drawable, 
+			gc, 
+		        LIBGGI_GC(vis)->cliptl.x, y,
+			(unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
+			(unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y
+			);
+		/*
 		XClearArea(priv->disp, priv->drawable,
 			   LIBGGI_GC(vis)->cliptl.x, y,
 			   (unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
 			   (unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
 			   False);
+			   */
 	} else {
+		DPRINT("X_fillscreen_slave_draw large clip!\n");
 		GGI_X_CLEAN(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+		DPRINT("X_fillscreen_slave_draw calling opdraw->fillscreen\n");
 		priv->slave->opdraw->fillscreen(priv->slave);
-		XClearWindow(priv->disp, priv->drawable);
+		DPRINT("X_fillscreen_slave_draw calling XClearWindow"
+				"(%x,%x)\n", priv->disp, priv->drawable);
+		XFillRectangle(priv->disp, priv->drawable, 
+			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
+		//XClearWindow(priv->disp, priv->drawable);
+		DPRINT("X_fillscreen_slave_draw XClearWindow returned\n");
 	}
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
@@ -92,6 +129,7 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	DPRINT("X_fillscreen_draw enter!\n");
 	ggLock(priv->xliblock);
 	XSetWindowBackground(priv->disp, priv->drawable,
 			     LIBGGI_GC(vis)->fg_color);
@@ -114,5 +152,6 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
 
+	DPRINT_LIBS("X_fillscreen_draw exit!\n");
 	return 0;
 }

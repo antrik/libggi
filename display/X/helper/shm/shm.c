@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.28 2005/01/06 23:08:22 cegger Exp $
+/* $Id: shm.c,v 1.29 2005/02/07 07:27:07 orzo Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -372,7 +372,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (!priv->parentwin) goto skip;
 
 	/* Do special cleanup for -inwin and root windows */
-	if (vis->opdisplay->checkmode == priv->shmhack_checkmode_fixed) {
+	if ( ! priv->ok_to_resize ) {
 		unsigned int dummy;
 		Window root;
 		int screen;

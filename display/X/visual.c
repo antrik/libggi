@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.43 2005/01/14 09:38:11 pekberg Exp $
+/* $Id: visual.c,v 1.44 2005/02/07 07:27:06 orzo Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -190,7 +190,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (!priv->parentwin) goto skip3;
 
 	/* Do special cleanup for -inwin and root windows */
-	if (vis->opdisplay->checkmode == GGI_X_checkmode_fixed) {
+	if ( ! priv->ok_to_resize )  {
 		unsigned int dummy;
 		Window root;
 		int screen;
@@ -355,8 +355,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		 * when both available. This is handled below.
 		 */
 
-		vis->opdisplay->checkmode = GGI_X_checkmode_normal;
-		vis->opdisplay->setmode = GGI_X_setmode_normal;
+		priv->ok_to_resize = 1;
 		if (options[OPT_INWIN].result[0] != 'n') {
 			XWindowAttributes wa;
 			priv->parentwin = priv->win =
@@ -366,8 +365,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			vi_mask = VisualScreenMask;
 			XGetWindowAttributes(priv->disp, priv->parentwin, &wa);
 			vi_template.screen = XScreenNumberOfScreen(wa.screen);
-			vis->opdisplay->checkmode = GGI_X_checkmode_fixed;
-			vis->opdisplay->setmode = GGI_X_setmode_fixed;
+			priv->ok_to_resize = 0;
 		}
 	} else {
 		XWindowAttributes wa;
@@ -383,8 +381,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		XGetWindowAttributes(priv->disp, priv->win, &wa);
 		vi_mask = VisualIDMask | VisualScreenMask;
 		vi_template.visualid = XVisualIDFromVisual(wa.visual);
-		vis->opdisplay->checkmode = GGI_X_checkmode_fixed;
-		vis->opdisplay->setmode = GGI_X_setmode_fixed;
+		priv->ok_to_resize = 0;
 
 		DPRINT_MISC("X: using root window of screen %u\n", 
 			       vi_template.screen);
@@ -419,10 +416,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		  _ggi_x_create_dot_cursor : _ggi_x_create_invisible_cursor; 
 	}
 
-	/* Set the rest of our default displayops. Helper libs may override. */
+	/* Set our default displayops. Helper libs may override. */
 	vis->opdisplay->getmode  = GGI_X_getmode;
 	vis->opdisplay->getapi   = GGI_X_getapi;
 	vis->opdisplay->setflags = GGI_X_setflags;
+	
+	vis->opdisplay->checkmode = GGI_X_checkmode;
+	vis->opdisplay->setmode = GGI_X_setmode;
 
 	/* Try the extensions that haven't been disabled. */
 #define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
@@ -448,7 +448,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (options[OPT_NOBUFFER].result[0] != 'n') goto noshm;
 	GGI_X_TEST_XEXT(GGI_X_USE_SHM, "helper-x-shm", noshm);
 	priv->shmhack_free_cmaps = _ggi_x_free_colormaps;
-	priv->shmhack_checkmode_fixed = GGI_X_checkmode_fixed;
 
  noshm:
 	priv->use_Xext &= ~GGI_X_USE_EVI;

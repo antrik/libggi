@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.8 2004/11/27 16:42:15 soyt Exp $
+/* $Id: dga.c,v 1.9 2005/02/07 07:27:07 orzo Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -31,21 +31,27 @@
 #include <ggi/display/x.h>
 #include <ggi/internal/ggi_debug.h>
 #include <X11/extensions/xf86dga.h>
+#include <string.h>
 
-#if 0
 static int ggi_xdga_getmodelist(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	XDGAMode *modes;
-	int i;
+	int screen;
 
 	priv = GGIX_PRIV(vis);
 
+	screen = priv->vilist[priv->viidx].vi->screen;
 	priv->modes_num = 0;
-	(XDGAMode *)(priv->modes_priv) = modes = 
-		XDGAQueryModes(priv->disp, priv->screen, &(priv->modes_num));
+	priv->modes_priv = modes = 
+		XDGAQueryModes(priv->disp, screen, &(priv->modes_num));
 	if (priv->modes_priv == NULL) return GGI_ENODEVICE;
 	if (priv->modes_num <= 0) return GGI_ENODEVICE;
 
+	return GGI_OK;
+}
+
+#if 0
+	
         priv->modes = calloc(sizeof(ggi_modelistmode), priv->modes_num);
         if (priv->modes == NULL) {
 		XFree(priv->modes_priv);
@@ -86,23 +92,30 @@ priv->modes[i].gt = GT_CONSTRUCT(modes[i].depth, ggigt, modes[i].bitsPerPixel);
 	return GGI_OK;
 }
 
+#endif
+
 static int ggi_xdga_restore_mode(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
+	int screen = DefaultScreen(priv->disp);
 
 	if (priv->priv != NULL) XFree(priv->priv);
-	priv->priv = XDGASetMode(priv->disp, priv->screen, 0);
+	priv->priv = XDGASetMode(priv->disp, screen, 0);
 	if (priv->priv != NULL) XFree(priv->priv); /* Docs not explicit */
 
 	return GGI_OK;
 }
 
 static int ggi_xdga_enter_mode(ggi_visual *vis, int num) {
-	ggi_x_priv *priv;
 	XDGADevice *dev;
 	XDGAMode *modes;
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+	int screen = priv->vilist[priv->viidx].vi->screen;
+	Window child_return;
+	Window root;
+	int x, y;
 
-	priv = GGIX_PRIV(vis);
+
 	dev = priv->priv;
 
 	if (dev != NULL) XFree(dev);
@@ -111,31 +124,162 @@ static int ggi_xdga_enter_mode(ggi_visual *vis, int num) {
 		DPRINT("helper-x-dga: Bug somewhere -- bad mode index.\n");
 		return GGI_ENODEVICE;
 	}
+    
+	XMoveWindow(priv->disp, priv->parentwin, 0, 0);
 
 	modes = (XDGAMode *)(priv->modes_priv);
 	num = modes[num].num;
-	priv->priv = dev = XDGASetMode(priv->disp, priv->screen, num);
+	DPRINT_MODE("\tXDGASetMode(%x, %d, %x) %d called.\n", 
+		     priv->disp, priv->vilist[priv->viidx].vi->screen, 
+		     num, DefaultScreen(priv->disp));
+
+	priv->priv = dev = XDGASetMode(priv->disp, screen, num);
 	if (dev == NULL) return GGI_ENODEVICE;
-	priv->fb = dev->data;
+	/*priv->fb = dev->data;*/
+	/* For now, only pixmap modes are allowed.. */
+	LIB_ASSERT(modes[num].flags & XDGAPixmap, "bad pixmap!!");
+	LIB_ASSERT(dev->pixmap, "null pixmap!!");
 	priv->drawable = dev->pixmap;
+	//priv->win = priv->drawable; /* This is BAD? Yes. */
+	DPRINT_MODE("disp,drawable = (%x,%x)...\n",
+			priv->disp, priv->drawable);
+#if 0
+	XClearWindow(priv->disp, priv->drawable);
+	ggUSleep(3000000);
+	DPRINT_MODE("tested ok.\n");
+#endif
+
+#if 0
+	/* 
+	 * Here we translate window origin to Root window origin 
+	 * in order to get the viewport centered on the window.
+	 * So no need to use override-redirect nor iCCM.
+	 */
+	root = DefaultRootWindow(priv->disp);
+	
+	XTranslateCoordinates(priv->disp, priv->parentwin, root, 
+			      0, 0, &x, &y, &child_return);
+
+	XDGASetViewport(priv->disp,
+			       priv->vilist[priv->viidx].vi->screen, 
+			       x,
+			       y,
+                   0);
+
+#endif
+
+	DPRINT_MODE("leaving helper-x-dga setmode.\n");
 	return GGI_OK;
 }
 
-static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *maxed) {
+static void ggi_xdga_checkmode_adapt(ggi_mode *m, XDGAMode *dgamode, 
+				     ggi_x_priv *priv )
+{
+	int screen = priv->vilist[priv->viidx].vi->screen;
+
+	m->visible.x = dgamode->viewportWidth;
+	m->visible.y = dgamode->viewportHeight;
+	m->virt.x = dgamode->imageWidth;
+	m->virt.y = dgamode->imageHeight;
+	m->dpp.x = 1;
+	m->dpp.y = 1;
+
+	/* frames not supported (yet?) */
+	m->frames = 1;
+
+	m->graphtype = GT_CONSTRUCT(dgamode->depth,
+					 (dgamode->depth <=
+					  9) ? GT_PALETTE :
+					 GT_TRUECOLOR, dgamode->bitsPerPixel);
+
+
+	
+#define SCREENWMM DisplayWidthMM(priv->disp, screen)
+#define SCREENW   DisplayWidth(priv->disp, screen)
+#define SCREENHMM DisplayHeightMM(priv->disp, screen)
+#define SCREENH   DisplayHeight(priv->disp, screen)
+#define SCREENDPIX \
+((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
+#define SCREENDPIY \
+((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
+		m->size.x = GGI_AUTO;
+		m->size.y = GGI_AUTO;
+		_ggi_physz_figure_size(m, priv->physzflags,
+				       &(priv->physz), SCREENDPIX,
+				       SCREENDPIY, SCREENW, SCREENH);
+#undef SCREENWMM
+#undef SCREENW
+#undef SCREENHMM
+#undef SCREENH
+#undef SCREENDPIX
+#undef SCREENDPIY
+
+}
+
+#include <ggi/display/modelist.h>
+#define WANT_GENERIC_CHECKMODE
+#include "../../../common/modelist.inc"
+
+
+/* This function performs the CheckMode operation and returns
+ * the number of the best mode.  */
+static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode) {
 	ggi_x_priv *priv;
-	XDGAMode *modes;
+	XDGAMode *dgamodes;
+	int i;
+    int no_modes = 1; /* true we haven't found a mode */
 
 	priv = GGIX_PRIV(vis);
 
-	modes = (XDGAMode *)(priv->modes_priv);
+	dgamodes = (XDGAMode *)(priv->modes_priv);
 
+
+    if( num>=0 )
+        return (dgamodes[num+1].flags & XDGAPixmap) ? 
+		dgamodes[num+1].num : GGI_ENOMATCH;
+        
+
+    
 	/* Find max values for maxed->virt and such. */
 
-	return GGI_OK;
+	ggi_checkmode_t *cm;
+	cm = _GGI_generic_checkmode_create();
 
+	/* Initialize best mode search */
+	_GGI_generic_checkmode_init( cm, mode );
+
+	for(i=0; i<priv->modes_num; i++ ) {
+		/* For now, only support modes that allow xlib rendering...
+		 * Things to come: this check is only neccessary if we
+		 * have no framebuffer or /dev/mem access. */
+		if( dgamodes[i].flags & XDGAPixmap )
+		{
+            DPRINT("found valid mode number: %i\n", i );
+			/* Turn dgamode structure into a ggimode suggestion */
+			ggi_xdga_checkmode_adapt( mode, &dgamodes[i], priv );
+
+			/* At this point, we may in the future want to adjust
+			 * mode to better match the requested mode (cm->req)
+			 * in order to, for example, support a range of 
+			 * virtual resolutions... */
+
+			/* Let the checkmode API decide if its the best so 
+			 * far. */
+			_GGI_generic_checkmode_update( cm, mode,
+					       (void *)i );
+            no_modes = 0; /* false, we have a mode now */
+		}
+	}
+	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)&i );
+	_GGI_generic_checkmode_destroy(cm);
+    if( no_modes )
+        return GGI_ENOMATCH;
+    else
+        return i;  
 }
 
 
+#if 0
 static int ggi_xdga_mmap (ggi_visual *vis) {
 	ggi_x_priv *priv;
 
@@ -195,12 +339,28 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->createdrawable = ggi_xdga_makerenderer;
 #endif
 
+	ggi_xdga_getmodelist(vis);
+
+	/* provide mode handling */
+	priv->mlfuncs.validate = ggi_xdga_validate_mode;
+	priv->mlfuncs.enter = ggi_xdga_enter_mode;
+	priv->mlfuncs.getlist = ggi_xdga_getmodelist;
+	priv->mlfuncs.restore = ggi_xdga_restore_mode;
+
+	/* TODO: if we can open the frame buffer or /dev/mem,
+	 * then we should override x drawing primitives.. */
+
 	*dlret = 0;
 	return GGI_OK;
 }
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
+    ggi_x_priv *priv = GGIX_PRIV(vis);
+    
+    if( priv->modes_num > 0 )
+        XFree( priv->modes_priv );
+
 	return GGI_OK;
 }
 

@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.13 2004/12/01 23:08:27 cegger Exp $
+/* $Id: x.h,v 1.14 2005/02/07 07:27:07 orzo Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -148,12 +148,18 @@ typedef struct {
 	ggifunc_resrelease	*release;
 	int			(*flush_cmap)(ggi_visual *vis);	
 
-	/* We shouldn't have to ferry these, but will until we figure out 
+	/* This boolean tells whether or not we are managing the window
+	 * size.  Its true unless we have -inwin= or -fullscreen. */
+	int			ok_to_resize;
+
+	ggifunc_checkmode	*shmhack_checkmode_fixed;
+
+	/* We shouldn't have to ferry this, but will until we figure out 
 	   how to unhook MIT-SHM's XCloseDisplay hook so we can close it 
 	   gracefully.
 	*/
 	void			(*shmhack_free_cmaps)(ggi_visual *vis);	
-	ggifunc_checkmode	*shmhack_checkmode_fixed;
+
 } ggi_x_priv;
 
 #define GGIX_PRIV(vis) ((ggi_x_priv *)LIBGGI_PRIVATE(vis))
@@ -177,7 +183,6 @@ void _ggi_x_build_vilist(ggi_visual *vis);
 ggi_graphtype _ggi_x_scheme_vs_class(ggi_graphtype gt, ggi_x_vi *vi);
 int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm, 
 			ggi_x_vi *vi, ggi_mode *suggest);
-int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this);
 void _ggi_x_free_colormaps(ggi_visual *vis);
 void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi);
 void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
@@ -187,6 +192,11 @@ void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc,
 void _ggi_x_create_dot_cursor(ggi_visual *vis);
 void _ggi_x_create_invisible_cursor(ggi_visual *vis);
 void _ggi_x_readback_fontdata(ggi_visual *vis);
+
+int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this);
+int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis);
+int _ggi_x_is_better_screen(Screen *than, Screen *cthis);
+
 
 /* buffer.c prototypes */
 ggifunc_resacquire GGI_X_db_acquire;
@@ -236,10 +246,8 @@ if (!(LIBGGI_FLAGS(_vis) & GGIFLAG_ASYNC)) XFlush(GGIX_PRIV(_vis)->disp);
 ggifunc_gcchanged	GGI_X_gcchanged;
 
 ggifunc_getmode		GGI_X_getmode;
-ggifunc_checkmode	GGI_X_checkmode_normal;
-ggifunc_checkmode	GGI_X_checkmode_fixed;
-ggifunc_setmode		GGI_X_setmode_normal;
-ggifunc_setmode		GGI_X_setmode_fixed;
+ggifunc_checkmode	GGI_X_checkmode;
+ggifunc_setmode		GGI_X_setmode;
 
 ggifunc_drawpixel	GGI_X_drawpixel_slave;
 ggifunc_drawpixel	GGI_X_drawpixel_slave_draw;

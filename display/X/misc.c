@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.28 2004/11/27 16:42:14 soyt Exp $
+/* $Id: misc.c,v 1.29 2005/02/07 07:27:06 orzo Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -39,8 +39,10 @@
 /* return 1 if an X11 Visual (cthis) has a "better" pixelformat (than than)
  * "this" is a C++ keyword, so we use "cthis" instead. 
  */
-static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
+int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
 {
+	DPRINT_MODE( "_ggi_x_is_better_fmt() entered.\n");
+
 	/* prefer color to grayscale */
 	if (((than->class==StaticGray) || (than->class==GrayScale))
 	    && 
@@ -78,7 +80,7 @@ static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
 	return 0;
 }
 
-static int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
+int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
 {
 	if (!DoesBackingStore(than) && DoesBackingStore(cthis)) return 1;
 	if (DoesBackingStore(than) && !DoesBackingStore(cthis)) return -1;
