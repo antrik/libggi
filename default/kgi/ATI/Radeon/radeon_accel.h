@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.4 2002/11/30 14:53:51 fspacek Exp $
+/* $Id: radeon_accel.h,v 1.5 2003/01/10 01:18:50 skids Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
