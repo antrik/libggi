@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.22 2004/10/28 16:54:10 cegger Exp $
+/* $Id: init.c,v 1.23 2004/10/28 17:41:12 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -49,7 +49,7 @@ void                 *_ggiConfigHandle = NULL;
 static struct {
 	void		*mutex;		/* Lock when changing.. */
 	int		 visuals;	/* # of visuals active */
-	ggi_visual	*visual;	/* Linked list of all visuals */
+	GG_SLIST_HEAD(, ggi_visual) visual; /* Linked list of all visuals */
 } _ggiVisuals;	/* This is for remembering visuals. */
 
 static int            _ggiLibIsUp      = 0;
@@ -169,7 +169,7 @@ int ggiInit(void)
 		return GGI_EUNKNOWN;
 	}
 	_ggiVisuals.visuals = 0;
-	_ggiVisuals.visual = NULL;
+	GG_SLIST_INIT(&_ggiVisuals.visual);
 
 	str = getenv("GGI_DEBUGSYNC");
 	if (str != NULL) {
@@ -230,7 +230,9 @@ int ggiExit(void)
 	}
 
 	GGIDPRINT_CORE("ggiExit: really destroying.\n");
-	while (_ggiVisuals.visual != NULL) ggiClose(_ggiVisuals.visual);
+	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
+		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual));
+	}
 
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
@@ -356,8 +358,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	if (success) {
 		ggLock(_ggiVisuals.mutex);
-		vis->next=_ggiVisuals.visual;
-		_ggiVisuals.visual=vis;
+		GG_SLIST_INSERT_HEAD(&_ggiVisuals.visual, vis, vislist);
 		_ggiVisuals.visuals++;
 		ggUnlock(_ggiVisuals.mutex);
 		GGIDPRINT_CORE("ggiOpen: returning %p\n", vis);
@@ -438,16 +439,22 @@ int ggiClose(ggi_visual *visual)
 
 	GGIDPRINT_CORE("ggiClose: closing\n");
 
-	for (vis = _ggiVisuals.visual; vis != NULL; pvis=vis, vis=vis->next) {
+	vis = GG_SLIST_FIRST(&_ggiVisuals.visual);
+	while (vis != NULL) {
 		if (vis == visual) break;
+		pvis = vis;
+		vis = GG_SLIST_NEXT(vis, vislist);
 	}
 
 	if (vis == NULL) return GGI_EARGINVAL;
 
 	ggLock(_ggiVisuals.mutex);
 
-	if (pvis == NULL) _ggiVisuals.visual = vis->next;
-	else pvis->next = vis->next;
+	if (pvis == NULL) {
+		GG_SLIST_FIRST(&_ggiVisuals.visual) = GG_SLIST_NEXT(vis, vislist);
+	} else {
+		GG_SLIST_NEXT(pvis, vislist) = GG_SLIST_NEXT(vis, vislist);
+	}
 
 	_ggiVisuals.visuals--;
 	

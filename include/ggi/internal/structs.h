@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.12 2004/10/28 16:54:12 cegger Exp $
+/* $Id: structs.h,v 1.13 2004/10/28 17:41:13 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -213,7 +213,7 @@ typedef struct {
 typedef struct ggi_visual {
 	unsigned int       version;
 	void		  *mutex;	/* Lock when changing.. */
-	struct ggi_visual *next;	/* Next one in the list... */
+	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
 
 	ggi_flags	flags;		/* Flags */
 
