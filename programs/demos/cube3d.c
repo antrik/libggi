@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.2 2001/07/03 20:18:40 cegger Exp $
+/* $Id: cube3d.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -503,7 +503,8 @@ int spawn_bg(char *what)
 	if (pid == 0) {
 		execlp("/bin/sh","/bin/sh","-c",what, NULL);
 		exit(127);
-	} else return pid;
+	}
+	return pid;
 }
 
 void CheckDB(Texture *tex)

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: color.c,v 1.2 2001/07/10 15:10:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Palette functions for AA target.
@@ -27,6 +27,7 @@
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/aa.h>
+#include <string.h>
 
 
 int GGI_aa_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)

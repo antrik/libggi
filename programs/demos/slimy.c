@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.1 2001/05/12 23:03:37 cegger Exp $
+/* $Id: slimy.c,v 1.2 2001/07/10 15:10:00 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -278,4 +278,9 @@ int main (int argc, char **argv) {
 	CloseGraphics();
 
 	exit(0);
+
+	/* Eliminate "control reaches end of non-void function"
+	 * compiler warning
+	 */
+	return 0;
 }

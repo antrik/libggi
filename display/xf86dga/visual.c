@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/06/24 19:33:12 skids Exp $
+/* $Id: visual.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -32,6 +32,8 @@
 
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
+
 
 static const gg_option optlist[] =
 {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/06/24 19:33:12 skids Exp $
+/* $Id: mode.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -369,7 +369,6 @@ int GGI_xf86dga_setmode(ggi_visual *vis,ggi_mode *tm)
 int GGI_xf86dga_checkmode(ggi_visual *vis,ggi_mode *tm)
 {
 	ggidga_priv *priv;
-	int xsize, ysize;
 	int err = 0;
 
 	if (vis==NULL) {
