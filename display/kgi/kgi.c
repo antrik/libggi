@@ -11,6 +11,7 @@
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	const kgi_version_t *version, const gg_option *options)
 {
+	char fopt[2048], *fname;
 	union {
 		kgic_mapper_identify_request_t	request;
 		kgic_mapper_identify_result_t	result;
@@ -27,17 +28,32 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 
 	memset(ctx, 0, sizeof(*ctx));
 
-	ctx->mapper.fd = open(options[KGI_OPT_DEVICE].result, O_RDWR);
-	if (ctx->mapper.fd < 0) {
-
-		fprintf(stderr, "failed to open device %s\n",
-			options[KGI_OPT_DEVICE].result);
-		return -KGI_INVAL;
+	if (strlen(options[KGI_OPT_DEVICE].result) > 2047) {
+		fprintf(stderr, "option string too long for device\n");
+		memcpy(fopt, options[KGI_OPT_DEVICE].result, 2047);
+		fopt[2047] = '\0';
+	}
+	else {
+		strcpy(fopt, options[KGI_OPT_DEVICE].result);
+	}
+	fname = fopt;
+	while (strchr(fname, ',') != NULL) {
+		*(strchr(fname, ',')) = '\0';
+		ctx->mapper.fd = open(fname, O_RDWR);
+		if (ctx->mapper.fd >= 0) goto found;
+		fprintf(stderr, "failed to open device %s\n", fname);
+		fname += strlen(fname) + 1;
 	}
 
+	ctx->mapper.fd = open(fname, O_RDWR);
+	if (ctx->mapper.fd >= 0) goto found;
+	fprintf(stderr, "failed to open device %s.\n", fname);
+	return -KGI_INVAL;
+
+ found:
+
 	memset(&cb, 0, sizeof(cb));
-	strncpy(cb.request.client, client,
-		sizeof(cb.request.client));
+	strncpy(cb.request.client, client, sizeof(cb.request.client));
 	cb.request.client[sizeof(cb.request.client) - 1] = 0;
 	cb.request.client_version = *version;
 
