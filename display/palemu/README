@@ -2,7 +2,7 @@
 PalEmu README
 =============
 
-Last 12th August 1998.
+Last 20th January 2003.
 
 
 Introduction
@@ -15,11 +15,11 @@ Here's how it works:
 
     1)  First specify the target as "palemu", for example:
 
-        export LIBGGI_DISPLAY=palemu
+        export GGI_DISPLAY=palemu
 
 	You can also specify the parent target, as in :
 
-	export LIBGGI_DISPLAY=palemu:fbdev
+	export GGI_DISPLAY=palemu:fbdev
 	
     2)	There are a number of optional arguments. These must begin with
 	a minus ('-'), and terminated by a colon. Arguments can be
@@ -31,7 +31,7 @@ Here's how it works:
 
 	For example:
 
-		export LIBGGI_DISPLAY=palemu:-p=[c32]:X
+		export GGI_DISPLAY=palemu:-p=[c32]:X
 
     3)	Finally, just run a program that uses a GT_PALETTE mode.  It
         obviously won't be as fast as a native palettized mode, but it
