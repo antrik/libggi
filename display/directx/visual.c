@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2003/10/10 05:35:07 cegger Exp $
+/* $Id: visual.c,v 1.10 2003/10/25 08:49:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -43,16 +43,18 @@ typedef struct {
 
 static const gg_option optlist[] =
 {
+	{ "inwin",  "no" },
         { "noinput", "no" },
 	{ "nocursor", "no" },
         { "physz", "0,0" },
 	{ "keepcursor", "no"}
 };
 
-#define OPT_NOINPUT	0
-#define OPT_NOCURSOR	1
-#define OPT_PHYSZ	2
-#define OPT_KEEPCURSOR	3
+#define OPT_INWIN	0
+#define OPT_NOINPUT	1
+#define OPT_NOCURSOR	2
+#define OPT_PHYSZ	3
+#define OPT_KEEPCURSOR	4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -61,9 +63,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = DIRECTX_PRIV(vis);
 
+	ggLock(priv->lock);
 	DDShutdown(priv);
-	CloseHandle(priv->hInit);
-	if (priv->hCursor) DestroyCursor(priv->hCursor);
+	ggUnlock(priv->lock);
 	ggLockDestroy(priv->lock);
 	free(priv);
 
@@ -119,6 +121,19 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		  1 : 0; 
 	} else {
 		priv->cursortype = 2;
+	}
+
+	if (options[OPT_INWIN].result[0] != 'n') {
+	  if (strcmp(options[OPT_INWIN].result, "root")) {
+	    priv->hParent = (HANDLE)
+	      strtoul(options[OPT_INWIN].result, NULL, 0);
+	    if (!IsWindow(priv->hParent)) {
+	      fprintf(stderr, "display-directx: 0x%08x is not a valid "
+		      "window handle.\n", (unsigned)priv->hParent);
+	      priv->hParent = NULL;
+	    }
+	  } else
+	    priv->hParent = GetDesktopWindow();
 	}
 
         if (!DDInit(priv)) {

@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.15 2003/10/10 22:04:33 cegger Exp $
+/* $Id: ddinit.c,v 1.16 2003/10/25 08:49:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -29,212 +29,99 @@
 #include <ggi/internal/ggi-dl.h>
 #include "ddinit.h"
 
+static void DDCreateClass(directx_priv *priv);
+static int DDCreateWindow(directx_priv *priv);
+static int DDCreateThread(directx_priv *priv);
+static int DDCreateSurface(directx_priv *priv);
+static void DDDestroySurface(directx_priv *priv);
+static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
 
-static int CreatePrimary(directx_priv * priv);
-static int CreateBackup(directx_priv * priv);
-static void ReleaseAllObjects(directx_priv * priv);
-
-
-typedef struct DDChangeModeStruct
+int DDInit(directx_priv *priv)
 {
-	DWORD width;
-	DWORD height;
-	DWORD BPP;
-} DDCMS, *LPDDCMS;
+  /* get the application instance */
+  priv->hInstance = GetModuleHandle(NULL);
 
-typedef struct DDMessageBoxStruct
-{
-	HWND hWnd;
-	LPCTSTR text;
-	LPCTSTR caption;
-	UINT type;
-} DDMBS, *LPDDMBS;
+  /* create and register the window class */
+  DDCreateClass(priv);
 
-
-long FAR PASCAL
-WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	PAINTSTRUCT ps;
-	HDC hdc;
-	DDMBS DDMessage;
-	DDCMS ddcms;
-	gii_event giiev;
-	directx_priv *priv =
-	  (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
-
-
-	switch (message) {
-
-	case WM_MOVE:
-		ggLock(priv->lock);
-		GetClientRect(hWnd, &priv->SrcWinPos);
-		GetClientRect(hWnd, &priv->DestWinPos);
-		ClientToScreen(hWnd, (POINT *) & priv->DestWinPos.left);
-		ClientToScreen(hWnd, (POINT *) & priv->DestWinPos.right);
-		ggUnlock(priv->lock);
-		return 0;
-
-
-	case WM_TIMER:
-		ggLock(priv->lock);
-		DDRedraw(priv);
-		ggUnlock(priv->lock);
-		return 0;
-
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		ggLock(priv->lock);
-		DDRedraw(priv);
-		ggUnlock(priv->lock);
-		EndPaint(hWnd, &ps);
-		return 0;
-
-	case WM_DESTROY:
-		/* Clean up and close the app */
-		ggLock(priv->lock);
-		ReleaseAllObjects(priv);
-		ggUnlock(priv->lock);
-		PostQuitMessage(0);
-		return 0;
-
-	case WM_DDMESSAGEBOX:
-		DDMessage = *(LPDDMBS) lParam;
-		MessageBox(DDMessage.hWnd, DDMessage.text, DDMessage.caption, DDMessage.type);
-		return 0;
-
-	case WM_DDCHANGEMODE:
-		ddcms = *(LPDDCMS) lParam;
-		/* GGI_directx_setmode already holds the lock here */
-		ReleaseAllObjects(priv);
-		IDirectDraw_SetCooperativeLevel(priv->lpddext, hWnd, DDSCL_NORMAL);
-		CreatePrimary(priv);
-		CreateBackup(priv);
-		/* temporarily release the lock so that WM_MOVE can be
-		   processed */
-		ggUnlock(priv->lock);
-		MoveWindow(hWnd, 50, 50, ddcms.width + 8, ddcms.height + 28, TRUE);
-		SetTimer(hWnd, 1, 33, NULL);
-		ShowWindow(hWnd, SW_SHOWNORMAL);
-		ggLock(priv->lock);
-		return 0;
-
-	}
-	return DefWindowProc(hWnd, message, wParam, lParam);
+  if (priv->hParent) {
+    /* create the window */
+    if (!DDCreateWindow(priv))
+      return 0;
+  } else {
+    /* start the event loop here */
+    if (!DDCreateThread(priv)) {
+      DDShutdown(priv);
+      return 0;
+    }
+  }
+  return 1;
 }
 
-static HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption)
+void DDShutdown(directx_priv *priv)
 {
-	DDMBS MessageData;
+  /* kill the timer callback */
+  if (priv->timer_id)
+    KillTimer(priv->hWnd, priv->timer_id);
 
-	MessageData.hWnd = hWnd;
-	MessageData.text = text;
-	MessageData.caption = caption;
-	MessageData.type = MB_OK;
-	SendMessage(hWnd, WM_DDMESSAGEBOX, 0, (LPARAM) & MessageData);
+  /* destroy the window and the surface */
+  if (priv->hWnd && !priv->hParent)
+    DestroyWindow(priv->hWnd);
+  DDDestroySurface(priv);
 
-	return 0;
+  /* stop the event loop */
+  if (priv->hThreadID &&
+      WaitForSingleObject(priv->hThreadID, 100) != WAIT_OBJECT_0)
+    /* asta la vista, baby */
+    TerminateThread(priv->hThreadID, 0);
+
+  /* get rid of the cursor if we created one */
+  if (priv->hCursor) DestroyCursor(priv->hCursor);
+
+  if (priv->hInit) CloseHandle(priv->hInit);
+
+  priv->hWnd = NULL;
+  priv->hThreadID = NULL;
+  priv->hCursor = NULL;
+  priv->hInit = NULL;
+  priv->timer_id = 0;
 }
 
-static void ReleaseAllObjects(directx_priv * priv)
+void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
+
+int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP)
 {
-	if (priv->lpbdds != NULL) {
-		IDirectDraw_Release(priv->lpbdds);
-		priv->lpbdds = NULL;
-	}
-	if (priv->lppdds != NULL) {
-		IDirectDraw_Release(priv->lppdds);
-		priv->lppdds = NULL;
-	}
+  /* destroy any existing surface */
+  DDDestroySurface(priv);
+
+  /* recreate the primary surface and back storage */
+  if (!DDCreateSurface(priv))
+    return 0;
+
+  /* set the new window size */
+  DDChangeWindow(priv, width, height);
+
+  /* set a timer to have the window refreshed at regular intervals,
+     and show the window */
+  priv->timer_id = SetTimer(priv->hWnd, 1, 33, TimerProc);
+  ggUnlock(priv->lock);
+  ShowWindow(priv->hWnd, SW_SHOWNORMAL);
+  ggLock(priv->lock);
+
+  return 1;
 }
 
-static int CreatePrimary(directx_priv * priv)
+void DDRedraw(directx_priv * priv)
 {
-	HRESULT hr;
-	LPDIRECTDRAWCLIPPER pClipper;
-	char errstr[50];
-	DDSURFACEDESC pddsd;
-
-	memset(&pddsd, 0, sizeof(pddsd));
-	pddsd.dwSize = sizeof(pddsd);
-	pddsd.dwFlags = DDSD_CAPS;
-	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	hr = IDirectDraw_CreateSurface(priv->lpddext, &pddsd, &priv->lppdds, NULL);
-	if (hr != 0) {
-#ifdef HAVE_SNPRINTF
-		snprintf(errstr, 50, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
-#else
-		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
-#endif
-		DDMessageBox(priv->hWnd, errstr, "Primary Surface");
-		exit(-1);
-	}	/* if */
-	IDirectDraw_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
-	IDirectDrawClipper_SetHWnd(pClipper, 0, priv->hWnd);
-	IDirectDrawSurface_SetClipper(priv->lppdds, pClipper);
-	IDirectDrawClipper_Release(pClipper);
-	pddsd.dwSize = sizeof(pddsd);
-	return 0;
+  RECT SrcWinPos, DestWinPos;
+  GetClientRect(priv->hWnd, &SrcWinPos);
+  GetWindowRect(priv->hWnd, &DestWinPos);
+  /* draw the stored image on the primary surface */
+  IDirectDrawSurface_Blt(priv->lppdds, &DestWinPos,
+			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
 }
 
-static int CreateBackup(directx_priv * priv)
-{
-        HRESULT rc;
-        char message[100];
-	DDSURFACEDESC pddsd, bddsd;
-
-	pddsd.dwSize = sizeof(pddsd);
-	IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
-
-        memset(&bddsd, 0, sizeof(bddsd));
-        bddsd.dwSize = sizeof(bddsd);
-        bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
-            | DDSD_PIXELFORMAT;
-        bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-        bddsd.dwWidth = pddsd.dwWidth;
-        bddsd.dwHeight = pddsd.dwHeight;
-        bddsd.lPitch = pddsd.lPitch;
-
-/* Set up the pixel format */
-	ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
-	bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-	bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
-	bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
-	bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
-	bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
-	bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
-
-	rc = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
-	if (rc) {
-#ifdef HAVE_SNPRINTF
-		snprintf(message, 100, "CreateBackup error : %ld. Exiting", rc & 0xffff);
-#else
-		sprintf(message, "CreateBackup error : %ld. Exiting", rc & 0xffff);
-#endif
-		DDMessageBox(priv->hWnd, message, "Backup");
-		exit(-1);
-	}
-	IDirectDrawSurface2_Lock(priv->lpbdds, NULL, &bddsd, DDLOCK_SURFACEMEMORYPTR, NULL);
-	priv->lpSurfaceAdd = (char *) bddsd.lpSurface;
-	IDirectDrawSurface2_Unlock(priv->lpbdds, bddsd.lpSurface);
-
-	return rc;
-}
-
-static DWORD WINAPI DDInitThread(LPVOID lpParm);
-
-HANDLE
-DDInit(directx_priv * priv)
-{
-	DWORD ThreadID;
-
-	priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
-	priv->hThreadID = CreateThread(NULL, 0, DDInitThread, (LPVOID) priv, 0,
-				       &ThreadID);
-	if (priv->hThreadID) {
-		WaitForSingleObject(priv->hInit, INFINITE);
-	}
-	return priv->hThreadID;
-}
+/* internal routines ********************************************************/
 
 /* cursors */
 
@@ -409,135 +296,256 @@ static BYTE XORmaskDotCursor[] =
     0x00, 0x00, 0x00, 0x00,   // line 31
     0x00, 0x00, 0x00, 0x00    // line 32
 };
+
+/* GGI window procedure */
+
+long FAR PASCAL
+WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  LPCREATESTRUCT lpcs;
+  PAINTSTRUCT ps;
+  HDC hdc;
+  directx_priv *priv =
+    (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
+
+  switch (message) {
+
+  case WM_CREATE:
+    lpcs = (LPCREATESTRUCT)lParam;
+    SetWindowLong(hWnd, GWL_USERDATA, (DWORD)lpcs->lpCreateParams);
+    return 0;
+
+  case WM_PAINT:
+    hdc = BeginPaint(hWnd, &ps);
+    ggLock(priv->lock);
+    DDRedraw(priv);
+    ggUnlock(priv->lock);
+    EndPaint(hWnd, &ps);
+    return 0;
+
+  }
+  return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+/* timer callback */
+
+void CALLBACK
+TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
+{
+  directx_priv *priv =
+    (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
+  ggLock(priv->lock);
+  DDRedraw(priv);
+  ggUnlock(priv->lock);
+}
+
+/* create and register the GGI window class */
+
+static void DDCreateClass(directx_priv *priv)
+{
+  WNDCLASS wc;
+
+  wc.style = 0;
+  wc.lpfnWndProc = WindowProc;
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
+  wc.hInstance = priv->hInstance;
+  wc.hIcon = LoadIcon(priv->hInstance, MAKEINTRESOURCE("DirectX.ico"));
+
+  switch (priv->cursortype) {
+  case 0:
+    wc.hCursor = CreateCursor(priv->hInstance,
+			      16, 16, /* hot spot x, y */
+			      32, 32, /* size x, y */ 
+			      ANDmaskInvCursor, /* masks */
+			      XORmaskInvCursor);
+    priv->hCursor = wc.hCursor;
+    break;
+  case 1:
+    wc.hCursor = CreateCursor(priv->hInstance,
+			      16, 16, /* hot spot x, y */
+			      32, 32, /* size x, y */ 
+			      ANDmaskDotCursor, /* masks */
+			      XORmaskDotCursor);
+    priv->hCursor = wc.hCursor;
+    break;
+  default:
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    priv->hCursor = NULL;
+    break;
+  }
+  wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
+  wc.lpszMenuName = NAME;
+  wc.lpszClassName = NAME;
+  RegisterClass(&wc);
+}
+
+/* create the GGI window */
+
+static int DDCreateWindow(directx_priv *priv)
+{
+  int w = 640+8, h = 480+28; /* default window size */
+  int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX;
+		  /* toplevel flags */
+
+  if (priv->hParent) {
+    /* determine the parent window size */
+    RECT r;
+    GetWindowRect(priv->hParent, &r);
+    w = r.right-r.left;
+    h = r.bottom-r.top;
+    /* flags for a child window */
+    ws_flags = WS_CHILD;
+  }
+
+  /* create the window */
+  priv->hWnd = CreateWindowEx(0, NAME, TITLE, ws_flags,
+			      0, 0, w, h,
+			      priv->hParent, NULL,
+			      priv->hInstance, priv);
+  if (!priv->hWnd) {
+    if (priv->hCursor) DestroyCursor(priv->hCursor);
+    priv->hCursor = NULL;
+    return 0;
+  }
+
+  /* make sure the window is initially hidden */
+  ShowWindow(priv->hWnd, SW_HIDE);
+
+  /* initialize the DirectDraw interface */
+  DirectDrawCreate(NULL, &priv->lpdd, NULL);
+  IDirectDraw_QueryInterface(priv->lpdd, &IID_IDirectDraw2,
+			     (LPVOID*)&priv->lpddext);
+
+  return 1;
+}
+
+/* create the event loop */
  
 static DWORD WINAPI
-DDInitThread(LPVOID lpParm)
+DDEventLoop(LPVOID lpParm)
 {
-	WNDCLASS wc;
-	MSG msg;
-	directx_priv *priv = (directx_priv*)lpParm;
+  MSG msg;
+  directx_priv *priv = (directx_priv*)lpParm;
 
-	priv->hInstance = GetModuleHandle(NULL);
+  /* create the window */
+  if (!DDCreateWindow(priv)) {
+    SetEvent(priv->hInit);
+    return 0;
+  }
 
-	wc.style = 0;
-	wc.lpfnWndProc = WindowProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = priv->hInstance;
-	wc.hIcon = LoadIcon(priv->hInstance, MAKEINTRESOURCE("DirectX.ico"));
-	switch (priv->cursortype) {
-	case 0:
-		wc.hCursor = CreateCursor(priv->hInstance,
-					  16, 16, /* hot spot x, y */
-					  32, 32, /* size x, y */ 
-					  ANDmaskInvCursor, /* masks */
-					  XORmaskInvCursor);
-		priv->hCursor = wc.hCursor;
-		break;
-	case 1:
-		wc.hCursor = CreateCursor(priv->hInstance,
-					  16, 16, /* hot spot x, y */
-					  32, 32, /* size x, y */ 
-					  ANDmaskDotCursor, /* masks */
-					  XORmaskDotCursor);
-		priv->hCursor = wc.hCursor;
-		break;
-	default:
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		priv->hCursor = NULL;
-		break;
-	}
-	wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
-	wc.lpszMenuName = NAME;
-	wc.lpszClassName = NAME;
-	RegisterClass(&wc);
+  SetEvent(priv->hInit);
 
-	/* Create a window */
-	priv->hWnd = CreateWindowEx(0,
-			      NAME,
-			      TITLE,
-			      WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX,
-			      0,
-			      0,
-			      640 + 8,
-			      480 + 28,
-			      NULL,
-			      NULL,
-			      priv->hInstance,
-			      NULL);
-	if (!priv->hWnd) {
-		if (priv->hCursor) DestroyCursor(priv->hCursor);
-		return FALSE;
-	}
-	SetWindowLong(priv->hWnd, GWL_USERDATA, (DWORD)priv);
-	ShowWindow(priv->hWnd, SW_HIDE);
+  while (GetMessage(&msg, priv->hWnd, 0, 0)) {
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
+  }
 
-	DirectDrawCreate(NULL, &priv->lpdd, NULL);
-	IDirectDraw_QueryInterface(priv->lpdd, &IID_IDirectDraw2, (LPVOID *) & priv->lpddext);
-	SetEvent(priv->hInit);
-
-	while (GetMessage(&msg, NULL, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return msg.wParam;
+  return msg.wParam;
 }
 
-HRESULT DDRedraw(directx_priv * priv)
+static int DDCreateThread(directx_priv *priv)
 {
-	IDirectDrawSurface_Blt(priv->lppdds, &priv->DestWinPos,
-			       priv->lpbdds, &priv->SrcWinPos, DDBLT_WAIT, NULL);
-	return 0;
+  DWORD ThreadID;
+  priv->hThreadID = CreateThread(NULL, 0, DDEventLoop, (LPVOID)priv, 0,
+				 &ThreadID);
+  priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
+  if (priv->hThreadID) {
+    WaitForSingleObject(priv->hInit, INFINITE);
+    return 1;
+  } else
+    return 0;
 }
 
-int DDChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
+/* initialize and finalize the primary surface and back storage */
+
+static int DDCreateSurface(directx_priv *priv)
 {
-	DDCMS ddcms;
-	char message[100];
-	int rc;
+  HRESULT hr;
+  LPDIRECTDRAWCLIPPER pClipper;
+  DDSURFACEDESC pddsd, bddsd;
 
-	ddcms.width = width;
-	ddcms.height = height;
-	ddcms.BPP = BPP;
+  IDirectDraw_SetCooperativeLevel(priv->lpddext, priv->hWnd, DDSCL_NORMAL);
 
+  /* create the primary surface */
+  memset(&pddsd, 0, sizeof(pddsd));
+  pddsd.dwSize = sizeof(pddsd);
+  pddsd.dwFlags = DDSD_CAPS;
+  pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+  hr = IDirectDraw_CreateSurface(priv->lpddext, &pddsd, &priv->lppdds, NULL);
+  if (hr != 0) {
+    fprintf(stderr, "Init Primary Surface Failed RC = %ld. Exiting\n",
+	    hr & 0xffff);
+    exit(-1);
+  }
+  IDirectDraw_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
+  IDirectDrawClipper_SetHWnd(pClipper, 0, priv->hWnd);
+  IDirectDrawSurface_SetClipper(priv->lppdds, pClipper);
+  IDirectDrawClipper_Release(pClipper);
+  pddsd.dwSize = sizeof(pddsd);
+  IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
 
-	rc = SendMessage(priv->hWnd, WM_DDCHANGEMODE, 0, (LPARAM) &ddcms);
-	if (rc) {
-#ifdef HAVE_SNPRINTF
-		snprintf(message, 100, "ChangeMode failed with rc= %d\n",
-			rc & 0xffff);
-#else
-		sprintf(message, "ChangeMode failed with rc= %d\n",
-			rc & 0xffff);
-#endif
-		DDMessageBox(priv->hWnd, message, "INFO");
-	} else {
-		DDSURFACEDESC pddsd;
+  /* create the back storage */
+  memset(&bddsd, 0, sizeof(bddsd));
+  bddsd.dwSize = sizeof(bddsd);
+  bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
+    | DDSD_PIXELFORMAT;
+  bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+  bddsd.dwWidth = pddsd.dwWidth;
+  bddsd.dwHeight = pddsd.dwHeight;
+  bddsd.lPitch = pddsd.lPitch;
 
-		pddsd.dwSize = sizeof(pddsd);
-		IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
+  /* set up the pixel format */
+  ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
+  bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+  bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+  bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
+  bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
+  bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
+  bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
 
-		priv->maxX = pddsd.dwWidth;
-		priv->maxY = pddsd.dwHeight;
-		priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-		priv->BPP = priv->ColorDepth / 8;
-		priv->pitch = priv->maxX * priv->BPP;
-	}
+  hr = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
+  if (hr) {
+    fprintf(stderr, "Init Backup Failed RC = %ld. Exiting\n", hr & 0xffff);
+    exit(-1);
+  }
+  IDirectDrawSurface2_Lock(priv->lpbdds, NULL, &bddsd,
+			   DDLOCK_SURFACEMEMORYPTR, NULL);
+  priv->lpSurfaceAdd = (char*)bddsd.lpSurface;
+  IDirectDrawSurface2_Unlock(priv->lpbdds, bddsd.lpSurface);
 
-	return rc;
+  /* set private mode parameters */
+  priv->maxX = pddsd.dwWidth;
+  priv->maxY = pddsd.dwHeight;
+  priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
+  priv->BPP = priv->ColorDepth / 8;
+  priv->pitch = priv->maxX * priv->BPP;
+
+  return 1;
 }
 
-HRESULT DDShutdown(directx_priv * priv)
+static void DDDestroySurface(directx_priv *priv)
 {
-	HRESULT rc = SendMessage(priv->hWnd, WM_DESTROY, 0, (LPARAM) NULL);
-	if (priv->hThreadID) {
-	  /* wait for the event loop to finish */
-	  if (WaitForSingleObject(priv->hThreadID, 100) != WAIT_OBJECT_0) {
-	    /* asta la vista, baby */
-	    TerminateThread(priv->hThreadID, 0);
-	  }
-	}
-	priv->hThreadID = NULL;
-	return rc;
+  if (priv->lpbdds != NULL) {
+    IDirectDraw_Release(priv->lpbdds);
+    priv->lpbdds = NULL;
+  }
+  if (priv->lppdds != NULL) {
+    IDirectDraw_Release(priv->lppdds);
+    priv->lppdds = NULL;
+  }
 }
+
+/* set a new window size */
+
+static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
+{
+  if (!priv->hParent) {
+    RECT r;
+    GetWindowRect(priv->hWnd, &r);
+    width += 8;
+    height += 28;
+    MoveWindow(priv->hWnd, r.left, r.top, width, height, TRUE);
+  }
+}
+

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2003/10/10 05:35:07 cegger Exp $
+/* $Id: mode.c,v 1.7 2003/10/25 08:49:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -144,8 +144,15 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	ggi_graphtype deftype;
 
 	GetScreenParams(&depth, &width, &height);
-	defwidth = width * 9 / 10;
-	defheight = height * 9 / 10;
+	if (priv->hParent) {
+	  RECT r;
+	  GetWindowRect(priv->hParent, &r);
+	  defwidth = r.right-r.left;
+	  defheight = r.bottom-r.top;
+	} else {
+	  defwidth = width * 9 / 10;
+	  defheight = height * 9 / 10;
+	}
 
 	/* handle AUTO */
 	_GGIhandle_ggiauto(mode, defwidth, defheight);
@@ -194,13 +201,20 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	}
 
 	if (!(mode->visible.x > 0
-	   && mode->visible.y > 0
-	   && mode->visible.x <= width
-	   && mode->visible.y <= height
-	   && GT_SIZE(mode->graphtype) == depth))
+	      && mode->visible.y > 0
+	      && mode->visible.x <= width
+	      && mode->visible.y <= height
+	      && (!priv->hParent ||
+		  mode->visible.x == defwidth &&
+		  mode->visible.y == defheight)))
 	{
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
+		err = -1;
+	}
+
+	if (GT_SIZE(mode->graphtype) != depth)
+	{
 		mode->graphtype = deftype;
 		err = -1;
 	}
@@ -228,7 +242,7 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 				&priv->physz,
 				0, 0, mode->visible.x, mode->visible.y);
 	ggUnlock(priv->lock);
-                
+
 	return err;
 }
 

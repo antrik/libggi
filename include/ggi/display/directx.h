@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.4 2003/10/10 05:30:39 cegger Exp $
+/* $Id: directx.h,v 1.5 2003/10/25 08:50:33 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -70,11 +70,12 @@ typedef struct directx_priv
 	ggi_coord physz;
 	int cursortype;
 	HCURSOR hCursor;
+	UINT timer_id;
 
 	gii_input *inp;
 	void *lock;
 
-        HANDLE hWnd;
+        HANDLE hWnd, hParent;
         HANDLE hInstance;
         long pitch;
         long maxX;
@@ -88,7 +89,6 @@ typedef struct directx_priv
 	LPDIRECTDRAWSURFACE lppdds;
 	LPDIRECTDRAWSURFACE lpbdds;
 	char *lpSurfaceAdd;
-	RECT DestWinPos, SrcWinPos;
 } directx_priv;
 
 #define DIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))

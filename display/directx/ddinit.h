@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.6 2003/10/10 05:35:07 cegger Exp $
+/* $Id: ddinit.h,v 1.7 2003/10/25 08:49:49 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -37,9 +37,9 @@
 
 __BEGIN_DECLS
 
-HANDLE DDInit(directx_priv *);
-HRESULT DDShutdown(directx_priv *);
-HRESULT DDRedraw(directx_priv *);
+int DDInit(directx_priv *);
+void DDShutdown(directx_priv *);
+void DDRedraw(directx_priv *);
 int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP);
 
 __END_DECLS

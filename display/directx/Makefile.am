@@ -6,7 +6,7 @@ directx_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 
 sublib_LTLIBRARIES = directx.la
 
-directx_la_SOURCES = ddcommon.c ddinit.c mode.c visual.c
+directx_la_SOURCES = ddinit.c mode.c visual.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
