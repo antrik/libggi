@@ -118,7 +118,7 @@ user, which affect the behaviour of LibGGI:
 
    []
        Delimits the graphic type.
-
+       
        :p:`scheme`
            One of:
 	   
@@ -191,23 +191,23 @@ Examples
 
 Example `GGI_DISPLAY` settings::
 
-                    see ASCII art flying GGIs
-
+  # see ASCII art flying GGIs
+  
   $ GGI_DISPLAY=aa ./flying_ggis          
-
-
-                    see demo on both machine next door and local
-		    X at the same time
-
+  
+  
+  # see demo on both machine next door and local
+  # X at the same time
+  
   $ GGI_DISPLAY=multi:(Xlib:crono:0.0):(X::0.0) ./demo
 
 
 Example `GGI_INPUT` string::
 
   $ export GGI_INPUT=linux-mouse:auto
-
-		    for "multi" target only
-
+  
+  # for "multi" target only
+  
   $ export GGI_INPUT_multi=linux-mouse:auto
     
 
@@ -230,7 +230,7 @@ See Also
 
 :man:`libgii(7)`, :man:`ggiInit(3)`,
 :man:`display-aa(7)`, :man:`display-dga(7)`,
-:man:`display-directx(7)`, :man:`display-directxnt(7)`, :man:`display-fbdev(7)`,
+:man:`display-directx(7)`, :man:`display-fbdev(7)`,
 :man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-macosx(7)`,
 :man:`display-memory(7)`, :man:`display-monotext(7)`, :man:`display-multi(7)`,
 :man:`display-palemu(7)`, :man:`display-sub(7)`, :man:`display-svgalib(7)`,
