@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.3 2001/09/30 15:12:18 skids Exp $
+/* $Id: ggi.h,v 1.4 2002/05/11 01:14:59 skids Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -481,6 +481,8 @@ int ggiSetGamma(ggi_visual_t vis,ggi_float r,ggi_float g,ggi_float b);
 
 int ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
 int ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+
+int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
 
 /* Origin handling
  */
