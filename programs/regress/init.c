@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.2 2004/08/27 07:08:53 pekberg Exp $
+/* $Id: init.c,v 1.3 2004/08/27 15:17:35 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -115,11 +115,11 @@ static void testcase4(const char *desc)
 {
 	int err;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	err = ggiClose(NULL);
-	if (err != GGI_OK) {
+	if (err != GGI_EARGINVAL) {
 		printfailure("expected return value: %i\n"
 			"actual return value: %i\n",
 			GGI_EARGINVAL, err);
