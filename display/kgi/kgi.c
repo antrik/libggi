@@ -1,4 +1,4 @@
-/* $Id: kgi.c,v 1.15 2004/09/22 20:20:11 nsouch Exp $
+/* $Id: kgi.c,v 1.16 2004/09/22 21:37:43 nsouch Exp $
 ******************************************************************************
 
 
@@ -309,8 +309,8 @@ kgi_error_t kgiSetDisplayOrigin(kgi_context_t *ctx, kgi_u_t x, kgi_u_t y)
 
 void kgiPrintImageMode(kgi_image_mode_t *mode)
 {
-	printf("%ix%i (%ix%i) \n", mode->size.x, mode->size.y, 
-		mode->virt.x, mode->virt.y);
+	GGIDPRINT_MODE("%ix%i (%ix%i) \n", mode->size.x, mode->size.y, 
+		       mode->virt.x, mode->virt.y);
 }
 
 kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
@@ -328,11 +328,11 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		return errno;
 	}
 
-	printf("resource %i (%s) is ", cb.result.resource, cb.result.name);
+	GGIDPRINT_MISC("resource %i (%s) is ", cb.result.resource, cb.result.name);
 	switch (cb.result.type & KGI_RT_MASK) {
 
 	case KGI_RT_MMIO:
-		printf("MMIO: window %i, size %i, align %.8x, "
+		GGIDPRINT_MISC("MMIO: window %i, size %i, align %.8x, "
 			"access %.8x\n",
 			cb.result.info.mmio.window,
 			cb.result.info.mmio.size,
@@ -341,18 +341,18 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		break;
 
 	case KGI_RT_ACCEL:
-		printf("ACCEL: recommended are %i buffers of size %i\n",
+		GGIDPRINT_MISC("ACCEL: recommended are %i buffers of size %i\n",
 			cb.result.info.accel.buffers,
 			cb.result.info.accel.buffer_size);
 		break;
 
 	case KGI_RT_SHMEM:
-		printf("SHMEM: (maximum) aperture size %i\n",
+		GGIDPRINT_MISC("SHMEM: (maximum) aperture size %i\n",
 			cb.result.info.shmem.aperture_size);
 		break;
 
 	default:
-		printf("of unknown type\n");
+		GGIDPRINT_MISC("of unknown type\n");
 	}
 	return KGI_EOK;
 }
