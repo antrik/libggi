@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.8 2004/10/08 12:37:50 cegger Exp $
+/* $Id: mansync.c,v 1.9 2004/10/11 18:58:52 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -92,7 +92,8 @@ int _GGI_mansync_init(ggi_visual *vis)
 
 int _GGI_mansync_deinit(ggi_visual *vis)
 {
-	_GGI_mansync_stop(vis);
+	LIBGGI_ASSERT(!MANSYNC_HOOK(vis)->running,
+		"Can't deinit mansync as long as mansync is running");
 
 	free(MANSYNC_PRIV(vis));
 	MANSYNC_PRIV(vis) = NULL;
@@ -157,7 +158,6 @@ int _GGI_mansync_stop(ggi_visual *vis)
 	if (ret != 0) return ret;
 
 	MANSYNC_HOOK(vis)->running = 0;
-
 	return 0;
 }
 
@@ -170,8 +170,11 @@ int _GGI_mansync_stop(ggi_visual *vis)
 
 int _GGI_mansync_ignore(ggi_visual *vis)
 {
-	if (MANSYNC_IGNORE(vis))
+	GGIDPRINT("_GGI_mansync_ignore() (MANSYNC_TASK) called.\n");
+
+	if (MANSYNC_IGNORE(vis)) {
 		return -1;
+	}
 
 	MANSYNC_IGNORE(vis) = 1;
 	return 0;
@@ -180,11 +183,14 @@ int _GGI_mansync_ignore(ggi_visual *vis)
 
 int _GGI_mansync_cont(ggi_visual *vis)
 {
+	GGIDPRINT("_GGI_mansync_cont() (MANSYNC_TASK) called.\n");
+
 	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)
 		return -1;
 
-	if (!MANSYNC_IGNORE(vis))
+	if (!MANSYNC_IGNORE(vis)) {
 		return -1;
+	}
 
 	MANSYNC_IGNORE(vis) = 0;
 	return 0;
