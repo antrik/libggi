@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2002/09/29 19:27:41 skids Exp $
+/* $Id: crossblit.c,v 1.4 2002/10/10 07:05:34 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -132,6 +132,7 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 			
 			/* Unroll manually. */
 			switch (w & 0x7) {
+			default:
 				for (; i > 0; i--) {
 				case 0:
 				  *dstpw++ = conv_tab[(*srcpb++ & 0x0f)];
@@ -165,6 +166,7 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 			/* Unroll manually. */			
 			switch (w & 0x7) {
+			default:
 				for (; i > 0; i--) {
 				case 0:
 				  *dstpw++ = conv_tab[(*srcpb & 0xf0) >> 4];
@@ -227,6 +229,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 		/* Unroll manually. */
 		switch (w & 0x7) {
+		default:
 			for (; i > 0; i--) {
 			case 0x0: *dstpw++ = conv_tab[*srcpb++];
 			case 0x7: *dstpw++ = conv_tab[*srcpb++];
@@ -281,6 +284,7 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 			bshift[val] = i;
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -308,6 +312,7 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -473,6 +478,7 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 			bshift[val] = i;
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -500,6 +506,7 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -687,6 +694,7 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 			bshift[val] = i;
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -714,6 +722,7 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
 			break;
 		default:
+			break;
 		}
 	}
 	
@@ -932,6 +941,7 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	default:
+		break;
 	}
 	
  fallback:
