@@ -5,61 +5,67 @@
 <refentry id="ref-display-svgalib">
 
 <refmeta>
-<refentrytitle><systemitem>display-svgalib</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-svgalib</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-svgalib</systemitem></refname>
-<refpurpose>Display fullscreen using SVGAlib</refpurpose>
+    <refname id="display-svgalib">display-svgalib</refname>
+    <refpurpose>Display fullscreen using SVGAlib</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-svgalib</command>
-<arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+
+    <command>display-svgalib</command>
+    <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
-<para>Uses the SVGAlib library to display fullscreen on a
-VGA-compatible graphics card.</para>
+<para>
+    Uses the SVGAlib library to display fullscreen on a VGA-compatible
+    graphics card.
+</para>
 
-<para>You may need to be root in order to have IO permissions to drive
-the VGA device.</para>
-
-</refsect1>
-<refsect1>
-<title>Options</title>
-
-<variablelist>
-
-<varlistentry>
- <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
- <listitem><para>
- This option will provide a physical screen size for applications which
- wish to remain resolution independent.  
- <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y
- size of the screen in millimeters, unless the optional <replaceable>dpi</replaceable>
- string is affixed, in which case, they represent resolution in dots-per-inch.
- </para></listitem>
- </varlistentry>
-
-</variablelist>
+<para>
+    You may need to be root in order to have IO permissions to drive
+    the VGA device.
+</para>
 
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Options</title>
+
+    <variablelist>
+
+    <varlistentry>
+    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+    <listitem><para>
+    This option will provide a physical screen size for applications which
+    wish to remain resolution independent.  
+    <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y
+    size of the screen in millimeters, unless the optional
+    <replaceable>dpi</replaceable> string is affixed, in which case,
+    they represent resolution in dots-per-inch.
+    </para></listitem>
+    </varlistentry>
+
+    </variablelist>
+
+</refsect1>
+
+<refsect1><title>Features</title>
 
 <simplelist>
-<member>DirectBuffer is available for the 320x200x8 mode.
-For other modes, support is only available if SVGAlib supports linear
-addressing.</member>
+<member>
+    DirectBuffer is available for the 320x200x8 mode. For other modes,
+    support is only available if SVGAlib supports linear addressing.
+</member>
 <member>Unaccelerated</member>
 </simplelist>
 

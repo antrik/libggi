@@ -5,137 +5,128 @@
 <refentry id="ref-display-tile">
 
 <refmeta>
-<refentrytitle><systemitem>display-tile</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-tile</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-tile</systemitem></refname>
-<refpurpose>Divide display into tiles similar to a video wall</refpurpose>
+    <refname id="display-tile">display-tile</refname>
+    <refpurpose>Divide display into tiles similar to a video wall</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-tile</command>
-<arg choice="plain">:</arg>
 
-<group>
- <arg><option>-usedb</option></arg>
- <arg><option>-nodb</option></arg>
-</group>
-
-<arg rep="repeat" choice="req">
- <replaceable>offset-x</replaceable>,
- <replaceable>offset-y</replaceable>,
- <replaceable>size-x</replaceable>,
- <replaceable>size-y</replaceable>,
- <replaceable>child-target-spec</replaceable>:
-</arg>
+    <command>display-tile</command>
+    <arg choice="plain">:</arg>
+    <group>
+        <arg><option>-usedb</option></arg>
+	<arg><option>-nodb</option></arg>
+    </group>
+    <arg rep="repeat" choice="req"><replaceable>offset-x</replaceable>,<replaceable>offset-y</replaceable>,<replaceable>size-x</replaceable>,<replaceable>size-y</replaceable>,<replaceable>child-target-spec</replaceable>:</arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
 
-
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Emulates one big target, where one or more areas are mapped to different
-child visuals.   
+    Emulates one big target, where one or more areas are mapped to different
+    child visuals.   
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
 <para>
-For each tile (i.e. child visual or mapped area), the following must be 
-specified:
+    For each tile (i.e. child visual or mapped area), the following must be 
+    specified:
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term><replaceable>offset-x</replaceable></term>
-<term><replaceable>offset-y</replaceable></term>
-<listitem><para>
-coordinates (within the parent visual) of the top-left corner of the child visual
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><replaceable>offset-x</replaceable></term>
+    <term><replaceable>offset-y</replaceable></term>
+    <listitem><para>
+    coordinates (within the parent visual) of the top-left corner of the child visual
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><replaceable>size-x</replaceable></term>
-<term><replaceable>size-y</replaceable></term>
-<listitem><para>
-width and height of the child visual
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><replaceable>size-x</replaceable></term>
+    <term><replaceable>size-y</replaceable></term>
+    <listitem><para>
+    width and height of the child visual
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><replaceable>child-target-spec</replaceable></term>
-<listitem><para>
-a target spec.  Since target specs can (and often do) contain colons, it
-needs to be enclosed in parentheses.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><replaceable>child-target-spec</replaceable></term>
+    <listitem><para>
+    a target spec.  Since target specs can (and often do) contain colons, it
+    needs to be enclosed in parentheses.
+    </para></listitem>
+    </varlistentry>
 
-</variablelist>
+    </variablelist>
 </para>
   
 <para>
 The following options apply to the whole <systemitem>display-tile</systemitem>:
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term><option>-usedb</option></term>
-<listitem>
+    <varlistentry>
+    <term><option>-usedb</option></term>
+    <listitem><para>
+    Enables DirectBuffer emulation. This is the default mode.  
+    </para>
+    <para>
+    The contents of each mapped area is blitted from the DirectBuffer into
+    their respective child visuals at regular intervals or when the visual
+    is flushed.  DirectBuffer emulation works regardless of whether the
+    child visuals support DirectBuffer or not.
+    </para>
+    </listitem></varlistentry>
 
-<para>
-Enables DirectBuffer emulation. This is the default mode.  
+    <varlistentry>
+    <term><option>-nodb</option></term>
+    <listitem><para>
+    Disables DirectBuffer emulation.  LibGGI primitives are passed to each
+    of the child visuals with the necessary clipping and translation.  Thus,
+    if a child visual underlying a mapped area supports acceleration, then
+    the operation on that area will be accelerated.
+    </para></listitem>
+    </varlistentry>
+
+    </variablelist>
 </para>
-
-<para>
-The contents of each mapped area is blitted from the DirectBuffer into
-their respective child visuals at regular intervals or when the visual
-is flushed.  DirectBuffer emulation works regardless of whether the
-child visuals support DirectBuffer or not.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><option>-nodb</option></term>
-
-<listitem><para>
-Disables DirectBuffer emulation.  LibGGI primitives are passed to each
-of the child visuals with the necessary clipping and translation.  Thus,
-if a child visual underlying a mapped area supports acceleration, then
-the operation on that area will be accelerated.
-</para></listitem>
-</varlistentry>
-
-</variablelist></para>
 
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
-<member>DirectBuffer support depends on the
-<option>-usedb</option>/<option>-nodb</option>
-options.</member>
-<member>Accelerated in no-DB mode if the underlying target is,
-otherwise unaccelerated.</member>
+<member>
+    DirectBuffer support depends on the <option>-usedb</option>/<option>-nodb</option>
+    options.
+</member>
+<member>
+    Accelerated in no-DB mode if the underlying target is, otherwise
+    unaccelerated.
+</member>
 </simplelist>
 
-<tip><para>
-<systemitem>display-tile</systemitem> can be used to emulate DirectBuffer for
-obstinate applications that cannot run without it, by specifying one
-tile which maps the whole screen.
-</para></tip>
+<tip>
+  <para>
+    <systemitem>display-tile</systemitem> can be used to emulate DirectBuffer for
+    obstinate applications that cannot run without it, by specifying one
+    tile which maps the whole screen.
+  </para>
+</tip>
 
 </refsect1>
+
 </refentry>

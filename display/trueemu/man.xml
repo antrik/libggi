@@ -5,96 +5,94 @@
 <refentry id="ref-display-trueemu">
 
 <refmeta>
-<refentrytitle><systemitem>display-trueemu</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-trueemu</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-trueemu</systemitem></refname>
-<refpurpose>Emulate truecolor modes</refpurpose>
+    <refname id="display-trueemu">display-trueemu</refname>
+    <refpurpose>Emulate truecolor modes</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-trueemu</command>
-<arg choice="plain">:</arg>
 
-<arg><option>-parent=<replaceable>mode</replaceable></option></arg>
-<arg><option>-dither=<replaceable>dither</replaceable></option></arg>
-<arg><option>-model=<replaceable>model</replaceable></option></arg>
-<arg choice="req"><replaceable>target-spec</replaceable></arg>
+    <command>display-trueemu</command>
+    <arg choice="plain">:</arg>
+    <arg><option>-parent=<replaceable>mode</replaceable></option></arg>
+    <arg><option>-dither=<replaceable>dither</replaceable></option></arg>
+    <arg><option>-model=<replaceable>model</replaceable></option></arg>
+    <arg choice="req"><replaceable>target-spec</replaceable></arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
 
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Emulates truecolor modes (<symbol>GT_TRUECOLOR</symbol>) on another target which
-can only do palette modes or truecolor modes of different sizes/depths.
-Uses dithering and special palettes to get the highest possible quality.
+    Emulates truecolor modes (<symbol>GT_TRUECOLOR</symbol>) on another target which
+    can only do palette modes or truecolor modes of different sizes/depths.
+    Uses dithering and special palettes to get the highest possible quality.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term><option>-parent=<replaceable>mode</replaceable></option></term>
-<listitem><para>
-Force the parent target to use a specific mode, specified as a standard 
-<link linkend="ggi-mode-string">LibGGI mode string</link>.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-parent=<replaceable>mode</replaceable></option></term>
+    <listitem><para>
+    Force the parent target to use a specific mode, specified as a standard 
+    LibGGI mode string (see <xref linkend="ref-libggi"/>).
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-dither=<replaceable>dither</replaceable></option></term>
-<listitem><para>
-Specifies the amount of dithering.  Legal values are 0, 2 and 4,
-defaulting to 4.
-</para>
+    <varlistentry>
+    <term><option>-dither=<replaceable>dither</replaceable></option></term>
+    <listitem><para>
+    Specifies the amount of dithering.  Legal values are 0, 2 and 4,
+    defaulting to 4.
+    </para>
+    <para>
+    When the target is running,
+    <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>d</keycap></keycombo>
+    changes the dithering level.
+    </para></listitem>
+    </varlistentry>
 
-<para>When the target is running,
-<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>d</keycap></keycombo>
-changes the dithering level.</para></listitem>
+    <varlistentry>
+    <term><option>-model=<replaceable>model</replaceable></option></term>
+    <listitem><para>
+    Color model to use (only when the parent is palettized).  Legal
+    values are rgb, cube and pastel.  Default depends on the parent
+    mode.
+    </para>
+    <para>
+    When the target is running,
+    <keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>p</keycap></keycombo>
+    changes the current color model.
+    </para></listitem>
+    </varlistentry>
 
-</varlistentry>
-  
-<varlistentry>
-<term><option>-model=<replaceable>model</replaceable></option></term>
-<listitem>
+    <varlistentry>
+    <term><replaceable>target-spec</replaceable></term>
+    <listitem><para>
+    Specifies the target which to draw on (the `parent'
+    target).  This defaults to automatic selection (just like using
+    <function>ggiOpen</function>(<symbol>NULL</symbol>) when
+    <envar>GGI_DISPLAY</envar> is not set).
+    </para></listitem>
+    </varlistentry>
 
-<para>Color model to use (only when the parent is palettized).  Legal
-values are rgb, cube and pastel.  Default depends on the parent
-mode.</para>
-
-<para>When the target is running,
-<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>p</keycap></keycombo>
-changes the current color model.</para>
-
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><replaceable>target-spec</replaceable></term>
-<listitem><para>Specifies the target which to draw on (the `parent'
-target).  This defaults to automatic selection (just like using
-<function>ggiOpen</function>(<symbol>NULL</symbol>) when
-<envar>GGI_DISPLAY</envar> is not set).</para></listitem>
-</varlistentry>
-</variablelist>
-
-
+    </variablelist>
+    
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
   
 <simplelist>
 <member>DirectBuffer never supported.</member>
@@ -102,4 +100,5 @@ target).  This defaults to automatic selection (just like using
 </simplelist>
 
 </refsect1>
+
 </refentry>

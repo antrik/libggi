@@ -5,88 +5,90 @@
 <refentry id="ref-display-file">
 
 <refmeta>
-<refentrytitle><systemitem>display-file</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-file</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-file</systemitem></refname>
-<refpurpose>Render display into image file</refpurpose>
+    <refname id="display-file">display-file</refname>
+    <refpurpose>Render display into image file</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-file</command>
-<arg choice="plain">:</arg>
-<arg><option>-flushcmd="<replaceable>command to execute</replaceable>"</option></arg>
-<arg><option>-flushframe=<replaceable>n</replaceable></option></arg>
-<arg><option>-flushtime=<replaceable>t</replaceable></option></arg>
-<arg choice="req"><replaceable>filename</replaceable></arg>
+
+    <command>display-file</command>
+    <arg choice="plain">:</arg>
+    <arg><option>-flushcmd="<replaceable>command to execute</replaceable>"</option></arg>
+    <arg><option>-flushframe=<replaceable>n</replaceable></option></arg>
+    <arg><option>-flushtime=<replaceable>t</replaceable></option></arg>
+    <arg choice="req"><replaceable>filename</replaceable></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
-
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Renders an image into a file.  The file can be a framebuffer device
-(e.g. <filename>/dev/fb0</filename>), in which case a reasonable
-representation of the image will be drawn on the console <emphasis>so
-long as</emphasis> the program's mode matches the framebuffer's mode.
+    Renders an image into a file.  The file can be a framebuffer device
+    (e.g. <filename>/dev/fb0</filename>), in which case a reasonable
+    representation of the image will be drawn on the console <emphasis>so
+    long as</emphasis> the program's mode matches the framebuffer's mode.
 </para>
 
-<note><para>
-This target generates no input.  The <systemitem>multi</systemitem> target can be
-used in order to see (and control) what the program does (using a normal
-target) and then generate a snapshot when the program exits.
-</para></note>
+<note>
+  <para>
+    This target generates no input.  The <systemitem>multi</systemitem> target can be
+    used in order to see (and control) what the program does (using a normal
+    target) and then generate a snapshot when the program exits.
+  </para>
+</note>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
 <para>
-<replaceable>filename</replaceable> is the file to render the images to.  If the
-filename is a PPM file (has the extension <filename>.ppm</filename>), then the
-image will be generated at <function>ggiClose</function> time.  Otherwise the file
-is a custom `GGIFILE' format and is generated continuously.
+    <replaceable>filename</replaceable> is the file to render the images to.  If the
+    filename is a PPM file (has the extension <filename>.ppm</filename>), then the
+    image will be generated at <function>ggiClose</function> time.  Otherwise the file
+    is a custom `GGIFILE' format and is generated continuously.
 </para>
 
 <para>
-The <systemitem class="resource">file</systemitem> target can be used to generate
-movies from running LibGGI applications. To do this, set
-<option>-flushcmd</option> to a shell command to execute at the times given by
-one of the two other parameters. This looks typically like
-<literal>ppmtogif foo.ppm >foo.%04d.gif</literal>. The command is passed through a
-<citerefentry><refentrytitle><function>printf</function></refentrytitle><manvolnum>3</manvolnum></citerefentry>
-which has the current count of saved frames as an argument (or rather as
-10 arguments to allow a few more complex commands).
+    The <systemitem>file</systemitem> target can be used to generate
+    movies from running LibGGI applications. To do this, set
+    <option>-flushcmd</option> to a shell command to execute at the times given by
+    one of the two other parameters. This looks typically like
+    <literal>ppmtogif foo.ppm &gt;foo.%04d.gif</literal>. The command is passed through a
+    <citerefentry>
+        <refentrytitle><function>printf</function></refentrytitle>
+	<manvolnum>3</manvolnum>
+    </citerefentry>
+    which has the current count of saved frames as an argument (or rather as
+    10 arguments to allow a few more complex commands).
 </para>
 
 <para>
-This shell command is either executed at every <replaceable>n</replaceable>-th
-invocation of ggiFlush or every <replaceable>t</replaceable> seconds, where
-<replaceable>t</replaceable> can have fractional components (specified as decimal).
+    This shell command is either executed at every <replaceable>n</replaceable>-th
+    invocation of ggiFlush or every <replaceable>t</replaceable> seconds, where
+    <replaceable>t</replaceable> can have fractional components (specified as decimal).
 </para>
 
 <para>
-Note, that the invocation of the shell command will slow down the
-program, so make sure you use a reasonable value, if you use the
-<option>-flushtime</option> argument.
+    Note, that the invocation of the shell command will slow down the
+    program, so make sure you use a reasonable value, if you use the
+    <option>-flushtime</option> argument.
 </para>
 
 <para>
-The primary file is updated before every invocation of the shell
-command.
+    The primary file is updated before every invocation of the shell command.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>DirectBuffer always available.</member>

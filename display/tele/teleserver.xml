@@ -5,80 +5,80 @@
 <refentry id="ref-ggiteleserver">
 
 <refmeta>
-<refentrytitle><systemitem>ggiteleserver</systemitem></refentrytitle>
-<manvolnum>1</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>ggiteleserver</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>ggiteleserver</systemitem></refname>
-<refpurpose>GGI display server</refpurpose>
+    <refname id="ggiteleserver">ggiteleserver</refname>
+    <refpurpose>GGI display server</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>ggiteleserver</command>
-<arg choice="opt">-V</arg>
-<arg choice="opt">-h</arg>
-<arg choice="opt">-t target</arg>
-<arg choice="opt">-d display</arg>
+
+    <command>ggiteleserver</command>
+    <arg choice="opt">-V</arg>
+    <arg choice="opt">-h</arg>
+    <arg choice="opt">-t <replaceable>target</replaceable></arg>
+    <arg choice="opt">-d <replaceable>display</replaceable></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-<systemitem>ggiteleserver</systemitem> starts a display server for
-GGI and listen for display operations on a TCP socket. A GGI
-application can then forward display operations to this
-server with the <systemitem>display-tele</systemitem> target. The
-server will use the default output.
+    <systemitem>ggiteleserver</systemitem> starts a display server for
+    GGI and listen for display operations on a TCP socket. A GGI
+    application can then forward display operations to this
+    server with the <systemitem>display-tele</systemitem> target. The
+    server will use the default output.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term>-V</term><term>--version</term>
-<listitem><para>Print the program version and exit.</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term>-V</term><term>--version</term>
+    <listitem><para>Print the program version and exit.</para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term>-h</term><term>--help</term>
-<listitem><para>Print options and exit.</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term>-h</term><term>--help</term>
+    <listitem><para>Print options and exit.</para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term>-t target</term>
-<listitem><para>Use the specified <parameter>target</parameter> as
-display. It overrides the value of <envar>GGI_DISPLAY</envar>.</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term>-t <replaceable>target</replaceable></term>
+    <listitem><para>Use the specified <replaceable>target</replaceable> as
+    display. It overrides the value of <envar>GGI_DISPLAY</envar>.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term>-d display</term>
-<listitem><para>?</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term>-d <replaceable>display</replaceable></term>
+    <listitem><para>
+    ???
+    </para></listitem>
+    </varlistentry>
 
-</variablelist>
+    </variablelist>
 
 <para>
-The default port is 27780.
+    The default port is 27780.
 </para>
   
 </refsect1>
 
-<refsect1>
-<title>See Also</title>
-
+<refsect1><title>See Also</title>
 <simplelist>
-<member><xref linkend="ref-display-tele"/></member>
+<member><xref linkend="display-tele"/></member>
 </simplelist>
-
 </refsect1>
 
 </refentry>

@@ -5,55 +5,54 @@
 <refentry id="ref-display-tele">
 
 <refmeta>
-<refentrytitle><systemitem>display-tele</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-tele</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-tele</systemitem></refname>
-<refpurpose>Forwards the display over a network</refpurpose>
+    <refname id="display-tele">display-tele</refname>
+    <refpurpose>Forwards the display over a network</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-tele</command>
-<arg choice="plain">:</arg>
-<arg choice="req">host</arg>
-<arg choice="opt">port</arg>
-</cmdsynopsis>
+
+    <command>display-tele</command>
+    <arg choice="plain">:</arg>
+    <arg choice="req">host</arg>
+    <arg choice="opt">port</arg>
+    </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-The tele target forwards the display over a network via TCP to a
-remote host.
+    The tele target forwards the display over a network via TCP to a
+    remote host.
 </para>
+
 <para>
-A <systemitem>ggiteleserver</systemitem> program must be running on
-the remote host where the final display resides. A normal GGI
-applications will then use the tele target to forward
-all graphic operations to the machine running the teleserver.
+    A <xref linkend="ggiteleserver"/> must be running on the remote
+    host where the final display resides. A normal GGI applications
+    will then use the tele target to forward all graphic operations to
+    the machine running the teleserver.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
 <para>
-The first argument to <systemitem>display-tele</systemitem> is the
-hostname to connect to (the display server). The second optional
-argument is the port on which the server is listening. The default
-port is 27780.
+    The first argument to <systemitem>display-tele</systemitem> is the
+    hostname to connect to (the display server). The second optional
+    argument is the port on which the server is listening. The default
+    port is 27780.
 </para>
   
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>DirectBuffer never supported.</member>
@@ -62,11 +61,9 @@ port is 27780.
 
 </refsect1>
 
-<refsect1>
-<title>See Also</title>
-
+<refsect1><title>See Also</title>
 <simplelist>
-<member><xref linkend="ref-ggiteleserver"/></member>
+<member><xref linkend="ggiteleserver"/></member>
 </simplelist>
 
 </refsect1>

@@ -5,63 +5,56 @@
 <refentry id="ref-display-macosx">
 
 <refmeta>
-<refentrytitle><systemitem>display-macosx</systemitem></refentrytitle>
-<manvolnum>7ggi</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-macosx</refentrytitle>
+    <manvolnum>7ggi</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-macosx</systemitem></refname>
-<refpurpose>Display on a Mac OS X</refpurpose>
+    <refname id="display-macosx">display-macosx</refname>
+    <refpurpose>Display on a Mac OS X</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-macosx</command>
-<arg choice="plain">:</arg>
-<arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
-</cmdsynopsis>
+
+    <command>display-macosx</command>
+    <arg choice="plain">:</arg>
+    <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+<
+/cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Emulates a linear framebuffer in main memory. The framebuffer can be a
-shared memory segment, an area specified by the application, or an area
-allocated by <systemitem>display-memory</systemitem> itself.
+    Use MacOS X Quartz.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
-<listitem><para>
-This option will provide a physical screen size for applications which
-wish to remain resolution independent.  
-<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y
-size of the screen in millimeters, unless the optional
-<replaceable>dpi</replaceable>
-string is affixed, in which case, they represent resolution in dots-per-inch.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+    <listitem><para>
+    This option will provide a physical screen size for applications which
+    wish to remain resolution independent.  
+    <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>
+    are the x,y size of the screen in millimeters, unless the optional
+    <replaceable>dpi</replaceable>
+    string is affixed, in which case, they represent resolution in
+    dots-per-inch.
+    </para></listitem>
+    </varlistentry>
 
-</variablelist>
-  
-<important><para>
-If you specify a memory area to use - be sure it's big enough as no
-checks can or will be made that a certain mode fits into it.
-</para></important>
+    </variablelist>
 
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>DirectBuffer support always available.</member>

@@ -5,29 +5,31 @@
 <refentry id="ref-display-vcsa">
 
 <refmeta>
-<refentrytitle><systemitem>display-vcsa</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-vcsa</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-vcsa</systemitem></refname>
-<refpurpose>Display using Linux virtual console text device</refpurpose>
+    <refname id="display-vcsa">display-vcsa</refname>
+    <refpurpose>Display using Linux virtual console text device</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-vcsa</command>
-<arg choice="plain">:</arg>
-<arg><option>-noinput</option></arg>
-<group choice="opt">
-  <arg><option>-nokbd</option></arg>
-  <arg><option>-nomouse</option></arg>
-</group>
-<arg><option>-shade</option></arg>
-<arg><option>-ascii</option></arg>
-<arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
-<arg><replaceable>vcsa device</replaceable></arg>
+
+    <command>display-vcsa</command>
+    <arg choice="plain">:</arg>
+    <arg><option>-noinput</option></arg>
+    <group choice="opt">
+      <arg><option>-nokbd</option></arg>
+      <arg><option>-nomouse</option></arg>
+    </group>
+    <arg><option>-shade</option></arg>
+    <arg><option>-ascii</option></arg>
+    <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+    <arg><replaceable>vcsa device</replaceable></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -36,87 +38,86 @@
 <title>Description</title>
 
 <para>
-Uses the Linux <filename>/dev/vcsa*</filename> devices 
-to render text modes onto the console.
+    Uses the Linux <filename>/dev/vcsa*</filename> devices 
+    to render text modes onto the console.
 </para>
   
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
+    <variablelist>
 
+    <varlistentry>
+    <term><option>-nokbd</option></term>
+    <listitem><para>
+    Do not open any libraries for keyboard input.
+    </para></listitem>
+    </varlistentry>
 
-<variablelist>
+    <varlistentry>
+    <term><option>-nomouse</option></term>
+    <listitem><para>
+    Do not open any libraries for mouse input.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-nokbd</option></term>
-<listitem><para>
-Do not open any libraries for keyboard input.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-noinput</option></term>
+    <listitem><para>
+    Same as both <option>-nokbd</option> and
+    <option>-nomouse</option>.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-nomouse</option></term>
-<listitem><para>
-Do not open any libraries for mouse input.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-shade</option></term>
+    <listitem><para>
+    The <option>-shade</option> option turns on `shading mode', which
+    changes the color mapping so that it chooses characters which
+    emulate a shading effect.  This makes a big improvement if using
+    (some might say abusing :) the <systemitem>vcsa</systemitem>
+    target for graphical purposes.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-noinput</option></term>
-<listitem><para>
-Same as both <option>-nokbd</option> and <option>-nomouse</option>.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-ascii</option></term>
+    <listitem><para>
+    The <option>-ascii</option> option limits the color mapping to
+    only using ASCII characters.  The default mode uses IBM special
+    characters (the solid block mainly, and others when using
+    <option>-shade</option>).
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-shade</option></term>
-<listitem><para>
-The <option>-shade</option> option turns on `shading mode', which changes the
-color mapping so that it chooses characters which emulate a shading
-effect.  This makes a big improvement if using (some might say abusing
-:) the <systemitem>vcsa</systemitem> target for graphical purposes.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+    <listitem><para>
+    This option will provide a physical screen size for applications
+    which wish to remain resolution
+    independent.
+    <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>
+    are the x,y size of the screen in millimeters, unless the optional
+    <replaceable>dpi</replaceable> string is affixed, in which case,
+    they represent resolution in dots-per-inch.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-ascii</option></term>
+    <varlistentry>
+    <term><replaceable>vcsa device</replaceable></term>
+    <listitem><para>
+    The filename of the device file, defaulting to
+    <filename>/dev/vcsa</filename> which draws on the current virtual
+    console.
+    </para></listitem>
+    </varlistentry>
 
-<listitem><para>
-The <option>-ascii</option> option limits the color mapping to only using ASCII
-characters.  The default mode uses IBM special characters (the solid
-block mainly, and others when using <option>-shade</option>).
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
-<listitem><para>
-This option will provide a physical screen size for applications which
-wish to remain resolution independent.  
-<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y
-size of the screen in millimeters, unless the optional <replaceable>dpi</replaceable>
-string is affixed, in which case, they represent resolution in dots-per-inch.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term><replaceable>vcsa device</replaceable></term>
-<listitem><para>
-The filename of the device file, defaulting to
-<filename>/dev/vcsa</filename> which draws on the current virtual
-console.
-</para></listitem>
-</varlistentry>
-
-</variablelist>
-
+    </variablelist>
 
 </refsect1>
   
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>No DirectBuffer support.</member>

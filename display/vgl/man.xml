@@ -5,74 +5,76 @@
 <refentry id="ref-display-vgl">
 
 <refmeta>
-<refentrytitle><systemitem>display-vgl</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-vgl</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-vgl</systemitem></refname>
-<refpurpose>FreeBSD/i386 console display</refpurpose>
+    <refname id="display-vgl">display-vgl</refname>
+    <refpurpose>FreeBSD/i386 console display</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-vgl</command>
-<arg choice="plain">:</arg>
 
-<arg><option>-nodb</option></arg>
-<arg><option>-usedb</option></arg>
+    <command>display-vgl</command>
+    <arg choice="plain">:</arg>
+    <arg><option>-nodb</option></arg>
+    <arg><option>-usedb</option></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
-
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Displays on the FreeBSD/i386 console. 16 and 32bit direct color support with
-the latest FreeBSD vgl(3) library (FreeBSD > R5.0 and a patch is available
-for FreeBSD R4.x series).
+    Displays on the FreeBSD/i386 console. 16 and 32bit direct color
+    support with the latest FreeBSD vgl(3) library (FreeBSD > R5.0 and
+    a patch is available for FreeBSD R4.x series).
 </para>
+
 <para>
-Like VGL, the vgl-display depends on the current VGA/VESA modes and you
-must load the vesa.ko module to get advanced modes (higher than 680x480x8).
+    Like VGL, the vgl-display depends on the current VGA/VESA modes
+    and you must load the vesa.ko module to get advanced modes (higher
+    than 680x480x8).
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term><option>-nodb</option></term>
-<listitem><para>
-Don't use directbuffer.
-</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term><option>-nodb</option></term>
+    <listitem><para>
+    Don't use directbuffer.
+    </para></listitem>
+    </varlistentry>
 
-<varlistentry>
-<term><option>-usedb</option></term>
-<listitem><para>Make use of directbuffer.
-</para>
-</listitem>
-</varlistentry>
-</variablelist>
+    <varlistentry>
+    <term><option>-usedb</option></term>
+    <listitem><para>Make use of directbuffer.
+    </para>
+    </listitem>
+    </varlistentry>
+
+    </variablelist>
 
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
   
 <simplelist>
-<member>True color support is best with directbuffer. Your
-board must provide VESA 2.1 compliance to use directbuffer. If it's an old
-S3 board, use the s3.ko module to access it's framebuffer (FreeBSD > R5.0).
+<member>
+    True color support is best with directbuffer. Your
+    board must provide VESA 2.1 compliance to use directbuffer. If
+    it's an old S3 board, use the s3.ko module to access it's
+    framebuffer (FreeBSD > R5.0).
 </member>
 <member>Unaccelerated (VESA).</member>
 </simplelist>
-
 </refsect1>
+
 </refentry>

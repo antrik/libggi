@@ -5,39 +5,39 @@
 <refentry id="ref-display-directx">
 
 <refmeta>
-<refentrytitle><systemitem>display-directx</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-directx</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-directx</systemitem></refname>
-<refname><systemitem>display-directxnt</systemitem></refname>
-<refpurpose>DirectX (WIN32)</refpurpose>
+    <refname id="display-directx">display-directx</refname>
+    <refname id="display-directxnt">display-directxnt</refname>
+    <refpurpose>DirectX (WIN32)</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
-<cmdsynopsis>
-<command>display-directx</command>
-<arg choice="plain">:</arg>
-</cmdsynopsis>
 
-<cmdsynopsis>
-<command>display-directxnt</command>
-<arg choice="plain">:</arg>
-</cmdsynopsis>
+    <cmdsynopsis>
+    <command>display-directx</command>
+    <arg choice="plain">:</arg>
+    </cmdsynopsis>
+
+    <cmdsynopsis>
+    <command>display-directxnt</command>
+    <arg choice="plain">:</arg>
+    </cmdsynopsis>
 
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Used for Win32 DirectX port of libGGI.
+    Used for Win32 DirectX port of libGGI.
 </para>
 
 <para>
-Use <command>display-directxnt</command> on NT4 system.
+    Use <command>display-directxnt</command> on NT4 system.
 </para>
 
 </refsect1>

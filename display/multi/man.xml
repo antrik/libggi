@@ -5,47 +5,46 @@
 <refentry id="ref-display-multi">
 
 <refmeta>
-<refentrytitle><systemitem>display-multi</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-multi</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-multi</systemitem></refname>
-<refpurpose>Duplicate visual operations onto multiple visuals</refpurpose>
+    <refname id="display-multi">display-multi</refname>
+    <refpurpose>Duplicate visual operations onto multiple visuals</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-multi</command>
-<arg choice="plain">:</arg>
-<arg choice="req" rep="repeat"><replaceable><link linkend="target-spec">target-spec</link>:</replaceable></arg>
+
+    <command>display-multi</command>
+    <arg choice="plain">:</arg>
+    <arg choice="req" rep="repeat"><replaceable><link linkend="target-spec">target-spec</link>:</replaceable></arg>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-Duplicates all drawing operations onto multiple `child' targets, thus
-producing identical output on multiple visuals.
+    Duplicates all drawing operations onto multiple `child' targets, thus
+    producing identical output on multiple visuals.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
 <para>
-The argument to <systemitem>display-multi</systemitem> is a colon- (`:') separated
-list of target specs to draw on.  Because target specs can (and often
-do) contain colons, they need to be enclosed in parentheses.
+    The argument to <systemitem>display-multi</systemitem> is a colon- (`:') separated
+    list of target specs to draw on.  Because target specs can (and often
+    do) contain colons, they need to be enclosed in parentheses.
 </para>
   
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>DirectBuffer never supported.</member>

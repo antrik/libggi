@@ -5,39 +5,42 @@
 <refentry id="ref-display-aa">
 
 <refmeta>
-<refentrytitle><systemitem>display-aa</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>display-aa</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>display-aa</systemitem></refname>
-<refpurpose>Display using AAlib</refpurpose>
+    <refname id="display-aa">display-aa</refname>
+    <refpurpose>Display using AAlib</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>display-aalib</command>
+
+    <command>display-aalib</command>
+
 </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
-<para>Uses the <ulink url="http://aa-project.sourceforge.net/aalib/">AA-lib</ulink>, 
-an ASCII art library, for output and input.</para>
+<para>
+    Uses the <ulink url="http://aa-project.sourceforge.net/aalib/">AA-lib</ulink>, 
+    an ASCII art library, for output and input.
+</para>
   
 </refsect1>
 
-<refsect1>
-<title>Environment variables</title>
+<refsect1><title>Environment variables</title>
+
 <para>
-AA-lib options may be specified using the the <envar>AA_OPTS</envar> variable.
+    AA-lib options may be specified using the the <envar>AA_OPTS</envar> variable.
 </para>
+
 </refsect1>
 
-<refsect1>
-<title>Features</title>
+<refsect1><title>Features</title>
 
 <simplelist>
 <member>DirectBuffer always available</member>
