@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.17 2005/02/09 17:20:02 mooz Exp $
+/* $Id: vidmode.c,v 1.18 2005/03/29 14:36:38 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -400,7 +400,7 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
       err = _GGI_generic_checkmode_finish(cm, mode, &num );
       _GGI_generic_checkmode_destroy(cm);
 
-      return num-1;
+      return num;
     }
   }
   
