@@ -1,4 +1,4 @@
-/* $Id: ggi-auto.inc,v 1.2 2004/02/14 13:45:37 cegger Exp $
+/* $Id: ggi-auto.inc,v 1.3 2004/10/14 09:08:41 cegger Exp $
 ******************************************************************************
 
    Common GGI_AUTO handling code.
@@ -44,24 +44,22 @@ static void _GGIhandle_ggiauto(ggi_mode *mode, int def_x, int def_y)
 		mode->dpp.y = (GT_SCHEME(mode->graphtype)==GT_TEXT) ? 8 : 1;
 	}
 
-	_ggi_physz_figure_visible(mode);
-
 	if (mode->visible.x==GGI_AUTO && mode->virt.x==GGI_AUTO) {
 		mode->visible.x = mode->virt.x = def_x;
-		
+
 	} else if (mode->visible.x == GGI_AUTO) {
 		mode->visible.x = mode->virt.x;
-		
+
 	} else if (mode->virt.x == GGI_AUTO) {
 		mode->virt.x = mode->visible.x;
 	}
 
 	if (mode->visible.y==GGI_AUTO && mode->virt.y==GGI_AUTO) {
 		mode->visible.y = mode->virt.y = def_y;
-		
+
 	} else if (mode->visible.y == GGI_AUTO) {
 		mode->visible.y = mode->virt.y;
-		
+
 	} else if (mode->virt.y == GGI_AUTO) {
 		mode->virt.y = mode->visible.y;
 	}
