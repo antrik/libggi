@@ -55,8 +55,8 @@ user, which affect the behaviour of LibGGI:
    `ggiOpen` with `NULL` argument.
 
    The default target is specified using a target-spec:
-   ``target:targetargs`` where :p:`targetname` is the name of the
-   target, and :p:`targetargs` are any target-specific arguments.
+   ``target:targetargs`` where :p:`target` is the name of the target,
+   and :p:`targetargs` are any target-specific arguments.
 
    If neither this variable nor `DISPLAY` is set, then the following
    targets are tried in order until one works: `fbdev`, `svga`, `aa`
@@ -241,6 +241,17 @@ Examples of `GGI_DEFMODE` strings:
 
   - ``640x480F2[GT_16BIT]`` 16-bit-color 640x480 with two buffers
 
+See Also
+--------
+
+:man:`libgii(7)`, :man:`ggiInit(3)`,
+:man:`display-aa(7)`, :man:`display-dga(7)`,
+:man:`display-directx(7)`, :man:`display-directxnt(7)`, :man:`display-fbdev(7)`,
+:man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-macosx(7)`,
+:man:`display-memory(7)`, :man:`display-monotext(7)`, :man:`display-multi(7)`,
+:man:`display-palemu(7)`, :man:`display-sub(7)`, :man:`display-svgalib(7)`,
+:man:`display-tele(7)`, :man:`display-tile(7)`, :man:`display-trueemu(7)`,
+:man:`display-vcsa(7)`, :man:`display-vgl(7)`, :man:`display-x(7)`
 
 
 .. include:: ../programs/util/monitest/monitest.txt
