@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.21 2001/08/16 11:44:58 cegger Exp $
+dnl $Id: configure.in,v 1.22 2001/08/21 23:12:22 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -94,10 +94,10 @@ AC_ARG_ENABLE(directfb,
 [  --disable-directfb      don't build the directfb renderer],
 build_directfb_renderer=$enableval)
 AC_ARG_WITH(directfb,
-[  --with-directfb=DIR     use directfb source dir DIR],
+[  --with-directfb=DIR     find directfb drivers modules in DIR],
   build_directfb_renderer=yes
-  directfb_src_dir=$withval,
-  directfb_src_dir=/usr/src/DirectFB)
+  directfb_driver_dir=$withval,
+  directfb_driver_dir=/usr/lib/directfb/gfxdrivers)
 AC_ARG_ENABLE(genkgi,
 [  --disable-genkgi        don't build the generic KGI driver (used by fbdev)],
 build_genkgi_driver=$enableval)
@@ -393,6 +393,11 @@ fix->accel = 0;
     build_fbdev_target="no")
 fi
 
+if test "x$build_directfb_renderer" != "xno"; then
+  AC_CHECK_HEADER(directfb-internal/directfb_version.h,
+	foo=bar, build_aa_target="no")
+fi
+
 if test "x$build_genkgi_driver" != "xno"; then
   AC_CHECK_HEADER(kgi/kgi.h, ,build_genkgi_driver="no")
 fi
@@ -579,19 +584,12 @@ else
   if test "x$build_directfb_renderer" = "xno"; then
     AC_MSG_RESULT(no)
   else
-    AC_MSG_CHECKING(if directfb dir $directfb_src_dir exists)
-    if test -d $directfb_src_dir; then
-      build_directfb_renderer="yes"
-      FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
-      AC_MSG_RESULT(yes)
-    else
-      build_directfb_renderer=no
-      AC_MSG_RESULT(no)
-      AC_WARN(disabling directfb renderer)
-    fi
+    build_directfb_renderer="yes"
+    FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
+    AC_DEFINE_UNQUOTED(DIRECTFB_DRIVER_DIR,"$directfb_driver_dir")
+    AC_MSG_RESULT(yes)
   fi
 fi
-
 
 AC_MSG_CHECKING(if we should build generic KGI driver)
 if test "x$build_genkgi_driver" = "xno"; then
@@ -813,7 +811,7 @@ AC_SUBST(FBDEVSUBDIRS)
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
 AC_SUBST(xf86dga_libs)
-AC_SUBST(directfb_src_dir)
+AC_SUBST(directfb_driver_dir)
 
 dnl Program specific substitutions
 AC_SUBST(SHMDEMOS)

@@ -1,4 +1,4 @@
-INCLUDES = -I@directfb_src_dir@/include -I@directfb_src_dir@/src/core -I@directfb_src_dir@/src -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 directfb_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 directfb_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
 	-export-symbols $(srcdir)/EXPSYMS

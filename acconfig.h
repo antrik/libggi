@@ -10,6 +10,9 @@
 /* The length of the tag */
 #define GGITAGLEN	FIXME_DEFINE_THIS!
 
+/* Where to look for DirectFB modules */
+#define DIRECTFB_DRIVER_DIR FIXME_DEFINE_THIS!
+
 /* Define to use pthreads for locking */
 #undef USE_THREADS
 

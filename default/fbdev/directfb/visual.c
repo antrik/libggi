@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: visual.c,v 1.2 2001/08/21 23:12:22 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -128,7 +128,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   GfxDriver *driver;
   DIR *dir;
   struct dirent *entry;
-  char *driver_dir = "/usr/local/lib/directfb/gfxdrivers";
+  char *driver_dir = DIRECTFB_DRIVER_DIR;
   int null_int = 0;
 
   GGIDPRINT("GGIopen for DirectFB started!\n");

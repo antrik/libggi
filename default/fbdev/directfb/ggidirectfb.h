@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: ggidirectfb.h,v 1.2 2001/08/21 23:12:22 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -33,7 +33,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 
-#include <directfb_version.h>
+#include <directfb-internal/directfb_version.h>
 
 #ifdef _COMPILING_DIRECTFB_VISUAL_C
 # define extern
@@ -60,11 +60,11 @@
 #ifdef _COMPILING_DIRECTFB_VISUAL_C
 # define extern
 # define dfb_config dfb_config = NULL
-# include <misc/conf.h>
+# include <directfb-internal/misc/conf.h>
 # undef dfb_config
 # undef extern
 #else
-# include <misc/conf.h>
+# include <directfb-internal/misc/conf.h>
 #endif
 
 DFBResult config_init( int *argc, char **argv[] ) { return 0; }
@@ -77,16 +77,16 @@ DFBResult config_set(const char *name, const char *value ) { return 0;}
 #undef  config_set
 
 /* Must include from DirectFB source tree. */
-#include "coretypes.h"
+#include <directfb-internal/core/coretypes.h>
 #ifdef _COMPILING_DIRECTFB_VISUAL_C
 #define extern
 #endif
-#include "gfxcard.h"
+#include <directfb-internal/core/gfxcard.h>
 #ifdef _COMPILING_DIRECTFB_VISUAL_C
 #undef extern
 #endif
-#include "state.h"
-#include "surfaces.h"
+#include <directfb-internal/core/state.h>
+#include <directfb-internal/core/surfaces.h>
 
 #ifndef MAP_FAILED
 #define MAP_FAILED ((void*)-1)
