@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/08 11:23:35 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/08 20:34:56 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -119,7 +119,7 @@ static int do_dbstuff(ggi_visual *vis)
 		buf->layout = blPixelLinearBuffer;
 
 		buf->buffer.plb.stride = 
-			(LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
+			GT_ByPPP(LIBGGI_VIRTX(vis), LIBGGI_GT(vis));
 		buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/09/08 11:25:45 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/09/08 20:38:20 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -278,7 +278,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	}
 
 	priv->pixperframe =
-	    ((GT_SIZE(tm->graphtype) * priv->stride + 7) / 8)
+		(GT_ByPPP(priv->stride, tm->graphtype))
 	    * tm->virt.y;
 	vis->d_frame_num = 0;
 
@@ -315,7 +315,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		    = (uint8 *) priv->fb + priv->pixperframe * i;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-		    = (GT_SIZE(tm->graphtype) * priv->stride + 7) / 8;
+		    = GT_ByPPP(priv->stride, tm->graphtype);
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
 		    = LIBGGI_PIXFMT(vis);
 		GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
@@ -491,7 +491,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 	}
 
 	if ((signed)
-	    (tm->frames * ((GT_SIZE(tm->graphtype) * priv->stride + 7) / 8)
+	    (tm->frames * (GT_ByPPP(priv->stride, tm->graphtype))
 	     * tm->virt.y) > priv->mem_size * 1024) {
 		tm->frames = priv->mem_size * 1024 /
 		    (((GT_SIZE(tm->graphtype) * priv->stride + 7) / 8)

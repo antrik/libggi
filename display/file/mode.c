@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/08 11:13:15 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/08 20:30:09 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -178,7 +178,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 	ggi_graphtype gt = LIBGGI_GT(vis);
 
 
-	priv->fb_stride = ((GT_SIZE(gt) * LIBGGI_VIRTX(vis)) + 7) / 8;
+	priv->fb_stride = GT_ByPPP(LIBGGI_VIRTX(vis), gt);
 	priv->fb_size = LIBGGI_FB_SIZE(LIBGGI_MODE(vis));
 
 	if (GT_SCHEME(gt) == GT_PALETTE) {

@@ -315,7 +315,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	/* "Page" align the frames.  Some accels need this. */
 	pad = 0;
-	stride = (GT_SIZE(tm->graphtype) * tm->virt.x + 7) / 8;
+	stride = GT_ByPPP(tm->virt.x, tm->graphtype);
 	if ((stride * tm->virt.y) & 4095)
 		pad = 4096 - ((stride * tm->virt.y) % 4096);
 	for (i = 0; i < tm->frames; ++i) {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/08/17 08:59:36 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/08 20:32:22 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -102,7 +102,7 @@ static int do_dbstuff(ggi_visual *vis)
 	LIBGGI_PRIVBUFS(vis)[0]->write = priv->fb_ptr;
 	LIBGGI_PRIVBUFS(vis)[0]->layout = blPixelLinearBuffer;
 	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.stride = 
-		(LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
+		GT_ByPPP(LIBGGI_VIRTX(vis), LIBGGI_GT(vis));
 	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
