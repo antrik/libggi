@@ -1,11 +1,11 @@
-dnl $Id: configure.in,v 1.59 2002/11/06 23:16:19 cegger Exp $
+dnl $Id: configure.in,v 1.60 2002/11/11 12:18:32 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
 
 AC_INIT(include/ggi/ggi.h)
 
-AM_INIT_AUTOMAKE(libggi,2.0.1,-)
+AM_INIT_AUTOMAKE(libggi,2.0.2-rc1,-)
 
 AM_MAINTAINER_MODE
 AM_DISABLE_STATIC
@@ -72,12 +72,22 @@ build_linvtsw_helper="auto"
 dnl SWAR selection: yes = compile this swar, no = don't compile,
 dnl auto = compiles the swar if CC supports it,
 dnl build = compiles the swar if the CPU on the build system supports it.
+dnl do_64bitc="auto"
+dnl do_mmx="auto"
+dnl do_3dnow="auto"
+dnl do_vis="auto"
+dnl do_mvi="auto"
+
+dnl Disable SWARs for two reasons:
+dnl 1. SWARs are still alpha
+dnl 2. People have encountered compiling problems with asm code
 do_noswar="yes"
-do_64bitc="auto"
-do_mmx="auto"
-do_3dnow="auto"
-do_vis="auto"
-do_mvi="auto"
+do_64bitc="no"
+do_mmx="no"
+do_3dnow="no"
+do_vis="no"
+do_mvi="no"
+
 
 dnl ========================================================================
 dnl Checks for programs.
