@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/02/05 09:34:58 cegger Exp $
+/* $Id: visual.c,v 1.14 2004/02/05 12:15:33 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -210,7 +210,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * generic function.  Note we know the string is NULL terminated.
 	 */
 	if (options[OPT_PIXFMT].result[0]) {
-		_ggi_parse_pixfmtstr(options[OPT_PIXFMT].result, NULL, NULL,
+		_ggi_parse_pixfmtstr(options[OPT_PIXFMT].result, '\0', NULL,
 				strlen(options[OPT_PIXFMT].result)+1,
 				&priv->r_mask, &priv->g_mask, &priv->b_mask,
 				&priv->a_mask);
