@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/04/07 22:55:28 nsouch Exp $
+/* $Id: color.c,v 1.7 2004/04/08 18:05:25 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Palette functions for AA target.
@@ -38,7 +38,8 @@ int GGI_aa_setPalette(ggi_visual_t vis,size_t start,size_t size, const ggi_color
 	ggi_color    *src  = (ggi_color*)colormap;
 	size_t        end = start + size;
 
-	GGIDPRINT_COLOR("AA setpalette.(%d,%d)\n",start,size);
+	GGIDPRINT_COLOR("AA setpalette.(%d,%d) %d\n",
+			start,size,LIBGGI_PAL(vis)->clut.size);
 	
 	for (; start<end; ++start, ++dest) {
 		*dest = *(src++);
