@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:25:23 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/04/02 16:05:25 ggibecka Exp $
 ******************************************************************************
 
    Terminfo target
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "TIvisual.h"
 
