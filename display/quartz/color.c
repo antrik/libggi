@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.10 2004/11/27 20:03:31 soyt Exp $
+/* $Id: color.c,v 1.1 2004/12/27 20:50:33 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -30,8 +30,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <ggi/internal/ggi_debug.h>
+#include "config.h"
 #include <ggi/display/quartz.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)

@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.10 2004/11/27 16:42:25 soyt Exp $
+/* $Id: visual.c,v 1.1 2004/12/27 20:50:33 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -31,15 +31,18 @@
 #include "config.h"
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/quartz.h>
+#include <ggi/input/quartz.h>
 
 static const gg_option optlist[] =
 {
 	{ "physz", "0,0" },
 	{ "noinput", "no" },
+	{ "fullscreen", "no" },
 };
 
 #define OPT_PHYSZ	0
 #define OPT_NOINPUT	1
+#define OPT_FULLSCREEN	2
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -49,33 +52,33 @@ static const gg_option optlist[] =
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_quartz_priv *priv;
-	NSAutoreleasePool *pool;
 
 	priv = QUARTZ_PRIV(vis);
 
-	pool = [ [ NSAutoreleasePool alloc ] init ];
-
-	[ priv->GGIApp terminate:priv->window ];
-
-	[ pool release ];
+	if (priv->memvis != NULL) {
+		ggiClose(priv->memvis);
+		free(priv->fb);
+	}
 
 	/* Restore original screen resolution/bpp */
-	CGDisplaySwitchToMode (priv->display_id, priv->save_mode);
-	CGDisplayRelease (priv->display_id);
-	CGPaletteRelease (priv->palette);
+	if (priv->fullscreen) {
+		CGDisplaySwitchToMode (priv->display_id, priv->save_mode);
+		CGDisplayRelease (priv->display_id);
+		CGPaletteRelease (priv->palette);
+
+		/* Ensure the cursor will be visible and working when we quit */
+		CGDisplayShowCursor (priv->display_id);
+		CGAssociateMouseAndMouseCursorPosition (1);
+	}
 
 	/* Restore gamma settings */
 	CGDisplayRestoreColorSyncSettings ();
 
-	/* Ensure the cursor will be visible and working when we quit */
-	CGDisplayShowCursor (priv->display_id);
-	CGAssociateMouseAndMouseCursorPosition (1);
-
-	free(vis->gamma);
-	free(QUARTZ_PRIV(vis));
+	if (vis->gamma) free(vis->gamma);
+	free(priv);
 	free(LIBGGI_GC(vis));
 	vis->gamma = NULL;
-	QUARTZ_PRIV(vis) = NULL;
+	LIBGGI_PRIVATE(vis) = NULL;
 	LIBGGI_GC(vis) = NULL;
 
 	return 0;
@@ -89,26 +92,27 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_quartz_priv *priv;
 	gg_option options[NUM_OPTS];
 
-	NSAutoreleasePool *pool;
-
-	DPRINT_MISC("display-quartz coming up.\n");
-
 	memcpy(options, optlist, sizeof(options));
 
 	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
-	if (!LIBGGI_GC(vis)) {
+	DPRINT_MISC("Allocated graphic context: %p\n", (void *)LIBGGI_GC(vis));
+	if (LIBGGI_GC(vis) == NULL) {
 		goto err0;
 	}
 
 	/* Allocate descriptor for screen memory */
-	priv = QUARTZ_PRIV(vis) = calloc(1,sizeof(ggi_quartz_priv));
-	if (!priv) {
+	priv = calloc(1,sizeof(ggi_quartz_priv));
+	DPRINT_MISC("Allocated private structure: %p\n", (void *)priv);
+	if (priv == NULL) {
 		goto err1;
 	}	/* if */
 
+	LIBGGI_PRIVATE(vis) = priv;
+
 	/* Allocate Gamma Map memory */
 	vis->gamma = calloc((size_t)1U, sizeof(struct ggi_gammastate));
-	if (!vis->gamma) {
+	DPRINT_MISC("Allocated gamma map: %p\n", (void *)vis->gamma);
+	if (vis->gamma == NULL) {
 		goto err2;
 	}
 
@@ -120,24 +124,38 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}	/* if */
 	}	/* if */
 
-	fprintf(stderr, "create pool\n");
-
-	pool = [ [ NSAutoreleasePool alloc ] init ];
-
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result,
 				&(priv->physzflags),
 				&(priv->physz));
 	if (err != GGI_OK) goto out;
 
-	fprintf(stderr, "call sharedApplication\n");
+	/* windowed mode is default */
+	if (tolower((uint8)options[OPT_FULLSCREEN].result[0]) != 'n') {
+		/* switch over to fullscreen mode, if possible */
+		DPRINT_CORE("turn on fullscreen mode");
+		priv->fullscreen = 1;
+	}
 
-	/* Ensure the application object is initialized */
-	[ NSApplication sharedApplication ];
 
-	priv->GGIApp = NSApp;
-	priv->window = [ priv->GGIApp keyWindow ];
-	if (priv->window == NULL) priv->window = [ priv->GGIApp mainWindow ];
-	if (priv->window == NULL) goto out;
+#if !defined(MACOSX_FINDER_SUPPORT)
+	do {
+		/* This chunk of code is heavily based off SDL_macosx.m from SDL
+		 * It uses an Apple private function to request foreground operation.
+		 */
+
+		extern void CPSEnableForegroundOperation(ProcessSerialNumber *psn);
+		ProcessSerialNumber myProc, frProc;
+		Boolean sameProc;
+
+		if (GetFrontProcess(&frProc) != noErr) break;
+		if (GetCurrentProcess(&myProc) != noErr) break;
+		if (SameProcess(&frProc, &myProc, &sameProc) == noErr && !sameProc) {
+			CPSEnableForegroundOperation(&myProc);
+		}
+		SetFrontProcess(&myProc);
+	} while(0);
+#endif
+
 
 	/* Initialize the video settings; this data persists between mode switches */
 	priv->display_id = CGMainDisplayID();
@@ -147,11 +165,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->palette    = CGPaletteCreateDefaultColorPalette ();
 
 	/* Put up the blanking window (a window above all other windows) */
-	if ( CGDisplayNoErr != CGDisplayCapture (priv->display_id) ) {
+	if ( priv->fullscreen && CGDisplayNoErr != CGDisplayCapture (priv->display_id) ) {
 		/* Failed capturing display */
 		goto out;
 	}	/* if */
 
+
+	priv->windowAttrs = kWindowStandardDocumentAttributes
+				| kWindowStandardHandlerAttribute
+				| kWindowCompositingAttribute;
+#if 0	/* This belongs into libggiwmh */
+				| kWindowLiveResizeAttribute;
+#endif
 
 	vis->opdisplay->checkmode	= GGI_quartz_checkmode;
 	vis->opdisplay->setmode		= GGI_quartz_setmode;
@@ -161,33 +186,33 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->setflags	= GGI_quartz_setflags;
 	vis->opdisplay->flush		= GGI_quartz_flush;
 
+
 #if 0
 	vis->opgc			= GGI_quartz_gcchanged;
 #endif
 
+#if 0
 	vis->opcolor->setpalvec		= GGI_quartz_setpalvec;
 	vis->opcolor->setgamma		= GGI_quartz_setgamma;
 	vis->opcolor->getgamma		= GGI_quartz_getgamma;
 	vis->opcolor->setgammamap	= GGI_quartz_setgammamap;
 	vis->opcolor->getgammamap	= GGI_quartz_getgammamap;
-
+#endif
 
 	if (tolower((uint8)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_input *inp;
-		gii_inputcocoa_arg _args;
+		gii_inputquartz_arg _args;
 
-		_args.GGIApp = NSApp;
-		_args.window = priv->window;
-#if 0
-		_args.gglock = lock;
-#endif
-		fprintf(stderr, "giiOpen(cocoa)\n");
+		_args.theWindow = priv->theWindow;
 
-		inp = giiOpen("cocoa", &_args, NULL);
+		_args.gglock = NULL;
+
+		DPRINT_MISC("open input-quartz\n");
+		inp = giiOpen("input-quartz", &_args, NULL);
 		if (inp == NULL) {
-			DPRINT_MISC("Unable to open cocoa inputlib\n");
+			DPRINT_MISC("Unable to open quartz inputlib\n");
 			err = GGI_ENODEVICE;
-			fprintf(stderr, "Unable to open cocoa inputlib\n");
+			fprintf(stderr, "Unable to open quartz inputlib\n");
 			goto out;
 		}	/* if */
 
@@ -198,19 +223,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inp = NULL;
 	}	/* if */
 
-	fprintf(stderr, "release pool\n");
-
-	[ pool release ];
+	priv->inp = NULL;
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
  out:
-	fprintf(stderr, "release pool\n");
-
-	[ pool release ];
-
-	fprintf(stderr, "GGIopen: out\n");
+	DPRINT("GGIopen: out\n");
 	GGIclose(vis, dlh);
 	return err;
 
