@@ -259,6 +259,7 @@ See Also
 .. include:: ../display/sub/man.txt
 .. include:: ../display/svgalib/man.txt
 .. include:: ../display/tele/man.txt
+.. include:: ../display/terminfo/man.txt
 .. include:: ../display/tile/man.txt
 .. include:: ../display/trueemu/man.txt
 .. include:: ../display/vcsa/man.txt
