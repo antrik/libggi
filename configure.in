@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.105 2004/02/06 13:57:01 cegger Exp $
+dnl $Id: configure.in,v 1.106 2004/02/09 14:31:31 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -298,7 +298,8 @@ sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
 sys/socket.h netinet/in.h netdb.h windows.h winsock2.h winsock.h \
-ddraw.h vgl.h ApplicationServices/ApplicationServices.h)
+ddraw.h vgl.h linux/h3600_ts.h asm/sharp_ts.h \
+ApplicationServices/ApplicationServices.h)
 
 
 dnl ========================================================================
@@ -928,6 +929,32 @@ else
   AC_MSG_RESULT(no)
 fi
 
+OPTUTILS=""
+
+AC_MSG_CHECKING(if we should build the tunemode program)
+if test "x$build_kgi_target" = "xyes"; then
+  OPTUTILS="$OPTUTILS tunemode\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should build the ggicalibrate program)
+if test "x$ac_cv_header_asm_sharp_ts_h" = "xyes"; then
+  OPTUTILS="$OPTUTILS ggicalibrate\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should build the ipaq_ggicalibrate program)
+if test "x$ac_cv_header_linux_h3600_ts_h" = "xyes"; then
+  OPTUTILS="$OPTUTILS ipaq_ggicalibrate\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
 
 
 dnl ========================================================================
@@ -1313,6 +1340,7 @@ dnl Program specific substitutions
 AC_SUBST(INSTDEMOS)
 AC_SUBST(OPTDEMOS)
 AC_SUBST(OPTCHECKS)
+AC_SUBST(OPTUTILS)
 AC_SUBST(monitest_extrasrc)
 AC_SUBST(monitest_extraobj)
 AC_SUBST(monitest_extralibs)

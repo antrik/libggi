@@ -15,9 +15,8 @@ Due : ????-??-??
 
 + bring improved code in showaccel demo to showaccel2 demo
 + Verify and fix cross-compilation to other architectures
-* Check for building and installing demos and checks requiring special headers/libs.
-  (Peter Ekberg)
-+ Check for building and installing utils requiring special headers/libs.
+* Check for building and installing demos, checks and utils requiring
+  special headers/libs. (Peter Ekberg)
 + Merge checks for libggi programs into stable tree
 + Fix libtool to create shared libs instead of static ones
   on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
