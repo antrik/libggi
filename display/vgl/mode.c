@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/09/12 19:44:35 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/10/05 09:44:51 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -97,17 +97,17 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	memset(&modeinfo, 0, sizeof(modeinfo));
 	
 	switch(gt) {
-		case GT_1BIT : modeinfo.vi_depth = 1; pixelBytes = 1; break;
-		case GT_4BIT : modeinfo.vi_depth = 4; pixelBytes = 1; break;
-		case GT_8BIT : modeinfo.vi_depth = 8; pixelBytes = 1; break;
-		case GT_16BIT: modeinfo.vi_depth = 16; pixelBytes = 2; break;
-		case GT_32BIT: modeinfo.vi_depth = 32; pixelBytes = 4; break;
+	case GT_1BIT : modeinfo.vi_depth = 1; pixelBytes = 1; break;
+	case GT_4BIT : modeinfo.vi_depth = 4; pixelBytes = 1; break;
+	case GT_8BIT : modeinfo.vi_depth = 8; pixelBytes = 1; break;
+	case GT_16BIT: modeinfo.vi_depth = 16; pixelBytes = 2; break;
+	case GT_32BIT: modeinfo.vi_depth = 32; pixelBytes = 4; break;
 
-		/* Unsupported mode depths */
-		case GT_15BIT:
-		case GT_24BIT:
-		default:
-			return -1;
+	/* Unsupported mode depths */
+	case GT_15BIT:
+	case GT_24BIT:
+	default:
+		return -1;
 	}
 
 	modeinfo.vi_width = tm->visible.x;
