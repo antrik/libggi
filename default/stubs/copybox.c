@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
+/* $Id: copybox.c,v 1.3 2004/09/08 20:20:25 cegger Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -54,7 +54,7 @@ GGI_stubs_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 
 	LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
 
-	size = (GT_SIZE(LIBGGI_GT(vis))*w+7)/8;
+	size = GT_ByPPP(w, LIBGGI_GT(vis));
 	if (size <= MAX_STACKBYTES) {
 		uint8 buf[MAX_STACKBYTES];
 
