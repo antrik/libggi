@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.18 2004/09/09 16:58:09 cegger Exp $
+/* $Id: shm.c,v 1.19 2004/09/09 17:53:30 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -158,8 +158,8 @@ static void _ggi_xshm_free_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-static int _ggi_xshm_create_ximage(ggi_visual *vis) {
-
+static int _ggi_xshm_create_ximage(ggi_visual *vis)
+{
 	char target[256];
 	ggi_mode tm;
 	ggi_x_priv *priv;
@@ -373,10 +373,12 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		if (priv->parentwin == root) 
 			XSetWindowColormap(priv->disp, priv->parentwin,
 					   DefaultColormap(priv->disp,screen));
-		wa.cursor = None;
-		XChangeWindowAttributes(priv->disp, priv->parentwin, 
+		wa.cursor = priv->oldcursor;
+		XChangeWindowAttributes(priv->disp, priv->parentwin,
 					CWCursor, &wa);
-	} else  XDestroyWindow(priv->disp, priv->parentwin);
+	} else {
+		XDestroyWindow(priv->disp, priv->parentwin);
+	}
 
 skip:
 	priv->shmhack_free_cmaps(vis);
