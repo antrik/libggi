@@ -1,6 +1,50 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
-New in 2:3:0 (2.0.3): 2003-03-19
+New in 2.0.6: 2004-09-14:
+* build system:
+  - Prepend with GII include path when --with-uninst-gii is specified via configure
+  - disable vgagl helper when not building the svga target
+* X-target:
+  - Bugfix: Ensure aligned memory access. Fixes crash on NetBSD/sparc64
+  - Bugfix: Perform correct clipping in ggiFillscreen(3).
+* display-memory: Bugfix: Free directbuffer completely.
+* display-monotext: Bugfix: ggiCheckMode() returns actual error code than always success.
+* documentation update:
+  - add manual page for display-mansync
+  - do not document not-existing GGIFLAG_TIDYBUF flag. It is a new feature in devel tree.
+^L
+
+New in 2.0.5: 2004-05-29:
+* X-target:
+  - Fix over-allocation of win y dimension.
+  - Forward expose events to the application when -nobuffer is used.
+  - Fix "strange colored pixels when re-exposing backbuffer"-Bug.
+  - Focus pulling fix. Key focus should no longer get lost,
+    when the mouse is NOT over the window. Note: Don't forget to
+    update libgii's input-xwin and input-x before as libggi now
+    passes some additional information to libgii.
+* build system: It checks for buildable demos. Fixes compiling breakage on some platforms.
+* other build system updates
+* libtool update. Fixes Debian bug #208288.
+* documentation updates
+^L
+
+New in 2.0.4: 2003-12-21:
+* X-target:
+  - minor mode initialization fix from Argo Vessmann
+  - shm helper checks return code, when setting up the directbuffer
+  - release locking on failure. (Threadsafety fix)
+  - fixed geometry check. Opening (very) small windows is now possible.
+* build fix: cygwin has no sys/shm.h and sys/ipc.h, so configure
+  disables all targets requiring them, if not present.
+* cbconsist demo: sync with devel tree
+* gcc 3.3 compiling fix for default/linear_16/crossbuild.c
+  (fixes Debian bug #197214)
+* merged build fix from FreeBSD's ports tree to make the xf86dga target
+  compile on FreeBSD (fixes FreeBSD PR ports/52380)
+^L
+
+New in 2.0.3: 2003-03-19
 * X-target:
   - Fixed a bug, where a ggiFlush() call was missed, which makes
     directbuffer content visible when releasing it.
@@ -22,7 +66,7 @@ New in 2:3:0 (2.0.3): 2003-03-19
 * manpage fixes
 ^L
 
-New in 2:2:0 (2.0.2): 2002-12-26
+New in 2.0.2: 2002-12-26
 * Misc bugfixes (see ChangeLog)
 * Huge documentation updates
 * Major build system update
@@ -45,9 +89,9 @@ New in 2:2:0 (2.0.2): 2002-12-26
   - still experimental, thus disabled in configure
 ^L
 
-New in 2:1:0 (2.0.1): 2001-08-26
+New in 2.0.1: 2001-08-26
 * More documentation updates.
-* Prelimiary support for using DirectFB drivers under display-fbdev
+* Preliminary support for using DirectFB drivers under display-fbdev
 * Many corrections/improvements to build files
 * Started move towards using libtool versioning, as interface is stable.
 
