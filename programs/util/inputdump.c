@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.10 2004/08/09 13:35:55 cegger Exp $
+/* $Id: inputdump.c,v 1.11 2004/09/08 18:09:51 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -504,7 +504,7 @@ static void show_devinfo(gii_cmd_event *ev)
 	
 	if (s) {
 	  fprintf(stderr, "short='%s' long='%s'\n"
-		"    axes=%d buttons=%d generate=0x%06x\n", 
+		"    axes=%u buttons=%u generate=0x%06x\n", 
 		DI->shortname, DI->longname,
 		DI->num_axes, DI->num_buttons, DI->can_generate);
 	}
@@ -638,7 +638,7 @@ static void show_expose(gii_expose_event *ev)
 {
 	int i, s = (do_show != SHOW_NIL);
 
-	if (s) fprintf(stderr, "Expose: from=(%d,%d) size=(%d,%d)\n", 
+	if (s) fprintf(stderr, "Expose: from=(%u,%u) size=(%u,%u)\n", 
 			ev->x, ev->y, ev->w, ev->h);
 
 	/* update display */

@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
+/* $Id: main.c,v 1.4 2004/09/08 18:10:29 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 				step++;
 			else {
 				fprintf(stderr,
-					"Error switching to %dx%d %d bpp mode.\n"
+					"Error switching to %ux%u %u bpp mode.\n"
 					"Under X, try using -d depth_of_your_screen.\n",
 					swidth, sheight, udepth);
 				done = -1;
