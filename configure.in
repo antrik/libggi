@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.147 2004/11/03 21:53:10 aldot Exp $
+dnl $Id: configure.in,v 1.148 2004/11/03 21:58:11 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1311,6 +1311,7 @@ if test "x$use_debug" = "xyes"; then
     CFLAGS="$CFLAGS -g"
   fi
   if test "$ac_cv_c_compiler_gnu" = "yes"; then
+    CFLAGS="$CFLAGS -pedantic"
     # Common warning flags
     CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
