@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.9 2004/05/25 21:44:28 cegger Exp $
+/* $Id: clip2d.c,v 1.10 2004/05/25 21:50:30 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -29,6 +29,8 @@
 
 #include "common.inc.c"
 
+#define MIN(a, b)	(a < b) ? (a) : (b)
+#define MAX(a, b)	(a > b) ? (a) : (b)
 
 #define MODE_SIZE_X	640
 #define MODE_SIZE_Y	480
