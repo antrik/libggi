@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.7 2004/09/13 11:55:25 cegger Exp $
+/* $Id: findleaks.c,v 1.8 2004/09/13 12:04:54 pekberg Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -39,7 +39,7 @@ static void err(char *s,...)
 	exit(1);
 }
 
-#ifdef __linux__
+#if defined(__linux__ ) || defined(__CYGWIN__)
 static int pid;
 static char statpath[1024];
 
