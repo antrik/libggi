@@ -1,0 +1,2164 @@
+LibGGI Functions
+================
+
+
+
+Initialize and uninitialize LibGGI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiInit ggiExit
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiInit(void);
+
+  int ggiExit(void);
+
+
+Description
+-----------
+
+`ggiInit` initalizes the library. This function must be called before
+using other LibGGI functions; otherwise the results will be undefined.
+
+
+`ggiExit` uninitializes the library (after being initalized by
+`ggiInit`) and automatically cleanup if necessary.  This should be
+called after an application is finished with the library.  If any GGI
+functions are called after the library has been uninitialized, the
+results will be undefined.
+
+
+`ggiInit` allows multiple invocations.  A reference count is
+maintained, and to completely uninitialize the library, `ggiExit` must
+be called as many times as `ggiInit` has been called beforehand.
+
+
+Return value
+------------
+
+`ggiInit` returns `0` for OK, otherwise an error code.
+
+
+`ggiExit` returns:
+
+    `0`
+	after successfully cleaning up,
+
+    >`0`
+	the number of 'open' `ggiInit` calls, if there has been more
+	than one call to `ggiInit`.  As `ggiInit` and `ggiExit` must
+	be used in properly nested pairs, e.g. the first `ggiExit`
+	after two `ggiInit`s will return `1`.
+
+    <`0`
+        error, especially if more `ggiExit` calls have been done than
+	`ggiInit` calls.
+    
+
+Examples
+--------
+
+Initialize and uninitialize LibGGI::
+
+  if (ggiInit() < 0) {
+      fprintf(stderr, "Cannot initalize LibGGI!\n");
+      exit(1);
+  }
+
+  /* Do some LibGGI stuff */
+
+  ggiExit();
+
+
+
+See Also
+--------
+
+:man:`ggiOpen(3)`
+
+
+Exit LibGGI programs for fatal errors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiPanic
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+
+  void ggiPanic(const char *format, ...);
+
+
+Description
+-----------
+
+`ggiPanic` shuts down the application, closing all visuals, with
+:man:`printf(3)`-style reporting to stderr, taking a format string and
+any additional variables.
+
+`ggiPanic` should only be used by usermode programs when something is
+really screwed, and they do not know what to do. The same applies for
+libraries, but might be used in rare situations such as corruption of
+critical data structures.
+
+
+Return value
+------------
+
+
+Never returns.
+
+
+Examples
+--------
+
+An unrecoverable error::
+
+  if (my_important_struct->magic != MAGIC) {
+        ggiPanic("Fatal error: structure is corrupted\n");
+  }
+
+
+
+Open and close a visual
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiOpen ggiClose
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  ggi_visual_t ggiOpen(const char *display, ...);
+
+  int ggiClose(ggi_visual_t vis);
+
+
+Description
+-----------
+
+`ggiOpen` opens a visual.  The visual is specified as a display
+string, followed by `NULL`.  If only `NULL` is specified, the default
+display target is opened.  The other arguments are for internal
+purposes only, such as :p:`argptr`, used to pass driver-specific,
+non-textual information to the driver.
+
+`ggiClose` releases and destroys an open visual.  This will close X
+windows, return consoles to text-mode, etc.
+
+
+Return value
+------------
+
+
+`ggiOpen` returns the opened visual or `NULL` for error.  The
+`ggi_visual_t` is opaque to the programmer and should only be used
+through GGI functions.
+
+
+`ggiClose` returns `0` for OK, otherwise an error code.
+
+
+Examples
+--------
+
+Open and closing default visual::
+
+  ggi_visual_t vis = ggiOpen(NULL);
+
+  if(vis==NULL) {
+        ggiPanic("Couldn't open default visual!\n");
+  }
+
+  /* do stuff */
+
+  ggiClose(vis);
+
+
+Open and closing a memory visual::
+
+  ggi_visual_t memvis = ggiOpen("display-memory", NULL);
+
+  if(memvis==NULL) {
+        return -1;
+  }
+
+  /* do stuff */
+
+  ggiClose(memvis);
+
+
+See Also
+--------
+
+:man:`ggiInit(3)`
+
+
+Check or negotiate a text/graphics mode on a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiCheckMode ggiCheckTextMode ggiCheckGraphMode ggiCheckSimpleMode
+
+
+Synopsis
+--------
+
+::
+
+  int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
+
+
+  int ggiCheckTextMode(ggi_visual_t visual,int cols,int rows,
+		       int vcols,int vrows, int fontx,int fonty,
+		       ggi_graphtype type, ggi_mode *suggested_mode);
+
+  int ggiCheckGraphMode(ggi_visual_t visual, int x, int y,
+		        int xv, int yv, ggi_graphtype type,
+		        ggi_mode *suggested_mode);
+
+  int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
+		         ggi_graphtype type, ggi_mode *md);
+
+
+Description
+-----------
+
+
+`ggiCheckMode` checks whether or not the given mode will work on the
+visual.  If it does not work, it will modify the values of passed
+`ggi_mode` structure so that the mode works.  This mode negotiation
+allows the application to discover modes that are both supported by
+the visual and suitable to the application.
+
+
+`ggiCheckTextMode` checks whether the text mode with the given visible
+and virtual dimensions and the font size is supported.
+
+
+`ggiCheckGraphMode` checks whether the graphics mode with the given
+visible and virtual dimensions and type is supported.
+
+
+`ggiCheckSimpleMode` checks whether the graphics mode with the given
+visible dimensions, type, and number of buffers is supported.  This is
+used in lieu of `ggiCheckGraphMode` if multiple buffering is desired.
+
+
+For `ggiCheckTextMode`, `ggiCheckGraphMode` and `ggiCheckSimpleMode`,
+:p:`suggested_mode` is either `NULL` or a pointer to a `ggi_mode`
+which will be filled in with the negotiated mode parameters.
+
+
+Return value
+------------
+
+
+For `ggiCheckTextMode` and `ggiCheckGraphMode`, a return of `0` means
+that the corresponding set mode call for this mode would
+succeed. Otherwise, the mode given cannot be set. In this case,
+:p:`suggested_mode` is changed to the suggested mode.
+
+
+If the only modifications made to the structure is replacing
+`GGI_AUTO` or `GT_AUTO` value, the functions return success.
+
+
+Rules for mode negotiation
+--------------------------
+
+
+First, if `GGI_AUTO` (or `GT_AUTO` for the graphtype) is specified for
+any of the members of :p:`tm`, these are filled in with the
+recommended values.  The values could be to a maximum, preferred, or
+`GGI_DEFMODE` resolution, and will be compatible with any other
+constraints.
+
+
+An application that does not care about a specific paramater should
+always specify `GGI_AUTO` or `GT_AUTO` for it.
+
+
+The resulting mode is guaranteed to be valid; if not, the application
+can assume that it cannot set any mode on the given visual and give
+up.
+
+
+The suggested mode is derived as follows:
+
+    1. Resolutions are always adjusted *up*. If you want the next
+       lower, start out at 1x1 (or somewhere else reasonable) and jump
+       up the ladder.
+
+       Only if the maximum resolution would be exceeded, resolutions
+       are adjusted *down* to the maximum.
+    
+       The above applies to visible and virtual size. If there is
+       interference between them, the visible size is satified first
+       if possible, then the virtual size.
+
+
+       The adjustment of one value do not normally affect other
+       values. For example, if (visible) 320x100 (virtual 320x200) is
+       requested, the visible size may be adjusted to 320x200, but
+       virtual size will be left alone. Of course, if the virtual size
+       becomes less than visible size, then it will be adjusted as
+       well.
+
+
+    2. Font sizes are handled the other way round: they are adjusted
+       *down* except when there is nothing below.
+
+
+    3. A specific graphtype is changed only if the card does not
+       support it *at all*.  If the maximum resolution is exceeded,
+       then that is adjusted down and not the graphtype. This assumes,
+       that if you request true-color, you really want that and not so
+       badly the resolution you requested. If this is not the case,
+       you can still retry with another graphtype or `GT_AUTO`.
+
+    
+       If graphtype is changed, it is adjusted in ascending order if
+       possible: e.g. 1->4->8->15->16->24/32 bit. So you always get a
+       mode which can do more than you requested. Only when no better
+       modes are available, the type is adjusted down.
+
+
+
+Examples
+--------
+
+Try a 320x200x8 mode::
+
+  err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
+                        &sug_mode);
+  if(err) {
+        /* Check if returned mode is ok... */
+  }
+  else {
+        ggiSetMode(vis, &sug_mode);
+  }
+
+
+See Also
+--------
+
+:man:`ggiOpen(3)`, :man:`ggiSetMode(3)`, :man:`ggi_mode(3)`
+
+
+
+Set or get a mode on a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiSetMode ggiSetTextMode ggiSetGraphMode ggiSetSimpleMode ggiGetMode
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
+
+  int ggiSetTextMode(ggi_visual_t visual,int cols,int rows,
+		     int vcols,int vrows,int fontx,int fonty,
+		     ggi_graphtype type);
+
+  int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
+		      int xv,int yv,ggi_graphtype type);
+
+  int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
+		       ggi_graphtype type);
+
+  int ggiGetMode(ggi_visual_t visual,ggi_mode *tm);
+
+
+Description
+-----------
+
+`ggiSetMode` sets any mode (text or graphics).  It also performs mode
+negotiation like `ggiCheckMode`, but if any non-`GGI_AUTO`/`GT_AUTO`
+parameters are changed from the original mode, the new mode will not
+be silently set.
+
+
+`ggiSetTextMode`, `ggiSetGraphMode` and `ggiSetSimpleMode` are
+convenient versions of `ggiSetMode` that take the mode parameters as
+integer arguments rather than as a `ggi_mode` struct that the
+application has to fill out.  Otherwise, they are functionally
+equivalent to `ggiSetMode` function, and the same mode-setting
+semantics apply, except the changed `ggi_mode` cannot be seen.
+
+
+`ggiGetMode` fills out the passed `ggi_mode` with the parameters of
+the current mode of the visual.
+
+
+Return value
+------------
+
+
+The mode setting functions return `0` if the mode is set successfully,
+otherwise an error code.
+
+
+
+See Also
+--------
+
+:man:`ggiOpen(3)`, :man:`ggiCheckMode(3)`, :man:`ggi_mode(3)`
+
+
+
+
+Parse and print formatted strings specifying modes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiParseMode ggiPrintMode ggiSPrintMode ggiFPrintMode
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+
+  int ggiParseMode(const char *s, ggi_mode *m);
+
+  #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
+
+  int ggiSPrintMode(char *s, ggi_mode *m);
+  int ggiFPrintMode(FILE *s, ggi_mode *m);
+
+
+Description
+-----------
+
+`ggiParseMode` parses a string into a `ggi_mode`.
+
+
+The `ggi*PrintMode` functions print all the members of `ggi_mode` in a
+human-readable form.  `ggiSPrintMode` outputs to a preallocated string
+buffer, `ggiFPrintMode` outputs to a stdio `FILE`, and `ggiPrintMode`
+outputs to standard output.  These functions correspond to
+:man:`sprintf(3)`, :man:`fprintf(3)` and :man:`printf(3)`
+respectively.
+
+
+The format of the string used by these functions is exactly the same
+as the one used in the `GGI_DEFMODE` environment variable decribed in
+:man:`libggi(7)`.
+
+
+Return value
+------------
+
+
+`ggiParseMode` returns:
+
+`0`
+    on success, i.e. the string was correct.
+    However, errors involving `GT_*`, position
+    information, or mismatched brackets do not make it fail;
+    these errors are simply ignored.
+
+`<0`
+    if there is text that can not be parsed.
+    This text is printed to stderr.
+    All parameters parsed so far are written into :p:`m`.
+
+
+So :p:`m` contains all parameters that have been successfully
+parsed. For most applications there will be no need for testing
+`ggiParseMode` for failure.
+
+
+
+
+
+
+Set or get the current frame for display, writing and reading
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiSetDisplayFrame ggiSetWriteFrame ggiSetReadFrame ggiGetDisplayFrame ggiGetWriteFrame ggiGetReadFrame
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetDisplayFrame(ggi_visual_t vis, int frameno);
+
+  int ggiSetWriteFrame(ggi_visual_t vis, int frameno);
+
+  int ggiSetReadFrame(ggi_visual_t vis, int frameno);
+
+  int ggiGetDisplayFrame(ggi_visual_t vis);
+
+  int ggiGetWriteFrame(ggi_visual_t vis);
+
+  int ggiGetReadFrame(ggi_visual_t vis);
+
+
+Description
+-----------
+
+These functions are used for selecting or getting the current buffers,
+when using the multiple buffering function of LibGGI.
+
+
+`ggiSetDisplayFrame` sets the frame that gets displayed.
+
+
+`ggiSetWriteFrame` sets the frame for write operations such as
+`ggiPuts` and `ggiHLine`.
+
+
+`ggiSetReadFrame` sets the frame for read operations, like
+`ggiGetPixel` and the `ggiCrossBlit` source.
+
+
+`ggiGetDisplayFrame` reports the frame currently displayed.
+
+
+`ggiGetWriteFrame` reports the frame currently written to.
+
+
+`ggiSetReadFrame` reports the frame currently read from.
+
+
+Frames are numbered from 0 to the number of frames requested minus 1.
+
+
+
+Return value
+------------
+
+The `ggiSet*Frame` functions return `0` if they succeed, and `<0` if
+they fail.
+
+
+The `ggiGet*Frame` functions never fail.
+
+
+Working with frames
+-------------------
+
+Write something useful here.
+
+
+
+See Also
+--------
+
+:man:`ggi_mode(3)`
+
+
+
+Convert from ggi_color(s) to ggi_pixel(s) and vice versa
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiMapColor ggiUnmapPixel ggiPackColors ggiUnpackPixels
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+
+  ggi_pixel ggiMapColor(ggi_visual_t vis,ggi_color *col);
+
+  int ggiUnmapPixel(ggi_visual_t vis,ggi_pixel pixel,ggi_color *col);
+
+  int ggiPackColors(ggi_visual_t vis,void *buf,ggi_color *cols,int len); 
+
+  int ggiUnpackPixels(ggi_visual_t vis,void *buf,ggi_color *cols,int len);
+
+
+Description
+-----------
+
+`ggiMapColor` gets the pixelvalue for the given color.
+
+
+`ggiUnmapPixel` gets the color associated with the given pixelvalue.
+
+`ggiPackColors` converts the colors in :p:`cols` to pixelvalues in
+:p:`buf`.  The output from this function is suitable for input to the
+`ggiPut{HLine,VLine,Box}` functions.
+
+
+`ggiUnpackPixels` converts the pixelvalues in :p:`buf` to individual
+elements of :p:`cols`.  This function maybe used to convert buffers
+output by the `ggiGet{HLine,VLine,Box}` functions from the pixelvalue
+representation to their actual colors as defined by
+:man:`ggi_color(3)`.
+
+
+The buffers output from `ggiPackColors` and the input to
+`ggiUnpackPixels` are in the same format as the get/put buffers. Their
+format is defined in :man:`ggi_pixelformat(3)`.
+
+
+Try to cache the results of color lookups in your application for
+efficiency purposes.
+
+
+
+Return value
+------------
+
+
+`ggiMapColor` returns a `ggi_pixel`.
+
+
+`ggiUnmapPixel`, `ggiPackColors`, and `ggiUnpackPixels` returns `0`
+for OK, otherwise an error code.
+
+
+See Also
+--------
+
+
+:man:`ggiGetPixelFormat(3)`, :man:`ggi_color(3)`, :man:`ggi_pixelformat(3)`
+
+
+
+Manipulate the palette of a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiSetPalette ggiGetPalette
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+
+  int ggiGetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+
+
+Description
+-----------
+
+LibGGI visuals in `GT_PALETTE` mode maps all pixelvalues to the
+corresponding `ggi_color` entry in the visual's palette.
+
+
+`ggiSetPalette` sets a range of palette values, of length :p:`len`,
+starting at index number :p:`s`.  The index can be
+`GGI_PALETTE_DONTCARE` to indicate to indicate that the palette can be
+installed anywhere in the CLUT.  This allows optimised use in
+windowing environments (to minimize color flashing between windows)
+and should be used if possible.
+
+
+
+`ggiGetPalette` copies the specified colors (starting from :p:`s`, for
+:p:`len` colors) from the visual's palette to the array pointed by
+:p:`cmap`.
+
+
+Return value
+------------
+
+`ggiSetPalette` returns the number of the first entry changed.
+Negative values indicate error.
+
+
+`ggiGetPalette` returns `0` for OK, otherwise an error code. When
+called with len=0 this function will not automatically succeed, but
+the return code will indicate whether there is a readable CLUT.
+
+
+Palette in GGI
+--------------
+
+Write something useful here.
+
+
+
+See Also
+--------
+:man:`ggiSetColorfulPalette(3)`
+
+
+
+Set a palette with a full range of all colors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiSetColorfulPalette
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetColorfulPalette(ggi_visual_t vis);
+
+
+Description
+-----------
+
+
+LibGGI guarantees that there will be a default palette when a
+palettized mode is set.  What this default is, however, is dependent
+on the visual.  For example, the X target deliberately avoids setting
+all colors to avoid color-flashing when moving between windows.
+
+
+Applicaations that want to ensure that they have a full scale of all
+colors can call `ggiSetColorfulPalette` after mode set.  This function
+uses a smarter color allocation scheme, causing good colors but still
+minimal flashing in windowed targets.
+
+
+Return value
+------------
+
+
+`ggiSetColorfulPalette` returns the number of the first entry changed.
+Negative values indicate error (codes).
+
+
+See Also
+--------
+
+:man:`ggiSetPalette(3)`
+
+
+Manipulate the gamma maps and the gamma correction of a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiGetGamma ggiSetGamma ggiGetGammaMap ggiSetGammaMap ggiGammaMax 
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiGetGamma(ggi_visual_t vis,ggi_float *r,ggi_float *g,ggi_float *b);
+
+  int ggiSetGamma(ggi_visual_t vis,ggi_float r,ggi_float g,ggi_float b);
+
+  int ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+
+  int ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+
+  int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
+
+
+Description
+-----------
+
+
+Some modes on some hardware can use a per-channel palette to lookup
+the values before sending to the monitor.  Generally this is used for
+gamma correction by filling the lookup table with a curve, hence the
+name "gamma map", but it could be used for other things e.g. special
+effects in games.  Truecolor modes with gamma maps are sometimes
+referred to as "directcolor".
+
+
+`ggiSetGammaMap` and `ggiGetGammaMap` set or get the gamma map, for
+:p:`len` colors starting at :p:`s`.  In the event that there are more
+map entries for some channels than others, values for the upper
+indices of the map in the shallow channels are ignored on write, and
+undefined on read.
+
+
+The `ggiGammaMax` function is used in order to find out how many
+readable and writeable entries are in the map (returned in the
+integers referenced by :p:`maxwrite` and :p:`maxread`).  This must be
+done once for each channel.  The parameter :p:`bitmeaning` should be
+set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
+the channel of which you are inquiring.  If `ggiGammaMax` returns an
+error, you cannot set the gamma map on this visual.  If `ggiGammaMax`
+succeeds, but :p:`maxwrite` is -1 on return, this means that
+`ggiSetGamma` will work, but that `ggiSetGammaMap` will not.
+
+
+`ggiSetGamma` and `ggiGetGamma` sets or gets the gamma correction for
+the visual according to the usual curve associated with the given
+values for each channel, which should be positive.
+
+
+Return value
+------------
+
+
+All five functions `0` for OK, otherwise an error code.
+
+
+
+Get a structure describing the format of a pixelvalue from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiGetPixelFormat
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
+
+
+Description
+-----------
+
+This function obtains the default pixel format for the given visual.
+
+
+Return value
+------------
+
+Returns a pointer to the `ggi_pixelformat` structure.
+
+.. important::
+
+    Modifying the structure returned is not allowed.  Do **not**
+    attempt to free the pointer returned.
+
+
+See Also
+--------
+
+:man:`ggi_pixelformat(3)`, :man:`ggiMapColor(3)`
+
+
+
+Set or get the foreground or background color used in drawing operations in a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiSetGCForeground ggiGetGCForeground ggiSetGCBackground ggiGetGCBackground
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetGCForeground(ggi_visual_t vis,ggi_pixel  color);
+
+  int ggiGetGCForeground(ggi_visual_t vis,ggi_pixel *color);
+
+  int ggiSetGCBackground(ggi_visual_t vis,ggi_pixel  color);
+
+  int ggiGetGCBackground(ggi_visual_t vis,ggi_pixel *color);
+
+
+Description
+-----------
+
+
+`ggiSetGCForeground` and `ggiGetGCForeground` set or reads the current
+colors for the foreground, used in all normal drawing functions.
+
+
+`ggiSetGCBackground` and `ggiGetGCBackground` set or reads the current
+colors for the background, used in two-color operations like drawing
+text.
+
+
+Return value
+------------
+
+
+All four functions `0` for OK.
+
+
+
+Set or get the clipping rectangle for a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiSetGCClipping ggiGetGCClipping
+
+
+Synopsis
+--------
+
+  #include <ggi/ggi.h>
+
+  int ggiSetGCClipping(ggi_visual_t vis, int left, int top,
+		       int  right,int  bottom);
+
+  int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,
+		       int *right,int *bottom);
+
+Description
+-----------
+
+
+`ggiSetGCClipping` sets the the current clipping rectangle to
+(:p:`left`, :p:`top`) - (:p:`right`-1, :p:`bottom`-1), inclusive.
+
+
+Initially the clipping rectangle is the whole virtual screen.
+
+
+All LibGGI drawing primitives obey the clipping rectangle.  Negative
+coordinates given to LibGGI drawing functions will be clipped
+correctly.
+
+
+`ggiGetGCClipping` reads the coordinates of the current clipping
+rectangle.
+
+
+Return value
+------------
+
+
+Both functions `0` for OK.
+
+
+
+
+Draw, put, and get a single pixel from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDrawPixel ggiPutPixel ggiGetPixel
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiDrawPixel(ggi_visual_t vis,int x,int y);
+
+  int ggiPutPixel(ggi_visual_t vis,int x,int y,ggi_pixel pixel);
+
+  int ggiGetPixel(ggi_visual_t vis,int x,int y,ggi_pixel *pixel);
+
+
+Description
+-----------
+
+
+Draw, put, or get a single pixelvalue at (:p:`x`,:p:`y`).
+
+
+Return value
+------------
+
+
+All three functions return `0` to indicate success.
+
+
+
+
+Draw, put, and get a horizontal line from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDrawHLine ggiPutHLine ggiGetHLine
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiDrawHLine(ggi_visual_t vis,int x,int y,int w);
+
+  int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+
+  int ggiGetHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+
+
+Description
+-----------
+
+Draw, put, or get a horizontal line from (:p:`x`,:p:`y`), extending
+:p:`w` pixels in the positive x direction (normally right).  The
+height is one pixel.
+
+
+The :p:`buf` parameter in Get/Put functions points to a buffer from
+which the pixels will be read, or to which they will be written (it
+must be correctly allocated), depending on the case. See
+`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+with pixels.
+
+
+Return value
+------------
+
+
+All three functions return `0` to indicate success.
+
+
+See Also
+--------
+
+
+:man:`ggiDrawVLine(3)`, :man:`ggiDrawBox(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
+
+
+
+Draw, put, and get a vertical line from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDrawVLine ggiPutVLine ggiGetVLine
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiDrawVLine(ggi_visual_t vis,int x,int y,int h);
+
+  int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+
+  int ggiGetVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+
+
+Description
+-----------
+
+
+Draw, put, or get a vertical line from (:p:`x`, :p:`y`), extending
+:p:`h` pixels in the positive y direction (normally down). The width
+of the line is one pixel.
+
+
+The :p:`buf` parameter in Get/Put functions points to a buffer from
+which the pixels will be read, or to which they will be written (it
+must be correctly allocated), depending on the case. See
+`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+with pixels.
+
+
+Return value
+------------
+
+
+All three functions return `0` to indicate success. 
+
+
+See Also
+--------
+
+
+:man:`ggiDrawHLine(3)`, :man:`ggiDrawBox(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
+
+
+Draw, put, and get a rectangle from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDrawBox ggiPutBox ggiGetBox
+
+
+Synopsis
+--------
+
+  #include <ggi/ggi.h>
+
+  int ggiDrawBox(ggi_visual_t vis,int x,int y,int w,int h);
+  
+
+  int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+  
+  int ggiGetBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+
+
+Description
+-----------
+
+
+Draw, put, or get a rectangle at (:p:`x`, :p:`y`), extending :p:`w`
+pixels in the positive x direction and :p:`h` pixels in the positive y
+direction.
+
+
+The :p:`buf` parameter in Get/Put functions points to a buffer from
+which the pixels will be read, or to which they will be written (it
+must be correctly allocated), depending on the case. See
+`ggiPackColors` and `ggiUnmapPixels` functions for more on how to deal
+with pixels.
+
+
+Return value
+------------
+
+
+All three functions return `0` to indicate success.
+
+
+See Also
+--------
+
+
+:man:`ggiDrawHLine(3)`, :man:`ggiDrawVLine(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
+
+
+
+
+Fills the entire virtual screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiFillscreen
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiFillscreen(ggi_visual_t vis);
+
+
+Description
+-----------
+
+
+Fills the current clipping rectangle (usually the entire virtual
+screen) with the current foreground color.  It may be more efficient
+than the corresponding call to `ggiDrawBox`.
+
+
+Return value
+------------
+
+
+This function returns `0` to indicate success.
+
+
+
+Draw a line on a visual
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDrawLine
+
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiDrawLine(ggi_visual_t vis,int x,int y,int xe,int ye);
+
+
+Description
+-----------
+
+
+Draws any line, using the current foreground color, from
+(:p:`x`,:p:`y`) to (:p:`xe`,:p:`ye`). The line is exact; the pixel set
+is no more than 0.5 pixels off the place it should be.
+
+
+Return value
+------------
+
+
+This function returns `0` to indicate success.
+
+
+See Also
+--------
+
+
+:man:`ggiDrawHLine`, :man:`ggiDrawVLine`
+
+
+
+Copy a rectangular area
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiCopyBox
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,int nx,int ny);
+
+
+Description
+-----------
+
+
+This is a area-to-area-blit, all in the same visual. Copy the box
+described by :p:`x`,:p:`y`, :p:`w`,:p:`h` to the new location
+:p:`nx`,:p:`ny`.  This automatically takes care of overlaps and
+optimizes for the given visual (e.g. uses HW-accel or intermediate
+buffers as appropriate).
+
+
+`ggiCopyBox` will transfer an area between frames when the read frame
+is not the same as the write frame.
+
+
+Return value
+------------
+
+
+`0` for OK, otherwise an error code.
+
+
+See Also
+--------
+
+
+:man:`ggiCrossBlit(3)`
+
+
+Copy a rectangular area between two visuals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiCrossBlit
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
+		   ggi_visual_t dst,int dx,int dy);
+
+
+Description
+-----------
+
+
+Blits a rectangular memory area from one visual to another. It handles
+colorspace-conversion. (Though it can be quite expensive, so take
+care.)
+
+
+`ggiCrossBlit` will transfer an area from the source visual's read
+frame to the destination visual's write frame.
+
+
+This function does not perform stretching.
+
+
+Return value
+------------
+
+
+`0` for OK, otherwise an error code.
+
+
+See Also
+--------
+
+:man:`ggiCopyBox(3)`
+
+
+
+Set and get origin of virtual screen
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiSetOrigin ggiGetOrigin
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetOrigin(ggi_visual_t vis,int x,int y);
+
+  int ggiGetOrigin(ggi_visual_t vis,int *x,int *y);
+
+
+Description
+-----------
+
+
+`ggiSetOrigin` sets the top-left corner of the displayed area to
+(:p:`x`, :p:`y`).
+
+
+When using a larger virtual area, you can pan the visible area over
+the virtual one to do scrolling. Some targets have extemely efficient
+means to do this (i.e. they do it in hardware).
+
+
+Large virtual areas are also commonly used for buffering the display
+contents, but that is usually more easily accomplished by requesting a
+specific number of `frames` when setting a mode.
+
+
+This call takes *dot* coordinates (see :man:`ggi_mode(3)`), not pixel
+coordinates as all other drawing primitives do. There is no difference
+in graphics modes because by definition *dpp* is 1x1, but in text
+modes the application can do smooth scrolling.
+
+
+`ggiGetOrigin` gets the current top-left corner of the displayed area
+into (:p:`x`, :p:`y`).
+
+
+Due to rounding to the hardware's capabilities, the values retrieved
+by a subsequent `ggiGetOrigin` may not necessarily match those passed
+to `ggiSetOrigin` previously.
+
+
+Return value
+------------
+
+
+`0` for OK, otherwise an error code.
+
+
+Examples
+--------
+
+Pan from the top to the bottom of the virtual screen::
+
+  for(i = 0; i < virt_y-visible_y; i++) {
+        ggiSetOrigin(vis, 0, i);
+  }
+
+
+
+Draw one or more characters on visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiPutc ggiPuts ggiGetCharSize
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiPutc(ggi_visual_t vis,int x,int y,char c);
+
+  int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
+
+  int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
+
+
+Description
+-----------
+
+
+LibGGI provides a few functions to do basic character output. They are
+for debugging and simple GUI applications. They are simple on purpose:
+there is only one fixed-width font and its size cannot be
+changed. Only the standard ASCII character set (0x20 to 0x7f) is
+supported, with no internationalization features.  All more complex
+character functions go beyond the scope of this base library.
+
+
+`ggiPutc` puts a single character on a graphical visual.
+
+
+`ggiPuts` puts multiple characters (from a C-style null-terminated
+string) at once. No special handling is applied to control characters
+like CR or LF. The associated glyph for control characters will be
+displayed. ggiPuts also only clips text at the clipping rectangle and
+does not wrap text.
+
+
+`ggiGetCharSize` obtains the size of the character cell, in pixels.
+This function allows the application to correctly position the text
+output. Character size must always be checked and application should
+not assume that it will be constant across targets or even
+modes. Visuals must have a mode set before querying the character
+size. It means that if you want to use a visual size which depends on
+the character size, you might have to iterate over `ggiSetMode` and
+`ggiGetCharSize` to get it right.
+
+
+.. note::
+
+
+    The values returned by `ggiGetCharSize` is not the same as the
+    values of `dpp` of the current mode, which is in dots.  In
+    graphics modes are 1x1 dpp by definition and use at least
+    8x8-pixel fonts.  In text mode, the character cell is 1x1 pixels
+    by definition and the `dpp` value is the actual size of the font.
+
+
+Return value
+------------
+
+
+`0` for success.
+
+
+
+Set or get flags affecting operation on a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiSetFlags ggiGetFlags ggiAddFlags ggiRemoveFlags
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetFlags(ggi_visual_t vis,ggi_flags flags);
+
+  ggi_flags ggiGetFlags(ggi_visual_t vis);
+
+  #define ggiAddFlags(vis,flags)  \
+		ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
+
+  #define ggiRemoveFlags(vis,flags) \
+		ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
+
+
+Description
+-----------
+
+
+`ggiSetFlags` sets the specified flags (bitwise
+OR'd together) on a visual.
+
+
+`ggiGetFlags` obtains the flags currently in effect.
+
+
+`ggiAddFlags` and `ggiRemoveFlags` are macros that set or unset the
+specified flags.
+
+
+Flags are used to alter a visual's underlying behavior.  All flags
+default to an unset value.  Flags which are not supported by a given
+visual will remain unset even when an attempt is made to raise them.
+Thus, it is possible to tell by reading back the flags whether or not
+each of the flags is supported by the given visual.
+
+
+Return Value
+------------
+
+
+`ggiSetFlags`, `ggiAddFlags`, and `ggiRemoveFlags` return `0` on
+success, `<0` on failure.  This will only happen if the failure of a
+target to support the addition or removal of a flag will cause the
+target to behave in a way that the application is not expecting.  As
+of this writing there are no such cases.  On visuals where certain
+flags are unsupported but are inconsequential, these functions will
+return a successful return code, but will not actually set or clear
+the flag.
+
+
+`ggiGetFlags` returns the current flags.  This can be used by the
+curious to check whether a flag is being silently ignored as per
+above.
+
+
+Synchronous and Asynchronous drawing modes
+------------------------------------------
+
+Some visuals allow different modes with regard to when the screen is
+updated and the actual drawing takes place.
+
+
+
+   - In synchronous mode when the drawing command returns, it is
+     already or will be executed very shortly. So the visible effect
+     is that everything is drawn immediately.  (It is not guaranteed
+     in the strict sense in that it is already drawn when the function
+     call returns, but almost.)  This is the default mode for all
+     visuals.
+
+
+    - The asynchronous mode does not guarantee that drawing commands
+      are executed immediately, but is faster on many targets.  If the
+      visual does not support asynchronous mode, attempting to set it
+      has no effect.  Code written for asynchronous visuals will
+      always perform correctly on synchronous visuals (but not
+      visa-versa), so it is not necessary to adapt a program's
+      behavior if this flag is not available.
+
+
+      To make sure that all pending graphics operations are actually
+      done and the screen is updated, you need to call
+      :man:ggiFlush(3)`.  This call is not needed in synchronous
+      mode.
+
+
+.. important::
+
+    On some targets such as the X target there is no real synchronous
+    mode, so LibGGI fakes one by periodically calling
+    `ggiFlush` in the background.  This process can
+    take about half the execution time of a program.  So using
+    synchronous mode can *really* slow things
+    down.
+
+    However, the synchronous mode is the default, because it is  what
+    most programmers expect.
+
+
+In either mode, all operations are guaranteed to be performed in the
+order in which they are called. Reordering is not done.
+
+
+So the recommendation for all graphics applications is to set the
+asynchronous mode.  It will be far more efficient on some platforms
+and will *never* be worse.
+
+
+Setting up asynchronous mode::
+
+  ggiAddFlags(vis, GGIFLAG_ASYNC);	/* switches to asynchronous mode */
+  ggiFlush(vis);			/* updates the screen */
+  ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
+
+
+Tidy buffer mode
+----------------
+
+
+Some visuals allow applications to manage their own dirty regions when
+using the directbuffer.
+
+
+
+    - In the default dirty-buffering mode, visuals which use
+      backbuffers to render to a display system will refresh the
+      entire screen when the resource lock is held and then released
+      for the write frame's directbuffer.  In syncronous modes this
+      full-screen refresh may be performed at regular intervals.  This
+      can be very inefficient, but it guarantees that naive
+      applications will be rendered correctly even though they were
+      not written with a backbuffered display in mind.
+
+      These visuals may also perform dirty-region tracking, such that
+      if the directbuffer is used, altered data may never reach the
+      screen until the lock is released, because the visual does not
+      know that a certain area of the backbuffer contains new (dirty)
+      data.  Even explicitly calling :man:`ggiFlushRegion(3)` on the
+      affected area may not cause the data to be sent to the screen.
+
+
+    - In tidy-buffering mode, which is set by raising the flag
+      GGIFLAG_TIDYBUF, visuals do not synchronize the screen at all
+      when the write frame's directbuffer lock is held or upon its
+      release.  However, in this mode, :man:`ggiFlushRegion(3)` will
+      always cause the requested region of the screen to be updated.
+
+      Note that this means that, as long as the lock is held, affected
+      regions may also have to be flushed (and thus, should be
+      flushed) after normal drawing primitives are called.
+   
+      Before releasing the lock, applications should be sure to flush
+      all affected regions, because the visual may revert to its
+      default dirty-region management behavior after the lock is
+      released.
+    
+      Do note, also, that in multi-frame displays `ggiFlushRegion`
+      affects only the current write frame, so even though it is
+      possible to use a directbuffer to alter a different frame, you
+      must call :man:`ggiSetWriteFrame(3)` to tell the visual that you
+      will be altering the frame.
+
+
+The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is
+safe to attempt to set it whether or not it is available.  Code
+written for the tidy-buffering mode will display correctly on visuals
+which do not have a tidy-buffering mode (but not visa-versa), so it is
+not necessary to adapt program behavior to its non-presence.
+
+It is recommended that, if an application must use directbuffer, the
+application should attempt to place the visual in tidy-buffered mode.
+Do note, though, that many applications that use the directbuffer do
+not actually need to do so and probably should not, as it reduces
+portability.
+
+
+See Also
+--------
+
+:man:`ggiFlush(3)`, :man:`ggiFlushRegion(3)`
+
+
+
+Flush pending output
+~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiFlush ggiFlushRegion
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiFlush(ggi_visual_t vis);
+
+  int ggiFlushRegion(ggi_visual_t vis, int x, int y, int w, int h);
+
+
+Description
+-----------
+
+
+`ggiFlush` waits for the visual to finish pending accelerator
+commands, and in some targets, it refreshes the framebuffer.
+
+
+`ggiFlushRegion` performs the flush function only in the specified
+region if it would improve performance.
+
+
+These functions are not needed if the visual is in synchronous mode.
+
+
+Return Value
+------------
+
+
+No meaningful return value.
+
+
+See Also
+--------
+
+:man:`ggiSetFlags(3)`
+
+
+
+
+Acquire and release a LibGGI resource
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiResourceAcquire ggiResourceRelease ggiResourceMustAcquire
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiResourceAcquire(ggi_resource_t res, uint32 actype);
+
+  int ggiResourceRelease(ggi_resource_t res);
+
+  int ggiResourceMustAcquire(ggi_resource_t res);
+
+
+Description
+-----------
+
+
+`ggiResourceAcquire` acquires (locks) a LibGGI resource, typically a
+DirectBuffer (see examples below).  The :p:`actype` indicates the
+desired access type for the operation.  The following flags may be
+bitwise-or'ed together:
+
+
+`GGI_ACTYPE_READ`
+	read access to the resource
+
+`GGI_ACTYPE_WRITE`
+	write access to the resource
+
+
+`ggiResourceRelease` releases (unlocks) an already-acquired resource.
+
+
+`ggiResourceMustAcquire` determines whether or not the specified
+resource needs to be acquired before using.
+
+
+Return Value
+------------
+
+
+`ggiResourceAcquire` and `ggiResourceRelease` return `0` on success,
+`<0` on failure.
+
+
+`ggiResourceMustAcquire` is simply a macro that returns true if the
+resource must be explicitly acquired and released, or false if not.
+However, it is still safe to call `ggiResourceAcquire` or
+`ggiResourceRelease` even in the latter case; it would be a no-op.
+
+
+
+Examples
+--------
+
+Using DirectBuffers::
+
+  const ggi_directbuffer *dbuf;
+
+  /* Acquire DirectBuffer before we use it. */
+  if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0) {
+	fail("Error acquiring DirectBuffer\n");
+  }
+
+  /* Do framebuffer rendering here... */
+
+  /* Release DirectBuffer when done with it. */
+  ggiResourceRelease(dbuf->resource);
+
+
+See Also
+--------
+
+:man:`ggi_directbuffer(3)`
+
+
+Get DirectBuffers from a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. manpage:: 3 ggiDBGetNumBuffers ggiDBGetBuffer
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int  ggiDBGetNumBuffers(ggi_visual_t vis);
+
+  const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis, int bufnum);
+
+
+Description
+-----------
+
+
+Dependent on the visual and runtime environment found, applications
+may be granted direct access to hardware and/or library internal
+buffers. This may significantly enhance performance for certain pixel
+oriented applications or libraries.
+
+
+The DirectBuffer is a mechanism in which a LibGGI program can use to
+determine all the characteristics of these buffers (typically the
+framebuffer), including the method of addressing, the stride,
+alignment requirements, and endianness.
+
+
+However, use not conforming to this specification will have undefined
+effects and may cause data loss or corruption, program malfunction or
+abnormal program termination. So you don't really want to do this.
+
+
+`ggiDBGetNumBuffers` returns the number of DirectBuffers available to
+the application.  `ggiDBGetBuffer` obtains the DirectBuffer at the
+specified position.
+
+
+Use `ggiDBGetBuffer` to obtain the DirectBuffers at 0 to n-1, where n
+is the number returned by `ggiDBGetNumBuffers`.
+
+
+Pixel-linear buffers have ``type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL``.
+You're on your own now.
+
+
+DirectBuffers where `ggiResourceMustAcquire` is true need to be
+'acquired' (i.e. locked) before using.  An acquire is done by using
+`ggiResourceAcquire` and is released by calling `ggiResourceRelease`.
+Beware that the `read`, `write` and `stride` fields of the
+DirectBuffer may be changed by an acquire, and that they may be `NULL`
+or invalid when the DirectBuffer is not acquired.
+
+
+Return value
+------------
+
+
+`ggiDBGetNumBuffers` returns the number of DirectBuffers
+available. `0` indicates that no DirectBuffers are available.
+
+
+`ggiDBGetBuffer` returns a pointer to a DirectBuffer structure.
+
+
+Types of Buffers
+----------------
+
+
+Only the framebuffer is defined currently. Other types of buffers,
+such as stencil, z will be defined by appropriate GGI extensions.
+
+
+A frame buffer may be organized as several distinct buffers.  Each
+buffer may have a different layout. This means both the addressing
+scheme to be used as well as the addressing parameters may differ from
+buffer to buffer.
+
+
+A framebuffer is denoted by `ggi_directbuffer.type`==`GGI_DB_NORMAL`.
+Each frame has its own buffer, and its number is indicated in
+`ggi_directbuffer.frame`.
+
+
+Examples
+--------
+
+How to obtain a DirectBuffer::
+
+  ggi_visual_t	vis;
+  ggi_mode	mode;
+  int		i;
+
+  /* Framebuffer info */
+  unsigned char *fbptr[2];
+  int stride[2];
+  int numbufs;
+
+  mode.frames = 2;	/* Double-buffering */
+  mode.visible.x = 640;	/* Screen res */
+  mode.visible.y = 480;
+  mode.virt.x = GGI_AUTO; /* Any virtual resolution.  Will usually be set */
+  mode.virt.y = GGI_AUTO; /* to be the same as visible but some targets */
+			  /* may have restrictions on virtual size. */
+  mode.graphtype = GT_8BIT;		/* Depend on 8-bit palette. */
+  mode.dpp.x = mode.dpp.y = GGI_AUTO;	/* Always 1x1 but we don't care. */
+
+  if(ggiInit()) {
+	/* Failed to initialize library. Bomb out. */
+  }
+
+  vis = ggiOpen(NULL);
+  if(!vis) {
+	/* Opening default visual failed, quit. */
+  }
+
+  if(ggiSetMode(vis, &mode)) {
+	/* Set mode has failed, should check if suggested mode
+	   is o.k. for us, and try the call again. */
+  }
+
+  numbufs = ggiDBGetNumBuffers(vis);
+
+  for(i = 0; i < numbufs; i++) {
+	ggi_directbuffer *db;
+	int frameno;
+
+	db = ggiDBGetBuffer(vis, i);
+
+	if(!(db->type & GGI_DB_SIMPLE_PLB))
+	{
+		/* We don't handle anything but simple pixel-linear buffers.
+		   Fall back to ggiPutBox() or something. */
+		continue;
+	}
+
+	frameno = db->frame;
+
+	if(readptr[frameno] != NULL &&
+		(db->buffer.plb.pixelformat->flags & GGI_PF_REVERSE_ENDIAN))
+	{
+		continue;
+	}
+
+	fbptr[frameno] = db->write;	/* read == write for simple plbs */
+
+	/* Stride of framebuffer (in bytes). */
+	stride[frameno] = db->buffer.plb.stride;
+
+	/* Check pixel format, be portable... */
+
+
+See Also
+--------
+
+
+:man:`ggi_directbuffer(3)`, :man:`ggiResourceAcquire(3)`
+
+
+
+Event management for LibGGI visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiJoinInputs ggiEventPoll ggiEventSelect ggiEventsQueued ggiEventRead ggiSetEventMask ggiGetEventMask ggiAddEventMask ggiRemoveEventMask
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  gii_event_mask ggiEventPoll(ggi_visual_t vis, gii_event_mask mask,
+			      struct timeval *t);
+
+  int ggiEventsQueued(ggi_visual_t vis, gii_event_mask mask);
+
+  int ggiEventRead(ggi_visual_t vis, gii_event *ev,
+		   gii_event_mask mask);
+
+  int ggiSetEventMask(ggi_visual_t vis, gii_event_mask evm);
+
+  gii_event_mask ggiGetEventMask(ggi_visual_t vis);
+
+  gii_input_t ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
+
+  #define ggiAddEventMask(vis,mask)  \
+		ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
+
+  #define ggiRemoveEventMask(vis,mask)  \
+		ggiSetEventMask((vis), ggiGetEventMask((vis)) & ~(mask))
+
+
+Description
+-----------
+
+LibGGI provides input facilities through an auxiliary library, LibGII.
+Each LibGGI visual internally contains a `gii_input_t` input, and all
+LibGII functions are available to manipulate and process inputs.  The
+LibGGI versions provided of most LibGII functions simply take a
+`ggi_visual_t` rather than `gii_input_t` for convenience during
+everyday usage.  Events are LibGII types.  All other semantics are the
+same; see :man:`libgii(7)` for details.
+
+
+.. important::
+
+    By default LibGGI visuals autodetect and open the appropriate
+    inputs, including mouse and keyboard and any other inputs that are
+    'intrinsic' to the visual e.g. any registered X11 input device
+    under the X target.  Thus in the usual cases there is no need to
+    open a LibGII `gii_input_t` directly (and that may in fact fail
+    because an input device is already open).  The LibGGI `ggiEvent*`
+    functions *must* be used to do event handling with LibGGI visuals,
+    and provide adequate support for most everyday, single-visual
+    usage.
+
+
+    Advanced management of input sources is accomplished by detaching
+    the input from the visual and using LibGII functions on the
+    separate visual handle (see :man:`ggiDetachInput(3)`).  This is
+    encouraged, for example, when joining inputs from multiple
+    visuals, because when two visuals share the same joined input, you
+    cannot ggiClose both of the visuals (a fatal error will result,
+    because closing the first visual closes both of the joined inputs
+    and leaves the second closed visual with a stale input handle.)
+
+
+See Also
+--------
+
+
+:man:`giiSetEventMask(3)`, :man:`giiEventPoll(3)`, :man:`ggiGetInput(3)`
+
+
+
+Functions to translate from GGI visuals to GII input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiGetInput ggiDetachInput
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  #define ggiGetInput(vis) ggiJoinInputs(vis, NULL)
+
+  gii_input_t ggiDetachInput(ggi_visual_t vis);
+
+
+Description
+-----------
+
+`ggiGetInput` returns the underlying input-handle associated with a
+LibGGI visual, for use with the LibGII API.
+
+
+`ggiDetachInput` also returns the underlying input-handle, but in
+adddition, it breaks the association between the given visual and that
+input handle.  After this has been done, no LibGGI event routines may
+be called on that visual handle, and when the visual handle is closed,
+the input will remain unaffected.
+
+
+See Also
+--------
+
+:man:`giiOpen(3)`
+
+
+
+
+Send commands and events to a LibGGI visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiEventSend
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiEventSend(ggi_visual_t vis, gii_event *ev);
+
+
+Description
+-----------
+
+
+`ggiEventSend` injects an event into the queue.
+
+
+Controlling VT switching behavior
+---------------------------------
+
+
+If an application wants to continue running after its VT is switched
+away, it should make a call `ggiEventSend` to the visual with an
+`evCommand` event with code `GGICMD_NOHALT_ON_UNMAP`.  To disable this
+behavior, use a command event with code `GGICMD_HALT_ON_UNMAP`.  The
+latter is the default.
+
+
+See Also
+--------
+
+:man:`ggiEventPoll(3)`, :man:`giiEventSend(3)`
+
+
+
+Convenience functions for simplistic keyboard input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiGetc ggiKbhit
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiGetc(ggi_visual_t vis);
+
+  int ggiKbhit(ggi_visual_t vis);
+
+
+Description
+-----------
+
+
+`ggiGetc` gets a character from the keyboard, and blocks if there is
+no key immediately available.
+
+
+`ggiKbhit` checks if a key has been hit on the keyboard.  This does
+not consume the key.  It is used for easy porting of old DOS
+applications.
+
+
+.. important::
+
+     *Do not* poll like this:
+     ``do while( ! ggiKbhit(vis) );``
+     On a multitasking OS you would be wasting a lot of resources
+     which could be available to other processes.  If you want to
+     wait for a key, use the `ggiGetc` call.
+
+
+Return value
+------------
+
+
+`ggiKbhit` returns `0` if no key has been received yet, otherwise
+there is a key to be consumed.
+
+
+`ggiGetc` returns a Unicode character in canonical form.
+
+
+For a fuller definition of characters, see :man:`gii_key_event(3)`.
+
+
+See Also
+--------
+
+:man:`ggiEventPoll(3)`

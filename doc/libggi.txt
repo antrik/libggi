@@ -1,0 +1,9 @@
+====================
+LibGGI Documentation
+====================
+
+.. include:: libggi-functions.txt
+
+.. include:: libggi-structures.txt
+
+.. include:: libggi-libraries.txt
