@@ -1,4 +1,4 @@
-/* $Id: kgi.c,v 1.14 2004/09/18 10:33:14 cegger Exp $
+/* $Id: kgi.c,v 1.15 2004/09/22 20:20:11 nsouch Exp $
 ******************************************************************************
 
 
@@ -30,7 +30,6 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
-#include "kgi/config.h"
 #include <ggi/display/kgi.h>
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
@@ -97,6 +96,7 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	/* Close /dev/graphic then open the true one */
 	close(ctx->mapper.fd);
 
+	ctx->mapper.graphic = get_unit.result.unit - 1;
 	sprintf(fname, "/dev/graphic%i", get_unit.result.unit);
 	ctx->mapper.fd = open(fname, O_RDWR | O_NONBLOCK);
 	if (ctx->mapper.fd < 0) {
@@ -332,8 +332,8 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 	switch (cb.result.type & KGI_RT_MASK) {
 
 	case KGI_RT_MMIO:
-		printf("MMIO: window %li, size %li, align %.8lx, "
-			"access %.8lx\n",
+		printf("MMIO: window %i, size %i, align %.8x, "
+			"access %.8x\n",
 			cb.result.info.mmio.window,
 			cb.result.info.mmio.size,
 			cb.result.info.mmio.align,
@@ -341,13 +341,13 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		break;
 
 	case KGI_RT_ACCEL:
-		printf("ACCEL: recommended are %li buffers of size %li\n",
+		printf("ACCEL: recommended are %i buffers of size %i\n",
 			cb.result.info.accel.buffers,
 			cb.result.info.accel.buffer_size);
 		break;
 
 	case KGI_RT_SHMEM:
-		printf("SHMEM: (maximum) aperture size %li\n",
+		printf("SHMEM: (maximum) aperture size %i\n",
 			cb.result.info.shmem.aperture_size);
 		break;
 
