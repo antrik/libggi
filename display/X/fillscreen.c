@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.6 2005/02/10 04:55:20 orzo Exp $
+/* $Id: fillscreen.c,v 1.7 2005/02/10 16:42:42 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -139,9 +139,8 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 		y = LIBGGI_GC(vis)->cliptl.y;
 		y = GGI_X_WRITE_Y;
 
-#define CLIPSIZE(xy) \
-		(unsigned)LIBGGI_GC(vis)->clipbr.xy-LIBGGI_GC(vis)->cliptl.xy
-
+		/* CLIPSIZE macro is defined above in 
+		 * GGI_X_fillscreen_slave_draw() */
 		XFillRectangle(priv->disp, priv->drawable, 
 			gc, 
 		        LIBGGI_GC(vis)->cliptl.x, y,

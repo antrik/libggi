@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.44 2005/02/10 04:55:20 orzo Exp $
+/* $Id: mode.c,v 1.45 2005/02/10 16:42:42 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -119,17 +119,7 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 	/* Now m->visible.  We'll compute the max values now
 	 * and adjust them down later in _GGI_X_checkmode_adjust() */
 
-	if( priv->parentwin != None && priv->parentwin == priv->win ) {
-		/* Don't resize an explicitly requested window */
-		XGetGeometry(priv->disp, priv->parentwin, 
-				&dummywin, 
-				(int *) &dummy, (int *) &dummy,
-				&w, &h,
-				&dummy, &dummy );
-		m->visible.x = w;
-		m->visible.y = h;
-	}
-	else if( priv->win == None ) {
+	if( priv->ok_to_resize ) {
 		/* Not a root window...
 		 * Don't create a window who's handles/borders are offscreen */
 		m->visible.x = screenw * 9 / 10;
@@ -139,6 +129,16 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 		 * of four, so let's make it likely that the visible 
 		 * width will equal the virtual one. */
 		m->visible.x = FourMultiple( m->visible.x );
+	}
+	else if( priv->parentwin != None && priv->parentwin == priv->win ) {
+		/* This case is for -inwin=(some window other than root).. */
+		XGetGeometry(priv->disp, priv->parentwin, 
+				&dummywin, 
+				(int *) &dummy, (int *) &dummy,
+				&w, &h,
+				&dummy, &dummy );
+		m->visible.x = w;
+		m->visible.y = h;
 	}
 	else {
 		/* Root window or fullscreen.. */
