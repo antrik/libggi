@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/09/13 09:07:06 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/09/13 16:19:59 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -136,7 +136,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Unsupported mode */
 		return GGI_ENOFUNC;
 	}
-	pixbytes = GT_SIZE(LIBGGI_GT(vis)) / 8;
+	pixbytes = GT_ByPP(LIBGGI_GT(vis));
 
 	priv = malloc(sizeof(struct m2164w_priv));
 	if (priv == NULL) {

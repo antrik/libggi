@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/09/13 09:06:27 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/09/13 16:19:19 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -307,7 +307,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Unsupported mode */
 		return GGI_ENOFUNC;
 	}
-	pixbytes = GT_SIZE(LIBGGI_GT(vis)) / 8;
+	pixbytes = GT_ByPP(LIBGGI_GT(vis));
 
 	priv = malloc(sizeof(struct ati_mach64_priv));
 	if (priv == NULL) {
