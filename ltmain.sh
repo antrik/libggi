@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.95 2004/11/29 21:11:25) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.100 2004/12/13 16:20:30) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.95 2004/11/29 21:11:25) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.100 2004/12/13 16:20:30) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.95 2004/11/29 21:11:25"
-package_revision=1.1667.2.95
+TIMESTAMP=" 1.1667.2.100 2004/12/13 16:20:30"
+package_revision=1.1667.2.100
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2038,7 +2038,7 @@ func_mode_finish ()
 
     $ECHO "See any operating system documentation about shared libraries for"
     case $host in
-      solaris2.6789|solaris2.10-9)
+      solaris2.[6789]|solaris2.1[0-9])
         $ECHO "more information, such as the ld(1), crle(1) and ld.so(8) manual"
 	$ECHO "pages."
 	;;
@@ -3033,6 +3033,16 @@ func_mode_link ()
 	continue
 	;;
 
+      # Tru64 UNIX uses -model [arg] to determine the layout of C++
+      # classes, name mangling, and exception handling.
+      -model)
+	compile_command="$compile_command $arg"
+	compiler_flags="$compiler_flags $arg"
+	finalize_command="$finalize_command $arg"
+	prev=xcompiler
+	continue
+	;;
+
       -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe)
 	deplibs="$deplibs $arg"
 	continue
@@ -3947,9 +3957,8 @@ func_mode_link ()
 	    if test -n "$shlibpath_var"; then
 	      # Make sure the rpath contains only unique directories.
 	      case "$temp_rpath " in
-	      *" $dir "*) ;;
-	      *" $absdir "*) ;;
-	      *) temp_rpath="$temp_rpath $absdir" ;;
+	      *"$absdir:"*) ;;
+	      *) temp_rpath="$temp_rpath$absdir:" ;;
 	      esac
 	    fi
 
@@ -5922,24 +5931,6 @@ EOF
 	fi
 
 	exit $status
-      fi
-
-      if test -n "$shlibpath_var"; then
-	# We should set the shlibpath_var
-	rpath=
-	for dir in $temp_rpath; do
-	  case $dir in
-	  [\\/]* | [A-Za-z]:[\\/]*)
-	    # Absolute path.
-	    rpath="$rpath$dir:"
-	    ;;
-	  *)
-	    # Relative path: add a thisdir entry.
-	    rpath="$rpath\$thisdir/$dir:"
-	    ;;
-	  esac
-	done
-	temp_rpath="$rpath"
       fi
 
       if test -n "$compile_shlibpath$finalize_shlibpath"; then
