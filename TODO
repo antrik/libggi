@@ -1,0 +1,13 @@
+------------------------------------------
+Next release
+------------------------------------------
+Version : 2.0.1
+Due : 2001-08-26
+
+- Move the build process to a 3-number versioning scheme.
+- Change makefile so that the sgml files don't go in the
+  tarballs.
+
+------------------------------------------
+Long-term plan
+------------------------------------------
