@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.3 2002/09/25 00:37:02 skids Exp $
+/* $Id: cbconsist.c,v 1.4 2002/09/29 18:12:01 skids Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -91,7 +91,7 @@ ggi_pixel cbconsist(cbcstate *s) {
     ggi_pixel curr;
 
     num = box.x * box.y;
-    if (num > count) num = count;
+    if (num > count) num = count + 1;
     curr = count;
     while (num--) {
       ggiPutPixel(s->svis, num % box.x, num / box.x, curr);
@@ -106,7 +106,7 @@ ggi_pixel cbconsist(cbcstate *s) {
     ggiFlush(s->dvis);
 
     num = box.x * box.y;
-    if (num > count) num = count;
+    if (num > count) num = count + 1;
     curr = count;
     while (num--) {
       ggi_pixel res, correct;
@@ -192,23 +192,23 @@ void cbtime(cbcstate *s) {
 char *memvis_fmts[MAX_MEMVIS_FMTS] = {
   "memory:-pixfmt=r5g6b5",
   "memory:-pixfmt=r4g4b4p4",
-  "memory:-pixfmt=r5g5b5",
-  "memory:-pixfmt=r5g5b6",
-  "memory:-pixfmt=r6g5b5",
-  "memory:-pixfmt=c8",
   "memory:-pixfmt=b5g6r5",
-  "memory:-pixfmt=p1r5g5b5"
+  "memory",
+  "memory",
+  "memory:-pixfmt=b8g8r8",
+  "memory:-pixfmt=r8g8b8p8",
+  "memory:-pixfmt=p8r8g8b8"
 };
 
 ggi_graphtype memvis_gts[MAX_MEMVIS_FMTS] = {
   GT_16BIT,
   GT_16BIT,
   GT_16BIT,
-  GT_16BIT,
-  GT_16BIT,
   GT_8BIT,
-  GT_16BIT,
-  GT_16BIT
+  GT_4BIT,
+  GT_24BIT,
+  GT_32BIT,
+  GT_32BIT
 };
 
 int mkmemvis(int i, char **str, 
