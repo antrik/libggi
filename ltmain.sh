@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.158 2005/02/07 14:14:40) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.166 2005/02/25 18:07:48) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.158 2005/02/07 14:14:40) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.166 2005/02/25 18:07:48) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.158 2005/02/07 14:14:40"
-package_revision=1.1667.2.158
+TIMESTAMP=" 1.1667.2.166 2005/02/25 18:07:48"
+package_revision=1.1667.2.166
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1440,14 +1440,13 @@ func_extract_archives ()
 	    for darwin_arch in  $darwin_arches ; do
 	      func_mkdir_p "unfat-$$/${darwin_base_archive}-${darwin_arch}"
 	      lipo -thin $darwin_arch -output "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" "${darwin_archive}"
-	      # Remove the table of contents from the thin files.
-	      $AR d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF 2>/dev/null || true
-	      $AR d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF\ SORTED 2>/dev/null || true
-	      func_extract_an_archive "unfat-$$/${darwin_base_archive}-${darwin_arch}" "${darwin_base_archive}"
+	      cd "unfat-$$/${darwin_base_archive}-${darwin_arch}"
+	      func_extract_an_archive "`pwd`" "${darwin_base_archive}"
+	      cd "$darwin_curdir"
 	      $RM "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}"
 	    done # $darwin_arches
             ## Okay now we've a bunch of thin objects, gotta fatten them up :)
-	    darwin_filelist=`find unfat-$$ -type f | xargs basename | sort -u | $NL2SP`
+	    darwin_filelist=`find unfat-$$ -type f -name \*.o -print -o -name \*.lo -print| xargs basename | sort -u | $NL2SP`
 	    darwin_file=
 	    darwin_files=
 	    for darwin_file in $darwin_filelist; do
@@ -3581,12 +3580,6 @@ func_mode_link ()
 	    finalize_deplibs="$deplib $finalize_deplibs"
 	  else
 	    compiler_flags="$compiler_flags $deplib"
-	    if test "$linkmode" = lib ; then
-		case "$new_inherited_linker_flags " in
-		    *" $deplib "*) ;;
-		    * ) new_inherited_linker_flags="$new_inherited_linker_flags $deplib" ;;
-		esac
-	    fi
 	  fi
 	  continue
 	  ;;
