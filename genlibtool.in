@@ -1,0 +1,55 @@
+dnl $Id: genlibtool.in,v 1.1 2004/10/23 13:23:08 cegger Exp $
+dnl Process this file with autoconf to produce genlibtool script.
+
+dnl Why do we need this?
+dnl
+dnl libtool 1.4.3 generated the platform dependent libtool script at
+dnl configure time when AM_PROG_LIBTOOL was invoked.
+dnl 
+dnl With libtool 2.0, config.status generates the platform dependent
+dnl libtool script. config.status is invoked by configure _after_
+dnl configure finished.
+dnl 
+dnl This arises the problem, that library checks via
+dnl AC_CHECK_LIB fail. We wrap around CC with '$SHELL ./libtool $CC'
+dnl to easily track somewhat hidden library dependencies that
+dnl may even differ from platform to platform. This way    
+dnl assumes that libtool exists and has been generated before.
+dnl Unfortunately, with libtool 2.0 this is no longer true.
+dnl 
+dnl The solution is to add a minimalistic configure script
+dnl called genlibtool. genlibtool only performs the checks
+dnl required to generate the libtool script.
+dnl 
+dnl configure invokes genlibtool right after AM_PROG_LIBTOOL
+dnl (which will be renamed to the new name LT_INIT later),
+dnl to ensure that libtool exists _before_ performing the
+dnl library checks via AC_CHECK_LIB as described above.
+dnl 
+dnl Now, since configure calls another 'embedded' configure
+dnl don't get confused when some checks seem to be done twice.
+dnl 
+dnl configure creates a confdefs.h file for internal use 
+dnl and deletes it after exiting. We make a safety copy
+dnl of it _before_ calling genlibtool. When genlibtool
+dnl finishs, we restore it to not break following checks 
+dnl assuming confdefs.h to be there.
+dnl 
+
+
+AC_PREREQ(2.59)
+
+AC_INIT
+AC_CONFIG_SRCDIR([gic/init.c])
+
+AM_INIT_AUTOMAKE(libgiigic,1.1.0,-)
+
+AM_MAINTAINER_MODE
+_LT_SET_OPTION([disable-static])
+
+
+_LT_SET_OPTION([dlopen])
+_LT_SET_OPTION([win32-dll])
+LT_INIT()
+
+AC_OUTPUT

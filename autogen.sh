@@ -20,5 +20,7 @@ echo "Running autoheader..."
 autoheader
 echo "Running automake..."
 automake --add-missing
-echo "Running autoconf..."
+echo "Running autoconf - generating genlibtool..."
+autoconf -o genlibtool genlibtool.in
+echo "Running autoconf - generating configure..."
 autoconf
