@@ -1,5 +1,5 @@
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
-LDADD = ${top_builddir}/ggi/libggi.la -lm ${THREADLIBS}
+LDADD = ${top_builddir}/ggi/libggi.la -lm
 
 noinst_PROGRAMS = warp
 
