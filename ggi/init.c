@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.30 2005/01/13 19:14:20 cegger Exp $
+/* $Id: init.c,v 1.31 2005/01/13 19:34:32 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -60,6 +60,15 @@ static GG_TAILQ_HEAD(, ggi_extension) _ggiExtension
 		= GG_TAILQ_HEAD_INITIALIZER(_ggiExtension);
 
 gg_swartype     swars_selected    = 0;
+
+
+/* extension macros
+ */
+#define FOREACH_EXTENSION(n)	GG_TAILQ_FOREACH(n, &_ggiExtension, extlist)
+#define ADD_EXTENSION(n)	GG_TAILQ_INSERT_TAIL(&_ggiExtension, n, extlist)
+#define REMOVE_EXTENSION(n)	GG_TAILQ_REMOVE(&_ggiExtension, n, extlist)
+#define HAVE_EXTENSIONS		GG_TAILQ_EMPTY(&_ggiExtension)
+
 
 /* 
  * Returns the directory where global config files are kept
@@ -239,11 +248,11 @@ int ggiExit(void)
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
 
-	GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
-		GG_TAILQ_REMOVE(&_ggiExtension, tmp, extlist);
+	FOREACH_EXTENSION(tmp) {
+		REMOVE_EXTENSION(tmp);
 		free(tmp);
 	}
-	LIB_ASSERT(GG_TAILQ_EMPTY(&_ggiExtension), "ggi extension list not empty at shutdown\n");
+	LIB_ASSERT(HAVE_EXTENSIONS, "ggi extension list not empty at shutdown\n");
 
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
@@ -483,8 +492,8 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 
 	DPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
 		       name, size, change);
-	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
-		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
+	if (!HAVE_EXTENSIONS) {
+		FOREACH_EXTENSION(tmp) {
 			if (strcmp(tmp->name, name) == 0) {
 				tmp->initcount++;
 				DPRINT_CORE("ggiExtensionRegister: accepting copy #%d of extension %s\n",
@@ -503,7 +512,7 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 	ext->initcount = 1;
 	ggstrlcpy(ext->name, name, sizeof(ext->name));
 
-	GG_TAILQ_INSERT_TAIL(&_ggiExtension, ext, extlist);
+	ADD_EXTENSION(ext);
 
 	DPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
 
@@ -525,9 +534,9 @@ int ggiExtensionUnregister(ggi_extid id)
 	ggi_extension *tmp;
 
 	DPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
-	if (GG_TAILQ_EMPTY(&_ggiExtension)) return GGI_ENOTALLOC;
+	if (HAVE_EXTENSIONS) return GGI_ENOTALLOC;
 
-	GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
+	FOREACH_EXTENSION(tmp) {
 		if (tmp->id != id) continue;
 		if (--tmp->initcount) {
 			DPRINT_CORE("ggiExtensionUnregister: removing #%d copy of extension %s\n", tmp->initcount+1, tmp->name);
@@ -535,7 +544,7 @@ int ggiExtensionUnregister(ggi_extid id)
 			return 0;	
 		}
 
-		GG_TAILQ_REMOVE(&_ggiExtension, tmp, extlist);
+		REMOVE_EXTENSION(tmp);
 
 		DPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
 			       tmp->name);
@@ -565,8 +574,8 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 
 	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
 
-	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
-		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
+	if (!HAVE_EXTENSIONS) {
+		FOREACH_EXTENSION(tmp) {
 			if (tmp->id == id) break;
 		}
 	}
@@ -633,8 +642,8 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 	DPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
 		       whatchanged, vis);
 
-	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
-		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
+	if (!HAVE_EXTENSIONS) {
+		FOREACH_EXTENSION(tmp) {
 			if (tmp->id < vis->numknownext &&
 			    LIBGGI_EXTAC(vis, tmp->id))
 			{
