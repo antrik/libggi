@@ -1,5 +1,4 @@
-AUTOMAKE_OPTIONS = 1.4
-AUTOMAKE_OPTIONS = foreign
+AUTOMAKE_OPTIONS = 1.4 foreign
 
 SUBDIRS = include ggi display default extensions programs doc m4 dist
 
