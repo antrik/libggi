@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.4 2004/09/10 16:38:47 cegger Exp $
+/* $Id: init.c,v 1.5 2004/09/10 16:44:21 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -126,12 +126,35 @@ static void testcase4(const char *desc)
 	if (dontrun) return;
 
 	err = ggiClose(NULL);
+	if (err != GGI_ENOTALLOC) {
+		printfailure("ggiClose: expected return value: %i\n"
+			"actual return value: %i\n",
+			GGI_ENOTALLOC, err);
+		return;
+	}
+
+	err = ggiInit();
+	if (err != GGI_OK) {
+		printfailure("ggiInit: expected return value: 0\n"
+			"actual return value: %i\n", err);
+		return;
+	}
+
+	err = ggiClose(NULL);
 	if (err != GGI_EARGINVAL) {
 		printfailure("ggiClose: expected return value: %i\n"
 			"actual return value: %i\n",
 			GGI_EARGINVAL, err);
 		return;
 	}
+
+	err = ggiExit();
+	if (err != 0) {
+		printfailure("ggiExit: expected return value: 0\n"
+			"actual return value: %i\n", err);
+		return;
+	}
+
 
 	printsuccess();
 	return;
