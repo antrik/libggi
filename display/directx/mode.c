@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2004/11/14 15:47:44 cegger Exp $
+/* $Id: mode.c,v 1.29 2004/11/26 21:35:33 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -431,7 +431,7 @@ GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
 
 int
 GGI_directx_setpalvec(struct ggi_visual *vis,
-	int start, int len, ggi_color *colormap)
+	int start, int len, const ggi_color *colormap)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 

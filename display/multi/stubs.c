@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.6 2004/11/25 16:56:32 cegger Exp $
+/* $Id: stubs.c,v 1.7 2004/11/26 21:35:33 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -271,7 +271,7 @@ int GGI_multi_setgammamap(ggi_visual *vis, int start, int len, ggi_color *cmap)
 }
 
 
-int GGI_multi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cmap)
+int GGI_multi_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *cmap)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/11/14 15:47:49 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/11/26 21:35:35 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -230,7 +230,7 @@ int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
 
 
 int
-GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2004/11/14 15:47:43 cegger Exp $
+/* $Id: color.c,v 1.5 2004/11/26 21:35:33 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Generic RAMDAC via IOCTL driver
@@ -39,7 +39,7 @@
 #include <kgi/kgi_commands.h>
 
 
-int GGI_ramdac_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_ramdac_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	int nocols = 256;
 

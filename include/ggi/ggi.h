@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.11 2004/11/26 19:51:22 cegger Exp $
+/* $Id: ggi.h,v 1.12 2004/11/26 21:35:37 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -481,7 +481,7 @@ GGIAPIFUNC int ggiUnpackPixels(ggi_visual_t vis,void *buf,ggi_color *cols,
 			       int len);
 
 GGIAPIFUNC int ggiGetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
-GGIAPIFUNC int ggiSetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+GGIAPIFUNC int ggiSetPalette(ggi_visual_t vis,int s,int len,const ggi_color *cmap);
 GGIAPIFUNC int ggiSetColorfulPalette(ggi_visual_t vis);
 
 #define GGI_PALETTE_DONTCARE  -1

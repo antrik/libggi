@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.14 2004/11/25 16:56:30 cegger Exp $
+/* $Id: color.c,v 1.15 2004/11/26 21:35:31 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -41,7 +41,7 @@ int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 	return 0;
 }
 
-int GGI_color_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
+int GGI_color_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colmap)
 {
 		if (start == GGI_PALETTE_DONTCARE) start = 0;
 		

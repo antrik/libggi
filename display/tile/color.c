@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2004/11/25 16:56:40 cegger Exp $
+/* $Id: color.c,v 1.5 2004/11/26 21:35:34 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -37,7 +37,7 @@ int GGI_tile_unmappixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 	return ggiUnmapPixel(TILE_PRIV(vis)->vislist[0].vis, pixel, col);
 }
 
-int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;

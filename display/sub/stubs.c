@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.3 2004/11/25 16:56:39 cegger Exp $
+/* $Id: stubs.c,v 1.4 2004/11/26 21:35:34 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -344,7 +344,7 @@ int GGI_sub_unmappixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 	return ggiUnmapPixel(priv->parent,pixel,col);
 }
 
-int GGI_sub_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_sub_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 

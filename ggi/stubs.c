@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.6 2004/11/25 16:56:41 cegger Exp $
+/* $Id: stubs.c,v 1.7 2004/11/26 21:35:36 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -104,7 +104,7 @@ int _ggiSendKGICommand(ggi_visual *vis,int cmd,void *arg)
 
 /* Palette, colors, etc...
  */
-int ggiSetPalette(ggi_visual *vis,int s,int len,ggi_color *cmap)
+int ggiSetPalette(ggi_visual *vis,int s,int len,const ggi_color *cmap)
 { return vis->opcolor->setpalvec(vis,s,len,cmap); }
 
 int ggiGetPalette(ggi_visual *vis,int s,int len,ggi_color *cmap)

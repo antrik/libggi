@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.4 2004/11/14 15:47:49 cegger Exp $
+/* $Id: draw.c,v 1.5 2004/11/26 21:35:34 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -120,7 +120,7 @@ int GGI_vgl_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 }
 
 int
-GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	vgl_priv *priv = VGL_PRIV(vis);
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));

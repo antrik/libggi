@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.6 2004/11/14 15:47:47 cegger Exp $
+/* $Id: color.m,v 1.7 2004/11/26 21:35:34 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -34,7 +34,7 @@
 #include <ggi/display/quartz.h>
 
 
-int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	CGTableCount  i;
 	CGDeviceColor color;
