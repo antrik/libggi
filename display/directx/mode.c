@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2004/09/20 19:24:42 pekberg Exp $
+/* $Id: mode.c,v 1.24 2004/09/24 11:09:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -136,12 +136,27 @@ GetScreenParams(int *depth, int *wpix, int *hpix, int *wmm, int *hmm)
 }
 
 
+static ggi_graphtype
+depth_to_graphtype(int depth)
+{
+	switch (depth) {
+	case  1:	return GT_1BIT;
+	case  2:	return GT_2BIT;
+	case  4:	return GT_4BIT;
+	case  8:	return GT_8BIT;
+	case 15:	return GT_15BIT;
+	case 16:	return GT_16BIT;
+	case 24:	return GT_24BIT;
+	case 32:	return GT_32BIT;
+	default:	return GT_INVALID;
+	}
+}
 
-int
-GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
+static int
+do_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
-	int err = 0;
+	int err = GGI_OK;
 	int depth, width, height, sizex, sizey, defwidth, defheight;
 	ggi_graphtype deftype;
 
@@ -164,6 +179,42 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 	if (mode->dpp.y == GGI_AUTO)
 		mode->dpp.y = 1;
+
+	if (priv->fullscreen) {
+		if (!DDMatchMode(vis, mode, &depth, &defwidth, &defheight)) {
+			err = GGI_ENOMATCH;
+		}
+		deftype = depth_to_graphtype(depth);
+		if (mode->graphtype != GT_AUTO && mode->graphtype != deftype)
+			err = GGI_ENOMATCH;
+		mode->graphtype = deftype;
+
+		if (mode->visible.x != GGI_AUTO && mode->visible.x != defwidth)
+			err = GGI_ENOMATCH;
+		mode->visible.x = defwidth;
+
+		if (mode->visible.y != GGI_AUTO && mode->visible.y != defheight)
+			err = GGI_ENOMATCH;
+		mode->visible.y = defheight;
+
+		width = defwidth;
+		height = defheight;
+	}
+	else {
+		deftype = depth_to_graphtype(depth);
+		if (deftype == GT_INVALID) {
+			deftype = GT_AUTO;
+			err = GGI_ENOMATCH;
+		}
+
+		if (mode->graphtype == GT_AUTO)
+			mode->graphtype = deftype;
+
+		if (GT_SIZE(mode->graphtype) != (unsigned) depth) {
+			mode->graphtype = deftype;
+			err = GGI_ENOMATCH;
+		}
+	}
 
 	if (mode->visible.x==GGI_AUTO
 		&& mode->virt.x==GGI_AUTO
@@ -200,41 +251,6 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 		mode->frames = GGI_DISPLAY_DIRECTX_FRAMES;
 	}
 
-	switch (depth) {
-	case 1:
-		deftype = GT_1BIT;
-		break;
-	case 2:
-		deftype = GT_2BIT;
-		break;
-	case 4:
-		deftype = GT_4BIT;
-		break;
-	case 8:
-		deftype = GT_8BIT;
-		break;
-	case 15:
-		deftype = GT_15BIT;
-		break;
-	case 16:
-		deftype = GT_16BIT;
-		break;
-	case 24:
-		deftype = GT_24BIT;
-		break;
-	case 32:
-		deftype = GT_32BIT;
-		break;
-	default:
-		deftype = GT_AUTO;
-		err = GGI_ENOMATCH;
-		break;
-	}
-
-	if (GT_DEPTH(mode->graphtype) == GT_AUTO) {
-		mode->graphtype = deftype;
-	}
-
 	if (!(mode->visible.x > 0
 	      && mode->visible.y > 0
 	      && mode->visible.x <= width
@@ -244,11 +260,6 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 		      && mode->visible.y == defheight)))) {
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
-		err = GGI_ENOMATCH;
-	}
-
-	if (GT_SIZE(mode->graphtype) != (unsigned) depth) {
-		mode->graphtype = deftype;
 		err = GGI_ENOMATCH;
 	}
 
@@ -285,6 +296,11 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
+int
+GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
+{
+	return do_checkmode(vis, mode);
+}
 
 
 int
@@ -294,7 +310,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 	int i, id, ret;
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 
-	ret = ggiCheckMode(vis, mode);
+	ret = do_checkmode(vis, mode);
 	if (ret != 0) {
 		return -1;
 	}
@@ -309,8 +325,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DDChangeMode(vis, mode->frames, mode->virt.x, mode->virt.y,
-		     mode->visible.x, mode->visible.y);
+	DDChangeMode(vis, mode);
 
 	vis->d_frame_num = 0;
 	vis->r_frame_num = 0;

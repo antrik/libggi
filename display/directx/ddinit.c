@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.36 2004/09/15 20:37:11 pekberg Exp $
+/* $Id: ddinit.c,v 1.37 2004/09/24 11:09:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -33,8 +33,7 @@
 static void DDCreateClass(directx_priv *priv);
 static int DDCreateWindow(ggi_visual *vis);
 static int DDCreateThread(ggi_visual *vis);
-static int DDCreateSurface(directx_priv *priv, int frames,
-			   DWORD vw, DWORD vh);
+static int DDCreateSurface(directx_priv *priv, ggi_mode *mode);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
 
@@ -119,21 +118,142 @@ DDShutdown(directx_priv *priv)
 	priv->timer_id = 0;
 }
 
+typedef struct matchmode
+{
+	ggi_visual *vis;
+	ggi_mode *mode;
+	int x, y;
+	int bestx, besty;
+	DWORD bits;
+} matchmode;
+
+static BOOL CALLBACK
+ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
+{
+	matchmode *mm = (matchmode *)ctx;
+	directx_priv *priv = GGIDIRECTX_PRIV(mm->vis);
+	ggi_mode *mode = mm->mode;
+	char *msg;
+	int ndx, bdx, ndy, bdy;
+
+	if (GT_DEPTH(mode->graphtype) != GT_AUTO) {
+		if (sd->ddpfPixelFormat.dwRGBBitCount <
+			GT_DEPTH(mode->graphtype))
+		{
+			if (sd->ddpfPixelFormat.dwRGBBitCount > mm->bits)
+				goto accept;
+			if (sd->ddpfPixelFormat.dwRGBBitCount < mm->bits) {
+				msg = "directx: rej mode (%i,%i) "
+					"poorer depth %i\n";
+				goto next;
+			}
+		}
+		if (sd->ddpfPixelFormat.dwRGBBitCount >
+			GT_DEPTH(mode->graphtype))
+		{
+			if (mm->bits < GT_DEPTH(mode->graphtype))
+				goto accept;
+			if (sd->ddpfPixelFormat.dwRGBBitCount < mm->bits)
+				goto accept;
+			if (sd->ddpfPixelFormat.dwRGBBitCount > mm->bits) {
+				msg = "directx: rej mode (%i,%i) "
+					"poorer depth %i\n";
+				goto next;
+			}
+		}
+		if (sd->ddpfPixelFormat.dwRGBBitCount != mm->bits)
+			goto accept;
+	}
+
+	if (mm->x == GGI_AUTO && mm->y == GGI_AUTO) {
+		if (sd->ddpfPixelFormat.dwRGBBitCount > mm->bits)
+			goto accept;
+		if (mm->bestx * mm->besty < (int)(sd->dwWidth * sd->dwHeight))
+			goto accept;
+		msg = "directx: rej smaller mode (%i,%i) depth %i\n";
+		goto next;
+	}
+
+	ndx = sd->dwWidth - mm->x;
+	ndy = sd->dwHeight - mm->y;
+	bdx = mm->bestx - mm->x;
+	bdy = mm->besty - mm->y;
+	if (mm->x == GGI_AUTO)
+		ndx = bdx = 0;
+	if (mm->y == GGI_AUTO)
+		ndy = bdy = 0;
+
+	if (ndx >= 0 && ndy >= 0 && (bdx < 0 || bdy < 0))
+		goto accept;
+	if ((ndx < 0 || ndy < 0) && bdx >= 0 && bdy >= 0) {
+		msg = "directx: rej bad mode (%i,%i) depth %i\n";
+		goto next;
+	}
+	if (ndx*ndx + ndy*ndy < bdx*bdx + bdy*bdy)
+		goto accept;
+	if (ndx*ndx + ndy*ndy == bdx*bdx + bdy*bdy) {
+		if (sd->ddpfPixelFormat.dwRGBBitCount >= mm->bits)
+			goto accept;
+		msg = "directx: rej mode (%i,%i) poorer depth %i\n";
+		goto next;
+	}
+	msg = "directx: rej worse mode (%i,%i) depth %i\n";
+	goto next;
+
+accept:
+	msg = "directx: best mode so far (%i,%i) depth %i\n";
+	mm->bestx = sd->dwWidth;
+	mm->besty = sd->dwHeight;
+	mm->bits  = sd->ddpfPixelFormat.dwRGBBitCount;
+next:
+	GGIDPRINT_MODE(msg, sd->dwWidth, sd->dwHeight,
+		sd->ddpfPixelFormat.dwRGBBitCount);
+	return DDENUMRET_OK;
+}
+
 int
-DDChangeMode(ggi_visual *vis, int frames,
-	     DWORD virtw, DWORD virth,
-	     DWORD width, DWORD height)
+DDMatchMode(ggi_visual *vis, ggi_mode *mode,
+	    int *depth, int *defwidth, int *defheight)
+{
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+	HRESULT hr;
+	matchmode mm;
+	int result = 1;
+
+	mm.vis = vis;
+	mm.mode = mode;
+	mm.bestx = mm.besty = mm.bits = 0;
+	mm.x = mode->visible.x;
+	mm.y = mode->visible.y;
+	if (mm.x == GGI_AUTO)
+		mm.x = mode->virt.x;
+	if (mm.y == GGI_AUTO)
+		mm.y = mode->virt.y;
+
+	hr = IDirectDraw2_EnumDisplayModes(priv->lpddext,
+		0, NULL, &mm, ModeCallback);
+
+	*depth = mm.bits;
+	*defwidth = mm.bestx;
+	*defheight = mm.besty;
+
+	return result;
+}
+
+int
+DDChangeMode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* destroy any existing surface */
 	DDDestroySurface(priv);
 
 	/* recreate the primary surface and back storage */
-	if (!DDCreateSurface(priv, frames, virtw, virth))
+	if (!DDCreateSurface(priv, mode))
 		return 0;
 
-	/* set the new window size */
-	DDChangeWindow(priv, width, height);
+	if (!priv->fullscreen)
+		/* set the new window size */
+		DDChangeWindow(priv, mode->visible.x, mode->visible.y);
 
 	/* set a timer to have the window refreshed at regular intervals,
 	   and show the window */
@@ -151,6 +271,14 @@ DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
+	HRESULT hr;
+
+	if (priv->fullscreen) {
+		hr = IDirectDrawSurface_IsLost(priv->lppdds);
+		if (FAILED(hr))
+			return;
+	}
+
 	SrcWinPos.left   = x;
 	SrcWinPos.right  = x + w;
 	SrcWinPos.top    = y;
@@ -185,6 +313,14 @@ DDRedrawAll(ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
+	HRESULT hr;
+
+	if (priv->fullscreen) {
+		hr = IDirectDrawSurface_IsLost(priv->lppdds);
+		if (FAILED(hr))
+			return;
+	}
+
 	GetClientRect(priv->hWnd, &SrcWinPos);
 	SrcWinPos.left   += vis->origin_x;
 	SrcWinPos.top    += vis->origin_y;
@@ -455,6 +591,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HDC hdc;
 	ggi_visual *vis = (ggi_visual *) GetWindowLong(hWnd, GWL_USERDATA);
 	directx_priv *priv = NULL;
+	HRESULT hr;
 
 	if (vis)
 		priv = GGIDIRECTX_PRIV(vis);
@@ -521,6 +658,12 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				giiEventSend(priv->inp, &ev);
 			}
 			*/
+			if (priv->fullscreen) {
+				hr = IDirectDrawSurface_IsLost(priv->lppdds);
+				if (hr == DDERR_SURFACELOST)
+					hr = IDirectDrawSurface_Restore(
+						priv->lppdds);
+			}
 			hdc = BeginPaint(hWnd, &ps);
 			DDRedraw(vis,
 				vis->origin_x + ps.rcPaint.left,
@@ -634,7 +777,9 @@ DDCreateWindow(ggi_visual *vis)
 		h = r.bottom - r.top;
 		/* flags for a child window */
 		ws_flags = WS_CHILD;
-	} else {
+	} else if (priv->fullscreen)
+		ws_flags = WS_VISIBLE | WS_POPUP;
+	else {
 		/* adjust the window size to accommodate for
 		 * the client area
 		 */
@@ -695,6 +840,36 @@ DDEventLoop(void *lpParm)
 			DestroyWindow(priv->hWnd);
 			break;
 		}
+		if (msg.hwnd == NULL && msg.message == WM_DDFULLSCREEN) {
+			directx_fullscreen *dxfull =
+				(directx_fullscreen *)msg.lParam;
+			if (!dxfull) {
+				fprintf(stderr, "directx: Aieee! "
+					"No lParam for WM_DDFULLSCREEN\n");
+				exit(1);
+			}
+			GGIDPRINT_MODE("Set coop level\n");
+			dxfull->hr = IDirectDraw2_SetCooperativeLevel(
+				dxfull->priv->lpddext, dxfull->priv->hWnd,
+				DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+			if (FAILED(dxfull->hr))
+				GGIDPRINT_MODE("failed %x\n", dxfull->hr);
+			GGIDPRINT_MODE("directx: Set fullscreen mode "
+				"(%i,%i) size %d\n",
+				dxfull->mode->visible.x,
+				dxfull->mode->visible.y,
+				GT_SIZE(dxfull->mode->graphtype));
+			dxfull->hr = IDirectDraw2_SetDisplayMode(
+				dxfull->priv->lpddext,
+				dxfull->mode->visible.x,
+				dxfull->mode->visible.y,
+				GT_SIZE(dxfull->mode->graphtype), 0, 0);
+			if (FAILED(dxfull->hr))
+				GGIDPRINT_MODE("directx: failed %x\n",
+					dxfull->hr);
+			SetEvent(dxfull->event);
+			continue;
+		}
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -734,23 +909,40 @@ DDCreateThread(ggi_visual *vis)
 /* initialize and finalize the primary surface and back storage */
 
 static int
-DDCreateSurface(directx_priv *priv, int frames,
-		DWORD virtw, DWORD virth)
+DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 {
 	HRESULT hr;
 	LPDIRECTDRAWCLIPPER pClipper;
 	DDSURFACEDESC pddsd, bddsd;
 	int i;
 
-	IDirectDraw_SetCooperativeLevel(priv->lpddext, priv->hWnd,
-					DDSCL_NORMAL);
+	if (!priv->fullscreen)
+		IDirectDraw2_SetCooperativeLevel(priv->lpddext, priv->hWnd,
+						DDSCL_NORMAL);
+	else {
+		/* Only the thread that has excluse access (Cooperative level)
+		 * may restore the surfaces when they are lost. Therefore
+		 * let the helper thread get exclusive access so that it can
+		 * later do restores.
+		 */
+		directx_fullscreen dxfull;
+		dxfull.priv = priv;
+		dxfull.mode = mode;
+		dxfull.event = CreateEvent(NULL, FALSE, FALSE, NULL);
+		PostThreadMessage(priv->nThreadID,
+			WM_DDFULLSCREEN, 0, (long)&dxfull);
+		WaitForSingleObject(dxfull.event, INFINITE);
+		CloseHandle(dxfull.event);
+	}
 
 	/* create the primary surface */
 	memset(&pddsd, 0, sizeof(pddsd));
 	pddsd.dwSize = sizeof(pddsd);
 	pddsd.dwFlags = DDSD_CAPS;
 	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	hr = IDirectDraw_CreateSurface(priv->lpddext, &pddsd,
+	if (priv->fullscreen)
+		pddsd.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
+	hr = IDirectDraw2_CreateSurface(priv->lpddext, &pddsd,
 				       &priv->lppdds, NULL);
 	if (hr != 0) {
 		fprintf(stderr,
@@ -758,7 +950,7 @@ DDCreateSurface(directx_priv *priv, int frames,
 			hr & 0xffff);
 		exit(-1);
 	}
-	IDirectDraw_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
+	IDirectDraw2_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
 	IDirectDrawClipper_SetHWnd(pClipper, 0, priv->hWnd);
 	IDirectDrawSurface_SetClipper(priv->lppdds, pClipper);
 	IDirectDrawClipper_Release(pClipper);
@@ -766,15 +958,15 @@ DDCreateSurface(directx_priv *priv, int frames,
 	IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
 
 	/* create the back storages */
-	for (i = 0; i < frames; ++i) {
+	for (i = 0; i < mode->frames; ++i) {
 		memset(&bddsd, 0, sizeof(bddsd));
 		bddsd.dwSize = sizeof(bddsd);
 		bddsd.dwFlags =
 		    DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
 		bddsd.ddsCaps.dwCaps =
 		    DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-		bddsd.dwWidth = virtw;
-		bddsd.dwHeight = virth;
+		bddsd.dwWidth = mode->virt.x;
+		bddsd.dwHeight = mode->virt.y;
 
 		/* set up the pixel format */
 		ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
@@ -789,7 +981,7 @@ DDCreateSurface(directx_priv *priv, int frames,
 		bddsd.ddpfPixelFormat.dwBBitMask =
 		    pddsd.ddpfPixelFormat.dwBBitMask;
 
-		hr = IDirectDraw_CreateSurface(priv->lpddext,
+		hr = IDirectDraw2_CreateSurface(priv->lpddext,
 					       &bddsd, &priv->lpbdds[i],
 					       NULL);
 		if (hr) {
@@ -806,8 +998,8 @@ DDCreateSurface(directx_priv *priv, int frames,
 	}
 
 	/* set private mode parameters */
-	priv->maxX = virtw;
-	priv->maxY = virth;
+	priv->maxX = mode->virt.x;
+	priv->maxY = mode->virt.y;
 	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
 	priv->pitch = bddsd.lPitch;
 
@@ -827,6 +1019,11 @@ DDDestroySurface(directx_priv *priv)
 	if (priv->lppdds != NULL) {
 		IDirectDrawSurface_Release(priv->lppdds);
 		priv->lppdds = NULL;
+	}
+	if (priv->fullscreen) {
+		IDirectDraw2_RestoreDisplayMode(priv->lpddext);
+		IDirectDraw2_SetCooperativeLevel(priv->lpddext, priv->hWnd,
+						DDSCL_NORMAL);
 	}
 }
 

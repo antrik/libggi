@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2004/09/15 20:29:21 pekberg Exp $
+/* $Id: visual.c,v 1.25 2004/09/24 11:09:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -46,7 +46,8 @@ static const gg_option optlist[] = {
 	{"noinput", "no"},
 	{"nocursor", "no"},
 	{"physz", "0,0"},
-	{"keepcursor", "no"}
+	{"keepcursor", "no"},
+	{"fullscreen", "no"}
 };
 
 #define OPT_INWIN	0
@@ -54,6 +55,7 @@ static const gg_option optlist[] = {
 #define OPT_NOCURSOR	2
 #define OPT_PHYSZ	3
 #define OPT_KEEPCURSOR	4
+#define OPT_FULLSCREEN	5
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -170,6 +172,12 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 			}
 		} else
 			priv->hParent = GetDesktopWindow();
+	}
+
+	if (options[OPT_FULLSCREEN].result[0] == 'n') {
+		priv->fullscreen = 0;
+	} else {
+		priv->fullscreen = 1;
 	}
 
 	if (!DDInit(vis)) {

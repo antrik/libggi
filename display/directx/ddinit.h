@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.15 2004/09/15 20:29:21 pekberg Exp $
+/* $Id: ddinit.h,v 1.16 2004/09/24 11:09:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -36,6 +36,16 @@
 #define WM_DDMESSAGEBOX		0x7FFF
 #define WM_DDCHANGEMODE		0x7FFE
 #define WM_DDEND		0x7FFD
+#define WM_DDFULLSCREEN		0x7FFC
+
+typedef struct directx_fullscreen
+{
+	directx_priv *priv;
+	ggi_mode *mode;
+	HRESULT hr;
+	HANDLE event;
+} directx_fullscreen;
+
 
 __BEGIN_DECLS
 
@@ -43,8 +53,8 @@ int DDInit(ggi_visual *vis);
 void DDShutdown(directx_priv *priv);
 void DDRedraw(ggi_visual *vis, int x, int y, int w, int h);
 void DDRedrawAll(ggi_visual *vis);
-int DDChangeMode(ggi_visual *vis, int frames,
-		 DWORD virtw, DWORD virth,
-		 DWORD width, DWORD height);
+int DDChangeMode(ggi_visual *vis, ggi_mode *mode);
+int DDMatchMode(ggi_visual *vis, ggi_mode *mode,
+		int *depth, int *defwidth, int *defheight);
 
 __END_DECLS

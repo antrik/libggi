@@ -33,7 +33,10 @@ Options
     When using the root window other features (like direct framebuffer
     access and video hardware mode selection) may be available which
     are not available when the application is running in a normal window.
-    
+
+``-fullscreen``
+    If mode switching is required for the mode, this option makes it
+    possible to set it. Superior to :p:`-inwin=root`.
 
 ``-nocursor``, ``-keepcursor``
     Normal behavior of display-directx is to create a small dot mouse
