@@ -47,7 +47,9 @@ Due : ????-??-??
 - improve modelist.inc
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
-
+- formalize pixelformat strings (e.g. "r5b5g5p1") and provide
+  parser/construction functions for them in the LibGGI internal interface.
+  Some code for this is already in LibBuf CVS.
 
 ------------------------------------------
 Over-Next major release
