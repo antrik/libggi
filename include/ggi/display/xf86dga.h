@@ -1,4 +1,4 @@
-/* $Id: xf86dga.h,v 1.1 2001/05/12 23:03:23 cegger Exp $
+/* $Id: xf86dga.h,v 1.2 2001/06/24 19:33:12 skids Exp $
 ******************************************************************************
 
    XFree86 Direct Graphics Access target for LibGGI
@@ -80,6 +80,7 @@ Bool _ggi_XF86DGAQueryExtension(Display *dpy, int *event_basep,
 				int *error_basep);
 Bool _ggi_XF86DGAQueryVersion(Display* dpy, int* majorVersion,
 			      int* minorVersion);
+Bool _ggi_XF86VidModeSetClientVersion(Display *dpy);
 Bool _ggi_XF86DGASetViewPort(Display* dpy, int screen, int x, int y);
 Bool _ggi_XF86DGAInstallColormap(Display* dpy, int screen, Colormap cmap);
 Bool _ggi_XF86DGAQueryDirectVideo(Display *dpy, int screen, int *flags);

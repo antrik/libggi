@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:44 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/06/24 19:33:12 skids Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -31,6 +31,21 @@
 #include "xf86dga.h"
 
 #include <stdlib.h>
+#include <ctype.h>
+
+static const gg_option optlist[] =
+{
+	{ "noinput",	"no" },
+	{ "nocursor",	"no" },
+	{ "physz",	"0,0"}
+};
+
+#define OPT_NOINPUT     0
+#define OPT_NOCURSOR    1
+#define OPT_PHYSZ       2
+
+#define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
+
 
 static int GGI_xf86dga_idleaccel(ggi_visual *vis)
 {
@@ -109,8 +124,10 @@ static int do_cleanup(ggi_visual *vis)
 	_ggi_XF86DGADirectVideo(priv->x.display, priv->x.screen, 0);
 	XSync(priv->x.display, False);
 
-	XUngrabPointer(priv->x.display, CurrentTime);
-	XUngrabKeyboard(priv->x.display, CurrentTime);
+	if (priv->x.inp) {
+		XUngrabPointer(priv->x.display, CurrentTime);
+		XUngrabKeyboard(priv->x.display, CurrentTime);
+	}
 
 	if (priv->x.cmap)XFreeColormap(priv->x.display,priv->x.cmap);
 	if (priv->cmap2) XFreeColormap(priv->x.display,priv->cmap2);
@@ -150,10 +167,21 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
 	ggidga_priv *priv;
+	gg_option options[NUM_OPTS];
 	Display *disp;
 	int dgafeat, err, x, y;
 	unsigned z;
 	Window root;
+
+	memcpy(options, optlist, sizeof(options));
+
+	if (args) {
+		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		if (args == NULL) {
+			fprintf(stderr, "display-x: error in arguments.\n");
+			return GGI_EARGINVAL;
+		}
+	}
 
 	GGIDPRINT_MISC("display-DGA starting.\n");
 
@@ -191,6 +219,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->x.xliblock = ggLockCreate();
 	if (priv->x.xliblock == NULL) goto out_freegc;
 
+	err = _ggi_parse_physz(options[OPT_PHYSZ].result,
+                               &(priv->x.physzflags),
+                               &(priv->x.physz));
+        if (err != GGI_OK) goto out_freegc;
+
 	priv->x.display	= disp;
 	priv->x.screen	= DefaultScreen(priv->x.display);
 	priv->dgafeat	= dgafeat;
@@ -227,15 +260,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	LIBGGI_PRIVATE(vis) = priv;
 
-	/* Get all the events */
-	XGrabKeyboard(priv->x.display, DefaultRootWindow(priv->x.display), 
-		      True, GrabModeAsync, GrabModeAsync, CurrentTime);
-
-	XGrabPointer(priv->x.display, DefaultRootWindow(priv->x.display), True,
-		     ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
-		     GrabModeAsync, GrabModeAsync,
-		     None, None, CurrentTime);
-
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -261,10 +285,20 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	priv->modes[priv->num_modes].bpp = 0;
 
-	{
+	priv->x.inp = NULL;
+	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_inputxwin_arg args;
 		gii_input *inp;
-		
+	
+		/* Get all the events */
+		XGrabKeyboard(priv->x.display, DefaultRootWindow(priv->x.display), 
+			      True, GrabModeAsync, GrabModeAsync, CurrentTime);
+
+		XGrabPointer(priv->x.display, DefaultRootWindow(priv->x.display), True,
+			     ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
+			     GrabModeAsync, GrabModeAsync,
+			     None, None, CurrentTime);
+	
 		args.disp = priv->x.display;
 		args.win = DefaultRootWindow(priv->x.display);
 		args.ptralwaysrel = 1;

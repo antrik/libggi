@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:43 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/06/24 19:33:12 skids Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -388,15 +388,6 @@ int GGI_xf86dga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	}
 	tm->dpp.x = tm->dpp.y = 1;
 
-	xsize = DisplayWidthMM(priv->x.display, priv->x.screen);
-	ysize = DisplayHeightMM(priv->x.display, priv->x.screen);
-	if ((tm->size.x != xsize && tm->size.x != GGI_AUTO) ||
-	    (tm->size.y != ysize && tm->size.y != GGI_AUTO)) {
-		err = -1;
-	}
-	tm->size.x = xsize;
-	tm->size.y = ysize;
-
 	if (GT_DEPTH(tm->graphtype) != priv->depth 
 	    || GT_SIZE(tm->graphtype) != priv->size) {
 		if (tm->graphtype != GT_AUTO)
@@ -485,6 +476,29 @@ int GGI_xf86dga_checkmode(ggi_visual *vis,ggi_mode *tm)
 		}
 		tm->frames = 1;
 	}
+
+#define SCREENWMM DisplayWidthMM(priv->x.display, priv->x.screen)
+#define SCREENW   DisplayWidth(priv->x.display, priv->x.screen)
+#define SCREENHMM DisplayHeightMM(priv->x.display, priv->x.screen)
+#define SCREENH   DisplayHeight(priv->x.display, priv->x.screen)
+#define SCREENDPIX \
+((SCREENWMM <= 0) ?  0 : (SCREENW * tm->dpp.x * 254 / SCREENWMM / 10))
+#define SCREENDPIY \
+((SCREENHMM <= 0) ?  0 : (SCREENH * tm->dpp.x * 254 / SCREENHMM / 10))
+
+	if (!err) {
+		err = _ggi_figure_physz(tm,
+					priv->x.physzflags, &(priv->x.physz),
+					SCREENDPIX, SCREENDPIY, 
+					SCREENW, SCREENH);
+	}
+
+#undef SCREENWMM
+#undef SCREENW
+#undef SCREENHMM
+#undef SCREENH
+#undef SCREENDPIX
+#undef SCREENDPIY
 
 	return err;	
 }
