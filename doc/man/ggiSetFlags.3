@@ -1,4 +1,4 @@
-.TH "ggiSetFlags" 3 "2004-11-20" "libggi-current" GGI
+.TH "ggiSetFlags" 3 "2004-11-21" "libggi-current" GGI
 .SH NAME
 \fBggiSetFlags\fR, \fBggiGetFlags\fR, \fBggiAddFlags\fR, \fBggiRemoveFlags\fR : Set or get flags affecting operation on a visual
 .SH SYNOPSIS
@@ -148,7 +148,7 @@ Before releasing the lock, applications should be sure to flush all
 affected regions, because the visual may revert to its default
 dirty-region management behavior after the lock is released.
 
-Do note, also, that in multi-frame displays \fBggiFlush(3)\fR affects
+Do note, also, that in multi-frame displays \fBggiFlushRegion(3)\fR affects
 only the current write frame, so even though it is possible to use a
 directbuffer to alter a different frame, you must call
 \fBggiSetWriteFrame(3)\fR to tell the visual that you will be
