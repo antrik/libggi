@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.13 2003/10/10 05:35:07 cegger Exp $
+/* $Id: ddinit.c,v 1.14 2003/10/10 05:48:20 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -160,7 +160,11 @@ static int CreatePrimary(directx_priv * priv)
 	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 	hr = IDirectDraw_CreateSurface(priv->lpddext, &pddsd, &priv->lppdds, NULL);
 	if (hr != 0) {
+#ifdef HAVE_SNPRINTF
+		snprintf(errstr, 50, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
+#else
 		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
+#endif
 		DDMessageBox(priv->hWnd, errstr, "Primary Surface");
 		exit(-1);
 	}	/* if */
@@ -201,7 +205,11 @@ static int CreateBackup(directx_priv * priv)
 
 	rc = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
 	if (rc) {
+#ifdef HAVE_SNPRINTF
+		sprintf(message, 100, "CreateBackup error : %ld. Exiting", rc & 0xffff);
+#else
 		sprintf(message, "CreateBackup error : %ld. Exiting", rc & 0xffff);
+#endif
 		DDMessageBox(priv->hWnd, message, "Backup");
 		exit(-1);
 	}
@@ -496,8 +504,13 @@ int DDChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
 
 	rc = SendMessage(priv->hWnd, WM_DDCHANGEMODE, 0, (LPARAM) &ddcms);
 	if (rc) {
+#ifdef HAVE_SNPRINTF
+		snprintf(message, 100, "ChangeMode failed with rc= %d\n",
+			rc & 0xffff);
+#else
 		sprintf(message, "ChangeMode failed with rc= %d\n",
 			rc & 0xffff);
+#endif
 		DDMessageBox(priv->hWnd, message, "INFO");
 	} else {
 		DDSURFACEDESC pddsd;
