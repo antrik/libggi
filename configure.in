@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.104 2004/02/04 14:29:43 cegger Exp $
+dnl $Id: configure.in,v 1.105 2004/02/06 13:57:01 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -293,7 +293,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h \
+AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
@@ -308,14 +308,6 @@ dnl Disable targets requiring non-existing headers
 if test "x$ac_cv_header_sys_shm_h" != "xyes"; then
 	build_x_shm_target="no"
 	build_ipc_target="no"
-dnl TODO:
-dnl Disable programs/demos/wrap.c here
-fi
-
-if test "x$ac_cv_header_sys_ipc_h" != "xyes"; then
-	build_ipc_target="no"
-dnl TODO:
-dnl Disable programs/demos/wrap.c here
 fi
 
 
@@ -571,28 +563,6 @@ if test "x$ac_cv_func_gethostbyname" = "xno"; then
   )
 fi
 
-
-AC_CHECK_LIB(kgimon,set_monitor,
-  monitest_extrasrc="kgitune.c"
-  monitest_extraobj="kgitune.o"
-  monitest_extralibs="-lkgimon",
-  monitest_extrasrc=""
-  monitest_extraobj=""
-  monitest_extralibs="")
-
-SHMDEMOS=""
-
-AC_MSG_CHECKING(if we should build the cube3d program)
-if test "x$ac_cv_header_unistd_h" = "xyes" \
-	-a "x$ac_cv_header_signal_h" = "xyes" \
-	-a "x$ac_cv_func_setenv" = "xyes" \
-	-a "x$ac_cv_header_sys_shm_h" = "xyes" \
-	-a "x$ac_cv_header_sys_ipc_h" = "xyes"; then
-  SHMDEMOS="$SHMDEMOS cube3d\$(EXEEXT)"
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
 
 DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
@@ -899,6 +869,66 @@ AC_MSG_RESULT($ggi_cv_have_unix_domain_socket)
 if test $ggi_cv_have_unix_domain_socket = yes ; then
   AC_DEFINE(HAVE_UNIX_DOMAIN_SOCKET)
 fi
+
+
+dnl ========================================================================
+dnl Checks for building demos
+
+
+AC_CHECK_LIB(kgimon,set_monitor,
+  monitest_extrasrc="kgitune.c"
+  monitest_extraobj="kgitune.o"
+  monitest_extralibs="-lkgimon",
+  monitest_extrasrc=""
+  monitest_extraobj=""
+  monitest_extralibs="")
+
+
+INSTDEMOS=""
+
+AC_MSG_CHECKING(if we should build the cube3d program)
+if test "x$ac_cv_header_unistd_h" = "xyes" \
+	-a "x$ac_cv_header_signal_h" = "xyes" \
+	-a "x$ac_cv_func_setenv" = "xyes" \
+	-a "x$ac_cv_header_sys_shm_h" = "xyes" \
+	-a "x$ac_cv_header_sys_ipc_h" = "xyes"; then
+  INSTDEMOS="$INSTDEMOS cube3d\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+OPTDEMOS=""
+
+AC_MSG_CHECKING(if we should build the wrap program)
+if test "x$ac_cv_header_signal_h" = "xyes" \
+	-a "x$ac_cv_header_sys_shm_h" = "xyes" \
+	-a "x$ac_cv_header_sys_ipc_h" = "xyes"; then
+  OPTDEMOS="$OPTDEMOS wrap\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+OPTCHECKS=""
+
+AC_MSG_CHECKING(if we should build the speed program)
+if test "x$ac_cv_header_sys_times_h" = "xyes"; then
+  OPTCHECKS="$OPTCHECKS speed\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should build the showaccel2 program)
+if test "x$ac_cv_func_fork" = "xyes"; then
+  OPTCHECKS="$OPTCHECKS showaccel2\$(EXEEXT)"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+
 
 dnl ========================================================================
 dnl Check for targets
@@ -1280,7 +1310,9 @@ AC_SUBST(x_helper_xf86dga_libs)
 AC_SUBST(directfb_driver_dir)
 
 dnl Program specific substitutions
-AC_SUBST(SHMDEMOS)
+AC_SUBST(INSTDEMOS)
+AC_SUBST(OPTDEMOS)
+AC_SUBST(OPTCHECKS)
 AC_SUBST(monitest_extrasrc)
 AC_SUBST(monitest_extraobj)
 AC_SUBST(monitest_extralibs)

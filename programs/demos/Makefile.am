@@ -4,11 +4,12 @@ LDADD = ${top_builddir}/ggi/libggi.la
 SUBDIRS = warp-ggi
 
 # cube3d is nice - we install it
-EXTRA_PROGRAMS = cube3d
-bin_PROGRAMS = ${SHMDEMOS}
+EXTRA_PROGRAMS = cube3d wrap
+bin_PROGRAMS = ${INSTDEMOS}
 
 # findleaks.c showaccel2.c tunemode.c
-noinst_PROGRAMS = demo flying_ggis wrap pageflip saver slimy stars textdemo
+noinst_PROGRAMS = demo flying_ggis pageflip saver slimy stars \
+	textdemo $(OPTDEMOS)
 
 # -lgg is needed for ggUSleep() and ggCurTime()
 demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg

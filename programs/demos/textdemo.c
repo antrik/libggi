@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: textdemo.c,v 1.5 2004/02/06 13:57:01 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -22,6 +22,10 @@
 #include <string.h>
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+# define sleep(s) Sleep((s)*1000)
 #endif
 
 ggi_visual_t vis;

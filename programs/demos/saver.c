@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
+/* $Id: saver.c,v 1.6 2004/02/06 13:57:01 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -25,6 +25,10 @@
 #include <time.h>
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+# define sleep(s) Sleep((s)*1000)
 #endif
 
 /* The time in minutes till activation
