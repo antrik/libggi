@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/04/04 14:31:57 mooz Exp $
+/* $Id: mode.c,v 1.13 2004/04/06 16:52:38 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -41,6 +41,9 @@
 
 void _GGI_svga_freedbs(ggi_visual *);
 
+/* This is exported from svgalib */
+extern int __svgalib_tty_fd;
+
 
 int _ggi_svgalib_setmode(int mode)
 {
@@ -70,7 +73,7 @@ int _ggi_svgalib_setmode(int mode)
 	return ret;
 }
 
-int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
+static int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
 {
 	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
 	if (x != 0 || y<0 || y> LIBGGI_MODE(vis)->virt.y )
@@ -237,28 +240,27 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 		ggi_directbuffer *buf;
 
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
-		
+
 		buf = LIBGGI_APPBUFS(vis)[i];
-		
+
 		if (0 == i) {
-		  buf->read = vga_getgraphmem();
-		  buf->write = buf->read;
+			buf->read = vga_getgraphmem();
+			buf->write = buf->read;
 		}
 
 		buf->frame = i;
 		buf->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		buf->read = LIBGGI_APPBUFS(vis)[0]->read + i * priv->frame_size;
+		buf->read = ((char *)LIBGGI_APPBUFS(vis)[0]->read) + i * priv->frame_size;
 		buf->write = buf->read;
 		buf->layout = blPixelLinearBuffer;
 		buf->buffer.plb.stride = modeinfo->linewidth;
 		buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 		GGIDPRINT("Setting up DirectBuffer %d, stride=%d\n",
-		  i, buf->buffer.plb.stride);
-		
+			i, buf->buffer.plb.stride);
+
 		err = vga_claimvideomemory(priv->frame_size * tm->frames);
-		if (err)
-		{
+		if (err) {
 			fprintf(stderr, "display-svga: "
 				"Can't allocate enough display memory:"
 				"%d bytes.\n", modeinfo->bytesperpixel * 
