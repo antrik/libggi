@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.1 2002/09/21 16:36:50 skids Exp $
+/* $Id: cbconsist.c,v 1.2 2002/09/21 17:28:14 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -163,7 +163,7 @@ void cbtime(cbcstate *s) {
   
   num = 0x100000 / box.x / box.y;
   
-  gettimeofday(&tvstart, NULL);
+  ggCurTime(&tvstart);
   
   while (num--) {
     ggiCrossBlit(s->svis, 0, 0, box.x, box.y, s->dvis, 0, 0);
@@ -171,7 +171,7 @@ void cbtime(cbcstate *s) {
     ggiFlush(s->dvis);
   }
   
-  gettimeofday(&tvend, NULL);
+  ggCurTime(&tvend);
   
   if (tvend.tv_usec < tvstart.tv_usec) {
     tvstart.tv_sec--;
