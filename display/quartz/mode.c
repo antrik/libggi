@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2004/12/29 11:01:20 cegger Exp $
+/* $Id: mode.c,v 1.4 2004/12/29 15:03:43 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -701,6 +701,12 @@ int GGI_quartz_flush(ggi_visual *vis,
 #endif
 
 	priv = QUARTZ_PRIV(vis);
+
+	/* do not flush on a invalid context
+	 * This happens at startup when we are in
+	 * sync mode and no mode has been set.
+	 */
+	if (priv->context == NULL) return 0;
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
