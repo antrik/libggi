@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2004/11/07 21:58:39 cegger Exp $
+/* $Id: visual.c,v 1.24 2004/11/07 22:04:40 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -442,13 +442,13 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 				       bufp+4);
 			continue;
 		} else if (0 == strncmp(bufp, "geometry", 8)) {
-			sscanf(bufp+8, " %d %d %d %d %d",
+			sscanf(bufp+8, " %u %u %u %u %u",
 			       &timing.xres, &timing.yres,
 			       &timing.xres_virtual, &timing.yres_virtual,
 			       &timing.bits_per_pixel);
 			continue;
 		} else if (0 == strncmp(bufp, "timings", 7)) {
-			sscanf(bufp+7, " %d %d %d %d %d %d %d",
+			sscanf(bufp+7, " %u %u %u %u %u %u %u",
 			       &timing.pixclock,
 			       &timing.left_margin, &timing.right_margin,
 			       &timing.upper_margin, &timing.lower_margin,
