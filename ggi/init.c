@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.34 2005/01/13 21:18:27 cegger Exp $
+/* $Id: init.c,v 1.35 2005/01/13 22:18:00 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -31,10 +31,9 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "ext.h"
+
 #include <string.h>
-#include <ctype.h>
 #include <stdarg.h>
 
 
@@ -55,21 +54,8 @@ static struct {
 static int            _ggiLibIsUp      = 0;
 static char           ggiconfstub[512] = GGICONFDIR;
 static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
-static int            numextensions    = 0;
-static GG_TAILQ_HEAD(, ggi_extension) _ggiExtension
-		= GG_TAILQ_HEAD_INITIALIZER(_ggiExtension);
 
 gg_swartype     swars_selected    = 0;
-
-
-/* extension macros
- */
-#define FOREACH_EXTENSION(n)	GG_TAILQ_FOREACH(n, &_ggiExtension, extlist)
-#define ADD_EXTENSION(n)	GG_TAILQ_INSERT_TAIL(&_ggiExtension, n, extlist)
-#define REMOVE_EXTENSION(n)	GG_TAILQ_REMOVE(&_ggiExtension, n, extlist)
-#define HAVE_NO_EXTENSIONS	GG_TAILQ_EMPTY(&_ggiExtension)
-#define HAVE_EXTENSIONS		(!GG_TAILQ_EMPTY(&_ggiExtension))
-
 
 
 /* 
@@ -168,6 +154,12 @@ int ggiInit(void)
 		return err;
 	}
 
+	err = ggiExtensionInit();
+	if (err) {
+		fprintf(stderr, "LibGGI: unable to initialize extension manager\n");
+		return err;
+	}
+
 	if ((_ggiVisuals.mutex = ggLockCreate()) == NULL) {
 		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
 		giiExit();
@@ -193,8 +185,8 @@ int ggiInit(void)
 	if (str != NULL) {
 		_ggiDebug |= atoi(str) & DEBUG_ALL;
 		DPRINT_CORE("%s Debugging=%d\n",
-			       DEBUG_ISSYNC ? "sync" : "async",
-			       _ggiDebug);
+				DEBUG_ISSYNC ? "sync" : "async",
+				_ggiDebug);
 	}
 	
 	str = getenv("GGI_DEFMODE");
@@ -232,8 +224,6 @@ int ggiInit(void)
 
 int ggiExit(void)
 {
-	ggi_extension *tmp;
-
 	DPRINT_CORE("ggiExit called\n");
 	if (!_ggiLibIsUp) return GGI_ENOTALLOC;
 
@@ -250,11 +240,7 @@ int ggiExit(void)
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
 
-	FOREACH_EXTENSION(tmp) {
-		REMOVE_EXTENSION(tmp);
-		free(tmp);
-	}
-	LIB_ASSERT(HAVE_NO_EXTENSIONS, "ggi extension list not empty at shutdown\n");
+	ggiExtensionExit();
 
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
@@ -476,184 +462,6 @@ int ggiClose(ggi_visual *visual)
 	_ggiDestroyVisual(vis);
 
 	DPRINT_CORE("ggiClose: done!\n");
-
-	return 0;
-}
-
-/*
-  Extension handling.
-*/
-
-/*
-  Register an Extension for usage. It will return an extension ID 
-  (ggi_extid) that can be used to address this extension.
-*/
-ggi_extid
-ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
-{
-	ggi_extension *tmp, *ext;
-
-	DPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
-		       name, size, change);
-	if (HAVE_EXTENSIONS) {
-		FOREACH_EXTENSION(tmp) {
-			if (strcmp(tmp->name, name) == 0) {
-				tmp->initcount++;
-				DPRINT_CORE("ggiExtensionRegister: accepting copy #%d of extension %s\n",
-					       tmp->initcount,tmp->name);
-				return tmp->id;
-			}
-		}
-	}
-
-	ext = malloc(sizeof(ggi_extension));
-	if (ext == NULL) return GGI_ENOMEM;
-
-	ext->size = size;
-	ext->paramchange = change;
-	GG_TAILQ_NEXT(ext, extlist) = NULL;
-	ext->initcount = 1;
-	ggstrlcpy(ext->name, name, sizeof(ext->name));
-
-	ADD_EXTENSION(ext);
-
-	DPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
-
-	ext->id = numextensions;
-	numextensions++;
-
-	return ext->id;
-}
-
-
-/*
-  Unregister an Extension. It takes the ggi_extid gotten from
-  ggiExtensionRegister. It disallows further calls to ggiExtensionAttach
-  (for that extid) and frees memory for the extension registry. 
-  It dos NOT automatically ggiExtensionDetach it from all visuals.
-*/
-int ggiExtensionUnregister(ggi_extid id)
-{
-	ggi_extension *tmp;
-
-	DPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
-	if (HAVE_NO_EXTENSIONS) return GGI_ENOTALLOC;
-
-	FOREACH_EXTENSION(tmp) {
-		if (tmp->id != id) continue;
-		if (--tmp->initcount) {
-			DPRINT_CORE("ggiExtensionUnregister: removing #%d copy of extension %s\n", tmp->initcount+1, tmp->name);
-			/* Removed copy */
-			return 0;	
-		}
-
-		REMOVE_EXTENSION(tmp);
-
-		DPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
-			       tmp->name);
-
-		free(tmp);
-
-		return 0;
-	}
-
-	return GGI_ENOTALLOC;
-}
-
-/*
-  Make an extension available for a given visual.
-  The extension has to be registered for that.
-  RC: negative  Error.
-       x	for the number of times this extension had already been
-         	registered to that visual. So
-       0 	means you installed the extension as the first one. Note that
-     >=0 	should be regarded as "success". It is legal to attach an 
-         	extension multiple times. You might want to set up private
-         	data if RC==0.
-*/
-int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
-{
-	ggi_extension *tmp = NULL;
-
-	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
-
-	if (HAVE_EXTENSIONS) {
-		FOREACH_EXTENSION(tmp) {
-			if (tmp->id == id) break;
-		}
-	}
-	if (! tmp) return GGI_EARGINVAL;
-
-	if (vis->numknownext <= id) {
-		ggi_extlist *newlist;
-		int extsize = sizeof(*vis->extlist);
-		
-		newlist = realloc(vis->extlist, extsize * (id + 1U));
-		if (newlist == NULL) return GGI_ENOMEM;
-
-		vis->extlist = newlist;
-		memset(&vis->extlist[vis->numknownext], 0,
-		       extsize*(id + 1U - vis->numknownext));
-		vis->numknownext = id + 1U;
-		DPRINT_CORE("ggiExtensionAttach: ExtList now at %p (%d)\n",
-			       vis->extlist, vis->numknownext);
-	}
-
-	if (LIBGGI_EXTAC(vis, id) == 0) {
-		LIBGGI_EXT(vis, id) = malloc(tmp->size);
-		if (LIBGGI_EXT(vis, id) == NULL) return GGI_ENOMEM;
-	}
-	return LIBGGI_EXTAC(vis, id)++;
-}
-
-/*
-  Destroy an extension for a given visual.
-  The extension need not be registered for that anymore, though the extid
-  has to be valid. 
-  RC: negative	Error.
-       x	for the number of times this extension remains attached. So
-       0	means you removed the last copy of the extension. Note that
-     >=0	should be regarded as "success". It is legal to attach an 
-		extension multiple times.
-*/
-int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
-{
-	DPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
-
-	if (vis->numknownext <= id || LIBGGI_EXTAC(vis, id) == 0) {
-	     	return GGI_EARGINVAL;
-	}
-
-	if (--LIBGGI_EXTAC(vis, id)) {
-		return LIBGGI_EXTAC(vis, id);
-	}
-	
-	free(LIBGGI_EXT(vis, id));
-	LIBGGI_EXT(vis, id) = NULL;  /* Make sure ... */
-
-	return 0;
-}
-
-int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
-{
-	ggi_extension *tmp = NULL;
-
-	DPRINT_CORE("ggiIndicateChange(%p, 0x%x) called\n",
-		       vis, whatchanged);
-
-	/* Tell all attached extensions on this visual */
-	DPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
-		       whatchanged, vis);
-
-	if (HAVE_EXTENSIONS) {
-		FOREACH_EXTENSION(tmp) {
-			if (tmp->id < vis->numknownext &&
-			    LIBGGI_EXTAC(vis, tmp->id))
-			{
-				tmp->paramchange(vis, whatchanged);
-			}
-		}
-	}
 
 	return 0;
 }
