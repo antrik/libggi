@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2004/09/13 09:42:12 pekberg Exp $
+/* $Id: visual.c,v 1.22 2004/09/13 12:31:10 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -70,6 +70,9 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 	DeleteCriticalSection(&priv->redrawcs);
 	DeleteCriticalSection(&priv->sizingcs);
 	free(priv);
+
+	if (LIBGGI_GC(vis))
+		free(LIBGGI_GC(vis));
 
 	return 0;
 }
