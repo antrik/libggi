@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.4 2002/05/18 22:02:31 skids Exp $
+/* $Id: demo.c,v 1.5 2002/05/18 23:44:34 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -979,7 +979,7 @@ int main(int argc, char **argv)
 		i = 0;
 		while ((TestTime() < 15) && (i < numplanes)) {
 			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
-				uint8 *linestart;
+			  	uint8 *linestart;
 				linestart = (uint8 *)dbuf->write + 
 				  stride2 * i + stride * y;
 				x = 0;
@@ -992,7 +992,7 @@ int main(int argc, char **argv)
 					  *((uint16 *)linestart+x) = random();
 					  break;
 					case 8:
-					  *(linestart + x) = random();
+					  *(linestart+x) = random();
 					  break;
 					}
 					x++;
@@ -1000,6 +1000,28 @@ int main(int argc, char **argv)
 			}
 			i++;
 		}	
+
+		while (TestTime() < 15) {
+			uint8 *linestart;
+			i = random() % numplanes;
+			y = random() % vy;
+			x = random() % (vx * GT_SIZE(type)/wordsize);
+			  	
+			linestart = (uint8 *)dbuf->write + 
+			  stride2 * i + stride * y;
+			
+			switch(wordsize) {
+			case 32:
+				*((uint32 *)linestart+x) = random();
+				break;
+			case 16:
+				*((uint16 *)linestart+x) = random();
+				break;
+			case 8:
+				*(linestart+x) = random();
+				break;
+			}
+		}
 
 		/* If we were not in syncronous mode, we would
 		 * call ggiFlush here, because there is no guarantee
