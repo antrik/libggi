@@ -7,6 +7,11 @@
 display-kgi			display/kgi.@DLLEXT@
 display-suidkgi			display/suidkgi.@DLLEXT@
 display-x			display/X.@DLLEXT@
+helper-x-evi			helper/helper_x_evi.@DLLEXT@
+helper-x-shm			helper/helper_x_shm.@DLLEXT@
+helper-x-dbe			helper/helper_x_dbe.@DLLEXT@
+helper-x-vidmode		helper/helper_x_vidmode.@DLLEXT@
+helper-x-dga			helper/helper_x_dga.@DLLEXT@
 display-xlib			display/Xlib.@DLLEXT@
 display-dga			display/xf86dga.@DLLEXT@
 display-svga			display/svgalib.@DLLEXT@

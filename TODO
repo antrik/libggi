@@ -17,8 +17,8 @@ Building issues:
 - bring improved code in showaccel demo to showaccel2 demo
 - Verify and fix cross-compilation to other architectures
 - Fix libtool to create shared libs instead of static ones
-  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
-  run GGI on Linux/MIPS boxes.
+  on Linux/MIPS boxes. This misbehaviour allows compile and install, but
+  not runtime use of LibGGI on Linux/MIPS boxes.
 * The default value of the configure option '--with-gii' should always be
   the one of the '--prefix' option, independent if '--prefix' is specified by
   the user or not, unless '--with-gii' itself is specified by the user.
@@ -41,14 +41,14 @@ Target specific issues:
 * enable DirectFB (Brian)
 * disable libKGI target, because it's currently a "proof-of-concept"
   (Brian)
-- BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
+* BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
   the RGBA colorspace. This causes colors being wrongly handled. The
   result on the screen are colors with blue characteristics. The bug
   is reproduceable when running apps using tile-over-Xlib with directbuffers
   respectively simply running apps on Xlib. The bug disappears by
-  disabling the directbuffer using tile-over-Xlib.
-- Make XF86DGA working with XF86 3.x and XF86 4.x
-  (Brian is working on a new X target, that hopefully fixes all these X issues.)
+  disabling the directbuffer using tile-over-Xlib. (fixed in new target)
+- shake down new X target until most users cannot find any bugs that didn't
+  already exist in display-X or display-Xlib.
 
 Common issues:
 
@@ -77,8 +77,28 @@ Due : ????-??-??
   parser/construction functions for them in the LibGGI internal interface.
   Some code for this is already in LibBuf CVS.
 
+New X Target:
+
+- Make display-xf86dga work with all pre-4.x XF86, move newer DGA support 
+  to a new dga helper.
+- 1,2,4-bpp support for new display-X.
+- Test/complete display-X with obscure bitdepths/endian reversal.
+- Verify/correct interaction of mouse events with setorigin.
+- Re-implement old display-X emulated setorigin for root windows and
+  for buggy WMs with faulty colormap handling code.
+- See if colormap can be force-installed under some buggy WMs.
+- Turn off hidden virtual area flushing when no backing store is available.
+- Get upstream to fix stuff (Solid-fill ops into backing store, for example.)
+- Compile on crusty old libc5 machines; replace any new-style X* symbols 
+  with backwards-compatible old-style symbols.
+- dbe helper for new display-X
+- dga helper for new display-X
+- vidmode helper for new display-X
+- Investigate emulating lower fixed-palette bitdepths and find out how to 
+  get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
+
 ------------------------------------------
-Over-Next major release
+Next major release after that
 ------------------------------------------
 Version : 3.0.0
 Due : ????-??-??

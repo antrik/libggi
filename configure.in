@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.35 2002/05/04 13:45:10 cegger Exp $
+dnl $Id: configure.in,v 1.36 2002/06/12 03:53:58 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -29,7 +29,7 @@ bsdsock_libs=""
 
 dnl Targets
 build_x_target="auto"
-build_xlib_target="auto"
+build_xlib_target="no"
 build_aa_target="auto"
 build_directx_target="no"
 build_fbdev_target="auto"
@@ -892,6 +892,12 @@ include/ggi/default/Makefile
 include/ggi/display/Makefile
 display/Makefile
 display/X/Makefile
+display/X/helper/Makefile
+display/X/helper/dga/Makefile
+display/X/helper/vidmode/Makefile
+display/X/helper/evi/Makefile
+display/X/helper/dbe/Makefile
+display/X/helper/shm/Makefile
 display/Xlib/Makefile
 display/aa/Makefile
 display/common/Makefile

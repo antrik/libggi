@@ -13,8 +13,7 @@
 
 <refnamediv>
 <refname><systemitem>display-x</systemitem></refname>
-<refname><systemitem>display-xlib</systemitem></refname>
-<refpurpose>Displays in an X window</refpurpose>
+<refpurpose>Displays to an X11 server</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -23,24 +22,19 @@
 <command>display-x</command>
 <arg choice="plain">:</arg>
 <group>
- <arg><option>-inroot</option></arg>
- <arg><option>-inwin=<replaceable>winid</replaceable></option></arg>
+ <arg><option>-screen=<replaceable>screenidx</replaceable></option></arg>
+ <arg><option>-inwin=<replaceable>winid|root</replaceable></option></arg>
  <arg><option>-noinput</option></arg>
  <arg><option>-nocursor</option></arg>
  <arg><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
-</group>
-<arg><replaceable>display</replaceable></arg>
-</cmdsynopsis>
-
-<cmdsynopsis>
-<command>display-xlib</command>
-<arg choice="plain">:</arg>
-<group>
- <arg><option>-inroot</option></arg>
- <arg><option>-inwin=<replaceable>winid</replaceable></option></arg>
- <arg><option>-noinput</option></arg>
- <arg><option>-nocursor</option></arg>
- <arg><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+ <arg><option>-nobuffer</option></arg>
+ <arg><option>-noaccel</option></arg>
+ <arg><option>-nomansync</option></arg>
+ <arg><option>-noshm</option></arg>
+ <arg><option>-nodga</option></arg>
+ <arg><option>-novidmode</option></arg>
+ <arg><option>-nodbe</option></arg>
+ <arg><option>-noevi</option></arg>
 </group>
 <arg><replaceable>display</replaceable></arg>
 </cmdsynopsis>
@@ -51,32 +45,23 @@
 <title>Description</title>
 
 <para>
-<systemitem>display-x</systemitem> opens an X window and emulates a linear
-framebuffer which is blitted to the X server with the
-<function>XPutImage</function> function. In <link linkend="api-ggisetflags">
-asynchronous mode</link> this is done when
-<function>ggiFlush</function> is called, and in synchronous mode it is
-done periodically in the background (with the
-framerate specified by <link linkend="GGI-MANSYNC-FPS">
-<envar>GGI_MANSYNC_FPS</envar></link>.  The MITSHM
-extension is used when available for maximum speed.
+<systemitem>display-x</systemitem> displays a GGI application via an
+ X11 server.  The server may be local or remote, and options
+ are provided to tune performance to various scenerios.  In normal
+ operation, a new X11 window is opened, solid fill primitives and 
+ copybox are accelerated by the server, and a backbuffer is kept 
+ client-side for content fills (e.g. ggiPut* functions) and to restore 
+ data when an application has been exposed after being concealed by 
+ another window.
 </para>
 
 <para>
-<systemitem>display-xlib</systemitem> opens an window and uses Xlib primitives to do
-drawing.  It is faster than <systemitem>display-x</systemitem> when using drawing
-primitives on on accelerated X server, but blitting is slower when
-running local to the X server.
-</para>
-
-<para>
-In both targets,
-<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>m</keycap></keycombo>
-toggles mouse grabbing.  It will try to emulate a "relative" mouse
-device, i.e. one that can be moved arbitrarily far in any direction
-without ever leaving the window.  This is useful for game controls,
-where loosing focus is generally undesireable.  Note that grabbing must
-be turned off in order to leave the window.
+<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>m</keycap>
+</keycombo> toggles mouse grabbing in the new window.  It will try to 
+emulate a "relative" mouse device, i.e. one that can be moved arbitrarily 
+far in any direction without ever leaving the window.  This is useful for 
+game controls, where loosing focus is generally undesireable.  Note that 
+grabbing must be turned off in order to leave the window.
 </para>
 
 </refsect1>
@@ -94,16 +79,30 @@ be turned off in order to leave the window.
  </varlistentry>
  
  <varlistentry>
- <term><option>-inroot</option></term>
+ <term><option>-screen=<replaceable>screenidx</replaceable></option></term>
  <listitem><para>
- Run in root window
+ The screen to run on.  Normally the biggest/deepest screen compatible with 
+ the requested mode will be chosen; with this option only the screen 
+ specified by <replaceable>screenidx</replaceable> will be considered.
  </para></listitem>
  </varlistentry>
  
  <varlistentry>
- <term><option>-inwin=<replaceable>winid</replaceable></option></term>
+ <term><option>-inwin=<replaceable>winid|root</replaceable></option></term>
  <listitem><para>
- Run in already-existing window with id <replaceable>winid</replaceable>
+ Run in already-existing window with id <replaceable>winid</replaceable>.
+ This can be used to embed a LibGGI application into an X11 application.
+ The value should be an X11 window ID expressed as a "0x" prefixed hexadecimal 
+ number.  The special string "root" will cause the application to run in the 
+ root window of the selected screen (or the default screen if no explicit
+ selection has been made.)  Note that in the root window, you may need to 
+ explictly select a LibGII input source using the GGI_INPUT environment 
+ variable as the window manager will absorb all events sent to the root 
+ window.  Some features (currently frames and virtual areas) may not work
+ in root windows.  On the other hand, when using the root window other
+ features like direct framebuffer access and video hardware mode selection
+ may be available which are not available when the application is running in
+ a normal window.
  </para></listitem>
  </varlistentry>
   
@@ -119,7 +118,7 @@ be turned off in order to leave the window.
  <varlistentry>
  <term><option>-nocursor</option></term>
  <listitem><para>
- Normal behavior of display-x and display-xlib is to create a small dot
+ Normal behavior of display-x is to create a small dot
  mouse cursor pixmap which is visible when the mouse is positioned over the
  window containing the visual.  This goes away when using mouse grabbing 
  as described above, but otherwise can get in the way of mouse cursors 
@@ -127,7 +126,7 @@ be turned off in order to leave the window.
  mouse cursor will be invisible when it is over the visual.
  </para></listitem>
  </varlistentry>
-
+ 
  <varlistentry>
  <term><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
  <listitem><para>
@@ -135,15 +134,96 @@ be turned off in order to leave the window.
  X server, which affects applications which wish to remain resolution
  independent.
  <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are
- the x,y 
- size of the entire screen (not just the X window containing the visual) 
- in millimeters, unless the optional <replaceable>dpi</replaceable> 
+ the x,y size of the entire screen (not just the X window containing the 
+ visual) in millimeters, unless the optional <replaceable>dpi</replaceable> 
  string is affixed, in which case, they represent resolution in dots-per-inch.
  Yes, there are two equals signs there, for reasons of compatibility with
  other targets.
  </para></listitem> 
  </varlistentry>
 
+ <varlistentry>
+ <term><option>-nobuffer</option></term>
+ <listitem><para>
+ No client-side backbuffer is kept.  This may result in lost data when the 
+ LibGGI application is obscured by other windows.  This data loss can be 
+ minimized by enabling backing store in the X11 server.  Using this option 
+ will cause operations which must read back framebuffer data to be much 
+ slower, but on the other hand can result in a slight speed gain for 
+ certain graphics primitives.  It is best used when resources are severely
+ limited on the client side, and with applications that do not perform 
+ frequent ggiPut* operations.
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-noaccel</option></term>
+ <listitem><para>
+ All rendering is performed in the client-side backbuffer, and then sent to
+ to the server; no server-side accelerated graphics operations are used.
+ This will signifigantly slow down certain graphics applications, but for
+ applications that use directbuffer and asyncronous mode extensively the effect
+ will not be noticeable.  The only real reason to use this option, however,
+ is to eliminate artifacts caused by incorrectly implemented X11 hardware 
+ drivers.
+ </para></listitem> 
+ </varlistentry>
+ 
+ <varlistentry>
+ <term><option>-nomansync</option></term>
+ <listitem><para>
+ Use of the mansync helper library to periodically flush backbuffer contents
+ to the X11 server is disabled.  This, of course, will result in incorrect 
+ behavior of applications that use syncronous mode.
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-noshm</option></term>
+ <listitem><para>
+ Use of the MIT-SHM extension to speed data transfer between clients and 
+ servers which are running on the same machine is disabled.  Normally it is
+ not necessary to use this option, as use of the MIT-SHM extension is disabled
+ automatically if it appears to be nonfunctional.
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-nodga</option></term>
+ <listitem><para>
+ Use of the XFree86-DGA extension to provide direct framebuffer access
+ is disabled.  Some implementations of the XFree86-DGA extension may cause
+ system lockups.  Use this option to prevent such occurrances.
+ (NOTE: Currently XFree86-DGA support has not been integrated into the 
+ display-X target.  To use DGA, see the older display-dga target.)
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-novidmode</option></term>
+ Use of the X11 Vidmode extension to change video timing in full-screen
+ modes is disabled.  Some implementations of the Vidmode extension may cause
+ system lockups.  Use this option to prevent such occurrances.
+ (NOTE: Currently Vidmode support has not been completed)
+ <listitem><para>
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-nodbe</option></term>
+ <listitem><para>
+ Use of the X11 DBE extension to provide buffered frame support is disabled.
+ (NOTE: Currently DBE extension support has not been completed.)
+ </para></listitem> 
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-noevi</option></term>
+ <listitem><para>
+ Use of the X11 Extended Visual Information extension to identify visuals
+ which are exclusively used for overlay/underlay is disabled.
+ </para></listitem> 
+ </varlistentry>
 
 </variablelist>
 
@@ -156,17 +236,9 @@ be turned off in order to leave the window.
 <title>For <systemitem>display-x</systemitem></title>
 <simplelist>
 <member>DirectBuffer always available.</member>
-<member>Unaccelerated</member>
-<member>Multiple frames</member>
-<member>Panning</member>
-</simplelist>
-</refsect2>
-
-<refsect2>
-<title>For <systemitem>display-xlib</systemitem></title>
-<simplelist>
-<member>DirectBuffer never available.</member>
-<member>Accelerated if the hosting X server is.</member>
+<member>Accelerated</member>
+<member>Multiple frames except for root window</member>
+<member>Panning except for root window</member>
 </simplelist>
 </refsect2>
 
