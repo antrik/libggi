@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2004/09/24 12:30:11 pekberg Exp $
+/* $Id: mode.c,v 1.26 2004/11/02 08:44:54 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/directx.h>
 
 #include "ddinit.h"

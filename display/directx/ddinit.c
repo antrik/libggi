@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.40 2004/09/24 12:30:11 pekberg Exp $
+/* $Id: ddinit.c,v 1.41 2004/11/02 08:44:54 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include "ddinit.h"
 #include <process.h>
 
