@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.2 2004/05/03 22:58:17 cegger Exp $
+/* $Id: clip2d.c,v 1.3 2004/05/04 10:23:24 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -21,6 +21,7 @@
 #include <ggi/ggi.h>
 
 #include <string.h>
+#include <limits.h>
 
 #include "../../default/common/clip.c"
 
