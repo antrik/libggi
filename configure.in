@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.42 2002/10/10 17:04:42 cegger Exp $
+dnl $Id: configure.in,v 1.43 2002/10/11 05:03:45 redmondp Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -59,8 +59,6 @@ build_dga_target="auto"
 internal_xf86dga="yes"
 build_linvtsw_helper="auto"
 
-build_genkgi_driver="auto"
-
 
 dnl ========================================================================
 dnl Checks for programs.
@@ -105,9 +103,6 @@ AC_ARG_WITH(directfb,
   build_directfb_renderer=yes
   directfb_driver_dir=$withval,
   directfb_driver_dir=/usr/lib/directfb/gfxdrivers)
-AC_ARG_ENABLE(genkgi,
-[  --disable-genkgi        don't build the generic KGI driver (used by fbdev)],
-build_genkgi_driver=$enableval)
 AC_ARG_ENABLE(file,
 [  --disable-file          don't build the file target],
 build_file_target=$enableval)
@@ -406,7 +401,6 @@ fi
 
 if test "x$ac_cv_func_mmap_fixed_mapped" != "xyes"; then 
   build_fbdev_target="no"
-  build_genkgi_driver="no"
   build_file_target="no"
   build_kgi_target="no"
 fi
@@ -427,10 +421,6 @@ fi
 if test "x$build_directfb_renderer" != "xno"; then
   AC_CHECK_HEADER(directfb-internal/directfb_version.h,
 	foo=bar, build_directfb_renderer="no")
-fi
-
-if test "x$build_genkgi_driver" != "xno"; then
-  AC_CHECK_HEADER(kgi/kgi.h, ,build_genkgi_driver="no")
 fi
 
 if test "x$build_libkgi_driver" != "xno"; then
@@ -592,7 +582,7 @@ if test "x$build_kgi_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
-  DEFAULTSUBDIRS="$DEFAULTSUBDIRS"
+  DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
   build_kgi_target="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -642,15 +632,6 @@ else
     AC_DEFINE_UNQUOTED(DIRECTFB_DRIVER_DIR,"$directfb_driver_dir")
     AC_MSG_RESULT(yes)
   fi
-fi
-
-AC_MSG_CHECKING(if we should build generic KGI driver)
-if test "x$build_genkgi_driver" = "xno"; then
-  AC_MSG_RESULT(no)
-else
-  DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
-  build_genkgi_driver="yes"
-  AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(if we should build file     target)
@@ -956,6 +937,8 @@ default/Makefile
 default/color/Makefile
 default/common/Makefile
 default/kgi/Makefile
+default/kgi/ATI/Makefile
+default/kgi/ATI/Mach64/Makefile
 default/linear_1/Makefile
 default/linear_1_r/Makefile
 default/linear_2/Makefile
