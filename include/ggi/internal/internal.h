@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.5 2002/10/20 20:35:49 skids Exp $
+/* $Id: internal.h,v 1.6 2003/12/11 23:44:20 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -150,6 +150,8 @@ __END_DECLS
 
 #define LIBGGI_EXT(vis,extid)	((vis)->extlist[(extid)].priv)
 #define LIBGGI_EXTAC(vis,extid)	((vis)->extlist[(extid)].attachcount)
+#define LIBGGI_EXT_CHECK(vis, extid)	(((vis)->numknownext > (extid)) ? \
+						LIBGGI_EXT((vis), (extid)) : NULL)
 
 #define LIBGGI_FLAGS(vis)	((vis)->flags)
 #define LIBGGI_FD(vis)		((vis)->fd)
