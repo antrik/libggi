@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-fbdev">
+
+<refmeta>
+<refentrytitle><systemitem>display-fbdev</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-fbdev</systemitem></refname>
+<refpurpose>Display using Linux kernel framebuffer devices</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-fbdev</command>
+<arg choice="plain">:</arg>
+<group>
+ <arg><option>-noinput</option></arg>
+ <group choice="opt">
+  <arg><option>-nokbd</option></arg>
+  <arg><option>-nomouse</option></arg>
+ </group>
+</group>
+<arg><option>-novt</option></arg>
+<arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+<arg><replaceable>framebuffer</replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Uses the Linux <filename>/dev/fb*</filename> devices to do fullscreen
+graphics.
+</para>
+
+<para>
+When using a regular fbdev driver, <filename>/etc/fb.modes</filename> 
+is used to determine the available modes for the device.
+Driver timings and resolutions can be automatically obtained when
+running under KGIcon.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+
+<varlistentry>
+<term><replaceable>framebuffer</replaceable></term>
+<listitem><para>
+The filename of the framebuffer target to use.  The default is to get it
+from the <envar>FRAMEBUFFER</envar> environment, or the framebuffer associated
+with the current console if that is unset.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-nokbd</option></term>
+<listitem><para>
+Do not open any libraries for keyboard input.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-nomouse</option></term>
+<listitem><para>
+Do not open any libraries for mouse input.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-noinput</option></term>
+<listitem><para>
+Same as both <option>-nokbd</option> and <option>-nomouse</option>.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-novt</option></term>
+<listitem><para>
+Disable virtual console support.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+<listitem><para>
+This option will provide a physical screen size for applications which 
+wish to remain resolution independent.  
+<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y 
+size of the screen in millimeters, unless the optional <replaceable>dpi</replaceable>
+string is affixed, in which case, they represent resolution in dots-per-inch.
+</para></listitem> 
+ </varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>Features</title>
+
+<simplelist>
+<member>DirectBuffer always available.</member>
+<member>Accelerated when using KGIcon or matroxfb.</member>
+<member>Multiple frames</member>
+<member>Panning</member>
+</simplelist>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist>
+<member>
+<citerefentry><refentrytitle><filename>fb.modes</filename></refentrytitle><manvolnum>5</manvolnum></citerefentry>
+</member>
+</simplelist>
+
+</refsect1>
+
+</refentry>

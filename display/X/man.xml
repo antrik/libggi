@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-x">
+
+<refmeta>
+<refentrytitle><systemitem>display-x</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+
+<refnamediv>
+<refname><systemitem>display-x</systemitem></refname>
+<refname><systemitem>display-xlib</systemitem></refname>
+<refpurpose>Displays in an X window</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+
+<cmdsynopsis>
+<command>display-x</command>
+<arg choice="plain">:</arg>
+<group>
+ <arg><option>-inroot</option></arg>
+ <arg><option>-inwin=<replaceable>winid</replaceable></option></arg>
+ <arg><option>-noinput</option></arg>
+ <arg><option>-nocursor</option></arg>
+ <arg><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+</group>
+<arg><replaceable>display</replaceable></arg>
+</cmdsynopsis>
+
+<cmdsynopsis>
+<command>display-xlib</command>
+<arg choice="plain">:</arg>
+<group>
+ <arg><option>-inroot</option></arg>
+ <arg><option>-inwin=<replaceable>winid</replaceable></option></arg>
+ <arg><option>-noinput</option></arg>
+ <arg><option>-nocursor</option></arg>
+ <arg><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+</group>
+<arg><replaceable>display</replaceable></arg>
+</cmdsynopsis>
+
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<systemitem>display-x</systemitem> opens an X window and emulates a linear
+framebuffer which is blitted to the X server with the
+<function>XPutImage</function> function. In <link linkend="api-ggisetflags">
+asynchronous mode</link> this is done when
+<function>ggiFlush</function> is called, and in synchronous mode it is
+done periodically in the background (with the
+framerate specified by <link linkend="GGI-MANSYNC-FPS">
+<envar>GGI_MANSYNC_FPS</envar></link>.  The MITSHM
+extension is used when available for maximum speed.
+</para>
+
+<para>
+<systemitem>display-xlib</systemitem> opens an window and uses Xlib primitives to do
+drawing.  It is faster than <systemitem>display-x</systemitem> when using drawing
+primitives on on accelerated X server, but blitting is slower when
+running local to the X server.
+</para>
+
+<para>
+In both targets,
+<keycombo><keycap>Ctrl</keycap><keycap>Alt</keycap><keycap>m</keycap></keycombo>
+toggles mouse grabbing.  It will try to emulate a "relative" mouse
+device, i.e. one that can be moved arbitrarily far in any direction
+without ever leaving the window.  This is useful for game controls,
+where loosing focus is generally undesireable.  Note that grabbing must
+be turned off in order to leave the window.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+ <varlistentry>
+ <term><replaceable>display</replaceable></term>
+ <listitem><para>
+ The X display to connect to, otherwise defaults to the display
+ specified in <envar>DISPLAY</envar>
+ </para></listitem>
+ </varlistentry>
+ 
+ <varlistentry>
+ <term><option>-inroot</option></term>
+ <listitem><para>
+ Run in root window
+ </para></listitem>
+ </varlistentry>
+ 
+ <varlistentry>
+ <term><option>-inwin=<replaceable>winid</replaceable></option></term>
+ <listitem><para>
+ Run in already-existing window with id <replaceable>winid</replaceable>
+ </para></listitem>
+ </varlistentry>
+  
+ <varlistentry>
+ <term><option>-noinput</option></term>
+ <listitem><para>
+ X events sent to the window are not captured and merged with any other
+ LibGII input sources.  This allows one to take input from raw devices without 
+ receiving duplicate events should X also be configured to use the device.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-nocursor</option></term>
+ <listitem><para>
+ Normal behavior of display-x and display-xlib is to create a small dot
+ mouse cursor pixmap which is visible when the mouse is positioned over the
+ window containing the visual.  This goes away when using mouse grabbing 
+ as described above, but otherwise can get in the way of mouse cursors 
+ implemented by the application.  With this option, the X 
+ mouse cursor will be invisible when it is over the visual.
+ </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+ <term><option>-physz==<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+ <listitem><para>
+ This option will override the physical screen size reported by the
+ X server, which affects applications which wish to remain resolution
+ independent.
+ <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are
+ the x,y 
+ size of the entire screen (not just the X window containing the visual) 
+ in millimeters, unless the optional <replaceable>dpi</replaceable> 
+ string is affixed, in which case, they represent resolution in dots-per-inch.
+ Yes, there are two equals signs there, for reasons of compatibility with
+ other targets.
+ </para></listitem> 
+ </varlistentry>
+
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>Features</title>
+
+<refsect2>
+<title>For <systemitem>display-x</systemitem></title>
+<simplelist>
+<member>DirectBuffer always available.</member>
+<member>Unaccelerated</member>
+<member>Multiple frames</member>
+<member>Panning</member>
+</simplelist>
+</refsect2>
+
+<refsect2>
+<title>For <systemitem>display-xlib</systemitem></title>
+<simplelist>
+<member>DirectBuffer never available.</member>
+<member>Accelerated if the hosting X server is.</member>
+</simplelist>
+</refsect2>
+
+</refsect1>
+
+</refentry>

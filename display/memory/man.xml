@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-memory">
+
+<refmeta>
+<refentrytitle><systemitem>display-memory</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-memory</systemitem></refname>
+<refpurpose>Display on buffer in main memory</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-memory</command>
+<arg choice="plain">:</arg>
+<arg><option>-input</option></arg>
+<arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+<group>
+ <arg>shmid:<replaceable>sid</replaceable></arg>
+ <arg>keyfile:<replaceable>size</replaceable>:<replaceable>id</replaceable>:<replaceable>fname</replaceable></arg>
+ <arg>pointer</arg>
+</group>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Emulates a linear framebuffer in main memory. The framebuffer can be a
+shared memory segment, an area specified by the application, or an area
+allocated by <systemitem>display-memory</systemitem> itself.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+
+<varlistentry>
+<term><replaceable>-input</replaceable></term>
+<listitem>
+
+<para>
+If the <option>-input</option> option is set, an input buffer of
+<symbol>INPBUFSIZE</symbol>
+(default is 8192 bytes) as #define'd in <filename>ggi/display/memory.h</filename>
+is allocated at the start of the requested memory area.
+</para>
+
+<para>
+When running on shared memory, this option enables you to to give input
+(using <link linkend="api-ggieventpoll"><function>giiSendEvent</function></link>) 
+to other processes sharing that segment.  This
+technique is demonstrated in <application>cube3d</application> and can
+be used for things like GGI multiplexers.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+<listitem><para>
+This option will provide a physical screen size for applications which
+wish to remain resolution independent.  
+<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y
+size of the screen in millimeters, unless the optional
+<replaceable>dpi</replaceable>
+string is affixed, in which case, they represent resolution in dots-per-inch.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>shmid:<replaceable>sid</replaceable></term>
+<listitem>
+<para>use existing shared memory ID <replaceable>sid</replaceable></para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>keyfile:<replaceable>size</replaceable>:<replaceable>id</replaceable>:<replaceable>fname</replaceable></term>
+<listitem>
+<para>create a new shm segment with id ftok(<replaceable>fname</replaceable>, <replaceable>id</replaceable>)
+of size <replaceable>size</replaceable> (preferred method !)</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>pointer</term>
+<listitem>
+<para>use the memory pointed to by <parameter>argptr</parameter> 
+(only available to applications calling <function>ggiOpen</function>).
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+  
+<important><para>
+If you specify a memory area to use - be sure it's big enough as no
+checks can or will be made that a certain mode fits into it.
+</para></important>
+
+</refsect1>
+
+<refsect1>
+<title>Features</title>
+
+<simplelist>
+<member>DirectBuffer support always available.</member>
+<member>Unaccelerated.</member>
+</simplelist>
+
+</refsect1>
+
+</refentry>

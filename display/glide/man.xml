@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-glide">
+
+<refmeta>
+<refentrytitle><systemitem>display-glide</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-glide</systemitem></refname>
+<refpurpose>Display using Glide library</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-glide</command>
+<arg choice="plain">:</arg>
+<arg><replaceable>card</replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Uses the Glide library to display fullscreen on a 3DFX graphics card.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<para>
+The 3DFX card to use can be optionally specified as a cardinal number
+minus one.  (e.g. <literal>0</literal> means the first card,
+<literal>1</literal> the second, etc.)
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Environment variables</title>
+
+<variablelist>
+
+<varlistentry>
+<term><envar>GGI_GLIDE_MAXFREQ</envar></term>
+<listitem><para>
+specifies the maximum update frequency your monitor can handle (in Hz). Default is 70Hz.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><envar>GGI_GLIDE_MAXHFREQ</envar></term>
+<listitem><para>
+specifies the maximum horizontal frequency your monitor can handle (in kHz). Default is 48kHz.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><envar>GGI_GLIDE_HALTONSWITCH</envar></term>
+<listitem><para>if this is set applications will be halted on
+console switchaway. The default is to continue running.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>Features</title>
+
+<simplelist>
+<member>DirectBuffer never available.</member>
+<member>Accelerated, one of the fastest targets when it comes to
+drawing-primitives.</member>
+<member>Multiple frames.</member>
+</simplelist>
+
+</refsect1>
+
+</refentry>

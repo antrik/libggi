@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-palemu">
+
+<refmeta>
+<refentrytitle><systemitem>display-palemu</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-palemu</systemitem></refname>
+<refpurpose>Emulate palettized modes on visuals of other mode schemes</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-palemu</command>
+<arg choice="plain">:</arg>
+<arg><option>-parent=<replaceable>mode</replaceable></option></arg>
+<arg choice="req"><replaceable>target-spec</replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Emulates palettized modes (<symbol>GT_PALETTE</symbol>) on another target which
+can only do truecolor/greyscale/text modes or palettized modes of higher
+depth.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+
+<varlistentry>
+<term><option>-parent=<replaceable>mode</replaceable></option></term>
+<listitem><para>
+Force the parent target to use a specific mode, specified as a standard 
+<link linkend="ggi-mode-string">LibGGI mode string</link>.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><replaceable>target-spec</replaceable></term>
+<listitem><para>
+Specifies the target which to draw on (the `parent' target).  This
+defaults to automatic selection (just like using
+<function>ggiOpen</function>(<symbol>NULL</symbol>) when
+<envar>GGI_DISPLAY</envar> is not set).
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title>Features</title>
+
+<simplelist>
+<member>DirectBuffer never supported.</member>
+<member>Unaccelerated.</member>
+</simplelist>
+</refsect1>
+
+ 
+</refentry>
+ 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-monotext">
+
+<refmeta>
+<refentrytitle><systemitem>display-monotext</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-monotext</systemitem></refname>
+<refpurpose>Emulate palettized modes on text-mode visuals</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-monotext</command>
+<arg choice="plain">:</arg>
+<group>
+ <arg><option>-a=<replaceable>accuracy</replaceable></option></arg>
+ <group choice="opt">
+  <arg><option>-x=<replaceable>accuracy</replaceable></option></arg>
+  <arg><option>-y=<replaceable>accuracy</replaceable></option></arg>
+ </group>
+</group>
+<arg><replaceable><link linkend="target-spec">target-spec</link></replaceable></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Emulates palettized modes (GT_PALETTE) on another target which can only
+do text modes, by representing the graphics as ASCII characters.  The
+effect is the much the same as the <systemitem>AAlib</systemitem>
+target, but does not depend on any external libraries.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Options</title>
+
+<variablelist>
+<varlistentry>
+<term><option>-x=<replaceable>accuracy</replaceable></option></term>
+<term><option>-y=<replaceable>accuracy</replaceable></option></term>
+<listitem><para>
+A value between 1 and 5 which determines how accurately to map the
+graphics to ASCII characters.  Lower values are less accurate, but can
+represent a wider range of intensity levels.
+</para>
+    
+<para>The default is X=2 and Y=4.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-a=<replaceable>accuracy</replaceable></option></term>
+<listitem><para>
+Same as above, but sets both the X and Y accuracy to the specified
+value.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+  
+</refsect1>
+
+</refentry>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC
+  "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<refentry id="ref-display-directx">
+
+<refmeta>
+<refentrytitle><systemitem>display-directx</systemitem></refentrytitle>
+<manvolnum>7ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname><systemitem>display-directx</systemitem></refname>
+<refname><systemitem>display-directxnt</systemitem></refname>
+<refpurpose>DirectX (WIN32)</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>display-directx</command>
+<arg choice="plain">:</arg>
+</cmdsynopsis>
+
+<cmdsynopsis>
+<command>display-directxnt</command>
+<arg choice="plain">:</arg>
+</cmdsynopsis>
+
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Used for Win32 DirectX port of libGGI.
+</para>
+
+<para>
+Use <command>display-directxnt</command> on NT4 system.
+</para>
+
+</refsect1>
+
+</refentry>
