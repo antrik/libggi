@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.107 2004/02/25 09:22:03 pekberg Exp $
+dnl $Id: configure.in,v 1.108 2004/02/25 10:13:58 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -297,9 +297,14 @@ AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
-sys/socket.h netinet/in.h netdb.h windows.h winsock2.h winsock.h \
-ddraw.h vgl.h linux/h3600_ts.h asm/sharp_ts.h \
+sys/socket.h netinet/in.h netdb.h windows.h vgl.h linux/h3600_ts.h \
+asm/sharp_ts.h \
 ApplicationServices/ApplicationServices.h)
+
+AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h, [], [],
+	[#ifdef HAVE_WINDOWS_H
+	 # include <windows.h>
+	 #endif])
 
 
 dnl ========================================================================
