@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/06/20 23:47:12 skids Exp $
+/* $Id: visual.c,v 1.5 2001/12/07 10:59:31 cegger Exp $
 ******************************************************************************
 
    Display-Xlib initialization.
@@ -143,6 +143,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->xwin.window = RootWindow(priv->xwin.x.display,
 				       priv->xwin.x.screen);
 	priv->xwin.x.cmap = 0;
+	priv->xwin.cmap_first=0;/* Initialize them ! or trouble comes later. */
+	priv->xwin.cmap_last=0;
 	priv->xwin.x.gc = 0;
 	priv->tempgc = 0;
 	priv->xwin.wintype = GGIX_NORMAL;
