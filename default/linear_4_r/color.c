@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: color.c,v 1.2 2002/10/09 22:38:43 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. pack/unpack
@@ -37,8 +37,9 @@ int GGI_lin4r_packcolors(ggi_visual *vis, void *outbuf, ggi_color *cols, int len
 	int i;
 
 	for (i=0; i < len/2; i++) {
-		*(obuf++) = (uint8)(LIBGGIMapColor(vis, (cols++)))
-			| (uint8)(LIBGGIMapColor(vis, (cols++)) << 4);
+		*(obuf++) = (uint8)(LIBGGIMapColor(vis, (cols+1)))
+			| (uint8)(LIBGGIMapColor(vis, (cols+2)) << 4);
+		cols += 2;
 	}
 
 	if (len & 1) {
