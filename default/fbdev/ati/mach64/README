@@ -2,3 +2,7 @@ A problem that it still has is that it only works in 8 bpp. Other pixel
 depths should work, but for some reason GT_DEPTH returns 18 in 16 and 32
 bpp modes, so the engine is not correctly initialized. If this is fixed, I
 expect 16 and 32 bpp will work too. 24 bpp still needs some work.
+
+Update: The checkmode implementation has been rewritten and makes use
+of the generic checkmode/modelist API. So the GT_DEPTH issue for 16 and 32
+bpp modes might have been fixed, but has not been verified yet.
