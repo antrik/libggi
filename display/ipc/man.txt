@@ -1,0 +1,46 @@
+Display using IPC
+~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-ipc
+
+Synopsis
+--------
+
+::
+
+  display-ipc: [-input] [-physz=<sizex>,<sizey>[dpi]]
+	       -socket=<socket> -semid=<semid> -shmid=<shmid>
+
+Description
+-----------
+
+Not sure what this is all about...
+
+Options
+-------
+
+``-input``
+    If the ``-input`` option is set, an input buffer of `INPBUFSIZE`
+    (default is 8192 bytes) as #define'd in `ggi/display/memory.h` is
+    allocated at the start of the requested memory area.
+
+    When running on shared memory, this option enables you to to give
+    input (using :man:`giiEventSend(3)`\ ) to other processes sharing
+    that segment. This technique is demonstrated in :man:`cube3d(1)`
+    and can be used for things like GGI multiplexers.
+
+``-physz=<sizex>,<sizey>[dpi]``
+    This option will provide a physical screen size for applications
+    which wish to remain resolution independent.  :p:`sizex`,
+    :p:`sizey` are the x,y size of the screen in millimeters, unless
+    the optional ``dpi`` string is affixed, in which case, they
+    represent resolution in dots-per-inch.
+
+``-socket=<socket>``
+    Specify the path to the socket.
+
+``-semid=<semid>``
+    Specify the sem id. Seem to be not used anywhere
+
+``-shmid=<shmid>``
+    Specify the shared memory identifier to use.
