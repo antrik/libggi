@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2004/10/31 14:25:02 cegger Exp $
+/* $Id: visual.c,v 1.22 2004/11/03 13:09:06 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -139,11 +139,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
 	/* Allocate descriptor for screen memory */
-	priv = MEMORY_PRIV(vis) = calloc(1,sizeof(ggi_memory_priv));
+	priv = calloc(1,sizeof(ggi_memory_priv));
 	if (!priv) {
 		free(LIBGGI_GC(vis));
 		return GGI_ENOMEM;
 	}
+	LIBGGI_PRIVATE(vis) = priv;
 
 	priv->memtype = MT_MALLOC;	/* Default to mallocing. */
 	priv->inputbuffer = NULL;	/* Default to no input */
