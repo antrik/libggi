@@ -1302,7 +1302,10 @@ EOF
       else $CC -o impgen impgen.c ; fi)~
       $output_objdir/impgen $dir/$soroot > $output_objdir/$soname-def'
 
-    old_archive_from_expsyms_cmds='$DLLTOOL --as=$AS --dllname $soname --def $output_objdir/$soname-def --output-lib $output_objdir/$newlib'
+    # Don't set old_archive_from_expsyms_cmds, as extract_expsyms_cmds
+    # does not work for dlls exporting variables (impgen.c does not
+    # append DATA to the variables in the $soname-def file).
+    # old_archive_from_expsyms_cmds='$DLLTOOL --as=$AS --dllname $soname --def $output_objdir/$soname-def --output-lib $output_objdir/$newlib'
 
     # cygwin and mingw dlls have different entry points and sets of symbols
     # to exclude.
