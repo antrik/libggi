@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2003/07/06 10:25:21 cegger Exp $
+/* $Id: mode.c,v 1.21 2003/11/09 13:01:07 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -193,14 +193,20 @@ int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
 
 	priv = GGIX_PRIV(vis);
 
+	GGIDPRINT_MODE("X (checkmode_normal): mlfuncs.validate = %p\n",
+			priv->mlfuncs.validate);
 	if (priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
+			GGIDPRINT_MODE("X: mlfuncs.validate failed: %i\n",
+				priv->cur_mode);
 			/* An error occured */
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
 		}	/* if */
+		GGIDPRINT_MODE("X: mlfuncs.validate successful: %i\n",
+			priv->cur_mode);
 	}	/* if */
 
 	return rc;
@@ -229,14 +235,20 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		tm->visible.y = h;
 	}
 
+	GGIDPRINT_MODE("X (checkmode_fixed): mlfuncs.validate = %p\n",
+			priv->mlfuncs.validate);
 	if (priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
+			GGIDPRINT_MODE("X: mlfuncs.validate failed: %i\n",
+					priv->cur_mode);
 			/* An error occured */
 			dummy = priv->cur_mode;
 			priv->cur_mode = 0;
 			return dummy;
 		}	/* if */
+		GGIDPRINT_MODE("X: mlfuncs.validate successful: %i\n",
+				priv->cur_mode);
 	}	/* if */
 
 	return dummy;
@@ -337,8 +349,12 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	if (!createparent) goto oldparent;
 
 
+	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
+			priv->mlfuncs.restore);
 	if (priv->mlfuncs.restore != NULL) {
 		err = priv->mlfuncs.restore(vis);
+		GGIDPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
+				err);
 		if (err) goto err0;
 	}	/* if */
 
@@ -457,8 +473,12 @@ oldparent:
 		if (err) goto err1;
 	}
 
+	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.enter = %p\n",
+			priv->mlfuncs.enter);
 	if (priv->mlfuncs.enter != NULL) {
 		err = priv->mlfuncs.enter(vis, priv->cur_mode);
+		GGIDPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
+				err);
 		if (err) goto err1;
 	}	/* if */
 
@@ -554,8 +574,12 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	attrib.colormap = priv->cmap;
 	attribmask = CWBackingStore;
 	if (priv->win == root) {
+		GGIDPRINT_MODE("X (setmode_fixed): mlfuncs.restore = %p\n",
+			priv->mlfuncs.restore);
 		if (priv->mlfuncs.restore != NULL) {
 			err = priv->mlfuncs.restore(vis);
+			GGIDPRINT_MODE("X: mlfuncs.restore retcode = %i\n",
+					err);
 			if (err) goto err0;
 		}	/* if */
 
@@ -623,8 +647,12 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		if (err) goto err1;
 	}
 
+	GGIDPRINT_MODE("X (setmode_fixed): mlfuncs.enter = %p\n",
+		priv->mlfuncs.enter);
 	if (priv->mlfuncs.enter != NULL) {
 		err = priv->mlfuncs.enter(vis, priv->cur_mode);
+		GGIDPRINT_MODE("X: mlfuncs.enter retcode = %i\n",
+				err);
 		if (err) goto err1;
 	}	/* if */
 
