@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: buffer.c,v 1.2 2002/06/20 12:47:15 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -27,6 +27,8 @@
 
 ******************************************************************************
 */
+
+#include <string.h>
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
