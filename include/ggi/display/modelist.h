@@ -1,4 +1,4 @@
-/* $Id: modelist.h,v 1.4 2005/02/09 06:34:12 orzo Exp $
+/* $Id: modelist.h,v 1.5 2005/02/10 04:57:43 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -30,6 +30,13 @@
 #define _GGI_DISPLAY_MODELIST_H
 
 #include <ggi/internal/ggi-dl.h>
+
+#if HAVE_STDINT_H
+#include <stdint.h>  /* for intptr_t */
+#endif
+
+#include <ggi/internal/gg_replace.h>
+
 
 /* obsolete... */
 typedef struct {
@@ -85,10 +92,6 @@ void _GGI_modelist_destroy( ggi_modelist *ml);
 void _GGI_modelist_append( ggi_modelist *ml, ggi_mode_padded *m);
 int _GGI_modelist_checkmode(ggi_modelist *ml, ggi_mode_padded *tm);
 */
-
-#ifdef HAVE_STDINT_H    /* This header provides intptr_t */
-#include <stdint.h>
-#endif
 
 typedef 
 int ggi_user_cmp( ggi_mode *, intptr_t, intptr_t, void *);

@@ -1,9 +1,10 @@
-/* $Id: modelist.inc,v 1.9 2005/02/09 06:34:12 orzo Exp $
+/* $Id: modelist.inc,v 1.10 2005/02/10 04:57:42 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
 
-   Copyright (C) 1998 Marcus Sundberg - marcus@ggi-project.org
+   Copyright (C) 1998 Marcus Sundberg		[marcus@ggi-project.org]
+   Copyright (C) 2005 Joseph Crayne		[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -297,6 +298,12 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 	tmp = _GGI_score_frames(requested->frames, a->frames)
 	    - _GGI_score_frames(requested->frames, b->frames);
 
+	if (tmp != 0)
+		return tmp;
+
+	/* Prefer larger physical sizes to smaller ones */
+	tmp = b->size.x * b->size.y  -  a->size.x * a->size.y;
+
 	return tmp;
 }
 
@@ -324,7 +331,7 @@ void _GGI_generic_checkmode_destroy( ggi_checkmode_t * cm)
 static
 void _GGI_generic_checkmode_init(ggi_checkmode_t *cm, ggi_mode *tm)
 {
-	cm->sug.visible.x = GGI_AUTO; /* no suggested mode yet */
+	cm->sug.graphtype = GT_INVALID; /* no suggested mode yet */
 	/* copy requested mode */
 	memcpy( &cm->req, tm, sizeof(ggi_mode) );
 	cm->mode_extra = 0;
@@ -344,7 +351,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 	maxamize_depth = ( cm->req.graphtype == GT_AUTO);
 
 	/* First time... nothing to compare. */
-	if( cm->sug.visible.x == GGI_AUTO )  {
+	if( cm->sug.graphtype == GT_INVALID )  {
 		/* store suggested mode */
 		memcpy( &cm->sug, p, sizeof(ggi_mode) );
 		cm->mode_extra = mode_extra;
@@ -400,9 +407,13 @@ int _GGI_generic_checkmode_finish(ggi_checkmode_t * cm,
 {
 	int retv;
 
-	/* Did we find a perfect match?
-	 */
-	if ((cm->req.frames == GGI_AUTO ||
+	/* We use GT_INVALID as a marker to mean that checkmode_update()
+	 * was never called and there are presumably no modes available. */
+	if( cm->sug.graphtype == GT_INVALID )
+		retv = GGI_ENODEVICE;
+	
+	/* Did we find a perfect match?  */
+	else if ((cm->req.frames == GGI_AUTO ||
 	     cm->sug.frames == cm->req.frames)
 	    && (cm->req.visible.x == GGI_AUTO ||
 		cm->sug.visible.x == cm->req.visible.x)
@@ -423,7 +434,7 @@ int _GGI_generic_checkmode_finish(ggi_checkmode_t * cm,
 	    && (cm->req.size.y == GGI_AUTO ||
 		cm->sug.size.y == cm->req.size.y))
 
-		retv = 0;
+		retv = GGI_OK;
 	else
 		retv = GGI_ENOMATCH;
 
@@ -446,16 +457,11 @@ int _GGI_modelist_checkmode(ggi_modelist * ml, ggi_mode_padded * tm)
 	int i;
 	int retv;
 
-	LIB_ASSERT(ml->n >= 1,
-		   "_GGI_modelist_checkmode called with empty list");
-
 	ggi_checkmode_t *cm =
 		_GGI_generic_checkmode_create();
 
 	_GGI_generic_checkmode_init( cm, &tm.mode );
 
-	/* Find a match... 
-	 * FIXME: no accounting is made for: dpp and size */
 	for (i = 0; i < ml->n; i++, p++) {
 
 		/* adjust p for wildcard behavior */
