@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2003/01/17 00:51:40 skids Exp $
+/* $Id: visual.c,v 1.9 2003/01/29 01:16:22 skids Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -73,7 +73,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	KGI_PRIV(vis)->use3d = (options[KGI_OPT_NO3D].result[0] == 'n');
 
-	if (strncmp(options[KGI_OPT_SWATCHSIZE].result, "auto", 4)) {
+	if (!strncmp(options[KGI_OPT_SWATCHSIZE].result, "auto", 4)) {
 		KGI_PRIV(vis)->swatch_size = 0;
 	} else {
 		KGI_PRIV(vis)->swatch_size = 

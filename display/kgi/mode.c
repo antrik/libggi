@@ -27,6 +27,7 @@
 
 #include "kgi/config.h"
 #include <ggi/display/kgi.h>
+#include <ggi/internal/font/8x8>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,6 +78,23 @@ static void GGI_kgi_mode2ggi(ggi_mode *tm, kgi_image_mode_t *mode)
 	tm->size.y = GGI_AUTO;
 	tm->dpp.x = 1;
 	tm->dpp.y = 1;
+}
+
+static void install_font(uint8 *ptr) {
+	int i;
+
+	for (i = 0; i < 256 * 8; i++) {
+		int j;
+		j = (i % 8) * 256 * 8 + (i / 8) * 8;
+		ptr[j++] = (font[i] & 0x80) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x40) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x20) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x10) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x08) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x04) ? 0xff : 0x00;
+		ptr[j++] = (font[i] & 0x02) ? 0xff : 0x00;
+		ptr[j] =   (font[i] & 0x01) ? 0xff : 0x00;
+	}
 }
 
 int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
@@ -227,11 +245,14 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	int err;
 	kgi_u8_t *fb_ptr;
 	kgi_size_t pad;
+	ggi_kgi_priv *priv;
 
 	if (vis == NULL) {
 		GGIDPRINT("Visual==NULL\n");
 		return GGI_EARGINVAL;
 	}
+
+	priv = KGI_PRIV(vis);
 
 	err = GGI_kgi_checkmode(vis, tm);
 	if (err) return err;
@@ -249,8 +270,8 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		}
 	}
 	
-	if(KGI_PRIV(vis)->fb)
-		munmap(KGI_PRIV(vis)->fb, KGI_PRIV(vis)->fb_size);
+	if(priv->fb)
+		munmap(priv->fb, priv->fb_size);
 
 	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
 	if (! fb) {
@@ -262,12 +283,12 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	kgiSetupMmapFB(&KGI_CTX(vis), fb->resource);
 
-	KGI_PRIV(vis)->fb_size = fb->info.mmio.size;
-	KGI_PRIV(vis)->fb = mmap(NULL, KGI_PRIV(vis)->fb_size,
-				 PROT_READ | PROT_WRITE, MAP_SHARED,
-				 KGI_CTX(vis).mapper.fd, 0);
+	priv->fb_size = fb->info.mmio.size;
+	priv->fb = mmap(NULL, priv->fb_size,
+			PROT_READ | PROT_WRITE, MAP_SHARED,
+			KGI_CTX(vis).mapper.fd, 0);
 
-	if (KGI_PRIV(vis)->fb == MAP_FAILED){
+	if (priv->fb == MAP_FAILED){
 		GGIDPRINT_LIBS("Unable to map the frambuffer\n");
 		return -1;
 	}
@@ -279,7 +300,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	GGIDPRINT_LIBS("Pixelformat set\n");
 
-	(char *)fb_ptr = (char *)(KGI_PRIV(vis)->fb);
+	(char *)fb_ptr = (char *)(priv->fb);
 
 	/* "Page" align the frames.  Some accels need this. */
 	pad = 0;
@@ -299,6 +320,46 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 			LIBGGI_PIXFMT(vis);
 
 		(char *)fb_ptr += stride * tm->virt.y + pad;
+	}
+
+	/* Set up swatches. */
+	if (priv->use3d && (priv->swatch_size >= 0)) {
+		kgi_size_t avail;
+
+		avail = priv->fb_size;
+		avail -= (char *)fb_ptr - (char *)priv->fb;
+
+		/* We want at least 10 scanlines and space for the font. */
+
+		if (priv->swatch_size) {
+			if (sizeof(font)*8 + stride*10 > priv->swatch_size) {
+				fprintf(stderr, "More swatch needed\n");
+				return GGI_EARGINVAL;
+			}
+			if (priv->swatch_size > avail) {
+				fprintf(stderr, "No space for swatch\n");
+				return GGI_ENOMEM;
+			}
+		}
+		else {
+			priv->swatch_size = avail;
+			if (stride * tm->virt.y / 2 + sizeof(font)*8 < avail) {
+				priv->swatch_size = 
+				  stride * tm->virt.y / 2 + sizeof(font)*8;
+			}
+			if (sizeof(font)*8 + stride*10 > priv->swatch_size) {
+				fprintf(stderr, "No space for swatch\n");
+				return GGI_EARGINVAL;
+			}
+		}
+		(char *)priv->font = (char *)fb_ptr;
+		(char *)priv->swatch = (char *)fb_ptr + sizeof(font)*8;
+		priv->swatch_size -= sizeof(font)*8;
+		
+		GGIDPRINT("Font at %p, %i byte swatch at %p.\n", 
+			  priv->font, priv->swatch_size, priv->swatch);
+
+		install_font((uint8 *)priv->font);
 	}
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
@@ -451,6 +512,6 @@ int GGI_kgi_setflags(ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 	/* Only raise supported flags */
-	LIBGGI_FLAGS(vis) &= ~GGIFLAG_ASYNC;
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC;
 	return 0;
 }
