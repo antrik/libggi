@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2003/05/20 12:41:44 cegger Exp $
+/* $Id: mode.c,v 1.18 2003/06/12 12:11:34 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -212,6 +212,17 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		tm->visible.x = w;
 		tm->visible.y = h;
 	}
+
+	if (priv->mlfuncs.validate != NULL) {
+		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
+		if (priv->cur_mode < 0) {
+			/* An error occured */
+			dummy = priv->cur_mode;
+			priv->cur_mode = 0;
+			return dummy;
+		}	/* if */
+	}	/* if */
+
 	return dummy;
 }
 
@@ -510,6 +521,11 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	attrib.colormap = priv->cmap;
 	attribmask = CWBackingStore;
 	if (priv->win == root) {
+		if (priv->mlfuncs.restore != NULL) {
+			err = priv->mlfuncs.restore(vis);
+			if (err) goto err0;
+		}	/* if */
+
 		attribmask = CWColormap;
 		goto nochild;
 	}
@@ -530,7 +546,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
-	
+
 	/* Select input events to listen for */
 	XSelectInput(priv->disp, priv->win,
 		     KeyPressMask | KeyReleaseMask |
@@ -572,6 +588,11 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		err = priv->createdrawable(vis);
 		if (err) goto err1;
 	}
+
+	if (priv->mlfuncs.enter != NULL) {
+		err = priv->mlfuncs.enter(vis, priv->cur_mode);
+		if (err) goto err1;
+	}	/* if */
 
 	/* Tell inputlib about the new window */
 	if (priv->inp) {

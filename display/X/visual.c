@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2003/03/19 11:51:38 cegger Exp $
+/* $Id: visual.c,v 1.19 2003/06/12 12:11:35 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -362,6 +362,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	GGIDPRINT_MISC("X: Sort/complete visual list.\n");
 	_ggi_x_build_vilist(vis);	/* Sorts/completes vilist */
+
+	/* Get Modelist from DGA or VidMode helper */
+	if (priv->mlfuncs.getlist != NULL) priv->mlfuncs.getlist(vis);
 
 
 	/* Parse physical size options */
