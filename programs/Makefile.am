@@ -1,1 +1,1 @@
-SUBDIRS = demos util check
+SUBDIRS = check demos regress util

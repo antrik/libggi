@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.114 2004/05/02 23:02:12 nsouch Exp $
+dnl $Id: configure.in,v 1.115 2004/05/03 22:41:33 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1500,11 +1500,12 @@ default/fbdev/ati/mach64/Makefile
 extensions/Makefile
 extensions/test/Makefile
 programs/Makefile
+programs/check/Makefile
 programs/demos/Makefile
 programs/demos/warp-ggi/Makefile
+programs/regress/Makefile
 programs/util/Makefile
 programs/util/monitest/Makefile
-programs/check/Makefile
 doc/Makefile
 doc/man/Makefile
 m4/Makefile
