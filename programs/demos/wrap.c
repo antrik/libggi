@@ -1,10 +1,10 @@
-/* $Id: wrap.c,v 1.7 2002/10/31 22:04:36 cegger Exp $
+/* $Id: wrap.c,v 1.8 2002/12/02 20:50:20 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
             emulation
 
-   Authors:	2001 Stefan Seefeld		[stefan@berlin-consortium.org]
+   Authors:	2001 Stefan Seefeld		[stefan@fresco.org]
 
    This software is placed in the public domain and can be used freely
    for any purpose. It comes without any kind of warranty, either
