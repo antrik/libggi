@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.5 2003/01/21 00:09:52 skids Exp $
+/* $Id: ggi.h,v 1.6 2003/07/05 14:49:31 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -78,11 +78,11 @@ typedef gii_event		ggi_event;
 typedef unsigned int ggi_flags;
 
 /* SYNC/ASYNC mode. Draw instantly or when thw HW likes to. Default is sync */
-#define GGIFLAG_ASYNC	0x0001
+#define GGIFLAG_ASYNC	0x0001U
 /* TIDYBUF mode (default off) is for applications which use directbuffer and
  * manage there own dirty regions.  See ggiSetFlags manpage.
  */
-#define GGIFLAG_TIDYBUF	0x0002
+#define GGIFLAG_TIDYBUF	0x0002U
 
 
 /*
