@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2004/11/24 13:25:00 cegger Exp $
+/* $Id: visual.c,v 1.17 2004/11/24 13:34:01 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -414,7 +414,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		usagecounter--;
 		return GGI_ENOMEM;
 	}
-	priv = SVGA_PRIV(vis) = malloc(sizeof(struct svga_priv));
+	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(struct svga_priv));
 	if (priv == NULL) {
 		do_cleanup(vis);
 		return GGI_ENOMEM;
