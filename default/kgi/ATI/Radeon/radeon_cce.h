@@ -1,4 +1,4 @@
-/* $Id: radeon_cce.h,v 1.4 2003/01/29 01:17:45 skids Exp $
+/* $Id: radeon_cce.h,v 1.5 2003/02/07 01:35:09 skids Exp $
 ******************************************************************************
 
    ATI Radeon CCE packet structures
@@ -337,6 +337,7 @@ typedef struct
 #define PP_TXFORMAT_1 0x1c70 /* also 0x2c70 */
 #define PP_TXOFFSET_1 0x1c74 /* also 0x2c74 */
 #define PP_TXCBLEND_1 0x1c78 /* also 0x1c78 */
+#define PP_TXABLEND_1 0x1c7c /* also 0x1c7c */
 #define PP_TEX_SIZE_1 0x1d0c /* also 0x2d0c */
 #define PP_CNTL 0x1c38 /* also 0x2c38 */
 
@@ -347,6 +348,8 @@ typedef struct
 #define RE_WIDTH_HEIGHT 0x1c44 /* also 0x2644 */
 
 #define RE_SOLID_COLOR 0x1c1c /* also 0x261c */
+#define SRC_CLUT_ADDRESS 0x1780
+#define SRC_CLUT_DATA_W  0x1784
 #define PP_TFACTOR_1 0x1c80 /* also 0x2c80  This is used for GC bgcolor. */
 /* Above two organized as a8r8g8b8 */
 #define SE_CNTL 0x1c4c /* also 0x2088 */

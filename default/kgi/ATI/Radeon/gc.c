@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.3 2003/01/29 01:17:45 skids Exp $
+/* $Id: gc.c,v 1.4 2003/02/07 01:35:09 skids Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -28,41 +28,64 @@
 
 void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 	if (mask & GGI_GCCHANGED_FG) {
-		ggi_color col;
 		struct {
-	  		cce_type0_header_t h;
+			cce_type0_header_t h;
 			uint32 val;
 		} packet;
 
-		ggiUnmapPixel(vis, LIBGGI_GC_FGCOLOR(vis), &col);
 		memset(&packet, 0, sizeof(packet));
 		packet.h.base_index = RE_SOLID_COLOR >> 2;
 		packet.h.count = 0;
-		col.a >>= 8;
-		col.r >>= 8;
-		col.g >>= 8;
-		col.b >>= 8;
-		packet.val = (uint32)col.a << 24 | (uint32)col.r << 16 | 
-		  (uint32)col.g << 8 | (uint32)col.b;
+
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
+			packet.val = LIBGGI_GC_FGCOLOR(vis);
+			packet.val <<= 16;
+		} else if (GT_DEPTH(LIBGGI_GT(vis)) == 24) {
+			packet.val = LIBGGI_GC_FGCOLOR(vis);
+		} else {
+			ggi_color col;
+
+			ggiUnmapPixel(vis, LIBGGI_GC_FGCOLOR(vis), &col);
+			col.a >>= 8;
+			col.r >>= 8;
+			col.g >>= 8;
+			col.b >>= 8;
+			packet.val = (uint32)col.a << 24 | 
+			  (uint32)col.r << 16 | 
+			  (uint32)col.g << 8 | 
+			  (uint32)col.b;
+		}
 		RADEON_WRITEPACKET(vis, packet);
 	}
 	if (mask & GGI_GCCHANGED_BG) {
-		ggi_color col;
+
 		struct {
 	  		cce_type0_header_t h;
 			uint32 val;
 		} packet;
 
-		ggiUnmapPixel(vis, LIBGGI_GC_BGCOLOR(vis), &col);
+
 		memset(&packet, 0, sizeof(packet));
 		packet.h.base_index = PP_TFACTOR_1 >> 2;
 		packet.h.count = 0;
-		col.a >>= 8;
-		col.r >>= 8;
-		col.g >>= 8;
-		col.b >>= 8;
-		packet.val = (uint32)col.a << 24 | (uint32)col.r << 16 | 
-		  (uint32)col.g << 8 | (uint32)col.b;
+
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
+			packet.val = LIBGGI_GC_BGCOLOR(vis);
+			packet.val <<= 16;
+		} else if (GT_DEPTH(LIBGGI_GT(vis)) == 24) {
+			packet.val = LIBGGI_GC_BGCOLOR(vis);
+		} else {
+			ggi_color col;
+			ggiUnmapPixel(vis, LIBGGI_GC_BGCOLOR(vis), &col);
+			col.a >>= 8;
+			col.r >>= 8;
+			col.g >>= 8;
+			col.b >>= 8;
+			packet.val = (uint32)col.a << 24 | 
+			  (uint32)col.r << 16 | 
+			  (uint32)col.g << 8 | 
+			  (uint32)col.b;
+		}
 		RADEON_WRITEPACKET(vis, packet);
 	}
 	if (mask & GGI_GCCHANGED_CLIP) {
@@ -97,3 +120,35 @@ void GGI_kgi_radeon_gcchanged_2d(ggi_visual *vis, int mask) {
 	 * We keep this place holder in case we find a need for it.
 	 */
 }
+
+#if 0
+void GGI_kgi_radeon_clut_ilut_sync(vis) {
+        struct {
+                cce_type0_header_t h1;
+                uint32 clutidx;
+		cce_type0_header_t h2;
+		clutdata[256];
+        } pkt;	
+	radeon_context_t *ctx;
+	unsigned int len, i;
+
+	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALLETE) return;
+	if (KGI_PRIV(vis)->ilut_touched == 0) return;
+	
+	ctx = RADEON_CONTEXT(vis);
+
+	len = 1 << GT_DEPTH(LIBGGI_GT(vis));
+
+	pkt.h1.base_inde
+
+	for (i = 0; i < len; i++) {
+		pkt.clutdata[i] = 
+		  ((vis->pallete[i].a >> 8) << 24) |
+		  ((vis->pallete[i].r >> 8) << 16) |
+		  ((vis->pallete[i].g >> 8) << 8) |
+		  (vis->pallete[i].b >> 8);
+	}
+
+	KGI_PRIV(vis)->ilut_touched = 0; 
+}
+#endif

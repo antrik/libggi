@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.8 2003/02/01 06:06:18 skids Exp $
+/* $Id: radeon_accel.h,v 1.9 2003/02/07 01:35:09 skids Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -52,6 +52,8 @@ typedef struct
 		uint32 se_cntl_status;
 		cce_type0_header_t h3;
 		uint32 re_top_left;
+		cce_type0_header_t h4;
+		uint32 txablend;
 	} base_ctx;
 #define RADEON_SOLIDFILL_CTX 2
 	struct {
@@ -100,6 +102,18 @@ typedef struct
                 uint32 txoffset;
 		uint32 txcblend;
 	} text_ctx;
+#define RADEON_CROSSBLIT_CTX 7
+	struct {
+                cce_type0_header_t h1;
+                uint32 pp_cntl;
+                cce_type0_header_t h2;
+                pp_txformat_t txformat;
+                uint32 txoffset;
+		uint32 txcblend;
+                cce_type0_header_t h3;
+                pp_tex_size_t tex_size;
+                pp_txpitch_t txpitch;
+	} crossblit_ctx;
 } radeon_context_t;
 
 #define RADEON_CONTEXT(vis) ((radeon_context_t *)KGI_ACCEL_PRIV(vis))
@@ -155,6 +169,9 @@ do {									\
     case RADEON_TEXT_CTX:						\
       RADEON_WRITEPACKET(vis, (RADEON_CONTEXT(vis)->text_ctx));		\
       break;								\
+    case RADEON_CROSSBLIT_CTX:						\
+      RADEON_WRITEPACKET(vis, (RADEON_CONTEXT(vis)->crossblit_ctx));	\
+      break;								\
     default: break; }}							\
   RADEON_CONTEXT(vis)->ctx_loaded = whatctx;				\
 } while (0)
@@ -176,6 +193,9 @@ ggifunc_puts        GGI_kgi_radeon_puts_3d;
 ggifunc_putbox      GGI_kgi_radeon_putbox_3d;
 ggifunc_putvline    GGI_kgi_radeon_puthline_3d;
 ggifunc_puthline    GGI_kgi_radeon_putvline_3d;
+ggifunc_crossblit   GGI_kgi_radeon_crossblit_3d;
 ggifunc_getcharsize GGI_kgi_radeon_getcharsize;
+
+void GGI_kgi_radeon_clut_ilut_sync(ggi_visual *vis);
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2003/02/01 06:06:18 skids Exp $
+/* $Id: box.c,v 1.5 2003/02/07 01:35:09 skids Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -214,7 +214,7 @@ int GGI_kgi_radeon_copybox_3d(ggi_visual *vis, int x, int y, int w, int h,
 int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h, 
 			     void *buf)
 {
-	int y2, wb, w32;
+	int y2, h2, wb, w32;
 	radeon_context_t *ctx;
 
 	struct {
@@ -225,73 +225,74 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 		float v1x, v1y, v1s, v1t; /* v1z; */ 
 		float v2x, v2y, v2s, v2t; /* v2z; */ 
 		float v3x, v3y, v3s, v3t; /* v3z; */ 
-	} packet;
+	} pkt;
 	struct {
 		cce_type0_header_t h;
 		uint32 txoffset;
-	} offsetpkt;
-
+	} pkt2;
+	struct {
+		cce_type0_header_t h;
+	        pp_tex_size_t tex_size;
+	        pp_txpitch_t txpitch;
+	} pkt3;
+	struct {
+		cce_type0_header_t h;
+	        pp_tex_size_t tex_size;
+	} pkt4;
 
 	ctx = RADEON_CONTEXT(vis);
 
 	y2 = 0;
 	wb = GT_ByPP(LIBGGI_GT(vis)) * w;
 	w32 = ((wb + 31) / 32) * 32;
+	h2 = KGI_PRIV(vis)->swatch_size - ctx->swatch_inuse;
+	h2 /= w32;
 
 	if (ctx->ctx_loaded != RADEON_PUT_CTX) {
 		ctx->put_ctx.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
-		ctx->put_ctx.tex_size.vsize = h;
+		ctx->put_ctx.tex_size.vsize = h2;
 		ctx->put_ctx.txpitch.txpitch = (w32/32) - 1;
 		RADEON_RESTORE_CTX(vis, RADEON_PUT_CTX);
 	} else {
-		struct {
-			cce_type0_header_t h;
-			pp_tex_size_t tex_size;
-			pp_txpitch_t txpitch;
-		} packet2;
+		memset(&pkt3, 0, sizeof(pkt3));
 
-		memset(&packet2, 0, sizeof(packet2));
-
-		packet2.h.base_index = PP_TEX_SIZE_1 >> 2;
-		packet2.h.count = 1;
-		packet2.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
-		packet2.tex_size.vsize = h;
-		packet2.txpitch.txpitch = (w32/32) - 1;
+		pkt3.h.base_index = PP_TEX_SIZE_1 >> 2;
+		pkt3.h.count = 1;
+		pkt3.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+		pkt3.tex_size.vsize = h2;
+		pkt3.txpitch.txpitch = (w32/32) - 1;
 		
 		RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
-		RADEON_WRITEPACKET(vis, packet2);
+		RADEON_WRITEPACKET(vis, pkt3);
 		ctx->ctx_loaded = RADEON_PUT_CTX;
 	}
+	pkt4.tex_size.vsize = h2;
 
-	memset(&packet, 0, sizeof(packet));
+	memset(&pkt, 0, sizeof(pkt));
 
-	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
-	packet.h.count     = 13;
-	packet.h.type      = 3;
+	pkt.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	pkt.h.count     = 13;
+	pkt.h.type      = 3;
 
-	packet.vfmt.st0 = 1;
-	packet.vfmt.z = 0 /* 1 */;
+	pkt.vfmt.st0 = 1;
+	pkt.vfmt.z = 0 /* 1 */;
 
-	packet.vctl.num_vertices = 3;
-	packet.vctl.en_maos = 1;
-	packet.vctl.fmt_mode = 1;
-	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
-	packet.vctl.prim_type = 8;   /* Rectangle list */
+	pkt.vctl.num_vertices = 3;
+	pkt.vctl.en_maos = 1;
+	pkt.vctl.fmt_mode = 1;
+	pkt.vctl.prim_walk = 3;   /* Vertex data follows in pkt. */
+	pkt.vctl.prim_type = 8;   /* Rectangle list */
 
-	packet.v1x = packet.v3x = x;
-	packet.v2x = x + w;
-	packet.v1s = packet.v3s = 0;
-	packet.v2s = w;
-	packet.v1t = packet.v2t = 0;
+	pkt.v1x = pkt.v3x = x;
+	pkt.v2x = x + w;
+	pkt.v1s = pkt.v3s = 0;
+	pkt.v2s = w;
+	pkt.v1t = pkt.v2t = 0;
 
-	memset(&offsetpkt, 0, sizeof(offsetpkt));
-	offsetpkt.h.base_index = PP_TXOFFSET_1 >> 2;
+	memset(&pkt2, 0, sizeof(pkt2));
+	pkt2.h.base_index = PP_TXOFFSET_1 >> 2;
 
 	while (y2 < h) {
-		int h2;
-
-		h2 = KGI_PRIV(vis)->swatch_size - ctx->swatch_inuse;
-		h2 /= w32;
 
 		if (h2 < 1) {
 			/* idleaccel */
@@ -300,18 +301,29 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 		}
 		if ((y2 + h2) > h) h2 = h - y2;
 
-		if (offsetpkt.txoffset != 
+		if (pkt2.txoffset != 
 		    (uint32)(KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse)) {
-			offsetpkt.txoffset = 
+			pkt2.txoffset = 
 			  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
-			RADEON_WRITEPACKET(vis, offsetpkt);
+			RADEON_WRITEPACKET(vis, pkt2);
 		}
+		if (h2 != pkt4.tex_size.vsize) {
+			memset(&pkt4, 0, sizeof(pkt4));
 
-		packet.v1y = packet.v2y = y + y2;
-		packet.v3y = y + y2 + h2;
-
-		packet.v3t = h2;
-
+			pkt4.h.base_index = PP_TEX_SIZE_1 >> 2;
+			pkt4.h.count = 0;
+			pkt4.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+			pkt4.tex_size.vsize = h2;
+			
+			RADEON_WRITEPACKET(vis, pkt4);
+		}
+			
+			
+		pkt.v1y = pkt.v2y = y + y2;
+		pkt.v3y = y + y2 + h2;
+		
+		pkt.v3t = h2;
+			
 		y2 += h2;
 		while (h2--) {
 			memcpy(KGI_PRIV(vis)->swatch + ctx->swatch_inuse,
@@ -320,7 +332,10 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 			(char *)buf += wb;
 		}
 	
-		RADEON_WRITEPACKET(vis, packet);
+		RADEON_WRITEPACKET(vis, pkt);
+
+		h2 = KGI_PRIV(vis)->swatch_size - ctx->swatch_inuse;
+		h2 /= w32;
 
 	}
 

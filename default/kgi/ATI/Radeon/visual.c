@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/02/01 06:06:18 skids Exp $
+/* $Id: visual.c,v 1.7 2003/02/07 01:35:09 skids Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -70,7 +70,7 @@ static int rwframes_changed_3d(ggi_visual *vis) {
 
 	ctx = KGI_ACCEL_PRIV(vis);
 
-	if (vis->r_frame) ctx->copybox_ctx.txoffset = ctx->put_ctx.txoffset = 
+	if (vis->r_frame) ctx->copybox_ctx.txoffset = 
 	   (kgi_u8_t *)(vis->r_frame->read) - KGI_PRIV(vis)->fb;
 	if (vis->w_frame) ctx->base_ctx.rb3d_coloroffset = 
 	   (kgi_u8_t *)(vis->w_frame->write) - KGI_PRIV(vis)->fb;
@@ -177,10 +177,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->base_ctx.h1.count = 5;
 
 	use3d = KGI_PRIV(vis)->use3d;
-	if (GT_SCHEME(vis->mode->graphtype) != GT_TRUECOLOR) use3d = 0;
-
 	switch (vis->mode->graphtype) {
-		case GT_8BIT:  ctx->base_ctx.rb3d_cntl = 9 << 10; break;
+		case GT_8BIT:
+			ctx->base_ctx.rb3d_cntl = 9 << 10;  
+			if (GT_SCHEME(vis->mode->graphtype) == GT_TRUECOLOR)
+				ctx->base_ctx.rb3d_cntl = 7 << 10;
+			break;
 		case GT_15BIT: ctx->base_ctx.rb3d_cntl = 3 << 10; break;
 		case GT_16BIT: ctx->base_ctx.rb3d_cntl = 4 << 10; break;
 		case GT_32BIT: ctx->base_ctx.rb3d_cntl = 6 << 10; break;
@@ -200,6 +202,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->base_ctx.h3.base_index = RE_TOP_LEFT >> 2;
 	ctx->base_ctx.h3.count = 0;
 	ctx->base_ctx.re_top_left = 0;
+	ctx->base_ctx.h4.base_index = PP_TXABLEND_1 >> 2;
+	ctx->base_ctx.h4.count = 0;
+	ctx->base_ctx.txablend = 0;
+
 
 	ctx->ctx_loaded = RADEON_BAD_CTX;
 
@@ -212,10 +218,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->copybox_ctx.pp_cntl = 0x00002022; /* Enable texture 0 */
 	ctx->copybox_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
 	ctx->copybox_ctx.h2.count = 2;
-        switch (GT_DEPTH(LIBGGI_GT(vis))) {
-        case 8:  ctx->copybox_ctx.txformat.txformat = 2; break;
-        case 16: ctx->copybox_ctx.txformat.txformat = 4; break;
-        case 32: ctx->copybox_ctx.txformat.txformat = 6; break;
+	switch (vis->mode->graphtype) {
+        case GT_8BIT:
+		ctx->copybox_ctx.txformat.txformat = 0;  
+		if (GT_SCHEME(vis->mode->graphtype) == GT_TRUECOLOR)
+			ctx->copybox_ctx.txformat.txformat = 2;
+		break;
+        case GT_15BIT:
+		ctx->copybox_ctx.txformat.txformat = 3; break;
+	case GT_16BIT:
+		ctx->copybox_ctx.txformat.txformat = 4; break;
+        case GT_32BIT: 
+		ctx->copybox_ctx.txformat.txformat = 6; break;
         default: use3d = 0; break;
         }
         ctx->copybox_ctx.txformat.non_power2 = 1;
@@ -253,6 +267,20 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->text_ctx.txoffset = (kgi_u32_t)KGI_PRIV(vis)->font_gp;
 	ctx->text_ctx.txcblend = 0x000c3080;
 
+	ctx->crossblit_ctx.h1.base_index = PP_CNTL >> 2;
+	ctx->crossblit_ctx.h1.count = 0;
+	ctx->crossblit_ctx.pp_cntl = 0x00002022; /* Enable texture 2 */
+	ctx->crossblit_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
+	ctx->crossblit_ctx.h2.count = 2;
+	ctx->crossblit_ctx.txformat = ctx->copybox_ctx.txformat;
+	ctx->crossblit_ctx.txoffset = 0;
+	ctx->crossblit_ctx.txcblend = 0x00803000;
+	ctx->crossblit_ctx.h3.base_index = PP_TEX_SIZE_1 >> 2;
+	ctx->crossblit_ctx.h3.count = 1;
+	ctx->crossblit_ctx.tex_size.usize = 
+	  ctx->crossblit_ctx.tex_size.vsize = 0;
+	ctx->crossblit_ctx.txpitch.txpitch = 0;
+
 	ctx->swatch_inuse = 0;
 
 	if (use3d) RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
@@ -279,11 +307,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		 */
 		if (KGI_PRIV(vis)->swatch_size >= 0) {
 			GGIDPRINT("Accelerating Put* functions.\n");
-			vis->opdraw->putc         = GGI_kgi_radeon_putc_3d;
-			vis->opdraw->puts         = GGI_kgi_radeon_puts_3d;
-			vis->opdraw->putbox       = GGI_kgi_radeon_putbox_3d;
-			vis->opdraw->puthline     = GGI_kgi_radeon_puthline_3d;
-			vis->opdraw->putvline     = GGI_kgi_radeon_putvline_3d;
+			vis->opdraw->putc        = GGI_kgi_radeon_putc_3d;
+			vis->opdraw->puts        = GGI_kgi_radeon_puts_3d;
+			vis->opdraw->putbox      = GGI_kgi_radeon_putbox_3d;
+			vis->opdraw->puthline    = GGI_kgi_radeon_puthline_3d;
+			vis->opdraw->putvline    = GGI_kgi_radeon_putvline_3d;
+			vis->opdraw->crossblit   = GGI_kgi_radeon_crossblit_3d;
 		}
 		KGI_PRIV(vis)->rwframes_changed = rwframes_changed_3d;
 	} else {
