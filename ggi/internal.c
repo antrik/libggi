@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.16 2004/02/28 17:22:58 aldot Exp $
+/* $Id: internal.c,v 1.17 2004/07/31 08:23:32 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -249,9 +249,9 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 
 	LIBGGI_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
 	LIBGGI_ASSERT(r_mask != NULL, "r_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(r_mask != NULL, "g_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(r_mask != NULL, "b_mask doesn't have to be NULL");
-	LIBGGI_ASSERT(r_mask != NULL, "a_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(g_mask != NULL, "g_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(b_mask != NULL, "b_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(a_mask != NULL, "a_mask doesn't have to be NULL");
 
 	*r_mask = *g_mask = *b_mask = *a_mask = 0;
 
