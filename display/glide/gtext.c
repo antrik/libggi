@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/05/12 23:02:07 cegger Exp $
+/* $Id: gtext.c,v 1.2 2002/12/04 23:06:00 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Text functions
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/display/glide.h>
 
 #include <ggi/internal/font/8x8>

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/10/31 21:55:21 cegger Exp $
+/* $Id: visual.c,v 1.3 2002/12/04 23:06:02 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/display/glide.h>
 #include <ggi/display/linvtsw.h>
 
