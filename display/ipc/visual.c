@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/13 03:29:15 stefan Exp $
+/* $Id: visual.c,v 1.2 2001/05/16 03:19:09 stefan Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-
+#include <errno.h>
 #include <ggi/display/ipc.h>
 
 static const gg_option optlist[] =
@@ -83,15 +83,17 @@ int GII_ipc_send(gii_input_t inp, ggi_event *event)
   return 0;
 }
 
-int ggi_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
+  char buffer[32];
   ggi_ipc_priv *priv = LIBGGI_PRIVATE(vis);
   if (priv->sockfd == -1) return 0;
-  write(priv->sockfd, "F", 1);
-  write(priv->sockfd, (char *)x, sizeof(int));
-  write(priv->sockfd, (char *)y, sizeof(int));
-  write(priv->sockfd, (char *)w, sizeof(int));
-  write(priv->sockfd, (char *)h, sizeof(int));
+  buffer[0] = 'F'; // may be some day we want to send something other than flush messages...
+  memcpy(buffer + 1, &x, sizeof(int));
+  memcpy(buffer + 1 + sizeof(int), &y, sizeof(int));
+  memcpy(buffer + 1 + 2*sizeof(int), &w, sizeof(int));
+  memcpy(buffer + 1 + 3*sizeof(int), &h, sizeof(int));
+  write(priv->sockfd, buffer, 1 + 4*sizeof(int));
   return 0;
 }
 
@@ -102,7 +104,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, 
   struct sockaddr_un address;
 
   GGIDPRINT_MISC("display-ipc coming up.\n");
-
   memcpy(options, optlist, sizeof(options));
 
   LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -127,7 +128,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, 
   args = ggParseOptions((char *) args, options, NUM_OPTS);
   if (args == NULL)
     {
-      fprintf(stderr, "display-ipc: error in arguments.\n");
+      GGIDPRINT("display-ipc: error in arguments.\n");
       return GGI_EARGREQ;
     }
   if (!options[0].result[0] &&
@@ -149,8 +150,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh, const char *args, 
   if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1 ||
       connect(priv->sockfd, &address, sizeof(struct sockaddr_un)) == -1 ||
       (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
-    return GGI_ENODEVICE;
-
+    {
+      GGIDPRINT("display-ipc initialization failed : %s\n", strerror(errno));
+      return GGI_ENODEVICE;
+    }
   if (options[OPT_INPUT].result[0])
     {
       priv->inputbuffer=priv->memptr;
