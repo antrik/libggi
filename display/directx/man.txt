@@ -1,14 +1,14 @@
 DirectX (WIN32)
 ~~~~~~~~~~~~~~~
 
-.. manpage:: 7 display-directx display-directxnt
+.. manpage:: 7 display-directx
 
 Synopsis
 --------
 
 ::
 
-  display-directx:	[ [-keepcursor] [-nocursor] [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
+  display-directx:	[ [-inwin=<winid>] [-keepcursor] [-nocursor] [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
 
 
 Description
@@ -21,12 +21,29 @@ Used for Win32 DirectX port of libGGI.
 Options
 -------
 
-``-keep-cursor``
-    Shows the standard arrow cursor in the window, instead of the default
-    dot cursor.
+``-inwin=<winid>|root``
+    Run in already-existing window with id :p:`winid`.  This can be   
+    used to embed a LibGGI application into a DirectX application. The
+    value should be a DirectX window ID expressed as a decimal,
+    hexadecimal or octal number in C syntax. The special string "root"
+    will cause the application to run in the root window. Note that in the root window,
+    you may need to explictly select a LibGII input source using the
+    `GGI_INPUT` environment variable as Windows will absorb all events
+    sent to the window.
+    When using the root window other features (like direct framebuffer
+    access and video hardware mode selection) may be available which
+    are not available when the application is running in a normal window.
+    
 
-``-no-cursor``
-    No cursor is displayed in the window.
+``-nocursor``, ``-keepcursor``
+    Normal behavior of display-directx is to create a small dot mouse
+    cursor pixmap which is visible when the mouse is positioned over the
+    window containing the visual. With the former option, the DirectX
+    mouse cursor will be invisible when it is over the visual, with the
+    latter, the cursor from the root window is used unaltered.  If both
+    options are supplied, the latter takes precedence.
+    Note, that none of them works with the -inwin option.
+
 
 ``-noinput``
     DirectX events sent to the window are not captured and merged with
