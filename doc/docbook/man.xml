@@ -5,16 +5,15 @@
 <refentry id="ref-libggi">
 
 <refmeta>
-<refentrytitle><systemitem>libggi</systemitem></refentrytitle>
-<manvolnum>7</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>libggi</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>libggi</systemitem></refname>
-<refpurpose>
-A fast, simple, small and flexible user-space graphics library
-</refpurpose>
+    <refname>libggi</refname>
+    <refpurpose>A fast, simple, small and flexible user-space graphics
+    library</refpurpose>
 </refnamediv>
 
 <refsect1><title>Description</title>
@@ -58,120 +57,88 @@ A fast, simple, small and flexible user-space graphics library
     user, which affect the behaviour of LibGGI:
 
     <variablelist>
-      <varlistentry>
-        <term><envar>DISPLAY</envar></term>
-	<listitem>
-	<para>
-	  If set, LibGGI assumes that you want to use the
-	  <systemitem>X</systemitem> target.  This setting is
-	  overriden by the <envar>GGI_DISPLAY</envar> variable.
-	</para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-        <term><envar>GGI_DISPLAY</envar></term>
-	<listitem>
-          <para>
-	  Specifies the default target used when the application calls 
-	  <link
-	  linkend="api-ggiopen"><function>ggiOpen</function></link>
-	  with <symbol>NULL</symbol> argument.
-	</para>
-	<para>
-	  The default target is specified using a target-spec:
-	  <cmdsynopsis id="target-spec">
-	  <command><replaceable>targetname</replaceable></command>
-	  <arg choice="opt">:<replaceable>targetargs</replaceable></arg>
-	  </cmdsynopsis>
-	  where <replaceable>targetname</replaceable> is the name of the
-	  target, and <replaceable>targetargs</replaceable> are any
-	  target-specific arguments.
-	</para>
-	<para>
-	  If neither this variable nor <envar>DISPLAY</envar> is set, then
-	  the following targets are tried in order until one works:
-	  <simplelist type="inline">
-	  <member><systemitem>fbdev</systemitem></member>
-	  <member><systemitem>svga</systemitem></member>
-	  <member><systemitem>aa</systemitem></member>
-	  </simplelist>
-	</para>
-	<example>
-	  <title>Example <envar>GGI_DISPLAY</envar> settings</title>
-	  
-	  <screen>
-	    <prompt>$ </prompt>
-	    <userinput><envar>GGI_DISPLAY</envar>=aa ./flying_ggis</userinput>
-	    <lineannotation>  # see ASCII art flying GGIs</lineannotation>
-	    <prompt>$ </prompt>
-	    <userinput><envar>GGI_DISPLAY</envar>=multi:(Xlib:crono:0.0):(X::0.0)
-	    ./demo</userinput>
-	    <lineannotation>  # see demo on both machine next door and local X at the same time</lineannotation>
-	  </screen>
-	</example>
-	</listitem>
-      </varlistentry>
-      <varlistentry id="GGI-INPUT">
-        <term><envar>GGI_INPUT_<replaceable>target</replaceable>_<replaceable>n</replaceable></envar></term>
-        <term><envar>GGI_INPUT_<replaceable>target</replaceable></envar></term>
-        <term><envar>GGI_INPUT</envar></term>
-
-        <listitem>
-        <para>
-	  <envar>GGI_INPUT_<replaceable>target</replaceable></envar>
-	  specifies extra <link linkend="libgii-inputs-reference">LibGII
-	  input sources</link> and/or filters for visuals  using
-	  <replaceable>target</replaceable>
-	</para>
-	<para>
-	  Multiple inputs can be specified by enclosing each
-	  input-spec in parentheses and separating them with semicolons:
-	  <cmdsynopsis>
-	  <arg rep="repeat" choice="req">(<replaceable>i1</replaceable>):</arg>
-	  </cmdsynopsis>
-	</para>
-	<para>
-	  The inputs specified by
-	  <envar>GGI_INPUT_<replaceable>target</replaceable>_<replaceable>n</replaceable></envar>
-	  are only opened at the <replaceable>n</replaceable>th call
-	  of <link linkend="api-ggiopen"><function>ggiOpen</function></link>.
-	  This is used for misbehaving applications that do not allow
-	  the user to specify inputs for the different targets that it
-	  opens.
-	</para>
-	<para>
-	  The <envar>GGI_INPUT</envar> variable specifies input
-	  settings for all other targets not specified using the other
-	  two variable forms.
-	</para>
-
-	<example><title>Example <envar>GGI_INPUT</envar> strings</title>
-	  <screen>
-	    <prompt>$ </prompt>
-	    <userinput>export<envar>GGI_INPUT</envar>=linux-mouse:auto</userinput>
-	    <lineannotation>  # all targets</lineannotation>
-	    <prompt>$ </prompt>
-	    <userinput>export
-	    <envar>GGI_INPUT_multi</envar>=linux-mouse:auto</userinput>
-	    <lineannotation>  # for multi target only</lineannotation>
-	  </screen>
-	</example>
-	</listitem>
-      </varlistentry>
-      <varlistentry id="GGI-DEFMODE">
-        <term><envar>GGI_DEFMODE</envar></term>
-	<listitem>
-	  <para>
-	    Specifies the default mode, which is used for mode
-	    negotiation with LibGGI applications.  Specifically, when
-	    <link linkend="ref-struct-ggi-mode"><symbol>GGI_AUTO</symbol></link>
-	    or <symbol>GT_AUTO</symbol> are specified in a mode
-	    setting call they will be replaced with values from
-	    <envar>GGI_DEFMODE</envar> before calling the target's own
-	    <function>ggiSetMode</function> implementation.
-	  </para>
-	  <para id="ggi-mode-string">
-	    The format is: (all on one line)
+    
+    <varlistentry>
+    <term><envar>DISPLAY</envar></term>
+    <listitem><para>
+    If set, LibGGI assumes that you want to use the
+    <systemitem>X</systemitem> target.  This setting is
+    overriden by the <envar>GGI_DISPLAY</envar> variable.
+    </para></listitem>
+    </varlistentry>
+   
+   <varlistentry>
+   <term><envar>GGI_DISPLAY</envar></term>
+   <listitem><para>
+   Specifies the default target used when the application calls 
+   <xref linkend="ggiOpen"/> with <symbol>NULL</symbol>
+   argument.
+   </para>
+   <para>
+   The default target is specified using a target-spec:
+   <literal><replaceable>target</replaceable>:<replaceable>targetargs</replaceable></literal>
+   where <replaceable>targetname</replaceable> is the name of the
+   target, and <replaceable>targetargs</replaceable> are any
+   target-specific arguments.
+   </para>
+   <para>
+   If neither this variable nor <envar>DISPLAY</envar> is set, then
+   the following targets are tried in order until one works:
+   <systemitem>fbdev</systemitem>, <systemitem>svga</systemitem>,
+   <systemitem>aa</systemitem>
+   </para></listitem>
+   </varlistentry>
+   
+   <varlistentry id="GGI-INPUT">
+   <term><envar>GGI_INPUT_<replaceable>target</replaceable>_<replaceable>n</replaceable></envar></term>
+   <term><envar>GGI_INPUT_<replaceable>target</replaceable></envar></term>
+   <term><envar>GGI_INPUT</envar></term>
+   <listitem>
+   <para>
+   <envar>GGI_INPUT_<replaceable>target</replaceable></envar>
+   specifies extra <link linkend="libgii-inputs-reference">LibGII
+   input sources</link> and/or filters for visuals  using
+   <replaceable>target</replaceable>
+   </para>
+   <para>
+   Multiple inputs can be specified by enclosing each
+   input-spec in parentheses and separating them with semicolons:
+   <literal>(i1):(i2):...</literal>
+<!--
+   <cmdsynopsis>
+   <arg rep="repeat"
+   choice="req">(<replaceable>i1</replaceable>):</arg>
+   </cmdsynopsis>
+-->
+   </para>
+   <para>
+   The inputs specified by
+   <envar>GGI_INPUT_<replaceable>target</replaceable>_<replaceable>n</replaceable></envar>
+   are only opened at the <replaceable>n</replaceable>th call
+   of <xref linkend="ggiOpen"/>. This is used for misbehaving
+   applications that do not allow the user to specify inputs for the
+   different targets that it opens.
+   </para>
+   <para>
+   The <envar>GGI_INPUT</envar> variable specifies input
+   settings for all other targets not specified using the other
+   two variable forms.
+   </para>
+   </listitem>
+   </varlistentry>
+   
+   <varlistentry id="GGI-DEFMODE">
+   <term><envar>GGI_DEFMODE</envar></term>
+   <listitem><para>
+   Specifies the default mode, which is used for mode
+   negotiation with LibGGI applications.  Specifically, when
+   <symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> are specified
+   in a mode setting call they will be replaced with values from
+   <envar>GGI_DEFMODE</envar> before calling the target's own
+   <function>ggiSetMode</function> implementation.
+   </para>
+   <para>
+   The format is: (all on one line)
 	    <synopsis format="linespecific">
 	      <token>S</token> <token><replaceable>x</replaceable></token> x <token><replaceable>y</replaceable></token> x <token><replaceable>depth</replaceable></token>
 <token>V</token> <token><replaceable>x</replaceable></token> x <token><replaceable>y</replaceable></token>
@@ -189,121 +156,270 @@ A fast, simple, small and flexible user-space graphics library
 	    are case-insensitive.  If certain values are not possible,
 	    they are overridden by the target.
 	  </para>
-	 
-  <variablelist>
-  <varlistentry>
-    <term><token>S</token></term>
-    <listitem><para>
-    Denotes the <link linkend="ref-struct-ggi-mode">visible</link> size
-    of the visual.  Totally optional, as dimensions without a
-    specifier are considered to be the visible dimensions.
-    </para></listitem>
-  </varlistentry>
-  
-  <varlistentry>
-    <term><token><replaceable>x</replaceable></token></term>
-    <term><token><replaceable>y</replaceable></token></term>
-    <listitem><para>
-    The width (<replaceable>x</replaceable>) and height
-    (<replaceable>y</replaceable>), in pixels.
-    </para></listitem>
-  </varlistentry>
+	  
+        <variablelist>
+	
+	<varlistentry>
+	<term><token>S</token></term>
+	<listitem><para>Denotes the visible size of the visual.
+	Totally optional, as dimensions without a specifier are
+	considered to be the visible dimensions.
+	</para></listitem>
+	</varlistentry>
+	
+	<varlistentry>
+	<term><token><replaceable>x</replaceable></token></term>
+	<term><token><replaceable>y</replaceable></token></term>
+	<listitem><para>
+	The width (<replaceable>x</replaceable>) and height
+	(<replaceable>y</replaceable>), in pixels.
+	</para></listitem>
+	</varlistentry>
     
-  <varlistentry>
-    <term><token>V</token></term>
-    <listitem><para>
-    Denotes <link linkend="ref-struct-ggi-mode">virtual</link> size, the
-    total drawing area available to the application.  The virtual size
-    must be equal or greater than the visible size.
-    </para></listitem>
-  </varlistentry>
+        <varlistentry>
+	<term><token>V</token></term>
+	<listitem><para>
+	Denotes virtual size, the total drawing area available to the
+	application.  The virtual size  must be equal or greater than
+	the visible size.
+	</para></listitem>
+	</varlistentry>
     
-  <varlistentry>
-    <term><token>D</token></term>
-    <listitem><para>
-    Denotes the <link linkend="ref-struct-ggi-mode">number of dots per
-    pixel</link>.  For graphics modes, this is always 1x1, and for text
-    modes, this is the size of the character cell.
-    </para></listitem>
-  </varlistentry>
+        <varlistentry>
+	<term><token>D</token></term>
+	<listitem><para>
+	Denotes the number of dots per pixel.  For graphics modes,
+	this is always 1x1, and for text modes, this is the size of
+	the character cell.
+	</para></listitem>
+	</varlistentry>
     
-  <varlistentry>
-  <term><token>F</token></term>
-    <listitem><para>
-    Denotes <link linkend="ref-struct-ggi-mode">number of frames</link>
-    available to the application. Applications can switch between
-    different frames for double-buffering, etc.
-    </para></listitem>
-  </varlistentry>
+        <varlistentry>
+	<term><token>F</token></term>
+	<listitem><para>
+	Denotes number of frames available to the
+	application. Applications can switch between different frames
+	for double-buffering, etc.
+	</para></listitem>
+	</varlistentry>
     
-  <varlistentry>
-  <term><token>[</token></term>
-  <term><token>]</token></term>
-    <listitem><para>
-    Delimits the <link linkend="ref-struct-ggi-mode">graphic type</link>.
-    </para></listitem>
-  </varlistentry>
+        <varlistentry>
+	<term><token>[</token></term>
+	<term><token>]</token></term>
+	<listitem><para>
+	Delimits the graphic type.
+	</para></listitem>
+	</varlistentry>
     
-  <varlistentry>
-  <term><token><replaceable>scheme</replaceable></token></term>
-    <listitem>
-    <para>One of:
-    <variablelist>
-    <varlistentry>
-      <term><token>C</token></term>
-      <listitem><para><symbol>GT_TRUECOLOR</symbol></para></listitem>
-    </varlistentry>
-    <varlistentry>
-      <term><token>P</token></term>
-      <listitem><para><symbol>GT_PALETTE</symbol></para></listitem>
-    </varlistentry>
-    <varlistentry>
-      <term><token>K</token></term>
-      <listitem><para><symbol>GT_GREYSCALE</symbol></para></listitem>
-    </varlistentry>
-    <varlistentry>
-      <term><token>T</token></term>
-      <listitem><para><symbol>GT_TEXT</symbol></para></listitem>
-    </varlistentry>
-    </variablelist>
+        <varlistentry>
+	<term><token><replaceable>scheme</replaceable></token></term>
+	<listitem>
+	<para>One of:
+	
+	    <variablelist>
+
+	    <varlistentry>
+	    <term><token>C</token></term>
+	    <listitem><para><symbol>GT_TRUECOLOR</symbol></para></listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	    <term><token>P</token></term>
+	    <listitem><para><symbol>GT_PALETTE</symbol></para></listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	    <term><token>K</token></term>
+	    <listitem><para><symbol>GT_GREYSCALE</symbol></para></listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	    <term><token>T</token></term>
+	    <listitem><para><symbol>GT_TEXT</symbol></para></listitem>
+	    </varlistentry>
+
+	    </variablelist>
+        </para>
+	</listitem>
+	</varlistentry>
+
+	<varlistentry>
+	<term><token><replaceable>depth</replaceable></token></term>
+	<listitem><para>
+	Pixel depth in number of bits.
+	</para></listitem>
+	</varlistentry>
+	
+	<varlistentry>
+	<term><token><replaceable>size</replaceable></token></term>
+	<listitem><para>
+	Size of pixel in number of bits, including padding.
+	</para></listitem>
+	</varlistentry>
+
+	</variablelist>
+
+    <para>
+    Instead of <replaceable>scheme</replaceable>,
+    <replaceable>depth</replaceable>, <replaceable>size</replaceable>,
+    it is also possible to specify the graphtype by using one of the
+    following:
+        <simplelist type="inline">
+	<member><symbol>GT_1BIT</symbol></member>
+	<member><symbol>GT_2BIT</symbol></member>
+	<member><symbol>GT_4BIT</symbol></member>
+	<member><symbol>GT_8BIT</symbol></member>
+	<member><symbol>GT_15BIT</symbol></member>
+	<member><symbol>GT_16BIT</symbol></member>
+	<member><symbol>GT_24BIT</symbol></member>
+	<member><symbol>GT_32BIT</symbol></member>
+	<member><symbol>GT_TEXT16</symbol></member>
+	<member><symbol>GT_TEXT32</symbol></member>
+	</simplelist>
     </para>
     </listitem>
-  </varlistentry>
-    
-  <varlistentry>
-  <term><token><replaceable>depth</replaceable></token></term>
+    </varlistentry>
+
+    <varlistentry>
+    <term><envar>GGI_DEBUG</envar></term>
     <listitem><para>
-    Pixel depth in number of bits.
-    </para></listitem>
-  </varlistentry>
-    
-  <varlistentry>
-  <term><token><replaceable>size</replaceable></token></term>
+    The debugging level for LibGGI:
+        
+	<variablelist>
+
+	<varlistentry>
+	<term>0 or unset</term>
+	<listitem><para>debug output is off; debugging is off</para></listitem>
+	</varlistentry>
+	
+	<varlistentry>
+	<term>255</term>
+	<listitem><para>all debug output is on</para></listitem>
+	</varlistentry>
+	
+	</variablelist>
+    </para>
+    <para>
+    You may also bitwise-or any of the following together:
+        <variablelist>
+	
+	<varlistentry><term>2</term>
+	<listitem><para>debug core</para></listitem>
+	</varlistentry>
+
+	<varlistentry><term>4</term>
+	<listitem><para>debug mode setting</para></listitem>
+	</varlistentry>
+
+	<varlistentry><term>8</term>
+	<listitem><para>debug color handling</para></listitem>
+	</varlistentry>
+
+	<varlistentry><term>16</term>
+	<listitem><para>debug drawing</para></listitem>
+	</varlistentry>
+	
+	<varlistentry><term>32</term>
+	<listitem><para>misc debugging output</para></listitem>
+	</varlistentry>
+	
+	<varlistentry><term>64</term>
+	<listitem><para>debug dynamic library handling</para></listitem>
+	</varlistentry>
+
+	<varlistentry><term>128</term>
+	<listitem><para>debug event handling</para></listitem>
+	</varlistentry>
+	
+	</variablelist>
+    </para>
+    <para>
+    The debugging output can be quite verbose and in most cases you should
+    redirect stderr so that it does not interfere with your program's
+    output.
+    </para>
+    </listitem>
+    </varlistentry>
+  
+    <varlistentry>
+    <term><envar>GGI_DEBUGSYNC</envar></term>
     <listitem><para>
-    Size of pixel in number of bits, including padding.
+    Turn on synchronous debugging output, flushing the output buffers before
+    returning from <function>GGIDPRINT</function> calls.
     </para></listitem>
-  </varlistentry>
-    
-  </variablelist>
-    
-  <para>
-  Instead of <replaceable>scheme</replaceable>,
-  <replaceable>depth</replaceable>, <replaceable>size</replaceable>,
-  it is also possible to specify the graphtype by using one of the
-  following:
-  <simplelist type="inline">
-  <member><symbol>GT_1BIT</symbol></member>
-  <member><symbol>GT_2BIT</symbol></member>
-  <member><symbol>GT_4BIT</symbol></member>
-  <member><symbol>GT_8BIT</symbol></member>
-  <member><symbol>GT_15BIT</symbol></member>
-  <member><symbol>GT_16BIT</symbol></member>
-  <member><symbol>GT_24BIT</symbol></member>
-  <member><symbol>GT_32BIT</symbol></member>
-  <member><symbol>GT_TEXT16</symbol></member>
-  <member><symbol>GT_TEXT32</symbol></member>
-  </simplelist>
-  </para>
+    </varlistentry>
+<!--
+    <varlistentry>
+    <term><envar>FRAMEBUFFER</envar></term>
+    <listitem><para>
+    Specifies which framebuffer device file the
+    <systemitem>fbdev</systemitem> target should use.
+    </para></listitem>
+    </varlistentry>
+-->
+    <varlistentry>
+    <term><envar>GGI_NEWVT</envar></term>
+    <listitem><para>
+    If set, causes a new virtual console to be allocated for some
+    Linux-console-based targets (currently
+    <systemitem>fbdev</systemitem> and
+    <systemitem>glide</systemitem>).
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term><envar>GGI_MANSYNC_FPS</envar></term>
+    <listitem><para>
+    This variable specifies the framerate for targets emulating
+    synchronous mode. The default is 20fps.  If you are experiencing
+    problems with the X target over relatively slow remote connections
+    it might be due to connection overload. You might want to try with
+    a lower <envar>GGI_MANSYNC_FPS</envar> setting.
+    </para></listitem>
+    </varlistentry>
+
+    </variablelist>
+</para>
+
+</refsect1>
+
+</refentry>
+
+
+
+<!--
+
+   <example>
+	  <title>Example <envar>GGI_DISPLAY</envar> settings</title>
+	  
+	  <screen>
+	    <prompt>$ </prompt>
+	    <userinput><envar>GGI_DISPLAY</envar>=aa ./flying_ggis</userinput>
+	    <lineannotation>  # see ASCII art flying GGIs</lineannotation>
+	    <prompt>$ </prompt>
+	    <userinput><envar>GGI_DISPLAY</envar>=multi:(Xlib:crono:0.0):(X::0.0)
+	    ./demo</userinput>
+	    <lineannotation>  # see demo on both machine next door and local X at the same time</lineannotation>
+	  </screen>
+	</example>
+
+
+
+	<example><title>Example <envar>GGI_INPUT</envar> strings</title>
+	  <screen>
+	    <prompt>$ </prompt>
+	    <userinput>export<envar>GGI_INPUT</envar>=linux-mouse:auto</userinput>
+	    <lineannotation>  # all targets</lineannotation>
+	    <prompt>$ </prompt>
+	    <userinput>export
+	    <envar>GGI_INPUT_multi</envar>=linux-mouse:auto</userinput>
+	    <lineannotation>  # for multi target only</lineannotation>
+	  </screen>
+	</example>
+
+
+
+
     
   <example>
   <title>Examples of <envar>GGI_DEFMODE</envar> strings</title>
@@ -364,99 +480,5 @@ A fast, simple, small and flexible user-space graphics library
     
   </variablelist>
   </example>
-  </listitem>
-    
-</varlistentry>
-    
-<varlistentry>
-<term><envar>GGI_DEBUG</envar></term>
-<listitem>
-  
-<para>
-The debugging level for LibGGI:
-  
-  <variablelist>
-  <varlistentry>
-    <term>0 or unset</term>
-    <listitem><para>debug output is off; debugging is off</para></listitem>
-  </varlistentry>
-  
-  <varlistentry>
-    <term>255</term>
-    <listitem><para>all debug output is on</para></listitem>
-  </varlistentry>
-  </variablelist>
 
-</para>
-  
-<para>
-You may also bitwise-or any of the following together:
-
-  <variablelist>
-  <varlistentry><term>2</term><listitem><para>debug core</para></listitem></varlistentry>
-  <varlistentry><term>4</term><listitem><para>debug mode setting</para></listitem></varlistentry>
-  <varlistentry><term>8</term><listitem><para>debug color handling</para></listitem></varlistentry>
-  <varlistentry><term>16</term><listitem><para>debug drawing</para></listitem></varlistentry>
-  <varlistentry><term>32</term><listitem><para>misc debugging output</para></listitem></varlistentry>
-  <varlistentry><term>64</term><listitem><para>debug dynamic library handling</para></listitem></varlistentry>
-  <varlistentry><term>128</term><listitem><para>debug event handling</para></listitem></varlistentry>
-  </variablelist>
-</para>
-
-<para>
-The debugging output can be quite verbose and in most cases you should
-redirect stderr so that it does not interfere with your program's
-output.
-</para>
-
-</listitem>
-</varlistentry>
-  
-
-<varlistentry>
-<term><envar>GGI_DEBUGSYNC</envar></term>
-<listitem><para>
-Turn on synchronous debugging output, flushing the output buffers before
-returning from <function>GGIDPRINT</function> calls.
-</para></listitem>
-</varlistentry>
-
-  
-<varlistentry>
-<term><envar>FRAMEBUFFER</envar></term>
-<listitem><para>
-Specifies which framebuffer device file the <systemitem>fbdev</systemitem> target
-should use.
-</para></listitem>
-</varlistentry>
-
-  
-<varlistentry>
-<term><envar>GGI_NEWVT</envar></term>
-<listitem><para>
-If set, causes a new virtual console to be allocated for some
-Linux-console-based targets (currently <systemitem>fbdev</systemitem> and
-<systemitem>glide</systemitem>).
-</para></listitem>
-</varlistentry>
-
-
-<varlistentry id="GGI-MANSYNC-FPS">
-<term><envar>GGI_MANSYNC_FPS</envar></term>
-<listitem><para>
-This variable specifies the framerate for targets <link
-linkend="mansync">emulating synchronous mode</link>. The default is
-20fps.  If you are experiencing problems with the X target over
-relatively slow remote connections it might be due to connection
-overload. You might want to try with a lower <envar>GGI_MANSYNC_FPS</envar>
-setting.
-</para></listitem>
-</varlistentry>
-
-</variablelist>
-
-</para>
-
-</refsect1>
-
-</refentry>
+-->
