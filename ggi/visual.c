@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
+/* $Id: visual.c,v 1.5 2003/12/22 07:44:23 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -239,7 +239,7 @@ ggi_visual *_ggiNewVisual(void)
 	vis->gamma = NULL;
 
 	LIBGGI_PAL(vis) = _ggi_malloc(sizeof(ggi_colormap));
- 	if(!LIBGGI_PAL(vis)) goto out_freeopdisplay;
+	if (!LIBGGI_PAL(vis)) goto out_freeopdisplay;
  	
  	LIBGGI_PAL(vis)->clut     = NULL;
  	LIBGGI_PAL(vis)->size     = 0;
@@ -256,7 +256,7 @@ ggi_visual *_ggiNewVisual(void)
 	return vis;
 
 	/* Error occured. */
-	out_freeopdisplay:
+  out_freeopdisplay:
  	free(vis->opdisplay);
   out_freeopgc:
 	free(vis->opgc);
