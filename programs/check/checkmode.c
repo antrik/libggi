@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.7 2004/05/21 20:09:07 aldot Exp $
+/* $Id: checkmode.c,v 1.8 2004/09/08 19:16:45 cegger Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -24,12 +24,12 @@
 #include <unistd.h>  /* getopt */
 #endif
 
-ggi_visual_t vis;
+static ggi_visual_t vis;
 
 /* most graphics resolutions taken from XFree */
 /* EGA/CGA, text resolutions from */
 /* M. Uphff: Die Programmierung der EGA/VGA Grafikkarte */
-struct resolution {
+static struct resolution {
 	int x;
 	int y;
 } defaultresolutions[]= { 
@@ -61,7 +61,7 @@ struct resolution {
 	{0,0}          /* End mark!! */
 };
 
-ggi_graphtype defaultgraphtypes[]={
+static ggi_graphtype defaultgraphtypes[]={
 	/* can't handle textmode yet */
 	GT_1BIT,                /*  1 bpp graphics              */
         GT_4BIT,                /*  4 bpp graphics              */
@@ -73,14 +73,15 @@ ggi_graphtype defaultgraphtypes[]={
         GT_INVALID
 };
 
-int setmod; /* true: do not only check, but set also */
-int verbose;/* true: report all test results. False: small table */
-int autof;   /* true: virtual size is GGI_AUTO, false: virtual = visible */
-int xinc;   /* x increment */
-int fast;   /* check only some y values for each X span, big speed increase! */
-int async;  /* false: sync mode, true: async mode */
+static int setmod; /* true: do not only check, but set also */
+static int verbose;/* true: report all test results. False: small table */
+static int autof; /* true: virtual size is GGI_AUTO, false: virtual = visible */
+static int xinc;   /* x increment */
+static int fast;   /* check only some y values for each X span,
+		      big speed increase! */
+static int async;  /* false: sync mode, true: async mode */
 
-int iswrong=0; /* if the checkmode return is wrong. */
+static int iswrong=0; /* if the checkmode return is wrong. */
 
 static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 {
@@ -129,7 +130,7 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 		}
 
 		if (verbose){
-			printf("- (%dx%d*%dx%d %d/%d %s)",
+			printf("- (%dx%d*%dx%d %u/%u %s)",
 			       suggest.visible.x,suggest.visible.y,
 			       suggest.virt.x,suggest.virt.y,
 			       GT_DEPTH(suggest.graphtype),
@@ -138,10 +139,10 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 		} else {
 			if (broken){
 				printf("B");
-			} else if (GT_DEPTH(suggest.graphtype) > 
+			} else if (GT_DEPTH(suggest.graphtype) >
 				   GT_DEPTH(defaultgraphtypes[j])) {
 				printf(">");
-			} else if (GT_DEPTH(suggest.graphtype) < 
+			} else if (GT_DEPTH(suggest.graphtype) <
 				   GT_DEPTH(defaultgraphtypes[j])) {
 				printf("<");
 			} else if (((suggest.visible.x < x)&&
@@ -180,18 +181,18 @@ static void checkstandardresolutions(void)
 	if (!verbose){
 		printf("\t\t");
 		for (j=0;defaultgraphtypes[j]!=GT_INVALID;j++){
-			printf("%d/%d\t",
+			printf("%u/%u\t",
 			       GT_DEPTH(defaultgraphtypes[j]),
 			       GT_SIZE(defaultgraphtypes[j]));
 		}
 		printf("\n");
 	}
-	
+
 	i=0;j=0;
 	x=defaultresolutions[i].x;
 	y=defaultresolutions[i].y;
 	while (x!=0){
-		
+
 		printf("%s%dx%d%s",verbose?"Checking ":"",
 		       x,y,
 		       verbose?" :":"  \t");
@@ -236,7 +237,7 @@ struct area {
 };
 
 
-static void scanarea(struct area * a, 
+static void scanarea(struct area * a,
 	      int gti /* graphtype index */)
 /* area with x1,y1,x2,y2 initialised: maximum scanned area! */
 
@@ -266,7 +267,7 @@ static void scanarea(struct area * a,
 	if (fail){
 		if (GT_DEPTH(sugg.graphtype) !=
 		    GT_DEPTH(defaultgraphtypes[gti]) ) {
-			printf("Depth %d is not supported at all.\n",
+			printf("Depth %u is not supported at all.\n",
 			       GT_DEPTH(defaultgraphtypes[gti]));
 			return;
 		}
@@ -279,11 +280,11 @@ static void scanarea(struct area * a,
 	a->yref= sugg.visible.y;
 	a->xvref= sugg.virt.x;
 	a->yvref= sugg.virt.y;
-	
+
 	/* peek to the right: */
 	/* it might be always this x for this area */
 	/* or always accepted */
-	
+
 	fail=ggiCheckGraphMode(vis,x+xinc,y,
 			       autof?GGI_AUTO:x+xinc,autof?GGI_AUTO:y,
 			       defaultgraphtypes[gti],&sugg);
@@ -304,7 +305,7 @@ static void scanarea(struct area * a,
 	/* peek down: */
 	/* it might be always this y for this area */
 	/* or always accepted */
-	
+
 	fail=ggiCheckGraphMode(vis,x,y+1,
 			       autof?GGI_AUTO:x,autof?GGI_AUTO:y+1,
 			       defaultgraphtypes[gti],&sugg);
@@ -323,7 +324,7 @@ static void scanarea(struct area * a,
 		}
 	}
 	/*printf("peeking down: vis.%d virt.%d.\n",a->yref,a->yvref);*/
-	
+
 	/*printf("pling %d %d\n",a->yref,a->yvref);*/
 	/* extend it to higher y */
 	y++;
@@ -337,7 +338,7 @@ static void scanarea(struct area * a,
 #define CHECKACCEPTL(l,m,n) ( (printf(#m"=%d ",m),m==0) ? (\
 printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 #define CHECKACCEPT(l,m,n) ( (m==0) ? (l==n) : (l==m))
-	
+
 	while (	(a->supported==!fail)&&
 		CHECKACCEPT(sugg.visible.x,a->xref,x) &&
 		CHECKACCEPT(sugg.visible.y,a->yref,y) &&
@@ -383,7 +384,7 @@ printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 		     y+= (fast && ((a->y2 - a->y1)>10))?
 			     (a->y2 - a->y1)/10
 			     :1){
-			
+
 			/*printf(" y=%d ;",y);*/
 			fail=ggiCheckGraphMode(
 				vis,x,y,
@@ -395,7 +396,7 @@ printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 				CHECKACCEPT(sugg.visible.y,a->yref,y) &&
 				CHECKACCEPT(sugg.virt.x,a->xvref,x) &&
 				CHECKACCEPT(sugg.virt.y,a->yvref,y) &&
-				
+
 				(a->broken==ggiCheckMode(vis,&sugg)));
 #if 0
 			if (spanfailed){
@@ -416,12 +417,12 @@ printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 		}
 	}
 	x -= xinc;
-	
+
 	a->x2=x;
 	right.x1=x+xinc;
 	down.x2=x;
 
-       
+
 #define EQORVAR(x) if (x==0) printf(" == "); else printf("%d ",x)
 
 	printf("Area %d..%dx%d..%d : ",
@@ -446,8 +447,6 @@ printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 		scanarea(&right,gti);
 }
 
-	
-
 
 static void checkallresolutions(void)
 {
@@ -460,7 +459,7 @@ static void checkallresolutions(void)
 	const int ymax=/* 9 */ 2048 ;
 
 	for (j=0;defaultgraphtypes[j]!=GT_INVALID;j++){
-		printf (" %d/%d:  ",
+		printf (" %u/%u:  ",
 			GT_DEPTH(defaultgraphtypes[j]),
 			GT_SIZE(defaultgraphtypes[j]));
 		a.x1=xmin;
@@ -470,7 +469,7 @@ static void checkallresolutions(void)
 		scanarea(&a,j);
 	}
 }
-		
+
 static void usage(char * s)
 {
 	printf("Usage: %s [options]\n"
@@ -500,7 +499,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.7 2004/05/21 20:09:07 aldot Exp $\n");
+	printf("$Id: checkmode.c,v 1.8 2004/09/08 19:16:45 cegger Exp $\n");
 	exit(0);
 }
 
@@ -522,10 +521,10 @@ int main(int argc, char **argv)
 #ifdef HAVE_GETOPT
 	while ( (op=getopt(argc,argv,"48ahsvflA"))!=EOF ){
 		switch(op){
-		case 's': /*fprintf(stderr,"Setting modes also");*/ 
+		case 's': /*fprintf(stderr,"Setting modes also");*/
 			setmod=1;
 			break;
-		case 'v': 
+		case 'v':
 			verbose=1;
 			break;
 		case 'a':
@@ -558,9 +557,9 @@ int main(int argc, char **argv)
 		if (xinc==8) printf("option -8 ignored (use only with -l).\n");
 		if (fast==1) printf("option -f ignored (use only with -l).\n");
 	}
-	
+
 	/*usage(myself);*/
-	
+
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
@@ -578,7 +577,6 @@ int main(int argc, char **argv)
 
 	checkstandardresolutions();
 
-	
 	if (longtest){
 		checkallresolutions();
 	}
@@ -595,7 +593,4 @@ int main(int argc, char **argv)
 
 	return (0);
 }
-
-
-
 
