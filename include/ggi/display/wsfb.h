@@ -1,7 +1,7 @@
-/* $Id: wsfb.h,v 1.1 2003/02/13 19:44:25 fries Exp $
+/* $Id: wsfb.h,v 1.2 2003/02/14 16:37:34 fries Exp $
 ******************************************************************************
 
-   LibGGI wsfb(3) target
+   LibGGI wsconsole(4) wsfb target
 
    Copyright (C) 2003 Todd T. Fries <todd@openbsd.org>
 
@@ -48,6 +48,7 @@ ggifunc_getmode		GGI_wsfb_getmode;
 ggifunc_setmode		GGI_wsfb_setmode;
 ggifunc_getapi		GGI_wsfb_getapi;
 ggifunc_checkmode	GGI_wsfb_checkmode;
+ggifunc_setpalvec	GGI_wsfb_setpalvec;
 
 typedef struct wsfb_priv {
 	ggi_modelistmode *availmodes;

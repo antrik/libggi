@@ -1,7 +1,7 @@
-/* $Id: visual.c,v 1.1 2003/02/13 19:44:25 fries Exp $
+/* $Id: visual.c,v 1.2 2003/02/14 16:37:33 fries Exp $
 ******************************************************************************
 
-   LibGGI wsfb(3) target
+   wsconsole(4) wsfb target: initialization
 
    Copyright (C) 2003 Todd T. Fries <todd@openbsd.org>
 
@@ -31,8 +31,6 @@
 #include <ggi/display/wsfb.h>
 
 static int usagecounter = 0;
-
-static int do_mmap(ggi_visual *);
 
 static int do_cleanup(ggi_visual *vis)
 {
@@ -135,7 +133,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto error;
 	}
 
-	printf("info: depth: %d height: %d width: %d\n",
+	GGIDPRINT("info: depth: %d height: %d width: %d\n",
 		priv->info.depth, priv->info.height, priv->info.width);
 
 	if (ioctl(priv->fd, WSDISPLAYIO_GMODE, &priv->origmode) == -1) {
@@ -162,13 +160,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->pagemask = getpagesize() - 1;
 	priv->mapsize = ((int)priv->size  + priv->pagemask) & ~(priv->pagemask);
-
-	do_mmap(vis);
-
-	/* show some data */
-	for(i=0; i<priv->size/4/16; i++) {
-		priv->base[i]=i*2;
-	}
 
 	/* Open keyboard and mouse input */
 	vis->input = giiOpen("stdin:ansikey", NULL);
@@ -220,48 +211,6 @@ int GGIdl_wsfb(int func, void **funcptr)
 	}
 
 	return GGI_ENOTFOUND;
-}
-
-static int
-do_mmap(ggi_visual *vis)
-{
-	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
-        ggi_mode *mode = LIBGGI_MODE(vis);
-        ggi_graphtype gt = mode->graphtype;
-	ggi_directbuffer *buf;
-
-	
-	priv->base = mmap(0, priv->mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
-		priv->fd, priv->Base);
-
-	if (priv->base == (void *)-1) {
-		GGIDPRINT("mmap failed: %s %s\n",
-			priv->devname, strerror(errno));
-		return -1;
-	}
-
-
-	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
-	LIBGGI_PIXFMT(vis)->size  = GT_SIZE(gt);
-	LIBGGI_PIXFMT(vis)->depth = GT_DEPTH(gt);
-
-	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
-
-	_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
-
-	buf = LIBGGI_APPBUFS(vis)[0];
-
-	buf->frame = 0;
-	buf->type  = GGI_DB_SIMPLE_PLB|GGI_DB_NORMAL;
-	buf->read  = (uint8 *) priv->base;
-	buf->write = buf->read;
-
-	buf->layout = blPixelPlanarBuffer;
-
-	buf->buffer.plb.stride = priv->linebytes;
-	buf->buffer.plan.pixelformat = LIBGGI_PIXFMT(vis);
-
-	return 0;
 }
 
 

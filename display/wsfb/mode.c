@@ -1,29 +1,32 @@
-/* $Id: mode.c,v 1.1 2003/02/13 19:44:25 fries Exp $
+/* $Id: mode.c,v 1.2 2003/02/14 16:37:33 fries Exp $
 ******************************************************************************
-
-   LibGGI wsfb(3) target
-
-   Copyright (C) 2003 Todd T. Fries <todd@openbsd.org>
-
-   Permission is hereby granted, free of charge, to any person obtaining a
-   copy of this software and associated documentation files (the "Software"),
-   to deal in the Software without restriction, including without limitation
-   the rights to use, copy, modify, merge, publish, distribute, sublicense,
-   and/or sell copies of the Software, and to permit persons to whom the
-   Software is furnished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-******************************************************************************
-*/
+ *
+ * wsfb(3) target: mode management
+ *
+ *
+ * Copyright (c) 2003 Todd T. Fries <todd@OpenBSD.org>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
+ * THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+******************************************************************************/
 
 #include <sys/ioccom.h>
 
@@ -34,6 +37,10 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/wsfb.h>
+
+#include "../common/pixfmt-setup.inc"
+
+static int do_mmap(ggi_visual *);
 
 int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
@@ -69,14 +76,19 @@ int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 { 
-	//struct wsfb_priv *priv = WSFB_PRIV(vis);
-	ggi_graphtype gt = tm->graphtype;
+	struct wsfb_priv *priv = WSFB_PRIV(vis);
+	//ggi_graphtype gt = tm->graphtype;
 	//unsigned long modenum = 0;
 	//char sugname[256];
 	//char args[256];
 	int err = 0;
 	//int id, i;
-	int pixelBytes;
+	//int pixelBytes;
+
+	if (vis == NULL) {
+		GGIDPRINT("vis == NULL");
+		return -1;
+	}
 
 	GGIDPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
 		tm->visible.x, tm->visible.y,
@@ -84,17 +96,45 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 		tm->frames, tm->graphtype);
 
 	err = GGI_wsfb_checkmode(vis, tm);
-	if (err)
-		return err;
+	if (err) {
+		GGIDPRINT("error from checkmode during GGI_wsfb_setmode\n");
+		return -1;
+	}
 
-	switch(gt) {
-		case GT_8BIT : pixelBytes = 1; break;
-		/* Unsupported mode depths */
+	switch(tm->graphtype) {
+		case GT_8BIT : break;
 		default:
 			return -1;
 	}
+	if ((GT_SCHEME(tm->graphtype) == GT_PALETTE)) {
+		int nocols = 1 << GT_DEPTH(tm->graphtype);
 
-//	ggiIndicateChange(vis, GGI_CHG_APILIST);
+		vis->palette = _ggi_malloc(nocols * sizeof(ggi_color));
+		vis->opcolor->setpalvec = GGI_wsfb_setpalvec;
+		/* Initialize palette */
+		ggiSetColorfulPalette(vis);
+	}
+
+	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
+
+	_ggiZapMode(vis, 0);
+
+	do_mmap(vis);
+
+	{
+		int i;
+		/* show some data */
+		for(i=0; i<priv->size/4/16; i++) {
+			priv->base[i]=0;
+		}
+		for(; i < priv->size/4/8; i++) {
+			priv->base[i]=0xffffffff;
+		}
+	}
+   
+
+
+	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;
 }
@@ -104,10 +144,51 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 
 /**********************************/
 /* check any mode (text/graphics) */
+/* return -1 on any error, but set things to what should be working values */
 /**********************************/
 int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
+	int err = 0;
+
+	if (vis == NULL)
+		return -1;
+
+	if(tm->visible.x != priv->info.width && tm->visible.x != GGI_AUTO)
+		err = -1;
+	else if(tm->virt.x != priv->info.width && tm->virt.x != GGI_AUTO)
+		err = -1;
+
+	if(tm->visible.y != priv->info.height && tm->visible.y != GGI_AUTO)
+		err = -1;
+	else if(tm->virt.y != priv->info.height && tm->virt.y != GGI_AUTO)
+		err = -1;
+
+	if(tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT)
+		err = -1;	
+
+	if(tm->frames != GGI_AUTO && tm->frames != 1)
+		err = -1;
+
+	if(tm->dpp.x != GGI_AUTO && tm->dpp.x != 1)
+		err = -1;
+	else if(tm->dpp.y != GGI_AUTO && tm->dpp.y != 1)
+		err = -1;
+
+	tm->visible.x = tm->virt.x = priv->info.width;
+	tm->visible.y = tm->virt.y = priv->info.height;
+
+	tm->graphtype = GT_8BIT;
+	
+	tm->frames = 1;
+
+	tm->dpp.x = 1;
+	tm->dpp.y = 1;
+
+	return err;
+
+	/* FIXKME */
+#if 0
 	int err = 0;
 
 	GGIDPRINT_MODE("display-wsfb: setmode %dx%d#V%dx%d.F%d[0x%02x]\n",
@@ -118,11 +199,6 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 	if (vis==NULL || tm==NULL)
 		return -1;
 
-	tm->visible.x = tm->virt.x = priv->info.width;
-	tm->visible.y = tm->virt.y = priv->info.height;
-
-	tm->graphtype = GT_8BIT;
-	
 	if(tm->virt.x==GGI_AUTO) tm->virt.x = tm->visible.x;
 	if(tm->virt.y==GGI_AUTO) tm->virt.y = tm->visible.y;
 
@@ -136,9 +212,9 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 		err = -1;
 	}
  
-	tm->frames = 0;
 
 	return err;
+#endif
 }
 
 /************************/
@@ -151,5 +227,94 @@ int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
 	GGIDPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
+	return 0;
+}
+
+
+int
+GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+{
+	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
+	//struct fb_cmap cmap;
+	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
+
+	GGIDPRINT_COLOR("display-wsfb: SetPalVec(%d,%d)\n", start, len);
+	
+	if (start == GGI_PALETTE_DONTCARE) {
+		start = 0;
+	}
+
+	if ((start < 0) || (len < 0) || (start+len > nocols)) {
+		return -1;
+	}
+#if 0
+	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+
+	if (!priv->ismapped) return 0;
+
+	cmap.start  = start;
+	cmap.len    = len;
+	cmap.red    = &priv->reds[start];
+	cmap.green  = &priv->greens[start];
+	cmap.blue   = &priv->blues[start];
+	cmap.transp = NULL;
+
+	for (; len > 0; start++, colormap++, len--) {
+		priv->reds[start]   = colormap->r;
+		priv->greens[start] = colormap->g;
+		priv->blues[start]  = colormap->b;
+	}
+
+	if (fbdev_doioctl(vis, FBIOPUTCMAP, &cmap) < 0) {
+		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.");
+		return -1;
+	}
+#endif
+
+	return 0;
+}
+
+
+static int
+do_mmap(ggi_visual *vis)
+{
+	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_mode *mode = LIBGGI_MODE(vis);
+	ggi_graphtype gt = mode->graphtype;
+	ggi_directbuffer *buf;
+
+	
+	priv->base = mmap(0, priv->mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
+		priv->fd, priv->Base);
+
+	if (priv->base == (void *)-1) {
+		GGIDPRINT("mmap failed: %s %s\n",
+			priv->devname, strerror(errno));
+		return -1;
+	}
+
+	fprintf(stderr,"mmap offset: 0x%lx\n",priv->base);
+
+	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
+
+	_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
+
+	buf = LIBGGI_APPBUFS(vis)[0];
+
+	buf->frame = 0;
+	buf->type  = GGI_DB_SIMPLE_PLB|GGI_DB_NORMAL;
+	buf->read  = (uint8 *) priv->base;
+	buf->write = buf->read;
+	buf->page_size = 0;
+
+	buf->layout = blPixelLinearBuffer;
+
+	buf->buffer.plb.stride = priv->linebytes;
+	buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+
+	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+
+
 	return 0;
 }
