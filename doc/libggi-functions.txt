@@ -466,6 +466,8 @@ The format of the string used by these functions is exactly the same
 as the one used in the `GGI_DEFMODE` environment variable described in
 :man:`libggi(7)`.
 
+The string returned by both `ggiSPrintMode` and `ggiFPrintMode`
+does *not* contain a trailing newline.
 
 Return value
 ------------
