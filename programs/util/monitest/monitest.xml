@@ -5,119 +5,121 @@
 <refentry id="ref-monitest">
 
 <refmeta>
-<refentrytitle><systemitem>monitest</systemitem></refentrytitle>
-<manvolnum>1</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>monitest</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>monitest</systemitem></refname>
-<refpurpose>Monitor test program</refpurpose>
+    <refname id="monitest">monitest</refname>
+    <refpurpose>Monitor test program</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>monitest</command>
-<arg choice="opt">modestring</arg>
+    <command>monitest</command>
+    <arg choice="opt">modestring</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
-
+<refsect1><title>Description</title>
 
 <para>
-<systemitem>monitest</systemitem> is intended to test ggi drivers
-(during development) and the optical quality of monitors
-(later). Don't be too disappointed if you find a weakness in your
-monitor, mine is probably worse than yours ...
+    <systemitem>monitest</systemitem> is intended to test ggi drivers
+    (during development) and the optical quality of monitors
+    (later). Don't be too disappointed if you find a weakness in your
+    monitor, mine is probably worse than yours ...
 </para>
 
 <para>
-The main feature is a test screen like broadcast in former days before 24
-hour TV programs. It is used to test geometry and resolution of the
-monitor.
+    The main feature is a test screen like broadcast in former days before 24
+    hour TV programs. It is used to test geometry and resolution of the
+    monitor.
 </para>
+
 <para>
-Also included are several test screens for testing moiree effects, the
-horizontal and vertical screen resolution, and colour convergence.
+    Also included are several test screens for testing moiree effects, the
+    horizontal and vertical screen resolution, and colour convergence.
 </para>
+
 <para>
-You will be able to switch resolution on the fly, to find out
-interactively what modes the driver supports and how much of this your
-card/monitor can do with acceptable quality.
+    You will be able to switch resolution on the fly, to find out
+    interactively what modes the driver supports and how much of this your
+    card/monitor can do with acceptable quality.
 </para>
 
 </refsect1>
 
-<refsect1>
-<title>Options</title>
+<refsect1><title>Options</title>
 
-<variablelist>
+    <variablelist>
 
-<varlistentry>
-<term>modestring</term>
-<listitem><para>Specify the mode to use</para></listitem>
-</varlistentry>
+    <varlistentry>
+    <term>modestring</term>
+    <listitem><para>Specify the mode to use</para></listitem>
+    </varlistentry>
 
-</variablelist>
+    </variablelist>
 
 </refsect1>
 
-<refsect1>
-<title>Pattern descriptions</title>
+<refsect1><title>Pattern descriptions</title>
 
 <refsect2><title>Testpattern</title>
+
 <para>
-The basic grid is white on black and has sixteen times twelve fields. On a
-tube with 4:3 ratio each one should be square, even if the pixel size of
-the screen does not have 4:3 ratio. The lines are one pixel wide. They
-should be straight, even in the corners, and not have coloured
-borders.
+    The basic grid is white on black and has sixteen times twelve fields. On a
+    tube with 4:3 ratio each one should be square, even if the pixel size of
+    the screen does not have 4:3 ratio. The lines are one pixel wide. They
+    should be straight, even in the corners, and not have coloured
+    borders.
 </para>
 
 <para>
-There is a big circle in the middle and smaller circles in each corner.
-They are round pixelwise, so they should be circles if the screen size
-ratio (width:height of visible area) is equal to the pixel ratio. It
-usually should be 4:3. So the best sizes for testing are 320x240, 640x480,
-800x600 and up.
+    There is a big circle in the middle and smaller circles in each corner.
+    They are round pixelwise, so they should be circles if the screen size
+    ratio (width:height of visible area) is equal to the pixel ratio. It
+    usually should be 4:3. So the best sizes for testing are 320x240, 640x480,
+    800x600 and up.
 </para>
+
 <para>
-In each corner there is one box with vertical stripes. These are one pixel
-wide, with one pixel distance, so you get maximum signal frequency and can
-see how well your monitor and video card handle the dotclock.
+    In each corner there is one box with vertical stripes. These are one pixel
+    wide, with one pixel distance, so you get maximum signal frequency and can
+    see how well your monitor and video card handle the dotclock.
 </para>
+
 <para>
-The middle field has eight solid blocks with the eight colours, i.e all
-combinations of the red, green and blue signals turned on and off. Below
-it there are four fields with vertical stripes as in the corners, but in
-white and the three basic colours red, green and blue. Below it there is a
-bar with these four colours red, blue, green and white blending from full
-intensity (left) to zero intensity (right), i.e. black.
+    The middle field has eight solid blocks with the eight colours, i.e all
+    combinations of the red, green and blue signals turned on and off. Below
+    it there are four fields with vertical stripes as in the corners, but in
+    white and the three basic colours red, green and blue. Below it there is a
+    bar with these four colours red, blue, green and white blending from full
+    intensity (left) to zero intensity (right), i.e. black.
 </para>
+
 <para>
-In the middle the current resolution is printed. Maybe horizontal and
-vertical frequency will be printed too, if I can get the information,
-which is not (yet) implemented in the LibGGI API.
+    In the middle the current resolution is printed. Maybe horizontal and
+    vertical frequency will be printed too, if I can get the information,
+    which is not (yet) implemented in the LibGGI API.
 </para>
 
 </refsect2>
 
 <refsect2><title>Convergence</title>
+
 <para>
-Convergence means how well the red, green and blue picture are
-aligned.
+    Convergence means how well the red, green and blue picture are aligned.
 </para>
 
 <para>
-This is tested by painting a grid of red, green and blue + signs. They
-should be aligned properly where they touch. Usually they don't...
+    This is tested by painting a grid of red, green and blue + signs. They
+    should be aligned properly where they touch. Usually they don't...
 </para>
 
 <para>
-There are four patterns like this, rotating the colours. Press space to
-switch forward, or press q to quit anytime.
+    There are four patterns like this, rotating the colours. Press space to
+    switch forward, or press q to quit anytime.
 </para>
 
 </refsect2>
@@ -126,65 +128,76 @@ switch forward, or press q to quit anytime.
 <refsect2><title>Resolution</title>
 
 <para>
-Once again there are several screens, press space to step thru them.
+    Once again there are several screens, press space to step thru them.
 </para>
 
 <para>
- Vertical white stripes with width 1, 2, 3 and 4 pixels. See what
- the highest dotclock is the monitor can handle.
+    Vertical white stripes with width 1, 2, 3 and 4 pixels. See what
+    the highest dotclock is the monitor can handle.
 </para>
+
 <para>
- Horizontal stripes with width 1 and 2 pixels. See how well the scan
- lines are separated.
+    Horizontal stripes with width 1 and 2 pixels. See how well the scan
+    lines are separated.
 </para>
+
 <para>
-  Three stars of black lines on white, with a width and space (at the
- sceen borders) of 1 and 1, 1 and 5, 2 and 10 respectively. Watch for
- colour changes, and once again you can see the maximum frequency your
- monitor can do.
+    Three stars of black lines on white, with a width and space (at the
+    sceen borders) of 1 and 1, 1 and 5, 2 and 10 respectively. Watch for
+    colour changes, and once again you can see the maximum frequency your
+    monitor can do.
 </para>
-<para> Vertical bars in red, blue, green and white, with the width of 4,
- 3, 2, 1, 2, 3 and 4 pixels for bar and space. See whether there is a
- difference in resolution between the colours. And watch, again, for the
- alignment.
+
+<para>
+    Vertical bars in red, blue, green and white, with the width of 4,
+    3, 2, 1, 2, 3 and 4 pixels for bar and space. See whether there is a
+    difference in resolution between the colours. And watch, again, for the
+    alignment.
 </para>
 
 </refsect2>
 
 <refsect2><title>Moiree</title>
+
 <para>
-I don't know whether these tests work, my monitor is rather good in this
-respect. Please gimme some feedback!
+    I don't know whether these tests work, my monitor is rather good in this
+    respect. Please gimme some feedback!
 </para>
+
 <para>
-If there is interference between the monitor mask and a grid displayed on
-the monitor, a change of colours can be seen, and is sometimes very
-annoying. There are three tests present, each one comes in the four colour
-combinations black, red, green and blue on white background :
-vertical stripes, one dot wide, with one dot space; white dots on
-colour ground, spaced two and two (run testscreen with a really low
-resolution to see what I mean :-); a chessboard.
+    If there is interference between the monitor mask and a grid displayed on
+    the monitor, a change of colours can be seen, and is sometimes very
+    annoying. There are three tests present, each one comes in the four colour
+    combinations black, red, green and blue on white background :
+    vertical stripes, one dot wide, with one dot space; white dots on
+    colour ground, spaced two and two (run testscreen with a really low
+    resolution to see what I mean :-); a chessboard.
 </para>
+
 </refsect2>
 
 <refsect2><title>Flat panel test</title>
+
 <para>
-This test allows you to drag a coloured rectangle around, looking for
-pixels that are always on or off, which is, as far as I know, the most
-common failure of flat panels.
+    This test allows you to drag a coloured rectangle around, looking for
+    pixels that are always on or off, which is, as far as I know, the most
+    common failure of flat panels.
 </para>
+
 <para>
-The rectange is moved using the mouse or the arrow keys.
+    The rectange is moved using the mouse or the arrow keys.
 </para>
+
 <para>
-The color of the rectange can be changed by pressing the primary mouse
-button (usually the left one) or &lt;Space&gt;, cycling through (black,
-red, green, blue, white) or by pressing a number between 0 and 4 or the
-first letter of the colour (b is blue).
+    The color of the rectange can be changed by pressing the primary mouse
+    button (usually the left one) or &lt;Space&gt;, cycling through (black,
+    red, green, blue, white) or by pressing a number between 0 and 4 or the
+    first letter of the colour (b is blue).
 </para>
+
 <para>
-Dragging with the second button pressed changes the size of the
-rectangle. Every other key terminates this test.
+    Dragging with the second button pressed changes the size of the
+    rectangle. Every other key terminates this test.
 </para>
 
 </refsect2>
@@ -204,8 +217,8 @@ the X targets) supports that.
 
 <refsect1><title>Author</title>
 
-<para><systemitem>monitest</systemitem> was written by Hartmut
-Niemann.
+<para>
+    <systemitem>monitest</systemitem> was written by Hartmut Niemann.
 </para>
 
 </refsect1>

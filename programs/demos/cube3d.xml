@@ -5,63 +5,63 @@
 <refentry id="ref-cube3d">
 
 <refmeta>
-<refentrytitle><systemitem>cube3d</systemitem></refentrytitle>
-<manvolnum>1</manvolnum>
-<refmiscinfo>GGI</refmiscinfo>
+    <refentrytitle>cube3d</refentrytitle>
+    <manvolnum>1</manvolnum>
+    <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname><systemitem>cube3d</systemitem></refname>
-<refpurpose>3D cube console</refpurpose>
+    <refname id="cube3d">cube3d</refname>
+    <refpurpose>3D cube console</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
-<command>cube3d</command>
+    <command>cube3d</command>
 </cmdsynopsis>
 </refsynopsisdiv>
 
-<refsect1>
-<title>Description</title>
+<refsect1><title>Description</title>
 
 <para>
-<systemitem>cube3d</systemitem> is a LibGGI "middleend", that allows
-to run up to 6 LibGGI applications on one screen, mapped to the six
-sides of a cube.
+    <systemitem>cube3d</systemitem> is a LibGGI "middleend", that allows
+    to run up to 6 LibGGI applications on one screen, mapped to the six
+    sides of a cube.
 </para>
 
 <para>
-The programs program1 to program6 are invoked and mapped to the cube sides
-after the 3d program itself has started. You can interleave the program
-names with size parameters of the form -xxx,yyy that will ask the programs 
-that come later on the commandline to start up in that size.
-The default size is half that of the visual 3d is running on.
+    The programs program1 to program6 are invoked and mapped to the cube sides
+    after the 3d program itself has started. You can interleave the program
+    names with size parameters of the form -xxx,yyy that will ask the programs 
+    that come later on the commandline to start up in that size.
+    The default size is half that of the visual 3d is running on.
 </para>
 
 <para>
-You can add more programs while 3d is running by setting some environment 
-variables and starting them :
+    You can add more programs while 3d is running by setting some environment 
+    variables and starting them :
 </para>
 
 <screen>
-GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
+    GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
 </screen>
 
 <para>
-The [0-5] selects on which face of the cube you want the application to run.
+    The [0-5] selects on which face of the cube you want the application to run.
 </para>
+
 <para>
-You should as well set <envar>GGI_DEFMODE</envar> to a mode with the same color
-organization like the one 3d itself is running on, and the mode, 3d
-believes it should run in, as specified with a size parameter.
+    You should as well set <envar>GGI_DEFMODE</envar> to a mode with the same color
+    organization like the one 3d itself is running on, and the mode, 3d
+    believes it should run in, as specified with a size parameter.
 </para>
+
 <para>
-Once <systemitem>cube3d</systemitem>
-is invoked, the program will display the cube with the six other
-applications mapped to it. But you will probably only see application 
-number 1 (and maybe 3 from behind), as this is the way the cube is 
-oriented. The keyboard is redirected to the application that has the 
-blinking border.
+    Once <systemitem>cube3d</systemitem> is invoked, the program will
+    display the cube with the six other applications mapped to it. But
+    you will probably only see application number 1 (and maybe 3 from
+    behind), as this is the way the cube is oriented. The keyboard is
+    redirected to the application that has the blinking border.
 </para>
 
 </refsect1>
@@ -70,131 +70,131 @@ blinking border.
 <refsect1><title>Function Keys</title>
 
 <para>
-# is the "escape" key. After pressing it, the blinking border
-should turn red. All further input now goes to the 3d program and is
-used to manipulate the appearance and behaviour of the cube:
+    # is the "escape" key. After pressing it, the blinking border
+    should turn red. All further input now goes to the 3d program and is
+    used to manipulate the appearance and behaviour of the cube:
+
+    <variablelist>
+
+    <varlistentry>
+    <term>#</term>
+    <listitem><para>
+    A double-escape is used to send the escape-char '#' itself.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>&lt;Enter&gt;</term>
+    <listitem><para>
+    or any unknown keypress will end the escape mode. The border will turn
+    white again and input will go to the bordered application.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>&lt;Left&gt;</term><term>&lt;Right&gt;</term>
+    <term>&lt;Up&gt;</term><term>&lt;Down&gt;</term>
+    <term>&lt;Home&gt;</term><term>&lt;End&gt;</term>
+    <listitem><para>
+    will make the cube turn along the respective axis.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>&lt;PageUp&gt;</term><term>&lt;PageDown&gt;</term>
+    <listitem><para>
+    will make the cube enlarge/shrink.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>s</term><term>S</term>
+    <listitem><para>will stop any cube motion.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>c</term><term>C</term>
+    <listitem><para>
+    will center the currently active face (the one with the border) in a
+    smooth motion and when this is finished, it will stop all motion.
+    This is a toggle, that gets turned off automatically when the final 
+    position is reached. That is, you can disable it on its way, which
+    will leave the cube spinning in the current direction.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>b</term><term>B</term>
+    <listitem><para>
+    will toggle backface culling. In that case, the three "back" sides of
+    the cube are not drawn. Looks much less nice, but is faster. Use on slow
+    systems.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>a</term><term>A</term>
+    <listitem><para>
+    will toggle autoactivation. If this is on, the blinking frame will
+    automatically move to the face, that is facing the viewer most
+    directly, i.e. the "front" face. This can be quite irritating, especially,
+    if the cube is moving fast. But it's cool at times ...
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>t</term><term>T</term>
+    <listitem><para>
+    will toggle transparency. The pixelvalue of 0x00000000 is treated as
+    "transparent" usually. This not only looks better, but often even 
+    improves performance, as there is less to draw. However things like
+    shells (nixterm) might be hard to read on a colorful background, so
+    you might want to turn it off at times.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>0-5</term>
+    <listitem><para>
+    select the active console that will get input, when you leave the escaped
+    mode. The blinking rectangle will move there. Together with 'c', this is
+    used to get a particular console to the front.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>q</term><term>Q</term>
+    <listitem><para>
+    quit 3d. This also tries to kill the apps started from it. Externally
+    started apps are _not_ killed. They will continue to run and might interfere
+    with future runs of 3d, as they still hog the shared memory used to
+    communicate between 3d and the apps.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>f</term><term>F</term>
+    <listitem><para>
+    display framerate. (undocumented, may disappear)
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term>d</term><term>D</term>
+    <listitem><para>
+    display debugging info. Not very useful. (undocumented, may disappear)
+    </para></listitem>
+    </varlistentry>
+
+    </variablelist>
 </para>
-
-<variablelist>
-
-<varlistentry>
-<term>#</term>
-<listitem><para>
-A double-escape is used to send the escape-char '#' itself.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>&lt;Enter&gt;</term>
-<listitem><para>
-or any unknown keypress will end the escape mode. The border will turn
-white again and input will go to the bordered application.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>&lt;Left&gt;</term><term>&lt;Right&gt;</term>
-<term>&lt;Up&gt;</term><term>&lt;Down&gt;</term>
-<term>&lt;Home&gt;</term><term>&lt;End&gt;</term>
-<listitem><para>
-will make the cube turn along the respective axis.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>&lt;PageUp&gt;</term><term>&lt;PageDown&gt;</term>
-<listitem><para>
-will make the cube enlarge/shrink.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>s</term><term>S</term>
-<listitem><para>will stop any cube motion.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>c</term><term>C</term>
-<listitem><para>
-will center the currently active face (the one with the border) in a
-smooth motion and when this is finished, it will stop all motion.
-This is a toggle, that gets turned off automatically when the final 
-position is reached. That is, you can disable it on its way, which
-will leave the cube spinning in the current direction.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>b</term><term>B</term>
-<listitem><para>
-will toggle backface culling. In that case, the three "back" sides of
-the cube are not drawn. Looks much less nice, but is faster. Use on slow
-systems.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>a</term><term>A</term>
-<listitem><para>
-will toggle autoactivation. If this is on, the blinking frame will
-automatically move to the face, that is facing the viewer most
-directly, i.e. the "front" face. This can be quite irritating, especially,
-if the cube is moving fast. But it's cool at times ...
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>t</term><term>T</term>
-<listitem><para>
-will toggle transparency. The pixelvalue of 0x00000000 is treated as
-"transparent" usually. This not only looks better, but often even 
-improves performance, as there is less to draw. However things like
-shells (nixterm) might be hard to read on a colorful background, so
-you might want to turn it off at times.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>0-5</term>
-<listitem><para>
-select the active console that will get input, when you leave the escaped
-mode. The blinking rectangle will move there. Together with 'c', this is
-used to get a particular console to the front.
-</para></listitem>
-</varlistentry>
-
-
-<varlistentry>
-<term>q</term><term>Q</term>
-<listitem><para>
-quit 3d. This also tries to kill the apps started from it. Externally
-started apps are _not_ killed. They will continue to run and might interfere
-with future runs of 3d, as they still hog the shared memory used to
-communicate between 3d and the apps.
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>f</term><term>F</term>
-<listitem><para>
-display framerate. (undocumented, may disappear)
-</para></listitem>
-</varlistentry>
-
-<varlistentry>
-<term>d</term><term>D</term>
-<listitem><para>
-display debugging info. Not very useful. (undocumented, may disappear)
-</para></listitem>
-</varlistentry>
-
-</variablelist>
 
 </refsect1>
 
 <refsect1><title>Bugs</title>
-<para>Too numerous to count.
+<para>
+    Too numerous to count.
 </para>
 </refsect1>
 
