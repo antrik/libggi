@@ -1,6 +1,6 @@
 dnl Let user add extra includes and libs
 
-AC_DEFUN(GGI_DLLEXT,
+AC_DEFUN([GGI_DLLEXT],
 [
 
 AC_MSG_CHECKING(for shared library extension)

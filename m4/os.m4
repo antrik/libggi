@@ -1,6 +1,6 @@
 dnl Add your OS here, if not listed
 
-AC_DEFUN(GGI_CHECKOS,
+AC_DEFUN([GGI_CHECKOS],
 [
 
 case "${host_os}" in
