@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.65 2002/11/28 14:11:37 cegger Exp $
+dnl $Id: configure.in,v 1.66 2002/12/02 15:06:43 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -610,8 +610,12 @@ if test "x$build_x_target" != "xno" \
     build_dga_target="no"
   else
 
-dnl This is necessary as there are plattforms (i.e. Darwin),
-dnl where $ac_x_includes doesn't belong to the default paths
+
+dnl This is necessary as there are plattforms, where
+dnl $ac_x_includes does NOT belong to the default search
+dnl path. Darwin is such a system, for example.
+dnl $ac_x_includes contains the right path to the X
+dnl includes (/usr/X11R6/include on most systems).
 
     cflags_old="$CFLAGS"
     cppflags_old="$CPPFLAGS"
