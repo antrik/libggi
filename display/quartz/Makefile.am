@@ -1,4 +1,3 @@
-AM_CFLAGS = -DPKG_NAME='"GGI:display:quartz"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 quartz_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 
@@ -14,4 +13,5 @@ quartz_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS
-AM_CPPFLAGS = -no-cpp-precomp -I/System/Library/Frameworks
+AM_CPPFLAGS = -no-cpp-precomp -I/System/Library/Frameworks -DPKG_NAME='"GGI:display:quartz"'
+
