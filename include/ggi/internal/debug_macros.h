@@ -188,5 +188,7 @@ static inline void DERROR_##sfx##1  (const char*fmt,...){DERROR1(var,val);}\
 static inline void DERROR_##sfx##2  (const char*fmt,...){DERROR2(var,val);}\
 static inline void DERROR_##sfx##3  (const char*fmt,...){DERROR3(var,val);}\
 
+#if 0	/* disabled due to re-declaration */
 /* Compatibility */
 #define DPRINTIF(state, field) DMESSAGE(state,DEBUG_NOTICE,DEBUG_0,field)
+#endif
