@@ -130,3 +130,5 @@ Non backward-compatible changes
 ------------------------------------------
 
 - Remove old ggi versions of event types, which were replaced by gii typedefs.
+- Restructure ggi/errors.h codes to allow wrappers/apps to easily 
+  differentiate between application errors and internal faults.
