@@ -2,7 +2,7 @@
 <!DOCTYPE reference
   PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<reference id="libggi-api-functions"><title>LibGGI API Functions</title>
+<reference id="libggi-api-functions"><title>LibGGI Functions</title>
 
 <refentry id="api-ggiinit">
 

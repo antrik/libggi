@@ -2,7 +2,7 @@
 <!DOCTYPE reference
   PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<reference id="libggi-api-structures"><title>LibGGI API Structures</title>
+<reference id="libggi-api-structures"><title>LibGGI Structures</title>
 
 
 <refentry id="ref-struct-ggi-mode">
@@ -27,10 +27,6 @@
 <refsect1>
 <title>Description</title>
 
-<para>The mode structure describes a visual configuration given by
-its size and other graphic properties.
-</para>
-
 <programlisting>
 typedef struct { sint16 x, y; } ggi_coord;
 </programlisting>
@@ -50,6 +46,10 @@ typedef struct
         ggi_coord       dpp;
 } ggi_mode;
 </programlisting>
+
+<para>The mode structure describes a visual configuration given by
+its size and other graphic properties.
+</para>
 
 </refsect1>
 
@@ -349,10 +349,6 @@ pointer arithmetics with <type>ggi_pixel</type>s.
 <refsect1>
 <title>Description</title>
 
-<para>
-This structure describes the internal format of pixel values for a visual.
-</para>
-
 <programlisting>
 typedef struct {
 	int		depth;		/* Number of significant bits */
@@ -420,7 +416,9 @@ typedef struct {
 	 */
 	
 } ggi_pixelformat;
+</programlisting>
 
+<programlisting>
 /* Pixelformat flags */
 #define GGI_PF_REVERSE_ENDIAN	0x01
 #define GGI_PF_HIGHBIT_RIGHT	0x02
@@ -428,7 +426,9 @@ typedef struct {
 #define GGI_PF_EXTENDED		0x08
 </programlisting>
 
-<para>Use the <function>ggiGetPixelFormat</function> function.
+<para>
+This structure describes the internal format of pixel values for a visual.
+Use the <function>ggiGetPixelFormat</function> function.
 </para>
 
 </refsect1>
@@ -469,10 +469,6 @@ typedef struct {
 <refsect1>
 <title>Description</title>
 
-<para>The <structname>ggi_directbuffer</structname> structure contains
-information on target-dependent buffers to allow applications to
-access them directly.  </para>
-
 <programlisting>
 /* Buffer types */
 #define GGI_DB_NORMAL		0x0001  /* "frame" is valid when set */
@@ -489,7 +485,9 @@ access them directly.  </para>
       align == 0
       layout == blPixelLinearBuffer
 */
+</programlisting>
 
+<programlisting>
 typedef struct {
 	uint32		type;		/* buffer type */
 	int		frame;		/* framenumber (GGI_DB_NORMAL) */
@@ -524,6 +522,15 @@ typedef struct {
 	} buffer;
 } ggi_directbuffer;
 </programlisting>
+
+<para>The <structname>ggi_directbuffer</structname> structure contains
+information on target-dependent buffers to allow applications to
+access them directly.  </para>
+
+</refsect1>
+
+<refsect1>
+<title>Structure Members</title>
 
 <variablelist>
 <varlistentry>
