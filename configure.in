@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.34 2002/04/08 11:36:14 cegger Exp $
+dnl $Id: configure.in,v 1.35 2002/05/04 13:45:10 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -416,7 +416,7 @@ if test "x$build_genkgi_driver" != "xno"; then
 fi
 
 if test "x$build_libkgi_driver" != "xno"; then
-  AC_CHECK_LIB(galloc, ggiGAInit, foo=bar, build_libkgi_target="no"),
+  AC_CHECK_LIB(galloc, ggiGAInit, foo=bar, build_libkgi_target="no")
 fi
 
 if test "x$build_glide_target" != "xno"; then
