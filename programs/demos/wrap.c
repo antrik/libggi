@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.2 2001/05/25 19:56:14 stefan Exp $
+/* $Id: wrap.c,v 1.3 2001/06/17 09:02:37 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -67,7 +67,7 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
   address.sun_family = AF_UNIX;
   strcpy(address.sun_path, tmpnam(0));
   strcpy((char *)client->socket, address.sun_path);
-  if (bind(client->sockfd, &address, sizeof(struct sockaddr_un)))
+  if (bind(client->sockfd, (const struct sockaddr *)(&address), sizeof(struct sockaddr_un)))
     fprintf(stderr, "error in bind: %s\n", strerror(errno));
   /*
    * serialization has yet to be implemented
@@ -106,7 +106,8 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
     }
   listen(client->sockfd, 1);
   len = sizeof(struct sockaddr_un);
-  client->sockfd = accept(client->sockfd, &address, &len);
+  client->sockfd = accept(client->sockfd,
+			  (struct sockaddr *)(&address), &len);
   if (client->sockfd == -1) { perror("accept");}
 }
 
@@ -117,10 +118,10 @@ void exit_client(client_t *client)
   unlink(client->socket);
 }
 
-//. return 1 if we got called by the client
-//. return 0 if nothing is to do (either because we got interrupted by a signal, or because we
-//.                               just forwarded an event)
-//. return -1 on error
+/*. return 1 if we got called by the client */
+/*. return 0 if nothing is to do (either because we got interrupted by a signal, or because we */
+/*.                               just forwarded an event) */
+/*. return -1 on error */
 int wait_for_something(ggi_visual_t master, client_t *client)
 {
   /*
@@ -155,10 +156,9 @@ int repair_screen(client_t *client, ggi_visual_t visual)
    */
   char tag;
   int region[4];
-  if (read(client->sockfd, &tag, 1) == 1 && // read 'F' (like 'flush');
+  if (read(client->sockfd, &tag, 1) == 1 && /* read 'F' (like 'flush'); */
       read(client->sockfd, (char *)region, 4*sizeof(int)) == 4*sizeof(int))
     {
-      ggi_mode mode;
       ggiCrossBlit(client->visual, region[0], region[1], region[2], region[3], visual, region[0], region[1]);
       ggiFlush(visual);
       return 1;
