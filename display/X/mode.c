@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2003/05/01 08:07:15 cegger Exp $
+/* $Id: mode.c,v 1.16 2003/05/08 14:52:49 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -184,12 +184,14 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	return -1;
 }
 
-int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm) {
+int GGI_X_checkmode_normal(ggi_visual *vis, ggi_mode *tm)
+{
 	int dummy;
 	return(GGI_X_checkmode_internal(vis, tm, &dummy));
 }
 
-int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm) {
+int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
+{
 	ggi_x_priv *priv;
 	Window root;
 	int w, h, dummy;
@@ -197,7 +199,7 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm) {
 	priv = GGIX_PRIV(vis);
 
 #warning retcode checking here
-        XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
+	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
 		     &w, &h, &dummy, &dummy);
 
 	if (tm->visible.x == GGI_AUTO) tm->visible.x = w;

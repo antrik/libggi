@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2003/05/03 16:06:56 cegger Exp $
+/* $Id: color.c,v 1.6 2003/05/08 14:52:49 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -217,24 +217,25 @@ int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 
 	i = 0;
 	do {
-		colormap[i].r = priv->gammamap[start + i].red;   
-		colormap[i].g = priv->gammamap[start + i].green; 
+		colormap[i].r = priv->gammamap[start + i].red;
+		colormap[i].g = priv->gammamap[start + i].green;
 		colormap[i].b = priv->gammamap[start + i].blue;
 	} while (i++ < len);
 
 	return 0;
 }
 
-void _ggi_x_free_colormaps(ggi_visual *vis) {
+void _ggi_x_free_colormaps(ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
 	if (priv->cmap != None)   XFreeColormap(priv->disp,priv->cmap);
 	if (priv->cmap2 != None)  XFreeColormap(priv->disp,priv->cmap2);
-        if (vis->palette) {
+	if (vis->palette) {
 		free(vis->palette);
 		vis->palette = NULL;
-        }
+	}
 	if (priv->gammamap != NULL) free(priv->gammamap);
 	priv->gammamap = NULL;
 }
