@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.9 2003/10/07 19:38:40 cegger Exp $
+/* $Id: ddinitnt.c,v 1.10 2003/10/07 20:24:57 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -308,6 +308,11 @@ DDInitThread(LPVOID lpParm)
 	}
 
 	return msg.wParam;
+}
+
+HRESULT DDShutdown(void)
+{
+	return SendMessage(hWnd, WM_DESTROY, 0, (LPARAM) NULL);
 }
 
 char locked = 0;

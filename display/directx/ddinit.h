@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.3 2003/10/06 21:33:49 cegger Exp $
+/* $Id: ddinit.h,v 1.4 2003/10/07 20:24:57 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -64,6 +64,7 @@ typedef struct DDMessageBoxStruct
 __BEGIN_DECLS
 
 HANDLE DDInit(directx_priv *);
+HRESULT DDShutdown(void);
 DWORD WINAPI DDInitThread(LPVOID lpParm);
 HRESULT redraw(void);
 int DDDrawLine(directx_priv *priv, int x0, int y0, int x1, int y1,

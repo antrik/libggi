@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2003/10/07 19:53:19 cegger Exp $
+/* $Id: visual.c,v 1.8 2003/10/07 20:24:57 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -57,9 +57,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = DIRECTX_PRIV(vis);
 
-#if 0
 	DDShutdown();
-#endif
 	free(priv);
 
 	return 0;
