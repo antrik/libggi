@@ -3323,7 +3323,7 @@ m4_if([$1], [CXX], [
       ;;
 
     linux*)
-      case $CC in
+      case "$cc_basename" in
       icc* | ecc*)
 	_LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
 	_LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
@@ -3803,7 +3803,7 @@ _LT_EOF
 	  # -bexpall does not export symbols beginning with underscore (_)
 	  _LT_TAGVAR(always_export_symbols, $1)=yes
 	  # Exported symbols can be pulled into shared objects from archives
-	  _LT_TAGVAR(whole_archive_flag_spec, $1)=' '
+	  _LT_TAGVAR(whole_archive_flag_spec, $1)='$convenience'
 	  _LT_TAGVAR(archive_cmds_need_lc, $1)=yes
 	  # This is similar to how AIX traditionally builds it's shared libraries.
 	  _LT_TAGVAR(archive_expsym_cmds, $1)="\$CC $shared_flag"' -o $output_objdir/$soname $libobjs $deplibs $compiler_flags ${wl}-bE:$export_symbols ${wl}-bnoentry${allow_undefined_flag}~$AR $AR_FLAGS $output_objdir/$libname$release.a $output_objdir/$soname'
@@ -4144,7 +4144,7 @@ _LT_EOF
       case $host_os in
       solaris2.[[0-5]] | solaris2.[[0-5]].*) ;;
       *) # Supported since Solaris 2.6 (maybe 2.5.1?)
-	_LT_TAGVAR(whole_archive_flag_spec, $1)='-z allextract$convenience -z defaultextract' ;;
+	_LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}-z ${wl}allextract$convenience ${wl}-z ${wl}defaultextract' ;;
       esac
       _LT_TAGVAR(link_all_deplibs, $1)=yes
       ;;
@@ -4758,7 +4758,7 @@ if test "$_lt_caught_CXX_error" != yes; then
   	    # -bexpall does not export symbols beginning with underscore (_)
   	    _LT_TAGVAR(always_export_symbols, $1)=yes
   	    # Exported symbols can be pulled into shared objects from archives
-  	    _LT_TAGVAR(whole_archive_flag_spec, $1)=' '
+  	    _LT_TAGVAR(whole_archive_flag_spec, $1)='$convenience'
   	    _LT_TAGVAR(archive_cmds_need_lc, $1)=yes
   	    # This is similar to how AIX traditionally builds it's shared
 	    # libraries.
