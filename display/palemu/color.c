@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
+/* $Id: color.c,v 1.4 2004/02/27 10:41:17 cegger Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -46,11 +46,10 @@ int GGI_palemu_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_
 	}
 
 	memcpy(LIBGGI_PAL(vis)->clut+start, src, len*sizeof(ggi_color));
-	/*	
 	if (end > start) {
 		UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	}
-	*/
+
 	for (; start < end; ++start, ++src) {
 		priv->palette[start] = *src;
 		priv->lookup[start] = ggiMapColor(priv->parent, src);
