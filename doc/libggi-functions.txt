@@ -585,12 +585,12 @@ Wrong (causes flickering)::
 
 Right::
 
-  displayframe = writeframe;
-  writeframe = nextframe;
-  ggiSetWriteFrame(vis, writeframe);
-  ggiSetDisplayFrame(vis, displayframe);
+  ggiSetWriteFrame(vis, framenr);
 
   /* render here */
+
+  ggiSetDisplayFrame(vis, framenr);
+
 
 
 See Also
