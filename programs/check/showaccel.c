@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: showaccel.c,v 1.5 2004/04/02 16:02:47 ggibecka Exp $
 ******************************************************************************
 
    showaccel.c
@@ -36,6 +36,7 @@
 */
 
 #include <ggi/ggi.h>
+#include <ggi/gg.h> 
 
 #include <stdlib.h>
 #include <unistd.h>

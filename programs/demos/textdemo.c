@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.6 2004/02/29 13:31:18 cegger Exp $
+/* $Id: textdemo.c,v 1.7 2004/04/02 16:02:48 ggibecka Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
 
 #include <stdio.h>
 #include <string.h>

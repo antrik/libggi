@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.6 2004/02/02 19:22:00 cegger Exp $
+/* $Id: pageflip.c,v 1.7 2004/04/02 16:02:48 ggibecka Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -33,6 +33,8 @@
 #endif
 
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

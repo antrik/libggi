@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.14 2004/02/02 19:22:00 cegger Exp $
+/* $Id: demo.c,v 1.15 2004/04/02 16:02:48 ggibecka Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -33,6 +33,7 @@
 /* Include the LibGGI declarations.
  */
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
 
 /* Include the necessary headers used for e.g. error-reporting.
  */

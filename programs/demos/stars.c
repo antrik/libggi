@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.3 2004/02/02 19:22:00 cegger Exp $
+/* $Id: stars.c,v 1.4 2004/04/02 16:02:48 ggibecka Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -36,6 +36,8 @@
 */
 
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>

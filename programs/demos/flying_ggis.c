@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.3 2004/02/02 19:22:00 cegger Exp $
+/* $Id: flying_ggis.c,v 1.4 2004/04/02 16:02:48 ggibecka Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -27,6 +27,7 @@
 #endif
 
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
 
 #include <stdio.h>
 #include <stdlib.h>
