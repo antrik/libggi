@@ -1,4 +1,4 @@
-/* $Id: ppm.c,v 1.3 2003/07/06 10:25:22 cegger Exp $
+/* $Id: ppm.c,v 1.4 2004/11/14 16:17:27 cegger Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -65,7 +65,11 @@ void _ggi_file_ppm_write(ggi_visual *vis)
 	_ggi_file_write_string(vis, "P6\n");
 	_ggi_file_write_string(vis, PPM_INFO_STRING);
 
+#ifdef HAVE_SNPRINTF
+	snprintf(buf, 200, "%d %d\n255\n", LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+#else
 	sprintf(buf, "%d %d\n255\n", LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+#endif
 	_ggi_file_write_string(vis, buf);
 
 
