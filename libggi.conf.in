@@ -21,6 +21,7 @@ display-vgl			display/vgl.@DLLEXT@
 display-aa			display/aa.@DLLEXT@
 display-directx			display/directx.@DLLEXT@
 display-directxnt		display/directxnt.@DLLEXT@
+display-quartz			display/quartz.@DLLEXT@
 display-file			display/file.@DLLEXT@
 display-fbdev			display/fbdev.@DLLEXT@
 display-glide			display/glide.@DLLEXT@
@@ -51,6 +52,7 @@ vgl				display/vgl.@DLLEXT@
 aa				display/aa.@DLLEXT@
 directx				display/directx.@DLLEXT@
 directxnt			display/directxnt.@DLLEXT@
+quartz				display/quartz.@DLLEXT@
 file				display/file.@DLLEXT@
 fbdev				display/fbdev.@DLLEXT@
 glide				display/glide.@DLLEXT@

@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.75 2002/12/22 10:47:50 cegger Exp $
+dnl $Id: configure.in,v 1.76 2002/12/22 12:59:38 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -54,6 +54,9 @@ build_vgl_target="auto"
 dnl Win32 specific Targets
 build_directx_target="no"
 
+dnl MacOS X specific Targets
+build_quartz_target="auto"
+
 dnl PseudoTargets
 build_multi_target="yes"
 build_tile_target="auto"
@@ -101,6 +104,7 @@ AC_PROG_MAKE_SET
 AC_LIBTOOL_DLOPEN
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
+
 
 dnl ========================================================================
 dnl User selectable options
@@ -190,6 +194,12 @@ AC_ARG_ENABLE(directx,
 build_directx_target=$enableval)
 
 
+dnl MacOS X specific Targets
+AC_ARG_ENABLE(quartz,
+[  --disable-quartz       don't build the quartz target],
+build_quartz_target=$enableval)
+
+
 dnl PseudoTargets
 AC_ARG_ENABLE(multi,
 [  --disable-multi         don't build the multi target],
@@ -270,7 +280,8 @@ AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h \
 sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
-sys/socket.h netinet/in.h netdb.h windows.h ddraw.h vgl.h)
+sys/socket.h netinet/in.h netdb.h windows.h ddraw.h vgl.h \
+ApplicationServices/ApplicationServices.h)
 
 dnl ========================================================================
 dnl LibGII must be built
@@ -657,6 +668,8 @@ dnl includes (/usr/X11R6/include on most systems).
   fi
 fi
 
+
+
 if test "x$build_aa_target" != "xno"; then
   AC_CHECK_HEADER(aalib.h,
 	AC_CHECK_LIB(aa, aa_autoinit, foo=bar, build_aa_target="no"),
@@ -700,6 +713,15 @@ if test "x$build_kgi_target" != "xno"; then
 kgi_u32_t i;
    ], build_kgi_target="no"
    )
+fi
+
+if test "x$build_quartz_target" != "xno"; then
+  AC_CHECK_HEADER(ApplicationServices/ApplicationServices.h,
+    AC_TRY_COMPILE([
+#include <ApplicationServices/ApplicationServices.h>
+],[
+CGDirectDisplayID id;
+], foo=bar), build_quartz_target="no")
 fi
 
 if test "x$build_glide_target" != "xno"; then
@@ -897,6 +919,15 @@ if test "x$build_directx_target" != "xno" -a \
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should build quartz   target)
+if test "x$build_quartz_target" != "xno"; then
+   DISPLAYSUBDIRS="$DISPLAYSUBDIRS quartz"
+   build_quartz_target="yes"
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
 fi
 
 AC_MSG_CHECKING(if we should build fbdev    target)
@@ -1122,6 +1153,19 @@ if test "x$use_debug" = "xyes"; then
   fi
 fi
 
+# Check for darwin at the very end and set up the Objective C compiler
+# We do this here so that we get the full CFLAGS into OBJCFLAGS
+case "$host" in
+    *-*-darwin*)
+        OBJC="cc"
+        OBJCFLAGS="$CFLAGS"
+        OBJCDEPMODE="$CCDEPMODE"
+        AC_SUBST(OBJC)
+        AC_SUBST(OBJCFLAGS)
+        AC_SUBST(OBJCDEPMODE)
+        ;;
+esac
+
 
 dnl ========================================================================
 dnl Write output
@@ -1204,6 +1248,7 @@ display/X/helper/shm/Makefile
 display/aa/Makefile
 display/common/Makefile
 display/directx/Makefile
+display/quartz/Makefile
 display/fbdev/Makefile
 display/file/Makefile
 display/glide/Makefile
