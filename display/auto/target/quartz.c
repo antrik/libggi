@@ -1,7 +1,7 @@
-/* $Id: target.h,v 1.2 2004/12/30 17:28:03 cegger Exp $
+/* $Id: quartz.c,v 1.1 2004/12/30 17:28:03 cegger Exp $
 ******************************************************************************
 
-   Auto target for GGI - target option definitions
+   Auto target for GGI - How to probe Quartz-target
 
    Copyright (C) 2004 Christoph Egger
 
@@ -25,36 +25,19 @@
 ******************************************************************************
 */
 
-#include <stdlib.h>
-#include <string.h>
 
-#include "config.h"
-#include <ggi/internal/ggi-dl.h>
-#include <ggi/display/auto.h>
+#include "target.h"
 
 
+static const char *options[] =
+{
+	NO_OPTION,
+};
 
-/* AA-target */
-extern struct ggi_auto_TargetOption probe_AA[];
 
-/* DirectX-target */
-extern struct ggi_auto_TargetOption probe_DIRECTX[];
-
-/* fbdev-target */
-extern struct ggi_auto_TargetOption probe_FBDEV[];
-
-/* KGI-target */
-extern struct ggi_auto_TargetOption probe_KGI[];
-
-/* Quartz-target */
-extern struct ggi_auto_TargetOption probe_QUARTZ[];
-
-/* SVGALIB-target */
-extern struct ggi_auto_TargetOption probe_SVGALIB[];
-
-/* VGL-target */
-extern struct ggi_auto_TargetOption probe_VGL[];
-
-/* X-target */
-extern struct ggi_auto_TargetOption probe_X[];
-
+struct ggi_auto_TargetOption probe_QUARTZ[] =
+{
+	{ NULL,		/* function */
+	  0,		/* num_options */
+	  options },
+};
