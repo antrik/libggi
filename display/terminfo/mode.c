@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/09/13 08:58:03 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/09/13 11:17:29 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -209,7 +209,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 		= LIBGGI_PRIVBUFS(vis)[0]->write
 		= _ggi_malloc(LIBGGI_FB_SIZE(tm));
 	LIBGGI_PRIVBUFS(vis)[0]->layout = blPixelLinearBuffer;
-	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.stride = tm->virt.x * GT_SIZE(tm->graphtype) / 8;
+	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.stride = GT_ByPPP(tm->virt.x, tm->graphtype);
 	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
