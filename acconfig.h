@@ -39,7 +39,9 @@
 
 /* Defines for SWAR selection */
 #undef DO_SWAR_NONE
+#undef DO_SWAR_64BITC
 #undef DO_SWAR_MMX
 #undef DO_SWAR_3DNOW
 #undef DO_SWAR_VIS
+#undef DO_SWAR_MVI
 

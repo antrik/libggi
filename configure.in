@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.54 2002/10/24 22:22:59 cegger Exp $
+dnl $Id: configure.in,v 1.55 2002/10/27 05:09:38 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -73,9 +73,11 @@ dnl SWAR selection: yes = compile this swar, no = don't compile,
 dnl auto = compiles the swar if CC supports it,
 dnl build = compiles the swar if the CPU on the build system supports it.
 do_noswar="yes"
+do_64bitc="auto"
 do_mmx="auto"
 do_3dnow="auto"
 do_vis="auto"
+do_mvi="auto"
 
 dnl ========================================================================
 dnl Checks for programs.
@@ -234,6 +236,10 @@ AC_ARG_ENABLE(debug,
 [  --disable-debug         don't build with run-time debugging (speed freaks)],
 use_debug=$enableval)
 
+AC_ARG_ENABLE(64bitc,
+[  --disable-64bitc        don't build 64-bit C SWAR code],
+do_64bitc=$enableval)
+
 AC_ARG_ENABLE(noswar,
 [  --disable-noswar        don't build non-SWAR code],
 do_noswar=$enableval)
@@ -245,6 +251,10 @@ do_mmx=$enableval)
 AC_ARG_ENABLE(vis,
 [  --disable-vis           don't build VIS SWAR code],
 do_vis=$enableval)
+
+AC_ARG_ENABLE(mvi,
+[  --disable-mvi           don't build MVI SWAR code],
+do_mvi=$enableval)
 
 GGI_EXTRA_PATHS
 
@@ -326,14 +336,47 @@ AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
 dnl ========================================================================
 dnl Checks whether to compile in various SWARs
 
-if test "$do_noswar" = "yes"; then
+if test "x$do_noswar" = "xyes"; then
    AC_DEFINE(DO_SWAR_NONE)
+fi
+
+AC_MSG_CHECKING(if LibGII build detected working int64)
+AC_TRY_CPP([
+#include <ggi/system.h>
+#ifdef GG_HAVE_INT64
+#else
+#error No 64-bit ints - this line makes compilation fail...
+#endif
+],
+
+dnl do test for do_64bitc == "build" here.
+  if test "x$do_64bitc" = "xauto"; then
+    do_64bitc="yes"
+  fi
+  AC_MSG_RESULT(yes),
+
+  AC_MSG_RESULT(no)
+  if test "x$do_64bitc" = "xyes"; then
+    AC_MSG_ERROR(Cannot build 64bit C SWAR against 32-bit LibGG)
+  fi
+  if test "x$do_mvi" = "xyes"; then
+    AC_MSG_ERROR(Cannot build MVI SWAR against 32-bit LibGG)
+  fi
+  if test "x$do_vis" = "xyes"; then
+    AC_MSG_ERROR(Cannot build VIS SWAR against 32-bit LibGG)
+  fi
+  do_64bitc="no"
+  do_vis="no"
+  do_mvi="no")
+
+if test "x$do_64bitc" = "xyes"; then 
+   AC_DEFINE(DO_SWAR_64BITC)
 fi
 
 AC_CC_CAN_EMMS
 if test "x$do_mmx" = "xyes"; then 
    if test "x$ac_cc_can_emms" != "xyes"; then
-      AC_MSG_ERROR([MMX explicitly requested, but compiler cannot compile MMX!])
+      AC_MSG_ERROR([MMX requested, but compiler cannot compile MMX!])
       do_mmx=no
    fi
 fi
@@ -359,7 +402,7 @@ fi
 AC_CC_CAN_FEMMS
 if test "x$do_3dnow" = "xyes"; then
    if test "x$ac_cc_can_femms" != "xyes"; then
-      AC_MSG_ERROR([3DNOW explicitly requested, but compiler cannot compile 3DNOW!])
+      AC_MSG_ERROR([3DNOW requested, but compiler cannot compile 3DNOW!])
       do_3dnow=no
    fi
 fi
@@ -385,7 +428,7 @@ fi
 AC_CC_CAN_FALIGNDATA
 if test "x$do_vis" = "xyes"; then
    if test "x$ac_cc_can_faligndata" != "xyes"; then
-      AC_MSG_ERROR([VIS explicitly requested, but compiler cannot compile VIS!])
+      AC_MSG_ERROR([VIS requested, but compiler cannot compile VIS!])
       do_vis=no
    fi
 fi
@@ -406,6 +449,32 @@ if test "x$do_vis" = "xauto"; then
 fi
 if test "x$do_vis" = "xyes"; then 
    AC_DEFINE(DO_SWAR_VIS)
+fi
+
+AC_CC_CAN_PKLB
+if test "x$do_mvi" = "xyes"; then
+   if test "x$ac_cc_can_pklb" != "xyes"; then
+      AC_MSG_ERROR([MVI requested, but compiler cannot compile MVI!])
+      do_mvi=no
+   fi
+fi
+if test "x$do_mvi" = "xbuild"; then
+   AC_CPU_CAN_PKLB
+   if test "x$ac_cpu_can_pklb" = "xyes"; then
+      do_mvi=auto
+   else
+      do_mvi=no
+   fi
+fi
+if test "x$do_mvi" = "xauto"; then
+   if test "x$ac_cc_can_pklb" = "xyes"; then
+      do_mvi=yes
+   else
+      do_mvi=no
+   fi
+fi
+if test "x$do_mvi" = "xyes"; then 
+   AC_DEFINE(DO_SWAR_MVI)
 fi
 
 dnl ========================================================================

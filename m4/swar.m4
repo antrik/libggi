@@ -43,3 +43,18 @@ AC_DEFUN([AC_CPU_CAN_FALIGNDATA],
 	ac_cpu_can_faligndata=no, ac_cpu_can_faligndata=no)])
 ])
 
+AC_DEFUN([AC_CC_CAN_PKLB],
+[AC_CACHE_CHECK(whether CC can assemble pklb instruction, ac_cc_can_pklb,
+        [ AC_TRY_LINK(,[
+	unsigned long foo;
+	__asm__ __volatile__("pklb %1, %0" : "=r" (foo) : "rI" (foo));],
+	ac_cc_can_pklb=yes, ac_cc_can_pklb=no)])
+])
+
+AC_DEFUN([AC_CPU_CAN_PKLB],
+[AC_CACHE_CHECK(whether build CPU can run the PKLB instruction,
+	ac_cpu_can_pklb,
+        [ AC_ERROR(Test not yet implemented!) ],
+	ac_cpu_can_pklb=no, ac_cpu_can_pklb=no)])
+])
+
