@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.7 2005/02/10 16:42:42 orzo Exp $
+/* $Id: fillscreen.c,v 1.8 2005/02/12 13:23:07 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -54,9 +54,10 @@ int GGI_X_fillscreen_slave(ggi_visual *vis) {
 int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 {
 	ggi_x_priv *priv;
-	priv = GGIX_PRIV(vis);
 	XGCValues gcValue;
 	GC gc;
+
+	priv = GGIX_PRIV(vis);
 
 	DPRINT("X_fillscreen_slave_draw enter!\n");
 
