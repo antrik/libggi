@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2004/11/14 15:47:47 cegger Exp $
+/* $Id: visual.c,v 1.15 2004/11/14 20:18:07 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -485,14 +485,22 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
+#ifdef HAVE_SNPRINTF
+			snprintf(strbuf, 64, "linux-kbd:/dev/tty%d", vtnum);
+#else
 			sprintf(strbuf, "linux-kbd:/dev/tty%d", vtnum);
+#endif
 			inputstr = strbuf;
 		}
 
 		vis->input = giiOpen(inputstr, NULL);
 		if (vis->input == NULL) {
 			if (vtnum != -1) {
+#ifdef HAVE_SNPRINTF
+				snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d", vtnum);
+#else
 				sprintf(strbuf, "linux-kbd:/dev/vc/%d", vtnum);
+#endif
 				vis->input = giiOpen(inputstr, NULL);
 			}
 			if (vis->input == NULL) {

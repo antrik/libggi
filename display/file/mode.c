@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/14 15:47:44 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/11/14 20:18:06 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -64,11 +64,19 @@ static void dowritefile(ggi_visual *vis)
 		(* priv->writer)(vis);
 	}
 
+#ifdef HAVE_SNPRINTF
+	snprintf(cmdbuf, 1024, priv->flushcmd,
+		priv->flushcnt,priv->flushcnt,priv->flushcnt,
+		priv->flushcnt,priv->flushcnt,priv->flushcnt,
+		priv->flushcnt,priv->flushcnt,priv->flushcnt,
+		priv->flushcnt,priv->flushcnt,priv->flushcnt);
+#else
 	sprintf(cmdbuf,priv->flushcmd,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt);
+#endif
 	system(cmdbuf);
 	priv->flushcnt++;
 }

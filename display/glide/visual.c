@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/06 22:48:28 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/11/14 20:18:06 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -161,7 +161,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		if (vtnum != -1) {
+#ifdef HAVE_SNPRINTF
+			snprintf(strbuf, 32, "linux-kbd:/dev/tty%d", vtnum);
+#else
 			sprintf(strbuf, "linux-kbd:/dev/tty%d", vtnum);
+#endif
 			inputname = strbuf;
 		}
 		on_linux_cons = 1;
@@ -174,7 +178,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->input = giiOpen(inputname, NULL);
 		if (vis->input == NULL) {
 			if (vtnum != -1) {
+#ifdef HAVE_SNPRINTF
+				snprintf(strbuf, 32, "linux-kbd:/dev/vc/%d", vtnum);
+#else
 				sprintf(strbuf, "linux-kbd:/dev/vc/%d", vtnum);
+#endif
 				vis->input = giiOpen(inputname, NULL);
 			}
 			if (vis->input == NULL) {

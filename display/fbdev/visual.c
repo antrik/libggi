@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2004/11/07 22:04:40 cegger Exp $
+/* $Id: visual.c,v 1.25 2004/11/14 20:18:06 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -347,10 +347,18 @@ get_fbdev(void)
 
 	/* Find a framebuffer to open */
 	for (fb=0; fb < 32; fb++) {
+#ifdef HAVE_SNPRINTF
+		snprintf(devname, MAX_DEV_LEN, "/dev/fb%d", fb);
+#else
 		sprintf(devname, "/dev/fb%d", fb);
+#endif
 		fd = open(devname, O_RDONLY);
 		if (fd >= 0) break;
+#ifdef HAVE_SNPRINTF
+		snprintf(devname, MAX_DEV_LEN, "/dev/fb/%d", fb);
+#else
 		sprintf(devname, "/dev/fb/%d", fb);
+#endif
 		fd = open(devname, O_RDONLY);
 		if (fd >= 0) break;
 	}

@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.20 2004/11/14 15:47:43 cegger Exp $
+/* $Id: buffer.c,v 1.21 2004/11/14 20:18:05 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -174,7 +174,7 @@ void _ggi_x_free_ximage(ggi_visual *vis) {
 
 int _ggi_x_create_ximage(ggi_visual *vis)
 {
-	char target[256];
+	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
 	ggi_x_priv *priv;
 	int i;
@@ -203,12 +203,21 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
+#ifdef HAVE_SNPRINTF
+	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-noblank:-pixfmt=");
+#else
 	i += sprintf(target, "display-memory:-noblank:-pixfmt=");
+#endif
 	memset(target+i, '\0', 64);
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
+#ifdef HAVE_SNPRINTF
+	snprintf(target + i, GGI_MAX_APILEN, ":-physz=%i,%i:pointer", 
+		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
+#else
 	sprintf(target + i, ":-physz=%i,%i:pointer", 
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
+#endif
 
 	priv->slave = ggiOpen(target, priv->fb);
 	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
