@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.8 2002/12/02 20:50:20 cegger Exp $
+/* $Id: wrap.c,v 1.9 2003/01/27 17:07:03 fries Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -131,7 +131,7 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 		perror("fork");
 		exit(-1);
 	} else if (client->pid == 0) {
-		execlp("/bin/sh","/bin/sh","-c", command, NULL);
+		execlp("/bin/sh","/bin/sh","-c", command, (void *)NULL);
 		_exit(-1);
 	}	/* if */
 
