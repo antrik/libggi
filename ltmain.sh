@@ -1,6 +1,6 @@
 # Generated from ltmain.in; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.30 2004/10/15 17:29:47) 1.9e
+# ltmain.sh (GNU libtool 1.1667.2.34 2004/10/21 16:51:07) 1.9e
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.30 2004/10/15 17:29:47) 1.9e
+#       $progname:		(GNU libtool 1.1667.2.34 2004/10/21 16:51:07) 1.9e
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9e
-TIMESTAMP=" 1.1667.2.30 2004/10/15 17:29:47"
-package_revision=1.1667.2.30
+TIMESTAMP=" 1.1667.2.34 2004/10/21 16:51:07"
+package_revision=1.1667.2.34
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -212,7 +212,20 @@ esac
 # Sed substitution that helps us do robust quoting.  It backslashifies
 # metacharacters that are still active within double-quoted strings.
 Xsed="${SED}"' -e 1s/^X//'
-sed_quote_subst='s/\([\\`\\"$\\\\]\)/\\\1/g'
+sed_quote_subst='s/\([`"$\\]\)/\\\1/g'
+
+# Same as above, but do not quote variable references.
+double_quote_subst='s/\(["`\\]\)/\\\1/g'
+
+# Re-`\' parameter expansions in output of double_quote_subst that were
+# `\'-ed in input to the same.  If an odd number of `\' preceded a '$'
+# in input to double_quote_subst, that '$' was protected from expansion.
+# Since each input `\' is now two `\'s, look for any number of runs of
+# four `\'s followed by two `\'s and then a '$'.  `\' that '$'.  Note
+# that the embedded single quotes serve only to enhance readability.
+sed_double_backslash='s/^\(\(''\\\\''\\\\''\)*''\\\\''\$\)/\\\1/;
+                s/\([^\\]\(''\\\\''\\\\''\)*''\\\\''\$\)/\\\1/g'
+
 # test EBCDIC or ASCII
 case `$ECHO A|tr A '\301'` in
  A) # EBCDIC based system
@@ -375,18 +388,60 @@ func_mktempdir ()
 # Aesthetically quote ARG to be evaled later.
 func_quote_for_eval ()
 {
-  my_arg="$1"
+    my_arg=`$ECHO "X$1" | $Xsed -e "$sed_quote_subst"`
 
-  case $my_arg in
-    # Double-quote args containing other shell metacharacters.
-    # Many Bourne shells cannot handle close brackets correctly
-    # in scan sets, so we specify it separately.
-    *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
-      my_arg="\"$my_arg\""
-      ;;
-  esac
+    case $my_arg in
+      # Double-quote args containing shell metacharacters to delay
+      # word splitting, command substitution and and variable
+      # expansion for a subsequent eval.
+      # Many Bourne shells cannot handle close brackets correctly
+      # in scan sets, so we specify it separately.
+      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
+        my_arg="\"$my_arg\""
+        ;;
+    esac
 
-  func_quote_for_eval_result="$my_arg"
+    func_quote_for_eval_result="$my_arg"
+}
+
+
+# func_quote_for_expand arg
+# Aesthetically quote ARG to be evaled later; same as above,
+# but do not quote variable references.
+func_quote_for_expand ()
+{
+    my_arg=`$ECHO "X$1" | $Xsed \
+        -e "$double_quote_subst" -e "$sed_double_backslash"`
+
+    case $my_arg in
+      # Double-quote args containing shell metacharacters to delay
+      # word splitting and command substitution for a subsequent eval.
+      # Many Bourne shells cannot handle close brackets correctly
+      # in scan sets, so we specify it separately.
+      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
+        my_arg="\"$my_arg\""
+        ;;
+    esac
+
+    func_quote_for_expand_result="$my_arg"
+}
+
+
+# func_show_eval cmd [fail_exp]
+# Unless opt_silent is true, then output CMD.  Then, if opt_dryrun is
+# not true, evaluate CMD.  If the evaluation of CMD fails, and FAIL_EXP
+# is given, then evaluate it.
+func_show_eval ()
+{
+    my_cmd="$1"
+    my_fail_exp="${2-:}"
+
+    ${opt_silent-false} || {
+      func_quote_for_expand "$my_cmd"
+      eval "func_echo $func_quote_for_expand_result"
+    }
+
+    ${opt_dry_run-false} || eval "$my_cmd" || eval "$my_fail_exp"
 }
 
 
@@ -1457,7 +1512,6 @@ func_mode_compile ()
       esac    #  case $arg_mode
 
       # Aesthetically quote the previous argument.
-      lastarg=`$ECHO "X$lastarg" | $Xsed -e "$sed_quote_subst"`
       func_quote_for_eval "$lastarg"
       base_compile="$base_compile $func_quote_for_eval_result"
     done # for arg
@@ -1878,8 +1932,8 @@ func_mode_execute ()
 	;;
       esac
       # Quote arguments (to preserve shell metacharacters).
-      file=`$ECHO "X$file" | $Xsed -e "$sed_quote_subst"`
-      args="$args \"$file\""
+      func_quote_for_eval "$file"
+      args="$args $func_quote_for_eval_result"
     done
 
     if test -z "$run"; then
@@ -1982,7 +2036,7 @@ func_mode_finish ()
 
     $ECHO "See any operating system documentation about shared libraries for"
     case $host in
-      solaris2.789|solaris2.10-9)
+      solaris2.6789|solaris2.10-9)
         $ECHO "more information, such as the ld(1), crle(1) and ld.so(8) manual"
 	$ECHO "pages."
 	;;
@@ -2004,8 +2058,7 @@ func_mode_install ()
        # Allow the use of GNU shtool's install command.
        $ECHO "X$nonopt" | $Xsed | $GREP shtool > /dev/null; then
       # Aesthetically quote it.
-      arg=`$ECHO "X$nonopt" | $Xsed -e "$sed_quote_subst"`
-      func_quote_for_eval "$arg"
+      func_quote_for_eval "$nonopt"
       install_prog="$func_quote_for_eval_result "
       arg="$1"
       shift
@@ -2016,7 +2069,6 @@ func_mode_install ()
 
     # The real first argument should be the name of the installation program.
     # Aesthetically quote it.
-    arg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
     func_quote_for_eval "$arg"
     install_prog="$install_prog$func_quote_for_eval_result"
 
@@ -2060,7 +2112,6 @@ func_mode_install ()
       esac
 
       # Aesthetically quote the argument.
-      arg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
       func_quote_for_eval "$arg"
       install_prog="$install_prog $func_quote_for_eval_result"
     done
@@ -2566,7 +2617,7 @@ func_mode_link ()
       arg="$1"
       shift
       qarg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
-      func_quote_for_eval "$qarg"
+      func_quote_for_eval "$arg"
       libtool_args="$libtool_args $func_quote_for_eval_result"
 
       # If the previous option needs an argument, assign it.
@@ -3083,7 +3134,7 @@ func_mode_link ()
 	;;
 
       -Wc,*)
-	args=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst" -e 's/^-Wc,//'`
+	args=`$ECHO "X$arg" | $Xsed -e 's/^-Wc,//'`
 	arg=
 	save_ifs="$IFS"; IFS=','
 	for flag in $args; do
@@ -3097,7 +3148,7 @@ func_mode_link ()
 	;;
 
       -Wl,*)
-	args=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst" -e 's/^-Wl,//'`
+	args=`$ECHO "X$arg" | $Xsed -e 's/^-Wl,//'`
 	arg=
 	save_ifs="$IFS"; IFS=','
 	for flag in $args; do
@@ -3132,7 +3183,6 @@ func_mode_link ()
       # -q* pass through compiler args for the IBM compiler
       # -m* pass through architecture-specific compiler args for GCC
       -64|-mips[0-9]|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*)
-        arg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
         compile_command="$compile_command $arg"
@@ -3143,7 +3193,6 @@ func_mode_link ()
 
       # Some other compiler flag.
       -* | +*)
-        arg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
 	;;
@@ -3277,7 +3326,6 @@ func_mode_link ()
       *)
 	# Unknown arguments in both finalize_command and compile_command need
 	# to be aesthetically quoted because they are evaled later.
-	arg=`$ECHO "X$arg" | $Xsed -e "$sed_quote_subst"`
 	func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
 	;;
@@ -5511,8 +5559,8 @@ EOF
 	for cmd in $cmds; do
 	  IFS="$save_ifs"
 	  eval cmd=\"$cmd\"
-	  func_quote_for_eval "$cmd"
-	  eval \$show \"$func_quote_for_eval_result\"
+	  func_quote_for_expand "$cmd"
+	  eval \$show "$func_quote_for_expand_result"
 	  $run eval "$cmd" || {
 	    lt_exit=$?
 
@@ -5960,8 +6008,8 @@ EOF
 	  elif eval var_value=\$$var; test -z "$var_value"; then
 	    relink_command="$var=; export $var; $relink_command"
 	  else
-	    var_value=`$ECHO "X$var_value" | $Xsed -e "$sed_quote_subst"`
-	    relink_command="$var=\"$var_value\"; export $var; $relink_command"
+	    func_quote_for_eval "$var_value"
+	    relink_command="$var=$func_quote_for_eval_result; export $var; $relink_command"
 	  fi
 	done
 	relink_command="(cd `pwd`; $relink_command)"
@@ -6650,8 +6698,8 @@ fi\
 	elif eval var_value=\$$var; test -z "$var_value"; then
 	  relink_command="$var=; export $var; $relink_command"
 	else
-	  var_value=`$ECHO "X$var_value" | $Xsed -e "$sed_quote_subst"`
-	  relink_command="$var=\"$var_value\"; export $var; $relink_command"
+	  func_quote_for_eval "$var_value"
+	  relink_command="$var=$func_quote_for_eval_result; export $var; $relink_command"
 	fi
       done
       # Quote the link command for shipping.
