@@ -1,4 +1,4 @@
-/* $Id: db.c,v 1.3 2004/08/24 19:19:14 pekberg Exp $
+/* $Id: db.c,v 1.4 2004/10/31 13:15:00 cegger Exp $
 ******************************************************************************
 
    DirectBuffer handling.
@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include "config.h"
 #include <ggi/internal/internal.h>
+#include <ggi/internal/ggi_debug.h>
+
 
 /* Internal functions */
 

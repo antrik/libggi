@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.3 2004/04/04 14:32:00 mooz Exp $
+/* $Id: colormap.c,v 1.4 2004/10/31 13:15:00 cegger Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/internal.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 size_t _ggiColormapGetPrivsize(ggi_visual_t vis)

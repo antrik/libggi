@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.2 2004/09/13 17:37:00 cegger Exp $
+/* $Id: probe.c,v 1.3 2004/10/31 13:15:00 cegger Exp $
 ******************************************************************************
 
    LibGGI core - probe for targets.
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/internal.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 ggi_visual_t _ggiProbeTarget(void)
