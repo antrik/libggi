@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.101 2004/01/29 14:43:50 cegger Exp $
+dnl $Id: configure.in,v 1.102 2004/01/31 00:06:48 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -388,7 +388,7 @@ AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
-	herror connect gethostbyname sigpending fork \
+	herror gethostbyname sigpending fork \
 	snprintf strncat strncpy)
 
 
@@ -545,24 +545,25 @@ dnl ========================================================================
 dnl Checks for target-specific libraries and headers
 
 
-if test "x$ac_cv_func_connect" = "xno"; then
-  SAVELIBS="$LIBS"
-  AC_MSG_CHECKING([for connect in -lwsock32])
-  LIBS="$LIBS -lwsock32"
-  AC_TRY_LINK([
-#include <winsock.h>
+SAVELIBS="$LIBS"
+AC_MSG_CHECKING([for connect in -lwsock32])
+LIBS="$LIBS -lwsock32"
+AC_TRY_LINK([
+  #include <winsock.h>
 ],[
-connect(0, NULL, 42);
+  connect(0, NULL, 42);
 ],
     bsdsock_libs="$bsdsock_libs -lwsock32"
     ac_cv_func_connect=yes
     AC_MSG_RESULT(yes),
       AC_MSG_RESULT(no)
       LIBS="$SAVELIBS"
-      AC_CHECK_LIB(socket,connect,bsdsock_libs="$bsdsock_libs -lsocket")
-  )
-  LIBS="$SAVELIBS"
-fi
+      AC_CHECK_LIB(socket,connect,
+		bsdsock_libs="$bsdsock_libs -lsocket",
+		AC_CHECK_LIB(c, connect, ,))
+)
+LIBS="$SAVELIBS"
+
 
 if test "x$ac_cv_func_gethostbyname" = "xno"; then
   AC_CHECK_LIB(c, gethostbyname, ,
