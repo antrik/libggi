@@ -1,4 +1,4 @@
-/* $Id: xevi.h,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: xevi.h,v 1.2 2004/11/27 23:10:38 soyt Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -25,6 +25,9 @@
 ******************************************************************************
 */
 
+#ifndef _GGI_DISPLAY_XEVI_H
+#define _GGI_DISPLAY_XEVI_H
+
 #include <ggi/display/x.h>
 #include <X11/extensions/XEVI.h>
 
@@ -33,3 +36,4 @@ typedef struct {
 	ExtendedVisualInfo *evi;
 } ggi_xevi_priv;
 
+#endif /* _GGI_DISPLAY_XEVI_H */
