@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.2 2002/10/31 03:20:17 redmondp Exp $
+/* $Id: radeon_accel.h,v 1.3 2002/11/03 04:23:07 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -69,11 +69,14 @@ GGI_ACCEL_WRITE_u32(RADEON_ACCEL(vis), val)
 			RADEON_WRITE(vis, *ptr++);\
 	}
 	
-ggifunc_drawhline GGI_kgi_radeon_drawhline;
-ggifunc_drawvline GGI_kgi_radeon_drawvline;
-ggifunc_drawline  GGI_kgi_radeon_drawline;
-ggifunc_drawbox	  GGI_kgi_radeon_drawbox;
-ggifunc_copybox   GGI_kgi_radeon_copybox;
-ggifunc_gcchanged GGI_kgi_radeon_gcchanged;
+ggifunc_drawhline   GGI_kgi_radeon_drawhline;
+ggifunc_drawvline   GGI_kgi_radeon_drawvline;
+ggifunc_drawline    GGI_kgi_radeon_drawline;
+ggifunc_drawbox	    GGI_kgi_radeon_drawbox;
+ggifunc_copybox     GGI_kgi_radeon_copybox;
+ggifunc_gcchanged   GGI_kgi_radeon_gcchanged;
+ggifunc_putc        GGI_kgi_radeon_putc;
+ggifunc_puts        GGI_kgi_radeon_puts;
+ggifunc_getcharsize GGI_kgi_radeon_getcharsize;
 
 #endif

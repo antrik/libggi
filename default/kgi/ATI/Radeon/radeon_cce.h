@@ -1,4 +1,4 @@
-/* $Id: radeon_cce.h,v 1.1 2002/10/31 03:20:17 redmondp Exp $
+/* $Id: radeon_cce.h,v 1.2 2002/11/03 04:23:07 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon CCE packet structures
@@ -237,5 +237,26 @@ typedef struct
 	     src_w1 : 14;
 	     
 } cce_bitblt_t;
+
+typedef struct
+{
+
+	dword frgd_color;
+	bits bas_x : 16,
+	     bas_y : 16;
+
+} cce_smalltext_t;
+
+typedef struct 
+{
+
+	bits dx : 8,
+	     dy : 8,
+	     w  : 8,
+	     h  : 8;
+	/* using ascii fixed 8x8 mono bitmap */
+	dword raster1,
+	      raster2;
+} cce_smallchar_t;
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
+/* $Id: visual.c,v 1.3 2002/11/03 04:23:07 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -73,6 +73,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawline     = GGI_kgi_radeon_drawline;
 	vis->opdraw->drawbox      = GGI_kgi_radeon_drawbox;
 	vis->opdraw->copybox      = GGI_kgi_radeon_copybox;
+	vis->opdraw->putc         = GGI_kgi_radeon_putc;
+	vis->opdraw->puts         = GGI_kgi_radeon_puts;
+	vis->opdraw->getcharsize  = GGI_kgi_radeon_getcharsize;
 	vis->opgc->gcchanged      = GGI_kgi_radeon_gcchanged;
 	
 	*dlret = GGI_DL_OPDRAW | GGI_DL_OPGC;
