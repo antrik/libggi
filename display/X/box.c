@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.8 2004/09/08 17:47:02 cegger Exp $
+/* $Id: box.c,v 1.9 2004/10/31 14:24:51 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 
 int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)

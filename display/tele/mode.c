@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/08 11:20:57 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

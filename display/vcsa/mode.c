@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/12 19:43:49 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/10/31 14:25:06 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -36,8 +36,8 @@
 #include <sys/stat.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vcsa.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/ggi-auto.inc"
 

@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.24 2004/10/08 18:38:37 cegger Exp $
+/* $Id: misc.c,v 1.25 2004/10/31 14:24:52 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -33,6 +33,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 
 /* return 1 if an X11 Visual (cthis) has a "better" pixelformat (than than)

@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.10 2004/10/17 19:16:50 mooz Exp $
+/* $Id: vidmode.c,v 1.11 2004/10/31 14:24:59 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <X11/extensions/xf86vmode.h>
 

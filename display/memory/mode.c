@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/09/13 10:36:00 cegger Exp $
+/* $Id: mode.c,v 1.22 2004/10/31 14:25:01 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/display/memory.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/29 22:39:58 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/10/31 14:25:05 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -31,8 +31,8 @@
 #include <ctype.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/trueemu.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static const gg_option optlist[] =

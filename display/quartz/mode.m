@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.5 2004/09/12 19:34:49 cegger Exp $
+/* $Id: mode.m,v 1.6 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <ggi/internal/debug.h>
 #include <ggi/display/quartz.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/ggi-auto.inc"

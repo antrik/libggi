@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.22 2004/10/28 16:16:43 cegger Exp $
+/* $Id: shm.c,v 1.23 2004/10/31 14:24:59 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <sys/shm.h>
 #include <X11/extensions/XShm.h>

@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.3 2003/09/16 22:16:25 cegger Exp $
+/* $Id: color.m,v 1.4 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -25,11 +25,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <ggi/internal/debug.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/quartz.h>
 
 

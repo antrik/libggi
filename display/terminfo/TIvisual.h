@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.5 2004/09/12 21:11:04 cegger Exp $
+/* $Id: TIvisual.h,v 1.6 2004/10/31 14:25:04 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -19,9 +19,6 @@
    IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-#include <stdlib.h>
-#include <stdio.h>
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>

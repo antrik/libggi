@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/12 19:24:16 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/10/31 14:25:00 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -37,8 +37,8 @@
 #include <sys/mman.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/file.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/ggi-auto.inc"

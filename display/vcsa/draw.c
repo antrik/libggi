@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: draw.c,v 1.4 2004/10/31 14:25:06 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -27,9 +27,8 @@
 
 #include <unistd.h>
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/vcsa.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 #define VCSA_SEEK(vis, priv, x, y)  \

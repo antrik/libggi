@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/09/13 11:17:29 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/10/31 14:25:04 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -30,9 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include "TIvisual.h"
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/pixfmt-setup.inc"
 

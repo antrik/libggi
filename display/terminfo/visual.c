@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/09/12 21:21:43 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/10/31 14:25:04 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -32,6 +32,8 @@
 #include <unistd.h>
 
 #include "TIvisual.h"
+#include <ggi/internal/ggi_debug.h>
+
 
 static const gg_option optlist[] =
 {

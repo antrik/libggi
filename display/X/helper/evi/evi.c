@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.5 2004/09/12 21:03:47 cegger Exp $
+/* $Id: evi.c,v 1.6 2004/10/31 14:24:54 cegger Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/xevi.h>
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,

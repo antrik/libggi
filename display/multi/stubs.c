@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.4 2004/10/28 21:19:59 cegger Exp $
+/* $Id: stubs.c,v 1.5 2004/10/31 14:25:02 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -29,9 +29,8 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/multi.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 void GGI_multi_gcchanged(ggi_visual *vis, int mask)

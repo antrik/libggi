@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/09/12 20:13:28 cegger Exp $
+/* $Id: color.c,v 1.6 2004/10/31 14:25:02 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/display/monotext.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

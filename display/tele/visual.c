@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/09/12 20:45:23 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "libtele.h"
 #include <ggi/display/tele.h>

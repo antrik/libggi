@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/30 09:39:30 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/10/31 14:25:04 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -30,7 +30,9 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "config.h"
 #include <ggi/display/tile.h>
+#include <ggi/internal/ggi_debug.h>
 
 void _GGI_tile_freedbs(ggi_visual *vis)
 {

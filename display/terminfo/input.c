@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: input.c,v 1.3 2004/10/31 14:25:04 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -32,13 +32,12 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include "config.h"
-#include <ggi/internal/ggi-dl.h>
+#include "TIvisual.h"
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gii.h>
 #include <ggi/gii.h>
 #include <ggi/keyboard.h>
 #include <ggi/events.h>
-#include "TIvisual.h"
 
 static int translate_key(int key, uint32 *modifiers)
 {

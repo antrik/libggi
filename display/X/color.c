@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.13 2004/10/05 09:47:43 cegger Exp $
+/* $Id: color.c,v 1.14 2004/10/31 14:24:52 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <string.h>
 #include <ggi/display/x.h>
 

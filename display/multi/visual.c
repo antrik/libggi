@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/10/29 22:32:42 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -33,9 +33,8 @@
 #include <ctype.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/multi.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,

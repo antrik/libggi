@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.9 2004/10/11 18:58:52 cegger Exp $
+/* $Id: mansync.c,v 1.10 2004/10/31 14:25:01 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/mansync.h>
 
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/09/13 08:45:00 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/10/31 14:25:00 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include <ggi/display/ipc.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

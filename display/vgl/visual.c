@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:25:26 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/10/31 14:25:07 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +33,7 @@
 #include <errno.h>
 
 #include <ggi/display/vgl.h>
+#include <ggi/internal/ggi_debug.h>
 
 static int usagecounter = 0;
 

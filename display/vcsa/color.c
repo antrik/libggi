@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: color.c,v 1.4 2004/10/31 14:25:06 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: color mapping
@@ -26,8 +26,6 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/vcsa.h>
 
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/10/29 22:41:37 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/10/31 14:25:06 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -40,8 +40,8 @@
 #endif
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vcsa.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static const gg_option optlist[] =

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: draw.c,v 1.3 2004/10/31 14:25:07 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -26,8 +26,8 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vgl.h>
+#include <ggi/internal/ggi_debug.h>
 
 int
 GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)

@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.3 2004/02/02 19:21:59 cegger Exp $
+/* $Id: events.c,v 1.4 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -27,7 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
-
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/tele.h>
 
 #include <stdlib.h>

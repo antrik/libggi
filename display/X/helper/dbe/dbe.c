@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.5 2004/09/18 14:42:40 cegger Exp $
+/* $Id: dbe.c,v 1.6 2004/10/31 14:24:53 cegger Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <X11/extensions/Xdbe.h>
 

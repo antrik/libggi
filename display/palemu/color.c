@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/04/04 14:31:57 mooz Exp $
+/* $Id: color.c,v 1.6 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/display/palemu.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

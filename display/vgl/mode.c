@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/10/05 09:44:51 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/10/31 14:25:07 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -32,8 +32,8 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vgl.h>
+#include <ggi/internal/ggi_debug.h>
 
 void _GGI_vgl_freedbs(ggi_visual *);
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/09/12 19:31:52 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/10/31 14:25:03 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/display/palemu.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

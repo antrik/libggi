@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/09/12 20:19:27 cegger Exp $
+/* $Id: visual.c,v 1.14 2004/10/31 14:25:00 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/display/ipc.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdlib.h>
 #include <string.h>

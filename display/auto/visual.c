@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/09/13 17:50:58 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/10/31 14:25:00 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/auto.h>
 
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/09/12 20:13:40 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/10/31 14:25:02 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include <ggi/display/monotext.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>
