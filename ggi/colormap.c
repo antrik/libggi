@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.1 2003/12/13 21:12:03 mooz Exp $
+/* $Id: colormap.c,v 1.2 2003/12/13 22:32:10 cegger Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -120,8 +120,6 @@ ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
 {
 	size_t idx;
 	ssize_t rc;
-	size_t rw_start, rw_stop;
-	size_t ro_start, ro_stop;
 
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
@@ -129,34 +127,18 @@ ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
 
 	switch (region) {
 	case GGI_COLORMAP_RW_REGION:
-		_ggiColormapGetRW(vis, &rw_start, &rw_stop);
-
-		if (idx >= rw_stop) return GGI_EARGINVAL;
-		if ((rw_start > 0) && (!(idx < rw_start))) {
-			return GGI_EARGINVAL;
-		}	/* if */
-		break;
 	case GGI_COLORMAP_RO_REGION:
-		_ggiColormapGetRO(vis, &ro_start, &ro_stop);
-
-		if (idx >= ro_stop) return GGI_EARGINVAL;
-		if ((ro_start > 0) && (!(idx < ro_start))) {
-			return GGI_EARGINVAL;
-		}	/* if */
-		break;
-
 	case GGI_COLORMAP_RW_RO_REGION:
 		break;
 	default:
 		return GGI_EARGINVAL;
 	}	/* switch */
 
-
 	for (idx = 0; idx < map->size; idx++) {
 		rc = _ggiColormapMatchByColor(vis, &(map->clut[idx]),
 					color, region);
 		if (rc == GGI_OK) {
-			return idx;
+			return (ssize_t)(idx);
 		}	/* if */
 	}	/* for */
 
