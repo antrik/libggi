@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: visual.c,v 1.2 2001/06/20 22:52:09 ggibecka Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -89,6 +89,13 @@ static int do_cleanup(ggi_visual *vis)
 
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
+
+	/* Fix up DSTORG register in case someone messed with it - fbdev
+	 * really dislikes that being wrong.
+	 */
+	mga_waitfifo(fbdevpriv->mmioaddr, 2);
+	mga_out32(fbdevpriv->mmioaddr, 0, DSTORG);
+	mga_out32(fbdevpriv->mmioaddr, 0, SRCORG);
 
 	/* Restore OPMODE and terminate any pending DMA operations
 	   Manual says we should write to byte 0 to terminate DMA sequence,

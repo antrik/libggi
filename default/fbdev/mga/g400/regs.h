@@ -1,4 +1,4 @@
-/* $Id: regs.h,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: regs.h,v 1.2 2001/06/20 22:52:09 ggibecka Exp $
 ******************************************************************************
 
    LibGGI - Millennium II register definitions
@@ -159,3 +159,6 @@
 #	define OPMODE_DMA_BE_8BPP	0x0000
 #	define OPMODE_DMA_BE_16BPP	0x0100
 #	define OPMODE_DMA_BE_32BPP	0x0200
+
+#define DSTORG		0x2cb8
+#define SRCORG		0x2cb4
