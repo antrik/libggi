@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.5 2003/10/07 05:29:00 cegger Exp $
+/* $Id: ddinit.c,v 1.6 2003/10/07 15:27:51 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -60,156 +60,158 @@ int GetDesc(directx_priv *priv);
 void ReleaseAllObjects(void);
 
 static HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd,
-                                                 LPVOID Context);
+						 LPVOID Context);
 
 
 long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-        PAINTSTRUCT ps;
-        HDC hdc;
-        DDMBS DDMessage;
-        DDCMS ddcms;
-        gii_event giiev;
+	PAINTSTRUCT ps;
+	HDC hdc;
+	DDMBS DDMessage;
+	DDCMS ddcms;
+	gii_event giiev;
 
 
-        switch (message) {
+	switch (message) {
 
-        case WM_ACTIVATEAPP:
-                /* Pause if minimized or not the top window */
-                Active = 1;
-                return 0;
+	case WM_ACTIVATEAPP:
+		/* Pause if minimized or not the top window */
+		Active = 1;
+		return 0;
 
-        case WM_KILLFOCUS:
-                PtrActive = 1;
-                Active = 0;
-                return 0;
+	case WM_KILLFOCUS:
+		PtrActive = 1;
+		Active = 0;
+		return 0;
 
-        case WM_SETFOCUS:
-                Active = 1;
-                return 0;
+	case WM_SETFOCUS:
+		Active = 1;
+		return 0;
 
-        case WM_GETMINMAXINFO:
+	case WM_GETMINMAXINFO:
 
-                ((LPMINMAXINFO) lParam)->ptMaxSize.x = MaxSize.ptMaxSize.x;
-                ((LPMINMAXINFO) lParam)->ptMaxSize.y = MaxSize.ptMaxSize.y;
-                return 0;
+		((LPMINMAXINFO) lParam)->ptMaxSize.x = MaxSize.ptMaxSize.x;
+		((LPMINMAXINFO) lParam)->ptMaxSize.y = MaxSize.ptMaxSize.y;
+		return 0;
 
-        case WM_MOVE:
-                GetClientRect(hWnd, &SrcWinPos);
-                GetClientRect(hWnd, &DestWinPos);
-                ClientToScreen(hWnd, (POINT *) & DestWinPos.left);
-                ClientToScreen(hWnd, (POINT *) & DestWinPos.right);
-                return 0;
+	case WM_MOVE:
+		GetClientRect(hWnd, &SrcWinPos);
+		GetClientRect(hWnd, &DestWinPos);
+		ClientToScreen(hWnd, (POINT *) & DestWinPos.left);
+		ClientToScreen(hWnd, (POINT *) & DestWinPos.right);
+		return 0;
 
 
-        case WM_TIMER:
-                redraw();
-                return 0;
+	case WM_TIMER:
+		redraw();
+		return 0;
 
-        case WM_PAINT:
-                hdc = BeginPaint(hWnd, &ps);
-                redraw();
-                EndPaint(hWnd, &ps);
-                return 0;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		redraw();
+		EndPaint(hWnd, &ps);
+		return 0;
 
-        case WM_DESTROY:
-                /* Clean up and close the app */
-                ReleaseAllObjects();
-                PostQuitMessage(0);
-                return 0;
+	case WM_DESTROY:
+		/* Clean up and close the app */
+		ReleaseAllObjects();
+		PostQuitMessage(0);
+		return 0;
 
-        case WM_DDMESSAGEBOX:
-                DDMessage = *(LPDDMBS) lParam;
-                MessageBox(DDMessage.hWnd, DDMessage.text, DDMessage.caption, DDMessage.type);
-                return 0;
+	case WM_DDMESSAGEBOX:
+		DDMessage = *(LPDDMBS) lParam;
+		MessageBox(DDMessage.hWnd, DDMessage.text, DDMessage.caption, DDMessage.type);
+		return 0;
 
-        case WM_DDCHANGEMODE:
-                ddcms = *(LPDDCMS) lParam;
-                ReleaseAllObjects();
-                IDirectDraw_SetCooperativeLevel(lpddext, hWnd, DDSCL_NORMAL);
-                CreatePrimary();
-                CreateBackup();
-                MaxSize.ptMaxSize.x = ddcms.width + 8;
-                MaxSize.ptMaxSize.y = ddcms.height + 28;
-                MoveWindow(hWnd, 50, 50, ddcms.width + 8, ddcms.height + 28, TRUE);
-                ShowWindow(hWnd, SW_SHOWNORMAL);
-                SetTimer(hWnd, 1, 33, NULL);
-                return 0;
+	case WM_DDCHANGEMODE:
+		ddcms = *(LPDDCMS) lParam;
+		ReleaseAllObjects();
+		IDirectDraw_SetCooperativeLevel(lpddext, hWnd, DDSCL_NORMAL);
+		CreatePrimary();
+		CreateBackup();
+		MaxSize.ptMaxSize.x = ddcms.width + 8;
+		MaxSize.ptMaxSize.y = ddcms.height + 28;
+		MoveWindow(hWnd, 50, 50, ddcms.width + 8, ddcms.height + 28, TRUE);
+		ShowWindow(hWnd, SW_SHOWNORMAL);
+		SetTimer(hWnd, 1, 33, NULL);
+		return 0;
 
-        case WM_MOUSEMOVE:
-                if (PtrActive && Active) {
-                        PtrActive = 0;
-                        while (ShowCursor(FALSE) >= 0);
-                }               /* End if */
-                break;
+	case WM_MOUSEMOVE:
+		if (PtrActive && Active) {
+			PtrActive = 0;
+			while (ShowCursor(FALSE) >= 0);
+		}	/* if */
+		break;
 
-        case WM_NCMOUSEMOVE:
-                if (!PtrActive) {
-                        PtrActive = 1;
-                        while (ShowCursor(TRUE) < 0);
-                }               /* End if */
-                break;
-        }
-        return DefWindowProc(hWnd, message, wParam, lParam);
+	case WM_NCMOUSEMOVE:
+		if (!PtrActive) {
+			PtrActive = 1;
+			while (ShowCursor(TRUE) < 0);
+		}	/* if */
+		break;
+	}
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 void ReleaseAllObjects(void)
 {
-        if (lpbdds != NULL) {
-                IDirectDraw_Release(lpbdds);
-                lpbdds = NULL;
-        }
-        if (lppdds != NULL) {
-                IDirectDraw_Release(lppdds);
-                lppdds = NULL;
-        }
+	if (lpbdds != NULL) {
+		IDirectDraw_Release(lpbdds);
+		lpbdds = NULL;
+	}
+	if (lppdds != NULL) {
+		IDirectDraw_Release(lppdds);
+		lppdds = NULL;
+	}
 }
 
 int CreatePrimary(void)
 {
-        HRESULT hr;
-        LPDIRECTDRAWCLIPPER pClipper;
-        char errstr[50];
+	HRESULT hr;
+	LPDIRECTDRAWCLIPPER pClipper;
+	char errstr[50];
 
 
-        memset(&pddsd, 0, sizeof(pddsd));
-        pddsd.dwSize = sizeof(pddsd);
-        pddsd.dwFlags = DDSD_CAPS;
-        pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-        hr = IDirectDraw_CreateSurface(lpddext, &pddsd, &lppdds, NULL);
-        if (hr != 0) {
-                sprintf(errstr, "Init Primary Surface Failed RC = %d", (int) hr);
-                DDMessageBox(hWnd, errstr, "Primary Surface");
-        }                       /* End if */
-        IDirectDraw_CreateClipper(lpddext, 0, &pClipper, NULL);
-        IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
-        IDirectDrawSurface_SetClipper(lppdds, pClipper);
-        IDirectDrawClipper_Release(pClipper);
-        pddsd.dwSize = sizeof(pddsd);
-        return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+	memset(&pddsd, 0, sizeof(pddsd));
+	pddsd.dwSize = sizeof(pddsd);
+	pddsd.dwFlags = DDSD_CAPS;
+	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+	hr = IDirectDraw_CreateSurface(lpddext, &pddsd, &lppdds, NULL);
+	if (hr != 0) {
+		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
+		DDMessageBox(hWnd, errstr, "Primary Surface");
+		exit(-1);
+	}	/* if */
+	IDirectDraw_CreateClipper(lpddext, 0, &pClipper, NULL);
+	IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
+	IDirectDrawSurface_SetClipper(lppdds, pClipper);
+	IDirectDrawClipper_Release(pClipper);
+	pddsd.dwSize = sizeof(pddsd);
+	return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 }
 
 int GetDesc(directx_priv * priv)
 {
-        pddsd.dwSize = sizeof(pddsd);
+	pddsd.dwSize = sizeof(pddsd);
 
-        IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+	IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 
-        priv->hWnd = hWnd;
-/*
-        priv->pitch = pddsd.lPitch;
-*/
-        priv->maxX = pddsd.dwWidth;
-        priv->maxY = pddsd.dwHeight;
-        priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-        priv->BPP = priv->ColorDepth / 8;
+	priv->hWnd = hWnd;
+
+/*	priv->pitch = pddsd.lPitch; */
+
+	priv->maxX = pddsd.dwWidth;
+	priv->maxY = pddsd.dwHeight;
+	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
+	priv->BPP = priv->ColorDepth / 8;
 	priv->pitch = priv->maxX * priv->BPP;
 
-/*      priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
-        priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
-        priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
-*/      return 0;
+/*	priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
+	priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
+	priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
+*/
+	return 0;
 }
 
 int CreateBackup(void)
@@ -220,7 +222,7 @@ int CreateBackup(void)
         memset(&bddsd, 0, sizeof(bddsd));
         bddsd.dwSize = sizeof(bddsd);
         bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
-            | DDSD_LPSURFACE | DDSD_PITCH | DDSD_PIXELFORMAT;
+            | DDSD_LPSURFACE | DDSD_PIXELFORMAT;
         bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
         lpSurfaceAdd = (char *) malloc(pddsd.dwWidth * pddsd.dwHeight
                               * pddsd.ddpfPixelFormat.dwRGBBitCount / 8);
