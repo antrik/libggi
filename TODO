@@ -43,7 +43,7 @@ Due : ????-??-??
 [Target specific issues]
 
 - update targets after the common issues are done
-+ make fbdev use of gamma map functions
+* make fbdev use of gamma map functions
 + alter fbdev.conf appropriately for selected accel sublibs
 - make pseudo-targets use of the dirty-region management
 
