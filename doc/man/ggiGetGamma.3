@@ -1,1 +1,44 @@
-.so man3/ggiSetGamma.3
+.TH "ggiGetGamma" 3 GGI
+.SH NAME
+\fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
+.SH SYNOPSIS
+.nb
+#include <ggi/ggi.h>
+
+int ggiGetGamma(ggi_visual_t vis, ggi_float *r, ggi_float *g, ggi_float *b);
+
+int ggiSetGamma(ggi_visual_t vis, ggi_float r, ggi_float g, ggi_float b);
+
+int ggiGetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+
+int ggiSetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+
+int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
+.fi
+.SH DESCRIPTION
+Some modes on some hardware can use a per-channel palette to lookup
+the values before sending to the monitor.  Generally this is used for
+gamma correction by filling the lookup table with a curve, hence the
+name "gamma map", but it could be used for other things e.g. special
+effects in games.  Truecolor modes with gamma maps are sometimes
+referred to as "directcolor".
+
+\fBggiSetGammaMap\fR and \fBggiGetGammaMap\fR set or get the gamma map, for
+\fBlen\fR colors starting at \fBs\fR.  In the event that there are more
+map entries for some channels than others, values for the upper
+indices of the map in the shallow channels are ignored on write, and
+undefined on read.
+The \fBggiGammaMax\fR function is used in order to find out how many
+readable and writeable entries are in the map (returned in the
+integers referenced by \fBmaxwrite\fR and \fBmaxread\fR).  This must be
+done once for each channel.  The parameter \fBbitmeaning\fR should be
+set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
+the channel of which you are inquiring.  If \fBggiGammaMax\fR returns an
+error, you cannot set the gamma map on this visual.  If \fBggiGammaMax\fR
+succeeds, but \fBmaxwrite\fR is -1 on return, this means that
+\fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
+\fBggiSetGamma\fR and \fBggiGetGamma\fR sets or gets the gamma correction for
+the visual according to the usual curve associated with the given
+values for each channel, which should be positive.
+.SH RETURN VALUE
+All five functions \fB0\fR for OK, otherwise an error code.

@@ -1,19 +1,27 @@
 .TH "ggiDrawBox" 3 GGI
 .SH NAME
-ggiDrawBox, ggiPutBox, ggiGetBox \- Draw, put, and get a rectangle from a visual
+\fBggiDrawBox\fR, \fBggiPutBox\fR, \fBggiGetBox\fR : Draw, put, and get a rectangle from a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiDrawBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR );
+int ggiDrawBox(ggi_visual_t vis, int x, int y, int w, int h);
 
-int \fBggiPutBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, void *\fIbuf\fR );
+int ggiPutBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
 
-int \fBggiGetBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, void *\fIbuf\fR );
+int ggiGetBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
+.fi
 .SH DESCRIPTION
-Draw, put, or get a rectangle at (\fIx\fR, \fIy\fR), extending \fIw\fR pixels in the positive x direction and \fIh\fR pixels in the positive y direction.
-
-The \fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
+Draw, put, or get a rectangle at (\fBx\fR, \fBy\fR), extending \fBw\fR
+pixels in the positive x direction and \fBh\fR pixels in the positive y
+direction.
+The \fBbuf\fR parameter in Get/Put functions points to a buffer from
+which the pixels will be read, or to which they will be written (it
+must be correctly allocated), depending on the case. See
+\fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal
+with pixels.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO
-\fBggiDrawHLine\fR (3), \fBggiDrawVLine\fR (3), \fBggiDrawLine\fR (3), \fBggiMapColor\fR (3), \fBggi_pixelformat\fR (3) 
+\fBggiDrawHLine(3)\fR, \fBggiDrawVLine(3)\fR, \fBggiDrawLine(3)\fR,
+\fBggiMapColor(3)\fR, \fBggi_pixelformat(3)\fR

@@ -1,23 +1,29 @@
 .TH "display-monotext" 7 GGI
 .SH NAME
-display-monotext \- Emulate palettized modes on text-mode visuals
+\fBdisplay-monotext\fR : Emulate palettized modes on text-mode visuals
 .SH SYNOPSIS
-\fBdisplay-monotext\fR : [ [-a=\fIaccuracy\fR] | [ [-x=\fIaccuracy\fR] [-y=\fIaccuracy\fR] ] ] [\fItarget-spec\fR]
+.nb
+display-monotext: [ [-a=<acc>] | [ [-x=<acc>] [-y=<acc>] ] ] <target-spec>
+.fi
 .SH DESCRIPTION
-Emulates palettized modes (GT_PALETTE) on another target which can only do text modes, by representing the graphics as ASCII characters. The effect is the much the same as the \fBAAlib\fR target, but does not depend on any external libraries.
+Emulates palettized modes (\fBGT_PALETTE\fR) on another target which can
+only do text modes, by representing the graphics as ASCII characters.
+The effect is the much the same as the \fBAAlib\fR target, but does not
+depend on any external libraries.
 .SH OPTIONS
 .TP
-\fB-x=accuracy\fR, \fB-y=accuracy\fR
-A value between 1 and 5 which determines how accurately to map the graphics to ASCII characters. Lower values are less accurate, but can represent a wider range of intensity levels.
-
-The default is x=2 and y=4.
+\fB-x=<acc>\fR, \fB-y=<acc>\fR
+A value between 1 and 5 which determines how accurately to map the
+graphics to ASCII characters.  Lower values are less accurate, but
+can represent a wider range of intensity levels.  The default is
+x=2 and y=4.
 .PP
 .TP
-\fB-a=accuracy\fR
-Same as above, but sets both the x and y accuracy to the specified value.
+\fB-a=<acc>\fR
+Same as above, but sets both the x and y accuracy to the specified
+value.
 .PP
 .TP
 \fBtarget-spec\fR
-?
+TODO wrtie something
 .PP
-

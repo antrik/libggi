@@ -1,15 +1,21 @@
 .TH "ggiGetInput" 3 GGI
 .SH NAME
-ggiGetInput, ggiDetachInput \- Functions to translate from GGI visuals to GII input
+\fBggiGetInput\fR, \fBggiDetachInput\fR : Functions to translate from GGI visuals to GII input
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-gii_input_t \fBggiGetInput\fR( ggi_visual_t \fIvis\fR );
+#define ggiGetInput(vis) ggiJoinInputs(vis, NULL)
 
-gii_input_t \fBggiDetachInput\fR( ggi_visual_t \fIvis\fR );
+gii_input_t ggiDetachInput(ggi_visual_t vis);
+.fi
 .SH DESCRIPTION
-\fBggiGetInput\fR returns the underlying input-handle associated with a LibGGI visual, for use with the LibGII API.
-
-\fBggiDetachInput\fR also returns the underlying input-handle, but in adddition, it breaks the association between the given visual and that input handle. After this has been done, no LibGGI event routines may be called on that visual handle, and when the visual handle is closed, the input will remain unaffected.
+\fBggiGetInput\fR returns the underlying input-handle associated with a
+LibGGI visual, for use with the LibGII API.
+\fBggiDetachInput\fR also returns the underlying input-handle, but in
+adddition, it breaks the association between the given visual and that
+input handle.  After this has been done, no LibGGI event routines may
+be called on that visual handle, and when the visual handle is closed,
+the input will remain unaffected.
 .SH SEE ALSO
-\fBgiiOpen\fR (3) 
+\fBgiiOpen(3)\fR

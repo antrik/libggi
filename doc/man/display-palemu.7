@@ -1,22 +1,28 @@
 .TH "display-palemu" 7 GGI
 .SH NAME
-display-palemu \- Emulate palettized modes on visuals of other mode schemes
+\fBdisplay-palemu\fR : Emulate palettized modes on visuals of other mode schemes
 .SH SYNOPSIS
-\fBdisplay-palemu\fR : [-parent=\fImode\fR] {\fItarget-spec\fR}
+.nb
+display-palemu: [-parent=<mode>] <target-spec>
+.fi
 .SH DESCRIPTION
-Emulates palettized modes (\fBGT_PALETTE\fR) on another target which can only do truecolor/greyscale/text modes or palettized modes of higher depth.
+Emulates palettized modes (\fBGT_PALETTE\fR) on another target which can
+only do truecolor/greyscale/text modes or palettized modes of higher
+depth.
 .SH OPTIONS
 .TP
-\fB-parent=mode\fR
-Force the parent target to use a specific mode, specified as a standard LibGGI mode string (see \fBlibggi\fR (7).
+\fB-parent=<mode>\fR
+Force the parent target to use a specific mode, specified as a standard 
+LibGGI mode string (see \fBlibggi(7)\fR).
 .PP
 .TP
 \fBtarget-spec\fR
-Specifies the target which to draw on (the `parent' target). This defaults to automatic selection (just like using \fBggiOpen\fR(\fBNULL\fR) when \fBGGI_DISPLAY\fR is not set).
+Specifies the target which to draw on (the \fIparent\fR target).  This
+defaults to automatic selection (just like using
+\fBggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
 .PP
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer never supported.
 .IP \(bu 4
 Unaccelerated.
-

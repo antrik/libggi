@@ -1,10 +1,14 @@
 .TH "display-vcsa" 7 GGI
 .SH NAME
-display-vcsa \- Display using Linux virtual console text device
+\fBdisplay-vcsa\fR : Display using Linux virtual console text device
 .SH SYNOPSIS
-\fBdisplay-vcsa\fR : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-shade] [-ascii] [-physz=\fIsizex\fR,\fIsizey\fR[dpi]] [\fIvcsa device\fR]
+.nb
+display-vcsa : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-shade]
+                 [-ascii] [-physz=<sizex>,<sizey>[dpi]] [<vcsa device>]
+.fi
 .SH DESCRIPTION
-Uses the Linux \fB/dev/vcsa*\fR devices to render text modes onto the console.
+Uses the Linux \fB/dev/vcsa*\fR devices to render text modes onto the
+console.
 .SH OPTIONS
 .TP
 \fB-nokbd\fR
@@ -20,23 +24,32 @@ Same as both \fB-nokbd\fR and \fB-nomouse\fR.
 .PP
 .TP
 \fB-shade\fR
-The \fB-shade\fR option turns on `shading mode', which changes the color mapping so that it chooses characters which emulate a shading effect. This makes a big improvement if using (some might say abusing :) the \fBvcsa\fR target for graphical purposes.
+The \fB-shade\fR option turns on \fIshading mode\fR, which changes the
+color mapping so that it chooses characters which emulate a
+shading effect.  This makes a big improvement if using (some might
+say abusing :) the vcsa target for graphical purposes.
 .PP
 .TP
 \fB-ascii\fR
-The \fB-ascii\fR option limits the color mapping to only using ASCII characters. The default mode uses IBM special characters (the solid block mainly, and others when using \fB-shade\fR).
+The \fB-ascii\fR option limits the color mapping to only using ASCII
+characters.  The default mode uses IBM special characters (the
+solid block mainly, and others when using \fB-shade\fR).
 .PP
 .TP
-\fB-physz=sizex,sizey[dpi]\fR
-This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fBdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
+\fB-physz=<sizex>,<sizey>[dpi]\fR
+This option will provide a physical screen size for applications
+which wish to remain resolution independent.  \fBsizex\fR,
+\fBsizey\fR are the x,y size of the screen in millimeters, unless
+the optional \fBdpi\fR string is affixed, in which case, they
+represent resolution in dots-per-inch.
 .PP
 .TP
-\fIvcsa device\fR
-The filename of the device file, defaulting to \fB/dev/vcsa\fR which draws on the current virtual console.
+\fBvcsa device\fR
+The filename of the device file, defaulting to \fB/dev/vcsa\fR which
+draws on the current virtual console.
 .PP
 .SH FEATURES
 .IP \(bu 4
 No DirectBuffer support.
 .IP \(bu 4
 Unaccelerated.
-

@@ -1,33 +1,40 @@
 .TH "ggiSetOrigin" 3 GGI
 .SH NAME
-ggiSetOrigin, ggiGetOrigin \- Set and get origin of virtual screen
+\fBggiSetOrigin\fR, \fBggiGetOrigin\fR : Set and get origin of virtual screen
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiSetOrigin\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR );
+int ggiSetOrigin(ggi_visual_t vis, int x, int y);
 
-int \fBggiGetOrigin\fR( ggi_visual_t \fIvis\fR, int *\fIx\fR, int *\fIy\fR );
+int ggiGetOrigin(ggi_visual_t vis, int *x, int *y);
+.fi
 .SH DESCRIPTION
-\fBggiSetOrigin\fR sets the top-left corner of the displayed area to (\fIx\fR, \fIy\fR).
+\fBggiSetOrigin\fR sets the top-left corner of the displayed area to
+(\fBx\fR, \fBy\fR).
+When using a larger virtual area, you can pan the visible area over
+the virtual one to do scrolling. Some targets have extemely efficient
+means to do this (i.e. they do it in hardware).
 
-When using a larger virtual area, you can pan the visible area over the virtual one to do scrolling. Some targets have extemely efficient means to do this (i.e. they do it in hardware).
-
-Large virtual areas are also commonly used for buffering the display contents, but that is usually more easily accomplished by requesting a specific number of \fBframes\fR when setting a mode.
-
-This call takes dot coordinates (see \fBggi_mode\fR (3)), not pixel coordinates as all other drawing primitives do. There is no difference in graphics modes because by definition \fBdpp\fR is 1x1, but in text modes the application can do smooth scrolling.
-
-\fBggiGetOrigin\fR gets the current top-left corner of the displayed area into (\fIx\fR, \fIy\fR).
-
-Due to rounding to the hardware's capabilities, the values retrieved by a subsequent \fBggiGetOrigin\fR may not necessarily match those passed to \fBggiSetOrigin\fR previously.
+Large virtual areas are also commonly used for buffering the display
+contents, but that is usually more easily accomplished by requesting a
+specific number of \fBframes\fR when setting a mode.
+This call takes \fIdot\fR coordinates (see \fBggi_mode(3)\fR), not pixel
+coordinates as all other drawing primitives do. There is no difference
+in graphics modes because by definition \fIdpp\fR is 1x1, but in text
+modes the application can do smooth scrolling.
+\fBggiGetOrigin\fR gets the current top-left corner of the displayed area
+into (\fBx\fR, \fBy\fR).
+Due to rounding to the hardware's capabilities, the values retrieved
+by a subsequent \fBggiGetOrigin\fR may not necessarily match those passed
+to \fBggiSetOrigin\fR previously.
 .SH RETURN VALUE
 \fB0\fR for OK, otherwise an error code.
 .SH EXAMPLES
-.SS Pan from the top to the bottom of the virtual screen
-.nf
+Pan from the top to the bottom of the virtual screen:
 
+.nb
 for(i = 0; i < virt_y-visible_y; i++) {
-        ggiSetOrigin(vis, 0, i);
+      ggiSetOrigin(vis, 0, i);
 }
-
 .fi
-

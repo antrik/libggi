@@ -1,23 +1,33 @@
 .TH "ggiSetPalette" 3 GGI
 .SH NAME
-ggiSetPalette, ggiGetPalette \- Manipulate the palette of a visual
+\fBggiSetPalette\fR, \fBggiGetPalette\fR : Manipulate the palette of a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiGetPalette\fR( ggi_visual_t \fIvis\fR, int \fIs\fR, int \fIlen\fR, ggi_color *\fIcmap\fR );
+int ggiSetPalette(ggi_visual_t vis, int s, int len, ggi_color *cmap);
 
-int \fBggiSetPalette\fR( ggi_visual_t \fIvis\fR, int \fIs\fR, int \fIlen\fR, ggi_color *\fIcmap\fR );
+int ggiGetPalette(ggi_visual_t vis, int s, int len, ggi_color *cmap);
+.fi
 .SH DESCRIPTION
-LibGGI visuals in \fBGT_PALETTE\fR mode maps all pixelvalues to the corresponding \fBggi_color\fR entry in the visual's palette.
-
-\fBggiSetPalette\fR sets a range of palette values, of length \fIlen\fR, starting at index number \fIs\fR. The index can be \fBGGI_PALETTE_DONTCARE\fR to indicate to indicate that the palette can be installed anywhere in the CLUT. This allows optimised use in windowing environments (to minimize color flashing between windows) and should be used if possible.
-
-\fBggiGetPalette\fR copies the specified colors (starting from \fIs\fR, for \fIlen\fR colors) from the visual's palette to the array pointed by \fIcmap\fR.
+LibGGI visuals in \fBGT_PALETTE\fR mode maps all pixelvalues to the
+corresponding \fBggi_color\fR entry in the visual's palette.
+\fBggiSetPalette\fR sets a range of palette values, of length \fBlen\fR,
+starting at index number \fBs\fR.  The index can be
+\fBGGI_PALETTE_DONTCARE\fR to indicate to indicate that the palette can be
+installed anywhere in the CLUT.  This allows optimised use in
+windowing environments (to minimize color flashing between windows)
+and should be used if possible.
+\fBggiGetPalette\fR copies the specified colors (starting from \fBs\fR, for
+\fBlen\fR colors) from the visual's palette to the array pointed by
+\fBcmap\fR.
 .SH RETURN VALUE
-\fBggiSetPalette\fR returns the number of the first entry changed. Negative values indicate error.
-
-\fBggiGetPalette\fR returns \fB0\fR for OK, otherwise an error code. When called with len=0 this function will not automatically succeed, but the return code will indicate whether there is a readable CLUT.
+\fBggiSetPalette\fR returns the number of the first entry changed.
+Negative values indicate error.
+\fBggiGetPalette\fR returns \fB0\fR for OK, otherwise an error code. When
+called with len=0 this function will not automatically succeed, but
+the return code will indicate whether there is a readable CLUT.
 .SH PALETTE IN GGI
 Write something useful here.
 .SH SEE ALSO
-\fBggiSetColorfulPalette\fR (3) 
+\fBggiSetColorfulPalette(3)\fR

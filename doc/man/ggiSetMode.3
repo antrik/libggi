@@ -1,25 +1,39 @@
 .TH "ggiSetMode" 3 GGI
 .SH NAME
-ggiSetMode, ggiSetTextMode, ggiSetGraphMode, ggiSetSimpleMode, ggiGetMode \- Set or get a mode on a visual
+\fBggiSetMode\fR, \fBggiSetTextMode\fR, \fBggiSetGraphMode\fR, \fBggiSetSimpleMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiSetMode\fR( ggi_visual_t \fIvis\fR, ggi_mode *\fItm\fR );
+int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
 
-int \fBggiSetTextMode\fR( ggi_visual_t \fIvisual\fR, int \fIcols\fR, int \fIrows\fR, int \fIvcols\fR, int \fIvrows\fR, int \fIfontx\fR, int \fIfonty\fR, ggi_graphtype \fItype\fR );
+int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
+                   int vcols, int vrows, int fontx, int fonty,
+                   ggi_graphtype type);
 
-int \fBggiSetGraphMode\fR( ggi_visual_t \fIvisual\fR, int \fIx\fR, int \fIy\fR, int \fIxv\fR, int \fIyv\fR, ggi_graphtype \fItype\fR );
+int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
+                    int xv, int yv, ggi_graphtype type);
 
-int \fBggiSetSimpleMode\fR( ggi_visual_t \fIvisual\fR, int \fIx\fR, int \fIy\fR, int \fIframes\fR, ggi_graphtype \fItype\fR );
+int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
+                     ggi_graphtype type);
 
-int \fBggiGetMode\fR( ggi_visual_t \fIvis\fR, ggi_mode *\fItm\fR );
+int ggiGetMode(ggi_visual_t visual, ggi_mode *tm);
+.fi
 .SH DESCRIPTION
-\fBggiSetMode\fR sets any mode (text or graphics). It also performs mode negotiation like \fBggiCheckMode\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO\fR parameters are changed from the original mode, the new mode will not be silently set.
-
-\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR and \fBggiSetSimpleMode\fR are convenient versions of \fBggiSetMode\fR that take the mode parameters as integer arguments rather than as a \fBggi_mode\fR struct that the application has to fill out. Otherwise, they are functionally equivalent to \fBggiSetMode\fR function, and the same mode-setting semantics apply, except the changed \fBggi_mode\fR cannot be seen.
-
-\fBggiGetMode\fR fills out the passed \fBggi_mode\fR with the parameters of the current mode of the visual.
+\fBggiSetMode\fR sets any mode (text or graphics).  It also performs mode
+negotiation like \fBggiCheckMode\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO\fR
+parameters are changed from the original mode, the new mode will not
+be silently set.
+\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR and \fBggiSetSimpleMode\fR are
+convenient versions of \fBggiSetMode\fR that take the mode parameters as
+integer arguments rather than as a \fBggi_mode\fR struct that the
+application has to fill out.  Otherwise, they are functionally
+equivalent to \fBggiSetMode\fR function, and the same mode-setting
+semantics apply, except the changed \fBggi_mode\fR cannot be seen.
+\fBggiGetMode\fR fills out the passed \fBggi_mode\fR with the parameters of
+the current mode of the visual.
 .SH RETURN VALUE
-The mode setting functions return \fB0\fR if the mode is set successfully, otherwise an error code.
+The mode setting functions return \fB0\fR if the mode is set successfully,
+otherwise an error code.
 .SH SEE ALSO
-\fBggiOpen\fR (3), \fBggiCheckMode\fR (3), \fBggi_mode\fR (3) 
+\fBggiOpen(3)\fR, \fBggiCheckMode(3)\fR, \fBggi_mode(3)\fR

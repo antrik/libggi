@@ -1,10 +1,15 @@
 .TH "ggiteleserver" 1 GGI
 .SH NAME
-ggiteleserver \- GGI display server
+\fBggiteleserver\fR : GGI display server
 .SH SYNOPSIS
-\fBggiteleserver\fR [ [-V] | [--version] ] [ [-h] | [--help] ] [-t \fItarget\fR] [-d \fIdisplay\fR]
+.nb
+ggiteleserver [-V|--version] [-h|--help] [-t <target>] [-d <display>]
+.fi
 .SH DESCRIPTION
-\fBggiteleserver\fR starts a display server for GGI and listen for display operations on a TCP socket. A GGI application can then forward display operations to this server with the \fBdisplay-tele\fR target. The server will use the default output.
+\fBggiteleserver\fR starts a display server for GGI and listen for display
+operations on a TCP socket. A GGI application can then forward display
+operations to this server with the \fBdisplay-tele\fR target. The server
+will use the default output.
 .SH OPTIONS
 .TP
 \fB-V\fR, \fB--version\fR
@@ -15,15 +20,14 @@ Print the program version and exit.
 Print options and exit.
 .PP
 .TP
-\fB-t target\fR
-Use the specified \fItarget\fR as display. It overrides the value of \fBGGI_DISPLAY\fR.
+\fB-t <target>\fR
+Use the specified \fBtarget\fR as display. It overrides the value
+of \fBGGI_DISPLAY\fR.
 .PP
 .TP
-\fB-d display\fR
-???
+\fB-d <display>\fR
+TODO what is that?
 .PP
 The default port is 27780.
 .SH SEE ALSO
-.IP \(bu 4
-\fBdisplay-tele\fR (7)
-
+\fBdisplay-tele(7)\fR

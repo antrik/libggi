@@ -1,16 +1,23 @@
 .TH "display-fbdev" 7 GGI
 .SH NAME
-display-fbdev \- Display using Linux kernel framebuffer devices
+\fBdisplay-fbdev\fR : Display using Linux kernel framebuffer devices
 .SH SYNOPSIS
-\fBdisplay-fbdev\fR : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-novt] [-physz=\fIsizex\fR,\fIsizey\fR[dpi]] [\fIframebuffer\fR]
+.nb
+display-fbdev: [ [-noinput] | [ [-nokbd] | [-nomouse] ] ] [-novt]
+               [-physz=<sizex>,<sizey>[dpi]] [<framebuffer>]
+.fi
 .SH DESCRIPTION
-Uses the Linux \fB/dev/fb*\fR devices to do fullscreen graphics.
-
-When using a regular fbdev driver, \fB/etc/fb.modes\fR is used to determine the available modes for the device. Driver timings and resolutions can be automatically obtained when running under KGIcon.
+Uses the Linux \fB/dev/fb*\fR devices to do fullscreen
+graphics.
+When using a regular fbdev driver, \fB/etc/fb.modes\fR is used to
+determine the available modes for the device.  Driver timings and
+resolutions can be automatically obtained when running under KGIcon.
 .SH OPTIONS
 .TP
 \fBframebuffer\fR
-The filename of the framebuffer target to use. The default is to get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer associated with the current console if that is unset.
+The filename of the framebuffer target to use.  The default is to
+get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer
+associated with the current console if that is unset.
 .PP
 .TP
 \fB-nokbd\fR
@@ -29,8 +36,12 @@ Same as both \fB-nokbd\fR and \fB-nomouse\fR.
 Disable virtual console support.
 .PP
 .TP
-\fB-physz=sizex,sizey[dpi]\fR
-This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fBdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
+\fB-physz=<sizex>,<sizey>[dpi]\fR
+This option will provide a physical screen size for applications
+which wish to remain resolution independent.
+\fBsizex\fR,:p:\fBsizey\fR are the x,y size of the screen in
+millimeters, unless the optional \fBdpi\fR string is affixed, in
+which case, they represent resolution in dots-per-inch.
 .PP
 .SH FEATURES
 .IP \(bu 4
@@ -38,10 +49,8 @@ DirectBuffer always available.
 .IP \(bu 4
 Accelerated when using KGIcon or matroxfb.
 .IP \(bu 4
-Multiple frames
+Multiple frames.
 .IP \(bu 4
-Panning
+Panning.
 .SH SEE ALSO
-.IP \(bu 4
-\fBfb.modes\fR (5)
-
+\fBfb.modes(5)\fR

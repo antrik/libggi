@@ -1,1 +1,55 @@
-.so man3/ggiEventPoll.3
+.TH "ggiJoinInputs" 3 GGI
+.SH NAME
+\fBggiJoinInputs\fR, \fBggiEventPoll\fR, \fBggiEventSelect\fR, \fBggiEventsQueued\fR, \fBggiEventRead\fR, \fBggiSetEventMask\fR, \fBggiGetEventMask\fR, \fBggiAddEventMask\fR, \fBggiRemoveEventMask\fR : Event management for LibGGI visual
+.SH SYNOPSIS
+.nb
+#include <ggi/ggi.h>
+
+gii_event_mask ggiEventPoll(ggi_visual_t vis, gii_event_mask mask,
+                            struct timeval *t);
+
+int ggiEventsQueued(ggi_visual_t vis, gii_event_mask mask);
+
+int ggiEventRead(ggi_visual_t vis, gii_event *ev,
+                 gii_event_mask mask);
+
+int ggiSetEventMask(ggi_visual_t vis, gii_event_mask evm);
+
+gii_event_mask ggiGetEventMask(ggi_visual_t vis);
+
+gii_input_t ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
+
+#define ggiAddEventMask(vis,mask)  \
+              ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
+
+#define ggiRemoveEventMask(vis,mask)  \
+              ggiSetEventMask((vis), ggiGetEventMask((vis)) & ~(mask))
+.fi
+.SH DESCRIPTION
+LibGGI provides input facilities through an auxiliary library, LibGII.
+Each LibGGI visual internally contains a \fBgii_input_t\fR input, and all
+LibGII functions are available to manipulate and process inputs.  The
+LibGGI versions provided of most LibGII functions simply take a
+\fBggi_visual_t\fR rather than \fBgii_input_t\fR for convenience during
+everyday usage.  Events are LibGII types.  All other semantics are the
+same; see \fBlibgii(7)\fR for details.
+BImprotant:R
+By default LibGGI visuals autodetect and open the appropriate
+inputs, including mouse and keyboard and any other inputs that are
+'intrinsic' to the visual e.g. any registered X11 input device
+under the X target.  Thus in the usual cases there is no need to
+open a LibGII \fBgii_input_t\fR directly (and that may in fact fail
+because an input device is already open).  The LibGGI \fBggiEvent*\fR
+functions \fImust\fR be used to do event handling with LibGGI visuals,
+and provide adequate support for most everyday, single-visual
+usage.
+Advanced management of input sources is accomplished by detaching
+the input from the visual and using LibGII functions on the
+separate visual handle (see \fBggiDetachInput(3)\fR).  This is
+encouraged, for example, when joining inputs from multiple
+visuals, because when two visuals share the same joined input, you
+cannot ggiClose both of the visuals (a fatal error will result,
+because closing the first visual closes both of the joined inputs
+and leaves the second closed visual with a stale input handle.)
+.SH SEE ALSO
+\fBgiiSetEventMask(3)\fR, \fBgiiEventPoll(3)\fR, \fBggiGetInput(3)\fR

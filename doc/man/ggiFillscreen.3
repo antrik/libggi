@@ -1,12 +1,15 @@
 .TH "ggiFillscreen" 3 GGI
 .SH NAME
-ggiFillscreen \- Fills the entire virtual screen
+\fBggiFillscreen\fR : Fills the entire virtual screen
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiFillscreen\fR( ggi_visual_t \fIvis\fR );
+int ggiFillscreen(ggi_visual_t vis);
+.fi
 .SH DESCRIPTION
-Fills the current clipping rectangle (usually the entire virtual screen) with the current foreground color. It may be more efficient than the corresponding call to \fBggiDrawBox\fR.
+Fills the current clipping rectangle (usually the entire virtual
+screen) with the current foreground color.  It may be more efficient
+than the corresponding call to \fBggiDrawBox\fR.
 .SH RETURN VALUE
 This function returns \fB0\fR to indicate success.
-

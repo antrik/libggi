@@ -1,28 +1,47 @@
 .TH "display-file" 7 GGI
 .SH NAME
-display-file \- Render display into image file
+\fBdisplay-file\fR : Render display into image file
 .SH SYNOPSIS
-\fBdisplay-file\fR : [-flushcmd=\fIcommand\fR] [-flushframe=\fIn\fR] [-flushtime=\fIt\fR] {\fIfilename\fR}
+.nb
+display-file: [-flushcmd=<command>] [-flushframe=<n>]
+              [-flushtime=<t>] <filename>
+.fi
 .SH DESCRIPTION
-Renders an image into a file. The file can be a framebuffer device (e.g. \fB/dev/fb0\fR), in which case a reasonable representation of the image will be drawn on the console so long as the program's mode matches the framebuffer's mode.
-
-.RS
-\fBNote:\fR
-This target generates no input. The \fBmulti\fR target can be used in order to see (and control) what the program does (using a normal target) and then generate a snapshot when the program exits.
-.RE
+Renders an image into a file.  The file can be a framebuffer device
+(e.g. \fB/dev/fb0\fR), in which case a reasonable representation of the
+image will be drawn on the console \fIso long as\fR the program's mode
+matches the framebuffer's mode.
+BNote:R
+This target generates no input.  The \fBdisplay-multi\fR target can be
+used in order to see (and control) what the program does (using a
+normal target) and then generate a snapshot when the program
+exits.
 .SH OPTIONS
-\fIfilename\fR is the file to render the images to. If the filename is a PPM file (has the extension \fB.ppm\fR), then the image will be generated at \fBggiClose\fR time. Otherwise the file is a custom `GGIFILE' format and is generated continuously.
+\fBfilename\fR is the file to render the images to.  If the filename is
+a PPM file (has the extension \fB.ppm\fR), then the image will be
+generated at \fBggiClose\fR time.  Otherwise the file is a custom
+\fIGGIFILE\fR format and is generated continuously.
+The \fBdisplay-file\fR target can be used to generate movies from running
+LibGGI applications. To do this, set \fB-flushcmd\fR to a shell command
+to execute at the times given by one of the two other parameters. This
+looks typically like:
+.nb
+ppmtogif foo.ppm > foo.%04d.gif
+.fi
+The command is passed through a \fBprintf(3)\fR which has the current
+count of saved frames as an argument (or rather as 10 arguments to
+allow a few more complex commands).
+This shell command is either executed at every \fBn\fR-th invocation
+of ggiFlush or every \fBt\fR seconds, where \fBt\fR can have fractional
+components (specified as decimal).
+Note, that the invocation of the shell command will slow down the
+program, so make sure you use a reasonable value, if you use the
+\fB-flushtime\fR argument.
 
-The \fBfile\fR target can be used to generate movies from running LibGGI applications. To do this, set \fB-flushcmd\fR to a shell command to execute at the times given by one of the two other parameters. This looks typically like \fBppmtogif foo.ppm >foo.%04d.gif\fR. The command is passed through a \fBprintf\fR (3) which has the current count of saved frames as an argument (or rather as 10 arguments to allow a few more complex commands).
-
-This shell command is either executed at every \fIn\fR-th invocation of ggiFlush or every \fIt\fR seconds, where \fIt\fR can have fractional components (specified as decimal).
-
-Note, that the invocation of the shell command will slow down the program, so make sure you use a reasonable value, if you use the \fB-flushtime\fR argument.
-
-The primary file is updated before every invocation of the shell command.
+The primary file is updated before every invocation of the shell
+command.
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer always available.
 .IP \(bu 4
 Unaccelerated.
-

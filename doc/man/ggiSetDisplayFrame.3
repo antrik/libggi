@@ -1,40 +1,40 @@
 .TH "ggiSetDisplayFrame" 3 GGI
 .SH NAME
-ggiSetDisplayFrame, ggiSetWriteFrame, ggiSetReadFrame, ggiGetDisplayFrame, ggiGetWriteFrame, ggiGetReadFrame \- Set or get the current frame for display, writing and reading
+\fBggiSetDisplayFrame\fR, \fBggiSetWriteFrame\fR, \fBggiSetReadFrame\fR, \fBggiGetDisplayFrame\fR, \fBggiGetWriteFrame\fR, \fBggiGetReadFrame\fR : Set or get the current frame for display, writing and reading
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiSetDisplayFrame\fR( ggi_visual_t \fIvis\fR, int \fIframeno\fR );
+int ggiSetDisplayFrame(ggi_visual_t vis, int frameno);
 
-int \fBggiSetWriteFrame\fR( ggi_visual_t \fIvis\fR, int \fIframeno\fR );
+int ggiSetWriteFrame(ggi_visual_t vis, int frameno);
 
-int \fBggiSetReadFrame\fR( ggi_visual_t \fIvis\fR, int \fIframeno\fR );
+int ggiSetReadFrame(ggi_visual_t vis, int frameno);
 
-int \fBggiGetDisplayFrame\fR( ggi_visual_t \fIvis\fR );
+int ggiGetDisplayFrame(ggi_visual_t vis);
 
-int \fBggiGetWriteFrame\fR( ggi_visual_t \fIvis\fR );
+int ggiGetWriteFrame(ggi_visual_t vis);
 
-int \fBggiGetReadFrame\fR( ggi_visual_t \fIvis\fR );
+int ggiGetReadFrame(ggi_visual_t vis);
+.fi
 .SH DESCRIPTION
-These functions are used for selecting or getting the current buffers, when using the multiple buffering function of LibGGI.
+These functions are used for selecting or getting the current buffers,
+when using the multiple buffering function of LibGGI.
 
-\fBggiSetDisplayFrame\fR sets the frame that getsdisplayed.
-
-\fBggiSetWriteFrame\fR sets the frame for write operations such as \fBggiPuts\fR and \fBggiHLine\fR.
-
-\fBggiSetReadFrame\fR sets the frame for read operations, like \fBggiGetPixel\fR and the \fBggiCrossBlit\fR source.
-
+\fBggiSetDisplayFrame\fR sets the frame that gets displayed.
+\fBggiSetWriteFrame\fR sets the frame for write operations such as
+\fBggiPuts\fR and \fBggiHLine\fR.
+\fBggiSetReadFrame\fR sets the frame for read operations, like
+\fBggiGetPixel\fR and the \fBggiCrossBlit\fR source.
 \fBggiGetDisplayFrame\fR reports the frame currently displayed.
-
 \fBggiGetWriteFrame\fR reports the frame currently written to.
-
 \fBggiSetReadFrame\fR reports the frame currently read from.
-
 Frames are numbered from 0 to the number of frames requested minus 1.
 .SH RETURN VALUE
-The \fBggiSet*Frame\fR functions return \fB0\fR if they succeed, and \fB<0\fR if they fail.
-
+The \fBggiSet*Frame\fR functions return \fB0\fR if they succeed, and \fB<0\fR if
+they fail.
 The \fBggiGet*Frame\fR functions never fail.
 .SH WORKING WITH FRAMES
 Write something useful here.
-
+.SH SEE ALSO
+\fBggi_mode(3)\fR

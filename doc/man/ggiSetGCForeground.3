@@ -1,20 +1,23 @@
 .TH "ggiSetGCForeground" 3 GGI
 .SH NAME
-ggiSetGCForeground, ggiGetGCForeground, ggiSetGCBackground, ggiGetGCBackground \- Set or get the foreground or background color used in drawing operations in a visual
+\fBggiSetGCForeground\fR, \fBggiGetGCForeground\fR, \fBggiSetGCBackground\fR, \fBggiGetGCBackground\fR : Set or get the foreground or background color used in drawing operations in a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiSetGCForeground\fR( ggi_visual_t \fIvis\fR, ggi_pixel \fIcolor\fR );
+int ggiSetGCForeground(ggi_visual_t vis,ggi_pixel  color);
 
-int \fBggiGetGCForeground\fR( ggi_visual_t \fIvis\fR, ggi_pixel *\fIcolor\fR );
+int ggiGetGCForeground(ggi_visual_t vis,ggi_pixel *color);
 
-int \fBggiSetGCBackground\fR( ggi_visual_t \fIvis\fR, ggi_pixel \fIcolor\fR );
+int ggiSetGCBackground(ggi_visual_t vis,ggi_pixel  color);
 
-int \fBggiGetGCBackground\fR( ggi_visual_t \fIvis\fR, ggi_pixel *\fIcolor\fR );
+int ggiGetGCBackground(ggi_visual_t vis,ggi_pixel *color);
+.fi
 .SH DESCRIPTION
-\fBggiSetGCForeground\fR and \fBggiGetGCForeground\fR set or reads the current colors for the foreground, used in all normal drawing functions.
-
-\fBggiSetGCBackground\fR and \fBggiGetGCBackground\fR set or reads the current colors for the background, used in two-color operations like drawing text.
+\fBggiSetGCForeground\fR and \fBggiGetGCForeground\fR set or reads the current
+colors for the foreground, used in all normal drawing functions.
+\fBggiSetGCBackground\fR and \fBggiGetGCBackground\fR set or reads the current
+colors for the background, used in two-color operations like drawing
+text.
 .SH RETURN VALUE
 All four functions \fB0\fR for OK.
-

@@ -1,49 +1,53 @@
 .TH "ggiOpen" 3 GGI
 .SH NAME
-ggiOpen, ggiClose \- Open and close a visual
+\fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-ggi_visual_t \fBggiOpen\fR( const char *\fIdisplay\fR, \fI...\fR );
+ggi_visual_t ggiOpen(const char *display, ...);
 
-int \fBggiClose\fR( ggi_visual_t \fIvis\fR );
+int ggiClose(ggi_visual_t vis);
+.fi
 .SH DESCRIPTION
-\fBggiOpen\fR opens a visual. The visual is specified as a display string, followed by \fBNULL\fR. If only \fBNULL\fR is specified, the default display target is opened. The other arguments are for internal purposes only, such as \fIargptr\fR, used to pass driver-specific, non-textual information to the driver.
-
-\fBggiClose\fR releases and destroys an open visual. This will close X windows, return consoles to text-mode, etc.
+\fBggiOpen\fR opens a visual.  The visual is specified as a display
+string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
+display target is opened.  The other arguments are for internal
+purposes only, such as \fBargptr\fR, used to pass driver-specific,
+non-textual information to the driver.
+\fBggiClose\fR releases and destroys an open visual.  This will close X
+windows, return consoles to text-mode, etc.
 .SH RETURN VALUE
-\fBggiOpen\fR returns the opened visual or \fBNULL\fR for error. The \fBggi_visual_t\fR is opaque to the programmer and should only be used through GGI functions.
-
+\fBggiOpen\fR returns the opened visual or \fBNULL\fR for error.  The
+\fBggi_visual_t\fR is opaque to the programmer and should only be used
+through GGI functions.
 \fBggiClose\fR returns \fB0\fR for OK, otherwise an error code.
 .SH EXAMPLES
-.SS Open and closing default visual
-.nf
+Open and closing default visual:
 
+.nb
 ggi_visual_t vis = ggiOpen(NULL);
 
 if(vis==NULL) {
-        ggiPanic("Couldn't open default visual!\\n");
+      ggiPanic("Couldn't open default visual!\n");
 }
 
 /* do stuff */
 
 ggiClose(vis);
-
-
 .fi
-.SS Open and closing a memory visual
-.nf
+Open and closing a memory visual:
 
+.nb
 ggi_visual_t memvis = ggiOpen("display-memory", NULL);
 
 if(memvis==NULL) {
-        return -1;
+      return -1;
 }
 
 /* do stuff */
 
 ggiClose(memvis);
-
 .fi
 .SH SEE ALSO
-\fBggiInit\fR (3) 
+\fBggiInit(3)\fR

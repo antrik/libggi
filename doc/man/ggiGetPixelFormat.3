@@ -1,15 +1,18 @@
 .TH "ggiGetPixelFormat" 3 GGI
 .SH NAME
-ggiGetPixelFormat \- Get a structure describing the format of a pixelvalue from a visual
+\fBggiGetPixelFormat\fR : Get a structure describing the format of a pixelvalue from a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-ggi_pixelformat *\fBggiGetPixelFormat\fR( ggi_visual_t \fIvis\fR );
+const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
+.fi
 .SH DESCRIPTION
 This function obtains the default pixel format for the given visual.
 .SH RETURN VALUE
 Returns a pointer to the \fBggi_pixelformat\fR structure.
-
-Modifying the structure returned is not allowed. Do not attempt to free the pointer returned.
+BImprotant:R
+Modifying the structure returned is not allowed.  Do \*fBnot*\fR
+attempt to free the pointer returned.
 .SH SEE ALSO
-\fBggi_pixelformat\fR (3), \fBggiMapColor\fR (3) 
+\fBggi_pixelformat(3)\fR, \fBggiMapColor(3)\fR

@@ -1,16 +1,17 @@
 .TH "ggiDrawPixel" 3 GGI
 .SH NAME
-ggiDrawPixel, ggiPutPixel, ggiGetPixel \- Draw, put, and get a single pixel from a visual
+\fBggiDrawPixel\fR, \fBggiPutPixel\fR, \fBggiGetPixel\fR : Draw, put, and get a single pixel from a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiDrawPixel\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR );
+int ggiDrawPixel(ggi_visual_t vis, int x, int y);
 
-int \fBggiPutPixel\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, ggi_pixel \fIcol\fR );
+int ggiPutPixel(ggi_visual_t vis, int x, int y, ggi_pixel pixel);
 
-int \fBggiGetPixel\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, ggi_pixel *\fIcol\fR );
+int ggiGetPixel(ggi_visual_t vis, int x, int y, ggi_pixel *pixel);
+.fi
 .SH DESCRIPTION
-Draw, put, or get a single pixelvalue at (\fIx\fR,\fIy\fR).
+Draw, put, or get a single pixelvalue at (\fBx\fR, \fBy\fR).
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
-

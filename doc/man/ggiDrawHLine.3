@@ -1,19 +1,27 @@
 .TH "ggiDrawHLine" 3 GGI
 .SH NAME
-ggiDrawHLine, ggiPutHLine, ggiGetHLine \- Draw, put, and get a horizontal line from a visual
+\fBggiDrawHLine\fR, \fBggiPutHLine\fR, \fBggiGetHLine\fR : Draw, put, and get a horizontal line from a visual
 .SH SYNOPSIS
-\fB#include <ggi/ggi.h>\fR
+.nb
+#include <ggi/ggi.h>
 
-int \fBggiDrawHLine\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR );
+int ggiDrawHLine(ggi_visual_t vis, int x, int y, int w);
 
-int \fBggiPutHLine\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, void *\fIbuf\fR );
+int ggiPutHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
 
-int \fBggiGetHLine\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, void *\fIbuf\fR );
+int ggiGetHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
+.fi
 .SH DESCRIPTION
-Draw, put, or get a horizontal line from (\fIx\fR,\fIy\fR), extending \fIw\fR pixels in the positive x direction (normally right). The height is one pixel.
-
-The \fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
+Draw, put, or get a horizontal line from (\fBx\fR, \fBy\fR), extending
+\fBw\fR pixels in the positive x direction (normally right).  The
+height is one pixel.
+The \fBbuf\fR parameter in Get/Put functions points to a buffer from
+which the pixels will be read, or to which they will be written (it
+must be correctly allocated), depending on the case. See
+\fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal
+with pixels.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO
-\fBggiDrawVLine\fR (3), \fBggiDrawBox\fR (3), \fBggiDrawLine\fR (3), \fBggiMapColor\fR (3), \fBggi_pixelformat\fR (3) 
+\fBggiDrawVLine(3)\fR, \fBggiDrawBox(3)\fR, \fBggiDrawLine(3)\fR,
+\fBggiMapColor(3)\fR, \fBggi_pixelformat(3)\fR
