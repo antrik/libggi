@@ -1,11 +1,11 @@
-dnl $Id: configure.in,v 1.79 2003/03/16 14:59:59 cegger Exp $
+dnl $Id: configure.in,v 1.80 2003/03/19 23:07:51 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
 
 AC_INIT(include/ggi/ggi.h)
 
-AM_INIT_AUTOMAKE(libggi,2.0.2,-)
+AM_INIT_AUTOMAKE(libggi,2.1.0-cvs,-)
 
 AM_MAINTAINER_MODE
 AM_DISABLE_STATIC
