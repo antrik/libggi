@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.13 2004/02/05 09:34:58 cegger Exp $
+/* $Id: internal.c,v 1.14 2004/02/05 09:49:07 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -347,12 +347,6 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 			pixfmtstr_len--;
 			LIBGGI_ASSERT(pixfmtstr_len > 0,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
-#if 0
-			if (pixfmtstr_len == 0) {
-				GGIDPRINT("_ggi_build_pixfmtstr: pixfmtstr_len too short. Not enough memory allocated for pixfmtstr\n");
-				return GGI_EARGINVAL;
-			}
-#endif
 
 			switch(pixfmt->bitmeaning[idx] & 0x00ffff00) {
 			case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
@@ -391,15 +385,8 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
 			LIBGGI_ASSERT(tmp <= pixfmtstr_len,
 				"Off-by-one bug: Not even room for string termination.");
+
 			pixfmtstr_len -= tmp;
-#if 0
-			if (tmp >= pixfmtstr_len) {
-				GGIDPRINT_CORE("_ggi_build_pixfmtstr: pixfmtstr_len too short. Not enough memory allocated for pixfmtstr\n");
-				return GGI_EARGINVAL;
-			} else {
-				pixfmtstr_len -= tmp;
-			}
-#endif
 			ptr += tmp;
 			idx--;
 			if (idx < 0) break;
