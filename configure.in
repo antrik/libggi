@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.56 2002/10/31 22:42:01 cegger Exp $
+dnl $Id: configure.in,v 1.57 2002/11/02 14:11:06 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -501,7 +501,7 @@ connect(0, NULL, 42);
   LIBS="$SAVELIBS"
 fi
 
-if test "x$ac_cv_func_gethostbyname" = "xyes"; then
+if test "x$ac_cv_func_gethostbyname" = "xno"; then
   AC_CHECK_LIB(c, gethostbyname, ,
     AC_CHECK_LIB(nsl, gethostbyname, bsdsock_libs="$bsdsock_libs -lnsl")
   )
