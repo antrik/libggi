@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.123 2004/06/03 05:56:45 pekberg Exp $
+dnl $Id: configure.in,v 1.124 2004/06/06 19:56:05 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -382,8 +382,8 @@ AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
-	herror gethostbyname sigpending fork \
+AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
+	random herror gethostbyname sigpending fork \
 	snprintf strncat strncpy)
 
 
@@ -880,7 +880,7 @@ INSTDEMOS=""
 AC_MSG_CHECKING(if we should build the cube3d program)
 if test "x$ac_cv_header_unistd_h" = "xyes" \
 	-a "x$ac_cv_header_signal_h" = "xyes" \
-	-a "x$ac_cv_func_setenv" = "xyes" \
+	-a "x$ac_cv_func_putenv" = "xyes" \
 	-a "x$ac_cv_header_sys_shm_h" = "xyes" \
 	-a "x$ac_cv_header_sys_ipc_h" = "xyes"; then
   INSTDEMOS="$INSTDEMOS cube3d\$(EXEEXT)"
