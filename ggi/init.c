@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.8 2003/07/04 23:09:28 cegger Exp $
+/* $Id: init.c,v 1.9 2003/07/13 07:21:07 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -507,7 +507,7 @@ int ggiClose(ggi_visual *visual)
   (ggi_extid) that can be used to address this extension.
 */
 ggi_extid
-ggiExtensionRegister(char *name, int size, int (*change)(ggi_visual_t, int))
+ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 {
 	ggi_extension *tmp, *ext;
 
