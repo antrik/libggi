@@ -1,0 +1,225 @@
+LibGGI types and structures
+===========================
+
+LIBGGI colormap 
+~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggi_colormap ggi_colormap_region
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  /* a color consists of red, green, blue and alpha component */
+  typedef struct { uint16 r,g,b,a; }               ggi_color;
+  /* color look up table */
+  typedef struct { uint16 size; ggi_color *data; } ggi_clut;
+
+  enum ggi_colormap_region {
+      GGI_COLORMAP_RW_REGION    = 0,
+      GGI_COLORMAP_RO_REGION    = 1,
+      GGI_COLORMAP_RW_RO_REGION = 2
+  };
+
+  typedef int (ggifunc_setPalette)(ggi_visual_t vis, 
+                                   size_t start, size_t size,
+				   const ggi_color *cmap);
+
+  typedef struct ggi_colormap {
+      ggi_clut clut;
+      
+      size_t rw_start;
+      size_t rw_stop;
+      size_t ro_start;
+      size_t ro_stop;
+      
+      void *priv;
+
+      size_t (*getPrivSize)(ggi_visual_t vis);
+
+      int (*setRW)(ggi_visual_t vis, size_t  start, size_t  end);
+      int (*setRO)(ggi_visual_t vis, size_t  start, size_t  end);
+      int (*getRW)(ggi_visual_t vis, size_t *start, size_t *end);
+      int (*getRO)(ggi_visual_t vis, size_t *start, size_t *end);
+
+      ggifunc_setPalette* setPalette;
+
+      ssize_t (*findByColor)(ggi_visual_t vis, 
+                             const ggi_color *color,
+			     enum ggi_colormap_region region);
+
+      ssize_t (*findByIdx)(ggi_visual_t vis,
+                           size_t idx,
+			   enum ggi_colormap_region region);
+
+      int (*matchByColor)(ggi_visual_t vis,
+                          const ggi_color *color1,
+			  const ggi_color *color2,
+			  enum ggi_colormap_region region);
+
+      int (*matchByIdx)(ggi_visual_t vis,
+      			size_t idx1,
+			size_t idx2,
+			enum ggi_colormap_region region);
+  } ggi_colormap;
+
+  /* This is a very usefull marco to directly access visual palette entry */
+  #define LIBGGI_PAL(vis)             ((vis)->palette)
+
+
+Description
+-----------
+
+
+ggi_colormap structure can be considered as an interface between target colormap and ggi internal colormap. Target specific information is stored in the priv member. The ggi colormap is represented by the clut member. It can be viewed as an abstract colormap whereas the priv member can be view as the 'real' one. These members are initialised during ggi initialisation. Colormaps (both target and ggi ones) are updated/initialised with the ggiSetPalette function.
+
+The target is also responsible for setting the RO/RW area indices. RW entries can be modified by any application whereas RO entries can't be modified. In a target like X (or any other windowed one) where the colormap is shared between all the applicataion, RO entries are the shared color cells. These colormap entries are shared by all applications so any changes will affect them. For example if you display a 256 colors image without taking these entries into account, the colors of the window manager and all the other windows are screwed. The RW entries are the private color cells (ie) application specific entries. The reason why the RO/RW management is not a native ggi feature is simple if we consider this almost wrong analogy. GGI can be seen as a graphical hardware and the target as its driver. The hardware only give us access to 'raw' data. The way we represent/use it is up to the target develloper.
+
+Every colormap function respect the standard ggi return policy which is:
+
+    * 0 on normal completion
+    * >0 when giving additional hints or returning nonnegative integer data
+    * <0 for errors
+
+
+Structure Members
+-----------------
+
+
+`clut`
+    The ggi side colormap.
+
+`rw_start`
+`rw_stop`
+    Read/Write region boundaries. Any color in this region can be modified.
+
+`ro_start`
+`ro_end`
+    Read only region boundaries. Colors in this region can't and must not be modified.
+
+`priv`
+    Target specific informations. This could be the target colormap structure.
+
+`getPrivSize`
+    Return the size in bytes of the priv member.
+
+`setRW`
+`setRO`
+    Initialize the RW RO region of the colormap. These functions perform target specific operations and initialize region boundaries members of the colormap structure.
+
+`getRW`
+`getRO`
+    Get RW RO region information from target.
+
+`setPalette`
+    One of the more important function. It initializes the colormap (both internal and target ones).
+
+`findByColor`
+`findByIdx`
+    Find the index of the color passed as argument.
+
+`matchByColor`
+    Match the CLUT entry with the lowest index when more than one CLUT entry exists with the same color in it.
+
+`matchByIdx`
+    Similar to matchByColor. The correct pixel value of the color in the CLUT slot N is not necessarily N.
+
+
+Examples
+--------
+
+
+display/my_target/mode.c :
+
+int GGI_my_target_setmode(ggi_visual *vis,ggi_mode *tm) {
+    /* Target structure */
+    ggi_my_target_priv *priv;
+
+    priv=LIBGGI_PRIVATE(vis);
+
+    /* [...] */
+
+    /*
+      Let's considerer a basic vga target with two different 
+      mode, a truecolor and a 8bpp(vga like) mode.
+
+      First you'll have to initialize the ggi_colormap structure 
+      during video mode initialization.
+    */
+    if(priv->mode == MY_TARGET_8BPPINDEXED) {
+        /* 
+          Well we know that the colormap can only contain 256 colors. 
+          But that's some kind of paranoid size computation :)
+        */
+        LIBGGI_PAL(vis)->clut.size = 1 << priv->bits_per_pixel;
+
+        /* Let's allocate the the clut data */
+        LIBGGI_PAL(vis)->clut.data = _ggi_malloc(LIBGGI_PAL(vis)->clut.size * sizeof(ggi_color));
+
+        /* Set up function pointers */
+        LIBGGI_PAL(vis)->getPrivSize = GGI_my_target_getPrivSize;
+        LIBGGI_PAL(vis)->setPalette  = GGI_my_target_setPalette;
+
+        /*
+          If you need it initialize ggi_colormap priv member to hold 
+          target colormaps informations.
+          my_target_palette is the colormap target structure.
+          In this example my_target_palette contains 3 arrays
+          of 256 bytes (b g r).
+        */
+        LIBGGI_PAL(vis)->priv = _ggi_malloc(sizeof(my_target_palette));
+    }
+
+    /* [...] */
+
+    return 0;
+}
+
+/* getPrivSize */
+size_t GGI_my_target_getPrivSize(ggi_visual_t vis)
+{
+ 	return sizeof(my_target_palette);
+}
+
+display/my_target/color.c :
+
+#include "config.h"
+#include <ggi/internal/ggi-dl.h>
+#include <ggi/display/my_target.h>
+
+/* setPalette */
+int GGI_my_target_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
+{
+    ggi_fbdev_priv      *priv = LIBGGI_PRIVATE(vis);
+    my_target_palette   *pal  = (my_target_palette*)(LIBGGI_PAL(vis)->priv);
+    
+    GGIDPRINT_COLOR("my_target setpalette.(%d,%d) %d\n",
+                    start,size,LIBGGI_PAL(vis)->clut.size);
+	
+    /*
+      We will consider the target library contains a colormap initialisation function
+      that takes a my_target_palette and two indices as arguments.
+
+      First we'll update the ggi_colormap and our priv palette.
+    */
+    memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
+    for(; size > 0; ++start, --size) {
+        pal->b[start] = LIBGGI_PAL(vis)->clut.data[start].b >> 8;
+        pal->g[start] = LIBGGI_PAL(vis)->clut.data[start].g >> 8;
+        pal->r[start] = LIBGGI_PAL(vis)->clut.data[start].r >> 8;
+    }
+
+    /* Then we'll call the function provided by the target api that updates the colormap */
+    my_target_update_colormap(pal);
+
+    return 0;
+}
+
+
+See Also
+--------
+
+:man:`ggiSetPalette(3)`
