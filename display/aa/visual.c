@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/06 12:49:53 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/11/06 13:44:58 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -140,7 +140,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freelock;
 	}
 
-	AA_PRIV(vis) = priv;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	MANSYNC_init(vis);
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
