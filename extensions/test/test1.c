@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.3 2004/09/08 18:51:39 cegger Exp $
+/* $Id: test1.c,v 1.4 2004/11/13 16:07:00 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -43,7 +43,7 @@ ggi_extid ggiTest1ID=-1;
 static int changed(ggi_visual_t vis,int whatchanged)
 {
 	printf("changed called for extension 1 - vis=%p, %i \n",
-		vis,whatchanged);
+		(void *)vis, whatchanged);
 
 	switch(whatchanged) {
 	case GGI_CHG_APILIST:
@@ -86,7 +86,8 @@ int ggiTest1Attach(ggi_visual_t vis)
 {
 	int rc;
 	rc=ggiExtensionAttach(vis,ggiTest1ID);
-	printf("Attached Test1 extension to %p. rc=%i\n", vis, rc);
+	printf("Attached Test1 extension to %p. rc=%i\n",
+		(void *)vis, rc);
 
 	if (rc==0) {	/* We are actually creating the primary instance. */
 		strcpy(LIBGGI_EXT(vis,ggiTest1ID),"Test 1 private Data !");
@@ -101,7 +102,8 @@ int ggiTest1Detach(ggi_visual_t vis)
 {
 	int rc;
 	rc=ggiExtensionDetach(vis,ggiTest1ID);
-	printf("Detached Test1 extension from %p. rc=%i\n", vis, rc);
+	printf("Detached Test1 extension from %p. rc=%i\n",
+		(void *)vis, rc);
 
 	return rc;
 }

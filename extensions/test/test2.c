@@ -1,4 +1,4 @@
-/* $Id: test2.c,v 1.2 2004/02/02 19:22:00 cegger Exp $
+/* $Id: test2.c,v 1.3 2004/11/13 16:07:01 cegger Exp $
 ******************************************************************************
 
    Test extension test2.c
@@ -45,7 +45,7 @@ ggi_extid ggiTest2ID=-1;
 static int changed(ggi_visual_t vis,int whatchanged)
 {
 	printf("load extension 2 - vis: %p %i\n",
-		vis,whatchanged);
+		(void *)vis, whatchanged);
 	return 0;
 }
 
@@ -74,7 +74,8 @@ int ggiTest2Attach(ggi_visual_t vis)
 {
 	int rc;
 	rc=ggiExtensionAttach(vis,ggiTest2ID);
-	printf("Attached Test2 extension to %p. rc=%i\n", vis, rc);
+	printf("Attached Test2 extension to %p. rc=%i\n",
+		(void *)vis, rc);
 
 	if (rc==0) {	/* We are actually creating the primary instance. */
 		ggiTest1Attach(vis);
@@ -88,7 +89,8 @@ int ggiTest2Detach(ggi_visual_t vis)
 {
 	int rc;
 	rc=ggiExtensionDetach(vis,ggiTest2ID);
-	printf("Detached Test2 extension from %p. rc=%i\n", vis, rc);
+	printf("Detached Test2 extension from %p. rc=%i\n",
+		(void *)vis, rc);
 	if (rc==0) ggiTest1Detach(vis);
 
 	return rc;
