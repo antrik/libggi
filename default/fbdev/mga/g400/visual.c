@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/08/30 23:06:39 skids Exp $
+/* $Id: visual.c,v 1.4 2001/10/17 04:33:42 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -256,7 +256,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* The crossblit in linear-* is faster on truecolor modes! */
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE ||
 	    GT_SCHEME(LIBGGI_GT(vis)) == GT_STATIC_PALETTE) {
-		//vis->opdraw->crossblit = GGI_mga_g400_crossblit;
+	  /* vis->opdraw->crossblit = GGI_mga_g400_crossblit; */
 	}
 
 	MGA_G400_PRIV(vis) = priv;

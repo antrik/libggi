@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/10/17 04:33:41 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -68,7 +68,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->putvline		= GGI_lin4r_putvline;
 	vis->opdraw->getvline		= GGI_lin4r_getvline;
 
-//	vis->opdraw->copybox		= GGI_lin4r_copybox;
+	/*	vis->opdraw->copybox		= GGI_lin4r_copybox; */
 
 	*dlret = GGI_DL_OPCOLOR|GGI_DL_OPDRAW;
 	return 0;
