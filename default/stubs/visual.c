@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:51 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/09/08 20:22:41 cegger Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -51,7 +51,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	
 	if (! (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
 
-	switch ((GT_SIZE(LIBGGI_GT(vis)) + 7) / 8) {
+	switch (GT_ByPP(LIBGGI_GT(vis))) {
 
 		case 1: vis->opdraw->puthline=_GGI_stubs_L1_puthline;
 			vis->opdraw->putvline=_GGI_stubs_L1_putvline;
