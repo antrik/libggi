@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2004/02/23 14:25:14 pekberg Exp $
+/* $Id: visual.c,v 1.17 2004/06/04 11:41:14 pekberg Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -105,6 +105,21 @@ static int GGI_memory_flush(ggi_visual *vis,
 	return 0;
 }
 
+#if defined(HAVE_SHM) && !defined(HAVE_SYS_SHM_H) && defined(HAVE_WINDOWS_H)
+
+static const char *ftok(const char *pathname, int id)
+{
+	static char object[MAX_PATH];
+	char *ptr;
+	sprintf(object, "ggi-display-memory-shm:%s:%d", pathname, id);
+	ptr = object;
+	while(ptr = strchr(ptr, '\\'))
+		*ptr++ = '/';
+	return object;
+}
+
+#endif /* HAVE_SHM && !HAVE_SYS_SHM_H && HAVE_WINDOWS_H */
+
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
@@ -147,7 +162,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (args && *args)	/* We have parameters. Analyze them. */
 	{
 		GGIDPRINT("display-memory has args.\n");
-#ifdef HAVE_SYS_SHM_H
+#ifdef HAVE_SHM
 		if (strncmp(args,"shmid:",6)==0)
 		{
 			sscanf(args+6,"%i",&(priv->shmid));
@@ -311,12 +326,24 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	case MT_MALLOC:
 	case MT_EXTERN:	/* Nothing to be done. */
 		break;
-#ifdef HAVE_SYS_SHM_H
-	case MT_SHMKEYFILE: /* FIXME ? Should we RMID the area ? */
-	case MT_SHMID: 
-	  	shmdt(MEMORY_PRIV(vis)->memptr);
+#ifdef HAVE_SHM
+	case MT_SHMKEYFILE:
+		if(MEMORY_PRIV(vis)->inputbuffer)
+			shmdt(MEMORY_PRIV(vis)->inputbuffer);
+		else
+			shmdt(MEMORY_PRIV(vis)->memptr);
+#if !defined(HAVE_SYS_SHM_H)
+		/* FIXME ? Should we RMID the area for unix as well? */
+		shmctl(MEMORY_PRIV(vis)->shmid, IPC_RMID, NULL);
+#endif
+		break;
+	case MT_SHMID:
+		if(MEMORY_PRIV(vis)->inputbuffer)
+			shmdt(MEMORY_PRIV(vis)->inputbuffer);
+		else
+			shmdt(MEMORY_PRIV(vis)->memptr);
 	  	break;
-#endif	
+#endif /* HAVE_SHM */
 	default:
 		break;
 	}

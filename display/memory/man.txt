@@ -88,13 +88,24 @@ Options
 ``shmid:<sid>``
     use existing shared memory ID :p:`sid`
 
+    On win32, :p:`sid` is the HANDLE returned by a call to
+    ``CreateFileMapping`` in decimal form.
+
 ``keyfile:<size>:<id>:<fname>``
     create a new shm segment with id ``ftok(fname,id)`` of size
     :p:`size` (preferred method !). See :man:`ftok(3)`.
 
+    On win32, the newly created shared memory mapping has the object
+    name: ``ggi-display-memory-shm:<fname>:<ascid>``, where all
+    backslashes have been converted to forward slashes in :p:`fname`
+    and :p:`ascid` is the ascii value of :p:`id` in decimal form.
+    If this object does already exist (and is a file mapping) it will
+    be used, so two apps can share memory by using the same
+    ``keyfile`` arguments on win32.
+
 ``pointer``
     use the memory pointed to by :p:`argptr` (only available to
-    applications calling `ggiOpen`.
+    applications calling `ggiOpen`).
 
 .. important::
 
