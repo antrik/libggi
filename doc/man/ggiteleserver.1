@@ -1,4 +1,4 @@
-.TH "ggiteleserver" 1 "2003-04-02" "libggi-current" GGI
+.TH "ggiteleserver" 1 "2005-03-11" "libggi-current" GGI
 .SH NAME
 \fBggiteleserver\fR : GGI display server
 .SH SYNOPSIS
@@ -9,9 +9,9 @@ ggiteleserver [-V|--version] [-h|--help] [-t <target>] [-d <display>]
 
 .SH DESCRIPTION
 \fBggiteleserver\fR starts a display server for GGI and listen for display
-operations on a TCP socket. A GGI application can then forward display
-operations to this server with the \fBdisplay-tele(7)\fR target. The server
-will use the default output.
+operations on a TCP socket or a Unix domain socket. A GGI application
+can then forward display operations to this server with the
+\fBdisplay-tele(7)\fR target. The server will use the default output.
 .SH OPTIONS
 .TP
 \fB'-V'\fR, \fB'--version'\fR
@@ -28,9 +28,11 @@ of \fBGGI_DISPLAY\fR.
 
 .TP
 \fB'-d <display>'\fR
-TODO what is that?
+Specifies the 'display' to use, display 0 - 9 use inet sockets
+27780 - 27789 repectively, and display 10 - 19 use unix domain
+sockets /tmp/.tele0 - /tmp/.tele9 respectivly.
 
 .PP
-The default port is 27780.
+The default display is 0, i.e. TCP port 27780.
 .SH SEE ALSO
 \fBdisplay-tele(7)\fR
