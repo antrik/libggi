@@ -101,19 +101,32 @@ LibGGI provides input facilities through an auxiliary library,
 <Application/LibGII/.
 Each LibGGI visual internally contains a <type/gii_input_t/ input, and
 all LibGII functions are available to manipulate and process inputs.
-The LibGGI version of LibGII functions simply take a <type/ggi_visual_t/
-rather than <type/gii_input_t/.  Events are LibGII types.  All other
-semantics are the same; see <xref linkend="libgii"> for details.
+The LibGGI versions provided of most LibGII functions simply take a 
+<type/ggi_visual_t/ rather than <type/gii_input_t/ for convenience
+during everyday usage.  Events are LibGII types.  All other semantics 
+are the same; see <xref linkend="libgii"> for details.
 </para>
 
 <important><para>
-LibGGI visuals open the appropriate inputs already, including mouse and
-keyboard, or the inputs are 'intrinsic' to the visual, e.g. X mouse and
-keyboard events.  Thus in the usual cases there is no need to open a
-LibGII <type/gii_input_t/ directly (and that may in fact fail because an
+By default LibGGI visuals autodetect and open the appropriate inputs, 
+including mouse and keyboard and any other inputs that are 'intrinsic' 
+to the visual e.g. any registered X11 input device under the X target.  
+Thus in the usual cases there is no need to open a LibGII 
+<type/gii_input_t/ directly (and that may in fact fail because an
 input device is already open).  The LibGGI <function/ggiEvent*/
 functions <emphasis/must/ be used to do event handling with LibGGI
-visuals.
+visuals, and provide adequate support for most everyday, single-visual
+usage.
+</para>
+<para>
+Advanced management of input sources is accomplished by detaching
+the input from the visual and using LibGII functions on the separate
+visual handle (see <xref linkend="ggiDetachInput">)  This is encouraged,
+for example, when joining inputs from multiple visuals, because
+when two visuals share the same joined input, you cannot
+ggiClose both of the visuals (a fatal error will result, because 
+closing the first visual closes both of the joined inputs and leaves
+the second closed visual with a stale input handle.)
 </para></important>
 
 </refsect1>
@@ -124,6 +137,72 @@ visuals.
 <simplelist TYPE=inline>
 <member><xref linkend="giiSetEventMask"></member>
 <member><xref linkend="giiEventPoll"></member>
+<member><xref linkend="ggiDetachInput"></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+<refentry id="ggiGetInput">
+
+<refmeta>
+<refentrytitle><function/ggiGetInput/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiGetInput/
+<refname/ggiDetachInput/
+<refpurpose/Functions to translate from GGI visuals to GII input</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+
+<funcprototype>
+<funcdef>gii_input_t <function/ggiGetInput/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_input_t <function/ggiDetachInput/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/
+</paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function/ggiGetInput/ returns the underlying input-handle associated
+with a LibGGI visual, for use with the LibGII API.
+</para>
+
+<para>
+<function/ggiDetachInput/ also returns the underlying input-handle,
+but in adddition, it breaks the association between the given visual 
+and that input handle.  After this has been done, no LibGGI event routines
+may be called on that visual handle, and when the visual handle
+is closed, the input will remain unaffected.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist TYPE="inline">
+<member><xref linkend="giiSplitInput"></member>
 </simplelist>
 
 </refsect1>
@@ -271,10 +350,12 @@ For a fuller definition of characters, see <xref linkend="gii-keysym">.
 <refsect1>
 <title/See Also/
 
-<simplelist type=horiz>
+<simplelist TYPE=inline>
 <member><xref linkend="ggiEventPoll"></member>
 </simplelist>
 
 </refsect1>
 
 </refentry>
+
+

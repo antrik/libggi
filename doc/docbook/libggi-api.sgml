@@ -1,4 +1,4 @@
-<sect1 id="libggi-api"><title>LibGGI API</title>
+<reference id="libggi-api"><title>LibGGI API</title>
 &libggi-api-control;
 &libggi-api-visual;
 &libggi-api-mode;
@@ -11,4 +11,4 @@
 &libggi-api-misc;
 &libggi-api-db;
 &libggi-api-events;
-</sect1>
+</reference>
