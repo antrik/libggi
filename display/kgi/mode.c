@@ -329,10 +329,9 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		avail = priv->fb_size;
 		avail -= fb_ptr - priv->fb;
 
-		/* We want at least 10 scanlines and space for the font. */
-
 		if (priv->swatch_size) {
-			if (sizeof(font)*8 + stride*10 > priv->swatch_size) {
+			if (GGI_KGI_MINSWATCH + GGI_KGI_FONTSIZE > 
+			    priv->swatch_size) {
 				fprintf(stderr, "More swatch needed\n");
 				return GGI_EARGINVAL;
 			}
@@ -343,11 +342,12 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		}
 		else {
 			priv->swatch_size = avail;
-			if (stride * tm->virt.y / 2 + sizeof(font)*8 < avail) {
+			if (stride * tm->virt.y/2 + GGI_KGI_FONTSIZE < avail) {
 				priv->swatch_size = 
-				  stride * tm->virt.y / 2 + sizeof(font)*8;
+				  stride * tm->virt.y/2 + GGI_KGI_FONTSIZE;
 			}
-			if (sizeof(font)*8 + stride*10 > priv->swatch_size) {
+			if (GGI_KGI_MINSWATCH + GGI_KGI_FONTSIZE > 
+			    priv->swatch_size) {
 				fprintf(stderr, "No space for swatch\n");
 				return GGI_EARGINVAL;
 			}
@@ -407,10 +407,14 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
 	kgi_image_mode_t mode;
 	int frames, virty;
+	ggi_kgi_priv *priv;
 
 	if (vis == NULL || tm == NULL) return GGI_EARGINVAL;
 
+	priv = KGI_PRIV(vis);
+
 	frames = tm->frames;
+	if (frames == GGI_AUTO) frames = 1;
 
 	memset(&mode, 0, sizeof(kgi_image_mode_t));
 
