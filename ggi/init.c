@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.7 2002/12/03 18:38:26 cegger Exp $
+/* $Id: init.c,v 1.8 2003/07/04 23:09:28 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -617,13 +617,13 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 		ggi_extlist *newlist;
 		int extsize = sizeof(*vis->extlist);
 		
-		newlist = realloc(vis->extlist, extsize*(id+1));
+		newlist = realloc(vis->extlist, extsize * (id + 1U));
 		if (newlist == NULL) return GGI_ENOMEM;
 
 		vis->extlist = newlist;
 		memset(&vis->extlist[vis->numknownext], 0,
-		       extsize*(id+1-vis->numknownext));
-		vis->numknownext = id+1;
+		       extsize*(id + 1U - vis->numknownext));
+		vis->numknownext = id + 1U;
 		GGIDPRINT_CORE("ggiExtensionAttach: ExtList now at %p (%d)\n",
 			       vis->extlist, vis->numknownext);
 	}

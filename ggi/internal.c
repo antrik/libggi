@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.11 2003/03/30 20:54:27 cegger Exp $
+/* $Id: internal.c,v 1.12 2003/07/04 23:09:28 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -289,7 +289,7 @@ int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col)
 	int i, closest=0;
 	int r = col->r, g = col->g, b = col->b;
 
-	uint32 closest_dist = (1 << 31);
+	uint32 closest_dist = (1U << 31U);
 
 	for (i=0; i < pal_len; i++) {
 #undef ABS
