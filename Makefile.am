@@ -10,4 +10,4 @@ noinst_PROGRAMS = patchlib
 DISTCLEANFILES = libggi.conf
 
 EXTRA_DIST = ChangeLog.1999 ChangeLog FAQ INSTALL.autoconf \
-	autogen.sh checkversion.sh
+	autogen.sh checkversion.sh genlibtool.in
