@@ -1,9 +1,10 @@
-/* $Id: teleserver.c,v 1.1 2001/05/12 23:02:29 cegger Exp $
+/* $Id: teleserver.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
 
    Copyright (C) 1998 Andrew Apted    [andrew@ggi-project.org]
+                 2002 Tobias Hunger   [tobias@fresco.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -112,7 +113,10 @@ static void handle_connection(void)
 		return;
 	}
 
-	vis = ggiOpen(target_name, NULL);
+	if (NULL == target_name)
+	  vis = ggiOpen(NULL);
+	else
+	  vis = ggiOpen(target_name, NULL);
 
 	if (vis == NULL) {
 		fprintf(stderr, "teleserver: Couldn't open GGI visual.\n");
@@ -305,11 +309,12 @@ static void perf_CHECK(TeleUser *u, TeleEvent *ev)
 	mode.visible.y = (sint16) d->visible.height;
 	mode.virt.x    = (sint16) d->virt.width;
 	mode.virt.y    = (sint16) d->virt.height;
+	mode.size.x    = (sint16) d->size.width;
+	mode.size.y    = (sint16) d->size.height;
 	mode.dpp.x     = (sint16) d->dot.width;
 	mode.dpp.y     = (sint16) d->dot.height;
 
 	d->error = ggiCheckMode(vis, &mode);
-
 
 	/* send result back to client */
 
@@ -326,6 +331,8 @@ static void perf_CHECK(TeleUser *u, TeleEvent *ev)
 	d->visible.height = (T_Long) mode.visible.y;
 	d->virt.width     = (T_Long) mode.virt.x;
 	d->virt.height    = (T_Long) mode.virt.y;
+	d->size.width     = (T_Long) mode.size.x;
+	d->size.height    = (T_Long) mode.size.y;
 	d->dot.width      = (T_Long) mode.dpp.x;
 	d->dot.height     = (T_Long) mode.dpp.y;
 
@@ -403,15 +410,17 @@ static void perf_CLOSE(TeleUser *u)
 	close_connection(0);
 }
 
+
 static void perf_FLUSH(TeleUser *u)
 {
 	ggiFlush(vis);
-}
+}	/* perf_FLUSH */
+
 
 static void perf_PUTBOX(TeleUser *u, TeleCmdGetPutData *d)
 {
 	/* Put a pixel matrix */
-	unsigned char *src = (unsigned char *) d->pixel;
+	uint8 *src = (uint8 *)d->pixel;
 
 	if ((d->x < 0) || (d->y < 0) ||
 	    (d->x + d->width  > vis_mode.virt.x) ||
@@ -421,66 +430,48 @@ static void perf_PUTBOX(TeleUser *u, TeleCmdGetPutData *d)
 			"%dx%d.\n", (int) d->x, (int) d->y,
 			(int) d->width, (int) d->height);
 		return;
-	}
+	}	/* if */
 
 	ggiPutBox(vis, d->x, d->y, d->width, d->height, src);
+}	/* perf_PUTBOX */
 
-#if 0
-	/* horribly inefficient */
-	for (y=0; y < d->height; y++) {
-		for (x=0; x < d->width;  x++) {
-			ggiPutPixel(vis, d->x + x, d->y + y, *src++);
-		}
-	}
-#endif
-}
 
 static void perf_GETBOX(TeleUser *u, TeleEvent *ev)
 {
 	/* Get a pixel matrix */
 	TeleCmdGetPutData *d = (TeleCmdGetPutData *) ev->data;
 	T_Long reply_sequence;
-	int bpp = 1;  /* !!! */
 	uint8 *dest;
 
 	if ((d->x < 0) || (d->y < 0) ||
 	    (d->x + d->width  >= vis_mode.virt.x) ||
-	    (d->y + d->height >= vis_mode.virt.y)) {
-
+	    (d->y + d->height >= vis_mode.virt.y))
+	{
 		fprintf(stderr, "teleserver: ILLEGAL GETBOX.\n");
 		return;
-	}
+	}	/* if */
 
-	if ((d->width * d->height * bpp) >
-	    ((ev->size - ev->rawstart) * sizeof(long))) {
-
+	if ((d->width * d->height * d->bpp) >
+	    ((ev->size - ev->rawstart) * sizeof(long)))
+	{
 		fprintf(stderr, "teleserver: NOT ENOUGH ROOM FOR GETBOX.\n");
 		return;
-	}
+	}	/* if */
 
 	reply_sequence = ev->sequence;
 
 	tserver_new_event(u, ev, TELE_CMD_GETBOX,
-		sizeof(TeleCmdGetPutData)-4, d->width * d->height * bpp);
+		sizeof(TeleCmdGetPutData)-4, d->width * d->height * d->bpp);
 
 	ev->sequence = reply_sequence;
 
-	dest = (uint8 *) d->pixel;
+	dest = (uint8 *)d->pixel;
 
 	ggiGetBox(vis, d->x, d->y, d->width, d->height, dest);
 
-#if 0
-	/* horribly inefficient */
-	for (y=0; y < d->height; y++) {
-		for (x=0; x < d->width;  x++) {
-			ggi_pixel col;
-			ggiGetPixel(vis, d->x + x, d->y + y, &col);
-			*dest++ = col;
-		}
-	}
-#endif
 	tserver_write(u, ev);
-}
+}	/* perf_GETBOX */
+
 
 static void perf_DRAWBOX(TeleUser *u, TeleCmdDrawBoxData *d)
 {
@@ -488,15 +479,16 @@ static void perf_DRAWBOX(TeleUser *u, TeleCmdDrawBoxData *d)
 
 	if ((d->x < 0) || (d->y < 0) ||
 	    (d->x + d->width  > vis_mode.virt.x) ||
-	    (d->y + d->height > vis_mode.virt.y)) {
-
+	    (d->y + d->height > vis_mode.virt.y))
+	{
 		fprintf(stderr, "teleserver: ILLEGAL DRAWBOX.\n");
 		return;
-	}
+	}	/* if */
 
 	ggiSetGCForeground(vis, d->pixel);
 	ggiDrawBox(vis, d->x, d->y, d->width, d->height);
-}
+}	/* perf_DRAWBOX */
+
 
 static void perf_COPYBOX(TeleUser *u, TeleCmdCopyBoxData *d)
 {
@@ -508,14 +500,24 @@ static void perf_COPYBOX(TeleUser *u, TeleCmdCopyBoxData *d)
 	    (d->sx + d->width  > vis_mode.virt.x) ||
 	    (d->sy + d->height > vis_mode.virt.y) ||
 	    (d->dx + d->width  > vis_mode.virt.x) ||
-	    (d->dy + d->height > vis_mode.virt.y)) {
-
+	    (d->dy + d->height > vis_mode.virt.y))
+	{
 		fprintf(stderr, "teleserver: ILLEGAL COPYBOX.\n");
 		return;
-	}
+	}	/* if */
 
 	ggiCopyBox(vis, d->sx, d->sy, d->width, d->height, d->dx, d->dy);
-}
+}	/* perf_COPYBOX */
+
+
+static void perf_DRAWLINE(TeleUser *u, TeleCmdDrawLineData *d)
+{
+	/* draw a solid line */
+
+	ggiSetGCForeground(vis, d->pixel);
+	ggiDrawLine(vis, d->x, d->y, d->xe, d->ye);
+}	/* perf_DRAWLINE */
+
 
 static void perf_SETORIGIN(TeleUser *u, TeleCmdSetOriginData *d)
 {
@@ -523,6 +525,7 @@ static void perf_SETORIGIN(TeleUser *u, TeleCmdSetOriginData *d)
 
 	ggiSetOrigin(vis, d->x, d->y);
 }
+
 
 static void perf_SETPALETTE(TeleUser *u, TeleCmdSetPaletteData *d)
 {
@@ -543,6 +546,44 @@ static void perf_SETPALETTE(TeleUser *u, TeleCmdSetPaletteData *d)
 		ggiSetPalette(vis, d->start, 1, &col);
 	}
 }
+
+
+static void perf_PUTSTR(TeleUser *u, TeleCmdPutStrData *d)
+{
+	/* Note: If your compiler fails here, then it
+	 * is _not_ ANSI C99 compliant
+	 */
+	char s[d->length + 1];
+	int i;
+
+	for(i = 0; i <= d->length; ++i) {
+		s[i] = (char)(d->text[i] & 0xFF);
+	}	/* for */
+
+	ggiSetGCForeground(vis, d->fg);
+	ggiSetGCBackground(vis, d->bg);
+	ggiPuts(vis, d->x, d->y, s);
+}
+
+
+static void perf_GETCHARSIZE(TeleUser *u, TeleEvent *ev)
+{
+	TeleCmdGetCharSizeData *d = (TeleCmdGetCharSizeData *) ev->data;
+	T_Long reply_sequence;
+
+
+	reply_sequence = ev->sequence;
+
+	tserver_new_event(u, ev, TELE_CMD_GETCHARSIZE,
+			sizeof(TeleCmdGetCharSizeData), 0);
+
+	ev->sequence = reply_sequence;
+	ggiGetCharSize(vis, &d->width, &d->height);
+
+	tserver_write(u, ev);
+}	/* perf_GETCHARSIZE */
+
+
 
 static void handle_command(TeleUser *u)
 {
@@ -613,6 +654,10 @@ static void handle_command(TeleUser *u)
 			perf_COPYBOX(u, (TeleCmdCopyBoxData *) ev.data);
 			break;
 
+		case TELE_CMD_DRAWLINE:
+			perf_DRAWLINE(u, (TeleCmdDrawLineData *) ev.data);
+			break;
+
 		case TELE_CMD_SETORIGIN:
 			perf_SETORIGIN(u, (TeleCmdSetOriginData *) ev.data);
 			break;
@@ -621,7 +666,13 @@ static void handle_command(TeleUser *u)
 			perf_SETPALETTE(u, (TeleCmdSetPaletteData *) ev.data);
 			break;
 
-		/* TELE_CMD_PUTSTR */
+		case TELE_CMD_PUTSTR:
+			perf_PUTSTR(u, (TeleCmdPutStrData *) ev.data);
+			break;
+
+		case TELE_CMD_GETCHARSIZE:
+			perf_GETCHARSIZE(u, &ev);
+			break;
 
 		default:
 			fprintf(stderr, "teleserver: UNKNOWN EVENT "
@@ -717,7 +768,7 @@ int main(int argc, char *argv[])
 		return 3;
 	}
 
-	gettimeofday(&flush_time, NULL);
+	ggCurTime(&flush_time);
 
 	printf("TeleServer Ready.\n");
 	fflush(stdout);
@@ -758,7 +809,8 @@ int main(int argc, char *argv[])
 			ggUSleep(TSERVER_SLEEP_TIME * 1000);
 		}
 
-		gettimeofday(&cur_time, NULL);
+		ggCurTime(&cur_time);
+
 
 		millies = (cur_time.tv_sec  - flush_time.tv_sec)  * 1000 +
 		          (cur_time.tv_usec - flush_time.tv_usec) / 1000;

@@ -1,9 +1,10 @@
-/* $Id: box.c,v 1.1 2001/05/12 23:02:27 cegger Exp $
+/* $Id: box.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    TELE target.
 
    Copyright (C) 1998 Andrew Apted    [andrew@ggi-project.org]
+                 2002 Tobias Hunger   [tobias@fresco.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -30,10 +31,10 @@
 #include "libtele.h"
 #include <ggi/display/tele.h>
 
+#define BYTES_PER_PIXEL(vis)	(GT_ByPP(LIBGGI_GT(vis)))
+#define MAX_PIXELS(vis)		\
+	TELE_MAXIMUM_RAW(TeleCmdGetPutData) / BYTES_PER_PIXEL(vis)
 
-/* !!! FIXME for pixels != 8 bit wide */
-
-#define MAX_PIXELS  TELE_MAXIMUM_RAW(TeleCmdGetPutData)
 
 
 int GGI_tele_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
@@ -51,16 +52,18 @@ int GGI_tele_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	p->width  = 1;
 	p->height = 1;
 	
-	((uint8 *) p->pixel)[0] = col;
-	
+	p->pixel[0] = col;
+
 	err = tclient_write(priv->client, &ev);
 
 	if (err == TELE_ERROR_SHUTDOWN) {
 		TELE_HANDLE_SHUTDOWN;
-	}
+	}	/* if */
 
 	return err;
-}
+}	/* GGI_tele_putpixel_nc */
+
+
 
 int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
@@ -70,16 +73,18 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 
 	int err;
 
-	if ((x < 0) || (y < 0) ||
-	    (x >= LIBGGI_MODE(vis)->virt.x) ||
-	    (y >= LIBGGI_MODE(vis)->virt.y)) {
 
+	if ((x < 0) || (y < 0)
+	  || (x >= LIBGGI_MODE(vis)->virt.x)
+	  || (y >= LIBGGI_MODE(vis)->virt.y))
+	{
 	    	/* illegal coordinates */
 		return -1;
-	}
+	}	/* if */
+
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_GETBOX,
-			      sizeof(TeleCmdGetPutData)-4, 1);
+				sizeof(TeleCmdGetPutData)-4, 1);
 	p->x = x;
 	p->y = y;
 	p->width  = 1;
@@ -91,66 +96,49 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 		TELE_HANDLE_SHUTDOWN;
 	} else if (err < 0) {
 		return err;
-	}
+	}	/* if */
 	
 	tele_receive_reply(vis, &ev, TELE_CMD_GETBOX, ev.sequence);
 
-	*col = ((uint8 *) p->pixel)[0];
+	*col = p->pixel[0];
 
 	return 0;
-}
+}	/* GGI_tele_getpixel */
 
 
 /* ---------------------------------------------------------------------- */
 
 
 int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
-{ 
+{
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
 	TeleEvent ev;
 
-	uint8 *src = buf;
-	int stride = w;
+	uint8 *src = (uint8 *)(buf);
+	int srcwidth = w;
+	int stride = w * BYTES_PER_PIXEL(vis);
 
 	int xstep, ystep;
 	int curx;
 
 
-	/* clip */
 
-	if ((x+w) > LIBGGI_GC(vis)->clipbr.x) {
-		w = LIBGGI_GC(vis)->clipbr.x - x;
-	}
-	if ((y+h) > LIBGGI_GC(vis)->clipbr.y) {
-		h = LIBGGI_GC(vis)->clipbr.y - y;
-	}
-	if (x < LIBGGI_GC(vis)->cliptl.x) {
-		w   -= (LIBGGI_GC(vis)->cliptl.x - x);
-		src += (LIBGGI_GC(vis)->cliptl.x - x);
-		x = LIBGGI_GC(vis)->cliptl.x;
-	}
-	if (y < LIBGGI_GC(vis)->cliptl.y) {
-		h   -= (LIBGGI_GC(vis)->cliptl.y - y);
-		src += (LIBGGI_GC(vis)->cliptl.y - y) * stride;
-		y = LIBGGI_GC(vis)->cliptl.y;
-	}
-	if ((w <= 0) || (h <= 0)) {
-		return 0;
-	}
+	LIBGGICLIP_PUTBOX(vis, x,y, w,h, buf, srcwidth, );
+
 
 	xstep = w;
-	ystep = MAX_PIXELS / w;
+	ystep = (MAX_PIXELS(vis) / w);
 
 	if (ystep == 0) {
-		xstep = MAX_PIXELS;
+		xstep = MAX_PIXELS(vis);
 		ystep = 1;
-	}
+	}	/* if */
 
-	curx = 0; 
+	curx = 0;
 
 	while (h > 0) {
-		int i, j, err;
+		int j, err;
 
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
@@ -158,18 +146,21 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		uint8 *dest;
 
 		p = tclient_new_event(priv->client, &ev, TELE_CMD_PUTBOX,
-				      sizeof(TeleCmdGetPutData)-4, ww*hh);
+				      sizeof(TeleCmdGetPutData)-4,
+				      ww*hh*BYTES_PER_PIXEL(vis));
 		p->x = x + curx;
 		p->y = y;
 		p->width  = ww;
 		p->height = hh;
 
-		dest = (uint8 *) p->pixel;
+		dest = (uint8 *)(p->pixel);
 
-		for (j=0; j < hh; j++)
-		for (i=0; i < ww; i++) {
-			dest[j*ww + i] = src[j*stride + curx + i];
-		}
+		for(j = 0; j < hh; ++j) {
+		  memcpy(&(dest[j * ww * BYTES_PER_PIXEL(vis)]),
+			&(src[(j*stride + curx)]),
+				ww * BYTES_PER_PIXEL(vis));
+		}	/* for */
+
 
 		err = tclient_write(priv->client, &ev);
 
@@ -177,38 +168,37 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 			TELE_HANDLE_SHUTDOWN;
 		} else if (err < 0) {
 			return err;
-		}
+		}	/* if */
 	
-
 		curx += xstep;
-
 		if (curx >= w) {
 			curx = 0;
 			src += stride * ystep;
 			y += ystep;
 			h -= ystep;
-		}
-	}
+		}	/* if */
+	}	/* while */
 
-	return 0;   /* success */
-}
+	return 0;
+}	/* GGI_tele_putbox */
+
 
 
 /* ---------------------------------------------------------------------- */
 
-
 int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 { 
-	ggi_tele_priv *priv = TELE_PRIV(vis);
+ 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
 	TeleEvent ev;
 
-	uint8 *dest = buf;
-	int stride = w;
+	uint8 *dest = (uint8 *)buf;
+	int stride = w * BYTES_PER_PIXEL(vis);
 
 	int xstep, ystep;
 	int curx;
 
+	GGIDPRINT_MODE("getbox %dx%d\n", w, h);
 
 	if ((x < 0) || (y < 0) ||
 	    (x+w > LIBGGI_MODE(vis)->virt.x) ||
@@ -217,20 +207,19 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 	    	/* invalid request */
 		return -1;
-	}
+	}	/* if */
 
 	xstep = w;
-	ystep = MAX_PIXELS / w;
+	ystep = (MAX_PIXELS(vis) / w);
 
 	if (ystep == 0) {
-		xstep = MAX_PIXELS;
+		xstep = MAX_PIXELS(vis);
 		ystep = 1;
-	}
+	}	/* if */
 
 	curx = 0; 
-
 	while (h > 0) {
-		int i, j, err;
+		int j, err;
 
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
@@ -238,11 +227,13 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		uint8 *src;
 
 		p = tclient_new_event(priv->client, &ev, TELE_CMD_GETBOX,
-				      sizeof(TeleCmdGetPutData)-4, ww*hh);
+				      sizeof(TeleCmdGetPutData)-4,
+				      ww*hh*BYTES_PER_PIXEL(vis));
 		p->x = x + curx;
 		p->y = y;
 		p->width  = ww;
 		p->height = hh;
+		p->bpp = BYTES_PER_PIXEL(vis);
 
 		err = tclient_write(priv->client, &ev);
 
@@ -255,25 +246,81 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		tele_receive_reply(vis, &ev, TELE_CMD_GETBOX, 
 					ev.sequence);
 
-		src = (uint8 *) p->pixel;
+		src = (uint8 *)p->pixel;
 
-		for (j=0; j < hh; j++)
-		for (i=0; i < ww; i++) {
-			dest[j*stride + curx + i] = src[j*ww + i];
-		}
+		GGIDPRINT_MODE("GETBOX: First 10 byte recv: %d %d %d %d %d  %d %d %d %d %d\n",
+			src[0], src[1], src[2], src[3], src[4],
+			src[5], src[6], src[7], src[8], src[9]);
+
+		for(j = 0; j < hh; ++j) {
+		  memcpy(&(dest[(j*stride + curx)]),
+			&(src[j * ww * BYTES_PER_PIXEL(vis)]),
+				ww * BYTES_PER_PIXEL(vis));
+		}	/* for */
 
 		curx += xstep;
-
 		if (curx >= w) {
 			curx = 0;
-			src += stride * ystep;
+			dest += stride * ystep;
 			y += ystep;
 			h -= ystep;
-		}
-	}
+		}	/* if */
+	}	/* while */
 
 	return 0;
-}
+}	/* GGI_tele_getbox */
+
+
+/* ---------------------------------------------------------------------- */
+
+
+
+int GGI_tele_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
+                       ggi_visual *vis, int dx, int dy)
+{ 
+	int err = 0;
+	uint8 *packed_buf;
+	ggi_color * buf;
+ 
+
+	LIBGGICLIP_XYWH(src, sx,sy, w,h);
+	LIBGGICLIP_XYWH(vis, dx,dy, w,h);
+
+ 
+	/*
+	 * FIXME: Get real values, don't assume that anything must be
+	 * smaller then ggi_pixel
+	 */
+	packed_buf = malloc(sizeof(ggi_pixel) * w * h);
+	if (!packed_buf) {
+		err = GGI_ENOMEM;
+		goto err0;
+	}	/* if */
+	buf = malloc(sizeof(ggi_color) * w * h);
+	if (!buf) {
+		err = GGI_ENOMEM;
+		goto err1;
+	}	/* if */
+
+	ggiGetBox(src, sx, sy, w, h, packed_buf);
+
+	ggiUnpackPixels(src, packed_buf, buf, w * h);
+	ggiPackColors(vis, packed_buf, buf, w * h);
+
+	err = ggiPutBox(vis, dx, dy, w, h, buf);
+
+	free(packed_buf);
+	free(buf);
+
+	return err;
+
+err1:
+	free(packed_buf);
+err0:
+	return err;
+}	/* GGI_tele_crossblit */
+ 
+
 
 
 /* ---------------------------------------------------------------------- */
@@ -284,24 +331,28 @@ int GGI_tele_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	CHECKXY(vis, x, y);
 
 	return GGI_tele_putpixel_nc(vis, x, y, col);
-}
+}	/* GGI_tele_putpixel */
+
 
 int GGI_tele_puthline(ggi_visual *vis, int x, int y, int w, void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, w, 1, buf);
-}
+}	/* GGI_tele_puthline */
+
 
 int GGI_tele_putvline(ggi_visual *vis, int x, int y, int h, void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, 1, h, buf);
-}
+}	/* GGI_tele_putvline */
+
 
 int GGI_tele_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 {
 	return GGI_tele_getbox(vis, x, y, w, 1, buf);
-}
+}	/* GGI_tele_gethline */
+
 
 int GGI_tele_getvline(ggi_visual *vis, int x, int y, int h, void *buf)
 {
 	return GGI_tele_getbox(vis, x, y, 1, h, buf);
-}
+}	/* GGI_tele_getvline */

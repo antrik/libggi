@@ -1,9 +1,10 @@
-/* $Id: libtele.c,v 1.3 2002/08/18 19:50:56 cegger Exp $
+/* $Id: libtele.c,v 1.4 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    libtele.c
 
    Copyright (C) 1998 Andrew Apted	[andrew@ggi-project.org]
+                 2002 Tobias Hunger     [tobias@fresco.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -691,7 +692,8 @@ int tserver_init(TeleServer *s, int display)
 	
 	} else {
 #ifdef HAVE_UNIX_DOMAIN_SOCKET
-		fprintf(stderr, "tserver: Creating unix socket...\n");
+		fprintf(stderr, "tserver: Creating unix socket... [%d]\n",
+				TELE_PORT_BASE + display);
 
 		me_un.sun_family = AF_UNIX;
 

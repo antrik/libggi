@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: tele.h,v 1.2 2002/08/28 16:52:51 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -92,11 +92,16 @@ ggifunc_drawhline_nc	GGI_tele_drawhline_nc;
 ggifunc_drawhline	GGI_tele_drawhline;
 ggifunc_drawvline_nc	GGI_tele_drawvline_nc;
 ggifunc_drawvline	GGI_tele_drawvline;
+ggifunc_drawline	GGI_tele_drawline;
 ggifunc_drawbox		GGI_tele_drawbox;
 ggifunc_copybox		GGI_tele_copybox;
+ggifunc_crossblit	GGI_tele_crossblit;
 ggifunc_putc		GGI_tele_putc;
+ggifunc_puts		GGI_tele_puts;
 ggifunc_getcharsize	GGI_tele_getcharsize;
 ggifunc_setorigin	GGI_tele_setorigin;
+
+ggifunc_crossblit	GGI_tele_crossblit;
 
 
 #endif /* _GGI_DISPLAY_TELE_H */

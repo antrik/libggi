@@ -1,9 +1,10 @@
-/* $Id: text.c,v 1.1 2001/05/12 23:02:27 cegger Exp $
+/* $Id: text.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    TELE target.
 
    Copyright (C) 1998 Andrew Apted    [andrew@ggi-project.org]
+                 2002 Tobias Hunger   [tobias@fresco.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -30,7 +31,6 @@
 #include <unistd.h>
 
 #include <ggi/internal/ggi-dl.h>
-#include <ggi/internal/font/8x8>
 
 #include "libtele.h"
 #include <ggi/display/tele.h>
@@ -38,29 +38,73 @@
 
 int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)
 {
-	*width = *height = 8;
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdGetCharSizeData *p;
+	TeleEvent ev;
+	int err;
+
+
+        p = tclient_new_event(priv->client, &ev, TELE_CMD_GETCHARSIZE,
+				sizeof(TeleCmdGetCharSizeData), 0);
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	} else if (err < 0) {
+		return err;
+	}	/* if */
+
+	tele_receive_reply(vis, &ev, TELE_CMD_GETCHARSIZE,
+			ev.sequence);
+
+	*width = p->width;
+	*height = p->height;
+
 	return 0;
-}
+}	/* GGI_tele_getcharsize */
+
 
 int GGI_tele_putc(ggi_visual *vis, int x, int y, char c)
 {
-	/* !!! use CMD_PUTSTR */
+	char s[2];
+	s[0] = c; s[1] = '\0';
 
-	uint8 pixbuf[8*8];
+	return GGI_tele_puts(vis, x, y, s);
+}	/* GGI_tele_putc */
 
-	int cx, cy;
 
-	uint8 *ch_data = & font[((int) c & 0xff) << 3];
 
-	for (cy=0; cy < 8; cy++)
-	for (cx=0; cx < 8; cx++) {
-		
-		pixbuf[(cy << 3) + cx] = (ch_data[cy] & (1 << (7-cx))) ?
-			LIBGGI_GC_FGCOLOR(vis) : LIBGGI_GC_BGCOLOR(vis);
-	}
+int GGI_tele_puts(ggi_visual *vis, int x, int y, const char * s)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdPutStrData *p;
+	TeleEvent ev;
+	int err = 0;
+	int i = 0;
 
-	return ggiPutBox(vis, x, y, 8, 8, pixbuf);
-}
+	T_Long * data;
 
-/* !!! Implement GGIputs() with CMD_PUTSTR */
+	p = tclient_new_event(priv->client, &ev, TELE_CMD_PUTSTR,
+				sizeof(TeleCmdPutStrData)-4,
+				(strlen(s) + 1) * sizeof(T_Long));
 
+	p->x = (T_Long)(x);
+	p->y = (T_Long)(y);
+	p->length = (T_Long)strlen(s);
+	p->fg = (T_Long)(LIBGGI_GC_FGCOLOR(vis));
+	p->bg = (T_Long)(LIBGGI_GC_BGCOLOR(vis));
+
+	data = (T_Long *)(p->text);
+
+	for (i=0 ; i <= strlen(s); ++i)	/* Copy the trailing \0! */
+		data[i] = (T_Long)(s[i]);
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	}	/* if */
+
+	return err;
+}	/* GGI_tele_puts */

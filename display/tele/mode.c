@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:28 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -90,6 +90,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	char libname[200], libargs[200];
 	int id, err;
 
+
 	/* if window already open, close it */
 	if (priv->mode_up) {
 		GGI_tele_resetmode(vis);
@@ -102,6 +103,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
@@ -143,11 +145,15 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	vis->opdraw->drawhline=GGI_tele_drawhline;
 	vis->opdraw->drawvline_nc=GGI_tele_drawvline_nc;
 	vis->opdraw->drawvline=GGI_tele_drawvline;
+	vis->opdraw->drawline=GGI_tele_drawline;
 	vis->opdraw->drawbox=GGI_tele_drawbox;
 	vis->opdraw->copybox=GGI_tele_copybox;
+#if 0
+	vis->opdraw->crossblit=GGI_tele_crossblit;
+#endif
 
 	vis->opdraw->putc=GGI_tele_putc;
-/* !!!	vis->opdraw->puts=GGI_tele_puts; */
+	vis->opdraw->puts=GGI_tele_puts;
 	vis->opdraw->getcharsize=GGI_tele_getcharsize;
 
 	vis->opdraw->setorigin=GGI_tele_setorigin;
@@ -160,10 +166,13 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	w = tclient_new_event(priv->client, &ev, TELE_CMD_OPEN,
 			      sizeof(TeleCmdOpenData), 0);
 
+
 	w->graphtype      = (T_Long) mode->graphtype;
 	w->frames         = (T_Long) mode->frames;
 	w->visible.width  = (T_Long) mode->visible.x;
 	w->visible.height = (T_Long) mode->visible.y;
+	w->size.width     = (T_Long) mode->size.x;
+	w->size.height    = (T_Long) mode->size.y;
 	w->virt.width     = (T_Long) mode->virt.x;
 	w->virt.height    = (T_Long) mode->virt.y;
 	w->dot.width      = (T_Long) mode->dpp.x;
@@ -194,6 +203,8 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	mode->visible.y = (sint16) w->visible.height;
 	mode->virt.x    = (sint16) w->virt.width;
 	mode->virt.y    = (sint16) w->virt.height;
+	mode->size.x    = (sint16) w->size.width;
+	mode->size.y    = (sint16) w->size.height;
 	mode->dpp.x     = (sint16) w->dot.width;
 	mode->dpp.y     = (sint16) w->dot.height;
 
@@ -211,19 +222,6 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	int err = 0;
 
 	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
-
-	if (GT_SCHEME(mode->graphtype) & GT_SUB_PACKED_GETPUT) {
-		mode->graphtype &= ~GT_SUB_PACKED_GETPUT;
-		err = -1;
-	}
-
-	if (GT_SIZE(mode->graphtype) != 8) {
-		/* !!! FIXME: only 8 bits supported now */
-		GGIDPRINT_MODE("GGI_tele_checkmode: Unsupported GT.\n");
-
-		mode->graphtype = GT_8BIT;
-		err = -1;
-	}
 
 	if (mode->visible.x > mode->virt.x) {
 		mode->virt.x = mode->visible.x;
@@ -250,6 +248,8 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	w->frames         = (T_Long) mode->frames;
 	w->visible.width  = (T_Long) mode->visible.x;
 	w->visible.height = (T_Long) mode->visible.y;
+	w->size.width     = (T_Long) mode->size.x;
+	w->size.height    = (T_Long) mode->size.y;
 	w->virt.width     = (T_Long) mode->virt.x;
 	w->virt.height    = (T_Long) mode->virt.y;
 	w->dot.width      = (T_Long) mode->dpp.x;
@@ -276,6 +276,8 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	mode->visible.y = (sint16) w->visible.height;
 	mode->virt.x    = (sint16) w->virt.width;
 	mode->virt.y    = (sint16) w->virt.height;
+	mode->size.x    = (sint16) w->size.width;
+	mode->size.y    = (sint16) w->size.height;
 	mode->dpp.x     = (sint16) w->dot.width;
 	mode->dpp.y     = (sint16) w->dot.height;
 

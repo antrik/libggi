@@ -1,9 +1,10 @@
-/* $Id: libtele.h,v 1.1 2001/05/12 23:02:27 cegger Exp $
+/* $Id: libtele.h,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    libtele.h
 
    Copyright (C) 1998 Andrew Apted	[andrew@ggi-project.org]
+                 2002 Tobias Hunger     [tobias@fresco.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -110,6 +111,8 @@ typedef enum tele_event_type
 	TELE_CMD_DRAWBOX,	/* draw a solid box */
 	TELE_CMD_COPYBOX,	/* copy a box elsewhere */
 	TELE_CMD_PUTSTR,	/* write a string */
+	TELE_CMD_GETCHARSIZE,	/* get char size */
+	TELE_CMD_DRAWLINE,	/* draw a solid line */
 
 	TELE_CMD_SETORIGIN,	/* pan around */
 	TELE_CMD_SETFRAME,	/* change frames */
@@ -183,6 +186,11 @@ typedef struct tele_cmd_open_data
 		T_Long height;
 	} dot;
 
+	struct {
+		T_Long width;
+		T_Long height;
+	} size;
+
 } TeleCmdOpenData;
 
 typedef struct tele_cmd_getput_data
@@ -191,8 +199,9 @@ typedef struct tele_cmd_getput_data
 	T_Long y;
 	T_Long width;
 	T_Long height;
+	T_Long bpp;		/* used by getbox */
 
-	T_Long pixel[1];    /* raw: (replied): array of width*height */
+	T_Long pixel[1];	/* raw: (replied): array of width*height*bpp */
 
 } TeleCmdGetPutData;
 
@@ -222,12 +231,30 @@ typedef struct tele_cmd_putstr_data
 {
 	T_Long x;
 	T_Long y;
-	T_Long fg;
-	T_Long bg;
-
+        T_Long length;
+        T_Long fg;
+        T_Long bg;
 	T_Long text[1];    /* raw: ASCII string, zero terminated */
 	
 } TeleCmdPutStrData;
+
+typedef struct tele_cmd_getcharsize_data
+{
+	T_Long width;
+	T_Long height;
+	
+} TeleCmdGetCharSizeData;
+
+typedef struct tele_cmd_drawline_data
+{
+	T_Long x;
+	T_Long y;
+	T_Long xe;
+	T_Long ye;
+
+	T_Long pixel;
+	
+} TeleCmdDrawLineData;
 
 typedef struct tele_cmd_setorigin_data
 {
@@ -262,7 +289,6 @@ typedef struct tele_server
 	int inet;
 	int display;
 	int endianness;
-
 } TeleServer;
 
 typedef struct tele_user

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.1 2001/05/12 23:02:27 cegger Exp $
+/* $Id: draw.c,v 1.2 2002/08/28 16:51:11 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -34,14 +34,45 @@
 int GGI_tele_drawpixel_nc(ggi_visual *vis, int x, int y)
 {
 	return GGI_tele_putpixel_nc(vis, x, y, LIBGGI_GC_FGCOLOR(vis));
-}
+}	/* GGI_tele_drawpixel_nc */
+
 
 int GGI_tele_drawpixel(ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 
 	return GGI_tele_putpixel_nc(vis, x, y, LIBGGI_GC_FGCOLOR(vis));
-}
+}	/* GGI_tele_drawpixel */
+
+
+
+int GGI_tele_drawline(struct ggi_visual *vis, int x,int y, int xe,int ye)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdDrawLineData *p;
+	TeleEvent ev;
+
+	int err;
+
+
+	p = tclient_new_event(priv->client, &ev, TELE_CMD_DRAWLINE,
+			      sizeof(TeleCmdDrawLineData), 0);
+	p->x = x;
+	p->y = y;
+	p->xe  = xe;
+	p->ye = ye;
+	p->pixel  = LIBGGI_GC_FGCOLOR(vis);
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	}	/* if */
+
+	return err;
+}	/* GGI_tele_drawline */
+
+
 
 /* FIXME !!! this is confused */
 
@@ -60,15 +91,16 @@ int GGI_tele_drawbox_nc(ggi_visual *vis, int x, int y, int w, int h)
 	p->width  = w;
 	p->height = h;
 	p->pixel  = LIBGGI_GC_FGCOLOR(vis);
-	
+
 	err = tclient_write(priv->client, &ev);
 
 	if (err == TELE_ERROR_SHUTDOWN) {
 		TELE_HANDLE_SHUTDOWN;
-	}
+	}	/* if */
 
 	return err;
-}
+}	/* GGI_tele_drawbox_nc */
+
 
 int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
@@ -79,25 +111,8 @@ int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	int err;
 
 
-	/* clip */
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
 
-	if ((x+w) > LIBGGI_GC(vis)->clipbr.x) {
-		w = LIBGGI_GC(vis)->clipbr.x - x;
-	}
-	if ((y+h) > LIBGGI_GC(vis)->clipbr.y) {
-		h = LIBGGI_GC(vis)->clipbr.y - y;
-	}
-	if (x < LIBGGI_GC(vis)->cliptl.x) {
-		w -= (LIBGGI_GC(vis)->cliptl.x - x);
-		x = LIBGGI_GC(vis)->cliptl.x;
-	}
-	if (y < LIBGGI_GC(vis)->cliptl.y) {
-		h -= (LIBGGI_GC(vis)->cliptl.y - y);
-		y = LIBGGI_GC(vis)->cliptl.y;
-	}
-	if ((w <= 0) || (h <= 0)) {
-		return -1;
-	}
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_DRAWBOX,
 			      sizeof(TeleCmdDrawBoxData), 0);
@@ -106,17 +121,19 @@ int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	p->width  = w;
 	p->height = h;
 	p->pixel  = LIBGGI_GC_FGCOLOR(vis);
-	
+
 	err = tclient_write(priv->client, &ev);
 
 	if (err == TELE_ERROR_SHUTDOWN) {
 		TELE_HANDLE_SHUTDOWN;
-	}
+	}	/* if */
 
 	return err;
-}
+}	/* GGI_tele_drawbox */
 
-int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+
+int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h,
+			int nx, int ny)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdCopyBoxData *p;
@@ -125,35 +142,8 @@ int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny
 	int err;
 
 
-	/* clip */
+	LIBGGICLIP_COPYBOX(vis, x,y,w,h, nx,ny);
 
-	if ((x < 0) || (y < 0) ||
-	    ((x+w) > LIBGGI_MODE(vis)->virt.x) ||
-	    ((y+h) > LIBGGI_MODE(vis)->virt.y)) {
-
-	    	/* source box is invalid */
-		return -2;
-	}
-
-	if ((nx+w) > LIBGGI_GC(vis)->clipbr.x) {
-		w = LIBGGI_GC(vis)->clipbr.x - nx;
-	}
-	if ((ny+h) > LIBGGI_GC(vis)->clipbr.y) {
-		h = LIBGGI_GC(vis)->clipbr.y - ny;
-	}
-	if (nx < LIBGGI_GC(vis)->cliptl.x) {
-		w -= (LIBGGI_GC(vis)->cliptl.x - nx);
-		x += (LIBGGI_GC(vis)->cliptl.x - nx);
-		nx = LIBGGI_GC(vis)->cliptl.x;
-	}
-	if (ny < LIBGGI_GC(vis)->cliptl.y) {
-		h -= (LIBGGI_GC(vis)->cliptl.y - ny);
-		y += (LIBGGI_GC(vis)->cliptl.y - ny);
-		ny = LIBGGI_GC(vis)->cliptl.y;
-	}
-	if ((w <= 0) || (h <= 0)) {
-		return -1;
-	}
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_COPYBOX,
 			      sizeof(TeleCmdCopyBoxData), 0);
@@ -168,10 +158,10 @@ int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny
 
 	if (err == TELE_ERROR_SHUTDOWN) {
 		TELE_HANDLE_SHUTDOWN;
-	}
+	}	/* if */
 
 	return err;
-}
+}	/* GGI_tele_copybox */
 
 
 /* ---------------------------------------------------------------------- */
@@ -180,19 +170,22 @@ int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny
 int GGI_tele_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 {
 	return GGI_tele_drawbox_nc(vis, x, y, w, 1);
-}
+}	/* GGI_tele_drawhline_nc */
+
 
 int GGI_tele_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 {
 	return GGI_tele_drawbox_nc(vis, x, y, 1, h);
-}
+}	/* GGI_tele_drawvline_nc */
+
 
 int GGI_tele_drawhline(ggi_visual *vis, int x, int y, int w)
 {
 	return GGI_tele_drawbox(vis, x, y, w, 1);
-}
+}	/* GGI_tele_drawhline */
+
 
 int GGI_tele_drawvline(ggi_visual *vis, int x, int y, int h)
 {
 	return GGI_tele_drawbox(vis, x, y, 1, h);
-}
+}	/* GGI_tele_drawvline */
