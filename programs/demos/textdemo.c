@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.1 2001/05/12 23:03:41 cegger Exp $
+/* $Id: textdemo.c,v 1.2 2001/05/26 00:00:20 skids Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -24,7 +24,8 @@ ggi_visual_t vis;
 
 int
 main(int argc, char *argv[]) {
-	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', 
+			     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 	int a, b;
 	char *hello = "Hello World";
 	ggi_mode mode;
@@ -46,7 +47,8 @@ main(int argc, char *argv[]) {
 			exit(1);
 		}
 	}
-	if (ggiSetTextMode(vis, 80, 25, 80, 25, 9, 14, GT_TEXT16) != 0) {
+	if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO, 
+			   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
 		fprintf(stderr,
 			"%s: unable to set text mode, retrying with terminfo.\n",
 			argv[0]);
@@ -57,7 +59,9 @@ main(int argc, char *argv[]) {
 				argv[0]);
 			exit(1);
 		}
-		if (ggiSetTextMode(vis, 80, 25, 80, 25, 9, 14, GT_TEXT16) != 0) {
+		if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, 
+				   GGI_AUTO, GGI_AUTO, 
+				   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
 			fprintf(stderr,
 				"%s: unable to set text mode, exiting.\n",
 				argv[0]);
@@ -67,23 +71,32 @@ main(int argc, char *argv[]) {
 	}		
 	ggiSetGCForeground(vis,1<<8);
 
-	for ( a = 0 ; a < 25 ; a++ ) {
-		for ( b = 0 ; b < 80 ; b++ ) {
+	ggiGetMode(vis, &mode);
+	if (mode.visible.y < 17 || mode.visible.x < 52) {
+		fprintf(stderr, "Need at least 52x17 chars for this demo\n");
+		ggiClose(vis);
+		ggiExit();
+		exit(-1);
+	}
+
+	for ( a = 0 ; a < mode.visible.y ; a++ ) {
+		for ( b = 0 ; b < mode.visible.x ; b++ ) {
 			ggiPutc(vis, b, a, 'x');
 		}
 	}
 
+
 	ggiSetGCForeground(vis,9<<8);
-	ggiPuts(vis, 34, 13, "Hello World");
-	ggiPuts(vis, 34, 14, hello);
+	ggiPuts(vis, (mode.visible.x - 7)/2, mode.visible.y/2 , "Hello World");
+	ggiPuts(vis, (mode.visible.x - 7)/2, mode.visible.y/2 , hello);
 	ggiFlush(vis);
 
 	ggiGetc(vis);
        
 	for ( a = 0 ; a <= 0xff ; a++ ) {
 		ggiSetGCForeground(vis, a << 8);
-		for ( b = 0 ; b < 25 ; b++ ) {
-			ggiPuts(vis, a&31, b, "Testing all colors ... ");
+		for ( b = 0 ; b < mode.visible.y ; b++ ) {
+			ggiPuts(vis, a&31, b, "Testing colors");
 		}
 		ggiFlush(vis);
 		ggUSleep(20000);
@@ -92,8 +105,8 @@ main(int argc, char *argv[]) {
 	ggiGetc(vis);
 
 	ggiSetGCForeground(vis,1<<8);
-	for ( a = 0 ; a < 25 ; a++ ) {
-		for ( b = 0 ; b < 80 ; b++ ) {
+	for ( a = 0 ; a < mode.visible.y ; a++ ) {
+		for ( b = 0 ; b < mode.visible.y ; b++ ) {
 			ggiPutc(vis, b, a, 'x');
 		}
 	}
