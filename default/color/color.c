@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2002/10/20 20:35:49 skids Exp $
+/* $Id: color.c,v 1.5 2003/05/03 16:34:36 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -79,7 +79,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
 #ifndef ABS
 #define ABS(val)	((val) < 0 ? -(val) : val)
 #endif
-		int dist =
+		uint32 dist =
 			ABS(r - pal[i].r) +
 			ABS(g - pal[i].g) +
 			ABS(b - pal[i].b);
@@ -174,7 +174,7 @@ int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 	LIBGGI_ASSERT(vis->palette != NULL, 
 		      "PAL_unmappixel with vis->palette==NULL");
 
-	if (pixel >= COLOR_PALPRIV(vis)->numcols) return -1;
+	if (pixel >= (unsigned)COLOR_PALPRIV(vis)->numcols) return -1;
 
 	*col = vis->palette[pixel];
 
