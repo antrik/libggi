@@ -3,6 +3,13 @@ Make a child visual that is a window to the parent
 
 .. manpage:: 7 display-sub
 
+Synopsis
+--------
+
+::
+
+  display-sub: <target-spec>
+
 
 Description
 -----------
@@ -22,6 +29,15 @@ moving/resizing the window does *not* cause any drawing action.  You
 have to perform those yourself. All it does for you is providing a
 virtual visual within an existing one, which is convenient to allow
 for window system canvases to be about any GGI program.
+
+
+Options
+-------
+
+:p:`target-spec`
+    Specifies the target which to draw on (the *parent* target).  This
+    defaults to automatic selection (just like using
+    ``ggiOpen(NULL)`` when `GGI_DISPLAY` is not set).
 
 
 Features
