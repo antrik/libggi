@@ -1,4 +1,4 @@
-.TH "display-trueemu" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-trueemu" 7 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBdisplay-trueemu\fR : Emulate truecolor modes
 .SH SYNOPSIS
@@ -15,27 +15,27 @@ Uses dithering and special palettes to get the highest possible
 quality.
 .SH OPTIONS
 .TP
-\fB-parent=<mode>\fR
-Force the parent target to use a specific \fBmode\fR, specified as a
+\fB'-parent=<mode>'\fR
+Force the parent target to use a specific \fImode\fR, specified as a
 standard LibGGI mode string (see \fBlibggi(7)\fR).
 
 .TP
-\fB-dither=<dither>\fR
+\fB'-dither=<dither>'\fR
 Specifies the amount of dithering.  Legal values are 0, 2 and 4,
-defaulting to 4. When the target is running, \fBCtrl-Alt-d\fR
+defaulting to 4. When the target is running, \fB'Ctrl-Alt-d'\fR
 changes the dithering level.
 
 .TP
-\fB-model=<model>\fR
+\fB'-model=<model>'\fR
 Color model to use (only when the parent is palettized).  Legal
 values are rgb, cube and pastel.  Default depends on the parent
-mode. When the target is running, \fBCtrl-Alt-p\fR changes the
+mode. When the target is running, \fB'Ctrl-Alt-p'\fR changes the
 current color model.
 
 .TP
-\fBtarget-spec\fR
+\fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
-defaults to automatic selection (just like using \fBggiOpen(NULL)\fR
+defaults to automatic selection (just like using \fB'ggiOpen(NULL)'\fR
 when \fBGGI_DISPLAY\fR is not set).
 
 .PP

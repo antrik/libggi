@@ -1,4 +1,4 @@
-.TH "ggiSetDisplayFrame" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiSetDisplayFrame" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiSetDisplayFrame\fR, \fBggiSetWriteFrame\fR, \fBggiSetReadFrame\fR, \fBggiGetDisplayFrame\fR, \fBggiGetWriteFrame\fR, \fBggiGetReadFrame\fR : Set or get the current frame for display, writing and reading
 .SH SYNOPSIS
@@ -26,10 +26,10 @@ when using the multiple buffering function of LibGGI.
 \fBggiSetDisplayFrame\fR sets the frame that gets displayed.
 
 \fBggiSetWriteFrame\fR sets the frame for write operations such as
-\fBggiPuts\fR and \fBggiHLine\fR.
+\fBggiPuts(3)\fR and \fBggiHLine\fR.
 
 \fBggiSetReadFrame\fR sets the frame for read operations, like
-\fBggiGetPixel\fR and the \fBggiCrossBlit\fR source.
+\fBggiGetPixel(3)\fR and the \fBggiCrossBlit(3)\fR source.
 
 \fBggiGetDisplayFrame\fR reports the frame currently displayed.
 

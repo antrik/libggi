@@ -1,4 +1,4 @@
-.TH "ggiParseMode" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiParseMode" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
 .SH SYNOPSIS
@@ -16,9 +16,9 @@ int ggiFPrintMode(FILE *s, ggi_mode *m);
 .fi
 
 .SH DESCRIPTION
-\fBggiParseMode\fR parses a string into a \fBggi_mode\fR.
+\fBggiParseMode\fR parses a string into a \fBggi_mode(3)\fR.
 
-The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a
+The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode(3)\fR in a
 human-readable form.  \fBggiSPrintMode\fR outputs to a preallocated string
 buffer, \fBggiFPrintMode\fR outputs to a stdio \fBFILE\fR, and \fBggiPrintMode\fR
 outputs to standard output.  These functions correspond to
@@ -44,9 +44,9 @@ these errors are simply ignored.
 \fB<0\fR
 if there is text that can not be parsed.
 This text is printed to stderr.
-All parameters parsed so far are written into \fBm\fR.
+All parameters parsed so far are written into \fIm\fR.
 
 .PP
-So \fBm\fR contains all parameters that have been successfully
+So \fIm\fR contains all parameters that have been successfully
 parsed. For most applications there will be no need for testing
 \fBggiParseMode\fR for failure.

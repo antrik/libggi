@@ -1,4 +1,4 @@
-.TH "display-directx" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-directx" 7 "2004-09-24" "libggi-current" GGI
 .SH NAME
 \fBdisplay-directx\fR : DirectX (WIN32)
 .SH SYNOPSIS
@@ -11,8 +11,8 @@ display-directx:      [ [-inwin=<winid>] [-keepcursor] [-nocursor] [-noinput] [-
 Used for Win32 DirectX port of libGGI.
 .SH OPTIONS
 .TP
-\fB-inwin=<winid>|root\fR
-Run in already-existing window with id \fBwinid\fR.  This can be   
+\fB'-inwin=<winid>|root'\fR
+Run in already-existing window with id \fIwinid\fR.  This can be   
 used to embed a LibGGI application into a DirectX application. The
 value should be a DirectX window ID expressed as a decimal,
 hexadecimal or octal number in C syntax. The special string "root"
@@ -25,12 +25,12 @@ access and video hardware mode selection) may be available which
 are not available when the application is running in a normal window.
 
 .TP
-\fB-fullscreen\fR
+\fB'-fullscreen'\fR
 If mode switching is required for the mode, this option makes it
-possible to set it. Superior to \fB-inwin=root\fR.
+possible to set it. Superior to \fI-inwin=root\fR.
 
 .TP
-\fB-nocursor\fR, \fB-keepcursor\fR
+\fB'-nocursor'\fR, \fB'-keepcursor'\fR
 Normal behavior of display-directx is to create a small dot mouse
 cursor pixmap which is visible when the mouse is positioned over the
 window containing the visual. With the former option, the DirectX
@@ -40,19 +40,19 @@ options are supplied, the latter takes precedence.
 Note, that none of them works with the -inwin option.
 
 .TP
-\fB-noinput\fR
+\fB'-noinput'\fR
 DirectX events sent to the window are not captured and merged with
 any other LibGII input sources. This allows one to take input from
 raw devices without receiving duplicate events should DirectX also
 be configured to use the device.
 
 .TP
-\fB-physz==<sizex>,<sizey>[dpi]\fR
+\fB'-physz==<sizex>,<sizey>[dpi]'\fR
 This option will override the physical screen size reported by the
 DirectX, which affects applications which wish to remain resolution
-independent.  \fBsizex\fR,:p:\fBsizey\fR are the x,y size of the entire
+independent.  \fIsizex\fR,:p:\fBsizey\fR are the x,y size of the entire
 screen (not just the DirectX window containing the visual) in
-millimeters, unless the optional \fBdpi\fR string is affixed, in
+millimeters, unless the optional \fB'dpi'\fR string is affixed, in
 which case, they represent resolution in dots-per-inch. Yes, there
 are two equals signs there, for reasons of compatibility with
 other targets.

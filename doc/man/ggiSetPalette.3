@@ -1,4 +1,4 @@
-.TH "ggiSetPalette" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiSetPalette" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiSetPalette\fR, \fBggiGetPalette\fR : Manipulate the palette of a visual
 .SH SYNOPSIS
@@ -13,18 +13,18 @@ int ggiGetPalette(ggi_visual_t vis, int s, int len, ggi_color *cmap);
 
 .SH DESCRIPTION
 LibGGI visuals in \fBGT_PALETTE\fR mode map all pixelvalues to the
-corresponding \fBggi_color\fR entry in the visual's palette.
+corresponding \fBggi_color(3)\fR entry in the visual's palette.
 
-\fBggiSetPalette\fR sets a range of palette values of length \fBlen\fR,
-starting at index number \fBs\fR.  The index can be
+\fBggiSetPalette\fR sets a range of palette values of length \fIlen\fR,
+starting at index number \fIs\fR.  The index can be
 \fBGGI_PALETTE_DONTCARE\fR to indicate that the palette can be
 installed anywhere in the CLUT.  This allows optimized use in
 windowing environments (to minimize color flashing between windows)
 and should be used if possible.
 
-\fBggiGetPalette\fR copies the specified colors (starting from \fBs\fR, for
-\fBlen\fR colors) from the visual's palette to the array pointed by
-\fBcmap\fR.
+\fBggiGetPalette\fR copies the specified colors (starting from \fIs\fR, for
+\fIlen\fR colors) from the visual's palette to the array pointed by
+\fIcmap\fR.
 .SH RETURN VALUE
 \fBggiSetPalette\fR returns the number of the first entry changed.
 \fB<0\fR indicate error.

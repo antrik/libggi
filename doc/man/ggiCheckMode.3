@@ -1,4 +1,4 @@
-.TH "ggiCheckMode" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiCheckMode" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiCheckMode\fR, \fBggiCheckTextMode\fR, \fBggiCheckGraphMode\fR, \fBggiCheckSimpleMode\fR : Check or negotiate a text/graphics mode on a visual
 .SH SYNOPSIS
@@ -22,7 +22,7 @@ int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize,
 .SH DESCRIPTION
 \fBggiCheckMode\fR checks whether or not the given mode will work on the
 visual.  If it does not work, it will modify the values of passed
-\fBggi_mode\fR structure so that the mode works.  This mode negotiation
+\fBggi_mode(3)\fR structure so that the mode works.  This mode negotiation
 allows the application to discover modes that are both supported by
 the visual and suitable to the application.
 
@@ -37,19 +37,19 @@ visible dimensions, type, and number of buffers is supported.  This is
 used in lieu of \fBggiCheckGraphMode\fR if multiple buffering is desired.
 
 For \fBggiCheckTextMode\fR, \fBggiCheckGraphMode\fR and \fBggiCheckSimpleMode\fR,
-\fBsuggested_mode\fR is either \fBNULL\fR or a pointer to a \fBggi_mode\fR
+\fIsuggested_mode\fR is either \fBNULL\fR or a pointer to a \fBggi_mode(3)\fR
 which will be filled in with the negotiated mode parameters.
 .SH RETURN VALUE
 For \fBggiCheckTextMode\fR and \fBggiCheckGraphMode\fR, a return of \fB0\fR means
 that the corresponding set mode call for this mode would
 succeed. Otherwise, the mode given cannot be set. In this case,
-\fBsuggested_mode\fR is changed to the suggested mode.
+\fIsuggested_mode\fR is changed to the suggested mode.
 
 If the only modifications made to the structure is replacing
 \fBGGI_AUTO\fR or \fBGT_AUTO\fR value, the functions return success.
 .SH RULES FOR MODE NEGOTIATION
 First, if \fBGGI_AUTO\fR (or \fBGT_AUTO\fR for the graphtype) is specified for
-any of the members of \fBtm\fR, these are filled in with the
+any of the members of \fItm\fR, these are filled in with the
 recommended values.  The values could be to a maximum, preferred, or
 \fBGGI_DEFMODE\fR resolution, and will be compatible with any other
 constraints.

@@ -1,4 +1,4 @@
-.TH "ggiMapColor" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiMapColor" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiMapColor\fR, \fBggiUnmapPixel\fR, \fBggiPackColors\fR, \fBggiUnpackPixels\fR : Convert from ggi_color(s) to ggi_pixel(s) and vice versa
 .SH SYNOPSIS
@@ -21,12 +21,12 @@ int ggiUnpackPixels(ggi_visual_t vis, void *buf, ggi_color *cols, int len);
 
 \fBggiUnmapPixel\fR gets the color associated with the given pixelvalue.
 
-\fBggiPackColors\fR converts the colors in \fBcols\fR to pixelvalues in
-\fBbuf\fR.  The output from this function is suitable for input to the
+\fBggiPackColors\fR converts the colors in \fIcols\fR to pixelvalues in
+\fIbuf\fR.  The output from this function is suitable for input to the
 \fBggiPut{HLine,VLine,Box}\fR functions.
 
-\fBggiUnpackPixels\fR converts the pixelvalues in \fBbuf\fR to individual
-elements of \fBcols\fR.  This function may be used to convert buffers
+\fBggiUnpackPixels\fR converts the pixelvalues in \fIbuf\fR to individual
+elements of \fIcols\fR.  This function may be used to convert buffers
 output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue
 representation to their actual colors as defined by
 \fBggi_color(3)\fR.

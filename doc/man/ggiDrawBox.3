@@ -1,4 +1,4 @@
-.TH "ggiDrawBox" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiDrawBox" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiDrawBox\fR, \fBggiPutBox\fR, \fBggiGetBox\fR : Draw, put, and get a rectangle from a visual
 .SH SYNOPSIS
@@ -14,11 +14,11 @@ int ggiGetBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
 .fi
 
 .SH DESCRIPTION
-Draw, put, or get a rectangle at (\fBx\fR, \fBy\fR), extending \fBw\fR
-pixels in the positive x direction and \fBh\fR pixels in the positive y
+Draw, put, or get a rectangle at (\fIx\fR, \fIy\fR), extending \fIw\fR
+pixels in the positive x direction and \fIh\fR pixels in the positive y
 direction.
 
-The \fBbuf\fR parameter in Get/Put functions points to a buffer from
+The \fIbuf\fR parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
 must be correctly allocated), respectively. See
 \fBggiPackColors(3)\fR and \fBggiUnmapPixel(3)\fR functions for

@@ -1,4 +1,4 @@
-.TH "display-x" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-x" 7 "2004-10-14" "libggi-current" GGI
 .SH NAME
 \fBdisplay-x\fR : Displays to an X11 server
 .SH SYNOPSIS
@@ -20,7 +20,7 @@ server, and a backbuffer is kept client-side for content fills
 (e.g. ggiPut* functions) and to restore data when an application has
 been exposed after being concealed by another window.
 
-\fBCtrl-Alt-m\fR toggles mouse grabbing in the new window.  It will try
+\fB'Ctrl-Alt-m'\fR toggles mouse grabbing in the new window.  It will try
 to emulate a \fIrelative\fR mouse device, i.e. one that can be moved
 arbitrarily far in any direction without ever leaving the window.
 This is useful for game controls, where loosing focus is generally
@@ -28,12 +28,12 @@ undesireable.  Note that grabbing must be turned off in order to leave
 the window.
 .SH OPTIONS
 .TP
-\fBdisplay\fR
+\fIdisplay\fR
 The X display to connect to, otherwise defaults to the display
 specified in \fBDISPLAY\fR.
 
 .TP
-\fB-fullscreen\fR
+\fB'-fullscreen'\fR
 Turns on the fullscreen mode. Default mode is the windowed mode.
 In fullscreen mode, the dga helper is tried first if not disabled
 by -nodga or failed for some reason. Then the vidmode helper is
@@ -41,7 +41,7 @@ tried. When this fails, then the target falls back to the windowed
 mode. Note, the -inwin option has no effect with fullscreen.
 
 .TP
-\fB-noaccel\fR
+\fB'-noaccel'\fR
 All rendering is performed in the client-side backbuffer, and then
 sent to the server; no server-side accelerated graphics
 operations are used.  This will signifigantly slow down certain
@@ -52,7 +52,7 @@ to eliminate artifacts caused by incorrectly implemented X11
 hardware drivers.
 
 .TP
-\fB-nobuffer\fR
+\fB'-nobuffer'\fR
 No client-side backbuffer is kept.  This may result in lost data
 when the LibGGI application is obscured by other windows.  This
 data loss can be minimized by enabling backing store in the X11
@@ -67,7 +67,7 @@ application (Otherwise, they are internally grabbed to update the
 backbuffer).
 
 .TP
-\fB-nodbe\fR
+\fB'-nodbe'\fR
 Use of the X11 DBE extension to provide buffered frame support is
 disabled.
 .RS
@@ -76,7 +76,7 @@ Currently DBE extension support has not been completed.
 .RE
 
 .TP
-\fB-nodga\fR
+\fB'-nodga'\fR
 Use of the XFree86-DGA extension to provide direct framebuffer access
 is disabled.  Some implementations of the XFree86-DGA extension may cause
 system lockups.  Use this option to prevent such occurrances.
@@ -87,20 +87,20 @@ display-X target.  To use DGA, see the older display-dga target.
 .RE
 
 .TP
-\fB-noevi\fR
+\fB'-noevi'\fR
 Use of the X11 Extended Visual Information extension to identify
 visuals which are exclusively used for overlay/underlay is
 disabled.
 
 .TP
-\fB-noinput\fR
+\fB'-noinput'\fR
 X events sent to the window are not captured and merged with any
 other LibGII input sources.  This allows one to take input from
 raw devices without receiving duplicate events should X also be
 configured to use the device.
 
 .TP
-\fB-nocursor\fR, \fB-keepcursor\fR
+\fB'-nocursor'\fR, \fB'-keepcursor'\fR
 Normal behavior of display-x is to create a small dot mouse cursor
 pixmap which is visible when the mouse is positioned over the
 window containing the visual.  This goes away when using mouse
@@ -112,14 +112,14 @@ unaltered.  If both options are supplied, the latter takes
 precedence.
 
 .TP
-\fB-nomansync\fR
+\fB'-nomansync'\fR
 Use of the mansync helper library to periodically flush backbuffer
 contents to the X11 server is disabled.  This, of course, will
 result in incorrect behavior of applications that use syncronous
 mode.
 
 .TP
-\fB-noshm\fR
+\fB'-noshm'\fR
 Use of the MIT-SHM extension to speed data transfer between
 clients and servers which are running on the same machine is
 disabled.  Normally it is not necessary to use this option, as use
@@ -127,8 +127,8 @@ of the MIT-SHM extension is disabled automatically if it appears
 to be nonfunctional.
 
 .TP
-\fB-inwin=<winid>|root\fR
-Run in already-existing window with id \fBwinid\fR.  This can be
+\fB'-inwin=<winid>|root'\fR
+Run in already-existing window with id \fIwinid\fR.  This can be
 used to embed a LibGGI application into an X11 application.  The
 value should be an X11 window ID expressed as a "0x" prefixed
 hexadecimal number.  The special string "root" will cause the
@@ -144,7 +144,7 @@ selection may be available which are not available when the
 application is running in a normal window.
 
 .TP
-\fB-novidmode\fR
+\fB'-novidmode'\fR
 Use of the X11 Vidmode extension to change video timing in full-screen
 modes is disabled.  Some implementations of the Vidmode extension may cause
 system lockups.  Use this option to prevent such occurrances.
@@ -154,21 +154,21 @@ Currently Vidmode support has not been completed.
 .RE
 
 .TP
-\fB-physz==<sizex>,<sizey>[dpi]\fR
+\fB'-physz==<sizex>,<sizey>[dpi]'\fR
 This option will override the physical screen size reported by the
 X server, which affects applications which wish to remain
-resolution independent.  \fBsizex\fR,:p:\fBsizey\fR are the x,y size of
+resolution independent.  \fIsizex\fR,:p:\fBsizey\fR are the x,y size of
 the entire screen (not just the X window containing the visual) in
-millimeters, unless the optional \fBdpi\fR string is affixed, in
+millimeters, unless the optional \fB'dpi'\fR string is affixed, in
 which case, they represent resolution in dots-per-inch. Yes, there
 are two equals signs there, for reasons of compatibility with
 other targets.
 
 .TP
-\fB-screen=<screenidx>\fR
+\fB'-screen=<screenidx>'\fR
 The screen to run on.  Normally the biggest/deepest screen
 compatible with the requested mode will be chosen; with this
-option only the screen specified by \fBscreenidx\fR will be
+option only the screen specified by \fIscreenidx\fR will be
 considered.
 
 .PP
@@ -261,8 +261,8 @@ be optimized not to send this data when it detects that there is no
 backing store available in the server.
 
 Either the RAM backbuffer or the X primitives can be disabled via
-target options, which will cause emulation of the old X (\fB-noaccel\fR) and
-Xlib (\fB-nobuffer\fR) targets, with a couple of notable exceptions:
+target options, which will cause emulation of the old X (\fB'-noaccel'\fR) and
+Xlib (\fB'-nobuffer'\fR) targets, with a couple of notable exceptions:
 .RS
 The old X and Xlib targets opened a window and drew directly into
 it.  The old Xlib target did not implement support for

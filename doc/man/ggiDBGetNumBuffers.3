@@ -1,4 +1,4 @@
-.TH "ggiDBGetNumBuffers" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiDBGetNumBuffers" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiDBGetNumBuffers\fR, \fBggiDBGetBuffer\fR : Get DirectBuffers from a visual
 .SH SYNOPSIS
@@ -33,12 +33,12 @@ specified position.
 Use \fBggiDBGetBuffer\fR to obtain the DirectBuffers at 0 to n-1, where n
 is the number returned by \fBggiDBGetNumBuffers\fR.
 
-Pixel-linear buffers have \fBtype==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL\fR.
+Pixel-linear buffers have \fB'type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL'\fR.
 You're on your own now.
 
-DirectBuffers where \fBggiResourceMustAcquire\fR is true need to be
+DirectBuffers where \fBggiResourceMustAcquire(3)\fR is true need to be
 'acquired' (i.e. locked) before using.  An acquire is done by using
-\fBggiResourceAcquire\fR and is released by calling \fBggiResourceRelease\fR.
+\fBggiResourceAcquire(3)\fR and is released by calling \fBggiResourceRelease(3)\fR.
 Beware that the \fBread\fR, \fBwrite\fR and \fBstride\fR fields of the
 DirectBuffer may be changed by an acquire, and that they may be \fBNULL\fR
 or invalid when the DirectBuffer is not acquired.

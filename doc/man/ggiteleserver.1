@@ -1,4 +1,4 @@
-.TH "ggiteleserver" 1 "2004-10-21" "libggi-current" GGI
+.TH "ggiteleserver" 1 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBggiteleserver\fR : GGI display server
 .SH SYNOPSIS
@@ -10,24 +10,24 @@ ggiteleserver [-V|--version] [-h|--help] [-t <target>] [-d <display>]
 .SH DESCRIPTION
 \fBggiteleserver\fR starts a display server for GGI and listen for display
 operations on a TCP socket. A GGI application can then forward display
-operations to this server with the \fBdisplay-tele\fR target. The server
+operations to this server with the \fBdisplay-tele(7)\fR target. The server
 will use the default output.
 .SH OPTIONS
 .TP
-\fB-V\fR, \fB--version\fR
+\fB'-V'\fR, \fB'--version'\fR
 Print the program version and exit.
 
 .TP
-\fB-h\fR, \fB--help\fR
+\fB'-h'\fR, \fB'--help'\fR
 Print options and exit.
 
 .TP
-\fB-t <target>\fR
-Use the specified \fBtarget\fR as display. It overrides the value
+\fB'-t <target>'\fR
+Use the specified \fItarget\fR as display. It overrides the value
 of \fBGGI_DISPLAY\fR.
 
 .TP
-\fB-d <display>\fR
+\fB'-d <display>'\fR
 TODO what is that?
 
 .PP

@@ -1,4 +1,4 @@
-.TH "display-palemu" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-palemu" 7 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBdisplay-palemu\fR : Emulate palettized modes on visuals of other mode schemes
 .SH SYNOPSIS
@@ -13,15 +13,15 @@ only do truecolor/greyscale/text modes or palettized modes of higher
 depth.
 .SH OPTIONS
 .TP
-\fB-parent=<mode>\fR
+\fB'-parent=<mode>'\fR
 Force the parent target to use a specific mode, specified as a standard 
 LibGGI mode string (see \fBlibggi(7)\fR).
 
 .TP
-\fBtarget-spec\fR
+\fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using
-\fBggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
+\fB'ggiOpen(NULL)'\fR when \fBGGI_DISPLAY\fR is not set).
 
 .PP
 .SH FEATURES

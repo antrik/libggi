@@ -1,4 +1,4 @@
-.TH "ggiGetGamma" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiGetGamma" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
 .SH SYNOPSIS
@@ -31,19 +31,19 @@ effects in games.  Truecolor modes with gamma maps are sometimes
 referred to as "directcolor".
 
 \fBggiSetGammaMap\fR and \fBggiGetGammaMap\fR set or get the gamma map, for
-\fBlen\fR colors starting at \fBs\fR.  In the event that there are more
+\fIlen\fR colors starting at \fIs\fR.  In the event that there are more
 map entries for some channels than others, values for the upper
 indices of the map in the shallow channels are ignored on write, and
 undefined on read.
 
 The \fBggiGammaMax\fR function is used in order to find out how many
 readable and writeable entries are in the map (returned in the
-integers referenced by \fBmaxwrite\fR and \fBmaxread\fR).  This must be
-done once for each channel.  The parameter \fBbitmeaning\fR should be
+integers referenced by \fImaxwrite\fR and \fImaxread\fR).  This must be
+done once for each channel.  The parameter \fIbitmeaning\fR should be
 set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
 the channel of which you are inquiring.  If \fBggiGammaMax\fR returns an
 error, you cannot set the gamma map on this visual.  If \fBggiGammaMax\fR
-succeeds, but \fBmaxwrite\fR is -1 on return, this means that
+succeeds, but \fImaxwrite\fR is -1 on return, this means that
 \fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
 
 \fBggiSetGamma\fR and \fBggiGetGamma\fR sets or gets the gamma correction for

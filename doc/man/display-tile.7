@@ -1,4 +1,4 @@
-.TH "display-tile" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-tile" 7 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBdisplay-tile\fR : Divide display into tiles similar to a video wall
 .SH SYNOPSIS
@@ -16,12 +16,12 @@ different child visuals.
 For each tile (i.e. child visual or mapped area), the following must
 be specified:
 .TP
-\fBoffset-x\fR, \fBoffset-y\fR
+\fIoffset-x\fR, \fIoffset-y\fR
 coordinates (within the parent visual) of the top-left corner of
 the child visual
 
 .TP
-\fBsize-x\fR, \fBsize-y\fR
+\fIsize-x\fR, \fIsize-y\fR
 width and height of the child visual
 
 .TP
@@ -32,7 +32,7 @@ needs to be enclosed in parentheses.
 .PP
 The following options apply to the whole \fBdisplay-tile\fR:
 .TP
-\fB-usedb\fR
+\fB'-usedb'\fR
 Enables DirectBuffer emulation. This is the default mode.
 
 The contents of each mapped area is blitted from the DirectBuffer into
@@ -41,7 +41,7 @@ is flushed.  DirectBuffer emulation works regardless of whether the
 child visuals support DirectBuffer or not.
 
 .TP
-\fB-nodb\fR
+\fB'-nodb'\fR
 Disables DirectBuffer emulation.  LibGGI primitives are passed to each
 of the child visuals with the necessary clipping and translation.  Thus,
 if a child visual underlying a mapped area supports acceleration, then
@@ -50,7 +50,7 @@ the operation on that area will be accelerated.
 .PP
 .SH FEATURES
 .IP \(bu 4
-DirectBuffer support depends on the \fB-usedb\fR and \fB-nodb\fR
+DirectBuffer support depends on the \fB'-usedb'\fR and \fB'-nodb'\fR
 options.
 .IP \(bu 4
 Accelerated in no-DB mode if the underlying target is, otherwise

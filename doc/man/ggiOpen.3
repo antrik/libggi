@@ -1,4 +1,4 @@
-.TH "ggiOpen" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiOpen" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
@@ -16,7 +16,7 @@ int ggiClose(ggi_visual_t vis);
 string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
 display target is opened, which means first examining \fBGGI_DISPLAY\fR,
 then invoking \fBdisplay-auto(7)\fR.  The other arguments are for internal
-purposes only, such as \fBargptr\fR, used to pass driver-specific,
+purposes only, such as \fIargptr\fR, used to pass driver-specific,
 non-textual information to the driver.
 
 \fBggiClose\fR releases and destroys an open visual.  This will close X

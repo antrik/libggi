@@ -1,4 +1,4 @@
-.TH "display-dga" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-dga" 7 "2004-10-14" "libggi-current" GGI
 .SH NAME
 \fBdisplay-dga\fR : Display using XFree86-DGA extension
 .SH SYNOPSIS
@@ -15,12 +15,12 @@ framebuffer support, the program must be run as root for this target
 to be able to mmap \fB/dev/mem\fR.
 .SH OPTIONS
 .TP
-\fBdisplay\fR
+\fIdisplay\fR
 The X display to connect to, otherwise defaults to the display
 specified in \fBDISPLAY\fR.
 
 .TP
-\fB-nocursor\fR
+\fB'-nocursor'\fR
 Normal behavior of display-x and display-xlib is to create a small
 dot mouse cursor pixmap which is visible when the mouse is
 positioned over the window containing the visual.  This can get in
@@ -29,18 +29,18 @@ this option, you will not see an X mouse cursor when it is over
 the visual.
 
 .TP
-\fB-noinput\fR
+\fB'-noinput'\fR
 XF86DGA events sent to the window are not captured and merged with
 any other LibGII input sources.  This allows one to take input
 from raw devices without receiving duplicate events should X also
 be configured to use the device.
 
 .TP
-\fB-physz==<sizex>,<sizey>[dpi]\fR
+\fB'-physz==<sizex>,<sizey>[dpi]'\fR
 This option will override the physical screen size reported by the
 X server, which affects applications which wish to remain
-resolution independent.  \fBsizex\fR, \fBsizey\fR are the x,y size
-of the screen in millimeters, unless the optional \fBdpi\fR string
+resolution independent.  \fIsizex\fR, \fIsizey\fR are the x,y size
+of the screen in millimeters, unless the optional \fB'dpi'\fR string
 is affixed, in which case, they represent resolution in
 dots-per-inch.  Yes, there are two equals signs there, for reasons
 of compatibility with other targets.

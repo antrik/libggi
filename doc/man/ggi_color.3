@@ -1,4 +1,4 @@
-.TH "ggi_color" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggi_color" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggi_color\fR, \fBggi_pixel\fR : LibGGI color description
 .SH SYNOPSIS
@@ -30,14 +30,14 @@ to their documentation.
 
 \fBggi_pixel\fRs format depends on the actual display and mode. For those
 who want to operate directly on pixel values, this format is described
-in the \fBggi_pixelformat\fR structure.
+in the \fBggi_pixelformat(3)\fR structure.
 .SH PIXEL ARRAYS
 Although individual pixels are kept into 32 bits \fBggi_pixel\fR, arrays
-of pixels, as used in \fBggi[Get|Put]*\fR functions, \fBggiPackColors\fR and
-\fBggiUnpackPixels\fR, are stored in the display specific format, thus
+of pixels, as used in \fBggi[Get|Put]*\fR functions, \fBggiPackColors(3)\fR and
+\fBggiUnpackPixels(3)\fR, are stored in the display specific format, thus
 packed according to the actual pixel size.  This size is given by the
 \fBGT_SIZE\fR macro for \fBgraphtype\fR or the \fBsize\fR field of the
-\fBggi_pixelformat\fR structure.
+\fBggi_pixelformat(3)\fR structure.
 
 The buffers provided to these functions must be big enough to store or
 read enough pixels. Although it is safe to use 32 bits per pixel, the

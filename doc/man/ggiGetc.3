@@ -1,4 +1,4 @@
-.TH "ggiGetc" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggiGetc" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggiGetc\fR, \fBggiKbhit\fR : Convenience functions for simplistic keyboard input
 .SH SYNOPSIS
@@ -21,7 +21,7 @@ applications.
 .RS
 \fBImportant:\fR
 \fIDo not\fR poll like this:
-\fBdo while( ! ggiKbhit(vis) );\fR
+\fB'do while( ! ggiKbhit(vis) );'\fR
 On a multitasking OS you would be wasting a lot of resources
 which could be available to other processes.  If you want to
 wait for a key, use the \fBggiGetc\fR call.

@@ -1,4 +1,4 @@
-.TH "ggi_directbuffer" 3 "2004-10-21" "libggi-current" GGI
+.TH "ggi_directbuffer" 3 "2004-10-15" "libggi-current" GGI
 .SH NAME
 \fBggi_directbuffer\fR, \fBggi_pixellinearbuffer\fR, \fBggi_pixelplanarbuffer\fR, \fBggi_samplelinearbuffer\fR, \fBggi_sampleplanarbuffer\fR : LibGGI direct buffer structure description
 .SH SYNOPSIS
@@ -75,9 +75,9 @@ LibGGI needs to be informed when the application is using the
 framebuffer.
 
 You can determine whether the DirectBuffer needs to be acquired by
-using \fBggiResourceMustAcquire\fR.  An acquire is done by using
-\fBggiResourceAcquire\fR and it is released by calling
-\fBggiResourceRelease\fR.
+using \fBggiResourceMustAcquire(3)\fR.  An acquire is done by using
+\fBggiResourceAcquire(3)\fR and it is released by calling
+\fBggiResourceRelease(3)\fR.
 
 .TP
 \fBread\fR, \fBwrite\fR
@@ -151,7 +151,7 @@ typedef struct {
 .fi
 
 A linear buffer is a region in the application's virtual memory
-address space. A pixel with the pixel coordinates (\fBx\fR, \fBy\fR) is
+address space. A pixel with the pixel coordinates (\fIx\fR, \fIy\fR) is
 assigned a pixel number according to the following formula:
 
 .nb

@@ -1,4 +1,4 @@
-.TH "display-sub" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-sub" 7 "2004-10-14" "libggi-current" GGI
 .SH NAME
 \fBdisplay-sub\fR : Make a child visual that is a window to the parent
 .SH SYNOPSIS
@@ -13,7 +13,7 @@ a window and the \fBdisplay-sub\fR target is intended for simple windowing
 systems.
 
 No textual arguments, since this target can only be used by
-applications. \fBargptr\fR must contain the parent visual.
+applications. \fIargptr\fR must contain the parent visual.
 
 The sub target behaves a bit special with respect to (i.e. abuses the
 semantics of :) the \fBggiSetMode(3)\fR call. It uses the "visible"
@@ -25,10 +25,10 @@ virtual visual within an existing one, which is convenient to allow
 for window system canvases to be about any GGI program.
 .SH OPTIONS
 .TP
-\fBtarget-spec\fR
+\fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using
-\fBggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
+\fB'ggiOpen(NULL)'\fR when \fBGGI_DISPLAY\fR is not set).
 
 .PP
 .SH FEATURES

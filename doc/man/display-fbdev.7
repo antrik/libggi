@@ -1,4 +1,4 @@
-.TH "display-fbdev" 7 "2004-10-21" "libggi-current" GGI
+.TH "display-fbdev" 7 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBdisplay-fbdev\fR : Display using Linux kernel framebuffer devices
 .SH SYNOPSIS
@@ -17,33 +17,33 @@ determine the available modes for the device.  Driver timings and
 resolutions can be automatically obtained when running under KGIcon.
 .SH OPTIONS
 .TP
-\fBframebuffer\fR
+\fIframebuffer\fR
 The filename of the framebuffer target to use.  The default is to
 get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer
 associated with the current console if that is unset.
 
 .TP
-\fB-nokbd\fR
+\fB'-nokbd'\fR
 Do not open any libraries for keyboard input.
 
 .TP
-\fB-nomouse\fR
+\fB'-nomouse'\fR
 Do not open any libraries for mouse input.
 
 .TP
-\fB-noinput\fR
-Same as both \fB-nokbd\fR and \fB-nomouse\fR.
+\fB'-noinput'\fR
+Same as both \fB'-nokbd'\fR and \fB'-nomouse'\fR.
 
 .TP
-\fB-novt\fR
+\fB'-novt'\fR
 Disable virtual console support.
 
 .TP
-\fB-physz=<sizex>,<sizey>[dpi]\fR
+\fB'-physz=<sizex>,<sizey>[dpi]'\fR
 This option will provide a physical screen size for applications
 which wish to remain resolution independent.
-\fBsizex\fR,:p:\fBsizey\fR are the x,y size of the screen in
-millimeters, unless the optional \fBdpi\fR string is affixed, in
+\fIsizex\fR,:p:\fBsizey\fR are the x,y size of the screen in
+millimeters, unless the optional \fB'dpi'\fR string is affixed, in
 which case, they represent resolution in dots-per-inch.
 
 .PP
