@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.2 2004/06/04 22:41:16 cegger Exp $
+/* $Id: mansync.h,v 1.3 2004/10/08 18:00:28 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -133,7 +133,7 @@ int _GGI_mansync_cont(ggi_visual *vis);
 /* Convenience macro */
 
 #define MANSYNC_SETFLAGS(vis,flags)					\
-{									\
+do {									\
 	/* Change from async to sync. */				\
 	if(MANSYNC_ISASYNC(vis) && !(flags & GGIFLAG_ASYNC) &&		\
 	   /* Don't start mansync if no DB */				\
@@ -143,6 +143,6 @@ int _GGI_mansync_cont(ggi_visual *vis);
 	/* From sync to async */					\
 	else if(!MANSYNC_ISASYNC(vis) && (flags & GGIFLAG_ASYNC))	\
 		MANSYNC_stop(vis);					\
-}
+} while(0);
 
 #endif /* _GGI_DISPLAY_MANSYNC_H */
