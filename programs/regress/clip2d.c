@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.11 2004/05/27 10:05:57 pekberg Exp $
+/* $Id: clip2d.c,v 1.12 2004/05/27 11:10:58 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -28,6 +28,7 @@
 #include "../../default/common/clip.c"
 
 #include "common.inc.c"
+#include "clipdb.inc.c"
 
 #define MIN(a, b)	(a < b) ? (a) : (b)
 #define MAX(a, b)	(a > b) ? (a) : (b)
@@ -42,7 +43,7 @@ static ggi_visual_t vis;
 static int checkresult(int x0, int y0, int x1, int y1,
 			int x0_expect, int y0_expect,
 			int x1_expect, int y1_expect,
-			int ret_expect)
+			int ret_expect, int finish)
 {
 	int clip_first = 0;
 	int clip_last = 0;
@@ -100,7 +101,8 @@ static int checkresult(int x0, int y0, int x1, int y1,
 	}
 
 success:
-	printsuccess();
+	if(finish)
+		printsuccess();
 	return 0;
 }
 
@@ -124,7 +126,7 @@ static void testcase1(void)
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
-		ret_expect);
+		ret_expect, 1);
 }
 
 
@@ -146,7 +148,7 @@ static void testcase2(void)
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
-		ret_expect);
+		ret_expect, 1);
 }
 
 
@@ -168,7 +170,7 @@ static void testcase3(void)
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
-		ret_expect);
+		ret_expect, 1);
 }
 
 
@@ -185,7 +187,7 @@ static void testcase4(void)
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
-		1);
+		1, 1);
 }
 
 
@@ -202,7 +204,65 @@ static void testcase5(void)
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
-		1);
+		1, 1);
+}
+
+
+#if 0
+#define DBSIZE (1000)
+static void generate_clipdb(void)
+{
+	int db[DBSIZE][9];
+	int i;
+	FILE *f=fopen("clipdb.inc.c", "wt");
+	srand(time(NULL));
+	fprintf(f, "#define CLIPDBSIZE (%d)\n", DBSIZE);
+	fprintf(f, "int db[CLIPDBSIZE][9] = {\n");
+	for(i = 0; i < DBSIZE; ++i) {
+		int clip1, clip2, j;
+		db[i][0] = (rand() % (2*MODE_SIZE_X)) - MODE_SIZE_X / 2;
+		db[i][1] = (rand() % (2*MODE_SIZE_Y)) - MODE_SIZE_Y / 2;
+		db[i][2] = (rand() % (2*MODE_SIZE_X)) - MODE_SIZE_X / 2;
+		db[i][3] = (rand() % (2*MODE_SIZE_Y)) - MODE_SIZE_Y / 2;
+		db[i][4] = db[i][0];
+		db[i][5] = db[i][1];
+		db[i][6] = db[i][2];
+		db[i][7] = db[i][3];
+		db[i][8] = _ggi_clip2d(vis, &db[i][4], &db[i][5], &db[i][6], &db[i][7],
+				&clip1, &clip2);
+		if(!db[i][8])
+			db[i][4] = db[i][5] = db[i][6] = db[i][7] = 0;
+
+		for(j = 0; j < 9; ++j) {
+			if(!j)
+				fprintf(f, "\t{ ");
+			else
+				fprintf(f, ",\t");
+			fprintf(f, "%d", db[i][j]);
+		}
+		if(i < DBSIZE - 1)
+			fprintf(f, " },\n");
+		else
+			fprintf(f, " }\n");
+	}
+	fprintf(f, "};\n");
+}
+#endif
+
+static void testcase6(void)
+{
+	int i;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+
+	for(i = 0; i < CLIPDBSIZE; ++i)
+		if(checkresult(
+			db[i][0], db[i][1], db[i][2], db[i][3],
+			db[i][4], db[i][5], db[i][6], db[i][7],
+			db[i][8], 0))
+			return;
+
+	printsuccess();
 }
 
 
@@ -227,6 +287,7 @@ int main(void)
 	testcase3();
 	testcase4();
 	testcase5();
+	testcase6();
 
 	rc = ggiClose(vis);
 
