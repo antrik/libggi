@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.12 2004/09/13 09:42:12 pekberg Exp $
+/* $Id: directx.h,v 1.13 2004/09/13 14:10:35 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -98,7 +98,8 @@ typedef struct directx_priv
 	int xstep;
 	int ystep;
 
-	HANDLE hThreadID, hInit;
+	HANDLE hThread, hInit;
+	DWORD nThreadID;
 	LPDIRECTDRAW lpdd;
 	LPDIRECTDRAW2 lpddext;
 	LPDIRECTDRAWSURFACE lppdds;
