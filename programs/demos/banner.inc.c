@@ -1,7 +1,7 @@
-/* $Id: banner.inc.c,v 1.1 2004/10/18 14:24:21 pekberg Exp $
+/* $Id: banner.inc.c,v 1.2 2004/10/19 13:30:31 pekberg Exp $
 ******************************************************************************
 
-   The banner used by Flying-GGIs...
+   The banner used by the Flying-GGIs demo.
 
    Authors:	1998 	  Andrew Apted		[andrew@ggi-project.org]
 
