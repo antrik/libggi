@@ -3,12 +3,12 @@
 AC_VERSION="2.13"
 AM_VERSION="1.5"
 
-echo -n "Checking for required autoconf ${AC_VERSION}..."
+printf "Checking for required autoconf ${AC_VERSION}..."
 ./checkversion.sh autoconf $AC_VERSION
-test $? -eq 0 || exit $? && echo "ok"
-echo -n "Checking for required automake ${AM_VERSION}..."
+test $? -eq 0 || exit $? && printf "ok\n"
+printf "Checking for required automake ${AM_VERSION}..."
 ./checkversion.sh automake $AM_VERSION
-test $? -eq 0 || exit $? && echo "ok"
+test $? -eq 0 || exit $? && printf "ok\n"
 
 
 touch ChangeLog
