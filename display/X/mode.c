@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2004/09/09 11:55:29 cegger Exp $
+/* $Id: mode.c,v 1.30 2004/09/11 21:10:32 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -216,20 +216,26 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_x_priv *priv;
 	Window root;
-	int w, h, dummy;
+	int w, h;
+	unsigned int depth, dummy;
 
 	priv = GGIX_PRIV(vis);
 
-#warning retcode checking here
-	XGetGeometry(priv->disp, priv->parentwin, &root, &dummy, &dummy,
-		     &w, &h, &dummy, &dummy);
+	if (! XGetGeometry(priv->disp, priv->parentwin, &root,
+		     (int *)&dummy, (int *)&dummy,
+		     &w, &h, &dummy, &depth))
+	{
+		GGIDPRINT_MODE("X (checkmode_fixed):"
+				"no reply from X11 server\n");
+		return GGI_EEVNOTARGET;
+	}
 
 	if (tm->visible.x == GGI_AUTO) tm->visible.x = w;
 	if (tm->visible.y == GGI_AUTO) tm->visible.y = h;
 	if ((tm->visible.x != w) || (tm->visible.y != h))
 		return GGI_EARGINVAL;
 
-	dummy = GGI_X_checkmode_internal(vis, tm, &dummy);
+	dummy = GGI_X_checkmode_internal(vis, tm, (int *)&dummy);
 	if ((dummy != GGI_OK) || (tm->visible.x != w) || (tm->visible.y != h)) {
 		tm->visible.x = w;
 		tm->visible.y = h;
