@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.14 2004/01/29 13:49:34 cegger Exp $
+/* $Id: init.c,v 1.15 2004/01/29 15:00:48 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -26,15 +26,15 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/internal/internal.h>
+#include <ggi/gg.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
-
-#include "config.h"
-#include <ggi/internal/internal.h>
-#include <ggi/gg.h>
 
 
 /* Exported variables */

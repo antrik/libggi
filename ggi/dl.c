@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.5 2004/01/29 13:49:34 cegger Exp $
+/* $Id: dl.c,v 1.6 2004/01/29 15:00:48 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -26,14 +26,14 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/internal/internal.h>
+#include <ggi/gg.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-
-#include "config.h"
-#include <ggi/internal/internal.h>
-#include <ggi/gg.h>
 
 
 #define GGI_SYMNAME_MAX		255
