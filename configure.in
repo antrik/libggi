@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.43 2002/10/11 05:03:45 redmondp Exp $
+dnl $Id: configure.in,v 1.44 2002/10/15 15:37:02 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -40,24 +40,30 @@ build_ipc_target="auto"
 build_kgi_target="no"
 build_libkgi_target="no"
 build_lcd823_target="auto"
-build_mansync_helper="auto"
 build_memory_target="yes"
 build_monotext_target="auto"
-build_multi_target="yes"
-build_palemu_target="auto"
-build_sub_target="auto"
 build_suidkgi_target="no"
 build_svga_target="auto"
 build_vgl_target="auto"
 build_tele_target="auto"
 build_terminfo_target="auto"
-build_tile_target="auto"
-build_truemu_target="auto"
 build_vcsa_target="auto"
-build_vgagl_helper="auto"
 build_dga_target="auto"
 internal_xf86dga="yes"
+
+dnl PseudoTargets
+build_multi_target="yes"
+build_tile_target="auto"
+build_palemu_target="auto"
+build_sub_target="auto"
+build_truemu_target="auto"
+
+dnl Helpers
+build_mansync_helper="auto"
+build_vgagl_helper="auto"
 build_linvtsw_helper="auto"
+
+
 
 
 dnl ========================================================================
