@@ -9,7 +9,7 @@ Synopsis
 ::
 
   display-ipc: [-input] [-physz=<sizex>,<sizey>[dpi]]
-	       -socket=<socket> -semid=<semid> -shmid=<shmid>
+	       -semid=<semid> -shmid=<shmid> -socket=<socket>
 
 Description
 -----------
