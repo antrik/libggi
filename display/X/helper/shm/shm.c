@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
+/* $Id: shm.c,v 1.4 2002/12/05 16:38:35 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -59,7 +59,7 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("TRYLOCK fail!\n");
+			GGIDPRINT_MISC("xshm: TRYLOCK fail (in flush_ximage_child)!\n");
 			if (priv->opmansync) MANSYNC_cont(vis);
 			return 0;
 		}

@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
+/* $Id: buffer.c,v 1.4 2002/12/05 16:38:34 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -239,7 +239,7 @@ int GGI_X_flush_draw(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("TRYLOCK fail!\n");
+			GGIDPRINT_MISC("X: TRYLOCK fail (in flush_draw)!\n");
 			return 0;
 		}
 	} else if (tryflag != 2) { 
@@ -343,7 +343,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("TRYLOCK fail!\n");
+			GGIDPRINT_MISC("X: TRYLOCK fail (in flush_ximage_child)!\n");
 			if (priv->opmansync) MANSYNC_cont(vis);
 			return 0;
 		}
