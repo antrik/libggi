@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/09/13 08:54:06 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/10/31 14:01:27 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -368,7 +368,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		sigaction(vga_signals[i], NULL, old_signals+i);
 	}
 
-	if (!_ggiDebugState) vga_disabledriverreport();
+	if (!_ggiDebug) vga_disabledriverreport();
 
 	if (vga_init()) {
 		fprintf(stderr, "display-SVGAlib: vga_init() failed\n");
