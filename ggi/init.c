@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.20 2004/10/27 09:27:37 pekberg Exp $
+/* $Id: init.c,v 1.21 2004/10/27 18:54:12 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -58,7 +58,7 @@ static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
 static int            numextensions    = 0;
 static ggi_extension *_ggiExtension    = NULL;
 
-enum gg_swartype     swars_selected    = 0;
+gg_swartype     swars_selected    = 0;
 
 /* 
  * Returns the directory where global config files are kept
@@ -74,7 +74,7 @@ const char *ggiGetConfDir(void)
 	return ggiconfdir;
 }
 
-enum gg_swartype _ggiGetSwarType(void) {
+gg_swartype _ggiGetSwarType(void) {
 	return (swars_selected & ggGetSwarType());
 }
 

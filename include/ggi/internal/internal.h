@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.17 2004/10/14 11:01:33 cegger Exp $
+/* $Id: internal.h,v 1.18 2004/10/27 18:54:12 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -142,7 +142,7 @@ GGIAPIFUNC void _ggiZapMode(ggi_visual * vis, int zapall);
 GGIAPIFUNC ggi_visual *_ggiNewVisual(void);
 GGIAPIFUNC void _ggiDestroyVisual(ggi_visual * vis);
 
-GGIAPIFUNC enum gg_swartype _ggiGetSwarType(void);
+GGIAPIFUNC gg_swartype _ggiGetSwarType(void);
 
 /* colormap.c */
 GGIAPIFUNC size_t _ggiColormapGetPrivsize(ggi_visual_t vis);
