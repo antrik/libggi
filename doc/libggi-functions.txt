@@ -1369,6 +1369,10 @@ in graphic modes because by definition *dpp* is 1x1, but in text
 modes the application can do smooth scrolling.
 
 
+When `ggiSetOrigin` returns, the screen reflects the new origin.
+It is not necessary to call ggiFlush.
+
+ 
 `ggiGetOrigin` gets the current top-left corner of the displayed area
 into (:p:`x`, :p:`y`).
 
