@@ -1,6 +1,6 @@
 # Generated from ltmain.in; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.42 2004/10/22 18:03:48) 1.9e
+# ltmain.sh (GNU libtool 1.1667.2.53 2004/11/01 18:18:37) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.42 2004/10/22 18:03:48) 1.9e
+#       $progname:		(GNU libtool 1.1667.2.53 2004/11/01 18:18:37) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -70,9 +70,9 @@
 
 PROGRAM=ltmain.sh
 PACKAGE=libtool
-VERSION=1.9e
-TIMESTAMP=" 1.1667.2.42 2004/10/22 18:03:48"
-package_revision=1.1667.2.42
+VERSION=1.9g
+TIMESTAMP=" 1.1667.2.53 2004/11/01 18:18:37"
+package_revision=1.1667.2.53
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2249,7 +2249,17 @@ func_mode_install ()
 	  # Install the shared library and build the symlinks.
 	  $show "$install_prog $dir/$srcname $destdir/$realname"
 	  $run eval "$install_prog $dir/$srcname $destdir/$realname" || exit $?
-	  if test -n "$stripme" && test -n "$striplib"; then
+	  tstripme="$stripme"
+	  case $host_os in
+	  cygwin* | mingw* | pw32*)
+	    case $realname in
+	    *.dll.a)
+	      tstripme=""
+	      ;;
+	    esac
+	    ;;
+	  esac
+	  if test -n "$tstripme" && test -n "$striplib"; then
 	    $show "$striplib $destdir/$realname"
 	    $run eval "$striplib $destdir/$realname" || exit $?
 	  fi
@@ -2379,7 +2389,7 @@ func_mode_install ()
 	  esac
 
 	  # Check the variables that should have been set.
-	  test -z "$notinst_deplibs" && \
+	  test -z "$generated_by_libtool_version" && \
 	    func_fatal_error "invalid libtool wrapper script \`$wrapper'"
 
 	  finalize=yes
@@ -6073,6 +6083,7 @@ EOF
 #include <malloc.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #if defined(PATH_MAX)
@@ -6117,6 +6128,8 @@ EOF
   if (stale) { free ((void *) stale); stale = 0; } \
 } while (0)
 
+/* -DDEBUG is fairly common in CFLAGS.  */
+#undef DEBUG
 #if defined DEBUGWRAPPER
 # define DEBUG(format, ...) fprintf(stderr, format, __VA_ARGS__)
 #else
@@ -6174,6 +6187,7 @@ EOF
 EOF
 
 	    cat >> $cwrappersource <<"EOF"
+  return 0;
 }
 
 void *
@@ -6243,7 +6257,6 @@ find_executable (const char* wrapper)
   int has_slash = 0;
   const char* p;
   const char* p_next;
-  struct stat st;
   /* static buffer for getcwd */
   char tmp[LT_PATHMAX + 1];
   int tmp_len;
@@ -6415,7 +6428,8 @@ relink_command=\"$relink_command\"
 
 # This environment variable determines our operation mode.
 if test \"\$libtool_install_magic\" = \"$magic\"; then
-  # install mode needs the following variable:
+  # install mode needs the following variables:
+  generated_by_libtool_version='$macro_version'
   notinst_deplibs='$notinst_deplibs'
 else
   # When we are sourced in execute mode, \$file and \$ECHO are already set.
