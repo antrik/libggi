@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.2 2001/05/13 01:30:03 skids Exp $
+/* $Id: speed.c,v 1.3 2003/07/04 23:36:57 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -34,7 +34,7 @@ struct {
 /**********************************************************************/
 
 struct tms timer;
-double u_time,s_time;
+double u_time, s_time;
 
 /* A few simple timing routines. Note that this is Unixish and might need
  * autoconfiguration later ...
@@ -42,8 +42,7 @@ double u_time,s_time;
 
 /* Start a timer.
  */
-void
-time_start(void)
+static void time_start(void)
 {
 	times(&timer);
 }
@@ -51,13 +50,12 @@ time_start(void)
 /* Sample an intermediate result. This is done for later correction for
  * calling overhead and such.
  */
-void
-time_offset(void)
+static void time_offset(void)
 {
 	struct tms end; 
 	times(&end);
-	u_time=-(end.tms_utime-timer.tms_utime)/(double)CLK_TCK;
-	s_time=-(end.tms_stime-timer.tms_stime)/(double)CLK_TCK;
+	u_time = (double) -(end.tms_utime - timer.tms_utime) / CLK_TCK;
+	s_time = (double) -(end.tms_stime - timer.tms_stime) / CLK_TCK;
 	time_start();
 }
 
@@ -65,13 +63,12 @@ time_offset(void)
  * time_offset is applied.
  * u_time and s_time contain the user- and system times afterwards.
  */
-void
-time_stop(void)
+static void time_stop(void)
 {
 	struct tms end; 
 	times(&end);
-	u_time+=(end.tms_utime-timer.tms_utime)/(double)CLK_TCK;
-	s_time+=(end.tms_stime-timer.tms_stime)/(double)CLK_TCK;
+	u_time += (double) (end.tms_utime - timer.tms_utime) / CLK_TCK;
+	s_time += (double) (end.tms_stime - timer.tms_stime) / CLK_TCK;
 }
 
 /* The pixelvalue for the color white.
@@ -80,8 +77,7 @@ ggi_pixel white_pixel;
 
 /* Print the name of the currently excuting test in the top left corner.
  */
-void
-TestName(const char *name)
+static void TestName(const char *name)
 {
 	ggiSetGCForeground(mode.vis, white_pixel);
 	ggiPuts(mode.vis, 0, 0, name);
@@ -89,15 +85,14 @@ TestName(const char *name)
 
 /* This is an empty function that is used for calibration.
  */
-void
-nothing(ggi_visual_t vis, int foo, int bar, int foo2, int bar2)
+static void nothing(ggi_visual_t vis, int foo, int bar, int foo2, int bar2)
 {}
 
+#if 0
 /* Get the number of pixels that are in the rectangle (including _all_
  * borders).
  */
-int
-getnumpixels(int x1,int y1,int x2,int y2)
+static int getnumpixels(int x1,int y1,int x2,int y2)
 {
 	int x, y, c; 
 	ggi_pixel pix;
@@ -111,13 +106,14 @@ getnumpixels(int x1,int y1,int x2,int y2)
 	}
 	return c;
 }
+#endif
 
 #define RANDSEED 0x12345678
 
+#if 0
 /* Draw a random pattern. See speed.c.
  */
-void
-drawrandom(int x1,int y1,int x2,int y2)
+static void drawrandom(int x1,int y1,int x2,int y2)
 {
 	int x,y; 
 	srand(RANDSEED);
@@ -127,11 +123,12 @@ drawrandom(int x1,int y1,int x2,int y2)
 		}
 	}
 }
+#endif
 
+#if 0
 /* Check for the above generated pattern.
  */
-int
-checkrandom(int x1,int y1,int x2,int y2)
+static int checkrandom(int x1,int y1,int x2,int y2)
 {
 	int x, y; 
 	ggi_pixel pix;
@@ -145,11 +142,11 @@ checkrandom(int x1,int y1,int x2,int y2)
 	}
 	return 0;
 }
+#endif
 
 /* Check DrawLine speed.
  */
-void
-Line(void)
+static void Line(void)
 {
 	int x,c,mxcnt;
 
@@ -196,8 +193,7 @@ Line(void)
 
 /* Check DrawBox speed.
  */
-void
-Box(void)
+static void Box(void)
 {
 	int c,mxcnt;
 
@@ -243,8 +239,7 @@ Box(void)
 /* Check CopyBox speed. Check all overlapping cases. This can make a real
  * difference. Cache prediction and such ...
  */
-void
-CopyBox(void)
+static void CopyBox(void)
 {
 	int c,mxcnt;
 
@@ -442,8 +437,7 @@ struct test
 
 /* Display usage info.
  */
-void
-usage(const char *prog)
+static void usage(const char *prog)
 {
 	fprintf(stderr,"Usage:\n\n"
 		       "%s [-flags] [--tests] \n\n"
@@ -457,8 +451,7 @@ usage(const char *prog)
 
 /* Display usage info. List of tests.
  */
-void
-list_tests(void)
+static void list_tests(void)
 {
 	int testnum;
 	
@@ -472,8 +465,7 @@ list_tests(void)
 
 /* Check arguments.
  */
-int
-parse_args(int argc,char **argv)
+static int parse_args(int argc,char **argv)
 {
 	int x,testnum;
 
@@ -507,8 +499,7 @@ parse_args(int argc,char **argv)
 
 /* Set up default mode.
  */
-int
-setup_mode(void)
+static int setup_mode(void)
 {
 	int err;
 	ggi_color map[256];
@@ -552,7 +543,7 @@ main(int argc,char **argv)
 
 	if (parse_args(argc,argv)) return 1;
 
-	srandom(time(NULL));
+	srandom((unsigned)time(NULL));
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);

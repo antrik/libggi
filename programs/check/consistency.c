@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.3 2003/05/03 16:50:33 cegger Exp $
+/* $Id: consistency.c,v 1.4 2003/07/04 23:36:57 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -46,8 +46,7 @@ ggi_pixel white_pixel, black_pixel;
 
 /* Print the name of the currently running test in the top left corner
  */
-void
-TestName(const char *name)
+static void TestName(const char *name)
 {
 	ggiSetGCForeground(mode.vis,white_pixel);
 	ggiPuts(mode.vis,0,0,name);
@@ -56,8 +55,7 @@ TestName(const char *name)
 /* This gets the number of pixels with a nonzero pixelvalue within the
  * rectangle enclosed by x1,y2,x2,y2 - including both borders.
  */
-int
-getnumpixels(int x1,int y1,int x2,int y2)
+static int getnumpixels(int x1,int y1,int x2,int y2)
 {
 	int x,y,c; 
 	ggi_pixel pix;
@@ -78,8 +76,7 @@ getnumpixels(int x1,int y1,int x2,int y2)
 
 /* Draw a random sequence into a rectangle.
  */
-void
-drawrandom(int x1,int y1,int x2,int y2)
+static void drawrandom(int x1,int y1,int x2,int y2)
 {
 	int x,y; 
 	srand(RANDSEED);
@@ -93,8 +90,7 @@ drawrandom(int x1,int y1,int x2,int y2)
 /* Check, if the pixels set in a rectangle are those that would have been
  * drawn by the above routine.
  */
-int
-checkrandom(int x1,int y1,int x2,int y2)
+static int checkrandom(int x1,int y1,int x2,int y2)
 {
 	int x, y;
 	ggi_pixel pix;
@@ -112,8 +108,7 @@ checkrandom(int x1,int y1,int x2,int y2)
 /* A few very basic checks, that test the checking system itself.
  * If these fail, something is _very_ wrong.
  */
-void
-BasicConsistency(void)
+static void BasicConsistency(void)
 {
 	int c,x,y,pass;
 	ggi_pixel rc;
@@ -123,7 +118,7 @@ BasicConsistency(void)
 
 	pass=1; 
 	for(x=1;x!=0;x<<=1) {
-		ggiSetGCForeground(mode.vis,x);
+		ggiSetGCForeground(mode.vis, (ggi_pixel)x);
 		ggiGetGCForeground(mode.vis,&rc);
 		if ((unsigned)x != rc) {
 			pass=0;break;
@@ -161,8 +156,7 @@ BasicConsistency(void)
  * The output is neither pass/fail, nor does it indicate much, but it
  * can be helpful to target developers.
  */
-void
-ColorWrap(void)
+static void ColorWrap(void)
 {
 	ggi_pixel pix, pix2;
 	/* Now we check when we have a color wraparound. */
@@ -180,8 +174,7 @@ ColorWrap(void)
 
 /* Test horizontal lines.
  */
-void
-Hline(void)
+static void Hline(void)
 {
 	int x,y,c,pass;
 
@@ -211,8 +204,7 @@ Hline(void)
 
 /* Test vertical lines.
  */
-void
-Vline(void)
+static void Vline(void)
 {
 	int x=0, y, c, pass;
 
@@ -242,8 +234,7 @@ Vline(void)
  * given ruleset for rounding and such. The test is compliant with the
  * article by "the master of lines", Bresenham - at least I hope so ;-).
  */
-int
-CheckLine(ggi_visual_t vis,int x1,int y1,int x2,int y2)
+static int CheckLine(ggi_visual_t vis,int x1,int y1,int x2,int y2)
 {
 	int xx,max,cx,cy,fail;
 	ggi_pixel pix;
@@ -283,8 +274,7 @@ CheckLine(ggi_visual_t vis,int x1,int y1,int x2,int y2)
  * could be errors at specific major lengths, which are not completely checked.
  * Maybe we should add a few more ...
  */
-void
-Line(void)
+static void Line(void)
 {
 	int x,failcnt;
 
@@ -318,8 +308,7 @@ Line(void)
 
 /* Check boxes.
  */
-void
-Box(void)
+static void Box(void)
 {
 	int x,y,c,pass;
 
@@ -413,8 +402,7 @@ Box(void)
 /* Check copyboxs. This exhaustively checks overlapping conditions and such,
  * as they often cause problems.
  */
-void
-CopyBox(void)
+static void CopyBox(void)
 {
 	int x,y;
 	int pass;
@@ -558,8 +546,7 @@ struct test
 
 /* Give a usage summary
  */
-void
-usage(const char *prog)
+static void usage(const char *prog)
 {
 	fprintf(stderr,"Usage:\n\n"
 		       "%s [-flags] [--tests]\n\n"
@@ -573,8 +560,7 @@ usage(const char *prog)
 
 /* Give a usage summary of the available tests
  */
-void
-list_tests(void)
+static void list_tests(void)
 {
 	int testnum;
 	
@@ -588,8 +574,7 @@ list_tests(void)
 
 /* Parse arguments
  */
-int
-parse_args(int argc,char **argv)
+static int parse_args(int argc,char **argv)
 {
 	int x,testnum;
 
@@ -625,8 +610,7 @@ parse_args(int argc,char **argv)
 /* Set up the mode to work on. We set the default mode. Use GGI_DEFMODE to
  * override the target default.
  */
-int
-setup_mode(void)
+static int setup_mode(void)
 {
 	int err;
 	ggi_color map[256];
@@ -673,7 +657,7 @@ main(int argc,char **argv)
 
 	if (parse_args(argc,argv)) return 1;
 
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);

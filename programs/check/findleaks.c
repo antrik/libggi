@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.2 2002/10/25 21:23:15 cegger Exp $
+/* $Id: findleaks.c,v 1.3 2003/07/04 23:36:57 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -25,14 +25,14 @@
 
 ggi_visual_t vis;
 
-void
-wait4key(void)
+#if 0
+static void wait4key(void)
 {
 	getchar();
 }
+#endif
 
-void
-err(char *s,...)
+static void err(char *s,...)
 {
 	printf("Fatal error: ");
 	printf(s);
@@ -43,15 +43,13 @@ err(char *s,...)
 int pid;
 char statpath[1024];
 
-void
-fill_info(void)
+static void fill_info(void)
 {
 	pid = getpid();
 	sprintf(statpath, "/proc/%d/status", pid);
 }
 
-long
-get_size(void)
+static long get_size(void)
 {
 	long size=0;
 	FILE *fil;
@@ -68,7 +66,7 @@ get_size(void)
 }
 
 
-void
+static void
 inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
 {
 	printf(info);

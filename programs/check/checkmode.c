@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.5 2003/02/14 14:52:31 cegger Exp $
+/* $Id: checkmode.c,v 1.6 2003/07/04 23:36:57 cegger Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -82,7 +82,7 @@ int async;  /* false: sync mode, true: async mode */
 
 int iswrong=0; /* if the checkmode return is wrong. */
 
-void checkoneresolution(int j, int x, int y, int xvir, int yvir )
+static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 {
 	ggi_mode suggest;
 	int res;
@@ -173,7 +173,7 @@ void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 	}
 }
 
-void checkstandardresolutions(void)
+static void checkstandardresolutions(void)
 {
 	int i,j,x,y;
 
@@ -236,7 +236,7 @@ struct area {
 };
 
 
-void scanarea(struct area * a, 
+static void scanarea(struct area * a, 
 	      int gti /* graphtype index */)
 /* area with x1,y1,x2,y2 initialised: maximum scanned area! */
 
@@ -449,7 +449,7 @@ printf("%d =? %d ",l,n), l==n) : (printf("%d =? %d ",l,m), l==m))
 	
 
 
-void checkallresolutions(void)
+static void checkallresolutions(void)
 {
 	int j;
 	struct area a;
@@ -471,7 +471,7 @@ void checkallresolutions(void)
 	}
 }
 		
-void usage(char * s)
+static void usage(char * s)
 {
 	printf("Usage: %s [options]\n"
 	       "     available options:\n"
@@ -500,7 +500,7 @@ void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.5 2003/02/14 14:52:31 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.6 2003/07/04 23:36:57 cegger Exp $\n");
 	exit(0);
 }
 

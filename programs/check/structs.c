@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.2 2003/02/14 15:37:51 fries Exp $
+/* $Id: structs.c,v 1.3 2003/07/04 23:36:57 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -50,8 +50,7 @@ struct test
 
 /* Display usage info.
  */
-void
-usage(const char *prog)
+static void usage(const char *prog)
 {
 	fprintf(stderr,"Usage:\n\n"
 		       "%s [-flags] [--tests]\n\n"
@@ -64,8 +63,7 @@ usage(const char *prog)
 
 /* Display usage info. List available tests.
  */
-void
-list_tests(void)
+static void list_tests(void)
 {
 	int testnum;
 	
@@ -79,8 +77,7 @@ list_tests(void)
 
 /* Check arguments.
  */
-int
-parse_args(int argc,char **argv)
+static int parse_args(int argc,char **argv)
 {
 	int x,testnum;
 
@@ -118,8 +115,7 @@ parse_args(int argc,char **argv)
 	return 0;
 }
 
-void
-print_pixfmt(const ggi_pixelformat *pixfmt)
+static void print_pixfmt(const ggi_pixelformat *pixfmt)
 {
 	int i;
 	if (pixfmt == NULL) {
@@ -154,7 +150,7 @@ print_pixfmt(const ggi_pixelformat *pixfmt)
 }
 
 
-int db_doacquire(const ggi_directbuffer *dbuf)
+static int db_doacquire(const ggi_directbuffer *dbuf)
 {
 	if (ggiResourceAcquire(dbuf->resource,
 			       GGI_ACTYPE_READ | GGI_ACTYPE_WRITE) == 0) {
@@ -173,8 +169,7 @@ int db_doacquire(const ggi_directbuffer *dbuf)
 /* Set the default mode and do all the work. We might want to split 
  * that later ...
  */
-int
-setup_mode(void)
+static int setup_mode(void)
 {
 	int i;
 	ggi_color col;
