@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.11 2003/02/09 00:10:19 cegger Exp $
+/* $Id: shm.c,v 1.12 2003/05/05 12:52:52 ggibecka Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -267,6 +267,11 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 
 	/* We assume vis->mode structure has already been filled out */
 	memcpy(&tm, vis->mode, sizeof(ggi_mode));
+
+	/* Make sure we do not fail due to physical size constraints,
+	 * which are meaningless on a memory visual.
+	 */
+	tm.size.x=tm.size.y=GGI_AUTO;
 
 	i = 0;
 	i += sprintf(target, "display-memory:-pixfmt=");
