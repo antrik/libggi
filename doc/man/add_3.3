@@ -23,6 +23,18 @@ unsigned *divmod_3(unsigned a[3], unsigned b[3],
 
 \fBdivmod_3\fR calculates the quotient \fBq\fR and the remainder \fBr\fR of \fBa\fR/\fBb\fR
 such that \fBa\fR = \fBq\fR * \fBb\fR + \fBr\fR. Equivalent to r=a%b,q=a/b.
+
+Multiplication and division needs to operate on \fBlimbs\fR to perform long
+multiplication and division. If a type with twice the precision of an
+\fBunsigned\fR is found (typically the \fBlong long\fR type), \fBunsigned\fR is used
+as the \fBlimb\fR. If not, half the bits of an \fBunsigned\fR are used as the
+\fBlimb\fR.
+
+The division algorithm is probably similar to the algorithm described
+by Donald E. Knuth in "The Art of Computer Programming", volume 2, but
+the author of the code has not actually read that book, only a short
+description of the algorithm. The degree of similarity is therefore
+uncertain.
 .SH RETURN VALUE
 \fBadd_3\fR, \fBsub_3\fR and \fBmul_3\fR all return a pointer to \fBl\fR which has
 been updated in place.

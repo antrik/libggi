@@ -16,6 +16,16 @@ with triple precision.
 
 The most significant part of the \fBtriple-int\fR is stored at the
 highest index in the array representation.
+
+A \fBtriple-int\fR is typically declared as follows:
+
+.nb
+.nf
+unsigned x[3];
+.fi
+
+Don't let the above unsigned keyword fool you, all the routines
+operate as if the \fBtriple-int\fR is signed.
 .SH SEE ALSO
 \fBassign_3(3)\fR, \fBassign_int_3(3)\fR, \fBassign_unsigned_3(3)\fR,
 \fBsign_3(3)\fR, \fBbits_3(3)\fR, \fBeq0_3(3)\fR, \fBgt0_3(3)\fR,
