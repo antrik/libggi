@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2003/12/13 21:12:02 mooz Exp $
+/* $Id: color.c,v 1.5 2004/01/31 22:34:03 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -262,11 +262,11 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 	gam.green = priv->greens;
 	gam.blue = priv->blues;
 	gam.transp = NULL;
-	
+
 	i = 0;
 	do {
 		if ((start + i) < priv->gamma.maxwrite_r)
-			vis->gamma->map[start + i].r = priv->reds[start + i] 
+			vis->gamma->map[start + i].r = priv->reds[start + i]
 			  = colormap[i].r;
 		if ((start + i) < priv->gamma.maxwrite_g)
 			vis->gamma->map[start + i].g = priv->greens[start + i]
@@ -297,7 +297,7 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 	if (start >= vis->gamma->len) return -1;
 	if (start < 0) return -1;
 	if (len > (vis->gamma->len - start)) return -1;
-	
+
 	i = 0;
 	do {
 		if ((start + i) < vis->gamma->maxread_r)
