@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.1 2004/10/08 11:49:34 cegger Exp $
+/* $Id: mansync.c,v 1.2 2004/10/08 12:00:23 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI display-x - mansync.
@@ -58,6 +58,13 @@ static void testcase1(const char *desc)
 		return;
 	}
 
+#if 0
+	/* Here, XGGI would switch to async mode,
+	 * if there were a place to hook in ggiFlush()
+	 */
+	ggiSetFlags(vis, GGIFLAG_ASYNC);
+#endif
+
 	ggiParseMode("", &mode);
 	ggiCheckMode(vis, &mode);
 
@@ -98,8 +105,7 @@ static void testcase1(const char *desc)
 	}
 
 
-	/* ... and now draw something. If mansync runs,
-	 * you should see something
+	/* ... and now draw something.
 	 */
 	pixel_color = ggiMapColor(vis, &color_color);
 	ggiSetGCForeground(vis, pixel_color);
