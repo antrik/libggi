@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.16 2004/05/21 20:09:07 aldot Exp $
+/* $Id: demo.c,v 1.17 2004/06/04 19:46:32 aldot Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -47,7 +47,12 @@
  * globally so subroutines like "waitabit" can access it.
  * See its allocation in main() for details.
  */
-ggi_visual_t vis;
+static ggi_visual_t vis;
+
+
+/* noninteractive ? default no, interactive */
+
+static int noninteractive = 0;
 
 
 /* In case we were called with wrong parameters, give an explanation.
@@ -55,10 +60,10 @@ ggi_visual_t vis;
 static void usage(const char *prog)
 {
 	fprintf(stderr, "Usage:\n\n"
-		        "%s [--clip] [--target <target>] "
+			"%s [--clip] [--noninteractive] [--target <target>] "
 			"<xsize>x<ysize>[#<virtx>x<virty>]"
 			"['['<bpp>']']\n\n"
-		       "Example: %s 320x200[8]\n"
+			"Example: %s 320x200[8]\n"
 		"For textmode, try %s 80x25T\n",prog,prog,prog);
 	exit(1);
 }
@@ -73,26 +78,29 @@ static void waitabit(void)
 	 */
 	ggiFlush(vis);
 
-#if 0	/* Activate this to test waiting for max times. 
+	/* Activate this to test waiting for max times. 
 	 * It will cause the wait to not block indefinitely but only for
 	 * 5 seconds.
-         */
+	 */
+	if (noninteractive)
 	{
+#if 1
 		struct timeval tv={5,0};
 		key=ggiEventPoll(vis,emKeyPress,&tv);
 		if (! (key & emKeyPress)) return;
 		key = ggiGetc(vis);
-	}
-
 #else
-	/* ggiGetc will blocking-wait for a keypress. 
-	 * we ignore modifier keys.
-	 */
-	do {
-		key = ggiGetc(vis);
-
-	} while ((key == GIIK_VOID) || (GII_KTYP(key) == GII_KT_MOD));
+		ggUSleep(5000000);
 #endif
+	} else {
+		/* ggiGetc will blocking-wait for a keypress.
+		 * we ignore modifier keys.
+		 */
+		do {
+			key = ggiGetc(vis);
+
+		} while ((key == GIIK_VOID) || (GII_KTYP(key) == GII_KT_MOD));
+	}
 
 	if ((key == 'q') || (key == 'Q'))	/* Q pressed */
 	{	
@@ -104,8 +112,8 @@ static void waitabit(void)
 
 /* Pixel value for white and black. See main() on how to get at it.
  */
-ggi_pixel white;
-ggi_pixel black;
+static ggi_pixel white;
+static ggi_pixel black;
 
 /* Print the name of the current test in the top left corner.
  */
@@ -249,6 +257,7 @@ int main(int argc, char **argv)
 	 * Hope this is enough ... 
 	 */
 	char put_buf[64*1024];
+	char get_buf[64*1024];
 
 	/* This is a struct containing visual and virtual screen size as
 	 * well as the bpp/textmode information 
@@ -285,19 +294,29 @@ int main(int argc, char **argv)
 		/* Enable clipping */
 		doclip=1; argv++; argc--;
 	}
-	
+
+	if ((argc > 0) &&
+	    ((strcmp(*argv, "-n") == 0) ||
+	     (strcmp(*argv, "--noninteractive") == 0))) {
+
+		/* toggle noninteractive */
+		noninteractive = !noninteractive; argv++; argc--;
+	}
+	printf("running tests %sinteractively.\n",
+			noninteractive?"non-":"");
+
 	if ((argc > 1) && 
 	    ((strcmp(*argv, "-t") == 0) ||
 	     (strcmp(*argv, "--target") == 0))) {
 
 		target_name=argv[1]; argv+=2; argc-=2;
 	}
-	
+
 	if (argc > 1) {
 		usage(prog);	/* This is not an allowed call format. */
 		return 1;	/* Tell the user how to call and fail. */
 	}
-	
+
 	/* Set up the random number generator. */
 	srandom((unsigned)time(NULL));
 
@@ -406,8 +425,9 @@ int main(int argc, char **argv)
 	sx_5 = sx/5; sx_12 = sx/12;
 	sy_5 = sy/5; sy_12 = sy/12;
 
-	printf("Visual size is %d mm x %d mm (0 means unknown)\n", mode.size.x, mode.size.y);
-	
+	printf("Visual size is %d mm x %d mm (0 means unknown)\n",
+			mode.size.x, mode.size.y);
+
 	/* Set a colorful palette for the tests.
 	   Please note that GGI always uses 16 bit color components,
 	   so stretch the values accordingly when porting from DOS 
@@ -430,11 +450,11 @@ int main(int argc, char **argv)
 	map[0].b=0xFFFF;
 	
 	white=ggiMapColor(vis, &map[0]);
-	printf("white=%d\n", white);
+	printf("white=%u\n", white);
 
 	map[0].r= map[0].g= map[0].b= 0x0;
 	black=ggiMapColor(vis, &map[0]);
-	printf("black=%d\n", black);
+	printf("black=%u\n", black);
 
 	/* Set the drawing color to black and clear the screen.
 	   (The screen is cleared to black at setmode time, but the
@@ -447,14 +467,17 @@ int main(int argc, char **argv)
 	 */
 	ggiSetGCForeground(vis, white);
 	ggiSetGCBackground(vis, black);
-	ggiPuts(vis,0,0,"Press any key to begin tests...");
+	if (noninteractive)
+		ggiPuts(vis,0,0,"Beginning tests...");
+	else
+		ggiPuts(vis,0,0,"Press any key to begin tests...");
 	ggiFlush(vis);
 
 	/* Wait for any keypress. 
 	 * This is a blocking call which returns a 16 bit wide unicode
 	 * character
 	 */
-	ggiGetc(vis);
+	waitabit();
 
 	if (doclip) {
 		ggiDrawHLine(vis, 0, sy_5-1,  sx);
@@ -567,7 +590,6 @@ int main(int argc, char **argv)
 		ggiDrawVLine(vis, x, 7*sy_12, sy_12);
 	}
 
-
 	/* Now the memvisual and crossblitting code.
 	 * This is an advanced topic which you should ignore if you are
 	 * a beginner.
@@ -674,19 +696,24 @@ int main(int argc, char **argv)
 
 	/* SetOrigin Y test - doesn't need to work 
 	 */
-	dy=0;
 	if (mode.visible.y < mode.virt.y) {
 
 		TestName("SetOrigin Y");
 		waitabit();
 
-		for (dy=0; dy < mode.virt.y-mode.visible.y; dy++) 
+		dx=dy=0;
+		TestStart();
+		for (; dy < mode.virt.y-mode.visible.y; dy++)
 		{
 			ggiSetOrigin(vis,0,dy);
 			ggUSleep(2000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis) || (dx = TestTime()) > 9) break;
 		}
+		dx = TestTime();
 		ggiSetOrigin(vis,0,0);
+		printf("SetOrigin Y: offset %i took %d seconds"
+				" -- %.3f steps per second\n", dy, dx,
+				(double)((dx>0)?(dy/dx):dy));
 	}
 
 	/* SetOrigin X test - doesn't need to work.
@@ -697,19 +724,25 @@ int main(int argc, char **argv)
 		TestName("SetOrigin X");
 		waitabit();
 
-		for (dx=0; dx < mode.virt.x-mode.visible.x; dx++) 
+		dx=dy=0;
+		TestStart();
+		for (; dx < mode.virt.x-mode.visible.x; dx++)
 		{
 			ggiSetOrigin(vis,dx,0);
 			ggUSleep(2000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis) || (dy = TestTime()) > 9) break;
 		}
+		dy = TestTime();
 		ggiSetOrigin(vis,0,0);
+		printf("SetOrigin X: offset %i took %d seconds"
+				" -- %.3f steps per second\n", dx, dy,
+				(double)((dy>0)?(dx/dy):dx));
 	}
 
 	/* Hline tests.
 	 * Draw horizontal lines.
 	 */
-	TestName("HLine");
+	TestName("HLine Draw");
 	waitabit();
 
 	ggiSetGCForeground(vis, black);
@@ -733,11 +766,12 @@ int main(int argc, char **argv)
 		}
 		if (ggiKbhit(vis)) break;
 	}
+	printf("DrawHLine(): %d lines\n", c);
 
 	/* VLine Tests.
 	 * Draw vertical lines.
 	 */
-	TestName("VLine");
+	TestName("VLine Draw");
 	waitabit();
 
 	ggiSetGCForeground(vis, black);
@@ -754,13 +788,14 @@ int main(int argc, char **argv)
 			
 			ggiSetGCForeground(vis, ggiMapColor(vis, &col));
 
-			/* Draw vertical lines at x=vx-i-1, y=i, and with
+			/* Draw vertical lines at x=sx-i-1, y=i, and with
 			 * height=sy / 5.
 			 */
-			ggiDrawVLine(vis, vx-i-1, i, sy_5);
+			ggiDrawVLine(vis, sx-i-1, i, sy_5);
 		}
 		if (ggiKbhit(vis)) break;
 	}
+	printf("DrawVLine(): %d lines\n", c);
 
 	/* Put horizontal lines. "Putting" means blitting the contents
 	 * of a memory buffer.  
@@ -775,9 +810,28 @@ int main(int argc, char **argv)
 
 	for(x = 0; x < (signed)sizeof(put_buf); x++) put_buf[x]=x&0xff;
 
-	for(y=10; y<vy; y++) {
+	for(y=15; y<vy; y++) {
 		ggiPutHLine(vis, 0, y, vx, put_buf);
 	}
+
+	/* Get horizontal lines. */
+	TestName("Hline Get");
+	memset(get_buf, 0, sizeof(get_buf)); /* clear get_buf */
+	x = 0; /* count wrong gets */
+
+	for(y=15; y<vy; y++) {
+		ggiGetHLine(vis, 0, y, vx, get_buf);
+		if (get_buf[y] != put_buf[y]) {
+			x += 1;
+#if 0
+			fprintf(stderr,"Error: Hline[%i]: put %x != get %x\n",
+					y, put_buf[y], get_buf[y]);
+#endif
+		}
+	}
+	/* this does not account for clipping */
+	if (!doclip && x)
+		fprintf(stderr, "ggiGetHline: %i errors.\n", x);
 
 	/* The same with vlines.
 	 */
@@ -785,8 +839,27 @@ int main(int argc, char **argv)
 	waitabit();
 
 	for(x=0; x<vx; x++) {
-		ggiPutVLine(vis, x, 10, vy - 10, put_buf);
+		ggiPutVLine(vis, x, 15, vy - 15, put_buf);
 	}
+
+	/* Get vertical lines. */
+	TestName("Vline Get");
+	memset(get_buf, 0, sizeof(get_buf)); /* clear get_buf */
+	y = 0; /* count wrong gets */
+
+	for(x=0; x<vx; x++) {
+		ggiGetVLine(vis, x, 15, vy - 15, get_buf);
+		if (get_buf[x] != put_buf[x]) {
+			y += 1;
+#if 0
+			fprintf(stderr,"Error: Vline[%i]: put %x != get %x\n",
+					x, put_buf[x], get_buf[x]);
+#endif
+		}
+	}
+	/* this does not account for clipping */
+	if (!doclip && y)
+		fprintf(stderr, "ggiGetVline: %i errors.\n", y);
 
 	/* The same with boxes.
 	 */
@@ -831,6 +904,7 @@ int main(int argc, char **argv)
 		ggiDrawBox(vis, x, y, w, h);
 		if (ggiKbhit(vis)) break;
 	}
+	printf("Boxes(): %d boxes\n", i);
 
 	/* Linedrawing tests */
 	TestName("Lines");
@@ -856,8 +930,8 @@ int main(int argc, char **argv)
 		ggiDrawLine(vis, x, y, w, h);
 		if (ggiKbhit(vis)) break;
 	}
-	printf("DrawLine(): %d lines\n", i);
-		
+	printf("Lines(): %d lines\n", i);
+
 	/* CopyBox tests */
 
 	TestName("CopyBox");
@@ -917,7 +991,7 @@ int main(int argc, char **argv)
 		map[i].b=0xffff*i/127;
 	}
 
-	/* Convert it to get/put buffer format, and the blit it to the
+	/* Convert it to get/put buffer format, and then blit it to the
 	 * screen.
 	 */
 	ggiPackColors(vis, put_buf, map, 128);
@@ -1228,7 +1302,7 @@ int main(int argc, char **argv)
 	 * undefined behaviour now. It is not recommended to needlessly
 	 * deinit-reinit LibGGI, but it's possible.
 	 */
-	ggiExit();	
+	ggiExit();
 
 	/* Terminate the program.
 	 */
