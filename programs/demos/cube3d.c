@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.10 2004/06/06 19:57:55 pekberg Exp $
+/* $Id: cube3d.c,v 1.11 2004/06/06 20:00:09 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -656,7 +656,6 @@ int main(int argc, char **argv)
 	ggi_color map;		/* Helper for color mapping */
 
 	ggi_graphtype type;	/* graphics type */
-	int depth;		/* bit depth */
 
 	int err, x;		/* counters and other helpers. */
 
@@ -762,7 +761,6 @@ int main(int argc, char **argv)
 	vissizey = mode.visible.y;
 	slavesizex = mode.visible.x / 2;
 	slavesizey = mode.visible.y / 2;
-	depth = GT_DEPTH(mode.graphtype);
 
 	if (GT_SCHEME(mode.graphtype) == GT_PALETTE) {
 		ggiSetColorfulPalette(vis);
@@ -882,7 +880,7 @@ int main(int argc, char **argv)
 		ggiSetGCBackground(memvis[0],
 				   ggiMapColor(memvis[0], &black_col));
 		ggiPuts(memvis[0], 0, 0, "Keyboard:");
-		ggiPuts(memvis[0], 0, 10, "#: Got to Cube control");
+		ggiPuts(memvis[0], 0, 10, "#: Go to Cube control");
 		ggiPuts(memvis[0], 0, 20, "Cursor,Home,End: Rotate");
 		ggiPuts(memvis[0], 0, 30, "PgUp/PgDown    : Resize");
 		ggiPuts(memvis[0], 0, 40, "q: quit s:stop b:backfaces");
