@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
+/* $Id: color.c,v 1.4 2002/10/28 16:27:27 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -149,7 +149,7 @@ int GGI_X_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 		start = priv->ncols - len;
 	}
 
-	if (start+len > priv->ncols || start < 0) return -1;
+	if (colormap == NULL || start+len > priv->ncols || start < 0) return -1;
 
 	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
 
