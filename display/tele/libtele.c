@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.6 2003/07/06 10:25:23 cegger Exp $
+/* $Id: libtele.c,v 1.7 2003/10/12 10:01:00 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include <ggi/internal/plat.h>
+#include <ggi/gg.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -507,8 +508,7 @@ static int tclient_open_inet(TeleClient *c, const char *addr)
 
 
 	/* Obtain numerical address from string */
-	strncpy(name, addr, n);
-	name[n] = '\0';
+	ggstrlcpy(name, addr, sizeof(name));
 
 	h = gethostbyname(name);
 
