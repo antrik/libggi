@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2003/03/30 13:22:19 cegger Exp $
+/* $Id: mode.c,v 1.14 2003/04/25 13:10:38 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -340,6 +340,9 @@ oldparent:
 	GGIDPRINT("viidx = %i\n", priv->viidx);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
+		/* xlib lock is still acquired here - unlock before exiting */
+		GGIDPRINT("priv->createfb failed.\n");
+		ggUnlock(priv->xliblock);
 		if (err) goto err0;
 	}
 
@@ -487,6 +490,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	_ggi_x_load_slaveops(vis);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
+		/* xlib lock is still acquired here - unlock before exiting */
+		ggUnlock(priv->xliblock);
 		if (err) goto err0;
 	}
 
