@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2005/01/18 20:22:46 cegger Exp $
+/* $Id: mode.c,v 1.11 2005/02/07 11:20:15 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -431,6 +431,48 @@ static void testcase7(const char *desc)
 }
 
 
+static void testcase8(const char *desc)
+{
+	int err;
+	ggi_visual_t vis;
+	ggi_mode mode;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggiInit();
+	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+
+	vis = ggiOpen(NULL);
+	printassert(vis != NULL, "ggiOpen() failed\n");
+
+	mode.virt.x = mode.virt.y = GGI_AUTO;
+	mode.visible.x = mode.visible.y = GGI_AUTO;
+	mode.frames = GGI_AUTO;
+	mode.graphtype = GT_AUTO;
+	mode.dpp.x = mode.dpp.y = 1;
+        mode.size.x = -19493;
+        mode.size.y = 31831;
+
+	/* Get the default mode */
+	ggiCheckMode(vis, &mode);
+
+	err = ggiSetMode(vis, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiSetMode() failed even though ggiCheckMode() was called!\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	ggiClose(vis);
+	ggiExit();
+
+	printsuccess();
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -443,6 +485,7 @@ int main(int argc, char * const argv[])
 	testcase5("Set up the mode in the ggiterm way");
 	testcase6("Check that re-setting of a different mode works [async mode]");
 	testcase7("Check that re-setting of a different mode works [sync mode]");
+	testcase8("Check checking then setting a mode with braindamaged visual size");
 
 	printsummary();
 
