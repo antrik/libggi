@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2002/07/09 12:37:29 cegger Exp $
+/* $Id: mode.c,v 1.6 2002/07/09 13:45:07 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -143,12 +143,12 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 			continue;
 
 		if (_ggi_x_is_better_gt(tm->graphtype, thisgt)) {
-			best = this;
+	       		best = this;
 			*viidx = idx - 1;
 			break;
 		}
 	}
-	if (best == NULL) goto suggest3;
+	if (best != NULL) goto suggest3;
 	tm->graphtype = _ggi_x_scheme_vs_class(GGI_AUTO, best);
 	LIBGGI_APPASSERT(tm->graphtype != GT_INVALID, "Should not fail here");
 	_ggi_x_fit_geometry(vis, tm, best, tm);

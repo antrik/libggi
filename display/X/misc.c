@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.5 2002/07/09 13:05:32 cegger Exp $
+/* $Id: misc.c,v 1.6 2002/07/09 13:45:06 skids Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -40,86 +40,56 @@ static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *this) {
 	/* prefer color to grayscale */
 	if (((than->class==StaticGray) || (than->class==GrayScale))
 	    && 
-	    ((this->class!=StaticGray) && (this->class!=GrayScale)))  return 1;
+	    ((this->class!=StaticGray) && (this->class!=GrayScale))) return 1;
 	if (((this->class==StaticGray) || (this->class==GrayScale))
 	    && 
-	    ((than->class!=StaticGray) && (than->class!=GrayScale)))  return 0;
+	    ((than->class!=StaticGray) && (than->class!=GrayScale))) return -1;
 
 	/* prefer more colors or levels */
 	if (than->depth < this->depth) return 1;
 	if (than->depth > this->depth) return 0;
 
 	/* Prefer read-write colormaps if depth is the same. */
-	if ((than->class==StaticGray)  && (this->class==GrayScale))   return 1;
-	if ((this->class==StaticGray)  && (than->class==GrayScale))   return 0;
-	if ((than->class==StaticColor) && (this->class==PseudoColor)) return 1;
-	if ((this->class==StaticColor) && (than->class==PseudoColor)) return 0;
-	if ((than->class==TrueColor)   && (this->class==PseudoColor)) return 1;
-	if ((this->class==TrueColor)   && (than->class==PseudoColor)) return 0;
+	if ((than->class==StaticGray) && (this->class==GrayScale))   return 1;
+	if ((this->class==StaticGray) && (than->class==GrayScale))   return -1;
+	if ((than->class==StaticColor)&& (this->class==PseudoColor)) return 1;
+	if ((this->class==StaticColor)&& (than->class==PseudoColor)) return -1;
+	if ((than->class==TrueColor)  && (this->class==PseudoColor)) return 1;
+	if ((this->class==TrueColor)  && (than->class==PseudoColor)) return -1;
 
 	/* prefer palette to gammamap if the depth is the same */
-	if ((than->class==DirectColor) && (this->class==PseudoColor)) return 1;
-	if ((this->class==DirectColor) && (than->class==PseudoColor)) return 0;
+	if ((than->class==DirectColor)&& (this->class==PseudoColor)) return 1;
+	if ((this->class==DirectColor)&& (than->class==PseudoColor)) return -1;
 
 	/* prefer gamma map to truecolor */
-	if ((than->class==StaticColor) && (this->class==DirectColor)) return 1;
-	if ((this->class==StaticColor) && (than->class==DirectColor)) return 0;
-	if ((than->class==TrueColor)   && (this->class==DirectColor)) return 1;
-	if ((this->class==TrueColor)   && (than->class==DirectColor)) return 0;
+	if ((than->class==StaticColor)&& (this->class==DirectColor)) return 1;
+	if ((this->class==StaticColor)&& (than->class==DirectColor)) return -1;
+	if ((than->class==TrueColor)  && (this->class==DirectColor)) return 1;
+	if ((this->class==TrueColor)  && (than->class==DirectColor)) return -1;
 
 	/* More? */
-
 	return 0;
 }
 
 static int _ggi_x_is_better_screen(Screen *than, Screen *this) {
 
 	if (!DoesBackingStore(than) && DoesBackingStore(this)) return 1;
-	if (DoesBackingStore(than) && !DoesBackingStore(this)) return 0;
+	if (DoesBackingStore(than) && !DoesBackingStore(this)) return -1;
 	if (than->width * than->height < this->width * this->height)
 		return 1;
 	if (than->width * than->height > this->width * this->height)
-		return 0;
+		return -1;
 	if (than->mwidth * than->mheight < this->mwidth * this->mheight)
 		return 1;
 	if (than->mwidth * than->mheight > this->mwidth * this->mheight)
-		return 0;
+		return -1;
 
 	if (than->ndepths < this->ndepths) return 1;
 	if (than->ndepths > this->ndepths) return 0;
 
 	/* More? */
-
 	return 0;
 }
-
-
-/* return 1, if vi is unique */
-static int _ggi_x_visual_is_unique(ggi_visual *vis, int viidx_cmp)
-{
-	int viidx;
-	ggi_x_priv *priv;
-	XVisualInfo *via, *vib;
-	priv = LIBGGI_PRIVATE(vis);
-
-	via = priv->visual + viidx_cmp;
-
-	for (viidx = 0; viidx < priv->nvisuals; viidx++) {
-		vib = priv->visual + viidx;
-
-		if (vib == NULL) continue;
-		if (vib->class != via->class) continue;
-		if (vib->depth != via->depth) continue;
-		if (vib->visualid >= via->visualid) continue;
-
-		GGIDPRINT_MISC("visual %X duplicates %X\n",
-			via->visualid, vib->visualid);
-		return 0;
-	}	/* for */
-
-	return 1;
-}	/* _ggi_x_visual_is_unique */
-
 
 /* We cross index and pre-sort the various informational items;
  * This reduces code complexity in checkmode.
@@ -134,16 +104,8 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 	nvisuals = priv->nvisuals;
 	for (viidx = 0; viidx < priv->nvisuals; viidx++) {
 		ggi_x_vi *vi;
+		int restmp;
 		int bufidx;
-
-		/* There are duplicate visuals in multihead configurations.
-		 * So we have to make sure that the visual list is unique to
-		 * avoid an endless loop in _ggi_x_build_vilist().
-		 */
-		if (!_ggi_x_visual_is_unique(vis, viidx)) {
-			nvisuals--;
-			continue;
-		}	/* if */
 
 		vi = priv->vilist + viidx;
 		vi->vi = priv->visual + viidx;
@@ -183,21 +145,25 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 	viidx = 0;
 	while (viidx < (priv->nvisuals - 1)) {
 		ggi_x_vi    tmp;
+		int restmp;
 		XVisualInfo *via, *vib;
 
 		via = (priv->vilist + viidx)->vi;
 		vib = (priv->vilist + viidx + 1)->vi;
 
-		if (_ggi_x_is_better_fmt(vib, via)) goto swap;
-		if (_ggi_x_is_better_screen(ScreenOfDisplay(priv->disp,
+		restmp = _ggi_x_is_better_fmt(vib, via);
+		if (restmp > 0) goto swap;
+		else if (restmp == 0) {
+		  restmp = 
+		    _ggi_x_is_better_screen(ScreenOfDisplay(priv->disp,
 							    vib->screen),
 					    ScreenOfDisplay(priv->disp,
-							    via->screen)))
-		    goto swap;
-
-		/* Don't swap visuals by visualid, because when they are
-		 * reswapped by above again and causing another endless loop.
-		 */
+							    via->screen));
+		  if (restmp > 0) goto swap;
+		  else if (restmp == 0) {
+		    if (via->visualid > vib->visualid) goto swap;
+		  }
+		}
 		viidx++;
 		continue;
 	swap:
