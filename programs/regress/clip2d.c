@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.7 2004/05/04 16:43:41 cegger Exp $
+/* $Id: clip2d.c,v 1.8 2004/05/16 12:16:14 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -102,7 +102,7 @@ static void testcase1(void)
 	int ret_expect = 1;
 
 
-	printteststart(__PRETTY_FUNCTION__);
+	printteststart(__FILE__, __PRETTY_FUNCTION__);
 
 	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
 			&clip_first, &clip_last);
@@ -143,7 +143,7 @@ static void testcase2(void)
 	int ret_expect = 1;
 
 
-	printteststart(__PRETTY_FUNCTION__);
+	printteststart(__FILE__, __PRETTY_FUNCTION__);
 
 	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
 			&clip_first, &clip_last);
@@ -184,7 +184,7 @@ static void testcase3(void)
 	int ret_expect = 1;
 
 
-	printteststart(__PRETTY_FUNCTION__);
+	printteststart(__FILE__, __PRETTY_FUNCTION__);
 
 	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
 			&clip_first, &clip_last);
