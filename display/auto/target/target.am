@@ -5,4 +5,4 @@ target_src = ${target_dir}/aa.c ${target_dir}/directx.c \
 		${target_dir}/svgalib.c ${target_dir}/vgl.c \
 		${target_dir}/x.c
 
-EXTRA_DIST += ${target_dir}/target.h
+EXTRA_DIST += ${target_dir}/target.h ${target_src}

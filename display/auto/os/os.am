@@ -30,4 +30,12 @@ endif # OS_FREEBSD
 endif # OS_DARWIN
 endif # OS_WIN32
 
-EXTRA_DIST += ${os_dir}/common.inc ${os_dir}/os.h
+EXTRA_DIST += ${os_dir}/common.inc ${os_dir}/os.h \
+	${os_dir}/win32.c \
+	${os_dir}/darwin.c \
+	${os_dir}/freebsd.c \
+	${os_dir}/linux.c \
+	${os_dir}/netbsd.c \
+	${os_dir}/openbsd.c \
+	${os_dir}/solaris.c \
+	${os_dir}/defaultos.c
