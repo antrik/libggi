@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"GGI:display:X"'
 SUBDIRS = helper
 DIST_SUBDIRS = helper
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)

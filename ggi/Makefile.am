@@ -1,4 +1,4 @@
-AM_CFLAGS = -DPKG_NAME='"LibGGI"' DBUILDING_LIBGGI
+AM_CFLAGS = -DPKG_NAME='"LibGGI"' -DBUILDING_LIBGGI
 INCLUDES  = -I$(top_srcdir)/include $(extra_includes)
 libggi_la_LIBADD = -lgii -lgg
 

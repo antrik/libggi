@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"GGI:display:quartz"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 quartz_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
 

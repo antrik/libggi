@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"LibGGI:default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 ilbm_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
 ilbm_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \

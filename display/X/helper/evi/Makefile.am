@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"GGI:display:X"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
 helper_x_evi_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
 	$(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)

@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"GGI:display:auto"'
 EXTRA_DIST =
 
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)

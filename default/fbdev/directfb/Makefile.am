@@ -1,3 +1,4 @@
+AM_CFLAGS = -DPKG_NAME='"LibGGI:default"'
 SUBDIRS = core
 
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
