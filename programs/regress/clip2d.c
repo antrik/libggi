@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.19 2004/06/01 19:14:49 pekberg Exp $
+/* $Id: clip2d.c,v 1.20 2004/06/02 05:00:45 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -108,11 +108,11 @@ success:
 
 
 
-static void testcase1(void)
+static void testcase1(const char *desc)
 {
 	int i;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 
 	for(i = 0; i < CLIPDBSIZE; ++i)
 		if(checkresult(
@@ -125,7 +125,7 @@ static void testcase1(void)
 }
 
 
-static void testcase2(void)
+static void testcase2(const char *desc)
 {
 	int x0 = INT_MIN;
 	int y0 = INT_MIN;
@@ -139,7 +139,7 @@ static void testcase2(void)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -147,7 +147,7 @@ static void testcase2(void)
 }
 
 
-static void testcase3(void)
+static void testcase3(const char *desc)
 {
 	int x0 = 140000;
 	int y0 = 70000;
@@ -161,7 +161,7 @@ static void testcase3(void)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -169,13 +169,13 @@ static void testcase3(void)
 }
 
 
-static void testcase4(void)
+static void testcase4(const char *desc)
 {
 	/* Tests longest possible diagonal line that succeeds, I think. */
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 
 	checkresult(
 		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta,
@@ -186,13 +186,13 @@ static void testcase4(void)
 }
 
 
-static void testcase5(void)
+static void testcase5(const char *desc)
 {
 	/* Tests shortest possible line that fails, I think. */
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
 
 	checkresult(
 		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta + 1,
@@ -203,13 +203,13 @@ static void testcase5(void)
 }
 
 
-static void testcase6(void)
+static void testcase6(const char *desc)
 {
 	/* dx == INT_MIN (or INT_MAX+1) generates divide by zero,
 	 * and the same goes for dy.
 	 */
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
 
 	if(checkresult(
 		INT_MIN,          0,
@@ -264,11 +264,11 @@ static void testcase6(void)
 }
 
 
-static void testcase7(void)
+static void testcase7(const char *desc)
 {
 	/* This line is clipped incorrectly due to overflow. */
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
 
 	checkresult(
 		INT_MIN/2 + 200, 10,
@@ -351,12 +351,12 @@ static int endpoint_checker(int dx, int dy)
 }
 
 
-static void testcase8(void)
+static void testcase8(const char *desc)
 {
 	/* Check if the clipping endpoint is really on the actual line
 	 * for a bunch of lines.
 	 */
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 
 	if(endpoint_checker(  0,   0))
 		return;
@@ -423,10 +423,13 @@ static void generate_clipdb(void)
 #endif
 
 
-int main(void)
+int main(int argc, char * const argv[])
 {
 	int rc;
 	ggi_mode tm;
+
+	parseopts(argc, argv);
+	printdesc("Regression testsuite for _ggi_clip2d().\n\n");
 
 	rc = ggiInit();
 	if (rc < 0) return 1;
@@ -441,14 +444,19 @@ int main(void)
 		ggiSetColorfulPalette(vis);
 
 	/* run tests */
-	testcase1();
-	testcase2();
-	testcase3();
-	testcase4();
-	testcase5();
-	testcase6();
-	testcase7();
-	testcase8();
+	testcase1("Check correct clipping of some randomized lines.");
+	testcase2("Check clipping from upper left corner (INT_MIN/INT_MIN) "
+		  "to bottom right (INT_MAX/INT_MAX).");
+	testcase3("Check clipping of bottom right (140000/70000) to upper left (0/0).");
+	testcase4("Tests longest possible diagonal line that succeeds - "
+		  "with delta of 32768 on 32 bit archs.");
+	testcase5("Tests shortest possible line that fails - "
+		  "with delta of 32768 on 32 bit arches.");
+	testcase6("dx == INT_MIN (or INT_MAX+1) generates divide by zero. "
+		  "The same goes for dy.");
+	testcase7("Check if clipping is resistent against overflows.");
+	testcase8("Check if the clipping endpoint is really on the actual line "
+		  "for a bunch of lines.");
 
 	rc = ggiClose(vis);
 

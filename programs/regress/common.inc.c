@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.5 2004/05/27 08:44:19 cegger Exp $
+/* $Id: common.inc.c,v 1.6 2004/06/02 05:00:45 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -20,8 +20,22 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef HAVE_GETOPT_H
+#include <getopt.h>
+#endif
 
+
+/* EXPECTED2PASS is used for testcases that are expected to pass.
+ * That is for most testcases.
+ */
 #define EXPECTED2PASS	0
+
+/* EXPECTED2FAIL is used for testcases that are expcted to fail.
+ * That is almost useful to test error handling.
+ */
 #define EXPECTED2FAIL	1
 
 
@@ -33,9 +47,27 @@ static int num_asserterrors = 0;
 
 static int expected_current_testresult = EXPECTED2PASS;
 
+static int verbose = 0;
 
-static void printteststart(const char *file, const char *funcname, int expected)
+
+
+static void printdesc(const char *desc)
 {
+	if (!verbose) return;
+
+	printf("%s", desc);
+	fflush(stdout);
+
+	return;
+}
+
+
+static void printteststart(const char *file, const char *funcname,
+		int expected, const char *description)
+{
+	if (verbose) {
+		printf("%s: %s: %s\n", file, funcname, description);
+	}
 	printf("%s: Running %s...", file, funcname);
 	fflush(stdout);
 
@@ -47,7 +79,7 @@ static void printteststart(const char *file, const char *funcname, int expected)
 #define printassert(x, fmt...)	\
 	if (!(x)) {		\
 		printf(fmt);	\
-		fflush(stdout);\
+		fflush(stdout);	\
 		num_asserterrors++;	\
 	}
 
@@ -100,3 +132,37 @@ static void printsummary(void)
 	printf("%2d assert failures\n", num_asserterrors);
 	fflush(stdout);
 }
+
+
+
+static void printhelp(const char *name)
+{
+	printf("Usage:  %s [OPTION]\n", name);
+	printf("Options:\n");
+	printf("    -h      Shows this help\n");
+	printf("    -v      Print testcase descriptions\n");
+	fflush(stdout);
+	exit(0);
+}
+
+static void parseopts(int argc, char * const argv[])
+{
+	int ch;
+
+	while ((ch = getopt(argc, argv, "hv")) != -1) {
+		switch (ch) {
+		case 'v':
+			verbose = 1;
+			break;
+		case 'h':
+		default:
+			printhelp(argv[0]);
+		}
+	}
+
+	argc -= optind;
+	argv += optind;
+
+	return;
+}
+

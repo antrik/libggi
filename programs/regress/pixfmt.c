@@ -1,4 +1,4 @@
-/* $Id: pixfmt.c,v 1.3 2004/05/25 21:44:34 cegger Exp $
+/* $Id: pixfmt.c,v 1.4 2004/06/02 05:00:46 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI pixelformat operations.
@@ -25,7 +25,7 @@
 #include "common.inc.c"
 
 
-static void testcase1(void)
+static void testcase1(const char *desc)
 {
 	const char *pixfmt="r5g6b5";
 
@@ -38,7 +38,7 @@ static void testcase1(void)
 	ggi_pixel a_mask_expect = 0x0000;
 	int ret_expect = GGI_OK;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 
 	ret = _ggi_parse_pixfmtstr(pixfmt, NULL, NULL,
 				strlen(pixfmt)+1,
@@ -82,9 +82,12 @@ static void testcase1(void)
 }
 
 
-int main(void)
+int main(int argc, char * const argv[])
 {
-	testcase1();
+	parseopts(argc, argv);
+	printdesc("Regression testsuite for _ggi_parse_pixfmtstr().\n\n");
+
+	testcase1("Check for correct parsing of \"r5g6b5\" pixfmt string.");
 
 	printsummary();
 
