@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:35 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/07/31 09:01:51 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -246,7 +246,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 			LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write = fbaddr;
 			LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 			LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-				= (GT_SIZE(tm->graphtype)+7)/8 * tm->virt.x;
+				= ((GT_SIZE(tm->graphtype) * tm->virt.x)+7)/8;
 		}
 	}
 	

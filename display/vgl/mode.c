@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/07/12 19:55:02 cegger Exp $
+/* $Id: mode.c,v 1.3 2001/07/31 09:02:08 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -168,7 +168,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 			LIBGGI_APPBUFS(vis)[i]->write = VGLDisplay->Bitmap;
 			LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 			LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-				= (GT_SIZE(tm->graphtype)+7)/8 * tm->virt.x;
+				= ((GT_SIZE(tm->graphtype) * tm->virt.x)+7)/8;
 		}
 	}
 
