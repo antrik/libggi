@@ -1,5 +1,12 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2:1:0 (2.0.1): 2001-08-26
+* More documentation updates.
+* Prelimiary support for using DirectFB drivers under display-fbdev
+* Many corrections/improvements to build files
+* Started move towards using libtool versioning, as interface is stable.
+
+
 New in 2.0: 2001-08-11
 * Huge documentation updates.
 * svgalib-target
