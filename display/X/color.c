@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2002/10/28 16:27:27 cegger Exp $
+/* $Id: color.c,v 1.5 2003/05/03 16:06:56 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -240,11 +240,12 @@ void _ggi_x_free_colormaps(ggi_visual *vis) {
 }
 
 /* This function may fail, if so priv->cmap will be set to None */
-void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
+void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
+{
 	ggi_x_priv *priv;
 	Colormap defcmap;
 	XColor xcell;
-	uint32 i, j;
+	int i, j;
 	ggi_pixelformat *fmt;
 
 	fmt = LIBGGI_PIXFMT(vis);
@@ -253,12 +254,13 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
 	defcmap = DefaultColormap(priv->disp, vi->screen);
 
 	vis->gamma->maxwrite_r = vis->gamma->maxwrite_g = 
-	  vis->gamma->maxwrite_b = vis->gamma->maxread_r = 
-	  vis->gamma->maxread_g = vis->gamma->maxread_b = 0;
+		vis->gamma->maxwrite_b = vis->gamma->maxread_r = 
+		vis->gamma->maxread_g = vis->gamma->maxread_b = 0;
 	vis->gamma->gamma_r = vis->gamma->gamma_g = vis->gamma->gamma_b = 1.0;
 
 	if (vi->class == PseudoColor || vi->class == GrayScale ||
-	    vi->class == StaticColor || vi->class == StaticGray) {
+	    vi->class == StaticColor || vi->class == StaticGray)
+	{
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
@@ -271,20 +273,23 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
 		}
 
 		/* Fill the colormap with the original colors */
-		for (i=0; i<priv->ncols; i++) {
+		for (i = 0; i < priv->ncols; i++) {
 			xcell.pixel = i;
 			xcell.flags = DoRed | DoGreen | DoBlue;
 			XQueryColor(priv->disp, defcmap, &xcell);
 			if (vi->class == PseudoColor || 
-			    vi->class == GrayScale) 
+			    vi->class == GrayScale)
+			{
 				XStoreColor(priv->disp, priv->cmap, &xcell);
+			}
 
 			vis->palette[i].r = xcell.red;
 			vis->palette[i].g = xcell.green;
 			vis->palette[i].b = xcell.blue;
 		}
-		if (vi->class == PseudoColor || vi->class == GrayScale) 
+		if (vi->class == PseudoColor || vi->class == GrayScale) {
 			vis->opcolor->setpalvec = GGI_X_setpalvec;
+		}
 
 		priv->cmap_first=256;
 		priv->cmap_last=0;
@@ -297,8 +302,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
 					     vi->visual, AllocNone);
 		if (priv->cmap == None) return;
 		if (vi->class != TrueColor) return;
-	}
-	else {
+	} else {
 		GGIDPRINT("Filmed on location in DirectColor\n");
 		vis->opcolor->setgammamap = GGI_X_setgammamap;
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
@@ -332,21 +336,21 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
 	i = j = 0;
 	do {
 		priv->gammamap[j].pixel = 
-		  (i >> fmt->red_shift) & fmt->red_mask;
+			(i >> fmt->red_shift) & fmt->red_mask;
 		j++;
 		i += (0x80000000 >> (vis->gamma->maxread_r - 1));
 	} while (i);
 	i = j = 0;
 	do {
 		priv->gammamap[j].pixel |= 
-		  (i >> fmt->green_shift) & fmt->green_mask;
+			(i >> fmt->green_shift) & fmt->green_mask;
 		j++;
 		i += (0x80000000 >> (vis->gamma->maxread_g - 1));
 	} while (i);
 	i = j = 0;
 	do {
 		priv->gammamap[j].pixel |= 
-		  (i >> fmt->blue_shift) & fmt->blue_mask;
+			(i >> fmt->blue_shift) & fmt->blue_mask;
 		j++;
 		i += (0x80000000 >> (vis->gamma->maxread_b - 1));
 	} while (i);
@@ -360,7 +364,9 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi) {
 	 * by preventing aliasing of lower order color channel values.
 	 * It must be done after XQueryColors as that sets all flags.
 	 */
-	for (i = 0; i < priv->ncols; i++) priv->gammamap[i].flags = 0;
+	for (i = 0; i < priv->ncols; i++) {
+		priv->gammamap[i].flags = 0;
+	}
 	for (i = 0; i < vis->gamma->maxread_r; i++)
 		priv->gammamap[i].flags |= DoRed;
 	for (i = 0; i < vis->gamma->maxread_g; i++)
