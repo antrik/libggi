@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.7 2004/05/03 21:44:38 cegger Exp $
+/* $Id: clip.c,v 1.8 2004/05/05 22:08:04 aldot Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -46,13 +46,13 @@
 
 /* Outcodes:
 +-> x
-|       |      | 
+|       |      |
 V  0101 | 0100 | 0110
 y ---------------------
    0001 | 0000 | 0010
   ---------------------
    1001 | 1000 | 1010
-        |      | 
+        |      |
  */
 #define outcode(code, xx, yy) \
 {\
@@ -95,7 +95,7 @@ static int FloorDiv(int a, int b)
 }
 
 /*
-  Calculates |^ a/b ^| with mathamatically correct ceil
+  Calculates |^ a/b ^| with mathematically correct ceil
   */
 static int CeilDiv(int a,int b)
 {
@@ -132,10 +132,10 @@ static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
 
 	dx = x1 - x0;
 	dy = y1 - y0;
-  
+
 	xmajor = (abs(dx) > abs(dy));
 	slope = ((dx>=0) && (dy>=0)) || ((dx<0) && (dy<0));
-  
+
 	for (;;) {
 		code = first;
 		if (first==0)

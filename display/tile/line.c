@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.4 2003/07/06 10:25:24 cegger Exp $
+/* $Id: line.c,v 1.5 2004/05/05 22:08:05 aldot Exp $
 ******************************************************************************
 
    Tile target: clipped-line function in non-DB mode
@@ -48,13 +48,13 @@
 
 /* Outcodes:
 +-> x
-|       |      | 
+|       |      |
 V  0101 | 0100 | 0110
 y ---------------------
    0001 | 0000 | 0010
   ---------------------
    1001 | 1000 | 1010
-        |      | 
+        |      |
  */
 #define outcode(code, xx, yy) \
 {\
@@ -97,7 +97,7 @@ static int FloorDiv(int a, int b)
 }
 
 /*
-  Calculates |^ a/b ^| with mathamatically correct floor
+  Calculates |^ a/b ^| with mathematically correct ceil
   */
 static int CeilDiv(int a, int b)
 {
