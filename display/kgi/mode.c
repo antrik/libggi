@@ -300,7 +300,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	GGIDPRINT_LIBS("Pixelformat set\n");
 
-	(char *)fb_ptr = (char *)(priv->fb);
+	fb_ptr = priv->fb;
 
 	/* "Page" align the frames.  Some accels need this. */
 	pad = 0;
@@ -319,7 +319,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = 
 			LIBGGI_PIXFMT(vis);
 
-		(char *)fb_ptr += stride * tm->virt.y + pad;
+		fb_ptr += stride * tm->virt.y + pad;
 	}
 
 	/* Set up swatches. */
@@ -327,7 +327,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		kgi_size_t avail;
 
 		avail = priv->fb_size;
-		avail -= (char *)fb_ptr - (char *)priv->fb;
+		avail -= fb_ptr - priv->fb;
 
 		/* We want at least 10 scanlines and space for the font. */
 
@@ -352,8 +352,8 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 				return GGI_EARGINVAL;
 			}
 		}
-		(char *)priv->font = (char *)fb_ptr;
-		(char *)priv->swatch = (char *)fb_ptr + sizeof(font)*8;
+		priv->font = fb_ptr;
+		priv->swatch = fb_ptr + sizeof(font)*8;
 		priv->swatch_size -= sizeof(font)*8;
 		
 		GGIDPRINT("Font at %p, %i byte swatch at %p.\n", 
@@ -361,6 +361,8 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 		install_font((uint8 *)priv->font);
 	}
+	priv->swatch_gp = (kgi_u8_t *)(priv->swatch - priv->fb);
+	priv->font_gp = (kgi_u8_t *)(priv->font - priv->fb);
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
