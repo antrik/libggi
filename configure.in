@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.120 2004/05/21 20:15:16 aldot Exp $
+dnl $Id: configure.in,v 1.121 2004/05/28 09:36:02 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -365,8 +365,6 @@ dnl This isn't a problem during the build because libtool is always used.
 dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
 save_CC="$CC"
 CC="$SHELL ./libtool $CC"
-save_LDFLAGS="$LDFLAGS"
-LDFLAGS="$LDFLAGS -lgg $THREADLIBS"
 AC_CHECK_LIB(gii,giiInit,
   AC_CHECK_LIB(gg,ggGetSwarType,
 	foo=bar,
@@ -377,7 +375,6 @@ AC_CHECK_LIB(gii,giiInit,
 		LibGII first.])
 )
 CC="$save_CC"
-LDFLAGS="$save_LDFLAGS"
 
 
 dnl ========================================================================
