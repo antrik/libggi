@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2003/12/13 23:52:17 cegger Exp $
+/* $Id: color.c,v 1.4 2003/12/20 11:09:24 cegger Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -32,8 +32,8 @@
 #include <ggi/display/xf86dga.h>
 
 
-int GGI_xf86dga_setPalette(ggi_visual *vis, size_t start, size_t size,
-			   const ggi_color *colormap)
+int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,
+			   const ggi_color * colormap)
 {
 	ggidga_priv *priv = DGA_PRIV(vis);
 	XColor xcol;
@@ -41,17 +41,17 @@ int GGI_xf86dga_setPalette(ggi_visual *vis, size_t start, size_t size,
 
 	size_t end = start + size;
 
-	GGIDPRINT_COLOR("GGI_xf86dga_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
-			vis, start, size, colormap->r, colormap->g, colormap->b);
+	GGIDPRINT_COLOR
+	    ("GGI_xf86dga_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
+	     vis, start, size, colormap->r, colormap->g, colormap->b);
 
-	if (colormap == NULL ||
-	    end > (size_t)(DGA_PRIV(vis)->x.nocols))
-	{
+	if (colormap == NULL || end > (size_t) (DGA_PRIV(vis)->x.nocols)) {
 		return -1;
-	}	/* if */
-
+	}
+	/* if */
 	LIBGGI_PAL(vis)->size = size;
-	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut + start, colormap,
+	       size * sizeof(ggi_color));
 
 	if (start < LIBGGI_PAL(vis)->rw_start) {
 		LIBGGI_PAL(vis)->rw_start = start;
@@ -62,14 +62,13 @@ int GGI_xf86dga_setPalette(ggi_visual *vis, size_t start, size_t size,
 
 	ggLock(priv->x.xliblock);
 
-	for(i = LIBGGI_PAL(vis)->rw_start; i < LIBGGI_PAL(vis)->rw_stop;
-		++i)
-	{
-		xcol.red   = LIBGGI_PAL(vis)->clut[i].r;
+	for (i = LIBGGI_PAL(vis)->rw_start; i < LIBGGI_PAL(vis)->rw_stop;
+	     ++i) {
+		xcol.red = LIBGGI_PAL(vis)->clut[i].r;
 		xcol.green = LIBGGI_PAL(vis)->clut[i].g;
-		xcol.blue  = LIBGGI_PAL(vis)->clut[i].b;
+		xcol.blue = LIBGGI_PAL(vis)->clut[i].b;
 		xcol.pixel = i;
-		xcol.flags = DoRed | DoGreen | DoBlue ;
+		xcol.flags = DoRed | DoGreen | DoBlue;
 		XStoreColor(priv->x.display, priv->x.cmap, &xcol);
 		XStoreColor(priv->x.display, priv->cmap2, &xcol);
 	}

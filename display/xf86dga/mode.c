@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2003/12/19 21:36:09 nsouch Exp $
+/* $Id: mode.c,v 1.9 2003/12/20 11:09:24 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -269,7 +269,8 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	}
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->size = priv->x.nocols = 1 << GT_DEPTH(tm->graphtype);
+		LIBGGI_PAL(vis)->size = priv->x.nocols =
+		    1 << GT_DEPTH(tm->graphtype);
 		priv->activecmap = 0;
 
 		LIBGGI_PAL(vis)->clut = _ggi_malloc(sizeof(ggi_color) *

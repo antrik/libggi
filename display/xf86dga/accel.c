@@ -1,4 +1,4 @@
-/* $Id: accel.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
+/* $Id: accel.c,v 1.4 2003/12/20 11:09:24 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target - acceleration
@@ -30,21 +30,21 @@
 #include <ggi/display/xf86dga.h>
 
 
-int GGI_xf86dga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_xf86dga_drawbox(ggi_visual * vis, int x, int y, int w, int h)
 {
 	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
-	int add = vis->w_frame_num*LIBGGI_VIRTY(vis);
+	int add = vis->w_frame_num * LIBGGI_VIRTY(vis);
 
 	/* We can't draw outside the root window :-( */
-	if ((unsigned)(y+add+h) > priv->height)
+	if ((unsigned) (y + add + h) > priv->height)
 		return priv->drawbox(vis, x, y, w, h);
-	
+
 	y += add;
 
 	_ggi_XF86DGAFillRectangle(priv->x.display, priv->x.screen,
 				  DefaultRootWindow(priv->x.display),
 				  priv->x.gc, x, y,
-				  (unsigned)w, (unsigned)h);
+				  (unsigned) w, (unsigned) h);
 
 	vis->accelactive = 1;
 
@@ -53,24 +53,25 @@ int GGI_xf86dga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_xf86dga_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_xf86dga_copybox(ggi_visual * vis, int x, int y, int w, int h,
 			int nx, int ny)
 {
 	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
-	int add = vis->w_frame_num*LIBGGI_VIRTY(vis);
+	int add = vis->w_frame_num * LIBGGI_VIRTY(vis);
 
-	y  += vis->r_frame_num*LIBGGI_VIRTY(vis);
+	y += vis->r_frame_num * LIBGGI_VIRTY(vis);
 
 	/* We can't draw outside the root window :-( */
-	if ((unsigned)(ny+add+h) > priv->height) {
+	if ((unsigned) (ny + add + h) > priv->height) {
 		return priv->copybox(vis, x, y, w, h, nx, ny);
 	}
 
 	ny += add;
 
 	_ggi_XF86DGACopyArea(priv->x.display, priv->x.screen,
-			     DefaultRootWindow(priv->x.display), priv->x.gc,
-			     x, y, (unsigned)w, (unsigned)h, nx, ny);
+			     DefaultRootWindow(priv->x.display),
+			     priv->x.gc, x, y, (unsigned) w, (unsigned) h,
+			     nx, ny);
 
 	vis->accelactive = 1;
 

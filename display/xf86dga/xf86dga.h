@@ -41,4 +41,4 @@ Copyright (c) 1995  XFree86 Inc
 #define XF86DGADirectNotActivated	3
 #define XF86DGANumberErrors		(XF86DGADirectNotActivated + 1)
 
-#endif /* _XF86DGA_H_ */
+#endif				/* _XF86DGA_H_ */
