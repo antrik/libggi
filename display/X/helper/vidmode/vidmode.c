@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.7 2004/02/23 14:24:54 pekberg Exp $
+/* $Id: vidmode.c,v 1.8 2004/09/25 20:56:12 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -59,10 +59,14 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 		GGIDPRINT_MODE("\tXF86VidModeGetAllModeLines failed\n");
 		return GGI_ENODEVICE;
 	}
-	if (modes == NULL)
+	if (modes == NULL) {
+		GGIDPRINT_MODE("\tNo modes found (empty mode array).\n");
+	        return GGI_ENODEVICE;
+	}
+	if (priv->modes_num <= 0) {
+		GGIDPRINT_MODE("\tNo modes found (mode number <= 0).\n");
 		return GGI_ENODEVICE;
-	if (priv->modes_num <= 0)
-		return GGI_ENODEVICE;
+	}
 
 	priv->modes_priv = modes;
 
@@ -70,14 +74,17 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 				(size_t)(priv->modes_num));
 	if (priv->modes == NULL) {
 #warning LEAK: figure out proper cleanup here.
+		GGIDPRINT_MODE("\tNo enough memory.\n");
 		return GGI_ENOMEM;
 	}
+
+	GGIDPRINT_MODE("\t# modes: %d\n",priv->modes_num);
 
 	for (i = 0; i < priv->modes_num; i++) {
 		priv->modes[i].x = modes[i]->hdisplay;
 		priv->modes[i].y = modes[i]->vdisplay;
 		priv->modes[i].bpp =
-		    priv->vilist[priv->viidx].buf->bits_per_pixel;
+		    priv->vilist[priv->viidx].buf->depth;
 		priv->modes[i].gt = gt;
 		GGIDPRINT_MODE("Found mode: %dx%d %dbpp\n",
 			       priv->modes[i].x, priv->modes[i].y,
@@ -95,11 +102,24 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 {
 	ggi_x_priv *priv;
+
 	XF86VidModeModeInfo **modes;
 
-	GGIDPRINT_MODE("ggi_xvidmode_enter_mode\n");
+	Window child_return;
+	Window root;
+	int    x, y;
+	
 
 	priv = GGIX_PRIV(vis);
+	
+	GGIDPRINT_MODE("ggi_xvidmode_enter_mode (mode # %d, actual mode #: %d)\n",
+		       num, priv->cur_mode);
+
+	if(num == 0) {
+	       GGIDPRINT_MODE
+	         ("helper-x-vidmode: No suitable mode found.\n");
+	       return GGI_OK;
+	}
 
 	if ((num + 1) > priv->modes_num) {
 		GGIDPRINT_MODE
@@ -110,8 +130,8 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 	modes = (XF86VidModeModeInfo **) (priv->modes_priv);
 
 	GGIDPRINT_MODE
-	    ("\tXF86VidModeSwitchToMode(%x, %d, %x) called with:",
-	     priv->disp, priv->vilist[priv->viidx].vi->screen, modes[num]);
+	    ("\tXF86VidModeSwitchToMode(%x, %d, %x) %d called with:",
+	     priv->disp, priv->vilist[priv->viidx].vi->screen, modes[num], DefaultScreen(priv->disp));
 
 	GGIDPRINT_MODE("\tmodes[%d]:\n", num);
 	GGIDPRINT_MODE("\tdotclock    %d\n", modes[num]->dotclock);
@@ -120,22 +140,50 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 	GGIDPRINT_MODE("\thsyncend    %d\n", modes[num]->hsyncend);
 	GGIDPRINT_MODE("\thtotal      %d\n", modes[num]->htotal);
 	GGIDPRINT_MODE("\tvdisplay    %d\n", modes[num]->vdisplay);
-	GGIDPRINT_MODE("\t vsyncstart %d\n", modes[num]->vsyncstart);
+	GGIDPRINT_MODE("\tvsyncstart  %d\n", modes[num]->vsyncstart);
 	GGIDPRINT_MODE("\tvsyncend    %d\n", modes[num]->vsyncend);
 	GGIDPRINT_MODE("\tvtotal      %d\n", modes[num]->vtotal);
 	GGIDPRINT_MODE("\tflags       %d\n", modes[num]->flags);
 	GGIDPRINT_MODE("\tprivsize    %d\n", modes[num]->privsize);
 	GGIDPRINT_MODE("\tprivate     %x\n", modes[num]->private);
 
+	GGIDPRINT_MODE("Unlock mode switching\n");
+	/* Unlock mode switching */
+	XF86VidModeLockModeSwitch(priv->disp,
+				  priv->vilist[priv->viidx].vi->screen, 
+				  False);
+
+	GGIDPRINT_MODE("Switching to mode %d\n", num);
 	if (!XF86VidModeSwitchToMode(priv->disp,
 				     priv->vilist[priv->viidx].vi->screen,
 				     modes[num])) {
+	        GGIDPRINT_MODE("XF86VidModeSwitchToMode failed.\n");
 		return GGI_ENODEVICE;
 	}
 
-	/* TODO (viewport info) */
+	GGIDPRINT_MODE("Setting viewport\n");
+	/* 
+	 * Here we translate window origin to Root window origin 
+	 * in order to get the viewport centered on the window.
+	 * So no need to use override-redirect nor iCCM.
+	 */
+	root = DefaultRootWindow(priv->disp);
+	
+	XTranslateCoordinates(priv->disp, priv->win, root, 
+			      0, 0, &x, &y, &child_return);
+	
 	XF86VidModeSetViewPort(priv->disp,
-			       priv->vilist[priv->viidx].vi->screen, 0, 0);
+			       priv->vilist[priv->viidx].vi->screen, 
+			       x,
+			       y);
+	
+	GGIDPRINT_MODE("Lock mode switching\n");
+	/* Lock mode switching */
+	XF86VidModeLockModeSwitch(priv->disp,
+				  priv->vilist[priv->viidx].vi->screen,
+				  True);
+
+	XSync(priv->disp, 0);
 
 	return GGI_OK;
 }
@@ -160,12 +208,17 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
 	GGIDPRINT_MODE("\tavailable mode: bpp:%d w:%d h:%d\n",
 		       priv->modes[num + 1].bpp, priv->modes[num + 1].x,
 		       priv->modes[num + 1].y);
+ 
+	do {
+	  if ((maxed->visible.x == priv->modes[num + 1].x) &&
+	      (maxed->visible.y == priv->modes[num + 1].y) &&
+	      (GT_DEPTH(maxed->graphtype) ==
+	       (unsigned) priv->modes[num + 1].bpp)) {
+	      return (num + 1);
+	  }
 
-	if ((maxed->visible.x == priv->modes[num + 1].x) &&
-	    (maxed->visible.y == priv->modes[num + 1].y) &&
-	    (GT_DEPTH(maxed->graphtype) ==
-	     (unsigned) priv->modes[num + 1].bpp))
-		return (num + 1);
+	  ++num;
+	} while(num < priv->modes_num);
 
 	return -1;
 }
@@ -179,13 +232,18 @@ static int ggi_xvidmode_restore_mode(ggi_visual * vis)
 
 	GGIDPRINT_MODE("ggi_xvidmode_restore_mode\n");
 
+	/* Unlock mode switching */
+	XF86VidModeLockModeSwitch(priv->disp,
+				  priv->vilist[priv->viidx].vi->screen, 
+				  False);
+
 	/* The original mode is the first one in the list */
 	XF86VidModeSwitchToMode(priv->disp,
 				priv->vilist[priv->viidx].vi->screen,
 				((XF86VidModeModeInfo **) priv->
 				 modes_priv)[0]);
 
-	/* TODO */
+	/* Set the viewport to root window origin */
 	XF86VidModeSetViewPort(priv->disp,
 			       priv->vilist[priv->viidx].vi->screen, 0, 0);
 
@@ -200,18 +258,20 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 	priv = GGIX_PRIV(vis);
 
-	if (!XF86VidModeQueryVersion(priv->disp, &x, &y))
+	if (!XF86VidModeQueryVersion(priv->disp, &x, &y)) {
+	        GGIDPRINT_MODE("\tXF86VidModeQueryVersion failed\n");
 		return GGI_ENOFUNC;
-	GGIDPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", x,
-		       y);
+	}
+	GGIDPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", 
+		       x, y);
 
 	/*
 	   overload mode list functions
 	 */
 
-	priv->mlfuncs.getlist = ggi_xvidmode_getmodelist;
-	priv->mlfuncs.restore = ggi_xvidmode_restore_mode;
-	priv->mlfuncs.enter = ggi_xvidmode_enter_mode;
+	priv->mlfuncs.getlist  = ggi_xvidmode_getmodelist;
+	priv->mlfuncs.restore  = ggi_xvidmode_restore_mode;
+	priv->mlfuncs.enter    = ggi_xvidmode_enter_mode;
 	priv->mlfuncs.validate = ggi_xvidmode_validate_mode;
 
 
@@ -221,6 +281,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 {
+        ggi_xvidmode_restore_mode(vis);
 	return GGI_OK;
 }
 
