@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.11 2004/04/04 14:31:46 mooz Exp $
+/* $Id: color.c,v 1.12 2004/09/12 20:58:46 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -138,7 +138,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 
 int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
 {
-	ggi_x_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_x_priv *priv = GGIX_PRIV(vis);
 	
 	GGIDPRINT_COLOR("GGI_X_setPalette(%p, %d, %d, {%d, %d, %d}) called\n",
 			vis, start, len, colormap->r,colormap->g ,colormap->b);

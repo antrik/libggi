@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.20 2004/09/09 13:03:39 cegger Exp $
+/* $Id: misc.c,v 1.21 2004/09/12 20:58:46 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -108,8 +108,7 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 {
 	int viidx, more;
 	int nvisuals;
-	ggi_x_priv *priv;
-	priv = LIBGGI_PRIVATE(vis);
+	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	nvisuals = priv->nvisuals;
 	for (viidx = 0; viidx < priv->nvisuals; viidx++) {

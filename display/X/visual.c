@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2004/09/09 12:41:44 cegger Exp $
+/* $Id: visual.c,v 1.31 2004/09/12 20:58:46 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -91,9 +91,9 @@ static int GGI_X_getapi(ggi_visual *vis,int num,
 	return -1;
 }
 
-void GGI_X_gcchanged(ggi_visual *vis, int mask) {
-	ggi_x_priv *priv;
-	priv = LIBGGI_PRIVATE(vis);
+void GGI_X_gcchanged(ggi_visual *vis, int mask)
+{
+	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	if (!priv->slave) goto noslave;
 	if ((mask & GGI_GCCHANGED_CLIP)) {
@@ -255,9 +255,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Create our visual's GC and it's private data area */
 	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) goto out;
-	priv = calloc(1, sizeof(ggi_x_priv));
+	priv = GGIX_PRIV(vis) = calloc(1, sizeof(ggi_x_priv));
 	if (priv == NULL) goto out;
-	LIBGGI_PRIVATE(vis) = priv;
 	vis->gamma = &(priv->gamma);
 
 	/* Create a lock to prevent concurrent Xlib access */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2004/09/12 19:47:52 cegger Exp $
+/* $Id: mode.c,v 1.32 2004/09/12 20:58:46 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -56,7 +56,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 
 	LIBGGI_APPASSERT(vis != NULL, "GGIcheckmode: vis == NULL");
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = GGIX_PRIV(vis);
 
 	best = NULL;
 	w = h = idx = 0;
