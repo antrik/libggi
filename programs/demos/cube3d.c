@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.12 2004/06/06 20:07:01 pekberg Exp $
+/* $Id: cube3d.c,v 1.13 2004/06/06 20:14:40 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -944,6 +944,21 @@ int main(int argc, char **argv)
 		/* Check, if textures have changed properties. */
 		for (x = 0; x < the_scene.numpolys; x++) {
 			ggiGetMode(memvis[x], &submode[x]);
+
+			/* "submode[x].frames != 0" below is an attemp to
+			 * kill a race between sub-app and cube3d. When the
+			 * sub-app opens the display-memory target it clears
+			 * some variables so that the mode returned by
+			 * ggiGetMode in cube3d is totally bogus. When the
+			 * sub-app later sets a mode, the ggiGetMode call in
+			 * cube3d returns sane values again. This "fix"
+			 * detects the broken mode returned between ggiOpen
+			 * and ggiSetMode in the sub-app. The race is
+			 * probably not killed totally, as in ggiGetMode in
+			 * cube3d _during_ ggiOpen/ggiSetMode in the sub-app
+			 * is not handled. That requires inter-process locks.
+			 */
+
 			if (submode[x].frames != 0 &&
 			    (the_textures[x].filex !=
 			     submode[x].visible.x ||
