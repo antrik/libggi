@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/08/07 18:41:23 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/09/12 20:43:11 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -107,7 +107,7 @@ static int _GGIchecksvgamodes(ggi_visual *vis)
 {
 	int modes = 0;
 	int i;
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 
 	for (i=1; i <= vga_lastmodenumber(); i++) {
 		if (vga_hasmode(i)) {
@@ -184,7 +184,7 @@ static void
 switching(void *arg)
 {
 	ggi_visual *vis = arg;
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 
 #if 0
 	save_palette(vis);
@@ -199,7 +199,7 @@ static void
 switchreq(void *arg)
 {
 	ggi_visual *vis = arg;
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
 
@@ -248,7 +248,7 @@ switchback(void *arg)
 static int 
 GGI_svga_sendevent(ggi_visual *vis, gii_event *ev)
 {
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 
 	GGIDPRINT_MISC("GGI_svga_sendevent() called\n");
 
@@ -294,7 +294,7 @@ extern int __svgalib_tty_fd;
 
 static int do_cleanup(ggi_visual *vis)
 {
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 
 	GGIDPRINT("display-svga: GGIdlcleanup start.\n");
 
@@ -414,12 +414,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		usagecounter--;
 		return GGI_ENOMEM;
 	}
-	LIBGGI_PRIVATE(vis) = malloc(sizeof(struct svga_priv));
-	if (LIBGGI_PRIVATE(vis) == NULL) {
+	priv = SVGA_PRIV(vis) = malloc(sizeof(struct svga_priv));
+	if (priv == NULL) {
 		do_cleanup(vis);
 		return GGI_ENOMEM;
 	}
-	priv = LIBGGI_PRIVATE(vis);
 	LIBGGI_PAL(vis)->priv = NULL;
 	priv->inputs = INP_KBD | INP_MOUSE;
 	priv->dohalt = 1;

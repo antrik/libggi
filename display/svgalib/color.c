@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2004/04/04 14:31:57 mooz Exp $
+/* $Id: color.c,v 1.7 2004/09/12 20:43:11 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -37,7 +37,7 @@
 int
 GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	int *vgaptr;
 	int i;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/09/12 19:37:53 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/09/12 20:43:11 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -75,7 +75,7 @@ int _ggi_svgalib_setmode(int mode)
 
 static int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
 {
-	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
+	struct svga_priv *priv = SVGA_PRIV(vis);
 	if (x != 0 || y<0 || y> LIBGGI_MODE(vis)->virt.y )
 		return -1;
 	
@@ -162,7 +162,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 
 int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 { 
-	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
+	struct svga_priv *priv = SVGA_PRIV(vis);
 	int modenum;
 	vga_modeinfo *modeinfo;
 	int err = 0;
@@ -325,7 +325,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 /**********************************/
 int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 {
-	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	svga_priv *priv = SVGA_PRIV(vis);
 	vga_modeinfo *vmi = NULL;
 	int mode = 0;
 
