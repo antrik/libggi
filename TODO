@@ -35,6 +35,13 @@ Due : 200?-??-??
   the RGBA colorspace. Verify, that X and Xlib handle that case correctly.
   That might also solve the above tile-over-Xlib issue.
 - alter fbdev.conf appropriately for selected accel sublibs
+- Alter all gcchanged functions so that unknown flags are not set, as
+  an indication that they are not supported by the target yet.
+- Make sure all target flush functions clip appropriately.  Brian has
+  a patch that makes stubs and mansync flush virt.x, virt.y which can
+  be applied after this is done.
+- Alter all ggiSetPalette implementations as per mailinglist discussion
+  of 1999-07-03.
 
 ------------------------------------------
 Next major release
@@ -45,6 +52,7 @@ Due : ????-??-??
 - libKGI-target (compiling framework, probably only working with Matrox Cards)
 - make Xlib a helper target for X
 - improve modelist.inc
+- allow physz params to determine window size when visible == GGI_AUTO
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
 - formalize pixelformat strings (e.g. "r5b5g5p1") and provide
