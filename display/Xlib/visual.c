@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:55 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/23 17:46:03 cegger Exp $
 ******************************************************************************
 
    Display-Xlib initialization.
@@ -34,38 +34,23 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xlib.h>
 
+#define GGI_XLIB_TARGET
+#include "../X/visual.inc"
+
 static const gg_option optlist[] =
 {
 	{ "inroot", "no" },
 	{ "inwin",  "no" },
-	{ "noinput", "no" }
+	{ "noinput", "no" },
+	{ "nocursor", "no" }
 };
 
 #define OPT_INROOT	0
 #define OPT_INWIN	1
 #define OPT_NOINPUT	2
+#define OPT_NOCURSOR	3
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
-
-
-static inline Cursor make_cursor(Display *disp, Window root)
-{
-	char data[] = { 0xf8, 0xfa, 0xf8 };
-	char mask[] = { 0xfa, 0xff, 0xfa };
-	Pixmap crsrpix, crsrmask;
-	XColor black = { 0, 0x0, 0x0, 0x0 },
-	       white = { 0, 0xffff, 0xffff, 0xffff };
-	Cursor mycrsr;
-
-	crsrpix = XCreateBitmapFromData(disp, root, data, 3, 3);
-	crsrmask = XCreateBitmapFromData(disp, root, mask, 3, 3);
-	mycrsr = XCreatePixmapCursor(disp, crsrpix, crsrmask,
-				     &black, &white, 1, 1);
-	XFreePixmap(disp, crsrpix);
-	XFreePixmap(disp, crsrmask);
-
-	return mycrsr;
-}
 
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -176,8 +161,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->xwin.wintype = GGIX_NORMAL;
 	}
 
-	priv->xwin.cursor = make_cursor(disp, RootWindow(priv->xwin.x.display,
-							 priv->xwin.x.screen));
+	priv->xwin.cursor =
+		_ggi_x_make_cursor(disp, RootWindow(priv->xwin.x.display,
+						    priv->xwin.x.screen),
+				   (options[OPT_NOCURSOR].result[0] == 'n'));
 
 	/* This doesn't work yet... */
 #if 0

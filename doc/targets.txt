@@ -41,6 +41,8 @@ environment variable.
 Flags:
 -inroot		- run in root window
 -inwin=<winid>	- run in allready existing window with id <winid>
+-noinput        - disable input events
+-nocursor       - disable mouse cursor
 
 Hotkeys
 +++++++
@@ -90,6 +92,8 @@ environment variable.
 Flags:
 -inroot		- run in root window
 -inwin=<winid>	- run in allready existing window with id <winid>
+-noinput        - disable input events
+-nocursor       - disable mouse cursor
 
 Hotkeys
 +++++++
