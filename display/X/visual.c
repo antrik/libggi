@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2004/09/18 13:44:29 cegger Exp $
+/* $Id: visual.c,v 1.33 2004/10/08 18:03:25 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -533,7 +533,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 
-	if (priv->opmansync) MANSYNC_init(vis);
+	if (priv->opmansync) {
+		MANSYNC_init(vis);
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_start(vis);
+		}
+	}
 
 	GGIDPRINT_MISC("X-target fully up\n");
 
