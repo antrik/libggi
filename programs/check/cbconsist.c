@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.2 2002/09/21 17:28:14 cegger Exp $
+/* $Id: cbconsist.c,v 1.3 2002/09/25 00:37:02 skids Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -334,7 +334,7 @@ int main(int argc, char **argv) {
     ggi_pixel res;
     fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
     res = cbconsist(&s);
-    if (s.flags & CBC_ABORT) {
+    if (res && (s.flags & CBC_ABORT)) {
       fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
       goto err3;
     }
@@ -350,7 +350,7 @@ int main(int argc, char **argv) {
 
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
       res = cbconsist(&s);
-      if (s.flags & CBC_ABORT) {
+      if (res && (s.flags & CBC_ABORT)) {
 	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
 	goto err2;
       }
@@ -369,7 +369,7 @@ int main(int argc, char **argv) {
 
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
       res = cbconsist(&s);
-      if (s.flags & CBC_ABORT) {
+      if (res && (s.flags & CBC_ABORT)) {
 	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
 	goto err4;
       }
@@ -390,7 +390,7 @@ int main(int argc, char **argv) {
 	
 	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
 	res = cbconsist(&s);
-	if (s.flags & CBC_ABORT) {
+	if (res && (s.flags & CBC_ABORT)) {
 	  fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
 	  goto err4;
 	}
