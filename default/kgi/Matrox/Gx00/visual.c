@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: visual.c,v 1.2 2002/12/24 00:26:08 ortalo Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -102,6 +102,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	/* Initializes the destination origin */
 	GX00_WRITE_REG(vis, 0x0, DSTORG);
+	/* Initializes the old-style destination origin */
+	GX00_WRITE_REG(vis, 0x0, YDSTORG);
 	/* Initializes the plane mask */
 	GX00_WRITE_REG(vis, 0xFFFFFFFF, PLNWT);
 #if 0 /* Maybe not needed? TODO: Check in libggi if clipping is initialized */
@@ -137,7 +139,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	
 	*dlret = GGI_DL_OPDRAW | GGI_DL_OPGC;
 
-	fprintf(stderr,"Gx00 accel lib opened\n");
 	return 0;	
 }
 
