@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/09/12 20:40:15 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/03 13:23:06 cegger Exp $
 ******************************************************************************
 
    Display-sub
@@ -55,7 +55,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->position.x = priv->position.y = 0;
 	priv->botright.x = priv->botright.y = 0;
 
-	SUB_PRIV(vis) = priv;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	/* Has mode management */
 	vis->opdisplay->getmode=GGI_sub_getmode;
