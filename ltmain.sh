@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.73 2004/11/17 17:49:15) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.78 2004/11/19 16:58:48) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.73 2004/11/17 17:49:15) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.78 2004/11/19 16:58:48) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.73 2004/11/17 17:49:15"
-package_revision=1.1667.2.73
+TIMESTAMP=" 1.1667.2.78 2004/11/19 16:58:48"
+package_revision=1.1667.2.78
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -350,12 +350,13 @@ func_mkdir_p ()
 }
 
 
-# func_mktempdir
+# func_mktempdir [string]
 # Make a temporary directory that won't clash with other running
-# libtool processes, and avoids race conditions if possible
+# libtool processes, and avoids race conditions if possible.  If
+# given, STRING is the basename for that directory.
 func_mktempdir ()
 {
-    my_template="${TMPDIR-/tmp}/libtool"
+    my_template="${TMPDIR-/tmp}/${1-$progname}"
 
     if test "$opt_dry_run" = ":"; then
       # Return a directory name, but don't create it in dry-run mode
