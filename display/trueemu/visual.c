@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:25:24 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/09/12 20:49:37 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -123,7 +123,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (LIBGGI_GC(vis) == NULL) {
 		return GGI_ENOMEM;
 	}
-	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(*priv));
+	TRUEEMU_PRIV(vis) = priv = malloc(sizeof(*priv));
 	if (priv == NULL) {
 		goto out_freegc;
 	}
