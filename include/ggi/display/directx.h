@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.2 2001/06/26 02:23:56 fortinj Exp $
+/* $Id: directx.h,v 1.3 2003/10/06 21:30:14 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -66,6 +66,11 @@ ggifunc_drawline                GGI_directx_drawline;
 
 typedef struct directx_priv
 {
+	int physzflags;
+	ggi_coord physz;
+
+	gii_input *inp;
+
         HANDLE hWnd;
         HANDLE hInstance;
         long pitch;
