@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.2 2005/01/19 07:54:55 cegger Exp $
+/* $Id: quartz.h,v 1.3 2005/01/29 13:52:43 cegger Exp $
 ******************************************************************************
 
    Display-quartz: internal headers
@@ -47,7 +47,7 @@ ggifunc_getgamma	GGI_quartz_getgamma;
 ggifunc_setgammamap	GGI_quartz_setgammamap;
 ggifunc_getgammamap	GGI_quartz_getgammamap;
 
-int _GGI_quartz_updateWindowContext(ggi_visual *vis);
+int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh);
 
 
 #endif /* _GGI_QUARTZ_H */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2005/01/28 22:31:33 cegger Exp $
+/* $Id: mode.c,v 1.10 2005/01/29 13:52:42 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -154,7 +154,7 @@ static int _ggi_load_slaveops(ggi_visual *vis)
 
 
 
-int _GGI_quartz_updateWindowContext(ggi_visual *vis)
+int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh)
 {
 	int width, height;
 	ggi_mode mode;
@@ -184,14 +184,14 @@ int _GGI_quartz_updateWindowContext(ggi_visual *vis)
 	mode.visible.y = height;
 	fb_size = GT_ByPPP(mode.visible.x * mode.visible.y * mode.frames,
 			mode.graphtype);
-#if 0
-	fb = realloc(priv->fb, fb_size);
-	if (fb == NULL) {
-		return GGI_ENOMEM;
-	}
+	if (manualrefresh) {
+		fb = realloc(priv->fb, fb_size);
+		if (fb == NULL) {
+			return GGI_ENOMEM;
+		}
 
-	priv->fb = fb;
-#endif
+		priv->fb = fb;
+	}
 	priv->fb_size = fb_size;
 
 	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
@@ -202,7 +202,7 @@ int _GGI_quartz_updateWindowContext(ggi_visual *vis)
 	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
 	CGContextClearRect(priv->context, tmpBounds);
 
-	return 0;
+	return GGI_OK;
 }	/* _GGI_quartz_updateWindowContext */
 
 

@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.6 2005/01/19 07:43:40 cegger Exp $
+/* $Id: quartz.h,v 1.7 2005/01/29 13:53:38 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -79,8 +79,10 @@ typedef struct {
 
 	gii_input	*inp;
 
+	int enableUserResize;
+
 	/* functions for use of extensions */
-	int (*updateWindowContext)(ggi_visual *vis);
+	int (*updateWindowContext)(ggi_visual *vis, int manualrefresh);
 } ggi_quartz_priv;
 
 
@@ -99,7 +101,8 @@ typedef struct {
 #define GGI_WINDOW_TITLEBORDER		15
 
 /* functions for use of extensions */
-#define GGI_quartz_updateWindowContext(vis)	QUARTZ_PRIV(vis)->updateWindowContext(vis)
+#define GGI_quartz_updateWindowContext(vis, refresh)	\
+		QUARTZ_PRIV(vis)->updateWindowContext(vis, refresh)
 
 
 #endif /* _GGI_DISPLAY_QUARTZ_H */
