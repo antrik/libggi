@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.2 2003/07/06 10:35:39 cegger Exp $
+/* $Id: trueemu.h,v 1.3 2004/10/30 10:16:27 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -122,8 +122,8 @@ typedef struct ggi_trueemu_priv {
 	/* mansync info */
 
 	void *flush_lock;
-	_ggi_opmansync *opmansync;
 
+	MANSYNC_DATA;
 } ggi_trueemu_priv;
 
 #define TRUEEMU_PRIV(vis)  ((ggi_trueemu_priv *) LIBGGI_PRIVATE(vis))
@@ -255,11 +255,11 @@ ggifunc_setwriteframe	GGI_trueemu_setwriteframe;
 extern int GGI_trueemu_resetmode(ggi_visual *vis);
 
 
-#define MANSYNC_init(vis)    TRUEEMU_PRIV(vis)->opmansync->init(vis)
-#define MANSYNC_deinit(vis)  TRUEEMU_PRIV(vis)->opmansync->deinit(vis)
-#define MANSYNC_start(vis)   TRUEEMU_PRIV(vis)->opmansync->start(vis)
-#define MANSYNC_stop(vis)    TRUEEMU_PRIV(vis)->opmansync->stop(vis)
-#define MANSYNC_ignore(vis)  TRUEEMU_PRIV(vis)->opmansync->ignore(vis)
-#define MANSYNC_cont(vis)    TRUEEMU_PRIV(vis)->opmansync->cont(vis)
+#define MANSYNC_init(vis)   MANSYNC_DECL_INIT(TRUEEMU_PRIV(vis), vis)
+#define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(TRUEEMU_PRIV(vis), vis)
+#define MANSYNC_start(vis)  MANSYNC_DECL_START(TRUEEMU_PRIV(vis), vis)
+#define MANSYNC_stop(vis)   MANSYNC_DECL_STOP(TRUEEMU_PRIV(vis), vis)
+#define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(TRUEEMU_PRIV(vis), vis)
+#define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(TRUEEMU_PRIV(vis), vis)
 
 #endif /* _GGI_DISPLAY_TRUEEMU_H */

@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
+/* $Id: palemu.h,v 1.4 2004/10/30 10:16:27 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -102,7 +102,7 @@ typedef struct ggi_palemu_priv {
 
 	/* mansync info */
 	void *flush_lock;
-	_ggi_opmansync *opmansync;
+	MANSYNC_DATA;
 } ggi_palemu_priv;
 
 #define PALEMU_PRIV(vis)  ((ggi_palemu_priv *) LIBGGI_PRIVATE(vis))
@@ -166,12 +166,12 @@ ggifunc_setwriteframe	GGI_palemu_setwriteframe;
 extern int GGI_palemu_resetmode(ggi_visual *vis);
 
 
-#define MANSYNC_init(vis)    PALEMU_PRIV(vis)->opmansync->init(vis)
-#define MANSYNC_deinit(vis)  PALEMU_PRIV(vis)->opmansync->deinit(vis)
-#define MANSYNC_start(vis)   PALEMU_PRIV(vis)->opmansync->start(vis)
-#define MANSYNC_stop(vis)    PALEMU_PRIV(vis)->opmansync->stop(vis)
-#define MANSYNC_ignore(vis)  PALEMU_PRIV(vis)->opmansync->ignore(vis)
-#define MANSYNC_cont(vis)    PALEMU_PRIV(vis)->opmansync->cont(vis)
+#define MANSYNC_init(vis)   MANSYNC_DECL_INIT(PALEMU_PRIV(vis), vis)
+#define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(PALEMU_PRIV(vis), vis)
+#define MANSYNC_start(vis)  MANSYNC_DECL_START(PALEMU_PRIV(vis), vis)
+#define MANSYNC_stop(vis)   MANSYNC_DECL_STOP(PALEMU_PRIV(vis), vis)
+#define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(PALEMU_PRIV(vis), vis)
+#define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(PALEMU_PRIV(vis), vis)
 
 
 #endif /* _GGI_DISPLAY_PALEMU_H */

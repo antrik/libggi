@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.3 2004/10/30 09:39:04 cegger Exp $
+/* $Id: tile.h,v 1.4 2004/10/30 10:16:27 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -98,17 +98,18 @@ typedef struct {
 	void *buf;			/* Blitting buffer */
 	ggi_directbuffer *d_frame;	/* Current display frame */
 
-	_ggi_opmansync *opmansync;
+	MANSYNC_DATA;
 } ggi_tile_priv;
 
 #define TILE_PRIV(vis)	((ggi_tile_priv *)LIBGGI_PRIVATE(vis))
 
-#define MANSYNC_init(vis)   TILE_PRIV(vis)->opmansync->init(vis)
-#define MANSYNC_deinit(vis) TILE_PRIV(vis)->opmansync->deinit(vis)
-#define MANSYNC_start(vis)  TILE_PRIV(vis)->opmansync->start(vis)
-#define MANSYNC_stop(vis)   TILE_PRIV(vis)->opmansync->stop(vis)
-#define MANSYNC_ignore(vis) TILE_PRIV(vis)->opmansync->ignore(vis)
-#define MANSYNC_cont(vis)   TILE_PRIV(vis)->opmansync->cont(vis)
+#define MANSYNC_init(vis)   MANSYNC_DECL_INIT(TILE_PRIV(vis), vis)
+#define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(TILE_PRIV(vis), vis)
+#define MANSYNC_start(vis)  MANSYNC_DECL_START(TILE_PRIV(vis), vis)
+#define MANSYNC_stop(vis)   MANSYNC_DECL_STOP(TILE_PRIV(vis), vis)
+#define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(TILE_PRIV(vis), vis)
+#define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(TILE_PRIV(vis), vis)
+
 
 /* Prototypes */
 void _GGI_tile_freedbs(ggi_visual *vis);

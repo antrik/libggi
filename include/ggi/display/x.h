@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.10 2004/10/03 10:27:48 cegger Exp $
+/* $Id: x.h,v 1.11 2004/10/30 10:16:27 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -83,7 +83,7 @@ typedef struct {
 
 	Display	*disp;		/* One display per instance  */
 
-	_ggi_opmansync *opmansync;	/* mansync helper hooks     */
+	MANSYNC_DATA;			/* mansync helper hooks     */
 	ggi_coord  dirtytl,dirtybr;	/* Simple dirty region */
 	int fullflush;			/* Flush all visible area?  */
 
@@ -165,12 +165,12 @@ int _ggi_x_resize (ggi_visual_t vis, int w, int h, ggi_event *ev);
 /* Defined in visual.c */
 void _GGI_X_freedbs(ggi_visual *, ggi_x_priv *);
 
-#define MANSYNC_init(vis)   GGIX_PRIV(vis)->opmansync->init(vis)
-#define MANSYNC_deinit(vis) GGIX_PRIV(vis)->opmansync->deinit(vis)
-#define MANSYNC_start(vis)  GGIX_PRIV(vis)->opmansync->start(vis)
-#define MANSYNC_stop(vis)   GGIX_PRIV(vis)->opmansync->stop(vis)
-#define MANSYNC_ignore(vis) GGIX_PRIV(vis)->opmansync->ignore(vis)
-#define MANSYNC_cont(vis)   GGIX_PRIV(vis)->opmansync->cont(vis)
+#define MANSYNC_init(vis)   MANSYNC_DECL_INIT(GGIX_PRIV(vis), vis)
+#define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(GGIX_PRIV(vis), vis)
+#define MANSYNC_start(vis)  MANSYNC_DECL_START(GGIX_PRIV(vis), vis)
+#define MANSYNC_stop(vis)   MANSYNC_DECL_STOP(GGIX_PRIV(vis), vis)
+#define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(GGIX_PRIV(vis), vis)
+#define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(GGIX_PRIV(vis), vis)
 
 /* Protos for utility functions in misc.c */
 void _ggi_x_build_vilist(ggi_visual *vis);

@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.4 2004/10/08 20:39:46 pekberg Exp $
+/* $Id: mansync.h,v 1.5 2004/10/30 10:16:25 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -144,5 +144,17 @@ do {									\
 	else if(!MANSYNC_ISASYNC(vis) && (flags & GGIFLAG_ASYNC))	\
 		MANSYNC_stop(vis);					\
 } while(0)
+
+
+/* helpers */
+#define MANSYNC_DATA		_ggi_opmansync *opmansync
+
+#define MANSYNC_DECL_INIT(priv, vis)	(priv)->opmansync->init((vis))
+#define MANSYNC_DECL_DEINIT(priv, vis)	(priv)->opmansync->deinit((vis))
+#define MANSYNC_DECL_START(priv, vis)	(priv)->opmansync->start((vis))
+#define MANSYNC_DECL_STOP(priv, vis)	(priv)->opmansync->stop((vis))
+#define MANSYNC_DECL_IGNORE(priv, vis)	(priv)->opmansync->ignore((vis))
+#define MANSYNC_DECL_CONT(priv, vis)	(priv)->opmansync->cont((vis))
+
 
 #endif /* _GGI_DISPLAY_MANSYNC_H */

@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
+/* $Id: aa.h,v 1.3 2004/10/30 10:16:23 cegger Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -55,17 +55,17 @@ giifunc_sendevent	GII_aa_sendevent;
 #define AA_SCRMULT_X 2
 #define AA_SCRMULT_Y 2
 
-#define MANSYNC_init(vis)   AA_PRIV(vis)->opmansync->init(vis)
-#define MANSYNC_deinit(vis) AA_PRIV(vis)->opmansync->deinit(vis)
-#define MANSYNC_start(vis)  AA_PRIV(vis)->opmansync->start(vis)
-#define MANSYNC_stop(vis)   AA_PRIV(vis)->opmansync->stop(vis)
-#define MANSYNC_ignore(vis) AA_PRIV(vis)->opmansync->ignore(vis)
-#define MANSYNC_cont(vis)   AA_PRIV(vis)->opmansync->cont(vis)
+#define MANSYNC_init(vis)   MANSYNC_DECL_INIT(AA_PRIV(vis), vis)
+#define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(AA_PRIV(vis), vis)
+#define MANSYNC_start(vis)  MANSYNC_DECL_START(AA_PRIV(vis), vis)
+#define MANSYNC_stop(vis)   MANSYNC_DECL_STOP(AA_PRIV(vis), vis)
+#define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(AA_PRIV(vis), vis)
+#define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(AA_PRIV(vis), vis)
 
 typedef struct { 
 	aa_context *context;
 	
-	_ggi_opmansync *opmansync;
+	MANSYNC_DATA;
 	void *aalock;
 
 	int fastrender;
