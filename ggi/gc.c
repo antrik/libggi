@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.2 2002/09/08 21:37:48 soyt Exp $
+/* $Id: gc.c,v 1.3 2004/09/13 09:30:34 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. GC handling
@@ -65,8 +65,8 @@ int ggiGetGCBackground(ggi_visual *vis,ggi_pixel *color)
 int ggiSetGCClipping(ggi_visual_t vis,int left,int top,int right,int bottom)
 {
 	if ((left < 0) || (top < 0) || 
-	    (right  > LIBGGI_MODE(vis)->virt.x) || 
-	    (bottom > LIBGGI_MODE(vis)->virt.y) ||
+	    (right  > LIBGGI_VIRTX(vis)) || 
+	    (bottom > LIBGGI_VIRTY(vis)) ||
 	    (left>right) || 
 	    (top>bottom)) {
 		return -1;
