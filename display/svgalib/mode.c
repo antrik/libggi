@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2001/08/11 03:36:40 skids Exp $
+/* $Id: mode.c,v 1.5 2001/09/04 07:04:20 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -225,7 +225,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	priv->frame_size = tm->virt.x * tm->virt.y * modeinfo->bytesperpixel;
 	GGIDPRINT("Setting up DirectBuffers, islinear=%d, frame_size=%d, frames=%d\n",
 		  priv->islinear, priv->frame_size, LIBGGI_MODE(vis)->frames);
-	for (i=0; priv->islinear && (i < LIBGGI_MODE(vis)->frames); i++) {
+	for (i=0; priv->islinear && (i < tm->frames); i++) {
 		ggi_directbuffer *buf;
 
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
@@ -366,8 +366,8 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	/* Only support frames when we can support linear access 
 	 * and we have enough video memory. */
 	if (!(vmi->flags & CAPABLE_LINEAR)
-			&& (vmi->memory < (vmi->bytesperpixel * tm->virt.x * 
-					   tm->virt.y * tm->frames)))
+	   || (vmi->memory < (vmi->bytesperpixel * tm->virt.x * 
+		tm->virt.y * tm->frames)))
 	{
 		tm->frames = 1;
 	}
