@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2002/12/05 19:35:12 cegger Exp $
+/* $Id: mode.c,v 1.11 2002/12/18 08:09:22 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -297,8 +297,14 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	if (priv->parentwin == None)	      destroyparent = 0;
 	if (priv->win == None) 		      destroychild = 0;
 
-	if (destroychild)  XDestroyWindow(priv->disp, priv->win);
-	if (destroyparent) XDestroyWindow(priv->disp, priv->parentwin);
+	if (destroychild)  {
+		/* Don't destroy window, when not created */
+		if (priv->win != 0) XDestroyWindow(priv->disp, priv->win);
+	}
+	if (destroyparent) {
+		/* Don't destroy window, when not created */
+		if (priv->parentwin != 0) XDestroyWindow(priv->disp, priv->parentwin);
+	}
 	if (!createparent) goto oldparent;
 
 	/* Parent windows are merely clipping frames, just use defaults. */
@@ -472,7 +478,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	if (priv->win != priv->parentwin) {
 #warning only destroy childwin when necessary
-		XDestroyWindow(priv->disp, priv->win);
+		/* Don't destroy window, when not created */
+		if (priv->win != 0) XDestroyWindow(priv->disp, priv->win);
 	}
 
 	ggi_x_load_mode_libs(vis);

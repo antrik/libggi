@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2002/09/08 21:37:44 soyt Exp $
+/* $Id: visual.c,v 1.13 2002/12/18 08:09:22 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -163,7 +163,10 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		_ggiZapDL(vis, &vis->extlib);
 	}
 
-	if (priv->win != priv->parentwin) XDestroyWindow(priv->disp,priv->win);
+	if (priv->win != priv->parentwin) {
+		/* Don't destroy window, when not created */
+		if (priv->win != 0) XDestroyWindow(priv->disp,priv->win);
+	}
 	if (!priv->parentwin) goto skip3;
 
 	/* Do special cleanup for -inwin and root windows */
@@ -182,7 +185,10 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		wa.cursor = None;
 		XChangeWindowAttributes(priv->disp, priv->parentwin, 
 					CWCursor, &wa);
-	} else  XDestroyWindow(priv->disp, priv->parentwin);
+	} else {
+		/* Don't destroy window, when not created */
+		if (priv->parentwin != 0) XDestroyWindow(priv->disp, priv->parentwin);
+	}
 
 skip3:
 	_ggi_x_free_colormaps(vis);

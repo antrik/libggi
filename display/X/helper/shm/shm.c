@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.8 2002/12/17 23:18:21 cegger Exp $
+/* $Id: shm.c,v 1.9 2002/12/18 08:09:23 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -332,7 +332,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 		_ggiZapDL(vis, &vis->extlib);
 	}
 
-	if (priv->win != priv->parentwin) XDestroyWindow(priv->disp,priv->win);
+	if (priv->win != priv->parentwin) {
+		if (priv->win != 0) XDestroyWindow(priv->disp,priv->win);
+	}
 	if (!priv->parentwin) goto skip;
 
 	/* Do special cleanup for -inwin and root windows */
