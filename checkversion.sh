@@ -2,12 +2,12 @@
 
 TOOL=$1
 
-have_version=`$TOOL --version | head -1 | tr -s '[A-Za-z() ]' ' '`
+have_version=`$TOOL --version | head -1 | sed -e 's;[A-Za-z() ]*; ;'`
 wanted_version=$2
 required_version=$wanted_version
 
-have_version=`echo $have_version | tr '[A-Za-z]' '.'`
-wanted_version=`echo $wanted_version | tr '[A-Za-z]' '.'`
+have_version=`echo $have_version | tr -s '[\-A-Za-z]' '.'`
+wanted_version=`echo $wanted_version | tr -s '[\-A-Za-z]' '.'`
 
 # debug
 ##echo "have version: $have_version"
@@ -43,12 +43,16 @@ fi
 have_patch_version=`echo $have_version | cut -d"." -f3`
 wanted_patch_version=`echo $wanted_version | cut -d"." -f3`
 
+if test -z "$have_patch_version"; then
+	have_patch_version=0
+fi
+if test -z "$wanted_patch_version"; then
+	wanted_patch_version=0
+fi
+
 # debug
 ##echo "have_patch_version: $have_patch_version"
 ##echo "wanted_patch_version: $wanted_patch_version"
-
-test -z $have_patch_version && have_patch_version=0
-test -z $wanted_patch_version && wanted_patch_version=0
 
 if test $have_patch_version -lt $wanted_patch_version; then
 	echo "$TOOL $required_version is required"
