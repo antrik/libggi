@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.33 2005/01/13 21:04:28 cegger Exp $
+/* $Id: init.c,v 1.34 2005/01/13 21:18:27 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -339,9 +339,9 @@ ggi_visual *ggiOpen(const char *driver,...)
 		return NULL;
 	}
 
-	va_start(drivers,driver);
+	va_start(drivers, driver);
 
-	argptr=va_arg(drivers,void *);
+	argptr = va_arg(drivers, void *);
 	va_end(drivers);
 
 	DPRINT_CORE("Loading driver %s\n",driver);
@@ -367,8 +367,6 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	} while (0);
 	
-
-	va_end(drivers);
 
 	if (success) {
 		ggLock(_ggiVisuals.mutex);
