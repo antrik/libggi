@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.6 2004/05/17 17:16:47 aldot Exp $
+/* $Id: showaccel2.c,v 1.7 2004/05/17 18:03:19 aldot Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	/* Pipe to pass result string cnt from child to parent
 	 */
 	int p_fd[2];
-	char *cnt;
+	char cnt[8] = "\0\0\0\0\0\0\0\0";
 
 	/* The visible screen sizes
 	 */
