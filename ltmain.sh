@@ -4039,10 +4039,12 @@ fi\
 	    dlprefiles="$newdlprefiles"
 	  fi
 	  $rm $output
-	  # place dlname in correct position for cygwin
+	  # place dlname in correct position for cygwin/mingw
 	  tdlname=$dlname
 	  case $host,$output,$installed,$module,$dlname in
-	    *cygwin*,*lai,yes,no,*.dll) tdlname=../bin/$dlname ;;
+	    *cygwin*,*lai,yes,no,*.dll | *mingw*,*lai,yes,no,*.dll)
+	      tdlname=../bin/$dlname
+	      ;;
 	  esac
 	  $echo > $output "\
 # $outputname - a libtool library file
