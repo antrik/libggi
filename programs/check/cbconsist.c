@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.12 2004/04/02 16:02:47 ggibecka Exp $
+/* $Id: cbconsist.c,v 1.13 2004/04/04 19:13:55 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -36,6 +36,9 @@
 #include <time.h>
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
+#endif
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
 #endif
 
 struct cbcstate_s;
