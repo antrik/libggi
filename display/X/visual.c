@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2002/07/16 09:46:07 cegger Exp $
+/* $Id: visual.c,v 1.11 2002/07/19 22:16:21 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -246,8 +246,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GGIDPRINT_MISC("X: want display %s\n", args);
 	disp = XOpenDisplay(args);
 	if (disp == NULL) goto out;
-	GGIDPRINT_MISC("X: have display %s\n", args);
+	GGIDPRINT_MISC("X: have display %s\n", DisplayString(disp));
+	GGIDPRINT_MISC("X: number of screens on this display: %i\n",
+			ScreenCount(disp));
+	GGIDPRINT_MISC("X: defaultscreen on this display: %i\n",
+			DefaultScreen(disp));
 	priv->disp = disp;
+
 
 	/* Link in some functions that would otherwise need symbol entries */
 	priv->acquire = GGI_X_db_acquire;
