@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.6 2002/10/12 06:03:16 skids Exp $
+/* $Id: cbconsist.c,v 1.7 2002/10/27 17:45:09 skids Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -48,6 +48,8 @@ struct cbcstate_s {
 #define CBC_REALDST	4	/* Use a real visual as the destination */
 #define CBC_FLUSHALOT	8	/* Do extra (slow) flushing to work 
 				   around any races. */ 
+#define CBC_NOTIMING	16	/* Don't time. */ 
+#define CBC_NOCONSIST	32	/* Don't run consistancy tests. */ 
 };
 
 #define BAILOUT(string, label) \
@@ -70,6 +72,8 @@ void usage(FILE *fp) {
 	  "  -d dstvis        The destination visual (display-memory)\n"
 	  "  -a               Abort when first inconsiatancy found.\n"
 	  "  -f               Flush a lot (for buggy targets. Very slow).\n"
+	  "  -t               Run without timing tests.\n"
+	  "  -c               Run without consistency tests.\n"
 	  "\nNote that this application depends on bug-free color ops.\n"
 	  "Also note timing measurements don't account for system load.\n\n",
 	  CBC_VERSION);
@@ -243,7 +247,7 @@ int mkmemvis(int i, char **str,
   return i;
 }
 
-char optstring[] = "s:d:haf";
+char optstring[] = "s:d:haftc";
 
 int main(int argc, char **argv) {
   ggi_color color;
@@ -280,6 +284,14 @@ int main(int argc, char **argv) {
 
     case 'f':
       s.flags |= CBC_FLUSHALOT;
+      break;
+
+    case 't':
+      s.flags |= CBC_NOTIMING;
+      break;
+
+    case 'c':
+      s.flags |= CBC_NOCONSIST;
       break;
       
     case '?':
@@ -332,17 +344,21 @@ int main(int argc, char **argv) {
 
   if ((s.flags & CBC_REALDST) && (s.flags & CBC_REALSRC)) {
     ggi_pixel res;
-    fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-    fflush(stdout);
-    cbtime(&s);
-    fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
-    fflush(stdout);
-    res = cbconsist(&s);
-    if (res && (s.flags & CBC_ABORT)) {
-      fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
-      goto err3;
+    if (!(s.flags & CBC_NOTIMING)) {
+      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
+      cbtime(&s);
     }
-    fprintf(stdout, "%i bad values.\n", res);
+    if (!(s.flags & CBC_NOCONSIST)) {
+      fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
+      res = cbconsist(&s);
+      if (res && (s.flags & CBC_ABORT)) {
+	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
+	goto err3;
+      }
+      fprintf(stdout, "%i bad values.\n", res);
+    }
   } 
   else if (s.flags & CBC_REALDST) {
     int i;
@@ -350,18 +366,22 @@ int main(int argc, char **argv) {
     while (mkmemvis(i, &s.svisstr, &s.svis, &s.smode, &s.sblack) >= 0) {
       ggi_pixel res;
 
-      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      cbtime(&s);
-      fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      res = cbconsist(&s);
-      if (res && (s.flags & CBC_ABORT)) {
-	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
-	goto err2;
+      if (!(s.flags & CBC_NOTIMING)) {
+	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+	fflush(stdout);
+	cbtime(&s);
       }
-      fprintf(stdout, "%i bad values.\n", res);
-      ggiClose(s.svis);
+      if (!(s.flags & CBC_NOCONSIST)) {
+	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+	fflush(stdout);
+	res = cbconsist(&s);
+	if (res && (s.flags & CBC_ABORT)) {
+	  fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
+	  goto err2;
+	}
+	fprintf(stdout, "%i bad values.\n", res);
+	ggiClose(s.svis);
+      }
       i++;
     }
   }
@@ -371,18 +391,22 @@ int main(int argc, char **argv) {
     while (mkmemvis(i, &s.dvisstr, &s.dvis, &s.dmode, &s.dblack) >= 0) {
       ggi_pixel res;
 
-      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      cbtime(&s);
-      fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      res = cbconsist(&s);
-      if (res && (s.flags & CBC_ABORT)) {
-	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
-	goto err4;
+      if (!(s.flags & CBC_NOTIMING)) {
+	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+	fflush(stdout);
+	cbtime(&s);
       }
-      fprintf(stdout, "%i bad values.\n", res);
-      ggiClose(s.dvis);
+      if (!(s.flags & CBC_NOCONSIST)) {
+	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+	fflush(stdout);
+	res = cbconsist(&s);
+	if (res && (s.flags & CBC_ABORT)) {
+	  fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
+	  goto err4;
+	}
+	fprintf(stdout, "%i bad values.\n", res);
+	ggiClose(s.dvis);
+      }
       i++;
     }
   } else {
@@ -394,18 +418,22 @@ int main(int argc, char **argv) {
       while (mkmemvis(j, &s.svisstr, &s.svis, &s.smode, &s.sblack) >= 0){
 	ggi_pixel res;
 
-	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-        fflush(stdout);
-	cbtime(&s);
-	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
-        fflush(stdout);
-	res = cbconsist(&s);
-	if (res && (s.flags & CBC_ABORT)) {
-	  fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
-	  goto err4;
+	if (!(s.flags & CBC_NOTIMING)) {
+	  fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+	  fflush(stdout);
+	  cbtime(&s);
 	}
-	fprintf(stdout, "%i bad values.\n", res);
-	ggiClose(s.svis);
+	if (!(s.flags & CBC_NOCONSIST)) {
+	  fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+	  fflush(stdout);
+	  res = cbconsist(&s);
+	  if (res && (s.flags & CBC_ABORT)) {
+	    fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
+	    goto err4;
+	  }
+	  fprintf(stdout, "%i bad values.\n", res);
+	  ggiClose(s.svis);
+	}
 	j++;
       }
       ggiClose(s.dvis);
