@@ -2,101 +2,8 @@
 Status symbols
 ------------------------------------------
 - still to do
++ still to do and to merge into the stable tree
 * completed
-
-------------------------------------------
-Next minor release (BUGFIX release)
-------------------------------------------
-Version : 2.0.2
-Due : 200?-??-??
-
-[Building issues]
-
-- bring improved code in showaccel demo to showaccel2 demo
-* The default value of the configure option '--with-gii' should always be
-  the one of the '--prefix' option, independent if '--prefix' is specified by
-  the user or not, unless '--with-gii' itself is specified by the user.
-  This simplifies compiling libggi on a machine with no root-permissions.
-  (Christoph)
-* Lots of OpenBSD/libtool fixes (Todd T. Fries)
-* libtool update let GGI compile again under *BSD (including Darwin)
-  (Christoph)
-
-
-[Documentation related stuff]
-
-* documentate tele-target in libggi/doc/targets.txt and via XML.
-  (Christoph & Eric)
-* make sure all Get/Put function manpages make it easy to understand 
-  contents of *buf, if only by mentioning ggiUnPackPixels/ggiPackColors
-  (Eric)
-
-[Target specific issues]
-
-* added missing physz option to memory target (Brian)
-* use config file instead of static accel_strings array in fbdev (Brian)
-- alter fbdev.conf appropriately for selected accel sublibs
-* why is directfb drawing on only every other pixel column? (was DFB bug)
-* enable DirectFB (Brian)
-* disable libKGI target, because it's currently a "proof-of-concept"
-  (Brian)
-* BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
-  the RGBA colorspace. This causes colors being wrongly handled. The
-  result on the screen are colors with blue characteristics. The bug
-  is reproduceable when running apps using tile-over-Xlib with 
-  directbuffers respectively simply running apps on Xlib. The bug 
-  disappears by disabling the directbuffer using tile-over-Xlib.
-  (fixed in new X-target)
-- shake down new X target until most users cannot find any bugs that didn't
-  already exist in display-X or display-Xlib.
-
-
-[Common issues]
-
-* Fix up gamma map functions for non-24bpp visuals (Brian)
-* Alter all setflags functions so that unknown flags are not set, as
-  an indication that they are not supported by the target yet. (Brian)
-* Make sure all target flush functions clip appropriately.  Brian has
-  a patch that makes stubs and mansync flush virt.x, virt.y which can
-  be applied after this is done.
-
-
-------------------------------------------
-Overnext minor release (BUGFIX release)
-------------------------------------------
-Version : 2.0.3
-Due : 200?-??-??
-
-[Building issues]
-
-- Verify and fix cross-compilation to other architectures
-- cleanup demo building and installation. That means, that demos requring
-  a special header/input device like ggicalibrate should only be built,
-  if possible.
-- Fix libtool to create shared libs instead of static ones
-  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
-  run GGI on Linux/MIPS boxes.
-  This should be fixed by libtool update. Please verify.
-
-
-[Documentation related stuff]
-
-- write a target developers guide
-
-
-[Common issues]
-
-- Alter all ggiSetPalette implementations as per mailinglist discussion
-  of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
-- remove obseleted Xlib target
-
-
-[Target specific issues]
-
-- update targets after the common issues are done
-- make fbdev use of gamma map functions
-
-
 
 ------------------------------------------
 Next major release
@@ -104,23 +11,54 @@ Next major release
 Version : 2.1.0
 Due : ????-??-??
 
-- libKGI-target (compiling framework, probably only working with Matrox Cards)
-- improve modelist.inc
+[Building issues]
+
++ bring improved code in showaccel demo to showaccel2 demo
++ Verify and fix cross-compilation to other architectures
++ cleanup demo building and installation. That means, that demos requring
+  a special header/input device like ggicalibrate should only be built,
+  if possible.
++ Fix libtool to create shared libs instead of static ones
+  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
+  run GGI on Linux/MIPS boxes.
+  This should be fixed by libtool update. Please verify.
+
+
+[Common issues]
+
+- Alter all ggiSetPalette implementations as per mailinglist discussion
+  of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
+* remove obseleted Xlib target (Christoph)
+- libKGI-target (compiling framework)
++ improve modelist.inc
 - allow physz params to determine window size when visible == GGI_AUTO
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
 - formalize pixelformat strings (e.g. "r5b5g5p1") and provide
   parser/construction functions for them in the LibGGI internal interface.
   Some code for this is already in LibBuf CVS.
+- add helper target for dirty-region management
+- make use of libgii's enhanced config file system:
+  aliases, in-file option strings, wildcards
+- make use of libgii's enhanced dl system:
+  allow single library to serve multiple suggest strings
 
+
+[Target specific issues]
+
+- update targets after the common issues are done
++ make fbdev use of gamma map functions
++ alter fbdev.conf appropriately for selected accel sublibs
+- make pseudo-targets use of the dirty-region management
 
 New X Target:
 
+- make use of the dirty-region helper target
 - Make display-xf86dga work with all pre-4.x XF86, move newer DGA support
   to a new dga helper.
-- 1,2,4-bpp support for new display-X.
-- Test/complete display-X with obscure bitdepths/endian reversal.
-- Verify/correct interaction of mouse events with setorigin.
++ 1,2,4-bpp support for new display-X.
++ Test/complete display-X with obscure bitdepths/endian reversal.
++ Verify/correct interaction of mouse events with setorigin.
 - Re-implement old display-X emulated setorigin for root windows and
   for buggy WMs with faulty colormap handling code.
 - See if colormap can be force-installed under some buggy WMs.
@@ -142,6 +80,13 @@ New X Target:
   GGI_INPUT=stdin to talk to an interactive app through an xterm).
 
 
+[Documentation related stuff]
+
++ write a target developers guide
+
+
+
+
 ------------------------------------------
 Over-Next major release
 ------------------------------------------
@@ -154,8 +99,6 @@ Due : ????-??-??
   to extensions) to the cascade, add some infrastructure for next 
   cut of LibGGIMISC to make it easy for extensions to integrate with automatic
   frame flipping.  Make sure it's all fast and efficient.
-- enhance config file system: aliases, in-file option strings, wildcards
-- enhance dl system: allow single library to serve multiple suggest strings
 - move libmmutil from libgalloc to libggi to allow normal ggi primitives
   to use batchops
 - finish long-term plan
