@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2002/06/20 13:14:29 cegger Exp $
+/* $Id: box.c,v 1.3 2002/07/05 05:40:59 skids Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -223,8 +223,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + 
-			(ximg->xoffset * ximg->bits_per_pixel)/8;
+		ximgptr = ximg->data + ximg->xoffset * 2;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 2; j += 2) {
@@ -232,13 +231,12 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 				*((uint8 *)data + j + 1) = *(ximgptr + j);
 			}
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->bytes_per_line;
+			((uint8 *)data) += ximg->width * 2;
 		}
 	}
 	else if (ximg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
-		ximgptr = ximg->data + 
-			(ximg->xoffset * ximg->bits_per_pixel)/8;
+		ximgptr = ximg->data + ximg->xoffset * 4;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 4; j += 4) {
@@ -248,7 +246,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 				*((uint8 *)data + j + 3) = *(ximgptr + j);
 			}
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->bytes_per_line;
+			((uint8 *)data) += ximg->width * 4;
 		}
 	}
 	else {
@@ -261,7 +259,8 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 		while (h--) {
 			memcpy(data, ximgptr, (w * ximg->bits_per_pixel)/8);
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->bytes_per_line;
+			((uint8 *)data) += 
+			  ximg->width * ximg->bits_per_pixel/8;
 		}
 	}
 	XDestroyImage(ximg);
