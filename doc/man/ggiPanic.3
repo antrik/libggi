@@ -4,17 +4,20 @@ ggiPanic \- Exit LibGGI programs for fatal errors
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-void \fBggiPanic\fR( const char *\fIformat\fR,  \fI...\fR );
+void \fBggiPanic\fR( const char *\fIformat\fR, \fI...\fR );
 .SH DESCRIPTION
-\fBggiPanic\fR shuts down the application, closing all visuals, with  \fBprintf\fR (3) -style reporting to stderr, taking a format string and any additional variables.
+\fBggiPanic\fR shuts down the application, closing all visuals, with \fBprintf\fR (3) -style reporting to stderr, taking a format string and any additional variables.
 
 \fBggiPanic\fR should only be used by usermode programs when something is really screwed, and they do not know what to do. The same applies for libraries, but might be used in rare situations such as corruption of critical data structures.
 .SH RETURN VALUE
 Never returns.
 .SH EXAMPLES
 .SS Example : An unrecoverable error
+.nf
 
 if (my_important_struct->magic != MAGIC) {
         ggiPanic("Fatal error: structure is corrupted\\n");
 }
-  
+
+.fi
+

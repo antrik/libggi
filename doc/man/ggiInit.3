@@ -10,9 +10,9 @@ int \fBggiExit\fR( void );
 .SH DESCRIPTION
 \fBggiInit\fR initalizes the library. This function must be called before using other LibGGI functions; otherwise the results will be undefined.
 
-\fBggiExit\fR uninitializes the library (after being initalized by \fBggiInit\fR) and automatically cleanup if necessary.  This should be called after an application is finished with the library.  If any GGI functions are called after the library has been uninitialized, the results will be undefined.
+\fBggiExit\fR uninitializes the library (after being initalized by \fBggiInit\fR) and automatically cleanup if necessary. This should be called after an application is finished with the library. If any GGI functions are called after the library has been uninitialized, the results will be undefined.
 
-\fBggiInit\fR allows multiple invocations.  A reference count is maintained, and to completely uninitialize the library, \fBggiExit\fR must be called as many times as \fBggiInit\fR has been called beforehand.
+\fBggiInit\fR allows multiple invocations. A reference count is maintained, and to completely uninitialize the library, \fBggiExit\fR must be called as many times as \fBggiInit\fR has been called beforehand.
 .SH RETURN VALUE
 \fBggiInit\fR returns \fB0\fR for OK, otherwise an error code.
 
@@ -23,7 +23,7 @@ after successfully cleaning up,
 .PP
 .TP
 \fB> 0\fR
-the number of 'open' \fBggiInit\fR calls, if there has been more than one call to \fBggiInit\fR.  As \fBggiInit\fR and \fBggiExit\fR must be used in properly nested pairs, e.g. the first \fBggiExit\fR after two \fBggiInit\fRs will return 1.
+the number of 'open' \fBggiInit\fR calls, if there has been more than one call to \fBggiInit\fR. As \fBggiInit\fR and \fBggiExit\fR must be used in properly nested pairs, e.g. the first \fBggiExit\fR after two \fBggiInit\fRs will return 1.
 .PP
 .TP
 \fB< 0\fR
@@ -31,14 +31,17 @@ error, especially if more \fBggiExit\fR calls have been done than \fBggiInit\fR 
 .PP
 .SH EXAMPLES
 .SS Example : Initialize and uninitialize LibGGI
+.nf
 
 if (ggiInit() < 0)
 {
- fprintf(stderr, "Cannot initalize LibGGI!\\n");
- exit(1);
+	fprintf(stderr, "Cannot initalize LibGGI!\\n");
+	exit(1);
 }
 
 /* Do some LibGGI stuff */
 
 ggiExit();
-   
+
+.fi
+

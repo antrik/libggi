@@ -4,11 +4,11 @@ ggiOpen, ggiClose \- Open and close a visual
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-ggi_visual_t \fBggiOpen\fR( const char *\fIdisplay\fR,  \fI...\fR );
+ggi_visual_t \fBggiOpen\fR( const char *\fIdisplay\fR, \fI...\fR );
 
 int \fBggiClose\fR( ggi_visual_t \fIvis\fR );
 .SH DESCRIPTION
-\fBggiOpen\fR opens a visual.  The visual is specified as a display string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default display target is opened.  (This may be may be specified by the user.)
+\fBggiOpen\fR opens a visual. The visual is specified as a display string, followed by \fBNULL\fR. If only \fBNULL\fR is specified, the default display target is opened. (This may be may be specified by the user.)
 
 The other arguments are for internal purposes only, such as \fIargptr\fR, used to pass driver-specific, non-textual information to the driver.
 
@@ -19,6 +19,7 @@ The other arguments are for internal purposes only, such as \fIargptr\fR, used t
 \fBggiClose\fR returns \fB0\fR for OK, otherwise an error code.
 .SH EXAMPLES
 .SS Example : Open and closing default visual
+.nf
 
 ggi_visual_t vis = ggiOpen(NULL);
 
@@ -32,7 +33,9 @@ if(vis==NULL)
 ggiClose(vis);
 
 
+.fi
 .SS Example : Open and closing a memory visual
+.nf
 
 ggi_visual_t memvis = ggiOpen("display-memory", NULL);
 
@@ -44,5 +47,6 @@ if(memvis==NULL) {
 
 ggiClose(memvis);
 
+.fi
 .SH SEE ALSO
-\fBggiInit\fR (3)  
+\fBggiInit\fR (3) 

@@ -4,21 +4,21 @@ ggiCheckMode, ggiCheckTextMode, ggiCheckGraphMode, ggiCheckSimpleMode \- Check o
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiCheckMode\fR( ggi_visual_t \fIvis\fR,   ggi_mode *\fItm\fR );
+int \fBggiCheckMode\fR( ggi_visual_t \fIvis\fR, ggi_mode *\fItm\fR );
 
-int \fBggiCheckTextMode\fR( ggi_visual_t \fIvisual\fR,  int \fIcols\fR,  int \fIrows\fR,   int \fIvcols\fR,  int \fIvrows\fR,  int \fIfontx\fR,  int \fIfonty\fR,  ggi_mode *\fIsuggested_mode\fR );
+int \fBggiCheckTextMode\fR( ggi_visual_t \fIvisual\fR, int \fIcols\fR, int \fIrows\fR, int \fIvcols\fR, int \fIvrows\fR, int \fIfontx\fR, int \fIfonty\fR, ggi_mode *\fIsuggested_mode\fR );
 
-int \fBggiCheckGraphMode\fR( ggi_visual_t \fIvisual\fR,  int \fIx\fR,  int \fIy\fR,  int \fIxv\fR,  int \fIyv\fR,  ggi_graphtype \fItype\fR,  ggi_mode *\fIsuggested_mode\fR );
+int \fBggiCheckGraphMode\fR( ggi_visual_t \fIvisual\fR, int \fIx\fR, int \fIy\fR, int \fIxv\fR, int \fIyv\fR, ggi_graphtype \fItype\fR, ggi_mode *\fIsuggested_mode\fR );
 
-int \fBggiCheckSimpleMode\fR( ggi_visual_t \fIvisual\fR,  int \fIx\fR,  int \fIy\fR,  int \fIframes\fR,  ggi_graphtype \fItype\fR,  ggi_mode *\fIsuggested_mode\fR );
+int \fBggiCheckSimpleMode\fR( ggi_visual_t \fIvisual\fR, int \fIx\fR, int \fIy\fR, int \fIframes\fR, ggi_graphtype \fItype\fR, ggi_mode *\fIsuggested_mode\fR );
 .SH DESCRIPTION
-\fBggiCheckMode\fR checks whether or not the given mode will work on the visual.  If it does not work, it will modify the values of passed \fBggi_mode\fR structure so that the mode works.  This mode negotiation allows the application to discover modes that are both supported by the visual and suitable to the application.
+\fBggiCheckMode\fR checks whether or not the given mode will work on the visual. If it does not work, it will modify the values of passed \fBggi_mode\fR structure so that the mode works. This mode negotiation allows the application to discover modes that are both supported by the visual and suitable to the application.
 
 \fBggiCheckTextMode\fR checks whether the text mode with the given visible and virtual dimensions and the font size is supported.
 
 \fBggiCheckGraphMode\fR checks whether the graphics mode with the given visible and virtual dimensions and type is supported.
 
-\fBggiCheckSimpleMode\fR checks whether the graphics mode with the given visible dimensions, type, and number of buffers is supported.  This is used in lieu of \fBggiCheckGraphMode\fR if multiple buffering is desired.
+\fBggiCheckSimpleMode\fR checks whether the graphics mode with the given visible dimensions, type, and number of buffers is supported. This is used in lieu of \fBggiCheckGraphMode\fR if multiple buffering is desired.
 
 For \fBggiCheckTextMode\fR, \fBggiCheckGraphMode\fR and \fBggiCheckSimpleMode\fR, \fIsuggested_mode\fR is either \fBNULL\fR or a pointer to a \fBggi_mode\fR which will be filled in with the negotiated mode parameters.
 .SH RETURN VALUE
@@ -26,7 +26,7 @@ For \fBggiCheckTextMode\fR and \fBggiCheckGraphMode\fR, a return of \fB0\fR mean
 
 If the only modifications made to the structure is replacing \fBGGI_AUTO\fR or \fBGT_AUTO\fR value, the functions return success.
 .SH RULES FOR MODE NEGOTIATION
-First, if \fBGGI_AUTO\fR (or \fBGT_AUTO\fR for the graphtype) is specified for any of the members of \fI*tm\fR, these are filled in with the recommended values.  The values could be to a maximum, preferred, or \fBGGI_DEFMODE\fR resolution, and will be compatible with any other constraints.
+First, if \fBGGI_AUTO\fR (or \fBGT_AUTO\fR for the graphtype) is specified for any of the members of \fI*tm\fR, these are filled in with the recommended values. The values could be to a maximum, preferred, or \fBGGI_DEFMODE\fR resolution, and will be compatible with any other constraints.
 
 An application that does not care about a specific paramater should always specify \fBGGI_AUTO\fR or \fBGT_AUTO\fR for it.
 
@@ -37,6 +37,7 @@ The suggested mode is derived as follows:
 .RE
 .SH EXAMPLES
 .SS Example : Try a 320x200x8 mode
+.nf
 
 err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
                         &sug_mode, NULL);
@@ -47,5 +48,6 @@ else {
         ggiSetMode(&sug_mode);
 }
 
+.fi
 .SH SEE ALSO
-\fBggiOpen\fR (3), \fBggiSetMode\fR (3), \fBggi_mode\fR (3)  
+\fBggiOpen\fR (3), \fBggiSetMode\fR (3), \fBggi_mode\fR (3) 

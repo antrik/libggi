@@ -4,9 +4,9 @@ ggiSetOrigin, ggiGetOrigin \- Set and get origin of virtual screen
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiSetOrigin\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR );
+int \fBggiSetOrigin\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR );
 
-int \fBggiGetOrigin\fR( ggi_visual_t \fIvis\fR,  int *\fIx\fR,  int *\fIy\fR );
+int \fBggiGetOrigin\fR( ggi_visual_t \fIvis\fR, int *\fIx\fR, int *\fIy\fR );
 .SH DESCRIPTION
 \fBggiSetOrigin\fR sets the top-left corner of the displayed area to (\fIx\fR, \fIy\fR).
 
@@ -14,7 +14,7 @@ When using a larger virtual area, you can pan the visible area over the virtual 
 
 Large virtual areas are also commonly used for buffering the display contents, but that is usually more easily accomplished by requesting a specific number of \fBframes\fR when setting a mode.
 
-This call takes  coordinates, not pixel coordinates as all other drawing primitives do. There is no difference in graphics modes because by definition \fBdpp\fR is 1x1, but in text modes the application can do smooth scrolling.
+This call takes coordinates, not pixel coordinates as all other drawing primitives do. There is no difference in graphics modes because by definition \fBdpp\fR is 1x1, but in text modes the application can do smooth scrolling.
 
 \fBggiGetOrigin\fR gets the current top-left corner of the displayed area into (\fIx\fR, \fIy\fR).
 
@@ -23,8 +23,11 @@ Due to rounding to the hardware's capabilities, the values retrieved by a subseq
 \fB0\fR for OK, otherwise an error code.
 .SH EXAMPLES
 .SS Example : Pan from the top to the bottom of the virtual screen
+.nf
 
 for(i = 0; i < virt_y-visible_y; i++) {
         ggiSetOrigin(vis, 0, i);
 }
-   
+
+.fi
+

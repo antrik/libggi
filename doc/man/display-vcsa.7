@@ -2,9 +2,9 @@
 .SH NAME
 display-vcsa \- Display using Linux virtual console text device
 .SH SYNOPSIS
- \fBdisplay-vcsa\fR : -noinput -nokbd -nomouse -shade -ascii -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR \fIvcsa device\fR 
+\fBdisplay-vcsa\fR : -noinput -nokbd -nomouse -shade -ascii -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR \fIvcsa device\fR
 .SH DESCRIPTION
-Uses the Linux \fB/dev/vcsa*\fR devices  to render text modes onto the console.
+Uses the Linux \fB/dev/vcsa*\fR devices to render text modes onto the console.
 .SH OPTIONS
 .TP
 -nokbd
@@ -20,15 +20,15 @@ Same as both -nokbd and -nomouse.
 .PP
 .TP
 -shade
-The -shade option turns on `shading mode', which changes the color mapping so that it chooses characters which emulate a shading effect.  This makes a big improvement if using (some might say abusing :) the vcsa target for graphical purposes.
+The -shade option turns on `shading mode', which changes the color mapping so that it chooses characters which emulate a shading effect. This makes a big improvement if using (some might say abusing :) the vcsa target for graphical purposes.
 .PP
 .TP
 -ascii
-The -ascii option limits the color mapping to only using ASCII characters.  The default mode uses IBM special characters (the solid block mainly, and others when using -shade).
+The -ascii option limits the color mapping to only using ASCII characters. The default mode uses IBM special characters (the solid block mainly, and others when using -shade).
 .PP
 .TP
 -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR
-This option will provide a physical screen size for applications which wish to remain resolution independent.   \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fIdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
+This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fIdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
 .PP
 .TP
 \fIvcsa device\fR

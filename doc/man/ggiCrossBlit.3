@@ -4,7 +4,7 @@ ggiCrossBlit \- Copy a rectangular area between two visuals
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiCrossBlit\fR( ggi_visual_t \fIsrc\fR,  int \fIsx\fR,  int \fIsy\fR,  int \fIsw\fR,  int \fIsh\fR,  ggi_visual_t \fIdst\fR,  int \fIdx\fR,  int \fIdy\fR );
+int \fBggiCrossBlit\fR( ggi_visual_t \fIsrc\fR, int \fIsx\fR, int \fIsy\fR, int \fIsw\fR, int \fIsh\fR, ggi_visual_t \fIdst\fR, int \fIdx\fR, int \fIdy\fR );
 .SH DESCRIPTION
 Blits a rectangular memory area from one visual to another. It handles colorspace-conversion. (Though it can be quite expensive, so take care.)
 
@@ -14,4 +14,4 @@ This function does not perform stretching.
 .SH RETURN VALUE
 \fB0\fR for OK, otherwise an error code.
 .SH SEE ALSO
-\fBggiCopyBox\fR (3)  
+\fBggiCopyBox\fR (3) 

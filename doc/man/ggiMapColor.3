@@ -4,21 +4,21 @@ ggiMapColor, ggiUnmapPixel, ggiPackColors, ggiUnpackPixels \- Convert from ggi_c
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-ggi_pixel \fBggiMapColor\fR( ggi_visual_t \fIvis\fR,  ggi_color *\fIcol\fR );
+ggi_pixel \fBggiMapColor\fR( ggi_visual_t \fIvis\fR, ggi_color *\fIcol\fR );
 
-int \fBggiUnmapPixel\fR( ggi_visual_t \fIvis\fR,  ggi_pixel \fIpixel\fR,  ggi_color *\fIcol\fR );
+int \fBggiUnmapPixel\fR( ggi_visual_t \fIvis\fR, ggi_pixel \fIpixel\fR, ggi_color *\fIcol\fR );
 
-int \fBggiPackColors\fR( ggi_visual_t \fIvis\fR,  void *\fIbuf\fR,  ggi_color *\fIcols\fR,  int \fIlen\fR );
+int \fBggiPackColors\fR( ggi_visual_t \fIvis\fR, void *\fIbuf\fR, ggi_color *\fIcols\fR, int \fIlen\fR );
 
-int \fBggiUnpackPixels\fR( ggi_visual_t \fIvis\fR,  void *\fIbuf\fR,  ggi_color *\fIcols\fR,  int \fIlen\fR );
+int \fBggiUnpackPixels\fR( ggi_visual_t \fIvis\fR, void *\fIbuf\fR, ggi_color *\fIcols\fR, int \fIlen\fR );
 .SH DESCRIPTION
 \fBggiMapColor\fR gets the pixelvalue for the given color.
 
 \fBggiUnmapPixel\fR gets the color associated with the given pixelvalue.
 
-\fBggiPackColors\fR converts the colors in \fIcols\fR to  in \fIbuf\fR.  The output from this function is suitable for input to the \fBggiPut{HLine,VLine,Box}\fR functions.
+\fBggiPackColors\fR converts the colors in \fIcols\fR to in \fIbuf\fR. The output from this function is suitable for input to the \fBggiPut{HLine,VLine,Box}\fR functions.
 
-\fBggiUnpackPixels\fR converts the pixelvalues in \fIbuf\fR to individual elements of \fIcols\fR.  This function maybe used to convert buffers output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue representation to their actual .
+\fBggiUnpackPixels\fR converts the pixelvalues in \fIbuf\fR to individual elements of \fIcols\fR. This function maybe used to convert buffers output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue representation to their actual .
 
 The buffers output from \fBggiPackColors\fR and the input to \fBggiUnpackPixels\fR are in the same format as the get/put buffers. Their format is defined in \fBggi_pixelformat\fR.
 
@@ -28,4 +28,4 @@ Try to cache the results of color lookups in your application for efficiency pur
 
 \fBggiUnmapPixel\fR, \fBggiPackColors\fR, and \fBggiUnpackPixels\fR returns \fB0\fR for OK, otherwise an error code.
 .SH SEE ALSO
-\fBggiGetPixelFormat\fR (3), \fBggi_color\fR (3), \fBggi_pixelformat\fR (3)  
+\fBggiGetPixelFormat\fR (3), \fBggi_color\fR (3), \fBggi_pixelformat\fR (3) 

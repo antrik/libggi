@@ -4,19 +4,19 @@ ggiParseMode, ggiPrintMode, ggiSPrintMode, ggiFPrintMode \- Parse and print form
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiParseMode\fR( const char *\fIs\fR,  ggi_mode *\fIm\fR );
+int \fBggiParseMode\fR( const char *\fIs\fR, ggi_mode *\fIm\fR );
 
 int \fBggiPrintMode\fR( ggi_mode *\fIm\fR );
 
-int \fBggiSPrintMode\fR( char *\fIs\fR,  ggi_mode *\fIm\fR );
+int \fBggiSPrintMode\fR( char *\fIs\fR, ggi_mode *\fIm\fR );
 
-int \fBggiFPrintMode\fR( FILE *\fIs\fR,  ggi_mode *\fIm\fR );
+int \fBggiFPrintMode\fR( FILE *\fIs\fR, ggi_mode *\fIm\fR );
 .SH DESCRIPTION
 \fBggiParseMode\fR parses a string into a \fBggi_mode\fR.
 
-The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a human-readable form. \fBggiSPrintMode\fR outputs to a preallocated string buffer, \fBggiFPrintMode\fR outputs to a stdio FILE, and \fBggiPrintMode\fR outputs to standard output.  These functions correspond to \fBsprintf \fR (3), \fBfprintf \fR (3), \fBprintf \fR (3), respectively.
+The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a human-readable form. \fBggiSPrintMode\fR outputs to a preallocated string buffer, \fBggiFPrintMode\fR outputs to a stdio FILE, and \fBggiPrintMode\fR outputs to standard output. These functions correspond to \fBsprintf \fR (3), \fBfprintf \fR (3), \fBprintf \fR (3), respectively.
 
-The format of the string used by these functions is exactly the same as the one used in the  environment variable.
+The format of the string used by these functions is exactly the same as the one used in the environment variable.
 .SH RETURN VALUE
 \fBggiParseMode\fR returns:
 .TP

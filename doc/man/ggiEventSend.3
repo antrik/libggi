@@ -4,10 +4,10 @@ ggiEventSend \- Send commands and events to a LibGGI visual
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiEventSend\fR( ggi_visual_t \fIvis\fR,  gii_event *\fIev\fR );
+int \fBggiEventSend\fR( ggi_visual_t \fIvis\fR, gii_event *\fIev\fR );
 .SH DESCRIPTION
 \fBggiEventSend\fR injects an event into the queue.
 .SH CONTROLLING VT SWITCHING BEHAVIOR
-If an application wants to continue running after its VT is switched away, it should make a call \fBggiEventSend\fR to the visual with an \fBevCommand\fR event with code \fBGGICMD_NOHALT_ON_UNMAP\fR.  To disable this behavior, use a command event with code \fBGGICMD_HALT_ON_UNMAP\fR. The latter is the default.
+If an application wants to continue running after its VT is switched away, it should make a call \fBggiEventSend\fR to the visual with an \fBevCommand\fR event with code \fBGGICMD_NOHALT_ON_UNMAP\fR. To disable this behavior, use a command event with code \fBGGICMD_HALT_ON_UNMAP\fR. The latter is the default.
 .SH SEE ALSO
-\fBggiJoinInputs\fR (3), \fBgiiEventSend\fR (3)  
+\fBggiJoinInputs\fR (3), \fBgiiEventSend\fR (3) 

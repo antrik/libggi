@@ -4,13 +4,13 @@ ggiSetFlags, ggiGetFlags, ggiAddFlags, ggiRemoveFlags \- Set or get flags affect
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiSetFlags\fR( ggi_visual_t \fIvis\fR,  ggi_flags \fIflags\fR );
+int \fBggiSetFlags\fR( ggi_visual_t \fIvis\fR, ggi_flags \fIflags\fR );
 
 ggi_flags \fBggiGetFlags\fR( ggi_visual_t \fIvis\fR );
 
-int \fBggiAddFlags\fR( ggi_visual_t \fIvis\fR,  ggi_flags \fIflags\fR );
+int \fBggiAddFlags\fR( ggi_visual_t \fIvis\fR, ggi_flags \fIflags\fR );
 
-int \fBggiRemoveFlags\fR( ggi_visual_t \fIvis\fR,  ggi_flags \fIflags\fR );
+int \fBggiRemoveFlags\fR( ggi_visual_t \fIvis\fR, ggi_flags \fIflags\fR );
 .SH DESCRIPTION
 \fBggiSetFlags\fR sets the specified flags (bitwise OR'd together) on a visual.
 
@@ -18,36 +18,38 @@ int \fBggiRemoveFlags\fR( ggi_visual_t \fIvis\fR,  ggi_flags \fIflags\fR );
 
 \fBggiAddFlags\fR and \fBggiRemoveFlags\fR are macros that set or unset the specified flags.
 
-Flags are used to alter a visual's underlying behavior.  All flags  default to an unset value.  Flags which are not supported by a given visual  will remain unset even when an attempt is made to raise them.  Thus, it  is possible to tell by reading back the flags whether or not each of the  flags is supported by the given visual.
+Flags are used to alter a visual's underlying behavior. All flags default to an unset value. Flags which are not supported by a given visual will remain unset even when an attempt is made to raise them. Thus, it is possible to tell by reading back the flags whether or not each of the flags is supported by the given visual.
 .SH RETURN VALUE
-\fBggiSetFlags\fR, \fBggiAddFlags\fR, and \fBggiRemoveFlags\fR return \fB0\fR on success, \fB<0\fR on failure.  This will only happen if the failure of a target to support the addition or removal of a  flag will cause the target to behave in a way that the application is not expecting.  As of this writing there are no such cases.  On visuals where  certain flags are unsupported but are inconsequential, these functions  will return a successful return code, but will not actually set or  clear the flag.
+\fBggiSetFlags\fR, \fBggiAddFlags\fR, and \fBggiRemoveFlags\fR return \fB0\fR on success, \fB<0\fR on failure. This will only happen if the failure of a target to support the addition or removal of a flag will cause the target to behave in a way that the application is not expecting. As of this writing there are no such cases. On visuals where certain flags are unsupported but are inconsequential, these functions will return a successful return code, but will not actually set or clear the flag.
 
-\fBggiGetFlags\fR returns the current flags.  This can  be used by the curious to check whether a flag is being silently ignored as per above.
+\fBggiGetFlags\fR returns the current flags. This can be used by the curious to check whether a flag is being silently ignored as per above.
 .SH SYNCHRONOUS AND ASYNCHRONOUS DRAWING MODES
 Some visuals allow different modes with regard to when the screen is updated and the actual drawing takes place.
 .RS
 .RE
-On some targets such as the X target there is no real synchronous mode, so LibGGI fakes one by periodically calling \fBggiFlush\fR in the background.  This process can take about half the execution time of a program.  So using synchronous mode can really slow things down.
+On some targets such as the X target there is no real synchronous mode, so LibGGI fakes one by periodically calling \fBggiFlush\fR in the background. This process can take about half the execution time of a program. So using synchronous mode can really slow things down.
 
-However, the synchronous mode is the default, because it is  what most programmers expect.
+However, the synchronous mode is the default, because it is what most programmers expect.
 
 In either mode, all operations are guaranteed to be performed in the order in which they are called. Reordering is not done.
 
-So the recommendation for all graphics applications is to set the asynchronous mode.  It will be far more efficient on some platforms and will never be worse.
+So the recommendation for all graphics applications is to set the asynchronous mode. It will be far more efficient on some platforms and will never be worse.
 .SS Example : Setting up asynchronous mode
+.nf
 
-ggiAddFlags(vis, GGIFLAG_ASYNC); /* switches to asynchronous mode */
+ggiAddFlags(vis, GGIFLAG_ASYNC);	/* switches to asynchronous mode */
 
-ggiFlush(vis);    /* updates the screen */
+ggiFlush(vis);				/* updates the screen */
 
-ggiRemoveFlags(vis, GGIFLAG_ASYNC); /* switches to synchronous mode */
+ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 
+.fi
 .SH TIDY BUFFER MODE.
 Some visuals allow applications to manage their own dirty regions when using the directbuffer.
 .RS
 .RE
-The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is safe to attempt to set it whether or not it is available.  Code written for the tidy-buffering mode will display correctly on visuals which do not have a tidy-buffering mode (but not visa-versa), so it is not  necessary to adapt program behavior to its non-presence.
+The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is safe to attempt to set it whether or not it is available. Code written for the tidy-buffering mode will display correctly on visuals which do not have a tidy-buffering mode (but not visa-versa), so it is not necessary to adapt program behavior to its non-presence.
 
 It is recommended that, if an application must use directbuffer, the application should attempt to place the visual in tidy-buffered mode. Do note, though, that many applications that use the directbuffer do not actually need to do so and probably should not, as it reduces portability.
 .SH SEE ALSO
-\fBggiFlush\fR (3)  
+\fBggiFlush\fR (3) 

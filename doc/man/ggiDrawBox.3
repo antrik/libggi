@@ -4,11 +4,11 @@ ggiDrawBox, ggiPutBox, ggiGetBox \- Draw, put, and get a rectangle from a visual
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiDrawBox\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  int \fIw\fR,  int \fIh\fR );
+int \fBggiDrawBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR );
 
-int \fBggiPutBox\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  int \fIw\fR,  int \fIh\fR,  void *\fIbuf\fR );
+int \fBggiPutBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, void *\fIbuf\fR );
 
-int \fBggiGetBox\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  int \fIw\fR,  int \fIh\fR,  void *\fIbuf\fR );
+int \fBggiGetBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, void *\fIbuf\fR );
 .SH DESCRIPTION
 Draw, put, or get a rectangle at (\fIx\fR,\fIy\fR), extending \fIw\fR pixels in the positive x direction and \fIh\fR pixels in the positive y direction.
 
@@ -16,4 +16,4 @@ The *\fIbuf\fR parameter in Get/Put functions points to a buffer from which the 
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO
-\fBggiDrawHLine\fR (3), \fBggiDrawVLine\fR (3), \fBggiDrawLine\fR (3), \fBggiMapColor\fR (3), \fBggi_pixelformat\fR (3)  
+\fBggiDrawHLine\fR (3), \fBggiDrawVLine\fR (3), \fBggiDrawLine\fR (3), \fBggiMapColor\fR (3), \fBggi_pixelformat\fR (3) 

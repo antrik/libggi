@@ -4,21 +4,21 @@ ggiPutc, ggiPuts, ggiGetCharSize \- Draw one or more characters on visual
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiPutc\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  char \fIc\fR );
+int \fBggiPutc\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, char \fIc\fR );
 
-int \fBggiPuts\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  const char *\fIstr\fR );
+int \fBggiPuts\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, const char *\fIstr\fR );
 
-int \fBggiGetCharSize\fR( ggi_visual_t \fIvis\fR,  int *\fIwidth\fR,  int *\fIheight\fR );
+int \fBggiGetCharSize\fR( ggi_visual_t \fIvis\fR, int *\fIwidth\fR, int *\fIheight\fR );
 .SH DESCRIPTION
-LibGGI provides a few functions to do basic character output. They are for debugging and simple GUI applications. They are simple on purpose: there is only one fixed-width font and its size cannot be changed. Only the standard ASCII character set (0x20 to 0x7f) is supported, with no internationalization features.  All more complex character functions go beyond the scope of this base library.
+LibGGI provides a few functions to do basic character output. They are for debugging and simple GUI applications. They are simple on purpose: there is only one fixed-width font and its size cannot be changed. Only the standard ASCII character set (0x20 to 0x7f) is supported, with no internationalization features. All more complex character functions go beyond the scope of this base library.
 
 \fBggiPutc\fR puts a single character on a graphical visual.
 
 \fBggiPuts\fR puts multiple characters (from a C-style null- -terminated string) at once. No special handling is applied to control characters like CR or LF. The associated glyph for control characters will be displayed. ggiPuts also only clips text at the clipping rectangle and does not wrap text.
 
-\fBggiGetCharSize\fR obtains the size of the character cell, in pixels.  This function allows the application to correctly position the text output. Character size must always be checked and application should not assume that it will be constant across targets or even modes. Visuals must have a mode set before querying the character size. It means that if you want to use a visual size which depends on the character size, you might have to iterate over \fBggiSetMode\fR and \fBggiGetCharSize\fR to get it right.
+\fBggiGetCharSize\fR obtains the size of the character cell, in pixels. This function allows the application to correctly position the text output. Character size must always be checked and application should not assume that it will be constant across targets or even modes. Visuals must have a mode set before querying the character size. It means that if you want to use a visual size which depends on the character size, you might have to iterate over \fBggiSetMode\fR and \fBggiGetCharSize\fR to get it right.
 
-The values returned by \fBggiGetCharSize\fR is not the same as the values of  of the current mode, which is in .  In graphics modes are 1x1 dpp by definition and use at least 8x8-pixel fonts.  In text mode, the character cell is 1x1  by definition and the \fBdpp\fR value is the actual size of the font.
+The values returned by \fBggiGetCharSize\fR is not the same as the values of of the current mode, which is in . In graphics modes are 1x1 dpp by definition and use at least 8x8-pixel fonts. In text mode, the character cell is 1x1 by definition and the \fBdpp\fR value is the actual size of the font.
 .SH RETURN VALUE
 \fB0\fR for success.
 

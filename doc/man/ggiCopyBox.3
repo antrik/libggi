@@ -4,9 +4,9 @@ ggiCopyBox \- Copy a rectangular area
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiCopyBox\fR( ggi_visual_t \fIvis\fR,  int \fIx\fR,  int \fIy\fR,  int \fIw\fR,  int \fIh\fR,  int \fInx\fR,  int \fIny\fR );
+int \fBggiCopyBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, int \fInx\fR, int \fIny\fR );
 .SH DESCRIPTION
-This is a area-to-area-blit, all in the same visual. Copy the box described by \fIx\fR,\fIy\fR, \fIw\fR,\fIh\fR to the new location \fInx\fR,\fIny\fR.  This automatically takes care of overlaps and optimizes for the given visual (e.g. uses HW-accel or intermediate buffers as appropriate).
+This is a area-to-area-blit, all in the same visual. Copy the box described by \fIx\fR,\fIy\fR, \fIw\fR,\fIh\fR to the new location \fInx\fR,\fIny\fR. This automatically takes care of overlaps and optimizes for the given visual (e.g. uses HW-accel or intermediate buffers as appropriate).
 
 \fBggiCopyBox\fR will transfer an area between frames when the read frame is not the same as the write frame.
 .SH RETURN VALUE

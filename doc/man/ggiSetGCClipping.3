@@ -4,15 +4,15 @@ ggiSetGCClipping, ggiGetGCClipping \- Set or get the clipping rectangle for a vi
 .SH SYNOPSIS
 \fB#include <ggi/ggi.h>\fR
 
-int \fBggiSetGCClipping\fR( ggi_visual_t \fIvis\fR,  int \fIleft\fR,  int \fItop\fR,  int \fIright\fR,  int \fIbottom\fR );
+int \fBggiSetGCClipping\fR( ggi_visual_t \fIvis\fR, int \fIleft\fR, int \fItop\fR, int \fIright\fR, int \fIbottom\fR );
 
-int \fBggiGetGCClipping\fR( ggi_visual_t \fIvis\fR,  int *\fIleft\fR,  int *\fItop\fR,  int *\fIright\fR,  int *\fIbottom\fR );
+int \fBggiGetGCClipping\fR( ggi_visual_t \fIvis\fR, int *\fIleft\fR, int *\fItop\fR, int *\fIright\fR, int *\fIbottom\fR );
 .SH DESCRIPTION
 \fBggiSetGCClipping\fR sets the the current clipping rectangle to (\fIleft\fR,\fItop\fR)- (\fIright\fR-1,\fIbottom\fR-1), inclusive.
 
 Initially the clipping rectangle is the whole virtual screen.
 
-All LibGGI drawing primitives obey the clipping rectangle. Negative coordinates given to LibGGI drawing functions will be  clipped correctly.
+All LibGGI drawing primitives obey the clipping rectangle. Negative coordinates given to LibGGI drawing functions will be clipped correctly.
 
 \fBggiGetGCClipping\fR reads the coordinates of the current clipping rectangle.
 .SH RETURN VALUE

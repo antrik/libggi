@@ -6,7 +6,7 @@ ggiDBGetNumBuffers, ggiDBGetBuffer \- Get DirectBuffers from a visual
 
 int \fBggiDBGetNumBuffers\fR( ggi_visual_t \fIvis\fR );
 
-const ggi_directbuffer *\fBggiDBGetBuffer\fR( ggi_visual_t \fIvis\fR,  int \fIbufnum\fR );
+const ggi_directbuffer *\fBggiDBGetBuffer\fR( ggi_visual_t \fIvis\fR, int \fIbufnum\fR );
 .SH DESCRIPTION
 Dependent on the visual and runtime environment found, applications may be granted direct access to hardware and/or library internal buffers. This may significantly enhance performance for certain pixel oriented applications or libraries.
 
@@ -18,9 +18,9 @@ However, use not conforming to this specification will have undefined effects an
 
 Use \fBggiDBGetBuffer\fR to obtain the DirectBuffers at 0 to n-1, where n is the number returned by \fBggiDBGetNumBuffers\fR.
 
-Pixel-linear buffers have type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL.  You're on your own now.
+Pixel-linear buffers have type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL. You're on your own now.
 
-DirectBuffers where \fBggiResourceMustAcquire\fR is true need to be 'acquired' (i.e. locked) before using.  An acquire is done by using \fBggiResourceAcquire\fR and is released by calling \fBggiResourceRelease\fR.  (See \fBggiResourceAcquire\fR (3).)  Beware that the \fBread\fR, \fBwrite\fR and \fBstride\fR fields of the DirectBuffer may be changed by an acquire, and that they may be \fBNULL\fR or invalid when the DirectBuffer is not acquired.
+DirectBuffers where \fBggiResourceMustAcquire\fR is true need to be 'acquired' (i.e. locked) before using. An acquire is done by using \fBggiResourceAcquire\fR and is released by calling \fBggiResourceRelease\fR. (See \fBggiResourceAcquire\fR (3).) Beware that the \fBread\fR, \fBwrite\fR and \fBstride\fR fields of the DirectBuffer may be changed by an acquire, and that they may be \fBNULL\fR or invalid when the DirectBuffer is not acquired.
 .SH RETURN VALUE
 \fBggiDBGetNumBuffers\fR returns the number of DirectBuffers available. \fB0\fR indicates that no DirectBuffers are available.
 
@@ -33,74 +33,76 @@ A frame buffer may be organized as several distinct buffers. Each buffer may hav
 A framebuffer is denoted by \fBggi_directbuffer.type\fR==\fBGGI_DB_NORMAL\fR. Each frame has its own buffer, and its number is indicated in \fBggi_directbuffer.frame\fR.
 .SH EXAMPLES
 .SS Example : How to obtain a DirectBuffer
+.nf
 
-ggi_visual_t vis;
-ggi_mode mode;
-int  i;
+ggi_visual_t	vis;
+ggi_mode	mode;
+int		i;
 
 /* Framebuffer info */
 unsigned char *fbptr[2];
 int stride[2];
 int numbufs;
 
-mode.frames = 2; /* Double-buffering */
-mode.visible.x = 640; /* Screen res */
+mode.frames = 2;	/* Double-buffering */
+mode.visible.x = 640;	/* Screen res */
 mode.visible.y = 480;
-mode.virt.x = GGI_AUTO; /* Any virtual resolution.  Will usually be set
-mode.virt.y = GGI_AUTO;    to be the same as visible but some targets may
-      have restrictions on virtual size. */
-mode.graphtype = GT_8BIT;  /* Depend on 8-bit palette. */
-mode.dpp.x = mode.dpp.y = GGI_AUTO; /* Always 1x1 but we don't care. */
+mode.virt.x = GGI_AUTO;	/* Any virtual resolution.  Will usually be set
+mode.virt.y = GGI_AUTO;	   to be the same as visible but some targets may
+			   have restrictions on virtual size. */
+mode.graphtype = GT_8BIT;		/* Depend on 8-bit palette. */
+mode.dpp.x = mode.dpp.y = GGI_AUTO;	/* Always 1x1 but we don't care. */
 
 if(ggiInit())
 {
- /* Failed to initialize library. Bomb out. */
+	/* Failed to initialize library. Bomb out. */
 }
 
 vis = ggiOpen(NULL);
 if(!vis)
 {
- /* Opening default visual failed, quit. */
+	/* Opening default visual failed, quit. */
 }
 
 if(ggiSetMode(vis, &mode))
 {
- /* Set mode has failed, should check if suggested mode
-    is o.k. for us, and try the call again. */
+	/* Set mode has failed, should check if suggested mode
+	   is o.k. for us, and try the call again. */
 }
 
 numbufs = ggiDBGetNumBuffers(vis);
 
 for(i = 0; i < numbufs; i++)
 {
- ggi_directbuffer *db;
- int frameno;
+	ggi_directbuffer *db;
+	int frameno;
 
- db = ggiDBGetBuffer(vis, i);
+	db = ggiDBGetBuffer(vis, i);
 
- if(!(db->type & GGI_DB_SIMPLE_PLB))
- {
+	if(!(db->type & GGI_DB_SIMPLE_PLB))
+	{
 
-  /* We don't handle anything but simple pixel-linear buffers.
-     Fall back to ggiPutBox() or something. */
-  continue;
+		/* We don't handle anything but simple pixel-linear buffers.
+		   Fall back to ggiPutBox() or something. */
+		continue;
 
- }
+	}
 
- frameno = db->frame;
+	frameno = db->frame;
 
- if(readptr[frameno] != NULL &&
-  (db->buffer.plb.pixelformat->flags & GGI_PF_REVERSE_ENDIAN))
- {
-  continue;
- }
+	if(readptr[frameno] != NULL &&
+		(db->buffer.plb.pixelformat->flags & GGI_PF_REVERSE_ENDIAN))
+	{
+		continue;
+	}
 
- fbptr[frameno] = db->write; /* read == write for simple plbs */
+	fbptr[frameno] = db->write;	/* read == write for simple plbs */
 
- /* Stride of framebuffer (in bytes). */
- stride[frameno] = db->buffer.plb.stride;
+	/* Stride of framebuffer (in bytes). */
+	stride[frameno] = db->buffer.plb.stride;
 
- /* Check pixel format, be portable.... */
+	/* Check pixel format, be portable.... */
 
+.fi
 .SH SEE ALSO
 \fBggi_directbuffer\fR (3), \fBggiResourceAcquire\fR (3) 

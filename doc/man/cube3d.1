@@ -2,21 +2,23 @@
 .SH NAME
 cube3d \- 3D cube console
 .SH SYNOPSIS
- \fBcube3d\fR 
+\fBcube3d\fR
 .SH DESCRIPTION
 cube3d is a LibGGI "middleend", that allows to run up to 6 LibGGI applications on one screen, mapped to the six sides of a cube.
 
-The programs program1 to program6 are invoked and mapped to the cube sides after the 3d program itself has started. You can interleave the program names with size parameters of the form -xxx,yyy that will ask the programs  that come later on the commandline to start up in that size. The default size is half that of the visual 3d is running on.
+The programs program1 to program6 are invoked and mapped to the cube sides after the 3d program itself has started. You can interleave the program names with size parameters of the form -xxx,yyy that will ask the programs that come later on the commandline to start up in that size. The default size is half that of the visual 3d is running on.
 
-You can add more programs while 3d is running by setting some environment  variables and starting them :
+You can add more programs while 3d is running by setting some environment variables and starting them :
+.nf
 
 GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
 
+.fi
 The [0-5] selects on which face of the cube you want the application to run.
 
 You should as well set \fBGGI_DEFMODE\fR to a mode with the same color organization like the one 3d itself is running on, and the mode, 3d believes it should run in, as specified with a size parameter.
 
-Once cube3d is invoked, the program will display the cube with the six other applications mapped to it. But you will probably only see application  number 1 (and maybe 3 from behind), as this is the way the cube is  oriented. The keyboard is redirected to the application that has the  blinking border.
+Once cube3d is invoked, the program will display the cube with the six other applications mapped to it. But you will probably only see application number 1 (and maybe 3 from behind), as this is the way the cube is oriented. The keyboard is redirected to the application that has the blinking border.
 .SH FUNCTION KEYS
 # is the "escape" key. After pressing it, the blinking border should turn red. All further input now goes to the 3d program and is used to manipulate the appearance and behaviour of the cube:
 .TP
@@ -41,7 +43,7 @@ will stop any cube motion.
 .PP
 .TP
 c, C
-will center the currently active face (the one with the border) in a smooth motion and when this is finished, it will stop all motion. This is a toggle, that gets turned off automatically when the final  position is reached. That is, you can disable it on its way, which will leave the cube spinning in the current direction.
+will center the currently active face (the one with the border) in a smooth motion and when this is finished, it will stop all motion. This is a toggle, that gets turned off automatically when the final position is reached. That is, you can disable it on its way, which will leave the cube spinning in the current direction.
 .PP
 .TP
 b, B
@@ -53,7 +55,7 @@ will toggle autoactivation. If this is on, the blinking frame will automatically
 .PP
 .TP
 t, T
-will toggle transparency. The pixelvalue of 0x00000000 is treated as "transparent" usually. This not only looks better, but often even  improves performance, as there is less to draw. However things like shells (nixterm) might be hard to read on a colorful background, so you might want to turn it off at times.
+will toggle transparency. The pixelvalue of 0x00000000 is treated as "transparent" usually. This not only looks better, but often even improves performance, as there is less to draw. However things like shells (nixterm) might be hard to read on a colorful background, so you might want to turn it off at times.
 .PP
 .TP
 0-5

@@ -2,17 +2,17 @@
 .SH NAME
 display-palemu \- Emulate palettized modes on visuals of other mode schemes
 .SH SYNOPSIS
- \fBdisplay-palemu\fR : -parent=\fImode\fR \fItarget-spec\fR 
+\fBdisplay-palemu\fR : -parent=\fImode\fR \fItarget-spec\fR
 .SH DESCRIPTION
 Emulates palettized modes (\fBGT_PALETTE\fR) on another target which can only do truecolor/greyscale/text modes or palettized modes of higher depth.
 .SH OPTIONS
 .TP
 -parent=\fImode\fR
-Force the parent target to use a specific mode, specified as a standard  .
+Force the parent target to use a specific mode, specified as a standard .
 .PP
 .TP
 \fItarget-spec\fR
-Specifies the target which to draw on (the `parent' target).  This defaults to automatic selection (just like using \fBggiOpen\fR(\fBNULL\fR) when \fBGGI_DISPLAY\fR is not set).
+Specifies the target which to draw on (the `parent' target). This defaults to automatic selection (just like using \fBggiOpen\fR(\fBNULL\fR) when \fBGGI_DISPLAY\fR is not set).
 .PP
 .SH FEATURES
 .RS
