@@ -40,6 +40,8 @@
  */
 enum {
 	KGI_OPT_DEVICE = 0,
+	KGI_OPT_NO3D = 1,
+	KGI_OPT_SWATCHSIZE = 2,
 	KGI_NUM_OPTS
 };
 
@@ -59,12 +61,12 @@ typedef struct
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		    const kgi_version_t *version, const gg_option *options);
+kgi_error_t kgiCheckMode(kgi_context_t *ctx);
 kgi_error_t kgiSetImages(kgi_context_t *ctx, kgi_u_t images);
 kgi_error_t kgiSetImageMode(kgi_context_t *ctx, kgi_u_t image,
 			    const kgi_image_mode_t *mode);
 kgi_error_t kgiGetImageMode(kgi_context_t *ctx, kgi_u_t image,
 			    kgi_image_mode_t *mode);
-kgi_error_t kgiCheckMode(kgi_context_t *ctx);
 kgi_error_t kgiSetMode(kgi_context_t *ctx);
 kgi_error_t kgiUnsetMode(kgi_context_t *ctx);
 void kgiPrintImageMode(kgi_image_mode_t *mode);
@@ -103,10 +105,18 @@ typedef struct {
 	/* Framebuffer information */
 	kgi_u16_t *fb;
 	kgi_size_t fb_size;
+
+	/* Options */
+	int use3d;
+	kgi_size_t swatch_size;
 	
 	/* Accelerator mapping functionality */
 	ggifunc_map_accel *map_accel;
-	
+
+	/* Accelerator callbacks for frames/origin. */
+	int (*origin_changed)(ggi_visual_t vis);
+	int (*rwframes_changed)(ggi_visual_t vis);
+
 	/* Accelerator target private data pointer */
 	void *accel_priv;
 } ggi_kgi_priv;
