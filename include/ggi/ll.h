@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.4 2004/09/18 09:46:41 cegger Exp $
+/* $Id: ll.h,v 1.5 2004/11/03 21:40:22 cegger Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -397,39 +397,50 @@ struct ggi_llobj {
  */
 #define GGI_LL_POS_SHIFT 28
 #define GGI_LL_POS_NUMPTRS 3
-#define GGI_LL_CB(obj) \
-(ggi_ll_cb_t)(obj)->ptrs[(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)]
-#define GGI_LL_LENSE(obj) \
-(ggi_ll_lense_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
-#define GGI_LL_POS(obj) \
-(ggi_ll_pos_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+
+#define GGI_LL_CB_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)]
+#define GGI_LL_CB(obj)		(ggi_ll_cb_t)GGI_LL_CB_SET(obj)
+
+#define GGI_LL_LENSE_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+#define GGI_LL_LENSE(obj)	(ggi_ll_lense_t)GGI_LL_LENSE_SET(obj)
+
+#define GGI_LL_POS_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+#define GGI_LL_POS(obj)		(ggi_ll_pos_t)GGI_LL_POS_SET(obj)
+
 
 /* Storage 
  */
 #define GGI_LL_ST_SHIFT 24
 #define GGI_LL_ST_NUMPTRS 2
-#define GGI_LL_STOPS(obj) \
-(ggi_ll_stops_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)]
-#define GGI_LL_STSTATE(obj) \
-(ggi_ll_ststate_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+
+#define GGI_LL_STOPS_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)]
+#define GGI_LL_STOPS(obj)	(ggi_ll_stops_t)GGI_LL_STOPS_SET(obj)
+
+#define GGI_LL_STSTATE_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+#define GGI_LL_STSTATE(obj)	(ggi_ll_ststate_t)GGI_LL_STATE_SET(obj)
 
 /* GC 
  */
 #define GGI_LL_GC_SHIFT 20
 #define GGI_LL_GC_NUMPTRS 3
-#define GGI_LL_GC2(obj) \
-(ggi_ll_fgbg_gc_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)]
-#define GGI_LL_GC(obj) \
-(ggi_ll_fgbg_gc_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
-#define GGI_LL_MATHGC(obj) \
-(ggi_ll_math_gc_t)(obj)->ptrs[ \
-(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+
+#define GGI_LL_GC2_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)]
+#define GGI_LL_GC2(obj)		(ggi_ll_fgbg_gc_t)GGI_LL_GC2_SET(obj)
+
+#define GGI_LL_GC_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+#define GGI_LL_GC(obj)		(ggi_ll_fgbg_gc_t)GGI_LL_GC_SET(obj)
+
+#define GGI_LL_MATHGC_SET(obj) \
+(obj)->ptrs[(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+#define GGI_LL_MATHGC(obj)	(ggi_ll_math_gc_t)GGI_LL_MATHGC(obj)
+
 
 /* LibGAlloc resource management 
  */
