@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.18 2004/06/06 10:02:16 aldot Exp $
+/* $Id: demo.c,v 1.19 2004/09/16 00:47:19 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -42,6 +42,39 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+
+/* A couple of routines that tries to put random bits in
+ * every position of 16 and 32 bit numbers.
+ */
+static int random_16_shift = 0;
+static int random_32_shift = 0;
+static inline uint16 random16(void)
+{
+	uint16 rnd = random();
+	int shift = 16 - random_16_shift;
+	while (shift < 16) {
+		rnd |= random() << shift;
+		shift += 16 - random_16_shift;
+	} 
+	return rnd;
+}
+static inline uint32 random32(void)
+{
+	uint32 rnd = random();
+	int shift = 32 - random_32_shift;
+	while(shift < 32) {
+		rnd |= random() << shift;
+		shift += 32 - random_32_shift;
+	}
+	return rnd;
+}
+/* If RAND_MAX is less than 2^16-1, shift the value
+ * so that we get the brightest possible colors.
+ */
+#define RANDOM_COLOR(col) \
+	col.r = random() << random_16_shift; \
+	col.g = random() << random_16_shift; \
+	col.b = random() << random_16_shift;
 
 /* We are running on a single primary visual which is made accessible
  * globally so subroutines like "waitabit" can access it.
@@ -277,6 +310,22 @@ int main(int argc, char **argv)
 		{GGI_AUTO,GGI_AUTO}     /* Font size */
 	};
 
+
+	/* Calculate how many bits the random numbers needs to be
+	 * shifted in order to affect the most significant bit of the
+	 * colors.
+	 */
+	uint32 tmp_rand = RAND_MAX;
+	while (tmp_rand < 0x8000U) {
+		++random_16_shift;
+		++random_32_shift;
+		tmp_rand <<= 1;
+	}
+	while (tmp_rand < 0x80000000U) {
+		++random_32_shift;
+		tmp_rand <<= 1;
+	}
+
 	/* Get the arguments from the command line. 
 	 * Set defaults for optional arguments.
 	 */
@@ -509,16 +558,12 @@ int main(int argc, char **argv)
 		ggi_color col;
 
 		/* Set the foreground color to some random value */
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 
 		ggiSetGCForeground(vis, ggiMapColor(vis, &col));
 
 		/* Set the background color to some random value */
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 
 		ggiSetGCBackground(vis, ggiMapColor(vis, &col));
 
@@ -626,14 +671,10 @@ int main(int argc, char **argv)
 	for (i=0; i < 50; i++) {
 		ggi_color col;
 
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 		ggiSetGCForeground(memvis, ggiMapColor(memvis, &col));
 
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 		ggiSetGCBackground(memvis, ggiMapColor(memvis, &col));
 
 		x = random() % 150;
@@ -896,9 +937,7 @@ int main(int argc, char **argv)
 
 	for (i=0; TestTime() < 3; i++) {
 		ggi_color col;
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 
 		x = random() % vx;
 		y = random() % vy;
@@ -922,9 +961,7 @@ int main(int argc, char **argv)
 	for (i=0; TestTime() < 3; i++) {
 		ggi_color col;
 
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 
 		x = random() % vx;
 		y = random() % vy;
@@ -1089,10 +1126,10 @@ int main(int argc, char **argv)
 				while (x < vx * (signed)GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
-					  *((uint32 *)linestart+x) = random();
+					  *((uint32 *)linestart+x) = random32();
 					  break;
 					case 16:
-					  *((uint16 *)linestart+x) = random();
+					  *((uint16 *)linestart+x) = random16();
 					  break;
 					case 8:
 					  *(linestart+x) = random();
@@ -1118,10 +1155,10 @@ int main(int argc, char **argv)
 
 			switch(wordsize) {
 			case 32:
-				*((uint32 *)linestart+x) = random();
+				*((uint32 *)linestart+x) = random32();
 				break;
 			case 16:
-				*((uint16 *)linestart+x) = random();
+				*((uint16 *)linestart+x) = random16();
 				break;
 			case 8:
 				*(linestart+x) = random();
@@ -1158,10 +1195,10 @@ int main(int argc, char **argv)
 
 				switch(wordsize) {
 				case 32:
-					*((uint32 *)linestart+x) = random();
+					*((uint32 *)linestart+x) = random32();
 					break;
 				case 16:
-					*((uint16 *)linestart+x) = random();
+					*((uint16 *)linestart+x) = random16();
 					break;
 				case 8:
 					*(linestart+x) = random();
@@ -1206,9 +1243,7 @@ int main(int argc, char **argv)
 	for (i=0; TestTime() < 3; i++) {
 		ggi_color col;
 
-		col.r = random();
-		col.g = random();
-		col.b = random();
+		RANDOM_COLOR(col);
 
 		x = random() % vx;
 		y = random() % vy;
