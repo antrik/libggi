@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2002/10/23 23:42:39 redmondp Exp $
+/* $Id: visual.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -41,22 +41,51 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
 	ggi_accel_t *accel;
+	radeon_context_t *ctx;
 
-	accel = KGI_PRIV(vis)->map_accel(vis, 1, 0, RADEON_BUFFER_SIZE_ORDER,
-			                 RADEON_BUFFER_NUM, 0);
-	
-	if(!accel)
+	if (!(accel = KGI_PRIV(vis)->map_accel(vis, 1, 0, 
+		RADEON_BUFFER_SIZE_ORDER, RADEON_BUFFER_NUM, 0)))
 		return -1;
 
-	KGI_ACCEL_PRIV(vis) = accel;
+	if (!(ctx = (radeon_context_t*)malloc(sizeof(*ctx))))
+		return -1;
+	
+	/* setup the accel_priv */
+	KGI_ACCEL_PRIV(vis) = ctx;
+	memset(ctx, 0, sizeof(*ctx));
+	ctx->accel = accel;
+	switch (vis->mode->graphtype) {
+	
+		case GT_8BIT: ctx->dst_type = 2; break;
+		case GT_15BIT:ctx->dst_type = 4; break;
+		case GT_16BIT:ctx->dst_type = 3; break;
+		/* what no 24bit ?? */
+		case GT_32BIT:ctx->dst_type = 6; break;
+		default:
+			ctx->dst_type = 0;
+	}
 
-	vis->opdisplay->flush = GGI_kgi_radeon_flush;
-	vis->opgc->gcchanged = GGI_kgi_radeon_gcchanged;
+	vis->opdisplay->flush     = GGI_kgi_radeon_flush;
+	vis->opdraw->drawhline_nc = GGI_kgi_radeon_drawhline;
+	vis->opdraw->drawhline    = GGI_kgi_radeon_drawhline;
+	vis->opdraw->drawvline_nc = GGI_kgi_radeon_drawvline;
+	vis->opdraw->drawvline    = GGI_kgi_radeon_drawvline;
+	vis->opdraw->drawline     = GGI_kgi_radeon_drawline;
+	vis->opdraw->drawbox      = GGI_kgi_radeon_drawbox;
+	vis->opdraw->copybox      = GGI_kgi_radeon_copybox;
+	vis->opgc->gcchanged      = GGI_kgi_radeon_gcchanged;
 	
 	*dlret = GGI_DL_OPDRAW | GGI_DL_OPGC;
 	return 0;	
 }
 
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	free(KGI_ACCEL_PRIV(vis));
+	KGI_ACCEL_PRIV(vis) = NULL;
+	
+	return 0;
+}
 
 int GGIdl_radeon(int func, void **funcptr)
 {
@@ -66,7 +95,7 @@ int GGIdl_radeon(int func, void **funcptr)
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:
-		*funcptr = NULL;
+		*funcptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

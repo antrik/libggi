@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.1 2002/10/23 23:42:39 redmondp Exp $
+/* $Id: radeon_accel.h,v 1.2 2002/10/31 03:20:17 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -22,15 +22,23 @@
 
 ******************************************************************************
 */
-#ifndef _RADEONLIB_H
-#define _RADEONLIB_H
+#ifndef _RADEON_ACCEL_H
+#define _RADEON_ACCEL_H
 
 #include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/kgi.h>
-/*#include "RADEON.h"*/
+#include "radeon_cce.h"
 
-#define RADEON_ACCEL(vis) ((ggi_accel_t *)KGI_ACCEL_PRIV(vis))
+typedef struct
+{
+
+	ggi_accel_t *accel;
+	uint32 dst_type;
+	
+} radeon_context_t;
+
+#define RADEON_CONTEXT(vis) ((radeon_context_t *)KGI_ACCEL_PRIV(vis))
+#define RADEON_ACCEL(vis) (RADEON_CONTEXT(vis)->accel)
 
 #define RADEON_BUFFER_SIZE_ORDER  1
 #define RADEON_BUFFER_SIZE        (0x1000 << RADEON_BUFFER_SIZE_ORDER)
@@ -52,6 +60,15 @@ GGI_ACCEL_CHECK_TOTAL_u32(RADEON_ACCEL(vis), n, RADEON_BUFFER_SIZE32, RADEON_TOT
 #define RADEON_WRITE(vis, val) \
 GGI_ACCEL_WRITE_u32(RADEON_ACCEL(vis), val)
 
+#define RADEON_WRITEPACKET(vis, data)\
+	{\
+		uint32 i = sizeof(data) / 4;\
+		uint32 *ptr = (uint32*)&data;\
+		RADEON_CHECK(vis, sizeof(data) / 4);\
+		while (i--)\
+			RADEON_WRITE(vis, *ptr++);\
+	}
+	
 ggifunc_drawhline GGI_kgi_radeon_drawhline;
 ggifunc_drawvline GGI_kgi_radeon_drawvline;
 ggifunc_drawline  GGI_kgi_radeon_drawline;

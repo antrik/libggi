@@ -1,6 +1,5 @@
-/* $Id: box.c,v 1.1 2002/10/23 23:42:39 redmondp Exp $
+/* $Id: box.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
 ******************************************************************************
-
    ATI Radeon box acceleration
 
    Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,11 +26,64 @@
 
 int GGI_kgi_radeon_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
+	struct {
+		cce_type3_header_t h;
+		cce_gui_control_t gc;
+		uint32 bp;
+		cce_paint_t paint;
+	} packet;
+	
+	memset(&packet, 0, sizeof(packet));
+
+	packet.h.it_opcode = CCE_IT_OPCODE_PAINT;
+	packet.h.count     = (sizeof(packet) / 4) - 2;
+	packet.h.type      = 0x3;
+
+	packet.gc.brush_type = 13;
+	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
+	packet.gc.src_type   = 3; /* 3 means same as dst_type */
+	packet.gc.win31_rop  = ROP3_PATCOPY;
+
+	packet.bp = LIBGGI_GC_FGCOLOR(vis);
+
+	packet.paint.left   = x;
+	packet.paint.top    = y;
+	packet.paint.right  = x + w;
+	packet.paint.bottom = y + h;
+	
+	RADEON_WRITEPACKET(vis, packet);
+
 	return 0;
 }
 
 int GGI_kgi_radeon_copybox(ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
+	struct {
+		cce_type3_header_t h;
+		cce_gui_control_t gc;
+		cce_bitblt_t bb;
+	} packet;
+
+	memset(&packet, 0, sizeof(packet));
+	
+	packet.h.it_opcode = CCE_IT_OPCODE_BITBLT;
+	packet.h.count     = (sizeof(packet) / 4) - 2;
+	packet.h.type      = 0x3;
+	
+	packet.gc.brush_type = 15;
+	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
+	packet.gc.src_type   = 3;
+	packet.gc.win31_rop  = ROP3_SRCCOPY;
+
+	packet.bb.src_x1 = x;
+	packet.bb.src_y1 = y;
+	packet.bb.src_w1 = w;
+	packet.bb.src_h1 = h;
+	packet.bb.dst_x1 = nx;
+	packet.bb.dst_y1 = ny;
+	
+	RADEON_WRITEPACKET(vis, packet);
+	
 	return 0;
 }

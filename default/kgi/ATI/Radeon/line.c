@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2002/10/23 23:42:39 redmondp Exp $
+/* $Id: line.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -26,15 +26,52 @@
 
 int GGI_kgi_radeon_drawhline(ggi_visual *vis, int x, int y, int w)
 {
+/*	GGI_kgi_radeon_drawline(vis, x, y, x + w - 1, y);
+*/	GGI_kgi_radeon_drawbox(vis, x, y, w, 1);
+
 	return 0;
 }
 
 int GGI_kgi_radeon_drawvline(ggi_visual *vis, int x, int y, int h)
 {
+/*	GGI_kgi_radeon_drawline(vis, x, y, x, y + h - 1);
+*/	GGI_kgi_radeon_drawbox(vis, x, y, 1, h);
+
 	return 0;
 }
 
 int GGI_kgi_radeon_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
+	struct {
+	
+		cce_type3_header_t h;
+		cce_gui_control_t gc;
+		uint32 bp;
+		cce_polyline_t pl;
+		
+	} packet;
+	
+	memset(&packet, 0, sizeof(packet));
+	
+	packet.h.it_opcode = CCE_IT_OPCODE_POLYLINE;
+	packet.h.count     = sizeof(packet) / 4 - 2;
+	packet.h.type      = 0x3;
+
+	packet.gc.brush_type = 14;
+	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
+	packet.gc.src_type   = 3;
+	packet.gc.win31_rop  = ROP3_PATCOPY;
+
+	packet.gc.dst_type = RADEON_CONTEXT(vis)->dst_type;
+
+	packet.bp = LIBGGI_GC_FGCOLOR(vis);
+
+	packet.pl.x0 = x1;
+	packet.pl.y0 = y1;
+	packet.pl.x1 = x2;
+	packet.pl.y1 = y2;
+
+	RADEON_WRITEPACKET(vis, packet);
+
 	return 0;
 }
