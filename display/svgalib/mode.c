@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2004/11/24 13:25:00 cegger Exp $
+/* $Id: mode.c,v 1.23 2004/11/24 13:37:16 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -47,7 +47,6 @@ extern int __svgalib_tty_fd;
 
 int _ggi_svgalib_setmode(int mode)
 {
-	extern int __svgalib_tty_fd;
 	struct termios temp_term;
 	int dorestore = 1;
 	int ret;
