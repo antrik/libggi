@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.4 2003/07/04 23:04:56 cegger Exp $
+/* $Id: structs.h,v 1.5 2003/09/16 20:57:42 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -89,6 +89,9 @@ typedef struct ggi_gammastate
 	/* maxwrite_* == -1 means only factors usable.  */
 	int		maxwrite_r, maxwrite_g, maxwrite_b;
 	int		maxread_r, maxread_g, maxread_b;
+
+	int start;	/* first index in .map */
+	int len;	/* number of map fields */
 } ggi_gammastate;
 
 /* Resource structure */
