@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/10/29 22:38:20 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/10/30 09:39:30 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -122,10 +122,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out_freeopmansync;
 		}
 
-		priv->vis_origins[i].x = sx;
-		priv->vis_origins[i].y = sy;
-		priv->vis_sizes[i].x = vx;
-		priv->vis_sizes[i].y = vy;
+		priv->vislist[i].origin.x = sx;
+		priv->vislist[i].origin.y = sy;
+		priv->vislist[i].size.x = vx;
+		priv->vislist[i].size.y = vy;
 
 		args = ggParseTarget((char *)args, target, 1024);
 
@@ -141,21 +141,21 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		GGIDPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
 			i, target, sx, sy, vx, vy);
 
-		if (! (priv->vislist[i]=ggiOpen(target,NULL)) ) {
+		if (! (priv->vislist[i].vis = ggiOpen(target,NULL)) ) {
 			fprintf(stderr,"display-tile: Opening of target %s failed.\n", target);
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
 
 		/* Add giiInputs, if we have them. */
-		if (priv->vislist[i]->input) {
-			vis->input=giiJoinInputs(vis->input,priv->vislist[i]->input);
-			priv->vislist[i]->input=NULL;	/* Destroy old reference */
+		if (priv->vislist[i].vis->input) {
+			vis->input=giiJoinInputs(vis->input,priv->vislist[i].vis->input);
+			priv->vislist[i].vis->input=NULL;	/* Destroy old reference */
 		}
 
 		if (priv->use_db) {
 			/* Don't need SYNC mode, we do it ourselves */
-			ggiSetFlags(priv->vislist[i], GGIFLAG_ASYNC);
+			ggiSetFlags(priv->vislist[i].vis, GGIFLAG_ASYNC);
 		}
 
 		/* check for ':' separator */
@@ -213,7 +213,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   out_closevisuals:
 	/* Close opened visuals. */
 	while (i--) {
-		ggiClose(priv->vislist[i]);
+		ggiClose(priv->vislist[i].vis);
 	}
   out_freeopmansync:
 	free(priv->opmansync);
@@ -241,7 +241,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	 * that are used by multiple targets).
 	 */
 	for (i = priv->numvis; i>=0; i--) {
-		ggiClose(priv->vislist[i]);
+		ggiClose(priv->vislist[i].vis);
 	}
 
 	free(priv->opmansync);

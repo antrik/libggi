@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.2 2003/07/06 10:25:24 cegger Exp $
+/* $Id: stubs.c,v 1.3 2004/10/30 09:39:30 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -40,7 +40,7 @@ int GGI_tile_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	int i;
 
 	for (i=0; i < priv->numvis; i++) {
-		ggiFlushRegion(priv->vislist[i], x, y, w, h);
+		ggiFlushRegion(priv->vislist[i].vis, x, y, w, h);
 	}
 
 	return 0;
@@ -60,7 +60,7 @@ void GGI_tile_gcchanged(ggi_visual *vis, int mask)
 		mask &= ~GGI_GCCHANGED_CLIP;
 
 	for(i=0; i<priv->numvis; i++) {
-		currvis = priv->vislist[i];
+		currvis = priv->vislist[i].vis;
 
 #if 0	/* Don't blindly copy the GC. */
 		memcpy(LIBGGI_GC(currvis), LIBGGI_GC(vis), sizeof(ggi_gc));
@@ -91,8 +91,8 @@ int GGI_tile_drawbox(ggi_visual *vis, int _x, int _y, int _width, int _length)
 	int i, x, y, width, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -119,7 +119,7 @@ int GGI_tile_drawbox(ggi_visual *vis, int _x, int _y, int _width, int _length)
 		if (length <= 0 || width <= 0 )
 			continue;
 
-		ggiDrawBox(priv->vislist[i],
+		ggiDrawBox(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width, length);
 	}
 
@@ -134,8 +134,8 @@ int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 	int i, x, y, width, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -163,7 +163,7 @@ int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 			continue;
 
 		while(length--) {
-			ggiPutHLine(priv->vislist[i],
+			ggiPutHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -180,8 +180,8 @@ int GGI_tile_getbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 	int i, x, y, width, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -209,7 +209,7 @@ int GGI_tile_getbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 			continue;
 
 		while(length--) {
-			ggiGetHLine(priv->vislist[i],
+			ggiGetHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -230,8 +230,8 @@ int GGI_tile_copybox(ggi_visual *vis, int x, int y, int width, int height,
 	   contained in one of the tile visuals.
 	*/
 	for (i=0; i < priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 		    x + width > clipbr.x || y + height > clipbr.y ||
@@ -240,7 +240,7 @@ int GGI_tile_copybox(ggi_visual *vis, int x, int y, int width, int height,
 			continue;
 		}
 
-		return ggiCopyBox(priv->vislist[i],
+		return ggiCopyBox(priv->vislist[i].vis,
 				  x - cliptl.x, y - cliptl.y, width, height,
 				  nx - cliptl.x, ny - cliptl.y);
 	}
@@ -266,7 +266,7 @@ int GGI_tile_fillscreen(ggi_visual *vis)
 	int i;
 
 	for(i = 0; i<priv->numvis; i++)
-		ggiFillscreen(priv->vislist[i]);
+		ggiFillscreen(priv->vislist[i].vis);
 
 	return 0;
 }
@@ -275,8 +275,11 @@ int GGI_tile_fillscreen(ggi_visual *vis)
 int GGI_tile_putc(ggi_visual *vis,int x,int y,char c)
 {
 	int err=EOK;
-	ggi_visual_t *vislist=TILE_PRIV(vis);
-	while(*vislist) err=ggiPutc(*vislist++,x,y,c);
+	int i;
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+
+	for (i = 0; i < priv->numvis; i++)
+		err = ggiPutc(priv->vislist[i].vis,x,y,c);
 
 	return err;
 }
@@ -285,8 +288,11 @@ int GGI_tile_putc(ggi_visual *vis,int x,int y,char c)
 int GGI_tile_puts(ggi_visual *vis,int x,int y,const char *str)
 {
 	int err=EOK;
-	ggi_visual_t *vislist=TILE_PRIV(vis);
-	while(*vislist) err=ggiPuts(*vislist++,x,y,str);
+	int i;
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+
+	for (i = 0; i < priv->numvis; i++)
+		err = ggiPuts(priv->vislist[i],x,y,str);
 
 	return err;
 }
@@ -294,8 +300,11 @@ int GGI_tile_puts(ggi_visual *vis,int x,int y,const char *str)
 int GGI_tile_drawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
 {
 	int err=EOK;
-	ggi_visual_t *vislist=TILE_PRIV(vis);
-	while(*vislist) err=ggiDrawLine(*vislist++,x1,y1,x2,y2);
+	int i;
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+
+	for (i = 0; i < priv->numvis; i++)
+		err = ggiDrawLine(priv->vislist[i],x1,y1,x2,y2);
 
 	return err;
 }
@@ -308,8 +317,8 @@ int GGI_tile_drawhline_nc(ggi_visual *vis,int _x,int y,int _width)
 	int i, x, width, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		width = _width;
 
@@ -328,7 +337,7 @@ int GGI_tile_drawhline_nc(ggi_visual *vis,int _x,int y,int _width)
 		if (width <= 0)
 			continue;
 
-		_ggiDrawHLineNC(priv->vislist[i],
+		_ggiDrawHLineNC(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width);
 	}
 
@@ -361,8 +370,8 @@ int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 	int i, x, width, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		width = _width;
 
@@ -383,7 +392,7 @@ int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 		if (width <= 0)
 			continue;
 
-		ggiPutHLine(priv->vislist[i],
+		ggiPutHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
 			((uint8*)buffer + diff*rowadd));
 	}
@@ -399,8 +408,8 @@ int GGI_tile_gethline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 	int i, x, width, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		x = _x;
 		width = _width;
 
@@ -421,7 +430,7 @@ int GGI_tile_gethline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 		if (width <= 0)
 			continue;
 
-		ggiGetHLine(priv->vislist[i],
+		ggiGetHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
 			((uint8*)buffer + diff*rowadd));
 	}
@@ -436,8 +445,8 @@ int GGI_tile_drawvline_nc(ggi_visual *vis,int x,int _y,int _height)
 	int i, y, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		y = _y;
 		length = _height;
 
@@ -456,7 +465,7 @@ int GGI_tile_drawvline_nc(ggi_visual *vis,int x,int _y,int _height)
 		if (length <= 0)
 			continue;
 
-		_ggiDrawVLineNC(priv->vislist[i],
+		_ggiDrawVLineNC(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length);
  	}
 
@@ -491,8 +500,8 @@ int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 	int i, y, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		y = _y;
 		length = _height;
 
@@ -513,7 +522,7 @@ int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 		if (length <= 0)
 			continue;
 
-		ggiPutVLine(priv->vislist[i],
+		ggiPutVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
 			((uint8*)buffer + diff*rowadd));
  	}
@@ -529,8 +538,8 @@ int GGI_tile_getvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 	int i, y, length, diff;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 		y = _y;
 		length = _height;
 
@@ -551,7 +560,7 @@ int GGI_tile_getvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 		if (length <= 0)
 			continue;
 
-		ggiGetVLine(priv->vislist[i],
+		ggiGetVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
 			((uint8*)buffer + diff*rowadd));
  	}
@@ -566,15 +575,15 @@ int GGI_tile_drawpixel_nc(ggi_visual *vis,int x,int y)
 	int i;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		_ggiDrawPixelNC(priv->vislist[i],
+		_ggiDrawPixelNC(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y);
 	}
 
@@ -594,15 +603,15 @@ int GGI_tile_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	int i;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		ggiPutPixel(priv->vislist[i],
+		ggiPutPixel(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 
@@ -622,14 +631,14 @@ int GGI_tile_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 	int i;
 
 	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vis_origins[i];
-		clipbr = priv->vis_clipbr[i];
+		cliptl = priv->vislist[i].origin;
+		clipbr = priv->vislist[i].clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
-		return ggiGetPixel(priv->vislist[i],
+		return ggiGetPixel(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:35 cegger Exp $
+/* $Id: color.c,v 1.2 2004/10/30 09:39:29 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -29,20 +29,20 @@
 
 ggi_pixel GGI_tile_mapcolor(ggi_visual *vis,ggi_color *col)
 {
-	return ggiMapColor(TILE_PRIV(vis)->vislist[0], col);
+	return ggiMapColor(TILE_PRIV(vis)->vislist[0].vis, col);
 }
 
 int GGI_tile_unmappixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 {
-	return ggiUnmapPixel(TILE_PRIV(vis)->vislist[0], pixel, col);
+	return ggiUnmapPixel(TILE_PRIV(vis)->vislist[0].vis, pixel, col);
 }
 
 int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i<priv->numvis; i++)
-		if(ggiSetPalette(priv->vislist[i], start, len, colormap))
+	for(i = 0; i < priv->numvis; i++)
+		if(ggiSetPalette(priv->vislist[i].vis, start, len, colormap))
 			return -1;
 
 	return 0;
@@ -50,5 +50,5 @@ int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 int GGI_tile_getpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	return ggiGetPalette(TILE_PRIV(vis)->vislist[0], start, len, colormap);
+	return ggiGetPalette(TILE_PRIV(vis)->vislist[0].vis, start, len, colormap);
 }

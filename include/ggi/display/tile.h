@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
+/* $Id: tile.h,v 1.3 2004/10/30 09:39:04 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -88,10 +88,12 @@ typedef struct {
 	int use_db;			/* Emulate DirectBuffer ? */
 
 	int numvis;
-	ggi_visual_t vislist[MAX_VISUALS];
-	ggi_coord vis_origins[MAX_VISUALS];	/* Start of tile.  Also clip area topleft. */
-	ggi_coord vis_clipbr[MAX_VISUALS];	/* Clip area bottom right. */
-	ggi_coord vis_sizes[MAX_VISUALS];	/* Dimensions of tile. */
+	struct {
+		ggi_visual_t vis;
+		ggi_coord origin;	/* Start of tile. Also clip area topleft. */
+		ggi_coord clipbr;	/* Clip area bottom right. */
+		ggi_coord size;		/* Dimensions of tile. */
+	} vislist[MAX_VISUALS];
 
 	void *buf;			/* Blitting buffer */
 	ggi_directbuffer *d_frame;	/* Current display frame */

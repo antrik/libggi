@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.1 2001/05/12 23:02:35 cegger Exp $
+/* $Id: frames.c,v 1.2 2004/10/30 09:39:30 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -47,8 +47,8 @@ int GGI_tile_setdisplayframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i<priv->numvis; i++)
-		if(ggiSetDisplayFrame(priv->vislist[i], num))
+	for(i = 0; i < priv->numvis; i++)
+		if(ggiSetDisplayFrame(priv->vislist[i].vis, num))
 			return -1;
 
 	return 0;
@@ -58,8 +58,8 @@ int GGI_tile_setreadframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i<priv->numvis; i++)
-		if(ggiSetReadFrame(priv->vislist[i], num))
+	for(i = 0; i < priv->numvis; i++)
+		if(ggiSetReadFrame(priv->vislist[i].vis, num))
 			return -1;
 
 	return 0;
@@ -69,8 +69,8 @@ int GGI_tile_setwriteframe(ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	for(i = 0; i<priv->numvis; i++)
-		if(ggiSetWriteFrame(priv->vislist[i], num))
+	for(i = 0; i < priv->numvis; i++)
+		if(ggiSetWriteFrame(priv->vislist[i].vis, num))
 			return -1;
 
 	return 0;

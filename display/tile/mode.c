@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/12 20:48:22 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/10/30 09:39:30 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -44,14 +44,14 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	ggi_visual_t currvis;
 
 #if 0
-	for(i = 0; i<priv->numvis; i++) {
-		currvis = priv->vislist[i];
-		width = priv->vis_sizes[i].x;
-		height = priv->vis_sizes[i].y;
+	for(i = 0; i < priv->numvis; i++) {
+		currvis = priv->vislist[i].vis;
+		width = priv->vislist[i].size.x;
+		height = priv->vislist[i].size.y;
 		
 		ggiGetBox(vis, 
-			priv->vis_origins[i].x+vis->origin_x, 
-			priv->vis_origins[i].y+vis->origin_y,
+			priv->vislist[i].origin.x+vis->origin_x, 
+			priv->vislist[i].origin.y+vis->origin_y,
 			width, height, priv->buf);
 		ggiPutBox(currvis, 0, 0, width, height, priv->buf);
 
@@ -71,13 +71,13 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	stride = priv->d_frame->buffer.plb.stride;
 
 	for(i = 0; i<priv->numvis; i++) {
-		currvis = priv->vislist[i];
-		width = priv->vis_sizes[i].x;
-		height = priv->vis_sizes[i].y - 1;
+		currvis = priv->vislist[i].vis;
+		width = priv->vislist[i].size.x;
+		height = priv->vislist[i].size.y - 1;
 
 		buf = (uint8*)priv->d_frame->read +
-				stride * (priv->vis_origins[i].y + vis->origin_y + height) +
-				rowadd * (priv->vis_origins[i].x + vis->origin_x);
+				stride * (priv->vislist[i].origin.y + vis->origin_y + height) +
+				rowadd * (priv->vislist[i].origin.x + vis->origin_x);
 
 		do {
 			ggiPutHLine(currvis, 0, height, width, buf);
@@ -85,10 +85,10 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 		} while(height--);
 #endif
 
-		nx = x - priv->vis_origins[i].x;
-		nw = w - priv->vis_origins[i].x;
-		ny = y - priv->vis_origins[i].y;
-		nh = h - priv->vis_origins[i].y;
+		nx = x - priv->vislist[i].origin.x;
+		nw = w - priv->vislist[i].origin.x;
+		ny = y - priv->vislist[i].origin.y;
+		nh = h - priv->vislist[i].origin.y;
 		if (nx < 0) nx = 0;
 		else if (nx > LIBGGI_X(currvis)) continue;
 		if (ny < 0) ny = 0;
@@ -249,10 +249,10 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 	}
 	
 	for (i = 0; i<priv->numvis; i++) {
-		currvis = priv->vislist[i];
+		currvis = priv->vislist[i].vis;
 		sugmode = *tm;
-		sugmode.visible.x = priv->vis_sizes[i].x;
-		sugmode.visible.y = priv->vis_sizes[i].y;
+		sugmode.visible.x = priv->vislist[i].size.x;
+		sugmode.visible.y = priv->vislist[i].size.y;
 		sugmode.virt.x=sugmode.virt.y=GGI_AUTO;
 
 		/* Multiple buffering is handled by us in DB mode */
@@ -275,18 +275,18 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 		if(!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
 		
-			priv->vis_clipbr[i].x = priv->vis_origins[i].x + priv->vis_sizes[i].x;
-			if(priv->vis_clipbr[i].x > tm->virt.x)
-				priv->vis_clipbr[i].x = tm->virt.x;
+			priv->vislist[i].clipbr.x = priv->vislist[i].origin.x + priv->vislist[i].size.x;
+			if(priv->vislist[i].clipbr.x > tm->virt.x)
+				priv->vislist[i].clipbr.x = tm->virt.x;
 
-			priv->vis_clipbr[i].y = priv->vis_origins[i].y + priv->vis_sizes[i].y;
-			if(priv->vis_clipbr[i].y > tm->virt.y)
-				priv->vis_clipbr[i].y = tm->virt.y;
+			priv->vislist[i].clipbr.y = priv->vislist[i].origin.y + priv->vislist[i].size.y;
+			if(priv->vislist[i].clipbr.y > tm->virt.y)
+				priv->vislist[i].clipbr.y = tm->virt.y;
 		}
 
 #if 0
 		/* This is to determine the largest buffer size needed for copybox */
-		currbuf = priv->vis_sizes[i].x * priv->vis_sizes[i].y;
+		currbuf = priv->vislist[i].size.x * priv->vislist[i].size.y;
 		if(currbuf > maxbuf) maxbuf=currbuf;
 	}
 
@@ -303,7 +303,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 	}
 
 	/* Assume first visual's pixelformat properties */
-	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(priv->vislist[0]), 
+	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(priv->vislist[0].vis), 
 		sizeof(ggi_pixelformat));
 
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
@@ -338,8 +338,8 @@ int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 		int x;
 		tm->virt.x=0;
 		for (i = 0; i<priv->numvis; i++) {
-			x = priv->vis_origins[i].x
-				+ priv->vis_sizes[i].x;
+			x = priv->vislist[i].origin.x
+				+ priv->vislist[i].size.x;
 			if (x > tm->virt.x) tm->virt.x = x;
 		}
 	}
@@ -347,8 +347,8 @@ int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 		int y;
 		tm->virt.y=0;
 		for(i = 0; i<priv->numvis; i++) {
-			y = priv->vis_origins[i].y
-				+ priv->vis_sizes[i].y;
+			y = priv->vislist[i].origin.y
+				+ priv->vislist[i].size.y;
 			if (y > tm->virt.y) tm->virt.y = y;
 		}
 	}
@@ -372,15 +372,15 @@ int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 		   GGI_AUTO to be substituted by GGI_DEFMODE values */
 		   
 		sugmode.frames = priv->use_db ? 1 : tm->frames;
-		sugmode.visible.x = priv->vis_sizes[i].x;
-		sugmode.visible.y = priv->vis_sizes[i].y;
+		sugmode.visible.x = priv->vislist[i].size.x;
+		sugmode.visible.y = priv->vislist[i].size.y;
 		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
 		sugmode.size.x = sugmode.size.y = GGI_AUTO;
 		sugmode.graphtype = tm->graphtype;
 		sugmode.dpp  = tm->dpp;
 		sugmode.size = tm->size;
 
-		err = ggiCheckMode(priv->vislist[i], &sugmode);
+		err = ggiCheckMode(priv->vislist[i].vis, &sugmode);
 		if (err) {
 			/* Forget searching all visuals for the source of
 			   error, it's way too complicated. Just say fail
@@ -425,7 +425,7 @@ int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
 	} else {
 		int i;
 		for (i = 0; i<priv->numvis; i++) {
-			ggiSetFlags(priv->vislist[i], flags);
+			ggiSetFlags(priv->vislist[i].vis, flags);
 		}
 	}	
 
