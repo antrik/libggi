@@ -1,4 +1,4 @@
-/* $Id: mansync.inc.c,v 1.1 2004/10/10 12:18:47 cegger Exp $
+/* $Id: mansync.inc.c,v 1.2 2004/10/10 20:47:03 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for correct mansync usage.
@@ -24,12 +24,15 @@
 static void testcase1(const char *desc)
 {
 	int ret;
-	unsigned int j, size;
 	ggi_visual_t vis;
 	ggi_mode mode;
-	const ggi_directbuffer *dbuf = NULL;
 	ggi_pixel pixel_color;
 	ggi_color color_color;
+
+#if 0
+	unsigned int j, size;
+	const ggi_directbuffer *dbuf = NULL;
+#endif
 
 
 	color_color.r = 0x0000;
@@ -84,6 +87,11 @@ static void testcase1(const char *desc)
 		goto exit_testcase;
 	}
 
+	/* Disable directbuffer as this is not required to
+	 * perform the test
+	 */
+
+#if 0
 	ret = -1;
 	size = GT_SIZE(mode.graphtype);
 	for (j = 0;
@@ -111,6 +119,7 @@ static void testcase1(const char *desc)
 		printfailure("Unable to acquire DirectBuffer\n");
 		goto exit_testcase;
 	}
+#endif
 
 	/* ... and now draw something.
 	 */
@@ -118,8 +127,9 @@ static void testcase1(const char *desc)
 	ggiSetGCForeground(vis, pixel_color);
 	ggiFillscreen(vis);
 
-
+#if 0
 	ggiResourceRelease(dbuf->resource);
+#endif
 
 
 exit_testcase:
