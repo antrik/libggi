@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:25:15 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/09/12 20:07:50 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -51,7 +51,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}
 
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_multi_priv));
+	priv = GGIMULTI_PRIV(vis) = malloc(sizeof(ggi_multi_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -200,7 +200,7 @@ static void destroyvisuals(MultiVis *cur) {
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_multi_priv *mm = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *mm = GGIMULTI_PRIV(vis);
 
 	giiClose(vis->input);
 	destroyvisuals(mm->vis_list);

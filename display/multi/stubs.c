@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: stubs.c,v 1.3 2004/09/12 20:07:50 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -36,7 +36,7 @@
 
 void GGI_multi_gcchanged(ggi_visual *vis, int mask)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 
 	GGIDPRINT("display-multi: GCCHANGED %d\n", mask);
@@ -62,7 +62,7 @@ void GGI_multi_gcchanged(ggi_visual *vis, int mask)
 
 int GGI_multi_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -75,7 +75,7 @@ int GGI_multi_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 
 int GGI_multi_drawpixel(ggi_visual *vis, int x, int y)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -88,7 +88,7 @@ int GGI_multi_drawpixel(ggi_visual *vis, int x, int y)
 
 int GGI_multi_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -101,7 +101,7 @@ int GGI_multi_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 int GGI_multi_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -114,7 +114,7 @@ int GGI_multi_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 int GGI_multi_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -127,7 +127,7 @@ int GGI_multi_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 
 int GGI_multi_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -141,7 +141,7 @@ int GGI_multi_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 int GGI_multi_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 			ggi_visual *dst, int dx, int dy)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(dst);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(dst);
 	MultiVis *cur;
 	int err = 0;
 
@@ -156,7 +156,7 @@ int GGI_multi_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 int GGI_multi_fillscreen(ggi_visual *vis)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -169,7 +169,7 @@ int GGI_multi_fillscreen(ggi_visual *vis)
 
 int GGI_multi_putc(ggi_visual *vis, int x, int y, char c)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -182,7 +182,7 @@ int GGI_multi_putc(ggi_visual *vis, int x, int y, char c)
 
 int GGI_multi_puts(ggi_visual *vis, int x, int y, const char *str)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -195,7 +195,7 @@ int GGI_multi_puts(ggi_visual *vis, int x, int y, const char *str)
 
 int GGI_multi_drawhline(ggi_visual *vis, int x, int y, int w)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -208,7 +208,7 @@ int GGI_multi_drawhline(ggi_visual *vis, int x, int y, int w)
 
 int GGI_multi_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -221,7 +221,7 @@ int GGI_multi_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 
 int GGI_multi_drawvline(ggi_visual *vis, int x, int y, int h)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -234,7 +234,7 @@ int GGI_multi_drawvline(ggi_visual *vis, int x, int y, int h)
 
 int GGI_multi_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -247,7 +247,7 @@ int GGI_multi_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int n
 
 int GGI_multi_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -260,7 +260,7 @@ int GGI_multi_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 
 int GGI_multi_setgammamap(ggi_visual *vis, int start, int len, ggi_color *cmap)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -274,7 +274,7 @@ int GGI_multi_setgammamap(ggi_visual *vis, int start, int len, ggi_color *cmap)
 
 int GGI_multi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cmap)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
@@ -288,7 +288,7 @@ int GGI_multi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cmap)
 
 int GGI_multi_setorigin(ggi_visual *vis, int x, int y)
 {
-	ggi_multi_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
 	int err = 0;
 
