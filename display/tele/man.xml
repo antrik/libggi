@@ -12,7 +12,6 @@
 
 <refnamediv>
 <refname><systemitem>display-tele</systemitem></refname>
-<refname><systemitem>ggiteleserver</systemitem></refname>
 <refpurpose>Forwards the display over a network</refpurpose>
 </refnamediv>
 
@@ -31,18 +30,12 @@
 <para>
 The tele target forwards the display over a network via TCP to a
 remote host.
-
-The target comes with the <systemitem>ggiteleserver</systemitem>
-program that must be run on the remote host where the final display
-reside. A normal GGI applications will then use the tele target to forward
+</para>
+<para>
+A <systemitem>ggiteleserver</systemitem> program must be running on
+the remote host where the final display resides. A normal GGI
+applications will then use the tele target to forward
 all graphic operations to the machine running the teleserver.
-
-<systemitem>ggiteleserver</systemitem> uses the default target for output
-and port to listen on, if not specified. For more information, see
-<screen>
-ggiteleserver --help
-</screen>
-
 </para>
 
 </refsect1>
@@ -65,6 +58,15 @@ port is 27780.
 <simplelist>
 <member>DirectBuffer never supported.</member>
 <member>Accelerated if the remote display is.</member>
+</simplelist>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist>
+<member><xref linkend="ref-ggiteleserver"/></member>
 </simplelist>
 
 </refsect1>
