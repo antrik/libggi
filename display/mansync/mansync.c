@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.5 2004/06/03 05:34:15 pekberg Exp $
+/* $Id: mansync.c,v 1.6 2004/10/04 12:38:45 pekberg Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -69,7 +69,9 @@ static int _GGI_mansync_task(struct gg_task *task)
 	if(MANSYNC_ISASYNC(vis))
 		return 0;
 
-	ggiFlush(vis);
+#warning Want to call ggiFlush for threaded ggTask implementations, but that hangs display-x on signal based ggTask.
+	_ggiInternFlush(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis), 0);
+
 	return 0;
 }
 
