@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2005/01/18 19:40:34 cegger Exp $
+/* $Id: visual.c,v 1.6 2005/01/19 07:54:55 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -172,6 +172,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		SetFrontProcess(&myProc);
 	} while(0);
 #endif
+
+	/* export functions */
+	priv->updateWindowContext = _GGI_quartz_updateWindowContext;
 
 
 	/* Initialize the video settings; this data persists between mode switches */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2005/01/18 19:40:34 cegger Exp $
+/* $Id: mode.c,v 1.7 2005/01/19 07:54:55 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -154,6 +154,57 @@ static int _ggi_load_slaveops(ggi_visual *vis)
 
 
 
+int _GGI_quartz_updateWindowContext(ggi_visual *vis)
+{
+	int width, height;
+	ggi_mode mode;
+	size_t fb_size;
+	uint8 *fb;
+	CGRect tmpBounds;
+	Rect contentRect;
+	int titleborder;
+	ggi_quartz_priv *priv = QUARTZ_PRIV(vis);
+
+	LIB_ASSERT(priv->theWindow != NULL, "a mode has not been set!\n");
+
+	GetWindowBounds( priv->theWindow, kWindowContentRgn, &contentRect);
+
+	width = contentRect.right - contentRect.left;
+	height = contentRect.bottom - contentRect.top;
+
+	if (priv->fullscreen) {
+		titleborder = GGI_FULLSCREEN_TITLEBORDER;
+	} else {
+		titleborder = GGI_WINDOW_TITLEBORDER;
+	}
+
+	memcpy(&mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+
+	mode.visible.x = width;
+	mode.visible.y = height;
+	fb_size = GT_ByPPP(mode.visible.x * mode.visible.y * mode.frames,
+			mode.graphtype);
+#if 0
+	fb = realloc(priv->fb, fb_size);
+	if (fb == NULL) {
+		return GGI_ENOMEM;
+	}
+
+	priv->fb = fb;
+#endif
+	priv->fb_size = fb_size;
+
+	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
+	memcpy(&priv->winRect, &contentRect, sizeof(Rect));
+
+	/* Clear Background */
+	tmpBounds = CGRectMake(0, titleborder, priv->winRect.right, priv->winRect.bottom);
+	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
+	CGContextClearRect(priv->context, tmpBounds);
+
+	return 0;
+}	/* _GGI_quartz_updateWindowContext */
+
 
 static void _GGIfreedbs(ggi_visual *vis)
 {
@@ -225,7 +276,7 @@ static void _GGIallocdbs(ggi_visual *vis)
 
 #if 0
 	DPRINT_MODE("_GGIallocdbs: open memory target (%s) with pre-allocated buffer\n",
-		target);
+			target);
 	priv->memvis = ggiOpen(target, priv->fb);
 	if (priv->memvis == NULL) {
 		DPRINT_MODE("_GGIallocdbs: opening memory visual for backbuffer failed\n");
@@ -455,7 +506,7 @@ int GGI_quartz_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = GGI_quartz_checkmode_fullscreen(vis, mode);
 	} else {
 		err = GGI_quartz_checkmode_windowed(vis, mode);
-	}	
+	}
 
 	if (err) return err;
 	err = _ggi_physz_figure_size(mode, priv->physzflags,
@@ -559,11 +610,14 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 	if (priv->theWindow != NULL) {
 		/* Happens when we re-set the mode */
 		DPRINT_MODE("Re-Set the window\n");
+#if 0
+		_GGI_quartz_updateWindowContext(vis);
+#endif
+		DPRINT_MODE("Resize the window\n");
 		HideWindow(priv->theWindow);
 		ChangeWindowAttributes(priv->theWindow,
 			~priv->windowAttrs, priv->windowAttrs);
 		SizeWindow(priv->theWindow, mode->visible.x, mode->visible.y, 1);
-
 	} else {
 #if 1
 		_create_menu(vis);
