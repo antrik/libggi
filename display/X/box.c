@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.9 2004/10/31 14:24:51 cegger Exp $
+/* $Id: box.c,v 1.10 2004/11/03 08:36:01 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -200,6 +200,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	XImage *ximg;
 	int     (*olderrorhandler) (Display *, XErrorEvent *);
 	int ret = 0;
+	uint8 *data8;
 	priv = GGIX_PRIV(vis);
 
 	/* TODO: chunk transfer for performance/memory profile.
@@ -238,29 +239,31 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
 		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 2;
+		data8 = (uint8 *)data;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 2; j += 2) {
-				*((uint8 *)data + j) = *(ximgptr + j + 1);
-				*((uint8 *)data + j + 1) = *(ximgptr + j);
+				*(data8 + j) = *(ximgptr + j + 1);
+				*(data8 + j + 1) = *(ximgptr + j);
 			}
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->width * 2;
+			data8 += ximg->width * 2;
 		}
 	}
 	else if (ximg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
 		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 4;
+		data8 = (uint8 *)data;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 4; j += 4) {
-				*((uint8 *)data + j) = *(ximgptr + j + 3);
-				*((uint8 *)data + j + 1) = *(ximgptr + j + 2);
-				*((uint8 *)data + j + 2) = *(ximgptr + j + 1);
-				*((uint8 *)data + j + 3) = *(ximgptr + j);
+				*(data8 + j) = *(ximgptr + j + 3);
+				*(data8 + j + 1) = *(ximgptr + j + 2);
+				*(data8 + j + 2) = *(ximgptr + j + 1);
+				*(data8 + j + 3) = *(ximgptr + j);
 			}
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->width * 4;
+			data8 += ximg->width * 4;
 		}
 	}
 	else {
@@ -270,11 +273,12 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 
 		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
+		data8 = (uint8 *)data;
 		while (h--) {
-			memcpy(data, ximgptr,
+			memcpy(data8, ximgptr,
 				(size_t)(w * ximg->bits_per_pixel)/8);
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += 
+			data8 += 
 			  ximg->width * ximg->bits_per_pixel/8;
 		}
 	}
