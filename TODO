@@ -38,10 +38,6 @@ Due : ????-??-??
   parser/construction functions for them in the LibGGI internal interface.
   Some code for this is already in LibBuf CVS.
 - add helper target for dirty-region management
-- make use of libgii's enhanced config file system:
-  aliases, in-file option strings, wildcards
-- make use of libgii's enhanced dl system:
-  allow single library to serve multiple suggest strings
 
 
 [Target specific issues]
@@ -93,7 +89,10 @@ Over-Next major release
 Version : 3.0.0
 Due : ????-??-??
 
-- A working full-featured KGI-target
+[Building issues]
+
+[Common issues]
+
 - change way that pixela/pixel stubs are selected, integrate ggiFlush
   and ggiSetFlags with the changed() dl cascade, add renderers (in addition
   to extensions) to the cascade, add some infrastructure for next 
@@ -104,6 +103,18 @@ Due : ????-??-??
 - finish long-term plan
 - implement below API additions
 - implement below non-backward-compatible changes
+- make use of libgii's enhanced config file system:
+  aliases, in-file option strings, wildcards
+- make use of libgii's enhanced dl system:
+  allow single library to serve multiple suggest strings
+
+
+[Target specific issues]
+
+- A working full-featured KGI-target
+
+
+[Documentation related stuff]
 
 
 ------------------------------------------
