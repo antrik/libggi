@@ -1,4 +1,4 @@
-/* $Id: debug.h,v 1.5 2004/10/30 10:36:04 soyt Exp $
+/* $Id: ggi_debug.h,v 1.1 2004/10/30 11:06:38 soyt Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -26,8 +26,8 @@
 ******************************************************************************
 */
 
-#ifndef _GGI_INTERNAL_DEBUG_H
-#define _GGI_INTERNAL_DEBUG_H
+#ifndef _GGI_INTERNAL_GGI_DEBUG_H
+#define _GGI_INTERNAL_GGI_DEBUG_H
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -156,4 +156,4 @@ __END_DECLS
 # define GGID3(x)	/* empty */
 #endif
 
-#endif /* _GGI_INTERNAL_DEBUG_H */
+#endif /* _GGI_INTERNAL_GGI_DEBUG_H */
