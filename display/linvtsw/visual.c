@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -538,6 +538,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 		
+
+int GGIdl_linvtsw(int func, void **funcptr);
 
 int GGIdl_linvtsw(int func, void **funcptr)
 {

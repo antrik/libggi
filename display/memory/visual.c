@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2003/05/03 16:16:19 cegger Exp $
+/* $Id: visual.c,v 1.11 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -50,7 +50,7 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
+static ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 {
 	ggi_memory_priv *priv=inp->priv;
 	ggi_event ev;
@@ -65,7 +65,7 @@ ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 			return 0;
 		}
 		memcpy(&ev, &(priv->inputbuffer->buffer[priv->inputoffset]),
-		       priv->inputbuffer->buffer[priv->inputoffset]);
+		       (size_t)(priv->inputbuffer->buffer[priv->inputoffset]));
 		_giiEvQueueAdd(inp, &ev);
 		priv->inputoffset += ev.any.size;
 		rc |= 1<<ev.any.type;
@@ -79,14 +79,14 @@ ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 	return rc;
 }
 
-int GII_memory_send(gii_input_t inp, ggi_event *event)
+static int GII_memory_send(gii_input_t inp, ggi_event *event)
 {
 	ggi_memory_priv *priv=inp->priv;
-	int size;
+	size_t size = event->any.size;
 	
 	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset++]=MEMINPMAGIC;
 	memcpy(&(priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]),
-		event,size=event->any.size);
+		event,size);
 	priv->inputbuffer->writeoffset+=size;
 	if (priv->inputbuffer->writeoffset >= (signed)(INPBUFSIZE 
 		- sizeof(ggi_event)
@@ -170,11 +170,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		else if (strncmp(args,"keyfile:",8)==0)
 		{
-			int size;
+			unsigned int size;
 			char id;
 			char filename[1024];
 
-			sscanf(args+8,"%d:%c:%s",&size,&id,filename);
+			sscanf(args+8,"%u:%c:%s",&size,&id,filename);
 			GGIDPRINT("display-memory has keyfile-arg:%d:%c:%s.\n",
 				size,id,filename);
 
@@ -353,6 +353,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_memory(int func, void **funcptr);
 
 int GGIdl_memory(int func, void **funcptr)
 {

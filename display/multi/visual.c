@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -190,7 +190,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  * So we just use recursion to traverse to the end of the list and then destroy
  * the visuals while backtracking.
  */
-void destroyvisuals(MultiVis *cur) {
+static void destroyvisuals(MultiVis *cur) {
 	if (cur) destroyvisuals(cur->next);
 	else return;
 	cur->vis->input = NULL;
@@ -212,6 +212,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_multi(int func, void **funcptr);
 
 int GGIdl_multi(int func, void **funcptr)
 {

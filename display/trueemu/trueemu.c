@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: trueemu.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -140,7 +140,7 @@ static ggi_color black = { 0,0,0 };
  **************************************************/
 
 
-static int calc_default_flags(int flags, int graphtype)
+static int calc_default_flags(int flags, ggi_graphtype graphtype)
 {
 	int default_dither  = TRUEEMU_F_DITHER_4;
 	int default_palette = TRUEEMU_F_RGB;
@@ -179,7 +179,7 @@ static void load_332_palette(ggi_color *colormap)
 	for (g = 0; g < 8; g++)
 	for (b = 0; b < 4; b++) {
 
-		int index = (r << 5) | (g << 2) | b;
+		int _index = (r << 5) | (g << 2) | b;
 
 		ggi_color col;
 
@@ -187,7 +187,7 @@ static void load_332_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (8-1);
 		col.b = b * 0xffff / (4-1);
 
-		colormap[index] = col;
+		colormap[_index] = col;
 	}
 }
 
@@ -200,7 +200,7 @@ static void load_cube_palette(ggi_color *colormap)
 	for (g = 0; g < CUBE_LEVELS; g++)
 	for (b = 0; b < CUBE_LEVELS; b++) {
 
-		int index = (r * CUBE_LEVELS + g) * CUBE_LEVELS + b;
+		int _index = (r * CUBE_LEVELS + g) * CUBE_LEVELS + b;
 
 		ggi_color col;
 
@@ -208,14 +208,14 @@ static void load_cube_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (CUBE_LEVELS-1);
 		col.b = b * 0xffff / (CUBE_LEVELS-1);
 
-		colormap[index] = col;
+		colormap[_index] = col;
 	}
 }
 
 
 static void load_pastel_palette(ggi_color *colormap)
 {
-	int index;
+	int _index;
 	int pastel;
 
 
@@ -232,7 +232,7 @@ static void load_pastel_palette(ggi_color *colormap)
 		int tg = pastel_array[pastel].color.g;
 		int tb = pastel_array[pastel].color.b;
 
-		index = 1 + pastel * PASTEL_LEVELS;
+		_index = 1 + pastel * PASTEL_LEVELS;
 
 		for (pl=1; pl <= PASTEL_LEVELS; pl++) {
 
@@ -242,7 +242,7 @@ static void load_pastel_palette(ggi_color *colormap)
 			col.g = pl * tg / PASTEL_LEVELS;
 			col.b = pl * tb / PASTEL_LEVELS;
 
-			colormap[index++] = col;
+			colormap[_index++] = col;
 		}
 	}
 }
@@ -250,10 +250,10 @@ static void load_pastel_palette(ggi_color *colormap)
 
 static void load_col16_palette(ggi_color *colormap)
 {
-	int index;
+	int i;
 
-	for (index=0; index < 16; index++) {
-		colormap[index] = col16_palette[index];
+	for (i=0; i < 16; i++) {
+		colormap[i] = col16_palette[i];
 	}
 }
 
@@ -266,7 +266,7 @@ static void load_121_palette(ggi_color *colormap)
 	for (g = 0; g < 4; g++)
 	for (b = 0; b < 2; b++) {
 
-		int index = (r << 3) | (g << 1) | b;
+		int _index = (r << 3) | (g << 1) | b;
 
 		ggi_color col;
 
@@ -274,7 +274,7 @@ static void load_121_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (4-1);
 		col.b = b * 0xffff / (2-1);
 
-		colormap[index] = col;
+		colormap[_index] = col;
 	}
 }
 
@@ -556,7 +556,7 @@ static void calc_pastel_dither(ggi_trueemu_priv *priv, int shift)
 	for (r=0; r < 32; r++) {
 	for (g=0; g < 32; g++) {
 	for (b=0; b < 32; b++) {
-		int index = (r << 10) | (g << 5) | b;
+		int _index = (r << 10) | (g << 5) | b;
 		int tr = r * 0xff / 31;
 		int tg = g * 0xff / 31;
 		int tb = b * 0xff / 31;
@@ -566,7 +566,7 @@ static void calc_pastel_dither(ggi_trueemu_priv *priv, int shift)
 		for (n=0; n < num; n++) {
 			int pl = (((max * bands) >> 5) + n) >> shift;
 
-			priv->T[index][n] = (pl == 0) ? 0 :
+			priv->T[_index][n] = (pl == 0) ? 0 :
 				1 + (pastel * PASTEL_LEVELS) + (pl - 1);
 		}
 	}
@@ -593,14 +593,14 @@ static void calc_col16_dither(ggi_trueemu_priv *priv, int shift)
 	for (g=0; g < 32; g++) {
 	for (b=0; b < 32; b++) {
 	for (n=0; n < num; n++) {
-		int index = (r << 10) | (g << 5) | b;
+		int _index = (r << 10) | (g << 5) | b;
 		int max = MAX(r, MAX(g, b));
 		int tr,tg,tb;
 		int cr,cg,cb;
 		int pl;
 
 		if (max == 0) {
-			priv->T[index][n] = 0;
+			priv->T[_index][n] = 0;
 			continue;
 		}
 
@@ -613,7 +613,7 @@ static void calc_col16_dither(ggi_trueemu_priv *priv, int shift)
 
 			pl = (((max * green_bands) >> 5) + n) >> shift;
 
-			priv->T[index][n] = col16_greens[pl];
+			priv->T[_index][n] = col16_greens[pl];
 			continue;
 		}
 
@@ -623,7 +623,7 @@ static void calc_col16_dither(ggi_trueemu_priv *priv, int shift)
 
 			pl = (((max * brown_bands) >> 5) + n) >> shift;
 
-			priv->T[index][n] = col16_browns[pl];
+			priv->T[_index][n] = col16_browns[pl];
 			continue;
 		}
 
@@ -634,7 +634,7 @@ static void calc_col16_dither(ggi_trueemu_priv *priv, int shift)
 
 			pl = (((max * grey_bands) >> 5) + n) >> shift;
 
-			priv->T[index][n] = col16_greys[pl];
+			priv->T[_index][n] = col16_greys[pl];
 			continue;
 		}
 
@@ -643,7 +643,7 @@ static void calc_col16_dither(ggi_trueemu_priv *priv, int shift)
 		cg = (((g * cube_bands) >> 5) + n) >> shift;
 		cb = (((b * cube_bands) >> 5) + n) >> shift;
 
-		priv->T[index][n] = ((cr*2) + cg)*2 + cb;
+		priv->T[_index][n] = ((cr*2) + cg)*2 + cb;
 	}
 	}
 	}
@@ -898,7 +898,7 @@ int _ggi_trueemu_Close(ggi_visual *vis)
 int _ggi_trueemu_Open(ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
-	int bufsize;
+	size_t bufsize;
 	int err;
 
 	/* Free any previously allocated resources. */

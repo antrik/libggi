@@ -1,4 +1,4 @@
-/* $Id: gt-auto.inc,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: gt-auto.inc,v 1.2 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Common GT_AUTO handling code.
@@ -74,7 +74,7 @@ static ggi_graphtype _GGIhandle_gtauto(ggi_graphtype gt)
 				GT_SETSIZE(gt, GT_DEPTH(gt));
 			}
 		} else {
-			GT_SETSIZE(gt, (GT_DEPTH(gt) + 7) & ~7);
+			GT_SETSIZE(gt, (GT_DEPTH(gt) + 7U) & ~(7U));
 		}
 	}
 

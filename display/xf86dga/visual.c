@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
+/* $Id: visual.c,v 1.5 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -290,7 +290,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->x.inp = NULL;
 	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
-		gii_inputxwin_arg args;
+		gii_inputxwin_arg _args;
 		gii_input *inp;
 	
 		/* Get all the events */
@@ -302,15 +302,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			     GrabModeAsync, GrabModeAsync,
 			     None, None, CurrentTime);
 	
-		args.disp = priv->x.display;
-		args.win = DefaultRootWindow(priv->x.display);
-		args.ptralwaysrel = 1;
-		args.wait = 0;
-		args.exposefunc = args.exposearg
-			= args.resizefunc = args.resizearg = NULL;
-		args.gglock = priv->x.xliblock;
+		_args.disp = priv->x.display;
+		_args.win = DefaultRootWindow(priv->x.display);
+		_args.ptralwaysrel = 1;
+		_args.wait = 0;
+		_args.exposefunc = _args.exposearg
+			= _args.resizefunc = _args.resizearg = NULL;
+		_args.gglock = priv->x.xliblock;
 
-		if ((inp = giiOpen("xwin", &args, NULL)) == NULL) {
+		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
 			GGIDPRINT_MISC("Unable to open xwin inputlib\n");
 			do_cleanup(vis);
 			return GGI_ENODEVICE;
@@ -352,6 +352,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+int GGIdl_xf86dga(int func, void **funcptr);
 
 int GGIdl_xf86dga(int func, void **funcptr)
 {

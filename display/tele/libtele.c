@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.5 2002/09/08 21:37:47 soyt Exp $
+/* $Id: libtele.c,v 1.6 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -123,7 +123,7 @@ static int do_poll_event(int fd)
 static int do_read_event(int sock_fd, TeleEvent *ev)
 {
 	int num;
-	int count;
+	unsigned int count;
 
 	unsigned char *buf = (unsigned char *) ev;
 
@@ -229,7 +229,7 @@ static int do_read_event(int sock_fd, TeleEvent *ev)
 static int do_write_event(int sock_fd, TeleEvent *ev)
 {
 	int num;
-	int count = ev->size*4;
+	unsigned int count = ev->size*4;
 
 	unsigned char *buf = (unsigned char *) ev;
 
@@ -356,7 +356,7 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 	}
 
 	/* Copy event to end of buffer (really the head :) */
-	memcpy(buf + c->writebuf_head, ev, evsize);
+	memcpy(buf + c->writebuf_head, ev, (size_t)evsize);
 	c->writebuf_head += evsize;
 	
 	while (len > 0) {
@@ -491,7 +491,7 @@ static int tclient_open_inet(TeleClient *c, const char *addr)
 
 	int err;
 
-	int n = 0;
+	unsigned int n = 0;
 	const char *port = addr;
 	char name[512];
 	unsigned int display_num = 27780;
@@ -554,7 +554,7 @@ static int tclient_open_inet(TeleClient *c, const char *addr)
 int tclient_open(TeleClient *c, const char *addrspec)
 {
 	int err;
-	int n = 0;
+	unsigned int n = 0;
 	const char *addr = addrspec;
 
 	/* Find a colon: this is the type of socket to use */
@@ -663,7 +663,7 @@ int tserver_init(TeleServer *s, int display)
 	struct sockaddr_in me_in;
 
 	struct sockaddr *me = NULL;
-	int me_len = 0;
+	unsigned int me_len = 0;
 
 	int inet = (display < 10);
 

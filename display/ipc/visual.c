@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/05/03 16:13:31 cegger Exp $
+/* $Id: visual.c,v 1.7 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -43,7 +43,7 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
+static ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 {
 	ggi_ipc_priv *priv=inp->priv;
 	ggi_event ev;
@@ -59,7 +59,7 @@ ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 		}	/* if */
 
 		memcpy(&ev, &(priv->inputbuffer->buffer[priv->inputoffset]),
-			priv->inputbuffer->buffer[priv->inputoffset]);
+			(size_t)(priv->inputbuffer->buffer[priv->inputoffset]));
 
 		_giiEvQueueAdd(inp, &ev);
 		priv->inputoffset += ev.any.size;
@@ -74,14 +74,14 @@ ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 }	/* GII_ipc_poll */
 
 
-int GII_ipc_send(gii_input_t inp, ggi_event *event)
+static int GII_ipc_send(gii_input_t inp, ggi_event *event)
 {
 	ggi_ipc_priv *priv=inp->priv;
-	int size;
+	size_t size = event->any.size;
   
 	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset++] = MEMINPMAGIC;
 	memcpy(&(priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]),
-		event,size=event->any.size);
+		event, size);
 
 	priv->inputbuffer->writeoffset += size;
 	if (priv->inputbuffer->writeoffset
@@ -252,6 +252,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }	/* GGIclose */
 
+
+int GGIdl_ipc(int func, void **funcptr);
 
 int GGIdl_ipc(int func, void **funcptr)
 {

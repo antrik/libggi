@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.1 2001/05/12 23:02:36 cegger Exp $
+/* $Id: stubs.c,v 1.2 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -246,7 +246,7 @@ int GGI_tile_copybox(ggi_visual *vis, int x, int y, int width, int height,
 	}
 
 	/* ARGGH!!! */
-	buf = malloc((LIBGGI_PIXFMT(vis)->size+7)/8*width*height);
+	buf = malloc((size_t)((LIBGGI_PIXFMT(vis)->size+7)/8*width*height));
 	if (buf == NULL) {
 		/* Tough luck kid... */
 		return GGI_ENOMEM;

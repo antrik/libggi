@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: color.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: color mapping
@@ -102,17 +102,17 @@ ggi_pixel GGI_vcsa_mapcolor(ggi_visual *vis, ggi_color *col)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 	ggi_color outer;
-	int intens, index;
+	int intens, _index;
 
 	if (! (priv->flags & VCSA_FLAG_SHADE)) {
 		
-		index = _ggi_match_palette(ansi_16_colors, 16, col);
+		_index = _ggi_match_palette(ansi_16_colors, 16, col);
 
 		if (priv->flags & VCSA_FLAG_ASCII) {
-			return (index << 8) | '#';
+			return (_index << 8) | '#';
 		}
 
-		return (index << 8) | 0xdb;
+		return (_index << 8) | 0xdb;
 	}
 	
 	outer.r = col->r >> 4;
@@ -130,15 +130,15 @@ ggi_pixel GGI_vcsa_mapcolor(ggi_visual *vis, ggi_color *col)
 	outer.g = outer.g * 0xffff / intens;
 	outer.b = outer.b * 0xffff / intens;
 
-	index = _ggi_match_palette(outer_7_colors, 7, &outer);
+	_index = _ggi_match_palette(outer_7_colors, 7, &outer);
 
 	intens = intens * NUM_INTENS / 0x1000;
 
 	if (priv->flags & VCSA_FLAG_ASCII) {
-		return vcsa_ascii_pixels[index * NUM_INTENS + intens];
+		return vcsa_ascii_pixels[_index * NUM_INTENS + intens];
 	}
 
-	return vcsa_normal_pixels[index * NUM_INTENS + intens];
+	return vcsa_normal_pixels[_index * NUM_INTENS + intens];
 }
 
 int GGI_vcsa_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)

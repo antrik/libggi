@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
+/* $Id: mode.c,v 1.5 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -33,14 +33,14 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
-#include "../common/pixfmt-setup.inc"
 #include "../common/gt-auto.inc"
 
 #include "libtele.h"
 #include <ggi/display/tele.h>
 
 
-int GGI_tele_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+static int GGI_tele_getapi(ggi_visual *vis, int num,
+			char *apiname, char *arguments)
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
 
@@ -82,7 +82,7 @@ int GGI_tele_resetmode(ggi_visual *vis)
 	return tclient_write(priv->client, &ev);
 }
 
-int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
+static int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
 {
   ggi_tele_priv *priv = TELE_PRIV(vis);
   int err;

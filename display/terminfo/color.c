@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:31 cegger Exp $
+/* $Id: color.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -37,6 +37,8 @@
 #define TWO_THIRDS (GGI_COLOR_COMPONENT_TYPE)((1<<(GGI_COLOR_PRECISION+2))/3)
 #define ONE_THIRD (GGI_COLOR_COMPONENT_TYPE)((1<<(GGI_COLOR_PRECISION+1))/3) 
 
+
+#if 0
 static const ggi_color vga16_palette[16] = {
 	{ 0, 0, 0 },
 	{ 0, 0, TWO_THIRDS },
@@ -54,13 +56,15 @@ static const ggi_color vga16_palette[16] = {
 	{ THREE_THIRDS, THREE_THIRDS, ONE_THIRD },
 	{ THREE_THIRDS, THREE_THIRDS, THREE_THIRDS }
 };
+#endif
+
 #undef ONE_THIRD
 #undef TWO_THIRDS
 #undef THREE_THIRDS
 
 #undef GGI_COLOR_COMPONENT_TYPE
 
-static inline chtype map_char_to_chtype(ggi_visual *vis, int c) {
+static inline chtype map_char_to_chtype(ggi_visual *vis, unsigned int c) {
 	struct TIhooks *tiinfo;
 	tiinfo = LIBGGI_PRIVATE(vis);
 	switch (c) {
@@ -81,7 +85,7 @@ static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16 pixel)
 	int fg = (pixel >> 8)  & 0x0F;
 	int bg = (pixel >> 12) & 0x0F;
 
-	return map_char_to_chtype(vis, pixel & 0xFF)
+	return map_char_to_chtype(vis, pixel & 0xFFU)
 		| tiinfo->color16_table[fg+(bg<<4)];
 }
 

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2003/05/08 14:52:49 cegger Exp $
+/* $Id: color.c,v 1.7 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -327,7 +327,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	LIBGGI_APPASSERT(priv->ncols > 0, "X: Spurious Pixel Format");
 
 	/* Fill the colormap with the original colors (or just read) */
-	priv->gammamap = calloc(priv->ncols, sizeof(XColor));
+	priv->gammamap = calloc((size_t)priv->ncols, sizeof(XColor));
 	if (priv->gammamap == NULL) {
 		XFreeColormap(priv->disp, priv->cmap);
 		priv->cmap = None;

@@ -1,4 +1,4 @@
-/* $Id: ncurses.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: ncurses.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Terminfo target - miscellaneous ncurses stuff
@@ -78,7 +78,7 @@ void _terminfo_release_screen()
 
 SCREEN *_terminfo_new_screen(const char *term_type, FILE *out, FILE *in)
 {
-	SCREEN *newscr;
+	SCREEN *_newscr;
 	ggLock(ncurses_lock);
         if ( term_type == NULL ) {
                 term_type = getenv("TERM");
@@ -89,14 +89,14 @@ SCREEN *_terminfo_new_screen(const char *term_type, FILE *out, FILE *in)
 	{ char *temp;
 		temp = (char *)malloc(sizeof(char) * ( strlen(term_type) + 1 ));
 		strcpy(temp, term_type);
-		newscr = newterm(temp, out, in);
+		_newscr = newterm(temp, out, in);
 		free(temp);
 	}
-	if ( newscr == NULL ) {
+	if ( _newscr == NULL ) {
 		ggUnlock(ncurses_lock);
 	} else {
-		ncurses_screen = newscr;
-		set_term(newscr);
+		ncurses_screen = _newscr;
+		set_term(_newscr);
 		start_color();
 		cbreak();
 		noecho();
@@ -105,7 +105,7 @@ SCREEN *_terminfo_new_screen(const char *term_type, FILE *out, FILE *in)
 		meta(stdscr, TRUE);
 		keypad(stdscr, TRUE);
 	}
-	return newscr;
+	return _newscr;
 }
 
 void _terminfo_destroy_screen()

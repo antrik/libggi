@@ -1,4 +1,4 @@
-/* $Id: giievents.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: giievents.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -35,7 +35,8 @@
 #include <ggi/display/aa.h>
 
 
-static void add_key_event(gii_input_t inp, int key, ggi_event_mask type)
+static void add_key_event(gii_input_t inp, unsigned int key, 
+			ggi_event_mask type)
 {
 	ggi_event ggievent;
 
@@ -127,7 +128,7 @@ ggi_event_mask GII_aa_poll(gii_input_t inp, void *arg)
 
 	ggi_aa_priv *priv = inp->priv;
 	ggi_event_mask evmask = 0;
-	int aatype;
+	unsigned int aatype;
 
 	GGIDPRINT_EVENTS("GII_aa_poll\n");
 

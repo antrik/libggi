@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/10/27 18:26:25 skids Exp $
+/* $Id: mode.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -81,7 +81,7 @@ static int do_dbstuff(ggi_visual *vis)
 	}
 	priv->frame_size = LIBGGI_FB_SIZE(LIBGGI_MODE(vis));
 	priv->fb_size = priv->frame_size * LIBGGI_MODE(vis)->frames;
-	priv->fb_ptr  = malloc(priv->fb_size);
+	priv->fb_ptr  = malloc((size_t)(priv->fb_size));
 
 	GGIDPRINT("display-trueemu: fb=%p size=%d frame=%d\n", 
 		priv->fb_ptr, priv->fb_size, priv->frame_size);
@@ -92,7 +92,7 @@ static int do_dbstuff(ggi_visual *vis)
 	}
 
 	/* clear all frames */
-	memset(priv->fb_ptr, 0, priv->fb_size);
+	memset(priv->fb_ptr, 0, (size_t)(priv->fb_size));
 
 	/* set up pixel format */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));

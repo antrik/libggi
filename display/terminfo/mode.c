@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2002/10/27 18:26:25 skids Exp $
+/* $Id: mode.c,v 1.5 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -36,9 +36,7 @@
 
 #include "../common/pixfmt-setup.inc"
 
-extern void _GGI_terminfo_freedbs(ggi_visual *);
-
-int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
+static int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
 {
 	ggi_mode *mode;
 

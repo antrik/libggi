@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: visual.c,v 1.3 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -48,8 +48,6 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
-extern int GGI_file_resetmode(ggi_visual *vis);
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32 *dlret)
@@ -149,6 +147,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_file(int func, void **funcptr);
 
 int GGIdl_file(int func, void **funcptr)
 {

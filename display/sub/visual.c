@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:18 cegger Exp $
+/* $Id: visual.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-sub
@@ -115,6 +115,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_sub(int func, void **funcptr);
 
 int GGIdl_sub(int func, void **funcptr)
 {

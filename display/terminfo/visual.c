@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/06/17 08:56:44 cegger Exp $
+/* $Id: visual.c,v 1.4 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -374,6 +374,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh) {
 	return 0;
 }
 
+
+int GGIdl_terminfo(int func, void **funcptr);
 
 int GGIdl_terminfo(int func, void **funcptr)
 {

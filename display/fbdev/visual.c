@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2003/05/19 17:53:11 cegger Exp $
+/* $Id: visual.c,v 1.11 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -950,6 +950,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return do_cleanup(vis);
 }
 
+
+int GGIdl_fbdev(int func, void **funcptr);
 
 int GGIdl_fbdev(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/10/27 18:26:23 skids Exp $
+/* $Id: mode.c,v 1.4 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -119,7 +119,7 @@ int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
  *
  * We try to work around as much as possible.
  */
-int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
+static int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
 {
 	int err = 0;
 	

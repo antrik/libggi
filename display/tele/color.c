@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2003/05/03 16:18:19 cegger Exp $
+/* $Id: color.c,v 1.5 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -76,7 +76,8 @@ int GGI_tele_setpalvec(ggi_visual *vis, int start, int len, ggi_color *cols)
 		}
 
 		c = tclient_new_event(priv->client, &ev, TELE_CMD_SETPALETTE,
-				sizeof(TeleCmdSetPaletteData) + num*4, 0);
+				(signed)(sizeof(TeleCmdSetPaletteData) + num*4),
+				0);
 				
 		c->start = start;
 		c->len   = num;

@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
+/* $Id: hline.c,v 1.4 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -126,8 +126,9 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 
 	ggLock(priv->xliblock);
         ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-                            LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
-                            data, w, 1, 8, 0);
+                            (unsigned)LIBGGI_PIXFMT(vis)->depth,
+			    ZPixmap, 0,
+                            data, (unsigned)w, 1, 8, 0);
 
 #ifdef GGI_LITTLE_ENDIAN
         ximg->byte_order = LSBFirst;
@@ -138,7 +139,7 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 #endif
 
         XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
-                  0, 0, x, GGI_X_WRITE_Y, w, 1);
+                  0, 0, x, GGI_X_WRITE_Y, (unsigned)w, 1);
         XFree(ximg); /* XDestroyImage would free(data) (bad).
 			Luckily, this doesn't leak (?) */
 
@@ -174,7 +175,7 @@ int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 #warning honor various ximage format fields here.
 #warning 1,2,4-bit support needed.
 	ximg = XGetImage(priv->disp, priv->drawable, x, GGI_X_READ_Y,
-			 w, 1, AllPlanes, ZPixmap);
+			 (unsigned)w, 1, AllPlanes, ZPixmap);
 	XSync(priv->disp, 0);
 	XSetErrorHandler(olderrorhandler);
 
@@ -214,7 +215,7 @@ int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 	else {
 	noswab:
 		memcpy(data, ximg->data,
-		       (int)((long)w * LIBGGI_PIXFMT(vis)->size)/8);
+		       (size_t)((long)w * LIBGGI_PIXFMT(vis)->size)/8);
 	}
 
 	XDestroyImage(ximg);

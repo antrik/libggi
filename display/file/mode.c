@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/10/27 18:26:23 skids Exp $
+/* $Id: mode.c,v 1.4 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -73,7 +73,8 @@ static void dowritefile(ggi_visual *vis)
 	priv->flushcnt++;
 }
 
-int GGI_file_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+static int GGI_file_flush(ggi_visual *vis, 
+			int x, int y, int w, int h, int tryflag)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	struct timeval now;
@@ -132,8 +133,8 @@ static int _ggi_rawstuff(ggi_visual *vis)
 	/* Write initial file contents 
 	 */
 	write_string(vis, "\020GGIFILE");	/* magic */
-	write_word(vis, LIBGGI_VIRTX(vis));	/* width */
-	write_word(vis, LIBGGI_VIRTY(vis));	/* height */
+	write_word(vis, (unsigned)LIBGGI_VIRTX(vis));	/* width */
+	write_word(vis, (unsigned)LIBGGI_VIRTY(vis));	/* height */
 
 	/* graphtype */
 	write_byte(vis, (gt & GT_SCHEME_MASK) >> GT_SCHEME_SHIFT);
@@ -141,8 +142,8 @@ static int _ggi_rawstuff(ggi_visual *vis)
 	write_byte(vis, (gt & GT_SIZE_MASK)  >> GT_SIZE_SHIFT);
 	write_byte(vis, (gt & GT_DEPTH_MASK) >> GT_DEPTH_SHIFT);
 
-	write_word(vis, priv->fb_stride);		/* stride */
-	write_word(vis, padding);		/* padsize */
+	write_word(vis, (unsigned)priv->fb_stride);		/* stride */
+	write_word(vis, (unsigned)padding);		/* padsize */
 
 	write_zeros(vis, priv->num_cols * 3);	/* palette */
 	write_zeros(vis, padding);		/* padding */
@@ -154,7 +155,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 
 	/* Map the file into memory
 	 */
-	priv->file_mmap = (uint8 *) mmap(0, priv->file_size, 
+	priv->file_mmap = (uint8 *) mmap(0, (size_t)priv->file_size, 
 		PROT_READ | PROT_WRITE, MAP_SHARED, LIBGGI_FD(vis), 0);
 
 	GGIDPRINT("display-file: File mmap'd at 0x%x.\n", priv->file_mmap);
@@ -201,7 +202,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 			return -1;
 		}
 	} else {
-		priv->fb_ptr = malloc(priv->fb_size);
+		priv->fb_ptr = malloc((size_t)priv->fb_size);
 
 		if (priv->fb_ptr == NULL) {
 			GGIDPRINT_MODE("display-file: Out of memory!");
@@ -360,7 +361,7 @@ int GGI_file_resetmode(ggi_visual *vis)
 	GGIDPRINT("display-file: GGIresetmode(%p)\n", vis);
 
 	if (priv->flags & FILEFLAG_RAW) {
-		munmap((void *)priv->file_mmap, priv->file_size);
+		munmap((void *)priv->file_mmap, (unsigned)priv->file_size);
 	} else {
 		/* This is where we write the non-raw file */
 

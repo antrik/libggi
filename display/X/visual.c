@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2003/06/27 12:58:25 cegger Exp $
+/* $Id: visual.c,v 1.22 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -71,7 +71,8 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-int GGI_X_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+static int GGI_X_getapi(ggi_visual *vis,int num,
+			char *apiname ,char *arguments)
 {
 	*arguments = '\0';
 	switch (num) {
@@ -334,9 +335,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	} else {
 		XWindowAttributes wa;
-		vi_template.screen = (options[OPT_SCREEN].result[0] != 'n')  ? 
-		  strtoul(options[OPT_SCREEN].result, NULL, 0) : 
-		  DefaultScreen(priv->disp);
+		if (options[OPT_SCREEN].result[0] != 'n') {
+			vi_template.screen =
+				strtoul(options[OPT_SCREEN].result, NULL, 0);
+		} else {
+			vi_template.screen = DefaultScreen(priv->disp);
+		}
+
 		priv->win = priv->parentwin = 
 			RootWindow(priv->disp, vi_template.screen);
 		XGetWindowAttributes(priv->disp, priv->win, &wa);
@@ -356,7 +361,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENOFUNC;
 		goto out;
 	}
-	priv->vilist = calloc(priv->nvisuals, sizeof(ggi_x_vi));
+	priv->vilist = calloc((size_t)priv->nvisuals, sizeof(ggi_x_vi));
 	if (priv->vilist == NULL) goto out;
 
 	priv->buflist = XListPixmapFormats(disp, &(priv->nbufs));
@@ -483,20 +488,20 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         }
 
 	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
-		gii_inputxwin_arg args;
+		gii_inputxwin_arg _args;
 		gii_input *inp;
                 
-		args.disp = priv->disp;
-		args.ptralwaysrel = 0;
-		args.wait = 1;
-                args.exposefunc = (gii_inputxwin_exposefunc*)GGI_X_expose;
-                args.exposearg = vis;
-      /* args.resizefunc = (gii_inputxwin_resizefunc*)GGI_X_resize;*/
-		args.resizefunc = NULL;
-                args.resizearg = vis;
-		args.gglock = lock;
+		_args.disp = priv->disp;
+		_args.ptralwaysrel = 0;
+		_args.wait = 1;
+                _args.exposefunc = (gii_inputxwin_exposefunc*)GGI_X_expose;
+		_args.exposearg = vis;
+      /* _args.resizefunc = (gii_inputxwin_resizefunc*)GGI_X_resize;*/
+		_args.resizefunc = NULL;
+                _args.resizearg = vis;
+		_args.gglock = lock;
                 
-		if ((inp = giiOpen("xwin", &args, NULL)) == NULL) {
+		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
 			GGIDPRINT_MISC("Unable to open xwin inputlib\n");
 			GGIclose(vis, dlh);
 			return GGI_ENODEVICE;
@@ -528,6 +533,8 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (GGIX_PRIV(vis)->opmansync) MANSYNC_deinit(vis);	
 	return 0;
 }
+
+int GGIdl_X(int func, void **funcptr);
 
 int GGIdl_X(int func, void **funcptr)
 {

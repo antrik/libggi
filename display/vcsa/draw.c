@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: draw.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -83,7 +83,7 @@ int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	
 	w *= 2;
 
-	if (write(LIBGGI_FD(vis), buf, w) != w) {
+	if (write(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
 		GGIDPRINT_DRAW("display-vcsa: write failed.\n");
 		return -1;
 	}
@@ -129,7 +129,7 @@ int GGI_vcsa_puthline(ggi_visual *vis, int x, int y, int w, void *buf)
 
 	w *= 2;
 
-	if (write(LIBGGI_FD(vis), buf, w) != w) {
+	if (write(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
 		GGIDPRINT_DRAW("display-vcsa: write failed.\n");
 		return -1;
 	}
@@ -171,7 +171,7 @@ int GGI_vcsa_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 
 	w *= 2;
 
-	if (read(LIBGGI_FD(vis), buf, w) != w) {
+	if (read(LIBGGI_FD(vis), buf, (unsigned)w) != w) {
 		GGIDPRINT_DRAW("display-vcsa: read failed.\n");
 		return -1;
 	}

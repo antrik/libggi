@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
+/* $Id: visual.c,v 1.4 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -65,8 +65,6 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
-extern int GGI_vcsa_resetmode(ggi_visual *vis);
 
 
 static int which_console(void)
@@ -266,6 +264,8 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_vcsa(int func, void **funcptr);
 
 int GGIdl_vcsa(int func, void **funcptr)
 {

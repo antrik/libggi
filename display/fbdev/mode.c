@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2002/10/27 18:26:23 skids Exp $
+/* $Id: mode.c,v 1.11 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -50,6 +50,9 @@
 #define FB_KLUDGE_FONTX	 8
 #define FB_KLUDGE_FONTY	16
 
+
+extern int GGI_fbdev_resetmode(ggi_visual *vis);
+
 static int
 do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var);
 
@@ -74,9 +77,9 @@ static void clear_fbmem(void *mem, unsigned long len)
 }
 
 
-int GGI_fbdev_kgicommand(ggi_visual *vis,int cmd,void *args)
+int GGI_fbdev_kgicommand(ggi_visual *vis, int cmd,void *args)
 {
-	return fbdev_doioctl(vis, cmd, args);
+	return fbdev_doioctl(vis, (unsigned)cmd, args);
 }
         
 
@@ -426,8 +429,8 @@ static int do_mmap(ggi_visual *vis)
 	if (priv->fb_ptr != NULL) {
 		_GGI_free_dbs(vis);
 		/* Clear old contents */
-		clear_fbmem(priv->fb_ptr, priv->mmap_size);
-		munmap(priv->fb_ptr, priv->mmap_size);
+		clear_fbmem(priv->fb_ptr, (unsigned)priv->mmap_size);
+		munmap(priv->fb_ptr, (unsigned)priv->mmap_size);
 	}
 
         /* calculate framebuffer size */
@@ -472,7 +475,8 @@ static int do_mmap(ggi_visual *vis)
 		    "mmap_size=0x%x\n", priv->frame_size,
 		    priv->fb_size, priv->mmap_size);
 
-	priv->fb_ptr = mmap(NULL, priv->mmap_size, PROT_READ | PROT_WRITE, 
+	priv->fb_ptr = mmap(NULL, (unsigned)priv->mmap_size,
+			    PROT_READ | PROT_WRITE, 
 			    MAP_SHARED, LIBGGI_FD(vis), 0);
 
 	GGIDPRINT_MODE("display-fbdev: FB_PTR=%p\n", priv->fb_ptr);
@@ -483,7 +487,7 @@ static int do_mmap(ggi_visual *vis)
 	}
 
 	/* clear all frames */
-	clear_fbmem(priv->fb_ptr, priv->fb_size);
+	clear_fbmem(priv->fb_ptr, (unsigned)priv->fb_size);
 
 	/* Set up pixel format */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
@@ -667,8 +671,8 @@ int GGI_fbdev_resetmode(ggi_visual *vis)
 	if (priv->fb_ptr != NULL) {
 		_GGI_free_dbs(vis);
 		/* Clear framebuffer */
-		clear_fbmem(priv->fb_ptr, priv->mmap_size);
-		munmap(priv->fb_ptr, priv->mmap_size);
+		clear_fbmem(priv->fb_ptr, (unsigned)priv->mmap_size);
+		munmap(priv->fb_ptr, (unsigned)priv->mmap_size);
 	}
 	fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, &priv->orig_var);
 	if (priv->fix.xpanstep != 0 || priv->fix.ypanstep != 0) {
@@ -806,7 +810,8 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 
 	if (!err) {
 		err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
-					DPI(width, x), DPI(height,y), 
+					(signed)(DPI(width, x)),
+					(signed)(DPI(height,y)), 
 					mode->visible.x, mode->visible.y);
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.1 2001/05/12 23:02:15 cegger Exp $
+/* $Id: monotext.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -134,79 +134,79 @@ static void setup_rgb2grey_table(uint8 *map)
 	}
 }
 
-static void calc_accuracy_1x1(int index, ggi_coord acc)
+static void calc_accuracy_1x1(int _index, ggi_coord acc)
 {
 	uint8 templ[16];
 
-	templ[0] = index;
+	templ[0] = _index;
 
-	greyblock_to_ascii[index] = find_closest_char(templ, acc);
+	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
-static void calc_accuracy_1x2(int index, ggi_coord acc)
+static void calc_accuracy_1x2(int _index, ggi_coord acc)
 {
 	uint8 templ[16];
 
-	templ[0] = index >> 8;
-	templ[1] = index & 0xff;
+	templ[0] = _index >> 8;
+	templ[1] = _index & 0xff;
 
-	greyblock_to_ascii[index] = find_closest_char(templ, acc);
+	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
-static void calc_accuracy_2x2(int index, ggi_coord acc)
+static void calc_accuracy_2x2(int _index, ggi_coord acc)
 {
 	uint8 templ[16];
 
-	templ[0] = ((index >> 12) & 0xf) * 255 / 15;
-	templ[1] = ((index >>  8) & 0xf) * 255 / 15;
-	templ[2] = ((index >>  4) & 0xf) * 255 / 15;
-	templ[3] = ((index      ) & 0xf) * 255 / 15;
+	templ[0] = ((_index >> 12) & 0xf) * 255 / 15;
+	templ[1] = ((_index >>  8) & 0xf) * 255 / 15;
+	templ[2] = ((_index >>  4) & 0xf) * 255 / 15;
+	templ[3] = ((_index      ) & 0xf) * 255 / 15;
 
-	greyblock_to_ascii[index] = find_closest_char(templ, acc);
+	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
-static void calc_accuracy_2x4(int index, ggi_coord acc)
+static void calc_accuracy_2x4(int _index, ggi_coord acc)
 {
 	uint8 templ[16];
 
-	templ[0] = ((index >> 14) & 0x3) * 255 / 3;
-	templ[1] = ((index >> 12) & 0x3) * 255 / 3;
-	templ[2] = ((index >> 10) & 0x3) * 255 / 3;
-	templ[3] = ((index >>  8) & 0x3) * 255 / 3;
+	templ[0] = ((_index >> 14) & 0x3) * 255 / 3;
+	templ[1] = ((_index >> 12) & 0x3) * 255 / 3;
+	templ[2] = ((_index >> 10) & 0x3) * 255 / 3;
+	templ[3] = ((_index >>  8) & 0x3) * 255 / 3;
 
-	templ[4] = ((index >>  6) & 0x3) * 255 / 3;
-	templ[5] = ((index >>  4) & 0x3) * 255 / 3;
-	templ[6] = ((index >>  2) & 0x3) * 255 / 3;
-	templ[7] = ((index      ) & 0x3) * 255 / 3;
+	templ[4] = ((_index >>  6) & 0x3) * 255 / 3;
+	templ[5] = ((_index >>  4) & 0x3) * 255 / 3;
+	templ[6] = ((_index >>  2) & 0x3) * 255 / 3;
+	templ[7] = ((_index      ) & 0x3) * 255 / 3;
 
-	greyblock_to_ascii[index] = find_closest_char(templ, acc);
+	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
-static void calc_accuracy_4x4(int index, ggi_coord acc)
+static void calc_accuracy_4x4(int _index, ggi_coord acc)
 {
 	uint8 templ[16];
 
-	templ[ 0] = (index & 0x8000) ? 255 : 0;
-	templ[ 1] = (index & 0x4000) ? 255 : 0;
-	templ[ 2] = (index & 0x2000) ? 255 : 0;
-	templ[ 3] = (index & 0x1000) ? 255 : 0;
+	templ[ 0] = (_index & 0x8000) ? 255 : 0;
+	templ[ 1] = (_index & 0x4000) ? 255 : 0;
+	templ[ 2] = (_index & 0x2000) ? 255 : 0;
+	templ[ 3] = (_index & 0x1000) ? 255 : 0;
 
-	templ[ 4] = (index & 0x0800) ? 255 : 0;
-	templ[ 5] = (index & 0x0400) ? 255 : 0;
-	templ[ 6] = (index & 0x0200) ? 255 : 0;
-	templ[ 7] = (index & 0x0100) ? 255 : 0;
+	templ[ 4] = (_index & 0x0800) ? 255 : 0;
+	templ[ 5] = (_index & 0x0400) ? 255 : 0;
+	templ[ 6] = (_index & 0x0200) ? 255 : 0;
+	templ[ 7] = (_index & 0x0100) ? 255 : 0;
 
-	templ[ 8] = (index & 0x0080) ? 255 : 0;
-	templ[ 9] = (index & 0x0040) ? 255 : 0;
-	templ[10] = (index & 0x0020) ? 255 : 0;
-	templ[11] = (index & 0x0010) ? 255 : 0;
+	templ[ 8] = (_index & 0x0080) ? 255 : 0;
+	templ[ 9] = (_index & 0x0040) ? 255 : 0;
+	templ[10] = (_index & 0x0020) ? 255 : 0;
+	templ[11] = (_index & 0x0010) ? 255 : 0;
 
-	templ[12] = (index & 0x0008) ? 255 : 0;
-	templ[13] = (index & 0x0004) ? 255 : 0;
-	templ[14] = (index & 0x0002) ? 255 : 0;
-	templ[15] = (index & 0x0001) ? 255 : 0;
+	templ[12] = (_index & 0x0008) ? 255 : 0;
+	templ[13] = (_index & 0x0004) ? 255 : 0;
+	templ[14] = (_index & 0x0002) ? 255 : 0;
+	templ[15] = (_index & 0x0001) ? 255 : 0;
 
-	greyblock_to_ascii[index] = find_closest_char(templ, acc);
+	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
 static void blitter_1x1(ggi_monotext_priv *priv, void *dest, void *src, int w)
@@ -230,17 +230,17 @@ static void blitter_1x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	uint16 *d = (uint16 *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
-	int index;
+	int _index;
 
 	for (; w > 0; w--, s++) {
 	
-		index = (s[0] << 8) | s[stride];
+		_index = (s[0] << 8) | s[stride];
 		
-		if (greyblock_to_ascii[index] == 255) {
-			calc_accuracy_1x2(index, priv->accuracy);
+		if (greyblock_to_ascii[_index] == 255) {
+			calc_accuracy_1x2(_index, priv->accuracy);
 		}
 
-		*d++ = 0x0700 | greyblock_to_ascii[index]; 
+		*d++ = 0x0700 | greyblock_to_ascii[_index]; 
 	}
 }
 
@@ -250,20 +250,20 @@ static void blitter_2x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	uint16 *d = (uint16 *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
-	int index;
+	int _index;
 
 	for (; w > 1; w -= 2, s += 2) {
 	
-		index = ((s[stride*0 + 0] & 0xf0) << 8) |
+		_index = ((s[stride*0 + 0] & 0xf0) << 8) |
 		        ((s[stride*0 + 1] & 0xf0) << 4) |
 		        ((s[stride*1 + 0] & 0xf0)     ) |
 		        ((s[stride*1 + 1] & 0xf0) >> 4);
 		
-		if (greyblock_to_ascii[index] == 255) {
-			calc_accuracy_2x2(index, priv->accuracy);
+		if (greyblock_to_ascii[_index] == 255) {
+			calc_accuracy_2x2(_index, priv->accuracy);
 		}
 
-		*d++ = 0x0700 | greyblock_to_ascii[index];
+		*d++ = 0x0700 | greyblock_to_ascii[_index];
 	}
 }
 
@@ -273,11 +273,11 @@ static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	uint16 *d = (uint16 *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
-	int index;
+	int _index;
 
 	for (; w > 1; w -= 2, s += 2) {
 	
-		index = ((s[stride*0 + 0] & 0xc0) << 8) |
+		_index = ((s[stride*0 + 0] & 0xc0) << 8) |
 		        ((s[stride*0 + 1] & 0xc0) << 6) |
 		        ((s[stride*1 + 0] & 0xc0) << 4) |
 		        ((s[stride*1 + 1] & 0xc0) << 2) |
@@ -287,11 +287,11 @@ static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 		        ((s[stride*3 + 0] & 0xc0) >> 4) |
 		        ((s[stride*3 + 1] & 0xc0) >> 6);
 		
-		if (greyblock_to_ascii[index] == 255) {
-			calc_accuracy_2x4(index, priv->accuracy);
+		if (greyblock_to_ascii[_index] == 255) {
+			calc_accuracy_2x4(_index, priv->accuracy);
 		}
 
-		*d++ = 0x0700 | greyblock_to_ascii[index];
+		*d++ = 0x0700 | greyblock_to_ascii[_index];
 	}
 }
 
@@ -301,11 +301,11 @@ static void blitter_4x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	uint16 *d = (uint16 *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
-	int index;
+	int _index;
 
 	for (; w > 3; w -= 4, s += 4) {
 	
-		index = ((s[stride*0 + 0] & 0x80) << 8) |
+		_index = ((s[stride*0 + 0] & 0x80) << 8) |
 		        ((s[stride*0 + 1] & 0x80) << 7) |
 		        ((s[stride*0 + 2] & 0x80) << 6) |
 		        ((s[stride*0 + 3] & 0x80) << 5) |
@@ -325,11 +325,11 @@ static void blitter_4x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 		        ((s[stride*3 + 2] & 0x80) >> 6) |
 		        ((s[stride*3 + 3] & 0x80) >> 7);
 
-		if (greyblock_to_ascii[index] == 255) {
-			calc_accuracy_4x4(index, priv->accuracy);
+		if (greyblock_to_ascii[_index] == 255) {
+			calc_accuracy_4x4(_index, priv->accuracy);
 		}
 
-		*d++ = 0x0700 | greyblock_to_ascii[index];
+		*d++ = 0x0700 | greyblock_to_ascii[_index];
 	}
 }
 
@@ -454,8 +454,8 @@ int _ggi_monotextOpen(ggi_visual *vis)
 	/* set the parent mode */
 	if (ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		priv->parent_gt) < 0) {
-
+		(unsigned)(priv->parent_gt)) < 0)
+	{
 		GGIDPRINT("Couldn't set child graphic mode.\n");
 		return -1;
 	}

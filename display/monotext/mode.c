@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/10/27 18:26:24 skids Exp $
+/* $Id: mode.c,v 1.4 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -84,7 +84,7 @@ static int do_dbstuff(ggi_visual *vis)
 	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
 
 	priv->fb_size = LIBGGI_FB_SIZE(LIBGGI_MODE(vis));
-	priv->fb_ptr  = malloc(priv->fb_size);
+	priv->fb_ptr  = malloc((size_t)(priv->fb_size));
 	
 	GGIDPRINT_MODE("display-monotext: fb=%p size=%d\n", 
 		       priv->fb_ptr, priv->fb_size);
@@ -226,11 +226,11 @@ int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode, 
-		       int target_width, int target_height)
+		       int _target_width, int _target_height)
 {
 	int sq_x, sq_y;
-	int totw = target_width *priv->accuracy.x;
-	int toth = target_height * priv->accuracy.y;
+	int totw = _target_width *priv->accuracy.x;
+	int toth = _target_height * priv->accuracy.y;
 
 #if 0   /* Preliminary mode-improvement code */
 	while ((mode->visible.x % totw)  != 0) mode->visible.x++;

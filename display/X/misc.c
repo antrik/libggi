@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.15 2003/05/20 12:41:44 cegger Exp $
+/* $Id: misc.c,v 1.16 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -297,18 +297,26 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 	else if (priv->win == None) { /* Not a root window */
 		/* Don't create a window who's handles/borders are offscreen */
 		w = screenw * 9 / 10; 
-		w = (w+3) & ~3;		/* make likely virt=visible */
+		w = (signed)((unsigned)(w)+3) & ~3;	/* make likely virt=visible */
 		h = screenh * 9 / 10;
 	}
 
 	LIBGGI_APPASSERT(w && h, "Bad max w/h.");
 
 	if (tm->visible.x == GGI_AUTO) {
-		suggest->visible.x = (tm->virt.x == GGI_AUTO) ? w : tm->virt.x;
+		if (tm->virt.x == GGI_AUTO) {
+			suggest->visible.x = w;
+		} else {
+			suggest->visible.x = tm->virt.x;
+		}
 		if ((unsigned)suggest->visible.x > w) suggest->visible.x = w;
 	}
 	if (tm->visible.y == GGI_AUTO) {
-		suggest->visible.y = (tm->virt.y == GGI_AUTO) ? h : tm->virt.y;
+		if (tm->virt.y == GGI_AUTO) {
+			suggest->visible.y = h;
+		} else {
+			suggest->visible.y = tm->virt.y;
+		}
 		if ((unsigned)suggest->visible.x > w) suggest->visible.x = w;
 	}
 	if (tm->virt.x == GGI_AUTO) 
@@ -338,7 +346,10 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 ((screenhmm <= 0) ?  0 : (screenh * 254 / screenhmm / 10))
 
         res = _ggi_figure_physz(suggest, priv->physzflags, &(priv->physz),
-                                SCREENDPIX, SCREENDPIY, screenw, screenh);
+                                (signed)SCREENDPIX,
+				(signed)SCREENDPIY,
+				(signed)screenw, 
+				(signed)screenh);
 	return(res);
 }
 
@@ -536,8 +547,8 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 	if (priv->fontimg) XDestroyImage(priv->fontimg);
 
 	fontpix = XCreatePixmap(priv->disp, priv->drawable, 
-				w * 256, h, 
-				priv->vilist[priv->viidx].vi->depth);
+				(unsigned)w * 256, (unsigned)h, 
+				(unsigned)priv->vilist[priv->viidx].vi->depth);
 
 	pixgc = XCreateGC(priv->disp, priv->win, 0, 0);
 	XSetFont(priv->disp, pixgc, priv->textfont->fid);
@@ -545,15 +556,16 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 	XSetForeground(priv->disp, pixgc, 0);
 
 	XFillRectangle(priv->disp, fontpix, pixgc, 
-			0, 0, w * 256, h);
-	XSetForeground(priv->disp, pixgc, ~0);
+			0, 0, (unsigned)w * 256, (unsigned)h);
+	XSetForeground(priv->disp, pixgc, ~0U);
 	for (i = 0; i < 256; i++) str[i] = i;
 	XDrawString(priv->disp, fontpix, pixgc, 
 		    0, priv->textfont->max_bounds.ascent, 
 		    str, 256);
 	XSync(priv->disp, 0);
 	priv->fontimg = XGetImage(priv->disp, fontpix, 0, 0, 
-				  w * 256, h, AllPlanes, ZPixmap);
+				  (unsigned)w * 256, (unsigned)h, 
+				  AllPlanes, ZPixmap);
 	XFreeGC(priv->disp, pixgc);
 
 	/* Reverse endianness if needed. */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2003/06/27 12:58:25 cegger Exp $
+/* $Id: mode.c,v 1.20 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -350,18 +350,23 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	priv->parentwin = 
 		XCreateSimpleWindow(priv->disp,
 				    RootWindow(priv->disp, vi->screen),
-				    0, 0, tm->visible.x, tm->visible.y, 0,
+				    0, 0,
+				    (unsigned)tm->visible.x,
+				    (unsigned)tm->visible.y, 0,
 				    0, 0);
 	_ggi_x_dress_parentwin(vis, tm);
 
 	GGIDPRINT_MODE("X: Prepare to resize.\n");
-	XResizeWindow(priv->disp,priv->parentwin,tm->visible.x,tm->visible.y);
+	XResizeWindow(priv->disp,priv->parentwin,
+			(unsigned)tm->visible.x, (unsigned)tm->visible.y);
 	GGIDPRINT_MODE("X: About to map parent\n");
 
 	/* Map window. */
+	GGIDPRINT_MODE("X: Parent win: Map Input\n");
 	XSelectInput(priv->disp, priv->parentwin, ExposureMask);
+	GGIDPRINT_MODE("X: Parent win: Raise Mapping\n");
 	XMapRaised(priv->disp, priv->parentwin);
-	
+
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
@@ -393,8 +398,8 @@ oldparent:
 	attrib.colormap = priv->cmap;
 	attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 	priv->win = XCreateWindow(priv->disp, priv->parentwin,
-				  0, 0, tm->virt.x, 
-				  tm->virt.y * (tm->frames + 1), 0,
+				  0, 0, (unsigned)tm->virt.x, 
+				  (unsigned)tm->virt.y * (tm->frames + 1), 0,
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap | CWBorderPixel, 
 				  &attrib);
@@ -559,7 +564,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	}
 	/* Create the child window */
 	priv->win = XCreateWindow(priv->disp, priv->parentwin,
-				  0, 0, tm->virt.x, tm->virt.y, 0,
+				  0, 0, (unsigned)tm->virt.x,
+				  (unsigned)tm->virt.y, 0,
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap, &attrib);
 	GGIDPRINT_MODE("X: About to map child\n");

@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: fileio.c,v 1.3 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -79,14 +79,16 @@ void _ggi_file_flush(ggi_visual *vis)
 		return;
 	}
 
-	if (write(LIBGGI_FD(vis), priv->buffer, priv->buf_len) < 0) {
+	if (write(LIBGGI_FD(vis), priv->buffer,
+		(unsigned)priv->buf_len) < 0)
+	{
 		perror("display-file: write error");
 	}
 
 	priv->buf_len = 0;
 }
 
-void _ggi_file_write_byte(ggi_visual *vis, int val)
+void _ggi_file_write_byte(ggi_visual *vis, unsigned int val)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	
@@ -98,7 +100,7 @@ void _ggi_file_write_byte(ggi_visual *vis, int val)
 	priv->buf_len++;
 }
 
-void _ggi_file_write_word(ggi_visual *vis, int val)
+void _ggi_file_write_word(ggi_visual *vis, unsigned int val)
 {
 #ifdef GGI_BIG_ENDIAN
 	val = GGI_BYTEREV16(val);
@@ -107,7 +109,7 @@ void _ggi_file_write_word(ggi_visual *vis, int val)
 	_ggi_file_write_byte(vis, val & 0xff);
 }
 
-void _ggi_file_write_string(ggi_visual *vis, char *str)
+void _ggi_file_write_string(ggi_visual *vis, unsigned char *str)
 {
 	for (; *str; str++) {
 		_ggi_file_write_byte(vis, (unsigned char) *str);

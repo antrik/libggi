@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.4 2002/09/08 21:37:44 soyt Exp $
+/* $Id: vline.c,v 1.5 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -127,8 +127,9 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	ggLock(priv->xliblock);
 #warning 1,2,4-bit support needed.
         ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-                            LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
-                            data, 1, h, 8, 0);
+                            (unsigned)LIBGGI_PIXFMT(vis)->depth,
+			    ZPixmap, 0,
+                            data, 1, (unsigned)h, 8, 0);
 
 #ifdef GGI_LITTLE_ENDIAN
         ximg->byte_order = LSBFirst;
@@ -139,7 +140,7 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 #endif
 
         XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
-                  0, 0, x, GGI_X_WRITE_Y, 1, h);
+                  0, 0, x, GGI_X_WRITE_Y, 1, (unsigned)h);
         XFree(ximg); /* XDestroyImage would free(data) (bad).
 			Luckily, this doesn't leak (?) */
 
@@ -173,7 +174,7 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	/* This will cause a BadMatch error when the window is
 	   iconified or on another virtual screen... */
 	ximg = XGetImage(priv->disp, priv->drawable, x, GGI_X_READ_Y,
-			 1, h, AllPlanes, ZPixmap);
+			 1, (unsigned)h, AllPlanes, ZPixmap);
 	XSync(priv->disp,0);
 	XSetErrorHandler(olderrorhandler);
 
@@ -223,7 +224,8 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 		ximgptr = ximg->data + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		while (h--) {
-			memcpy(data, ximgptr, ximg->bits_per_pixel/8);
+			memcpy(data, ximgptr,
+				(unsigned)ximg->bits_per_pixel/8);
 			ximgptr += ximg->bytes_per_line;
 			((uint8 *)data) += ximg->bits_per_pixel/8;
 		}

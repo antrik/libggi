@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.4 2003/03/18 00:09:59 ggibecka Exp $
+/* $Id: gtext.c,v 1.5 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -59,11 +59,11 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 #warning 1,2,4-bpp support needed.
 
 	/* Font to backbuffer.  Fun fun fun fun fun! */
-	colors = malloc(w * h * sizeof(ggi_color));
+	colors = malloc(sizeof(ggi_color) * w * h);
 	if (!colors) return -1;
-	datafg = malloc((w * h * priv->fontimg->bits_per_pixel)/8);
+	datafg = malloc((size_t)(w * h * priv->fontimg->bits_per_pixel)/8);
 	if (!datafg) { free(colors); return -1; }
-	databg = malloc((w * h * priv->fontimg->bits_per_pixel)/8);
+	databg = malloc((size_t)(w * h * priv->fontimg->bits_per_pixel)/8);
 	if (!databg) { free(datafg); free(colors); return -1; }
 
 
@@ -110,7 +110,8 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 	ggLock(priv->xliblock);
 
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_BGCOLOR(vis));
-	XFillRectangle(priv->disp, priv->drawable, priv->gc, x, y, w, h);
+	XFillRectangle(priv->disp, priv->drawable, priv->gc, x, y,
+		       (unsigned)w, (unsigned)h);
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_FGCOLOR(vis));
 	XDrawString(priv->disp, priv->drawable, priv->gc,
 		    x, y+priv->textfont->max_bounds.ascent, &c, 1);
@@ -134,8 +135,8 @@ int GGI_X_putc_draw(ggi_visual *vis, int x, int y, char c)
 
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_BGCOLOR(vis));
 	XFillRectangle(priv->disp, priv->drawable, priv->gc,
-                       x, y, priv->textfont->max_bounds.width, 
-		       priv->textfont->max_bounds.ascent
+                       x, y, (unsigned)priv->textfont->max_bounds.width, 
+		       (unsigned)priv->textfont->max_bounds.ascent
 		       + priv->textfont->max_bounds.descent);
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_FGCOLOR(vis));
 

@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.6 2003/05/03 16:20:27 cegger Exp $
+/* $Id: text.c,v 1.7 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -88,7 +88,7 @@ int GGI_tele_puts(ggi_visual *vis, int x, int y, const char * s)
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_PUTSTR,
 				sizeof(TeleCmdPutStrData)-4,
-				(strlen(s) + 1) * sizeof(T_Long));
+				(signed)((strlen(s) + 1) * sizeof(T_Long)));
 
 	p->x = (T_Long)(x);
 	p->y = (T_Long)(y);

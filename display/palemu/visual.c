@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -44,8 +44,6 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
-extern int GGI_palemu_resetmode(ggi_visual *vis);
 
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -203,6 +201,8 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_palemu(int func, void **funcptr);
 
 int GGIdl_palemu(int func, void **funcptr)
 {

@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.11 2003/05/08 06:22:13 cegger Exp $
+/* $Id: buffer.c,v 1.12 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -215,15 +215,15 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	}
 	
 	priv->ximage = XCreateImage(priv->disp, 
-				    priv->vilist[priv->viidx].vi->visual, 
-				    priv->vilist[priv->viidx].vi->depth,
-				    ZPixmap,	/* format */
-				    0,		/* offset */
-				    priv->fb,	/* data */
-				    vis->mode->virt.x, 
-				    vis->mode->virt.y * vis->mode->frames,
-				    8,		/* bitmap_pad*/
-				    0);
+				priv->vilist[priv->viidx].vi->visual, 
+				(unsigned)priv->vilist[priv->viidx].vi->depth,
+				ZPixmap,	/* format */
+				0,		/* offset */
+				priv->fb,	/* data */
+				(unsigned)vis->mode->virt.x, 
+				(unsigned)vis->mode->virt.y * vis->mode->frames,
+				8,		/* bitmap_pad*/
+				0);
 	if (priv->ximage == NULL) {
 		ggiClose(priv->slave);
 		priv->slave = NULL;
@@ -283,7 +283,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	return GGI_OK;
 }
 
-int GGI_X_flush_draw(ggi_visual *vis, 
+static int GGI_X_flush_draw(ggi_visual *vis, 
 		     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
@@ -417,7 +417,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 			y = GGI_X_WRITE_Y;
 		} /* else it's a non-translated exposure event. */
 		XPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage, 
-			  x, y, x, y, w, h);
+			  x, y, x, y, (unsigned)w, (unsigned)h);
 		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) mansync = 0;
 	} else {
 		/* Just flush the intersection with the dirty region */
@@ -439,7 +439,8 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 		if ((w <= 0) || (h <= 0)) goto clean;
 
 		XPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage, 
-			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y, w, h);
+			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y,
+			  (unsigned)w, (unsigned)h);
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
 

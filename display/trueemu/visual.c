@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: visual.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -48,8 +48,6 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
-extern int GGI_trueemu_resetmode(ggi_visual *vis);
 
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -239,6 +237,8 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
+
+int GGIdl_trueemu(int func, void **funcptr);
 
 int GGIdl_trueemu(int func, void **funcptr)
 {

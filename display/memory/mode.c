@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2003/02/07 01:18:52 skids Exp $
+/* $Id: mode.c,v 1.8 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -104,7 +104,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	_GGIfreedbs(vis);
 
 	if (priv->memtype==MT_MALLOC) {
-		fbaddr = malloc(fstride * mode->frames);
+		fbaddr = malloc((size_t)(fstride * mode->frames));
 		if (! fbaddr) {
 			GGIDPRINT("Out of memory!");
 			return -1;

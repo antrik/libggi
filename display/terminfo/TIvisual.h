@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.3 2002/09/08 21:37:47 soyt Exp $
+/* $Id: TIvisual.h,v 1.4 2003/07/06 10:25:23 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -87,3 +87,4 @@ giifunc_eventpoll	GII_terminfo_eventpoll;
 giifunc_sendevent	GII_terminfo_sendevent;
 
 extern int paint_ncurses_window(ggi_visual *, WINDOW *, int, int);
+extern void _GGI_terminfo_freedbs(ggi_visual *);

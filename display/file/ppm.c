@@ -1,4 +1,4 @@
-/* $Id: ppm.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: ppm.c,v 1.3 2003/07/06 10:25:22 cegger Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -85,9 +85,9 @@ void _ggi_file_ppm_write(ggi_visual *vis)
 			ggiUnmapPixel(vis, pix, &col);
 		}
 
-		_ggi_file_write_byte(vis, col.r >> 8);
-		_ggi_file_write_byte(vis, col.g >> 8);
-		_ggi_file_write_byte(vis, col.b >> 8);
+		_ggi_file_write_byte(vis, (unsigned)(col.r >> 8));
+		_ggi_file_write_byte(vis, (unsigned)(col.g >> 8));
+		_ggi_file_write_byte(vis, (unsigned)(col.b >> 8));
 
 		last = pix;
 	}

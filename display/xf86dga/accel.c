@@ -1,4 +1,4 @@
-/* $Id: accel.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: accel.c,v 1.3 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target - acceleration
@@ -36,13 +36,15 @@ int GGI_xf86dga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	int add = vis->w_frame_num*LIBGGI_VIRTY(vis);
 
 	/* We can't draw outside the root window :-( */
-	if (y+add+h > priv->height) return priv->drawbox(vis, x, y, w, h);
+	if ((unsigned)(y+add+h) > priv->height)
+		return priv->drawbox(vis, x, y, w, h);
 	
 	y += add;
 
 	_ggi_XF86DGAFillRectangle(priv->x.display, priv->x.screen,
 				  DefaultRootWindow(priv->x.display),
-				  priv->x.gc, x, y, w, h);
+				  priv->x.gc, x, y,
+				  (unsigned)w, (unsigned)h);
 
 	vis->accelactive = 1;
 
@@ -60,7 +62,7 @@ int GGI_xf86dga_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	y  += vis->r_frame_num*LIBGGI_VIRTY(vis);
 
 	/* We can't draw outside the root window :-( */
-	if (ny+add+h > priv->height) {
+	if ((unsigned)(ny+add+h) > priv->height) {
 		return priv->copybox(vis, x, y, w, h, nx, ny);
 	}
 
@@ -68,7 +70,7 @@ int GGI_xf86dga_copybox(ggi_visual *vis, int x, int y, int w, int h,
 
 	_ggi_XF86DGACopyArea(priv->x.display, priv->x.screen,
 			     DefaultRootWindow(priv->x.display), priv->x.gc,
-			     x, y, w, h, nx, ny);
+			     x, y, (unsigned)w, (unsigned)h, nx, ny);
 
 	vis->accelactive = 1;
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:36 cegger Exp $
+/* $Id: visual.c,v 1.2 2003/07/06 10:25:24 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -175,14 +175,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->numvis=i;
 
 	if (priv->numvis == 0) {
-		fprintf(stderr, "display-tile needs the real targets as arguments.\n")
-;
+		fprintf(stderr, "display-tile needs the real targets as arguments.\n");
 		err = GGI_EARGINVAL;
 		goto out_freeopmansync;
 	}
 
 	if (priv->use_db) {
-		int err = _ggiAddDL(vis, "helper-mansync", NULL,
+		err = _ggiAddDL(vis, "helper-mansync", NULL,
 				    priv->opmansync, 0);
 		if (err) {
 			fprintf(stderr, "display-tile: Cannot load required helper-mansync! (for DB mode)\n");
@@ -260,6 +259,8 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	return 0;
 }
+
+int GGIdl_tile(int func, void **funcptr);
 
 int GGIdl_tile(int func, void **funcptr)
 {

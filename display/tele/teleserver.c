@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.5 2003/05/03 16:21:53 cegger Exp $
+/* $Id: teleserver.c,v 1.6 2003/07/06 10:25:23 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -233,7 +233,7 @@ static int translate_to_tele(TeleUser *u, TeleEvent *g, ggi_event *ev)
 			d = tserver_new_event(u, g,
 				TELE_INP_JOYSTICK,
 				sizeof(TeleInpAxisData),
-				4 * ev->val.count);
+				(signed)(4 * ev->val.count));
 
 			g->device = TELE_DEVICE_JOYSTICK |
 				HASH_ORIG(ev->any.origin);
@@ -527,7 +527,7 @@ static void perf_DRAWBOX(TeleUser *u, TeleCmdDrawBoxData *d)
 		return;
 	}	/* if */
 
-	ggiSetGCForeground(vis, d->pixel);
+	ggiSetGCForeground(vis, (ggi_pixel)d->pixel);
 	ggiDrawBox(vis, d->x, d->y, d->width, d->height);
 }	/* perf_DRAWBOX */
 
@@ -556,7 +556,7 @@ static void perf_DRAWLINE(TeleUser *u, TeleCmdDrawLineData *d)
 {
 	/* draw a solid line */
 
-	ggiSetGCForeground(vis, d->pixel);
+	ggiSetGCForeground(vis, (ggi_pixel)d->pixel);
 	ggiDrawLine(vis, d->x, d->y, d->xe, d->ye);
 }	/* perf_DRAWLINE */
 
@@ -602,8 +602,8 @@ static void perf_PUTSTR(TeleUser *u, TeleCmdPutStrData *d)
 		s[i] = (char)(d->text[i] & 0xFF);
 	}	/* for */
 
-	ggiSetGCForeground(vis, d->fg);
-	ggiSetGCBackground(vis, d->bg);
+	ggiSetGCForeground(vis, (ggi_pixel)d->fg);
+	ggiSetGCBackground(vis, (ggi_pixel)d->bg);
 	ggiPuts(vis, d->x, d->y, s);
 }
 

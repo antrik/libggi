@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.2 2002/09/08 21:37:44 soyt Exp $
+/* $Id: fillscreen.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -73,8 +73,8 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 		y = GGI_X_WRITE_Y;
 		XClearArea(priv->disp, priv->drawable,
 			   LIBGGI_GC(vis)->cliptl.x, y,
-			   LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-			   LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
+			   (unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
+			   (unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
 			   False);
 	} else {
 		GGI_X_CLEAN(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
@@ -105,8 +105,8 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 		y = GGI_X_WRITE_Y;
 		XClearArea(priv->disp, priv->drawable,
 			   LIBGGI_GC(vis)->cliptl.x, y,
-			   LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-			   LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
+			   (unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
+			   (unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
 			   False);
 	} else {
 		XClearWindow(priv->disp, priv->drawable);
