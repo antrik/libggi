@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2002/06/12 03:53:59 skids Exp $
+/* $Id: visual.c,v 1.8 2002/06/24 22:08:21 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -378,6 +378,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->shmhack_checkmode_fixed = GGI_X_checkmode_fixed;
 
  noshm:
+	priv->use_Xext &= ~GGI_X_USE_EVI;
+	goto noevi; /* Xevi disabled until EVIGetVisualInfo BadLength fixed. */
 	GGI_X_TEST_XEXT(GGI_X_USE_EVI, "helper-x-evi", noevi);
 	/* See if Xevi disqualified all the visuals (should not happen) */
 	tmp1 = tmp2 = 0;
