@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/10/29 22:52:52 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/10/30 11:50:34 soyt Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -83,8 +83,8 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 	LIBGGI_APPASSERT(tm != NULL,  "ggiSetMode: tm == NULL");
 
 #ifdef DEBUG
-	if ((_ggiDebugState & GGIDEBUG_CORE)
-	    || (_ggiDebugState & GGIDEBUG_MODE)) {
+	if ((_ggiDebug & GGIDEBUG_CORE)
+	    || (_ggiDebug & GGIDEBUG_MODE)) {
 		fprintf(stderr, "LibGGI: ggiSetMode(%p, ", vis);
 		ggiFPrintMode(stderr, tm);
 		fprintf(stderr, ") called\n");
