@@ -1,4 +1,4 @@
-/* $Id: pixfmt.c,v 1.5 2004/07/28 09:25:20 cegger Exp $
+/* $Id: pixfmt.c,v 1.6 2004/07/31 08:26:12 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI pixelformat operations.
@@ -40,7 +40,7 @@ static void testcase1(const char *desc)
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 
-	ret = _ggi_parse_pixfmtstr(pixfmt, NULL, NULL,
+	ret = _ggi_parse_pixfmtstr(pixfmt, '\0', NULL,
 				strlen(pixfmt)+1,
 				&r_mask, &g_mask, &b_mask, &a_mask);
 
