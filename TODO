@@ -57,7 +57,7 @@ Common issues:
   a patch that makes stubs and mansync flush virt.x, virt.y which can
   be applied after this is done.
 - Alter all ggiSetPalette implementations as per mailinglist discussion
-  of 1999-07-03.
+  of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
 
 ------------------------------------------
 Next major release
