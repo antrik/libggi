@@ -1,4 +1,4 @@
-/* $Id: xf86dga.h,v 1.4 2005/01/31 18:34:42 cegger Exp $
+/* $Id: xf86dga.h,v 1.5 2005/02/03 18:10:17 orzo Exp $
 ******************************************************************************
 
    XFree86 Direct Graphics Access target for LibGGI
@@ -51,7 +51,6 @@ typedef struct {
 	ggi_x_common x;
 
 	XF86VidModeModeInfo **dgamodes;
-	ggi_modelistmode *modes;
 	int num_modes;
 	int dgafeat;
 	unsigned width;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2005/01/31 18:34:42 cegger Exp $
+/* $Id: mode.c,v 1.24 2005/02/03 18:10:16 orzo Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -35,6 +35,9 @@
 #include <ggi/internal/ggi_debug.h>
 #include "xf86dga.h"
 
+static
+int _GGI_xf86dga_do_checkmode(ggi_visual * vis, ggi_mode * mode,
+			      XF86VidModeModeInfo **dgamode );
 
 static void GGI_xf86dga_gcchanged(ggi_visual * vis, int mask)
 {
@@ -152,7 +155,7 @@ static int xf86dga_release(ggi_resource * res)
 	return 0;
 }
 
-
+#if 0
 /*
 ** Finds the appropriate XF86VidMode modeline for x/y.
 */
@@ -172,7 +175,7 @@ static int _GGI_xf86dga_findmode(ggi_visual * vis, int visible_x,
 	/* mode not found */
 	return GGI_ENOMATCH;
 }
-
+#endif
 
 int GGI_xf86dga_getapi(ggi_visual * vis, int num, char *apiname,
 		       char *arguments)
@@ -203,20 +206,17 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	XVisualInfo vinfo;
 	int flags, i, err, id;
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
+	XF86VidModeModeInfo *dgamode;
 
 	/* First, check if the mode can be set */
-	err = GGI_xf86dga_checkmode(vis, tm);
+	err = _GGI_xf86dga_do_checkmode(vis, tm, &dgamode);
 	if (err != 0)
 		return err;
 
 	priv = DGA_PRIV(vis);
 
 	/* Set XF86VidMode */
-	_ggi_XF86VidModeSwitchToMode(priv->x.display, priv->x.screen,
-				     priv->
-				     dgamodes[_GGI_xf86dga_findmode
-					      (vis, tm->visible.x,
-					       tm->visible.y)]);
+	_ggi_XF86VidModeSwitchToMode(priv->x.display, priv->x.screen, dgamode );
 
 	if (priv->x.cmap)
 		XFreeColormap(priv->x.display, priv->x.cmap);
@@ -387,138 +387,42 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	return 0;
 }
 
-#define WANT_CHECKONEBPP
-#define _GGIcheckonebpp _GGI_xf86dga_checkonebpp
+#define WANT_GENERIC_CHECKMODE
 #include "../common/modelist.inc"
 
-/**********************************/
-/* check any mode (text/graphics) */
-/**********************************/
-int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
+/* This function creates a new ggi_mode structure from a 
+ * XF86VidModeInfo structure.
+ */
+static
+void _GGI_xf86dga_checkmode_adapt( ggi_mode * m,
+				   XF86VidModeModeInfo *dgamode,
+				   ggidga_priv *priv )
 {
-	ggidga_priv *priv;
-	int err = 0;
+		m->visible.x = dgamode->hdisplay;
+		m->visible.y = dgamode->vdisplay;
+		m->graphtype = GT_CONSTRUCT(priv->depth,
+						 (priv->depth <=
+						  9) ? GT_PALETTE :
+						 GT_TRUECOLOR, priv->size);
 
-	if (vis == NULL) {
-		DPRINT("Visual==NULL\n");
-		return GGI_EARGINVAL;
-	}
+		/* Virtual x-resolution is unchangeable */
+		m->virt.x = priv->width;
+		m->dpp.x = 1;
+		m->dpp.y = 1;
 
-	priv = DGA_PRIV(vis);
-
-	if (tm->visible.x == GGI_AUTO)
-		tm->visible.x = priv->width;
-	if (tm->visible.y == GGI_AUTO)
-		tm->visible.y = tm->virt.y;
-
-	if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
-	    (tm->dpp.y != 1 && tm->dpp.y != GGI_AUTO)) {
-		err = -1;
-	}
-	tm->dpp.x = tm->dpp.y = 1;
-
-	if (GT_DEPTH(tm->graphtype) != priv->depth
-	    || GT_SIZE(tm->graphtype) != priv->size) {
-		if (tm->graphtype != GT_AUTO)
-			err = -1;
-		tm->graphtype = GT_CONSTRUCT(priv->depth,
-					     (priv->depth <=
-					      8) ? GT_PALETTE :
-					     GT_TRUECOLOR, priv->size);
-	}
-
-	/* Try to find a suitable XF86DGA mode. */
-#if 1
-	if (_GGI_xf86dga_checkonebpp(vis, tm, priv->modes))
-		err = -1;
-#else
-	if (_GGI_xf86dga_findmode(vis, tm->visible.x, tm->visible.y) == -1) {
-		int sug_x, sug_y, new_x, new_y, i;
-
-		/* If that cannot be done, flag it as an error */
-		err = -1;
-
-		/* Then try to find another mode with
-		   the next higher resolution */
-
-		sug_x = sug_y = 0x7FFFFFFF;	/* Just the maximum */
-
-		for (i = 0; i < priv->num_modes; i++) {
-			new_x = priv->modes[i].x;
-			new_y = priv->modes[i].y;
-			if (new_x >= tm->visible.x &&
-			    new_y >= tm->visible.y &&
-			    new_x <= sug_x && new_y <= sug_y) {
-				sug_x = new_x;
-				sug_y = new_y;
-			}
-		}
-
-		/* If the above failed, then use
-		   the highest resolution possible */
-		if (sug_x == 0x7FFFFFFF && sug_y == 0x7FFFFFFF) {
-			sug_x = sug_y = 0;
-
-			for (i = 0; i < priv->num_modes; i++) {
-				new_x = priv->modes[i].x;
-				new_y = priv->modes[i].y;
-				if (new_x >= sug_x && new_y >= sug_y) {
-					sug_x = new_x;
-					sug_y = new_y;
-				}
-			}
-		}
-
-		tm->visible.x = sug_x;
-		tm->visible.y = sug_y;
-	}
-#endif
-	if (tm->virt.x == GGI_AUTO)
-		tm->virt.x = priv->width;
-	if (tm->virt.y == GGI_AUTO)
-		tm->virt.y = tm->visible.y;
-
-	/* Virtual x-resolution is unchangeable */
-	if ((unsigned) tm->virt.x != priv->width) {
-		tm->virt.x = priv->width;
-		err = -1;
-	}
-	if ((unsigned) tm->virt.y > priv->height) {
-		tm->virt.y = priv->height;
-		err = -1;
-	} else if (tm->virt.y < tm->visible.y) {
-		tm->virt.y = tm->visible.y;
-		err = -1;
-	}
-
-	if ((signed)
-	    (GT_ByPPP(priv->stride * tm->virt.y * tm->frames,
-		      tm->graphtype)) > priv->mem_size * 1024) {
-		tm->frames = priv->mem_size * 1024 /
-		    GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
-		err = -1;
-	}
-	if (tm->frames < 1) {
-		if (tm->frames != GGI_AUTO) {
-			err = -1;
-		}
-		tm->frames = 1;
-	}
 #define SCREENWMM DisplayWidthMM(priv->x.display, priv->x.screen)
 #define SCREENW   DisplayWidth(priv->x.display, priv->x.screen)
 #define SCREENHMM DisplayHeightMM(priv->x.display, priv->x.screen)
 #define SCREENH   DisplayHeight(priv->x.display, priv->x.screen)
 #define SCREENDPIX \
-((SCREENWMM <= 0) ?  0 : (SCREENW * tm->dpp.x * 254 / SCREENWMM / 10))
+((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
 #define SCREENDPIY \
-((SCREENHMM <= 0) ?  0 : (SCREENH * tm->dpp.x * 254 / SCREENHMM / 10))
-
-	if (!err) {
-		err = _ggi_physz_figure_size(tm,
-					     priv->x.physzflags,
-					     &(priv->x.physz), SCREENDPIX,
-					     SCREENDPIY, SCREENW, SCREENH);
-	}
+((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
+		m->size.x = GGI_AUTO;
+		m->size.y = GGI_AUTO;
+		_ggi_physz_figure_size(m, priv->x.physzflags,
+				       &(priv->x.physz), SCREENDPIX,
+				       SCREENDPIY, SCREENW, SCREENH);
 #undef SCREENWMM
 #undef SCREENW
 #undef SCREENHMM
@@ -526,7 +430,74 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 #undef SCREENDPIX
 #undef SCREENDPIY
 
+		/* These two items will be modified by our adjuster. */
+		m->virt.y = GGI_AUTO;
+		m->frames = GGI_AUTO;
+}
+
+/* This function adjusts recognizer's frames and
+ * virtual y resolution to match the required mode,
+ * allowing those items to behave like wildcards.
+ */
+static 
+void _GGI_xf86dga_checkmode_adjust(ggi_mode * req, ggi_mode * recognizer, 
+				   ggi_visual *vis)
+{
+	ggidga_priv *priv = DGA_PRIV(vis);
+
+	recognizer->virt.y = req->virt.y;
+	if ((unsigned) recognizer->virt.y > priv->height)
+		recognizer->virt.y = priv->height;
+	if (recognizer->virt.y < recognizer->visible.y)
+		recognizer->virt.y = recognizer->visible.y;
+
+	int max_frames = priv->mem_size * 1024 /
+	    GT_ByPPP(priv->stride * recognizer->virt.y,
+		     recognizer->graphtype);
+
+	recognizer->frames = req->frames;
+	if (recognizer->frames > max_frames)
+		recognizer->frames = max_frames;
+	if (recognizer->frames < 1)
+		recognizer->frames = 1;
+
+}
+
+/* This function performs the CheckMode operation and also 
+ * sets dgamode to point to the corresponding XF86VidModeInfo 
+ * structure.
+ */
+static
+int _GGI_xf86dga_do_checkmode(ggi_visual * vis, ggi_mode * mode,
+			      XF86VidModeModeInfo **dgamode )
+{
+	ggidga_priv *priv = DGA_PRIV(vis);
+	ggi_checkmode_t *cm;
+	cm = _GGI_generic_checkmode_create();
+
+	/* Initialize best mode search */
+	_GGI_generic_checkmode_init( cm, mode );
+
+	for(int i=0; i<priv->num_modes; i++ ) {
+		/* Turn dgamode structure into a ggimode suggestion */
+		_GGI_xf86dga_checkmode_adapt( mode, priv->dgamodes[i], priv );
+		/* Adjust this suggestion for wildcard matching against
+		 * the requested mode in cm->req */
+		_GGI_xf86dga_checkmode_adjust( &cm->req, mode, vis );
+		/* Let the checkmode API decide if its the best so far */
+		_GGI_generic_checkmode_update( cm, mode, priv->dgamodes[i] );
+	}
+	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)dgamode );
+	_GGI_generic_checkmode_destroy(cm);
 	return err;
+}
+
+/**********************************/
+/* check any mode (text/graphics) */
+/**********************************/
+int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
+{
+	return _GGI_xf86dga_do_checkmode( vis, tm, NULL );
 }
 
 /************************/

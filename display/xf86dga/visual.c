@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2005/01/29 08:54:16 cegger Exp $
+/* $Id: visual.c,v 1.16 2005/02/03 18:10:17 orzo Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -150,8 +150,6 @@ static int do_cleanup(ggi_visual * vis)
 		}
 		XFree(priv->dgamodes);
 	}
-	if (priv->modes)
-		free(priv->modes);
 
 	_ggi_XF86DGAUnmap();
 
@@ -285,26 +283,6 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	/* Get XF86VidMode modelines */
 	_ggi_XF86VidModeGetAllModeLines(priv->x.display, priv->x.screen,
 					&priv->num_modes, &priv->dgamodes);
-
-	priv->modes =
-	    malloc((priv->num_modes + 1) * sizeof(ggi_modelistmode));
-	if (priv->modes == NULL) {
-		do_cleanup(vis);
-		return GGI_ENOMEM;
-	}
-
-	for (x = 0; x < priv->num_modes; x++) {
-		priv->modes[x].x = priv->dgamodes[x]->hdisplay;
-		priv->modes[x].y = priv->dgamodes[x]->vdisplay;
-		priv->modes[x].bpp = priv->depth;
-		priv->modes[x].gt = GT_CONSTRUCT(priv->depth,
-						 (priv->depth <=
-						  8) ? GT_PALETTE :
-						 GT_TRUECOLOR, priv->size);
-		DPRINT_MISC("Found mode: %dx%d\n", priv->modes[x].x,
-			    priv->modes[x].y);
-	}
-	priv->modes[priv->num_modes].bpp = 0;
 
 	priv->x.inp = NULL;
 	if (tolower((uint8) options[OPT_NOINPUT].result[0]) == 'n') {
