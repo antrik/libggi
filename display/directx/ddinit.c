@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.26 2004/08/27 12:02:19 pekberg Exp $
+/* $Id: ddinit.c,v 1.27 2004/09/03 07:56:26 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -42,7 +42,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int DDInit(ggi_visual *vis)
 {
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
   /* get the application instance */
   priv->hInstance = GetModuleHandle(NULL);
 
@@ -120,7 +120,7 @@ int DDChangeMode(directx_priv *priv, int frames,
 
 void DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 {
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
   RECT SrcWinPos, DestWinPos;
   SrcWinPos.left = x;
   SrcWinPos.right = x + w;
@@ -153,7 +153,7 @@ void DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 
 void DDRedrawAll(ggi_visual *vis)
 {
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
   RECT SrcWinPos, DestWinPos;
   GetClientRect(priv->hWnd, &SrcWinPos);
   SrcWinPos.left += vis->origin_x;
@@ -431,7 +431,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	directx_priv *priv = NULL;
 
 	if(vis)
-		priv = LIBGGI_PRIVATE(vis);
+		priv = GGIDIRECTX_PRIV(vis);
 
 	switch (message) {
 
@@ -560,7 +560,7 @@ static void DDCreateClass(directx_priv *priv)
 
 static int DDCreateWindow(ggi_visual *vis)
 {
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
   int w = 640, h = 480; /* default window size */
   int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
 		  /* toplevel flags */
@@ -612,7 +612,7 @@ DDEventLoop(void *lpParm)
 {
   MSG msg;
   ggi_visual *vis = (ggi_visual *)lpParm;
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
   /* create the window */
   if (!DDCreateWindow(vis)) {
@@ -632,7 +632,7 @@ DDEventLoop(void *lpParm)
 
 static int DDCreateThread(ggi_visual *vis)
 {
-  directx_priv *priv = LIBGGI_PRIVATE(vis);
+  directx_priv *priv = GGIDIRECTX_PRIV(vis);
   unsigned ThreadID;
   priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
 #ifdef __CYGWIN__

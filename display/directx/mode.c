@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/08/25 08:25:24 pekberg Exp $
+/* $Id: mode.c,v 1.14 2004/09/03 07:56:26 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -50,7 +50,7 @@ directx_acquire(ggi_resource * res, uint32 actype)
 		return GGI_EARGINVAL;
 	}
 	vis = res->priv;
-	priv = LIBGGI_PRIVATE(vis);
+	priv = GGIDIRECTX_PRIV(vis);
 	dbuf = res->self;
 	bufnum = dbuf->frame;
 
@@ -91,7 +91,7 @@ directx_release(ggi_resource * res)
 
 int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	EnterCriticalSection(&priv->cs);
 	DDRedraw(vis, x, y, w, h);
 	LeaveCriticalSection(&priv->cs);
@@ -137,7 +137,7 @@ static void GetScreenParams(int *depth, int *width, int *height)
 
 int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	uint8 err = 0;
 	int depth, width, height, defwidth, defheight;
 	ggi_graphtype deftype;
@@ -250,7 +250,7 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 
 int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int i, id, ret;
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 
@@ -336,7 +336,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 int GGI_directx_getmode(ggi_visual * vis, ggi_mode * tm)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	LIBGGI_APPASSERT(vis != NULL, "directx: GGIgetmode: Visual == NULL");
 

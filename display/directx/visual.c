@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/08/25 07:47:45 pekberg Exp $
+/* $Id: visual.c,v 1.18 2004/09/03 07:56:26 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -61,7 +61,7 @@ static const gg_option optlist[] =
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	EnterCriticalSection(&priv->cs);
 	DDShutdown(priv);
