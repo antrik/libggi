@@ -8,48 +8,37 @@ Status symbols
 ------------------------------------------
 Next major release
 ------------------------------------------
-Version : 2.1.0
+Version : 2.2.0
 Due : ????-??-??
 
 [Building issues]
 
-* bring improved code in showaccel demo to showaccel2 demo
-  (Bernhard Fischer, Christoph Egger)
 + Verify and fix cross-compilation to other architectures
-* Check for building and installing demos, checks and utils requiring
-  special headers/libs. (Peter Ekberg)
-* Merge checks for libggi programs into stable tree (Christoph Egger)
-+ Fix libtool to create shared libs instead of static ones
-  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
-  run GGI on Linux/MIPS boxes.
-  This should be fixed by libtool update. Please verify.
+
+- update build system to libtool 2.0, make use of latest
+  autotools features
+
+- add support for non-gcc compilers
 
 
 [Common issues]
 
-* Alter all ggiSetPalette implementations as per mailinglist discussion
-  of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
-  (Vincent Cruz)
-* remove obseleted Xlib target (Christoph)
 - libKGI-target (compiling framework)
 + improve modelist.inc -- 
-* allow physz params to determine mode resolution when visible == GGI_AUTO
-  (Christoph Egger)
-* add display-auto to separate OS dependent auto-detect routines from
-  libggi core (Christoph)
-* formalize pixelformat strings (e.g. "r5b5g5p1") and provide
-  parser/construction functions for them in the LibGGI internal interface.
-  (Christoph Egger)
 - add helper target for dirty-region management
 + look at  egrep -ri "return[[:space:]]*\-"  and peruse proper defines for
   retval where applicable
+- make use of libgii's enhanced dl system:
+  allow single library to serve multiple suggest strings
+  (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
+- make use of libgii's enhanced config file system:
+  aliases, in-file option strings, wildcards
 
 
 [Target specific issues]
 
 - update targets after the common issues are done (apply new 
   dirty region stuff, new modelist stuff, etc.)
-* make fbdev use of gamma map functions
 + alter fbdev.conf appropriately for selected accel sublibs
 - make pseudo-targets use of the dirty-region management.  This 
   is an open design issue -- if done right, pseudo targets and
@@ -59,7 +48,6 @@ Due : ????-??-??
 
 New X Target:
 
-* implemented -fullscreen option (Christoph)
 - make use of the dirty-region helper target
 - Make display-xf86dga work with all pre-4.x XF86, move newer DGA support
   to a new dga helper.
@@ -163,11 +151,6 @@ Due : ????-??-??
 - finish long-term plan
 - implement below API additions
 - implement below non-backward-compatible changes
-- make use of libgii's enhanced config file system:
-  aliases, in-file option strings, wildcards
-- make use of libgii's enhanced dl system:
-  allow single library to serve multiple suggest strings
-  (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
 
 [Target specific issues]
 
