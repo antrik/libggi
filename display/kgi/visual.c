@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2003/01/16 00:36:34 skids Exp $
+/* $Id: visual.c,v 1.8 2003/01/17 00:51:40 skids Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -32,12 +32,14 @@
 #include <ggi/display/kgi.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 static const gg_option optlist[] =
 {
 	{ "device", "/dev/graphic,/dev/kgi/graphic" },
 	{ "no3d", "no" },
-	{ "swatchsize",  "auto" }
+	{ "swatchsize",  "auto" },
+	{ "noinput",  "no" }
 };
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -45,6 +47,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	kgi_version_t version = { 0, 0, 1, 0 };
 	gg_option options[KGI_NUM_OPTS];
+	gii_input *inp;
 
 	LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_kgi_priv));
 	if(LIBGGI_PRIVATE(vis) == NULL)
@@ -91,6 +94,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->checkmode = GGI_kgi_checkmode;
 	vis->opdisplay->getapi    = GGI_kgi_getapi;
 	vis->opdisplay->setflags  = GGI_kgi_setflags;
+
+        if (tolower((int)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
+                if ((inp = giiOpen("kii", &args, NULL)) == NULL) {
+                        GGIDPRINT_MISC("Unable to open KII inputlib\n");
+			goto err_freegc;
+                }
+
+                /* Now join the new event source in. */
+                vis->input = giiJoinInputs(vis->input, inp);
+        }
 
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return 0;
