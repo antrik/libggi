@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/02/23 14:24:44 pekberg Exp $
+/* $Id: visual.c,v 1.9 2004/09/13 10:34:44 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -150,7 +150,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->src_pitch_offset.offset = 0;
 	ctx->src_pitch_offset.pitch = 
 	  (LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_GT(vis)) / 64 / 8); 
-	switch (vis->mode->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 	
 		case GT_8BIT: ctx->dst_type = 2; break;
 		case GT_15BIT:ctx->dst_type = 4; break;
@@ -177,10 +177,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->base_ctx.h1.count = 5;
 
 	use3d = KGI_PRIV(vis)->use3d;
-	switch (vis->mode->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 		case GT_8BIT:
 			ctx->base_ctx.rb3d_cntl = 9 << 10;  
-			if (GT_SCHEME(vis->mode->graphtype) == GT_TRUECOLOR)
+			if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR)
 				ctx->base_ctx.rb3d_cntl = 7 << 10;
 			break;
 		case GT_15BIT: ctx->base_ctx.rb3d_cntl = 3 << 10; break;
@@ -218,10 +218,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ctx->copybox_ctx.pp_cntl = 0x00002022; /* Enable texture 0 */
 	ctx->copybox_ctx.h2.base_index = PP_TXFORMAT_1 >> 2;
 	ctx->copybox_ctx.h2.count = 2;
-	switch (vis->mode->graphtype) {
+	switch (LIBGGI_GT(vis)) {
         case GT_8BIT:
 		ctx->copybox_ctx.txformat.txformat = 0;  
-		if (GT_SCHEME(vis->mode->graphtype) == GT_TRUECOLOR)
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR)
 			ctx->copybox_ctx.txformat.txformat = 2;
 		break;
         case GT_15BIT:
