@@ -7,7 +7,7 @@ sublib_LTLIBRARIES = fbdev.la
 
 fbdev_la_SOURCES = visual.c mode.c pan.c color.c
 
-sublibdir = ${libdir)/$(ggi_subdir)/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 fbdevconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 fbdevconf_DATA = fbdev.conf
