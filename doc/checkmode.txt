@@ -1,0 +1,165 @@
+GGI Generic Checkmode API.
+
+To make use of these functions, you must include the following
+(usually in your mode.c):
+
+	#include <ggi/display/modelist.h>
+
+	#define WANT_GENERIC_CHECKMODE
+	#include "../common/modelist.inc"
+
+(Here ../common/modelist.inc will have to be replaced, of course, with
+whatever the the path to modelist.inc happens to be for you.)
+
+Using these helper functions, a typical checkmode() implementation for
+a target will look something like this:
+
+
+	/* First we create a checkmode object. */
+
+	cm = _GGI_generic_checkmode_create();
+
+	/* Then we tell it the mode that is being requested.  The mode
+	 * struct will be copied to cm->req. */
+	_GGI_generic_checkmode_init( cm, &mode );
+
+
+Then we feed a series of suggested modes to the checkmode object by
+making many calls to the _update() method:
+
+	_GGI_generic_checkmode_update( cm, &suggestion, mode_extra );
+
+Here suggestion is of type ggi_mode and is a mode that the target is
+capable of entering.  mode_extra is an integer or pointer that means
+whatever you want.  It is stored along with the suggestion so that the
+target can keep track of target-specific mode-related data.  This is
+typically done for every possible mode that the target can enter, but
+you may narrow it with some reasonable narrowing that I will discuss
+later in the "Adapt/Adjust" section.
+
+After this process is complete we finish up:
+
+	/* get error code and best suggested mode data to return
+	 * to the caller.  Also, our own saved mode_extra param that
+	 * accompanies this mode */
+	err = _GGI_generic_checkmode_finish( cm, &best_mode, &best_mode_extra);
+
+	/* free up the ggi_checkmode object */
+	_GGI_generic_checkmode_destroy(cm); 
+
+	return err;
+
+
+Tada! Instant ggiCheckMode() support.  Usually there is some means to
+communicate best_mode_extra to the your implementation of setmode().
+My prefered approach is to write a checkmode_internal() that gives
+this parameter in addition to the suggested mode back to the caller.
+Then the actual checkmode() function is implemented as a small wrapper
+that ignores the mode_extra result.
+
+
+
+ADAPT/ADJUST
+
+Ok, wait... what's that you say?  Your target is capable of generating
+any over a billion modes?  Certainly we don't want to feed every
+single one to _GGI_generic_checkmode_update().  Well you don't, but
+first lets consider what a "mode" is.
+
+Usually, there is some natural target-specific data format that is
+analagous to a "mode".  For example, fbdev has a timings structure
+that is read from a fb.modes file.  X11 has to choose a "visual".
+XFree86-DGA and VidMode both have api calls that return arrays of
+"modes" in their respective formats.  What is needed is a way to
+convert this target-specific notion of a mode into a suggestion to
+_GGI_checkmode_update().  By convention, I typically create a function
+called _GGI_name_adapt() where name is the name of the target.  This
+function usually takes 3 arguments:
+
+void _GGI_name_adapt( ggi_mode *out_mode, 
+                      my_mode_type *in_mode, 
+		      ggi_visual *vis );
+
+This function does it's best to adapt a my_mode_type struct into a
+ggi_mode.
+
+Now wait a minute.  What if a single my_mode_type will be used for a
+whole family of modes?  For example, my_mode_type does not include a
+field analogous to ggi_mode's virt.  So the target will set the
+visible display dimensions and then emulate a whole range of different
+possible virtual dimensions.  How do we communicate this to the
+Checkmode API?  Well, if we can do any virtual resolution, then we
+should give them exactly the virtual resolution asked for.  We do this
+by setting the virt field of the mode returned by _GGI_name_adapt() to
+match the virt field of the requested mode in cm->req.  By convention,
+I usually delegate the task of tailoring the results of an adapt()
+function to a function I call _GGI_name_adjust():
+
+/* req - the requested mode (unaltered by this function)
+ * sug - the current suggested mode that this function will
+ *       adjust to match req.
+ * vis - the visual (I have sometimes used a target-specific
+         struct here instead)  */
+void _GGI_name_adjust( ggi_mode *req, ggi_mode *sug, ggi_visual *vis);
+
+In the case that your target can handle any virtual dimensions
+requested, this function would asign sug->virt = req->virt.  
+
+Now you feed the suggested mode to update.  So we havent iterated
+over all the billions of modes you are capable of, instead only
+the sensible attempts to meet the requested mode.  
+
+
+MODE_EXTRA COMPARE
+
+When converting a target that does its own implementation of
+Checkmode() to use the Checkmode API, it may be tempting to simply let
+it do its thing and pass the single resulting suggestion off to the
+_GGI_checkmode_update() function.  Do not do this.  You should not
+iterate over data searching for a best-fit.  This defeats the purpose
+of the Checkmode API which gives universal checkmode behavior.  If you
+are making comparisons in your checkmode implementation, you are most
+likely doing something wrong.  Instead, you should take the data,
+assume its the best and do what you do to make a ggi_mode struct.
+Then pass it to _GGI_checkmode_update() and move on to the next data.  
+
+Oh, but there is data that you want to consider that is lost when
+converting to a ggi_mode?  For this, a hook is provided to compare
+mode_extra parameters which should somehow encode the lost data.
+Before you make any calls to _GGI_checkmode_update(), set the hook:
+
+	 cm->user_cmp = (ggi_user_cmp *)_GGI_X_checkmode_compare_visuals;
+	 cm->user_param = priv;
+
+This example is taken from display-x.  It's modes are based on an xlib
+struct called Visual.  The mode_extra parameter in this case is a
+pointer to such a struct.  The user_param is typically a pointer to a
+ggi_visual or your own private struct.  It's passed to the compare
+function to give it context.  Here is how display-x declares it's
+compare:
+
+/* requested - the mode being requested (i.e. the one saved in cm->req)
+ * via_num - mode_extra for one mode 
+ * vib_num - mode_extra for another mode 
+ * priv - private contextual data (i.e. the pointer saved in cm->user_param)
+ *
+ * returns <0 if via_num is preferable to vib_num
+ *         =0 if we have no preference
+ *         >0 if we prefer vib_num
+ */
+int _GGI_X_checkmode_compare_visuals( ggi_mode *requested,
+                                      int via_num,
+                                      int vib_num,
+                                      ggi_x_priv *priv );
+
+
+Note that this hook is called only when the checkmode API cannot
+otherwise decide between two suggested modes.  It therefore is
+incapable of altering the behavior of ggiCheckmode() as described in
+the man page.  You shouldn't alter the documented behavior unless it
+is very promently documented as an exception on the man page and
+currently no hook is provided for this task.
+
+
+Best of luck,
+ - Joe Crayne
