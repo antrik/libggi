@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:25:24 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/09/12 20:52:28 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -124,7 +124,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
- 	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_vcsa_priv));
+ 	priv = VCSA_PRIV(vis) = malloc(sizeof(ggi_vcsa_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
