@@ -5,7 +5,7 @@ radeon_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 
 sublib_LTLIBRARIES = radeon.la
 
-radeon_la_SOURCES = visual.c box.c line.c gc.c gtext.c crossblit.c
+radeon_la_SOURCES = visual.c box.c line.c gc.c gtext.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/default/kgi
 
