@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/08/22 03:41:08 skids Exp $
+/* $Id: visual.c,v 1.4 2001/08/23 03:11:09 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -70,7 +70,6 @@ static int directfb_release(ggi_resource *res)
 static int
 directfb_idleaccel(ggi_visual *vis)
 {
-	GGIDPRINT_DRAW("directfb_idleaccel(%p) called \n", vis);
 
 	DIRECTFB_PRIV(vis)->gfxcard.EngineSync();
 	
@@ -311,12 +310,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   vis->opdraw->drawbox     = GGI_directfb_drawbox;
   vis->opdraw->fillscreen  = GGI_directfb_fillscreen;
 
+  vis->opdraw->copybox     = GGI_directfb_copybox;
+
 #if 0
   /* These will follow.  First let's get the rest of the stuff working. */
   vis->opdraw->puthline   = GGI_directfb_puthline;
   vis->opdraw->putvline   = GGI_directfb_putvline;
   vis->opdraw->putbox     = GGI_directfb_putbox;
-  vis->opdraw->copybox     = GGI_directfb_copybox;
   vis->opdraw->crossblit   = GGI_directfb_crossblit;
 #endif
   

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: box.c,v 1.2 2001/08/23 03:11:09 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for the fbdev target
@@ -64,18 +64,11 @@ int GGI_directfb_fillscreen(ggi_visual *vis)
         directfb_gcupdate(vis, priv, LIBGGI_MODE(vis), LIBGGI_GC(vis),
                           LIBGGI_VIRTX(vis), yadd, DFXL_FILLRECTANGLE);
 
-	/*	dfbobj.x = 0;
+	dfbobj.x = 0;
 	dfbobj.y = 0;
 	dfbobj.h = virty;
-	dfbobj.w = virtx; */
+	dfbobj.w = virtx;
 
-	dfbobj.x = 10;
-	dfbobj.y = 10;
-	dfbobj.h = 100;
-	dfbobj.w = 100;
-
-	GGIDPRINT("fillrectangle = %p, called\n", 
-		  priv->gfxcard.FillRectangle);
 	priv->gfxcard.FillRectangle(&dfbobj);
 
 	vis->accelactive = 1;
