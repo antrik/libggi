@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/01/26 23:03:35 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/01/26 23:07:08 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -28,6 +28,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
