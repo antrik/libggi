@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.44 2005/01/03 13:11:34 pekberg Exp $
+/* $Id: ddinit.c,v 1.45 2005/01/04 10:22:44 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -43,7 +43,7 @@ static int DDCreateSurface(directx_priv *priv, ggi_mode *mode);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
 
-long FAR PASCAL
+static long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int
@@ -653,7 +653,7 @@ DDSizing(ggi_visual *vis, WPARAM wParam, LPRECT rect)
 
 /* GGI window procedure */
 
-long FAR PASCAL
+static long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LPCREATESTRUCT lpcs;
