@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.1 2001/05/12 23:03:32 cegger Exp $
+/* $Id: structs.c,v 1.2 2003/02/14 15:37:51 fries Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -122,6 +122,11 @@ void
 print_pixfmt(const ggi_pixelformat *pixfmt)
 {
 	int i;
+	if (pixfmt == NULL) {
+		fprintf(stderr, "  pixfmt is a NULL pointer!\n");
+		fflush(stderr);
+		return;
+	}
 
 	printf("  depth = %2d, size = %2d, flags = 0x%08x\n"
 	       "  stdformat = 0x%08x\n"
