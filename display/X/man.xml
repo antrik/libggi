@@ -117,7 +117,7 @@ grabbing must be turned off in order to leave the window.
  </varlistentry>
 
  <varlistentry>
- <term><option>-nocursor</option></term> and
+ <term><option>-nocursor</option></term>
  <term><option>-keepcursor</option></term>
  <listitem><para>
  Normal behavior of display-x is to create a small dot
