@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.2 2003/07/06 18:18:43 cegger Exp $
+/* $Id: visual.m,v 1.3 2003/09/16 22:16:00 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -70,8 +70,10 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	CGDisplayShowCursor (priv->display_id);
 	CGAssociateMouseAndMouseCursorPosition (1);
 
+	free(vis->gamma);
 	free(LIBGGI_PRIVATE(vis));
 	free(LIBGGI_GC(vis));
+	vis->gamma = NULL;
 	LIBGGI_PRIVATE(vis) = NULL;
 	LIBGGI_GC(vis) = NULL;
 
@@ -93,14 +95,21 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	memcpy(options, optlist, sizeof(options));
 
 	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
-	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
+	if (!LIBGGI_GC(vis)) {
+		goto err0;
+	}
 
 	/* Allocate descriptor for screen memory */
 	priv = LIBGGI_PRIVATE(vis) = calloc(1,sizeof(ggi_quartz_priv));
 	if (!priv) {
-		free(LIBGGI_GC(vis));
-		return GGI_ENOMEM;
+		goto err1;
 	}	/* if */
+
+	/* Allocate Gamma Map memory */
+	vis->gamma = calloc((size_t)1U, sizeof(struct ggi_gammastate));
+	if (!vis->gamma) {
+		goto err2;
+	}
 
 	if (args) {
 		args = ggParseOptions((char *) args, options, NUM_OPTS);
@@ -203,6 +212,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fprintf(stderr, "GGIopen: out\n");
 	GGIclose(vis, dlh);
 	return err;
+
+err2:
+	free(priv);
+err1:
+	free(LIBGGI_GC(vis));
+err0:
+	return GGI_ENOMEM;
 }	/* GGIopen */
 
 
