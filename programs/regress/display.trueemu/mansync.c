@@ -1,7 +1,7 @@
-/* $Id: mansync.c,v 1.4 2004/10/10 12:18:48 cegger Exp $
+/* $Id: mansync.c,v 1.1 2004/10/10 12:18:48 cegger Exp $
 ******************************************************************************
 
-   This is a regression-test for LibGGI display-x - mansync usage.
+   This is a regression-test for LibGGI display-trueemu - mansync usage.
 
    Written in 2004 by Christoph Egger
 
@@ -18,10 +18,10 @@
 
 #include "config.h"
 #include <ggi/internal/internal.h>
-#include <ggi/display/x.h>
+#include <ggi/display/trueemu.h>
 #include <ggi/ggi.h>
 
 
-#define DISPLAYSTR	"display-x"
+#define DISPLAYSTR	"display-trueemu"
 
 #include "../display.mansync/mansync.inc.c"

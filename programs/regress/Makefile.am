@@ -1,5 +1,6 @@
 SUBDIRS = @TESTSUBDIRS@
-EXTRA_SUBDIRS = display.x
+EXTRA_SUBDIRS = display.aa display.mansync display.palemu \
+		display.tile display.trueemu display.x
 
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
 LDADD = ${top_builddir}/ggi/libggi.la

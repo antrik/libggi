@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.133 2004/10/08 12:05:58 cegger Exp $
+dnl $Id: configure.in,v 1.134 2004/10/10 12:19:39 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -593,6 +593,7 @@ if test "x$build_mansync_helper" = "xno"; then
   build_trueemu_target="no"
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS mansync"
+  TESTSUBDIRS="$TESTSUBDIRS display.mansync"
   build_mansync_helper="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -1041,6 +1042,7 @@ if test "x$build_aa_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS aa"
+  TESTSUBDIRS="$TESTSUBDIRS display.aa"
   build_aa_target="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -1170,6 +1172,7 @@ if test "x$build_palemu_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS palemu"
+  TESTSUBDIRS="$TESTSUBDIRS display.palemu"
   build_palemu_target="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -1233,6 +1236,7 @@ if test "x$build_tile_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS tile"
+  TESTSUBDIRS="$TESTSUBDIRS display.tile"
   build_tile_target="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -1242,6 +1246,7 @@ if test "x$build_trueemu_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS trueemu"
+  TESTSUBDIRS="$TESTSUBDIRS display.trueemu"
   build_trueemu_target="yes"
   AC_MSG_RESULT(yes)
 fi
@@ -1491,6 +1496,11 @@ programs/check/Makefile
 programs/demos/Makefile
 programs/demos/warp-ggi/Makefile
 programs/regress/Makefile
+programs/regress/display.aa/Makefile
+programs/regress/display.mansync/Makefile
+programs/regress/display.palemu/Makefile
+programs/regress/display.tile/Makefile
+programs/regress/display.trueemu/Makefile
 programs/regress/display.x/Makefile
 programs/util/Makefile
 programs/util/monitest/Makefile
