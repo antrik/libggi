@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.8 2004/09/08 19:16:45 cegger Exp $
+/* $Id: checkmode.c,v 1.9 2004/09/09 08:50:34 pekberg Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -142,8 +142,14 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 			} else if (GT_DEPTH(suggest.graphtype) >
 				   GT_DEPTH(defaultgraphtypes[j])) {
 				printf(">");
+			} else if (GT_SIZE(suggest.graphtype) >
+				   GT_SIZE(defaultgraphtypes[j])){
+				printf(">");
 			} else if (GT_DEPTH(suggest.graphtype) <
 				   GT_DEPTH(defaultgraphtypes[j])) {
+				printf("<");
+			} else if (GT_SIZE(suggest.graphtype) <
+				   GT_SIZE(defaultgraphtypes[j])){
 				printf("<");
 			} else if (((suggest.visible.x < x)&&
 				    (suggest.visible.y <= y))||
@@ -491,7 +497,7 @@ static void usage(char * s)
 		   " C for success, but the virtual size changed (which is not allowed)\n"
 	       " B for impossible modes, when the suggested mode doesn't work"
 	       " either (broken),\n"
-	       " > for 'higher' graphtypes (=bitdepth) suggested,\n"
+	       " > for 'higher' graphtypes (=bitdepth or size) suggested,\n"
 	       " < for lower graphtypes\n"
 	       " ^ for lower x AND y resolution\n"
 	       " v for higher x AND y resolution\n"
@@ -499,7 +505,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.8 2004/09/08 19:16:45 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.9 2004/09/09 08:50:34 pekberg Exp $\n");
 	exit(0);
 }
 
