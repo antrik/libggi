@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2004/09/11 21:10:32 cegger Exp $
+/* $Id: mode.c,v 1.31 2004/09/12 19:47:52 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -263,7 +263,7 @@ int GGI_X_checkmode_fixed(ggi_visual *vis, ggi_mode *tm)
 static int ggi_x_load_mode_libs(ggi_visual *vis)
 {
 	int err,id;
-	char sugname[256],args[256];
+	char sugname[GGI_MAX_APILEN],args[GGI_MAX_APILEN];
 
 	_ggiZapMode(vis, 0);
         for (id=1; 0 == vis->opdisplay->getapi(vis,id,sugname,args); id++) {
