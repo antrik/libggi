@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2002/11/03 04:25:29 redmondp Exp $
+/* $Id: gtext.c,v 1.2 2003/01/10 01:16:47 skids Exp $
 ******************************************************************************
 
    ATI Radeon text acceleration
@@ -23,6 +23,7 @@
 ******************************************************************************
 */
 #include <ggi/internal/font/8x8>
+#include <string.h>
 #include "radeon_accel.h"
 
 typedef struct
@@ -61,8 +62,8 @@ int GGI_kgi_radeon_putc(ggi_visual *vis, int x, int y, char c)
 	packet.sc.w       = 8;
 	packet.sc.h       = 8;
 	packet.sc.dy      = 8;
-	packet.sc.raster1 = glyphs[c].dw1;
-	packet.sc.raster2 = glyphs[c].dw2;
+	packet.sc.raster1 = glyphs[(unsigned char)c].dw1;
+	packet.sc.raster2 = glyphs[(unsigned char)c].dw2;
 	
 	RADEON_WRITEPACKET(vis, packet);
 	
@@ -107,8 +108,8 @@ int GGI_kgi_radeon_puts(ggi_visual *vis, int x, int y, const char *string)
 	sc.h = 8;
 
 	for (;*string; string++) {
-		sc.raster1 = glyphs[*string].dw1;
-		sc.raster2 = glyphs[*string].dw2;
+		sc.raster1 = glyphs[(unsigned char)*string].dw1;
+		sc.raster2 = glyphs[(unsigned char)*string].dw2;
 		RADEON_WRITEPACKET(vis, sc);
 		sc.dx = 8;
 	}
