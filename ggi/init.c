@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.6 2002/12/03 18:29:35 cegger Exp $
+/* $Id: init.c,v 1.7 2002/12/03 18:38:26 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -308,7 +308,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 		void *ret;
 
-		ggDPrintf(1, "LibGGI", "No certain target specified.\n");
+		ggDPrintf(1, "LibGGI", "No explicit target specified.\n");
 		
 		/* Try the X display.. */
 		cp=getenv("DISPLAY");
