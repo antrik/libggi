@@ -32,7 +32,7 @@ Due : ????-??-??
   (Vincent Cruz)
 * remove obseleted Xlib target (Christoph)
 - libKGI-target (compiling framework)
-+ improve modelist.inc
++ improve modelist.inc -- 
 * allow physz params to determine mode resolution when visible == GGI_AUTO
   (Christoph Egger)
 * add display-auto to separate OS dependent auto-detect routines from
@@ -45,10 +45,15 @@ Due : ????-??-??
 
 [Target specific issues]
 
-- update targets after the common issues are done
+- update targets after the common issues are done (apply new 
+  dirty region stuff, new modelist stuff, etc.)
 * make fbdev use of gamma map functions
 + alter fbdev.conf appropriately for selected accel sublibs
-- make pseudo-targets use of the dirty-region management
+- make pseudo-targets use of the dirty-region management.  This 
+  is an open design issue -- if done right, pseudo targets and
+  targets that make use of a RAM backbuffer or slave memvis could 
+  merge their backbuffers and dirty-region support, decreasing 
+  runtime profile.
 
 New X Target:
 
@@ -60,20 +65,68 @@ New X Target:
 + Test/complete display-X with obscure bitdepths/endian reversal.
 + Verify/correct interaction of mouse events with setorigin.
 - Re-implement old display-X emulated setorigin for root windows and
-  for buggy WMs with faulty colormap handling code.
+  for buggy WMs with faulty colormap handling code.  The old display-X
+  used to do setorigin (and splitline) through the backbuffer, by 
+  altering the translation between the backbuffer and the screen.
+  This involved a pretty ugly system of coordinate and clip translation,
+  but unfortunately is needed for root-window displays.  For efficiency
+  reasons, we should keep the two-window system and only use the 
+  old-style support when needed.  The part about colormap ties into the
+  next item -- using the old-style support would allow a normal window
+  to work without a parent window, which can workaround the colormap 
+  problem on buggy window-managers.  Anyone who does this should note
+  that LibGGIMISC needs to have splitline support implemented, and it
+  would help if the GGI core code made this easy so that LibGGIMISC does
+  not have to provide a complete set of overloading primitives.
 - See if colormap can be force-installed under some buggy WMs.
+  Some Windowmanagers do not seem to realize that when a window is 
+  moused over, they need to install the colormap of that window.
+  Some will only install the colormap of windows that are one level 
+  under the windowmanager.  This can easily be checked for
+  in 8bpp mode, or if you have a card that supports gammamap, in 
+  a 16-bpp or 32-bpp mode with gamma.  Run the demo application, and
+  see if the pallette or gamma tests work.  If not, try mousing out/in
+  of the window and see if the test starts working when you mouse back
+  in.  If either do not work, then things need to be fixed, but 
+  especially the second part.
 - colormap: add RW support.
 - Turn off hidden virtual area flushing when no backing store is 
-  available.
-- Get upstream to fix stuff (Solid-fill ops into backing store, for 
-  example.)
+  available.  When backing store is not turned on on the X server,
+  then flushing data to the unexposed areas of the visual just wastes
+  computing resources.  When it is turned on, the server will sometimes
+  save the data which can make setorigin/copybox faster, but when it is not
+  on, the server theoretically just dumps the data in the bit-bucket.
+  (In actuality some driver authors cheat and do a bit of backing store
+  unconditionally, I think, but the overall performance will probably be 
+  best if we dont't flush to unbacked regions).
+- Get upstream to fix stuff (Solid-fill ops into backing store, broken
+  WM child window colormaps, etc.)  This is basically a matter of pestering
+  people until you find someone in a position to fix it and helping or
+  encouraging them to do so.
 - Compile on crusty old libc5 machines; replace any new-style X* symbols
   with backwards-compatible old-style symbols.
-- dbe helper for new display-X
-- dga helper for new display-X
-- vidmode helper for new display-X
+- dbe helper for new display-X -- The dbe docs are here:
+  http://www.ibiblio.org/pub/X11/releases/DOCS/DBE/ 
+  and they will tell you that dbe allows you to create double-buffer
+  areas for windows.  This would be used to implement frames, instead
+  of "para-virtual area" like we do now, as an enhancement to giving
+  each frame its own window.
+- dga helper for new display-X: allow -inwin=root visuals to use dga,
+  and overload the normal operations with dga acceleration.  This can
+  only be done after vidmode support.
+- vidmode helper for new display-X: set the X server resolution, either
+  for -inwin=root, or cleverly positioning a non-root window so the 
+  borders are of the side of the screen.
 - Investigate emulating lower fixed-palette bitdepths and find out how to
   get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
+  Basically since X provides various "visuals" some of which are lower
+  resolutions than the normal screen, we may be able to use the X server
+  to support different bitdepths, and in some cases even paletted modes, 
+  without using pseudo targets like palemu and trueemu.  This actually would 
+  not be all that hard -- it is just a matter of choosing the right X11 
+  "visual" for the parent and child windows, and matching the slave visual 
+  to that.  And since the X server does the work, it would likely be 
+  a lot faster than palemu/trueemu.
 - Prevent ungraceful termination of a paletted/gammamapped -inroot app
   from leaving the X server in a bad state by adding a signal handler.
   Current workaround: if no apps will run after a GGI -inroot app was 
