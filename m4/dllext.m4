@@ -8,9 +8,6 @@ case "${host}" in
   *-*-mingw* | *-*-cygwin*)
 	DLLEXT="dll"
         ;;
-  *-*-darwin* | *-*-rhapsody*)
-	DLLEXT="dylib"
-	;;
   *)
 	DLLEXT="so"
         ;;

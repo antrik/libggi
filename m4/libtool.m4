@@ -1580,7 +1580,7 @@ else
     # FIXME: Relying on posixy $() will cause problems for
     #        cross-compilation, but unfortunately the echo tests do not
     #        yet detect zsh echo's removal of \ escapes.
-    archive_cmds='$nonopt $(test "x$module" = xyes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib $libobjs $deplibs$linker_flags -install_name $rpath/$soname $verstring'
+    archive_cmds='$CC -r -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs && $CC $(test .$module = .yes && echo -bundle || echo -dynamiclib) $allow_undefined_flag -o $lib ${lib}-master.o $deplibs$linker_flags $(test .$module != .yes && echo -install_name $rpath/$soname $verstring)'
     # We need to add '_' to the symbols in $export_symbols first
     #archive_expsym_cmds="$archive_cmds"' && strip -s $export_symbols'
     hardcode_direct=yes
@@ -1821,6 +1821,12 @@ EOF
     archive_cmds='$LD -G -h $soname -o $lib $libobjs $deplibs $linker_flags'
     hardcode_libdir_flag_spec='-L$libdir'
     hardcode_shlibpath_var=no
+    ;;
+
+  darwin*)
+    shared_flag='-dynamiclib'
+    archive_cmds='$CC -r -keep_private_externs -nostdlib -o ${lib}-master.o $libobjs && $CC -dynamiclib -install_name $rpath/$soname $predep_objects ${lib}-master.o $deplibs $postdep_objects $compiler_flags -o $lib'
+    output_verbose_link_cmd='$CC -dynamiclib $CFLAGS -v conftest.$objext 2>&1 | egrep "\-L"'
     ;;
 
   dgux*)
