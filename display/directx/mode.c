@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/03/25 10:28:32 pekberg Exp $
+/* $Id: mode.c,v 1.10 2004/08/23 12:17:31 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -93,7 +93,7 @@ int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	EnterCriticalSection(&priv->cs);
-	DDRedraw(priv);
+	DDRedraw(priv, x, y, w, h);
 	LeaveCriticalSection(&priv->cs);
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.22 2004/08/11 09:48:59 pekberg Exp $
+/* $Id: ddinit.c,v 1.23 2004/08/23 12:17:31 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -115,7 +115,22 @@ int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP)
   return 1;
 }
 
-void DDRedraw(directx_priv * priv)
+void DDRedraw(directx_priv * priv, int x, int y, int w, int h)
+{
+  RECT SrcWinPos, DestWinPos;
+  SrcWinPos.left = x;
+  SrcWinPos.right = x + w;
+  SrcWinPos.top = y;
+  SrcWinPos.bottom = y + h;
+  DestWinPos = SrcWinPos;
+  ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.left);
+  ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
+  /* draw the stored image on the primary surface */
+  IDirectDrawSurface_Blt(priv->lppdds, &DestWinPos,
+			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
+}
+
+void DDRedrawAll(directx_priv * priv)
 {
   RECT SrcWinPos, DestWinPos;
   GetClientRect(priv->hWnd, &SrcWinPos);
@@ -395,7 +410,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			PostMessage(hWnd, message, wParam, lParam);
 			return 0;
 		}
-		DDRedraw(priv);
+		DDRedrawAll(priv);
 		EnterCriticalSection(&priv->redrawcs);
 		priv->redraw = 1;
 		LeaveCriticalSection(&priv->redrawcs);
@@ -405,6 +420,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		if(wParam != 1)
 			break;
+		/* TODO: return 0 if async mode. */
 		/* Fall through */
 	case WM_PAINT:
 		if(!TryEnterCriticalSection(&priv->cs)) {
@@ -420,7 +436,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		if(message == WM_PAINT)
 			hdc = BeginPaint(hWnd, &ps);
-		DDRedraw(priv);
+		DDRedrawAll(priv);
 		if(message == WM_PAINT)
 			EndPaint(hWnd, &ps);
 		LeaveCriticalSection(&priv->cs);
