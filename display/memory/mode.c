@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/02/14 13:45:38 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/04/04 14:31:56 mooz Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -159,14 +159,14 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 
 	/* Set up palette */
 	/* Set up palette */ 
- 	if (LIBGGI_PAL(vis)->clut) {
- 		free(LIBGGI_PAL(vis)->clut);
- 		LIBGGI_PAL(vis)->clut = NULL;
+ 	if (LIBGGI_PAL(vis)->clut.data) {
+ 		free(LIBGGI_PAL(vis)->clut.data);
+ 		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->clut = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
+		LIBGGI_PAL(vis)->clut.data = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
  					   	sizeof(ggi_color));
- 		LIBGGI_PAL(vis)->size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
+ 		LIBGGI_PAL(vis)->clut.size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
 	
 	return 0;
@@ -387,7 +387,7 @@ int GGI_memory_setPalette(ggi_visual_t vis,size_t start,size_t size,const ggi_co
 {
 	GGIDPRINT("memory setpalette.\n");
 	                      
-	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color)); 
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color)); 
 	
 	return 0;
 }

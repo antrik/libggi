@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/03/14 12:56:10 pekberg Exp $
+/* $Id: mode.c,v 1.8 2004/04/04 14:31:57 mooz Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -125,14 +125,14 @@ static int do_dbstuff(ggi_visual *vis)
 	}
 
 	/* Set up palette */
-	if (LIBGGI_PAL(vis)->clut) {
-		free(LIBGGI_PAL(vis)->clut);
- 		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+ 		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->clut = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis))) *
+		LIBGGI_PAL(vis)->clut.data = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis))) *
 						sizeof(ggi_color));
-		LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
+		LIBGGI_PAL(vis)->clut.size = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
 
 	return 0;

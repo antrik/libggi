@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/02/02 19:21:59 cegger Exp $
+/* $Id: color.c,v 1.8 2004/04/04 14:31:58 mooz Exp $
 ******************************************************************************
 
    TELE target.
@@ -61,7 +61,7 @@ int GGI_tele_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_c
 		return -1;
 	}
 
-	memcpy(LIBGGI_PAL(vis)->clut+start, cols, size*sizeof(ggi_color)); 
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, cols, size*sizeof(ggi_color)); 
 
 
 	/* send palette to the server */

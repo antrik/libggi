@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2003/12/13 21:12:03 mooz Exp $
+/* $Id: color.c,v 1.3 2004/04/04 14:31:55 mooz Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -46,7 +46,7 @@ GGI_lcd823_setPalette(ggi_visual *vis, size_t start, size_t size, const ggi_colo
 		return -1;
 	}
 
-	memcpy(vis->palette+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
 
 	for (i = 0; i < size; i ++) {
 		     pal[i+start] =

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2003/12/13 21:12:02 mooz Exp $
+/* $Id: color.c,v 1.8 2004/04/04 14:31:42 mooz Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -34,7 +34,7 @@ int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 {
 	if (start < 0 || start+len > COLOR_PALPRIV(vis)->numcols) return -1;
 
-	memcpy(colmap, LIBGGI_PAL(vis)->clut+start, len*sizeof(ggi_color));
+	memcpy(colmap, LIBGGI_PAL(vis)->clut.data+start, len*sizeof(ggi_color));
 
 	return 0;
 }
@@ -68,9 +68,9 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
 
 	LIBGGI_ASSERT(LIBGGI_PAL(vis) != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)==NULL");
 
-	pal = LIBGGI_PAL(vis)->clut;
+	pal = LIBGGI_PAL(vis)->clut.data;
 
-	LIBGGI_ASSERT(pal != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)->clut==NULL");
+	LIBGGI_ASSERT(pal != NULL, "PAL_mapcolor with LIBGGI_PAL(vis)->clut.data==NULL");
 
 	r = col->r;
 	g = col->g;
@@ -187,12 +187,12 @@ int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	LIBGGI_ASSERT(LIBGGI_PAL(vis) != NULL, 
 								"PAL_unmappixel with LIBGGI_PAL(vis)==NULL");
-	LIBGGI_ASSERT(LIBGGI_PAL(vis)->clut != NULL, 
-								"PAL_unmappixel with LIBGGI_PAL(vis)->clut==NULL");
+	LIBGGI_ASSERT(LIBGGI_PAL(vis)->clut.data != NULL, 
+								"PAL_unmappixel with LIBGGI_PAL(vis)->clut.data==NULL");
 	
 	if (pixel >= (unsigned)COLOR_PALPRIV(vis)->numcols) return -1;
 	
-	*col = LIBGGI_PAL(vis)->clut[pixel];
+	*col = LIBGGI_PAL(vis)->clut.data[pixel];
 		
 	return 0;
 }

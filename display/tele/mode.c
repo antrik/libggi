@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/02/02 19:21:59 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/04/04 14:31:58 mooz Exp $
 ******************************************************************************
 
    TELE target.
@@ -70,9 +70,9 @@ int GGI_tele_resetmode(ggi_visual *vis)
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleEvent ev;
 
-	if (LIBGGI_PAL(vis)->clut) {
-		free(LIBGGI_PAL(vis)->clut);
-		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (LIBGGI_PAL(vis)->priv) {
 		free(LIBGGI_PAL(vis)->priv);
@@ -154,8 +154,8 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	/* set up palette */
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-	        LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
-		LIBGGI_PAL(vis)->clut = _ggi_malloc(LIBGGI_PAL(vis)->size * sizeof(ggi_color));
+	        LIBGGI_PAL(vis)->clut.size = 1 << GT_DEPTH(LIBGGI_GT(vis));
+		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(LIBGGI_PAL(vis)->clut.size * sizeof(ggi_color));
 		LIBGGI_PAL(vis)->setPalette = GGI_tele_setPalette;
 	}
 

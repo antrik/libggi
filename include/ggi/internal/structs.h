@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.9 2004/02/28 17:22:58 aldot Exp $
+/* $Id: structs.h,v 1.10 2004/04/04 14:32:00 mooz Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -88,8 +88,7 @@ enum ggi_colormap_region {
 };
 
 typedef struct ggi_colormap {
-		size_t size;		/* 0 means, no CLUT available */
-		ggi_color *clut;	/* color lookup table */
+		ggi_clut clut;		/* color lookup table */
 		
 		size_t rw_start;	/* start index of r/w indeces */
 		size_t rw_stop;		/* end index of r/w indices */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/02/14 13:45:39 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/04/04 14:31:57 mooz Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -183,9 +183,9 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
 	/* Palette */
-	if (LIBGGI_PAL(vis)->clut) {
-		free(LIBGGI_PAL(vis)->clut);
-		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (LIBGGI_PAL(vis)->priv) {
 		free(LIBGGI_PAL(vis)->priv);
@@ -194,9 +194,9 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
 		int len = 1 << GT_DEPTH(tm->graphtype);
 
-		LIBGGI_PAL(vis)->size = len;
-		LIBGGI_PAL(vis)->clut = malloc(len * sizeof(ggi_color));
-		if (LIBGGI_PAL(vis)->clut == NULL) return GGI_EFATAL;
+		LIBGGI_PAL(vis)->clut.size = len;
+		LIBGGI_PAL(vis)->clut.data = malloc(len * sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut.data == NULL) return GGI_EFATAL;
 		LIBGGI_PAL(vis)->priv = malloc(sizeof(int) * (len*3));
 		if (LIBGGI_PAL(vis)->priv == NULL) return GGI_EFATAL;
 

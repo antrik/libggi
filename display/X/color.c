@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2003/12/13 21:12:02 mooz Exp $
+/* $Id: color.c,v 1.11 2004/04/04 14:31:46 mooz Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -67,18 +67,18 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
 		X_pal[i].g = xcol.green;
 		X_pal[i].b = xcol.blue;
 
-		LIBGGI_PAL(vis)->clut[i] = G_pal[i] = cols[i];
+		LIBGGI_PAL(vis)->clut.data[i] = G_pal[i] = cols[i];
 	}
 
-	_ggi_smart_match_palettes(LIBGGI_PAL(vis)->clut, len, X_pal, len);
+	_ggi_smart_match_palettes(LIBGGI_PAL(vis)->clut.data, len, X_pal, len);
 
 	for (i=0; i < len; i++) {
 		GGIDPRINT_COLOR("Smart alloc %03d: X=%02x%02x%02x "
 		             " GGI=%02x%02x%02x  (orig: %02x%02x%02x)\n", i, 
 			     X_pal[i].r >> 8, X_pal[i].g >> 8, X_pal[i].b >> 8, 
-			     LIBGGI_PAL(vis)->clut[i].r >> 8, 
-			     LIBGGI_PAL(vis)->clut[i].g >> 8,
-			     LIBGGI_PAL(vis)->clut[i].b >> 8,
+			     LIBGGI_PAL(vis)->clut.data[i].r >> 8, 
+			     LIBGGI_PAL(vis)->clut.data[i].g >> 8,
+			     LIBGGI_PAL(vis)->clut.data[i].b >> 8,
 			     G_pal[i].r >> 8, G_pal[i].g >> 8, G_pal[i].b >> 8);
 	}
 
@@ -96,14 +96,14 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 	LIBGGI_ASSERT(priv->cmap, "No cmap!\n");
 
 	if (LIBGGI_PAL(vis)->rw_start >= LIBGGI_PAL(vis)->rw_stop) return 0;
-	if (LIBGGI_PAL(vis)->clut) {
+	if (LIBGGI_PAL(vis)->clut.data) {
 		size_t x;
 		XColor xcol;
 
 		for (x = LIBGGI_PAL(vis)->rw_start; x < LIBGGI_PAL(vis)->rw_stop; x++) {
-			xcol.red   = LIBGGI_PAL(vis)->clut[x].r;
-			xcol.green = LIBGGI_PAL(vis)->clut[x].g;
-			xcol.blue  = LIBGGI_PAL(vis)->clut[x].b;
+			xcol.red   = LIBGGI_PAL(vis)->clut.data[x].r;
+			xcol.green = LIBGGI_PAL(vis)->clut.data[x].g;
+			xcol.blue  = LIBGGI_PAL(vis)->clut.data[x].b;
 			xcol.pixel = x;
 			xcol.flags = DoRed | DoGreen | DoBlue;
 			XStoreColor(priv->disp, priv->cmap, &xcol);
@@ -158,8 +158,8 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 			 ((int)(start+len) > priv->ncols ) || 
 	     (start < 0) ) return -1;
 
-	LIBGGI_PAL(vis)->size = len;
-	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, len*sizeof(ggi_color));
+	LIBGGI_PAL(vis)->clut.size = len;
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
 
 	if (start < LIBGGI_PAL(vis)->rw_start) {
 		LIBGGI_PAL(vis)->rw_start = start;
@@ -240,8 +240,8 @@ void _ggi_x_free_colormaps(ggi_visual *vis)
 
 	if (priv->cmap != None)   XFreeColormap(priv->disp,priv->cmap);
 	if (priv->cmap2 != None)  XFreeColormap(priv->disp,priv->cmap2);
-	if (LIBGGI_PAL(vis)->clut) free(LIBGGI_PAL(vis)->clut);
-  LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) free(LIBGGI_PAL(vis)->clut.data);
+  LIBGGI_PAL(vis)->clut.data = NULL;
 	if (priv->gammamap != NULL) free(priv->gammamap);
 	priv->gammamap = NULL;
 }
@@ -276,10 +276,10 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
-		priv->ncols = LIBGGI_PAL(vis)->size = 1 << vi->depth;
-		LIBGGI_PAL(vis)->clut = _ggi_malloc(sizeof(ggi_color) * LIBGGI_PAL(vis)->size);
+		priv->ncols = LIBGGI_PAL(vis)->clut.size = 1 << vi->depth;
+		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(sizeof(ggi_color) * LIBGGI_PAL(vis)->clut.size);
 		
-		if (LIBGGI_PAL(vis)->clut == NULL) {
+		if (LIBGGI_PAL(vis)->clut.data == NULL) {
 			XFreeColormap(priv->disp, priv->cmap);
 			priv->cmap = None;
 			return;
@@ -296,9 +296,9 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 				XStoreColor(priv->disp, priv->cmap, &xcell);
 			}
 
-			LIBGGI_PAL(vis)->clut[i].r = xcell.red;
-			LIBGGI_PAL(vis)->clut[i].g = xcell.green;
-			LIBGGI_PAL(vis)->clut[i].b = xcell.blue;
+			LIBGGI_PAL(vis)->clut.data[i].r = xcell.red;
+			LIBGGI_PAL(vis)->clut.data[i].g = xcell.green;
+			LIBGGI_PAL(vis)->clut.data[i].b = xcell.blue;
 		}
 		if (vi->class == PseudoColor || vi->class == GrayScale) {
 			LIBGGI_PAL(vis)->setPalette = GGI_X_setPalette;

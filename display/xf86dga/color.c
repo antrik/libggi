@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2003/12/20 11:09:24 cegger Exp $
+/* $Id: color.c,v 1.5 2004/04/04 14:31:59 mooz Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -49,8 +49,8 @@ int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,
 		return -1;
 	}
 	/* if */
-	LIBGGI_PAL(vis)->size = size;
-	memcpy(LIBGGI_PAL(vis)->clut + start, colormap,
+	LIBGGI_PAL(vis)->clut.size = size;
+	memcpy(LIBGGI_PAL(vis)->clut.data + start, colormap,
 	       size * sizeof(ggi_color));
 
 	if (start < LIBGGI_PAL(vis)->rw_start) {
@@ -64,9 +64,9 @@ int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,
 
 	for (i = LIBGGI_PAL(vis)->rw_start; i < LIBGGI_PAL(vis)->rw_stop;
 	     ++i) {
-		xcol.red = LIBGGI_PAL(vis)->clut[i].r;
-		xcol.green = LIBGGI_PAL(vis)->clut[i].g;
-		xcol.blue = LIBGGI_PAL(vis)->clut[i].b;
+		xcol.red   = LIBGGI_PAL(vis)->clut.data[i].r;
+		xcol.green = LIBGGI_PAL(vis)->clut.data[i].g;
+		xcol.blue  = LIBGGI_PAL(vis)->clut.data[i].b;
 		xcol.pixel = i;
 		xcol.flags = DoRed | DoGreen | DoBlue;
 		XStoreColor(priv->x.display, priv->x.cmap, &xcol);

@@ -402,9 +402,9 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	}
 
 	/* Palette */
-	if (LIBGGI_PAL(vis)->clut) {
-		free(LIBGGI_PAL(vis)->clut);
-		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (LIBGGI_PAL(vis)->priv) {
 		free(LIBGGI_PAL(vis)->priv);
@@ -413,9 +413,9 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	if(GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE){
 		int len = 1 << GT_DEPTH(tm->graphtype);
 
-		LIBGGI_PAL(vis)->size = len;
-		LIBGGI_PAL(vis)->clut = malloc(len * sizeof(ggi_color));
-		if (LIBGGI_PAL(vis)->clut == NULL) return GGI_EFATAL;
+		LIBGGI_PAL(vis)->clut.size = len;
+		LIBGGI_PAL(vis)->clut.data = malloc(len * sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut.data == NULL) return GGI_EFATAL;
 		LIBGGI_PAL(vis)->priv = malloc(sizeof(int) * (len*3));
 		if (LIBGGI_PAL(vis)->priv == NULL) return GGI_EFATAL;
 

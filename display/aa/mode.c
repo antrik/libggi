@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2003/12/13 21:12:02 mooz Exp $
+/* $Id: mode.c,v 1.6 2004/04/04 14:31:52 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -73,13 +73,13 @@ static int _GGIdomode(ggi_visual *vis)
 		
 	LIBGGI_PAL(vis)->priv = _ggi_malloc(sizeof(aa_palette));
 		
-	if(LIBGGI_PAL(vis)->clut){
-		free(LIBGGI_PAL(vis)->clut);
-		LIBGGI_PAL(vis)->clut = NULL;			
+	if(LIBGGI_PAL(vis)->clut.data){
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;			
 	}
 		
-	LIBGGI_PAL(vis)->clut = _ggi_malloc(256*sizeof(ggi_color));
-	LIBGGI_PAL(vis)->size     = 256;	
+	LIBGGI_PAL(vis)->clut.data = _ggi_malloc(256*sizeof(ggi_color));
+	LIBGGI_PAL(vis)->clut.size = 256;	
 
 	for(id=1;0==GGI_aa_getapi(vis,id,sugname,args);id++) {
 		err = _ggiOpenDL(vis, sugname, args, NULL);

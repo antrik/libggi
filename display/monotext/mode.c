@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/01/31 20:56:05 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/04/04 14:31:56 mooz Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -107,13 +107,13 @@ static int do_dbstuff(ggi_visual *vis)
 	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
-	if (LIBGGI_PAL(vis)->clut) {
- 		free(LIBGGI_PAL(vis)->clut);
- 		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+ 		free(LIBGGI_PAL(vis)->clut.data);
+ 		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->size = 1 << GT_DEPTH(LIBGGI_GT(vis));
- 		LIBGGI_PAL(vis)->clut = _ggi_malloc(LIBGGI_PAL(vis)->size * sizeof(ggi_color));
+		LIBGGI_PAL(vis)->clut.size = 1 << GT_DEPTH(LIBGGI_GT(vis));
+ 		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(LIBGGI_PAL(vis)->clut.size * sizeof(ggi_color));
 	}
 
 	return 0;

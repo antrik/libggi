@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
+/* $Id: color.c,v 1.4 2004/04/04 14:31:56 mooz Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -41,7 +41,7 @@ int GGI_monotext_setPalette(ggi_visual_t vis, size_t start, size_t size, const g
 
  	GGIDPRINT("display-monotext: SetPalette(%d,%d)\n", start, size);
 		
-	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
 		
 	if (end > start) {
 		UPDATE_MOD(priv, 0, 0, priv->size.x, priv->size.y);

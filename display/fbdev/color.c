@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/01/31 22:34:03 cegger Exp $
+/* $Id: color.c,v 1.6 2004/04/04 14:31:52 mooz Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -52,13 +52,13 @@ static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
 void GGI_fbdev_color_reset(ggi_visual *vis) {
 	ggi_fbdev_priv *priv = LIBGGI_PRIVATE(vis);
 
-	if (LIBGGI_PAL(vis)->clut == NULL) return; /* New visual. */
+	if (LIBGGI_PAL(vis)->clut.data == NULL) return; /* New visual. */
 
 	if ((LIBGGI_PAL(vis)->setPalette != NULL) && (vis->opcolor->setpalvec != NULL))
 		vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)),
-			       LIBGGI_PAL(vis)->clut);
+			       LIBGGI_PAL(vis)->clut.data);
 	else if (vis->opcolor->setgammamap != NULL)
-	  vis->opcolor->setgammamap(vis, 0, vis->gamma->len, LIBGGI_PAL(vis)->clut);
+	  vis->opcolor->setgammamap(vis, 0, vis->gamma->len, LIBGGI_PAL(vis)->clut.data);
 
 	/* Unhook the entry points */
 	LIBGGI_PAL(vis)->setPalette = NULL;
@@ -80,8 +80,8 @@ void GGI_fbdev_color_reset(ggi_visual *vis) {
 
 	/* Free the storage area for the palettes. */
 	priv->gamma.map = priv->orig_cmap = NULL;
-	free (LIBGGI_PAL(vis)->clut);
-	LIBGGI_PAL(vis)->clut = NULL;
+	free (LIBGGI_PAL(vis)->clut.data);
+	LIBGGI_PAL(vis)->clut.data = NULL;
 }
 
 void GGI_fbdev_color_setup(ggi_visual *vis)
@@ -91,7 +91,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 	int len;
 
 	/* We rely on caller to have deallocated old storage */
-	priv->orig_cmap = LIBGGI_PAL(vis)->clut = priv->gamma.map = NULL; 
+	priv->orig_cmap = LIBGGI_PAL(vis)->clut.data = priv->gamma.map = NULL; 
 	vis->gamma = NULL;
 	priv->reds = priv->greens = priv->blues = NULL;
 	priv->gamma.maxread_r = priv->gamma.maxread_g = 
@@ -121,10 +121,10 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 		priv->gamma.len = len;
 		priv->gamma.start = 0;
 		
-		LIBGGI_PAL(vis)->size = len * 2;
-		LIBGGI_PAL(vis)->clut = calloc(len * 2 /* orig */, sizeof(ggi_color));
-		if (LIBGGI_PAL(vis)->clut == NULL) return;
-		priv->gamma.map = LIBGGI_PAL(vis)->clut;
+		LIBGGI_PAL(vis)->clut.size = len * 2;
+		LIBGGI_PAL(vis)->clut.data = calloc(len * 2 /* orig */, sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut.data == NULL) return;
+		priv->gamma.map = LIBGGI_PAL(vis)->clut.data;
 		/* All of the above is moot until we turn it on like so: */
 		vis->gamma = &(priv->gamma);
 	} else {
@@ -132,9 +132,9 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 		GGIDPRINT("display-fbdev: trying palette.\n");
 
 		len = 1 << priv->var.bits_per_pixel;
-		LIBGGI_PAL(vis)->size = len * 2;
-		LIBGGI_PAL(vis)->clut = calloc(len * 2 /* orig */, sizeof(ggi_color));
-		if (LIBGGI_PAL(vis)->clut == NULL) return;
+		LIBGGI_PAL(vis)->clut.size = len * 2;
+		LIBGGI_PAL(vis)->clut.data = calloc(len * 2 /* orig */, sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut.data == NULL) return;
 	}
 
 	cmap.start = 0;
@@ -151,7 +151,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 		goto bail;
 	} 
 
-	priv->orig_cmap = LIBGGI_PAL(vis)->clut + len;
+	priv->orig_cmap = LIBGGI_PAL(vis)->clut.data + len;
 
 	if (vis->gamma != NULL) {
 
@@ -192,8 +192,8 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 	return;
 
  bail:
-	free(LIBGGI_PAL(vis)->clut);
-	LIBGGI_PAL(vis)->clut = NULL;
+	free(LIBGGI_PAL(vis)->clut.data);
+	LIBGGI_PAL(vis)->clut.data = NULL;
 	vis->gamma = NULL;
 	return;
 
@@ -211,7 +211,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
 	
 	GGIDPRINT_COLOR("display-fbdev: SetPalette(%d,%d)\n", start, size);
 	
-	memcpy(LIBGGI_PAL(vis)->clut+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
 
 	if (!priv->ismapped) return 0;
 
@@ -313,5 +313,5 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 
 static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis) 
 {
-	return (LIBGGI_PAL(vis)->size * 3);
+	return (LIBGGI_PAL(vis)->clut.size * 3);
 }

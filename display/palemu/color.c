@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2004/02/27 10:41:17 cegger Exp $
+/* $Id: color.c,v 1.5 2004/04/04 14:31:57 mooz Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -45,7 +45,7 @@ int GGI_palemu_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_
 		return -1;
 	}
 
-	memcpy(LIBGGI_PAL(vis)->clut+start, src, len*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, src, len*sizeof(ggi_color));
 	if (end > start) {
 		UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	}

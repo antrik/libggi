@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2003/12/22 07:44:23 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/04/04 14:32:00 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -241,13 +241,13 @@ ggi_visual *_ggiNewVisual(void)
 	LIBGGI_PAL(vis) = _ggi_malloc(sizeof(ggi_colormap));
 	if (!LIBGGI_PAL(vis)) goto out_freeopdisplay;
  	
- 	LIBGGI_PAL(vis)->clut     = NULL;
- 	LIBGGI_PAL(vis)->size     = 0;
- 	LIBGGI_PAL(vis)->rw_start = 0;
- 	LIBGGI_PAL(vis)->rw_stop  = 0;
- 	LIBGGI_PAL(vis)->ro_start = 0;
- 	LIBGGI_PAL(vis)->ro_stop  = 0;
- 	LIBGGI_PAL(vis)->priv     = NULL;
+ 	LIBGGI_PAL(vis)->clut.data = NULL;
+ 	LIBGGI_PAL(vis)->clut.size = 0;
+ 	LIBGGI_PAL(vis)->rw_start  = 0;
+ 	LIBGGI_PAL(vis)->rw_stop   = 0;
+ 	LIBGGI_PAL(vis)->ro_start  = 0;
+ 	LIBGGI_PAL(vis)->ro_stop   = 0;
+ 	LIBGGI_PAL(vis)->priv      = NULL;
 
 	vis->input = NULL;
 
@@ -291,7 +291,8 @@ void _ggiDestroyVisual(ggi_visual *vis)
 
 	if (LIBGGI_PAL(vis)) {
 		if (LIBGGI_PAL(vis)->priv) free(LIBGGI_PAL(vis)->priv);
-		if (LIBGGI_PAL(vis)->clut) free(LIBGGI_PAL(vis)->clut);
+		if (LIBGGI_PAL(vis)->clut.data)
+			free(LIBGGI_PAL(vis)->clut.data);
  	 	free(LIBGGI_PAL(vis));
 	}
 	

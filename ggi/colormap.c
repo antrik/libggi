@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.2 2003/12/13 22:32:10 cegger Exp $
+/* $Id: colormap.c,v 1.3 2004/04/04 14:32:00 mooz Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -42,7 +42,7 @@ int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end)
 
 	if (start > end) return GGI_EARGINVAL;
 	if (end < start) return GGI_EARGINVAL;
-	if (end >= map->size) return GGI_EARGINVAL;
+	if (end >= map->clut.size) return GGI_EARGINVAL;
 
 	_ggiColormapGetRO(vis, &ro_start, &ro_stop);
 
@@ -78,7 +78,7 @@ int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end)
 
 	if (start > end) return GGI_EARGINVAL;
 	if (end < start) return GGI_EARGINVAL;
-	if (end >= map->size) return GGI_EARGINVAL;
+	if (end >= map->clut.size) return GGI_EARGINVAL;
 
 	_ggiColormapGetRW(vis, &rw_start, &rw_stop);
 
@@ -134,8 +134,8 @@ ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
 		return GGI_EARGINVAL;
 	}	/* switch */
 
-	for (idx = 0; idx < map->size; idx++) {
-		rc = _ggiColormapMatchByColor(vis, &(map->clut[idx]),
+	for (idx = 0; idx < map->clut.size; idx++) {
+		rc = _ggiColormapMatchByColor(vis, &(map->clut.data[idx]),
 					color, region);
 		if (rc == GGI_OK) {
 			return (ssize_t)(idx);
@@ -156,7 +156,7 @@ ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
 
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
-	if (idx >= map->size) return GGI_EARGINVAL;
+	if (idx >= map->clut.size) return GGI_EARGINVAL;
 
 	switch (region) {
 	case GGI_COLORMAP_RW_REGION:
@@ -183,7 +183,7 @@ ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
 	}	/* switch */
 
 
-	for (idx_tmp = 0; idx_tmp < map->size; idx_tmp++) {
+	for (idx_tmp = 0; idx_tmp < map->clut.size; idx_tmp++) {
 		rc = _ggiColormapMatchByIdx(vis, idx,
 					idx_tmp, region);
 		if (rc == GGI_OK) {
@@ -217,8 +217,8 @@ int _ggiColormapMatchByIdx(ggi_visual_t vis, size_t idx1, size_t idx2,
 
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
-	if (idx1 >= map->size) return GGI_EARGINVAL;
-	if (idx2 >= map->size) return GGI_EARGINVAL;
+	if (idx1 >= map->clut.size) return GGI_EARGINVAL;
+	if (idx2 >= map->clut.size) return GGI_EARGINVAL;
 
 	switch (region) {
 	case GGI_COLORMAP_RW_REGION:

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/12/13 21:12:03 mooz Exp $
+/* $Id: mode.c,v 1.5 2004/04/04 14:31:55 mooz Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -151,8 +151,8 @@ static int do_setmode(ggi_visual *vis)
 	if ((GT_SCHEME(gt) == GT_PALETTE) || (GT_SCHEME(gt) == GT_TEXT)) {
 	    	int nocols = 1 << GT_DEPTH(gt);
 
-		LIBGGI_PAL(vis)->size = nocols;
-		LIBGGI_PAL(vis)->clut = _ggi_malloc(nocols * sizeof(ggi_color));
+		LIBGGI_PAL(vis)->clut.size = nocols;
+		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(nocols * sizeof(ggi_color));
 		LIBGGI_PAL(vis)->priv = _ggi_malloc(256 * sizeof(uint16));
 		LIBGGI_PAL(vis)->setPalette  = GGI_lcd823_setPalette;
 		LIBGGI_PAL(vis)->getPrivSize = GGI_lcd823_getPrivSize;
@@ -176,9 +176,9 @@ int GGI_lcd823_setmode(ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	if (LIBGGI_PAL(vis)->clut) {
-		free(LIBGGI_PAL(vis)->clut);
-		LIBGGI_PAL(vis)->clut = NULL;
+	if (LIBGGI_PAL(vis)->clut.data) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 
 	if (LIBGGI_PAL(vis)->priv) {
