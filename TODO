@@ -16,9 +16,12 @@ Due : ????-??-??
 * use config file instead of static accel_strings array in fbdev
 * enable DirectFB
 - change way that pixela/pixel stubs are selected (above item breaks current.)
+  (in progress)
 - KGI-target (compiling framework, probably only working with Matrox Cards)
 - make Xlib a helper target for X
 - Make XF86DGA working with XF86 3.x and XF86 4.x working
+- improve modelist.inc
+- documentate tele-target in libggi/doc/targets.txt
 
 
 ------------------------------------------
@@ -28,6 +31,7 @@ Version : 3.0.0
 Due : ????-??-??
 
 - A working full-featured KGI-target
+- enhance config file system: aliases, in-file option strings, wildcards
 - finish long-term plan
 - implement API additions
 
@@ -36,9 +40,7 @@ Due : ????-??-??
 Long-term plan
 ------------------------------------------
 
-- improve modelist.inc
 - improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
-- enhance config file system: aliases, in-file option strings, wildcards
 - move display autodetection routines into a display-auto sublib, and
   create display-auto-linux, display-auto-bsd, etc, mapping them to
   display-auto in libggi.conf.
