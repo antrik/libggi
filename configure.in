@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.61 2002/11/18 11:41:09 cegger Exp $
+dnl $Id: configure.in,v 1.62 2002/11/26 08:30:28 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -116,7 +116,7 @@ dnl TARGETS:
 
 dnl Common useable Targets
 AC_ARG_ENABLE(x,
-[  --disable-x             don't build the X target],
+[  --disable-x             don't build the X target  (uses memory-target as backbuffer)],
 build_x_target=$enableval)
 AC_ARG_ENABLE(xlib,
 [  --disable-xlib          don't build the Xlib target],
@@ -128,7 +128,7 @@ AC_ARG_ENABLE(kgi,
 [  --disable-kgi           don't build the kgi target],
 build_kgi_target=$enableval)
 AC_ARG_ENABLE(libkgi,
-[  --disable-libkgi           don't build the libkgi target],
+[  --disable-libkgi        don't build the libkgi target],
 build_libkgi_target=$enableval)
 dnl AC_ARG_ENABLE(suidkgi,
 dnl [  --enable-suidkgi        build the suidkgi target],
@@ -596,6 +596,13 @@ if !defined(__linux__)
 else
       use_threads="no"
       AC_MSG_RESULT(no)
+fi
+
+memory_dependent="x"
+if test "x$build_memory_target" = "xno"; then
+  AC_MSG_WARN(the following targets depend on the memory target)
+  AC_MSG_WARN(and will not be built: $memory_dependent)
+  build_x_target="no"
 fi
 
 mansync_dependent="x aa tile palemu trueemu"
