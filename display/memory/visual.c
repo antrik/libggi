@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/09/12 20:31:35 cegger Exp $
+/* $Id: visual.c,v 1.20 2004/09/14 19:08:01 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -111,7 +111,11 @@ static const char *ftok(const char *pathname, int id)
 {
 	static char object[MAX_PATH];
 	char *ptr;
+#ifdef HAVE_SNPRINTF
+	snprintf(object, MAX_PATH, "ggi-display-memory-shm:%s:%d", pathname, id);
+#else
 	sprintf(object, "ggi-display-memory-shm:%s:%d", pathname, id);
+#endif
 	ptr = object;
 	while(ptr = strchr(ptr, '\\'))
 		*ptr++ = '/';
