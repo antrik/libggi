@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.26 2004/11/27 16:42:44 soyt Exp $
+/* $Id: init.c,v 1.27 2004/11/27 17:43:41 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -173,14 +173,14 @@ int ggiInit(void)
 
 	str = getenv("GGI_DEBUGSYNC");
 	if (str != NULL) {
-		_ggiDebug |= GGIDEBUG_SYNC;
+		_ggiDebug |= DEBUG_SYNC;
 	}
 	
 	str = getenv("GGI_DEBUG");
 	if (str != NULL) {
-		_ggiDebug |= atoi(str) & GGIDEBUG_ALL;
+		_ggiDebug |= atoi(str) & DEBUG_ALL;
 		DPRINT_CORE("%s Debugging=%d\n",
-			       GGIDEBUG_ISSYNC ? "sync" : "async",
+			       DEBUG_ISSYNC ? "sync" : "async",
 			       _ggiDebug);
 	}
 	
