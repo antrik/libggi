@@ -107,4 +107,4 @@ generic-ioctl 			default/ioctl.@DLLEXT@
 .include @static_sysconfdir@/@ggi_subdir@/targets/kgi.conf
 
 # temporary directive to load LibBuf storage/renderers.
-.include @static_sysconfdir@/@ggi_subdir@/libbuf.conf
+.include @static_sysconfdir@/@ggi_subdir@/libggibuf.conf
