@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2002/09/08 21:37:45 soyt Exp $
+/* $Id: visual.c,v 1.10 2003/05/19 17:53:11 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -907,12 +907,23 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_ENOMEM;
 	}
 
-	if (get_timings(priv, modedb) == GGI_ENOMEM) {
+	switch (get_timings(priv, modedb)) {
+	case GGI_OK:
+		break;
+	case GGI_ENOFILE:
+		/* PDA's like Compaq iPaq and Sharp Zaurus don't
+		 * need /etc/fb.modes to work, so we ignore this failure.
+		 */
+		break;
+	case GGI_ENOMEM:
 		/* If we can't do a simple malloc() it's better to fail
-		   right now. */
+		 * right now.
+		 */
 		do_cleanup(vis);
 		return GGI_ENOMEM;
-	}
+	default:
+		break;
+	}	/* switch */
 
 	/* Mode management */
 	vis->opdisplay->getmode   = GGI_fbdev_getmode;
