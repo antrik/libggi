@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.9 2003/07/04 23:36:57 cegger Exp $
+/* $Id: cbconsist.c,v 1.10 2003/08/24 15:42:42 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -349,7 +349,10 @@ int main(int argc, char **argv)
 		ggiSetFlags(s.svis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.svis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.smode);
-		ggiSetMode(s.svis, &s.smode);
+		if (ggiSetMode(s.svis, &s.smode) < 0) {
+			ggiPanic("Source Visual: Mode setting failed!\n");
+			exit(1);
+		}
 		if (GT_SCHEME(s.smode.graphtype) == GT_PALETTE)
 			ggiSetColorfulPalette(s.svis);
 		color.r = color.b = color.g = color.a = 0;
@@ -367,7 +370,10 @@ int main(int argc, char **argv)
 		ggiSetFlags(s.dvis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.dvis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.dmode);
-		ggiSetMode(s.dvis, &s.dmode);
+		if (ggiSetMode(s.dvis, &s.dmode)) {
+			ggiPanic("Destination Visual: Mode setting failed!\n");
+			exit(1);
+		}
 		if (GT_SCHEME(s.dmode.graphtype) == GT_PALETTE)
 			ggiSetColorfulPalette(s.dvis);
 		color.r = color.b = color.g = color.a = 0;
