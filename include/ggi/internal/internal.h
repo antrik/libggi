@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.14 2004/09/08 21:18:21 cegger Exp $
+/* $Id: internal.h,v 1.15 2004/09/15 18:50:32 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -204,8 +204,8 @@ __END_DECLS
 #define LIBGGI_MODE(vis)	((vis)->mode)
 #define LIBGGI_PIXFMT(vis)	((vis)->pixfmt)
 #define LIBGGI_GC(vis)		((vis)->gc)
-#define LIBGGI_GC_FGCOLOR(vis)	((vis)->gc->fg_color)
-#define LIBGGI_GC_BGCOLOR(vis)	((vis)->gc->bg_color)
+#define LIBGGI_GC_FGCOLOR(vis)	(LIBGGI_GC(vis)->fg_color)
+#define LIBGGI_GC_BGCOLOR(vis)	(LIBGGI_GC(vis)->bg_color)
 #define LIBGGI_APPLIST(vis)	((vis)->app_dbs)
 
 #define LIBGGI_PRIVLIST(vis)	((vis)->priv_dbs)
@@ -218,11 +218,11 @@ __END_DECLS
 #define LIBGGI_PRIVATE(vis)	((vis)->targetpriv)
 #define LIBGGI_DRVPRIV(vis,idx)	((vis)->drvpriv[(idx)])
 
-#define LIBGGI_X(vis)		((vis)->mode->visible.x)
-#define LIBGGI_Y(vis)		((vis)->mode->visible.y)
-#define LIBGGI_VIRTX(vis)	((vis)->mode->virt.x)
-#define LIBGGI_VIRTY(vis)	((vis)->mode->virt.y)
-#define LIBGGI_GT(vis)		((vis)->mode->graphtype)
+#define LIBGGI_X(vis)		(LIBGGI_MODE(vis)->visible.x)
+#define LIBGGI_Y(vis)		(LIBGGI_MODE(vis)->visible.y)
+#define LIBGGI_VIRTX(vis)	(LIBGGI_MODE(vis)->virt.x)
+#define LIBGGI_VIRTY(vis)	(LIBGGI_MODE(vis)->virt.y)
+#define LIBGGI_GT(vis)		(LIBGGI_MODE(vis)->graphtype)
 
 #define LIBGGI_FB_SIZE(mode)	(GT_ByPPP((mode)->virt.x * (mode)->virt.y, (mode)->graphtype))
 #define LIBGGI_FB_R_STRIDE(vis)	((vis)->r_frame->buffer.plb.stride)
