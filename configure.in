@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.12 2001/07/16 17:52:33 thayne Exp $
+dnl $Id: configure.in,v 1.13 2001/07/18 12:33:34 adamel Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -196,7 +196,7 @@ dnl Testing libs should use libtool but doesn't - grrrr!
 dnl This isn't a problem during the build because libtool is always used.
 dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
 save_CC="$CC"
-CC="$SHELL $top_builddir/libtool $CC"
+CC="$SHELL ./libtool $CC"
 save_LDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS -lgg"
 AC_CHECK_LIB(gii,giiInit,
