@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.2 2004/02/02 19:22:00 cegger Exp $
+/* $Id: test1.c,v 1.3 2004/09/08 18:51:39 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -46,17 +46,22 @@ static int changed(ggi_visual_t vis,int whatchanged)
 		vis,whatchanged);
 
 	switch(whatchanged) {
-		case GGI_CHG_APILIST:
-			{	int temp;
-				char api[256],args[256];
-				for(temp=0;0==ggiGetAPI(vis,temp,api,args);temp++) {
-					strcat(api,"-test1");
-                	                printf("Would now load #%d: %s(%s)\n",temp,api,args);
-				}
+	case GGI_CHG_APILIST:
+		{	int temp;
+			char api[GGI_MAX_APILEN];
+			char args[GGI_MAX_APILEN];
+			for (temp=0;
+			    0 == ggiGetAPI(vis, temp, api, args);
+			    temp++)
+			{
+				ggstrlcat(api,"-test1", sizeof(api));
+				printf("Would now load #%d: %s(%s)\n",
+					temp, api, args);
 			}
-			break;
+		}
+		break;
 	}
-                                
+
 	return 0;
 }
 
