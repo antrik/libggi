@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2004/09/08 20:16:39 cegger Exp $
+/* $Id: crossblit.c,v 1.3 2004/09/13 10:47:47 cegger Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -425,8 +425,8 @@ int GGI_kgi_radeon_crossblit_3d (ggi_visual *src, int sx, int sy, int w,
         if ((src->r_frame == NULL) ||
 	    (src->r_frame->layout != blPixelLinearBuffer) ||
 	    (GT_SIZE(LIBGGI_GT(src)) < 8) ||
-	    (GT_SCHEME(LIBGGI_MODE(src)->graphtype) != GT_TRUECOLOR) ||
-	    (GT_SCHEME(LIBGGI_MODE(dst)->graphtype) != GT_TRUECOLOR)) {
+	    (GT_SCHEME(LIBGGI_GT(src)) != GT_TRUECOLOR) ||
+	    (GT_SCHEME(LIBGGI_GT(dst)) != GT_TRUECOLOR)) {
 		trn = dst;
 		get = 1;
 		txformat = ctx->put_ctx.txformat; 
