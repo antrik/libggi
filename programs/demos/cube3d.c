@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.13 2004/06/06 20:14:40 pekberg Exp $
+/* $Id: cube3d.c,v 1.14 2004/09/08 19:19:39 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -71,14 +71,14 @@
 #endif
 #include <signal.h>
 
-ggi_visual_t vis;
-int vissizex, vissizey;
+static ggi_visual_t vis;
+static int vissizex, vissizey;
 
 /* Pixel value for white, red and black. See main() on how to get at it.
  */
-ggi_pixel white;
-ggi_pixel red;
-ggi_pixel black;
+static ggi_pixel white;
+static ggi_pixel red;
+static ggi_pixel black;
 
 /* In case we were called with wrong parameters, give an explanation.
  */
@@ -109,15 +109,15 @@ typedef struct Texture {
 } Texture;
 
 
-Vector2D the_texcoord[4] = {
+static Vector2D the_texcoord[4] = {
 	{0.0, 0.0}, {1.0, 0.0}, {1.0, 1.0}, {0.0, 1.0}
 };
 
-Texture the_textures[6];
+static Texture the_textures[6];
 
-Point3D the_points[24];
+static Point3D the_points[24];
 
-Point3D the_original_points[24] = {
+static Point3D the_original_points[24] = {
 	{{-100, -75, -130}, {0, 0}},
 	{{100, -75, -130}, {0, 0}},
 	{{100, +75, -130}, {0, 0}},
@@ -150,7 +150,7 @@ Point3D the_original_points[24] = {
 	{{-100, 105, +75}, {0, 0}}
 };
 
-int numpoints = 24;
+static int numpoints = 24;
 
 typedef struct {
 	int numedges;
@@ -161,7 +161,7 @@ typedef struct {
 	Texture *texture;
 } Polygon3D;
 
-Polygon3D the_polys[6] = {
+static Polygon3D the_polys[6] = {
 	{4, the_points + 0, the_texcoord, {0, 0, 0}, {0, 0, 0}, 0,
 	 the_textures + 0},
 	{4, the_points + 4, the_texcoord, {0, 0, 0}, {0, 0, 0}, 0,
@@ -186,12 +186,12 @@ typedef struct {
 	Polygon3D *polys;
 } Scene3D;
 
-Scene3D the_scene = {
+static Scene3D the_scene = {
 	6,
 	the_polys
 };
 
-Vector3D eyepos = { 0, 0, -1000 };
+static Vector3D eyepos = { 0, 0, -1000 };
 
 static inline void
 Matrix_times_Vector(double *mat, double *vec, double *result)

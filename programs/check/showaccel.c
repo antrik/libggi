@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.6 2004/05/14 14:13:06 aldot Exp $
+/* $Id: showaccel.c,v 1.7 2004/09/08 19:18:28 cegger Exp $
 ******************************************************************************
 
    showaccel.c
@@ -44,7 +44,7 @@
 
 #include "config.h"
 
-ggi_visual_t vis;
+static ggi_visual_t vis;
 
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).

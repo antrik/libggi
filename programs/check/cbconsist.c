@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.13 2004/04/04 19:13:55 cegger Exp $
+/* $Id: cbconsist.c,v 1.14 2004/09/08 19:14:18 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -221,7 +221,7 @@ static void cbtime(cbcstate * s)
  * possible pixel formats.
  */
 #define MAX_MEMVIS_FMTS 8
-char *memvis_fmts[MAX_MEMVIS_FMTS] = {
+static char *memvis_fmts[MAX_MEMVIS_FMTS] = {
 	"memory:-pixfmt=r5g6b5",
 	"memory:-pixfmt=r4g4b4p4",
 	"memory:-pixfmt=b5g6r5",
@@ -232,7 +232,7 @@ char *memvis_fmts[MAX_MEMVIS_FMTS] = {
 	"memory:-pixfmt=p8r8g8b8"
 };
 
-ggi_graphtype memvis_gts[MAX_MEMVIS_FMTS] = {
+static ggi_graphtype memvis_gts[MAX_MEMVIS_FMTS] = {
 	GT_16BIT,
 	GT_16BIT,
 	GT_16BIT,
@@ -282,7 +282,7 @@ static int mkmemvis(int i, char **str,
 	return i;
 }
 
-char optstring[] = "s:d:haftc";
+static char optstring[] = "s:d:haftc";
 
 int main(int argc, char **argv)
 {

@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.7 2004/05/17 18:03:19 aldot Exp $
+/* $Id: showaccel2.c,v 1.8 2004/09/08 19:18:28 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -46,7 +46,7 @@ TODO: notify on exit (terminate with single keystroke then print final ratio.
 
 #include "config.h"
 
-ggi_visual_t vis;
+static ggi_visual_t vis;
 
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).
