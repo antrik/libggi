@@ -1,0 +1,3 @@
+SUBDIRS = mach64
+
+DIST_SUBDIRS = mach64
