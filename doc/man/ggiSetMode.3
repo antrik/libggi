@@ -1,4 +1,4 @@
-.TH "ggiSetMode" 3 "2004-10-15" "libggi-current" GGI
+.TH "ggiSetMode" 3 "2004-11-11" "libggi-current" GGI
 .SH NAME
 \fBggiSetMode\fR, \fBggiSetTextMode\fR, \fBggiSetGraphMode\fR, \fBggiSetSimpleMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
 .SH SYNOPSIS
@@ -39,5 +39,10 @@ the current mode of the visual.
 .SH RETURN VALUE
 The mode setting functions return \fB0\fR if the mode is set successfully,
 otherwise an error code.
+.SH NOTES
+Do not set a mode before checking it. You may be able to set up
+a certain mode on one target, but not other targets.
+
+See the example in \fBggiCheckMode(3)\fR
 .SH SEE ALSO
 \fBggiCheckMode(3)\fR, \fBggiOpen(3)\fR, \fBggi_mode(3)\fR
