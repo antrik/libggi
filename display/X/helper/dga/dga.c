@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.11 2005/02/09 06:28:43 orzo Exp $
+/* $Id: dga.c,v 1.12 2005/02/10 18:06:18 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -95,10 +95,13 @@ priv->modes[i].gt = GT_CONSTRUCT(modes[i].depth, ggigt, modes[i].bitsPerPixel);
 
 #endif
 
-static int ggi_xdga_restore_mode(ggi_visual *vis) {
+static int ggi_xdga_restore_mode(ggi_visual *vis)
+{
 	ggi_x_priv *priv;
+	int screen;
+
 	priv = GGIX_PRIV(vis);
-	int screen = DefaultScreen(priv->disp);
+	screen = DefaultScreen(priv->disp);
 
 	if (priv->priv != NULL) XFree(priv->priv);
 	priv->priv = XDGASetMode(priv->disp, screen, 0);
@@ -228,6 +231,7 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode)
 {
 	ggi_x_priv *priv;
 	XDGAMode *dgamodes;
+	ggi_checkmode_t *cm;
 	int i;
 	int err;
 	int no_modes = 1; /* true we haven't found a mode */
@@ -245,7 +249,6 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode)
     
 	/* Find max values for maxed->virt and such. */
 
-	ggi_checkmode_t *cm;
 	cm = _GGI_generic_checkmode_create();
 
 	/* Initialize best mode search */
