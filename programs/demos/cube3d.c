@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.14 2004/09/08 19:19:39 cegger Exp $
+/* $Id: cube3d.c,v 1.15 2004/09/12 10:02:42 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -88,7 +88,7 @@ static void usage(const char *prog)
 		"%s [[-slavex,slavey] [program]]* \n\n"
 		"Example: %s -320,200 nixterm -160,100 ./demo", prog,
 		prog);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 typedef double Matrix3D[3][3];
