@@ -435,6 +435,50 @@ things like GGI-multiplexers.
 Unaccelerated.
 
 
+===========
+tele-target
+===========
+
+Description
++++++++++++
+
+Forwards the display over a network via TCP.
+First, ggiteleserver must run on the remote host you wanna forward the display output to.
+ggiteleserver uses the default target for output and port to listen on, if not specified.
+Then start the GGI application (= the client) on the local host.
+
+The default port is 27780.
+
+
+Arguments
++++++++++
+
+Client side:
+
+inet:<remote-host>[:port]
+
+Connects to the given remote host on the specified port. Note, that ggiteleserver must already listen
+on that. Otherwise it will fail. If port is not specified, the default one is used.
+
+See ggiteleserver --help
+
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Accelerated, if the remote display is.
+
+
 ==============
 svgalib-target
 ==============
