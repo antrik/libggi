@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.1 2004/08/26 11:22:23 cegger Exp $
+/* $Id: init.c,v 1.2 2004/08/27 07:08:53 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -122,7 +122,7 @@ static void testcase4(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("expected return value: %i\n"
 			"actual return value: %i\n",
-			GGI_OK, err);
+			GGI_EARGINVAL, err);
 		return;
 	}
 
