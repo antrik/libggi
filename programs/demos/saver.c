@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.2 2001/06/20 22:54:55 skids Exp $
+/* $Id: saver.c,v 1.3 2003/05/03 16:44:09 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -440,7 +440,8 @@ void blank_screen2(int interactive)
  */
 int main(int argc,char *argv[])
 {
-	int ic,ic2,cnt,x;
+	int ic,ic2,cnt;
+	uint32 x;
 	
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",

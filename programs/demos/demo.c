@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.11 2003/02/01 05:30:36 skids Exp $
+/* $Id: demo.c,v 1.12 2003/05/03 16:42:59 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -772,7 +772,7 @@ int main(int argc, char **argv)
 	TestName("Hline Put");
 	waitabit();
 
-	for(x=0; x<sizeof(put_buf); x++) put_buf[x]=x&0xff;
+	for(x = 0; x < (signed)sizeof(put_buf); x++) put_buf[x]=x&0xff;
 
 	for(y=10; y<vy; y++) {
 		ggiPutHLine(vis, 0, y, vx, put_buf);
@@ -1003,10 +1003,10 @@ int main(int argc, char **argv)
 			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
 				uint8 *linestart;
 				linestart = (uint8 *)dbuf->write + 
-				  stride2 * i + stride * y;
+					stride2 * i + stride * y;
 				x = 0;
 				if (ggiKbhit(vis)) goto dbuf_tidy;
-				while (x < vx * GT_SIZE(type)/wordsize) {
+				while (x < vx * (signed)GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
 					  *((uint32 *)linestart+x) = random();
