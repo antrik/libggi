@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.144 2004/10/24 11:11:12 cegger Exp $
+dnl $Id: configure.in,v 1.145 2004/10/27 09:25:06 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -9,7 +9,6 @@ AC_CONFIG_SRCDIR([include/ggi/ggi.h])
 AM_INIT_AUTOMAKE(libggi,2.2.0,-)
 
 AM_MAINTAINER_MODE
-_LT_SET_OPTION([disable-static])
 
 
 AC_CANONICAL_BUILD
@@ -112,10 +111,7 @@ AC_PROG_RANLIB
 dnl Make Objective-C work with automake 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)
 
-_LT_SET_OPTION([dlopen])
-_LT_SET_OPTION([win32-dll])
-
-LT_INIT()
+LT_INIT([disable-static dlopen win32-dll])
 
 dnl ========================================================================
 dnl Generate libtool
