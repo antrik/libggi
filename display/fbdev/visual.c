@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2004/11/06 22:48:27 cegger Exp $
+/* $Id: visual.c,v 1.23 2004/11/07 21:58:39 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -300,7 +300,7 @@ static int do_cleanup(ggi_visual *vis)
 		free(prevtim);
 	}
 	free(priv);
-	FBDEV_PRIV(vis) = NULL;
+	LIBGGI_PRIVATE(vis) = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -569,12 +569,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	FBDEV_PRIV(vis) = priv = calloc(1, sizeof(ggi_fbdev_priv));
+	priv = calloc(1, sizeof(ggi_fbdev_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
 	GGIDPRINT("display-fbdev: Got private mem.\n");
-	
+	LIBGGI_PRIVATE(vis) = priv;
+
 	priv->fb_ptr = NULL;
 	priv->need_timings = 1;
 	priv->flags = 0;
@@ -602,7 +603,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	GGIDPRINT("display-fbdev: Parsing input options.\n");
-	
+
 	priv->inputs = FBDEV_INP_KBD | FBDEV_INP_MOUSE;
 
 	if (toupper((uint8)options[OPT_NOKBD].result[0]) != 'N') {
