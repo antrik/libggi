@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.6 2003/07/05 22:13:40 cegger Exp $
+/* $Id: clip.c,v 1.7 2004/05/03 21:44:38 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -93,8 +93,9 @@ static int FloorDiv(int a, int b)
 		}
 	}
 }
+
 /*
-  Calculates |^ a/b ^| with mathamatically correct floor
+  Calculates |^ a/b ^| with mathamatically correct ceil
   */
 static int CeilDiv(int a,int b)
 {
