@@ -1264,8 +1264,92 @@ set).</para></listitem>
 </simplelist>
 
 </refsect1>
-
 </refentry>
+
+
+
+
+
+<refentry id="display-vgl">
+
+<refmeta>
+<refentrytitle><systemitem/display-vgl/</refentrytitle>
+<manvolnum/7ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname><systemitem/display-vgl/</refname>
+<refpurpose/FreeBSD/i386 console display/
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command/display-vgl/
+<arg choice=plain/:/
+
+<arg><option>-nodb</option></arg>
+<arg><option>-usedb</option></arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1>
+<title/Description/
+
+<para>
+Displays on the FreeBSD/i386 console. 16 and 32bit direct color support with
+the latest FreeBSD vgl(3) library (FreeBSD > R5.0 and a patch is available
+for FreeBSD R4.x series).
+</para>
+<para>
+Like VGL, the vgl-display depends on the current VGA/VESA modes and you
+must load the vesa.ko module to get advanced modes (higher than 680x480x8).
+</para>
+
+</refsect1>
+
+<refsect1>
+<title/Options/
+
+<variablelist>
+
+<varlistentry>
+<term><option>-nodb</option></term>
+<listitem><para>
+Don't use directbuffer.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-usedb</option></term>
+<listitem><para>
+</para>
+</varlistentry>
+</variablelist>
+
+</refsect1>
+
+<refsect1>
+<title/Features/
+  
+<simplelist>
+<member>True color support is best with directbuffer. Your
+board must provide VESA 2.1 compliance to use directbuffer. If it's an old
+S3 board, use the s3.ko module to access it's framebuffer (FreeBSD > R5.0).
+</member>
+<member>Unaccelerated (VESA).</member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+
+
+
+
+
+
 
 <refentry id="display-sub">
 
