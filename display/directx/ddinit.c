@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.20 2004/03/09 08:54:22 pekberg Exp $
+/* $Id: ddinit.c,v 1.21 2004/03/25 10:28:32 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -28,6 +28,7 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "ddinit.h"
+#include <process.h>
 
 static void DDCreateClass(directx_priv *priv);
 static int DDCreateWindow(directx_priv *priv);
@@ -106,10 +107,10 @@ int DDChangeMode(directx_priv *priv, DWORD width, DWORD height, DWORD BPP)
 
   /* set a timer to have the window refreshed at regular intervals,
      and show the window */
-  priv->timer_id = SetTimer(priv->hWnd, 1, 33, TimerProc);
-  ggUnlock(priv->lock);
+  priv->timer_id = SetTimer(priv->hWnd, 1, 33, NULL);
   ShowWindow(priv->hWnd, SW_SHOWNORMAL);
-  ggLock(priv->lock);
+  if (priv->hParent == NULL)
+    SetForegroundWindow(priv->hWnd);
 
   return 1;
 }
@@ -302,51 +303,152 @@ static BYTE XORmaskDotCursor[] =
     0x00, 0x00, 0x00, 0x00    // line 32
 };
 
+
+static void
+DDSizing(directx_priv *priv, WPARAM wParam, LPRECT rect)
+{
+	int xsize, ysize;
+	RECT diff, test1, test2;
+	DWORD ws_style = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
+
+	/* Calculate diff between client and window coords */
+	test1.top = 200;
+	test1.left = 200;
+	test1.right = 400;
+	test1.bottom = 400;
+	test2 = test1;
+	AdjustWindowRectEx(&test2, ws_style, FALSE, 0);
+	diff.top    = test1.top    - test2.top;
+	diff.bottom = test1.bottom - test2.bottom;
+	diff.left   = test1.left   - test2.left;
+	diff.right  = test1.right  - test2.right;
+
+	/* Adjust to client coords */
+	rect->top    += diff.top;
+	rect->bottom += diff.bottom;
+	rect->left   += diff.left;
+	rect->right  += diff.right;
+
+	/* Calculate new size, with regard to max/min/step */
+	xsize = rect->right - rect->left;
+	ysize = rect->bottom - rect->top;
+	if(xsize < priv->xmin)
+		xsize = priv->xmin;
+	if(xsize > priv->xmax)
+		xsize = priv->xmax;
+	if(ysize < priv->ymin)
+		ysize = priv->ymin;
+	if(ysize > priv->ymax)
+		ysize = priv->ymax;
+	xsize -= (xsize - priv->xmin) % priv->xstep;
+	ysize -= (ysize - priv->ymin) % priv->ystep;
+
+	/* Move the appropriate edge(s) */
+	switch(wParam) {
+	case WMSZ_LEFT:
+	case WMSZ_BOTTOMLEFT:
+	case WMSZ_TOPLEFT:
+		rect->left = rect->right - xsize;
+		break;
+	case WMSZ_RIGHT:
+	case WMSZ_BOTTOMRIGHT:
+	case WMSZ_TOPRIGHT:
+		rect->right = rect->left + xsize;
+		break;
+	}
+	switch(wParam) {
+	case WMSZ_TOP:
+	case WMSZ_TOPRIGHT:
+	case WMSZ_TOPLEFT:
+		rect->top = rect->bottom - ysize;
+		break;
+	case WMSZ_BOTTOM:
+	case WMSZ_BOTTOMRIGHT:
+	case WMSZ_BOTTOMLEFT:
+		rect->bottom = rect->top + ysize;
+		break;
+	}
+
+	/* Adjust back to window coords */
+	rect->top    -= diff.top;
+	rect->bottom -= diff.bottom;
+	rect->left   -= diff.left;
+	rect->right  -= diff.right;
+}
+
 /* GGI window procedure */
 
 long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  LPCREATESTRUCT lpcs;
-  PAINTSTRUCT ps;
-  HDC hdc;
-  directx_priv *priv =
-    (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
+	LPCREATESTRUCT lpcs;
+	PAINTSTRUCT ps;
+	HDC hdc;
+	directx_priv *priv =
+		(directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
 
-  switch (message) {
+	switch (message) {
 
-  case WM_CREATE:
-    lpcs = (LPCREATESTRUCT)lParam;
-    SetWindowLong(hWnd, GWL_USERDATA, (DWORD)lpcs->lpCreateParams);
-    return 0;
+	case WM_USER:
+		if(!TryEnterCriticalSection(&priv->cs)) {
+			/* spin */
+			PostMessage(hWnd, message, wParam, lParam);
+			return 0;
+		}
+		DDRedraw(priv);
+		EnterCriticalSection(&priv->redrawcs);
+		priv->redraw = 1;
+		LeaveCriticalSection(&priv->redrawcs);
+		LeaveCriticalSection(&priv->cs);
+		return 0;
 
-  case WM_PAINT:
-    hdc = BeginPaint(hWnd, &ps);
-    ggLock(priv->lock);
-    DDRedraw(priv);
-    ggUnlock(priv->lock);
-    EndPaint(hWnd, &ps);
-    return 0;
+	case WM_TIMER:
+		if(wParam != 1)
+			break;
+		/* Fall through */
+	case WM_PAINT:
+		if(!TryEnterCriticalSection(&priv->cs)) {
+			int redraw = 0;
+			EnterCriticalSection(&priv->redrawcs);
+			redraw = priv->redraw;
+			priv->redraw = 0;
+			LeaveCriticalSection(&priv->redrawcs);
+			if(redraw)
+				/* spin */
+				PostMessage(hWnd, WM_USER, wParam, lParam);
+			return 0;
+		}
+		if(message == WM_PAINT)
+			hdc = BeginPaint(hWnd, &ps);
+		DDRedraw(priv);
+		if(message == WM_PAINT)
+			EndPaint(hWnd, &ps);
+		LeaveCriticalSection(&priv->cs);
+		return 0;
 
-  case WM_CLOSE:
-    if (!priv->hParent)
-      exit(1);
-    break;
+	case WM_SIZING:
+		EnterCriticalSection(&priv->sizingcs);
+		if(priv->xstep < 0) {
+			LeaveCriticalSection(&priv->sizingcs);
+			break;
+		}
+		DDSizing(priv, wParam, (LPRECT)lParam);
+		LeaveCriticalSection(&priv->sizingcs);
+		return TRUE;
 
-  }
-  return DefWindowProc(hWnd, message, wParam, lParam);
-}
+	case WM_CREATE:
+		lpcs = (LPCREATESTRUCT)lParam;
+		SetWindowLong(hWnd,
+		              GWL_USERDATA,
+		              (DWORD)lpcs->lpCreateParams);
+		return 0;
 
-/* timer callback */
-
-void CALLBACK
-TimerProc(HWND hWnd, UINT uMsg, UINT idEvent, DWORD dwTime)
-{
-  directx_priv *priv =
-    (directx_priv *)GetWindowLong(hWnd, GWL_USERDATA);
-  ggLock(priv->lock);
-  DDRedraw(priv);
-  ggUnlock(priv->lock);
+	case WM_CLOSE:
+		if (!priv->hParent)
+			exit(1);
+		break;
+	}
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 /* create and register the GGI window class */
@@ -395,7 +497,7 @@ static void DDCreateClass(directx_priv *priv)
 static int DDCreateWindow(directx_priv *priv)
 {
   int w = 640, h = 480; /* default window size */
-  int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX;
+  int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
 		  /* toplevel flags */
 
   if (priv->hParent) {
@@ -440,8 +542,8 @@ static int DDCreateWindow(directx_priv *priv)
 
 /* create the event loop */
  
-static DWORD WINAPI
-DDEventLoop(LPVOID lpParm)
+static unsigned __stdcall
+DDEventLoop(void *lpParm)
 {
   MSG msg;
   directx_priv *priv = (directx_priv*)lpParm;
@@ -454,8 +556,6 @@ DDEventLoop(LPVOID lpParm)
 
   SetEvent(priv->hInit);
 
-  SetForegroundWindow(priv->hWnd);
-
   while (GetMessage(&msg, priv->hWnd, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
@@ -466,10 +566,10 @@ DDEventLoop(LPVOID lpParm)
 
 static int DDCreateThread(directx_priv *priv)
 {
-  DWORD ThreadID;
+  unsigned ThreadID;
   priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
-  priv->hThreadID = CreateThread(NULL, 0, DDEventLoop, (LPVOID)priv, 0,
-				 &ThreadID);
+  priv->hThreadID = (HANDLE)_beginthreadex(NULL, 0, DDEventLoop, priv, 0,
+					   &ThreadID);
   if (priv->hThreadID) {
     WaitForSingleObject(priv->hInit, INFINITE);
     return 1;
@@ -550,11 +650,11 @@ static int DDCreateSurface(directx_priv *priv)
 static void DDDestroySurface(directx_priv *priv)
 {
   if (priv->lpbdds != NULL) {
-    IDirectDraw_Release(priv->lpbdds);
+    IDirectDrawSurface_Release(priv->lpbdds);
     priv->lpbdds = NULL;
   }
   if (priv->lppdds != NULL) {
-    IDirectDraw_Release(priv->lppdds);
+    IDirectDrawSurface_Release(priv->lppdds);
     priv->lppdds = NULL;
   }
 }
@@ -564,12 +664,20 @@ static void DDDestroySurface(directx_priv *priv)
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
 {
   if (!priv->hParent) {
-    int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX;
+    EnterCriticalSection(&priv->sizingcs);
+    priv->xmin = width;
+    priv->ymin = height;
+    priv->xmax = width;
+    priv->ymax = height;
+    priv->xstep = 1;
+    priv->ystep = 1;
+    LeaveCriticalSection(&priv->sizingcs);
+    int ws_style = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
     RECT r;
     GetWindowRect(priv->hWnd, &r);
     r.right = r.left+width;
     r.bottom = r.top+height;
-    AdjustWindowRectEx(&r, ws_flags, 0, 0);
+    AdjustWindowRectEx(&r, ws_style, 0, 0);
     width = r.right-r.left;
     height = r.bottom-r.top;
     if (r.left < 0) r.left = 0;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/02/14 13:45:37 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/03/25 10:28:32 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -63,10 +63,10 @@ directx_acquire(ggi_resource * res, uint32 actype)
 		res->count++;
 		return 0;
 	}
-	ggLock(priv->lock);
+	EnterCriticalSection(&priv->cs);
 	dbuf->write = priv->lpSurfaceAdd;
 	dbuf->read = dbuf->write;
-	ggUnlock(priv->lock);
+	LeaveCriticalSection(&priv->cs);
 
 	res->curactype |= actype;
 	res->count++;
@@ -92,9 +92,9 @@ directx_release(ggi_resource * res)
 int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
-	ggLock(priv->lock);
+	EnterCriticalSection(&priv->cs);
 	DDRedraw(priv);
-	ggUnlock(priv->lock);
+	LeaveCriticalSection(&priv->cs);
 	return 0;
 }
 
@@ -138,7 +138,6 @@ static void GetScreenParams(int *depth, int *width, int *height)
 int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
-	uint8 i;
 	uint8 err = 0;
 	int depth, width, height, defwidth, defheight;
 	ggi_graphtype deftype;
@@ -204,16 +203,16 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	      && mode->visible.y > 0
 	      && mode->visible.x <= width
 	      && mode->visible.y <= height
-	      && (!priv->hParent ||
-		  mode->visible.x == defwidth &&
-		  mode->visible.y == defheight)))
+	      && (!priv->hParent
+	          || (mode->visible.x == defwidth
+	              && mode->visible.y == defheight))))
 	{
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
 		err = -1;
 	}
 
-	if (GT_SIZE(mode->graphtype) != depth)
+	if (GT_SIZE(mode->graphtype) != (unsigned)depth)
 	{
 		mode->graphtype = deftype;
 		err = -1;
@@ -237,11 +236,11 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 
 	if (err) return err;
 
-	ggLock(priv->lock);
+	EnterCriticalSection(&priv->cs);
 	err = _ggi_physz_figure_size(mode, priv->physzflags,
 				&priv->physz,
 				0, 0, mode->visible.x, mode->visible.y);
-	ggUnlock(priv->lock);
+	LeaveCriticalSection(&priv->cs);
 
 	return err;
 }
@@ -260,7 +259,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		return -1;
 	}
 
-	ggLock(priv->lock);
+	EnterCriticalSection(&priv->cs);
 
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
@@ -286,7 +285,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 		res = malloc(sizeof(ggi_resource));
 		if (res == NULL) {
-			ggUnlock(priv->lock);
+			LeaveCriticalSection(&priv->cs);
 			return GGI_EFATAL;
 		}
 		LIBGGI_APPLIST(vis)->last_targetbuf
@@ -322,8 +321,6 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
-	ggUnlock(priv->lock);
-
 	for (id = 1; GGI_directx_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL) != 0) {
 			fprintf(stderr, "display-directx: Error opening the "
@@ -333,6 +330,8 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		GGIDPRINT("Success in loading %s (%s)\n", libname, libargs);
 	}
 
+	LeaveCriticalSection(&priv->cs);
+
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;
@@ -341,10 +340,14 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 int GGI_directx_getmode(ggi_visual * vis, ggi_mode * tm)
 {
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
+
 	LIBGGI_APPASSERT(vis != NULL, "directx: GGIgetmode: Visual == NULL");
 
+	EnterCriticalSection(&priv->cs);
 	/* We assume the mode in the visual to be OK */
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
+	LeaveCriticalSection(&priv->cs);
 
 	return 0;
 }

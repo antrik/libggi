@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2004/02/23 14:24:55 pekberg Exp $
+/* $Id: visual.c,v 1.15 2004/03/25 10:28:32 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -61,12 +61,14 @@ static const gg_option optlist[] =
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	directx_priv *priv = DIRECTX_PRIV(vis);
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
 
-	ggLock(priv->lock);
+	EnterCriticalSection(&priv->cs);
 	DDShutdown(priv);
-	ggUnlock(priv->lock);
-	ggLockDestroy(priv->lock);
+	LeaveCriticalSection(&priv->cs);
+	DeleteCriticalSection(&priv->cs);
+	DeleteCriticalSection(&priv->redrawcs);
+	DeleteCriticalSection(&priv->sizingcs);
 	free(priv);
 
 	return 0;
@@ -98,8 +100,17 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	memset(priv, 0, sizeof(directx_priv));
         LIBGGI_PRIVATE(vis) = priv;
 
-	priv->lock = ggLockCreate();
-	if (priv->lock == NULL) goto err2;
+	InitializeCriticalSection(&priv->cs);
+	InitializeCriticalSection(&priv->redrawcs);
+	priv->redraw = 1;
+
+	InitializeCriticalSection(&priv->sizingcs);
+	priv->xmin = 0;
+	priv->ymin = 0;
+	priv->xmax = 0;
+	priv->ymax = 0;
+	priv->xstep = -1;
+	priv->ystep = -1;
 
 	if (args) {
 		args = ggParseOptions((char *) args, options, NUM_OPTS);
@@ -172,12 +183,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         vis->opdisplay->getmode = GGI_directx_getmode;
         vis->opdisplay->checkmode = GGI_directx_checkmode;
         vis->opdisplay->flush = GGI_directx_flush;
+        vis->opdisplay->getapi = GGI_directx_getapi;
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return GGI_OK;
 
 err3:
-	ggLockDestroy(priv->lock);
+	DeleteCriticalSection(&priv->cs);
+	DeleteCriticalSection(&priv->redrawcs);
+	DeleteCriticalSection(&priv->sizingcs);
 err2:
 	free(LIBGGI_GC(vis));
 err1:

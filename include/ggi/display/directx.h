@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.6 2004/02/14 22:30:46 cegger Exp $
+/* $Id: directx.h,v 1.7 2004/03/25 10:28:32 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -36,7 +36,7 @@
 ggifunc_getmode                 GGI_directx_getmode;
 ggifunc_setmode                 GGI_directx_setmode;
 ggifunc_checkmode               GGI_directx_checkmode;
-/*ggifunc_getapi                GGI_directx_getapi;*/
+ggifunc_getapi                  GGI_directx_getapi;
 ggifunc_flush                   GGI_directx_flush;
 
 /*ggifunc_setreadframe          GGI_directx_setreadframe;*/
@@ -73,7 +73,9 @@ typedef struct directx_priv
 	UINT timer_id;
 
 	gii_input *inp;
-	void *lock;
+	CRITICAL_SECTION cs;
+	CRITICAL_SECTION redrawcs;
+	int redraw;
 
         HANDLE hWnd, hParent;
         HANDLE hInstance;
@@ -83,6 +85,15 @@ typedef struct directx_priv
         DWORD ColorDepth;
         char BPP;
 
+	/* resizing info */
+	CRITICAL_SECTION sizingcs;
+	int xmin;
+	int ymin;
+	int xmax;
+	int ymax;
+	int xstep;
+	int ystep;
+
 	HANDLE hThreadID, hInit;
 	LPDIRECTDRAW lpdd;
 	LPDIRECTDRAW2 lpddext;
@@ -90,7 +101,5 @@ typedef struct directx_priv
 	LPDIRECTDRAWSURFACE lpbdds;
 	char *lpSurfaceAdd;
 } directx_priv;
-
-#define DIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
 
 #endif /* _GGI_DISPLAY_DIRECTX_H */
