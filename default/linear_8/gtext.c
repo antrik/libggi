@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: gtext.c,v 1.2 2003/07/13 06:52:32 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -36,7 +36,7 @@ int GGI_lin8_putc(ggi_visual *vis, int x, int y, char c)
 	int offset, x_run, y_run;
 	uint8 *bitmap;
 
-	bitmap = font + ( c * char_height );
+	bitmap = (uint8 *)(font) + ( c * char_height );
 	x_run = char_width;
 	y_run = char_height;
 	offset = 0;

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: gtext.c,v 1.2 2003/07/13 06:48:15 cegger Exp $
 ******************************************************************************
 
    Linear 1 character drawing.
@@ -50,7 +50,7 @@ int GGI_lin1_putc(ggi_visual *vis, int x, int y, char c)
 		return ggiDrawBox(vis, x, y, 8, 8);
 	}
 
-	src = font + ((int) (uint8) c << 3);
+	src = (uint8 *)(font) + ((int) (uint8) c << 3);
 	rev = (LIBGGI_GC_BGCOLOR(vis) & 1);
 
 	if (y < LIBGGI_GC(vis)->cliptl.y) {
