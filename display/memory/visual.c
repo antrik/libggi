@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2002/05/22 04:21:47 skids Exp $
+/* $Id: visual.c,v 1.7 2002/07/05 05:38:04 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -266,7 +266,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Do not blank the framebuffer on SetMode.
 	 * (Preserves data in prealloced memory area.) 
 	 */
-	priv->noblank = (options[OPT_NOBLANK].result[0] == 'n');
+	priv->noblank = (options[OPT_NOBLANK].result[0] != 'n');
 
 	vis->opdisplay->flush=GGI_memory_flush; 
 	vis->opdisplay->getmode=GGI_memory_getmode;
