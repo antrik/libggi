@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.128 2004/06/26 21:06:01 aldot Exp $
+dnl $Id: configure.in,v 1.129 2004/08/11 10:57:16 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -696,7 +696,13 @@ fi
 
 if test "x$build_aa_target" != "xno"; then
   AC_CHECK_HEADER(aalib.h,
-	AC_CHECK_LIB(aa, aa_autoinit, foo=bar, build_aa_target="no"),
+	dnl Testing libs should use libtool but doesn't - grrrr!
+	dnl This isn't a problem during build because libtool is always used.
+	dnl Wish I could use $LIBTOOL, but it is written for Makefile use.
+	save_CC="$CC"
+	CC="$SHELL ./libtool $CC"
+	AC_CHECK_LIB(aa, aa_autoinit, foo=bar, build_aa_target="no")
+	CC="$save_CC",
 	build_aa_target="no")
 fi
 
