@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/10/07 18:45:34 cegger Exp $
+/* $Id: visual.c,v 1.7 2003/10/07 19:53:19 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -96,11 +96,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (args) {
 		args = ggParseOptions((char *) args, options, NUM_OPTS);
 		if (args == NULL) {
-			fprintf(stderr, "display-memory: error in "
+			fprintf(stderr, "display-directx: error in "
 				"arguments.\n");
 		}
 	}
-        
+
 	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
 			&(priv->physzflags), &(priv->physz)))
 	{
