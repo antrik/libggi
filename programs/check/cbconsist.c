@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.4 2002/09/29 18:12:01 skids Exp $
+/* $Id: cbconsist.c,v 1.5 2002/10/10 14:53:42 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -333,6 +333,7 @@ int main(int argc, char **argv) {
   if ((s.flags & CBC_REALDST) && (s.flags & CBC_REALSRC)) {
     ggi_pixel res;
     fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+    fflush(stdout);
     res = cbconsist(&s);
     if (res && (s.flags & CBC_ABORT)) {
       fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
@@ -340,6 +341,7 @@ int main(int argc, char **argv) {
     }
     fprintf(stdout, "%i bad values.\n", res);
     fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+    fflush(stdout);
     cbtime(&s);
   } 
   else if (s.flags & CBC_REALDST) {
@@ -349,6 +351,7 @@ int main(int argc, char **argv) {
       ggi_pixel res;
 
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
       res = cbconsist(&s);
       if (res && (s.flags & CBC_ABORT)) {
 	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
@@ -356,6 +359,7 @@ int main(int argc, char **argv) {
       }
       fprintf(stdout, "%i bad values.\n", res);
       fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
       cbtime(&s);
       ggiClose(s.svis);
       i++;
@@ -368,6 +372,7 @@ int main(int argc, char **argv) {
       ggi_pixel res;
 
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
       res = cbconsist(&s);
       if (res && (s.flags & CBC_ABORT)) {
 	fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
@@ -375,6 +380,7 @@ int main(int argc, char **argv) {
       }
       fprintf(stdout, "%i bad values.\n", res);
       fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
       cbtime(&s);
       ggiClose(s.dvis);
       i++;
@@ -389,6 +395,7 @@ int main(int argc, char **argv) {
 	ggi_pixel res;
 	
 	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
+        fflush(stdout);
 	res = cbconsist(&s);
 	if (res && (s.flags & CBC_ABORT)) {
 	  fprintf(stdout, "\nBad value converting pixel value %x.\n", res);
@@ -396,6 +403,7 @@ int main(int argc, char **argv) {
 	}
 	fprintf(stdout, "%i bad values.\n", res);
 	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+        fflush(stdout);
 	cbtime(&s);
 	ggiClose(s.svis);
 	j++;
