@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2003/01/29 01:17:46 skids Exp $
+/* $Id: visual.c,v 1.6 2003/02/01 06:06:18 skids Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -45,9 +45,9 @@ static int rwframes_changed_2d(ggi_visual *vis) {
 
 	ctx = KGI_ACCEL_PRIV(vis);
 	if (vis->w_frame) ctx->gui2d_ctx.default_pitch_offset.offset = 
-	  ((char *)(vis->w_frame->write) - (char*)(KGI_PRIV(vis)->fb)) / 1024;
+	  ((kgi_u8_t *)vis->w_frame->write - KGI_PRIV(vis)->fb) / 1024;
 	if (vis->w_frame) ctx->src_pitch_offset.offset = 
-	  ((char *)(vis->r_frame->write) - (char*)(KGI_PRIV(vis)->fb)) / 1024;
+	  ((kgi_u8_t *)(vis->r_frame->write) - KGI_PRIV(vis)->fb) / 1024;
 	memset(&packet, 0, sizeof(packet));
 	packet.h1.base_index = DEFAULT_PITCH_OFFSET >> 2;
 	packet.h1.count = 0;
@@ -71,9 +71,9 @@ static int rwframes_changed_3d(ggi_visual *vis) {
 	ctx = KGI_ACCEL_PRIV(vis);
 
 	if (vis->r_frame) ctx->copybox_ctx.txoffset = ctx->put_ctx.txoffset = 
-	  (char *)(vis->r_frame->read) - (char*)(KGI_PRIV(vis)->fb);
+	   (kgi_u8_t *)(vis->r_frame->read) - KGI_PRIV(vis)->fb;
 	if (vis->w_frame) ctx->base_ctx.rb3d_coloroffset = 
-		(char *)(vis->w_frame->write) - (char*)(KGI_PRIV(vis)->fb);
+	   (kgi_u8_t *)(vis->w_frame->write) - KGI_PRIV(vis)->fb;
 
 	memset(&packet, 0, sizeof(packet));
 	packet.h1.base_index = PP_TXOFFSET_1 >> 2;
@@ -105,7 +105,7 @@ static int origin_changed(ggi_visual *vis) {
 	packet.h1.base_index = CRTC_OFFSET >> 2;
 	packet.h1.count = 0;	
 	packet.crtc_offset = 
-	  (char *)(db->read) - (char*)(KGI_PRIV(vis)->fb);
+	  (kgi_u8_t *)(db->read) - KGI_PRIV(vis)->fb;
 	packet.crtc_offset +=
 	  (vis->origin_y * LIBGGI_VIRTX(vis) + vis->origin_x) * GT_SIZE(gt)/8;
 	switch (GT_SIZE(gt)) {
@@ -250,9 +250,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         ctx->text_ctx.txformat.non_power2 = 0;
 	ctx->text_ctx.txformat.txwidth = 0xb;
 	ctx->text_ctx.txformat.txheight = 0x3;
-	ctx->text_ctx.txoffset = 
-	  (char *)KGI_PRIV(vis)->font - (char *)KGI_PRIV(vis)->fb;
+	ctx->text_ctx.txoffset = (kgi_u32_t)KGI_PRIV(vis)->font_gp;
 	ctx->text_ctx.txcblend = 0x000c3080;
+
+	ctx->swatch_inuse = 0;
 
 	if (use3d) RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
 	else RADEON_RESTORE_CTX(vis, RADEON_GUI2D_CTX);
@@ -280,6 +281,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			GGIDPRINT("Accelerating Put* functions.\n");
 			vis->opdraw->putc         = GGI_kgi_radeon_putc_3d;
 			vis->opdraw->puts         = GGI_kgi_radeon_puts_3d;
+			vis->opdraw->putbox       = GGI_kgi_radeon_putbox_3d;
+			vis->opdraw->puthline     = GGI_kgi_radeon_puthline_3d;
+			vis->opdraw->putvline     = GGI_kgi_radeon_putvline_3d;
 		}
 		KGI_PRIV(vis)->rwframes_changed = rwframes_changed_3d;
 	} else {

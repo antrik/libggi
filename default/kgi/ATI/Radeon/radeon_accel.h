@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.7 2003/01/29 01:17:45 skids Exp $
+/* $Id: radeon_accel.h,v 1.8 2003/02/01 06:06:18 skids Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -36,6 +36,8 @@ typedef struct
 
 	ggi_accel_t *accel;
 	uint32 ctx_loaded;
+
+	kgi_size_t swatch_inuse;
 #define RADEON_BAD_CTX 0
 #define RADEON_BASE_CTX 1
 	struct {
@@ -171,6 +173,9 @@ ggifunc_putc        GGI_kgi_radeon_putc_2d;
 ggifunc_putc        GGI_kgi_radeon_putc_3d;
 ggifunc_puts        GGI_kgi_radeon_puts_2d;
 ggifunc_puts        GGI_kgi_radeon_puts_3d;
+ggifunc_putbox      GGI_kgi_radeon_putbox_3d;
+ggifunc_putvline    GGI_kgi_radeon_puthline_3d;
+ggifunc_puthline    GGI_kgi_radeon_putvline_3d;
 ggifunc_getcharsize GGI_kgi_radeon_getcharsize;
 
 #endif

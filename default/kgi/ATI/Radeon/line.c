@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.3 2003/01/16 00:33:39 skids Exp $
+/* $Id: line.c,v 1.4 2003/02/01 06:06:18 skids Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -117,5 +117,198 @@ int GGI_kgi_radeon_drawline_3d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	RADEON_WRITEPACKET(vis, packet);
         if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);
 
+	return 0;
+}
+
+int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, void *buf)
+{
+	int wb, w32;
+	radeon_context_t *ctx;
+
+	struct {
+		cce_type3_header_t h;
+		cce_se_se_vtx_fmt_t vfmt;
+		cce_se_se_vf_cntl_t vctl;
+		/* TODO: this wrongly assumes float is 32 bit everywhere. */
+		float v1x, v1y, v1s, v1t; /* v1z; */ 
+		float v2x, v2y, v2s, v2t; /* v2z; */ 
+		float v3x, v3y, v3s, v3t; /* v3z; */ 
+	} packet;
+	struct {
+		cce_type0_header_t h;
+		uint32 txoffset;
+	} offsetpkt;
+
+
+	ctx = RADEON_CONTEXT(vis);
+
+	wb = GT_ByPP(LIBGGI_GT(vis)) * w;
+	w32 = ((wb + 31) / 32) * 32;
+
+	if (ctx->ctx_loaded != RADEON_PUT_CTX) {
+		ctx->put_ctx.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+		ctx->put_ctx.tex_size.vsize = 1;
+		ctx->put_ctx.txpitch.txpitch = (w32/32) - 1;
+		RADEON_RESTORE_CTX(vis, RADEON_PUT_CTX);
+	} else {
+		struct {
+			cce_type0_header_t h;
+			pp_tex_size_t tex_size;
+			pp_txpitch_t txpitch;
+		} packet2;
+
+		memset(&packet2, 0, sizeof(packet2));
+
+		packet2.h.base_index = PP_TEX_SIZE_1 >> 2;
+		packet2.h.count = 1;
+		packet2.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+		packet2.tex_size.vsize = 1;
+		packet2.txpitch.txpitch = (w32/32) - 1;
+		
+		RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
+		RADEON_WRITEPACKET(vis, packet2);
+		ctx->ctx_loaded = RADEON_PUT_CTX;
+	}
+
+	memset(&packet, 0, sizeof(packet));
+
+	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	packet.h.count     = 13;
+	packet.h.type      = 3;
+
+	packet.vfmt.st0 = 1;
+	packet.vfmt.z = 0 /* 1 */;
+
+	packet.vctl.num_vertices = 3;
+	packet.vctl.en_maos = 1;
+	packet.vctl.fmt_mode = 1;
+	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
+	packet.vctl.prim_type = 8;   /* Rectangle list */
+
+	packet.v1x = packet.v3x = x;
+	packet.v2x = x + w;
+	packet.v1y = packet.v2y = y;
+	packet.v3y = y + 1;
+	packet.v1s = packet.v3s = 0;
+	packet.v2s = w;
+	packet.v1t = packet.v2t = 0;
+	packet.v3t = 1;
+
+	memset(&offsetpkt, 0, sizeof(offsetpkt));
+	offsetpkt.h.base_index = PP_TXOFFSET_1 >> 2;
+
+	if ((KGI_PRIV(vis)->swatch_size - ctx->swatch_inuse) < w32) {
+		/* idleaccel */
+	        ctx->swatch_inuse = 0;
+	}
+
+	offsetpkt.txoffset = 
+	  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+
+	RADEON_WRITEPACKET(vis, offsetpkt);
+
+	memcpy(KGI_PRIV(vis)->swatch + ctx->swatch_inuse,
+	       (char *)buf, wb);
+	
+	RADEON_WRITEPACKET(vis, packet);
+
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);	
+	return 0;
+}
+
+
+int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, void *buf)
+{
+	int wb, w32;
+	radeon_context_t *ctx;
+
+	struct {
+		cce_type3_header_t h;
+		cce_se_se_vtx_fmt_t vfmt;
+		cce_se_se_vf_cntl_t vctl;
+		/* TODO: this wrongly assumes float is 32 bit everywhere. */
+		float v1x, v1y, v1s, v1t; /* v1z; */ 
+		float v2x, v2y, v2s, v2t; /* v2z; */ 
+		float v3x, v3y, v3s, v3t; /* v3z; */ 
+	} packet;
+	struct {
+		cce_type0_header_t h;
+		uint32 txoffset;
+	} offsetpkt;
+
+
+	ctx = RADEON_CONTEXT(vis);
+
+	wb = GT_ByPP(LIBGGI_GT(vis)) * h;
+	w32 = ((wb + 31) / 32) * 32;
+
+	if (ctx->ctx_loaded != RADEON_PUT_CTX) {
+		ctx->put_ctx.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+		ctx->put_ctx.tex_size.vsize = 1;
+		ctx->put_ctx.txpitch.txpitch = (w32/32) - 1;
+		RADEON_RESTORE_CTX(vis, RADEON_PUT_CTX);
+	} else {
+		struct {
+			cce_type0_header_t h;
+			pp_tex_size_t tex_size;
+			pp_txpitch_t txpitch;
+		} packet2;
+
+		memset(&packet2, 0, sizeof(packet2));
+
+		packet2.h.base_index = PP_TEX_SIZE_1 >> 2;
+		packet2.h.count = 1;
+		packet2.tex_size.usize = w32 / GT_ByPP(LIBGGI_GT(vis));
+		packet2.tex_size.vsize = 1;
+		packet2.txpitch.txpitch = (w32/32) - 1;
+		
+		RADEON_RESTORE_CTX(vis, RADEON_BASE_CTX);
+		RADEON_WRITEPACKET(vis, packet2);
+		ctx->ctx_loaded = RADEON_PUT_CTX;
+	}
+
+	memset(&packet, 0, sizeof(packet));
+
+	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	packet.h.count     = 13;
+	packet.h.type      = 3;
+
+	packet.vfmt.st0 = 1;
+	packet.vfmt.z = 0 /* 1 */;
+
+	packet.vctl.num_vertices = 3;
+	packet.vctl.en_maos = 1;
+	packet.vctl.fmt_mode = 1;
+	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
+	packet.vctl.prim_type = 8;   /* Rectangle list */
+
+	packet.v1x = packet.v3x = x;
+	packet.v2x = x + 1;
+	packet.v1y = packet.v2y = y;
+	packet.v3y = y + h;
+	packet.v1s = packet.v2s = 0;
+        packet.v3s = h;
+	packet.v1t = packet.v3t = 1;
+	packet.v2t = 0;
+
+	memset(&offsetpkt, 0, sizeof(offsetpkt));
+	offsetpkt.h.base_index = PP_TXOFFSET_1 >> 2;
+
+	if ((KGI_PRIV(vis)->swatch_size - ctx->swatch_inuse) < w32) {
+		/* idleaccel */
+	        ctx->swatch_inuse = 0;
+	}
+
+	offsetpkt.txoffset = 
+	  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+
+	RADEON_WRITEPACKET(vis, offsetpkt);
+
+	memcpy(KGI_PRIV(vis)->swatch + ctx->swatch_inuse,
+	       (char *)buf, wb);
+	
+	RADEON_WRITEPACKET(vis, packet);
+
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);	
 	return 0;
 }
