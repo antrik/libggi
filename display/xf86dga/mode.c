@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/09/08 20:56:53 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/09/08 21:27:50 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -277,9 +277,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		ggiSetColorfulPalette(vis);
 	}
 
-	priv->pixperframe =
-		(GT_ByPPP(priv->stride, tm->graphtype))
-	    * tm->virt.y;
+	priv->pixperframe = GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
 	vis->d_frame_num = 0;
 
 	_GGI_xf86dga_freedbs(vis);
@@ -491,11 +489,11 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 	}
 
 	if ((signed)
-	    (tm->frames * (GT_ByPPP(priv->stride, tm->graphtype))
-	     * tm->virt.y) > priv->mem_size * 1024) {
+	    (GT_ByPPP(priv->stride * tm->virt.y * tm->frames,
+	    tm->graphtype)) > priv->mem_size * 1024)
+	{
 		tm->frames = priv->mem_size * 1024 /
-		    (GT_ByPPP(priv->stride, tm->graphtype)
-		     * tm->virt.y);
+		    GT_ByPPP(priv->stride * tm->virt.y, tm->graphtype);
 		err = -1;
 	}
 	if (tm->frames < 1) {
