@@ -137,7 +137,7 @@ are not counted.
 between `x` and zero. `eq0_3` tests if `x` is equal to zero, `gt0_3` if
 `x` is greater than zero, `ge0_3` if `x` is greater than or equal to
 zero, `lt0_3` if `x` is less than zero and last but not least `le0_3`
-tests if ´x´ is less than or equal to zero.
+tests if `x` is less than or equal to zero.
 
 
 Return value
