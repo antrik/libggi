@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/12/25 22:16:04 cegger Exp $
+/* $Id: mode.c,v 1.10 2005/01/18 20:22:46 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -306,6 +306,131 @@ static void testcase5(const char *desc)
 }
 
 
+static void testcase6(const char *desc)
+{
+	int err;
+	ggi_visual_t vis;
+	ggi_mode mode;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggiInit();
+	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+
+	vis = ggiOpen(NULL);
+	printassert(vis != NULL, "ggiOpen() failed\n");
+
+	/* async mode disables mansync if used */
+	ggiSetFlags(vis, GGIFLAG_ASYNC);
+
+	/* Get the default mode */
+	err = ggiCheckGraphMode (vis, 640, 480, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	err = ggiSetMode(vis, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+
+	err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	err = ggiSetMode(vis, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+
+	ggiClose(vis);
+	ggiExit();
+
+	printsuccess();
+	return;
+}
+
+
+static void testcase7(const char *desc)
+{
+	int err;
+	ggi_visual_t vis;
+	ggi_mode mode;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggiInit();
+	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+
+	vis = ggiOpen(NULL);
+	printassert(vis != NULL, "ggiOpen() failed\n");
+
+	/* sync mode enables mansync if used */
+
+	/* Get the default mode */
+	err = ggiCheckGraphMode (vis, 640, 480, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	err = ggiSetMode(vis, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+
+	err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	err = ggiSetMode(vis, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+
+	ggiClose(vis);
+	ggiExit();
+
+	printsuccess();
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -316,6 +441,8 @@ int main(int argc, char * const argv[])
 	testcase3("Check setting a mode with a given number of frames");
 	testcase4("Check setting a mode by it's physical size");
 	testcase5("Set up the mode in the ggiterm way");
+	testcase6("Check that re-setting of a different mode works [async mode]");
+	testcase7("Check that re-setting of a different mode works [sync mode]");
 
 	printsummary();
 
