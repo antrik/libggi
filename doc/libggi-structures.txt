@@ -59,7 +59,7 @@ Structure Members
     screen efficiently.  See `ggi[Set|Get]Origin` functions for more.
 
 `size`
-    TODO : Write something here.
+    The size of the visible area in mm.
 
 `graphtype`
     It holds information on the type of display.  libggi defines
