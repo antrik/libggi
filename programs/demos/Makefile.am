@@ -9,7 +9,7 @@ bin_PROGRAMS = ${SHMDEMOS}
 man_MANS = cube3d.6
 
 # findleaks.c showaccel2.c tunemode.c
-noinst_PROGRAMS = demo flying_ggis pageflip saver slimy stars textdemo
+noinst_PROGRAMS = demo flying_ggis wrap pageflip saver slimy stars textdemo
 
 # -lgg is needed for ggUSleep() and ggCurTime()
 demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
@@ -18,6 +18,7 @@ pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm
 stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
+wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 
