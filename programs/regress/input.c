@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.1 2004/08/08 19:50:06 cegger Exp $
+/* $Id: input.c,v 1.2 2004/08/08 20:55:15 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -31,6 +31,7 @@ gii_input_t inp;
 static void testcase1(const char *desc)
 {
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	inp = ggiDetachInput(vis);
 
@@ -50,6 +51,7 @@ static void testcase1(const char *desc)
 static void testcase2(const char *desc)
 {
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	inp = ggiJoinInputs(vis, inp);
 

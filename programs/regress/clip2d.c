@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.22 2004/07/28 09:25:20 cegger Exp $
+/* $Id: clip2d.c,v 1.23 2004/08/08 20:55:15 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -113,6 +113,7 @@ static void testcase1(const char *desc)
 	int i;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	for(i = 0; i < CLIPDBSIZE; ++i)
 		if(checkresult(
@@ -140,6 +141,7 @@ static void testcase2(const char *desc)
 
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -162,6 +164,7 @@ static void testcase3(const char *desc)
 
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
 
 	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
@@ -176,6 +179,7 @@ static void testcase4(const char *desc)
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	checkresult(
 		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta,
@@ -193,6 +197,7 @@ static void testcase5(const char *desc)
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
 
 	checkresult(
 		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta + 1,
@@ -210,6 +215,7 @@ static void testcase6(const char *desc)
 	 */
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
 
 	if(checkresult(
 		INT_MIN,          0,
@@ -269,6 +275,7 @@ static void testcase7(const char *desc)
 	/* This line is clipped incorrectly due to overflow. */
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	if (dontrun) return;
 
 	checkresult(
 		INT_MIN/2 + 200, 10,
@@ -357,6 +364,7 @@ static void testcase8(const char *desc)
 	 * for a bunch of lines.
 	 */
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	if(endpoint_checker(  0,   0))
 		return;
@@ -383,6 +391,7 @@ static void testcase8(const char *desc)
 static void testcase9(const char *desc)
 {
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
 
 	checkresult(
 		MODE_SIZE_X/4, MODE_SIZE_Y/4,

@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.1 2004/07/28 09:25:20 cegger Exp $
+/* $Id: testsuite.inc.c,v 1.2 2004/08/08 20:55:15 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -48,7 +48,7 @@ static int num_asserterrors = 0;
 static int expected_current_testresult = EXPECTED2PASS;
 
 static int verbose = 0;
-
+static int dontrun = 0;
 
 
 static void printdesc(const char *desc)
@@ -68,11 +68,13 @@ static void printteststart(const char *file, const char *funcname,
 	if (verbose) {
 		printf("%s: %s: %s\n", file, funcname, description);
 	}
+	if (dontrun) return;
 	printf("%s: Running %s...", file, funcname);
 	fflush(stdout);
 
 	num_tests++;
 	expected_current_testresult = expected;
+	return;
 }
 
 
@@ -97,6 +99,7 @@ static void printsuccess(void)
 	fflush(stdout);
 
 	num_successfultests++;
+	return;
 }
 
 
@@ -120,6 +123,7 @@ static void printfailure(const char *fmt, ...)
 	va_end(ap);
 
 	num_failedtests++;
+	return;
 }
 
 
@@ -140,7 +144,8 @@ static void printhelp(const char *name)
 	printf("Usage:  %s [OPTION]\n", name);
 	printf("Options:\n");
 	printf("    -h      Shows this help\n");
-	printf("    -v      Print testcase descriptions\n");
+	printf("    -n      Don't run testcases. Just show what would they do. Implies -v\n");
+	printf("    -v      Print testcase description\n");
 	fflush(stdout);
 	exit(0);
 }
@@ -149,8 +154,12 @@ static void parseopts(int argc, char * const argv[])
 {
 	int ch;
 
-	while ((ch = getopt(argc, argv, "hv")) != -1) {
+	while ((ch = getopt(argc, argv, "hnv")) != -1) {
 		switch (ch) {
+		case 'n':
+			dontrun = 1;
+			verbose = 1;
+			break;
 		case 'v':
 			verbose = 1;
 			break;
