@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.8 2004/09/08 18:54:11 cegger Exp $
+/* $Id: dl.c,v 1.9 2004/10/28 15:11:16 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -179,13 +179,12 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
 
 	tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
 	tmp->handle = dlh;
-	tmp->next = vis->extlib;
-	vis->extlib = tmp;
+
+	GG_SLIST_INSERT_HEAD(&vis->extlib, tmp, dllist);
 
 	tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
 	tmp->handle = dlh;
-	tmp->next = LIBGGI_DLHANDLE(vis);
-	LIBGGI_DLHANDLE(vis) = tmp;
+	GG_SLIST_INSERT_HEAD(&LIBGGI_DLHANDLE(vis), tmp, dllist);
 
 	return dlh;
 }
@@ -209,40 +208,44 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 		if (dlret & GGI_DL_OPDISPLAY) {
 			tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
 			tmp->handle = dlh;
-			tmp->next = vis->opdisplay->head.dlhandle;
-			vis->opdisplay->head.dlhandle = tmp;
+
+			GG_SLIST_INSERT_HEAD(&vis->opdisplay->head.dlhandle,
+					tmp, dllist);
 			dlh->usecnt++;
 		}
 
 		if (dlret & GGI_DL_OPCOLOR) {
 			tmp = _ggi_malloc(sizeof(ggi_dlhandle_l));
 			tmp->handle = dlh;
-			tmp->next = vis->opcolor->head.dlhandle;
-			vis->opcolor->head.dlhandle = tmp;
+
+			GG_SLIST_INSERT_HEAD(&vis->opcolor->head.dlhandle,
+					tmp, dllist);
 			dlh->usecnt++;
 		}
 
 		if (dlret & GGI_DL_OPDRAW) {
 			tmp = _ggi_malloc(sizeof(ggi_dlhandle_l));
 			tmp->handle = dlh;
-			tmp->next = vis->opdraw->head.dlhandle;
-			vis->opdraw->head.dlhandle = tmp;
+
+			GG_SLIST_INSERT_HEAD(&vis->opdraw->head.dlhandle,
+					tmp, dllist);
 			dlh->usecnt++;
 		}
 
 		if (dlret & GGI_DL_OPGC) {
 			tmp = _ggi_malloc(sizeof(ggi_dlhandle_l));
 			tmp->handle = dlh;
-			tmp->next = vis->opgc->head.dlhandle;
-			vis->opgc->head.dlhandle = tmp;
+
+			GG_SLIST_INSERT_HEAD(&vis->opgc->head.dlhandle,
+					tmp, dllist);
 			dlh->usecnt++;
 		}
 	} else {
 		dlh->usecnt = 1;
 		tmp = _ggi_malloc(sizeof(ggi_dlhandle_l));
 		tmp->handle = dlh;
-		tmp->next = vis->extlib;
-		vis->extlib = tmp;
+
+		GG_SLIST_INSERT_HEAD(&vis->extlib, tmp, dllist);
 	}
 
 	if (dlh->usecnt == 0) {
@@ -255,8 +258,8 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 	} else {
 		tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
 		tmp->handle = dlh;
-		tmp->next = LIBGGI_DLHANDLE(vis);
-		LIBGGI_DLHANDLE(vis) = tmp;
+
+		GG_SLIST_INSERT_HEAD(&LIBGGI_DLHANDLE(vis), tmp, dllist);
 	}
 
 	dlh->name = strdup(name);
@@ -272,7 +275,7 @@ _ggiOpenDL(ggi_visual *vis, const char *name, const char *args, void *argptr)
 
 void _ggiExitDL(ggi_visual *vis, ggi_dlhandle_l *lib)
 {
-	for (; lib != NULL; lib = lib->next) {
+	for (; lib != NULL; lib = GG_SLIST_NEXT(lib, dllist)) {
 		if (lib->handle->exit) {
 			lib->handle->exit(vis, lib->handle);
 		}
@@ -285,11 +288,13 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 	ggi_dlhandle_l *libtmp, **libprev, *libnext;
 
 	for (libprev = lib, libtmp = *lib; libtmp != NULL; libtmp=libnext) {
-		libnext = libtmp->next;
+		libnext = GG_SLIST_NEXT(libtmp, dllist);
+
 		if (libtmp->handle->usecnt <= 0) {
 			GGIDPRINT_LIBS("Disposing \"%s\"\n",
 				       libtmp->handle->name);
-			*libprev = libtmp->next;
+
+			*libprev = GG_SLIST_NEXT(libtmp, dllist);
 			if (libtmp->handle->close) {
 				libtmp->handle->close(vis, libtmp->handle);
 			}
@@ -298,22 +303,22 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 			ggFreeModule(libtmp->handle->handle);
 
 			/* Now, clean up the master visual */
-			prev = &LIBGGI_DLHANDLE(vis);
-			for (tmp=LIBGGI_DLHANDLE(vis); tmp; tmp=tmp->next) {
+			prev = &GG_SLIST_FIRST(&LIBGGI_DLHANDLE(vis));
+			GG_SLIST_FOREACH(tmp, &LIBGGI_DLHANDLE(vis), dllist) {
 				if (tmp->handle == libtmp->handle) break;
-				prev = &tmp->next;
+				prev = &GG_SLIST_NEXT(tmp, dllist);
 			}
 			if (!tmp) {
 				GGIDPRINT_LIBS("Error: handle not in master list.\n");
 			}
-			*prev = tmp->next;
+			*prev = GG_SLIST_NEXT(tmp, dllist);
 			free(tmp);
 
 			free(libtmp->handle->name);
 			free(libtmp->handle);
 			free(libtmp);
 		} else {
-			libprev = &libtmp->next;
+			libprev = &GG_SLIST_NEXT(libtmp, dllist);
 		}
 	}
 }
@@ -324,14 +329,14 @@ void _ggiZapDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 
 	GGIDPRINT_LIBS("_ggiZapDL(%p, %p) called\n", vis, lib);
 
-	for (tmp = *lib; tmp; tmp = tmp->next) {
+	for (tmp = *lib; tmp; tmp = GG_SLIST_NEXT(tmp, dllist)) {
 		tmp->handle->usecnt--;
 	}
 
 	_ggiRemoveDL(vis,lib);
 
 	for (tmp = *lib; tmp; tmp = next) {
-		next = tmp->next;
+		next = GG_SLIST_NEXT(tmp, dllist);
 		free(tmp);
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.10 2004/04/04 14:32:00 mooz Exp $
+/* $Id: structs.h,v 1.11 2004/10/28 15:11:19 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -40,6 +40,8 @@ typedef struct ggi_resource *ggi_resource_t;
 #include <ggi/ggi_ext.h>
 
 #include <ggi/internal/dltypes.h>
+
+#include <ggi/gg-queue.h>
 
 #define GGI_VERSION_DLL	1
 
@@ -176,7 +178,8 @@ typedef struct ggi_dlhandle {
 
 typedef struct ggi_dlhandle_l {
 	struct ggi_dlhandle *handle;
-	struct ggi_dlhandle_l *next;
+
+	GG_SLIST_ENTRY(ggi_dlhandle_l) dllist;
 } ggi_dlhandle_l;
 
 typedef struct ggi_extension {
@@ -259,10 +262,11 @@ typedef struct ggi_visual {
 
 	ggi_db_list 	 *app_dbs;	/* List of public DBs */
 	ggi_db_list	 *priv_dbs;	/* List of private DBs */
-	ggi_dlhandle_l	 *dlhandle;	/* Handles to dynamic libs */
+
+	GG_SLIST_HEAD(,ggi_dlhandle_l) dlhandle; /* Handles to dynamic libs */
 
 	/* Extension stuff */
-	ggi_dlhandle_l	 *extlib;	/* Dynamic libs from extensions */
+	GG_SLIST_HEAD(,ggi_dlhandle_l) extlib;   /* Dynamic libs from extensions */
 	ggi_extlist	 *extlist;	/* Pointer to array of private data */
 
 	void	*drvpriv[_GGI_NROF_HELPERS];	/* Driver private data */
@@ -284,7 +288,7 @@ typedef struct ggi_visual {
 
 struct ggi_op_head {
 	unsigned int	version;
-	ggi_dlhandle_l	*dlhandle;
+	GG_SLIST_HEAD(,ggi_dlhandle_l) dlhandle;
 
 	void		*dummy;	/* For future expansion */
 };

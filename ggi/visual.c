@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/04/04 14:32:00 mooz Exp $
+/* $Id: visual.c,v 1.7 2004/10/28 15:11:18 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -131,7 +131,7 @@ static void *_ggi_init_op(struct ggi_op_head *head, int numfuncs)
 	__simp_int *funcarr;
 	int i;
 
-	head->dlhandle = NULL;
+	GG_SLIST_INIT(&head->dlhandle);
 	head->dummy = NULL;
 
 	funcarr = (__simp_int*)(head+1);
@@ -159,17 +159,17 @@ static void _ggi_init_allops(ggi_visual *vis, int initall)
 
 static void _ggiCloseDL(ggi_visual *vis, int zapall)
 {
-	if (zapall) _ggiExitDL(vis, vis->extlib);
-	_ggiExitDL(vis, vis->opdraw->head.dlhandle);
-	_ggiExitDL(vis, vis->opcolor->head.dlhandle);
-	_ggiExitDL(vis, vis->opgc->head.dlhandle);
-	if (zapall) _ggiExitDL(vis, vis->opdisplay->head.dlhandle);
+	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
+	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
 
-	if (zapall) _ggiZapDL(vis, &vis->extlib);
-	_ggiZapDL(vis, &vis->opdraw->head.dlhandle);
-	_ggiZapDL(vis, &vis->opcolor->head.dlhandle);
-	_ggiZapDL(vis, &vis->opgc->head.dlhandle);
-	if (zapall) _ggiZapDL(vis, &vis->opdisplay->head.dlhandle);
+	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
+	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
+	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
+	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
+	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
 }
 
 void _ggiZapMode(ggi_visual *vis, int zapall)
@@ -229,8 +229,8 @@ ggi_visual *_ggiNewVisual(void)
 	LIBGGI_FLAGS(vis) = 0;
 	LIBGGI_FD(vis) = -1;
 
-	LIBGGI_DLHANDLE(vis) = NULL;
-	vis->extlib = NULL;
+	GG_SLIST_INIT(&LIBGGI_DLHANDLE(vis));
+	GG_SLIST_INIT(&vis->extlib);
 
 	vis->d_frame_num = vis->r_frame_num = vis->w_frame_num = 0;
 	vis->r_frame = vis->w_frame = NULL;
