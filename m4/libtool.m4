@@ -71,8 +71,8 @@ esac
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(STRIP, strip, :)
 
-ifdef([AC_PROVIDE_AC_LIBTOOL_DLOPEN], enable_dlopen=yes, enable_dlopen=no)
-ifdef([AC_PROVIDE_AC_LIBTOOL_WIN32_DLL],
+ifdef([AC_LIBTOOL_DLOPEN], enable_dlopen=yes, enable_dlopen=no)
+ifdef([AC_LIBTOOL_WIN32_DLL],
 enable_win32_dll=yes, enable_win32_dll=no)
 
 AC_ARG_ENABLE(libtool-lock,
@@ -116,7 +116,7 @@ case $host in
   fi
   ;;
 
-ifdef([AC_PROVIDE_AC_LIBTOOL_WIN32_DLL],
+ifdef([AC_LIBTOOL_WIN32_DLL],
 [*-*-cygwin* | *-*-mingw* | *-*-pw32*)
   AC_CHECK_TOOL(DLLTOOL, dlltool, false)
   AC_CHECK_TOOL(AS, as, false)
