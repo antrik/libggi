@@ -1,5 +1,6 @@
 ggiincludedir = ${includedir}/ggi/display
-ggiinclude_HEADERS = sub.h tile.h multi.h trueemu.h palemu.h \
+ggiinclude_HEADERS = auto.h \
+	sub.h tile.h multi.h trueemu.h palemu.h \
 	linvtsw.h mansync.h modelist.h \
 	x.h xf86dga.h xevi.h xlib.h xcommon.h \
 	libkgi.h kgi.h fbdev.h glide.h lcd823.h svgalib.h \

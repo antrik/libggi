@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.99 2004/01/01 17:43:33 cegger Exp $
+dnl $Id: configure.in,v 1.100 2004/01/29 13:49:33 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -9,6 +9,9 @@ AM_INIT_AUTOMAKE(libggi,2.1.0-cvs,-)
 
 AM_MAINTAINER_MODE
 AM_DISABLE_STATIC
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 dnl ========================================================================
 dnl Set some defaults
@@ -359,6 +362,7 @@ AC_STRUCT_TM
 AC_TYPE_SIGNAL
 
 GGI_DLLEXT
+GGI_CHECKOS
 
 dnl check for socklen_t
 dnl Define HAVE_SOCKLEN_T if found.
@@ -1334,6 +1338,7 @@ display/X/helper/evi/Makefile
 display/X/helper/dbe/Makefile
 display/X/helper/shm/Makefile
 display/aa/Makefile
+display/auto/Makefile
 display/common/Makefile
 display/directx/Makefile
 display/quartz/Makefile

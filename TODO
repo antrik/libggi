@@ -32,7 +32,7 @@ Due : ????-??-??
 - libKGI-target (compiling framework)
 + improve modelist.inc
 - allow physz params to determine window size when visible == GGI_AUTO
-- add display-auto to separate OS dependent auto-detect routines from
+* add display-auto to separate OS dependent auto-detect routines from
   libggi core
 - formalize pixelformat strings (e.g. "r5b5g5p1") and provide
   parser/construction functions for them in the LibGGI internal interface.

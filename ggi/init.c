@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.13 2003/12/11 21:38:23 cegger Exp $
+/* $Id: init.c,v 1.14 2004/01/29 13:49:34 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -290,7 +290,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	GGIDPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
 
-	if (driver==NULL) {
+	if (driver == NULL) {
 		void *ret;
 		
 		/* If GGI_DISPLAY is set, use it. Fall back to "auto" 
@@ -298,59 +298,20 @@ ggi_visual *ggiOpen(const char *driver,...)
 		 */
 
 		cp=getenv("GGI_DISPLAY");
-		if (cp!=NULL) {
+		if (cp != NULL) {
 			ret = ggiOpen(cp,NULL);
 			return ret;
 		}
-		driver="auto";
+		driver = "auto";
 	}
-	if (strcmp(driver,"auto")==0) {
+	if (strcmp(driver,"auto") == 0) {
 
 		void *ret;
 
 		ggDPrintf(1, "LibGGI", "No explicit target specified.\n");
 
-		/* Try the X display.. */
-		cp=getenv("DISPLAY");
-		if (cp!=NULL) {
-			strcpy(str,"display-x:");
-			ggstrlcat(str, cp, sizeof(str));
-
-			ggDPrintf(1, "LibGGI", "Try to use X target...\n");
-			ret = ggiOpen(str,NULL);
-			if (ret != NULL)
-				return ret;
-		}
-
-#if 0
-		/* Try the KGI console.. */
-		ggDPrintf(1, "LibGGI", "Try to use KGI target (KGI console)...\n");
-		ret=ggiOpen("display-KGI:/dev/graphic",NULL);
-		if (ret != NULL)
-			return ret;
-#endif
-
-		/* Try the framebuffer console.. */
-		ggDPrintf(1, "LibGGI", "Try to use fbdev target (framebuffer console)...\n");
-		ret = ggiOpen("display-fbdev", NULL);
-		if (ret != NULL)
-			return ret;
-
-		/* Try svgalib target.. */
-		ggDPrintf(1, "LibGGI", "Try to use svgalib target...\n");
-		ret = ggiOpen("display-svga",NULL);
-		if (ret != NULL)
-			return ret;
-
-		/* Try AAlib target.. */
-		ggDPrintf(1, "LibGGI", "Try to use AAlib target...\n");
-		ret = ggiOpen("display-aa",NULL);
-		if (ret != NULL)
-			return ret;
-
-		/* This fallthrough is for a smooth transition, when someone 
-		 * makes a display-auto target :
-		 */
+		ret = _ggiProbeTarget();
+		return ret;
 	}
 
 	if ((vis = _ggiNewVisual()) == NULL) {

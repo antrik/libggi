@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.4 2002/09/08 21:37:48 soyt Exp $
+/* $Id: dl.c,v 1.5 2004/01/29 13:49:34 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -105,6 +105,48 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	return 0;
 }
 
+
+/* Probe a DL
+ */
+int _ggiProbeDL(ggi_visual *vis, const char *name,
+		const char *args, void *argptr,
+		int type, ggi_dlhandle **dlh, uint32 *dlret)
+{
+	int err;
+	const char *filename;
+
+	GGIDPRINT_LIBS("_ggiProbeDL(%p, \"%s\", \"%s\", %p, 0x%x) called\n",
+			vis, name, args ? args : "(null)", argptr, type);
+
+	filename = ggMatchConfig(_ggiConfigHandle, name, NULL);
+	if (filename == NULL) {
+		GGIDPRINT_LIBS("LibGGI: no config entry for sublib: %s\n",
+				name);
+		return GGI_ENOMATCH;
+	}
+
+	err = _ggiLoadDL(filename, GGI_SYMNAME_PREFIX, type, dlh);
+	GGIDPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, *dlh);
+	if (err) return err;
+
+	dlh[0]->type = type;
+	dlh[0]->visual = vis;
+
+	err = dlh[0]->open(vis, *dlh, args, argptr, dlret);
+	GGIDPRINT_LIBS("%d = dlh[0]->open(%p, %p, \"%s\", %p, %d) - %s\n",
+		       err, vis, *dlh, args ? args : "(null)", argptr, *dlret,
+		       filename);
+	if (err) {
+		ggFreeModule(dlh[0]->handle);
+		free(*dlh);
+		*dlh = NULL;
+		return err;
+	}
+
+	return 0;
+}
+
+
 /* Add an extension DL
  */
 ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
@@ -161,28 +203,8 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 	GGIDPRINT_LIBS("_ggiAddDL(%p, \"%s\", \"%s\", 0x%x) called\n",
 		       vis, name, args ? args : "(null)", type);
 
-	if ((filename = ggMatchConfig(_ggiConfigHandle, name, NULL)) == NULL) {
-		GGIDPRINT_LIBS("LibGGI: no config entry for sublib: %s\n",
-			name);
-		return GGI_ENOMATCH;
-	}
-
-	err = _ggiLoadDL(filename, GGI_SYMNAME_PREFIX, type, &dlh);
-	GGIDPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
+	err = _ggiProbeDL(vis, name, args, argptr, type, &dlh, &dlret);
 	if (err) return err;
-
-	dlh->type = type;
-	dlh->visual = vis;
-
-	err = dlh->open(vis, dlh, args, argptr, &dlret);
-	GGIDPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d) - %s\n",
-		       err, vis, dlh, args ? args : "(null)", argptr, dlret,
-		       filename);
-	if (err) {
-		ggFreeModule(dlh->handle);
-		free(dlh);
-		return err;
-	}
 
 	if (type == GGI_DLTYPE_INTERNAL) {
 		if (dlret & GGI_DL_OPDISPLAY) {

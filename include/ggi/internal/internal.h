@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.9 2004/01/25 12:49:55 cegger Exp $
+/* $Id: internal.h,v 1.10 2004/01/29 13:49:34 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -71,6 +71,9 @@ void _ggiExitDL(ggi_visual * vis, ggi_dlhandle_l * lib);
 void _ggiZapDL(ggi_visual * vis, ggi_dlhandle_l ** lib);
 int _ggiAddDL(ggi_visual * vis, const char *drv, const char *args,
 	      void *argptr, int type);
+int _ggiProbeDL(ggi_visual * vis, const char * name,
+		const char * args, void * argptr,
+		int type, ggi_dlhandle ** dlh, uint32 * dlret);
 
 /* internal.c */
 int _ggi_countbits(uint32 val);
@@ -91,9 +94,11 @@ int _ggi_parse_physz(char *optstr, int *physzflag, ggi_coord * physz);
 int _ggi_figure_physz(ggi_mode * mode, int physzflag, ggi_coord * op_sz,
 		      int dpix, int dpiy, int dsx, int dsy);
 
-
 /* mode.c */
 void _ggiSetDefaultMode(const char *str);
+
+/* probe.c */
+ggi_visual_t _ggiProbeTarget(void);
 
 /* stubs.c */
 int _ggiInternFlush(ggi_visual * vis, int x, int y, int w, int h,

@@ -19,6 +19,7 @@ display-svga			display/svgalib.@DLLEXT@
 display-svgalib			display/svgalib.@DLLEXT@
 helper-vgagl			display/vgagl.@DLLEXT@
 display-vgl			display/vgl.@DLLEXT@
+display-auto			display/auto.@DLLEXT@
 display-aa			display/aa.@DLLEXT@
 display-directx			display/directx.@DLLEXT@
 display-quartz			display/quartz.@DLLEXT@
@@ -51,6 +52,7 @@ dga				display/xf86dga.@DLLEXT@
 xf86dga				display/xf86dga.@DLLEXT@
 svga				display/svgalib.@DLLEXT@
 vgl				display/vgl.@DLLEXT@
+auto				display/auto.@DLLEXT@
 aa				display/aa.@DLLEXT@
 directx				display/directx.@DLLEXT@
 quartz				display/quartz.@DLLEXT@

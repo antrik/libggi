@@ -4,7 +4,7 @@ libggi_la_LIBADD = -lgii -lgg
 lib_LTLIBRARIES = libggi.la
 
 libggi_la_SOURCES = colormap.c db.c dl.c events.c gc.c init.c internal.c \
-	mode.c stubs.c visual.c unix.c
+	mode.c probe.c stubs.c visual.c unix.c
 libggi_la_LDFLAGS = $(extra_libraries) -version-info 2:3:0 -no-undefined \
 	-export-symbols $(srcdir)/EXPSYMS
 
