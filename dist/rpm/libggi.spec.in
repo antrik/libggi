@@ -60,7 +60,8 @@ gmake
 
 %files
 %defattr(-,root,root)
-%doc README doc/env.txt doc/inputs.txt doc/docbook/*.sgml
+%doc ChangeLog* FAQ INSTALL NEWS README TODO
+%doc doc/env.txt doc/inputs.txt doc/docbook/*.sgml
 %config %{_sysconfdir}/ggi
 %{_bindir}/ggiteleserver
 %{_bindir}/monitest
@@ -85,6 +86,9 @@ gmake
 
 
 %changelog
+* Wed Aug 22 2001 Thayne Harbaugh <thayne@plug.org>
+- added TODO file
+
 * Mon Jul 02 2001 Thayne Harbaugh <thayne@plug.org>
 - initial libgii.spec
 

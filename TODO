@@ -1,4 +1,10 @@
 ------------------------------------------
+Status symbols
+------------------------------------------
+- still to do
+* completed
+
+------------------------------------------
 Next release
 ------------------------------------------
 Version : 2.0.1
@@ -7,6 +13,9 @@ Due : 2001-08-26
 - Move the build process to a 3-number versioning scheme.
 - Change makefile so that the sgml files don't go in the
   tarballs.
+- cleanup demo building and installation
+- directfb off by default
+- fix building of directfb libraries
 
 ------------------------------------------
 Long-term plan
