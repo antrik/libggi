@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/09/12 21:48:32 cegger Exp $
+/* $Id: visual.c,v 1.20 2004/10/29 22:29:09 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -605,16 +605,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	
 	priv->inputs = FBDEV_INP_KBD | FBDEV_INP_MOUSE;
 
-	if (toupper(options[OPT_NOKBD].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOKBD].result[0]) != 'N') {
 		priv->inputs &= ~FBDEV_INP_KBD;
 	}
-	if (toupper(options[OPT_NOMOUSE].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOMOUSE].result[0]) != 'N') {
 		priv->inputs &= ~FBDEV_INP_MOUSE;
 	}
-	if (toupper(options[OPT_NOINPUT].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOINPUT].result[0]) != 'N') {
 		priv->inputs &= ~(FBDEV_INP_KBD | FBDEV_INP_MOUSE);
 	}
-	if (toupper(options[OPT_NOVT].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOVT].result[0]) != 'N') {
 		priv->inputs = 0;
 		novt = 1;
 	}
@@ -723,7 +723,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			char *strptr = devicename;
 			char *chkptr;
 
-			while (!isdigit(*strptr)) {
+			while (!isdigit((uint8)*strptr)) {
 				if (*strptr == '\0') break;
 				strptr++;
 			}

@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.6 2004/09/12 20:39:12 cegger Exp $
+/* $Id: visual.m,v 1.7 2004/10/29 22:36:08 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -171,7 +171,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opcolor->getgammamap	= GGI_quartz_getgammamap;
 
 
-	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_input *inp;
 		gii_inputcocoa_arg _args;
 

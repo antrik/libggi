@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2004/09/24 12:30:11 pekberg Exp $
+/* $Id: visual.c,v 1.27 2004/10/29 22:26:30 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -190,7 +190,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	ggigii.hWnd = priv->hWnd;
 	ggigii.hInstance = priv->hInstance;
 
-	if (tolower((int) options[OPT_NOINPUT].result[0]) == 'n' &&
+	if (tolower((uint8) options[OPT_NOINPUT].result[0]) == 'n' &&
 	    /* FIXME: dxinput doesn't work with -inwin yet; the following
 	       condition disables the default input target if -inwin has been
 	       specified */

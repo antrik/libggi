@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/10/11 19:09:51 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/10/29 22:38:20 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -86,7 +86,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	for (;;) {
 		sx = sy = vx = vy = 0;
 
-		while (*args && isspace((int)*args)) args++;
+		while (*args && isspace((uint8)*args)) args++;
 
 		if (! *args) break;
 
@@ -160,7 +160,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		/* check for ':' separator */
 
-		while (*args && isspace((int)*args)) args++;
+		while (*args && isspace((uint8)*args)) args++;
 
 		if (*args && (*args != ':')) {
 			fprintf(stderr, "display-tile: expecting ':' between targets.\n");

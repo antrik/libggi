@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2004/09/22 20:22:46 nsouch Exp $
+/* $Id: visual.c,v 1.17 2004/10/29 22:30:03 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -101,7 +101,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * behaviour of KGI display: let GGI open the input. Otherwise,
 	 * try to open the /dev/event corresponding to ower /dev/graphic
 	 */
-	if (tolower((int)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
 #ifdef HAVE_SNPRINTF
 		snprintf(eventname, 32, "kii:-device=/dev/event%i",
 			 KGI_CTX(vis).mapper.graphic);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/10/11 19:05:17 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/10/29 22:39:58 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -105,7 +105,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Find out the parent target. */
-	while (args && *args && isspace((int)*args)) {
+	while (args && *args && isspace((uint8)*args)) {
 		args++;
 	}
 

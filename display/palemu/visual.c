@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/11 18:53:08 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/10/29 22:34:31 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -101,7 +101,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Find out the parent target. */
-	while (args && *args && isspace((int)*args)) {
+	while (args && *args && isspace((uint8)*args)) {
 		args++;
 	}
 
