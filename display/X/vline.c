@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.6 2003/07/13 08:28:49 cegger Exp $
+/* $Id: vline.c,v 1.7 2004/11/03 08:26:39 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -164,6 +164,7 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	XImage *ximg;
 	int     (*olderrorhandler) (Display *, XErrorEvent *);
 	int ret = 0;
+	uint8 *data8;
 	priv = GGIX_PRIV(vis);
 
         ggLock(priv->xliblock);
@@ -196,24 +197,26 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
+		data8 = (uint8 *)data;
 		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 2;
 		while (h--) {
-			*((uint8 *)data) = *(ximgptr + 1);
-			*((uint8 *)data + 1) = *(ximgptr);
+			*(data8) = *(ximgptr + 1);
+			*(data8 + 1) = *(ximgptr);
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += 2;
+			data8 += 2;
 		}
 	}
 	else if (ximg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
+		data8 = (uint8 *)data;
 		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 4;
 		while (h--) {
-			*((uint8 *)data) = *(ximgptr + 3);
-			*((uint8 *)data + 1) = *(ximgptr + 2);
-			*((uint8 *)data + 2) = *(ximgptr + 1);
-			*((uint8 *)data + 3) = *(ximgptr);
+			*(data8) = *(ximgptr + 3);
+			*(data8 + 1) = *(ximgptr + 2);
+			*(data8 + 2) = *(ximgptr + 1);
+			*(data8 + 3) = *(ximgptr);
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += 4;
+			data8 += 4;
 		}
 	}
 	else {
@@ -223,11 +226,12 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 
 		ximgptr = (uint8 *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
+		data8 = (uint8 *)data;
 		while (h--) {
 			memcpy(data, ximgptr,
 				(unsigned)ximg->bits_per_pixel/8);
 			ximgptr += ximg->bytes_per_line;
-			((uint8 *)data) += ximg->bits_per_pixel/8;
+			data8 += ximg->bits_per_pixel/8;
 		}
 	}
 	XDestroyImage(ximg);
