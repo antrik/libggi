@@ -24,23 +24,30 @@ Due : ????-??-??
 [Common issues]
 
 - libKGI-target (compiling framework)
-+ improve modelist.inc -- 
-- add helper target for dirty-region management
++ improve modelist.inc -- reduce amount of per-target code necessary to use 
+  a modelist by providing sensible constructor/destructor which fills out 
+  default values automatically.  Perhaps move to helper lib.
+- add helper target for dirty-region management -- keep refreshes from 
+  backbuffer to a (practical) minimum as updating untouched data wastes
+  bus bandwidth.
 * look at  egrep -Hirn "return[[:space:]]*\-\w+;"  and peruse proper defines for
   retval where applicable (Christoph Egger)
 - make use of libgii's enhanced dl system:
   allow single library to serve multiple suggest strings
   (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
 - make use of libgii's enhanced config file system:
-  aliases, in-file option strings, wildcards
+  aliases, in-file option strings, wildcards (also see above URL)
 
 
 [Target specific issues]
 
 - update targets after the common issues are done (apply new 
   dirty region stuff, new modelist stuff, etc.)
-+ alter fbdev.conf appropriately for selected accel sublibs
-- make pseudo-targets use of the dirty-region management.  This 
++ alter fbdev.conf appropriately for selected accel sublibs --
+  perhaps provide a utility for distributions to use when a sublib
+  is installed/uninstalled to update fbdev.conf accordingly, but mainly
+  just get it right during the build process.
+- make pseudo-targets use dirty-region management.  This 
   is an open design issue -- if done right, pseudo targets and
   targets that make use of a RAM backbuffer or slave memvis could 
   merge their backbuffers and dirty-region support, decreasing 
