@@ -1198,6 +1198,9 @@ Draw a line on a visual
 .. manpage:: 3 ggiDrawLine
 
 
+Synopsis
+--------
+
 ::
 
   #include <ggi/ggi.h>
