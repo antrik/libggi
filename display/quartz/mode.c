@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2005/01/19 07:54:55 cegger Exp $
+/* $Id: mode.c,v 1.8 2005/01/28 10:06:30 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -651,6 +651,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 
 			DPRINT_MODE("update input-quartz event handler\n");
 			data.theWindow = priv->theWindow;
+			data.flags = GII_QZFLAG_UPDATE_WINDOW;
 
 			ev.cmd.size = sizeof(gii_cmd_event);
 			ev.cmd.type = evCommand;
