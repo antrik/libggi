@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/01/26 23:03:35 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -34,7 +34,20 @@
 #include <ggi/display/aa.h>
 
 
-void _GGI_aa_freedbs(ggi_visual *vis) {
+static gg_option optlist[] =
+{
+	{ "fastrender", "no" }
+};
+
+
+#define OPT_FASTRENDER	0
+
+#define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+
+
+
+void _GGI_aa_freedbs(ggi_visual *vis)
+{
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -71,10 +84,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_aa_priv *priv;
 	void *lock;
 	int err = GGI_ENOMEM;
-	gg_option optlist[] = {
-		{ "fastrender", "" }};
+	gg_option options[NUM_OPTS];
 	
 	GGIDPRINT_LIBS("display-aa: Starting\n");
+
+	memcpy(options, optlist, sizeof(options));
 	
 	/* Get options from environment variable AAOPTS */
 	if (!aa_parseoptions(NULL, NULL, NULL, NULL)) {
@@ -110,13 +124,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->haverelease = 0;
 
 	if (args) {
-		args = ggParseOptions((char *)args, optlist,
-					sizeof(optlist)/sizeof(gg_option));
-		if(!args) {
+		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		if (!args) {
 			fprintf(stderr, "display-aa: error in arguments\n");
 		}
 
-		priv->fastrender = (*args && optlist[0].result[0]=='y');
+		priv->fastrender = (*args && options[OPT_FASTRENDER].result[0] == 'y');
 	}
 
 	err = _ggiAddDL(vis, "helper-mansync", NULL, priv->opmansync, 0);
