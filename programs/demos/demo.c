@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.6 2002/05/19 15:42:43 skids Exp $
+/* $Id: demo.c,v 1.7 2003/01/22 16:16:00 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -975,11 +975,12 @@ int main(int argc, char **argv)
 		if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0)
 			break;
 
+	dbuf_start:
 		TestStart();
 		i = 0;
 		while ((TestTime() < 10) && (i < numplanes)) {
 			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
-			  	uint8 *linestart;
+				uint8 *linestart;
 				linestart = (uint8 *)dbuf->write + 
 				  stride2 * i + stride * y;
 				x = 0;
@@ -1000,7 +1001,7 @@ int main(int argc, char **argv)
 				}
 			}
 			i++;
-		}	
+		}
 
 		while (TestTime() < 10) {
 			uint8 *linestart;
@@ -1010,10 +1011,10 @@ int main(int argc, char **argv)
 			i = random() % numplanes;
 			y = random() % vy;
 			x = random() % (vx * GT_SIZE(type)/wordsize);
-			  	
+
 			linestart = (uint8 *)dbuf->write + 
 			  stride2 * i + stride * y;
-			
+
 			switch(wordsize) {
 			case 32:
 				*((uint32 *)linestart+x) = random();
@@ -1025,9 +1026,26 @@ int main(int argc, char **argv)
 				*(linestart+x) = random();
 				break;
 			}
+
+			if ((ggiGetFlags(vis) & GGIFLAG_TIDYBUF) == GGIFLAG_TIDYBUF)
+				ggiFlushRegion(vis, x,y,50,50);
 		}
 
 	dbuf_end:
+
+		if ((ggiGetFlags(vis) & GGIFLAG_TIDYBUF) == GGIFLAG_TIDYBUF)
+			break;
+
+		if (!ggiAddFlags(vis, GGIFLAG_TIDYBUF)) {
+			ggiSetGCForeground(vis, black);
+			ggiFillscreen(vis);
+
+			TestName("Directbuffer (with GGIFLAG_TIDYBUF flag)");
+			waitabit();
+			goto dbuf_start;
+		}	/* if */
+
+
 		/* If we were not in syncronous mode, we would
 		 * call ggiFlush here, because there is no guarantee
 		 * that the directbuffer is not a software back-buffer
