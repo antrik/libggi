@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.5 2004/09/14 08:29:58 pekberg Exp $
+/* $Id: testsuite.inc.c,v 1.6 2005/01/25 11:52:45 pekberg Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -17,6 +17,7 @@
 
 #include "config.h"
 
+#include <ggi/internal/gg_replace.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -98,12 +99,16 @@ static void printteststart(const char *file, const char *funcname,
 }
 
 
+#ifdef _MSC_VER
+#define printassert()
+#else
 #define printassert(x, fmt...)	\
 	if (!(x)) {		\
 		printf(fmt);	\
 		fflush(stdout);	\
 		num_asserterrors++;	\
 	}
+#endif
 
 
 static void printsuccess(void)
