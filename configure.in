@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.88 2003/07/05 22:27:36 cegger Exp $
+dnl $Id: configure.in,v 1.89 2003/08/04 05:41:18 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1227,9 +1227,12 @@ case "$host" in
         OBJC="cc"
         OBJCFLAGS="$CFLAGS"
         OBJCDEPMODE="$CCDEPMODE"
+	OBJCCOMPILE="$CCCOMPILE"
         AC_SUBST(OBJC)
         AC_SUBST(OBJCFLAGS)
-        AC_SUBST(OBJCDEPMODE)
+	dnl automake 1.6.x complains about that
+        dnl AC_SUBST(OBJCDEPMODE)
+	AC_SUBST(OBJCCOMPILE)
         ;;
 esac
 
