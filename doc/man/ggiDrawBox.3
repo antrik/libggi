@@ -10,9 +10,9 @@ int \fBggiPutBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\
 
 int \fBggiGetBox\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fIw\fR, int \fIh\fR, void *\fIbuf\fR );
 .SH DESCRIPTION
-Draw, put, or get a rectangle at (\fIx\fR,\fIy\fR), extending \fIw\fR pixels in the positive x direction and \fIh\fR pixels in the positive y direction.
+Draw, put, or get a rectangle at (\fIx\fR, \fIy\fR), extending \fIw\fR pixels in the positive x direction and \fIh\fR pixels in the positive y direction.
 
-The *\fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
+The \fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO

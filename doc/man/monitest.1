@@ -2,7 +2,7 @@
 .SH NAME
 monitest \- Monitor test program
 .SH SYNOPSIS
-\fBmonitest\fR modestring
+\fBmonitest\fR [modestring]
 .SH DESCRIPTION
 monitest is intended to test ggi drivers (during development) and the optical quality of monitors (later). Don't be too disappointed if you find a weakness in your monitor, mine is probably worse than yours ...
 
@@ -12,10 +12,12 @@ Also included are several test screens for testing moiree effects, the horizonta
 
 You will be able to switch resolution on the fly, to find out interactively what modes the driver supports and how much of this your card/monitor can do with acceptable quality.
 .SH OPTIONS
+.RS
 .TP
 modestring
 Specify the mode to use
 .PP
+.RE
 .SH PATTERN DESCRIPTIONS
 .SS Testpattern
 The basic grid is white on black and has sixteen times twelve fields. On a tube with 4:3 ratio each one should be square, even if the pixel size of the screen does not have 4:3 ratio. The lines are one pixel wide. They should be straight, even in the corners, and not have coloured borders.

@@ -11,7 +11,7 @@ The programs program1 to program6 are invoked and mapped to the cube sides after
 You can add more programs while 3d is running by setting some environment variables and starting them :
 .nf
 
-GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
+    GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
 
 .fi
 The [0-5] selects on which face of the cube you want the application to run.
@@ -21,6 +21,7 @@ You should as well set \fBGGI_DEFMODE\fR to a mode with the same color organizat
 Once cube3d is invoked, the program will display the cube with the six other applications mapped to it. But you will probably only see application number 1 (and maybe 3 from behind), as this is the way the cube is oriented. The keyboard is redirected to the application that has the blinking border.
 .SH FUNCTION KEYS
 # is the "escape" key. After pressing it, the blinking border should turn red. All further input now goes to the 3d program and is used to manipulate the appearance and behaviour of the cube:
+.RS
 .TP
 #
 A double-escape is used to send the escape-char '#' itself.
@@ -73,6 +74,7 @@ display framerate. (undocumented, may disappear)
 d, D
 display debugging info. Not very useful. (undocumented, may disappear)
 .PP
+.RE
 .SH BUGS
 Too numerous to count.
 

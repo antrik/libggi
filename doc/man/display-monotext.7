@@ -2,18 +2,20 @@
 .SH NAME
 display-monotext \- Emulate palettized modes on text-mode visuals
 .SH SYNOPSIS
-\fBdisplay-monotext\fR : -a=\fIaccuracy\fR -x=\fIaccuracy\fR -y=\fIaccuracy\fR \fItarget-spec\fR
+\fBdisplay-monotext\fR : [-a=\fIaccuracy\fR] [-x=\fIaccuracy\fR] [-y=\fIaccuracy\fR] [\fItarget-spec\fR]
 .SH DESCRIPTION
 Emulates palettized modes (GT_PALETTE) on another target which can only do text modes, by representing the graphics as ASCII characters. The effect is the much the same as the AAlib target, but does not depend on any external libraries.
 .SH OPTIONS
+.RS
 .TP
 -x=\fIaccuracy\fR, -y=\fIaccuracy\fR
 A value between 1 and 5 which determines how accurately to map the graphics to ASCII characters. Lower values are less accurate, but can represent a wider range of intensity levels.
 
-The default is X=2 and Y=4.
+The default is x=2 and y=4.
 .PP
 .TP
 -a=\fIaccuracy\fR
-Same as above, but sets both the X and Y accuracy to the specified value.
+Same as above, but sets both the x and y accuracy to the specified value.
 .PP
+.RE
 

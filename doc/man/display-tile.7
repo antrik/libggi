@@ -2,11 +2,12 @@
 .SH NAME
 display-tile \- Divide display into tiles similar to a video wall
 .SH SYNOPSIS
-\fBdisplay-tile\fR : -usedb -nodb \fIoffset-x\fR, \fIoffset-y\fR, \fIsize-x\fR, \fIsize-y\fR, \fIchild-target-spec\fR:
+\fBdisplay-tile\fR : [-usedb] [-nodb] <\fIoffset-x\fR,\fIoffset-y\fR,\fIsize-x\fR,\fIsize-y\fR,\fIchild-target-spec\fR:>
 .SH DESCRIPTION
 Emulates one big target, where one or more areas are mapped to different child visuals.
 .SH OPTIONS
 For each tile (i.e. child visual or mapped area), the following must be specified:
+.RS
 .TP
 \fIoffset-x\fR, \fIoffset-y\fR
 coordinates (within the parent visual) of the top-left corner of the child visual
@@ -19,8 +20,10 @@ width and height of the child visual
 \fIchild-target-spec\fR
 a target spec. Since target specs can (and often do) contain colons, it needs to be enclosed in parentheses.
 .PP
+.RE
 
 The following options apply to the whole display-tile:
+.RS
 .TP
 -usedb
 Enables DirectBuffer emulation. This is the default mode.
@@ -31,6 +34,7 @@ The contents of each mapped area is blitted from the DirectBuffer into their res
 -nodb
 Disables DirectBuffer emulation. LibGGI primitives are passed to each of the child visuals with the necessary clipping and translation. Thus, if a child visual underlying a mapped area supports acceleration, then the operation on that area will be accelerated.
 .PP
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

@@ -16,8 +16,7 @@ typedef uint32 ggi_graphtype;
 .fi
 .nf
 
-typedef struct
-{
+typedef struct {
         sint32          frames;
         ggi_coord       visible;
         ggi_coord       virt;
@@ -29,6 +28,7 @@ typedef struct
 .fi
 The mode structure describes a visual configuration given by its size and other graphic properties.
 .SH STRUCTURE MEMBERS
+.RS
 .TP
 \fBframes\fR
 The number of frames. Some displays have multi-buffer capabilites (double-buffering, triple-buffering...). See libggi for information on working with multiple frames.
@@ -48,6 +48,7 @@ The virtual size of the visual. It can be larger (but not smaller) than the visi
 .TP
 \fBgraphtype\fR
 It holds information on the type of display. libggi defines macros to construct graphtypes values or access individual field.
+.RS
 .TP
 \fBdepth\fR ( \fBGT_DEPTH\fR(gt), \fBGT_SETDEPTH\fR(gt,x) )
 The number of significant bits holding color information.
@@ -63,7 +64,7 @@ The following schemes are available :
 .IP \(bu 4
 \fBGT_TEXT\fR : text mode only
 .IP \(bu 4
-\fBGT_TRUECOLOR\fR :
+\fBGT_TRUECOLOR\fR : true color mode
 .IP \(bu 4
 \fBGT_GREYSCALE\fR : pixels represent level of gray
 .IP \(bu 4
@@ -92,6 +93,7 @@ The following schemes are available :
 \fBGT_SUB_PACKED_GETPUT\fR
 .RE
 .PP
+.RE
 Graphtypes can be constructed directly or via the \fBGT_CONSTRUCT\fR(depth,scheme,size) macro. The following common graphtypes are defined :
 .RS
 .IP \(bu 4
@@ -124,6 +126,7 @@ Graphtypes can be constructed directly or via the \fBGT_CONSTRUCT\fR(depth,schem
 \fBdpp\fR
 It stands for dot-per-pixel.
 .PP
+.RE
 When filling a mode structure for setting a visual, any field can be assigned \fBGGI_AUTO\fR (\fBGT_AUTO\fR for graphtype) if a specific value isn't required.
 .SH SEE ALSO
 \fBggiCheckMode\fR (3), \fBggiSetMode\fR (3) 

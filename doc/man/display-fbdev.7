@@ -2,12 +2,13 @@
 .SH NAME
 display-fbdev \- Display using Linux kernel framebuffer devices
 .SH SYNOPSIS
-\fBdisplay-fbdev\fR : -noinput -nokbd -nomouse -novt -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR \fIframebuffer\fR
+\fBdisplay-fbdev\fR : [-noinput] [-nokbd] [-nomouse] [-novt] [-physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [\fIframebuffer\fR]
 .SH DESCRIPTION
 Uses the Linux \fB/dev/fb*\fR devices to do fullscreen graphics.
 
 When using a regular fbdev driver, \fB/etc/fb.modes\fR is used to determine the available modes for the device. Driver timings and resolutions can be automatically obtained when running under KGIcon.
 .SH OPTIONS
+.RS
 .TP
 \fIframebuffer\fR
 The filename of the framebuffer target to use. The default is to get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer associated with the current console if that is unset.
@@ -32,6 +33,7 @@ Disable virtual console support.
 -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR
 This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fIdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
 .PP
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

@@ -16,7 +16,7 @@ int \fBggiGetMode\fR( ggi_visual_t \fIvis\fR, ggi_mode *\fItm\fR );
 .SH DESCRIPTION
 \fBggiSetMode\fR sets any mode (text or graphics). It also performs mode negotiation like \fBggiCheckMode\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO\fR parameters are changed from the original mode, the new mode will not be silently set.
 
-\fBggiSetTextMode\fR \fBggiSetGraphMode\fR \fBggiSetSimpleMode\fR are convenient versions of \fBggiSetMode\fR that take the mode paramters as integer arguments rather than as a \fBggi_mode\fR struct that the application has to fill out. Otherwise, they are functionally equivalent to \fBggiSetMode\fR function, and the same mode-setting semantics apply, except the changed \fBggi_mode\fR cannot be seen.
+\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR and \fBggiSetSimpleMode\fR are convenient versions of \fBggiSetMode\fR that take the mode parameters as integer arguments rather than as a \fBggi_mode\fR struct that the application has to fill out. Otherwise, they are functionally equivalent to \fBggiSetMode\fR function, and the same mode-setting semantics apply, except the changed \fBggi_mode\fR cannot be seen.
 
 \fBggiGetMode\fR fills out the passed \fBggi_mode\fR with the parameters of the current mode of the visual.
 .SH RETURN VALUE

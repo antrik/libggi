@@ -14,7 +14,7 @@ LibGGI visuals in \fBGT_PALETTE\fR mode maps all pixelvalues to the correspondin
 
 \fBggiGetPalette\fR copies the specified colors (starting from \fIs\fR, for \fIlen\fR colors) from the visual's palette to the array pointed by \fIcmap\fR.
 .SH RETURN VALUE
-\fBggiSetPalette\fR returns the number of the first entry changed. Negative values indicate error (codes).
+\fBggiSetPalette\fR returns the number of the first entry changed. Negative values indicate error.
 
 \fBggiGetPalette\fR returns \fB0\fR for OK, otherwise an error code. When called with len=0 this function will not automatically succeed, but the return code will indicate whether there is a readable CLUT.
 .SH PALETTE IN GGI

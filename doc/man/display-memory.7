@@ -2,15 +2,16 @@
 .SH NAME
 display-memory \- Display on buffer in main memory
 .SH SYNOPSIS
-\fBdisplay-memory\fR : -input -noblank -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR -pixfmt=\fIformat_string\fR -layout=\fIfstride\fR[plb\fIlstride\fR|plan\fIpstride\fR,\fIplstride\fR] shmid:\fIsid\fR keyfile:\fIsize\fR:\fIid\fR:\fIfname\fR pointer
+\fBdisplay-memory\fR : [-input] [-noblank] [-physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [-pixfmt=\fIformat_string\fR] [-layout=\fIfstride\fR[plb\fIlstride\fR|plan\fIpstride\fR,\fIplstride\fR]] [shmid:\fIsid\fR] [keyfile:\fIsize\fR:\fIid\fR:\fIfname\fR] [pointer]
 .SH DESCRIPTION
 Emulates a linear framebuffer in main memory. The framebuffer can be a shared memory segment, an area specified by the application, or an area allocated by display-memory itself.
 .SH OPTIONS
+.RS
 .TP
 \fI-input\fR
 If the -input option is set, an input buffer of \fBINPBUFSIZE\fR (default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is allocated at the start of the requested memory area.
 
-When running on shared memory, this option enables you to to give input (using ) to other processes sharing that segment. This technique is demonstrated in \fBcube3d\fR and can be used for things like GGI multiplexers.
+When running on shared memory, this option enables you to to give input (using \fBgiiEventSend\fR (3)) to other processes sharing that segment. This technique is demonstrated in \fBcube3d\fR (1) and can be used for things like GGI multiplexers.
 .PP
 .TP
 \fI-noblank\fR
@@ -42,7 +43,11 @@ create a new shm segment with id ftok(\fIfname\fR, \fIid\fR) of size \fIsize\fR 
 pointer
 use the memory pointed to by \fIargptr\fR (only available to applications calling \fBggiOpen\fR).
 .PP
+.RE
+.RS
+\fBImportant:\fR
 If you specify a memory area to use - be sure it's big enough as no checks can or will be made that a certain mode fits into it.
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

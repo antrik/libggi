@@ -2,15 +2,18 @@
 .SH NAME
 display-file \- Render display into image file
 .SH SYNOPSIS
-\fBdisplay-file\fR : -flushcmd="\fIcommand to execute\fR" -flushframe=\fIn\fR -flushtime=\fIt\fR \fIfilename\fR
+\fBdisplay-file\fR : [-flushcmd="\fIcommand to execute\fR"] [-flushframe=\fIn\fR] [-flushtime=\fIt\fR] <\fIfilename\fR>
 .SH DESCRIPTION
 Renders an image into a file. The file can be a framebuffer device (e.g. \fB/dev/fb0\fR), in which case a reasonable representation of the image will be drawn on the console so long as the program's mode matches the framebuffer's mode.
 
+.RS
+\fBNote:\fR
 This target generates no input. The multi target can be used in order to see (and control) what the program does (using a normal target) and then generate a snapshot when the program exits.
+.RE
 .SH OPTIONS
 \fIfilename\fR is the file to render the images to. If the filename is a PPM file (has the extension \fB.ppm\fR), then the image will be generated at \fBggiClose\fR time. Otherwise the file is a custom `GGIFILE' format and is generated continuously.
 
-The file target can be used to generate movies from running LibGGI applications. To do this, set -flushcmd to a shell command to execute at the times given by one of the two other parameters. This looks typically like ppmtogif foo.ppm >foo.%04d.gif. The command is passed through a \fBprintf\fR (3) which has the current count of saved frames as an argument (or rather as 10 arguments to allow a few more complex commands).
+The file target can be used to generate movies from running LibGGI applications. To do this, set -flushcmd to a shell command to execute at the times given by one of the two other parameters. This looks typically like \fBppmtogif foo.ppm >foo.%04d.gif\fR. The command is passed through a \fBprintf\fR (3) which has the current count of saved frames as an argument (or rather as 10 arguments to allow a few more complex commands).
 
 This shell command is either executed at every \fIn\fR-th invocation of ggiFlush or every \fIt\fR seconds, where \fIt\fR can have fractional components (specified as decimal).
 

@@ -11,8 +11,11 @@ int \fBggiKbhit\fR( ggi_visual_t \fIvis\fR );
 \fBggiGetc\fR gets a character from the keyboard, and blocks if there is no key immediately available.
 
 \fBggiKbhit\fR checks if a key has been hit on the keyboard. This does not consume the key. It is used for easy porting of old DOS applications.
-Do not poll like this: do while( ! ggiKbhit(vis) ); On a multitasking OS you would be wasting a lot of resources which could be available to other processes. If you want to wait for a key, use the \fBggiGetc\fR call.
 
+.RS
+\fBImportant:\fR
+Do not poll like this: \fBdo while( ! ggiKbhit(vis) );\fR On a multitasking OS you would be wasting a lot of resources which could be available to other processes. If you want to wait for a key, use the \fBggiGetc\fR call.
+.RE
 .SH RETURN VALUE
 \fBggiKbhit\fR returns \fB0\fR if no key has been received yet, otherwise there is a key to be consumed.
 
@@ -20,4 +23,4 @@ Do not poll like this: do while( ! ggiKbhit(vis) ); On a multitasking OS you wou
 
 For a fuller definition of characters, see \fBgii_key_event\fR (3).
 .SH SEE ALSO
-\fBggiJoinInputs\fR (3) 
+\fBggiEventPoll\fR (3) 

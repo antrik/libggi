@@ -14,11 +14,12 @@ int \fBggiFPrintMode\fR( FILE *\fIs\fR, ggi_mode *\fIm\fR );
 .SH DESCRIPTION
 \fBggiParseMode\fR parses a string into a \fBggi_mode\fR.
 
-The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a human-readable form. \fBggiSPrintMode\fR outputs to a preallocated string buffer, \fBggiFPrintMode\fR outputs to a stdio FILE, and \fBggiPrintMode\fR outputs to standard output. These functions correspond to \fBsprintf \fR (3), \fBfprintf \fR (3), \fBprintf \fR (3), respectively.
+The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode\fR in a human-readable form. \fBggiSPrintMode\fR outputs to a preallocated string buffer, \fBggiFPrintMode\fR outputs to a stdio FILE, and \fBggiPrintMode\fR outputs to standard output. These functions correspond to \fBsprintf \fR (3), \fBfprintf \fR (3) and \fBprintf \fR (3) respectively.
 
-The format of the string used by these functions is exactly the same as the one used in the environment variable.
+The format of the string used by these functions is exactly the same as the one used in the \fBGGI_DEFMODE\fR environment variable decribed in \fBlibggi\fR (7).
 .SH RETURN VALUE
 \fBggiParseMode\fR returns:
+.RS
 .TP
 \fB0\fR
 on success, i.e. the string was correct. However, errors involving \fBGT_*\fR, position information, or mismatched brackets do not make it fail; these errors are simply ignored.
@@ -27,6 +28,7 @@ on success, i.e. the string was correct. However, errors involving \fBGT_*\fR, p
 \fB<0\fR
 if there is text that can not be parsed. This text is printed to stderr. All parameters parsed so far are written into \fIm\fR.
 .PP
+.RE
 
 So \fIm\fR contains all parameters that have been successfully parsed. For most applications there will be no need for testing \fBggiParseMode\fR for failure.
 

@@ -18,7 +18,7 @@ However, use not conforming to this specification will have undefined effects an
 
 Use \fBggiDBGetBuffer\fR to obtain the DirectBuffers at 0 to n-1, where n is the number returned by \fBggiDBGetNumBuffers\fR.
 
-Pixel-linear buffers have type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL. You're on your own now.
+Pixel-linear buffers have \fBtype==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL\fR. You're on your own now.
 
 DirectBuffers where \fBggiResourceMustAcquire\fR is true need to be 'acquired' (i.e. locked) before using. An acquire is done by using \fBggiResourceAcquire\fR and is released by calling \fBggiResourceRelease\fR. (See \fBggiResourceAcquire\fR (3).) Beware that the \fBread\fR, \fBwrite\fR and \fBstride\fR fields of the DirectBuffer may be changed by an acquire, and that they may be \fBNULL\fR or invalid when the DirectBuffer is not acquired.
 .SH RETURN VALUE
@@ -32,7 +32,7 @@ A frame buffer may be organized as several distinct buffers. Each buffer may hav
 
 A framebuffer is denoted by \fBggi_directbuffer.type\fR==\fBGGI_DB_NORMAL\fR. Each frame has its own buffer, and its number is indicated in \fBggi_directbuffer.frame\fR.
 .SH EXAMPLES
-.SS Example : How to obtain a DirectBuffer
+.SS How to obtain a DirectBuffer
 .nf
 
 ggi_visual_t	vis;
@@ -53,27 +53,23 @@ mode.virt.y = GGI_AUTO;	   to be the same as visible but some targets may
 mode.graphtype = GT_8BIT;		/* Depend on 8-bit palette. */
 mode.dpp.x = mode.dpp.y = GGI_AUTO;	/* Always 1x1 but we don't care. */
 
-if(ggiInit())
-{
+if(ggiInit()) {
 	/* Failed to initialize library. Bomb out. */
 }
 
 vis = ggiOpen(NULL);
-if(!vis)
-{
+if(!vis) {
 	/* Opening default visual failed, quit. */
 }
 
-if(ggiSetMode(vis, &mode))
-{
+if(ggiSetMode(vis, &mode)) {
 	/* Set mode has failed, should check if suggested mode
 	   is o.k. for us, and try the call again. */
 }
 
 numbufs = ggiDBGetNumBuffers(vis);
 
-for(i = 0; i < numbufs; i++)
-{
+for(i = 0; i < numbufs; i++) {
 	ggi_directbuffer *db;
 	int frameno;
 

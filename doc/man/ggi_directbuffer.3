@@ -33,6 +33,7 @@ typedef struct {
 .fi
 The \fBggi_directbuffer\fR structure contains information on target-dependent buffers to allow applications to access them directly.
 .SH STRUCTURE MEMBERS
+.RS
 .TP
 \fBtype\fR
 .nf
@@ -52,7 +53,7 @@ The \fBggi_directbuffer\fR structure contains information on target-dependent bu
       align == 0
       layout == blPixelLinearBuffer
 */
-
+    
 .fi
 .PP
 .TP
@@ -95,6 +96,7 @@ is an enumeration specifying the buffer adressing scheme. Possible values are \f
 \fBbuffer\fR
 is a union of all buffer info. Check the \fBlayout\fR member to see which member of use.
 .PP
+.RE
 .SH PIXEL LINEAR BUFFER
 .nf
 
@@ -107,8 +109,7 @@ typedef struct {
 A linear buffer is a region in the application's virtual memory address space. A pixel with the pixel coordinates (\fIx\fR, \fIy\fR) is assigned a pixel number according to the following formula:
 .nf
 
-pixel_number = (origin_y + y) * 
-stride + origin_x + x;
+pixel_number = (origin_y + y) * stride + origin_x + x;
 
 .fi
 
@@ -148,4 +149,4 @@ typedef struct {
 .SH EXTENDED BUFFER
 ?
 .SH SEE ALSO
-\fBggi_pixelformat\fR (3), \fBggiDBGetNumBuffers\fR (3), \fBggiResourceAcquire\fR (3) 
+\fBggi_pixelformat\fR (3), \fBggiDBGetBuffer\fR (3), \fBggiResourceAcquire\fR (3) 

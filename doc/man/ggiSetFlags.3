@@ -25,31 +25,53 @@ Flags are used to alter a visual's underlying behavior. All flags default to an 
 \fBggiGetFlags\fR returns the current flags. This can be used by the curious to check whether a flag is being silently ignored as per above.
 .SH SYNCHRONOUS AND ASYNCHRONOUS DRAWING MODES
 Some visuals allow different modes with regard to when the screen is updated and the actual drawing takes place.
+
 .RS
+.IP \(bu 4
+In synchronous mode when the drawing command returns, it is already or will be executed very shortly. So the visible effect is that everything is drawn immediately. (It is not guaranteed in the strict sense in that it is already drawn when the function call returns, but almost.) This is the default mode for all visuals.
+.IP \(bu 4
+The asynchronous mode does not guarantee that drawing commands are executed immediately, but is faster on many targets. If the visual does not support asynchronous mode, attempting to set it has no effect. Code written for asynchronous visuals will always perform correctly on synchronous visuals (but not visa-versa), so it is not necessary to adapt a program's behavior if this flag is not available.
+
+To make sure that all pending graphics operations are actually done and the screen is updated, you need to call \fBggiFlush\fR (3). This call is not needed in synchronous mode.)
 .RE
+
+.RS
+\fBImportant:\fR
 On some targets such as the X target there is no real synchronous mode, so LibGGI fakes one by periodically calling \fBggiFlush\fR in the background. This process can take about half the execution time of a program. So using synchronous mode can really slow things down.
 
 However, the synchronous mode is the default, because it is what most programmers expect.
-
+.RE
 In either mode, all operations are guaranteed to be performed in the order in which they are called. Reordering is not done.
 
 So the recommendation for all graphics applications is to set the asynchronous mode. It will be far more efficient on some platforms and will never be worse.
-.SS Example : Setting up asynchronous mode
+.SS Setting up asynchronous mode
 .nf
 
 ggiAddFlags(vis, GGIFLAG_ASYNC);	/* switches to asynchronous mode */
-
 ggiFlush(vis);				/* updates the screen */
-
 ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 
 .fi
-.SH TIDY BUFFER MODE.
+.SH TIDY BUFFER MODE
 Some visuals allow applications to manage their own dirty regions when using the directbuffer.
+
 .RS
+.IP \(bu 4
+In the default dirty-buffering mode, visuals which use backbuffers to render to a display system will refresh the entire screen when the resource lock is held and then released for the write frame's directbuffer. In syncronous modes this full-screen refresh may be performed at regular intervals. This can be very inefficient, but it guarantees that naive applications will be rendered correctly even though they were not written with a backbuffered display in mind.
+
+These visuals may also perform dirty-region tracking, such that if the directbuffer is used, altered data may never reach the screen until the lock is released, because the visual does not know that a certain area of the backbuffer contains new (dirty) data. Even explicitly calling \fBggiFlushRegion\fR (3) on the affected area may not cause the data to be sent to the screen.
+.IP \(bu 4
+In tidy-buffering mode, which is set by raising the flag GGIFLAG_TIDYBUF, visuals do not synchronize the screen at all when the write frame's directbuffer lock is held or upon its release. However, in this mode, \fBggiFlushRegion\fR (3) will always cause the requested region of the screen to be updated.
+
+Note that this means that, as long as the lock is held, affected regions may also have to be flushed (and thus, should be flushed) after normal drawing primitives are called.
+
+Before releasing the lock, applications should be sure to flush all affected regions, because the visual may revert to its default dirty-region management behavior after the lock is released.
+
+Do note, also, that in multi-frame displays \fBggiFlushRegion\fR affects only the current write frame, so even though it is possible to use a directbuffer to alter a different frame, you must call \fBggiSetWriteFrame\fR (3) to tell the visual that you will be altering the frame.
 .RE
+
 The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is safe to attempt to set it whether or not it is available. Code written for the tidy-buffering mode will display correctly on visuals which do not have a tidy-buffering mode (but not visa-versa), so it is not necessary to adapt program behavior to its non-presence.
 
 It is recommended that, if an application must use directbuffer, the application should attempt to place the visual in tidy-buffered mode. Do note, though, that many applications that use the directbuffer do not actually need to do so and probably should not, as it reduces portability.
 .SH SEE ALSO
-\fBggiFlush\fR (3) 
+\fBggiFlush\fR (3), \fBggiFlushRegion\fR (3) 

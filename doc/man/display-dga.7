@@ -2,10 +2,11 @@
 .SH NAME
 display-dga \- Display using XFree86-DGA extension
 .SH SYNOPSIS
-\fBdisplay-dga\fR : -noinput -nocursor -physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR \fIdisplay\fR
+\fBdisplay-dga\fR : [-noinput] [-nocursor] [-physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [\fIdisplay\fR]
 .SH DESCRIPTION
 Uses the XFree86 DGA extension to do fullscreen direct framebuffer access on X servers which support this. For systems without kernel framebuffer support, the program must be run as root for this target to be able to mmap \fB/dev/mem\fR.
 .SH OPTIONS
+.RS
 .TP
 -noinput
 XF86DGA events sent to the window are not captured and merged with any other LibGII input sources. This allows one to take input from raw devices without receiving duplicate events should X also be configured to use the device.
@@ -22,11 +23,14 @@ This option will override the physical screen size reported by the X server, whi
 \fIdisplay\fR
 The X display to connect to, otherwise defaults to the display specified in \fBDISPLAY\fR
 .PP
+.RE
 .SH ENVIRONMENT VARIABLES
+.RS
 .TP
 \fBGGI_DGA_FBDEV\fR
 specifies a framebuffer device to mmap instead of \fB/dev/mem\fR. This allows you to use the DGA target without root privileges!
 .PP
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

@@ -12,7 +12,7 @@ int \fBggiGetHLine\fR( ggi_visual_t \fIvis\fR, int \fIx\fR, int \fIy\fR, int \fI
 .SH DESCRIPTION
 Draw, put, or get a horizontal line from (\fIx\fR,\fIy\fR), extending \fIw\fR pixels in the positive x direction (normally right). The height is one pixel.
 
-The *\fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
+The \fIbuf\fR parameter in Get/Put functions points to a buffer from which the pixels will be read, or to which they will be written (it must be correctly allocated), depending on the case. See \fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal with pixels.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO

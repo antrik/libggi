@@ -2,10 +2,11 @@
 .SH NAME
 display-vcsa \- Display using Linux virtual console text device
 .SH SYNOPSIS
-\fBdisplay-vcsa\fR : -noinput -nokbd -nomouse -shade -ascii -physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR \fIvcsa device\fR
+\fBdisplay-vcsa\fR : [-noinput] [-nokbd] [-nomouse] [-shade] [-ascii] [-physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [\fIvcsa device\fR]
 .SH DESCRIPTION
 Uses the Linux \fB/dev/vcsa*\fR devices to render text modes onto the console.
 .SH OPTIONS
+.RS
 .TP
 -nokbd
 Do not open any libraries for keyboard input.
@@ -34,6 +35,7 @@ This option will provide a physical screen size for applications which wish to r
 \fIvcsa device\fR
 The filename of the device file, defaulting to \fB/dev/vcsa\fR which draws on the current virtual console.
 .PP
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

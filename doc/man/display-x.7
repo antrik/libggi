@@ -2,12 +2,13 @@
 .SH NAME
 display-x \- Displays to an X11 server
 .SH SYNOPSIS
-\fBdisplay-x\fR : -screen=\fIscreenidx\fR -inwin=\fIwinid|root\fR -noinput -nocursor -keepcursor -physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR -nobuffer -noaccel -nomansync -noshm -nodga -novidmode -nodbe -noevi \fIdisplay\fR
+\fBdisplay-x\fR : [-screen=\fIscreenidx\fR] [-inwin=\fIwinid|root\fR] [-noinput] [-nocursor] [-keepcursor] [-physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [-nobuffer] [-noaccel] [-nomansync] [-noshm] [-nodga] [-novidmode] [-nodbe] [-noevi] [\fIdisplay\fR]
 .SH DESCRIPTION
 display-x displays a GGI application via an X11 server. The server may be local or remote, and options are provided to tune performance to various scenerios. In normal operation, a new X11 window is opened, solid fill primitives and copybox are accelerated by the server, and a backbuffer is kept client-side for content fills (e.g. ggiPut* functions) and to restore data when an application has been exposed after being concealed by another window.
 
 CtrlAltm toggles mouse grabbing in the new window. It will try to emulate a "relative" mouse device, i.e. one that can be moved arbitrarily far in any direction without ever leaving the window. This is useful for game controls, where loosing focus is generally undesireable. Note that grabbing must be turned off in order to leave the window.
 .SH OPTIONS
+.RS
 .TP
 \fIdisplay\fR
 The X display to connect to, otherwise defaults to the display specified in \fBDISPLAY\fR
@@ -64,6 +65,7 @@ Use of the X11 DBE extension to provide buffered frame support is disabled. (NOT
 -noevi
 Use of the X11 Extended Visual Information extension to identify visuals which are exclusively used for overlay/underlay is disabled.
 .PP
+.RE
 .SH "CLIFF NOTES" ON NEW X TARGET
 The old X target rendered all primitives in a RAM backbuffer, and then copied the entire backbuffer periodically using the mansync helper to the X screen. This caused a lot of wasted bandwidth. However, since the bandwidth was being wasted anyway, LibGGIMISC splitline support was a simple hack that added nearly no complexity.
 
@@ -74,12 +76,14 @@ The new X target in its default mode maintains both a RAM backbuffer on the clie
 The old X target's RAM buffer was implemented using the X target's drawops hooks -- that is, the RAM buffer was essentially a re-implementation of display-memory with the extra facilities to sync to the X server built in. The new target capitalizes on some improvements made in display-memory, and instead it opens and loads a child display-memory visual which takes care of finding software renderers for the RAM buffer. The main drawops of the new target dispatch the the X server commands and call the child's corresponsing software drawops to ensure consistant state of the RAM buffer vs the X window. This must be done such that any requests to get data from the RAM backbuffer are not processed until the RAM backbuffer is up to date, and any flushes from the backbuffer are not processed until the backbuffer is up to date. There's a lot of locking intracacy to ensure this level of consistancy.
 
 The basic syncronization operation is accomplished by the flush function, which is the function loaded on the xpriv "flush" member hook. The flush hook function is called:
-
+.RS
+.IP 1) 4
 When the mansync helper decides it is time to refresh the screen.
-
+.IP 2) 4
 After a primitive, if the visual is in syncronous rendering mode.
-
+.IP 3) 4
 When an expose or graphicsexpose event is sent from the server. This means the server has discarded data that was concealed by another window or by the edge of the screen, and the data must be resent from the client.
+.RE
 
 ...in the last case the whole area that must be refreshed is sent again by the client. In the first two cases only the dirty area is sent, except when the application is holding the directbuffer writing resource, in which case the whole area must be synced because there is no way for the target to tell what the user has modified. Holding the directbuffer write resource open when the display is in syncronous mode or when also sending primitives will result in bad perfomance. There's no reason to do so on any target, so don't.
 
@@ -105,7 +109,6 @@ However, a more common problem will be seen because X does not give us any way t
 
 Anyway, I hope this is helpful to any intrepid soul which decides to fondle this code :-) (Brian S. Julin)
 .SH FEATURES
-.SS For display-x
 .RS
 .IP \(bu 4
 DirectBuffer always available.

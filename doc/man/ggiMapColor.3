@@ -16,11 +16,11 @@ int \fBggiUnpackPixels\fR( ggi_visual_t \fIvis\fR, void *\fIbuf\fR, ggi_color *\
 
 \fBggiUnmapPixel\fR gets the color associated with the given pixelvalue.
 
-\fBggiPackColors\fR converts the colors in \fIcols\fR to in \fIbuf\fR. The output from this function is suitable for input to the \fBggiPut{HLine,VLine,Box}\fR functions.
+\fBggiPackColors\fR converts the colors in \fIcols\fR to pixelvalues in \fIbuf\fR. The output from this function is suitable for input to the \fBggiPut{HLine,VLine,Box}\fR functions.
 
-\fBggiUnpackPixels\fR converts the pixelvalues in \fIbuf\fR to individual elements of \fIcols\fR. This function maybe used to convert buffers output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue representation to their actual .
+\fBggiUnpackPixels\fR converts the pixelvalues in \fIbuf\fR to individual elements of \fIcols\fR. This function maybe used to convert buffers output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue representation to their actual colors as defined by \fBggi_color\fR (3).
 
-The buffers output from \fBggiPackColors\fR and the input to \fBggiUnpackPixels\fR are in the same format as the get/put buffers. Their format is defined in \fBggi_pixelformat\fR.
+The buffers output from \fBggiPackColors\fR and the input to \fBggiUnpackPixels\fR are in the same format as the get/put buffers. Their format is defined in \fBggi_pixelformat\fR (3).
 
 Try to cache the results of color lookups in your application for efficiency purposes.
 .SH RETURN VALUE

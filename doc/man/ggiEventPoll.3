@@ -24,8 +24,11 @@ int \fBgiiRemoveEventMask\fR( ggi_visual_t \fIvis\fR, gii_event_mask \fImask\fR 
 .SH DESCRIPTION
 LibGGI provides input facilities through an auxiliary library, \fBLibGII\fR. Each LibGGI visual internally contains a gii_input_t input, and all LibGII functions are available to manipulate and process inputs. The LibGGI versions provided of most LibGII functions simply take a ggi_visual_t rather than gii_input_t for convenience during everyday usage. Events are LibGII types. All other semantics are the same; see \fBlibgii\fR (7) for details.
 
+.RS
+\fBImportant:\fR
 By default LibGGI visuals autodetect and open the appropriate inputs, including mouse and keyboard and any other inputs that are 'intrinsic' to the visual e.g. any registered X11 input device under the X target. Thus in the usual cases there is no need to open a LibGII gii_input_t directly (and that may in fact fail because an input device is already open). The LibGGI \fBggiEvent*\fR functions must be used to do event handling with LibGGI visuals, and provide adequate support for most everyday, single-visual usage.
 
-Advanced management of input sources is accomplished by detaching the input from the visual and using LibGII functions on the separate visual handle (see ). This is encouraged, for example, when joining inputs from multiple visuals, because when two visuals share the same joined input, you cannot ggiClose both of the visuals (a fatal error will result, because closing the first visual closes both of the joined inputs and leaves the second closed visual with a stale input handle.)
+Advanced management of input sources is accomplished by detaching the input from the visual and using LibGII functions on the separate visual handle (see \fBggiDetachInput\fR (3)). This is encouraged, for example, when joining inputs from multiple visuals, because when two visuals share the same joined input, you cannot ggiClose both of the visuals (a fatal error will result, because closing the first visual closes both of the joined inputs and leaves the second closed visual with a stale input handle.)
+.RE
 .SH SEE ALSO
 \fBgiiSetEventMask\fR (3), \fBgiiEventPoll\fR (3), \fBggiGetInput\fR (3) 

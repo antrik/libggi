@@ -2,10 +2,11 @@
 .SH NAME
 ggiteleserver \- GGI display server
 .SH SYNOPSIS
-\fBggiteleserver\fR -V -h -t target -d display
+\fBggiteleserver\fR [-V] [-h] [-t \fItarget\fR] [-d \fIdisplay\fR]
 .SH DESCRIPTION
 ggiteleserver starts a display server for GGI and listen for display operations on a TCP socket. A GGI application can then forward display operations to this server with the display-tele target. The server will use the default output.
 .SH OPTIONS
+.RS
 .TP
 -V, --version
 Print the program version and exit.
@@ -15,13 +16,14 @@ Print the program version and exit.
 Print options and exit.
 .PP
 .TP
--t target
+-t \fItarget\fR
 Use the specified \fItarget\fR as display. It overrides the value of \fBGGI_DISPLAY\fR.
 .PP
 .TP
--d display
-?
+-d \fIdisplay\fR
+???
 .PP
+.RE
 The default port is 27780.
 .SH SEE ALSO
 .RS

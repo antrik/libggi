@@ -2,12 +2,13 @@
 .SH NAME
 display-glide \- Display using Glide library
 .SH SYNOPSIS
-\fBdisplay-glide\fR : \fIcard\fR
+\fBdisplay-glide\fR : [\fIcard\fR]
 .SH DESCRIPTION
 Uses the Glide library to display fullscreen on a 3DFX graphics card.
 .SH OPTIONS
-The 3DFX card to use can be optionally specified as a cardinal number minus one. (e.g. 0 means the first card, 1 the second, etc.)
+The 3DFX card to use can be optionally specified as a cardinal number minus one. (e.g. \fB0\fR means the first card, \fB1\fR the second, etc.)
 .SH ENVIRONMENT VARIABLES
+.RS
 .TP
 \fBGGI_GLIDE_MAXFREQ\fR
 specifies the maximum update frequency your monitor can handle (in Hz). Default is 70Hz.
@@ -20,6 +21,7 @@ specifies the maximum horizontal frequency your monitor can handle (in kHz). Def
 \fBGGI_GLIDE_HALTONSWITCH\fR
 if this is set applications will be halted on console switchaway. The default is to continue running.
 .PP
+.RE
 .SH FEATURES
 .RS
 .IP \(bu 4

@@ -11,6 +11,7 @@ int \fBggiResourceRelease\fR( ggi_resource_t \fIres\fR );
 int \fBggiResourceMustAcquire\fR( ggi_resource_t \fIres\fR );
 .SH DESCRIPTION
 \fBggiResourceAcquire\fR acquires (locks) a LibGGI resource, typically a DirectBuffer (see examples below). The \fIactype\fR indicates the desired access type for the operation. The following flags may be bitwise-or'ed together:
+.RS
 .TP
 \fBGGI_ACTYPE_READ\fR
 read access to the resource
@@ -19,6 +20,7 @@ read access to the resource
 \fBGGI_ACTYPE_WRITE\fR
 write access to the resource
 .PP
+.RE
 
 \fBggiResourceRelease\fR releases (unlocks) an already-acquired resource.
 
@@ -26,9 +28,9 @@ write access to the resource
 .SH RETURN VALUE
 \fBggiResourceAcquire\fR and \fBggiResourceRelease\fR return \fB0\fR on success, \fB<0\fR on failure.
 
-\fBggiResourceMustAcquire\fR is simply a macro that returns true if the resource must be explicitly acquired and released, or false if not. However, it is still safe to call \fBggiResourceAcquire\fR or \fBggiResourceRelease\fR even in the latter case -- it --> -- would be a no-op.
+\fBggiResourceMustAcquire\fR is simply a macro that returns true if the resource must be explicitly acquired and released, or false if not. However, it is still safe to call \fBggiResourceAcquire\fR or \fBggiResourceRelease\fR even in the latter case; it would be a no-op.
 .SH EXAMPLES
-.SS Example : Using DirectBuffers
+.SS Using DirectBuffers
 .nf
 
 const ggi_directbuffer *dbuf;
