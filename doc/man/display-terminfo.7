@@ -1,0 +1,27 @@
+.TH "display-terminfo" 7 "2003-04-02" "libggi-current" GGI
+.SH NAME
+\fBdisplay-terminfo\fR : Display using ncurses
+.SH SYNOPSIS
+.nb
+.nf
+display-terminfo: [-physz=<sizex>,<sizey>[dpi]]
+.fi
+
+.SH DESCRIPTION
+Uses the ncurses library for output and input.
+.SH OPTIONS
+.TP
+\fB-physz=<sizex>,<sizey>[dpi]\fR
+This option will provide a physical screen size for applications
+which wish to remain resolution independent.  \fBsizex\fR,
+\fBsizey\fR are the x,y size of the screen in millimeters, unless
+the optional \fBdpi\fR string is affixed, in which case, they
+represent resolution in dots-per-inch.
+
+.PP
+.SH FEATURES
+.IP \(bu 4
+DirectBuffer support always available.
+.IP \(bu 4
+Unaccelerated
+.PP

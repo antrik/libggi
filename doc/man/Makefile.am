@@ -15,6 +15,7 @@ man_MANS = \
  display-sub.7	\
  display-svgalib.7	\
  display-tele.7	\
+ display-terminfo.7	\
  display-tile.7	\
  display-trueemu.7	\
  display-vcsa.7	\
