@@ -126,6 +126,9 @@ typedef struct {
 	/* Accelerator target private data pointer */
 	void *accel_priv;
 
+	/* Flag set whenever pallete is altered, for use by accel renderer. */
+	int ilut_touched;
+
 } ggi_kgi_priv;
 
 
