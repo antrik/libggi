@@ -316,7 +316,7 @@ ggiClose(memvis);
 <refsect1>
 <title>See Also</title>
 
-<simplelist>
+<simplelist type="inline">
 <member><xref linkend="api-ggiinit"/></member>
 
 <!-- !!! link to libggi(7) -->
