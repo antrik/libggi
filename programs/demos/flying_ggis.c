@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.4 2004/04/02 16:02:48 ggibecka Exp $
+/* $Id: flying_ggis.c,v 1.5 2004/06/02 11:25:25 pekberg Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -64,6 +64,7 @@ static fixed max_size;    /* default 1.0 = full screen */
 static int cluster_size;  /* pixels */
 static int fixed_speed=0;
 static int speed;
+static int async = 1;
 
 static char *target_str = NULL;
 static ggi_visual_t vis;
@@ -199,7 +200,8 @@ static void update_frame(void)
 		}
 	}
 
-        ggiFlush(vis);
+	if(async)
+		ggiFlush(vis);
 }
 
 static void init_textures(void)
@@ -331,7 +333,8 @@ static void show_usage(char *progname)
 		"    -s, --speed     <speed>\n"
 		"    -z, --size      <percentage>\n"
 		"    -c, --cluster   <percentage>\n"
-		"    -f, --fixed\n\n",
+		"    -f, --fixed\n\n"
+		"Press 's' to toggle (a)synchronous drawing.\n\n",
 		progname);
 }
 
@@ -459,7 +462,8 @@ int main(int argc, char **argv)
                 ggiPanic("Failed to open visual.\n");
         }
 
-	ggiSetFlags(vis, GGIFLAG_ASYNC);
+	if(async)
+		ggiSetFlags(vis, GGIFLAG_ASYNC);
 	
 	ggiCheckMode(vis, &vis_mode);
 
@@ -507,6 +511,10 @@ int main(int argc, char **argv)
 					case 'q': case 'Q':
 					case 'x': case 'X':
 						done=1;
+						break;
+					case 's': case 'S':
+						async = !async;
+						ggiSetFlags(vis, async ? GGIFLAG_ASYNC : 0);
 						break;
 				}
 			}
