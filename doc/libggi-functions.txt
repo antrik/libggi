@@ -43,7 +43,7 @@ be called as many times as `ggiInit` has been called beforehand.
 Return value
 ------------
 
-`ggiInit` returns `0` for OK, otherwise an error code.
+`ggiInit` returns `0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 `ggiExit` returns:
@@ -58,7 +58,7 @@ Return value
     `ggiInit`s will return `1`.
 
 `<0`
-    error, especially if more `ggiExit` calls have been done than
+    :man:`ggi-error(3)`, especially if more `ggiExit` calls have been done than
     `ggiInit` calls.
     
 
@@ -174,7 +174,7 @@ Return value
 through GGI functions.
 
 
-`ggiClose` returns `0` for OK, otherwise an error code.
+`ggiClose` returns `0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 Examples
@@ -418,7 +418,7 @@ Return value
 
 
 The mode setting functions return `0` if the mode is set successfully,
-otherwise an error code.
+otherwise an :man:`ggi-error(3)` code.
 
 
 Notes
@@ -503,6 +503,10 @@ parsed. For most applications there will be no need for testing
 `ggiParseMode` for failure.
 
 
+See Also
+--------
+
+:man:`libggi(7)`, :man:`ggi-error(3)`
 
 
 
@@ -567,8 +571,8 @@ Frames are numbered from 0 to the number of frames requested minus 1.
 Return value
 ------------
 
-The `ggiSet*Frame` functions return `0` if they succeed, and `<0` if
-they fail.
+The `ggiSet*Frame` functions return `0` if they succeed, and an
+:man:`ggi-error(3)` on failure.
 
 
 The `ggiGet*Frame` functions never fail.
@@ -669,7 +673,7 @@ Return value
 
 
 `ggiUnmapPixel`, `ggiPackColors` and `ggiUnpackPixels` returns `0`
-for OK, otherwise an error code.
+for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 See Also
@@ -722,12 +726,13 @@ Return value
 ------------
 
 `ggiSetPalette` returns the number of the first entry changed.
-`<0` indicate error.
+`<0` indicate an :man:`ggi-error(3)`.
 
 
-`ggiGetPalette` returns `0` for OK, otherwise an error code. When
-called with len=0 this function will not automatically succeed, but
-the return code will indicate whether there is a readable CLUT.
+`ggiGetPalette` returns `0` for OK, otherwise an :man:`ggi-error(3)`
+code. When called with len=0 this function will not automatically
+succeed, but the return code will indicate whether there is a
+readable CLUT.
 
 
 Palette in GGI
@@ -781,7 +786,7 @@ Return value
 
 
 `ggiSetColorfulPalette` returns the number of the first entry changed.
-`<0` indicate error.
+`<0` indicate an :man:`ggi-error(3)`.
 
 
 See Also
@@ -845,9 +850,9 @@ integers referenced by :p:`maxwrite` and :p:`maxread`).  This must be
 done once for each channel.  The parameter :p:`bitmeaning` should be
 set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
 the channel of which you are inquiring.  If `ggiGammaMax` returns an
-error, you cannot set the gamma map on this visual.  If `ggiGammaMax`
-succeeds, but :p:`maxwrite` is -1 on return, this means that
-`ggiSetGamma` will work, but that `ggiSetGammaMap` will not.
+:man:`ggi-error(3)`, you cannot set the gamma map on this visual. 
+If `ggiGammaMax` succeeds, but :p:`maxwrite` is -1 on return, this means
+that `ggiSetGamma` will work, but that `ggiSetGammaMap` will not.
 
 
 `ggiSetGamma` and `ggiGetGamma` sets or gets the gamma correction for
@@ -859,7 +864,7 @@ Return value
 ------------
 
 
-All five functions `0` for OK, otherwise an error code.
+All five functions `0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 
@@ -989,7 +994,7 @@ Return value
 ------------
 
 
-Both functions `0` for OK, ggiSetGCClipping returns an error.
+Both functions `0` for OK, ggiSetGCClipping returns an :man:`ggi-error(3)`.
 
 
 
@@ -1291,7 +1296,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an error code.
+`0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 See Also
@@ -1338,7 +1343,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an error code.
+`0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 See Also
@@ -1407,7 +1412,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an error code.
+`0` for OK, otherwise an :man:`ggi-error(3)` code.
 
 
 Examples
@@ -1546,13 +1551,13 @@ Return Value
 
 
 `ggiSetFlags`, `ggiAddFlags`, and `ggiRemoveFlags` return `0` on
-success, `<0` on failure.  This will only happen if the failure of a
-target to support the addition or removal of a flag will cause the
-target to behave in a way that the application is not expecting.  As
-of this writing there are no such cases.  On visuals where certain
-flags are unsupported but are inconsequential, these functions will
-return a successful return code, but will not actually set or clear
-the flag.
+success, an :man:`ggi-error(3)` code on failure.  This will only
+happen if the failure of a target to support the addition or
+removal of a flag will cause the target to behave in a way that
+the application is not expecting.  As of this writing there are no
+such cases.  On visuals where certain flags are unsupported but are
+inconsequential, these functions will return a successful return
+code, but will not actually set or clear the flag.
 
 
 `ggiGetFlags` returns the current flags.  This can be used by the
@@ -1793,7 +1798,7 @@ Return Value
 
 
 `ggiResourceAcquire` and `ggiResourceRelease` return `0` on success,
-`<0` on failure.
+an :man:`ggi-error(3)` code on failure.
 
 
 `ggiResourceMustAcquire` is simply a macro that returns true if the
