@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.5 2004/02/02 19:22:01 cegger Exp $
+/* $Id: inputdump.c,v 1.6 2004/06/10 13:00:32 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -685,6 +685,7 @@ static void show_event(gii_event *ev)
 	if (do_show == SHOW_LONG) {
 		show_common(ev);
 	}
+	fflush(stderr);
 }
 
 
@@ -809,18 +810,6 @@ int main(int argc, char **argv)
 	if (input_str) {
 		ggiJoinInputs(vis, giiOpen(input_str, NULL));
 	}
-	
-
-	/* trigger GII to send information on all input devices */
-
-	ev.any.size   = sizeof(gii_cmd_event);
-	ev.any.type   = evCommand;
-	ev.any.origin = GII_EV_ORIGIN_NONE;
-	ev.any.target = GII_EV_TARGET_ALL;
-	ev.cmd.code   = GII_CMDCODE_GETDEVINFO;
-
-	giiEventSend(ggiJoinInputs(vis, NULL), &ev);
-
 
 	/* main loop */
 
