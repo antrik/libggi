@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2003/07/05 22:13:41 cegger Exp $
+/* $Id: visual.c,v 1.4 2003/07/13 06:55:01 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -213,7 +213,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fbdevpriv->idleaccel = m2164w_idleaccel;
 
 	/* Accelerate fonts if possible */
-	priv->font = font;
+	priv->font = (uint8 *)(font);
 	usedmemend = LIBGGI_MODE(vis)->frames *
 		fbdevpriv->fix.line_length * LIBGGI_MODE(vis)->virt.y;
 	fontlen = 256*8;
