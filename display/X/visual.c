@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2001/07/31 08:15:25 cegger Exp $
+/* $Id: visual.c,v 1.6 2001/12/06 19:58:34 ggibecka Exp $
 ******************************************************************************
 
    Display-X: initialization
@@ -181,6 +181,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				       priv->xwin.x.screen);
 	priv->ximage = NULL;
 	priv->xwin.x.cmap = 0;
+	priv->xwin.cmap_first=0;/* Initialize them ! or trouble comes later. */
+	priv->xwin.cmap_last=0;
 	priv->xwin.x.gc = 0;
 	priv->xwin.x.xliblock = lock;
 
