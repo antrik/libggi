@@ -1,4 +1,4 @@
-/* $Id: unix.c,v 1.2 2002/09/08 21:37:48 soyt Exp $
+/* $Id: unix.c,v 1.3 2003/07/28 18:30:22 cegger Exp $
 ******************************************************************************
 
    LibGGI core - UNIX specific stuff.
@@ -31,7 +31,7 @@
 #include <ggi/ggi-unix.h>
 
 
-/* Wait for filedescriptors and LibGGI events the the same time */
+/* Wait for filedescriptors and LibGGI events at the same time */
 int ggiEventSelect(ggi_visual *vis, ggi_event_mask *mask, int n,
 		   fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 		   struct timeval *timeout)
