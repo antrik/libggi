@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.113 2004/05/02 06:48:11 cegger Exp $
+dnl $Id: configure.in,v 1.114 2004/05/02 23:02:12 nsouch Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -322,6 +322,34 @@ if test "x$ac_cv_header_sys_shm_h" != "xyes"; then
 	build_ipc_target="no"
 fi
 
+dnl ========================================================================
+dnl -pthread is necessary if gii compiled with threads
+
+have_pthreads=no
+if test "x$use_threads" != "xno"; then
+  AC_MSG_CHECKING(for pthread library)
+  TMP_SAVE_LIBS=$LIBS
+  if test $host_os = "freebsd5.1" -o \
+          $host_os = "freebsd4.10"; then
+    _pthread="-pthread"
+  else
+    _pthread="-lpthread"
+  fi
+  LIBS="$LIBS $_pthread"
+  AC_TRY_LINK([
+#include "confdefs.h"
+#define __C_ASM_H /* fix for retarded Digital Unix headers */
+#include <pthread.h>],[
+void foo(void)
+{
+pthread_exit (0);
+}
+],
+    have_pthreads=yes
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no)
+  LIBS=$TMP_SAVE_LIBS)
+fi
 
 dnl ========================================================================
 dnl LibGII must be built
@@ -580,26 +608,6 @@ DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
 XSUBDIRS=""
 FBDEVSUBDIRS=""
-
-have_pthreads=no
-if test "x$use_threads" != "xno"; then
-  AC_MSG_CHECKING(for pthread library)
-  TMP_SAVE_LIBS=$LIBS
-  LIBS="$LIBS -lpthread"
-  AC_TRY_LINK([
-#include "confdefs.h"
-#define __C_ASM_H /* fix for retarded Digital Unix headers */
-#include <pthread.h>],[
-void foo(void)
-{
-pthread_exit (0);
-}
-],
-    have_pthreads=yes
-    AC_MSG_RESULT(yes),
-    AC_MSG_RESULT(no))
-  LIBS=$TMP_SAVE_LIBS
-fi
 
 use_threads_orig="$use_threads"
 
