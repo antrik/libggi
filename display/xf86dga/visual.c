@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2005/03/29 14:36:39 mooz Exp $
+/* $Id: visual.c,v 1.18 2005/03/30 07:11:54 pekberg Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -308,7 +308,10 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		_args.exposearg = NULL;
 		_args.resizefunc = NULL;
 		_args.resizearg = NULL;
-		_args.lockfunc = priv->x.xliblock;
+		_args.lockfunc = (gii_inputxwin_lockfunc*)ggLock;
+		_args.lockarg = priv->x.xliblock;
+		_args.unlockfunc = (gii_inputxwin_unlockfunc*)ggUnlock;
+		_args.unlockarg = priv->x.xliblock;
 
 		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
 			DPRINT_MISC("Unable to open xwin inputlib\n");
