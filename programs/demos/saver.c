@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.1 2001/05/12 23:03:41 cegger Exp $
+/* $Id: saver.c,v 1.2 2001/06/20 22:54:55 skids Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 #include <ggi/ggi.h>
 
