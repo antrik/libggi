@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.4 2004/02/23 14:24:54 pekberg Exp $
+/* $Id: evi.c,v 1.5 2004/09/12 21:03:47 cegger Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -32,7 +32,7 @@
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32 *dlret)
 {
-	ggi_x_priv *xpriv = LIBGGI_PRIVATE(vis);
+	ggi_x_priv *xpriv = GGIX_PRIV(vis);
 	ggi_xevi_priv *priv;
 	int i;
 
@@ -96,7 +96,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_x_priv *xpriv = LIBGGI_PRIVATE(vis);
+	ggi_x_priv *xpriv = GGIX_PRIV(vis);
 	ggi_xevi_priv *priv = xpriv->evilist;
 
 	if (priv != NULL) {

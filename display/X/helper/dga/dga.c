@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.4 2004/02/23 14:24:53 pekberg Exp $
+/* $Id: dga.c,v 1.5 2004/09/12 21:03:46 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -139,7 +139,7 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *maxed) {
 static int ggi_xdga_mmap (ggi_visual *vis) {
 	ggi_x_priv *priv;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = GGIX_PRIV(vis);
 
 	/* This should have been taken care of by enter_mode */
 
@@ -151,7 +151,7 @@ static int ggi_xdga_makerenderer (ggi_visual *vis) {
 	ggi_x_priv *priv;
 	XDGADevice *dev;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = GGIX_PRIV(vis);
 	dev = priv->priv;
 
 	if (priv->slave != NULL) ggiClose(priv->slave);
