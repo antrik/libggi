@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.1 2001/05/12 23:03:14 cegger Exp $
+/* $Id: dl.c,v 1.2 2002/01/26 19:32:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -69,7 +69,8 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	} else {
 		nameptr++;
 	}
-	sprintf(symname, "%s%s", symprefix, nameptr);
+	snprintf(symname, strlen(symprefix) + strlen(nameptr) + 2,
+		"%s%s", symprefix, nameptr);
 	nameptr = strrchr(symname, '.');
 	if (nameptr) {
 		*nameptr = '\0';

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2001/09/04 07:04:20 cegger Exp $
+/* $Id: mode.c,v 1.6 2002/01/26 19:36:22 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -144,7 +144,8 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	}
 
 	/* Form a SVGAlib mode number */
-	sprintf(modestr, "G%dx%dx%s", tm->visible.x, tm->visible.y, colors);
+	snprintf(modestr, 64, "G%dx%dx%s",
+		tm->visible.x, tm->visible.y, colors);
 	GGIDPRINT("SVGAlib trying modeline=%s.\n", modestr);
 
  	modenum = vga_getmodenumber(modestr);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2001/09/08 03:12:11 skids Exp $
+/* $Id: visual.c,v 1.10 2002/01/26 19:34:13 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -184,7 +184,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	entry->d_name[strlen(entry->d_name)-2] != 's')
       continue;
 
-    sprintf( buf, "%s/%s", driver_dir, entry->d_name );
+    snprintf( buf, 4096, "%s/%s", driver_dir, entry->d_name );
     GGIDPRINT("Opening '%s'.\n", buf);
 
     handle = dlopen( buf, RTLD_LAZY );

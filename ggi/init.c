@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: init.c,v 1.2 2002/01/26 19:32:21 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -127,7 +127,8 @@ int ggiInit(void)
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
 	} else {
-		sprintf(conffile, "%s/%s", confdir, GGICONFFILE);
+		snprintf(conffile, strlen(confdir) + strlen(GGICONFFILE) + 2,
+			"%s/%s", confdir, GGICONFFILE);
 		err = ggLoadConfig(conffile, &_ggiConfigHandle);
 		if (err == GGI_OK) {
 			free(conffile);
@@ -243,7 +244,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 		cp=getenv("DISPLAY");
 		if (cp!=NULL) {
 			strcpy(str,"display-x:");
-			strcat(str,cp);
+			strncat(str, cp, 1024);
 			ret = ggiOpen(str,NULL);
 			if (ret != NULL)
 				return ret;
@@ -328,14 +329,14 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	inplist=NULL;
 
-	sprintf(str,"GGI_INPUT_%s_%d",target,++globalopencount);
+	snprintf(str, 1024, "GGI_INPUT_%s_%d", target, ++globalopencount);
 	mangle_variable(str);
 	if (!inplist) { 
 		inplist = getenv(str);
 		GGIDPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
 	}
 
-	sprintf(str,"GGI_INPUT_%s",target);
+	snprintf(str, 1024, "GGI_INPUT_%s", target);
 	mangle_variable(str);
 	if (!inplist) {
 		inplist = getenv(str);
