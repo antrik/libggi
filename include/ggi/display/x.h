@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.5 2003/01/23 03:02:58 skids Exp $
+/* $Id: x.h,v 1.6 2003/06/12 11:52:08 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -45,6 +45,13 @@
 typedef int (*ggi_modelist_getlist)(ggi_visual *vis);
 typedef int (*ggi_modelist_restore)(ggi_visual *vis);
 typedef int (*ggi_modelist_enter)(ggi_visual *vis, int num);
+
+/* Validate the 'num's mode, if it fits into the 'maxed' mode.
+ * If 'num' is negative, then search for the best mode that
+ * fits into the 'maxed' mode.
+ * Return the 'num's mode from the modelist indicating success.
+ * Negative return code indicates an error or GGI_ENOTFOUND.
+ */
 typedef int (*ggi_modelist_validate)(ggi_visual *vis, int num, 
 				     ggi_mode *maxed);
 
@@ -130,6 +137,7 @@ typedef struct {
 	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads */
 	ggi_modelistmode	*modes;		/* modelist helper modes     */
 	void		 	*modes_priv;	/* DGA or VideoMode modelist */
+	int			cur_mode;	/* Current used mode from the modelist */
 	int			modes_num;	/* number of modes in list.  */
 
 	gii_input   *inp;
