@@ -26,8 +26,8 @@ Due : ????-??-??
 - libKGI-target (compiling framework)
 + improve modelist.inc -- 
 - add helper target for dirty-region management
-+ look at  egrep -Hirn "return[[:space:]]*\-\w;"  and peruse proper defines for
-  retval where applicable
+* look at  egrep -Hirn "return[[:space:]]*\-\w+;"  and peruse proper defines for
+  retval where applicable (Christoph Egger)
 - make use of libgii's enhanced dl system:
   allow single library to serve multiple suggest strings
   (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
