@@ -36,3 +36,7 @@
 
 /* Define if Unix domain sockets are supported. */
 #undef HAVE_UNIX_DOMAIN_SOCKET
+
+/* Define if socklen_t type is supported. */
+#undef HAVE_SOCKLEN_T
+
