@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:47 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/07/12 19:55:02 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -90,6 +90,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	char args[256];
 	int err = 0;
 	int id, i;
+	int pixelBytes;
 
 	err = GGI_vgl_checkmode(vis, tm);
 	if (err) return err;
@@ -98,11 +99,11 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	memset(&modeinfo, 0, sizeof(modeinfo));
 	
 	switch(gt) {
-		case GT_1BIT : modeinfo.vi_depth = 1; break;
-		case GT_4BIT : modeinfo.vi_depth = 4; break;
-		case GT_8BIT : modeinfo.vi_depth = 8; break;
-		case GT_16BIT: modeinfo.vi_depth = 16; break;
-		case GT_32BIT: modeinfo.vi_depth = 32; break;
+		case GT_1BIT : modeinfo.vi_depth = 1; pixelBytes = 1; break;
+		case GT_4BIT : modeinfo.vi_depth = 4; pixelBytes = 1; break;
+		case GT_8BIT : modeinfo.vi_depth = 8; pixelBytes = 1; break;
+		case GT_16BIT: modeinfo.vi_depth = 16; pixelBytes = 2; break;
+		case GT_32BIT: modeinfo.vi_depth = 32; pixelBytes = 4; break;
 
 		/* Unsupported mode depths */
 		case GT_15BIT:
@@ -151,11 +152,11 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 		for (i = 0; i<tm->frames; i++) {
 			if (LIBGGI_FB_SIZE(tm) >
 				(VGLDisplay->Xsize*VGLDisplay->Ysize*
-							VGLDisplay->PixelBytes)) {
+					pixelBytes)) {
 				fprintf(stderr, "display-vgl: framebuffer too large! (%d > %d*%d*%d)\n",
 					LIBGGI_FB_SIZE(tm),
 					VGLDisplay->Xsize, VGLDisplay->Ysize, 
-					VGLDisplay->PixelBytes);
+					pixelBytes);
 				return GGI_ENOMEM;
 			}
 
