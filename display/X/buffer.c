@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.9 2003/01/21 01:36:50 ggibecka Exp $
+/* $Id: buffer.c,v 1.10 2003/05/02 05:49:49 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -234,12 +234,17 @@ int _ggi_x_create_ximage(ggi_visual *vis) {
 	priv->ximage->bitmap_bit_order = MSBFirst;
 #endif
 
-	/* TODO: Some brave soul do alloc error handling here. */
-
 	for (i = 0; i < vis->mode->frames; i++) {
+		ggi_directbuffer *db;
+
+		db = _ggi_db_get_new();
+		if (!db) {
+			_ggi_x_free_ximage(vis);
+			return GGI_ENOMEM;
+		}
+
 		LIBGGI_APPLIST(vis)->last_targetbuf
-		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis),
-				       _ggi_db_get_new());
+		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis), db);
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
 		LIBGGI_APPBUFS(vis)[i]->type
 		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
@@ -258,9 +263,10 @@ int _ggi_x_create_ximage(ggi_visual *vis) {
 		LIBGGI_APPBUFS(vis)[i]->resource->release = GGI_X_db_release;
 		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
 		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
-        }
-	LIBGGI_APPLIST(vis)->first_targetbuf
-	  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
+
+		LIBGGI_APPLIST(vis)->first_targetbuf
+		  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
+	}
 
 	/* The core doesn't init this soon enough for us. */
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
