@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.129 2004/08/11 10:57:16 pekberg Exp $
+dnl $Id: configure.in,v 1.130 2004/08/17 06:51:52 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1369,7 +1369,24 @@ until test "$static_sysconfdir" = "$old_val"; do
 	eval static_sysconfdir="$static_sysconfdir"
 done
 
+case "${host}" in
+ *-*-mingw*)
+	dnl Find a relative path that takes us from static_sysconfdir
+	dnl to static_libdir.
+	GGI_SYSCONF_TO_LIB
+	dnl The relative path from sysconfdir to sysconfdir is simple.
+	ggi_sysconfdir="."
+	;;
+ *)
+	dnl Usually good to use an absolute path.
+	ggi_sysconfdir_to_libdir="$static_libdir/$ggi_subdir"
+	ggi_sysconfdir="$static_sysconfdir/$ggi_subdir"
+	;;
+esac
+
 AC_SUBST(ggi_subdir)
+AC_SUBST(ggi_sysconfdir_to_libdir)
+AC_SUBST(ggi_sysconfdir)
 AC_SUBST(static_libdir)
 AC_SUBST(static_sysconfdir)
 AC_DEFINE_UNQUOTED(GGITAGLEN,$TAGLEN)

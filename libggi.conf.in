@@ -1,5 +1,5 @@
 # Mapping file for suggest-strings to libraries
-.root: @static_libdir@/@ggi_subdir@
+.root: @ggi_sysconfdir_to_libdir@
 #
 # suggest_name			library_name			versions
 # ------------			--------------------------	--------
@@ -110,10 +110,10 @@ generic-mmio 			default/mmio.@DLLEXT@
 generic-ioctl 			default/ioctl.@DLLEXT@
 
 # Fbdev accels
-.include @static_sysconfdir@/@ggi_subdir@/targets/fbdev.conf
+.include @ggi_sysconfdir@/targets/fbdev.conf
 
 # KGI accels
-.include @static_sysconfdir@/@ggi_subdir@/targets/kgi.conf
+.include @ggi_sysconfdir@/targets/kgi.conf
 
 # temporary directive to load LibBuf storage/renderers.
-.include @static_sysconfdir@/@ggi_subdir@/libggibuf.conf
+.include @ggi_sysconfdir@/libggibuf.conf
