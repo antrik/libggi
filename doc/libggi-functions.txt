@@ -84,6 +84,7 @@ See Also
 :man:`ggiOpen(3)`
 
 
+
 Exit LibGGI programs for fatal errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -154,7 +155,8 @@ Description
 
 `ggiOpen` opens a visual.  The visual is specified as a display
 string, followed by `NULL`.  If only `NULL` is specified, the default
-display target is opened.  The other arguments are for internal
+display target is opened, which means first examining `GGI_DISPLAY`,
+then invoking `display-auto(7)`.  The other arguments are for internal
 purposes only, such as :p:`argptr`, used to pass driver-specific,
 non-textual information to the driver.
 
@@ -206,7 +208,8 @@ Open and closing a memory visual::
 See Also
 --------
 
-:man:`ggiInit(3)`
+:man:`display-auto(7)`, :man:`ggiInit(3)`, :man:`libggi(7)`
+
 
 
 Check or negotiate a text/graphics mode on a visual
@@ -421,8 +424,7 @@ otherwise an error code.
 See Also
 --------
 
-:man:`ggiOpen(3)`, :man:`ggiCheckMode(3)`, :man:`ggi_mode(3)`
-
+:man:`ggiCheckMode(3)`, :man:`ggiOpen(3)`, :man:`ggi_mode(3)`
 
 
 
@@ -643,7 +645,6 @@ for OK, otherwise an error code.
 See Also
 --------
 
-
 :man:`ggiGetPixelFormat(3)`, :man:`ggi_color(3)`, :man:`ggi_pixelformat(3)`
 
 
@@ -709,6 +710,7 @@ Write something useful here.
 
 See Also
 --------
+
 :man:`ggiSetColorfulPalette(3)`
 
 
@@ -757,6 +759,7 @@ See Also
 --------
 
 :man:`ggiSetPalette(3)`
+
 
 
 Manipulate the gamma maps and the gamma correction of a visual
@@ -866,7 +869,7 @@ Returns a pointer to the `ggi_pixelformat` structure.
 See Also
 --------
 
-:man:`ggi_pixelformat(3)`, :man:`ggiMapColor(3)`
+:man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
 
 
 
@@ -1044,8 +1047,7 @@ All three functions return `0` to indicate success.
 See Also
 --------
 
-
-:man:`ggiDrawVLine(3)`, :man:`ggiDrawBox(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiDrawBox(3)`, :man:`ggiDrawLine(3)`, :man:`ggiDrawVLine(3)`,
 :man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
 
 
@@ -1097,9 +1099,9 @@ All three functions return `0` to indicate success.
 See Also
 --------
 
-
-:man:`ggiDrawHLine(3)`, :man:`ggiDrawBox(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiDrawBox(3)`, :man:`ggiDrawHLine(3)`, :man:`ggiDrawLine(3)`,
 :man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
+
 
 
 Draw, put, and get a rectangle from a visual
@@ -1149,10 +1151,8 @@ All three functions return `0` to indicate success.
 See Also
 --------
 
-
-:man:`ggiDrawHLine(3)`, :man:`ggiDrawVLine(3)`, :man:`ggiDrawLine(3)`,
+:man:`ggiDrawHLine(3)`, :man:`ggiDrawLine(3)`, :man:`ggiDrawVLine(3)`,
 :man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
-
 
 
 
@@ -1228,7 +1228,6 @@ This function returns `0` to indicate success.
 See Also
 --------
 
-
 :man:`ggiDrawHLine(3)`, :man:`ggiDrawVLine(3)`
 
 
@@ -1275,8 +1274,8 @@ Return value
 See Also
 --------
 
-
 :man:`ggiCrossBlit(3)`
+
 
 
 Copy a rectangular area between two visuals
@@ -1726,7 +1725,6 @@ See Also
 
 
 
-
 Acquire and release a LibGGI resource
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1808,6 +1806,7 @@ See Also
 --------
 
 :man:`ggi_directbuffer(3)`
+
 
 
 Get DirectBuffers from a visual
@@ -1972,7 +1971,6 @@ How to obtain a DirectBuffer::
 See Also
 --------
 
-
 :man:`ggi_directbuffer(3)`, :man:`ggiResourceAcquire(3)`
 
 
@@ -2049,8 +2047,7 @@ same; see :man:`libgii(7)` for details.
 See Also
 --------
 
-
-:man:`giiSetEventMask(3)`, :man:`giiEventPoll(3)`, :man:`ggiGetInput(3)`
+:man:`ggiGetInput(3)`, :man:`giiEventPoll(3)`, :man:`giiSetEventMask(3)`
 
 
 
@@ -2090,7 +2087,6 @@ See Also
 --------
 
 :man:`ggiJoinInputs(3)`, :man:`giiOpen(3)`
-
 
 
 
