@@ -1,0 +1,42 @@
+README for Win32 Direct-X port of libGGI.
+Created: 8 Jul 2001 by John Fortin (fortinj@attglobal.net)
+Updated:
+
+
+Quick Installation Guide
+========================
+
+I) Software needed:
+	- Cygwin for Win32 (www.cygwin.com)
+	    (Installing all packages from setup.exe is recommended)	
+	- Automake (Select from cygwin install)
+	- Autoconf (select form cygwin install)
+	- Perl for Cygwin (needed for automake) (select from cygwin install)
+	- DirectX SDK 6.1 of newer 
+		(http://download.microsoft.com/download/win2000pro/dx8asdk/8.0a/W9X2KMe/EN-US/DX8a_SDK.exe)
+    	
+II) Compilation:
+	- from libggi directory
+		./autogen.sh
+		./configure --without-x --with-directx
+		make all
+		make install
+	- libs and headers will be installed into /usr/local/lib and 
+          /usr/local/include.
+
+III) Notes:
+	- WinNT4
+	    use directxnt as target.  This uses DirectX 3.0 features available
+            in WinNT4.
+	- libGII must be build prior to libGGI
+	- the demo.exe program should work.  Build the demo directory 
+	  separately
+	- The demo.exe program should run.  Build in libggi/programs/demos.
+  	  The executable will be in the .libs directory.
+	- Set GGI_DISPLAY=directx (ie. export GGI_DISPLAY=directx)
+	- Set GGI_DEFMODE=wxh[GT_xBIT] (ie. export GGI_DEFMODE=800x600[GT_16BIT])
+	        (make sure the color depth matches your windows settings)	
+	         See libggi/doc/env.txt for more details.
+	- A Native Win32 version using MingW will be forthcoming.
+	
+		
