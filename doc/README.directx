@@ -79,3 +79,7 @@ III) Notes:
 		See libggi/doc/env.txt for more details.
 	- Run some demos, they are found in the .libs subdirs in the
 	  directories under the programs directory)
+	- If you are using a unix shell (and not the windows command prompt),
+	  you can use the generated scripts instead of the .exe files in the
+	  .libs subdirs, and the environment variables above should be set
+	  with "export", at least for the sane shells.
