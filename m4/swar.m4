@@ -29,4 +29,17 @@ AC_DEFUN([AC_CPU_CAN_FEMMS],
 	ac_cpu_can_femms=no, ac_cpu_can_femms=no)])
 ])
 
+AC_DEFUN([AC_CC_CAN_FALIGNDATA],
+[AC_CACHE_CHECK(whether CC can assemble faligndata instruction, ac_cc_can_faligndata,
+        [ AC_TRY_LINK(,[
+	__asm__ __volatile__("faligndata %%f0, %%f4, %%f8" : );],
+	ac_cc_can_faligndata=yes, ac_cc_can_faligndata=no)])
+])
+
+AC_DEFUN([AC_CPU_CAN_FALIGNDATA],
+[AC_CACHE_CHECK(whether build CPU can run the FALIGNDATA instruction,
+	ac_cpu_can_faligndata,
+        [ AC_ERROR(Test not yet implemented!) ],
+	ac_cpu_can_faligndata=no, ac_cpu_can_faligndata=no)])
+])
 

@@ -44,4 +44,5 @@
 #undef DO_SWAR_NONE
 #undef DO_SWAR_MMX
 #undef DO_SWAR_3DNOW
+#undef DO_SWAR_VIS
 
