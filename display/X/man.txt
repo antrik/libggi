@@ -107,7 +107,8 @@ Options
     result in a slight speed gain for certain graphics primitives.  It
     is best used when resources are severely limited on the client
     side, and with applications that do not perform frequent ggiPut*
-    operations.
+    operations. Note, with this option evExpose events are passed
+    to the application.
 
 ``-noaccel``
     All rendering is performed in the client-side backbuffer, and then
