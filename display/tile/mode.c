@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/02/02 19:21:59 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/06/03 05:30:49 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -320,6 +320,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 
 		priv->d_frame = LIBGGI_APPBUFS(vis)[0];
 
+		MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 		MANSYNC_cont(vis);
 	}
 	

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/04/04 14:31:57 mooz Exp $
+/* $Id: mode.c,v 1.9 2004/06/03 05:30:48 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -254,7 +254,8 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	/* Initialize palette */
 	ggiSetColorfulPalette(vis);
-	
+
+	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);
 
 	GGIDPRINT_MODE("display-palemu: setmode succeeded.\n");

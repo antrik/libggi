@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/04/04 14:31:52 mooz Exp $
+/* $Id: mode.c,v 1.7 2004/06/03 05:30:48 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -330,6 +330,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 	aa_autoinitkbd(priv->context,AA_SENDRELEASE);
 	aa_autoinitmouse(priv->context,AA_MOUSEALLMASK);
 	
+	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);
 	
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));

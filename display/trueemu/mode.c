@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/03/14 12:56:11 pekberg Exp $
+/* $Id: mode.c,v 1.6 2004/06/03 05:30:49 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -229,6 +229,7 @@ int GGI_trueemu_setmode(ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
+	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);
 
 	GGIDPRINT_MODE("display-trueemu: setmode succeeded.\n");
