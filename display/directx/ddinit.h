@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.10 2004/08/25 07:47:45 pekberg Exp $
+/* $Id: ddinit.h,v 1.11 2004/08/27 12:02:19 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -28,6 +28,7 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/directx.h>
+#include <ggi/input/directx.h>
 
 
 #define NAME			"GGI-on-DX"

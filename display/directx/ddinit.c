@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.25 2004/08/25 07:47:45 pekberg Exp $
+/* $Id: ddinit.c,v 1.26 2004/08/27 12:02:19 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -493,6 +493,23 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		if (!priv->hParent)
 			exit(1);
+		break;
+
+	case WM_SETTINGCHANGE:
+		if (priv->inp) {
+			gii_event ev;
+
+			GGIDPRINT("display-directx: tell inputlib about "
+				"new system parameters\n");
+
+			ev.cmd.size = sizeof(gii_cmd_event);
+			ev.cmd.type = evCommand;
+			ev.cmd.target = priv->inp->origin;
+			ev.cmd.code = GII_CMDCODE_DXSETTINGCHANGE;
+
+			giiEventSend(priv->inp, &ev);
+			return 0;
+		}
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
