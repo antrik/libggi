@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.13 2004/02/05 09:34:57 cegger Exp $
+/* $Id: buffer.c,v 1.14 2004/08/24 19:15:35 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -81,6 +81,8 @@ int GGI_X_setorigin_child(ggi_visual *vis, int x, int y) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	if (x < 0) return GGI_EARGINVAL;
+	if (y < 0) return GGI_EARGINVAL;
 	if (x > LIBGGI_VIRTX(vis) - LIBGGI_X(vis)) return GGI_EARGINVAL;
 	if (y > LIBGGI_VIRTY(vis) - LIBGGI_Y(vis)) return GGI_EARGINVAL;
 	vis->origin_x = x;
