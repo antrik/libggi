@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/12 20:16:11 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/18 17:21:02 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -35,6 +35,11 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/glide.h>
 #include "../../default/color/color.h"
+
+#include "../common/pixfmt-setup.inc"
+#include "../common/ggi-auto.inc"
+#include "../common/gt-auto.inc"
+
 
 static void
 GGI_glide_gcchanged(ggi_visual *vis, int mask)
@@ -220,8 +225,7 @@ int GGI_glide_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 int GGI_glide_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
-	switch(num)
-	{
+	switch(num) {
 	case 0:
 		strcpy(apiname, "display-glide");
 		return 0;
@@ -379,45 +383,28 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
-	LIBGGI_PIXFMT(vis)->depth=GT_DEPTH(mode->graphtype);
-	LIBGGI_PIXFMT(vis)->size=GT_SIZE(mode->graphtype);
+	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
 
 	switch(mode->graphtype)	{
 	case GT_15BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask  = ((1<<5)-1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1<<5)-1)<<5;
-		LIBGGI_PIXFMT(vis)->red_mask   = ((1<<5)-1)<<(5+5);
-
 		priv->src_format = GR_LFB_SRC_FMT_555;
 		priv->write_mode = GR_LFBWRITEMODE_555;
 		priv->bytes_per_pixel = 2;
 		break;
 		
 	case GT_16BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask  = ((1<<5)-1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1<<6)-1)<<5;
-		LIBGGI_PIXFMT(vis)->red_mask   = ((1<<5)-1)<<(5+6);
-
 		priv->src_format = GR_LFB_SRC_FMT_565;
 		priv->write_mode = GR_LFBWRITEMODE_565;
 		priv->bytes_per_pixel = 2;
 		break;
 		
 	case GT_24BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask  = ((1<<8)-1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1<<8)-1)<<8;
-		LIBGGI_PIXFMT(vis)->red_mask   = ((1<<8)-1)<<(8+8);
-
 		priv->src_format = GR_LFB_SRC_FMT_888;
 		priv->write_mode = GR_LFBWRITEMODE_888;
 		priv->bytes_per_pixel = 3;
 		break;
 		
 	case GT_32BIT:
-		LIBGGI_PIXFMT(vis)->blue_mask  = ((1<<8)-1);
-		LIBGGI_PIXFMT(vis)->green_mask = ((1<<8)-1)<<8;
-		LIBGGI_PIXFMT(vis)->red_mask   = ((1<<8)-1)<<(8+8);
-
 		priv->src_format = GR_LFB_SRC_FMT_8888;
 		priv->write_mode = GR_LFBWRITEMODE_8888;
 		priv->bytes_per_pixel = 4;
@@ -532,12 +519,17 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 	vis->opgc->gcchanged = GGI_glide_gcchanged;
 
 	/* Text */
-	if (GT_SIZE(mode->graphtype) == 16) {
+	switch (GT_SIZE(mode->graphtype)) {
+	case 16:
 		vis->opdraw->putc = GGI_glide16_putc;
-	} else if (GT_SIZE(mode->graphtype) == 32) {
+		break;
+	case 32:
 		vis->opdraw->putc = GGI_glide32_putc;
+		break;
+	default:
+		break;
 	}
-	
+
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	priv->setmodesuccess = 1;
@@ -551,7 +543,12 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 	int err = 0;
 
 	LIBGGI_APPASSERT(vis != NULL, "glide: Visual NULL in GGIcheckmode");
-	
+
+	/* handle AUTO */
+	_GGIhandle_ggiauto(mode, 640, 480);
+
+	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
+
 	if (tm->frames == GGI_AUTO) {
 		tm->frames = 1;
 	} else if (tm->frames < 1) {
@@ -562,19 +559,9 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 		tm->frames = 2;
 	}
 
-	if (tm->visible.x == GGI_AUTO && tm->visible.y == GGI_AUTO) {
-		tm->visible.x = 640;
-		tm->visible.y = 480;
-	} else if (res2glideres(GLIDE_PRIV(vis), tm, &resolution) != 0) {
+	if (res2glideres(GLIDE_PRIV(vis), tm, &resolution) != 0) {
 		err = -1;
 	}
-
-	if (tm->virt.x == GGI_AUTO) {
-		tm->virt.x = tm->visible.x;
-	}
-	if (tm->virt.y == GGI_AUTO) {
-		tm->virt.y = tm->visible.y;
-	}	
 
 	if (tm->virt.x < tm->visible.x) {
 		tm->virt.x = tm->visible.x;
@@ -590,86 +577,13 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 		err = -1;
 	}
 	tm->dpp.x = tm->dpp.y = 1;
-
-	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
-		err = -1;
-	}
-	tm->size.x = tm->size.y = GGI_AUTO;
-
-	if (GT_SCHEME(tm->graphtype) != GT_TRUECOLOR
-	    && GT_SCHEME(tm->graphtype) != GT_AUTO) {
-		err = -1;
-	}
-	GT_SETSCHEME(tm->graphtype, GT_TRUECOLOR);
-	if (GT_SUBSCHEME(tm->graphtype) != 0
-	    && GT_SUBSCHEME(tm->graphtype) != GT_AUTO) {
-		err = -1;
-	}
-	GT_SETSUBSCHEME(tm->graphtype, 0);
-
-	/* FIXME!
-	   Could someone please come up with a nice way to handle
-	   SIZE/DEPTH properly...
-	*/
-	switch (GT_DEPTH(tm->graphtype)) {
-	case 15:
-	case 16:
-		if (GT_SIZE(tm->graphtype) != 16
-		    && GT_SIZE(tm->graphtype) != GT_AUTO) {
-			err = -1;
-		}
-		GT_SETSIZE(tm->graphtype, 16);
-		break;
-	case 24:
-		if (GT_SIZE(tm->graphtype) != 24
-		    && GT_SIZE(tm->graphtype) != 32
-		    && GT_SIZE(tm->graphtype) != GT_AUTO) {
-			err = -1;
-			GT_SETSIZE(tm->graphtype, 32);
-		} else if (GT_SIZE(tm->graphtype) == GT_AUTO) {
-			GT_SETSIZE(tm->graphtype, 32);
-		}
-		break;
-	case GT_AUTO:
-		break;
-	default:
-		GT_SETDEPTH(tm->graphtype, GT_AUTO);
-		err = -1;
-		break;
-	}
-	switch (GT_SIZE(tm->graphtype)) {
-	case 16:
-		if (GT_DEPTH(tm->graphtype) != 15
-		    && GT_DEPTH(tm->graphtype) != 16
-		    && GT_DEPTH(tm->graphtype) != GT_AUTO) {
-			err = -1;
-			GT_SETDEPTH(tm->graphtype, 16);
-		} else if (GT_DEPTH(tm->graphtype) == GT_AUTO) {
-			GT_SETDEPTH(tm->graphtype, 16);
-		}
-		break;
-	case 24:
-	case 32:
-		if (GT_DEPTH(tm->graphtype) != 24
-		    && GT_DEPTH(tm->graphtype) != GT_AUTO) {
-			err = -1;
-		}
-		GT_SETDEPTH(tm->graphtype, 24);
-		break;
-	case GT_AUTO:
-		break;
-	default:
-		GT_SETSIZE(tm->graphtype, GT_AUTO);
-		err = -1;
-		break;
-	}
-	if (GT_DEPTH(tm->graphtype) == GT_AUTO) {
-		tm->graphtype = GT_16BIT;
-	} else if (GT_SIZE(tm->graphtype) == GT_AUTO) {
-		GT_SETSIZE(tm->graphtype, (GT_DEPTH(tm->graphtype)+1)&~8);
-	}
-
-        return err;
+	if (err) return err;
+#if 0
+	err = _ggi_physz_figure_size(mode, GLIDE_PRIV(vis)->physzflags,
+				&(GLIDE_PRIV(vis)->physz),
+				0, 0, mode->visible.x, mode->visible.y);
+#endif
+	return err;
 }
 
 /*
