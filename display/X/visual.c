@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2002/07/08 09:44:11 cegger Exp $
+/* $Id: visual.c,v 1.10 2002/07/16 09:46:07 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -435,7 +435,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out;
 		}
-		fprintf(stderr,"disabling drawable\n");
+		GGIDPRINT("disabling drawable\n");
 		priv->createdrawable = NULL;
 	}
 
