@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.1 2004/10/10 12:18:47 cegger Exp $
+/* $Id: mansync.c,v 1.2 2004/10/10 22:14:36 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI display-palemu - mansync usage.
@@ -22,6 +22,6 @@
 #include <ggi/ggi.h>
 
 
-#define DISPLAYSTR	"display-palemu:(display-auto)"
+#define DISPLAYSTR	"display-palemu"
 
 #include "../display.mansync/mansync.inc.c"
