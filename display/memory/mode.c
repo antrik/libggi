@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/01/31 20:56:05 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/02/03 22:52:58 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -164,7 +164,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
 		LIBGGI_PAL(vis)->clut = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
- 					   														sizeof(ggi_color));
+ 					   	sizeof(ggi_color));
  		LIBGGI_PAL(vis)->size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
 	
@@ -196,7 +196,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
-	  	if (MEMORY_PRIV(vis)->layout == blPixelPlanarBuffer) {
+		if (MEMORY_PRIV(vis)->layout == blPixelPlanarBuffer) {
 			sprintf(apiname, "generic-planar");
 			return 0;
 		}
