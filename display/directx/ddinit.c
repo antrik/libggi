@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.47 2005/01/19 20:55:28 pekberg Exp $
+/* $Id: ddinit.c,v 1.48 2005/01/27 08:17:16 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -502,51 +502,51 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DDSETPALETTE:
 		{
 			int setpalette;
-			EnterCriticalSection(&priv->spincs);
+			GGI_directx_Lock(priv->spincs);
 			setpalette = priv->setpalette;
-			LeaveCriticalSection(&priv->spincs);
+			GGI_directx_Unlock(priv->spincs);
 			if(setpalette)
 				/* setpalette canceled */
 				return 0;
 		}
-		if(!TryEnterCriticalSection(&priv->cs)) {
+		if(GGI_directx_TryLock(priv->cs)) {
 			/* spin */
 			PostMessage(hWnd, message, wParam, lParam);
 			return 0;
 		}
 		if(priv->lpddp)
 			DDChangePalette(vis);
-		EnterCriticalSection(&priv->spincs);
+		GGI_directx_Lock(priv->spincs);
 		priv->setpalette = 1;
-		LeaveCriticalSection(&priv->spincs);
-		LeaveCriticalSection(&priv->cs);
+		GGI_directx_Unlock(priv->spincs);
+		GGI_directx_Unlock(priv->cs);
 		return 0;
 
 	case WM_TIMER:
 		if (wParam != 1)
 			break;
-		if (!TryEnterCriticalSection(&priv->cs)) {
+		if (GGI_directx_TryLock(priv->cs)) {
 			int redraw = 0;
-			EnterCriticalSection(&priv->spincs);
+			GGI_directx_Lock(priv->spincs);
 			redraw = priv->redraw;
 			priv->redraw = 0;
-			LeaveCriticalSection(&priv->spincs);
+			GGI_directx_Unlock(priv->spincs);
 			if (redraw)
 				/* spin */
 				PostMessage(hWnd, WM_USER, wParam, lParam);
 			return 0;
 		}
 		DDRedrawAll(vis);
-		LeaveCriticalSection(&priv->cs);
+		GGI_directx_Unlock(priv->cs);
 		return 0;
 
 	case WM_PAINT:
-		if (!TryEnterCriticalSection(&priv->cs)) {
+		if (GGI_directx_TryLock(priv->cs)) {
 			int redraw = 0;
-			EnterCriticalSection(&priv->spincs);
+			GGI_directx_Lock(priv->spincs);
 			redraw = priv->redraw;
 			priv->redraw = 0;
-			LeaveCriticalSection(&priv->spincs);
+			GGI_directx_Unlock(priv->spincs);
 			if (redraw)
 				/* spin */
 				InvalidateRect(hWnd, NULL, 0);
@@ -583,17 +583,17 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				ps.rcPaint.bottom - ps.rcPaint.top);
 			EndPaint(hWnd, &ps);
 		}
-		LeaveCriticalSection(&priv->cs);
+		GGI_directx_Unlock(priv->cs);
 		return 0;
 
 	case WM_SIZING:
-		EnterCriticalSection(&priv->sizingcs);
+		GGI_directx_Lock(priv->sizingcs);
 		if (priv->xstep < 0) {
-			LeaveCriticalSection(&priv->sizingcs);
+			GGI_directx_Unlock(priv->sizingcs);
 			break;
 		}
 		DDSizing(vis, wParam, (LPRECT) lParam);
-		LeaveCriticalSection(&priv->sizingcs);
+		GGI_directx_Unlock(priv->sizingcs);
 		return TRUE;
 
 	case WM_SIZE:
@@ -604,22 +604,22 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		default:
 			return 0;
 		}
-		EnterCriticalSection(&priv->sizingcs);
+		GGI_directx_Lock(priv->sizingcs);
 		if (priv->xstep < 0) {
-			LeaveCriticalSection(&priv->sizingcs);
+			GGI_directx_Unlock(priv->sizingcs);
 			break;
 		}
 		DDNotifyResize(vis, LOWORD(lParam), HIWORD(lParam));
-		LeaveCriticalSection(&priv->sizingcs);
+		GGI_directx_Unlock(priv->sizingcs);
 		return 0;
 
 	case WM_QUERYNEWPALETTE:
-		if(!TryEnterCriticalSection(&priv->cs)) {
+		if(GGI_directx_TryLock(priv->cs)) {
 			int setpalette = 0;
-			EnterCriticalSection(&priv->spincs);
+			GGI_directx_Lock(priv->spincs);
 			setpalette = priv->setpalette;
 			priv->redraw = 0;
-			LeaveCriticalSection(&priv->spincs);
+			GGI_directx_Unlock(priv->spincs);
 			if(setpalette)
 				/* spin */
 				PostMessage(hWnd, WM_DDSETPALETTE,
@@ -627,11 +627,11 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 		if(!priv->lpddp) {
-			LeaveCriticalSection(&priv->cs);
+			GGI_directx_Unlock(priv->cs);
 			break;
 		}
 		DDChangePalette(vis);
-		LeaveCriticalSection(&priv->cs);
+		GGI_directx_Unlock(priv->cs);
 		return TRUE;
 
 	case WM_CREATE:
@@ -1063,14 +1063,14 @@ DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
 	RECT r1, r2;
 	if (priv->hParent)
 		return;
-	EnterCriticalSection(&priv->sizingcs);
+	GGI_directx_Lock(priv->sizingcs);
 	priv->xmin = width;
 	priv->ymin = height;
 	priv->xmax = width;
 	priv->ymax = height;
 	priv->xstep = 1;
 	priv->ystep = 1;
-	LeaveCriticalSection(&priv->sizingcs);
+	GGI_directx_Unlock(priv->sizingcs);
 	GetWindowRect(priv->hWnd, &r1);
 	r2 = r1;
 	AdjustWindowRectEx(&r2, ws_style, FALSE, 0);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2005/01/14 09:38:12 pekberg Exp $
+/* $Id: visual.c,v 1.33 2005/01/27 08:17:17 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -88,12 +88,12 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 	DDShutdown(priv);
-	LeaveCriticalSection(&priv->cs);
-	DeleteCriticalSection(&priv->cs);
-	DeleteCriticalSection(&priv->spincs);
-	DeleteCriticalSection(&priv->sizingcs);
+	GGI_directx_Unlock(priv->cs);
+	GGI_directx_LockDestroy(priv->cs);
+	GGI_directx_LockDestroy(priv->spincs);
+	GGI_directx_LockDestroy(priv->sizingcs);
 	free(priv);
 
 	if (LIBGGI_GC(vis))
@@ -129,12 +129,24 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	memset(priv, 0, sizeof(directx_priv));
 	LIBGGI_PRIVATE(vis) = priv;
 
-	InitializeCriticalSection(&priv->cs);
-	InitializeCriticalSection(&priv->spincs);
+	priv->cs = GGI_directx_LockCreate();
+	if (priv->cs == NULL) {
+		err = GGI_ENOMEM;
+		goto err2;
+	}
+	priv->spincs = GGI_directx_LockCreate();
+	if (priv->spincs == NULL) {
+		err = GGI_ENOMEM;
+		goto err3;
+	}
 	priv->redraw = 1;
 	priv->setpalette = 1;
 
-	InitializeCriticalSection(&priv->sizingcs);
+	priv->sizingcs = GGI_directx_LockCreate();
+	if (priv->sizingcs == NULL) {
+		err = GGI_ENOMEM;
+		goto err4;
+	}
 	priv->xmin = 0;
 	priv->ymin = 0;
 	priv->xmax = 0;
@@ -153,7 +165,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
 				    &(priv->physzflags), &(priv->physz))) {
 		err = GGI_EARGINVAL;
-		goto err3;
+		goto err5;
 	}
 
 	if (options[OPT_KEEPCURSOR].result[0] == 'n') {
@@ -225,10 +237,12 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return GGI_OK;
 
+err5:
+	GGI_directx_LockDestroy(priv->cs);
+err4:
+	GGI_directx_LockDestroy(priv->spincs);
 err3:
-	DeleteCriticalSection(&priv->cs);
-	DeleteCriticalSection(&priv->spincs);
-	DeleteCriticalSection(&priv->sizingcs);
+	GGI_directx_LockDestroy(priv->sizingcs);
 err2:
 	free(LIBGGI_GC(vis));
 err1:

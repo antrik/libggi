@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.16 2004/09/24 12:30:09 pekberg Exp $
+/* $Id: directx.h,v 1.17 2005/01/27 08:17:16 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -78,8 +78,8 @@ typedef struct directx_priv
 	UINT timer_id;
 
 	gii_input *inp;
-	CRITICAL_SECTION cs;
-	CRITICAL_SECTION spincs;
+	HANDLE cs;
+	HANDLE spincs;
 	int redraw;
 	int setpalette;
 
@@ -93,7 +93,7 @@ typedef struct directx_priv
 	int fullscreen;
 
 	/* resizing info */
-	CRITICAL_SECTION sizingcs;
+	HANDLE sizingcs;
 	int xmin;
 	int ymin;
 	int xmax;
@@ -112,5 +112,17 @@ typedef struct directx_priv
 } directx_priv;
 
 #define GGIDIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
+
+#define GGI_directx_LockCreate() \
+	CreateMutex(NULL, FALSE, NULL)
+#define GGI_directx_LockDestroy(lock) \
+	CloseHandle(lock)
+#define GGI_directx_Lock(lock) \
+	WaitForSingleObject((lock), INFINITE)
+#define GGI_directx_TryLock(lock) \
+	(WaitForSingleObject((lock), 0) != WAIT_OBJECT_0)
+#define GGI_directx_Unlock(lock) \
+	ReleaseMutex(lock)
+
 
 #endif /* _GGI_DISPLAY_DIRECTX_H */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.33 2005/01/14 09:38:12 pekberg Exp $
+/* $Id: mode.c,v 1.34 2005/01/27 08:17:17 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -65,10 +65,10 @@ directx_acquire(ggi_resource *res, uint32 actype)
 		res->count++;
 		return 0;
 	}
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 	dbuf->write = priv->lpSurfaceAdd[dbuf->frame];
 	dbuf->read = dbuf->write;
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 
 	res->curactype |= actype;
 	res->count++;
@@ -96,9 +96,9 @@ int
 GGI_directx_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 	DDRedraw(vis, x, y, w, h);
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 	return 0;
 }
 
@@ -282,13 +282,13 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 	if (err)
 		return err;
 
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 	err = _ggi_physz_figure_size(mode, priv->physzflags,
 				     &priv->physz,
 				     width * 254 / sizex / 10,
 				     height * 254 / sizey / 10,
 				     width, height);
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 
 	DPRINT_MODE
 	    ("checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
@@ -318,7 +318,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 		return GGI_ENOMATCH;
 	}
 
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 
 	_ggiZapMode(vis, 0);
 
@@ -341,7 +341,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 		res = malloc(sizeof(ggi_resource));
 		if (res == NULL) {
-			LeaveCriticalSection(&priv->cs);
+			GGI_directx_Unlock(priv->cs);
 			return GGI_EFATAL;
 		}
 		LIBGGI_APPLIST(vis)->last_targetbuf
@@ -398,7 +398,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 			_ggi_malloc(sizeof(ggi_color) *
 			LIBGGI_PAL(vis)->clut.size);
 		if (LIBGGI_PAL(vis)->clut.data == NULL) {
-			LeaveCriticalSection(&priv->cs);
+			GGI_directx_Unlock(priv->cs);
 			return GGI_EFATAL;
 		}
 		vis->opcolor->setpalvec = GGI_directx_setpalvec;
@@ -406,7 +406,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 		LIBGGI_PAL(vis)->rw_stop  = 0;
 	}
 
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
@@ -422,10 +422,10 @@ GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
 	APP_ASSERT(vis != NULL,
 			 "directx: GGIgetmode: Visual == NULL");
 
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 	/* We assume the mode in the visual to be OK */
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 
 	return 0;
 }
@@ -451,7 +451,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 /*	if (((int)(start+len) > 246) || (start < 10) )
 		return GGI_EARGINVAL;*/
 
-	EnterCriticalSection(&priv->cs);
+	GGI_directx_Lock(priv->cs);
 
 	memcpy(LIBGGI_PAL(vis)->clut.data + start,
 		colormap,
@@ -469,7 +469,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 /*	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))*/
 		DDChangePalette(vis);
 
-	LeaveCriticalSection(&priv->cs);
+	GGI_directx_Unlock(priv->cs);
 
 	return start;
 }
