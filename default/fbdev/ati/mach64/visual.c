@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/07/05 22:13:40 cegger Exp $
+/* $Id: visual.c,v 1.5 2003/07/13 08:54:27 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -333,6 +333,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	GGIDPRINT_MISC("ati-mach64: Mapped MMIO region at %p\n",
 		       fbdevpriv->mmioaddr);
+#warning Not 64bit safe: Cast from pointer to integer of different size
 	priv->regbase = (uint32)fbdevpriv->mmioaddr;
 	addr = priv->regbase + 0x400;
 	for (i=0;i<256;i++) {
@@ -363,7 +364,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		buf->resource->count = 0;
 		buf->resource->curactype = 0;
 	}
-/*	priv->drawboxcmd
+#if 0
+	priv->drawboxcmd
 		= BOP_COPY | SHFTZERO | SGNZERO | ARZERO | SOLID | OP_TRAP;
 	if (pixbytes != 3) {
 		switch (fbdevpriv->orig_fix.accel) {	
@@ -378,23 +380,27 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			* For now - assume SDRAM for other cards *
 			break;
 		}
-	}*/
+	}
+#endif
 	priv->oldfgcol = LIBGGI_GC(vis)->fg_color - 1;
 	priv->oldbgcol = LIBGGI_GC(vis)->bg_color - 1;
 	priv->oldtl.x = -1;
 	priv->oldtl.y = -1;
 	priv->oldbr.x = -1;
 	priv->oldbr.y = -1;
-/*	priv->oldyadd = -1;
+
+#if 0
+	priv->oldyadd = -1;
 	priv->curopmode = priv->origopmode = mga_in16(fbdevpriv->mmioaddr, OPMODE);
 	* Use the 7k Pseudo-DMA window *
 	priv->dmaaddr = (void*)fbdevpriv->mmioaddr;
-	priv->dma_len = 0x1c00;*/
+	priv->dma_len = 0x1c00;
+#endif
 
 	fbdevpriv->idleaccel = ati_mach64_idleaccel;
 
 	/* Accelerate fonts if possible */
-	priv->font = font;
+	priv->font = (uint8 *)(font);
 	usedmemend = LIBGGI_MODE(vis)->frames *
 		fbdevpriv->fix.line_length * LIBGGI_MODE(vis)->virt.y;
 	fontlen = 256*8;
