@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = kgi.la
 
 kgi_la_SOURCES = mode.c events.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = X.la
 
 X_la_SOURCES = visual.c mode.c color.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS color.inc mode.inc

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = text_16.la
 
 text_16_la_SOURCES = color.c gtext.c pixel.c pixela.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS t16lib.h

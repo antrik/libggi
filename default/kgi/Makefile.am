@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = genkgi.la
 
 genkgi_la_SOURCES = box.c copybox.c line.c visual.c
 
-sublibdir = $(libdir)/ggi/default/fbdev/kgi
+sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/kgi
 
 EXTRA_DIST = EXPSYMS

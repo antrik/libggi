@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = lcd823.la
 
 lcd823_la_SOURCES = visual.c mode.c color.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

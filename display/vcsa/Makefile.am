@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = vcsa.la
 
 vcsa_la_SOURCES = color.c draw.c mode.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = memory.la
 
 memory_la_SOURCES = mode.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = linear_8.la
 linear_8_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 	pixela.c pixel.c visual.c vline.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin8lib.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = vgl.la
 
 vgl_la_SOURCES = draw.c mode.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

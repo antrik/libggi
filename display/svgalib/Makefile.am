@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = svgalib.la
 svgalib_la_SOURCES = box.c color.c frames.c hline.c mode.c pixel.c visual.c \
 	vline.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

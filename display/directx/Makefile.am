@@ -13,6 +13,6 @@ sublib_LTLIBRARIES = directx.la directxnt.la
 directx_la_SOURCES = ddinit.c mode.c visual.c
 directxnt_la_SOURCES = ddinitnt.c mode.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS ddinit.h

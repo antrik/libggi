@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = stubs.la
 stubs_la_SOURCES = box.c copybox.c crossblit.c fillscreen.c gtext.c hline.c \
 	 line.c pixel.c visual.c vline.c 
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS stublib.h

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = linear_4.la
 linear_4_la_SOURCES = color.c copybox.c hline.c pixel.c pixela.c visual.c \
 	vline.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin4lib.h

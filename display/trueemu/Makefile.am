@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = trueemu.la
 trueemu_la_SOURCES = blit24.c blit32.c frames.c mode.c stubs.c trueemu.c \
 	visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS genblit.c

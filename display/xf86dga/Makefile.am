@@ -16,6 +16,6 @@ xf86dga_la_SOURCES = accel.c color.c mode.c visual.c $(dga_src)
 
 EXTRA_xf86dga_la_SOURCES = XF86DGA.c XF86VMode.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS extutil.h xf86dga.h xf86dgastr.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = ramdac.la
 
 ramdac_la_SOURCES = color.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS

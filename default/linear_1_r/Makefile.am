@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = linear_1_r.la
 
 linear_1_r_la_SOURCES = gtext.c pixel.c pixela.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin1rlib.h

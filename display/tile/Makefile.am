@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = tile.la
 
 tile_la_SOURCES = color.c frames.c line.c mode.c stubs.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

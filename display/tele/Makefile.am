@@ -12,6 +12,6 @@ sublib_LTLIBRARIES = tele.la
 tele_la_SOURCES = box.c color.c draw.c events.c mode.c text.c visual.c \
 	libtele.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS libtele.h teleserver.c Makefile.server

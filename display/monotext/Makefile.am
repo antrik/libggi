@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = monotext.la
 
 monotext_la_SOURCES = color.c draw.c mode.c monotext.c text.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS font_data.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = color.la
 
 color_la_SOURCES = color.c pack.c gamma.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS color.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = terminfo.la
 
 terminfo_la_SOURCES = color.c input.c mode.c visual.c ncurses.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS TIvisual.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = ioctl.la
 
 ioctl_la_SOURCES = box.c copybox.c line.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS ioctllib.h

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = mga_g400.la
 mga_g400_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 	visual.c vline.c
 
-sublibdir = $(libdir)/ggi/default/fbdev/mga
+sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/mga
 
 EXTRA_DIST = EXPSYMS mga_g400.h mmio.h regs.h

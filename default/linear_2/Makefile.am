@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = linear_2.la
 
 linear_2_la_SOURCES = pixel.c pixela.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin2lib.h

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = m2164w.la
 m2164w_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 	visual.c vline.c
 
-sublibdir = $(libdir)/ggi/default/fbdev/mga
+sublibdir = $(libdir)/$(ggi_subdir)/default/fbdev/mga
 
 EXTRA_DIST = EXPSYMS m2164w.h mmio.h regs.h

@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = iplanar_2p.la
 
 iplanar_2p_la_SOURCES = pixel.c pixela.c visual.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS ipl2lib.h

@@ -8,6 +8,6 @@ sublib_LTLIBRARIES = linear_24.la
 linear_24_la_SOURCES = box.c crossblit.c copybox.c hline.c pixel.c pixela.c \
 	visual.c vline.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin24lib.h

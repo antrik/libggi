@@ -7,6 +7,6 @@ sublib_LTLIBRARIES = linmm_banked.la
 
 linmm_banked_la_SOURCES = hline.c pixel.c visual.c vline.c
 
-sublibdir = $(libdir)/ggi/default
+sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS linmm_banked.h

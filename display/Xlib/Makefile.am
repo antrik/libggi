@@ -9,6 +9,6 @@ sublib_LTLIBRARIES = Xlib.la
 Xlib_la_SOURCES = box.c color.c fillscreen.c hline.c line.c mode.c pixel.c \
 	visual.c vline.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

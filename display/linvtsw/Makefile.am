@@ -10,6 +10,6 @@ AM_CPPFLAGS = -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED
 
 linvtsw_la_SOURCES = visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS

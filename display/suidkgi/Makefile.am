@@ -7,7 +7,7 @@ sublib_LTLIBRARIES = suidkgi.la
 
 suidkgi_la_SOURCES = mode.c suidbridge.c visual.c
 
-sublibdir = $(libdir)/ggi/display
+sublibdir = $(libdir)/$(ggi_subdir)/display
 
 EXTRA_DIST = EXPSYMS clut.inc font.inc \
 	ibm-cp437.08x08.inc ibm-cp437.08x14.inc ibm-cp437.09x16.inc \
