@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2005/02/06 13:11:25 cegger Exp $
+/* $Id: mode.c,v 1.26 2005/02/06 19:43:34 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -444,7 +444,7 @@ void _GGI_xf86dga_checkmode_adjust(ggi_mode * req, ggi_mode * recognizer,
 				   ggi_visual *vis)
 {
 	ggidga_priv *priv = DGA_PRIV(vis);
-	int frames;
+	int max_frames;
 
 	recognizer->virt.y = req->virt.y;
 	if ((unsigned) recognizer->virt.y > priv->height)
