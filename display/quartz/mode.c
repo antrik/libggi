@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/12/29 15:03:43 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/12/30 22:20:47 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -278,10 +278,10 @@ static void _GGIallocdbs(ggi_visual *vis)
 err2:
 	ggiClose(priv->memvis);
 	priv->memvis = NULL;
-#endif
 err1:
 	free(priv->fb);
 	priv->fb = NULL;
+#endif
 err0:
 	return;
 }	/* _GGIallocdbs */
@@ -708,13 +708,23 @@ int GGI_quartz_flush(ggi_visual *vis,
 	 */
 	if (priv->context == NULL) return 0;
 
-	if (priv->opmansync) MANSYNC_ignore(vis);
+	/* When tryflag == 0, we know we are called
+	 * from mansync. So there's no need to disable
+	 * and reenable mansync. This results in a
+	 * speed gain on sync mode.
+	 */
+	if (tryflag != 0) {
+		if (priv->opmansync) MANSYNC_ignore(vis);
+	}
 
 	bounds = CGRectMake(x, y, w, h);
 
 	CGContextDrawImage(priv->context, bounds, priv->image);
 	CGContextFlush(priv->context);
 
-	if (priv->opmansync) MANSYNC_cont(vis);
+	if (tryflag != 0) {
+		if (priv->opmansync) MANSYNC_cont(vis);
+	}
+
 	return 0;
 }	/* GGI_quartz_flush */
