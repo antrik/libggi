@@ -83,7 +83,7 @@ to the freshly assigned `triple-int`.
 Examples
 --------
 
-Assign some values to `triple-int`s::
+Assign some values to `triple-ints`::
 
   unsigned x[3], y[3], z[3];
 
@@ -277,7 +277,7 @@ been updated in place.
 Examples
 --------
 
-Some bitwise operations on `triple-int`s::
+Some bitwise operations on `triple-ints`::
 
   unsigned x[3];
 
@@ -337,7 +337,7 @@ to `x` which has been updated in place.
 Examples
 --------
 
-Some unary arithmetic operations on `triple-int`s::
+Some unary arithmetic operations on `triple-ints`::
 
   unsigned x[3];
 
@@ -402,7 +402,7 @@ been updated in place.
 Examples
 --------
 
-Some binary arithmetic operations on `triple-int`s::
+Some binary arithmetic operations on `triple-ints`::
 
   unsigned x[3], y[3], q[3], r[3];
 
