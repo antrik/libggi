@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.17 2004/02/26 23:00:28 aldot Exp $
+/* $Id: init.c,v 1.18 2004/09/09 13:13:07 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -170,17 +170,19 @@ int ggiInit(void)
 	_ggiVisuals.visuals = 0;
 	_ggiVisuals.visual = NULL;
 
-	str = getenv("GGI_DEBUG");
-	if (str != NULL) {
-		_ggiDebugState = atoi(str);
-		GGIDPRINT_CORE("Debugging=%d\n", _ggiDebugState);
-	}
-
 	str = getenv("GGI_DEBUGSYNC");
 	if (str != NULL) {
 		_ggiDebugSync = 1;
 	}
-		
+
+	str = getenv("GGI_DEBUG");
+	if (str != NULL) {
+		_ggiDebugState = atoi(str);
+		GGIDPRINT_CORE("%s debugging=%d\n",
+				_ggiDebugSync ? "sync" : "async",
+				_ggiDebugState);
+	}
+
 	str = getenv("GGI_DEFMODE");
 	if (str != NULL) {
 		_ggiSetDefaultMode(str);
