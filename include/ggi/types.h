@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.2 2001/06/03 06:42:30 cegger Exp $
+/* $Id: types.h,v 1.3 2001/09/01 18:17:51 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -40,7 +40,8 @@
 
 #define        GGI_AUTO     (0)
 
-typedef struct { sint16   x, y; }				ggi_coord;
+typedef struct { sint16	x, y; }					ggi_coord;
+typedef struct { long	x, y; }					ggi_subcoord;	
 typedef	uint32							ggi_pixel;
 
 typedef	uint32							ggi_attr;
