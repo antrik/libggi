@@ -1,4 +1,4 @@
-/* $Id: giievents.c,v 1.3 2003/07/06 10:25:21 cegger Exp $
+/* $Id: giievents.c,v 1.4 2004/11/06 12:49:53 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -31,8 +31,8 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/aa.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static void add_key_event(gii_input_t inp, unsigned int key, 

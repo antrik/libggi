@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/09 06:54:11 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/06 12:49:53 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -31,8 +31,8 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/aa.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static gg_option optlist[] =
