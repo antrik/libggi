@@ -1,5 +1,3 @@
-<chapter id="libggi-c-api">
-<title/Using LibGGI from C programs/
 
 <para>
 Include the header <filename>ggi/ggi.h</filename> in the C program, and
@@ -20,7 +18,7 @@ the <filename>ggi/errors.h</filename> file, which is part of the
 LibGGI/LibGG package.
 </para>
 
-<sect1 id="libggi-threadsafety">
+<sect2 id="libggi-threadsafety">
 <title/Thread-safety in LibGGI/
 
 <para>
@@ -35,9 +33,8 @@ does not do this locking to avoid bloat for something most applications
 do not require.
 </para>
 
-</sect1>
+</sect2>
 
 
-</chapter>
 
 

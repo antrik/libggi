@@ -1,4 +1,4 @@
-<chapter id="libggi-env">
+<sect1 id="libggi-env">
 <title/Environment variables/
 
 <para>
@@ -405,6 +405,6 @@ want to try with a lower <envar/GGI_MANSYNC_FPS/ setting.
 
 </variablelist>
 </para>
-</chapter>
+</sect1>
 
 

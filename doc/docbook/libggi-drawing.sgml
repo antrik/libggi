@@ -1,5 +1,3 @@
-<chapter id="libggi-gc">
-<title>Graphics context</title>
 
 <para>
 LibGGI has a current context associated with each visual. This is done for
@@ -8,7 +6,5 @@ when the GC changes (which can be monitored, as it may only be changed by
 the functions mentioned below), or switch the hardware state efficiently.
 </para>
 
-
-</chapter>
 
 
