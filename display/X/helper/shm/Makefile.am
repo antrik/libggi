@@ -1,5 +1,5 @@
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
-helper_x_shm_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
+helper_x_shm_la_LIBADD = $(top_builddir)/ggi/libggi.la -lggi -lgii -lgg \
 	$(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)
 helper_x_shm_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
 	-avoid-version -export-symbols $(srcdir)/EXPSYMS
