@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.4 2002/12/05 16:38:34 cegger Exp $
+/* $Id: buffer.c,v 1.5 2002/12/05 18:17:23 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -250,7 +250,7 @@ int GGI_X_flush_draw(ggi_visual *vis,
 	/* Flush any pending Xlib operations. */
 	XFlush(priv->disp);
 
-	ggUnlock(priv->xliblock);
+	if ((tryflag == 0) || (tryflag != 2)) ggUnlock(priv->xliblock);
 	return 0;
 }
 
@@ -392,7 +392,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
-	if (tryflag != 2) ggUnlock(priv->xliblock);
+	if ((tryflag == 0) || (tryflag != 2)) ggUnlock(priv->xliblock);
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return 0;
 }
