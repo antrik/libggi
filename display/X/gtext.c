@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.7 2004/01/30 13:09:56 ggibecka Exp $
+/* $Id: gtext.c,v 1.8 2004/08/17 08:39:32 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -60,11 +60,11 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 
 	/* Font to backbuffer.  Fun fun fun fun fun! */
 	colors = malloc(sizeof(ggi_color) * w * h);
-	if (!colors) return -1;
+	if (!colors) return GGI_ENOMEM;
 	datafg = malloc((size_t)(w * h * priv->fontimg->bits_per_pixel)/8);
-	if (!datafg) { free(colors); return -1; }
+	if (!datafg) { free(colors); return GGI_ENOMEM; }
 	databg = malloc((size_t)(w * h * priv->fontimg->bits_per_pixel)/8);
-	if (!databg) { free(datafg); free(colors); return -1; }
+	if (!databg) { free(datafg); free(colors); return GGI_ENOMEM; }
 
 	/* This looks overcomplicated, but is more ready to be 
 	 * adapted to 1,2,4-bit.  In fact will already work for 
