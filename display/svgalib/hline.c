@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2001/06/24 16:45:12 skids Exp $
+/* $Id: hline.c,v 1.3 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: horizontal lines
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/svgalib.h>
 

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2002/07/05 05:40:59 skids Exp $
+/* $Id: box.c,v 1.4 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 

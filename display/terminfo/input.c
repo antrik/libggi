@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.1 2001/05/12 23:02:33 cegger Exp $
+/* $Id: input.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/gii.h>
 #include <ggi/gii.h>

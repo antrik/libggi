@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/06/26 02:34:12 fortinj Exp $
+/* $Id: mode.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/directx.h>
 

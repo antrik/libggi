@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2001/08/30 23:06:39 skids Exp $
+/* $Id: visual.c,v 1.9 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 #include <ggi/display/linvtsw.h>

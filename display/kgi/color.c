@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2002/07/29 15:45:31 fspacek Exp $
+/* $Id: color.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -31,6 +31,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/kgi.h>
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2001/12/07 10:59:31 cegger Exp $
+/* $Id: visual.c,v 1.6 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Display-Xlib initialization.
@@ -31,6 +31,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xlib.h>
 

@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.2 2001/05/31 21:54:40 skids Exp $
+/* $Id: TIvisual.h,v 1.3 2002/09/08 21:37:47 soyt Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #ifdef __GNUC__

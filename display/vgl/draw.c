@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.1 2001/05/12 23:02:46 cegger Exp $
+/* $Id: draw.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vgl.h>
 

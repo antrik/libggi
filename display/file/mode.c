@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:04 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -36,6 +36,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/file.h>
 

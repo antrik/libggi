@@ -1,4 +1,4 @@
-/* $Id: unix.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: unix.c,v 1.2 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    LibGGI core - UNIX specific stuff.
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 #include <ggi/gii-unix.h>
 #include <ggi/ggi-unix.h>

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2001/09/20 05:10:16 skids Exp $
+/* $Id: mode.c,v 1.9 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -36,6 +36,7 @@
 
 #include <linux/fb.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 

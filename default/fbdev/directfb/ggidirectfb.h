@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.5 2002/03/23 05:50:24 skids Exp $
+/* $Id: ggidirectfb.h,v 1.6 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:09 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -28,6 +28,7 @@
 /* We want SA_NOMASK from glibc 2.1 */
 #define _GNU_SOURCE
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/linvtsw.h>
 

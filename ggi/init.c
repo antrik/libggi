@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.3 2002/01/27 09:15:24 cegger Exp $
+/* $Id: init.c,v 1.4 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 #include <ggi/gg.h>
 

@@ -1,4 +1,4 @@
-/* $Id: lin8lib.h,v 1.1 2001/05/12 23:01:46 cegger Exp $
+/* $Id: lin8lib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_putc		GGI_lin8_putc;

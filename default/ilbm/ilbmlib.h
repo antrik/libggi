@@ -1,4 +1,4 @@
-/* $Id: ilbmlib.h,v 1.1 2001/05/12 23:01:36 cegger Exp $
+/* $Id: ilbmlib.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    ilbm sublib function prototypes
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_putc		GGI_ilbm_putc;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
+/* $Id: mode.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include "../common/pixfmt-setup.inc"

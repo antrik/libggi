@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.1 2001/05/12 23:02:41 cegger Exp $
+/* $Id: fillscreen.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: fill screen
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "vgaglvis.h"
 

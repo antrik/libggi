@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2001/05/12 23:02:46 cegger Exp $
+/* $Id: color.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -27,6 +27,7 @@
 */
 
 #include <string.h>
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xf86dga.h>
 

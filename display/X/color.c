@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2002/06/12 03:53:59 skids Exp $
+/* $Id: color.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -27,6 +27,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <string.h>
 #include <ggi/display/x.h>

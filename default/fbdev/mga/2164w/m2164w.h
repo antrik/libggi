@@ -1,4 +1,4 @@
-/* $Id: m2164w.h,v 1.1 2001/05/12 23:01:35 cegger Exp $
+/* $Id: m2164w.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 

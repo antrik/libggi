@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2002/09/06 09:25:20 cegger Exp $
+/* $Id: color.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include "libtele.h"

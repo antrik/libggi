@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:11 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -34,6 +34,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/mansync.h>
 

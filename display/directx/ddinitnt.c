@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.2 2001/06/26 02:33:12 fortinj Exp $
+/* $Id: ddinitnt.c,v 1.3 2002/09/08 21:37:45 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "ddinit.h"
 

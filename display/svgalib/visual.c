@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/07/09 13:14:25 cegger Exp $
+/* $Id: visual.c,v 1.4 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/svgalib.h>
 

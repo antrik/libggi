@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2001/05/12 23:01:37 cegger Exp $
+/* $Id: copybox.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Copybox
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <kgi/kgi_commands.h>

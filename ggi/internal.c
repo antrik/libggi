@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.7 2002/05/24 21:46:44 skids Exp $
+/* $Id: internal.c,v 1.8 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 
 int _ggi_countbits(uint32 val)

@@ -1,4 +1,4 @@
-/* $Id: suidhook.h,v 1.1 2001/05/12 23:02:22 cegger Exp $
+/* $Id: suidhook.h,v 1.2 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    Display-SUID: definitions
@@ -30,6 +30,7 @@
 #ifndef _DISPLAY_SUIDKGI_H
 #define _DISPLAY_SUIDKGI_H
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <kgi/kgi_commands.h>
 

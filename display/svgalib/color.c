@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2001/08/08 22:27:29 jtaylor Exp $
+/* $Id: color.c,v 1.3 2002/09/08 21:37:46 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -29,6 +29,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/svgalib.h>
 

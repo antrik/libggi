@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.2 2001/06/21 19:09:27 skids Exp $
+/* $Id: events.c,v 1.3 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Events handling.
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 
 gii_event_mask ggiEventPoll(ggi_visual *vis, gii_event_mask mask,

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: mode.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vcsa.h>
 

@@ -53,6 +53,7 @@ from Kaleb S. KEITHLEY.
 #include <X11/extensions/Xext.h>
 #include "extutil.h"
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #ifndef MODE_BAD

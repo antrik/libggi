@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:40 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -30,6 +30,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/trueemu.h>
 

@@ -1,4 +1,4 @@
-/* $Id: mga_g400.h,v 1.1 2001/06/17 01:58:44 ggibecka Exp $
+/* $Id: mga_g400.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 

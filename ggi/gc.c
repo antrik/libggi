@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: gc.c,v 1.2 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. GC handling
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 
 int ggiSetGCForeground(ggi_visual *vis,ggi_pixel color)

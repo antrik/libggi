@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.3 2002/01/27 09:15:24 cegger Exp $
+/* $Id: dl.c,v 1.4 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -31,6 +31,7 @@
 #include <string.h>
 #include <limits.h>
 
+#include "config.h"
 #include <ggi/internal/internal.h>
 #include <ggi/gg.h>
 

@@ -1,4 +1,4 @@
-/* $Id: plat.h,v 1.1 2001/05/12 23:03:23 cegger Exp $
+/* $Id: plat.h,v 1.2 2002/09/08 21:37:48 soyt Exp $
 ******************************************************************************
 
    LibGGI platform specific definitions
@@ -27,8 +27,6 @@
 
 #ifndef _GGI_INTERNAL_PLAT_H
 #define _GGI_INTERNAL_PLAT_H
-
-#include "config.h"
 
 #if defined(__GNUC__) && !defined(inline)
 #define inline __inline__

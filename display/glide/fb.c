@@ -1,4 +1,4 @@
-/* $Id: fb.c,v 1.1 2001/05/12 23:02:06 cegger Exp $
+/* $Id: fb.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Framebuffer handling
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/glide.h>
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -39,6 +39,7 @@
 #include <linux/vt.h>
 #endif
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/vcsa.h>
 

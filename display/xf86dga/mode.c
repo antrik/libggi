@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
+/* $Id: mode.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xf86dga.h>
 #include "xf86dga.h"

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/aa.h>
 

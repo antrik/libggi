@@ -1,4 +1,4 @@
-/* $Id: ati_mach64.h,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: ati_mach64.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 and rage pro acceleration for fbdev target
@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 

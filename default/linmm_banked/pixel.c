@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2001/05/12 23:01:48 cegger Exp $
+/* $Id: pixel.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
 ******************************************************************************
 
    Generic Banked 8,16,32Bpp MMAP Graphics library for GGI. Pixels.
@@ -27,6 +27,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include "linmm_banked.h"

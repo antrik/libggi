@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2002/07/27 10:15:05 cegger Exp $
+/* $Id: mode.c,v 1.9 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 #include <ggi/display/mansync.h>

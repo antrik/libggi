@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:07 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -31,6 +31,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/glide.h>
 #include "../../default/color/color.h"

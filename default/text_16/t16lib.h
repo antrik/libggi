@@ -1,4 +1,4 @@
-/* $Id: t16lib.h,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: t16lib.h,v 1.2 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    text-16 sublib function prototypes
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_mapcolor	GGI_t16_mapcolor;

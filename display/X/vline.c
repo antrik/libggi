@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2002/07/05 05:41:00 skids Exp $
+/* $Id: vline.c,v 1.4 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 

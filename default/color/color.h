@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.2 2001/06/03 22:16:28 skids Exp $
+/* $Id: color.h,v 1.3 2002/09/08 21:37:42 soyt Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -29,6 +29,7 @@
 #ifndef _LIBGGI_DEFAULT_COLOR_H
 #define _LIBGGI_DEFAULT_COLOR_H
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_mapcolor	GGI_color_PAL_mapcolor;

@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: pixel.c,v 1.2 2002/09/08 21:37:44 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 

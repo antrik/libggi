@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/05/12 23:01:48 cegger Exp $
+/* $Id: hline.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
 ******************************************************************************
 
    Generic 8, 16, 32 Banked Graphics library for GGI. Horizontal lines.
@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "linmm_banked.h"
 
