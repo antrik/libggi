@@ -1,4 +1,4 @@
-/* $Id: triple-int.c,v 1.1 2004/10/18 07:59:00 pekberg Exp $
+/* $Id: triple-int.c,v 1.2 2004/10/18 21:16:54 ggibecka Exp $
 ******************************************************************************
 
    This is a regression-test for triple precision int math.
@@ -16,6 +16,7 @@
 */
 
 
+#include "time.h"
 #include "config.h"
 #include <ggi/ggi.h>
 #include <ggi/errors.h>
@@ -704,10 +705,11 @@ badluck:
 
 int main(int argc, char * const argv[])
 {
+	unsigned tmp_rand = RAND_MAX;
+
 	parseopts(argc, argv);
 	printdesc("Regression testsuite triple precision int math\n\n");
 
-	unsigned tmp_rand = RAND_MAX;
 	while (tmp_rand < (unsigned)INT_MIN) {
 		++random_shift;
 		tmp_rand <<= 1;
