@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.6 2003/12/13 21:12:04 mooz Exp $
+/* $Id: structs.h,v 1.7 2003/12/14 10:13:49 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -243,11 +243,7 @@ typedef struct ggi_visual {
 	ggi_directbuffer *w_frame;	/* linear-* libraries */
 
 	ggi_gc		 *gc;		/* Graphics context */
-#if 0
-	ggi_color	 *palette;	/* Current palette */
-#else
-	ggi_colormap *palette; /* Current palette */
-#endif
+	ggi_colormap *palette;		/* Current palette */
 	
 	ggi_mode	 *mode;		/* Current mode */
 	ggi_pixelformat	 *pixfmt;	/* Format of the pixels */
