@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.3 2003/07/04 23:36:57 cegger Exp $
+/* $Id: findleaks.c,v 1.4 2003/07/12 06:29:10 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -80,19 +80,16 @@ inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
 
 #else
 
-void
-fill_info(void)
+static void fill_info(void)
 {
 }
 
-long
-get_size(void)
+static long get_size(void)
 {
 	return 0;
 }
 
-void
-inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
+static void inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
 {
 	printf(info);
 	printf("Check memory stats now!\n");
