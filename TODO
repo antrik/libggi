@@ -25,7 +25,8 @@ Building issues:
   This simplifies compiling libggi on a machine with no root-permissions.
   (Christoph)
 * Lots of OpenBSD/libtool fixes (Todd T. Fries)
-- Teach autoconf to #define atexit on_exit(something) when atexit not available
+* Teach autoconf to #define atexit on_exit(something) when atexit not available
+   (This is better done in libgii - Eric)
 
 Documentation related stuff:
 
