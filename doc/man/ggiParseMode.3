@@ -1,4 +1,4 @@
-.TH "ggiParseMode" 3 "2003-04-02 06:39:16" "ggi-current" GGI
+.TH "ggiParseMode" 3 "2003-04-02" "libggi-current" GGI
 .SH NAME
 \fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
 .SH SYNOPSIS
@@ -28,6 +28,9 @@ respectively.
 The format of the string used by these functions is exactly the same
 as the one used in the \fBGGI_DEFMODE\fR environment variable described in
 \fBlibggi(7)\fR.
+
+The string returned by both \fBggiSPrintMode\fR and \fBggiFPrintMode\fR
+does \fInot\fR contain a trailing newline.
 .SH RETURN VALUE
 \fBggiParseMode\fR returns:
 .TP
