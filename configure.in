@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.40 2002/10/07 20:57:58 cegger Exp $
+dnl $Id: configure.in,v 1.41 2002/10/09 23:28:57 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -501,9 +501,9 @@ if test "x$build_vcsa_target" != "xno"; then
   fi
 fi
 
+AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
 if test "x$build_dga_target" != "xno"; then
   AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
-  AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
   if test "x$internal_xf86dga" = "xyes"; then
     xf86dga_libs=""
     AC_DEFINE(GGI_INTERNAL_XF86DGA)
