@@ -21,7 +21,7 @@ If the \fB-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
 (default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
 allocated at the start of the requested memory area.
 
-When running on shared memory, this option enables you to to give
+When running on shared memory, this option enables you to give
 input (using \fBgiiEventSend(3)\fR) to other processes sharing
 that segment. This technique is demonstrated in \fBcube3d(1)\fR
 and can be used for things like GGI multiplexers.
