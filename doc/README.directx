@@ -1,42 +1,81 @@
-README for Win32 Direct-X port of libGGI.
+README for Win32 port of libGGI.
 Created: 8 Jul 2001 by John Fortin (fortinj@attglobal.net)
-Updated:
+Updated: 17 Aug 2004 by Peter Ekberg (peda@lysator.liu.se)
 
 
-Quick Installation Guide
-========================
+Quick Installation Guide for Cygwin
+===================================
 
 I) Software needed:
 	- Cygwin for Win32 (www.cygwin.com)
 	    (Installing all packages from setup.exe is recommended)	
 	- Automake (Select from cygwin install)
 	- Autoconf (select form cygwin install)
-	- Perl for Cygwin (needed for automake) (select from cygwin install)
-	- DirectX SDK 6.1 of newer 
-		(http://download.microsoft.com/download/win2000pro/dx8asdk/8.0a/W9X2KMe/EN-US/DX8a_SDK.exe)
-    	
+	- Perl for Cygwin (needed for automake, select from cygwin install)
+	- DirectX SDK 7.0 or newer (optional)
+
+	The DirectX SDK is optional, but needed for the directx target to work.
+	The DirectX 9.0c (- Summer 2004) SDK could be downloaded from
+	http://msdn.microsoft.com/library/default.asp?url=/downloads/list/directx.asp
+	at the time of this writing. Beware, it's more than 200MB, but all
+	you need from it is a could of header files. Exactly which ones have not
+	been determined at the time of this writing.
+
 II) Compilation:
 	- from libggi directory
-		./autogen.sh
-		./configure --without-x --with-directx
-		make all
+		WANT_AUTOMAKE_VER=1.8.5 WANT_AUTOCONF_VER=2.59 ./autogen.sh
+		./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+		make
 		make install
-	- libs and headers will be installed into /usr/local/lib and 
-          /usr/local/include.
+	- core dlls will be installed into /usr/bin, import libraries into
+	  /usr/lib and headers into /usr/include/ggi. Target libraries will
+	  be installed into /usr/lib/ggi and the configuration into
+	  /usr/etc/ggi.
 
 III) Notes:
-	- WinNT4
-	    use directxnt as target.  This uses DirectX 3.0 features available
-            in WinNT4.
 	- libGII must be build prior to libGGI
-	- the demo.exe program should work.  Build the demo directory 
-	  separately
-	- The demo.exe program should run.  Build in libggi/programs/demos.
-  	  The executable will be in the .libs directory.
-	- Set GGI_DISPLAY=directx (ie. export GGI_DISPLAY=directx)
-	- Set GGI_DEFMODE=wxh[GT_xBIT] (ie. export GGI_DEFMODE=800x600[GT_16BIT])
-	        (make sure the color depth matches your windows settings)	
-	         See libggi/doc/env.txt for more details.
-	- A Native Win32 version using MingW will be forthcoming.
-	
-		
+	- The version numbers for WANT_AUTOMAKE_VER and WANT_AUTOCONF_VER
+	  can be determined by running automake and autoconf with the
+	  --version switch. Use the latest available version.
+	- Set GGI_DEFMODE=wxh (ie. export GGI_DEFMODE=800x600)
+		See libggi/doc/env.txt for more details.
+	- Run some demos under the programs dir.
+
+
+
+Quick Installation Guide for MinGW
+==================================
+
+I) Software needed:
+
+	- Something that can generate the configure script (using autogen.sh).
+	  Usually any unix like thingy, such as cygwin, will do the trick.
+	- MSYS and MinGW (http://www.mingw.org/)
+	- DirectX SDK 7.0 or newer
+
+II) Compilation:
+	- from libggi directory (the configure script needs to have been
+	  created with autogen.sh, see section I)
+		./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+		make
+		make install
+	- core dlls will be installed into /usr/bin, import libraries into
+	  /usr/lib and headers into /usr/include/ggi. Target libraries will
+	  be installed into /usr/lib/ggi and the configuration into
+	  /usr/etc/ggi.
+
+III) Notes:
+	- libGII must be build prior to libGGI
+	- If MSYS was installed in c:\msys\1.0, you need to look in the
+	  folders below that to find the generated files. Beware that
+	  MSYS by default maps /usr to /. E.g. the core dlls can by
+	  default be found in c:\msys\1.0\bin (and not the expected
+	  c:\msys\1.0\usr\bin).
+	- Add the MSYS /usr/bin to you PATH
+	  (E.g. "set PATH=C:\msys\1.0\bin;%PATH%", at the command prompt)
+	- Set GGI_CONFDIR to the windows path of your configuration files
+	  (E.g. "set GGI_CONFDIR=C:\msys\1.0\etc\ggi")
+	- Set GGI_DEFMODE=wxh (ie. "set GGI_DEFMODE=800x600")
+		See libggi/doc/env.txt for more details.
+	- Run some demos, they are found in the .libs subdirs in the
+	  directories under the programs directory)
