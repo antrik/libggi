@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.10 2004/11/03 08:00:59 cegger Exp $
+/* $Id: crossblit.c,v 1.11 2004/11/05 07:54:54 cegger Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -79,6 +79,7 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	       ggi_visual *dst, int dx, int dy)
 {
 	uint8 *srcp, *dstp;
+	uint32 *srcp32, *dstp32;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 	int tmpw;
@@ -93,8 +94,8 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 
 	while (h--) {
 		tmpw = w;
-		uint32 *srcp32 = (uint32 *)srcp;
-		uint32 *dstp32 = (uint32 *)dstp;
+		srcp32 = (uint32 *)srcp;
+		dstp32 = (uint32 *)dstp;
 
 		while (tmpw--) {
 			*((dstp32)++) = *((srcp32)++);
