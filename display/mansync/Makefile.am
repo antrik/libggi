@@ -9,4 +9,4 @@ mansync_la_SOURCES = mansync.c visual.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
-EXTRA_DIST = EXPSYMS child.c pthread.c
+EXTRA_DIST = EXPSYMS child.c pthread.c win32thread.c
