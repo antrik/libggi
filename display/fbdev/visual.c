@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2004/11/27 16:42:19 soyt Exp $
+/* $Id: visual.c,v 1.27 2005/02/03 00:19:23 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -112,7 +112,8 @@ static const gg_option optlist[] =
 #define DEFAULT_FBNUM	0
 
 extern int GGI_fbdev_mode_reset(ggi_visual *vis);
-extern void GGI_fbdev_color_reset(ggi_visual *vis);
+extern void GGI_fbdev_color0(ggi_visual *vis);
+extern void GGI_fbdev_color_free(ggi_visual *vis);
 
 static void
 switchreq(void *arg)
@@ -280,7 +281,7 @@ static int do_cleanup(ggi_visual *vis)
 		ioctl(LIBGGI_FD(vis), FBIOPUT_CON2FBMAP, &origconmap);
 #endif
 #endif
-		GGI_fbdev_color_reset(vis);
+		GGI_fbdev_color_free(vis);
 		GGI_fbdev_mode_reset(vis);
 	}
 

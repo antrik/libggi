@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.12 2004/11/27 16:42:19 soyt Exp $
+/* $Id: color.c,v 1.13 2005/02/03 00:19:22 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -36,8 +36,10 @@
 #include <ggi/display/fbdev.h>
 #include <ggi/internal/ggi_debug.h>
 
-void GGI_fbdev_color_reset(ggi_visual *vis);
+void GGI_fbdev_color0(ggi_visual *vis);
+void GGI_fbdev_color_free(ggi_visual *vis);
 void GGI_fbdev_color_setup(ggi_visual *vis);
+
 static int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len, 
 				 ggi_color *colormap);
 static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len, 
@@ -47,18 +49,22 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t end,
 static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
 
 
-
-/* Restore and free palette/gamma entries.  Called before changing modes. */
-void GGI_fbdev_color_reset(ggi_visual *vis) {
+/* Zeros out the palette/gamma entries.  Called before changing modes. */
+void GGI_fbdev_color0(ggi_visual *vis)
+{
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	if (LIBGGI_PAL(vis)->clut.data == NULL) return; /* New visual. */
+	vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)),
+		       LIBGGI_PAL(vis)->clut.data);
+	vis->opcolor->setgammamap(vis, 0, vis->gamma->len, 
+			LIBGGI_PAL(vis)->clut.data);
+}
 
-	if ((LIBGGI_PAL(vis)->setPalette != NULL) && (vis->opcolor->setpalvec != NULL))
-		vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)),
-			       LIBGGI_PAL(vis)->clut.data);
-	else if (vis->opcolor->setgammamap != NULL)
-	  vis->opcolor->setgammamap(vis, 0, vis->gamma->len, LIBGGI_PAL(vis)->clut.data);
+/* Free palette/gamma entries.  Called before changing modes. */
+void GGI_fbdev_color_free(ggi_visual *vis)
+{
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	/* Unhook the entry points */
 	LIBGGI_PAL(vis)->setPalette = NULL;

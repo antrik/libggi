@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2004/11/27 16:42:19 soyt Exp $
+/* $Id: mode.c,v 1.22 2005/02/03 00:19:23 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -50,7 +50,8 @@
 #define FB_KLUDGE_FONTX	 8
 #define FB_KLUDGE_FONTY	16
 
-extern void GGI_fbdev_color_reset(ggi_visual *vis);
+extern void GGI_fbdev_color0(ggi_visual *vis);
+extern void GGI_fbdev_color_free(ggi_visual *vis);
 extern void GGI_fbdev_color_setup(ggi_visual *vis);
 int GGI_fbdev_mode_reset(ggi_visual *vis);
 
@@ -337,7 +338,8 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	/* If we already have set a mode, restore the old palette
 	 * or gamma settings before setting a new one. 
 	 */
-	GGI_fbdev_color_reset(vis);
+	GGI_fbdev_color0(vis);
+	GGI_fbdev_color_free(vis);
 
 	/* We need this to set virtual resolution correct */
 	ggimode2var(vis, mode, var);
