@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/09/03 07:56:26 pekberg Exp $
+/* $Id: mode.c,v 1.15 2004/09/08 11:06:01 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -100,22 +100,19 @@ int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 
 int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	switch (num) {
 	case 0:
 		strcpy(apiname, "display-directx");
-		strcpy(arguments, "");
 		return 0;
 	case 1:
 		strcpy(apiname, "generic-stubs");
-		strcpy(arguments, "");
 		return 0;
 	case 2:
 		strcpy(apiname, "generic-color");
-		strcpy(arguments, "");
 		return 0;
 	case 3:
 		sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_MODE(vis)->graphtype));
-		strcpy(arguments, "");
 		return 0;
 	}
 

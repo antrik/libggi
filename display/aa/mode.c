@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/06/03 05:30:48 pekberg Exp $
+/* $Id: mode.c,v 1.8 2004/09/08 11:05:16 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -37,22 +37,19 @@
 
 int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
+	*arguments = '\0';
 	switch(num) {
 		case 0: strcpy(apiname, "display-aa");
-			strcpy(arguments, "");
 			return 0;
 		case 1: strcpy(apiname, "generic-stubs");
-			strcpy(arguments, "");
 			return 0;
 		case 2: strcpy(apiname, "generic-color");
-			strcpy(arguments, "");
 			return 0;
 		case 3:
 			if(LIBGGI_MODE(vis)->graphtype!=GT_8BIT)
 				return -1;
 
 			sprintf(apiname, "generic-linear-8");
-			strcpy(arguments, "");
 			return 0;
 	}
 	return -1;
