@@ -36,6 +36,12 @@ from Kaleb S. KEITHLEY.
 
 /* THIS IS NOT AN X CONSORTIUM STANDARD */
 
+#if defined(__FreeBSD__)
+#include <sys/types.h>
+#include <sys/time.h>
+#include <unistd.h>
+#endif
+
 #define _POSIX_C_SOURCE	199309L
 #if !defined (__OpenBSD__)
 #define _POSIX_SOURCE
