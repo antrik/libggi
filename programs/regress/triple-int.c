@@ -1,4 +1,4 @@
-/* $Id: triple-int.c,v 1.2 2004/10/18 21:16:54 ggibecka Exp $
+/* $Id: triple-int.c,v 1.3 2004/10/20 14:19:30 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for triple precision int math.
@@ -16,17 +16,19 @@
 */
 
 
-#include "time.h"
 #include "config.h"
 #include <ggi/ggi.h>
 #include <ggi/errors.h>
+#include <time.h>
 
 /*#define HALF_MUL_DIVMOD_3  */ /* Uncomment to not use double type */
 /*#define NAIVE_MUL_DIVMOD_3 */ /* Uncomment to use slow naive impl */
 
 #include <ggi/internal/triple-int.h>
 
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 
 #include "testsuite.inc.c"
 
