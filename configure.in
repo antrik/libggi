@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.30 2001/11/04 22:54:08 skids Exp $
+dnl $Id: configure.in,v 1.31 2002/01/12 16:20:45 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -73,6 +73,12 @@ AM_PROG_LIBTOOL
 
 dnl ========================================================================
 dnl User selectable options
+
+
+dnl Bah! autoconf hasn't set prefix to it's default value yet!
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+
 
 dnl TARGETS:
 
@@ -173,7 +179,10 @@ AC_ARG_WITH(gii,
 [  --with-gii=DIR          use the LibGII installed with prefix DIR],
 CFLAGS="$CFLAGS -I$withval/include"
   CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib")
+  LDFLAGS="$LDFLAGS -L$withval/lib",
+CFLAGS="$CFLAGS -I$prefix/include"
+  CPPFLAGS="$CPPFLAGS -I$prefix/include"
+  LDFLAGS="$LDFLAGS -L$prefix/lib")
 
 # This is for building against an uninstalled libgii for
 # both $(top_builddir) == $(top_srcdir)
@@ -835,10 +844,6 @@ AC_SUBST(SHMDEMOS)
 AC_SUBST(monitest_extrasrc)
 AC_SUBST(monitest_extraobj)
 AC_SUBST(monitest_extralibs)
-
-dnl Bah! autoconf hasn't set prefix to it's default value yet!
-test "x$prefix" = xNONE && prefix=$ac_default_prefix
-test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 dnl Use static_* to substitute into files where values shouldn't
 dnl dynamicly change.  Makefiles need to be able to dynamicly change

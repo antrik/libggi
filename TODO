@@ -14,18 +14,20 @@ Due : 200?-??-??
 - bring improved code in showaccel demo to showaccel2 demo
 - documentate tele-target in libggi/doc/targets.txt
 * why is directfb drawing on only every other pixel column? (was DFB bug)
-* use config file instead of static accel_strings array in fbdev
-* enable DirectFB
+* use config file instead of static accel_strings array in fbdev (Brian)
+* enable DirectFB (Brian)
 - Make XF86DGA working with XF86 3.x and XF86 4.x
 - Verify and fix cross-compilation to other architectures
 - Fix libtool to create shared libs instead of static ones
   on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
   run GGI on Linux/MIPS boxes.
-- The default value of the configure option '--with-gii' should always be
+* The default value of the configure option '--with-gii' should always be
   the one of the '--prefix' option, independent if '--prefix' is specified by
   the user or not, unless '--with-gii' itself is specified by the user.
   This simplifies compiling libggi on a machine with no root-permissions.
+  (Christoph)
 * disable libKGI target, because it's currently a "proof-of-concept"
+  (Brian)
 - BUGFIX: tile-over-Xlib produces colors with blue characteristics!
   The bug appears, when using the directbuffer, that tile provides.
   That means, disabling the db, colors appear correctly.	  
