@@ -115,7 +115,7 @@ directly on the gfxhw ;)</para>
 <answer>
 <para>Because LibGGI is designed to be simple, it only provides basic
 drawing functions and visual management. Some applications may need
-more sophiscated functionality. This is provided by extensions,
+more sophisticated functionality. This is provided by extensions,
 which are attached to LibGGI visuals (displays). Extensions have
 full access to the internals of LibGGI and may implement advanced
 features such as 3D, while using LibGGI's flexible DL system.</para>
