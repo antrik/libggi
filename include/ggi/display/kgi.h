@@ -217,4 +217,10 @@ union ggi_accel {
 #define GGI_ACCEL_WRITE_u8(a, val)  _GGI_ACCEL_WRITE(u8, a, val)
 #define GGI_ACCEL_WRITE_s8(a, val)  _GGI_ACCEL_WRITE(s8, a, val)
 
+/* This allows 16 lines of swatch plus space for the font even in the
+ * largest/deepest mode possible with Radeon's 3D accel (2048x2048) 
+ */
+#define GGI_KGI_FONTSIZE 16320
+#define GGI_KGI_MINSWATCH 131072
+
 #endif /* _GGI_DISPLAY_KGI_H */
