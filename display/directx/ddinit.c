@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.9 2003/10/07 19:26:57 cegger Exp $
+/* $Id: ddinit.c,v 1.10 2003/10/07 19:38:40 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -416,9 +416,13 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 	case 32:
 		deftype = GT_32BIT;
 		break;
+	default:
+		deftype = GT_AUTO;
+		err = -1;
+		break;
 	}
 
-	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
+	if (GT_DEPTH(mode->graphtype) == GT_AUTO) {
 		mode->graphtype = deftype;
 	}
 
