@@ -427,7 +427,7 @@ See Also
 
 
 DEPRECATED: Set a specific type of mode on a visual
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 ggiSetTextMode ggiSetGraphMode ggiSetSimpleMode
 
