@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.7 2004/11/03 08:26:39 cegger Exp $
+/* $Id: vline.c,v 1.8 2004/11/03 08:35:30 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -228,7 +228,7 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		data8 = (uint8 *)data;
 		while (h--) {
-			memcpy(data, ximgptr,
+			memcpy(data8, ximgptr,
 				(unsigned)ximg->bits_per_pixel/8);
 			ximgptr += ximg->bytes_per_line;
 			data8 += ximg->bits_per_pixel/8;
