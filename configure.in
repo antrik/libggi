@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.153 2004/12/29 22:18:14 cegger Exp $
+dnl $Id: configure.in,v 1.154 2005/02/19 00:57:34 orzo Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -701,6 +701,16 @@ dnl includes (/usr/X11R6/include on most systems).
 	    ]], [[xXF86VidModeSetClientVersionReq *req;]])],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
 	    build_dga_target="no"])
 	fi
+    fi
+    if test "x$build_x_xf86dga_target" != "xno"
+    then
+    	AC_MSG_CHECKING(for XFree86-DGA version 2.0)
+	AC_COMPILE_IFELSE([
+#include <X11/Xlib.h>
+#include <X11/extensions/xf86dga.h>
+XDGAMode *ptr;
+	    ], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)
+	    build_x_xf86dga_target="no"])
     fi
     CFLAGS="$cflags_old"
     CPPFLAGS="$cppflags_old"
