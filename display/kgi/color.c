@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/04/04 14:31:55 mooz Exp $
+/* $Id: color.c,v 1.8 2004/09/12 20:27:24 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -64,7 +64,7 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	ilut.idx = start;
 	ilut.cnt = len;
 	ilut.am = KGI_AM_COLORS;
-	ilut.data = LIBGGI_PRIVATE(vis);
+	ilut.data = KGI_PRIV(vis);
 
 	for (start = 0; len > 0; start++, colormap++, len--) {
 		ilut.data[start*3]     = colormap->r;

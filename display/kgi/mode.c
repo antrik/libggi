@@ -105,7 +105,7 @@ int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
 {
 	ggi_kgi_priv *priv;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = KGI_PRIV(vis);
 
 	if (x > (LIBGGI_VIRTX(vis) - LIBGGI_X(vis))) return GGI_EARGINVAL;
 	if (y > (LIBGGI_VIRTY(vis) - LIBGGI_Y(vis))) return GGI_EARGINVAL;
@@ -122,9 +122,7 @@ int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
 static
 int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
 {
-	ggi_kgi_priv *priv;
-
-	priv = LIBGGI_PRIVATE(vis);
+	ggi_kgi_priv *priv = KGI_PRIV(vis);
 
 	if ((num < 0) || (num >= LIBGGI_MODE(vis)->frames))
 		return GGI_EARGINVAL;
@@ -150,7 +148,7 @@ int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
         vis->r_frame_num = num;
         vis->r_frame = db;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = KGI_PRIV(vis);
 
 	if (priv->rwframes_changed) return priv->rwframes_changed(vis);
 
@@ -172,7 +170,7 @@ int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 	vis->w_frame_num = num;
 	vis->w_frame = db;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = KGI_PRIV(vis);
 
 	if (priv->rwframes_changed) return priv->rwframes_changed(vis);
 
