@@ -154,14 +154,16 @@ int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
 int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
-        ggi_directbuffer *db;
+	ggi_directbuffer *db;
 
 	db = _ggi_db_find_frame(vis, num);
 
-        if (db == NULL) return -1;
+	GGIDPRINT("Setting write frame: %p found\n", db);
 
-        vis->w_frame_num = num;
-        vis->w_frame = db;
+	if (db == NULL) return -1;
+
+	vis->w_frame_num = num;
+	vis->w_frame = db;
 
 	priv = LIBGGI_PRIVATE(vis);
 
