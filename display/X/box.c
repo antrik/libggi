@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2002/09/08 21:37:44 soyt Exp $
+/* $Id: box.c,v 1.5 2003/06/12 12:09:39 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -37,7 +37,7 @@ int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-        LIBGGICLIP_XYWH(vis, x, y, w, h);
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	priv->slave->opdraw->drawbox(priv->slave, x, y, w, h);
 	GGI_X_DIRTY(vis, x, y, w, h);
 	return GGI_OK;
@@ -49,7 +49,7 @@ int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	priv = GGIX_PRIV(vis);
 
 	priv->slave->opdraw->putbox(priv->slave, x, y, w, h, data);
-        LIBGGICLIP_XYWH(vis, x, y, w, h);
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	GGI_X_DIRTY(vis, x, y, w, h);
 	return GGI_OK;
 }
@@ -80,13 +80,13 @@ int GGI_X_drawbox_slave_draw(ggi_visual *vis, int x, int y, int w, int h)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-        LIBGGICLIP_XYWH(vis, x, y, w, h);
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	GGI_X_CLEAN(vis, x, y, w, h);
 	priv->slave->opdraw->drawbox(priv->slave, x, y, w, h);
 	y = GGI_X_WRITE_Y;
 	ggLock(priv->xliblock);
 	XFillRectangle(priv->disp, priv->drawable, priv->gc,
-                       x, y, w, h);
+			x, y, w, h);
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
 	return GGI_OK;
@@ -129,32 +129,32 @@ int GGI_X_drawbox_draw(ggi_visual *vis, int x, int y, int w, int h)
 
 int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 {
-        XImage *ximg;
+	XImage *ximg;
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
 	ggLock(priv->xliblock);
 #warning 1,2,4-bit support needed.
-        ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-                            LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
-                            data, w, h, 8, 0);
+	ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
+			    LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
+			    data, w, h, 8, 0);
 	y = GGI_X_WRITE_Y;
 
 #ifdef GGI_LITTLE_ENDIAN
-        ximg->byte_order = LSBFirst;
-        ximg->bitmap_bit_order = LSBFirst;
+	ximg->byte_order = LSBFirst;
+	ximg->bitmap_bit_order = LSBFirst;
 #else
-        ximg->byte_order = MSBFirst;
-        ximg->bitmap_bit_order = MSBFirst;
+	ximg->byte_order = MSBFirst;
+	ximg->bitmap_bit_order = MSBFirst;
 #endif
 
-        XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
-                  0, 0, x, y, w, h);
-        XFree(ximg); /* XDestroyImage would free(data) (bad).
+	XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
+		  0, 0, x, y, w, h);
+	XFree(ximg); /* XDestroyImage would free(data) (bad).
 			Luckily, this doesn't leak (?) */
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
-        return GGI_OK;
+	return GGI_OK;
 }
 
 int GGI_X_copybox_draw(ggi_visual *vis, int x, int y, 
@@ -177,12 +177,12 @@ static int geterror;
 
 static int errorhandler (Display * disp, XErrorEvent * event)
 {
-  if (event->error_code == BadMatch) geterror = 1;
-  return 0;
+	if (event->error_code == BadMatch) geterror = 1;
+	return 0;
 }
 
 int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
-{	
+{
 	ggi_x_priv *priv;
 	XImage *ximg;
 	int     (*olderrorhandler) (Display *, XErrorEvent *);
@@ -206,7 +206,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	XSync(priv->disp, 0);
 	XSetErrorHandler(olderrorhandler);
 
-	if (geterror) { 
+	if (geterror) {
 		ret = -1;
 		goto out;
 	}
@@ -221,7 +221,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	    MSBFirst
 #endif
 	    ) goto noswab;
-	
+
 	if (ximg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
 		ximgptr = ximg->data + ximg->xoffset * 2;
