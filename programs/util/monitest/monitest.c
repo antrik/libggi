@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.6 2004/09/08 17:51:03 cegger Exp $
+/* $Id: monitest.c,v 1.7 2004/09/24 12:23:14 pekberg Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -245,7 +245,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.6 2004/09/08 17:51:03 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.7 2004/09/24 12:23:14 pekberg Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -494,6 +494,8 @@ static int changeresmenu(void)
 			}
 			/*sleep(1); */
 			/*ggiFlush(vis); */
+			if (GT_SCHEME(graphtypes[gtindex]) == GT_PALETTE)
+				ggiSetColorfulPalette(vis);
 		}
 		setcolors();	/* necessary when depth changed */
 
@@ -617,6 +619,8 @@ int main(int argc, char **argv)
 		return 2;
 	}
 
+	if (GT_SCHEME(mo.graphtype) == GT_PALETTE)
+		ggiSetColorfulPalette(vis);
 	kgidevice = is_kgicondev(vis);
 
 	setcolors();
