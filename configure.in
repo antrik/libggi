@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.17 2001/08/14 03:29:48 skids Exp $
+dnl $Id: configure.in,v 1.18 2001/08/15 04:52:08 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -33,6 +33,7 @@ build_xlib_target="auto"
 build_aa_target="auto"
 build_directx_target="no"
 build_fbdev_target="auto"
+build_directfb_renderer="auto"
 build_file_target="auto"
 build_glide_target="auto"
 build_ipc_target="auto"
@@ -88,6 +89,9 @@ build_directx_target=$enableval)
 AC_ARG_ENABLE(fbdev,
 [  --disable-fbdev         don't build the fbdev target],
 build_fbdev_target=$enableval)
+AC_ARG_ENABLE(directfb,
+[  --disable-directfb      don't build the directfb renderer],
+build_directfb_renderer=$enableval)
 AC_ARG_ENABLE(genkgi,
 [  --disable-genkgi        don't build the generic KGI driver (used by fbdev)],
 build_genkgi_driver=$enableval)
@@ -285,6 +289,7 @@ fi
 
 DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
+FBDEVSUBDIRS=""
 
 have_pthreads=no
 if test "x$use_threads" != "xno"; then
@@ -377,6 +382,19 @@ fix->accel = 0;
       AC_DEFINE(HAVE_NEW_FBDEV)
       have_new_fbdev=yes),
     build_fbdev_target="no")
+fi
+
+if test "x$build_fbdev_target" == "xno"; then
+  build_directfb_renderer="no"
+fi
+
+if test "x$build_directfb_renderer" != "xno"; then
+
+   if test -d /usr/src/DirectFB; then
+     build_directfb_renderer="yes"
+   else
+     build_directfb_renderer="no"
+   fi
 fi
 
 if test "x$build_genkgi_driver" != "xno"; then
@@ -554,6 +572,15 @@ else
     DEFAULTSUBDIRS="$DEFAULTSUBDIRS fbdev"
   fi
   build_fbdev_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build directfb renderer )
+if test "x$build_directfb_renderer" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
+  build_directfb_renderer="yes"
   AC_MSG_RESULT(yes)
 fi
 
@@ -772,6 +799,7 @@ AC_SUBST(bsdsock_libs)
 
 AC_SUBST(DISPLAYSUBDIRS)
 AC_SUBST(DEFAULTSUBDIRS)
+AC_SUBST(FBDEVSUBDIRS)
 
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
