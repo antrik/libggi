@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.131 2004/09/29 13:50:16 cegger Exp $
+dnl $Id: configure.in,v 1.132 2004/10/08 11:47:18 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -567,6 +567,7 @@ if test "x$ac_cv_func_gethostbyname" = "xno"; then
 fi
 
 
+TESTSUBDIRS=""
 DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
 XSUBDIRS=""
@@ -967,6 +968,7 @@ if test "x$build_x_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
+  TESTSUBDIRS="$TESTSUBDIRS X"
   build_x_target="yes"
   AC_MSG_RESULT(yes)
 
@@ -1328,6 +1330,7 @@ dnl Write output
 AC_SUBST(sublib_libs)
 AC_SUBST(bsdsock_libs)
 
+AC_SUBST(TESTSUBDIRS)
 AC_SUBST(DISPLAYSUBDIRS)
 AC_SUBST(DEFAULTSUBDIRS)
 AC_SUBST(XSUBDIRS)
@@ -1488,6 +1491,7 @@ programs/check/Makefile
 programs/demos/Makefile
 programs/demos/warp-ggi/Makefile
 programs/regress/Makefile
+programs/regress/display.x/Makefile
 programs/util/Makefile
 programs/util/monitest/Makefile
 doc/Makefile

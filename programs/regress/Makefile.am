@@ -1,4 +1,5 @@
-SUBDIRS =
+SUBDIRS = @TESTSUBDIRS@
+EXTRA_SUBDIRS = display.x
 
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
 LDADD = ${top_builddir}/ggi/libggi.la
