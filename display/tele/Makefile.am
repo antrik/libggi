@@ -5,7 +5,7 @@ tele_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
 
 bin_PROGRAMS = ggiteleserver
 ggiteleserver_SOURCES = teleserver.c libtele.c
-ggiteleserver_LDADD = $(top_builddir)/ggi/libggi.la $(bsdsock_libs)
+ggiteleserver_LDADD = $(top_builddir)/ggi/libggi.la $(bsdsock_libs) $(THREADLIBS)
 
 sublib_LTLIBRARIES = tele.la
 
