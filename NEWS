@@ -1,5 +1,28 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2:2:0 (2.0.2): 2002-12-??
+* Misc bugfixes (see ChangeLog)
+* Huge documentation updates
+* Major build system update
+  - adds builds fixes for many platforms
+* memory-target
+  - add -pixfmt option
+  - added missing support for reporting physical screen sizes.
+* X-target
+  - rewritten (x/xlib splitting is obselete now)
+  - added dirty region management
+* xlib-target
+  - disabled. Will be removed later
+* fbdev-target
+  - DirectFB driver works with directfb 0.9.13
+  - added mach64 accelerator
+* KGI-target
+  - big update (works with KGI-0.9 now)
+  - added mach64 accelerator
+  - added radeon accelerator
+  - still experimental, thus disabled in configure
+^L
+
 New in 2:1:0 (2.0.1): 2001-08-26
 * More documentation updates.
 * Prelimiary support for using DirectFB drivers under display-fbdev
