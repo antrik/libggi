@@ -66,7 +66,7 @@ any target, so don't.
 Unfortunately some XFree86 drivers are buggy, and when you render an 
 accelerated primitive which overlaps an area which is not visible to
 the user, the driver fails to update the backing store (it only draws
-the clipped primitive using accelarated funtions and does not complete the
+the clipped primitive using accelarated functions and does not complete the
 job by calling the software renderer to update the backing store.)  Most
 people will not be affected by this bug, however.
 

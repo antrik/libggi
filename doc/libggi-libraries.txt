@@ -18,7 +18,7 @@ future, other platforms). The support for all of these different types
 of displays and hardware are provided by dynamically-loaded
 mini-libraries.
 
-__ http://www.ggi-project.org
+__ http://www.ggi-project.org/
 
 
 LibGGI can transparently (to the LibGGI-using application) display
@@ -35,7 +35,7 @@ LibGGI supports acceleration of graphics primitives where possible.
 
 LibGGI is a very generic piece of software, that will run on about
 every platform that has remotely heard of POSIX (ports to other
-systems such as Win32 are underway) and on many display subsystems.
+systems such as Win32 are available, too) and on many display subsystems.
 
 
 Environment variables
@@ -48,7 +48,7 @@ user, which affect the behaviour of LibGGI:
 
 `DISPLAY`
     If set, LibGGI assumes that you want to use the X target.  This
-    setting is overriden by the `GGI_DISPLAY` variable.
+    setting is overridden by the `GGI_DISPLAY` variable.
 
 `GGI_DISPLAY`
    Specifies the default target used when the application calls
@@ -99,7 +99,7 @@ user, which affect the behaviour of LibGGI:
        dimensions without a specifier are considered to be the visible
        dimensions.
        
-       :p:`w` and :p:`h` are the Width and height in pixels.
+       :p:`w` and :p:`h` are the width and height in pixels.
     
    V
        Denotes virtual size, the total drawing area available to the
@@ -107,7 +107,7 @@ user, which affect the behaviour of LibGGI:
        the visible size.
 
    D
-       Denotes the number of dots per pixel.  For graphics modes, this
+       Denotes the number of dots per pixel.  For graphic modes, this
        is always 1x1, and for text modes, this is the size of the
        character cell.
 
@@ -162,7 +162,7 @@ user, which affect the behaviour of LibGGI:
     - 4 : debug mode setting
     - 8 : debug color handling
     - 16 : debug drawing
-    - 32 : misc debuging output
+    - 32 : misc debugging output
     - 64 : debug dynamic library handling
     - 128 : debug event handling
     
@@ -173,6 +173,9 @@ user, which affect the behaviour of LibGGI:
 `GGI_DEBUGSYNC`
     Turn on synchronous debugging output, flushing the output buffers
     before returning from `GGIDPRINT` calls.
+
+`GGI_CONFDIR`
+    Override compiled-in path to global config files (Win32 only).
 
 `GGI_NEWVT`
     If set, causes a new virtual console to be allocated for some
@@ -192,24 +195,24 @@ Examples
 Example `GGI_DISPLAY` settings::
 
   # see ASCII art flying GGIs
-  
-  $ GGI_DISPLAY=aa ./flying_ggis          
-  
-  
-  # see demo on both machine next door and local
+
+  $ GGI_DISPLAY=aa ./flying_ggis
+
+
+  # see demo on both machine "crono" next door and local
   # X at the same time
-  
+ 
   $ GGI_DISPLAY=multi:(Xlib:crono:0.0):(X::0.0) ./demo
 
 
 Example `GGI_INPUT` string::
 
   $ export GGI_INPUT=linux-mouse:auto
-  
+ 
   # for "multi" target only
-  
+ 
   $ export GGI_INPUT_multi=linux-mouse:auto
-    
+ 
 
 Examples of `GGI_DEFMODE` strings:
 

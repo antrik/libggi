@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.6 2003/07/04 23:36:57 cegger Exp $
+/* $Id: checkmode.c,v 1.7 2004/05/21 20:09:07 aldot Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -303,7 +303,7 @@ static void scanarea(struct area * a,
 	/*printf("peeking right: vis.%d virt.%d.\n",a->xref,a->xvref);*/
 	/* peek down: */
 	/* it might be always this y for this area */
-	/* or allways accepted */
+	/* or always accepted */
 	
 	fail=ggiCheckGraphMode(vis,x,y+1,
 			       autof?GGI_AUTO:x,autof?GGI_AUTO:y+1,
@@ -500,7 +500,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.6 2003/07/04 23:36:57 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.7 2004/05/21 20:09:07 aldot Exp $\n");
 	exit(0);
 }
 

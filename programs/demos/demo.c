@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.15 2004/04/02 16:02:48 ggibecka Exp $
+/* $Id: demo.c,v 1.16 2004/05/21 20:09:07 aldot Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -541,7 +541,7 @@ int main(int argc, char **argv)
 		map[0].r=i; map[0].g=0; map[0].b=0;
 
 		/* ggiMapColor will return the color value that is
-		 * closest to the requested color. We set this a ctive
+		 * closest to the requested color. We set this as active
 		 * drawing color.
 		 */
 		ggiSetGCForeground(vis,ggiMapColor(vis, &map[0]));

@@ -43,14 +43,17 @@ Structure Members
 
 `frames`
     The number of frames. Some displays have multi-buffer capabilities
-    (double-buffering, triple-buffering...). See libggi frame-related
-    functions for information on working with multiple frames.
+    (double-buffering, triple-buffering,...). See libggi frame-related
+    functions (ggi{s,g}et{Read,Write,Display}Frame) for information on
+    working with multiple frames.
 
 `visible`
-    The size of the visible area. This is what the user will see.
+    The size of the visible area in pixels. This is what the user will
+    see.
 
 `virt`
-    The virtual size of the visual. It can be larger (but not smaller)
+    The virtual size of the visual in pixels. It can be larger
+    (but not smaller)
     than the visible area, in which case only a part of it is
     displayed.  It is useful for scrolling or backing up portions of
     screen efficiently.  See `ggi[Set|Get]Origin` functions for more.
@@ -157,8 +160,8 @@ convert ggi_colors to ggi_pixels.
 Structure members
 -----------------
 
-`r`, `g` and `b` correspond respectively to the red, green and blue
-channels.  Since libggi does not deal with alpha compositing, the
+`r`, `g` and `b` correspond to the red, green and blue channels.
+Since libggi does not deal with alpha compositing, the
 `a` (alpha) field is mainly there for padding and it is not used by
 libggi. Setting this value has no effect in libggi itself, and it will
 most probably not be unmapped correctly from `ggi_pixel`\ s. However,
@@ -167,7 +170,7 @@ to their documentation.
 
 
 `ggi_pixel`\ s format depends on the actual display and mode. For those
-who want to operate directly on pixel values, this format is describe
+who want to operate directly on pixel values, this format is described
 in the `ggi_pixelformat` structure.
 
 
@@ -355,14 +358,15 @@ Structure Members
   ::
   
     /* Buffer types */
-    #define GGI_DB_NORMAL		0x0001  /* "frame" is valid when set */
-    #define GGI_DB_EXTENDED		0x0002
-    #define GGI_DB_MULTI_LEFT	0x0004
-    #define GGI_DB_MULTI_RIGHT	0x0008
+    #define GGI_DB_NORMAL      0x0001  /* "frame" is valid when set */
+    #define GGI_DB_EXTENDED    0x0002
+    #define GGI_DB_MULTI_LEFT  0x0004
+    #define GGI_DB_MULTI_RIGHT 0x0008
 
     /* Flags that may be or'ed with the buffer type */
     #define GGI_DB_SIMPLE_PLB	0x01000000
-    /* GGI_DB_SIMPLE_PLB means that the buffer has the following properties:
+    /* GGI_DB_SIMPLE_PLB means that the buffer
+       has the following properties:
       type == GGI_DB_NORMAL
       read == write
       noaccess == 0
@@ -404,7 +408,6 @@ Structure Members
     they may be `NULL` or invalid when the DirectBuffer is not
     acquired.
 
-
 `page_size`
     indicates a Paged buffer if not `0`.
 
@@ -421,8 +424,7 @@ Structure Members
     the other. If not, it is recommended to copy pagewise into a
     temporary buffer and then to copy this temporary buffer back to
     screen.
-    
-    
+ 
 `noaccess`
     is a bitfield specifying an access restriction. When bit x is set,
     you may not access this DirectBuffer at the width of 2^x bytes. It

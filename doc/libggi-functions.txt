@@ -29,8 +29,8 @@ using other LibGGI functions; otherwise the results will be undefined.
 
 
 `ggiExit` uninitializes the library (after being initialized by
-`ggiInit`) and automatically cleanup if necessary.  This should be
-called after an application is finished with the library.  If any GGI
+`ggiInit`) and automatically cleans up if necessary.  This should be
+called after an application finished using the library.  If any GGI
 functions are called after the library has been uninitialized, the
 results will be undefined.
 
@@ -57,7 +57,7 @@ Return value
     properly nested pairs, e.g. the first `ggiExit` after two
     `ggiInit`s will return `1`.
 
-`>0`
+`<0`
     error, especially if more `ggiExit` calls have been done than
     `ggiInit` calls.
     
@@ -220,7 +220,7 @@ Synopsis
 
 ::
 
-  int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
+  int ggiCheckMode(ggi_visual_t visual, ggi_mode *tm);
 
 
   int ggiCheckTextMode(ggi_visual_t visual, int cols, int rows,
@@ -308,7 +308,7 @@ The suggested mode is derived as follows:
    adjusted *down* to the maximum.
     
    The above applies to visible and virtual size. If there is
-   interference between them, the visible size is satified first if
+   interference between them, the visible size is satisfied first if
    possible, then the virtual size.
 
 
@@ -342,6 +342,7 @@ Examples
 
 Try a 320x200x8 mode::
 
+  ggi_mode sug_mode;
   err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
                         &sug_mode);
   if(err) {
@@ -372,7 +373,7 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
+  int ggiSetMode(ggi_visual_t visual, ggi_mode *tm);
 
   int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
 		     int vcols, int vrows, int fontx, int fonty,
@@ -462,7 +463,7 @@ respectively.
 
 
 The format of the string used by these functions is exactly the same
-as the one used in the `GGI_DEFMODE` environment variable decribed in
+as the one used in the `GGI_DEFMODE` environment variable described in
 :man:`libggi(7)`.
 
 
@@ -610,7 +611,7 @@ Description
 
 
 `ggiUnpackPixels` converts the pixelvalues in :p:`buf` to individual
-elements of :p:`cols`.  This function maybe used to convert buffers
+elements of :p:`cols`.  This function may be used to convert buffers
 output by the `ggiGet{HLine,VLine,Box}` functions from the pixelvalue
 representation to their actual colors as defined by
 :man:`ggi_color(3)`.
@@ -630,7 +631,7 @@ Return value
 ------------
 
 
-`ggiMapColor` returns a `ggi_pixel`.
+`ggiMapColor` returns a :man:`ggi_pixel(3)`.
 
 
 `ggiUnmapPixel`, `ggiPackColors`, and `ggiUnpackPixels` returns `0`
@@ -667,13 +668,13 @@ Synopsis
 Description
 -----------
 
-LibGGI visuals in `GT_PALETTE` mode maps all pixelvalues to the
+LibGGI visuals in `GT_PALETTE` mode map all pixelvalues to the
 corresponding `ggi_color` entry in the visual's palette.
 
 
-`ggiSetPalette` sets a range of palette values, of length :p:`len`,
+`ggiSetPalette` sets a range of palette values of length :p:`len`,
 starting at index number :p:`s`.  The index can be
-`GGI_PALETTE_DONTCARE` to indicate to indicate that the palette can be
+`GGI_PALETTE_DONTCARE` to indicate that the palette can be
 installed anywhere in the CLUT.  This allows optimised use in
 windowing environments (to minimize color flashing between windows)
 and should be used if possible.
@@ -689,7 +690,7 @@ Return value
 ------------
 
 `ggiSetPalette` returns the number of the first entry changed.
-Negative values indicate error.
+`<0` indicate error.
 
 
 `ggiGetPalette` returns `0` for OK, otherwise an error code. When
@@ -731,12 +732,12 @@ Description
 
 
 LibGGI guarantees that there will be a default palette when a
-palettized mode is set.  What this default is, however, is dependent
+palettized mode is set.  What this default is, however, dependent
 on the visual.  For example, the X target deliberately avoids setting
 all colors to avoid color-flashing when moving between windows.
 
 
-Applicaations that want to ensure that they have a full scale of all
+Applications that want to ensure that they have a full scale of all
 colors can call `ggiSetColorfulPalette` after mode set.  This function
 uses a smarter color allocation scheme, causing good colors but still
 minimal flashing in windowed targets.
@@ -747,7 +748,7 @@ Return value
 
 
 `ggiSetColorfulPalette` returns the number of the first entry changed.
-Negative values indicate error (codes).
+`<0` indicate error.
 
 
 See Also
@@ -768,15 +769,20 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiGetGamma(ggi_visual_t vis, ggi_float *r, ggi_float *g, ggi_float *b);
+  int ggiGetGamma(ggi_visual_t vis,
+			ggi_float *r, ggi_float *g, ggi_float *b);
 
-  int ggiSetGamma(ggi_visual_t vis, ggi_float r, ggi_float g, ggi_float b);
+  int ggiSetGamma(ggi_visual_t vis,
+			ggi_float r, ggi_float g, ggi_float b);
 
-  int ggiGetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+  int ggiGetGammaMap(ggi_visual_t vis,
+			int s, int len, ggi_color *gammamap);
 
-  int ggiSetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+  int ggiSetGammaMap(ggi_visual_t vis,
+			int s, int len, ggi_color *gammamap);
 
-  int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
+  int ggiGammaMax(ggi_visual_t vis,
+			uint32 bitmeaning, int *max_r, int *max_w);
 
 
 Description
@@ -948,7 +954,7 @@ Return value
 ------------
 
 
-Both functions `0` for OK.
+Both functions `0` for OK, ggiSetGCClipping returns an error.
 
 
 
@@ -1022,8 +1028,8 @@ height is one pixel.
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
 must be correctly allocated), respectively. See
-`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
-with pixels.
+:man:`ggiPackColors(3)` and :man:`ggiUnmapPixel(3)` functions for
+details on how to deal with pixels.
 
 
 Return value
@@ -1075,8 +1081,8 @@ of the line is one pixel.
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
 must be correctly allocated), respectively. See
-`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
-with pixels.
+:man:`ggiPackColors(3)` and :man:`ggiUnmapPixel(3)` functions for
+details on how to deal with pixels.
 
 
 Return value
@@ -1127,8 +1133,8 @@ direction.
 The :p:`buf` parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
 must be correctly allocated), respectively. See
-`ggiPackColors` and `ggiUnmapPixel` functions for details on how to deal
-with pixels.
+:man:`ggiPackColors(3)` and :man:`ggiUnmapPixel(3)` functions for
+details on how to deal with pixels.
 
 
 Return value
@@ -1148,7 +1154,7 @@ See Also
 
 
 
-Fills the entire virtual screen
+Fill the entire virtual screen
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -1171,7 +1177,8 @@ Description
 
 Fills the current clipping rectangle (usually the entire virtual
 screen) with the current foreground color.  It may be more efficient
-than the corresponding call to `ggiDrawBox`.
+than the corresponding call to :man:`ggiDrawBox(3)`. To set a clipping
+rectangle, see :man:`ggiSetGCClipping(3)`.
 
 
 Return value
@@ -1200,9 +1207,10 @@ Description
 -----------
 
 
-Draws any line, using the current foreground color, from (:p:`x`,
-:p:`y`) to (:p:`xe`, :p:`ye`). The line is exact; the pixel set is no
-more than 0.5 pixels off the place it should be.
+Draws any line, using the current foreground color set by
+:man:`ggiSetGCForeground(3)`, from (:p:`x`, :p:`y`) to (:p:`xe`, :p:`ye`).
+The line is exact; the pixel set is no more than 0.5 pixels off the
+place it should be.
 
 
 Return value
@@ -1288,8 +1296,8 @@ Description
 
 
 Blits a rectangular memory area from one visual to another. It handles
-colorspace-conversion. (Though it can be quite expensive, so take
-care.)
+colorspace-conversion (though it can be quite expensive, so take
+care).
 
 
 `ggiCrossBlit` will transfer an area from the source visual's read
@@ -1309,7 +1317,7 @@ Return value
 See Also
 --------
 
-:man:`ggiCopyBox(3)`
+:man:`ggiCopyBox(3)`, :man:`ggiSetReadFrame(3)`, :man:`ggiSetWriteFrame(3)`
 
 
 
@@ -1432,8 +1440,8 @@ output. Character size must always be checked and application should
 not assume that it will be constant across targets or even
 modes. Visuals must have a mode set before querying the character
 size. It means that if you want to use a visual size which depends on
-the character size, you might have to iterate over `ggiSetMode` and
-`ggiGetCharSize` to get it right.
+the character size, you might have to iterate over :man:`ggiSetMode(3)`
+and `ggiGetCharSize` to get it right.
 
 
 .. note::
@@ -1495,11 +1503,15 @@ specified flags.
 
 
 Flags are used to alter a visual's underlying behavior.  All flags
-default to an unset value.  Flags which are not supported by a given
+default to an unset value. Flags which are not supported by a given
 visual will remain unset even when an attempt is made to raise them.
 Thus, it is possible to tell by reading back the flags whether or not
 each of the flags is supported by the given visual.
 
+.. note::
+
+    It is recommended to set the flags *before* setting a mode,
+    i.e. right after :man:`ggiOpen(3)`.
 
 Return Value
 ------------
@@ -1529,7 +1541,7 @@ updated and the actual drawing takes place.
 - In synchronous mode when the drawing command returns, it is already
   or will be executed very shortly. So the visible effect is that
   everything is drawn immediately.  (It is not guaranteed in the
-  strict sense in that it is already drawn when the function call
+  strict sense that it is already drawn when the function call
   returns, but almost.)  This is the default mode for all visuals.
 
 
@@ -1537,7 +1549,7 @@ updated and the actual drawing takes place.
   executed immediately, but is faster on many targets.  If the visual
   does not support asynchronous mode, attempting to set it has no
   effect.  Code written for asynchronous visuals will always perform
-  correctly on synchronous visuals (but not visa-versa), so it is not
+  correctly on synchronous visuals (but not vice-versa), so it is not
   necessary to adapt a program's behavior if this flag is not
   available.
 
@@ -1549,7 +1561,7 @@ updated and the actual drawing takes place.
 
     On some targets such as the X target there is no real synchronous
     mode, so LibGGI fakes one by periodically calling
-    `ggiFlush` in the background.  This process can
+    :man:`ggiFlush(3)` in the background.  This process can
     take about half the execution time of a program.  So using
     synchronous mode can *really* slow things
     down.
@@ -1623,7 +1635,7 @@ using the directbuffer.
 The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is
 safe to attempt to set it whether or not it is available.  Code
 written for the tidy-buffering mode will display correctly on visuals
-which do not have a tidy-buffering mode (but not visa-versa), so it is
+which do not have a tidy-buffering mode (but not vice-versa), so it is
 not necessary to adapt program behavior to its non-presence.
 
 It is recommended that, if an application must use directbuffer, the
@@ -2042,7 +2054,7 @@ LibGGI visual, for use with the LibGII API.
 
 
 `ggiDetachInput` also returns the underlying input-handle, but in
-adddition, it breaks the association between the given visual and that
+addition, it breaks the association between the given visual and that
 input handle.  After this has been done, no LibGGI event routines may
 be called on that visual handle, and when the visual handle is closed,
 the input will remain unaffected.
@@ -2148,7 +2160,7 @@ there is a key to be consumed.
 `ggiGetc` returns a Unicode character in canonical form.
 
 
-For a fuller definition of characters, see :man:`gii_key_event(3)`.
+For a more detailed definition of characters, see :man:`gii_key_event(3)`.
 
 
 See Also
