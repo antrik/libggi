@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.2 2001/05/13 03:29:15 stefan Exp $
+/* $Id: inputdump.c,v 1.3 2003/05/03 16:48:24 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -415,7 +415,7 @@ static void show_pbutton(gii_pbutton_event *ev)
 
 static void show_valuator(gii_val_event *ev)
 {
-	int i;
+	uint32 i;
 
 	if (do_show != SHOW_NIL) {
 		fprintf(stderr, "0x%02x..0x%02x =", ev->first,

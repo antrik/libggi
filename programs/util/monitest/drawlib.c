@@ -1,4 +1,4 @@
-/* $Id: drawlib.c,v 1.1 2001/05/12 23:03:50 cegger Exp $
+/* $Id: drawlib.c,v 1.2 2003/05/03 16:47:17 cegger Exp $
 ******************************************************************************
 
    Monitest drawing library: fields with stripes and stars, circle.
@@ -87,14 +87,14 @@ stripevert(ggi_visual_t vis, int x1, int y1, int x2, int y2,
 	   ggi_pixel col1, ggi_pixel col2, unsigned int s)
 {
 	int x, xi;
-	ASSERT(s>0);
+	ASSERT(s > 0);
 
 	ggiSetGCForeground(vis, col1);
 	ggiDrawBox(vis, x1, y1, x2-x1+1, y2-y1+1);
 
 	ggiSetGCForeground(vis, col2);
-	for (x=x1; x<=x2;x+=s+s){
-		for (xi=0; xi<s;xi++){
+	for (x = x1; x <= x2; x += s+s){
+		for (xi = 0; xi < (signed)s; xi++){
 			ggiDrawVLine(vis, x+xi, y1, y2-y1+1);
 		}
 	}
@@ -105,14 +105,14 @@ stripehor(ggi_visual_t vis, int x1, int y1, int x2, int y2,
 	  ggi_pixel col1, ggi_pixel col2, unsigned int s)
 {
 	int y, yi;
-	ASSERT(s>0);
+	ASSERT(s > 0);
 
 	ggiSetGCForeground(vis, col1);
 	ggiDrawBox(vis, x1, y1, x2-x1+1, y2-y1+1);
 
 	ggiSetGCForeground(vis, col2);
-	for (y=y1; y<=y2;y+=s+s){
-		for (yi=0;yi<s;yi++){
+	for (y = y1; y <= y2; y += s+s){
+		for (yi = 0;yi < (signed)s; yi++){
 			ggiDrawHLine(vis, x1, y+yi, x2-x1+1);
 		}
 	}

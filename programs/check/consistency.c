@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.2 2001/06/17 09:15:12 cegger Exp $
+/* $Id: consistency.c,v 1.3 2003/05/03 16:50:33 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -125,7 +125,7 @@ BasicConsistency(void)
 	for(x=1;x!=0;x<<=1) {
 		ggiSetGCForeground(mode.vis,x);
 		ggiGetGCForeground(mode.vis,&rc);
-		if (x!=rc) {
+		if ((unsigned)x != rc) {
 			pass=0;break;
 		}
 	}
