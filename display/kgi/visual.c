@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/02/23 14:24:57 pekberg Exp $
+/* $Id: visual.c,v 1.14 2004/04/04 21:51:21 nsouch Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -26,13 +26,13 @@
 
 ******************************************************************************
 */
-
-#include "kgi/config.h"
-#include <string.h>
-#include <ggi/display/kgi.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+#include "kgi/config.h"
+#include <ggi/display/kgi.h>
 
 static const gg_option optlist[] =
 {
