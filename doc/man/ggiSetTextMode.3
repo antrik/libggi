@@ -1,1 +1,41 @@
-.so man3/ggiSetMode.3
+.TH "ggiSetTextMode" 3 "2005-02-26" "libggi-current" GGI
+.SH NAME
+\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR, \fBggiSetSimpleMode\fR : DEPRECATED: Set a specific type of mode on a visual
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/ggi.h>
+
+int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
+                   int vcols, int vrows, int fontx, int fonty,
+                   ggi_graphtype type);
+
+int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
+                    int xv, int yv, ggi_graphtype type);
+
+int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize,
+                     int frames, ggi_graphtype type);
+.fi
+
+.SH DESCRIPTION
+.RS
+\fBImportant:\fR
+These functions are DEPRECATED and may be removed from a future version of
+GGI.
+.RE
+\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR and \fBggiSetSimpleMode\fR are
+convenient versions of \fBggiSetMode(3)\fR that take the mode parameters as
+integer arguments rather than as a \fBggi_mode(3)\fR struct that the
+application has to fill out.  Otherwise, they are functionally
+equivalent to \fBggiSetMode(3)\fR function, and the same mode-setting
+semantics apply, except the changed \fBggi_mode(3)\fR cannot be seen.
+.SH RETURN VALUE
+The functions return \fB0\fR if the mode is set successfully, otherwise an
+\fBggi-error(3)\fR code.
+.SH NOTES
+Do not set a mode before checking it. You may be able to set up
+a certain mode on one target, but not other targets.
+
+See the example in \fBggiCheckMode(3)\fR.
+.SH SEE ALSO
+\fBggiCheckMode(3)\fR, \fBggiSetMode(3)\fR, \fBggiGetMode(3)\fR, \fBggiOpen(3)\fR, \fBggi_mode(3)\fR
