@@ -10,4 +10,4 @@ X_la_SOURCES = visual.c mode.c color.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
-EXTRA_DIST = EXPSYMS color.inc mode.inc
+EXTRA_DIST = EXPSYMS color.inc mode.inc visual.inc

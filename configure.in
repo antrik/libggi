@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.9 2001/07/10 18:59:13 cegger Exp $
+dnl $Id: configure.in,v 1.10 2001/07/16 14:48:50 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -8,7 +8,7 @@ AC_INIT(include/ggi/ggi.h)
 AM_INIT_AUTOMAKE(libggi,2.0b4,-)
 
 AM_MAINTAINER_MODE
-AC_DISABLE_STATIC
+AM_DISABLE_STATIC
 
 dnl ========================================================================
 dnl Set some defaults
@@ -65,8 +65,7 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_LIBTOOL_DLOPEN
 AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
-AC_PROG_INSTALL
+AM_PROG_LIBTOOL
 
 
 dnl ========================================================================
