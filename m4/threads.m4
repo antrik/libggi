@@ -1,52 +1,35 @@
-dnl Requires GGI_CHECKOS have been run before
-dnl Return: $mutextype and $THREADLIB
+dnl Optional: Predefine $use_threads
+dnl Return: $use_threads and $THREADLIB
 
 AC_DEFUN([GGI_THREADLIBS],
 [
 
-use_threads="auto"
-threadtype=""
+dnl Set use_threads to autodetect (yes) if not already
+dnl specified via configure
+if test -z "$use_threads"; then
+	use_threads="yes"
+fi
 THREADLIBS=""
 
 
 dnl Check for pthread library
 
-if test "$use_threads" != "no"; then
+if test "$use_threads" = "yes" -o \
+	"$use_threads" = "pthread"; then
 
 AC_CHECK_HEADERS([pthread.h])
 have_pthread=no
 if test "$ac_cv_header_pthread_h" = "yes"; then
-	AC_MSG_CHECKING(for pthread library)
 	TMP_SAVE_LIBS=$LIBS
-	LIBS="$LIBS -lpthread"
+	TMP_SAVE_CC=$CC
+	CC="$SHELL ./libtool $CC"
 
-	AC_TRY_RUN([
-		#define __C_ASM_H /* fix for retarded Digital Unix headers */
-		#include <pthread.h>
-		pthread_mutex_t mtex;
-		int main(void)
-		{
-			if (pthread_mutex_init(&mtex, NULL) == 0) return 0;
-			return 1;
-		}
-	],[
-		AC_MSG_RESULT(yes)
-		have_pthread=yes
-		THREADLIBS="-lpthread"
-	],[
-		AC_MSG_RESULT(no)
-		case "$host_os" in
-		openbsd3.0 | freebsd5.1 | freebsd4.*)
-			_pthread="-pthread"
-			;;
-		*)
-			_pthread="-lc_r"
-			;;
-		esac
+	for pthreadlib in -lpthread -lc_r -pthread; do
+		AC_MSG_CHECKING(for pthread_mutex_init with $pthreadlib)
+		LIBS="$TMP_SAVE_LIBS $pthreadlib"
 
-		AC_MSG_CHECKING(for pthread_mutex_init in $_pthread)
-		LIBS="$TMP_SAVE_LIBS $_pthread"
 		AC_TRY_RUN([
+			#define __C_ASM_H /* fix for retarded Digital Unix headers */
 			#include <pthread.h>
 			pthread_mutex_t mtex;
 			int main(void)
@@ -57,18 +40,22 @@ if test "$ac_cv_header_pthread_h" = "yes"; then
 		],[
 			AC_MSG_RESULT(yes)
 			have_pthread=yes
-			THREADLIBS="$_pthread"
+			THREADLIBS="$pthreadlib"
+			break
 		],[
 			AC_MSG_RESULT(no)
 		])
-	])
+	done
+
 	LIBS=$TMP_SAVE_LIBS
+	CC="$TMP_SAVE_CC"
 fi
 
 dnl Use pthread library if present
 if test "$have_pthread" = "yes"; then
-	use_threads="yes"
-	threadtype="pthread"
+	use_threads="pthread"
+elif test "$use_threads" = "pthread"; then
+	use_threads="no"
 fi
 
 fi
@@ -76,26 +63,29 @@ fi
 
 dnl Check for OS specific thread support
 
-if test "$use_threads" != "no"; then
+if test "$use_threads" = "yes" -o \
+	"$use_threads" = "win32"; then
 
 dnl Win32 (after pthread since pthread is prefered on cygwin)
 AC_CHECK_HEADERS([windows.h])
-AC_MSG_CHECKING(for win32 semaphores)
+AC_MSG_CHECKING(for win32 threads)
 if test "x$ac_cv_header_windows_h" = "xyes"; then
 	AC_MSG_RESULT(yes)
-	use_threads="yes"
-	threadtype="win32"
+	use_threads="win32"
 	THREADLIBS=""
 else
 	AC_MSG_RESULT(no)
+	if test "$use_threads" = "win32"; then
+		use_threads="no"
+	fi
 fi
 
 fi
 
 
-dnl Fall back to not use threads, if nothing else was found
+dnl Fall back to not use threads, if threads were not found
 
-if test "$use_threads" != "yes"; then
+if test "$use_threads" = "yes"; then
 	use_threads="no"
 fi
 
