@@ -14,6 +14,7 @@ _ggiZapMode
 _ggi_alloc_drvpriv
 _ggi_build_pixfmt
 _ggi_calloc
+_ggi_countbits
 _ggi_db_add_buffer
 _ggi_db_del_buffer
 _ggi_db_find_frame
@@ -60,6 +61,7 @@ ggiFPrintMode
 ggiFillscreen
 ggiFlush
 ggiFlushRegion
+ggiGammaMax
 ggiGetAPI
 ggiGetBox
 ggiGetCharSize

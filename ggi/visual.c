@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:03:16 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/05/11 01:10:46 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -235,7 +235,7 @@ ggi_visual *_ggiNewVisual(void)
 	vis->r_frame = vis->w_frame = NULL;
 	vis->origin_x = vis->origin_y = 0;
 	vis->needidleaccel = vis->accelactive = 0;
-	vis->gamma_red = vis->gamma_green = vis->gamma_blue = 1.0;
+	vis->gamma = NULL;
 	vis->palette = NULL;
 	vis->input = NULL;
 
