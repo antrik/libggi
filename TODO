@@ -34,7 +34,7 @@ Due : 200?-??-??
 - BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
   the RGBA colorspace. Verify, that X and Xlib handle that case correctly.
   That might also solve the above tile-over-Xlib issue.
-
+- alter fbdev.conf appropriately for selected accel sublibs
 
 ------------------------------------------
 Next major release
