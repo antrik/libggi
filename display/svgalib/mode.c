@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2004/09/13 11:11:36 cegger Exp $
+/* $Id: mode.c,v 1.19 2004/09/13 11:12:24 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -269,7 +269,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 /* virt.x != visible.x should be possible with this,
    but currently it doesn't work. */
 #if 0
-	vga_setlogicalwidth( GT_ByPPP(tm->virt.x, GT_SIZE(tm->graphtype)) );
+	vga_setlogicalwidth( GT_ByPPP(tm->virt.x, tm->graphtype) );
 #endif
 
 	_ggiZapMode(vis, 0);
