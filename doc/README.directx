@@ -1,6 +1,6 @@
 README for Win32 port of libGGI.
 Created: 8 Jul 2001 by John Fortin (fortinj@attglobal.net)
-Updated: 3 Sep 2004 by Peter Ekberg (peda@lysator.liu.se)
+Updated: 2 Nov 2004 by Peter Ekberg (peda@lysator.liu.se)
 
 
 Quick Installation Guide for Cygwin
@@ -12,14 +12,12 @@ I) Software needed:
 	    (Installing all packages from setup.exe is perhaps overkill, but
 	     will work. A minimum set of needed packages has not been
 	     determined at the time of this writing)
-	- DirectX SDK 7.0 or newer (optional)
+	- DirectX headers (optional)
 
-	The DirectX SDK is optional, but needed for the directx target to work.
-	The DirectX 9.0c (- Summer 2004) SDK could be downloaded from
-	http://msdn.microsoft.com/library/default.asp?url=/downloads/list/directx.asp
-	at the time of this writing. Beware, it's more than 200MB. I think
-	the only file needed is the ddraw.h file, see the notes below for
-	a possible workaround to downloading 200MB if you have MSVC.
+	The DirectX headers are optional, but needed for the directx target
+	to work. You can get the headers from
+	http://www.lysator.liu.se/~peda/directx-headers/
+	Follow the installation instructions inside the tarball.
 
 II) Installing from CVS:
 
@@ -50,7 +48,7 @@ III) Compilation:
 
 	From the libggi directory, issue the following commands:
 
-	  ./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+	  ./configure --prefix=/usr
 	  make
 	  make install
 
@@ -61,11 +59,6 @@ III) Compilation:
 IV) Notes:
 
 	- libgii must be built and installed prior to building libggi
-	- You might be able to get the ddraw.h file from a (newish) MSVC
-	  installation (MSVC 6.0 is probably not new enough), if you should
-	  have one. In that case, copy this file to a separate directory, if
-	  you specify the MSVC include dir in the --with-extra-includes
-	  argument, you will bring in too many of the MSVC headers.
 	- The configure script sometimes terminates early due to bash bugs.
 	  Try again if you get this or a similar error:
 	  configure: error: invalid package name: extra-includes
@@ -83,13 +76,11 @@ Quick Installation Guide for MinGW
 I) Software needed:
 
 	- MSYS and MinGW (http://www.mingw.org/)
-	- DirectX SDK 7.0 or newer
+	- DirectX headers
 
-	The DirectX 9.0c (- Summer 2004) SDK could be downloaded from
-	http://msdn.microsoft.com/library/default.asp?url=/downloads/list/directx.asp
-	at the time of this writing. Beware, it's more than 200MB. I think
-	the only file needed is the ddraw.h file, see the notes below for
-	a possible workaround to downloading 200MB if you have MSVC.
+	You can get the DirectX headers from
+	http://www.lysator.liu.se/~peda/directx-headers/
+	Follow the installation instructions inside the tarball.
 
 II) Installing from CVS:
 
@@ -107,7 +98,7 @@ III) Compilation:
 
 	From the libggi directory, issue the following commands:
 
-	  ./configure --prefix=/usr --with-extra-includes=/path-to-directx-sdk/include
+	  ./configure --prefix=/usr
 	  make
 	  make install
 
@@ -118,11 +109,6 @@ III) Compilation:
 IV) Notes:
 
 	- libgii must be built and installed prior to building libggi
-	- You might be able to get the ddraw.h file from a (newish) MSVC
-	  installation (MSVC 6.0 is probably not new enough), if you should
-	  have one. In that case, copy this file to a separate directory, if
-	  you specify the MSVC include dir in the --with-extra-includes
-	  argument, you will bring in too many of the MSVC headers.
 	- If MSYS was installed in c:\msys\1.0, you need to look in the
 	  folders below that to find the generated files. Beware that
 	  MSYS by default maps /usr to /. E.g. the core dlls can by
