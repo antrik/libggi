@@ -44,7 +44,7 @@
 #define DPRINTIF(debugvar, mask) do {             \
     if (debugvar & mask) {                        \
 	    va_list args;                         \
-	    fprintf(stderr, DEBUG_NAMESPACE ": ");   \
+	    fprintf(stderr, "[" DEBUG_NAMESPACE "] ");   \
 	    va_start(args, form);                 \
 	    vfprintf(stderr, form, args);         \
 	    va_end(args);                         \
@@ -53,11 +53,11 @@
 } while(0)
 
 #define LIB_ASSERT(x,str) do { if (!(x)) { \
-	fprintf(stderr,DEBUG_NAMESPACE ": %s:%s:%d: INTERNAL ERROR: %s\n",DEBUG_INFO,str); \
+	fprintf(stderr,"[" DEBUG_NAMESPACE "] %s:%s:%d: INTERNAL ERROR: %s\n",DEBUG_INFO,str); \
 	exit(1); } } while(0)
 
 #define APP_ASSERT(x,str) do { if (!(x)) { \
-	fprintf(stderr,DEBUG_NAMESPACE ": %s:%s:%d: APPLICATION ERROR: %s\n",DEBUG_INFO,str); \
+	fprintf(stderr,"[" DEBUG_NAMESPACE "] %s:%s:%d: APPLICATION ERROR: %s\n",DEBUG_INFO,str); \
 	exit(1); } } while(0)
 
 #else   /* DEBUG */
