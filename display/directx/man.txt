@@ -8,7 +8,9 @@ Synopsis
 
 ::
 
-  display-directx:	[ [-inwin=<winid>] [-keepcursor] [-nocursor] [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
+  display-directx: [ [-inwin=<winid>|root] | [-fullscreen] ]
+                   [ [-keepcursor] | [-nocursor] ] [-noinput]
+                   [-physz==<sizex>,<sizey>[dpi]]
 
 
 Description
