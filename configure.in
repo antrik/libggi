@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.126 2004/06/07 07:04:05 pekberg Exp $
+dnl $Id: configure.in,v 1.127 2004/06/26 20:58:23 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -794,6 +794,8 @@ if test "x$build_svga_target" != "xno"; then
 	AC_CHECK_LIB(vgagl, gl_setpixel, foo=bar,
 		build_vgagl_helper="no",
 		[ -lvga ]),
+	build_vgagl_helper="no")
+else
 	build_vgagl_helper="no")
 fi
 
