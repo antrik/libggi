@@ -261,7 +261,7 @@ Description
 
 `lshift_3` shifts `l` to the left by `r` bits. Equivalent to l<<=r.
 
-`rshift_3` shifts `l` to the left by `r` bits. This shift is
+`rshift_3` shifts `l` to the right by `r` bits. This shift is
 arithmetic, so the sign of `l` is kept as is. Equivalent to l>>=r.
 
 
