@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/12/29 11:01:20 cegger Exp $
+/* $Id: visual.c,v 1.4 2004/12/30 20:22:51 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -188,7 +188,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}	/* if */
 
 
-	priv->windowAttrs = kWindowStandardDocumentAttributes
+	priv->windowAttrs = kWindowCollapseBoxAttribute
 				| kWindowStandardHandlerAttribute
 				| kWindowCompositingAttribute;
 #if 0	/* This belongs into libggiwmh */
