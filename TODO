@@ -23,8 +23,21 @@ Due : 2001-08-26
 Long-term plan
 ------------------------------------------
 
-- why is directfb drawing on only every other pixel column?
-- use config file instead of static accel_strings array in fbdev
+* why is directfb drawing on only every other pixel column? (was DFB bug)
+* use config file instead of static accel_strings array in fbdev
+- change way that pixela/pixel stubs are selected (above item breaks current.)
 - improve modelist.inc
-- inprove fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
+- improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
+- enhance config file system: aliases, in-file option strings, wildcards
 
+------------------------------------------
+Things that will induce API additions
+------------------------------------------
+- make sure all bitfields (e.g. BM_TYPE) have associated _MASK/_SHIFT macros
+- Figure out all the caveats for cloning a visual and add core support 
+	and a ggiClone API function.
+
+------------------------------------------
+Non backward-compatible chnages
+------------------------------------------
+None currently planned
