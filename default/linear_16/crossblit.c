@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.5 2002/10/20 20:35:49 skids Exp $
+/* $Id: crossblit.c,v 1.6 2002/10/20 22:13:51 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -377,6 +377,7 @@ if (stmp <= 15) {						\
 		  SETMASK(bshift);
 		  break;
 		default:
+		  break;
 		}
 
 #undef SETMASK
@@ -869,6 +870,7 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	default:
+		break;
 	}
 	
  fallback:
