@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.41 2005/02/07 07:27:06 orzo Exp $
+/* $Id: mode.c,v 1.42 2005/02/08 10:02:04 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1170,6 +1170,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	ggLock(priv->xliblock);
 
 	vi = (priv->vilist + viidx)->vi;
+	DPRINT("* visual id = 0x%X\n", vi->visualid);
 
 	_ggi_x_build_pixfmt(vis, tm, vi);	/* Fill in ggi_pixelformat */
 
@@ -1260,6 +1261,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	_ggi_x_load_slaveops(vis);
 
 	DPRINT("* viidx = %i\n", priv->viidx);
+	DPRINT("* visual id = 0x%X\n", priv->vilist[priv->viidx].vi->visualid);
 
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
