@@ -1,7 +1,7 @@
 #!/bin/sh
 
 AC_VERSION="2.59"
-AM_VERSION="1.9.2"
+AM_VERSION="1.9.5"
 
 printf "Checking for required autoconf ${AC_VERSION}..."
 ./checkversion.sh autoconf $AC_VERSION
