@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.9 2004/10/17 19:06:04 mooz Exp $
+/* $Id: vidmode.c,v 1.10 2004/10/17 19:16:50 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -34,17 +34,20 @@
 #include <X11/extensions/xf86vmode.h>
 
 /*
- * The requested mode must be one available X mode.
- * We don't search for the highest closest mode, then
+ * The requested mode must be one of the available X modes.
+ * We should search for the highest closest mode, then
  * create a window with the found mode. And finally
- * reparent priv->parent_win to the newly created window
- * because the behaviour of XReparent window changes from
- * on window manager to an other. This technique works well
- * under KDE, icewm, xfce, twm. But it failed under gnome
- * (priv->parent_win turned to overrideride_ridection mode),
- * and under window maker (the children didn't get mapped).
+ * reparent priv->parent_win to the newly created window. But
+ * we don't do this because the behaviour of XReparentWindow 
+ * changes from one window manager to an other. This technique 
+ * works well under KDE, icewm, xfce, twm. But it failed under
+ * gnome (priv->parent_win overrideride_ridect attribute was set
+ * to True), and under window maker (the children didn't get 
+ * mapped).
  *
- * Frameless windows should be handled by libggiwmh wia ICCM.
+ * Frameless windows should be handled by libggiwmh via ICCM.
+ * (for the case where the mode dimensions are equal to root 
+ * window ones).
  *
  * I hate Window Managers :)
  */
