@@ -1,4 +1,5 @@
 SUBDIRS = helper
+DIST_SUBDIRS = helper
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
 X_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
 	$(X_LIBS) -lX11 $(X_EXTRA_LIBS)

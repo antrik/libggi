@@ -1,1 +1,3 @@
-SUBDIRS = dga vidmode dbe shm evi
+SUBDIRS = $(XSUBDIRS)
+
+DIST_SUBDIRS = dga vidmode dbe shm evi

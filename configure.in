@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.49 2002/10/20 21:28:42 skids Exp $
+dnl $Id: configure.in,v 1.50 2002/10/20 22:18:37 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -328,7 +328,7 @@ fi
 AC_CC_CAN_EMMS
 if test "x$do_mmx" = "xyes"; then 
    if test "x$ac_cc_can_emms" != "xyes"; then
-      AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
+      AC_MSG_ERROR([MMX explicitly requested, but compiler cannot compile MMX!])
       do_mmx=no
    fi
 fi
@@ -352,9 +352,9 @@ if test "x$do_mmx" = "xyes"; then
 fi
 
 AC_CC_CAN_FEMMS
-if test "x$do_mmx" = "xyes"; then 
+if test "x$do_mmx" = "xyes"; then
    if test "x$ac_cc_can_femms" != "xyes"; then
-      AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
+      AC_MSG_ERROR([MMX explicitly requested, but compiler cannot compile MMX!])
       do_mmx=no
    fi
 fi
@@ -424,6 +424,7 @@ fi
 
 DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
+XSUBDIRS=""
 FBDEVSUBDIRS=""
 
 have_pthreads=no
@@ -490,6 +491,23 @@ if test "x$build_x_target" != "xno" \
     build_x_target="no"
     build_xlib_target="no"
     build_dga_target="no"
+  else
+
+dnl This is necessary as there are plattforms (i.e. Darwin),
+dnl where $ac_x_includes doesn't belong to the default paths
+
+    cflags_old="$CFLAGS"
+    cppflags_old="$CPPFLAGS"
+    CFLAGS="$CFLAGS -I$ac_x_includes"
+    CPPFLAGS="$CPPFLAGS -I$ac_x_includes"
+
+    AC_CHECK_HEADERS(X11/extensions/xf86dga.h	\
+		X11/extensions/Xdbe.h		\
+		X11/extensions/XEVI.h		\
+		X11/extensions/XShm.h		\
+		X11/extensions/xf86vmode.h)
+    CFLAGS="$cflags_old"
+    CPPFLAGS="$cppflags_old"
   fi
 fi
 
@@ -657,6 +675,46 @@ else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
   build_x_target="yes"
   AC_MSG_RESULT(yes)
+
+  AC_MSG_CHECKING(if we should build support for DoubleBuffer extension for x target)
+  if test "x$ac_cv_header_X11_extensions_Xdbe_h" != "xyes"; then
+	AC_MSG_RESULT(no)
+  else
+	XSUBDIRS="$XSUBDIRS dbe"
+	AC_MSG_RESULT(yes)
+  fi
+
+  AC_MSG_CHECKING(if we should build support for Extended Visual Information extension for x target)
+  if test "x$ac_cv_header_X11_extensions_XEVI_h" != "xyes"; then
+	AC_MSG_RESULT(no)
+  else
+	XSUBDIRS="$XSUBDIRS evi"
+	AC_MSG_RESULT(yes)
+  fi
+
+  AC_MSG_CHECKING(if we should build support for MIT-SHM extension for x target)
+  if test "x$ac_cv_header_X11_extensions_XShm_h" != "xyes"; then
+	AC_MSG_RESULT(no)
+  else
+	XSUBDIRS="$XSUBDIRS shm"
+	AC_MSG_RESULT(yes)
+  fi
+
+  AC_MSG_CHECKING(if we should build support for xf86dga extension for x target)
+  if test "x$ac_cv_header_X11_extensions_xf86dga_h" != "xyes"; then
+	AC_MSG_RESULT(no)
+  else
+	XSUBDIRS="$XSUBDIRS dga"
+	AC_MSG_RESULT(yes)
+  fi
+
+  AC_MSG_CHECKING(if we should build support for XF86 Vidmode extension for x target)
+  if test "x$ac_cv_header_X11_extensions_xf86vmode_h" != "xyes"; then
+	AC_MSG_RESULT(no)
+  else
+	XSUBDIRS="$XSUBDIRS vidmode"
+	AC_MSG_RESULT(yes)
+  fi
 fi
 
 AC_MSG_CHECKING(if we should build xlib     target)
@@ -668,7 +726,7 @@ else
   AC_MSG_RESULT(yes)
 fi
 
-AC_MSG_CHECKING(if we should build libkgi      target)
+AC_MSG_CHECKING(if we should build libkgi   target)
 if test "x$build_libkgi_target" = "xno"; then
    AC_MSG_RESULT(no)
  else
@@ -940,6 +998,7 @@ AC_SUBST(bsdsock_libs)
 
 AC_SUBST(DISPLAYSUBDIRS)
 AC_SUBST(DEFAULTSUBDIRS)
+AC_SUBST(XSUBDIRS)
 AC_SUBST(FBDEVSUBDIRS)
 
 dnl Target specific substitutions
