@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/12 19:46:53 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/12 20:55:23 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -232,7 +232,7 @@ int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
 int
 GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
-	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
+	wsfb_priv *priv = WSFB_PRIV(vis);
 	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
 	GGIDPRINT_COLOR("display-wsfb: SetPalVec(%d,%d)\n", start, len);
@@ -268,7 +268,7 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 static int
 do_mmap(ggi_visual *vis)
 {
-	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
+	wsfb_priv *priv = WSFB_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);
 	ggi_graphtype gt = mode->graphtype;
 	ggi_directbuffer *buf;
