@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.39 2002/10/01 15:11:42 cegger Exp $
+dnl $Id: configure.in,v 1.40 2002/10/07 20:57:58 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -293,7 +293,10 @@ fi
 AC_CHECK_LIB(kgimon,set_monitor,
   monitest_extrasrc="kgitune.c"
   monitest_extraobj="kgitune.o"
-  monitest_extralibs="-lkgimon")
+  monitest_extralibs="-lkgimon",
+  monitest_extrasrc=""
+  monitest_extraobj=""
+  monitest_extralibs="")
 
 SHMDEMOS=""
 
