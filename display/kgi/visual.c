@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2003/01/29 01:16:22 skids Exp $
+/* $Id: visual.c,v 1.10 2003/02/07 01:20:51 skids Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -104,6 +104,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
                 /* Now join the new event source in. */
                 vis->input = giiJoinInputs(vis->input, inp);
         }
+
+	KGI_PRIV(vis)->ilut_touched = 1;
 
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return 0;
