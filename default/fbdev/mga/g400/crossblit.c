@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
+/* $Id: crossblit.c,v 1.3 2004/02/28 17:22:58 aldot Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -52,11 +52,11 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 
 	switch (srcfmt) {
 #if 0 /* This case is the default. */
-	case GGI_DB_STD_24a32u8r8g8b8:
+	case GGI_DB_STD_24a32p8r8g8b8:
 		bltmod = BLTMOD_BU32RGB;
 		break;
 #endif
-	case GGI_DB_STD_24a32u8b8g8r8:
+	case GGI_DB_STD_24a32p8b8g8r8:
 		bltmod = BLTMOD_BU32BGR;
 		break;
 	}
@@ -134,8 +134,8 @@ int GGI_mga_g400_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		PREPARE_FB(src);
 
 		switch (srcformat) {
-			case GGI_DB_STD_24a32u8r8g8b8:
-			case GGI_DB_STD_24a32u8b8g8r8:
+			case GGI_DB_STD_24a32p8r8g8b8:
+			case GGI_DB_STD_24a32p8b8g8r8:
 				dbblit_32bpp(src, sx, sy, w, h, dst, dx, dy, srcformat);
 				return 0;
 		}

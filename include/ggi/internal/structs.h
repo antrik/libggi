@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.8 2004/02/14 22:30:12 cegger Exp $
+/* $Id: structs.h,v 1.9 2004/02/28 17:22:58 aldot Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -468,14 +468,15 @@ typedef enum {
 	GGI_DB_STD_4a8hnl,			/* 4 bit, high nibble left */
 
 	GGI_DB_STD_8a8i8=0x08000000,		/* 8 bit indexed */
+	GGI_DB_STD_8a8r3g3b2,			/* 8 bit RGB 3/3/2 */
 
-	GGI_DB_STD_15a16u1r5g5b5=0x10000000,	/* 15 bit RGB 5/5/5 native
+	GGI_DB_STD_15a16p1r5g5b5=0x10000000,	/* 15 bit RGB 5/5/5 native
 						   endian */
-	GGI_DB_STD_15a16u1r5g5b5rev,		/* 15 bit RGB 5/5/5 reverse
+	GGI_DB_STD_15a16p1r5g5b5rev,		/* 15 bit RGB 5/5/5 reverse
 						   endian */
-	GGI_DB_STD_15a16u1b5g5r5,		/* 15 bit BGR 5/5/5 native
+	GGI_DB_STD_15a16p1b5g5r5,		/* 15 bit BGR 5/5/5 native
 						   endian */
-	GGI_DB_STD_15a16u1b5g5r5rev,		/* 15 bit BGR 5/5/5 reverse
+	GGI_DB_STD_15a16p1b5g5r5rev,		/* 15 bit BGR 5/5/5 reverse
 						   endian */
 
 	GGI_DB_STD_16a16r5g6b5=0x11000000,	/* 16 bit RGB 5/6/5 native
@@ -490,11 +491,11 @@ typedef enum {
 	GGI_DB_STD_24a24r8g8b8=0x18000000,	/* 24 bit RGB */
 	GGI_DB_STD_24a24b8g8r8,			/* 24 bit BGR */
 
-	GGI_DB_STD_24a32u8r8g8b8=0x20000000,	/* 32 bit URGB */
-	GGI_DB_STD_24a32b8g8r8u8,		/* 32 bit BGRU */
-	GGI_DB_STD_24a32r8g8b8u8,		/* 32 bit RGBU */
-	GGI_DB_STD_24a32u8b8g8r8,		/* 32 bit UBGR */
-	
+	GGI_DB_STD_24a32p8r8g8b8=0x20000000,	/* 32 bit <PAD>RGB */
+	GGI_DB_STD_24a32b8g8r8p8,		/* 32 bit BGR<PAD> */
+	GGI_DB_STD_24a32r8g8b8p8,		/* 32 bit RGB<PAD> */
+	GGI_DB_STD_24a32p8b8g8r8,		/* 32 bit <PAD>BGR */
+
 	GGI_DB_STD_last	/* Just to have a special entry to avoid the common
 			   ,-at-end warning after changes :-) */
 } ggi_db_stdformat;

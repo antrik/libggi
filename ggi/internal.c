@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.15 2004/02/14 13:45:40 cegger Exp $
+/* $Id: internal.c,v 1.16 2004/02/28 17:22:58 aldot Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -134,25 +134,25 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		if (pixfmt->red_mask	== 0x00ff0000 &&
 		    pixfmt->green_mask	== 0x0000ff00 &&
 		    pixfmt->blue_mask	== 0x000000ff) {
-			pixfmt->stdformat = GGI_DB_STD_24a32u8r8g8b8;
+			pixfmt->stdformat = GGI_DB_STD_24a32p8r8g8b8;
 			break;
 		}
 		if (pixfmt->red_mask	== 0x0000ff00 &&
 		    pixfmt->green_mask	== 0x00ff0000 &&
 		    pixfmt->blue_mask	== 0xff000000) {
-			pixfmt->stdformat = GGI_DB_STD_24a32b8g8r8u8;
+			pixfmt->stdformat = GGI_DB_STD_24a32b8g8r8p8;
 			break;
 		}
 		if (pixfmt->red_mask	== 0xff000000 &&
 		    pixfmt->green_mask	== 0x00ff0000 &&
 		    pixfmt->blue_mask	== 0x0000ff00) {
-			pixfmt->stdformat = GGI_DB_STD_24a32r8g8b8u8;
+			pixfmt->stdformat = GGI_DB_STD_24a32r8g8b8p8;
 			break;
 		}
 		if (pixfmt->red_mask	== 0x000000ff &&
 		    pixfmt->green_mask	== 0x0000ff00 &&
 		    pixfmt->blue_mask	== 0x00ff0000) {
-			pixfmt->stdformat = GGI_DB_STD_24a32u8b8g8r8;
+			pixfmt->stdformat = GGI_DB_STD_24a32p8b8g8r8;
 			break;
 		}
 		break;
@@ -198,10 +198,10 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		    pixfmt->blue_mask	== 0x001f) {
 			if (revendian) {
 				pixfmt->stdformat
-					= GGI_DB_STD_15a16u1r5g5b5rev;
+					= GGI_DB_STD_15a16p1r5g5b5rev;
 			} else {
 				pixfmt->stdformat
-					= GGI_DB_STD_15a16u1r5g5b5;
+					= GGI_DB_STD_15a16p1r5g5b5;
 			}
 			break;
 		}
@@ -210,16 +210,21 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		    pixfmt->blue_mask	== 0x7c00) {
 			if (revendian) {
 				pixfmt->stdformat
-					= GGI_DB_STD_15a16u1b5g5r5rev;
+					= GGI_DB_STD_15a16p1b5g5r5rev;
 			} else {
 				pixfmt->stdformat
-					= GGI_DB_STD_15a16u1b5g5r5;
+					= GGI_DB_STD_15a16p1b5g5r5;
 			}
 			break;
 		}
 		break;
 	case 8:
 		if ((pixfmt->red_mask|pixfmt->green_mask|pixfmt->blue_mask)) {
+			if (pixfmt->red_mask	== 0xe0 &&
+			    pixfmt->green_mask	== 0x1c &&
+			    pixfmt->blue_mask	== 0x03) {
+				pixfmt->stdformat = GGI_DB_STD_8a8r3g3b2;
+			}
 			break;
 		}
 		if (pixfmt->clut_mask == 0xff) {
