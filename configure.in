@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.103 2004/02/02 19:21:58 cegger Exp $
+dnl $Id: configure.in,v 1.104 2004/02/04 14:29:43 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -545,24 +545,24 @@ dnl ========================================================================
 dnl Checks for target-specific libraries and headers
 
 
-SAVELIBS="$LIBS"
-AC_MSG_CHECKING([for connect in -lwsock32])
-LIBS="$LIBS -lwsock32"
-AC_TRY_LINK([
-  #include <winsock.h>
-],[
-  connect(0, NULL, 42);
-],
-    bsdsock_libs="$bsdsock_libs -lwsock32"
-    ac_cv_func_connect=yes
-    AC_MSG_RESULT(yes),
+AC_CHECK_LIB(socket, connect,
+  bsdsock_libs="$bsdsock_libs -lsocket",
+  AC_CHECK_LIB(c, connect,
+    ,
+    SAVELIBS="$LIBS"
+    AC_MSG_CHECKING([for connect in -lwsock32])
+    LIBS="$LIBS -lwsock32"
+    AC_TRY_LINK(
+      [#include <winsock.h>],
+      [connect(0, NULL, 42);],
+      bsdsock_libs="$bsdsock_libs -lwsock32"
+      ac_cv_func_connect=yes
+      AC_MSG_RESULT(yes),
       AC_MSG_RESULT(no)
-      LIBS="$SAVELIBS"
-      AC_CHECK_LIB(socket,connect,
-		bsdsock_libs="$bsdsock_libs -lsocket",
-		AC_CHECK_LIB(c, connect, ,))
+    )
+    LIBS="$SAVELIBS"
+  )
 )
-LIBS="$SAVELIBS"
 
 
 if test "x$ac_cv_func_gethostbyname" = "xno"; then

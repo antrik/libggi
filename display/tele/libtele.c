@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.8 2004/02/02 19:21:59 cegger Exp $
+/* $Id: libtele.c,v 1.9 2004/02/04 14:29:44 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -34,21 +34,22 @@
 
 #include "libtele.h"
 
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__CYGWIN__)
 # ifdef HAVE_WINSOCK2_H
-#   include <winsock2.h>
+#  include <winsock2.h>
 # endif
 # ifdef HAVE_WINSOCK_H
-#   include <winsock.h>
+#  include <winsock.h>
 # endif
-# undef HAVE_HERROR
 #endif
 
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <signal.h>
 
@@ -60,16 +61,14 @@
 # include <sys/stat.h>
 #endif
 
-#ifndef __WIN32__
-# ifdef HAVE_SYS_SOCKET_H
-#   include <sys/socket.h>
-# endif
-# ifdef HAVE_NETINET_IN_H
-#   include <netinet/in.h>
-# endif
-# ifdef HAVE_NETDB_H
-#   include <netdb.h>
-# endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
 #endif
 
 #ifdef HAVE_SYS_UN_H

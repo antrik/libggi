@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.11 2004/02/02 19:22:00 cegger Exp $
+/* $Id: wrap.c,v 1.12 2004/02/04 14:29:45 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -32,22 +32,34 @@
 #include <string.h>
 #include <time.h>
 #include <limits.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#ifndef __WIN32__
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_IPC_H
+# include <sys/ipc.h>
+#endif
+#ifdef HAVE_SYS_SHM_H
+# include <sys/shm.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
-#else
+#endif
+
+#if defined(__WIN32__) && !defined(__CYGWIN__)
 # ifdef HAVE_WINSOCK2_H
 #  include <winsock2.h>
 # endif
 # ifdef HAVE_WINSOCK_H
 #  include <winsock.h>
 # endif
-# undef HAVE_SOCKLEN_T
 #endif
-#include <sys/un.h>
+
+#ifdef HAVE_SYS_UN_H
+# include <sys/un.h>
+#endif
 #include <signal.h>
 #include <errno.h>
 

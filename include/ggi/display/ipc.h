@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: ipc.h,v 1.5 2004/02/04 14:29:45 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -35,12 +35,12 @@
 #define INPBUFSIZE	8192
 #define MEMINPMAGIC	'M'
 
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__CYGWIN__)
 # ifdef HAVE_WINSOCK2_H
-#   include <winsock2.h>
+#  include <winsock2.h>
 # endif
 # ifdef HAVE_WINSOCK_H
-#   include <winsock.h>
+#  include <winsock.h>
 # endif
 #endif
 
@@ -48,10 +48,8 @@
 # include <sys/types.h>
 #endif
 
-#ifndef __WIN32__
-# ifdef HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-# endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
 #endif
 
 #ifdef HAVE_SYS_UN_H
