@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: vline.c,v 1.2 2002/10/09 22:27:34 cegger Exp $
 ******************************************************************************
 
    Generic vertical lines.
@@ -55,7 +55,7 @@ int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint8 *src = (uint8 *) buffer;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, /**/);
+	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 
 	for (; h > 0; h--, y++, src++) {
 		LIBGGIPutPixelNC(vis, x, y, *src);
@@ -68,7 +68,7 @@ int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint16 *src = (uint16 *) buffer;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, /**/);
+	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 
 	for (; h > 0; h--, y++, src++) {
 		LIBGGIPutPixelNC(vis, x, y, *src);
@@ -95,7 +95,7 @@ int _GGI_stubs_L4_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint32 *src = (uint32 *) buffer;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, /**/);
+	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 
 	for (; h > 0; h--, y++, src++) {
 		LIBGGIPutPixelNC(vis, x, y, *src);
