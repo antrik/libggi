@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:23 cegger Exp $
+/* $Id: mode.c,v 1.2 2004/09/13 08:50:19 cegger Exp $
 ******************************************************************************
 
    Display-SUID
@@ -60,7 +60,7 @@ int GGI_suidkgi_setorigin(ggi_visual *vis,int x,int y)
 #if 0
 int GGI_suidkgi_setsplitline(ggi_visual *vis,int y)
 {
-	if (y<0 || y>LIBGGI_MODE(vis)->visible.y) return -1;
+	if (y<0 || y > LIBGGI_Y(vis)) return -1;
 
 	GGIDPRINT("GGIsetsplitline:\n");
 	return GGI_suidkgi_kgicommand(vis,CHIP_SETSPLITLINE,y);
@@ -77,11 +77,11 @@ static void _GGIgetmmio(ggi_visual *vis)
 	suid_hook *priv = SUIDHOOK(vis);
 
 	long regsize,regpsize,regpstart;
-	int size=LIBGGI_MODE(vis)->virt.x*LIBGGI_MODE(vis)->virt.y;
+	int size = LIBGGI_VIRTX(vis) * LIBGGI_VIRTY(vis);
 	
-	printf("Getmmio: %d %d\n",LIBGGI_MODE(vis)->virt.x,LIBGGI_MODE(vis)->virt.y);
+	printf("Getmmio: %d %d\n",LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 
-	if (LIBGGI_CURWRITE(vis)!=NULL) {
+	if (LIBGGI_CURWRITE(vis) != NULL) {
 		munmap(LIBGGI_CURWRITE(vis),priv->mmap_length);
 		LIBGGI_CURWRITE(vis)=LIBGGI_CURREAD(vis)=NULL;
 		priv->mmap_length=0;
@@ -123,9 +123,8 @@ static void _GGIgetmmio(ggi_visual *vis)
 	             regpstart);
 /*	             MMAP_TYPE_MMIO|MMAP_PER_REGION_TYPE|MMAP_FRAMEBUFFER); */
 
-	LIBGGI_FB_R_STRIDE(vis)=LIBGGI_FB_W_STRIDE(vis)=
-		LIBGGI_MODE(vis)->virt.x*
-		(GT_SIZE(LIBGGI_MODE(vis)->graphtype)/8);
+	LIBGGI_FB_R_STRIDE(vis) = LIBGGI_FB_W_STRIDE(vis) =
+		GT_ByPPP(LIBGGI_VIRTX(vis), LIBGGI_GT(vis));
 
 	GGIDPRINT("Linear FB=%p\n",LIBGGI_CURWRITE(vis));
 	if (LIBGGI_CURWRITE(vis) == (void *)(-1)) {
@@ -153,7 +152,7 @@ static int _GGIdomode(ggi_visual *vis)
 		
 /*	vis->opdraw->setsplitline=GGI_suidkgi_setsplitline;*/
 	vis->opdraw->setorigin=GGI_suidkgi_setorigin;
-	printf("domode: %d %d\n",LIBGGI_MODE(vis)->virt.x,LIBGGI_MODE(vis)->virt.y);
+	printf("domode: %d %d\n", LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 
 	sug.id=0;
 	do {

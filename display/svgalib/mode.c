@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/09/12 20:43:11 cegger Exp $
+/* $Id: mode.c,v 1.17 2004/09/13 08:53:27 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -76,12 +76,12 @@ int _ggi_svgalib_setmode(int mode)
 static int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
 {
 	struct svga_priv *priv = SVGA_PRIV(vis);
-	if (x != 0 || y<0 || y> LIBGGI_MODE(vis)->virt.y )
+	if (x != 0 || y<0 || y > LIBGGI_VIRTY(vis) )
 		return -1;
 	
 	vga_setdisplaystart(priv->frame_size * vis->d_frame_num +
 			    GT_ByPP(LIBGGI_GT(vis)) * 
-			    (y * LIBGGI_MODE(vis)->virt.x + x));
+			    (y * LIBGGI_VIRTX(vis) + x));
 	
 	vis->origin_x=x;
 	vis->origin_y=y;
@@ -118,7 +118,7 @@ int GGI_svga_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			}
 
 			/* else islinear */
-			sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_MODE(vis)->graphtype));
+			sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
 			return 0;
 	}
 			
