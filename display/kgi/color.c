@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: color.c,v 1.3 2002/10/11 01:30:26 redmondp Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -58,11 +58,11 @@ GGI_kgi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	ilut.resource = 0;
 	ilut.lut = 0;
 	ilut.idx = start;
-	ilut.cnt = len*3;
+	ilut.cnt = len;
 	ilut.am = KGI_AM_COLORS;
-	ilut.data = malloc(256*3*2);
+	ilut.data = malloc(len*3*sizeof(ilut.data[0]));
 
-	for (; len > 0; start++, colormap++, len--) {
+	for (start = 0; len > 0; start++, colormap++, len--) {
 		ilut.data[start*3]     = colormap->r;
 		ilut.data[start*3 + 1] = colormap->g;
 		ilut.data[start*3 + 2] = colormap->b;
