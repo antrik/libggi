@@ -1,3 +1,3 @@
-SUBDIRS = Mach64
+SUBDIRS = Mach64 Radeon
 
-DIST_SUBDIRS = Mach64
+DIST_SUBDIRS = Mach64 Radeon

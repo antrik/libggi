@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.51 2002/10/21 04:16:13 skids Exp $
+dnl $Id: configure.in,v 1.52 2002/10/23 23:39:42 redmondp Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1129,6 +1129,7 @@ default/common/Makefile
 default/kgi/Makefile
 default/kgi/ATI/Makefile
 default/kgi/ATI/Mach64/Makefile
+default/kgi/ATI/Radeon/Makefile
 default/linear_1/Makefile
 default/linear_1_r/Makefile
 default/linear_2/Makefile

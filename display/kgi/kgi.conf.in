@@ -3,3 +3,4 @@
 # ------------			--------------------------
 
 kgi-mach64			default/kgi/mach64.@DLLEXT@
+kgi-radeon			default/kgi/radeon.@DLLEXT@
