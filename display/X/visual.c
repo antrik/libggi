@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.45 2005/02/10 04:55:20 orzo Exp $
+/* $Id: visual.c,v 1.46 2005/02/16 06:13:03 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -33,10 +33,10 @@
 #include <ctype.h>
 
 #include "config.h"
-#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
+#include <ggi/internal/gg_replace.h>
 
 /* Options honored by this target */
 static const gg_option optlist[] =
