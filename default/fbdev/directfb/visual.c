@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2001/08/24 01:39:40 skids Exp $
+/* $Id: visual.c,v 1.6 2001/08/24 01:49:14 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -152,12 +152,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
     free(priv);
     return GGI_ENOFUNC;
   }
-  fprintf(stderr,"Opened the helper\n");
-  fprintf(stderr,"globals %p %p %p %p %p %p %p\n",
-	  priv->globals.dfb_card_ptr, priv->globals.dfb_config_ptr,
-	  priv->globals.dfb_major_version, priv->globals.dfb_minor_version,
-	  priv->globals.dfb_micro_version, priv->globals.dfb_interface_age,
-	  priv->globals.dfb_binary_age);
   dfb_card = &(priv->gfxcard);
   *(priv->globals.dfb_card_ptr) = &(priv->gfxcard);
   driver = &(priv->gfxdriver);
@@ -250,7 +244,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   priv->corebuffer.policy = CSP_VIDEOONLY;
   priv->corebuffer.video.health = CSH_STORED;
   priv->corebuffer.video.pitch = 
-    LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_MODE(vis)->graphtype);
+    LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_MODE(vis)->graphtype) / 8;
   priv->corebuffer.video.offset = 0;
   priv->corebuffer.surface = &(priv->coresurface);
   priv->dfbstate.destination = &(priv->coresurface);
