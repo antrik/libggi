@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.9 2004/02/02 19:22:00 cegger Exp $
+/* $Id: cube3d.c,v 1.10 2004/06/06 19:57:55 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -33,15 +33,43 @@
  */
 #include <math.h>
 
+/* For autoconf inline support */
+#include "config.h"
+
 /* We do shm here !
  */
 #include <unistd.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <signal.h>
 
-/* For autoconf inline support */
-#include "config.h"
+#ifdef HAVE_SYS_IPC_H
+#include <sys/ipc.h>
+#endif
+#ifdef HAVE_SYS_SHM_H
+
+#include <sys/shm.h>
+
+#elif defined(HAVE_WINDOWS_H)
+
+/* Very rudimentary mapping from unix shm api to win32 file mapping api */
+
+#include <windows.h>
+
+#define shmget(key, size, shmflg) \
+    (int)CreateFileMapping( \
+	INVALID_HANDLE_VALUE, \
+	NULL, \
+	PAGE_READWRITE | SEC_COMMIT, \
+	0, /* size not larger than 2^32, I hope. */ \
+	size, \
+	key)
+#define shmat(shmid, shmaddr, shmflg) \
+	MapViewOfFile((HANDLE)shmid, FILE_MAP_WRITE, 0, 0, 0)
+#define shmdt(shmaddr) \
+	UnmapViewOfFile(shmaddr)
+#define shmctl(shmid, cmd, buf) \
+	CloseHandle((HANDLE)shmid)
+
+#endif
+#include <signal.h>
 
 ggi_visual_t vis;
 int vissizex, vissizey;
@@ -327,9 +355,9 @@ static ggi_pixel Plb32(int posx, int posy, Texture * file)
 			      posy * file->filex);
 }
 
-#define FP_SHIFT	(16)
-#define FP_ZERO		(0x00000000)
-#define FP_HALF		(0x00008000)
+#define FIX_SHIFT	(16)
+#define FIX_ZERO		(0x00000000)
+#define FIX_HALF		(0x00008000)
 
 /* Fourth try. Use scanline technique
  */
@@ -380,12 +408,12 @@ static void doblit(Polygon3D * poly, int transp)
 	(hlp.patx=((int)(poly->texture->filex*		\
 			(poly->texcoord[    x][0]*dy2-	\
 			 poly->texcoord[lastx][0]*dy1)/	\
-			(dy2-dy1)))<<FP_SHIFT)
+			(dy2-dy1)))<<FIX_SHIFT)
 #define MKPATY \
 	(hlp.paty=((int)(poly->texture->filey*		\
 			(poly->texcoord[    x][1]*dy2-	\
 			 poly->texcoord[lastx][1]*dy1)/	\
-			(dy2-dy1)))<<FP_SHIFT)
+			(dy2-dy1)))<<FIX_SHIFT)
 
 #define MKXPOS \
 	hlp.xpos=((int)((poly->points[    x].projected[0]*dy2-	\
@@ -419,8 +447,8 @@ static void doblit(Polygon3D * poly, int transp)
 
 		if (min.xpos == max.xpos) {
 			if ((pixel =
-			     poly->texture->mapper((min.patx >> FP_SHIFT),
-						   (min.paty >> FP_SHIFT),
+			     poly->texture->mapper((min.patx >> FIX_SHIFT),
+						   (min.paty >> FIX_SHIFT),
 						   poly->texture))
 			    || !transp)
 				ggiPutPixel(vis, min.xpos, y, pixel);
@@ -429,8 +457,8 @@ static void doblit(Polygon3D * poly, int transp)
 							   (max.xpos -
 							    min.xpos + 1));
 			patyadd = (max.paty - min.paty) / xx;
-			min.patx += FP_HALF;
-			min.paty += FP_HALF;
+			min.patx += FIX_HALF;
+			min.paty += FIX_HALF;
 			for (x = min.xpos; x <= max.xpos; x++,
 			     min.patx += patxadd, min.paty += patyadd) {
 				if (x < 0)
@@ -439,8 +467,8 @@ static void doblit(Polygon3D * poly, int transp)
 					break;
 				if ((pixel =
 				     poly->texture->
-				     mapper((min.patx >> FP_SHIFT),
-					    (min.paty >> FP_SHIFT),
+				     mapper((min.patx >> FIX_SHIFT),
+					    (min.paty >> FIX_SHIFT),
 					    poly->texture)) || !transp)
 					ggiPutPixel(vis, x, y, pixel);
 			}
@@ -533,6 +561,7 @@ static void highlight_face(Polygon3D * poly)
 
 static int spawn_bg(char *what)
 {
+#ifdef HAVE_FORK
 	int pid;
 
 	pid = fork();
@@ -543,7 +572,51 @@ static int spawn_bg(char *what)
 		exit(127);
 	}
 	return pid;
+#elif defined(HAVE_WINDOWS_H)
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	si.cb = sizeof(si);
+	si.lpReserved = NULL;
+	si.lpDesktop = NULL;
+	si.lpTitle = NULL;
+	si.dwFlags = 0;
+	si.cbReserved2 = 0;
+	si.lpReserved2 = NULL;
+
+	if(CreateProcess(
+		what,
+		NULL,
+		NULL,
+		NULL,
+		TRUE,
+		NORMAL_PRIORITY_CLASS,
+		NULL,
+		NULL,
+		&si,
+		&pi))
+		return (int)pi.hProcess;
+	else {
+		printf("CreateProcess(\"%s\") failed\n", what);
+		fflush(stdout);
+		return 0;
+	}
+#endif
 }
+
+#if defined(HAVE_SYS_SHM_H)
+#elif defined(HAVE_WINDOWS_H)
+static const char *ftok(const char *pathname, int id)
+{
+	static char object[MAX_PATH+50];
+	char *ptr;
+	sprintf(object, "ggi-display-memory-shm:%s:%d", pathname, id);
+	ptr = object;
+	while((ptr = strchr(ptr, '\\')) != NULL)
+		*ptr++ = '/';
+	return object;
+}
+#endif
 
 static void CheckDB(Texture * tex)
 {
@@ -794,6 +867,8 @@ int main(int argc, char **argv)
 			printf("GGI_DISPLAY=%s\n", text);
 		}
 	}
+	fflush(stderr);
+	fflush(stdout);
 
 	{
 		/* black, white and red are already defined
@@ -1099,8 +1174,13 @@ int main(int argc, char **argv)
 	}
 
 	for (x = 0; x < 6; x++) {
+#ifdef HAVE_KILL
 		if (the_textures[x].pid > 0)
 			kill(the_textures[x].pid, SIGHUP);
+#elif defined(HAVE_WINDOWS_H)
+		if (the_textures[x].pid != 0)
+			TerminateProcess((HANDLE)the_textures[x].pid, 1);
+#endif
 		ggiClose(memvis[x]);
 
 		/* this makes the memory detach when all programs using this memory
