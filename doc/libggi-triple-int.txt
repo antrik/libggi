@@ -20,7 +20,7 @@ Description
 -----------
 
 `triple-int` is a collection of math routines that operates on an
-array of 3 unsigned intergers, treating them as as a single integer
+array of 3 unsigned intergers, treating them as a single integer
 with triple precision.
 
 `triple-int` uses a 2-complement representation for negative values.
