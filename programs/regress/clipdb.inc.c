@@ -1,3 +1,21 @@
+/* $Id: clipdb.inc.c,v 1.3 2004/09/18 10:35:29 cegger Exp $
+******************************************************************************
+
+   This is a regression-test and for LibGGI clipping operations.
+
+   Written in 2004 by Peter Ekberg
+
+   This software is placed in the public domain and can be used freely
+   for any purpose. It comes without any kind of warranty, either
+   expressed or implied, including, but not limited to the implied
+   warranties of merchantability or fitness for a particular purpose.
+   Use it at your own risk. the author is not responsible for any damage
+   or consequences raised by use or inability to use this program.
+
+******************************************************************************
+*/
+
+
 #define CLIPDBSIZE (1000)
 static int db[CLIPDBSIZE][9] = {
 	{ 278,	-15,	103,	-157,	0,	0,	0,	0,	0 },
