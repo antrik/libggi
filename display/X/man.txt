@@ -125,7 +125,6 @@ Options
     to be nonfunctional.
 
 ``-nodga``
-
     Use of the XFree86-DGA extension to provide direct framebuffer access
     is disabled.  Some implementations of the XFree86-DGA extension may cause
     system lockups.  Use this option to prevent such occurrances.
@@ -136,7 +135,6 @@ Options
       display-X target.  To use DGA, see the older display-dga target.
 
 ``-novidmode``
-
     Use of the X11 Vidmode extension to change video timing in full-screen
     modes is disabled.  Some implementations of the Vidmode extension may cause
     system lockups.  Use this option to prevent such occurrances.

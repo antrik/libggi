@@ -48,19 +48,16 @@ Return value
 
 `ggiExit` returns:
 
-  `0`
-
+`0`
     after successfully cleaning up,
 
-  `>0`
-
+`>0`
     the number of 'open' `ggiInit` calls, if there has been more than
     one call to `ggiInit`.  As `ggiInit` and `ggiExit` must be used in
     properly nested pairs, e.g. the first `ggiExit` after two
     `ggiInit`s will return `1`.
 
-  `>0`
-
+`>0`
     error, especially if more `ggiExit` calls have been done than
     `ggiInit` calls.
     
@@ -475,15 +472,13 @@ Return value
 
 `ggiParseMode` returns:
 
-  `0`
-
+`0`
     on success, i.e. the string was correct.
     However, errors involving `GT_*`, position
     information, or mismatched brackets do not make it fail;
     these errors are simply ignored.
 
-  `<0`
-
+`<0`
     if there is text that can not be parsed.
     This text is printed to stderr.
     All parameters parsed so far are written into :p:`m`.

@@ -42,7 +42,6 @@ Structure Members
 
 
 `frames`
-
     The number of frames. Some displays have multi-buffer capabilites
     (double-buffering, triple-buffering...). See libggi frame-related
     functions for information on working with multiple frames.
@@ -60,22 +59,18 @@ Structure Members
     TODO : Write something here.
 
 `graphtype`
-
     It holds information on the type of display.  libggi defines
     macros to construct graphtypes values or access individual field.
 
     `depth` ( access via `GT_DEPTH(gt)`, `GT_SETDEPTH(gt,x)` )
-
         The number of significant bits holding color information.
 
     `size` ( access via  `GT_SIZE(gt)`, `GT_SETSIZE(gt,x)` )
-
 	The actual size (in bits) of a pixel.  For instance, on a 32
 	bits X server the pixel size is 32 but the depth is only 24
 	(8bits RGB channels, 8 unused).
 
     `scheme` ( access via  `GT_SCHEME(gt)`, `GT_SETSCHEME(gt,x)` )
-
 	The following schemes are available :
 
 	- `GT_TEXT` : text mode only
@@ -89,7 +84,6 @@ Structure Members
 	- `GT_NIL`
 
     `subscheme` ( access via `GT_SUBSCHEME(gt)` , `GT_SETSUBSCHEME(gt,x)` )
-
 	One of:
 	
 	- `GT_SUB_REVERSE_ENDIAN`
@@ -114,7 +108,6 @@ Structure Members
     - `GT_INVALID`
 
 `dpp`
-
     It stands for dot-per-pixel.
 
 
@@ -358,7 +351,7 @@ Structure Members
 -----------------
 
 `type`
-
+  
   ::
   
     /* Buffer types */
