@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: pan.c,v 1.3 2004/08/24 19:13:32 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -50,7 +50,7 @@ int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
 	if ((x < 0) || (y < 0) || (x > max_x) || (y > max_y)) {
 		GGIDPRINT("display-fbdev: panning out of range:"
 			"(%d,%d) > (%d,%d)\n", x, y, max_x, max_y);
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	if (priv->fix.xpanstep == 0) {
