@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.9 2003/01/27 17:07:03 fries Exp $
+/* $Id: wrap.c,v 1.10 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -48,24 +48,24 @@
 # ifdef _POSIX_PATH_MAX
 #  define PATH_MAX _POSIX_PATH_MAX
 # else
-#  define PATH_MAX 4096	/* Should be enough for most systems */
+#  define PATH_MAX 4096		/* Should be enough for most systems */
 # endif
 #endif
 
 
-struct client_t
-{
+struct client_t {
 	ggi_visual_t visual;
-	const char   socket[PATH_MAX];
-	int          sockfd;
-	int          semid;
-	int          shmid;
-	pid_t        pid;  
+	const char socket[PATH_MAX];
+	int sockfd;
+	int semid;
+	int shmid;
+	pid_t pid;
 };
 
 typedef struct client_t client_t;
 
-void init_client(client_t *client, ggi_mode *mode, const char *command)
+static void init_client(client_t * client, ggi_mode * mode,
+			const char *command)
 {
 	struct sockaddr_un address;
 #ifdef HAVE_SOCKLEN_T
@@ -75,7 +75,7 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 #endif
 	size_t bufsize;
 	char text[128];
-	char envtext[182+14];
+	char envtext[182 + 14];
 
 	/* initialize the connection
 	 */
@@ -86,11 +86,10 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 
 	address.sun_family = AF_UNIX;
 	strcpy(address.sun_path, tmpnam(0));
-	strcpy((char *)client->socket, address.sun_path);
+	strcpy((char *) client->socket, address.sun_path);
 
-	if (bind(client->sockfd, (const struct sockaddr *)(&address),
-		 sizeof(struct sockaddr_un)))
-	{
+	if (bind(client->sockfd, (const struct sockaddr *) (&address),
+		 sizeof(struct sockaddr_un))) {
 		fprintf(stderr, "error in bind: %s\n", strerror(errno));
 	}	/* if */
 
@@ -98,10 +97,10 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 	 */
 	client->semid = 0;
 	bufsize = mode->virt.x * mode->virt.y
-		  * GT_ByPP(mode->graphtype) + 64 * 1024;
+	    * GT_ByPP(mode->graphtype) + 64 * 1024;
 
 	client->shmid = shmget(IPC_PRIVATE, bufsize, IPC_CREAT | 0666);
-  
+
 	/* Open a shared "memory-visual" which is simply a simulated 
 	 * display in shared memory.
 	 */
@@ -120,33 +119,32 @@ void init_client(client_t *client, ggi_mode *mode, const char *command)
 	 */
 	sprintf(text, "display-ipc:-input -socket=%s -semid=%d -shmid=%d",
 		client->socket, client->semid, client->shmid);
-	sprintf(envtext, "GGI_DISPLAY=%s",text);
+	sprintf(envtext, "GGI_DISPLAY=%s", text);
 	putenv(envtext);
 
 	ggiSPrintMode(text, mode);
-	sprintf(envtext, "GGI_DEFMODE=%s",text);
+	sprintf(envtext, "GGI_DEFMODE=%s", text);
 	putenv(envtext);
 	client->pid = fork();
 	if (client->pid == -1) {
 		perror("fork");
 		exit(-1);
 	} else if (client->pid == 0) {
-		execlp("/bin/sh","/bin/sh","-c", command, (void *)NULL);
+		execlp("/bin/sh", "/bin/sh", "-c", command, (void *) NULL);
 		_exit(-1);
 	}	/* if */
-
+	
 	listen(client->sockfd, 1);
 	len = sizeof(struct sockaddr_un);
 	client->sockfd = accept(client->sockfd,
-			  (struct sockaddr *)(&address), &len);
+				(struct sockaddr *) (&address), &len);
 	if (client->sockfd == -1) {
 		perror("accept");
 	}	/* if */
-
 }	/* init_client */
 
 
-void exit_client(client_t *client)
+static void exit_client(client_t * client)
 {
 	ggiClose(client->visual);
 	shmctl(client->shmid, IPC_RMID, NULL);
@@ -159,7 +157,7 @@ void exit_client(client_t *client)
  *		just forwarded an event)
  * return -1 on error
  */
-int wait_for_something(ggi_visual_t master, client_t *client)
+static int wait_for_something(ggi_visual_t master, client_t * client)
 {
 	/* wait for the client to notify us
 	 */
@@ -170,9 +168,12 @@ int wait_for_something(ggi_visual_t master, client_t *client)
 
 	FD_SET(client->sockfd, &fds);
 	mask = emAll;
-	nfds = ggiEventSelect(master, &mask, client->sockfd + 1, &fds, 0, 0, 0);
+	nfds =
+	    ggiEventSelect(master, &mask, client->sockfd + 1, &fds, 0, 0,
+			   0);
 	if (nfds == -1) {
-		if (errno == EINTR || errno == EAGAIN) errno = 0;
+		if (errno == EINTR || errno == EAGAIN)
+			errno = 0;
 		return 0;
 	} else if (nfds == 0) {
 		ggiEventRead(master, &event, mask);
@@ -187,18 +188,19 @@ int wait_for_something(ggi_visual_t master, client_t *client)
 }	/* wait_for_something */
 
 
-int repair_screen(client_t *client, ggi_visual_t visual)
+static int repair_screen(client_t * client, ggi_visual_t visual)
 {
 	char tag;
 	int region[4];
 
 	/* read what region was damaged and repair it
 	 */
-	if (read(client->sockfd, &tag, 1) == 1 && /* read 'F' (like 'flush'); */
-	   read(client->sockfd, (char *)region, 4*sizeof(int)) == 4*sizeof(int))
-	{
-		ggiCrossBlit(client->visual, region[0], region[1], region[2],
-				region[3], visual, region[0], region[1]);
+	if (read(client->sockfd, &tag, 1) == 1 &&	/* read 'F' (like 'flush'); */
+	    read(client->sockfd, (char *) region,
+		 4 * sizeof(int)) == 4 * sizeof(int)) {
+		ggiCrossBlit(client->visual, region[0], region[1],
+			     region[2], region[3], visual, region[0],
+			     region[1]);
 		ggiFlush(visual);
 		return 1;
 	}	/* if */
@@ -209,14 +211,13 @@ int repair_screen(client_t *client, ggi_visual_t visual)
 int main(int argc, char **argv)
 {
 	ggi_visual_t visual;
-	ggi_mode mode =
-	{	/* This will cause the default mode to be set */
-		1,			/* 1 frame */
-		{GGI_AUTO,GGI_AUTO},	/* Default size */
-		{GGI_AUTO,GGI_AUTO},	/* Virtual */
-		{0,0},			/* size in mm don't care */
-		GT_AUTO,		/* Mode */
-		{GGI_AUTO,GGI_AUTO}	/* Font size */
+	ggi_mode mode = {	/* This will cause the default mode to be set */
+		1,		/* 1 frame */
+		{GGI_AUTO, GGI_AUTO},	/* Default size */
+		{GGI_AUTO, GGI_AUTO},	/* Virtual */
+		{0, 0},		/* size in mm don't care */
+		GT_AUTO,	/* Mode */
+		{GGI_AUTO, GGI_AUTO}	/* Font size */
 	};
 
 	const char *command;
@@ -225,13 +226,13 @@ int main(int argc, char **argv)
 	/* Get the arguments from the command line. 
 	 * Set defaults for optional arguments.
 	 */
-	if (argc == 1 || ((strcmp(*argv, "-h")==0) ||
-	   (strcmp(*argv, "--help")==0)))
-	{  
+	if (argc == 1 || ((strcmp(*argv, "-h") == 0) ||
+			  (strcmp(*argv, "--help") == 0))) {
 		fprintf(stderr, "Usage: %s <program>\n", argv[0]);
 		exit(1);
 		return 1;	/* Tell the user how to call and fail. */
-	} else command = argv[1];
+	} else
+		command = argv[1];
 
 	/* Open up GGI and a visual.
 	 */
@@ -241,9 +242,9 @@ int main(int argc, char **argv)
 	}	/* if */
 
 	visual = ggiOpen(NULL);
-
 	if (visual == NULL) {
-		fprintf(stderr, "unable to open default visual, exiting.\n");
+		fprintf(stderr,
+			"unable to open default visual, exiting.\n");
 		ggiExit();
 		exit(1);
 	}	/* if */
@@ -251,7 +252,7 @@ int main(int argc, char **argv)
 	/* Go to async-mode.
 	 */
 	ggiSetFlags(visual, GGIFLAG_ASYNC);
-  
+
 	/* Check and set the mode ...
 	 */
 	ggiCheckMode(visual, &mode);
@@ -268,14 +269,16 @@ int main(int argc, char **argv)
 	 */
 	while (1) {
 		int status = wait_for_something(visual, &client);
-		if (!status) continue;
-		if (status == -1 || !repair_screen(&client, visual)) break;
+		if (!status)
+			continue;
+		if (status == -1 || !repair_screen(&client, visual))
+			break;
 	};
 
 	kill(client.pid, SIGHUP);
 	exit_client(&client);
 	ggiClose(visual);
-	ggiExit();	
+	ggiExit();
 
 	return 0;
 }	/* main */

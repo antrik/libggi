@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.1 2001/05/12 23:03:41 cegger Exp $
+/* $Id: stars.c,v 1.2 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -58,20 +58,20 @@ static int posx[300][60];
 static int posy[300][60];
 
 void SetupNewVisual(ggi_visual_t setvis);
-ggi_visual_t InitVisual(const char* visname);
+ggi_visual_t InitVisual(const char *visname);
 void CleanUp(void);
 void InitStars(void);
 void Transform(int *ta, int *tb);
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
 	int i, quit = 0;
 	double fps = 0.0;
 	int color;
 	time_t st;
 	int frames = 0;
- 	ggi_visual_t curvis;
-	
+	ggi_visual_t curvis;
+
 	if (argc > 1) {
 		count = atoi(argv[1]) % 301;
 	}
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	vis = InitVisual(NULL); /* Null gives the default visual */
+	vis = InitVisual(NULL);	/* Null gives the default visual */
 	if (vis == NULL) {
 		ggiPanic("unable to open default visual, exiting.\n");
 	}
@@ -100,33 +100,39 @@ int main(int argc, char **argv)
 			starsr[i][0] = stars[i][0];
 			starsr[i][1] = stars[i][1];
 			starsr[i][2] = stars[i][2];
-	
+
 			Transform(&starsr[i][1], &starsr[i][2]);
 			Transform(&starsr[i][0], &starsr[i][2]);
 			Transform(&starsr[i][0], &starsr[i][1]);
 
-			ggiPutPixel(curvis, posx[i][tail], posy[i][tail], 
+			ggiPutPixel(curvis, posx[i][tail], posy[i][tail],
 				    lookup[0]);
 
-			posx[i][head] = xoff+(int) floor((256*starsr[i][0]) / 
-				(double)(starsr[i][2]-1024) * scale);
-			posy[i][head] = yoff+(int) floor((256*starsr[i][1]) / 
-				(double)(starsr[i][2]-1024) * scale);
-		
+			posx[i][head] =
+			    xoff +
+			    (int) floor((256 * starsr[i][0]) /
+					(double) (starsr[i][2] -
+						  1024) * scale);
+			posy[i][head] =
+			    yoff +
+			    (int) floor((256 * starsr[i][1]) /
+					(double) (starsr[i][2] -
+						  1024) * scale);
+
 			color = (int) floor((starsr[i][2] + 721) / 5.5);
 
-			ggiPutPixel(curvis, posx[i][head], posy[i][head], 
+			ggiPutPixel(curvis, posx[i][head], posy[i][head],
 				    lookup[color]);
 		}
 		ggUSleep(10000);
 		ggiFlush(curvis);
 		frames++;
 		angle += speed;
-		head=(head+1) % 60; 
-		tail=(tail+1) % 60;
+		head = (head + 1) % 60;
+		tail = (tail + 1) % 60;
 		if (ggiKbhit(curvis)) {
 			int key = ggiGetc(curvis);
-			
+
 			switch (key) {
 			case ' ':
 				/* Switch from/to DGA visual if possible */
@@ -147,9 +153,10 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-	} while(! quit);
+	} while (!quit);
 
-	if ((time(NULL) - st) != 0) fps = frames / (time(NULL) - st);
+	if ((time(NULL) - st) != 0)
+		fps = frames / (time(NULL) - st);
 
 	printf("%f frames per second\n", fps);
 	printf("beek / lightspeed\nPorted to GGI by Nathan Strong\n");
@@ -167,7 +174,7 @@ void Transform(int *ta, int *tb)
 	*tb = (int) floor(z);
 }
 
-void CleanUp(void) 
+void CleanUp(void)
 {
 	if (dgavis) {
 		ggiClose(dgavis);
@@ -178,15 +185,14 @@ void CleanUp(void)
 	ggiExit();
 }
 
-void InitStars(void) 
+void InitStars(void)
 {
 	int i;
-	srand(time(NULL));
-	for (i = 0; i < count; i++)
-	{
-		stars[i][0] = ((rand() % 320)+1 - 160) * 3;
-		stars[i][1] = ((rand() % 320)+1 - 160) * 3;
-		stars[i][2] = ((rand() % 128)+1 -  64) * 5;
+	srand((unsigned)time(NULL));
+	for (i = 0; i < count; i++) {
+		stars[i][0] = ((rand() % 320) + 1 - 160) * 3;
+		stars[i][1] = ((rand() % 320) + 1 - 160) * 3;
+		stars[i][2] = ((rand() % 128) + 1 - 64) * 5;
 	}
 }
 
@@ -197,46 +203,46 @@ void SetupNewVisual(ggi_visual_t setvis)
 
 	ggiGetMode(setvis, &mode);
 
-	xoff = mode.visible.x/2;
-	yoff = mode.visible.y/2;
+	xoff = mode.visible.x / 2;
+	yoff = mode.visible.y / 2;
 
 	scale = ((double) mode.visible.x / 200.0);
 
 	if (GT_SCHEME(mode.graphtype) == GT_PALETTE) {
 
 		int nocols = 1 << GT_DEPTH(mode.graphtype);
-		
-		ggi_color *Palette = malloc(sizeof(ggi_color)*nocols);
-		
+
+		ggi_color *Palette = malloc(sizeof(ggi_color) * nocols);
+
 		if (Palette == NULL) {
 			ggiPanic("Unable to allocate temporary memory!\n");
 		}
 
 		for (i = 0; i < nocols; i++) {
-			Palette[i].r = i*0xffff/(nocols-1);
-			Palette[i].g = i*0xffff/(nocols-1);
-			Palette[i].b = i*0xffff/(nocols-1);
+			Palette[i].r = i * 0xffff / (nocols - 1);
+			Palette[i].g = i * 0xffff / (nocols - 1);
+			Palette[i].b = i * 0xffff / (nocols - 1);
 		}
 
 		ggiSetPalette(setvis, 0, nocols, Palette);
-		
+
 		free(Palette);
 	}
-	
+
 	for (i = 0; i < 256; i++) {
-	
+
 		ggi_color col;
 
-		col.r = col.g = col.b = i*0xffff/255;
+		col.r = col.g = col.b = i * 0xffff / 255;
 
 		lookup[i] = ggiMapColor(setvis, &col);
 	}
 
 	ggiSetGCForeground(setvis, lookup[0]);
 	ggiFillscreen(setvis);
-}	
+}
 
-ggi_visual_t InitVisual(const char* visname)
+ggi_visual_t InitVisual(const char *visname)
 {
 	ggi_visual_t newvis;
 
@@ -252,6 +258,6 @@ ggi_visual_t InitVisual(const char* visname)
 	}
 
 	SetupNewVisual(newvis);
-	
+
 	return newvis;
 }

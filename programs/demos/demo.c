@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.12 2003/05/03 16:42:59 cegger Exp $
+/* $Id: demo.c,v 1.13 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -51,7 +51,7 @@ ggi_visual_t vis;
 
 /* In case we were called with wrong parameters, give an explanation.
  */
-void usage(const char *prog)
+static void usage(const char *prog)
 {
 	fprintf(stderr, "Usage:\n\n"
 		        "%s [--clip] [--target <target>] "
@@ -64,7 +64,7 @@ void usage(const char *prog)
 
 /* Wait for a keypress. Shut down everything, if "q" is pressed.
  */
-void waitabit(void)
+static void waitabit(void)
 {
 	int key;
 
@@ -108,7 +108,7 @@ ggi_pixel black;
 
 /* Print the name of the current test in the top left corner.
  */
-void TestName(const char *name)
+static void TestName(const char *name)
 {
 	int left, right, top, bottom;
 	int ch_width=8, ch_height=8;
@@ -155,12 +155,12 @@ void TestName(const char *name)
 */
 static struct timeval test_start_time;
 
-void TestStart(void)
+static void TestStart(void)
 {
 	ggCurTime(&test_start_time);
 }
 
-int TestTime(void)	/* result is in seconds */
+static int TestTime(void)	/* result is in seconds */
 {
 	int seconds;
 	int micros;
@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 	}
 	
 	/* Set up the random number generator. */
-	srandom(time(NULL));
+	srandom((unsigned)time(NULL));
 
 	/* Initialize the GGI library. This must be called before any other 
 	 * GGI function. Otherwise behaviour is undefined.
@@ -509,15 +509,15 @@ int main(int argc, char **argv)
 	ggiSetGCBackground(vis, black);	
 	ggiSetGCForeground(vis, white);	
 	i = 25;
-	ggiPutc(vis, i, i, 'P'); i+= 10;
-	ggiPutc(vis, i, i, 'u'); i+= 10;
-	ggiPutc(vis, i, i, 't'); i+= 10;
-	ggiPutc(vis, i, i, 'c'); i+= 10;
-	ggiPutc(vis, i, i, ' '); i+= 10;
-	ggiPutc(vis, i, i, 'T'); i+= 10;
-	ggiPutc(vis, i, i, 'e'); i+= 10;
-	ggiPutc(vis, i, i, 's'); i+= 10;
-	ggiPutc(vis, i, i, 't'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'P'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'u'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'t'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'c'); i+= 10;
+	ggiPutc(vis, i, i, (signed)' '); i+= 10;
+	ggiPutc(vis, i, i, (signed)'T'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'e'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'s'); i+= 10;
+	ggiPutc(vis, i, i, (signed)'t'); i+= 10;
 
 
 	/* Check the colormapping code. Draw four horizontal bars in red/green
@@ -531,7 +531,7 @@ int main(int argc, char **argv)
 		/* Make i (intensity) so it varies from 0-0xFFFF over
 		 * the visible length
 		 */
-		int i = 0xFFFF*x/(sx-1);
+		i = 0xFFFF*x/(sx-1);
 		
 		/* Now first make a color descriptor for the red bar. It
 		 * will holf the R/G/B triplet x/0/0 describing the

@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.2 2001/05/26 00:00:20 skids Exp $
+/* $Id: textdemo.c,v 1.3 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -22,10 +22,11 @@
 
 ggi_visual_t vis;
 
-int
-main(int argc, char *argv[]) {
-	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', 
-			     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+int main(int argc, char *argv[])
+{
+	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
 	int a, b;
 	char *hello = "Hello World";
 	ggi_mode mode;
@@ -36,31 +37,31 @@ main(int argc, char *argv[]) {
 			argv[0]);
 		exit(1);
 	}
-	if ((vis=ggiOpen(NULL)) == NULL) {
+	if ((vis = ggiOpen(NULL)) == NULL) {
 		fprintf(stderr,
 			"%s: unable to open default visual, retrying with terminfo.\n",
 			argv[0]);
-		if ((vis=ggiOpen("terminfo",NULL)) == NULL) {
+		if ((vis = ggiOpen("terminfo", NULL)) == NULL) {
 			fprintf(stderr,
 				"%s: unable to open terminfo, exiting.\n",
 				argv[0]);
 			exit(1);
 		}
 	}
-	if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO, 
+	if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
 			   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
 		fprintf(stderr,
 			"%s: unable to set text mode, retrying with terminfo.\n",
 			argv[0]);
 		ggiClose(vis);
-		if ((vis=ggiOpen("terminfo",NULL)) == NULL) {
+		if ((vis = ggiOpen("terminfo", NULL)) == NULL) {
 			fprintf(stderr,
 				"%s: unable to open terminfo, exiting.\n",
 				argv[0]);
 			exit(1);
 		}
-		if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, 
-				   GGI_AUTO, GGI_AUTO, 
+		if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO,
+				   GGI_AUTO, GGI_AUTO,
 				   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
 			fprintf(stderr,
 				"%s: unable to set text mode, exiting.\n",
@@ -68,35 +69,37 @@ main(int argc, char *argv[]) {
 			ggiClose(vis);
 			exit(1);
 		}
-	}		
-	ggiSetGCForeground(vis,1<<8);
+	}
+	ggiSetGCForeground(vis, 1 << 8);
 
 	ggiGetMode(vis, &mode);
 	if (mode.visible.y < 17 || mode.visible.x < 52) {
-		fprintf(stderr, "Need at least 52x17 chars for this demo\n");
+		fprintf(stderr,
+			"Need at least 52x17 chars for this demo\n");
 		ggiClose(vis);
 		ggiExit();
 		exit(-1);
 	}
 
-	for ( a = 0 ; a < mode.visible.y ; a++ ) {
-		for ( b = 0 ; b < mode.visible.x ; b++ ) {
+	for (a = 0; a < mode.visible.y; a++) {
+		for (b = 0; b < mode.visible.x; b++) {
 			ggiPutc(vis, b, a, 'x');
 		}
 	}
 
 
-	ggiSetGCForeground(vis,9<<8);
-	ggiPuts(vis, (mode.visible.x - 7)/2, mode.visible.y/2 , "Hello World");
-	ggiPuts(vis, (mode.visible.x - 7)/2, mode.visible.y/2 , hello);
+	ggiSetGCForeground(vis, 9 << 8);
+	ggiPuts(vis, (mode.visible.x - 7) / 2, mode.visible.y / 2,
+		"Hello World");
+	ggiPuts(vis, (mode.visible.x - 7) / 2, mode.visible.y / 2, hello);
 	ggiFlush(vis);
 
 	ggiGetc(vis);
-       
-	for ( a = 0 ; a <= 0xff ; a++ ) {
-		ggiSetGCForeground(vis, a << 8);
-		for ( b = 0 ; b < mode.visible.y ; b++ ) {
-			ggiPuts(vis, a&31, b, "Testing colors");
+
+	for (a = 0; a <= 0xff; a++) {
+		ggiSetGCForeground(vis, (unsigned) (a) << 8);
+		for (b = 0; b < mode.visible.y; b++) {
+			ggiPuts(vis, a & 31, b, "Testing colors");
 		}
 		ggiFlush(vis);
 		ggUSleep(20000);
@@ -104,35 +107,37 @@ main(int argc, char *argv[]) {
 
 	ggiGetc(vis);
 
-	ggiSetGCForeground(vis,1<<8);
-	for ( a = 0 ; a < mode.visible.y ; a++ ) {
-		for ( b = 0 ; b < mode.visible.y ; b++ ) {
+	ggiSetGCForeground(vis, 1 << 8);
+	for (a = 0; a < mode.visible.y; a++) {
+		for (b = 0; b < mode.visible.y; b++) {
 			ggiPutc(vis, b, a, 'x');
 		}
 	}
 
-	ggiSetGCForeground(vis, 7<<8);
+	ggiSetGCForeground(vis, 7 << 8);
 	ggiPuts(vis, 0, 1, "BG0");
-	for ( a = 1 ; a < 16 ; a++ ) {
+	for (a = 1; a < 16; a++) {
 		char str[4];
 		sprintf(str, "BG%c", hex[a]);
-		ggiSetGCForeground(vis, a<<12);
-		ggiPuts(vis, 0, a+1, str);
+		ggiSetGCForeground(vis, (unsigned) (a) << 12);
+		ggiPuts(vis, 0, a + 1, str);
 	}
 
-	ggiSetGCForeground(vis, 15<<12);
+	ggiSetGCForeground(vis, 15 << 12);
 	ggiPuts(vis, 3, 0, "FG0");
-	for ( a = 1 ; a < 16 ; a++ ) {
+	for (a = 1; a < 16; a++) {
 		char str[4];
 		sprintf(str, "FG%c", hex[a]);
-		ggiSetGCForeground(vis,a<<8);
-		ggiPuts(vis, (a+1) * 3, 0, str);
+		ggiSetGCForeground(vis, (unsigned) (a) << 8);
+		ggiPuts(vis, (a + 1) * 3, 0, str);
 	}
 
-	for ( a = 0 ; a < 16 ; a++ ) {
-		for ( b = 0 ; b < 16 ; b++ ) {
-			ggiSetGCForeground(vis,(a<<12)|(b<<8));
-			ggiPuts(vis, b*3 + 3, a + 1, "###");
+	for (a = 0; a < 16; a++) {
+		for (b = 0; b < 16; b++) {
+			ggiSetGCForeground(vis,
+					   ((unsigned) (a) << 12) |
+					   ((unsigned) (b) << 8));
+			ggiPuts(vis, b * 3 + 3, a + 1, "###");
 		}
 	}
 
@@ -140,7 +145,7 @@ main(int argc, char *argv[]) {
 
 	sleep(1);
 
-	ggiSetGCForeground(vis,4<<8);
+	ggiSetGCForeground(vis, 4 << 8);
 	ggiPuts(vis, 56, 5, "  LibGGI dynamic  ");
 
 	ggiFlush(vis);
@@ -151,12 +156,12 @@ main(int argc, char *argv[]) {
 
 	b = mode.visible.y * mode.dpp.y;
 
-#if 0	/* This requires linking to the misc extension and initializing it. */
-	for ( a = b ; a >= 0 ; a-- ) {
+#if 0				/* This requires linking to the misc extension and initializing it. */
+	for (a = b; a >= 0; a--) {
 		ggiSetSplitline(vis, a);
 		ggUSleep(10000);
 	}
-	for ( a = 0 ; a <= b ; a++ ) {
+	for (a = 0; a <= b; a++) {
 		ggiSetSplitline(vis, a);
 		ggUSleep(10000);
 	}

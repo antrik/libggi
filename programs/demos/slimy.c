@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.3 2003/05/20 12:51:28 cegger Exp $
+/* $Id: slimy.c,v 1.4 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -24,38 +24,41 @@
 #endif
 
 
-static ggi_visual_t		 disp = NULL;
-static const ggi_directbuffer	*dbuf;
-static uint8			*bitmap;
+static ggi_visual_t disp = NULL;
+static const ggi_directbuffer *dbuf;
+static uint8 *bitmap;
 
-static signed long int xcosv[1024+512];
-static signed long int ycosv[1024+512];
+static signed long int xcosv[1024 + 512];
+static signed long int ycosv[1024 + 512];
 static signed long int *sx, *sy;
 
-static int width;	        /* Visible screen width, in pixels  */
-static int height;	        /* Visible screen height, in pixels */
+static int width;		/* Visible screen width, in pixels  */
+static int height;		/* Visible screen height, in pixels */
 
 int show_fps = 0;
 
-static ggi_color black={0x0000,0x0000,0x0000};
+static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 
 
-void fail(char *reason) {
-	fprintf(stderr, "%s", reason); 
+static void fail(char *reason)
+{
+	fprintf(stderr, "%s", reason);
 	if (disp != NULL) {
 		ggiClose(disp);
 		ggiExit();
 	}
-	exit(1); 
+	exit(1);
 }
 
-void load_bitmap(void) {
+static void load_bitmap(void)
+{
 	int p, x, y, xm, ym;
 	double f;
 	ggi_color gc;
 
-	bitmap = malloc(32*32);
-	if (bitmap == NULL) fail("Error allocating memory!\n");
+	bitmap = malloc(32 * 32);
+	if (bitmap == NULL)
+		fail("Error allocating memory!\n");
 
 	for (y = 0; y < 16; y++) {
 		for (x = 0; x < 16; x++) {
@@ -78,29 +81,34 @@ void load_bitmap(void) {
 	xm = (640 << 12) / width;
 	ym = (480 << 12) / height;
 
-	for (p = 0; p < (1024+512); p++) {
+	for (p = 0; p < (1024 + 512); p++) {
 		f = cos((p & 1023) * (M_PI / 512));
 		xcosv[p] = f * xm;
 		ycosv[p] = f * ym;
 	}
 
 	sx = malloc(sizeof(signed long int) * width * 2);
-	if (sx == NULL) fail("Error allocating memory!\n");
+	if (sx == NULL)
+		fail("Error allocating memory!\n");
 
 	for (p = 0; p < width; p++) {
-		sx[p] = sx[p + width] = cos(p * 2 * (M_PI / width)) * xm * 64;
+		sx[p] = sx[p + width] =
+		    cos(p * 2 * (M_PI / width)) * xm * 64;
 	}
 
 	sy = malloc(sizeof(signed long int) * height * 2);
-	if (sy == NULL) fail("Error allocating memory!\n");
+	if (sy == NULL)
+		fail("Error allocating memory!\n");
 
 	for (p = 0; p < height; p++) {
 		sy[p] = sy[p + height] = cos(p * 2 * (M_PI / height))
-			* ym * 64 * 32;
+		    * ym * 64 * 32;
 	}
 }
 
-void draw_rotation(int angle, int basex, int basey, int movex, int movey) {
+static void draw_rotation(int angle, int basex, int basey, int movex,
+			  int movey)
+{
 	unsigned int xrowadd, yrowadd, xcoladd, ycoladd;
 	unsigned int x, y, vx, vy, padd;
 	uint8 *fbptr;
@@ -148,33 +156,35 @@ void draw_rotation(int angle, int basex, int basey, int movex, int movey) {
 	sx -= basex;
 }
 
-void SmoothPalette(ggi_color *c) {
-	int		xv, yv, z;
-	ggi_color	t[256];
+static void SmoothPalette(ggi_color * c)
+{
+	int xv, yv, z;
+	ggi_color t[256];
 	for (xv = 0; xv < 16; xv++) {
 		for (yv = 0; yv < 16; yv++) {
-			z  = (c[0].r * xv * yv);
-			z += (c[1].r * xv * (16-yv));
-			z += (c[2].r * (16-xv) * yv);
-			z += (c[3].r * (16-xv) * (16-yv));
-			t[(yv<<4)+xv].r = z;
-			z  = (c[0].g * xv * yv);
-			z += (c[1].g * xv * (16-yv));
-			z += (c[2].g * (16-xv) * yv);
-			z += (c[3].g * (16-xv) * (16-yv));
-			t[(yv<<4)+xv].g = z;
-			z  = (c[0].b * xv * yv);
-			z += (c[1].b * xv * (16-yv));
-			z += (c[2].b * (16-xv) * yv);
-			z += (c[3].b * (16-xv) * (16-yv));
-			t[(yv<<4)+xv].b = z;
+			z = (c[0].r * xv * yv);
+			z += (c[1].r * xv * (16 - yv));
+			z += (c[2].r * (16 - xv) * yv);
+			z += (c[3].r * (16 - xv) * (16 - yv));
+			t[(yv << 4) + xv].r = z;
+			z = (c[0].g * xv * yv);
+			z += (c[1].g * xv * (16 - yv));
+			z += (c[2].g * (16 - xv) * yv);
+			z += (c[3].g * (16 - xv) * (16 - yv));
+			t[(yv << 4) + xv].g = z;
+			z = (c[0].b * xv * yv);
+			z += (c[1].b * xv * (16 - yv));
+			z += (c[2].b * (16 - xv) * yv);
+			z += (c[3].b * (16 - xv) * (16 - yv));
+			t[(yv << 4) + xv].b = z;
 		}
 	}
 	ggiSetPalette(disp, 0, 256, t);
 }
 
-void InitGraphics(void) {
-  	ggi_mode m;
+static void InitGraphics(void)
+{
+	ggi_mode m;
 
 	if (ggiInit() < 0) {
 		fprintf(stderr, "Unable to initialize LibGGI, exiting.\n");
@@ -190,8 +200,7 @@ void InitGraphics(void) {
 	if (ggiSetSimpleMode(disp, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT)) {
 		fail("Error switching to 8bpp mode.\n"
 		     "You may want to try using GGI_DISPLAY=\"tile:0,0,640,480,(palemu:auto)\" ./slimy\n"
-		     "if you think the problem is due to running on a truecolor-only target.\n"
-		     );
+		     "if you think the problem is due to running on a truecolor-only target.\n");
 	}
 
 	ggiGetMode(disp, &m);
@@ -199,41 +208,43 @@ void InitGraphics(void) {
 	width = m.virt.x;
 	height = m.virt.y;
 
-	if (! (dbuf = ggiDBGetBuffer (disp, 0))) {
+	if (!(dbuf = ggiDBGetBuffer(disp, 0))) {
 		fail("No DirectBuffer available.\n");
 	}
 
-	if (! (dbuf->type & GGI_DB_SIMPLE_PLB)) {
+	if (!(dbuf->type & GGI_DB_SIMPLE_PLB)) {
 		fail("Error: non-standard display buffer\n");
 	}
 }
 
-void CloseGraphics(void) {
+static void CloseGraphics(void)
+{
 	ggiClose(disp);
 	ggiExit();
 }
 
-void RunSpinner(void) {
-	struct timeval tv = {0,0};
-	double	fps = .0;
-	int	quit = 0, frames = 0;
-	time_t	tt;
-	int		a, x, y, xdir, ydir, adir, vx, vy, vxdir, vydir;
-	int		z, g;
-	ggi_color	e[4], c[4], d[4] = {{0,0,0},{0,127,255},{255,127,0},{255,255,255}};
+static void RunSpinner(void)
+{
+	double fps = .0;
+	int quit = 0, frames = 0;
+	time_t tt;
+	int a, x, y, xdir, ydir, adir, vx, vy, vxdir, vydir;
+	int z, g;
+	ggi_color e[4], c[4], d[4] =
+	    { {0, 0, 0}, {0, 127, 255}, {255, 127, 0}, {255, 255, 255} };
 
 	x = rand() % width;
 	y = rand() % height;
 	vx = rand() % width;
 	vy = rand() % height;
-	xdir = (rand() & 1) ? ((rand() & 1) ? width-2 : 2)
-		: ((rand() & 1) ? width-1 : 1);
-	ydir = (rand() & 1) ? ((rand() & 1) ? height-2 : 2)
-		: ((rand() & 1) ? height-1 : 1);
+	xdir = (rand() & 1) ? ((rand() & 1) ? width - 2 : 2)
+	    : ((rand() & 1) ? width - 1 : 1);
+	ydir = (rand() & 1) ? ((rand() & 1) ? height - 2 : 2)
+	    : ((rand() & 1) ? height - 1 : 1);
 	vxdir = (rand() & 1) ? ((rand() & 1) ? -2 : 2)
-		: ((rand() & 1) ? -1 : 1);
+	    : ((rand() & 1) ? -1 : 1);
 	vydir = (rand() & 1) ? ((rand() & 1) ? -2 : 2)
-		: ((rand() & 1) ? -1 : 1);
+	    : ((rand() & 1) ? -1 : 1);
 	adir = 7;
 	g = 0;
 	a = 0;
@@ -248,23 +259,30 @@ void RunSpinner(void) {
 		}
 		draw_rotation(a, x, y, vx, vy);
 		a = (a + adir) & 1023;
-		if (!(rand() & 1023)) adir = -adir;
+		if (!(rand() & 1023))
+			adir = -adir;
 		x = (x + xdir) % width;
 		if (!(rand() & 1023)) {
-			xdir = (rand() & 1) ? ((rand() & 1) ? width-2 : 2)
-				: ((rand() & 1) ? width-1 : 1);
+			xdir =
+			    (rand() & 1) ? ((rand() & 1) ? width - 2 : 2)
+			    : ((rand() & 1) ? width - 1 : 1);
 		}
 		y = (y + ydir) % height;
 		if (!(rand() & 1023)) {
-			ydir = (rand() & 1) ? ((rand() & 1) ? height-2 : 2)
-				: ((rand() & 1) ? height-1 : 1);
+			ydir =
+			    (rand() & 1) ? ((rand() & 1) ? height - 2 : 2)
+			    : ((rand() & 1) ? height - 1 : 1);
 		}
 		vx += vxdir;
-		     if (vx < 0)	vxdir = (rand() & 1) + 1;
-		else if (vx > width)	vxdir = (rand() & 1) - 2;
+		if (vx < 0)
+			vxdir = (rand() & 1) + 1;
+		else if (vx > width)
+			vxdir = (rand() & 1) - 2;
 		vy += vydir;
-		     if (vy < 0)	vydir = (rand() & 1) + 1;
-		else if (vy > height)	vydir = (rand() & 1) - 2;
+		if (vy < 0)
+			vydir = (rand() & 1) + 1;
+		else if (vy > height)
+			vydir = (rand() & 1) - 2;
 		if (!g) {
 			for (z = 0; z < 4; z++) {
 				c[z] = d[z];
@@ -281,15 +299,17 @@ void RunSpinner(void) {
 		SmoothPalette(e);
 		g = ((g + 1) & 63);
 
-		if ((time(NULL) - tt) != 0) fps = frames / (time(NULL) - tt);
+		if ((time(NULL) - tt) != 0)
+			fps = frames / (time(NULL) - tt);
 
 		if (show_fps) {
 			char str[18];
 			ggi_pixel _bg;
-			sprintf(str,"FPS : %f", fps);
+			sprintf(str, "FPS : %f", fps);
 			ggiGetGCBackground(disp, &_bg);
-			ggiSetGCBackground(disp, ggiMapColor(disp, &black));
-			ggiPuts(disp,0,0,str);
+			ggiSetGCBackground(disp,
+					   ggiMapColor(disp, &black));
+			ggiPuts(disp, 0, 0, str);
 			ggiSetGCBackground(disp, _bg);
 		}
 
@@ -299,7 +319,8 @@ void RunSpinner(void) {
 	printf(" %f fps\n", fps);
 }
 
-int main (int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
 	InitGraphics();
 

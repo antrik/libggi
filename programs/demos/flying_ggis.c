@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.1 2001/05/12 23:03:35 cegger Exp $
+/* $Id: flying_ggis.c,v 1.2 2003/07/05 13:00:56 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -73,7 +73,7 @@ static int use_putbox;
 static ggi_pixel lookup[256];
 
 static void *image_buf;
-static int image_size;
+static size_t image_size;
 
 
 typedef struct texture
@@ -92,7 +92,7 @@ typedef struct texture
 static Texture *texture_list;
 
 
-static char *banner[46];
+extern char *banner[46];
 
 static void banner_size(int *width, int *height)
 {
@@ -345,12 +345,12 @@ int main(int argc, char **argv)
 
         /* initialize */
 
-        srand(time(NULL));
+        srand((unsigned)time(NULL));
 
         banner_size(&banner_width, &banner_height);
 
-        banner_diag = sqrt(banner_width * banner_width +
-                              banner_height * banner_height);
+        banner_diag = sqrt((double)(banner_width * banner_width +
+                              banner_height * banner_height));
 
         screen_width  = DEFAULT_WIDTH;
         screen_height = DEFAULT_HEIGHT;
@@ -471,8 +471,8 @@ int main(int argc, char **argv)
 	screen_width  = vis_mode.visible.x;
 	screen_height = vis_mode.visible.y;
 
-        screen_diag = sqrt(screen_width  * screen_width +
-			   screen_height * screen_height);
+        screen_diag = sqrt((double)(screen_width  * screen_width +
+			   screen_height * screen_height));
 
         image_size = screen_width * screen_height * 1;
 
@@ -531,7 +531,7 @@ int main(int argc, char **argv)
 
 
 		if (use_putbox) {
-			memset(image_buf, lookup[0], image_size);
+			memset(image_buf, (signed)lookup[0], image_size);
 		} else {
 			memset(image_buf, 0,         image_size);
 		}
