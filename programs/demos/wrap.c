@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.1 2001/05/16 03:17:49 stefan Exp $
+/* $Id: wrap.c,v 1.2 2001/05/25 19:56:14 stefan Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -28,6 +28,7 @@
  */
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
+#include <ggi/ggi-unix.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -116,21 +117,35 @@ void exit_client(client_t *client)
   unlink(client->socket);
 }
 
-int wait_for_client(client_t *client)
+//. return 1 if we got called by the client
+//. return 0 if nothing is to do (either because we got interrupted by a signal, or because we
+//.                               just forwarded an event)
+//. return -1 on error
+int wait_for_something(ggi_visual_t master, client_t *client)
 {
   /*
    * wait for the client to notify us
    */
   fd_set fds;
-  int nsel;
+  ggi_event event;
+  ggi_event_mask mask;
+  int nfds;
   FD_SET(client->sockfd, &fds);
-  nsel = select(client->sockfd + 1, &fds, 0, 0, 0);
-  if (nsel == -1)
+  mask = emAll;
+  nfds = ggiEventSelect(master, &mask, client->sockfd + 1, &fds, 0, 0, 0);
+  if (nfds == -1)
     {
       if (errno == EINTR || errno == EAGAIN) errno = 0;
+      return 0;
     }
-  if (FD_ISSET(client->sockfd, &fds)) return 1;
-  else return 0;
+  else if (nfds == 0)
+    {
+      ggiEventRead(master, &event, mask);
+      ggiEventSend(client->visual, &event);
+      return 0;
+    }
+  else if (FD_ISSET(client->sockfd, &fds)) return 1;
+  else return -1;
 }
 
 int repair_screen(client_t *client, ggi_visual_t visual)
@@ -144,12 +159,8 @@ int repair_screen(client_t *client, ggi_visual_t visual)
       read(client->sockfd, (char *)region, 4*sizeof(int)) == 4*sizeof(int))
     {
       ggi_mode mode;
-/*       printf("repair screen at x: %d, y: %d, width: %d, height: %d\n", region[0], region[1], region[2], region[3]); */
-/*       ggiGetMode(client->visual, &mode); */
-/*       ggiFPrintMode(stderr,&mode); */
-/*       ggiGetMode(visual, &mode); */
-/*       ggiFPrintMode(stderr,&mode); */
       ggiCrossBlit(client->visual, region[0], region[1], region[2], region[3], visual, region[0], region[1]);
+      ggiFlush(visual);
       return 1;
     }
   return 0;
@@ -217,8 +228,9 @@ int main(int argc, char **argv)
    */
   while (1)
     {
-      if (!wait_for_client(&client) ||
-	  !repair_screen(&client, visual)) break;
+      int status = wait_for_something(visual, &client);
+      if (!status) continue;
+      if (status == -1 || !repair_screen(&client, visual)) break;
     };
   kill(client.pid, SIGHUP);
   exit_client(&client);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/16 03:19:09 stefan Exp $
+/* $Id: visual.c,v 1.3 2001/05/25 19:56:14 stefan Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -87,6 +87,7 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfla
 {
   char buffer[32];
   ggi_ipc_priv *priv = LIBGGI_PRIVATE(vis);
+  ggi_pixel pixel;
   if (priv->sockfd == -1) return 0;
   buffer[0] = 'F'; // may be some day we want to send something other than flush messages...
   memcpy(buffer + 1, &x, sizeof(int));
