@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.47 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: mode.c,v 1.48 2005/03/30 10:09:55 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1392,6 +1392,12 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		       sizeof(gii_xwin_cmddata_setparam));
 
 		giiEventSend(priv->inp, &ev);
+
+		if(priv->use_Xext & GGI_X_USE_VIDMODE) {	
+			/* Grab pointers */
+			ev.cmd.code = GII_CMDCODE_PREFER_RELPTR;
+			giiEventSend(priv->inp, &ev);
+		}
 	}
 
 	DPRINT_MODE("X (setmode): set dirty region\n");

@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.18 2005/03/29 14:36:38 mooz Exp $
+/* $Id: vidmode.c,v 1.19 2005/03/30 10:09:57 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -224,7 +224,7 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 	XF86VidModeLockModeSwitch(priv->disp,
 				  priv->vilist[priv->viidx].vi->screen,
 				  True);
-	
+
 	GGI_X_MAYBE_SYNC(vis);
 	
 	return GGI_OK;
