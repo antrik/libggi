@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.3 2001/07/09 13:14:25 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -291,6 +291,8 @@ static int do_cleanup(ggi_visual *vis)
 {
 	svga_priv *priv = LIBGGI_PRIVATE(vis);
 
+	GGIDPRINT("display-svga: GGIdlcleanup start.\n");
+
 	/* Restore to text mode */
 	_ggi_svgalib_setmode(TEXT);
 
@@ -314,6 +316,7 @@ static int do_cleanup(ggi_visual *vis)
 	
 	usagecounter--;
 
+	GGIDPRINT("display-svga: GGIdlcleanup done.\n");
 	return 0;
 }
 
