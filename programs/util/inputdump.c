@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.6 2004/06/10 13:00:32 pekberg Exp $
+/* $Id: inputdump.c,v 1.7 2004/06/17 17:20:29 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -36,6 +36,7 @@
 static struct timeval start_time;
 static int firstevent = 1;
 static enum { SHOW_NIL, SHOW_SHORT, SHOW_LONG } do_show = SHOW_NIL;
+static int no_pmove = 0;
 
 static ggi_visual_t vis;
 static ggi_mode vis_mode;
@@ -58,6 +59,7 @@ typedef struct mydev_info
 	
 	sint32 axes[MAX_NR_VAL+4];
 	sint32 buttons[MAX_NR_BUT];  /* labels */
+	sint32 pbuttons[MAX_NR_BUT];  /* ptr-buttons */
 
 	ggi_coord top;
 	int val_h, ptr_h;
@@ -177,6 +179,16 @@ static void draw_inp_buttons(mydev_info *M)
 		ggiPuts(vis, x, y, buf);  y += vis_ch.y;
 	}
 
+	for (i=0; i < MAX_NR_BUT; i++) {
+		int label = M->pbuttons[i];
+
+		if (label < 0) continue;
+
+		sprintf(buf, "ptrbtn %03d        ", i);
+		
+		ggiPuts(vis, x, y, buf);  y += vis_ch.y;
+	}
+
 	ggiPuts(vis, x, y, "                    ");
 }
 
@@ -283,6 +295,7 @@ static mydev_info *find_input_device(uint32 origin)
 	memset(InputDevices[i]->axes, 0, (MAX_NR_VAL+4) * sizeof(sint32));
 	for (j = 0; j < MAX_NR_BUT; j++) {
 		InputDevices[i]->buttons[j] = -1;
+		InputDevices[i]->pbuttons[j] = -1;
 	}
 	
 	InputDevices[i]->val_h = 0;
@@ -361,7 +374,7 @@ static void show_key(gii_key_event *ev)
 
 static void show_pmove(gii_pmove_event *ev)
 {
-	if (do_show != SHOW_NIL) {
+	if (!no_pmove && do_show != SHOW_NIL) {
 		fprintf(stderr, "x=%-3d y=%-3d z=%-3d wheel=%-3d\n",
 			ev->x, ev->y, ev->z, ev->wheel);
 	}
@@ -397,7 +410,7 @@ static void show_pmove(gii_pmove_event *ev)
 static void show_pbutton(gii_pbutton_event *ev)
 {
 	if (do_show != SHOW_NIL) {
-		fprintf(stderr, "button=0x%02x\n", ev->button);
+		fprintf(stderr, "ptrbutton=0x%02x\n", ev->button);
 	}
 
 	/* update display */
@@ -408,7 +421,7 @@ static void show_pbutton(gii_pbutton_event *ev)
 		if ((b == GII_PBUTTON_NONE) || (b >= MAX_NR_BUT)) 
 			return;
 
-		cur_dev->buttons[b] = (ev->type == evPtrButtonRelease) ? 
+		cur_dev->pbuttons[b] = (ev->type == evPtrButtonRelease) ? 
 					-1 : GIIK_VOID;
 
 		draw_inp_buttons(cur_dev);
@@ -644,12 +657,12 @@ static void show_event(gii_event *ev)
 			break;
 
 		case evPtrAbsolute:
-			if (s) fprintf(stderr, "PtrAbsolute: ");
+			if (!no_pmove && s) fprintf(stderr, "PtrAbsolute: ");
 			show_pmove(&ev->pmove);
 			break;
 
 		case evPtrRelative:
-			if (s) fprintf(stderr, "PtrRelative: ");
+			if (!no_pmove && s) fprintf(stderr, "PtrRelative: ");
 			show_pmove(&ev->pmove);
 			break;
 
@@ -758,6 +771,12 @@ int main(int argc, char **argv)
 			continue;
 		}
 			
+		if (CMP_OPT("-p", "--no-pmove", 0)) {
+			no_pmove = 1;
+			argv++; argc--;
+			continue;
+		}
+
 		fprintf(stderr, "Unknown option '%s'.\n", *argv);
 		usage();
 		exit(1);
