@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2004/09/13 10:40:30 cegger Exp $
+/* $Id: mode.c,v 1.35 2004/10/11 18:55:06 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -324,7 +324,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	int destroychild, destroyparent, createchild, createparent;
 
 	GGIDPRINT("GGI_X_setmode_normal(%p, %p) called\n",vis,tm);
-		
+
 	priv = GGIX_PRIV(vis);
 
 	if ((err=GGI_X_checkmode_internal(vis,tm,&viidx))) return err;
@@ -332,6 +332,8 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	priv->viidx = viidx;
 
 	GGIDPRINT("* viidx = %i\n", priv->viidx);
+
+	if (priv->opmansync) MANSYNC_ignore(vis);
 
 	ggLock(priv->xliblock);
 
@@ -540,6 +542,7 @@ oldparent:
 err1:
 	priv->freefb(vis);
 err0:
+	if (priv->opmansync) MANSYNC_cont(vis);
 	return err;
 }
 
@@ -576,6 +579,8 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
 	priv->viidx = viidx;
+
+	if (priv->opmansync) MANSYNC_ignore(vis);
 
 	ggLock(priv->xliblock);
 
@@ -729,6 +734,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 err1:
 	priv->freefb(vis);
 err0:
+	if (priv->opmansync) MANSYNC_cont(vis);
 	return err;
 }
 
