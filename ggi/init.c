@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.28 2004/12/12 14:47:21 neiljp Exp $
+/* $Id: init.c,v 1.29 2005/01/13 19:05:25 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -221,7 +221,7 @@ int ggiInit(void)
 
 int ggiExit(void)
 {
-	ggi_extension *tmp, *next;
+	ggi_extension *tmp;
 
 	DPRINT_CORE("ggiExit called\n");
 	if (!_ggiLibIsUp) return GGI_ENOTALLOC;
@@ -239,12 +239,11 @@ int ggiExit(void)
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
 
-	tmp = GG_TAILQ_FIRST(&_ggiExtension);
-	while (!GG_TAILQ_EMPTY(&_ggiExtension)) {
-		next = GG_TAILQ_NEXT(tmp, extlist);
+	GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
+		GG_TAILQ_REMOVE(&_ggiExtension, tmp, extlist);
 		free(tmp);
-		tmp = next;
 	}
+	LIB_ASSERT(GG_TAILQ_EMPTY(&_ggiExtension), "ggi extension list not empty at shutdown\n");
 
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
