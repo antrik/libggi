@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/10/11 01:30:26 redmondp Exp $
+/* $Id: color.c,v 1.4 2002/11/04 21:32:41 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -33,6 +33,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include "kgi/config.h"
 #include <ggi/display/kgi.h>
 
 

@@ -29,6 +29,7 @@
 #define _GGI_DISPLAY_KGI_H
 
 #include <stdlib.h>
+#include <kgi/system.h>
 #include <kgi/kgi.h>
 #include <kgi/cmd.h>
 

@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include "kgi/config.h"
 #include <ggi/display/kgi.h>
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
