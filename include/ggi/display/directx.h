@@ -1,9 +1,10 @@
-/* $Id: directx.h,v 1.15 2004/09/24 11:09:09 pekberg Exp $
+/* $Id: directx.h,v 1.16 2004/09/24 12:30:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
 
    Copyright (C) 1999 John Fortin       [fortinj@ibm.net]
+   Copyright (C) 2004 Peter Ekberg      [peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -66,6 +67,7 @@ ggifunc_drawline                GGI_directx_drawline;
 /*ggifunc_putc                  GGI_directx32_putc;*/
 
 ggifunc_setorigin               GGI_directx_setorigin;
+ggifunc_setpalvec               GGI_directx_setpalvec;
 
 typedef struct directx_priv
 {
@@ -77,8 +79,9 @@ typedef struct directx_priv
 
 	gii_input *inp;
 	CRITICAL_SECTION cs;
-	CRITICAL_SECTION redrawcs;
+	CRITICAL_SECTION spincs;
 	int redraw;
+	int setpalette;
 
 	HANDLE hWnd, hParent;
 	HANDLE hInstance;
@@ -105,6 +108,7 @@ typedef struct directx_priv
 	LPDIRECTDRAWSURFACE lppdds;
 	LPDIRECTDRAWSURFACE lpbdds[GGI_DISPLAY_DIRECTX_FRAMES];
 	char *lpSurfaceAdd[GGI_DISPLAY_DIRECTX_FRAMES];
+	LPDIRECTDRAWPALETTE lpddp;
 } directx_priv;
 
 #define GGIDIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))

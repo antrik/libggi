@@ -1,9 +1,10 @@
-/* $Id: ddinit.h,v 1.16 2004/09/24 11:09:09 pekberg Exp $
+/* $Id: ddinit.h,v 1.17 2004/09/24 12:30:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
 
    Copyright (C) 1999 John Fortin       [fortinj@ibm.net]
+   Copyright (C) 2004 Peter Ekberg      [peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -37,6 +38,8 @@
 #define WM_DDCHANGEMODE		0x7FFE
 #define WM_DDEND		0x7FFD
 #define WM_DDFULLSCREEN		0x7FFC
+#define WM_DDREDRAW		0x7FFB
+#define WM_DDSETPALETTE		0x7FFA
 
 typedef struct directx_fullscreen
 {
@@ -56,5 +59,6 @@ void DDRedrawAll(ggi_visual *vis);
 int DDChangeMode(ggi_visual *vis, ggi_mode *mode);
 int DDMatchMode(ggi_visual *vis, ggi_mode *mode,
 		int *depth, int *defwidth, int *defheight);
+int DDChangePalette(ggi_visual *vis);
 
 __END_DECLS

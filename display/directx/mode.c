@@ -1,9 +1,10 @@
-/* $Id: mode.c,v 1.24 2004/09/24 11:09:09 pekberg Exp $
+/* $Id: mode.c,v 1.25 2004/09/24 12:30:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
 
    Copyright (C) 1999-2000 John Fortin	[fortinj@ibm.net]
+   Copyright (C) 2004      Peter Ekberg	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -388,6 +389,20 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 	vis->opdraw->setorigin = GGI_directx_setorigin;
 	vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 
+	if(priv->lpddp) {
+		LIBGGI_PAL(vis)->clut.size = 256;
+		LIBGGI_PAL(vis)->clut.data =
+			_ggi_malloc(sizeof(ggi_color) *
+			LIBGGI_PAL(vis)->clut.size);
+		if (LIBGGI_PAL(vis)->clut.data == NULL) {
+			LeaveCriticalSection(&priv->cs);
+			return GGI_EFATAL;
+		}
+		vis->opcolor->setpalvec = GGI_directx_setpalvec;
+		LIBGGI_PAL(vis)->rw_start = 256;
+		LIBGGI_PAL(vis)->rw_stop  = 0;
+	}
+
 	LeaveCriticalSection(&priv->cs);
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
@@ -410,6 +425,55 @@ GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
 	LeaveCriticalSection(&priv->cs);
 
 	return 0;
+}
+
+int
+GGI_directx_setpalvec(struct ggi_visual *vis,
+	int start, int len, ggi_color *colormap)
+{
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
+
+	GGIDPRINT_COLOR(
+	"GGI_directx_setpalvec(%p, %d, %d, {%d, %d, %d}) called\n",
+	vis, start, len, colormap->r,colormap->g ,colormap->b);
+
+	LIBGGI_APPASSERT(colormap != NULL,
+		"ggiSetPalette() called with NULL colormap!");
+
+	if (((int)start) == GGI_PALETTE_DONTCARE) {
+		start = 10;
+		if (start+len > 256)
+			start = 256 - (start+len);
+		if (start < 0)
+			start = 0;
+	}
+
+	if (colormap == NULL)
+		return GGI_EARGREQ;
+/*	if (((int)(start+len) > 246) || (start < 10) )
+		return GGI_EARGINVAL;*/
+
+	EnterCriticalSection(&priv->cs);
+
+	memcpy(LIBGGI_PAL(vis)->clut.data + start,
+		colormap,
+		len * sizeof(ggi_color));
+
+	if (start < LIBGGI_PAL(vis)->rw_start) {
+		LIBGGI_PAL(vis)->rw_start = start;
+	}
+	if ((start+len) > LIBGGI_PAL(vis)->rw_stop) {
+		LIBGGI_PAL(vis)->rw_stop  = start+len;
+	}
+
+	GGIDPRINT_COLOR("directx setPalette success\n");
+
+/*	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))*/
+		DDChangePalette(vis);
+
+	LeaveCriticalSection(&priv->cs);
+
+	return start;
 }
 
 int

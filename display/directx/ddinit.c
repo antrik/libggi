@@ -1,9 +1,10 @@
-/* $Id: ddinit.c,v 1.39 2004/09/24 11:11:18 pekberg Exp $
+/* $Id: ddinit.c,v 1.40 2004/09/24 12:30:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
 
    Copyright (C) 1999-2000 John Fortin  [fortinj@ibm.net]
+   Copyright (C) 2004      Peter Ekberg [peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -599,16 +600,39 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message) {
 
-	case WM_USER:
+	case WM_DDREDRAW:
 		if (!TryEnterCriticalSection(&priv->cs)) {
 			/* spin */
 			PostMessage(hWnd, message, wParam, lParam);
 			return 0;
 		}
 		DDRedrawAll(vis);
-		EnterCriticalSection(&priv->redrawcs);
+		EnterCriticalSection(&priv->spincs);
 		priv->redraw = 1;
-		LeaveCriticalSection(&priv->redrawcs);
+		LeaveCriticalSection(&priv->spincs);
+		LeaveCriticalSection(&priv->cs);
+		return 0;
+
+	case WM_DDSETPALETTE:
+		{
+			int setpalette;
+			EnterCriticalSection(&priv->spincs);
+			setpalette = priv->setpalette;
+			LeaveCriticalSection(&priv->spincs);
+			if(setpalette)
+				/* setpalette canceled */
+				return 0;
+		}
+		if(!TryEnterCriticalSection(&priv->cs)) {
+			/* spin */
+			PostMessage(hWnd, message, wParam, lParam);
+			return 0;
+		}
+		if(priv->lpddp)
+			DDChangePalette(vis);
+		EnterCriticalSection(&priv->spincs);
+		priv->setpalette = 1;
+		LeaveCriticalSection(&priv->spincs);
 		LeaveCriticalSection(&priv->cs);
 		return 0;
 
@@ -617,10 +641,10 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		if (!TryEnterCriticalSection(&priv->cs)) {
 			int redraw = 0;
-			EnterCriticalSection(&priv->redrawcs);
+			EnterCriticalSection(&priv->spincs);
 			redraw = priv->redraw;
 			priv->redraw = 0;
-			LeaveCriticalSection(&priv->redrawcs);
+			LeaveCriticalSection(&priv->spincs);
 			if (redraw)
 				/* spin */
 				PostMessage(hWnd, WM_USER, wParam, lParam);
@@ -633,13 +657,13 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		if (!TryEnterCriticalSection(&priv->cs)) {
 			int redraw = 0;
-			EnterCriticalSection(&priv->redrawcs);
+			EnterCriticalSection(&priv->spincs);
 			redraw = priv->redraw;
 			priv->redraw = 0;
-			LeaveCriticalSection(&priv->redrawcs);
+			LeaveCriticalSection(&priv->spincs);
 			if (redraw)
 				/* spin */
-				PostMessage(hWnd, WM_USER, wParam, lParam);
+				PostMessage(hWnd, WM_DDREDRAW, wParam, lParam);
 			return 0;
 		}
 		if (GetUpdateRect(hWnd, &dirty, FALSE)) {
@@ -684,6 +708,27 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		DDSizing(priv, wParam, (LPRECT) lParam);
 		LeaveCriticalSection(&priv->sizingcs);
+		return TRUE;
+
+	case WM_QUERYNEWPALETTE:
+		if(!TryEnterCriticalSection(&priv->cs)) {
+			int setpalette = 0;
+			EnterCriticalSection(&priv->spincs);
+			setpalette = priv->setpalette;
+			priv->redraw = 0;
+			LeaveCriticalSection(&priv->spincs);
+			if(setpalette)
+				/* spin */
+				PostMessage(hWnd, WM_DDSETPALETTE,
+					wParam, lParam);
+			return 0;
+		}
+		if(!priv->lpddp) {
+			LeaveCriticalSection(&priv->cs);
+			break;
+		}
+		DDChangePalette(vis);
+		LeaveCriticalSection(&priv->cs);
 		return TRUE;
 
 	case WM_CREATE:
@@ -907,6 +952,49 @@ DDCreateThread(ggi_visual *vis)
 	}
 }
 
+
+int DDChangePalette(ggi_visual *vis)
+{
+	directx_priv *priv = LIBGGI_PRIVATE(vis);
+	int start       = LIBGGI_PAL(vis)->rw_start;
+	int stop        = LIBGGI_PAL(vis)->rw_stop;
+	ggi_color *clut = LIBGGI_PAL(vis)->clut.data;
+	HRESULT hr;
+	int x;
+	static PALETTEENTRY pal[256];
+
+	LIBGGI_ASSERT(priv->lpddp, "No palette!\n");
+
+	if (start >= stop)
+		return 0;
+
+	for (x = start; x < stop; x++) {
+		pal[x].peFlags = PC_NOCOLLAPSE;
+		pal[x].peRed   = clut[x].r >> 8;
+		pal[x].peGreen = clut[x].g >> 8;
+		pal[x].peBlue  = clut[x].b >> 8;
+	}
+	/*
+	for (x = 0; x < 10; x++) {
+		pal[x].peFlags  = pal[x+246].peFlags = PC_EXPLICIT;
+		pal[x].peRed = x;
+		pal[x+246].peRed = x+246;
+		pal[x].peGreen = pal[x].peBlue = 0;
+	}
+	*/
+
+	hr = IDirectDrawPalette_SetEntries(
+	priv->lpddp, 0, start, stop - start, &pal[start]);
+
+	if (hr != 0) {
+		fprintf(stderr, "DDP_SetEntries Failed RC = %ld. Exiting\n",
+		hr & 0xffff);
+		exit(-1);
+	}
+
+	return 0;
+}
+
 /* initialize and finalize the primary surface and back storage */
 
 static int
@@ -972,7 +1060,8 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 		/* set up the pixel format */
 		ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
 		bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-		bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+		bddsd.ddpfPixelFormat.dwFlags =
+		    pddsd.ddpfPixelFormat.dwFlags;
 		bddsd.ddpfPixelFormat.dwRGBBitCount =
 		    pddsd.ddpfPixelFormat.dwRGBBitCount;
 		bddsd.ddpfPixelFormat.dwRBitMask =
@@ -1004,6 +1093,27 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
 	priv->pitch = bddsd.lPitch;
 
+	if (pddsd.ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED8) {
+		static PALETTEENTRY pal[256];
+		/* todo fill in pal */
+		hr = IDirectDraw_CreatePalette(priv->lpddext,
+			DDPCAPS_8BIT|DDPCAPS_ALLOW256,
+			pal, &priv->lpddp, NULL);
+		if (hr) {
+			fprintf(stderr,
+				"Init Palette failed RC = %lx. Exiting\n",
+				hr);
+			exit(-1);
+		}
+		hr = IDirectDrawSurface_SetPalette(priv->lppdds, priv->lpddp);
+		if (hr) {
+			fprintf(stderr,
+				 "Install Palette failed RC = %lx. Exiting\n",
+				hr);
+			exit(-1);
+		}
+	}
+
 	return 1;
 }
 
@@ -1011,6 +1121,10 @@ static void
 DDDestroySurface(directx_priv *priv)
 {
 	int i;
+	if (priv->lpddp != NULL) {
+		IDirectDrawPalette_Release(priv->lpddp);
+		priv->lpddp = NULL;
+	}
 	for (i = 0; i < GGI_DISPLAY_DIRECTX_FRAMES; ++i) {
 		if (priv->lpbdds[i] != NULL) {
 			IDirectDrawSurface_Release(priv->lpbdds[i]);

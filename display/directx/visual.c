@@ -1,10 +1,11 @@
-/* $Id: visual.c,v 1.25 2004/09/24 11:09:09 pekberg Exp $
+/* $Id: visual.c,v 1.26 2004/09/24 12:30:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
 
    Copyright (C) 1999 John Fortin       [fortinj@ibm.net]
    Copyright (C) 2000 Marcus Sundberg   [marcus@ggi-project.org]
+   Copyright (C) 2004 Peter Ekberg      [peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -89,7 +90,7 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 	DDShutdown(priv);
 	LeaveCriticalSection(&priv->cs);
 	DeleteCriticalSection(&priv->cs);
-	DeleteCriticalSection(&priv->redrawcs);
+	DeleteCriticalSection(&priv->spincs);
 	DeleteCriticalSection(&priv->sizingcs);
 	free(priv);
 
@@ -127,8 +128,9 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	LIBGGI_PRIVATE(vis) = priv;
 
 	InitializeCriticalSection(&priv->cs);
-	InitializeCriticalSection(&priv->redrawcs);
+	InitializeCriticalSection(&priv->spincs);
 	priv->redraw = 1;
+	priv->setpalette = 1;
 
 	InitializeCriticalSection(&priv->sizingcs);
 	priv->xmin = 0;
@@ -223,7 +225,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 
 err3:
 	DeleteCriticalSection(&priv->cs);
-	DeleteCriticalSection(&priv->redrawcs);
+	DeleteCriticalSection(&priv->spincs);
 	DeleteCriticalSection(&priv->sizingcs);
 err2:
 	free(LIBGGI_GC(vis));
