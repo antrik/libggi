@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2003/12/13 21:12:02 mooz Exp $
+/* $Id: mode.c,v 1.23 2004/01/08 21:18:44 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -418,7 +418,7 @@ oldparent:
 	attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 	priv->win = XCreateWindow(priv->disp, priv->parentwin,
 				  0, 0, (unsigned)tm->virt.x, 
-				  (unsigned)tm->virt.y * (tm->frames + 1), 0,
+				  (unsigned)tm->virt.y * tm->frames, 0,
 				  vi->depth, InputOutput,
 				  vi->visual, CWColormap | CWBorderPixel, 
 				  &attrib);
@@ -455,7 +455,7 @@ oldparent:
 		XSetFont(priv->disp, priv->tempgc, priv->textfont->fid);
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
-			 LIBGGI_VIRTY(vis) * (vis->mode->frames + 1));
+			 LIBGGI_VIRTY(vis) * vis->mode->frames);
 	GGIDPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (frees old cursor) */
@@ -631,7 +631,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	XSetGraphicsExposures(priv->disp, priv->tempgc, True);
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
-			 LIBGGI_VIRTY(vis) * (vis->mode->frames + 1));
+			 LIBGGI_VIRTY(vis) * vis->mode->frames);
 	GGIDPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (destroys old one) */
