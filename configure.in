@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.31 2002/01/12 16:20:45 cegger Exp $
+dnl $Id: configure.in,v 1.32 2002/01/27 09:22:11 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -264,7 +264,7 @@ AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
-	herror connect sigpending fork)
+	herror connect sigpending fork snprintf strncat strncpy)
 
 
 dnl ========================================================================
