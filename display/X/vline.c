@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.11 2005/02/10 04:55:20 orzo Exp $
+/* $Id: vline.c,v 1.12 2005/02/10 20:32:37 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -127,6 +127,7 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
 	ggLock(priv->xliblock);
 #warning 1,2,4-bit support needed.
 	ximg = _ggi_x_create_ximage( vis, (char*)data, 1, h);
+	if (ximg == NULL) return GGI_ENOMEM;
 
         XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
                   0, 0, x, GGI_X_WRITE_Y, 1, (unsigned)h);
