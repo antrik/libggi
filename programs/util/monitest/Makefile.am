@@ -9,4 +9,4 @@ monitest_SOURCES = drawlib.c flatpanel.c ggitext.c menu.c monitest.c \
 EXTRA_monitest_SOURCES = kgitune.c
 
 EXTRA_DIST = drawlib.h ggicolors.h ggitext.h kgitune.h menu.h monitest.h \
-	monitest.sgml window.h
+	window.h
