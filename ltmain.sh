@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.118 2004/12/28 13:50:56) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.127 2005/01/11 15:52:15) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.118 2004/12/28 13:50:56) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.127 2005/01/11 15:52:15) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.118 2004/12/28 13:50:56"
-package_revision=1.1667.2.118
+TIMESTAMP=" 1.1667.2.127 2005/01/11 15:52:15"
+package_revision=1.1667.2.127
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -460,11 +460,11 @@ func_show_eval ()
 # Echo version message to standard output and exit.
 func_version ()
 {
-    $SED '/^# '$PROGRAM' (GNU /,/# warranty; / {
+    $SED -n '/^# '$PROGRAM' (GNU /,/# warranty; / {
         s/^# //; s/^# *$//;
         s/\((C)\)[ 0-9,-]*\( [1-9][0-9]*\)/\1\2/;
         p;
-     }; d' < "$progpath"
+     }' < "$progpath"
      exit $EXIT_SUCCESS
 }
 
@@ -472,11 +472,11 @@ func_version ()
 # Echo short help message to standard output and exit.
 func_usage ()
 {
-    $SED '/^# Usage:/,/# -h/ {
+    $SED -n '/^# Usage:/,/# -h/ {
         s/^# //; s/^# *$//;
 	s/\$progname/'$progname'/;
 	p;
-    }; d' < "$progpath"
+    }' < "$progpath"
     $ECHO
     $ECHO "run \`$progname --help | more' for full usage"
     exit $EXIT_SUCCESS
@@ -486,7 +486,7 @@ func_usage ()
 # Echo long help message to standard output and exit.
 func_help ()
 {
-    $SED '/^# Usage:/,/# Report bugs to/ {
+    $SED -n '/^# Usage:/,/# Report bugs to/ {
         s/^# //; s/^# *$//;
 	s*\$progname*'$progname'*;
 	s*\$SHELL*'"$SHELL"'*;
@@ -494,10 +494,10 @@ func_help ()
 	s*\$LTCFLAGS*'"$LTCFLAGS"'*;
 	s*\$LD*'"$LD"'*;
 	s/\$with_gnu_ld/'"$with_gnu_ld"'/;
-	s/\$automake_version/'"`automake --version 2>/dev/null |$SED 1q`"'/;
-	s/\$autoconf_version/'"`autoconf --version 2>/dev/null |$SED 1q`"'/;
+	s/\$automake_version/'"`(automake --version) 2>/dev/null |$SED 1q`"'/;
+	s/\$autoconf_version/'"`(autoconf --version) 2>/dev/null |$SED 1q`"'/;
 	p;
-     }; d' < "$progpath"
+     }' < "$progpath"
     exit $EXIT_SUCCESS
 }
 
@@ -1350,6 +1350,46 @@ static const void *lt_preloaded_setup() {
     fi
 }
 
+# func_extract_an_archive dir oldlib
+func_extract_an_archive () {
+    $opt_debug
+    f_ex_an_ar_dir="$1"; shift
+    f_ex_an_ar_oldlib="$1"
+    $show "(cd $f_ex_an_ar_dir && $AR x $f_ex_an_ar_oldlib)"
+    $run eval "(cd \$f_ex_an_ar_dir && $AR x \$f_ex_an_ar_oldlib)" || exit $?
+    if ($AR t "$f_ex_an_ar_oldlib" | sort | sort -uc >/dev/null 2>&1); then
+     :
+    else
+      f_ex_an_ar_lib=`$ECHO "X$f_ex_an_ar_oldlib" | $Xsed -e 's%^.*/%%'`
+      func_warning "$modename: warning: object name conflicts; renaming object files" 1>&2
+      func_warning "$modename: warning: to ensure that they will not overwrite" 1>&2
+      $show "cp $f_ex_an_ar_oldlib $f_ex_an_ar_dir/$f_ex_an_ar_lib"
+      $run eval "cp \$f_ex_an_ar_oldlib \$f_ex_an_ar_dir/\$f_ex_an_ar_lib"
+      $AR t "$f_ex_an_ar_oldlib" | sort | uniq -c | while read count name
+      do
+	# We don't want to do anything to objects with unique names
+        test "$count" -eq 1 && continue
+	i=1
+	while test "$i" -le "$count"
+	  do
+	  # Put our $i before any first dot (extension)
+	  # Never overwrite any file
+	  name_to="$name"
+	  while test "X$name_to" = "X$name" || test -f "$f_ex_an_ar_dir/$name_to"
+	    do
+	    name_to=`$ECHO "X$name_to" | $Xsed -e "s/\([^.]*\)/\1-$i/"`
+	  done
+	  $show "(cd $f_ex_an_ar_dir && $AR x $f_ex_an_ar_lib '$name' && $MV '$name' '$name_to' && $AR d $f_ex_an_ar_lib '$name')"
+	  $run eval "(cd \$f_ex_an_ar_dir && $AR x \$f_ex_an_ar_lib '$name' && $MV '$name' '$name_to' && $AR d \$f_ex_an_ar_lib '$name')" || exit $?
+	  i=`expr $i + 1`
+	done
+      done
+      $show "$RM $f_ex_an_ar_dir/$f_ex_an_ar_lib"
+      $run eval "$RM \$f_ex_an_ar_dir/\$f_ex_an_ar_lib"
+    fi
+}
+
+
 # func_extract_archives gentop oldlib ...
 func_extract_archives () {
     $opt_debug
@@ -1368,6 +1408,7 @@ func_extract_archives () {
       esac
       my_xlib=`$ECHO "X$my_xlib" | $Xsed -e 's%^.*/%%'`
       my_xdir="$my_gentop/$my_xlib"
+      my_xdir="$my_gentop/$my_xlib"
 
       func_mkdir_p "$my_xdir"
 
@@ -1381,7 +1422,7 @@ func_extract_archives () {
 	  darwin_archive=$my_xabs
 	  darwin_curdir=`pwd`
 	  darwin_base_archive=`basename $darwin_archive`
-	  darwin_arches=`lipo -info "$darwin_archive" 2>/dev/null | $GREP Architectures 2>/dev/null`
+	  darwin_arches=`lipo -info "$darwin_archive" 2>/dev/null | $GREP Architectures 2>/dev/null || true`
 	  if test -n "$darwin_arches"; then
 	    darwin_arches=`$ECHO "$darwin_arches" | $SED -e 's/.*are://'`
 	    darwin_arch=
@@ -1390,12 +1431,10 @@ func_extract_archives () {
 	      func_mkdir_p "unfat-$$/${darwin_base_archive}-${darwin_arch}"
 	      lipo -thin $darwin_arch -output "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" "${darwin_archive}"
 	      # Remove the table of contents from the thin files.
-	      $AR -d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF 2>/dev/null || true
-	      $AR -d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF\ SORTED 2>/dev/null || true
-	      cd "unfat-$$/${darwin_base_archive}-${darwin_arch}"
-	      $AR -xo "${darwin_base_archive}"
-	      $RM "${darwin_base_archive}"
-	      cd "$darwin_curdir"
+	      $AR d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF 2>/dev/null || true
+	      $AR d "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}" __.SYMDEF\ SORTED 2>/dev/null || true
+	      func_extract_an_archive "unfat-$$/${darwin_base_archive}-${darwin_arch}" "${darwin_base_archive}"
+	      $RM "unfat-$$/${darwin_base_archive}-${darwin_arch}/${darwin_base_archive}"
 	    done # $darwin_arches
             ## Okay now we've a bunch of thin objects, gotta fatten them up :)
 	    darwin_filelist=`find unfat-$$ -type f | xargs basename | sort -u | $NL2SP`
@@ -1409,39 +1448,12 @@ func_extract_archives () {
 	    cd "$darwin_orig_dir"
 	  else
 	    cd $darwin_orig_dir
-	    (cd $my_xdir && $AR x $my_xabs) || exit $?
+	    func_extract_an_archive "$my_xdir" "$my_xabs"
 	  fi # $darwin_arches
 	fi # $run
       ;;
       *)
-	# We will extract separately just the conflicting names and we will
-	# no longer touch any unique names. It is faster to leave these
-	# extract automatically by $AR in one run.
-	$show "(cd $my_xdir && $AR x $my_xabs)"
-	$run eval "(cd \$my_xdir && $AR x \$my_xabs)" || exit $?
-	if ($AR t "$my_xabs" | sort | sort -uc >/dev/null 2>&1); then
-	  :
-	else
-	  func_warning "object name conflicts; renaming object files"
-	  func_warning "to ensure that they will not overwrite"
-	  $AR t "$my_xabs" | sort | uniq -cd | while read count name
-	  do
-	    i=1
-	    while test "$i" -le "$count"
-	    do
-	      # Put our $i before any first dot (extension)
-	      # Never overwrite any file
-	      name_to="$name"
-	      while test "X$name_to" = "X$name" || test -f "$my_xdir/$name_to"
-	      do
-		name_to=`$ECHO "X$name_to" | $Xsed -e "s/\([^.]*\)/\1-$i/"`
-	      done
-	      $show "(cd $my_xdir && $AR xN $i $my_xabs '$name' && $MV '$name' '$name_to')"
-	      $run eval "(cd \$my_xdir && $AR xN $i \$my_xabs '$name' && $MV '$name' '$name_to')" || exit $?
-	      i=`expr $i + 1`
-	    done
-	  done
-	fi
+        func_extract_an_archive "$my_xdir" "$my_xabs"
 	;;
       esac
       my_oldobjs="$my_oldobjs "`find $my_xdir -name \*.$objext -print -o -name \*.lo -print | $NL2SP`
@@ -2168,8 +2180,8 @@ func_mode_install ()
       destname=`$ECHO "X$dest" | $Xsed -e 's%^.*/%%'`
 
       # Not a directory, so check to see that there is only one file specified.
-      set dummy $files
-      test "$#" -gt 2 && \
+      set dummy $files; shift
+      test "$#" -gt 1 && \
 	func_fatal_help "\`$dest' is not a directory"
     fi
     case $destdir in
@@ -2261,10 +2273,9 @@ func_mode_install ()
 	fi
 
 	# See the names of the shared library.
-	set dummy $library_names
-	if test -n "$2"; then
-	  realname="$2"
-	  shift
+	set dummy $library_names; shift
+	if test -n "$1"; then
+	  realname="$1"
 	  shift
 
 	  srcname="$realname"
@@ -2578,6 +2589,7 @@ func_mode_link ()
     dllsearchpath=
     lib_search_path=`pwd`
     inst_prefix_dir=
+    new_inherited_linker_flags=
 
     avoid_version=no
     dlfiles=
@@ -3511,7 +3523,7 @@ func_mode_link ()
 	case $pass in
 	dlopen) libs="$dlfiles" ;;
 	dlpreopen) libs="$dlprefiles" ;;
-	link) libs="$deplibs %DEPLIBS% $dependency_libs $inherited_linker_flags" ;;
+	link) libs="$deplibs %DEPLIBS% $dependency_libs" ;;
 	esac
       fi
       if test "$linkmode,$pass" = "lib,dlpreopen"; then
@@ -3636,9 +3648,9 @@ func_mode_link ()
 	  else
 	    deplibs="$deplib $deplibs"
 	    if test "$linkmode" = lib ; then
-		case "$inherited_linker_flags " in
+		case "$new_inherited_linker_flags " in
 		    *" $deplib "*) ;;
-		    * ) inherited_linker_flags="$inherited_linker_flags $deplib" ;;
+		    * ) new_inherited_linker_flags="$new_inherited_linker_flags $deplib" ;;
 		esac
 	    fi
 	  fi
@@ -3699,8 +3711,8 @@ func_mode_link ()
 	      valid_a_lib=no
 	      case $deplibs_check_method in
 		match_pattern*)
-		  set dummy $deplibs_check_method
-		  match_pattern_regex=`expr "$deplibs_check_method" : "$2 \(.*\)"`
+		  set dummy $deplibs_check_method; shift
+		  match_pattern_regex=`expr "$deplibs_check_method" : "$1 \(.*\)"`
 		  if eval $ECHO \"X$deplib\" 2>/dev/null | $Xsed -e 10q \
 		    | $EGREP "$match_pattern_regex" > /dev/null; then
 		    valid_a_lib=yes
@@ -3797,12 +3809,18 @@ func_mode_link ()
 	*-*-darwin*)
 	  # Convert "-framework foo" to "foo.ltframework"
 	  if test -n "$inherited_linker_flags"; then
-	    inherited_linker_flags=`$ECHO "X$inherited_linker_flags" | $Xsed -e 's/-framework \([^ $]*\)/\1.ltframework/g'`
+	    tmp_inherited_linker_flags=`$ECHO "X$inherited_linker_flags" | $Xsed -e 's/-framework \([^ $]*\)/\1.ltframework/g'`
+	    new_inherited_linker_flags="$new_inherited_linker_flags $tmp_inherited_linker_flags"
 	  fi
 	  dependency_libs=`$ECHO "X $dependency_libs" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
 	  ;;
 	esac
-
+	if test "$linkmode,$pass" = "prog,link"; then
+	  compile_deplibs="$inherited_linker_flags $compile_deplibs"
+	  finalize_deplibs="$inherited_linker_flags $finalize_deplibs"
+	else
+	  compiler_flags="$compiler_flags $inherited_linker_flags"
+	fi
 	if test "$linkmode,$pass" = "lib,link" ||
 	   test "$linkmode,$pass" = "prog,scan" ||
 	   { test "$linkmode" != prog && test "$linkmode" != lib; }; then
@@ -4081,8 +4099,9 @@ func_mode_link ()
 	  if test -n "$old_archive_from_expsyms_cmds"; then
 	    # figure out the soname
 	    set dummy $library_names
-	    realname="$2"
-	    shift; shift
+	    shift
+	    realname="$1"
+	    shift
 	    libname=`eval \\$ECHO \"$libname_spec\"`
 	    # use dlname if we got it. it's perfectly good, no?
 	    if test -n "$dlname"; then
@@ -4365,7 +4384,7 @@ func_mode_link ()
 
 	  if test "$link_all_deplibs" != no; then
 	    # Add the search paths of all dependency libraries
-	    for deplib in $dependency_libs $inherited_linker_flags; do
+	    for deplib in $dependency_libs; do
 	      case $deplib in
 	      -L*) path="$deplib" ;;
 	      *.la)
@@ -4596,10 +4615,11 @@ func_mode_link ()
 	func_warning "\`-dlopen self' is ignored for libtool libraries"
 
       set dummy $rpath
-      test "$#" -gt 2 && \
+      shift
+      test "$#" -gt 1 && \
 	func_warning "ignoring multiple \`-rpath's for a libtool library"
 
-      install_libdir="$2"
+      install_libdir="$1"
 
       oldlibs=
       if test -z "$rpath"; then
@@ -4623,9 +4643,10 @@ func_mode_link ()
 	# Parse the version information argument.
 	save_ifs="$IFS"; IFS=':'
 	set dummy $vinfo 0 0 0
+	shift
 	IFS="$save_ifs"
 
-	test -n "$8" && \
+	test -n "$7" && \
 	  func_fatal_help "too many parameters to \`-version-info'"
 
 	# convert absolute version numbers to libtool ages
@@ -4634,9 +4655,9 @@ func_mode_link ()
 
 	case $vinfo_number in
 	yes)
-	  number_major="$2"
-	  number_minor="$3"
-	  number_revision="$4"
+	  number_major="$1"
+	  number_minor="$2"
+	  number_revision="$3"
 	  #
 	  # There are really only two kinds -- those that
 	  # use the current revision as the major version
@@ -4663,9 +4684,9 @@ func_mode_link ()
 	  esac
 	  ;;
 	no)
-	  current="$2"
-	  revision="$3"
-	  age="$4"
+	  current="$1"
+	  revision="$2"
+	  age="$3"
 	  ;;
 	esac
 
@@ -4990,8 +5011,8 @@ EOF
 		if test -n "$i" ; then
 		  libname=`eval \\$ECHO \"$libname_spec\"`
 		  deplib_matches=`eval \\$ECHO \"$library_names_spec\"`
-		  set dummy $deplib_matches
-		  deplib_match=$2
+		  set dummy $deplib_matches; shift
+		  deplib_match=$1
 		  if test `expr "$ldd_output" : ".*$deplib_match"` -ne 0 ; then
 		    newdeplibs="$newdeplibs $i"
 		  else
@@ -5032,8 +5053,8 @@ EOF
 		  if test -n "$i" ; then
 		    libname=`eval \\$ECHO \"$libname_spec\"`
 		    deplib_matches=`eval \\$ECHO \"$library_names_spec\"`
-		    set dummy $deplib_matches
-		    deplib_match=$2
+		    set dummy $deplib_matches; shift
+		    deplib_match=$1
 		    if test `expr "$ldd_output" : ".*$deplib_match"` -ne 0 ; then
 		      newdeplibs="$newdeplibs $i"
 		    else
@@ -5062,8 +5083,8 @@ EOF
 	  fi
 	  ;;
 	file_magic*)
-	  set dummy $deplibs_check_method
-	  file_magic_regex=`expr "$deplibs_check_method" : "$2 \(.*\)"`
+	  set dummy $deplibs_check_method; shift
+	  file_magic_regex=`expr "$deplibs_check_method" : "$1 \(.*\)"`
 	  for a_deplib in $deplibs; do
 	    name="`expr $a_deplib : '-l\(.*\)'`"
 	    # If $name is empty we are operating on a -L argument.
@@ -5131,8 +5152,8 @@ EOF
 	  done # Gone through all deplibs.
 	  ;;
 	match_pattern*)
-	  set dummy $deplibs_check_method
-	  match_pattern_regex=`expr "$deplibs_check_method" : "$2 \(.*\)"`
+	  set dummy $deplibs_check_method; shift
+	  match_pattern_regex=`expr "$deplibs_check_method" : "$1 \(.*\)"`
 	  for a_deplib in $deplibs; do
 	    name="`expr $a_deplib : '-l\(.*\)'`"
 	    # If $name is empty we are operating on a -L argument.
@@ -5266,7 +5287,7 @@ EOF
       case $host in
 	*-*-darwin*)
 	  newdeplibs=`$ECHO "X $newdeplibs" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
-	  inherited_linker_flags=`$ECHO "X $inherited_linker_flags" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
+	  new_inherited_linker_flags=`$ECHO "X $new_inherited_linker_flags" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
 	  deplibs=`$ECHO "X $deplibs" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
 	  ;;
       esac
@@ -5341,8 +5362,9 @@ EOF
 	eval shared_ext=\"$shrext_cmds\"
 	eval library_names=\"$library_names_spec\"
 	set dummy $library_names
-	realname="$2"
-	shift; shift
+	shift
+	realname="$1"
+	shift
 
 	if test -n "$soname_spec"; then
 	  eval soname=\"$soname_spec\"
@@ -6853,7 +6875,7 @@ library_names='$library_names'
 old_library='$old_library'
 
 # Linker flags that can not go in dependency_libs.
-inherited_linker_flags='$inherited_linker_flags'
+inherited_linker_flags='$new_inherited_linker_flags'
 
 # Libraries that this one depends upon.
 dependency_libs='$dependency_libs'
