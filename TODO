@@ -106,7 +106,7 @@ New X Target:
 - Compile on crusty old libc5 machines; replace any new-style X* symbols
   with backwards-compatible old-style symbols.
 - dbe helper for new display-X -- The dbe docs are here:
-  http://www.ibiblio.org/pub/X11/releases/DOCS/DBE/ 
+  http://ftp.x.org/pub/DOCS/DBE/
   and they will tell you that dbe allows you to create double-buffer
   areas for windows.  This would be used to implement frames, instead
   of "para-virtual area" like we do now, as an enhancement to giving
