@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.8 2003/04/12 22:32:17 cegger Exp $
+/* $Id: crossblit.c,v 1.9 2003/05/24 18:03:49 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1092,16 +1092,16 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 				done64:
 #ifdef GGI_LITTLE_ENDIAN
 					tmpa64 |= tmpa64 >> 16;
-					tmpa64 &= 0x00000000ffffffff;
+					tmpa64 &= 0x00000000ffffffffLL;
 					tmpa64 |= tmpb64 << 32;
-					tmpb64 &= 0x0000ffff00000000;
+					tmpb64 &= 0x0000ffff00000000LL;
 					tmpa64 |= tmpb64 << 16;
 					*((uint64 *)dstp) = tmpa64;
 #else
 					tmpb64 |= tmpa64 >> 16;
-					tmpb64 &= 0x00000000ffffffff;
+					tmpb64 &= 0x00000000ffffffffLL;
 					tmpb64 |= tmpa64 << 32;
-					tmpa64 &= 0x0000ffff00000000;
+					tmpa64 &= 0x0000ffff00000000LL;
 					tmpb64 |= tmpa64 << 16;
 					*((uint64 *)dstp) = tmpb64;
 #endif
