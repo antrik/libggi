@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.8 2004/01/25 12:42:55 cegger Exp $
+/* $Id: internal.h,v 1.9 2004/01/25 12:49:55 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -139,55 +139,71 @@ int _ggiColormapMatchByIdx(ggi_visual_t vis, size_t idx1, size_t idx2,
 			   enum ggi_colormap_region region);
 
 __END_DECLS
+
+
 /*
 ******************************************************************************
  Macros for quickly accessing performance critical LibGGI functions.
 ******************************************************************************
 */
+
 #define LIBGGIMapColor(vis,col)		(vis->opcolor->mapcolor(vis,col))
 #define LIBGGIUnmapPixel(vis,pixel,col)	\
 	(vis->opcolor->unmappixel(vis,pixel,col))
+
 #define LIBGGIDrawPixel(vis,x,y)	(vis->opdraw->drawpixel(vis,x,y))
 #define LIBGGIDrawPixelNC(vis,x,y)	(vis->opdraw->drawpixel_nc(vis,x,y))
 #define LIBGGIPutPixel(vis,x,y,col)	(vis->opdraw->putpixel(vis,x,y,col))
 #define LIBGGIPutPixelNC(vis,x,y,col)	(vis->opdraw->putpixel_nc(vis,x,y,col))
 #define LIBGGIGetPixel(vis,x,y,col)	(vis->opdraw->getpixel(vis,x,y,col))
+
 #define LIBGGIIdleAccel(vis)		(vis->opdisplay->idleaccel(vis))
+
+
 /*
 ******************************************************************************
  Macros to access members of LibGGI structures.
  Please use these instead of directly referencing the members.
 ******************************************************************************
 */
+
 #define LIBGGI_EXT(vis,extid)	((vis)->extlist[(extid)].priv)
 #define LIBGGI_EXTAC(vis,extid)	((vis)->extlist[(extid)].attachcount)
 #define LIBGGI_EXT_CHECK(vis, extid)	(((vis)->numknownext > (extid)) ? \
 						LIBGGI_EXT((vis), (extid)) : NULL)
 #define LIBGGI_FLAGS(vis)	((vis)->flags)
 #define LIBGGI_FD(vis)		((vis)->fd)
+
 #define LIBGGI_MODE(vis)	((vis)->mode)
 #define LIBGGI_PIXFMT(vis)	((vis)->pixfmt)
 #define LIBGGI_GC(vis)		((vis)->gc)
 #define LIBGGI_GC_FGCOLOR(vis)	((vis)->gc->fg_color)
 #define LIBGGI_GC_BGCOLOR(vis)	((vis)->gc->bg_color)
 #define LIBGGI_APPLIST(vis)	((vis)->app_dbs)
+
 #define LIBGGI_PRIVLIST(vis)	((vis)->priv_dbs)
 #define LIBGGI_APPBUFS(vis)	(LIBGGI_APPLIST(vis)->bufs)
 #define LIBGGI_PRIVBUFS(vis)	(LIBGGI_PRIVLIST(vis)->bufs)
 #define LIBGGI_CURREAD(vis)	((vis)->r_frame->read)
 #define LIBGGI_CURWRITE(vis)	((vis)->w_frame->write)
+
 #define LIBGGI_DLHANDLE(vis)	((vis)->dlhandle)
 #define LIBGGI_PRIVATE(vis)	((vis)->targetpriv)
 #define LIBGGI_DRVPRIV(vis,idx)	((vis)->drvpriv[(idx)])
+
 #define LIBGGI_X(vis)		((vis)->mode->visible.x)
 #define LIBGGI_Y(vis)		((vis)->mode->visible.y)
 #define LIBGGI_VIRTX(vis)	((vis)->mode->virt.x)
 #define LIBGGI_VIRTY(vis)	((vis)->mode->virt.y)
 #define LIBGGI_GT(vis)		((vis)->mode->graphtype)
+
 #define LIBGGI_FB_SIZE(mode)	(((GT_SIZE((mode)->graphtype)*(mode)->virt.x*(mode)->virt.y)+7)/8)
 #define LIBGGI_FB_R_STRIDE(vis)	((vis)->r_frame->buffer.plb.stride)
 #define LIBGGI_FB_W_STRIDE(vis)	((vis)->w_frame->buffer.plb.stride)
+
 #define LIBGGI_R_PLAN(vis)	((vis)->r_frame->buffer.plan)
 #define LIBGGI_W_PLAN(vis)	((vis)->w_frame->buffer.plan)
+
 #define LIBGGI_PAL(vis)		((vis)->palette)
-#endif				/* _GGI_INTERNAL_H */
+
+#endif	/* _GGI_INTERNAL_H */
