@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.1 2001/05/12 23:03:54 cegger Exp $
+/* $Id: monitest.c,v 1.2 2001/05/13 19:49:18 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -201,7 +201,7 @@ void moiree(ggi_visual_t vis)
 
 char * helptext ={
   "GGI screntest program               \n"
-  "(c) H. Niemann, $Id: monitest.c,v 1.1 2001/05/12 23:03:54 cegger Exp $               \n"
+  "(c) H. Niemann, $Id: monitest.c,v 1.2 2001/05/13 19:49:18 cegger Exp $               \n"
   "h:   this help screen               \n"
   "q:   quit this testscreen           \n"
   ""};
@@ -330,6 +330,9 @@ int changeresmenu(void)
 
 	int nextresindex,prevresindex;
 	int nextgtindex,prevgtindex;
+
+	nextresindex = prevresindex = 0;
+	nextgtindex = prevgtindex = 0;
 
 	default_menu(&cm, vis);
 
