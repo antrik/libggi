@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.48 2002/10/20 20:55:43 skids Exp $
+dnl $Id: configure.in,v 1.49 2002/10/20 21:28:42 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -326,54 +326,54 @@ if test "$do_noswar" = "yes"; then
 fi
 
 AC_CC_CAN_EMMS
-if test "$do_mmx" = "yes"; then 
-   if test "$ac_cc_can_emms" != "yes"; then
+if test "x$do_mmx" = "xyes"; then 
+   if test "x$ac_cc_can_emms" != "xyes"; then
       AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "build"; then
+if test "x$do_mmx" = "xbuild"; then
    AC_CPU_CAN_EMMS
-   if test "$ac_cpu_can_emms"; then
+   if test "x$ac_cpu_can_emms" = "xyes"; then
       do_mmx=auto
    else
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "auto"; then
-   if test "$ac_cc_can_emms"; then
+if test "x$do_mmx" = "xauto"; then
+   if test "x$ac_cc_can_emms" = "xyes"; then
       do_mmx=yes
    else
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "yes"; then 
+if test "x$do_mmx" = "xyes"; then 
    AC_DEFINE(DO_SWAR_MMX)
 fi
 
 AC_CC_CAN_FEMMS
-if test "$do_mmx" = "yes"; then 
-   if test "$ac_cc_can_femms" != "yes"; then
+if test "x$do_mmx" = "xyes"; then 
+   if test "x$ac_cc_can_femms" != "xyes"; then
       AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "build"; then
+if test "x$do_mmx" = "xbuild"; then
    AC_CPU_CAN_FEMMS
-   if test "$ac_cpu_can_femms"; then
+   if test "x$ac_cpu_can_femms" = "xyes"; then
       do_mmx=auto
    else
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "auto"; then
-   if test "$ac_cc_can_femms"; then
+if test "x$do_mmx" = "xauto"; then
+   if test "x$ac_cc_can_femms" = "xyes"; then
       do_mmx=yes
    else
       do_mmx=no
    fi
 fi
-if test "$do_mmx" = "yes"; then 
+if test "x$do_mmx" = "xyes"; then 
    AC_DEFINE(DO_SWAR_3DNOW)
 fi
 
