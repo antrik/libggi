@@ -8,9 +8,9 @@ Synopsis
 
 ::
 
-  display-directx
+  display-directx:	[ [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
 
-  display-directxnt
+  display-directxnt:	[ [-noinput] [-physz==<sizex>,<sizey>[dpi]] ]
 
 
 Description
@@ -19,4 +19,30 @@ Description
 
 Used for Win32 DirectX port of libGGI.
 
-Use `display-directxnt` on NT4 system.
+Use `display-directxnt` on NT4 and Win2k systems.
+
+
+Options
+-------
+
+``-noinput``
+    DirectX events sent to the window are not captured and merged with
+    any other LibGII input sources. This allows one to take input from
+    raw devices without receiving duplicate events should DirectX also
+    be configured to use the device.
+
+``-physz==<sizex>,<sizey>[dpi]``
+    This option will override the physical screen size reported by the
+    DirectX, which affects applications which wish to remain resolution
+    independent.  :p:`sizex`,:p:`sizey` are the x,y size of the entire
+    screen (not just the DirectX window containing the visual) in
+    millimeters, unless the optional ``dpi`` string is affixed, in
+    which case, they represent resolution in dots-per-inch. Yes, there
+    are two equals signs there, for reasons of compatibility with
+    other targets.
+
+
+Features
+--------
+
+- DirectBuffer always available.
