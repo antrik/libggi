@@ -1,5 +1,13 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2.0: 2001-08-11
+* Huge documentation updates.
+* svgalib-target
+  - added frame support
+  - misc bug-fixes
+^L
+
+
 New in 2.0beta4: 2001-07-10
 * Misc bugfixes (see ChangeLog).
 * Huge documentation updates.
