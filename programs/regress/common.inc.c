@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.3 2004/05/16 12:13:17 cegger Exp $
+/* $Id: common.inc.c,v 1.4 2004/05/25 21:44:34 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -21,8 +21,8 @@
 #include <stdarg.h>
 
 
-#define MIN(a, b)	(a < b) ? (a) : (b)
-#define MAX(a, b)	(a > b) ? (a) : (b)
+#define EXPECTED2PASS	0
+#define EXPECTED2FAIL	1
 
 
 /* global variables */
@@ -31,13 +31,16 @@ static int num_successfultests = 0;
 static int num_failedtests = 0;
 static int num_asserterrors = 0;
 
+static int expected_current_testresult = EXPECTED2PASS;
 
-static void printteststart(const char *file, const char *funcname)
+
+static void printteststart(const char *file, const char *funcname, int expected)
 {
-	printf("%s: Run %s...", file, funcname);
+	printf("%s: Running %s...", file, funcname);
 	fflush(stdout);
 
 	num_tests++;
+	expected_current_testresult = expected;
 }
 
 
@@ -51,7 +54,14 @@ static void printteststart(const char *file, const char *funcname)
 
 static void printsuccess(void)
 {
-	printf("passed\n");
+	switch (expected_current_testresult) {
+	case EXPECTED2PASS:
+		printf("passed, as expected\n");
+		break;
+	case EXPECTED2FAIL:
+		printf("passed - UNEXPECTED!\n");
+		break;
+	}
 	fflush(stdout);
 
 	num_successfultests++;
@@ -64,7 +74,14 @@ static void printfailure(const char *fmt, ...)
 
 	va_start(ap, fmt);
 
-	printf("failed!\n");
+	switch (expected_current_testresult) {
+	case EXPECTED2PASS:
+		printf("failed - UNEXPECTED!\n");
+		break;
+	case EXPECTED2FAIL:
+		printf("failed, as expected\n");
+		break;
+	}
 	vprintf(fmt, ap);
 	fflush(stdout);
 
