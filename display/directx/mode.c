@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2004/09/13 09:42:12 pekberg Exp $
+/* $Id: mode.c,v 1.19 2004/09/13 10:59:37 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -275,7 +275,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
 
-	priv->BPP = mode->graphtype / 8;
+	priv->BPP = GT_ByPP(mode->graphtype);
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
