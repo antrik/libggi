@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/09/12 20:53:57 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/10/29 22:41:37 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -172,20 +172,20 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->inputs = VCSA_INP_KBD | VCSA_INP_MOUSE;
 	priv->flags = 0;
 
-	if (toupper(options[OPT_NOINPUT].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOINPUT].result[0]) != 'N') {
 		priv->inputs = 0;
 	}
-	if (toupper(options[OPT_NOKBD].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOKBD].result[0]) != 'N') {
 		priv->inputs &= ~VCSA_INP_KBD;
 	}
-	if (toupper(options[OPT_NOMOUSE].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_NOMOUSE].result[0]) != 'N') {
 		priv->inputs &= ~VCSA_INP_MOUSE;
 	}
 
-	if (toupper(options[OPT_ASCII].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_ASCII].result[0]) != 'N') {
 		priv->flags |= VCSA_FLAG_ASCII;
 	}
-	if (toupper(options[OPT_SHADE].result[0]) != 'N') {
+	if (toupper((uint8)options[OPT_SHADE].result[0]) != 'N') {
 		priv->flags |= VCSA_FLAG_SHADE;
 	}
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 

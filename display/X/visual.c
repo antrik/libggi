@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2004/10/28 16:16:42 cegger Exp $
+/* $Id: visual.c,v 1.36 2004/10/29 22:44:29 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -500,7 +500,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
         }
 
-	if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_inputxwin_arg _args;
 		gii_input *inp;
                 
