@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/10/31 14:25:04 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/11/03 13:29:25 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -210,8 +210,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	GGIDPRINT("display-terminfo: initializing %s on %s.\n", term_type, ( ( *term_path == '\0' ) ? "stdin/stdout" : term_path ));
 
-	priv = TERMINFO_PRIV(vis) = (struct TIhooks *)malloc(sizeof(struct TIhooks));
+	priv = (struct TIhooks *)malloc(sizeof(struct TIhooks));
 	if (priv == NULL) return GGI_ENOMEM;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			       &(priv->physzflags), &(priv->physz)); 
