@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/01/09 18:14:16 cegger Exp $
+/* $Id: visual.c,v 1.7 2003/01/16 00:36:34 skids Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -30,10 +30,14 @@
 #include "kgi/config.h"
 #include <string.h>
 #include <ggi/display/kgi.h>
+#include <string.h>
+#include <stdlib.h>
 
 static const gg_option optlist[] =
 {
-	{ "device", "/dev/graphic,/dev/kgi/graphic" }
+	{ "device", "/dev/graphic,/dev/kgi/graphic" },
+	{ "no3d", "no" },
+	{ "swatchsize",  "auto" }
 };
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
@@ -42,11 +46,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	kgi_version_t version = { 0, 0, 1, 0 };
 	gg_option options[KGI_NUM_OPTS];
 
-	LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_kgi_priv));
+	LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_kgi_priv));
 	if(LIBGGI_PRIVATE(vis) == NULL)
 		return GGI_ENOMEM;
 
-	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
 	if(LIBGGI_GC(vis) == NULL)
 		goto err_freepriv;
 	
@@ -62,6 +66,18 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if(kgiInit(&KGI_CTX(vis), "ggi", &version, options) != KGI_EOK){
 		GGIDPRINT_LIBS("Unable to initialize kgi\n");
 		goto err_freegc;
+	}
+
+	KGI_PRIV(vis)->use3d = (options[KGI_OPT_NO3D].result[0] == 'n');
+
+	if (strncmp(options[KGI_OPT_SWATCHSIZE].result, "auto", 4)) {
+		KGI_PRIV(vis)->swatch_size = 0;
+	} else {
+		KGI_PRIV(vis)->swatch_size = 
+		  strtoul(options[KGI_OPT_SWATCHSIZE].result, NULL, 10);
+		if (KGI_PRIV(vis)->swatch_size < 2048) {
+			KGI_PRIV(vis)->swatch_size = -1;
+		}
 	}
 
 	/* accel sublib private data */

@@ -9,7 +9,7 @@
 #include <ggi/display/kgi.h>
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
-	const kgi_version_t *version, const gg_option *options)
+		    const kgi_version_t *version, const gg_option *options)
 {
 	char fopt[2048], *fname;
 	union {

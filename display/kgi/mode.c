@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2002/12/23 13:14:54 ortalo Exp $
+/* $ix: mode.c,v 1.4 2002/12/23 13:14:54 ortalo Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -66,19 +66,92 @@ static ggi_graphtype image_mode_to_graphtype(kgi_image_mode_t *mode)
 	return GT_INVALID;
 }
 
-
-/*
-int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
+static void GGI_kgi_mode2ggi(ggi_mode *tm, kgi_image_mode_t *mode)
 {
-	GGIDPRINT("setting display frame %d\n", num);
+	tm->graphtype = image_mode_to_graphtype(mode);
+	tm->visible.x = mode->size.x;
+	tm->visible.y = mode->size.y;
+	tm->virt.x = mode->virt.x;
+	tm->virt.y = mode->virt.y;
+	tm->size.x = GGI_AUTO;
+	tm->size.y = GGI_AUTO;
+	tm->dpp.x = 1;
+	tm->dpp.y = 1;
+}
 
-	kgiSetDisplayOrigin(&KGI_CTX(vis), 0, num*LIBGGI_MODE(vis)->visible.y);
+int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
+{
+	ggi_kgi_priv *priv;
 
-	vis->d_frame_num = num;
-	
+	priv = LIBGGI_PRIVATE(vis);
+
+	if (x > (LIBGGI_VIRTX(vis) - LIBGGI_X(vis))) return GGI_EARGINVAL;
+	if (y > (LIBGGI_VIRTY(vis) - LIBGGI_Y(vis))) return GGI_EARGINVAL;
+	vis->origin_x = x;
+	vis->origin_y = y;
+
+	if (priv->origin_changed) return priv->origin_changed(vis);
+
+	/* Place for Paul to put the default KGI interface */
+
 	return 0;
 }
-*/
+
+int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
+{
+	ggi_kgi_priv *priv;
+
+	priv = LIBGGI_PRIVATE(vis);
+
+	if ((num < 0) || (num >= LIBGGI_MODE(vis)->frames))
+		return GGI_EARGINVAL;
+	vis->d_frame_num = num;
+
+	if (priv->origin_changed) return priv->origin_changed(vis);
+
+	/* Place for Paul to put the default KGI interface */
+
+	return 0;
+}
+
+int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
+{
+	ggi_kgi_priv *priv;
+        ggi_directbuffer *db;
+
+	db = _ggi_db_find_frame(vis, num);
+
+        if (db == NULL) return -1;
+
+        vis->r_frame_num = num;
+        vis->r_frame = db;
+
+	priv = LIBGGI_PRIVATE(vis);
+
+	if (priv->rwframes_changed) return priv->rwframes_changed(vis);
+
+	return 0;
+}
+
+int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
+{
+	ggi_kgi_priv *priv;
+        ggi_directbuffer *db;
+
+	db = _ggi_db_find_frame(vis, num);
+
+        if (db == NULL) return -1;
+
+        vis->w_frame_num = num;
+        vis->w_frame = db;
+
+	priv = LIBGGI_PRIVATE(vis);
+
+	if (priv->rwframes_changed) return priv->rwframes_changed(vis);
+
+	return 0;
+}
+
 
 int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
@@ -140,23 +213,28 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return -1;
 }
 
+int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *mode)
+{
+        memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+        return 0;
+}
 
 int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 {
 	const kgic_mapper_resource_info_result_t *fb;
-	int id, i;
+	int id, i, stride;
 	char sugname[256], args[256];
 	int err;
 	kgi_u8_t *fb_ptr;
+	kgi_size_t pad;
 
 	if (vis == NULL) {
 		GGIDPRINT("Visual==NULL\n");
-		return -1;
+		return GGI_EARGINVAL;
 	}
 
 	err = GGI_kgi_checkmode(vis, tm);
-	if(err)
-		return err;
+	if (err) return err;
 
 	if(kgiSetMode(&KGI_CTX(vis)) != KGI_EOK){
 		GGIDPRINT_LIBS("Unable to set mode \n");
@@ -201,21 +279,26 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	GGIDPRINT_LIBS("Pixelformat set\n");
 
-	fb_ptr = KGI_PRIV(vis)->fb;
+	(char *)fb_ptr = (char *)(KGI_PRIV(vis)->fb);
+
+	/* "Page" align the frames.  Some accels need this. */
+	pad = 0;
+	stride = (GT_SIZE(tm->graphtype) * tm->virt.x + 7) / 8;
+	if ((stride * tm->virt.y) & 4095)
+		pad = 4096 - ((stride * tm->virt.y) % 4096);
 	for (i = 0; i < tm->frames; ++i) {
-	
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		LIBGGI_APPBUFS(vis)[i]->type = 
+			GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
 		LIBGGI_APPBUFS(vis)[i]->read = fb_ptr;
 		LIBGGI_APPBUFS(vis)[i]->write = fb_ptr;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = 
-			(GT_SIZE(tm->graphtype)*tm->virt.x + 7) / 8;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = stride;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = 
 			LIBGGI_PIXFMT(vis);
-		
-		fb_ptr += LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride*tm->virt.y;
+
+		(char *)fb_ptr += stride * tm->virt.y + pad;
 	}
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
@@ -229,11 +312,8 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	for(id = 1; 0 == GGI_kgi_getapi(vis, id, sugname, args); ++id){
 		if(_ggiOpenDL(vis, sugname, args, NULL)){
 			GGIDPRINT_LIBS("kgi: can't open %s\n", sugname);
-			
-			if (id < 4)
-				return GGI_EFATAL;
-			else
-				continue;
+			if (id < 4) return GGI_EFATAL;
+			else continue;
 		}
 		GGIDPRINT_LIBS("kgi: loaded %s\n", sugname);
 	}
@@ -243,10 +323,19 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		vis->opcolor->setpalvec = GGI_kgi_setpalvec;
 	}
 
+	/* Load generic frame/origin handling functions */
+
+	vis->opdraw->setorigin = GGI_kgi_set_origin;
+        vis->opdraw->setdisplayframe = GGI_kgi_set_display_frame;
+        vis->opdraw->setreadframe = GGI_kgi_set_read_frame;
+        vis->opdraw->setwriteframe = GGI_kgi_set_write_frame;
+
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;
 }
+
+
 
 /**********************************/
 /* check any mode (text/graphics) */
@@ -254,9 +343,11 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
 	kgi_image_mode_t mode;
+	int frames, virty;
 
-	if (vis == NULL)
-		return -1;
+	if (vis == NULL || tm == NULL) return GGI_EARGINVAL;
+
+	frames = tm->frames;
 
 	memset(&mode, 0, sizeof(kgi_image_mode_t));
 
@@ -271,11 +362,11 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 		
 	case GT_TRUECOLOR:
 		mode.fam |= KGI_AM_COLORS;
-		mode.bpfa[0] = GT_DEPTH(tm->graphtype) / 3;
-		mode.bpfa[1] = GT_DEPTH(tm->graphtype) / 3 +
-			       GT_DEPTH(tm->graphtype) % 3;
-		mode.bpfa[2] = GT_DEPTH(tm->graphtype) / 3;
-		mode.bpfa[3] = GT_SIZE(tm->graphtype) - GT_DEPTH(tm->graphtype);
+		mode.bpfa[0]= GT_DEPTH(tm->graphtype) / 3;
+		mode.bpfa[1]= GT_DEPTH(tm->graphtype) / 3 +
+			      GT_DEPTH(tm->graphtype) % 3;
+		mode.bpfa[2]= GT_DEPTH(tm->graphtype) / 3;
+		mode.bpfa[3]= GT_SIZE(tm->graphtype) - GT_DEPTH(tm->graphtype);
 		if (mode.bpfa[3])
 			mode.fam |= KGI_AM_APPLICATION;
 		break;
@@ -294,7 +385,32 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 	mode.size.x = tm->visible.x;
 	mode.size.y = tm->visible.y;
 	mode.virt.x = tm->virt.x;
-	mode.virt.y = tm->virt.y;
+
+	if (frames > 1) {
+		kgi_size_t pad;
+
+		/* Hack... we essentially cannot autosize vertically
+		 * with frames > 1.  Limitation of KGI.  Should be fixed
+		 * in KGI (by adding GGI "frames" support, which will have
+		 * to go under another name).
+		 */
+		if (mode.virt.y == GGI_AUTO)
+			mode.virt.y = tm->visible.y;
+		if (mode.virt.x == GGI_AUTO) 
+			mode.virt.x = tm->visible.x;
+
+		/* Most targets benefit from or require page-aligned frames. */
+		virty = mode.virt.y;
+		pad = mode.virt.y * mode.virt.x * GT_SIZE(tm->graphtype) / 8;
+		if (pad & 4095) { pad /= 4096; pad++; pad *= 4096; }
+		pad *= frames;
+		mode.virt.y = pad / (mode.virt.x * GT_SIZE(tm->graphtype) / 8);
+		mode.virt.y++;
+	}
+	else {
+		virty = mode.virt.y;
+		mode.virt.y = tm->virt.y;
+	}
 
 	GGIDPRINT("%d, %d, %d, %d\n", mode.size.x, mode.size.y, mode.virt.x, mode.virt.y);
 
@@ -313,39 +429,20 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 		GGIDPRINT_LIBS("Unable to check mode\n");
 		return -1;
 	}
-	GGI_kgi_getmode(vis, tm);
-	
-	return 0;
-}
-
-/************************/
-/* get the current mode */
-/************************/
-int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *tm)
-{
-	kgi_image_mode_t mode;
-	
-	GGIDPRINT("In GGI_kgi_getmode(%p,%p)\n",vis,tm);
-	if (vis == NULL)
-		return -1;
-
 	memset(&mode, 0, sizeof(kgi_image_mode_t));
-	kgiGetImageMode(&KGI_CTX(vis), 0, &mode);
+	if (kgiGetImageMode(&KGI_CTX(vis), 0, &mode)) {
+		GGIDPRINT_LIBS("Unable to get mode\n");
+		return GGI_EFATAL;
+	}
 	kgiPrintImageMode(&mode);
+	GGI_kgi_mode2ggi(tm, &mode);
+	tm->frames = frames;
+	tm->virt.y = virty;
+	if (frames < 2) tm->virt.y = mode.virt.y;
 
-	tm->graphtype = image_mode_to_graphtype(&mode);
-	tm->frames = 1;
-	tm->visible.x = mode.size.x;
-	tm->visible.y = mode.size.y;
-	tm->virt.x = mode.virt.x;
-	tm->virt.y = mode.virt.y;
-	tm->size.x = GGI_AUTO;
-	tm->size.y = GGI_AUTO;
-	tm->dpp.x = 1;
-	tm->dpp.y = 1;
-	
 	return 0;
 }
+
 
 /*************************/
 /* set the current flags */
@@ -353,5 +450,7 @@ int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *tm)
 int GGI_kgi_setflags(ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
+	/* Only raise supported flags */
+	LIBGGI_FLAGS(vis) &= ~GGIFLAG_ASYNC;
 	return 0;
 }
