@@ -6,7 +6,6 @@ SUBDIRS = warp-ggi
 # cube3d is nice - we install it
 EXTRA_PROGRAMS = cube3d
 bin_PROGRAMS = ${SHMDEMOS}
-man_MANS = cube3d.6
 
 # findleaks.c showaccel2.c tunemode.c
 noinst_PROGRAMS = demo flying_ggis wrap pageflip saver slimy stars textdemo
