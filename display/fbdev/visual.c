@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.3 2001/06/16 22:52:53 ggibecka Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -154,7 +154,7 @@ static accel_info accel_strings[] = {
 	{ NULL, 0, 0 },			/* Sun bwtwo			*/
 	{ NULL, 0, 0 },			/* Sun cgthree			*/
 	{ NULL, 0, 0 },			/* Sun tcx			*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV
+	{ "mga-g400", 1, GGI_FBDEV_4BPP_REV
 	},				/* Matrox G400			*/
 	{ NULL, 0, 0 },			/* nVidia RIVA 128		*/
 	{ NULL, 0, 0 },			/* nVidia RIVA TNT		*/
@@ -724,6 +724,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
+	GGIDPRINT("display-fbdev: Got private mem.\n");
 	
 	priv->fb_ptr = NULL;
 	priv->need_timings = 1;
@@ -755,6 +756,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	} else {
 		fbnum = get_fbdev();
 	}
+
+	GGIDPRINT("display-fbdev: Parsing input options.\n");
 	
 	priv->inputs = FBDEV_INP_KBD | FBDEV_INP_MOUSE;
 
@@ -772,6 +775,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		novt = 1;
 	}
 
+	GGIDPRINT("display-fbdev: Parsing physz options.\n");
 	do {
 		int err;
 		err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
@@ -782,6 +786,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	} while (0);
 
+	GGIDPRINT("display-fbdev: Setting up locks.\n");
 	ggLock(_ggi_global_lock);
 	if (refcount == 0) {
 		_ggi_fbdev_lock = ggLockCreate();
