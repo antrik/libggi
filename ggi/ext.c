@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.1 2005/01/13 22:18:00 cegger Exp $
+/* $Id: ext.c,v 1.2 2005/01/25 12:01:27 pekberg Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -38,7 +38,7 @@
 
 static int numextensions = 0;
 
-static GG_TAILQ_HEAD(, ggi_extension) _ggiExtension
+static GG_TAILQ_HEAD(_ggiExtension, ggi_extension) _ggiExtension
 		= GG_TAILQ_HEAD_INITIALIZER(_ggiExtension);
 
 

@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.37 2005/01/13 23:15:39 cegger Exp $
+/* $Id: init.c,v 1.38 2005/01/25 12:01:27 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -49,7 +49,7 @@ void                 *_ggiConfigHandle = NULL;
 static struct {
 	void		*mutex;		/* Lock when changing.. */
 	int		 visuals;	/* # of visuals active */
-	GG_SLIST_HEAD(, ggi_visual) visual; /* Linked list of all visuals */
+	GG_SLIST_HEAD(visual, ggi_visual) visual; /* Linked list of all visuals */
 } _ggiVisuals;	/* This is for remembering visuals. */
 
 static int            _ggiLibIsUp      = 0;
