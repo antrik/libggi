@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:11 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/04/14 22:51:02 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -57,10 +57,13 @@ static void _GGIfreedbs(ggi_visual *vis)
 static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 {
 	char *fbaddr;
+	ggi_memory_priv *priv;
+
+	priv = MEMORY_PRIV(vis);
 
 	_GGIfreedbs(vis);
 
-	if (MEMORY_PRIV(vis)->memtype==MT_MALLOC) {
+	if (priv->memtype==MT_MALLOC) {
 
 		fbaddr = malloc(LIBGGI_FB_SIZE(mode));
 
@@ -69,11 +72,16 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 			return -1;
 		}
 	} else {
-		fbaddr = MEMORY_PRIV(vis)->memptr;
+		fbaddr = priv->memptr;
 	}
 
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
+	if (priv->r_mask && priv->g_mask && priv->b_mask) {
+		LIBGGI_PIXFMT(vis)->red_mask   = priv->r_mask;
+		LIBGGI_PIXFMT(vis)->green_mask = priv->g_mask;
+		LIBGGI_PIXFMT(vis)->blue_mask  = priv->b_mask;
+	}
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	/* Set up directbuffer */
@@ -173,6 +181,9 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
+	ggi_memory_priv *priv;
+
+	priv = MEMORY_PRIV(vis);
 
 	GGIDPRINT("display-memory: GGIsetmode: called\n");
 
@@ -188,14 +199,14 @@ int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
 	if (err)
 		return err;
 
-	if (MEMORY_PRIV(vis)->inputbuffer) {
-		MEMORY_PRIV(vis)->inputbuffer->visx=mode->visible.x;
-		MEMORY_PRIV(vis)->inputbuffer->visy=mode->visible.y;
-		MEMORY_PRIV(vis)->inputbuffer->virtx=mode->virt.x;
-		MEMORY_PRIV(vis)->inputbuffer->virty=mode->virt.y;
-		MEMORY_PRIV(vis)->inputbuffer->frames=mode->frames;
-		MEMORY_PRIV(vis)->inputbuffer->type=mode->graphtype;
-		MEMORY_PRIV(vis)->inputbuffer->visframe=0;
+	if (priv->inputbuffer) {
+		priv->inputbuffer->visx=mode->visible.x;
+		priv->inputbuffer->visy=mode->visible.y;
+		priv->inputbuffer->virtx=mode->virt.x;
+		priv->inputbuffer->virty=mode->virt.y;
+		priv->inputbuffer->frames=mode->frames;
+		priv->inputbuffer->type=mode->graphtype;
+		priv->inputbuffer->visframe=0;
 	}
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);

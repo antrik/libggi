@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.3 2002/04/14 22:51:02 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -35,11 +35,14 @@
 static const gg_option optlist[] =
 {
 	{ "input", "" },
-	{ "physz", "0,0" }
+	{ "physz", "0,0" },
+	{ "pixfmt", "" }
+
 };
 
 #define OPT_INPUT	0
 #define OPT_PHYSZ	1
+#define OPT_PIXFMT	2
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -177,6 +180,42 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			priv->memptr = argptr;
 			if (priv->memptr)
 				priv->memtype=MT_EXTERN;
+		}
+	}
+
+	/* Explicit pixelformat: braindead parser until GGI core gets a 
+	 * generic function.  Note we know the string is NULL terminated.
+	 */
+	if (options[OPT_PIXFMT].result[0]) {
+		char *ptr;
+		ggi_pixel *curr;
+
+		ptr = options[OPT_PIXFMT].result;
+		curr = NULL;
+
+		while (*ptr) {
+			switch (*ptr) {
+				unsigned long nbits;
+			case 'p': /* pad */
+				curr = NULL;
+				break;
+			case 'r':
+				curr = &(priv->r_mask);
+				break;
+			case 'g':
+				curr = &(priv->g_mask);
+				break;
+			case 'b':
+				curr = &(priv->b_mask);
+				break;
+			default:
+				nbits = strtoul(ptr, NULL, 10);
+				priv->r_mask = priv->r_mask << nbits;
+				priv->g_mask = priv->g_mask << nbits;
+				priv->b_mask = priv->b_mask << nbits;
+				if(curr != NULL) *curr |= ((1 << nbits) - 1);
+			}
+			ptr++;
 		}
 	}
 

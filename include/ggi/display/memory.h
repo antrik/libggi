@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: memory.h,v 1.2 2002/04/14 22:51:02 skids Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -67,6 +67,7 @@ typedef struct {
 	void *memptr;
 	inpbuffer *inputbuffer;
 	int  inputoffset;
+	ggi_pixel r_mask, g_mask, b_mask;
 #ifdef HAVE_SHM
 	int	shmid;
 #endif

@@ -21,6 +21,7 @@
 <arg choice="plain">:</arg>
 <arg><option>-input</option></arg>
 <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+<arg><option>-pixfmt=<replaceable>format_string</replaceable></option></arg>
 <group>
  <arg>shmid:<replaceable>sid</replaceable></arg>
  <arg>keyfile:<replaceable>size</replaceable>:<replaceable>id</replaceable>:<replaceable>fname</replaceable></arg>
@@ -75,6 +76,19 @@ wish to remain resolution independent.
 size of the screen in millimeters, unless the optional
 <replaceable>dpi</replaceable>
 string is affixed, in which case, they represent resolution in dots-per-inch.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><option>-pixfmt=<replaceable>format_string</replaceable></option></term>
+<listitem><para>
+This option will provide a non-default pixel format explicitly.  Currently
+the accepted format of <replaceable>format_string</replaceable> is something
+like "r5b5g5p1", which would specify a pixel where the low bit of the 
+pixel is unused padding, followed by 5 bits of green, then 5 bits of blue and 
+finally 5 bits of red, with the remaining high bits, if any, being unused pad.
+A more formal description of this format string will be provided (and more 
+strings accepted) in future LibGGI releases.
 </para></listitem>
 </varlistentry>
 
