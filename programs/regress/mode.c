@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/10/10 09:18:46 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/12/25 22:16:04 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -140,7 +140,7 @@ static void testcase3(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen("memory", NULL);
+	vis = ggiOpen(NULL);
 	printassert(vis != NULL, "ggiOpen() failed\n");
 
 	err = ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, 2, GT_AUTO, &mode);
