@@ -1,4 +1,4 @@
-/* $Id: patchlib.c,v 1.2 2003/07/13 07:05:37 cegger Exp $
+/* $Id: patchlib.c,v 1.3 2004/01/31 21:18:15 cegger Exp $
 ******************************************************************************
 
    Alter the path to the config file in binary libggi
@@ -25,14 +25,22 @@
 ******************************************************************************
 */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_FCNTL_H
 #include <fcntl.h> 
+#endif
 #include <sys/stat.h>
 
-#include "config.h"
 
 static void print_usage(char *fname)
 {
