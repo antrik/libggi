@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.116 2004/05/05 05:54:20 cegger Exp $
+dnl $Id: configure.in,v 1.117 2004/05/08 21:16:37 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -24,7 +24,6 @@ ggi_subdir="ggi"
 use_debug="yes"
 
 sublib_libs=""
-dynload_libs="-lgii -lgg"
 bsdsock_libs=""
 
 dnl Common useable Targets
@@ -1324,7 +1323,6 @@ dnl ========================================================================
 dnl Write output
 
 AC_SUBST(sublib_libs)
-AC_SUBST(dynload_libs)
 AC_SUBST(bsdsock_libs)
 
 AC_SUBST(DISPLAYSUBDIRS)
