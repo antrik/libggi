@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/04/04 14:31:56 mooz Exp $
+/* $Id: mode.c,v 1.8 2004/08/17 08:59:36 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -52,8 +52,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 
 int GGI_monotext_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	strcpy(arguments, "");
-
+	*arguments = '\0';
 	switch(num) {
 	case 0:
 		strcpy(apiname, "display-monotext");
@@ -339,7 +338,7 @@ int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = -1;
 	}
 
-	return 0;
+	return err;
 }
 
 int GGI_monotext_getmode(ggi_visual *vis, ggi_mode *mode)
