@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.15 2005/01/01 22:54:29 mooz Exp $
+/* $Id: vidmode.c,v 1.16 2005/02/07 17:03:48 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -79,9 +79,7 @@ static void ggi_xvidmode_cleanup(ggi_visual * vis) {
 static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 {
 	ggi_x_priv    *priv;
-	ggi_graphtype gt;
 	ggi_x_vidmode *vidmode;
-	int i;
 
 	DPRINT_MODE("ggi_xvidmode_getmodelist\n");
 
@@ -110,12 +108,6 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 	XF86VidModeGetViewPort(priv->disp, priv->vilist[priv->viidx].vi->screen,
 			       &(vidmode->old_x), &(vidmode->old_y));
 
-	/* Get available modes list */
-#warning figure out scheme/gt from main visual here  old code was lacking
-	gt = GT_CONSTRUCT(priv->vilist[priv->viidx].vi->depth,
-			  GT_TRUECOLOR,
-			  priv->vilist[priv->viidx].buf->bits_per_pixel);
-
 	priv->modes_num = 0;
 	if (!XF86VidModeGetAllModeLines
 	    (priv->disp, priv->vilist[priv->viidx].vi->screen,
@@ -130,26 +122,6 @@ static int ggi_xvidmode_getmodelist(ggi_visual * vis)
 	if (priv->modes_num <= 0) {
 		DPRINT_MODE("\tNo modes found (mode number <= 0).\n");
 		goto error_device;
-	}
-
-	priv->modes = calloc(sizeof(ggi_modelistmode),
-				(size_t)(priv->modes_num));
-	if (priv->modes == NULL) {
-		DPRINT_MODE("\tNo enough memory.\n");
-		goto error_mem;
-	}
-
-	DPRINT_MODE("\t# modes: %d\n",priv->modes_num);
-
-	for (i = 0; i < priv->modes_num; i++) {
-		priv->modes[i].x = vidmode->modes[i]->hdisplay;
-		priv->modes[i].y = vidmode->modes[i]->vdisplay;
-		priv->modes[i].bpp =
-		    priv->vilist[priv->viidx].buf->depth;
-		priv->modes[i].gt = gt;
-		DPRINT_MODE("Found mode: %dx%d %dbpp\n",
-			       priv->modes[i].x, priv->modes[i].y,
-			       priv->modes[i].bpp);
 	}
 
 	return GGI_OK;
@@ -258,145 +230,168 @@ static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
 	return GGI_OK;
 }
 
-static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
-				      ggi_mode * maxed)
+static void ggi_vidmode_checkmode_adapt(ggi_mode *m, XF86VidModeModeInfo *vidmode, 
+					ggi_x_priv *priv )
 {
-	ggi_x_priv    *priv    = GGIX_PRIV(vis);
-	ggi_x_vidmode *vidmode;
-	int delta_x, delta_y, min_delta_x, min_delta_y, min_x, min_y;
-	
-	DPRINT_MODE("ggi_xvidmode_validate_mode: %x %x\n", priv,
-		       priv->modes);
+	int screen = priv->vilist[priv->viidx].vi->screen;
 
-	DPRINT_MODE("\tmode number:%d of %d\n", num + 1,
-		       priv->modes_num);
-	if ((priv->modes_num < 1) && (!priv->modes_num))
-		ggi_xvidmode_getmodelist(vis);
+	m->visible.x = vidmode->hdisplay;
+	m->visible.y = vidmode->vdisplay;
+	m->virt.x = GGI_AUTO;
+	m->virt.y = GGI_AUTO;
 
-	DPRINT_MODE("\trequested mode: depth:%d  bpp:%d w:%d y:%d\n",
-		       GT_DEPTH(maxed->graphtype),
-		       GT_ByPP(maxed->graphtype), maxed->visible.x,
-		       maxed->visible.y);
-	DPRINT_MODE("\tavailable mode: bpp:%d w:%d h:%d\n",
-		       priv->modes[num + 1].bpp, priv->modes[num + 1].x,
-		       priv->modes[num + 1].y);
-	
-	vidmode = (ggi_x_vidmode*)priv->modes_priv;
+	m->dpp.x = 1;
+	m->dpp.y = 1;
 
-	/* 
-	 * First pass : Check for correct mode 
-	 */
-	do {
-		if ((maxed->visible.x == priv->modes[num + 1].x) &&
-		    (maxed->visible.y == priv->modes[num + 1].y) &&
-		    (GT_DEPTH(maxed->graphtype) == 
-		     (unsigned) priv->modes[num + 1].bpp)) {
+	/* frames not supported (yet?) */
+	m->frames = 1;
 		
-			DPRINT_MODE("\tvalid mode: bpp:%d w:%d h:%d\n",
-				    priv->modes[num + 1].bpp, 
-				    priv->modes[num + 1].x,
-				    priv->modes[num + 1].y);
-			/* Mode found */
-			vidmode->validation_flag = 1;
+#define SCREENWMM DisplayWidthMM(priv->disp, screen)
+#define SCREENW   DisplayWidth(priv->disp, screen)
+#define SCREENHMM DisplayHeightMM(priv->disp, screen)
+#define SCREENH   DisplayHeight(priv->disp, screen)
+#define SCREENDPIX \
+((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
+#define SCREENDPIY \
+((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
+		m->size.x = GGI_AUTO;
+		m->size.y = GGI_AUTO;
+		_ggi_physz_figure_size(m, priv->physzflags,
+				       &(priv->physz), SCREENDPIX,
+				       SCREENDPIY, SCREENW, SCREENH);
+#undef SCREENWMM
+#undef SCREENW
+#undef SCREENHMM
+#undef SCREENH
+#undef SCREENDPIX
+#undef SCREENDPIY
+}
 
-			/* No need to build mode */
-			return (num + 1);
-		}
+#include <ggi/display/modelist.h>
+#define WANT_GENERIC_CHECKMODE
+#include "../../../common/modelist.inc"
 
-		++num;
-	} while(num < priv->modes_num);
+/* This function performs the CheckMode operation and returns
+ * the number of the best mode.  */
+static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
+				      ggi_mode   * mode)
+{
+  ggi_x_priv *priv;
 
-	/*
-	 * Second pass : Find next closest mode
-	 */
-	min_x = delta_x = min_y = delta_y = -1;
-	min_delta_x = priv->modes[0].x - maxed->visible.x;
-	min_delta_y = priv->modes[0].y - maxed->visible.y;
-	for(num = 0; num < priv->modes_num; ++num) {
-		if(GT_DEPTH(maxed->graphtype) == 
-		   (unsigned) priv->modes[num].bpp) {
+  ggi_x_vidmode *vidmode;
 
-			delta_x = priv->modes[num].x - maxed->visible.x;
-			if(delta_x >= 0) {
-				if(delta_x <= min_delta_x) {
-					min_delta_x = delta_x;
-					min_x       = num;
-				}
-			}
+  priv = GGIX_PRIV(vis);
+  
+  DPRINT_MODE("ggi_xvidmode_validate_mode (mode # %d, actual mode #: %x)\n",
+	      num, mode);
+  
+  DPRINT_MODE("\trequested mode: depth:%d  bpp:%d w:%d y:%d\n",
+	      GT_DEPTH(mode->graphtype), GT_ByPP(mode->graphtype),
+	      mode->visible.x, mode->visible.y);
 
-			delta_y = priv->modes[num].y - maxed->visible.y;
-			if(delta_y >= 0) {
-				if(delta_y <= min_delta_y) {
-					min_delta_y = delta_y;
-					min_y       = num;
-				}
-			}
-		}
+  vidmode = (ggi_x_vidmode*)priv->modes_priv;
+  
+  /*
+   * If mode index 'num' is a positive number check if it's supported
+   */
+  if(num >= 0) {
+    if ((mode->visible.x == vidmode->modes[num]->hdisplay) &&
+	(mode->visible.y == vidmode->modes[num]->vdisplay)) { 
+      DPRINT_MODE("\tvalid mode: w:%d h:%d\n",
+		  vidmode->modes[num]->hdisplay,
+		  vidmode->modes[num]->vdisplay);
+      /* Mode found */
+      vidmode->validation_flag = 1;
+      
+      /* No need to build mode */
+      return num;
+    }
+  }
+  /*
+   * Let's try to find the best mode
+   */
+  else {
+    ggi_checkmode_t *cm;
+    int delta_x, delta_y, min_delta_x, min_delta_y, min_x, min_y;
+
+    cm = _GGI_generic_checkmode_create();
+
+    /* Initialize best mode search */
+    _GGI_generic_checkmode_init( cm, mode );
+ 
+    min_x = delta_x = min_y = delta_y = -1;
+    min_delta_x = vidmode->modes[0]->hdisplay - mode->visible.x;
+    min_delta_y = vidmode->modes[0]->vdisplay - mode->visible.y;
+
+    for(num = 0; num < priv->modes_num; ++num) {
+      delta_x = vidmode->modes[num]->hdisplay - mode->visible.x;
+      if(delta_x >= 0) {
+	if(delta_x <= min_delta_x) {
+	  min_delta_x = delta_x;
+	  min_x       = num;
 	}
-
-	DPRINT_MODE("\tmin x valid mode: #%d bpp:%d w:%d h:%d\n",
-		    min_x,
-		    priv->modes[min_x].bpp, priv->modes[min_x].x,
-		    priv->modes[min_x].y);
-	
-	DPRINT_MODE("\tmin y valid mode: #%d bpp:%d w:%d h:%d\n",
-		    min_y,
-		    priv->modes[min_y].bpp, priv->modes[min_y].x,
-		    priv->modes[min_y].y);
-
-	if((min_x > 0) && (min_y > 0)) {
-	        int      err;
-		ggi_mode mode;
-
-		if(min_delta_x < min_delta_y) {
-			if(priv->modes[min_x].y >= maxed->visible.y) {
-				num = min_x;
-			}
-			else {
-				num = min_y;
-			}
-		}
-		else {
-			if(priv->modes[min_y].x >= maxed->visible.x) {
-				num = min_y;
-			}
-			else {
-				num = min_x;
-			}
-	  	}
-
-	  	DPRINT_MODE("\tclosest valid mode: bpp:%d w:%d h:%d\n",
-			    priv->modes[num].bpp, priv->modes[num].x,
-			    priv->modes[num].y);
-
-		vidmode->validation_flag = 0;
-	  	
-		/* Build mode */  	  
-	
-		maxed->visible.x = priv->modes[num].x;
-		maxed->visible.y = priv->modes[num].y;
-		
-		/*
-		switch (priv->modes[num].bpp) {
-			case  1:	maxed->graphtype = GT_1BIT; break;
-			case  2:	maxed->graphtype = GT_2BIT;  break;
-			case  4:	maxed->graphtype = GT_4BIT;  break;
-			case  8:	maxed->graphtype = GT_8BIT;  break;
-			case 15:	maxed->graphtype = GT_15BIT; break;
-			case 16:	maxed->graphtype = GT_16BIT; break;
-			case 24:	maxed->graphtype = GT_24BIT; break;
-			case 32:	maxed->graphtype = GT_32BIT; break;
-			default:	maxed->graphtype = GT_INVALID;
-		}
-		*/
-		       
-		return num;
+      }
+      
+      delta_y = vidmode->modes[num]->vdisplay - mode->visible.y;
+      if(delta_y >= 0) {
+	if(delta_y <= min_delta_y) {
+	  min_delta_y = delta_y;
+	  min_y       = num;
 	}
+      }
+    }
 
-	/* No valid mode found */
-	vidmode->validation_flag = -1;
+    if((min_x > 0) && (min_y > 0)) {
+      int      err;
 
-	return GGI_ENOMATCH;
+      DPRINT_MODE("\tmin x valid mode: #%d w:%d h:%d\n",
+		  min_x,
+		  vidmode->modes[min_x]->hdisplay,
+		  vidmode->modes[min_x]->vdisplay);
+      
+      DPRINT_MODE("\tmin y valid mode: #%d w:%d h:%d\n",
+		  min_y,
+		  vidmode->modes[min_y]->hdisplay,
+		  vidmode->modes[min_y]->vdisplay);
+      
+      if(min_delta_x < min_delta_y) {
+	if(vidmode->modes[min_x]->vdisplay >= mode->visible.y) {
+	  num = min_x;
+	}
+	else {
+	  num = min_y;
+	}
+      }
+      else {
+	if(vidmode->modes[min_y]->hdisplay >= mode->visible.x) {
+	  num = min_y;
+	}
+	else {
+	  num = min_x;
+	}
+      }
+      
+      DPRINT_MODE("\tclosest valid mode: w:%d h:%d\n",
+		  vidmode->modes[num]->hdisplay,
+		  vidmode->modes[num]->vdisplay);
+            
+      vidmode->validation_flag = 0;
+
+      ggi_vidmode_checkmode_adapt(mode, vidmode->modes[num], priv);
+      _GGI_generic_checkmode_update(cm, mode, (void *)num );
+      err = _GGI_generic_checkmode_finish(cm, mode, (void**)&num );
+      _GGI_generic_checkmode_destroy(cm);
+
+      return num;
+    }
+  }
+  
+  /*
+   * No valid mode found
+   */
+  DPRINT_MODE("\tSorry, no valid mode found\n");
+  vidmode->validation_flag = -1;
+  return GGI_ENOMATCH;
 }
 
 /*
@@ -441,6 +436,8 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	}
 	DPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", 
 		       x, y);
+
+	ggi_xvidmode_getmodelist(vis);
 
 	/*
 	   overload mode list functions
