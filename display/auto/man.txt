@@ -43,3 +43,9 @@ If you are on FreeBSD, next targets may be vgl and aalib.
 
 Similar counts for all other Operating Systems such as
 MacOSX, Open- and NetBSD, Windows, Solaris, etc.
+
+
+See Also
+--------
+
+:man:`ggiOpen(3)`
