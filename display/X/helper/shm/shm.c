@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.12 2003/05/05 12:52:52 ggibecka Exp $
+/* $Id: shm.c,v 1.13 2003/07/06 13:41:09 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -52,7 +52,7 @@ static int shmerrorhandler (Display * disp, XErrorEvent * event)
 	return 0;
 }
 
-int GGI_XSHM_flush_ximage_child(ggi_visual *vis, 
+static int GGI_XSHM_flush_ximage_child(ggi_visual *vis, 
 			     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
@@ -116,7 +116,7 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 }
 
 /* XImage allocation for normal client-side buffer */
-void _ggi_xshm_free_ximage(ggi_visual *vis) {
+static void _ggi_xshm_free_ximage(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	int i, first, last;
 	XShmSegmentInfo *myshminfo;
@@ -157,7 +157,7 @@ void _ggi_xshm_free_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-int _ggi_xshm_create_ximage(ggi_visual *vis) {
+static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 
 	char target[256];
 	ggi_mode tm;
@@ -390,6 +390,8 @@ skip:
 	priv->disp = NULL;
 	return 0;
 }
+
+int GGIdl_helper_x_shm(int func, void **funcptr);
 
 int GGIdl_helper_x_shm(int func, void **funcptr)
 {
