@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.8 2004/09/08 19:04:27 cegger Exp $
+/* $Id: pageflip.c,v 1.9 2004/09/30 08:06:01 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -42,8 +42,6 @@
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 static ggi_color white = { 0xffff, 0xffff, 0xffff };
-static ggi_color blue = { 0x0000, 0x0000, 0xffff };
-static ggi_color yellow = { 0xffff, 0xffff, 0x0000 };
 
 static void animate_one_frame(ggi_visual_t vis, int x, int y, int w, int h,
 			      ggi_pixel * buf, int x2)
