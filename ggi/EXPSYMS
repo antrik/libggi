@@ -28,6 +28,8 @@ _ggi_mask2shift
 _ggi_match_palette
 _ggi_realloc
 _ggi_smart_match_palettes
+_ggi_parse_physz
+_ggi_figure_physz
 ggiCheckGraphMode
 ggiCheckMode
 ggiCheckSimpleMode

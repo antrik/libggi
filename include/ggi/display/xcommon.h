@@ -1,4 +1,4 @@
-/* $Id: xcommon.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: xcommon.h,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Common data for X based targets
@@ -46,6 +46,9 @@ typedef struct {
 
 	void       *xliblock;
 	gii_input  *inp;
+
+	int        physzflags;
+	ggi_coord  physz;
 } ggi_x_common;
 
 /* x/xlib common data */

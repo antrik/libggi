@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.1 2001/05/12 23:03:23 cegger Exp $
+/* $Id: internal.h,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -82,6 +82,12 @@ ggifunc_setwriteframe _ggi_default_setwriteframe;
 void _ggi_build_palette(ggi_color *pal, int num);
 void _ggi_smart_match_palettes(ggi_color *pal, int size,
                                ggi_color *ref_pal, int ref_size);
+#define GGI_PHYSZ_OVERRIDE	1
+#define GGI_PHYSZ_DPI		2
+int _ggi_parse_physz(char *optstr, int *physzflag, ggi_coord *physz);
+int _ggi_figure_physz(ggi_mode *mode, int physzflag, ggi_coord *op_sz, 
+                      int dpix, int dpiy, int dsx, int dsy);
+
 
 /* mode.c */
 void _ggiSetDefaultMode(const char *str);

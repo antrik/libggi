@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/23 17:46:03 cegger Exp $
+/* $Id: visual.c,v 1.3 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-X: initialization
@@ -42,13 +42,15 @@ static const gg_option optlist[] =
 	{ "inroot", "no" },
 	{ "inwin",  "no" },
 	{ "noinput", "no" },
-	{ "nocursor", "no" }
+	{ "nocursor", "no" },
+	{ "physz", "0,0"}
 };
 
 #define OPT_INROOT	0
 #define OPT_INWIN	1
 #define OPT_NOINPUT	2
 #define OPT_NOCURSOR	3
+#define OPT_PHYSZ	4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -159,6 +161,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->opmansync == NULL) {
 		goto out_freepriv;
 	}
+
+	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+			       &(priv->xwin.x.physzflags), 
+			       &(priv->xwin.x.physz)); 
+	if (err != GGI_OK) goto out_freepriv;
 
 	priv->xwin.x.display = disp;
 	priv->xwin.x.screen = DefaultScreen(priv->xwin.x.display);

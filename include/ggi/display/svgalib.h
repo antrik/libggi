@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: svgalib.h,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -86,6 +86,8 @@ typedef struct svga_priv {
 	int	ismapped;
 	ggi_linvtsw_func *doswitch;
 	int	gfxmode;
+	int	physzflags;
+	ggi_coord	physz;
 } svga_priv;
 
 #define SVGA_PRIV(vis) ((svga_priv*)LIBGGI_PRIVATE(vis))

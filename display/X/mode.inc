@@ -1,4 +1,4 @@
-/* $Id: mode.inc,v 1.1 2001/05/12 23:01:53 cegger Exp $
+/* $Id: mode.inc,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Mode management for display-X and display-Xlib.
@@ -225,7 +225,6 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
 	XVisualInfo vinfo;      /* Dummy here */
 	ggi_x_priv *priv;
-	int xsize, ysize;
 	int err = 0;
 
 	LIBGGI_APPASSERT(vis != NULL, "GGIcheckmode: Visual == NULL");
@@ -278,18 +277,25 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 	}
 	tm->dpp.x = tm->dpp.y = 1;
 
-	xsize = tm->visible.x
-		* DisplayWidthMM(priv->xwin.x.display, priv->xwin.x.screen)
-		/ DisplayWidth(priv->xwin.x.display, priv->xwin.x.screen);
-	ysize = tm->visible.y
-		* DisplayHeightMM(priv->xwin.x.display, priv->xwin.x.screen)
-		/ DisplayHeight  (priv->xwin.x.display, priv->xwin.x.screen);
-	if ((tm->size.x != xsize && tm->size.x != GGI_AUTO) ||
-	    (tm->size.y != ysize && tm->size.y != GGI_AUTO)) {
-		err = -1;
-	}
-	tm->size.x = xsize;
-	tm->size.y = ysize;
+#define SCREENWMM DisplayWidthMM(priv->xwin.x.display, priv->xwin.x.screen)
+#define SCREENW   DisplayWidth(priv->xwin.x.display, priv->xwin.x.screen)
+#define SCREENHMM DisplayHeightMM(priv->xwin.x.display, priv->xwin.x.screen)
+#define SCREENH   DisplayHeight(priv->xwin.x.display, priv->xwin.x.screen)
+#define SCREENDPIX \
+((SCREENWMM <= 0) ?  0 : (SCREENW * tm->dpp.x * 254 / SCREENWMM / 10))
+#define SCREENDPIY \
+((SCREENHMM <= 0) ?  0 : (SCREENH * tm->dpp.x * 254 / SCREENHMM / 10))
+
+        err = _ggi_figure_physz(tm, 
+				priv->xwin.x.physzflags, &(priv->xwin.x.physz),
+                                SCREENDPIX, SCREENDPIY, SCREENW, SCREENH);
+
+#undef SCREENWMM 
+#undef SCREENW   
+#undef SCREENHMM 
+#undef SCREENH   
+#undef SCREENDPIX
+#undef SCREENDPIY
 
 	err = _GGIbasiccheck(vis, tm, &vinfo);
 

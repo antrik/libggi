@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:26 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -80,6 +80,13 @@ static const int vga_signals[] = {
 };
 #define NUMVGASIGS	(sizeof(vga_signals)/sizeof(int))
 
+
+static const gg_option optlist[] =
+{
+        { "physz",      "0,0" }
+};
+#define OPT_PHYSZ       0
+#define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
 void _GGI_svga_freedbs(ggi_visual *vis) {
 	int i;
@@ -314,6 +321,7 @@ static int do_cleanup(ggi_visual *vis)
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
+	gg_option options[NUM_OPTS];
 	ggi_linvtsw_arg vtswarg;
 	int  vtnum = -1, novt = 0;
 	svga_priv *priv;
@@ -322,6 +330,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	struct vt_mode temp_vtmode;
 #endif
 	int i, err;
+
+	memcpy(options, optlist, sizeof(options));
+        if (args != NULL) {
+                args = ggParseOptions((char *)args, options, NUM_OPTS);
+                if (args == NULL) {
+                        fprintf(stderr, "display-x: error in arguments.\n");
+                        return GGI_EARGINVAL;
+                }
+        }
 	
 	if (__svgalib_tty_fd == GSW_MAGIC) {
 		ggiPanic("SVGAlib target called from the SVGAlib wrapper!"
@@ -402,6 +419,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->switchpending = 0;
 	priv->ismapped = 1;
 	priv->doswitch = NULL;
+
+	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+                               &(priv->physzflags), &(priv->physz)); 
+        if (err != GGI_OK) {
+          do_cleanup(vis);
+          return err;
+        }
+
 
 	priv->availmodes = 
 		malloc(vga_lastmodenumber()*sizeof(ggi_modelistmode));

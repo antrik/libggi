@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:12 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -34,10 +34,12 @@
 
 static const gg_option optlist[] =
 {
-	{ "input", "" }
+	{ "input", "" },
+	{ "physz", "0,0" }
 };
 
 #define OPT_INPUT	0
+#define OPT_PHYSZ	1
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 

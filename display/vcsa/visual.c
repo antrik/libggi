@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:41 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -49,7 +49,9 @@ static const gg_option optlist[] =
 	{ "nokbd",   "no" },
 	{ "nomouse", "no" },
 	{ "ascii",   "no" },
-	{ "shade",   "no" }
+	{ "shade",   "no" },
+	{ "physz",   "0,0" },
+	{ ":file",   "" }
 };
 
 #define OPT_NOINPUT	0
@@ -57,6 +59,8 @@ static const gg_option optlist[] =
 #define OPT_NOMOUSE	2
 #define OPT_ASCII	3
 #define OPT_SHADE	4
+#define OPT_PHYSZ	5
+#define OPT_FILE	6
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -129,17 +133,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freepriv;
 	}
 
-
-	/* handle args */
-	filename[0] = '\0';
-	while (args && *args && isspace(*args)) {
-		args++;
-	}
-
-	if (args && *args) {
-		filename[79] = '\0';
-		strncpy(filename, args, 79);
-	}
+	strncpy(filename, options[OPT_FILE].result, 79);
+	filename[79] = '\0';
 
 	err = GGI_ENODEVICE;
 	/* work out which console we're on */
@@ -195,6 +190,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (toupper(options[OPT_SHADE].result[0]) != 'N') {
 		priv->flags |= VCSA_FLAG_SHADE;
 	}
+	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+                               &(priv->physzflags), &(priv->physz)); 
+        if (err != GGI_OK) goto out_closefd;
 
 	/* move cursor somewhere relatively out of the way */
         buf[2] = buf[1];  /* cursor_x */

@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: vcsa.h,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -39,6 +39,9 @@ typedef struct {
 
 	int inputs;
 	int flags;
+
+	int physzflags;
+	ggi_coord physz;
 
 } ggi_vcsa_priv;
 

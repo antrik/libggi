@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:03 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -702,10 +702,14 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	mode->dpp.x = xdpp;
 	mode->dpp.y = ydpp;
 
-	if (mode->size.x != GGI_AUTO || mode->size.y != GGI_AUTO) {
-		err = -1;
-	}
-	mode->size.x = mode->size.y = GGI_AUTO;
+#define DPI(dim, d) \
+	((priv->orig_var.dim <= 0) ? 0 : \
+	 (mode->visible.d * mode->dpp.d * 254 / priv->orig_var.dim / 10))
+
+	err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
+                                DPI(width, x), DPI(height,y), 
+				mode->visible.x, mode->visible.y);
+#undef DPI
 
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;

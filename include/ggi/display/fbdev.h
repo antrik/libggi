@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: fbdev.h,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -123,6 +123,8 @@ typedef struct {
 	/* Misc */
 	void	*lock;		/* Pointer to the fbdev common lock */
 	int	*refcount;	/* Pointer to the refcount */
+	int	physzflags;
+	ggi_coord	physz;
 } ggi_fbdev_priv;
 
 #define FBDEV_PRIV(vis) ((ggi_fbdev_priv *)LIBGGI_PRIVATE(vis))

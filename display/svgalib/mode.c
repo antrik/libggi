@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:24 cegger Exp $
+/* $Id: mode.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -275,6 +275,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 /**********************************/
 int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 {
+	svga_priv *priv = LIBGGI_PRIVATE(vis);
+
 	int ret, err = 0;
 
 	if (vis==NULL || tm==NULL)
@@ -321,10 +323,8 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	}
 	tm->dpp.x = tm->dpp.y = 1;
 
-	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
-		err = -1;
-	}
-	tm->size.x = tm->size.y = GGI_AUTO;
+	err = _ggi_figure_physz(tm, priv->physzflags, &(priv->physz),
+				0, 0, tm->visible.x, tm->visible.y);
 
 	return err;
 }

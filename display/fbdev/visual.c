@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:02:01 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/05/31 21:55:21 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -93,13 +93,17 @@ static const gg_option optlist[] =
 	{ "nokbd",   "no" },
 	{ "nomouse", "no" },
 	{ "noinput", "no" },  /* shorthand for nokbd + nomouse */
-	{ "novt",    "no" }
+	{ "novt",    "no" },
+	{ "physz",    "no" },
+	{ ":dev",    ""}
 };
 
 #define OPT_NOKBD	0
 #define OPT_NOMOUSE	1
 #define OPT_NOINPUT	2
 #define OPT_NOVT	3
+#define OPT_PHYSZ	4
+#define OPT_DEV		5
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -741,11 +745,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush = NULL;
 	priv->idleaccel = NULL;
 
-	/* handle args */
-	while (args && *args && isspace(*args)) args++;
-
-	if (args && *args) {
-		devfile = args;
+	if (strlen(options[OPT_DEV].result)) {
+		devfile = options[OPT_DEV].result;
 	} else if (getenv("FRAMEBUFFER") != NULL) {
 		strncpy(devicename, getenv("FRAMEBUFFER"), MAX_DEV_LEN);
 		/* Make sure string is terminated */
@@ -770,6 +771,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inputs = 0;
 		novt = 1;
 	}
+
+	do {
+		int err;
+		err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+				       &(priv->physzflags), &(priv->physz)); 
+		if (err != GGI_OK) {
+			do_cleanup(vis);
+			return err;
+		}
+	} while (0);
 
 	ggLock(_ggi_global_lock);
 	if (refcount == 0) {
