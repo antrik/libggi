@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.5 2002/05/18 23:44:34 skids Exp $
+/* $Id: demo.c,v 1.6 2002/05/19 15:42:43 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -977,12 +977,13 @@ int main(int argc, char **argv)
 
 		TestStart();
 		i = 0;
-		while ((TestTime() < 15) && (i < numplanes)) {
+		while ((TestTime() < 10) && (i < numplanes)) {
 			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
 			  	uint8 *linestart;
 				linestart = (uint8 *)dbuf->write + 
 				  stride2 * i + stride * y;
 				x = 0;
+				if (ggiKbhit(vis)) goto dbuf_end;
 				while (x < vx * GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
@@ -1001,8 +1002,11 @@ int main(int argc, char **argv)
 			i++;
 		}	
 
-		while (TestTime() < 15) {
+		while (TestTime() < 10) {
 			uint8 *linestart;
+
+			if (ggiKbhit(vis)) goto dbuf_end;
+
 			i = random() % numplanes;
 			y = random() % vy;
 			x = random() % (vx * GT_SIZE(type)/wordsize);
@@ -1023,6 +1027,7 @@ int main(int argc, char **argv)
 			}
 		}
 
+	dbuf_end:
 		/* If we were not in syncronous mode, we would
 		 * call ggiFlush here, because there is no guarantee
 		 * that the directbuffer is not a software back-buffer
