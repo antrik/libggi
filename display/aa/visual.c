@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/09/12 19:55:50 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/10/09 06:54:11 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -143,8 +143,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	AA_PRIV(vis) = priv;
 
 	MANSYNC_init(vis);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_start(vis);
+	}
 
-	{
+	do {
 		gii_input *inp;
 		GGIDPRINT_MISC("display-aa: gii starting\n");
 
@@ -177,7 +180,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		
 		GGIDPRINT_MISC("display-aa: input joined into %p\n",
 			       vis->input);
-	}
+	} while(0);
+
 
 	/* Has mode management */
 	vis->opdisplay->flush=GGI_aa_flush;

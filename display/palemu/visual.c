@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/09/12 20:37:05 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/10/09 06:56:59 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -161,6 +161,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	MANSYNC_init(vis);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_start(vis);
+	}
 
 	/* add giiInputs, if we have them */
 	if (priv->parent->input) {

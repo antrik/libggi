@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/09/12 20:48:22 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/10/09 06:58:14 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -190,6 +190,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		MANSYNC_init(vis);
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_start(vis);
+		}
 	}
 
 	vis->opdisplay->getmode=GGI_tile_getmode;

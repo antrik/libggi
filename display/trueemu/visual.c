@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/09/12 20:49:37 cegger Exp $
+/* $Id: visual.c,v 1.6 2004/10/09 06:59:22 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -195,6 +195,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	MANSYNC_init(vis);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_start(vis);
+	}
 
 	/* add giiInputs, if we have them */
 	if (priv->parent->input) {
