@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.7 2004/11/27 20:03:31 soyt Exp $
+/* $Id: draw.c,v 1.8 2004/12/01 23:08:25 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -30,11 +30,11 @@
 #include <ggi/internal/ggi_debug.h>
 
 int
-GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
-	uint8 *buf = buffer;
+	const uint8 *buf = buffer;
 
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 
@@ -63,10 +63,10 @@ int GGI_vgl_drawline(ggi_visual *vis,int x,int y,int xe,int ye)
 	return 0;
 }
 
-int GGI_vgl_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_vgl_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 {
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
-	byte *buf = buffer;
+	const byte *buf = buffer;
 	int i;
 
 	for (i = 0; i < w*pixelsize; i++)

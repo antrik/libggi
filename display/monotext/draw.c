@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.3 2004/09/13 09:11:37 cegger Exp $
+/* $Id: draw.c,v 1.4 2004/12/01 23:08:07 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -145,7 +145,7 @@ int GGI_monotext_drawhline(ggi_visual *vis, int x, int y, int w)
 	return err;
 }
 
-int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -190,7 +190,7 @@ int GGI_monotext_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -214,7 +214,7 @@ int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
  * the affected area is relatively large. 
  */
  
-int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.9 2004/11/14 15:47:48 cegger Exp $
+/* $Id: box.c,v 1.10 2004/12/01 23:08:23 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -109,13 +109,13 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
+int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
 	TeleEvent ev;
 
-	uint8 *src = (uint8 *)(buf);
+	const uint8 *src = (const uint8 *)(buf);
 	int srcwidth = w;
 	int stride = w * BYTES_PER_PIXEL(vis);
 
@@ -324,13 +324,13 @@ int GGI_tele_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 }	/* GGI_tele_putpixel */
 
 
-int GGI_tele_puthline(ggi_visual *vis, int x, int y, int w, void *buf)
+int GGI_tele_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, w, 1, buf);
 }	/* GGI_tele_puthline */
 
 
-int GGI_tele_putvline(ggi_visual *vis, int x, int y, int h, void *buf)
+int GGI_tele_putvline(ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, 1, h, buf);
 }	/* GGI_tele_putvline */

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.11 2004/11/27 16:42:14 soyt Exp $
+/* $Id: box.c,v 1.12 2004/12/01 23:08:06 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -46,7 +46,7 @@ int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)
 	return GGI_OK;
 }
 
-int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -140,7 +140,7 @@ int GGI_X_drawbox_draw(ggi_visual *vis, int x, int y, int w, int h)
 	return GGI_OK;
 }
 
-int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	XImage *ximg;
 	ggi_x_priv *priv;

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.4 2004/11/14 15:47:48 cegger Exp $
+/* $Id: stubs.c,v 1.5 2004/12/01 23:08:23 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -126,7 +126,7 @@ int GGI_tile_drawbox(ggi_visual *vis, int _x, int _y, int _width, int _length)
 	return 0;
 }
 
-int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, void *buffer)
+int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -165,7 +165,7 @@ int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 		while(length--) {
 			ggiPutHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
-				((uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
+				((const uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
 	}
 
@@ -362,7 +362,7 @@ int GGI_tile_drawhline(ggi_visual *vis,int x,int y,int w)
 		return 0;	/* ??? Shouldn't this be an error? */
 }
 
-int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
+int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -394,7 +394,7 @@ int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 
 		ggiPutHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
-			((uint8*)buffer + diff*rowadd));
+			((const uint8*)buffer + diff*rowadd));
 	}
 
 	return 0;
@@ -492,7 +492,7 @@ int GGI_tile_drawvline(ggi_visual *vis,int x,int y,int height)
 		return 0;	/* ??? Shouldn't this be an error? */
 }
 
-int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
+int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -524,7 +524,7 @@ int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 
 		ggiPutVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
-			((uint8*)buffer + diff*rowadd));
+			((const uint8*)buffer + diff*rowadd));
  	}
 
 	return 0;

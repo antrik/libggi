@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: stubs.c,v 1.3 2004/12/01 23:08:23 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : stubs
@@ -105,7 +105,7 @@ int GGI_trueemu_drawvline(ggi_visual *vis, int x, int y, int h)
 	return priv->mem_opdraw->drawvline(vis, x, y, h);
 }
 
-int GGI_trueemu_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int GGI_trueemu_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -152,7 +152,7 @@ int GGI_trueemu_drawhline(ggi_visual *vis, int x, int y, int w)
 	return priv->mem_opdraw->drawhline(vis, x, y, w);
 }
 
-int GGI_trueemu_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_trueemu_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -161,7 +161,7 @@ int GGI_trueemu_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	return priv->mem_opdraw->puthline(vis, x, y, w, buffer);
 }
 
-int GGI_trueemu_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_trueemu_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	

@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: vline.c,v 1.3 2004/12/01 23:08:24 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: vertical lines
@@ -61,7 +61,7 @@ int GGI_vgagl_drawvline_nc(ggi_visual *vis,int x,int y,int height)
 	return 0;
 }
 
-int GGI_vgagl_putvline(ggi_visual *vis,int x,int y,int height,void *buffer)
+int GGI_vgagl_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
 {
         /* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -70,7 +70,7 @@ int GGI_vgagl_putvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 		int diff=(LIBGGI_GC(vis)->cliptl.y)-y;
 		y     +=diff;
 		height-=diff;
-		buffer =((char *)buffer)+diff;
+		buffer =((const char *)buffer)+diff;
 	}
 	if (y+height>(LIBGGI_GC(vis)->clipbr.y)) {
 		height=(LIBGGI_GC(vis)->clipbr.y)-y;

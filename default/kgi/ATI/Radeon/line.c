@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.4 2003/02/01 06:06:18 skids Exp $
+/* $Id: line.c,v 1.5 2004/12/01 23:08:01 cegger Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -120,7 +120,7 @@ int GGI_kgi_radeon_drawline_3d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, void *buf)
+int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, const void *buf)
 {
 	int wb, w32;
 	radeon_context_t *ctx;
@@ -217,7 +217,7 @@ int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, void *buf)
 }
 
 
-int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, void *buf)
+int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	int wb, w32;
 	radeon_context_t *ctx;

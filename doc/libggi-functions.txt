@@ -1055,7 +1055,7 @@ Synopsis
 
   int ggiDrawHLine(ggi_visual_t vis, int x, int y, int w);
 
-  int ggiPutHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
+  int ggiPutHLine(ggi_visual_t vis, int x, int y, int w, const void *buf);
 
   int ggiGetHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
 
@@ -1105,7 +1105,7 @@ Synopsis
 
   int ggiDrawVLine(ggi_visual_t vis, int x, int y, int h);
 
-  int ggiPutVLine(ggi_visual_t vis, int x, int y, int h, void *buf);
+  int ggiPutVLine(ggi_visual_t vis, int x, int y, int h, const void *buf);
 
   int ggiGetVLine(ggi_visual_t vis, int x, int y, int h, void *buf);
 
@@ -1156,7 +1156,7 @@ Synopsis
 
   int ggiDrawBox(ggi_visual_t vis, int x, int y, int w, int h);
   
-  int ggiPutBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
+  int ggiPutBox(ggi_visual_t vis, int x, int y, int w, int h, const void *buf);
   
   int ggiGetBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
 

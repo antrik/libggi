@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.5 2004/11/27 00:06:00 cegger Exp $
+/* $Id: stubs.c,v 1.6 2004/12/01 23:08:22 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -99,7 +99,7 @@ int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int width,int length)
 	return err;
 }
 
-int GGI_sub_putbox(ggi_visual *vis,int x,int y,int width,int length,void *buffer)
+int GGI_sub_putbox(ggi_visual *vis,int x,int y,int width,int length,const void *buffer)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -235,7 +235,7 @@ int GGI_sub_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *col)
 	return err;
 }
 
-int GGI_sub_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_sub_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -259,7 +259,7 @@ int GGI_sub_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 	return err;
 }
 
-int GGI_sub_putvline(ggi_visual *vis,int x,int y,int height,void *buffer)
+int GGI_sub_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;

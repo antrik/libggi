@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.7 2004/11/27 00:06:05 cegger Exp $
+/* $Id: dltypes.h,v 1.8 2004/12/01 23:08:28 cegger Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -120,16 +120,16 @@ typedef int (ggifunc_drawline)(struct ggi_visual *vis,int x,int y,int xe,int ye)
 
 typedef int (ggifunc_drawhline_nc)(struct ggi_visual *vis,int x,int y,int w);
 typedef int (ggifunc_drawhline)(struct ggi_visual *vis,int x,int y,int w);
-typedef int (ggifunc_puthline)(struct ggi_visual *vis,int x,int y,int w,void *buf);
+typedef int (ggifunc_puthline)(struct ggi_visual *vis,int x,int y,int w,const void *buf);
 typedef int (ggifunc_gethline)(struct ggi_visual *vis,int x,int y,int w,void *buf);
 
 typedef int (ggifunc_drawvline_nc)(struct ggi_visual *vis,int x,int y,int h);
 typedef int (ggifunc_drawvline)(struct ggi_visual *vis,int x,int y,int h);
-typedef int (ggifunc_putvline)(struct ggi_visual *vis,int x,int y,int h,void *buf);
+typedef int (ggifunc_putvline)(struct ggi_visual *vis,int x,int y,int h,const void *buf);
 typedef int (ggifunc_getvline)(struct ggi_visual *vis,int x,int y,int h,void *buf);
 
 typedef int (ggifunc_drawbox)(struct ggi_visual *vis,int x,int y,int w,int h);
-typedef int (ggifunc_putbox)(struct ggi_visual *vis,int x,int y,int w,int h,void *buf);
+typedef int (ggifunc_putbox)(struct ggi_visual *vis,int x,int y,int w,int h,const void *buf);
 typedef int (ggifunc_getbox)(struct ggi_visual *vis,int x,int y,int w,int h,void *buf);
 
 typedef int (ggifunc_copybox)(struct ggi_visual *vis,int x,int y,int w,int h,int nx,int ny);

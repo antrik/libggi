@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.8 2004/11/03 08:35:30 cegger Exp $
+/* $Id: vline.c,v 1.9 2004/12/01 23:08:06 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -53,7 +53,7 @@ int GGI_X_drawvline_nc_slave(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_putvline_slave(ggi_visual *vis, int x, int y, int h, void *data)
+int GGI_X_putvline_slave(ggi_visual *vis, int x, int y, int h, const void *data)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -118,7 +118,7 @@ int GGI_X_drawvline_draw(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
+int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
 {
         XImage *ximg;
 	ggi_x_priv *priv;

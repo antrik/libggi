@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: hline.c,v 1.3 2004/12/01 23:08:05 cegger Exp $
 ******************************************************************************
 
    Generic 8, 16, 32 Banked Graphics library for GGI. Horizontal lines.
@@ -155,9 +155,10 @@ int GGIdrawhline_nc(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGIputhline(ggi_visual *vis,int x,int y,int w,void *buff)
+int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
 { 
-	uint8 *pixpt,*buffer=(uint8 *)buff;
+	uint8 *pixpt;
+	const uint8 *buffer=(const uint8 *)buff;
 	unsigned int align;
 
 	/* Clipping */

@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2003/07/05 22:13:42 cegger Exp $
+/* $Id: hline.c,v 1.4 2004/12/01 23:08:06 cegger Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -50,9 +50,9 @@ int GGI_stubs_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 }
 
 
-int _GGI_stubs_L1_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L1_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	uint8 *src = (uint8 *) buffer;
+	const uint8 *src = (const uint8 *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
@@ -63,9 +63,9 @@ int _GGI_stubs_L1_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L2_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L2_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	uint16 *src = (uint16 *) buffer;
+	const uint16 *src = (const uint16 *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
@@ -76,9 +76,9 @@ int _GGI_stubs_L2_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	uint8 *src = (uint8 *) buffer;
+	const uint8 *src = (const uint8 *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *3);
 
@@ -90,9 +90,9 @@ int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L4_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L4_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	uint32 *src = (uint32 *) buffer;
+	const uint32 *src = (const uint32 *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 

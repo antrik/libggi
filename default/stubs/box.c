@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2004/09/08 20:09:40 cegger Exp $
+/* $Id: box.c,v 1.4 2004/12/01 23:08:05 cegger Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -60,9 +60,9 @@ int GGI_stubs_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
-	uint8 *src = (uint8 *) buffer;
+	const uint8 *src = (const uint8 *) buffer;
 	int rowadd;
 
 	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {

@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: hline.c,v 1.3 2004/12/01 23:08:24 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: horizontal lines
@@ -46,10 +46,10 @@ int GGI_vgagl_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_vgagl_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_vgagl_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
-	uint8 *buf = buffer;
+	const uint8 *buf = buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf, *pixelsize);
 

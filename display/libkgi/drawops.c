@@ -1,4 +1,4 @@
-/* $Id: drawops.c,v 1.2 2004/01/31 22:35:31 cegger Exp $
+/* $Id: drawops.c,v 1.3 2004/12/01 23:08:07 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: Channeling of GGI drawops through KGI batchop
@@ -184,7 +184,7 @@ int GGI_libkgi_drawhline(struct ggi_visual *vis,int x,int y,int w)
 	SEND_BO;
 }
 
-int GGI_libkgi_puthline(struct ggi_visual *vis,int x,int y,int w,void *buf) 
+int GGI_libkgi_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buf) 
 
 {
 	union {
@@ -269,7 +269,7 @@ int GGI_libkgi_drawvline(struct ggi_visual *vis,int x,int y,int h)
 	SEND_BO;
 }
 
-int GGI_libkgi_putvline(struct ggi_visual *vis,int x,int y,int h,void *buf) 
+int GGI_libkgi_putvline(struct ggi_visual *vis,int x,int y,int h,const void *buf) 
 {
 	union {
 		uint64 align;	/* Forces alignment (?) */
@@ -355,7 +355,7 @@ int GGI_libkgi_drawbox(struct ggi_visual *vis,int x,int y,int w,int h)
 	SEND_BO;
 }
 
-int GGI_libkgi_putbox(struct ggi_visual *vis,int x,int y,int w,int h,void *buf)
+int GGI_libkgi_putbox(struct ggi_visual *vis,int x,int y,int w,int h,const void *buf)
 {
 	union {
 		uint64 align;	/* Forces alignment (?) */

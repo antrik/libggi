@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2004/09/13 09:16:13 cegger Exp $
+/* $Id: box.c,v 1.5 2004/12/01 23:08:22 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -47,11 +47,11 @@ int GGI_svga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 int
-GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
-	uint8 *buf = buffer;
+	const uint8 *buf = buffer;
 
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 

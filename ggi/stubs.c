@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.10 2004/11/27 20:03:32 soyt Exp $
+/* $Id: stubs.c,v 1.11 2004/12/01 23:08:26 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -277,7 +277,7 @@ int _ggiDrawHLineNC(ggi_visual *vis,int x,int y,int w)
 int ggiDrawHLine(ggi_visual *vis,int x,int y,int w)
 { return vis->opdraw->drawhline(vis,x,y,w); }
 
-int ggiPutHLine(ggi_visual *vis,int x,int y,int w,void *buf)
+int ggiPutHLine(ggi_visual *vis,int x,int y,int w,const void *buf)
 { return vis->opdraw->puthline(vis,x,y,w,buf); }
 
 int ggiGetHLine(ggi_visual *vis,int x,int y,int w,void *buf)
@@ -290,7 +290,7 @@ int _ggiDrawVLineNC(ggi_visual *vis,int x,int y,int h)
 int ggiDrawVLine(ggi_visual *vis,int x,int y,int h)
 { return vis->opdraw->drawvline(vis,x,y,h); }
 
-int ggiPutVLine(ggi_visual *vis,int x,int y,int h,void *buf)
+int ggiPutVLine(ggi_visual *vis,int x,int y,int h,const void *buf)
 { return vis->opdraw->putvline(vis,x,y,h,buf); }
 
 int ggiGetVLine(ggi_visual *vis,int x,int y,int h,void *buf)
@@ -300,7 +300,7 @@ int ggiGetVLine(ggi_visual *vis,int x,int y,int h,void *buf)
 int ggiDrawBox(ggi_visual *vis,int x,int y,int w,int h)
 { return vis->opdraw->drawbox(vis,x,y,w,h); }
 
-int ggiPutBox(ggi_visual *vis,int x,int y,int w,int h,void *buf)
+int ggiPutBox(ggi_visual *vis,int x,int y,int w,int h,const void *buf)
 { return vis->opdraw->putbox(vis,x,y,w,h,buf); }
 
 int ggiGetBox(ggi_visual *vis,int x,int y,int w,int h,void *buf)

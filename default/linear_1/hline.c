@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: hline.c,v 1.2 2004/12/01 23:08:01 cegger Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -67,9 +67,10 @@ int GGI_lin1_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 { 
-	uint8 *adr,*buff=(uint8 *)buffer;
+	uint8 *adr;
+	const uint8 *buff=(const uint8 *)buffer;
 	int mask,i,j,diff=0;
 	uint8 foo,color;
 

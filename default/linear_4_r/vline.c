@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: vline.c,v 1.2 2004/12/01 23:08:04 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -68,9 +68,10 @@ int GGI_lin4r_drawvline_nc(ggi_visual *vis,int x,int y,int h)
 	return 0;
 }
 
-int GGI_lin4r_putvline(ggi_visual *vis,int x,int y,int h,void *buffer)
+int GGI_lin4r_putvline(ggi_visual *vis,int x,int y,int h,const void *buffer)
 {
-	uint8 *ptr,*buf8=(uint8 *)buffer;
+	uint8 *ptr;
+	const uint8 *buf8=(const uint8 *)buffer;
 	int stride=LIBGGI_FB_W_STRIDE(vis);
 	uint8 shift = (x & 0x01) << 2;
 	uint8 mask = 0x0f << shift;

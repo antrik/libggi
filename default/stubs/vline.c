@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2003/07/05 22:13:42 cegger Exp $
+/* $Id: vline.c,v 1.4 2004/12/01 23:08:06 cegger Exp $
 ******************************************************************************
 
    Generic vertical lines.
@@ -51,9 +51,9 @@ int GGI_stubs_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
-	uint8 *src = (uint8 *) buffer;
+	const uint8 *src = (const uint8 *) buffer;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 
@@ -64,9 +64,9 @@ int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
-	uint16 *src = (uint16 *) buffer;
+	const uint16 *src = (const uint16 *) buffer;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 
@@ -77,9 +77,9 @@ int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L3_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L3_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
-	uint8 *src = (uint8 *) buffer;
+	const uint8 *src = (const uint8 *) buffer;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *3);
 
@@ -91,9 +91,9 @@ int _GGI_stubs_L3_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L4_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L4_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
-	uint32 *src = (uint32 *) buffer;
+	const uint32 *src = (const uint32 *) buffer;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, src, *1);
 

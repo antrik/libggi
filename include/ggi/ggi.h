@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.14 2004/11/27 00:06:04 cegger Exp $
+/* $Id: ggi.h,v 1.15 2004/12/01 23:08:27 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -526,15 +526,15 @@ GGIAPIFUNC int ggiGetPixel(ggi_visual_t vis,int x,int y,ggi_pixel *pixel);
 
 GGIAPIFUNC int ggiDrawLine(ggi_visual_t vis,int x,int y,int xe,int ye);
 GGIAPIFUNC int ggiDrawHLine(ggi_visual_t vis,int x,int y,int w);
-GGIAPIFUNC int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+GGIAPIFUNC int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,const void *buf);
 GGIAPIFUNC int ggiGetHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
 
 GGIAPIFUNC int ggiDrawVLine(ggi_visual_t vis,int x,int y,int h);
-GGIAPIFUNC int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+GGIAPIFUNC int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,const void *buf);
 GGIAPIFUNC int ggiGetVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
 
 GGIAPIFUNC int ggiDrawBox(ggi_visual_t vis,int x,int y,int w,int h);
-GGIAPIFUNC int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+GGIAPIFUNC int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,const void *buf);
 GGIAPIFUNC int ggiGetBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
 GGIAPIFUNC int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,
 			  int nx,int ny);

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: box.c,v 1.3 2004/12/01 23:08:06 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Box functions
@@ -60,7 +60,7 @@ int GGI_glide_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 }
 
-int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 	int bpp = priv->bytes_per_pixel;
@@ -69,7 +69,7 @@ int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, void *data)
 		int diff=LIBGGI_GC(vis)->cliptl.y-y;
 		y+=diff;
 		h-=diff;
-		data = (uint8 *)data + diff*bpp*w;
+		data = (const uint8 *)data + diff*bpp*w;
 	}
 	if (y+h>LIBGGI_GC(vis)->clipbr.y) {
 		h=LIBGGI_GC(vis)->clipbr.y-y;
@@ -80,7 +80,7 @@ int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, void *data)
 		int diff=LIBGGI_GC(vis)->cliptl.x-x;
 		x+=diff;
 		w-=diff;
-		data = (uint8*)data + diff*bpp;
+		data = (const uint8*)data + diff*bpp;
 	}
 	if (x+w>LIBGGI_GC(vis)->clipbr.x) {
 		w=LIBGGI_GC(vis)->clipbr.x-x;

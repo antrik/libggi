@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.10 2004/11/27 16:42:24 soyt Exp $
+/* $Id: stubs.c,v 1.11 2004/12/01 23:08:07 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -98,7 +98,7 @@ int GGI_multi_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return err;
 }
 
-int GGI_multi_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_multi_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
@@ -111,7 +111,7 @@ int GGI_multi_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	return err;
 }
 
-int GGI_multi_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int GGI_multi_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
@@ -124,7 +124,7 @@ int GGI_multi_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return err;
 }
 
-int GGI_multi_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_multi_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;

@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: vline.c,v 1.3 2004/12/01 23:08:05 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -83,9 +83,10 @@ int GGIdrawvline_nc(ggi_visual *vis,int x,int y,int h)
 
 
 
-int GGIputvline(ggi_visual *vis,int x,int y,int h,void *buff)
+int GGIputvline(ggi_visual *vis,int x,int y,int h,const void *buff)
 {
-  uint8 *pixpt, *buffer=(uint8 *)buff;
+  uint8 *pixpt;
+  const uint8 *buffer=(const uint8 *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 
 
@@ -114,9 +115,10 @@ int GGIputvline(ggi_visual *vis,int x,int y,int h,void *buff)
 }
 
 
-int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,void *buff)
+int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,const void *buff)
 {
-  uint8 *pixpt, *buffer=(uint8 *)buff;
+  uint8 *pixpt;
+  const uint8 *buffer=(const uint8 *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 
   pixpt = BANKFB + ((y * LIBGGI_FB_W_STRIDE(vis) + x) << LOGBYTPP);

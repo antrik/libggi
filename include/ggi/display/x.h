@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.12 2004/10/31 14:25:07 cegger Exp $
+/* $Id: x.h,v 1.13 2004/12/01 23:08:27 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -293,8 +293,8 @@ ggifunc_drawbox		GGI_X_drawbox_draw;
 ggifunc_putbox		GGI_X_putbox_slave;
 ggifunc_putbox		GGI_X_putbox_draw;
 
-ggifunc_putbox		GGI_X_getbox_slave;
-ggifunc_putbox		GGI_X_getbox_draw;
+ggifunc_getbox		GGI_X_getbox_slave;
+ggifunc_getbox		GGI_X_getbox_draw;
 
 ggifunc_copybox		GGI_X_copybox_slave;
 ggifunc_copybox		GGI_X_copybox_slave_draw;

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2003/07/05 22:13:42 cegger Exp $
+/* $Id: box.c,v 1.4 2004/12/01 23:08:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -55,9 +55,9 @@ int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 }
 
 
-int GGI_lin32_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_lin32_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
-	uint32 *src = buffer;
+	const uint32 *src = buffer;
 	uint8 *dest;
 	int srcwidth = w;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);

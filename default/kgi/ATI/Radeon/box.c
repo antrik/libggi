@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.5 2003/02/07 01:35:09 skids Exp $
+/* $Id: box.c,v 1.6 2004/12/01 23:08:00 cegger Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -212,7 +212,7 @@ int GGI_kgi_radeon_copybox_3d(ggi_visual *vis, int x, int y, int w, int h,
 
 
 int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h, 
-			     void *buf)
+			     const void *buf)
 {
 	int y2, h2, wb, w32;
 	radeon_context_t *ctx;

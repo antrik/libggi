@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: line.c,v 1.3 2004/12/01 23:08:07 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Line functions
@@ -76,7 +76,7 @@ GGI_glide_drawvline(ggi_visual *vis,int x,int y,int h)
 }
 
 int
-GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, void *data)
+GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, const void *data)
 {
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) {
@@ -86,7 +86,7 @@ GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, void *data)
 		int diff=(LIBGGI_GC(vis)->cliptl.x)-x;
 		x+=diff;
 		w-=diff;
-		data=((uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
+		data=((const uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
 	}
 	if (x+w>(LIBGGI_GC(vis)->clipbr.x)) {
 		w=(LIBGGI_GC(vis)->clipbr.x)-x;
@@ -101,7 +101,7 @@ GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, void *data)
 }
 
 int
-GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, void *data)
+GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, const void *data)
 {
 	/* Clipping */
 	if (x<(LIBGGI_GC(vis)->cliptl.x) || x>=(LIBGGI_GC(vis)->clipbr.x)) {
@@ -111,7 +111,7 @@ GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, void *data)
 		int diff=(LIBGGI_GC(vis)->cliptl.y)-y;
 		y+=diff;
 		h-=diff;
-		data=((uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
+		data=((const uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
 	}
 	if (y+h>(LIBGGI_GC(vis)->clipbr.y)) {
 		h=(LIBGGI_GC(vis)->clipbr.y)-y;
