@@ -9,4 +9,4 @@ mach64_la_SOURCES = visual.c box.c line.c gc.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/default/kgi
 
-EXTRA_DIST = EXPSYMS
+EXTRA_DIST = EXPSYMS mach64_accel.h

@@ -9,4 +9,4 @@ Gx00_la_SOURCES = visual.c box.c line.c gc.c gtext.c
 
 sublibdir = $(libdir)/$(ggi_subdir)/default/kgi
 
-EXTRA_DIST = EXPSYMS
+EXTRA_DIST = EXPSYMS Gx00.h Gx00_accel.h
