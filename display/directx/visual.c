@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2004/09/13 08:22:05 pekberg Exp $
+/* $Id: visual.c,v 1.21 2004/09/13 09:42:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -36,18 +36,17 @@
 
 
 typedef struct {
-        HANDLE hWnd;
-        HINSTANCE hInstance;
+	HANDLE hWnd;
+	HINSTANCE hInstance;
 } GGIGII, *lpGGIGII;
 
 
-static const gg_option optlist[] =
-{
-	{ "inwin",  "no" },
-        { "noinput", "no" },
-	{ "nocursor", "no" },
-        { "physz", "0,0" },
-	{ "keepcursor", "no"}
+static const gg_option optlist[] = {
+	{"inwin", "no"},
+	{"noinput", "no"},
+	{"nocursor", "no"},
+	{"physz", "0,0"},
+	{"keepcursor", "no"}
 };
 
 #define OPT_INWIN	0
@@ -59,7 +58,8 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int
+GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
@@ -75,8 +75,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-                        const char *args, void *argptr, uint32 *dlret)
+static int
+GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
+	const char *args, void *argptr, uint32 * dlret)
 {
 	int err = GGI_OK;
 	directx_priv *priv;
@@ -92,13 +93,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENOMEM;
 		goto err0;
 	}
-        if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
+	if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
 		err = GGI_ENOMEM;
 		goto err1;
-        }
+	}
 
 	memset(priv, 0, sizeof(directx_priv));
-        LIBGGI_PRIVATE(vis) = priv;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	InitializeCriticalSection(&priv->cs);
 	InitializeCriticalSection(&priv->redrawcs);
@@ -119,43 +120,44 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				"arguments.\n");
 		}
 	}
-        
+
 	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
-			&(priv->physzflags), &(priv->physz)))
-	{
+				    &(priv->physzflags), &(priv->physz))) {
 		err = GGI_EARGINVAL;
 		goto err3;
 	}
 
 	if (options[OPT_KEEPCURSOR].result[0] == 'n') {
-		priv->cursortype = (options[OPT_NOCURSOR].result[0] == 'n') ?
-		  1 : 0; 
+		priv->cursortype =
+		    (options[OPT_NOCURSOR].result[0] == 'n') ? 1 : 0;
 	} else {
 		priv->cursortype = 2;
 	}
 
 	if (options[OPT_INWIN].result[0] != 'n') {
-	  if (strcmp(options[OPT_INWIN].result, "root")) {
-	    priv->hParent = (HANDLE)
-	      strtoul(options[OPT_INWIN].result, NULL, 0);
-	    if (!IsWindow(priv->hParent)) {
-	      fprintf(stderr, "display-directx: 0x%08x is not a valid "
-		      "window handle.\n", (unsigned)priv->hParent);
-	      priv->hParent = NULL;
-	    }
-	  } else
-	    priv->hParent = GetDesktopWindow();
+		if (strcmp(options[OPT_INWIN].result, "root")) {
+			priv->hParent = (HANDLE)
+			    strtoul(options[OPT_INWIN].result, NULL, 0);
+			if (!IsWindow(priv->hParent)) {
+				fprintf(stderr,
+					"display-directx: 0x%08x "
+					"is not a valid window handle.\n",
+					(unsigned) priv->hParent);
+				priv->hParent = NULL;
+			}
+		} else
+			priv->hParent = GetDesktopWindow();
 	}
 
-        if (!DDInit(vis)) {
+	if (!DDInit(vis)) {
 		err = GGI_ENODEVICE;
 		goto err3;
-        }
+	}
 
-        ggigii.hWnd = priv->hWnd;
-        ggigii.hInstance = priv->hInstance;
+	ggigii.hWnd = priv->hWnd;
+	ggigii.hInstance = priv->hInstance;
 
-        if (tolower((int)options[OPT_NOINPUT].result[0]) == 'n' &&
+	if (tolower((int) options[OPT_NOINPUT].result[0]) == 'n' &&
 	    /* FIXME: dxinput doesn't work with -inwin yet; the following
 	       condition disables the default input target if -inwin has been
 	       specified */
@@ -178,12 +180,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inp = NULL;
 	}
 
-        vis->opdisplay->setmode = GGI_directx_setmode;
-        vis->opdisplay->getmode = GGI_directx_getmode;
-        vis->opdisplay->checkmode = GGI_directx_checkmode;
-        vis->opdisplay->flush = GGI_directx_flush;
-        vis->opdisplay->getapi = GGI_directx_getapi;
-        vis->opdraw->setorigin = GGI_directx_setorigin;
+	vis->opdisplay->setmode = GGI_directx_setmode;
+	vis->opdisplay->getmode = GGI_directx_getmode;
+	vis->opdisplay->checkmode = GGI_directx_checkmode;
+	vis->opdisplay->flush = GGI_directx_flush;
+	vis->opdisplay->getapi = GGI_directx_getapi;
+	vis->opdraw->setorigin = GGI_directx_setorigin;
 	vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
@@ -203,10 +205,11 @@ err0:
 
 
 
-EXPORTFUNC
-int GGIdl_directx(int func, void **funcptr);
+EXPORTFUNC int
+GGIdl_directx(int func, void **funcptr);
 
-int GGIdl_directx(int func, void **funcptr)
+int
+GGIdl_directx(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:

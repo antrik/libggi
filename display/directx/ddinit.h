@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.11 2004/08/27 12:02:19 pekberg Exp $
+/* $Id: ddinit.h,v 1.12 2004/09/13 09:42:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -43,7 +43,7 @@ void DDShutdown(directx_priv *priv);
 void DDRedraw(ggi_visual *vis, int x, int y, int w, int h);
 void DDRedrawAll(ggi_visual *vis);
 int DDChangeMode(directx_priv *priv, int frames,
-	DWORD virtw, DWORD virth,
-	DWORD width, DWORD height, DWORD BPP);
+		 DWORD virtw, DWORD virth,
+		 DWORD width, DWORD height, DWORD BPP);
 
 __END_DECLS

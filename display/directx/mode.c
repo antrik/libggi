@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2004/09/13 08:38:29 cegger Exp $
+/* $Id: mode.c,v 1.18 2004/09/13 09:42:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -37,7 +37,7 @@
 #include "../common/ggi-auto.inc"
 
 static int
-directx_acquire(ggi_resource * res, uint32 actype)
+directx_acquire(ggi_resource *res, uint32 actype)
 {
 	ggi_directbuffer *dbuf;
 	ggi_visual *vis;
@@ -71,13 +71,14 @@ directx_acquire(ggi_resource * res, uint32 actype)
 	res->curactype |= actype;
 	res->count++;
 
-	GGIDPRINT_MISC("directx_acquire - success, count: %d\n", res->count);
+	GGIDPRINT_MISC("directx_acquire - success, count: %d\n",
+		       res->count);
 
 	return 0;
 }
 
 static int
-directx_release(ggi_resource * res)
+directx_release(ggi_resource *res)
 {
 	GGIDPRINT_MISC("directx_release(%p) called\n", res);
 
@@ -89,7 +90,8 @@ directx_release(ggi_resource * res)
 	return 0;
 }
 
-int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
+int
+GGI_directx_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	EnterCriticalSection(&priv->cs);
@@ -98,7 +100,8 @@ int GGI_directx_flush(ggi_visual * vis, int x, int y, int w, int h, int tryflag)
 	return 0;
 }
 
-int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments)
+int
+GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch (num) {
@@ -120,9 +123,8 @@ int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments
 }
 
 
-static void GetScreenParams(int *depth,
-	int *wpix, int *hpix,
-	int *wmm, int *hmm)
+static void
+GetScreenParams(int *depth, int *wpix, int *hpix, int *wmm, int *hmm)
 {
 	HWND wnd = GetDesktopWindow();
 	HDC dc = GetDC(wnd);
@@ -136,7 +138,8 @@ static void GetScreenParams(int *depth,
 
 
 
-int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
+int
+GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	uint8 err = 0;
@@ -145,13 +148,13 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 
 	GetScreenParams(&depth, &width, &height, &sizex, &sizey);
 	if (priv->hParent) {
-	  RECT r;
-	  GetWindowRect(priv->hParent, &r);
-	  defwidth = r.right-r.left;
-	  defheight = r.bottom-r.top;
+		RECT r;
+		GetWindowRect(priv->hParent, &r);
+		defwidth = r.right - r.left;
+		defheight = r.bottom - r.top;
 	} else {
-	  defwidth = width * 9 / 10;
-	  defheight = height * 9 / 10;
+		defwidth = width * 9 / 10;
+		defheight = height * 9 / 10;
 	}
 
 	/* handle AUTO */
@@ -166,15 +169,15 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	}
 
 	switch (depth) {
-	case 1: 
-		deftype = GT_1BIT; 
+	case 1:
+		deftype = GT_1BIT;
 		break;
-	case 2: 
-		deftype = GT_2BIT;  
+	case 2:
+		deftype = GT_2BIT;
 		break;
-	case 4: 
+	case 4:
 		deftype = GT_4BIT;
-		break;   
+		break;
 	case 8:
 		deftype = GT_8BIT;
 		break;
@@ -188,7 +191,7 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 		deftype = GT_24BIT;
 		break;
 	case 32:
-		deftype = GT_32BIT;  
+		deftype = GT_32BIT;
 		break;
 	default:
 		deftype = GT_AUTO;
@@ -205,16 +208,14 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	      && mode->visible.x <= width
 	      && mode->visible.y <= height
 	      && (!priv->hParent
-	          || (mode->visible.x == defwidth
-	              && mode->visible.y == defheight))))
-	{
+		  || (mode->visible.x == defwidth
+		      && mode->visible.y == defheight)))) {
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
 		err = -1;
 	}
 
-	if (GT_SIZE(mode->graphtype) != (unsigned)depth)
-	{
+	if (GT_SIZE(mode->graphtype) != (unsigned) depth) {
 		mode->graphtype = deftype;
 		err = -1;
 	}
@@ -222,34 +223,33 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	if (mode->virt.x < mode->visible.x) {
 		mode->virt.x = mode->visible.x;
 		err = -1;
-	}       
+	}
 	if (mode->virt.y < mode->visible.y) {
 		mode->virt.y = mode->visible.y;
 		err = -1;
 	}
 
 	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
-	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
-	{
+	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
 		err = -1;
 	}
 	mode->dpp.x = mode->dpp.y = 1;
 
-	if (err) return err;
+	if (err)
+		return err;
 
 	EnterCriticalSection(&priv->cs);
 	err = _ggi_physz_figure_size(mode, priv->physzflags,
-				&priv->physz,
-				width * 254 / sizex / 10,
-				height * 254 / sizey / 10,
-				width, height);
+				     &priv->physz,
+				     width * 254 / sizex / 10,
+				     height * 254 / sizey / 10,
+				     width, height);
 	LeaveCriticalSection(&priv->cs);
 
-	GGIDPRINT_MODE(
-		"display-directx: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
-		mode->visible.x, mode->visible.y,
-		mode->virt.x, mode->virt.y, 
-		mode->frames, mode->graphtype);
+	GGIDPRINT_MODE
+	    ("display-directx: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
+	     mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y,
+	     mode->frames, mode->graphtype);
 
 	return err;
 }
@@ -257,7 +257,8 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 
 
 
-int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
+int
+GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int i, id, ret;
@@ -279,7 +280,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	DDChangeMode(priv, mode->frames, mode->virt.x, mode->virt.y,
-		mode->visible.x, mode->visible.y, priv->BPP * 8);
+		     mode->visible.x, mode->visible.y, priv->BPP * 8);
 
 	vis->d_frame_num = 0;
 	vis->r_frame_num = 0;
@@ -301,17 +302,20 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		LIBGGI_APPBUFS(vis)[i]->resource = res;
 		LIBGGI_APPBUFS(vis)[i]->resource->acquire = directx_acquire;
 		LIBGGI_APPBUFS(vis)[i]->resource->release = directx_release;
-		LIBGGI_APPBUFS(vis)[i]->resource->self = LIBGGI_APPBUFS(vis)[i];
+		LIBGGI_APPBUFS(vis)[i]->resource->self =
+		    LIBGGI_APPBUFS(vis)[i];
 		LIBGGI_APPBUFS(vis)[i]->resource->priv = vis;
 		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
 		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write
-			= priv->lpSurfaceAdd[i];
+		LIBGGI_APPBUFS(vis)[i]->type =
+		    GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		LIBGGI_APPBUFS(vis)[i]->read =
+		    LIBGGI_APPBUFS(vis)[i]->write = priv->lpSurfaceAdd[i];
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = priv->pitch;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat =
+		    LIBGGI_PIXFMT(vis);
 
 		GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
 			       LIBGGI_APPBUFS(vis)[i]->read,
@@ -326,13 +330,15 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
-	for (id = 1; GGI_directx_getapi(vis, id, libname, libargs) == 0; id++) {
+	for (id = 1; !GGI_directx_getapi(vis, id, libname, libargs); id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL) != 0) {
-			fprintf(stderr, "display-directx: Error opening the "
+			fprintf(stderr,
+				"display-directx: Error opening the "
 				"%s (%s) library\n", libname, libargs);
 			return -1;
 		}
-		GGIDPRINT("Success in loading %s (%s)\n", libname, libargs);
+		GGIDPRINT("Success in loading %s (%s)\n",
+			  libname, libargs);
 	}
 
 	LeaveCriticalSection(&priv->cs);
@@ -343,11 +349,13 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 }
 
 
-int GGI_directx_getmode(ggi_visual * vis, ggi_mode * tm)
+int
+GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
-	LIBGGI_APPASSERT(vis != NULL, "directx: GGIgetmode: Visual == NULL");
+	LIBGGI_APPASSERT(vis != NULL,
+			 "directx: GGIgetmode: Visual == NULL");
 
 	EnterCriticalSection(&priv->cs);
 	/* We assume the mode in the visual to be OK */
@@ -357,25 +365,31 @@ int GGI_directx_getmode(ggi_visual * vis, ggi_mode * tm)
 	return 0;
 }
 
-int GGI_directx_setorigin(ggi_visual *vis, int x, int y)
+int
+GGI_directx_setorigin(ggi_visual *vis, int x, int y)
 {
-	if (x < 0) return GGI_EARGINVAL;
-	if (y < 0) return GGI_EARGINVAL;
-	if (x > LIBGGI_VIRTX(vis) - LIBGGI_X(vis)) return GGI_EARGINVAL;
-	if (y > LIBGGI_VIRTY(vis) - LIBGGI_Y(vis)) return GGI_EARGINVAL;
+	if (x < 0)
+		return GGI_EARGINVAL;
+	if (y < 0)
+		return GGI_EARGINVAL;
+	if (x > LIBGGI_VIRTX(vis) - LIBGGI_X(vis))
+		return GGI_EARGINVAL;
+	if (y > LIBGGI_VIRTY(vis) - LIBGGI_Y(vis))
+		return GGI_EARGINVAL;
 	vis->origin_x = x;
 	vis->origin_y = y;
 	return 0;
 }
 
-int GGI_directx_setdisplayframe(ggi_visual *vis, int num)
+int
+GGI_directx_setdisplayframe(ggi_visual *vis, int num)
 {
-        ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
+	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
-        if (db == NULL)
-                return -1;
+	if (db == NULL)
+		return -1;
 
-        vis->d_frame_num = num;
+	vis->d_frame_num = num;
 
-        return 0;
+	return 0;
 }

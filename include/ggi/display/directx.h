@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.11 2004/09/10 18:48:24 pekberg Exp $
+/* $Id: directx.h,v 1.12 2004/09/13 09:42:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -80,14 +80,14 @@ typedef struct directx_priv
 	CRITICAL_SECTION redrawcs;
 	int redraw;
 
-        HANDLE hWnd, hParent;
-        HANDLE hInstance;
-        ATOM wndclass;
-        long pitch;
-        long maxX;
-        long maxY;
-        DWORD ColorDepth;
-        char BPP;
+	HANDLE hWnd, hParent;
+	HANDLE hInstance;
+	ATOM wndclass;
+	long pitch;
+	long maxX;
+	long maxY;
+	DWORD ColorDepth;
+	char BPP;
 
 	/* resizing info */
 	CRITICAL_SECTION sizingcs;
