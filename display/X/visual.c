@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2004/02/29 22:04:52 cegger Exp $
+/* $Id: visual.c,v 1.28 2004/09/09 12:07:56 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -545,7 +545,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	if (GGIX_PRIV(vis)->opmansync) MANSYNC_deinit(vis);	
+	if (vis && GGIX_PRIV(vis) && GGIX_PRIV(vis)->opmansync) {
+		MANSYNC_deinit(vis);
+	}
 	return 0;
 }
 
