@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/09/08 21:37:48 soyt Exp $
+/* $Id: mode.c,v 1.3 2003/10/23 08:37:22 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -26,14 +26,13 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/internal/internal.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#include "config.h"
-#include <ggi/internal/internal.h>
-
 
 /* Static variables */
 static ggi_mode _ggiDefaultMode =
