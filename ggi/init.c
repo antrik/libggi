@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.19 2004/09/15 18:32:42 cegger Exp $
+/* $Id: init.c,v 1.20 2004/10/27 09:27:37 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -66,7 +66,7 @@ enum gg_swartype     swars_selected    = 0;
 
 const char *ggiGetConfDir(void)
 {
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__CYGWIN__)
 	/* On Win32 we allow overriding of the compiled in path. */
 	const char *envdir = getenv("GGI_CONFDIR");
 	if (envdir) return envdir;

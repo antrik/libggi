@@ -175,7 +175,8 @@ user, which affect the behaviour of LibGGI:
     before returning from `GGIDPRINT` calls.
 
 `GGI_CONFDIR`
-    Override compiled-in path to global config files (Win32 only).
+    Override compiled-in path to global config files (Win32 only,
+    but not Cygwin).
 
 `GGI_NEWVT`
     If set, causes a new virtual console to be allocated for some
