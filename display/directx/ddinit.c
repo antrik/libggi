@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.32 2004/09/13 12:57:04 pekberg Exp $
+/* $Id: ddinit.c,v 1.33 2004/09/13 14:12:22 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -124,7 +124,7 @@ void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
 int
 DDChangeMode(directx_priv *priv, int frames,
 	     DWORD virtw, DWORD virth,
-	     DWORD width, DWORD height, DWORD BPP)
+	     DWORD width, DWORD height)
 {
 	/* destroy any existing surface */
 	DDDestroySurface(priv);
@@ -778,8 +778,7 @@ DDCreateSurface(directx_priv *priv, int frames,
 	priv->maxX = virtw;
 	priv->maxY = virth;
 	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-	priv->BPP = (priv->ColorDepth + 7) / 8;
-	priv->pitch = priv->maxX * priv->BPP;
+	priv->pitch = priv->maxX * (priv->ColorDepth + 7) / 8;
 
 	return 1;
 }

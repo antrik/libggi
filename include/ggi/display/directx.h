@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.13 2004/09/13 14:10:35 pekberg Exp $
+/* $Id: directx.h,v 1.14 2004/09/13 14:12:22 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -87,7 +87,6 @@ typedef struct directx_priv
 	long maxX;
 	long maxY;
 	DWORD ColorDepth;
-	char BPP;
 
 	/* resizing info */
 	CRITICAL_SECTION sizingcs;
