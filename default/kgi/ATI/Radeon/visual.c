@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/09/13 10:34:44 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/09/13 16:10:55 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -107,7 +107,7 @@ static int origin_changed(ggi_visual *vis) {
 	packet.crtc_offset = 
 	  (kgi_u8_t *)(db->read) - KGI_PRIV(vis)->fb;
 	packet.crtc_offset +=
-	  (vis->origin_y * LIBGGI_VIRTX(vis) + vis->origin_x) * GT_SIZE(gt)/8;
+	  (vis->origin_y * LIBGGI_VIRTX(vis) + vis->origin_x) * GT_ByPP(gt);
 	switch (GT_SIZE(gt)) {
 	case 32:
 		packet.crtc_offset &= 0xffffffc0;
