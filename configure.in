@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.111 2004/03/03 20:15:02 cegger Exp $
+dnl $Id: configure.in,v 1.112 2004/03/12 13:00:17 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -571,7 +571,7 @@ fi
 
 
 DISPLAYSUBDIRS=""
-DEFAULTSUBDIRS="stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
+DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
 XSUBDIRS=""
 FBDEVSUBDIRS=""
 
@@ -1468,6 +1468,7 @@ default/linear_16/Makefile
 default/linear_24/Makefile
 default/linear_32/Makefile
 default/stubs/Makefile
+default/pseudo_stubs/Makefile
 default/text_16/Makefile
 default/text_32/Makefile
 default/ilbm/Makefile

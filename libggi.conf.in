@@ -76,6 +76,9 @@ wsfb				display/wsfb.@DLLEXT@
 # Stubs library - generic drawing code goes here
 generic-stubs			default/stubs.@DLLEXT@
 
+# Stubs library - code for pseudo targets goes here
+generic-pseudo-stubs		default/pseudo_stubs.@DLLEXT@
+
 # Color library
 generic-color			default/color.@DLLEXT@
 
