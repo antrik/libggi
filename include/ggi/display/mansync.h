@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.3 2004/10/08 18:00:28 cegger Exp $
+/* $Id: mansync.h,v 1.4 2004/10/08 20:39:46 pekberg Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -143,6 +143,6 @@ do {									\
 	/* From sync to async */					\
 	else if(!MANSYNC_ISASYNC(vis) && (flags & GGIFLAG_ASYNC))	\
 		MANSYNC_stop(vis);					\
-} while(0);
+} while(0)
 
 #endif /* _GGI_DISPLAY_MANSYNC_H */
