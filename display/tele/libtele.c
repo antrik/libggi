@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.9 2004/02/04 14:29:44 cegger Exp $
+/* $Id: libtele.c,v 1.10 2005/03/10 14:27:06 pekberg Exp $
 ******************************************************************************
 
    libtele.c
@@ -527,6 +527,8 @@ static int tclient_open_inet(TeleClient *c, const char *addr)
 
 	/* Obtain numerical address from string */
 	ggstrlcpy(name, addr, sizeof(name));
+	if (size_t(n) < sizeof(name))
+		name[n] = '\0';
 
 	h = gethostbyname(name);
 
