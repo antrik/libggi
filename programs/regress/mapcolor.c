@@ -1,4 +1,4 @@
-/* $Id: mapcolor.c,v 1.1 2004/12/25 23:17:24 cegger Exp $
+/* $Id: mapcolor.c,v 1.2 2005/02/09 07:38:31 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for color (un)mapping
@@ -59,6 +59,8 @@ static void testcase1(const char *desc)
 
 	err = ggiSetMode(vis, &mode);
 	printassert(err == GGI_OK, "mode setting failed\n");
+
+	ggiSetColorfulPalette(vis);
 
 	white_pixel = ggiMapColor(vis, &white_color);
 	black_pixel = ggiMapColor(vis, &black_color);
