@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.10 2004/11/25 16:56:41 cegger Exp $
+/* $Id: ggi.h,v 1.11 2004/11/26 19:51:22 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -472,7 +472,7 @@ GGIAPIFUNC int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,
 
 /* Color palette manipulation
  */
-GGIAPIFUNC ggi_pixel ggiMapColor(ggi_visual_t vis,ggi_color const *col);
+GGIAPIFUNC ggi_pixel ggiMapColor(ggi_visual_t vis,const ggi_color *col);
 GGIAPIFUNC int ggiUnmapPixel(ggi_visual_t vis,ggi_pixel pixel,ggi_color *col);
 
 GGIAPIFUNC int ggiPackColors(ggi_visual_t vis,void *buf,ggi_color *cols,
