@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: pixel.c,v 1.2 2002/11/16 19:06:30 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -118,13 +118,16 @@ int GGI_lin4_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin4_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
-	int pel;
-	uint8 xs;
+	uint8 pel;
 	
-	pel = *(uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
+	pel = *((uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1));
 
-	xs = (x & 1) << 2;
-	*pixel = (ggi_pixel)((pel & (0x0f << xs)) >> (xs ^ 4)); 
+        if (x & 1) {
+                *pixel = (ggi_pixel)(pel & 0x0f);
+        }
+        else {
+                *pixel = (ggi_pixel)(pel >> 4);
+        }
 
 	return 0;
 }

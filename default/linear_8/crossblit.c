@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2002/10/09 22:54:08 cegger Exp $
+/* $Id: crossblit.c,v 1.4 2002/11/16 19:06:30 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -42,6 +42,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	ggi_pixel cur_dst = 0;
 	uint8 *dstptr;
 	int stride;
+
+	GGIDPRINT_DRAW("linear-8: fallback to slow crossblit.\n");
 
 	LIBGGIGetPixel(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
