@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/04/28 17:58:13 skids Exp $
+/* $Id: mode.c,v 1.4 2002/04/30 23:03:03 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -174,6 +174,8 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
 		vis->opcolor->setpalvec = GGI_memory_setpalvec;
 	}
+
+	vis->opgc->gcchanged = NULL; /* kick _default_error off hook. */
 	
 	return 0;
 }

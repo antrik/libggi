@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2002/04/28 17:58:13 skids Exp $
+/* $Id: visual.c,v 1.5 2002/04/30 23:03:03 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -88,6 +88,11 @@ int GII_memory_send(gii_input_t inp, ggi_event *event)
 	return 0;
 }
 
+static int GGI_memory_flush(ggi_visual *vis, 
+			    int x, int y, int w, int h, int tryflag) {
+	/* Dummy function to avoid leaving _default_error on hook */
+	return 0;
+}
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
@@ -226,6 +231,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
+	vis->opdisplay->flush=GGI_memory_flush; 
 	vis->opdisplay->getmode=GGI_memory_getmode;
 	vis->opdisplay->setmode=GGI_memory_setmode;
 	vis->opdisplay->getapi=GGI_memory_getapi;
