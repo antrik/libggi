@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.10 2003/02/07 01:16:58 skids Exp $
+/* $Id: internal.c,v 1.11 2003/03/30 20:54:27 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -294,7 +294,7 @@ int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col)
 	for (i=0; i < pal_len; i++) {
 #undef ABS
 #define ABS(val)	((val) < 0 ? -(val) : val)
-		int dist =
+		uint32 dist =
 			ABS(r - pal[i].r) +
 			ABS(g - pal[i].g) +
 			ABS(b - pal[i].b);
@@ -373,10 +373,10 @@ void _ggi_smart_match_palettes(ggi_color *pal, int size,
 
 void _ggi_build_palette(ggi_color *pal, int num)
 {
-	ggi_color black  = { 0x0000, 0x0000, 0x0000 };
-	ggi_color white  = { 0xffff, 0xffff, 0xffff };
-	ggi_color blue   = { 0x0000, 0x0000, 0xffff };
-	ggi_color yellow = { 0xffff, 0xffff, 0x0000 };
+	ggi_color black  = { 0x0000, 0x0000, 0x0000, 0x0000 };
+	ggi_color white  = { 0xffff, 0xffff, 0xffff, 0x0000 };
+	ggi_color blue   = { 0x0000, 0x0000, 0xffff, 0x0000 };
+	ggi_color yellow = { 0xffff, 0xffff, 0x0000, 0x0000 };
 
 	int i, depth, N;
 
