@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.3 2003/09/16 22:16:00 cegger Exp $
+/* $Id: visual.m,v 1.4 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -123,7 +123,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	pool = [ [ NSAutoreleasePool alloc ] init ];
 
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result,
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result,
 				&(priv->physzflags),
 				&(priv->physz));
 	if (err != GGI_OK) goto out;

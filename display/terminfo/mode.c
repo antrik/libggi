@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2003/07/06 10:25:23 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -261,7 +261,7 @@ int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 		err = -1;
 	}
 
-	err = _ggi_figure_physz(tm, priv->physzflags, &(priv->physz),
+	err = _ggi_physz_figure_size(tm, priv->physzflags, &(priv->physz),
 				0, 0, tm->visible.x, tm->visible.y);
 
 	if (tm->graphtype == GT_TEXT) tm->graphtype = GT_TEXT32;

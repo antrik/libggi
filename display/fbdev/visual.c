@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2003/12/13 21:12:02 mooz Exp $
+/* $Id: visual.c,v 1.15 2004/02/14 13:45:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -624,7 +624,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GGIDPRINT("display-fbdev: Parsing physz options.\n");
 	do {
 		int err;
-		err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+		err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 				       &(priv->physzflags), &(priv->physz)); 
 		if (err != GGI_OK) {
 			do_cleanup(vis);

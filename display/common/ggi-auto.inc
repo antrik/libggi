@@ -1,4 +1,4 @@
-/* $Id: ggi-auto.inc,v 1.1 2001/05/12 23:01:57 cegger Exp $
+/* $Id: ggi-auto.inc,v 1.2 2004/02/14 13:45:37 cegger Exp $
 ******************************************************************************
 
    Common GGI_AUTO handling code.
@@ -25,11 +25,26 @@
 ******************************************************************************
 */
 
+/* ASSUMPTION:
+ *
+ * <ggi/internal/internal.h> has been included before
+ */
+
 static void _GGIhandle_ggiauto(ggi_mode *mode, int def_x, int def_y)
 {
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;
 	}
+
+	if (mode->dpp.x == GGI_AUTO) {
+		mode->dpp.x = (GT_SCHEME(mode->graphtype)==GT_TEXT) ? 8 : 1;
+	}
+
+	if (mode->dpp.y == GGI_AUTO) {
+		mode->dpp.y = (GT_SCHEME(mode->graphtype)==GT_TEXT) ? 8 : 1;
+	}
+
+	_ggi_physz_figure_visible(mode);
 
 	if (mode->visible.x==GGI_AUTO && mode->virt.x==GGI_AUTO) {
 		mode->visible.x = mode->virt.x = def_x;
@@ -51,11 +66,4 @@ static void _GGIhandle_ggiauto(ggi_mode *mode, int def_x, int def_y)
 		mode->virt.y = mode->visible.y;
 	}
 
-	if (mode->dpp.x == GGI_AUTO) {
-		mode->dpp.x = (GT_SCHEME(mode->graphtype)==GT_TEXT) ? 8 : 1;
-	}
-
-	if (mode->dpp.y == GGI_AUTO) {
-		mode->dpp.y = (GT_SCHEME(mode->graphtype)==GT_TEXT) ? 8 : 1;
-	}
 }

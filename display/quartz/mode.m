@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.2 2003/09/16 22:16:25 cegger Exp $
+/* $Id: mode.m,v 1.3 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -256,7 +256,7 @@ int GGI_quartz_checkmode(ggi_visual *vis, ggi_mode *mode)
 #endif
 
 	if (err) return err;
-	err = _ggi_figure_physz(mode, priv->physzflags,
+	err = _ggi_physz_figure_size(mode, priv->physzflags,
 				&(priv->physz),
 				0, 0, mode->visible.x, mode->visible.y);
 

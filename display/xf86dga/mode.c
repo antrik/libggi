@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2003/12/20 11:09:24 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -517,7 +517,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 ((SCREENHMM <= 0) ?  0 : (SCREENH * tm->dpp.x * 254 / SCREENHMM / 10))
 
 	if (!err) {
-		err = _ggi_figure_physz(tm,
+		err = _ggi_physz_figure_size(tm,
 					priv->x.physzflags,
 					&(priv->x.physz), SCREENDPIX,
 					SCREENDPIY, SCREENW, SCREENH);

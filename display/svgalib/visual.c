@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/12/13 21:12:03 mooz Exp $
+/* $Id: visual.c,v 1.7 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -427,7 +427,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->ismapped = 1;
 	priv->doswitch = NULL;
 
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
                                &(priv->physzflags), &(priv->physz)); 
         if (err != GGI_OK) {
           do_cleanup(vis);

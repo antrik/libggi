@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2003/12/20 11:09:24 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/02/14 13:45:40 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -235,7 +235,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	if (priv->x.xliblock == NULL)
 		goto out_freegc;
 
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result,
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result,
 			       &(priv->x.physzflags), &(priv->x.physz));
 	if (err != GGI_OK)
 		goto out_freegc;

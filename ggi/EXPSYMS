@@ -34,8 +34,9 @@ _ggi_parse_pixfmtstr
 _ggi_build_pixfmtstr
 _ggi_realloc
 _ggi_smart_match_palettes
-_ggi_parse_physz
-_ggi_figure_physz
+_ggi_physz_parse_option
+_ggi_physz_figure_visible
+_ggi_physz_figure_size
 ggiCheckGraphMode
 ggiCheckMode
 ggiCheckSimpleMode

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2003/07/06 10:25:24 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -189,7 +189,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (toupper(options[OPT_SHADE].result[0]) != 'N') {
 		priv->flags |= VCSA_FLAG_SHADE;
 	}
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
                                &(priv->physzflags), &(priv->physz)); 
         if (err != GGI_OK) goto out_closefd;
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2003/12/13 21:12:03 mooz Exp $
+/* $Id: mode.c,v 1.11 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -387,7 +387,7 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	}
 	tm->dpp.x = tm->dpp.y = 1;
 
-	err = _ggi_figure_physz(tm, priv->physzflags, &(priv->physz),
+	err = _ggi_physz_figure_size(tm, priv->physzflags, &(priv->physz),
 				0, 0, tm->visible.x, tm->visible.y);
 
 	return err;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/01/03 22:43:58 cegger Exp $
+/* $Id: mode.c,v 1.14 2004/02/14 13:45:37 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -806,7 +806,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	 (mode->visible.d * mode->dpp.d * 254 / priv->orig_var.dim / 10))
 
 	if (!err) {
-		err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
+		err = _ggi_physz_figure_size(mode, priv->physzflags, &(priv->physz),
 					(signed)(DPI(width, x)),
 					(signed)(DPI(height,y)), 
 					mode->visible.x, mode->visible.y);

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.11 2004/02/05 09:34:59 cegger Exp $
+/* $Id: internal.h,v 1.12 2004/02/14 13:45:40 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -97,14 +97,16 @@ ggifunc_setwriteframe _ggi_default_setwriteframe;
 void _ggi_build_palette(ggi_color * pal, int num);
 void _ggi_smart_match_palettes(ggi_color * pal, int size,
 			       ggi_color * ref_pal, int ref_size);
-#define GGI_PHYSZ_OVERRIDE	1
-#define GGI_PHYSZ_DPI		2
-int _ggi_parse_physz(char *optstr, int *physzflag, ggi_coord * physz);
-int _ggi_figure_physz(ggi_mode * mode, int physzflag, ggi_coord * op_sz,
-		      int dpix, int dpiy, int dsx, int dsy);
 
 /* mode.c */
 void _ggiSetDefaultMode(const char *str);
+
+#define GGI_PHYSZ_OVERRIDE	1
+#define GGI_PHYSZ_DPI		2
+int _ggi_physz_parse_option(const char *optstr, int *physzflag, ggi_coord * physz);
+int _ggi_physz_figure_visible(ggi_mode *mode);
+int _ggi_physz_figure_size(ggi_mode * mode, int physzflag, ggi_coord * op_sz,
+		      int dpix, int dpiy, int dsx, int dsy);
 
 /* probe.c */
 ggi_visual_t _ggiProbeTarget(void);
@@ -118,6 +120,9 @@ int _ggiDrawHLineNC(ggi_visual * vis, int x, int y, int w);
 int _ggiDrawVLineNC(ggi_visual * vis, int x, int y, int h);
 int _ggiIdleAccel(ggi_visual * vis);
 int _ggiSendKGICommand(ggi_visual * vis, int cmd, void *arg);
+
+/* unit.h */
+#include <ggi/internal/unit.h>
 
 /* visual.c */
 void *_ggi_malloc(size_t siz);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2002/12/22 10:25:44 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/02/14 13:45:38 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -338,7 +338,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	sprintf(priv->suggest, "foodrv");
 
         GGIDPRINT("display-libkgi: Parsing physz options.\n");
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			       &(priv->physzflags), &(priv->physz)); 
 	if (err != GGI_OK) {
 		do_cleanup(vis);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/02/05 09:34:58 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/02/14 13:45:38 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -341,7 +341,7 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 	mode->dpp.x = mode->dpp.y = 1;
 
 	if (err) return err;
-	err = _ggi_figure_physz(mode, MEMORY_PRIV(vis)->physzflags, 
+	err = _ggi_physz_figure_size(mode, MEMORY_PRIV(vis)->physzflags, 
 				&(MEMORY_PRIV(vis)->physz),
 				0, 0, mode->visible.x, mode->visible.y);
 

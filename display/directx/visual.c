@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/01/30 17:01:09 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/02/14 13:45:37 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -109,7 +109,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
         
-	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
+	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
 			&(priv->physzflags), &(priv->physz)))
 	{
 		err = GGI_EARGINVAL;

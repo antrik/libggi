@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/01/31 20:56:04 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/02/14 13:45:38 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -166,7 +166,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}	/* if */
 
-	if (_ggi_parse_physz(options[OPT_PHYSZ].result,
+	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
 			     &(priv->physzflags), &(priv->physz)))
 	{
 		free(priv);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2003/10/25 08:49:49 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/02/14 13:45:37 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -238,7 +238,7 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	if (err) return err;
 
 	ggLock(priv->lock);
-	err = _ggi_figure_physz(mode, priv->physzflags,
+	err = _ggi_physz_figure_size(mode, priv->physzflags,
 				&priv->physz,
 				0, 0, mode->visible.x, mode->visible.y);
 	ggUnlock(priv->lock);

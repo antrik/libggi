@@ -32,12 +32,13 @@ Due : ????-??-??
 * remove obseleted Xlib target (Christoph)
 - libKGI-target (compiling framework)
 + improve modelist.inc
-- allow physz params to determine window size when visible == GGI_AUTO
+* allow physz params to determine mode resolution when visible == GGI_AUTO
+  (Christoph Egger)
 * add display-auto to separate OS dependent auto-detect routines from
   libggi core (Christoph)
 * formalize pixelformat strings (e.g. "r5b5g5p1") and provide
   parser/construction functions for them in the LibGGI internal interface.
-  (Christoph)
+  (Christoph Egger)
 - add helper target for dirty-region management
 
 

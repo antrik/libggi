@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.17 2003/07/13 08:44:21 cegger Exp $
+/* $Id: misc.c,v 1.18 2004/02/14 13:45:37 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -345,7 +345,7 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 #define SCREENDPIY \
 ((screenhmm <= 0) ?  0 : (screenh * 254 / screenhmm / 10))
 
-        res = _ggi_figure_physz(suggest, priv->physzflags, &(priv->physz),
+        res = _ggi_physz_figure_size(suggest, priv->physzflags, &(priv->physz),
                                 (signed)SCREENDPIX,
 				(signed)SCREENDPIY,
 				(signed)screenw, 

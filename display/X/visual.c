@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2004/01/28 05:12:40 skids Exp $
+/* $Id: visual.c,v 1.25 2004/02/14 13:45:37 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -383,7 +383,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	/* Parse physical size options */
-	err = _ggi_parse_physz(options[OPT_PHYSZ].result, 
+	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			       &(priv->physzflags), 
 			       &(priv->physz)); 
 	if (err != GGI_OK) goto out;

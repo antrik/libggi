@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2002/10/27 18:26:25 skids Exp $
+/* $Id: mode.c,v 1.5 2004/02/14 13:45:39 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -183,7 +183,7 @@ int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
 		err = -1;
 	}
 
-	err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
+	err = _ggi_physz_figure_size(mode, priv->physzflags, &(priv->physz),
 				0, 0, mode->visible.x, mode->visible.y);
 		
 	GGIDPRINT_MODE("display-vcsa: result %d %dx%d#%dx%dF%d[0x%02x]\n",

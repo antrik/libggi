@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2003/10/23 08:37:22 cegger Exp $
+/* $Id: mode.c,v 1.4 2004/02/14 13:45:40 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -735,3 +735,202 @@ int ggiParseMode(const char * s, ggi_mode * m)
 	return 0;
 }
 #endif
+
+
+/***************************************/
+/* PHYsical SiZe (physz) handling      */
+/***************************************/
+
+int _ggi_physz_parse_option(const char *optstr, int *physzflag, ggi_coord *physz)
+{
+	/* This function parses a string gotten through the -physz= option,
+	 * contained in optstr, and fills out the values physzflag and physz 
+	 * based on what is in that string.  The latter two are stored in
+	 * the visual's target private area (not all targets use the -physz
+	 * option.)
+	 *
+	 * physz gets the integer values in the option string. physzflag can 
+	 * contain two flags, one (GGI_PHYSZ_OVERRIDE) designating that the 
+	 * values are not defaults, rather overrides for a misconfigured 
+	 * display.  The second, GGI_PHYSZ_DPI designates that the sizes
+	 * in the string are in dots-per-inch, otherwise the sizes are
+	 * assumed to be the full size of the display  in millimeters. 
+	 * (which may not be the same as the size of the visual, on targets 
+	 * where the visual is a subregion of a display system such as X).
+	 */
+
+	char *endptr;
+	const char *nptr = optstr;
+
+	*physzflag = 0;
+	physz->x =physz->y = GGI_AUTO;
+
+	/* The 'N' is there by default, if the option was not filled in. */
+	if (*nptr == 'N' || *nptr == 'n') return GGI_OK;
+
+	/* Check if we should *always* override the display system values */
+	if (*nptr == '=') {
+		nptr++;
+		*physzflag |= GGI_PHYSZ_OVERRIDE;
+	}
+
+	physz->x = strtoul(nptr, &endptr, 0);
+
+	if (*nptr == '\0' || *endptr != ',') {
+		*physzflag = 0;
+		physz->x = physz->y = GGI_AUTO;
+		return GGI_EARGINVAL;
+	}
+
+	nptr = endptr + 1;
+
+	physz->y = strtoul(nptr, &endptr, 0);
+
+	if (*nptr != '\0' && 
+	    (*endptr == 'd' || *endptr == 'D') && 
+	    (*(endptr + 1) == 'p' || *(endptr + 1) == 'P') && 
+	    (*(endptr + 2) == 'i' || *(endptr + 2) == 'I'))
+	{
+		endptr += 3;
+		*physzflag |= GGI_PHYSZ_DPI;
+	}
+
+	if (*nptr == '\0' || *endptr != '\0') {
+		*physzflag = 0;
+		physz->x =physz->y = GGI_AUTO;
+		return GGI_EARGINVAL;
+	}
+
+	return GGI_OK;
+}
+
+
+int _ggi_physz_figure_visible(ggi_mode *mode)
+{
+	ggi_mode tmp;
+
+	GGIDPRINT_MODE("_ggi_physz_figure_visible(%p) called\n",
+			mode);
+
+	LIBGGI_ASSERT(mode != NULL, "Invalid mode");
+
+	memset(&tmp, GGI_AUTO, sizeof(tmp));
+
+
+	if ((mode->visible.x != GGI_AUTO)
+	  && (mode->visible.y != GGI_AUTO))
+	{
+		return GGI_OK;
+	}
+
+	GGIDPRINT_MODE("_ggi_physz_figure_visible: mode dpp (%i,%i), size (%i,%i)\n",
+			mode->dpp.x, mode->dpp.y,
+			mode->size.x, mode->size.y);
+
+	if (mode->dpp.x == GGI_AUTO) return GGI_OK;
+	if (mode->dpp.y == GGI_AUTO) return GGI_OK;
+	if (mode->size.x == GGI_AUTO) return GGI_OK;
+	if (mode->size.y == GGI_AUTO) return GGI_OK;
+
+	/* Now convert mm into pixel */
+	_ggi_unit_mm2pix(&(tmp.visible), &(mode->size),
+			&(mode->dpp));
+
+	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
+			tmp.visible.x, tmp.visible.y, mode->virt.x, mode->virt.y);
+
+	if ((mode->virt.x != GGI_AUTO)
+	  && (tmp.visible.x > mode->virt.x))
+	{
+		tmp.visible.x = mode->virt.x;
+	}
+	if ((mode->virt.y != GGI_AUTO)
+	  && (tmp.visible.y > mode->virt.y))
+	{
+		tmp.visible.y = mode->virt.y;
+	}
+
+	if (tmp.visible.x <= 0) tmp.visible.x = 0;
+	if (tmp.visible.y <= 0) tmp.visible.y = 0;
+
+	mode->visible = tmp.visible;
+
+	GGIDPRINT_MODE("_ggi_physz_figure_visible: visible (%i,%i), virt (%i,%i)\n",
+			mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y);
+	GGIDPRINT_MODE("_ggi_physz_figure_visible: leaving\n");
+
+	return GGI_OK;
+}
+
+
+int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, ggi_coord *op_sz, 
+			int dpix, int dpiy, int dsx, int dsy)
+{
+
+	/* This function validates/suggests values in mode->size to
+	 * designate the physical screen size in millimeters.
+	 *
+	 * mode->visible and mode->dpp are assumed to already contain 
+	 * valid values.
+	 *
+	 * The physzflag and op_sz parameters are from the visual's 
+	 * target private area, as set by the above _ggi_physz_parse_option
+	 * function.
+	 *
+	 * The dpix, dpiy parameters contain the dpi of the display.
+	 *
+	 * The dsx, dsy parameters contain the size in pixels of the
+	 * entire display, which on visuals using a subregion of 
+	 * a display system, such as X, is the size of the entire screen.
+	 */
+
+	long xsize, ysize;
+	int err = GGI_OK;
+
+	xsize = ysize = 0;
+
+	if (physzflag & GGI_PHYSZ_DPI) {
+		xsize = (physzflag & GGI_PHYSZ_OVERRIDE) ? op_sz->x : dpix;
+		ysize = (physzflag & GGI_PHYSZ_OVERRIDE) ? op_sz->y : dpiy;
+		if (xsize <= 0 || ysize <= 0) {
+			xsize = op_sz->x;
+			ysize = op_sz->y;
+		}
+		if (xsize <= 0 || ysize <= 0) goto nosize;
+		/* find absolute size in mm */
+		xsize = mode->visible.x * mode->dpp.x * 254 / xsize / 10;
+		ysize = mode->visible.y * mode->dpp.y * 254 / ysize / 10;
+	} else {
+		if (physzflag & GGI_PHYSZ_OVERRIDE) {
+			xsize = op_sz->x;
+			ysize = op_sz->y;
+		} else if (dpix > 0 && dpiy > 0) {
+			xsize = (dsx * mode->dpp.x * 254 / dpix / 10);
+			ysize = (dsy * mode->dpp.y * 254 / dpiy / 10);
+		}
+		if (xsize <= 0 || ysize <= 0) {
+			xsize = op_sz->x;
+			ysize = op_sz->y;
+		}
+		if (xsize <= 0 || ysize <= 0) goto nosize;
+		if (dsx <= 0 || dsy <= 0) goto nosize;
+		xsize = xsize * mode->visible.x / dsx;
+		ysize = ysize * mode->visible.y / dsy;
+	}
+
+	if ((mode->size.x != xsize && mode->size.x != GGI_AUTO) ||
+	    (mode->size.y != ysize && mode->size.y != GGI_AUTO))
+	{
+		err = GGI_ENOMATCH;
+	}
+
+	mode->size.x = (int)xsize;
+	mode->size.y = (int)ysize;
+
+	return err;
+
+ nosize:
+	if ((mode->size.x != GGI_AUTO) || (mode->size.y != GGI_AUTO))
+		err = GGI_ENOMATCH;
+	return err;
+}
