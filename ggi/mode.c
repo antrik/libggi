@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/20 12:39:44 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/20 19:13:45 pekberg Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -921,6 +921,9 @@ int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, const ggi_coord *op_sz
 	if ((mode->size.x != xsize && mode->size.x != GGI_AUTO) ||
 	    (mode->size.y != ysize && mode->size.y != GGI_AUTO))
 	{
+		GGIDPRINT_MODE("_ggi_physz_figure_size: "
+			"physical size (%i,%i) doesn't match (%i,%i)\n",
+			xsize, ysize, mode->size.x, mode->size.y);
 		err = GGI_ENOMATCH;
 	}
 
