@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.1 2004/01/29 13:49:34 cegger Exp $
+/* $Id: probe.c,v 1.2 2004/09/13 17:37:00 cegger Exp $
 ******************************************************************************
 
    LibGGI core - probe for targets.
@@ -46,6 +46,7 @@ ggi_visual_t _ggiProbeTarget(void)
 
 	GGIDPRINT_CORE("Unload display-auto\n");
 	ggFreeModule(dlh->handle);
+	free(dlh);
 
 	return vis;
 }
