@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.16 2003/07/06 10:25:21 cegger Exp $
+/* $Id: misc.c,v 1.17 2003/07/13 08:44:21 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -579,7 +579,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 	
 	if (priv->fontimg->bits_per_pixel == 16) {
 		uint8 *ximgptr;
-		ximgptr = priv->fontimg->data + 
+		ximgptr = (uint8 *)(priv->fontimg->data) + 
 		  (priv->fontimg->xoffset * priv->fontimg->bits_per_pixel)/8;
 		while (h--) {
 			int j;
@@ -594,7 +594,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 	}
 	else if (priv->fontimg->bits_per_pixel == 32) {
 		uint8 *ximgptr;
-		ximgptr = priv->fontimg->data + 
+		ximgptr = (uint8 *)(priv->fontimg->data) + 
 		  (priv->fontimg->xoffset * priv->fontimg->bits_per_pixel)/8;
 		while (h--) {
 			int j;
