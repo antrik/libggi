@@ -56,6 +56,10 @@ Mansync provides the following functions::
 Please see display/X, display/aa or display/tile to see how mansync is
 used.  The functions should be transparent enough.
 
+.. important::
+
+You're responsible for locking your own visual, not mansync!
+
 
 Environment variables
 ---------------------
