@@ -699,7 +699,7 @@ corresponding `ggi_color` entry in the visual's palette.
 `ggiSetPalette` sets a range of palette values of length :p:`len`,
 starting at index number :p:`s`.  The index can be
 `GGI_PALETTE_DONTCARE` to indicate that the palette can be
-installed anywhere in the CLUT.  This allows optimised use in
+installed anywhere in the CLUT.  This allows optimized use in
 windowing environments (to minimize color flashing between windows)
 and should be used if possible.
 
