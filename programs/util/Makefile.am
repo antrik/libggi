@@ -3,7 +3,7 @@ LDADD = ${top_builddir}/ggi/libggi.la
 
 SUBDIRS = monitest
 
-EXTRA_PROGRAMS = ggicalibrate ipaq_ggicalibrate $(EXTRAUTILS)
+EXTRA_PROGRAMS = tunemode ggicalibrate ipaq_ggicalibrate
 noinst_PROGRAMS = inputdump $(OPTUTILS)
 
 inputdump_SOURCES = giik2str.c inputdump.c
