@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.5 2005/01/18 19:41:13 cegger Exp $
+/* $Id: quartz.h,v 1.6 2005/01/19 07:43:40 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -78,6 +78,9 @@ typedef struct {
 	ggi_gammastate	gamma;
 
 	gii_input	*inp;
+
+	/* functions for use of extensions */
+	int (*updateWindowContext)(ggi_visual *vis);
 } ggi_quartz_priv;
 
 
@@ -90,6 +93,13 @@ typedef struct {
 #define MANSYNC_stop(vis)	MANSYNC_DECL_STOP(QUARTZ_PRIV(vis), vis)
 #define MANSYNC_ignore(vis)	MANSYNC_DECL_IGNORE(QUARTZ_PRIV(vis), vis)
 #define MANSYNC_cont(vis)	MANSYNC_DECL_CONT(QUARTZ_PRIV(vis), vis)
+
+
+#define GGI_FULLSCREEN_TITLEBORDER	0
+#define GGI_WINDOW_TITLEBORDER		15
+
+/* functions for use of extensions */
+#define GGI_quartz_updateWindowContext(vis)	QUARTZ_PRIV(vis)->updateWindowContext(vis)
 
 
 #endif /* _GGI_DISPLAY_QUARTZ_H */
