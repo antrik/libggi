@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.23 2004/12/25 15:46:15 cegger Exp $
+/* $Id: buffer.c,v 1.24 2005/01/06 12:05:56 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -231,7 +231,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 				(unsigned)priv->vilist[priv->viidx].vi->depth,
 				ZPixmap,	/* format */
 				0,		/* offset */
-				priv->fb,	/* data */
+				(char *)priv->fb,	/* data */
 				(unsigned)LIBGGI_VIRTX(vis), 
 				(unsigned)LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames,
 				8,		/* bitmap_pad*/

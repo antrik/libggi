@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.6 2004/12/01 23:08:06 cegger Exp $
+/* $Id: hline.c,v 1.7 2005/01/06 12:04:56 cegger Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -128,7 +128,7 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, const void *data)
         ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
                             (unsigned)LIBGGI_PIXFMT(vis)->depth,
 			    ZPixmap, 0,
-                            data, (unsigned)w, 1, 8, 0);
+			    (char *)data, (unsigned)w, 1, 8, 0);
 
 #ifdef GGI_LITTLE_ENDIAN
         ximg->byte_order = LSBFirst;

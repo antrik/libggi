@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.9 2004/12/01 23:08:06 cegger Exp $
+/* $Id: vline.c,v 1.10 2005/01/06 12:04:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -129,7 +129,7 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
         ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
                             (unsigned)LIBGGI_PIXFMT(vis)->depth,
 			    ZPixmap, 0,
-                            data, 1, (unsigned)h, 8, 0);
+			    (char *)data, 1, (unsigned)h, 8, 0);
 
 #ifdef GGI_LITTLE_ENDIAN
         ximg->byte_order = LSBFirst;
