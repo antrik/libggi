@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.12 2004/12/10 23:46:11 neiljp Exp $
+/* $Id: stubs.c,v 1.13 2004/12/12 14:47:21 neiljp Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -80,6 +80,7 @@ int ggiFlushRegion(ggi_visual *vis, int x, int y, int w, int h)
 	else if (x > LIBGGI_VIRTX(vis)) return GGI_EARGINVAL;
 	if (y < 0) y = 0;
 	else if (y > LIBGGI_VIRTY(vis)) return GGI_EARGINVAL;
+	if (w < 0 || h < 0) return GGI_EARGINVAL;
 	if (x + w > LIBGGI_VIRTX(vis)) w = LIBGGI_VIRTX(vis) - x;
 	if (y + h > LIBGGI_VIRTY(vis)) h = LIBGGI_VIRTY(vis) - y;
 

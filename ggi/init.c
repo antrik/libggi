@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.27 2004/11/27 17:43:41 cegger Exp $
+/* $Id: init.c,v 1.28 2004/12/12 14:47:21 neiljp Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -160,12 +160,14 @@ int ggiInit(void)
 	if ((_ggiVisuals.mutex = ggLockCreate()) == NULL) {
 		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
 		giiExit();
+		_ggiLibIsUp--;
 		return GGI_EUNKNOWN;
 	}
 	if ((_ggi_global_lock = ggLockCreate()) == NULL) {
 		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
 		ggLockDestroy(_ggiVisuals.mutex);
 		giiExit();
+		_ggiLibIsUp--;
 		return GGI_EUNKNOWN;
 	}
 	_ggiVisuals.visuals = 0;
