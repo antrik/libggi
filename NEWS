@@ -1,5 +1,21 @@
 NEWS - list of user-visible changes between releases of LibGGI
 
+New in 2.0beta4: 2001-07-10
+* Misc bugfixes (see ChangeLog).
+* Huge documentation updates.
+* finished support for reporting physical screen sizes.
+* splitted libggimisc off
+* New API: ggiDetachInput()
+* fbdev-target
+  - Acceleration of Matrox G400 (matrox fb)
+* directX-target
+  - Update
+  - Highly experimental target for Win ... Use at your own risk !
+* ipc-target
+  - New target for interprocess communication (experimental)
+^L
+
+
 New in 2.0beta3: 2000-12-18
 * Misc bugfixes (see ChangeLog).
 * Minor documentation updates.
