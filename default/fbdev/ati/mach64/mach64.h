@@ -1,3 +1,4 @@
+/* $Id: visual.c,v 1.9 2004/09/13 16:19:19 cegger Exp */
 /*
  * ATI Mach64 Register Definitions
  *

@@ -1,3 +1,4 @@
+/* $Id: xf86dga.h,v 1.3 2004/09/18 10:53:35 cegger Exp $ */
 /* $XFree86: xc/include/extensions/xf86dga.h,v 3.5 1996/10/18 14:57:24 dawes Exp $ */
 /*
 

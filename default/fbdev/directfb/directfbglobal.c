@@ -1,4 +1,4 @@
-
+/* $Id: directfbglobal.c,v 1.9 2004/09/18 10:58:51 cegger Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS

@@ -1,3 +1,4 @@
+/* $Id: xf86dgastr.h,v 1.3 2004/09/18 10:53:35 cegger Exp $ */
 /* $XFree86: xc/include/extensions/xf86dgastr.h,v 3.3 1996/10/18 14:57:25 dawes Exp $ */
 /*
 
