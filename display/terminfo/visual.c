@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/05/31 21:54:40 skids Exp $
+/* $Id: visual.c,v 1.3 2001/06/17 08:56:44 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -167,7 +167,7 @@ static void construct_charmap(chtype charmap[256])
 	charmap[175] = '>'; /* >> */
 #ifdef ACS_PI
 	charmap[227] = ACS_PI;
-#endif ACS_PI
+#endif /* ACS_PI */
 	charmap[232] = ACS_LANTERN; /* iota */
 #ifdef ACS_LEQUAL
 	charmap[243] = ACS_LEQUAL;
