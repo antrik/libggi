@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2003/02/14 16:37:33 fries Exp $
+/* $Id: mode.c,v 1.3 2003/02/14 17:51:38 fries Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -235,7 +235,6 @@ int
 GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
 	wsfb_priv *priv = LIBGGI_PRIVATE(vis);
-	//struct fb_cmap cmap;
 	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
 	GGIDPRINT_COLOR("display-wsfb: SetPalVec(%d,%d)\n", start, len);
@@ -247,29 +246,22 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	if ((start < 0) || (len < 0) || (start+len > nocols)) {
 		return -1;
 	}
-#if 0
+
 	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
 
-	if (!priv->ismapped) return 0;
-
-	cmap.start  = start;
-	cmap.len    = len;
-	cmap.red    = &priv->reds[start];
-	cmap.green  = &priv->greens[start];
-	cmap.blue   = &priv->blues[start];
-	cmap.transp = NULL;
+	priv->cmap.index  = start;
+	priv->cmap.count  = len;
 
 	for (; len > 0; start++, colormap++, len--) {
-		priv->reds[start]   = colormap->r;
-		priv->greens[start] = colormap->g;
-		priv->blues[start]  = colormap->b;
+		priv->cmap.red[start]   = colormap->r;
+		priv->cmap.green[start] = colormap->g;
+		priv->cmap.blue[start]  = colormap->b;
 	}
 
-	if (fbdev_doioctl(vis, FBIOPUTCMAP, &cmap) < 0) {
-		GGIDPRINT_COLOR("display-fbdev: PUTCMAP failed.");
+	if (ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->cmap) < 0) {
+		GGIDPRINT_COLOR("display-wsfb: PUTCMAP failed.");
 		return -1;
 	}
-#endif
 
 	return 0;
 }
@@ -283,6 +275,13 @@ do_mmap(ggi_visual *vis)
 	ggi_graphtype gt = mode->graphtype;
 	ggi_directbuffer *buf;
 
+	if (ioctl(priv->fd, WSDISPLAYIO_GETCMAP, &priv->ocmap) < 0) {
+		GGIDPRINT("getcmap failed\n");
+		return -1;
+	}
+	priv->cmap.red   = (char *)malloc(256);
+	priv->cmap.green = (char *)malloc(256);
+	priv->cmap.blue  = (char *)malloc(256);
 	
 	priv->base = mmap(0, priv->mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
 		priv->fd, priv->Base);
@@ -292,6 +291,7 @@ do_mmap(ggi_visual *vis)
 			priv->devname, strerror(errno));
 		return -1;
 	}
+
 
 	fprintf(stderr,"mmap offset: 0x%lx\n",priv->base);
 

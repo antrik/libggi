@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2003/02/14 16:37:33 fries Exp $
+/* $Id: visual.c,v 1.3 2003/02/14 17:51:38 fries Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -52,11 +52,14 @@ static int do_cleanup(ggi_visual *vis)
 		if (ioctl(priv->fd, WSDISPLAYIO_SMODE, &priv->mode) == -1) {
 			GGIDPRINT("ioctl WSDISPLAYIO_SMODE error: %s %s\n",
 				priv->devname, strerror(errno));
-			return 1;
 		}
 	}
 
 	munmap(priv->base, priv->mapsize);
+	if(ioctl(priv->fd, WSDISPLAYIO_PUTCMAP, &priv->ocmap) < 0) {
+		GGIDPRINT("ioctl WSDISPLAYIO_PUTCMAP error: %s %s\n",
+			priv->devname, strerror(errno));
+	}
 	close(priv->fd);
 
 	free(LIBGGI_GC(vis));

@@ -1,4 +1,4 @@
-/* $Id: wsfb.h,v 1.2 2003/02/14 16:37:34 fries Exp $
+/* $Id: wsfb.h,v 1.3 2003/02/14 17:51:39 fries Exp $
 ******************************************************************************
 
    LibGGI wsconsole(4) wsfb target
@@ -59,6 +59,8 @@ typedef struct wsfb_priv {
 	unsigned long Base, size, mapsize;
 
 	struct wsdisplay_fbinfo info;
+	struct wsdisplay_cmap   cmap;   /* working color map */
+	struct wsdisplay_cmap   ocmap;  /* old color map */
 
 	int linebytes, wstype, pagemask, origmode, mode;
 } wsfb_priv;
