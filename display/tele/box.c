@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.7 2003/07/06 10:25:23 cegger Exp $
+/* $Id: box.c,v 1.8 2004/09/13 09:17:33 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -75,8 +75,8 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 	int err;
 
 	if ((x < 0) || (y < 0)
-	  || (x >= LIBGGI_MODE(vis)->virt.x)
-	  || (y >= LIBGGI_MODE(vis)->virt.y))
+	  || (x >= LIBGGI_VIRTX(vis))
+	  || (y >= LIBGGI_VIRTY(vis)))
 	{
 	    	/* illegal coordinates */
 		return -1;
@@ -196,8 +196,8 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	int curx;
 
 	if ((x < 0) || (y < 0) ||
-	    (x+w > LIBGGI_MODE(vis)->virt.x) ||
-	    (y+h > LIBGGI_MODE(vis)->virt.y) ||
+	    (x+w > LIBGGI_VIRTX(vis)) ||
+	    (y+h > LIBGGI_VIRTY(vis)) ||
 	    (w <= 0) || (h <= 0)) {
 
 	    	/* invalid request */

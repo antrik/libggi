@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:49 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/09/13 09:10:16 cegger Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -68,8 +68,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			__localdfb_len =
 			__localrfb_len =
 			__localwfb_len =
-			(((LIBGGI_MODE(vis)->virt.x
-			   * LIBGGI_MODE(vis)->virt.y)
+			(((LIBGGI_VIRTX(vis) * LIBGGI_VIRTY(vis))
 			  & ~(MMAP_PAGE_SIZE - 1)) + MMAP_PAGE_SIZE);
 
 		GGIDPRINT("afb is this big: %d\n",__localafb_len);

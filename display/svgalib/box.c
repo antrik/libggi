@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2002/09/08 21:37:46 soyt Exp $
+/* $Id: box.c,v 1.4 2004/09/13 09:16:13 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -38,7 +38,7 @@ int GGI_svga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
 	x2 = w + x - 1;
-	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
+	y += vis->w_frame_num * LIBGGI_VIRTY(vis);
 	while (h--) {
 		vga_drawline(x, y, x2, y);
 		y++;
@@ -55,13 +55,13 @@ GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 
-	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
+	y += vis->w_frame_num * LIBGGI_VIRTY(vis);
 	if (SVGA_PRIV(vis)->ismodex
 		&& w%4 == 0
 		&& x%4 == 0) {
 		vga_copytoplanar256(buf, rowadd,
-				    ((y*LIBGGI_MODE(vis)->virt.x+x))/4,
-				    LIBGGI_MODE(vis)->virt.x/4, w, h);
+				    ((y*LIBGGI_VIRTX(vis) + x))/4,
+				    LIBGGI_VIRTX(vis)/4, w, h);
 	} else {
 		while (h--) {
 			ggiPutHLine(vis, x, y, w, buf);

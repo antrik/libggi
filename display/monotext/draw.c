@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.2 2004/09/12 20:13:40 cegger Exp $
+/* $Id: draw.c,v 1.3 2004/09/13 09:11:37 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -274,7 +274,7 @@ int GGI_monotext_fillscreen(ggi_visual *vis)
 	}
 
 	return _ggi_monotextUpdate(vis, 0, 0,
-		LIBGGI_MODE(vis)->virt.x, LIBGGI_MODE(vis)->virt.y);
+		LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 }
 
 
