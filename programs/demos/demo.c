@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.9 2003/01/27 04:06:50 skids Exp $
+/* $Id: demo.c,v 1.10 2003/01/27 23:28:25 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -1068,21 +1068,14 @@ int main(int argc, char **argv)
 
 				c++;
 				if (c > 100) {
-					ggiFlushRegion(vis, 0,0,dx,dy);
+					ggiFlushRegion(vis, 
+						       (vx-dx)/2,(vy-dy)/2,
+						       dx,dy);
 					c = 0;
 				}
 			}
 		}	/* if */
 	dbuf_end:
-
-		/* If we were not in syncronous mode, we would
-		 * call ggiFlush here, because there is no guarantee
-		 * that the directbuffer is not a software back-buffer
-		 * which still needs to be sent to the display.
-		 * 
-		 * We release our directbuffer immediately once we are done,
-		 * even if we are going to use it again in a short time.
-		 */
 		ggiResourceRelease(dbuf->resource);
 
 	} while (0);
