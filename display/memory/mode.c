@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/04/04 14:31:56 mooz Exp $
+/* $Id: mode.c,v 1.15 2004/08/09 19:21:28 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -350,17 +350,20 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_memory_getmode(ggi_visual *vis, ggi_mode *mode)
 {
+	ggi_memory_priv *priv;
 	ggi_mode mymode;
 	GGIDPRINT("display-memory: GGIgetmode(%p,%p)\n", vis, mode);
 
+	priv = MEMORY_PRIV(vis);
+
 	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
-	if (MEMORY_PRIV(vis)->inputbuffer) {
-		mymode.visible.x=MEMORY_PRIV(vis)->inputbuffer->visx;
-		mymode.visible.y=MEMORY_PRIV(vis)->inputbuffer->visy;
-		mymode.virt.x   =MEMORY_PRIV(vis)->inputbuffer->virtx;
-		mymode.virt.y   =MEMORY_PRIV(vis)->inputbuffer->virty;
-		mymode.frames   =MEMORY_PRIV(vis)->inputbuffer->frames;
-		mymode.graphtype=MEMORY_PRIV(vis)->inputbuffer->type;
+	if (priv->inputbuffer) {
+		mymode.visible.x = priv->inputbuffer->visx;
+		mymode.visible.y = priv->inputbuffer->visy;
+		mymode.virt.x    = priv->inputbuffer->virtx;
+		mymode.virt.y    = priv->inputbuffer->virty;
+		mymode.frames    = priv->inputbuffer->frames;
+		mymode.graphtype = priv->inputbuffer->type;
 	}
 	memcpy(mode, &mymode, sizeof(ggi_mode));
 
