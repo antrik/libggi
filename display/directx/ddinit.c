@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.46 2005/01/04 13:08:14 pekberg Exp $
+/* $Id: ddinit.c,v 1.47 2005/01/19 20:55:28 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -499,19 +499,6 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message) {
 
-	case WM_DDREDRAW:
-		if (!TryEnterCriticalSection(&priv->cs)) {
-			/* spin */
-			PostMessage(hWnd, message, wParam, lParam);
-			return 0;
-		}
-		DDRedrawAll(vis);
-		EnterCriticalSection(&priv->spincs);
-		priv->redraw = 1;
-		LeaveCriticalSection(&priv->spincs);
-		LeaveCriticalSection(&priv->cs);
-		return 0;
-
 	case WM_DDSETPALETTE:
 		{
 			int setpalette;
@@ -562,7 +549,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LeaveCriticalSection(&priv->spincs);
 			if (redraw)
 				/* spin */
-				PostMessage(hWnd, WM_DDREDRAW, wParam, lParam);
+				InvalidateRect(hWnd, NULL, 0);
 			return 0;
 		}
 		if (GetUpdateRect(hWnd, &dirty, FALSE)) {
