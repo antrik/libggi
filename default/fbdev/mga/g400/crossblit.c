@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2004/02/28 17:22:58 aldot Exp $
+/* $Id: crossblit.c,v 1.4 2004/11/07 22:47:43 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -39,6 +39,7 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 	uint32 dwgctl, bltmod = BLTMOD_BU32RGB;
 	uint16 opmode;
 	uint8 *srcptr;
+	uint32 *srcptr32;
 	int srcinc;
 	int maxpix;
 
@@ -101,7 +102,9 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 
 				tmpw -= tmpw2;
 				while (tmpw2--) {
-					*(dstptr++) = *(((uint32*)srcptr)++);
+					srcptr32 = (uint32 *)srcptr;
+					*(dstptr++) = *(srcptr32++);
+					srcptr = (uint8 *)srcptr32;
 				}
 				dstptr = priv->dmaaddr;
 			}
@@ -112,7 +115,9 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 			int tmpw = w;
 
 			while (tmpw--) {
-				*(dstptr++) = *(((uint32*)srcptr)++);
+				srcptr32 = (uint32 *)srcptr;
+				*(dstptr++) = *(srcptr32++);
+				srcptr = (uint8 *)srcptr32;
 			}
 			srcptr += srcinc;
 			dstptr = priv->dmaaddr;
