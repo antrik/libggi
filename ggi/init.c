@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.10 2003/10/12 10:06:05 cegger Exp $
+/* $Id: init.c,v 1.11 2003/12/09 23:25:24 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -584,6 +584,7 @@ int ggiExtensionUnregister(ggi_extid id)
 	return GGI_ENOTALLOC;
 }
 
+
 /*
   Make an extension available for a given visual.
   The extension has to be registered for that.
@@ -658,6 +659,56 @@ int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 
 	return 0;
 }
+
+
+/*
+  Allow to query a visual whether a certain extension has been attached
+  onto it.
+
+  Returns GGI_ENOTFOUND if no extension has been registered to libggi at all.
+  Returns GGI_ENOMATCH if queried extension has not been registered to libggi.
+  Returns >= 0 (attachcount) if the queried extension has been attached onto it.
+ */
+int ggiExtensionIsAttached2VisByName(ggi_visual *vis, const char *name)
+{
+	ggi_extid id = -1;
+	ggi_extension *tmp;
+
+	GGIDPRINT_CORE("ggiExtensionIsAttachedByName(%p, \"%s\") called\n",
+		       vis, name);
+	if (!_ggiExtension) return GGI_ENOTFOUND;
+
+	for (tmp = _ggiExtension; tmp == NULL; tmp = tmp->next) {
+		if (strcmp(tmp->name, name) == 0) {
+			GGIDPRINT_CORE("ggiExtensionIsAttached2VisByName: %s found. It's been %d times registered\n",
+				       tmp->name, tmp->initcount);
+			id = tmp->id;
+			break;
+		}
+	}
+
+	if (id < 0) return GGI_ENOMATCH;
+
+	return vis->extlist[id].attachcount;
+}	/* ggiExtensionQueryByName */
+
+
+/*
+  Allow to query a visual whether a certain extension has been attached
+  onto it.
+
+  Returns GGI_EARGINVAL, if specified id is invalid.
+  Returns >= 0 (attachcount) otherwise.
+ */
+int ggiExtensionIsAttached2VisByID(ggi_visual *vis, ggi_extid id)
+{
+	if (vis->numknownext <= id) {
+		return GGI_EARGINVAL;
+	}	/* if */
+
+	return vis->extlist[id].attachcount;
+}	/* ggiExtensionIsAttached2VisByID */
+
 
 int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 {
