@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.2 2004/11/13 15:56:25 cegger Exp $
+/* $Id: teleserver.c,v 1.3 2005/01/25 11:57:45 pekberg Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -45,7 +45,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 
 #define VERSION_STRING  "teleserver 0.8 (c) 1998 Andrew Apted"
@@ -596,8 +598,12 @@ static void perf_PUTSTR(TeleUser *u, TeleCmdPutStrData *d)
 	/* Note: If your compiler fails here, then it
 	 * is _not_ ANSI C99 compliant
 	 */
-	char s[d->length + 1];
 	int i;
+#ifdef _MSC_VER
+	char *s = _alloca(d->length + 1);
+#else
+	char s[d->length + 1];
+#endif
 
 	for(i = 0; i <= d->length; ++i) {
 		s[i] = (char)(d->text[i] & 0xFF);
