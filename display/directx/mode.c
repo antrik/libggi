@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/09/09 14:18:49 pekberg Exp $
+/* $Id: mode.c,v 1.17 2004/09/13 08:38:29 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -112,7 +112,7 @@ int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments
 		strcpy(apiname, "generic-color");
 		return 0;
 	case 3:
-		sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_MODE(vis)->graphtype));
+		sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
 		return 0;
 	}
 

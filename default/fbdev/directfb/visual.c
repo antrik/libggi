@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2004/02/23 14:24:41 pekberg Exp $
+/* $Id: visual.c,v 1.16 2004/09/13 08:34:10 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -253,7 +253,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->corebuffer.policy = CSP_VIDEOONLY;
 	priv->corebuffer.video.health = CSH_STORED;
 	priv->corebuffer.video.pitch = 
-	  LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_MODE(vis)->graphtype) / 8;
+	  LIBGGI_VIRTX(vis) * GT_SIZE(LIBGGI_GT(vis)) / 8;
 	priv->corebuffer.video.offset = 0;
 	priv->corebuffer.surface = &(priv->coresurface);
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2004/09/10 22:01:37 cegger Exp $
+/* $Id: mode.c,v 1.18 2004/09/13 08:43:15 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -446,7 +446,7 @@ static int do_mmap(ggi_visual *vis)
 	}
 
         /* calculate framebuffer size */
-	gt = LIBGGI_MODE(vis)->graphtype;
+	gt = LIBGGI_GT(vis);
 
 	switch (priv->fix.type) {
 	case FB_TYPE_PLANES:

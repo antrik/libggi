@@ -1,4 +1,4 @@
-/* $Id: pack.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: pack.c,v 1.3 2004/09/13 08:31:50 cegger Exp $
 ******************************************************************************
 
    Generic color packing
@@ -148,7 +148,7 @@ GGIpackcolors(...)
 {
 	int i;
 	
-	switch (LIBGGI_MODE(vis)->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 	case GT_1BIT:
 	{
 		uint8 tmp=0,*obuf=(uint8 *)outbuf;
@@ -225,7 +225,7 @@ GGIunpackpixels(...)
 {
 	int i;
 	
-	switch (GT_SIZE(LIBGGI_MODE(vis)->graphtype)) {
+	switch (GT_SIZE(LIBGGI_GT(vis))) {
 	case 1:
 	{
 		uint8 *ibuf=(uint8 *)outbuf;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/12 19:55:50 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/09/13 08:37:14 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -46,7 +46,7 @@ int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 		case 2: strcpy(apiname, "generic-color");
 			return 0;
 		case 3:
-			if(LIBGGI_MODE(vis)->graphtype!=GT_8BIT)
+			if (LIBGGI_GT(vis) != GT_8BIT)
 				return -1;
 
 			sprintf(apiname, "generic-linear-8");

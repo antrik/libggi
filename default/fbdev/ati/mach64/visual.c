@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:24:41 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/09/13 08:32:30 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -67,9 +67,9 @@ static void ati_mach64_init_engine(ggi_visual *vis)
     int bpp,depth;
     struct ati_mach64_priv *priv;
 
-    priv=ATI_MACH64_PRIV(vis);
-    bpp=GT_SIZE(LIBGGI_MODE(vis)->graphtype);
-    depth=GT_DEPTH(LIBGGI_MODE(vis)->graphtype);
+    priv = ATI_MACH64_PRIV(vis);
+    bpp = GT_SIZE(LIBGGI_GT(vis));
+    depth = GT_DEPTH(LIBGGI_GT(vis));
 
     /* On GTC (RagePro), we need to reset the 3D engine before */
     if (priv->has_3d)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2004/09/12 19:30:04 cegger Exp $
+/* $Id: mode.c,v 1.20 2004/09/13 08:46:02 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -183,7 +183,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 	case 1: strcpy(apiname, "generic-stubs");
 		return 0;
 
-	case 2: if (GT_SCHEME(LIBGGI_MODE(vis)->graphtype) == GT_TEXT)
+	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT)
 			return -1;
 
 		strcpy(apiname, "generic-color");

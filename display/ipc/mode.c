@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/09/12 19:25:54 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/09/13 08:45:00 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -114,7 +114,7 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
 
-	case 3: if (GT_SCHEME(LIBGGI_MODE(vis)->graphtype) == GT_TEXT)
+	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT)
 			return -1;
 
 		strcpy(apiname, "generic-color");
