@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.3 2001/09/01 18:17:51 cegger Exp $
+/* $Id: types.h,v 1.4 2001/09/30 15:12:18 skids Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -6,7 +6,8 @@
    Copyright (C) 1995-1996	Andreas Beck	[becka@ggi-project.org]
    Copyright (C) 1995-1996	Steffen Seeger	[seeger@ggi-project.org]
    Copyright (C) 1998		Marcus Sundberg	[marcus@ggi-project.org]
-  
+   Copyright (C) 2001		Brian S. Julin  [bri@tull.umassp.edu]
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -102,6 +103,10 @@ typedef uint32 ggi_graphtype;
 #define GT_GREYSCALE		((0x03) << GT_SCHEME_SHIFT)
 #define GT_PALETTE		((0x04) << GT_SCHEME_SHIFT)
 #define GT_STATIC_PALETTE	((0x05) << GT_SCHEME_SHIFT)
+#define GT_SUBSAMPLE_YUV	((0x06) << GT_SCHEME_SHIFT)
+#define GT_SUBSAMPLE_U_YCRBR	((0x07) << GT_SCHEME_SHIFT)
+#define GT_SUBSAMPLE_S_YCRBR	((0x08) << GT_SCHEME_SHIFT)
+#define GT_NIL			((0xff) << GT_SCHEME_SHIFT)
 
 /* Subschemes */
 #define GT_SUB_REVERSE_ENDIAN   ((0x01) << GT_SUBSCHEME_SHIFT)
@@ -138,6 +143,105 @@ typedef struct		/* requested by user and changed by driver    */
 	ggi_graphtype	graphtype;	/* which mode ?			    */
 	ggi_coord	dpp;		/* dots per pixel		    */
 } ggi_mode;
+
+
+/*
+******************************************************************************
+ LibGGI batchop interface
+******************************************************************************
+*/
+
+/* OPcodes */
+#define GGI_OP_GET		0x10000000 /* Flag, gets data from target */
+#define GGI_OP_OWNER_MASK       0x0fff0000 /* What extension owns this */
+#define GGI_OP_OWNER_GGI        0x00000000 /* GGI primitives */
+#define GGI_OP_OWNER_USER       0x0fff0000 /* Will never be allocated */
+
+/* The rest of the extensions will define their owner codes and opcodes
+ * in their own headers.  A registry is kept here, but in comment form 
+ * so as to reduce revision requirements between LibGGI and extensions.
+ =======================================================================
+ OPCODE REGISTRY:
+
+ GGI_OP_OWNER_BUF       0x00010000      Owned/defined by LibBuf
+ GGI_OP_OWNER_MISC      0x00020000      Owned/defined by LibGGIMisc
+ GGI_OP_OWNER_OVL       0x00030000      Owned/defined by LibOvl
+ GGI_OP_OWNER_BLT       0x00040000      Owned/defined by LibBlt
+ =======================================================================
+*/
+
+/* Opcodes for GGI's operations */
+
+#define GGI_OP_DRAWPIXEL	0x00000001	/* drawops.drawpixel */
+#define GGI_OP_PUTPIXEL		0x00000002	/* drawops.putpixel  */
+#define GGI_OP_DRAWHLINE	0x00000003	/* drawops.drawhline */
+#define GGI_OP_PUTHLINE		0x00000004	/* drawops.puthline  */
+#define GGI_OP_DRAWVLINE	0x00000005	/* drawops.drawvline */
+#define GGI_OP_PUTVLINE		0x00000006	/* drawops.putvline  */
+#define GGI_OP_DRAWBOX		0x00000007	/* drawops.drawbox   */
+#define GGI_OP_PUTBOX		0x00000008	/* drawops.putbox    */
+#define GGI_OP_DRAWLINE		0x00000009	/* drawops.drawline  */
+#define GGI_OP_COPYBOX		0x0000000a	/* drawops.copybox   */
+#define GGI_OP_CROSSBLIT	0x0000000b	/* drawops.copybox   */
+
+/* Since GGI's API is entirely stable, we guarantee we will never use these
+ * bits, which makes it easier for extensions providing altered analogs to
+ * GGI drawing primitives to map between their altered primitives and ours.
+ */
+#define GGI_OP_NEVERUSED        0x0000f000
+
+/* PT == parmtype.  Operations need parameters.  Here we define parmtypes,
+ * such that mmutils can match up source and destination batchops.
+ */
+
+/* What IS the batchparm representing? */
+#define GGI_PT_IS_MASK		0xffff0000
+#define GGI_PT_IS_CHANMASK	0x003f0000
+#define GGI_PT_IS_TYPEMASK	0x0f000000
+#define GGI_PT_IS_MISCMASK	0xe0000000
+#define GGI_PT_IS_COORD		0x00000000 /* A coordinate		     */
+#define GGI_PT_IS_COLOR1	0x00010000 /* A color channel (R, Y, C)	     */
+#define GGI_PT_IS_COLOR2	0x00020000 /* A color channel (B, U, Cr, M)  */
+#define GGI_PT_IS_COLOR3	0x00040000 /* A color channel (G, V, Cg, Y)  */
+#define GGI_PT_IS_COLOR4	0x00080000 /* A color channel (K)	     */
+#define GGI_PT_IS_ALPHA		0x00100000 /* A translucency  (A)	     */
+#define GGI_PT_IS_DEPTH		0x00200000 /* A depth	      (Z, Bump)	     */
+#define GGI_PT_IS_PAT		0x01000000 /* A pattern for tesslation fills */
+#define GGI_PT_IS_CLIP		0x02000000 /* A clipping region		     */
+#define GGI_PT_IS_ERR		0x03000000 /* An error term		     */
+#define GGI_PT_IS_FGCOL		0x04000000 /* A foreground color	     */
+#define GGI_PT_IS_BGCOL		0x05000000
+#define GGI_PT_IS_BOP		0x06000000 /* A boolean ROP		     */
+#define GGI_PT_IS_KEYCOL	0x07000000 /* A color key		     */
+#define GGI_PT_IS_KEYMASK	0x08000000 /* A color key mask		     */
+#define GGI_PT_IS_PLANEMASK	0x09000000 /* A plane mask		     */
+#define GGI_PT_IS_OPCODE	0x0a000000 /* An opcode or command	     */
+#define GGI_PT_IS_SRC		0x10000000 /* Pertains to source, not dest   */
+#define GGI_PT_IS_INDEXED	0x20000000 /* Uses a LUT		     */
+#define GGI_PT_IS_MODE		0x60000000 /* An operational mode (pixel size, 
+					    * pixel format, blend, etc.)     */
+#define GGI_PT_IS_SPECIAL	0xe0000000 /* Extension/target/chipset priv  */
+
+/* IN what axis/dimensions/units the value is given/wanted */
+#define GGI_PT_IN_MASK		0x0000ff00
+#define GGI_PT_IN_AXISMASK	0x00000f00
+#define GGI_PT_IN_UNITMASK	0x0000f000
+#define GGI_PT_IN_QTY		0x00000000 /* A generic quantity 	     */
+#define GGI_PT_IN_X		0x00000100 /* X Axis			     */
+#define GGI_PT_IN_Y		0x00000200 /* Y Axis			     */
+#define GGI_PT_IN_ADDR		0x00000300 /* Linearized fb address	     */
+#define GGI_PT_IN_MAJOR		0x00000400 /* Major Axis		     */
+#define GGI_PT_IN_MINOR		0x00000500 /* Minor Axis		     */
+#define GGI_PT_IN_PIXEL		0x00000000 /* In Pixels			     */
+#define GGI_PT_IN_BYTES		0x00001000 /* In Bytes			     */
+#define GGI_PT_IN_SLICE		0x0000f000 /* In chipset native size slice   */
+
+/* The ROLE the value plays in the operation */
+#define GGP_PT_ROLE_MASK	0x000000c0
+#define GGI_PT_ROLE_START	0x00000000 /* A starting value or coordinate */
+#define GGI_PT_ROLE_END		0x00000040 /* An ending value or coordinate  */
+#define GGI_PT_ROLE_LEN		0x00000080 /* A width or height		     */
+#define GGI_PT_ROLE_INCR	0x000000c0 /* An increment, pitch, or slope  */
 
 
 /*

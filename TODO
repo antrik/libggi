@@ -35,8 +35,9 @@ Due : ????-??-??
 - change way that pixela/pixel stubs are selected (above item breaks current.)
   (in progress)
 - enhance config file system: aliases, in-file option strings, wildcards
-- move libmmutil from libgalloc to libggi to make normal ggi primitives
-  to use of batchops
+- enhance dl system: allow single library to serve multiple suggest strings
+- move libmmutil from libgalloc to libggi to allow normal ggi primitives
+  to use batchops
 - finish long-term plan
 - implement API additions
 

@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.2 2001/06/21 19:09:27 skids Exp $
+/* $Id: ggi.h,v 1.3 2001/09/30 15:12:18 skids Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -8,6 +8,7 @@
    Copyright (C) 1998 Andrew Apted		[andrew@ggi-project.org]
    Copyright (C) 1998 Andreas Beck		[becka@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2001 Brian S. Julin		[bri@tull.umassp.edu]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -127,6 +128,22 @@ typedef unsigned int ggi_flags;
 #define		GGI_BM_SUB_Y		0x2000
 #define		GGI_BM_SUB_U		0x2100
 #define		GGI_BM_SUB_V		0x2200
+#define		GGI_BM_SUB_Y0		0x2000
+#define		GGI_BM_SUB_Y1		0x2300
+#define		GGI_BM_SUB_Y2		0x2400
+#define		GGI_BM_SUB_Y3		0x2500
+#define		GGI_BM_SUB_Y4		0x2600
+#define		GGI_BM_SUB_Y5		0x2700
+#define		GGI_BM_SUB_Y6		0x2800
+#define		GGI_BM_SUB_Y7		0x2900
+#define		GGI_BM_SUB_U0		0x2100
+#define		GGI_BM_SUB_U1		0x2a00
+#define		GGI_BM_SUB_U2		0x2b00
+#define		GGI_BM_SUB_U3		0x2c00
+#define		GGI_BM_SUB_V0		0x2200
+#define		GGI_BM_SUB_V1		0x2d00
+#define		GGI_BM_SUB_V2		0x2e00
+#define		GGI_BM_SUB_V3		0x2f00
 
 #define		GGI_BM_SUB_CLUT		0xf000	/* This bit Color or attrib ? */
 
@@ -147,9 +164,9 @@ typedef unsigned int ggi_flags;
 #define		GGI_BM_SUB_BGCOL		0x2100
 
 #define		GGI_BM_SUB_TEXNUM		0x3000
-#define		GGI_BM_SUB_FONTSEL		0x3100  /*select different font banks*/
-#define		GGI_BM_SUB_PALSEL		0x3200	/* select different palettes */
-#define		GGI_BM_SUB_MODESEL		0x3300	/* select different palettes */
+#define		GGI_BM_SUB_FONTSEL		0x3100  /* select font banks*/
+#define		GGI_BM_SUB_PALSEL		0x3200	/* select palettes */
+#define		GGI_BM_SUB_MODESEL		0x3300	/* select palettes */
 
 /*
   Bit that influence drawing logic
@@ -159,8 +176,8 @@ typedef unsigned int ggi_flags;
 #define		GGI_BM_SUB_ZBUFFER		0x0100
 #define		GGI_BM_SUB_WRITEPROT		0x1000
 #define		GGI_BM_SUB_WINDOWID		0x2000
+#define		GGI_BM_SUB_DELTA		0x3000 /* stencil for video */
 
-	
 /* Pixelformat for ggiGet/Put* buffers and pixellinearbuffers */
 typedef struct {
 	int		depth;		/* Number of significant bits */
@@ -217,8 +234,6 @@ typedef struct {
 
 	uint32		bitmeaning[sizeof(ggi_pixel)*8];
 
-	/* Shall we keep those ?
-	 */
 	uint32		flags;		/* Pixelformat flags */
 
 	uint32		stdformat;	/* Standard format identifier */
@@ -247,6 +262,8 @@ typedef enum {
 	blPixelLinearBuffer,
 	blPixelPlanarBuffer,
 	blExtended,
+	blSampleLinearBuffer,
+	blSamplePlanarBuffer,
 
 	blLastBufferLayout
 } ggi_bufferlayout;
@@ -261,6 +278,18 @@ typedef struct {
 	int		next_plane;	/* bytes until next plane	*/
 	ggi_pixelformat *pixelformat;	/* format of the pixels		*/
 } ggi_pixelplanarbuffer;
+
+typedef struct {
+	int		num_pixels;	/* how many pixelformats	*/
+	int		stride;		/* bytes per row		*/
+	ggi_pixelformat *pixelformat[4];/* format of the pixels		*/
+} ggi_samplelinearbuffer;
+
+typedef struct {
+	int		next_line[3];	/* bytes until next line	*/
+	int		next_plane[3];	/* bytes until next plane	*/
+	ggi_pixelformat *pixelformat[4];/* format of the pixels		*/
+} ggi_sampleplanarbuffer;
 
 /* Buffer types */
 #define GGI_DB_NORMAL		0x0001  /* "frame" is valid when set */
@@ -306,7 +335,8 @@ typedef struct {
 	union {
 		ggi_pixellinearbuffer plb;
 		ggi_pixelplanarbuffer plan;
-
+		ggi_samplelinearbuffer slb;
+		ggi_sampleplanarbuffer splan;
 		void *extended;
 	} buffer;
 } ggi_directbuffer;
@@ -375,6 +405,7 @@ int ggiResourceFastRelease(ggi_resource_t res);
 #define GGI_MAX_APILEN	1024
 int ggiGetAPI(ggi_visual_t vis, int num, char *apiname, char *arguments);
 #define GGI_CHG_APILIST 0x00000001
+#define GGI_CHG_ACCELSYNC 0x00000002
 int ggiIndicateChange(ggi_visual_t vis, int whatchanged);
 
 /* Mode management
