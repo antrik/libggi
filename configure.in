@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.18 2001/08/15 04:52:08 skids Exp $
+dnl $Id: configure.in,v 1.19 2001/08/16 09:26:45 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -55,6 +55,7 @@ build_truemu_target="auto"
 build_vcsa_target="auto"
 build_vgagl_helper="auto"
 build_dga_target="auto"
+internal_xf86dga="yes"
 build_linvtsw_helper="auto"
 
 build_genkgi_driver="auto"
@@ -152,6 +153,9 @@ build_vgagl_helper=$enableval)
 AC_ARG_ENABLE(dga,
 [  --disable-dga           don't build the dga target],
 build_dga_target=$enableval)
+AC_ARG_ENABLE(internal-xf86dga,
+[  --disable-internal-xf86dga  don't use libggi internal xf86dga support],
+internal_xf86dga=$enableval)
 AC_ARG_ENABLE(linvtsw,
 [  --disable-linvtsw       don't build the linvtsw helper],
 build_linvtsw_helper=$enableval)
@@ -473,7 +477,6 @@ fi
 
 if test "x$build_dga_target" != "xno"; then
   AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
-  internal_xf86dga="yes"
   AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
   if test "x$internal_xf86dga" = "xyes"; then
     xf86dga_libs=""
