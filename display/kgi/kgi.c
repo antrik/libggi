@@ -29,23 +29,17 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 #endif
 
 	if (NULL == ctx) {
-
 		return -KGI_NOMEM;
 	}
 	if ((NULL == client) || (NULL == version)) {
-
 		return -KGI_INVAL;
 	}
 
 	memset(ctx, 0, sizeof(*ctx));
 
+	ggstrlcpy(fopt, options[KGI_OPT_DEVICE].result, sizeof(fopt));
 	if (strlen(options[KGI_OPT_DEVICE].result) > 2047) {
 		fprintf(stderr, "option string too long for device\n");
-		memcpy(fopt, options[KGI_OPT_DEVICE].result, 2047);
-		fopt[2047] = '\0';
-	}
-	else {
-		strcpy(fopt, options[KGI_OPT_DEVICE].result);
 	}
 	fname = fopt;
 	while (strchr(fname, ',') != NULL) {
@@ -104,8 +98,7 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
  found:
 
 	memset(&cb, 0, sizeof(cb));
-	strncpy(cb.request.client, client, sizeof(cb.request.client));
-	cb.request.client[sizeof(cb.request.client) - 1] = 0;
+	ggstrlcpy(cb.request.client, client, sizeof(cb.request.client));
 	cb.request.client_version = *version;
 
 	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_IDENTIFY, &cb)) {
