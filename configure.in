@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.96 2003/12/13 21:12:02 mooz Exp $
+dnl $Id: configure.in,v 1.97 2003/12/14 00:03:40 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -28,53 +28,53 @@ dynload_libs="-lgii -lgg"
 bsdsock_libs=""
 
 dnl Common useable Targets
-build_x_target="yes"
-build_x_dbe_target="no"
-build_x_evi_target="no"
-build_x_shm_target="no"
-build_x_xf86dga_target="no"
-build_x_xf86vmode_target="no"
+build_x_target="auto"
+build_x_dbe_target="auto"
+build_x_evi_target="auto"
+build_x_shm_target="auto"
+build_x_xf86dga_target="auto"
+build_x_xf86vmode_target="auto"
 build_file_target="auto"
 build_kgi_target="no"
 build_accel="yes"
 build_libkgi_target="no"
 build_suidkgi_target="no"
 build_memory_target="yes"
-build_dga_target="no"
-internal_xf86dga="no"
+build_dga_target="auto"
+internal_xf86dga="yes"
 build_terminfo_target="auto"
 
 dnl Linux specific Targets
 build_aa_target="auto"
-build_fbdev_target="yes"
-build_directfb_renderer="no"
-build_glide_target="no"
-build_lcd823_target="no"
+build_fbdev_target="auto"
+build_directfb_renderer="auto"
+build_glide_target="auto"
+build_lcd823_target="auto"
 build_monotext_target="auto"
 build_svga_target="auto"
-build_vcsa_target="no"
+build_vcsa_target="auto"
 
 dnl FreeBSD specific Targets
-build_vgl_target="no"
+build_vgl_target="auto"
 
 dnl Win32 specific Targets
 build_directx_target="no"
 
 dnl MacOS X specific Targets
-build_quartz_target="no"
+build_quartz_target="auto"
 
 dnl PseudoTargets
-build_multi_target="no"
-build_tile_target="yes"
+build_multi_target="yes"
+build_tile_target="auto"
 build_palemu_target="auto"
-build_truemu_target="no"
+build_truemu_target="auto"
 build_sub_target="auto"
 build_ipc_target="auto"
-build_tele_target="no"
+build_tele_target="auto"
 
 dnl Helpers
 build_mansync_helper="auto"
-build_vgagl_helper="no"
+build_vgagl_helper="auto"
 build_linvtsw_helper="auto"
 
 dnl SWAR selection: yes = compile this swar, no = don't compile,
