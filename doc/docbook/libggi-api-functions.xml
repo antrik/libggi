@@ -8,7 +8,7 @@
 
 <refmeta>
 <refentrytitle><function>ggiInit</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -139,7 +139,7 @@ ggiExit();
 
 <refmeta>
 <refentrytitle><function>ggiPanic</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -208,7 +208,7 @@ if (my_important_struct-&gt;magic != MAGIC) {
 
 <refmeta>
 <refentrytitle><function>ggiOpen</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -330,7 +330,7 @@ ggiClose(memvis);
 
 <refmeta>
 <refentrytitle><function>ggiCheckMode</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -568,7 +568,7 @@ else {
 
 <refmeta>
 <refentrytitle><function>ggiSetMode</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -690,7 +690,7 @@ Also we don't need ggiGetMode in vis->opdisplay, do we?  </comment>
 
 <refmeta>
 <refentrytitle><function>ggiParseMode</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -803,7 +803,7 @@ For most applications there will be no need for testing
 
 <refmeta>
 <refentrytitle><function>ggiSetDisplayFrame</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -926,7 +926,7 @@ The <function>ggiSet*Frame</function> functions return
 
 <refmeta>
 <refentrytitle><function>ggiMapColor</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1049,7 +1049,7 @@ error code.
 
 <refmeta>
 <refentrytitle><function>ggiSetPalette</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1145,7 +1145,7 @@ the return code will indicate whether there is a readable CLUT.
 <refentry id="api-ggisetcolorfulpalette">
 <refmeta>
 <refentrytitle><function>ggiSetColorfulPalette</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1205,7 +1205,7 @@ the first entry changed.  Negative values indicate error (codes).
 
 <refmeta>
 <refentrytitle><function>ggiSetGamma</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1320,7 +1320,7 @@ error code.
 
 <refmeta>
 <refentrytitle><function>ggiGetPixelFormat</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1384,7 +1384,7 @@ that is returned.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiSetGCForeground</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1461,7 +1461,7 @@ All four functions <returnvalue>0</returnvalue> for OK.
 
 <refmeta>
 <refentrytitle><function>ggiSetGCClipping</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1532,7 +1532,7 @@ current clipping rectangle.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiDrawPixel</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1593,7 +1593,7 @@ indicate success.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiDrawHLine</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1682,7 +1682,7 @@ indicate success.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiDrawVLine</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1767,7 +1767,7 @@ with pixels.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiDrawBox</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1856,7 +1856,7 @@ indicate success.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiFillscreen</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1898,7 +1898,7 @@ success.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiDrawLine</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -1954,7 +1954,7 @@ success.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiCopyBox</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2019,7 +2019,7 @@ when the read frame is not the same as the write frame.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiCrossBlit</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2087,7 +2087,7 @@ This function does not perform stretching.
 
 <refmeta>
 <refentrytitle><function>ggiSetOrigin</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2184,7 +2184,7 @@ for(i = 0; i &lt; virt_y-visible_y; i++) {
 
 <refmeta>
 <refentrytitle><function>ggiPutc</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2281,7 +2281,7 @@ linkend="ref-struct-ggi-color">pixels</link> by definition and the
 
 <refmeta>
 <refentrytitle><function>ggiSetFlags</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2433,7 +2433,7 @@ ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 <refentry id="api-ggiflush">
 <refmeta>
 <refentrytitle><function>ggiFlush</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2500,7 +2500,7 @@ No meaningful return value.
 <refentry id="api-ggiresourceacquire">
 <refmeta>
 <refentrytitle><function>ggiResourceAcquire</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2622,7 +2622,7 @@ ggiResourceRelease(dbuf-&gt;resource);
 
 <refmeta>
 <refentrytitle><function>ggiDBGetBuffer</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2829,7 +2829,7 @@ for(i = 0; i &lt; numbufs; i++)
 
 <refmeta>
 <refentrytitle><function>ggiEventPoll</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -2972,7 +2972,7 @@ visual with a stale input handle.)  </para>
 
 <refmeta>
 <refentrytitle><function>ggiGetInput</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -3032,7 +3032,7 @@ the visual handle is closed, the input will remain unaffected.
 
 <refmeta>
 <refentrytitle><function>ggiEventSend</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
@@ -3092,7 +3092,7 @@ The latter is the default.  </para>
 
 <refmeta>
 <refentrytitle><function>ggiGetc</function></refentrytitle>
-<manvolnum>3ggi</manvolnum>
+<manvolnum>3</manvolnum>
 <refmiscinfo>GGI</refmiscinfo>
 </refmeta>
 
