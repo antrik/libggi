@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.151 2004/11/13 13:20:49 cegger Exp $
+dnl $Id: configure.in,v 1.152 2004/12/14 13:43:59 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -759,7 +759,7 @@ if test "x$build_directfb_renderer" != "xno"; then
 fi
 
 if test "x$build_libkgi_driver" != "xno"; then
-  AC_CHECK_LIB(galloc, ggiGAInit, foo=bar, build_libkgi_target="no")
+  AC_CHECK_LIB(ggigalloc, ggiGAInit, foo=bar, build_libkgi_target="no")
 fi
 
 if test "x$build_kgi_target" != "xno"; then
