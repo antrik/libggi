@@ -24,6 +24,8 @@
 <refsect1>
 <title>Description</title>
 
+This structure describes the internal format of pixel values for a visual.
+
 <programlisting>
 typedef struct {
 	int		depth;		/* Number of significant bits */
@@ -98,6 +100,15 @@ typedef struct {
 #define GGI_PF_HAM		0x04
 #define GGI_PF_EXTENDED		0x08
 </programlisting>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggigetpixelformat"/></member>
+</simplelist>
 
 </refsect1>
 

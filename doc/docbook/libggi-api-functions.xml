@@ -993,20 +993,18 @@ The output from this function is suitable for input to the
 
 <para>
 <function>ggiUnpackPixels</function> converts the pixelvalues in
-<parameter>buf</parameter> to
-individual elements of <parameter>cols</parameter>.  This function
-maybe used to convert
+<parameter>buf</parameter> to individual elements of
+<parameter>cols</parameter>.  This function maybe used to convert
 buffers output by the <function>ggiGet{HLine,VLine,Box}</function>
-functions from the
-pixelvalue representation to their actual <link
+functions from the pixelvalue representation to their actual <link
 linkend="ggi-color">colors</link>.
 </para>
 
 <para>
 The buffers output from <function>ggiPackColors</function> and the input to
 <function>ggiUnpackPixels</function> are in the same format as the
-get/put buffers.
-Their format is defined in <structname>ggi_pixelformat</structname>.
+get/put buffers. Their format is defined in
+<structname>ggi_pixelformat</structname>.
 </para>
 
 <para>
@@ -1030,6 +1028,17 @@ error code.
 </para>
 
 </refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggigetpixelformat"/></member>
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
+</simplelist>
+
+</refsect1>
+
 </refentry>
 
 
@@ -1330,6 +1339,7 @@ error code.
 <title>Description</title>
 <para>This function obtains the default pixel format for the given visual.
 </para>
+
 </refsect1>
 
 <refsect1>
@@ -1348,9 +1358,19 @@ the pointer returned.  <!-- Apparently this is not clear enough. -->
 <title>Structures</title>
 
 <para>
-See <filename>ggi/ggi.h</filename> or <xref linkend="ggi-pixelformat"/>
+See <filename>ggi/ggi.h</filename> or <xref linkend="ref-struct-ggi-pixelformat"/>
 for details on the structure that is returned.
 </para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
+<member><xref linkend="api-ggimapcolor"/></member>
+</simplelist>
 
 </refsect1>
 
@@ -1621,6 +1641,15 @@ Draw, put, or get a horizontal line from
 <parameter>w</parameter> pixels in the positive x direction (normally
 right).  The height is one pixel.
 </para>
+
+<para>The *<parameter>buf</parameter> parameter in Get/Put functions
+points to a buffer from which the pixels will be read, or to which they
+will be written (it must be correctly allocated), depending on the
+case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more
+on how to deal with pixels.
+</para>
+
 </refsect1>
 
 <refsect1>
@@ -1637,6 +1666,8 @@ right).  The height is one pixel.
 <member><xref linkend="api-ggidrawvline"/></member>
 <member><xref linkend="api-ggidrawbox"/></member>
 <member><xref linkend="api-ggidrawline"/></member>
+<member><xref linkend="api-ggimapcolor"/></member>
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
 </simplelist>
 
 </refsect1>
@@ -1699,6 +1730,15 @@ Draw, put, or get a vertical line from
 <parameter>h</parameter> pixels in the positive y direction (normally
 down). The width of the line is one pixel.
  </para>
+
+<para>The *<parameter>buf</parameter> parameter in Get/Put functions
+points to a buffer from which the pixels will be read, or to which they
+will be written (it must be correctly allocated), depending on the
+case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more
+on how to deal with pixels.
+</para>
+
 </refsect1>
 
 <refsect1>
@@ -1714,6 +1754,8 @@ down). The width of the line is one pixel.
 <member><xref linkend="api-ggidrawhline"/></member>
 <member><xref linkend="api-ggidrawbox"/></member>
 <member><xref linkend="api-ggidrawline"/></member>
+<member><xref linkend="api-ggimapcolor"/></member>
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
 </simplelist>
 </refsect1>
 </refentry>
@@ -1779,6 +1821,15 @@ Draw, put, or get a rectangle at
 <parameter>h</parameter> pixels in the
 positive y direction.
 </para>
+
+<para>The *<parameter>buf</parameter> parameter in Get/Put functions
+points to a buffer from which the pixels will be read, or to which they
+will be written (it must be correctly allocated), depending on the
+case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more
+on how to deal with pixels.
+</para>
+
 </refsect1>
 
 <refsect1>
@@ -1794,6 +1845,8 @@ positive y direction.
 <member><xref linkend="api-ggidrawhline"/></member>
 <member><xref linkend="api-ggidrawvline"/></member>
 <member><xref linkend="api-ggidrawline"/></member>
+<member><xref linkend="api-ggimapcolor"/></member>
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
 </simplelist>
 
 </refsect1>
