@@ -15,10 +15,16 @@ Copyright (c) 1999  Marcus Sundberg [marcus@ggi-project.org]
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE	199309L
 #endif
+#ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
+#endif
 #define _XOPEN_SOURCE	500L
+#ifndef _BSD_SOURCE
 #define _BSD_SOURCE
+#endif
+#ifndef _SVID_SOURCE
 #define _SVID_SOURCE
+#endif
 #define FUNCPROTO	15
 #define NARROWPROTO
 #define XTHREADS
