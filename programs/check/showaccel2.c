@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.2 2003/07/13 07:04:26 cegger Exp $
+/* $Id: showaccel2.c,v 1.3 2004/01/03 22:54:37 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 			pal[c].b=(128-abs(128-c))*7*64;
 		}
 		/* And send it to the visual. In case we are in a 
-		 * non-palletized mode, this simply fails.
+		 * non-palettized mode, this simply fails.
 		 */
 		ggiSetPalette(vis,0,256,pal);
 
