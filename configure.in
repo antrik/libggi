@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.121 2004/05/28 09:36:02 pekberg Exp $
+dnl $Id: configure.in,v 1.122 2004/05/28 13:10:35 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -574,29 +574,15 @@ DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r lin
 XSUBDIRS=""
 FBDEVSUBDIRS=""
 
-use_threads_orig="$use_threads"
-
 AC_MSG_CHECKING(if we should use pthreads for mansync)
-if test "$have_pthread" = "yes" -a "x$use_threads" != "xno"; then 
-  AC_TRY_CPP([
-#include <features.h>
-#if !defined(__linux__)
-#error We're not on a bad system - this line makes compilation fail...
-#endif
-],
-    use_threads="no"
-    AC_MSG_RESULT(no),
-    AC_MSG_RESULT(yes))
+if test "x$use_threads" = "xpthread"; then 
+  AC_MSG_RESULT(yes)
 else
-      use_threads="no"
-      AC_MSG_RESULT(no)
+  AC_MSG_RESULT(no)
 fi
 
 AC_MSG_CHECKING(if we should use win32 threads for mansync)
-if test "$ac_cv_header_windows_h" = "yes" \
-  -a "x$use_threads_orig" != "xno" \
-  -a "x$use_threads" = "xno"; then
-  use_threads="$use_threads_orig"
+if test "x$use_threads" = "xwin32"; then
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
