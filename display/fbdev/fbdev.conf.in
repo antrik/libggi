@@ -4,6 +4,7 @@
 
 # Native drivers
 tgt-fbdev-mga-2164w		default/fbdev/mga/m2164w.@DLLEXT@
+tgt-fbdev-mga-g400		default/fbdev/mga/mga_g400.@DLLEXT@
 
 # KGIcon drivers
 tgt-fbdev-kgicon-generic	default/fbdev/kgi/genkgi.@DLLEXT@
