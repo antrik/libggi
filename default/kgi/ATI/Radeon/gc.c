@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.4 2003/02/07 01:35:09 skids Exp $
+/* $Id: gc.c,v 1.5 2004/01/03 22:41:05 cegger Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -132,7 +132,7 @@ void GGI_kgi_radeon_clut_ilut_sync(vis) {
 	radeon_context_t *ctx;
 	unsigned int len, i;
 
-	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALLETE) return;
+	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE) return;
 	if (KGI_PRIV(vis)->ilut_touched == 0) return;
 	
 	ctx = RADEON_CONTEXT(vis);
@@ -143,10 +143,10 @@ void GGI_kgi_radeon_clut_ilut_sync(vis) {
 
 	for (i = 0; i < len; i++) {
 		pkt.clutdata[i] = 
-		  ((vis->pallete[i].a >> 8) << 24) |
-		  ((vis->pallete[i].r >> 8) << 16) |
-		  ((vis->pallete[i].g >> 8) << 8) |
-		  (vis->pallete[i].b >> 8);
+		  ((vis->palette[i].a >> 8) << 24) |
+		  ((vis->palette[i].r >> 8) << 16) |
+		  ((vis->palette[i].g >> 8) << 8) |
+		  (vis->palette[i].b >> 8);
 	}
 
 	KGI_PRIV(vis)->ilut_touched = 0; 
