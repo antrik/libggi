@@ -4,7 +4,6 @@ Version: @VERSION@
 Release: 1
 Group: System Environment/Libraries
 Source0: ftp://ftp.ggi-project.org/pub/ggi/%name-%{version}.tar.gz
-Source1: ftp://ftp.ggi-project.org/pub/ggi/%name-%{version}.tar.bz2
 URL: http://www.ggi-project.org/
 License: LGPL
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
