@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.3 2002/04/28 17:57:01 skids Exp $
+/* $Id: memory.h,v 1.4 2002/05/22 13:10:19 skids Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -63,15 +63,24 @@ typedef struct {
 } inpbuffer;
 
 typedef struct {
-	enum memtype memtype;
-	void *memptr;
-	inpbuffer *inputbuffer;
-	int  inputoffset;
-	int         physzflags;
-	ggi_coord   physz;
-	ggi_pixel r_mask, g_mask, b_mask;
+	enum memtype   	memtype;
+	void	       *memptr;
+	inpbuffer      *inputbuffer;
+	int		inputoffset;
+	int		physzflags;
+	ggi_coord	physz;
+	ggi_pixel	r_mask, g_mask, b_mask;
+	int		fstride;
+	int		noblank;
+	ggifunc_fillscreen     *oldfillscreen;
+	ggi_bufferlayout	layout;
+        union {
+		ggi_pixellinearbuffer plb;
+                ggi_pixelplanarbuffer plan;
+        } buffer;
+
 #ifdef HAVE_SHM
-	int	shmid;
+	int		shmid;
 #endif
 } ggi_memory_priv;
 
