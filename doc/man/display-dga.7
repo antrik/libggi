@@ -2,37 +2,32 @@
 .SH NAME
 display-dga \- Display using XFree86-DGA extension
 .SH SYNOPSIS
-\fBdisplay-dga\fR : [-noinput] [-nocursor] [-physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [\fIdisplay\fR]
+\fBdisplay-dga\fR : [-noinput] [-nocursor] [-physz==\fIsizex\fR,\fIsizey\fR[dpi]] [\fIdisplay\fR]
 .SH DESCRIPTION
-Uses the XFree86 DGA extension to do fullscreen direct framebuffer access on X servers which support this. For systems without kernel framebuffer support, the program must be run as root for this target to be able to mmap \fB/dev/mem\fR.
+Uses the XFree86 DGA extension to do fullscreen direct framebuffer access on X servers which support this. For systems without kernel framebuffer support, the program must be run as \fBroot\fR for this target to be able to mmap \fB/dev/mem\fR.
 .SH OPTIONS
-.RS
 .TP
--noinput
+\fB-noinput\fR
 XF86DGA events sent to the window are not captured and merged with any other LibGII input sources. This allows one to take input from raw devices without receiving duplicate events should X also be configured to use the device.
 .PP
 .TP
--nocursor
+\fB-nocursor\fR
 Normal behavior of display-x and display-xlib is to create a small dot mouse cursor pixmap which is visible when the mouse is positioned over the window containing the visual. This can get in the way of mouse cursors implemented by the application. With this option, you will not see an X mouse cursor when it is over the visual.
 .PP
 .TP
--physz==\fIsizex\fR,\fIsizey\fR\fIdpi\fR
-This option will override the physical screen size reported by the X server, which affects applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fIdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch. Yes, there are two equals signs there, for reasons of compatibility with other targets.
+\fB-physz==sizex,sizey[dpi]\fR
+This option will override the physical screen size reported by the X server, which affects applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fBdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch. Yes, there are two equals signs there, for reasons of compatibility with other targets.
 .PP
 .TP
 \fIdisplay\fR
 The X display to connect to, otherwise defaults to the display specified in \fBDISPLAY\fR
 .PP
-.RE
 .SH ENVIRONMENT VARIABLES
-.RS
 .TP
 \fBGGI_DGA_FBDEV\fR
-specifies a framebuffer device to mmap instead of \fB/dev/mem\fR. This allows you to use the DGA target without root privileges!
+specifies a framebuffer device to mmap instead of \fB/dev/mem\fR. This allows you to use the \fBDGA\fR target without root privileges!
 .PP
-.RE
 .SH FEATURES
-.RS
 .IP \(bu 4
 DirectBuffer always available.
 .IP \(bu 4
@@ -41,5 +36,4 @@ Some operations may be accelerated depending on the X server
 Multiple frames
 .IP \(bu 4
 Panning
-.RE
 

@@ -21,8 +21,8 @@
     <command>display-tile</command>
     <arg choice="plain">:</arg>
     <group>
-        <arg><option>-usedb</option></arg>
-	<arg><option>-nodb</option></arg>
+        <arg>-usedb</arg>
+	<arg>-nodb</arg>
     </group>
     <arg rep="repeat" choice="req"><replaceable>offset-x</replaceable>,<replaceable>offset-y</replaceable>,<replaceable>size-x</replaceable>,<replaceable>size-y</replaceable>,<replaceable>child-target-spec</replaceable>:</arg>
 
@@ -47,23 +47,24 @@
     <variablelist>
 
     <varlistentry>
-    <term><replaceable>offset-x</replaceable></term>
-    <term><replaceable>offset-y</replaceable></term>
+    <term><option><replaceable>offset-x</replaceable></option></term>
+    <term><option><replaceable>offset-y</replaceable></option></term>
     <listitem><para>
-    coordinates (within the parent visual) of the top-left corner of the child visual
+    coordinates (within the parent visual) of the top-left corner of
+    the child visual
     </para></listitem>
     </varlistentry>
 
     <varlistentry>
-    <term><replaceable>size-x</replaceable></term>
-    <term><replaceable>size-y</replaceable></term>
+    <term><option><replaceable>size-x</replaceable></option></term>
+    <term><option><replaceable>size-y</replaceable></option></term>
     <listitem><para>
     width and height of the child visual
     </para></listitem>
     </varlistentry>
 
     <varlistentry>
-    <term><replaceable>child-target-spec</replaceable></term>
+    <term><option><replaceable>child-target-spec</replaceable></option></term>
     <listitem><para>
     a target spec.  Since target specs can (and often do) contain colons, it
     needs to be enclosed in parentheses.
@@ -74,7 +75,8 @@
 </para>
   
 <para>
-The following options apply to the whole <systemitem>display-tile</systemitem>:
+    The following options apply to the whole
+    <systemitem>display-tile</systemitem>:
 
     <variablelist>
 
@@ -110,8 +112,9 @@ The following options apply to the whole <systemitem>display-tile</systemitem>:
 
 <simplelist>
 <member>
-    DirectBuffer support depends on the <option>-usedb</option>/<option>-nodb</option>
-    options.
+    DirectBuffer support depends on the
+    <option>-usedb</option>/<option>-nodb</option>
+     options.
 </member>
 <member>
     Accelerated in no-DB mode if the underlying target is, otherwise
@@ -121,9 +124,9 @@ The following options apply to the whole <systemitem>display-tile</systemitem>:
 
 <tip>
   <para>
-    <systemitem>display-tile</systemitem> can be used to emulate DirectBuffer for
-    obstinate applications that cannot run without it, by specifying one
-    tile which maps the whole screen.
+    <systemitem>display-tile</systemitem> can be used to emulate
+    DirectBuffer for obstinate applications that cannot run without
+    it, by specifying one tile which maps the whole screen.
   </para>
 </tip>
 

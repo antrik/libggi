@@ -20,9 +20,9 @@
 
     <command>display-file</command>
     <arg choice="plain">:</arg>
-    <arg><option>-flushcmd="<replaceable>command to execute</replaceable>"</option></arg>
-    <arg><option>-flushframe=<replaceable>n</replaceable></option></arg>
-    <arg><option>-flushtime=<replaceable>t</replaceable></option></arg>
+    <arg>-flushcmd=<replaceable>command</replaceable></arg>
+    <arg>-flushframe=<replaceable>n</replaceable></arg>
+    <arg>-flushtime=<replaceable>t</replaceable></arg>
     <arg choice="req"><replaceable>filename</replaceable></arg>
 
 </cmdsynopsis>
@@ -50,18 +50,20 @@
 <refsect1><title>Options</title>
 
 <para>
-    <replaceable>filename</replaceable> is the file to render the images to.  If the
-    filename is a PPM file (has the extension <filename>.ppm</filename>), then the
-    image will be generated at <function>ggiClose</function> time.  Otherwise the file
-    is a custom `GGIFILE' format and is generated continuously.
+    <replaceable>filename</replaceable> is the file to render the
+    images to.  If the filename is a PPM file (has the extension
+    <filename>.ppm</filename>), then the image will be generated at
+    <function>ggiClose</function> time.  Otherwise the file is a
+    custom `GGIFILE' format and is generated continuously.
 </para>
 
 <para>
     The <systemitem>file</systemitem> target can be used to generate
     movies from running LibGGI applications. To do this, set
-    <option>-flushcmd</option> to a shell command to execute at the times given by
-    one of the two other parameters. This looks typically like
-    <literal>ppmtogif foo.ppm &gt;foo.%04d.gif</literal>. The command is passed through a
+    <option>-flushcmd</option> to a shell command to execute at the
+    times given by one of the two other parameters. This looks typically like
+    <literal>ppmtogif foo.ppm &gt;foo.%04d.gif</literal>. The command
+    is passed through a 
     <citerefentry>
         <refentrytitle><function>printf</function></refentrytitle>
 	<manvolnum>3</manvolnum>
@@ -71,9 +73,11 @@
 </para>
 
 <para>
-    This shell command is either executed at every <replaceable>n</replaceable>-th
-    invocation of ggiFlush or every <replaceable>t</replaceable> seconds, where
-    <replaceable>t</replaceable> can have fractional components (specified as decimal).
+    This shell command is either executed at every
+    <replaceable>n</replaceable>-th invocation of ggiFlush or every
+    <replaceable>t</replaceable> seconds, where
+    <replaceable>t</replaceable> can have fractional components
+    (specified as decimal).
 </para>
 
 <para>

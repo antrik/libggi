@@ -21,14 +21,14 @@
     <command>display-fbdev</command>
     <arg choice="plain">:</arg>
     <group>
-        <arg><option>-noinput</option></arg>
-	<group choice="opt">
-	    <arg><option>-nokbd</option></arg>
-	    <arg><option>-nomouse</option></arg>
-	</group>
+        <arg>-noinput</arg>
+	<arg>
+	    <arg>-nokbd</arg>
+	    <arg>-nomouse</arg>
+	</arg>
     </group>
-    <arg><option>-novt</option></arg>
-    <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
+    <arg>-novt</arg>
+    <arg>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>[dpi]</arg>
     <arg><replaceable>framebuffer</replaceable></arg>
 
 </cmdsynopsis>
@@ -55,11 +55,11 @@
     <variablelist>
 
     <varlistentry>
-    <term><replaceable>framebuffer</replaceable></term>
+    <term><option><replaceable>framebuffer</replaceable></option></term>
     <listitem><para>
     The filename of the framebuffer target to use.  The default is to get it
-    from the <envar>FRAMEBUFFER</envar> environment, or the framebuffer associated
-    with the current console if that is unset.
+    from the <envar>FRAMEBUFFER</envar> environment, or the
+    framebuffer associated with the current console if that is unset.
     </para></listitem>
     </varlistentry>
 
@@ -92,13 +92,14 @@
     </varlistentry>
 
     <varlistentry>
-    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>[dpi]</option></term>
     <listitem><para>
     This option will provide a physical screen size for applications which 
     wish to remain resolution independent.  
-    <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable> are the x,y 
-    size of the screen in millimeters, unless the optional <replaceable>dpi</replaceable>
-    string is affixed, in which case, they represent resolution in dots-per-inch.
+    <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>
+    are the x,y size of the screen in millimeters, unless the optional
+    <option>dpi</option> string is affixed, in which case,
+    they represent resolution in dots-per-inch.
     </para></listitem> 
     </varlistentry>
 

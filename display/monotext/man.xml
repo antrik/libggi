@@ -21,13 +21,13 @@
     <command>display-monotext</command>
     <arg choice="plain">:</arg>
     <group>
-        <arg><option>-a=<replaceable>accuracy</replaceable></option></arg>
-	<group choice="opt">
-	    <arg><option>-x=<replaceable>accuracy</replaceable></option></arg>
-	    <arg><option>-y=<replaceable>accuracy</replaceable></option></arg>
-	</group>
+        <arg>-a=<replaceable>accuracy</replaceable></arg>
+	<arg>
+	    <arg>-x=<replaceable>accuracy</replaceable></arg>
+	    <arg>-y=<replaceable>accuracy</replaceable></arg>
+	</arg>
     </group>
-    <arg><replaceable><link linkend="target-spec">target-spec</link></replaceable></arg>
+    <arg><replaceable>target-spec</replaceable></arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -65,6 +65,13 @@
     <listitem><para>
     Same as above, but sets both the x and y accuracy to the specified
     value.
+    </para></listitem>
+    </varlistentry>
+
+    <varlistentry>
+    <term><option><replaceable>target-spec</replaceable></option></term>
+    <listitem><para>
+    ?
     </para></listitem>
     </varlistentry>
 

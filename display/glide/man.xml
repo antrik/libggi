@@ -36,8 +36,9 @@
 <refsect1><title>Options</title>
 
 <para>
-    The 3DFX card to use can be optionally specified as a cardinal number
-    minus one.  (e.g. <literal>0</literal> means the first card,
+    The 3DFX <option><replaceable>card</replaceable></option> to use
+    can be optionally specified  as a cardinal number minus one.
+    (e.g. <literal>0</literal> means the first card,
     <literal>1</literal> the second, etc.)
 </para>
 

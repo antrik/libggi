@@ -19,6 +19,7 @@
 <cmdsynopsis>
 
     <command>display-aalib</command>
+    <arg choice="plain">:</arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -26,7 +27,8 @@
 <refsect1><title>Description</title>
 
 <para>
-    Uses the <ulink url="http://aa-project.sourceforge.net/aalib/">AA-lib</ulink>, 
+    Uses the <ulink
+    url="http://aa-project.sourceforge.net/aalib/">AA-lib</ulink>, 
     an ASCII art library, for output and input.
 </para>
   

@@ -2,37 +2,33 @@
 .SH NAME
 display-trueemu \- Emulate truecolor modes
 .SH SYNOPSIS
-\fBdisplay-trueemu\fR : [-parent=\fImode\fR] [-dither=\fIdither\fR] [-model=\fImodel\fR] <\fItarget-spec\fR>
+\fBdisplay-trueemu\fR : [-parent=\fImode\fR] [-dither=\fIdither\fR] [-model=\fImodel\fR] {\fItarget-spec\fR}
 .SH DESCRIPTION
 Emulates truecolor modes (\fBGT_TRUECOLOR\fR) on another target which can only do palette modes or truecolor modes of different sizes/depths. Uses dithering and special palettes to get the highest possible quality.
 .SH OPTIONS
-.RS
 .TP
--parent=\fImode\fR
+\fB-parent=mode\fR
 Force the parent target to use a specific mode, specified as a standard LibGGI mode string (see \fBlibggi\fR (7)).
 .PP
 .TP
--dither=\fIdither\fR
+\fB-dither=dither\fR
 Specifies the amount of dithering. Legal values are 0, 2 and 4, defaulting to 4.
 
-When the target is running, CtrlAltd changes the dithering level.
+When the target is running, [\fBCtrl\fR+\fBAlt\fR+\fBd\fR] changes the dithering level.
 .PP
 .TP
--model=\fImodel\fR
+\fB-model=model\fR
 Color model to use (only when the parent is palettized). Legal values are rgb, cube and pastel. Default depends on the parent mode.
 
-When the target is running, CtrlAltp changes the current color model.
+When the target is running, [\fBCtrl\fR+\fBAlt\fR+\fBp\fR] changes the current color model.
 .PP
 .TP
-\fItarget-spec\fR
+\fBtarget-spec\fR
 Specifies the target which to draw on (the `parent' target). This defaults to automatic selection (just like using \fBggiOpen\fR(\fBNULL\fR) when \fBGGI_DISPLAY\fR is not set).
 .PP
-.RE
 .SH FEATURES
-.RS
 .IP \(bu 4
 DirectBuffer never supported.
 .IP \(bu 4
 Unaccelerated.
-.RE
 

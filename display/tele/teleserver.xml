@@ -19,10 +19,16 @@
 <cmdsynopsis>
 
     <command>ggiteleserver</command>
-    <arg choice="opt">-V</arg>
-    <arg choice="opt">-h</arg>
-    <arg choice="opt">-t <replaceable>target</replaceable></arg>
-    <arg choice="opt">-d <replaceable>display</replaceable></arg>
+    <group>
+        <arg>-V</arg>
+	<arg>--version</arg>
+    </group>
+    <group>
+        <arg>-h</arg>
+	<arg>--help</arg>
+    </group>
+    <arg>-t <replaceable>target</replaceable></arg>
+    <arg>-d <replaceable>display</replaceable></arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -44,24 +50,24 @@
     <variablelist>
 
     <varlistentry>
-    <term>-V</term><term>--version</term>
+    <term><option>-V</option></term><term><option>--version</option></term>
     <listitem><para>Print the program version and exit.</para></listitem>
     </varlistentry>
 
     <varlistentry>
-    <term>-h</term><term>--help</term>
+    <term><option>-h</option></term><term><option>--help</option></term>
     <listitem><para>Print options and exit.</para></listitem>
     </varlistentry>
 
     <varlistentry>
-    <term>-t <replaceable>target</replaceable></term>
+    <term><option>-t <replaceable>target</replaceable></option></term>
     <listitem><para>Use the specified <replaceable>target</replaceable> as
     display. It overrides the value of <envar>GGI_DISPLAY</envar>.
     </para></listitem>
     </varlistentry>
 
     <varlistentry>
-    <term>-d <replaceable>display</replaceable></term>
+    <term><option>-d <replaceable>display</replaceable></option></term>
     <listitem><para>
     ???
     </para></listitem>

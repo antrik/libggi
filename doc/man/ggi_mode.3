@@ -28,7 +28,6 @@ typedef struct {
 .fi
 The mode structure describes a visual configuration given by its size and other graphic properties.
 .SH STRUCTURE MEMBERS
-.RS
 .TP
 \fBframes\fR
 The number of frames. Some displays have multi-buffer capabilites (double-buffering, triple-buffering...). See libggi for information on working with multiple frames.
@@ -48,7 +47,6 @@ The virtual size of the visual. It can be larger (but not smaller) than the visi
 .TP
 \fBgraphtype\fR
 It holds information on the type of display. libggi defines macros to construct graphtypes values or access individual field.
-.RS
 .TP
 \fBdepth\fR ( \fBGT_DEPTH\fR(gt), \fBGT_SETDEPTH\fR(gt,x) )
 The number of significant bits holding color information.
@@ -60,7 +58,6 @@ The actual size (in bits) of a pixel. For instance, on a 32 bits X server the pi
 .TP
 \fBscheme\fR ( \fBGT_SCHEME\fR(gt), \fBGT_SETSCHEME\fR(gt,x) )
 The following schemes are available :
-.RS
 .IP \(bu 4
 \fBGT_TEXT\fR : text mode only
 .IP \(bu 4
@@ -79,23 +76,18 @@ The following schemes are available :
 \fBGT_SUBSAMPLE_S_YCRBR\fR
 .IP \(bu 4
 \fBGT_NIL\fR
-.RE
 .PP
 .TP
 \fBsubscheme\fR ( \fBGT_SUBSCHEME\fR(gt), \fBGT_SETSUBSCHEME\fR(gt,x) )
 ????
-.RS
 .IP \(bu 4
 \fBGT_SUB_REVERSE_ENDIAN\fR
 .IP \(bu 4
 \fBGT_SUB_HIGHBIT_RIGHT\fR
 .IP \(bu 4
 \fBGT_SUB_PACKED_GETPUT\fR
-.RE
 .PP
-.RE
 Graphtypes can be constructed directly or via the \fBGT_CONSTRUCT\fR(depth,scheme,size) macro. The following common graphtypes are defined :
-.RS
 .IP \(bu 4
 \fBGT_TEXT16\fR
 .IP \(bu 4
@@ -120,13 +112,11 @@ Graphtypes can be constructed directly or via the \fBGT_CONSTRUCT\fR(depth,schem
 \fBGT_AUTO\fR
 .IP \(bu 4
 \fBGT_INVALID\fR
-.RE
 .PP
 .TP
 \fBdpp\fR
 It stands for dot-per-pixel.
 .PP
-.RE
 When filling a mode structure for setting a visual, any field can be assigned \fBGGI_AUTO\fR (\fBGT_AUTO\fR for graphtype) if a specific value isn't required.
 .SH SEE ALSO
 \fBggiCheckMode\fR (3), \fBggiSetMode\fR (3) 

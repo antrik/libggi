@@ -20,9 +20,9 @@
 
     <command>display-macosx</command>
     <arg choice="plain">:</arg>
-    <arg><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></arg>
-<
-/cmdsynopsis>
+    <arg>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>dpi]</arg>
+
+</cmdsynopsis>
 </refsynopsisdiv>
 
 <refsect1><title>Description</title>
@@ -38,13 +38,13 @@
     <variablelist>
 
     <varlistentry>
-    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable><replaceable>dpi</replaceable></option></term>
+    <term><option>-physz=<replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>[dpi]</option></term>
     <listitem><para>
     This option will provide a physical screen size for applications which
     wish to remain resolution independent.  
     <replaceable>sizex</replaceable>,<replaceable>sizey</replaceable>
     are the x,y size of the screen in millimeters, unless the optional
-    <replaceable>dpi</replaceable>
+    <option>dpi</option>
     string is affixed, in which case, they represent resolution in
     dots-per-inch.
     </para></listitem>

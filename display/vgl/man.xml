@@ -20,8 +20,10 @@
 
     <command>display-vgl</command>
     <arg choice="plain">:</arg>
-    <arg><option>-nodb</option></arg>
-    <arg><option>-usedb</option></arg>
+    <group>
+        <arg>-nodb</arg>
+	<arg>-usedb</arg>
+    </group>
 
 </cmdsynopsis>
 </refsynopsisdiv>

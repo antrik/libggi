@@ -2,45 +2,43 @@
 .SH NAME
 display-tile \- Divide display into tiles similar to a video wall
 .SH SYNOPSIS
-\fBdisplay-tile\fR : [-usedb] [-nodb] <\fIoffset-x\fR,\fIoffset-y\fR,\fIsize-x\fR,\fIsize-y\fR,\fIchild-target-spec\fR:>
+\fBdisplay-tile\fR : [ [-usedb] | [-nodb] ] {\fIoffset-x\fR,\fIoffset-y\fR,\fIsize-x\fR,\fIsize-y\fR,\fIchild-target-spec\fR:...}
 .SH DESCRIPTION
 Emulates one big target, where one or more areas are mapped to different child visuals.
 .SH OPTIONS
 For each tile (i.e. child visual or mapped area), the following must be specified:
 .RS
 .TP
-\fIoffset-x\fR, \fIoffset-y\fR
+\fBoffset-x\fR, \fBoffset-y\fR
 coordinates (within the parent visual) of the top-left corner of the child visual
 .PP
 .TP
-\fIsize-x\fR, \fIsize-y\fR
+\fBsize-x\fR, \fBsize-y\fR
 width and height of the child visual
 .PP
 .TP
-\fIchild-target-spec\fR
+\fBchild-target-spec\fR
 a target spec. Since target specs can (and often do) contain colons, it needs to be enclosed in parentheses.
 .PP
 .RE
 
-The following options apply to the whole display-tile:
+The following options apply to the whole \fBdisplay-tile\fR:
 .RS
 .TP
--usedb
+\fB-usedb\fR
 Enables DirectBuffer emulation. This is the default mode.
 
 The contents of each mapped area is blitted from the DirectBuffer into their respective child visuals at regular intervals or when the visual is flushed. DirectBuffer emulation works regardless of whether the child visuals support DirectBuffer or not.
 .PP
 .TP
--nodb
+\fB-nodb\fR
 Disables DirectBuffer emulation. LibGGI primitives are passed to each of the child visuals with the necessary clipping and translation. Thus, if a child visual underlying a mapped area supports acceleration, then the operation on that area will be accelerated.
 .PP
 .RE
 .SH FEATURES
-.RS
 .IP \(bu 4
-DirectBuffer support depends on the -usedb/-nodb options.
+DirectBuffer support depends on the \fB-usedb\fR/\fB-nodb\fR options.
 .IP \(bu 4
 Accelerated in no-DB mode if the underlying target is, otherwise unaccelerated.
-.RE
-display-tile can be used to emulate DirectBuffer for obstinate applications that cannot run without it, by specifying one tile which maps the whole screen.
+\fBdisplay-tile\fR can be used to emulate DirectBuffer for obstinate applications that cannot run without it, by specifying one tile which maps the whole screen.
 

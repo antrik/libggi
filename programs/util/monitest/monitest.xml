@@ -18,7 +18,7 @@
 <refsynopsisdiv>
 <cmdsynopsis>
     <command>monitest</command>
-    <arg choice="opt">modestring</arg>
+    <arg>modestring</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -55,7 +55,7 @@
     <variablelist>
 
     <varlistentry>
-    <term>modestring</term>
+    <term><option>modestring</option></term>
     <listitem><para>Specify the mode to use</para></listitem>
     </varlistentry>
 

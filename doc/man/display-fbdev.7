@@ -2,40 +2,37 @@
 .SH NAME
 display-fbdev \- Display using Linux kernel framebuffer devices
 .SH SYNOPSIS
-\fBdisplay-fbdev\fR : [-noinput] [-nokbd] [-nomouse] [-novt] [-physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR] [\fIframebuffer\fR]
+\fBdisplay-fbdev\fR : [ [-noinput] | [ [-nokbd] [-nomouse] ] ] [-novt] [-physz=\fIsizex\fR,\fIsizey\fR[dpi]] [\fIframebuffer\fR]
 .SH DESCRIPTION
 Uses the Linux \fB/dev/fb*\fR devices to do fullscreen graphics.
 
 When using a regular fbdev driver, \fB/etc/fb.modes\fR is used to determine the available modes for the device. Driver timings and resolutions can be automatically obtained when running under KGIcon.
 .SH OPTIONS
-.RS
 .TP
-\fIframebuffer\fR
+\fBframebuffer\fR
 The filename of the framebuffer target to use. The default is to get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer associated with the current console if that is unset.
 .PP
 .TP
--nokbd
+\fB-nokbd\fR
 Do not open any libraries for keyboard input.
 .PP
 .TP
--nomouse
+\fB-nomouse\fR
 Do not open any libraries for mouse input.
 .PP
 .TP
--noinput
-Same as both -nokbd and -nomouse.
+\fB-noinput\fR
+Same as both \fB-nokbd\fR and \fB-nomouse\fR.
 .PP
 .TP
--novt
+\fB-novt\fR
 Disable virtual console support.
 .PP
 .TP
--physz=\fIsizex\fR,\fIsizey\fR\fIdpi\fR
-This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fIdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
+\fB-physz=sizex,sizey[dpi]\fR
+This option will provide a physical screen size for applications which wish to remain resolution independent. \fIsizex\fR,\fIsizey\fR are the x,y size of the screen in millimeters, unless the optional \fBdpi\fR string is affixed, in which case, they represent resolution in dots-per-inch.
 .PP
-.RE
 .SH FEATURES
-.RS
 .IP \(bu 4
 DirectBuffer always available.
 .IP \(bu 4
@@ -44,10 +41,7 @@ Accelerated when using KGIcon or matroxfb.
 Multiple frames
 .IP \(bu 4
 Panning
-.RE
 .SH SEE ALSO
-.RS
 .IP \(bu 4
 \fBfb.modes\fR (5)
-.RE
 

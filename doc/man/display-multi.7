@@ -2,16 +2,14 @@
 .SH NAME
 display-multi \- Duplicate visual operations onto multiple visuals
 .SH SYNOPSIS
-\fBdisplay-multi\fR : <\fItarget-spec:\fR>
+\fBdisplay-multi\fR : {\fItarget-spec:\fR...}
 .SH DESCRIPTION
 Duplicates all drawing operations onto multiple `child' targets, thus producing identical output on multiple visuals.
 .SH OPTIONS
-The argument to display-multi is a colon- (`:') separated list of target specs to draw on. Because target specs can (and often do) contain colons, they need to be enclosed in parentheses.
+The argument to \fBdisplay-multi\fR is a colon- (`:') separated list of target specs to draw on. Because target specs can (and often do) contain colons, they need to be enclosed in parentheses.
 .SH FEATURES
-.RS
 .IP \(bu 4
 DirectBuffer never supported.
 .IP \(bu 4
 Unaccelerated.
-.RE
 

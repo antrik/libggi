@@ -14,7 +14,7 @@ The following outlines the environment variables, intended for the user, which a
 .RS
 .TP
 \fBDISPLAY\fR
-If set, LibGGI assumes that you want to use the X target. This setting is overriden by the \fBGGI_DISPLAY\fR variable.
+If set, LibGGI assumes that you want to use the \fBX\fR target. This setting is overriden by the \fBGGI_DISPLAY\fR variable.
 .PP
 .TP
 \fBGGI_DISPLAY\fR
@@ -22,7 +22,7 @@ Specifies the default target used when the application calls \fBggiOpen\fR (3) w
 
 The default target is specified using a target-spec: \fBtarget:targetargs\fR where \fItargetname\fR is the name of the target, and \fItargetargs\fR are any target-specific arguments.
 
-If neither this variable nor \fBDISPLAY\fR is set, then the following targets are tried in order until one works: fbdev, svga, aa
+If neither this variable nor \fBDISPLAY\fR is set, then the following targets are tried in order until one works: \fBfbdev\fR, \fBsvga\fR, \fBaa\fR
 .PP
 .TP
 \fBGGI_INPUT_target_n\fR, \fBGGI_INPUT_target\fR, \fBGGI_INPUT\fR
@@ -43,7 +43,6 @@ S \fIx\fR x \fIy\fR x \fIdepth\fR V \fIx\fR x \fIy\fR D \fIx\fR x \fIy\fR F \fIf
 Anything and everything can be omitted, except tokens indicating what the next token is.
 
 Any omitted values default to \fBGGI_AUTO\fR (or \fBGT_AUTO\fR for the graphtype). Whitespace and '.' symbols are ignored. Character tokens are case-insensitive. If certain values are not possible, they are overridden by the target.
-.RS
 .TP
 S
 Denotes the visible size of the visual. Totally optional, as dimensions without a specifier are considered to be the visible dimensions.
@@ -98,7 +97,6 @@ Pixel depth in number of bits.
 \fIsize\fR
 Size of pixel in number of bits, including padding.
 .PP
-.RE
 Instead of \fIscheme\fR, \fIdepth\fR, \fIsize\fR, it is also possible to specify the graphtype by using one of the following: \fBGT_1BIT\fR, \fBGT_2BIT\fR, \fBGT_4BIT\fR, \fBGT_8BIT\fR, \fBGT_15BIT\fR, \fBGT_16BIT\fR, \fBGT_24BIT\fR, \fBGT_32BIT\fR, \fBGT_TEXT16\fR, \fBGT_TEXT32\fR
 .PP
 .TP
@@ -155,7 +153,7 @@ Turn on synchronous debugging output, flushing the output buffers before returni
 .PP
 .TP
 \fBGGI_NEWVT\fR
-If set, causes a new virtual console to be allocated for some Linux-console-based targets (currently fbdev and glide).
+If set, causes a new virtual console to be allocated for some Linux-console-based targets (currently \fBfbdev\fR and \fBglide\fR).
 .PP
 .TP
 \fBGGI_MANSYNC_FPS\fR

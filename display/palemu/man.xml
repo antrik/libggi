@@ -12,7 +12,8 @@
 
 <refnamediv>
     <refname id="display-palemu">display-palemu</refname>
-    <refpurpose>Emulate palettized modes on visuals of other mode schemes</refpurpose>
+    <refpurpose>Emulate palettized modes on visuals of other mode
+    schemes</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -20,7 +21,7 @@
 
     <command>display-palemu</command>
     <arg choice="plain">:</arg>
-    <arg><option>-parent=<replaceable>mode</replaceable></option></arg>
+    <arg>-parent=<replaceable>mode</replaceable></arg>
     <arg choice="req"><replaceable>target-spec</replaceable></arg>
 
 </cmdsynopsis>
@@ -29,9 +30,9 @@
 <refsect1><title>Description</title>
 
 <para>
-    Emulates palettized modes (<symbol>GT_PALETTE</symbol>) on another target which
-    can only do truecolor/greyscale/text modes or palettized modes of higher
-    depth.
+    Emulates palettized modes (<symbol>GT_PALETTE</symbol>) on another
+    target which can only do truecolor/greyscale/text modes or
+    palettized modes of higher depth.
 </para>
 
 </refsect1>
@@ -49,7 +50,7 @@
     </varlistentry>
 
     <varlistentry>
-    <term><replaceable>target-spec</replaceable></term>
+    <term><option><replaceable>target-spec</replaceable></option></term>
     <listitem><para>
     Specifies the target which to draw on (the `parent' target).  This
     defaults to automatic selection (just like using

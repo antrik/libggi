@@ -4,7 +4,7 @@ monitest \- Monitor test program
 .SH SYNOPSIS
 \fBmonitest\fR [modestring]
 .SH DESCRIPTION
-monitest is intended to test ggi drivers (during development) and the optical quality of monitors (later). Don't be too disappointed if you find a weakness in your monitor, mine is probably worse than yours ...
+\fBmonitest\fR is intended to test ggi drivers (during development) and the optical quality of monitors (later). Don't be too disappointed if you find a weakness in your monitor, mine is probably worse than yours ...
 
 The main feature is a test screen like broadcast in former days before 24 hour TV programs. It is used to test geometry and resolution of the monitor.
 
@@ -12,12 +12,10 @@ Also included are several test screens for testing moiree effects, the horizonta
 
 You will be able to switch resolution on the fly, to find out interactively what modes the driver supports and how much of this your card/monitor can do with acceptable quality.
 .SH OPTIONS
-.RS
 .TP
-modestring
+\fBmodestring\fR
 Specify the mode to use
 .PP
-.RE
 .SH PATTERN DESCRIPTIONS
 .SS Testpattern
 The basic grid is white on black and has sixteen times twelve fields. On a tube with 4:3 ratio each one should be square, even if the pixel size of the screen does not have 4:3 ratio. The lines are one pixel wide. They should be straight, even in the corners, and not have coloured borders.
@@ -58,10 +56,8 @@ The color of the rectange can be changed by pressing the primary mouse button (u
 
 Dragging with the second button pressed changes the size of the rectangle. Every other key terminates this test.
 .SH BUGS AND LIMITATIONS
-.RS
 .IP \(bu 4
 If you switch depth, the program might crash badly. This will be solved once I figure out mode checking or using a target that (opposed to the X targets) supports that.
-.RE
 .SH AUTHOR
-monitest was written by Hartmut Niemann.
+\fBmonitest\fR was written by Hartmut Niemann.
 

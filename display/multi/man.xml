@@ -20,7 +20,7 @@
 
     <command>display-multi</command>
     <arg choice="plain">:</arg>
-    <arg choice="req" rep="repeat"><replaceable><link linkend="target-spec">target-spec</link>:</replaceable></arg>
+    <arg choice="req" rep="repeat"><replaceable>target-spec:</replaceable></arg>
 
 </cmdsynopsis>
 </refsynopsisdiv>
@@ -37,9 +37,10 @@
 <refsect1><title>Options</title>
 
 <para>
-    The argument to <systemitem>display-multi</systemitem> is a colon- (`:') separated
-    list of target specs to draw on.  Because target specs can (and often
-    do) contain colons, they need to be enclosed in parentheses.
+    The argument to <systemitem>display-multi</systemitem> is a colon-
+    (`:') separated list of target specs to draw on.  Because target
+    specs can (and often do) contain colons, they need to be enclosed
+    in parentheses.
 </para>
   
 </refsect1>

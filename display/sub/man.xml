@@ -24,8 +24,8 @@
 </para>
 
 <para>
-    No textual arguments. <parameter>argptr</parameter> must contain the parent
-    visual.
+    No textual arguments. <parameter>argptr</parameter> must contain
+    the parent visual.
 </para>
 
 <para>

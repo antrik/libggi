@@ -2,23 +2,19 @@
 .SH NAME
 display-tele \- Forwards the display over a network
 .SH SYNOPSIS
-\fBdisplay-tele\fR : <host> [port]
+\fBdisplay-tele\fR : {host} [port]
 .SH DESCRIPTION
 The tele target forwards the display over a network via TCP to a remote host.
 
 A \fBggiteleserver\fR (1) must be running on the remote host where the final display resides. A normal GGI applications will then use the tele target to forward all graphic operations to the machine running the teleserver.
 .SH OPTIONS
-The first argument to display-tele is the hostname to connect to (the display server). The second optional argument is the port on which the server is listening. The default port is 27780.
+The first argument to \fBdisplay-tele\fR is the hostname to connect to (the display server). The second optional argument is the port on which the server is listening. The default port is 27780.
 .SH FEATURES
-.RS
 .IP \(bu 4
 DirectBuffer never supported.
 .IP \(bu 4
 Accelerated if the remote display is.
-.RE
 .SH SEE ALSO
-.RS
 .IP \(bu 4
 \fBggiteleserver\fR (1)
-.RE
 
