@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.129 2005/01/12 16:36:31) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.137 2005/01/24 07:46:16) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.129 2005/01/12 16:36:31) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.137 2005/01/24 07:46:16) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.129 2005/01/12 16:36:31"
-package_revision=1.1667.2.129
+TIMESTAMP=" 1.1667.2.137 2005/01/24 07:46:16"
+package_revision=1.1667.2.137
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -3084,7 +3084,7 @@ func_mode_link ()
 	;;
 
       -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe)
-	deplibs="$deplibs $arg"
+	compiler_flags="$compiler_flags $arg"
 	continue
 	;;
 
@@ -3568,7 +3568,7 @@ func_mode_link ()
 	    compile_deplibs="$deplib $compile_deplibs"
 	    finalize_deplibs="$deplib $finalize_deplibs"
 	  else
-	    deplibs="$deplib $deplibs"
+	    compiler_flags="$compiler_flags $deplib"
 	    if test "$linkmode" = lib ; then
 		case "$new_inherited_linker_flags " in
 		    *" $deplib "*) ;;

@@ -97,6 +97,11 @@ m4_defun([_LT_SETUP],
 AC_REQUIRE([AC_CANONICAL_BUILD])dnl
 _LT_DECL([], [host_alias], [0], [The host system])dnl
 _LT_DECL([], [host], [0])dnl
+_LT_DECL([], [host_os], [0])dnl
+dnl
+_LT_DECL([], [build_alias], [0], [The build system])dnl
+_LT_DECL([], [build], [0])dnl
+_LT_DECL([], [build_os], [0])dnl
 dnl
 AC_REQUIRE([AC_PROG_CC])dnl
 AC_REQUIRE([LT_PATH_LD])dnl
@@ -1156,7 +1161,20 @@ AC_CACHE_VAL([lt_cv_sys_max_cmd_len], [dnl
     # And add a safety zone
     lt_cv_sys_max_cmd_len=`expr $lt_cv_sys_max_cmd_len \/ 4`
     ;;
- *)
+  osf*)
+    # Dr. Hans Ekkehard Plesser reports seeing a kernel panic running configure
+    # due to this test when exec_disable_arg_limit is 1 on Tru64. It is not
+    # nice to cause kernel panics so lets avoid the loop below.
+    # First set a reasonable default.
+    lt_cv_sys_max_cmd_len=16384
+    # 
+    if test -x /sbin/sysconfig; then
+      case `/sbin/sysconfig -q proc exec_disable_arg_limit` in
+        *1*) lt_cv_sys_max_cmd_len=-1 ;;
+      esac
+    fi
+    ;;
+  *)
     # Make teststring a little bigger before we do anything with it.
     # a 1K string should be a reasonable start.
     for i in 1 2 3 4 5 6 7 8 ; do
@@ -5963,7 +5981,7 @@ lt_ac_count=0
 # Add /usr/xpg4/bin/sed as it is typically found on Solaris
 # along with /bin/sed that truncates output.
 for lt_ac_sed in $lt_ac_sed_list /usr/xpg4/bin/sed; do
-  test ! -f $lt_ac_sed && break
+  test ! -f $lt_ac_sed && continue
   cat /dev/null > conftest.in
   lt_ac_count=0
   $ECHO $ECHO_N "0123456789$ECHO_C" >conftest.in
