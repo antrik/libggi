@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.1 2001/05/12 23:01:32 cegger Exp $
+/* $Id: gamma.c,v 1.2 2002/05/11 01:12:17 skids Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -35,77 +35,88 @@
 
 #include <ggi/internal/ggi-dl.h>
 
-
-#if 0  /* REDUNDANT */
-int GGI_color_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
-{
-	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_TRUECOLOR)
-		return -2;
-
-	return ggiSetPalette(vis, start, len, colormap);
-}
-
-int GGI_color_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
-{
-	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_TRUECOLOR)
-		return -2;
-
-	return ggiGetPalette(vis, start, len, colormap);
-}
-#endif
-
-
 int GGI_color_getgamma(ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
 {
-	*r = vis->gamma_red;
-	*g = vis->gamma_green;
-	*b = vis->gamma_blue;
+	if (!vis->gamma) {
+		*r = *g = *b = 1.0;	/* principal of least surprise */
+		return GGI_ENOFUNC;
+	}
+	*r = vis->gamma->gamma_r;
+	*g = vis->gamma->gamma_g;
+	*b = vis->gamma->gamma_b;
 
-	return 0;
+	return GGI_OK;
 }
 
 int GGI_color_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 {
 	int err, i;
-	
-	ggi_float intensity, delta;
 	ggi_float ir, ig, ib;
+	ggi_float intensity_r, intensity_g, intensity_b;
+	ggi_float delta_r, delta_g, delta_b;
+	ggi_color map[256]; /* This gets most visuals in one function call */
 
-	ggi_color map[256];
-
-
-	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_TRUECOLOR)
-		return -2;
+	if (!vis->gamma) return GGI_ENOFUNC;
 
 	if ((r <= 0.0) || (g <= 0.0) || (b <= 0.0))
-		return -1;
+		return GGI_EARGINVAL;
+
+	if ((vis->gamma->maxwrite_r < 0) ||
+	    (vis->gamma->maxwrite_g < 0) ||
+	    (vis->gamma->maxwrite_b < 0)) {
+		GGIDPRINT("vis %p missing ggiSetGamma implementation.\n");
+		return GGI_ENOFUNC;
+	}
 
 	/* inverse the gamma values */
-
 	ir = 1.0 / r;
 	ig = 1.0 / g;
 	ib = 1.0 / b;
 
-	intensity = 0.0;
-	delta = 1.0 / 256;
+	delta_r = 1.0 / vis->gamma->maxwrite_r;
+	delta_g = 1.0 / vis->gamma->maxwrite_g;
+	delta_b = 1.0 / vis->gamma->maxwrite_b;
+
+	intensity_r = intensity_g = intensity_b = 0.0;
 
 	/* calculate gammamap */
-
-	for (i=0; i < 256; i++, intensity += delta) {
-		map[i].r = (uint16) floor(pow(intensity, ir) * 65536.0);
-		map[i].g = (uint16) floor(pow(intensity, ig) * 65536.0);
-		map[i].b = (uint16) floor(pow(intensity, ib) * 65536.0);
-	}
-	
-	if ((err = ggiSetGammaMap(vis, 0, 256, map)) != 0) {
-		return err;
+	memset(map, 0, 256 * sizeof(ggi_color));
+	i = 0;
+	while (1) { /* Do as many 256-color blocks as needed. */
+		int j, maxj;
+		maxj = 0;
+		for (j=0; 
+		     (j < 256) && ((i + j) < vis->gamma->maxwrite_r);
+		     j++) {
+		  map[j].r = (uint16) floor(pow(intensity_r, ir) * 65536.0);
+		  intensity_r += delta_r;
+		}
+		if (maxj < j) maxj = j;
+		for (j=0; 
+		     (j < 256) && ((i + j) < vis->gamma->maxwrite_g);
+		     j++) {
+		  map[j].g = (uint16) floor(pow(intensity_g, ig) * 65536.0);
+		  intensity_g += delta_g;
+		}
+		if (maxj < j) maxj = j;
+		for (j=0; 
+		     (j < 256) && ((i + j) < vis->gamma->maxwrite_b);
+		     j++) {
+		  map[j].b = (uint16) floor(pow(intensity_b, ib) * 65536.0);
+		  intensity_b += delta_b;
+		}
+		if (maxj < j) maxj = j;
+		if ((err = ggiSetGammaMap(vis, i, maxj, map)) != 0) {
+		  return err;
+		}
+		i += maxj;
+		if (maxj < 256) break;
 	}
 
 	/* SetGammaMap was successful, so update values */
-
-	vis->gamma_red   = r;
-	vis->gamma_green = g;
-	vis->gamma_blue  = b;
+	vis->gamma->gamma_r = r;
+	vis->gamma->gamma_g = g;
+	vis->gamma->gamma_b = b;
 
 	return 0;
 } 
