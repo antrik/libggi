@@ -1,4 +1,4 @@
-dnl $Id: genlibtool.in,v 1.4 2004/10/27 09:25:06 pekberg Exp $
+dnl $Id: genlibtool.in,v 1.5 2004/10/28 07:14:08 pekberg Exp $
 dnl Process this file with autoconf to produce genlibtool script.
 
 dnl Why do we need this?
@@ -46,6 +46,6 @@ AM_INIT_AUTOMAKE(libggi,2.2.0,-)
 
 AM_MAINTAINER_MODE
 
-LT_INIT([disable-static dlopen win32-dll])
+LT_INIT([disable-static win32-dll])
 
 AC_OUTPUT
