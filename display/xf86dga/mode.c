@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2003/12/13 23:52:17 cegger Exp $
+/* $Id: mode.c,v 1.8 2003/12/19 21:36:09 nsouch Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -262,17 +262,21 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 
 	_ggiZapMode(vis, 0);
 
-	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+	/* Palette */
+	if (LIBGGI_PAL(vis)->clut) {
+		free(LIBGGI_PAL(vis)->clut);
+		LIBGGI_PAL(vis)->clut = NULL;
 	}
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
-		priv->x.nocols = 1 << GT_DEPTH(tm->graphtype);
+		LIBGGI_PAL(vis)->size = priv->x.nocols = 1 << GT_DEPTH(tm->graphtype);
 		priv->activecmap = 0;
 
-		vis->palette =
-		    _ggi_malloc(sizeof(ggi_color) * priv->x.nocols);
+		LIBGGI_PAL(vis)->clut = _ggi_malloc(sizeof(ggi_color) *
+						    LIBGGI_PAL(vis)->size);
+
+		/* Set an initial palette. */
+		ggiSetColorfulPalette(vis);
 	}
 
 	priv->pixperframe =
