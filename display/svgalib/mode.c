@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: mode.c,v 1.3 2001/06/24 16:45:12 skids Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -69,21 +69,21 @@ int _ggi_svgalib_setmode(int mode)
 	return ret;
 }
 
-#if 0 /* Doesn't work yet */
 int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
 {
+	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
 	if (x != 0 || y<0 || y> LIBGGI_MODE(vis)->virt.y )
 		return -1;
 	
-	vga_setdisplaystart(y * (LIBGGI_BPP(vis)*LIBGGI_MODE(vis)->virt.x)/8
-			    + (x * LIBGGI_BPP(vis))/8);
+	vga_setdisplaystart(priv->frame_size * vis->d_frame_num +
+			    GT_ByPP(LIBGGI_GT(vis)) * 
+			    (y * LIBGGI_MODE(vis)->virt.x + x));
 	
 	vis->origin_x=x;
 	vis->origin_y=y;
 	
 	return 0;
 }
-#endif
 
 int GGI_svga_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
@@ -124,20 +124,12 @@ int GGI_svga_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return -1;
 }
 
-int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
-{ 
-	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
-	char modestr[64], *colors;
+static int GGI_svga_make_modeline(ggi_mode *tm)
+{
 	int modenum;
-	vga_modeinfo *modeinfo;
-	int err = 0;
-	int id;
-	char sugname[256];
-	char args[256];
+	char modestr[64];
+	char *colors;
 
-	err = GGI_svga_checkmode(vis, tm);
-	if (err) return err;
-	
 	/* See GGI_svga_checkmode() for details... */
 	switch(tm->graphtype) {
 	case GT_1BIT : colors = "2"; break;
@@ -152,12 +144,30 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	/* Form a SVGAlib mode number */
 	sprintf(modestr, "G%dx%dx%s", tm->visible.x, tm->visible.y, colors);
- 	modenum = vga_getmodenumber(modestr);
-	GGIDPRINT("Setting SVGAlib mode %d: %s\n", modenum, modestr);
 
+ 	modenum = vga_getmodenumber(modestr);
+
+	return modenum;
+}
+
+int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
+{ 
+	struct svga_priv *priv = LIBGGI_PRIVATE(vis);
+	int modenum;
+	vga_modeinfo *modeinfo;
+	int err = 0;
+	int id, i;
+	char sugname[256];
+	char args[256];
+
+	err = GGI_svga_checkmode(vis, tm);
+	if (err) return err;
+	
+	modenum = GGI_svga_make_modeline(tm);
 	if (_ggi_svgalib_setmode(modenum) != 0) return GGI_EFATAL;
 
 	modeinfo = vga_getmodeinfo(modenum);
+	GGIDPRINT("Setting SVGAlib mode number %d.\n", modenum);
 
 	/* Palette */
 	if (vis->palette) {
@@ -206,16 +216,37 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 
 	/* DirectBuffers */
 	_GGI_svga_freedbs(vis);
-	if (priv->islinear) {
+	priv->frame_size = tm->virt.x * tm->virt.y * modeinfo->bytesperpixel;
+	for (i=0; priv->islinear && (i < LIBGGI_MODE(vis)->frames); i++) {
+		ggi_directbuffer *buf;
+
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
-		LIBGGI_APPBUFS(vis)[0]->frame = 0;
-		LIBGGI_APPBUFS(vis)[0]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[0]->read = 
-		LIBGGI_APPBUFS(vis)[0]->write = vga_getgraphmem();
-		LIBGGI_APPBUFS(vis)[0]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[0]->buffer.plb.stride = modeinfo->linewidth;
-		LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat
+		if (!i) {
+			LIBGGI_APPBUFS(vis)[0]->read = 
+				LIBGGI_APPBUFS(vis)[0]->write =
+			  vga_getgraphmem();
+		}
+
+		buf = LIBGGI_APPBUFS(vis)[i];
+		LIBGGI_APPBUFS(vis)[i]->frame = i;
+		LIBGGI_APPBUFS(vis)[i]->type = 
+		  	GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
+			LIBGGI_APPBUFS(vis)[0]->read + i * priv->frame_size;
+		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = 
+			modeinfo->linewidth;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
 			= LIBGGI_PIXFMT(vis);
+		err = vga_claimvideomemory(priv->frame_size * tm->frames);
+		if (err)
+		{
+			fprintf(stderr, "display-svga: "
+				"Can't allocate enough display memory:"
+				"%d bytes.\n", modeinfo->bytesperpixel * 
+				tm->virt.x * tm->virt.y * tm->frames);
+			return GGI_EFATAL;
+		}
 	}
 
 /* virt.x != visible.x should be possible with this,
@@ -231,7 +262,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	for(id=1;0==GGI_svga_getapi(vis,id,sugname,args);id++) {
 		err = _ggiOpenDL(vis, sugname, args, NULL);
 		if (err) {
-			fprintf(stderr,"display-svga: Can't open the %s (%s) library.\n",
+			fprintf(stderr,"display-svga: "
+				"Can't open the %s (%s) library.\n",
 				sugname, args);
 			return GGI_EFATAL;
 		} else {
@@ -240,8 +272,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 		}
 	}
 
-	/* Doesn't work correct */
-	/*vis->opdraw->setorigin=GGIsetorigin;*/
+	vis->opdraw->setorigin		= GGI_svga_setorigin;
+	vis->opdraw->setdisplayframe    = GGI_svga_setdisplayframe;
 	
 	if (priv->ismodex) {
 		vis->opdraw->putpixel_nc	= GGI_svga_putpixel_nc;
@@ -256,6 +288,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 		vis->opdraw->drawbox		= GGI_svga_drawbox;
 		vis->opdraw->puthline		= GGI_svga_puthline;
 		vis->opdraw->putbox		= GGI_svga_putbox;
+		vis->opdraw->setreadframe       = GGI_svga_setreadframe;
+		vis->opdraw->setwriteframe      = GGI_svga_setwriteframe;
 	}
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
@@ -276,12 +310,16 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 {
 	svga_priv *priv = LIBGGI_PRIVATE(vis);
+	vga_modeinfo *vmi = NULL;
+	int mode = 0;
+
 
 	int ret, err = 0;
 
 	if (vis==NULL || tm==NULL)
 		return -1;
 	
+
 	if (tm->visible.x == GGI_AUTO)
 		tm->visible.x = tm->virt.x;
 	if (tm->visible.y == GGI_AUTO)
@@ -300,6 +338,9 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 	if(tm->virt.x==GGI_AUTO) tm->virt.x = tm->visible.x;
 	if(tm->virt.y==GGI_AUTO) tm->virt.y = tm->visible.y;
 
+	mode = GGI_svga_make_modeline(tm);
+	vmi = vga_getmodeinfo(mode);
+
 	/* SVGAlib doesn't seem to support virtual dimensions
 	   Force them to be the same as visible size */
 	if(tm->virt.x != tm->visible.x) {
@@ -311,11 +352,14 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 		err = -1;
 	}
  
-	/* Multiple frames are not implemented yet... */
-	if (tm->frames != 1 && tm->frames != GGI_AUTO) {
-		err = -1;
+	/* Only support frames when we can support linear access 
+	 * and we have enough video memory */
+	if (!(vmi->flags & CAPABLE_LINEAR)
+			&& (vmi->memory < (vmi->bytesperpixel * tm->virt.x * 
+					   tm->virt.y * tm->frames)))
+	{
+		tm->frames = 1;
 	}
-	tm->frames = 1;
 
 	if ((tm->dpp.x != 1 && tm->dpp.x != GGI_AUTO) ||
 	    (tm->dpp.y != 1 && tm->dpp.y != GGI_AUTO)) {

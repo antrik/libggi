@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2001/05/12 23:02:24 cegger Exp $
+/* $Id: vline.c,v 1.2 2001/06/24 16:45:12 skids Exp $
 ******************************************************************************
 
    SVGAlib target: vertical lines
@@ -36,6 +36,7 @@
 
 int GGI_svga_drawvline(ggi_visual *vis,int x,int y,int height)
 {
+
 	/* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
 	    x>=(LIBGGI_GC(vis)->clipbr.x)) return 0;
@@ -51,6 +52,7 @@ int GGI_svga_drawvline(ggi_visual *vis,int x,int y,int height)
 		return 0;
 	
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
+	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
 	vga_drawline(x,y,x,y+height-1);
 	
 	return 0;
@@ -59,6 +61,7 @@ int GGI_svga_drawvline(ggi_visual *vis,int x,int y,int height)
 int GGI_svga_drawvline_nc(ggi_visual *vis,int x,int y,int height)
 {
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
+	y += vis->r_frame_num * LIBGGI_MODE(vis)->virt.y;
 	vga_drawline(x,y,x,y+height-1);
 	
 	return 0;

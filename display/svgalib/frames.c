@@ -1,9 +1,9 @@
-/* $Id: pixel.c,v 1.2 2001/06/24 16:45:12 skids Exp $
+/* $Id: frames.c,v 1.1 2001/06/24 16:45:12 skids Exp $
 ******************************************************************************
 
-   SVGAlib target: pixels
+   SVGA target: frame handling functions
 
-   Copyright (C) 1998-1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2001 Brian S. Julin   [skids@ggi-project.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -25,50 +25,37 @@
 ******************************************************************************
 */
 
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/svgalib.h>
 
-
-int GGI_svga_drawpixel(ggi_visual *vis, int x, int y)
+int
+GGI_svga_setreadframe(ggi_visual *vis, int num)
 {
-	CHECKXY(vis, x, y);
+	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
+		return -1;
+	}
+	vis->r_frame_num = num;
 	
-	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
-	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_MODE(vis)->virt.y);
-
 	return 0;
 }
 
-int GGI_svga_drawpixel_nc(ggi_visual *vis, int x, int y)
+int
+GGI_svga_setwriteframe(ggi_visual *vis, int num)
 {
-	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
-	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_MODE(vis)->virt.y);
-
+	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
+		return -1;
+	}
+	vis->w_frame_num = num;
+	
 	return 0;
 }
 
-int GGI_svga_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
-{ 
-	vga_setcolor(col);
-	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_MODE(vis)->virt.y);
-
-	return 0;
-}
-
-int GGI_svga_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
-{ 
-	CHECKXY(vis, x, y);
-
-	vga_setcolor(col);
-	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_MODE(vis)->virt.y);
-
-	return 0;
-}
-
-int GGI_svga_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
-{ 
-	*pixel = 
-		vga_getpixel(x, y+vis->r_frame_num * LIBGGI_MODE(vis)->virt.y);
-
-	return 0;
+int
+GGI_svga_setdisplayframe(ggi_visual *vis, int num)
+{
+	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
+		return -1;
+	}
+	vis->d_frame_num = num;
+	
+	return(ggiSetOrigin(vis, vis->origin_x, vis->origin_y));
 }

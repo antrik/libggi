@@ -5,7 +5,8 @@ svgalib_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
 
 sublib_LTLIBRARIES = svgalib.la
 
-svgalib_la_SOURCES = box.c color.c hline.c mode.c pixel.c visual.c vline.c
+svgalib_la_SOURCES = box.c color.c frames.c hline.c mode.c pixel.c visual.c \
+	vline.c
 
 sublibdir = $(libdir)/ggi/display
 

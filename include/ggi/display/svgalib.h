@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: svgalib.h,v 1.3 2001/06/24 16:45:12 skids Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -63,6 +63,10 @@ ggifunc_drawbox		GGI_svga_drawbox;
 ggifunc_puthline	GGI_svga_puthline;
 ggifunc_putbox		GGI_svga_putbox;
 
+ggifunc_setreadframe	GGI_svga_setreadframe;
+ggifunc_setwriteframe	GGI_svga_setwriteframe;
+ggifunc_setdisplayframe	GGI_svga_setdisplayframe;
+
 ggifunc_setpalvec	GGI_svga_setpalvec;
 
 
@@ -87,6 +91,7 @@ typedef struct svga_priv {
 	ggi_linvtsw_func *doswitch;
 	int	gfxmode;
 	int	physzflags;
+	int	frame_size;
 	ggi_coord	physz;
 } svga_priv;
 

@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2001/05/12 23:02:26 cegger Exp $
+/* $Id: hline.c,v 1.2 2001/06/24 16:45:12 skids Exp $
 ******************************************************************************
 
    SVGAlib target: horizontal lines
@@ -34,6 +34,7 @@ int GGI_svga_drawhline(ggi_visual *vis, int x, int y, int w)
 	LIBGGICLIP_XYW(vis, x, y, w);
 
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
+	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
 	vga_drawline(x,y,x+w-1,y);
 
 	return 0;
@@ -42,6 +43,7 @@ int GGI_svga_drawhline(ggi_visual *vis, int x, int y, int w)
 int GGI_svga_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 {
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
+	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
 	vga_drawline(x,y,x+w-1,y);
 
 	return 0;
@@ -54,6 +56,7 @@ int GGI_svga_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf, *pixelsize);
 
+	y += vis->w_frame_num * LIBGGI_MODE(vis)->virt.y;
 	if (SVGA_PRIV(vis)->ismodex && x%4 != 0) {
 		/* ModeX is always 8bpp */
 		for (;x%4 != 0; x++,w--) {
