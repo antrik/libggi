@@ -1,4 +1,4 @@
-/* $Id: accel.c,v 1.4 2003/12/20 11:09:24 cegger Exp $
+/* $Id: accel.c,v 1.5 2004/09/12 21:01:40 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target - acceleration
@@ -32,7 +32,7 @@
 
 int GGI_xf86dga_drawbox(ggi_visual * vis, int x, int y, int w, int h)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	int add = vis->w_frame_num * LIBGGI_VIRTY(vis);
 
 	/* We can't draw outside the root window :-( */
@@ -56,7 +56,7 @@ int GGI_xf86dga_drawbox(ggi_visual * vis, int x, int y, int w, int h)
 int GGI_xf86dga_copybox(ggi_visual * vis, int x, int y, int w, int h,
 			int nx, int ny)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	int add = vis->w_frame_num * LIBGGI_VIRTY(vis);
 
 	y += vis->r_frame_num * LIBGGI_VIRTY(vis);

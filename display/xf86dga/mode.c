@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/09/12 19:49:43 cegger Exp $
+/* $Id: mode.c,v 1.17 2004/09/12 21:01:40 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -38,7 +38,7 @@
 
 static void GGI_xf86dga_gcchanged(ggi_visual * vis, int mask)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 
 	if ((mask & GGI_GCCHANGED_CLIP)) {
 		XRectangle xrect;
@@ -66,7 +66,7 @@ static void GGI_xf86dga_gcchanged(ggi_visual * vis, int mask)
 
 static int GGI_xf86dga_setdisplayframe(ggi_visual * vis, int num)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
 	if (db == NULL) {
@@ -102,7 +102,7 @@ static int GGI_xf86dga_setwriteframe(ggi_visual * vis, int num)
 
 static int GGI_xf86dga_setorigin(ggi_visual * vis, int x, int y)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
 	if (x < 0 || x > mode->virt.x - mode->visible.x ||
@@ -159,7 +159,7 @@ static int xf86dga_release(ggi_resource * res)
 static int _GGI_xf86dga_findmode(ggi_visual * vis, int visible_x,
 				 int visible_y)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	int i;
 
 	/* Find a suitable XF86VidMode and return it */
@@ -208,7 +208,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	if (GGI_xf86dga_checkmode(vis, tm))
 		return -1;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = DGA_PRIV(vis);
 
 	/* Set XF86VidMode */
 	_ggi_XF86VidModeSwitchToMode(priv->x.display, priv->x.screen,
@@ -401,7 +401,7 @@ int GGI_xf86dga_checkmode(ggi_visual * vis, ggi_mode * tm)
 		return -1;
 	}
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = DGA_PRIV(vis);
 
 	if (tm->visible.x == GGI_AUTO)
 		tm->visible.x = priv->width;

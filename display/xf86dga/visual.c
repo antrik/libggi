@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/02/23 14:25:28 pekberg Exp $
+/* $Id: visual.c,v 1.9 2004/09/12 21:01:40 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -117,7 +117,7 @@ static int _GGI_xf86dga_getbpp(ggidga_priv * priv)
 
 static int do_cleanup(ggi_visual * vis)
 {
-	ggidga_priv *priv = LIBGGI_PRIVATE(vis);
+	ggidga_priv *priv = DGA_PRIV(vis);
 	int i;
 
 	/* We may be called more than once due to the LibGG cleanup stuff */
@@ -160,11 +160,10 @@ static int do_cleanup(ggi_visual * vis)
 
 	ggLockDestroy(priv->x.xliblock);
 
-	free(LIBGGI_PRIVATE(vis));
-
+	free(DGA_PRIV(vis));
 	free(LIBGGI_GC(vis));
 
-	LIBGGI_PRIVATE(vis) = NULL;
+	DGA_PRIV(vis) = NULL;
 
 	ggUnregisterCleanup((ggcleanup_func *) do_cleanup, vis);
 
@@ -277,7 +276,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	GGIDPRINT_MISC("Virtwidth: %d, depth: %d, size: %d\n",
 		       priv->width, priv->depth, priv->size);
 
-	LIBGGI_PRIVATE(vis) = priv;
+	DGA_PRIV(vis) = priv;
 
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *) do_cleanup, vis);
