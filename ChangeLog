@@ -1135,3 +1135,7 @@
 	programs/demos/cube3d.6, programs/demos/demo.c,
 	programs/demos/flying_ggis.c: initial import
 
+2001-08-08	15:25:00	jtaylor
+
+	display/tele/color.c: Added missing #include <string.h>
+	
