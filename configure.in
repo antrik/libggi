@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.90 2003/09/16 21:18:23 cegger Exp $
+dnl $Id: configure.in,v 1.91 2003/10/07 21:21:46 nsouch Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -36,6 +36,7 @@ build_x_xf86dga_target="auto"
 build_x_xf86vmode_target="auto"
 build_file_target="auto"
 build_kgi_target="no"
+build_accel="yes"
 build_libkgi_target="no"
 build_suidkgi_target="no"
 build_memory_target="yes"
@@ -142,6 +143,9 @@ build_file_target=$enableval)
 AC_ARG_ENABLE(kgi,
 [  --disable-kgi           don't build the kgi target],
 build_kgi_target=$enableval)
+AC_ARG_ENABLE(accel,
+[  --disable-accel         don't build the accel],
+build_accel=$enableval)
 AC_ARG_ENABLE(libkgi,
 [  --disable-libkgi        don't build the libkgi target],
 build_libkgi_target=$enableval)
@@ -947,12 +951,16 @@ if test "x$build_libkgi_target" = "xno"; then
    AC_MSG_RESULT(yes)
 fi
 
-AC_MSG_CHECKING(if we should build kgi      target)
+AC_MSG_CHECKING(if we should build kgi/accel      target)
 if test "x$build_kgi_target" = "xno"; then
+  build_accel="no"
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
-  DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
+  if test "x$build_accel" != "xno"; then
+    DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
+    build_accel="yes"
+  fi
   build_kgi_target="yes"
   AC_MSG_RESULT(yes)
 fi

@@ -18,12 +18,12 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	} cb;
 #ifdef __FreeBSD__
 	union {
-		kgic_mapper_attach_request_t    request;
-		kgic_mapper_attach_result_t     result;
+		kgic_mapper_attach_request_t	request;
+		kgic_mapper_attach_result_t	result;
 	} at;
 	union {
-		kgic_mapper_get_unit_request_t  request;
-		kgic_mapper_get_unit_result_t   result;
+		kgic_mapper_get_unit_request_t	request;
+		kgic_mapper_get_unit_result_t	result;
 	} get_unit;
 #endif
 
@@ -54,19 +54,22 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		fprintf(stderr, "failed to open device %s\n", fname);
 		fname += strlen(fname) + 1;
 	}
-
-	ctx->mapper.fd = open(fname, O_RDWR);
-	if (ctx->mapper.fd >= 0) goto found;
-	fprintf(stderr, "failed to open device %s.\n", fname);
-	return -KGI_INVAL;
-
- found:
-
 #ifdef __FreeBSD__
+
 	memset(&get_unit, 0, sizeof(get_unit));
 
-	/* Pass an invalid device id to force auto attachement */
-	get_unit.request.unit = -1;
+	/* If the device id is specified, take it */
+	if (sscanf(fname, "/dev/graphic%d", &get_unit.request.unit) != 1) {
+		/* Pass an invalid device id to force auto attachement */
+		get_unit.request.unit = -1;
+	}
+		
+	ctx->mapper.fd = open("/dev/graphic", O_RDWR);
+	if (ctx->mapper.fd <0) {
+		fprintf(stderr, "failed to open device %s.\n", fname);
+		return -KGI_INVAL;
+	}
+
 	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_GET_UNIT, &get_unit)) {
 		perror("failed to get free unit");
 		return errno;
@@ -87,10 +90,17 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	/* Pass an invalid device id to force auto attachement */
 	at.request.device_id = -1;
 	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_ATTACH, &at)) {
+
 		perror("failed to attach to device");
 		return errno;
 	}
+#else
+	ctx->mapper.fd = open(fname, O_RDWR);
+	if (ctx->mapper.fd >= 0) goto found;
+	fprintf(stderr, "failed to open device %s.\n", fname);
+	return -KGI_INVAL;
 #endif
+ found:
 
 	memset(&cb, 0, sizeof(cb));
 	strncpy(cb.request.client, client, sizeof(cb.request.client));

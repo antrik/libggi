@@ -51,6 +51,9 @@ static ggi_graphtype image_mode_to_graphtype(kgi_image_mode_t *mode)
 	bits = 0;
 	for (i = 0; mode->bpfa[i] && (i < __KGI_MAX_NR_ATTRIBUTES); i++)
 		bits += mode->bpfa[i];
+
+	if (mode->fam & KGI_AM_APPLICATION)
+		bits -= mode->bpfa[3];
 		
 	switch (bits) {
 

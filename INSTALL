@@ -96,6 +96,7 @@ experimental or wrongly undetected targets to be build, you can use:
   --disable-vcsa             don't build the vcsa target
   --disable-vgagl            don't build the vgagl target, needed by svga
   --disable-dga              don't build the dga target
+  --disable-accel            don't build the accel for the kgi target
 
 Options specific to specific targets:
 
