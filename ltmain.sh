@@ -1,6 +1,6 @@
 # Generated from ltmain.in; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.34 2004/10/21 16:51:07) 1.9e
+# ltmain.sh (GNU libtool 1.1667.2.42 2004/10/22 18:03:48) 1.9e
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.34 2004/10/21 16:51:07) 1.9e
+#       $progname:		(GNU libtool 1.1667.2.42 2004/10/22 18:03:48) 1.9e
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9e
-TIMESTAMP=" 1.1667.2.34 2004/10/21 16:51:07"
-package_revision=1.1667.2.34
+TIMESTAMP=" 1.1667.2.42 2004/10/22 18:03:48"
+package_revision=1.1667.2.42
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -223,8 +223,8 @@ double_quote_subst='s/\(["`\\]\)/\\\1/g'
 # Since each input `\' is now two `\'s, look for any number of runs of
 # four `\'s followed by two `\'s and then a '$'.  `\' that '$'.  Note
 # that the embedded single quotes serve only to enhance readability.
-sed_double_backslash='s/^\(\(''\\\\''\\\\''\)*''\\\\''\$\)/\\\1/;
-                s/\([^\\]\(''\\\\''\\\\''\)*''\\\\''\$\)/\\\1/g'
+sed_double_backslash='s/^\(\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/;
+                s/\([^\\]\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/g'
 
 # test EBCDIC or ASCII
 case `$ECHO A|tr A '\301'` in
