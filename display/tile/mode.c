@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/27 16:42:27 soyt Exp $
+/* $Id: mode.c,v 1.16 2005/01/25 11:47:18 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -33,7 +33,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "../common/gt-auto.inc"
 

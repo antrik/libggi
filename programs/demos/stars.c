@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.5 2004/09/08 19:06:58 cegger Exp $
+/* $Id: stars.c,v 1.6 2005/01/25 11:47:19 pekberg Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -40,7 +40,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <time.h>
 #include <math.h>
 

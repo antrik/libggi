@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.8 2004/02/02 19:21:59 cegger Exp $
+/* $Id: text.c,v 1.9 2005/01/25 11:47:18 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -35,7 +35,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 
 int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)

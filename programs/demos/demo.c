@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.19 2004/09/16 00:47:19 pekberg Exp $
+/* $Id: demo.c,v 1.20 2005/01/25 11:47:19 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -41,7 +41,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 /* A couple of routines that tries to put random bits in
  * every position of 16 and 32 bit numbers.

@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.6 2004/11/27 16:42:26 soyt Exp $
+/* $Id: events.c,v 1.7 2005/01/25 11:47:18 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -32,7 +32,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 
 #define MINSLEEPTIME  (20*1000)  /* microseconds */

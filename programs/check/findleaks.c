@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.9 2004/09/13 12:13:10 cegger Exp $
+/* $Id: findleaks.c,v 1.10 2005/01/25 11:47:19 pekberg Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -18,7 +18,9 @@
 #include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 
 #define _get_ggi_alloced() 0
