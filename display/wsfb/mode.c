@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/02/15 21:21:59 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/09/08 11:25:02 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -47,25 +47,22 @@ int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	//struct wsfb_priv *priv = WSFB_PRIV(vis);
 	GGIDPRINT("GGI_wsfb_getapi called\n");
 
+	*arguments = '\0';
 	switch(num) {
 	case 0:
 		strcpy(apiname, "display-wsfb");
-		strcpy(arguments, "");
 		return 0;
 	case 1:
 		strcpy(apiname, "generic-stubs");
-		strcpy(arguments, "");
 		return 0;
 	case 2:
 		strcpy(apiname, "generic-color");
-		strcpy(arguments, "");
 		return 0;
 	case 3:
 		sprintf(apiname, "generic-linear-%d%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 				? "-r" : "");
-		strcpy(arguments, "");
 		return 0;
 	default:
 		break;

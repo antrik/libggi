@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/09/29 19:27:42 skids Exp $
+/* $Id: mode.c,v 1.4 2004/09/08 11:13:51 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -219,19 +219,17 @@ int GGI_glide_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 
 int GGI_glide_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	switch(num)
 	{
 	case 0:
 		strcpy(apiname, "display-glide");
-		strcpy(arguments, "");
 		return 0;
 	case 1:
 		strcpy(apiname, "generic-stubs");
-		strcpy(arguments, "");
 		return 0;
 	case 2:
 		strcpy(apiname, "generic-color");
-		strcpy(arguments, "");
 		return 0;
 	}
 	

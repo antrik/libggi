@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/02/14 13:45:39 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/08 11:21:30 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -99,14 +99,13 @@ int GGI_terminfo_flush(ggi_visual *vis, int x, int y, int w, int h,
 
 int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	switch(num) {
 		case 0:
 			strcpy(apiname, "display-terminfo");
-			strcpy(arguments, "");
 			return 0;
 		case 1:
 			strcpy(apiname, "generic-stubs");
-			strcpy(arguments, "");
 			return 0;
 		case 2:
 			switch (LIBGGI_MODE(vis)->graphtype) {
@@ -115,7 +114,6 @@ int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 				default: return -1;
 			}
 
-			strcpy(arguments, "");
 			return 0;
 	}
 

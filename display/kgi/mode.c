@@ -182,18 +182,16 @@ int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 
 int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	switch(num){
 	case 0:
 		strcpy(apiname, "display-kgi");
-		strcpy(arguments, "");
 		return 0;
 	case 1:
 		strcpy(apiname, "generic-stubs");
-		strcpy(arguments, "");
 		return 0;
 	case 2:
 		strcpy(apiname, "generic-color");
-		strcpy(arguments, "");
 		return 0;
 	case 3:
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
@@ -206,7 +204,6 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT)
 				? "-r" : "");
 		}
-		strcpy(arguments, "");
 		return 0;
 	case 4:
 	{
@@ -222,27 +219,26 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
 		if (! accel) {
-		
+
 			GGIDPRINT("Didn't find an accelerator\n");
 			return -1;
 		}
-		
+
 		space = strchr(accel->name, ' ');
 		if (space)
 			name_size = space - accel->name;
 		else
 			name_size = strlen(accel->name);
-		
+
 		strcpy(apiname, "kgi-");
 		strncat(apiname, accel->name, name_size);
-		strcpy(arguments, "");
-		
+
 		return 0;
 	}
 	default:
 		break;
 	}
-	
+
 	return -1;
 }
 

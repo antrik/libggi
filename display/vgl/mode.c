@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/08/10 16:39:31 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/08 11:24:40 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -46,18 +46,16 @@ int GGI_vgl_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	struct vgl_priv *priv = VGL_PRIV(vis);
 
+	*arguments = '\0';
 	switch(num) {
 		case 0:
 			strcpy(apiname, "display-vgl");
-			strcpy(arguments, "");
 			return 0;
 		case 1:
 			strcpy(apiname, "generic-stubs");
-			strcpy(arguments, "");
 			return 0;
 		case 2:
 			strcpy(apiname, "generic-color");
-			strcpy(arguments, "");
 			return 0;
 		case 3:
 			if (!priv->vgl_use_db)
@@ -72,7 +70,6 @@ int GGI_vgl_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 					(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 					? "-r" : "");
 			}
-			strcpy(arguments, "");
 			return 0;
 		default:
 			break;

@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.3 2004/02/14 13:45:39 cegger Exp $
+/* $Id: mode.m,v 1.4 2004/09/08 11:18:37 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -38,7 +38,7 @@
 
 int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
-	strcpy(arguments,"");
+	*arguments = '\0';
 
 	switch(num) {
 	case 0: strcpy(apiname, "display-quartz");
@@ -57,7 +57,6 @@ int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT)
 				? "-r" : "");
 		}	/* if */
-		strcpy(arguments, "");
 		return 0;
 	}	/* switch */
 
