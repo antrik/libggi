@@ -1,4 +1,4 @@
-/* $Id: mode.inc,v 1.3 2001/07/31 08:15:25 cegger Exp $
+/* $Id: mode.inc,v 1.4 2002/01/14 15:03:49 ggibecka Exp $
 ******************************************************************************
 
    Mode management for display-X and display-Xlib.
@@ -572,6 +572,8 @@ int GGI_X_setmode(ggi_visual *vis, ggi_mode *tm)
 				priv->shminfo[i].shmid = -1;
 				priv->have_shm = 0;
 				GGIDPRINT_MODE("X: XShmAttach failed - trying without shm\n");
+				ggUnlock(_ggi_global_lock); /* Exiting protected
+							       section */
 				break;
 			} else {
 				shmctl(priv->shminfo[i].shmid, IPC_RMID, 0);
