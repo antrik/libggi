@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.130 2004/08/17 06:51:52 pekberg Exp $
+dnl $Id: configure.in,v 1.131 2004/09/29 13:50:16 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1440,6 +1440,7 @@ display/svgalib/Makefile
 display/vgl/Makefile
 display/wsfb/Makefile
 display/tele/Makefile
+display/tele/server/Makefile
 display/terminfo/Makefile
 display/tile/Makefile
 display/trueemu/Makefile

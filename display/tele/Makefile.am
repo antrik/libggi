@@ -3,10 +3,6 @@ tele_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg $(bsdsock_libs)
 tele_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
 	-export-symbols $(srcdir)/EXPSYMS
 
-bin_PROGRAMS = ggiteleserver
-ggiteleserver_SOURCES = teleserver.c libtele.c
-ggiteleserver_LDADD = $(top_builddir)/ggi/libggi.la $(bsdsock_libs)
-
 sublib_LTLIBRARIES = tele.la
 
 tele_la_SOURCES = box.c color.c draw.c events.c mode.c text.c visual.c \
@@ -14,4 +10,6 @@ tele_la_SOURCES = box.c color.c draw.c events.c mode.c text.c visual.c \
 
 sublibdir = $(libdir)/$(ggi_subdir)/display
 
-EXTRA_DIST = EXPSYMS libtele.h teleserver.c Makefile.server
+EXTRA_DIST = EXPSYMS libtele.h Makefile.server
+
+SUBDIRS = server
