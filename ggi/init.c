@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.29 2005/01/13 19:05:25 cegger Exp $
+/* $Id: init.c,v 1.30 2005/01/13 19:14:20 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -503,11 +503,7 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 	ext->initcount = 1;
 	ggstrlcpy(ext->name, name, sizeof(ext->name));
 
-	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
-		GG_TAILQ_INSERT_TAIL(&_ggiExtension, ext, extlist);
-	} else {
-		GG_TAILQ_INSERT_HEAD(&_ggiExtension, ext, extlist);
-	}
+	GG_TAILQ_INSERT_TAIL(&_ggiExtension, ext, extlist);
 
 	DPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
 
