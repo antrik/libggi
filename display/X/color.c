@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.12 2004/09/12 20:58:46 cegger Exp $
+/* $Id: color.c,v 1.13 2004/10/05 09:47:43 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -240,8 +240,10 @@ void _ggi_x_free_colormaps(ggi_visual *vis)
 
 	if (priv->cmap != None)   XFreeColormap(priv->disp,priv->cmap);
 	if (priv->cmap2 != None)  XFreeColormap(priv->disp,priv->cmap2);
-	if (LIBGGI_PAL(vis)->clut.data) free(LIBGGI_PAL(vis)->clut.data);
-  LIBGGI_PAL(vis)->clut.data = NULL;
+	if (LIBGGI_PAL(vis)->clut.data != NULL) {
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.data = NULL;
+	}
 	if (priv->gammamap != NULL) free(priv->gammamap);
 	priv->gammamap = NULL;
 }
