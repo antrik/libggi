@@ -8,6 +8,7 @@ LibGGI mode description
 .. manpage:: 3 ggi_mode ggi_coord ggi_graphtype
 
 
+
 Synopsis
 --------
 
@@ -122,14 +123,15 @@ isn't required.
 See Also
 --------
 
-
 :man:`ggiCheckMode(3)`, :man:`ggiSetMode(3)`
+
 
 
 LibGGI color description
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 ggi_color ggi_pixel
+
 
 Synopsis
 --------
@@ -207,6 +209,7 @@ LibGGI pixel format description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 ggi_pixelformat
+
 
 Synopsis
 --------
@@ -303,12 +306,11 @@ See Also
 
 
 
-
-
 LibGGI direct buffer structure description
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 ggi_directbuffer ggi_pixellinearbuffer ggi_pixelplanarbuffer ggi_samplelinearbuffer ggi_sampleplanarbuffer
+
 
 Synopsis
 --------
@@ -528,10 +530,12 @@ See Also
 :man:`ggi_pixelformat(3)`, :man:`ggiDBGetBuffer(3)`, :man:`ggiResourceAcquire(3)`
 
 
+
 LIBGGI colormap 
 ~~~~~~~~~~~~~~~
 
 .. manpage:: 3 ggi_colormap ggi_colormap_region
+
 
 Synopsis
 --------
