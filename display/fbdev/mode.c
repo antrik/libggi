@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2001/08/14 03:29:48 skids Exp $
+/* $Id: mode.c,v 1.6 2001/08/22 03:41:08 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -557,11 +557,6 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	}
 
 	if (priv->accel &&
-	    !strncmp(priv->accel, "tgt-fbdev-directfb", 19) &&
-	    _ggiAddDL(vis, priv->accel, NULL, NULL, GGI_DLTYPE_GLOBAL) == 0) {
-		priv->have_accel = 1;
-	}
-	else if (priv->accel &&
 	    _ggiOpenDL(vis, priv->accel, NULL, NULL) == 0) {
 		priv->have_accel = 1;
 	} else {

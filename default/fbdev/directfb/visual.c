@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/08/21 23:12:22 skids Exp $
+/* $Id: visual.c,v 1.3 2001/08/22 03:41:08 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -25,7 +25,7 @@
 ******************************************************************************
 */
 
-#define _COMPILING_DIRECTFB_VISUAL_C
+#define _FBDEV_DIRECTFB_BOGUS_GLOBALS
 #include "ggidirectfb.h"
 #include <sys/types.h>
 #include <stdio.h>
@@ -125,6 +125,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   int pixbytes;
   int fd = LIBGGI_FD(vis);
   int i;
+  GfxCard *dfb_card;
+  DFBConfig *dfb_config;
   GfxDriver *driver;
   DIR *dir;
   struct dirent *entry;
@@ -146,22 +148,36 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
     return GGI_ENOMEM;
   }
 
-  card = &(priv->gfxcard);
+  if(_ggiAddDL(vis, "helper-fbdev-directfb-global", NULL, &(priv->globals),
+	    GGI_DLTYPE_GLOBAL)) {
+    free(priv);
+    return GGI_ENOFUNC;
+  }
+  fprintf(stderr,"Opened the helper\n");
+  fprintf(stderr,"globals %p %p %p %p %p %p %p\n",
+	  priv->globals.dfb_card_ptr, priv->globals.dfb_config_ptr,
+	  priv->globals.dfb_major_version, priv->globals.dfb_minor_version,
+	  priv->globals.dfb_micro_version, priv->globals.dfb_interface_age,
+	  priv->globals.dfb_binary_age);
+  dfb_card = &(priv->gfxcard);
+  *(priv->globals.dfb_card_ptr) = &(priv->gfxcard);
   driver = &(priv->gfxdriver);
   dfb_config = &(priv->dfbconfig);
+  *(priv->globals.dfb_config_ptr) = &(priv->dfbconfig);
   dfb_config->layer_bg_mode = DLBM_COLOR;
   if (!_ggiDebugState) {
     dfb_config->quiet = 1;
     dfb_config->no_debug = 1;
   }
+  fprintf(stderr,"card = %p, config = %p\n", dfb_card, dfb_config);
 
-  sprintf(card->info.driver_vendor, "convergence integrated media GmbH" );
-  card->info.driver_version.major = 0;
-  card->info.driver_version.major = 3;
+  sprintf(dfb_card->info.driver_vendor, "convergence integrated media GmbH" );
+  dfb_card->info.driver_version.major = 0;
+  dfb_card->info.driver_version.major = 3;
   
-  memcpy(&card->fix, &(fbdevpriv->orig_fix), sizeof(card->fix));
-  card->framebuffer.length = card->fix.smem_len;
-  card->framebuffer.base = fbdevpriv->fb_ptr;
+  memcpy(&dfb_card->fix, &(fbdevpriv->orig_fix), sizeof(dfb_card->fix));
+  dfb_card->framebuffer.length = dfb_card->fix.smem_len;
+  dfb_card->framebuffer.base = fbdevpriv->fb_ptr;
 
   /* Load the DirectFB driver module.  Code as per DirectFB core/gfxcard.c */
   dir = opendir( driver_dir );
@@ -188,7 +204,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
       driver->Probe  = dlsym( handle, "driver_probe"  );
       GGIDPRINT("Probing driver at %p...\n", driver->Probe);
       if (driver->Probe) {
-	if ( driver->Probe( fd, card )) {
+	if ( driver->Probe( fd, dfb_card )) {
 	  driver->Init       = dlsym( handle, "driver_init"   );
 	  driver->InitLayers = dlsym( handle, "driver_init_layers" );
 	  driver->DeInit     = dlsym( handle, "driver_deinit" );
@@ -220,16 +236,17 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   }
 
   closedir( dir );
-  card->info.driver = driver;
+  dfb_card->info.driver = driver;
 
-  if (priv->gfxdriver.Init(fd, card)) {
+  if (priv->gfxdriver.Init(fd, dfb_card)) {
     GGIDPRINT("DirectFB driver init function failed\n");
     goto abort;
   }
 
-  GGIDPRINT("DirectFB/GfxCard: %s %d.%d (%s)\n", card->info.driver_name,
-	    card->info.driver_version.major, card->info.driver_version.minor,
-	    card->info.driver_vendor);
+  GGIDPRINT("DirectFB/GfxCard: %s %d.%d (%s)\n", dfb_card->info.driver_name,
+	    dfb_card->info.driver_version.major, 
+	    dfb_card->info.driver_version.minor,
+	    dfb_card->info.driver_vendor);
 
   priv->corebuffer.policy = CSP_VIDEOONLY;
   priv->corebuffer.video.health = CSH_STORED;
@@ -265,7 +282,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   priv->coresurface.back_buffer = priv->coresurface.front_buffer = 
     &(priv->corebuffer);
   priv->coresurface.caps &= ~DSCAPS_FLIPPING;
-  if (card->AfterSetVar) card->AfterSetVar();
+  if (dfb_card->AfterSetVar) dfb_card->AfterSetVar();
 
   /* Set up DirectBuffers */
   for (i=0; i < LIBGGI_MODE(vis)->frames; i++) {

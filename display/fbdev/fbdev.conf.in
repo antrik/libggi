@@ -11,3 +11,4 @@ tgt-fbdev-kgicon-generic	default/fbdev/kgi/genkgi.@DLLEXT@
 
 #DirectFB Driver
 tgt-fbdev-directfb		default/fbdev/directfb/directfb.@DLLEXT@
+helper-fbdev-directfb-global	default/fbdev/directfb/directfbglobal.@DLLEXT@

@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.2 2001/08/21 23:12:22 skids Exp $
+/* $Id: ggidirectfb.h,v 1.3 2001/08/22 03:41:08 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -35,7 +35,7 @@
 
 #include <directfb-internal/directfb_version.h>
 
-#ifdef _COMPILING_DIRECTFB_VISUAL_C
+#ifdef _FBDEV_DIRECTFB_GLOBALS
 # define extern
 # define directfb_major_version directfb_major_version = DIRECTFB_MAJOR_VERSION
 # define directfb_minor_version directfb_minor_version = DIRECTFB_MINOR_VERSION
@@ -50,41 +50,62 @@
 # undef directfb_binary_age
 # undef directfb_interface_age
 #else
-# include <directfb.h>
+#  define directfb_major_version fbdev_directfb_major_version_bogus
+#  define directfb_minor_version fbdev_directfb_minor_version_bogus
+#  define directfb_micro_version fbdev_directfb_micro_version_bogus
+#  define directfb_binary_age    fbdev_directfb_binary_age_bogus
+#  define directfb_interface_age fbdev_directfb_interface_age_bogus
+# ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
+#  define extern
+#  include <directfb.h>
+#  undef extern
+# else
+#  include <directfb.h>
+# endif
+#  undef directfb_major_version
+#  undef directfb_minor_version
+#  undef directfb_micro_version
+#  undef directfb_binary_age
+#  undef directfb_interface_age
+#  undef extern
 #endif
 
-#define config_init DFBconfig_init
-#define config_read DFBconfig_read
-#define config_set  DFBconfig_set
-#define DFBResult static DFBResult
-#ifdef _COMPILING_DIRECTFB_VISUAL_C
+#ifdef _FBDEV_DIRECTFB_GLOBALS
 # define extern
 # define dfb_config dfb_config = NULL
 # include <directfb-internal/misc/conf.h>
 # undef dfb_config
 # undef extern
 #else
-# include <directfb-internal/misc/conf.h>
+# define dfb_config fbdev_directfb_dfb_config_bogus
+# ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
+#  define extern
+#  include <directfb-internal/misc/conf.h>
+#  undef extern
+# else
+#  include <directfb-internal/misc/conf.h>
+# endif
+# undef dfb_config
 #endif
 
-DFBResult config_init( int *argc, char **argv[] ) { return 0; }
-DFBResult config_read( const char *filename ) { return 0; }
-DFBResult config_set(const char *name, const char *value ) { return 0;}
-
-#undef  DFBResult
-#undef  config_init
-#undef  config_read
-#undef  config_set
-
-/* Must include from DirectFB source tree. */
 #include <directfb-internal/core/coretypes.h>
-#ifdef _COMPILING_DIRECTFB_VISUAL_C
-#define extern
+
+#ifdef _FBDEV_DIRECTFB_GLOBALS
+# define extern
+# include <directfb-internal/core/gfxcard.h>
+# undef extern
+#else
+# define card fbdev_directfb_dfb_card_bogus
+# ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
+#  define extern
+#  include <directfb-internal/core/gfxcard.h>
+#  undef extern
+# else
+#  include <directfb-internal/core/gfxcard.h>
+# endif
+# undef card
 #endif
-#include <directfb-internal/core/gfxcard.h>
-#ifdef _COMPILING_DIRECTFB_VISUAL_C
-#undef extern
-#endif
+
 #include <directfb-internal/core/state.h>
 #include <directfb-internal/core/surfaces.h>
 
@@ -96,8 +117,18 @@ DFBResult config_set(const char *name, const char *value ) { return 0;}
 #define FWIDTH	8
 #define FHEIGHT	8
 
+struct fbdev_directfb_global {
+  GfxCard	**dfb_card_ptr;
+  DFBConfig	**dfb_config_ptr;
+  unsigned int *dfb_major_version;
+  unsigned int *dfb_minor_version;
+  unsigned int *dfb_micro_version;
+  unsigned int *dfb_binary_age;
+  unsigned int *dfb_interface_age;
+};
+
 struct directfb_priv {
-  /*   DFB_Config config_global; */
+  struct fbdev_directfb_global globals;
   DFBConfig	dfbconfig;
   CardState	dfbstate;
   GfxDriver	gfxdriver;
@@ -108,6 +139,8 @@ struct directfb_priv {
   ggi_pixel	oldbg;
 };
 
+
+
 /* Update GC components if needed */
 static inline void
 directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
@@ -117,11 +150,13 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
 		  
 {
   CardState *dfbstate;
+  DFBConfig *dfb_config;
   int newfg, newbg, newclip;
 
   GGIDPRINT("gcupdate called\n");
 
   dfbstate = &(priv->dfbstate);
+  dfb_config = &(priv->dfbconfig);
 
   newfg = (gc->fg_color != priv->oldfg)
     || (dfbstate->drawingflags != DSDRAW_NOFX)
