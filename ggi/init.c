@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.21 2004/10/27 18:54:12 cegger Exp $
+/* $Id: init.c,v 1.22 2004/10/28 16:54:10 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -56,7 +56,8 @@ static int            _ggiLibIsUp      = 0;
 static char           ggiconfstub[512] = GGICONFDIR;
 static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
 static int            numextensions    = 0;
-static ggi_extension *_ggiExtension    = NULL;
+static GG_TAILQ_HEAD(, ggi_extension) _ggiExtension
+		= GG_TAILQ_HEAD_INITIALIZER(_ggiExtension);
 
 gg_swartype     swars_selected    = 0;
 
@@ -233,10 +234,12 @@ int ggiExit(void)
 
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
-	
-	for (tmp = _ggiExtension; tmp; tmp = next) {
-		next = tmp->next;
+
+	tmp = GG_TAILQ_FIRST(&_ggiExtension);
+	while (!GG_TAILQ_EMPTY(&_ggiExtension)) {
+		next = GG_TAILQ_NEXT(tmp, extlist);
 		free(tmp);
+		tmp = next;
 	}
 
 	ggFreeConfig(_ggiConfigHandle);
@@ -472,8 +475,8 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 
 	GGIDPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
 		       name, size, change);
-	if (_ggiExtension) {
-		for (tmp = _ggiExtension; tmp == NULL; tmp=tmp->next) {
+	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
+		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 			if (strcmp(tmp->name, name) == 0) {
 				tmp->initcount++;
 				GGIDPRINT_CORE("ggiExtensionRegister: accepting copy #%d of extension %s\n",
@@ -488,17 +491,14 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 
 	ext->size = size;
 	ext->paramchange = change;
-	ext->next = NULL;
+	GG_TAILQ_NEXT(ext, extlist) = NULL;
 	ext->initcount = 1;
 	ggstrlcpy(ext->name, name, sizeof(ext->name));
 
-	if (_ggiExtension) {
-		for (tmp = _ggiExtension; tmp->next; tmp=tmp->next) ;
-		tmp->next = ext;
-		ext->prev = tmp;
+	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
+		GG_TAILQ_INSERT_TAIL(&_ggiExtension, ext, extlist);
 	} else {
-		_ggiExtension = ext;
-		ext->prev = NULL;
+		GG_TAILQ_INSERT_HEAD(&_ggiExtension, ext, extlist);
 	}
 
 	GGIDPRINT_CORE("ggiExtensionRegister: installing first copy of extension %s\n", name);
@@ -521,9 +521,9 @@ int ggiExtensionUnregister(ggi_extid id)
 	ggi_extension *tmp;
 
 	GGIDPRINT_CORE("ggiExtensionUnregister(%d) called\n", id);
-	if (!_ggiExtension) return GGI_ENOTALLOC;
+	if (GG_TAILQ_EMPTY(&_ggiExtension)) return GGI_ENOTALLOC;
 
-	for (tmp = _ggiExtension; tmp != NULL; tmp=tmp->next) {
+	GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 		if (tmp->id != id) continue;
 		if (--tmp->initcount) {
 			GGIDPRINT_CORE("ggiExtensionUnregister: removing #%d copy of extension %s\n", tmp->initcount+1, tmp->name);
@@ -531,10 +531,7 @@ int ggiExtensionUnregister(ggi_extid id)
 			return 0;	
 		}
 
-		if (tmp->prev == NULL) _ggiExtension = tmp->next;
-		else tmp->prev->next = tmp->next;
-
-		if (tmp->next != NULL) tmp->next->prev = tmp->prev;
+		GG_TAILQ_REMOVE(&_ggiExtension, tmp, extlist);
 
 		GGIDPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
 			       tmp->name);
@@ -564,8 +561,8 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 
 	GGIDPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
 
-	if (_ggiExtension) {
-		for (tmp = _ggiExtension; tmp != NULL; tmp = tmp->next) {
+	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
+		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 			if (tmp->id == id) break;
 		}
 	}
@@ -632,8 +629,8 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 	GGIDPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
 		       whatchanged, vis);
 
-	if (_ggiExtension) {
-		for (tmp = _ggiExtension; tmp != NULL; tmp=tmp->next) {
+	if (!GG_TAILQ_EMPTY(&_ggiExtension)) {
+		GG_TAILQ_FOREACH(tmp, &_ggiExtension, extlist) {
 			if (tmp->id < vis->numknownext &&
 			    LIBGGI_EXTAC(vis, tmp->id))
 			{
