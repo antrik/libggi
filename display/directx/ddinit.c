@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.14 2003/10/10 05:48:20 cegger Exp $
+/* $Id: ddinit.c,v 1.15 2003/10/10 22:04:33 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -206,7 +206,7 @@ static int CreateBackup(directx_priv * priv)
 	rc = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
 	if (rc) {
 #ifdef HAVE_SNPRINTF
-		sprintf(message, 100, "CreateBackup error : %ld. Exiting", rc & 0xffff);
+		snprintf(message, 100, "CreateBackup error : %ld. Exiting", rc & 0xffff);
 #else
 		sprintf(message, "CreateBackup error : %ld. Exiting", rc & 0xffff);
 #endif
