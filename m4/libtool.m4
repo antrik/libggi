@@ -1324,6 +1324,24 @@ EOF
       archive_expsym_cmds='$CC -shared -nodefaultlibs $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
     fi
     ;;
+  openbsd*)
+    if test -z "`echo __ELF__|$CC -E -|grep __ELF__`" || test "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
+      archive_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $linkopts'
+      hardcode_libdir_flag_spec='${wl}-R$libdir'
+      export_dynamic_flag_spec='${wl}-E'
+    else
+      case "$host_os" in
+      openbsd[01].* | openbsd2.[0-7] | openbsd2.[0-7].*)
+        archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linkopts'
+        hardcode_libdir_flag_spec='-R$libdir'
+        ;;
+      *)
+        archive_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $linkopts'
+        hardcode_libdir_flag_spec='${wl}-R$libdir'
+        ;;
+      esac
+    fi
+    ;;
 
   solaris* | sysv5*)
     if $LD -v 2>&1 | egrep 'BFD 2\.8' > /dev/null; then
@@ -1592,10 +1610,24 @@ else
     ;;
 
   openbsd*)
-    archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'
-    hardcode_libdir_flag_spec='-R$libdir'
     hardcode_direct=yes
     hardcode_shlibpath_var=no
+    if test -z "`echo __ELF__ | $CC -E - | grep __ELF__`" || test "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
+	archive_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $linkopts'
+	hardcode_libdir_flag_spec='${wl}-R$libdir'
+	export_dynamic_flag_spec='${wl}-E'
+    else
+	case "$host_os" in
+	openbsd[01].* | openbsd2.[0-7] | openbsd2.[0-7].*)
+		archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linkopts'
+		hardcode_libdir_flag_spec='-R$libdir'
+		;;
+	*)
+		archive_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $linkopts'
+		hardcode_libdir_flag_spec='${wl}-R$libdir'
+		;;
+	esac
+    fi
     ;;
 
   os2*)
@@ -2081,9 +2113,25 @@ newsos6)
 
 openbsd*)
   version_type=sunos
-  if test "$with_gnu_ld" = yes; then
-    need_lib_prefix=no
-    need_version=no
+  need_lib_prefix=no
+  need_version=no
+  sys_lib_search_path_spec="/usr/lib"
+  sys_lib_dlsearch_path_spec="/usr/lib /usr/local/lib"
+  file_magic_cmd=/usr/bin/file
+  file_magic_test_file=`echo /usr/lib/libc.so.*`
+  if test "`echo __ELF__ | $CC -E - | grep __ELF__`" = "" || test "$host_os-$host_cpu" = "openbsd2.8-powerpc"; then
+	deplibs_check_method='file_magic ELF [0-9][0-9]*-bit [LM]SB shared object'
+	case "$host_os" in
+	openbsd2.[89] | openbsd2.[89].*)
+		shlibpath_overrides_runpath=no
+	;;
+	*)
+		shlibpath_overrides_runpath=yes
+	;;
+	esac
+  else
+	deplibs_check_method='file_magic OpenBSD.* shared library'
+	shlibpath_overrides_runpath=yes
   fi
   library_names_spec='${libname}${release}.so$versuffix ${libname}.so$versuffix'
   finish_cmds='PATH="\$PATH:/sbin" ldconfig -m $libdir'
@@ -2249,7 +2297,11 @@ if test "$enable_shared" = yes && test "$GCC" = yes; then
       then
 	lt_cv_archive_cmds_need_lc=no
       else
-	lt_cv_archive_cmds_need_lc=yes
+	if ! test "$host_os" = "openbsd3.0"; then
+		lt_cv_archive_cmds_need_lc=no
+	else
+		lt_cv_archive_cmds_need_lc=yes
+	fi
       fi
       allow_undefined_flag=$save_allow_undefined_flag
     else

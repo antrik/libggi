@@ -1032,9 +1032,31 @@ compiler."
 	    test "X$arg" = "X-lc" && continue
 	    ;;
 	  esac
+	elif test "$arg" = "-lc_r"; then
+		case "$host" in
+		*-*-openbsd*)
+			# Do not include libc_r directly, use -pthread flag.
+			continue
+			;;
+		*)
+			echo "BLARGH >> /dev/tty"
+			exit 1
+			;;
+		esac
 	fi
 	deplibs="$deplibs $arg"
 	continue
+	;;
+
+      -pthread)
+	case $host in
+	*-*-openbsd*)
+		deplibs="$deplibs $arg"
+		;;
+	*)
+		continue
+		;;
+	esac
 	;;
 
       -module)
@@ -1481,7 +1503,7 @@ compiler."
 	if test $found = yes || test -f "$lib"; then :
 	else
 	  $echo "$modename: cannot find the library \`$lib'" 1>&2
-	  exit 1
+	  continue
 	fi
 
 	# Check to see that this really is a libtool archive.
@@ -2406,7 +2428,7 @@ compiler."
 	    # Rhapsody C library is in the System framework
 	    deplibs="$deplibs -framework System"
 	    ;;
-	  *-*-netbsd*)
+	  *-*-netbsd*|*-*-openbsd*)
 	    # Don't link with libc until the a.out ld.so is fixed.
 	    ;;
 	  *)
