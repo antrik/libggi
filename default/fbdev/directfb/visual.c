@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2002/07/05 09:00:38 cegger Exp $
+/* $Id: visual.c,v 1.14 2002/12/04 01:06:22 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -218,16 +218,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	switch (GT_DEPTH(LIBGGI_GT(vis))) {
 		/* TODO: map 8-bit truecolor */
 	case 15:
-		priv->videomode.format = DSPF_RGB15;
+		priv->coresurface.format= DSPF_RGB15;
 		break;
 	case 16:
-		priv->videomode.format = DSPF_RGB16;
+		priv->coresurface.format= DSPF_RGB16;
 		break;
 	case 24:
-		priv->videomode.format = DSPF_RGB24;
+		priv->coresurface.format= DSPF_RGB24;
 		break;
 	case 32:
-		priv->videomode.format = DSPF_RGB32;
+		priv->coresurface.format= DSPF_RGB32;
 		break;
 	default:
 		/* priv->videomode.format = DSPF_UNKNOWN; */
@@ -244,7 +244,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->cardstate.destination = &(priv->coresurface);
 	priv->cardstate.source = &(priv->coresurface);
 	
-	priv->coresurface.format =  priv->videomode.format;
 	priv->coresurface.width = LIBGGI_VIRTX(vis);
 	priv->coresurface.height = LIBGGI_VIRTY(vis);
 	priv->coresurface.back_buffer = priv->coresurface.front_buffer = 

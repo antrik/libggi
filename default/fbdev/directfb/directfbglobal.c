@@ -118,41 +118,74 @@ void dfb_sort_triangle( DFBTriangle *tri )
    */
 }
 
-void
-dfb_layers_add( DisplayLayer *layer )
+CoreSurface       *dfb_layer_surface( const DisplayLayer *layer ) 
+{ 
+  return NULL; /* Used for overlays only */ 
+}
+
+DFBResult          dfb_layer_flip_buffers( DisplayLayer *layer,
+					   DFBSurfaceFlipFlags flags )
+{ 
+  return DFB_OK; /* Used for overlays only (Matrox BES) */ 
+}
+
+typedef void * DisplayLayerFuncs;
+void dfb_layers_register( GraphicsDevice    *device,
+                          void              *driver_data,
+                          DisplayLayerFuncs *funcs ) 
+{ 
+  /* Used for overlays only */ 
+}
+
+DFBResult dfb_fbdev_wait_vsync() {
+  /* Only works with a DFB-specific kernel patch anyway. */
+  return 0;
+}
+
+void dfb_primary_layer_rectangle( float x, float y, float w, float h,
+				  DFBRectangle *rect )
+{ 
+  /* Used for overlays only */ 
+}
+
+DFBSurfacePixelFormat dfb_primary_layer_pixelformat() 
+{
+  /* Used for overlays only */ 
+  return 0;
+}
+
+/* I think this one is old and no longer used. */
+void dfb_layers_add( DisplayLayer *layer )
 {
   /* Used for overlays only */
 }
 
-
-/*
- * like surface_create, but with preallocated system memory that won't be
- * freed on surface destruction
- */
+/* I think this one is old and no longer used. */
 DFBResult dfb_surface_create( int                      width,
                               int                      height,
                               DFBSurfacePixelFormat    format,
                               CoreSurfacePolicy        policy,
                               DFBSurfaceCapabilities   caps,
+			      CorePalette             *palette,
                               CoreSurface            **surface )
 {
   /* Used for overlays only */
   return -1;
 }
 
-CoreWindowStack*
-dfb_windowstack_new( DisplayLayer *layer )
+CoreWindowStack* dfb_windowstack_new( DisplayLayer *layer )
 {
   
   /* Used for overlays only. */
   return NULL;
 }
 
-void reactor_attach (FusionReactor *reactor,
+FusionResult reactor_attach (FusionReactor *reactor,
                      React          react,
                      void          *ctx)
 {
   /* Only Matrox BES uses this.  Will find out more someday. */
+  return FUSION_SUCCESS;
 }
 
 #include <ggi/internal/ggidlinit.h>

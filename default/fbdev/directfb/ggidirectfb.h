@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.6 2002/09/08 21:37:42 soyt Exp $
+/* $Id: ggidirectfb.h,v 1.7 2002/12/04 01:06:22 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -126,17 +126,17 @@ struct _GraphicsDevice {
 #ifdef _FBDEV_DIRECTFB_GLOBALS
 # define extern
 # define dfb_fbdev dfb_fbdev = NULL
-# include <directfb-internal/core/fbdev.h>
+# include <directfb-internal/core/fbdev/fbdev.h>
 # undef dfb_fbdev
 # undef extern
 #else
 # define dfb_fbdev fbdev_directfb_dfb_fbdev_bogus
 # ifdef _FBDEV_DIRECTFB_BOGUS_GLOBALS
 #  define extern
-#  include <directfb-internal/core/fbdev.h>
+#  include <directfb-internal/core/fbdev/fbdev.h>
 #  undef extern
 # else
-#  include <directfb-internal/core/fbdev.h>
+#  include <directfb-internal/core/fbdev/fbdev.h>
 # endif
 # undef dfb_fbdev
 #endif
