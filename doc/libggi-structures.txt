@@ -351,6 +351,17 @@ The `ggi_directbuffer` structure contains information on
 target-dependent buffers to allow applications to access them
 directly.
 
+Certain DirectBuffers need to be explicitly acquired (i.e. locked)
+before using them (i.e. accessing their pointers).  Such a situation
+may arise if the underlying visual supports mixed acceleration and
+framebuffer access, but they cannot occur at the same time.  In that
+case, LibGGI needs to be informed when the application is using the
+framebuffer.  An acquire is done by using `ggiResourceAcquire` and it
+is released by calling `ggiResourceRelease`.  You can determine
+whether the DirectBuffer needs to be acquired by using
+ggiResourceMustAcquire`.
+
+
 
 Structure Members
 -----------------
