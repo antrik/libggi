@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.6 2004/11/03 22:05:46 cegger Exp $
+/* $Id: ll.h,v 1.7 2004/11/03 22:31:42 aldot Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -58,7 +58,7 @@ struct ggi_ll_pos {
 };
 typedef struct ggi_ll_pos * ggi_ll_pos_t;
 
-/* Magnification, internal content panning/flipping, tesslation. 
+/* Magnification, internal content panning/flipping, tesselation. 
  */
 struct ggi_ll_lense {
 	long x, y;  
@@ -270,7 +270,7 @@ enum ggi_ll_rop {
   LL_ROP_KEY_CMP          = 0x02000000, /* key on compare                    */
   
   /* Stuff for pattern fills/filters.  Operand 1 only. */
-  LL_ROP_TESSLATE         = 0x10000000, /* tesslate (pat fill/filter)        */
+  LL_ROP_TESSELATE        = 0x10000000, /* tesselate (pat fill/filter)       */
   LL_ROP_XWRAP            = 0x20000000, /* rotate/wrap/pin horizontally      */
   LL_ROP_YWRAP            = 0x40000000, /* rotate/wrap/pin vertically        */
 

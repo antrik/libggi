@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.7 2004/09/08 20:17:54 cegger Exp $
+/* $Id: types.h,v 1.8 2004/11/03 22:27:37 aldot Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -207,7 +207,7 @@ typedef struct		/* requested by user and changed by driver    */
 #define GGI_PT_IS_COLOR4	0x00080000 /* A color channel (K)	     */
 #define GGI_PT_IS_ALPHA		0x00100000 /* A translucency  (A)	     */
 #define GGI_PT_IS_DEPTH		0x00200000 /* A depth	      (Z, Bump)	     */
-#define GGI_PT_IS_PAT		0x01000000 /* A pattern for tesslation fills */
+#define GGI_PT_IS_PAT		0x01000000 /* A pattern for tesselation fills*/
 #define GGI_PT_IS_CLIP		0x02000000 /* A clipping region		     */
 #define GGI_PT_IS_ERR		0x03000000 /* An error term		     */
 #define GGI_PT_IS_FGCOL		0x04000000 /* A foreground color	     */
