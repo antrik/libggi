@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2003/09/29 04:48:31 skids Exp $
+/* $Id: mode.c,v 1.13 2004/01/03 22:43:58 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -106,12 +106,12 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			sprintf(apiname, "generic-text-%d", size);
 			return 0;
 		} 
-		
+
 		if (priv->fix.type == FB_TYPE_PLANES) {
 			strcpy(apiname, "generic-planar");
 			return 0;
 		}
-		
+
 		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
 			sprintf(apiname, "generic-%s",
 				(priv->fix.type_aux == 2) ? 
@@ -127,7 +127,7 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		   a different generic renderer, e.g. if the driver
 		   in question wants a generic-linear-4r instead of 
 		   a generic-linear-4r */
-	  	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
 			sprintf(apiname, "fb-generic-%2.2x-text-%d", 
 				priv->orig_fix.accel, size);
 			return 0;
@@ -151,20 +151,20 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 				priv->orig_fix.accel, size);
 		return 0;
 		break;
-		
+
 	case 5:
-	  	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
 			sprintf(apiname, "fb-accel-%2.2x-text-%d", 
 				priv->orig_fix.accel, size);
 			return 0;
 		} 
-		
+
 		if (priv->fix.type == FB_TYPE_PLANES) {
 			sprintf(apiname, "fb-accel-%2.2x-planar",
 				priv->orig_fix.accel);
 			return 0;
 		}
-		
+
 		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
 			sprintf(apiname, "fb-accel-%2.2x-%s",
 				priv->orig_fix.accel ,
@@ -228,7 +228,8 @@ var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 		GT_SETSCHEME(mode->graphtype, GT_GREYSCALE);
 		GT_SETDEPTH(mode->graphtype, var->bits_per_pixel);
 	} else if (var->red.length + var->green.length + var->blue.length
-		   > var->bits_per_pixel) {
+		   > var->bits_per_pixel)
+	{
 		GT_SETSCHEME(mode->graphtype, GT_PALETTE);
 		GT_SETDEPTH(mode->graphtype, var->bits_per_pixel);
 	} else {
@@ -333,7 +334,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	ggi_graphtype gt = mode->graphtype;
 	int err;
 
-	/* If we already have set a mode, restore the old pallette
+	/* If we already have set a mode, restore the old palette
 	 * or gamma settings before setting a new one. 
 	 */
 	GGI_fbdev_color_reset(vis);
@@ -372,14 +373,15 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR)
 				err = GGI_EFATAL;
 			break;
-	
+
 		case GT_PALETTE:
 			if (GT_DEPTH(gt) != priv->var.bits_per_pixel ||
 #ifdef FB_TYPE_TEXT
 			    priv->fix.type == FB_TYPE_TEXT ||
 #endif
 			    priv->fix.visual == FB_VISUAL_TRUECOLOR ||
-			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR) {
+			    priv->fix.visual == FB_VISUAL_DIRECTCOLOR)
+			{
 				err = GGI_EFATAL;
 				GGIDPRINT_MODE("display-fbdev: GT_PALETTE mode failed\n");
 			}
@@ -392,7 +394,8 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 			    priv->fix.type  == FB_TYPE_TEXT ||
 #endif
 			    (priv->fix.visual != FB_VISUAL_TRUECOLOR &&
-			     priv->fix.visual != FB_VISUAL_DIRECTCOLOR)) {
+			     priv->fix.visual != FB_VISUAL_DIRECTCOLOR))
+			{
 				err = GGI_EFATAL;
 				GGIDPRINT_MODE("display-fbdev: GT_TRUECOLOR mode failed\n");
 			}
@@ -418,7 +421,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	}
 
 	/* Reset panning and frames */
-        vis->d_frame_num = vis->origin_x = vis->origin_y = 0;
+	vis->d_frame_num = vis->origin_x = vis->origin_y = 0;
 
 	return err;
 }
