@@ -126,7 +126,7 @@ typedef struct ggi_ll_cb * ggi_ll_cb_t;
 /* direct access address, stride, pixfmt, current read/write/display frame 
  */
 struct ggi_ll_ststate {
-	int bitdepth, stride;
+	int bitdepth, stride, w, h;
 	union { void *addr; int frame; } read;
 	union { void *addr; int frame; } write;
 	union { void *addr; int frame; } display;
@@ -146,7 +146,7 @@ typedef struct ggi_ll_stops * ggi_ll_stops_t;
 
 typedef int (storage2mem_func)(ggi_ll_ststate_t src, size_t xoffset,
 			       size_t yoffset, size_t stride,
-			       void *dest, size_t deststride,
+			       void *membuf, size_t deststride,
 			       size_t linewidth, size_t numlines);
 
 typedef int (mem2storage_func)(ggi_ll_ststate_t dest, size_t xoffset,
@@ -179,8 +179,8 @@ struct ggi_ll_stops {
 /* Constant-fill values for absent channels 
 */
 struct ggi_ll_fgbg_gc {
-	ggi_storageval src;  /* Default value for source object 	*/
-	ggi_storageval dest; /* Default value for destination object 	*/
+	ggi_storageval fgsrc, bgsrc;	/* default values for source      */
+	ggi_storageval fgdest, bgdest;	/* default values for destination */
 };
 typedef struct ggi_ll_fgbg_gc * ggi_ll_fgbg_gc_t;
 
@@ -390,31 +390,38 @@ struct ggi_llobj {
 #define GGI_LL_POS_SHIFT 28
 #define GGI_LL_POS_NUMPTRS 3
 #define GGI_LL_CB(obj) \
-(ggi_ll_cb_t)obj->ptrs[((obj->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)]
+(ggi_ll_cb_t)(obj)->ptrs[(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)]
 #define GGI_LL_LENSE(obj) \
-(ggi_ll_lense_t)obj->ptrs[((obj->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+(ggi_ll_lense_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
 #define GGI_LL_POS(obj) \
-(ggi_ll_pos_t)obj->ptrs[((obj->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+(ggi_ll_pos_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_POS_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
 
 /* Storage 
  */
 #define GGI_LL_ST_SHIFT 24
 #define GGI_LL_ST_NUMPTRS 2
 #define GGI_LL_STOPS(obj) \
-(ggi_ll_stops_t)obj->ptrs[((obj->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)]
+(ggi_ll_stops_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)]
 #define GGI_LL_STSTATE(obj) \
-(ggi_ll_ststate_t)obj->ptrs[((obj->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+(ggi_ll_ststate_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
 
 /* GC 
  */
 #define GGI_LL_GC_SHIFT 20
 #define GGI_LL_GC_NUMPTRS 3
 #define GGI_LL_GC2(obj) \
-(ggi_ll_fgbg_gc_t)obj->ptrs[((obj->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)]
+(ggi_ll_fgbg_gc_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)]
 #define GGI_LL_GC(obj) \
-(ggi_ll_fgbg_gc_t)obj->ptrs[((obj->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
+(ggi_ll_fgbg_gc_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
 #define GGI_LL_MATHGC(obj) \
-(ggi_ll_math_gc_t)obj->ptrs[((obj->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
+(ggi_ll_math_gc_t)(obj)->ptrs[ \
+(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
 
 /* LibGAlloc resource management 
  */
