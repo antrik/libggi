@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2004/09/09 10:05:17 pekberg Exp $
+/* $Id: mode.c,v 1.3 2004/09/20 12:42:27 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -168,6 +168,66 @@ static void testcase3(const char *desc)
 }
 
 
+static void testcase4(const char *desc)
+{
+	int err;
+	ggi_visual_t vis;
+	ggi_mode mode;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggiInit();
+	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+
+	vis = ggiOpen(NULL);
+	printassert(vis != NULL, "ggiOpen() failed\n");
+
+	mode.frames    = GGI_AUTO;
+	mode.visible.x = GGI_AUTO;
+	mode.visible.y = GGI_AUTO;
+	mode.virt.x    = GGI_AUTO;
+	mode.virt.y    = GGI_AUTO;
+	mode.size.x    = 40;
+	mode.size.y    = 30;
+	mode.graphtype = GT_AUTO;
+	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
+
+	err = ggiCheckMode(vis, &mode);
+
+	if (mode.size.x == GGI_AUTO) {
+		printfailure(
+			"ggiCheckMode: expected return value: not GGI_AUTO\n"
+					"actual return value: GGI_AUTO\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	if (mode.size.y == GGI_AUTO) {
+		printfailure(
+			"ggiCheckMode: expected return value: not GGI_AUTO\n"
+					"actual return value: GGI_AUTO\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	ggiClose(vis);
+	ggiExit();
+	
+	if (err == GGI_OK || err == GGI_ENOMATCH) {
+		printsuccess();
+		return;
+	}
+
+	printfailure(
+		"ggiSetMode: expected return value: GGI_OK or GGI_ENOMATCH\n"
+				"actual return value: %i\n", err);
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -175,7 +235,8 @@ int main(int argc, char * const argv[])
 
 	testcase1("Check that ggiCheckMode() doesn't return GGI_AUTO");
 	testcase2("Check that ggiSetMode() can actually set the mode that has been suggested by ggiCheckMode");
-	testcase3("Check that setting a mode with a given number of frames");
+	testcase3("Check setting a mode with a given number of frames");
+	testcase4("Check setting a 40x30 mm mode");
 
 	printsummary();
 
