@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/09/08 11:06:01 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/09/09 14:18:49 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -120,13 +120,17 @@ int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments
 }
 
 
-static void GetScreenParams(int *depth, int *width, int *height)
+static void GetScreenParams(int *depth,
+	int *wpix, int *hpix,
+	int *wmm, int *hmm)
 {
 	HWND wnd = GetDesktopWindow();
 	HDC dc = GetDC(wnd);
 	*depth = GetDeviceCaps(dc, BITSPIXEL);
-	*width = GetDeviceCaps(dc, HORZRES);
-	*height = GetDeviceCaps(dc, VERTRES);
+	*wpix = GetDeviceCaps(dc, HORZRES);
+	*hpix = GetDeviceCaps(dc, VERTRES);
+	*wmm = GetDeviceCaps(dc, HORZSIZE);
+	*hmm = GetDeviceCaps(dc, VERTSIZE);
 	ReleaseDC(wnd, dc);
 }
 
@@ -136,10 +140,10 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	uint8 err = 0;
-	int depth, width, height, defwidth, defheight;
+	int depth, width, height, sizex, sizey, defwidth, defheight;
 	ggi_graphtype deftype;
 
-	GetScreenParams(&depth, &width, &height);
+	GetScreenParams(&depth, &width, &height, &sizex, &sizey);
 	if (priv->hParent) {
 	  RECT r;
 	  GetWindowRect(priv->hParent, &r);
@@ -236,8 +240,16 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	EnterCriticalSection(&priv->cs);
 	err = _ggi_physz_figure_size(mode, priv->physzflags,
 				&priv->physz,
-				0, 0, mode->visible.x, mode->visible.y);
+				width * 254 / sizex / 10,
+				height * 254 / sizey / 10,
+				width, height);
 	LeaveCriticalSection(&priv->cs);
+
+	GGIDPRINT_MODE(
+		"display-directx: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
+		mode->visible.x, mode->visible.y,
+		mode->virt.x, mode->virt.y, 
+		mode->frames, mode->graphtype);
 
 	return err;
 }
