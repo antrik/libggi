@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.7 2002/12/05 20:03:31 cegger Exp $
+/* $Id: shm.c,v 1.8 2002/12/17 23:18:21 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -213,6 +213,7 @@ int _ggi_xshm_create_ximage(ggi_visual *vis) {
 			/* The shmid has already been removed, see below. */
 			priv->fb = NULL;
 		}
+		fprintf(stderr, "XSHM extension failed to initialize. Retry with -noshm\n");
 		ggUnlock(_ggi_global_lock); /* Exiting protected section */
 		return GGI_ENOMEM;
 	} else {
