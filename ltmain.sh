@@ -1431,6 +1431,7 @@ compiler."
 	    finalize_deplibs="$deplib $finalize_deplibs"
 	  else
 	    deplibs="$deplib $deplibs"
+	    test $linkmode = lib && newdependency_libs="$deplib $newdependency_libs"
 	  fi
 	  continue
 	  ;;
