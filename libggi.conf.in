@@ -95,6 +95,3 @@ generic-ioctl 			default/ioctl.@DLLEXT@
 
 # Fbdev accels
 .include @ggi_confdir@/targets/fbdev.conf
-
-# libGGImisc extension
-.include @ggi_confdir@/libggimisc.conf
