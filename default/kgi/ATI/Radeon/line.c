@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
+/* $Id: line.c,v 1.3 2003/01/16 00:33:39 skids Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -23,46 +23,50 @@
 *******************************************************************************/
 
 #include "radeon_accel.h"
+#include <string.h>
 
 int GGI_kgi_radeon_drawhline(ggi_visual *vis, int x, int y, int w)
 {
-/*	GGI_kgi_radeon_drawline(vis, x, y, x + w - 1, y);
-*/	GGI_kgi_radeon_drawbox(vis, x, y, w, 1);
-
+	vis->opdraw->drawbox(vis, x, y, w, 1);
 	return 0;
 }
 
 int GGI_kgi_radeon_drawvline(ggi_visual *vis, int x, int y, int h)
 {
-/*	GGI_kgi_radeon_drawline(vis, x, y, x, y + h - 1);
-*/	GGI_kgi_radeon_drawbox(vis, x, y, 1, h);
-
+	vis->opdraw->drawbox(vis, x, y, 1, h);
 	return 0;
 }
 
-int GGI_kgi_radeon_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_kgi_radeon_drawline_2d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	struct {
 	
 		cce_type3_header_t h;
 		cce_gui_control_t gc;
+		cce_scissor_t tl;
+		cce_scissor_t br;
 		uint32 bp;
 		cce_polyline_t pl;
-		
 	} packet;
-	
+
 	memset(&packet, 0, sizeof(packet));
 	
 	packet.h.it_opcode = CCE_IT_OPCODE_POLYLINE;
 	packet.h.count     = sizeof(packet) / 4 - 2;
 	packet.h.type      = 0x3;
 
+	packet.gc.dst_clipping = 1;
 	packet.gc.brush_type = 14;
 	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
 	packet.gc.src_type   = 3;
 	packet.gc.win31_rop  = ROP3_PATCOPY;
 
 	packet.gc.dst_type = RADEON_CONTEXT(vis)->dst_type;
+
+	packet.tl.x = LIBGGI_GC(vis)->cliptl.x;
+	packet.tl.y = LIBGGI_GC(vis)->cliptl.y;
+	packet.br.x = LIBGGI_GC(vis)->clipbr.x;
+	packet.br.y = LIBGGI_GC(vis)->clipbr.y;
 
 	packet.bp = LIBGGI_GC_FGCOLOR(vis);
 
@@ -72,6 +76,46 @@ int GGI_kgi_radeon_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	packet.pl.y1 = y2;
 
 	RADEON_WRITEPACKET(vis, packet);
+        if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);
+
+	return 0;
+}
+
+int GGI_kgi_radeon_drawline_3d(ggi_visual *vis, int x1, int y1, int x2, int y2)
+{
+	struct {
+		cce_type3_header_t h;
+		cce_se_se_vtx_fmt_t vfmt;
+		cce_se_se_vf_cntl_t vctl;
+		/* TODO: this wrongly assumes float is 32 bit everywhere. */
+	  float v1x, v1y; /* v1z; */ 
+	  float v2x, v2y; /* v2z; */ 
+	} packet;
+
+	RADEON_RESTORE_CTX(vis, RADEON_SOLIDFILL_CTX);
+	
+	memset(&packet, 0, sizeof(packet));
+	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	packet.h.count     = (sizeof(packet) / 4) - 2;
+	packet.h.type      = 3;
+
+	packet.vfmt.z = 0 /* 1 */;
+
+	packet.vctl.num_vertices = 2;
+	packet.vctl.en_maos = 1;
+	packet.vctl.fmt_mode = 1;
+	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
+	packet.vctl.prim_type = 2;   /* Line list */
+
+	packet.v1x = x1;
+	packet.v1y = y1;
+	packet.v2x = x2;
+	packet.v2y = y2;
+
+	/*	packet.v1z = packet.v2z = packet.v3z = 0; */
+	
+	RADEON_WRITEPACKET(vis, packet);
+        if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: radeon_cce.h,v 1.2 2002/11/03 04:23:07 redmondp Exp $
+/* $Id: radeon_cce.h,v 1.3 2003/01/16 00:33:39 skids Exp $
 ******************************************************************************
 
    ATI Radeon CCE packet structures
@@ -25,8 +25,8 @@
 #ifndef _RADEON_CCE_H
 #define _RADEON_CCE_H
 
-typedef unsigned long bits;
-typedef unsigned long dword;
+typedef uint32 bits;
+typedef uint32 dword;
 
 typedef struct
 {
@@ -53,6 +53,7 @@ typedef struct
 #define CCE_IT_OPCODE_PAINT_MULTI 		0x9A
 #define CCE_IT_OPCODE_BITBLT_MULTI 		0x9B
 #define CCE_IT_OPCODE_TRANS_BITBLT 		0x9C
+#define CCE_IT_OPCODE_3D_DRAW_IMMD 		0x29
 
 
 typedef struct
@@ -91,35 +92,16 @@ typedef struct
 		tiled       : 1,
 		microtiling : 1;
 
-} cce_src_pitch_offset_t,
-  cce_dst_pitch_offset_t;
+} cce_pitch_offset_t;
 
 typedef struct
 {
 
-	bits	right  : 14,
+	bits	x      : 14,
 		dummy  : 2,
-		bottom : 14;
+		y      : 14;
 	
-} cce_src_sc_bot_rite_t;
-
-typedef struct
-{
-
-	bits	left  : 14,
-		dummy : 2,
-		top   : 14;
-	
-} cce_sc_top_left_t;
-
-typedef struct
-{
-
-	bits	right  : 14,
-		dummy  : 2,
-		bottom : 14;
-	
-} cce_sc_bot_rite_t;
+} cce_scissor_t;
 
 typedef struct
 {
@@ -258,5 +240,136 @@ typedef struct
 	dword raster1,
 	      raster2;
 } cce_smallchar_t;
+
+
+typedef struct
+{
+	bits w0 : 1,
+	     fpcolor : 1,
+	     fpalpha : 1,
+	     pkcolor : 1,
+	     fpspec : 1,
+	     fpfog : 1,
+	     pkspec : 1,
+	     st0 : 1,
+	     st1 : 1,
+	     q1 : 1,
+	     st2: 1,
+	     q2 : 1,
+	     st3 : 1,
+	     q3 : 1,
+	     q0 : 1,
+	     blnd_weight_cnt : 3,
+	     n0 : 1,
+	     pad: 8,
+	     xy1: 1,
+	     z1 : 1,
+	     w1 : 1,
+	     n1 : 1,
+	     z : 1;
+} cce_se_se_vtx_fmt_t;
+
+typedef struct {
+        bits prim_type : 4,
+	     prim_walk : 2,
+	     color_order : 1,
+	     en_maos : 1,
+	     fmt_mode : 1,
+	     pad : 7,
+	     num_vertices : 16;
+} cce_se_se_vf_cntl_t;
+
+
+/* CCE type 0 packets */
+
+typedef struct
+{
+	bits 	base_index  : 15,
+		one_reg_wr : 1,
+		count : 14,
+		type : 2; /* must be 0x0 */
+} cce_type0_header_t;
+
+typedef struct
+{
+	bits	txformat : 5,
+		apple_yuv : 1,
+		alpha_enable : 1,
+		non_power2 : 1,
+		txwidth : 4,
+		txheight : 4,
+		face_width_5 : 4,
+		face_height_5 : 4,
+		st_route : 2,
+		endian_swap : 2,
+	        alpha_mask_enable : 1,
+		chroma_key_enable : 1,
+		cubic_map_enable : 1,
+		perspective_enable : 1;
+} pp_txformat_t;
+
+typedef struct
+{
+	bits	usize : 11,
+		pad : 5,
+	        vsize : 11,
+		pad2 : 5;
+} pp_tex_size_t;
+
+typedef struct
+{
+	bits	pad : 5,
+                txpitch : 11,
+		pad2 : 16;
+} pp_txpitch_t;
+
+
+
+#define CRTC_OFFSET 0x224
+
+/****************** Registers used by 2D engine CCE0 *******************/
+
+#define DEFAULT_PITCH_OFFSET 0x16e0
+#define DEFAULT_SC_BOT_RIGHT 0x16e8
+
+/****************** Registers used by 3D engine CCE0 *******************/
+
+#define PP_TXFORMAT_2 0x1c88 /* also 0x2c88 */
+#define PP_TXOFFSET_2 0x1c8c /* also 0x2c8c */
+#define PP_TEX_SIZE_2 0x1d14 /* also 0x2d14 */
+#define PP_CNTL 0x1c38 /* also 0x2c38 */
+
+/* X_LEFT 10:0 Y_TOP 26:16 */
+#define RE_TOP_LEFT 0x26c0 
+
+/* WIDTH 10:0 (minus 1) HEIGHT 26:16 (minus 1) */
+#define RE_WIDTH_HEIGHT 0x1c44 /* also 0x2644 */
+
+#define RE_SOLID_COLOR 0x1c1c /* also 0x261C */
+/* Organized as 8: 8: 8: 8 ARGB. */
+#define SE_CNTL 0x1c4c /* also 0x2088 */
+#define SE_CNTL_STATUS 0x2140
+#define SE_TCL_UCP_VERT_BLEND_CTL 0x2264
+#define SE_TCL_TEXTURE_PROC_CTL 0x2268
+#define RB3D_COLOROFFSET 0x1c40 /* also 0x3240 */
+#define RB3D_COLORPITCH  0x1c48 /* also 0x3248 */
+/* Use bits 12 to 3, others used for tiling/endian, 0,1,2 are set 0 */
+#define RB3D_CNTL 0x1c3c /* also 0x323C */
+/* Z_ENABLE bit 8, depthxy_offset_enable bit 9, colorformat bit 13:10 as so:
+
+3=ARGB1555
+4=RGB565
+6=ARGB8888
+7=RGB332
+8=Y8
+9=RGB8
+11=YUV422 packed (VYUY)
+12=YUV422 packed (YVYU)
+14=aYUV444
+15=ARGB4444 
+
+*/
+
+
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.1 2002/10/23 23:42:39 redmondp Exp $
+/* $Id: gc.c,v 1.2 2003/01/16 00:33:39 skids Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -24,7 +24,57 @@
 */
 
 #include "radeon_accel.h"
+#include <string.h>
 
-void GGI_kgi_radeon_gcchanged(ggi_visual *vis, int mask)
-{
+void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
+	if (mask & GGI_GCCHANGED_FG) {
+		ggi_color col;
+		struct {
+	  		cce_type0_header_t h;
+			uint32 val;
+		} packet;
+
+		ggiUnmapPixel(vis, LIBGGI_GC_FGCOLOR(vis), &col);
+		memset(&packet, 0, sizeof(packet));
+		packet.h.base_index = RE_SOLID_COLOR >> 2;
+		packet.h.count = 0;
+		col.a >>= 8;
+		col.r >>= 8;
+		col.g >>= 8;
+		col.b >>= 8;
+		packet.val = (uint32)col.a << 24 | (uint32)col.r << 16 | 
+		  (uint32)col.g << 8 | (uint32)col.b;
+		RADEON_WRITEPACKET(vis, packet);
+	}
+	if (mask & GGI_GCCHANGED_CLIP) {
+		struct {
+	  		cce_type0_header_t h;
+			uint32 val;
+		} packet;
+
+		/* TODO: mask out bad values. */
+		memset(&packet, 0, sizeof(packet));
+		packet.h.base_index = RE_TOP_LEFT >> 2;
+		packet.h.count = 0;
+		packet.val = LIBGGI_GC(vis)->cliptl.x | 
+		  (LIBGGI_GC(vis)->cliptl.y << 16);
+		RADEON_CONTEXT(vis)->base_ctx.re_top_left = packet.val;
+		RADEON_WRITEPACKET(vis, packet);
+
+		memset(&packet, 0, sizeof(packet));
+		packet.h.base_index = RE_WIDTH_HEIGHT >> 2;
+		packet.h.count = 0;
+		packet.val = (LIBGGI_GC(vis)->clipbr.x - 1) | 
+		  ((LIBGGI_GC(vis)->clipbr.y - 1) << 16);
+		RADEON_CONTEXT(vis)->base_ctx.re_width_height = packet.val;
+		RADEON_WRITEPACKET(vis, packet);
+	}
+}
+
+void GGI_kgi_radeon_gcchanged_2d(ggi_visual *vis, int mask) {
+	/* Nothing to do because the scissors don't work in a desirable 
+	 * manner when using the GUI2D engine through CCE -- clip must be
+	 * sent with each 2D packet.  Solid colors are also sent in packet.
+	 * We keep this place holder in case we find a need for it.
+	 */
 }

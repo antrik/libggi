@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2002/10/31 03:20:17 redmondp Exp $
+/* $Id: box.c,v 1.3 2003/01/16 00:33:39 skids Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -23,8 +23,9 @@
 */
 
 #include "radeon_accel.h"
+#include <string.h>
 
-int GGI_kgi_radeon_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_radeon_drawbox_2d(ggi_visual *vis, int x, int y, int w, int h)
 {
 	struct {
 		cce_type3_header_t h;
@@ -32,7 +33,10 @@ int GGI_kgi_radeon_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 		uint32 bp;
 		cce_paint_t paint;
 	} packet;
-	
+
+	/* Clipping across the bus costs bandwidth, faster to do the math. */
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
+
 	memset(&packet, 0, sizeof(packet));
 
 	packet.h.it_opcode = CCE_IT_OPCODE_PAINT;
@@ -53,17 +57,68 @@ int GGI_kgi_radeon_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	
 	RADEON_WRITEPACKET(vis, packet);
 
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);
 	return 0;
 }
 
-int GGI_kgi_radeon_copybox(ggi_visual *vis, int x, int y, int w, int h,
-			   int nx, int ny)
+
+int GGI_kgi_radeon_drawbox_3d(ggi_visual *vis, int x, int y, int w, int h)
 {
 	struct {
 		cce_type3_header_t h;
+		cce_se_se_vtx_fmt_t vfmt;
+		cce_se_se_vf_cntl_t vctl;
+		/* TODO: this wrongly assumes float is 32 bit everywhere. */
+	  float v1x, v1y; /* v1z; */ 
+	  float v2x, v2y; /* v2z; */ 
+	  float v3x, v3y; /* v3z; */ 
+	} packet;
+
+	RADEON_RESTORE_CTX(vis, RADEON_SOLIDFILL_CTX);
+	
+	memset(&packet, 0, sizeof(packet));
+	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	packet.h.count     = (sizeof(packet) / 4) - 2;
+	packet.h.type      = 3;
+
+	packet.vfmt.z = 0 /* 1 */;
+
+	packet.vctl.num_vertices = 3;
+	packet.vctl.en_maos = 1;
+	packet.vctl.fmt_mode = 1;
+	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
+	packet.vctl.prim_type = 8;   /* Rectangle list */
+
+	packet.v1x = x;
+	packet.v1y = y;
+	packet.v2x = x + w;
+	packet.v2y = y;
+	packet.v3x = x;
+	packet.v3y = y + h;
+
+	/*	packet.v1z = packet.v2z = packet.v3z = 0; */
+	
+	RADEON_WRITEPACKET(vis, packet);
+
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);
+	return 0;
+}
+
+int GGI_kgi_radeon_copybox_2d(ggi_visual *vis, int x, int y, int w, int h,
+			   int nx, int ny)
+{
+	radeon_context_t *ctx;
+	struct {
+		cce_type3_header_t h;
 		cce_gui_control_t gc;
+		cce_pitch_offset_t spo;
 		cce_bitblt_t bb;
 	} packet;
+
+	/* Clipping across the bus costs bandwidth, faster to do the math. */
+        LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
+
+	ctx = KGI_ACCEL_PRIV(vis);
 
 	memset(&packet, 0, sizeof(packet));
 	
@@ -71,10 +126,13 @@ int GGI_kgi_radeon_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	packet.h.count     = (sizeof(packet) / 4) - 2;
 	packet.h.type      = 0x3;
 	
+	packet.gc.src_pitch_off = 1;
 	packet.gc.brush_type = 15;
 	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
 	packet.gc.src_type   = 3;
 	packet.gc.win31_rop  = ROP3_SRCCOPY;
+
+	packet.spo = ctx->src_pitch_offset;
 
 	packet.bb.src_x1 = x;
 	packet.bb.src_y1 = y;
@@ -84,6 +142,70 @@ int GGI_kgi_radeon_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	packet.bb.dst_y1 = ny;
 	
 	RADEON_WRITEPACKET(vis, packet);
+
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);	
+	return 0;
+}
+
+int GGI_kgi_radeon_copybox_3d(ggi_visual *vis, int x, int y, int w, int h,
+			      int nx, int ny)
+{
+
+	struct {
+		cce_type3_header_t h;
+		cce_se_se_vtx_fmt_t vfmt;
+		cce_se_se_vf_cntl_t vctl;
+		/* TODO: this wrongly assumes float is 32 bit everywhere. */
+		float v1x, v1y, v1s, v1t; /* v1z; */ 
+		float v2x, v2y, v2s, v2t; /* v2z; */ 
+		float v3x, v3y, v3s, v3t; /* v3z; */ 
+	} packet;
+
+	RADEON_RESTORE_CTX(vis, RADEON_COPYBOX_CTX);
 	
+	memset(&packet, 0, sizeof(packet));
+
+	packet.h.it_opcode = CCE_IT_OPCODE_3D_DRAW_IMMD;
+	packet.h.count     = 13;
+	packet.h.type      = 3;
+
+	packet.vfmt.st0 = 1;
+	packet.vfmt.z = 0 /* 1 */;
+
+	packet.vctl.num_vertices = 3;
+	packet.vctl.en_maos = 1;
+	packet.vctl.fmt_mode = 1;
+	packet.vctl.prim_walk = 3;   /* Vertex data follows in packet. */
+	packet.vctl.prim_type = 8;   /* Rectangle list */
+
+	/* Order verts to prevent artifacts from overlapping copies. */
+	if (nx > x) {
+		packet.v2x = nx;
+		packet.v2y = ny;
+		packet.v2s = x;
+		packet.v2t = y;
+		packet.v1x = nx + w;
+		packet.v1y = ny;
+		packet.v1s = x + w;
+		packet.v1t = y;
+	} else {
+		packet.v1x = nx;
+		packet.v1y = ny;
+		packet.v1s = x;
+		packet.v1t = y;
+		packet.v2x = nx + w;
+		packet.v2y = ny;
+		packet.v2s = x + w;
+		packet.v2t = y;
+	}
+
+	packet.v3x = nx;
+	packet.v3y = ny + h;
+	packet.v3s = x;
+	packet.v3t = y + h;
+	
+	RADEON_WRITEPACKET(vis, packet);
+
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) RADEON_FLUSH(vis);	
 	return 0;
 }

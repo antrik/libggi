@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/01/10 01:16:47 skids Exp $
+/* $Id: gtext.c,v 1.3 2003/01/16 00:33:39 skids Exp $
 ******************************************************************************
 
    ATI Radeon text acceleration
@@ -31,15 +31,16 @@ typedef struct
 	uint32 dw1,dw2;
 } glyph;
 
-int GGI_kgi_radeon_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_kgi_radeon_putc_2d(ggi_visual *vis, int x, int y, char c)
 {
 	struct {
 	
 		cce_type3_header_t h;
 		cce_gui_control_t gc;
+		cce_scissor_t tl;
+		cce_scissor_t br;
 		cce_smalltext_t st;
-		cce_smallchar_t sc;
-	
+		cce_smallchar_t sc;	
 	} packet;
 	glyph *glyphs = (glyph*)font;
 	
@@ -49,15 +50,21 @@ int GGI_kgi_radeon_putc(ggi_visual *vis, int x, int y, char c)
 	packet.h.count     = sizeof(packet) / 4 - 2;
 	packet.h.type      = 0x3;
 	
+	packet.gc.dst_clipping = 1;
 	packet.gc.brush_type = 15;
 	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
 	packet.gc.src_type   = 0;
 	packet.gc.win31_rop  = ROP3_SRCCOPY;
 	packet.gc.src_load   = 3;
+
+        packet.tl.x = LIBGGI_GC(vis)->cliptl.x;
+        packet.tl.y = LIBGGI_GC(vis)->cliptl.y;
+        packet.br.x = LIBGGI_GC(vis)->clipbr.x;
+        packet.br.y = LIBGGI_GC(vis)->clipbr.y;
 	
 	packet.st.frgd_color = LIBGGI_GC_FGCOLOR(vis);
-	packet.st.bas_x      = x;
-	packet.st.bas_y      = y;
+	packet.st.bas_x = x;
+	packet.st.bas_y = y;
 	
 	packet.sc.w       = 8;
 	packet.sc.h       = 8;
@@ -70,12 +77,61 @@ int GGI_kgi_radeon_putc(ggi_visual *vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_kgi_radeon_puts(ggi_visual *vis, int x, int y, const char *string)
+int GGI_kgi_radeon_putc_3d(ggi_visual *vis, int x, int y, char c)
 {
 	struct {
 	
 		cce_type3_header_t h;
 		cce_gui_control_t gc;
+		cce_scissor_t tl;
+		cce_scissor_t br;
+		cce_smalltext_t st;
+		cce_smallchar_t sc;
+	
+	} packet;
+	glyph *glyphs = (glyph*)font;
+	
+	memset(&packet, 0, sizeof(packet));
+	
+	packet.h.it_opcode = CCE_IT_OPCODE_SMALL_TEXT;
+	packet.h.count     = sizeof(packet) / 4 - 2;
+	packet.h.type      = 0x3;
+
+	packet.gc.dst_clipping = 1;	
+	packet.gc.brush_type = 15;
+	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
+	packet.gc.src_type   = 0;
+	packet.gc.win31_rop  = ROP3_SRCCOPY;
+	packet.gc.src_load   = 3;
+
+        packet.tl.x = LIBGGI_GC(vis)->cliptl.x;
+        packet.tl.y = LIBGGI_GC(vis)->cliptl.y;
+        packet.br.x = LIBGGI_GC(vis)->clipbr.x;
+        packet.br.y = LIBGGI_GC(vis)->clipbr.y;
+	
+	packet.st.frgd_color = LIBGGI_GC_FGCOLOR(vis);
+	packet.st.bas_x = x;
+	packet.st.bas_y = y;
+	
+	packet.sc.w       = 8;
+	packet.sc.h       = 8;
+	packet.sc.dy      = 8;
+	packet.sc.raster1 = glyphs[(unsigned char)c].dw1;
+	packet.sc.raster2 = glyphs[(unsigned char)c].dw2;
+	
+	RADEON_WRITEPACKET(vis, packet);
+	
+	return 0;
+}
+
+int GGI_kgi_radeon_puts_2d(ggi_visual *vis, int x, int y, const char *string)
+{
+	struct {
+	
+		cce_type3_header_t h;
+		cce_gui_control_t gc;
+		cce_scissor_t tl;
+		cce_scissor_t br;
 		cce_smalltext_t st;
 	
 	} packet;
@@ -90,12 +146,72 @@ int GGI_kgi_radeon_puts(ggi_visual *vis, int x, int y, const char *string)
 	packet.h.it_opcode = CCE_IT_OPCODE_SMALL_TEXT;
 	packet.h.count     = sizeof(packet) / 4 - 2;
 	packet.h.type      = 0x3;
-	
+
+	packet.gc.dst_clipping = 1;	
 	packet.gc.brush_type = 15;
 	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
 	packet.gc.src_type   = 0;
 	packet.gc.win31_rop  = ROP3_SRCCOPY;
 	packet.gc.src_load   = 3;
+
+        packet.tl.x = LIBGGI_GC(vis)->cliptl.x;
+        packet.tl.y = LIBGGI_GC(vis)->cliptl.y;
+        packet.br.x = LIBGGI_GC(vis)->clipbr.x;
+        packet.br.y = LIBGGI_GC(vis)->clipbr.y;
+	
+	packet.st.frgd_color = LIBGGI_GC_FGCOLOR(vis);
+	packet.st.bas_x = x;
+	packet.st.bas_y = y;
+		
+	packet.h.count += strlen(string) * sizeof(sc) / 4;
+	RADEON_WRITEPACKET(vis, packet);
+
+	sc.w = 8;
+	sc.h = 8;
+
+	for (;*string; string++) {
+		sc.raster1 = glyphs[(unsigned char)*string].dw1;
+		sc.raster2 = glyphs[(unsigned char)*string].dw2;
+		RADEON_WRITEPACKET(vis, sc);
+		sc.dx = 8;
+	}
+
+	return 0;
+}
+
+int GGI_kgi_radeon_puts_3d(ggi_visual *vis, int x, int y, const char *string)
+{
+	struct {
+	
+		cce_type3_header_t h;
+		cce_gui_control_t gc;
+		cce_scissor_t tl;
+		cce_scissor_t br;
+		cce_smalltext_t st;
+	} packet;
+	cce_smallchar_t sc;
+	glyph *glyphs = (glyph*)font;
+
+	if (!string) return 0;
+	
+	memset(&packet, 0, sizeof(packet));
+	memset(&sc , 0, sizeof(sc));
+	
+	packet.h.it_opcode = CCE_IT_OPCODE_SMALL_TEXT;
+	packet.h.count     = sizeof(packet) / 4 - 2;
+	packet.h.type      = 0x3;
+	
+	packet.gc.dst_clipping = 1;
+	packet.gc.brush_type = 15;
+	packet.gc.dst_type   = RADEON_CONTEXT(vis)->dst_type;
+	packet.gc.src_type   = 0;
+	packet.gc.win31_rop  = ROP3_SRCCOPY;
+	packet.gc.src_load   = 3;
+
+        packet.tl.x = LIBGGI_GC(vis)->cliptl.x;
+        packet.tl.y = LIBGGI_GC(vis)->cliptl.y;
+        packet.br.x = LIBGGI_GC(vis)->clipbr.x;
+        packet.br.y = LIBGGI_GC(vis)->clipbr.y;
 	
 	packet.st.frgd_color = LIBGGI_GC_FGCOLOR(vis);
 	packet.st.bas_x = x;
