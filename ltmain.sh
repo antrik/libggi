@@ -1,9 +1,9 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.149 2005/02/01 17:44:27) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.158 2005/02/07 14:14:40) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.149 2005/02/01 17:44:27) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.158 2005/02/07 14:14:40) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.149 2005/02/01 17:44:27"
-package_revision=1.1667.2.149
+TIMESTAMP=" 1.1667.2.158 2005/02/07 14:14:40"
+package_revision=1.1667.2.158
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -466,7 +466,7 @@ func_version ()
         s/\((C)\)[ 0-9,-]*\( [1-9][0-9]*\)/\1\2/;
         p;
      }' < "$progpath"
-     exit $EXIT_SUCCESS
+     exit $?
 }
 
 # func_usage
@@ -480,7 +480,7 @@ func_usage ()
     }' < "$progpath"
     $ECHO
     $ECHO "run \`$progname --help | more' for full usage"
-    exit $EXIT_SUCCESS
+    exit $?
 }
 
 # func_help
@@ -499,7 +499,7 @@ func_help ()
 	s/\$autoconf_version/'"`(autoconf --version) 2>/dev/null |$SED 1q`"'/;
 	p;
      }' < "$progpath"
-    exit $EXIT_SUCCESS
+    exit $?
 }
 
 # func_missing_arg argname
@@ -586,7 +586,7 @@ func_config ()
       $SED -n "/$re_begincf TAG CONFIG: $tagname\$/,/$re_endcf TAG CONFIG: $tagname\$/p" < "$progpath"
     done
 
-    exit $EXIT_SUCCESS
+    exit $?
 }
 
 # func_features
@@ -605,7 +605,7 @@ func_features ()
       $ECHO "disable static libraries"
     fi
 
-    exit $EXIT_SUCCESS
+    exit $?
 }
 
 # func_enable_tag tagname
@@ -826,7 +826,7 @@ Otherwise, only FILE itself is deleted using RM."
     $ECHO
     $ECHO "Try \`$progname --help' for more information about other modes."
 
-    exit $EXIT_SUCCESS
+    exit $?
 }
 
 # Parse options once, thoroughly.  This comes as soon as possible in
@@ -1189,24 +1189,24 @@ extern \"C\" {
 
 	  # Prepare the list of exported symbols
 	  if test -z "$export_symbols"; then
-	    export_symbols="$output_objdir/$output.exp"
+	    export_symbols="$output_objdir/$outputname.exp"
 	    $run $RM $export_symbols
 	    $run eval "${SED} -n -e '/^: @PROGRAM@$/d' -e 's/^.* \(.*\)$/\1/p' "'< "$nlist" > "$export_symbols"'
 	    case $host in
 	    *cygwin* | *mingw* )
-              $run eval "${ECHO} EXPORTS "'> "$output_objdir/$output.def"'
-              $run eval 'cat "$export_symbols" >> "$output_objdir/$output.def"'
+              $run eval "${ECHO} EXPORTS "'> "$output_objdir/$outputname.def"'
+              $run eval 'cat "$export_symbols" >> "$output_objdir/$outputname.def"'
 	      ;;
 	    esac
 	  else
-	    $run eval "${SED} -e 's/\([][.*^$]\)/\\\1/g' -e 's/^/ /' -e 's/$/$/'"' < "$export_symbols" > "$output_objdir/$output.exp"'
+	    $run eval "${SED} -e 's/\([ ][.*^$]\)/\\\1/g' -e 's/^/ /' -e 's/$/$/'"' < "$export_symbols" > "$output_objdir/$outputname.exp"'
 	    case $host in
 	    *cygwin | *mingw* )
-	      $run eval "${ECHO} EXPORTS "'> "$output_objdir/$output.def"'
-	      $run eval 'cat "$output_objdir/$output.exp" >> "$output_objdir/$output.def"'
+	      $run eval "${ECHO} EXPORTS "'> "$output_objdir/$outputname.def"'
+	      $run eval 'cat "$output_objdir/$outputname.exp" >> "$output_objdir/$outputname.def"'
 	      ;;
 	    esac
-	    $run eval '$GREP -f "$output_objdir/$output.exp" < "$nlist" > "$nlist"T'
+	    $run eval '$GREP -f "$output_objdir/$outputname.exp" < "$nlist" > "$nlist"T'
 	    $run eval '$MV "$nlist"T "$nlist"'
 	  fi
 	fi
@@ -3090,6 +3090,8 @@ func_mode_link ()
 
       -mt|-mthreads|-kthread|-Kthread|-pthread|-pthreads|--thread-safe)
 	compiler_flags="$compiler_flags $arg"
+	compile_command="$compile_command $arg"
+	finalize_command="$finalize_command $arg"
 	continue
 	;;
 
@@ -3809,6 +3811,8 @@ func_mode_link ()
 	# it will not redefine variables installed, or shouldnotlink
 	installed=yes
 	shouldnotlink=no
+	avoidtemprpath=
+
 
 	# Read the .la file
 	case $lib in
@@ -3919,6 +3923,7 @@ func_mode_link ()
 	    dir="$libdir"
 	    absdir="$libdir"
 	  fi
+	  test "X$hardcode_automatic" = Xyes && avoidtemprpath=yes
 	else
 	  if test ! -f "$ladir/$objdir/$linklib" && test -f "$abs_ladir/$linklib"; then
 	    dir="$ladir"
@@ -4006,7 +4011,7 @@ func_mode_link ()
 	  if test -n "$library_names" &&
 	     { test "$prefer_static_libs" = no || test -z "$old_library"; }; then
 	    # We need to hardcode the library path
-	    if test -n "$shlibpath_var"; then
+	    if test -n "$shlibpath_var" && test -z "$avoidtemprpath" ; then
 	      # Make sure the rpath contains only unique directories.
 	      case "$temp_rpath " in
 	      *"$absdir:"*) ;;
@@ -4703,7 +4708,7 @@ func_mode_link ()
 
 	# Check that each of the things are valid numbers.
 	case $current in
-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
+	0|[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9]) ;;
 	*)
 	  func_error "CURRENT \`$current' is not a nonnegative integer"
 	  func_fatal_error "\`$vinfo' is not valid version information"
@@ -4711,7 +4716,7 @@ func_mode_link ()
 	esac
 
 	case $revision in
-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
+	0|[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9]) ;;
 	*)
 	  func_error "REVISION \`$revision' is not a nonnegative integer"
 	  func_fatal_error "\`$vinfo' is not valid version information"
@@ -4719,7 +4724,7 @@ func_mode_link ()
 	esac
 
 	case $age in
-	0 | [1-9] | [1-9][0-9] | [1-9][0-9][0-9]) ;;
+	0|[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9]) ;;
 	*)
 	  func_error "AGE \`$age' is not a nonnegative integer"
 	  func_fatal_error "\`$vinfo' is not valid version information"
