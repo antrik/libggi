@@ -105,11 +105,14 @@ typedef struct {
 	
 	/* Framebuffer information */
 	kgi_u16_t *fb;
+	kgi_u16_t *swatch;
+	kgi_u16_t *font;
 	kgi_size_t fb_size;
 
 	/* Options */
 	int use3d;
 	kgi_size_t swatch_size;
+	kgi_size_t font_size;
 	
 	/* Accelerator mapping functionality */
 	ggifunc_map_accel *map_accel;
