@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2005/01/29 13:52:42 cegger Exp $
+/* $Id: mode.c,v 1.11 2005/02/07 20:18:31 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -468,25 +468,25 @@ static int GGI_quartz_checkmode_windowed(ggi_visual *vis, ggi_mode *mode)
 	if (mode->frames == GGI_AUTO) mode->frames = 1;
 
 	if (mode->frames != 1) {
-		err = -1;
+		err = GGI_ENOMATCH;
 		mode->frames = 1;
 	}	/* if */
 
 	/* Quartz has no virtual resolutions. */
 	if (mode->virt.x != mode->visible.x) {
 		mode->virt.x = mode->visible.x;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}	/* if */
 
 	if (mode->virt.y != mode->visible.y) {
 		mode->virt.y = mode->visible.y;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}	/* if */
 
 	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
 	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
 	{
-		err = -1;
+		err = GGI_ENOMATCH;
 	}	/* if */
 	mode->dpp.x = mode->dpp.y = 1;
 
