@@ -104,15 +104,17 @@ typedef struct {
 	kgi_context_t ctx;
 	
 	/* Framebuffer information */
-	kgi_u16_t *fb;
-	kgi_u16_t *swatch;
-	kgi_u16_t *font;
+	kgi_u8_t *fb;
+	kgi_u8_t *swatch;
+	kgi_u8_t *swatch_gp; /* address as seen from the gpu */
+	kgi_u8_t *font;
+	kgi_u8_t *font_gp;   /* address as seen from the gpu */
+	kgi_size_t font_size;
 	kgi_size_t fb_size;
 
 	/* Options */
 	int use3d;
 	kgi_size_t swatch_size;
-	kgi_size_t font_size;
 	
 	/* Accelerator mapping functionality */
 	ggifunc_map_accel *map_accel;
