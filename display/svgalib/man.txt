@@ -38,3 +38,12 @@ Features
   support is only available if SVGAlib supports linear addressing.
 
 - Unaccelerated
+
+
+Bugs
+----
+
+- The getbox test of demo.c does not work correct on modeX.
+- copybox is not implemented for banked and modeX modes.
+- 1 and 4 bit modes don't work
+
