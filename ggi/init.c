@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.9 2003/07/13 07:21:07 cegger Exp $
+/* $Id: init.c,v 1.10 2003/10/12 10:06:05 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -309,16 +309,12 @@ ggi_visual *ggiOpen(const char *driver,...)
 		void *ret;
 
 		ggDPrintf(1, "LibGGI", "No explicit target specified.\n");
-		
+
 		/* Try the X display.. */
 		cp=getenv("DISPLAY");
 		if (cp!=NULL) {
 			strcpy(str,"display-x:");
-#ifdef HAVE_STRNCAT
-			strncat(str, cp, 1024);
-#else
-			strcat(str, cp);
-#endif
+			ggstrlcat(str, cp, sizeof(str));
 
 			ggDPrintf(1, "LibGGI", "Try to use X target...\n");
 			ret = ggiOpen(str,NULL);
@@ -333,7 +329,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 		if (ret != NULL)
 			return ret;
 #endif
-		
+
 		/* Try the framebuffer console.. */
 		ggDPrintf(1, "LibGGI", "Try to use fbdev target (framebuffer console)...\n");
 		ret = ggiOpen("display-fbdev", NULL);
@@ -531,8 +527,7 @@ ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
 	ext->paramchange = change;
 	ext->next = NULL;
 	ext->initcount = 1;
-	strncpy(ext->name, name, sizeof(ext->name));
-	ext->name[sizeof(ext->name)-1] = '\0';	/* Make sure it terminates */
+	ggstrlcpy(ext->name, name, sizeof(ext->name));
 
 	if (_ggiExtension) {
 		for (tmp = _ggiExtension; tmp->next; tmp=tmp->next) ;
