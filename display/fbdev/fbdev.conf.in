@@ -26,6 +26,11 @@ fb-accel-00-linear-32		default/fbdev/kgi/genkgi.@DLLEXT@
 # FB_ACCEL_ATI_MACH64GX		6       ATI Mach 64GX family         
 # FB_ACCEL_DEC_TGA		7       DEC 21030 TGA                
 # FB_ACCEL_ATI_MACH64CT		8       ATI Mach 64CT family         
+fb-accel-8-linear-8		default/fbdev/ati/mach64.@DLLEXT@
+fb-accel-8-linear-16		default/fbdev/ati/mach64.@DLLEXT@
+fb-accel-8-linear-24		default/fbdev/ati/mach64.@DLLEXT@
+fb-accel-8-linear-32		default/fbdev/ati/mach64.@DLLEXT@
+
 # FB_ACCEL_ATI_MACH64VT		9       ATI Mach 64CT family VT class 
 # FB_ACCEL_ATI_MACH64GT		10      ATI Mach 64CT family GT class 
 # FB_ACCEL_SUN_CREATOR		11      Sun Creator/Creator3D        
