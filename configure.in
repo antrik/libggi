@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.19 2001/08/16 09:26:45 thayne Exp $
+dnl $Id: configure.in,v 1.20 2001/08/16 10:44:48 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -93,6 +93,11 @@ build_fbdev_target=$enableval)
 AC_ARG_ENABLE(directfb,
 [  --disable-directfb      don't build the directfb renderer],
 build_directfb_renderer=$enableval)
+AC_ARG_WITH(directfb,
+[  --with-directfb=DIR     use directfb source dir DIR],
+  build_directfb_renderer=yes
+  directfb_src_dir=$withval,
+  directfb_src_dir=/usr/src/DirectFB)
 AC_ARG_ENABLE(genkgi,
 [  --disable-genkgi        don't build the generic KGI driver (used by fbdev)],
 build_genkgi_driver=$enableval)
@@ -388,19 +393,6 @@ fix->accel = 0;
     build_fbdev_target="no")
 fi
 
-if test "x$build_fbdev_target" == "xno"; then
-  build_directfb_renderer="no"
-fi
-
-if test "x$build_directfb_renderer" != "xno"; then
-
-   if test -d /usr/src/DirectFB; then
-     build_directfb_renderer="yes"
-   else
-     build_directfb_renderer="no"
-   fi
-fi
-
 if test "x$build_genkgi_driver" != "xno"; then
   AC_CHECK_HEADER(kgi/kgi.h, ,build_genkgi_driver="no")
 fi
@@ -569,6 +561,12 @@ fi
 AC_MSG_CHECKING(if we should build fbdev    target)
 if test "x$build_fbdev_target" = "xno"; then
   AC_MSG_RESULT(no)
+  if test "x$build_directfb_renderer" != "xno"; then
+    AC_MSG_WARN(directfb renderer requires fbdev!)
+    AC_MSG_WARN(     disabling directfb renderer)
+    AC_MSG_WARN(     enable fbdev or disable directfb to disable warning)
+    build_directfb_renderer="no"
+  fi
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS fbdev"
   if test "x$have_new_fbdev" = "xyes"; then
@@ -585,6 +583,14 @@ else
   FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
   build_directfb_renderer="yes"
   AC_MSG_RESULT(yes)
+  AC_MSG_CHECKING(if directfb dir $directfb_src_dir exists)
+  if test -d $directfb_src_dir; then
+    AC_MSG_RESULT(yes)
+  else
+    build_directfb_renderer=no
+    AC_MSG_RESULT(no)
+    AC_WARN(disabling directfb renderer)
+  fi
 fi
 
 AC_MSG_CHECKING(if we should build generic KGI driver)
@@ -807,6 +813,7 @@ AC_SUBST(FBDEVSUBDIRS)
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
 AC_SUBST(xf86dga_libs)
+AC_SUBST(directfb_src_dir)
 
 dnl Program specific substitutions
 AC_SUBST(SHMDEMOS)
