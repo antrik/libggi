@@ -12,14 +12,14 @@ noinst_PROGRAMS = demo flying_ggis pageflip saver slimy stars \
 	textdemo $(OPTDEMOS)
 
 # -lgg is needed for ggUSleep() and ggCurTime()
-demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
-flying_ggis_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg -lm
-saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm
-stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(bsdsock_libs)
-cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
+demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg ${THREADLIBS}
+flying_ggis_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm ${THREADLIBS}
+pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg -lm ${THREADLIBS}
+saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm ${THREADLIBS}
+slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm ${THREADLIBS}
+stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm ${THREADLIBS}
+wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(bsdsock_libs) ${THREADLIBS}
+cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm ${THREADLIBS}
+textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg ${THREADLIBS}
 
 EXTRA_DIST =

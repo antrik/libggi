@@ -1,5 +1,5 @@
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
-LDADD = ${top_builddir}/ggi/libggi.la ${monitest_extralibs}
+LDADD = ${top_builddir}/ggi/libggi.la ${monitest_extralibs} ${THREADLIBS}
 
 bin_PROGRAMS = monitest
 
