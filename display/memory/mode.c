@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/04/14 22:51:02 skids Exp $
+/* $Id: mode.c,v 1.3 2002/04/28 17:58:13 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -239,7 +239,7 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 			err = -1;
 		}
 	}
-	
+
 	if (mode->virt.x < mode->visible.x) {
 		mode->virt.x = mode->visible.x;
 		err = -1;
@@ -261,10 +261,10 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 	}
 	mode->dpp.x = mode->dpp.y = 1;
 
-	if (mode->size.x != GGI_AUTO || mode->size.y != GGI_AUTO) {
-		err = -1;
-	}
-	mode->size.x = mode->size.y = GGI_AUTO;
+	if (err) return err;
+	err = _ggi_figure_physz(mode, MEMORY_PRIV(vis)->physzflags, 
+				&(MEMORY_PRIV(vis)->physz),
+				0, 0, mode->visible.x, mode->visible.y);
 
 	return err;	
 }

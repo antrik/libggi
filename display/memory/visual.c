@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2002/04/14 22:51:02 skids Exp $
+/* $Id: visual.c,v 1.4 2002/04/28 17:58:13 skids Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -119,6 +119,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			fprintf(stderr, "display-memory: error in "
 				"arguments.\n");
 		}
+	}
+
+	if (_ggi_parse_physz(options[OPT_PHYSZ].result, 
+			     &(priv->physzflags), &(priv->physz))) { 
+		free(priv);
+		free(LIBGGI_GC(vis));
+		return GGI_EARGINVAL;
 	}
 
 	if (args && *args)	/* We have parameters. Analyze them. */
