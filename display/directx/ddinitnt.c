@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.7 2003/10/07 18:42:22 cegger Exp $
+/* $Id: ddinitnt.c,v 1.8 2003/10/07 19:26:57 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -392,28 +392,28 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 
 	switch (depth) {
 	case 1:
-		mode->graphtype = GT_1BIT;
+		deftype = GT_1BIT;
 		break;
 	case 2:
-		mode->graphtype = GT_2BIT;
+		deftype = GT_2BIT;
 		break;
 	case 4:
-		mode->graphtype = GT_4BIT;
+		deftype = GT_4BIT;
 		break;
 	case 8:
-		mode->graphtype = GT_8BIT;
+		deftype = GT_8BIT;
 		break;
 	case 15:
-		mode->graphtype = GT_15BIT;
+		deftype = GT_15BIT;
 		break;
 	case 16:
-		mode->graphtype = GT_16BIT;
+		deftype = GT_16BIT;
 		break;
 	case 24:
-		mode->graphtype = GT_24BIT;
+		deftype = GT_24BIT;
 		break;
 	case 32:
-		mode->graphtype = GT_32BIT;
+		deftype = GT_32BIT;
 		break;
 	}
 
