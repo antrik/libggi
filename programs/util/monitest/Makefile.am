@@ -4,7 +4,7 @@ LDADD = ${top_builddir}/ggi/libggi.la ${monitest_extralibs}
 bin_PROGRAMS = monitest
 
 monitest_SOURCES = drawlib.c flatpanel.c ggitext.c menu.c monitest.c \
-	pattern.c resolution.c window.c ${monitest_extrasrc}
+	pattern.c resolution.c window.c
 
 EXTRA_monitest_SOURCES = kgitune.c
 
