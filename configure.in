@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.117 2004/05/08 21:16:37 cegger Exp $
+dnl $Id: configure.in,v 1.118 2004/05/09 02:47:19 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -661,6 +661,7 @@ dnl includes (/usr/X11R6/include on most systems).
 		X11/extensions/Xdbe.h		\
 		X11/extensions/XEVI.h		\
 		X11/extensions/XShm.h		\
+		X11/extensions/xf86vmstr.h	\
 		X11/extensions/xf86vmode.h, [], [],
 		[#include <X11/Xlib.h>])
     CFLAGS="$cflags_old"
@@ -692,6 +693,30 @@ dnl includes (/usr/X11R6/include on most systems).
   		build_x_xf86dga_target=no,
 		[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ]),
 	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+
+    dnl XFree86 3.x has broken dga support
+    cflags_old="$CFLAGS"
+    cppflags_old="$CPPFLAGS"
+    if test -n "$x_includes" -a "x$x_includes" != "xNONE"; then
+	CFLAGS="$CFLAGS -I$x_includes"
+	CPPFLAGS="$CPPFLAGS -I$x_includes"
+    fi
+    if test "x$build_x_xf86dga_target" != "xno" -o "x$build_dga_target" != "xno"
+    then
+	if test "x$ac_cv_header_X11_extensions_xf86vmstr_h" != "xno"; then
+	AC_MSG_CHECKING(whether dga is working)
+	AC_TRY_COMPILE([
+#include <X11/Xlibint.h>
+#include <X11/extensions/xf86vmstr.h>
+#include <X11/extensions/Xext.h>
+	    ],[xXF86VidModeSetClientVersionReq *req;],
+	    [AC_MSG_RESULT(yes)],
+	    [AC_MSG_RESULT(no)
+	    build_dga_target="no"])
+	fi
+    fi
+    CFLAGS="$cflags_old"
+    CPPFLAGS="$cppflags_old"
 
     AC_CHECK_LIB(Xxf86vm_pic, XF86VidModeSwitchToMode,
 	x_helper_xf86vm_libs="-lXxf86vm_pic",
