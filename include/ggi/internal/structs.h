@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.1 2001/05/12 23:03:24 cegger Exp $
+/* $Id: structs.h,v 1.2 2001/05/25 23:18:33 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -165,7 +165,7 @@ typedef struct ggi_visual {
 	int		origin_y;
 	int		numknownext;	/* Number of registered extensions */
 	int		needidleaccel;	/* Accelerator must be idled before
-					   acessing framebuffer */
+					   accessing framebuffer */
 	int		accelactive;	/* Accelerator is active */
 	int		dummyint[6];	/* For future expansion */
 
