@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.13 2003/03/30 13:23:20 cegger Exp $
+/* $Id: misc.c,v 1.14 2003/04/02 15:20:21 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -353,7 +353,7 @@ int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype cthis) {
 		return 1;
 
 	/* prefer more colors or levels */
-	if (GT_DEPTH(than) < GT_DEPTH(than)) return 1;
+	if (GT_DEPTH(than) < GT_DEPTH(cthis)) return 1;
 
 	/* prefer palette to true/fixed color (of same depth.) */
 	if ((GT_SCHEME(than)==GT_STATIC_PALETTE) &&
