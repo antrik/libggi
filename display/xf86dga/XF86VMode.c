@@ -1,4 +1,4 @@
-/* $Id: XF86VMode.c,v 1.10 2004/09/18 10:50:34 cegger Exp $
+/* $Id: XF86VMode.c,v 1.11 2004/10/31 15:16:43 cegger Exp $
 
 This is a modified version of the XF86VMode API functions for use
 internally by the LibGGI xf86dga target.  Mods by Marcus Sundberg and
@@ -61,6 +61,7 @@ from Kaleb S. KEITHLEY.
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #ifndef MODE_BAD
 #define MODE_BAD 255

@@ -1,4 +1,4 @@
-/* $Id: linvtsw.h,v 1.1 2001/05/12 23:03:22 cegger Exp $
+/* $Id: linvtsw.h,v 1.2 2004/10/31 15:16:43 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -27,6 +27,8 @@
 
 #ifndef _GGI_DISPLAY_LINVTSW_H
 #define _GGI_DISPLAY_LINVTSW_H
+
+#include <ggi/internal/ggi-dl.h>
 
 typedef void (ggi_linvtsw_func)(void *vis);
 

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/09/10 22:01:37 cegger Exp $
+/* $Id: color.c,v 1.8 2004/10/31 15:16:42 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -33,8 +33,8 @@
 #include <linux/fb.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
+#include <ggi/internal/ggi_debug.h>
 
 void GGI_fbdev_color_reset(ggi_visual *vis);
 void GGI_fbdev_color_setup(ggi_visual *vis);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2004/10/29 22:29:09 cegger Exp $
+/* $Id: visual.c,v 1.21 2004/10/31 15:16:42 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -27,9 +27,9 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
 #include <ggi/display/linvtsw.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>

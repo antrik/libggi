@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/09/13 16:19:19 cegger Exp $
+/* $Id: visual.c,v 1.10 2004/10/31 15:16:39 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -31,6 +31,7 @@
 
 /* The default LibGGI font */
 #include <ggi/internal/font/8x8>
+#include <ggi/internal/ggi_debug.h>
 
     /*
      *  Generic Mach64 routines

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:24:59 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/10/31 15:16:42 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -29,8 +29,8 @@
 #define _GNU_SOURCE
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/linvtsw.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include <string.h>
 #include <errno.h>

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/04/04 14:31:59 mooz Exp $
+/* $Id: color.c,v 1.6 2004/10/31 15:16:43 cegger Exp $
 ******************************************************************************
 
    XF86DGA target: color
@@ -28,8 +28,8 @@
 
 #include <string.h>
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xf86dga.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_xf86dga_setPalette(ggi_visual * vis, size_t start, size_t size,

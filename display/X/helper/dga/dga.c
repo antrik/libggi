@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.5 2004/09/12 21:03:46 cegger Exp $
+/* $Id: dga.c,v 1.6 2004/10/31 15:16:41 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -28,8 +28,8 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
+#include <ggi/internal/ggi_debug.h>
 #include <X11/extensions/xf86dga.h>
 
 #if 0

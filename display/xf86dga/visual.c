@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/10/29 22:45:32 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/10/31 15:16:43 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -27,8 +27,8 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/xf86dga.h>
+#include <ggi/internal/ggi_debug.h>
 #include "xf86dga.h"
 
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.4 2004/09/10 22:01:37 cegger Exp $
+/* $Id: pan.c,v 1.5 2004/10/31 15:16:42 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -31,8 +31,8 @@
 #include <linux/fb.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2004/09/13 08:43:15 cegger Exp $
+/* $Id: mode.c,v 1.19 2004/10/31 15:16:42 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -37,8 +37,8 @@
 #include <linux/fb.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/fbdev.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/gt-auto.inc"
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/09/13 16:19:59 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/10/31 15:16:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -31,6 +31,8 @@
 
 /* The default LibGGI font */
 #include <ggi/internal/font/8x8>
+
+#include <ggi/internal/ggi_debug.h>
 
 
 static int m2164w_acquire(ggi_resource *res, uint32 actype)
