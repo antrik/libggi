@@ -35,9 +35,9 @@ has the format <type>:<specifier>. The available types are inet
 and unix. The specifier for type inet has the format hostname:port,
 and for type unix, it is a file. Some examples::
 
-  - ``GGI_DISPLAY=tele:inet:localhost:27780``
-  - ``GGI_DISPLAY=tele::192.168.1.2:27780`` (inet is the default)
-  - ``GGI_DISPLAY=tele:unix:/tmp/.tele0``
+  - GGI_DISPLAY=tele:inet:localhost:27780
+  - GGI_DISPLAY=tele::192.168.1.2:27780 (inet is the default)
+  - GGI_DISPLAY=tele:unix:/tmp/.tele0
 
 
 Features
