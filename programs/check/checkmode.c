@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.3 2001/07/10 15:10:00 cegger Exp $
+/* $Id: checkmode.c,v 1.4 2003/02/14 14:37:45 fries Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -54,6 +54,7 @@ struct resolution {
 	{800,600},
 	{1024,768},
 	{1152,864},
+	{1152,900}, /* STD Sparc graphics resolution */
 	{1200,1024},
 	{1600,1200},
 	{0,0}          /* End mark!! */
@@ -498,7 +499,7 @@ void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.3 2001/07/10 15:10:00 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.4 2003/02/14 14:37:45 fries Exp $\n");
 	exit(0);
 }
 
