@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2003/04/25 13:10:38 ggibecka Exp $
+/* $Id: mode.c,v 1.15 2003/05/01 08:07:15 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -128,7 +128,7 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	if (_ggi_x_fit_geometry(vis, tm, best, tm) != GGI_OK) {
 		GGIDPRINT("This should not happen\n");
 	}
-	return GGI_OK;
+	return -1;
 
  suggest2:
 	/* Adjust the graphtype up one notch if possible.  
@@ -340,10 +340,12 @@ oldparent:
 	GGIDPRINT("viidx = %i\n", priv->viidx);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
-		/* xlib lock is still acquired here - unlock before exiting */
-		GGIDPRINT("priv->createfb failed.\n");
-		ggUnlock(priv->xliblock);
-		if (err) goto err0;
+		if (err) {
+			/* xlib lock is still acquired here - unlock before exiting */
+			GGIDPRINT("priv->createfb failed.\n");
+			ggUnlock(priv->xliblock);
+			goto err0;
+		}
 	}
 
 	_ggi_x_free_colormaps(vis);
@@ -490,9 +492,12 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	_ggi_x_load_slaveops(vis);
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
-		/* xlib lock is still acquired here - unlock before exiting */
-		ggUnlock(priv->xliblock);
-		if (err) goto err0;
+		if (err) {
+			/* xlib lock is still acquired here - unlock before exiting */
+			GGIDPRINT("priv->createfb failed.\n");
+			ggUnlock(priv->xliblock);
+			goto err0;
+		}
 	}
 
 	_ggi_x_free_colormaps(vis);
