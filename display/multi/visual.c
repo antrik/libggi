@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/10/31 14:25:03 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/11/03 13:14:47 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -50,8 +50,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}
 
-	priv = GGIMULTI_PRIV(vis) = malloc(sizeof(ggi_multi_priv));
+	priv = malloc(sizeof(ggi_multi_priv));
 	if (priv == NULL) return GGI_ENOMEM;
+	LIBGGI_PRIVATE(vis) = priv;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
