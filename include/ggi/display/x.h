@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.1 2001/05/12 23:03:19 cegger Exp $
+/* $Id: x.h,v 1.2 2001/07/31 08:13:13 cegger Exp $
 ******************************************************************************
 
    Display-X: data
@@ -54,6 +54,9 @@ ggifunc_setflags	GGI_X_setflags;
 
 ggifunc_setpalvec	GGI_X_setpalvec;
 
+
+#define X_FRAME_MAXNUM	8
+
 typedef struct {
 	ggi_xwin_common	 xwin;
 
@@ -61,12 +64,12 @@ typedef struct {
 	int      xoff, yoff;	/* We can pan, too */
 	int      ysplit;	/* Emulating Splitline ;-) */
 	int      viswidth, visheight;
-	XImage  *ximage;		/* Current frame */
-	XImage  *ximage_list[8];	/* List of frames */
+	XImage  *ximage;			/* Current frame */
+	XImage  *ximage_list[X_FRAME_MAXNUM];	/* List of frames */
 	_ggi_opmansync *opmansync;
 	
 #ifdef HAVE_SHM
-	XShmSegmentInfo shminfo[8];	/* Segment info. */
+	XShmSegmentInfo shminfo[X_FRAME_MAXNUM];/* Segment info. */
 	int     have_shm;
 #endif
 } ggi_x_priv;
