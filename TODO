@@ -41,6 +41,8 @@ Due : ????-??-??
   parser/construction functions for them in the LibGGI internal interface.
   (Christoph Egger)
 - add helper target for dirty-region management
++ look at  egrep -ri "return[[:space:]]*\-"  and peruse proper defines for
+  retval where applicable
 
 
 [Target specific issues]
