@@ -2605,6 +2605,14 @@ ggiResourceRelease(dbuf-&gt;resource);
 </example>
 </refsect1>
 
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="ref-struct-ggi-directbuffer"/></member>
+</simplelist>
+</refsect1>
+
+
 </refentry>
 
 
@@ -2705,6 +2713,30 @@ DirectBuffer structure.  </para>
 </refsect1>
 
 <refsect1>
+<title>Types of Buffers</title>
+
+<para>
+Only the framebuffer is defined currently. Other types of buffers,
+such as stencil, z will be defined by appropriate GGI extensions.
+</para>
+
+<para>
+A frame buffer may be organized as several distinct buffers.
+Each buffer may have a different layout. This means both the
+addressing scheme to be used as well as the addressing
+parameters may differ from buffer to buffer.
+</para>
+
+<para>
+A framebuffer is denoted by
+<structfield>ggi_directbuffer.type</structfield>==<symbol>GGI_DB_NORMAL</symbol>.
+Each frame has its own buffer, and its number is indicated in
+<structfield>ggi_directbuffer.frame</structfield>.
+</para>
+
+</refsect1>
+
+<refsect1>
 <title>Examples</title>
 
 <example>
@@ -2787,7 +2819,6 @@ for(i = 0; i &lt; numbufs; i++)
 <simplelist type="inline">
 <member><xref linkend="ref-struct-ggi-directbuffer"/></member>
 <member><xref linkend="api-ggiresourceacquire"/></member>
-
 </simplelist>
 </refsect1>
 
