@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: fbdev.h,v 1.3 2003/07/05 20:35:01 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -129,9 +129,16 @@ typedef struct {
 
 #define FBDEV_PRIV(vis) ((ggi_fbdev_priv *)LIBGGI_PRIVATE(vis))
 
+
+/* BIG NOTE: ioctl() has different types in the parameters:
+ * Solaris: int ioctl(int fildes, int request, ...);
+ * Linux: extern int ioctl (int __fd, unsigned long int __request, ...);
+ * Since fbdev is Linux specific we use Linux's semantic
+ */
+
 /* Multihead safe ioctls */
 #ifdef FBDEV_MH
-static inline int fbdev_doioctl(ggi_visual *vis, int req, void *arg)
+static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
 {
 	struct fb_con2fbmap conmap;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
@@ -162,7 +169,7 @@ static inline int fbdev_doioctl(ggi_visual *vis, int req, void *arg)
 	}
 }
 #else
-static inline int fbdev_doioctl(ggi_visual *vis, int req, void *arg)
+static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
 {
 	return ioctl(LIBGGI_FD(vis), req, arg);
 }
