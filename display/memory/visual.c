@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2004/11/27 16:42:24 soyt Exp $
+/* $Id: visual.c,v 1.25 2005/01/03 14:38:45 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -227,9 +227,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
-	/* Explicit pixelformat: braindead parser until GGI core gets a 
-	 * generic function.  Note we know the string is NULL terminated.
-	 */
+	/* Explicit pixelformat. */
 	if (options[OPT_PIXFMT].result[0]) {
 		_ggi_parse_pixfmtstr(options[OPT_PIXFMT].result, '\0', NULL,
 				strlen(options[OPT_PIXFMT].result)+1,
