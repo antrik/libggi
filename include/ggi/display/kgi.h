@@ -32,9 +32,11 @@
 
 #ifndef __FreeBSD__
 #  include <kgi/system.h>
+#  include <kgi/kgi.h>
 #  include <kgi/cmd.h>
+#else
+#  include <kgi/kgi.h>
 #endif
-#include <kgi/kgi.h>
 
 #include <ggi/internal/ggi-dl.h>
 
