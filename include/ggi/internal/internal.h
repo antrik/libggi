@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: internal.h,v 1.3 2002/05/11 01:16:15 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -74,6 +74,7 @@ int _ggiAddDL(ggi_visual *vis, const char *drv, const char *args,
 	      void *argptr, int type);
 
 /* internal.c */
+int _ggi_countbits(uint32 val);
 int _ggi_mask2shift(uint32 mask);
 void _ggi_build_pixfmt(ggi_pixelformat *pixfmt);
 int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col);

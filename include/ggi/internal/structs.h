@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.2 2001/05/25 23:18:33 skids Exp $
+/* $Id: structs.h,v 1.3 2002/05/11 01:16:15 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -80,6 +80,17 @@ typedef struct ggi_gc
 
 } ggi_gc;
 
+/* Gamma state structure. */
+typedef struct ggi_gammastate
+{
+	ggi_float	gamma_r, gamma_g, gamma_b; /* gamma factors */
+	ggi_color	*map;		 /* Explicitly provided map */
+	/* Number of writeable/readable entries in map. */
+	/* maxwrite_* == -1 means only factors usable.  */
+	int		maxwrite_r, maxwrite_g, maxwrite_b;
+	int		maxread_r, maxread_g, maxread_b;
+} ggi_gammastate;
+
 /* Resource structure */
 struct ggi_resource;
 typedef struct ggi_resource {
@@ -150,9 +161,8 @@ typedef struct ggi_visual {
 
 	ggi_flags	flags;		/* Flags */
 
-	ggi_float	gamma_red;	/* Current gamma settings */
-	ggi_float	gamma_green;
-	ggi_float	gamma_blue;
+        /* used to be gamma. pad for binary compat until next major release. */
+        ggi_float	dummy1, dummy2, dummy3; 
 	
 	/*
 	  Integer values [9/15]
@@ -203,11 +213,9 @@ typedef struct ggi_visual {
 
 	void	*drvpriv[_GGI_NROF_HELPERS];	/* Driver private data */
 
-	/* Obsolete { */
-	void		*helperpriv;	/* Helper private data */
-	void		*genericpriv;	/* Generic library private data */
+	void		*helperpriv;    /* Helper library private data */
+	ggi_gammastate	*gamma;		/* was genericpriv (obselete) */
 	void		*colorpriv;	/* Color library private data */
-	/* } */
 } ggi_visual;
 
 #define GGI_DL_ERROR		0x80000000
