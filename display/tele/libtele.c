@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.11 2005/03/11 08:36:21 pekberg Exp $
+/* $Id: libtele.c,v 1.12 2005/03/16 11:30:32 pekberg Exp $
 ******************************************************************************
 
    libtele.c
@@ -504,6 +504,89 @@ static int tclient_open_unix(TeleClient *c, const char *addr)
 }
 #endif /* HAVE_UNIX_DOMAIN_SOCKET */
 
+/* If a blocking connect is interrupted by a signal, it behaves as a
+ * non-blocking connect (according to SUSv3). Add extra code to
+ * properly wait for the connection to complete or fail when a
+ * signal interrupts a connection attempt.
+ */
+static int tclient_connect(int fd, struct sockaddr *serv_addr, int addrlen)
+{
+	int err;
+	fd_set wfds, efds;
+
+	if (connect(fd, serv_addr, addrlen) >= 0)
+		return TELE_OK;
+
+	if (errno != EINTR) {
+		perror("tclient: connect");
+		return -1;
+	}
+
+	do {
+		struct timeval tv;
+
+		FD_ZERO(&wfds);
+		FD_SET(fd, &wfds);
+		FD_ZERO(&efds);
+		FD_SET(fd, &efds);
+
+		tv.tv_sec = 1;
+		tv.tv_usec = 0;
+
+		err = select(fd+1, NULL, &wfds, &efds, &tv);
+	} while ((err < 0) && (errno == EINTR));
+
+	if (err < 0) {
+		perror("tclient: select");
+		return -1;
+	}
+
+	if (FD_ISSET(fd, &efds)) {
+		fprintf(stderr, "tclient: connect\n");
+		return -1;
+	}
+
+	if (!FD_ISSET(fd, &wfds)) {
+		/* Can this happen? */
+		fprintf(stderr, "tclient: connect\n");
+		return -1;
+	}
+	
+	return TELE_OK;
+
+#if 0
+	struct pollfd unix_really_sucks;
+	int some_more_junk;
+	int yet_more_useless_junk;
+	/* connect interrupted by signal, it should now
+	 * behave as a non-blovking connect. Use poll
+	 * to find out when the connect has finished.
+	 */
+	unix_really_sucks.fd = c->sock_fd;
+	unix_really_sucks.events = POLLOUT;
+	while (poll(&unix_really_sucks, 1, -1) < 0)
+		if (errno != EINTR) {
+			perror("tclient: poll");
+			close(c->sock_fd);
+			return -1;
+		}
+	yet_more_useless_junk = sizeof(some_more_junk);
+	if (getsockopt(c->sock_fd, SOL_SOCKET, SO_ERROR,
+		       &some_more_junk,
+		       &yet_more_useless_junk) < 0) {
+		perror("tclient: getsockopt");
+		close(c->sock_fd);
+		return -1;
+	}
+	if (some_more_junk != 0) {
+		fprintf(stderr, "tclient: connect: %s\n",
+			strerror(some_more_junk));
+		close(c->sock_fd);
+		return -1;
+	}
+#endif
+}
+
 static int tclient_open_inet(TeleClient *c, const char *addr)
 {
 	struct sockaddr_in dest_in;
@@ -557,18 +640,13 @@ static int tclient_open_inet(TeleClient *c, const char *addr)
 		return -1;
 	}
 
-	do {
-		err = connect(c->sock_fd, (struct sockaddr *) &dest_in, 
+	err = tclient_connect(c->sock_fd, (struct sockaddr *) &dest_in,
 			      sizeof(dest_in));
-	} while ((err < 0) && (errno == EINTR));
 
-	if (err < 0) {
-		perror("tclient: connect");
+	if (err < 0)
 		close(c->sock_fd);
-		return -1;
-	}
 
-	return TELE_OK;
+	return err;
 }
 
 int tclient_open(TeleClient *c, const char *addrspec)
