@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/09/20 12:54:29 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/09/20 13:15:16 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -194,37 +194,34 @@ static void testcase4(const char *desc)
 	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
 
 	err = ggiCheckMode(vis, &mode);
-
-	if (mode.size.x == GGI_AUTO) {
-		printfailure(
-			"ggiCheckMode: size.x: expected return value: not GGI_AUTO\n"
-					"actual return value: GGI_AUTO\n");
-		ggiClose(vis);
-		ggiExit();
-		return;
-	}
-
-	if (mode.size.y == GGI_AUTO) {
-		printfailure(
-			"ggiCheckMode: size.y: expected return value: not GGI_AUTO\n"
-					"actual return value: GGI_AUTO\n");
-		ggiClose(vis);
-		ggiExit();
-		return;
-	}
-
 	ggiClose(vis);
 	ggiExit();
 	
-	if (err == GGI_OK || err == GGI_ENOMATCH) {
-		printsuccess();
+	printassert(err == GGI_OK || err == GGI_ENOMATCH,
+		"ggiCheckMode should return GGI_OK or GGI_ENOMATCH, not %i\n",
+		err);
+
+	printassert(err == GGI_OK,
+		"physical size is apparently not supported\n");
+
+	if (err != GGI_OK)
+		;
+	else if (mode.size.x <= 1) {
+		printfailure(
+			"ggiCheckMode: size.x: expected return value: > 1\n"
+					"actual return value: %i\n",
+			mode.size.x);
+		return;
+	}
+	else if (mode.size.y <= 1) {
+		printfailure(
+			"ggiCheckMode: size.y: expected return value: > 1\n"
+					"actual return value: %i\n",
+			mode.size.y);
 		return;
 	}
 
-	printfailure(
-		"ggiSetMode: err: expected return value: GGI_OK or GGI_ENOMATCH\n"
-				"actual return value: %i\n", err);
-	return;
+	printsuccess();
 }
 
 
