@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.10 2003/10/07 20:24:57 cegger Exp $
+/* $Id: ddinitnt.c,v 1.11 2003/10/08 08:51:16 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -28,8 +28,6 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include "ddinit.h"
-
-#include "../common/ggi-auto.inc"
 
 
 LPDIRECTDRAW lpdd = NULL;
@@ -310,23 +308,6 @@ DDInitThread(LPVOID lpParm)
 	return msg.wParam;
 }
 
-HRESULT DDShutdown(void)
-{
-	return SendMessage(hWnd, WM_DESTROY, 0, (LPARAM) NULL);
-}
-
-char locked = 0;
-
-char *DDLock(void)
-{
-	return (char *) lpSurfaceAdd;
-}
-
-HRESULT DDUnlock(void)
-{
-	return 0;
-}
-
 HRESULT redraw(void)
 {
 
@@ -356,124 +337,4 @@ int DXChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
 	}
 
 	return rc;
-}
-
-HRESULT DDChangeMode(directx_priv * priv, DDCMS * ddcms)
-{
-	return SendMessage(hWnd, WM_DDCHANGEMODE, 0, (LPARAM) ddcms);
-}
-
-static void GetScreenParams(int *depth, int *width, int *height)
-{
-	HWND wnd = GetDesktopWindow();
-	HDC dc = GetDC(wnd);
-	*depth = GetDeviceCaps(dc, BITSPIXEL);
-	*width = GetDeviceCaps(dc, HORZRES);
-	*height = GetDeviceCaps(dc, VERTRES);
-	ReleaseDC(wnd, dc);
-}
-
-int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
-{
-	uint8 i;
-	uint8 err = 0;
-	int depth, width, height, defwidth, defheight;
-	ggi_graphtype deftype;
-
-	GetScreenParams(&depth, &width, &height);
-	defwidth = width * 9 / 10;
-	defheight = height * 9 / 10;
-
-	/* handle AUTO */
-	_GGIhandle_ggiauto(mode, defwidth, defheight);
-
-	if (mode->frames < 1) {
-		err = -1;
-		mode->frames = 1;
-	} else if (mode->frames > 2) {
-		err = -1;
-		mode->frames = 1;
-	}
-
-	switch (depth) {
-	case 1:
-		deftype = GT_1BIT;
-		break;
-	case 2:
-		deftype = GT_2BIT;
-		break;
-	case 4:
-		deftype = GT_4BIT;
-		break;
-	case 8:
-		deftype = GT_8BIT;
-		break;
-	case 15:
-		deftype = GT_15BIT;
-		break;
-	case 16:
-		deftype = GT_16BIT;
-		break;
-	case 24:
-		deftype = GT_24BIT;
-		break;
-	case 32:
-		deftype = GT_32BIT;
-		break;
-	default:
-		deftype = GT_AUTO;
-		err = -1;
-		break;
-	}
-
-	if (GT_DEPTH(mode->graphtype) == GT_AUTO) {
-		mode->graphtype = deftype;
-	}
-
-	if (!(mode->visible.x > 0 && mode->visible.y > 0 &&
-		mode->visible.x <= width && mode->visible.y <= height &&
-		GT_SIZE(mode->graphtype) == depth))
-	{
-		mode->visible.x = defwidth;
-		mode->visible.y = defheight;
-		mode->graphtype = deftype;
-		err = -1;
-	}
-
-	if (mode->virt.x != mode->visible.x) {
-		mode->virt.x = mode->visible.x;
-		err = -1;
-	}
-	if (mode->virt.y != mode->visible.y) {
-		mode->virt.y = mode->visible.y;
-		err = -1;
-	}
-
-	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
-	   (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
-	{
-		err = -1;
-	}
-	mode->dpp.x = mode->dpp.y = 1;
-
-	if (err) return err;
-	err = _ggi_figure_physz(mode, DIRECTX_PRIV(vis)->physzflags,
-				&(DIRECTX_PRIV(vis)->physz),
-				0, 0, mode->visible.x, mode->visible.y);
-
-	return err;
-}
-
-
-DDMBS MessageData;
-
-HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption)
-{
-
-	MessageData.hWnd = hWnd;
-	MessageData.text = text;
-	MessageData.caption = caption;
-	MessageData.type = MB_OK;
-	SendMessage(hWnd, WM_DDMESSAGEBOX, 0, (LPARAM) & MessageData);
-	return 0;
 }

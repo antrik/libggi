@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2003/10/06 21:33:49 cegger Exp $
+/* $Id: mode.c,v 1.5 2003/10/08 08:51:16 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -34,6 +34,7 @@
 #include "ddinit.h"
 
 #include "../common/pixfmt-setup.inc"
+#include "../common/ggi-auto.inc"
 
 static int
 directx_acquire(ggi_resource * res, uint32 actype)
@@ -126,12 +127,109 @@ int GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments
 	return -1;
 }
 
+
+
+int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
+{
+	uint8 i;
+	uint8 err = 0;
+	int depth, width, height, defwidth, defheight;
+	ggi_graphtype deftype;
+
+	GetScreenParams(&depth, &width, &height);
+	defwidth = width * 9 / 10;
+	defheight = height * 9 / 10;
+
+	/* handle AUTO */
+	_GGIhandle_ggiauto(mode, defwidth, defheight);
+
+	if (mode->frames < 1) {
+		err = -1;
+		mode->frames = 1;
+	} else if (mode->frames > 2) {
+		err = -1;
+		mode->frames = 1;
+	}
+
+	switch (depth) {
+	case 1: 
+		deftype = GT_1BIT; 
+		break;
+	case 2: 
+		deftype = GT_2BIT;  
+		break;
+	case 4: 
+		deftype = GT_4BIT;
+		break;   
+	case 8:
+		deftype = GT_8BIT;
+		break;
+	case 15:
+		deftype = GT_15BIT;
+		break;
+	case 16:
+		deftype = GT_16BIT;
+		break;
+	case 24:
+		deftype = GT_24BIT;
+		break;
+	case 32:
+		deftype = GT_32BIT;  
+		break;
+	default:
+		deftype = GT_AUTO;
+		err = -1;
+		break;
+	}
+
+	if (GT_DEPTH(mode->graphtype) == GT_AUTO) {
+		mode->graphtype = deftype;
+	}
+
+	if (!(mode->visible.x > 0
+	   && mode->visible.y > 0
+	   && mode->visible.x <= width
+	   && mode->visible.y <= height
+	   && GT_SIZE(mode->graphtype) == depth))
+	{
+		mode->visible.x = defwidth;
+		mode->visible.y = defheight;
+		mode->graphtype = deftype;
+		err = -1;
+	}
+
+	if (mode->virt.x != mode->visible.x) {
+		mode->virt.x = mode->visible.x;
+		err = -1;
+	}       
+	if (mode->virt.y != mode->visible.y) {
+		mode->virt.y = mode->visible.y;
+		err = -1;
+	}
+
+	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
+	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
+	{
+		err = -1;
+	}
+	mode->dpp.x = mode->dpp.y = 1;
+
+	if (err) return err;
+	err = _ggi_figure_physz(mode, DIRECTX_PRIV(vis)->physzflags,
+				&(DIRECTX_PRIV(vis)->physz),
+				0, 0, mode->visible.x, mode->visible.y);
+                
+	return err;
+}
+
+
+
+
 int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 {
-
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	int i, id, ret;
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 
 	ret = ggiCheckMode(vis, mode);
 	if (ret != 0) {
@@ -182,7 +280,6 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		GGIDPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
 			       LIBGGI_APPBUFS(vis)[i]->read,
 			       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
-
 	}
 
 	vis->r_frame = LIBGGI_APPBUFS(vis)[0];
@@ -208,14 +305,6 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
 
 	return 0;
-}
-
-
-int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * tm)
-{
-	int rc;
-	rc = DDCheckMode(vis, tm);
-	return rc;
 }
 
 

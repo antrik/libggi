@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.4 2003/10/07 20:24:57 cegger Exp $
+/* $Id: ddinit.h,v 1.5 2003/10/08 08:51:16 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -77,5 +77,6 @@ int DDCheckMode(ggi_visual *vis, ggi_mode *mode);
 char *DDLock(void);
 HRESULT DDUnlock(void);
 HRESULT DDMessageBox(HWND hWnd, LPCTSTR text, LPCTSTR caption);
+void GetScreenParams(int *depth, int *width, int *height);
 
 __END_DECLS
