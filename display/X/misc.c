@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.32 2005/02/10 18:44:50 cegger Exp $
+/* $Id: misc.c,v 1.33 2005/02/10 21:47:25 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -648,8 +648,8 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 	if( img0 == NULL )
 		return NULL;
 	
-	img0->width = (unsigned)w;
-	img0->height = (unsigned)h;          
+	img0->width = w;
+	img0->height = h;          
 	img0->xoffset = 0;         /* number of pixels offset in X direction */
 	img0->format = ZPixmap;    /* XYBitmap, XYPixmap, ZPixmap */
 	img0->data = data;         /* pointer to image data */
@@ -672,21 +672,27 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 
 	/* XXX: what does bitmap_unit mean?  I put 8 here, but I don't
 	 * know if that's always the right value. */
+#if 0
 	img0->bitmap_unit = BitmapUnit(priv->disp);	/* quant. of scanline 8, 16, 32 */
 	img0->bitmap_pad = BitmapPad(priv->disp);	/* 8, 16, 32 either XY or ZPixmap */
+#endif
+	img0->bitmap_unit = img0->bitmap_pad = 0;
 	DPRINT_MISC("bitmap_unit = %i\n", img0->bitmap_unit);
 	DPRINT_MISC("bitmap_pad = %i\n", img0->bitmap_pad);
 
 
-	img0->depth =(unsigned)LIBGGI_PIXFMT(vis)->depth; /* depth of image */
+	img0->depth = fmt->depth;	/* depth of image */
 	img0->bits_per_pixel = fmt->size;  /* bits per pixel (ZPixmap) */
 	img0->red_mask = fmt->red_mask;    /* bits in z arrangment */
 	img0->green_mask = fmt->green_mask;
 	img0->blue_mask = fmt->blue_mask;
+	img0->obdata = NULL;
 
-	/* XInitImage() will calculate this one */
-	img0->bytes_per_line = 0;  /* accelarator to next line */
-	
+	/* XInitImage() will calculate this one, if we set it to 0.
+	 * But we do not trust XInitImage() to calculate it right.
+	 */
+	img0->bytes_per_line = ((w * fmt->size + 7) / 8);  /* accelarator to next line */
+
 	if( XInitImage(img0) ) {
 		free(img0);
 		DPRINT("XInitImage failed!\n");
