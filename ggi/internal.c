@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.12 2003/07/04 23:09:28 cegger Exp $
+/* $Id: internal.c,v 1.13 2004/02/05 09:34:58 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -230,58 +230,195 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 	}
 }
 
+
+
+int _ggi_parse_pixfmtstr(const char *pixfmtstr,
+		char separator, char **endptr,
+		size_t pixfmtstr_len,
+		ggi_pixel *r_mask, ggi_pixel *g_mask,
+		ggi_pixel *b_mask, ggi_pixel *a_mask)
+{
+	ggi_pixel *curr = NULL;
+	char *ptr = (char *)pixfmtstr;
+	unsigned long nbits;
+
+	LIBGGI_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
+	LIBGGI_ASSERT(r_mask != NULL, "r_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(r_mask != NULL, "g_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(r_mask != NULL, "b_mask doesn't have to be NULL");
+	LIBGGI_ASSERT(r_mask != NULL, "a_mask doesn't have to be NULL");
+
+	*r_mask = *g_mask = *b_mask = *a_mask = 0;
+
+	while (pixfmtstr_len--
+		&& (*ptr != '\0' || *ptr != separator))
+	{
+		switch (*ptr) {
+		case 'p':	/* pad */
+		case 'a':	/* alpha */
+			curr = a_mask;
+			break;
+		case 'r':	/* red */
+			curr = r_mask;
+			break;
+		case 'g':	/* green */
+			curr = g_mask;
+			break;
+		case 'b':	/* blue */
+			curr = b_mask;
+			break;
+
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			nbits = strtoul(ptr, NULL, 10);
+			*r_mask <<= nbits;
+			*g_mask <<= nbits;
+			*b_mask <<= nbits;
+			*a_mask <<= nbits;
+			if (curr != NULL)
+				*curr |= ((1 << nbits) - 1);
+			break;
+
+		default:
+			GGIDPRINT("_ggi_parse_pixfmtstr: Detected invalid character: %c\n",
+					*ptr);
+			goto err0;
+		}
+		ptr++;
+	}
+
+	if (endptr != NULL) *endptr = ptr;
+
+	return GGI_OK;
+
+err0:
+	if (endptr != NULL) *endptr = ptr;
+	return GGI_ENOMATCH;
+}	/* _ggi_parse_pixfmtstr */
+
+
 /* Generate a string representing the pixelformat e.g. r5g6b5.
    This can be used for dl loading or for passing pixfmt through 
    stringified/user-accessible interfaces.   Note these strings
    don't use the same format as GGI_DB_STD_*, though it would be
    nice if we could change GGI_DB_STD_* and depricate old values. */
 /* TODO: flesh this out                                       */
-void _ggi_pixfmtstr (ggi_visual *vis, char* str, int flags)
+int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
+			size_t pixfmtstr_len, int flags)
 {
-	if (flags & 1) {
+	LIBGGI_ASSERT(vis != NULL, "Invalid visual");
+	LIBGGI_ASSERT(pixfmtstr != NULL, "Invalid string pointer");
+	LIBGGI_ASSERT(pixfmtstr_len > 0, "Invalid string length");
+
+	if ((flags != GGI_PIXFMT_GRAPHTYPE)
+	   && (flags != GGI_PIXFMT_CHANNEL)
+	   && (flags == GGI_PIXFMT_ALPHA_USED))
+	{
+		return GGI_EARGINVAL;
+	}
+
+	/* Now, we can assume there's at least room
+	 * for the terminating \0. 
+	 */
+
+	if (flags & GGI_PIXFMT_CHANNEL) {
 		char alpha_or_pad, *ptr;
 		ggi_pixelformat *pixfmt;
+		size_t tmp;
 		int idx;
 
 		pixfmt = LIBGGI_PIXFMT(vis);
-		alpha_or_pad = (flags & 2) ? 'a' : 'p';
-		idx = pixfmt->size - 1;
-		if (idx > 31) return; /* paranoia never hurts. */
-		ptr = str;
+		alpha_or_pad = (flags & GGI_PIXFMT_ALPHA_USED) ? 'a' : 'p';
+		idx = pixfmt->depth - 1;
+		if (idx > 31) {		/* paranoia never hurts. */
+			return GGI_ENOMATCH;
+		}
+		ptr = pixfmtstr;
 
-		while (1) {
+		while (pixfmtstr_len != 0) {
+			pixfmtstr_len--;
+			LIBGGI_ASSERT(pixfmtstr_len > 0,
+				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
+#if 0
+			if (pixfmtstr_len == 0) {
+				GGIDPRINT("_ggi_build_pixfmtstr: pixfmtstr_len too short. Not enough memory allocated for pixfmtstr\n");
+				return GGI_EARGINVAL;
+			}
+#endif
+
 			switch(pixfmt->bitmeaning[idx] & 0x00ffff00) {
-			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
+			case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
 				*(ptr++) = 'r';
 				break;
-			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
+			case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
 				*(ptr++) = 'g';
 				break;
-			      case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
+			case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
 				*(ptr++) = 'b';
 				break;
-			      case GGI_BM_TYPE_ATTRIB | GGI_BM_SUB_ALPHA:
+			case GGI_BM_TYPE_ATTRIB | GGI_BM_SUB_ALPHA:
 				*(ptr++) = alpha_or_pad;
 				break;
-			      default:
+			default:
 				*(ptr++) = 'p';
 				break;
 			}
+
 			while ((pixfmt->bitmeaning[idx] & 0x00ffff00) ==
-			       (pixfmt->bitmeaning[idx - 1] & 0x00ffff00)) {
-			  if (idx == 0) break;
-			  idx--;
+			       (pixfmt->bitmeaning[idx - 1] & 0x00ffff00))
+			{
+				if (idx == 0) break;
+				idx--;
 			}
-			ptr += sprintf(ptr, "%d", 
+#ifdef HAVE_SNPRINTF
+			tmp = snprintf(ptr, pixfmtstr_len, "%d",
 				       256-(pixfmt->bitmeaning[idx] & 0xff)
 				       );
+#else
+			tmp = sprintf(ptr, "%d", 
+				       256-(pixfmt->bitmeaning[idx] & 0xff)
+				       );
+#endif
+			LIBGGI_ASSERT(tmp < pixfmtstr_len,
+				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
+			LIBGGI_ASSERT(tmp <= pixfmtstr_len,
+				"Off-by-one bug: Not even room for string termination.");
+			pixfmtstr_len -= tmp;
+#if 0
+			if (tmp >= pixfmtstr_len) {
+				GGIDPRINT_CORE("_ggi_build_pixfmtstr: pixfmtstr_len too short. Not enough memory allocated for pixfmtstr\n");
+				return GGI_EARGINVAL;
+			} else {
+				pixfmtstr_len -= tmp;
+			}
+#endif
+			ptr += tmp;
 			idx--;
 			if (idx < 0) break;
-
 		}
+		LIBGGI_ASSERT(pixfmtstr_len >= 1, "Off-by-one bug! No room for string termination.");
 		*ptr = '\0';
+
+	} else {
+#ifdef HAVE_SNPRINTF
+		size_t tmp;
+
+		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%d", GT_SIZE(LIBGGI_GT(vis)));
+		LIBGGI_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
+#else
+		sprintf(pixfmtstr, "%d", GT_SIZE(LIBGGI_GT(vis)));
+#endif
 	}
-	else sprintf(str, "%d", GT_SIZE(LIBGGI_GT(vis)));
+
+	return GGI_OK;
 }
 
 int _ggi_match_palette(ggi_color *pal, int pal_len, ggi_color *col)

@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.14 2003/07/06 14:08:54 cegger Exp $
+/* $Id: shm.c,v 1.15 2004/02/05 09:34:58 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -277,7 +277,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	i = 0;
 	i += sprintf(target, "display-memory:-pixfmt=");
 	memset(target+i, '\0', 64);
-	_ggi_pixfmtstr(vis, target + i, 1);
+	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 	sprintf(target + i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
 		priv->ximage->bytes_per_line * vis->mode->virt.y,

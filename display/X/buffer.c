@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.12 2003/07/06 10:25:21 cegger Exp $
+/* $Id: buffer.c,v 1.13 2004/02/05 09:34:57 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -202,7 +202,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	i = 0;
 	i += sprintf(target, "display-memory:-noblank:-pixfmt=");
 	memset(target+i, '\0', 64);
-	_ggi_pixfmtstr(vis, target + i, 1);
+	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 	sprintf(target + i, ":-physz=%i,%i:pointer", 
 		vis->mode->size.x, vis->mode->size.y);

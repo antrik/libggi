@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/02/03 22:52:58 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/02/05 09:34:58 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -120,6 +120,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 		LIBGGI_PIXFMT(vis)->red_mask   = priv->r_mask;
 		LIBGGI_PIXFMT(vis)->green_mask = priv->g_mask;
 		LIBGGI_PIXFMT(vis)->blue_mask  = priv->b_mask;
+		LIBGGI_PIXFMT(vis)->alpha_mask  = priv->a_mask;
 	}
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 

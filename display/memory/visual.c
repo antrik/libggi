@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/01/31 22:36:45 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/02/05 09:34:58 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -210,36 +210,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * generic function.  Note we know the string is NULL terminated.
 	 */
 	if (options[OPT_PIXFMT].result[0]) {
-		char *ptr;
-		ggi_pixel *curr;
-
-		ptr = options[OPT_PIXFMT].result;
-		curr = NULL;
-
-		while (*ptr) {
-			switch (*ptr) {
-				unsigned long nbits;
-			case 'p': /* pad */
-				curr = NULL;
-				break;
-			case 'r':
-				curr = &(priv->r_mask);
-				break;
-			case 'g':
-				curr = &(priv->g_mask);
-				break;
-			case 'b':
-				curr = &(priv->b_mask);
-				break;
-			default:
-				nbits = strtoul(ptr, NULL, 10);
-				priv->r_mask = priv->r_mask << nbits;
-				priv->g_mask = priv->g_mask << nbits;
-				priv->b_mask = priv->b_mask << nbits;
-				if(curr != NULL) *curr |= ((1 << nbits) - 1);
-			}
-			ptr++;
-		}
+		_ggi_parse_pixfmtstr(options[OPT_PIXFMT].result, NULL, NULL,
+				strlen(options[OPT_PIXFMT].result)+1,
+				&priv->r_mask, &priv->g_mask, &priv->b_mask,
+				&priv->a_mask);
 	}
 
 	/* Explicit layout for preallocated buffers with nontrivial layouts. */

@@ -30,7 +30,8 @@ _ggi_free_drvpriv
 _ggi_malloc
 _ggi_mask2shift
 _ggi_match_palette
-_ggi_pixfmtstr
+_ggi_parse_pixfmtstr
+_ggi_build_pixfmtstr
 _ggi_realloc
 _ggi_smart_match_palettes
 _ggi_parse_physz

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.10 2004/01/29 13:49:34 cegger Exp $
+/* $Id: internal.h,v 1.11 2004/02/05 09:34:59 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -78,10 +78,19 @@ int _ggiProbeDL(ggi_visual * vis, const char * name,
 /* internal.c */
 int _ggi_countbits(uint32 val);
 int _ggi_mask2shift(uint32 mask);
+
+#define GGI_PIXFMT_GRAPHTYPE	0
+#define GGI_PIXFMT_CHANNEL	1
+#define GGI_PIXFMT_ALPHA_USED	2
 void _ggi_build_pixfmt(ggi_pixelformat * pixfmt);
-void _ggi_pixfmtstr(ggi_visual * vis, char *str, int flags);
-/* _ggi_pixfmtstr flags: 1 == break down channels */
-/*                       2 == report alpha as pad */
+int _ggi_parse_pixfmtstr(const char *pixfmtstr,
+		char separator, char **endptr,
+		size_t pixfmtstr_len,
+		ggi_pixel *r_mask, ggi_pixel *g_mask,
+		ggi_pixel *b_mask, ggi_pixel *a_mask);
+int _ggi_build_pixfmtstr(ggi_visual * vis, char *pixfmtstr,
+			size_t pixfmtstr_len, int flags);
+
 int _ggi_match_palette(ggi_color * pal, int pal_len, ggi_color * col);
 ggifunc_setreadframe _ggi_default_setreadframe;
 ggifunc_setwriteframe _ggi_default_setwriteframe;
