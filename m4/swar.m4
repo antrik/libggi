@@ -1,6 +1,6 @@
 
 AC_DEFUN([AC_CC_CAN_EMMS],
-[AC_CACHE_CHECK(whether CC can assemble emms instruction, ac_cc_can_emms,
+[AC_CACHE_CHECK([whether $CC can assemble emms instruction], ac_cc_can_emms,
         [ AC_TRY_LINK(,[unsigned long a;
 	asm("emms");
 	return a;],
@@ -15,7 +15,7 @@ AC_DEFUN([AC_CPU_CAN_EMMS],
 ])
 
 AC_DEFUN([AC_CC_CAN_FEMMS],
-[AC_CACHE_CHECK(whether CC can assemble femms instruction, ac_cc_can_femms,
+[AC_CACHE_CHECK([whether $CC can assemble femms instruction], ac_cc_can_femms,
         [ AC_TRY_LINK(,[unsigned long a;
 	asm("femms");
 	return a;],
@@ -30,7 +30,7 @@ AC_DEFUN([AC_CPU_CAN_FEMMS],
 ])
 
 AC_DEFUN([AC_CC_CAN_FALIGNDATA],
-[AC_CACHE_CHECK(whether CC can assemble faligndata instruction, ac_cc_can_faligndata,
+[AC_CACHE_CHECK([whether $CC can assemble faligndata instruction], ac_cc_can_faligndata,
         [ AC_TRY_LINK(,[
 	__asm__ __volatile__("faligndata %%f0, %%f4, %%f8" : );],
 	ac_cc_can_faligndata=yes, ac_cc_can_faligndata=no)])
@@ -44,7 +44,7 @@ AC_DEFUN([AC_CPU_CAN_FALIGNDATA],
 ])
 
 AC_DEFUN([AC_CC_CAN_PKLB],
-[AC_CACHE_CHECK(whether CC can assemble pklb instruction, ac_cc_can_pklb,
+[AC_CACHE_CHECK([whether $CC can assemble pklb instruction], ac_cc_can_pklb,
         [ AC_TRY_LINK(,[
 	unsigned long foo;
 	__asm__ __volatile__("pklb %1, %0" : "=r" (foo) : "rI" (foo));],
