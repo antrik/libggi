@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2002/06/24 22:08:21 skids Exp $
+/* $Id: visual.c,v 1.9 2002/07/08 09:44:11 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -255,7 +255,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush_cmap = _ggi_x_flush_cmap;
 
 	/* See what extensions are available on this display. */
-#define GGI_X_CHECK_XEXT(extname, flag) \
+#define GGI_X_CHECK_XEXT(extname, flag)					\
 	tmpstr = extname;						\
 	XQueryExtension(disp, tmpstr, &tmp1, &tmp2, &tmp3);		\
 	if (tmp1) {							\
@@ -355,7 +355,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->setflags = GGI_X_setflags;
 
 	/* Try the extensions that haven't been disabled. */
-#define GGI_X_TEST_XEXT(flag, helper, abort_label) \
+#define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
 	tmpstr = helper;					\
 	err = _ggiAddDL(vis, tmpstr, NULL, NULL, 0);		\
@@ -363,7 +363,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		fprintf(stderr, "X: Cannot load %s\n", tmpstr);	\
 		priv->use_Xext &= ~flag;			\
 		goto abort_label;				\
-	}							\
+	}
 
 	/* Order is important here -- XCloseDisplay has sharp hooks! */
 
