@@ -1273,15 +1273,15 @@ of the map in the shallow channels are ignored on write, and undefined
 on read.
 </para>
 <para>
-The <function>ggiGammaMap</function> function is used in order to find 
+The <function>ggiGammaMax</function> function is used in order to find 
 out how many readable and writeable entries are in the map (returned in 
 the integers referenced by <parameter>maxwrite</parameter> and 
 <parameter>maxread</parameter>).  This must be done once for each channel.
 The parameter <parameter>bitmeaning</parameter> should be set to the
 bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of the channel
-of which you are inquiring.  If <function>ggiGammaMap</function> 
+of which you are inquiring.  If <function>ggiGammaMax</function> 
 returns an error, you cannot set the gamma map on this visual.  If 
-<function>ggiGammaMap</function> succeeds, but <parameter>maxwrite</parameter> 
+<function>ggiGammaMax</function> succeeds, but <parameter>maxwrite</parameter> 
 is -1 on return, this means that <function>ggiSetGamma</function> will work, 
 but that <function>ggiSetGammaMap</function> will not.  
 </para>
