@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.21 2004/03/25 10:28:32 pekberg Exp $
+/* $Id: ddinit.c,v 1.22 2004/08/11 09:48:59 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -568,8 +568,13 @@ static int DDCreateThread(directx_priv *priv)
 {
   unsigned ThreadID;
   priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
+#ifdef __CYGWIN__
+  priv->hThreadID = CreateThread(NULL, 0, DDEventLoop, priv, 0,
+				 &ThreadID);
+#else
   priv->hThreadID = (HANDLE)_beginthreadex(NULL, 0, DDEventLoop, priv, 0,
 					   &ThreadID);
+#endif
   if (priv->hThreadID) {
     WaitForSingleObject(priv->hInit, INFINITE);
     return 1;
