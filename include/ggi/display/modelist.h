@@ -1,4 +1,4 @@
-/* $Id: modelist.h,v 1.5 2005/02/10 04:57:43 orzo Exp $
+/* $Id: modelist.h,v 1.6 2005/02/14 19:39:05 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -33,6 +33,9 @@
 
 #if HAVE_STDINT_H
 #include <stdint.h>  /* for intptr_t */
+#endif
+#if HAVE_INTTYPES_H
+#include <inttypes.h>	/* for intptr_t */
 #endif
 
 #include <ggi/internal/gg_replace.h>
