@@ -1,4 +1,4 @@
-/* $Id: db.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: db.c,v 1.3 2004/08/24 19:19:14 pekberg Exp $
 ******************************************************************************
 
    DirectBuffer handling.
@@ -71,7 +71,7 @@ void _ggi_db_free(ggi_directbuffer *db)
 int _ggi_db_add_buffer(ggi_db_list *dbl, ggi_directbuffer *buf)
 {
 	LIBGGI_ASSERT(dbl != NULL, "_ggi_db_add_buffer: list is NULL");
-	LIBGGI_ASSERT(dbl != NULL, "_ggi_db_add_buffer: buffer is NULL");
+	LIBGGI_ASSERT(buf != NULL, "_ggi_db_add_buffer: buffer is NULL");
 
 	dbl->num++;
 	dbl->bufs = _ggi_realloc(dbl->bufs, sizeof(ggi_directbuffer *) * dbl->num);
