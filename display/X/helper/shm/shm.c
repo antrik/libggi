@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.17 2004/09/09 16:40:04 cegger Exp $
+/* $Id: shm.c,v 1.18 2004/09/09 16:58:09 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -62,7 +62,7 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 
 	if (tryflag == 0) {
 		if (ggTryLock(priv->xliblock) != 0) {
-			GGIDPRINT_MISC("xshm: TRYLOCK fail (in flush_ximage_child)!\n");
+			GGIDPRINT_MISC("X: MIT-SHM: TRYLOCK fail (in flush_ximage_child)!\n");
 			if (priv->opmansync) MANSYNC_cont(vis);
 			return 0;
 		}
@@ -172,7 +172,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 
 	priv = GGIX_PRIV(vis);
 
-	GGIDPRINT_MODE("X: Creating shared MIT-SHM buffer\n");
+	GGIDPRINT_MODE("X: MIT-SHM: Creating shared MIT-SHM buffer\n");
 
 	_ggi_xshm_free_ximage(vis);
 
@@ -197,16 +197,19 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	
 	priv->fb = myshminfo->shmaddr = priv->ximage->data =
 		shmat(myshminfo->shmid,0,0);
-	GGIDPRINT_MODE("X: shmat success at %p.\n", priv->fb);
+	GGIDPRINT_MODE("X: MIT-SHM: shmat success at %p.\n", priv->fb);
 
 	myshminfo->readOnly = False;
 
 	ggLock(_ggi_global_lock); /* Entering protected section */
 	shmerror = 0;
+	GGIDPRINT_MODE("X: MIT-SHM: install error handler\n");
 	oldshmerrorhandler = XSetErrorHandler(shmerrorhandler);
+	GGIDPRINT_MODE("X: MIT-SHM: Attach shm to display\n");
 	XShmAttach(priv->disp, myshminfo);
 
 	XSync(priv->disp, 0);
+	GGIDPRINT_MODE("X: MIT-SHM: restore error handler\n");
 	XSetErrorHandler(oldshmerrorhandler);
 	if (shmerror) {
 		if (priv->ximage) {
@@ -225,7 +228,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 	} else {
 		/* Take the shmid away so noone else can get it. */
 		shmctl(myshminfo->shmid, IPC_RMID, 0);
-		GGIDPRINT_MODE("X: ShmImage #%d allocated\n", i);
+		GGIDPRINT_MODE("X: MIT-SHM: ShmImage #%d allocated\n", i);
 	}
 	ggUnlock(_ggi_global_lock); /* Exiting protected section */
 
@@ -300,7 +303,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis) {
 
 	vis->opdisplay->flush		= GGI_XSHM_flush_ximage_child;
 
-	GGIDPRINT_MODE("X: XSHMImage and slave visual %p share buffer at %p\n",
+	GGIDPRINT_MODE("X: MIT-SHM: XSHMImage and slave visual %p share buffer at %p\n",
 		       priv->slave, priv->fb);
 
 	return GGI_OK;
@@ -319,7 +322,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (XShmQueryVersion(priv->disp, &major, &minor, &pixmaps)
 	    != True) return GGI_ENOFUNC;
 
-	GGIDPRINT_LIBS("X: SHM version %i.%i %s pixmap support\n",
+	GGIDPRINT_LIBS("X: MIT-SHM: SHM version %i.%i %s pixmap support\n",
 		       major, minor, pixmaps ? "with" : "without");
 
 	priv->createfb = _ggi_xshm_create_ximage;
