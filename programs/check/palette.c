@@ -1,4 +1,4 @@
-/* $Id: palette.c,v 1.1 2004/11/22 13:33:59 pekberg Exp $
+/* $Id: palette.c,v 1.2 2004/11/22 16:39:58 cegger Exp $
 ******************************************************************************
 
    This is a test program for palette handling.
@@ -26,7 +26,6 @@
 static void testcase1(const char *desc)
 {
 	ggi_visual_t vis;
-	ggi_mode mode;
 	ggi_color green, back;
 	int err;
 
@@ -59,7 +58,7 @@ static void testcase1(const char *desc)
 		return;
 	}
 
-	printassert(err == ggiMapColor(vis, &green),
+	printassert(err == (int)ggiMapColor(vis, &green),
 		"ggiMapColor inconsistent with retval of ggiSetPalette.\n");
 
 	ggiUnmapPixel(vis, err, &back);
