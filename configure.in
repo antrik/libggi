@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.41 2002/10/09 23:28:57 cegger Exp $
+dnl $Id: configure.in,v 1.42 2002/10/10 17:04:42 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -255,6 +255,21 @@ AC_TYPE_SIZE_T
 
 GGI_DLLEXT
 
+dnl check for socklen_t
+dnl Define HAVE_SOCKETLEN_T if found.
+if test "$ac_cv_header_sys_socket_h" = "yes"; then
+
+	AC_MSG_CHECKING([whether socklen_t is available])
+	AC_TRY_COMPILE([   
+		#include <sys/types.h>
+		#include <sys/socket.h>
+		#ifdef HAVE_SYS_UN_H
+		#include <sys/un.h>
+		#endif], [socklen_t len;],
+		[AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SOCKLEN_T)],
+		[AC_MSG_RESULT(no)])
+fi
 
 dnl ========================================================================
 dnl Checks for library functions.
