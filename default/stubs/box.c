@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: box.c,v 1.2 2004/09/08 10:52:56 cegger Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -68,7 +68,7 @@ int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
 		rowadd = (w * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
 	} else {
-		rowadd = w * ((GT_SIZE(LIBGGI_GT(vis))+7)/8);
+		rowadd = w * GT_ByPP(LIBGGI_GT(vis));
 	}
 
 	/* Pre-clipping, so we don't call PutHline without need */
@@ -106,9 +106,9 @@ int GGI_stubs_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
 		rowadd = (w * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
 	} else {
-		rowadd = w * ((GT_SIZE(LIBGGI_GT(vis))+7)/8);
+		rowadd = w * GT_ByPP(LIBGGI_GT(vis));
 	}
-	
+
 	for (; h > 0; h--, y++, dest += rowadd) {
 		ggiGetHLine(vis, x, y, w, dest);
 	}
