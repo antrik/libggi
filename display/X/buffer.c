@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.16 2004/09/08 20:10:10 cegger Exp $
+/* $Id: buffer.c,v 1.17 2004/09/13 10:40:26 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -192,8 +192,8 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 				LIBGGI_MODE(vis)->frames,LIBGGI_GT(vis)));
 	if (priv->fb == NULL) return GGI_ENOMEM;
 
-	/* We assume vis->mode structure has already been filled out */
-	memcpy(&tm, vis->mode, sizeof(ggi_mode));
+	/* We assume LIBGGI_MODE(vis) structure has already been filled out */
+	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
 
 	/* Make sure we do not fail due to physical size constraints,
@@ -207,7 +207,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 	sprintf(target + i, ":-physz=%i,%i:pointer", 
-		vis->mode->size.x, vis->mode->size.y);
+		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
 	priv->slave = ggiOpen(target, priv->fb);
 	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
@@ -223,7 +223,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 				0,		/* offset */
 				priv->fb,	/* data */
 				(unsigned)vis->mode->virt.x, 
-				(unsigned)vis->mode->virt.y * vis->mode->frames,
+				(unsigned)vis->mode->virt.y * LIBGGI_MODE(vis)->frames,
 				8,		/* bitmap_pad*/
 				0);
 	if (priv->ximage == NULL) {
@@ -242,7 +242,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 	priv->ximage->bitmap_bit_order = MSBFirst;
 #endif
 
-	for (i = 0; i < vis->mode->frames; i++) {
+	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
 		ggi_directbuffer *db;
 
 		db = _ggi_db_get_new();
@@ -273,7 +273,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
 
 		LIBGGI_APPLIST(vis)->first_targetbuf
-		  = LIBGGI_APPLIST(vis)->last_targetbuf - (vis->mode->frames-1);
+		  = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames-1);
 	}
 
 	/* The core doesn't init this soon enough for us. */

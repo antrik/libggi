@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.33 2004/09/13 09:04:56 cegger Exp $
+/* $Id: mode.c,v 1.34 2004/09/13 10:40:30 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -470,7 +470,7 @@ oldparent:
 		XSetFont(priv->disp, priv->tempgc, priv->textfont->fid);
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
-			 LIBGGI_VIRTY(vis) * vis->mode->frames);
+			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
 	GGIDPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (frees old cursor) */
@@ -660,7 +660,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	XSetGraphicsExposures(priv->disp, priv->tempgc, True);
 	_ggi_x_set_xclip(NULL, priv->disp, priv->tempgc, 0, 0, 
 			 LIBGGI_VIRTX(vis), 
-			 LIBGGI_VIRTY(vis) * vis->mode->frames);
+			 LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
 	GGIDPRINT_MODE("X GCs allocated.\n");
 
 	/* Create a cursor (destroys old one) */

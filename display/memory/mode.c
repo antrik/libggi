@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2004/09/13 08:46:02 cegger Exp $
+/* $Id: mode.c,v 1.21 2004/09/13 10:36:00 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -43,7 +43,7 @@
  * by calling fillscreen when -noblank option is specified.
  */
 static int _strawman_fillscreen(ggi_visual *vis) {
-	if (vis->w_frame_num == vis->mode->frames - 1) 
+	if (vis->w_frame_num == LIBGGI_MODE(vis)->frames - 1) 
 		vis->opdraw->fillscreen = MEMORY_PRIV(vis)->oldfillscreen;
 	return GGI_OK;
 }

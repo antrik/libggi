@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.21 2004/09/12 20:58:46 cegger Exp $
+/* $Id: misc.c,v 1.22 2004/09/13 10:40:30 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -433,7 +433,7 @@ void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc,
 
 
 	if (vis != NULL) {
-		frames = vis->mode->frames;
+		frames = LIBGGI_MODE(vis)->frames;
 		virty = LIBGGI_VIRTY(vis);
 	} else {
 		frames = 1;

@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.20 2004/09/13 09:29:27 cegger Exp $
+/* $Id: shm.c,v 1.21 2004/09/13 10:40:30 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -269,7 +269,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	/* The core doesn't init this soon enough for us. */
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
 
-	/* We assume vis->mode structure has already been filled out */
+	/* We assume LIBGGI_MODE(vis) structure has already been filled out */
 	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
 	/* Make sure we do not fail due to physical size constraints,
