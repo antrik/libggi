@@ -21,4 +21,4 @@ wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(bsdsock_libs)
 cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST =
