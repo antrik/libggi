@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.1 2004/10/10 12:18:47 cegger Exp $
+/* $Id: mansync.c,v 1.2 2004/10/11 19:12:03 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI display-tile - mansync usage.
@@ -22,6 +22,6 @@
 #include <ggi/ggi.h>
 
 
-#define DISPLAYSTR	"display-tile:0,0,320,200,(display-auto)"
+#define DISPLAYSTR	"display-tile:0,0,320,200,(display-memory)"
 
 #include "../display.mansync/mansync.inc.c"
