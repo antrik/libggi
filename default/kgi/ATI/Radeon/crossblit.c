@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.1 2003/10/23 22:30:51 skids Exp $
+/* $Id: crossblit.c,v 1.2 2004/09/08 20:16:39 cegger Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -495,7 +495,7 @@ int GGI_kgi_radeon_crossblit_3d (ggi_visual *src, int sx, int sy, int w,
 
 	if (get) {
 	  return blit3d_get(src, dst, ctx, dx, dy, w, h, 
-			    (w * GT_SIZE(LIBGGI_GT(src))+7)/8, 
+			    GT_ByPPP(w, LIBGGI_GT(src)),
 			    sx, sy, sb32, h2);
 	}
 	if (trn == dst) {
