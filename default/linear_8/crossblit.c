@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: crossblit.c,v 1.3 2002/10/09 22:54:08 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -107,6 +107,7 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 		 * compiler hence unroll manually.
 		 */
 		switch (w & 0x7) {
+		default:
 			for (; i > 0; i--) {
 			case 0x0: *dstp++ = conv_tab[*srcp++];
 			case 0x7: *dstp++ = conv_tab[*srcp++];
