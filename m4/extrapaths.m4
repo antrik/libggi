@@ -1,9 +1,9 @@
 dnl Let user add extra includes and libs
 
-AC_DEFUN(GGI_EXTRA_PATHS,
+AC_DEFUN([GGI_EXTRA_PATHS],
 [
 
-AC_ARG_WITH(extra-includes,
+AC_ARG_WITH([extra-includes],
 [  --with-extra-includes=DIR
                           add extra include paths (separator ':')],
   use_extra_includes="$withval",
@@ -26,7 +26,7 @@ if test -n "$use_extra_includes" && \
   CPPFLAGS="$CPPFLAGS $extra_includes"
 fi
 
-AC_ARG_WITH(extra-libs,
+AC_ARG_WITH([extra-libs],
 [  --with-extra-libs=DIR   add extra library paths (separator ':')],
   use_extra_libs="$withval",
   use_extra_libs=NO
