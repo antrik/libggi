@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.6 2002/07/09 13:45:06 skids Exp $
+/* $Id: misc.c,v 1.7 2002/07/09 13:46:12 skids Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -104,7 +104,6 @@ void _ggi_x_build_vilist(ggi_visual *vis)
 	nvisuals = priv->nvisuals;
 	for (viidx = 0; viidx < priv->nvisuals; viidx++) {
 		ggi_x_vi *vi;
-		int restmp;
 		int bufidx;
 
 		vi = priv->vilist + viidx;
