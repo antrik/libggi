@@ -52,7 +52,6 @@ Requirements
 
 * LibGG 0.8 or later (included in LibGII).
 * LibGII 0.8 or later.
-* Most likely GNU Make.
 * Fbcon Linux kernel if using display-fbdev target.
 * DirectFB binary drivers for acceleration of fbdev target.
 * X Window System if using display-X/Xlib target.
