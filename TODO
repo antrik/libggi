@@ -29,6 +29,9 @@ Long-term plan
 - improve modelist.inc
 - improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
 - enhance config file system: aliases, in-file option strings, wildcards
+- move display autodetection routines into a display-auto sublib, and
+  create display-auto-linux, display-auto-bsd, etc, mapping them to
+  display-auto in libggi.conf.
 
 ------------------------------------------
 Things that will induce API additions

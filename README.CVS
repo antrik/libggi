@@ -1,0 +1,7 @@
+
+If you got this source through CVS, you will need recent 
+versions of automake, autoconf, autoheader.  You should
+first invoke the ./autogen.sh script, and then proceed
+with the normal installation procedure as described in 
+the file INSTALL.
+

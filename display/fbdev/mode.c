@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2001/08/30 23:06:39 skids Exp $
+/* $Id: mode.c,v 1.8 2001/09/20 05:10:16 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -585,7 +585,8 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	priv->have_accel = 0;
 	priv->flush = NULL;
 	priv->idleaccel = NULL;
-	vis->needidleaccel = 0;
+	vis->needidleaccel = 1; /* Temp hack until we work out the */
+	vis->accelactive = 0;   /* new changed() traversal for renderers */
 	for(id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL)) {
 			GGIDPRINT_LIBS("display-fbdev: Error opening the "
