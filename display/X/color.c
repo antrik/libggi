@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.21 2005/03/05 22:52:20 cegger Exp $
+/* $Id: color.c,v 1.22 2005/03/05 23:04:50 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -285,9 +285,8 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
-		LIBGGI_PAL(vis)->clut.size = 1 << vi->depth;
+		priv->ncols = LIBGGI_PAL(vis)->clut.size = priv->visual[priv->viidx].colormap_size;
 		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(sizeof(ggi_color) * LIBGGI_PAL(vis)->clut.size);
-		priv->ncols = priv->visual[priv->viidx].colormap_size;
 		
 		if (LIBGGI_PAL(vis)->clut.data == NULL) {
 			XFreeColormap(priv->disp, priv->cmap);
