@@ -13,7 +13,8 @@ Due : ????-??-??
 
 [Building issues]
 
-+ bring improved code in showaccel demo to showaccel2 demo
+* bring improved code in showaccel demo to showaccel2 demo
+  (Bernhard Fischer, Christoph Egger)
 + Verify and fix cross-compilation to other architectures
 * Check for building and installing demos, checks and utils requiring
   special headers/libs. (Peter Ekberg)
