@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.37 2002/07/29 15:52:31 fspacek Exp $
+dnl $Id: configure.in,v 1.38 2002/08/18 07:52:09 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -476,15 +476,15 @@ fi
 if test "x$build_terminfo_target" != "xno"; then
   curseslib=""
   AC_CHECK_HEADER(ncurses.h,
-	AC_DEFINE(HAVE_NCURSES_H)
-	curseslib="ncurses",
+	[AC_DEFINE(HAVE_NCURSES_H)
+	curseslib="ncurses"],[
   AC_CHECK_HEADER(ncurses/ncurses.h,
-	AC_DEFINE(HAVE_NCURSES_NCURSES_H)
-	curseslib="ncurses",
+	[AC_DEFINE(HAVE_NCURSES_NCURSES_H)
+	curseslib="ncurses"],[
   AC_CHECK_HEADER(curses.h,
-	AC_DEFINE(HAVE_CURSES_H)
-	curseslib="curses",
-	build_terminfo_target="no")))
+	[AC_DEFINE(HAVE_CURSES_H)
+	curseslib="curses"],[
+	build_terminfo_target="no"])])])
   if test -n "$curseslib"; then
     AC_CHECK_LIB($curseslib, set_term,
 	terminfolibs="-l$curseslib",
