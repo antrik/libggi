@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/20 13:40:05 pekberg Exp $
+/* $Id: mode.c,v 1.7 2004/09/21 06:03:16 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -221,7 +221,7 @@ static void testcase4(const char *desc)
 	ggiExit();
 
 	if (err != GGI_OK) {
-		printfailure("ggiCheckMode: expected return value: 0\n"
+		printfailure("ggiCheckMode: expected return value: GGI_OK\n"
 					"actual return value: %i\n", err);
 		return;
 	}
