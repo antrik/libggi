@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.22 2004/09/13 10:40:30 cegger Exp $
+/* $Id: misc.c,v 1.23 2004/10/03 10:27:48 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -402,8 +402,9 @@ void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi)
 }
 
 /* Make a newly created parent window presentable */
-void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
+int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
 {
+	int rc;
 	XSizeHints      hint;
 	ggi_x_priv      *priv;
 	char *name = "GGI-on-X";
@@ -414,15 +415,16 @@ void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
 	hint.x = hint.y         = 0;
 	hint.width              = tm->visible.x;
 	hint.height             = tm->visible.y;
-	hint.flags              = PSize | PMinSize | PMaxSize;
+	hint.flags              = PPosition | PSize | PMinSize | PMaxSize;
 	hint.min_width          = tm->visible.x;
 	hint.min_height         = tm->visible.y;
 	hint.max_width          = tm->visible.x;
 	hint.max_height         = tm->visible.y;
 	
 	/* Set WM hints and titles */
-	XSetStandardProperties(priv->disp, priv->parentwin, name, name,
+	rc = XSetStandardProperties(priv->disp, priv->parentwin, name, name,
 			       None, NULL, 0, &hint);
+	return rc;
 }
 
 void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc, 

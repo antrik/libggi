@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.9 2004/09/09 12:41:44 cegger Exp $
+/* $Id: x.h,v 1.10 2004/10/03 10:27:48 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -181,7 +181,7 @@ int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this);
 void _ggi_x_free_colormaps(ggi_visual *vis);
 void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi);
 void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
-void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm);
+int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm);
 void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc, 
 		      int x, int y, int w, int h);
 void _ggi_x_create_dot_cursor(ggi_visual *vis);
