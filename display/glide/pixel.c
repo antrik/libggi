@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: pixel.c,v 1.3 2002/09/29 19:27:42 skids Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Pixel functions
@@ -42,8 +42,6 @@ GGI_glide_drawpixel(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-#define DOSHIFT(val, shift)  \
-	(((shift) >= 0) ? (val) << (shift) : (val) >> -(shift))
 int
 GGI_glide_putpixel(ggi_visual *vis, int x, int y, ggi_pixel pix)
 {
@@ -52,15 +50,15 @@ GGI_glide_putpixel(ggi_visual *vis, int x, int y, ggi_pixel pix)
 
 	vert.x = x;
 	vert.y = y;
-	vert.r = DOSHIFT(LIBGGI_GC(vis)->fg_color
-			 & LIBGGI_PIXFMT(vis)->red_mask,
-			 colorpriv->red_unmap - 8);
-	vert.g = DOSHIFT(LIBGGI_GC(vis)->fg_color
-			  & LIBGGI_PIXFMT(vis)->green_mask,
-			 colorpriv->green_unmap - 8);
-	vert.b = DOSHIFT(LIBGGI_GC(vis)->fg_color
-			 & LIBGGI_PIXFMT(vis)->blue_mask,
-			 colorpriv->blue_unmap - 8);
+	vert.r = SSHIFT(LIBGGI_GC(vis)->fg_color
+			& LIBGGI_PIXFMT(vis)->red_mask,
+			colorpriv->red_unmap - 8);
+	vert.g = SSHIFT(LIBGGI_GC(vis)->fg_color
+			& LIBGGI_PIXFMT(vis)->green_mask,
+			colorpriv->green_unmap - 8);
+	vert.b = SSHIFT(LIBGGI_GC(vis)->fg_color
+			& LIBGGI_PIXFMT(vis)->blue_mask,
+			colorpriv->blue_unmap - 8);
 	vert.a = 255;
 
 	grDrawPoint(&vert);

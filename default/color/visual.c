@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/06/03 22:16:28 skids Exp $
+/* $Id: visual.c,v 1.3 2002/09/29 19:27:41 skids Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -117,8 +117,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			else if (COLOR_TRUEPRIV(vis)->red_nbits >= 4 &&
 				 COLOR_TRUEPRIV(vis)->green_nbits >= 4 &&
 				 COLOR_TRUEPRIV(vis)->blue_nbits >= 4)
-					vis->opcolor->unmappixel = 
-						GGI_color_TRUE_unmappixel_gte4;
+				vis->opcolor->unmappixel = 
+					GGI_color_TRUE_unmappixel_gte4;
 			else if (COLOR_TRUEPRIV(vis)->red_nbits >= 2 &&
 				 COLOR_TRUEPRIV(vis)->green_nbits >= 2 &&
 				 COLOR_TRUEPRIV(vis)->blue_nbits >= 2)
@@ -126,6 +126,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 						GGI_color_TRUE_unmappixel_gte2;
 			else vis->opcolor->unmappixel = 
 				GGI_color_TRUE_unmappixel_gte1;
+			if (GT_SIZE(LIBGGI_GT(vis)) == 16) {
+			  vis->opcolor->mapcolor   = GGI_color_TRUE16_mapcolor;
+			  if (vis->opcolor->unmappixel == 
+			      GGI_color_TRUE_unmappixel_gte4)
+			  	vis->opcolor->unmappixel = 
+					GGI_color_TRUE16_unmappixel_4to7;
+			}
+
 			break;
 
 		case GT_GREYSCALE:

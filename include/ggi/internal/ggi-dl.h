@@ -1,9 +1,11 @@
-/* $Id: ggi-dl.h,v 1.1 2001/05/12 23:03:25 cegger Exp $
+/* $Id: ggi-dl.h,v 1.2 2002/09/29 19:27:42 skids Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
 
    Copyright (C) 1999	Marcus Sundberg		[marcus@ggi-project.org]
+
+   Note: this file should really be renamed.
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -35,6 +37,11 @@
 
 #define PREPARE_FB(vis) if (vis->accelactive) { LIBGGIIdleAccel(vis); }
 
+/* A shift operator with direction determined by sign of the shift count. */
+#define SSHIFT(val, shift)  \
+        (((shift) >= 0) ? (val) << (shift) : (val) >> -(shift))
+
+/* Macros for applying clip regions */
 #define CHECKXY(vis,cx,cy) \
 do { \
 	if ((cx) <  LIBGGI_GC((vis))->cliptl.x || \

@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.3 2002/09/08 21:37:42 soyt Exp $
+/* $Id: color.h,v 1.4 2002/09/29 19:27:41 skids Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -33,10 +33,12 @@
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_mapcolor	GGI_color_PAL_mapcolor;
+ggifunc_mapcolor	GGI_color_TRUE16_mapcolor;
 ggifunc_mapcolor	GGI_color_TRUE_mapcolor;
 ggifunc_mapcolor	GGI_color_GREY_mapcolor;
 
 ggifunc_unmappixel	GGI_color_PAL_unmappixel;
+ggifunc_unmappixel	GGI_color_TRUE16_unmappixel_4to7;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte8;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte4;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte2;

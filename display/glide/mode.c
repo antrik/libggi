@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: mode.c,v 1.3 2002/09/29 19:27:42 skids Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -36,9 +36,6 @@
 #include <ggi/display/glide.h>
 #include "../../default/color/color.h"
 
-#define DOSHIFT(val, shift)  \
-	(((shift) >= 0) ? (val) << (shift) : (val) >> -(shift))
-
 static void
 GGI_glide_gcchanged(ggi_visual *vis, int mask)
 {
@@ -60,33 +57,33 @@ GGI_glide_gcchanged(ggi_visual *vis, int mask)
 	if ((mask & GGI_GCCHANGED_FG)) {
 		color_truepriv *colorpriv = vis->colorpriv;
 		priv->fgvertex.r
-			= DOSHIFT(LIBGGI_GC(vis)->fg_color
-				  & LIBGGI_PIXFMT(vis)->red_mask,
-				  colorpriv->red_unmap - 8);
+			= SSHIFT(LIBGGI_GC(vis)->fg_color
+				 & LIBGGI_PIXFMT(vis)->red_mask,
+				 colorpriv->red_unmap - 8);
 		priv->fgvertex.g
-			= DOSHIFT(LIBGGI_GC(vis)->fg_color
-				  & LIBGGI_PIXFMT(vis)->green_mask,
-				  colorpriv->green_unmap - 8);
+			= SSHIFT(LIBGGI_GC(vis)->fg_color
+				 & LIBGGI_PIXFMT(vis)->green_mask,
+				 colorpriv->green_unmap - 8);
 		priv->fgvertex.b =
-			DOSHIFT(LIBGGI_GC(vis)->fg_color
-				& LIBGGI_PIXFMT(vis)->blue_mask,
-				colorpriv->blue_unmap - 8);
+			SSHIFT(LIBGGI_GC(vis)->fg_color
+			       & LIBGGI_PIXFMT(vis)->blue_mask,
+			       colorpriv->blue_unmap - 8);
 		priv->fgvertex.a = 255;
 	}
 	if ((mask & GGI_GCCHANGED_BG)) {
 		color_truepriv *colorpriv = vis->colorpriv;
 		priv->bgvertex.r
-			= DOSHIFT(LIBGGI_GC(vis)->bg_color
-				  & LIBGGI_PIXFMT(vis)->red_mask,
-				  colorpriv->red_unmap - 8);
+			= SSHIFT(LIBGGI_GC(vis)->bg_color
+				 & LIBGGI_PIXFMT(vis)->red_mask,
+				 colorpriv->red_unmap - 8);
 		priv->bgvertex.g
-			= DOSHIFT(LIBGGI_GC(vis)->bg_color
-				  & LIBGGI_PIXFMT(vis)->green_mask,
-				  colorpriv->green_unmap - 8);
+			= SSHIFT(LIBGGI_GC(vis)->bg_color
+				 & LIBGGI_PIXFMT(vis)->green_mask,
+				 colorpriv->green_unmap - 8);
 		priv->bgvertex.b =
-			DOSHIFT(LIBGGI_GC(vis)->bg_color
-				& LIBGGI_PIXFMT(vis)->blue_mask,
-				colorpriv->blue_unmap - 8);
+			SSHIFT(LIBGGI_GC(vis)->bg_color
+			       & LIBGGI_PIXFMT(vis)->blue_mask,
+			       colorpriv->blue_unmap - 8);
 		priv->bgvertex.a = 255;
 	}
 }

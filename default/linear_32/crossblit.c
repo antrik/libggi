@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: crossblit.c,v 1.3 2002/09/29 19:27:42 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,9 +32,6 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
-
-#define DOSHIFT(val, shift)  \
-	(((shift) >= 0) ? (val) << (shift) : (val) >> -(shift))
 
 /* Default fallback */
 static inline void
@@ -123,11 +120,11 @@ true_fallback(ggi_visual *src, int sx, int sy, int w, int h,
 
 				if (pixel != cur_src) {
 					cur_dst	=
-						(DOSHIFT(pixel&srmask, rshift)
+						(SSHIFT(pixel&srmask, rshift)
 						 & drmask) |
-						(DOSHIFT(pixel&sgmask, gshift)
+						(SSHIFT(pixel&sgmask, gshift)
 						 & dgmask) |
-						(DOSHIFT(pixel&sbmask, bshift)
+						(SSHIFT(pixel&sbmask, bshift)
 						 & dbmask);
 					cur_src = pixel;
 				}
@@ -150,11 +147,11 @@ true_fallback(ggi_visual *src, int sx, int sy, int w, int h,
 
 				if (pixel != cur_src) {
 					cur_dst	=
-						(DOSHIFT(pixel&srmask, rshift)
+						(SSHIFT(pixel&srmask, rshift)
 						 & drmask) |
-						(DOSHIFT(pixel&sgmask, gshift)
+						(SSHIFT(pixel&sgmask, gshift)
 						 & dgmask) |
-						(DOSHIFT(pixel&sbmask, bshift)
+						(SSHIFT(pixel&sbmask, bshift)
 						 & dbmask);
 					cur_src = pixel;
 				}
@@ -177,11 +174,11 @@ true_fallback(ggi_visual *src, int sx, int sy, int w, int h,
 
 				if (pixel != cur_src) {
 					cur_dst	=
-						(DOSHIFT(pixel&srmask, rshift)
+						(SSHIFT(pixel&srmask, rshift)
 						 & drmask) |
-						(DOSHIFT(pixel&sgmask, gshift)
+						(SSHIFT(pixel&sgmask, gshift)
 						 & dgmask) |
-						(DOSHIFT(pixel&sbmask, bshift)
+						(SSHIFT(pixel&sbmask, bshift)
 						 & dbmask);
 					cur_src = pixel;
 				}
@@ -204,11 +201,11 @@ true_fallback(ggi_visual *src, int sx, int sy, int w, int h,
 
 				if (pixel != cur_src) {
 					cur_dst	=
-						(DOSHIFT(pixel&srmask, rshift)
+						(SSHIFT(pixel&srmask, rshift)
 						 & drmask) |
-						(DOSHIFT(pixel&sgmask, gshift)
+						(SSHIFT(pixel&sgmask, gshift)
 						 & dgmask) |
-						(DOSHIFT(pixel&sbmask, bshift)
+						(SSHIFT(pixel&sbmask, bshift)
 						 & dbmask);
 					cur_src = pixel;
 				}
