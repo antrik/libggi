@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.17 2004/06/04 19:46:32 aldot Exp $
+/* $Id: demo.c,v 1.18 2004/06/06 10:02:16 aldot Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -90,7 +90,12 @@ static void waitabit(void)
 		if (! (key & emKeyPress)) return;
 		key = ggiGetc(vis);
 #else
+		gii_event ev;
 		ggUSleep(5000000);
+		if (! (ggiEventsQueued(vis, emKeyPress | emKeyRepeat)))
+			return;
+		ggiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+		key = ev.key.sym;
 #endif
 	} else {
 		/* ggiGetc will blocking-wait for a keypress.
