@@ -1,5 +1,4 @@
-_ggiDebugState
-_ggiDebugSync
+_ggiDebug
 _ggi_global_lock
 _ggiAddDL
 _ggiExitDL

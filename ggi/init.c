@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.23 2004/10/28 17:41:12 cegger Exp $
+/* $Id: init.c,v 1.24 2004/10/30 10:48:09 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -38,8 +38,7 @@
 
 
 /* Exported variables */
-uint32                _ggiDebugState   = 0;
-int                   _ggiDebugSync    = 0;
+uint32               _ggiDebug         = 0;
 void                 *_ggi_global_lock = NULL;
 
 /* Global variables */
@@ -173,17 +172,17 @@ int ggiInit(void)
 
 	str = getenv("GGI_DEBUGSYNC");
 	if (str != NULL) {
-		_ggiDebugSync = 1;
+		_ggiDebug |= GGIDEBUG_SYNC;
 	}
-
+	
 	str = getenv("GGI_DEBUG");
 	if (str != NULL) {
-		_ggiDebugState = atoi(str);
-		GGIDPRINT_CORE("%s debugging=%d\n",
-				_ggiDebugSync ? "sync" : "async",
-				_ggiDebugState);
+		_ggiDebug |= atoi(str) & GGIDEBUG_ALL;
+		GGIDPRINT_CORE("%s Debugging=%d\n",
+			       GGIDEBUG_ISSYNC ? "sync" : "async",
+			       _ggiDebug);
 	}
-
+	
 	str = getenv("GGI_DEFMODE");
 	if (str != NULL) {
 		_ggiSetDefaultMode(str);
