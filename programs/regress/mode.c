@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2004/09/08 21:42:27 cegger Exp $
+/* $Id: mode.c,v 1.2 2004/09/09 10:05:17 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -173,7 +173,7 @@ int main(int argc, char * const argv[])
 	parseopts(argc, argv);
 	printdesc("Regression testsuite mode handling\n\n");
 
-	testcase1("Check that ggiCheckMode() doesn't return ");
+	testcase1("Check that ggiCheckMode() doesn't return GGI_AUTO");
 	testcase2("Check that ggiSetMode() can actually set the mode that has been suggested by ggiCheckMode");
 	testcase3("Check that setting a mode with a given number of frames");
 
