@@ -42,6 +42,7 @@ enum {
 	KGI_OPT_DEVICE = 0,
 	KGI_OPT_NO3D = 1,
 	KGI_OPT_SWATCHSIZE = 2,
+	KGI_OPT_NOINPUT = 3,
 	KGI_NUM_OPTS
 };
 
@@ -119,6 +120,7 @@ typedef struct {
 
 	/* Accelerator target private data pointer */
 	void *accel_priv;
+
 } ggi_kgi_priv;
 
 
