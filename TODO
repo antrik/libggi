@@ -25,10 +25,11 @@ Due : 200?-??-??
 
 [Documentation related stuff]
 
-- documentate tele-target in libggi/doc/targets.txt and via XML.
-- make sure all Get/Put function manpages make it easy to understand 
+* documentate tele-target in libggi/doc/targets.txt and via XML.
+  (Christoph & Eric)
+* make sure all Get/Put function manpages make it easy to understand 
   contents of *buf, if only by mentioning ggiUnPackPixels/ggiPackColors
-
+  (Eric)
 
 [Target specific issues]
 
