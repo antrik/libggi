@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/02/02 19:22:00 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/03/14 12:56:11 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -65,6 +65,10 @@ int GGI_trueemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 
 	case 3: strcpy(apiname, "generic-color");
+		return 0;
+		
+	case 4: strcpy(apiname, "generic-pseudo-stubs");
+		sprintf(arguments, "%p", TRUEEMU_PRIV(vis)->parent);
 		return 0;
 	}
 
