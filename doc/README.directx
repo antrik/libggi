@@ -140,4 +140,11 @@ IV) Notes:
 	  you can use the generated scripts instead of the .exe files in the
 	  .libs subdirs, and the environment variables above should be set
 	  with "export", at least for the sane shells.
+	- The default MSYS shell (sh in rxvt) does not grab data on standard
+	  output from the child process unless it explicitly flushes the
+	  file descriptor (it should be enough to write a newline). Demo
+	  programs that writes to stdout might appear to not work, when they
+	  in fact work perfectly fine. Try to run them at the windows command
+	  prompt instead.
+	  http://sourceforge.net/tracker/index.php?func=detail&aid=946191&group_id=2435&atid=102435
 	- The file C:\foo can by default be accessed as /c/foo in MSYS.
