@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2001/06/20 22:52:09 ggibecka Exp $
+/* $Id: visual.c,v 1.3 2001/08/30 23:06:39 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev matrix g400 acceleration
@@ -215,6 +215,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->dmaaddr = (void*)fbdevpriv->mmioaddr;
 	priv->dma_len = 0x1c00;
 
+	vis->needidleaccel = 1;
 	fbdevpriv->idleaccel = mga_g400_idleaccel;
 
 	/* Accelerate fonts if possible */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2001/08/24 03:14:02 skids Exp $
+/* $Id: visual.c,v 1.8 2001/08/30 23:06:39 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -152,6 +152,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   dfb_config = &(priv->dfbconfig);
   *(priv->globals.dfb_config_ptr) = &(priv->dfbconfig);
   dfb_config->layer_bg_mode = DLBM_COLOR;
+  dfb_config->matrox_sgram = 1;
   if (!_ggiDebugState) {
     dfb_config->quiet = 1;
     dfb_config->no_debug = 1;
@@ -286,6 +287,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   }
 
   /* Initialize function pointers */
+  vis->needidleaccel = 1;
   fbdevpriv->idleaccel = directfb_idleaccel;
 
   vis->opdraw->getcharsize = GGI_directfb_getcharsize;

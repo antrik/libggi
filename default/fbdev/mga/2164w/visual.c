@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:35 cegger Exp $
+/* $Id: visual.c,v 1.2 2001/08/30 23:06:39 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -209,6 +209,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->dmaaddr = (void*)fbdevpriv->mmioaddr;
 	priv->dma_len = 0x1c00;
 
+	vis->needidleaccel = 1;
 	fbdevpriv->idleaccel = m2164w_idleaccel;
 
 	/* Accelerate fonts if possible */

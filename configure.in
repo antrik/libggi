@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.28 2001/08/25 11:46:03 cegger Exp $
+dnl $Id: configure.in,v 1.29 2001/08/30 23:06:39 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -33,7 +33,7 @@ build_xlib_target="auto"
 build_aa_target="auto"
 build_directx_target="no"
 build_fbdev_target="auto"
-build_directfb_renderer="no"
+build_directfb_renderer="auto"
 dnl build_directfb_renderer="auto"
 build_file_target="auto"
 build_glide_target="auto"

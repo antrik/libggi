@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2001/08/24 01:39:40 skids Exp $
+/* $Id: visual.c,v 1.8 2001/08/30 23:06:39 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -109,65 +109,6 @@ static const gg_option optlist[] =
 
 #define MAX_DEV_LEN	63
 #define DEFAULT_FBNUM	0
-
-#ifdef HAVE_NEW_FBDEV
-static char accel_prefix[] = "tgt-fbdev-";
-#define PREFIX_LEN	(sizeof(accel_prefix))
-
-typedef struct {
-	char *str;
-	int   async;
-	int   flags;
-} accel_info;
-
-
-static accel_info accel_strings[] = {
-/* 0  */{ "kgicon-generic", 0, 0 },	/* no accel - check for KGIcon	*/
-	{ NULL, 0, 0 },			/* Atari Blitter		*/
-	{ NULL, 0, 0 },			/* Amiga Blitter                */
-	{ NULL, 0, 0 },			/* Cybervision64 (S3 Trio64)    */
-	{ NULL, 0, 0 },			/* RetinaZ3 (NCR 77C32BLT)      */
-	{ NULL, 0, 0 },			/* Cybervision64/3D (S3 ViRGE)	*/
-	{ NULL, 0, 0 },			/* ATI Mach 64GX family		*/
-	{ NULL, 0, 0 },			/* DEC 21030 TGA		*/
-	{ NULL, 0, 0 },			/* ATI Mach 64CT family		*/
-	{ NULL, 0, 0 },			/* ATI Mach 64CT family VT class */
-/* 10 */{ NULL, 0, 0 },			/* ATI Mach 64CT family GT class */
-	{ NULL, 0, 0 },			/* Sun Creator/Creator3D	*/
-	{ NULL, 0, 0 },			/* Sun cg6			*/
-	{ NULL, 0, 0 },			/* Sun leo/zx			*/
-	{ NULL, 0, 0 },			/* IMS Twin Turbo		*/
-	{ NULL, 0, 0 },			/* 3Dlabs Permedia 2		*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
-	},				/* Matrox MGA2064W (Millenium)	*/
-	{ "directfb", 1, 0
-	},				/* Matrox MGA1064SG (Mystique)	*/
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
-	},	   			/* Matrox MGA2164W (Millenium II) */
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
-	},	   			/* Matrox MGA2164W (Millenium II AGP)*/
-/* 20 */ 
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
-	},	        		/* Matrox G100 (Productiva G100) */
-	{ "mga-2164w", 1, GGI_FBDEV_4BPP_REV 
-	},	        		/* Matrox G200 (Myst, Mill, ...) */
-	{ NULL, 0, 0 },			/* Sun cgfourteen		*/
-	{ NULL, 0, 0 },			/* Sun bwtwo			*/
-	{ NULL, 0, 0 },			/* Sun cgthree			*/
-	{ NULL, 0, 0 },			/* Sun tcx			*/
-	{ "mga-g400", 1, GGI_FBDEV_4BPP_REV
-	},				/* Matrox G400			*/
-	{ "directfb", 1, 0 },		/* nVidia RIVA 128              */
-	{ "directfb", 1, 0 },		/* nVidia RIVA TNT              */
-	{ "directfb", 1, 0 },		/* nVidia RIVA TNT2             */
-/* 30 */{ NULL, 0, 0 },			/* C&T 6555x			*/
-	{ "directfb", 1, 0 },		/* 3Dfx Banshee			*/
-	{ "directfb", 1, 0 }		/* ATI Rage128 family		*/
-};
-
-#define NUM_ACCELS	(sizeof(accel_strings)/sizeof(accel_info))
-#endif /* HAVE_NEW_FBDEV */
-
 
 extern int GGI_fbdev_resetmode(ggi_visual *vis);
 
@@ -440,9 +381,6 @@ static int do_cleanup(ggi_visual *vis)
 
 	if (priv->normalgc) {
 		free(priv->normalgc);
-	}
-	if (priv->accel) {
-		free(priv->accel);
 	}
 	curtim = priv->timings;
 	while (curtim) {
@@ -740,7 +678,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->doswitch = NULL;
 
 	priv->iskgi = 0;
-	priv->accel = NULL;
 	priv->have_accel = 0;
 	priv->accelpriv = NULL;
 	priv->mmioaddr = NULL;
@@ -968,30 +905,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		do_cleanup(vis);
 		return GGI_ENOMEM;
 	}
-
-#ifdef HAVE_NEW_FBDEV
-	GGIDPRINT_MISC("display-fbdev: accel: %d, supported: %d\n",
-		       priv->orig_fix.accel, NUM_ACCELS);
-	if (priv->orig_fix.accel >= 0 && priv->orig_fix.accel < NUM_ACCELS) {
-		vis->needidleaccel = accel_strings[priv->orig_fix.accel].async;
-		priv->flags |= accel_strings[priv->orig_fix.accel].flags;
-		if (accel_strings[priv->orig_fix.accel].str == NULL) {
-			goto no_accel_lib;
-		}
-		priv->accel
-			= malloc(strlen(accel_strings[priv->orig_fix.accel].str)
-				 + PREFIX_LEN);
-		if (priv->accel == NULL) {
-			do_cleanup(vis);
-			return GGI_ENOMEM;
-		}
-		sprintf(priv->accel, "%s%s", accel_prefix,
-			accel_strings[priv->orig_fix.accel].str);
-		GGIDPRINT_MISC("display-fbdev: Have accel: \"%s\"\n",
-			       accel_strings[priv->orig_fix.accel].str);
-	}
-  no_accel_lib:
-#endif /* HAVE_NEW_FBDEV */
 
 	if (get_timings(priv, modedb) == GGI_ENOMEM) {
 		/* If we can't do a simple malloc() it's better to fail

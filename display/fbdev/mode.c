@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2001/08/22 03:41:08 skids Exp $
+/* $Id: mode.c,v 1.7 2001/08/30 23:06:39 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -114,19 +114,63 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 			return 0;
 		}
 
-		if ((size == 1 && (priv->flags & GGI_FBDEV_1BPP_REV)) ||
-		    (size == 4 && (priv->flags & GGI_FBDEV_4BPP_REV))) {
-			sprintf(apiname, "generic-linear-%d-r", size);
-		} else {
-			sprintf(apiname, "generic-linear-%d", size);
-		}
+		sprintf(apiname, "generic-linear-%d", size);
 		return 0;
-		
+
 	case 4:
-		if (priv->have_accel) {
-			strcpy(apiname, priv->accel);
+		/* These allow an opportunity for fbdev.conf to choose
+		   a different generic renderer, e.g. if the driver
+		   in question wants a generic-linear-4r instead of 
+		   a generic-linear-4r */
+	  	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+			sprintf(apiname, "fb-generic-%2.2x-text-%d", 
+				priv->orig_fix.accel, size);
+			return 0;
+		} 
+		
+		if (priv->fix.type == FB_TYPE_PLANES) {
+			sprintf(apiname, "fb-generic-%2.2x-planar",
+				priv->orig_fix.accel);
 			return 0;
 		}
+		
+		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
+			sprintf(apiname, "fb-generic-%2.2x-%s",
+				priv->orig_fix.accel ,
+				(priv->fix.type_aux == 2) ? 
+				"iplanar-2p" : "ilbm");
+			return 0;
+		}
+
+		sprintf(apiname, "fb-generic-%2.2x-linear-%d", 
+				priv->orig_fix.accel, size);
+		return 0;
+		break;
+		
+	case 5:
+	  	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+			sprintf(apiname, "fb-accel-%2.2x-text-%d", 
+				priv->orig_fix.accel, size);
+			return 0;
+		} 
+		
+		if (priv->fix.type == FB_TYPE_PLANES) {
+			sprintf(apiname, "fb-accel-%2.2x-planar",
+				priv->orig_fix.accel);
+			return 0;
+		}
+		
+		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
+			sprintf(apiname, "fb-accel-%2.2x-%s",
+				priv->orig_fix.accel ,
+				(priv->fix.type_aux == 2) ? 
+				"iplanar-2p" : "ilbm");
+			return 0;
+		}
+
+		sprintf(apiname, "fb-accel-%2.2x-linear-%d", 
+				priv->orig_fix.accel, size);
+		return 0;
 		break;
 	}
 
@@ -289,12 +333,8 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 
 	var->activate = FB_ACTIVATE_NOW;
 
-#ifdef HAVE_NEW_FBDEV
-	if (priv->accel) {
-		/* Enable user space acceleration */
-		var->accel_flags = 0;
-	}
-#endif /* HAVE_NEW_FBDEV */
+	/* Enable user space acceleration */
+	var->accel_flags = 0;
 
 	/* Tell framebuffer to change mode */
 	if (fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, var) < 0) {
@@ -545,24 +585,26 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 	priv->have_accel = 0;
 	priv->flush = NULL;
 	priv->idleaccel = NULL;
+	vis->needidleaccel = 0;
 	for(id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
 		if (_ggiOpenDL(vis, libname, libargs, NULL)) {
-			fprintf(stderr,"display-fbdev: Error opening the "
-				"%s (%s) library.\n", libname, libargs);
-			return GGI_EFATAL;
+			GGIDPRINT_LIBS("display-fbdev: Error opening the "
+				       "%s (%s) library.\n", libname, libargs);
+			if (id < 4) {
+				fprintf(stderr, 
+					"A needed sublib was not found.\n");
+				return GGI_EFATAL;
+			}
+			continue;
+		}
+		else if (id == 5) {
+			priv->have_accel = 1;
 		}
 
 		GGIDPRINT_LIBS("Success in loading %s (%s)\n",
 			       libname, libargs);
 	}
-
-	if (priv->accel &&
-	    _ggiOpenDL(vis, priv->accel, NULL, NULL) == 0) {
-		priv->have_accel = 1;
-	} else {
-		LIBGGI_GC(vis) = priv->normalgc;
-		priv->have_accel = 0;
-	}
+	if (!priv->have_accel) LIBGGI_GC(vis) = priv->normalgc;
 	vis->accelactive = 0;
 
 	/* Set up palette */
