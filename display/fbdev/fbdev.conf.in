@@ -9,15 +9,6 @@ helper-fbdev-directfb-global	default/fbdev/directfb/directfbglobal.@DLLEXT@
 # Use fb-generic-xx-<format>-<depth> to override default renderer used
 # Use fb-accel-xx-<format>-<depth> to choose accelerator sublib.
 
-# FB_ACCEL_NONE - check for KGIcon
-fb-accel-00-linear-1		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-4		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-8		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-15		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-16		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-24		default/fbdev/kgi/genkgi.@DLLEXT@
-fb-accel-00-linear-32		default/fbdev/kgi/genkgi.@DLLEXT@
-
 # FB_ACCEL_ATARIBLITT		1       Atari Blitter                
 # FB_ACCEL_AMIGABLITT		2       Amiga Blitter                
 # FB_ACCEL_S3_TRIO64		3       Cybervision64 (S3 Trio64)    
