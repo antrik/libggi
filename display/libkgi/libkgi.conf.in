@@ -1,0 +1,6 @@
+# Mapping file for config-strings to accel libraries
+# config-name			library_name
+# ------------			--------------------------
+
+foo-accel-??-linear-1		default/libkgi/foo.@DLLEXT@
+

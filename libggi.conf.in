@@ -21,6 +21,7 @@ display-fbdev			display/fbdev.@DLLEXT@
 display-glide			display/glide.@DLLEXT@
 display-ipc			display/ipc.@DLLEXT@
 display-lcd823			display/lcd823.@DLLEXT@
+display-libkgi			display/kgilib.@DLLEXT@
 display-memory			display/memory.@DLLEXT@
 display-monotext		display/monotext.@DLLEXT@
 display-multi			display/multi.@DLLEXT@
@@ -49,6 +50,7 @@ file				display/file.@DLLEXT@
 fbdev				display/fbdev.@DLLEXT@
 glide				display/glide.@DLLEXT@
 lcd823				display/lcd823.@DLLEXT@
+libkgi				display/kgilib.@DLLEXT@
 memory				display/memory.@DLLEXT@
 monotext			display/monotext.@DLLEXT@
 multi				display/multi.@DLLEXT@
@@ -95,3 +97,6 @@ generic-ioctl 			default/ioctl.@DLLEXT@
 
 # Fbdev accels
 .include @static_sysconfdir@/@ggi_subdir@/targets/fbdev.conf
+
+# temporary directive to load LibBuf storage/renderers.
+.include @static_sysconfdir@/@ggi_subdir@/libbuf.conf

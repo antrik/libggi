@@ -1,5 +1,5 @@
 SUBDIRS = common $(DISPLAYSUBDIRS)
 
-DIST_SUBDIRS = X Xlib aa common directx fbdev file glide ipc lcd823 linvtsw \
-	mansync memory monotext multi palemu sub svgalib \
+DIST_SUBDIRS = libkgi X Xlib aa common directx fbdev file glide ipc \
+	lcd823 linvtsw mansync memory monotext multi palemu sub svgalib \
 	tele terminfo tile trueemu vcsa vgagl vgl xf86dga
