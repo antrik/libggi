@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.100 2004/01/29 13:49:33 cegger Exp $
+dnl $Id: configure.in,v 1.101 2004/01/29 14:43:50 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -61,7 +61,7 @@ dnl FreeBSD specific Targets
 build_vgl_target="auto"
 
 dnl Win32 specific Targets
-build_directx_target="no"
+build_directx_target="auto"
 
 dnl MacOS X specific Targets
 build_quartz_target="auto"
