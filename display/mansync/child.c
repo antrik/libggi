@@ -1,4 +1,4 @@
-/* $Id: child.c,v 1.1 2001/05/12 23:02:11 cegger Exp $
+/* $Id: child.c,v 1.2 2002/05/24 21:47:44 skids Exp $
 ******************************************************************************
 
    MANSYNC_CHILD implementation.
@@ -98,8 +98,9 @@ static void _GGI_mansync_handler(int unused)
 		for (i = 0; i< _GGI_mansync_state.nrvisuals; i++) {
 			if (!MANSYNC_ISASYNC(_GGI_mansync_state.visuals[i])) {
 				ggi_visual *vis= _GGI_mansync_state.visuals[i];
-				_ggiInternFlush(vis, 0, 0, LIBGGI_X(vis),
-						LIBGGI_Y(vis), 0);
+				_ggiInternFlush(vis, 0, 0, 
+						LIBGGI_VIRTX(vis),
+						LIBGGI_VIRTY(vis), 0);
 			}
 		}
 	}
