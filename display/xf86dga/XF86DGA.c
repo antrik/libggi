@@ -1,4 +1,4 @@
-/*
+/* $Id: XF86DGA.c,v 1.6 2004/09/18 10:50:34 cegger Exp $
 
 Copyright (c) 1995  Jon Tombs
 Copyright (c) 1995,1996  The XFree86 Project, Inc

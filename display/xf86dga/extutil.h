@@ -1,3 +1,4 @@
+/* $Id: extutil.h,v 1.3 2004/09/18 10:48:05 cegger Exp $ */
 /*
  * $XConsortium: extutil.h,v 1.15 94/10/07 15:36:33 kaleb Exp $
  *
