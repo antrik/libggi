@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2004/09/18 10:34:04 cegger Exp $
+/* $Id: mode.c,v 1.21 2004/09/22 20:09:36 nsouch Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -208,12 +208,6 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		const kgic_mapper_resource_info_result_t *accel;
 		int name_size;
 		char *space;
-
-#ifdef __FreeBSD__
-		/* XXX no accel support in kernel */
-		GGIDPRINT("Warning!! Accel not supported by FreeBSD kernel\n");
-		return -1;
-#endif
 
 		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
 		if (! accel) {
