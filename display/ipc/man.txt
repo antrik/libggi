@@ -14,7 +14,8 @@ Synopsis
 Description
 -----------
 
-Not sure what this is all about...
+Transfers drawing commands through sockets to other processes.
+Expects the client to specify the socket, semid and shmid options.
 
 Options
 -------
