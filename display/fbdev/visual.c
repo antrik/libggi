@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2001/06/17 04:35:53 skids Exp $
+/* $Id: visual.c,v 1.5 2001/06/17 16:13:18 skids Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -274,12 +274,12 @@ switchback(void *arg)
 #if 0
 	if (refcount > 1) {
 		fbdev_doioctl(vis, FBIOPUT_VSCREENINFO, &priv->var);
-		if (priv->fix.xpanstep != 0 || priv->fix.ypanstep != 0) {
-			fbdev_doioctl(vis, FBIOPAN_DISPLAY, &priv->var);
-		}
 	}
 #endif
 	do_setpalette(vis);
+	if (priv->fix.xpanstep != 0 || priv->fix.ypanstep != 0) {
+		fbdev_doioctl(vis, FBIOPAN_DISPLAY, &priv->var);
+	}
 	priv->ismapped = 1;
 }
 
