@@ -226,8 +226,8 @@ Synopsis
   int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
 
 
-  int ggiCheckTextMode(ggi_visual_t visual,int cols,int rows,
-		       int vcols,int vrows, int fontx,int fonty,
+  int ggiCheckTextMode(ggi_visual_t visual, int cols, int rows,
+		       int vcols, int vrows, int fontx, int fonty,
 		       ggi_graphtype type, ggi_mode *suggested_mode);
 
   int ggiCheckGraphMode(ggi_visual_t visual, int x, int y,
@@ -377,17 +377,17 @@ Synopsis
 
   int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
 
-  int ggiSetTextMode(ggi_visual_t visual,int cols,int rows,
-		     int vcols,int vrows,int fontx,int fonty,
+  int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
+		     int vcols, int vrows, int fontx, int fonty,
 		     ggi_graphtype type);
 
   int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
-		      int xv,int yv,ggi_graphtype type);
+		      int xv, int yv, ggi_graphtype type);
 
   int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
 		       ggi_graphtype type);
 
-  int ggiGetMode(ggi_visual_t visual,ggi_mode *tm);
+  int ggiGetMode(ggi_visual_t visual, ggi_mode *tm);
 
 
 Description
@@ -592,13 +592,13 @@ Synopsis
   #include <ggi/ggi.h>
 
 
-  ggi_pixel ggiMapColor(ggi_visual_t vis,ggi_color *col);
+  ggi_pixel ggiMapColor(ggi_visual_t vis, ggi_color *col);
 
-  int ggiUnmapPixel(ggi_visual_t vis,ggi_pixel pixel,ggi_color *col);
+  int ggiUnmapPixel(ggi_visual_t vis, ggi_pixel pixel, ggi_color *col);
 
-  int ggiPackColors(ggi_visual_t vis,void *buf,ggi_color *cols,int len); 
+  int ggiPackColors(ggi_visual_t vis, void *buf, ggi_color *cols, int len); 
 
-  int ggiUnpackPixels(ggi_visual_t vis,void *buf,ggi_color *cols,int len);
+  int ggiUnpackPixels(ggi_visual_t vis, void *buf, ggi_color *cols, int len);
 
 
 Description
@@ -664,9 +664,9 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiSetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+  int ggiSetPalette(ggi_visual_t vis, int s, int len, ggi_color *cmap);
 
-  int ggiGetPalette(ggi_visual_t vis,int s,int len,ggi_color *cmap);
+  int ggiGetPalette(ggi_visual_t vis, int s, int len, ggi_color *cmap);
 
 
 Description
@@ -773,13 +773,13 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiGetGamma(ggi_visual_t vis,ggi_float *r,ggi_float *g,ggi_float *b);
+  int ggiGetGamma(ggi_visual_t vis, ggi_float *r, ggi_float *g, ggi_float *b);
 
-  int ggiSetGamma(ggi_visual_t vis,ggi_float r,ggi_float g,ggi_float b);
+  int ggiSetGamma(ggi_visual_t vis, ggi_float r, ggi_float g, ggi_float b);
 
-  int ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+  int ggiGetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
 
-  int ggiSetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap);
+  int ggiSetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
 
   int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
 
@@ -924,10 +924,10 @@ Synopsis
   #include <ggi/ggi.h>
 
   int ggiSetGCClipping(ggi_visual_t vis, int left, int top,
-		       int  right,int  bottom);
+		       int  right, int  bottom);
 
-  int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,
-		       int *right,int *bottom);
+  int ggiGetGCClipping(ggi_visual_t vis, int *left, int *top,
+		       int *right, int *bottom);
 
 Description
 -----------
@@ -972,11 +972,11 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiDrawPixel(ggi_visual_t vis,int x,int y);
+  int ggiDrawPixel(ggi_visual_t vis, int x, int y);
 
-  int ggiPutPixel(ggi_visual_t vis,int x,int y,ggi_pixel pixel);
+  int ggiPutPixel(ggi_visual_t vis, int x, int y, ggi_pixel pixel);
 
-  int ggiGetPixel(ggi_visual_t vis,int x,int y,ggi_pixel *pixel);
+  int ggiGetPixel(ggi_visual_t vis, int x, int y, ggi_pixel *pixel);
 
 
 Description
@@ -1009,11 +1009,11 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiDrawHLine(ggi_visual_t vis,int x,int y,int w);
+  int ggiDrawHLine(ggi_visual_t vis, int x, int y, int w);
 
-  int ggiPutHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+  int ggiPutHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
 
-  int ggiGetHLine(ggi_visual_t vis,int x,int y,int w,void *buf);
+  int ggiGetHLine(ggi_visual_t vis, int x, int y, int w, void *buf);
 
 
 Description
@@ -1061,11 +1061,11 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiDrawVLine(ggi_visual_t vis,int x,int y,int h);
+  int ggiDrawVLine(ggi_visual_t vis, int x, int y, int h);
 
-  int ggiPutVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+  int ggiPutVLine(ggi_visual_t vis, int x, int y, int h, void *buf);
 
-  int ggiGetVLine(ggi_visual_t vis,int x,int y,int h,void *buf);
+  int ggiGetVLine(ggi_visual_t vis, int x, int y, int h, void *buf);
 
 
 Description
@@ -1113,12 +1113,11 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiDrawBox(ggi_visual_t vis,int x,int y,int w,int h);
+  int ggiDrawBox(ggi_visual_t vis, int x, int y, int w, int h);
   
-
-  int ggiPutBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+  int ggiPutBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
   
-  int ggiGetBox(ggi_visual_t vis,int x,int y,int w,int h,void *buf);
+  int ggiGetBox(ggi_visual_t vis, int x, int y, int w, int h, void *buf);
 
 
 Description
@@ -1199,16 +1198,16 @@ Draw a line on a visual
 
   #include <ggi/ggi.h>
 
-  int ggiDrawLine(ggi_visual_t vis,int x,int y,int xe,int ye);
+  int ggiDrawLine(ggi_visual_t vis, int x, int y, int xe, int ye);
 
 
 Description
 -----------
 
 
-Draws any line, using the current foreground color, from
-(:p:`x`,:p:`y`) to (:p:`xe`,:p:`ye`). The line is exact; the pixel set
-is no more than 0.5 pixels off the place it should be.
+Draws any line, using the current foreground color, from (:p:`x`,
+:p:`y`) to (:p:`xe`, :p:`ye`). The line is exact; the pixel set is no
+more than 0.5 pixels off the place it should be.
 
 
 Return value
@@ -1240,7 +1239,7 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,int nx,int ny);
+  int ggiCopyBox(ggi_visual_t vis, int x, int y, int w, int h, int nx ,int ny);
 
 
 Description
@@ -1248,8 +1247,8 @@ Description
 
 
 This is a area-to-area-blit, all in the same visual. Copy the box
-described by :p:`x`,:p:`y`, :p:`w`,:p:`h` to the new location
-:p:`nx`,:p:`ny`.  This automatically takes care of overlaps and
+described by :p:`x`, :p:`y`, :p:`w`, :p:`h` to the new location
+:p:`nx`, :p:`ny`.  This automatically takes care of overlaps and
 optimizes for the given visual (e.g. uses HW-accel or intermediate
 buffers as appropriate).
 
@@ -1285,8 +1284,8 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
-		   ggi_visual_t dst,int dx,int dy);
+  int ggiCrossBlit(ggi_visual_t src, int sx, int sy, int w, int h,
+		   ggi_visual_t dst, int dx, int dy);
 
 
 Description
@@ -1333,9 +1332,9 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiSetOrigin(ggi_visual_t vis,int x,int y);
+  int ggiSetOrigin(ggi_visual_t vis, int x, int y);
 
-  int ggiGetOrigin(ggi_visual_t vis,int *x,int *y);
+  int ggiGetOrigin(ggi_visual_t vis, int *x, int *y);
 
 
 Description
@@ -1403,11 +1402,11 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiPutc(ggi_visual_t vis,int x,int y,char c);
+  int ggiPutc(ggi_visual_t vis, int x, int y, char c);
 
-  int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
+  int ggiPuts(ggi_visual_t vis, int x, int y, const char *str);
 
-  int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
+  int ggiGetCharSize(ggi_visual_t vis, int *width, int *height);
 
 
 Description
@@ -1474,7 +1473,7 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiSetFlags(ggi_visual_t vis,ggi_flags flags);
+  int ggiSetFlags(ggi_visual_t vis, ggi_flags flags);
 
   ggi_flags ggiGetFlags(ggi_visual_t vis);
 
