@@ -1,4 +1,4 @@
-/* $Id: ggi_debug.h,v 1.2 2004/10/31 12:50:28 cegger Exp $
+/* $Id: ggi_debug.h,v 1.3 2004/10/31 13:11:05 cegger Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -31,8 +31,8 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <ggi/types.h>	/* needed for uint32 */
-
+#include <ggi/types.h>		/* needed for uint32 */
+#include <ggi/ggi-defs.h>	/* needed for GGIAPIVAR */
 
 __BEGIN_DECLS
 
