@@ -1,4 +1,1 @@
-SUBDIRS =
-DIST_SUBDIRS = 
-
 EXTRA_DIST = reactor.h
