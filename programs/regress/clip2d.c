@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.24 2004/08/26 07:41:26 pekberg Exp $
+/* $Id: clip2d.c,v 1.25 2004/08/27 09:25:42 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -140,7 +140,7 @@ static void testcase2(const char *desc)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	checkresult(x0, y0, x1, y1,
@@ -163,7 +163,7 @@ static void testcase3(const char *desc)
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	checkresult(x0, y0, x1, y1,
@@ -196,7 +196,7 @@ static void testcase5(const char *desc)
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	checkresult(
@@ -214,7 +214,7 @@ static void testcase6(const char *desc)
 	 * and the same goes for dy.
 	 */
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	if(checkresult(
@@ -274,7 +274,7 @@ static void testcase7(const char *desc)
 {
 	/* This line is clipped incorrectly due to overflow. */
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	checkresult(
@@ -404,7 +404,7 @@ static void testcase9(const char *desc)
 
 static void testcase10(const char *desc)
 {
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL, desc);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	ggiSetGCClipping(vis, 10, 10, MODE_SIZE_X, MODE_SIZE_Y);
