@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2003/12/19 23:07:51 nsouch Exp $
+/* $Id: color.c,v 1.6 2004/01/03 22:45:48 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -44,7 +44,7 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 
 	LIBGGI_APPASSERT(colormap != NULL,
-			 "GGI_kgi_setPallete() - colormap == NULL");
+			 "GGI_kgi_setPalette() - colormap == NULL");
 
 	GGIDPRINT_COLOR("display-kgi: SetPalVec(%d,%d)\n", start, len);
 	
