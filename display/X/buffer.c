@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.15 2004/09/08 10:56:02 cegger Exp $
+/* $Id: buffer.c,v 1.16 2004/09/08 20:10:10 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -186,10 +186,10 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 
 	_ggi_x_free_ximage(vis);
 
-	priv->fb = malloc((LIBGGI_VIRTX(vis) * 
-			   LIBGGI_VIRTY(vis) *
-			   LIBGGI_MODE(vis)->frames *
-			   GT_SIZE(LIBGGI_GT(vis)) + 7) / 8);
+	priv->fb = malloc(GT_ByPPP(
+				LIBGGI_VIRTX(vis)*
+				LIBGGI_VIRTY(vis)*
+				LIBGGI_MODE(vis)->frames,LIBGGI_GT(vis)));
 	if (priv->fb == NULL) return GGI_ENOMEM;
 
 	/* We assume vis->mode structure has already been filled out */

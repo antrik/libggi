@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2004/09/08 10:52:56 cegger Exp $
+/* $Id: box.c,v 1.3 2004/09/08 20:09:40 cegger Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -66,7 +66,7 @@ int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 	int rowadd;
 
 	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
-		rowadd = (w * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
+		rowadd = GT_ByPPP(w, LIBGGI_GT(vis));
 	} else {
 		rowadd = w * GT_ByPP(LIBGGI_GT(vis));
 	}
@@ -103,8 +103,9 @@ int GGI_stubs_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 
 	/* Unclipped */
 
+
 	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
-		rowadd = (w * GT_SIZE(LIBGGI_GT(vis)) + 7) / 8;
+		rowadd = GT_ByPPP(w, LIBGGI_GT(vis));
 	} else {
 		rowadd = w * GT_ByPP(LIBGGI_GT(vis));
 	}
