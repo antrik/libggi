@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2005/01/27 10:04:49 pekberg Exp $
+/* $Id: mode.c,v 1.36 2005/02/07 12:19:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -263,6 +263,8 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 		      && mode->visible.y == defheight)))) {
 		mode->visible.x = defwidth;
 		mode->visible.y = defheight;
+		mode->size.x = GGI_AUTO;
+		mode->size.y = GGI_AUTO;
 		err = GGI_ENOMATCH;
 	}
 
