@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.5 2002/10/10 14:53:42 cegger Exp $
+/* $Id: cbconsist.c,v 1.6 2002/10/12 06:03:16 skids Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -161,7 +161,7 @@ void cbtime(cbcstate *s) {
 
   ggiFlush(s->svis);
   
-  num = 0x100000 / box.x / box.y;
+  num = 0x10000000 / box.x / box.y;
   
   ggCurTime(&tvstart);
   
@@ -180,7 +180,7 @@ void cbtime(cbcstate *s) {
   tvend.tv_sec -= tvstart.tv_sec;
   tvend.tv_usec -= tvstart.tv_usec;
   
-  fprintf(stdout, "0x100000 pixels in %i.%6.6i seconds\n", 
+  fprintf(stdout, "0x10000000 pixels in %i.%6.6i seconds\n", 
 	  (int)tvend.tv_sec, (int)tvstart.tv_usec);
 }
 
@@ -332,6 +332,9 @@ int main(int argc, char **argv) {
 
   if ((s.flags & CBC_REALDST) && (s.flags & CBC_REALSRC)) {
     ggi_pixel res;
+    fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+    fflush(stdout);
+    cbtime(&s);
     fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
     fflush(stdout);
     res = cbconsist(&s);
@@ -340,9 +343,6 @@ int main(int argc, char **argv) {
       goto err3;
     }
     fprintf(stdout, "%i bad values.\n", res);
-    fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-    fflush(stdout);
-    cbtime(&s);
   } 
   else if (s.flags & CBC_REALDST) {
     int i;
@@ -350,6 +350,9 @@ int main(int argc, char **argv) {
     while (mkmemvis(i, &s.svisstr, &s.svis, &s.smode, &s.sblack) >= 0) {
       ggi_pixel res;
 
+      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
+      cbtime(&s);
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
       fflush(stdout);
       res = cbconsist(&s);
@@ -358,9 +361,6 @@ int main(int argc, char **argv) {
 	goto err2;
       }
       fprintf(stdout, "%i bad values.\n", res);
-      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      cbtime(&s);
       ggiClose(s.svis);
       i++;
     }
@@ -371,6 +371,9 @@ int main(int argc, char **argv) {
     while (mkmemvis(i, &s.dvisstr, &s.dvis, &s.dmode, &s.dblack) >= 0) {
       ggi_pixel res;
 
+      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+      fflush(stdout);
+      cbtime(&s);
       fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
       fflush(stdout);
       res = cbconsist(&s);
@@ -379,9 +382,6 @@ int main(int argc, char **argv) {
 	goto err4;
       }
       fprintf(stdout, "%i bad values.\n", res);
-      fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-      fflush(stdout);
-      cbtime(&s);
       ggiClose(s.dvis);
       i++;
     }
@@ -393,7 +393,10 @@ int main(int argc, char **argv) {
       j = 0;
       while (mkmemvis(j, &s.svisstr, &s.svis, &s.smode, &s.sblack) >= 0){
 	ggi_pixel res;
-	
+
+	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
+        fflush(stdout);
+	cbtime(&s);
 	fprintf(stdout, "Testing %s --> %s ...", s.svisstr, s.dvisstr);
         fflush(stdout);
 	res = cbconsist(&s);
@@ -402,9 +405,6 @@ int main(int argc, char **argv) {
 	  goto err4;
 	}
 	fprintf(stdout, "%i bad values.\n", res);
-	fprintf(stdout, "Timing  %s --> %s ...", s.svisstr, s.dvisstr);
-        fflush(stdout);
-	cbtime(&s);
 	ggiClose(s.svis);
 	j++;
       }
