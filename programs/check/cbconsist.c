@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.14 2004/09/08 19:14:18 cegger Exp $
+/* $Id: cbconsist.c,v 1.15 2005/01/25 11:53:51 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -29,6 +29,7 @@
 #include "config.h"
 #include <ggi/ggi.h>
 #include <ggi/gg.h> 
+#include <ggi/internal/gg_replace.h>
 
 #include <stdio.h>
 #include <stdlib.h>
