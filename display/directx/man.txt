@@ -71,3 +71,25 @@ Features
 - DirectBuffer
 - Multiple frames (up to 16)
 - Panning
+
+
+Bugs
+----
+
+- On palettized windowed modes (i.e. not with -fullscreen) the first and
+  last 10 entries of the palette are reserved by Windows and will not
+  behave correctly. Even with the -fullscreen option, palettized modes
+  can have problems with the first and the last entry, depending on what
+  version of Windows is running.
+
+- Can not draw directly in video ram, instead uses a intermediate buffer
+  that is copied to video ram at regular intervals.
+
+- The rate at which the above copy happens is fixed at 30Hz, and cannot
+  be controlled by the user. The environment variable ``MANSYNC_FPS``
+  should probably be used.
+
+- Does not fall back to fullscreen if -fullscreen is not specified. That
+  should ideally happen when the requested graphics mode is incompatible
+  with the current Windows graphics mode and a matching fullscreen mode
+  is there.
