@@ -1,4 +1,4 @@
-/* $Id: triple-int.h,v 1.1 2004/10/18 07:59:00 pekberg Exp $
+/* $Id: triple-int.h,v 1.2 2004/10/19 06:06:58 pekberg Exp $
 ******************************************************************************
 
    Small functions for triple precision integer math.
@@ -226,7 +226,7 @@ static inline unsigned *add_3(unsigned l[3], unsigned r[3])
 {
 	unsigned s, c1, c2;
 	s = l[0] + r[0];
-	c1 = s<l[0] && s<r[0];
+	c1 = s<l[0];
 	l[0] = s;
 	s = l[1] + r[1];
 	c2 = (s <= (s+c1)) ? (s<l[1] && s<r[1]) : 1;
