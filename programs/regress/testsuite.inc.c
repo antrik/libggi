@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.2 2004/08/08 20:55:15 cegger Exp $
+/* $Id: testsuite.inc.c,v 1.3 2004/08/26 11:20:53 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -41,8 +41,10 @@
 
 /* global variables */
 static int num_tests = 0;
-static int num_successfultests = 0;
-static int num_failedtests = 0;
+static int num_expected_successfultests = 0;
+static int num_unexpected_successfultests = 0;
+static int num_expected_failedtests = 0;
+static int num_unexpected_failedtests = 0;
 static int num_asserterrors = 0;
 
 static int expected_current_testresult = EXPECTED2PASS;
@@ -91,14 +93,15 @@ static void printsuccess(void)
 	switch (expected_current_testresult) {
 	case EXPECTED2PASS:
 		printf("passed, as expected\n");
+		num_expected_successfultests++;
 		break;
 	case EXPECTED2FAIL:
 		printf("passed - UNEXPECTED!\n");
+		num_unexpected_successfultests++;
 		break;
 	}
 	fflush(stdout);
 
-	num_successfultests++;
 	return;
 }
 
@@ -112,9 +115,11 @@ static void printfailure(const char *fmt, ...)
 	switch (expected_current_testresult) {
 	case EXPECTED2PASS:
 		printf("failed - UNEXPECTED!\n");
+		num_unexpected_failedtests++;
 		break;
 	case EXPECTED2FAIL:
 		printf("failed, as expected\n");
+		num_expected_failedtests++;
 		break;
 	}
 	vprintf(fmt, ap);
@@ -122,7 +127,6 @@ static void printfailure(const char *fmt, ...)
 
 	va_end(ap);
 
-	num_failedtests++;
 	return;
 }
 
@@ -131,8 +135,15 @@ static void printsummary(void)
 {
 	printf("\nSummary:\n");
 	printf("%2d tests run\n", num_tests);
-	printf("%2d tests successful\n", num_successfultests);
-	printf("%2d tests failed\n", num_failedtests);
+	printf("%2d tests successful, as expected\n",
+			num_expected_successfultests);
+	printf("%2d tests successful - UNEXPECTED\n",
+			num_unexpected_successfultests); 
+
+	printf("%2d tests failed, as expected\n",
+			num_expected_failedtests);
+	printf("%2d tests failed - UNEXPECTED\n",
+			num_unexpected_failedtests); 
 	printf("%2d assert failures\n", num_asserterrors);
 	fflush(stdout);
 }
