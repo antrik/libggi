@@ -25,7 +25,7 @@
  <arg><option>-inwin=<replaceable/winid/</option></arg>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
+ <arg><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -38,7 +38,7 @@
  <arg><option>-inwin=<replaceable/winid/</option></arg>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
+ <arg><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -189,7 +189,7 @@ be turned off in order to leave the window.
 <group>
  <arg><option/-noinput/</arg>
  <arg><option/-nocursor/</arg>
- <arg><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
+ <arg><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></arg>
 </group>
 <arg><replaceable/display/</arg>
 </cmdsynopsis>
@@ -235,7 +235,7 @@ to be able to mmap <filename>/dev/mem</filename>.
  </varlistentry>
 
  <varlistentry>
- <term><option>-physz=<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
+ <term><option>-physz==<replaceable/sizex/,<replaceable/sizey/<replaceable/dpi/</option></term>
  <listitem><para>
  This option will override the physical screen size reported by the
  X server, which affects applications which wish to remain resolution
