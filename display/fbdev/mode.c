@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: mode.c,v 1.3 2001/06/17 04:46:51 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -702,18 +702,10 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 	mode->dpp.x = xdpp;
 	mode->dpp.y = ydpp;
 
-#define DPI(dim, d) \
-	((priv->orig_var.dim <= 0) ? 0 : \
-	 (mode->visible.d * mode->dpp.d * 254 / priv->orig_var.dim / 10))
-
-	err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
-                                DPI(width, x), DPI(height,y), 
-				mode->visible.x, mode->visible.y);
-#undef DPI
-
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;
 	} else if (priv->orig_fix.ypanstep == 0 && mode->frames > 1) {
+		GGIDPRINT_MODE("display-fbdev: %d frames but no vertical panning\n", mode->frames);
 		mode->frames = 1;
 		err = -1;
 	}
@@ -763,6 +755,18 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 		GGIDPRINT_MODE("display-fbdev: checkmode error\n");
 		err = -1;
 	}
+
+#define DPI(dim, d) \
+	((priv->orig_var.dim <= 0) ? 0 : \
+	 (mode->visible.d * mode->dpp.d * 254 / priv->orig_var.dim / 10))
+
+	if (!err) {
+		err = _ggi_figure_physz(mode, priv->physzflags, &(priv->physz),
+					DPI(width, x), DPI(height,y), 
+					mode->visible.x, mode->visible.y);
+	}
+
+#undef DPI
 
 	maxframes = priv->orig_fix.smem_len /
 		(mode->virt.x * mode->virt.y *
