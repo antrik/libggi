@@ -1,4 +1,4 @@
-/* $Id: mansync.inc.c,v 1.2 2004/10/10 20:47:03 cegger Exp $
+/* $Id: mansync.inc.c,v 1.3 2004/10/11 19:01:23 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for correct mansync usage.
@@ -45,7 +45,7 @@ static void testcase1(const char *desc)
 
 	vis = ggiOpen(DISPLAYSTR, NULL);
 	if (vis == NULL) {
-		printfailure("Couldn't open DISPLAYSTR");
+		printfailure("Couldn't open %s", DISPLAYSTR);
 		return;
 	}
 
