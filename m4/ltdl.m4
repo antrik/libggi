@@ -21,6 +21,7 @@
 ## the same distribution terms that you use for the rest of that program.
 
 # serial 5 AC_LIB_LTDL
+# Debian $Rev: 50 $
 
 # AC_WITH_LTDL
 # ------------
@@ -127,7 +128,7 @@ AC_CACHE_CHECK([whether deplibs are loaded by dlopen],
         hpux10*|hpux11*)
           libltdl_cv_sys_dlopen_deplibs=yes
           ;;
-	linux*)
+	linux*|kfreebsd*-gnu*)
 	  libltdl_cv_sys_dlopen_deplibs=yes
 	  ;;
 	netbsd*)
