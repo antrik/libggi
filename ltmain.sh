@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.100 2004/12/13 16:20:30) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.118 2004/12/28 13:50:56) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.100 2004/12/13 16:20:30) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.118 2004/12/28 13:50:56) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.100 2004/12/13 16:20:30"
-package_revision=1.1667.2.100
+TIMESTAMP=" 1.1667.2.118 2004/12/28 13:50:56"
+package_revision=1.1667.2.118
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -217,6 +217,9 @@ sed_quote_subst='s/\([`"$\\]\)/\\\1/g'
 
 # Same as above, but do not quote variable references.
 double_quote_subst='s/\(["`\\]\)/\\\1/g'
+
+# Protect character class for func_quote_* by variable expansion.
+quote_scanset='[[~#^*{};<>?'"'"' 	]'
 
 # Re-`\' parameter expansions in output of double_quote_subst that were
 # `\'-ed in input to the same.  If an odd number of `\' preceded a '$'
@@ -397,8 +400,11 @@ func_quote_for_eval ()
       # word splitting, command substitution and and variable
       # expansion for a subsequent eval.
       # Many Bourne shells cannot handle close brackets correctly
-      # in scan sets, so we specify it separately.
-      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
+      # in scan sets, and some SunOS ksh mistreat backslash-escaping
+      # in scan sets (worked around with variable expansion),
+      # and furthermore cannot handle '|' '&' '(' ')' in scan sets
+      # at all, so we specify them separately.
+      *$quote_scanset* | *]* | *\|* | *\&* | *\(* | *\)* | "")
         my_arg="\"$my_arg\""
         ;;
     esac
@@ -419,8 +425,11 @@ func_quote_for_expand ()
       # Double-quote args containing shell metacharacters to delay
       # word splitting and command substitution for a subsequent eval.
       # Many Bourne shells cannot handle close brackets correctly
-      # in scan sets, so we specify it separately.
-      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
+      # in scan sets, and some SunOS ksh mistreat backslash-escaping
+      # in scan sets (worked around with variable expansion),
+      # and furthermore cannot handle '|' '&' '(' ')' in scan sets
+      # at all, so we specify them separately.
+      *$quote_scanset* | *]* | *\|* | *\&* | *\(* | *\)* | "")
         my_arg="\"$my_arg\""
         ;;
     esac
@@ -543,6 +552,7 @@ o2lo="s/\\.${objext}\$/.lo/"
 
 opt_dry_run=${run-false}  ## inherit $run when mdemo-dryrun.test sets it above
 opt_duplicate_deps=false
+opt_debug=:
 
 # If this variable is set in any of the actions, the command in it
 # will be execed at the end.  This prevents here-documents from being
@@ -830,25 +840,25 @@ Otherwise, only FILE itself is deleted using RM."
   # Shorthand for --mode=foo, only valid as the first argument
   case $1 in
   clean|clea|cle|cl)
-    shift; set -- --mode clean ${1+"$@"}
+    shift; set dummy --mode clean ${1+"$@"}; shift
     ;;
   compile|compil|compi|comp|com|co|c)
-    shift; set -- --mode compile ${1+"$@"}
+    shift; set dummy --mode compile ${1+"$@"}; shift
     ;;
   execute|execut|execu|exec|exe|ex|e)
-    shift; set -- --mode execute ${1+"$@"}
+    shift; set dummy --mode execute ${1+"$@"}; shift
     ;;
   finish|finis|fini|fin|fi|f)
-    shift; set -- --mode finish ${1+"$@"}
+    shift; set dummy --mode finish ${1+"$@"}; shift
     ;;
   install|instal|insta|inst|ins|in|i)
-    shift; set -- --mode install ${1+"$@"}
+    shift; set dummy --mode install ${1+"$@"}; shift
     ;;
   link|lin|li|l)
-    shift; set -- --mode link ${1+"$@"}
+    shift; set dummy --mode link ${1+"$@"}; shift
     ;;
   uninstall|uninstal|uninsta|uninst|unins|unin|uni|un|u)
-    shift; set -- --mode uninstall ${1+"$@"}
+    shift; set dummy --mode uninstall ${1+"$@"}; shift
     ;;
   esac
 
@@ -862,7 +872,8 @@ Otherwise, only FILE itself is deleted using RM."
 
       --debug)		preserve_args="$preserve_args $opt"
 	    		func_echo "enabling shell trace mode"
-	    		set -x
+	    		opt_debug='set -x'
+			$opt_debug
 			;;
 
       -dlopen)		test "$#" -eq 0 && func_missing_arg "$opt" && break
@@ -917,21 +928,24 @@ Otherwise, only FILE itself is deleted using RM."
       -dlopen=*|--mode=*|--tag=*)
 			arg=`$ECHO "X$opt" | $Xsed -e "$my_sed_long_arg"`
 			opt=`$ECHO "X$opt" | $Xsed -e "$my_sed_long_opt"`
-			set -- "$opt" "$arg" ${1+"$@"}
+			set dummy "$opt" "$arg" ${1+"$@"}
+			shift
 			;;
 
       # Separate optargs to short options:
 #      -x*|-y*)
 #			arg=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_rest"`
 #			opt=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_opt"`
-#			set -- "$opt" "$arg" ${1+"$@"}
+#			set dummy "$opt" "$arg" ${1+"$@"}
+#			shift
 #			;;
 
       # Separate non-argument short options:
 #      -z*|-z*|-y*)
 #			rest=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_rest"`
 #			opt=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_opt"`
-#			set -- "$opt" "-$rest" ${1+"$@"}
+#			set dummy "$opt" "-$rest" ${1+"$@"}
+#			shift
 #			;;
 
       -\?|-h)		func_usage					;;
@@ -1007,6 +1021,7 @@ _LT_EOF
 # Has to be a shell function in order to 'eat' the argument
 # that is supplied when $file_magic_command is called.
 func_win32_libid () {
+  $opt_debug
   win32_libid_type="unknown"
   win32_fileres=`file -L $1 2>/dev/null`
   case $win32_fileres in
@@ -1048,6 +1063,7 @@ func_win32_libid () {
 # command doesn't match the default compiler.
 # arg is usually of the form 'gcc ...'
 func_infer_tag () {
+    $opt_debug
     if test -n "$available_tags" && test -z "$tagname"; then
       CC_quoted=
       for arg in $CC; do
@@ -1102,6 +1118,7 @@ func_infer_tag () {
 # Extract symbols from dlprefiles and create ${outputname}S.o with
 # a dlpreopen symbol table.
 func_generate_dlsyms () {
+    $opt_debug
     my_outputname="$1"
     my_originator="$2"
     my_pic_p="${3-no}"
@@ -1335,6 +1352,7 @@ static const void *lt_preloaded_setup() {
 
 # func_extract_archives gentop oldlib ...
 func_extract_archives () {
+    $opt_debug
     my_gentop="$1"; shift
     my_oldlibs=${1+"$@"}
     my_oldobjs=""
@@ -1406,7 +1424,7 @@ func_extract_archives () {
 	else
 	  func_warning "object name conflicts; renaming object files"
 	  func_warning "to ensure that they will not overwrite"
-	  $AR t "$my_xabs" | sort | uniq -cd | while read -r count name
+	  $AR t "$my_xabs" | sort | uniq -cd | while read count name
 	  do
 	    i=1
 	    while test "$i" -le "$count"
@@ -1436,6 +1454,7 @@ func_extract_archives () {
 # func_mode_compile arg...
 func_mode_compile ()
 {
+    $opt_debug
     # Get the compilation command and the source file.
     base_compile=
     srcfile="$nonopt"  #  always keep a non-empty value in "srcfile"
@@ -1840,6 +1859,7 @@ EOF
 # func_mode_execute arg...
 func_mode_execute ()
 {
+    $opt_debug
     # The first argument is the command name.
     cmd="$nonopt"
     test -z "$cmd" && \
@@ -1969,6 +1989,7 @@ func_mode_execute ()
 # func_mode_finish arg...
 func_mode_finish ()
 {
+    $opt_debug
     libdirs="$nonopt"
     admincmds=
 
@@ -2054,6 +2075,7 @@ func_mode_finish ()
 # func_mode_install arg...
 func_mode_install ()
 {
+    $opt_debug
     # There may be an optional sh(1) argument at the beginning of
     # install_prog (especially on Windows NT).
     if test "$nonopt" = "$SHELL" || test "$nonopt" = /bin/sh ||
@@ -2518,6 +2540,7 @@ func_mode_install ()
 # func_mode_link arg...
 func_mode_link ()
 {
+    $opt_debug
     case $host in
     *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-os2*)
       # It is impossible to link a dll without this setting, and
@@ -6875,6 +6898,7 @@ relink_command=\"$relink_command\""
 # func_mode_uninstall arg...
 func_mode_uninstall ()
 {
+    $opt_debug
     RM="$nonopt"
     files=
     rmforce=

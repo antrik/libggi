@@ -692,7 +692,7 @@ m4_defun([_LT_PROG_ECHO_BACKSLASH],
 # Check that we are running under the correct shell.
 SHELL=${CONFIG_SHELL-/bin/sh}
 
-case $lt_ECHO in
+case X$lt_ECHO in
 X*--fallback-echo)
   # Remove one level of quotation (which was required for Make).
   ECHO=`echo "$lt_ECHO" | sed 's,\\\\\[$]\\[$]0,'[$]0','`
@@ -3076,7 +3076,7 @@ m4_if([$1], [CXX], [
 	    _LT_TAGVAR(lt_prog_compiler_wl, $1)='--backend -Wl,'
 	    _LT_TAGVAR(lt_prog_compiler_pic, $1)='-fPIC'
 	    ;;
-	  icpc)
+	  icpc* | ecpc* )
 	    # Intel C++
 	    _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
 	    _LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
@@ -3871,7 +3871,7 @@ _LT_EOF
       _LT_TAGVAR(old_archive_from_new_cmds, $1)='true'
       # FIXME: Should let the user specify the lib program.
       _LT_TAGVAR(old_archive_cmds, $1)='lib /OUT:$oldlib$oldobjs$old_deplibs'
-      fix_srcfile_path='`cygpath -w "$srcfile"`'
+      _LT_TAGVAR(fix_srcfile_path, $1)='`cygpath -w "$srcfile"`'
       _LT_TAGVAR(enable_shared_with_static_runtimes, $1)=yes
       ;;
 
@@ -4149,11 +4149,11 @@ _LT_EOF
       ;;
 
     solaris*)
-      _LT_TAGVAR(no_undefined_flag, $1)=' -z text'
+      _LT_TAGVAR(no_undefined_flag, $1)=' -z defs'
       if test "$GCC" = yes; then
-	_LT_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+	_LT_TAGVAR(archive_cmds, $1)='$CC -shared ${wl}-z ${wl}text ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
 	_LT_TAGVAR(archive_expsym_cmds, $1)='$ECHO "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$ECHO "local: *; };" >> $lib.exp~
-	  $CC -shared ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags~$RM $lib.exp'
+	  $CC -shared ${wl}-z ${wl}text ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags~$RM $lib.exp'
       else
 	case `$CC -V 2>&1` in
 	*"Compilers 5.0"*)
@@ -4276,7 +4276,7 @@ _LT_EOF
     if test x$host_vendor = xsni; then
       case $host in
       sysv4 | sysv4.2uw2* | sysv4.3* | sysv5*)
-	export_dynamic_flag_spec='${wl}-Blargedynsym'
+	_LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}-Blargedynsym'
 	;;
       esac
     fi
@@ -5111,7 +5111,7 @@ if test "$_lt_caught_CXX_error" != yes; then
 	    # "CC -Bstatic", where "CC" is the KAI C++ compiler.
 	    _LT_TAGVAR(old_archive_cmds, $1)='$CC -Bstatic -o $oldlib $oldobjs'
 	    ;;
-	  icpc)
+	  icpc* | ecpc* )
 	    # Intel C++
 	    with_gnu_ld=yes
 	    # version 8.0 and above of icpc choke on multiply defined symbols
