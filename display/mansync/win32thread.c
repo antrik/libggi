@@ -1,4 +1,4 @@
-/* $Id: win32thread.c,v 1.1 2004/02/12 09:09:53 pekberg Exp $
+/* $Id: win32thread.c,v 1.2 2004/02/20 06:28:27 pekberg Exp $
 ******************************************************************************
 
    MANSYNC_WIN32THREAD implementation.
@@ -134,6 +134,7 @@ int _GGI_mansync_stop(ggi_visual *vis)
 	MANSYNC_ISASYNC(vis) = 1;
 
 	WaitForSingleObject(MANSYNC_PRIV(vis)->thread, INFINITE);
+	CloseHandle(MANSYNC_PRIV(vis)->thread);
 	MANSYNC_PRIV(vis)->thread = NULL;
 	return 0;
 }
