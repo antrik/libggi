@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2004/08/15 10:54:08 cegger Exp $
+/* $Id: mode.c,v 1.29 2004/09/09 11:55:29 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -369,21 +369,23 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 		XCreateSimpleWindow(priv->disp,
 				    RootWindow(priv->disp, vi->screen),
 				    0, 0,
-				    (unsigned)tm->visible.x,
-				    (unsigned)tm->visible.y, 0,
+				    (unsigned int)tm->visible.x,
+				    (unsigned int)tm->visible.y, 0,
 				    0, 0);
 	_ggi_x_dress_parentwin(vis, tm);
 
 	GGIDPRINT_MODE("X: Prepare to resize.\n");
 	XResizeWindow(priv->disp,priv->parentwin,
-			(unsigned)tm->visible.x, (unsigned)tm->visible.y);
-	GGIDPRINT_MODE("X: About to map parent\n");
+			(unsigned int)tm->visible.x,
+			(unsigned int)tm->visible.y);
+	GGIDPRINT_MODE("X: About to map parent (%p)\n", priv->parentwin);
 
 	/* Map window. */
 	GGIDPRINT_MODE("X: Parent win: Map Input\n");
 	XSelectInput(priv->disp, priv->parentwin, ExposureMask);
 	GGIDPRINT_MODE("X: Parent win: Raise Mapping\n");
 	XMapRaised(priv->disp, priv->parentwin);
+	GGIDPRINT_MODE("X: Parent win: Map requested\n");
 
 	/* Wait for window to become mapped */
 	XNextEvent (priv->disp, &event);
