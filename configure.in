@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.47 2002/10/20 20:35:49 skids Exp $
+dnl $Id: configure.in,v 1.48 2002/10/20 20:55:43 skids Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -328,7 +328,7 @@ fi
 AC_CC_CAN_EMMS
 if test "$do_mmx" = "yes"; then 
    if test "$ac_cc_can_emms" != "yes"; then
-      AC_MSG_ERROR(MMX explicitly requested, but compiler cannot compile MMX!)
+      AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
       do_mmx=no
    fi
 fi
@@ -354,7 +354,7 @@ fi
 AC_CC_CAN_FEMMS
 if test "$do_mmx" = "yes"; then 
    if test "$ac_cc_can_femms" != "yes"; then
-      AC_MSG_ERROR(MMX explicitly requested, but compiler cannot compile MMX!)
+      AC_MSG_ERROR(MMX explicitly requested but compiler cannot compile MMX!)
       do_mmx=no
    fi
 fi
