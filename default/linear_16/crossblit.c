@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.11 2004/03/01 17:21:35 skids Exp $
+/* $Id: crossblit.c,v 1.12 2004/03/01 20:01:08 skids Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1276,7 +1276,6 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 			if ((stopcol > dstp + 11) && 
 			    !((unsigned int)dstp % 8)) {
 				while (stopcol > dstp + 11) {
-				  void *dummy;
 				  __asm__ __volatile__(
 				   "movq  (%1), %%mm0\n\t"
                                    "pxor  %%mm5, %%mm5\n\t"
@@ -1287,28 +1286,28 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
                                    "add   $24, %1\n\t"
 
                                    ".Lleft%=:"
-                                   "cmp   $0, 8(%2)\n\t"
+                                   "cmp   $0, 8(%4)\n\t"
                                    "je    .Lmiddle%=\n\t"
 
                                    "movq  %%mm0, %%mm3\n\t"
                                    "movq  %%mm1, %%mm4\n\t"
-                                   "psllw (%2), %%mm3\n\t"
-                                   "psllw (%2), %%mm4\n\t"
-                                   "pand  8(%2), %%mm3\n\t"
-                                   "pand  8(%2), %%mm4\n\t"
+                                   "psllw (%4), %%mm3\n\t"
+                                   "psllw (%4), %%mm4\n\t"
+                                   "pand  8(%4), %%mm3\n\t"
+                                   "pand  8(%4), %%mm4\n\t"
                                    "por   %%mm3, %%mm5\n\t"
                                    "movq  %%mm2, %%mm3\n\t"
                                    "por   %%mm4, %%mm6\n\t"
-                                   "psllw (%2), %%mm3\n\t"
-                                   "pand  8(%2), %%mm3\n\t"
-                                   "cmp   $0, (%2)\n\t"
+                                   "psllw (%4), %%mm3\n\t"
+                                   "pand  8(%4), %%mm3\n\t"
+                                   "cmp   $0, (%4)\n\t"
                                    "por   %%mm3, %%mm7\n\t"
                                    "je    .Lright%=\n\t"
-                                   "add   $16, %2\n\t"
+                                   "add   $16, %4\n\t"
                                    "jmp   .Lleft%=\n\t"
 
                                    ".Lmiddle%=:\n\t"
-                                   "cmp   $0, (%2)\n\t"
+                                   "cmp   $0, (%4)\n\t"
                                    "je    .Lright%=\n\t"
 
                                    ".Ldone%=:\n\t"
@@ -1319,29 +1318,29 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
                                    "jmp   .Lout%=\n\t"
 
                                    ".Lright%=:\n\t"
-                                   "add   $16, %2\n\t"
-                                   "cmp   $0, 8(%2)\n\t"
+                                   "add   $16, %4\n\t"
+                                   "cmp   $0, 8(%4)\n\t"
                                    "je    .Ldone%=\n\t"
 
                                    "movq  %%mm0, %%mm3\n\t"
                                    "movq  %%mm1, %%mm4\n\t"
-                                   "psrlw (%2), %%mm3\n\t"
-                                   "psrlw (%2), %%mm4\n\t"
-                                   "pand  8(%2), %%mm3\n\t"
-                                   "pand  8(%2), %%mm4\n\t"
+                                   "psrlw (%4), %%mm3\n\t"
+                                   "psrlw (%4), %%mm4\n\t"
+                                   "pand  8(%4), %%mm3\n\t"
+                                   "pand  8(%4), %%mm4\n\t"
                                    "por   %%mm3, %%mm5\n\t"
                                    "movq  %%mm2, %%mm3\n\t"
                                    "por   %%mm4, %%mm6\n\t"
-                                   "psrlw (%2), %%mm3\n\t"
-                                   "pand  8(%2), %%mm3\n\t"
+                                   "psrlw (%4), %%mm3\n\t"
+                                   "pand  8(%4), %%mm3\n\t"
                                    "por   %%mm3, %%mm7\n\t"
 
                                    "jmp   .Lright%=\n\t"
 
                                    ".Lout%=:\n\t"
                                    "emms\n\t"
-				   : "=q" (dstp), "=q" (srcp), "=q" (dummy)
-				   : "q" (dstp), "q" (srcp), "q" (tab)
+				   : "=q" (dstp), "=q" (srcp)
+				   : "0" (dstp), "1" (srcp), "q" (tab)
 				   : "cc", "memory");
 				}
 			}
@@ -1435,7 +1434,6 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 			if ((stopcol > dstp + 7) && 
 			    !((unsigned int)dstp % 8)) {
 				while (stopcol > dstp + 7) {
-				  void *dummy;
 				  __asm__ __volatile__(
 
 				   "movq  (%1), %%mm0\n\t"
@@ -1447,34 +1445,34 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
                                    "pxor  %%mm6, %%mm6\n\t"
 
                                    ".Lleft%=:"
-                                   "cmp   $0, 8(%2)\n\t"
+                                   "cmp   $0, 8(%4)\n\t"
                                    "je    .Lmiddle%=\n\t"
 
                                    "movq  %%mm1, %%mm4\n\t"
                                    "movq  %%mm0, %%mm5\n\t"
-                                   "pslld (%2), %%mm4\n\t"
-                                   "pslld (%2), %%mm5\n\t"
+                                   "pslld (%4), %%mm4\n\t"
+                                   "pslld (%4), %%mm5\n\t"
                                    "psrad $16, %%mm4\n\t"
                                    "psrad $16, %%mm5\n\t"
                                    "packssdw %%mm4, %%mm5\n\t"
                                    "movq  %%mm3, %%mm4\n\t"
-                                   "pand  8(%2), %%mm5\n\t"
+                                   "pand  8(%4), %%mm5\n\t"
                                    "por   %%mm5, %%mm6\n\t"
                                    "movq  %%mm2, %%mm5\n\t"
-                                   "pslld (%2), %%mm4\n\t"
-                                   "pslld (%2), %%mm5\n\t"
+                                   "pslld (%4), %%mm4\n\t"
+                                   "pslld (%4), %%mm5\n\t"
                                    "psrad $16, %%mm4\n\t"
                                    "psrad $16, %%mm5\n\t"
                                    "packssdw %%mm4, %%mm5\n\t"
-                                   "pand  8(%2), %%mm5\n\t"
-                                   "cmp   $0, (%2)\n\t"
+                                   "pand  8(%4), %%mm5\n\t"
+                                   "cmp   $0, (%4)\n\t"
                                    "por   %%mm5, %%mm7\n\t"
                                    "je    .Lright%=\n\t"
-                                   "add   $16, %2\n\t"
+                                   "add   $16, %4\n\t"
                                    "jmp   .Lleft%=\n\t"
 
                                    ".Lmiddle%=:\n\t"
-                                   "cmp   $0, (%2)\n\t"
+                                   "cmp   $0, (%4)\n\t"
                                    "je    .Lright%=\n\t"
 
                                    ".Ldone%=:\n\t"
@@ -1484,30 +1482,30 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
                                    "jmp   .Lout%=\n\t"
 
                                    ".Lright%=:\n\t"
-                                   "add   $16, %2\n\t"
-                                   "cmp   $0, 8(%2)\n\t"
+                                   "add   $16, %4\n\t"
+                                   "cmp   $0, 8(%4)\n\t"
                                    "je    .Ldone%=\n\t"
 
                                    "movq  %%mm1, %%mm4\n\t"
                                    "movq  %%mm0, %%mm5\n\t"
-                                   "psrld (%2), %%mm4\n\t"
-                                   "psrld (%2), %%mm5\n\t"
+                                   "psrld (%4), %%mm4\n\t"
+                                   "psrld (%4), %%mm5\n\t"
                                    "packssdw %%mm4, %%mm5\n\t"
                                    "movq  %%mm3, %%mm4\n\t"
-                                   "pand  8(%2), %%mm5\n\t"
+                                   "pand  8(%4), %%mm5\n\t"
                                    "por   %%mm5, %%mm6\n\t"
                                    "movq  %%mm2, %%mm5\n\t"
-                                   "psrld (%2), %%mm4\n\t"
-                                   "psrld (%2), %%mm5\n\t"
+                                   "psrld (%4), %%mm4\n\t"
+                                   "psrld (%4), %%mm5\n\t"
                                    "packssdw %%mm4, %%mm5\n\t"
-                                   "pand  8(%2), %%mm5\n\t"
+                                   "pand  8(%4), %%mm5\n\t"
                                    "por   %%mm5, %%mm7\n\t"
                                    "jmp   .Lright%=\n\t"
 
                                     ".Lout%=:\n\t"
                                    "emms\n\t"
-				   : "=q" (dstp), "=q" (srcp), "=q" (dummy)
-				   : "q" (dstp), "q" (srcp), "q" (tab)
+				   : "=q" (dstp), "=q" (srcp)
+				   : "0" (dstp), "1" (srcp), "q" (tab)
 				   : "cc", "memory");
 				}
 			}
