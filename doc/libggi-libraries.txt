@@ -236,10 +236,13 @@ Examples of `GGI_DEFMODE` strings:
 
   - ``320x200[C/16]`` : 320x200 with 16-bit pixels (also hicolor) 
 
-  - ``320x200[C24/32]``, 320x200[GT_32BIT] : 320x200, with 32-bit
+  - ``320x200[C24/32]``, ``320x200[GT_32BIT]`` : 320x200, with 32-bit
     pixels for 16777216 colors (truecolor)
 
   - ``640x480F2[GT_16BIT]`` 16-bit-color 640x480 with two buffers
 
 
+
+.. include:: ../programs/util/monitest/monitest.txt
+.. include:: ../programs/demos/cube3d.txt
 

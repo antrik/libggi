@@ -57,24 +57,24 @@ Structure Members
     screen efficiently.  See `ggi[Set|Get]Origin` functions for more.
 
 `size`
-    ???
+    TODO : Write something here.
 
 `graphtype`
 
     It holds information on the type of display.  libggi defines
     macros to construct graphtypes values or access individual field.
 
-    `depth` (`GT_DEPTH`(gt), `GT_SETDEPTH`(gt,x))
+    `depth` ( access via `GT_DEPTH(gt)`, `GT_SETDEPTH(gt,x)` )
 
         The number of significant bits holding color information.
 
-    `size` (`GT_SIZE`(gt), `GT_SETSIZE`(gt,x))
+    `size` ( access via  `GT_SIZE(gt)`, `GT_SETSIZE(gt,x)` )
 
 	The actual size (in bits) of a pixel.  For instance, on a 32
 	bits X server the pixel size is 32 but the depth is only 24
 	(8bits RGB channels, 8 unused).
 
-    `scheme` (`GT_SCHEME`(gt), `GT_SETSCHEME`(gt,x))
+    `scheme` ( access via  `GT_SCHEME(gt)`, `GT_SETSCHEME(gt,x)` )
 
 	The following schemes are available :
 
@@ -88,16 +88,16 @@ Structure Members
 	- `GT_SUBSAMPLE_S_YCRBR`
 	- `GT_NIL`
 
-    `subscheme` (`GT_SUBSCHEME`(gt), `GT_SETSUBSCHEME`(gt,x))
+    `subscheme` ( access via `GT_SUBSCHEME(gt)` , `GT_SETSUBSCHEME(gt,x)` )
 
-	????
+	One of:
 	
 	- `GT_SUB_REVERSE_ENDIAN`
 	- `GT_SUB_HIGHBIT_RIGHT`
 	- `GT_SUB_PACKED_GETPUT`
 
     Graphtypes can be constructed directly or via the
-    `GT_CONSTRUCT`(depth,scheme,size) macro.  The following common
+    `GT_CONSTRUCT(depth,scheme,size)` macro.  The following common
     graphtypes are defined :
 
     - `GT_TEXT16`
@@ -133,8 +133,7 @@ See Also
 LibGGI color description
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-..manpage:: 3 ggi_color ggi_pixel
+.. manpage:: 3 ggi_color ggi_pixel
 
 Synopsis
 --------
@@ -157,7 +156,7 @@ Colors in ggi are described genericaly through the display-independent
 precision most displays.
 
 
-`ggi_pixel`s are display-dependent pixel values.  They are used by all
+`ggi_pixel`\ s are display-dependent pixel values.  They are used by all
 GGI drawing primitives for efficiency.  Use :man:`ggiMapColor(3)` to
 convert ggi_colors to ggi_pixels.
 
@@ -167,14 +166,14 @@ Structure members
 
 `r`, `g` and `b` correspond respectively to the red, green and blue
 channels.  Since libggi does not deal with alpha compositing, the
-`a`(alpha) field is mainly there for padding and it is not used by
+`a` (alpha) field is mainly there for padding and it is not used by
 libggi. Setting this value has no effect in libggi itself, and it will
-most probably not be unmaped correctly from `ggi_pixel`s. However,
+most probably not be unmaped correctly from `ggi_pixel`\ s. However,
 some extensions might make use of it, in which case you should refer
 to their documentation.
 
 
-`ggi_pixel`s format depends on the actual display and mode. For those
+`ggi_pixel`\ s format depends on the actual display and mode. For those
 who want to operate directly on pixel values, this format is describe
 in the `ggi_pixelformat` structure.
 
@@ -183,7 +182,7 @@ Pixel Arrays
 ------------
 
 Although individual pixels are kept into 32 bits `ggi_pixel`, arrays
-of pixels, as used in `ggi[Get¦Put]*` functions, `ggiPackColors` and
+of pixels, as used in `ggi[Get|Put]*` functions, `ggiPackColors` and
 `ggiUnpackPixels`, are stored in the display specific format, thus
 packed according to the actual pixel size.  This size is given by the
 `GT_SIZE` macro for `graphtype` or the `size` field of the
@@ -198,7 +197,7 @@ get the number of bytes.
 
 
 If you want to access such buffers directly, do *not* use pointer
-arithmetics with `ggi_pixel`s.
+arithmetics with `ggi_pixel`\ s.
 
 
 See Also
@@ -469,7 +468,7 @@ A linear buffer is a region in the application's virtual memory
 address space. A pixel with the pixel coordinates (:p:`x`, :p:`y`) is
 assigned a pixel number according to the following formula::
 
-  `pixel_number` = (`origin_y` + `y`) * `stride` + `origin_x` + `x`;
+  pixel_number = (origin_y + y) * stride + origin_x + x;
 
 In any case both `x` and `y` must not be negative, and less than the
 buffer's width and height respectively. For top-left-origin screen
@@ -525,7 +524,7 @@ Sample Planar Buffer
 Extended Buffer
 ---------------
 
-????
+TODO : write something here.
 
 
 See Also
