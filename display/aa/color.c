@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/04/08 18:05:25 cegger Exp $
+/* $Id: color.c,v 1.8 2004/11/06 12:46:11 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Palette functions for AA target.
@@ -26,8 +26,8 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 #include <ggi/display/aa.h>
+#include <ggi/internal/ggi_debug.h>
 #include <string.h>
 
 
