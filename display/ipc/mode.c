@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/08 20:25:31 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/09/08 20:40:42 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -73,7 +73,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	LIBGGI_APPBUFS(vis)[0]->read = LIBGGI_APPBUFS(vis)[0]->write = fbaddr;
 	LIBGGI_APPBUFS(vis)[0]->layout = blPixelLinearBuffer;
 	LIBGGI_APPBUFS(vis)[0]->buffer.plb.stride
-		= GT_ByPPP(mode->virt.x, GT_SIZE(mode->graphtype));
+		= GT_ByPPP(mode->virt.x, mode->graphtype);
 	LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
