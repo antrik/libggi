@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2004/07/28 09:33:14 ggibecka Exp $
+/* $Id: mode.c,v 1.28 2004/08/15 10:54:08 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -495,8 +495,7 @@ oldparent:
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
 		gii_event ev;
-		gii_xwin_cmddata_setparam *data
-			= (gii_xwin_cmddata_setparam *) ev.cmd.data;
+		gii_xwin_cmddata_setparam data;
 
 		GGIDPRINT_MODE("X (setmode_normal): tell inputlib about new window\n");
 
@@ -504,10 +503,17 @@ oldparent:
 		ev.cmd.type = evCommand;
 		ev.cmd.target = priv->inp->origin;
 		ev.cmd.code = GII_CMDCODE_XWINSETPARAM;
-		data->win = priv->win;
-		if (data->win == None) data->win = priv->parentwin;
-		data->ptralwaysrel = 0;
-		data->parentwin = priv->parentwin;
+		data.win = priv->win;
+		if (data.win == None) {
+			data.win = priv->parentwin;
+		}
+		data.ptralwaysrel = 0;
+		data.parentwin = priv->parentwin;
+
+		/* Assure aligned memory access. Some platforms
+		 * (i.e. NetBSD/sparc64) rely on this.
+		 */
+		memcpy(ev.cmd.data, &data, sizeof(gii_xwin_cmddata_setparam));
 
 		giiEventSend(priv->inp, &ev);
 	}
@@ -679,8 +685,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
 		gii_event ev;
-		gii_xwin_cmddata_setparam *data
-			= (gii_xwin_cmddata_setparam *) ev.cmd.data;
+		gii_xwin_cmddata_setparam data;
 
 		GGIDPRINT_MODE("X (setmode_fixed): tell inputlib about new window\n");
 
@@ -688,9 +693,17 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		ev.cmd.type = evCommand;
 		ev.cmd.target = priv->inp->origin;
 		ev.cmd.code = GII_CMDCODE_XWINSETPARAM;
-		data->win = priv->win;
-		if (data->win == None) data->win = priv->parentwin;
-		data->ptralwaysrel = 0;
+		data.win = priv->win;
+		if (data.win == None) {
+			data.win = priv->parentwin;
+		}
+		data.ptralwaysrel = 0;
+		data.parentwin = priv->parentwin;
+
+		/* Assure aligned memory access. Some platforms
+		 * (i.e. NetBSD/sparc64) rely on this.
+		 */
+		memcpy(ev.cmd.data, &data, sizeof(gii_xwin_cmddata_setparam));
 
 		giiEventSend(priv->inp, &ev);
 	}
