@@ -16,7 +16,8 @@ Due : 2001-08-26
 - cleanup demo building and installation
 - bring improved code in showaccel demo to showaccel2 demo
 * directfb off by default
-- fix building of directfb libraries (and breakage of make distcheck)
+- fix building of directfb libraries.
+* fix broken "make distcheck" for directfb. (thayne)
 
 ------------------------------------------
 Long-term plan

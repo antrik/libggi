@@ -1,3 +1,3 @@
 SUBDIRS = mga $(FBDEVSUBDIRS)
 
-EXTRA_SUBDIRS = mga directfb
+DIST_SUBDIRS = mga directfb
