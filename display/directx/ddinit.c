@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.16 2003/10/25 08:49:49 cegger Exp $
+/* $Id: ddinit.c,v 1.17 2004/02/12 00:59:06 agraef Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -35,6 +35,9 @@ static int DDCreateThread(directx_priv *priv);
 static int DDCreateSurface(directx_priv *priv);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
+
+long FAR PASCAL
+WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int DDInit(directx_priv *priv)
 {
@@ -115,7 +118,9 @@ void DDRedraw(directx_priv * priv)
 {
   RECT SrcWinPos, DestWinPos;
   GetClientRect(priv->hWnd, &SrcWinPos);
-  GetWindowRect(priv->hWnd, &DestWinPos);
+  GetClientRect(priv->hWnd, &DestWinPos);
+  ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.left);
+  ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
   /* draw the stored image on the primary surface */
   IDirectDrawSurface_Blt(priv->lppdds, &DestWinPos,
 			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
@@ -384,7 +389,7 @@ static void DDCreateClass(directx_priv *priv)
 
 static int DDCreateWindow(directx_priv *priv)
 {
-  int w = 640+8, h = 480+28; /* default window size */
+  int w = 640, h = 480; /* default window size */
   int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX;
 		  /* toplevel flags */
 
@@ -396,11 +401,19 @@ static int DDCreateWindow(directx_priv *priv)
     h = r.bottom-r.top;
     /* flags for a child window */
     ws_flags = WS_CHILD;
+  } else {
+    /* adjust the window size to accommodate for the client area */
+    RECT r;
+    r.left = r.top = 0;
+    r.right = w; r.bottom = h;
+    AdjustWindowRectEx(&r, ws_flags, 0, 0);
+    w = r.right-r.left;
+    h = r.bottom-r.top;
   }
 
   /* create the window */
   priv->hWnd = CreateWindowEx(0, NAME, TITLE, ws_flags,
-			      0, 0, w, h,
+			      CW_USEDEFAULT, 0, w, h,
 			      priv->hParent, NULL,
 			      priv->hInstance, priv);
   if (!priv->hWnd) {
@@ -541,10 +554,16 @@ static void DDDestroySurface(directx_priv *priv)
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
 {
   if (!priv->hParent) {
+    int ws_flags = WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX;
     RECT r;
     GetWindowRect(priv->hWnd, &r);
-    width += 8;
-    height += 28;
+    r.right = r.left+width;
+    r.bottom = r.top+height;
+    AdjustWindowRectEx(&r, ws_flags, 0, 0);
+    width = r.right-r.left;
+    height = r.bottom-r.top;
+    if (r.left < 0) r.left = 0;
+    if (r.top < 0) r.top = 0;
     MoveWindow(priv->hWnd, r.left, r.top, width, height, TRUE);
   }
 }
