@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/27 16:42:28 soyt Exp $
+/* $Id: mode.c,v 1.14 2005/02/15 08:07:32 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -69,7 +69,7 @@ int GGI_trueemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 		
 	case 4: strcpy(apiname, "generic-pseudo-stubs");
-		sprintf(arguments, "%p", TRUEEMU_PRIV(vis)->parent);
+		sprintf(arguments, "%p", (void *)TRUEEMU_PRIV(vis)->parent);
 		return 0;
 	}
 
