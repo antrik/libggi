@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.5 2004/02/23 14:25:15 pekberg Exp $
+/* $Id: visual.m,v 1.6 2004/09/12 20:39:12 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -71,10 +71,10 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	CGAssociateMouseAndMouseCursorPosition (1);
 
 	free(vis->gamma);
-	free(LIBGGI_PRIVATE(vis));
+	free(QUARTZ_PRIV(vis));
 	free(LIBGGI_GC(vis));
 	vis->gamma = NULL;
-	LIBGGI_PRIVATE(vis) = NULL;
+	QUARTZ_PRIV(vis) = NULL;
 	LIBGGI_GC(vis) = NULL;
 
 	return 0;
@@ -100,7 +100,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Allocate descriptor for screen memory */
-	priv = LIBGGI_PRIVATE(vis) = calloc(1,sizeof(ggi_quartz_priv));
+	priv = QUARTZ_PRIV(vis) = calloc(1,sizeof(ggi_quartz_priv));
 	if (!priv) {
 		goto err1;
 	}	/* if */
