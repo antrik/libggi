@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2002/09/08 21:37:44 soyt Exp $
+/* $Id: mode.c,v 1.10 2002/12/05 19:35:12 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -332,7 +332,10 @@ oldparent:
 	ggi_x_load_mode_libs(vis);
 	_ggi_x_load_slaveops(vis);
 	GGIDPRINT("viidx = %i\n", priv->viidx);
-	if (priv->createfb != NULL) priv->createfb(vis);
+	if (priv->createfb != NULL) {
+		err = priv->createfb(vis);
+		if (err) goto err0;
+	}
 
 	_ggi_x_free_colormaps(vis);
 	XSync(priv->disp, 0);
@@ -395,7 +398,10 @@ oldparent:
 	XSync(priv->disp, 0);
 	GGIDPRINT_MODE("X: Sync done\n");
 
-	if (priv->createdrawable) priv->createdrawable(vis);
+	if (priv->createdrawable) {
+		err = priv->createdrawable(vis);
+		if (err) goto err1;
+	}
 
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
@@ -418,6 +424,11 @@ oldparent:
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
+	return err;
+
+err1:
+	priv->freefb(vis);
+err0:
 	return err;
 }
 
@@ -466,7 +477,10 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	ggi_x_load_mode_libs(vis);
 	_ggi_x_load_slaveops(vis);
-	if (priv->createfb != NULL) priv->createfb(vis);
+	if (priv->createfb != NULL) {
+		err = priv->createfb(vis);
+		if (err) goto err0;
+	}
 
 	_ggi_x_free_colormaps(vis);
 	XSync(priv->disp, 0);
@@ -532,7 +546,10 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	XSync(priv->disp, 0);
 	GGIDPRINT_MODE("X: Sync done\n");
 
-	if (priv->createdrawable) priv->createdrawable(vis);
+	if (priv->createdrawable) {
+		err = priv->createdrawable(vis);
+		if (err) goto err1;
+	}
 
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
@@ -555,6 +572,11 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
+	return err;
+
+err1:
+	priv->freefb(vis);
+err0:
 	return err;
 }
 
