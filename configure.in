@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.45 2002/10/15 15:43:36 cegger Exp $
+dnl $Id: configure.in,v 1.46 2002/10/15 16:03:40 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -37,6 +37,7 @@ build_suidkgi_target="no"
 build_memory_target="yes"
 build_dga_target="auto"
 internal_xf86dga="yes"
+build_terminfo_target="auto"
 
 dnl Linux specific Targets
 build_aa_target="auto"
@@ -46,9 +47,10 @@ build_glide_target="auto"
 build_lcd823_target="auto"
 build_monotext_target="auto"
 build_svga_target="auto"
-build_vgl_target="auto"
-build_terminfo_target="auto"
 build_vcsa_target="auto"
+
+dnl FreeBSD specific Targets
+build_vgl_target="auto"
 
 dnl Win32 specific Targets
 build_directx_target="no"
@@ -90,18 +92,43 @@ test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 dnl TARGETS:
 
+dnl Common useable Targets
 AC_ARG_ENABLE(x,
 [  --disable-x             don't build the X target],
 build_x_target=$enableval)
 AC_ARG_ENABLE(xlib,
 [  --disable-xlib          don't build the Xlib target],
 build_xlib_target=$enableval)
+AC_ARG_ENABLE(file,
+[  --disable-file          don't build the file target],
+build_file_target=$enableval)
+AC_ARG_ENABLE(kgi,
+[  --disable-kgi           don't build the kgi target],
+build_kgi_target=$enableval)
+AC_ARG_ENABLE(libkgi,
+[  --disable-libkgi           don't build the libkgi target],
+build_libkgi_target=$enableval)
+dnl AC_ARG_ENABLE(suidkgi,
+dnl [  --enable-suidkgi        build the suidkgi target],
+dnl build_suidkgi_target=$enableval)
+AC_ARG_ENABLE(memory,
+[  --disable-memory        don't build the memory target],
+build_memory_target=$enableval)
+AC_ARG_ENABLE(dga,
+[  --disable-dga           don't build the dga target],
+build_dga_target=$enableval)
+AC_ARG_ENABLE(internal-xf86dga,
+[  --disable-internal-xf86dga  don't use libggi internal xf86dga support],
+internal_xf86dga=$enableval)
+AC_ARG_ENABLE(terminfo,
+[  --disable-terminfo      don't build the terminfo target],
+build_terminfo_target=$enableval)
+
+
+dnl Linux specific Targets
 AC_ARG_ENABLE(aa,
 [  --disable-aa            don't build the aa target],
 build_aa_target=$enableval)
-AC_ARG_ENABLE(directx,
-[  --disable-directx       don't build the directx target],
-build_directx_target=$enableval)
 AC_ARG_ENABLE(fbdev,
 [  --disable-fbdev         don't build the fbdev target],
 build_fbdev_target=$enableval)
@@ -113,72 +140,65 @@ AC_ARG_WITH(directfb,
   build_directfb_renderer=yes
   directfb_driver_dir=$withval,
   directfb_driver_dir=/usr/lib/directfb/gfxdrivers)
-AC_ARG_ENABLE(file,
-[  --disable-file          don't build the file target],
-build_file_target=$enableval)
 AC_ARG_ENABLE(glide,
 [  --disable-glide         don't build the glide target],
 build_glide_target=$enableval)
-AC_ARG_ENABLE(ipc,
-[  --disable-ipc            don't build the ipc target],
-build_ipc_target=$enableval)
-dnl AC_ARG_ENABLE(suidkgi,
-dnl [  --enable-suidkgi        build the suidkgi target],
-dnl build_suidkgi_target=$enableval)
-AC_ARG_ENABLE(kgi,
-[  --disable-kgi           don't build the kgi target],
-build_kgi_target=$enableval)
-AC_ARG_ENABLE(libkgi,
-[  --disable-libkgi           don't build the libkgi target],
-build_libkgi_target=$enableval)
-AC_ARG_ENABLE(memory,
-[  --disable-memory        don't build the memory target],
-build_memory_target=$enableval)
 AC_ARG_ENABLE(monotext,
 [  --disable-monotext      don't build the monotext target],
 build_monotext_target=$enableval)
-AC_ARG_ENABLE(multi,
-[  --disable-multi         don't build the multi target],
-build_multi_target=$enableval)
-AC_ARG_ENABLE(palemu,
-[  --disable-palemu        don't build the palemu target],
-build_palemu_target=$enableval)
-AC_ARG_ENABLE(sub,
-[  --disable-sub           don't build the sub target],
-build_sub_target=$enableval)
-AC_ARG_ENABLE(vgl,
-[  --disable-vgl           don't build the vgl target],
-build_vgl_target=$enableval)
 AC_ARG_ENABLE(svga,
 [  --disable-svga          don't build the svga target],
 build_svga_target=$enableval)
-AC_ARG_ENABLE(tele,
-[  --disable-tele          don't build the tele target],
-build_tele_target=$enableval)
-AC_ARG_ENABLE(terminfo,
-[  --disable-terminfo      don't build the terminfo target],
-build_terminfo_target=$enableval)
-AC_ARG_ENABLE(tile,
-[  --disable-tile          don't build the tile target],
-build_tile_target=$enableval)
-AC_ARG_ENABLE(trueemu,
-[  --disable-trueemu       don't build the trueemu target],
-build_trueemu_target=$enableval)
 AC_ARG_ENABLE(vcsa,
 [  --disable-vcsa          don't build the vcsa target],
 build_vcsa_target=$enableval)
+
+
+dnl FreeBSD specific Targets
+AC_ARG_ENABLE(vgl,
+[  --disable-vgl           don't build the vgl target],
+build_vgl_target=$enableval)
+
+
+dnl Win32 specific Targets
+AC_ARG_ENABLE(directx,
+[  --disable-directx       don't build the directx target],
+build_directx_target=$enableval)
+
+
+dnl PseudoTargets
+AC_ARG_ENABLE(multi,
+[  --disable-multi         don't build the multi target],
+build_multi_target=$enableval)
+AC_ARG_ENABLE(tile,
+[  --disable-tile          don't build the tile target],
+build_tile_target=$enableval)
+AC_ARG_ENABLE(palemu,
+[  --disable-palemu        don't build the palemu target],
+build_palemu_target=$enableval)
+AC_ARG_ENABLE(trueemu,
+[  --disable-trueemu       don't build the trueemu target],
+build_trueemu_target=$enableval)
+AC_ARG_ENABLE(sub,
+[  --disable-sub           don't build the sub target],
+build_sub_target=$enableval)
+AC_ARG_ENABLE(ipc,
+[  --disable-ipc            don't build the ipc target],
+build_ipc_target=$enableval)
+AC_ARG_ENABLE(tele,
+[  --disable-tele          don't build the tele target],
+build_tele_target=$enableval)
+
+
+dnl Helpers
 AC_ARG_ENABLE(vgagl,
 [  --disable-vgagl         don't build the vgagl target, needed by svga],
 build_vgagl_helper=$enableval)
-AC_ARG_ENABLE(dga,
-[  --disable-dga           don't build the dga target],
-build_dga_target=$enableval)
-AC_ARG_ENABLE(internal-xf86dga,
-[  --disable-internal-xf86dga  don't use libggi internal xf86dga support],
-internal_xf86dga=$enableval)
 AC_ARG_ENABLE(linvtsw,
 [  --disable-linvtsw       don't build the linvtsw helper],
 build_linvtsw_helper=$enableval)
+
+
 
 AC_ARG_WITH(gii,
 [  --with-gii=DIR          use the LibGII installed with prefix DIR],
