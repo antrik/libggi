@@ -1,4 +1,4 @@
-/* $Id: multi.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: multi.h,v 1.2 2003/07/06 10:35:39 cegger Exp $
 ******************************************************************************
 
    Display-multi: definitions
@@ -46,9 +46,9 @@ ggifunc_putc		GGI_multi_putc;
 ggifunc_puts		GGI_multi_puts;
 ggifunc_getcharsize	GGI_multi_getcharsize;
 
-ggifunc_drawpixel_nc	GGI_multi_drawpixel;
+ggifunc_drawpixel_nc	GGI_multi_drawpixel_nc;
 ggifunc_drawpixel	GGI_multi_drawpixel;
-ggifunc_putpixel_nc	GGI_multi_putpixel;
+ggifunc_putpixel_nc	GGI_multi_putpixel_nc;
 ggifunc_putpixel	GGI_multi_putpixel;
 ggifunc_getpixel	GGI_multi_getpixel;
 

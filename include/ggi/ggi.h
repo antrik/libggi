@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.6 2003/07/05 14:49:31 cegger Exp $
+/* $Id: ggi.h,v 1.7 2003/07/06 10:36:55 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -353,8 +353,8 @@ typedef struct {
 */
 
 /* Access types */
-#define GGI_ACTYPE_READ		(1<<0)
-#define GGI_ACTYPE_WRITE	(1<<1)
+#define GGI_ACTYPE_READ		(1U<<0U)
+#define GGI_ACTYPE_WRITE	(1U<<1U)
 
 
 /*
