@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: box.c,v 1.2 2003/01/10 23:28:05 ortalo Exp $
 ******************************************************************************
    Matrox Gx00 box acceleration
 
@@ -138,10 +138,10 @@ int GGI_kgi_Gx00_copybox(ggi_visual *vis, int x, int y, int w, int h,
 		    | ((0xC << DWGCTL_BOP_SHIFT) & DWGCTL_BOP_MASK) /* ROP ! */
 		    | ((0x0 << DWGCTL_TRANS_SHIFT) & DWGCTL_TRANS_MASK) /* trans.! */
 		    | DWGCTL_BLTMOD_BFCOL);
-  GX00_WRITE_REG(vis, (begin & 0xFFFFFF), AR3);
-  GX00_WRITE_REG(vis, (end & 0x3FFFF), AR0);
-  /* TODO: Handle blit direction (up or down) */
-  GX00_WRITE_REG(vis, ar5, AR5); /* y increment */
+  /* TODO: G200 and G400 do not have the same precision for AR{0,3,5}... */
+  GX00_WRITE_REG(vis, begin, AR3);
+  GX00_WRITE_REG(vis, end, AR0);
+  GX00_WRITE_REG(vis, ar5 & 0x3FFFFF, AR5); /* y increment */
   GX00_WRITE_REG(vis, (nx & 0xFFFF) | (((nx+w) & 0xFFFF) << 16),
 		 FXBNDRY);
   GX00_WRITE_DSTORG(vis, vis->w_frame_num * LIBGGI_FB_SIZE(LIBGGI_MODE(vis)));

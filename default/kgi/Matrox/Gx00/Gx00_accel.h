@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: Gx00_accel.h,v 1.2 2003/01/10 23:28:05 ortalo Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -178,7 +178,7 @@ typedef struct
 #define GX00_BUFFER_SIZE32      (GX00_BUFFER_SIZE >> 2)
 #define GX00_BUFFER_MASK32      (GX00_BUFFER_SIZE32 - 1)
 
-#define GX00_BUFFER_NUM         4
+#define GX00_BUFFER_NUM         2
 
 #define GX00_TOTAL_SIZE         (GX00_BUFFER_SIZE * GX00_BUFFER_NUM)
 #define GX00_TOTAL_SIZE32       (GX00_BUFFER_SIZE32 * GX00_BUFFER_NUM)

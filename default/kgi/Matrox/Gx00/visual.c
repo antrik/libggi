@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2002/12/24 00:26:08 ortalo Exp $
+/* $Id: visual.c,v 1.3 2003/01/10 23:28:05 ortalo Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -98,6 +98,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	    ggiPanic("Unknown depth size!");
 	    break;
 	  }
+	  /* TODO: check? -- ortalo: maccess |= MACCESS_NODITHER; */
 	  GX00_WRITE_REG(vis, maccess, MACCESS);
 	}
 	/* Initializes the destination origin */
@@ -128,6 +129,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->fillscreen   = GGI_kgi_Gx00_fillscreen;
 	vis->opdraw->drawline     = GGI_kgi_Gx00_drawline;
 	vis->opdraw->copybox      = GGI_kgi_Gx00_copybox;
+	/* bugs on the G400
+	*/
 	vis->opdraw->getcharsize  = GGI_kgi_Gx00_getcharsize;
 	vis->opdraw->putc         = GGI_kgi_Gx00_putc;
 	/* The generic puts uses putc, so...
