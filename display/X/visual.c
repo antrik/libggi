@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2003/11/09 13:24:18 cegger Exp $
+/* $Id: visual.c,v 1.24 2004/01/28 05:12:40 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -506,6 +506,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.ptralwaysrel = 0;
 		_args.wait = 1;
                 _args.exposefunc = (gii_inputxwin_exposefunc*)GGI_X_expose;
+		if (priv->createfb == NULL) _args.exposefunc = NULL;
 		_args.exposearg = vis;
       /* _args.resizefunc = (gii_inputxwin_resizefunc*)GGI_X_resize;*/
 		_args.resizefunc = NULL;
