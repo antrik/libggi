@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.29 2004/09/13 09:42:12 pekberg Exp $
+/* $Id: ddinit.c,v 1.30 2004/09/13 10:05:55 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -73,15 +73,22 @@ DDShutdown(directx_priv *priv)
 		KillTimer(priv->hWnd, priv->timer_id);
 
 	/* destroy the window and the surface */
-	if (priv->hWnd && !priv->hParent)
-		DestroyWindow(priv->hWnd);
+	if (priv->hWnd && !priv->hParent) {
+		GGIDPRINT("display-directx: End session\n");
+		PostThreadMessage(priv->nThreadID, WM_DDEND, 0, 0);
+	}
 	DDDestroySurface(priv);
 
 	/* stop the event loop */
-	if (priv->hThreadID &&
-	    WaitForSingleObject(priv->hThreadID, 100) != WAIT_OBJECT_0)
+	if (priv->hThread &&
+	    WaitForSingleObject(priv->hThread, 2000) != WAIT_OBJECT_0) {
 		/* asta la vista, baby */
-		TerminateThread(priv->hThreadID, 0);
+		GGIDPRINT("display-directx: "
+			  "Terminating helper thread harshly\n");
+		TerminateThread(priv->hThread, 0);
+	}
+	if (priv->hThread)
+		CloseHandle(priv->hThread);
 
 	/* Get rid of the window class if we registered it */
 	if (priv->wndclass)
@@ -96,7 +103,8 @@ DDShutdown(directx_priv *priv)
 
 	priv->hWnd = NULL;
 	priv->wndclass = 0;
-	priv->hThreadID = NULL;
+	priv->hThread = NULL;
+	priv->nThreadID = 0;
 	priv->hCursor = NULL;
 	priv->hInit = NULL;
 	priv->timer_id = 0;
@@ -636,11 +644,23 @@ DDEventLoop(void *lpParm)
 
 	SetEvent(priv->hInit);
 
-	while (GetMessage(&msg, priv->hWnd, 0, 0)) {
+	while (GetMessage(&msg, NULL, 0, 0)) {
+		if (msg.hwnd == NULL && msg.message == WM_DDEND) {
+			/* Use PostThreadMessage to get here */
+			GGIDPRINT("display-directx: Ending session, "
+				  "destroying window.\n");
+			DestroyWindow(priv->hWnd);
+			break;
+		}
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+	GGIDPRINT("display-directx: Helper thread terminating\n");
 
+#ifndef __CYGWIN__
+	_endthreadex(msg.wParam);
+#endif
 	return msg.wParam;
 }
 
@@ -648,18 +668,17 @@ static int
 DDCreateThread(ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
-	unsigned ThreadID;
 	priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
 #ifdef __CYGWIN__
-	priv->hThreadID = CreateThread(NULL, 0,
-				       (LPTHREAD_START_ROUTINE) DDEventLoop,
-				       vis, 0, (LPDWORD)&ThreadID);
+	priv->hThread = CreateThread(NULL, 0,
+				     (LPTHREAD_START_ROUTINE) DDEventLoop,
+				     vis, 0, &priv->nThreadID);
 #else
-	priv->hThreadID =
+	priv->hThread =
 	    (HANDLE) _beginthreadex(NULL, 0, DDEventLoop, vis, 0,
-				    &ThreadID);
+				    (unsigned) &priv->nThreadID);
 #endif
-	if (priv->hThreadID) {
+	if (priv->hThread) {
 		WaitForSingleObject(priv->hInit, INFINITE);
 		return 1;
 	} else {

@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.12 2004/09/13 09:42:12 pekberg Exp $
+/* $Id: ddinit.h,v 1.13 2004/09/13 10:05:55 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -35,6 +35,7 @@
 #define TITLE			"GGI-on-DX"
 #define WM_DDMESSAGEBOX		0x7FFF
 #define WM_DDCHANGEMODE		0x7FFE
+#define WM_DDEND		0x7FFD
 
 __BEGIN_DECLS
 
