@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.31 2004/09/13 10:12:00 pekberg Exp $
+/* $Id: ddinit.c,v 1.32 2004/09/13 12:57:04 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -78,6 +78,15 @@ DDShutdown(directx_priv *priv)
 		PostThreadMessage(priv->nThreadID, WM_DDEND, 0, 0);
 	}
 	DDDestroySurface(priv);
+
+	if (priv->lpddext != NULL) {
+		IDirectDraw2_Release(priv->lpddext);
+		priv->lpddext = NULL;
+	}
+	if (priv->lpdd != NULL) {
+		IDirectDraw_Release(priv->lpdd);
+		priv->lpdd = NULL;
+	}
 
 	/* stop the event loop */
 	if (priv->hThread &&
