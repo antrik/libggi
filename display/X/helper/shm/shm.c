@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.6 2002/12/05 18:17:23 cegger Exp $
+/* $Id: shm.c,v 1.7 2002/12/05 20:03:31 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -107,7 +107,7 @@ int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
-	if ((tryflag == 0) || (tryflag != 2)) ggUnlock(priv->xliblock);
+	if (tryflag != 2) ggUnlock(priv->xliblock);
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return 0;
 }
