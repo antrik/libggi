@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.1 2001/05/12 23:00:46 cegger Exp $
+dnl $Id: configure.in,v 1.2 2001/05/13 03:29:15 stefan Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -34,6 +34,7 @@ build_directx_target="no"
 build_fbdev_target="auto"
 build_file_target="auto"
 build_glide_target="auto"
+build_ipc_target="auto"
 build_kgi_target="no"
 build_lcd823_target="auto"
 build_mansync_helper="auto"
@@ -96,6 +97,9 @@ build_file_target=$enableval)
 AC_ARG_ENABLE(glide,
 [  --disable-glide         don't build the glide target],
 build_glide_target=$enableval)
+AC_ARG_ENABLE(ipc,
+[  --disable-ipc            don't build the ipc target],
+build_ipc_target=$enableval)
 dnl AC_ARG_ENABLE(suidkgi,
 dnl [  --enable-suidkgi        build the suidkgi target],
 dnl build_suidkgi_target=$enableval)
@@ -376,6 +380,11 @@ if test "x$build_glide_target" != "xno"; then
   fi
 fi
 
+if test "x$build_ipc_target" != "xno"; then
+  AC_CHECK_HEADERS(sys/types.h sys/socket.h sys/un.h sys/shm.h,
+	build_ipc_target="yes", build_ipc_target="no")
+fi
+
 case "$host" in
   powerpc-*-linux*)
 	;;
@@ -559,6 +568,15 @@ if test "x$build_glide_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS glide"
   build_glide_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build ipc      target)
+if test "x$build_ipc_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS ipc"
+  build_ipc_target="yes"
   AC_MSG_RESULT(yes)
 fi
 
@@ -792,6 +810,7 @@ display/directx/Makefile
 display/fbdev/Makefile
 display/file/Makefile
 display/glide/Makefile
+display/ipc/Makefile
 display/lcd823/Makefile
 display/linvtsw/Makefile
 display/mansync/Makefile

@@ -19,6 +19,7 @@ display-directxnt		display/directxnt.@DLLEXT@
 display-file			display/file.@DLLEXT@
 display-fbdev			display/fbdev.@DLLEXT@
 display-glide			display/glide.@DLLEXT@
+display-ipc			display/ipc.@DLLEXT@
 display-lcd823			display/lcd823.@DLLEXT@
 display-memory			display/memory.@DLLEXT@
 display-monotext		display/monotext.@DLLEXT@

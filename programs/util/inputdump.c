@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.1 2001/05/12 23:03:50 cegger Exp $
+/* $Id: inputdump.c,v 1.2 2001/05/13 03:29:15 stefan Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -46,7 +46,7 @@ static int placement = 0;
 
 #define MAX_NR_DEV	128
 #define MAX_NR_VAL	128
-#define MAX_DRAW_VAL	 12
+#define MAX_DRAW_VAL	128
 #define MAX_NR_BUT	512
 
 typedef struct mydev_info
@@ -206,7 +206,7 @@ static void draw_inp_device(mydev_info *M)
 
 			ggiPuts(vis, M->top.x, y, "     ");
 			ggiPuts(vis, M->top.x, y, M->VI[i] ? 
-				M->VI[i]->shortname : buf);
+				M->VI[i]->longname : buf);
 
 			draw_inp_valuator(M, i);
 		}
