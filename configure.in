@@ -1,11 +1,11 @@
-dnl $Id: configure.in,v 1.24 2001/08/22 11:59:27 cegger Exp $
+dnl $Id: configure.in,v 1.25 2001/08/23 12:39:14 soyt Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
 
 AC_INIT(include/ggi/ggi.h)
 
-AM_INIT_AUTOMAKE(libggi,2.0,-)
+AM_INIT_AUTOMAKE(libggi,2.0.1,-)
 
 AM_MAINTAINER_MODE
 AM_DISABLE_STATIC
@@ -928,7 +928,6 @@ programs/util/Makefile
 programs/util/monitest/Makefile
 programs/check/Makefile
 doc/Makefile
-doc/docbook/Makefile
 doc/man/Makefile
 m4/Makefile
 libggi.conf
