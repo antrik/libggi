@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.3 2004/12/27 22:42:06 cegger Exp $
+/* $Id: quartz.h,v 1.4 2004/12/29 10:13:22 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -35,6 +35,9 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <Carbon/Carbon.h>
 
+#include <ggi/display/mansync.h>
+
+
 ggifunc_checkmode	GGI_quartz_checkmode;
 ggifunc_getmode		GGI_quartz_getmode;
 ggifunc_setmode		GGI_quartz_setmode;
@@ -53,6 +56,7 @@ ggifunc_getgammamap	GGI_quartz_getgammamap;
 
 typedef struct {
 	PHYSZ_DATA
+	MANSYNC_DATA;	/* mansync helper hooks */
 
 	int fullscreen;
 
@@ -96,5 +100,14 @@ typedef struct {
 
 
 #define QUARTZ_PRIV(vis) ((ggi_quartz_priv *)LIBGGI_PRIVATE(vis))
+
+
+#define MANSYNC_init(vis)	MANSYNC_DECL_INIT(QUARTZ_PRIV(vis), vis)
+#define MANSYNC_deinit(vis)	MANSYNC_DECL_DEINIT(QUARTZ_PRIV(vis), vis)
+#define MANSYNC_start(vis)	MANSYNC_DECL_START(QUARTZ_PRIV(vis), vis)
+#define MANSYNC_stop(vis)	MANSYNC_DECL_STOP(QUARTZ_PRIV(vis), vis)
+#define MANSYNC_ignore(vis)	MANSYNC_DECL_IGNORE(QUARTZ_PRIV(vis), vis)
+#define MANSYNC_cont(vis)	MANSYNC_DECL_CONT(QUARTZ_PRIV(vis), vis)
+
 
 #endif /* _GGI_DISPLAY_QUARTZ_H */
