@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2004/09/12 20:58:46 cegger Exp $
+/* $Id: visual.c,v 1.32 2004/09/18 13:44:29 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -297,6 +297,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GGI_X_CHECK_XEXT("DOUBLE-BUFFER",		GGI_X_USE_DBE);
 	GGI_X_CHECK_XEXT("XFree86-DGA",			GGI_X_USE_DGA);
 	GGI_X_CHECK_XEXT("XFree86-VidModeExtension",	GGI_X_USE_VIDMODE);
+#undef  GGI_X_CHECK_XEXT
 
 	if (options[OPT_FULLSCREEN].result[0] == 'n') {
 		priv->use_Xext &= ~GGI_X_USE_DGA;
