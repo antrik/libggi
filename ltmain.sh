@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.127 2005/01/11 15:52:15) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.129 2005/01/12 16:36:31) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -38,6 +38,7 @@
 #     --preserve-dup-deps  don't remove duplicate dependency libraries
 #     --quiet, --silent    don't print informational messages
 #     --tag=TAG            use configuration variables from tag TAG
+# -v, --verbose            print informational messages (default)
 #     --version            print version information
 # -h, --help               print short or long help message
 #
@@ -62,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.127 2005/01/11 15:52:15) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.129 2005/01/12 16:36:31) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.127 2005/01/11 15:52:15"
-package_revision=1.1667.2.127
+TIMESTAMP=" 1.1667.2.129 2005/01/12 16:36:31"
+package_revision=1.1667.2.129
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -916,6 +917,10 @@ Otherwise, only FILE itself is deleted using RM."
 
       --quiet|--silent)	preserve_args="$preserve_args $opt"
     			show=:
+			;;
+
+      --verbose| -v)	preserve_args="$preserve_args $opt"
+			show="$ECHO"
 			;;
 
       --tag)		test "$#" -eq 0 && func_missing_arg "$opt" && break
@@ -3565,9 +3570,9 @@ func_mode_link ()
 	  else
 	    deplibs="$deplib $deplibs"
 	    if test "$linkmode" = lib ; then
-		case "$inherited_linker_flags " in
+		case "$new_inherited_linker_flags " in
 		    *" $deplib "*) ;;
-		    * ) inherited_linker_flags="$inherited_linker_flags $deplib" ;;
+		    * ) new_inherited_linker_flags="$new_inherited_linker_flags $deplib" ;;
 		esac
 	    fi
 	  fi
