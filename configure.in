@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.53 2002/10/24 22:03:38 cegger Exp $
+dnl $Id: configure.in,v 1.54 2002/10/24 22:22:59 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1012,7 +1012,6 @@ dnl _THREAD_SAFE is used instead of _REENTRANT on some systems
 CFLAGS="$CFLAGS -D_REENTRANT -D_THREAD_SAFE"
 
 if test "x$use_debug" = "xyes"; then
-  AC_DEFINE(DEBUG)
   CFLAGS="$CFLAGS -DDEBUG"
   if test "$ac_cv_prog_gcc" = "yes"; then
     CFLAGS="$CFLAGS -g -Wall"

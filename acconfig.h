@@ -16,9 +16,6 @@
 /* Define to use pthreads for locking */
 #undef USE_THREADS
 
-/* Define to use run-time debugging */
-#undef DEBUG
-
 /* Define if you have the <ncurses.h> header file.  */
 #undef HAVE_NCURSES_H
 
