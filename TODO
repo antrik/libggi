@@ -135,7 +135,11 @@ New X Target:
 - vidmode helper for new display-X
 - Investigate emulating lower fixed-palette bitdepths and find out how to
   get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
-
+- Prevent ungraceful termination of a paletted/gammamapped -inroot app
+  from leaving the X server in a bad state by adding a signal handler.
+  Current workaround: if no apps will run after a GGI -inroot app was 
+  terminated, run another GGI app -inroot and terminate it normally (use 
+  GGI_INPUT=stdin to talk to an interactive app through an xterm).
 
 
 ------------------------------------------
