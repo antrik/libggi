@@ -3,7 +3,11 @@
 touch ChangeLog
 
 cat m4/*.m4 > acinclude.m4
+echo "Running aclocal..."
 aclocal
+echo "Running autoheader..."
 autoheader
-automake --add-missing --verbose
+echo "Running automake..."
+automake --add-missing
+echo "Running autoconf..."
 autoconf
