@@ -1,7 +1,7 @@
 #!/bin/sh
 
 AC_VERSION="2.13"
-AM_VERSION="1.6"
+AM_VERSION="1.5"
 
 echo -n "Checking for required autoconf ${AC_VERSION}..."
 ./checkversion.sh autoconf $AC_VERSION
