@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/09/12 20:52:28 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/09/12 20:53:57 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -132,8 +132,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freepriv;
 	}
 
-	strncpy(filename, options[OPT_FILE].result, 79);
-	filename[79] = '\0';
+	ggstrlcpy(filename, options[OPT_FILE].result, sizeof(filename));
 
 	err = GGI_ENODEVICE;
 	/* work out which console we're on */
