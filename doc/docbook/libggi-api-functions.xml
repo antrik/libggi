@@ -2645,6 +2645,26 @@ ggiResourceRelease(dbuf-&gt;resource);
 <title>Description</title>
 
 <para>
+Dependent on the visual and runtime environment found,
+applications may be granted direct access to hardware and/or
+library internal buffers. This may significantly enhance
+performance for certain pixel oriented applications or libraries.
+</para>
+
+<para>
+The DirectBuffer is a mechanism in which a LibGGI program can use to
+determine all the characteristics of these buffers (typically the
+framebuffer), including the method of addressing, the stride, alignment
+requirements, and endianness.
+</para>
+
+<para>
+However, use not conforming to this specification will have undefined
+effects and may cause data loss or corruption, program malfunction or
+abnormal program termination. So you don't really want to do this.
+</para>
+
+<para>
 <function>ggiDBGetNumBuffers</function> returns the number of
 DirectBuffers available to the application.
 <function>ggiDBGetBuffer</function> obtains the DirectBuffer at the
