@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.78 2004/11/19 16:58:48) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.88 2004/11/24 17:24:29) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.78 2004/11/19 16:58:48) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.88 2004/11/24 17:24:29) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.78 2004/11/19 16:58:48"
-package_revision=1.1667.2.78
+TIMESTAMP=" 1.1667.2.88 2004/11/24 17:24:29"
+package_revision=1.1667.2.88
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -159,6 +159,7 @@ $as_unset CDPATH
 : ${MV="mv -f"}
 : ${RM="rm -f"}
 : ${SED=""}
+: ${SHELL="${CONFIG_SHELL-/bin/sh}"}
 : ${Xsed="$SED -e s/^X//"}
 
 # Global variables:
@@ -2428,7 +2429,7 @@ func_mode_install ()
 	  outputname=
 	  if test "$fast_install" = no && test -n "$relink_command"; then
 	    if test "$finalize" = yes && test -z "$run"; then
-	      tmpdir=`func_mktempdir "${TMPDIR-/tmp}/libtool-XXXXXXXX"`
+	      tmpdir=`func_mktempdir`
 	      file=`$ECHO "X$file$stripped_ext" | $Xsed -e 's%^.*/%%'`
 	      outputname="$tmpdir/$file"
 	      # Replace the output file specification.
@@ -2715,7 +2716,7 @@ func_mode_link ()
 	  if test -f "$arg"; then
 	    save_arg=$arg
 	    moreargs=
-	    for fil in `cat $save_arg`
+	    for fil in `cat "$save_arg"`
 	    do
 #	      moreargs="$moreargs $fil"
 	      arg=$fil
