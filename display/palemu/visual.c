@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:25:15 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/09/03 18:47:02 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -196,7 +196,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	MANSYNC_deinit(vis);
+	if (PALEMU_PRIV(vis) && PALEMU_PRIV(vis)->opmansync)
+		MANSYNC_deinit(vis);
 
 	return 0;
 }
