@@ -950,6 +950,11 @@ Return value
 All four functions `0` for OK.
 
 
+See Also
+--------
+
+:man:`ggi_pixel(3)`
+
 
 Set or get the clipping rectangle for a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
