@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.26 2004/11/14 19:38:30 cegger Exp $
+/* $Id: misc.c,v 1.27 2004/11/14 19:49:50 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -458,8 +458,8 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	Pixmap crsrpix, crsrmask;
-	char crspdat[] = { 0xf8, 0xfa, 0xf8 };
-	char crsmdat[] = { 0xfa, 0xff, 0xfa };
+	unsigned char crspdat[] = { 0xf8, 0xfa, 0xf8 };
+	unsigned char crsmdat[] = { 0xfa, 0xff, 0xfa };
 	unsigned int dummy;
 	Window root;
 	XSetWindowAttributes wa;
@@ -488,8 +488,8 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 		     (int *)&dummy, (int *)&dummy,
 		     &dummy, &dummy, &dummy, &dummy);
             
-	crsrpix = XCreateBitmapFromData(priv->disp, root, crspdat, 3, 3);
-	crsrmask = XCreateBitmapFromData(priv->disp, root, crsmdat, 3, 3);
+	crsrpix = XCreateBitmapFromData(priv->disp, root, (char *)crspdat, 3, 3);
+	crsrmask = XCreateBitmapFromData(priv->disp, root, (char *)crsmdat, 3, 3);
 	priv->cursor = XCreatePixmapCursor(priv->disp, crsrpix, crsrmask,
 					   &black, &white, 1, 1);
 	wa.cursor = priv->cursor;
