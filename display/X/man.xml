@@ -201,11 +201,11 @@ grabbing must be turned off in order to leave the window.
 
  <varlistentry>
  <term><option>-novidmode</option></term>
+ <listitem><para>
  Use of the X11 Vidmode extension to change video timing in full-screen
  modes is disabled.  Some implementations of the Vidmode extension may cause
  system lockups.  Use this option to prevent such occurrances.
  (NOTE: Currently Vidmode support has not been completed)
- <listitem><para>
  </para></listitem> 
  </varlistentry>
 
