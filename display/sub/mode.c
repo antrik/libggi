@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2004/09/08 11:19:39 cegger Exp $
+/* $Id: mode.c,v 1.4 2004/09/08 19:52:02 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -42,7 +42,7 @@ int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 int GGI_sub_setmode(ggi_visual *vis,ggi_mode *tm)
 { 
-	ggi_sub_priv *subinfo=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *subinfo = SUB_PRIV(vis);
 	subinfo->position.x=tm->visible.x;
 	subinfo->position.y=tm->visible.y;
 	subinfo->botright.x=tm->virt.x+tm->visible.x;
@@ -79,7 +79,7 @@ int GGI_sub_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	if (ggiSetFlags(priv->parent, flags)) return -1;
 
@@ -91,7 +91,7 @@ int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 
 int GGI_sub_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
-	ggi_sub_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	return _ggiInternFlush(priv->parent, x+priv->position.x, 
 				y+priv->position.y, w, h, tryflag);
 }

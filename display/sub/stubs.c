@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.1 2001/05/12 23:02:17 cegger Exp $
+/* $Id: stubs.c,v 1.2 2004/09/08 19:52:17 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -76,7 +76,7 @@
 int GGI_sub_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		      ggi_visual *vis, int dx, int dy)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis); /* Destination is subvisual */
+	ggi_sub_priv *priv = SUB_PRIV(vis); /* Destination is subvisual */
 	int err;
 	IS_SAVING_GC;
 
@@ -89,7 +89,7 @@ int GGI_sub_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int width,int length)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -101,7 +101,7 @@ int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int width,int length)
 
 int GGI_sub_putbox(ggi_visual *vis,int x,int y,int width,int length,void *buffer)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -113,7 +113,7 @@ int GGI_sub_putbox(ggi_visual *vis,int x,int y,int width,int length,void *buffer
 
 int GGI_sub_getbox(ggi_visual *vis,int x,int y,int width,int length,void *buffer)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -125,7 +125,7 @@ int GGI_sub_getbox(ggi_visual *vis,int x,int y,int width,int length,void *buffer
 
 int GGI_sub_fillscreen(ggi_visual *vis)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -139,7 +139,7 @@ int GGI_sub_fillscreen(ggi_visual *vis)
 
 int GGI_sub_putc(ggi_visual *vis,int x,int y,char c)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -152,7 +152,7 @@ int GGI_sub_putc(ggi_visual *vis,int x,int y,char c)
 
 int GGI_sub_puts(ggi_visual *vis,int x,int y,const char *str)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -164,7 +164,7 @@ int GGI_sub_puts(ggi_visual *vis,int x,int y,const char *str)
 
 int GGI_sub_drawhline(ggi_visual *vis,int x,int y,int w)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -176,7 +176,7 @@ int GGI_sub_drawhline(ggi_visual *vis,int x,int y,int w)
 
 int GGI_sub_drawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -189,7 +189,7 @@ int GGI_sub_drawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
 
 int GGI_sub_drawvline(ggi_visual *vis,int x,int y,int height)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -201,7 +201,7 @@ int GGI_sub_drawvline(ggi_visual *vis,int x,int y,int height)
 
 int GGI_sub_drawpixel(ggi_visual *vis,int x,int y)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -213,7 +213,7 @@ int GGI_sub_drawpixel(ggi_visual *vis,int x,int y)
 
 int GGI_sub_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -225,7 +225,7 @@ int GGI_sub_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_sub_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *col)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -237,7 +237,7 @@ int GGI_sub_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *col)
 
 int GGI_sub_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -249,7 +249,7 @@ int GGI_sub_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
 
 int GGI_sub_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -261,7 +261,7 @@ int GGI_sub_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 
 int GGI_sub_putvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -273,7 +273,7 @@ int GGI_sub_putvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 
 int GGI_sub_getvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -285,7 +285,7 @@ int GGI_sub_getvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 
 int GGI_sub_copybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
@@ -301,7 +301,7 @@ int GGI_sub_copybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 
 int GGI_sub_setgammamap(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
 	return ggiSetGammaMap(priv->parent,start,len,colormap);
@@ -309,7 +309,7 @@ int GGI_sub_setgammamap(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 int GGI_sub_getgammamap(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiGetGammaMap(priv->parent,start,len,colormap);
 }
@@ -317,14 +317,14 @@ int GGI_sub_getgammamap(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 int GGI_sub_getgamma(ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_float *b)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiGetGamma(priv->parent,r,g,b);
 }
 
 int GGI_sub_setgamma(ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
 	return ggiSetGamma(priv->parent,r,g,b);
@@ -332,21 +332,21 @@ int GGI_sub_setgamma(ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b)
 
 ggi_pixel GGI_sub_mapcolor(ggi_visual *vis,ggi_color *col)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiMapColor(priv->parent,col);
 }
 
 int GGI_sub_unmappixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiUnmapPixel(priv->parent,pixel,col);
 }
 
 int GGI_sub_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
 	return ggiSetPalette(priv->parent,start,len,colormap);
@@ -354,7 +354,7 @@ int GGI_sub_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 int GGI_sub_getpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	ggi_sub_priv *priv=LIBGGI_PRIVATE(vis);
+	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiGetPalette(priv->parent,start,len,colormap);
 }
