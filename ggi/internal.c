@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.9 2002/09/29 15:25:55 skids Exp $
+/* $Id: internal.c,v 1.10 2003/02/07 01:16:58 skids Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -194,7 +194,7 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 			break;
 		}
 		if (pixfmt->red_mask	== 0x7c00 &&
-		    pixfmt->green_mask	== 0x03f0 &&
+		    pixfmt->green_mask	== 0x03e0 &&
 		    pixfmt->blue_mask	== 0x001f) {
 			if (revendian) {
 				pixfmt->stdformat
