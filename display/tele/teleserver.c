@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.7 2004/02/02 19:21:59 cegger Exp $
+/* $Id: teleserver.c,v 1.8 2004/04/02 16:04:40 ggibecka Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -38,6 +38,7 @@
 
 
 #include <ggi/ggi.h>
+#include <ggi/gg.h>
 
 #include "libtele.h"
 
