@@ -10,31 +10,27 @@ Next minor release (BUGFIX release)
 Version : 2.0.2
 Due : 200?-??-??
 
-Building issues:
-- cleanup demo building and installation. That means, that demos requring
-  a special header/input device like ggicalibrate should only be built,
-  if possible.
+[Building issues]
+
 - bring improved code in showaccel demo to showaccel2 demo
-- Verify and fix cross-compilation to other architectures
-- Fix libtool to create shared libs instead of static ones
-  on Linux/MIPS boxes. This misbehaviour allows compile and install, but
-  not runtime use of LibGGI on Linux/MIPS boxes.
 * The default value of the configure option '--with-gii' should always be
   the one of the '--prefix' option, independent if '--prefix' is specified by
   the user or not, unless '--with-gii' itself is specified by the user.
   This simplifies compiling libggi on a machine with no root-permissions.
   (Christoph)
 * Lots of OpenBSD/libtool fixes (Todd T. Fries)
-* Teach autoconf to #define atexit on_exit(something) when atexit not available
-   (This is better done in libgii - Eric)
+* libtool update let GGI compile again under *BSD (including Darwin)
+  (Christoph)
 
-Documentation related stuff:
 
-- document tele-target in libggi/doc/targets.txt and via XML.
-- make sure all Get/Put function manpages make it easy to understand contents
-  of *buf, if only by mentioning ggiUnPackPixels/ggiPackColors
+[Documentation related stuff]
 
-Target specific issues:
+- documentate tele-target in libggi/doc/targets.txt and via XML.
+- make sure all Get/Put function manpages make it easy to understand 
+  contents of *buf, if only by mentioning ggiUnPackPixels/ggiPackColors
+
+
+[Target specific issues]
 
 * added missing physz option to memory target (Brian)
 * use config file instead of static accel_strings array in fbdev (Brian)
@@ -46,13 +42,15 @@ Target specific issues:
 * BUGFIX: Exceed is a X-server for Win32, which uses the ABGR instead of
   the RGBA colorspace. This causes colors being wrongly handled. The
   result on the screen are colors with blue characteristics. The bug
-  is reproduceable when running apps using tile-over-Xlib with directbuffers
-  respectively simply running apps on Xlib. The bug disappears by
-  disabling the directbuffer using tile-over-Xlib. (fixed in new target)
+  is reproduceable when running apps using tile-over-Xlib with 
+  directbuffers respectively simply running apps on Xlib. The bug 
+  disappears by disabling the directbuffer using tile-over-Xlib.
+  (fixed in new X-target)
 - shake down new X target until most users cannot find any bugs that didn't
   already exist in display-X or display-Xlib.
 
-Common issues:
+
+[Common issues]
 
 * Fix up gamma map functions for non-24bpp visuals (Brian)
 - Alter all gcchanged functions so that unknown flags are not set, as
@@ -60,8 +58,44 @@ Common issues:
 * Make sure all target flush functions clip appropriately.  Brian has
   a patch that makes stubs and mansync flush virt.x, virt.y which can
   be applied after this is done.
+
+
+------------------------------------------
+Overnext minor release (BUGFIX release)
+------------------------------------------
+Version : 2.0.3
+Due : 200?-??-??
+
+[Building issues]
+
+- Verify and fix cross-compilation to other architectures
+- cleanup demo building and installation. That means, that demos requring
+  a special header/input device like ggicalibrate should only be built,
+  if possible.
+- Fix libtool to create shared libs instead of static ones
+  on Linux/MIPS boxes. This misbehaviour lets compile and install, but don't
+  run GGI on Linux/MIPS boxes.
+  This should be fixed by libtool update. Please verify.
+
+
+[Documentation related stuff]
+
+- write a target developers guide
+
+
+[Common issues]
+
 - Alter all ggiSetPalette implementations as per mailinglist discussion
   of 1999-07-03 (http://marc.theaimsgroup.com/?l=ggi-develop&m=93097803729315&w=2).
+- remove obseleted Xlib target
+
+
+[Target specific issues]
+
+- update targets after the common issues are done
+- make fbdev use of gamma map functions
+
+
 
 ------------------------------------------
 Next major release
@@ -70,7 +104,6 @@ Version : 2.1.0
 Due : ????-??-??
 
 - libKGI-target (compiling framework, probably only working with Matrox Cards)
-- make Xlib a helper target for X
 - improve modelist.inc
 - allow physz params to determine window size when visible == GGI_AUTO
 - add display-auto to separate OS dependent auto-detect routines from
@@ -79,9 +112,10 @@ Due : ????-??-??
   parser/construction functions for them in the LibGGI internal interface.
   Some code for this is already in LibBuf CVS.
 
+
 New X Target:
 
-- Make display-xf86dga work with all pre-4.x XF86, move newer DGA support 
+- Make display-xf86dga work with all pre-4.x XF86, move newer DGA support
   to a new dga helper.
 - 1,2,4-bpp support for new display-X.
 - Test/complete display-X with obscure bitdepths/endian reversal.
@@ -89,18 +123,22 @@ New X Target:
 - Re-implement old display-X emulated setorigin for root windows and
   for buggy WMs with faulty colormap handling code.
 - See if colormap can be force-installed under some buggy WMs.
-- Turn off hidden virtual area flushing when no backing store is available.
-- Get upstream to fix stuff (Solid-fill ops into backing store, for example.)
-- Compile on crusty old libc5 machines; replace any new-style X* symbols 
+- Turn off hidden virtual area flushing when no backing store is 
+  available.
+- Get upstream to fix stuff (Solid-fill ops into backing store, for 
+  example.)
+- Compile on crusty old libc5 machines; replace any new-style X* symbols
   with backwards-compatible old-style symbols.
 - dbe helper for new display-X
 - dga helper for new display-X
 - vidmode helper for new display-X
-- Investigate emulating lower fixed-palette bitdepths and find out how to 
+- Investigate emulating lower fixed-palette bitdepths and find out how to
   get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
 
+
+
 ------------------------------------------
-Next major release after that
+Over-Next major release
 ------------------------------------------
 Version : 3.0.0
 Due : ????-??-??
@@ -119,6 +157,7 @@ Due : ????-??-??
 - implement below API additions
 - implement below non-backward-compatible changes
 
+
 ------------------------------------------
 Long-term plan
 ------------------------------------------
@@ -131,6 +170,7 @@ Long-term plan
 ------------------------------------------
 Things that will induce API additions
 ------------------------------------------
+
 - make sure all bitfields (e.g. BM_TYPE) have associated _MASK/_SHIFT macros
 - Figure out all the caveats for cloning a visual and add core support 
 	and a ggiClone API function.
@@ -140,4 +180,5 @@ Things that will induce API additions
 ------------------------------------------
 Non backward-compatible changes
 ------------------------------------------
+
 - Remove old ggi versions of event types, which were replaced by gii typedefs.
