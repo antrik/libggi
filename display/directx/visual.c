@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2004/08/24 18:43:48 pekberg Exp $
+/* $Id: visual.c,v 1.17 2004/08/25 07:47:45 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -184,6 +184,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         vis->opdisplay->flush = GGI_directx_flush;
         vis->opdisplay->getapi = GGI_directx_getapi;
         vis->opdraw->setorigin = GGI_directx_setorigin;
+	vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 
 	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPDRAW;
 	return GGI_OK;

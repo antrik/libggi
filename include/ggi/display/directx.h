@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.8 2004/08/24 18:43:48 pekberg Exp $
+/* $Id: directx.h,v 1.9 2004/08/25 07:47:46 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -32,6 +32,7 @@
 #include <windows.h>
 #include <ddraw.h>
 
+#define GGI_DISPLAY_DIRECTX_FRAMES (16)
 
 ggifunc_getmode                 GGI_directx_getmode;
 ggifunc_setmode                 GGI_directx_setmode;
@@ -41,7 +42,7 @@ ggifunc_flush                   GGI_directx_flush;
 
 /*ggifunc_setreadframe          GGI_directx_setreadframe;*/
 /*ggifunc_setwriteframe         GGI_directx_setwriteframe;*/
-/*ggifunc_setdisplayframe       GGI_directx_setdisplayframe;*/
+ggifunc_setdisplayframe         GGI_directx_setdisplayframe;
 
 /*ggifunc_fillscreen            GGI_directx_fillscreen;*/
 
@@ -100,8 +101,8 @@ typedef struct directx_priv
 	LPDIRECTDRAW lpdd;
 	LPDIRECTDRAW2 lpddext;
 	LPDIRECTDRAWSURFACE lppdds;
-	LPDIRECTDRAWSURFACE lpbdds;
-	char *lpSurfaceAdd;
+	LPDIRECTDRAWSURFACE lpbdds[GGI_DISPLAY_DIRECTX_FRAMES];
+	char *lpSurfaceAdd[GGI_DISPLAY_DIRECTX_FRAMES];
 } directx_priv;
 
 #endif /* _GGI_DISPLAY_DIRECTX_H */

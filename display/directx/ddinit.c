@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.24 2004/08/24 18:43:48 pekberg Exp $
+/* $Id: ddinit.c,v 1.25 2004/08/25 07:47:45 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -33,7 +33,7 @@
 static void DDCreateClass(directx_priv *priv);
 static int DDCreateWindow(ggi_visual *vis);
 static int DDCreateThread(ggi_visual *vis);
-static int DDCreateSurface(directx_priv *priv, DWORD vw, DWORD vh);
+static int DDCreateSurface(directx_priv *priv, int frames, DWORD vw, DWORD vh);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
 
@@ -94,7 +94,7 @@ void DDShutdown(directx_priv *priv)
 
 void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
 
-int DDChangeMode(directx_priv *priv,
+int DDChangeMode(directx_priv *priv, int frames,
 	DWORD virtw, DWORD virth,
 	DWORD width, DWORD height, DWORD BPP)
 {
@@ -102,7 +102,7 @@ int DDChangeMode(directx_priv *priv,
   DDDestroySurface(priv);
 
   /* recreate the primary surface and back storage */
-  if (!DDCreateSurface(priv, virtw, virth))
+  if (!DDCreateSurface(priv, frames, virtw, virth))
     return 0;
 
   /* set the new window size */
@@ -147,7 +147,8 @@ void DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
   /* draw the stored image on the primary surface */
   IDirectDrawSurface_Blt(priv->lppdds, &DestWinPos,
-			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
+			 priv->lpbdds[vis->d_frame_num], &SrcWinPos,
+			 DDBLT_WAIT, NULL);
 }
 
 void DDRedrawAll(ggi_visual *vis)
@@ -164,7 +165,8 @@ void DDRedrawAll(ggi_visual *vis)
   ClientToScreen(priv->hWnd, (POINT*)&DestWinPos.right);
   /* draw the stored image on the primary surface */
   IDirectDrawSurface_Blt(priv->lppdds, &DestWinPos,
-			 priv->lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
+			 priv->lpbdds[vis->d_frame_num], &SrcWinPos,
+			 DDBLT_WAIT, NULL);
 }
 
 /* internal routines ********************************************************/
@@ -636,11 +638,13 @@ static int DDCreateThread(ggi_visual *vis)
 
 /* initialize and finalize the primary surface and back storage */
 
-static int DDCreateSurface(directx_priv *priv, DWORD virtw, DWORD virth)
+static int DDCreateSurface(directx_priv *priv, int frames,
+	DWORD virtw, DWORD virth)
 {
   HRESULT hr;
   LPDIRECTDRAWCLIPPER pClipper;
   DDSURFACEDESC pddsd, bddsd;
+  int i;
 
   IDirectDraw_SetCooperativeLevel(priv->lpddext, priv->hWnd, DDSCL_NORMAL);
 
@@ -662,34 +666,37 @@ static int DDCreateSurface(directx_priv *priv, DWORD virtw, DWORD virth)
   pddsd.dwSize = sizeof(pddsd);
   IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
 
-  /* create the back storage */
-  memset(&bddsd, 0, sizeof(bddsd));
-  bddsd.dwSize = sizeof(bddsd);
-  bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
-    | DDSD_PIXELFORMAT;
-  bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-  bddsd.dwWidth = virtw;
-  bddsd.dwHeight = virth;
-  bddsd.lPitch = virtw * (pddsd.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
+  /* create the back storages */
+  for (i = 0; i < frames; ++i) {
+    memset(&bddsd, 0, sizeof(bddsd));
+    bddsd.dwSize = sizeof(bddsd);
+    bddsd.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH
+      | DDSD_PIXELFORMAT;
+    bddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+    bddsd.dwWidth = virtw;
+    bddsd.dwHeight = virth;
+    bddsd.lPitch = virtw * (pddsd.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
 
-  /* set up the pixel format */
-  ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
-  bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-  bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
-  bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
-  bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
-  bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
-  bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
+    /* set up the pixel format */
+    ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
+    bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+    bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+    bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
+    bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
+    bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
+    bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
 
-  hr = IDirectDraw_CreateSurface(priv->lpddext, &bddsd, &priv->lpbdds, NULL);
-  if (hr) {
-    fprintf(stderr, "Init Backup Failed RC = %ld. Exiting\n", hr & 0xffff);
-    exit(-1);
+    hr = IDirectDraw_CreateSurface(priv->lpddext,
+    		&bddsd, &priv->lpbdds[i], NULL);
+    if (hr) {
+      fprintf(stderr, "Init Backup Failed RC = %ld. Exiting\n", hr & 0xffff);
+      exit(-1);
+    }
+    IDirectDrawSurface2_Lock(priv->lpbdds[i], NULL, &bddsd,
+			     DDLOCK_SURFACEMEMORYPTR, NULL);
+    priv->lpSurfaceAdd[i] = (char*)bddsd.lpSurface;
+    IDirectDrawSurface2_Unlock(priv->lpbdds[i], bddsd.lpSurface);
   }
-  IDirectDrawSurface2_Lock(priv->lpbdds, NULL, &bddsd,
-			   DDLOCK_SURFACEMEMORYPTR, NULL);
-  priv->lpSurfaceAdd = (char*)bddsd.lpSurface;
-  IDirectDrawSurface2_Unlock(priv->lpbdds, bddsd.lpSurface);
 
   /* set private mode parameters */
   priv->maxX = virtw;
@@ -703,9 +710,12 @@ static int DDCreateSurface(directx_priv *priv, DWORD virtw, DWORD virth)
 
 static void DDDestroySurface(directx_priv *priv)
 {
-  if (priv->lpbdds != NULL) {
-    IDirectDrawSurface_Release(priv->lpbdds);
-    priv->lpbdds = NULL;
+  int i;
+  for (i = 0; i < GGI_DISPLAY_DIRECTX_FRAMES; ++i) {
+    if (priv->lpbdds[i] != NULL) {
+      IDirectDrawSurface_Release(priv->lpbdds[i]);
+      priv->lpbdds[i] = NULL;
+    }
   }
   if (priv->lppdds != NULL) {
     IDirectDrawSurface_Release(priv->lppdds);
@@ -739,4 +749,3 @@ static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height)
     MoveWindow(priv->hWnd, r.left, r.top, width, height, TRUE);
   }
 }
-

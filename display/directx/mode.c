@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/08/24 18:43:48 pekberg Exp $
+/* $Id: mode.c,v 1.12 2004/08/25 07:47:45 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -159,9 +159,9 @@ int GGI_directx_checkmode(ggi_visual * vis, ggi_mode * mode)
 	if (mode->frames < 1) {
 		err = -1;
 		mode->frames = 1;
-	} else if (mode->frames > 2) {
+	} else if (mode->frames > GGI_DISPLAY_DIRECTX_FRAMES) {
 		err = -1;
-		mode->frames = 1;
+		mode->frames = GGI_DISPLAY_DIRECTX_FRAMES;
 	}
 
 	switch (depth) {
@@ -269,7 +269,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DDChangeMode(priv, mode->virt.x, mode->virt.y,
+	DDChangeMode(priv, mode->frames, mode->virt.x, mode->virt.y,
 		mode->visible.x, mode->visible.y, priv->BPP * 8);
 
 	vis->d_frame_num = 0;
@@ -278,7 +278,7 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	/* Set Up Direct Buffers */
 
-	for (i = 0; i < 1; i++) {	/* Fix-me for multi frames */
+	for (i = 0; i < mode->frames; i++) {	/* Fix-me for multi frames */
 		ggi_resource *res;
 
 		res = malloc(sizeof(ggi_resource));
@@ -298,7 +298,8 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
 		LIBGGI_APPBUFS(vis)[i]->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write = NULL;
+		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write
+			= priv->lpSurfaceAdd[i];
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride = priv->pitch;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
@@ -310,9 +311,6 @@ int GGI_directx_setmode(ggi_visual * vis, ggi_mode * mode)
 
 	vis->r_frame = LIBGGI_APPBUFS(vis)[0];
 	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
-
-	LIBGGI_CURWRITE(vis) = priv->lpSurfaceAdd;
-	LIBGGI_CURREAD(vis) = priv->lpSurfaceAdd;
 
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (mode->frames - 1);
@@ -359,4 +357,16 @@ int GGI_directx_setorigin(ggi_visual *vis, int x, int y)
 	vis->origin_x = x;
 	vis->origin_y = y;
 	return 0;
+}
+
+int GGI_directx_setdisplayframe(ggi_visual *vis, int num)
+{
+        ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
+
+        if (db == NULL)
+                return -1;
+
+        vis->d_frame_num = num;
+
+        return 0;
 }
