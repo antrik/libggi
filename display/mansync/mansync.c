@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.3 2004/02/12 09:09:53 pekberg Exp $
+/* $Id: mansync.c,v 1.4 2004/03/08 00:58:17 skids Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -31,7 +31,7 @@
 #include <ggi/display/mansync.h>
 
 #ifdef USE_THREADS
-# ifdef HAVE_PHREADS_H
+# ifdef HAVE_PTHREAD_H
 #  include "pthread.c"
 # else
 #  include "win32thread.c"
