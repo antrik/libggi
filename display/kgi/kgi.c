@@ -16,6 +16,16 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		kgic_mapper_identify_request_t	request;
 		kgic_mapper_identify_result_t	result;
 	} cb;
+#ifdef __FreeBSD__
+	union {
+		kgic_mapper_attach_request_t    request;
+		kgic_mapper_attach_result_t     result;
+	} at;
+	union {
+		kgic_mapper_get_unit_request_t  request;
+		kgic_mapper_get_unit_result_t   result;
+	} get_unit;
+#endif
 
 	if (NULL == ctx) {
 
@@ -51,6 +61,36 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	return -KGI_INVAL;
 
  found:
+
+#ifdef __FreeBSD__
+	memset(&get_unit, 0, sizeof(get_unit));
+
+	/* Pass an invalid device id to force auto attachement */
+	get_unit.request.unit = -1;
+	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_GET_UNIT, &get_unit)) {
+		perror("failed to get free unit");
+		return errno;
+	}
+
+	/* Close /dev/graphic then open the true one */
+	close(ctx->mapper.fd);
+
+	sprintf(fname, "/dev/graphic%i", get_unit.result.unit);
+	ctx->mapper.fd = open(fname, O_RDWR | O_NONBLOCK);
+	if (ctx->mapper.fd < 0) {
+		perror("failed to open /dev/graphicX");
+		return errno;
+	}
+
+	memset(&at, 0, sizeof(at));
+
+	/* Pass an invalid device id to force auto attachement */
+	at.request.device_id = -1;
+	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_ATTACH, &at)) {
+		perror("failed to attach to device");
+		return errno;
+	}
+#endif
 
 	memset(&cb, 0, sizeof(cb));
 	strncpy(cb.request.client, client, sizeof(cb.request.client));
@@ -261,8 +301,8 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 	switch (cb.result.type & KGI_RT_MASK) {
 
 	case KGI_RT_MMIO:
-		printf("MMIO: window %li, size %li, align %.8x, "
-			"access %.8x\n",
+		printf("MMIO: window %li, size %li, align %.8lx, "
+			"access %.8lx\n",
 			cb.result.info.mmio.window,
 			cb.result.info.mmio.size,
 			cb.result.info.mmio.align,
@@ -270,7 +310,7 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		break;
 
 	case KGI_RT_ACCEL:
-		printf("ACCEL: recommended are %i buffers of size %li\n",
+		printf("ACCEL: recommended are %li buffers of size %li\n",
 			cb.result.info.accel.buffers,
 			cb.result.info.accel.buffer_size);
 		break;
