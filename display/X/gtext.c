@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2002/09/08 21:37:44 soyt Exp $
+/* $Id: gtext.c,v 1.4 2003/03/18 00:09:59 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -86,7 +86,7 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 	priv->slave->opcolor->packcolors(priv->slave, databg, colors, w * h);
 	free(colors);
 	ptr = priv->fontimg->data + 
-	  (w * (unsigned int)c + priv->fontimg->xoffset) * 
+	  (w * (unsigned int)(unsigned char)c + priv->fontimg->xoffset) * 
 	  priv->fontimg->bits_per_pixel / 8;
 	for (i = 0; i < h; i++) {
 		int j, w2;
