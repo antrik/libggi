@@ -1,4 +1,4 @@
-/* $Id: ggi_debug.h,v 1.6 2005/01/05 13:48:43 soyt Exp $
+/* $Id: ggi_debug.h,v 1.7 2005/01/25 11:54:55 pekberg Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -56,7 +56,11 @@ static inline void DPRINT_LIBS(const char *form,...)   { DPRINTIF(_ggiDebug,DEBU
 static inline void DPRINT_EVENTS(const char *form,...) { DPRINTIF(_ggiDebug,DEBUG_EVENTS); }
 
 /* XXX handle this nicely */
+#ifdef _MSC_VER
+#define DPRINT2_COLOR() do{}while(0)
+#else
 #define DPRINT2_COLOR(...) do{}while(0)
+#endif
 
 __END_DECLS
 
