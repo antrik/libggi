@@ -1,22 +1,12 @@
-.TH "ggiSetMode" 3 "2004-12-01" "libggi-current" GGI
+.TH "ggiSetMode" 3 "2005-02-26" "libggi-current" GGI
 .SH NAME
-\fBggiSetMode\fR, \fBggiSetTextMode\fR, \fBggiSetGraphMode\fR, \fBggiSetSimpleMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
+\fBggiSetMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
 .SH SYNOPSIS
 .nb
 .nf
 #include <ggi/ggi.h>
 
 int ggiSetMode(ggi_visual_t visual, ggi_mode *tm);
-
-int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
-                   int vcols, int vrows, int fontx, int fonty,
-                   ggi_graphtype type);
-
-int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
-                    int xv, int yv, ggi_graphtype type);
-
-int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize,
-                     int frames, ggi_graphtype type);
 
 int ggiGetMode(ggi_visual_t visual, ggi_mode *tm);
 .fi
@@ -27,22 +17,23 @@ negotiation like \fBggiCheckMode(3)\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO
 parameters are changed from the original mode, the new mode will not
 be silently set.
 
-\fBggiSetTextMode\fR, \fBggiSetGraphMode\fR and \fBggiSetSimpleMode\fR are
-convenient versions of \fBggiSetMode\fR that take the mode parameters as
-integer arguments rather than as a \fBggi_mode(3)\fR struct that the
-application has to fill out.  Otherwise, they are functionally
-equivalent to \fBggiSetMode\fR function, and the same mode-setting
-semantics apply, except the changed \fBggi_mode(3)\fR cannot be seen.
-
 \fBggiGetMode\fR fills out the passed \fBggi_mode(3)\fR with the parameters of
 the current mode of the visual.
 .SH RETURN VALUE
-The mode setting functions return \fB0\fR if the mode is set successfully,
-otherwise an \fBggi-error(3)\fR code.
+\fBggiSetMode\fR returns \fB0\fR if the mode is set successfully, otherwise an
+\fBggi-error(3)\fR code.
 .SH NOTES
 Do not set a mode before checking it. You may be able to set up
 a certain mode on one target, but not other targets.
 
-See the example in \fBggiCheckMode(3)\fR
+See the example in \fBggiCheckMode(3)\fR.
+.RS
+\fBImportant:\fR
+Note that the \fBggiSetTextMode(3)\fR, \fBggiSetGraphMode(3)\fR and
+\fBggiSetSimpleMode(3)\fR functions are \*fBdeprecated*\fR. Use
+\fBggiCheckMode(3)\fR and similar functions, and then use
+\fBggiSetMode(3)\fR on the resulting adjusted \fBggi_mode(3)\fR, once you
+have checked it yourself.
+.RE
 .SH SEE ALSO
 \fBggiCheckMode(3)\fR, \fBggiOpen(3)\fR, \fBggi_mode(3)\fR

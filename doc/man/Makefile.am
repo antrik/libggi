@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 man_MANS = \
            ggiInit.3 \
            ggiExit.3 \
@@ -9,10 +11,10 @@ man_MANS = \
            ggiCheckGraphMode.3 \
            ggiCheckSimpleMode.3 \
            ggiSetMode.3 \
+           ggiGetMode.3 \
            ggiSetTextMode.3 \
            ggiSetGraphMode.3 \
            ggiSetSimpleMode.3 \
-           ggiGetMode.3 \
            ggiParseMode.3 \
            ggiPrintMode.3 \
            ggiSPrintMode.3 \
@@ -155,6 +157,3 @@ man_MANS = \
            divmod_3.3
 
 EXTRA_DIST = $(man_MANS)
-
-MAINTAINERCLEANFILES = Makefile.in
-
