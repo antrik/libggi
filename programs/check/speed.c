@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.1 2001/05/12 23:03:28 cegger Exp $
+/* $Id: speed.c,v 1.2 2001/05/13 01:30:03 skids Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -20,6 +20,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/times.h>
+#ifndef CLK_TCK
+#include <time.h>
+#endif
 
 #include <ggi/ggi.h>
 
