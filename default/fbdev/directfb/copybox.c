@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2001/08/24 03:14:02 skids Exp $
+/* $Id: copybox.c,v 1.3 2001/08/24 03:15:55 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for fbdev target
@@ -44,7 +44,6 @@ int GGI_directfb_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	dfbobj.h = h;
 	dfbobj.w = w;
 
-	printf("Copybox\n");
 	priv->gfxcard.Blit(&dfbobj, dstx, dsty);
 
 	vis->accelactive = 1;
