@@ -102,30 +102,6 @@ man_MANS = \
            ggi_colormap.3 \
            ggi_colormap_region.3 \
            libggi.7 \
-           triple-int.7 \
-           assign_3.3 \
-           assign_int_3.3 \
-           assign_unsigned_3.3 \
-           sign_3.3 \
-           bits_3.3 \
-           eq0_3.3 \
-           gt0_3.3 \
-           ge0_3.3 \
-           lt0_3.3 \
-           le0_3.3 \
-           eq_3.3 \
-           ge_3.3 \
-           invert_3.3 \
-           lshift_3.3 \
-           rshift_3.3 \
-           inc_3.3 \
-           dec_3.3 \
-           negate_3.3 \
-           abs_3.3 \
-           add_3.3 \
-           sub_3.3 \
-           mul_3.3 \
-           divmod_3.3 \
            monitest.1 \
            cube3d.1 \
            ggi-demo.1 \
@@ -152,6 +128,30 @@ man_MANS = \
            display-vcsa.7 \
            display-vgl.7 \
            display-x.7 \
-           display-dga.7
+           display-dga.7 \
+           triple-int.7 \
+           assign_3.3 \
+           assign_int_3.3 \
+           assign_unsigned_3.3 \
+           sign_3.3 \
+           bits_3.3 \
+           eq0_3.3 \
+           gt0_3.3 \
+           ge0_3.3 \
+           lt0_3.3 \
+           le0_3.3 \
+           eq_3.3 \
+           ge_3.3 \
+           invert_3.3 \
+           lshift_3.3 \
+           rshift_3.3 \
+           inc_3.3 \
+           dec_3.3 \
+           negate_3.3 \
+           abs_3.3 \
+           add_3.3 \
+           sub_3.3 \
+           mul_3.3 \
+           divmod_3.3
 
 EXTRA_DIST = $(man_MANS)

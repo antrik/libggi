@@ -1,4 +1,4 @@
-.TH "ggiGetGamma" 3 "2004-11-15" "libggi-current" GGI
+.TH "ggiGetGamma" 3 "2004-11-20" "libggi-current" GGI
 .SH NAME
 \fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
 .SH SYNOPSIS
@@ -38,12 +38,12 @@ undefined on read.
 
 The \fBggiGammaMax\fR function is used in order to find out how many
 readable and writeable entries are in the map (returned in the
-integers referenced by \fImaxwrite\fR and \fImaxread\fR).  This must be
+integers referenced by \fImax_w\fR and \fImax_r\fR).  This must be
 done once for each channel.  The parameter \fIbitmeaning\fR should be
-set to the bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of
+set to the bit meaning (e.g. \fBGGI_BM_TYPE_COLOR\fR | \fBGGI_BM_SUB_BLUE\fR) of
 the channel of which you are inquiring.  If \fBggiGammaMax\fR returns an
 \fBggi-error(3)\fR, you cannot set the gamma map on this visual. 
-If \fBggiGammaMax\fR succeeds, but \fImaxwrite\fR is -1 on return, this means
+If \fBggiGammaMax\fR succeeds, but \fImax_w\fR is -1 on return, this means
 that \fBggiSetGamma\fR will work, but that \fBggiSetGammaMap\fR will not.
 
 \fBggiSetGamma\fR and \fBggiGetGamma\fR sets or gets the gamma correction for
