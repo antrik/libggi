@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.38 2004/09/24 11:10:14 pekberg Exp $
+/* $Id: ddinit.c,v 1.39 2004/09/24 11:11:18 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -100,7 +100,8 @@ DDShutdown(directx_priv *priv)
 
 	/* Get rid of the window class if we registered it */
 	if (priv->wndclass)
-		UnregisterClass((LPCTSTR) priv->wndclass, priv->hInstance);
+		UnregisterClass((LPCTSTR)(INT_PTR)priv->wndclass,
+			priv->hInstance);
 
 	/* get rid of the cursor if we created one */
 	if (priv->hCursor)
