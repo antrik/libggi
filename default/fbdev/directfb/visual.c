@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2001/08/24 01:49:14 skids Exp $
+/* $Id: visual.c,v 1.7 2001/08/24 03:14:02 skids Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -94,7 +94,7 @@ static int do_cleanup(ggi_visual *vis)
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
 
-	priv->gfxdriver.DeInit();
+	if (priv->gfxdriver.DeInit != NULL) priv->gfxdriver.DeInit();
 
 	/* Free DB resource structures */
 	for (i = LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -134,12 +134,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   GGIDPRINT("GGIopen for DirectFB started!\n");
 
-  if (GT_SIZE(LIBGGI_GT(vis)) % 8 != 0 ||
-      GT_SIZE(LIBGGI_GT(vis)) > 32 ||
-      GT_SIZE(LIBGGI_GT(vis)) < 8) {
-    /* Unsupported mode */
-    return GGI_ENOFUNC;
-  }
   pixbytes = GT_SIZE(LIBGGI_GT(vis)) / 8;
   
   priv = calloc(sizeof(struct directfb_priv), 1);
@@ -147,8 +141,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
     return GGI_ENOMEM;
   }
 
-  if(_ggiAddDL(vis, "helper-fbdev-directfb-global", NULL, &(priv->globals),
-	    GGI_DLTYPE_GLOBAL)) {
+  if(_ggiAddDL(vis, "helper-fbdev-directfb-global", 
+	       NULL, &(priv->globals), GGI_DLTYPE_GLOBAL)) {
     free(priv);
     return GGI_ENOFUNC;
   }
@@ -248,22 +242,19 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   priv->corebuffer.video.offset = 0;
   priv->corebuffer.surface = &(priv->coresurface);
   priv->dfbstate.destination = &(priv->coresurface);
+  priv->dfbstate.source = &(priv->coresurface);
   switch (GT_DEPTH(LIBGGI_GT(vis))) {
   case 15:
     priv->coresurface.format = DSPF_RGB15;
-    GGIDPRINT("Setting DSPF_RGB15\n");
     break;
   case 16:
     priv->coresurface.format = DSPF_RGB16;
-    GGIDPRINT("Setting DSPF_RGB16\n");
     break;
   case 24:
     priv->coresurface.format = DSPF_RGB24;
-    GGIDPRINT("Setting DSPF_RGB24\n");
     break;
   case 32:
     priv->coresurface.format = DSPF_RGB32;
-    GGIDPRINT("Setting DSPF_RGB32\n");
     break;
   default:
     /* priv->coresurface.format = DSPF_UNKNOWN; */
@@ -298,22 +289,26 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   fbdevpriv->idleaccel = directfb_idleaccel;
 
   vis->opdraw->getcharsize = GGI_directfb_getcharsize;
-  vis->opdraw->drawhline   = GGI_directfb_drawhline;
-  vis->opdraw->drawvline   = GGI_directfb_drawvline;
-  vis->opdraw->drawline    = GGI_directfb_drawline;
-  vis->opdraw->drawbox     = GGI_directfb_drawbox;
-  vis->opdraw->fillscreen  = GGI_directfb_fillscreen;
-
-  vis->opdraw->copybox     = GGI_directfb_copybox;
-
+  if (dfb_card->caps.accel & DFXL_FILLRECTANGLE) {
+    vis->opdraw->drawhline   = GGI_directfb_drawhline;
+    vis->opdraw->drawvline   = GGI_directfb_drawvline;
+    vis->opdraw->drawbox     = GGI_directfb_drawbox;
+    vis->opdraw->fillscreen  = GGI_directfb_fillscreen;
+  };
+  if (dfb_card->caps.accel & DFXL_FILLRECTANGLE) {
+    vis->opdraw->drawline    = GGI_directfb_drawline;
+  }
+  if (dfb_card->caps.accel & DFXL_BLIT) {
+    vis->opdraw->copybox     = GGI_directfb_copybox;
 #if 0
-  /* These will follow.  First let's get the rest of the stuff working. */
-  vis->opdraw->puthline   = GGI_directfb_puthline;
-  vis->opdraw->putvline   = GGI_directfb_putvline;
-  vis->opdraw->putbox     = GGI_directfb_putbox;
-  vis->opdraw->crossblit   = GGI_directfb_crossblit;
+    /* These will follow.  First let's get the rest of the stuff working. */
+    vis->opdraw->puthline   = GGI_directfb_puthline;
+    vis->opdraw->putvline   = GGI_directfb_putvline;
+    vis->opdraw->putbox     = GGI_directfb_putbox;
+    vis->opdraw->crossblit   = GGI_directfb_crossblit;
 #endif
-  
+  }
+
   DIRECTFB_PRIV(vis) = priv;
   
   /* Register cleanup handler */

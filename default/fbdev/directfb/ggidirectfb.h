@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.3 2001/08/22 03:41:08 skids Exp $
+/* $Id: ggidirectfb.h,v 1.4 2001/08/24 03:14:02 skids Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -137,6 +137,7 @@ struct directfb_priv {
   CoreSurface	coresurface;
   ggi_pixel	oldfg;
   ggi_pixel	oldbg;
+  CoreSurface	*oldsource;
 };
 
 
@@ -151,7 +152,7 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
 {
   CardState *dfbstate;
   DFBConfig *dfb_config;
-  int newfg, newbg, newclip;
+  int newfg, newbg, newclip, newsource;
 
   GGIDPRINT("gcupdate called\n");
 
@@ -168,8 +169,9 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
     (gc->clipbr.x != dfbstate->clip.x2) ||
     (gc->cliptl.y != dfbstate->clip.y1) ||
     (gc->clipbr.y != dfbstate->clip.y2);
+  newsource = (dfbstate->source == priv->oldsource);
   
-  if (! (newfg || newbg || newclip)) return;
+  if (! (newfg || newbg || newclip || newsource)) return;
 
   if (newclip) {
     GGIDPRINT("updating clip\n");
@@ -214,6 +216,10 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
     dfbstate->modified |= SMF_DESTINATION;
     priv->oldbg = gc->bg_color;
     dfb_config->layer_bg_mode = DLBM_COLOR;
+  }
+
+  if (newsource) {
+    dfbstate->modified = SMF_SOURCE;
   }
 
   priv->gfxcard.SetState(dfbstate, accel);
