@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: text.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-palemu: text
@@ -25,13 +25,13 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/palemu.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #undef putc
 

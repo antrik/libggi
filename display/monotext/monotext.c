@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.3 2003/07/13 06:39:36 cegger Exp $
+/* $Id: monotext.c,v 1.4 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -25,12 +25,14 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/monotext.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#include <ggi/display/monotext.h>
 #include "font_data.h"
 
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/10/27 18:26:24 skids Exp $
+/* $Id: mode.c,v 1.4 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-multi: mode management
@@ -27,14 +27,14 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/multi.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)

@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.3 2002/09/08 21:37:46 soyt Exp $
+/* $Id: palemu.c,v 1.4 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -25,14 +25,14 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/palemu.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /**************************************************

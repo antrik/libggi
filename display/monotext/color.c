@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2003/12/13 21:12:03 mooz Exp $
+/* $Id: color.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -25,11 +25,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/monotext.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <ggi/display/monotext.h>
 
 
 int GGI_monotext_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)

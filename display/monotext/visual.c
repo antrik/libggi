@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
+/* $Id: visual.c,v 1.3 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -26,12 +26,13 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/monotext.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-#include <ggi/display/monotext.h>
 
 
 static const gg_option optlist[] =

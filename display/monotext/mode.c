@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2003/12/13 21:12:03 mooz Exp $
+/* $Id: mode.c,v 1.6 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -26,14 +26,14 @@
 ******************************************************************************
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #include <ggi/display/monotext.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Evil, FIXME - query target! */
 static int target_width  = 80;

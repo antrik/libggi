@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2003/12/13 21:12:03 mooz Exp $
+/* $Id: mode.c,v 1.10 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -28,11 +28,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/memory.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <ggi/display/memory.h>
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/ggi-auto.inc"

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2003/11/13 17:13:59 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/01/31 20:56:04 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -25,10 +25,16 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/ipc.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <ggi/display/ipc.h>
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 static const gg_option optlist[] =
 {

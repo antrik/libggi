@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.1 2001/05/12 23:02:15 cegger Exp $
+/* $Id: text.c,v 1.2 2004/01/31 20:56:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: displaying text
@@ -25,10 +25,11 @@
 ******************************************************************************
 */
 
+#include "config.h"
+#include <ggi/display/monotext.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <ggi/display/monotext.h>
 
 #undef putc
 
