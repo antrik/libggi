@@ -6,6 +6,6 @@ noinst_PROGRAMS = checkmode showaccel findleaks \
 	consistency structs cbconsist $(OPTCHECKS)
 
 # -lgg is needed for ggUSleep() and ggCurTime()
-showaccel_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
+showaccel_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(THREADLIBS)
 
 EXTRA_DIST = speed.sh
