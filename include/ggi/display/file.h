@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: file.h,v 1.2 2003/07/06 08:24:54 cegger Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -87,9 +87,9 @@ extern void _ggi_file_close_file(ggi_visual *vis);
 extern void _ggi_file_rewind(ggi_visual *vis);
 extern void _ggi_file_flush(ggi_visual *vis);
 
-extern void _ggi_file_write_byte(ggi_visual *vis, int val);
-extern void _ggi_file_write_word(ggi_visual *vis, int val);
-extern void _ggi_file_write_string(ggi_visual *vis, char *str);
+extern void _ggi_file_write_byte(ggi_visual *vis, unsigned int val);
+extern void _ggi_file_write_word(ggi_visual *vis, unsigned int val);
+extern void _ggi_file_write_string(ggi_visual *vis, unsigned char *str);
 extern void _ggi_file_write_zeros(ggi_visual *vis, int count);
 
 
@@ -98,6 +98,11 @@ extern void _ggi_file_write_zeros(ggi_visual *vis, int count);
  
 extern file_detect_func _ggi_file_ppm_detect;
 extern file_writer_func _ggi_file_ppm_write;
+
+/* Misc
+ */
+
+extern int GGI_file_resetmode(ggi_visual *vis);
 
 
 /* LibGGI Interface
