@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.4 2004/04/02 16:02:48 ggibecka Exp $
+/* $Id: stars.c,v 1.5 2004/09/08 19:06:58 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -44,7 +44,7 @@
 #include <time.h>
 #include <math.h>
 
-ggi_visual_t vis = NULL, dgavis = NULL;
+static ggi_visual_t vis = NULL, dgavis = NULL;
 static ggi_pixel lookup[256];
 static int xoff, yoff;
 
@@ -59,11 +59,11 @@ static int starsr[300][3];
 static int posx[300][60];
 static int posy[300][60];
 
-void SetupNewVisual(ggi_visual_t setvis);
-ggi_visual_t InitVisual(const char *visname);
-void CleanUp(void);
-void InitStars(void);
-void Transform(int *ta, int *tb);
+static void SetupNewVisual(ggi_visual_t setvis);
+static ggi_visual_t InitVisual(const char *visname);
+static void CleanUp(void);
+static void InitStars(void);
+static void Transform(int *ta, int *tb);
 
 int main(int argc, char **argv)
 {
