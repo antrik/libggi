@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2004/09/09 12:07:56 cegger Exp $
+/* $Id: visual.c,v 1.29 2004/09/09 12:17:56 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -307,13 +307,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Turn off extensions which the user does not want */
 	if (options[OPT_NOSHM].result[0] != 'n') 
-		priv->use_Xext &=~GGI_X_USE_SHM;
+		priv->use_Xext &= ~GGI_X_USE_SHM;
 	if (options[OPT_NODBE].result[0] != 'n')
-		priv->use_Xext &=~GGI_X_USE_DBE;
+		priv->use_Xext &= ~GGI_X_USE_DBE;
 	if (options[OPT_NODGA].result[0] != 'n')
-		priv->use_Xext &=~GGI_X_USE_DGA;
+		priv->use_Xext &= ~GGI_X_USE_DGA;
 	if (options[OPT_NOVIDMODE].result[0] != 'n') 
-		priv->use_Xext &=~GGI_X_USE_VIDMODE;
+		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
 
 	/* Get a list of possibly compatible X11 visuals */
 	memset(&vi_template, 0, sizeof(XVisualInfo));
@@ -361,7 +361,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdisplay->checkmode = GGI_X_checkmode_fixed;
 		vis->opdisplay->setmode = GGI_X_setmode_fixed;
 
-		GGIDPRINT_MISC("X: using root window of screen %ui\n", 
+		GGIDPRINT_MISC("X: using root window of screen %u\n", 
 			       vi_template.screen);
 	}
 
@@ -538,6 +538,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
+#undef GGI_X_TEST_XEXT
  out:
 	GGIclose(vis, dlh);
 	return err;
@@ -545,7 +546,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	if (vis && GGIX_PRIV(vis) && GGIX_PRIV(vis)->opmansync) {
+	LIBGGI_ASSERT(vis != NULL, "GGIexit: vis == NULL");
+	LIBGGI_ASSERT(GGIX_PRIV(vis) != NULL, "GGIexit: GGIX_PRIV(vis) == NULL");
+
+	if (GGIX_PRIV(vis)->opmansync) {
 		MANSYNC_deinit(vis);
 	}
 	return 0;
