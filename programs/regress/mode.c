@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/09/20 13:15:16 pekberg Exp $
+/* $Id: mode.c,v 1.6 2004/09/20 13:40:05 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -173,6 +173,7 @@ static void testcase4(const char *desc)
 	int err;
 	ggi_visual_t vis;
 	ggi_mode mode;
+	ggi_coord size;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
@@ -183,41 +184,61 @@ static void testcase4(const char *desc)
 	vis = ggiOpen(NULL);
 	printassert(vis != NULL, "ggiOpen() failed\n");
 
+	err = ggiCheckSimpleMode(
+		vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
+	printassert(err == GGI_OK, "ggiCheckSimpleMode: can't find a mode\n");
+	if(err != GGI_OK) {
+		ggiClose(vis);
+		ggiExit();
+		printsuccess();
+		return;
+	}
+
+	printassert(mode.size.x != GGI_AUTO && mode.size.y != GGI_AUTO,
+		"physical size is apparently not supported\n");
+	if(mode.size.x == GGI_AUTO || mode.size.y == GGI_AUTO) {
+		ggiClose(vis);
+		ggiExit();
+		printsuccess();
+		return;
+	}
+
+	/* Clear out all but the physical size */
 	mode.frames    = GGI_AUTO;
 	mode.visible.x = GGI_AUTO;
 	mode.visible.y = GGI_AUTO;
 	mode.virt.x    = GGI_AUTO;
 	mode.virt.y    = GGI_AUTO;
-	mode.size.x    = 40;
-	mode.size.y    = 30;
 	mode.graphtype = GT_AUTO;
-	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
+	mode.dpp.x     = GGI_AUTO;
+	mode.dpp.y     = GGI_AUTO;
 
+	size = mode.size;
+
+	/* This mode should be there */
 	err = ggiCheckMode(vis, &mode);
 	ggiClose(vis);
 	ggiExit();
-	
-	printassert(err == GGI_OK || err == GGI_ENOMATCH,
-		"ggiCheckMode should return GGI_OK or GGI_ENOMATCH, not %i\n",
-		err);
 
-	printassert(err == GGI_OK,
-		"physical size is apparently not supported\n");
-
-	if (err != GGI_OK)
-		;
-	else if (mode.size.x <= 1) {
-		printfailure(
-			"ggiCheckMode: size.x: expected return value: > 1\n"
-					"actual return value: %i\n",
-			mode.size.x);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckMode: expected return value: 0\n"
+					"actual return value: %i\n", err);
 		return;
 	}
-	else if (mode.size.y <= 1) {
+
+	if (mode.size.x != size.x) {
 		printfailure(
-			"ggiCheckMode: size.y: expected return value: > 1\n"
+			"ggiCheckMode: size.x: expected return value: %i\n"
 					"actual return value: %i\n",
-			mode.size.y);
+			size.x, mode.size.x);
+		return;
+	}
+
+	if (mode.size.y != size.y) {
+		printfailure(
+			"ggiCheckMode: size.y: expected return value: %i\n"
+					"actual return value: %i\n",
+			size.y, mode.size.y);
 		return;
 	}
 
@@ -233,7 +254,7 @@ int main(int argc, char * const argv[])
 	testcase1("Check that ggiCheckMode() doesn't return GGI_AUTO");
 	testcase2("Check that ggiSetMode() can actually set the mode that has been suggested by ggiCheckMode");
 	testcase3("Check setting a mode with a given number of frames");
-	testcase4("Check setting a 40x30 mm mode");
+	testcase4("Check setting a mode by it's physical size");
 
 	printsummary();
 
