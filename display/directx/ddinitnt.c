@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.4 2003/10/06 21:33:49 cegger Exp $
+/* $Id: ddinitnt.c,v 1.5 2003/10/07 05:29:01 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -193,21 +193,25 @@ int CreatePrimary(void)
 
 int GetDesc(directx_priv * priv)
 {
-        pddsd.dwSize = sizeof(pddsd);
+	pddsd.dwSize = sizeof(pddsd);
 
-        IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+	IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 
-        priv->hWnd = hWnd;
-        priv->pitch = pddsd.lPitch;
-        priv->maxX = pddsd.dwWidth;
-        priv->maxY = pddsd.dwHeight;
-        priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-        priv->BPP = priv->ColorDepth / 8;
-/*      priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
-        priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
-        priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
+	priv->hWnd = hWnd;
+
+/*	priv->pitch = pddsd.lPitch; */
+
+	priv->maxX = pddsd.dwWidth;
+	priv->maxY = pddsd.dwHeight;
+	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
+	priv->BPP = priv->ColorDepth / 8;
+	priv->pitch = priv->maxX * priv->BPP;
+
+/*	priv->RedMask = pddsd.ddpfPixelFormat.dwRBitMask;
+	priv->GreenMask = pddsd.ddpfPixelFormat.dwGBitMask;
+	priv->BlueMask = pddsd.ddpfPixelFormat.dwBBitMask;
 */
-        return 0;
+	return 0;
 }
 
 int CreateBackup(void)
@@ -379,7 +383,36 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 	}
 
 	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
-		mode->graphtype = GT_16BIT;
+		HWND wnd = GetDesktopWindow();
+		HDC dc = GetDC(wnd);
+		int depth = GetDeviceCaps(dc, BITSPIXEL);
+		ReleaseDC(wnd, dc);
+		switch (depth) {
+		case 1:
+			mode->graphtype = GT_1BIT;
+			break;
+		case 2:
+			mode->graphtype = GT_2BIT;
+			break;
+		case 4:
+			mode->graphtype = GT_4BIT;
+			break;
+		case 8:
+			mode->graphtype = GT_8BIT;
+			break;
+		case 15:
+			mode->graphtype = GT_15BIT;
+			break;
+		case 16:
+			mode->graphtype = GT_16BIT;
+			break;
+		case 24:
+			mode->graphtype = GT_24BIT;
+			break;
+		case 32:
+			mode->graphtype = GT_32BIT;
+			break;
+		}
 	}
 
 	modefound = 0;
