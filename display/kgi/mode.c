@@ -205,6 +205,12 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		int name_size;
 		char *space;
 
+#ifdef __FreeBSD__
+		/* XXX no accel support in kernel */
+		GGIDPRINT("Warning!! Accel not supported by FreeBSD kernel\n");
+		return -1;
+#endif
+
 		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
 		if (! accel) {
 		
@@ -279,7 +285,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		return -1;
 	}
 
-	GGIDPRINT("Found fb as resource %d", fb->resource);
+	GGIDPRINT("Found fb as resource %d\n", fb->resource);
 
 	kgiSetupMmapFB(&KGI_CTX(vis), fb->resource);
 
