@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/12 19:31:11 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/09/12 20:13:40 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -80,7 +80,7 @@ int GGI_monotext_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 
 static int do_dbstuff(ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	priv->fb_size = LIBGGI_FB_SIZE(LIBGGI_MODE(vis));
 	priv->fb_ptr  = malloc((size_t)(priv->fb_size));
@@ -120,7 +120,7 @@ static int do_dbstuff(ggi_visual *vis)
 
 static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
@@ -265,7 +265,7 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 
 int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err = 0;
 
 	if ((vis == NULL) || (mode == NULL)) {
@@ -361,7 +361,7 @@ int GGI_monotext_setflags(ggi_visual *vis, ggi_flags flags)
 int
 GGI_monotext_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 
 	if ((err = _ggi_monotextFlush(vis)) < 0) {

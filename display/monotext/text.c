@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.2 2004/01/31 20:56:05 cegger Exp $
+/* $Id: text.c,v 1.3 2004/09/12 20:13:40 cegger Exp $
 ******************************************************************************
 
    Display-monotext: displaying text
@@ -36,7 +36,7 @@
 
 int GGI_monotext_putc(ggi_visual *vis, int x, int y, char c)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int char_w, char_h;
 	int err;

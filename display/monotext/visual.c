@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:25:14 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/09/12 20:13:40 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -127,7 +127,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->parent->input = NULL; /* destroy old reference */
 	}
 	
-	LIBGGI_PRIVATE(vis) = priv;
+	MONOTEXT_PRIV(vis) = priv;
 
 	vis->opdisplay->getmode   = GGI_monotext_getmode;
 	vis->opdisplay->setmode   = GGI_monotext_setmode;
@@ -144,7 +144,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	GGIDPRINT("display-monotext: GGIdlcleanup start.\n");
 

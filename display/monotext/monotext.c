@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.4 2004/01/31 20:56:05 cegger Exp $
+/* $Id: monotext.c,v 1.5 2004/09/12 20:13:40 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -350,7 +350,7 @@ static uint8 dest_buf[8192];
 static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
 				   uint8 *src)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 
@@ -369,7 +369,7 @@ static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
 
 int _ggi_monotextUpdate(ggi_visual *vis, int x, int y, int w, int h)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int step_x = priv->accuracy.x * priv->squish.x;
 	int step_y = priv->accuracy.y * priv->squish.y;
@@ -407,7 +407,7 @@ int _ggi_monotextUpdate(ggi_visual *vis, int x, int y, int w, int h)
 
 int _ggi_monotextFlush(ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int sx = MAX(priv->dirty_tl.x, vis->gc->cliptl.x);
 	int sy = MAX(priv->dirty_tl.y, vis->gc->cliptl.y);
@@ -433,7 +433,7 @@ int _ggi_monotextFlush(ggi_visual *vis)
 
 int _ggi_monotextOpen(ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	ggi_coord child_size;
 
@@ -511,7 +511,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 
 int _ggi_monotextClose(ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	if (priv->colormap != NULL) {
 		free(priv->colormap);

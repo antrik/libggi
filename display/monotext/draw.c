@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.1 2001/05/12 23:02:13 cegger Exp $
+/* $Id: draw.c,v 1.2 2004/09/12 20:13:40 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -36,7 +36,7 @@
 
 int GGI_monotext_drawpixel_nc(ggi_visual *vis, int x, int y)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, 1);
@@ -51,7 +51,7 @@ int GGI_monotext_drawpixel_nc(ggi_visual *vis, int x, int y)
 
 int GGI_monotext_drawpixel(ggi_visual *vis, int x, int y)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, 1);
@@ -66,7 +66,7 @@ int GGI_monotext_drawpixel(ggi_visual *vis, int x, int y)
 
 int GGI_monotext_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, 1);
@@ -81,7 +81,7 @@ int GGI_monotext_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 
 int GGI_monotext_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, 1);
@@ -96,7 +96,7 @@ int GGI_monotext_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 
 int GGI_monotext_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 
 	int sx = MIN(x1, x2);
@@ -117,7 +117,7 @@ int GGI_monotext_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 
 int GGI_monotext_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	err = priv->mem_opdraw->drawhline_nc(vis, x, y, w);
@@ -132,7 +132,7 @@ int GGI_monotext_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 
 int GGI_monotext_drawhline(ggi_visual *vis, int x, int y, int w)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	err = priv->mem_opdraw->drawhline(vis, x, y, w);
@@ -147,7 +147,7 @@ int GGI_monotext_drawhline(ggi_visual *vis, int x, int y, int w)
 
 int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 { 
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	err = priv->mem_opdraw->puthline(vis, x, y, w, buffer);
@@ -162,7 +162,7 @@ int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 int GGI_monotext_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, h);
@@ -177,7 +177,7 @@ int GGI_monotext_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 
 int GGI_monotext_drawvline(ggi_visual *vis, int x, int y, int h)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, h);
@@ -192,7 +192,7 @@ int GGI_monotext_drawvline(ggi_visual *vis, int x, int y, int h)
 
 int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	UPDATE_MOD(priv, x, y, 1, h);
@@ -216,7 +216,7 @@ int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, void *buffer)
  
 int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 { 
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	if ((err = priv->mem_opdraw->putbox(vis, x, y, w, h, buffer)) < 0) {
@@ -228,7 +228,7 @@ int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffe
 
 int GGI_monotext_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	if ((err = priv->mem_opdraw->drawbox(vis, x, y, w, h)) < 0) {
@@ -240,7 +240,7 @@ int GGI_monotext_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 int GGI_monotext_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	if ((err = priv->mem_opdraw->copybox(vis, x, y, w, h, nx, ny)) < 0) {
@@ -253,7 +253,7 @@ int GGI_monotext_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, in
 int GGI_monotext_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
                  ggi_visual *vis, int dx, int dy)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	if ((err = priv->mem_opdraw->crossblit(src, sx, sy, w, h, 
@@ -266,7 +266,7 @@ int GGI_monotext_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 int GGI_monotext_fillscreen(ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 	
 	if ((err = priv->mem_opdraw->fillscreen(vis)) < 0) {
@@ -286,7 +286,7 @@ int GGI_monotext_fillscreen(ggi_visual *vis)
 
 int GGI_monotext_setorigin(ggi_visual *vis, int x, int y)
 {
-	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int err;
 	
