@@ -1,4 +1,4 @@
-/* $Id: common.inc.c,v 1.2 2004/05/04 16:43:41 cegger Exp $
+/* $Id: common.inc.c,v 1.3 2004/05/16 12:13:17 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -32,9 +32,9 @@ static int num_failedtests = 0;
 static int num_asserterrors = 0;
 
 
-static void printteststart(const char *funcname)
+static void printteststart(const char *file, const char *funcname)
 {
-	printf("%s: Run %s...", __FILE__, funcname);
+	printf("%s: Run %s...", file, funcname);
 	fflush(stdout);
 
 	num_tests++;
