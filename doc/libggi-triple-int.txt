@@ -37,7 +37,7 @@ See Also
 :man:`eq_3(3)`, :man:`ge_3(3)`,
 :man:`invert_3(3)`, :man:`lshift_3(3)`, :man:`rshift_3(3)`,
 :man:`inc_3(3)`, :man:`dec_3(3)`, :man:`negate_3(3)`, :man:`abs_3(3)`,
-:man:`add_3(3)`, :man:`sub_3(3)`, :man:`mul_3(3)`, :man:`divmod_3(3)`,
+:man:`add_3(3)`, :man:`sub_3(3)`, :man:`mul_3(3)`, :man:`divmod_3(3)`
 
 
 
