@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.5 2004/02/06 13:57:01 cegger Exp $
+/* $Id: textdemo.c,v 1.6 2004/02/29 13:31:18 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -24,9 +24,6 @@
 # include <unistd.h>
 #endif
 
-#if defined(__WIN32__) && !defined(__CYGWIN__)
-# define sleep(s) Sleep((s)*1000)
-#endif
 
 ggi_visual_t vis;
 
@@ -151,14 +148,14 @@ int main(int argc, char *argv[])
 
 	ggiFlush(vis);
 
-	sleep(1);
+	ggUSleep(1000);
 
 	ggiSetGCForeground(vis, 4 << 8);
 	ggiPuts(vis, 56, 5, "  LibGGI dynamic  ");
 
 	ggiFlush(vis);
 
-	sleep(1);
+	ggUSleep(1000);
 
 	ggiGetMode(vis, &mode);
 

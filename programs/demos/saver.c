@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.6 2004/02/06 13:57:01 cegger Exp $
+/* $Id: saver.c,v 1.7 2004/02/29 13:31:18 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -27,9 +27,6 @@
 # include <unistd.h>
 #endif
 
-#if defined(__WIN32__) && !defined(__CYGWIN__)
-# define sleep(s) Sleep((s)*1000)
-#endif
 
 /* The time in minutes till activation
  */
@@ -586,7 +583,7 @@ int main(int argc, char *argv[])
 				cnt = 0;
 				ic = ic2;
 			}
-			sleep(60);
+			ggUSleep(60000);
 		}
 
 	ggiClose(visual);
