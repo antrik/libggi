@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: box.c,v 1.2 2002/10/09 22:56:31 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -77,7 +77,7 @@ int GGI_lin16_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 	int srcwidth = w;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
 
-	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, );
+	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, *1);
 	PREPARE_FB(vis);
 	
 	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*2);
