@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2004/02/02 19:21:59 cegger Exp $
+/* $Id: mode.c,v 1.25 2004/02/29 22:04:51 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -490,6 +490,9 @@ oldparent:
 		gii_event ev;
 		gii_xwin_cmddata_setparam *data
 			= (gii_xwin_cmddata_setparam *) ev.cmd.data;
+
+		GGIDPRINT_MODE("X (setmode_normal): tell inputlib about new window\n");
+
 		ev.cmd.size = sizeof(gii_cmd_event);
 		ev.cmd.type = evCommand;
 		ev.cmd.target = priv->inp->origin;
@@ -501,11 +504,15 @@ oldparent:
 		giiEventSend(priv->inp, &ev);
 	}
 
+
+	GGIDPRINT_MODE("X (setmode_normal): set dirty region\n");
+
 	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
 	priv->dirtytl.x = 1; priv->dirtybr.x = 0;
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
+	GGIDPRINT_MODE("X (setmode_normal): return code = %i\n", err);
 	return err;
 
 err1:
@@ -666,6 +673,9 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		gii_event ev;
 		gii_xwin_cmddata_setparam *data
 			= (gii_xwin_cmddata_setparam *) ev.cmd.data;
+
+		GGIDPRINT_MODE("X (setmode_fixed): tell inputlib about new window\n");
+
 		ev.cmd.size = sizeof(gii_cmd_event);
 		ev.cmd.type = evCommand;
 		ev.cmd.target = priv->inp->origin;
@@ -677,11 +687,14 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 		giiEventSend(priv->inp, &ev);
 	}
 
+	GGIDPRINT_MODE("X (setmode_fixed): set dirty region\n");
+
 	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
 	priv->dirtytl.x = 1; priv->dirtybr.x = 0;
 
 	if (priv->opmansync) MANSYNC_cont(vis);
 
+	GGIDPRINT_MODE("X (setmode_fixed): return code = %i\n", err);
 	return err;
 
 err1:

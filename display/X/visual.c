@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2004/02/23 14:24:52 pekberg Exp $
+/* $Id: visual.c,v 1.27 2004/02/29 22:04:52 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -513,7 +513,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
                 _args.resizearg = vis;
 		_args.gglock = lock;
                 
-		if ((inp = giiOpen("xwin", &_args, NULL)) == NULL) {
+		inp = giiOpen("xwin", &_args, NULL);
+		GGIDPRINT_MISC("X: giiOpen returned with %p\n", inp);
+
+		if (inp == NULL) {
 			GGIDPRINT_MISC("Unable to open xwin inputlib\n");
 			GGIclose(vis, dlh);
 			return GGI_ENODEVICE;
