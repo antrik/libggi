@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.1 2002/12/22 12:59:38 cegger Exp $
+/* $Id: mode.m,v 1.2 2003/09/16 22:16:25 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -312,6 +312,10 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 		vis->palette = _ggi_malloc(sizeof(ggi_color) * priv->ncols);
 		vis->opcolor->setpalvec = GGI_quartz_setpalvec;
 	}	/* if */
+
+	/* initialize gamma structure */
+	vis->gamma->start = 0;
+	vis->gamma->len = priv->ncols;
 
 	/* Pixel format */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));

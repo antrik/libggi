@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.2 2003/05/04 20:31:03 cegger Exp $
+/* $Id: color.m,v 1.3 2003/09/16 22:16:25 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -158,9 +158,9 @@ int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	priv = QUARTZ_PRIV(vis);
 
 	if (colormap == NULL) return -1;
-	if (start >= priv->ncols) return -1;
+	if (start >= vis->gamma->len) return -1;
 	if (start < 0) return -1;
-	if (len > (priv->ncols - start)) return -1;
+	if (len > (vis->gamma->len - start)) return -1;
 
 	/* Extract gamma values into separate tables,
 	 * convert to floats between 0.0 and 1.0
@@ -205,7 +205,7 @@ int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	/* Note: If the compiler breaks here,
 	 * then it is not ANSI C99 conform.
 	 */
-	const CGTableCount tableSize = priv->ncols;
+	const CGTableCount tableSize = vis->gamma->len;
 	CGGammaValue redTable[tableSize];
 	CGGammaValue greenTable[tableSize];
 	CGGammaValue blueTable[tableSize];
@@ -213,9 +213,9 @@ int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 	int i;
 
 	if (colormap==NULL) return -1;
-	if (start >= priv->ncols) return -1;
+	if (start >= vis->gamma->len) return -1;
 	if (start < 0) return -1;
-	if (len > (priv->ncols - start)) return -1;
+	if (len > (vis->gamma->len - start)) return -1;
 
 
 	if ( CGDisplayNoErr != CGGetDisplayTransferByTable
