@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/21 06:03:16 pekberg Exp $
+/* $Id: mode.c,v 1.8 2004/10/10 09:18:46 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -246,6 +246,66 @@ static void testcase4(const char *desc)
 }
 
 
+static void testcase5(const char *desc)
+{
+	int err;
+	ggi_visual_t vis;
+	ggi_mode sug_mode, final_mode;
+	int visible_w, visible_h;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggiInit();
+	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+
+	vis = ggiOpen(NULL);
+	printassert(vis != NULL, "ggiOpen() failed\n");
+
+	ggiSetFlags(vis, GGIFLAG_ASYNC);
+
+	/* Get the default mode */
+	err = ggiCheckGraphMode (vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &sug_mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: No graphic mode available\n");
+		ggiClose(vis);
+		ggiExit();
+		return;
+	}
+
+	visible_w = sug_mode.visible.x;
+	visible_h = sug_mode.visible.y;
+
+	err = ggiCheckGraphMode(vis, visible_w, visible_h, visible_w, visible_h*2,
+				GT_AUTO, &final_mode);
+	if (!err) {
+		/* actually print an info output */
+		printassert(0 == 1, "Info: Applications may assume now,"
+				" panning via ggiSetOrigin() is available\n");
+
+		/* Note, Applications have no other way to figure out if
+		 * ggiSetOrigin() is available or not
+		 */
+	} else {
+		final_mode = sug_mode;
+	}
+
+	err = ggiSetMode(vis, &final_mode);
+	if (err) {
+		printfailure("ggiSetMode() failed although ggiCheckGraphMode() was OK!\n");
+		ggiClose(vis);
+		ggiExit();
+	}
+
+	ggiClose(vis);
+	ggiExit();
+
+	printsuccess();
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -255,6 +315,7 @@ int main(int argc, char * const argv[])
 	testcase2("Check that ggiSetMode() can actually set the mode that has been suggested by ggiCheckMode");
 	testcase3("Check setting a mode with a given number of frames");
 	testcase4("Check setting a mode by it's physical size");
+	testcase5("Set up the mode in the ggiterm way");
 
 	printsummary();
 
