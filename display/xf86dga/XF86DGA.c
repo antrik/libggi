@@ -12,7 +12,9 @@ Copyright (c) 1999  Marcus Sundberg [marcus@ggi-project.org]
 
 /* Defines */
 
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE	199309L
+#endif
 #define _POSIX_SOURCE
 #define _XOPEN_SOURCE	500L
 #define _BSD_SOURCE
@@ -72,8 +74,8 @@ static XEXT_GENERATE_CLOSE_DISPLAY (close_display, xf86dga_info)
  *                                                                           *
  *****************************************************************************/
 
-Bool _ggi_XF86DGAQueryExtension(Display *dpy, int *event_basep,
-				int *error_basep)
+static Bool _ggi_XF86DGAQueryExtension(Display *dpy, int *event_basep,
+					int *error_basep)
 {
     XExtDisplayInfo *info = find_display (dpy);
 
@@ -86,8 +88,9 @@ Bool _ggi_XF86DGAQueryExtension(Display *dpy, int *event_basep,
     }
 }
 
-Bool _ggi_XF86DGAQueryVersion(Display* dpy, int* majorVersion,
-			      int* minorVersion)
+
+static Bool _ggi_XF86DGAQueryVersion(Display* dpy, int* majorVersion,
+				     int* minorVersion)
 {
     XExtDisplayInfo *info = find_display (dpy);
     xXF86DGAQueryVersionReply rep;
@@ -161,7 +164,8 @@ static Bool _ggi_XF86DGADirectVideoLL(Display* dpy, int screen, int enable)
     return True;
 }
 
-Bool _ggi_XF86DGASetViewPort(Display* dpy, int screen, int x, int y)
+static Bool _ggi_XF86DGASetViewPort(Display* dpy, int screen,
+				    int x, int y)
 {
     XExtDisplayInfo *info = find_display (dpy);
     xXF86DGASetViewPortReq *req;
@@ -181,7 +185,9 @@ Bool _ggi_XF86DGASetViewPort(Display* dpy, int screen, int x, int y)
     return True;
 }
 
-Bool _ggi_XF86DGAInstallColormap(Display* dpy, int screen, Colormap cmap)
+
+static Bool _ggi_XF86DGAInstallColormap(Display* dpy, int screen,
+					Colormap cmap)
 {
    XExtDisplayInfo *info = find_display (dpy);
    xXF86DGAInstallColormapReq *req;
@@ -200,7 +206,9 @@ Bool _ggi_XF86DGAInstallColormap(Display* dpy, int screen, Colormap cmap)
     return True;
 }
 
-Bool _ggi_XF86DGAQueryDirectVideo(Display *dpy, int screen, int *flags)
+
+static Bool _ggi_XF86DGAQueryDirectVideo(Display *dpy, int screen,
+					 int *flags)
 {
     XExtDisplayInfo *info = find_display (dpy);
     xXF86DGAQueryDirectVideoReply rep;
@@ -224,7 +232,9 @@ Bool _ggi_XF86DGAQueryDirectVideo(Display *dpy, int screen, int *flags)
     return True;
 }
 
-Bool _ggi_XF86DGACopyArea(Display* dpy, int screen, Drawable d, GC gc,
+
+static Bool _ggi_XF86DGACopyArea(Display* dpy, int screen, Drawable d,
+			  GC gc,
 			  int src_x, int src_y,
 			  unsigned int width, unsigned int height,
 			  int dst_x, int dst_y)
@@ -253,9 +263,11 @@ Bool _ggi_XF86DGACopyArea(Display* dpy, int screen, Drawable d, GC gc,
     return True;
 }
 
-Bool _ggi_XF86DGAFillRectangle(Display* dpy, int screen, Drawable d, GC gc,
-			       int x, int y,
-			       unsigned int width, unsigned int height)
+
+static Bool _ggi_XF86DGAFillRectangle(Display* dpy, int screen,
+				Drawable d, GC gc,
+				int x, int y,
+				unsigned int width, unsigned int height)
 {
     XExtDisplayInfo *info = find_display (dpy);
     xXF86DGAFillRectangleReq *req;
@@ -327,7 +339,7 @@ static int    memory_fd;
 static char * _XFree86addr = NULL;
 static int    _XFree86size = 0;
 
-int _ggi_XF86DGADirectVideo(Display *dis, int screen, int enable)
+static int _ggi_XF86DGADirectVideo(Display *dis, int screen, int enable)
 {
    if (enable&XF86DGADirectGraphics) {
 #if !defined(ISC) && !defined(HAS_SVR3_MMAP) && !defined(Lynx)
@@ -359,8 +371,8 @@ int _ggi_XF86DGADirectVideo(Display *dis, int screen, int enable)
 }
 
 
-int _ggi_XF86DGAGetVideo(Display *dis, int screen, char **addr,
-			 int *width, int *bank, int *ram)
+static int _ggi_XF86DGAGetVideo(Display *dis, int screen, char **addr,
+				int *width, int *bank, int *ram)
 {
    int offset;
    char *devname;
@@ -424,7 +436,8 @@ int _ggi_XF86DGAGetVideo(Display *dis, int screen, char **addr,
    return 1;
 }
 
-void _ggi_XF86DGAUnmap(void)
+
+static void _ggi_XF86DGAUnmap(void)
 {
 	munmap(_XFree86addr, _XFree86size);
 	close(memory_fd);
