@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2002/11/04 21:32:41 cegger Exp $
+/* $Id: color.c,v 1.5 2003/12/19 23:07:51 nsouch Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -38,14 +38,17 @@
 
 
 int
-GGI_kgi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	kgic_ilut_set_request_t ilut;
-	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
+	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
+
+	LIBGGI_APPASSERT(colormap != NULL,
+			 "GGI_kgi_setPallete() - colormap == NULL");
 
 	GGIDPRINT_COLOR("display-kgi: SetPalVec(%d,%d)\n", start, len);
 	
-	if (start == GGI_PALETTE_DONTCARE) {
+	if (start == (size_t)GGI_PALETTE_DONTCARE) {
 		start = 0;
 	}
 
@@ -53,7 +56,7 @@ GGI_kgi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 		return -1;
 	}
 
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut, colormap, len*sizeof(ggi_color));
 
 	ilut.image = 0;
 	ilut.resource = 0;
@@ -61,7 +64,7 @@ GGI_kgi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	ilut.idx = start;
 	ilut.cnt = len;
 	ilut.am = KGI_AM_COLORS;
-	ilut.data = malloc(len*3*sizeof(ilut.data[0]));
+	ilut.data = LIBGGI_PRIVATE(vis);
 
 	for (start = 0; len > 0; start++, colormap++, len--) {
 		ilut.data[start*3]     = colormap->r;
@@ -74,7 +77,10 @@ GGI_kgi_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
 		return -1;
 	}
 
-	free(ilut.data);
-
 	return 0;
+}
+
+size_t GGI_kgi_getPrivSize(ggi_visual_t vis)
+{
+  return (3 * LIBGGI_PAL(vis)->size * sizeof(int));
 }

@@ -100,6 +100,7 @@ static void install_font(uint8 *ptr) {
 	}
 }
 
+static
 int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
 {
 	ggi_kgi_priv *priv;
@@ -118,6 +119,7 @@ int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
+static
 int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
@@ -135,6 +137,7 @@ int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
 	return 0;
 }
 
+static
 int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
@@ -154,6 +157,7 @@ int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
 	return 0;
 }
 
+static
 int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
@@ -251,11 +255,11 @@ int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 {
 	const kgic_mapper_resource_info_result_t *fb;
-	int id, i, stride;
+	int id, i;
 	char sugname[256], args[256];
 	int err;
 	kgi_u8_t *fb_ptr;
-	kgi_size_t pad;
+	kgi_size_t pad, stride;
 	ggi_kgi_priv *priv;
 
 	if (vis == NULL) {
@@ -392,9 +396,29 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		GGIDPRINT_LIBS("kgi: loaded %s\n", sugname);
 	}
 
+	/* Palette */
+	if (LIBGGI_PAL(vis)->clut) {
+		free(LIBGGI_PAL(vis)->clut);
+		LIBGGI_PAL(vis)->clut = NULL;
+	}
+	if (LIBGGI_PAL(vis)->priv) {
+		free(LIBGGI_PAL(vis)->priv);
+		LIBGGI_PAL(vis)->priv = NULL;
+	}
 	if(GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE){
-		vis->palette = _ggi_malloc(sizeof(ggi_color) * 256);
-		vis->opcolor->setpalvec = GGI_kgi_setpalvec;
+		int len = 1 << GT_DEPTH(tm->graphtype);
+
+		LIBGGI_PAL(vis)->size = len;
+		LIBGGI_PAL(vis)->clut = malloc(len * sizeof(ggi_color));
+		if (LIBGGI_PAL(vis)->clut == NULL) return GGI_EFATAL;
+		LIBGGI_PAL(vis)->priv = malloc(sizeof(int) * (len*3));
+		if (LIBGGI_PAL(vis)->priv == NULL) return GGI_EFATAL;
+
+		LIBGGI_PAL(vis)->setPalette = GGI_kgi_setPalette;
+		LIBGGI_PAL(vis)->getPrivSize = GGI_kgi_getPrivSize;
+
+		/* Set an initial palette. */
+		ggiSetColorfulPalette(vis);
 	}
 
 	/* Load generic frame/origin handling functions */
