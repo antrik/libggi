@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2004/09/13 14:12:22 pekberg Exp $
+/* $Id: mode.c,v 1.21 2004/09/15 20:14:39 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -271,6 +271,8 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	EnterCriticalSection(&priv->cs);
 
+	_ggiZapMode(vis, 0);
+
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
@@ -338,6 +340,8 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 		GGIDPRINT("Success in loading %s (%s)\n",
 			  libname, libargs);
 	}
+	vis->opdraw->setorigin = GGI_directx_setorigin;
+	vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 
 	LeaveCriticalSection(&priv->cs);
 
