@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/11/04 21:32:41 cegger Exp $
+/* $Id: mode.c,v 1.4 2002/12/23 13:14:54 ortalo Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -221,6 +221,10 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
 	_ggiZapMode(vis, 0);
+
+	/* TODO: Do not assume that an accelerator is always present */
+	vis->needidleaccel = 1; /* Temp hack until we work out the */
+	vis->accelactive = 0;   /* new changed() traversal for renderers */
 
 	for(id = 1; 0 == GGI_kgi_getapi(vis, id, sugname, args); ++id){
 		if(_ggiOpenDL(vis, sugname, args, NULL)){
