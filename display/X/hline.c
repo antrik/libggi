@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: hline.c,v 1.2 2002/06/20 13:14:29 cegger Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -25,6 +25,8 @@
 
 ******************************************************************************
 */
+
+#include <string.h>
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>

@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: misc.c,v 1.2 2002/06/20 13:14:30 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -28,6 +28,8 @@
 
 ******************************************************************************
 */
+
+#include <string.h>
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>

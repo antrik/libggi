@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.1 2002/06/12 03:53:59 skids Exp $
+/* $Id: shm.c,v 1.2 2002/06/20 13:14:30 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -33,6 +33,8 @@
 #include <ggi/display/x.h>
 #include <sys/shm.h>
 #include <X11/extensions/XShm.h>
+
+#include <string.h>
 
 /* Hack to fall back when shm is not working. */
 static int      shmerror;

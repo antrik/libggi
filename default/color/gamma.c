@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.2 2002/05/11 01:12:17 skids Exp $
+/* $Id: gamma.c,v 1.3 2002/06/20 13:14:29 cegger Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -27,6 +27,7 @@
 */
 
 #include <math.h>
+#include <string.h>
 
 #ifdef _AIX
 #include <sys/types.h>
