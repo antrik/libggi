@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.15 2004/06/01 09:49:32 pekberg Exp $
+/* $Id: clip2d.c,v 1.16 2004/06/01 10:41:44 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -264,6 +264,21 @@ static void testcase6(void)
 }
 
 
+static void testcase7(void)
+{
+	/* This line is clipped incorrectly due to overflow. */
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+
+	checkresult(
+		INT_MIN/2 + 200, 10,
+		100,              5,
+		0,                5,
+		100,              5,
+		1, 0);
+}
+
+
 #define ENDPOINTS (4)
 #define LINES     (4)
 #define LENGTH    (98)
@@ -336,7 +351,7 @@ static int endpoint_checker(int dx, int dy)
 }
 
 
-static void testcase7(void)
+static void testcase8(void)
 {
 	/* Check if the clipping endpoint is really on the actual line
 	 * for a bunch of lines.
@@ -433,6 +448,7 @@ int main(void)
 	testcase5();
 	testcase6();
 	testcase7();
+	testcase8();
 
 	rc = ggiClose(vis);
 
