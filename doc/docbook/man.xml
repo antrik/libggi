@@ -164,7 +164,7 @@ A fast, simple, small and flexible user-space graphics library
 	  <para>
 	    Specifies the default mode, which is used for mode
 	    negotiation with LibGGI applications.  Specifically, when
-	    <link linkend="ggi-auto"><symbol>GGI_AUTO</symbol></link>
+	    <link linkend="ref-struct-ggi-mode"><symbol>GGI_AUTO</symbol></link>
 	    or <symbol>GT_AUTO</symbol> are specified in a mode
 	    setting call they will be replaced with values from
 	    <envar>GGI_DEFMODE</envar> before calling the target's own
@@ -194,7 +194,7 @@ A fast, simple, small and flexible user-space graphics library
   <varlistentry>
     <term><token>S</token></term>
     <listitem><para>
-    Denotes the <link linkend="ggi-mode-visible">visible</link> size
+    Denotes the <link linkend="ref-struct-ggi-mode">visible</link> size
     of the visual.  Totally optional, as dimensions without a
     specifier are considered to be the visible dimensions.
     </para></listitem>
@@ -212,7 +212,7 @@ A fast, simple, small and flexible user-space graphics library
   <varlistentry>
     <term><token>V</token></term>
     <listitem><para>
-    Denotes <link linkend="ggi-mode-virtual">virtual</link> size, the
+    Denotes <link linkend="ref-struct-ggi-mode">virtual</link> size, the
     total drawing area available to the application.  The virtual size
     must be equal or greater than the visible size.
     </para></listitem>
@@ -221,7 +221,7 @@ A fast, simple, small and flexible user-space graphics library
   <varlistentry>
     <term><token>D</token></term>
     <listitem><para>
-    Denotes the <link linkend="ggi-mode-dpp">number of dots per
+    Denotes the <link linkend="ref-struct-ggi-mode">number of dots per
     pixel</link>.  For graphics modes, this is always 1x1, and for text
     modes, this is the size of the character cell.
     </para></listitem>
@@ -230,7 +230,7 @@ A fast, simple, small and flexible user-space graphics library
   <varlistentry>
   <term><token>F</token></term>
     <listitem><para>
-    Denotes <link linkend="ggi-mode-frames">number of frames</link>
+    Denotes <link linkend="ref-struct-ggi-mode">number of frames</link>
     available to the application. Applications can switch between
     different frames for double-buffering, etc.
     </para></listitem>
@@ -240,7 +240,7 @@ A fast, simple, small and flexible user-space graphics library
   <term><token>[</token></term>
   <term><token>]</token></term>
     <listitem><para>
-    Delimits the <link linkend="ggi-graphtype">graphic type</link>.
+    Delimits the <link linkend="ref-struct-ggi-mode">graphic type</link>.
     </para></listitem>
   </varlistentry>
     

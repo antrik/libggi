@@ -3,6 +3,130 @@
   PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
 <reference id="libggi-api-structures"><title>LibGGI API Structures</title>
+
+
+<refentry id="ref-struct-ggi-mode">
+<refmeta>
+<refentrytitle><structname>ggi_mode</structname></refentrytitle>
+<manvolnum>9ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggi_mode</refname>
+<refname>ggi_coord</refname>
+<refname>ggi_graphtype</refname>
+<refpurpose>LibGGI mode description</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>#include &lt;ggi/ggi.h&gt;
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<programlisting>
+typedef struct { sint16 x, y; } ggi_coord;
+</programlisting>
+
+<programlisting>
+typedef uint32 ggi_graphtype;
+</programlisting>
+
+<programlisting>
+typedef struct
+{
+        sint32          frames;         /* frames needed                    */
+        ggi_coord       visible;        /* vis. pixels, may change slightly */
+        ggi_coord       virt;           /* virtual pixels, may change       */
+        ggi_coord       size;           /* size of visible in mm            */
+        ggi_graphtype   graphtype;      /* which mode ?                     */
+        ggi_coord       dpp;            /* dots per pixel                   */
+} ggi_mode;
+</programlisting>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggicheckmode"/></member>
+<member><xref linkend="api-ggisetmode"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+
+<refentry id="ref-struct-ggi-color">
+<refmeta>
+<refentrytitle><structname>ggi_color</structname></refentrytitle>
+<manvolnum>9ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggi_color</refname>
+<refname>ggi_pixel</refname>
+<refpurpose>LibGGI color description</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>#include &lt;ggi/ggi.h&gt;
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<programlisting>
+typedef struct { uint16 r,g,b,a; }   ggi_color;
+</programlisting>
+
+<programlisting>
+typedef uint32   ggi_pixel;
+</programlisting>
+
+<para>Colors in ggi are described genericaly through this structure.
+16 bit channels are used to ensure a sufficient precision for most
+displays.
+</para>
+
+<para>Note that GGI drawing functions use ggi_pixels instead. Use
+<function>ggiMapColor</function> to convert ggi_colors to ggi_pixels.
+</para>
+
+<para>
+<structfield>r</structfield>, <structfield>g</structfield> and
+<structfield>b</structfield> correspond respectively to the red, green
+and blue channels.  . The <structfield>a</structfield>(alpha) field is
+mainly there for padding and it is not used by libggi. Setting this
+value has no effect in libggi itself, and it will most probably not be
+unmaped correctly from ggi_pixels. However, some extensions might make
+use of it, in which case you should refer to their documentation.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggimapcolor"/></member>
+<member><xref linkend="ref-struct-ggi-pixelformat"/></member>
+
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
 <refentry id="ref-struct-ggi-pixelformat">
 
 <refmeta>
@@ -103,6 +227,9 @@ typedef struct {
 #define GGI_PF_EXTENDED		0x08
 </programlisting>
 
+<para>Use the <function>ggiGetPixelFormat</function> function.
+</para>
+
 </refsect1>
 
 <refsect1>
@@ -141,9 +268,9 @@ typedef struct {
 <refsect1>
 <title>Description</title>
 
-<para>The <structname>ggi_directbuffer</structname> structure contains information on
-target-dependent buffers to allow applications to access them directly.
-</para>
+<para>The <structname>ggi_directbuffer</structname> structure contains
+information on target-dependent buffers to allow applications to
+access them directly.  </para>
 
 <programlisting>
 /* Buffer types */

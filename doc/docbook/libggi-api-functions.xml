@@ -165,13 +165,12 @@ ggiExit();
 <para>
 <function>ggiPanic</function> shuts down the application, closing all
 visuals, with 
-
 <citerefentry>
 <refentrytitle><function>printf</function></refentrytitle>
 <manvolnum>3</manvolnum>
 </citerefentry>
-
--style reporting to stderr, taking a format string and any additional variables. 
+-style reporting to stderr, taking a format string and any additional
+variables. 
 </para>
 
 <para>
@@ -299,7 +298,6 @@ ggiClose(vis);
 <title>Open and closing a memory visual</title>
 
 <programlisting format="linespecific">
-
 ggi_visual_t memvis = ggiOpen("display-memory", NULL);
 
 if(memvis==NULL) {
@@ -309,7 +307,6 @@ if(memvis==NULL) {
 <replaceable>/* do stuff */</replaceable>
 
 ggiClose(memvis);
-
 </programlisting>
 </example>
 
@@ -395,40 +392,38 @@ ggiClose(memvis);
 <title>Description</title>
 
 <para>
-<function>ggiCheckMode</function> checks whether or not the given mode will work
-on the visual.  If it does not work, it will modify the values of passed
-<structname>ggi_mode</structname> structure so that the mode works.  This mode
-negotiation allows the application to discover modes that are both
-supported by the visual and suitable to the application.
+<function>ggiCheckMode</function> checks whether or not the given mode
+will work on the visual.  If it does not work, it will modify the
+values of passed <structname>ggi_mode</structname> structure so that
+the mode works.  This mode negotiation allows the application to
+discover modes that are both supported by the visual and suitable to
+the application.
 </para>
 
 <para>
-<function>ggiCheckTextMode</function> checks whether the text mode with the given
-visible and virtual dimensions and the font size is supported.
-</para>
+<function>ggiCheckTextMode</function> checks whether the text mode
+with the given visible and virtual dimensions and the font size is
+supported.  </para>
 
 <para>
-<function>ggiCheckGraphMode</function> checks whether the graphics mode with the
-given visible and virtual dimensions and type is supported.
-</para>
+<function>ggiCheckGraphMode</function> checks whether the graphics
+mode with the given visible and virtual dimensions and type is
+supported.  </para>
 
 <para>
 <function>ggiCheckSimpleMode</function> checks whether the graphics
-mode with the
-given visible dimensions, type, and number of buffers is supported.
-This is used in lieu of <function>ggiCheckGraphMode</function> if multiple
-buffering is desired.
-</para>
+mode with the given visible dimensions, type, and number of buffers is
+supported.  This is used in lieu of
+<function>ggiCheckGraphMode</function> if multiple buffering is
+desired.  </para>
 
 <para>
 For <function>ggiCheckTextMode</function>,
 <function>ggiCheckGraphMode</function> and
 <function>ggiCheckSimpleMode</function>,
-<parameter>suggested_mode</parameter> is either
-<symbol>NULL</symbol> or a pointer to a
-<structname>ggi_mode</structname> which will be
-filled in with the negotiated mode parameters.  
-</para>
+<parameter>suggested_mode</parameter> is either <symbol>NULL</symbol>
+or a pointer to a <structname>ggi_mode</structname> which will be
+filled in with the negotiated mode parameters.  </para>
 
 
 </refsect1>
@@ -438,18 +433,16 @@ filled in with the negotiated mode parameters.
 
 <para>
 For <function>ggiCheckTextMode</function> and
-<function>ggiCheckGraphMode</function>, a
-return of <returnvalue>0</returnvalue> means that the corresponding
-set mode call for
-this mode would succeed. Otherwise, the mode given cannot be set. In
-this case, <parameter>suggested_mode</parameter> is changed to the suggested mode.
-</para>
+<function>ggiCheckGraphMode</function>, a return of
+<returnvalue>0</returnvalue> means that the corresponding set mode
+call for this mode would succeed. Otherwise, the mode given cannot be
+set. In this case, <parameter>suggested_mode</parameter> is changed to
+the suggested mode.  </para>
 
 <para>
 If the only modifications made to the structure is replacing
-<symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> value, the functions return
-success.
-</para>
+<symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> value, the
+functions return success.  </para>
 
 </refsect1>
 
@@ -457,22 +450,22 @@ success.
 <title>Rules for mode negotiation</title>
 
 <para>
-First, if <symbol>GGI_AUTO</symbol> (or <symbol>GT_AUTO</symbol> for the graphtype) is
-specified for any of the members of <parameter>*tm</parameter>, these are filled in
-with the recommended values.  The values could be to a maximum,
-preferred, or <envar>GGI_DEFMODE</envar> resolution, and will be compatible
-with any other constraints.  
-</para>
+First, if <symbol>GGI_AUTO</symbol> (or <symbol>GT_AUTO</symbol> for
+the graphtype) is specified for any of the members of
+<parameter>*tm</parameter>, these are filled in with the recommended
+values.  The values could be to a maximum, preferred, or
+<envar>GGI_DEFMODE</envar> resolution, and will be compatible with any
+other constraints.  </para>
 
 <para>
 An application that does not care about a specific paramater should
-always specify <symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> for it.
-</para>
+always specify <symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol>
+for it.  </para>
 
 <para>
 The resulting mode is guaranteed to be valid; if not, the application
-can assume that it cannot set any mode on the given visual and give up.
-</para>
+can assume that it cannot set any mode on the given visual and give
+up.  </para>
 
 <para>
 The suggested mode is derived as follows:
@@ -516,12 +509,11 @@ Font sizes are handled the other way round: they are adjusted
 <listitem>
 <para>
 A specific graphtype is changed only if the card does not support it
-<emphasis>at all</emphasis>.  If the maximum resolution is exceeded, then that is
-adjusted down and not the graphtype. This assumes, that if you request
-true-color, you really want that and not so badly the resolution you
-requested. If this is not the case, you can still retry with another
-graphtype or <symbol>GT_AUTO</symbol>.
-</para>
+<emphasis>at all</emphasis>.  If the maximum resolution is exceeded,
+then that is adjusted down and not the graphtype. This assumes, that
+if you request true-color, you really want that and not so badly the
+resolution you requested. If this is not the case, you can still retry
+with another graphtype or <symbol>GT_AUTO</symbol>.  </para>
 
 <para>
 If graphtype is changed, it is adjusted in ascending order if possible:
@@ -561,6 +553,7 @@ else {
 <simplelist type="inline">
 <member><xref linkend="api-ggiopen"/></member>
 <member><xref linkend="api-ggisetmode"/></member>
+<member><xref linkend="ref-struct-ggi-mode"/></member>
 </simplelist>
 
 </refsect1>
@@ -640,22 +633,22 @@ else {
 <title>Description</title>
 
 <para>
-<function>ggiSetMode</function> sets any mode (text or graphics).
-It also performs mode negotiation like <function>ggiCheckMode</function>, but if
-any non-<symbol>GGI_AUTO</symbol>/<symbol>GT_AUTO</symbol> parameters are changed from
-the original mode, the new mode will not be silently set.
-</para>
+<function>ggiSetMode</function> sets any mode (text or graphics).  It
+also performs mode negotiation like <function>ggiCheckMode</function>,
+but if any non-<symbol>GGI_AUTO</symbol>/<symbol>GT_AUTO</symbol>
+parameters are changed from the original mode, the new mode will not
+be silently set.  </para>
 
 <para>
 <function>ggiSetTextMode</function>
 <function>ggiSetGraphMode</function>
 <function>ggiSetSimpleMode</function> are convenient versions of
-<function>ggiSetMode</function> that take the mode paramters as integer arguments
-rather than as a <structname>ggi_mode</structname> struct that the application has
-to fill out.  Otherwise, they are functionally equivalent to
-<function>ggiSetMode</function> function, and the same mode-setting semantics
-apply, except the changed <structname>ggi_mode</structname> cannot be seen.
-</para>
+<function>ggiSetMode</function> that take the mode paramters as
+integer arguments rather than as a <structname>ggi_mode</structname>
+struct that the application has to fill out.  Otherwise, they are
+functionally equivalent to <function>ggiSetMode</function> function,
+and the same mode-setting semantics apply, except the changed
+<structname>ggi_mode</structname> cannot be seen.  </para>
 
 <para>
 <function>ggiGetMode</function> fills out the passed
@@ -669,16 +662,15 @@ the parameters of the current mode of the visual.
 <title>Return value</title>
 
 <para>
-The mode setting functions return <returnvalue>0</returnvalue> if the mode is set
-successfully, otherwise an error code.
-</para>
+The mode setting functions return <returnvalue>0</returnvalue> if the
+mode is set successfully, otherwise an error code.  </para>
+
 <!--
-<comment>
-Looking at the code, ggiGetMode doesn't just return error if there is no
-mode set, but does an ASSERT ! Should this be changed ?
-Also we don't need ggiGetMode in vis->opdisplay, do we?
-</comment>
+<comment> Looking at the code, ggiGetMode doesn't just return error if
+there is no mode set, but does an ASSERT ! Should this be changed ?
+Also we don't need ggiGetMode in vis->opdisplay, do we?  </comment>
 -->
+
 </refsect1>
 
 <refsect1>
@@ -687,6 +679,7 @@ Also we don't need ggiGetMode in vis->opdisplay, do we?
 <simplelist type="inline">
 <member><xref linkend="api-ggiopen"/></member>
 <member><xref linkend="api-ggicheckmode"/></member>
+<member><xref linkend="ref-struct-ggi-mode"/></member>
 </simplelist>
 
 </refsect1>
@@ -747,26 +740,24 @@ Also we don't need ggiGetMode in vis->opdisplay, do we?
 
 <para>
 The <function>ggi*PrintMode</function> functions print all the members
-of <structname>ggi_mode</structname> in a
-human-readable form.  <function>ggiSPrintMode</function> outputs to a preallocated
-string buffer, <function>ggiFPrintMode</function> outputs to a stdio
-<type>FILE</type>, and
-<function>ggiPrintMode</function> outputs to standard output.  These functions
-correspond to
+of <structname>ggi_mode</structname> in a human-readable form.
+<function>ggiSPrintMode</function> outputs to a preallocated string
+buffer, <function>ggiFPrintMode</function> outputs to a stdio
+<type>FILE</type>, and <function>ggiPrintMode</function> outputs to
+standard output.  These functions correspond to
 <citerefentry><refentrytitle><function>sprintf</function>
 </refentrytitle><manvolnum>3</manvolnum></citerefentry>,
 <citerefentry><refentrytitle><function>fprintf</function>
-</refentrytitle><manvolnum>3</manvolnum></citerefentry>, 
+</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
 <citerefentry><refentrytitle><function>printf</function>
-</refentrytitle><manvolnum>3</manvolnum></citerefentry>, 
-respectively.
+</refentrytitle><manvolnum>3</manvolnum></citerefentry>, respectively.
 </para>
 
 <para>
-The format of the string used by these functions is exactly the same as
-the one used in the <link linkend="GGI-DEFMODE"><envar>GGI_DEFMODE</envar></link>
-environment variable.
-</para>
+The format of the string used by these functions is exactly the same
+as the one used in the <link
+linkend="GGI-DEFMODE"><envar>GGI_DEFMODE</envar></link> environment
+variable.  </para>
 
 </refsect1>
 
@@ -807,6 +798,7 @@ For most applications there will be no need for testing
 </refsect1>
 
 </refentry>
+
 <refentry id="api-ggisetdisplayframe">
 
 <refmeta>
@@ -870,7 +862,7 @@ For most applications there will be no need for testing
 
 <para>
 These functions are used for selecting or getting the current
-buffers, when using the <link linkend="frames">multiple buffering</link>
+buffers, when using the multiple buffering
 function of LibGGI.
 </para>
 
@@ -919,7 +911,17 @@ The <function>ggiSet*Frame</function> functions return
 </para>
 
 </refsect1>
+
+<refsect1>
+<title>Working with frames</title>
+
+<para>Write something useful here.
+</para>
+
+</refsect1>
+
 </refentry>
+
 <refentry id="api-ggimapcolor">
 
 <refmeta>
@@ -986,10 +988,10 @@ with the given pixelvalue.
 <para>
 <function>ggiPackColors</function> converts the colors in
 <parameter>cols</parameter> to <link
-linkend="ggi-pixel">pixelvalues</link> in <parameter>buf</parameter>.
-The output from this function is suitable for input to the
-<function>ggiPut{HLine,VLine,Box}</function> functions.
-</para>
+linkend="ref-struct-ggi-color">pixelvalues</link> in
+<parameter>buf</parameter>.  The output from this function is suitable
+for input to the <function>ggiPut{HLine,VLine,Box}</function>
+functions.  </para>
 
 <para>
 <function>ggiUnpackPixels</function> converts the pixelvalues in
@@ -997,7 +999,7 @@ The output from this function is suitable for input to the
 <parameter>cols</parameter>.  This function maybe used to convert
 buffers output by the <function>ggiGet{HLine,VLine,Box}</function>
 functions from the pixelvalue representation to their actual <link
-linkend="ggi-color">colors</link>.
+linkend="ref-struct-ggi-color">colors</link>.
 </para>
 
 <para>
@@ -1034,6 +1036,7 @@ error code.
 
 <simplelist type="inline">
 <member><xref linkend="api-ggigetpixelformat"/></member>
+<member><xref linkend="ref-struct-ggi-color"/></member>
 <member><xref linkend="ref-struct-ggi-pixelformat"/></member>
 </simplelist>
 
@@ -1084,41 +1087,45 @@ error code.
 
 <para>
 LibGGI visuals in <symbol>GT_PALETTE</symbol> mode maps all pixelvalues to the
-corresponding <structname>ggi_color</structname> entry in the visual's <link
-linkend="palette">palette</link>.
+corresponding <structname>ggi_color</structname> entry in the visual's
+palette.
 </para>
 
 <para>
-<function>ggiSetPalette</function> sets a range of palette values, of length
-<parameter>len</parameter>, starting at index number
+<function>ggiSetPalette</function> sets a range of palette values, of
+length <parameter>len</parameter>, starting at index number
 <parameter>s</parameter>.  The index can be
-<symbol>GGI_PALETTE_DONTCARE</symbol> to indicate to indicate that the palette can be
-installed anywhere in the CLUT.
-This allows optimised use in windowing environments (to minimize color
-flashing between windows) and should be used if possible.
-</para>
+<symbol>GGI_PALETTE_DONTCARE</symbol> to indicate to indicate that the
+palette can be installed anywhere in the CLUT.  This allows optimised
+use in windowing environments (to minimize color flashing between
+windows) and should be used if possible.  </para>
 
 <para>
-<function>ggiGetPalette</function> copies the specified colors (starting from
-<parameter>s</parameter>, for <parameter>len</parameter> colors) from
-the visual's palette to the array
-pointed by <parameter>cmap</parameter>.
-</para>
+<function>ggiGetPalette</function> copies the specified colors
+(starting from <parameter>s</parameter>, for
+<parameter>len</parameter> colors) from the visual's palette to the
+array pointed by <parameter>cmap</parameter>.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para><function>ggiSetPalette</function> returns the number of the first entry
-changed.  Negative values indicate error (codes).
-</para>
+<para><function>ggiSetPalette</function> returns the number of the
+first entry changed.  Negative values indicate error (codes).  </para>
 
 <para><function>ggiGetPalette</function> returns
-<returnvalue>0</returnvalue> for OK, otherwise
-an error code. When called with len=0 this function will not
-automatically succeed, but the return code will indicate whether there
-is a readable CLUT.
+<returnvalue>0</returnvalue> for OK, otherwise an error code. When
+called with len=0 this function will not automatically succeed, but
+the return code will indicate whether there is a readable CLUT.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Palette in GGI</title>
+
+<para>Write something useful here.
 </para>
 
 </refsect1>
@@ -1161,27 +1168,25 @@ is a readable CLUT.
 <title>Description</title>
 
 <para>
-LibGGI guarantees that there will be a default palette when a palettized mode is
-set.  What this default is, however, is dependent on the visual. 
-For example, the X target deliberately avoids setting all colors 
-to avoid color-flashing when moving between windows.
+LibGGI guarantees that there will be a default palette when a
+palettized mode is set.  What this default is, however, is dependent
+on the visual.  For example, the X target deliberately avoids setting
+all colors to avoid color-flashing when moving between windows.
 </para>
 
 <para>
-Applications that want to ensure that they have a full scale of all colors
-can call <function>ggiSetColorfulPalette</function> after mode set.
-This function uses a
-smarter color allocation scheme, causing good colors but still minimal
-flashing in windowed targets.
-</para>
+Applicaations that want to ensure that they have a full scale of all
+colors can call <function>ggiSetColorfulPalette</function> after mode
+set.  This function uses a smarter color allocation scheme, causing
+good colors but still minimal flashing in windowed targets.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para><function>ggiSetColorfulPalette</function> returns the number of the first entry
-changed.  Negative values indicate error (codes).
+<para><function>ggiSetColorfulPalette</function> returns the number of
+the first entry changed.  Negative values indicate error (codes).
 </para>
 
 </refsect1>
@@ -1274,32 +1279,31 @@ modes with gamma maps are sometimes referred to as "directcolor".
 
 <para>
 <function>ggiSetGammaMap</function> and
-<function>ggiGetGammaMap</function> set or get the
-gamma map, for <parameter>len</parameter> colors starting at
-<parameter>s</parameter>.  In the event that there are more map 
-entries for some channels than others, values for the upper indices 
-of the map in the shallow channels are ignored on write, and undefined 
-on read.
-</para>
-<para>
-The <function>ggiGammaMax</function> function is used in order to find 
-out how many readable and writeable entries are in the map (returned in 
-the integers referenced by <parameter>maxwrite</parameter> and 
-<parameter>maxread</parameter>).  This must be done once for each channel.
-The parameter <parameter>bitmeaning</parameter> should be set to the
-bit meaning (e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of the channel
-of which you are inquiring.  If <function>ggiGammaMax</function> 
-returns an error, you cannot set the gamma map on this visual.  If 
-<function>ggiGammaMax</function> succeeds, but <parameter>maxwrite</parameter> 
-is -1 on return, this means that <function>ggiSetGamma</function> will work, 
-but that <function>ggiSetGammaMap</function> will not.  
-</para>
-<para>
+<function>ggiGetGammaMap</function> set or get the gamma map, for
+<parameter>len</parameter> colors starting at
+<parameter>s</parameter>.  In the event that there are more map
+entries for some channels than others, values for the upper indices of
+the map in the shallow channels are ignored on write, and undefined on
+read.  </para>
+
+<para> The <function>ggiGammaMax</function> function is used in order
+to find out how many readable and writeable entries are in the map
+(returned in the integers referenced by
+<parameter>maxwrite</parameter> and <parameter>maxread</parameter>).
+This must be done once for each channel.  The parameter
+<parameter>bitmeaning</parameter> should be set to the bit meaning
+(e.g. GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE) of the channel of which you
+are inquiring.  If <function>ggiGammaMax</function> returns an error,
+you cannot set the gamma map on this visual.  If
+<function>ggiGammaMax</function> succeeds, but
+<parameter>maxwrite</parameter> is -1 on return, this means that
+<function>ggiSetGamma</function> will work, but that
+<function>ggiSetGammaMap</function> will not.  </para> <para>
 <function>ggiSetGamma</function> and <function>ggiGetGamma</function>
-sets or gets the gamma correction for the visual according to the usual
-curve associated with the given values for each channel, which should 
-be positive.
-</para>
+sets or gets the gamma correction for the visual according to the
+usual curve associated with the given values for each channel, which
+should be positive.  </para>
+
 </refsect1>
 
 <refsect1>
@@ -1344,8 +1348,9 @@ error code.
 
 <refsect1>
 <title>Return value</title>
-<para>Returns a pointer to the <structname>ggi_pixelformat</structname> structure.
-</para>
+
+<para>Returns a pointer to the
+<structname>ggi_pixelformat</structname> structure.  </para>
 
 <para>
 Modifying the structure returned is not allowed.  Do not attempt to free
@@ -1358,9 +1363,9 @@ the pointer returned.  <!-- Apparently this is not clear enough. -->
 <title>Structures</title>
 
 <para>
-See <filename>ggi/ggi.h</filename> or <xref linkend="ref-struct-ggi-pixelformat"/>
-for details on the structure that is returned.
-</para>
+See <filename>ggi/ggi.h</filename> or <xref
+linkend="ref-struct-ggi-pixelformat"/> for details on the structure
+that is returned.  </para>
 
 </refsect1>
 
@@ -1493,10 +1498,10 @@ All four functions <returnvalue>0</returnvalue> for OK.
 <title>Description</title>
 
 <para>
-<function>ggiSetGCClipping</function> sets the the current clipping rectangle to
-(<parameter>left</parameter>,<parameter>top</parameter>)-
-(<parameter>right</parameter>-1,<parameter>bottom</parameter>-1), inclusive.
-</para>
+<function>ggiSetGCClipping</function> sets the the current clipping
+rectangle to (<parameter>left</parameter>,<parameter>top</parameter>)-
+(<parameter>right</parameter>-1,<parameter>bottom</parameter>-1),
+inclusive.  </para>
 
 <para>
 Initially the clipping rectangle is the whole virtual screen.
@@ -1509,9 +1514,8 @@ clipped correctly.
 </para>
 
 <para>
-<function>ggiGetGCClipping</function> reads the coordinates of the current clipping
-rectangle.
-</para>
+<function>ggiGetGCClipping</function> reads the coordinates of the
+current clipping rectangle.  </para>
 
 </refsect1>
 
@@ -1578,8 +1582,8 @@ Draw, put, or get a single pixelvalue at
 <refsect1>
 <title>Return value</title>
 
-<para>All three functions return <returnvalue>0</returnvalue> to indicate success.
-</para>
+<para>All three functions return <returnvalue>0</returnvalue> to
+indicate success.  </para>
 
 </refsect1>
 </refentry>
@@ -1639,24 +1643,23 @@ Draw, put, or get a single pixelvalue at
 Draw, put, or get a horizontal line from
 (<parameter>x</parameter>,<parameter>y</parameter>), extending
 <parameter>w</parameter> pixels in the positive x direction (normally
-right).  The height is one pixel.
-</para>
+right).  The height is one pixel.  </para>
 
 <para>The *<parameter>buf</parameter> parameter in Get/Put functions
-points to a buffer from which the pixels will be read, or to which they
-will be written (it must be correctly allocated), depending on the
-case. See <function>ggiPackColors</function> and
-<function>ggiUnmapPixels</function> functions for more
-on how to deal with pixels.
-</para>
+points to a buffer from which the pixels will be read, or to which
+they will be written (it must be correctly allocated), depending on
+the case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more on how to deal
+with pixels.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para>All three functions return <returnvalue>0</returnvalue> to indicate success. 
-</para>
+<para>All three functions return <returnvalue>0</returnvalue> to
+indicate success.  </para>
+
 </refsect1>
 
 <refsect1>
@@ -1671,6 +1674,7 @@ on how to deal with pixels.
 </simplelist>
 
 </refsect1>
+
 </refentry>
 
 
@@ -1728,16 +1732,14 @@ on how to deal with pixels.
 Draw, put, or get a vertical line from
 (<parameter>x</parameter>,<parameter>y</parameter>), extending
 <parameter>h</parameter> pixels in the positive y direction (normally
-down). The width of the line is one pixel.
- </para>
+down). The width of the line is one pixel.  </para>
 
 <para>The *<parameter>buf</parameter> parameter in Get/Put functions
-points to a buffer from which the pixels will be read, or to which they
-will be written (it must be correctly allocated), depending on the
-case. See <function>ggiPackColors</function> and
-<function>ggiUnmapPixels</function> functions for more
-on how to deal with pixels.
-</para>
+points to a buffer from which the pixels will be read, or to which
+they will be written (it must be correctly allocated), depending on
+the case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more on how to deal
+with pixels.  </para>
 
 </refsect1>
 
@@ -1814,29 +1816,26 @@ on how to deal with pixels.
 <refsect1>
 <title>Description</title>
 
-<para>
-Draw, put, or get a rectangle at
+<para> Draw, put, or get a rectangle at
 (<parameter>x</parameter>,<parameter>y</parameter>), extending
 <parameter>w</parameter> pixels in the positive x direction and
-<parameter>h</parameter> pixels in the
-positive y direction.
-</para>
+<parameter>h</parameter> pixels in the positive y direction.  </para>
 
 <para>The *<parameter>buf</parameter> parameter in Get/Put functions
-points to a buffer from which the pixels will be read, or to which they
-will be written (it must be correctly allocated), depending on the
-case. See <function>ggiPackColors</function> and
-<function>ggiUnmapPixels</function> functions for more
-on how to deal with pixels.
-</para>
+points to a buffer from which the pixels will be read, or to which
+they will be written (it must be correctly allocated), depending on
+the case. See <function>ggiPackColors</function> and
+<function>ggiUnmapPixels</function> functions for more on how to deal
+with pixels.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para>All three functions return <returnvalue>0</returnvalue> to indicate success. 
-</para>
+<para>All three functions return <returnvalue>0</returnvalue> to
+indicate success.  </para>
+
 </refsect1>
 
 <refsect1>
@@ -1878,19 +1877,18 @@ on how to deal with pixels.
 <refsect1>
 <title>Description</title>
 
-<para>
-Fills the current clipping rectangle (usually the entire virtual screen)
-with the current foreground color.  It may be
-more efficient than the corresponding call to <function>ggiDrawBox</function>.
-</para>
+<para> Fills the current clipping rectangle (usually the entire
+virtual screen) with the current foreground color.  It may be more
+efficient than the corresponding call to
+<function>ggiDrawBox</function>.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para>This function returns <returnvalue>0</returnvalue> to indicate success. 
-</para>
+<para>This function returns <returnvalue>0</returnvalue> to indicate
+success.  </para>
 
 </refsect1>
 </refentry>
@@ -1930,15 +1928,16 @@ Draws any line, using the current foreground color, from
 (<parameter>x</parameter>,<parameter>y</parameter>) to
 (<parameter>xe</parameter>,<parameter>ye</parameter>). The line is
 exact; the pixel set is no more than 0.5 pixels off the place it
-should be.
-</para>
+should be.  </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para>This function returns <returnvalue>0</returnvalue> to indicate success. 
-</para>
+<para>This function returns <returnvalue>0</returnvalue> to indicate
+success.  </para>
+
 </refsect1>
 
 <refsect1>
@@ -1986,24 +1985,24 @@ should be.
 <para>
 This is a area-to-area-blit, all in the same visual. Copy the box
 described by <parameter>x</parameter>,<parameter>y</parameter>,
-<parameter>w</parameter>,<parameter>h</parameter>
-to the new location
-<parameter>nx</parameter>,<parameter>ny</parameter>.
-This automatically takes
-care of overlaps and optimizes for the given visual (e.g. uses HW-accel or
-intermediate buffers as appropriate).
+<parameter>w</parameter>,<parameter>h</parameter> to the new location
+<parameter>nx</parameter>,<parameter>ny</parameter>.  This
+automatically takes care of overlaps and optimizes for the given
+visual (e.g. uses HW-accel or intermediate buffers as appropriate).
 </para>
 
 <para>
 <function>ggiCopyBox</function> will transfer an area between frames
-when the read frame is not the same as the write frame.
-</para>
+when the read frame is not the same as the write frame.  </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
+
 <para><returnvalue>0</returnvalue> for OK, otherwise an error code.
 </para>
+
 </refsect1>
 
 <refsect1>
@@ -2056,19 +2055,22 @@ colorspace-conversion. (Though it can be quite expensive, so take care.)
 
 <para>
 <function>ggiCrossBlit</function> will transfer an area from the
-source visual's read frame
-to the destination visual's write frame.
+source visual's read frame to the destination visual's write frame.
 </para>
 
 <para>
 This function does not perform stretching.
 </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
+
+
 <para><returnvalue>0</returnvalue> for OK, otherwise an error code.
 </para>
+
 </refsect1>
 
 <refsect1>
@@ -2118,15 +2120,14 @@ This function does not perform stretching.
 <title>Description</title>
 
 <para>
-<function>ggiSetOrigin</function> sets the top-left corner of the displayed area to
-(<parameter>x</parameter>, <parameter>y</parameter>).
-</para>
+<function>ggiSetOrigin</function> sets the top-left corner of the
+displayed area to (<parameter>x</parameter>,
+<parameter>y</parameter>).  </para>
 
 <para>
-When using a larger virtual area, you can pan the visible area over the
-virtual one to do scrolling. Some targets have extemely efficient means to
-do this (i.e. they do it in hardware).
-</para>
+When using a larger virtual area, you can pan the visible area over
+the virtual one to do scrolling. Some targets have extemely efficient
+means to do this (i.e. they do it in hardware).  </para>
 
 <para>
 Large virtual areas are also commonly used for buffering the display
@@ -2134,29 +2135,32 @@ contents, but that is usually more easily accomplished by requesting a
 specific number of <property>frames</property> when setting a mode.
 </para>
 
-<para>
-This call takes <link linkend="dot"><emphasis>dot</emphasis></link> coordinates, not
-pixel coordinates as all other drawing primitives do.  There is no
-difference in graphics modes because by definition <property>dpp</property> is
-1x1, but in text modes the application can do smooth scrolling.
-</para>
+<para>This call takes <link
+linkend="ref-struct-ggi-mode"><emphasis>dot</emphasis></link>
+coordinates, not pixel coordinates as all other drawing primitives do.
+There is no difference in graphics modes because by definition
+<property>dpp</property> is 1x1, but in text modes the application can
+do smooth scrolling.  </para>
 
 <para>
-<function>ggiGetOrigin</function> gets the current top-left corner of the displayed
-area into (<parameter>x</parameter>, <parameter>y</parameter>).
-</para>
+<function>ggiGetOrigin</function> gets the current top-left corner of
+the displayed area into (<parameter>x</parameter>,
+<parameter>y</parameter>).  </para>
 
 <para>
-Due to rounding to the hardware's capabilities, the values
-retrieved by a subsequent <function>ggiGetOrigin</function> may not
-necessarily match those passed to <function>ggiSetOrigin</function> previously.
+Due to rounding to the hardware's capabilities, the values retrieved
+by a subsequent <function>ggiGetOrigin</function> may not necessarily
+match those passed to <function>ggiSetOrigin</function> previously.
 </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
+
 <para><returnvalue>0</returnvalue> for OK, otherwise an error code.
 </para>
+
 </refsect1>
 
 <refsect1>
@@ -2172,7 +2176,10 @@ for(i = 0; i &lt; virt_y-visible_y; i++) {
 </example>
 
 </refsect1>
+
 </refentry>
+
+
 <refentry id="api-ggiputc">
 
 <refmeta>
@@ -2242,20 +2249,21 @@ does not wrap text.
 </para>
 
 <para>
-<function>ggiGetCharSize</function> obtains the size of the character cell, in pixels.
-This function allows the application to corectly position the text output.
-</para>
+<function>ggiGetCharSize</function> obtains the size of the character
+cell, in pixels.  This function allows the application to corectly
+position the text output.  </para>
 
 <note>
-<para>
-The values returned by <function>ggiGetCharSize</function> is not the same as the
-values of <link linkend="ggi-mode-dpp"><structfield>dpp</structfield></link> of the
-current mode, which is in <link linkend="dot">dots</link>.  In graphics modes
-are 1x1 dpp by definition and use at least 8x8-pixel fonts.  In text
-mode, the character cell is 1x1 <link linkend="pixel">pixels</link> by
-definition and the <structname>dpp</structname> value is the actual size of the font.
-</para>
-</note>
+<para> The values returned by <function>ggiGetCharSize</function> is
+not the same as the values of <link
+linkend="ref-struct-ggi-mode"><structfield>dpp</structfield></link> of
+the current mode, which is in <link
+linkend="ref-struct-ggi-mode">dots</link>.  In graphics modes are 1x1
+dpp by definition and use at least 8x8-pixel fonts.  In text mode, the
+character cell is 1x1 <link
+linkend="ref-struct-ggi-color">pixels</link> by definition and the
+<structname>dpp</structname> value is the actual size of the font.
+</para> </note>
 
 </refsect1>
 
@@ -2320,26 +2328,25 @@ definition and the <structname>dpp</structname> value is the actual size of the 
 <para>
 <function>ggiSetFlags</function> sets the specified flags (bitwise
 OR'd together) on a visual. This function is usually used to set async
-mode on a visual (see below).
-</para>
+mode on a visual (see below).  </para>
 
-<para><function>ggiGetFlags</function> obtains the flags currently in effect.
-</para>
+<para><function>ggiGetFlags</function> obtains the flags currently in
+effect.  </para>
 
 <para><function>ggiAddFlags</function> and
-<function>ggiRemoveFlags</function> are macros that
-set or unsets the specified flags.
-</para>
+<function>ggiRemoveFlags</function> are macros that set or unsets the
+specified flags.  </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return Value</title>
 
 <para>
-<function>ggiSetFlags</function>, <function>ggiAddFlags</function>, and
-<function>ggiRemoveFlags</function> return <returnvalue>0</returnvalue> on success,
-<returnvalue>&lt;0</returnvalue> on failure.
-</para>
+<function>ggiSetFlags</function>, <function>ggiAddFlags</function>,
+and <function>ggiRemoveFlags</function> return
+<returnvalue>0</returnvalue> on success,
+<returnvalue>&lt;0</returnvalue> on failure.  </para>
 
 <para>
 <function>ggiGetFlags</function> returns the current flags.
@@ -2351,47 +2358,42 @@ set or unsets the specified flags.
 <title>Synchronous and Asynchronous drawing modes</title>
 
 <para>
-Some visuals allow different modes with regard to when the screen is updated
-and the actual drawing takes place.
-</para>
+Some visuals allow different modes with regard to when the screen is
+updated and the actual drawing takes place.  </para>
 
 <itemizedlist>
 <listitem>
 <para>
 In synchronous mode when the drawing command returns, it is already or
-will be executed very shortly. So the visible effect is that everything
-is drawn immediately.  (It is not guaranteed in the strict sense in that
-it is already drawn when the function call returns, but almost.)
-This is the default mode for all visuals.
-</para>
+will be executed very shortly. So the visible effect is that
+everything is drawn immediately.  (It is not guaranteed in the strict
+sense in that it is already drawn when the function call returns, but
+almost.)  This is the default mode for all visuals.  </para>
 </listitem>
 
 <listitem>
-<para>
-The asynchronous mode does not guarantee that drawing commands are
-executed immediately, but is faster on many targets. 
-If the visual does not support asynchronous mode, setting it has no
-effect.  
+<para> The asynchronous mode does not guarantee that drawing commands
+are executed immediately, but is faster on many targets.  If the
+visual does not support asynchronous mode, setting it has no effect.
 </para>
 
-<para>
-To make sure that all pending graphics operations are actually done and
-the screen is updated, you need to call <link linkend="api-ggiflush">
-<function>ggiFlush</function></link>.  This call is not needed in synchronous mode.)
-</para>
+<para>To make sure that all pending graphics operations are actually
+done and the screen is updated, you need to call <link
+linkend="api-ggiflush"> <function>ggiFlush</function></link>.  This
+call is not needed in synchronous mode.)  </para>
 </listitem>
 </itemizedlist>
 
 <warning>
 <para id="mansync">
-On some targets such as the X target there is no real synchronous mode,
-so LibGGI fakes one by periodically calling <function>ggiFlush</function> in the
-background.  This process can take about half the execution time of a program. 
-So using synchronous mode can <emphasis>really</emphasis> slow things down.
-</para>
+On some targets such as the X target there is no real synchronous
+mode, so LibGGI fakes one by periodically calling
+<function>ggiFlush</function> in the background.  This process can
+take about half the execution time of a program.  So using synchronous
+mode can <emphasis>really</emphasis> slow things down.  </para>
 
-<para>The synchronous mode is default because it is what most programmers
-expect.</para>
+<para>The synchronous mode is default because it is what most
+programmers expect.</para>
 </warning>
 
 <para>
@@ -2401,8 +2403,8 @@ order given in both modes. Reordering is not done.
 
 <para>
 So the recommendation for all graphics applications is to set the
-asynchronous mode.  It will be far more efficient on some platforms and will
-<emphasis>never</emphasis> be worse. 
+asynchronous mode.  It will be far more efficient on some platforms
+and will <emphasis>never</emphasis> be worse.
 </para>
 
 <example>
@@ -2464,21 +2466,22 @@ ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 <title>Description</title>
 
 <para>
-<function>ggiFlush</function> waits for the visual to finish pending accelerator
-commands, and in some targets, it refreshes the framebuffer.
-</para>
+<function>ggiFlush</function> waits for the visual to finish pending
+accelerator commands, and in some targets, it refreshes the
+framebuffer.  </para>
 
 <para>
-<function>ggiFlushRegion</function> performs the flush function 
-only in the specified region if it would improve performance.
-</para>
+<function>ggiFlushRegion</function> performs the flush function only
+in the specified region if it would improve performance.  </para>
 
 <para>These functions are not needed if the visual is in synchronous mode.
 </para>
+
 </refsect1>
 
 <refsect1>
 <title>Return Value</title>
+
 <para>
 No meaningful return value.
 </para>
@@ -2537,9 +2540,8 @@ No meaningful return value.
 <para>
 <function>ggiResourceAcquire</function> acquires (locks) a LibGGI
 resource, typically a DirectBuffer (see examples below).  The
-<parameter>actype</parameter> indicates the desired access type for the
-operation.  The following flags may be
-bitwise-or'ed together:
+<parameter>actype</parameter> indicates the desired access type for
+the operation.  The following flags may be bitwise-or'ed together:
 
 <variablelist>
 <varlistentry>
@@ -2556,14 +2558,12 @@ bitwise-or'ed together:
 </para>
 
 <para>
-<function>ggiResourceRelease</function> releases (unlocks) an already-acquired
-resource.
-</para>
+<function>ggiResourceRelease</function> releases (unlocks) an
+already-acquired resource.  </para>
 
 <para>
-<function>ggiResourceMustAcquire</function> determines whether or not the
-specified resource needs to be acquired before using.
-</para>
+<function>ggiResourceMustAcquire</function> determines whether or not
+the specified resource needs to be acquired before using.  </para>
 
 </refsect1>
 
@@ -2577,13 +2577,12 @@ return <returnvalue>0</returnvalue> on success,
 </para>
 
 <para>
-<function>ggiResourceMustAcquire</function> is simply a macro that returns true
-if the resource must be explicitly acquired and released, or false if not.
-However, it is still safe to call <function>ggiResourceAcquire</function> or
-<function>ggiResourceRelease</function> even in the latter case -- it -->
--- would be a no-op.
-</para>
-</refsect1>
+<function>ggiResourceMustAcquire</function> is simply a macro that
+returns true if the resource must be explicitly acquired and released,
+or false if not.  However, it is still safe to call
+<function>ggiResourceAcquire</function> or
+<function>ggiResourceRelease</function> even in the latter case -- it
+--> -- would be a no-op.  </para> </refsect1>
 
 <refsect1>
 <title>Examples</title>
@@ -2602,7 +2601,6 @@ if (ggiResourceAcquire(dbuf-&gt;resource, GGI_ACTYPE_WRITE) != 0) {
 
 /* Release DirectBuffer when done with it. */
 ggiResourceRelease(dbuf-&gt;resource);
-
 </programlisting>
 </example>
 </refsect1>
@@ -2647,12 +2645,10 @@ ggiResourceRelease(dbuf-&gt;resource);
 <title>Description</title>
 
 <para>
-<function>ggiDBGetNumBuffers</function> returns the number of DirectBuffers available
-to the application.
-
-<function>ggiDBGetBuffer</function> obtains the DirectBuffer at the specified
-position.
-</para>
+<function>ggiDBGetNumBuffers</function> returns the number of
+DirectBuffers available to the application.
+<function>ggiDBGetBuffer</function> obtains the DirectBuffer at the
+specified position.  </para>
 
 <para>
 Use <function>ggiDBGetBuffer</function> to obtain the DirectBuffers at 0 to
@@ -2660,34 +2656,32 @@ n-1, where n is the number returned by <function>ggiDBGetNumBuffers</function>.
 </para>
 
 <para>
-Pixel-linear buffers have <literal>type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL</literal>.
-You're on your own now.
-</para>
+Pixel-linear buffers have <literal>type==GGI_DB_SIMPLE_PLB |
+GGI_DB_NORMAL</literal>.  You're on your own now.  </para>
 
 <para>
-DirectBuffers where <function>ggiResourceMustAcquire</function> is true need to be
-'acquired' (i.e. locked) before using.  An acquire is done by using
-<function>ggiResourceAcquire</function> and is released by calling
-<function>ggiResourceRelease</function>.
-(See <xref linkend="api-ggiresourceacquire"/>.)
-
-Beware that the <structfield>read</structfield>, <structfield>write</structfield> and
-<structfield>stride</structfield> fields of the DirectBuffer may be changed by an
-acquire, and that they may be <symbol>NULL</symbol> or invalid when the
-DirectBuffer is not acquired.
-</para>
+DirectBuffers where <function>ggiResourceMustAcquire</function> is
+true need to be 'acquired' (i.e. locked) before using.  An acquire is
+done by using <function>ggiResourceAcquire</function> and is released
+by calling <function>ggiResourceRelease</function>.  (See <xref
+linkend="api-ggiresourceacquire"/>.)  Beware that the
+<structfield>read</structfield>, <structfield>write</structfield> and
+<structfield>stride</structfield> fields of the DirectBuffer may be
+changed by an acquire, and that they may be <symbol>NULL</symbol> or
+invalid when the DirectBuffer is not acquired.  </para>
 
 </refsect1>
 
 <refsect1>
 <title>Return value</title>
 
-<para><function>ggiDBGetNumBuffers</function> returns the number of DirectBuffers
-available. <returnvalue>0</returnvalue> indicates that no DirectBuffers are available.
-</para>
-<para><function>ggiDBGetBuffer</function> returns a pointer to a DirectBuffer
-structure.
-</para>
+<para><function>ggiDBGetNumBuffers</function> returns the number of
+DirectBuffers available. <returnvalue>0</returnvalue> indicates that
+no DirectBuffers are available.  </para>
+
+<para><function>ggiDBGetBuffer</function> returns a pointer to a
+DirectBuffer structure.  </para>
+
 </refsect1>
 
 <refsect1>
@@ -2696,7 +2690,6 @@ structure.
 <example>
 <title>How to obtain a DirectBuffer</title>
 <programlisting>
-
 ggi_visual_t	vis;
 ggi_mode	mode;
 int		i;
@@ -2764,7 +2757,6 @@ for(i = 0; i &lt; numbufs; i++)
 	stride[frameno] = db-&gt;buffer.plb.stride;
 
 	<replaceable>/* Check pixel format, be portable.... */</replaceable>
-
 </programlisting>
 </example>
 
@@ -2859,7 +2851,7 @@ for(i = 0; i &lt; numbufs; i++)
 </funcprototype>
 
 <funcprototype>
-<funcdef>int <function>giiAddEventMask</function></funcdef>
+<funcdef>int <function>ggiAddEventMask</function></funcdef>
 <paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
 <paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
 </funcprototype>
@@ -2878,38 +2870,36 @@ for(i = 0; i &lt; numbufs; i++)
 
 <para>
 LibGGI provides input facilities through an auxiliary library,
-<application>LibGII</application>.
-Each LibGGI visual internally contains a <type>gii_input_t</type> input, and
-all LibGII functions are available to manipulate and process inputs.
-The LibGGI versions provided of most LibGII functions simply take a 
-<type>ggi_visual_t</type> rather than <type>gii_input_t</type> for convenience
-during everyday usage.  Events are LibGII types.  All other semantics 
-are the same; see <xref linkend="ref-libgii"/> for details.
-</para>
+<application>LibGII</application>.  Each LibGGI visual internally
+contains a <type>gii_input_t</type> input, and all LibGII functions
+are available to manipulate and process inputs.  The LibGGI versions
+provided of most LibGII functions simply take a
+<type>ggi_visual_t</type> rather than <type>gii_input_t</type> for
+convenience during everyday usage.  Events are LibGII types.  All
+other semantics are the same; see <xref linkend="ref-libgii"/> for
+details.  </para>
 
-<important><para>
-By default LibGGI visuals autodetect and open the appropriate inputs, 
-including mouse and keyboard and any other inputs that are 'intrinsic' 
-to the visual e.g. any registered X11 input device under the X target.  
-Thus in the usual cases there is no need to open a LibGII 
-<type>gii_input_t</type> directly (and that may in fact fail because an
-input device is already open).  The LibGGI <function>ggiEvent*</function>
-functions <emphasis>must</emphasis> be used to do event handling with LibGGI
-visuals, and provide adequate support for most everyday, single-visual
-usage.
-</para>
+<important><para> By default LibGGI visuals autodetect and open the
+appropriate inputs, including mouse and keyboard and any other inputs
+that are 'intrinsic' to the visual e.g. any registered X11 input
+device under the X target.  Thus in the usual cases there is no need
+to open a LibGII <type>gii_input_t</type> directly (and that may in
+fact fail because an input device is already open).  The LibGGI
+<function>ggiEvent*</function> functions <emphasis>must</emphasis> be
+used to do event handling with LibGGI visuals, and provide adequate
+support for most everyday, single-visual usage.  </para>
 
 <para>
-Advanced management of input sources is accomplished by detaching
-the input from the visual and using LibGII functions on the separate
-visual handle (see <link linkend="api-ggigetinput">ggiDetachInput</link>).
-This is encouraged, for example, when joining inputs from multiple
-visuals, because
-when two visuals share the same joined input, you cannot
-ggiClose both of the visuals (a fatal error will result, because 
-closing the first visual closes both of the joined inputs and leaves
-the second closed visual with a stale input handle.)
-</para></important>
+Advanced management of input sources is accomplished by detaching the
+input from the visual and using LibGII functions on the separate
+visual handle (see <link
+linkend="api-ggigetinput">ggiDetachInput</link>).  This is encouraged,
+for example, when joining inputs from multiple visuals, because when
+two visuals share the same joined input, you cannot ggiClose both of
+the visuals (a fatal error will result, because closing the first
+visual closes both of the joined inputs and leaves the second closed
+visual with a stale input handle.)  </para>
+</important>
 
 </refsect1>
 
@@ -2962,16 +2952,15 @@ the second closed visual with a stale input handle.)
 <title>Description</title>
 
 <para>
-<function>ggiGetInput</function> returns the underlying input-handle associated
-with a LibGGI visual, for use with the LibGII API.
-</para>
+<function>ggiGetInput</function> returns the underlying input-handle
+associated with a LibGGI visual, for use with the LibGII API.  </para>
 
 <para>
-<function>ggiDetachInput</function> also returns the underlying input-handle,
-but in adddition, it breaks the association between the given visual 
-and that input handle.  After this has been done, no LibGGI event routines
-may be called on that visual handle, and when the visual handle
-is closed, the input will remain unaffected.
+<function>ggiDetachInput</function> also returns the underlying
+input-handle, but in adddition, it breaks the association between the
+given visual and that input handle.  After this has been done, no
+LibGGI event routines may be called on that visual handle, and when
+the visual handle is closed, the input will remain unaffected.
 </para>
 
 </refsect1>
@@ -3028,12 +3017,11 @@ is closed, the input will remain unaffected.
 
 <para>
 If an application wants to continue running after its VT is switched
-away,  it should make a call <function>ggiEventSend</function> to the visual 
-with an <symbol>evCommand</symbol> event with code
-<symbol>GGICMD_NOHALT_ON_UNMAP</symbol>.
-To disable this behavior, use a command event with code
-<symbol>GGICMD_HALT_ON_UNMAP</symbol>.  The latter is the default.
-</para>
+away, it should make a call <function>ggiEventSend</function> to the
+visual with an <symbol>evCommand</symbol> event with code
+<symbol>GGICMD_NOHALT_ON_UNMAP</symbol>.  To disable this behavior,
+use a command event with code <symbol>GGICMD_HALT_ON_UNMAP</symbol>.
+The latter is the default.  </para>
 
 </refsect1> 
 
@@ -3084,22 +3072,20 @@ To disable this behavior, use a command event with code
 <title>Description</title>
 
 <para>
-<function>ggiGetc</function> gets a character from the keyboard, 
-and blocks if there is no key immediately available.
-</para>
+<function>ggiGetc</function> gets a character from the keyboard, and
+blocks if there is no key immediately available.  </para>
 
 <para>
-<function>ggiKbhit</function> checks if a key has been hit on the keyboard.  This
-does not consume the key.  It is used for easy porting of old DOS
-applications.
+<function>ggiKbhit</function> checks if a key has been hit on the
+keyboard.  This does not consume the key.  It is used for easy porting
+of old DOS applications.
 
 <important>
 <para>
 <emphasis>Do not</emphasis> poll like this: <literal>do while( !
-ggiKbhit(vis) );</literal>
-On a multitasking OS you would be wasting a lot of resources which could be
-available to other processes.  If you want to wait for a key, use the 
-<function>ggiGetc</function> call.
+ggiKbhit(vis) );</literal> On a multitasking OS you would be wasting a
+lot of resources which could be available to other processes.  If you
+want to wait for a key, use the <function>ggiGetc</function> call.
 </para>
 </important>
 
@@ -3115,12 +3101,12 @@ no key has been received yet, otherwise there is a key to be consumed.
 </para>
 
 <para>
-<function>ggiGetc</function> returns a Unicode character in canonical form.
-</para>
+<function>ggiGetc</function> returns a Unicode character in canonical
+form.  </para>
 
 <para>
-For a fuller definition of characters, see <xref linkend="ref-struct-gii-key-event"/>.
-</para>
+For a fuller definition of characters, see <xref
+linkend="ref-struct-gii-key-event"/>.  </para>
 
 </refsect1>
 
