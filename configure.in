@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.110 2004/03/01 22:20:14 cegger Exp $
+dnl $Id: configure.in,v 1.111 2004/03/03 20:15:02 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -670,8 +670,10 @@ dnl includes (/usr/X11R6/include on most systems).
     if test -z "$x_includes" -o "x$x_includes" = "xNONE"; then
 	x_includes="$ac_x_includes"
     fi
-    CFLAGS="$CFLAGS -I$x_includes"
-    CPPFLAGS="$CPPFLAGS -I$x_includes"
+    if test -n "$x_includes" -a "x$x_includes" != "xNONE"; then
+	CFLAGS="$CFLAGS -I$x_includes"
+	CPPFLAGS="$CPPFLAGS -I$x_includes"
+    fi
 
     AC_CHECK_HEADERS(X11/extensions/xf86dga.h	\
 		X11/extensions/Xdbe.h		\
