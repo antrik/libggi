@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
+/* $Id: text.c,v 1.5 2002/10/09 22:22:25 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "config.h"
