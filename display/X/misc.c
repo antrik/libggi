@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.31 2005/02/10 04:55:20 orzo Exp $
+/* $Id: misc.c,v 1.32 2005/02/10 18:44:50 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -639,7 +639,10 @@ noswab:
 XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 {
 	ggi_pixelformat *fmt;
+	ggi_x_priv *priv;
 	XImage *img0;
+
+	priv = GGIX_PRIV(vis);
 
 	img0 = malloc( sizeof(XImage) );
 	if( img0 == NULL )
@@ -651,6 +654,7 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
 	img0->format = ZPixmap;    /* XYBitmap, XYPixmap, ZPixmap */
 	img0->data = data;         /* pointer to image data */
 
+#if 0
 #ifdef GGI_LITTLE_ENDIAN
         img0->byte_order = LSBFirst;
         img0->bitmap_bit_order = LSBFirst;
@@ -658,15 +662,22 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
         img0->byte_order = MSBFirst;
         img0->bitmap_bit_order = MSBFirst;
 #endif
+#endif
+	img0->byte_order = ImageByteOrder(priv->disp);
+	img0->bitmap_bit_order = BitmapBitOrder(priv->disp);
+	DPRINT_MISC("byte order = %i\n", img0->byte_order);
+	DPRINT_MISC("bit order = %i\n", img0->bitmap_bit_order);
 
 	fmt = LIBGGI_PIXFMT(vis);
 
 	/* XXX: what does bitmap_unit mean?  I put 8 here, but I don't
 	 * know if that's always the right value. */
-	img0->bitmap_unit = 8;      /* quant. of scanline 8, 16, 32 */
+	img0->bitmap_unit = BitmapUnit(priv->disp);	/* quant. of scanline 8, 16, 32 */
+	img0->bitmap_pad = BitmapPad(priv->disp);	/* 8, 16, 32 either XY or ZPixmap */
+	DPRINT_MISC("bitmap_unit = %i\n", img0->bitmap_unit);
+	DPRINT_MISC("bitmap_pad = %i\n", img0->bitmap_pad);
 
 
-	img0->bitmap_pad = 8;              /* 8, 16, 32 either XY or ZPixmap */
 	img0->depth =(unsigned)LIBGGI_PIXFMT(vis)->depth; /* depth of image */
 	img0->bits_per_pixel = fmt->size;  /* bits per pixel (ZPixmap) */
 	img0->red_mask = fmt->red_mask;    /* bits in z arrangment */
