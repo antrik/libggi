@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.4 2004/09/14 08:27:19 pekberg Exp $
+/* $Id: testsuite.inc.c,v 1.5 2004/09/14 08:29:58 pekberg Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -25,6 +25,12 @@
 #endif
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+#include <strings.h>
 #endif
 
 
