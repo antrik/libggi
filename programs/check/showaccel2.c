@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.1 2001/05/12 23:03:32 cegger Exp $
+/* $Id: showaccel2.c,v 1.2 2003/07/13 07:04:26 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -48,8 +48,10 @@ ggi_visual_t vis;
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).
  */
-int randnum(int max)
-{ return (rand()%max); }
+static int randnum(int max)
+{
+	return (rand() % max);
+}
 
 
 /* Draw a box from individual horizontal lines. This effectively disables
