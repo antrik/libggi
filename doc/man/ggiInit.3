@@ -1,8 +1,9 @@
-.TH "ggiInit" 3 GGI
+.TH "ggiInit" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiInit\fR, \fBggiExit\fR : Initialize and uninitialize LibGGI
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiInit(void);
@@ -14,8 +15,8 @@ int ggiExit(void);
 using other LibGGI functions; otherwise the results will be undefined.
 
 \fBggiExit\fR uninitializes the library (after being initialized by
-\fBggiInit\fR) and automatically cleanup if necessary.  This should be
-called after an application is finished with the library.  If any GGI
+\fBggiInit\fR) and automatically cleans up if necessary.  This should be
+called after an application finished using the library.  If any GGI
 functions are called after the library has been uninitialized, the
 results will be undefined.
 
@@ -38,7 +39,7 @@ properly nested pairs, e.g. the first \fBggiExit\fR after two
 \fBggiInit`s will return `1\fR.
 
 .TP
-\fB>0\fR
+\fB<0\fR
 error, especially if more \fBggiExit\fR calls have been done than
 \fBggiInit\fR calls.
 
@@ -47,8 +48,9 @@ error, especially if more \fBggiExit\fR calls have been done than
 Initialize and uninitialize LibGGI:
 
 .nb
+.nf
 if (ggiInit() < 0) {
-    fprintf(stderr, "Cannot initialize LibGGI!\n");
+    fprintf(stderr, "Cannot initialize LibGGI!\en");
     exit(1);
 }
 

@@ -1,8 +1,9 @@
-.TH "ggiSetGCClipping" 3 GGI
+.TH "ggiSetGCClipping" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiSetGCClipping\fR, \fBggiGetGCClipping\fR : Set or get the clipping rectangle for a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiSetGCClipping(ggi_visual_t vis, int left, int top,
@@ -24,4 +25,4 @@ correctly.
 \fBggiGetGCClipping\fR reads the coordinates of the current clipping
 rectangle.
 .SH RETURN VALUE
-Both functions \fB0\fR for OK.
+Both functions \fB0\fR for OK, ggiSetGCClipping returns an error.

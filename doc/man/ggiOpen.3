@@ -1,8 +1,9 @@
-.TH "ggiOpen" 3 GGI
+.TH "ggiOpen" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 ggi_visual_t ggiOpen(const char *display, ...);
@@ -28,10 +29,11 @@ through GGI functions.
 Open and closing default visual:
 
 .nb
+.nf
 ggi_visual_t vis = ggiOpen(NULL);
 
 if(vis==NULL) {
-      ggiPanic("Couldn't open default visual!\n");
+      ggiPanic("Couldn't open default visual!\en");
 }
 
 /* do stuff */
@@ -41,6 +43,7 @@ ggiClose(vis);
 Open and closing a memory visual:
 
 .nb
+.nf
 ggi_visual_t memvis = ggiOpen("display-memory", NULL);
 
 if(memvis==NULL) {

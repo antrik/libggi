@@ -1,8 +1,9 @@
-.TH "ggiDrawHLine" 3 GGI
+.TH "ggiDrawHLine" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiDrawHLine\fR, \fBggiPutHLine\fR, \fBggiGetHLine\fR : Draw, put, and get a horizontal line from a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiDrawHLine(ggi_visual_t vis, int x, int y, int w);
@@ -18,9 +19,9 @@ height is one pixel.
 
 The \fBbuf\fR parameter in Get/Put functions points to a buffer from
 which the pixels will be read, or to which they will be written (it
-must be correctly allocated), depending on the case. See
-\fBggiPackColors\fR and \fBggiUnmapPixels\fR functions for more on how to deal
-with pixels.
+must be correctly allocated), respectively. See
+\fBggiPackColors(3)\fR and \fBggiUnmapPixel(3)\fR functions for
+details on how to deal with pixels.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
 .SH SEE ALSO

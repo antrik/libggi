@@ -1,19 +1,25 @@
-.TH "ggiGetGamma" 3 GGI
+.TH "ggiGetGamma" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiGetGamma\fR, \fBggiSetGamma\fR, \fBggiGetGammaMap\fR, \fBggiSetGammaMap\fR, \fBggiGammaMax\fR : Manipulate the gamma maps and the gamma correction of a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
-int ggiGetGamma(ggi_visual_t vis, ggi_float *r, ggi_float *g, ggi_float *b);
+int ggiGetGamma(ggi_visual_t vis,
+                      ggi_float *r, ggi_float *g, ggi_float *b);
 
-int ggiSetGamma(ggi_visual_t vis, ggi_float r, ggi_float g, ggi_float b);
+int ggiSetGamma(ggi_visual_t vis,
+                      ggi_float r, ggi_float g, ggi_float b);
 
-int ggiGetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+int ggiGetGammaMap(ggi_visual_t vis,
+                      int s, int len, ggi_color *gammamap);
 
-int ggiSetGammaMap(ggi_visual_t vis, int s, int len, ggi_color *gammamap);
+int ggiSetGammaMap(ggi_visual_t vis,
+                      int s, int len, ggi_color *gammamap);
 
-int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w);
+int ggiGammaMax(ggi_visual_t vis,
+                      uint32 bitmeaning, int *max_r, int *max_w);
 .fi
 .SH DESCRIPTION
 Some modes on some hardware can use a per-channel palette to lookup

@@ -1,18 +1,19 @@
-.TH "ggiSetFlags" 3 GGI
+.TH "ggiSetFlags" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiSetFlags\fR, \fBggiGetFlags\fR, \fBggiAddFlags\fR, \fBggiRemoveFlags\fR : Set or get flags affecting operation on a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiSetFlags(ggi_visual_t vis, ggi_flags flags);
 
 ggi_flags ggiGetFlags(ggi_visual_t vis);
 
-#define ggiAddFlags(vis,flags)  \
+#define ggiAddFlags(vis,flags)  \e
               ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
 
-#define ggiRemoveFlags(vis,flags) \
+#define ggiRemoveFlags(vis,flags) \e
               ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
 .fi
 .SH DESCRIPTION
@@ -25,10 +26,15 @@ OR'd together) on a visual.
 specified flags.
 
 Flags are used to alter a visual's underlying behavior.  All flags
-default to an unset value.  Flags which are not supported by a given
+default to an unset value. Flags which are not supported by a given
 visual will remain unset even when an attempt is made to raise them.
 Thus, it is possible to tell by reading back the flags whether or not
 each of the flags is supported by the given visual.
+.RS
+\fBNote:\fR
+It is recommended to set the flags \fIbefore\fR setting a mode,
+i.e. right after \fBggiOpen(3)\fR.
+.RE
 .SH RETURN VALUE
 \fBggiSetFlags\fR, \fBggiAddFlags\fR, and \fBggiRemoveFlags\fR return \fB0\fR on
 success, \fB<0\fR on failure.  This will only happen if the failure of a
@@ -49,14 +55,14 @@ updated and the actual drawing takes place.
 In synchronous mode when the drawing command returns, it is already
 or will be executed very shortly. So the visible effect is that
 everything is drawn immediately.  (It is not guaranteed in the
-strict sense in that it is already drawn when the function call
+strict sense that it is already drawn when the function call
 returns, but almost.)  This is the default mode for all visuals.
 .IP \(bu 4
 The asynchronous mode does not guarantee that drawing commands are
 executed immediately, but is faster on many targets.  If the visual
 does not support asynchronous mode, attempting to set it has no
 effect.  Code written for asynchronous visuals will always perform
-correctly on synchronous visuals (but not visa-versa), so it is not
+correctly on synchronous visuals (but not vice-versa), so it is not
 necessary to adapt a program's behavior if this flag is not
 available.
 
@@ -65,10 +71,10 @@ and the screen is updated, you need to call \fBggiFlush(3)\fR.
 This call is not needed in synchronous mode.
 .PP
 .RS
-\fBImprotant:\fR
+\fBImportant:\fR
 On some targets such as the X target there is no real synchronous
 mode, so LibGGI fakes one by periodically calling
-\fBggiFlush\fR in the background.  This process can
+\fBggiFlush(3)\fR in the background.  This process can
 take about half the execution time of a program.  So using
 synchronous mode can \fIreally\fR slow things
 down.
@@ -86,6 +92,7 @@ and will \fInever\fR be worse.
 Setting up asynchronous mode:
 
 .nb
+.nf
 ggiAddFlags(vis, GGIFLAG_ASYNC);      /* switches to asynchronous mode */
 ggiFlush(vis);                        /* updates the screen */
 ggiRemoveFlags(vis, GGIFLAG_ASYNC);   /* switches to synchronous mode */
@@ -133,7 +140,7 @@ altering the frame.
 The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is
 safe to attempt to set it whether or not it is available.  Code
 written for the tidy-buffering mode will display correctly on visuals
-which do not have a tidy-buffering mode (but not visa-versa), so it is
+which do not have a tidy-buffering mode (but not vice-versa), so it is
 not necessary to adapt program behavior to its non-presence.
 
 It is recommended that, if an application must use directbuffer, the

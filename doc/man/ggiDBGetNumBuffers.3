@@ -1,8 +1,9 @@
-.TH "ggiDBGetNumBuffers" 3 GGI
+.TH "ggiDBGetNumBuffers" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiDBGetNumBuffers\fR, \fBggiDBGetBuffer\fR : Get DirectBuffers from a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int  ggiDBGetNumBuffers(ggi_visual_t vis);
@@ -61,6 +62,7 @@ Each frame has its own buffer, and its number is indicated in
 How to obtain a DirectBuffer:
 
 .nb
+.nf
 ggi_visual_t  vis;
 ggi_mode      mode;
 int           i;

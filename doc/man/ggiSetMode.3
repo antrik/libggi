@@ -1,11 +1,12 @@
-.TH "ggiSetMode" 3 GGI
+.TH "ggiSetMode" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiSetMode\fR, \fBggiSetTextMode\fR, \fBggiSetGraphMode\fR, \fBggiSetSimpleMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
-int ggiSetMode(ggi_visual_t visual,ggi_mode *tm);
+int ggiSetMode(ggi_visual_t visual, ggi_mode *tm);
 
 int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
                    int vcols, int vrows, int fontx, int fonty,

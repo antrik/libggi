@@ -1,15 +1,17 @@
-.TH "ggiDrawLine" 3 GGI
+.TH "ggiDrawLine" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiDrawLine\fR : Draw a line on a visual
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiDrawLine(ggi_visual_t vis, int x, int y, int xe, int ye);
 .fi
 .SH DESCRIPTION
-Draws any line, using the current foreground color, from (\fBx\fR,
-\fBy\fR) to (\fBxe\fR, \fBye\fR). The line is exact; the pixel set is no
-more than 0.5 pixels off the place it should be.
+Draws any line, using the current foreground color set by
+\fBggiSetGCForeground(3)\fR, from (\fBx\fR, \fBy\fR) to (\fBxe\fR, \fBye\fR).
+The line is exact; the pixel set is no more than 0.5 pixels off the
+place it should be.
 .SH RETURN VALUE
 This function returns \fB0\fR to indicate success.
 .SH SEE ALSO

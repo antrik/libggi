@@ -1,8 +1,9 @@
-.TH "ggiResourceAcquire" 3 GGI
+.TH "ggiResourceAcquire" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiResourceAcquire\fR, \fBggiResourceRelease\fR, \fBggiResourceMustAcquire\fR : Acquire and release a LibGGI resource
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiResourceAcquire(ggi_resource_t res, uint32 actype);
@@ -41,11 +42,12 @@ However, it is still safe to call \fBggiResourceAcquire\fR or
 Using DirectBuffers:
 
 .nb
+.nf
 const ggi_directbuffer *dbuf;
 
 /* Acquire DirectBuffer before we use it. */
 if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0) {
-      fail("Error acquiring DirectBuffer\n");
+      fail("Error acquiring DirectBuffer\en");
 }
 
 /* Do framebuffer rendering here... */

@@ -1,9 +1,10 @@
-.TH "ggiCheckMode" 3 GGI
+.TH "ggiCheckMode" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiCheckMode\fR, \fBggiCheckTextMode\fR, \fBggiCheckGraphMode\fR, \fBggiCheckSimpleMode\fR : Check or negotiate a text/graphics mode on a visual
 .SH SYNOPSIS
 .nb
-int ggiCheckMode(ggi_visual_t visual,ggi_mode *tm);
+.nf
+int ggiCheckMode(ggi_visual_t visual, ggi_mode *tm);
 
 
 int ggiCheckTextMode(ggi_visual_t visual, int cols, int rows,
@@ -69,7 +70,7 @@ Only if the maximum resolution would be exceeded, resolutions are
 adjusted \fIdown\fR to the maximum.
 
 The above applies to visible and virtual size. If there is
-interference between them, the visible size is satified first if
+interference between them, the visible size is satisfied first if
 possible, then the virtual size.
 
 The adjustment of one value do not normally affect other
@@ -97,6 +98,8 @@ available, the type is adjusted down.
 Try a 320x200x8 mode:
 
 .nb
+.nf
+ggi_mode sug_mode;
 err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
                       &sug_mode);
 if(err) {

@@ -1,8 +1,9 @@
-.TH "ggi_mode" 3 GGI
+.TH "ggi_mode" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggi_mode\fR, \fBggi_coord\fR, \fBggi_graphtype\fR : LibGGI mode description
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 typedef struct { sint16 x, y; } ggi_coord;
@@ -25,16 +26,19 @@ and other graphic properties.
 .TP
 \fBframes\fR
 The number of frames. Some displays have multi-buffer capabilities
-(double-buffering, triple-buffering...). See libggi frame-related
-functions for information on working with multiple frames.
+(double-buffering, triple-buffering,...). See libggi frame-related
+functions (ggi{s,g}et{Read,Write,Display}Frame) for information on
+working with multiple frames.
 
 .TP
 \fBvisible\fR
-The size of the visible area. This is what the user will see.
+The size of the visible area in pixels. This is what the user will
+see.
 
 .TP
 \fBvirt\fR
-The virtual size of the visual. It can be larger (but not smaller)
+The virtual size of the visual in pixels. It can be larger
+(but not smaller)
 than the visible area, in which case only a part of it is
 displayed.  It is useful for scrolling or backing up portions of
 screen efficiently.  See \fBggi[Set|Get]Origin\fR functions for more.

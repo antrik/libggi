@@ -1,8 +1,9 @@
-.TH "ggiGetInput" 3 GGI
+.TH "ggiGetInput" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiGetInput\fR, \fBggiDetachInput\fR : Functions to translate from GGI visuals to GII input
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 #define ggiGetInput(vis) ggiJoinInputs(vis, NULL)
@@ -14,7 +15,7 @@ gii_input_t ggiDetachInput(ggi_visual_t vis);
 LibGGI visual, for use with the LibGII API.
 
 \fBggiDetachInput\fR also returns the underlying input-handle, but in
-adddition, it breaks the association between the given visual and that
+addition, it breaks the association between the given visual and that
 input handle.  After this has been done, no LibGGI event routines may
 be called on that visual handle, and when the visual handle is closed,
 the input will remain unaffected.

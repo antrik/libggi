@@ -1,8 +1,9 @@
-.TH "ggiJoinInputs" 3 GGI
+.TH "ggiJoinInputs" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiJoinInputs\fR, \fBggiEventPoll\fR, \fBggiEventSelect\fR, \fBggiEventsQueued\fR, \fBggiEventRead\fR, \fBggiSetEventMask\fR, \fBggiGetEventMask\fR, \fBggiAddEventMask\fR, \fBggiRemoveEventMask\fR : Event management for LibGGI visual
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 gii_event_mask ggiEventPoll(ggi_visual_t vis, gii_event_mask mask,
@@ -19,10 +20,10 @@ gii_event_mask ggiGetEventMask(ggi_visual_t vis);
 
 gii_input_t ggiJoinInputs(ggi_visual_t vis, gii_input_t inp);
 
-#define ggiAddEventMask(vis,mask)  \
+#define ggiAddEventMask(vis,mask)  \e
               ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
 
-#define ggiRemoveEventMask(vis,mask)  \
+#define ggiRemoveEventMask(vis,mask)  \e
               ggiSetEventMask((vis), ggiGetEventMask((vis)) & ~(mask))
 .fi
 .SH DESCRIPTION
@@ -34,7 +35,7 @@ LibGGI versions provided of most LibGII functions simply take a
 everyday usage.  Events are LibGII types.  All other semantics are the
 same; see \fBlibgii(7)\fR for details.
 .RS
-\fBImprotant:\fR
+\fBImportant:\fR
 By default LibGGI visuals autodetect and open the appropriate
 inputs, including mouse and keyboard and any other inputs that are
 'intrinsic' to the visual e.g. any registered X11 input device

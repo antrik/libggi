@@ -1,8 +1,9 @@
-.TH "ggiGetc" 3 GGI
+.TH "ggiGetc" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiGetc\fR, \fBggiKbhit\fR : Convenience functions for simplistic keyboard input
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiGetc(ggi_visual_t vis);
@@ -17,7 +18,7 @@ no key immediately available.
 not consume the key.  It is used for easy porting of old DOS
 applications.
 .RS
-\fBImprotant:\fR
+\fBImportant:\fR
 \fIDo not\fR poll like this:
 \fBdo while( ! ggiKbhit(vis) );\fR
 On a multitasking OS you would be wasting a lot of resources
@@ -30,6 +31,6 @@ there is a key to be consumed.
 
 \fBggiGetc\fR returns a Unicode character in canonical form.
 
-For a fuller definition of characters, see \fBgii_key_event(3)\fR.
+For a more detailed definition of characters, see \fBgii_key_event(3)\fR.
 .SH SEE ALSO
 \fBggiEventPoll(3)\fR

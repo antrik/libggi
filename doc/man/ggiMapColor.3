@@ -1,8 +1,9 @@
-.TH "ggiMapColor" 3 GGI
+.TH "ggiMapColor" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiMapColor\fR, \fBggiUnmapPixel\fR, \fBggiPackColors\fR, \fBggiUnpackPixels\fR : Convert from ggi_color(s) to ggi_pixel(s) and vice versa
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 
@@ -24,7 +25,7 @@ int ggiUnpackPixels(ggi_visual_t vis, void *buf, ggi_color *cols, int len);
 \fBggiPut{HLine,VLine,Box}\fR functions.
 
 \fBggiUnpackPixels\fR converts the pixelvalues in \fBbuf\fR to individual
-elements of \fBcols\fR.  This function maybe used to convert buffers
+elements of \fBcols\fR.  This function may be used to convert buffers
 output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue
 representation to their actual colors as defined by
 \fBggi_color(3)\fR.
@@ -36,7 +37,7 @@ format is defined in \fBggi_pixelformat(3)\fR.
 Try to cache the results of color lookups in your application for
 efficiency purposes.
 .SH RETURN VALUE
-\fBggiMapColor\fR returns a \fBggi_pixel\fR.
+\fBggiMapColor\fR returns a \fBggi_pixel(3)\fR.
 
 \fBggiUnmapPixel\fR, \fBggiPackColors\fR, and \fBggiUnpackPixels\fR returns \fB0\fR
 for OK, otherwise an error code.

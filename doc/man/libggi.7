@@ -1,4 +1,4 @@
-.TH "libggi" 7 GGI
+.TH "libggi" 7 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBlibggi\fR : A fast, simple, small and flexible user-space graphics library
 .SH DESCRIPTION
@@ -20,14 +20,14 @@ LibGGI supports acceleration of graphics primitives where possible.
 
 LibGGI is a very generic piece of software, that will run on about
 every platform that has remotely heard of POSIX (ports to other
-systems such as Win32 are underway) and on many display subsystems.
+systems such as Win32 are available, too) and on many display subsystems.
 .SH ENVIRONMENT VARIABLES
 The following outlines the environment variables, intended for the
 user, which affect the behaviour of LibGGI:
 .TP
 \fBDISPLAY\fR
 If set, LibGGI assumes that you want to use the X target.  This
-setting is overriden by the \fBGGI_DISPLAY\fR variable.
+setting is overridden by the \fBGGI_DISPLAY\fR variable.
 
 .TP
 \fBGGI_DISPLAY\fR
@@ -82,7 +82,7 @@ Denotes the visible size of the visual.  Totally optional, as
 dimensions without a specifier are considered to be the visible
 dimensions.
 
-\fBw\fR and \fBh\fR are the Width and height in pixels.
+\fBw\fR and \fBh\fR are the width and height in pixels.
 
 .TP
 V
@@ -92,7 +92,7 @@ the visible size.
 
 .TP
 D
-Denotes the number of dots per pixel.  For graphics modes, this
+Denotes the number of dots per pixel.  For graphic modes, this
 is always 1x1, and for text modes, this is the size of the
 character cell.
 
@@ -181,7 +181,7 @@ You may also bitwise-or any of the following together:
 .IP \(bu 4
 16 : debug drawing
 .IP \(bu 4
-32 : misc debuging output
+32 : misc debugging output
 .IP \(bu 4
 64 : debug dynamic library handling
 .IP \(bu 4
@@ -196,6 +196,10 @@ program's output.
 \fBGGI_DEBUGSYNC\fR
 Turn on synchronous debugging output, flushing the output buffers
 before returning from \fBGGIDPRINT\fR calls.
+
+.TP
+\fBGGI_CONFDIR\fR
+Override compiled-in path to global config files (Win32 only).
 
 .TP
 \fBGGI_NEWVT\fR
@@ -215,12 +219,13 @@ a lower \fBGGI_MANSYNC_FPS\fR setting.
 Example \fBGGI_DISPLAY\fR settings:
 
 .nb
+.nf
 # see ASCII art flying GGIs
 
-$ GGI_DISPLAY=aa ./flying_ggis          
+$ GGI_DISPLAY=aa ./flying_ggis
 
 
-# see demo on both machine next door and local
+# see demo on both machine "crono" next door and local
 # X at the same time
 
 $ GGI_DISPLAY=multi:(Xlib:crono:0.0):(X::0.0) ./demo
@@ -228,6 +233,7 @@ $ GGI_DISPLAY=multi:(Xlib:crono:0.0):(X::0.0) ./demo
 Example \fBGGI_INPUT\fR string:
 
 .nb
+.nf
 $ export GGI_INPUT=linux-mouse:auto
 
 # for "multi" target only

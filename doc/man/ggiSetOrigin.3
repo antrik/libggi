@@ -1,8 +1,9 @@
-.TH "ggiSetOrigin" 3 GGI
+.TH "ggiSetOrigin" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggiSetOrigin\fR, \fBggiGetOrigin\fR : Set and get origin of virtual screen
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 int ggiSetOrigin(ggi_visual_t vis, int x, int y);
@@ -38,6 +39,7 @@ to \fBggiSetOrigin\fR previously.
 Pan from the top to the bottom of the virtual screen:
 
 .nb
+.nf
 for(i = 0; i < virt_y-visible_y; i++) {
       ggiSetOrigin(vis, 0, i);
 }

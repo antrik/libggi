@@ -1,8 +1,9 @@
-.TH "display-file" 7 GGI
+.TH "display-file" 7 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBdisplay-file\fR : Render display into image file
 .SH SYNOPSIS
 .nb
+.nf
 display-file: [-flushcmd=<command>] [-flushframe=<n>]
               [-flushtime=<t>] <filename>
 .fi
@@ -30,6 +31,7 @@ to execute at the times given by one of the two other parameters. This
 looks typically like:
 
 .nb
+.nf
 ppmtogif foo.ppm > foo.%04d.gif
 .fi
 The command is passed through a \fBprintf(3)\fR which has the current

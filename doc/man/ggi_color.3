@@ -1,8 +1,9 @@
-.TH "ggi_color" 3 GGI
+.TH "ggi_color" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggi_color\fR, \fBggi_pixel\fR : LibGGI color description
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 typedef struct { uint16 r,g,b,a; }   ggi_color;
@@ -18,8 +19,8 @@ precision on most displays.
 GGI drawing primitives for efficiency.  Use \fBggiMapColor(3)\fR to
 convert ggi_colors to ggi_pixels.
 .SH STRUCTURE MEMBERS
-\fBr\fR, \fBg\fR and \fBb\fR correspond respectively to the red, green and blue
-channels.  Since libggi does not deal with alpha compositing, the
+\fBr\fR, \fBg\fR and \fBb\fR correspond to the red, green and blue channels.
+Since libggi does not deal with alpha compositing, the
 \fBa\fR (alpha) field is mainly there for padding and it is not used by
 libggi. Setting this value has no effect in libggi itself, and it will
 most probably not be unmapped correctly from \fBggi_pixel\fRs. However,
@@ -27,7 +28,7 @@ some extensions might make use of it, in which case you should refer
 to their documentation.
 
 \fBggi_pixel\fRs format depends on the actual display and mode. For those
-who want to operate directly on pixel values, this format is describe
+who want to operate directly on pixel values, this format is described
 in the \fBggi_pixelformat\fR structure.
 .SH PIXEL ARRAYS
 Although individual pixels are kept into 32 bits \fBggi_pixel\fR, arrays

@@ -1,8 +1,9 @@
-.TH "ggi_directbuffer" 3 GGI
+.TH "ggi_directbuffer" 3 "2003-04-02 06:39:16" "ggi-current" GGI
 .SH NAME
 \fBggi_directbuffer\fR, \fBggi_pixellinearbuffer\fR, \fBggi_pixelplanarbuffer\fR, \fBggi_samplelinearbuffer\fR, \fBggi_sampleplanarbuffer\fR : LibGGI direct buffer structure description
 .SH SYNOPSIS
 .nb
+.nf
 #include <ggi/ggi.h>
 
 typedef struct {
@@ -37,15 +38,17 @@ directly.
 \fBtype\fR
 .RS
 .nb
+.nf
 /* Buffer types */
-#define GGI_DB_NORMAL               0x0001  /* "frame" is valid when set */
-#define GGI_DB_EXTENDED             0x0002
-#define GGI_DB_MULTI_LEFT   0x0004
-#define GGI_DB_MULTI_RIGHT  0x0008
+#define GGI_DB_NORMAL      0x0001  /* "frame" is valid when set */
+#define GGI_DB_EXTENDED    0x0002
+#define GGI_DB_MULTI_LEFT  0x0004
+#define GGI_DB_MULTI_RIGHT 0x0008
 
 /* Flags that may be or'ed with the buffer type */
 #define GGI_DB_SIMPLE_PLB   0x01000000
-/* GGI_DB_SIMPLE_PLB means that the buffer has the following properties:
+/* GGI_DB_SIMPLE_PLB means that the buffer
+   has the following properties:
   type == GGI_DB_NORMAL
   read == write
   noaccess == 0
@@ -138,6 +141,7 @@ which member of use.
 .PP
 .SH PIXEL LINEAR BUFFER
 .nb
+.nf
 typedef struct {
       int             stride;         /* bytes per row                */
       ggi_pixelformat *pixelformat;   /* format of the pixels         */
@@ -148,6 +152,7 @@ address space. A pixel with the pixel coordinates (\fBx\fR, \fBy\fR) is
 assigned a pixel number according to the following formula:
 
 .nb
+.nf
 pixel_number = (origin_y + y) * stride + origin_x + x;
 .fi
 In any case both \fBx\fR and \fBy\fR must not be negative, and less than the
@@ -164,6 +169,7 @@ might not be in host CPU native format and swapping operations need to
 be performed before writes or after reads.
 .SH PIXEL PLANAR BUFFER
 .nb
+.nf
 typedef struct {
       int             next_line;      /* bytes until next line        */
       int             next_plane;     /* bytes until next plane       */
@@ -172,6 +178,7 @@ typedef struct {
 .fi
 .SH SAMPLE LINEAR BUFFER
 .nb
+.nf
 typedef struct {
       int             num_pixels;     /* how many pixelformats        */
       int             stride;         /* bytes per row                */
@@ -180,6 +187,7 @@ typedef struct {
 .fi
 .SH SAMPLE PLANAR BUFFER
 .nb
+.nf
 typedef struct {
       int             next_line[3];   /* bytes until next line        */
       int             next_plane[3];  /* bytes until next plane       */
