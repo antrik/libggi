@@ -58,8 +58,8 @@ ggiEventsQueued
 ggiExit
 ggiExtensionAttach
 ggiExtensionDetach
-ggiExtensionIsAttached2VisByName
-ggiExtensionIsAttached2VisByID
+ggiExtensionIsAttachedByName
+ggiExtensionIsAttachedByID
 ggiExtensionLoadDL
 ggiExtensionRegister
 ggiExtensionUnregister
