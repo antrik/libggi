@@ -1,4 +1,4 @@
-/* $Id: ddinitnt.c,v 1.5 2003/10/07 05:29:01 cegger Exp $
+/* $Id: ddinitnt.c,v 1.6 2003/10/07 15:25:47 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectXNT target - Internal functions
@@ -141,14 +141,14 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (PtrActive && Active) {
 			PtrActive = 0;
 			while (ShowCursor(FALSE) >= 0);
-		}		/* End if */
+		}	/* if */
 		break;
 
 	case WM_NCMOUSEMOVE:
 		if (!PtrActive) {
 			PtrActive = 1;
 			while (ShowCursor(TRUE) < 0);
-		}		/* End if */
+		}	/* if */
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -179,16 +179,16 @@ int CreatePrimary(void)
 	pddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 	hr = IDirectDraw_CreateSurface(lpddext, &pddsd, &lppdds, NULL);
 	if (hr != 0) {
-		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", hr);
+		sprintf(errstr, "Init Primary Surface Failed RC = %d.  Exiting", (int)hr);
 		DDMessageBox(hWnd, errstr, "Primary Surface");
 		exit(-1);
-	}			/* End if */
+	}	/* if */
 	IDirectDraw_CreateClipper(lpddext, 0, &pClipper, NULL);
-        IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
-        IDirectDrawSurface_SetClipper(lppdds, pClipper);
-        IDirectDrawClipper_Release(pClipper);
-        pddsd.dwSize = sizeof(pddsd);
-        return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
+	IDirectDrawClipper_SetHWnd(pClipper, 0, hWnd);
+	IDirectDrawSurface_SetClipper(lppdds, pClipper);
+	IDirectDrawClipper_Release(pClipper);
+	pddsd.dwSize = sizeof(pddsd);
+	return IDirectDrawSurface_GetSurfaceDesc(lppdds, &pddsd);
 }
 
 int GetDesc(directx_priv * priv)
