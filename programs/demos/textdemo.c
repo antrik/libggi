@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.7 2004/04/02 16:02:48 ggibecka Exp $
+/* $Id: textdemo.c,v 1.8 2004/09/08 19:07:15 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -26,7 +26,7 @@
 #endif
 
 
-ggi_visual_t vis;
+static ggi_visual_t vis;
 
 int main(int argc, char *argv[])
 {

@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.8 2004/04/02 16:02:48 ggibecka Exp $
+/* $Id: saver.c,v 1.9 2004/09/08 19:05:35 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -31,15 +31,15 @@
 
 /* The time in minutes till activation
  */
-int timeout = 0;
+static int timeout = 0;
 
 /* The visual to draw on
  */
-ggi_visual_t visual;
+static ggi_visual_t visual;
 
 /* The colormap
  */
-ggi_color map[256];
+static ggi_color map[256];
 
 /* The colormap
  */
@@ -51,7 +51,7 @@ ggi_color map[256];
 
 /* Visible sizes.
  */
-int xsize, ysize;
+static int xsize, ysize;
 
 /* Get the interrupt counters. This is Linux specific.
  */
@@ -412,7 +412,7 @@ static void ge_vesa_blank3(void)
 
 /* List of available saver functions.
  */
-struct scrsaver {
+static struct scrsaver {
 	void (*func) (void);
 	char *name;
 } SaverList[] = { {
@@ -427,7 +427,7 @@ ge_vesa_blank3, "Power Off"}, {
 NULL, NULL}			/* Terminator */
 };
 
-struct scrsaver *SaverActive = SaverList;
+static struct scrsaver *SaverActive = SaverList;
 
 /* Execute a saver function.
  */

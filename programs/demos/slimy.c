@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.5 2004/02/02 19:22:00 cegger Exp $
+/* $Id: slimy.c,v 1.6 2004/09/08 19:05:57 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -35,7 +35,7 @@ static signed long int *sx, *sy;
 static int width;		/* Visible screen width, in pixels  */
 static int height;		/* Visible screen height, in pixels */
 
-int show_fps = 0;
+static int show_fps = 0;
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 
