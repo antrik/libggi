@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.2 2003/01/10 23:28:05 ortalo Exp $
+/* $Id: Gx00_accel.h,v 1.3 2005/01/23 21:57:20 nsouch Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -26,6 +26,7 @@
 #define _Gx00_ACCEL_H
 
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "kgi/config.h"
 #include <ggi/display/kgi.h>

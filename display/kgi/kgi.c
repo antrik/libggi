@@ -1,4 +1,4 @@
-/* $Id: kgi.c,v 1.17 2004/11/27 16:42:21 soyt Exp $
+/* $Id: kgi.c,v 1.18 2005/01/23 21:57:20 nsouch Exp $
 ******************************************************************************
 
 
@@ -30,6 +30,7 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/kgi.h>
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,

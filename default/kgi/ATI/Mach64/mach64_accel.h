@@ -1,4 +1,4 @@
-/* $Id: mach64_accel.h,v 1.3 2004/09/22 20:16:51 nsouch Exp $
+/* $Id: mach64_accel.h,v 1.4 2005/01/23 21:57:19 nsouch Exp $
 ******************************************************************************
 
    ATI Mach64 sublib function prototypes
@@ -28,6 +28,7 @@
 #define _MACH64LIB_H
 
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "kgi/config.h"
 #include <ggi/display/kgi.h>

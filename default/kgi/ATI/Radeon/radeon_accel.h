@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.9 2003/02/07 01:35:09 skids Exp $
+/* $Id: radeon_accel.h,v 1.10 2005/01/23 21:57:19 nsouch Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -26,6 +26,7 @@
 #define _RADEON_ACCEL_H
 
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "kgi/config.h"
 #include <ggi/display/kgi.h>
