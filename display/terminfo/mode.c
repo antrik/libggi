@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/08 11:21:30 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/12 19:40:24 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -123,7 +123,7 @@ int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 static int _GGI_terminfo_loadstubs(ggi_visual *vis)
 {
 	int i, err;
-	char sugname[256], args[256];
+	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 
 	for (i = 1; GGI_terminfo_getapi(vis, i, sugname, args)==0; i++) {
 		err = _ggiOpenDL(vis, sugname, args, NULL);

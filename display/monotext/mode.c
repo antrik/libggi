@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/08 20:32:22 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/09/12 19:31:11 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -121,7 +121,7 @@ static int do_dbstuff(ggi_visual *vis)
 static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_monotext_priv *priv = LIBGGI_PRIVATE(vis);
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
 	_GGIfreedbs(vis);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/08 20:41:57 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/09/12 19:44:35 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -84,8 +84,8 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	ggi_graphtype gt = tm->graphtype;
 	video_info_t modeinfo;
 	unsigned long modenum = 0;
-	char sugname[256];
-	char args[256];
+	char sugname[GGI_MAX_APILEN];
+	char args[GGI_MAX_APILEN];
 	int err = 0;
 	int id, i;
 	int pixelBytes;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/08 20:34:56 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/12 19:43:12 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -129,7 +129,7 @@ static int do_dbstuff(ggi_visual *vis)
 static int do_setmode(ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
 	_GGI_trueemu_freedbs(vis);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/08 11:05:16 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/12 19:23:58 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -59,7 +59,7 @@ int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 static int _GGIdomode(ggi_visual *vis)
 {
 	int err,id;
-	char sugname[256],args[256];
+	char sugname[GGI_MAX_APILEN],args[GGI_MAX_APILEN];
 
 	_ggiZapMode(vis, 0);
 

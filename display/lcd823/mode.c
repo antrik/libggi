@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/08 11:16:30 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/12 19:29:12 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -127,7 +127,7 @@ static int do_mmap(ggi_visual *vis)
 
 static int do_setmode(ggi_visual *vis)
 {
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	ggi_graphtype gt;
 	int err, id;
 

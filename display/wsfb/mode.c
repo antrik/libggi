@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/09/08 11:25:02 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/09/12 19:46:53 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -76,8 +76,8 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 	struct wsfb_priv *priv = WSFB_PRIV(vis);
 	//ggi_graphtype gt = tm->graphtype;
 	//unsigned long modenum = 0;
-	//char sugname[256];
-	//char args[256];
+	//char sugname[GGI_MAX_APILEN];
+	//char args[GGI_MAX_APILEN];
 	int err = 0;
 	//int id, i;
 	//int pixelBytes;

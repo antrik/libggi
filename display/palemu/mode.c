@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/09/08 20:33:46 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/09/12 19:31:52 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -142,7 +142,7 @@ static int do_setmode(ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 
 	int err, id;
 

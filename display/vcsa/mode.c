@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/09/08 11:24:01 cegger Exp $
+/* $Id: mode.c,v 1.7 2004/09/12 19:43:49 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -59,7 +59,7 @@ int GGI_vcsa_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
 { 
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
         if ((err = ggiCheckMode(vis, mode)) != 0) {

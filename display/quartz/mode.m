@@ -1,4 +1,4 @@
-/* $Id: mode.m,v 1.4 2004/09/08 11:18:37 cegger Exp $
+/* $Id: mode.m,v 1.5 2004/09/12 19:34:49 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -131,8 +131,8 @@ static void _GGIallocdbs(ggi_visual *vis)
 static int _ggi_load_mode_libs(ggi_visual *vis)
 {
 	int err, i;
-	char	name[256];
-	char	args[256];
+	char	name[GGI_MAX_APILEN];
+	char	args[GGI_MAX_APILEN];
 
 	GGIDPRINT("display-quartz: _ggi_load_mode_libs: called\n");
 

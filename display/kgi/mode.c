@@ -252,7 +252,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 {
 	const kgic_mapper_resource_info_result_t *fb;
 	int id, i;
-	char sugname[256], args[256];
+	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 	int err;
 	kgi_u8_t *fb_ptr;
 	kgi_size_t pad, stride;

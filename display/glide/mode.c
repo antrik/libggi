@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/09/08 11:13:51 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/09/12 19:25:08 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -351,7 +351,7 @@ res2glideres(glide_priv *priv, ggi_mode *mode,
 int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	glide_priv *priv = LIBGGI_PRIVATE(vis);
-	char libname[256], libargs[256];
+	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	GrScreenResolution_t resolution;
 	GrScreenRefresh_t    freq;
 	GrLfbInfo_t inf;

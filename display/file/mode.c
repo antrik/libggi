@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/08 20:30:09 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/09/12 19:24:16 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -287,8 +287,8 @@ static void _ggi_freedbs(ggi_visual *vis)
 static int _ggi_domode(ggi_visual *vis)
 {
 	int err, i;
-	char name[256];
-	char args[256];
+	char name[GGI_MAX_APILEN];
+	char args[GGI_MAX_APILEN];
 
 	_ggiZapMode(vis, 0);
 	_ggi_freedbs(vis);

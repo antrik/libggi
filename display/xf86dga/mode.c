@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/09/08 21:27:50 cegger Exp $
+/* $Id: mode.c,v 1.16 2004/09/12 19:49:43 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -202,7 +202,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 	ggidga_priv *priv;
 	XVisualInfo vinfo;
 	int flags, i, err, id;
-	char sugname[256], args[256];
+	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 
 	/* First, check if the mode can be set */
 	if (GGI_xf86dga_checkmode(vis, tm))

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2004/09/08 11:20:12 cegger Exp $
+/* $Id: mode.c,v 1.15 2004/09/12 19:37:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -167,8 +167,8 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 	vga_modeinfo *modeinfo;
 	int err = 0;
 	int id, i;
-	char sugname[256];
-	char args[256];
+	char sugname[GGI_MAX_APILEN];
+	char args[GGI_MAX_APILEN];
 
 	err = GGI_svga_checkmode(vis, tm);
 	if (err) return err;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/09/08 20:40:42 cegger Exp $
+/* $Id: mode.c,v 1.12 2004/09/12 19:25:54 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -127,8 +127,8 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 {
 	int err, i;
-	char	name[256];
-	char	args[256];
+	char	name[GGI_MAX_APILEN];
+	char	args[GGI_MAX_APILEN];
 	
 	GGIDPRINT("display-ipc: _GGIdomode: called\n");
 
