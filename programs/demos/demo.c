@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.2 2002/05/11 01:48:25 skids Exp $
+/* $Id: demo.c,v 1.3 2002/05/17 23:03:24 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -980,7 +980,7 @@ int main(int argc, char **argv)
 			ggiSetGamma(vis, gr, gb, gg);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis)) goto gamma_done;
 		}
 		for (gr = 0.1; 
 		     (gr < 1.0) && (TestTime() < 10); 
@@ -988,7 +988,7 @@ int main(int argc, char **argv)
 			ggiSetGamma(vis, gr, 0.1, 0.1);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis)) goto gamma_done;
 		}
 		for (gb = 0.1; 
 		     (gb < 1.0) && (TestTime() < 10); 
@@ -996,7 +996,7 @@ int main(int argc, char **argv)
 			ggiSetGamma(vis, 1.0, gb, 0.1);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis)) goto gamma_done;
 		}
 		for (gg = 0.1; 
 		     (gg < 1.0) && (TestTime() < 10); 
@@ -1004,8 +1004,9 @@ int main(int argc, char **argv)
 			ggiSetGamma(vis, 1.0, 1.0, gg);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) break;
+			if (ggiKbhit(vis)) goto gamma_done;
 		}
+	gamma_done:
 		ggiSetGamma(vis, 1.0, 1.0, 1.0);
 	}
 
