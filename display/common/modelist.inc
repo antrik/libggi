@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.6 2005/02/03 18:06:44 orzo Exp $
+/* $Id: modelist.inc,v 1.7 2005/02/06 13:03:31 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -335,6 +335,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 				   ggi_mode * p,
 				   void *mode_extra)
 {
+	int ret;
 	int maxamize_x, maxamize_y;
 
 	/* make the default to maximize the resolution... */
@@ -362,7 +363,6 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 			cm->req.visible.x = cm->sug.visible.y;
 	}
 
-	int ret;
 	ret =_GGI_default_mode_cmp(&cm->req, p, &cm->sug);
 
 	/* If the modes are indistinguishable, let the user
