@@ -57,9 +57,9 @@ m4_ifdef([$0_found], [m4_undefine([$0_found])], [$2
 
 # _LT_SET_OPTIONS(OPTIONS)
 # ------------------------
-# OPTIONS is a space-separated list of Automake options.
+# OPTIONS is a space-separated list of Libtool options.
 # If any OPTION has a handler macro declared with LT_OPTION_DEFINE,
-# despatch to that macro; otherwise complain about the unknown option
+# dispatch to that macro; otherwise complain about the unknown option
 # and exit.
 m4_define([_LT_SET_OPTIONS],
 [AC_FOREACH([_LT_Option], [$1],
@@ -86,9 +86,9 @@ _LT_UNLESS_OPTIONS([fast-install disable-fast-install],
 ])# _LT_SET_OPTIONS
 
 
-## ----------------------------------------- ##
-## Macros to handle LT_INIT_LIBTOOL options. ##
-## ----------------------------------------- ##
+## --------------------------------- ##
+## Macros to handle LT_INIT options. ##
+## --------------------------------- ##
 
 m4_define([_LT_MANGLE_DEFUN],
 [[_LT_OPTION_DEFUN_]m4_bpatsubst(m4_toupper([$1]), [[^A-Z0-9_]], [_])])
@@ -109,8 +109,11 @@ AU_DEFUN([AC_LIBTOOL_DLOPEN],
 [_LT_SET_OPTION([dlopen])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `dlopen' option into LT_LIBTOOL_INIT's first parameter.])
+put the `dlopen' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_LIBTOOL_DLOPEN], [])
 
 
 # win32-dll
@@ -141,14 +144,17 @@ AU_DEFUN([AC_LIBTOOL_WIN32_DLL],
 [_LT_SET_OPTION([win32-dll])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `win32-dll' option into LT_LIBTOOL_INIT's first parameter.])
+put the `win32-dll' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_LIBTOOL_WIN32_DLL], [])
 
 
 # _LT_ENABLE_SHARED([DEFAULT])
 # ----------------------------
 # implement the --enable-shared flag, and supports the `shared' and
-# `disable-shared' LT_INIT_LIBTOOL options.
+# `disable-shared' LT_INIT options.
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 m4_define([_LT_ENABLE_SHARED],
 [m4_define([_LT_ENABLE_SHARED_DEFAULT], [m4_if($1, no, no, yes)])dnl
@@ -186,35 +192,42 @@ AU_DEFUN([AC_ENABLE_SHARED],
 [_LT_SET_OPTION([shared])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `shared' option into LT_LIBTOOL_INIT's first parameter.])
+put the `shared' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AM_ENABLE_SHARED],
 [_LT_SET_OPTION([shared])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `shared' option into LT_LIBTOOL_INIT's first parameter.])
+put the `shared' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AC_DISABLE_SHARED],
 [_LT_SET_OPTION([disable-shared])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `disable-shared' option into LT_LIBTOOL_INIT's first parameter.])
+the `disable-shared' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AM_DISABLE_SHARED],
 [_LT_SET_OPTION([disable-shared])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `disable-shared' option into LT_LIBTOOL_INIT's first parameter.])
+the `disable-shared' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_ENABLE_SHARED], [])
+dnl AC_DEFUN([AM_ENABLE_SHARED], [])
+dnl AC_DEFUN([AC_DISABLE_SHARED], [])
+dnl AC_DEFUN([AM_DISABLE_SHARED], [])
+
 
 
 # _LT_ENABLE_STATIC([DEFAULT])
 # ----------------------------
 # implement the --enable-static flag, and support the `static' and
-# `disable-static' LT_INIT_LIBTOOL options.
+# `disable-static' LT_INIT options.
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 m4_define([_LT_ENABLE_STATIC],
 [m4_define([_LT_ENABLE_STATIC_DEFAULT], [m4_if($1, no, no, yes)])dnl
@@ -252,35 +265,42 @@ AU_DEFUN([AC_ENABLE_STATIC],
 [_LT_SET_OPTION([static])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `static' option into LT_LIBTOOL_INIT's first parameter.])
+put the `static' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AM_ENABLE_STATIC],
 [_LT_SET_OPTION([static])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `static' option into LT_LIBTOOL_INIT's first parameter.])
+put the `static' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AC_DISABLE_STATIC],
 [_LT_SET_OPTION([disable-static])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `disable-static' option into LT_LIBTOOL_INIT's first parameter.])
+the `disable-static' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AM_DISABLE_STATIC],
 [_LT_SET_OPTION([disable-static])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `disable-static' option into LT_LIBTOOL_INIT's first parameter.])
+the `disable-static' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_ENABLE_STATIC], [])
+dnl AC_DEFUN([AM_ENABLE_STATIC], [])
+dnl AC_DEFUN([AC_DISABLE_STATIC], [])
+dnl AC_DEFUN([AM_DISABLE_STATIC], [])
+
 
 
 # _LT_ENABLE_FAST_INSTALL([DEFAULT])
 # ----------------------------------
 # implement the --enable-fast-install flag, and support the `fast-install'
-# and `disable-fast-install' LT_INIT_LIBTOOL options.
+# and `disable-fast-install' LT_INIT options.
 # DEFAULT is either `yes' or `no'.  If omitted, it defaults to `yes'.
 m4_define([_LT_ENABLE_FAST_INSTALL],
 [m4_define([_LT_ENABLE_FAST_INSTALL_DEFAULT], [m4_if($1, no, no, yes)])dnl
@@ -318,21 +338,25 @@ AU_DEFUN([AC_ENABLE_FAST_INSTALL],
 [_LT_SET_OPTION([fast-install])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `fast-install' option into LT_LIBTOOL_INIT's first parameter.])
+the `fast-install' option into LT_INIT's first parameter.])
 ])
 
 AU_DEFUN([AC_DISABLE_FAST_INSTALL],
 [_LT_SET_OPTION([disable-fast-install])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you put
-the `disable-fast-install' option into LT_LIBTOOL_INIT's first parameter.])
+the `disable-fast-install' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_ENABLE_FAST_INSTALL], [])
+dnl AC_DEFUN([AM_DISABLE_FAST_INSTALL], [])
 
 
 # _LT_WITH_PIC([MODE])
 # --------------------
 # implement the --with-pic flag, and support the `pic-only' and `no-pic'
-# LT_INIT_LIBTOOL options.
+# LT_INIT options.
 # MODE is either `yes' or `no'.  If omitted, it defaults to `both'.
 m4_define([_LT_WITH_PIC],
 [AC_ARG_WITH([pic],
@@ -354,5 +378,8 @@ AU_DEFUN([AC_LIBTOOL_PIC_MODE],
 [_LT_SET_OPTION([pic-only])
 AC_DIAGNOSE([obsolete],
 [$0: Remove this warning and the call to _LT_SET_OPTION when you
-put the `pic-only' option into LT_LIBTOOL_INIT's first parameter.])
+put the `pic-only' option into LT_INIT's first parameter.])
 ])
+
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([AC_LIBTOOL_PIC_MODE], [])

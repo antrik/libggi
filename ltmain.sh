@@ -1,6 +1,6 @@
-# Generated from ltmain.in; do not edit by hand
+# Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.55 2004/11/03 14:07:35) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.67 2004/11/10 13:20:51) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004 Free Software Foundation, Inc.
@@ -62,7 +62,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.55 2004/11/03 14:07:35) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.67 2004/11/10 13:20:51) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -71,8 +71,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.55 2004/11/03 14:07:35"
-package_revision=1.1667.2.55
+TIMESTAMP=" 1.1667.2.67 2004/11/10 13:20:51"
+package_revision=1.1667.2.67
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2813,7 +2813,7 @@ func_mode_link ()
 	      fi
 	    done
 	  else
-	    func_fatal_error "link input file \`$save_arg' does not exist"
+	    func_fatal_error "link input file \`$arg' does not exist"
 	  fi
 	  arg=$save_arg
 	  prev=
@@ -3517,6 +3517,12 @@ func_mode_link ()
 	    finalize_deplibs="$deplib $finalize_deplibs"
 	  else
 	    deplibs="$deplib $deplibs"
+	    if test "$linkmode" = lib ; then
+		case "$inherited_linker_flags " in
+		    *" $deplib "*) ;;
+		    * ) inherited_linker_flags="$inherited_linker_flags $deplib" ;;
+		esac
+	    fi
 	  fi
 	  continue
 	  ;;
@@ -6183,9 +6189,18 @@ EOF
 
 EOF
 
-	    cat >> $cwrappersource <<EOF
+	    case $host_os in
+	      mingw*)
+		cat >> $cwrappersource <<EOF
+  execv("$SHELL",(char const **)newargz);
+EOF
+	      ;;
+	      *)
+		cat >> $cwrappersource <<EOF
   execv("$SHELL",newargz);
 EOF
+	      ;;
+	    esac
 
 	    cat >> $cwrappersource <<"EOF"
   return 0;
