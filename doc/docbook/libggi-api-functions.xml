@@ -2335,15 +2335,21 @@ linkend="ref-struct-ggi-color">pixels</link> by definition and the
 
 <para>
 <function>ggiSetFlags</function> sets the specified flags (bitwise
-OR'd together) on a visual. This function is usually used to set async
-mode on a visual (see below).  </para>
+OR'd together) on a visual.  </para>
 
 <para><function>ggiGetFlags</function> obtains the flags currently in
 effect.  </para>
 
 <para><function>ggiAddFlags</function> and
-<function>ggiRemoveFlags</function> are macros that set or unsets the
+<function>ggiRemoveFlags</function> are macros that set or unset the
 specified flags.  </para>
+
+<para>Flags are used to alter a visual's underlying behavior.  All flags 
+default to an unset value.  Flags which are not supported by a given visual 
+will remain unset even when an attempt is made to raise them.  Thus, it 
+is possible to tell by reading back the flags whether or not each of the 
+flags is supported by the given visual.
+</para>
 
 </refsect1>
 
@@ -2382,13 +2388,17 @@ almost.)  This is the default mode for all visuals.  </para>
 <listitem>
 <para> The asynchronous mode does not guarantee that drawing commands
 are executed immediately, but is faster on many targets.  If the
-visual does not support asynchronous mode, setting it has no effect.
+visual does not support asynchronous mode, attempting to set it has 
+no effect.  Code written for asynchronous visuals will always perform 
+correctly on synchronous visuals (but not visa-versa), so it is not 
+necessary to adapt a program's behavior if this flag is not available.
 </para>
 
 <para>To make sure that all pending graphics operations are actually
 done and the screen is updated, you need to call <link
 linkend="api-ggiflush"> <function>ggiFlush</function></link>.  This
-call is not needed in synchronous mode.)  </para>
+call is not needed in synchronous mode.)
+</para>
 </listitem>
 </itemizedlist>
 
@@ -2398,15 +2408,15 @@ On some targets such as the X target there is no real synchronous
 mode, so LibGGI fakes one by periodically calling
 <function>ggiFlush</function> in the background.  This process can
 take about half the execution time of a program.  So using synchronous
-mode can <emphasis>really</emphasis> slow things down.  </para>
+mode can <emphasis>really</emphasis> slow things down.</para>
 
-<para>The synchronous mode is default because it is what most
-programmers expect.</para>
+<para>However, the synchronous mode is the default, because it is 
+what most programmers expect.</para>
 </warning>
 
 <para>
-All operations are guaranteed to be performed in the
-order given in both modes. Reordering is not done.
+In either mode, all operations are guaranteed to be performed in the
+order in which they are called. Reordering is not done.
 </para>
 
 <para>
@@ -2427,6 +2437,77 @@ ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
 </example>
 
 </refsect1>
+
+<refsect1>
+<title>Tidy buffer mode.</title>
+
+<para>
+Some visuals allow applications to manage their own dirty regions when
+using the directbuffer.</para>
+
+<itemizedlist>
+<listitem>
+<para>
+In the default dirty-buffering mode, visuals which use backbuffers
+to render to a display system will refresh the entire screen when
+the resource lock is held and then released for the write frame's 
+directbuffer.  In syncronous modes this full-screen refresh may
+be performed at regular intervals.  This can be very inefficient, 
+but it guarantees that naive applications will be rendered correctly 
+even though they were not written with a backbuffered display in mind.
+</para>
+
+<para>
+These visuals may also perform dirty-region tracking, such that if the 
+directbuffer is used, altered data may never reach the screen until the
+lock is released, because the visual does not know that a certain area 
+of the backbuffer contains new (dirty) data.  Even explicitly calling 
+<link linkend="api-ggiflush"><function>ggiFlushRegion</function></link> 
+on the affected area may not cause the data to be sent to the screen.
+</para>
+</listitem>
+
+<listitem>
+<para> In tidy-buffering mode, which is set by raising the flag
+GGIFLAG_TIDYBUF, visuals do not synchronize the screen at all when
+the write frame's directbuffer lock is held or upon its release.  However, 
+in this mode, <link linkend="api-ggiflush"><function>ggiFlushRegion</function>
+</link> will always cause the requested region of the screen to be updated.
+</para>
+<para> Note that this means that, as long as the lock is held, 
+affected regions may also have to be flushed (and thus, should be flushed) 
+after normal drawing primitives are called.
+</para>
+<para> Before releasing the lock, applications should be sure to flush 
+all affected regions, because the visual may revert to its default 
+dirty-region management behavior after the lock is released.
+</para>
+<para>Do note, also, that in multi-frame displays 
+<link linkend="api-ggiflush"><function>ggiFlushRegion</function></link> 
+affects only the current write frame, so even though it is possible to use 
+a directbuffer to alter a different frame, you must call 
+<link linkend="api-ggisetdisplayframe"><function>ggiSetWriteFrame</function>
+</link> to tell the visual that you will be altering the frame.
+</para>
+</listitem>
+</itemizedlist>
+
+<para>
+The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is
+safe to attempt to set it whether or not it is available.  Code written
+for the tidy-buffering mode will display correctly on visuals which
+do not have a tidy-buffering mode (but not visa-versa), so it is not 
+necessary to adapt program behavior to its non-presence.
+</para>
+<para>
+It is recommended that, if an application must use directbuffer, the
+application should attempt to place the visual in tidy-buffered mode.
+Do note, though, that many applications that use the directbuffer do
+not actually need to do so and probably should not, as it reduces portability.
+</para>
+
+</refsect1>
+
 
 <refsect1>
 <title>See Also</title>
