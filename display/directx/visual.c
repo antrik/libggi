@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2004/11/27 16:42:19 soyt Exp $
+/* $Id: visual.c,v 1.31 2005/01/03 13:07:42 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -168,7 +168,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 			    strtoul(options[OPT_INWIN].result, NULL, 0);
 			if (!IsWindow(priv->hParent)) {
 				fprintf(stderr,
-					"display-directx: 0x%08x "
+					"0x%08x "
 					"is not a valid window handle.\n",
 					(unsigned) priv->hParent);
 				priv->hParent = NULL;

@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.42 2004/11/27 16:42:18 soyt Exp $
+/* $Id: ddinit.c,v 1.43 2005/01/03 13:07:41 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -75,7 +75,7 @@ DDShutdown(directx_priv *priv)
 
 	/* destroy the window and the surface */
 	if (priv->hWnd && !priv->hParent) {
-		DPRINT("display-directx: End session\n");
+		DPRINT("End session\n");
 		PostThreadMessage(priv->nThreadID, WM_DDEND, 0, 0);
 	}
 	DDDestroySurface(priv);
@@ -93,8 +93,7 @@ DDShutdown(directx_priv *priv)
 	if (priv->hThread &&
 	    WaitForSingleObject(priv->hThread, 2000) != WAIT_OBJECT_0) {
 		/* asta la vista, baby */
-		DPRINT("display-directx: "
-			  "Terminating helper thread harshly\n");
+		DPRINT("Terminating helper thread harshly\n");
 		TerminateThread(priv->hThread, 0);
 	}
 	if (priv->hThread)
@@ -134,7 +133,6 @@ static BOOL CALLBACK
 ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 {
 	matchmode *mm = (matchmode *)ctx;
-	directx_priv *priv = GGIDIRECTX_PRIV(mm->vis);
 	ggi_mode *mode = mm->mode;
 	char *msg;
 	int ndx, bdx, ndy, bdy;
@@ -146,7 +144,7 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 			if (sd->ddpfPixelFormat.dwRGBBitCount > mm->bits)
 				goto accept;
 			if (sd->ddpfPixelFormat.dwRGBBitCount < mm->bits) {
-				msg = "directx: rej mode (%i,%i) "
+				msg = "rej mode (%i,%i) "
 					"poorer depth %i\n";
 				goto next;
 			}
@@ -159,7 +157,7 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 			if (sd->ddpfPixelFormat.dwRGBBitCount < mm->bits)
 				goto accept;
 			if (sd->ddpfPixelFormat.dwRGBBitCount > mm->bits) {
-				msg = "directx: rej mode (%i,%i) "
+				msg = "rej mode (%i,%i) "
 					"poorer depth %i\n";
 				goto next;
 			}
@@ -173,7 +171,7 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 			goto accept;
 		if (mm->bestx * mm->besty < (int)(sd->dwWidth * sd->dwHeight))
 			goto accept;
-		msg = "directx: rej smaller mode (%i,%i) depth %i\n";
+		msg = "rej smaller mode (%i,%i) depth %i\n";
 		goto next;
 	}
 
@@ -189,7 +187,7 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 	if (ndx >= 0 && ndy >= 0 && (bdx < 0 || bdy < 0))
 		goto accept;
 	if ((ndx < 0 || ndy < 0) && bdx >= 0 && bdy >= 0) {
-		msg = "directx: rej bad mode (%i,%i) depth %i\n";
+		msg = "rej bad mode (%i,%i) depth %i\n";
 		goto next;
 	}
 	if (ndx*ndx + ndy*ndy < bdx*bdx + bdy*bdy)
@@ -197,14 +195,14 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 	if (ndx*ndx + ndy*ndy == bdx*bdx + bdy*bdy) {
 		if (sd->ddpfPixelFormat.dwRGBBitCount >= mm->bits)
 			goto accept;
-		msg = "directx: rej mode (%i,%i) poorer depth %i\n";
+		msg = "rej mode (%i,%i) poorer depth %i\n";
 		goto next;
 	}
-	msg = "directx: rej worse mode (%i,%i) depth %i\n";
+	msg = "rej worse mode (%i,%i) depth %i\n";
 	goto next;
 
 accept:
-	msg = "directx: best mode so far (%i,%i) depth %i\n";
+	msg = "best mode so far (%i,%i) depth %i\n";
 	mm->bestx = sd->dwWidth;
 	mm->besty = sd->dwHeight;
 	mm->bits  = sd->ddpfPixelFormat.dwRGBBitCount;
@@ -747,7 +745,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (priv->inp) {
 			gii_event ev;
 
-			DPRINT("display-directx: tell inputlib about "
+			DPRINT("tell inputlib about "
 				  "new system parameters\n");
 
 			ev.cmd.size = sizeof(gii_cmd_event);
@@ -882,7 +880,7 @@ DDEventLoop(void *lpParm)
 	while (GetMessage(&msg, NULL, 0, 0)) {
 		if (msg.hwnd == NULL && msg.message == WM_DDEND) {
 			/* Use PostThreadMessage to get here */
-			DPRINT("display-directx: Ending session, "
+			DPRINT("Ending session, "
 				  "destroying window.\n");
 			DestroyWindow(priv->hWnd);
 			break;
@@ -891,7 +889,7 @@ DDEventLoop(void *lpParm)
 			directx_fullscreen *dxfull =
 				(directx_fullscreen *)msg.lParam;
 			if (!dxfull) {
-				fprintf(stderr, "directx: Aieee! "
+				fprintf(stderr, "Aieee! "
 					"No lParam for WM_DDFULLSCREEN\n");
 				exit(1);
 			}
@@ -900,8 +898,9 @@ DDEventLoop(void *lpParm)
 				dxfull->priv->lpddext, dxfull->priv->hWnd,
 				DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
 			if (FAILED(dxfull->hr))
-				DPRINT_MODE("failed %x\n", dxfull->hr);
-			DPRINT_MODE("directx: Set fullscreen mode "
+				DPRINT_MODE("SetCooperativeLevel failed %x\n",
+					dxfull->hr);
+			DPRINT_MODE("Set fullscreen mode "
 				"(%i,%i) size %d\n",
 				dxfull->mode->visible.x,
 				dxfull->mode->visible.y,
@@ -912,7 +911,7 @@ DDEventLoop(void *lpParm)
 				dxfull->mode->visible.y,
 				GT_SIZE(dxfull->mode->graphtype), 0, 0);
 			if (FAILED(dxfull->hr))
-				DPRINT_MODE("directx: failed %x\n",
+				DPRINT_MODE("SetDisplayMode failed %x\n",
 					dxfull->hr);
 			SetEvent(dxfull->event);
 			continue;
@@ -921,7 +920,7 @@ DDEventLoop(void *lpParm)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	DPRINT("display-directx: Helper thread terminating\n");
+	DPRINT("Helper thread terminating\n");
 
 #ifndef __CYGWIN__
 	_endthreadex(msg.wParam);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2004/11/27 20:03:31 soyt Exp $
+/* $Id: mode.c,v 1.32 2005/01/03 13:07:42 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -240,7 +240,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 	else if (mode->virt.y == GGI_AUTO)
 		mode->virt.y = mode->visible.y;
 
-	DPRINT_MODE("directx: visible (%i,%i) virt (%i,%i) size (%i,%i)\n",
+	DPRINT_MODE("visible (%i,%i) virt (%i,%i) size (%i,%i)\n",
 		mode->visible.x, mode->visible.y,
 		mode->virt.x, mode->virt.y,
 		mode->size.x, mode->size.y);
@@ -290,7 +290,7 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 	LeaveCriticalSection(&priv->cs);
 
 	DPRINT_MODE
-	    ("display-directx: checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
+	    ("checkmode returns %dx%d#%dx%dF%d[0x%02x]\n",
 	     mode->visible.x, mode->visible.y, mode->virt.x, mode->virt.y,
 	     mode->frames, mode->graphtype);
 
@@ -463,7 +463,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 		LIBGGI_PAL(vis)->rw_stop  = start+len;
 	}
 
-	DPRINT_COLOR("directx setPalette success\n");
+	DPRINT_COLOR("setPalette success\n");
 
 /*	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))*/
 		DDChangePalette(vis);
