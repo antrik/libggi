@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.9 2004/08/09 11:39:08 pekberg Exp $
+/* $Id: inputdump.c,v 1.10 2004/08/09 13:35:55 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -229,8 +229,8 @@ static void draw_inp_device(mydev_info *M)
 		if (w < 0)
 			w = 0;
 	}
-	if (w > sizeof(buf) - 1)
-		w = sizeof(buf) - 1;
+	if (w > (int)(sizeof(buf) - 1))
+		w = (int)sizeof(buf) - 1;
 	M->val_x = w;
 
 	if (M->val_h > 0) {
