@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2004/11/27 16:42:21 soyt Exp $
+/* $Id: mode.c,v 1.25 2005/01/23 21:42:56 nsouch Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -28,6 +28,7 @@
 #include "kgi/config.h"
 #include <ggi/display/kgi.h>
 #include <ggi/internal/font/8x8>
+#include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
 #include <stdlib.h>
