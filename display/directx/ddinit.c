@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.6 2003/10/07 15:27:51 cegger Exp $
+/* $Id: ddinit.c,v 1.7 2003/10/07 16:07:21 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -234,135 +234,136 @@ int CreateBackup(void)
         bddsd.lPitch = pddsd.lPitch;
 
 /* Set up the pixel format */
-        ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
-        bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-        bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
-        bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
-        bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
-        bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
-        bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
+	ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
+	bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+	bddsd.ddpfPixelFormat.dwFlags = DDPF_RGB;
+	bddsd.ddpfPixelFormat.dwRGBBitCount = pddsd.ddpfPixelFormat.dwRGBBitCount;
+	bddsd.ddpfPixelFormat.dwRBitMask = pddsd.ddpfPixelFormat.dwRBitMask;
+	bddsd.ddpfPixelFormat.dwGBitMask = pddsd.ddpfPixelFormat.dwGBitMask;
+	bddsd.ddpfPixelFormat.dwBBitMask = pddsd.ddpfPixelFormat.dwBBitMask;
 
-        rc = IDirectDraw_CreateSurface(lpddext, &bddsd, &lpbdds, NULL);
-        if (rc) {
-                sprintf(message, "CreateBackup error : %ld", rc & 0xffff);
-                DDMessageBox(hWnd, message, "Redraw");
-        }
-        return rc;
+	rc = IDirectDraw_CreateSurface(lpddext, &bddsd, &lpbdds, NULL);
+	if (rc) {
+		sprintf(message, "CreateBackup error : %ld. Exiting", rc & 0xffff);
+		DDMessageBox(hWnd, message, "Backup");
+		exit(-1);
+	}
+	return rc;
 }
 
 HANDLE
 DDInit(directx_priv * priv)
 {
-        DWORD ThreadID;
+	DWORD ThreadID;
 
-        hSem = CreateSemaphore(NULL, 0, 1, NULL);
-        hThreadID = CreateThread(NULL, 0, DDInitThread, (LPVOID) priv, 0,
-                                 &ThreadID);
-        if (hThreadID) {
-                WaitForSingleObject(hSem, INFINITE);
-        }
-        priv->hWnd = hWnd;
-        priv->hInstance = hInstance;
-        return hThreadID;
+	hSem = CreateSemaphore(NULL, 0, 1, NULL);
+	hThreadID = CreateThread(NULL, 0, DDInitThread, (LPVOID) priv, 0,
+				 &ThreadID);
+	if (hThreadID) {
+		WaitForSingleObject(hSem, INFINITE);
+	}
+	priv->hWnd = hWnd;
+	priv->hInstance = hInstance;
+	return hThreadID;
 }
 
 DWORD WINAPI
 DDInitThread(LPVOID lpParm)
 {
-        WNDCLASS wc;
-        MSG msg;
+	WNDCLASS wc;
+	MSG msg;
 
-        Active = 0;
-        hInstance = GetModuleHandle(NULL);
+	Active = 0;
+	hInstance = GetModuleHandle(NULL);
 
-        wc.style = 0;
-        wc.lpfnWndProc = WindowProc;
-        wc.cbClsExtra = 0;
-        wc.cbWndExtra = 0;
-        wc.hInstance = hInstance;
-        wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE("DirectX.ico"));
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
-        wc.lpszMenuName = NAME;
-        wc.lpszClassName = NAME;
-        RegisterClass(&wc);
+	wc.style = 0;
+	wc.lpfnWndProc = WindowProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE("DirectX.ico"));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
+	wc.lpszMenuName = NAME;
+	wc.lpszClassName = NAME;
+	RegisterClass(&wc);
 
-        /* Create a window */
-        hWnd = CreateWindowEx(0,
-                              NAME,
-                              TITLE,
-                              WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX,
-                              0,
-                              0,
-                              640 + 8,
-                              480 + 28,
-                              NULL,
-                              NULL,
-                              hInstance,
-                              NULL);
-        if (!hWnd)
-                return FALSE;
+	/* Create a window */
+	hWnd = CreateWindowEx(0,
+			      NAME,
+			      TITLE,
+			      WS_OVERLAPPEDWINDOW & ~WS_SIZEBOX,
+			      0,
+			      0,
+			      640 + 8,
+			      480 + 28,
+			      NULL,
+			      NULL,
+			      hInstance,
+			      NULL);
+	if (!hWnd)
+		return FALSE;
 
-        DirectDrawCreate(NULL, &lpdd, NULL);
-        IDirectDraw_QueryInterface(lpdd, &IID_IDirectDraw4, (LPVOID *) & lpddext);
-        IDirectDraw_EnumDisplayModes(lpdd, 0, NULL, NULL, EnumDisplayModesCallback);
-        ReleaseSemaphore(hSem, 1, NULL);
-        Active = 1;
+	DirectDrawCreate(NULL, &lpdd, NULL);
+	IDirectDraw_QueryInterface(lpdd, &IID_IDirectDraw4, (LPVOID *) & lpddext);
+	IDirectDraw_EnumDisplayModes(lpdd, 0, NULL, NULL, EnumDisplayModesCallback);
+	ReleaseSemaphore(hSem, 1, NULL);
+	Active = 1;
 
-        while (GetMessage(&msg, NULL, 0, 0)) {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-        }
+	while (GetMessage(&msg, NULL, 0, 0)) {
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 
-        return msg.wParam;
+	return msg.wParam;
 }
 
 char locked = 0;
 
 char *DDLock(void)
 {
-        return (char *) lpSurfaceAdd;
+	return (char *) lpSurfaceAdd;
 }
 
 HRESULT DDUnlock(void)
 {
-        return 0;
+	return 0;
 }
 
 HRESULT redraw(void)
 {
 
-        IDirectDrawSurface_Blt(lppdds, &DestWinPos,
-                               lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
-        return 0;
+	IDirectDrawSurface_Blt(lppdds, &DestWinPos,
+			       lpbdds, &SrcWinPos, DDBLT_WAIT, NULL);
+	return 0;
 }
 
 int DXChangeMode(directx_priv * priv, DWORD width, DWORD height, DWORD BPP)
 {
-        DDCMS ddcms;
-        char message[100];
-        int rc;
+	DDCMS ddcms;
+	char message[100];
+	int rc;
 
-        ddcms.width = width;
-        ddcms.height = height;
-        ddcms.BPP = BPP;
+	ddcms.width = width;
+	ddcms.height = height;
+	ddcms.BPP = BPP;
 
 
-        rc = DDChangeMode(priv, &ddcms);
-        if (rc) {
-                sprintf(message, "ChangeMode failed with rc= %d\n",
-                        rc & 0xffff);
-                DDMessageBox(hWnd, message, "INFO");
-        } else {
-                GetDesc(priv);
-        }
+	rc = DDChangeMode(priv, &ddcms);
+	if (rc) {
+		sprintf(message, "ChangeMode failed with rc= %d\n",
+			rc & 0xffff);
+		DDMessageBox(hWnd, message, "INFO");
+	} else {
+		GetDesc(priv);
+	}
 
-        return rc;
+	return rc;
 }
 
 HRESULT DDChangeMode(directx_priv * priv, DDCMS * ddcms)
 {
-        return SendMessage(hWnd, WM_DDCHANGEMODE, 0, (LPARAM) ddcms);
+	return SendMessage(hWnd, WM_DDCHANGEMODE, 0, (LPARAM) ddcms);
 }
 
 int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
@@ -384,34 +385,34 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 
 	if (GT_DEPTH(mode->graphtype) == GGI_AUTO) {
 		HWND wnd = GetDesktopWindow();
-                HDC dc = GetDC(wnd);
-                int depth = GetDeviceCaps(dc, BITSPIXEL);
-                ReleaseDC(wnd, dc);
-                switch (depth) {
-                case 1:
-                        mode->graphtype = GT_1BIT;
-                        break;
-                case 2:
-                        mode->graphtype = GT_2BIT;
-                        break;
-                case 4:
-                        mode->graphtype = GT_4BIT;
-                        break;
-                case 8:
-                        mode->graphtype = GT_8BIT;
-                        break;
-                case 15:
-                        mode->graphtype = GT_15BIT;
-                        break;
-                case 16:
-                        mode->graphtype = GT_16BIT;
-                        break;  
-                case 24:
-                        mode->graphtype = GT_24BIT;
-                        break;
-                case 32:
-                        mode->graphtype = GT_32BIT;
-                        break;
+		HDC dc = GetDC(wnd);
+		int depth = GetDeviceCaps(dc, BITSPIXEL);
+		ReleaseDC(wnd, dc);
+		switch (depth) {
+		case 1:
+			mode->graphtype = GT_1BIT;
+			break;
+		case 2:
+			mode->graphtype = GT_2BIT;
+			break;
+		case 4:
+			mode->graphtype = GT_4BIT;
+			break;
+		case 8:
+			mode->graphtype = GT_8BIT;
+			break;
+		case 15:
+			mode->graphtype = GT_15BIT;
+			break;
+		case 16:
+			mode->graphtype = GT_16BIT;
+			break;
+		case 24:
+			mode->graphtype = GT_24BIT;
+			break;
+		case 32:
+			mode->graphtype = GT_32BIT;
+			break;
 		}
 	}
 
@@ -459,8 +460,8 @@ int DDCheckMode(ggi_visual *vis, ggi_mode * mode)
 
 static HRESULT CALLBACK EnumDisplayModesCallback(LPDDSURFACEDESC pddsd, LPVOID Context)
 {
-        if (nDisplayModes == MAX_DISPLAYMODES - 1)
-                return DDENUMRET_CANCEL;
+	if (nDisplayModes == MAX_DISPLAYMODES - 1)
+		return DDENUMRET_CANCEL;
 
 	DisplayModes[nDisplayModes].width = pddsd->dwWidth;
 	DisplayModes[nDisplayModes].height = pddsd->dwHeight;
