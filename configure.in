@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.74 2002/12/21 16:25:53 cegger Exp $
+dnl $Id: configure.in,v 1.75 2002/12/22 10:47:50 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -29,7 +29,6 @@ bsdsock_libs=""
 
 dnl Common useable Targets
 build_x_target="auto"
-build_xlib_target="no"
 build_file_target="auto"
 build_kgi_target="no"
 build_libkgi_target="no"
@@ -124,9 +123,6 @@ dnl Common useable Targets
 AC_ARG_ENABLE(x,
 [  --disable-x             don't build the X target  (uses memory-target as backbuffer)],
 build_x_target=$enableval)
-AC_ARG_ENABLE(xlib,
-[  --disable-xlib          don't build the Xlib target],
-build_xlib_target=$enableval)
 AC_ARG_ENABLE(file,
 [  --disable-file          don't build the file target],
 build_file_target=$enableval)
@@ -613,12 +609,10 @@ else
 fi
 
 if test "x$build_x_target" != "xno" \
-	-o "x$build_xlib_target" != "xno" \
 	-o "x$build_dga_target" != "xno"; then
   AC_PATH_XTRA
   if test "x$no_x" = "xyes"; then
     build_x_target="no"
-    build_xlib_target="no"
     build_dga_target="no"
   else
 
@@ -865,15 +859,6 @@ else
 	XSUBDIRS="$XSUBDIRS vidmode"
 	AC_MSG_RESULT(yes)
   fi
-fi
-
-AC_MSG_CHECKING(if we should build xlib     target)
-if test "x$build_xlib_target" = "xno"; then
-  AC_MSG_RESULT(no)
-else
-  DISPLAYSUBDIRS="$DISPLAYSUBDIRS Xlib"
-  build_xlib_target="yes"
-  AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(if we should build libkgi   target)
@@ -1216,7 +1201,6 @@ display/X/helper/vidmode/Makefile
 display/X/helper/evi/Makefile
 display/X/helper/dbe/Makefile
 display/X/helper/shm/Makefile
-display/Xlib/Makefile
 display/aa/Makefile
 display/common/Makefile
 display/directx/Makefile
@@ -1295,7 +1279,7 @@ dist/rpm/libggi.spec
 )
 
 dnl Removed dirs
-dnl  display/suidkgi/Makefile
-dnl  default/ramdac/Makefile
-dnl  default/linmm_banked/Makefile
-dnl  default/ioctl/Makefile
+dnl display/suidkgi/Makefile
+dnl default/ramdac/Makefile
+dnl default/linmm_banked/Makefile
+dnl default/ioctl/Makefile
