@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.143 2004/10/24 11:04:26 cegger Exp $
+dnl $Id: configure.in,v 1.144 2004/10/24 11:11:12 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -306,11 +306,10 @@ dnl Checks for header files.
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
 
 AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
-sys/wait.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
+sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
 sys/socket.h netinet/in.h netdb.h windows.h linux/h3600_ts.h \
 asm/sharp_ts.h \
