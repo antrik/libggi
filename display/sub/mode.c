@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/10/27 18:26:24 skids Exp $
+/* $Id: mode.c,v 1.3 2004/09/08 11:19:39 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -31,9 +31,9 @@
 
 int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	if(num==0) {
 		strcpy(apiname, "display-sub");
-		strcpy(arguments, "");
 		return 0;
 	}
 
