@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2004/09/13 10:57:48 cegger Exp $
+/* $Id: mode.c,v 1.13 2004/10/10 20:26:55 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -111,10 +111,10 @@ int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	}
 	
 	aa_renderpalette(priv->context, *pal, &aa_defrenderparams, 
-									 x / AA_SCRMULT_X,
-									 y / AA_SCRMULT_Y,
-									 (x + w + AA_SCRMULT_X-1) / AA_SCRMULT_X,
-									 (y + h + AA_SCRMULT_Y-1) / AA_SCRMULT_Y);
+			 x / AA_SCRMULT_X,
+			 y / AA_SCRMULT_Y,
+			 (x + w + AA_SCRMULT_X-1) / AA_SCRMULT_X,
+			 (y + h + AA_SCRMULT_Y-1) / AA_SCRMULT_Y);
 	
 	aa_flush(priv->context);
 
