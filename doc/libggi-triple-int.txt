@@ -28,6 +28,13 @@ with triple precision.
 The most significant part of the `triple-int` is stored at the
 highest index in the array representation.
 
+A `triple-int` is typically declared as follows::
+
+  unsigned x[3];
+
+Don't let the above unsigned keyword fool you, all the routines
+operate as if the `triple-int` is signed.
+
 
 See Also
 --------
@@ -65,11 +72,11 @@ Synopsis
 Description
 -----------
 
-`assign_3` assigns the value of one existing triple-int `r` to another
-triple-int.
+`assign_3` assigns the value of one existing `triple-int` `r` to another
+`triple-int` `l`.
 
 `assign_int_3` and `assign_unsigned_3` assignes the argument `r` to
-the least significant possition of the `triple-int`. `assign_int_3`
+the least significant possition of the `triple-int` `l`. `assign_int_3`
 extends the sign, while `assign_unsigned_3` does not.
 
 
@@ -77,7 +84,7 @@ Return value
 ------------
 
 `assign_3`, `assign_int_3` and `assign_unsigned_3` all return a pointer
-to the freshly assigned `triple-int`.
+to the freshly assigned `triple-int` `x`.
     
 
 Examples
@@ -388,6 +395,18 @@ Description
 
 `divmod_3` calculates the quotient `q` and the remainder `r` of `a`/`b`
 such that `a` = `q` * `b` + `r`. Equivalent to r=a%b,q=a/b.
+
+Multiplication and division needs to operate on `limbs` to perform long
+multiplication and division. If a type with twice the precision of an
+`unsigned` is found (typically the `long long` type), `unsigned` is used
+as the `limb`. If not, half the bits of an `unsigned` are used as the
+`limb`.
+
+The division algorithm is probably similar to the algorithm described
+by Donald E. Knuth in "The Art of Computer Programming", volume 2, but
+the author of the code has not actually read that book, only a short
+description of the algorithm. The degree of similarity is therefore
+uncertain.
 
 
 Return value
