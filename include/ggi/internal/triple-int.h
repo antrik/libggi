@@ -1,4 +1,4 @@
-/* $Id: triple-int.h,v 1.2 2004/10/19 06:06:58 pekberg Exp $
+/* $Id: triple-int.h,v 1.3 2004/10/19 22:35:47 cegger Exp $
 ******************************************************************************
 
    Small functions for triple precision integer math.
@@ -636,6 +636,8 @@ static inline unsigned *_assign_from3_6h(unsigned l[6], unsigned r[3])
 	l[2] = _lower_half_6h(r[1]);
 	l[1] = _upper_half_6h(r[0]);
 	l[0] = _lower_half_6h(r[0]);
+
+	return l;
 }
 
 /* support routine l=r, and return l, where r is a six-tuple-half-int */
@@ -644,6 +646,8 @@ static inline unsigned *_assign_to3_6h(unsigned l[3], unsigned r[6])
 	l[2] = (r[5] << HALFBITS_3) | r[4];
 	l[1] = (r[3] << HALFBITS_3) | r[2];
 	l[0] = (r[1] << HALFBITS_3) | r[0];
+
+	return l;
 }
 
 /* support routine l=r, and return l, where l and r are six-tuple-half-ints */
