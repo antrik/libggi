@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.10 2004/05/25 21:50:30 cegger Exp $
+/* $Id: clip2d.c,v 1.11 2004/05/27 10:05:57 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -39,10 +39,29 @@
 static ggi_visual_t vis;
 
 
-static int checkresult(int x0, int y0, int x1, int y1, int clip_first, int clip_last,
-			int x0_expect, int y0_expect, int x1_expect, int y1_expect,
-			int clip_first_expect, int clip_last_expect)
+static int checkresult(int x0, int y0, int x1, int y1,
+			int x0_expect, int y0_expect,
+			int x1_expect, int y1_expect,
+			int ret_expect)
 {
+	int clip_first = 0;
+	int clip_last = 0;
+	int clip_first_expect = (x0 != x0_expect) || (y0 != y0_expect);
+	int clip_last_expect  = (x1 != x1_expect) || (y1 != y1_expect);
+	int ret;
+
+	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
+			&clip_first, &clip_last);
+
+	if (ret != ret_expect) {
+		printfailure("expected return value: \"%i\"\n"
+			"actual return value: \"%i\"\n",
+			ret_expect, ret);
+		return -1;
+	}
+	if (ret == 0)
+		goto success;
+
 	if (x0 != x0_expect) {
 		printfailure("expected x0 value: \"%i\"\n"
 			"actual x0 value: \"%i\"\n",
@@ -80,6 +99,8 @@ static int checkresult(int x0, int y0, int x1, int y1, int clip_first, int clip_
 		return -1;
 	}
 
+success:
+	printsuccess();
 	return 0;
 }
 
@@ -91,38 +112,19 @@ static void testcase1(void)
 	int y0 = 50;
 	int x1 = 52;
 	int y1 = 52;
-	int clip_first = 0;
-	int clip_last = 0;
-	int ret;
 
 	int x0_expect = 50;
 	int y0_expect = 50;
 	int x1_expect = 52;
 	int y1_expect = 52;
-	int clip_first_expect = 0;
-	int clip_last_expect = 0;
 	int ret_expect = 1;
 
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
-	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
-			&clip_first, &clip_last);
-
-	if (ret != ret_expect) {
-		printfailure("expected return value: \"%i\"\n"
-			"actual return value: \"%i\"\n",
-			ret_expect, ret);
-		return;
-	}
-
-	ret = checkresult(x0, y0, x1, y1, clip_first, clip_last,
+	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
-		clip_first_expect, clip_last_expect);
-	if (ret != 0) return;
-
-	printsuccess();
-	return;
+		ret_expect);
 }
 
 
@@ -132,38 +134,19 @@ static void testcase2(void)
 	int y0 = INT_MIN;
 	int x1 = INT_MAX;
 	int y1 = INT_MAX;
-	int clip_first = 0;
-	int clip_last = 0;
-	int ret;
 
 	int x0_expect = 0;
 	int y0_expect = 0;
 	int x1_expect = MIN(MODE_SIZE_X, MODE_SIZE_Y) - 1;
 	int y1_expect = MIN(MODE_SIZE_X, MODE_SIZE_Y) - 1;
-	int clip_first_expect = 1;
-	int clip_last_expect = 1;
 	int ret_expect = 1;
 
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
 
-	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
-			&clip_first, &clip_last);
-
-	if (ret != ret_expect) {
-		printfailure("expected return value: \"%i\"\n"
-			"actual return value: \"%i\"\n",
-			ret_expect, ret);
-		return;
-	}
-
-	ret = checkresult(x0, y0, x1, y1, clip_first, clip_last,
+	checkresult(x0, y0, x1, y1,
 		x0_expect, y0_expect, x1_expect, y1_expect,
-		clip_first_expect, clip_last_expect);
-	if (ret != 0) return;
-
-	printsuccess();
-	return;
+		ret_expect);
 }
 
 
@@ -173,38 +156,53 @@ static void testcase3(void)
 	int y0 = 70000;
 	int x1 = 0;
 	int y1 = 0;
-	int clip_first = 0;
-	int clip_last = 0;
-	int ret;
 
-	int x0_expect = 639;
-	int y0_expect = 320;
+	int x0_expect = MODE_SIZE_X - 1;
+	int y0_expect = MODE_SIZE_X / 2;
 	int x1_expect = 0;
 	int y1_expect = 0;
-	int clip_first_expect = 1;
-	int clip_last_expect = 0;
 	int ret_expect = 1;
 
 
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+
+	checkresult(x0, y0, x1, y1,
+		x0_expect, y0_expect, x1_expect, y1_expect,
+		ret_expect);
+}
+
+
+static void testcase4(void)
+{
+	/* Tests longest possible diagonal line that succeeds, I think */
+	/* delta will be 32768 on 32 bit arches. */
+	int delta = (INT_MAX >> sizeof(int)*4) + 1;
+
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
-	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
-			&clip_first, &clip_last);
+	checkresult(
+		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		1);
+}
 
-	if (ret != ret_expect) {
-		printfailure("expected return value: \"%i\"\n"
-			"actual return value: \"%i\"\n",
-			ret_expect, ret);
-		return;
-	}
 
-	ret = checkresult(x0, y0, x1, y1, clip_first, clip_last,
-		x0_expect, y0_expect, x1_expect, y1_expect,
-		clip_first_expect, clip_last_expect);
-	if (ret != 0) return;
+static void testcase5(void)
+{
+	/* Tests shortest possible line that fails, I think */
+	/* delta will be 32768 on 32 bit arches. */
+	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
-	printsuccess();
-	return;
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+
+	checkresult(
+		MODE_SIZE_X - 1 + delta, MODE_SIZE_Y - 1 + delta + 1,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
+		1);
 }
 
 
@@ -227,6 +225,8 @@ int main(void)
 	testcase1();
 	testcase2();
 	testcase3();
+	testcase4();
+	testcase5();
 
 	rc = ggiClose(vis);
 
