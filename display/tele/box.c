@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
+/* $Id: box.c,v 1.4 2002/09/06 18:00:09 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -132,7 +132,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	curx = 0;
 
 	while (h > 0) {
-		int i, j, err;
+		int j, err;
 
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
@@ -149,11 +149,12 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 		dest = (uint8 *)(p->pixel);
 
-		for (j = 0; j < hh; j++)
+		for (j = 0; j < hh; j++) {
 		  memcpy(&(dest[j * ww * BYTES_PER_PIXEL(vis)]),
 			 &(src[j * stride +
 			       (curx) * BYTES_PER_PIXEL(vis)]),
 			 ww * BYTES_PER_PIXEL(vis));
+		}	/* for */
 
 		err = tclient_write(priv->client, &ev);
 

@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.3 2002/09/06 09:25:20 cegger Exp $
+/* $Id: teleserver.c,v 1.4 2002/09/06 18:00:10 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -409,7 +409,7 @@ static void perf_GETPIXELFMT(TeleUser *u, TeleEvent *ev)
 	T_Long reply_sequence;
 	int err;
 	
-	ggi_pixelformat * format;
+	const ggi_pixelformat * format;
 	format = ggiGetPixelFormat(vis);
 
 	reply_sequence = ev->sequence;
