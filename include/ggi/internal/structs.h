@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.3 2002/05/11 01:16:15 skids Exp $
+/* $Id: structs.h,v 1.4 2003/07/04 23:04:56 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -130,7 +130,7 @@ typedef struct ggi_extension {
 	char name[32];
 	int id;
 	int initcount;
-	int size;
+	size_t size;
 	int (*paramchange)(ggi_visual_t,int whatchanged);
 	struct ggi_extension *next,*prev;
 } ggi_extension;
