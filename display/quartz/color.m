@@ -1,4 +1,4 @@
-/* $Id: color.m,v 1.1 2002/12/22 12:59:38 cegger Exp $
+/* $Id: color.m,v 1.2 2003/05/04 20:31:03 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -60,7 +60,7 @@ int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
 
 	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
 
-	for (i = start; i < start+len; i++) {
+	for (i = (unsigned)start; i < (unsigned)start+len; i++) {
 		/* Clamp colors between 0.0 and 1.0 */
 		color.red   = colormap->r / 65535.0;
 		color.green = colormap->g / 65535.0;
@@ -224,7 +224,7 @@ int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *color
 		return -1;
 	}	/* if */
 
-	if (len < actualSize) len = actualSize;
+	if ((unsigned)len < actualSize) len = actualSize;
 	if (len < start) return -1;
 
 	/* Pack tables into one array, with values from 0 to 65535 */
