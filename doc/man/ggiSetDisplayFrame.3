@@ -44,6 +44,33 @@ they fail.
 
 The \fBggiGet*Frame\fR functions never fail.
 .SH WORKING WITH FRAMES
-Write something useful here.
+People report about heavy flickering, they can't solve.
+
+This is because they display the frame \fIduring\fR rendering.
+Unless you know what you do, never set the same frame to write
+and display mode.
+
+Wrong (causes flickering):
+
+.nb
+.nf
+ggiSetWriteFrame(vis, framenr);
+ggiSetDisplayFrame(vis, framenr);
+
+/* render here */
+.fi
+
+Right:
+
+.nb
+.nf
+displayframe = writeframe;
+writeframe = nextframe;
+ggiSetWriteFrame(vis, writeframe);
+ggiSetDisplayFrame(vis, displayframe);
+
+/* render here */
+.fi
+
 .SH SEE ALSO
 \fBggi_mode(3)\fR
