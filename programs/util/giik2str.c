@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
+/* $Id: giik2str.c,v 1.4 2004/10/29 22:55:54 cegger Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -258,7 +258,7 @@ const char *giik2str(uint32 giik, int issym)
 	default:
 		if (giik >= 32 && giik < 256) {
 			/* Handle sym/label here */
-			if (!issym) giik = toupper((int)giik);
+			if (!issym) giik = toupper((uint8)giik);
 			switch (giik) {
 			case GIIUC_Space:	return "GIIUC_Space";
 			case GIIUC_Exclamation:	return "GIIUC_Exclamation";

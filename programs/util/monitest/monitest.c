@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.7 2004/09/24 12:23:14 pekberg Exp $
+/* $Id: monitest.c,v 1.8 2004/10/29 22:57:48 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -71,12 +71,12 @@ int waitabit(ggi_visual_t _vis)
 	int key;
 	key = ggiGetc(_vis);
 
-	if (toupper(key) == 'Q') {
+	if (toupper((uint8)key) == 'Q') {
 		/* Q pressed */
 		ggiClose(_vis);
 		ggiExit();
 		exit(1);
-	} else if (key == GIIUC_Escape || toupper(key) == 'B') {
+	} else if (key == GIIUC_Escape || toupper((uint8)key) == 'B') {
 		return 1;
 	}
 	return 0;
@@ -245,7 +245,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.7 2004/09/24 12:23:14 pekberg Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.8 2004/10/29 22:57:48 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };

@@ -1,4 +1,4 @@
-/* $Id: tunemode.c,v 1.5 2004/09/18 10:41:21 cegger Exp $
+/* $Id: tunemode.c,v 1.6 2004/10/29 22:59:44 cegger Exp $
 ***********************************************************************
 
    Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
@@ -80,7 +80,7 @@ void beep(void)
 void toup(char *what)
 {
 	do {
-		*what = toupper(*what);
+		*what = toupper((uint8)*what);
 	} while (*what++);
 }
 
