@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.37 2004/11/14 16:10:48 cegger Exp $
+/* $Id: mode.c,v 1.38 2004/11/18 13:39:44 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -343,6 +343,16 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 
 	_ggi_x_build_pixfmt(vis, tm, vi); /* Fill in ggi_pixelformat */
 
+	/* Restore original mode */
+	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
+			priv->mlfuncs.restore);
+	if (priv->mlfuncs.restore != NULL) {
+		err = priv->mlfuncs.restore(vis);
+		GGIDPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
+				err);
+		if (err) goto err0;
+	}	/* if */
+	
 #warning TODO: do not destroy windows unless necessary.
 
 	destroychild = destroyparent = 1;
@@ -359,17 +369,6 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 		if (priv->parentwin != 0) XDestroyWindow(priv->disp, priv->parentwin);
 	}
 	if (!createparent) goto oldparent;
-
-
-	GGIDPRINT_MODE("X (setmode_normal): mlfuncs.restore = %p\n",
-			priv->mlfuncs.restore);
-	if (priv->mlfuncs.restore != NULL) {
-		err = priv->mlfuncs.restore(vis);
-		GGIDPRINT_MODE("X: mlfuncs.restore retcode: %i\n",
-				err);
-		if (err) goto err0;
-	}	/* if */
-
 
 	/* Parent windows are merely clipping frames, just use defaults. */
 
