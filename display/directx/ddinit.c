@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.35 2004/09/15 20:29:21 pekberg Exp $
+/* $Id: ddinit.c,v 1.36 2004/09/15 20:37:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -118,8 +118,6 @@ DDShutdown(directx_priv *priv)
 	priv->hInit = NULL;
 	priv->timer_id = 0;
 }
-
-void CALLBACK TimerProc(HWND, UINT, UINT, DWORD);
 
 int
 DDChangeMode(ggi_visual *vis, int frames,
