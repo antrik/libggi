@@ -502,10 +502,10 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 
 		/* Most targets benefit from or require page-aligned frames. */
 		virty = mode.virt.y;
-		pad = mode.virt.y * mode.virt.x * GT_SIZE(tm->graphtype) / 8;
+		pad = GT_ByPPP(mode.virt.y * mode.virt.x, tm->graphtype);
 		if (pad & 4095) { pad /= 4096; pad++; pad *= 4096; }
 		pad *= frames;
-		mode.virt.y = pad / (mode.virt.x * GT_SIZE(tm->graphtype) / 8);
+		mode.virt.y = pad / GT_ByPPP(mode.virt.x, tm->graphtype);
 		mode.virt.y++;
 	}
 	else {
