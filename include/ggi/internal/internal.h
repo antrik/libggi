@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.4 2002/05/24 21:47:10 skids Exp $
+/* $Id: internal.h,v 1.5 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -116,6 +116,8 @@ void _ggiZapMode(ggi_visual *vis, int zapall);
 
 ggi_visual *_ggiNewVisual(void);
 void _ggiDestroyVisual(ggi_visual *vis);
+
+enum gg_swartype _ggiGetSwarType(void);
 
 __END_DECLS
 

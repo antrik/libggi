@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.4 2002/09/08 21:37:48 soyt Exp $
+/* $Id: init.c,v 1.5 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -58,6 +58,7 @@ static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
 static int            numextensions    = 0;
 static ggi_extension *_ggiExtension    = NULL;
 
+enum gg_swartype     swars_selected    = 0;
 
 /* 
  * Returns the directory where global config files are kept
@@ -73,6 +74,9 @@ const char *ggiGetConfDir(void)
 	return ggiconfdir;
 }
 
+enum gg_swartype _ggiGetSwarType(void) {
+	return (swars_selected & ggGetSwarType());
+}
 
 /*
  * Initalize the strutures for the library
@@ -86,6 +90,65 @@ int ggiInit(void)
 
 	_ggiLibIsUp++;
 	if (_ggiLibIsUp > 1) return 0;	/* Initialize only at first call. */
+
+#ifdef DO_SWAR_NONE
+	swars_selected |= GG_SWAR_NONE;
+#endif
+#ifdef DO_SWAR_32BITC
+	swars_selected |= GG_SWAR_32BITC;
+#endif
+#ifdef DO_SWAR_64BITC
+	swars_selected |= GG_SWAR_64BITC;
+#endif
+#ifdef DO_SWAR_ALTIVEC
+	swars_selected |= GG_SWAR_ALTIVEC;
+#endif
+#ifdef DO_SWAR_SSE2
+	swars_selected |= GG_SWAR_SSE2;
+#endif
+#ifdef DO_SWAR_SSE
+	swars_selected |= GG_SWAR_SSE;
+#endif
+#ifdef DO_SWAR_MMX
+	swars_selected |= GG_SWAR_MMX;
+#endif
+#ifdef DO_SWAR_MMXPLUS
+	swars_selected |= GG_SWAR_MMXPLUS;
+#endif
+#ifdef DO_SWAR_3DNOW
+	swars_selected |= GG_SWAR_3DNOW;
+#endif
+#ifdef DO_SWAR_ADV3DNOW
+	swars_selected |= GG_SWAR_ADV3DNOW;
+#endif
+#ifdef DO_SWAR_MVI
+	swars_selected |= GG_SWAR_MVI;
+#endif
+#ifdef DO_SWAR_MAX
+	swars_selected |= GG_SWAR_MAX;
+#endif
+#ifdef DO_SWAR_MAX2
+	swars_selected |= GG_SWAR_MAX2;
+#endif
+#ifdef DO_SWAR_SIGD
+	swars_selected |= GG_SWAR_SIGD;
+#endif
+#ifdef DO_SWAR_MDMX
+	swars_selected |= GG_SWAR_MDMX;
+#endif
+#ifdef DO_SWAR_VIS
+	swars_selected |= GG_SWAR_VIS;
+#endif
+#ifdef DO_SWAR_MAJC
+	swars_selected |= GG_SWAR_MAJC;
+#endif
+	/* TODO: disable SWARs with environment variable */
+
+	if (!swars_selected) {
+		fprintf(stderr, 
+			"LibGGI: No SWARs selected.  Need at least one.\n");
+		return GGI_ENOFUNC;
+	}
 
 	err = giiInit();
 	if (err) {

@@ -5,6 +5,7 @@ _ggiAddDL
 _ggiDrawHLineNC
 _ggiDrawPixelNC
 _ggiDrawVLineNC
+_ggiGetSwarType
 _ggiIdleAccel
 _ggiInternFlush
 _ggiOpenDL

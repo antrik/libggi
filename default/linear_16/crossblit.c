@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.4 2002/10/10 07:05:34 cegger Exp $
+/* $Id: crossblit.c,v 1.5 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -32,8 +32,7 @@
 */
 
 #include <string.h>
-#include "config.h"
-#include <ggi/internal/ggi-dl.h>
+#include "lin16lib.h"
 
 /* Default fallback to lower GGI primitive functions (slow).
  */
@@ -98,6 +97,8 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 }
 
 /* 4 bit to 16 bit crossblitting.
+ * TODO: a 256-entry lookup table could map two pixels at once and
+ * avoid a lot of bit-fiddling.
  */
 static inline void
 cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
@@ -206,9 +207,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 	GGIDPRINT_DRAW("linear-16: cb8to16.\n");
 
-	/* Creates the conversion table. 
-	 * A bit simplistic approach for 256 colors, perhaps?
-	 */
+	/* Create a conversion table. */
 	do {
 		int i;
 		for (i = 0; i < 256; i++) {
@@ -247,219 +246,77 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 	}
 }
 
-/* 16 bit to 16 bit crossblitting.
- */
-static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
-	int i, j, rshift[16], gshift[16], bshift[16];
-	ggi_pixel mask[31];
-	int nl, nr;
-	
-	GGIDPRINT_DRAW("linear-16: cb16to16.\n");
-	
-	/* Create a table of shift and mask operations needed to translate
-	 * the source visual pixelformat to that of the destination visual.
-	 */
-	
-	memset(mask, 0, 31 * sizeof(ggi_pixel));
-	memset(rshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(gshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(bshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	
-	for (i = 0; i < 16; i++) {
-		ggi_pixel bm;
-		int val;
-		
-		bm = src->r_frame->buffer.plb.pixelformat->bitmeaning[i];
-		val = (bm & 0xff) - 240;
-		
-		switch(bm & 0xffffff00) {
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			rshift[val] = i;
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			gshift[val] = i;
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			bshift[val] = i;
-			break;
-		default:
-			break;
-		}
-	}
-	
-	/* Ensure pixel-correct fillout when destination channel is deeper. 
-	 */
-	for (i=15,j=15; i >= 0; i--) if (rshift[i] < 0) rshift[i]= rshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (gshift[i] < 0) gshift[i]= gshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (bshift[i] < 0) bshift[i]= bshift[j--];
-	
-	for (i = 0; i < 16; i++) {
-		ggi_pixel bm;
-		int val;
-	
-		bm = dst->w_frame->buffer.plb.pixelformat->bitmeaning[i];
-		val = (bm & 0xff) - 240;
-		
-		switch(bm & 0xffffff00) {
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			mask[rshift[val] + 15 - i] |= 1 << rshift[val];
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			mask[gshift[val] + 15 - i] |= 1 << gshift[val];
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
-			break;
-		default:
-			break;
-		}
-	}
-	
-	/* Precipitate the array of masks and create a corresponding array
-	 * of shifts.  Note that rshift, gshift, and bshift areas are reused 
-	 * for efficiency -- rshift will afterwards contain right-shift counts,
-	 * and bshift will contain left-shift counts.  Masks for left-shift
-	 * operations will start at index 16 in the array mask; index 15 will 
-	 * contain a mask for zero-shift.
-	 */
-	for (i = 0, j = 0; i < 15; i++) if (mask[i]) {
-		mask[j] = mask[i];
-		bshift[j] = 15 - i;
-		j++;
-	}
-	nl = j;
-	for (i = 16, j = 16; i < 31; i++) if (mask[i]) {
-		mask[j] = mask[i];
-		rshift[j - 16] = i - 15;
-		j++;
-	}
-	nr = j - 16;
-	
-	do {
-		uint16 *stoprow, *dstp, *srcp;
-		int dstride, sstride;
-		
-		dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
-				 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-		srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
-				 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
-		dstride = LIBGGI_FB_W_STRIDE(dst)/2;
-		sstride = LIBGGI_FB_R_STRIDE(src)/2;
-		
-		stoprow = dstp + h * dstride;
-		dstride -= w;
-		sstride -= w;
-		
-		while (stoprow > dstp) {
-			uint16 *stopcol;
-			
-			stopcol = dstp + w;
-			while (stopcol > dstp) {
-				ggi_pixel tmp, cache;
-				
-				tmp = 0;
-				cache = *srcp;
-				switch (nl & 0xf) {
-				case 15:
-				  tmp |= (cache & mask[14]) << bshift[14];
-				case 14:
-				  tmp |= (cache & mask[13]) << bshift[13];
-				case 13:
-				  tmp |= (cache & mask[12]) << bshift[12];
-				case 12:
-				  tmp |= (cache & mask[11]) << bshift[11];
-				case 11:
-				  tmp |= (cache & mask[10]) << bshift[10];
-				case 10:
-				  tmp |= (cache & mask[9]) << bshift[9];
-				case 9:
-				  tmp |= (cache & mask[8]) << bshift[8];
-				case 8:
-				  tmp |= (cache & mask[7]) << bshift[7];
-				case 7:
-				  tmp |= (cache & mask[6]) << bshift[6];
-				case 6:
-				  tmp |= (cache & mask[5]) << bshift[5];
-				case 5:
-				  tmp |= (cache & mask[4]) << bshift[4];
-				case 4:
-				  tmp |= (cache & mask[3]) << bshift[3];
-				case 3:
-				  tmp |= (cache & mask[2]) << bshift[2];
-				case 2:
-				  tmp |= (cache & mask[1]) << bshift[1];
-				case 1:
-				  tmp |= (cache & mask[0]) << bshift[0];
-				case 0:
-				  break;
-				}
-				if (mask[15]) tmp |= cache & mask[15];
-				switch (nr & 0xf) {
-				case 15:
-				  tmp |= (cache & mask[30]) >> rshift[14];
-				case 14:
-				  tmp |= (cache & mask[29]) >> rshift[13];
-				case 13:
-				  tmp |= (cache & mask[28]) >> rshift[12];
-				case 12:
-				  tmp |= (cache & mask[27]) >> rshift[11];
-				case 11:
-				  tmp |= (cache & mask[26]) >> rshift[10];
-				case 10:
-				  tmp |= (cache & mask[25]) >> rshift[9];
-				case 9:
-				  tmp |= (cache & mask[24]) >> rshift[8];
-				case 8:
-				  tmp |= (cache & mask[23]) >> rshift[7];
-				case 7:
-				  tmp |= (cache & mask[22]) >> rshift[6];
-				case 6:
-				  tmp |= (cache & mask[21]) >> rshift[5];
-				case 5:
-				  tmp |= (cache & mask[20]) >> rshift[4];
-				case 4:
-				  tmp |= (cache & mask[19]) >> rshift[3];
-				case 3:
-				  tmp |= (cache & mask[18]) >> rshift[2];
-				case 2:
-				  tmp |= (cache & mask[17]) >> rshift[1];
-				case 1:
-				  tmp |= (cache & mask[16]) >> rshift[0];
-				case 0:
-				  break;
-				}
-				
-				*dstp = tmp;
-				dstp++;
-				srcp++;
-			}
-			srcp += sstride;
-			dstp += dstride;
-		}
-	} while (0);
-	return;
-}
 
-/* 24 bit to 16 bit crossblitting.
+
+/* Create a table of shift and mask operations needed to translate the source 
+ * visual pixelformat to that of the destination visual.  This is a complex 
+ * do-all function that can create tables suitable for various different SWAR 
+ * implementations.  Most of the complexities are mainly for MMX-style SWARs 
+ * which have the most deficiencies, so the inlining should produce a much 
+ * more simple function for other SWARs.
+ *
+ * src and dst are the visuals.
+ * rshift, gshift, and bshift are temporary arrays used to unpack 
+ *   the "bitmeaning" array in the visual's pixelformat.
+ * shift is the location to store the first element of the column in the
+ *   table which contains the shifts.  It may overlap with 
+ *   rshift/gshift/bshift.
+ * sskip is the number of bytes to skip between shift values, in case the
+ *   SWAR works best when the shift and mask values are interleaved, and/or
+ *   in case the SWAR works best with different size values than sint32.
+ * soff defines a bit offset added to bitshifts. The actual direction of the
+ *   shift may be altered by this offset.
+ * mask is the location to store the first element of the column in the 
+ *   table which contains the bitmasks.  It must NOT overlap with 
+ *   rshift/gshift/bshift.
+ * mskip is the number of bytes to skip between mask values, in case the
+ *   SWAR works best when the shift and mask values are interleaved, and/or
+ *   in case the SWAR works best with different size values than ggi_pixel.
+ * maskpost is a bitflag register:  
+ *   If bit 0 is set than left masks are set to values that are appropriate 
+ *     to apply after the shift operation, else before the shift operation.
+ *   If bit 1 is set than right masks are set to values that are appropriate 
+ *     to apply after the shift operation, else before the shift operation.
+ * nl returns the number of actual left shifts after the effect of soff is 
+ *     factored in.  This can also be found by counting the number 
+ *     of nonzero shift values at the beggining of the shift column.
+ * nr returns the number of actual right shifts after the effect of soff
+ *     is factored in.  This can also be found by counting the 
+ *     number of nonzero mask values in the mask column after the value 
+ *     corresponding to the zero-shift value.
+ * 
+ * Thus, neglecting actual memory layout, the produced table looks like this:
+ *
+ * [mask != 0] [left shift count > 0]
+ * [mask != 0] [left shift count > 0]
+ * [mask != 0] [left shift count > 0]
+ * [...]
+ * [mask]      [shift == 0]
+ * [mask != 0] [right shift count > 0]
+ * [mask != 0] [right shift count > 0]
+ * [mask != 0] [right shift count > 0]
+ * [...]
+ * [mask == 0]
+ *
+ * Note if nl is 0 there won't be any left shift rows and the table will
+ * start with the zero shift, and if nr is 0 the zero mask will immediately
+ * succeed the zero shift row.  The SWAR can either use nr and nl or branch
+ * on the telltale zeroes in the table.
+ *   
  */
-static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
-	int i, j, rshift[16], gshift[16], bshift[16];
-	ggi_pixel mask[39];
-	int nl, nr;
-	
-	GGIDPRINT_DRAW("linear-16: cb24to16.\n");
-	
-	/* Create a table of shift and mask operations needed to translate
-	 * the source visual pixelformat to that of the destination visual.
-	 */
-	memset(mask, 0, 39 * sizeof(ggi_pixel));
-	memset(rshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(gshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(bshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	
-	for (i = 0; i < 24; i++) {
+
+static inline void build_masktab(ggi_visual *src, ggi_visual *dst, 
+				 sint32 *rshift,sint32 *gshift,sint32 *bshift,
+				 sint32 *shift, int sskip, int soff,
+				 ggi_pixel *mask, int masklen, int mskip,
+				 int maskpost, int *nl, int *nr) {
+	int i, j;
+
+	for (i = 0; i < masklen * sskip; i += sskip) mask[i] = 0;
+	for (i = 0; i < 16 * sskip; i += sskip)
+		rshift[i] = bshift[i] = gshift[i] = -1;
+
+	for (i = 0; i < masklen - 16; i++) {
 		ggi_pixel bm;
 		int val;
 		
@@ -469,190 +326,338 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 		
 		switch(bm & 0xffffff00) {
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			rshift[val] = i;
+			rshift[val * sskip] = i;
 			break;
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			gshift[val] = i;
+			gshift[val * sskip] = i;
 			break;
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			bshift[val] = i;
+			bshift[val * sskip] = i;
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	/* Ensure pixel-correct fillout when destination channel is deeper. 
 	 */
-	for (i=15,j=15; i >= 0; i--) if (rshift[i] < 0) rshift[i]= rshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (gshift[i] < 0) gshift[i]= gshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (bshift[i] < 0) bshift[i]= bshift[j--];
+	for (i=15,j=15; i >= 0; i--) if (rshift[i * sskip] < 0)
+		rshift[i * sskip] = rshift[j-- * sskip];
+	for (i=15,j=15; i >= 0; i--) if (gshift[i * sskip] < 0)
+		gshift[i * sskip] = gshift[j-- * sskip];
+	for (i=15,j=15; i >= 0; i--) if (bshift[i * sskip] < 0)
+		bshift[i * sskip] = bshift[j-- * sskip];
 
 	for (i = 0; i < 16; i++) {
 		ggi_pixel bm;
-		int val;
-
+		int val, stmp;
+        
 		bm = dst->w_frame->buffer.plb.pixelformat->bitmeaning[i];
 		val = (bm & 0xff) - 240;
-		
+		if (val < 0) continue;
+
+#define SETMASK(arr) \
+stmp = arr[val * sskip] + 15 - i;				\
+if (stmp <= 15) {						\
+	if (maskpost & 1) mask[stmp * mskip] |= 1 << i;		\
+	else mask[stmp * mskip] |= 1 << arr[val * sskip];	\
+} else {							\
+	if (maskpost & 2) mask[stmp * mskip] |= 1 << i;	        \
+	else mask[stmp * mskip] |= 1 << arr[val * sskip];	\
+}
+
 		switch(bm & 0xffffff00) {
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			mask[rshift[val] + 15 - i] |= 1 << rshift[val];
-			break;
+		  SETMASK(rshift);
+		  break;
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			mask[gshift[val] + 15 - i] |= 1 << gshift[val];
-			break;
+		  SETMASK(gshift);
+		  break;
 		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
-			break;
+		  SETMASK(bshift);
+		  break;
 		default:
-			break;
 		}
-	}
-	
-	
-	/* Precipitate the array of masks and create a corresponding array
-	 * of shifts.  Note that rshift, gshift, and bshift areas are reused
-	 * for efficiency -- rshift will afterwards contain right-shift counts,
-	 * and bshift,gshift will contain left-shift counts.  Masks for 
-	 * left-shift operations will start at index 16 in the array mask; 
-	 * index 15 will contain a mask for zero-shift.
-	 */
-	for (i = 0, j = 0; i < 15; i++) if (mask[i]) {
-		mask[j] = mask[i];
-		bshift[j] = 15 - i;
-		j++;
-	}
-	nl = j;
-	for (i = 16, j = 16; i < 39; i++) if (mask[i]) {
-		mask[j] = mask[i];
-		if (j > 31) gshift[j - 32] = i - 15;
-		else rshift[j - 16] = i - 15;
-		j++;
-	}  
-	nr = j - 16;
 
-	do {
-		uint16 *stoprow, *dstp;
-		uint8 *srcp;
-		int dstride, sstride;
-		
-		dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
-				 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-		srcp = (uint8*)LIBGGI_CURREAD(src) + 
-		  sy*(LIBGGI_FB_R_STRIDE(src)) + sx*3;
-		dstride = LIBGGI_FB_W_STRIDE(dst)/2;
-		sstride = LIBGGI_FB_R_STRIDE(src);
-		
-		stoprow = dstp + h * dstride;
-		dstride -= w;
-		sstride -= w * 3;
-		
-		while (stoprow > dstp) {
-			uint16 *stopcol;
-			
-			stopcol = dstp + w;
-			while (stopcol > dstp) {
-				ggi_pixel tmp, cache;
-				
-				tmp = 0;
-				cache = ((ggi_pixel)*(srcp + 2) << 16) | 
-				  ((ggi_pixel)*(srcp + 1) << 8) | 
-				  (ggi_pixel)*srcp;
-				switch (nl & 0xf) {
-				case 15:
-				  tmp |= (cache & mask[14]) << bshift[14];
-				case 14:
-				  tmp |= (cache & mask[13]) << bshift[13];
-				case 13:
-				  tmp |= (cache & mask[12]) << bshift[12];
-				case 12:
-				  tmp |= (cache & mask[11]) << bshift[11];
-				case 11:
-				  tmp |= (cache & mask[10]) << bshift[10];
-				case 10:
-				  tmp |= (cache & mask[9]) << bshift[9];
-				case 9:
-				  tmp |= (cache & mask[8]) << bshift[8];
-				case 8:
-				  tmp |= (cache & mask[7]) << bshift[7];
-				case 7:
-				  tmp |= (cache & mask[6]) << bshift[6];
-				case 6:
-				  tmp |= (cache & mask[5]) << bshift[5];
-				case 5:
-				  tmp |= (cache & mask[4]) << bshift[4];
-				case 4:
-				  tmp |= (cache & mask[3]) << bshift[3];
-				case 3:
-				  tmp |= (cache & mask[2]) << bshift[2];
-				case 2:
-				  tmp |= (cache & mask[1]) << bshift[1];
-				case 1:
-				  tmp |= (cache & mask[0]) << bshift[0];
-				case 0:
-				  break;
-				}
-				if (mask[15]) tmp |= cache & mask[15];
-				switch (nr & 0x1f) {
-				case 23:
-				  tmp |= (cache & mask[38]) >> gshift[6];
-				case 22:
-				  tmp |= (cache & mask[37]) >> gshift[5];
-				case 21:
-				  tmp |= (cache & mask[36]) >> gshift[4];
-				case 20:
-				  tmp |= (cache & mask[35]) >> gshift[3];
-				case 19:
-				  tmp |= (cache & mask[34]) >> gshift[2];
-				case 18:
-				  tmp |= (cache & mask[33]) >> gshift[1];
-				case 17:
-				  tmp |= (cache & mask[32]) >> gshift[0];
-				case 16:
-				  tmp |= (cache & mask[31]) >> rshift[15];
-				case 15:
-				  tmp |= (cache & mask[30]) >> rshift[14];
-				case 14:
-				  tmp |= (cache & mask[29]) >> rshift[13];
-				case 13:
-				  tmp |= (cache & mask[28]) >> rshift[12];
-				case 12:
-				  tmp |= (cache & mask[27]) >> rshift[11];
-				case 11:
-				  tmp |= (cache & mask[26]) >> rshift[10];
-				case 10:
-				  tmp |= (cache & mask[25]) >> rshift[9];
-				case 9:
-				  tmp |= (cache & mask[24]) >> rshift[8];
-				case 8:
-				  tmp |= (cache & mask[23]) >> rshift[7];
-				case 7:
-				  tmp |= (cache & mask[22]) >> rshift[6];
-				case 6:
-				  tmp |= (cache & mask[21]) >> rshift[5];
-				case 5:
-				  tmp |= (cache & mask[20]) >> rshift[4];
-				case 4:
-				  tmp |= (cache & mask[19]) >> rshift[3];
-				case 3:
-				  tmp |= (cache & mask[18]) >> rshift[2];
-				case 2:
-				  tmp |= (cache & mask[17]) >> rshift[1];
-				case 1:
-				  tmp |= (cache & mask[16]) >> rshift[0];
-				case 0:
-				  break;
-				}
-				
-				*dstp = tmp;
-				dstp++;
-				srcp += 3;
-			}
-			srcp += sstride;
-			dstp += dstride;
+#undef SETMASK
+
+	}
+
+	/* Precipitate the array of masks and generate accompanying shifts */
+	for (i = 0, j = 0; i < 15 - soff; i++) 
+		if (mask[i * mskip]) {
+			mask[j * mskip] = mask[i * mskip];
+			shift[j * sskip] = 15 - i - soff;
+			j++;
 		}
-	} while (0);
+	*nl = j;
+	mask[j * mskip] = mask[(15 - soff) * mskip];
+	shift[j * sskip] = 0;
+	j++; i++;
+	for (; i < masklen; i++) 
+		if (mask[i * mskip]) {
+			mask[j * mskip] = mask[i * mskip];
+			shift[j * sskip] = i - 15 + soff;
+			j++;
+		}
+	*nr = j - *nl - 1;
+	mask[j * mskip] = 0;
+}
+
+/* 24 bit to 16 bit crossblitting.
+ */
+static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h, 
+			    ggi_visual *dst, int dx, int dy) {
+	sint32 shifts[48], rshifts[24];
+	ggi_pixel masks[40], rmasks[24];
+	int nl, nr;
+	uint16 *stoprow, *dstp;
+	uint8 *srcp;
+	int dstride, sstride;
+	
+	GGIDPRINT_DRAW("linear-16: cb24to16.\n");
+
+	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
+		      shifts, 1, 0, masks, 40, 1, 0, &nl, &nr);
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint8*)LIBGGI_CURREAD(src) + 
+	  sy*(LIBGGI_FB_R_STRIDE(src)) + sx*3;
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src);
+	
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w * 3;
+
+	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			ggi_pixel tmp, cache;
+			
+			tmp = 0;
+			cache = ((ggi_pixel)*(srcp + 2) << 16) | 
+			  ((ggi_pixel)*(srcp + 1) << 8) | 
+			  (ggi_pixel)*srcp;
+			switch (nl) {
+			case 15:
+				tmp |= (cache & masks[14]) << shifts[14];
+			case 14:
+				tmp |= (cache & masks[13]) << shifts[13];
+			case 13:
+				tmp |= (cache & masks[12]) << shifts[12];
+			case 12:
+				tmp |= (cache & masks[11]) << shifts[11];
+			case 11:
+				tmp |= (cache & masks[10]) << shifts[10];
+			case 10:
+				tmp |= (cache & masks[9]) << shifts[9];
+			case 9:
+				tmp |= (cache & masks[8]) << shifts[8];
+			case 8:
+				tmp |= (cache & masks[7]) << shifts[7];
+			case 7:
+				tmp |= (cache & masks[6]) << shifts[6];
+			case 6:
+				tmp |= (cache & masks[5]) << shifts[5];
+			case 5:
+				tmp |= (cache & masks[4]) << shifts[4];
+			case 4:
+				tmp |= (cache & masks[3]) << shifts[3];
+			case 3:
+				tmp |= (cache & masks[2]) << shifts[2];
+			case 2:
+				tmp |= (cache & masks[1]) << shifts[1];
+			case 1:
+				tmp |= (cache & masks[0]) << shifts[0];
+			case 0:
+				break;
+			}
+			if (masks[nl]) { tmp |= cache & masks[nl]; }
+			switch (nr) {
+			case 23:
+				tmp |= (cache & rmasks[22]) >> rshifts[22];
+			case 22:
+				tmp |= (cache & rmasks[21]) >> rshifts[21];
+			case 21:
+				tmp |= (cache & rmasks[20]) >> rshifts[20];
+			case 20:
+				tmp |= (cache & rmasks[19]) >> rshifts[19];
+			case 19:
+				tmp |= (cache & rmasks[18]) >> rshifts[18];
+			case 18:
+				tmp |= (cache & rmasks[17]) >> rshifts[17];
+			case 17:
+				tmp |= (cache & rmasks[16]) >> rshifts[16];
+			case 16:
+				tmp |= (cache & rmasks[15]) >> rshifts[15];
+			case 15:
+				tmp |= (cache & rmasks[14]) >> rshifts[14];
+			case 14:
+				tmp |= (cache & rmasks[13]) >> rshifts[13];
+			case 13:
+				tmp |= (cache & rmasks[12]) >> rshifts[12];
+			case 12:
+				tmp |= (cache & rmasks[11]) >> rshifts[11];
+			case 11:
+				tmp |= (cache & rmasks[10]) >> rshifts[10];
+			case 10:
+				tmp |= (cache & rmasks[9]) >> rshifts[9];
+			case 9:
+				tmp |= (cache & rmasks[8]) >> rshifts[8];
+			case 8:
+				tmp |= (cache & rmasks[7]) >> rshifts[7];
+			case 7:
+				tmp |= (cache & rmasks[6]) >> rshifts[6];
+			case 6:
+				tmp |= (cache & rmasks[5]) >> rshifts[5];
+			case 5:
+				tmp |= (cache & rmasks[4]) >> rshifts[4];
+			case 4:
+				tmp |= (cache & rmasks[3]) >> rshifts[3];
+			case 3:
+				tmp |= (cache & rmasks[2]) >> rshifts[2];
+			case 2:
+				tmp |= (cache & rmasks[1]) >> rshifts[1];
+			case 1:
+				tmp |= (cache & rmasks[0]) >> rshifts[0];
+			case 0:
+				break;
+			}
+			
+			*dstp = tmp;
+			dstp++;
+			srcp += 3;
+		}
+		srcp += sstride;
+		dstp += dstride;
+	}
+	return;
+}
+
+#ifdef DO_SWAR_NONE
+
+/* 16 bit to 16 bit crossblitting.
+ */
+static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h, 
+			    ggi_visual *dst, int dx, int dy) {
+	int shifts[48], rshifts[16];
+	ggi_pixel masks[32], rmasks[16];
+	int nl, nr;
+	uint16 *stoprow, *dstp, *srcp;
+	int dstride, sstride;
+	
+	GGIDPRINT_DRAW("linear-16: cb16to16.\n");
+
+	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
+		      shifts, 1, 0, masks, 32, 1, 0, &nl, &nr);
+		
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/2;
+	
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+
+	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+		
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			ggi_pixel tmp, cache;
+			
+			tmp = 0;
+			cache = *srcp;
+			switch (nl) {
+			case 15:
+				tmp |= (cache & masks[14]) << shifts[14];
+			case 14:
+				tmp |= (cache & masks[13]) << shifts[13];
+			case 13:
+				tmp |= (cache & masks[12]) << shifts[12];
+			case 12:
+				tmp |= (cache & masks[11]) << shifts[11];
+			case 11:
+				tmp |= (cache & masks[10]) << shifts[10];
+			case 10:
+				tmp |= (cache & masks[9]) << shifts[9];
+			case 9:
+				tmp |= (cache & masks[8]) << shifts[8];
+			case 8:
+				tmp |= (cache & masks[7]) << shifts[7];
+			case 7:
+				tmp |= (cache & masks[6]) << shifts[6];
+			case 6:
+				tmp |= (cache & masks[5]) << shifts[5];
+			case 5:
+				tmp |= (cache & masks[4]) << shifts[4];
+			case 4:
+				tmp |= (cache & masks[3]) << shifts[3];
+			case 3:
+				tmp |= (cache & masks[2]) << shifts[2];
+			case 2:
+				tmp |= (cache & masks[1]) << shifts[1];
+			case 1:
+				tmp |= (cache & masks[0]) << shifts[0];
+			case 0:
+				break;
+			}
+			if (masks[nl]) tmp |= cache & masks[nl];
+			switch (nr) {
+			case 15:
+				tmp |= (cache & rmasks[14]) >> rshifts[14];
+			case 14:
+				tmp |= (cache & rmasks[13]) >> rshifts[13];
+			case 13:
+				tmp |= (cache & rmasks[12]) >> rshifts[12];
+			case 12:
+				tmp |= (cache & rmasks[11]) >> rshifts[11];
+			case 11:
+				tmp |= (cache & rmasks[10]) >> rshifts[10];
+			case 10:
+				tmp |= (cache & rmasks[9]) >> rshifts[9];
+			case 9:
+				tmp |= (cache & rmasks[8]) >> rshifts[8];
+			case 8:
+				tmp |= (cache & rmasks[7]) >> rshifts[7];
+			case 7:
+				tmp |= (cache & rmasks[6]) >> rshifts[6];
+			case 6:
+				tmp |= (cache & rmasks[5]) >> rshifts[5];
+			case 5:
+				tmp |= (cache & rmasks[4]) >> rshifts[4];
+			case 4:
+				tmp |= (cache & rmasks[3]) >> rshifts[3];
+			case 3:
+				tmp |= (cache & rmasks[2]) >> rshifts[2];
+			case 2:
+				tmp |= (cache & rmasks[1]) >> rshifts[1];
+			case 1:
+				tmp |= (cache & rmasks[0]) >> rshifts[0];
+			case 0:
+				break;
+			}
+			
+			*dstp = tmp;
+			dstp++;
+			srcp++;
+		}
+		srcp += sstride;
+		dstp += dstride;
+	}
 	return;
 }
 
@@ -660,228 +665,150 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
  */
 static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	int i, j, rshift[16], gshift[16], bshift[16];
-	ggi_pixel mask[47];
+	sint32 shifts[48], rshifts[32];
+	ggi_pixel masks[48], rmasks[32];
 	int nl, nr;
+	uint16 *stoprow, *dstp;
+	uint32 *srcp;
+	int dstride, sstride;
 	
 	GGIDPRINT_DRAW("linear-16: cb32to16.\n");
-	
-	/* Create a table of shift and mask operations needed to translate
-	 * the source visual pixelformat to that of the destination visual.
-	 */
-	
-	memset(mask, 0, 47 * sizeof(ggi_pixel));
-	memset(rshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(gshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	memset(bshift, 0xff, 16 * sizeof(int));	/* Load with -1s */
-	
-	for (i = 0; i < 32; i++) {
-		ggi_pixel bm;
-		int val;
+
+	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
+		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/4;
 		
-		bm = src->r_frame->buffer.plb.pixelformat->bitmeaning[i];
-		val = (bm & 0xff) - 240;
-		if (val < 0) continue;
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+
+	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+
+	while (stoprow > dstp) {
+		uint16 *stopcol;
 		
-		switch(bm & 0xffffff00) {
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			rshift[val] = i;
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			gshift[val] = i;
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			bshift[val] = i;
-			break;
-		default:
-			break;
-		}
-	}
-	
-	/* Ensure pixel-correct fillout when destination channel is deeper. 
-	 */
-	for (i=15,j=15; i >= 0; i--) if (rshift[i] < 0) rshift[i]= rshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (gshift[i] < 0) gshift[i]= gshift[j--];
-	for (i=15,j=15; i >= 0; i--) if (bshift[i] < 0) bshift[i]= bshift[j--];
-	
-	for (i = 0; i < 16; i++) {
-		ggi_pixel bm;
-		int val;
-		
-		bm = dst->w_frame->buffer.plb.pixelformat->bitmeaning[i];
-		val = (bm & 0xff) - 240;
-		
-		switch(bm & 0xffffff00) {
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
-			mask[rshift[val] + 15 - i] |= 1 << rshift[val];
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_GREEN:
-			mask[gshift[val] + 15 - i] |= 1 << gshift[val];
-			break;
-		case GGI_BM_TYPE_COLOR | GGI_BM_SUB_BLUE:
-			mask[bshift[val] + 15 - i] |= 1 << bshift[val];
-			break;
-		default:
-			break;
-		}
-	}
-	
-	/* Precipitate the array of masks and create a corresponding array
-	 * of shifts.  Note that rshift, gshift, and bshift areas are reused 
-	 * for efficiency -- rshift will afterwards contain right-shift counts,
-	 * and bshift,gshift will contain left-shift counts.  Masks for 
-	 * left-shift operations will start at index 16 in the array mask; 
-	 * index 15 will contain a mask for zero-shift.
-	 */
-	for (i = 0, j = 0; i < 15; i++) if (mask[i]) {
-	  mask[j] = mask[i];
-	  bshift[j] = 15 - i;
-	  j++;
-	}
-	nl = j;
-	for (i = 16, j = 16; i < 47; i++) if (mask[i]) {
-	  mask[j] = mask[i];
-	  if (j > 31) gshift[j - 32] = i - 15;
-	  else rshift[j - 16] = i - 15;
-	  j++;
-	}  
-	nr = j - 16;
-	
-	do {
-		uint16 *stoprow, *dstp;
-		uint32 *srcp;
-		int dstride, sstride;
-		
-		dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
-				 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-		srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
-				 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
-		dstride = LIBGGI_FB_W_STRIDE(dst)/2;
-		sstride = LIBGGI_FB_R_STRIDE(src)/4;
-		
-		stoprow = dstp + h * dstride;
-		dstride -= w;
-		sstride -= w;
-		
-		while (stoprow > dstp) {
-			uint16 *stopcol;
-			
-			stopcol = dstp + w;
-			while (stopcol > dstp) {
-				ggi_pixel tmp, cache;
-				
-				tmp = 0;
-				cache = *srcp;
-			  switch (nl & 0xf) {
-			  case 15:
-			    tmp |= (cache & mask[14]) << bshift[14];
-			  case 14:
-			    tmp |= (cache & mask[13]) << bshift[13];
-			  case 13:
-			    tmp |= (cache & mask[12]) << bshift[12];
-			  case 12:
-			    tmp |= (cache & mask[11]) << bshift[11];
-			  case 11:
-			    tmp |= (cache & mask[10]) << bshift[10];
-			  case 10:
-			    tmp |= (cache & mask[9]) << bshift[9];
-			  case 9:
-			    tmp |= (cache & mask[8]) << bshift[8];
-			  case 8:
-			    tmp |= (cache & mask[7]) << bshift[7];
-			  case 7:
-			    tmp |= (cache & mask[6]) << bshift[6];
-			  case 6:
-			    tmp |= (cache & mask[5]) << bshift[5];
-			  case 5:
-			    tmp |= (cache & mask[4]) << bshift[4];
-			  case 4:
-			    tmp |= (cache & mask[3]) << bshift[3];
-			  case 3:
-			    tmp |= (cache & mask[2]) << bshift[2];
-			  case 2:
-			    tmp |= (cache & mask[1]) << bshift[1];
-			  case 1:
-			    tmp |= (cache & mask[0]) << bshift[0];
-			  case 0:
-			    break;
-			  }
-			  if (mask[15]) { tmp |= cache & mask[15]; }
-			  switch (nr & 0x1f) {
-			  case 31:
-			    tmp |= (cache & mask[46]) >> gshift[14];
-			  case 30:
-			    tmp |= (cache & mask[45]) >> gshift[13];
-			  case 29:
-			    tmp |= (cache & mask[44]) >> gshift[12];
-			  case 28:
-			    tmp |= (cache & mask[43]) >> gshift[11];
-			  case 27:
-			    tmp |= (cache & mask[42]) >> gshift[10];
-			  case 26:
-			    tmp |= (cache & mask[41]) >> gshift[9];
-			  case 25:
-			    tmp |= (cache & mask[40]) >> gshift[8];
-			  case 24:
-			    tmp |= (cache & mask[39]) >> gshift[7];
-			  case 23:
-			    tmp |= (cache & mask[38]) >> gshift[6];
-			  case 22:
-			    tmp |= (cache & mask[37]) >> gshift[5];
-			  case 21:
-			    tmp |= (cache & mask[36]) >> gshift[4];
-			  case 20:
-			    tmp |= (cache & mask[35]) >> gshift[3];
-			  case 19:
-			    tmp |= (cache & mask[34]) >> gshift[2];
-			  case 18:
-			    tmp |= (cache & mask[33]) >> gshift[1];
-			  case 17:
-			    tmp |= (cache & mask[32]) >> gshift[0];
-			  case 16:
-			    tmp |= (cache & mask[31]) >> rshift[15];
-			  case 15:
-			    tmp |= (cache & mask[30]) >> rshift[14];
-			  case 14:
-			    tmp |= (cache & mask[29]) >> rshift[13];
-			  case 13:
-			    tmp |= (cache & mask[28]) >> rshift[12];
-			  case 12:
-			    tmp |= (cache & mask[27]) >> rshift[11];
-			  case 11:
-			    tmp |= (cache & mask[26]) >> rshift[10];
-			  case 10:
-			    tmp |= (cache & mask[25]) >> rshift[9];
-			  case 9:
-			    tmp |= (cache & mask[24]) >> rshift[8];
-			  case 8:
-			    tmp |= (cache & mask[23]) >> rshift[7];
-			  case 7:
-			    tmp |= (cache & mask[22]) >> rshift[6];
-			  case 6:
-			    tmp |= (cache & mask[21]) >> rshift[5];
-			  case 5:
-			    tmp |= (cache & mask[20]) >> rshift[4];
-			  case 4:
-			    tmp |= (cache & mask[19]) >> rshift[3];
-			  case 3:
-			    tmp |= (cache & mask[18]) >> rshift[2];
-			  case 2:
-			    tmp |= (cache & mask[17]) >> rshift[1];
-			  case 1:
-			    tmp |= (cache & mask[16]) >> rshift[0];
-			  case 0:
-			    break;
-			  }
-			  
-			  *dstp = tmp;
-			  dstp++;
-			  srcp++;
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			ggi_pixel tmp, cache;
+
+			tmp = 0;
+			cache = *srcp;
+			switch (nl) {
+			case 15:
+				tmp |= (cache & masks[14]) << shifts[14];
+			case 14:
+				tmp |= (cache & masks[13]) << shifts[13];
+			case 13:
+				tmp |= (cache & masks[12]) << shifts[12];
+			case 12:
+				tmp |= (cache & masks[11]) << shifts[11];
+			case 11:
+				tmp |= (cache & masks[10]) << shifts[10];
+			case 10:
+				tmp |= (cache & masks[9]) << shifts[9];
+			case 9:
+				tmp |= (cache & masks[8]) << shifts[8];
+			case 8:
+				tmp |= (cache & masks[7]) << shifts[7];
+			case 7:
+				tmp |= (cache & masks[6]) << shifts[6];
+			case 6:
+				tmp |= (cache & masks[5]) << shifts[5];
+			case 5:
+				tmp |= (cache & masks[4]) << shifts[4];
+			case 4:
+				tmp |= (cache & masks[3]) << shifts[3];
+			case 3:
+				tmp |= (cache & masks[2]) << shifts[2];
+			case 2:
+				tmp |= (cache & masks[1]) << shifts[1];
+			case 1:
+				tmp |= (cache & masks[0]) << shifts[0];
+			case 0:
+				break;
 			}
-			srcp += sstride;
-			dstp += dstride;
+			if (masks[nl]) { tmp |= cache & masks[nl]; }
+			switch (nr) {
+			case 31:
+				tmp |= (cache & rmasks[30]) >> rshifts[30];
+			case 30:
+				tmp |= (cache & rmasks[29]) >> rshifts[29];
+			case 29:
+				tmp |= (cache & rmasks[28]) >> rshifts[28];
+			case 28:
+				tmp |= (cache & rmasks[27]) >> rshifts[27];
+			case 27:
+				tmp |= (cache & rmasks[26]) >> rshifts[26];
+			case 26:
+				tmp |= (cache & rmasks[25]) >> rshifts[25];
+			case 25:
+				tmp |= (cache & rmasks[24]) >> rshifts[24];
+			case 24:
+				tmp |= (cache & rmasks[23]) >> rshifts[23];
+			case 23:
+				tmp |= (cache & rmasks[22]) >> rshifts[22];
+			case 22:
+				tmp |= (cache & rmasks[21]) >> rshifts[21];
+			case 21:
+				tmp |= (cache & rmasks[20]) >> rshifts[20];
+			case 20:
+				tmp |= (cache & rmasks[19]) >> rshifts[19];
+			case 19:
+				tmp |= (cache & rmasks[18]) >> rshifts[18];
+			case 18:
+				tmp |= (cache & rmasks[17]) >> rshifts[17];
+			case 17:
+				tmp |= (cache & rmasks[16]) >> rshifts[16];
+			case 16:
+				tmp |= (cache & rmasks[15]) >> rshifts[15];
+			case 15:
+				tmp |= (cache & rmasks[14]) >> rshifts[14];
+			case 14:
+				tmp |= (cache & rmasks[13]) >> rshifts[13];
+			case 13:
+				tmp |= (cache & rmasks[12]) >> rshifts[12];
+			case 12:
+				tmp |= (cache & rmasks[11]) >> rshifts[11];
+			case 11:
+				tmp |= (cache & rmasks[10]) >> rshifts[10];
+			case 10:
+				tmp |= (cache & rmasks[9]) >> rshifts[9];
+			case 9:
+				tmp |= (cache & rmasks[8]) >> rshifts[8];
+			case 8:
+				tmp |= (cache & rmasks[7]) >> rshifts[7];
+			case 7:
+				tmp |= (cache & rmasks[6]) >> rshifts[6];
+			case 6:
+				tmp |= (cache & rmasks[5]) >> rshifts[5];
+			case 5:
+				tmp |= (cache & rmasks[4]) >> rshifts[4];
+			case 4:
+				tmp |= (cache & rmasks[3]) >> rshifts[3];
+			case 3:
+				tmp |= (cache & rmasks[2]) >> rshifts[2];
+			case 2:
+				tmp |= (cache & rmasks[1]) >> rshifts[1];
+			case 1:
+				tmp |= (cache & rmasks[0]) >> rshifts[0];
+			case 0:
+				break;
+			}
+			
+			*dstp = tmp;
+			dstp++;
+			srcp++;
 		}
-	} while (0);
+		srcp += sstride;
+		dstp += dstride;
+	}
 	return;
 }
 
@@ -892,6 +819,7 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 			ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+
 	PREPARE_FB(dst);
 
 	/* Check if src read buffer is also a blPixelLinearBuffer. */
@@ -941,6 +869,394 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	default:
+	}
+	
+ fallback:
+	fallback(src, sx, sy, w, h, dst, dx, dy);
+	return 0;
+}
+
+#endif
+
+#ifdef DO_SWAR_MMX
+
+/* 16 bit to 16 bit crossblitting using MMX SWAR.
+ */
+static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
+				ggi_visual *dst, int dx, int dy) {
+	char tabbuf[8 * 96 + 7], *tab;
+	int nl, nr;
+	uint16 *stoprow, *dstp, *srcp;
+	int dstride, sstride, i;
+
+	GGIDPRINT_DRAW("linear-16: cb16to16.\n");
+
+	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
+
+	build_masktab(src, dst, (int *)tab, 
+		      (int *)(tab + 256), (int *)(tab + 512), 
+		      (int *)tab, 4, 0,
+		      (ggi_pixel *)(tab + 8), 32, 4, 3, &nl, &nr);
+
+	for (i = 0; i < 32; i++) {
+		*((unsigned long long *)tab + i*2) = *((int *)tab + i*4);
+		*((uint16 *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16 *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16 *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
+	}
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/2;
+
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+		
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			ggi_pixel tmp, cache;
+
+			if ((stopcol > dstp + 11) && 
+			    !((unsigned int)dstp % 8)) {
+				while (stopcol > dstp + 11) {
+				  void *dummy;
+				  __asm__ __volatile__(
+				   "movq  (%1), %%mm0\n\t
+                                    pxor  %%mm5, %%mm5\n\t
+                                    movq  8(%1), %%mm1\n\t
+                                    pxor  %%mm6, %%mm6\n\t
+                                    movq  16(%1), %%mm2\n\t
+                                    pxor  %%mm7, %%mm7\n\t
+                                    add   $24, %1\n\t
+
+                                    .Lleft%=:
+                                    cmp   $0, 8(%2)\n\t
+                                    je    .Lmiddle%=\n\t
+
+                                    movq  %%mm0, %%mm3\n\t
+                                    movq  %%mm1, %%mm4\n\t
+                                    psllw (%2), %%mm3\n\t
+                                    psllw (%2), %%mm4\n\t
+                                    pand  8(%2), %%mm3\n\t
+                                    pand  8(%2), %%mm4\n\t
+                                    por   %%mm3, %%mm5\n\t
+                                    movq  %%mm2, %%mm3\n\t
+                                    por   %%mm4, %%mm6\n\t
+                                    psllw (%2), %%mm3\n\t
+                                    pand  8(%2), %%mm3\n\t
+                                    cmp   $0, (%2)\n\t
+                                    por   %%mm3, %%mm7\n\t
+                                    je    .Lright%=\n\t
+                                    add   $16, %2\n\t
+                                    jmp   .Lleft%=\n\t
+
+                                    .Lmiddle%=:\n\t
+                                    cmp   $0, (%2)\n\t
+                                    je    .Lright%=\n\t
+
+                                    .Ldone%=:\n\t
+                                    movq  %%mm5, (%0)\n\t
+                                    movq  %%mm6, 8(%0)\n\t
+                                    movq  %%mm7, 16(%0)\n\t
+                                    add   $24, %0\n\t
+                                    jmp   .Lout%=\n\t
+
+                                    .Lright%=:\n\t
+                                    add   $16, %2\n\t
+                                    cmp   $0, 8(%2)\n\t
+                                    je    .Ldone%=\n\t
+
+                                    movq  %%mm0, %%mm3\n\t
+                                    movq  %%mm1, %%mm4\n\t
+                                    psrlw (%2), %%mm3\n\t
+                                    psrlw (%2), %%mm4\n\t
+                                    pand  8(%2), %%mm3\n\t
+                                    pand  8(%2), %%mm4\n\t
+                                    por   %%mm3, %%mm5\n\t
+                                    movq  %%mm2, %%mm3\n\t
+                                    por   %%mm4, %%mm6\n\t
+                                    psrlw (%2), %%mm3\n\t
+                                    pand  8(%2), %%mm3\n\t
+                                    por   %%mm3, %%mm7\n\t
+
+                                    jmp   .Lright%=\n\t
+
+                                    .Lout%=:\n\t
+                                    emms\n\t"
+				   : "=qom" (dstp), "=qom" (srcp), "=q" (dummy)
+				   : "qom" (dstp), "qom" (srcp), "q" (tab)
+				   : "cc", "memory");
+				}
+			}
+
+			tmp = 0;
+			cache = *srcp;
+			i = 0;
+
+			while (*((ggi_pixel *)tab + i * 4 + 2)) {
+				tmp |= (cache << 
+					*((unsigned long long *)tab + i*2)) &
+				  *((ggi_pixel *)tab + i * 4 + 2);
+				if (!*((unsigned long long *)tab + i * 2)) 
+				  goto doright;
+				i++;
+			}
+			if (!*((unsigned long long *)tab + i * 2)) 
+			  goto doright;
+		done:
+			*dstp = tmp;
+			dstp++;
+			srcp++;
+			continue;
+
+		doright:
+			i++;
+			while (*((ggi_pixel *)tab + i * 4 + 2)) {
+				tmp |= (cache >>
+					*((unsigned long long *)tab + i * 2)) &
+				  *((ggi_pixel *)tab + i * 4 + 2);
+				i++;
+			}
+			goto done;
+		}
+		dstp += dstride;
+		srcp += sstride;
+	}			
+}
+
+/* 32 bit to 16 bit crossblitting using MMX SWAR.
+ */
+static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
+				ggi_visual *dst, int dx, int dy) {
+	/* TODO: Align stuff here. */
+	char tabbuf[8 * 96 + 7], *tab;
+	int nl, nr;
+	uint16 *stoprow, *dstp;
+	uint32 *srcp;
+	int dstride, sstride, i, right;
+	
+	GGIDPRINT_DRAW("linear-16: cb32to16.\n");
+
+	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
+
+	build_masktab(src, dst, (int *)tab, 
+		      (int *)(tab + 256), (int *)(tab + 512), 
+		      (int *)tab, 4, -16,
+		      (ggi_pixel *)(tab + 8), 48, 4, 3, &nl, &nr);
+
+	/* Translate the values to sizes acceptable to MMX. */
+
+	right = 0;
+	for (i = 0; i < 48; i++) {
+		*((unsigned long long *)tab + i*2) = 
+			*((int *)tab + i*4) + right;
+		if (!*((unsigned long long *)tab + i*2)) right = 16;
+		*((uint16 *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16 *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16 *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
+	}
+
+	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
+	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
+	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
+	sstride = LIBGGI_FB_R_STRIDE(src)/4;
+		
+	stoprow = dstp + h * dstride;
+	dstride -= w;
+	sstride -= w;
+	
+	while (stoprow > dstp) {
+		uint16 *stopcol;
+		
+		stopcol = dstp + w;
+		while (stopcol > dstp) {
+			uint32 tmp;
+			ggi_pixel cache;
+
+			if ((stopcol > dstp + 7) && 
+			    !((unsigned int)dstp % 8)) {
+				while (stopcol > dstp + 7) {
+				  void *dummy;
+				  __asm__ __volatile__(
+
+				   "movq  (%1), %%mm0\n\t
+                                    movq  8(%1), %%mm1\n\t
+                                    movq  16(%1), %%mm2\n\t
+                                    movq  24(%1), %%mm3\n\t
+                                    add   $32, %1\n\t
+                                    pxor  %%mm7, %%mm7\n\t
+                                    pxor  %%mm6, %%mm6\n\t
+
+                                    .Lleft%=:
+                                    cmp   $0, 8(%2)\n\t
+                                    je    .Lmiddle%=\n\t
+
+                                    movq  %%mm1, %%mm4\n\t
+                                    movq  %%mm0, %%mm5\n\t
+                                    pslld (%2), %%mm4\n\t
+                                    pslld (%2), %%mm5\n\t
+                                    psrad $16, %%mm4\n\t
+                                    psrad $16, %%mm5\n\t
+                                    packssdw %%mm4, %%mm5\n\t
+                                    movq  %%mm3, %%mm4\n\t
+                                    pand  8(%2), %%mm5\n\t
+                                    por   %%mm5, %%mm6\n\t
+                                    movq  %%mm2, %%mm5\n\t
+                                    pslld (%2), %%mm4\n\t
+                                    pslld (%2), %%mm5\n\t
+                                    psrad $16, %%mm4\n\t
+                                    psrad $16, %%mm5\n\t
+                                    packssdw %%mm4, %%mm5\n\t
+                                    pand  8(%2), %%mm5\n\t
+                                    cmp   $0, (%2)\n\t
+                                    por   %%mm5, %%mm7\n\t
+                                    je    .Lright%=\n\t
+                                    add   $16, %2\n\t
+                                    jmp   .Lleft%=\n\t
+
+                                    .Lmiddle%=:\n\t
+                                    cmp   $0, (%2)\n\t
+                                    je    .Lright%=\n\t
+
+                                    .Ldone%=:\n\t
+                                    movq  %%mm6, (%0)\n\t
+                                    movq  %%mm7, 8(%0)\n\t
+                                    add   $16, %0\n\t
+                                    jmp   .Lout%=\n\t
+
+                                    .Lright%=:\n\t
+                                    add   $16, %2\n\t
+                                    cmp   $0, 8(%2)\n\t
+                                    je    .Ldone%=\n\t
+
+                                    movq  %%mm1, %%mm4\n\t
+                                    movq  %%mm0, %%mm5\n\t
+                                    psrld (%2), %%mm4\n\t
+                                    psrld (%2), %%mm5\n\t
+                                    packssdw %%mm4, %%mm5\n\t
+                                    movq  %%mm3, %%mm4\n\t
+                                    pand  8(%2), %%mm5\n\t
+                                    por   %%mm5, %%mm6\n\t
+                                    movq  %%mm2, %%mm5\n\t
+                                    psrld (%2), %%mm4\n\t
+                                    psrld (%2), %%mm5\n\t
+                                    packssdw %%mm4, %%mm5\n\t
+                                    pand  8(%2), %%mm5\n\t
+                                    por   %%mm5, %%mm7\n\t
+                                    jmp   .Lright%=\n\t
+
+                                    .Lout%=:\n\t
+                                    emms\n\t"
+				   : "=qom" (dstp), "=qom" (srcp), "=q" (dummy)
+				   : "qom" (dstp), "qom" (srcp), "q" (tab)
+				   : "cc", "memory");
+				}
+			}
+
+			
+			tmp = 0;
+			cache = *srcp;
+			i = 0;
+
+			while (*((ggi_pixel *)tab + i*4 + 2)) {
+				tmp |= ((cache << 
+					 (*((unsigned long long *)tab + i*2))) 
+					>> 16) &
+				  *((ggi_pixel *)tab + i * 4 + 2);
+				if (!*((unsigned long long *)tab + i * 2)) 
+				  goto doright;
+				i++;
+			}
+			if (!*((unsigned long long *)tab + i * 2)) 
+			  goto doright;
+		done:
+			*dstp = tmp;
+			dstp++;
+			srcp++;
+			continue;
+
+		doright:
+			i++;
+			while (*((ggi_pixel *)tab + i * 4 + 2)) {
+			  tmp |= ((cache >>
+				   *((unsigned long long *)tab + i * 2))) &
+			    *((ggi_pixel *)tab + i * 4 + 2);
+			  i++;
+			}
+			goto done;
+		}
+
+		dstp += dstride;
+		srcp += sstride;
+	}
+
+}
+
+/* Main function hook for MMX SWAR -- does some common-case preprocessing 
+ * and dispatches to one of the above functions.
+ */
+int GGI_lin16_crossblit_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
+			    ggi_visual *dst, int dx, int dy)
+{
+	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	PREPARE_FB(dst);
+
+	/* Check if src read buffer is also a blPixelLinearBuffer. */
+	if (src->r_frame == NULL) goto fallback;
+	if (src->r_frame->layout != blPixelLinearBuffer) goto fallback;
+
+	/* No optimizations yet for reverse endian and other such weirdness */
+	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+
+	PREPARE_FB(src);
+
+	switch (GT_SIZE(LIBGGI_MODE(src)->graphtype)) {
+	case 1:
+		/* TODO */
+	case 2:
+		/* TODO */
+		goto fallback;
+	case 4:
+		if (w * h > 15) cb4to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 8:
+		if (w * h > 255) cb8to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 16:
+		if (!dst->w_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		if (dst->w_frame->buffer.plb.pixelformat->stdformat !=
+		    src->r_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
+		return 0;
+	notsame:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb16to16_mmx(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 24:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb24to16(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	case 32:
+		if (GT_SCHEME(LIBGGI_MODE(src)->graphtype) == GT_TRUECOLOR)
+		  cb32to16_mmx(src, sx, sy, w, h, dst, dx, dy);
+		else goto fallback;
+		return 0;
+	default:
 		break;
 	}
 	
@@ -949,3 +1265,4 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	return 0;
 }
 
+#endif

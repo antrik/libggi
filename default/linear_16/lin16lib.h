@@ -1,4 +1,4 @@
-/* $Id: lin16lib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: lin16lib.h,v 1.3 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -55,6 +55,24 @@ ggifunc_getvline	GGI_lin16_getvline;
 ggifunc_drawline	GGI_lin16_drawline;
 
 ggifunc_copybox		GGI_lin16_copybox;
-ggifunc_crossblit	GGI_lin16_crossblit;
 ggifunc_drawbox		GGI_lin16_drawbox;
 ggifunc_putbox		GGI_lin16_putbox;
+
+#ifdef DO_SWAR_MMX
+# ifndef HAVE_LIN16_SWAR
+# define HAVE_LIN16_SWAR
+# endif
+ggifunc_crossblit	GGI_lin16_crossblit_mmx;
+#endif
+
+#ifndef HAVE_LIN16_SWAR
+/* Define DO_SWAR_NONE locally for this sublib */
+# ifndef DO_SWAR_NONE
+# define DO_SWAR_NONE
+# endif
+#endif
+
+#ifdef DO_SWAR_NONE
+ggifunc_crossblit	GGI_lin16_crossblit;
+#endif
+

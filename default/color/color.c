@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2002/09/29 19:27:41 skids Exp $
+/* $Id: color.c,v 1.4 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -42,6 +42,9 @@ int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 
 /* ---------------------------------------------------------------------- */
 
+/* This could be optimized using TINN:
+compgeo.math.uwaterloo.ca/~cccg01/proceedings/short/chang-53914.ps.gz
+*/
 
 ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, ggi_color *col)
 {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: visual.c,v 1.2 2002/10/20 20:35:49 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -28,10 +28,10 @@
 
 #include "lin16lib.h"
 
-
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32 *dlret)
 {
+	enum gg_swartype swar;
 	/* Frame handling
 	 */
 
@@ -69,7 +69,24 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawbox		= GGI_lin16_drawbox;
 	vis->opdraw->putbox		= GGI_lin16_putbox;
 	vis->opdraw->copybox		= GGI_lin16_copybox;
-	vis->opdraw->crossblit		= GGI_lin16_crossblit;
+
+	swar = _ggiGetSwarType();
+
+	vis->opdraw->crossblit		= NULL;
+
+#ifdef DO_SWAR_NONE
+	if (swar & GG_SWAR_NONE) 
+		vis->opdraw->crossblit	= GGI_lin16_crossblit;
+#endif
+#ifdef DO_SWAR_MMX
+	if (swar & GG_SWAR_MMX) 
+		vis->opdraw->crossblit	= GGI_lin16_crossblit_mmx;
+#endif
+
+	if (vis->opdraw->crossblit == NULL) {
+		fprintf(stderr, "linear_16: No acceptible SWAR.  Aborting.\n");
+		return GGI_ENOFUNC;
+	}
 
 	*dlret = GGI_DL_OPDRAW;
 	return 0;

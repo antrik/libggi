@@ -40,3 +40,8 @@
 /* Define if socklen_t type is supported. */
 #undef HAVE_SOCKLEN_T
 
+/* Defines for SWAR selection */
+#undef DO_SWAR_NONE
+#undef DO_SWAR_MMX
+#undef DO_SWAR_3DNOW
+
