@@ -1,10 +1,11 @@
-/* $Id: debug.h,v 1.4 2004/02/23 14:25:30 pekberg Exp $
+/* $Id: debug.h,v 1.5 2004/10/30 10:36:04 soyt Exp $
 ******************************************************************************
 
    LibGGI debugging macros
-
+   
+   Copyright (C) 2004      Eric Faurot	        [eric.faurot@info.unicaen.fr]
    Copyright (C) 1998-1999 Marcus Sundberg	[marcus@ggi-project.org]
-  
+   
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -38,8 +39,7 @@
 __BEGIN_DECLS
 
 /* Exported variables */
-GGIAPIVAR uint32     _ggiDebugState;
-GGIAPIVAR int        _ggiDebugSync;
+GGIAPIVAR uint32     _ggiDebug;
 
 __END_DECLS
 
@@ -55,19 +55,22 @@ __END_DECLS
 #define GGIDEBUG_LIBS		(1<<6)	/*  64 */
 #define GGIDEBUG_EVENTS		(1<<7)	/* 128 */
 
-#define GGIDEBUG_ALL	0xffffffff
+#define GGIDEBUG_ALL	 0x7fffffff
+#define GGIDEBUG_SYNC	 0x80000000
+
+#define GGIDEBUG_ISSYNC  (_ggiDebug&GGIDEBUG_SYNC)
 
 #ifdef __GNUC__
 
 #ifdef DEBUG
-#define GGIDPRINT(args...)        if (_ggiDebugState) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_CORE(args...)   if (_ggiDebugState & GGIDEBUG_CORE) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_MODE(args...)   if (_ggiDebugState & GGIDEBUG_MODE) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_COLOR(args...)  if (_ggiDebugState & GGIDEBUG_COLOR) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_DRAW(args...)   if (_ggiDebugState & GGIDEBUG_DRAW) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_MISC(args...)   if (_ggiDebugState & GGIDEBUG_MISC) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_LIBS(args...)   if (_ggiDebugState & GGIDEBUG_LIBS) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
-#define GGIDPRINT_EVENTS(args...) if (_ggiDebugState & GGIDEBUG_EVENTS) { ggDPrintf(_ggiDebugSync,"LibGGI",args); }
+#define GGIDPRINT(args...)        if (_ggiDebug & GGIDEBUG_ALL)    ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_CORE(args...)   if (_ggiDebug & GGIDEBUG_CORE)   ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_MODE(args...)   if (_ggiDebug & GGIDEBUG_MODE)   ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_COLOR(args...)  if (_ggiDebug & GGIDEBUG_COLOR)  ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_DRAW(args...)   if (_ggiDebug & GGIDEBUG_DRAW)   ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_MISC(args...)   if (_ggiDebug & GGIDEBUG_MISC)   ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_LIBS(args...)   if (_ggiDebug & GGIDEBUG_LIBS)   ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
+#define GGIDPRINT_EVENTS(args...) if (_ggiDebug & GGIDEBUG_EVENTS) ggDPrintf(GGIDEBUG_ISSYNC,"LibGGI",args)
 #else /* DEBUG */
 #define GGIDPRINT(args...)		do{}while(0)
 #define GGIDPRINT_CORE(args...)		do{}while(0)
@@ -83,125 +86,29 @@ __END_DECLS
 
 __BEGIN_DECLS
 
-static inline void GGIDPRINT(const char *form,...)
-{
 #ifdef DEBUG
-	if (_ggiDebugState) {
-		va_list args;
+#define GGIDPRINTIF(mask) do {                   \
+    if (_ggiDebug & mask) {                      \
+	    va_list args;                        \
+	    fprintf(stderr, "LibGGI: ");         \
+	    va_start(args, form);                \
+	    vfprintf(stderr, form, args);        \
+	    va_end(args);                        \
+	    if (GGIDEBUG_ISSYNC) fflush(stderr); \
+    }                                            \
+} while(0)
+#else /* DEBUG */
+#define GGIDPRINTIF(mask)  do{}while(0)
+#endif  /* DEBUG */
 
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_CORE(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_CORE) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_MODE(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_MODE) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_COLOR(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_COLOR) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_DRAW(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_DRAW) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_MISC(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_MISC) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_LIBS(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_LIBS) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
-
-static inline void GGIDPRINT_EVENTS(const char *form,...)
-{
-#ifdef DEBUG
-	if (_ggiDebugState & GGIDEBUG_EVENTS) {
-		va_list args;
-
-		fprintf(stderr, "LibGGI: ");
-		va_start(args, form);
-		vfprintf(stderr, form, args);
-		va_end(args);
-		if (_ggiDebugSync) fflush(stderr);
-	}
-#endif
-}
+static inline void GGIDPRINT(const char *form,...)        { GGIDPRINTIF(GGIDEBUG_ALL);    }
+static inline void GGIDPRINT_CORE(const char *form,...)   { GGIDPRINTIF(GGIDEBUG_CORE);   }
+static inline void GGIDPRINT_MODE(const char *form,...)   { GGIDPRINTIF(GGIDEBUG_MODE);   }
+static inline void GGIDPRINT_COLOR(const char *form,...)  { GGIDPRINTIF(GGIDEBUG_COLOR);  }
+static inline void GGIDPRINT_DRAW(const char *form,...)   { GGIDPRINTIF(GGIDEBUG_DRAW);   }
+static inline void GGIDPRINT_MISC(const char *form,...)   { GGIDPRINTIF(GGIDEBUG_MISC);   }
+static inline void GGIDPRINT_LIBS(const char *form,...)   { GGIDPRINTIF(GGIDEBUG_LIBS);   }
+static inline void GGIDPRINT_EVENTS(const char *form,...) { GGIDPRINTIF(GGIDEBUG_EVENTS); }
 
 __END_DECLS
 
