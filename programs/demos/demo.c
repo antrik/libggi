@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.7 2003/01/22 16:16:00 cegger Exp $
+/* $Id: demo.c,v 1.8 2003/01/22 16:52:59 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -975,7 +975,6 @@ int main(int argc, char **argv)
 		if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0)
 			break;
 
-	dbuf_start:
 		TestStart();
 		i = 0;
 		while ((TestTime() < 10) && (i < numplanes)) {
@@ -984,7 +983,7 @@ int main(int argc, char **argv)
 				linestart = (uint8 *)dbuf->write + 
 				  stride2 * i + stride * y;
 				x = 0;
-				if (ggiKbhit(vis)) goto dbuf_end;
+				if (ggiKbhit(vis)) goto dbuf_tidy;
 				while (x < vx * GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
@@ -1006,7 +1005,7 @@ int main(int argc, char **argv)
 		while (TestTime() < 10) {
 			uint8 *linestart;
 
-			if (ggiKbhit(vis)) goto dbuf_end;
+			if (ggiKbhit(vis)) goto dbuf_tidy;
 
 			i = random() % numplanes;
 			y = random() % vy;
@@ -1026,25 +1025,77 @@ int main(int argc, char **argv)
 				*(linestart+x) = random();
 				break;
 			}
-
-			if ((ggiGetFlags(vis) & GGIFLAG_TIDYBUF) == GGIFLAG_TIDYBUF)
-				ggiFlushRegion(vis, x,y,50,50);
 		}
 
-	dbuf_end:
-
-		if ((ggiGetFlags(vis) & GGIFLAG_TIDYBUF) == GGIFLAG_TIDYBUF)
-			break;
+	dbuf_tidy:
 
 		if (!ggiAddFlags(vis, GGIFLAG_TIDYBUF)) {
-			ggiSetGCForeground(vis, black);
-			ggiFillscreen(vis);
-
 			TestName("Directbuffer (with GGIFLAG_TIDYBUF flag)");
 			waitabit();
-			goto dbuf_start;
-		}	/* if */
+			TestStart();
 
+			i = 0;
+			dx = (100 < vx) ? 100 : vx;
+			dy = (100 < vy) ? 100 : vy;
+
+			while ((TestTime() < 10) && (i < numplanes)) {
+				for (y = 0; (TestTime() < 15) && (y < dy); y++) {
+					uint8 *linestart;
+					linestart = (uint8 *)dbuf->write + 
+					  stride2 * i + stride * y;
+					x = 0;
+					if (ggiKbhit(vis)) goto dbuf_end;
+					while (x < dx * GT_SIZE(type)/wordsize) {
+						switch(wordsize) {
+						case 32:
+						  *((uint32 *)linestart+x) = random();
+						  break;
+						case 16:
+						  *((uint16 *)linestart+x) = random();
+						  break;
+						case 8:
+						  *(linestart+x) = random();
+						  break;
+						}
+						x++;
+					}
+				}
+				i++;
+			}
+
+			c = 0;
+			while (TestTime() < 10) {
+				uint8 *linestart;
+
+				if (ggiKbhit(vis)) goto dbuf_end;
+
+				i = random() % numplanes;
+				y = random() % dy;
+				x = random() % (dx * GT_SIZE(type)/wordsize);
+
+				linestart = (uint8 *)dbuf->write + 
+				  stride2 * i + stride * y;
+
+				switch(wordsize) {
+				case 32:
+					*((uint32 *)linestart+x) = random();
+					break;
+				case 16:
+					*((uint16 *)linestart+x) = random();
+					break;
+				case 8:
+					*(linestart+x) = random();
+					break;
+				}
+
+				c++;
+				if (c > 100) {
+					ggiFlushRegion(vis, 0,0,dx,dy);
+					c = 0;
+				}
+			}
+		}	/* if */
+	dbuf_end:
 
 		/* If we were not in syncronous mode, we would
 		 * call ggiFlush here, because there is no guarantee
