@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.3 2002/12/01 21:42:37 cegger Exp $
+/* $Id: clip.c,v 1.4 2002/12/09 20:55:13 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -114,8 +114,8 @@ static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
 	int xmajor;
 	int slope;
 
-	first = 0;
-	last = 0;
+	*clip_first = first = 0;
+	*clip_last = last = 0;
 	outcode(first,*_x0,*_y0);
 	outcode(last,*_x1,*_y1);
 
