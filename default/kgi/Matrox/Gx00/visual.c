@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/02/23 14:24:44 pekberg Exp $
+/* $Id: visual.c,v 1.5 2004/02/28 17:21:42 aldot Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -22,11 +22,15 @@
 
 ******************************************************************************
 */
-
+#include "config.h"
+#ifdef HAVE_STRING_H
+#include <string.h>	/* memset */
+#endif
 #include <unistd.h>
 #include <sys/mman.h>
 
 #include <ggi/internal/ggi-dl.h>
+#include "kgi/config.h"
 #include "Gx00_accel.h"
 
 int GGI_kgi_Gx00_idleaccel(ggi_visual *vis)
@@ -58,13 +62,13 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* NB: The accel engine is resource 2 (1 is the ILOAD aperture,
 	** 0 the framebuffer) */
-	if (!(accel = KGI_PRIV(vis)->map_accel(vis, 2, 0, 
+	if (!(accel = KGI_PRIV(vis)->map_accel(vis, 2, 0,
 		GX00_BUFFER_SIZE_ORDER, GX00_BUFFER_NUM, 0)))
 		return -1;
 
 	if (!(ctx = (Gx00_context_t*)malloc(sizeof(*ctx))))
 		return -1;
-	
+
 	/* setup the accel_priv data structures */
 	KGI_ACCEL_PRIV(vis) = ctx;
 	memset(ctx, 0, sizeof(*ctx));
@@ -139,17 +143,17 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	vis->needidleaccel = 1;
 	vis->accelactive = 0;
-	
+
 	*dlret = GGI_DL_OPDRAW | GGI_DL_OPGC;
 
-	return 0;	
+	return 0;
 }
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	free(KGI_ACCEL_PRIV(vis));
 	KGI_ACCEL_PRIV(vis) = NULL;
-	
+
 	return 0;
 }
 
