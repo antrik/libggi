@@ -133,31 +133,31 @@ user, which affect the behaviour of LibGGI:
        :p:`size`   
            Size of pixel in number of bits, including padding.
 
-   Instead of :p:`scheme`, :p:`depth`, :p:`size`, it is also possible
-   to specify the graphtype by using one of the following:
+       Instead of :p:`scheme`, :p:`depth`, :p:`size`, it is also possible
+       to specify the graphtype by using one of the following:
 
-   - GT_1BIT
-   - GT_2BIT
-   - GT_4BIT
-   - GT_8BIT
-   - GT_15BIT
-   - GT_16BIT
-   - GT_24BIT
-   - GT_32BIT
-   - GT_TEXT16
-   - GT_TEXT32
+       - GT_1BIT
+       - GT_2BIT
+       - GT_4BIT
+       - GT_8BIT
+       - GT_15BIT
+       - GT_16BIT
+       - GT_24BIT
+       - GT_32BIT
+       - GT_TEXT16
+       - GT_TEXT32
 
 `GGI_DEBUG`
     The debugging level for LibGGI:
-
+    
     0 or unset
         debug output is off; debugging is off
-
+    
     255
 	all debug output is on
-
+    
     You may also bitwise-or any of the following together:
-
+    
     - 2 : debug core
     - 4 : debug mode setting
     - 8 : debug color handling
@@ -165,7 +165,7 @@ user, which affect the behaviour of LibGGI:
     - 32 : misc debuging output
     - 64 : debug dynamic library handling
     - 128 : debug event handling
-
+    
     The debugging output can be quite verbose and in most cases you
     should redirect stderr so that it does not interfere with your
     program's output.
