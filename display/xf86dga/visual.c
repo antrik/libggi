@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/11/27 16:42:30 soyt Exp $
+/* $Id: visual.c,v 1.14 2005/01/29 08:51:28 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -235,7 +235,8 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		goto out_freegc;
 
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result,
-			       &(priv->x.physzflags), &(priv->x.physz));
+				      &(priv->x.physzflags),
+				      &(priv->x.physz));
 	if (err != GGI_OK)
 		goto out_freegc;
 
@@ -257,7 +258,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	}
 
 	DPRINT("fb: %p, stride: %d, bank_size: %d, mem_size: %d\n",
-		  priv->fb, priv->stride, priv->bank_size, priv->mem_size);
+	       priv->fb, priv->stride, priv->bank_size, priv->mem_size);
 
 	if (priv->bank_size != priv->mem_size * 1024) {
 		fprintf(stderr,
@@ -274,7 +275,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	priv->size = _GGI_xf86dga_getbpp(priv);
 
 	DPRINT_MISC("Virtwidth: %d, depth: %d, size: %d\n",
-		       priv->width, priv->depth, priv->size);
+		    priv->width, priv->depth, priv->size);
 
 	DGA_PRIV(vis) = priv;
 
@@ -301,7 +302,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 						  8) ? GT_PALETTE :
 						 GT_TRUECOLOR, priv->size);
 		DPRINT_MISC("Found mode: %dx%d\n", priv->modes[x].x,
-			       priv->modes[x].y);
+			    priv->modes[x].y);
 	}
 	priv->modes[priv->num_modes].bpp = 0;
 
@@ -372,20 +373,19 @@ static int GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 }
 
 
-EXPORTFUNC
-int GGIdl_xf86dga(int func, void **funcptr);
+EXPORTFUNC int GGIdl_xf86dga(int func, void **funcptr);
 
 int GGIdl_xf86dga(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		*funcptr = (void *) GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		*funcptr = (void *) GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

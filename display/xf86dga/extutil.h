@@ -1,4 +1,4 @@
-/* $Id: extutil.h,v 1.3 2004/09/18 10:48:05 cegger Exp $ */
+/* $Id: extutil.h,v 1.4 2005/01/29 08:51:28 cegger Exp $ */
 /*
  * $XConsortium: extutil.h,v 1.15 94/10/07 15:36:33 kaleb Exp $
  *
@@ -153,9 +153,8 @@ extern XExtDisplayInfo *XextAddDisplay(
 					      /* extinfo */ ,
 					      Display * /* dpy */ ,
 					      char * /* ext_name */ ,
-					      XExtensionHooks * /* hooks */
-					      ,
-					      int /* nevents */ ,
+					      XExtensionHooks *	/* hooks */
+					      , int /* nevents */ ,
 					      XPointer	/* data */
 #endif
     );

@@ -1,4 +1,4 @@
-/* $Id: XF86VMode.c,v 1.12 2004/11/27 16:42:29 soyt Exp $
+/* $Id: XF86VMode.c,v 1.13 2005/01/29 08:51:28 cegger Exp $
 
 This is a modified version of the XF86VMode API functions for use
 internally by the LibGGI xf86dga target.  Mods by Marcus Sundberg and
@@ -107,9 +107,9 @@ static XEXT_GENERATE_CLOSE_DISPLAY(close_display, xf86vidmode_info)
  *		    public XFree86-VidMode Extension routines                *
  *                                                                           *
  *****************************************************************************/
- static Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
-					    int *event_basep,
-					    int *error_basep)
+static Bool _ggi_XF86VidModeQueryExtension(Display * dpy,
+					   int *event_basep,
+					   int *error_basep)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 
@@ -263,7 +263,7 @@ static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
 
 	*modecount = rep.modecount;
 	DPRINT("XF86VidMode extension found %i modelines\n",
-		  rep.modecount);
+	       rep.modecount);
 
 	if (!(modelines = (XF86VidModeModeInfo **) Xcalloc(rep.modecount,
 							   sizeof
@@ -323,8 +323,7 @@ static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
 						Xfree(modelines[i]->
 						      private);
 					} else {
-						_XRead32(dpy,
-							 (char *)
+						_XRead32(dpy, (char *)
 							 modelines[i]->
 							 private,
 							 oldxmdline.
@@ -365,8 +364,7 @@ static Bool _ggi_XF86VidModeGetAllModeLines(Display * dpy, int screen,
 						Xfree(modelines[i]->
 						      private);
 					} else {
-						_XRead(dpy,
-						       (char *)
+						_XRead(dpy, (char *)
 						       modelines[i]->
 						       private,
 						       xmdline.privsize *

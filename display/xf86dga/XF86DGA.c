@@ -1,4 +1,4 @@
-/* $Id: XF86DGA.c,v 1.6 2004/09/18 10:50:34 cegger Exp $
+/* $Id: XF86DGA.c,v 1.7 2005/01/29 08:51:28 cegger Exp $
 
 Copyright (c) 1995  Jon Tombs
 Copyright (c) 1995,1996  The XFree86 Project, Inc
@@ -78,8 +78,8 @@ static XEXT_GENERATE_CLOSE_DISPLAY(close_display, xf86dga_info)
  *		    public XFree86-DGA Extension routines                *
  *                                                                           *
  *****************************************************************************/
- static Bool _ggi_XF86DGAQueryExtension(Display * dpy, int *event_basep,
-					int *error_basep)
+static Bool _ggi_XF86DGAQueryExtension(Display * dpy, int *event_basep,
+				       int *error_basep)
 {
 	XExtDisplayInfo *info = find_display(dpy);
 
