@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.4 2001/09/30 15:12:18 skids Exp $
+/* $Id: types.h,v 1.5 2003/07/04 23:06:07 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -75,10 +75,10 @@ typedef uint32 ggi_graphtype;
 #define GT_SUBSCHEME_SHIFT	(16)
 #define GT_SCHEME_SHIFT		(24)
 
-#define GT_DEPTH_MASK		(0xff << GT_DEPTH_SHIFT)
-#define GT_SIZE_MASK		(0xff << GT_SIZE_SHIFT)
-#define GT_SUBSCHEME_MASK	(0xff << GT_SUBSCHEME_SHIFT)
-#define GT_SCHEME_MASK		(0xff << GT_SCHEME_SHIFT)
+#define GT_DEPTH_MASK		(0xffU << GT_DEPTH_SHIFT)
+#define GT_SIZE_MASK		(0xffU << GT_SIZE_SHIFT)
+#define GT_SUBSCHEME_MASK	(0xffU << GT_SUBSCHEME_SHIFT)
+#define GT_SCHEME_MASK		(0xffU << GT_SCHEME_SHIFT)
 
 /* Macros to extract info from a ggi_graphtype. */
 #define GT_DEPTH(x)		(((x) & GT_DEPTH_MASK) >> GT_DEPTH_SHIFT)
