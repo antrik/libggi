@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.14 2004/09/18 09:52:59 cegger Exp $
+/* $Id: kgi.h,v 1.15 2004/09/22 20:14:09 nsouch Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -31,6 +31,7 @@
 #include <stdlib.h>
 
 #ifndef __FreeBSD__
+#  include <kgi/config.h>
 #  include <kgi/system.h>
 #  include <kgi/kgi.h>
 #  include <kgi/cmd.h>
@@ -54,16 +55,17 @@ enum {
 /*
  * KGI communication
  */
-typedef struct
+struct kgi_context_s
 {
 	struct
 	{
 		kgi_s_t		fd;
 		kgi_u_t		resources;
-
+		kgi_u_t		graphic;	/* unit of /dev/graphic */
 	} mapper;
+};
 
-} kgi_context_t;
+typedef struct kgi_context_s kgi_context_t;
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		    const kgi_version_t *version, const gg_option *options);
