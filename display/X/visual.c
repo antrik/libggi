@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2003/01/21 08:11:16 cegger Exp $
+/* $Id: visual.c,v 1.16 2003/01/22 03:22:39 skids Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -50,7 +50,8 @@ static const gg_option optlist[] =
 	{ "noaccel", "no"},
 	{ "nomansync", "no"},
 	{ "nobuffer", "no"},
-	{ "physz", "0,0"}
+	{ "physz", "0,0"},
+	{ "keepcursor", "no"}
 };
 
 #define OPT_SCREEN	0
@@ -65,6 +66,7 @@ static const gg_option optlist[] =
 #define OPT_NOMANSYNC	9
 #define OPT_NOBUFFER	10
 #define OPT_PHYSZ	11
+#define OPT_KEEPCURSOR	12
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -367,8 +369,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (err != GGI_OK) goto out;
 
 	/* Hook default functions to create the cursor */
-	priv->createcursor = (options[OPT_NOCURSOR].result[0] == 'n') ?
-	  _ggi_x_create_dot_cursor : _ggi_x_create_invisible_cursor; 
+	if (options[OPT_KEEPCURSOR].result[0] == 'n') {
+		priv->createcursor = (options[OPT_NOCURSOR].result[0] == 'n') ?
+		  _ggi_x_create_dot_cursor : _ggi_x_create_invisible_cursor; 
+	}
 
 	/* Set the rest of our default displayops. Helper libs may override. */
 	vis->opdisplay->getmode  = GGI_X_getmode;
