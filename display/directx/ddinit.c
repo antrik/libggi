@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.33 2004/09/13 14:12:22 pekberg Exp $
+/* $Id: ddinit.c,v 1.34 2004/09/15 19:44:04 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -736,14 +736,11 @@ DDCreateSurface(directx_priv *priv, int frames,
 		memset(&bddsd, 0, sizeof(bddsd));
 		bddsd.dwSize = sizeof(bddsd);
 		bddsd.dwFlags =
-		    DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PITCH |
-		    DDSD_PIXELFORMAT;
+		    DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
 		bddsd.ddsCaps.dwCaps =
 		    DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 		bddsd.dwWidth = virtw;
 		bddsd.dwHeight = virth;
-		bddsd.lPitch =
-		    virtw * (pddsd.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
 
 		/* set up the pixel format */
 		ZeroMemory(&bddsd.ddpfPixelFormat, sizeof(DDPIXELFORMAT));
@@ -778,7 +775,7 @@ DDCreateSurface(directx_priv *priv, int frames,
 	priv->maxX = virtw;
 	priv->maxY = virth;
 	priv->ColorDepth = pddsd.ddpfPixelFormat.dwRGBBitCount;
-	priv->pitch = priv->maxX * (priv->ColorDepth + 7) / 8;
+	priv->pitch = bddsd.lPitch;
 
 	return 1;
 }
