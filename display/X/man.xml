@@ -287,7 +287,7 @@ function is called:
 <orderedlist>
 <listitem><para>When the mansync helper decides it is time to refresh
 the screen.</para></listitem>
-<listitem><para>After a primitive, if the visual in in syncronous
+<listitem><para>After a primitive, if the visual is in syncronous
 rendering mode.</para></listitem>
 <listitem><para>
 When an expose or graphicsexpose event is sent from the server.
