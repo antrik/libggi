@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.8 2004/06/17 18:18:02 pekberg Exp $
+/* $Id: inputdump.c,v 1.9 2004/08/09 11:39:08 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -64,6 +64,7 @@ typedef struct mydev_info
 
 	ggi_coord top;
 	int val_h, ptr_h;
+	int val_x;
 
 	sint32 cur_x, cur_y, cur_z, cur_w;
 
@@ -140,7 +141,7 @@ static void draw_inp_valuator(mydev_info *M, int n)
 		range = &default_range;
 	}
 
-	draw_bar(M->top.x + vis_ch.x * 5,
+	draw_bar(M->top.x + vis_ch.x * M->val_x,
 		 M->top.y + vis_ch.y * (n+1),
 		 M->axes[n], range);
 }
@@ -149,7 +150,7 @@ static void draw_inp_mouserel(mydev_info *M, int n, int change)
 {
 	gii_valrange range = { -64, 0, +64 };
 
-	draw_bar(M->top.x + vis_ch.x * 5,
+	draw_bar(M->top.x + vis_ch.x * M->val_x,
 		 M->top.y + vis_ch.y * (1 + M->val_h + n),
 		 change, &range);
 }
@@ -198,7 +199,8 @@ static void draw_inp_device(mydev_info *M)
 	char buf[40];
 
 	int i;
-	
+	int w = 0;
+
 	sprintf(buf, "Unknown 0x%04x", M->origin);
 	
 	ggiSetGCBackground(vis, ggiMapColor(vis, &black));
@@ -209,14 +211,39 @@ static void draw_inp_device(mydev_info *M)
 
 	if (M->val_h > 0) {
 		for (i=0; i < M->val_h; i++) {
+			int tmp;
+			if (!M->VI[i]) {
+				sprintf(buf, "? %d", i);
+				tmp = strlen(buf);
+			}
+			else
+				tmp = strlen(M->VI[i]->longname);
+			if (tmp > w)
+				w = tmp;
+		}
+	}
+	if (M->ptr_h > 0 && w < 2)
+		w = 2;
+	if (w > (vis_mode.virt.x / 2) / vis_ch.x - 14) {
+		w = (vis_mode.virt.x / 2) / vis_ch.x - 14;
+		if (w < 0)
+			w = 0;
+	}
+	if (w > sizeof(buf) - 1)
+		w = sizeof(buf) - 1;
+	M->val_x = w;
+
+	if (M->val_h > 0) {
+		for (i=0; i < M->val_h; i++) {
 			int y = M->top.y + (i+1) * vis_ch.y;
 
-			sprintf(buf, "? %d", i);
-		
 			ggiSetGCBackground(vis, ggiMapColor(vis, &black));
 			ggiSetGCForeground(vis, ggiMapColor(vis, &white));
 
-			ggiPuts(vis, M->top.x, y, "     ");
+			memset(buf, ' ', M->val_x);
+			buf[M->val_x] = '\0';
+			ggiPuts(vis, M->top.x, y, buf);
+			sprintf(buf, "? %d", i);
 			ggiPuts(vis, M->top.x, y, M->VI[i] ? 
 				M->VI[i]->longname : buf);
 
