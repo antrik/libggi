@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.106 2004/02/09 14:31:31 cegger Exp $
+dnl $Id: configure.in,v 1.107 2004/02/25 09:22:03 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -590,6 +590,8 @@ pthread_exit (0);
   LIBS=$TMP_SAVE_LIBS
 fi
 
+use_threads_orig="$use_threads"
+
 AC_MSG_CHECKING(if we should use pthreads for mansync)
 if test "$have_pthreads" = "yes" -a "x$use_threads" != "xno"; then 
   AC_TRY_CPP([
@@ -604,6 +606,16 @@ if test "$have_pthreads" = "yes" -a "x$use_threads" != "xno"; then
 else
       use_threads="no"
       AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should use win32 threads for mansync)
+if test "$ac_cv_header_windows_h" = "yes" \
+  -a "x$use_threads_orig" != "xno" \
+  -a "x$use_threads" = "xno"; then
+  use_threads="$use_threads_orig"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
 fi
 
 memory_dependent="x"
@@ -1374,9 +1386,11 @@ AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
 AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
 AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$static_sysconfdir/$ggi_subdir")
 
-if test "x$use_threads" = "xpthread"; then
+if test "x$use_threads" != "xno"; then
   AC_DEFINE(USE_THREADS)
-  THREADLIBS="-lpthread"
+  if test "x$use_threads" = "xpthread"; then
+    THREADLIBS="-lpthread"
+  fi
 fi
 
 AM_CONFIG_HEADER(config.h)
