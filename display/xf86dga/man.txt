@@ -9,7 +9,7 @@ Synopsis
 
 ::
 
-  display-dga: [-noinput] [-nocursor] [-physz==>sizex>,<sizey>[dpi]]
+  display-dga: [-nocursor] [-noinput] [-physz==>sizex>,<sizey>[dpi]]
                [<display>]
 
 
@@ -26,11 +26,9 @@ to be able to mmap `/dev/mem`.
 Options
 -------
 
-``-noinput``
-    XF86DGA events sent to the window are not captured and merged with
-    any other LibGII input sources.  This allows one to take input
-    from raw devices without receiving duplicate events should X also
-    be configured to use the device.
+:p:`display`
+    The X display to connect to, otherwise defaults to the display
+    specified in `DISPLAY`.
 
 ``-nocursor``
     Normal behavior of display-x and display-xlib is to create a small
@@ -40,6 +38,12 @@ Options
     this option, you will not see an X mouse cursor when it is over
     the visual.
 
+``-noinput``
+    XF86DGA events sent to the window are not captured and merged with
+    any other LibGII input sources.  This allows one to take input
+    from raw devices without receiving duplicate events should X also
+    be configured to use the device.
+
 ``-physz==<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
     X server, which affects applications which wish to remain
@@ -48,10 +52,6 @@ Options
     is affixed, in which case, they represent resolution in
     dots-per-inch.  Yes, there are two equals signs there, for reasons
     of compatibility with other targets.
-
-:p:`display`
-    The X display to connect to, otherwise defaults to the display
-    specified in `DISPLAY`.
 
 
 Environment Variables

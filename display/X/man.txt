@@ -8,11 +8,11 @@ Synopsis
 
 ::
 
-  display-x: [ [-screen=<screenidx>] | [-inwin=<winid>|root] ] [-noinput]
-	     [-nocursor] [-keepcursor] [-physz==<sizex>,<sizey>[dpi]]
-	     [-nobuffer] [-noaccel] [-nomansync] [-noshm]
-	     [-fullscreen] [-nodga] [-novidmode]
-	     [-nodbe] [-noevi] [<display>]
+  display-x: [ [-inwin=<winid|root] | [-screen=<screenidx>] ]
+	     [-fullscreen] [-keepcursor] [-noaccel] [-nobuffer]
+	     [-nocursor] [-nodbe] [-nodga] [-noevi] [-noinput]
+	     [-nomansync] [-noshm] [-novidmode] [-physz==<sizex>,<sizey>[dpi]]
+	     [<display>]
 
 
 Description
@@ -41,18 +41,89 @@ Options
     The X display to connect to, otherwise defaults to the display
     specified in `DISPLAY`.
 
-``-screen=<screenidx>``
-    The screen to run on.  Normally the biggest/deepest screen
-    compatible with the requested mode will be chosen; with this
-    option only the screen specified by :p:`screenidx` will be
-    considered.
-
 ``-fullscreen``
     Turns on the fullscreen mode. Default mode is the windowed mode.
     In fullscreen mode, the dga helper is tried first if not disabled
     by -nodga or failed for some reason. Then the vidmode helper is
     tried. When this fails, then the target falls back to the windowed
     mode. Note, the -inwin option has no effect with fullscreen. 
+
+``-noaccel``
+    All rendering is performed in the client-side backbuffer, and then
+    sent to the server; no server-side accelerated graphics
+    operations are used.  This will signifigantly slow down certain
+    graphics applications, but for applications that use directbuffer
+    and asyncronous mode extensively the effect will not be
+    noticeable.  The only real reason to use this option, however, is
+    to eliminate artifacts caused by incorrectly implemented X11
+    hardware drivers.
+
+``-nobuffer``
+    No client-side backbuffer is kept.  This may result in lost data
+    when the LibGGI application is obscured by other windows.  This
+    data loss can be minimized by enabling backing store in the X11
+    server.  Using this option will cause operations which must read
+    back framebuffer data to be much slower, but on the other hand can
+    result in a slight speed gain for certain graphics primitives.  It
+    is best used when resources are severely limited on the client
+    side, and with applications that do not perform frequent ggiPut*
+    operations.
+    Note, with this option evExpose events are passed to the
+    application (Otherwise, they are internally grabbed to update the
+    backbuffer).
+
+``-nodbe``
+    Use of the X11 DBE extension to provide buffered frame support is
+    disabled.
+
+    .. note::
+      
+      Currently DBE extension support has not been completed.
+
+``-nodga``
+    Use of the XFree86-DGA extension to provide direct framebuffer access
+    is disabled.  Some implementations of the XFree86-DGA extension may cause
+    system lockups.  Use this option to prevent such occurrances.
+    
+    .. note::
+
+      Currently XFree86-DGA support has not been integrated into the 
+      display-X target.  To use DGA, see the older display-dga target.
+
+``-noevi``
+    Use of the X11 Extended Visual Information extension to identify
+    visuals which are exclusively used for overlay/underlay is
+    disabled.
+
+``-noinput``
+    X events sent to the window are not captured and merged with any
+    other LibGII input sources.  This allows one to take input from
+    raw devices without receiving duplicate events should X also be
+    configured to use the device.
+
+``-nocursor``, ``-keepcursor``
+    Normal behavior of display-x is to create a small dot mouse cursor
+    pixmap which is visible when the mouse is positioned over the
+    window containing the visual.  This goes away when using mouse
+    grabbing as described above, but otherwise can get in the way of
+    mouse cursors implemented by the application.  With the former
+    option, the X mouse cursor will be invisible when it is over the
+    visual, with the latter, the cursor from the root window is used
+    unaltered.  If both options are supplied, the latter takes
+    precedence.
+
+``-nomansync``
+    Use of the mansync helper library to periodically flush backbuffer
+    contents to the X11 server is disabled.  This, of course, will
+    result in incorrect behavior of applications that use syncronous
+    mode.
+
+``-noshm``
+    Use of the MIT-SHM extension to speed data transfer between
+    clients and servers which are running on the same machine is
+    disabled.  Normally it is not necessary to use this option, as use
+    of the MIT-SHM extension is disabled automatically if it appears
+    to be nonfunctional.
 
 ``-inwin=<winid>|root``
     Run in already-existing window with id :p:`winid`.  This can be
@@ -70,23 +141,14 @@ Options
     selection may be available which are not available when the
     application is running in a normal window.
   
-``-noinput``
-    X events sent to the window are not captured and merged with any
-    other LibGII input sources.  This allows one to take input from
-    raw devices without receiving duplicate events should X also be
-    configured to use the device.
+``-novidmode``
+    Use of the X11 Vidmode extension to change video timing in full-screen
+    modes is disabled.  Some implementations of the Vidmode extension may cause
+    system lockups.  Use this option to prevent such occurrances.
 
-
-``-nocursor``, ``-keepcursor``
-    Normal behavior of display-x is to create a small dot mouse cursor
-    pixmap which is visible when the mouse is positioned over the
-    window containing the visual.  This goes away when using mouse
-    grabbing as described above, but otherwise can get in the way of
-    mouse cursors implemented by the application.  With the former
-    option, the X mouse cursor will be invisible when it is over the
-    visual, with the latter, the cursor from the root window is used
-    unaltered.  If both options are supplied, the latter takes
-    precedence.
+    .. note::
+      
+      Currently Vidmode support has not been completed.
 
 ``-physz==<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
@@ -98,74 +160,12 @@ Options
     are two equals signs there, for reasons of compatibility with
     other targets.
 
-``-nobuffer``
-    No client-side backbuffer is kept.  This may result in lost data
-    when the LibGGI application is obscured by other windows.  This
-    data loss can be minimized by enabling backing store in the X11
-    server.  Using this option will cause operations which must read
-    back framebuffer data to be much slower, but on the other hand can
-    result in a slight speed gain for certain graphics primitives.  It
-    is best used when resources are severely limited on the client
-    side, and with applications that do not perform frequent ggiPut*
-    operations.
-    Note, with this option evExpose events are passed to the
-    application (Otherwise, they are internally grabbed to update the
-    backbuffer).
+``-screen=<screenidx>``
+    The screen to run on.  Normally the biggest/deepest screen
+    compatible with the requested mode will be chosen; with this
+    option only the screen specified by :p:`screenidx` will be
+    considered.
 
-``-noaccel``
-    All rendering is performed in the client-side backbuffer, and then
-    sent to the server; no server-side accelerated graphics
-    operations are used.  This will signifigantly slow down certain
-    graphics applications, but for applications that use directbuffer
-    and asyncronous mode extensively the effect will not be
-    noticeable.  The only real reason to use this option, however, is
-    to eliminate artifacts caused by incorrectly implemented X11
-    hardware drivers.
-
-``-nomansync``
-    Use of the mansync helper library to periodically flush backbuffer
-    contents to the X11 server is disabled.  This, of course, will
-    result in incorrect behavior of applications that use syncronous
-    mode.
-
-``-noshm``
-    Use of the MIT-SHM extension to speed data transfer between
-    clients and servers which are running on the same machine is
-    disabled.  Normally it is not necessary to use this option, as use
-    of the MIT-SHM extension is disabled automatically if it appears
-    to be nonfunctional.
-
-``-nodga``
-    Use of the XFree86-DGA extension to provide direct framebuffer access
-    is disabled.  Some implementations of the XFree86-DGA extension may cause
-    system lockups.  Use this option to prevent such occurrances.
-    
-    .. note::
-
-      Currently XFree86-DGA support has not been integrated into the 
-      display-X target.  To use DGA, see the older display-dga target.
-
-``-novidmode``
-    Use of the X11 Vidmode extension to change video timing in full-screen
-    modes is disabled.  Some implementations of the Vidmode extension may cause
-    system lockups.  Use this option to prevent such occurrances.
-
-    .. note::
-      
-      Currently Vidmode support has not been completed.
-
-``-nodbe``
-    Use of the X11 DBE extension to provide buffered frame support is
-    disabled.
-
-    .. note::
-      
-      Currently DBE extension support has not been completed.
-
-``-noevi``
-    Use of the X11 Extended Visual Information extension to identify
-    visuals which are exclusively used for overlay/underlay is
-    disabled.
 
 "Cliff notes" on new X target
 -----------------------------
