@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/10/09 06:59:22 cegger Exp $
+/* $Id: visual.c,v 1.7 2004/10/11 19:05:17 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -235,6 +235,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_stop(vis);
+	}
 	MANSYNC_deinit(vis);
 
 	return 0;
