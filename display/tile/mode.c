@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2004/09/08 11:22:50 cegger Exp $
+/* $Id: mode.c,v 1.8 2004/09/08 21:10:54 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -66,10 +66,10 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	if(priv->use_db) {
 		MANSYNC_ignore(vis);
 	}
-                        
+
 	rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8/sizeof(uint8);
 	stride = priv->d_frame->buffer.plb.stride;
-	
+
 	for(i = 0; i<priv->numvis; i++) {
 		currvis = priv->vislist[i];
 		width = priv->vis_sizes[i].x;
@@ -244,11 +244,11 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 			LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write = fbaddr;
 			LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 			LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-				= ((GT_SIZE(tm->graphtype) * tm->virt.x)+7)/8;
+				= GT_ByPPP(tm->virt.x, tm->graphtype);
 		}
 	}
 	
-	for(i = 0; i<priv->numvis; i++) {
+	for (i = 0; i<priv->numvis; i++) {
 		currvis = priv->vislist[i];
 		sugmode = *tm;
 		sugmode.visible.x = priv->vis_sizes[i].x;
