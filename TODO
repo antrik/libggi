@@ -14,9 +14,16 @@ Due : 2001-08-26
 * Change makefile so that the sgml files don't go in the
   tarballs. (eric)
 - cleanup demo building and installation
+- bring improved code in showaccel demo to showaccel2 demo
 * directfb off by default
 - fix building of directfb libraries (and breakage of make distcheck)
 
 ------------------------------------------
 Long-term plan
 ------------------------------------------
+
+- why is directfb drawing on only every other pixel column?
+- use config file instead of static accel_strings array in fbdev
+- improve modelist.inc
+- inprove fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
+
