@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.43 2005/01/03 13:07:41 pekberg Exp $
+/* $Id: ddinit.c,v 1.44 2005/01/03 13:11:34 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -30,7 +30,11 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include "ddinit.h"
+#ifdef __CYGWIN__
+#include <pthread.h>
+#else
 #include <process.h>
+#endif
 
 static void DDCreateClass(directx_priv *priv);
 static int DDCreateWindow(ggi_visual *vis);
@@ -69,6 +73,8 @@ DDInit(ggi_visual *vis)
 void
 DDShutdown(directx_priv *priv)
 {
+	void *res;
+
 	/* kill the timer callback */
 	if (priv->timer_id)
 		KillTimer(priv->hWnd, priv->timer_id);
@@ -89,6 +95,14 @@ DDShutdown(directx_priv *priv)
 		priv->lpdd = NULL;
 	}
 
+#ifdef __CYGWIN__
+	DPRINT("Join helper thread\n");
+	if (priv->hThread &&
+	    pthread_join((pthread_t)priv->hThread, &res))
+	{
+		DPRINT("Failed to join helper thread\n");
+	}
+#else
 	/* stop the event loop */
 	if (priv->hThread &&
 	    WaitForSingleObject(priv->hThread, 2000) != WAIT_OBJECT_0) {
@@ -98,6 +112,7 @@ DDShutdown(directx_priv *priv)
 	}
 	if (priv->hThread)
 		CloseHandle(priv->hThread);
+#endif
 
 	/* Get rid of the window class if we registered it */
 	if (priv->wndclass)
@@ -510,8 +525,59 @@ static BYTE XORmaskDotCursor[] = {
 
 
 static void
-DDSizing(directx_priv *priv, WPARAM wParam, LPRECT rect)
+DDNotifyResize(ggi_visual *vis, int xsize, int ysize)
 {
+	ggi_event ev;
+	ggi_cmddata_switchrequest *swreq;
+
+	DPRINT_DRAW("DDNotifyResize(%p, %dx%d) called\n",
+		       vis, xsize, ysize);
+
+	/* This is racy, what if window is resized and
+	 * resized back before the app gets to react
+	 * to the first resize notification?
+	 */
+	if (!LIBGGI_X(vis) || !LIBGGI_Y(vis)) {
+		DPRINT_DRAW("DDNotifyResize: No old size, ignore\n");
+		return;
+	}
+	if ((LIBGGI_X(vis) == xsize) &&
+	    (LIBGGI_Y(vis) == ysize))
+	{
+		DPRINT_DRAW("DDNotifyResize: Same size, ignore\n");
+		return;
+	}
+	DPRINT_DRAW("DDNotifyResize: Old size %ux%u\n",
+		LIBGGI_X(vis), LIBGGI_Y(vis));
+
+	_giiEventBlank(&ev, sizeof(gii_cmd_event));
+
+	ev.any.size=	sizeof(gii_cmd_nodata_event) +
+			sizeof(ggi_cmddata_switchrequest);
+	ev.any.type=	evCommand;
+	ev.cmd.code=	GGICMD_REQUEST_SWITCH;
+
+	swreq = (ggi_cmddata_switchrequest *) ev.cmd.data;
+	swreq->request = GGI_REQSW_MODE;
+	swreq->mode = *LIBGGI_MODE(vis);
+
+	swreq->mode.visible.x = xsize;
+	swreq->mode.visible.y = ysize;
+	if (swreq->mode.virt.x < xsize)
+		swreq->mode.virt.x = xsize;
+	if (swreq->mode.virt.y < ysize)
+		swreq->mode.virt.y = ysize;
+	swreq->mode.size.x = GGI_AUTO;
+	swreq->mode.size.y = GGI_AUTO;
+
+	_giiSafeAdd(vis->input, &ev);
+}
+
+
+static void
+DDSizing(ggi_visual *vis, WPARAM wParam, LPRECT rect)
+{
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int xsize, ysize;
 	RECT diff, test1, test2;
 	DWORD ws_style = WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX;
@@ -537,6 +603,7 @@ DDSizing(directx_priv *priv, WPARAM wParam, LPRECT rect)
 	/* Calculate new size, with regard to max/min/step */
 	xsize = rect->right  - rect->left;
 	ysize = rect->bottom - rect->top;
+	DPRINT_DRAW("Wants resize to %ux%u\n", xsize, ysize);
 	if (xsize < priv->xmin)
 		xsize = priv->xmin;
 	if (xsize > priv->xmax)
@@ -579,6 +646,9 @@ DDSizing(directx_priv *priv, WPARAM wParam, LPRECT rect)
 	rect->bottom -= diff.bottom;
 	rect->left   -= diff.left;
 	rect->right  -= diff.right;
+
+	DPRINT_DRAW("Gets resize to %ux%u\n", xsize, ysize);
+	DDNotifyResize(vis, xsize, ysize);
 }
 
 /* GGI window procedure */
@@ -705,9 +775,26 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			LeaveCriticalSection(&priv->sizingcs);
 			break;
 		}
-		DDSizing(priv, wParam, (LPRECT) lParam);
+		DDSizing(vis, wParam, (LPRECT) lParam);
 		LeaveCriticalSection(&priv->sizingcs);
 		return TRUE;
+
+	case WM_SIZE:
+		switch(wParam) {
+		case SIZE_MAXIMIZED:
+		case SIZE_RESTORED:
+			break;
+		default:
+			return 0;
+		}
+		EnterCriticalSection(&priv->sizingcs);
+		if (priv->xstep < 0) {
+			LeaveCriticalSection(&priv->sizingcs);
+			break;
+		}
+		DDNotifyResize(vis, LOWORD(lParam), HIWORD(lParam));
+		LeaveCriticalSection(&priv->sizingcs);
+		return 0;
 
 	case WM_QUERYNEWPALETTE:
 		if(!TryEnterCriticalSection(&priv->cs)) {
@@ -869,6 +956,8 @@ DDEventLoop(void *lpParm)
 	ggi_visual *vis = (ggi_visual *) lpParm;
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
+	priv->nThreadID = GetCurrentThreadId();
+
 	/* create the window */
 	if (!DDCreateWindow(vis)) {
 		SetEvent(priv->hInit);
@@ -934,9 +1023,15 @@ DDCreateThread(ggi_visual *vis)
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
 #ifdef __CYGWIN__
+	if (pthread_create((pthread_t *)&priv->hThread, NULL, DDEventLoop, vis))
+		priv->nThreadID = 0;
+	else
+		priv->nThreadID = ~0;
+	/*
 	priv->hThread = CreateThread(NULL, 0,
 				     (LPTHREAD_START_ROUTINE) DDEventLoop,
 				     vis, 0, &priv->nThreadID);
+	*/
 #else
 	priv->hThread =
 	    (HANDLE) _beginthreadex(NULL, 0, DDEventLoop, vis, 0,
