@@ -1,4 +1,4 @@
-/* $Id: ggi-dl.h,v 1.2 2002/09/29 19:27:42 skids Exp $
+/* $Id: ggi-dl.h,v 1.3 2004/09/13 09:35:20 cegger Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
@@ -203,7 +203,7 @@ do {  \
 
 #define LIBGGICLIP_FULLSCREEN(vis) \
 ((LIBGGI_GC(vis)->cliptl.x | LIBGGI_GC(vis)->cliptl.y) == 0 && \
- LIBGGI_GC(vis)->clipbr.x == LIBGGI_MODE(vis)->virt.x && \
- LIBGGI_GC(vis)->clipbr.y == LIBGGI_MODE(vis)->virt.x)
+ LIBGGI_GC(vis)->clipbr.x == LIBGGI_VIRTX(vis) && \
+ LIBGGI_GC(vis)->clipbr.y == LIBGGI_VIRTY(vis))
 
 #endif /* _GGI_INTERNAL_GGI_DL_H */
