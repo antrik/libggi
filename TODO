@@ -22,8 +22,6 @@ Due : ????-??-??
 - documentate tele-target in libggi/doc/targets.txt
 - add display-auto to separate OS dependent auto-detect routines from
   libggi core
-- remove pre-gii typedefs from <ggi/types.h>
-
 
 ------------------------------------------
 Over-Next release
@@ -32,15 +30,18 @@ Version : 3.0.0
 Due : ????-??-??
 
 - A working full-featured KGI-target
-- change way that pixela/pixel stubs are selected (above item breaks current.)
-  (in progress)
+- change way that pixela/pixel stubs are selected, integrate ggiFlush
+  and ggiSetFlags with the changed() dl cascade, add renderers (in addition
+  to extensions) to the cascade, add some infrastructure for next 
+  cut of LibGGIMISC to make it easy for extensions to integrate with automatic
+  frame flipping.  Make sure it's all fast and efficient.
 - enhance config file system: aliases, in-file option strings, wildcards
 - enhance dl system: allow single library to serve multiple suggest strings
 - move libmmutil from libgalloc to libggi to allow normal ggi primitives
   to use batchops
 - finish long-term plan
-- implement API additions
-
+- implement below API additions
+- implement below non-backward-compatible changes
 
 ------------------------------------------
 Long-term plan
@@ -57,9 +58,10 @@ Things that will induce API additions
 - make sure all bitfields (e.g. BM_TYPE) have associated _MASK/_SHIFT macros
 - Figure out all the caveats for cloning a visual and add core support 
 	and a ggiClone API function.
-
+- Add a ggiFlushNeeded that checks to see if a ggiFlush should be called,
+  but allows application to continue on its merry way if so.
 
 ------------------------------------------
 Non backward-compatible changes
 ------------------------------------------
-None currently planned
+- Remove old ggi versions of event types, which were replaced by gii typedefs.
