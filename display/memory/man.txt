@@ -30,7 +30,7 @@ Options
     (default is 8192 bytes) as #define'd in `ggi/display/memory.h` is
     allocated at the start of the requested memory area.
 
-    When running on shared memory, this option enables you to to give
+    When running on shared memory, this option enables you to give
     input (using :man:`giiEventSend(3)`\ ) to other processes sharing
     that segment. This technique is demonstrated in :man:`cube3d(1)`
     and can be used for things like GGI multiplexers.

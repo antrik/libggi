@@ -111,7 +111,7 @@ Options
 
 ``-noaccel``
     All rendering is performed in the client-side backbuffer, and then
-    sent to to the server; no server-side accelerated graphics
+    sent to the server; no server-side accelerated graphics
     operations are used.  This will signifigantly slow down certain
     graphics applications, but for applications that use directbuffer
     and asyncronous mode extensively the effect will not be
