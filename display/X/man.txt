@@ -8,7 +8,7 @@ Synopsis
 
 ::
 
-  display-x: [ [-inwin=<winid|root] | [-screen=<screenidx>] ]
+  display-x: [ [-inwin=<winid>|root] | [-screen=<screenidx>] ]
 	     [-fullscreen] [-keepcursor] [-noaccel] [-nobuffer]
 	     [-nocursor] [-nodbe] [-nodga] [-noevi] [-noinput]
 	     [-nomansync] [-noshm] [-novidmode] [-physz==<sizex>,<sizey>[dpi]]
