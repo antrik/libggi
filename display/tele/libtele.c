@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.12 2005/03/16 11:30:32 pekberg Exp $
+/* $Id: libtele.c,v 1.13 2005/03/16 11:54:04 pekberg Exp $
 ******************************************************************************
 
    libtele.c
@@ -523,17 +523,12 @@ static int tclient_connect(int fd, struct sockaddr *serv_addr, int addrlen)
 	}
 
 	do {
-		struct timeval tv;
-
 		FD_ZERO(&wfds);
 		FD_SET(fd, &wfds);
 		FD_ZERO(&efds);
 		FD_SET(fd, &efds);
 
-		tv.tv_sec = 1;
-		tv.tv_usec = 0;
-
-		err = select(fd+1, NULL, &wfds, &efds, &tv);
+		err = select(fd+1, NULL, &wfds, &efds, NULL);
 	} while ((err < 0) && (errno == EINTR));
 
 	if (err < 0) {
