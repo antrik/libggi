@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.5 2004/11/03 21:40:22 cegger Exp $
+/* $Id: ll.h,v 1.6 2004/11/03 22:05:46 cegger Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -422,7 +422,7 @@ struct ggi_llobj {
 
 #define GGI_LL_STSTATE_SET(obj) \
 (obj)->ptrs[(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
-#define GGI_LL_STSTATE(obj)	(ggi_ll_ststate_t)GGI_LL_STATE_SET(obj)
+#define GGI_LL_STSTATE(obj)	(ggi_ll_ststate_t)GGI_LL_STSTATE_SET(obj)
 
 /* GC 
  */
