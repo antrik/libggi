@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.29 2005/02/07 07:27:07 orzo Exp $
+/* $Id: shm.c,v 1.30 2005/02/22 09:14:28 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -166,7 +166,6 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	ggi_x_priv *priv;
 	int i;
 	XShmSegmentInfo *myshminfo;
-	ggi_directbuffer *db;
 
 
 	i = 0; /* ??? Cranky GCC */
@@ -236,6 +235,8 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
+		ggi_directbuffer *db;
+
 		db = _ggi_db_get_new();
 		if (!db) {
 			_ggi_xshm_free_ximage(vis);
@@ -304,13 +305,8 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 
-#ifdef GGI_LITTLE_ENDIAN
-	priv->ximage->byte_order = LSBFirst;
-	priv->ximage->bitmap_bit_order = LSBFirst;
-#else
-	priv->ximage->byte_order = MSBFirst;
-	priv->ximage->bitmap_bit_order = MSBFirst;
-#endif
+	priv->ximage->byte_order = ImageByteOrder(priv->disp);
+	priv->ximage->bitmap_bit_order = BitmapBitOrder(priv->disp);
 
 	vis->opdisplay->flush		= GGI_XSHM_flush_ximage_child;
 
