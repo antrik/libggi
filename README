@@ -21,7 +21,7 @@ Targets
 Targets are devices which LibGGI can render to.  See doc/targets.txt for more
 details.
 
-	+ fbdev: fbcon framebuffer devices, and kgicon
+	+ fbdev: fbcon framebuffer devices, DirectFB, and kgicon
 	+ vcsa: Linux text console
 
 	+ X: X Window System
@@ -39,6 +39,7 @@ details.
 
 	+ file: write to a file
 	+ memory: off-screen memory
+	+ IPC: shared memory segment for inter-process use.
 
 	+ multi: display on multiple targets at once
 	+ Tile: display in multiple visuals each showing a component part
@@ -52,9 +53,10 @@ Requirements
 ============
 
 * LibGG 0.7 or later (included in LibGII).
-* LibGII 0.7 or later.
+* LibGII 0.8 or later.
 * Most likely GNU Make.
 * Fbcon Linux kernel if using display-fbdev target.
+* DirectFB binary drivers for acceleration of fbdev target.
 * X Window System if using display-X/Xlib target.
 * XFree86 if using display-DGA target.
 * VGL library if using display-vgl target.
@@ -77,10 +79,11 @@ details on environment variables. You might also want to have a look at
 the doc/env.txt file in the LibGII distribution, as LibGGI uses LibGII for
 input.
 
-For a list of available targets see doc/targets.txt. If you intend to use
-any of the Linux console based targets (fbdev, SVGAlib, Glide, vcsa) you
-should also read the section on input-linux-mouse in the doc/inputs.txt
-file in the LibGII distribution.
+For a list of available targets see the HTML documentation, 
+distributed separately, or the display-* manpages or doc/targets.txt. 
+If you intend to use any of the Linux console based targets (fbdev, 
+SVGAlib, Glide, vcsa) you should also read the section on input-linux-mouse 
+or input-linux-evdev in the doc/inputs.txt file in the LibGII distribution.
 
 
 The GGI mailing lists
