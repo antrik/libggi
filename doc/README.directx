@@ -18,8 +18,8 @@ I) Software needed:
 	The DirectX 9.0c (- Summer 2004) SDK could be downloaded from
 	http://msdn.microsoft.com/library/default.asp?url=/downloads/list/directx.asp
 	at the time of this writing. Beware, it's more than 200MB, but all
-	you need from it is a could of header files. Exactly which ones have not
-	been determined at the time of this writing.
+	you need from it is a couple of header files. Exactly which ones have
+	not been determined at the time of this writing.
 
 II) Compilation:
 	- from libggi directory
