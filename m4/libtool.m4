@@ -2043,6 +2043,7 @@ cygwin* | mingw* | pw32*)
   yes,cygwin*)
     library_names_spec='$libname.dll.a'
     soname_spec='`echo ${libname} | sed -e 's/^lib/cyg/'``echo ${release} | sed -e 's/[[.]]/-/g'`${versuffix}.dll'
+    sys_lib_search_path_spec="/usr/lib /lib/w32api /lib /usr/local/lib"
     postinstall_cmds='dlpath=`bash 2>&1 -c '\''. $dir/${file}i;echo \$dlname'\''`~
       dldir=$destdir/`dirname \$dlpath`~
       test -d \$dldir || mkdir -p \$dldir~
