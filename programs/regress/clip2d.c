@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.18 2004/06/01 18:22:31 pekberg Exp $
+/* $Id: clip2d.c,v 1.19 2004/06/01 19:14:49 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -275,9 +275,7 @@ static void testcase7(void)
 		100,              5,
 		0,                5,
 		100,              5,
-		1, 0);
-
-	printsuccess();
+		1, 1);
 }
 
 
