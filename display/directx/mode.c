@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2005/01/27 08:17:17 pekberg Exp $
+/* $Id: mode.c,v 1.35 2005/01/27 10:04:49 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -305,13 +305,44 @@ GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return do_checkmode(vis, mode);
 }
 
+static int
+compatible_mode(ggi_visual *vis, ggi_mode *mode)
+{
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+
+	if (priv->fullscreen)
+		return !memcmp(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+
+	if (mode->frames != LIBGGI_MODE(vis)->frames)
+		return 0;
+	if (mode->graphtype != LIBGGI_MODE(vis)->graphtype)
+		return 0;
+	if (memcmp(&mode->dpp, &LIBGGI_MODE(vis)->dpp, sizeof(ggi_coord)))
+		return 0;
+
+	return 1;
+}
+
+static void
+free_dbs(ggi_visual *vis)
+{
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+	int i;
+
+	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
+		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
+		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
+	}
+}
 
 int
 GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int i, id, ret;
-	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
+	char lib[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
+	int compatible;
+	int change = 0;
 
 	ret = do_checkmode(vis, mode);
 	if (ret != 0) {
@@ -320,7 +351,21 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	GGI_directx_Lock(priv->cs);
 
-	_ggiZapMode(vis, 0);
+	free_dbs(vis);
+
+	compatible = compatible_mode(vis, mode);
+	if (!compatible) {
+		_ggiZapMode(vis, 0);
+		if(priv->lpddp) {
+			LIBGGI_PAL(vis)->clut.size = 0;
+			if (LIBGGI_PAL(vis)->clut.data)
+				free(LIBGGI_PAL(vis)->clut.data);
+			LIBGGI_PAL(vis)->rw_start = 0;
+			LIBGGI_PAL(vis)->rw_stop  = 0;
+			vis->opcolor->setpalvec = NULL;
+		}
+		change |= GGI_CHG_APILIST;
+	}
 
 	/* Fill in ggi_pixelformat */
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
@@ -336,7 +381,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	/* Set Up Direct Buffers */
 
-	for (i = 0; i < mode->frames; i++) {	/* Fix-me for multi frames */
+	for (i = 0; i < mode->frames; i++) {
 		ggi_resource *res;
 
 		res = malloc(sizeof(ggi_resource));
@@ -377,20 +422,21 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (mode->frames - 1);
 
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
-
-	for (id = 1; !GGI_directx_getapi(vis, id, libname, libargs); id++) {
-		int rc = _ggiOpenDL(vis, libname, libargs, NULL);
-		if (rc != 0) {
-			fprintf(stderr,
-				"display-directx: Error opening the "
-				"%s (%s) library\n", libname, libargs);
-			return rc;
+	if (!compatible) {
+		for (id = 1; !GGI_directx_getapi(vis, id, lib, args); id++) {
+			int rc = _ggiOpenDL(vis, lib, args, NULL);
+			if (rc != 0) {
+				fprintf(stderr,
+					"display-directx: Error opening the "
+					"%s (%s) library\n", lib, args);
+				return rc;
+			}
+			DPRINT("Success in loading %s (%s)\n",
+				  lib, args);
 		}
-		DPRINT("Success in loading %s (%s)\n",
-			  libname, libargs);
+		vis->opdraw->setorigin = GGI_directx_setorigin;
+		vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 	}
-	vis->opdraw->setorigin = GGI_directx_setorigin;
-	vis->opdraw->setdisplayframe = GGI_directx_setdisplayframe;
 
 	if(priv->lpddp) {
 		LIBGGI_PAL(vis)->clut.size = 256;
@@ -408,7 +454,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	GGI_directx_Unlock(priv->cs);
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis, change);
 
 	return 0;
 }
