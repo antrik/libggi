@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2004/10/31 14:25:00 cegger Exp $
+/* $Id: visual.c,v 1.15 2004/11/03 13:04:47 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -146,13 +146,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
 	/* Allocate descriptor for screen memory */
-	priv = IPC_PRIV(vis) = malloc(sizeof(ggi_ipc_priv));
+	priv = malloc(sizeof(ggi_ipc_priv));
 
 	if (!priv) {
 		free(LIBGGI_GC(vis));
 		return GGI_ENOMEM;
 	}	/* if */
 
+	LIBGGI_PRIVATE(vis) = priv;
 	priv->inputbuffer = NULL;	/* Default to no input */
 	priv->inputoffset = 0;		/* Setup offset. */
 
