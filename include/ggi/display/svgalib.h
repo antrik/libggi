@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.5 2004/02/14 22:30:47 cegger Exp $
+/* $Id: svgalib.h,v 1.6 2004/11/24 13:44:38 cegger Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -73,7 +73,7 @@ size_t GGI_svga_getPrivSize(ggi_visual_t);
 /* We must use a wrapper around vga_setmode() because SVGAlib messes
    with terminal settings. */
 int _ggi_svgalib_setmode(int mode);
-
+void _GGI_svga_freedbs(ggi_visual *);
 
 typedef struct svga_priv {
 	PHYSZ_DATA

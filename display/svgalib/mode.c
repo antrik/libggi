@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2004/11/24 13:37:16 cegger Exp $
+/* $Id: mode.c,v 1.24 2004/11/24 13:44:38 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -38,8 +38,6 @@
 
 #include "../common/pixfmt-setup.inc"
 
-
-void _GGI_svga_freedbs(ggi_visual *);
 
 /* This is exported from svgalib */
 extern int __svgalib_tty_fd;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/11/24 13:34:01 cegger Exp $
+/* $Id: visual.c,v 1.18 2004/11/24 13:44:38 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -93,7 +93,8 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ       0
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-static void _GGI_svga_freedbs(ggi_visual *vis) {
+void _GGI_svga_freedbs(ggi_visual *vis)
+{
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
