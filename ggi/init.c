@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.18 2004/09/09 13:13:07 cegger Exp $
+/* $Id: init.c,v 1.19 2004/09/15 18:32:42 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -586,12 +586,11 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 			       vis->extlist, vis->numknownext);
 	}
 
-	if (vis->extlist[id].attachcount == 0) {
-		vis->extlist[id].priv = malloc(tmp->size);
-		if (vis->extlist[id].priv == NULL) return GGI_ENOMEM;
+	if (LIBGGI_EXTAC(vis, id) == 0) {
+		LIBGGI_EXT(vis, id) = malloc(tmp->size);
+		if (LIBGGI_EXT(vis, id) == NULL) return GGI_ENOMEM;
 	}
-
-	return vis->extlist[id].attachcount++;
+	return LIBGGI_EXTAC(vis, id)++;
 }
 
 /*
@@ -608,16 +607,16 @@ int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 {
 	GGIDPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
 
-	if (vis->numknownext <= id || vis->extlist[id].attachcount == 0) {
+	if (vis->numknownext <= id || LIBGGI_EXTAC(vis, id) == 0) {
 	     	return GGI_EARGINVAL;
 	}
 
-	if (--vis->extlist[id].attachcount) {
-		return vis->extlist[id].attachcount;
+	if (--LIBGGI_EXTAC(vis, id)) {
+		return LIBGGI_EXTAC(vis, id);
 	}
 	
-	free(vis->extlist[id].priv);
-	vis->extlist[id].priv = NULL;	/* Make sure ... */
+	free(LIBGGI_EXT(vis, id));
+	LIBGGI_EXT(vis, id) = NULL;  /* Make sure ... */
 
 	return 0;
 }
@@ -636,7 +635,8 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 	if (_ggiExtension) {
 		for (tmp = _ggiExtension; tmp != NULL; tmp=tmp->next) {
 			if (tmp->id < vis->numknownext &&
-			    vis->extlist[tmp->id].attachcount) {
+			    LIBGGI_EXTAC(vis, tmp->id))
+			{
 				tmp->paramchange(vis, whatchanged);
 			}
 		}
