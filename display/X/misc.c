@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.23 2004/10/03 10:27:48 cegger Exp $
+/* $Id: misc.c,v 1.24 2004/10/08 18:38:37 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -415,7 +415,7 @@ int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
 	hint.x = hint.y         = 0;
 	hint.width              = tm->visible.x;
 	hint.height             = tm->visible.y;
-	hint.flags              = PPosition | PSize | PMinSize | PMaxSize;
+	hint.flags              = PSize | PMinSize | PMaxSize;
 	hint.min_width          = tm->visible.x;
 	hint.min_height         = tm->visible.y;
 	hint.max_width          = tm->visible.x;
