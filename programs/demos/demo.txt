@@ -1,0 +1,51 @@
+GGI demonstration and example program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 1 ggi-demo demo
+
+Synopsis
+--------
+
+::
+
+   ggi-demo [--clip] [--noninteractive] [--target <target>]
+            <xsize>x<ysize>[#<virtx>x<virty>]['['<bpp>']']
+
+
+Description
+-----------
+
+The `ggi-demos` are intended to quickly test `GGI` and demonstrate
+its capabilities.
+
+
+Options
+-------
+
+`-h`
+    display this help and exit
+
+`--clip`
+    Enables clipping
+
+`--noninteractive`
+    Enables noninteractive mode. Doesn't require to hit any key.
+
+`--target <target>`
+    Same effect as the `GGI_DISPLAY` environment variable.
+
+`<xsize>x<ysize>[#<virtx>x<virty>]['['<bpp>']']`
+    Same effect as the `GGI_DEFMODE` environment varialbe.
+
+
+Environment variables
+---------------------
+
+Environment variables that are common to all GGI programs are described in
+the `libggi(7)` manual.
+
+
+See Also
+--------
+
+:man:`monitest(1)`, :man:`libggi(7)`, :man:`ggiParseMode(3)`
