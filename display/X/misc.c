@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.7 2002/07/09 13:46:12 skids Exp $
+/* $Id: misc.c,v 1.8 2002/07/27 10:15:05 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -34,58 +34,60 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 
-/* return 1 if an X11 Visual (this) has a "better" pixelformat (than than) */
-static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *this) {
+/* return 1 if an X11 Visual (cthis) has a "better" pixelformat (than than)
+ * "this" is a C++ keyword, so we use "cthis" instead. 
+ */
+static int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis) {
 
 	/* prefer color to grayscale */
 	if (((than->class==StaticGray) || (than->class==GrayScale))
 	    && 
-	    ((this->class!=StaticGray) && (this->class!=GrayScale))) return 1;
-	if (((this->class==StaticGray) || (this->class==GrayScale))
+	    ((cthis->class!=StaticGray) && (cthis->class!=GrayScale))) return 1;
+	if (((cthis->class==StaticGray) || (cthis->class==GrayScale))
 	    && 
 	    ((than->class!=StaticGray) && (than->class!=GrayScale))) return -1;
 
 	/* prefer more colors or levels */
-	if (than->depth < this->depth) return 1;
-	if (than->depth > this->depth) return 0;
+	if (than->depth < cthis->depth) return 1;
+	if (than->depth > cthis->depth) return 0;
 
 	/* Prefer read-write colormaps if depth is the same. */
-	if ((than->class==StaticGray) && (this->class==GrayScale))   return 1;
-	if ((this->class==StaticGray) && (than->class==GrayScale))   return -1;
-	if ((than->class==StaticColor)&& (this->class==PseudoColor)) return 1;
-	if ((this->class==StaticColor)&& (than->class==PseudoColor)) return -1;
-	if ((than->class==TrueColor)  && (this->class==PseudoColor)) return 1;
-	if ((this->class==TrueColor)  && (than->class==PseudoColor)) return -1;
+	if ((than->class==StaticGray) && (cthis->class==GrayScale))   return 1;
+	if ((cthis->class==StaticGray) && (than->class==GrayScale))   return -1;
+	if ((than->class==StaticColor)&& (cthis->class==PseudoColor)) return 1;
+	if ((cthis->class==StaticColor)&& (than->class==PseudoColor)) return -1;
+	if ((than->class==TrueColor)  && (cthis->class==PseudoColor)) return 1;
+	if ((cthis->class==TrueColor)  && (than->class==PseudoColor)) return -1;
 
 	/* prefer palette to gammamap if the depth is the same */
-	if ((than->class==DirectColor)&& (this->class==PseudoColor)) return 1;
-	if ((this->class==DirectColor)&& (than->class==PseudoColor)) return -1;
+	if ((than->class==DirectColor)&& (cthis->class==PseudoColor)) return 1;
+	if ((cthis->class==DirectColor)&& (than->class==PseudoColor)) return -1;
 
 	/* prefer gamma map to truecolor */
-	if ((than->class==StaticColor)&& (this->class==DirectColor)) return 1;
-	if ((this->class==StaticColor)&& (than->class==DirectColor)) return -1;
-	if ((than->class==TrueColor)  && (this->class==DirectColor)) return 1;
-	if ((this->class==TrueColor)  && (than->class==DirectColor)) return -1;
+	if ((than->class==StaticColor)&& (cthis->class==DirectColor)) return 1;
+	if ((cthis->class==StaticColor)&& (than->class==DirectColor)) return -1;
+	if ((than->class==TrueColor)  && (cthis->class==DirectColor)) return 1;
+	if ((cthis->class==TrueColor)  && (than->class==DirectColor)) return -1;
 
 	/* More? */
 	return 0;
 }
 
-static int _ggi_x_is_better_screen(Screen *than, Screen *this) {
-
-	if (!DoesBackingStore(than) && DoesBackingStore(this)) return 1;
-	if (DoesBackingStore(than) && !DoesBackingStore(this)) return -1;
-	if (than->width * than->height < this->width * this->height)
+static int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
+{
+	if (!DoesBackingStore(than) && DoesBackingStore(cthis)) return 1;
+	if (DoesBackingStore(than) && !DoesBackingStore(cthis)) return -1;
+	if (than->width * than->height < cthis->width * cthis->height)
 		return 1;
-	if (than->width * than->height > this->width * this->height)
+	if (than->width * than->height > cthis->width * cthis->height)
 		return -1;
-	if (than->mwidth * than->mheight < this->mwidth * this->mheight)
+	if (than->mwidth * than->mheight < cthis->mwidth * cthis->mheight)
 		return 1;
-	if (than->mwidth * than->mheight > this->mwidth * this->mheight)
+	if (than->mwidth * than->mheight > cthis->mwidth * cthis->mheight)
 		return -1;
 
-	if (than->ndepths < this->ndepths) return 1;
-	if (than->ndepths > this->ndepths) return 0;
+	if (than->ndepths < cthis->ndepths) return 1;
+	if (than->ndepths > cthis->ndepths) return 0;
 
 	/* More? */
 	return 0;
@@ -333,10 +335,10 @@ int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 
 
 /* return 1 if one ggi_graphtype is "better" than another. */
-int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this) {
+int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype cthis) {
 
 	/* prefer color to grayscale */
-	if ((GT_SCHEME(than)==GT_GREYSCALE)&&(GT_SCHEME(this)!=GT_GREYSCALE))
+	if ((GT_SCHEME(than)==GT_GREYSCALE)&&(GT_SCHEME(cthis)!=GT_GREYSCALE))
 		return 1;
 
 	/* prefer more colors or levels */
@@ -344,9 +346,9 @@ int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this) {
 
 	/* prefer palette to true/fixed color (of same depth.) */
 	if ((GT_SCHEME(than)==GT_STATIC_PALETTE) &&
-	    (GT_SCHEME(this)==GT_PALETTE))
+	    (GT_SCHEME(cthis)==GT_PALETTE))
 		return 1;
-	if ((GT_SCHEME(than)==GT_TRUECOLOR)&&(GT_SCHEME(this)==GT_PALETTE))
+	if ((GT_SCHEME(than)==GT_TRUECOLOR)&&(GT_SCHEME(cthis)==GT_PALETTE))
 		return 1;
 
 	return 0;

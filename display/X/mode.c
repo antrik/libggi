@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2002/07/09 14:38:59 cegger Exp $
+/* $Id: mode.c,v 1.8 2002/07/27 10:15:05 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -39,6 +39,11 @@
 
 
 /*
+ * "this" is a C++ keyword, so we use "cthis" instead.
+ */
+
+
+/*
  * Check mode
  */
 static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
@@ -55,25 +60,25 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	best = NULL;
 	w = h = idx = 0;
 	while (idx < priv->nvisuals) {
-	  	ggi_x_vi	*this;
+	  	ggi_x_vi	*cthis;
 		ggi_mode	dummy;
 
 		dummy.visible.x = dummy.visible.y = 0;
 
-		this = priv->vilist + idx++;
+		cthis = priv->vilist + idx++;
 
-		if (this->flags & GGI_X_VI_NON_FB)
+		if (cthis->flags & GGI_X_VI_NON_FB)
 			continue;
 #warning GT_SUBSCHEME needs to be validated here.
-		if (_ggi_x_scheme_vs_class(tm->graphtype, this) == GT_INVALID)
+		if (_ggi_x_scheme_vs_class(tm->graphtype, cthis) == GT_INVALID)
 			continue;
-		if (_ggi_x_fit_geometry(vis, tm, this, &dummy) != GGI_OK) 
+		if (_ggi_x_fit_geometry(vis, tm, cthis, &dummy) != GGI_OK) 
 			continue;
 
 		if ((dummy.visible.x * dummy.visible.y) < (w * h))
 			continue;
 
-		best = this;
+		best = cthis;
 		*viidx = idx - 1;
 		w = dummy.visible.x;
 		h = dummy.visible.y;
@@ -93,24 +98,24 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	best = NULL;
 	w = h = idx = 0;
 	while (idx < priv->nvisuals) {
-	  	ggi_x_vi	*this;
+	  	ggi_x_vi	*cthis;
 		ggi_mode	dummy;
 
 		dummy.visible.x = dummy.visible.y = 0;
 
-		this = priv->vilist + idx++;
+		cthis = priv->vilist + idx++;
 
-		if (this->flags & GGI_X_VI_NON_FB)
+		if (cthis->flags & GGI_X_VI_NON_FB)
 			continue;
 #warning GT_SUBSCHEME needs to be validated here.
-		if (_ggi_x_scheme_vs_class(tm->graphtype, this) == GT_INVALID)
+		if (_ggi_x_scheme_vs_class(tm->graphtype, cthis) == GT_INVALID)
 			continue;
-		_ggi_x_fit_geometry(vis, tm, this, &dummy);
+		_ggi_x_fit_geometry(vis, tm, cthis, &dummy);
 
 		if ((dummy.visible.x * dummy.visible.y) < (w * h))
 			continue;
 
-		best = this;
+		best = cthis;
 		*viidx = idx - 1;
 		w = dummy.visible.x;
 		h = dummy.visible.y;
@@ -131,19 +136,19 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	best = NULL;
 	idx = w = h = 0;
 	while (idx < priv->nvisuals) {
-	  	ggi_x_vi	*this;
+	  	ggi_x_vi	*cthis;
 		ggi_graphtype	thisgt;
 
-		this = priv->vilist + idx++;
+		cthis = priv->vilist + idx++;
 
-		if (this->flags & GGI_X_VI_NON_FB)
+		if (cthis->flags & GGI_X_VI_NON_FB)
 			continue;
-		thisgt = _ggi_x_scheme_vs_class(GGI_AUTO, this);
+		thisgt = _ggi_x_scheme_vs_class(GGI_AUTO, cthis);
 		if (thisgt == GT_INVALID) 
 			continue;
 
 		if (_ggi_x_is_better_gt(tm->graphtype, thisgt)) {
-			best = this;
+			best = cthis;
 			*viidx = idx - 1;
 			break;
 		}
@@ -158,13 +163,13 @@ static int GGI_X_checkmode_internal(ggi_visual *vis, ggi_mode *tm, int *viidx)
 	best = NULL;
 	idx = w = h = 0;
 	while (idx < priv->nvisuals) {
-		ggi_x_vi	*this;
+		ggi_x_vi	*cthis;
 
-		this = priv->vilist + idx++;
+		cthis = priv->vilist + idx++;
 
-		if (this->flags & GGI_X_VI_NON_FB)
+		if (cthis->flags & GGI_X_VI_NON_FB)
 			continue;
-		best = this;
+		best = cthis;
 		*viidx = idx - 1;
 	}
 
