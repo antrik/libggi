@@ -1,8 +1,9 @@
-/* $Id: pointer.c,v 1.2 2004/10/01 17:12:18 pekberg Exp $
+/* $Id: pointer.c,v 1.3 2004/10/04 11:28:26 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
    generate absolute and releative pointer motion simultaneously.
+   Click a pointer button to sync up relative with absolute coordinates.
 
    Copyright (C) 2004 Peter Ekberg	[peda@lysator.liu.se]
 
@@ -38,9 +39,14 @@ main(int argc, char **argv)
 	int err;
 	int rx = 0, ry = 0;
 	int ax = 0, ay = 0;
+	int ox = 0, oy = 0;
+	int old_type;
 	int ch_x, ch_y;
+	int box_size;
 	int quit = 0;
 	ggi_pixel white;
+	ggi_pixel red;
+	ggi_pixel yellow;
 	ggi_pixel black;
 	ggi_color color;
 	char tmpstr[2000];
@@ -73,13 +79,21 @@ main(int argc, char **argv)
 
 	color.r = color.g = color.b = 0xFFFF;
 	white = ggiMapColor(vis, &color);
-	color.r = color.g = color.b = 0x0;
+	color.b = 0x0;
+	yellow = ggiMapColor(vis, &color);
+	color.g = 0x0;
+	red = ggiMapColor(vis, &color);
+	color.r = 0x0;
 	black = ggiMapColor(vis, &color);
 
 	ggiSetGCForeground(vis, white);
 	ggiSetGCBackground(vis, black);
 
 	ggiGetCharSize(vis, &ch_x, &ch_y);
+	if (ch_x > ch_y)
+		box_size = 2 * ch_x;
+	else
+		box_size = 2 * ch_y;
 
 	ggiAddEventMask(vis, emPtrRelative | emPtrAbsolute);
 
@@ -95,25 +109,36 @@ main(int argc, char **argv)
 			ggiEventRead(vis, &event, emAll);
 	
 			if (event.any.type == evPtrRelative) {
+				ox = rx;
+				oy = ry;
+				old_type = 0;
 				rx += event.pmove.x;
 				ry += event.pmove.y;
 				sprintf(tmpstr, " rel(%-4d,%-4d)   ",
 					rx, ry);
 				ggiPuts(vis, 0, 1 * ch_y, tmpstr);
-				sprintf(tmpstr, "diff(%-4d,%-4d)   ",
-					rx-ax, ry-ay);
-				ggiPuts(vis, 0, 2 * ch_y, tmpstr);
 			}
 	
 			else if (event.any.type == evPtrAbsolute) {
+				ox = ax;
+				oy = ay;
+				old_type = 1;
 				ax = event.pmove.x;
 				ay = event.pmove.y;
 				sprintf(tmpstr, " abs(%-4d,%-4d)   ",
 					ax, ay);
 				ggiPuts(vis, 0, 0 * ch_y, tmpstr);
-				sprintf(tmpstr, "diff(%-4d,%-4d)   ",
-					rx-ax, ry-ay);
-				ggiPuts(vis, 0, 2 * ch_y, tmpstr);
+			}
+
+			else if (event.any.type == evPtrButtonPress) {
+				ox = rx;
+				oy = ry;
+				old_type = 0;
+				rx = ax;
+				ry = ay;
+				sprintf(tmpstr, " rel(%-4d,%-4d)   ",
+					rx, ry);
+				ggiPuts(vis, 0, 1 * ch_y, tmpstr);
 			}
 			
 			else if (event.any.type == evKeyPress) {
@@ -123,6 +148,55 @@ main(int argc, char **argv)
 
 			else
 				continue;
+
+			sprintf(tmpstr, "diff(%-4d,%-4d)   ",
+				rx-ax, ry-ay);
+			ggiPuts(vis, 0, 2 * ch_y, tmpstr);
+
+			ggiSetGCForeground(vis, black);
+			if (old_type) {
+				ggiDrawBox(vis, ox - box_size, oy + 1,
+					   box_size, box_size);
+				ggiDrawBox(vis, ox + 1, oy - box_size,
+					   box_size, box_size);
+			}
+			else {
+				ggiDrawBox(vis, ox - box_size, oy - box_size,
+					   box_size, box_size);
+				ggiDrawBox(vis, ox + 1, oy + 1,
+					   box_size, box_size);
+			}
+
+			ggiSetGCForeground(vis, red);
+			ggiDrawBox(vis, ax - box_size, ay + 1,
+				   box_size, box_size);
+			ggiDrawBox(vis, ax + 1, ay - box_size,
+				   box_size, box_size);
+			ggiSetGCForeground(vis, white);
+			ggiSetGCBackground(vis, red);
+			ggiPutc(vis,
+				ax - 3 * box_size / 4,
+				ay + box_size / 4 + 1, 'A');
+			ggiPutc(vis,
+				ax + box_size / 4 + 1,
+				ay - 3 * box_size / 4, 'A');
+
+			ggiSetGCForeground(vis, yellow);
+			ggiDrawBox(vis, rx - box_size, ry - box_size,
+				   box_size, box_size);
+			ggiDrawBox(vis, rx + 1, ry + 1,
+				   box_size, box_size);
+			ggiSetGCForeground(vis, black);
+			ggiSetGCBackground(vis, yellow);
+			ggiPutc(vis,
+				rx - 3 * box_size / 4,
+				ry - 3 * box_size / 4, 'R');
+			ggiPutc(vis,
+				rx + box_size / 4 + 1,
+				ry + box_size / 4 + 1, 'R');
+
+			ggiSetGCForeground(vis, white);
+			ggiSetGCBackground(vis, black);
 		}
 		ggiFlush(vis);
 	}
