@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.3 2002/05/17 23:03:24 skids Exp $
+/* $Id: demo.c,v 1.4 2002/05/18 22:02:31 skids Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -903,6 +903,115 @@ int main(int argc, char **argv)
 		ggiPutHLine(vis, 16, 16+i,  128, put_buf);
 		ggiPutVLine(vis, 160+i, 16, 128, put_buf);
 	}
+
+
+	/* DirectBuffer.  Not all targets support directbuffer,
+	 * and using it correctly requires a lot of code to compensate
+	 * for the many types of pixel formats and framebuffer layouts
+	 * available.  If you want portability, you should stick to
+	 * using the normal LibGGI drawing functions -- a lot of applications
+	 * use directbuffers when they do not have to.
+	 *
+	 * This test fills the framebuffer with random data.  Since it
+	 * is random data, we do not need to care about the pixel format.
+	 * All we have to do is make sure that we obey the access rules
+	 * for the directbuffer.  This is much easier than actually drawing 
+	 * something.
+	 */
+	do {
+		const ggi_directbuffer   *dbuf;
+		int numplanes, stride, stride2, wordsize;
+		
+		if (!(dbuf = ggiDBGetBuffer (vis, 0))) break;
+
+		/* First we check what widths we can use to access the 
+		 * buffer.  There are some directbuffers where it is
+		 * not legal to read or write 16-bit values, for example.
+		 * We will try to get either 32, 16 or 8-bit access. 
+		 *
+		 * There is also a dbuf->align, but as long as we make
+		 * sure to never access unaligned values in the buffer,
+		 * we don't have to look at it.
+		 */
+		wordsize = 32;
+		if (dbuf->noaccess & 32) {
+			wordsize = 16;
+				if (dbuf->noaccess & 16) {
+					wordsize = 8;
+					if (dbuf->noaccess & 8) break;
+				}
+		}
+
+		/* Now we have to make sure not to write anywhere inside the
+		 * directbuffer area where we are not invited, since the
+		 * buffer may not be contiguous.  If we access any data 
+		 * which we should not, we are not guaranteed good behavior
+		 * by the target.
+		 */
+		switch (dbuf->layout) {
+		case blPixelLinearBuffer:
+			stride = dbuf->buffer.plb.stride;
+			stride2 = 0;
+			numplanes = 1;
+			break;
+		case blPixelPlanarBuffer:
+			stride = dbuf->buffer.plan.next_line;
+			stride2 = dbuf->buffer.plan.next_plane;
+			numplanes = depth;
+		default:
+			/* Other, even more complicated, layouts exist. */
+			stride = stride2 = numplanes = 0;
+			break;
+		}
+		if (!numplanes) break;
+
+		TestName("DirectBuffer");
+		waitabit();
+
+		/* Before using a directbuffer, it should be acquired.
+		 * While it is acquired, we do not use any other
+		 * LibGGI drawing commands.
+		 */
+		if (ggiResourceAcquire(dbuf->resource, GGI_ACTYPE_WRITE) != 0)
+			break;
+
+		TestStart();
+		i = 0;
+		while ((TestTime() < 15) && (i < numplanes)) {
+			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
+				uint8 *linestart;
+				linestart = (uint8 *)dbuf->write + 
+				  stride2 * i + stride * y;
+				x = 0;
+				while (x < vx * GT_SIZE(type)/wordsize) {
+					switch(wordsize) {
+					case 32:
+					  *((uint32 *)linestart+x) = random();
+					  break;
+					case 16:
+					  *((uint16 *)linestart+x) = random();
+					  break;
+					case 8:
+					  *(linestart + x) = random();
+					  break;
+					}
+					x++;
+				}
+			}
+			i++;
+		}	
+
+		/* If we were not in syncronous mode, we would
+		 * call ggiFlush here, because there is no guarantee
+		 * that the directbuffer is not a software back-buffer
+		 * which still needs to be sent to the display.
+		 * 
+		 * We release our directbuffer immediately once we are done,
+		 * even if we are going to use it again in a short time.
+		 */
+		ggiResourceRelease(dbuf->resource);
+
+	} while (0);
 
 
 	/* Asynchronous mode. From now on LibGGI is no longer
