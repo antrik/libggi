@@ -54,13 +54,13 @@ server will use the default output.
 </varlistentry>
 
 <varlistentry>
-<term>-t target</term><term>--version</term>
+<term>-t target</term>
 <listitem><para>Use the specified <parameter>target</parameter> as
 display. It overrides the value of <envar>GGI_DISPLAY</envar>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term>-d</term><term>--display</term>
+<term>-d display</term>
 <listitem><para>?</para></listitem>
 </varlistentry>
 
