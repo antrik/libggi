@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2002/09/08 21:37:46 soyt Exp $
+/* $Id: visual.c,v 1.5 2003/11/16 22:01:52 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -34,6 +34,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>	/* memcpy */
+#endif
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
