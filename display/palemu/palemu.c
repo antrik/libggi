@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.1 2001/05/12 23:02:17 cegger Exp $
+/* $Id: palemu.c,v 1.2 2001/07/31 09:01:03 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -173,7 +173,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 
 	/* setup tables and choose blitter function */
 
-	switch ((GT_SIZE(priv->mode.graphtype) + 7) / 8) {
+	switch (GT_ByPP(priv->mode.graphtype)) {
 
 	case 1: priv->do_blit = &blitter_1;
 		break;
