@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.9 2005/02/07 07:27:07 orzo Exp $
+/* $Id: dga.c,v 1.10 2005/02/07 19:25:09 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -223,21 +223,23 @@ static void ggi_xdga_checkmode_adapt(ggi_mode *m, XDGAMode *dgamode,
 
 /* This function performs the CheckMode operation and returns
  * the number of the best mode.  */
-static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode) {
+static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode)
+{
 	ggi_x_priv *priv;
 	XDGAMode *dgamodes;
 	int i;
-    int no_modes = 1; /* true we haven't found a mode */
+	int err;
+	int no_modes = 1; /* true we haven't found a mode */
 
 	priv = GGIX_PRIV(vis);
 
 	dgamodes = (XDGAMode *)(priv->modes_priv);
 
 
-    if( num>=0 )
-        return (dgamodes[num+1].flags & XDGAPixmap) ? 
-		dgamodes[num+1].num : GGI_ENOMATCH;
-        
+	if ( num>=0 ) {
+		return (dgamodes[num+1].flags & XDGAPixmap) ? 
+			dgamodes[num+1].num : GGI_ENOMATCH;
+	}        
 
     
 	/* Find max values for maxed->virt and such. */
@@ -252,9 +254,9 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode) {
 		/* For now, only support modes that allow xlib rendering...
 		 * Things to come: this check is only neccessary if we
 		 * have no framebuffer or /dev/mem access. */
-		if( dgamodes[i].flags & XDGAPixmap )
-		{
-            DPRINT("found valid mode number: %i\n", i );
+		if ( dgamodes[i].flags & XDGAPixmap ) {
+
+			DPRINT("found valid mode number: %i\n", i );
 			/* Turn dgamode structure into a ggimode suggestion */
 			ggi_xdga_checkmode_adapt( mode, &dgamodes[i], priv );
 
@@ -267,15 +269,16 @@ static int ggi_xdga_validate_mode(ggi_visual *vis, int num, ggi_mode *mode) {
 			 * far. */
 			_GGI_generic_checkmode_update( cm, mode,
 					       (void *)i );
-            no_modes = 0; /* false, we have a mode now */
+			no_modes = 0; /* false, we have a mode now */
 		}
 	}
-	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)&i );
+
+	err = _GGI_generic_checkmode_finish( cm, mode, (void**)&i );
 	_GGI_generic_checkmode_destroy(cm);
-    if( no_modes )
-        return GGI_ENOMATCH;
-    else
-        return i;  
+
+	if( no_modes ) return GGI_ENOMATCH;
+
+	return i;  
 }
 
 
@@ -356,10 +359,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-    ggi_x_priv *priv = GGIX_PRIV(vis);
+	ggi_x_priv *priv = GGIX_PRIV(vis);
     
-    if( priv->modes_num > 0 )
-        XFree( priv->modes_priv );
+	if( priv->modes_num > 0 )
+		XFree( priv->modes_priv );
 
 	return GGI_OK;
 }
