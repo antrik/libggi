@@ -1,4 +1,4 @@
-/* $Id: ipaq_ggicalibrate.c,v 1.5 2004/09/18 10:38:53 cegger Exp $
+/* $Id: ipaq_ggicalibrate.c,v 1.6 2004/10/17 02:04:29 aldot Exp $
 ******************************************************************************
 
    h3600 GGI calibration Application
@@ -353,7 +353,7 @@ static int do_calibration(int fd)
 			   Example Xscale0 = (Xcal1 - Xcal0 ) / (Xraw1 - Xraw0)
 
 			   trans = Xcal - mXraw
-			   What is actualy done is to take the Ave of two measurements
+			   What is actually done is to take the Ave of two measurements
 			   Example  Xtrans0 = ( (Xcal0 - mXraw0) + (Xcal3 - mXraw3) ) / 2
 
 			   We repeat the above procedure to calculate 
