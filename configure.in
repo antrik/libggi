@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.138 2004/10/18 22:21:27 cegger Exp $
+dnl $Id: configure.in,v 1.139 2004/10/19 19:30:15 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
@@ -345,7 +345,8 @@ if test "$ac_cv_header_sys_socket_h" = "yes"; then
 		#include <sys/un.h>
 		#endif], [socklen_t len;],
 		[AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_SOCKLEN_T)],
+		AC_DEFINE([HAVE_SOCKLEN_T], [1],
+			[Define if socklen_t type is supported.])],
 		[AC_MSG_RESULT(no)])
 fi
 
@@ -396,7 +397,8 @@ dnl ========================================================================
 dnl Checks whether to compile in various SWARs
 
 if test "x$do_noswar" = "xyes"; then
-   AC_DEFINE(DO_SWAR_NONE)
+   AC_DEFINE([DO_SWAR_NONE], [1],
+		[Defines for SWAR selection])
 fi
 
 AC_MSG_CHECKING(if LibGII build detected working int64)
@@ -429,7 +431,8 @@ dnl do test for do_64bitc == "build" here.
   do_mvi="no")
 
 if test "x$do_64bitc" = "xyes"; then 
-   AC_DEFINE(DO_SWAR_64BITC)
+   AC_DEFINE([DO_SWAR_64BITC], [1],
+		[Defines for SWAR selection])
 fi
 
 AC_CC_CAN_EMMS
@@ -455,7 +458,8 @@ if test "x$do_mmx" = "xauto"; then
    fi
 fi
 if test "x$do_mmx" = "xyes"; then 
-   AC_DEFINE(DO_SWAR_MMX)
+   AC_DEFINE([DO_SWAR_MMX], [1],
+		[Defines for SWAR selection])
 fi
 
 AC_CC_CAN_FEMMS
@@ -481,7 +485,8 @@ if test "x$do_3dnow" = "xauto"; then
    fi
 fi
 if test "x$do_3dnow" = "xyes"; then 
-   AC_DEFINE(DO_SWAR_3DNOW)
+   AC_DEFINE([DO_SWAR_3DNOW], [1],
+		[Defines for SWAR selection])
 fi
 
 AC_CC_CAN_FALIGNDATA
@@ -507,7 +512,8 @@ if test "x$do_vis" = "xauto"; then
    fi
 fi
 if test "x$do_vis" = "xyes"; then 
-   AC_DEFINE(DO_SWAR_VIS)
+   AC_DEFINE([DO_SWAR_VIS], [1],
+		[Defines for SWAR selection])
 fi
 
 AC_CC_CAN_PKLB
@@ -533,7 +539,8 @@ if test "x$do_mvi" = "xauto"; then
    fi
 fi
 if test "x$do_mvi" = "xyes"; then 
-   AC_DEFINE(DO_SWAR_MVI)
+   AC_DEFINE([DO_SWAR_MVI], [1],
+		[Defines for SWAR selection])
 fi
 
 dnl ========================================================================
@@ -722,14 +729,16 @@ if test "x$build_fbdev_target" != "xno"; then
 struct fb_fix_screeninfo *fix;
 fix->accel = 0;
 ],
-      AC_DEFINE(HAVE_NEW_FBDEV)
+      AC_DEFINE([HAVE_NEW_FBDEV], [1],
+		[Define if struct fb_fix_screeninfo has an 'accel' member.])
       have_new_fbdev=yes),
     build_fbdev_target="no")
 fi
 
 if test "x$build_directfb_renderer" != "xno"; then
   AC_CHECK_HEADER(directfb.h,
-	AC_DEFINE(HAVE_DIRECTFB_H),
+	AC_DEFINE([HAVE_DIRECTFB_H], [1],
+		[Define if you have <directfb.h> header file]),
 	build_directfb_renderer="no")
 
   AC_CHECK_HEADER(directfb-internal/directfb_version.h,
@@ -810,13 +819,16 @@ fi
 if test "x$build_terminfo_target" != "xno"; then
   curseslib=""
   AC_CHECK_HEADER(ncurses.h,
-	[AC_DEFINE(HAVE_NCURSES_H)
+	[AC_DEFINE([HAVE_NCURSES_H], [1],
+		[Define if you have the <ncurses.h> header file])
 	curseslib="ncurses"],[
   AC_CHECK_HEADER(ncurses/ncurses.h,
-	[AC_DEFINE(HAVE_NCURSES_NCURSES_H)
+	[AC_DEFINE([HAVE_NCURSES_NCURSES_H], [1],
+		[Define if you have the <ncurses/ncurses.h> header file.])
 	curseslib="ncurses"],[
   AC_CHECK_HEADER(curses.h,
-	[AC_DEFINE(HAVE_CURSES_H)
+	[AC_DEFINE([HAVE_CURSES_H], [1],
+		[Define if you have the <curses.h> header file.])
 	curseslib="curses"],[
 	build_terminfo_target="no"])])])
   if test -n "$curseslib"; then
@@ -838,7 +850,8 @@ AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
 if test "x$build_dga_target" != "xno"; then
   AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
   if test "x$internal_xf86dga" = "xyes"; then
-    AC_DEFINE(GGI_INTERNAL_XF86DGA)
+    AC_DEFINE([GGI_INTERNAL_XF86DGA], [1],
+		[Define if you want to use the included XF86DGA implementation.])
   else
 	if test "x$ac_cv_header_X11_extensions_xf86dga_h" != "xyes" -o \
 		"x$ac_cv_header_X11_extensions_xf86vmode_h" != "xyes"; then
@@ -868,7 +881,8 @@ AC_CACHE_VAL(ggi_cv_have_unix_domain_socket,
     ggi_cv_have_unix_domain_socket=yes, ggi_cv_have_unix_domain_socket=no)])
 AC_MSG_RESULT($ggi_cv_have_unix_domain_socket)
 if test $ggi_cv_have_unix_domain_socket = yes ; then
-  AC_DEFINE(HAVE_UNIX_DOMAIN_SOCKET)
+  AC_DEFINE([HAVE_UNIX_DOMAIN_SOCKET], [1],
+	[Define if Unix domain sockets are supported.])
 fi
 
 
@@ -1089,7 +1103,8 @@ else
   else
     build_directfb_renderer="yes"
     FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
-    AC_DEFINE_UNQUOTED(DIRECTFB_DRIVER_DIR,"$directfb_driver_dir")
+    AC_DEFINE_UNQUOTED([DIRECTFB_DRIVER_DIR],"$directfb_driver_dir",
+		[Where to look for DirectFB modules])
     AC_MSG_RESULT(yes)
   fi
 fi
@@ -1407,14 +1422,11 @@ AC_SUBST(ggi_sysconfdir_to_libdir)
 AC_SUBST(ggi_sysconfdir)
 AC_SUBST(static_libdir)
 AC_SUBST(static_sysconfdir)
-AC_DEFINE_UNQUOTED(GGITAGLEN,$TAGLEN)
-AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
-AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
-AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$static_sysconfdir/$ggi_subdir")
-
-if test "x$use_threads" != "xno"; then
-  AC_DEFINE(USE_THREADS)
-fi
+AC_DEFINE_UNQUOTED([GGITAGLEN],$TAGLEN, [The length of the tag])
+AC_DEFINE_UNQUOTED([GGIPATHTAG],"$PATHTAG", [Tag to identify path to $ggi_conffile])
+AC_DEFINE_UNQUOTED([GGICONFFILE],"$ggi_conffile", [Name of LibGGI master config file])
+AC_DEFINE_UNQUOTED([GGICONFDIR],"$PATHTAG$static_sysconfdir/$ggi_subdir",
+				[Tag plus path to config dir])
 
 AM_CONFIG_HEADER(config.h)
 
