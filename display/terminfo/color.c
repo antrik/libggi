@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2004/09/12 21:11:05 cegger Exp $
+/* $Id: color.c,v 1.4 2004/09/12 21:21:42 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -121,26 +121,21 @@ static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
 	size_t buffer_size;
 
 	{
-		struct TIhooks *tiinfo;
-		ggi_mode *mode;
 		int fb_height, vis_width, vis_height;
 
 		fb_walk = LIBGGI_CURREAD(vis);
 		fb_width = LIBGGI_VIRTX(vis);
 		fb_height = LIBGGI_VIRTY(vis);
 
-		tiinfo = TERMINFO_PRIV(vis);
-
-		mode = LIBGGI_MODE(vis);
-		vis_width = mode->visible.x;
-		vis_height = mode->visible.y;
+		vis_width = LIBGGI_X(vis);
+		vis_height = LIBGGI_Y(vis);
 
 		x_limit = ( width < vis_width ) ? width : vis_width;
 		y_limit = ( height < vis_height ) ? height : vis_height;
 
 		fb_walk += ( vis->origin_x + vis->origin_y * fb_width );
 
-		splitline = tiinfo->splitline;
+		splitline = TERMINFO_PRIV(vis)->splitline;
 
 		buffer_size = sizeof(chtype) * width;
 		linebuffer = malloc(buffer_size);	
@@ -181,25 +176,20 @@ static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
 	size_t buffer_size;
 
 	{
-		struct TIhooks *tiinfo;
-		ggi_mode *mode;
 		int fb_height, vis_width, vis_height;
 
 		fb_walk = LIBGGI_CURREAD(vis);
 		fb_width = LIBGGI_VIRTX(vis);
 		fb_height = LIBGGI_VIRTY(vis);
 
-		tiinfo = TERMINFO_PRIV(vis);
-
-		mode = LIBGGI_MODE(vis);
-		vis_width = mode->visible.x;
-		vis_height = mode->visible.y;
+		vis_width = LIBGGI_X(vis);
+		vis_height = LIBGGI_Y(vis);
 
 		x_limit = ( width < vis_width ) ? width : vis_width;
 		y_limit = ( height < vis_height ) ? height : vis_height;
 
 		fb_walk += vis->origin_x + vis->origin_y * fb_width;
-		splitline = tiinfo->splitline;
+		splitline = TERMINFO_PRIV(vis)->splitline;
 
 		buffer_size = sizeof(chtype) * width;
 		linebuffer = malloc(buffer_size);	

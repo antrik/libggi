@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2004/09/12 21:11:05 cegger Exp $
+/* $Id: mode.c,v 1.10 2004/09/12 21:21:43 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -165,7 +165,7 @@ static int _GGI_terminfo_domode(ggi_visual *vis)
 
 	priv->virgin = 0;
 	vis->origin_x = vis->origin_y = 0;
-	priv->splitline = LIBGGI_MODE(vis)->visible.y;
+	priv->splitline = LIBGGI_Y(vis);
 
 	_terminfo_select_screen(priv->scr);
 	wclear(stdscr);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/09/12 21:11:05 cegger Exp $
+/* $Id: visual.c,v 1.9 2004/09/12 21:21:43 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -45,7 +45,8 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ	2
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-void _GGI_terminfo_freedbs(ggi_visual *vis) {
+void _GGI_terminfo_freedbs(ggi_visual *vis)
+{
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -207,7 +208,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	GGIDPRINT("display-terminfo: initializing %s on %s.\n", term_type, ( ( *term_path == '\0' ) ? "stdin/stdout" : term_path ));
 
-	priv = (struct TIhooks *)malloc(sizeof(struct TIhooks));
+	priv = TERMINFO_PRIV(vis) = (struct TIhooks *)malloc(sizeof(struct TIhooks));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
@@ -293,7 +294,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #else
 	GGIDPRINT("display-terminfo: mouse support is disabled\n");
 #endif
-	TERMINFO_PRIV(vis) = priv;
 
 	/* mode management */
 	vis->opdisplay->flush     = GGI_terminfo_flush;
