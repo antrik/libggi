@@ -1,10 +1,11 @@
-/* $Id: mode.c,v 1.26 2005/02/06 19:43:34 cegger Exp $
+/* $Id: mode.c,v 1.27 2005/02/09 06:34:12 orzo Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
 
    Copyright (C) 1997-1998 Steve Cheng		[steve@ggi-project.org]
    Copyright (C) 1999-2000 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2005      Joseph Crayne	[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -490,9 +491,10 @@ int _GGI_xf86dga_do_checkmode(ggi_visual * vis, ggi_mode * mode,
 		_GGI_xf86dga_checkmode_adjust( &cm->req, mode, vis );
 
 		/* Let the checkmode API decide if its the best so far */
-		_GGI_generic_checkmode_update( cm, mode, priv->dgamodes[i] );
+		_GGI_generic_checkmode_update( cm, mode, 
+					       (intptr_t)priv->dgamodes[i] );
 	}
-	err = _GGI_generic_checkmode_finish( cm, mode, (void**)dgamode );
+	err = _GGI_generic_checkmode_finish( cm, mode, (intptr_t*)dgamode );
 	_GGI_generic_checkmode_destroy(cm);
 	return err;
 }

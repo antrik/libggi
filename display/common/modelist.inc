@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.8 2005/02/08 10:28:15 orzo Exp $
+/* $Id: modelist.inc,v 1.9 2005/02/09 06:34:12 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -300,7 +300,7 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 	return tmp;
 }
 
-static int _ret0( ggi_mode *mode, void *mode_extra1, void *mode_extra2, 
+static int _ret0( ggi_mode *mode, intptr_t mode_extra1, intptr_t mode_extra2, 
 		  void *param)
 {
 	return 0;
@@ -327,13 +327,13 @@ void _GGI_generic_checkmode_init(ggi_checkmode_t *cm, ggi_mode *tm)
 	cm->sug.visible.x = GGI_AUTO; /* no suggested mode yet */
 	/* copy requested mode */
 	memcpy( &cm->req, tm, sizeof(ggi_mode) );
-	cm->mode_extra = NULL;
+	cm->mode_extra = 0;
 }
 
 static 
 void _GGI_generic_checkmode_update(ggi_checkmode_t * cm, 
 				   ggi_mode * p,
-				   void *mode_extra)
+				   intptr_t mode_extra)
 {
 	int ret;
 	int maxamize_x, maxamize_y, maxamize_depth;
@@ -396,7 +396,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 static
 int _GGI_generic_checkmode_finish(ggi_checkmode_t * cm,
 				  ggi_mode * mode,
-				  void **mode_extra )
+				  intptr_t *mode_extra )
 {
 	int retv;
 

@@ -1,10 +1,11 @@
-/* $Id: mode.c,v 1.24 2005/02/06 13:08:04 cegger Exp $
+/* $Id: mode.c,v 1.25 2005/02/09 06:34:12 orzo Exp $
 ******************************************************************************
 
    Display-FBDEV
 
-   Copyright (C) 1998 Andrew Apted		[andrew@ggi-project.org]
+   Copyright (C) 1998      Andrew Apted		[andrew@ggi-project.org]
    Copyright (C) 1999-2000 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2005      Joseph Crayne	[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -778,7 +779,7 @@ void _GGI_fbdev_checkmode_adjust( ggi_mode *req,
 }
 
 
-/* Iterate over the timings list obtained from thefb.modes 
+/* Iterate over the timings list obtained from the fb.modes 
  * file and search for the best matching mode. 
  */
 static 
@@ -841,7 +842,7 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 			/* The framebuffer seems to like it, so suggest 
 			 * it as a valid mode to the checkmode API. */
 			var2ggimode(vis, &var, mode, mode->frames);
-			_GGI_generic_checkmode_update( cm, mode, timing );
+			_GGI_generic_checkmode_update( cm, mode, (intptr_t)timing );
 		}
 		else {
 			/* The framebuffer didn't like this mode, so
@@ -873,7 +874,8 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 
 		_GGI_fbdev_checkmode_adapt( mode, saved_timing, priv );
 		_GGI_fbdev_checkmode_adjust( &cm->req, mode, priv );
-		_GGI_generic_checkmode_update( cm, mode, saved_timing );
+		_GGI_generic_checkmode_update( cm, mode, 
+					       (intptr_t)saved_timing );
 
 		/* ...and restore it to the list. */
 		saved_timing->next = NULL;
@@ -886,7 +888,7 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 	else if( saved_timing != priv->timings )
 		free( saved_timing );
 
-	err = _GGI_generic_checkmode_finish( cm, mode, (void**)timing_);
+	err = _GGI_generic_checkmode_finish( cm, mode, (intptr_t *)timing_);
 
 	_GGI_generic_checkmode_destroy( cm );
 	return err;

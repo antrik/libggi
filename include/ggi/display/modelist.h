@@ -1,9 +1,10 @@
-/* $Id: modelist.h,v 1.3 2005/02/03 18:06:45 orzo Exp $
+/* $Id: modelist.h,v 1.4 2005/02/09 06:34:12 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
 
    Copyright (C) 1998 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2005 Joseph Crayne	[oh.hello.joe@gmail.com]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -85,13 +86,17 @@ void _GGI_modelist_append( ggi_modelist *ml, ggi_mode_padded *m);
 int _GGI_modelist_checkmode(ggi_modelist *ml, ggi_mode_padded *tm);
 */
 
+#ifdef HAVE_STDINT_H    /* This header provides intptr_t */
+#include <stdint.h>
+#endif
+
 typedef 
-int ggi_user_cmp( ggi_mode *, void *, void *, void *);
+int ggi_user_cmp( ggi_mode *, intptr_t, intptr_t, void *);
 
 typedef struct {
 	ggi_mode req; /* the requested mode */
 	ggi_mode sug; /* the current best suggested mode */
-	void *mode_extra; /* extra target-specific mode data */
+	intptr_t mode_extra; /* extra target-specific mode data */
 	
 	/* The user_cmp hook is called when two mode suggestions
 	 * are indistinguishable.  When this happens, it may be
@@ -141,10 +146,10 @@ void _GGI_generic_checkmode_destroy( ggi_checkmode_t * );
 void _GGI_generic_checkmode_init(ggi_checkmode_t *cm, ggi_mode *tm);
 void _GGI_generic_checkmode_update(ggi_checkmode_t * cm, 
 				   ggi_mode * p,
-				   void *mode_extra);
+				   intptr_t mode_extra);
 int _GGI_generic_checkmode_finish(ggi_checkmode_t * cm,
 				  ggi_mode * mode,
-				  void **mode_extra);
+				  intptr_t *mode_extra);
 */
 
 
