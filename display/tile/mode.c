@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/06/03 05:30:49 pekberg Exp $
+/* $Id: mode.c,v 1.7 2004/09/08 11:22:50 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -108,28 +108,25 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 
 int GGI_tile_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	*arguments = '\0';
 	switch(num) {
 		case 0:
 			strcpy(apiname, "display-tile");
-			strcpy(arguments, "");
 			return 0;
 		case 1:
 			strcpy(apiname, "generic-stubs");
-			strcpy(arguments, "");
 			return 0;
 		case 2:
 			if(!TILE_PRIV(vis)->use_db)
 				return -1;
 
-			strcpy(arguments, "");
-
 			if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-				sprintf(apiname, "generic-text-%d",
+				sprintf(apiname, "generic-text-%u",
 					GT_SIZE(LIBGGI_GT(vis))); 
 				return 0;
 			}
 
-			sprintf(apiname, "generic-linear-%d%s", 
+			sprintf(apiname, "generic-linear-%u%s", 
 				GT_SIZE(LIBGGI_GT(vis)),
 				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 				? "-r" : "");

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/04/04 14:31:59 mooz Exp $
+/* $Id: mode.c,v 1.12 2004/09/08 11:25:45 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -177,23 +177,20 @@ static int _GGI_xf86dga_findmode(ggi_visual * vis, int visible_x,
 int GGI_xf86dga_getapi(ggi_visual * vis, int num, char *apiname,
 		       char *arguments)
 {
+	*arguments = '\0';
 	switch (num) {
 	case 0:
 		strcpy(apiname, "display-dga");
-		strcpy(arguments, "");
 		return 0;
 	case 1:
 		strcpy(apiname, "generic-stubs");
-		strcpy(arguments, "");
 		return 0;
 	case 2:
 		strcpy(apiname, "generic-color");
-		strcpy(arguments, "");
 		return 0;
 	case 3:
-		sprintf(apiname, "generic-linear-%d",
-			GT_SIZE(LIBGGI_MODE(vis)->graphtype));
-		strcpy(arguments, "");
+		sprintf(apiname, "generic-linear-%u",
+			GT_SIZE(LIBGGI_GT(vis)));
 		return 0;
 	}
 	return -1;
