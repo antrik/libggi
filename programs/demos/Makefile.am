@@ -13,7 +13,7 @@ noinst_PROGRAMS = demo flying_ggis wrap pageflip saver slimy stars textdemo
 # -lgg is needed for ggUSleep() and ggCurTime()
 demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
 flying_ggis_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
+pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg -lm
 saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
 slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm
 stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
