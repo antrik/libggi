@@ -2360,10 +2360,18 @@ flags is supported by the given visual.
 <function>ggiSetFlags</function>, <function>ggiAddFlags</function>,
 and <function>ggiRemoveFlags</function> return
 <returnvalue>0</returnvalue> on success,
-<returnvalue>&lt;0</returnvalue> on failure.  </para>
+<returnvalue>&lt;0</returnvalue> on failure.  This will only happen
+if the failure of a target to support the addition or removal of a 
+flag will cause the target to behave in a way that the application is not
+expecting.  As of this writing there are no such cases.  On visuals where 
+certain flags are unsupported but are inconsequential, these functions 
+will return a successful return code, but will not actually set or 
+clear the flag.</para>
 
 <para>
-<function>ggiGetFlags</function> returns the current flags.
+<function>ggiGetFlags</function> returns the current flags.  This can 
+be used by the curious to check whether a flag is being silently ignored
+as per above.
 </para>
 
 </refsect1>
