@@ -1,0 +1,35 @@
+Display using ncurses
+~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-terminfo
+
+Synopsis
+--------
+
+::
+
+  display-terminfo: [-physz=<sizex>,<sizey>[dpi]]
+
+
+Description
+-----------
+
+Uses the ncurses library for output and input.
+
+
+Options
+-------
+
+``-physz=<sizex>,<sizey>[dpi]``
+    This option will provide a physical screen size for applications
+    which wish to remain resolution independent.  :p:`sizex`,
+    :p:`sizey` are the x,y size of the screen in millimeters, unless
+    the optional ``dpi`` string is affixed, in which case, they
+    represent resolution in dots-per-inch.
+
+
+Features
+--------
+
+- DirectBuffer support always available.
+- Unaccelerated
