@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:17 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/10/27 18:26:24 skids Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -84,6 +84,7 @@ int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 	if (ggiSetFlags(priv->parent, flags)) return -1;
 
 	LIBGGI_FLAGS(vis) = flags;
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;	
 }

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/09/20 07:30:52 adamel Exp $
+/* $Id: mode.c,v 1.3 2002/10/27 18:26:24 skids Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -261,6 +261,8 @@ int GGI_lcd823_getmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_lcd823_setflags(ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
+
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

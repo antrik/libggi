@@ -53,8 +53,8 @@ Due : 200?-??-??
 [Common issues]
 
 * Fix up gamma map functions for non-24bpp visuals (Brian)
-- Alter all gcchanged functions so that unknown flags are not set, as
-  an indication that they are not supported by the target yet.
+* Alter all setflags functions so that unknown flags are not set, as
+  an indication that they are not supported by the target yet. (Brian)
 * Make sure all target flush functions clip appropriately.  Brian has
   a patch that makes stubs and mansync flush virt.x, virt.y which can
   be applied after this is done.

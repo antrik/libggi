@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2001/11/04 22:54:08 skids Exp $
+/* $Id: visual.c,v 1.2 2002/10/27 18:26:24 skids Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -86,7 +86,7 @@ int GGI_libkgi_setflags(ggi_visual *vis, ggi_flags flags)
 {
   fprintf(stderr, "GGI_libkgi_setflags\n");
         LIBGGI_FLAGS(vis) = flags;
-
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
         return 0;
 }
 

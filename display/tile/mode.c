@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2001/07/31 09:01:51 cegger Exp $
+/* $Id: mode.c,v 1.3 2002/10/27 18:26:25 skids Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -429,6 +429,8 @@ int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
 			ggiSetFlags(priv->vislist[i], flags);
 		}
 	}	
+
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

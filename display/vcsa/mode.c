@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.3 2002/09/08 21:37:47 soyt Exp $
+/* $Id: mode.c,v 1.4 2002/10/27 18:26:25 skids Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -205,6 +205,7 @@ int GGI_vcsa_getmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_vcsa_setflags(ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

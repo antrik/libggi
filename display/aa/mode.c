@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2002/09/08 21:37:45 soyt Exp $
+/* $Id: mode.c,v 1.3 2002/10/27 18:26:23 skids Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -398,6 +398,8 @@ int GGI_aa_setflags(ggi_visual *vis,ggi_flags flags)
 	LIBGGI_FLAGS(vis)=flags;
 
 	MANSYNC_SETFLAGS(vis,flags);
+
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

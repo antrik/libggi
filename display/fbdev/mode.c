@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2002/09/08 21:37:45 soyt Exp $
+/* $Id: mode.c,v 1.10 2002/10/27 18:26:23 skids Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -855,6 +855,8 @@ int GGI_fbdev_getmode(ggi_visual *vis, ggi_mode *mode)
 int GGI_fbdev_setflags(ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
+
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

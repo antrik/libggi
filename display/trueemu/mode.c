@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2001/05/12 23:02:37 cegger Exp $
+/* $Id: mode.c,v 1.2 2002/10/27 18:26:25 skids Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -355,6 +355,7 @@ int GGI_trueemu_setflags(ggi_visual *vis, ggi_flags flags)
 	LIBGGI_FLAGS(vis) = flags;
 
 	MANSYNC_SETFLAGS(vis, flags);
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }

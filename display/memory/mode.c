@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2002/05/22 04:21:47 skids Exp $
+/* $Id: mode.c,v 1.6 2002/10/27 18:26:24 skids Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -374,6 +374,7 @@ int _GGI_memory_resetmode(ggi_visual *vis)
 int GGI_memory_setflags(ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 	return 0;
 }
 
