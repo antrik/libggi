@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2004/09/12 21:01:40 cegger Exp $
+/* $Id: mode.c,v 1.18 2004/09/13 09:42:09 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -76,7 +76,7 @@ static int GGI_xf86dga_setdisplayframe(ggi_visual * vis, int num)
 	vis->d_frame_num = num;
 
 	_ggi_XF86DGASetViewPort(priv->x.display, priv->x.screen,
-				vis->origin_x, LIBGGI_MODE(vis)->virt.y
+				vis->origin_x, LIBGGI_VIRTY(vis)
 				* vis->d_frame_num + vis->origin_y);
 
 	return 0;
