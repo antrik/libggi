@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.7 2004/10/08 12:31:08 cegger Exp $
+/* $Id: mansync.c,v 1.8 2004/10/08 12:37:50 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -140,6 +140,8 @@ int _GGI_mansync_start(ggi_visual *vis)
 
 int _GGI_mansync_stop(ggi_visual *vis)
 {
+	int ret;
+
 	GGIDPRINT("_GGI_mansync_stop() (MANSYNC_TASK) called.\n");
 
 	LIBGGI_ASSERT(MANSYNC_HOOK(vis)->running,
@@ -151,7 +153,12 @@ int _GGI_mansync_stop(ggi_visual *vis)
 	MANSYNC_ISASYNC(vis) = 1;
 	MANSYNC_IGNORE(vis) = 1;
 
-	return ggDelTask(&MANSYNC_TASK(vis));
+	ret = ggDelTask(&MANSYNC_TASK(vis));
+	if (ret != 0) return ret;
+
+	MANSYNC_HOOK(vis)->running = 0;
+
+	return 0;
 }
 
 
