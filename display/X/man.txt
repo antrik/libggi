@@ -10,7 +10,8 @@ Synopsis
 
   display-x: [ [-screen=<screenidx>] | [-inwin=<winid>|root] ] [-noinput]
 	     [-nocursor] [-keepcursor] [-physz==<sizex>,<sizey>[dpi]]
-	     [-nobuffer] [-noaccel] [-nomansync] [-noshm] [-nodga] [-novidmode]
+	     [-nobuffer] [-noaccel] [-nomansync] [-noshm]
+	     [-fullscreen] [-nodga] [-novidmode]
 	     [-nodbe] [-noevi] [<display>]
 
 
@@ -45,6 +46,13 @@ Options
     compatible with the requested mode will be chosen; with this
     option only the screen specified by :p:`screenidx` will be
     considered.
+
+``-fullscreen``
+    Turns on the fullscreen mode. Default mode is the windowed mode.
+    In fullscreen mode, the dga helper is tried first if not disabled
+    by -nodga or failed for some reason. Then the vidmode helper is
+    tried. When this fails, then the target falls back to the windowed
+    mode. Note, the -inwin option has no effect with fullscreen. 
 
 ``-inwin=<winid>|root``
     Run in already-existing window with id :p:`winid`.  This can be
