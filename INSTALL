@@ -1,0 +1,97 @@
+Installation notes for LibGGI
+-----------------------------
+
+This file contains notes specific to LibGGI.
+LibGGI uses autoconf for configuration purposes, thus make sure you also
+read the file INSTALL.autoconf which contains some generic info.
+
+Short installation instructions for the impatient:
+
+./configure; make; make install
+will build LibGGI and install it in /usr/local.
+Make sure that your dynamic linker has /usr/local/lib in it's search path.
+Under Linux this is accomplished by adding the dir to /etc/ld.so.conf.
+
+Libraries and Includes:
+
+If you have installed X in a nonstandard location, and the files do not get
+found, use:
+
+  --x-includes=DIR        X include files are in DIR
+  --x-libraries=DIR       X library files are in DIR
+  --with-x                use the X Window System
+
+If you have not installed LibGII (mind the difference - LibGGI is this
+library, but it depends on LibGII) in a place where your compiler finds it,
+you can use a LibGII tree installed anywhere (i.e. installed using --prefix
+at LibGII configure time) using:
+
+  --with-gii=DIR          use the LibGII installed with prefix DIR
+
+Or you can use an uninstalled (but built) copy of LibGII using:
+
+  --with-uninst-gii=DIR   use uninstalled copy of LibGII found in DIR],
+
+Note that the latter requires that LibGII is build in it's sourcedir.
+
+Other missing library/include directories can be added with:
+
+  --with-extra-includes=DIR
+                          add extra include paths
+  --with-extra-libs=DIR   add extra library paths
+where DIR is a colon separated list of directories.
+
+In case you are toying with the thought to build LibGGI statically for some
+reason, please note, that due to the dynamic nature of LibGGI this makes no 
+sense and is unsupported, so don't use:
+
+  --enable-static         not supported
+
+LibGGI stores its configuration in sysconfdir/ggi (sysconfdir defaults to
+PREFIX/etc, see INSTALL.autoconf about PREFIX) by default. As the conffile
+contains library name mappings, it has to be protected against tampering.
+If for some reason you want to change sysconfdir you can set it with:
+
+  --sysconfdir=DIR        read-only single-machine data in DIR [PREFIX/etc]
+
+Some targets use a helper to periodically flush the screen, to allow for
+lazy programmers to run in "SYNC" mode. This helper normally uses fork()
+and signals. If your pthreads work properly, you can enable a somewhat
+nicer system using threads by:
+
+  --enable-threads        use threads for mansync
+
+In case you are never ever interested in debugging LibGGI, you can compile
+out all debugging code, making it a bit smaller and faster:
+
+  --disable-debug         don't build with run-time debugging (speed freaks)
+
+Note that usually autoconf defaults to compiling with "-O2 -g" independent
+of whether --disable-debug is used or not. To compile with other flags
+simply set the environment variable CFLAGS to the desired value when running
+configure.
+
+In case you do not want some targets to be built, or want to force
+experimental or wrongly undetected targets to be build, you can use:
+
+  --disable-x             don't build the X target
+  --disable-xlib          don't build the Xlib target
+  --disable-aa            don't build the aa target
+  --disable-fbdev         don't build the fbdev target
+  --disable-genkgi        don't build the generic KGI driver (used by fbdev)
+  --disable-file          don't build the file target
+  --disable-glide         don't build the glide target
+  --enable-suidkgi        build the suidkgi target
+  --disable-memory        don't build the memory target
+  --disable-monotext      don't build the monotext target
+  --disable-multi         don't build the multi target
+  --disable-palemu        don't build the palemu target
+  --disable-sub           don't build the sub target
+  --disable-svga          don't build the svga target
+  --disable-tele          don't build the tele target
+  --disable-terminfo      don't build the terminfo target
+  --disable-tile          don't build the tile target
+  --disable-trueemu       don't build the trueemu target
+  --disable-vcsa          don't build the vcsa target
+  --disable-vgagl         don't build the vgagl target, needed by svga
+  --disable-dga           don't build the dga target

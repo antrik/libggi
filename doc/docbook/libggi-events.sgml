@@ -1,0 +1,285 @@
+<chapter id="libggi-events">
+<title>Event handling</title>
+
+<refentry id="ggiEventPoll">
+
+<refmeta>
+<refentrytitle><function/ggiEventPoll/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiJoinInputs/
+
+<refname/ggiEventPoll/
+<refname/ggiEventsQueued/
+<refname/ggiEventRead/
+
+<refname/ggiSetEventMask/
+<refname/ggiGetEventMask/
+<refname/ggiAddEventMask/
+<refname/ggiRemoveEventMask/
+
+<refpurpose/Event management for LibGGI visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+
+<funcprototype>
+<funcdef>gii_input_t <function/ggiJoinInputs/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_input_t <parameter/inp/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_event_mask <function/ggiEventPoll/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event_mask <parameter/mask/, 
+struct timeval *<parameter/t/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function/ggiEventsQueued/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event_mask <parameter/mask/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function/ggiEventRead/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event *<parameter/ev/, 
+gii_event_mask <parameter/mask/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function/ggiSetEventMask/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event_mask <parameter/evm/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_event_mask <function/ggiGetEventMask/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function/giiAddEventMask/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event_mask <parameter/mask/
+</paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function/giiRemoveEventMask/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event_mask <parameter/mask/
+</paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+LibGGI provides input facilities through an auxiliary library,
+<Application/LibGII/.
+Each LibGGI visual internally contains a <type/gii_input_t/ input, and
+all LibGII functions are available to manipulate and process inputs.
+The LibGGI version of LibGII functions simply take a <type/ggi_visual_t/
+rather than <type/gii_input_t/.  Events are LibGII types.  All other
+semantics are the same; see <xref linkend="libgii"> for details.
+</para>
+
+<important><para>
+LibGGI visuals open the appropriate inputs already, including mouse and
+keyboard, or the inputs are 'intrinsic' to the visual, e.g. X mouse and
+keyboard events.  Thus in the usual cases there is no need to open a
+LibGII <type/gii_input_t/ directly (and that may in fact fail because an
+input device is already open).  The LibGGI <function/ggiEvent*/
+functions <emphasis/must/ be used to do event handling with LibGGI
+visuals.
+</para></important>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist TYPE=inline>
+<member><xref linkend="giiSetEventMask"></member>
+<member><xref linkend="giiEventPoll"></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+<refentry id="ggiEventSend">
+
+<refmeta>
+<refentrytitle><function/ggiEventSend/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiEventSend/
+<refpurpose/Send commands and events to a LibGGI visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+
+<funcprototype>
+<funcdef>int <function/ggiEventSend/</funcdef>
+<paramdef>
+ggi_visual_t <parameter/vis/, 
+gii_event *<parameter/ev/
+</paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function/ggiEventSend/ injects an event into the queue.  See
+<xref linkend="giiEventSend"> for details.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title/Controlling VT switching behavior/
+
+<para>
+If an application wants to continue running after its VT is switched
+away,  it should make a call <function/ggiEventSend/ to the visual 
+with an <symbol/evCommand/ event with code <symbol/GGICMD_NOHALT_ON_UNMAP/.
+To disable this behavior, use a command event with code
+<symbol/GGICMD_HALT_ON_UNMAP/.  The latter is the default.
+</para>
+
+</refsect1> 
+
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist TYPE=inline>
+<member><xref linkend="ggiEventPoll"></member>
+<member><xref linkend="giiEventSend"></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+
+<refentry id="ggiGetc">
+
+<refmeta>
+<refentrytitle><function/ggiGetc/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiGetc/
+<refname/ggiKbhit/
+<refpurpose/Convenience functions for simplistic keyboard input/
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+<funcprototype>
+<funcdef>int ggiGetc</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiKbhit/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function/ggiGetc/ gets a character from the keyboard, 
+and blocks if there is no key immediately available.
+</para>
+
+<para>
+<function/ggiKbhit/ checks if a key has been hit on the keyboard.  This
+does not consume the key.  It is used for easy porting of old DOS
+applications.
+
+<Important>
+<para>
+<emphasis/Do not/ poll like this: <literal/do while( ! ggiKbhit(vis) );/ 
+On a multitasking OS you would be wasting a lot of resources which could be
+available to other processes.  If you want to wait for a key, use the 
+<function/ggiGetc/ call.
+</para>
+</Important>
+
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<function/ggiKbhit/ returns <ReturnValue/0/ if no key has been received
+yet, otherwise there is a key to be consumed.
+</para>
+
+<para>
+<function/ggiGetc/ returns a Unicode character in canonical form.
+</para>
+
+<para>
+For a fuller definition of characters, see <xref linkend="gii-keysym">.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title/See Also/
+
+<simplelist type=horiz>
+<member><xref linkend="ggiEventPoll"></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+</chapter>
+

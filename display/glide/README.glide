@@ -1,0 +1,26 @@
+This is a LibGGI target for the Glide rasterization library for 3Dfx
+Voodoo based video cards.
+
+What works:
+-----------
+
+* 800x600, 640x480, and 512x384 resolutions (Exactly those and no others)
+* 15, 16, 24 and 32 bpp modes
+* Drawing primitives are hardware accelerated
+* Supports one or two frames per visual
+
+What doesn't (yet)
+------------------
+
+* XGGI.  I always get a black screen, no idea why yet
+
+Known bugs:
+-----------
+
+* ggiGet*() functions doesn't work in 24/32 bpp. This will be fixed.
+* ggiPut[C|S]() functions still use the stubs. These will be accelerated.
+
+Send questions, suggestions, patches, ideas, etc. to
+taylorj@ecs.csus.edu.
+
+Jon Taylor

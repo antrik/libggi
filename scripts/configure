@@ -1,0 +1,598 @@
+#!/bin/sh
+# $Id: configure,v 1.1 2001/05/12 23:03:57 cegger Exp $
+#*****************************************************************************
+#
+# Configuration script for libGGI
+#
+# Copyright (C) 1997 by Andreas Vogler	[asvogler@cip.informatik.uni-erlangen.de]
+# Copyright (C) 1997 by Marcus Sundberg	[marcus@ggi-project.org]
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+#*****************************************************************************
+#
+
+# Force use of the 'dialog' program.
+#USE_DIALOG="yes"
+
+# Do not use the 'dialog' program.
+#USE_DIALOG="no"
+
+# Autodetect the 'dialog' program if none of the above is selected.
+if [ -z "$USE_DIALOG" ]; then
+    type dialog 2>&1 | grep -v "not found" > /dev/null
+    if [ "$?" = "0" ]; then
+	USE_DIALOG=yes
+    else
+	USE_DIALOG=no
+    fi
+fi
+
+# Detect how to print text without a trailing newline.
+echo -n "test" | grep \\-n > /dev/null
+if [ "$?" = "0" ]; then
+    ECHON=../../config/scripts/echoc
+else
+    ECHON="echo -n"
+fi
+# Kludge for zsh.
+$ECHON testing 2>&1 | grep testing >/dev/null
+if [ "$?" != "0" ]; then
+    ECHON=../../config/scripts/echon
+fi
+
+PREFIX=/usr/local
+CONFDIR=/etc/ggi
+
+USE_THREADS=off
+TARG_kgi=off
+TARG_fbdev=off
+TARG_X=off
+TARG_Xlib=off
+TARG_xf86dga=off
+TARG_svgalib=off
+TARG_vgagl=off
+TARG_mansync=off
+TARG_memory=off
+TARG_file=off
+TARG_multi=off
+TARG_sub=off
+TARG_tile=off
+TARG_tele=off
+TARG_terminfo=off
+TARG_trueemu=off
+TARG_palemu=off
+TARG_monotext=off
+TARG_aa=off
+TARG_glide=off
+
+read_config () {
+    if [ ! -f .config ]; then
+        return;
+    fi
+
+    PREFIX=`grep '^PREFIX=' .config | sed -e 's/^.*=//'`
+    CONFDIR=`grep '^CONFDIR=' .config | sed -e 's/^.*=//'`
+    USE_THREADS=no
+    grep '^THREADS=' .config | grep -q -w "yes" && USE_THREADS=on
+    grep '^DISPLAY_TARGETS=' .config | sed -e 's/^.*=//' > /tmp/libggicurr
+
+    grep -q -w "kgi" /tmp/libggicurr && TARG_kgi=on
+    grep -q -w "fbdev" /tmp/libggicurr && TARG_fbdev=on
+    grep -q -w "X" /tmp/libggicurr && TARG_X=on && TARG_mansync=on
+    grep -q -w "Xlib" /tmp/libggicurr && TARG_Xlib=on
+    grep -q -w "xf86dga" /tmp/libggicurr && TARG_xf86dga=on
+    grep -q -w "svgalib" /tmp/libggicurr && TARG_svgalib=on && TARG_vgagl=on
+    grep -q -w "memory" /tmp/libggicurr && TARG_memory=on
+    grep -q -w "file" /tmp/libggicurr && TARG_file=on
+    grep -q -w "multi" /tmp/libggicurr && TARG_multi=on
+    grep -q -w "sub" /tmp/libggicurr && TARG_sub=on
+    grep -q -w "tile" /tmp/libggicurr && TARG_tile=on && TARG_mansync=on
+    grep -q -w "tele" /tmp/libggicurr && TARG_tele=on
+    grep -q -w "terminfo" /tmp/libggicurr && TARG_terminfo=on
+    grep -q -w "trueemu" /tmp/libggicurr && TARG_trueemu=on
+    grep -q -w "palemu" /tmp/libggicurr && TARG_palemu=on
+    grep -q -w "monotext" /tmp/libggicurr && TARG_monotext=on
+    grep -q -w "aa" /tmp/libggicurr && TARG_aa=on && TARG_mansync=on
+    grep -q -w "glide" /tmp/libggicurr && TARG_glide=on
+
+    rm -f /tmp/libggicurr
+}
+
+config_auto () {
+    TARG_X=off
+    TARG_Xlib=off
+    TARG_aa=off
+    TARG_kgi=off
+    TARG_fbdev=off
+    if [ -d /usr/X11R6 -o -d /usr/local/X11R6 -o -d /usr/X11 -o -d /usr/bin/X11 ]; then
+	TARG_X=on
+	TARG_Xlib=on
+    fi
+    if [ -d /usr/X11R6 -o -d /usr/local/X11R6 ]; then
+	TARG_xf86dga=on
+    fi
+    if [ -f /usr/local/lib/libaa.a -o -f /usr/lib/libaa.a ]; then
+	TARG_aa=on
+    fi
+# Disabled until there is a working kgi...
+#    if [ -c /dev/graphic ]; then
+#	TARG_kgi=on
+#    fi
+    if [ -c /dev/fb0 -o -c /dev/fb0current ]; then
+	TARG_fbdev=on
+    fi
+    if [ -f /usr/local/lib/libvga.so -o -f /usr/lib/libvga.so ]; then
+	TARG_svgalib=on
+	TARG_vgagl=on
+    fi
+    if [ -d /usr/local/glide ]; then
+	TARG_glide=on
+    fi
+    TARG_mansync=on
+    TARG_memory=on
+    TARG_file=on
+    TARG_multi=on
+    TARG_sub=on
+    TARG_tile=on
+    TARG_tele=on
+    TARG_terminfo=on	
+    TARG_trueemu=on	
+    TARG_palemu=on	
+    TARG_monotext=on	
+    USE_THREADS=off
+}
+
+write_config () {
+GGIDIR="$PREFIX/lib/ggi"
+$ECHON \
+"# Configuration for libGGI
+# automatically created by configuration script
+
+PREFIX=$PREFIX
+CONFDIR=$CONFDIR
+THREADS=" > .config
+if [ "$USE_THREADS" = "on" ]; then
+    echo "yes" >> .config
+else
+    echo "no" >> .config
+fi
+
+DISPLAY_TARGETS=""
+targ_on () {
+	if [ "`set | grep ^TARG_$1= | cut -d= -f2`" = "on" ]; then
+		DISPLAY_TARGETS="$DISPLAY_TARGETS $1"
+		echo "TARG_$1=on" >>.config
+	fi
+}
+
+targ_on X
+targ_on Xlib
+targ_on aa
+targ_on fbdev
+targ_on glide
+targ_on kgi
+targ_on mansync
+targ_on memory
+targ_on file
+targ_on monotext
+targ_on multi
+targ_on sub
+targ_on svgalib
+targ_on vgagl
+targ_on terminfo
+targ_on tile
+targ_on tele
+targ_on trueemu
+targ_on palemu
+targ_on xf86dga
+
+echo "DISPLAY_TARGETS=$DISPLAY_TARGETS" >> .config
+}
+
+read_config
+
+if [ "$USE_DIALOG" = "yes" ]; then
+    mainmenu () {
+	dialog --backtitle "LibGGI - configuration"\
+	--title "Main menu"\
+	--menu "Choose the part of libGGI to configure" 14 64 6 \
+	"README"  "Read the README file" \
+	"AUTO"    "Try to autoconfigure libGGI" \
+	"OPTIONS" "Choose compile time options" \
+	"TARGETS" "Choose the display targets" \
+	"SAVE"    "Save configuration and exit" \
+	"EXIT"    "Exit without saving" 2> /tmp/libggiselect
+    }
+
+    while [ true ] ;
+	do
+	mainmenu
+	SELECTION=`cat /tmp/libggiselect`
+	
+	if [ "$SELECTION" = "" ]; then
+	    rm -f /tmp/libggiselect
+	    clear
+	    exit 1
+	fi
+	
+	if [ "$SELECTION" = "SAVE" ]; then
+	    rm -f /tmp/libggiselect
+	    write_config
+	    clear
+	    exit
+	fi
+	
+	if [ "$SELECTION" = "EXIT" ]; then
+	    rm -f /tmp/libggiselect
+	    clear
+	    exit
+	fi
+	
+	if [ "$SELECTION" = "README" ]; then
+	    dialog --textbox doc/README 24 78
+	fi
+
+	if [ "$SELECTION" = "AUTO" ]; then
+	    config_auto;
+	    dialog --backtitle "LibGGI - configuration" --msgbox \
+"Multithreading will be left deactivated
+whether or not you have thread support installed.
+If you you want to test it activate it manually.
+
+display target KGI: $TARG_kgi
+display target FBDev: $TARG_fbdev
+display target X: $TARG_X
+display target Xlib: $TARG_Xlib
+display target XF86DGA: $TARG_xf86dga
+display target SVGAlib: $TARG_svgalib
+display target memory: $TARG_memory
+display target file: $TARG_file
+display target multi: $TARG_multi
+display target sub: $TARG_sub
+display target tile: $TARG_tile
+display target tele: $TARG_tele
+display target terminfo: $TARG_terminfo
+display target trueemu: $TARG_trueemu
+display target palemu: $TARG_palemu
+display target monotext: $TARG_monotext
+display target AAlib: $TARG_aa
+display target Glide: $TARG_glide" 21 60
+	fi
+    
+	if [ "$SELECTION" = "OPTIONS" ]; then
+	    dialog --backtitle "LibGGI - configuration"\
+	    --title "Compile time options"\
+	    --checklist "Leave THREADS deactivated if unsure!!" 10 62 1\
+	    "THREADS"  "Use multithreading" $USE_THREADS 2> /tmp/libggiselect
+	    USE_THREADS=off;
+	    if { cat /tmp/libggiselect | grep THREADS - > /dev/null; } ; then
+		USE_THREADS=on
+	    fi
+	    dialog --backtitle "LibGGI - configuration"\
+		--title "Installation paths"\
+		--inputbox "The LibGGI path prefix should be:" 8 60 $PREFIX \
+		2> /tmp/libggiselect
+		PREFIX=`cat /tmp/libggiselect`
+	    dialog --backtitle "LibGGI - configuration"\
+		--title "Installation paths"\
+		--inputbox "The LibGGI configuration file will be in:" 8 60 $CONFDIR \
+		2> /tmp/libggiselect
+		CONFDIR=`cat /tmp/libggiselect`
+	fi
+
+	if [ "$SELECTION" = "TARGETS" ]; then
+	    dialog --backtitle "LibGGI - configuration"\
+	    --title "Display targets"\
+	    --checklist "Choose the display targets you need" 16 64 8 \
+	    "KGI"    "KGI - the Kernel Graphics interface" $TARG_kgi \
+	    "FBDEV"  "FBDev, Linux Framebuffer devices" $TARG_fbdev \
+	    "XSERV"  "X server" $TARG_X \
+	    "XLIB"   "X server alternate method" $TARG_Xlib \
+	    "xf86dga"   "XFree86 DGA" $TARG_xf86dga \
+	    "SVGA"   "Linux SVGAlib" $TARG_svgalib \
+	    "MEM"    "simulate display in memory" $TARG_memory \
+	    "FILE"   "simulate display in a file" $TARG_file \
+	    "MULTI"  "display to multiple targets" $TARG_multi \
+	    "SUB"    "display on subwindows" $TARG_sub \
+	    "TILE"   "tile display to multiple targets" $TARG_tile \
+            "TERMINFO" "display textmodes on serial or pty terminal" $TARG_terminfo \
+            "TRUEEMU" "emulate truecolor modes" $TARG_trueemu \
+            "PALEMU" "emulate palettized modes" $TARG_palemu \
+            "MONOTEXT" "emulate graphics on textmode" $TARG_monotext \
+	    "TELE"   "display over a network" $TARG_tele \
+	    "AA"     "display on AAlib textmode" $TARG_aa \
+	    "GLIDE"  "3Dfx Glide library" $TARG_glide \
+	    2>/tmp/libggiselect
+	    TARG_kgi=off
+	    TARG_fbdev=off
+	    TARG_X=off
+	    TARG_Xlib=off
+	    TARG_xf86dga=off
+	    TARG_svgalib=off
+	    TARG_vgagl=off
+	    TARG_mansync=off
+	    TARG_memory=off
+	    TARG_file=off
+	    TARG_multi=off
+	    TARG_sub=off
+	    TARG_tile=off
+	    TARG_tele=off
+            TARG_terminfo=off
+            TARG_trueemu=off
+            TARG_palemu=off
+            TARG_monotext=off
+	    TARG_aa=off
+	    TARG_glide=off
+	    if { cat /tmp/libggiselect | grep KGI - > /dev/null ; } ; then
+		TARG_kgi=on
+	    fi
+	    if { cat /tmp/libggiselect | grep FBDEV - > /dev/null ; } ; then
+		TARG_fbdev=on
+	    fi
+	    if { cat /tmp/libggiselect | grep XSERV - > /dev/null ; } ; then
+		TARG_X=on
+		TARG_mansync=on
+	    fi
+	    if { cat /tmp/libggiselect | grep XLIB - > /dev/null ; } ; then
+		TARG_Xlib=on
+	    fi
+	    if { cat /tmp/libggiselect | grep xf86dga - > /dev/null ; } ; then
+		TARG_xf86dga=on
+	    fi
+	    if { cat /tmp/libggiselect | grep SVGA - > /dev/null ; } ; then
+		TARG_svgalib=on
+		TARG_vgagl=on
+	    fi
+	    if { cat /tmp/libggiselect | grep MEM - > /dev/null ; } ; then
+		TARG_memory=on
+	    fi
+	    if { cat /tmp/libggiselect | grep FILE - > /dev/null ; } ; then
+		TARG_file=on
+	    fi
+	    if { cat /tmp/libggiselect | grep MULTI - > /dev/null ; } ; then
+		TARG_multi=on
+	    fi
+	    if { cat /tmp/libggiselect | grep SUB - > /dev/null ; } ; then
+		TARG_sub=on
+	    fi
+	    if { cat /tmp/libggiselect | grep TILE - > /dev/null ; } ; then
+		TARG_tile=on
+		TARG_mansync=on
+	    fi
+	    if { cat /tmp/libggiselect | grep TELE - > /dev/null ; } ; then
+		TARG_tele=on
+	    fi
+	    if { cat /tmp/libggiselect | grep TERMINFO - > /dev/null ; } ; then
+		TARG_terminfo=on
+	    fi
+	    if { cat /tmp/libggiselect | grep TRUEEMU - > /dev/null ; } ; then
+		TARG_trueemu=on
+	    fi
+	    if { cat /tmp/libggiselect | grep PALEMU - > /dev/null ; } ; then
+		TARG_palemu=on
+	    fi
+	    if { cat /tmp/libggiselect | grep MONOTEXT - > /dev/null ; } ; then
+		TARG_monotext=on
+	    fi
+	    if { cat /tmp/libggiselect | grep AA - > /dev/null ; } ; then
+		TARG_aa=on
+		TARG_mansync=on
+	    fi
+	    if { cat /tmp/libggiselect | grep GLIDE - > /dev/null ; } ; then
+		TARG_glide=on
+	    fi
+	fi
+    done
+else
+
+# configuration without 'dialog'
+    while [ true ]; do
+	echo "
+		LibGGI - configuration
+		----------------------
+
+		1) Read the README file
+
+		2) Try an automatic configuration
+		3) Choose compile time options
+		4) Choose display targets
+
+		5) Save configuration and exit
+		6) Exit without saving
+"
+	$ECHON "Choose what you want to do: "
+	read SELECTION
+	case "$SELECTION" in
+	    1)
+		if [ ! -z "$PAGER" ]; then
+		    $PAGER doc/README
+		else
+		    more doc/README
+		fi;;
+	    2)
+		config_auto
+		echo \
+"
+
+Multithreading will be left deactivated
+whether or not you have thread support installed.
+If you you want to test it activate it manually.
+
+display target KGI: $TARG_kgi
+display target FBDEV: $TARG_fbdev
+display target X: $TARG_X
+display target Xlib: $TARG_Xlib
+display target XF86DGA: $TARG_xf86dga
+display target SVGAlib: $TARG_svgalib
+display target memory: $TARG_memory
+display target file: $TARG_file
+display target multi: $TARG_multi
+display target sub: $TARG_sub
+display target tile: $TARG_tile
+display target tele: $TARG_tele
+display target terminfo: $TARG_terminfo
+display target trueemu: $TARG_trueemu
+display target palemu: $TARG_palemu
+display target monotext: $TARG_monotext
+display target AAlib: $TARG_aa
+display target Glide: $TARG_glide
+
+libggi files will be installed under $PREFIX
+the libggi.conf file be placed in $CONFDIR
+"
+		;;
+	    3)
+		$ECHON "Do you want to use multithreading (requires linuxthreads-lib) [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    USE_THREADS=on
+		else
+		    USE_THREADS=off
+		fi
+		$ECHON "Where should the libggi files be [/usr/local] "
+		read PREFIX
+		$ECHON "Where should the libggi.conf file be [/etc/ggi] "
+		read CONFDIR
+		;;
+	    4)
+		TARG_kgi=off
+		TARG_fbdev=off
+		TARG_X=off
+		TARG_Xlib=off
+		TARG_xf86dga=off
+		TARG_svgalib=off
+		TARG_vgagl=off
+		TARG_mansync=off
+		TARG_memory=off
+		TARG_file=off
+		TARG_multi=off
+		TARG_sub=off
+		TARG_tile=off
+		TARG_tele=off
+		TARG_terminfo=off
+		TARG_trueemu=off
+		TARG_palemu=off
+		TARG_monotext=off
+		TARG_aa=off
+		TARG_glide=off
+		$ECHON "Enable KGI-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_kgi=on
+		fi
+		$ECHON "Enable FBDev-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_fbdev=on
+		fi
+		$ECHON "Enable X-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_X=on
+		    TARG_mansync=on
+		fi
+		$ECHON "Enable alternate Xlib-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_Xlib=on
+		fi
+		$ECHON "Enable alternate XFree86DGA-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_xf86dga=on
+		fi
+		$ECHON "Enable alternate SVGAlib-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_svgalib=on
+		    TARG_vgagl=on
+		fi
+		$ECHON "Enable memory-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_memory=on
+		fi
+		$ECHON "Enable file-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_file=on
+		fi
+		$ECHON "Enable multi-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_multi=on
+		fi
+		$ECHON "Enable sub-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_sub=on
+		fi
+		$ECHON "Enable tile-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_tile=on
+		    TARG_mansync=on
+		fi
+		$ECHON "Enable terminfo-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_terminfo=on
+		fi
+		$ECHON "Enable trueemu-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_trueemu=on
+		fi
+		$ECHON "Enable palemu-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_palemu=on
+		fi
+		$ECHON "Enable monotext-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_monotext=on
+		fi
+		$ECHON "Enable tele-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_tele=on
+		fi
+		$ECHON "Enable AA-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_aa=on
+		    TARG_mansync=on
+		fi
+		$ECHON "Enable Glide-display-target [y/N] "
+		read REPLY
+ 		if [ "$REPLY" = "y" ]; then
+		    TARG_glide=on
+		fi
+		;;
+	    5)
+		write_config
+		clear
+		exit;;
+	    6)
+		clear
+		exit;;
+	esac
+    done
+fi

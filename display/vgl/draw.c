@@ -1,0 +1,200 @@
+/* $Id: draw.c,v 1.1 2001/05/12 23:02:46 cegger Exp $
+******************************************************************************
+
+   FreeBSD vgl(3) target: vgl drawing
+
+   Copyright (C) 2000 Alcove - Nicolas Souchu <nsouch@freebsd.org>
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include <ggi/internal/ggi-dl.h>
+#include <ggi/display/vgl.h>
+
+int
+GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+{ 
+	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
+	int rowadd = w * pixelsize;
+	uint8 *buf = buffer;
+
+	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
+
+	while (h--) {
+		ggiPutHLine(vis, x, y, w, buf);
+		y++;
+		buf += rowadd;
+	}
+	
+	return 0;
+}
+
+int GGI_vgl_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+{
+	LIBGGICLIP_XYWH(vis, x, y, w, h);
+  
+	VGLFilledBox(VGLDisplay, x, y, x+w, y+h, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}
+
+int GGI_vgl_drawline(ggi_visual *vis,int x,int y,int xe,int ye)
+{
+	VGLLine(VGLDisplay, x, y, xe, ye, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}
+
+int GGI_vgl_puthline(ggi_visual *vis,int x,int y,int w,void *buffer)
+{
+	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
+	byte *buf = buffer;
+	int i;
+
+	for (i = 0; i < w*pixelsize; i++)
+		VGLSetXY(VGLDisplay, x+i, y, *buf++);
+		
+	return 0;
+}
+
+int GGI_vgl_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+{
+	VGLLine(VGLDisplay, x, y, x+w-1, y, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}
+
+int GGI_vgl_drawhline(ggi_visual *vis, int x, int y, int w)
+{
+	LIBGGICLIP_XYW(vis, x, y, w);
+
+	VGLLine(VGLDisplay, x, y, x+w-1, y, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}
+
+int GGI_vgl_drawvline(ggi_visual *vis, int x, int y, int height)
+{
+	/* Clipping */
+	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
+	    x>=(LIBGGI_GC(vis)->clipbr.x)) return 0;
+	if (y< (LIBGGI_GC(vis)->cliptl.y)) {
+		int diff=(LIBGGI_GC(vis)->cliptl.y)-y;
+		y     +=diff;
+		height-=diff;
+	}
+	if (y+height>(LIBGGI_GC(vis)->clipbr.y)) {
+		height=(LIBGGI_GC(vis)->clipbr.y)-y;
+	}
+	if (height<1)
+		return 0;
+	
+	VGLLine(VGLDisplay, x, y, x, y+height-1, (long)LIBGGI_GC_FGCOLOR(vis));
+	
+	return 0;
+}
+
+int GGI_vgl_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+{
+	VGLLine(VGLDisplay, x, y, x, y+h-1, (long)LIBGGI_GC_FGCOLOR(vis));
+	
+	return 0;
+}
+
+int
+GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+{
+	vgl_priv *priv = VGL_PRIV(vis);
+	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
+	int i;
+
+	LIBGGI_APPASSERT(colormap != NULL,
+			 "ggiSetPalette() called with NULL colormap!");
+
+	if (start == GGI_PALETTE_DONTCARE) start = 0;
+
+	if (maxlen > 256) {
+		GGIDPRINT("display-vgl: incorrect palette maxlen (%d)\n", maxlen);
+		return -1;
+	}
+
+	if (start < 0 || start+len > maxlen) {
+		GGIDPRINT("display-vgl: incorrect palette len (%d)\n", maxlen);
+		return -1;
+	}
+
+	/* XXX Why should we modify vis from here? */
+	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+
+	/* VGLSetPalette takes 8-bit r,g,b,
+	   so we need to scale ggi_color's 16-bit values. */
+	for (i = start; i < len; i++) {
+		priv->vgl_palred[i] = colormap[i].r >> 10;
+		priv->vgl_palgreen[i] = colormap[i].g >> 10;
+		priv->vgl_palblue[i] = colormap[i].b >> 10;
+	}
+
+	VGLSetPalette(priv->vgl_palred, priv->vgl_palgreen, priv->vgl_palblue);
+
+	GGIDPRINT("display-vgl: Palette set, ok (0x%x, 0x%x, 0x%x)\n",
+			start, len, maxlen);
+
+	return 0;
+}
+
+int GGI_vgl_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
+{
+
+	*col = (ggi_pixel)VGLGetXY(VGLDisplay, x, y);
+
+	return 0;
+}
+
+int GGI_vgl_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+{
+	CHECKXY(vis, x, y);
+
+	VGLSetXY(VGLDisplay, x, y, (long)col);
+
+	return 0;
+}
+
+int GGI_vgl_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+{
+	VGLSetXY(VGLDisplay, x, y, (long)col);
+
+	return 0;
+}
+
+int GGI_vgl_drawpixel(ggi_visual *vis, int x, int y)
+{
+	CHECKXY(vis, x, y);
+
+	VGLSetXY(VGLDisplay, x, y, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}
+
+int GGI_vgl_drawpixel_nc(ggi_visual *vis, int x, int y)
+{
+	VGLSetXY(VGLDisplay, x, y, (long)LIBGGI_GC_FGCOLOR(vis));
+
+	return 0;
+}

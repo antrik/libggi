@@ -1,0 +1,270 @@
+The big dummies guide to graphics programming
+---------------------------------------------
+
+1. Scope and introductary remarks
+
+This Document tries to give some enlightenment about pixel oriented graphics
+programming with lowlevel graphics libraries.
+
+It is intended for people that have never ever used a pixel oriented
+graphics library before.
+
+For the examples presented here, we use the LibGGI library which is
+available at http://www.ggi-project.org/ .
+
+We also use the GGI terminology, as LibGGI covers a very wide range of
+possible hard- and software to draw on, which causes it to have a very
+broad set of features that are not supported in many other libraries.
+
+If you are using anything but LibGGI, you will probably find, that LibGGI
+at times has abstraction layers for stuff that you have to access directly
+on your library. This at times simplifies the task, at times makes it
+harder, depending on how much you give about portability.
+
+2. Visuals
+
+A visual is something you can draw on. Imagine it as a piece of paper.
+
+This is actually a pretty good comparision, as pieces of paper tend to be
+rectangular in shape. When we are talking about visuals in this document we
+mean a rectangular area that can be drawn to.
+
+Most libraries have no notion of a "visual handle" - that is a "name" for a
+visual. This comes from the fact, that most graphics libraries can only
+handle a single such visual at a time.
+
+LibGGI was designed to be capable of handling multi-headed applications,
+like a CAD system showing the model on one high-res screen while displaying
+the menus on another one.
+
+For this reason you need to allocate a visual handle when working with
+LibGGI. Even if you do not use the multihead capabilities.
+
+Example 2.1: Getting at a visual and getting rid of it again
+
+ggi_visual_t vis;	/* a place to store the visual handle */
+
+if (ggiInit()) {	/* Initialize LibGGI */
+	printf("Ouch - ggiInit failed.\n");	/* oh - we failed ??? */
+	return 1;
+}
+if (NULL==(vis=ggiOpen(NULL))) {	/* Allocate a visual handle for the default visual (NULL) */
+	ggiExit();	/**/
+	printf("Ouch - ggiOpen failed.\n");
+	return 2;
+}
+/* Now we close it down again */
+ggiClose(vis);
+ggiExit();
+
+3. Coordinate systems
+
+O.K. - we now have a visual, so we can draw on it - right ?
+
+No. We can't. We first need to think about the way a computer can store
+something drawn on a visual.
+
+One way would be something like:
+
+- go to the top-left corner
+- draw a line to the middle of the sheet
+- draw a line straight up to the top border
+- ...
+
+This is called "vector oriented" drawing, as you basically give a list of
+motion vectors you would follow with a pencil.
+
+You might have noticed, that giving positions with phrases like "top-left
+corner" isn't very flexible.
+
+So the first thing we need is a coordinate system.
+
+That is, we take a point on our visual and call that the "origin".
+Then we draw two perpendicular lines through that origin and call that
+the axes x and y.
+
+To keep things simple, we use a corner of our rectangular drawing area
+for the origin and the edges that join there for the axes.
+
+In computer graphics, the chosen corner is usually the top-left one,
+and the top edge, spanning left->right, is called the x, the right
+edge, spanning top->bottom is called the y axis.
+
+If you now apply some kind of ruler-marks to the axis you can describe any
+point on the visual with a pair of values (x,y), which you get by going
+straight up from the point in question and reading the x-ruler and
+as well going to the right and reading the y-ruler afterwards.
+
+Up to now we can describe an infinite number of points. That's not good, as
+computers have only a finite amount of memory, so we make our "points"
+a little bigger.
+
+We draw a rectangular grid on our visual that divides it into many small
+rectangles and renumber our rulers, so that each row and column of the
+grid gets a number ranging from 0-maxx for the columns and from 0-maxy
+for the rows.
+
+Beginning at 0 instead of 1 has mathematical advantages later, though it
+brings the at first sight strange property of a 320x200 grid being addressed
+with pairs that use the ranges 0-319 and 0-199.
+
+
+4. Pixels
+
+The little rectangles we just made is what we call "pixels".
+
+Usually pixels can be given attributes like a color, being bright, blinking
+being transparent etc. individually [there are a few cases where hardware 
+limitations cause pixels to depend on each other].
+
+Now if you can give each such pixel a color, you can form an image from it.
+A simple example:
+              1
+    0123456789012
+0      #######
+1    ##       ##
+2   #   #   #   #
+3   #     #     #
+4   # #   #   # #
+5   #  #     #  #
+6   #   #####   #
+7    ##       ##
+8      #######
+
+I only used two "colors" here.
+
+You can see, that the image is quite crude. This is due to the very
+low resolution of 13x9 I was using. (Note the rulers on the sides ...)
+
+As you can probably imagine, the image quality gets better, if you increase
+resolution. Of course this will also need more memory and thus as well be
+slower, if you change the pixture.
+
+5. Modes
+
+6. Attributes
+
+As said, pixels can have attributes. Attributes tell pixels how they should
+look like. As computers always just work with numbers, there is normally
+a number for each pixel that describes the attribute.
+
+For a red pixel, this might for example be the number 0xff0000 (hex) or
+16711680 (dez), or it might be 0x4 or whatever.
+
+Many graphics libraries assume that you understand the inner workings of
+the hardware to determine that number, which we will call the "pixelvalue". 
+If you are lucky, they provide a few #defines for some common colors.
+
+LibGGI does not do so, as when writing a LibGGI program, you cannot know,
+what sick hardware someone out there might have. LibGGI thus has a way of 
+determining the pixelvalue from an abstract description of the wanted
+attributes.
+
+7. Color and colorspaces.
+
+The most common attribute of a pixel is it's color.
+
+Speaking from the standpoint of physics, the color of a light source is
+determined by its wavelength. One could in theory specify a color by
+giving it's wavelength and the intensity.
+
+This is however not what hardware can easily do, as wavelength-tuneable
+devices are very complex stuff.
+
+What is done in reality, is to have a set of  basic colors - usually red, 
+green and blue - which can be mixed to get almost any color impression.
+
+The read/green/blue model (RGB) is used in systems that emit light, like
+monitors. This is called additive color mixing, as the three colored lights
+red, green and blue add up to white.
+
+Systems that can only absorb light, like printed colors on a white paper,
+use the so called CMYK model, where the colors Cyan, Magenta and Yellow
+mixed together absorb all light thus causing a black impression.
+The K in CMYK stands for black, which is used in addition to the CMY, as 
+existing colors usually do not give a perfect black, which is often 
+a very wanted color.
+
+There are a few other color spaces the most important of which is I'll
+describe briefly here:
+
+a) HSV: Hue Saturation Value
+This is a very convenient model for photo-retouching and such, as it
+separates the brightness (Value) from the color information, and the
+color-contrast (Saturation) from the color (Hue) itself.
+
+b) YUV: This one is used for video and similar devices, as it again
+separates the brightness info from the rest, which is useful, as the
+eye is much more sensitive to the brightness information that it is 
+to the color. So for lossy compression, you start with the UV components.
+
+8. The RGB model and Colormapping
+
+As said computer graphics devices usually use the RGB model in hardware.
+Thus most programmers are used to it and most image formats are based on it
+as well. This is why LibGGI uses it by default as well.
+
+First of all, you need to know what color you want to display and how to
+describe it as an (R,G,B) triplet. To give you a place to start, I'll list a
+few common colors as such triplets:
+
+(  0%,  0%,  0%) - Black
+(  0%,  0%,100%) - Blue
+(  0%,100%,  0%) - Green
+(  0%,100%,100%) - Cyan
+(100%,  0%,  0%) - Red
+(100%,  0%,100%) - Purple
+(100%,100%,  0%) - Yellow
+(100%,100%,100%) - White
+
+You can scale down a color in its brightness by multiplying all of its
+values with a given factor (note, that you cannot exceed 100% ... :-),
+so e.g. (0%,50%,50%) gives dark cyan. And you can move from one color to
+another by adjusting the differing values smoothly. E.g. to get a greenish
+Cyan, you use something like (0%,100%,50%).
+
+Now percentile values are a bit inaccurate unless you are using fixedpoint,
+as the eye can distinguish more than 100 levels of brightness. You can see
+that on older VGAs with 6 Bit palette entries which only give 64 different
+shades. You can't get a really smooth shading on them.
+
+Computers work with bits and bytes, so the most common thing to do, is to
+just use one byte per color giving 256 shades. However there are a few
+special purpose cards that can do more then 256 shades. For that reason
+LibGGI always uses _two_ bytes per color to be safe.
+
+To ensure you do not have to know how many shades the underlying hardware
+can do, LibGGI always uses the range 0-65535 for 0-100%. The value will be
+rounded appropriately as the hardware permits.
+
+LibGGI provides a call to make a pixelvalue from such an abstract color
+description:
+
+	ggi_pixel white;
+        ggi_color map;
+
+        map.r=0xFFFF; /* this is the highest intensity value possible */
+        map.g=0xFFFF;
+        map.b=0xFFFF;
+
+        white=ggiMapColor(vis, &map);
+        printf("white=%d\n", white);
+
+This might look inconvenient to people use to other graphics libs that
+assume you know how the hardware encodes pixels. You'll love it, once you
+are trying to make your application portable. Other people have other
+hardware, and the assumption often doesn't hold there ... you'll get a BIG
+bunch of #ifdefs without it.
+
+9. Drawing a pixel
+
+Yes, we are finally there. We draw the first pixel:
+
+	ggiPutPixel(vis, 0, 0, white);
+
+O.K. - that example is basically to avoid boring you with too much theory
+before you can see the first result. It draws a white pixel (you remember
+what a pixel is, right ?) in the top left corner (remember that talk about
+coordinate systems ? 0, 0, are the two coordinates in the order x[left],
+y[down]) of the visual.
+

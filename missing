@@ -1,0 +1,12 @@
+#! /bin/sh
+# Stub for missing programs
+
+if test $# -eq 0; then
+  exit 1
+fi
+
+echo 1>&2 "\
+WARNING: \`$1' is missing on your system. You should not need this program
+         unless you have modified part of the building system."
+
+exit 0

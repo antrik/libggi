@@ -1,0 +1,247 @@
+How to use the DocBook documentation for GGI
+********************************************
+
+   This documentation is written in DocBook. The SGML source can be used
+to generate man pages, Texinfo, TeX, HTML and text formats
+automatically.
+
+   Your operating system or distribution may already include the tools
+that are needed to process DocBook. For those who are not experts in
+SGML systems, I recommend using them instead of installing the tools
+yourself. (DocBook is not one single integrated package.)
+
+   This document suggests a number of alternatives for using DocBook.
+Questions and comments on this and GGI documentation are of course
+welcome.
+
+   I have already automatically generated manpages in the `../man'
+directory.  Other formats can be found at
+ftp.ggi-project.org:/pub/ggi/doc
+(ftp://ftp.ggi-project.org/pub/ggi/doc/).  They should all be
+auto-generated soon.
+
+Getting the DTD (document type definition)
+******************************************
+
+   For anything more complicated than editing the SGML source with a
+text editor, you need to install the DocBook DTD
+(http://www.oasis-open.org/docbook/).
+
+To generate man pages
+*********************
+
+   Use docbook2man-spec.pl from docbook2X
+(http://docbook2x.sourceforge.net/).
+
+To generate Texinfo
+*******************
+
+   Convert to XML, then use
+docbook2texi-xslt from docbook2X (http://docbook2x.sourceforge.net/).
+
+To generate HTML
+****************
+
+   * Use Jade (http://www.jclark.com/jade/) with the DocBook Modular
+     Stylesheets (http://nwalsh.com/docbook/dsssl/).
+
+     Assuming that Jade and the DocBook Modular Stylesheets are
+     properly installed, the following command:
+
+          $ jade -t sgml -d ggi.dsl ggi.sgml
+
+     will produce HTML files in the current directory. Switch to a
+     different directory before running `jade' if necessary.
+
+   * Or, convert to XML, then use a XSL
+     processor such as XT (http://www.jclark.com/xml/xt.html) or SAXON
+     (http://users.iclway.co.uk/mhkay/saxon/index.html) with the XSL
+     DocBook stylesheets (http://www.nwalsh.com/docbook/xsl/index.html).
+
+     The XSL DocBook stylesheets are not yet mature, so using the Jade
+     method is recommended.
+
+   * Or, Convert to Texinfo, then use
+     `texi2html'.
+
+     This method theoretically produces the worst output (since
+     information is lost through the Texinfo conversion), but some
+     people may find using Texinfo easier.
+
+TeX
+***
+
+   * Use Jade (http://www.jclark.com/jade/) with the DocBook Modular
+     Stylesheets (http://nwalsh.com/docbook/dsssl/).  You also need
+     JadeTeX (http://www.tug.org/applications/jadetex/).
+
+     GGI documentation currently does not include print stylesheet
+     customizations, so the commands to produce the final result would
+     be:
+
+          $ jade -t tex -d /usr/share/sgml/stylesheet/dsssl/docbook/nwalsh/print/docbook.dsl ggi.sgml
+          $ jadetex ggi.tex
+
+   * Or, Convert to Texinfo, then use
+     `texi2dvi'.
+
+Text
+****
+
+   * Convert to HTML first, then use `lynx
+     -dump', `html2txt', etc.
+
+   * Or, convert to Texinfo and use
+     `makeinfo --no-headers'.
+
+Changing the documentation
+**************************
+
+   First, if you don't know DocBook, you can email the documentation
+maintainer any changes in ASCII amd he will gladly format and merge.
+
+   For the benefit of developers who do not have time to thoroughly
+understand how to use DocBook, the meaning of the DocBook elements used
+in GGI documentation is summarized below:
+
+`book'
+`chapter'
+`article'
+`sect1'
+`sect2'
+`sect3'
+     Contain sections
+
+`para'
+     Your standard paragraph :)
+
+`refentry'
+     Section that resembles a man page
+
+`example'
+`informalexample'
+     Denotes examples. `example' needs a title while `informalexample'
+     does not.
+
+`synopsis'
+`programlisting'
+`screen'
+     `Block' elements in which the content is displayed verbatim and
+     usually in a fixed-width font.  Equivalent to HTML's `pre' with
+     additional semantics.
+
+`cmdsynopsis'
+`arg'
+`group'
+`command'
+     Use for marking up synopses of commands and command-line-like
+     syntax.
+
+`funcsynopsis'
+`funcsynopsisinfo'
+`funcprototype'
+`funcdef'
+`paramdef'
+     Use for marking up synopses of C or C-like functions.  Currently,
+     the GGI documentation uses `paramdef' markup in a slightly
+     incorrect way, but you need not worry about that; when the time
+     comes they will all be corrected by the maintainer.
+
+`literal'
+     In GGI docs, used for values for parameters, arguments, struct
+     fields, or variables, and inline computer code.
+
+`symbol'
+     In GGI docs, used for denoting C #defines.
+
+`type'
+`structname'
+`structfield'
+     In GGI docs, `type' is used for C typedefs such as `ggi_visual_t'.
+     Although structs in GGI are also typedefs, we just use
+     `structname' for those.
+
+`replaceable'
+     Used for meta-syntactic variables (e.g. X), as well as naming the
+     user-specified part of a command-line argument.
+
+`parameter'
+     Function call parameters.
+
+`option'
+     Command-line option.
+
+`prompt'
+`userinput'
+`lineannotation'
+     Used in `screen'.
+
+`envar'
+`returnvalue'
+`email'
+`filename'
+`emphasis'
+`computeroutput'
+`firstterm'
+     Should be obvious.
+
+`property'
+          The notion of a `property' is very domain-dependent in
+          computer documentation. Some object-oriented systems speak of
+          properties; the components from which GUIs are constructed
+          have properties; and one can speak of properties in very
+          general terms; "the properties of a relational database."
+
+     In GGI, used of things like the set width of a visual.
+
+`itemizedlist'
+`orderedlist'
+`listitem'
+     Lists.
+
+`variablelist'
+`varlistentry'
+`term'
+`listitem'
+     Definition lists; definitions and values for certain properties,
+     etc.
+
+`xref'
+     Cross-reference. You need to write the correct predicates yourself
+     such as "see" or "refer to" (The cross-reference text generated is
+     usually dependent on the application, so don't abuse this for
+     hyperlinks (a mistake which I made myself.)
+
+`link'
+     Hypertext link.
+
+`important'
+`note'
+`warning'
+`caution'
+`tip'
+     Admonitions.
+
+`comment'
+     Any sort of documentator's remark.  The default stylesheets always
+     show `comment's in the generated output so we know of the things
+     that need correction.
+
+Validating the documentation
+****************************
+
+   After changing the documentation, use `nsgmls -s' to validate it (to
+ensure there are no markup errors).  `nsgmls' is included in both the
+Jade distribution as well as sp (http://www.jclark.com/sp/). This
+command also requires the DocBook DTD.
+
+Converting to XML
+*****************
+
+   Unfortunately this currently requires some human intervention.
+Basically, you run `sx -x lower' on `ggi.sgml', and then manually insert
+the document type declaration for the XML DocBook DTD to the result.
+
+$Id: README,v 1.1 2001/05/12 23:02:55 cegger Exp $
+-- Steve Cheng <steve@ggi-project.org> (GGI documentation maintainer)
+

@@ -1,0 +1,60 @@
+Tile target README
+==================
+
+Tile is a target that allows you to lay a (large) display area over multiple
+displays.  It is like those large screens on the wall that are actually
+composed of rows of monitors each displaying a smaller part of the image,
+but this target is less efficient because it's done by software rather than
+hardware.  Howvever it is more flexible because the tiles are not restricted
+to any grid; in fact, the "tiles" can be mapped to any area of the display,
+and some areas can even be unmapped!
+
+
+
+USAGE
+=====
+
+The target requires arguments in the form of 
+
+	"offx,offy,sizex,sizey,(subdisplay):..."
+
+where offx and offy are the tile's offset from the main display,
+      sizex and sizey are the size of the tile,
+      subdisplay is the display name to open for the tile,
+
+  and ... is more tiles following the same format as above.
+
+The subdisplay name must be in parantheses.  A colon separates the
+individual tiles. offx,offy,sizex,sizey are integers.
+
+For example, this makes an equal tile display of 2x2 X-target visuals
+with a size of 320x200 each:
+
+       "display-tile:0,0,320,200,(display-x):320,0,320,200,(display-x):0,200,320,200,(display-x):320,200,320,200,(display-x)"
+
+
+
+NOTES
+=====
+
+Visible.{x/y} passed to ggiSetMode() is ignored, because
+the physical dimensions are already specified in the arguments.
+
+All input comes from the first tile (child visual).
+
+Long-standing bug where display garbage results from bltting to a tile
+extending over a null area.
+
+The default behavior of the tile target is to emulate a DirectBuffer
+(framebuffer).  It is possible to disable it, which may result in speed ups.
+Use the arguments "-nodb" or "-usedb" to select.
+
+Non-DB mode still has some rough edges:
+
+Optimization needed. e.g. if everything is in the same visual than just do
+a ggiPutBox rather than lots of ggiPutHLines.  Another is ggiCopyBox.
+
+An unavoidable limitation is that the ggiGet* calls will be very slow
+because it has to poll every tile for the data rather than just using the
+backstore.
+

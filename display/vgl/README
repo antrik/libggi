@@ -1,0 +1,31 @@
+// README //
+
+The vgl GGI display device is the GGI display backend for the FreeBSD libvgl
+library. Please see vgl(3) on a FreeBSD system (>=3.0) for more info.
+
+It supports only VESA modes. Linear framebuffer is used if available.
+Note that the FreeBSD VESA driver only proposes modes for which it has BIOS
+support. Consequently, linear framebuffer will be only available with
+graphic cards that have BIOS of revision higher than 2.0.
+
+There's an exception though. The s3 module available under -current and
+-stable offers to use the linear framebuffer of S3 cards that only have
+1.2 BIOS revision. This is based on the patch of pdh@colonel-panic.com
+located at http://www.colonel-panic.com/linux.
+
+Directbuffer is supported by the display-vgl if you enable it like this:
+
+$ export GGI_DISPLAY=display-vgl:-usedb:
+
+There are some caveats with Truecolor. First of all, 24 bit mode is not
+supported. You can use 16 and 32bits modes with the Directbuffer without
+any trouble. But when using these modes with drawing functions, there's
+still some problems with ggiPutBox() (as I can guess with the demo
+program). This has to be fixed.
+
+Have fun!
+
+This port has been funded by Alcove - http://www.alcove.com
+
+Nicolas Souchu <nsouch@freebsd.org>
+http://www.freebsd.org/~nsouch/ggiport.html

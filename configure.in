@@ -1,0 +1,861 @@
+dnl $Id: configure.in,v 1.1 2001/05/12 23:00:46 cegger Exp $
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.13)
+
+AC_INIT(include/ggi/ggi.h)
+
+AM_INIT_AUTOMAKE(libggi,2.0b3,-)
+
+AM_MAINTAINER_MODE
+AM_DISABLE_STATIC
+
+dnl ========================================================================
+dnl Set some defaults
+
+PATHTAG="pAtHTAg"
+TAGLEN="7"
+ggi_conffile="libggi.conf"
+
+use_debug="yes"
+
+use_threads="no"
+THREADLIBS=""
+
+sublib_libs=""
+dynload_libs="-lgii -lgg"
+bsdsock_libs=""
+
+dnl Targets
+build_x_target="auto"
+build_xlib_target="auto"
+build_aa_target="auto"
+build_directx_target="no"
+build_fbdev_target="auto"
+build_file_target="auto"
+build_glide_target="auto"
+build_kgi_target="no"
+build_lcd823_target="auto"
+build_mansync_helper="auto"
+build_memory_target="yes"
+build_monotext_target="auto"
+build_multi_target="yes"
+build_palemu_target="auto"
+build_sub_target="auto"
+build_suidkgi_target="no"
+build_svga_target="auto"
+build_vgl_target="auto"
+build_tele_target="auto"
+build_terminfo_target="auto"
+build_tile_target="auto"
+build_truemu_target="auto"
+build_vcsa_target="auto"
+build_vgagl_helper="auto"
+build_dga_target="auto"
+build_linvtsw_helper="auto"
+
+build_genkgi_driver="auto"
+
+
+dnl ========================================================================
+dnl Checks for programs.
+
+AC_PROG_CC
+AC_LIBTOOL_DLOPEN
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+AC_PROG_INSTALL
+
+
+dnl ========================================================================
+dnl User selectable options
+
+dnl TARGETS:
+
+AC_ARG_ENABLE(x,
+[  --disable-x             don't build the X target],
+build_x_target=$enableval)
+AC_ARG_ENABLE(xlib,
+[  --disable-xlib          don't build the Xlib target],
+build_xlib_target=$enableval)
+AC_ARG_ENABLE(aa,
+[  --disable-aa            don't build the aa target],
+build_aa_target=$enableval)
+AC_ARG_ENABLE(directx,
+[  --disable-directx       don't build the directx target],
+build_directx_target=$enableval)
+AC_ARG_ENABLE(fbdev,
+[  --disable-fbdev         don't build the fbdev target],
+build_fbdev_target=$enableval)
+AC_ARG_ENABLE(genkgi,
+[  --disable-genkgi        don't build the generic KGI driver (used by fbdev)],
+build_genkgi_driver=$enableval)
+AC_ARG_ENABLE(file,
+[  --disable-file          don't build the file target],
+build_file_target=$enableval)
+AC_ARG_ENABLE(glide,
+[  --disable-glide         don't build the glide target],
+build_glide_target=$enableval)
+dnl AC_ARG_ENABLE(suidkgi,
+dnl [  --enable-suidkgi        build the suidkgi target],
+dnl build_suidkgi_target=$enableval)
+dnl AC_ARG_ENABLE(kgi,
+dnl [  --disable-kgi           don't build the kgi target],
+dnl build_kgi_target=$enableval)
+AC_ARG_ENABLE(memory,
+[  --disable-memory        don't build the memory target],
+build_memory_target=$enableval)
+AC_ARG_ENABLE(monotext,
+[  --disable-monotext      don't build the monotext target],
+build_monotext_target=$enableval)
+AC_ARG_ENABLE(multi,
+[  --disable-multi         don't build the multi target],
+build_multi_target=$enableval)
+AC_ARG_ENABLE(palemu,
+[  --disable-palemu        don't build the palemu target],
+build_palemu_target=$enableval)
+AC_ARG_ENABLE(sub,
+[  --disable-sub           don't build the sub target],
+build_sub_target=$enableval)
+AC_ARG_ENABLE(vgl,
+[  --disable-vgl           don't build the vgl target],
+build_vgl_target=$enableval)
+AC_ARG_ENABLE(svga,
+[  --disable-svga          don't build the svga target],
+build_svga_target=$enableval)
+AC_ARG_ENABLE(tele,
+[  --disable-tele          don't build the tele target],
+build_tele_target=$enableval)
+AC_ARG_ENABLE(terminfo,
+[  --disable-terminfo      don't build the terminfo target],
+build_terminfo_target=$enableval)
+AC_ARG_ENABLE(tile,
+[  --disable-tile          don't build the tile target],
+build_tile_target=$enableval)
+AC_ARG_ENABLE(trueemu,
+[  --disable-trueemu       don't build the trueemu target],
+build_trueemu_target=$enableval)
+AC_ARG_ENABLE(vcsa,
+[  --disable-vcsa          don't build the vcsa target],
+build_vcsa_target=$enableval)
+AC_ARG_ENABLE(vgagl,
+[  --disable-vgagl         don't build the vgagl target, needed by svga],
+build_vgagl_helper=$enableval)
+AC_ARG_ENABLE(dga,
+[  --disable-dga           don't build the dga target],
+build_dga_target=$enableval)
+AC_ARG_ENABLE(linvtsw,
+[  --disable-linvtsw       don't build the linvtsw helper],
+build_linvtsw_helper=$enableval)
+
+AC_ARG_WITH(gii,
+[  --with-gii=DIR          use the LibGII installed with prefix DIR],
+CFLAGS="$CFLAGS -I$withval/include"
+CPPFLAGS="$CPPFLAGS -I$withval/include"
+LDFLAGS="$LDFLAGS -L$withval/lib")
+AC_ARG_WITH(uninst-gii,
+[  --with-uninst-gii=DIR   use uninstalled copy of LibGII found in DIR],
+absval=`(cd "$withval"; pwd)`
+CFLAGS="$CFLAGS -I$absval/include"
+CPPFLAGS="$CPPFLAGS -I$absval/include"
+LDFLAGS="$LDFLAGS -L$absval/gg -L$absval/gii")
+
+AC_ARG_ENABLE(threads,
+[  --enable-threads        use threads for mansync],
+use_threads=$enableval)
+
+AC_ARG_ENABLE(debug,
+[  --disable-debug         don't build with run-time debugging (speed freaks)],
+use_debug=$enableval)
+
+GGI_EXTRA_PATHS
+
+
+dnl ========================================================================
+dnl Checks for header files.
+
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h sys/select.h \
+pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h sys/wait.h \
+asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
+linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
+sys/socket.h netinet/in.h netdb.h windows.h ddraw.h vgl.h)
+
+dnl ========================================================================
+dnl LibGII must be built
+
+gii_missing_part=no
+
+save_LDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS -lgg"
+AC_CHECK_LIB(gii,giiInit,
+  AC_CHECK_LIB(gii,giiEventsQueued,
+	foo=bar,
+	AC_MSG_ERROR(You have an obsolete LibGII version installed!)
+  ),
+  gii_missing_part=yes
+)
+LDFLAGS="$save_LDFLAGS"
+
+if test "$ac_cv_header_ggi_gii_h" != "yes"; then
+  gii_missing_part=yes
+fi
+
+dnl ========================================================================
+dnl Checks for typedefs, structures, and compiler characteristics.
+
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
+GGI_DLLEXT
+
+
+dnl ========================================================================
+dnl Checks for library functions.
+
+AC_FUNC_ALLOCA
+AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv getopt random \
+	herror connect sigpending fork)
+
+
+dnl ========================================================================
+dnl Checks for target-specific libraries and headers
+
+
+if test "x$ac_cv_func_connect" = "xno"; then
+  SAVELIBS="$LIBS"
+  AC_MSG_CHECKING([for connect in -lwsock32])
+  LIBS="$LIBS -lwsock32"
+  AC_TRY_LINK([
+#include <winsock.h>
+],[
+connect(0, NULL, 42);
+],
+    bsdsock_libs="$bsdsock_libs -lwsock32"
+    ac_cv_func_connect=yes
+    AC_MSG_RESULT(yes),
+      AC_MSG_RESULT(no)
+      LIBS="$SAVELIBS"
+      AC_CHECK_LIB(socket,connect,bsdsock_libs="$bsdsock_libs -lsocket")
+  )
+  LIBS="$SAVELIBS"
+fi
+
+AC_CHECK_LIB(kgimon,set_monitor,
+  monitest_extrasrc="kgitune.c"
+  monitest_extraobj="kgitune.o"
+  monitest_extralibs="-lkgimon")
+
+SHMDEMOS=""
+
+AC_MSG_CHECKING(if we should build the cube3d program)
+if test "x$ac_cv_header_unistd_h" = "xyes" \
+	-a "x$ac_cv_header_signal_h" = "xyes" \
+	-a "x$ac_cv_func_setenv" = "xyes" \
+	-a "x$ac_cv_header_sys_shm_h" = "xyes" \
+	-a "x$ac_cv_header_sys_ipc_h" = "xyes"; then
+  SHMDEMOS="$SHMDEMOS cube3d"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+DISPLAYSUBDIRS=""
+DEFAULTSUBDIRS="stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
+
+have_pthreads=no
+if test "x$use_threads" != "xno"; then
+  AC_MSG_CHECKING(for pthread library)
+  TMP_SAVE_LIBS=$LIBS
+  LIBS="$LIBS -lpthread"
+  AC_TRY_LINK([
+#include "confdefs.h"
+#define __C_ASM_H /* fix for retarded Digital Unix headers */
+#include <pthread.h>],[
+void foo(void)
+{
+pthread_exit (0);
+}
+],
+    have_pthreads=yes
+    AC_MSG_RESULT(yes),
+    AC_MSG_RESULT(no))
+  LIBS=$TMP_SAVE_LIBS
+fi
+
+AC_MSG_CHECKING(if we should use pthreads for mansync)
+if test "$have_pthreads" = "yes" -a "x$use_threads" != "xno"; then 
+  AC_TRY_CPP([
+#include <features.h>
+if !defined(__linux__)
+#error We're not on a bad system - this line makes compilation fail...
+#endif
+],
+    use_threads="no"
+    AC_MSG_RESULT(no),
+    AC_MSG_RESULT(yes))
+else
+      use_threads="no"
+      AC_MSG_RESULT(no)
+fi
+
+mansync_dependent="x aa tile palemu trueemu"
+AC_MSG_CHECKING(if we should build mansync helper)
+if test "x$ac_cv_func_fork" = "xno" -a "x$use_threads" = "xno"; then
+  build_mansync_helper=no
+fi
+if test "x$build_mansync_helper" = "xno"; then
+  AC_MSG_RESULT(no)
+  AC_MSG_WARN(the following targets depend on the mansync helper)
+  AC_MSG_WARN(and will not be built: $mansync_dependent)
+  build_x_target="no"
+  build_aa_target="no"
+  build_tile_target="no"
+  build_palemu_target="no"
+  build_trueemu_target="no"
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS mansync"
+  build_mansync_helper="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+if test "x$build_x_target" != "xno" \
+	-o "x$build_xlib_target" != "xno" \
+	-o "x$build_dga_target" != "xno"; then
+  AC_PATH_XTRA
+  if test "x$no_x" = "xyes"; then
+    build_x_target="no"
+    build_xlib_target="no"
+    build_dga_target="no"
+  fi
+fi
+
+if test "x$build_aa_target" != "xno"; then
+  AC_CHECK_HEADER(aalib.h,
+	AC_CHECK_LIB(aa, aa_autoinit, foo=bar, build_aa_target="no"),
+	build_aa_target="no")
+fi
+
+if test "x$ac_cv_func_mmap_fixed_mapped" != "xyes"; then 
+  build_fbdev_target="no"
+  build_genkgi_driver="no"
+  build_file_target="no"
+  build_kgi_target="no"
+fi
+
+if test "x$build_fbdev_target" != "xno"; then
+  AC_CHECK_HEADER(linux/fb.h,
+    AC_TRY_COMPILE([
+#include <linux/fb.h>
+],[
+struct fb_fix_screeninfo *fix;
+fix->accel = 0;
+],
+      AC_DEFINE(HAVE_NEW_FBDEV)
+      have_new_fbdev=yes),
+    build_fbdev_target="no")
+fi
+
+if test "x$build_genkgi_driver" != "xno"; then
+  AC_CHECK_HEADER(kgi/kgi.h, ,build_genkgi_driver="no")
+fi
+
+if test "x$build_glide_target" != "xno"; then
+  if test "x$ac_cv_header_glide_h" = "xno" -a \
+	  "x$ac_cv_header_glide_glide_h" = "xno"; then
+    build_glide_target="no"
+  else 
+    AC_CHECK_LIB(glide2x, grGlideInit, foo=bar,
+	build_glide_target="no", [ -lm ])
+  fi
+fi
+
+case "$host" in
+  powerpc-*-linux*)
+	;;
+  *)
+	build_lcd823_target="no"
+	;;
+esac
+
+
+if test "x$build_vgl_target" != "xno"; then
+    if test "x$ac_cv_header_vgl.h" = "xno"; then
+	build_vgl_target="no"
+    else
+	AC_CHECK_LIB(vgl, VGLInit, foo=bar,
+		     build_vgl_target="no")
+    fi
+fi
+
+if test "x$build_svga_target" != "xno"; then
+  AC_CHECK_HEADER(vga.h,
+	AC_CHECK_LIB(vga, vga_init, foo=bar,
+		build_svga_target="no"; build_vgagl_helper="no"),
+	build_svga_target="no"; build_vgagl_helper="no")
+  AC_CHECK_HEADER(vgagl.h,
+	AC_CHECK_LIB(vgagl, gl_setpixel, foo=bar,
+		build_vgagl_helper="no",
+		[ -lvga ]),
+	build_vgagl_helper="no")
+fi
+
+if test "x$build_terminfo_target" != "xno"; then
+  curseslib=""
+  AC_CHECK_HEADER(ncurses.h,
+	AC_DEFINE(HAVE_NCURSES_H)
+	curseslib="ncurses",
+  AC_CHECK_HEADER(ncurses/ncurses.h,
+	AC_DEFINE(HAVE_NCURSES_NCURSES_H)
+	curseslib="ncurses",
+  AC_CHECK_HEADER(curses.h,
+	AC_DEFINE(HAVE_CURSES_H)
+	curseslib="curses",
+	build_terminfo_target="no")))
+  if test -n "$curseslib"; then
+    AC_CHECK_LIB($curseslib, set_term,
+	terminfolibs="-l$curseslib",
+	build_terminfo_target=no)
+  fi
+fi
+
+if test "x$build_vcsa_target" != "xno"; then
+  if test "$ac_cv_header_linux_vt_h" != yes; then
+    build_vcsa_target="no"
+  fi
+fi
+
+if test "x$build_dga_target" != "xno"; then
+  AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
+  internal_xf86dga="yes"
+  AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
+  if test "x$internal_xf86dga" = "xyes"; then
+    xf86dga_libs=""
+    AC_DEFINE(GGI_INTERNAL_XF86DGA)
+  else
+    AC_CHECK_LIB(Xxf86dga, XF86DGAQueryVersion, foo=bar,
+	build_dga_target="no",
+	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+    AC_CHECK_LIB(Xxf86vm, XF86VidModeSwitchToMode, foo=bar,
+	build_dga_target="no",
+	[ $X_LIBS -lXext -lX11 $X_EXTRA_LIBS ])
+    xf86dga_libs="-lXxf86dga -lXxf86vm"
+  fi
+  ], build_dga_target="no")
+fi
+
+if test "x$build_linvtsw_helper" != "xno"; then
+  if test "$ac_cv_header_linux_vt_h" != yes -o \
+	"$ac_cv_header_linux_kd_h" != yes ; then
+    build_linvtsw_helper="no"
+  fi
+fi
+
+dnl check for Unix domain sockets.
+dnl Define HAVE_UNIX_DOMAIN_SOCKET if found.
+AC_MSG_CHECKING(whether UNIX domain sockets are supported)
+AC_CACHE_VAL(ggi_cv_have_unix_domain_socket,
+[AC_TRY_COMPILE([
+#include <sys/types.h>
+#include <sys/socket.h>
+#ifdef HAVE_SYS_UN_H
+#include <sys/un.h>
+#endif], [struct sockaddr_un unix_addr;],
+    ggi_cv_have_unix_domain_socket=yes, ggi_cv_have_unix_domain_socket=no)])
+AC_MSG_RESULT($ggi_cv_have_unix_domain_socket)
+if test $ggi_cv_have_unix_domain_socket = yes ; then
+  AC_DEFINE(HAVE_UNIX_DOMAIN_SOCKET)
+fi
+
+dnl ========================================================================
+dnl Check for targets
+
+AC_MSG_CHECKING(if we should build x        target)
+if test "x$build_x_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
+  build_x_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build xlib     target)
+if test "x$build_xlib_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS Xlib"
+  build_xlib_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+dnl AC_MSG_CHECKING(if we should build kgi      target)
+dnl if test "x$build_kgi_target" = "xno"; then
+dnl   AC_MSG_RESULT(no)
+dnl else
+dnl   DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
+dnl   DEFAULTSUBDIRS="$DEFAULTSUBDIRS linmm_banked ramdac ioctl"
+dnl   build_kgi_target="yes"
+dnl   AC_MSG_RESULT(yes)
+dnl fi
+
+AC_MSG_CHECKING(if we should build aa       target)
+if test "x$build_aa_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS aa"
+  build_aa_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build directx  target)
+if test "x$build_directx_target" != "xno" -a \
+	"x$ac_cv_header_ddraw_h" = "xyes"; then
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS directx"
+  build_directx_target="yes"
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if we should build fbdev    target)
+if test "x$build_fbdev_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS fbdev"
+  if test "x$have_new_fbdev" = "xyes"; then
+    DEFAULTSUBDIRS="$DEFAULTSUBDIRS fbdev"
+  fi
+  build_fbdev_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build generic KGI driver)
+if test "x$build_genkgi_driver" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
+  build_genkgi_driver="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build file     target)
+if test "x$build_file_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS file"
+  build_file_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build glide    target)
+if test "x$build_glide_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS glide"
+  build_glide_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+dnl AC_MSG_CHECKING(if we should build suidkgi  target)
+dnl if test "x$build_suidkgi_target" = "xno"; then
+dnl   AC_MSG_RESULT(no)
+dnl else
+dnl   DISPLAYSUBDIRS="$DISPLAYSUBDIRS suidkgi"
+dnl   DEFAULTSUBDIRS="$DEFAULTSUBDIRS linmm_banked ramdac ioctl"
+dnl   build_suidkgi_target="yes"
+dnl   AC_MSG_RESULT(yes)
+dnl fi
+
+AC_MSG_CHECKING(if we should build lcd823   target)
+if test "x$build_lcd823_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS lcd823"
+  build_lcd823_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build memory   target)
+if test "x$build_memory_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS memory"
+  build_memory_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build monotext target)
+if test "x$build_monotext_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS monotext"
+  build_monotext_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build multi    target)
+if test "x$build_multi_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS multi"
+  build_multi_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build palemu   target)
+if test "x$build_palemu_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS palemu"
+  build_palemu_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build sub      target)
+if test "x$build_sub_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS sub"
+  build_sub_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build vgl      target)
+if test "x$build_vgl_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS vgl"
+  build_vgl_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build svga     target)
+if test "x$build_svga_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS svgalib"
+  build_svga_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build vgagl    helper (used by svga target))
+if test "x$build_vgagl_helper" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS vgagl"
+  build_vgagl_helper="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build tele     target)
+if test "x$build_tele_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS tele"
+  build_tele_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build terminfo target)
+if test "x$build_terminfo_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS terminfo"
+  build_terminfo_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build tile     target)
+if test "x$build_tile_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS tile"
+  build_tile_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build trueemu  target)
+if test "x$build_trueemu_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS trueemu"
+  build_trueemu_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build vcsa     target)
+if test "x$build_vcsa_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS vcsa"
+  build_vcsa_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build dga      target)
+if test "x$build_dga_target" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS xf86dga"
+  build_dga_target="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(if we should build linvtsw  helper)
+if test "x$build_linvtsw_helper" = "xno"; then
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS linvtsw"
+  build_linvtsw_helper="yes"
+  AC_MSG_RESULT(yes)
+fi
+
+
+dnl ========================================================================
+dnl Finally add some flags
+
+dnl _THREAD_SAFE is used instead of _REENTRANT on some systems
+CFLAGS="$CFLAGS -D_REENTRANT -D_THREAD_SAFE"
+
+if test "x$use_debug" = "xyes"; then
+  AC_DEFINE(DEBUG)
+  if test "$ac_cv_prog_gcc" = "yes"; then
+    CFLAGS="$CFLAGS -g -Wall"
+  fi
+fi
+
+
+dnl ========================================================================
+dnl Write output
+
+AC_SUBST(THREADLIBS)
+AC_SUBST(sublib_libs)
+AC_SUBST(dynload_libs)
+AC_SUBST(bsdsock_libs)
+
+AC_SUBST(DISPLAYSUBDIRS)
+AC_SUBST(DEFAULTSUBDIRS)
+
+dnl Target specific substitutions
+AC_SUBST(terminfolibs)
+AC_SUBST(xf86dga_libs)
+
+dnl Program specific substitutions
+AC_SUBST(SHMDEMOS)
+AC_SUBST(monitest_extrasrc)
+AC_SUBST(monitest_extraobj)
+AC_SUBST(monitest_extralibs)
+
+dnl Bah! autoconf hasn't set prefix to it's default value yet!
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+
+eval foo="$libdir"
+eval ggi_libdir="$foo"
+eval ggi_confdir="$sysconfdir/ggi"
+
+AC_SUBST(ggi_libdir)
+AC_SUBST(ggi_confdir)
+AC_DEFINE_UNQUOTED(GGITAGLEN,$TAGLEN)
+AC_DEFINE_UNQUOTED(GGIPATHTAG,"$PATHTAG")
+AC_DEFINE_UNQUOTED(GGICONFFILE,"$ggi_conffile")
+AC_DEFINE_UNQUOTED(GGICONFDIR,"$PATHTAG$ggi_confdir")
+
+if test "x$use_threads" = "xpthread"; then
+  AC_DEFINE(USE_THREADS)
+  THREADLIBS="-lpthread"
+fi
+
+AM_CONFIG_HEADER(config.h)
+
+AC_OUTPUT(
+Makefile
+ggi/Makefile
+include/Makefile
+include/ggi/Makefile
+include/ggi/internal/Makefile
+include/ggi/internal/font/Makefile
+include/ggi/default/Makefile
+include/ggi/display/Makefile
+display/Makefile
+display/X/Makefile
+display/Xlib/Makefile
+display/aa/Makefile
+display/common/Makefile
+display/directx/Makefile
+display/fbdev/Makefile
+display/file/Makefile
+display/glide/Makefile
+display/lcd823/Makefile
+display/linvtsw/Makefile
+display/mansync/Makefile
+display/memory/Makefile
+display/monotext/Makefile
+display/multi/Makefile
+display/palemu/Makefile
+display/sub/Makefile
+display/svgalib/Makefile
+display/vgl/Makefile
+display/tele/Makefile
+display/terminfo/Makefile
+display/tile/Makefile
+display/trueemu/Makefile
+display/vcsa/Makefile
+display/vgagl/Makefile
+display/xf86dga/Makefile
+default/Makefile
+default/color/Makefile
+default/common/Makefile
+default/kgi/Makefile
+default/linear_1/Makefile
+default/linear_1_r/Makefile
+default/linear_2/Makefile
+default/linear_4/Makefile
+default/linear_4_r/Makefile
+default/linear_8/Makefile
+default/linear_16/Makefile
+default/linear_24/Makefile
+default/linear_32/Makefile
+default/stubs/Makefile
+default/text_16/Makefile
+default/text_32/Makefile
+default/ilbm/Makefile
+default/planar/Makefile
+default/iplanar_2p/Makefile
+default/fbdev/Makefile
+default/fbdev/mga/Makefile
+default/fbdev/mga/2164w/Makefile
+extensions/Makefile
+extensions/test/Makefile
+programs/Makefile
+programs/demos/Makefile
+programs/demos/warp-ggi/Makefile
+programs/util/Makefile
+programs/util/monitest/Makefile
+programs/check/Makefile
+doc/Makefile
+doc/docbook/Makefile
+doc/man/Makefile
+m4/Makefile
+libggi.conf
+display/fbdev/fbdev.conf
+)
+
+dnl Removed dirs
+dnl  display/suidkgi/Makefile
+dnl  default/ramdac/Makefile
+dnl  default/linmm_banked/Makefile
+dnl  default/ioctl/Makefile
+
+if test "$gii_missing_part" = "yes"; then 
+  AC_MSG_WARN([
+LibGII is not properly installed on the system. You need LibGII for
+building LibGGI. Please compile LibGII first.
+])
+fi

@@ -1,0 +1,112 @@
+#!/bin/sh
+
+#############################################################
+# Utility functions
+#
+
+abort () {
+	echo ""
+	echo "Error installing $LIBNAME $VERSION, aborting!"
+	exit 1
+}
+
+setattribsnox () {
+if [ -n "$OG" ]; then
+	chown $OG $* >/dev/null 2>&1
+fi
+chmod $MODE $1 >/dev/null 2>&1
+chmod -x $1 >/dev/null 2>&1
+}
+
+setattribs () {
+if [ -n "$OG" ]; then
+	chown $OG $* >/dev/null 2>&1
+fi
+chmod $MODE $1 >/dev/null 2>&1
+chmod +x $1 >/dev/null 2>&1
+}
+
+mkdirtree () {
+tmp=""
+for sub in `echo $1 | sed 's|/| |g'` ; do
+	tmp="$tmp/$sub"
+	if [ -d $tmp ]; then
+		continue
+	fi
+	if mkdir $tmp >/dev/null 2>&1; then
+		setattribs $1
+	else
+		echo "The directory $tmp does not exist and could not be created."
+		abort
+	fi
+done
+if [ ! -w "$tmp" ]; then
+	echo "You don't have write permissions in the $tmp directory."
+	abort
+fi
+}
+
+#############################################################
+# Script begins
+#
+
+CONFDIR=$1
+CONFNAME=$2
+GGIDIR=$3
+SHLIBDIR=$4
+RELNAME=$5
+MODE=$6
+OWNER=$7
+GROUP=$8
+
+VERSION=`cat .version`
+MAJOR=`echo $VERSION | cut -d. -f1`
+MINOR=`echo $VERSION | cut -d. -f2`
+LIBNAME=`echo $RELNAME | cut -d' ' -f1`
+SOLIB="$LIBNAME.so.$VERSION"
+
+if [ -z "$RELNAME" ]; then
+	echo ""
+	echo "This script should not be invoked directly!"
+	echo "Try running the [1mggiinstall[0m script instead."
+	echo ""
+	exit 1
+fi
+
+if [ -z "$GROUP" ]; then
+	OG=$OWNER
+else
+	OG="$OWNER.$GROUP"
+fi
+if [ -z "$MODE" ]; then
+	MODE="0644"
+fi
+
+mkdirtree $CONFDIR
+mkdirtree $SHLIBDIR
+mkdirtree $GGIDIR
+
+cat templates/libggi.conf.templ | sed -e "s|CONFDIR|$CONFDIR|g" -e "s|GGIDIR|$GGIDIR|g" > $CONFNAME
+cp $CONFNAME $CONFDIR
+setattribsnox "$CONFDIR/$CONFNAME"
+
+./patchlib "$SOLIB" "$CONFDIR/$CONFNAME" > /dev/null
+if [ "$?" != "0" ] ; then
+    echo "Error patching $SOLIB"
+    abort
+fi
+mv libggi.so.patched "$SHLIBDIR/$SOLIB"
+rm -f "$SHLIBDIR/$LIBNAME.so.$MAJOR" "$SHLIBDIR/$LIBNAME.so"
+ln -s $SOLIB "$SHLIBDIR/$LIBNAME.so.$MAJOR"
+ln -s "$LIBNAME.so.$MAJOR" "$SHLIBDIR/$LIBNAME.so"
+setattribs "$SHLIBDIR/$SOLIB" "$SHLIBDIR/$LIBNAME.so.$MAJOR" "$SHLIBDIR/$LIBNAME.so"
+
+for sofile in `find . -name \*.so -path \*dll/\*`; do
+    filename=`basename $sofile`
+    tmp=`echo $sofile | sed -e "s|/dll||g"`
+    instloc=`dirname "$GGIDIR/$tmp"`
+    mkdirtree $instloc
+    cp "$sofile" "$instloc"
+    setattribs "$instloc/$filename"
+done
+exit 0

@@ -1,0 +1,100 @@
+LibGGI README
+=============
+
+LibGGI, the dynamic GGI (General Graphics Interface) library is a flexible
+drawing library.
+
+It provides an opaque interface to the display's acceleration functions. It
+was originally intended to allow user programs to interface with KGI, the
+GGI Kernel Graphics Interface, but other display types can be easily used by
+loading the appropriate "display target" (e.g. X, memory).
+
+LibGGI consists of a main library (libggi.so) and a multitude of
+dynamic drivers. The library then loads the necessary "drivers" for the
+requested mode, taking hints from the graphics device if necessary. LibGGI
+can also load extension libraries, e.g. to provide enhanced 2D and 3D
+functions.
+
+Targets
+=======
+
+Targets are devices which LibGGI can render to.  See doc/targets.txt for more
+details.
+
+	+ fbdev: fbcon framebuffer devices, and kgicon
+	+ vcsa: Linux text console
+
+	+ X: X Window System
+	+ Xlib: X Window alternate method; uses X for primitives
+	+ XF86DGA: XFree86 server Direct Graphics Access
+
+	+ AA: AAlib, an ASCII-Art renderer
+	+ GLIDE: 3Dfx
+	+ SVGAlib: SUID root console graphics library
+	+ Terminfo: GGI textmodes on terminals
+
+	+ MonoText: emulate 8-bit visual on text-only visual (like AAlib)
+	+ TrueEmu: emulate true-color (24-bit) on visual of any other depth
+	+ PalEmu: emulate indexed-color on true-color visuals.
+
+	+ file: write to a file
+	+ memory: off-screen memory
+
+	+ multi: display on multiple targets at once
+	+ Tile: display in multiple visuals each showing a component part
+	+ Sub-target: Visual-within-a-visual
+
+	+ Tele: remote LibGGI
+	+ suidkgi: use KGI drivers in userspace, setuid root
+
+
+Requirements
+============
+
+* LibGG 0.7 or later (included in LibGII).
+* LibGII 0.7 or later.
+* Most likely GNU Make.
+* Fbcon Linux kernel if using display-fbdev target.
+* X Window System if using display-X/Xlib target.
+* XFree86 if using display-DGA target.
+* VGL library if using display-vgl target.
+* other libraries for other targets, such as aalib and SVGAlib.
+
+
+How to install and use
+======================
+
+See the files INSTALL and INSTALL.autoconf for installation instructions.
+
+Demos and some utilities are found in the programs/demos and programs/util
+directories respectively. They are built automatically.
+
+LibGGI will automatically default to the most suitable display target (the
+method through which LibGGI displays on). However, this can be overridden
+using the GGI_DISPLAY environment variable, set to the name of the display
+target, plus any additional arguments.  Please see doc/env.txt for more
+details on environment variables. You might also want to have a look at
+the doc/env.txt file in the LibGII distribution, as LibGGI uses LibGII for
+input.
+
+For a list of available targets see doc/targets.txt. If you intend to use
+any of the Linux console based targets (fbdev, SVGAlib, Glide, vcsa) you
+should also read the section on input-linux-mouse in the doc/inputs.txt
+file in the LibGII distribution.
+
+
+The GGI mailing lists
+=====================
+
+There are several mailing lists available for discussion of GGI-related
+topics. Please see http://www.ggi-project.org/mailinglist.html for more info.
+
+
+GGI resources
+=============
+
+Web site: http://www.ggi-project.org/
+FTP site: ftp://ftp.ggi-project.org/pub/ggi
+
+XGGI home: http://www.stacken.kth.se/~mackan/ggi/xggi/
+(XGGI is an X server which runs on LibGGI)

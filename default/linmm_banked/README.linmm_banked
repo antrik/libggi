@@ -1,0 +1,124 @@
+
+Note:  This code is not in a final form so don't infer 
+interface specifications from what is currently here.  Certain
+things like the MMAP_REGION_TYPEs might change;
+consider yourself warned.
+
+Second Note:  This code _does_ work (for 8bpp),
+and I'm only uploading the primitives as they
+pass speed.c and my own consistancy checks.
+But in it's current form it only works with 
+1 or 2 32K banks.
+
+ ---------------------------------------------------
+
+
+This is a relatively generic graphics library for use with
+graphics/chipset drivers for cards that use banked RAM access.
+Intelligent bank access is planned, but most importantly 
+it checks alignment before doing 16 and 32bit transfers
+and finds and uses the MMAPs proferred by drivers
+that want to use it.
+
+Eventually the library will support two-bank cards that
+can switch between split windows and ro/rw banks, as well as 
+sliding banks.  It will also support any subset of this type
+of banking system without recompilation by examining the
+banks handed to it.  That should make it cover almost all 
+older SVGA cards' needs.
+
+Since the cards that will _need_ to use this library tend to 
+be ISA cards, a little CPU work will be sacrificed for less 
+IO (and less context switches) by anticipating bank positions.
+
+The library will eventually support 8, 16, and 32bpp depths.  
+However it currently only works for 8bpp.  It probably isn't
+very portable off Linux yet, nor threadsafe.  I'm not a C
+optimization pro so the code is most likely very improvable.
+However, improvements to the C code should, please, result in 
+readable code.  Any hard-to-decipher fully unrolled optimizations 
+should be ASM optimizations for various architectures, since if you're 
+going to get that far into it you might as well do it right.
+
+Currently the following operations are implemented; everything
+else falls back on the stubs:
+
+DirectBuffer
+DrawPixel
+PutPixel
+GetPixel
+DrawHLine
+PutHLine
+GetHLine
+DrawVLine
+PutVLine
+GetVline
+(Implemented but not yet uploaded)
+DrawBox
+PutBox
+GetBox
+FillScreen
+
+
+The following cards will benefit most from this library:
+
+Ahead V5000A and V5000B
+ATI Mach 8
+Avance 2101 thru 2064  (for 2MB access, they can linear map 1M)
+Chips and Technologies 82c4xx and F655xx except maybe F65530
+Cirrus Technologies CL-GD[456]xx CL-GD[56]xxx except 6440
+Compaq Qvision 1024 and 1280 (for 2MB access, they can linear map 1M)
+Everex Ev236 and Ev6xx
+Genoa 5xxx, 6xxx, 7xxx
+Hualon HM863xx
+IIT AGX 10, 14, 15, 16
+Matrox MGA-I MGA-II
+MX 860xx
+Western Digital PVGA1A(wd90c90) and wd90c00(PVGA1B)
+Primus P2000 and P3000
+Realtek RTG3105 and RTG3106
+S3 86c7xx
+Trident TGUI89xx TGUI90xx TGUI92xx
+Tseng ET3000
+UMC 85c4xx
+Headland/Video7 20x
+Weitek 5xxx
+XGA
+
+
+The following cards might benefit from this library even though
+they have the ability to map their whole frambuffer in.
+It can be used as a temporary graphics library before the
+linear mapping code is complete in the chipset driver for
+the corresponding card.  With cards that cannot map lfb
+above 16M, it can be used to reduce the memory usage rather
+than sacrific megs for linear framebuffer, since ISA BIOSes
+tend not to be able to remap the RAM elsewhere.  Other quirks may
+make it necessary to use this library for certain modes.
+
+Cards that _can_ use this library as a substitute to real lfb:
+
+Acer ALi CAT/32
+Acer ALi CAT/64
+ATI Mach 32, Mach64
+Chips and Technologies 64xxx (and F65530?)
+Cirrus Technologies cl-gd 6440
+Compaq QVision
+Western Digital wd90c1x, wd90c2x, wd90x3x
+S3 86c8xx 86c9xx
+Sierra SC15064
+SIS SG86c201
+Targa and Targa+
+Trident TGUI94xx TGUI96xx
+Tseng ET4000 ET6000
+Headland/Video7 21x
+Weitek 9xxx
+
+
+Other stuff TODO:
+
+1) Add new IOCTL for graphics driver to get/set private driver mode-specific
+   information (window size, window granularity) and intelligently
+   choose between ascending and descending buffers.
+2) CopyBox and/or CrossBLT
+3) Bank register shadowing to avoid segfaults -- worth it?

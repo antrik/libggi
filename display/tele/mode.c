@@ -1,0 +1,331 @@
+/* $Id: mode.c,v 1.1 2001/05/12 23:02:28 cegger Exp $
+******************************************************************************
+
+   TELE target.
+
+   Copyright (C) 1998 Andrew Apted	[andrew@ggi-project.org]
+   Copyright (C) 2000 Marcus Sundberg	[marcus@ggi-project.org]
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <ggi/internal/ggi-dl.h>
+
+#include "../common/pixfmt-setup.inc"
+#include "../common/gt-auto.inc"
+
+#include "libtele.h"
+#include <ggi/display/tele.h>
+
+
+int GGI_tele_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+{
+	ggi_graphtype gt = LIBGGI_GT(vis);
+
+	strcpy(arguments,"");
+
+
+	switch(num) {
+		case 0: strcpy(apiname, "display-tele");
+			return 0;
+
+		case 1: strcpy(apiname, "generic-stubs");
+			return 0;
+
+		case 2: if (GT_SCHEME(gt) == GT_TEXT) {
+				return -1;
+			}
+
+			strcpy(apiname, "generic-color");
+			return 0;
+	}
+
+	return -1;
+}
+
+int GGI_tele_resetmode(ggi_visual *vis)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleEvent ev;
+
+	if (vis->palette) {
+		free(vis->palette);
+		vis->palette = NULL;
+	}
+
+	tclient_new_event(priv->client, &ev, TELE_CMD_CLOSE, 0, 0);
+
+	priv->mode_up = 0;
+
+	return tclient_write(priv->client, &ev);
+}
+
+int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdOpenData *w;
+	TeleEvent ev;
+
+	char libname[200], libargs[200];
+	int id, err;
+
+	/* if window already open, close it */
+	if (priv->mode_up) {
+		GGI_tele_resetmode(vis);
+	}
+
+        if ((err = GGI_tele_checkmode(vis, mode)) != 0) {
+		return err;
+	}
+
+	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
+
+	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
+	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+
+	/* load libraries */
+	for (id=1; 0==GGI_tele_getapi(vis, id, libname, libargs); id++) {
+		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		if (err) {
+			fprintf(stderr,"display-tele: Can't open the "
+				"%s (%s) library.\n", libname, libargs);
+			return GGI_EFATAL;
+		} else {
+			GGIDPRINT_MODE("display-tele: Success in loading "
+				"%s (%s)\n", libname, libargs);
+		}
+	}
+
+	/* set up palette */
+	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
+		vis->palette = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
+					sizeof(ggi_color));
+		vis->opcolor->setpalvec = GGI_tele_setpalvec;
+	}
+
+	/* override stuff */
+	vis->opdraw->putpixel_nc=GGI_tele_putpixel_nc;
+	vis->opdraw->putpixel=GGI_tele_putpixel;
+	vis->opdraw->puthline=GGI_tele_puthline;
+	vis->opdraw->putvline=GGI_tele_putvline;
+	vis->opdraw->putbox=GGI_tele_putbox;
+
+	vis->opdraw->getpixel=GGI_tele_getpixel;
+	vis->opdraw->gethline=GGI_tele_gethline;
+	vis->opdraw->getvline=GGI_tele_getvline;
+	vis->opdraw->getbox=GGI_tele_getbox;
+
+	vis->opdraw->drawpixel_nc=GGI_tele_drawpixel_nc;
+	vis->opdraw->drawpixel=GGI_tele_drawpixel;
+	vis->opdraw->drawhline_nc=GGI_tele_drawhline_nc;
+	vis->opdraw->drawhline=GGI_tele_drawhline;
+	vis->opdraw->drawvline_nc=GGI_tele_drawvline_nc;
+	vis->opdraw->drawvline=GGI_tele_drawvline;
+	vis->opdraw->drawbox=GGI_tele_drawbox;
+	vis->opdraw->copybox=GGI_tele_copybox;
+
+	vis->opdraw->putc=GGI_tele_putc;
+/* !!!	vis->opdraw->puts=GGI_tele_puts; */
+	vis->opdraw->getcharsize=GGI_tele_getcharsize;
+
+	vis->opdraw->setorigin=GGI_tele_setorigin;
+
+
+	/* send open window request */
+
+	GGIDPRINT_MODE("display-tele: Sending open request...\n");
+
+	w = tclient_new_event(priv->client, &ev, TELE_CMD_OPEN,
+			      sizeof(TeleCmdOpenData), 0);
+
+	w->graphtype      = (T_Long) mode->graphtype;
+	w->frames         = (T_Long) mode->frames;
+	w->visible.width  = (T_Long) mode->visible.x;
+	w->visible.height = (T_Long) mode->visible.y;
+	w->virt.width     = (T_Long) mode->virt.x;
+	w->virt.height    = (T_Long) mode->virt.y;
+	w->dot.width      = (T_Long) mode->dpp.x;
+	w->dot.height     = (T_Long) mode->dpp.y;
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	} else if (err < 0) {
+		return err;
+	}
+
+	/* receive reply */
+	GGIDPRINT_MODE("display-tele: Waiting for reply...\n");
+
+	tele_receive_reply(vis, &ev, TELE_CMD_OPEN, ev.sequence);
+
+	GGIDPRINT_MODE("display-tele: REPLY %d...\n", (int) w->error);
+
+	if (! w->error) {
+		priv->mode_up = 1;
+	}
+
+	mode->graphtype = (uint32) w->graphtype;
+	mode->frames    = (uint32) w->frames;
+	mode->visible.x = (sint16) w->visible.width;
+	mode->visible.y = (sint16) w->visible.height;
+	mode->virt.x    = (sint16) w->virt.width;
+	mode->virt.y    = (sint16) w->virt.height;
+	mode->dpp.x     = (sint16) w->dot.width;
+	mode->dpp.y     = (sint16) w->dot.height;
+
+	priv->width  = mode->virt.x;
+	priv->height = mode->virt.y;
+
+	return w->error;
+}
+
+int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdOpenData *w;
+	TeleEvent ev;
+	int err = 0;
+
+	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
+
+	if (GT_SCHEME(mode->graphtype) & GT_SUB_PACKED_GETPUT) {
+		mode->graphtype &= ~GT_SUB_PACKED_GETPUT;
+		err = -1;
+	}
+
+	if (GT_SIZE(mode->graphtype) != 8) {
+		/* !!! FIXME: only 8 bits supported now */
+		GGIDPRINT_MODE("GGI_tele_checkmode: Unsupported GT.\n");
+
+		mode->graphtype = GT_8BIT;
+		err = -1;
+	}
+
+	if (mode->visible.x > mode->virt.x) {
+		mode->virt.x = mode->visible.x;
+		err = -1;
+	}
+
+	if (mode->visible.y > mode->virt.y) {
+		mode->virt.y = mode->visible.y;
+		err = -1;
+	}
+
+	if (mode->size.x != GGI_AUTO || mode->size.y != GGI_AUTO) {
+		err = -1;
+	}
+	mode->size.x = mode->size.y = GGI_AUTO;
+
+	/* pass check onto server */
+	GGIDPRINT_MODE("GGI_tele_checkmode: Sending check request...\n");
+
+	w = tclient_new_event(priv->client, &ev, TELE_CMD_CHECK,
+			      sizeof(TeleCmdOpenData), 0);
+
+	w->graphtype      = (T_Long) mode->graphtype;
+	w->frames         = (T_Long) mode->frames;
+	w->visible.width  = (T_Long) mode->visible.x;
+	w->visible.height = (T_Long) mode->visible.y;
+	w->virt.width     = (T_Long) mode->virt.x;
+	w->virt.height    = (T_Long) mode->virt.y;
+	w->dot.width      = (T_Long) mode->dpp.x;
+	w->dot.height     = (T_Long) mode->dpp.y;
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	} else if (err < 0) {
+		return err;
+	}
+
+	/* get reply */
+	GGIDPRINT_MODE("GGI_tele_checkmode: Waiting for reply...\n");
+
+	tele_receive_reply(vis, &ev, TELE_CMD_CHECK, ev.sequence);
+
+	GGIDPRINT_MODE("GGI_tele_checkmode: REPLY %d...\n", (int) w->error);
+
+	mode->graphtype = (uint32) w->graphtype;
+	mode->frames    = (uint32) w->frames;
+	mode->visible.x = (sint16) w->visible.width;
+	mode->visible.y = (sint16) w->visible.height;
+	mode->virt.x    = (sint16) w->virt.width;
+	mode->virt.y    = (sint16) w->virt.height;
+	mode->dpp.x     = (sint16) w->dot.width;
+	mode->dpp.y     = (sint16) w->dot.height;
+
+	return w->error;
+}
+
+int GGI_tele_getmode(ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+
+	if (! priv->mode_up) {
+		return -1;
+	}
+
+	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+
+	return 0;
+}
+
+int GGI_tele_setorigin(ggi_visual *vis, int x, int y)
+{
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+	TeleCmdSetOriginData *d;
+	TeleEvent ev;
+
+        int max_x = LIBGGI_VIRTX(vis) - LIBGGI_X(vis);
+        int max_y = LIBGGI_VIRTY(vis) - LIBGGI_Y(vis);
+
+	int err;
+
+
+	if ((x < 0) || (y < 0) || (x > max_x) || (y > max_y)) {
+		GGIDPRINT("display-tele: setorigin out of range:"
+			"(%d,%d) > (%d,%d)\n", x, y, max_x, max_y);
+		return -1;
+	}
+
+	d = tclient_new_event(priv->client, &ev, TELE_CMD_SETORIGIN,
+			      sizeof(TeleCmdSetOriginData), 0);
+	d->x = x;
+	d->y = y;
+
+	err = tclient_write(priv->client, &ev);
+
+	if (err == TELE_ERROR_SHUTDOWN) {
+		TELE_HANDLE_SHUTDOWN;
+	}
+
+	vis->origin_x = x;
+	vis->origin_y = y;
+
+	return err;
+}

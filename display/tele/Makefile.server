@@ -1,0 +1,43 @@
+#------------------------------------------------------------------------
+#  TELE SERVER MAKEFILE
+#------------------------------------------------------------------------
+#  $Id: Makefile.server,v 1.1 2001/05/12 23:02:27 cegger Exp $
+#------------------------------------------------------------------------
+
+CC=gcc
+CFLAGS=-Wall -pedantic
+OPTFLAGS=-g -O
+INCLUDE=-I. -I../../../../include -I../../include
+
+_la_LDFLAGS=-L. -L../..
+LIBS=-lm
+
+CFLAGS  += $(INCLUDE) $(OPTFLAGS)
+_la_LDFLAGS += $(LIBS) -lggi -lgg
+
+
+PROGRAM=teleserver
+OBJECTS=teleserver.o libtele.o
+
+
+all: $(PROGRAM)
+
+clean:
+	rm -f *.o $(PROGRAM)
+
+
+teleserver: teleserver.o libtele.o
+	$(CC) $(OBJECTS) $(_la_LDFLAGS) -o $@
+
+teleserver.o: teleserver.c libtele.h
+
+libtele.o: Makefile
+	$(MAKE) libtele.o
+
+Makefile:
+	@echo
+	@echo "You need to compile the TELE target first..."
+	@echo
+
+
+.PHONY: all clean

@@ -1,0 +1,99 @@
+# Mapping file for suggest-strings to libraries
+.root: @ggi_libdir@/ggi
+#
+# suggest_name			library_name			versions
+# ------------			--------------------------	--------
+# Displays
+display-kgi			display/kgi.@DLLEXT@
+display-suidkgi			display/suidkgi.@DLLEXT@
+display-x			display/X.@DLLEXT@
+display-xlib			display/Xlib.@DLLEXT@
+display-dga			display/xf86dga.@DLLEXT@
+display-svga			display/svgalib.@DLLEXT@
+display-svgalib			display/svgalib.@DLLEXT@
+helper-vgagl			display/vgagl.@DLLEXT@
+display-vgl			display/vgl.@DLLEXT@
+display-aa			display/aa.@DLLEXT@
+display-directx			display/directx.@DLLEXT@
+display-directxnt		display/directxnt.@DLLEXT@
+display-file			display/file.@DLLEXT@
+display-fbdev			display/fbdev.@DLLEXT@
+display-glide			display/glide.@DLLEXT@
+display-lcd823			display/lcd823.@DLLEXT@
+display-memory			display/memory.@DLLEXT@
+display-monotext		display/monotext.@DLLEXT@
+display-multi			display/multi.@DLLEXT@
+display-palemu			display/palemu.@DLLEXT@
+display-sub			display/sub.@DLLEXT@
+display-terminfo		display/terminfo.@DLLEXT@
+display-tele			display/tele.@DLLEXT@
+display-tile			display/tile.@DLLEXT@
+display-trueemu			display/trueemu.@DLLEXT@
+display-vcsa			display/vcsa.@DLLEXT@
+helper-mansync			display/mansync.@DLLEXT@
+helper-linux-vtswitch		display/linvtsw.@DLLEXT@
+
+# Display abbreviations
+kgi				display/kgi.@DLLEXT@
+suidkgi				display/suidkgi.@DLLEXT@
+x				display/X.@DLLEXT@
+xlib				display/Xlib.@DLLEXT@
+dga				display/xf86dga.@DLLEXT@
+svga				display/svgalib.@DLLEXT@
+vgl				display/vgl.@DLLEXT@
+aa				display/aa.@DLLEXT@
+directx				display/directx.@DLLEXT@
+directxnt			display/directxnt.@DLLEXT@
+file				display/file.@DLLEXT@
+fbdev				display/fbdev.@DLLEXT@
+glide				display/glide.@DLLEXT@
+lcd823				display/lcd823.@DLLEXT@
+memory				display/memory.@DLLEXT@
+monotext			display/monotext.@DLLEXT@
+multi				display/multi.@DLLEXT@
+palemu				display/palemu.@DLLEXT@
+sub				display/sub.@DLLEXT@
+terminfo			display/terminfo.@DLLEXT@
+tele				display/tele.@DLLEXT@
+tile				display/tile.@DLLEXT@
+trueemu				display/trueemu.@DLLEXT@
+vcsa				display/vcsa.@DLLEXT@
+
+# Stubs library - generic drawing code goes here
+generic-stubs			default/stubs.@DLLEXT@
+
+# Color library
+generic-color			default/color.@DLLEXT@
+
+# Linear framebuffers
+generic-text-16			default/text_16.@DLLEXT@
+generic-text-32			default/text_32.@DLLEXT@
+
+generic-linear-1 		default/linear_1.@DLLEXT@
+generic-linear-1-r 		default/linear_1_r.@DLLEXT@
+generic-linear-2 		default/linear_2.@DLLEXT@
+generic-linear-4 		default/linear_4.@DLLEXT@
+generic-linear-4-r 		default/linear_4_r.@DLLEXT@
+generic-linear-8 		default/linear_8.@DLLEXT@
+generic-linear-16 		default/linear_16.@DLLEXT@
+generic-linear-24 		default/linear_24.@DLLEXT@
+generic-linear-32 		default/linear_32.@DLLEXT@
+generic-linmm-banked		default/linmm_banked.@DLLEXT@
+
+# Planar framebuffers
+generic-planar			default/planar.@DLLEXT@
+generic-ilbm			default/ilbm.@DLLEXT@
+generic-iplanar-2p		default/iplanar_2p.@DLLEXT@
+
+# Ramdac support via IOCTL
+generic-ramdac			default/ramdac.@DLLEXT@
+# MMIO ping-pong commands
+generic-mmio 			default/mmio.@DLLEXT@
+# IOCTL interface
+generic-ioctl 			default/ioctl.@DLLEXT@
+
+# Fbdev accels
+.include @ggi_confdir@/targets/fbdev.conf
+
+# libGGImisc extension
+.include @ggi_confdir@/libggimisc.conf

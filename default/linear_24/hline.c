@@ -1,0 +1,110 @@
+/* $Id: hline.c,v 1.1 2001/05/12 23:01:42 cegger Exp $
+******************************************************************************
+
+   Graphics library for GGI. Horizontal lines.
+
+   Copyright (C) 1995 Andreas Beck [becka@ggi-project.org]
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include <string.h>
+
+#include "lin24lib.h"
+
+
+static inline void
+do_drawhline(ggi_visual *vis, int x, int y, int w)
+{
+	uint32 colors[3], *dest32, i;
+	uint8 *colp = (uint8*)colors, *dest8;
+	
+	PREPARE_FB(vis);
+	dest8 = (uint8 *)LIBGGI_CURWRITE(vis)
+		+ y*LIBGGI_FB_W_STRIDE(vis) + x*3;
+
+	while ((x & 3)) {
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis)      ;
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis) >>  8;
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis) >> 16;
+		x++;
+		w--;
+		if (!w) return;
+	}
+	for (i = 0; i < 4; i++) {
+		*colp++ = LIBGGI_GC_FGCOLOR(vis)      ;
+		*colp++ = LIBGGI_GC_FGCOLOR(vis) >>  8;
+		*colp++ = LIBGGI_GC_FGCOLOR(vis) >> 16;
+	}
+	dest32 = (uint32*)dest8;
+	while (w > 3) {
+		*dest32++ = colors[0];
+		*dest32++ = colors[1];
+		*dest32++ = colors[2];
+		w -= 4;
+	}
+	dest8 = (uint8*)dest32;
+	while (w) {
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis)      ;
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis) >>  8;
+		*dest8++ = LIBGGI_GC_FGCOLOR(vis) >> 16;
+		w--;
+	}
+}
+
+
+int GGI_lin24_drawhline(ggi_visual *vis,int x,int y,int w)
+{
+	LIBGGICLIP_XYW(vis, x, y, w);
+
+	do_drawhline(vis, x, y, w);
+
+	return 0;
+}
+
+int GGI_lin24_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+{
+	do_drawhline(vis, x, y, w);
+
+	return 0;
+}
+
+int GGI_lin24_puthline(ggi_visual *vis, int x, int y, int w, void *buffer)
+{ 
+	uint8 *buf8 = buffer;
+
+	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf8, *3);
+	PREPARE_FB(vis);
+
+	memcpy((uint8 *)LIBGGI_CURWRITE(vis)
+	       + y*LIBGGI_FB_W_STRIDE(vis) + x*3, buf8, w*3);
+
+	return 0;
+}
+
+int GGI_lin24_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
+{
+	PREPARE_FB(vis);
+
+	memcpy(buffer,(uint8 *)LIBGGI_CURREAD(vis)
+	       + y*LIBGGI_FB_R_STRIDE(vis) + x*3, w*3);
+
+	return 0;
+}

@@ -1,0 +1,117 @@
+<book id="libggi">
+<title/LibGGI Documentation/
+<titleabbrev/LibGGI/
+
+<bookinfo>
+<abstract>
+<para>
+This document describes the API and usage of LibGGI, 
+a flexible drawing library.
+</para>
+</abstract>
+</bookinfo>
+
+<preface id="libggi-preface">
+<title/Preface/
+
+<para> 
+If you find any errors in this documentation, please notify the
+documentation maintainer(s).  If you find anything in this documentation
+that is misleading or could be improved, also notify the maintainers :)
+</para>
+
+<para>
+This manual is not intended to be a full tutorial, as actual working
+code serves that function better.  This manual is also not intended to
+be an internals guide, although implementation hints are dropped
+throughout the manual :)
+</para>
+
+<para>
+This documentation is written in DocBook.  The SGML source
+can be used to generate Unix manpages, HTML and text formats
+automatically.
+</para>
+
+<para>
+For other developers: if you want to change this manual and do not know
+DocBook/SGML, just mail me the ASCII version and I
+(<email/steve@ggi-project.org/) will gladly format and include it for you.
+</para>
+
+</preface>
+
+
+<chapter id="libggi-intro">
+<title/Introduction/
+
+<para>
+<firstterm>LibGGI</firstterm> is a fast, simple, small and flexible user-space 
+library for full-screen graphics.  
+</para>
+
+<para>
+It provides an opaque interface to the display and its acceleration
+functions. It was originally intended to allow user programs to
+interface with KGI, the GGI Kernel Graphics Interface, but many other
+display types can be selected at runtime without changing the interface
+for the application.
+</para>
+
+<para>
+For example, a LibGGI can transparently (to the LibGGI-using
+application) display graphics on an X window, under SVGAlib, fbcon, or
+glide.  Then there are some other &lsquo;targets&rsquo; thrown in for
+fun, such as <systemitem/multi/ to display simultaneously on multiple
+displays at once, and <systemitem/tile/ to tile your display to
+different monitors.
+</para>
+
+<para>
+LibGGI consists of a main library (<filename/libggi.so/) and a multitude
+of dynamic drivers. At runtime, the library loads the necessary drivers
+taking hints from the graphics device if necessary.
+</para>
+
+<para>
+LibGGI can also load extension libraries, which extend the basic
+interface if LibGGI.  Extension libraries that are implemented include
+LibGGI2D, LibGGI3D, LibWMH and LibXMI.
+</para>
+
+<para>
+LibGGI has been designed after having a look at several existing libraries,
+and so far we have found porting to be quite simple from and to most of
+them.
+</para>
+
+</chapter>
+
+
+<chapter id="libggi-build">
+<title/How to compile and install LibGGI/
+
+<para>
+Please see the <filename/INSTALL/ and <filename/README/ for detailed
+instructions on how to compile and install LibGGI.
+</para>
+
+</chapter>
+
+&libggi-env;
+&libggi-targets;
+&libggi-control;
+&libggi-visual;
+&libggi-mode;
+&libggi-frames;
+&libggi-pixel;
+&libggi-drawing;
+&libggi-blit;
+&libggi-origin;
+&libggi-char;
+&libggi-misc;
+&libggi-db;
+&libggi-events;
+&libggi-faq;
+
+</book>

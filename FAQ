@@ -1,0 +1,134 @@
+LibGGI FAQ
+==========
+
+Please read the file README in this directory if you are not sure about what
+LibGGI is. This FAQ is only intended as a "first stage" to catch the most
+common questions that arise with new installations.
+
+I. Installation questions
+
+Q: In which order do I need to install all that libs for a GGI system ?
+
+A: Start with LibGII - the input handling layer. Install it before
+   proceeding any further. When you have installed it, come back here.
+   and install LibGGI (the graphics layer).
+   After that order is usually not important, except for packages that
+   depend on other packages. This would be documented in the respective
+   README documents.
+
+Q: How does one compile and install LibGGI ?
+
+A: Reading INSTALL and INSTALL.autoconf should help.
+
+Q: What if autodetection of targets (the LibGGI term for the various output
+   layers like X, fbdev, SVGAlib, that can be accessed by LibGGI) fails 
+   somehow and compilation stops somewhere ?
+
+A: Check if the target in which make fails should work on your system.
+   If yes, chances are, that you don't have some development package
+   installed properly. If you can't figure out for yourself, please
+   report to out mailing list metioned in the README.
+   If no, just disable it using the --disable flags to configure. You might
+   still want to report that case to the mailinglist.
+
+Q: I am not root here. Can I still install LibGGI ?
+
+A: Yes. The GGI libs are usually relocatable. Just use --prefix. See INSTALL
+   for details.
+
+II. Post install configuration questions
+
+Q: What is that libggi.conf file ? Do I need to set anything in it ?
+
+A: Usually not. You might want to add aliases for the targets or disable
+   some targets, but this is rarely needed. You will know, if you need to
+   touch that file.
+
+III. Using LibGGI
+
+Q: Umm - I have installed it. What great apps can I run now ?
+
+A: Lots. But first of all, make sure everything is working fine by running 
+   some of the demos. they are located in programs/demos. Not all demos
+   will work in every environment. "demo" is usually a good choice for
+   testing the installation.
+
+Q: The tests don't work right - what should I do ?
+
+A: This is a difficult question, as LibGGI works in so many environments,
+   and they all have their own surprises. If possible, plaese try to make it
+   work under the X target first. Start up a standard X server (_not_ XGGI)
+   that works with your hardware. Open an xterm and run the demo from there.
+   Unless you don't have the X target configured it should work. If it does
+   not, please notify us on the mailinglist. We will try to help you.
+
+Q: The tests work on X, but they don't on the console. I keep getting the
+   "SVGAlib target called from the SVGAlib wrapper! Terminating." message.
+
+A: There are basically two possible console graphics layer you can use:
+   Fbcon and SVGAlib. Whatever you choose - make sure it works, before you
+   try to run LibGGI on it. Test SVGAlib with some native application or
+   fbdev by running fbset and/or verifying, that you are in deed in a
+   graphics mode (an indication is usually, if you have a block cursor
+   instead of an underline one). Please refer to the documentation of the
+   underlying system for troubleshooting it.
+   Note, that you should _NOT_ install the SVGAlib wrapper, if you have a
+   working SVGAlib. The wrapper is for those of you who can't use SVGAlib
+   normally.
+   For the purposes of LibGGI, KGIcon is nothing but a fbcon driver with
+   some extra spice.
+   Note, that you still need to be root, if you use SVGAlib, and that you
+   might have a permission problem on /dev/fbcon.
+   If the native tools and demos work, but LibGGI doesn't, please notify us
+   on the mailinglist.
+
+Q: I am trying to run on the vesafb driver, but it doesn't work.
+
+A: There are two common problems with the vesafb driver:
+   1. It has to be activated _explictly_ at boot. Please read
+      /usr/src/linux/Documentation/fb/vesafb.txt on how to do this.
+      Verify, that you have a _block_ cursor. If you have an underline
+      cursor, vesafb is not active.
+   2. It cannot switch modes. This is a VESA limitation, not a driver
+      limitation. Programs that cannot adapt to the preset mode have no
+      chance of running.
+
+Q: What's that environment variable stuff documented in doc/env.txt ? 
+   Why don't you have commandline switches ?
+
+A: Commandline switches require application cooperation. LibGII/GGI are
+   intended to give the user full freedom. It allows to override stuff
+   without the application having to care.
+
+Q: How does one use the GGI_DISPLAY variable ?
+
+A: LibGGI allows you to choose the target to send its output to yourself,
+   much like X does with its DISPLAY variable. If you leave it blank, LibGGI
+   will try to autodetect a suitable target, which usually works. However in
+   some cases you might want to override it and/or do some special effects
+   to the output like sending multiple tiles to multiple screens or similar.
+   If you want to use it, please read doc/targets.txt.
+
+Q: What is GGI_INPUT for ?
+
+A: LibGGI usually automatically associates a suitable set of inputs to each
+   visual it opens, like the native X inputs, the linux console layer, etc.
+   With GGI_INPUT, you can ask LibGGI to add more inputs. Have a look at the
+   LibGII documentation on how inputs are specified. GGI_INPUT is for LibGGI
+   what GII_INPUT for LibGII.
+
+Q: Some LibGGI application won't let me specify the mode it should run in.
+
+A: If it is well written, a LibGGI application will honour GGI_DEFMODE.
+   doc/env.txt describes how to use that variable. Note, that this does not
+   always help. Some applications have specific needs that cause them to
+   override some or all elements of the mode.
+
+Q: I have a problem with a LibGGI application. When reporting it to the
+   mailing list - is there anything I can do to help you in sorting things
+   out ?
+
+A: Yes. LibGGI has strong internal debugging features. they are enabled
+   using the LIBGGI_DEBUG environment variable. Usually setting it to 255
+   (i.e. all logging) is the best choice, if you don't already have a fair
+   idea about what is going on.

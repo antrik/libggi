@@ -1,0 +1,132 @@
+#!/bin/sh
+
+if [ -z "$USE_DIALOG" ]; then
+    type dialog 2>&1 | grep -v "not found" > /dev/null
+    if [ "$?" = "0" ]; then
+	USE_DIALOG=yes
+    else
+	USE_DIALOG=no
+    fi
+fi
+
+DEFDIR=/usr/local
+DEFCDIR=/etc/ggi
+DEFCNAME=libggi.conf
+
+CONFDIR="$DEFCDIR"
+CONFNAME="$DEFCNAME"
+GGIDIR="$DEFDIR/lib/ggi"
+SHLIBDIR="$DEFDIR/lib"
+VERSION=`cat ./.version`
+LIBNAME=libggi
+RELNAME=Dali
+
+while [ true ]; do
+    clear
+    echo "
+Welcome to the $LIBNAME $VERSION ($RELNAME) installation!
+
+Please choose where to install libggi:
+
+    1. The default location [$DEFDIR and $DEFCDIR]
+    2. Your homedir [$HOME/ggi]
+    3. Custom installation
+    4. Quit installation process
+"
+    LOCATION=1
+    echo -n "Installation method [$LOCATION] ? "
+    read LOCATION
+
+    case "$LOCATION" in
+	2)
+	    CONFDIR="$HOME/ggi/etc"
+	    CONFNAME="$DEFCNAME"
+	    GGIDIR="$HOME/ggi/lib/ggi"
+	    SHLIBDIR="$HOME/ggi/lib"
+	    ;;
+	3)
+	    echo ""
+#	    echo "This alternative is not yet available."
+#	    exit 1
+#	    ;;
+#	4)
+#	    echo ""
+#	    echo "This alternative is not yet available."
+#	    exit 1
+#	    ;;
+#	5)
+#	    echo ""
+#	    echo "This alternative is not yet available."
+#	    exit 1
+#	    ;;
+#	6)
+#	    echo ""
+	    echo "Where do you want to install the libggi config file [$CONFDIR] ?"
+	    read REPLY
+	    if [ -n "$REPLY" ]; then
+		CONFDIR="$REPLY"
+	    fi
+	    echo ""
+	    echo "What do you want to call the libggi config file [$CONFNAME] ?"
+	    echo "(It is strongly recommended that you do not change this!)"
+	    read REPLY
+	    if [ -n "$REPLY" ]; then
+		CONFNAME="$REPLY"
+	    fi
+	    echo ""
+	    echo "Where do you want to install the libggi.so shared library [$SHLIBDIR] ?"
+	    read REPLY
+	    if [ -n "$REPLY" ]; then
+		SHLIBDIR="$REPLY"
+	    fi
+	    echo ""
+	    echo "Where do you want to install the libggi dynamic modules [$GGIDIR] ?"
+	    read REPLY
+	    if [ -n "$REPLY" ]; then
+		GGIDIR="$REPLY"
+	    fi
+	    ;;
+#	7)
+	4)
+	    clear
+	    echo ""
+	    echo "Installation aborted, $LIBNAME not installed."
+	    echo ""
+	    exit 0
+	    ;;
+	*)
+	    CONFDIR="$DEFCDIR"
+	    CONFNAME="$DEFCNAME"
+	    GGIDIR="$DEFDIR/lib/ggi"
+	    SHLIBDIR="$DEFDIR/lib"
+	    ;;
+    esac
+
+    clear
+    echo "
+$LIBNAME $VERSION ($RELNAME) installation.
+
+The $LIBNAME.so shared library will be installed in $SHLIBDIR
+The $CONFNAME config file will be installed in $CONFDIR
+The libggi dynamic modules will be installed in $GGIDIR
+"
+
+    echo -n "Install using this configuration [y/n] ? "
+    read REPLY
+    if [ "$REPLY" = "y" ]; then
+	echo "Installing $LIBNAME $VERSION..."
+	if scripts/doinstall "$CONFDIR" "$CONFNAME" "$GGIDIR" "$SHLIBDIR" "$LIBNAME $RELNAME"; then
+	    echo ""
+	    echo "$LIBNAME successfully installed!"
+	    echo ""
+	    exit 0
+	else
+	    echo ""
+	    echo "$LIBNAME not installed!"
+	    echo "Press enter to continue"
+	    read REPLY
+	fi
+    fi
+    
+done
+

@@ -1,0 +1,78 @@
+/* $Id: visual.c,v 1.1 2001/05/12 23:02:11 cegger Exp $
+******************************************************************************
+
+   Helper library for the implementation of SYNC mode on targets which are
+   inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
+
+   Mansync initialization.
+
+   Copyright (C) 1998 Steve Cheng		[steve@ggi-project.org]
+   Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+
+   Helper library for the implementation of SYNC mode on targets which are
+   inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
+
+******************************************************************************
+*/
+
+#include <ggi/internal/ggi-dl.h>
+#include <ggi/display/mansync.h>
+
+
+static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+			const char *args, void *argptr, uint32 *dlret)
+{
+	_ggi_opmansync *ops = (_ggi_opmansync *) argptr;
+	
+	if (ops == NULL) {
+		ggiPanic("Target tried to use mansync helper in a wrong way!\n");
+	}
+
+	ops->init   = _GGI_mansync_init;
+	ops->deinit = _GGI_mansync_deinit;
+	ops->start  = _GGI_mansync_start;
+	ops->stop   = _GGI_mansync_stop;
+	ops->ignore = _GGI_mansync_ignore;
+	ops->cont   = _GGI_mansync_cont;
+
+	*dlret = 0;
+	return 0;
+}
+
+int GGIdl_mansync(int func, void **funcptr)
+{
+	switch (func) {
+	case GGIFUNC_open:
+		*funcptr = GGIopen;
+		return 0;
+	case GGIFUNC_exit:
+	case GGIFUNC_close:
+		*funcptr = NULL;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}
+
+	return GGI_ENOTFOUND;
+}
+
+#include <ggi/internal/ggidlinit.h>

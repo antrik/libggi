@@ -1,0 +1,21 @@
+#!/bin/sh
+skip=22
+instdir="/tmp/$$.ggiinstall"
+fromdir=`pwd`
+release=libggi-VERSION
+if [ "$1" = "untar" ]; then
+    tail +$skip $0 | gzip -cd | tar -xvf -; exit 0
+fi
+echo -n "Decompressing $release... "
+mkdir -p $instdir
+chmod 700 $instdir
+if tail +$skip $0 | gzip -cd | tar -xf - -C $instdir; then
+    echo "Done"
+    trap "rm -rf $instdir" EXIT
+    cd $instdir/$release
+    echo "Running installer..."
+    ./ggiinstall
+else
+    echo ""
+    echo Error installing $0; exit 1
+fi; exit 0

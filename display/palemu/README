@@ -1,0 +1,45 @@
+
+PalEmu README
+=============
+
+Last 12th August 1998.
+
+
+Introduction
+------------
+
+PalEmu is a GGI display target that emulates a palettized visual (e.g.
+8 bit) on a truecolor visual (e.g. 24 bit).
+
+Here's how it works:
+
+    1)  First specify the target as "palemu", for example:
+
+        export LIBGGI_DISPLAY=palemu
+
+	You can also specify the parent target, as in :
+
+	export LIBGGI_DISPLAY=palemu:fbdev
+	
+    2)	There are a number of optional arguments. These must begin with
+	a minus ('-'), and terminated by a colon. Arguments can be
+	separated by whitespace or by a colon. 
+
+	Currently supported arguments:
+
+		-parent=<modestr>
+
+	For example:
+
+		export LIBGGI_DISPLAY=palemu:-p=[c32]:X
+
+    3)	Finally, just run a program that uses a GT_PALETTE mode.  It
+        obviously won't be as fast as a native palettized mode, but it
+	should be acceptable.  Programs that make extensive use of the
+	palette for special effects will be worse hit than programs that
+	rarely change it.
+
+
+Have fun,
+
+	Andrew Apted   <andrew.apted@ggi-project.org>

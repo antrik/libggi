@@ -1,0 +1,440 @@
+<chapter id="directbuffer">
+<title>DirectBuffer</title>
+
+<para>
+Dependent on the visual and runtime environment found,
+applications may be granted direct access to hardware and/or
+library internal buffers. This may significantly enhance
+performance for certain pixel oriented applications or libraries.
+</para>
+
+<para>
+The DirectBuffer is a mechanism in which a LibGGI program can use to
+determine all the characteristics of these buffers (typically the
+framebuffer), including the method of addressing, the stride, alignment
+requirements, and endianness.
+</para>
+
+<para>
+However, use not conforming to this specification will have undefined
+effects and may cause data loss or corruption, program malfunction or
+abnormal program termination. So you don't really want to do this.
+</para>
+
+<sect1 id="db-types">
+<title>Types of Buffers</title>
+
+<para>
+Only the framebuffer is defined currently.
+</para>
+
+<sect2 id="db-framebuffer">
+<title>Framebuffer</title>
+
+<para>
+A frame buffer may be organized as several distinct buffers.
+Each buffer may have a different layout. This means both the
+addressing scheme to be used as well as the addressing
+parameters may differ from buffer to buffer.
+</para>
+
+<para>
+A framebuffer is denoted by
+<structfield/ggi_directbuffer.type/==<symbol/GGI_DB_NORMAL/.
+Each frame has its own buffer, and its number is indicated in
+<structfield/ggi_directbuffer.frame/.
+</para>
+
+</sect2>
+
+</sect1>
+
+<sect1 id="db-layouts">
+<title/Buffer layouts/
+
+<para>
+LibGGI currently has support for pixel-linear buffers, bit-planar buffers,
+and interleaved planar buffers.
+</para>
+
+<sect2 id="db-pixellinear">
+<title/Pixel Linear Buffer/
+
+<para>
+A linear buffer is a region in the application's virtual memory address
+space. A pixel with the pixel coordinates (<replaceable/x/,<replaceable/y/)
+is assigned a pixel number according to the following formula:
+
+<property/pixel_number/ = (<property/origin_y/ + <property/y/) * 
+<property/stride/ + <property/origin_x/ + <property/x/;
+</para>
+
+<para>
+In any case both <property/x/ and <property/y/ must not be negative,
+<property/x/ must be less than <property/size_x/ and <property/y/ must be
+less than <property/size_y/. For top-left-origin screen coordinates,
+<property/stride/ and <property/origin_y/ will both be positive. For
+bottom-left-origin screen coordinates, <property/stride/ and
+<property/origin_y/ will both be negative. This will result in the correct
+pixel number with the same formula in both cases. The pixel number will be
+used to address the pixel.
+</para>
+
+<para>
+A certain number of bits is stored per pixel, and this is
+indicated in the <structfield/ggi_pixelformat.access/ field.
+For some visuals, the buffer might not be in host CPU native format and
+swapping operations need to be performed before writes or after reads.
+</para>
+
+</sect2>
+</sect1>
+
+<sect1 id="db-access">
+<title>Accessing the Buffer</title>
+
+<para>
+Read and write access to the buffer is done using load and store
+instructions of the host CPU.  The <structfield/access/ and and
+<structfield/align/ members of <structname/ggi_directbuffer/ structure
+specify additional restrictions.
+</para>
+
+<para>
+Read operations should be performed using the <property/read/ buffer and write
+operations should be performed using the <property/write/ buffer. These might
+be the same, but need not. If they are, read/write may be done to either
+buffer. Please note, that either read or write may be <symbol/NULL/. These are
+write-only or read-only buffers, which might be caused by hardware
+limitations. Such buffers are not suited to do Read-Modify-Write operations,
+so take care.
+</para>
+
+<para>
+More importantly, certain DirectBuffers need to be explicitly acquired
+(i.e. locked) before using them (i.e. accessing their pointers).  
+Such a situation may arise if the underlying visual supports mixed
+acceleration and framebuffer access, but they cannot occur at the same
+time.  In that case, LibGGI needs to be informed when the application is using the
+framebuffer.  An acquire is done by using 
+
+<link linkend="ggiResourceAcquire"><function/ggiResourceAcquire/</>
+
+and it is released by calling <function/ggiResourceRelease/.
+
+</para>
+
+<para>
+You can determine whether the DirectBuffer needs to be acquired by using
+<function/ggiResourceMustAcquire/.
+</para>
+
+<para>
+Be aware that the <structfield/read/, <structfield/write/ and <structfield/stride/
+fields of the DirectBuffer may be changed by an acquire, and that they may be
+<symbol/NULL/ or invalid when the DirectBuffer is not acquired.
+</para>
+
+
+
+<sect2 id="db-paged">
+<title>Paged Buffers</title>
+
+<para>
+Paged buffers are indicated with <property/page_size/ != 0 in
+<structname/ggi_directbuffer/.
+</para>
+
+<para>
+Successive access to addresses <property/addr0/ and <property/addr1/ of
+either read or write buffers with
+
+<property/addr0/ / <property/page_size/  !=  
+<property/addr1/ / <property/page_size/
+
+may be very expensive compared to successive accesses with
+
+<property/addr0/ / <property/page_size/  ==  
+<property/addr1/ / <property/page_size/.
+</para>
+
+<para>
+On i386 the penalty will be about 1500 cycles plus 4 cycles per
+to be remapped. Because of this, block transfer operations might
+become very inefficient for paged buffers. If there are two
+different buffers provided for read and write operations,
+you should do successive reads from one and do successive writes
+to the other. If not, it is recommended to copy pagewise into
+a temporary buffer and then to copy this temporary buffer
+back to screen.
+</para>
+
+</sect2>
+</sect1>
+
+<sect1 id="db-struct">
+<title>DirectBuffer Structures</title>
+
+<programlisting>
+typedef enum {
+        blPixelLinearBuffer,
+        blPixelPlanarBuffer,
+        blExtended,
+
+        blLastBufferLayout
+} ggi_bufferlayout;
+
+typedef struct {
+        int             stride;         /* bytes per row                */
+        ggi_pixelformat *pixelformat;   /* format of the pixels         */
+} ggi_pixellinearbuffer;
+
+typedef struct {
+        int             next_line;      /* bytes until next line        */
+        int             next_plane;     /* bytes until next plane       */
+        ggi_pixelformat *pixelformat;   /* format of the pixels ???     */
+        /* shouldn't that rather describe the _planes_, then ??? becka  */
+} ggi_pixelplanarbuffer;
+
+/* Buffer types */
+#define GGI_DB_NORMAL           0x0001  /* "frame" is valid when set */
+#define GGI_DB_EXTENDED         0x0002
+#define GGI_DB_MULTI_LEFT       0x0004
+#define GGI_DB_MULTI_RIGHT      0x0008
+
+/* Flags that may be or'ed with the buffer type */
+#define GGI_DB_SIMPLE_PLB       0x00010000
+/* GGI_DB_SIMPLE_PLB means that the buffer has the following properties:
+      type=GGI_DB_NORMAL
+      read=write
+      layout=blPixelLinearBuffer
+*/
+
+
+typedef struct {
+        uint32          type;           /* buffer type */
+        int             frame;          /* framenumber (GGI_DB_NORMAL) */
+
+        /*      access info     */
+        void            *read;          /* buffer address for reads     */
+        void            *write;         /* buffer address for writes    */
+        unsigned int    page_size;      /* zero for true linear buffers */
+
+        uint32          noaccess;
+        /* bitfield. bit x set means you may _not_ access this DB at the
+           width of 2^x bytes. Usually 0, but _check_ it. */
+
+        uint32          align;
+        /* bitfield. bit x set means you may only access this DB at the
+           width of 2^x bytes, when the access is aligned to a multiple
+           of 2^x. Note that bit 0 is a bit bogus here, but it should
+           be always 0, as then ((noaccess|align)==0) is a quick check
+           for "no restrictions". */
+
+        ggi_bufferlayout        layout;
+
+        /* The actual buffer info. Depends on layout. */
+        union {
+                ggi_pixellinearbuffer plb;
+                ggi_pixelplanarbuffer plan;
+
+                void *extended;
+        } buffer;
+} ggi_directbuffer;
+
+</programlisting>
+
+<variablelist>
+<varlistentry>
+<term><structfield/frame/</term>
+<listitem>
+<para>is the frame number as used in multiple buffering.  Note that each
+frame can export more than one DirectBuffer.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield/layout/</term>
+<listitem>
+<para>is an enumeration specifying whether the buffer is
+pixel-linear, planar, etc.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><structfield/buffer/</term>
+<listitem>
+<para>is a union of all buffer info.  Check the <structfield/layout/ member
+to see which member of use.</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para> 
+Please see <xref linkend="ggi-pixelformat"> for information on
+<structname/ggi_pixelformat/ struct, which describes the format of the
+pixels for pixel-linear buffers.
+</para>
+
+</sect1>
+
+<sect1 id="db-get">
+<title>Getting DirectBuffers</title>
+
+<refentry id="ggiDBGetBuffer">
+
+<refmeta>
+<refentrytitle><function/ggiDBGetBuffer/</refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname/ggiDBGetNumBuffers/
+<refname/ggiDBGetBuffer/
+<refpurpose>Get DirectBuffers from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+<funcprototype>
+<funcdef>int <function/ggiDBGetNumBuffers/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>const ggi_directbuffer *<function/ggiDBGetBuffer/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int <parameter/bufnum/
+</paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function/ggiDBGetNumBuffers/ returns the number of DirectBuffers available
+to the application.
+
+<function/ggiDBGetBuffer/ obtains the DirectBuffer at the specified
+position.
+</para>
+<para>
+Use <function/ggiDBGetBuffer/ to obtain the DirectBuffers at 0 to
+n-1, where n is the number returned by <function/ggiDBGetNumBuffers/.
+</para>
+<para>
+Pixel-linear buffers have <literal/type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL/.
+You're on your own now.
+</para>
+
+<para>
+DirectBuffers where <function/ggiResourceMustAcquire/ is true need to be
+'acquired' (i.e. locked) before using.  An acquire is done by using
+<function/ggiResourceAcquire/ and is released by calling
+<function/ggiResourceRelease/.  
+(See <xref linkend="ggiResourceAcquire">.)
+
+Beware that the <structfield/read/, <structfield/write/ and
+<structfield/stride/ fields of the DirectBuffer may be changed by an
+acquire, and that they may be <symbol/NULL/ or invalid when the
+DirectBuffer is not acquired.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para><function/ggiDBGetNumBuffers/ returns the number of DirectBuffers
+available. <ReturnValue/0/ indicates that no DirectBuffers are available.
+</para>
+<para><function/ggiDBGetBuffer/ returns a pointer to a DirectBuffer
+structure.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>How to obtain a DirectBuffer</title>
+<programlisting>
+
+ggi_visual_t	vis;
+ggi_mode	mode;
+int		i;
+
+/* Framebuffer info */
+unsigned char *fbptr[2];
+int stride[2];
+int numbufs;
+
+mode.frames = 2;	/* Double-buffering */
+mode.visible.x = 640;	/* Screen res */
+mode.visible.y = 480;
+mode.virt.x = GGI_AUTO;	/* Any virtual resolution.  Will usually be set
+mode.virt.y = GGI_AUTO;	   to be the same as visible but some targets may
+			   have restrictions on virtual size. */
+mode.graphtype = GT_8BIT;		/* Depend on 8-bit palette. */
+mode.dpp.x = mode.dpp.y = GGI_AUTO;	/* Always 1x1 but we don't care. */
+
+if(ggiInit())
+{
+	/* Failed to initialize library. Bomb out. */
+}
+
+vis = ggiOpen(NULL);
+if(!vis)
+{
+	/* Opening default visual failed, quit. */
+}
+
+if(ggiSetMode(vis, &amp;mode))
+{
+	/* Set mode has failed, should check if suggested mode
+	   is o.k. for us, and try the call again. */
+}
+
+numbufs = ggiDBGetNumBuffers(vis);
+
+for(i = 0; i < numbufs; i++)
+{
+	ggi_directbuffer *db;
+	int frameno;
+
+	db = ggiDBGetBuffer(vis, i);
+
+	if(!(db->type & GGI_DB_SIMPLE_PLB))
+	{
+<replaceable>
+		/* We don't handle anything but simple pixel-linear buffers.
+		   Fall back to ggiPutBox() or something. */
+		continue;
+</>
+	}
+
+	frameno = db->frame;
+
+	if(readptr[frameno] != NULL &&
+		(db->buffer.plb.pixelformat->flags & GGI_PF_REVERSE_ENDIAN))
+	{
+		<replaceable>continue;</replaceable>
+	}
+
+	fbptr[frameno] = db->write;	/* read == write for simple plbs */
+
+	/* Stride of framebuffer (in bytes). */
+	stride[frameno] = db->buffer.plb.stride;
+
+	<replaceable>/* Check pixel format, be portable.... */</>
+
+</programlisting>
+</example>
+
+</refsect1>
+</refentry>
+</sect1>
+</chapter>
+

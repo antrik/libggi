@@ -1,0 +1,290 @@
+/* $Id: mode.c,v 1.1 2001/05/12 23:02:33 cegger Exp $
+******************************************************************************
+
+   Terminfo target
+
+   Copyright (C) 1998 MenTaLguY		[mentalg@geocities.com]
+   Copyright (C) 2000 Marcus Sundberg	[marcus@ggi-project.org]
+
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <ggi/internal/ggi-dl.h>
+#include "TIvisual.h"
+
+#include "../common/pixfmt-setup.inc"
+
+extern void _GGI_terminfo_freedbs(ggi_visual *);
+
+int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
+{
+	ggi_mode *mode;
+
+	mode = LIBGGI_MODE(vis);
+
+	x /= mode->dpp.x; y /= mode->dpp.y; /* terminfo can only set origin
+                                               with pixel granularity, so
+                                               internally, terminfo setorigin
+                                               works in pixels */
+
+	if ( ( x < 0 ) || ( x > ( mode->virt.x - mode->visible.x ) ) )
+		return -1;
+	if ( ( y < 0 ) || ( y > ( mode->virt.y - mode->visible.y ) ) )
+		return -1;
+
+	vis->origin_x=x;
+	vis->origin_y=y;
+	
+	return 0;
+}
+
+#if 0
+int GGI_terminfo_setsplitline(ggi_visual *vis, int line)
+{
+	struct TIhooks *priv;
+	ggi_mode *mode;
+
+	priv = LIBGGI_PRIVATE(vis);
+	mode = LIBGGI_MODE(vis);
+	
+	line /= mode->dpp.y; /* terminfo can only set splitline with pixel
+                                granularity, so internally, terminfo splitline
+                                works in pixels */ 
+
+	if ( ( line < 0 ) || ( line > mode->visible.y ) )
+		return -1;
+
+	priv->splitline = line;
+
+	return 0;
+}
+#endif
+
+int GGI_terminfo_flush(ggi_visual *vis, int x, int y, int w, int h,
+		       int tryflag)
+{
+	struct TIhooks *priv;
+	ggi_mode *mode;
+
+	priv = LIBGGI_PRIVATE(vis);
+	mode = LIBGGI_MODE(vis);
+
+	_terminfo_select_screen(priv->scr);
+	paint_ncurses_window(vis, stdscr, COLS, LINES);
+	refresh();
+	_terminfo_release_screen();
+	
+	return 0;
+}
+
+int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+{
+	switch(num) {
+		case 0:
+			strcpy(apiname, "display-terminfo");
+			strcpy(arguments, "");
+			return 0;
+		case 1:
+			strcpy(apiname, "generic-stubs");
+			strcpy(arguments, "");
+			return 0;
+		case 2:
+			switch (LIBGGI_MODE(vis)->graphtype) {
+				case GT_TEXT16: strcpy(apiname, "generic-text-16"); break;
+				case GT_TEXT32: strcpy(apiname, "generic-text-32"); break;
+				default: return -1;
+			}
+
+			strcpy(arguments, "");
+			return 0;
+	}
+
+	return -1;
+}
+
+static int _GGI_terminfo_loadstubs(ggi_visual *vis)
+{
+	int i, err;
+	char sugname[256], args[256];
+
+	for (i = 1; GGI_terminfo_getapi(vis, i, sugname, args)==0; i++) {
+		err = _ggiOpenDL(vis, sugname, args, NULL);
+		if (err) {
+			fprintf(stderr, "display-terminfo: Unable to load an "
+					"appropriate library for %s (%s)\n", sugname,
+					args);
+			return GGI_EFATAL;
+		} else {
+			GGIDPRINT("display-terminfo: Loaded %s (%s)\n", sugname, args);
+		}
+	}
+
+	ggiIndicateChange(vis, GGI_CHG_APILIST);
+
+	return 0;
+}
+
+static int _GGI_terminfo_domode(ggi_visual *vis)
+{
+	struct TIhooks *priv = LIBGGI_PRIVATE(vis);
+
+	_ggiZapMode(vis, 0);
+
+	_GGI_terminfo_loadstubs(vis);
+
+	vis->opdraw->setorigin = GGI_terminfo_setorigin;
+#if 0
+	vis->opdraw->setsplitline = GGI_terminfo_setsplitline;
+#endif
+
+#if 0   /* ++Andrew: The generic-text-* libraries supply versions of
+	 * these functions which do the job.
+	 */
+	 
+	vis->opcolor->mapcolor = GGI_terminfo_mapcolor;
+	vis->opcolor->unmappixel = GGI_terminfo_unmappixel;
+#endif
+
+	priv->virgin = 0;
+	vis->origin_x = vis->origin_y = 0;
+	priv->splitline = LIBGGI_MODE(vis)->visible.y;
+
+	_terminfo_select_screen(priv->scr);
+	wclear(stdscr);
+	refresh();
+	_terminfo_release_screen();
+	return 0;
+} 
+
+int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
+{
+	struct TIhooks *priv;
+	int status;
+
+	priv = LIBGGI_PRIVATE(vis);
+
+	GGIDPRINT("display-terminfo: setmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+		tm->graphtype,
+		tm->visible.x, tm->visible.y,
+		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,
+		tm->dpp.x, tm->dpp.y);
+
+	status = GGI_terminfo_checkmode(vis, tm);
+	if ( status ) return status;
+
+	GGIDPRINT("display-terminfo: approved mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+		tm->graphtype,
+		tm->visible.x, tm->visible.y,
+		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,
+		tm->dpp.x, tm->dpp.y);
+
+	_GGI_terminfo_freedbs(vis);
+
+	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
+	setup_pixfmt(LIBGGI_PIXFMT(vis), tm->graphtype);
+	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+
+	/* These are private or public buffers ? (-steve) */
+
+	_ggi_db_add_buffer(LIBGGI_PRIVLIST(vis), _ggi_db_get_new());
+	LIBGGI_PRIVBUFS(vis)[0]->type  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+	LIBGGI_PRIVBUFS(vis)[0]->frame = 0;
+	LIBGGI_PRIVBUFS(vis)[0]->read 
+		= LIBGGI_PRIVBUFS(vis)[0]->write
+		= _ggi_malloc(LIBGGI_FB_SIZE(tm));
+	LIBGGI_PRIVBUFS(vis)[0]->layout = blPixelLinearBuffer;
+	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.stride = tm->virt.x * GT_SIZE(tm->graphtype) / 8;
+	LIBGGI_PRIVBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
+
+	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
+
+	return _GGI_terminfo_domode(vis);
+}
+
+int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
+{
+	struct TIhooks *priv = LIBGGI_PRIVATE(vis);
+	int xdpp, ydpp;
+	int err = 0;
+
+	if (tm->frames != 1 && tm->frames != GGI_AUTO) {
+		err = -1;
+	}
+	tm->frames = 1;
+
+	xdpp = ydpp = 8;
+	if ((tm->dpp.x != xdpp && tm->dpp.x != GGI_AUTO) ||
+	    (tm->dpp.y != ydpp && tm->dpp.y != GGI_AUTO)) {
+		err = -1;
+	}
+	tm->dpp.x = xdpp;
+	tm->dpp.y = ydpp;
+
+	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
+		err = -1;
+	}
+	tm->size.x = tm->size.y = GGI_AUTO;
+
+	_terminfo_select_screen(priv->scr);
+	if (tm->visible.x != COLS || tm->visible.y != LINES) {
+		err = -1;
+	}
+	tm->visible.x = COLS;
+	tm->visible.y = LINES;
+	_terminfo_release_screen();
+
+	if (tm->virt.x < tm->visible.x) {
+		tm->virt.x = tm->visible.x;
+		err = -1;
+	}
+	if (tm->virt.y < tm->visible.y) {
+		tm->virt.y = tm->visible.y;
+		err = -1;
+	}
+
+	if (tm->graphtype != GT_TEXT16 && tm->graphtype != GT_TEXT32) {
+		tm->graphtype = GT_TEXT16;
+		err = -1;
+	}
+
+	return err;
+}
+
+int GGI_terminfo_getmode(ggi_visual *vis, ggi_mode *tm)
+{
+	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
+	GGIDPRINT("display-terminfo: getmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
+		tm->graphtype,
+		tm->visible.x, tm->visible.y,
+		tm->visible.x * tm->dpp.x, tm->visible.y * tm->dpp.y,
+		tm->dpp.x, tm->dpp.y);
+	return 0;
+}
+
+int GGI_terminfo_setflags(ggi_visual *vis, ggi_flags flags)
+{
+	/* Doesn't support sync mode */
+	LIBGGI_FLAGS(vis) = flags;
+	return 0;
+}

@@ -1,0 +1,786 @@
+			=========================                   Updated:
+			Display targets in LibGGI                   990401
+			=========================
+
+
+The targets currently included in LibGGI are:
+* Primary targets
+	X, Xlib, DGA, aa, fbdev, file, glide, memory, svgalib, vcsa
+
+* Emulation targets (runs on top of one or more other targets)
+	monotext, multi, palemu, tile, trueemu
+
+* Special targets (these can only be opened explicitly by applications,
+  setting GGI_DISPLAY to one of these causes undefined behaviour)
+	sub
+
+
+========
+X-target
+========
+
+Description
++++++++++++
+
+Displays in an X window.
+Emulates a linear framebuffer which is blitted to the Xserver with the
+XPutImage() function. In ASYNC mode this is done when ggiFlush() is called,
+and in SYNC mode it's done periodicly in the background (typicly 20 times/s).
+The MITSHM extension is used when available for maximum speed.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional:
+The display on which to open the X window. Default is to read the DISPLAY
+environment variable.
+
+Flags:
+-inroot		- run in root window
+-inwin=<winid>	- run in allready existing window with id <winid>
+
+Hotkeys
++++++++
+
+CTRL-ALT-m	- toggle mouse-grabbing
+		  This will try to emulate a "realtive" mouse device, i.e.
+		  one that can be moved arbitrarily far in any direction
+		  without ever leaving the window. This is useful for game
+		  controls, where loosing focus is generally undesireable.
+		  Note, that you need to turn grabbing off again to leave
+		  the window.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+Multiple frames.
+Panning.
+
+
+===========
+Xlib-target
+===========
+
+Description
++++++++++++
+
+Displays in an X window.
+Uses Xlib primitives to do drawing. Faster than X-target when using drawing-
+primitives on on accelerated X-server. Blitting is slower when running local.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional:
+The display on which to open the X window. Default is to read the DISPLAY
+environment variable.
+
+Flags:
+-inroot		- run in root window
+-inwin=<winid>	- run in allready existing window with id <winid>
+
+Hotkeys
++++++++
+
+CTRL-ALT-m	- toggle mouse-grabbing
+		  This will try to emulate a "realtive" mouse device, i.e.
+		  one that can be moved arbitrarily far in any direction
+		  without ever leaving the window. This is useful for game
+		  controls, where loosing focus is generally undesireable.
+		  Note, that you need to turn grabbing off again to leave
+		  the window.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Accelerated if the X-server is.
+
+
+==========
+DGA-target
+==========
+
+Description
++++++++++++
+
+Uses the XFree86 DGA extension to do fullscreen direct framebuffer access on
+X servers which support this. The bad thing about the DGA extension is that
+it requires root access in order to map /dev/mem, which means that you have
+to be root to use this target.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional:
+The display the target should use. Default is to read the DISPLAY environment
+variable.
+
+Environment variables
++++++++++++++++++++++
+
+GGI_DGA_FBDEV - Specify a framebuffer device to mmap() instead of /dev/mem.
+	This allows you to use the DGA target without root privs!
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+Multiple frames.
+Panning.
+
+
+=========
+aa-target
+=========
+
+Description
++++++++++++
+
+Uses the AAlib (see http://horac.ta.jcu.cz/aa/aalib/) for output and input.
+Only supports 8bit palette modes.  Parses standard AA_OPTS env. var. 
+
+Arguments
++++++++++
+
+None.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+
+============
+fbdev-target
+============
+
+Description
++++++++++++
+
+Uses the Linux /dev/fb* devices to do fullscreen graphics.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional:
+The filename of the framebuffer target to use.  The default is to get it
+from the FRAMEBUFFER environment, or the framebuffer associated with the
+current console if that is unset. As a last resort we simply open /dev/fb0.
+
+Additional Options:
+-noinput=yes
+	* Don't open any inputlibs by default.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+Accelerated when using KGIcon or matroxfb.
+Multiple frames.
+Panning.
+
+Examples
+++++++++
+
+GGI_DISPLAY=fbdev
+GGI_DISPLAY=fbdev:/dev/fb1
+GGI_DISPLAY=fbdev:-noinput=yes
+
+
+===========
+file-target
+===========
+
+Description
++++++++++++
+
+Renders an image into a file.  The file can be a framebuffer device
+(e.g. /dev/fb0), in which case a reasonable representation of the image
+will be drawn on the console _so long as_ the program's mode matches the
+framebuffer's mode.  
+
+Note: this target generates no input !  The multi-target can be used in
+order to see (and control) what the program does (using a normal target)
+and then generate a snapshot when the program exits.
+
+Arguments
++++++++++
+
+Required:
+The filename of the file.  If the filename is a PPM file (has the
+extension ".ppm"), then the image will be generated at ggiClose() time.
+Otherwise the file is a custom `GGIFILE' format and is generated
+continuously.
+
+Additional Options:
+
+-flushcmd="command_to_execute"
+-flushframe=n
+-flushtime=t
+
+The file target can be used to generate movies from running LibGGI
+applications. To do this, set -flushcmd to a shell command to execute
+at the times given by one of the two other parameters. This looks typically
+like "ppmtogif foo.ppm >foo.%04d.gif". The command is passed through a
+printf which has the current count of saved frames as an argument (or
+rather as 10 arguments to allow a few more complex commands).
+
+This shell command is either executed at every n-th invocation of ggiFlush
+or every t seconds, where t can have fractional components.
+
+Note, that the invocation of the shell command will slow down the program,
+so make sure you use a reasonable value, if you use the time argument.
+
+The primary file is updated before every invocation of the shell command.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=file:/tmp/file1.raw
+GGI_DISPLAY=multi:(file:/tmp/file2.ppm):(X)
+GGI_DISPLAY=file:/dev/fb1
+GGI_DISPLAY=multi:(X):(file:-flushcmd="ppmtogif bla.ppm >bla.%04d.gif":-flushframe=1:bla.ppm)
+
+
+============
+glide-target
+============
+
+Description
++++++++++++
+
+Uses the Glide rasterisation library to display fullscreen on a 3DFX card.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional:
+Which 3DFX card should be used. 0 means the first card, 1 the second etc...
+
+Environment variables
++++++++++++++++++++++
+
+GGI_GLIDE_MAXFREQ - specifies the maximum update frequency your monitor can
+	  handle (in Hz). Default is 70Hz.
+
+GGI_GLIDE_MAXHFREQ - specifies the maximum horizontal frequency your monitor
+	  can handle (in kHz). Default is 48kHz.
+
+GGI_GLIDE_HALTONSWITCH - if this is set applications will be halted on console
+	  switchaway. The default is to continue running.
+
+GGI_GLIDE_NOPASSTROUGH - if this is set pass through will not be enabled on
+	  switchaway. The default is to enable it.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Accelerated, one of the fastest targets when it comes to drawing-primitives.
+Multiple frames.
+
+
+=============
+memory-target
+=============
+
+Description
++++++++++++
+
+Emulates a linear framebuffer in main memory. This memory area can be
+a shared memory segemnt, an area specified by the application, or be
+malloc()ed by the memory-target itself.
+
+Arguments
++++++++++
+
+[-input:][shmid:<sid>|keyfile:<size>:<id>:<fname>|pointer]
+	* shmid		- use existing shmid <sid>
+	* keyfile	- create a new shm segment with id ftok(<fname>, <id>)
+		of size <size> (preferred method !)
+	* pointer	- use the memory pointed to by argptr.
+
+IMPORTANT NOTE: If you specify a memory area to use - be sure it's big enough
+	as no checks can or will be made that a certain mode fits into it.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always.
+
+Other features
+++++++++++++++
+
+If the "-input" option is set, an input buffer of INPBUFSIZE as #define'd
+in ggi/display/memory.h (default is 8192 bytes) is allocated at the start
+of the requested memory area. This is useful, when running on shared memory,
+because it enables you to use SendEvent to give input to other processes
+sharing that segment. This is demonstrated in cube3d and can be used for
+things like GGI-multiplexers.
+
+Unaccelerated.
+
+
+==============
+svgalib-target
+==============
+
+Description
++++++++++++
+
+Uses the SVGAlib library to display fullscreen on a VGA-compatible card.
+
+Arguments
++++++++++
+
+None.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Always in 320x200x8, otherwise only if SVGAlib supports linear addressing.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+
+===========
+vcsa-target
+===========
+
+Description
++++++++++++
+
+Uses the Linux /dev/vcsa* devices to render text modes onto the console.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional: 
+The filename of the device file, defaulting to "/dev/vcsa" which draws
+on the current virtual console.
+
+The "-shade" option turns on `shading mode', which changes the color
+mapping so that it chooses characters which emulate a shading effect.
+This makes a big improvement if using (some might say abusing :) the
+vcsa target for graphical purposes.
+
+The "-ascii" option limits the color mapping to only using ASCII
+characters.  The default mode uses IBM special characters (the solid
+block mainly, and others when using -shade).
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=vcsa
+GGI_DISPLAY=vcsa:/dev/vcsa1
+GGI_DISPLAY=vcsa:-shade:-ascii
+
+
+===============
+monotext-target
+===============
+
+Description
++++++++++++
+
+Emulates palettized modes (GT_PALETTE) on another target which can only
+do text modes, by representing the graphics as ASCII characters.  The
+effect is the much the same as the AAlib target.  
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional: 
+The target spec which to draw on (the `parent' target).  This defaults
+to automatic selection (just like using ggiOpen(NULL) when GGI_DISPLAY
+is not set).
+
+Additional Options:
+-a=<accuracy>
+-x=<accuracy>
+-y=<accuracy>
+
+      * <accuracy>   A value between 1 and 5 which determines how accurately
+		     to map the graphics to ASCII characters.
+		     Lower values are less accurate, but can represent a
+		     wider range of intensity levels. Defaults to x=2 and y=4.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=monotext
+GGI_DISPLAY=monotext:vcsa
+GGI_DISPLAY=monotext:-a=2:fbdev
+
+
+============
+multi-target
+============
+
+Description
++++++++++++
+
+Duplicates all drawing operations on multiple `child' targets, producing
+multiple indentical visuals.
+
+Arguments
++++++++++
+
+Required:
+A colon (`:') separated list of target specs to draw on.  Because target
+specs can (and often do) contain colons, they need to be enclosed in
+parentheses.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=multi:(x):(x):(x)
+GGI_DISPLAY=multi:(fbdev:/dev/fb0):(fbdev:/dev/fb1)
+
+
+=============
+palemu-target
+=============
+
+Description
++++++++++++
+
+Emulates palettized modes (GT_PALETTE) on another target which can only
+do truecolor/greyscale/text modes or palettized modes of _higher_ depth.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional: 
+The target spec which to draw on (the `parent' target).  This defaults
+to automatic selection (just like using ggiOpen(NULL) when GGI_DISPLAY
+is not set).
+
+Additional Options:
+-parent=<mode>
+
+      * <mode>    Force the parent target to use a specific mode
+      		  (standard LibGGI mode string expected).
+		  
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=palemu
+GGI_DISPLAY=palemu:X
+GGI_DISPLAY=palemu:-parent=320x200[16]:fbdev
+GGI_DISPLAY=palemu:trueemu:xlib
+
+
+===========
+tile-target
+===========
+
+Description
++++++++++++
+
+Emulates one big target, splitting it up into `tiles' where each tile is
+drawn on separate targets (the `children').
+
+Arguments
++++++++++
+
+Required:
+A colon (`:') separated list of tile specs.  Each tile spec is of the
+form:
+     <offset-x>,<offset-y>,<size-x>,<size-y>,<child>
+
+	* <offset-x> and <offset-y> are decimal values where the tile
+	  begins within the whole visual.
+	  
+	* <size-x> and <size-y> are decimal values for the size of the
+	  tile within the whole visual.
+
+	* <child> is a target spec.  Since target specs can (and often
+	  do) contain colons, it needs to be enclosed in parentheses.
+
+Additional Options:
+-usedb	  - enables  the DirectBuffer emulation.
+-nodb	  - disables the DirectBuffer emulation.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Depends on the -usedb/-nodb options.
+
+Other features
+++++++++++++++
+
+Accelerated in non-DB mode if the underlying target is, otherwise unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=tile:0,0,160,200,(x):160,0,160,200,(x)
+
+
+==============
+trueemu-target
+==============
+
+Description
++++++++++++
+
+Emulates truecolor modes (GT_TRUECOLOR) on another target which can only
+do palette modes or truecolor modes of different sizes/depths.  Uses
+dithering and special palettes to get the highest possible quality.
+
+Arguments
++++++++++
+
+Required:
+None.
+
+Optional: 
+The target spec which to draw on (the `parent' target).  This defaults
+to automatic selection (just like using ggiOpen(NULL) when GGI_DISPLAY
+is not set).
+
+Additional Options:
+-parent=<mode>
+-dither=<dither>
+-model=<model>
+
+      * <mode>    Force the parent target to use a specific mode
+      		  (standard LibGGI mode string expected).
+		  
+      * <dither>  Specifies the amount of dithering. 
+      		  Legal values are 0, 2 and 4, defaulting to 4.
+      
+      * <model>   Color model to use (only when the parent is
+      		  palettized).  Legal values are rgb, cube and pastel.
+		  Default depends on the parent mode.
+      
+Hotkeys
++++++++
+
+CTRL-ALT-d	- change the current dithering level.
+CTRL-ALT-p	- change the current color model.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never.
+
+Other features
+++++++++++++++
+
+Unaccelerated.
+
+Examples
+++++++++
+
+GGI_DISPLAY=trueemu
+GGI_DISPLAY=trueemu:xlib
+GGI_DISPLAY=trueemu:-parent=320x200[8]:fbdev
+GGI_DISPLAY=trueemu:-dither=2:-model=pastel:(multi:(x):(x))
+
+
+==========
+sub-target
+==========
+
+Description
++++++++++++
+
+Creates a `child' visual within a "parent". This can be thought of as a
+window and the sub target is intended for simple windowing systems.
+
+Arguments
++++++++++
+
+None. The Argptr must contain the parent visual.
+
+Hotkeys
++++++++
+
+None.
+
+DirectBuffer support
+++++++++++++++++++++
+
+Never. Maybe we add that some day ... but it's a bit dangerous ...
+
+Other features
+++++++++++++++
+
+Accelerated to the point of the parent. Calls are mapped through with
+modified clipping and coordinates.
+
+The sub target behaves a bit special with respect to the setmode call.
+It uses the "visible" size for the top left corner position of the window
+within the visual, and the "virtual" size for window width and height.
+Note, that moving/resizing the window does _not_ cause any drawing action.
+You have to perform those yourself. All it does for you is providing a
+virtual visual within an existing one, which is convenient to allow for
+window system canvases to be about any GGI program.

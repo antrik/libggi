@@ -1,0 +1,89 @@
+<chapter id="libggi-origin">
+<title>Origin</title>
+
+<refentry id="ggiSetOrigin">
+
+<refmeta>
+<refentrytitle><function/ggiSetOrigin/</refentrytitle>
+<manvolnum/3ggi/
+<refmiscinfo/GGI/
+</refmeta>
+
+<refnamediv>
+<refname/ggiSetOrigin/
+<refname/ggiGetOrigin/
+<refpurpose/Set and get origin of virtual screen/
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisInfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisInfo>
+<funcprototype>
+<funcdef>int ggiSetOrigin</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int <parameter/x/, int <parameter/y/</paramdef>
+</funcprototype>
+<funcprototype>
+<funcdef>int <function/ggiGetOrigin/</funcdef>
+<paramdef>ggi_visual_t <parameter/vis/, int *<parameter/x/, int *<parameter/y/</paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function/ggiSetOrigin/ sets the top-left corner of the displayed area to
+(<parameter/x/, <parameter/y/).
+</para>
+
+<para>
+When using a larger virtual area, you can pan the visible area over the
+virtual one to do scrolling. Some targets have extemely efficient means to
+do this (i.e. they do it in hardware).
+</para>
+<para>
+Large virtual areas are also commonly used for buffering the display
+contents, but that is usually more easily accomplished by requesting a
+specific number of <property/frames/ when setting a mode.
+</para>
+<para>
+This call takes <link linkend="dot"><emphasis/dot/</link> coordinates, not
+pixel coordinates as all other drawing primitives do.  There is no
+difference in graphics modes because by definition <property/dpp/ is
+1x1, but in text modes the application can do smooth scrolling.
+</para>
+<para>
+<function/ggiGetOrigin/ gets the current top-left corner of the displayed
+area into (<parameter/x/, <parameter/y/).
+</para>
+<para>
+Due to rounding to the hardware's capabilities, the values
+retrieved by a subsequent <function/ggiGetOrigin/ may not necessarily match
+those passed to <function/ggiSetOrigin/ previously.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para><ReturnValue/0/ for OK, otherwise an error code.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Pan from the top to the bottom of the virtual screen</title>
+<programlisting>
+for(i = 0; i &lt; virt_y-visible_y; i++) {
+        ggiSetOrigin(vis, 0, i);
+}
+</programlisting>
+</example>
+
+</refsect1>
+</refentry>
+</chapter>
+
+

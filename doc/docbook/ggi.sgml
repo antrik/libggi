@@ -1,0 +1,102 @@
+<!DOCTYPE set PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!-- This file "includes" the source files for the documentation
+     of the GGI core libraries.
+
+     This file really ought to be in degas/lib but libggi/doc/docbook
+     is used for historical reasons and may be a bit more obvious
+     location.
+-->
+
+<!ENTITY libggi-book	SYSTEM "../../../libggi/doc/docbook/libggi-book.sgml">
+<!ENTITY libggi-env     SYSTEM "../../../libggi/doc/docbook/libggi-env.sgml">
+<!ENTITY libggi-targets SYSTEM "../../../libggi/doc/docbook/libggi-targets.sgml">
+<!ENTITY libggi-control SYSTEM "../../../libggi/doc/docbook/libggi-control.sgml">
+<!ENTITY libggi-visual  SYSTEM "../../../libggi/doc/docbook/libggi-visual.sgml">
+<!ENTITY libggi-mode    SYSTEM "../../../libggi/doc/docbook/libggi-mode.sgml">
+<!ENTITY libggi-frames  SYSTEM "../../../libggi/doc/docbook/libggi-frames.sgml">
+<!ENTITY libggi-pixel   SYSTEM "../../../libggi/doc/docbook/libggi-pixel.sgml">
+<!ENTITY libggi-drawing SYSTEM "../../../libggi/doc/docbook/libggi-drawing.sgml">
+<!ENTITY libggi-blit    SYSTEM "../../../libggi/doc/docbook/libggi-blit.sgml">
+<!ENTITY libggi-origin  SYSTEM "../../../libggi/doc/docbook/libggi-origin.sgml">
+<!ENTITY libggi-char    SYSTEM "../../../libggi/doc/docbook/libggi-char.sgml">
+<!ENTITY libggi-misc    SYSTEM "../../../libggi/doc/docbook/libggi-misc.sgml">
+<!ENTITY libggi-db      SYSTEM "../../../libggi/doc/docbook/libggi-db.sgml">
+<!ENTITY libggi-events  SYSTEM "../../../libggi/doc/docbook/libggi-events.sgml">
+<!ENTITY libggi-faq	SYSTEM "../../../libggi/doc/docbook/libggi-faq.sgml">
+
+<!ENTITY libgii-book	SYSTEM "../../../libgii/doc/docbook/libgii-book.sgml">
+<!ENTITY libgii-env     SYSTEM "../../../libgii/doc/docbook/libgii-env.sgml">
+<!ENTITY libgii-inputs  SYSTEM "../../../libgii/doc/docbook/libgii-inputs.sgml">
+<!ENTITY libgii-control SYSTEM "../../../libgii/doc/docbook/libgii-control.sgml">
+<!ENTITY libgii-input   SYSTEM "../../../libgii/doc/docbook/libgii-input.sgml">
+<!ENTITY libgii-events  SYSTEM "../../../libgii/doc/docbook/libgii-events.sgml">
+<!ENTITY libgii-masks   SYSTEM "../../../libgii/doc/docbook/libgii-masks.sgml">
+<!ENTITY libgii-faq	SYSTEM "../../../libgii/doc/docbook/libgii-faq.sgml">
+
+]>
+
+<set id="index" lang="en">
+<title>GGI Core Library Documentation</title>
+
+<setinfo>
+
+<authorgroup>
+ <editor>
+  <firstname/Steve/<surname/Cheng/
+  <affiliation><address>
+   <email/steve@ggi-project.org/
+  </address></affiliation>
+  <contrib/Maintainer of GGI documentation/
+ </editor>
+
+ <editor>
+  <firstname/Hartmut/<surname/Niemann/
+  <contrib/Former maintainer of GGI documentation/
+ </editor>
+
+ <collab>
+  <collabname/GGI Project/
+ </collab>
+</authorgroup>
+
+<legalnotice>
+<para>
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+</para>
+
+<para>
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+</para>
+
+<para>
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</para>
+</legalnotice>
+
+<abstract>
+<para>This is a set of documents about the core 
+<ulink url="http://www.ggi-project.org/">GGI</ulink> user-space libraries.
+</para>
+</abstract>
+
+</setinfo>
+
+<!-- These books automatically include their subordinate content -->
+&libggi-book;
+&libgii-book;
+
+</set>
+
+

@@ -1,0 +1,123 @@
+NEWS - list of user-visible changes between releases of LibGGI
+
+New in 2.0beta3: 2000-12-18
+* Misc bugfixes (see ChangeLog).
+* Minor documentation updates.
+* Major rewrite of the internal sublib handling.
+* Some fixes for PowerPC compatibility.
+* preliminary support for reporting physical screen sizes.
+* Made all headers C++ compatible.
+
+* lcd823-target
+  - Target for the Motorola MPC823 builtin LCD controler, using
+    the /dev/lcd823 Linux kernel device.
+* fbdev-target
+  - Better detection of kgicon-type fb-devices and old fb implementations.
+  - Better usage of fbdev mode infos in fb.modes
+  - Better acceleration for the Matrox fb.
+* glide-target
+  - Added directbuffer support.
+* aalib-target
+  - Better mode handling.
+* X-target
+  - Propagated X dpi values to give physical screen dimensions.
+  - Various fixes to properly init several values.
+* tele-target
+  - Updated much to make it work again.
+* vgl-target
+  - New target for FreeBSD's VGL library.
+* directX-target
+  - Highly experimental target for Win ... Use at your own risk !
+
+
+
+New in 2.0beta2.1: 1999-05-17;
+* Misc bugfixes (see ChangeLog).
+* Minor documentation updates.
+* Autoconf now checks for headers as well as libraries for Glide, AAlib and
+  SVGAlib.
+* Should now compile on Linux libc5 and other systems which doesn't define
+  MAP_FAILED.
+
+* cube3d-demo
+  - Fixed to work on GT_32BIT visuals.
+* demo-demo
+  - Better teach how to properly use ASYNC/SYNC mode.
+
+* fbdev-target
+  - Now supports acceleration on matroxfb. Should work on all supported cards.
+  - Read /etc/fb.modes to get timing information - mode switching now
+    works for non-KGIcon drivers too.
+  - Fixed bug when running on a new VT (like XGGI does by default).
+  - Don't try to change the palette when the application is switched away.
+  - Now compiles on 2.0 kernels - someone with the proper hardware please
+    test whether it actually works.
+* svgalib-target
+  - Major updates and bugfixes.
+  - Now supports running in the background using the GGICMD_NOHALT_ON_UNMPAP
+    standard API.
+  - Console switching now works, but does _not_ use SIGUSR* - you can now use
+    the SVGAlib target with pthreads!
+
+
+
+New in 2.0beta2: 1999-04-01;
+* Portability fixes for non-Linux platforms.
+* Lots of bugfixes.
+* Documentaion updates.
+* Optimizations of the linear-* drawing libraries - now software drawing,
+  ggiCrossBlit() and ggiPutBox() is much faster.
+* Linux VT-switching now works with pthreads.
+* New environment variable GGI_NEWVT which will cause Linux-console based
+  targets to open a new VT instead of running on the current one.
+* API for requesting Linux-console based targets not to halt when switching
+  to another VT.
+* New API functions ggiSetColorfulPalette(), ggiFlushRegion(),
+  ggiResourceAcquire(), ggiResourceRelease(), ggiResourceMustAcquire(),
+  ggiResourceFastAcquire(), ggiResourceFastRelease(), ggiEventsQueued(),
+  ggiEventSend() and ggiEventSelect().
+* ggiGetSelectFdSet() removed.
+* The config file is now stored in /usr/local/etc/ggi by default.
+* Support for setting the mansync framerate.
+* New configure option --with-uninst-gii, which makes it possible to
+  build LibGGI against an uninstalled copy of LibGII.
+* All targets should now be compatible with Linux devfs systems.
+* Support for targets using asynchronous acceleration.
+* Big improvements in the event handling code, see the LibGII docs and NEWS
+  file for info.
+
+* stars-demo
+  - Demonstrate how to runtime switch between X and DGA targets with help
+    from the application.
+* cube3d-demo
+  - New demo which lets you run one to six arbitrary LibGGI applications
+    on a rotating, zoomable, cube, which is displayed on any LibGGI target.
+
+* X-target
+  - Handle expose events internally.
+* X/Xlib-targets
+  - Much improved system for matching LibGGI graphtypes with X-visual types.
+  - Support for StaticColor X-visuals.
+  - Support for running in an already existing window or in the root window.
+  - Don't close and reopen the window when changing modes.
+* DGA-target
+  - Use our own client-side implementation of XFree86DGA to get better
+    stability and support for optionally mapping the video memory from
+    a framebuffer device (= no root privs required for DGA).
+  - Support for acceleration on X servers supporting DGA 1.1.
+* fbdev-target
+  - Fixed fatal bug which would cause segfault when stride != virtual x.
+* glide-target
+  - Improved GGI_AUTO handling, support for more resolutions.
+  - Support for more than one 3DFX card.
+  - Restrained refreshrates so you doesn't damage your monitor.
+* svgalib-target
+  - 32-bit modes should now work
+  - "return key causes quit" problem fixed.
+* vcsa-target
+  - Much improved color mapping algorithm.
+  - "-shade" option added, and made shading NOT be the default since it
+     screws up the colormapping for normal text.
+* file-target
+  - Support for saving movies of running GGI applications.
+

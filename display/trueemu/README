@@ -1,0 +1,52 @@
+
+TrueEmu README
+==============
+
+Last updated 24th July 1998.
+
+
+Introduction
+------------
+
+TrueEmu is a GGI display target that emulates a 24 bit visual on some
+other type of visual, which could be 32 bit, 24 bit, 16 bit, 15 bit, 
+8 bit... or even 4 bit ! 
+
+Here's how it works:
+
+    1)	Set the target name to "trueemu", for example:
+
+    	export LIBGGI_DISPLAY=trueemu
+
+      	You can also specify the parent target, for example:
+
+    	export LIBGGI_DISPLAY=trueemu:xlib
+
+    2)	There are a number of optional arguments. These must begin with
+	a minus ('-'), and terminated by a colon. Arguments can be
+	separated by whitespace or by a colon. 
+
+	Currently supported arguments:
+
+		-r  :  rgb color-model
+		-c  :  cube color-model
+		-p  :  pastel color-model
+
+		-d<n> : dithering, where <n> can be 0, 2 or 4.
+		-f<n> : force depth of parent to be <n>
+
+	For example:
+
+		export LIBGGI_DISPLAY=trueemu:-c -d4:xlib
+
+    3)	Next run a program that uses a GT_TRUECOLOR mode (currently only
+	24 bit modes are emulated -- 15 bit and 16 bit are planned).
+	
+    4)	Two hotkeys will be recognized to change the dither/palette mode
+	on-the-fly:
+
+		CTRL+ALT+d  :  cycles the dither mode,
+		CTRL+ALT+p  :  cycles the palette mode.
+
+Enjoy,
+	Andrew Apted  <andrew.apted@ggi-project.org>

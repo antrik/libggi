@@ -1,0 +1,221 @@
+/* $Id: clip.c,v 1.1 2001/05/12 23:01:33 cegger Exp $
+******************************************************************************
+
+   Graphics library for GGI.
+
+   Copyright (C) 1998 Alexander Larsson   [alla@lysator.liu.se]
+   
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+   THE AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+******************************************************************************
+*/
+
+#include <ggi/internal/ggi-dl.h>
+
+/*
+  This is a line-clipper using the algorithm by cohen-sutherland.
+
+  It is modified to do pixel-perfect clipping. This means that it
+  will generate the same endpoints that would be drawn if an ordinary
+  bresenham line-drawer where used and only visible pixels drawn.
+
+  It can be used with a bresenham-like linedrawer if it is modified to
+  start with a correct error-term.
+*/
+
+#define OC_LEFT 1
+#define OC_RIGHT 2
+#define OC_TOP 4
+#define OC_BOTTOM 8
+
+/* Outcodes:
++-> x
+|       |      | 
+V  0101 | 0100 | 0110
+y ---------------------
+   0001 | 0000 | 0010
+  ---------------------
+   1001 | 1000 | 1010
+        |      | 
+ */
+#define outcode(code, xx, yy) \
+{\
+  code = 0;\
+  if ((xx)<(LIBGGI_GC(vis)->cliptl.x))\
+    code |= OC_LEFT;\
+  else if ((xx)>=(LIBGGI_GC(vis)->clipbr.x))\
+    code |= OC_RIGHT;\
+  if ((yy)<(LIBGGI_GC(vis)->cliptl.y))\
+    code |= OC_TOP;\
+  else if ((yy)>=(LIBGGI_GC(vis)->clipbr.y))\
+    code |= OC_BOTTOM;\
+}
+
+/*
+  Calculates |_ a/b _| with mathematically correct floor
+  */
+static int FloorDiv(int a, int b)
+{
+	int floor;
+	if (b>0) {
+		if (a>0) {
+			return a /b;
+		} else {
+			floor = -((-a)/b);
+			if ((-a)%b != 0)
+				floor--;
+		}
+		return floor;
+	} else {
+		if (a>0) {
+			floor = -(a/(-b));
+			if (a%(-b) != 0)
+				floor--;
+			return floor;
+		} else {
+			return (-a)/(-b);
+		}
+	}
+}
+/*
+  Calculates |^ a/b ^| with mathamatically correct floor
+  */
+static int CeilDiv(int a,int b)
+{
+	if (b>0)
+		return FloorDiv(a-1,b)+1;
+	else
+		return FloorDiv(-a-1,-b)+1;
+}
+
+static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
+		       int *clip_first, int *clip_last)
+{
+	int first,last, code;
+	int x0,y0,x1,y1;
+	int x,y;
+	int dx,dy;
+	int xmajor;
+	int slope;
+
+	first = 0;
+	last = 0;
+	outcode(first,*_x0,*_y0);
+	outcode(last,*_x1,*_y1);
+
+	if ((first | last) == 0) {
+		return 1; /* Trivially accepted! */
+	}
+	if ((first & last) != 0) {
+		return 0; /* Trivially rejected! */
+	}
+
+	x0=*_x0; y0=*_y0;
+	x1=*_x1; y1=*_y1;
+
+	dx = x1 - x0;
+	dy = y1 - y0;
+  
+	xmajor = (abs(dx) > abs(dy));
+	slope = ((dx>=0) && (dy>=0)) || ((dx<0) && (dy<0));
+  
+	for (;;) {
+		code = first;
+		if (first==0)
+			code = last;
+
+		if (code&OC_LEFT) {
+			x = LIBGGI_GC(vis)->cliptl.x;
+			if (xmajor) {
+				y = *_y0 +  FloorDiv(dy*(x - *_x0)*2 + dx,
+						      2*dx);
+			} else {
+				if (slope) {
+					y = *_y0 + CeilDiv(dy*((x - *_x0)*2
+							       - 1), 2*dx);
+				} else {
+					y = *_y0 + FloorDiv(dy*((x - *_x0)*2
+								- 1), 2*dx);
+				}
+			}
+		} else if (code&OC_RIGHT) {
+			x = LIBGGI_GC(vis)->clipbr.x - 1;
+			if (xmajor) {
+				y = *_y0 +  FloorDiv(dy*(x - *_x0)*2 + dx, 2*dx);
+			} else {
+				if (slope) {
+					y = *_y0 + CeilDiv(dy*((x - *_x0)*2
+							       + 1), 2*dx)-1;
+				} else {
+					y = *_y0 + FloorDiv(dy*((x - *_x0)*2
+								+ 1), 2*dx)+1;
+				}
+			}
+		} else if (code&OC_TOP) {
+			y = LIBGGI_GC(vis)->cliptl.y;
+			if (xmajor) {
+				if (slope) {
+					x = *_x0 + CeilDiv(dx*((y - *_y0)*2
+							       - 1), 2*dy);
+				} else {
+					x = *_x0 + FloorDiv(dx*((y - *_y0)*2
+								- 1), 2*dy);
+				}
+			} else {
+				x = *_x0 +  FloorDiv( dx*(y - *_y0)*2 + dy,
+						      2*dy);
+			}
+		} else { /* OC_BOTTOM */
+			y = LIBGGI_GC(vis)->clipbr.y - 1;
+			if (xmajor) {
+				if (slope) {
+					x = *_x0 + CeilDiv(dx*((y - *_y0)*2
+							       + 1), 2*dy)-1;
+				} else {
+					x = *_x0 + FloorDiv(dx*((y - *_y0)*2
+								+ 1), 2*dy)+1;
+				}
+			} else {
+				x = *_x0 +  FloorDiv(dx*(y - *_y0)*2 + dy,
+						     2*dy);
+			}
+		}
+
+		if (first!=0) {
+			x0 = x;
+			y0 = y;
+			outcode(first,x0,y0);
+			*clip_first = 1;
+		} else {
+			x1 = x;
+			y1 = y;
+			last = code;
+			outcode(last,x1,y1);
+			*clip_last = 1;
+		}
+    
+		if ((first & last) != 0) {
+			return 0; /* Trivially rejected! */
+		}
+		if ((first | last) == 0) {
+			*_x0=x0; *_y0=y0;
+			*_x1=x1; *_y1=y1;
+			return 1; /* Trivially accepted! */
+		}
+	}
+}

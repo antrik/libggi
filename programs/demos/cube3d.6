@@ -1,0 +1,109 @@
+.TH 3d 6
+.SH NAME
+3d \- 3D cube console
+.SH SYNOPSIS
+.B 3d
+.B [-xxx,yyy]
+.B [program1-6] 
+.SH DESCRIPTION
+.I 3d
+is a LibGGI "middleend", that allows to run up to 6 LibGGI applications
+on one screen, mapped to the six sides of a cube.
+.PP
+The programs program1 to program6 are invoked and mapped to the cube sides
+after the 3d program itself has started. You can interleave the program
+names with size parameters of the form -xxx,yyy that will ask the programs 
+that come later on the commandline to start up in that size.
+The default size is half that of the visual 3d is running on.
+.PP
+You can add more programs while 3d is running by setting some environment 
+variables and starting them :
+.PP
+.B GGI_DISPLAY=display-memory:-input:keyfile:1048576:[0-5]:/dev/null
+.PP
+The [0-5] selects on which face of the cube you want the application to run.
+.PP
+You should as well set GGI_DEFMODE to a mode with the same color
+organization like the one 3d itself is running on, and the mode, 3d
+believes it should run in, as specified with a size parameter.
+.PP
+Once
+.I 3d
+is invoked, the program will display the cube with the six other
+applications mapped to it. But you will probably only see application 
+number 1 (and maybe 3 from behind), as this is the way the cube is 
+oriented. The keyboard is redirected to the application that has the 
+blinking border.
+.SH "FUNCTION KEYS"
+.TP
+.B #
+is the "escape" key. After pressing it, the blinking border should turn red.
+All further input now goes to the 3d program and is used to manipulate the
+appearance and behaviour of the cube:
+.TP
+.B #
+A double-escape is used to send the escape-char '#' itself.
+.TP
+.B <Enter>
+or any unknown keypress will end the escape mode. The border will turn
+white again and input will go to the bordered application.
+.TP
+.B <Left>/<Right>/<Up>/<Down>/<Home>/<End>
+will make the cube turn along the respective axis.
+.TP
+.B <PgUp>/<PgDn>
+will make the cube enlarge/shrink.
+.TP
+.B s/S
+will stop any cube motion.
+.TP
+.B c/C
+will center the currently active face (the one with the border) in a
+smooth motion and when this is finished, it will stop all motion.
+This is a toggle, that gets turned off automatically when the final 
+position is reached. That is, you can disable it on its way, which
+will leave the cube spinning in the current direction.
+.TP
+.B b/B
+will toggle backface culling. In that case, the three "back" sides of
+the cube are not drawn. Looks much less nice, but is faster. Use on slow
+systems.
+.TP
+.B a/A
+will toggle autoactivation. If this is on, the blinking frame will
+automatically move to the face, that is facing the viewer most
+directly, i.e. the "front" face. This can be quite irritating, especially,
+if the cube is moving fast. But it's cool at times ...
+.TP
+.B t/T
+will toggle transparency. The pixelvalue of 0x00000000 is treated as
+"transparent" usually. This not only looks better, but often even 
+improves performance, as there is less to draw. However things like
+shells (nixterm) might be hard to read on a colorful background, so
+you might want to turn it off at times.
+.TP
+.B 0-5
+select the active console that will get input, when you leave the escaped
+mode. The blinking rectangle will move there. Together with 'c', this is
+used to get a particular console to the front.
+.TP
+.B q/Q
+quit 3d. This also tries to kill the apps started from it. Externally
+started apps are _not_ killed. They will continue to run and might interfere
+with future runs of 3d, as they still hog the shared memory used to
+communicate between 3d and the apps.
+.TP
+.B f/F (undocumented, may disappear)
+display framerate.
+.TP
+.B d/D (undocumented, may disappear)
+display debugging info. Not very useful.
+.SH BUGS
+.PP
+Too numerous to count.
+.fi
+.SH SEE ALSO
+.nf
+libggi(2)
+.fi
+
