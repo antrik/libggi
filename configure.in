@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.87 2003/05/19 12:34:39 cegger Exp $
+dnl $Id: configure.in,v 1.88 2003/07/05 22:27:36 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -285,6 +285,7 @@ dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
+
 AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h \
 sys/select.h pthread.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/wait.h asm/io.h sys/io.h sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
@@ -1203,8 +1204,19 @@ CFLAGS="$CFLAGS -D_REENTRANT -D_THREAD_SAFE"
 if test "x$use_debug" = "xyes"; then
   CFLAGS="$CFLAGS -DDEBUG"
   if test "$ac_cv_prog_gcc" = "yes"; then
+    # Common warning flags
     CFLAGS="$CFLAGS -g -Wall -Wpointer-arith -Wsign-compare"
     CFLAGS="$CFLAGS -Wno-uninitialized -Wstrict-prototypes -Wswitch"
+    CFLAGS="$CFLAGS -Wmissing-prototypes -Wreturn-types -Wshadow"
+
+    # Advanced warning flags
+    CFLAGS="$CFLAGS -Wnested-externs -Wredundant-decls"
+
+    # Buggy warning flag
+    # CFLAGS="$CFLAGS -Wconversion"
+
+    # Super advanced (only used for building releases)
+    # CFLAGS="$CFLAGS -Werror"
   fi
 fi
 
