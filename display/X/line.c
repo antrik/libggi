@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.3 2004/11/27 16:42:14 soyt Exp $
+/* $Id: line.c,v 1.4 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Arbitrary lines for display-X
@@ -52,11 +52,11 @@ int GGI_X_drawline_slave_draw(ggi_visual *vis, int x1, int y1, int x2, int y2)
         priv->slave->opdraw->drawline(priv->slave, x1, y1, x2, y2);
 	y1 = (y1 + LIBGGI_VIRTY(vis) * vis->w_frame_num);
 	y2 = (y2 + LIBGGI_VIRTY(vis) * vis->w_frame_num);
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc,
 		  x1, y1, x2, y2);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 

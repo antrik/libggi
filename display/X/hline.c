@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.10 2005/03/14 14:00:47 pekberg Exp $
+/* $Id: hline.c,v 1.11 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -83,10 +83,10 @@ int GGI_X_drawhline_slave_draw(ggi_visual *vis, int x, int y, int w)
 	GGI_X_CLEAN(vis, x, y, w, 1);
 	priv->slave->opdraw->drawhline_nc(priv->slave, x, y, w);
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x+w-1, y);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -98,10 +98,10 @@ int GGI_X_drawhline_nc_slave_draw(ggi_visual *vis, int x, int y, int w)
 	GGI_X_CLEAN(vis, x, y, w, 1);
 	priv->slave->opdraw->drawhline_nc(priv->slave, x, y, w);
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x+w-1, y);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -111,10 +111,10 @@ int GGI_X_drawhline_draw(ggi_visual *vis, int x, int y, int w)
 	priv = GGIX_PRIV(vis);
 
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x+w-1, y);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -127,7 +127,7 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, const void *data)
 	ximg = _ggi_x_create_ximage( vis, (char*)data, w, 1 );
 	if (ximg == NULL) return GGI_ENOMEM;
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
                   0, 0, x, GGI_X_WRITE_Y, (unsigned)w, 1);
 #ifndef HAVE_XINITIMAGE
@@ -137,7 +137,7 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, const void *data)
 #endif
 
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
         return 0;
 }
 
@@ -158,7 +158,7 @@ int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 	int ret = 0;
 	priv = GGIX_PRIV(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XSync(priv->disp,0);
 	ggLock(_ggi_global_lock);
 	geterror = 0;
@@ -214,7 +214,7 @@ int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 	XDestroyImage(ximg);
 out:
 	ggUnlock(_ggi_global_lock);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return ret;
 }

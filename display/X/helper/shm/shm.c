@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.30 2005/02/22 09:14:28 cegger Exp $
+/* $Id: shm.c,v 1.31 2005/03/28 20:33:35 pekberg Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -59,17 +59,18 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	if (tryflag == 0) {
+		/* flush later, this is in signal handler context
+		 * when using the signal based scheduler
+		 */
+		ggUnlock(priv->flushlock);
+		return 0;
+	}
+
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
-	if (tryflag == 0) {
-		if (ggTryLock(priv->xliblock) != 0) {
-			DPRINT_MISC("X: MIT-SHM: TRYLOCK fail (in flush_ximage_child)!\n");
-			if (priv->opmansync) MANSYNC_cont(vis);
-			return 0;
-		}
-	} else if (tryflag != 2) {
-		ggLock(priv->xliblock);
-	}
+	if (tryflag != 2) GGI_X_LOCK_XLIB(vis);
+
 	priv->flush_cmap(vis);		/* Update the palette/gamma */
 
 	/* Flush any pending Xlib operations. */
@@ -112,7 +113,7 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
-	if (tryflag != 2) ggUnlock(priv->xliblock);
+	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return 0;
 }

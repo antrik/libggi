@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.16 2005/03/14 14:00:47 pekberg Exp $
+/* $Id: box.c,v 1.17 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -95,11 +95,11 @@ int GGI_X_drawbox_slave_draw(ggi_visual *vis, int x, int y, int w, int h)
 	GGI_X_CLEAN(vis, x, y, w, h);
 	priv->slave->opdraw->drawbox(priv->slave, x, y, w, h);
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XFillRectangle(priv->disp, priv->drawable, priv->gc,
 			x, y, (unsigned)w, (unsigned)h);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -118,11 +118,11 @@ int GGI_X_copybox_slave_draw(ggi_visual *vis, int x, int y,
 	priv->slave->opdraw->copybox(priv->slave, x, y, w, h, nx, ny);
 	y = GGI_X_READ_Y;
 	ny += LIBGGI_VIRTY(vis) * vis->w_frame_num;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XCopyArea(priv->disp,  priv->drawable, priv->drawable,
 		  priv->gc, x, y, (unsigned)w, (unsigned)h, nx, ny);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -132,11 +132,11 @@ int GGI_X_drawbox_draw(ggi_visual *vis, int x, int y, int w, int h)
 	priv = GGIX_PRIV(vis);
 
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XFillRectangle(priv->disp, priv->drawable, priv->gc,
                        x, y, (unsigned)w, (unsigned)h);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -152,7 +152,7 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 
 	y = GGI_X_WRITE_Y;
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
 		  0, 0, x, y, (unsigned)w, (unsigned)h);
 
@@ -165,7 +165,7 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 #endif
 
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -177,11 +177,11 @@ int GGI_X_copybox_draw(ggi_visual *vis, int x, int y,
 
 	y = GGI_X_READ_Y;
 	ny += LIBGGI_VIRTY(vis) * vis->w_frame_num;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XCopyArea(priv->disp,  priv->drawable, priv->drawable,
 		  priv->gc, x, y, (unsigned)w, (unsigned)h, nx, ny);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -206,7 +206,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	   hlines are too small.  Find out optimal chunk size.
 	 */
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XSync(priv->disp, 0);
 	ggLock(_ggi_global_lock);
 
@@ -284,7 +284,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	XDestroyImage(ximg);
  out:
 	ggUnlock(_ggi_global_lock);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return ret;
 }

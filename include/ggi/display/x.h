@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.17 2005/03/02 20:11:29 pekberg Exp $
+/* $Id: x.h,v 1.18 2005/03/28 20:33:35 pekberg Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -125,6 +125,9 @@ typedef struct ggi_x_priv {
 	XImage	    *fontimg;
 
 	void        *xliblock;
+	void        (*lock_xlib)(ggi_visual *vis);
+	void        (*unlock_xlib)(ggi_visual *vis);
+	void        *flushlock;
 
 	int         wintype;
 	Window      parentwin, win;
@@ -173,6 +176,9 @@ typedef struct ggi_x_priv {
 } ggi_x_priv;
 
 #define GGIX_PRIV(vis) ((ggi_x_priv *)LIBGGI_PRIVATE(vis))
+
+#define GGI_X_LOCK_XLIB(vis)   (GGIX_PRIV(vis)->lock_xlib(vis))
+#define GGI_X_UNLOCK_XLIB(vis) (GGIX_PRIV(vis)->unlock_xlib(vis))
 
 /* Defined in mode.c */
 int _ggi_x_do_blit(ggi_visual_t vis, int x, int y, int w, int h);

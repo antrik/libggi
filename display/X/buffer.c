@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.26 2005/03/14 14:00:47 pekberg Exp $
+/* $Id: buffer.c,v 1.27 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -295,19 +295,21 @@ static int GGI_X_flush_draw(ggi_visual *vis,
 	priv = GGIX_PRIV(vis);
 
 	if (tryflag == 0) {
-		if (ggTryLock(priv->xliblock) != 0) {
-			DPRINT_MISC("X: TRYLOCK fail (in flush_draw)!\n");
-			return 0;
-		}
-	} else if (tryflag != 2) { 
-		ggLock(priv->xliblock);
+		/* flush later, this is in signal handler context
+		 * when using the signal based scheduler
+		 */
+		ggUnlock(priv->flushlock);
+		return 0;
 	}
+
+	if (tryflag != 2) GGI_X_LOCK_XLIB(vis);
+
 	_ggi_x_flush_cmap(vis);		/* Update the palette/gamma */
 
 	/* Flush any pending Xlib operations. */
 	XFlush(priv->disp);
 
-	if (tryflag != 2) ggUnlock(priv->xliblock);
+	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -396,19 +398,20 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	ggi_x_priv *priv;
 	int mansync;
 	priv = GGIX_PRIV(vis);
-	
+
+	if (tryflag == 0) {
+		/* flush later, this is in signal handler context
+		 * when using the signal based scheduler
+		 */
+		ggUnlock(priv->flushlock);
+		return 0;
+	}
+
 	if (priv->opmansync) MANSYNC_ignore(vis);
 	mansync = 1; /* Do we call MANSYNC_cont later? By default, yes. */
 
-	if (tryflag == 0) {
-		if (ggTryLock(priv->xliblock) != 0) {
-			DPRINT_MISC("X: TRYLOCK fail (in flush_ximage_child)!\n");
-			if (priv->opmansync) MANSYNC_cont(vis);
-			return 0;
-		}
-	} else if (tryflag != 2) { 
-		ggLock(priv->xliblock);
-	}
+	if (tryflag != 2) GGI_X_LOCK_XLIB(vis);
+
 	_ggi_x_flush_cmap(vis);		/* Update the palette/gamma */
 
 	/* Flush any pending Xlib operations. */
@@ -452,7 +455,7 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
-	if (tryflag != 2) ggUnlock(priv->xliblock);
+	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	if (priv->opmansync && mansync) MANSYNC_cont(vis);
 	return 0;
 }

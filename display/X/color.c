@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.23 2005/03/05 23:27:32 cegger Exp $
+/* $Id: color.c,v 1.24 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -55,14 +55,14 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
 	for (i=0; i < len; i++) {
 		XColor xcol;
 
-		ggLock(priv->xliblock);
+		GGI_X_LOCK_XLIB(vis);
 
 		xcol.pixel = i;
 		XQueryColor(priv->disp,
 			    DefaultColormap(priv->disp, screen),
 			    &xcol);
 
-		ggUnlock(priv->xliblock);
+		GGI_X_UNLOCK_XLIB(vis);
 
 		X_pal[i].r = xcol.red;
 		X_pal[i].g = xcol.green;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.46 2005/02/16 06:13:03 cegger Exp $
+/* $Id: visual.c,v 1.47 2005/03/28 20:33:35 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -116,7 +116,7 @@ void GGI_X_gcchanged(ggi_visual *vis, int mask)
 
  noslave:
 	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggLock(priv->xliblock);
+		GGI_X_LOCK_XLIB(vis);
 		_ggi_x_set_xclip(vis, priv->disp, priv->gc,
 				 LIBGGI_GC(vis)->cliptl.x, 
 				 LIBGGI_GC(vis)->cliptl.y,
@@ -124,17 +124,17 @@ void GGI_X_gcchanged(ggi_visual *vis, int mask)
 				 LIBGGI_GC(vis)->cliptl.x,
 				 LIBGGI_GC(vis)->clipbr.y -
 				 LIBGGI_GC(vis)->cliptl.y);
-		ggUnlock(priv->xliblock);
+		GGI_X_UNLOCK_XLIB(vis);
 	}
 	if ((mask & GGI_GCCHANGED_FG)) {
-		ggLock(priv->xliblock);
+		GGI_X_LOCK_XLIB(vis);
 		XSetForeground(priv->disp, priv->gc, LIBGGI_GC_FGCOLOR(vis));
-		ggUnlock(priv->xliblock);
+		GGI_X_UNLOCK_XLIB(vis);
 	}
 	if ((mask & GGI_GCCHANGED_BG)) {
-		ggLock(priv->xliblock);
+		GGI_X_LOCK_XLIB(vis);
 		XSetBackground(priv->disp, priv->gc, LIBGGI_GC_BGCOLOR(vis));
-		ggUnlock(priv->xliblock);
+		GGI_X_UNLOCK_XLIB(vis);
 	}
 }
 
@@ -156,6 +156,20 @@ static int GGI_X_setflags(ggi_visual *vis, ggi_flags flags) {
 		}
 	}
 	return GGI_OK;
+}
+
+static void GGI_X_lock_xlib(ggi_visual *vis)
+{
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+	ggLock(priv->xliblock);
+}
+
+static void GGI_X_unlock_xlib(ggi_visual *vis)
+{
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+	if (ggTryLock(priv->flushlock) == 0)
+		vis->opdisplay->flush(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis), 2);
+	ggUnlock(priv->xliblock);
 }
 
 static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -239,6 +253,8 @@ skip3:
 	DPRINT_MISC("GGIclose: free mansync\n");
 	if (priv->opmansync)	    free(priv->opmansync);
  skip2:
+	DPRINT_MISC("GGIclose: destroy flushlock\n");
+	if (priv->flushlock)	    ggLockDestroy(priv->flushlock);
 	DPRINT_MISC("GGIclose: destroy xliblock\n");
 	if (priv->xliblock)	    ggLockDestroy(priv->xliblock);
 	free(priv);
@@ -291,6 +307,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv == NULL) goto out;
 	LIBGGI_PRIVATE(vis) = priv;
 	vis->gamma = &(priv->gamma);
+
+	/* Create a lock to regularly flush */
+	lock = ggLockCreate();
+	if (lock == NULL) goto out;
+	ggLock(lock);
+	priv->flushlock = lock;
+	priv->lock_xlib    = GGI_X_lock_xlib;
+	priv->unlock_xlib = GGI_X_unlock_xlib;
 
 	/* Create a lock to prevent concurrent Xlib access */
 	lock = ggLockCreate();
@@ -550,7 +574,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
       /* _args.resizefunc = (gii_inputxwin_resizefunc*)GGI_X_resize;*/
 		_args.resizefunc = NULL;
                 _args.resizearg = vis;
-		_args.gglock = lock;
+		_args.lockfunc = (gii_inputxwin_lockfunc*)priv->lock_xlib;
+                _args.lockarg = vis;
+		_args.unlockfunc = (gii_inputxwin_unlockfunc*)priv->unlock_xlib;
+                _args.unlockarg = vis;
                 
 		inp = giiOpen("xwin", &_args, NULL);
 		DPRINT_MISC("X: giiOpen returned with %p\n", inp);

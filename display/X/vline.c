@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.13 2005/03/14 14:00:47 pekberg Exp $
+/* $Id: vline.c,v 1.14 2005/03/28 20:33:35 pekberg Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -83,10 +83,10 @@ int GGI_X_drawvline_slave_draw(ggi_visual *vis, int x, int y, int h)
 	GGI_X_CLEAN(vis, x, y, 1, h);
 	priv->slave->opdraw->drawvline_nc(priv->slave, x, y, h);
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x, y+h-1);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -98,10 +98,10 @@ int GGI_X_drawvline_nc_slave_draw(ggi_visual *vis, int x, int y, int h)
 	GGI_X_CLEAN(vis, x, y, 1, h);
 	priv->slave->opdraw->drawvline_nc(priv->slave, x, y, h);
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x, y+h-1);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -111,10 +111,10 @@ int GGI_X_drawvline_draw(ggi_visual *vis, int x, int y, int h)
 	priv = GGIX_PRIV(vis);
 
 	y = GGI_X_WRITE_Y;
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawLine(priv->disp, priv->drawable, priv->gc, x, y, x, y+h-1);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -124,7 +124,7 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 #warning 1,2,4-bit support needed.
 	ximg = _ggi_x_create_ximage( vis, (char*)data, 1, h);
 	if (ximg == NULL) return GGI_ENOMEM;
@@ -138,7 +138,7 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
 #endif
 
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
         return 0;
 }
 
@@ -160,7 +160,7 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	uint8 *data8;
 	priv = GGIX_PRIV(vis);
 
-        ggLock(priv->xliblock);
+        GGI_X_LOCK_XLIB(vis);
 	XSync(priv->disp, 0);
 	ggLock(_ggi_global_lock);
 	geterror = 0;
@@ -230,7 +230,7 @@ int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
 	XDestroyImage(ximg);
  out:
 	ggUnlock(_ggi_global_lock);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return ret;
 }

@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.8 2005/02/12 13:23:07 cegger Exp $
+/* $Id: fillscreen.c,v 1.9 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -61,7 +61,7 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 
 	DPRINT("X_fillscreen_slave_draw enter!\n");
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	
 	/* XXX: What is priv->gc ?  is it appropriate to use that here? */
 	gcValue.foreground = LIBGGI_GC(vis)->fg_color;
@@ -107,7 +107,7 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
 	}
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
 
@@ -121,7 +121,7 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 
 	DPRINT("X_fillscreen_draw enter!\n");
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	
 	/* XXX: What is priv->gc ?  is it appropriate to use that here? */
 	gcValue.foreground = LIBGGI_GC(vis)->fg_color;
@@ -153,7 +153,7 @@ int GGI_X_fillscreen_draw(ggi_visual *vis)
 			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
 	}
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	DPRINT_LIBS("X_fillscreen_draw exit!\n");
 	return 0;

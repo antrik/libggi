@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.4 2003/07/13 08:28:49 cegger Exp $
+/* $Id: pixel.c,v 1.5 2005/03/28 20:33:35 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -95,10 +95,10 @@ int GGI_X_drawpixel_slave_draw(ggi_visual *vis, int x, int y)
         CHECKXY(vis,x,y);
 	GGI_X_CLEAN(vis, x, y, 1, 1);
 	priv->slave->opdraw->drawpixel_nc(priv->slave, x, y);
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawPoint(priv->disp, priv->drawable, priv->gc, x, GGI_X_WRITE_Y); 
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -109,10 +109,10 @@ int GGI_X_drawpixel_nc_slave_draw(ggi_visual *vis, int x, int y)
 
 	GGI_X_CLEAN(vis, x, y, 1, 1);
 	priv->slave->opdraw->drawpixel_nc(priv->slave, x, y);
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawPoint(priv->disp, priv->drawable, priv->gc, x, GGI_X_WRITE_Y);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -121,10 +121,10 @@ int GGI_X_drawpixel_draw(ggi_visual *vis, int x, int y)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XDrawPoint(priv->disp, priv->drawable, priv->gc, x, GGI_X_WRITE_Y); 
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -134,11 +134,11 @@ int GGI_X_putpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel col)
 	priv = GGIX_PRIV(vis);
 
         CHECKXY(vis,x,y); /* tempgc is used in flush and has clip=fullscreen. */
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
         XSetForeground(priv->disp, priv->tempgc, col);
         XDrawPoint(priv->disp, priv->drawable, priv->tempgc, x, GGI_X_WRITE_Y);
 	GGI_X_MAYBE_SYNC(vis);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 	return 0;
 }
 
@@ -159,7 +159,7 @@ int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 	int ret = 0;
 	priv = GGIX_PRIV(vis);
         
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 	XSync(priv->disp, 0);
 	ggLock(_ggi_global_lock);
 
@@ -217,7 +217,7 @@ int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 	XDestroyImage(ximg);
  out:
 	ggUnlock(_ggi_global_lock);
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return ret;
 }

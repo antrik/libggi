@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.46 2005/02/18 16:28:26 orzo Exp $
+/* $Id: mode.c,v 1.47 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -681,7 +681,7 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 
 	vi = (priv->vilist + viidx)->vi;
 
@@ -765,7 +765,7 @@ oldparent:
 		if (err) {
 			/* xlib lock is still acquired here - unlock before exiting */
 			DPRINT("priv->createfb failed.\n");
-			ggUnlock(priv->xliblock);
+			GGI_X_UNLOCK_XLIB(vis);
 			goto err0;
 		}
 	}
@@ -827,7 +827,7 @@ oldparent:
 	attrib.backing_store = Always;
 	XChangeWindowAttributes(priv->disp,priv->win, CWBackingStore, &attrib);
 
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	DPRINT_MODE("X: Sync\n");
 	XSync(priv->disp, 0);
@@ -928,7 +928,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 
 	vi = (priv->vilist + viidx)->vi;
 
@@ -948,7 +948,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 			DPRINT("priv->createfb failed.\n");
 			/* xlib lock is still acquired here 
 			 * - unlock before exiting */
-			ggUnlock(priv->xliblock);
+			GGI_X_UNLOCK_XLIB(vis);
 			goto err0;
 		}
 	}
@@ -1022,7 +1022,7 @@ int GGI_X_setmode_fixed(ggi_visual *vis, ggi_mode *tm)
 	attrib.backing_store = Always;
 	XChangeWindowAttributes(priv->disp, priv->win, attribmask, &attrib);
 
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	DPRINT_MODE("X: Sync\n");
 	XSync(priv->disp, 0);
@@ -1141,7 +1141,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	if (priv->opmansync)
 		MANSYNC_ignore(vis);
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 
 	vi = (priv->vilist + viidx)->vi;
 
@@ -1228,7 +1228,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 			/* xlib lock is still acquired here 
 			 * - unlock before exiting */
 			DPRINT("priv->createfb failed.\n");
-			ggUnlock(priv->xliblock);
+			GGI_X_UNLOCK_XLIB(vis);
 			goto err0;
 		}
 	}
@@ -1319,7 +1319,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	attrib.backing_store = Always;
 	XChangeWindowAttributes(priv->disp, priv->win, attribmask, &attrib);
 
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	DPRINT_MODE("X: Sync\n");
 	XSync(priv->disp, 0);

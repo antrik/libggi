@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.8 2004/08/17 08:39:32 cegger Exp $
+/* $Id: gtext.c,v 1.9 2005/03/28 20:33:34 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -106,7 +106,7 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 
 	y = GGI_X_WRITE_Y;
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_BGCOLOR(vis));
 	XFillRectangle(priv->disp, priv->drawable, priv->gc, x, y,
@@ -117,7 +117,7 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 
 	GGI_X_MAYBE_SYNC(vis);
 
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return 0;
 }
@@ -130,7 +130,7 @@ int GGI_X_putc_draw(ggi_visual *vis, int x, int y, char c)
 
 	y = GGI_X_WRITE_Y;
 
-	ggLock(priv->xliblock);
+	GGI_X_LOCK_XLIB(vis);
 
 	XSetForeground(priv->disp, priv->gc, LIBGGI_GC_BGCOLOR(vis));
 	XFillRectangle(priv->disp, priv->drawable, priv->gc,
@@ -144,7 +144,7 @@ int GGI_X_putc_draw(ggi_visual *vis, int x, int y, char c)
 	
 	GGI_X_MAYBE_SYNC(vis);
 
-	ggUnlock(priv->xliblock);
+	GGI_X_UNLOCK_XLIB(vis);
 
 	return 0;
 }
