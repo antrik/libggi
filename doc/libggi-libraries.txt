@@ -52,7 +52,7 @@ user, which affect the behaviour of LibGGI:
 
 `GGI_DISPLAY`
    Specifies the default target used when the application calls
-   `ggiOpen` with `NULL` argument.
+   :man:`ggiOpen(3)` with `NULL` argument.
 
    The default target is specified using a target-spec:
    ``target:targetargs`` where :p:`target` is the name of the target,
@@ -70,7 +70,7 @@ user, which affect the behaviour of LibGGI:
    ``(i1):(i2):...``
 
    The inputs specified by `GGI_INPUT_target_n` are only opened at the
-   :p:`n`th call of `ggiOpen`. This is used for misbehaving
+   :p:`n`'th call of :man:`ggiOpen(3)`. This is used for misbehaving
    applications that do not allow the user to specify inputs for the
    different targets that it opens.
 
