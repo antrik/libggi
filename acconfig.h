@@ -10,6 +10,9 @@
 /* The length of the tag */
 #define GGITAGLEN	FIXME_DEFINE_THIS!
 
+/* Define if you have <directfb.h> header file */
+#undef HAVE_DIRECTFB_H
+
 /* Where to look for DirectFB modules */
 #define DIRECTFB_DRIVER_DIR FIXME_DEFINE_THIS!
 

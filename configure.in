@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.92 2003/10/09 15:06:47 cegger Exp $
+dnl $Id: configure.in,v 1.93 2003/10/29 17:31:22 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -753,6 +753,10 @@ fix->accel = 0;
 fi
 
 if test "x$build_directfb_renderer" != "xno"; then
+  AC_CHECK_HEADER(directfb.h,
+	AC_DEFINE(HAVE_DIRECTFB_H),
+	build_directfb_renderer="no")
+
   AC_CHECK_HEADER(directfb-internal/directfb_version.h,
 	foo=bar, build_directfb_renderer="no")
 fi
