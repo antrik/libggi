@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.6 2004/10/31 15:16:41 cegger Exp $
+/* $Id: dga.c,v 1.7 2004/11/06 22:48:25 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -212,13 +212,13 @@ int GGIdl_helper_x_dga(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return GGI_OK;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return GGI_OK;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return GGI_OK;
 	default:
 		*funcptr = NULL;

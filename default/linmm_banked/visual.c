@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/09/13 09:10:16 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/06 22:48:23 cegger Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -232,13 +232,13 @@ int GGIdl_linmm_banked(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/10/31 15:16:43 cegger Exp $
+/* $Id: visual.c,v 1.12 2004/11/06 22:48:32 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -379,13 +379,13 @@ int GGIdl_xf86dga(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:46 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/11/06 22:48:22 cegger Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-right)
@@ -67,7 +67,7 @@ int GGIdl_linear_1_r(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.6 2004/10/31 14:24:54 cegger Exp $
+/* $Id: evi.c,v 1.7 2004/11/06 22:48:26 cegger Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -114,13 +114,13 @@ int GGIdl_helper_x_evi(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

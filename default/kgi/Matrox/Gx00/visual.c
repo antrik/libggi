@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/02/28 17:21:42 aldot Exp $
+/* $Id: visual.c,v 1.6 2004/11/06 22:48:21 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -164,11 +164,11 @@ int GGIdl_Gx00(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit: /* TODO: Check if exit is also there */
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

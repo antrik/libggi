@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/09/08 20:22:41 cegger Exp $
+/* $Id: visual.c,v 1.5 2004/11/06 22:48:24 cegger Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -97,7 +97,7 @@ int GGIdl_stubs(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

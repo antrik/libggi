@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:51 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/11/06 22:48:24 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Generic RAMDAC via IOCTL driver
@@ -88,13 +88,13 @@ int GGIdl_ramdac(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

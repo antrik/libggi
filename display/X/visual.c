@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.38 2004/11/03 12:56:54 cegger Exp $
+/* $Id: visual.c,v 1.39 2004/11/06 22:48:25 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -574,13 +574,13 @@ int GGIdl_X(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = GGIexit;
+		*funcptr = (void *)GGIexit;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

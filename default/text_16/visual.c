@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:51 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/11/06 22:48:25 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -75,7 +75,7 @@ int GGIdl_text_16(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

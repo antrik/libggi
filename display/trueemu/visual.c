@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/11/03 13:34:25 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/11/06 22:48:31 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -251,13 +251,13 @@ int GGIdl_trueemu(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = GGIexit;
+		*funcptr = (void *)GGIexit;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

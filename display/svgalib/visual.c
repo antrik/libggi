@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/10/31 14:01:27 cegger Exp $
+/* $Id: visual.c,v 1.13 2004/11/06 22:48:31 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -544,13 +544,13 @@ int GGIdl_svgalib(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

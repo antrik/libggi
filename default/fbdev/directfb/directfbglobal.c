@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.9 2004/09/18 10:58:51 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.10 2004/11/06 22:48:20 cegger Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -33,13 +33,13 @@ int GGIdl_directfbglobal(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

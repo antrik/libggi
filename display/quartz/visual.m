@@ -1,4 +1,4 @@
-/* $Id: visual.m,v 1.8 2004/10/31 14:25:03 cegger Exp $
+/* $Id: visual.m,v 1.9 2004/11/06 22:48:30 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -240,13 +240,13 @@ int GGIdl_quartz(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = GGIexit;
+		*funcptr = (void *)GGIexit;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2004/02/23 14:24:43 pekberg Exp $
+/* $Id: visual.c,v 1.4 2004/11/06 22:48:21 cegger Exp $
 ******************************************************************************
 
   Interleaved planar graphics (with 2 byte interleave).
@@ -58,7 +58,7 @@ int GGIdl_iplanar_2p(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:25:27 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/11/06 22:48:32 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -219,13 +219,13 @@ int GGIdl_wsfb(int func, void **funcptr)
 	GGIDPRINT("GGIdl_wsfb\n");
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

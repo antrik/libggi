@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.23 2004/10/31 14:24:59 cegger Exp $
+/* $Id: shm.c,v 1.24 2004/11/06 22:48:26 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -405,13 +405,13 @@ int GGIdl_helper_x_shm(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

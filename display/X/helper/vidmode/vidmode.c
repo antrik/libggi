@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.11 2004/10/31 14:24:59 cegger Exp $
+/* $Id: vidmode.c,v 1.12 2004/11/06 22:48:26 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -404,13 +404,13 @@ int GGIdl_helper_x_vidmode(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = GGIopen;
+		*funcptr = (void *)GGIopen;
 		return GGI_OK;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return GGI_OK;
 	case GGIFUNC_close:
-		*funcptr = GGIclose;
+		*funcptr = (void *)GGIclose;
 		return GGI_OK;
 	default:
 		*funcptr = NULL;
