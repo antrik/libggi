@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.5 2004/05/17 16:16:35 aldot Exp $
+/* $Id: showaccel2.c,v 1.6 2004/05/17 17:16:47 aldot Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -265,12 +265,12 @@ int main(int argc, char *argv[])
 				read(p_fd[0], cnt, 7);
 				break;
 		}
+		/* Print the measured data
+		 */
+		c1 = atoi(cnt);
+		if (c2==0) c2=1;
+		printf("Ratio : %8d : %8d = %2f\n",c1,c2,(double)c1/(double)c2);
 	}
-	/* Print the measured data
-	 */
-	c1 = atoi(cnt);
-	if (c2==0) c2=1;
-	printf("Ratio : %8d : %8d = %2f\n",c1,c2,(double)c1/(double)c2);
 
 	/* Close down LibGGI.
 	 */
