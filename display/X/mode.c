@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2004/02/29 22:04:51 cegger Exp $
+/* $Id: mode.c,v 1.26 2004/04/05 23:11:32 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -389,8 +389,15 @@ int GGI_X_setmode_normal(ggi_visual *vis, ggi_mode *tm)
 	XNextEvent (priv->disp, &event);
 	GGIDPRINT_MODE("X: Window Mapped\n");
 
-	/* Parent window doesn't listen for input. */
-	XSelectInput(priv->disp, priv->parentwin, 0);
+	/* We let the parent window listen for the keyboard.
+	 * this allows to have the windowmanager decide about keyboard 
+	 * focus as usual.
+	 * The child window listens for the rest.
+	 * Note, that the child window also listens for the keyboard for
+	 * those cases where we don't have a parent.
+	 */
+	XSelectInput(priv->disp, priv->parentwin,
+		     KeyPressMask | KeyReleaseMask);
 
 oldparent:
 	GGIDPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
@@ -500,6 +507,7 @@ oldparent:
 		data->win = priv->win;
 		if (data->win == None) data->win = priv->parentwin;
 		data->ptralwaysrel = 0;
+		data->parentwin = priv->parentwin;
 
 		giiEventSend(priv->inp, &ev);
 	}
