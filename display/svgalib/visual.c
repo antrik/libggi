@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2004/09/12 20:43:11 cegger Exp $
+/* $Id: visual.c,v 1.11 2004/09/13 08:54:06 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -173,7 +173,7 @@ static int _GGIchecksvgamodes(ggi_visual *vis)
 static void 
 do_setpalette(ggi_visual *vis)
 {
-	ggi_graphtype gt = LIBGGI_MODE(vis)->graphtype;
+	ggi_graphtype gt = LIBGGI_GT(vis);
 	int len = 1 << GT_DEPTH(gt);
 
 	vga_setpalvec(0, len, LIBGGI_PAL(vis)->priv);

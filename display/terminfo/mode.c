@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/09/12 21:21:43 cegger Exp $
+/* $Id: mode.c,v 1.11 2004/09/13 08:58:03 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -38,9 +38,7 @@
 
 static int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
 {
-	ggi_mode *mode;
-
-	mode = LIBGGI_MODE(vis);
+	ggi_mode *mode = LIBGGI_MODE(vis);
 
 	x /= mode->dpp.x; y /= mode->dpp.y; /* terminfo can only set origin
                                                with pixel granularity, so
@@ -108,7 +106,7 @@ int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 			strcpy(apiname, "generic-stubs");
 			return 0;
 		case 2:
-			switch (LIBGGI_MODE(vis)->graphtype) {
+			switch (LIBGGI_GT(vis)) {
 				case GT_TEXT16: strcpy(apiname, "generic-text-16"); break;
 				case GT_TEXT32: strcpy(apiname, "generic-text-32"); break;
 				default: return -1;

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2004/09/12 21:21:42 cegger Exp $
+/* $Id: color.c,v 1.5 2004/09/13 08:55:21 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -221,7 +221,7 @@ static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
 
 int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 {
-	switch (LIBGGI_MODE(vis)->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 		case GT_TEXT16: return paint_ncurses_window16(vis, win, width, height);
 		case GT_TEXT32: return paint_ncurses_window32(vis, win, width, height);
 		default: return -1;
@@ -231,7 +231,7 @@ int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 #if 0
 ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, ggi_color *col)
 {
-	switch (LIBGGI_MODE(vis)->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 		case GT_TEXT16: {
 			long distance;
 			int current;
@@ -254,7 +254,7 @@ ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, ggi_color *col)
 
 int GGI_terminfo_unmappixel(ggi_visual *vis, ggi_pixel pix, ggi_color *col)
 {
-	switch (LIBGGI_MODE(vis)->graphtype) {
+	switch (LIBGGI_GT(vis)) {
 		case GT_TEXT16: {
 			pix = ( pix >> 8 ) & 0x0F;
 			memcpy(col, &vga16_palette[pix%16], sizeof(ggi_color));
