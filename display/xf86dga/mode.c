@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2005/02/03 18:10:16 orzo Exp $
+/* $Id: mode.c,v 1.25 2005/02/06 13:11:25 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -444,6 +444,7 @@ void _GGI_xf86dga_checkmode_adjust(ggi_mode * req, ggi_mode * recognizer,
 				   ggi_visual *vis)
 {
 	ggidga_priv *priv = DGA_PRIV(vis);
+	int frames;
 
 	recognizer->virt.y = req->virt.y;
 	if ((unsigned) recognizer->virt.y > priv->height)
@@ -451,7 +452,7 @@ void _GGI_xf86dga_checkmode_adjust(ggi_mode * req, ggi_mode * recognizer,
 	if (recognizer->virt.y < recognizer->visible.y)
 		recognizer->virt.y = recognizer->visible.y;
 
-	int max_frames = priv->mem_size * 1024 /
+	max_frames = priv->mem_size * 1024 /
 	    GT_ByPPP(priv->stride * recognizer->virt.y,
 		     recognizer->graphtype);
 
@@ -471,6 +472,8 @@ static
 int _GGI_xf86dga_do_checkmode(ggi_visual * vis, ggi_mode * mode,
 			      XF86VidModeModeInfo **dgamode )
 {
+	int i;
+	int err;
 	ggidga_priv *priv = DGA_PRIV(vis);
 	ggi_checkmode_t *cm;
 	cm = _GGI_generic_checkmode_create();
@@ -478,16 +481,18 @@ int _GGI_xf86dga_do_checkmode(ggi_visual * vis, ggi_mode * mode,
 	/* Initialize best mode search */
 	_GGI_generic_checkmode_init( cm, mode );
 
-	for(int i=0; i<priv->num_modes; i++ ) {
+	for(i = 0; i < priv->num_modes; i++ ) {
 		/* Turn dgamode structure into a ggimode suggestion */
 		_GGI_xf86dga_checkmode_adapt( mode, priv->dgamodes[i], priv );
+
 		/* Adjust this suggestion for wildcard matching against
 		 * the requested mode in cm->req */
 		_GGI_xf86dga_checkmode_adjust( &cm->req, mode, vis );
+
 		/* Let the checkmode API decide if its the best so far */
 		_GGI_generic_checkmode_update( cm, mode, priv->dgamodes[i] );
 	}
-	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)dgamode );
+	err = _GGI_generic_checkmode_finish( cm, mode, (void**)dgamode );
 	_GGI_generic_checkmode_destroy(cm);
 	return err;
 }

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2005/02/03 18:12:53 orzo Exp $
+/* $Id: mode.c,v 1.24 2005/02/06 13:08:04 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -785,17 +785,19 @@ static
 int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
                             struct ggi_fbdev_timing **timing_)
 {
+	int err = GGI_OK;
+	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
+	ggi_checkmode_t * cm;
+
+
+	cm = _GGI_generic_checkmode_create();
+	
 
 	DPRINT_MODE("display-fbdev: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
-
-	ggi_checkmode_t * cm =
-        _GGI_generic_checkmode_create();
-	
 
 	/* This puts the contents of mode into cm->req */
 	_GGI_generic_checkmode_init( cm, mode );
@@ -868,12 +870,15 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 		 * specify a return value for when this seems to be the case.
 		 * Let's suggest the saved_timing... */
 		DPRINT_MODE( "Error! FB_ACTIVATE_TEST failed for all modes\n" );
+
 		_GGI_fbdev_checkmode_adapt( mode, saved_timing, priv );
 		_GGI_fbdev_checkmode_adjust( &cm->req, mode, priv );
 		_GGI_generic_checkmode_update( cm, mode, saved_timing );
+
 		/* ...and restore it to the list. */
 		saved_timing->next = NULL;
 		priv->timings = saved_timing;
+
 		/* QUESTION: If the saved_timing mode just happens to
 		 * match the reqested mode, _GGI_generic_checkmode_finish
 		 * will return success.  Is this the proper behavior? */
@@ -881,7 +886,7 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 	else if( saved_timing != priv->timings )
 		free( saved_timing );
 
-	int err = _GGI_generic_checkmode_finish( cm, mode, (void**)timing_);
+	err = _GGI_generic_checkmode_finish( cm, mode, (void**)timing_);
 
 	_GGI_generic_checkmode_destroy( cm );
 	return err;
