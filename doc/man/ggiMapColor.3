@@ -11,9 +11,9 @@ ggi_pixel ggiMapColor(ggi_visual_t vis, const ggi_color *col);
 
 int ggiUnmapPixel(ggi_visual_t vis, ggi_pixel pixel, ggi_color *col);
 
-int ggiPackColors(ggi_visual_t vis, void *buf, ggi_color *cols, int len); 
+int ggiPackColors(ggi_visual_t vis, void *buf, const ggi_color *cols, int len); 
 
-int ggiUnpackPixels(ggi_visual_t vis, void *buf, ggi_color *cols, int len);
+int ggiUnpackPixels(ggi_visual_t vis, const void *buf, ggi_color *cols, int len);
 .fi
 
 .SH DESCRIPTION

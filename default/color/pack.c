@@ -1,4 +1,4 @@
-/* $Id: pack.c,v 1.4 2004/11/14 15:47:42 cegger Exp $
+/* $Id: pack.c,v 1.5 2004/11/26 22:17:44 cegger Exp $
 ******************************************************************************
 
    Generic color packing
@@ -32,7 +32,7 @@
 
 /* Pack the colors into an array
  */
-int GGI_color_L1_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L1_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
         uint8 *dest = (uint8 *) buf;
 		
@@ -43,7 +43,7 @@ int GGI_color_L1_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len
 	return 0;
 }	
 
-int GGI_color_L2_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L2_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
         uint16 *dest = (uint16 *) buf;
 		
@@ -54,7 +54,7 @@ int GGI_color_L2_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len
 	return 0;
 }	
 
-int GGI_color_L3_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L3_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
         uint8 *dest = (uint8 *) buf;
 		
@@ -69,7 +69,7 @@ int GGI_color_L3_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len
 	return 0;
 }	
 
-int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
         uint32 *dest = (uint32 *) buf;
 		
@@ -86,7 +86,7 @@ int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len
 
 /* Unpack into the ggi_color array the values of the pixels
  */
-int GGI_color_L1_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L1_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
         uint8 *src = (uint8 *) buf;
 		
@@ -97,7 +97,7 @@ int GGI_color_L1_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int l
 	return 0;
 }	
 
-int GGI_color_L2_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L2_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
         uint16 *src = (uint16 *) buf;
 		
@@ -108,7 +108,7 @@ int GGI_color_L2_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int l
 	return 0;
 }	
 
-int GGI_color_L3_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L3_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
         uint8 *src = (uint8 *) buf;
 		
@@ -122,7 +122,7 @@ int GGI_color_L3_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int l
 	return 0;
 }	
 
-int GGI_color_L4_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_color_L4_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
         uint32 *src = (uint32 *) buf;
 		

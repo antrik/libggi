@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.7 2004/11/26 21:35:33 cegger Exp $
+/* $Id: stubs.c,v 1.8 2004/11/26 22:17:45 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -389,7 +389,7 @@ int GGI_multi_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 }
 
 
-int GGI_multi_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_multi_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	ggi_visual *cvis = GG_SLIST_FIRST(&priv->vis_list)->vis;
@@ -398,7 +398,7 @@ int GGI_multi_packcolors(ggi_visual *vis, void *buf, ggi_color *cols, int len)
 }
 
 
-int GGI_multi_unpackpixels(ggi_visual *vis, void *buf, ggi_color *cols, int len)
+int GGI_multi_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	ggi_visual *cvis = GG_SLIST_FIRST(&priv->vis_list)->vis;

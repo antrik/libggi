@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.7 2004/11/26 21:35:36 cegger Exp $
+/* $Id: stubs.c,v 1.8 2004/11/26 22:17:46 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -116,10 +116,10 @@ ggi_pixel ggiMapColor(ggi_visual *vis, const ggi_color *col)
 int ggiUnmapPixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 { return vis->opcolor->unmappixel(vis,pixel,col); }
 
-int ggiPackColors(ggi_visual *vis,void *buf,ggi_color *cols,int len)
+int ggiPackColors(ggi_visual *vis,void *buf,const ggi_color *cols,int len)
 { return vis->opcolor->packcolors(vis,buf,cols,len); }
 
-int ggiUnpackPixels(ggi_visual *vis,void *buf,ggi_color *cols,int len)
+int ggiUnpackPixels(ggi_visual *vis,const void *buf,ggi_color *cols,int len)
 { return vis->opcolor->unpackpixels(vis,buf,cols,len); }
 
 
