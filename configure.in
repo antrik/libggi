@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.85 2003/05/04 20:17:19 cegger Exp $
+dnl $Id: configure.in,v 1.86 2003/05/09 22:08:04 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -1202,7 +1202,7 @@ if test "x$use_debug" = "xyes"; then
   CFLAGS="$CFLAGS -DDEBUG"
   if test "$ac_cv_prog_gcc" = "yes"; then
     CFLAGS="$CFLAGS -g -Wall -Wpointer-arith -Wsign-compare"
-    CFLAGS="$CFLAGS -Wno-uninitialized -Wstrict-prototypes"
+    CFLAGS="$CFLAGS -Wno-uninitialized -Wstrict-prototypes -Wswitch"
   fi
 fi
 
