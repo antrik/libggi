@@ -1,4 +1,4 @@
-/* $Id: triple-int.h,v 1.3 2004/10/19 22:35:47 cegger Exp $
+/* $Id: triple-int.h,v 1.4 2004/10/21 10:48:53 pekberg Exp $
 ******************************************************************************
 
    Small functions for triple precision integer math.
@@ -40,7 +40,7 @@
  *
  * List of public functions: assign_3, assign_int_3, assign_unsigned_3,
  * sign_3, inc_3, dec_3, invert_3, negate_3, lshift_3, rshift_3, add_3,
- * sub_3, eq0_3, gt0_3, ge_3, lt_3, le_3, eq_3, ge_3, abs_3, bits_3,
+ * sub_3, eq0_3, gt0_3, ge0_3, lt0_3, le0_3, eq_3, ge_3, abs_3, bits_3,
  * divmod_3, mul_3.
  *
  * Arguably missing: gt_3, lt_3, le_3, and_3, or_3, xor_3, div_3, mod_3.
