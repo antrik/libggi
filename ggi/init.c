@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.16 2004/02/23 14:25:28 pekberg Exp $
+/* $Id: init.c,v 1.17 2004/02/26 23:00:28 aldot Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -79,7 +79,7 @@ enum gg_swartype _ggiGetSwarType(void) {
 }
 
 /*
- * Initalize the strutures for the library
+ * Initialize the structures for the library
  */
 
 int ggiInit(void)

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/02/14 13:45:40 cegger Exp $
+/* $Id: mode.c,v 1.5 2004/02/26 23:00:28 aldot Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -434,7 +434,7 @@ int ggiFPrintMode(FILE *s, ggi_mode *m)
  *    is ignored, no failure
  * -1 if there is text that can not be parsed. 
  *    This text is printed to stderr.
- *    All paramters parsed so far are written into m!
+ *    All parameters parsed so far are written into m!
  *
  * So m contains all parameters that have been successfully parsed.
  * For most applications there will be no need for testing parsemode

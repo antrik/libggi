@@ -87,7 +87,7 @@ XGA
 
 
 The following cards might benefit from this library even though
-they have the ability to map their whole frambuffer in.
+they have the ability to map their whole framebuffer in.
 It can be used as a temporary graphics library before the
 linear mapping code is complete in the chipset driver for
 the corresponding card.  With cards that cannot map lfb

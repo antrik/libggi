@@ -24,11 +24,11 @@ Synopsis
 Description
 -----------
 
-`ggiInit` initalizes the library. This function must be called before
+`ggiInit` initializes the library. This function must be called before
 using other LibGGI functions; otherwise the results will be undefined.
 
 
-`ggiExit` uninitializes the library (after being initalized by
+`ggiExit` uninitializes the library (after being initialized by
 `ggiInit`) and automatically cleanup if necessary.  This should be
 called after an application is finished with the library.  If any GGI
 functions are called after the library has been uninitialized, the
@@ -68,7 +68,7 @@ Examples
 Initialize and uninitialize LibGGI::
 
   if (ggiInit() < 0) {
-      fprintf(stderr, "Cannot initalize LibGGI!\n");
+      fprintf(stderr, "Cannot initialize LibGGI!\n");
       exit(1);
   }
 
