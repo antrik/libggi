@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.13 2001/07/18 12:33:34 adamel Exp $
+dnl $Id: configure.in,v 1.14 2001/07/18 17:05:58 thayne Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -155,14 +155,21 @@ build_linvtsw_helper=$enableval)
 AC_ARG_WITH(gii,
 [  --with-gii=DIR          use the LibGII installed with prefix DIR],
 CFLAGS="$CFLAGS -I$withval/include"
-CPPFLAGS="$CPPFLAGS -I$withval/include"
-LDFLAGS="$LDFLAGS -L$withval/lib")
+  CPPFLAGS="$CPPFLAGS -I$withval/include"
+  LDFLAGS="$LDFLAGS -L$withval/lib")
+
+# This is for building against an uninstalled libgii for
+# both $(top_builddir) == $(top_srcdir)
+# and $(top_builddir) != $(top_srcdir)
+# I'd like the sed expression to be more robust, but
+# character set matching '[]' is stripped by m4
 AC_ARG_WITH(uninst-gii,
 [  --with-uninst-gii=DIR   use uninstalled copy of LibGII found in DIR],
-absval=`(cd "$withval"; pwd)`
-CFLAGS="$CFLAGS -I$absval/include"
-CPPFLAGS="$CPPFLAGS -I$absval/include"
-LDFLAGS="$LDFLAGS -L$absval/gg -L$absval/gii")
+gii_top_builddir=`(cd "$withval"; pwd)`
+  gii_top_srcdir=$gii_top_builddir/`(cd "$withval"; sed -n -e 's/^top_srcdir = //p' Makefile)`
+  CFLAGS="$CFLAGS -I$gii_top_srcdir/include -I$gii_top_builddir/include"
+  CPPFLAGS="$CPPFLAGS -I$gii_top_srcdir/include -I$gii_top_builddir/include"
+  LDFLAGS="$LDFLAGS -L$gii_top_builddir/gg -L$gii_top_builddir/gii")
 
 AC_ARG_ENABLE(threads,
 [  --enable-threads        use threads for mansync],
