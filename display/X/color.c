@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2003/07/06 10:25:21 cegger Exp $
+/* $Id: color.c,v 1.8 2003/09/16 21:02:45 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -100,7 +100,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 		int x;
 		XColor xcol;
 
-		for (x=priv->cmap_first; x < priv->cmap_last; x++) {
+		for (x = priv->cmap_first; x < priv->cmap_last; x++) {
 			xcol.red   = vis->palette[x].r;
 			xcol.green = vis->palette[x].g;
 			xcol.blue  = vis->palette[x].b;
@@ -113,11 +113,20 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 		goto set;
 	}
 	if (priv->gammamap) {
-		/* We may want to do as above someday, so left this way. */
-		XStoreColors(priv->disp, priv->cmap, 
-			     priv->gammamap, priv->ncols);
-		priv->cmap_first = priv->ncols;
-		priv->cmap_last = 0;
+		int x;
+		XColor xcol;
+
+		for (x = priv->gamma.start; x < priv->gamma.len; x++) {
+			xcol.red   = priv->gammamap[x].red;
+			xcol.green = priv->gammamap[x].green;
+			xcol.blue  = priv->gammamap[x].blue;
+			xcol.pixel = x;
+			xcol.flags = DoRed | DoGreen | DoBlue;
+			XStoreColor(priv->disp, priv->cmap, &xcol);
+		}
+
+		priv->gamma.start = priv->ncols;
+		priv->gamma.len = 0;
 		goto set;
 	}
 	return 0;
@@ -175,10 +184,10 @@ int GGI_X_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	priv = GGIX_PRIV(vis);
 	if (priv->vilist[priv->viidx].vi->class != DirectColor) return -2;
 
-	if (colormap==NULL) return -1;
-	if (start >= priv->ncols) return -1;
+	if (colormap == NULL) return -1;
+	if (start >= priv->gamma.len) return -1;
 	if (start < 0) return -1;
-	if (len > (priv->ncols - start)) return -1;
+	if (len > (priv->gamma.len - start)) return -1;
 
 	i = 0;
 	do {
@@ -189,11 +198,11 @@ int GGI_X_setgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 		if ((start + i) < priv->gamma.maxwrite_b)
 			priv->gammamap[start + i].blue  = colormap[i].b;
 	} while (i++ < len);
-	if (start < priv->cmap_first) {
-		priv->cmap_first = start;
+	if (start < priv->gamma.start) {
+		priv->gamma.start = start;
 	}
-	if (start+len > priv->cmap_last) {
-		priv->cmap_last  = start+len;
+	if (start+len > priv->gamma.len) {
+		priv->gamma.len  = start+len;
 	}
 
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) _ggi_x_flush_cmap(vis);
