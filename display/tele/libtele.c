@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.1 2001/05/12 23:02:31 cegger Exp $
+/* $Id: libtele.c,v 1.2 2002/01/27 09:18:29 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -734,7 +734,13 @@ int tserver_exit(TeleServer *s)
 	if (! s->inet) {
 		char filename[200];
 
-		sprintf(filename, "%s%d", TELE_FIFO_BASE, s->display);
+#ifdef HAVE_SNPRINTF
+		snprintf(filename, 200, "%s%d",
+			TELE_FIFO_BASE, s->display);
+#else
+		sprintf(filename, "%s%d",
+			TELE_FIFO_BASE, s->display);
+#endif
 
 		unlink(filename);
 	}
