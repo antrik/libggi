@@ -367,7 +367,7 @@ See Also
 Set or get a mode on a visual
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 ggiSetMode ggiSetTextMode ggiSetGraphMode ggiSetSimpleMode ggiGetMode
+.. manpage:: 3 ggiSetMode ggiGetMode
 
 
 Synopsis
@@ -378,16 +378,6 @@ Synopsis
   #include <ggi/ggi.h>
 
   int ggiSetMode(ggi_visual_t visual, ggi_mode *tm);
-
-  int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
-		     int vcols, int vrows, int fontx, int fonty,
-		     ggi_graphtype type);
-
-  int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
-		      int xv, int yv, ggi_graphtype type);
-
-  int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize,
-		       int frames, ggi_graphtype type);
 
   int ggiGetMode(ggi_visual_t visual, ggi_mode *tm);
 
@@ -401,14 +391,6 @@ parameters are changed from the original mode, the new mode will not
 be silently set.
 
 
-`ggiSetTextMode`, `ggiSetGraphMode` and `ggiSetSimpleMode` are
-convenient versions of `ggiSetMode` that take the mode parameters as
-integer arguments rather than as a `ggi_mode` struct that the
-application has to fill out.  Otherwise, they are functionally
-equivalent to `ggiSetMode` function, and the same mode-setting
-semantics apply, except the changed `ggi_mode` cannot be seen.
-
-
 `ggiGetMode` fills out the passed `ggi_mode` with the parameters of
 the current mode of the visual.
 
@@ -416,9 +398,8 @@ the current mode of the visual.
 Return value
 ------------
 
-
-The mode setting functions return `0` if the mode is set successfully,
-otherwise an :man:`ggi-error(3)` code.
+`ggiSetMode` returns `0` if the mode is set successfully, otherwise an
+:man:`ggi-error(3)` code.
 
 
 Notes
@@ -427,13 +408,83 @@ Notes
 Do not set a mode before checking it. You may be able to set up
 a certain mode on one target, but not other targets.
 
-See the example in :man:`ggiCheckMode(3)`
+See the example in :man:`ggiCheckMode(3)`.
+
+.. important::
+
+  Note that the :man:`ggiSetTextMode(3)`, :man:`ggiSetGraphMode(3)` and
+  :man:`ggiSetSimpleMode(3)` functions are **deprecated**. Use
+  :man:`ggiCheckMode(3)` and similar functions, and then use
+  :man:`ggiSetMode(3)` on the resulting adjusted :man:`ggi_mode(3)`, once you
+  have checked it yourself.
 
 
 See Also
 --------
 
 :man:`ggiCheckMode(3)`, :man:`ggiOpen(3)`, :man:`ggi_mode(3)`
+
+
+
+DEPRECATED: Set a specific type of mode on a visual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 3 ggiSetTextMode ggiSetGraphMode ggiSetSimpleMode
+
+
+Synopsis
+--------
+
+::
+
+  #include <ggi/ggi.h>
+
+  int ggiSetTextMode(ggi_visual_t visual, int cols, int rows,
+		     int vcols, int vrows, int fontx, int fonty,
+		     ggi_graphtype type);
+
+  int ggiSetGraphMode(ggi_visual_t visual, int x, int y,
+		      int xv, int yv, ggi_graphtype type);
+
+  int ggiSetSimpleMode(ggi_visual_t visual, int xsize, int ysize,
+		       int frames, ggi_graphtype type);
+
+
+Description
+-----------
+.. important::
+
+  These functions are DEPRECATED and may be removed from a future version of
+  GGI.
+
+`ggiSetTextMode`, `ggiSetGraphMode` and `ggiSetSimpleMode` are
+convenient versions of `ggiSetMode` that take the mode parameters as
+integer arguments rather than as a `ggi_mode` struct that the
+application has to fill out.  Otherwise, they are functionally
+equivalent to `ggiSetMode` function, and the same mode-setting
+semantics apply, except the changed `ggi_mode` cannot be seen.
+
+
+Return value
+------------
+
+The functions return `0` if the mode is set successfully, otherwise an
+:man:`ggi-error(3)` code.
+
+
+Notes
+-----
+
+Do not set a mode before checking it. You may be able to set up
+a certain mode on one target, but not other targets.
+
+See the example in :man:`ggiCheckMode(3)`.
+
+
+See Also
+--------
+
+:man:`ggiCheckMode(3)`, :man:`ggiGetMode(3)`, :man:`ggiOpen(3)`, :man:`ggiSetMode(3)`, :man:`ggi_mode(3)`
 
 
 
