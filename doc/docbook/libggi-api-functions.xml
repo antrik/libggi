@@ -2191,6 +2191,7 @@ for(i = 0; i &lt; virt_y-visible_y; i++) {
 <refnamediv>
 <refname>ggiPutc</refname>
 <refname>ggiPuts</refname>
+<refname>ggiGetCharSize</refname>
 <refpurpose>Draw one or more characters on visual</refpurpose>
 </refnamediv>
 
@@ -2250,8 +2251,15 @@ does not wrap text.
 
 <para>
 <function>ggiGetCharSize</function> obtains the size of the character
-cell, in pixels.  This function allows the application to corectly
-position the text output.  </para>
+cell, in pixels.  This function allows the application to correctly
+position the text output. Character size must always be checked and
+application should not assume that it will be constant across targets
+or even modes. Visuals must have a mode set before querying the
+character size. It means that if you want to use a visual size which
+depends on the character size, you might have to iterate over
+<function>ggiSetMode</function> and
+<function>ggiGetCharSize</function> to get it
+right. </para>
 
 <note>
 <para> The values returned by <function>ggiGetCharSize</function> is
