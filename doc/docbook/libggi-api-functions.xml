@@ -1,0 +1,3058 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE reference
+  PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<reference id="libggi-api-functions"><title>LibGGI API Functions</title>
+
+<refentry id="api-ggiinit">
+
+<refmeta>
+<refentrytitle><function>ggiInit</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiInit</refname>
+<refname>ggiExit</refname>
+<refpurpose>Initialize and uninitialize LibGGI</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiInit</function></funcdef>
+<void/>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiExit</function></funcdef>
+<void/>
+</funcprototype>
+
+</funcsynopsis></refsynopsisdiv>
+
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiInit</function> initalizes the library. This function
+must be called before using other LibGGI functions; otherwise the
+results will be undefined.
+</para>
+
+<para>
+<function>ggiExit</function> uninitializes the library (after being
+initalized by <function>ggiInit</function>) and automatically cleanup
+if necessary.  This should be called after an application is finished
+with the library.  If any GGI functions are called after the library
+has been uninitialized, the results will be undefined.
+</para>
+
+<para>
+<function>ggiInit</function> allows multiple invocations.  A reference
+count is maintained, and to completely uninitialize the library,
+<function>ggiExit</function> must be called as many times as
+<function>ggiInit</function> has been called beforehand.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<function>ggiInit</function> returns <returnvalue>0</returnvalue> for
+OK, otherwise an error code.
+</para>
+
+<para>
+<function>ggiExit</function> returns:
+
+<variablelist>
+
+<varlistentry>
+<term><returnvalue>0</returnvalue></term>
+<listitem><para>
+after successfully cleaning up,
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><returnvalue>&gt; 0</returnvalue></term>
+<listitem><para>
+the number of 'open' <function>ggiInit</function> calls, if there has
+been more than one call to <function>ggiInit</function>.  As
+<function>ggiInit</function> and <function>ggiExit</function> must be
+used in properly nested pairs, e.g. the first
+<function>ggiExit</function> after two <function>ggiInit</function>s
+will return 1.
+</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><returnvalue>&lt; 0</returnvalue></term>
+<listitem><para>
+error, especially if more <function>ggiExit</function> calls have been
+done than
+<function>ggiInit</function> calls.
+</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Initialize and uninitialize LibGGI</title>
+
+<programlisting format="linespecific">
+if (ggiInit() &lt; 0)
+{
+	fprintf(stderr, "Cannot initalize LibGGI!\n");
+	exit(1);
+}
+
+<replaceable>/* Do some LibGGI stuff */</replaceable>
+
+ggiExit();
+</programlisting>
+
+</example>
+</refsect1>
+
+</refentry>
+
+
+
+
+
+
+
+<refentry id="api-ggipanic">
+
+<refmeta>
+<refentrytitle><function>ggiPanic</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiPanic</refname>
+<refpurpose>Exit LibGGI programs for fatal errors</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>void <function>ggiPanic</function></funcdef>
+<paramdef>const char *<parameter>format</parameter></paramdef>
+<paramdef><replaceable>...</replaceable></paramdef>
+</funcprototype>
+
+</funcsynopsis></refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiPanic</function> shuts down the application, closing all
+visuals, with 
+
+<citerefentry>
+<refentrytitle><function>printf</function></refentrytitle>
+<manvolnum>3</manvolnum>
+</citerefentry>
+
+-style reporting to stderr, taking a format string and any additional variables. 
+</para>
+
+<para>
+<function>ggiPanic</function> should only be used by usermode programs when
+something is really screwed, and they do not know what to do. The same
+applies for libraries, but might be used in rare situations such as
+corruption of critical data structures.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para>
+Never returns.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>An unrecoverable error</title>
+
+<programlisting format="linespecific">
+if (my_important_struct-&gt;magic != MAGIC) {
+        ggiPanic("Fatal error: structure is corrupted\n");
+}
+</programlisting>
+</example>
+</refsect1>
+
+</refentry>
+<refentry id="api-ggiopen">
+
+<refmeta>
+<refentrytitle><function>ggiOpen</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiOpen</refname>
+<refname>ggiClose</refname>
+<refpurpose>Open and close a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>
+ggi_visual_t <function>ggiOpen</function></funcdef>
+<paramdef>const char *<parameter>display</parameter></paramdef>
+<paramdef><replaceable>...</replaceable></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiClose</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis></refsynopsisdiv>
+
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiOpen</function> opens a visual.  The visual is specified
+as a display string, followed by <symbol>NULL</symbol>.  If only
+<symbol>NULL</symbol> is specified, the default display target is
+opened.  (This may be may be specified by the user.)
+</para>
+
+<para>
+The other arguments are for internal purposes only, such as
+<parameter>argptr</parameter>, used to pass driver-specific, non-textual
+information to the driver.
+</para>
+
+<para>
+<function>ggiClose</function> releases and destroys an open visual.
+This will close X windows, return consoles to text-mode, etc.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<function>ggiOpen</function> returns the opened visual
+(<type>ggi_visual_t</type>), or <returnvalue>NULL</returnvalue> for error.
+</para>
+
+<para>
+<function>ggiClose</function> returns <returnvalue>0</returnvalue> for OK,
+otherwise an error code.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Open and closing default visual</title>
+<programlisting format="linespecific">
+ggi_visual_t vis = ggiOpen(NULL);
+
+if(vis==NULL)
+{
+        ggiPanic("Couldn't open default visual!\n");
+}
+
+<replaceable>/* do stuff */</replaceable>
+
+ggiClose(vis);
+
+</programlisting>
+</example>
+
+<example>
+<title>Open and closing a memory visual</title>
+
+<programlisting format="linespecific">
+
+ggi_visual_t memvis = ggiOpen("display-memory", NULL);
+
+if(memvis==NULL) {
+        return -1;
+}
+
+<replaceable>/* do stuff */</replaceable>
+
+ggiClose(memvis);
+
+</programlisting>
+</example>
+
+</refsect1>
+
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist>
+<member><xref linkend="api-ggiinit"/></member>
+
+<!-- !!! link to libggi(7) -->
+
+</simplelist>
+
+</refsect1>
+
+</refentry>
+<refentry id="api-ggicheckmode">
+
+<refmeta>
+<refentrytitle><function>ggiCheckMode</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiCheckMode</refname>
+<refname>ggiCheckTextMode</refname>
+<refname>ggiCheckGraphMode</refname>
+<refname>ggiCheckSimpleMode</refname>
+<refpurpose>Check or negotiate a text/graphics mode on a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiCheckMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef> 
+<paramdef>ggi_mode *<parameter>tm</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiCheckTextMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>cols</parameter></paramdef>
+<paramdef>int <parameter>rows</parameter></paramdef> 
+<paramdef>int <parameter>vcols</parameter></paramdef>
+<paramdef>int <parameter>vrows</parameter></paramdef>
+<paramdef>int <parameter>fontx</parameter></paramdef>
+<paramdef>int <parameter>fonty</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>suggested_mode</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiCheckGraphMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>xv</parameter></paramdef>
+<paramdef>int <parameter>yv</parameter></paramdef>
+<paramdef>ggi_graphtype <parameter>type</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>suggested_mode</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiCheckSimpleMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>frames</parameter></paramdef>
+<paramdef>ggi_graphtype <parameter>type</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>suggested_mode</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiCheckMode</function> checks whether or not the given mode will work
+on the visual.  If it does not work, it will modify the values of passed
+<structname>ggi_mode</structname> structure so that the mode works.  This mode
+negotiation allows the application to discover modes that are both
+supported by the visual and suitable to the application.
+</para>
+
+<para>
+<function>ggiCheckTextMode</function> checks whether the text mode with the given
+visible and virtual dimensions and the font size is supported.
+</para>
+
+<para>
+<function>ggiCheckGraphMode</function> checks whether the graphics mode with the
+given visible and virtual dimensions and type is supported.
+</para>
+
+<para>
+<function>ggiCheckSimpleMode</function> checks wheter the graphics mode with the
+given visible dimensions, type, and number of buffers is supported.
+This is used in lieu of <function>ggiCheckGraphMode</function> if multiple
+buffering is desired.
+</para>
+
+<para>
+For <function>ggiCheckTextMode</function>,
+<function>ggiCheckGraphMode</function> and
+<function>ggiCheckSimpleMode</function>,
+<parameter>suggested_mode</parameter> is either
+<symbol>NULL</symbol> or a pointer to a
+<structname>ggi_mode</structname> which will be
+filled in with the negotiated mode parameters.  
+</para>
+
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+For <function>ggiCheckTextMode</function> and
+<function>ggiCheckGraphMode</function>, a
+return of <returnvalue>0</returnvalue> means that the corresponding
+set mode call for
+this mode would succeed. Otherwise, the mode given cannot be set. In
+this case, <parameter>suggested_mode</parameter> is changed to the suggested mode.
+</para>
+
+<para>
+If the only modifications made to the structure is replacing
+<symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> value, the functions return
+success.
+</para>
+
+</refsect1>
+
+<refsect1 id="mode-negotiation">
+<title>Rules for mode negotiation</title>
+
+<para>
+First, if <symbol>GGI_AUTO</symbol> (or <symbol>GT_AUTO</symbol> for the graphtype) is
+specified for any of the members of <parameter>*tm</parameter>, these are filled in
+with the recommended values.  The values could be to a maximum,
+preferred, or <envar>GGI_DEFMODE</envar> resolution, and will be compatible
+with any other constraints.  
+</para>
+
+<para>
+An application that does not care about a specific paramater should
+always specify <symbol>GGI_AUTO</symbol> or <symbol>GT_AUTO</symbol> for it.
+</para>
+
+<para>
+The resulting mode is guaranteed to be valid; if not, the application
+can assume that it cannot set any mode on the given visual and give up.
+</para>
+
+<para>
+The suggested mode is derived as follows:
+
+<itemizedlist>
+
+<listitem>
+<para>
+Resolutions are always adjusted <emphasis>up</emphasis>. If you want the
+next lower, start out at 1x1 (or somewhere else reasonable) and jump up
+the ladder.
+</para>
+
+<para>
+Only if the maximum resolution would be exceeded, resolutions are
+adjusted <emphasis>down</emphasis> to the maximum.
+</para>
+
+<para>
+The above applies to visible and virtual size. If there is interference
+between them, the visible size is satified first if possible, then the
+virtual size.
+</para>
+
+<para>
+The adjustment of one value do not normally affect other values. For
+example, if (visible) 320x100 (virtual 320x200) is requested, the
+visible size may be adjusted to 320x200, but virtual size will be left
+alone. Of course, if the virtual size becomes less than visible size,
+then it will be adjusted as well. 
+</para>
+</listitem>
+
+<listitem>
+<para>
+Font sizes are handled the other way round: they are adjusted
+<emphasis>down</emphasis> except when there is nothing below.
+</para>
+</listitem>
+
+<listitem>
+<para>
+A specific graphtype is changed only if the card does not support it
+<emphasis>at all</emphasis>.  If the maximum resolution is exceeded, then that is
+adjusted down and not the graphtype. This assumes, that if you request
+true-color, you really want that and not so badly the resolution you
+requested. If this is not the case, you can still retry with another
+graphtype or <symbol>GT_AUTO</symbol>.
+</para>
+
+<para>
+If graphtype is changed, it is adjusted in ascending order if possible:
+e.g. i.e. 1->4->8->15->16->24/32 bit. So you always get a mode which can
+do more than you requested. Only when no better modes are available, the
+type is adjusted down.
+</para>
+</listitem>
+
+</itemizedlist>
+</para>
+</refsect1>
+
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Try a 320x200x8 mode</title>
+<programlisting>
+err = ggiCheckGraphMode(vis, 320, 200, GGI_AUTO, GGI_AUTO, GT_8BIT, 
+                        &amp;sug_mode, NULL);
+if(err) {
+        <replaceable>/* Check if returned mode is ok... */</replaceable>
+}
+else {
+        ggiSetMode(&amp;sug_mode);
+}
+</programlisting>
+</example>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggiopen"/></member>
+<member><xref linkend="api-ggisetmode"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+
+
+
+<refentry id="api-ggisetmode">
+
+<refmeta>
+<refentrytitle><function>ggiSetMode</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetMode</refname>
+<refname>ggiSetTextMode</refname>
+<refname>ggiSetGraphMode</refname>
+<refname>ggiSetSimpleMode</refname>
+<refname>ggiGetMode</refname>
+<refpurpose>Set or get a mode on a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiSetMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>tm</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetTextMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>cols</parameter></paramdef>
+<paramdef>int <parameter>rows</parameter></paramdef>
+<paramdef>int <parameter>vcols</parameter></paramdef>
+<paramdef>int <parameter>vrows</parameter></paramdef>
+<paramdef>int <parameter>fontx</parameter></paramdef>
+<paramdef>int <parameter>fonty</parameter></paramdef>
+<paramdef>ggi_graphtype <parameter>type</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetGraphMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>xv</parameter></paramdef>
+<paramdef>int <parameter>yv</parameter></paramdef>
+<paramdef>ggi_graphtype <parameter>type</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetSimpleMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>visual</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>frames</parameter></paramdef>
+<paramdef>ggi_graphtype <parameter>type</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetMode</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>tm</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis></refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiSetMode</function> sets any mode (text or graphics).
+It also performs mode negotiation like <function>ggiCheckMode</function>, but if
+any non-<symbol>GGI_AUTO</symbol>/<symbol>GT_AUTO</symbol> parameters are changed from
+the original mode, the new mode will not be silently set.
+</para>
+
+<para>
+<function>ggiSetTextMode</function>
+<function>ggiSetGraphMode</function>
+<function>ggiSetSimpleMode</function> are convenient versions of
+<function>ggiSetMode</function> that take the mode paramters as integer arguments
+rather than as a <structname>ggi_mode</structname> struct that the application has
+to fill out.  Otherwise, they are functionally equivalent to
+<function>ggiSetMode</function> function, and the same mode-setting semantics
+apply, except the changed <structname>ggi_mode</structname> cannot be seen.
+</para>
+
+<para>
+<function>ggiGetMode</function> fills out the passed
+<structname>ggi_mode</structname> with
+the parameters of the current mode of the visual.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+The mode setting functions return <returnvalue>0</returnvalue> if the mode is set
+successfully, otherwise an error code.
+</para>
+<!--
+<comment>
+Looking at the code, ggiGetMode doesn't just return error if there is no
+mode set, but does an ASSERT ! Should this be changed ?
+Also we don't need ggiGetMode in vis->opdisplay, do we?
+</comment>
+-->
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggiopen"/></member>
+<member><xref linkend="api-ggicheckmode"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggiparsemode">
+
+<refmeta>
+<refentrytitle><function>ggiParseMode</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiParseMode</refname>
+<refname>ggiPrintMode</refname>
+<refname>ggiSPrintMode</refname>
+<refname>ggiFPrintMode</refname>
+<refpurpose>Parse and print formatted strings specifying LibGGI modes</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiParseMode</function></funcdef>
+<paramdef>const char *<parameter>s</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>m</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPrintMode</function></funcdef>
+<paramdef>ggi_mode *<parameter>m</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSPrintMode</function></funcdef>
+<paramdef>char *<parameter>s</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>m</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiFPrintMode</function></funcdef>
+<paramdef>FILE *<parameter>s</parameter></paramdef>
+<paramdef>ggi_mode *<parameter>m</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis></refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiParseMode</function> parses a string into a
+<structname>ggi_mode</structname>.
+</para>
+
+<para>
+The <function>ggi*PrintMode</function> functions print all the members
+of <structname>ggi_mode</structname> in a
+human-readable form.  <function>ggiSPrintMode</function> outputs to a preallocated
+string buffer, <function>ggiFPrintMode</function> outputs to a stdio
+<type>FILE</type>, and
+<function>ggiPrintMode</function> outputs to standard output.  These functions
+correspond to
+<citerefentry><refentrytitle><function>sprintf</function>
+</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+<citerefentry><refentrytitle><function>fprintf</function>
+</refentrytitle><manvolnum>3</manvolnum></citerefentry>, 
+<citerefentry><refentrytitle><function>printf</function>
+</refentrytitle><manvolnum>3</manvolnum></citerefentry>, 
+respectively.
+</para>
+
+<para>
+The format of the string used by these functions is exactly the same as
+the one used in the <link linkend="GGI-DEFMODE"><envar>GGI_DEFMODE</envar></link>
+environment variable.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<function>ggiParseMode</function> returns:
+
+<variablelist>
+<varlistentry>
+<term><returnvalue>0</returnvalue></term>
+<listitem>
+<para>on success, i.e. the string was correct.
+However, errors involving <symbol>GT_*</symbol>, position
+information, or mismatched brackets do not make it fail;
+these errors are simply ignored.</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term><returnvalue>&lt;0</returnvalue></term>
+<listitem><para>
+if there is text that can not be parsed.
+This text is printed to stderr.
+All parameters parsed so far are written into <parameter>m</parameter>.</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+
+<para>
+So <parameter>m</parameter> contains all parameters that have been
+successfully parsed.
+For most applications there will be no need for testing
+<function>ggiParseMode</function> for failure.
+</para>
+</refsect1>
+
+</refentry>
+<refentry id="api-ggisetdisplayframe">
+
+<refmeta>
+<refentrytitle><function>ggiSetDisplayFrame</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetDisplayFrame</refname>
+<refname>ggiSetWriteFrame</refname>
+<refname>ggiSetReadFrame</refname>
+<refname>ggiGetDisplayFrame</refname>
+<refname>ggiGetWriteFrame</refname>
+<refname>ggiGetReadFrame</refname>
+<refpurpose>Set or get the current frame for display, writing and reading</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiSetDisplayFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>frameno</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetWriteFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>frameno</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetReadFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>frameno</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetDisplayFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetWriteFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetReadFrame</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+These functions are used for selecting or getting the current
+buffers, when using the <link linkend="frames">multiple buffering</link>
+function of LibGGI.
+</para>
+
+<para>
+<function>ggiSetDisplayFrame</function> sets the frame that getsdisplayed.
+</para>
+
+<para>
+<function>ggiSetWriteFrame</function> sets the frame for write operations such as
+<function>ggiPuts</function> and <function>ggiHLine</function>.
+</para>
+
+<para>
+<function>ggiSetReadFrame</function> sets the frame for read operations, like
+<function>ggiGetPixel</function> and the <function>ggiCrossBlit</function> source.
+</para>
+
+<para>
+<function>ggiGetDisplayFrame</function> reports the frame currently displayed.
+</para>
+
+<para>
+<function>ggiGetWriteFrame</function> reports the frame currently written to.
+</para>
+
+<para>
+<function>ggiSetReadFrame</function> reports the frame currently read from.
+</para>
+
+<para>
+Frames are numbered from 0 to the number of frames requested - 1.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+The <function>ggiSet*Frame</function> functions return
+<returnvalue>0</returnvalue> if they succeed, and
+<returnvalue>&lt;0</returnvalue> if they fail.
+</para>
+
+<para>The <function>ggiGet*Frame</function> functions never fail.
+</para>
+
+</refsect1>
+</refentry>
+<refentry id="api-ggimapcolor">
+
+<refmeta>
+<refentrytitle><function>ggiMapColor</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiMapColor</refname>
+<refname>ggiUnmapPixel</refname>
+<refname>ggiPackColors</refname>
+<refname>ggiUnpackPixels</refname>
+<refpurpose>Convert from ggi_color(s) to ggi_pixel(s) and vice versa</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>ggi_pixel <function>ggiMapColor</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_color *<parameter>col</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiUnmapPixel</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_pixel <parameter>pixel</parameter></paramdef>
+<paramdef>ggi_color *<parameter>col</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPackColors</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+<paramdef>ggi_color *<parameter>cols</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiUnpackPixels</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+<paramdef>ggi_color *<parameter>cols</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiMapColor</function> gets the pixelvalue for the given color.
+</para>
+
+<para>
+<function>ggiUnmapPixel</function> gets the color associated
+with the given pixelvalue.
+</para>
+
+<para>
+<function>ggiPackColors</function> converts the colors in
+<parameter>cols</parameter> to <link
+linkend="ggi-pixel">pixelvalues</link> in <parameter>buf</parameter>.
+The output from this function is suitable for input to the
+<function>ggiPut{HLine,VLine,Box}</function> functions.
+</para>
+
+<para>
+<function>ggiUnpackPixels</function> converts the pixelvalues in
+<parameter>buf</parameter> to
+individual elements of <parameter>cols</parameter>.  This function
+maybe used to convert
+buffers output by the <function>ggiGet{HLine,VLine,Box}</function>
+functions from the
+pixelvalue representation to their actual <link
+linkend="ggi-color">colors</link>.
+</para>
+
+<para>
+The buffers output from <function>ggiPackColors</function> and the input to
+<function>ggiUnpackPixels</function> are in the same format as the
+get/put buffers.
+Their format is defined in <structname>ggi_pixelformat</structname>.
+</para>
+
+<para>
+Try to cache the results of color lookups in your application for
+efficiency purposes.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para><function>ggiMapColor</function> returns a <type>ggi_pixel</type>.
+</para>
+
+<para><function>ggiUnmapPixel</function>,
+<function>ggiPackColors</function>, and
+<function>ggiUnpackPixels</function> returns
+<returnvalue>0</returnvalue> for OK, otherwise an
+error code.
+</para>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggisetpalette">
+
+<refmeta>
+<refentrytitle><function>ggiSetPalette</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetPalette</refname>
+<refname>ggiGetPalette</refname>
+<refpurpose>Manipulate the palette of a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiGetPalette</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>s</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+<paramdef>ggi_color *<parameter>cmap</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetPalette</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>s</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+<paramdef>ggi_color *<parameter>cmap</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+LibGGI visuals in <symbol>GT_PALETTE</symbol> mode maps all pixelvalues to the
+corresponding <structname>ggi_color</structname> entry in the visual's <link
+linkend="palette">palette</link>.
+</para>
+
+<para>
+<function>ggiSetPalette</function> sets a range of palette values, of length
+<parameter>len</parameter>, starting at index number
+<parameter>s</parameter>.  The index can be
+<symbol>GGI_PALETTE_DONTCARE</symbol> to indicate to indicate that the palette can be
+installed anywhere in the CLUT.
+This allows optimised use in windowing environments (to minimize color
+flashing between windows) and should be used if possible.
+</para>
+
+<para>
+<function>ggiGetPalette</function> copies the specified colors (starting from
+<parameter>s</parameter>, for <parameter>len</parameter> colors) from
+the visual's palette to the array
+pointed by <parameter>cmap</parameter>.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para><function>ggiSetPalette</function> returns the number of the first entry
+changed.  Negative values indicate error (codes).
+</para>
+
+<para><function>ggiGetPalette</function> returns
+<returnvalue>0</returnvalue> for OK, otherwise
+an error code. When called with len=0 this function will not
+automatically succeed, but the return code will indicate whether there
+is a readable CLUT.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggisetcolorfulpalette"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+<refentry id="api-ggisetcolorfulpalette">
+<refmeta>
+<refentrytitle><function>ggiSetColorfulPalette</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetColorfulPalette</refname>
+<refpurpose>Set a palette with a full range of all colors</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiSetColorfulPalette</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+LibGGI guarantees that there will be a default palette when a palettized mode is
+set.  What this default is, however, is dependent on the visual. 
+For example, the X target deliberately avoids setting all colors 
+to avoid color-flashing when moving between windows.
+</para>
+
+<para>
+Applications that want to ensure that they have a full scale of all colors
+can call <function>ggiSetColorfulPalette</function> after mode set.
+This function uses a
+smarter color allocation scheme, causing good colors but still minimal
+flashing in windowed targets.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para><function>ggiSetColorfulPalette</function> returns the number of the first entry
+changed.  Negative values indicate error (codes).
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="api-ggisetpalette"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggisetgamma">
+
+<refmeta>
+<refentrytitle><function>ggiSetGamma</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetGammaMap</refname>
+<refname>ggiGetGammaMap</refname>
+<refname>ggiSetGamma</refname>
+<refname>ggiGetGamma</refname>
+<refpurpose>Manipulate the gamma maps and the gamma correction of a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiSetGammaMap</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>s</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+<paramdef>ggi_color *<parameter>gammamap</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetGammaMap</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>s</parameter></paramdef>
+<paramdef>int <parameter>len</parameter></paramdef>
+<paramdef>ggi_color *<parameter>gammamap</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetGamma</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_float <parameter>r</parameter></paramdef>
+<paramdef>ggi_float <parameter>g</parameter></paramdef>
+<paramdef>ggi_float <parameter>b</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetGamma</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_float *<parameter>r</parameter></paramdef>
+<paramdef>ggi_float *<parameter>g</parameter></paramdef>
+<paramdef>ggi_float *<parameter>b</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<!-- From Andrew: -->
+Some truecolor modes on some hardware can use the DAC's palette to lookup
+the values before sending to the monitor.  Generally this is used for gamma
+correction by filling the lookup table with a curve, hence the name "gamma
+map", but it could be used for other things e.g. special effects in games.
+</para>
+
+<para>
+<function>ggiSetGammaMap</function> and
+<function>ggiGetGammaMap</function> sets or gets the
+gamma map, for <parameter>len</parameter> colors starting at
+<parameter>s</parameter>.
+</para>
+
+<para>
+<function>ggiSetGamma</function> and <function>ggiGetGamma</function>
+sets or gets the gamma
+correction for the visual.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>All four functions <returnvalue>0</returnvalue> for OK, otherwise an
+error code.
+</para>
+
+</refsect1>
+</refentry>
+
+<refentry id="api-ggigetpixelformat">
+
+<refmeta>
+<refentrytitle><function>ggiGetPixelFormat</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiGetPixelFormat</refname>
+<refpurpose>Get a structure describing the format of a pixelvalue from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>ggi_pixelformat *<function>ggiGetPixelFormat</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+<para>This function obtains the default pixel format for the given visual.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para>Returns a pointer to the <structname>ggi_pixelformat</structname> structure.
+</para>
+
+<para>
+Modifying the structure returned is not allowed.  Do not attempt to free
+the pointer returned.  <!-- Apparently this is not clear enough. -->
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Structures</title>
+
+<para>
+See <filename>ggi/ggi.h</filename> or <xref linkend="ggi-pixelformat"/>
+for details on the structure that is returned.
+</para>
+
+</refsect1>
+
+</refentry>
+<refentry id="api-ggisetgcforeground">
+
+<refmeta>
+<refentrytitle><function>ggiSetGCForeground</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetGCForeground</refname>
+<refname>ggiGetGCForeground</refname>
+<refname>ggiSetGCBackground</refname>
+<refname>ggiGetGCBackground</refname>
+<refpurpose>Set or get the foreground and background colors used in drawing
+operations in a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiSetGCForeground</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_pixel <parameter>color</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetGCForeground</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_pixel *<parameter>color</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetGCBackground</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_pixel <parameter>color</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetGCBackground</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_pixel *<parameter>color</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiSetGCForeground</function> and
+<function>ggiGetGCForeground</function> set or reads
+the current colors for the foreground, used in all normal drawing
+functions.
+</para>
+
+<para>
+<function>ggiSetGCBackground</function> and
+<function>ggiGetGCBackground</function> set or reads
+the current colors for the background, used in two-color operations like
+drawing text.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+All four functions <returnvalue>0</returnvalue> for OK.
+</para>
+
+</refsect1>
+</refentry>
+
+<refentry id="api-ggisetgcclipping">
+
+<refmeta>
+<refentrytitle><function>ggiSetGCClipping</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetGCClipping</refname>
+<refname>ggiGetGCClipping</refname>
+<refpurpose>Set or get the clipping rectangle for a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiSetGCClipping</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>left</parameter></paramdef>
+<paramdef>int <parameter>top</parameter></paramdef>
+<paramdef>int <parameter>right</parameter></paramdef>
+<paramdef>int <parameter>bottom</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetGCClipping</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int *<parameter>left</parameter></paramdef>
+<paramdef>int *<parameter>top</parameter></paramdef>
+<paramdef>int *<parameter>right</parameter></paramdef>
+<paramdef>int *<parameter>bottom</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiSetGCClipping</function> sets the the current clipping rectangle to
+(<parameter>left</parameter>,<parameter>top</parameter>)-
+(<parameter>right</parameter>-1,<parameter>bottom</parameter>-1), inclusive.
+</para>
+
+<para>
+Initially the clipping rectangle is the whole virtual screen.
+</para>
+
+<para>
+All LibGGI drawing primitives obey the clipping rectangle.
+Negative coordinates given to LibGGI drawing functions will be 
+clipped correctly.
+</para>
+
+<para>
+<function>ggiGetGCClipping</function> reads the coordinates of the current clipping
+rectangle.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>Both functions <returnvalue>0</returnvalue> for OK.
+</para>
+
+</refsect1>
+</refentry>
+
+<refentry id="api-ggidrawpixel">
+
+<refmeta>
+<refentrytitle><function>ggiDrawPixel</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDrawPixel</refname>
+<refname>ggiPutPixel</refname>
+<refname>ggiGetPixel</refname>
+<refpurpose>Draw, put, and get a single pixel from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiDrawPixel</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPutPixel</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef> 
+<paramdef>int <parameter>x</parameter></paramdef> 
+<paramdef>int <parameter>y</parameter></paramdef> 
+<paramdef>ggi_pixel <parameter>col</parameter></paramdef> 
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetPixel</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>ggi_pixel *<parameter>col</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Draw, put, or get a single pixelvalue at
+(<parameter>x</parameter>,<parameter>y</parameter>).
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>All three functions return <returnvalue>0</returnvalue> to indicate success.
+</para>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggidrawhline">
+
+<refmeta>
+<refentrytitle><function>ggiDrawHLine</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDrawHLine</refname>
+<refname>ggiPutHLine</refname>
+<refname>ggiGetHLine</refname>
+<refpurpose>Draw, put, and get a horizontal line from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiDrawHLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPutHLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetHLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Draw, put, or get a horizontal line from
+(<parameter>x</parameter>,<parameter>y</parameter>), extending
+<parameter>w</parameter> pixels in the positive x direction (normally
+right).  The height is one pixel.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>All three functions return <returnvalue>0</returnvalue> to indicate success. 
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggidrawvline"/></member>
+<member><xref linkend="api-ggidrawbox"/></member>
+<member><xref linkend="api-ggidrawline"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggidrawvline">
+
+<refmeta>
+<refentrytitle><function>ggiDrawVLine</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDrawVLine</refname>
+<refname>ggiPutVLine</refname>
+<refname>ggiGetVLine</refname>
+<refpurpose>Draw, put, and get a vertical line from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiDrawVLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPutVLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetVLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Draw, put, or get a vertical line from
+(<parameter>x</parameter>,<parameter>y</parameter>), extending
+<parameter>h</parameter> pixels in the positive y direction (normally
+down). The width of the line is one pixel.
+ </para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>All three functions return <returnvalue>0</returnvalue> to indicate success. 
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="api-ggidrawhline"/></member>
+<member><xref linkend="api-ggidrawbox"/></member>
+<member><xref linkend="api-ggidrawline"/></member>
+</simplelist>
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggidrawbox">
+
+<refmeta>
+<refentrytitle><function>ggiDrawBox</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDrawBox</refname>
+<refname>ggiPutBox</refname>
+<refname>ggiGetBox</refname>
+<refpurpose>Draw, put, and get a rectangle from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiDrawBox</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPutBox</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetBox</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+<paramdef>void *<parameter>buf</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Draw, put, or get a rectangle at
+(<parameter>x</parameter>,<parameter>y</parameter>), extending
+<parameter>w</parameter> pixels in the positive x direction and
+<parameter>h</parameter> pixels in the
+positive y direction.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>All three functions return <returnvalue>0</returnvalue> to indicate success. 
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="api-ggidrawhline"/></member>
+<member><xref linkend="api-ggidrawvline"/></member>
+<member><xref linkend="api-ggidrawline"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggifillscreen">
+
+<refmeta>
+<refentrytitle><function>ggiFillscreen</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiFillscreen</refname>
+<refpurpose>Fills the entire virtual screen</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiFillscreen</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Fills the current clipping rectangle (usually the entire virtual screen)
+with the current foreground color.  It may be
+more efficient than the corresponding call to <function>ggiDrawBox</function>.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>This function returns <returnvalue>0</returnvalue> to indicate success. 
+</para>
+
+</refsect1>
+</refentry>
+
+
+<refentry id="api-ggidrawline">
+
+<refmeta>
+<refentrytitle><function>ggiDrawLine</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDrawLine</refname>
+<refpurpose>Draw a line on a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiDrawLine</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>xe</parameter></paramdef>
+<paramdef>int <parameter>ye</parameter></paramdef>
+</funcprototype>
+</funcsynopsis></refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Draws any line, using the current foreground color, from
+(<parameter>x</parameter>,<parameter>y</parameter>) to
+(<parameter>xe</parameter>,<parameter>ye</parameter>). The line is
+exact; the pixel set is no more than 0.5 pixels off the place it
+should be.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>This function returns <returnvalue>0</returnvalue> to indicate success. 
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggidrawhline"/></member>
+<member><xref linkend="api-ggidrawvline"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+<refentry id="api-ggicopybox">
+
+<refmeta>
+<refentrytitle><function>ggiCopyBox</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiCopyBox</refname>
+<refpurpose>Copy a rectangular area</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiCopyBox</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+<paramdef>int <parameter>nx</parameter></paramdef>
+<paramdef>int <parameter>ny</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+This is a area-to-area-blit, all in the same visual. Copy the box
+described by <parameter>x</parameter>,<parameter>y</parameter>,
+<parameter>w</parameter>,<parameter>h</parameter>
+to the new location
+<parameter>nx</parameter>,<parameter>ny</parameter>.
+This automatically takes
+care of overlaps and optimizes for the given visual (e.g. uses HW-accel or
+intermediate buffers as appropriate).
+</para>
+
+<para>
+<function>ggiCopyBox</function> will transfer an area between frames
+when the read frame is not the same as the write frame.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para><returnvalue>0</returnvalue> for OK, otherwise an error code.
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="api-ggicrossblit"/></member>
+</simplelist>
+</refsect1>
+
+</refentry>
+
+
+<refentry id="api-ggicrossblit">
+
+<refmeta>
+<refentrytitle><function>ggiCrossBlit</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiCrossBlit</refname>
+<refpurpose>Copy a rectangular area between two visuals</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiCrossBlit</function></funcdef>
+<paramdef>ggi_visual_t <parameter>src</parameter></paramdef>
+<paramdef>int <parameter>sx</parameter></paramdef>
+<paramdef>int <parameter>sy</parameter></paramdef>
+<paramdef>int <parameter>sw</parameter></paramdef>
+<paramdef>int <parameter>sh</parameter></paramdef>
+<paramdef>ggi_visual_t <parameter>dst</parameter></paramdef>
+<paramdef>int <parameter>dx</parameter></paramdef>
+<paramdef>int <parameter>dy</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+Blits a rectangular memory area from one visual to another. It handles
+colorspace-conversion. (Though it can be quite expensive, so take care.)
+</para>
+
+<para>
+<function>ggiCrossBlit</function> will transfer an area from the
+source visual's read frame
+to the destination visual's write frame.
+</para>
+
+<para>
+This function does not perform stretching.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para><returnvalue>0</returnvalue> for OK, otherwise an error code.
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member>
+<xref linkend="api-ggicopybox"/>
+</member>
+</simplelist>
+</refsect1>
+
+</refentry>
+<refentry id="api-ggisetorigin">
+
+<refmeta>
+<refentrytitle><function>ggiSetOrigin</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetOrigin</refname>
+<refname>ggiGetOrigin</refname>
+<refpurpose>Set and get origin of virtual screen</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiSetOrigin</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetOrigin</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int *<parameter>x</parameter></paramdef>
+<paramdef>int *<parameter>y</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiSetOrigin</function> sets the top-left corner of the displayed area to
+(<parameter>x</parameter>, <parameter>y</parameter>).
+</para>
+
+<para>
+When using a larger virtual area, you can pan the visible area over the
+virtual one to do scrolling. Some targets have extemely efficient means to
+do this (i.e. they do it in hardware).
+</para>
+
+<para>
+Large virtual areas are also commonly used for buffering the display
+contents, but that is usually more easily accomplished by requesting a
+specific number of <property>frames</property> when setting a mode.
+</para>
+
+<para>
+This call takes <link linkend="dot"><emphasis>dot</emphasis></link> coordinates, not
+pixel coordinates as all other drawing primitives do.  There is no
+difference in graphics modes because by definition <property>dpp</property> is
+1x1, but in text modes the application can do smooth scrolling.
+</para>
+
+<para>
+<function>ggiGetOrigin</function> gets the current top-left corner of the displayed
+area into (<parameter>x</parameter>, <parameter>y</parameter>).
+</para>
+
+<para>
+Due to rounding to the hardware's capabilities, the values
+retrieved by a subsequent <function>ggiGetOrigin</function> may not
+necessarily match those passed to <function>ggiSetOrigin</function> previously.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+<para><returnvalue>0</returnvalue> for OK, otherwise an error code.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Pan from the top to the bottom of the virtual screen</title>
+<programlisting>
+for(i = 0; i &lt; virt_y-visible_y; i++) {
+        ggiSetOrigin(vis, 0, i);
+}
+</programlisting>
+</example>
+
+</refsect1>
+</refentry>
+<refentry id="api-ggiputc">
+
+<refmeta>
+<refentrytitle><function>ggiPutc</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiPutc</refname>
+<refname>ggiPuts</refname>
+<refpurpose>Draw one or more characters on visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiPutc</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>char <parameter>c</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiPuts</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>const char *<parameter>str</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiGetCharSize</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int *<parameter>width</parameter></paramdef>
+<paramdef>int *<parameter>height</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+LibGGI provides a few functions to do basic character output. They are
+for debugging and simple GUI applications. They are simple on purpose:
+there is only one fixed-width font and its size cannot be changed. Only
+the standard ASCII character set (0x20 to 0x7f) is supported, with no
+internationalization features.  All more complex character functions go
+beyond the scope of this base library.
+</para>
+
+<para>
+<function>ggiPutc</function> puts a single character on a graphical visual.
+</para>
+
+<para>
+<function>ggiPuts</function> puts multiple characters (from a C-style null-
+-terminated string) at once. No special handling is applied to control
+characters like CR or LF. The associated glyph for control characters will
+be displayed. ggiPuts also only clips text at the clipping rectangle and
+does not wrap text.
+</para>
+
+<para>
+<function>ggiGetCharSize</function> obtains the size of the character cell, in pixels.
+This function allows the application to corectly position the text output.
+</para>
+
+<note>
+<para>
+The values returned by <function>ggiGetCharSize</function> is not the same as the
+values of <link linkend="ggi-mode-dpp"><structfield>dpp</structfield></link> of the
+current mode, which is in <link linkend="dot">dots</link>.  In graphics modes
+are 1x1 dpp by definition and use at least 8x8-pixel fonts.  In text
+mode, the character cell is 1x1 <link linkend="pixel">pixels</link> by
+definition and the <structname>dpp</structname> value is the actual size of the font.
+</para>
+</note>
+
+</refsect1>
+
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<returnvalue>0</returnvalue> for success.
+</para>
+
+</refsect1>
+</refentry>
+<refentry id="api-ggisetflags">
+
+<refmeta>
+<refentrytitle><function>ggiSetFlags</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiSetFlags</refname>
+<refname>ggiGetFlags</refname>
+<refname>ggiAddFlags</refname>
+<refname>ggiRemoveFlags</refname>
+<refpurpose>Set or get flags affecting operation on a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiSetFlags</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_flags <parameter>flags</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>ggi_flags <function>ggiGetFlags</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiAddFlags</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_flags <parameter>flags</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiRemoveFlags</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>ggi_flags <parameter>flags</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiSetFlags</function> sets the specified flags (bitwise
+OR'd together) on a visual. This function is usually used to set async
+mode on a visual (see below).
+</para>
+
+<para><function>ggiGetFlags</function> obtains the flags currently in effect.
+</para>
+
+<para><function>ggiAddFlags</function> and
+<function>ggiRemoveFlags</function> are macros that
+set or unsets the specified flags.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return Value</title>
+
+<para>
+<function>ggiSetFlags</function>, <function>ggiAddFlags</function>, and
+<function>ggiRemoveFlags</function> return <returnvalue>0</returnvalue> on success,
+<returnvalue>&lt;0</returnvalue> on failure.
+</para>
+
+<para>
+<function>ggiGetFlags</function> returns the current flags.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Synchronous and Asynchronous drawing modes</title>
+
+<para>
+Some visuals allow different modes with regard to when the screen is updated
+and the actual drawing takes place.
+</para>
+
+<itemizedlist>
+<listitem>
+<para>
+In synchronous mode when the drawing command returns, it is already or
+will be executed very shortly. So the visible effect is that everything
+is drawn immediately.  (It is not guaranteed in the strict sense in that
+it is already drawn when the function call returns, but almost.)
+This is the default mode for all visuals.
+</para>
+</listitem>
+
+<listitem>
+<para>
+The asynchronous mode does not guarantee that drawing commands are
+executed immediately, but is faster on many targets. 
+If the visual does not support asynchronous mode, setting it has no
+effect.  
+</para>
+
+<para>
+To make sure that all pending graphics operations are actually done and
+the screen is updated, you need to call <link linkend="api-ggiflush">
+<function>ggiFlush</function></link>.  This call is not needed in synchronous mode.)
+</para>
+</listitem>
+</itemizedlist>
+
+<warning>
+<para id="mansync">
+On some targets such as the X target there is no real synchronous mode,
+so LibGGI fakes one by periodically calling <function>ggiFlush</function> in the
+background.  This process can take about half the execution time of a program. 
+So using synchronous mode can <emphasis>really</emphasis> slow things down.
+</para>
+
+<para>The synchronous mode is default because it is what most programmers
+expect.</para>
+</warning>
+
+<para>
+All operations are guaranteed to be performed in the
+order given in both modes. Reordering is not done.
+</para>
+
+<para>
+So the recommendation for all graphics applications is to set the
+asynchronous mode.  It will be far more efficient on some platforms and will
+<emphasis>never</emphasis> be worse. 
+</para>
+
+<example>
+<title>Setting up asynchronous mode</title>
+<programlisting>
+ggiAddFlags(vis, GGIFLAG_ASYNC);	/* switches to asynchronous mode */
+
+ggiFlush(vis);				/* updates the screen */
+
+ggiRemoveFlags(vis, GGIFLAG_ASYNC);	/* switches to synchronous mode */
+</programlisting>
+</example>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggiflush"/></member>
+</simplelist>
+
+</refsect1>
+</refentry>
+
+<refentry id="api-ggiflush">
+<refmeta>
+<refentrytitle><function>ggiFlush</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiFlush</refname>
+<refname>ggiFlushRegion</refname>
+<refpurpose>Flush pending output</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv><funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+<funcprototype>
+<funcdef>int <function>ggiFlush</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiFlushRegion</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>x</parameter></paramdef>
+<paramdef>int <parameter>y</parameter></paramdef>
+<paramdef>int <parameter>w</parameter></paramdef>
+<paramdef>int <parameter>h</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiFlush</function> waits for the visual to finish pending accelerator
+commands, and in some targets, it refreshes the framebuffer.
+</para>
+
+<para>
+<function>ggiFlushRegion</function> performs the flush function 
+only in the specified region if it would improve performance.
+</para>
+
+<para>These functions are not needed if the visual is in synchronous mode.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return Value</title>
+<para>
+No meaningful return value.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="api-ggisetflags"/></member>
+</simplelist>
+</refsect1>
+
+</refentry>
+
+<refentry id="api-ggiresourceacquire">
+<refmeta>
+<refentrytitle><function>ggiResourceAcquire</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiResourceAcquire</refname>
+<refname>ggiResourceRelease</refname>
+<refname>ggiResourceMustAcquire</refname>
+<refpurpose>Acquire and release a LibGGI resource</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiResourceAcquire</function></funcdef>
+<paramdef>ggi_resource_t <parameter>res</parameter></paramdef>
+<paramdef>uint32 <parameter>actype</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiResourceRelease</function></funcdef>
+<paramdef>ggi_resource_t <parameter>res</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiResourceMustAcquire</function></funcdef>
+<paramdef>ggi_resource_t <parameter>res</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiResourceAcquire</function> acquires (locks) a LibGGI
+resource, typically a DirectBuffer (see examples below).  The
+<parameter>actype</parameter> indicates the desired access type for the
+operation.  The following flags may be
+bitwise-or'ed together:
+
+<variablelist>
+<varlistentry>
+<term><symbol>GGI_ACTYPE_READ</symbol></term>
+<listitem><para>read access to the resource</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><symbol>GGI_ACTYPE_WRITE</symbol></term>
+<listitem><para>write access to the resource</para></listitem>
+</varlistentry>
+
+</variablelist>
+</para>
+
+<para>
+<function>ggiResourceRelease</function> releases (unlocks) an already-acquired
+resource.
+</para>
+
+<para>
+<function>ggiResourceMustAcquire</function> determines whether or not the
+specified resource needs to be acquired before using.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return Value</title>
+<para>
+<function>ggiResourceAcquire</function> and
+<function>ggiResourceRelease</function>
+return <returnvalue>0</returnvalue> on success,
+<returnvalue>&lt;0</returnvalue> on failure.
+</para>
+
+<para>
+<function>ggiResourceMustAcquire</function> is simply a macro that returns true
+if the resource must be explicitly acquired and released, or false if not.
+However, it is still safe to call <function>ggiResourceAcquire</function> or
+<function>ggiResourceRelease</function> even in the latter case -- it -->
+-- would be a no-op.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>Using DirectBuffers</title>
+<programlisting>
+const ggi_directbuffer *dbuf;
+
+/* Acquire DirectBuffer before we use it. */
+if (ggiResourceAcquire(dbuf-&gt;resource, GGI_ACTYPE_WRITE) != 0) {
+	fail("Error acquiring DirectBuffer\n");
+}
+
+<replaceable>/* Do framebuffer rendering here... */</replaceable>
+
+/* Release DirectBuffer when done with it. */
+ggiResourceRelease(dbuf-&gt;resource);
+
+</programlisting>
+</example>
+</refsect1>
+
+</refentry>
+
+
+
+
+<refentry id="api-ggidbgetbuffer">
+
+<refmeta>
+<refentrytitle><function>ggiDBGetBuffer</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiDBGetNumBuffers</refname>
+<refname>ggiDBGetBuffer</refname>
+<refpurpose>Get DirectBuffers from a visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiDBGetNumBuffers</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>const ggi_directbuffer *<function>ggiDBGetBuffer</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>int <parameter>bufnum</parameter></paramdef>
+</funcprototype>
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiDBGetNumBuffers</function> returns the number of DirectBuffers available
+to the application.
+
+<function>ggiDBGetBuffer</function> obtains the DirectBuffer at the specified
+position.
+</para>
+
+<para>
+Use <function>ggiDBGetBuffer</function> to obtain the DirectBuffers at 0 to
+n-1, where n is the number returned by <function>ggiDBGetNumBuffers</function>.
+</para>
+
+<para>
+Pixel-linear buffers have <literal>type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL</literal>.
+You're on your own now.
+</para>
+
+<para>
+DirectBuffers where <function>ggiResourceMustAcquire</function> is true need to be
+'acquired' (i.e. locked) before using.  An acquire is done by using
+<function>ggiResourceAcquire</function> and is released by calling
+<function>ggiResourceRelease</function>.
+(See <xref linkend="api-ggiresourceacquire"/>.)
+
+Beware that the <structfield>read</structfield>, <structfield>write</structfield> and
+<structfield>stride</structfield> fields of the DirectBuffer may be changed by an
+acquire, and that they may be <symbol>NULL</symbol> or invalid when the
+DirectBuffer is not acquired.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para><function>ggiDBGetNumBuffers</function> returns the number of DirectBuffers
+available. <returnvalue>0</returnvalue> indicates that no DirectBuffers are available.
+</para>
+<para><function>ggiDBGetBuffer</function> returns a pointer to a DirectBuffer
+structure.
+</para>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+
+<example>
+<title>How to obtain a DirectBuffer</title>
+<programlisting>
+
+ggi_visual_t	vis;
+ggi_mode	mode;
+int		i;
+
+/* Framebuffer info */
+unsigned char *fbptr[2];
+int stride[2];
+int numbufs;
+
+mode.frames = 2;	/* Double-buffering */
+mode.visible.x = 640;	/* Screen res */
+mode.visible.y = 480;
+mode.virt.x = GGI_AUTO;	/* Any virtual resolution.  Will usually be set
+mode.virt.y = GGI_AUTO;	   to be the same as visible but some targets may
+			   have restrictions on virtual size. */
+mode.graphtype = GT_8BIT;		/* Depend on 8-bit palette. */
+mode.dpp.x = mode.dpp.y = GGI_AUTO;	/* Always 1x1 but we don't care. */
+
+if(ggiInit())
+{
+	/* Failed to initialize library. Bomb out. */
+}
+
+vis = ggiOpen(NULL);
+if(!vis)
+{
+	/* Opening default visual failed, quit. */
+}
+
+if(ggiSetMode(vis, &amp;mode))
+{
+	/* Set mode has failed, should check if suggested mode
+	   is o.k. for us, and try the call again. */
+}
+
+numbufs = ggiDBGetNumBuffers(vis);
+
+for(i = 0; i &lt; numbufs; i++)
+{
+	ggi_directbuffer *db;
+	int frameno;
+
+	db = ggiDBGetBuffer(vis, i);
+
+	if(!(db-&gt;type &amp; GGI_DB_SIMPLE_PLB))
+	{
+<replaceable>
+		/* We don't handle anything but simple pixel-linear buffers.
+		   Fall back to ggiPutBox() or something. */
+		continue;
+</replaceable>
+	}
+
+	frameno = db-&gt;frame;
+
+	if(readptr[frameno] != NULL &amp;&amp;
+		(db-&gt;buffer.plb.pixelformat-&gt;flags &amp; GGI_PF_REVERSE_ENDIAN))
+	{
+		<replaceable>continue;</replaceable>
+	}
+
+	fbptr[frameno] = db->write;	/* read == write for simple plbs */
+
+	/* Stride of framebuffer (in bytes). */
+	stride[frameno] = db-&gt;buffer.plb.stride;
+
+	<replaceable>/* Check pixel format, be portable.... */</replaceable>
+
+</programlisting>
+</example>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<simplelist type="inline">
+<member><xref linkend="ref-struct-ggi-directbuffer"/></member>
+<member><xref linkend="api-ggiresourceacquire"/></member>
+
+</simplelist>
+</refsect1>
+
+</refentry>
+
+
+<refentry id="api-ggieventpoll">
+
+<refmeta>
+<refentrytitle><function>ggiEventPoll</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiJoinInputs</refname>
+
+<refname>ggiEventPoll</refname>
+<refname>ggiEventSelect</refname>
+<refname>ggiEventsQueued</refname>
+<refname>ggiEventRead</refname>
+
+<refname>ggiSetEventMask</refname>
+<refname>ggiGetEventMask</refname>
+<refname>ggiAddEventMask</refname>
+<refname>ggiRemoveEventMask</refname>
+
+<refpurpose>Event management for LibGGI visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>gii_input_t <function>ggiJoinInputs</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_input_t <parameter>inp</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_event_mask <function>ggiEventPoll</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
+<paramdef>struct timeval *<parameter>t</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>giiEventSelect</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask *<parameter>mask</parameter></paramdef>
+<paramdef>int <parameter>n</parameter></paramdef>
+<paramdef>fd_set *<parameter>readfds</parameter></paramdef>
+<paramdef>fd_set *<parameter>writefds</parameter></paramdef>
+<paramdef>fd_set *<parameter>exceptfds</parameter></paramdef>
+<paramdef>struct timeval *<parameter>timeout</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiEventsQueued</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiEventRead</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event *<parameter>ev</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiSetEventMask</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>evm</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_event_mask <function>ggiGetEventMask</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>giiAddEventMask</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>giiRemoveEventMask</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event_mask <parameter>mask</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+LibGGI provides input facilities through an auxiliary library,
+<application>LibGII</application>.
+Each LibGGI visual internally contains a <type>gii_input_t</type> input, and
+all LibGII functions are available to manipulate and process inputs.
+The LibGGI versions provided of most LibGII functions simply take a 
+<type>ggi_visual_t</type> rather than <type>gii_input_t</type> for convenience
+during everyday usage.  Events are LibGII types.  All other semantics 
+are the same; see <xref linkend="ref-libgii"/> for details.
+</para>
+
+<important><para>
+By default LibGGI visuals autodetect and open the appropriate inputs, 
+including mouse and keyboard and any other inputs that are 'intrinsic' 
+to the visual e.g. any registered X11 input device under the X target.  
+Thus in the usual cases there is no need to open a LibGII 
+<type>gii_input_t</type> directly (and that may in fact fail because an
+input device is already open).  The LibGGI <function>ggiEvent*</function>
+functions <emphasis>must</emphasis> be used to do event handling with LibGGI
+visuals, and provide adequate support for most everyday, single-visual
+usage.
+</para>
+
+<para>
+Advanced management of input sources is accomplished by detaching
+the input from the visual and using LibGII functions on the separate
+visual handle (see <link linkend="api-ggigetinput">ggiDetachInput</link>).
+This is encouraged, for example, when joining inputs from multiple
+visuals, because
+when two visuals share the same joined input, you cannot
+ggiClose both of the visuals (a fatal error will result, because 
+closing the first visual closes both of the joined inputs and leaves
+the second closed visual with a stale input handle.)
+</para></important>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-giiseteventmask"/></member>
+<member><xref linkend="api-giieventpoll"/></member>
+<member><xref linkend="api-ggigetinput"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+<refentry id="api-ggigetinput">
+
+<refmeta>
+<refentrytitle><function>ggiGetInput</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiGetInput</refname>
+<refname id="api-test-ggidetachinput">ggiDetachInput</refname>
+<refpurpose>Functions to translate from GGI visuals to GII input</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>gii_input_t <function>ggiGetInput</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>gii_input_t <function>ggiDetachInput</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiGetInput</function> returns the underlying input-handle associated
+with a LibGGI visual, for use with the LibGII API.
+</para>
+
+<para>
+<function>ggiDetachInput</function> also returns the underlying input-handle,
+but in adddition, it breaks the association between the given visual 
+and that input handle.  After this has been done, no LibGGI event routines
+may be called on that visual handle, and when the visual handle
+is closed, the input will remain unaffected.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-giiopen"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+
+<refentry id="api-ggieventsend">
+
+<refmeta>
+<refentrytitle><function>ggiEventSend</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiEventSend</refname>
+<refpurpose>Send commands and events to a LibGGI visual</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int <function>ggiEventSend</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+<paramdef>gii_event *<parameter>ev</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiEventSend</function> injects an event into the queue.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>Controlling VT switching behavior</title>
+
+<para>
+If an application wants to continue running after its VT is switched
+away,  it should make a call <function>ggiEventSend</function> to the visual 
+with an <symbol>evCommand</symbol> event with code
+<symbol>GGICMD_NOHALT_ON_UNMAP</symbol>.
+To disable this behavior, use a command event with code
+<symbol>GGICMD_HALT_ON_UNMAP</symbol>.  The latter is the default.
+</para>
+
+</refsect1> 
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggieventpoll"/></member>
+<member><xref linkend="api-giieventsend"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+<refentry id="api-ggigetc">
+
+<refmeta>
+<refentrytitle><function>ggiGetc</function></refentrytitle>
+<manvolnum>3ggi</manvolnum>
+<refmiscinfo>GGI</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>ggiGetc</refname>
+<refname>ggiKbhit</refname>
+<refpurpose>Convenience functions for simplistic keyboard input</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<funcsynopsis>
+<funcsynopsisinfo>#include &lt;ggi/ggi.h&gt;</funcsynopsisinfo>
+
+<funcprototype>
+<funcdef>int ggiGetc</funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+<funcprototype>
+<funcdef>int <function>ggiKbhit</function></funcdef>
+<paramdef>ggi_visual_t <parameter>vis</parameter></paramdef>
+</funcprototype>
+
+</funcsynopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>Description</title>
+
+<para>
+<function>ggiGetc</function> gets a character from the keyboard, 
+and blocks if there is no key immediately available.
+</para>
+
+<para>
+<function>ggiKbhit</function> checks if a key has been hit on the keyboard.  This
+does not consume the key.  It is used for easy porting of old DOS
+applications.
+
+<important>
+<para>
+<emphasis>Do not</emphasis> poll like this: <literal>do while( !
+ggiKbhit(vis) );</literal>
+On a multitasking OS you would be wasting a lot of resources which could be
+available to other processes.  If you want to wait for a key, use the 
+<function>ggiGetc</function> call.
+</para>
+</important>
+
+</para>
+</refsect1>
+
+<refsect1>
+<title>Return value</title>
+
+<para>
+<function>ggiKbhit</function> returns <returnvalue>0</returnvalue> if
+no key has been received yet, otherwise there is a key to be consumed.
+</para>
+
+<para>
+<function>ggiGetc</function> returns a Unicode character in canonical form.
+</para>
+
+<para>
+For a fuller definition of characters, see <xref linkend="ref-struct-gii-key-event"/>.
+</para>
+
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+
+<simplelist type="inline">
+<member><xref linkend="api-ggieventpoll"/></member>
+</simplelist>
+
+</refsect1>
+
+</refentry>
+
+</reference>
