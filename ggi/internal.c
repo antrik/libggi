@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.2 2001/05/31 21:55:21 skids Exp $
+/* $Id: internal.c,v 1.3 2001/06/16 22:51:49 ggibecka Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -389,6 +389,9 @@ int _ggi_parse_physz(char *optstr, int *physzflag, ggi_coord *physz) {
 
 	*physzflag = 0;
 	physz->x =physz->y = GGI_AUTO;
+	
+	/* The 'N' is there by default, if the option was not filled in. */
+	if (toupper(*nptr)=='N') return GGI_OK;
 
 	/* Check if we should *always* override the X server values */
 	if(*nptr == '=') {
