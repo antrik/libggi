@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.24 2005/01/06 12:05:56 cegger Exp $
+/* $Id: buffer.c,v 1.25 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -146,7 +146,7 @@ int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
 }
 
 /* XImage allocation for normal client-side buffer */
-void _ggi_x_free_ximage(ggi_visual *vis) {
+void _ggi_x_freefb(ggi_visual *vis) {
 	ggi_x_priv *priv;
 	int i, first, last;
 
@@ -154,7 +154,10 @@ void _ggi_x_free_ximage(ggi_visual *vis) {
 
 	if (priv->slave) ggiClose(priv->slave);
 	priv->slave = NULL;
-	if (priv->ximage) XDestroyImage(priv->ximage); /* frees priv->fb */ 
+	if (priv->ximage) {
+		free(priv->ximage);
+		free(priv->fb);
+	}
 	else if (priv->fb) free(priv->fb);
 	priv->ximage = NULL;
 	priv->fb = NULL;
@@ -172,7 +175,7 @@ void _ggi_x_free_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-int _ggi_x_create_ximage(ggi_visual *vis)
+int _ggi_x_createfb(ggi_visual *vis)
 {
 	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
@@ -185,7 +188,7 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 
 	DPRINT_MODE("X: Creating vanilla XImage client-side buffer\n");
 
-	_ggi_x_free_ximage(vis);
+	_ggi_x_freefb(vis);
 
 	priv->fb = malloc(GT_ByPPP(
 				LIBGGI_VIRTX(vis)*
@@ -226,16 +229,9 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 	
-	priv->ximage = XCreateImage(priv->disp, 
-				priv->vilist[priv->viidx].vi->visual, 
-				(unsigned)priv->vilist[priv->viidx].vi->depth,
-				ZPixmap,	/* format */
-				0,		/* offset */
-				(char *)priv->fb,	/* data */
-				(unsigned)LIBGGI_VIRTX(vis), 
-				(unsigned)LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames,
-				8,		/* bitmap_pad*/
-				0);
+	priv->ximage = _ggi_x_create_ximage( vis, (char*)priv->fb,
+					     LIBGGI_VIRTX(vis), 
+					     LIBGGI_VIRTY(vis) );
 	if (priv->ximage == NULL) {
 		ggiClose(priv->slave);
 		priv->slave = NULL;
@@ -244,20 +240,13 @@ int _ggi_x_create_ximage(ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 
-#ifdef GGI_LITTLE_ENDIAN
-	priv->ximage->byte_order = LSBFirst;
-	priv->ximage->bitmap_bit_order = LSBFirst;
-#else
-	priv->ximage->byte_order = MSBFirst;
-	priv->ximage->bitmap_bit_order = MSBFirst;
-#endif
 
 	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
 		ggi_directbuffer *db;
 
 		db = _ggi_db_get_new();
 		if (!db) {
-			_ggi_x_free_ximage(vis);
+			_ggi_x_freefb(vis);
 			return GGI_ENOMEM;
 		}
 

@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.30 2005/02/09 06:09:02 orzo Exp $
+/* $Id: misc.c,v 1.31 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -630,3 +630,58 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 noswab:
 	XFreePixmap(priv->disp, fontpix);
 }
+
+
+/* Allocates and initializes an XImage struct.
+ * This function was written because XCreateImage() is not
+ * DGA compatible as it requires a visual.
+ * The XImage should be freed with free() instead of XFree(). */
+XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
+{
+	ggi_pixelformat *fmt;
+	XImage *img0;
+
+	img0 = malloc( sizeof(XImage) );
+	if( img0 == NULL )
+		return NULL;
+	
+	img0->width = (unsigned)w;
+	img0->height = (unsigned)h;          
+	img0->xoffset = 0;         /* number of pixels offset in X direction */
+	img0->format = ZPixmap;    /* XYBitmap, XYPixmap, ZPixmap */
+	img0->data = data;         /* pointer to image data */
+
+#ifdef GGI_LITTLE_ENDIAN
+        img0->byte_order = LSBFirst;
+        img0->bitmap_bit_order = LSBFirst;
+#else
+        img0->byte_order = MSBFirst;
+        img0->bitmap_bit_order = MSBFirst;
+#endif
+
+	fmt = LIBGGI_PIXFMT(vis);
+
+	/* XXX: what does bitmap_unit mean?  I put 8 here, but I don't
+	 * know if that's always the right value. */
+	img0->bitmap_unit = 8;      /* quant. of scanline 8, 16, 32 */
+
+
+	img0->bitmap_pad = 8;              /* 8, 16, 32 either XY or ZPixmap */
+	img0->depth =(unsigned)LIBGGI_PIXFMT(vis)->depth; /* depth of image */
+	img0->bits_per_pixel = fmt->size;  /* bits per pixel (ZPixmap) */
+	img0->red_mask = fmt->red_mask;    /* bits in z arrangment */
+	img0->green_mask = fmt->green_mask;
+	img0->blue_mask = fmt->blue_mask;
+
+	/* XInitImage() will calculate this one */
+	img0->bytes_per_line = 0;  /* accelarator to next line */
+	
+	if( XInitImage(img0) ) {
+		free(img0);
+		DPRINT("XInitImage failed!\n");
+		return NULL;
+	}
+
+	return img0;
+}
+

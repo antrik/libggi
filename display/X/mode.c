@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.43 2005/02/09 06:09:02 orzo Exp $
+/* $Id: mode.c,v 1.44 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -43,6 +43,13 @@
 /* Rounds up to a multiple of 4 */
 #define FourMultiple(x) ( (x + 3) & ~3 )
 
+/* a few prototypes */
+void _GGI_X_checkmode_adapt( ggi_mode * m,
+			     ggi_x_vi * vi,
+			     ggi_x_priv * priv );
+void _GGI_X_checkmode_adjust( ggi_mode *req,
+			      ggi_mode *sug,
+			      ggi_x_priv *priv );
 
 /* Convert the ggi_x_vi structure to a ggi_mode structure
  * suitable for pasing as suggested mode to _GGI_generic_mode_update()
@@ -59,7 +66,6 @@
  * Left undefined: ( checkmode_adjust() will set them )
  * 	m->frames
  */
-static
 void _GGI_X_checkmode_adapt( ggi_mode * m,
 			     ggi_x_vi * vi,
 			     ggi_x_priv * priv )
@@ -155,7 +161,6 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
  * 	sug->virt    (anything reasonable so long as x is a multiple of 4)
  * 	sug->size    (this part is less flexible ;)
  */
-static
 void _GGI_X_checkmode_adjust( ggi_mode *req,
 			      ggi_mode *sug,
 			      ggi_x_priv *priv )
@@ -275,6 +280,8 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 
 	cm = _GGI_generic_checkmode_create();
 
+	/* hook in our last-resort compare in order to prefer some
+	 * visuals over other aparently equally capable visuals */
 	cm->user_cmp = (ggi_user_cmp *)_GGI_X_checkmode_compare_visuals;
 	cm->user_param = priv;
 
@@ -282,15 +289,20 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 
 	for(i=0, vi= priv->vilist; i < priv->nvisuals; i++, vi++ ) {
 
+		/* The evi helper disqualifies some visuals */
 		if( vi->flags & GGI_X_VI_NON_FB ) 
 			continue;
 		
-		_GGI_X_checkmode_adapt( tm, vi, priv );
-		_GGI_X_checkmode_adjust( &cm->req, tm, priv );
+		/* initialize mode suggestion */
+		priv->cm_adapt( tm, vi, priv );
+		/* adjust for wildcard matching in some fields */
+		priv->cm_adjust( &cm->req, tm, priv );
+
+		/* Let cm decide if it's the best suggestion yet */
 		_GGI_generic_checkmode_update( cm, tm, i );
 	}
 
-	i = _GGI_generic_checkmode_finish( cm, tm, viidx );
+	i = _GGI_generic_checkmode_finish( cm, tm, (intptr_t*)viidx );
 	_GGI_generic_checkmode_destroy( cm );
 	return i;
 
@@ -556,47 +568,12 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 
 	auto_virt = ((tm->virt.x == GGI_AUTO) && (tm->virt.y == GGI_AUTO));
 
-#if 0
-	/* made unneccessary by new checkmode code */
-	if( ! priv->ok_to_resize ) {
-		if (! XGetGeometry(priv->disp, priv->parentwin, &root,
-				(int *)&dummy, (int *)&dummy,
-				(unsigned int *)&w, (unsigned int *)&h,
-				&dummy, &depth))
-		{
-			DPRINT_MODE("X (checkmode_fixed):"
-					"no reply from X11 server\n");
-			return GGI_EEVNOTARGET;
-		}
-
-		if (tm->visible.x == GGI_AUTO) tm->visible.x = w;
-		if (tm->visible.y == GGI_AUTO) tm->visible.y = h;
-		if ((tm->visible.x != w) || (tm->visible.y != h))
-			return GGI_EARGINVAL;
-	}
-#endif
 	rc = GGI_X_checkmode_internal(vis, tm, &vi_idx);
 
-#if 0
-	/* made unneccessary by new checkmode code */
-	if ( !priv->ok_to_resize &&
-	     ( (rc != GGI_OK) ||
-	       (tm->visible.x != w) || 
-	       (tm->visible.y != h) ) ) {
-
-		tm->visible.x = w;
-		tm->visible.y = h;
-
-		DPRINT_MODE("X (checkmode_fixed): mlfuncs.validate = %p\n",
-				priv->mlfuncs.validate);
-	}
-	else {
-		DPRINT_MODE("X (checkmode_normal): mlfuncs.validate = %p\n",
-				priv->mlfuncs.validate);
-
-	}
-
-#endif
+	/* The mlfuncs.validate() hook is deprecated.  Instead,
+	 * overload priv->cm_adjust or priv->cm_adapt or 
+	 * opdisplay->checkmode()
+	 * XXX: Start of deprecated code. */
 	if (priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
 		if (priv->cur_mode < 0) {
@@ -614,10 +591,12 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 		  }
 
 		  _ggi_x_fit_geometry(vis, tm, priv->vilist + vi_idx, tm);
+		  rc = GGI_OK;
 		}        /* if */
 		DPRINT_MODE("X: mlfuncs.validate successful: %i\n",
 			priv->cur_mode);
 	}	/* if */
+	/* XXX: End of depricated code. */
 
 	return rc;
 		
@@ -1263,12 +1242,6 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	DPRINT("Create colormap.\n");
 	_ggi_x_create_colormaps(vis, vi);
 
-
-	/* XXX: does attribmask ever get CWBorderPixel ORed in?
-	 * and is it neccessary to set the border pixel? */
-	if (priv->ok_to_resize)
-		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
-
 	/* XXX: attribmask maybe should have CWColormap ORed in
 	 * as well.  As it is, that attribute is ignored in the
 	 * later call to XChangeWindowAttributes() in the case
@@ -1297,10 +1270,12 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		unsigned win_width;
 
 		/* XXX: our priv->win width is multiplied by the number
-		 * of frames only if we are allowed to resize.  Is this
-		 * proper??? */
+		 * of frames only if we are not -inwin or fullscreen...
+		 * Is this proper??? */
 		win_width = (unsigned) tm->virt.x;
 		win_width *=  priv->ok_to_resize ? tm->frames : 1;
+
+		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 
 		win_attribmask = CWColormap;
 		win_attribmask |= priv->ok_to_resize ? CWBorderPixel : 0;

@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.10 2005/01/06 12:04:57 cegger Exp $
+/* $Id: vline.c,v 1.11 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -126,23 +126,11 @@ int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
 
 	ggLock(priv->xliblock);
 #warning 1,2,4-bit support needed.
-        ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-                            (unsigned)LIBGGI_PIXFMT(vis)->depth,
-			    ZPixmap, 0,
-			    (char *)data, 1, (unsigned)h, 8, 0);
-
-#ifdef GGI_LITTLE_ENDIAN
-        ximg->byte_order = LSBFirst;
-        ximg->bitmap_bit_order = LSBFirst;
-#else
-        ximg->byte_order = MSBFirst;
-        ximg->bitmap_bit_order = MSBFirst;
-#endif
+	ximg = _ggi_x_create_ximage( vis, (char*)data, 1, h);
 
         XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
                   0, 0, x, GGI_X_WRITE_Y, 1, (unsigned)h);
-        XFree(ximg); /* XDestroyImage would free(data) (bad).
-			Luckily, this doesn't leak (?) */
+        free(ximg); 
 
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
@@ -153,9 +141,9 @@ static int geterror;
 
 static int errorhandler (Display * disp, XErrorEvent * event)
 {
-  if (event->error_code == BadMatch) geterror = 1;
+	if (event->error_code == BadMatch) geterror = 1;
 
-  return 0;
+	return 0;
 }
 
 int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)

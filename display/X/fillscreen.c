@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.5 2005/02/07 07:27:06 orzo Exp $
+/* $Id: fillscreen.c,v 1.6 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -61,21 +61,13 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 	DPRINT("X_fillscreen_slave_draw enter!\n");
 
 	ggLock(priv->xliblock);
-	/*
-	 * XSetWindowBackground(priv->disp, priv->drawable,
-			     LIBGGI_GC(vis)->fg_color);
-*/
 	
-	int screen =  priv->vilist[priv->viidx].vi->screen;
-
-	gcValue.foreground =
-		BlackPixel( priv->disp, screen );
-	gcValue.background =
-		BlackPixel( priv->disp, screen );
+	/* XXX: What is priv->gc ?  is it appropriate to use that here? */
+	gcValue.foreground = LIBGGI_GC(vis)->fg_color;
+	gcValue.background = LIBGGI_GC(vis)->fg_color;
 	gcValue.function   = GXcopy;
-
-	gc = XCreateGC(priv->disp, priv->win,
-	 	GCForeground | GCBackground | GCFunction, &gcValue);
+	gc = XCreateGC( priv->disp, priv->drawable,
+	 		GCForeground | GCBackground | GCFunction, &gcValue);
 
 	if (LIBGGI_GC(vis)->cliptl.x > 0
 	    || LIBGGI_GC(vis)->cliptl.y > 0
@@ -90,33 +82,28 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 			    LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y);
 		DPRINT("X_fillscreen_slave_draw calling opdraw->fillscreen\n");
 		priv->slave->opdraw->fillscreen(priv->slave);
+		/* What is this?  y is set twice?  which value is 
+		 * proper?  Answer: GGI_X_WRITE_Y is a macro that makes
+		 * use of the value stored in y. */
 		y = LIBGGI_GC(vis)->cliptl.y;
 		y = GGI_X_WRITE_Y;
-		DPRINT("X_fillscreen_slave_draw calling XClearArea\n");
+
+#define CLIPSIZE(xy) \
+		(unsigned)LIBGGI_GC(vis)->clipbr.xy-LIBGGI_GC(vis)->cliptl.xy
+
 		XFillRectangle(priv->disp, priv->drawable, 
 			gc, 
 		        LIBGGI_GC(vis)->cliptl.x, y,
-			(unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-			(unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y
+			CLIPSIZE(x),
+			CLIPSIZE(y)
 			);
-		/*
-		XClearArea(priv->disp, priv->drawable,
-			   LIBGGI_GC(vis)->cliptl.x, y,
-			   (unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-			   (unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
-			   False);
-			   */
 	} else {
 		DPRINT("X_fillscreen_slave_draw large clip!\n");
 		GGI_X_CLEAN(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 		DPRINT("X_fillscreen_slave_draw calling opdraw->fillscreen\n");
 		priv->slave->opdraw->fillscreen(priv->slave);
-		DPRINT("X_fillscreen_slave_draw calling XClearWindow"
-				"(%x,%x)\n", priv->disp, priv->drawable);
 		XFillRectangle(priv->disp, priv->drawable, 
 			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
-		//XClearWindow(priv->disp, priv->drawable);
-		DPRINT("X_fillscreen_slave_draw XClearWindow returned\n");
 	}
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
@@ -127,27 +114,43 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 int GGI_X_fillscreen_draw(ggi_visual *vis)
 {
 	ggi_x_priv *priv;
+	XGCValues gcValue;
+	GC gc;
 	priv = GGIX_PRIV(vis);
 
 	DPRINT("X_fillscreen_draw enter!\n");
+
 	ggLock(priv->xliblock);
-	XSetWindowBackground(priv->disp, priv->drawable,
-			     LIBGGI_GC(vis)->fg_color);
+	
+	/* XXX: What is priv->gc ?  is it appropriate to use that here? */
+	gcValue.foreground = LIBGGI_GC(vis)->fg_color;
+	gcValue.background = LIBGGI_GC(vis)->fg_color;
+	gcValue.function   = GXcopy;
+	gc = XCreateGC( priv->disp, priv->drawable,
+	 		GCForeground | GCBackground | GCFunction, &gcValue);
 
 	if (LIBGGI_GC(vis)->cliptl.x > 0
 	    || LIBGGI_GC(vis)->cliptl.y > 0
 	    || LIBGGI_GC(vis)->clipbr.x < LIBGGI_VIRTX(vis)
 	    || LIBGGI_GC(vis)->clipbr.y < LIBGGI_VIRTY(vis)) {
 		int y;
+		/* Note: GGI_X_WRITE_Y is a macro that makes use
+		 * of the value stored in y. */
 		y = LIBGGI_GC(vis)->cliptl.y;
 		y = GGI_X_WRITE_Y;
-		XClearArea(priv->disp, priv->drawable,
-			   LIBGGI_GC(vis)->cliptl.x, y,
-			   (unsigned)LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-			   (unsigned)LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y, 
-			   False);
+
+#define CLIPSIZE(xy) \
+		(unsigned)LIBGGI_GC(vis)->clipbr.xy-LIBGGI_GC(vis)->cliptl.xy
+
+		XFillRectangle(priv->disp, priv->drawable, 
+			gc, 
+		        LIBGGI_GC(vis)->cliptl.x, y,
+			CLIPSIZE(x),
+			CLIPSIZE(y)
+			);
 	} else {
-		XClearWindow(priv->disp, priv->drawable);
+		XFillRectangle(priv->disp, priv->drawable, 
+			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
 	}
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);

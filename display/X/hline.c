@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2005/01/06 12:04:56 cegger Exp $
+/* $Id: hline.c,v 1.8 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -124,24 +124,12 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, const void *data)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
+	ximg = _ggi_x_create_ximage( vis, (char*)data, w, 1 );
+
 	ggLock(priv->xliblock);
-        ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-                            (unsigned)LIBGGI_PIXFMT(vis)->depth,
-			    ZPixmap, 0,
-			    (char *)data, (unsigned)w, 1, 8, 0);
-
-#ifdef GGI_LITTLE_ENDIAN
-        ximg->byte_order = LSBFirst;
-        ximg->bitmap_bit_order = LSBFirst;
-#else
-        ximg->byte_order = MSBFirst;
-        ximg->bitmap_bit_order = MSBFirst;
-#endif
-
-        XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
+	XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
                   0, 0, x, GGI_X_WRITE_Y, (unsigned)w, 1);
-        XFree(ximg); /* XDestroyImage would free(data) (bad).
-			Luckily, this doesn't leak (?) */
+	free(ximg);
 
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
@@ -152,9 +140,9 @@ static int geterror;
 
 static int errorhandler (Display * disp, XErrorEvent * event)
 {
-  if (event->error_code == BadMatch) geterror = 1;
+	if (event->error_code == BadMatch) geterror = 1;
 
-  return 0;
+	return 0;
 }
 
 int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)

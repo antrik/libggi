@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.13 2004/12/27 22:55:09 cegger Exp $
+/* $Id: box.c,v 1.14 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -146,25 +146,19 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	ggLock(priv->xliblock);
 #warning 1,2,4-bit support needed.
-	ximg = XCreateImage(priv->disp, priv->vilist[priv->viidx].vi->visual,
-			    (unsigned)LIBGGI_PIXFMT(vis)->depth, ZPixmap, 0,
-			    (char *)data, (unsigned)w, (unsigned)h, 8, 0);
+	ximg = _ggi_x_create_ximage( vis, (char*)data, w, h );
+
 	y = GGI_X_WRITE_Y;
 
-#ifdef GGI_LITTLE_ENDIAN
-	ximg->byte_order = LSBFirst;
-	ximg->bitmap_bit_order = LSBFirst;
-#else
-	ximg->byte_order = MSBFirst;
-	ximg->bitmap_bit_order = MSBFirst;
-#endif
-
+	ggLock(priv->xliblock);
 	XPutImage(priv->disp, priv->drawable, priv->gc, ximg,
 		  0, 0, x, y, (unsigned)w, (unsigned)h);
-	XFree(ximg); /* XDestroyImage would free(data) (bad).
-			Luckily, this doesn't leak (?) */
+
+	/* XXX: These routines could be optimized to avoid memory
+	 * allocation. */
+	free(ximg); 
+
 	GGI_X_MAYBE_SYNC(vis);
 	ggUnlock(priv->xliblock);
 	return GGI_OK;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.44 2005/02/07 07:27:06 orzo Exp $
+/* $Id: visual.c,v 1.45 2005/02/10 04:55:20 orzo Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -249,6 +249,16 @@ skip3:
 	return 0;
 }
 
+/* prototypes for functions in mode.c that we need in 
+ * order to initialize xpriv->cm_adjust and xpriv->cm_adapt */
+void _GGI_X_checkmode_adapt( ggi_mode * m,
+			     ggi_x_vi * vi,
+			     ggi_x_priv * priv );
+void _GGI_X_checkmode_adjust( ggi_mode *req,
+			      ggi_mode *sug,
+			      ggi_x_priv *priv );
+
+
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32 *dlret)
 
@@ -424,6 +434,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->checkmode = GGI_X_checkmode;
 	vis->opdisplay->setmode = GGI_X_setmode;
 
+	/* An extension might want to overload these to provide different
+	 * Visual-based modes. */
+	priv->cm_adapt = _GGI_X_checkmode_adapt;
+	priv->cm_adjust = _GGI_X_checkmode_adjust;
+
 	/* Try the extensions that haven't been disabled. */
 #define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
@@ -479,8 +494,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto nomansync;
 	}
 	if (!priv->createfb) {
-		priv->createfb = _ggi_x_create_ximage;
-		priv->freefb = _ggi_x_free_ximage;
+		priv->createfb = _ggi_x_createfb;
+		priv->freefb = _ggi_x_freefb;
 	}
 
 	/* See if we want/need/have mansync */

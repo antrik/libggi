@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.14 2005/02/07 07:27:07 orzo Exp $
+/* $Id: x.h,v 1.15 2005/02/10 04:55:21 orzo Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -72,13 +72,21 @@ typedef struct {
 #define GGI_X_VI_NON_FB 1
 } ggi_x_vi;
 
-typedef int  (*ggi_x_createfb)(ggi_visual *vis);				/* MMAP/alloc fb/db  */
-typedef void (*ggi_x_freefb)(ggi_visual *vis);					/* clean up fb/db    */
+typedef int  (*ggi_x_createfb)(ggi_visual *vis);	/* MMAP/alloc fb/db  */
+typedef void (*ggi_x_freefb)(ggi_visual *vis);		/* clean up fb/db    */
 typedef int  (*ggi_x_createdrawable)(ggi_visual *vis);	/* prepare renderer  */
-typedef void (*ggi_x_createcursor)(ggi_visual *vis);		/* load mouse sprite */
+typedef void (*ggi_x_createcursor)(ggi_visual *vis);	/* load mouse sprite */
 
+struct ggi_x_priv;
 
-typedef struct {
+typedef void (*ggi_x_checkmode_adapt)( ggi_mode * m,
+				       ggi_x_vi * vi,
+				       struct ggi_x_priv * priv );
+typedef void (*ggi_x_checkmode_adjust)( ggi_mode *req,
+			      ggi_mode *sug,
+			      struct ggi_x_priv *priv );
+
+typedef struct ggi_x_priv {
 	PHYSZ_DATA
 
 	Display	*disp;		/* One display per instance  */
@@ -121,13 +129,15 @@ typedef struct {
 	int         wintype;
 	Window      parentwin, win;
 
-	unsigned char		*fb;				/* direct access */
+	unsigned char		*fb;	/* direct access */
+	Drawable	 drawable;	/* Xlib/accel access */
 
+	/* Overloadables: */
+	ggi_x_createdrawable	createdrawable;	/* overload init .drawable */
 	ggi_x_createfb	 createfb;	/* overload init .fb */
 	ggi_x_freefb	 freefb;	/* overload init .fb */
-
-	Drawable	 drawable;	/* Xlib/accel access */
-	ggi_x_createdrawable	createdrawable;	/* overload init .drawable */
+	ggi_x_checkmode_adapt cm_adapt; /* visual to ggi_mode conversion */
+	ggi_x_checkmode_adjust cm_adjust; /* adjust ggi_mode to meet request */
 
 	XImage	    *ximage;
 	ggi_visual	*slave;
@@ -205,8 +215,9 @@ int GGI_X_setdisplayframe_child(ggi_visual *vis, int num);
 int GGI_X_setorigin_child(ggi_visual *vis, int x, int y);
 int GGI_X_setreadframe_slave(ggi_visual *vis, int num);
 int GGI_X_setwriteframe_slave(ggi_visual *vis, int num);
-int _ggi_x_create_ximage(ggi_visual *vis);
-void _ggi_x_free_ximage(ggi_visual *vis);
+XImage *_ggi_x_create_ximage(ggi_visual *vis, char *data, int w, int h);
+int _ggi_x_createfb(ggi_visual *vis);
+void _ggi_x_freefb(ggi_visual *vis);
 int GGI_X_create_window_drawable (ggi_visual *vis);
 gii_inputxwin_exposefunc GGI_X_expose;
 ggifunc_flush GGI_X_flush_ximage_child;
