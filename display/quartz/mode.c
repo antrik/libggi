@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2005/01/28 10:06:30 cegger Exp $
+/* $Id: mode.c,v 1.9 2005/01/28 22:31:33 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -657,8 +657,6 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 			ev.cmd.type = evCommand;
 			ev.cmd.target = priv->inp->origin;
 			ev.cmd.code = GII_CMDCODE_QZSETPARAM;
-
-			data.theWindow = priv->theWindow;
 
 			/* Assure aligned memory access. */
 			memcpy(ev.cmd.data, &data, sizeof(gii_quartz_cmddata_setparam));
