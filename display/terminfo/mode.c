@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/09/12 19:40:24 cegger Exp $
+/* $Id: mode.c,v 1.9 2004/09/12 21:11:05 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -64,7 +64,7 @@ int GGI_terminfo_setsplitline(ggi_visual *vis, int line)
 	struct TIhooks *priv;
 	ggi_mode *mode;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = TERMINFO_PRIV(vis);
 	mode = LIBGGI_MODE(vis);
 	
 	line /= mode->dpp.y; /* terminfo can only set splitline with pixel
@@ -86,7 +86,7 @@ int GGI_terminfo_flush(ggi_visual *vis, int x, int y, int w, int h,
 	struct TIhooks *priv;
 	ggi_mode *mode;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = TERMINFO_PRIV(vis);
 	mode = LIBGGI_MODE(vis);
 
 	_terminfo_select_screen(priv->scr);
@@ -144,7 +144,7 @@ static int _GGI_terminfo_loadstubs(ggi_visual *vis)
 
 static int _GGI_terminfo_domode(ggi_visual *vis)
 {
-	struct TIhooks *priv = LIBGGI_PRIVATE(vis);
+	struct TIhooks *priv = TERMINFO_PRIV(vis);
 
 	_ggiZapMode(vis, 0);
 
@@ -179,7 +179,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 	struct TIhooks *priv;
 	int status;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = TERMINFO_PRIV(vis);
 
 	GGIDPRINT("display-terminfo: setmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
 		tm->graphtype,
@@ -221,7 +221,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 
 int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 {
-	struct TIhooks *priv = LIBGGI_PRIVATE(vis);
+	struct TIhooks *priv = TERMINFO_PRIV(vis);
 	int xdpp, ydpp;
 	int err = 0;
 

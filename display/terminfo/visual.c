@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/04/02 16:05:25 ggibecka Exp $
+/* $Id: visual.c,v 1.8 2004/09/12 21:11:05 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -293,7 +293,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #else
 	GGIDPRINT("display-terminfo: mouse support is disabled\n");
 #endif
-	LIBGGI_PRIVATE(vis) = priv;
+	TERMINFO_PRIV(vis) = priv;
 
 	/* mode management */
 	vis->opdisplay->flush     = GGI_terminfo_flush;
@@ -343,10 +343,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh) {
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
 	struct TIhooks *priv;
 
-	priv = LIBGGI_PRIVATE(vis);
+	priv = TERMINFO_PRIV(vis);
 	if ( priv != NULL ) {
 		if ( priv->scr != NULL ) {
 			_terminfo_select_screen(priv->scr);

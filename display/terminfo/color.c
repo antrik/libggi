@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2003/07/06 10:25:23 cegger Exp $
+/* $Id: color.c,v 1.3 2004/09/12 21:11:05 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -66,7 +66,7 @@ static const ggi_color vga16_palette[16] = {
 
 static inline chtype map_char_to_chtype(ggi_visual *vis, unsigned int c) {
 	struct TIhooks *tiinfo;
-	tiinfo = LIBGGI_PRIVATE(vis);
+	tiinfo = TERMINFO_PRIV(vis);
 	switch (c) {
 		case 0x00: return ' ';
 		default:   return tiinfo->charmap[c];
@@ -80,7 +80,7 @@ static inline chtype get_color_pair(ggi_visual *vis, int fg, int bg) {
 
 static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16 pixel)
 {
-	struct TIhooks *tiinfo = LIBGGI_PRIVATE(vis);
+	struct TIhooks *tiinfo = TERMINFO_PRIV(vis);
 
 	int fg = (pixel >> 8)  & 0x0F;
 	int bg = (pixel >> 12) & 0x0F;
@@ -129,7 +129,7 @@ static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
 		fb_width = LIBGGI_VIRTX(vis);
 		fb_height = LIBGGI_VIRTY(vis);
 
-		tiinfo = LIBGGI_PRIVATE(vis);
+		tiinfo = TERMINFO_PRIV(vis);
 
 		mode = LIBGGI_MODE(vis);
 		vis_width = mode->visible.x;
@@ -189,7 +189,7 @@ static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
 		fb_width = LIBGGI_VIRTX(vis);
 		fb_height = LIBGGI_VIRTY(vis);
 
-		tiinfo = LIBGGI_PRIVATE(vis);
+		tiinfo = TERMINFO_PRIV(vis);
 
 		mode = LIBGGI_MODE(vis);
 		vis_width = mode->visible.x;

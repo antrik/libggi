@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.4 2003/07/06 10:25:23 cegger Exp $
+/* $Id: TIvisual.h,v 1.5 2004/09/12 21:11:04 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -64,6 +64,8 @@ struct TIhooks {
 	int physzflags;
 	ggi_coord physz;
 };
+
+#define TERMINFO_PRIV(vis)	((struct TIhooks *)LIBGGI_PRIVATE(vis))
 
 /* Prototypes
  */
