@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/09/08 11:17:05 cegger Exp $
+/* $Id: visual.c,v 1.8 2004/09/12 20:33:41 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -267,7 +267,7 @@ int GGI_libkgi_sendevent (struct ggi_visual *vis, ggi_event *event)
 
 static int do_cleanup(ggi_visual *vis)
 {
-        ggi_libkgi_priv *priv = LIBGGI_PRIVATE(vis);
+        ggi_libkgi_priv *priv = LIBKGI_PRIV(vis);
 
         /* We may be called more than once due to the LibGG cleanup stuff */
         if (priv == NULL) return 0;
@@ -282,7 +282,7 @@ static int do_cleanup(ggi_visual *vis)
         }
 
 	free(priv);
-        LIBGGI_PRIVATE(vis) = NULL;
+        LIBKGI_PRIV(vis) = NULL;
 
         ggUnregisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
@@ -325,7 +325,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
                 }
         }
 
-        LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(ggi_libkgi_priv));
+        LIBKGI_PRIV(vis) = priv = malloc(sizeof(ggi_libkgi_priv));
         if (priv == NULL) {
                 return GGI_ENOMEM;
         }
