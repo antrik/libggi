@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.4 2002/12/15 16:00:39 ggibecka Exp $
+/* $Id: x.h,v 1.5 2003/01/23 03:02:58 skids Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -175,7 +175,8 @@ void _ggi_x_free_colormaps(ggi_visual *vis);
 void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi);
 void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
 void _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm);
-void _ggi_x_set_xclip(Display *disp, GC gc, int x, int y, int w, int h);
+void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc, 
+		      int x, int y, int w, int h);
 void _ggi_x_create_dot_cursor(ggi_visual *vis);
 void _ggi_x_create_invisible_cursor(ggi_visual *vis);
 void _ggi_x_readback_fontdata(ggi_visual *vis);
