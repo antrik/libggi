@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.20 2001/08/16 10:44:48 thayne Exp $
+dnl $Id: configure.in,v 1.21 2001/08/16 11:44:58 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -574,24 +574,24 @@ else
   fi
   build_fbdev_target="yes"
   AC_MSG_RESULT(yes)
-fi
 
-AC_MSG_CHECKING(if we should build directfb renderer )
-if test "x$build_directfb_renderer" = "xno"; then
-  AC_MSG_RESULT(no)
-else
-  FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
-  build_directfb_renderer="yes"
-  AC_MSG_RESULT(yes)
-  AC_MSG_CHECKING(if directfb dir $directfb_src_dir exists)
-  if test -d $directfb_src_dir; then
-    AC_MSG_RESULT(yes)
-  else
-    build_directfb_renderer=no
+  AC_MSG_CHECKING(if we should build directfb renderer )
+  if test "x$build_directfb_renderer" = "xno"; then
     AC_MSG_RESULT(no)
-    AC_WARN(disabling directfb renderer)
+  else
+    AC_MSG_CHECKING(if directfb dir $directfb_src_dir exists)
+    if test -d $directfb_src_dir; then
+      build_directfb_renderer="yes"
+      FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
+      AC_MSG_RESULT(yes)
+    else
+      build_directfb_renderer=no
+      AC_MSG_RESULT(no)
+      AC_WARN(disabling directfb renderer)
+    fi
   fi
 fi
+
 
 AC_MSG_CHECKING(if we should build generic KGI driver)
 if test "x$build_genkgi_driver" = "xno"; then
