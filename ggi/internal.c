@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.3 2001/06/16 22:51:49 ggibecka Exp $
+/* $Id: internal.c,v 1.4 2001/06/17 04:34:44 skids Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -391,7 +391,7 @@ int _ggi_parse_physz(char *optstr, int *physzflag, ggi_coord *physz) {
 	physz->x =physz->y = GGI_AUTO;
 	
 	/* The 'N' is there by default, if the option was not filled in. */
-	if (toupper(*nptr)=='N') return GGI_OK;
+	if (*nptr == 'N' || *nptr == 'n') return GGI_OK;
 
 	/* Check if we should *always* override the X server values */
 	if(*nptr == '=') {
@@ -469,7 +469,7 @@ int _ggi_figure_physz(ggi_mode *mode, int physzflag, ggi_coord *op_sz,
 			xsize = op_sz->x;
 			ysize = op_sz->y;
 		} 
-		else if (dpix && dpiy) {
+		else if (dpix > 0 && dpiy > 0) {
 			xsize = (dsx * mode->dpp.x * 254 / dpix / 10);
 			ysize = (dsy * mode->dpp.y * 254 / dpiy / 10);
 		}
@@ -478,6 +478,7 @@ int _ggi_figure_physz(ggi_mode *mode, int physzflag, ggi_coord *op_sz,
 			ysize = op_sz->y;
 		}
 		if (xsize <= 0 || ysize <= 0) goto nosize;
+		if (dsx <= 0 || dsy <= 0) goto nosize;
 		xsize = xsize * mode->visible.x / dsx;
 		ysize = ysize * mode->visible.y / dsy;
 	}
