@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.4 2001/06/20 23:47:12 skids Exp $
 ******************************************************************************
 
    Display-Xlib initialization.
@@ -59,8 +59,16 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_xlib_priv *priv = LIBGGI_PRIVATE(vis);
 
-	if (priv->xwin.x.cmap) XFreeColormap(priv->xwin.x.display, priv->xwin.x.cmap);
-	if (priv->textfont) XUnloadFont(priv->xwin.x.display, priv->textfont->fid);
+	if (priv->xwin.x.cmap) {
+		if (priv->xwin.wintype == GGIX_ROOT)
+		  XSetWindowColormap(priv->xwin.x.display, priv->xwin.window,
+				     DefaultColormap(priv->xwin.x.display,
+						     priv->xwin.x.screen));
+		XFreeColormap(priv->xwin.x.display, priv->xwin.x.cmap);
+	}
+
+	if (priv->textfont) XUnloadFont(priv->xwin.x.display, 
+					priv->textfont->fid);
 	if (priv->xwin.x.gc) XFreeGC(priv->xwin.x.display, priv->xwin.x.gc);
 	if (priv->tempgc) XFreeGC(priv->xwin.x.display, priv->tempgc);
 	if (priv->xwin.window && priv->xwin.wintype == GGIX_NORMAL) {

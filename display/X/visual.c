@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2001/05/31 21:55:21 skids Exp $
+/* $Id: visual.c,v 1.4 2001/06/20 23:47:12 skids Exp $
 ******************************************************************************
 
    Display-X: initialization
@@ -92,7 +92,13 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv = LIBGGI_PRIVATE(vis);
 
-	if (priv->xwin.x.cmap) XFreeColormap(priv->xwin.x.display, priv->xwin.x.cmap);
+	if (priv->xwin.x.cmap) {
+		if (priv->xwin.wintype == GGIX_ROOT)
+		  XSetWindowColormap(priv->xwin.x.display, priv->xwin.window,
+				     DefaultColormap(priv->xwin.x.display,
+						     priv->xwin.x.screen));
+		XFreeColormap(priv->xwin.x.display, priv->xwin.x.cmap);
+	}
 	_GGI_X_freedbs(vis, priv);
 	if (priv->xwin.x.gc) XFreeGC(priv->xwin.x.display, priv->xwin.x.gc);
 	if (priv->xwin.window && priv->xwin.wintype == GGIX_NORMAL) {
