@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/02/23 14:24:59 pekberg Exp $
+/* $Id: visual.c,v 1.7 2004/09/08 11:17:05 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -54,7 +54,7 @@ int GGI_libkgi_flush(ggi_visual *vis, int x, int y, int w, int h,
 
 int GGI_libkgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-        strcpy(arguments, "");
+	*arguments = '\0';
 
         switch(num) {
         case 0:

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2004/04/04 14:31:58 mooz Exp $
+/* $Id: mode.c,v 1.9 2004/09/08 11:20:57 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -44,8 +44,7 @@ static int GGI_tele_getapi(ggi_visual *vis, int num,
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
 
-	strcpy(arguments,"");
-
+	*arguments = '\0';
 
 	switch(num) {
 		case 0: strcpy(apiname, "display-tele");

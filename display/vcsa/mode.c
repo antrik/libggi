@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/02/14 13:45:39 cegger Exp $
+/* $Id: mode.c,v 1.6 2004/09/08 11:24:01 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -44,7 +44,7 @@
 
 int GGI_vcsa_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	strcpy(arguments, "");
+	*arguments = '\0';
 
 	switch (num) {
 		case 0: strcpy(apiname, "display-vcsa");

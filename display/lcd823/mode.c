@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2004/04/04 14:31:55 mooz Exp $
+/* $Id: mode.c,v 1.6 2004/09/08 11:16:30 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -59,7 +59,7 @@ int GGI_lcd823_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	int size = GT_SIZE(LIBGGI_GT(vis));
 
-	strcpy(arguments, "");
+	*arguments = '\0';
 
 	switch(num) {
 	case 0: strcpy(apiname, "display-lcd823");
