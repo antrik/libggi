@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.9 2002/09/08 21:37:44 soyt Exp $
+/* $Id: misc.c,v 1.10 2003/01/20 18:28:57 skids Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -473,6 +473,7 @@ void _ggi_x_readback_fontdata (ggi_visual *vis) {
 	Pixmap fontpix;
 	char str[256];
 	int i, w, h;
+	GC pixgc;
 
 	priv = GGIX_PRIV(vis);
 
@@ -485,17 +486,23 @@ void _ggi_x_readback_fontdata (ggi_visual *vis) {
 	fontpix = XCreatePixmap(priv->disp, priv->drawable, 
 				w * 256, h, 
 				priv->vilist[priv->viidx].vi->depth);
-	XSetForeground(priv->disp, priv->tempgc, 0);
-	XFillRectangle(priv->disp, fontpix, priv->tempgc, 
+
+	pixgc = XCreateGC(priv->disp, priv->win, 0, 0);
+	XSetFont(priv->disp, pixgc, priv->textfont->fid);
+	_ggi_x_set_xclip(priv->disp, pixgc, 0, 0, w * 256, h);
+	XSetForeground(priv->disp, pixgc, 0);
+
+	XFillRectangle(priv->disp, fontpix, pixgc, 
 		       0, 0, w * 256, h);
-	XSetForeground(priv->disp, priv->tempgc, ~0);
+	XSetForeground(priv->disp, pixgc, ~0);
 	for (i = 0; i < 256; i++) str[i] = i;
-	XDrawString(priv->disp, fontpix, priv->tempgc, 
+	XDrawString(priv->disp, fontpix, pixgc, 
 		    0, priv->textfont->max_bounds.ascent, 
 		    str, 256);
 	XSync(priv->disp, 0);
 	priv->fontimg = XGetImage(priv->disp, fontpix, 0, 0, 
 				  w * 256, h, AllPlanes, ZPixmap);
+	XFreeGC(priv->disp, pixgc);
 
 	/* Reverse endianness if needed. */
 	if (priv->fontimg->byte_order == 
