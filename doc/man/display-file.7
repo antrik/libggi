@@ -11,11 +11,13 @@ Renders an image into a file.  The file can be a framebuffer device
 (e.g. \fB/dev/fb0\fR), in which case a reasonable representation of the
 image will be drawn on the console \fIso long as\fR the program's mode
 matches the framebuffer's mode.
+.RS
 BNote:R
 This target generates no input.  The \fBdisplay-multi\fR target can be
 used in order to see (and control) what the program does (using a
 normal target) and then generate a snapshot when the program
 exits.
+.RE
 .SH OPTIONS
 \fBfilename\fR is the file to render the images to.  If the filename is
 a PPM file (has the extension \fB.ppm\fR), then the image will be
@@ -49,3 +51,4 @@ command.
 DirectBuffer always available.
 .IP \(bu 4
 Unaccelerated.
+.PP

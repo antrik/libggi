@@ -18,7 +18,7 @@ XF86DGA events sent to the window are not captured and merged with
 any other LibGII input sources.  This allows one to take input
 from raw devices without receiving duplicate events should X also
 be configured to use the device.
-.PP
+
 .TP
 \fB-nocursor\fR
 Normal behavior of display-x and display-xlib is to create a small
@@ -27,7 +27,7 @@ positioned over the window containing the visual.  This can get in
 the way of mouse cursors implemented by the application.  With
 this option, you will not see an X mouse cursor when it is over
 the visual.
-.PP
+
 .TP
 \fB-physz==<sizex>,<sizey>[dpi]\fR
 This option will override the physical screen size reported by the
@@ -37,17 +37,19 @@ of the screen in millimeters, unless the optional \fBdpi\fR string
 is affixed, in which case, they represent resolution in
 dots-per-inch.  Yes, there are two equals signs there, for reasons
 of compatibility with other targets.
-.PP
+
 .TP
 \fBdisplay\fR
 The X display to connect to, otherwise defaults to the display
 specified in \fBDISPLAY\fR.
+
 .PP
 .SH ENVIRONMENT VARIABLES
 .TP
 \fBGGI_DGA_FBDEV\fR
 specifies a framebuffer device to mmap instead of \fB/dev/mem\fR. This
 allows you to use the DGA target without root privileges!
+
 .PP
 .SH FEATURES
 .IP \(bu 4
@@ -58,3 +60,4 @@ Some operations may be accelerated depending on the X server
 Multiple frames
 .IP \(bu 4
 Panning
+.PP

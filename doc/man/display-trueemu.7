@@ -16,28 +16,30 @@ quality.
 \fB-parent=<mode>\fR
 Force the parent target to use a specific \fBmode\fR, specified as a
 standard LibGGI mode string (see \fBlibggi(7)\fR).
-.PP
+
 .TP
 \fB-dither=<dither>\fR
 Specifies the amount of dithering.  Legal values are 0, 2 and 4,
 defaulting to 4. When the target is running, \fBCtrl-Alt-d\fR
 changes the dithering level.
-.PP
+
 .TP
 \fB-model=<model>\fR
 Color model to use (only when the parent is palettized).  Legal
 values are rgb, cube and pastel.  Default depends on the parent
 mode. When the target is running, \fBCtrl-Alt-p\fR changes the
 current color model.
-.PP
+
 .TP
 \fBtarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using \fBggiOpen(NULL)\fR
 when \fBGGI_DISPLAY\fR is not set).
+
 .PP
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer never supported.
 .IP \(bu 4
 Unaccelerated.
+.PP

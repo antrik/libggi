@@ -16,12 +16,14 @@ no key immediately available.
 \fBggiKbhit\fR checks if a key has been hit on the keyboard.  This does
 not consume the key.  It is used for easy porting of old DOS
 applications.
+.RS
 BImprotant:R
 \fIDo not\fR poll like this:
 \fBdo while( ! ggiKbhit(vis) );\fR
 On a multitasking OS you would be wasting a lot of resources
 which could be available to other processes.  If you want to
 wait for a key, use the \fBggiGetc\fR call.
+.RE
 .SH RETURN VALUE
 \fBggiKbhit\fR returns \fB0\fR if no key has been received yet, otherwise
 there is a key to be consumed.

@@ -34,12 +34,13 @@ on success, i.e. the string was correct.
 However, errors involving \fBGT_*\fR, position
 information, or mismatched brackets do not make it fail;
 these errors are simply ignored.
-.PP
+
 .TP
 \fB<0\fR
 if there is text that can not be parsed.
 This text is printed to stderr.
 All parameters parsed so far are written into \fBm\fR.
+
 .PP
 So \fBm\fR contains all parameters that have been successfully
 parsed. For most applications there will be no need for testing

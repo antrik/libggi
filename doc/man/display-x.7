@@ -29,14 +29,14 @@ the window.
 \fBdisplay\fR
 The X display to connect to, otherwise defaults to the display
 specified in \fBDISPLAY\fR.
-.PP
+
 .TP
 \fB-screen=<screenidx>\fR
 The screen to run on.  Normally the biggest/deepest screen
 compatible with the requested mode will be chosen; with this
 option only the screen specified by \fBscreenidx\fR will be
 considered.
-.PP
+
 .TP
 \fB-fullscreen\fR
 Turns on the fullscreen mode. Default mode is the windowed mode.
@@ -44,7 +44,7 @@ In fullscreen mode, the dga helper is tried first if not disabled
 by -nodga or failed for some reason. Then the vidmode helper is
 tried. When this fails, then the target falls back to the windowed
 mode. Note, the -inwin option has no effect with fullscreen.
-.PP
+
 .TP
 \fB-inwin=<winid>|root\fR
 Run in already-existing window with id \fBwinid\fR.  This can be
@@ -61,14 +61,14 @@ root windows.  On the other hand, when using the root window other
 features like direct framebuffer access and video hardware mode
 selection may be available which are not available when the
 application is running in a normal window.
-.PP
+
 .TP
 \fB-noinput\fR
 X events sent to the window are not captured and merged with any
 other LibGII input sources.  This allows one to take input from
 raw devices without receiving duplicate events should X also be
 configured to use the device.
-.PP
+
 .TP
 \fB-nocursor\fR, \fB-keepcursor\fR
 Normal behavior of display-x is to create a small dot mouse cursor
@@ -80,7 +80,7 @@ option, the X mouse cursor will be invisible when it is over the
 visual, with the latter, the cursor from the root window is used
 unaltered.  If both options are supplied, the latter takes
 precedence.
-.PP
+
 .TP
 \fB-physz==<sizex>,<sizey>[dpi]\fR
 This option will override the physical screen size reported by the
@@ -91,7 +91,7 @@ millimeters, unless the optional \fBdpi\fR string is affixed, in
 which case, they represent resolution in dots-per-inch. Yes, there
 are two equals signs there, for reasons of compatibility with
 other targets.
-.PP
+
 .TP
 \fB-nobuffer\fR
 No client-side backbuffer is kept.  This may result in lost data
@@ -103,7 +103,7 @@ result in a slight speed gain for certain graphics primitives.  It
 is best used when resources are severely limited on the client
 side, and with applications that do not perform frequent ggiPut*
 operations.
-.PP
+
 .TP
 \fB-noaccel\fR
 All rendering is performed in the client-side backbuffer, and then
@@ -114,14 +114,14 @@ and asyncronous mode extensively the effect will not be
 noticeable.  The only real reason to use this option, however, is
 to eliminate artifacts caused by incorrectly implemented X11
 hardware drivers.
-.PP
+
 .TP
 \fB-nomansync\fR
 Use of the mansync helper library to periodically flush backbuffer
 contents to the X11 server is disabled.  This, of course, will
 result in incorrect behavior of applications that use syncronous
 mode.
-.PP
+
 .TP
 \fB-noshm\fR
 Use of the MIT-SHM extension to speed data transfer between
@@ -129,7 +129,7 @@ clients and servers which are running on the same machine is
 disabled.  Normally it is not necessary to use this option, as use
 of the MIT-SHM extension is disabled automatically if it appears
 to be nonfunctional.
-.PP
+
 .TP
 \fB-nodga\fR
 Use of the XFree86-DGA extension to provide direct framebuffer access
@@ -140,7 +140,7 @@ system lockups.  Use this option to prevent such occurrances.
 Currently XFree86-DGA support has not been integrated into the 
 display-X target.  To use DGA, see the older display-dga target.
 .RE
-.PP
+
 .TP
 \fB-novidmode\fR
 Use of the X11 Vidmode extension to change video timing in full-screen
@@ -150,7 +150,7 @@ system lockups.  Use this option to prevent such occurrances.
 BNote:R
 Currently Vidmode support has not been completed.
 .RE
-.PP
+
 .TP
 \fB-nodbe\fR
 Use of the X11 DBE extension to provide buffered frame support is
@@ -159,12 +159,13 @@ disabled.
 BNote:R
 Currently DBE extension support has not been completed.
 .RE
-.PP
+
 .TP
 \fB-noevi\fR
 Use of the X11 Extended Visual Information extension to identify
 visuals which are exclusively used for overlay/underlay is
 disabled.
+
 .PP
 .SH "CLIFF NOTES" ON NEW X TARGET
 The old X target rendered all primitives in a RAM backbuffer, and then
@@ -225,6 +226,7 @@ When an expose or graphicsexpose event is sent from the server.
 This means the server has discarded data that was concealed by
 another window or by the edge of the screen, and the data must be
 resent from the client.
+.PP
 ...in the last case the whole area that must be refreshed is sent
 again by the client.  In the first two cases only the dirty area is
 sent, except when the application is holding the directbuffer writing
@@ -256,6 +258,7 @@ backing store available in the server.
 Either the RAM backbuffer or the X primitives can be disabled via
 target options, which will cause emulation of the old X (\fB-noaccel\fR) and
 Xlib (\fB-nobuffer\fR) targets, with a couple of notable exceptions:
+.RS
 The old X and Xlib targets opened a window and drew directly into
 it.  The old Xlib target did not implement support for
 ggiSetOrigin.  As noted above the old X target used a hack that
@@ -268,6 +271,7 @@ displayed data to the right size.  This is much more efficient
 than the old way when the server is keeping a backing store (which
 it sometimes does "in secret" even when the backing store
 functionality in the server is turned off.)
+.RE
 Unfortunately many window managers seem to be buggy, and do not
 install the colormap of a child window when a mouse enters it.  This
 causes palette and gammamap to be messed up.  Since so many
@@ -323,3 +327,4 @@ Multiple frames except for root window
 Panning except for root window
 .IP \(bu 4
 Support Gammamap
+.PP

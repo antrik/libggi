@@ -13,28 +13,28 @@ console.
 .TP
 \fB-nokbd\fR
 Do not open any libraries for keyboard input.
-.PP
+
 .TP
 \fB-nomouse\fR
 Do not open any libraries for mouse input.
-.PP
+
 .TP
 \fB-noinput\fR
 Same as both \fB-nokbd\fR and \fB-nomouse\fR.
-.PP
+
 .TP
 \fB-shade\fR
 The \fB-shade\fR option turns on \fIshading mode\fR, which changes the
 color mapping so that it chooses characters which emulate a
 shading effect.  This makes a big improvement if using (some might
 say abusing :) the vcsa target for graphical purposes.
-.PP
+
 .TP
 \fB-ascii\fR
 The \fB-ascii\fR option limits the color mapping to only using ASCII
 characters.  The default mode uses IBM special characters (the
 solid block mainly, and others when using \fB-shade\fR).
-.PP
+
 .TP
 \fB-physz=<sizex>,<sizey>[dpi]\fR
 This option will provide a physical screen size for applications
@@ -42,14 +42,16 @@ which wish to remain resolution independent.  \fBsizex\fR,
 \fBsizey\fR are the x,y size of the screen in millimeters, unless
 the optional \fBdpi\fR string is affixed, in which case, they
 represent resolution in dots-per-inch.
-.PP
+
 .TP
 \fBvcsa device\fR
 The filename of the device file, defaulting to \fB/dev/vcsa\fR which
 draws on the current virtual console.
+
 .PP
 .SH FEATURES
 .IP \(bu 4
 No DirectBuffer support.
 .IP \(bu 4
 Unaccelerated.
+.PP

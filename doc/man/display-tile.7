@@ -17,15 +17,16 @@ be specified:
 \fBoffset-x\fR, \fBoffset-y\fR
 coordinates (within the parent visual) of the top-left corner of
 the child visual
-.PP
+
 .TP
 \fBsize-x\fR, \fBsize-y\fR
 width and height of the child visual
-.PP
+
 .TP
 :p`child-target-spec`
 a target spec.  Since target specs can (and often do) contain colons, it
 needs to be enclosed in parentheses.
+
 .PP
 The following options apply to the whole \fBdisplay-tile\fR:
 .TP
@@ -36,13 +37,14 @@ The contents of each mapped area is blitted from the DirectBuffer into
 their respective child visuals at regular intervals or when the visual
 is flushed.  DirectBuffer emulation works regardless of whether the
 child visuals support DirectBuffer or not.
-.PP
+
 .TP
 \fB-nodb\fR
 Disables DirectBuffer emulation.  LibGGI primitives are passed to each
 of the child visuals with the necessary clipping and translation.  Thus,
 if a child visual underlying a mapped area supports acceleration, then
 the operation on that area will be accelerated.
+
 .PP
 .SH FEATURES
 .IP \(bu 4
@@ -51,7 +53,10 @@ options.
 .IP \(bu 4
 Accelerated in no-DB mode if the underlying target is, otherwise
 unaccelerated.
+.PP
+.RS
 BTip:R
 \fBdisplay-tile\fR can be used to emulate DirectBuffer for obstinate
 applications that cannot run without it, by specifying one tile
 which maps the whole screen.
+.RE

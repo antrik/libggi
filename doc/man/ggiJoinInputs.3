@@ -33,6 +33,7 @@ LibGGI versions provided of most LibGII functions simply take a
 \fBggi_visual_t\fR rather than \fBgii_input_t\fR for convenience during
 everyday usage.  Events are LibGII types.  All other semantics are the
 same; see \fBlibgii(7)\fR for details.
+.RS
 BImprotant:R
 By default LibGGI visuals autodetect and open the appropriate
 inputs, including mouse and keyboard and any other inputs that are
@@ -52,5 +53,6 @@ visuals, because when two visuals share the same joined input, you
 cannot ggiClose both of the visuals (a fatal error will result,
 because closing the first visual closes both of the joined inputs
 and leaves the second closed visual with a stale input handle.)
+.RE
 .SH SEE ALSO
 \fBgiiSetEventMask(3)\fR, \fBgiiEventPoll(3)\fR, \fBggiGetInput(3)\fR

@@ -19,23 +19,23 @@ resolutions can be automatically obtained when running under KGIcon.
 The filename of the framebuffer target to use.  The default is to
 get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer
 associated with the current console if that is unset.
-.PP
+
 .TP
 \fB-nokbd\fR
 Do not open any libraries for keyboard input.
-.PP
+
 .TP
 \fB-nomouse\fR
 Do not open any libraries for mouse input.
-.PP
+
 .TP
 \fB-noinput\fR
 Same as both \fB-nokbd\fR and \fB-nomouse\fR.
-.PP
+
 .TP
 \fB-novt\fR
 Disable virtual console support.
-.PP
+
 .TP
 \fB-physz=<sizex>,<sizey>[dpi]\fR
 This option will provide a physical screen size for applications
@@ -43,6 +43,7 @@ which wish to remain resolution independent.
 \fBsizex\fR,:p:\fBsizey\fR are the x,y size of the screen in
 millimeters, unless the optional \fBdpi\fR string is affixed, in
 which case, they represent resolution in dots-per-inch.
+
 .PP
 .SH FEATURES
 .IP \(bu 4
@@ -53,5 +54,6 @@ Accelerated when using KGIcon or matroxfb.
 Multiple frames.
 .IP \(bu 4
 Panning.
+.PP
 .SH SEE ALSO
 \fBfb.modes(5)\fR

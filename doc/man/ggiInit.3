@@ -29,18 +29,19 @@ be called as many times as \fBggiInit\fR has been called beforehand.
 .TP
 \fB0\fR
 after successfully cleaning up,
-.PP
+
 .TP
 \fB>0\fR
 the number of 'open' \fBggiInit\fR calls, if there has been more than
 one call to \fBggiInit\fR.  As \fBggiInit\fR and \fBggiExit\fR must be used in
 properly nested pairs, e.g. the first \fBggiExit\fR after two
 \fBggiInit`s will return `1\fR.
-.PP
+
 .TP
 \fB>0\fR
 error, especially if more \fBggiExit\fR calls have been done than
 \fBggiInit\fR calls.
+
 .PP
 .SH EXAMPLES
 Initialize and uninitialize LibGGI:

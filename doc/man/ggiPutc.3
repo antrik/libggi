@@ -35,11 +35,13 @@ modes. Visuals must have a mode set before querying the character
 size. It means that if you want to use a visual size which depends on
 the character size, you might have to iterate over \fBggiSetMode\fR and
 \fBggiGetCharSize\fR to get it right.
+.RS
 BNote:R
 The values returned by \fBggiGetCharSize\fR is not the same as the
 values of \fBdpp\fR of the current mode, which is in dots.  In
 graphics modes are 1x1 dpp by definition and use at least
 8x8-pixel fonts.  In text mode, the character cell is 1x1 pixels
 by definition and the \fBdpp\fR value is the actual size of the font.
+.RE
 .SH RETURN VALUE
 \fB0\fR for success.

@@ -27,22 +27,22 @@ and other graphic properties.
 The number of frames. Some displays have multi-buffer capabilites
 (double-buffering, triple-buffering...). See libggi frame-related
 functions for information on working with multiple frames.
-.PP
+
 .TP
 \fBvisible\fR
 The size of the visible area. This is what the user will see.
-.PP
+
 .TP
 \fBvirt\fR
 The virtual size of the visual. It can be larger (but not smaller)
 than the visible area, in which case only a part of it is
 displayed.  It is useful for scrolling or backing up portions of
 screen efficiently.  See \fBggi[Set|Get]Origin\fR functions for more.
-.PP
+
 .TP
 \fBsize\fR
 TODO : Write something here.
-.PP
+
 .TP
 \fBgraphtype\fR
 It holds information on the type of display.  libggi defines
@@ -51,13 +51,13 @@ macros to construct graphtypes values or access individual field.
 .TP
 \fBdepth\fR ( access via \fBGT_DEPTH(gt)\fR, \fBGT_SETDEPTH(gt,x)\fR )
 The number of significant bits holding color information.
-.PP
+
 .TP
 \fBsize\fR ( access via  \fBGT_SIZE(gt)\fR, \fBGT_SETSIZE(gt,x)\fR )
 The actual size (in bits) of a pixel.  For instance, on a 32
 bits X server the pixel size is 32 but the depth is only 24
 (8bits RGB channels, 8 unused).
-.PP
+
 .TP
 \fBscheme\fR ( access via  \fBGT_SCHEME(gt)\fR, \fBGT_SETSCHEME(gt,x)\fR )
 The following schemes are available :
@@ -80,8 +80,9 @@ The following schemes are available :
 \fBGT_SUBSAMPLE_S_YCRBR\fR
 .IP \(bu 4
 \fBGT_NIL\fR
-.RE
 .PP
+
+.RE
 .TP
 \fBsubscheme\fR ( access via \fBGT_SUBSCHEME(gt)\fR , \fBGT_SETSUBSCHEME(gt,x)\fR )
 One of:
@@ -92,12 +93,13 @@ One of:
 \fBGT_SUB_HIGHBIT_RIGHT\fR
 .IP \(bu 4
 \fBGT_SUB_PACKED_GETPUT\fR
+.PP
+
 .RE
 .PP
 Graphtypes can be constructed directly or via the
 \fBGT_CONSTRUCT(depth,scheme,size)\fR macro.  The following common
 graphtypes are defined :
-.RS
 .IP \(bu 4
 \fBGT_TEXT16\fR
 .IP \(bu 4
@@ -122,11 +124,13 @@ graphtypes are defined :
 \fBGT_AUTO\fR
 .IP \(bu 4
 \fBGT_INVALID\fR
-.RE
 .PP
+
+.RE
 .TP
 \fBdpp\fR
 It stands for dot-per-pixel.
+
 .PP
 When filling a mode structure for setting a visual, any field can be
 assigned \fBGGI_AUTO\fR (\fBGT_AUTO\fR for graphtype) if a specific value

@@ -11,8 +11,10 @@ const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
 This function obtains the default pixel format for the given visual.
 .SH RETURN VALUE
 Returns a pointer to the \fBggi_pixelformat\fR structure.
+.RS
 BImprotant:R
 Modifying the structure returned is not allowed.  Do \*fBnot*\fR
 attempt to free the pointer returned.
+.RE
 .SH SEE ALSO
 \fBggi_pixelformat(3)\fR, \fBggiMapColor(3)\fR

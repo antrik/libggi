@@ -21,7 +21,7 @@ sent to the window.
 When using the root window other features (like direct framebuffer
 access and video hardware mode selection) may be available which
 are not available when the application is running in a normal window.
-.PP
+
 .TP
 \fB-nocursor\fR, \fB-keepcursor\fR
 Normal behavior of display-directx is to create a small dot mouse
@@ -31,14 +31,14 @@ mouse cursor will be invisible when it is over the visual, with the
 latter, the cursor from the root window is used unaltered.  If both
 options are supplied, the latter takes precedence.
 Note, that none of them works with the -inwin option.
-.PP
+
 .TP
 \fB-noinput\fR
 DirectX events sent to the window are not captured and merged with
 any other LibGII input sources. This allows one to take input from
 raw devices without receiving duplicate events should DirectX also
 be configured to use the device.
-.PP
+
 .TP
 \fB-physz==<sizex>,<sizey>[dpi]\fR
 This option will override the physical screen size reported by the
@@ -49,5 +49,6 @@ millimeters, unless the optional \fBdpi\fR string is affixed, in
 which case, they represent resolution in dots-per-inch. Yes, there
 are two equals signs there, for reasons of compatibility with
 other targets.
+
 .PP
 .SH FEATURES

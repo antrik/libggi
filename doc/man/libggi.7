@@ -28,7 +28,7 @@ user, which affect the behaviour of LibGGI:
 \fBDISPLAY\fR
 If set, LibGGI assumes that you want to use the X target.  This
 setting is overriden by the \fBGGI_DISPLAY\fR variable.
-.PP
+
 .TP
 \fBGGI_DISPLAY\fR
 Specifies the default target used when the application calls
@@ -40,7 +40,7 @@ and \fBtargetargs\fR are any target-specific arguments.
 
 If neither this variable nor \fBDISPLAY\fR is set, then the following
 targets are tried in order until one works: \fBfbdev\fR, \fBsvga\fR, \fBaa\fR
-.PP
+
 .TP
 \fBGGI_INPUT_target_n\fR, \fBGGI_INPUT_target\fR, \fBGGI_INPUT\fR
 \fBGGI_INPUT_target\fR specifies extra LibGII input sources and/or
@@ -57,7 +57,7 @@ different targets that it opens.
 
 The \fBGGI_INPUT\fR variable specifies input settings for all other
 targets not specified using the other two variable forms.
-.PP
+
 .TP
 \fBGGI_DEFMODE\fR   
 Specifies the default mode, which is used for mode negotiation with
@@ -83,25 +83,25 @@ dimensions without a specifier are considered to be the visible
 dimensions.
 
 \fBw\fR and \fBh\fR are the Width and height in pixels.
-.PP
+
 .TP
 V
 Denotes virtual size, the total drawing area available to the
 application.  The virtual size must be equal or greater than
 the visible size.
-.PP
+
 .TP
 D
 Denotes the number of dots per pixel.  For graphics modes, this
 is always 1x1, and for text modes, this is the size of the
 character cell.
-.PP
+
 .TP
 F
 Denotes number of frames available to the
 application. Applications can switch between different frames
 for double-buffering, etc.
-.PP
+
 .TP
 []
 Delimits the graphic type.
@@ -118,20 +118,20 @@ P : GT_PALETTE
 K : GT_GREYSCALE
 .IP \(bu 4
 T : GT_TEXT
-.RE
 .PP
+
+.RE
 .TP
 \fBdepth\fR
 Pixel depth in number of bits.
-.PP
+
 .TP
 \fBsize\fR   
 Size of pixel in number of bits, including padding.
-.PP
+
 .PP
 Instead of \fBscheme\fR, \fBdepth\fR, \fBsize\fR, it is also possible
 to specify the graphtype by using one of the following:
-.RS
 .IP \(bu 4
 GT_1BIT
 .IP \(bu 4
@@ -152,8 +152,12 @@ GT_32BIT
 GT_TEXT16
 .IP \(bu 4
 GT_TEXT32
+.PP
+
 .RE
 .PP
+
+.RE
 .TP
 \fBGGI_DEBUG\fR
 The debugging level for LibGGI:
@@ -161,13 +165,13 @@ The debugging level for LibGGI:
 .TP
 0 or unset
 debug output is off; debugging is off
-.PP
+
 .TP
 255
 all debug output is on
+
 .PP
 You may also bitwise-or any of the following together:
-.RS
 .IP \(bu 4
 2 : debug core
 .IP \(bu 4
@@ -182,21 +186,22 @@ You may also bitwise-or any of the following together:
 64 : debug dynamic library handling
 .IP \(bu 4
 128 : debug event handling
-.RE
+.PP
 The debugging output can be quite verbose and in most cases you
 should redirect stderr so that it does not interfere with your
 program's output.
-.PP
+
+.RE
 .TP
 \fBGGI_DEBUGSYNC\fR
 Turn on synchronous debugging output, flushing the output buffers
 before returning from \fBGGIDPRINT\fR calls.
-.PP
+
 .TP
 \fBGGI_NEWVT\fR
 If set, causes a new virtual console to be allocated for some
 Linux-console-based targets (currently \fBfbdev\fR and \fBglide\fR).
-.PP
+
 .TP
 \fBGGI_MANSYNC_FPS\fR
 This variable specifies the framerate for targets emulating
@@ -204,6 +209,7 @@ synchronous mode. The default is 20fps.  If you are experiencing
 problems with the X target over relatively slow remote connections
 it might be due to connection overload. You might want to try with
 a lower \fBGGI_MANSYNC_FPS\fR setting.
+
 .PP
 .SH EXAMPLES
 Example \fBGGI_DISPLAY\fR settings:
@@ -251,6 +257,7 @@ Examples of \fBGGI_DEFMODE\fR strings:
 \fB320x200[C24/32]\fR, \fB320x200[GT_32BIT]\fR : 320x200, with 32-bit pixels for 16777216 colors (truecolor)
 .IP \(bu 4
 \fB640x480F2[GT_16BIT]\fR : 16-bit-color 640x480 with two buffers
+.PP
 .SH SEE ALSO
 \fBlibgii(7)\fR, \fBggiInit(3)\fR,
 \fBdisplay-aa(7)\fR, \fBdisplay-dga(7)\fR,

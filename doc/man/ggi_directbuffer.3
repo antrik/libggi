@@ -35,6 +35,7 @@ target-dependent buffers to allow applications to access them
 directly.
 .SH STRUCTURE MEMBERS
 \fBtype\fR
+.RS
 .nb
 /* Buffer types */
 #define GGI_DB_NORMAL               0x0001  /* "frame" is valid when set */
@@ -52,11 +53,12 @@ directly.
   layout == blPixelLinearBuffer
 */
 .fi
+.RE
 .TP
 \fBframe\fR
 is the frame number as used in multiple buffering.  Note that each
 frame can export more than one DirectBuffer.
-.PP
+
 .TP
 \fBresource\fR
 is a pointer to a lowlevel resource. Certain DirectBuffers need to
@@ -71,7 +73,7 @@ You can determine whether the DirectBuffer needs to be acquired by
 using \fBggiResourceMustAcquire\fR.  An acquire is done by using
 \fBggiResourceAcquire\fR and it is released by calling
 \fBggiResourceRelease\fR.
-.PP
+
 .TP
 \fBread\fR, \fBwrite\fR
 are the addresses where the buffer is mapped to the application.
@@ -88,7 +90,7 @@ operations, so take care.
 Be aware that these fields may be changed by an acquire, and that
 they may be \fBNULL\fR or invalid when the DirectBuffer is not
 acquired.
-.PP
+
 .TP
 \fBpage_size\fR
 indicates a Paged buffer if not \fB0\fR.
@@ -106,13 +108,13 @@ should do successive reads from one and do successive writes to
 the other. If not, it is recommended to copy pagewise into a
 temporary buffer and then to copy this temporary buffer back to
 screen.
-.PP
+
 .TP
 \fBnoaccess\fR
 is a bitfield specifying an access restriction. When bit x is set,
 you may not access this DirectBuffer at the width of 2^x bytes. It
 is usually 0, but check it.
-.PP
+
 .TP
 \fBalign\fR
 is a bitfield specifying another access restriction.  When bit x
@@ -120,18 +122,19 @@ is set, you may only access this DirectBuffer at the width of 2^x
 bytes, when the access is aligned to a multiple of 2^x. Note that
 bit 0 is a bit bogus here, but it should be always 0, as then
 ((noaccess|align)==0) is a quick check for "no restrictions".
-.PP
+
 .TP
 \fBlayout\fR
 is an enumeration specifying the buffer adressing scheme.
 Possible values are \fBblPixelLinearBuffer\fR, \fBblPixelPlanarBuffer\fR,
 \fBblExtended\fR, \fBblSampleLinearBuffer\fR and \fBblSamplePlanarBuffer\fR.
 See below for their definition.
-.PP
+
 .TP
 \fBbuffer\fR
 is a union of all buffer info.  Check the \fBlayout\fR member to see
 which member of use.
+
 .PP
 .SH PIXEL LINEAR BUFFER
 .nb
