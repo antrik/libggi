@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.7 2004/11/03 22:31:42 aldot Exp $
+/* $Id: ll.h,v 1.8 2004/11/05 12:27:35 cegger Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -439,7 +439,7 @@ struct ggi_llobj {
 
 #define GGI_LL_MATHGC_SET(obj) \
 (obj)->ptrs[(((obj)->map>>GGI_LL_GC_SHIFT)&GGI_LL_ATTRIB_MASK)+2]
-#define GGI_LL_MATHGC(obj)	(ggi_ll_math_gc_t)GGI_LL_MATHGC(obj)
+#define GGI_LL_MATHGC(obj)	(ggi_ll_math_gc_t)GGI_LL_MATHGC_SET(obj)
 
 
 /* LibGAlloc resource management 
