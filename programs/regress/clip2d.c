@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.13 2004/05/27 11:30:11 pekberg Exp $
+/* $Id: clip2d.c,v 1.14 2004/06/01 09:44:06 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -110,23 +110,18 @@ success:
 
 static void testcase1(void)
 {
-	int x0 = 50;
-	int y0 = 50;
-	int x1 = 52;
-	int y1 = 52;
-
-	int x0_expect = 50;
-	int y0_expect = 50;
-	int x1_expect = 52;
-	int y1_expect = 52;
-	int ret_expect = 1;
-
+	int i;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
 
-	checkresult(x0, y0, x1, y1,
-		x0_expect, y0_expect, x1_expect, y1_expect,
-		ret_expect, 1);
+	for(i = 0; i < CLIPDBSIZE; ++i)
+		if(checkresult(
+			db[i][0], db[i][1], db[i][2], db[i][3],
+			db[i][4], db[i][5], db[i][6], db[i][7],
+			db[i][8], 0))
+			return;
+
+	printsuccess();
 }
 
 
@@ -176,7 +171,7 @@ static void testcase3(void)
 
 static void testcase4(void)
 {
-	/* Tests longest possible diagonal line that succeeds, I think */
+	/* Tests longest possible diagonal line that succeeds, I think. */
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
@@ -193,7 +188,7 @@ static void testcase4(void)
 
 static void testcase5(void)
 {
-	/* Tests shortest possible line that fails, I think */
+	/* Tests shortest possible line that fails, I think. */
 	/* delta will be 32768 on 32 bit arches. */
 	int delta = (INT_MAX >> sizeof(int)*4) + 1;
 
@@ -205,6 +200,168 @@ static void testcase5(void)
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		MODE_SIZE_X - 1,         MODE_SIZE_Y - 1,
 		1, 1);
+}
+
+
+static void testcase6(void)
+{
+	/* dx == INT_MIN (or INT_MAX+1) generates divide by zero,
+	 * and the same goes for dy.
+	 */
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2FAIL);
+
+	if(checkresult(
+		INT_MIN,          0,
+		0,                0,
+		0,                0,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		0,                0,
+		INT_MIN,          0,
+		0,                0,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		0,                INT_MIN,
+		0,                0,
+		0,                0,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		0,                0,
+		0,                INT_MIN,
+		0,                0,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		-1,               INT_MAX,
+		0,                0,
+		0,                MODE_SIZE_X - 1,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		0,                0,
+		-1,               INT_MAX,
+		0,                0,
+		0,                MODE_SIZE_Y - 1,
+		1, 0)) return;
+	if(checkresult(
+		INT_MAX,         -1,
+		0,                0,
+		MODE_SIZE_X - 1,  0,
+		0,                0,
+		1, 0)) return;
+	if(checkresult(
+		0,                0,
+		INT_MAX,         -1,
+		0,                0,
+		MODE_SIZE_Y - 1,  0,
+		1, 0)) return;
+
+	printsuccess();
+}
+
+
+#define ENDPOINTS (4)
+#define LINES     (4)
+#define LENGTH    (98)
+
+static void get_coords(int i, int *x0, int *y0, int *x1, int *y1)
+{
+	int endpoint = i/(LENGTH*LINES);
+	int line = (i-endpoint*LENGTH*LINES) / LENGTH;
+	int point = i % LENGTH;
+
+	switch(endpoint) {
+	case 0: *x1 =  3; *y1 =  3; break;
+	case 1: *x1 = 96; *y1 =  3; break;
+	case 2: *x1 =  3; *y1 = 96; break;
+	case 3: *x1 = 96; *y1 = 96; break;
+	}
+
+	switch(line) {
+	case 0: *x0 =  1 + point, *y0 =  1;         break;
+	case 1: *x0 =  1 + point, *y0 = 98;         break;
+	case 2: *x0 =  1,         *y0 =  1 + point; break;
+	case 3: *x0 = 98,         *y0 =  1 + point; break;
+	}	
+}
+
+
+static int endpoint_checker(int dx, int dy)
+{
+	int x0, y0, x1, y1, i;
+	int x0t, y0t, x1t, y1t;
+	int clip_first, clip_last;
+	int ret;
+	ggi_color whitec = { 0xffff, 0xffff, 0xffff, 0 };
+	ggi_color blackc = { 0, 0, 0, 0 };
+	ggi_pixel white = ggiMapColor(vis, &whitec);
+	ggi_pixel black = ggiMapColor(vis, &blackc);
+	ggi_pixel pixel;
+	
+	ggiSetGCForeground(vis, black);
+	ggiFillscreen(vis);
+
+	for(i = 0; i < ENDPOINTS*LINES*LENGTH; ++i) {
+		get_coords(i, &x0, &y0, &x1, &y1);
+		x0 += dx;  y0 += dy;
+		x1 += 100; y1 += 100;
+		x0t = x0; y0t = y0; x1t = x1; y1t = y1;
+		ggiSetGCClipping(vis, 100, 100, 200, 200);
+		ret = _ggi_clip2d(vis, &x0t, &y0t, &x1t, &y1t,
+				&clip_first, &clip_last);
+		ggiSetGCClipping(vis, 0, 0, MODE_SIZE_X, MODE_SIZE_Y);
+		if(!ret)
+			continue;
+
+		ggiSetGCForeground(vis, white);
+		ggiDrawLine(vis, x0, y0, x1, y1);
+		ggiFlush(vis);
+
+		ggiGetPixel(vis, x0t, y0t, &pixel);
+		ggiSetGCForeground(vis, black);
+		ggiFillscreen(vis);
+		if(pixel != white) {
+			printfailure("point (%i,%i) expected pixel value 0x%x\n"
+				"point (%i,%i) actual pixel value 0x%x\n",
+				x0t, y0t, white, x0t, y0t, pixel);
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+
+static void testcase7(void)
+{
+	/* Check if the clipping endpoint is really on the actual line
+	 * for a bunch of lines.
+	 */
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
+
+	if(endpoint_checker(  0,   0))
+		return;
+	if(endpoint_checker(100,   0))
+		return;
+	if(endpoint_checker(200,   0))
+		return;
+	if(endpoint_checker(  0, 100))
+		return;
+
+	if(endpoint_checker(200, 100))
+		return;
+	if(endpoint_checker(  0, 200))
+		return;
+	if(endpoint_checker(100, 200))
+		return;
+	if(endpoint_checker(200, 200))
+		return;
+
+	printsuccess();
 }
 
 
@@ -250,23 +407,6 @@ static void generate_clipdb(void)
 }
 #endif
 
-static void testcase6(void)
-{
-	int i;
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS);
-
-	for(i = 0; i < CLIPDBSIZE; ++i)
-		if(checkresult(
-			db[i][0], db[i][1], db[i][2], db[i][3],
-			db[i][4], db[i][5], db[i][6], db[i][7],
-			db[i][8], 0))
-			return;
-
-	printsuccess();
-}
-
-
 
 int main(void)
 {
@@ -282,6 +422,9 @@ int main(void)
 	rc = ggiSetMode(vis, &tm);
 	if (rc < 0) ggiPanic("Mode initialization failed.");
 
+	if(tm.graphtype & GT_PALETTE)
+		ggiSetColorfulPalette(vis);
+
 	/* run tests */
 	testcase1();
 	testcase2();
@@ -289,6 +432,7 @@ int main(void)
 	testcase4();
 	testcase5();
 	testcase6();
+	testcase7();
 
 	rc = ggiClose(vis);
 
