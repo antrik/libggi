@@ -49,6 +49,7 @@ Due : ????-??-??
 
 New X Target:
 
+* implemented -fullscreen option (Christoph)
 - make use of the dirty-region helper target
 - Make display-xf86dga work with all pre-4.x XF86, move newer DGA support
   to a new dga helper.
@@ -135,6 +136,11 @@ Things that will induce API additions
 	and a ggiClone API function.
 - Add a ggiFlushNeeded that checks to see if a ggiFlush should be called,
   but allows application to continue on its merry way if so.
+- Add ggi{Get|Set}TargetOptions() allowing the user to not only set
+  target options at ggiOpen() time.
+- Add ggiGetListOfTargetExtension(char **ext);
+- Add ggiQueryTargetExtension(const char *ext, char *versionstr)
+
 
 ------------------------------------------
 Non backward-compatible changes
