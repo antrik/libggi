@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.44 2002/10/15 15:37:02 cegger Exp $
+dnl $Id: configure.in,v 1.45 2002/10/15 15:43:36 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.13)
@@ -27,36 +27,40 @@ sublib_libs=""
 dynload_libs="-lgii -lgg"
 bsdsock_libs=""
 
-dnl Targets
+dnl Common useable Targets
 build_x_target="auto"
 build_xlib_target="no"
-build_aa_target="auto"
-build_directx_target="no"
-build_fbdev_target="auto"
-build_directfb_renderer="auto"
 build_file_target="auto"
-build_glide_target="auto"
-build_ipc_target="auto"
 build_kgi_target="no"
 build_libkgi_target="no"
-build_lcd823_target="auto"
-build_memory_target="yes"
-build_monotext_target="auto"
 build_suidkgi_target="no"
-build_svga_target="auto"
-build_vgl_target="auto"
-build_tele_target="auto"
-build_terminfo_target="auto"
-build_vcsa_target="auto"
+build_memory_target="yes"
 build_dga_target="auto"
 internal_xf86dga="yes"
+
+dnl Linux specific Targets
+build_aa_target="auto"
+build_fbdev_target="auto"
+build_directfb_renderer="auto"
+build_glide_target="auto"
+build_lcd823_target="auto"
+build_monotext_target="auto"
+build_svga_target="auto"
+build_vgl_target="auto"
+build_terminfo_target="auto"
+build_vcsa_target="auto"
+
+dnl Win32 specific Targets
+build_directx_target="no"
 
 dnl PseudoTargets
 build_multi_target="yes"
 build_tile_target="auto"
 build_palemu_target="auto"
-build_sub_target="auto"
 build_truemu_target="auto"
+build_sub_target="auto"
+build_ipc_target="auto"
+build_tele_target="auto"
 
 dnl Helpers
 build_mansync_helper="auto"
