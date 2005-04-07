@@ -204,7 +204,7 @@ AC_CACHE_CHECK([whether deplibs are loaded by dlopen],
   # For now, we just catch OSes we know something about -- in the
   # future, we'll try test this programmatically.
   lt_cv_sys_dlopen_deplibs=unknown
-  case "$host_os" in
+  case $host_os in
   aix3*|aix4.1.*|aix4.2.*)
     # Unknown whether this is true for these versions of AIX, but
     # we want this `case' here to explicitly catch those versions.
@@ -448,7 +448,7 @@ LT_DLPREOPEN=
 if test -n "$LT_DLLOADERS"
 then
   for lt_loader in $LT_DLLOADERS; do
-    LT_DLPREOPEN="$LT_DLPREOPEN-dlpreopen loaders/$lt_loader "
+    LT_DLPREOPEN="$LT_DLPREOPEN-dlpreopen $lt_loader "
   done
   AC_DEFINE([HAVE_LIBDLLOADER], [1],
             [Define if libdlloader will be built on this platform])
