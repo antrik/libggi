@@ -17,7 +17,7 @@ Colors in ggi are described generically through the display-independent
 precision on most displays.
 
 \fBggi_pixel\fRs are display-dependent pixel values.  They are used by all
-GGI drawing primitives for efficiency.  Use \fBggiMapColor(3)\fR to
+GGI drawing primitives for efficiency.  Use \f(CWggiMapColor(3)\fR to
 convert ggi_colors to ggi_pixels.
 .SH STRUCTURE MEMBERS
 \fBr\fR, \fBg\fR and \fBb\fR correspond to the red, green and blue channels.
@@ -48,4 +48,4 @@ get the number of bytes.
 If you want to access such buffers directly, do \fInot\fR use pointer
 arithmetics with \fBggi_pixel\fRs.
 .SH SEE ALSO
-\fBggiMapColor(3)\fR, \fBggi_mode(3)\fR, \fBggi_pixelformat(3)\fR
+\f(CWggiMapColor(3)\fR, \f(CWggi_mode(3)\fR, \f(CWggi_pixelformat(3)\fR

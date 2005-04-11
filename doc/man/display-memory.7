@@ -16,36 +16,36 @@ shared memory segment, an area specified by the application, or an
 area allocated by \fBdisplay-memory\fR itself.
 .SH OPTIONS
 .TP
-\fB'-input'\fR
-If the \fB'-input'\fR option is set, an input buffer of \fBINPBUFSIZE\fR
+\f(CW-input\fR
+If the \f(CW-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
 (default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
 allocated at the start of the requested memory area.
 
 When running on shared memory, this option enables you to give
-input (using \fBgiiEventSend(3)\fR) to other processes sharing
-that segment. This technique is demonstrated in \fBcube3d(1)\fR
+input (using \f(CWgiiEventSend(3)\fR) to other processes sharing
+that segment. This technique is demonstrated in \f(CWcube3d(1)\fR
 and can be used for things like GGI multiplexers.
 
 .TP
-\fB'-noblank'\fR
-If the \fB'-noblank'\fR option is set, the framebuffer will not be
+\f(CW-noblank\fR
+If the \f(CW-noblank\fR option is set, the framebuffer will not be
 filled with solid black when the mode of the visual is set.  This
 is useful for preserving data from other sources when using a
 preallocated area of memory as a framebuffer.
 
 .TP
-\fB'-physz=<sizex>,<sizey>[dpi]'\fR
+\f(CW-physz=<sizex>,<sizey>[dpi]\fR
 This option will provide a physical screen size for applications
 which wish to remain resolution independent.  \fIsizex\fR,
 \fIsizey\fR are the x,y size of the screen in millimeters, unless
-the optional \fB'dpi'\fR string is affixed, in which case, they
+the optional \f(CWdpi\fR string is affixed, in which case, they
 represent resolution in dots-per-inch.
 
 .TP
-\fB'-pixfmt=<format_string>'\fR
+\f(CW-pixfmt=<format_string>\fR
 This option will provide a non-default pixel format explicitly.
 Currently the accepted format of \fIformat_string\fR is something
-like \fB'"r5b5g5p1"'\fR, which would specify a pixel where the low bit
+like \f(CW"r5b5g5p1"\fR, which would specify a pixel where the low bit
 of the pixel is unused padding, followed by 5 bits of green, then
 5 bits of blue and finally 5 bits of red, with the remaining high
 bits, if any, being unused pad. A more formal description of this
@@ -53,15 +53,15 @@ format string will be provided (and more strings accepted) in
 future LibGGI releases.
 
 .TP
-\fB'[-layout=<fstride>[[plb<lstride>]|[plan<pstride>,<plstride>]]]'\fR
+\f(CW[-layout=<fstride>[[plb<lstride>]|[plan<pstride>,<plstride>]]]\fR
 This option will provide a non-default framebuffer layout
 explicitly.  The \fIfstride\fR parameter denotes the number of
 bytes between frames in the framebuffer, and will default to the
 size of the virtual screen in bytes if nonpresent or set to 0.
-Following fstride, the string \fB'plb'\fR denotes a linear
-packed-pixel framebuffer, or the string \fB'plan'\fR instead denotes a
+Following fstride, the string \f(CWplb\fR denotes a linear
+packed-pixel framebuffer, or the string \f(CWplan\fR instead denotes a
 planar framebuffer.  The packed-pixel framebuffer layout is the
-default.  If the string \fB'plb'\fR is present, a horizontal stride
+default.  If the string \f(CWplb\fR is present, a horizontal stride
 \fIlstride\fR may appear, denoting the number of bytes that elapse
 between the beginning of one line and the next.  This will default
 to the size of a horizontal line in bytes if nonpresent or set to
@@ -81,27 +81,27 @@ More strings and format parameters may accepted in future LibGGI
 releases.
 
 .TP
-\fB'shmid:<sid>'\fR
+\f(CWshmid:<sid>\fR
 use existing shared memory ID \fIsid\fR
 
 On win32, \fIsid\fR is the HANDLE returned by a call to
-\fB'CreateFileMapping'\fR in decimal form.
+\f(CWCreateFileMapping\fR in decimal form.
 
 .TP
-\fB'keyfile:<size>:<id>:<fname>'\fR
-create a new shm segment with id \fB'ftok(fname,id)'\fR of size
-\fIsize\fR (preferred method !). See \fBftok(3)\fR.
+\f(CWkeyfile:<size>:<id>:<fname>\fR
+create a new shm segment with id \f(CWftok(fname,id)\fR of size
+\fIsize\fR (preferred method !). See \f(CWftok(3)\fR.
 
 On win32, the newly created shared memory mapping has the object
-name: \fB'ggi-display-memory-shm:<fname>:<ascid>'\fR, where all
+name: \f(CWggi-display-memory-shm:<fname>:<ascid>\fR, where all
 backslashes have been converted to forward slashes in \fIfname\fR
 and \fIascid\fR is the ascii value of \fIid\fR in decimal form.
 If this object does already exist (and is a file mapping) it will
 be used, so two apps can share memory by using the same
-\fB'keyfile'\fR arguments on win32.
+\f(CWkeyfile\fR arguments on win32.
 
 .TP
-\fB'pointer'\fR
+\f(CWpointer\fR
 use the memory pointed to by \fIargptr\fR (only available to
 applications calling \fBggiOpen(3)\fR).
 

@@ -1,4 +1,4 @@
-.TH "ggiSetMode" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiSetMode" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiSetMode\fR, \fBggiGetMode\fR : Set or get a mode on a visual
 .SH SYNOPSIS
@@ -13,7 +13,7 @@ int ggiGetMode(ggi_visual_t visual, ggi_mode *tm);
 
 .SH DESCRIPTION
 \fBggiSetMode\fR sets any mode (text or graphics).  It also performs mode
-negotiation like \fBggiCheckMode(3)\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO\fR
+negotiation like \f(CWggiCheckMode(3)\fR, but if any non-\fBGGI_AUTO\fR/\fBGT_AUTO\fR
 parameters are changed from the original mode, the new mode will not
 be silently set.
 
@@ -21,19 +21,19 @@ be silently set.
 the current mode of the visual.
 .SH RETURN VALUE
 \fBggiSetMode\fR returns \fB0\fR if the mode is set successfully, otherwise an
-\fBggi-error(3)\fR code.
+\f(CWggi-error(3)\fR code.
 .SH NOTES
 Do not set a mode before checking it. You may be able to set up
 a certain mode on one target, but not other targets.
 
-See the example in \fBggiCheckMode(3)\fR.
+See the example in \f(CWggiCheckMode(3)\fR.
 .RS
 \fBImportant:\fR
-Note that the \fBggiSetTextMode(3)\fR, \fBggiSetGraphMode(3)\fR and
-\fBggiSetSimpleMode(3)\fR functions are \*fBdeprecated*\fR. Use
-\fBggiCheckMode(3)\fR and similar functions, and then use
-\fBggiSetMode(3)\fR on the resulting adjusted \fBggi_mode(3)\fR, once you
+Note that the \f(CWggiSetTextMode(3)\fR, \f(CWggiSetGraphMode(3)\fR and
+\f(CWggiSetSimpleMode(3)\fR functions are \*fBdeprecated*\fR. Use
+\f(CWggiCheckMode(3)\fR and similar functions, and then use
+\f(CWggiSetMode(3)\fR on the resulting adjusted \f(CWggi_mode(3)\fR, once you
 have checked it yourself.
 .RE
 .SH SEE ALSO
-\fBggiCheckMode(3)\fR, \fBggiOpen(3)\fR, \fBggi_mode(3)\fR
+\f(CWggiCheckMode(3)\fR, \f(CWggiOpen(3)\fR, \f(CWggi_mode(3)\fR

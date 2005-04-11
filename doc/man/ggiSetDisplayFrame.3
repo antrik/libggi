@@ -1,4 +1,4 @@
-.TH "ggiSetDisplayFrame" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiSetDisplayFrame" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiSetDisplayFrame\fR, \fBggiSetWriteFrame\fR, \fBggiSetReadFrame\fR, \fBggiGetDisplayFrame\fR, \fBggiGetWriteFrame\fR, \fBggiGetReadFrame\fR : Set or get the current frame for display, writing and reading
 .SH SYNOPSIS
@@ -26,7 +26,7 @@ when using the multiple buffering function of LibGGI.
 \fBggiSetDisplayFrame\fR sets the frame that gets displayed.
 
 \fBggiSetWriteFrame\fR sets the frame for write operations such as
-\fBggiPuts(3)\fR and \fBggiPutHLine(3)\fR.
+\f(CWggiPuts(3)\fR and \f(CWggiPutHLine(3)\fR.
 
 \fBggiSetReadFrame\fR sets the frame for read operations, like
 \fBggiGetPixel(3)\fR and the \fBggiCrossBlit(3)\fR source.
@@ -40,7 +40,7 @@ when using the multiple buffering function of LibGGI.
 Frames are numbered from 0 to the number of frames requested minus 1.
 .SH RETURN VALUE
 The \fBggiSet*Frame\fR functions return \fB0\fR if they succeed, and an
-\fBggi-error(3)\fR on failure.
+\f(CWggi-error(3)\fR on failure.
 
 The \fBggiGet*Frame\fR functions never fail.
 .SH WORKING WITH FRAMES
@@ -72,4 +72,4 @@ ggiSetDisplayFrame(vis, framenr);
 .fi
 
 .SH SEE ALSO
-\fBggi_mode(3)\fR
+\f(CWggi_mode(3)\fR

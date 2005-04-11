@@ -1,4 +1,4 @@
-.TH "ggiInit" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiInit" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiInit\fR, \fBggiExit\fR : Initialize and uninitialize LibGGI
 .SH SYNOPSIS
@@ -25,7 +25,7 @@ results will be undefined.
 maintained, and to completely uninitialize the library, \fBggiExit\fR must
 be called as many times as \fBggiInit\fR has been called beforehand.
 .SH RETURN VALUE
-\fBggiInit\fR returns \fB0\fR for OK, otherwise an \fBggi-error(3)\fR code.
+\fBggiInit\fR returns \fB0\fR for OK, otherwise an \f(CWggi-error(3)\fR code.
 
 \fBggiExit\fR returns:
 .TP
@@ -41,7 +41,7 @@ properly nested pairs, e.g. the first \fBggiExit\fR after two
 
 .TP
 \fB<0\fR
-\fBggi-error(3)\fR, especially if more \fBggiExit\fR calls have been done than
+\f(CWggi-error(3)\fR, especially if more \fBggiExit\fR calls have been done than
 \fBggiInit\fR calls.
 
 .PP
@@ -61,4 +61,4 @@ ggiExit();
 .fi
 
 .SH SEE ALSO
-\fBggiOpen(3)\fR
+\f(CWggiOpen(3)\fR

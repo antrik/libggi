@@ -16,7 +16,7 @@ No textual arguments, since this target can only be used by
 applications. \fIargptr\fR must contain the parent visual.
 
 The sub target behaves a bit special with respect to (i.e. abuses the
-semantics of :) the \fBggiSetMode(3)\fR call. It uses the "visible"
+semantics of :) the \f(CWggiSetMode(3)\fR call. It uses the "visible"
 size for the top left corner position of the window within the visual,
 and the "virtual" size for window width and height.  Note, that
 moving/resizing the window does \fInot\fR cause any drawing action.  You
@@ -35,7 +35,7 @@ unintended results.
 \fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using
-\fB'ggiOpen(NULL)'\fR when \fBGGI_DISPLAY\fR is not set).
+\f(CWggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
 
 .PP
 .SH FEATURES

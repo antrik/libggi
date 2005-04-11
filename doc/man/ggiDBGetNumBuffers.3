@@ -1,4 +1,4 @@
-.TH "ggiDBGetNumBuffers" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiDBGetNumBuffers" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiDBGetNumBuffers\fR, \fBggiDBGetBuffer\fR : Get DirectBuffers from a visual
 .SH SYNOPSIS
@@ -33,7 +33,7 @@ specified position.
 Use \fBggiDBGetBuffer\fR to obtain the DirectBuffers at 0 to n-1, where n
 is the number returned by \fBggiDBGetNumBuffers\fR.
 
-Pixel-linear buffers have \fB'type==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL'\fR.
+Pixel-linear buffers have \f(CWtype==GGI_DB_SIMPLE_PLB | GGI_DB_NORMAL\fR.
 You're on your own now.
 
 DirectBuffers where \fBggiResourceMustAcquire(3)\fR is true need to be
@@ -128,4 +128,4 @@ for(i = 0; i < numbufs; i++) {
 .fi
 
 .SH SEE ALSO
-\fBggi_directbuffer(3)\fR, \fBggiResourceAcquire(3)\fR
+\f(CWggi_directbuffer(3)\fR, \f(CWggiResourceAcquire(3)\fR

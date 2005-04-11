@@ -1,4 +1,4 @@
-.TH "ggiMapColor" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiMapColor" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiMapColor\fR, \fBggiUnmapPixel\fR, \fBggiPackColors\fR, \fBggiUnpackPixels\fR : Convert from ggi_color(s) to ggi_pixel(s) and vice versa
 .SH SYNOPSIS
@@ -29,18 +29,18 @@ int ggiUnpackPixels(ggi_visual_t vis, const void *buf, ggi_color *cols, int len)
 elements of \fIcols\fR.  This function may be used to convert buffers
 output by the \fBggiGet{HLine,VLine,Box}\fR functions from the pixelvalue
 representation to their actual colors as defined by
-\fBggi_color(3)\fR.
+\f(CWggi_color(3)\fR.
 
 The buffers output from \fBggiPackColors\fR and the input to
 \fBggiUnpackPixels\fR are in the same format as the get/put buffers. Their
-format is defined in \fBggi_pixelformat(3)\fR.
+format is defined in \f(CWggi_pixelformat(3)\fR.
 
 Try to cache the results of color lookups in your application for
 efficiency purposes.
 .SH RETURN VALUE
-\fBggiMapColor\fR returns a \fBggi_pixel(3)\fR.
+\fBggiMapColor\fR returns a \f(CWggi_pixel(3)\fR.
 
 \fBggiUnmapPixel\fR, \fBggiPackColors\fR and \fBggiUnpackPixels\fR returns \fB0\fR
-for OK, otherwise an \fBggi-error(3)\fR code.
+for OK, otherwise an \f(CWggi-error(3)\fR code.
 .SH SEE ALSO
-\fBggiGetPixelFormat(3)\fR, \fBggi_color(3)\fR, \fBggi_pixelformat(3)\fR
+\f(CWggiGetPixelFormat(3)\fR, \f(CWggi_color(3)\fR, \f(CWggi_pixelformat(3)\fR

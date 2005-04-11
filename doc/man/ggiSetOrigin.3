@@ -1,4 +1,4 @@
-.TH "ggiSetOrigin" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiSetOrigin" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiSetOrigin\fR, \fBggiGetOrigin\fR : Set and get origin of virtual screen
 .SH SYNOPSIS
@@ -23,7 +23,7 @@ Large virtual areas are also commonly used for buffering the display
 contents, but that is usually more easily accomplished by requesting a
 specific number of \fBframes\fR when setting a mode.
 
-This call takes \fIdot\fR coordinates (see \fBggi_mode(3)\fR), not pixel
+This call takes \fIdot\fR coordinates (see \f(CWggi_mode(3)\fR), not pixel
 coordinates as all other drawing primitives do. There is no difference
 in graphic modes because by definition \fIdpp\fR is 1x1, but in text
 modes the application can do smooth scrolling.
@@ -38,7 +38,7 @@ Due to rounding to the hardware's capabilities, the values retrieved
 by a subsequent \fBggiGetOrigin\fR may not necessarily match those passed
 to \fBggiSetOrigin\fR previously.
 .SH RETURN VALUE
-\fB0\fR for OK, otherwise an \fBggi-error(3)\fR code.
+\fB0\fR for OK, otherwise an \f(CWggi-error(3)\fR code.
 .SH EXAMPLES
 Pan from the top to the bottom of the virtual screen:
 

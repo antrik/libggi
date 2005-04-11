@@ -1,4 +1,4 @@
-.TH "ggiOpen" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiOpen" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
@@ -15,7 +15,7 @@ int ggiClose(ggi_visual_t vis);
 \fBggiOpen\fR opens a visual.  The visual is specified as a display
 string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
 display target is opened, which means first examining \fBGGI_DISPLAY\fR,
-then invoking \fBdisplay-auto(7)\fR.  The other arguments are for internal
+then invoking \f(CWdisplay-auto(7)\fR.  The other arguments are for internal
 purposes only, such as \fIargptr\fR, used to pass driver-specific,
 non-textual information to the driver.
 
@@ -26,7 +26,7 @@ windows, return consoles to text-mode, etc.
 \fBggi_visual_t\fR is opaque to the programmer and should only be used
 through GGI functions.
 
-\fBggiClose\fR returns \fB0\fR for OK, otherwise an \fBggi-error(3)\fR code.
+\fBggiClose\fR returns \fB0\fR for OK, otherwise an \f(CWggi-error(3)\fR code.
 .SH EXAMPLES
 Open and closing default visual:
 
@@ -59,4 +59,4 @@ ggiClose(memvis);
 .fi
 
 .SH SEE ALSO
-\fBdisplay-auto(7)\fR, \fBggiInit(3)\fR, \fBlibggi(7)\fR
+\f(CWdisplay-auto(7)\fR, \f(CWggiInit(3)\fR, \f(CWlibggi(7)\fR

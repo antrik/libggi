@@ -23,27 +23,27 @@ get it from the \fBFRAMEBUFFER\fR environment, or the framebuffer
 associated with the current console if that is unset.
 
 .TP
-\fB'-nokbd'\fR
+\f(CW-nokbd\fR
 Do not open any libraries for keyboard input.
 
 .TP
-\fB'-nomouse'\fR
+\f(CW-nomouse\fR
 Do not open any libraries for mouse input.
 
 .TP
-\fB'-noinput'\fR
-Same as both \fB'-nokbd'\fR and \fB'-nomouse'\fR.
+\f(CW-noinput\fR
+Same as both \f(CW-nokbd\fR and \f(CW-nomouse\fR.
 
 .TP
-\fB'-novt'\fR
+\f(CW-novt\fR
 Disable virtual console support.
 
 .TP
-\fB'-physz=<sizex>,<sizey>[dpi]'\fR
+\f(CW-physz=<sizex>,<sizey>[dpi]\fR
 This option will provide a physical screen size for applications
 which wish to remain resolution independent.
 \fIsizex\fR,:p:\fBsizey\fR are the x,y size of the screen in
-millimeters, unless the optional \fB'dpi'\fR string is affixed, in
+millimeters, unless the optional \f(CWdpi\fR string is affixed, in
 which case, they represent resolution in dots-per-inch.
 
 .PP
@@ -58,4 +58,4 @@ Multiple frames.
 Panning.
 .PP
 .SH SEE ALSO
-\fBfb.modes(5)\fR
+\f(CWfb.modes(5)\fR

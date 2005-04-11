@@ -1,4 +1,4 @@
-.TH "ggiPutc" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiPutc" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiPutc\fR, \fBggiPuts\fR, \fBggiGetCharSize\fR : Draw one or more characters on visual
 .SH SYNOPSIS
@@ -35,7 +35,7 @@ output. Character size must always be checked and application should
 not assume that it will be constant across targets or even
 modes. Visuals must have a mode set before querying the character
 size. It means that if you want to use a visual size which depends on
-the character size, you might have to iterate over \fBggiSetMode(3)\fR
+the character size, you might have to iterate over \f(CWggiSetMode(3)\fR
 and \fBggiGetCharSize\fR to get it right.
 .RS
 \fBNote:\fR

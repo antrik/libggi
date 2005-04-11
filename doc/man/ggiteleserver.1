@@ -14,20 +14,20 @@ can then forward display operations to this server with the
 \fBdisplay-tele(7)\fR target. The server will use the default output.
 .SH OPTIONS
 .TP
-\fB'-V'\fR, \fB'--version'\fR
+\f(CW-V\fR, \f(CW--version\fR
 Print the program version and exit.
 
 .TP
-\fB'-h'\fR, \fB'--help'\fR
+\f(CW-h\fR, \f(CW--help\fR
 Print options and exit.
 
 .TP
-\fB'-t <target>'\fR
+\f(CW-t <target>\fR
 Use the specified \fItarget\fR as display. It overrides the value
 of \fBGGI_DISPLAY\fR.
 
 .TP
-\fB'-d <display>'\fR
+\f(CW-d <display>\fR
 Specifies the 'display' to use, display 0 - 9 use inet sockets
 27780 - 27789 repectively, and display 10 - 19 use unix domain
 sockets /tmp/.tele0 - /tmp/.tele9 respectivly.
@@ -35,4 +35,4 @@ sockets /tmp/.tele0 - /tmp/.tele9 respectivly.
 .PP
 The default display is 0, i.e. TCP port 27780.
 .SH SEE ALSO
-\fBdisplay-tele(7)\fR
+\f(CWdisplay-tele(7)\fR

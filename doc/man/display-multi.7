@@ -11,14 +11,14 @@ display-multi <:targetspec> ...
 Duplicates all drawing operations onto multiple \fIchild\fR targets, thus
 producing identical output on multiple visuals.
 .SH OPTIONS
-The argument to \fBdisplay-multi\fR is a colon- (\fB':'\fR) separated list of
+The argument to \fBdisplay-multi\fR is a colon- (\f(CW:\fR) separated list of
 target specs to draw on.  Because target specs can (and often do)
 contain colons, they need to be enclosed in parentheses.
 .TP
 \fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using
-\fB'ggiOpen(NULL)'\fR when \fBGGI_DISPLAY\fR is not set).
+\f(CWggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
 
 .PP
 .SH FEATURES

@@ -32,7 +32,7 @@ needs to be enclosed in parentheses.
 .PP
 The following options apply to the whole \fBdisplay-tile\fR:
 .TP
-\fB'-usedb'\fR
+\f(CW-usedb\fR
 Enables DirectBuffer emulation. This is the default mode.
 
 The contents of each mapped area is blitted from the DirectBuffer into
@@ -41,7 +41,7 @@ is flushed.  DirectBuffer emulation works regardless of whether the
 child visuals support DirectBuffer or not.
 
 .TP
-\fB'-nodb'\fR
+\f(CW-nodb\fR
 Disables DirectBuffer emulation.  LibGGI primitives are passed to each
 of the child visuals with the necessary clipping and translation.  Thus,
 if a child visual underlying a mapped area supports acceleration, then
@@ -50,7 +50,7 @@ the operation on that area will be accelerated.
 .PP
 .SH FEATURES
 .IP \(bu 4
-DirectBuffer support depends on the \fB'-usedb'\fR and \fB'-nodb'\fR
+DirectBuffer support depends on the \f(CW-usedb\fR and \f(CW-nodb\fR
 options.
 .IP \(bu 4
 Accelerated in no-DB mode if the underlying target is, otherwise

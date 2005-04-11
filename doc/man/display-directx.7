@@ -1,4 +1,4 @@
-.TH "display-directx" 7 "2004-12-27" "libggi-current" GGI
+.TH "display-directx" 7 "2005-04-11" "libggi-current" GGI
 .SH NAME
 \fBdisplay-directx\fR : DirectX (WIN32)
 .SH SYNOPSIS
@@ -6,14 +6,14 @@
 .nf
 display-directx: [ [-inwin=<winid>|root] | [-fullscreen] ]
                  [ [-keepcursor] | [-nocursor] ] [-noinput]
-                 [-physz==<sizex>,<sizey>[dpi]]
+                 [-physz=<sizex>,<sizey>[dpi]]
 .fi
 
 .SH DESCRIPTION
 Used for Win32 DirectX port of libGGI.
 .SH OPTIONS
 .TP
-\fB'-inwin=<winid>|root'\fR
+\f(CW-inwin=<winid>|root\fR
 Run in already-existing window with id \fIwinid\fR.  This can be   
 used to embed a LibGGI application into a DirectX application. The
 value should be a DirectX window ID expressed as a decimal,
@@ -27,12 +27,12 @@ access and video hardware mode selection) may be available which
 are not available when the application is running in a normal window.
 
 .TP
-\fB'-fullscreen'\fR
+\f(CW-fullscreen\fR
 If mode switching is required for the mode, this option makes it
 possible to set it. Superior to \fI-inwin=root\fR.
 
 .TP
-\fB'-nocursor'\fR, \fB'-keepcursor'\fR
+\f(CW-nocursor\fR, \f(CW-keepcursor\fR
 Normal behavior of display-directx is to create a small dot mouse
 cursor pixmap which is visible when the mouse is positioned over the
 window containing the visual. With the former option, the DirectX
@@ -42,19 +42,19 @@ options are supplied, the latter takes precedence.
 Note, that none of them works with the -inwin option.
 
 .TP
-\fB'-noinput'\fR
+\f(CW-noinput\fR
 DirectX events sent to the window are not captured and merged with
 any other LibGII input sources. This allows one to take input from
 raw devices without receiving duplicate events should DirectX also
 be configured to use the device.
 
 .TP
-\fB'-physz==<sizex>,<sizey>[dpi]'\fR
+\f(CW-physz=<sizex>,<sizey>[dpi]\fR
 This option will override the physical screen size reported by the
 DirectX, which affects applications which wish to remain resolution
 independent.  \fIsizex\fR,:p:\fBsizey\fR are the x,y size of the entire
 screen (not just the DirectX window containing the visual) in
-millimeters, unless the optional \fB'dpi'\fR string is affixed, in
+millimeters, unless the optional \f(CWdpi\fR string is affixed, in
 which case, they represent resolution in dots-per-inch. Yes, there
 are two equals signs there, for reasons of compatibility with
 other targets.
@@ -80,7 +80,7 @@ Can not draw directly in video ram, instead uses a intermediate buffer
 that is copied to video ram at regular intervals.
 .IP \(bu 4
 The rate at which the above copy happens is fixed at 30Hz, and cannot
-be controlled by the user. The environment variable \fB'MANSYNC_FPS'\fR
+be controlled by the user. The environment variable \f(CWMANSYNC_FPS\fR
 should probably be used.
 .IP \(bu 4
 Does not fall back to fullscreen if -fullscreen is not specified. That

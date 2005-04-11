@@ -27,7 +27,7 @@ generated at \fBggiClose(3)\fR time.  Otherwise the file is a custom
 \fIGGIFILE\fR format and is generated continuously.
 
 The \fBdisplay-file\fR target can be used to generate movies from running
-LibGGI applications. To do this, set \fB'-flushcmd'\fR to a shell command
+LibGGI applications. To do this, set \f(CW-flushcmd\fR to a shell command
 to execute at the times given by one of the two other parameters. This
 looks typically like:
 
@@ -36,7 +36,7 @@ looks typically like:
 ppmtogif foo.ppm > foo.%04d.gif
 .fi
 
-The command is passed through a \fBprintf(3)\fR which has the current
+The command is passed through a \f(CWprintf(3)\fR which has the current
 count of saved frames as an argument (or rather as 10 arguments to
 allow a few more complex commands).
 
@@ -46,7 +46,7 @@ components (specified as decimal).
 
 Note, that the invocation of the shell command will slow down the
 program, so make sure you use a reasonable value, if you use the
-\fB'-flushtime'\fR argument.
+\f(CW-flushtime\fR argument.
 
 The primary file is updated before every invocation of the shell
 command.

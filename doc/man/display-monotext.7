@@ -14,14 +14,14 @@ The effect is the much the same as the \fBAAlib\fR target, but does not
 depend on any external libraries.
 .SH OPTIONS
 .TP
-\fB'-x=<acc>'\fR, \fB'-y=<acc>'\fR
+\f(CW-x=<acc>\fR, \f(CW-y=<acc>\fR
 A value between 1 and 5 which determines how accurately to map the
 graphics to ASCII characters.  Lower values are less accurate, but
 can represent a wider range of intensity levels.  The default is
 x=2 and y=4.
 
 .TP
-\fB'-a=<acc>'\fR
+\f(CW-a=<acc>\fR
 Same as above, but sets both the x and y accuracy to the specified
 value.
 
@@ -29,6 +29,6 @@ value.
 \fItarget-spec\fR
 Specifies the target which to draw on (the \fIparent\fR target).  This
 defaults to automatic selection (just like using
-\fB'ggiOpen(NULL)'\fR when \fBGGI_DISPLAY\fR is not set).
+\f(CWggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
 
 .PP

@@ -13,36 +13,36 @@ Uses the Linux \fB/dev/vcsa*\fR devices to render text modes onto the
 console.
 .SH OPTIONS
 .TP
-\fB'-nokbd'\fR
+\f(CW-nokbd\fR
 Do not open any libraries for keyboard input.
 
 .TP
-\fB'-nomouse'\fR
+\f(CW-nomouse\fR
 Do not open any libraries for mouse input.
 
 .TP
-\fB'-noinput'\fR
-Same as both \fB'-nokbd'\fR and \fB'-nomouse'\fR.
+\f(CW-noinput\fR
+Same as both \f(CW-nokbd\fR and \f(CW-nomouse\fR.
 
 .TP
-\fB'-ascii'\fR
-The \fB'-ascii'\fR option limits the color mapping to only using ASCII
+\f(CW-ascii\fR
+The \f(CW-ascii\fR option limits the color mapping to only using ASCII
 characters.  The default mode uses IBM special characters (the
-solid block mainly, and others when using \fB'-shade'\fR).
+solid block mainly, and others when using \f(CW-shade\fR).
 
 .TP
-\fB'-shade'\fR
-The \fB'-shade'\fR option turns on \fIshading mode\fR, which changes the
+\f(CW-shade\fR
+The \f(CW-shade\fR option turns on \fIshading mode\fR, which changes the
 color mapping so that it chooses characters which emulate a
 shading effect.  This makes a big improvement if using (some might
 say abusing :) the vcsa target for graphical purposes.
 
 .TP
-\fB'-physz=<sizex>,<sizey>[dpi]'\fR
+\f(CW-physz=<sizex>,<sizey>[dpi]\fR
 This option will provide a physical screen size for applications
 which wish to remain resolution independent.  \fIsizex\fR,
 \fIsizey\fR are the x,y size of the screen in millimeters, unless
-the optional \fB'dpi'\fR string is affixed, in which case, they
+the optional \f(CWdpi\fR string is affixed, in which case, they
 represent resolution in dots-per-inch.
 
 .TP

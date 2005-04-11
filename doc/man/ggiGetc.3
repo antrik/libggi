@@ -1,4 +1,4 @@
-.TH "ggiGetc" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiGetc" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiGetc\fR, \fBggiKbhit\fR : Convenience functions for simplistic keyboard input
 .SH SYNOPSIS
@@ -21,7 +21,7 @@ applications.
 .RS
 \fBImportant:\fR
 \fIDo not\fR poll like this:
-\fB'do while( ! ggiKbhit(vis) );'\fR
+\f(CWdo while( ! ggiKbhit(vis) );\fR
 On a multitasking OS you would be wasting a lot of resources
 which could be available to other processes.  If you want to
 wait for a key, use the \fBggiGetc\fR call.
@@ -32,6 +32,6 @@ there is a key to be consumed.
 
 \fBggiGetc\fR returns a Unicode character in canonical form.
 
-For a more detailed definition of characters, see \fBgii_key_event(3)\fR.
+For a more detailed definition of characters, see \f(CWgii_key_event(3)\fR.
 .SH SEE ALSO
-\fBggiEventPoll(3)\fR
+\f(CWggiEventPoll(3)\fR

@@ -1,4 +1,4 @@
-.TH "ggiSetFlags" 3 "2005-02-26" "libggi-current" GGI
+.TH "ggiSetFlags" 3 "2005-04-05" "libggi-current" GGI
 .SH NAME
 \fBggiSetFlags\fR, \fBggiGetFlags\fR, \fBggiAddFlags\fR, \fBggiRemoveFlags\fR : Set or get flags affecting operation on a visual
 .SH SYNOPSIS
@@ -34,11 +34,11 @@ each of the flags is supported by the given visual.
 .RS
 \fBNote:\fR
 It is recommended to set the flags \fIbefore\fR setting a mode,
-i.e. right after \fBggiOpen(3)\fR.
+i.e. right after \f(CWggiOpen(3)\fR.
 .RE
 .SH RETURN VALUE
 \fBggiSetFlags\fR, \fBggiAddFlags\fR, and \fBggiRemoveFlags\fR return \fB0\fR on
-success, an \fBggi-error(3)\fR code on failure.  This will only
+success, an \f(CWggi-error(3)\fR code on failure.  This will only
 happen if the failure of a target to support the addition or
 removal of a flag will cause the target to behave in a way that
 the application is not expecting.  As of this writing there are no
@@ -68,14 +68,14 @@ necessary to adapt a program's behavior if this flag is not
 available.
 
 To make sure that all pending graphics operations are actually done
-and the screen is updated, you need to call \fBggiFlush(3)\fR.
+and the screen is updated, you need to call \f(CWggiFlush(3)\fR.
 This call is not needed in synchronous mode.
 .PP
 .RS
 \fBImportant:\fR
 On some targets such as the X target there is no real synchronous
 mode, so LibGGI fakes one by periodically calling
-\fBggiFlush(3)\fR in the background.  This process can
+\f(CWggiFlush(3)\fR in the background.  This process can
 take about half the execution time of a program.  So using
 synchronous mode can \fIreally\fR slow things
 down.
@@ -131,13 +131,13 @@ These visuals may also perform dirty-region tracking, such that if
 the directbuffer is used, altered data may never reach the screen
 until the lock is released, because the visual does not know that a
 certain area of the backbuffer contains new (dirty) data.  Even
-explicitly calling \fBggiFlushRegion(3)\fR on the affected area may
+explicitly calling \f(CWggiFlushRegion(3)\fR on the affected area may
 not cause the data to be sent to the screen.
 .IP \(bu 4
 In tidy-buffering mode, which is set by raising the flag
 GGIFLAG_TIDYBUF, visuals do not synchronize the screen at all when
 the write frame's directbuffer lock is held or upon its release.
-However, in this mode, \fBggiFlushRegion(3)\fR will always cause
+However, in this mode, \f(CWggiFlushRegion(3)\fR will always cause
 the requested region of the screen to be updated.
 
 Note that this means that, as long as the lock is held, affected
@@ -151,7 +151,7 @@ dirty-region management behavior after the lock is released.
 Do note, also, that in multi-frame displays \fBggiFlushRegion(3)\fR affects
 only the current write frame, so even though it is possible to use a
 directbuffer to alter a different frame, you must call
-\fBggiSetWriteFrame(3)\fR to tell the visual that you will be
+\f(CWggiSetWriteFrame(3)\fR to tell the visual that you will be
 altering the frame.
 .PP
 The GGIFLAG_TIDYBUF flag is not available on all visuals, but it is
@@ -166,4 +166,4 @@ Do note, though, that many applications that use the directbuffer do
 not actually need to do so and probably should not, as it reduces
 portability.
 .SH SEE ALSO
-\fBggiFlush(3)\fR, \fBggiFlushRegion(3)\fR
+\f(CWggiFlush(3)\fR, \f(CWggiFlushRegion(3)\fR
