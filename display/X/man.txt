@@ -84,11 +84,6 @@ Options
     Use of the XFree86-DGA extension to provide direct framebuffer access
     is disabled.  Some implementations of the XFree86-DGA extension may cause
     system lockups.  Use this option to prevent such occurrances.
-    
-    .. note::
-
-      Currently XFree86-DGA support has not been integrated into the 
-      display-X target.  To use DGA, see the older display-dga target.
 
 ``-noevi``
     Use of the X11 Extended Visual Information extension to identify
@@ -145,10 +140,6 @@ Options
     Use of the X11 Vidmode extension to change video timing in full-screen
     modes is disabled.  Some implementations of the Vidmode extension may cause
     system lockups.  Use this option to prevent such occurrances.
-
-    .. note::
-      
-      Currently Vidmode support has not been completed.
 
 ``-physz==<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
