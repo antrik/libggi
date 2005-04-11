@@ -9,7 +9,7 @@ Synopsis
 
 ::
 
-  display-quartz:	[-physz==<sizex>,<sizey>[dpi]] [-nomansync]
+  display-quartz:	[-physz=<sizex>,<sizey>[dpi]] [-nomansync]
 
 
 Description
@@ -24,7 +24,7 @@ MacOS X 10.2.8 is required.
 Options
 -------
 
-``-physz==<sizex>,<sizey>[dpi]``
+``-physz=<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
     Quartz, which affects applications which wish to remain resolution
     independent.  :p:`sizex`, :p:`sizey` are the x,y size of the entire

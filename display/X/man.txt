@@ -11,7 +11,7 @@ Synopsis
   display-x: [ [-inwin=<winid>|root] | [-screen=<screenidx>] ]
 	     [-fullscreen] [-keepcursor] [-noaccel] [-nobuffer]
 	     [-nocursor] [-nodbe] [-nodga] [-noevi] [-noinput]
-	     [-nomansync] [-noshm] [-novidmode] [-physz==<sizex>,<sizey>[dpi]]
+	     [-nomansync] [-noshm] [-novidmode] [-physz=<sizex>,<sizey>[dpi]]
 	     [<display>]
 
 
@@ -141,7 +141,7 @@ Options
     modes is disabled.  Some implementations of the Vidmode extension may cause
     system lockups.  Use this option to prevent such occurrances.
 
-``-physz==<sizex>,<sizey>[dpi]``
+``-physz=<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
     X server, which affects applications which wish to remain
     resolution independent.  :p:`sizex`,:p:`sizey` are the x,y size of

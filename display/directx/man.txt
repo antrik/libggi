@@ -10,7 +10,7 @@ Synopsis
 
   display-directx: [ [-inwin=<winid>|root] | [-fullscreen] ]
                    [ [-keepcursor] | [-nocursor] ] [-noinput]
-                   [-physz==<sizex>,<sizey>[dpi]]
+                   [-physz=<sizex>,<sizey>[dpi]]
 
 
 Description
@@ -56,7 +56,7 @@ Options
     raw devices without receiving duplicate events should DirectX also
     be configured to use the device.
 
-``-physz==<sizex>,<sizey>[dpi]``
+``-physz=<sizex>,<sizey>[dpi]``
     This option will override the physical screen size reported by the
     DirectX, which affects applications which wish to remain resolution
     independent.  :p:`sizex`,:p:`sizey` are the x,y size of the entire
