@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.31 2005/03/28 20:33:35 pekberg Exp $
+/* $Id: shm.c,v 1.32 2005/04/16 19:51:05 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -391,16 +391,34 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 skip:
 	priv->shmhack_free_cmaps(vis);
 
+	DPRINT_MISC("XSHM: GGIclose: free cursor\n");
 	if (priv->cursor != None)   XFreeCursor(priv->disp,priv->cursor);
+
+	DPRINT_MISC("XSHM: GGIclose: free textfont\n");
 	if (priv->textfont != None) XFreeFont(priv->disp, priv->textfont);
+
+	DPRINT_MISC("XSHM: GGIclose: free fontimg\n");
 	if (priv->fontimg)	    XDestroyImage(priv->fontimg);
+
+	DPRINT_MISC("XSHM: GGIclose: free visual\n");
 	if (priv->visual)           XFree(priv->visual);
+
+	DPRINT_MISC("XSHM: GGIclose: free buflist\n");
 	if (priv->buflist)	    XFree(priv->buflist);
+
+	DPRINT_MISC("XSHM: GGIClose: close display\n");
 	if (priv->disp)		    XCloseDisplay(priv->disp);
+
+	DPRINT_MISC("XSHM: GGIclose: free X visual list\n");
 	if (priv->vilist)	    free(priv->vilist);
+
+	DPRINT_MISC("XSHM: GGIclose: free mode list\n");
 	if (priv->modes)	    free(priv->modes);
+
+	DPRINT_MISC("XSHM: GGIclose: free opmansync\n");
 	if (priv->opmansync)	    free(priv->opmansync);
 
+	DPRINT_MISC("XSHM: GGIclose: done\n");
 	priv->disp = NULL;
 	return 0;
 }
