@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.32 2005/04/16 19:51:05 cegger Exp $
+/* $Id: shm.c,v 1.33 2005/04/16 20:01:51 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -389,37 +389,71 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	}
 
 skip:
+	/* BIG UGLY HACK!!!
+	 *
+	 * helper-x-shm is NOT responsible for
+	 * cleaning up things from others, because
+	 * things get freed multiple times...
+	 * TODO: Only and only cleanup stuff XShm initiated.
+	 */
+
 	priv->shmhack_free_cmaps(vis);
 
 	DPRINT_MISC("XSHM: GGIclose: free cursor\n");
-	if (priv->cursor != None)   XFreeCursor(priv->disp,priv->cursor);
+	if (priv->cursor != None) {
+		XFreeCursor(priv->disp,priv->cursor);
+		priv->cursor = None;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free textfont\n");
-	if (priv->textfont != None) XFreeFont(priv->disp, priv->textfont);
+	if (priv->textfont != None) {
+		XFreeFont(priv->disp, priv->textfont);
+		priv->textfont = None;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free fontimg\n");
-	if (priv->fontimg)	    XDestroyImage(priv->fontimg);
+	if (priv->fontimg) {
+		XDestroyImage(priv->fontimg);
+		priv->fontimg = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free visual\n");
-	if (priv->visual)           XFree(priv->visual);
+	if (priv->visual) {
+		XFree(priv->visual);
+		priv->visual = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free buflist\n");
-	if (priv->buflist)	    XFree(priv->buflist);
+	if (priv->buflist) {
+		XFree(priv->buflist);
+		priv->buflist = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIClose: close display\n");
-	if (priv->disp)		    XCloseDisplay(priv->disp);
+	if (priv->disp)	{
+		XCloseDisplay(priv->disp);
+		priv->disp = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free X visual list\n");
-	if (priv->vilist)	    free(priv->vilist);
+	if (priv->vilist) {
+		free(priv->vilist);
+		priv->vilist = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free mode list\n");
-	if (priv->modes)	    free(priv->modes);
+	if (priv->modes) {
+		free(priv->modes);
+		priv->modes = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: free opmansync\n");
-	if (priv->opmansync)	    free(priv->opmansync);
+	if (priv->opmansync) {
+		free(priv->opmansync);
+		priv->opmansync = NULL;
+	}
 
 	DPRINT_MISC("XSHM: GGIclose: done\n");
-	priv->disp = NULL;
 	return 0;
 }
 
