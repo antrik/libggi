@@ -90,6 +90,20 @@ dnl AC_DEFUN([AC_PROG_LIBTOOL], [])
 dnl AC_DEFUN([AM_PROG_LIBTOOL], [])
 
 
+# _LT_CC_BASENAME(CC)
+# -------------------
+# Calculate cc_basename.  Skip known compiler wrappers and cross-prefix.
+m4_defun([_LT_CC_BASENAME],
+[for cc_temp in $1""; do
+  case $cc_temp in
+    ccache | *[[\\/]]ccache | distcc | *[[\\/]]distcc | purify | *[[\\/]]purify | \-*) ;;
+    *) break;;
+  esac
+done
+cc_basename=`$ECHO "X$cc_temp" | $Xsed -e 's%.*/%%' -e "s%^$host_alias-%%"`
+])
+
+
 # _LT_SETUP
 # ---------
 m4_defun([_LT_SETUP],
@@ -152,7 +166,7 @@ esac
 
 # Sed substitution that helps us do robust quoting.  It backslashifies
 # metacharacters that are still active within double-quoted strings.
-Xsed='sed -e s/^X//'
+Xsed='sed -e 1s/^X//'
 sed_quote_subst='s/\([["`$\\]]\)/\\\1/g'
 
 # Same as above, but do not quote variable references.
@@ -192,8 +206,7 @@ test -z "$LTCFLAGS" && LTCFLAGS=$CFLAGS
 test -z "$LD" && LD=ld
 test -z "$ac_objext" && ac_objext=o
 
-cc_basename=`$ECHO "X$compiler" \
-    | $Xsed -e 's%.*/%%;s%^[ 	]*\([^ 	]*\).*$%\1%'`
+_LT_CC_BASENAME([$compiler])
 
 # Only perform the check for file, if the check method requires it
 test -z "$MAGIC_CMD" && MAGIC_CMD=file
@@ -4680,8 +4693,7 @@ if test "$_lt_caught_CXX_error" != yes; then
   CC=${CXX-"c++"}
   compiler=$CC
   _LT_TAGVAR(compiler, $1)=$CC
-  cc_basename=`$ECHO "X$compiler" \
-      | $Xsed -e 's%.*/%%;s%^[ 	]*\([^ 	]*\).*$%\1%'`
+  _LT_CC_BASENAME([$compiler])
 
   if test -n "$compiler"; then
     # We don't want -fno-exception when compiling C++ code, so set the
@@ -5784,8 +5796,7 @@ if test "$_lt_caught_F77_error" != yes; then
   CC=${F77-"f77"}
   compiler=$CC
   _LT_TAGVAR(compiler, $1)=$CC
-  cc_basename=`$ECHO "X$compiler" \
-      | $Xsed -e 's%.*/%%;s%^[ 	]*\([^ 	]*\).*$%\1%'`
+  _LT_CC_BASENAME([$compiler])
 
   if test -n "$compiler"; then
     AC_MSG_CHECKING([if libtool supports shared libraries])
@@ -5873,11 +5884,12 @@ lt_save_CC="$CC"
 CC=${GCJ-"gcj"}
 compiler=$CC
 _LT_TAGVAR(compiler, $1)=$CC
-cc_basename=`$ECHO "X$compiler" \
-    | $Xsed -e 's%.*/%%;s%^[ 	]*\([^ 	]*\).*$%\1%'`
+_LT_CC_BASENAME([$compiler])
 
 # GCJ did not exist at the time GCC didn't implicitly link libc in.
 _LT_TAGVAR(archive_cmds_need_lc, $1)=no
+
+_LT_TAGVAR(old_archive_cmds, $1)=$old_archive_cmds
 
 ## CAVEAT EMPTOR:
 ## There is no encapsulation within the following macros, do not change
@@ -5931,8 +5943,7 @@ lt_save_CC="$CC"
 CC=${RC-"windres"}
 compiler=$CC
 _LT_TAGVAR(compiler, $1)=$CC
-cc_basename=`$ECHO "X$compiler" \
-    | $Xsed -e 's%.*/%%;s%^[ 	]*\([^ 	]*\).*$%\1%'`
+_LT_CC_BASENAME([$compiler])
 _LT_TAGVAR(lt_cv_prog_compiler_c_o, $1)=yes
 
 if test -n "$compiler"; then
@@ -5997,7 +6008,7 @@ m4_defun([_LT_DECL_SED],
 [AC_PROG_SED
 test -z "$SED" && SED=sed
 _LT_DECL([], [SED], [1], [A sed program that does not truncate output])
-_LT_DECL([], [Xsed], ["\$SED -e s/^X//"],
+_LT_DECL([], [Xsed], ["\$SED -e 1s/^X//"],
     [Sed that helps us avoid accidentally triggering echo(1) options like -n])
 ])# _LT_DECL_SED
 
