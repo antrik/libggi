@@ -2123,6 +2123,12 @@ same; see :man:`libgii(7)` for details.
     and leaves the second closed visual with a stale input handle.)
 
 
+Return value
+------------
+
+See return values of :man:`giiJoinInputs`, :man:`giiEventPoll`, :man:`giiEventSelect`, :man:`giiEventsQueued`, :man:`giiEventRead`, :man:`giiSetEventMask`, :man:`giiGetEventMask`, :man:`giiAddEventMask`, :man:`giiRemoveEventMask`
+
+
 See Also
 --------
 
