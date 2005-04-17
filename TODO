@@ -20,6 +20,10 @@ Due : ????-??-??
 
 - add support for non-gcc compilers
 
+- ggi/system.h typedefs of uint{8,16,32,64}:
+  instead of unconditionally typdef'ing uint{8,16,32,64}, peruse stdint.h
+  and only fallback to the old typedefs ifndef HAVE_STDINT_H.
+  Will fix using softfloat.
 
 [Common issues]
 
