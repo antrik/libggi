@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.13 2005/03/16 11:54:04 pekberg Exp $
+/* $Id: libtele.c,v 1.14 2005/04/22 12:54:58 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -858,7 +858,11 @@ int tserver_open(TeleServer *s, TeleUser *u)
 	struct sockaddr_in you_in;
 
 	struct sockaddr *you = NULL;
-	int you_len = 0;
+#ifdef HAVE_SOCKLEN_T
+        socklen_t you_len = 0;
+#else
+        int you_len = 0;
+#endif
 
 
 	u->server = s;
