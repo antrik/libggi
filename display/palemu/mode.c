@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/27 16:42:25 soyt Exp $
+/* $Id: mode.c,v 1.16 2005/04/22 12:47:08 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -68,7 +68,7 @@ int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 		return 0;
 		
 	case 4: strcpy(apiname, "generic-pseudo-stubs");
-		sprintf(arguments, "%p", PALEMU_PRIV(vis)->parent);
+		sprintf(arguments, "%p", (void *)PALEMU_PRIV(vis)->parent);
 		return 0;
 	}
 
