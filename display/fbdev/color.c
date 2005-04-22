@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.13 2005/02/03 00:19:22 cegger Exp $
+/* $Id: color.c,v 1.14 2005/04/22 12:37:59 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -52,8 +52,6 @@ static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
 /* Zeros out the palette/gamma entries.  Called before changing modes. */
 void GGI_fbdev_color0(ggi_visual *vis)
 {
-	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
-
 	if (LIBGGI_PAL(vis)->clut.data == NULL) return; /* New visual. */
 	vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)),
 		       LIBGGI_PAL(vis)->clut.data);
