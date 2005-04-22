@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.5 2004/12/01 23:08:22 cegger Exp $
+/* $Id: box.c,v 1.6 2005/04/22 12:49:36 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -59,7 +59,7 @@ GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 	if (SVGA_PRIV(vis)->ismodex
 		&& w%4 == 0
 		&& x%4 == 0) {
-		vga_copytoplanar256(buf, rowadd,
+		vga_copytoplanar256((uint8 *)buf, rowadd,
 				    ((y*LIBGGI_VIRTX(vis) + x))/4,
 				    LIBGGI_VIRTX(vis)/4, w, h);
 	} else {
