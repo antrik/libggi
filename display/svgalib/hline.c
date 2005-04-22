@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.5 2004/12/01 23:08:22 cegger Exp $
+/* $Id: hline.c,v 1.6 2005/04/22 12:51:25 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: horizontal lines
@@ -68,7 +68,7 @@ int GGI_svga_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 			ggiPutPixel(vis, x, y, *(buf+w));
 		}
 	}
-        vga_drawscansegment(buf, x, y, w*pixelsize);
+        vga_drawscansegment((uint8 *)buf, x, y, w*pixelsize);
 
 	return 0;
 }
