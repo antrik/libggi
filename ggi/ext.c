@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.2 2005/01/25 12:01:27 pekberg Exp $
+/* $Id: ext.c,v 1.3 2005/04/28 11:35:08 soyt Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -59,13 +59,14 @@ int ggiExtensionInit(void)
 int ggiExtensionExit(void)
 {
 	ggi_extension *tmp;
-
-	FOREACH_EXTENSION(tmp) {
+	
+	while((tmp = GG_TAILQ_FIRST(&_ggiExtension)) != NULL) {
 		REMOVE_EXTENSION(tmp);
 		free(tmp);
 	}
+	
 	LIB_ASSERT(HAVE_NO_EXTENSIONS, "ggi extension list not empty at shutdown\n");
-
+	
 	return 0;
 }
 
