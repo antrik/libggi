@@ -1,3 +1,4 @@
+dnl ------ compiler.m4 ------
 dnl Check CC specific characteristics
 
 dnl $1 is the $CC option to check for.
@@ -95,7 +96,7 @@ fi
 
 
 
-dnl
+dnl ----- dllext.m4 -----
 dnl Suffix detection for runtime loadable libraries.
 
 AC_DEFUN([GGI_DLLEXT],
@@ -119,7 +120,7 @@ AC_SUBST(DLLEXT)
 
 
 
-dnl
+dnl ------ extrapaths.m4 ------
 dnl Let user add extra includes and libs
 
 AC_DEFUN([GGI_EXTRA_PATHS],
@@ -172,6 +173,10 @@ AC_SUBST(extra_includes)
 AC_SUBST(extra_libraries)
 
 ])
+
+
+
+dnl ------ os.m4 ------
 dnl Add your OS here, if not listed
 
 AC_DEFUN([GGI_CHECKOS],
@@ -232,7 +237,7 @@ AM_CONDITIONAL(OS_DEFAULT, test $os = "os_default")
 
 
 
-
+dnl ------ rellibdir.m4 -----
 dnl Find a relative path that takes us from static_sysconfdir/ggi_subdir
 dnl to static_libdir/ggi_subdir.
 
@@ -299,7 +304,7 @@ ggi_sysconfdir_to_libdir="$rel_ggilibdir"
 ])
 
 
-
+dnl ----- strings.m4 -----
 dnl Check for safe and secure string functions
 
 AC_DEFUN([GGI_CHECK_STRING_FUNCS],
@@ -318,3 +323,33 @@ AC_CHECK_FUNCS([strcasecmp strncasecmp \
 
 
 
+dnl ----- genlibtool.m4 -----
+dnl Generate libtool
+
+AC_DEFUN([GGI_GENLIBTOOL],
+[
+
+AC_MSG_NOTICE([======= Running genlibtool now =======])
+
+dnl Safe confdefs.h and config.log
+cp ./confdefs.h ./conf.bak
+mv ./config.log ./conf.log
+
+save_cache_file="$cache_file"
+cache_file=./genlibtool.cache
+>$cache_file
+AC_CACHE_SAVE
+cache_file="$save_cache_file"
+
+$SHELL ${srcdir}/genlibtool --quiet --cache-file=./genlibtool.cache
+
+dnl Restore confdefs.h and config.log
+if test ! -f ./confdefs.h; then
+        mv ./conf.bak ./confdefs.h
+        cat ./config.log >>./conf.log
+        mv ./conf.log ./config.log
+fi
+
+AC_MSG_NOTICE([======= genlibtool finished ==========])
+
+])
