@@ -30,7 +30,7 @@ if test $activate -eq 0 -o "$cc_tmp" != "yes"; then
 fi
 
 
-AC_MSG_RESULT($cc_tmp)
+AC_MSG_RESULT([$cc_tmp])
 
 AS_VAR_SET(AS_TR_SH(m4_tolower([cc_has_$1])), $cc_tmp)
 
@@ -85,9 +85,9 @@ if test "$cc_has_werror_implicit_function_declaration" = "yes"; then
 	dnl there are no declarations missing. Thus the result output
 	dnl must be inverted!
 	if test $cc_has_werror_implicit_function_declaration = "yes"; then
-		AC_MSG_RESULT(no)
+		AC_MSG_RESULT([no])
 	else
-		AC_MSG_RESULT(yes)
+		AC_MSG_RESULT([yes])
 	fi
 fi
 
@@ -102,7 +102,7 @@ dnl Suffix detection for runtime loadable libraries.
 AC_DEFUN([GGI_DLLEXT],
 [
 
-AC_MSG_CHECKING(for shared library extension)
+AC_MSG_CHECKING([for shared library extension])
 case "${host}" in
   *-*-mingw* | *-*-cygwin*)
 	DLLEXT="dll"
@@ -111,7 +111,7 @@ case "${host}" in
 	DLLEXT="so"
         ;;
 esac
-AC_MSG_RESULT($DLLEXT)
+AC_MSG_RESULT([$DLLEXT])
 
 AC_SUBST(DLLEXT)
 

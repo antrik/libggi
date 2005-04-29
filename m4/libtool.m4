@@ -1219,9 +1219,9 @@ AC_CACHE_VAL([lt_cv_sys_max_cmd_len], [dnl
   esac
 ])
 if test -n $lt_cv_sys_max_cmd_len ; then
-  AC_MSG_RESULT($lt_cv_sys_max_cmd_len)
+  AC_MSG_RESULT([$lt_cv_sys_max_cmd_len])
 else
-  AC_MSG_RESULT(none)
+  AC_MSG_RESULT([none])
 fi
 max_cmd_len=$lt_cv_sys_max_cmd_len
 _LT_DECL([], [max_cmd_len], [0],
@@ -2300,9 +2300,9 @@ _LT_EOF
 esac])
 MAGIC_CMD="$lt_cv_path_MAGIC_CMD"
 if test -n "$MAGIC_CMD"; then
-  AC_MSG_RESULT($MAGIC_CMD)
+  AC_MSG_RESULT([$MAGIC_CMD])
 else
-  AC_MSG_RESULT(no)
+  AC_MSG_RESULT([no])
 fi
 _LT_DECL([], [MAGIC_CMD], [0],
 	 [Used to examine libraries when file_magic_cmd begins "file"])dnl
@@ -2408,9 +2408,9 @@ else
 fi])
 LD="$lt_cv_path_LD"
 if test -n "$LD"; then
-  AC_MSG_RESULT($LD)
+  AC_MSG_RESULT([$LD])
 else
-  AC_MSG_RESULT(no)
+  AC_MSG_RESULT([no])
 fi
 test -z "$LD" && AC_MSG_ERROR([no acceptable ld found in \$PATH])
 _LT_PATH_LD_GNU
@@ -2948,9 +2948,9 @@ if test -z "$lt_cv_sys_global_symbol_pipe"; then
   lt_cv_sys_global_symbol_to_cdecl=
 fi
 if test -z "$lt_cv_sys_global_symbol_pipe$lt_cv_sys_global_symbol_to_cdecl"; then
-  AC_MSG_RESULT(failed)
+  AC_MSG_RESULT([failed])
 else
-  AC_MSG_RESULT(ok)
+  AC_MSG_RESULT([ok])
 fi
 
 _LT_DECL([global_symbol_pipe], [lt_cv_sys_global_symbol_pipe], [1],
