@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.157 2005/03/15 12:48:55 pekberg Exp $
+dnl $Id: configure.in,v 1.158 2005/04/29 08:26:27 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -116,29 +116,7 @@ LT_INIT([disable-static win32-dll])
 dnl ========================================================================
 dnl Generate libtool
 
-AC_MSG_NOTICE([======= Running genlibtool now =======])
-
-dnl Safe confdefs.h
-cp ./confdefs.h ./conf.bak
-mv ./config.log ./conf.log
-
-save_cache_file="$cache_file"
-cache_file=./genlibtool.cache
->$cache_file
-AC_CACHE_SAVE
-cache_file="$save_cache_file"
-
-$SHELL ${srcdir}/genlibtool --quiet --cache-file=./genlibtool.cache
-
-dnl Restore confdefs.h
-if test ! -f ./confdefs.h; then
-        mv ./conf.bak ./confdefs.h
-	cat ./config.log >>./conf.log
-	mv ./conf.log ./config.log
-fi
-
-AC_MSG_NOTICE([======= genlibtool finished ==========])
-
+GGI_GENLIBTOOL
 
 dnl ========================================================================
 dnl User selectable options
