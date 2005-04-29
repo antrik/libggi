@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.48 2005/03/30 10:09:55 mooz Exp $
+/* $Id: mode.c,v 1.49 2005/04/29 22:05:28 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -274,10 +274,12 @@ static
 int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 {
 	int i;
+	intptr_t viidx_ptr;
 	ggi_checkmode_t * cm;
 	ggi_x_vi * vi;
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
+	viidx_ptr = *viidx;
 	cm = _GGI_generic_checkmode_create();
 
 	/* hook in our last-resort compare in order to prefer some
@@ -290,9 +292,9 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 	for(i=0, vi= priv->vilist; i < priv->nvisuals; i++, vi++ ) {
 
 		/* The evi helper disqualifies some visuals */
-		if( vi->flags & GGI_X_VI_NON_FB ) 
+		if( vi->flags & GGI_X_VI_NON_FB )
 			continue;
-		
+
 		/* initialize mode suggestion */
 		priv->cm_adapt( tm, vi, priv );
 		/* adjust for wildcard matching in some fields */
@@ -302,7 +304,8 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 		_GGI_generic_checkmode_update( cm, tm, i );
 	}
 
-	i = _GGI_generic_checkmode_finish( cm, tm, (intptr_t*)viidx );
+	i = _GGI_generic_checkmode_finish( cm, tm, &viidx_ptr );
+	*viidx = (int)viidx_ptr;
 	_GGI_generic_checkmode_destroy( cm );
 	return i;
 
