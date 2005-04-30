@@ -85,7 +85,7 @@ A: There are basically two possible console graphics layer you can use:
 Q: I am trying to run on the vesafb driver, but it doesn't work.
 
 A: There are two common problems with the vesafb driver:
-   1. It has to be activated _explictly_ at boot. Please read
+   1. It has to be activated _explicitly_ at boot. Please read
       /usr/src/linux/Documentation/fb/vesafb.txt on how to do this.
       Verify, that you have a _block_ cursor. If you have an underline
       cursor, vesafb is not active.
