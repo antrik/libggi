@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.3 2004/11/14 15:47:48 cegger Exp $
+/* $Id: frames.c,v 1.4 2005/04/30 12:54:27 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -27,19 +27,26 @@
 */
 
 #include <ggi/display/tile.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_tile_setdisplayframe_db(ggi_visual *vis, int num)
 {
-	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
+	ggi_directbuffer *db;
+
+	DPRINT_MISC("GGI_tile_setdisplayframe_db(%p, %i) entered\n",
+			(void *)vis, num);
+	db = _ggi_db_find_frame(vis, num);
 
 	if (db == NULL) {
+		DPRINT_MISC("GGI_tile_setdisplayframe_db: no frame found\n");
 		return GGI_ENOSPACE;
 	}
 
 	vis->d_frame_num = num;
 	TILE_PRIV(vis)->d_frame = db;
 
+	DPRINT_MISC("GGI_tile_setdisplayframe_db: leaving\n");
 	return 0;
 }
 
