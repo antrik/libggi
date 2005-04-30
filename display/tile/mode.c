@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2005/01/25 11:47:18 pekberg Exp $
+/* $Id: mode.c,v 1.17 2005/04/30 12:53:19 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -47,6 +47,9 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	ggi_visual_t currvis;
 
 #if 0
+	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
+			vis, x, y, w, h, tryflag);
+
 	for(i = 0; i < priv->numvis; i++) {
 		currvis = priv->vislist[i].vis;
 		width = priv->vislist[i].size.x;
@@ -65,6 +68,14 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 
 	int rowadd, stride;
 	uint8 *buf;
+
+	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
+			vis, x, y, w, h, tryflag);
+
+	if (priv->d_frame == NULL) {
+		/* happens, when mansync flushes before a mode is set */
+		return GGI_OK;
+	}
 		
 	if(priv->use_db) {
 		MANSYNC_ignore(vis);
@@ -105,6 +116,8 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	if(priv->use_db) {
 		MANSYNC_cont(vis);
 	}
+
+	DPRINT_MISC("GGI_tile_flush_db: leaving\n");
 
 	return 0;
 }
@@ -217,6 +230,8 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 	ggi_mode sugmode;
 	int depth, err, i;
 
+	DPRINT_MODE("GGI_tile_setmode(%p, %p) entered\n",
+			(void *)vis, (void *)tm);
 	err = GGI_tile_checkmode(vis, tm);
 	if (err) return err;
 	
@@ -277,7 +292,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 
 		if(!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
-		
+
 			priv->vislist[i].clipbr.x = priv->vislist[i].origin.x + priv->vislist[i].size.x;
 			if(priv->vislist[i].clipbr.x > tm->virt.x)
 				priv->vislist[i].clipbr.x = tm->virt.x;
@@ -314,16 +329,19 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 	err = _GGIdomode(vis);
 	if (err != 0) return err;
 
-	if(priv->use_db) {
-		for(i = 0; i<tm->frames; i++)
+	if (priv->use_db) {
+		DPRINT_MISC("GGI_tile_setmode: setting up directbuffer\n");
+		for (i = 0; i<tm->frames; i++)
 			LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 		priv->d_frame = LIBGGI_APPBUFS(vis)[0];
 
+		DPRINT_MISC("GGI_tile_setmode: call MANSYNC_SETFLAGS");
 		MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 		MANSYNC_cont(vis);
 	}
-	
+
+	DPRINT_MISC("GGI_tile_setmode: leaving\n");	
 	return 0;
 }
 
@@ -337,10 +355,10 @@ int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 	int err, i;
 
 	/* Find out the "bounding rectangle" for GGI_AUTO values */
-	if (tm->virt.x==GGI_AUTO) {
+	if(tm->virt.x==GGI_AUTO) {
 		int x;
 		tm->virt.x=0;
-		for (i = 0; i<priv->numvis; i++) {
+		for(i = 0; i<priv->numvis; i++) {
 			x = priv->vislist[i].origin.x
 				+ priv->vislist[i].size.x;
 			if (x > tm->virt.x) tm->virt.x = x;
@@ -422,6 +440,8 @@ int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 
 	LIBGGI_FLAGS(vis) = flags;
+	/* Unkown flags don't take. */
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC;
 
 	if (priv->use_db) {
 		MANSYNC_SETFLAGS(vis, flags);
@@ -431,8 +451,6 @@ int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
 			ggiSetFlags(priv->vislist[i].vis, flags);
 		}
 	}	
-
-	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
 }
