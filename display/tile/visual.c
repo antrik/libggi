@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/27 16:42:27 soyt Exp $
+/* $Id: visual.c,v 1.13 2005/04/30 12:45:53 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -62,13 +62,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int sx, sy, vx, vy, n, i=0;
 	int err = GGI_ENOMEM;
 
+	DPRINT_LIBS("GGIopen(%p, %p, %s, %p, %u) entered\n",
+			(void *)vis, (void *)dlh, args, argptr, dlret);
+
 	if (!args || *args == '\0') {
 		fprintf(stderr, "display-tile needs the real targets as arguments.\n");
 		fprintf(stderr, argument_format);
 		return GGI_EARGREQ;
 	}
 
-	priv = malloc(sizeof(ggi_tile_priv));
+	priv = calloc(1, sizeof(ggi_tile_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 	LIBGGI_PRIVATE(vis) = priv;
 
@@ -150,6 +153,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out_freeopmansync;
 		}
 
+		DPRINT_MISC("GGIopen: Collect input sources\n");
 		/* Add giiInputs, if we have them. */
 		if (priv->vislist[i].vis->input) {
 			vis->input=giiJoinInputs(vis->input,priv->vislist[i].vis->input);
@@ -192,6 +196,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		}
 
+		DPRINT_LIBS("GGIopen: initialize mansync\n");
 		MANSYNC_init(vis);
 		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 			MANSYNC_start(vis);
@@ -233,6 +238,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
 
+	DPRINT_LIBS("GGIclose(%p, %p) entered\n",
+			(void *)vis, (void *)dlh);
+
 	if (priv->use_db) {
 		_GGI_tile_freedbs(vis);
 	}
@@ -259,7 +267,12 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 
+	DPRINT_LIBS("GGIexit(%p, %p) entered\n",
+			(void *)vis, (void *)dlh);
+
 	if (priv->use_db) {
+		DPRINT_LIBS("GGIexit: de-initialize mansync\n");
+
 		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 			MANSYNC_stop(vis);
 		}
