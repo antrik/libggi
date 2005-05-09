@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2004/11/27 16:42:23 soyt Exp $
+/* $Id: mode.c,v 1.25 2005/05/09 09:03:21 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -266,12 +266,16 @@ int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
 	
-	if ((err=ggiCheckMode(vis, mode)) != 0)	return err;
+	err = ggiCheckMode(vis, mode);
+	if (err < 0) {
+		DPRINT("GGI_memory_setmode: ggiCheckMode() failed with error %i\n", err);
+		return err;
+	}
 
 	/* some elements of the mode setup rely on this. */
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
-	err=_GGIdomode(vis, mode);
+	err = _GGIdomode(vis, mode);
 	DPRINT("display-memory: GGIsetmode: domode=%d\n",err);
 	if (err)
 		return err;
