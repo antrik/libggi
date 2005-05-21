@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.22 2004/11/25 16:56:42 cegger Exp $
+/* $Id: internal.h,v 1.23 2005/05/21 14:38:45 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -29,6 +29,13 @@
 #define _GGI_INTERNAL_H
 
 #define _INTERNAL_LIBGGI
+
+/* Platforms with a strict ANSI conform libc
+ * need this for ssize_t, (u)intptr_t, etc.
+ */
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 
 #include <ggi/types.h>
 #include <ggi/gg.h>
