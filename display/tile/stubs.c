@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.5 2004/12/01 23:08:23 cegger Exp $
+/* $Id: stubs.c,v 1.6 2005/05/21 15:17:33 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -31,6 +31,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdlib.h>
 #include <ggi/display/tile.h>
 

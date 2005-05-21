@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.4 2005/04/30 12:54:27 cegger Exp $
+/* $Id: frames.c,v 1.5 2005/05/21 15:17:33 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/display/tile.h>
 #include <ggi/internal/ggi_debug.h>
 

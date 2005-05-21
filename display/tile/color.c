@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2004/11/26 21:35:34 cegger Exp $
+/* $Id: color.c,v 1.6 2005/05/21 15:17:33 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/display/tile.h>
 
 ggi_pixel GGI_tile_mapcolor(ggi_visual *vis, const ggi_color *col)
