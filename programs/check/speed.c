@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.5 2004/09/08 19:26:22 cegger Exp $
+/* $Id: speed.c,v 1.6 2005/05/21 15:35:53 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -17,11 +17,17 @@
 
 #include <ggi/ggi.h>
 
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <sys/times.h>
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
 #ifndef CLK_TCK
 #include <time.h>
 #endif
