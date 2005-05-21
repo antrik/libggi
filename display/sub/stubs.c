@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.6 2004/12/01 23:08:22 cegger Exp $
+/* $Id: stubs.c,v 1.7 2005/05/21 15:11:42 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -28,6 +28,7 @@
 
 /* FIXME: Should we adjust parent clipping for "get" calls ? */
 
+#include "config.h"
 #include <ggi/display/sub.h>
 
 #define IS_SAVING_GC	ggi_pixel _foreground, _background; \
