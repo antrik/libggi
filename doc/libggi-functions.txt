@@ -43,7 +43,7 @@ be called as many times as `ggiInit` has been called beforehand.
 Return value
 ------------
 
-`ggiInit` returns `0` for OK, otherwise an :man:`ggi-error(3)` code.
+`ggiInit` returns `0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 `ggiExit` returns:
@@ -174,7 +174,7 @@ Return value
 through GGI functions.
 
 
-`ggiClose` returns `0` for OK, otherwise an :man:`ggi-error(3)` code.
+`ggiClose` returns `0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 Examples
@@ -724,7 +724,7 @@ Return value
 
 
 `ggiUnmapPixel`, `ggiPackColors` and `ggiUnpackPixels` returns `0`
-for OK, otherwise an :man:`ggi-error(3)` code.
+for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 See Also
@@ -777,10 +777,10 @@ Return value
 ------------
 
 `ggiSetPalette` returns the number of the first entry changed.
-`<0` indicate an :man:`ggi-error(3)`.
+`<0` indicate a :man:`ggi-error(3)`.
 
 
-`ggiGetPalette` returns `0` for OK, otherwise an :man:`ggi-error(3)`
+`ggiGetPalette` returns `0` for OK, otherwise a :man:`ggi-error(3)`
 code. When called with len=0 this function will not automatically
 succeed, but the return code will indicate whether there is a
 readable CLUT.
@@ -837,7 +837,7 @@ Return value
 
 
 `ggiSetColorfulPalette` returns the number of the first entry changed.
-`<0` indicate an :man:`ggi-error(3)`.
+`<0` indicate a :man:`ggi-error(3)`.
 
 
 See Also
@@ -915,7 +915,7 @@ Return value
 ------------
 
 
-All five functions `0` for OK, otherwise an :man:`ggi-error(3)` code.
+All five functions `0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 
@@ -1050,7 +1050,7 @@ Return value
 ------------
 
 
-Both functions `0` for OK, ggiSetGCClipping returns an :man:`ggi-error(3)`.
+Both functions `0` for OK, ggiSetGCClipping returns a :man:`ggi-error(3)`.
 
 
 
@@ -1352,7 +1352,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 See Also
@@ -1399,7 +1399,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 See Also
@@ -1468,7 +1468,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise an :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`ggi-error(3)` code.
 
 
 Examples
@@ -1607,7 +1607,7 @@ Return Value
 
 
 `ggiSetFlags`, `ggiAddFlags`, and `ggiRemoveFlags` return `0` on
-success, an :man:`ggi-error(3)` code on failure.  This will only
+success, a :man:`ggi-error(3)` code on failure.  This will only
 happen if the failure of a target to support the addition or
 removal of a flag will cause the target to behave in a way that
 the application is not expecting.  As of this writing there are no
