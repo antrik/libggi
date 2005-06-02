@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.236 2005/05/16 09:04:43) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.239 2005/06/01 19:10:31) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.236 2005/05/16 09:04:43) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.239 2005/06/01 19:10:31) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.236 2005/05/16 09:04:43"
-package_revision=1.1667.2.236
+TIMESTAMP=" 1.1667.2.239 2005/06/01 19:10:31"
+package_revision=1.1667.2.239
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1370,32 +1370,7 @@ func_extract_an_archive ()
     if ($AR t "$f_ex_an_ar_oldlib" | sort | sort -uc >/dev/null 2>&1); then
      :
     else
-      f_ex_an_ar_lib=`$ECHO "X$f_ex_an_ar_oldlib" | $Xsed -e 's%^.*/%%'`
-      func_warning "$modename: warning: object name conflicts; renaming object files" 1>&2
-      func_warning "$modename: warning: to ensure that they will not overwrite" 1>&2
-      $show "cp $f_ex_an_ar_oldlib $f_ex_an_ar_dir/$f_ex_an_ar_lib"
-      $run eval "cp \$f_ex_an_ar_oldlib \$f_ex_an_ar_dir/\$f_ex_an_ar_lib"
-      $AR t "$f_ex_an_ar_oldlib" | sort | uniq -c | while read count name
-      do
-	# We don't want to do anything to objects with unique names
-        test "$count" -eq 1 && continue
-	i=1
-	while test "$i" -le "$count"
-	  do
-	  # Put our $i before any first dot (extension)
-	  # Never overwrite any file
-	  name_to="$name"
-	  while test "X$name_to" = "X$name" || test -f "$f_ex_an_ar_dir/$name_to"
-	    do
-	    name_to=`$ECHO "X$name_to" | $Xsed -e "s/\([^.]*\)/\1-$i/"`
-	  done
-	  $show "(cd $f_ex_an_ar_dir && $AR x $f_ex_an_ar_lib '$name' && $MV '$name' '$name_to' && $AR d $f_ex_an_ar_lib '$name')"
-	  $run eval "(cd \$f_ex_an_ar_dir && $AR x \$f_ex_an_ar_lib '$name' && $MV '$name' '$name_to' && $AR d \$f_ex_an_ar_lib '$name')" || exit $?
-	  i=`expr $i + 1`
-	done
-      done
-      $show "$RM $f_ex_an_ar_dir/$f_ex_an_ar_lib"
-      $run eval "$RM \$f_ex_an_ar_dir/\$f_ex_an_ar_lib"
+     func_fatal_error "object name conflicts in archive: $f_ex_an_ar_dir/$f_ex_an_ar_oldlib"
     fi
 }
 
@@ -4359,8 +4334,6 @@ func_mode_link ()
 	      fi
 	    fi
 	  else
-	    convenience="$convenience $dir/$old_library"
-	    old_convenience="$old_convenience $dir/$old_library"
 	    deplibs="$dir/$old_library $deplibs"
 	    link_static=yes
 	  fi
@@ -6696,6 +6669,52 @@ fi\
 	  oldobjs="$oldobjs $func_extract_archives_result"
 	fi
 
+	# POSIX demands no paths to be encoded in archives.  We have
+	# to avoid creating archives with duplicate basenames if we
+	# might have to extract them afterwards, e.g., when creating a
+	# static archive out of a convenience library, or when linking
+	# the entirety of a libtool archive into another (currently
+	# not supported by libtool).
+	if (for obj in $oldobjs
+	    do
+	      $ECHO "X$obj"
+	    done | $SED -e 's%^X%%' -e 's%.*/%%' | sort | sort -uc >/dev/null 2>&1); then
+	  :
+	else
+	  func_echo "copying selected object files to avoid basename conflicts..."
+
+
+	  gentop="$output_objdir/${outputname}x"
+	  generated="$generated $gentop"
+	  func_mkdir_p "$gentop"
+	  save_oldobjs=$oldobjs
+	  oldobjs=
+	  counter=1
+	  for obj in $save_oldobjs
+	  do
+	    objbase=`$ECHO "X$obj" | $Xsed -e 's%^.*/%%'`
+	    case " $oldobjs " in
+	    " ") oldobjs=$obj ;;
+	    *[\ /]"$objbase "*)
+	      while :; do
+		# Make sure we don't pick an alternate name that also
+		# overlaps.
+		newobj=lt$counter-$objbase
+		counter=`expr $counter + 1`
+		case " $oldobjs " in
+		*[\ /]"$newobj "*) ;;
+		*) if test ! -f "$gentop/$newobj"; then break; fi ;;
+		esac
+	      done
+	      $show "ln $obj $gentop/$newobj || cp $obj $gentop/$newobj"
+	      $run ln "$obj" "$gentop/$newobj" ||
+	      $run cp "$obj" "$gentop/$newobj"
+	      oldobjs="$oldobjs $gentop/$newobj"
+	      ;;
+	    *) oldobjs="$oldobjs $obj" ;;
+	    esac
+	  done
+	fi
 	eval cmds=\"$old_archive_cmds\"
 
 	if len=`expr "X$cmds" : ".*"` &&
@@ -6709,20 +6728,6 @@ fi\
 	  objlist=
 	  concat_cmds=
 	  save_oldobjs=$oldobjs
-	  # GNU ar 2.10+ was changed to match POSIX; thus no paths are
-	  # encoded into archives.  This makes 'ar r' malfunction in
-	  # this piecewise linking case whenever conflicting object
-	  # names appear in distinct ar calls; check, warn and compensate.
-	    if (for obj in $save_oldobjs
-	    do
-	      $ECHO "X$obj" | $Xsed -e 's%^.*/%%'
-	    done | sort | sort -uc >/dev/null 2>&1); then
-	    :
-	  else
-	    func_warning "object name conflicts; overriding AR_FLAGS to 'cq'"
-	    func_warning "to ensure that POSIX-compatible ar will work"
-	    AR_FLAGS=cq
-	  fi
 	  # Is there a better way of finding the last object in the list?
 	  for obj in $save_oldobjs
 	  do
