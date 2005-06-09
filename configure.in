@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.158 2005/04/29 08:26:27 cegger Exp $
+dnl $Id: configure.in,v 1.159 2005/06/09 16:48:10 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1335,6 +1335,7 @@ if test "$ac_cv_c_compiler_gnu" = "yes"; then
 
     # Advanced warning flags
     CFLAGS="$CFLAGS -Wnested-externs -Wredundant-decls"
+    CFLAGS="$CFLAGS -Wuninitialized -Wcast-qual -Wwrite-strings"
     if test "x$cc_has_werror_implicit_function_declaration" = "xyes"; then
       CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
     fi
