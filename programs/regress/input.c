@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.4 2004/08/09 17:33:07 ggibecka Exp $
+/* $Id: input.c,v 1.5 2005/06/09 19:19:08 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -112,7 +112,7 @@ static void testcase2(const char *desc)
 }
 
 static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, char *visname) {
+			    gii_input_t *input, const char *visname) {
 
 	*visual=ggiOpen(NULL);
 	if (*visual == NULL) {
@@ -137,7 +137,7 @@ static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 }
 
 static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, char *visname,int islast) {
+			    gii_input_t *input, const char *visname,int islast) {
 
 	uint32 origins;
 	gii_input_t newhand;
