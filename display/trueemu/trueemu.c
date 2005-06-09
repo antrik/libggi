@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.6 2004/11/27 16:42:28 soyt Exp $
+/* $Id: trueemu.c,v 1.7 2005/06/09 18:20:36 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -29,8 +29,7 @@
 #include <ggi/display/trueemu.h>
 #include <ggi/internal/ggi_debug.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
 
 /**************************************************
@@ -186,7 +185,7 @@ static void load_332_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (8-1);
 		col.b = b * 0xffff / (4-1);
 
-		colormap[_index] = col;
+		memcpy(&colormap[_index], &col, sizeof(ggi_color));
 	}
 }
 
@@ -207,7 +206,7 @@ static void load_cube_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (CUBE_LEVELS-1);
 		col.b = b * 0xffff / (CUBE_LEVELS-1);
 
-		colormap[_index] = col;
+		memcpy(&colormap[_index], &col, sizeof(ggi_color));
 	}
 }
 
@@ -241,7 +240,7 @@ static void load_pastel_palette(ggi_color *colormap)
 			col.g = pl * tg / PASTEL_LEVELS;
 			col.b = pl * tb / PASTEL_LEVELS;
 
-			colormap[_index++] = col;
+			memcpy(&colormap[_index++], &col, sizeof(ggi_color));
 		}
 	}
 }
@@ -273,7 +272,7 @@ static void load_121_palette(ggi_color *colormap)
 		col.g = g * 0xffff / (4-1);
 		col.b = b * 0xffff / (2-1);
 
-		colormap[_index] = col;
+		memcpy(&colormap[_index], &col, sizeof(ggi_color));
 	}
 }
 
