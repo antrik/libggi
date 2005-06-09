@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.40 2005/02/09 09:27:37 cegger Exp $
+/* $Id: init.c,v 1.41 2005/06/09 16:56:52 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -282,7 +282,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 	DPRINT_CORE("Loading driver %s\n",driver);
 
 	do {
-		if (ggParseTarget((char *)driver,target,MAX_TARGET_LEN) == NULL) {
+		if (ggParseTarget(driver,target,MAX_TARGET_LEN) == NULL) {
 			break;
 		}
 

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.24 2005/05/26 07:10:21 cegger Exp $
+/* $Id: internal.h,v 1.25 2005/06/09 16:55:18 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -85,7 +85,7 @@ GGIAPIFUNC int _ggi_mask2shift(uint32 mask);
 #define GGI_PIXFMT_ALPHA_USED	2
 GGIAPIFUNC void _ggi_build_pixfmt(ggi_pixelformat * pixfmt);
 GGIAPIFUNC int _ggi_parse_pixfmtstr(const char *pixfmtstr,
-		char separator, char **endptr,
+		char separator, const char **endptr,
 		size_t pixfmtstr_len,
 		ggi_pixel *r_mask, ggi_pixel *g_mask,
 		ggi_pixel *b_mask, ggi_pixel *a_mask);

@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.23 2005/01/14 09:38:14 pekberg Exp $
+/* $Id: internal.c,v 1.24 2005/06/09 16:55:18 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -241,13 +241,13 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 
 
 int _ggi_parse_pixfmtstr(const char *pixfmtstr,
-		char separator, char **endptr,
+		char separator, const char **endptr,
 		size_t pixfmtstr_len,
 		ggi_pixel *r_mask, ggi_pixel *g_mask,
 		ggi_pixel *b_mask, ggi_pixel *a_mask)
 {
 	ggi_pixel *curr = NULL;
-	char *ptr = (char *)pixfmtstr;
+	const char *ptr = pixfmtstr;
 	unsigned long nbits;
 
 	LIB_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
