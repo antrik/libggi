@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2004/11/27 16:42:26 soyt Exp $
+/* $Id: visual.c,v 1.20 2005/06/09 18:06:47 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -342,7 +342,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	memcpy(options, optlist, sizeof(options));
         if (args != NULL) {
-                args = ggParseOptions((char *)args, options, NUM_OPTS);
+                args = ggParseOptions(args, options, NUM_OPTS);
                 if (args == NULL) {
                         fprintf(stderr, "display-x: error in arguments.\n");
                         return GGI_EARGINVAL;
@@ -483,7 +483,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Open keyboard and mouse input */
 	if (priv->inputs & INP_KBD) {
 		char strbuf[64];
-		char *inputstr = "input-linux-kbd";
+		const char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
 #ifdef HAVE_SNPRINTF

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2004/11/27 16:42:27 soyt Exp $
+/* $Id: visual.c,v 1.14 2005/06/09 18:09:46 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -198,7 +198,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
         memcpy(options, optlist, sizeof(options));
 	if (args != NULL) {
-		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-x: error in arguments.\n");
 			return GGI_EARGINVAL;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2004/11/27 16:42:26 soyt Exp $
+/* $Id: mode.c,v 1.26 2005/06/09 18:06:47 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -126,7 +126,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 {
 	int modenum;
 	char modestr[64];
-	char *colors;
+	const char *colors;
 
 	DPRINT("SVGAlib trying for bitdepth %d, %d.\n", tm->graphtype, GT_DEPTH(tm->graphtype));
 	/* See GGI_svga_checkmode() for details... */

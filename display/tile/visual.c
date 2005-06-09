@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2005/04/30 12:45:53 cegger Exp $
+/* $Id: visual.c,v 1.14 2005/06/09 18:10:37 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -133,7 +133,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->vislist[i].size.x = vx;
 		priv->vislist[i].size.y = vy;
 
-		args = ggParseTarget((char *)args, target, 1024);
+		args = ggParseTarget(args, target, 1024);
 
 		if (! args) {
 			fprintf(stderr,"display-tile: parsetarget error.\n");
