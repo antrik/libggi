@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.27 2004/11/14 15:47:50 cegger Exp $
+/* $Id: clip2d.c,v 1.28 2005/06/09 19:16:32 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -301,13 +301,15 @@ static void get_coords(int i, int *x0, int *y0, int *x1, int *y1)
 	case 1: *x1 = 96; *y1 =  3; break;
 	case 2: *x1 =  3; *y1 = 96; break;
 	case 3: *x1 = 96; *y1 = 96; break;
+	default: *x1 = 0; *y1 = 0; break;
 	}
 
 	switch(line) {
-	case 0: *x0 =  1 + point, *y0 =  1;         break;
-	case 1: *x0 =  1 + point, *y0 = 98;         break;
-	case 2: *x0 =  1,         *y0 =  1 + point; break;
-	case 3: *x0 = 98,         *y0 =  1 + point; break;
+	case 0: *x0 =  1 + point; *y0 =  1;         break;
+	case 1: *x0 =  1 + point; *y0 = 98;         break;
+	case 2: *x0 =  1;         *y0 =  1 + point; break;
+	case 3: *x0 = 98;         *y0 =  1 + point; break;
+	default: *x0 = 0; *y0 = 0;
 	}	
 }
 
