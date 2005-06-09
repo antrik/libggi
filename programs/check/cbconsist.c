@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.15 2005/01/25 11:53:51 pekberg Exp $
+/* $Id: cbconsist.c,v 1.16 2005/06/09 18:46:12 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -222,7 +222,7 @@ static void cbtime(cbcstate * s)
  * possible pixel formats.
  */
 #define MAX_MEMVIS_FMTS 8
-static char *memvis_fmts[MAX_MEMVIS_FMTS] = {
+static const char *memvis_fmts[MAX_MEMVIS_FMTS] = {
 	"memory:-pixfmt=r5g6b5",
 	"memory:-pixfmt=r4g4b4p4",
 	"memory:-pixfmt=b5g6r5",
