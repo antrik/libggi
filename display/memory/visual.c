@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2005/01/14 09:38:13 pekberg Exp $
+/* $Id: visual.c,v 1.27 2005/06/09 17:56:16 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -152,7 +152,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->inputoffset = 0;		/* Setup offset. */
 
 	if (args) {
-		args = ggParseOptions((char *) args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-memory: error in "
 				"arguments.\n");

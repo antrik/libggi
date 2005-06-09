@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/27 16:42:24 soyt Exp $
+/* $Id: visual.c,v 1.10 2005/06/09 17:58:26 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -76,7 +76,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT("display-monotext: opening target: %s\n", args);
 	
 	if (args != NULL) {
-		if (ggParseTarget((char *) args, target, 1024) == NULL) {
+		if (ggParseTarget(args, target, 1024) == NULL) {
 			/* error occurred */
 			return GGI_EARGINVAL;
 		}

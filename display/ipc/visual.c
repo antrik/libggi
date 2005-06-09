@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2004/11/27 16:42:20 soyt Exp $
+/* $Id: visual.c,v 1.18 2005/06/09 17:54:19 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -162,7 +162,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_EARGREQ;
 	}	/* if */
 
-	args = ggParseOptions((char *) args, options, NUM_OPTS);
+	args = ggParseOptions(args, options, NUM_OPTS);
 	if (args == NULL) {
 		DPRINT("display-ipc: error in arguments.\n");
 		return GGI_EARGREQ;

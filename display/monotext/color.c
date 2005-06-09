@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/11/27 16:42:24 soyt Exp $
+/* $Id: color.c,v 1.8 2005/06/09 17:58:26 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -37,7 +37,7 @@
 int GGI_monotext_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	ggi_color *src = (ggi_color*)colormap;
+	const ggi_color *src = colormap;
 	size_t    end = start + size - 1;
 
  	DPRINT("display-monotext: SetPalette(%d,%d)\n", start, size);

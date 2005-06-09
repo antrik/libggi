@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2005/04/30 14:07:14 cegger Exp $
+/* $Id: visual.c,v 1.13 2005/06/09 18:00:20 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -65,7 +65,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	err = GGI_EARGINVAL;
 	for (;;) {
-		args = ggParseTarget((char *) args, target, 1024);
+		args = ggParseTarget(args, target, 1024);
 
 		if (args == NULL) {
 			goto out_freeall;
