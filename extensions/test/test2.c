@@ -1,4 +1,4 @@
-/* $Id: test2.c,v 1.4 2005/05/21 15:27:46 cegger Exp $
+/* $Id: test2.c,v 1.5 2005/06/09 18:40:45 cegger Exp $
 ******************************************************************************
 
    Test extension test2.c
@@ -103,7 +103,7 @@ void ggiTest2PrintLocaldata(ggi_visual_t vis)
 	printf("%s\n",(char *)LIBGGI_EXT(vis,ggiTest2ID));
 }
 
-void ggiTest2SetLocaldata  (ggi_visual_t vis,char *content)
+void ggiTest2SetLocaldata  (ggi_visual_t vis,const char *content)
 {
 	strcpy(LIBGGI_EXT(vis,ggiTest2ID),content);
 }
