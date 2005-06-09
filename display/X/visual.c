@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.47 2005/03/28 20:33:35 pekberg Exp $
+/* $Id: visual.c,v 1.48 2005/06/09 17:15:37 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -280,7 +280,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 {
 	int err, tmp1, tmp2, tmp3;  /* Return value, scratch variables */
-	char 		*tmpstr;
 	XVisualInfo	vi_template;
 	long		vi_mask;
 	gg_option 	options[NUM_OPTS];
@@ -291,7 +290,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	memcpy(options, optlist, sizeof(options));
 
 	if (args) {
-		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-x: error in arguments.\n");
 			return GGI_EARGINVAL;
@@ -340,13 +339,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* See what extensions are available on this display. */
 #define GGI_X_CHECK_XEXT(extname, flag)					\
-	tmpstr = extname;						\
-	XQueryExtension(disp, tmpstr, &tmp1, &tmp2, &tmp3);		\
+	XQueryExtension(disp, extname, &tmp1, &tmp2, &tmp3);		\
 	if (tmp1) {							\
-		DPRINT_MISC("%s X extension found\n", tmpstr);	\
+		DPRINT_MISC("%s X extension found\n", extname);		\
 		priv->use_Xext |= flag;					\
 	} else {							\
-		DPRINT_MISC("no %s extension\n", tmpstr);		\
+		DPRINT_MISC("no %s extension\n", extname);		\
 	}
 	
 	GGI_X_CHECK_XEXT("Extended-Visual-Information",	GGI_X_USE_EVI);
@@ -466,10 +464,9 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Try the extensions that haven't been disabled. */
 #define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
-	tmpstr = helper;					\
-	err = _ggiAddDL(vis, tmpstr, NULL, NULL, 0);		\
+	err = _ggiAddDL(vis, helper, NULL, NULL, 0);		\
 	if (err) {						\
-		fprintf(stderr, "X: Cannot load %s\n", tmpstr);	\
+		fprintf(stderr, "X: Cannot load %s\n", helper);	\
 		priv->use_Xext &= ~flag;			\
 		goto abort_label;				\
 	}

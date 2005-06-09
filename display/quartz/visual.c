@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2005/01/28 12:20:11 cegger Exp $
+/* $Id: visual.c,v 1.8 2005/06/09 17:17:57 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -120,7 +120,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	if (args) {
-		args = ggParseOptions((char *) args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-quartz: error in "
 				"arguments.\n");

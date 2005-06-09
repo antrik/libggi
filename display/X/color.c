@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.24 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: color.c,v 1.25 2005/06/09 17:15:35 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -38,7 +38,7 @@
  */
 #define COLOR_THRESHOLD(num,max)  1   /*  ((num)*4 >= (max)*3)  */
 
-static int _ggi_smart_allocate(ggi_visual *vis, int len, ggi_color *cols)
+static int _ggi_smart_allocate(ggi_visual *vis, int len, const ggi_color *cols)
 {
 	ggi_x_priv *priv;
 	ggi_color X_pal[256];
@@ -152,7 +152,7 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 
 	if (((int)start) == GGI_PALETTE_DONTCARE) {
 		if (COLOR_THRESHOLD(len, priv->ncols)) {
-			return _ggi_smart_allocate(vis, len, (ggi_color*)colormap);
+			return _ggi_smart_allocate(vis, len, colormap);
 		}
 
 		start = priv->ncols - len;

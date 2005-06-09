@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.11 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: hline.c,v 1.12 2005/06/09 17:15:35 cegger Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -124,7 +124,7 @@ int GGI_X_puthline_draw(ggi_visual *vis, int x, int y, int w, const void *data)
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
-	ximg = _ggi_x_create_ximage( vis, (char*)data, w, 1 );
+	ximg = _ggi_x_create_ximage( vis, (char *)data, w, 1 );
 	if (ximg == NULL) return GGI_ENOMEM;
 
 	GGI_X_LOCK_XLIB(vis);

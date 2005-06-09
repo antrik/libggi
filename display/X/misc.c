@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.36 2005/03/14 14:00:47 pekberg Exp $
+/* $Id: misc.c,v 1.37 2005/06/09 17:15:36 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -410,7 +410,7 @@ int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
 	int rc;
 	XSizeHints      hint;
 	ggi_x_priv      *priv;
-	char *name = "GGI-on-X";
+	const char *name = "GGI-on-X";
 
 	priv = GGIX_PRIV(vis);
 
