@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.10 2005/01/25 11:50:43 pekberg Exp $
+/* $Id: flying_ggis.c,v 1.11 2005/06/09 19:10:40 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -261,7 +261,7 @@ static void render_texture(int width, int height, Texture *t)
 
         for (y=0; (banner[y] != NULL) && (sy < height); y++, sy += dy) {
 
-                char *pos = banner[y];
+		const char *pos = banner[y];
 
                 if (sy >= 0) {
 

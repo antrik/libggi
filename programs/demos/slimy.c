@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.6 2004/09/08 19:05:57 cegger Exp $
+/* $Id: slimy.c,v 1.7 2005/06/09 19:10:40 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -40,7 +40,7 @@ static int show_fps = 0;
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 
 
-static void fail(char *reason)
+static void fail(const char *reason)
 {
 	fprintf(stderr, "%s", reason);
 	if (disp != NULL) {

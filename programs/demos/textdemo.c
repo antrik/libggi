@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.8 2004/09/08 19:07:15 cegger Exp $
+/* $Id: textdemo.c,v 1.9 2005/06/09 19:10:40 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 	};
 	int a, b;
-	char *hello = "Hello World";
+	const char *hello = "Hello World";
 	ggi_mode mode;
 
 	if (ggiInit() != 0) {

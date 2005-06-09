@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.9 2004/09/08 19:05:35 cegger Exp $
+/* $Id: saver.c,v 1.10 2005/06/09 19:10:40 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -414,7 +414,7 @@ static void ge_vesa_blank3(void)
  */
 static struct scrsaver {
 	void (*func) (void);
-	char *name;
+	const char *name;
 } SaverList[] = { {
 ge_bounce, "Jumping blob"}, {
 ge_stars, "Starfield"}, {
