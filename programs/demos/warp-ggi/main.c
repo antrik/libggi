@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.4 2004/09/08 18:10:29 cegger Exp $
+/* $Id: main.c,v 1.5 2005/06/09 18:59:06 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 	const ggi_directbuffer *dbuf = NULL;
 	struct raw_pict rp;
 	struct warp *w = NULL;
-	char *picname = NULL;
+	const char *picname = NULL;
 	uint32 swidth, sheight, smode, spixsize;
 	uint32 width, height, udepth = 0, stride;
 	sint32 err, step = 0, done = 0;

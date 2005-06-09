@@ -1,4 +1,4 @@
-/* $Id: readpcx.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
+/* $Id: readpcx.c,v 1.4 2005/06/09 18:59:06 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -49,7 +49,7 @@ struct pcx_header {
 
 #define get16(x) ((x[1]<<8)|x[0])
 
-int readPCX(char *name, struct raw_pict *rp, uint32 udepth)
+int readPCX(const char *name, struct raw_pict *rp, uint32 udepth)
 {
 	FILE *f;
 	struct pcx_header header;

@@ -1,4 +1,4 @@
-/* $Id: readtga.c,v 1.3 2004/02/02 19:22:01 cegger Exp $
+/* $Id: readtga.c,v 1.4 2005/06/09 18:59:06 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -67,7 +67,7 @@ static inline int RGBconv(int r, int g, int b, unsigned int bpp)
 	}
 }
 
-int readTGA(char *name, struct raw_pict *rp, uint32 udepth)
+int readTGA(const char *name, struct raw_pict *rp, uint32 udepth)
 {
 	FILE *is;
 	struct TargaHeader th;

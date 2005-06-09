@@ -1,4 +1,4 @@
-/* $Id: rawpict.h,v 1.2 2003/07/05 11:35:58 cegger Exp $
+/* $Id: rawpict.h,v 1.3 2005/06/09 18:59:06 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -39,11 +39,11 @@ struct raw_pict {
 
 /* Defined in readpcx.c */
 
-extern int readPCX (char *name, struct raw_pict *rp, uint32 udepth);
+extern int readPCX (const char *name, struct raw_pict *rp, uint32 udepth);
 
 /* Defined in readtga.c */
 
-extern int readTGA (char *name, struct raw_pict *rp, uint32 udepth);
+extern int readTGA (const char *name, struct raw_pict *rp, uint32 udepth);
 
 /* Defined in color.c */
 
