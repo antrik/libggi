@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.3 2005/04/28 11:35:08 soyt Exp $
+/* $Id: ext.c,v 1.4 2005/06/09 19:51:01 cegger Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -75,7 +75,7 @@ int ggiExtensionExit(void)
   (ggi_extid) that can be used to address this extension.
 */
 ggi_extid
-ggiExtensionRegister(char *name, size_t size, int (*change)(ggi_visual_t, int))
+ggiExtensionRegister(const char *name, size_t size, int (*change)(ggi_visual_t, int))
 {
 	ggi_extension *tmp, *ext;
 
