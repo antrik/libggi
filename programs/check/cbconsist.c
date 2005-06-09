@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.16 2005/06/09 18:46:12 cegger Exp $
+/* $Id: cbconsist.c,v 1.17 2005/06/09 18:50:13 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -47,7 +47,7 @@ typedef struct cbcstate_s cbcstate;
 
 struct cbcstate_s {
 	ggi_visual_t svis, dvis;
-	char *svisstr, *dvisstr;
+	const char *svisstr, *dvisstr;
 	ggi_mode smode, dmode;
 	ggi_pixel sblack, dblack;
 	int flags;
@@ -244,7 +244,7 @@ static ggi_graphtype memvis_gts[MAX_MEMVIS_FMTS] = {
 	GT_32BIT
 };
 
-static int mkmemvis(int i, char **str,
+static int mkmemvis(int i, const char **str,
 	     ggi_visual_t * vis, ggi_mode * mode, ggi_pixel * black)
 {
 	ggi_color color;
@@ -283,7 +283,7 @@ static int mkmemvis(int i, char **str,
 	return i;
 }
 
-static char optstring[] = "s:d:haftc";
+static const char optstring[] = "s:d:haftc";
 
 int main(int argc, char **argv)
 {

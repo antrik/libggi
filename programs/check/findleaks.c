@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.11 2005/01/29 08:47:45 cegger Exp $
+/* $Id: findleaks.c,v 1.12 2005/06/09 18:46:12 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -35,7 +35,7 @@ static void wait4key(void)
 }
 #endif
 
-static void err(char *s,...)
+static void err(const char *s,...)
 {
 	printf("Fatal error: ");
 	printf(s);
@@ -70,7 +70,7 @@ static long get_size(void)
 
 
 static void
-inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
+inform_mem(const char *info, long prev, long now, long allocprev, long allocnow)
 {
 	printf(info);
 	printf("Used before   : %6ld, after: %6ld,  Change: %6ld\n",
@@ -94,7 +94,7 @@ static long get_size(void)
 	return 0;
 }
 
-static void inform_mem(char *info, long prev, long now, long allocprev, long allocnow)
+static void inform_mem(const char *info, long prev, long now, long allocprev, long allocnow)
 {
 	printf(info);
 	fprintf(stderr, "inform_mem(): not implemented for your platform\n");

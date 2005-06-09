@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.6 2004/09/08 19:26:22 cegger Exp $
+/* $Id: consistency.c,v 1.7 2005/06/09 18:46:12 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -529,7 +529,8 @@ static void CopyBox(void)
  * checking and contains which checks to run.
  */
 static struct test
-{	char *name;
+{
+	const char *name;
 	void (*func)(void);
 	int active;
 } tests[]=

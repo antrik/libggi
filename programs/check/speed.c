@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.6 2005/05/21 15:35:53 cegger Exp $
+/* $Id: speed.c,v 1.7 2005/06/09 18:46:12 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -430,7 +430,8 @@ static void CopyBox(void)
 /* List of tests.
  */
 static struct test 
-{	char *name;
+{
+	const char *name;
 	void (*func)(void);
 	int active;
 } tests[]=
