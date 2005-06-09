@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.18 2005/03/28 20:33:35 pekberg Exp $
+/* $Id: x.h,v 1.19 2005/06/09 17:04:36 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -52,7 +52,7 @@ typedef int (*ggi_modelist_enter)(ggi_visual *vis, int num);
  * Return the 'num's mode from the modelist indicating success.
  * Negative return code indicates an error or GGI_ENOTFOUND.
  */
-typedef int (*ggi_modelist_validate)(ggi_visual *vis, int num, 
+typedef int (*ggi_modelist_validate)(ggi_visual *vis, intptr_t num, 
 				     ggi_mode *maxed);
 
 typedef struct {

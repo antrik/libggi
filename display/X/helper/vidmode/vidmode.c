@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.19 2005/03/30 10:09:57 mooz Exp $
+/* $Id: vidmode.c,v 1.20 2005/06/09 17:04:36 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -273,7 +273,7 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode *m, XF86VidModeModeInfo *vidmod
 
 /* This function performs the CheckMode operation and returns
  * the number of the best mode.  */
-static int ggi_xvidmode_validate_mode(ggi_visual * vis, int num,
+static int ggi_xvidmode_validate_mode(ggi_visual * vis, intptr_t num,
 				      ggi_mode   * mode)
 {
   ggi_x_priv *priv;
