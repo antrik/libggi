@@ -1,4 +1,4 @@
-/* $Id: window.h,v 1.1 2001/05/12 23:03:53 cegger Exp $
+/* $Id: window.h,v 1.2 2005/06/09 19:32:11 cegger Exp $
 ******************************************************************************
 
    Universal window for LibGGI
@@ -33,7 +33,7 @@ struct window {
 	int borderwidth;             /* coloured border with # pixels */
 	ggi_color bordercolor;
 
-	char * title ;
+	const char *title ;
 	ggi_color titlecolor;
 };
 

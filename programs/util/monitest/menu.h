@@ -1,4 +1,4 @@
-/* $Id: menu.h,v 1.1 2001/05/12 23:03:51 cegger Exp $
+/* $Id: menu.h,v 1.2 2005/06/09 19:32:11 cegger Exp $
 ******************************************************************************
 
    Universal menu for ggi
@@ -54,12 +54,12 @@ struct menu {
 	int entrylineskip;
 	int lastlineskip;
 
-	char * toptext;
+	const char * toptext;
 	int toptextx;
 	int toptexty;
 	ggi_color toptextcolor;
 
-	char * bottomtext;
+	const char * bottomtext;
 	int bottomtextx;
 	int bottomtexty;
 	ggi_color bottomtextcolor;

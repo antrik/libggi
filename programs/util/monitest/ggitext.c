@@ -1,4 +1,4 @@
-/* $Id: ggitext.c,v 1.3 2004/09/08 17:51:03 cegger Exp $
+/* $Id: ggitext.c,v 1.4 2005/06/09 19:32:11 cegger Exp $
 ******************************************************************************
 
    Implementation of ggitext: routines for formatted text output
@@ -22,7 +22,7 @@
 #include "ggitext.h"
 
 
-int ggiGraphTextCharwidth(ggi_visual_t vis, char c)     
+int ggiGraphTextCharwidth(ggi_visual_t vis, const char c)     
 {
 	int w, h;
 	ggiGetCharSize(vis,&w,&h);  /* until we have some font management. */
@@ -31,7 +31,7 @@ int ggiGraphTextCharwidth(ggi_visual_t vis, char c)
 }
 
 
-int ggiGraphTextCharheight(ggi_visual_t vis, char c)
+int ggiGraphTextCharheight(ggi_visual_t vis, const char c)
 {
 	int w, h;
 	ggiGetCharSize(vis,&w,&h);  /* until we have some font management. */
@@ -39,7 +39,7 @@ int ggiGraphTextCharheight(ggi_visual_t vis, char c)
 	return h;
 }
 
-int ggiGraphTextStringwidth(ggi_visual_t vis, char * c)
+int ggiGraphTextStringwidth(ggi_visual_t vis, const char * c)
 {
 	int w;
 	w = 0;
@@ -49,7 +49,7 @@ int ggiGraphTextStringwidth(ggi_visual_t vis, char * c)
 	}
 	return w;
 }
-int ggiGraphTextStringheight(ggi_visual_t vis, char * c)
+int ggiGraphTextStringheight(ggi_visual_t vis, const char * c)
 {
 	return ggiGraphTextCharheight(vis, *c );
 }

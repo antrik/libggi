@@ -1,4 +1,4 @@
-/* $Id: ggitext.h,v 1.1 2001/05/12 23:03:51 cegger Exp $
+/* $Id: ggitext.h,v 1.2 2005/06/09 19:32:11 cegger Exp $
 ******************************************************************************
 
    Header for ggitext functions for formatted text output
@@ -17,10 +17,10 @@
 
 #include <ggi/ggi.h>
 
-int ggiGraphTextCharwidth(ggi_visual_t  vis, char c);
-int ggiGraphTextCharheight(ggi_visual_t  vis, char c);
-int ggiGraphTextStringwidth(ggi_visual_t  vis, char * c);
-int ggiGraphTextStringheight(ggi_visual_t  vis, char * c);
+int ggiGraphTextCharwidth(ggi_visual_t  vis, const char c);
+int ggiGraphTextCharheight(ggi_visual_t  vis, const char c);
+int ggiGraphTextStringwidth(ggi_visual_t  vis, const char * c);
+int ggiGraphTextStringheight(ggi_visual_t  vis, const char * c);
 
 /* int ggiGraphTextFont(vis, char * fontnameorpath, uint size, int flags ); */
 
