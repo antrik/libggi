@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.5 2005/06/09 18:59:06 cegger Exp $
+/* $Id: main.c,v 1.6 2005/06/09 19:01:04 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -127,6 +127,7 @@ int main(int argc, char **argv)
 	sint32 nextarg, i, tval;
 
 	func_warpfunc	*warpfunc;
+	swidth = sheight = smode = spixsize = 0;
 
 	rp.clut = NULL;
 	while (!done)

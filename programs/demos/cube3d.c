@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.17 2005/02/23 14:13:49 pekberg Exp $
+/* $Id: cube3d.c,v 1.18 2005/06/09 19:05:32 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -377,6 +377,8 @@ static void doblit(Polygon3D * poly, int transp)
 		int xpos, patx, paty;
 	} min, max, hlp;
 
+	memset(&min, 0, sizeof(min));
+	memset(&max, 0, sizeof(max));
 	miny = INT_MIN;
 	maxy = INT_MAX;
 
