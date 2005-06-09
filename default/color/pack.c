@@ -1,4 +1,4 @@
-/* $Id: pack.c,v 1.5 2004/11/26 22:17:44 cegger Exp $
+/* $Id: pack.c,v 1.6 2005/06/09 18:26:17 cegger Exp $
 ******************************************************************************
 
    Generic color packing
@@ -88,10 +88,10 @@ int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, i
  */
 int GGI_color_L1_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-        uint8 *src = (uint8 *) buf;
+	const uint8 *src = (const uint8 *)buf;
 		
         for (; len > 0; len--, src++, cols++) {
-		LIBGGIUnmapPixel(vis, (ggi_pixel) *src, cols);
+		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
  	}
 
 	return 0;
@@ -99,10 +99,10 @@ int GGI_color_L1_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L2_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-        uint16 *src = (uint16 *) buf;
+	const uint16 *src = (const uint16 *)buf;
 		
         for (; len > 0; len--, src++, cols++) {
-		LIBGGIUnmapPixel(vis, (ggi_pixel) *src, cols);
+		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
  	}
 
 	return 0;
@@ -110,7 +110,7 @@ int GGI_color_L2_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L3_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-        uint8 *src = (uint8 *) buf;
+	const uint8 *src = (const uint8 *) buf;
 		
         for (; len > 0; len--, src+=3, cols++) {
 
@@ -124,10 +124,10 @@ int GGI_color_L3_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L4_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-        uint32 *src = (uint32 *) buf;
+	const uint32 *src = (const uint32 *) buf;
 		
         for (; len > 0; len--, src++, cols++) {
-		LIBGGIUnmapPixel(vis, (ggi_pixel) *src, cols);
+		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
  	}
 
 	return 0;
