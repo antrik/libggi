@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/27 16:42:19 soyt Exp $
+/* $Id: mode.c,v 1.16 2005/06/09 17:39:04 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -140,7 +140,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 
 	/* Write initial file contents 
 	 */
-	write_string(vis, "\020GGIFILE");	/* magic */
+	write_string(vis, (const unsigned char*)"\020GGIFILE");	/* magic */
 	write_word(vis, (unsigned)LIBGGI_VIRTX(vis));	/* width */
 	write_word(vis, (unsigned)LIBGGI_VIRTY(vis));	/* height */
 
@@ -480,10 +480,10 @@ int GGI_file_setflags(ggi_visual *vis, ggi_flags flags)
 
 int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
- 	ggi_file_priv *priv     = FILE_PRIV(vis);
- 	uint8         *file_pal = priv->file_mmap + priv->offset_pal;
- 	ggi_color     *dest     = LIBGGI_PAL(vis)->clut.data + start;
- 	ggi_color     *src      = (ggi_color*)colormap;	
+ 	ggi_file_priv   *priv     = FILE_PRIV(vis);
+ 	uint8           *file_pal = priv->file_mmap + priv->offset_pal;
+ 	ggi_color       *dest     = LIBGGI_PAL(vis)->clut.data + start;
+ 	const ggi_color *src      = colormap;	
 
 	DPRINT("display-file: setpalette.\n");
     

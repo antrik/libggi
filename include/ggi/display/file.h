@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.3 2003/12/13 21:12:03 mooz Exp $
+/* $Id: file.h,v 1.4 2005/06/09 17:39:03 cegger Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -82,14 +82,14 @@ typedef struct {
 /* File Primitives
  */
 
-extern int  _ggi_file_create_file(ggi_visual *vis, char *filename);
+extern int  _ggi_file_create_file(ggi_visual *vis, const char *filename);
 extern void _ggi_file_close_file(ggi_visual *vis);
 extern void _ggi_file_rewind(ggi_visual *vis);
 extern void _ggi_file_flush(ggi_visual *vis);
 
 extern void _ggi_file_write_byte(ggi_visual *vis, unsigned int val);
 extern void _ggi_file_write_word(ggi_visual *vis, unsigned int val);
-extern void _ggi_file_write_string(ggi_visual *vis, unsigned char *str);
+extern void _ggi_file_write_string(ggi_visual *vis, const unsigned char *str);
 extern void _ggi_file_write_zeros(ggi_visual *vis, int count);
 
 

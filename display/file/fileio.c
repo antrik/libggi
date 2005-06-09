@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.4 2004/11/13 15:56:20 cegger Exp $
+/* $Id: fileio.c,v 1.5 2005/06/09 17:39:04 cegger Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -39,7 +39,7 @@
 #include <ggi/display/file.h>
 
 
-int _ggi_file_create_file(ggi_visual *vis, char *filename)
+int _ggi_file_create_file(ggi_visual *vis, const char *filename)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -109,10 +109,10 @@ void _ggi_file_write_word(ggi_visual *vis, unsigned int val)
 	_ggi_file_write_byte(vis, val & 0xff);
 }
 
-void _ggi_file_write_string(ggi_visual *vis, unsigned char *str)
+void _ggi_file_write_string(ggi_visual *vis, const unsigned char *str)
 {
 	for (; *str; str++) {
-		_ggi_file_write_byte(vis, (unsigned char) *str);
+		_ggi_file_write_byte(vis, (const unsigned char) *str);
 	}
 }
 
