@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2005/03/30 07:11:54 pekberg Exp $
+/* $Id: visual.c,v 1.19 2005/06/10 07:52:04 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -182,7 +182,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	memcpy(options, optlist, sizeof(options));
 
 	if (args) {
-		args = ggParseOptions((char *) args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr,
 				"display-x: error in arguments.\n");

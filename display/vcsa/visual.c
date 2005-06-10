@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/04/22 12:58:27 cegger Exp $
+/* $Id: visual.c,v 1.15 2005/06/10 07:50:36 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -117,7 +117,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	if (args) {
-		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-vcsa: error in arguments.\n");
 			return GGI_EARGINVAL;
