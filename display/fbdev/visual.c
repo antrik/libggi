@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2005/02/03 00:19:23 cegger Exp $
+/* $Id: visual.c,v 1.28 2005/06/10 07:43:00 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -552,7 +552,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int   novt = 0;
 	int   classicname_failed = 0;
 	int   classicname_errno = 0;	/* Keep compiler happy. */
-	char *modedb = DEFAULT_MODEDB;
+	const char *modedb = DEFAULT_MODEDB;
 	gg_option options[NUM_OPTS];
 	ggi_fbdev_priv *priv;
 
@@ -689,7 +689,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Open keyboard and mouse input */
 	if (priv->inputs & FBDEV_INP_KBD) {
 		char strbuf[64];
-		char *inputstr = "input-linux-kbd";
+		const char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
 			sprintf(strbuf, "linux-kbd:/dev/tty%d", vtnum);

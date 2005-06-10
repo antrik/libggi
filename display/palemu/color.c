@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2004/11/27 16:42:24 soyt Exp $
+/* $Id: color.c,v 1.10 2005/06/10 07:45:19 cegger Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -37,7 +37,7 @@
 int GGI_palemu_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
-	ggi_color       *src  = (ggi_color*)colormap;
+	const ggi_color *src  = colormap;
 	size_t          end   = start + len;
 
  	DPRINT("display-palemu: SetPalette(%d,%d)\n", start, len);

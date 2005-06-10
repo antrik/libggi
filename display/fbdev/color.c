@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.14 2005/04/22 12:37:59 cegger Exp $
+/* $Id: color.c,v 1.15 2005/06/10 07:43:00 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -211,7 +211,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
 	
 	int len = (int)size;
 	
-	ggi_color* src = (ggi_color*)colormap;
+	const ggi_color* src = colormap;
 	
 	DPRINT_COLOR("display-fbdev: SetPalette(%d,%d)\n", start, size);
 	
