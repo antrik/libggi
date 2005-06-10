@@ -353,3 +353,19 @@ fi
 AC_MSG_NOTICE([======= genlibtool finished ==========])
 
 ])
+
+
+
+dnl ----- checklib.m4 -----
+dnl Check for libs using libtool
+
+AC_DEFUN([GGI_CHECK_LIB],
+[
+   save_CC="$CC"
+   CC="$SHELL ./libtool --mode=link $CC"
+   AC_CHECK_LIB($1, $2, [
+     CC="$save_CC"
+     $3], [
+     CC="$save_CC"
+     $4])
+])
