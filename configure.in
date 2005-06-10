@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.159 2005/06/09 16:48:10 cegger Exp $
+dnl $Id: configure.in,v 1.160 2005/06/10 10:43:39 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -559,13 +559,16 @@ AC_CHECK_LIB(socket, connect,
   AC_CHECK_LIB(c, connect,
     ,
     SAVELIBS="$LIBS"
+    SAVECC="$CC"
     AC_MSG_CHECKING([for connect in -lwsock32])
     LIBS="$LIBS -lwsock32"
+    CC="$SHELL ./libtool --mode=link $CC"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <winsock.h>]], [[connect(0, NULL, 42);]])],[bsdsock_libs="$bsdsock_libs -lwsock32"
       ac_cv_func_connect=yes
       AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
     ])
     LIBS="$SAVELIBS"
+    CC="$SAVECC"
   )
 )
 
