@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.239 2005/06/01 19:10:31) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.245 2005/06/11 11:12:23) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.239 2005/06/01 19:10:31) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.245 2005/06/11 11:12:23) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.239 2005/06/01 19:10:31"
-package_revision=1.1667.2.239
+TIMESTAMP=" 1.1667.2.245 2005/06/11 11:12:23"
+package_revision=1.1667.2.245
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -219,9 +219,6 @@ sed_quote_subst='s/\([`"$\\]\)/\\\1/g'
 
 # Same as above, but do not quote variable references.
 double_quote_subst='s/\(["`\\]\)/\\\1/g'
-
-# Protect character class for func_quote_* by variable expansion.
-quote_scanset='[[~#^*{};<>?'"'"' 	]'
 
 # Re-`\' parameter expansions in output of double_quote_subst that were
 # `\'-ed in input to the same.  If an odd number of `\' preceded a '$'
@@ -402,11 +399,8 @@ func_quote_for_eval ()
       # word splitting, command substitution and and variable
       # expansion for a subsequent eval.
       # Many Bourne shells cannot handle close brackets correctly
-      # in scan sets, and some SunOS ksh mistreat backslash-escaping
-      # in scan sets (worked around with variable expansion),
-      # and furthermore cannot handle '|' '&' '(' ')' in scan sets
-      # at all, so we specify them separately.
-      *$quote_scanset* | *]* | *\|* | *\&* | *\(* | *\)* | "")
+      # in scan sets, so we specify it separately.
+      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
         my_arg="\"$my_arg\""
         ;;
     esac
@@ -427,11 +421,8 @@ func_quote_for_expand ()
       # Double-quote args containing shell metacharacters to delay
       # word splitting and command substitution for a subsequent eval.
       # Many Bourne shells cannot handle close brackets correctly
-      # in scan sets, and some SunOS ksh mistreat backslash-escaping
-      # in scan sets (worked around with variable expansion),
-      # and furthermore cannot handle '|' '&' '(' ')' in scan sets
-      # at all, so we specify them separately.
-      *$quote_scanset* | *]* | *\|* | *\&* | *\(* | *\)* | "")
+      # in scan sets, so we specify it separately.
+      *[\[\~\#\^\&\*\(\)\{\}\|\;\<\>\?\'\ \	]*|*]*|"")
         my_arg="\"$my_arg\""
         ;;
     esac
@@ -1606,7 +1597,8 @@ func_mode_compile ()
 
     func_quote_for_eval "$libobj"
     test "X$libobj" != "X$func_quote_for_eval_result" \
-      && func_fatal_error "libobj name \`$libobj' may not contain shell special characters."
+      && $ECHO "X$libobj" | $GREP '[]~#^*{};<>?"'"'"' 	&()|`$[]' \
+      && func_warning "libobj name \`$libobj' may not contain shell special characters."
     objname=`$ECHO "X$obj" | $Xsed -e 's%^.*/%%'`
     xdir=`$ECHO "X$obj" | $Xsed -e 's%/[^/]*$%%'`
     if test "X$xdir" = "X$obj"; then
