@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.8 2004/11/05 12:27:35 cegger Exp $
+/* $Id: ll.h,v 1.9 2005/06/13 07:48:40 cegger Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -291,7 +291,8 @@ enum ggi_ll_rop {
   LL_ROP_Z                = 0x0e880000, 
 
   /* This flag must not be set for the above to be valid. */
-  LL_ROP_ALT              = 0x80000000, /* Reserved for future use.          */
+  /* ISO C limits enum to int */
+#define  LL_ROP_ALT        0x80000000   /* Reserved for future use.          */
 
   LL_ROP_NOP              = 0x00000000, /* This rop does nothing.            */
   
@@ -327,8 +328,9 @@ enum ggi_ll_math {
 	LL_MATH_CMP_LTE			= 0x0000c000,
 	LL_MATH_CMP_UNSIGNED		= 0x00000000,
 	LL_MATH_CMP_SIGNED		= 0x20000000,
-	LL_MATH_ALPHA_SRC_PREMULT	= 0x40000000,
-	LL_MATH_ALPHA_DST_PREMULT	= 0x80000000
+	LL_MATH_ALPHA_SRC_PREMULT	= 0x40000000
+	/* ISO C limits enum to int */
+#define	LL_MATH_ALPHA_DST_PREMULT	 0x80000000
 
 };	/* ggi_ll_math */
 
