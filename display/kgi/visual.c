@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2005/01/23 21:57:20 nsouch Exp $
+/* $Id: visual.c,v 1.23 2005/06/17 11:38:26 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -104,13 +104,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * try to open the /dev/event corresponding to ower /dev/graphic
 	 */
 	if (tolower((uint8)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
-#ifdef HAVE_SNPRINTF
+
 		snprintf(eventname, 32, "kii:-device=/dev/event%i",
 			 KGI_CTX(vis).mapper.graphic);
-#else
-		sprintf(eventname, "kii:-device=/dev/event%i",
-			KGI_CTX(vis).mapper.graphic);
-#endif
+
 		if ((inp = giiOpen(eventname, NULL)) == NULL) {
 			DPRINT_MISC("Unable to open KII inputlib\n");
 			goto err_freegc;
