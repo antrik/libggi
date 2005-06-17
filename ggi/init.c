@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.41 2005/06/09 16:56:52 cegger Exp $
+/* $Id: init.c,v 1.42 2005/06/17 11:26:58 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -30,6 +30,7 @@
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 #include "ext.h"
 #include "swar.h"
@@ -319,22 +320,14 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	inplist=NULL;
 
-#ifdef HAVE_SNPRINTF
 	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s_%d", target, ++globalopencount);
-#else
-	sprintf(str, "GGI_INPUT_%s_%d", target, ++globalopencount);
-#endif
 	mangle_variable(str);
 	if (!inplist) { 
 		inplist = getenv(str);
 		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
 	}
 
-#ifdef HAVE_SNPRINTF
 	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s", target);
-#else
-	sprintf(str, "GGI_INPUT_%s", target);
-#endif
 	mangle_variable(str);
 	if (!inplist) {
 		inplist = getenv(str);

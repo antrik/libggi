@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.24 2005/06/09 16:55:18 cegger Exp $
+/* $Id: internal.c,v 1.25 2005/06/17 11:26:58 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -380,15 +380,10 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 				if (idx == 0) break;
 				idx--;
 			}
-#ifdef HAVE_SNPRINTF
+
 			tmp = snprintf(ptr, pixfmtstr_len, "%u",
 				       256-(pixfmt->bitmeaning[idx] & 0xff)
 				       );
-#else
-			tmp = sprintf(ptr, "%u",
-				       256-(pixfmt->bitmeaning[idx] & 0xff)
-				       );
-#endif
 			LIB_ASSERT(tmp < pixfmtstr_len,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
 			LIB_ASSERT(tmp <= pixfmtstr_len,
@@ -403,14 +398,10 @@ int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
 		*ptr = '\0';
 
 	} else {
-#ifdef HAVE_SNPRINTF
 		size_t tmp;
 
 		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u", GT_SIZE(LIBGGI_GT(vis)));
 		LIB_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
-#else
-		sprintf(pixfmtstr, "%u", GT_SIZE(LIBGGI_GT(vis)));
-#endif
 	}
 
 	return GGI_OK;

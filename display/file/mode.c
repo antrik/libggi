@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2005/06/09 17:39:04 cegger Exp $
+/* $Id: mode.c,v 1.17 2005/06/17 11:32:21 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -39,6 +39,7 @@
 #include "config.h"
 #include <ggi/display/file.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/ggi-auto.inc"
@@ -64,19 +65,12 @@ static void dowritefile(ggi_visual *vis)
 		(* priv->writer)(vis);
 	}
 
-#ifdef HAVE_SNPRINTF
 	snprintf(cmdbuf, 1024, priv->flushcmd,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt,
 		priv->flushcnt,priv->flushcnt,priv->flushcnt);
-#else
-	sprintf(cmdbuf,priv->flushcmd,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt);
-#endif
+
 	system(cmdbuf);
 	priv->flushcnt++;
 }

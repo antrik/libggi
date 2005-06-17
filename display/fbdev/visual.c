@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2005/06/10 07:43:00 cegger Exp $
+/* $Id: visual.c,v 1.29 2005/06/17 11:30:08 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -30,6 +30,7 @@
 #include <ggi/display/fbdev.h>
 #include <ggi/display/linvtsw.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -348,18 +349,11 @@ get_fbdev(void)
 
 	/* Find a framebuffer to open */
 	for (fb=0; fb < 32; fb++) {
-#ifdef HAVE_SNPRINTF
 		snprintf(devname, MAX_DEV_LEN, "/dev/fb%d", fb);
-#else
-		sprintf(devname, "/dev/fb%d", fb);
-#endif
 		fd = open(devname, O_RDONLY);
 		if (fd >= 0) break;
-#ifdef HAVE_SNPRINTF
+
 		snprintf(devname, MAX_DEV_LEN, "/dev/fb/%d", fb);
-#else
-		sprintf(devname, "/dev/fb/%d", fb);
-#endif
 		fd = open(devname, O_RDONLY);
 		if (fd >= 0) break;
 	}

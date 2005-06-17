@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.14 2005/04/22 12:54:58 cegger Exp $
+/* $Id: libtele.c,v 1.15 2005/06/17 11:36:44 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -29,6 +29,7 @@
 #include "config.h"
 #include <ggi/internal/plat.h>
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 #include <ggi/ggi.h>
 
@@ -831,13 +832,8 @@ int tserver_exit(TeleServer *s)
 	if (! s->inet) {
 		char filename[200];
 
-#ifdef HAVE_SNPRINTF
 		snprintf(filename, 200, "%s%d",
 			TELE_FIFO_BASE, s->display);
-#else
-		sprintf(filename, "%s%d",
-			TELE_FIFO_BASE, s->display);
-#endif
 
 		unlink(filename);
 	}
