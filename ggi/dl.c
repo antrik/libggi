@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.12 2005/06/17 10:01:52 cegger Exp $
+/* $Id: dl.c,v 1.13 2005/06/17 11:10:28 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -29,6 +29,7 @@
 #include "config.h"
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 #include <ggi/gg.h>
 
 #include <stdio.h>
@@ -71,13 +72,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	} else {
 		nameptr++;
 	}
-#ifdef HAVE_SNPRINTF
 	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, nameptr);
-#else
-	if ((strlen(symprefix)+strlen(nameptr)) <= GGI_SYMNAME_MAX) {
-		sprintf(symname, "%s%s", symprefix, nameptr);
-	}
-#endif
 	symname[GGI_SYMNAME_MAX+1] = '\0';
 	nameptr = strrchr(symname, '.');
 	if (nameptr) {
