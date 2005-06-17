@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.33 2005/04/16 20:01:51 cegger Exp $
+/* $Id: shm.c,v 1.34 2005/06/17 11:48:37 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -32,6 +32,7 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <ggi/display/x.h>
 #include <sys/shm.h>
 #include <X11/extensions/XShm.h>
@@ -281,25 +282,17 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	tm.size.x=tm.size.y=GGI_AUTO;
 
 	i = 0;
-#ifdef HAVE_SNPRINTF
 	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-pixfmt=");
-#else
-	i += sprintf(target, "display-memory:-pixfmt=");
-#endif
+
 	memset(target+i, '\0', 64);
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
-#ifdef HAVE_SNPRINTF
+
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
 		priv->ximage->bytes_per_line * LIBGGI_VIRTY(vis),
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
-#else
-	sprintf(target + i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
-		priv->ximage->bytes_per_line * LIBGGI_VIRTY(vis),
-		priv->ximage->bytes_per_line,
-		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
-#endif
+
 	priv->slave = ggiOpen(target, priv->fb);
 	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
 		_ggi_xshm_free_ximage(vis);
