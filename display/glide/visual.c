@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/11/27 16:42:20 soyt Exp $
+/* $Id: visual.c,v 1.9 2005/06/17 11:41:14 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -32,6 +32,7 @@
 #include "config.h"
 #include <ggi/display/glide.h>
 #include <ggi/display/linvtsw.h>
+#include <ggi/internal/gg_replace.h>
 
 
 void _GGI_glide_freedbs(ggi_visual *vis)
@@ -161,11 +162,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		if (vtnum != -1) {
-#ifdef HAVE_SNPRINTF
 			snprintf(strbuf, 32, "linux-kbd:/dev/tty%d", vtnum);
-#else
-			sprintf(strbuf, "linux-kbd:/dev/tty%d", vtnum);
-#endif
 			inputname = strbuf;
 		}
 		on_linux_cons = 1;
@@ -178,11 +175,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->input = giiOpen(inputname, NULL);
 		if (vis->input == NULL) {
 			if (vtnum != -1) {
-#ifdef HAVE_SNPRINTF
 				snprintf(strbuf, 32, "linux-kbd:/dev/vc/%d", vtnum);
-#else
-				sprintf(strbuf, "linux-kbd:/dev/vc/%d", vtnum);
-#endif
 				vis->input = giiOpen(inputname, NULL);
 			}
 			if (vis->input == NULL) {

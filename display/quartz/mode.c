@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2005/02/07 20:18:31 cegger Exp $
+/* $Id: mode.c,v 1.12 2005/06/17 11:42:39 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -32,6 +32,7 @@
 #include "config.h"
 #include "quartz.h"
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>
 
 #include "../common/pixfmt-setup.inc"
 #include "../common/ggi-auto.inc"
@@ -257,22 +258,14 @@ static void _GGIallocdbs(ggi_visual *vis)
 	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
-#ifdef HAVE_SNPRINTF
 	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-noblank:-pixfmt=");
-#else
-	i += sprintf(target, "display-memory:-noblank:-pixfmt=");
-#endif
+
 	memset(target+i, '\0', (GGI_MAX_APILEN - i) * sizeof(char));
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
 
 	i = strlen(target);
-#ifdef HAVE_SNPRINTF
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer",
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
-#else
-	sprintf(target + i, ":-physz=%i,%i:pointer",
-		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
-#endif
 
 #if 0
 	DPRINT_MODE("_GGIallocdbs: open memory target (%s) with pre-allocated buffer\n",
