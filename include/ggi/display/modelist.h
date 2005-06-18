@@ -1,4 +1,4 @@
-/* $Id: modelist.h,v 1.6 2005/02/14 19:39:05 cegger Exp $
+/* $Id: modelist.h,v 1.7 2005/06/18 16:13:58 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -96,8 +96,7 @@ void _GGI_modelist_append( ggi_modelist *ml, ggi_mode_padded *m);
 int _GGI_modelist_checkmode(ggi_modelist *ml, ggi_mode_padded *tm);
 */
 
-typedef 
-int ggi_user_cmp( ggi_mode *, intptr_t, intptr_t, void *);
+typedef int (ggi_user_cmp)( ggi_mode *, intptr_t, intptr_t, void *);
 
 typedef struct {
 	ggi_mode req; /* the requested mode */
