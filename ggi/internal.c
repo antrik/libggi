@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.25 2005/06/17 11:26:58 cegger Exp $
+/* $Id: internal.c,v 1.26 2005/06/19 20:45:55 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -26,9 +26,9 @@
 */
 
 #include "config.h"
-#include <ggi/internal/gg_replace.h>
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>
 
 
 int _ggi_countbits(uint32 val)
