@@ -1,4 +1,4 @@
-/* $Id: patchlib.c,v 1.3 2004/01/31 21:18:15 cegger Exp $
+/* $Id: patchlib.c,v 1.4 2005/06/20 06:27:41 cegger Exp $
 ******************************************************************************
 
    Alter the path to the config file in binary libggi
@@ -49,7 +49,7 @@ static void print_usage(char *fname)
 }
 
 static char tag[]=GGIPATHTAG;
-static char *newname = "libggi.so.patched";
+static const char *newname = "libggi.so.patched";
 
 int main(int argc, char *argv[])
 {
