@@ -36,7 +36,7 @@ m4_define([_LT_IF_OPTION],
 # ---------------------------------------
 # Execute IF-NOT-SET if all OPTIONS are not set.
 m4_define([_LT_UNLESS_OPTIONS],
-[AC_FOREACH([_LT_Option], [$1],
+[m4_foreach([_LT_Option], m4_split(m4_normalize([$1])),
 	    [m4_ifdef(_LT_MANGLE_OPTION(_LT_Option),
 		      [m4_define([$0_found])])])[]dnl
 m4_ifdef([$0_found], [m4_undefine([$0_found])], [$2
@@ -51,14 +51,12 @@ m4_ifdef([$0_found], [m4_undefine([$0_found])], [$2
 # dispatch to that macro; otherwise complain about the unknown option
 # and exit.
 m4_define([_LT_SET_OPTIONS],
-[m4_if([$1], [], [],
-       [AC_FOREACH([_LT_Option], [$1],
-		   [_LT_SET_OPTION(_LT_Option)
-			m4_ifdef(_LT_MANGLE_DEFUN(_LT_Option),
-				 _LT_MANGLE_DEFUN(_LT_Option),
-		[m4_fatal([Unknown option `]_LT_Option[' to LT][_INIT_LIBTOOL])])
-		   ])dnl
-       ])
+[m4_foreach([_LT_Option], m4_split(m4_normalize([$1])),
+    [_LT_SET_OPTION(_LT_Option)
+    m4_ifdef(_LT_MANGLE_DEFUN(_LT_Option),
+	     _LT_MANGLE_DEFUN(_LT_Option),
+	[m4_fatal([Unknown option `]_LT_Option[' to LT][_INIT_LIBTOOL])])
+    ])dnl
 dnl
 dnl Simply set some default values (i.e off) if boolean options were not
 dnl specified:
