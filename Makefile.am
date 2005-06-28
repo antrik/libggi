@@ -7,8 +7,8 @@ ggiconfdata_DATA = libggi.conf
 
 noinst_PROGRAMS = patchlib
 
-DISTCLEANFILES = libggi.conf Makefile config.status config.log \
-	.libs stamp-h1 genlibtool.cache
+DISTCLEANFILES = libggi.conf genlibtool.cache
+
 MAINTAINERCLEANFILES = Makefile.in acinclude.m4 aclocal.m4 config.h.in \
 	configure genlibtool
 
