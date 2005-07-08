@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.252 2005/06/27 14:55:11) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.262 2005/07/08 16:16:53) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.252 2005/06/27 14:55:11) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.262 2005/07/08 16:16:53) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.252 2005/06/27 14:55:11"
-package_revision=1.1667.2.252
+TIMESTAMP=" 1.1667.2.262 2005/07/08 16:16:53"
+package_revision=1.1667.2.262
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1427,7 +1427,7 @@ func_extract_archives ()
 	    func_extract_an_archive "$my_xdir" "$my_xabs"
 	  fi # $darwin_arches
 	fi # $run
-      ;;
+	;;
       *)
         func_extract_an_archive "$my_xdir" "$my_xabs"
 	;;
@@ -1454,7 +1454,7 @@ func_mode_compile ()
 
     for arg
     do
-      case "$arg_mode" in
+      case $arg_mode in
       arg  )
 	# do not "continue".  Instead, add this to base_compile
 	lastarg="$arg"
@@ -2074,15 +2074,15 @@ func_mode_install ()
     # install_prog (especially on Windows NT).
     if test "$nonopt" = "$SHELL" || test "$nonopt" = /bin/sh ||
        # Allow the use of GNU shtool's install command.
-       $ECHO "X$nonopt" | $Xsed | $GREP shtool > /dev/null; then
+       $ECHO "X$nonopt" | $GREP shtool >/dev/null; then
       # Aesthetically quote it.
       func_quote_for_eval "$nonopt"
       install_prog="$func_quote_for_eval_result "
-      arg="$1"
+      arg=$1
       shift
     else
       install_prog=
-      arg="$nonopt"
+      arg=$nonopt
     fi
 
     # The real first argument should be the name of the installation program.
@@ -2102,28 +2102,33 @@ func_mode_install ()
     do
       if test -n "$dest"; then
 	files="$files $dest"
-	dest="$arg"
+	dest=$arg
 	continue
       fi
 
       case $arg in
       -d) isdir=yes ;;
-      -f) prev="-f" ;;
-      -g) prev="-g" ;;
-      -m) prev="-m" ;;
-      -o) prev="-o" ;;
+      -f)
+      	case " $install_prog " in
+	*[\\\ /]cp\ *) ;;
+	*) prev=$arg ;;
+	esac
+	;;
+      -g | -m | -o)
+	prev=$arg
+	;;
       -s)
 	stripme=" -s"
 	continue
 	;;
-      -*) ;;
-
+      -*)
+	;;
       *)
 	# If the previous option needed an argument, then skip it.
 	if test -n "$prev"; then
 	  prev=
 	else
-	  dest="$arg"
+	  dest=$arg
 	  continue
 	fi
 	;;
@@ -2468,7 +2473,7 @@ func_mode_install ()
 	fi
 
 	# remove .exe since cygwin /usr/bin/install will append another
-	# one anyways
+	# one anyway
 	case $install_prog,$host in
 	*/usr/bin/install*,*cygwin*)
 	  case $file:$destfile in
@@ -4194,7 +4199,7 @@ func_mode_link ()
 		add_dir="-L$dir"
 		# Try looking first in the location we're being installed to.
 		if test -n "$inst_prefix_dir"; then
-		  case "$libdir" in
+		  case $libdir in
 		    [\\/]*)
 		      add_dir="$add_dir -L$inst_prefix_dir$libdir"
 		      ;;
@@ -4266,7 +4271,7 @@ func_mode_link ()
 	      add_dir="-L$libdir"
 	      # Try looking first in the location we're being installed to.
 	      if test -n "$inst_prefix_dir"; then
-		case "$libdir" in
+		case $libdir in
 		  [\\/]*)
 		    add_dir="$add_dir -L$inst_prefix_dir$libdir"
 		    ;;
@@ -4982,7 +4987,7 @@ EOF
 	  if test "$?" -eq 0 ; then
 	    ldd_output=`ldd conftest`
 	    for i in $deplibs; do
-	      name="`expr $i : '-l\(.*\)'`"
+	      name=`expr $i : '-l\(.*\)'`
 	      # If $name is empty we are operating on a -L argument.
 	      if test "$name" != "" && test "$name" -ne "0"; then
 		if test "X$allow_libtool_libs_with_static_runtimes" = "Xyes" ; then
@@ -5019,7 +5024,7 @@ EOF
 	    # Error occurred in the first compile.  Let's try to salvage
 	    # the situation: Compile a separate program for each library.
 	    for i in $deplibs; do
-	      name="`expr $i : '-l\(.*\)'`"
+	      name=`expr $i : '-l\(.*\)'`
 	      # If $name is empty we are operating on a -L argument.
 	      if test "$name" != "" && test "$name" != "0"; then
 		$RM conftest
@@ -5071,7 +5076,7 @@ EOF
 	  set dummy $deplibs_check_method; shift
 	  file_magic_regex=`expr "$deplibs_check_method" : "$1 \(.*\)"`
 	  for a_deplib in $deplibs; do
-	    name="`expr $a_deplib : '-l\(.*\)'`"
+	    name=`expr $a_deplib : '-l\(.*\)'`
 	    # If $name is empty we are operating on a -L argument.
 	    if test "$name" != "" && test  "$name" != "0"; then
 	      if test "X$allow_libtool_libs_with_static_runtimes" = "Xyes" ; then
@@ -5140,7 +5145,7 @@ EOF
 	  set dummy $deplibs_check_method; shift
 	  match_pattern_regex=`expr "$deplibs_check_method" : "$1 \(.*\)"`
 	  for a_deplib in $deplibs; do
-	    name="`expr $a_deplib : '-l\(.*\)'`"
+	    name=`expr $a_deplib : '-l\(.*\)'`
 	    # If $name is empty we are operating on a -L argument.
 	    if test -n "$name" && test "$name" != "0"; then
 	      if test "X$allow_libtool_libs_with_static_runtimes" = "Xyes" ; then
@@ -6591,13 +6596,13 @@ else
 	# Backslashes separate directories on plain windows
 	*-*-mingw | *-*-os2*)
 	  $ECHO >> $output "\
-      exec \$progdir\\\\\$program \${1+\"\$@\"}
+      exec \"\$progdir\\\\\$program\" \${1+\"\$@\"}
 "
 	  ;;
 
 	*)
 	  $ECHO >> $output "\
-      exec \$progdir/\$program \${1+\"\$@\"}
+      exec \"\$progdir/\$program\" \${1+\"\$@\"}
 "
 	  ;;
 	esac
@@ -6607,7 +6612,7 @@ else
     fi
   else
     # The program doesn't exist.
-    \$ECHO \"\$0: error: \$progdir/\$program does not exist\" 1>&2
+    \$ECHO \"\$0: error: \\\`\$progdir/\$program' does not exist\" 1>&2
     \$ECHO \"This script is just a wrapper for \$program.\" 1>&2
     $ECHO \"See the $PACKAGE documentation for more information.\" 1>&2
     exit 1
