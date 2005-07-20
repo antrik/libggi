@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.48 2005/01/27 08:17:16 pekberg Exp $
+/* $Id: ddinit.c,v 1.49 2005/07/20 14:31:19 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -150,7 +150,7 @@ ModeCallback(LPDDSURFACEDESC sd, LPVOID ctx)
 {
 	matchmode *mm = (matchmode *)ctx;
 	ggi_mode *mode = mm->mode;
-	char *msg;
+	const char *msg;
 	int ndx, bdx, ndy, bdy;
 
 	if (GT_DEPTH(mode->graphtype) != GT_AUTO) {
