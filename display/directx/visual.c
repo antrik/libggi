@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.33 2005/01/27 08:17:17 pekberg Exp $
+/* $Id: visual.c,v 1.34 2005/07/20 14:34:51 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -155,7 +155,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	priv->ystep = -1;
 
 	if (args) {
-		args = ggParseOptions((char *) args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
 			fprintf(stderr, "display-directx: error in "
 				"arguments.\n");
