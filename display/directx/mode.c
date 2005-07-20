@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.36 2005/02/07 12:19:11 pekberg Exp $
+/* $Id: mode.c,v 1.37 2005/07/20 14:32:39 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -328,7 +328,6 @@ compatible_mode(ggi_visual *vis, ggi_mode *mode)
 static void
 free_dbs(ggi_visual *vis)
 {
-	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int i;
 
 	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
@@ -505,10 +504,10 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 		colormap,
 		len * sizeof(ggi_color));
 
-	if (start < LIBGGI_PAL(vis)->rw_start) {
+	if ((size_t)start < LIBGGI_PAL(vis)->rw_start) {
 		LIBGGI_PAL(vis)->rw_start = start;
 	}
-	if ((start+len) > LIBGGI_PAL(vis)->rw_stop) {
+	if ((size_t)(start+len) > LIBGGI_PAL(vis)->rw_stop) {
 		LIBGGI_PAL(vis)->rw_stop  = start+len;
 	}
 
