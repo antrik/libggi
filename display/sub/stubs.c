@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.9 2005/07/21 07:22:07 cegger Exp $
+/* $Id: stubs.c,v 1.10 2005/07/21 07:27:47 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -179,6 +179,14 @@ int GGI_sub_puts(ggi_visual *vis, int x, int y, const char *str)
 			y + priv->position.y, str);
 	RESTORE_GC;
 	return err;
+}
+
+
+int GGI_sub_getcharsize(ggi_visual *vis, int *width, int *height)
+{
+	ggi_sub_priv *priv = SUB_PRIV(vis);
+
+	return ggiGetCharSize(priv->parent, width, height);
 }
 
 int GGI_sub_drawhline(ggi_visual *vis, int x, int y, int w)

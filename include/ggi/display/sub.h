@@ -1,4 +1,4 @@
-/* $Id: sub.h,v 1.1 2001/05/12 23:03:20 cegger Exp $
+/* $Id: sub.h,v 1.2 2005/07/21 07:27:46 cegger Exp $
 ******************************************************************************
 
    Display-sub: subwindows in a parent visual
@@ -52,6 +52,7 @@ ggifunc_fillscreen	GGI_sub_fillscreen;
 ggifunc_flush		GGI_sub_flush;
 ggifunc_getapi		GGI_sub_getapi;
 ggifunc_getbox		GGI_sub_getbox;
+ggifunc_getcharsize	GGI_sub_getcharsize;
 ggifunc_getgamma	GGI_sub_getgamma;
 ggifunc_getgammamap	GGI_sub_getgammamap;
 ggifunc_gethline	GGI_sub_gethline;
