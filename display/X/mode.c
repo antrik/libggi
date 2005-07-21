@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.50 2005/07/21 08:30:12 cegger Exp $
+/* $Id: mode.c,v 1.51 2005/07/21 10:51:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1186,7 +1186,8 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 					0, 0);
 		_ggi_x_dress_parentwin(vis, tm);
 
-		DPRINT_MODE("X: Prepare to resize.\n");
+		DPRINT_MODE("X: Prepare to resize (%i,%i).\n",
+				tm->visible.x, tm->visible.y);
 		XResizeWindow(priv->disp, priv->parentwin,
 			      (unsigned int) tm->visible.x,
 			      (unsigned int) tm->visible.y);
@@ -1222,15 +1223,16 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	ggi_x_load_mode_libs(vis);
 	_ggi_x_load_slaveops(vis);
 
-	DPRINT("* viidx = %i\n", priv->viidx);
-	DPRINT("* visual id = 0x%X\n", priv->vilist[priv->viidx].vi->visualid);
+	DPRINT("X: (setmode): * viidx = %i\n", priv->viidx);
+	DPRINT("X: (setmode): * visual id = 0x%X\n",
+		priv->vilist[priv->viidx].vi->visualid);
 
 	if (priv->createfb != NULL) {
 		err = priv->createfb(vis);
 		if (err) {
 			/* xlib lock is still acquired here 
 			 * - unlock before exiting */
-			DPRINT("priv->createfb failed.\n");
+			DPRINT("priv->createfb failed with err=%i\n", err);
 			GGI_X_UNLOCK_XLIB(vis);
 			goto err0;
 		}
@@ -1267,13 +1269,13 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	else {
 
 		unsigned long win_attribmask;
-		unsigned win_width;
+		unsigned int win_height;
 
-		/* XXX: our priv->win width is multiplied by the number
+		/* XXX: our priv->win height is multiplied by the number
 		 * of frames only if we are not -inwin or fullscreen...
 		 * Is this proper??? */
-		win_width = (unsigned) tm->virt.x;
-		win_width *=  priv->ok_to_resize ? tm->frames : 1;
+		win_height = (unsigned) tm->virt.y;
+		win_height *=  priv->ok_to_resize ? tm->frames : 1;
 
 		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 
@@ -1282,7 +1284,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 
 		priv->win = XCreateWindow(priv->disp, priv->parentwin,
 					  0, 0, (unsigned) tm->virt.x,
-					  win_width,
+					  win_height,
 					   0, vi->depth,
 					  InputOutput, vi->visual,
 					  win_attribmask, 
