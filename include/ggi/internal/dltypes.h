@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.9 2005/07/21 07:03:40 cegger Exp $
+/* $Id: dltypes.h,v 1.10 2005/07/21 07:30:53 cegger Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -103,7 +103,7 @@ typedef int (ggifunc_getgammamap)(struct ggi_visual *vis,int start,int len,ggi_c
 typedef int (ggifunc_setorigin)(struct ggi_visual *vis,int x,int y);
 
 typedef int (ggifunc_putc)(struct ggi_visual *vis,int x,int y,char c);
-typedef int (ggifunc_puts)(struct ggi_visual *vis,int x,int y,const char *string);
+typedef int (ggifunc_puts)(struct ggi_visual *vis,int x,int y,const char *str);
 typedef int (ggifunc_getcharsize)(struct ggi_visual *vis,int *width,int *height);
 
 /* Generic drawing routines
