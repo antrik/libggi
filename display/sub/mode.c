@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/11/14 15:47:47 cegger Exp $
+/* $Id: mode.c,v 1.7 2005/07/21 06:56:17 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -32,7 +32,7 @@
 int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
-	if(num==0) {
+	if(num == 0) {
 		strcpy(apiname, "display-sub");
 		return 0;
 	}
@@ -43,14 +43,14 @@ int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 int GGI_sub_setmode(ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_sub_priv *subinfo = SUB_PRIV(vis);
-	subinfo->position.x=tm->visible.x;
-	subinfo->position.y=tm->visible.y;
-	subinfo->botright.x=tm->virt.x+tm->visible.x;
-	subinfo->botright.y=tm->virt.y+tm->visible.y;
+	subinfo->position.x = tm->visible.x;
+	subinfo->position.y = tm->visible.y;
+	subinfo->botright.x = tm->virt.x + tm->visible.x;
+	subinfo->botright.y = tm->virt.y + tm->visible.y;
 
 	tm->visible=tm->virt;
-        memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
-                                                                                                
+	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
+
 	return 0;
 }
 
@@ -67,10 +67,10 @@ int GGI_sub_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 int GGI_sub_getmode(ggi_visual *vis,ggi_mode *tm)
 {
-        memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
-	tm->visible.x=tm->virt.x;
-	tm->visible.y=tm->virt.y;
-	tm->frames=1;
+	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
+	tm->visible.x = tm->virt.x;
+	tm->visible.y = tm->virt.y;
+	tm->frames = 1;
 	return 0;
 }
 
@@ -94,6 +94,6 @@ int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 int GGI_sub_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
-	return _ggiInternFlush(priv->parent, x+priv->position.x, 
-				y+priv->position.y, w, h, tryflag);
+	return _ggiInternFlush(priv->parent, x + priv->position.x, 
+				y + priv->position.y, w, h, tryflag);
 }

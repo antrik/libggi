@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/13 15:56:24 cegger Exp $
+/* $Id: visual.c,v 1.8 2005/07/21 06:56:17 cegger Exp $
 ******************************************************************************
 
    Display-sub
@@ -58,50 +58,50 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	LIBGGI_PRIVATE(vis) = priv;
 
 	/* Has mode management */
-	vis->opdisplay->getmode=GGI_sub_getmode;
-	vis->opdisplay->setmode=GGI_sub_setmode;
-	vis->opdisplay->checkmode=GGI_sub_checkmode;
-	vis->opdisplay->flush=GGI_sub_flush;
-	vis->opdisplay->getapi=GGI_sub_getapi;
-	vis->opdisplay->setflags=GGI_sub_setflags;
+	vis->opdisplay->getmode = GGI_sub_getmode;
+	vis->opdisplay->setmode = GGI_sub_setmode;
+	vis->opdisplay->checkmode = GGI_sub_checkmode;
+	vis->opdisplay->flush = GGI_sub_flush;
+	vis->opdisplay->getapi = GGI_sub_getapi;
+	vis->opdisplay->setflags = GGI_sub_setflags;
 
-	vis->opdraw->fillscreen=GGI_sub_fillscreen;
+	vis->opdraw->fillscreen = GGI_sub_fillscreen;
 
-	vis->opdraw->putc=GGI_sub_putc;
-	vis->opdraw->puts=GGI_sub_puts;
+	vis->opdraw->putc = GGI_sub_putc;
+	vis->opdraw->puts = GGI_sub_puts;
 
-	vis->opdraw->drawpixel_nc=GGI_sub_drawpixel;
-	vis->opdraw->drawpixel=GGI_sub_drawpixel;
-	vis->opdraw->putpixel_nc=GGI_sub_putpixel;
-	vis->opdraw->putpixel=GGI_sub_putpixel;
-	vis->opdraw->getpixel=GGI_sub_getpixel;
+	vis->opdraw->drawpixel_nc = GGI_sub_drawpixel;
+	vis->opdraw->drawpixel = GGI_sub_drawpixel;
+	vis->opdraw->putpixel_nc = GGI_sub_putpixel;
+	vis->opdraw->putpixel = GGI_sub_putpixel;
+	vis->opdraw->getpixel = GGI_sub_getpixel;
 
-	vis->opdraw->drawhline=GGI_sub_drawhline;
-	vis->opdraw->puthline=GGI_sub_puthline;
-	vis->opdraw->gethline=GGI_sub_gethline;
+	vis->opdraw->drawhline = GGI_sub_drawhline;
+	vis->opdraw->puthline = GGI_sub_puthline;
+	vis->opdraw->gethline = GGI_sub_gethline;
 
-	vis->opdraw->drawvline=GGI_sub_drawvline;
-	vis->opdraw->putvline=GGI_sub_putvline;
-	vis->opdraw->getvline=GGI_sub_getvline;
+	vis->opdraw->drawvline = GGI_sub_drawvline;
+	vis->opdraw->putvline = GGI_sub_putvline;
+	vis->opdraw->getvline = GGI_sub_getvline;
 
-	vis->opdraw->drawbox=GGI_sub_drawbox;
-	vis->opdraw->putbox=GGI_sub_putbox;
-	vis->opdraw->getbox=GGI_sub_getbox;
+	vis->opdraw->drawbox = GGI_sub_drawbox;
+	vis->opdraw->putbox = GGI_sub_putbox;
+	vis->opdraw->getbox = GGI_sub_getbox;
 
-	vis->opdraw->drawline=GGI_sub_drawline;
-	vis->opdraw->copybox=GGI_sub_copybox;
+	vis->opdraw->drawline = GGI_sub_drawline;
+	vis->opdraw->copybox = GGI_sub_copybox;
 
-	vis->opdraw->crossblit=GGI_sub_crossblit;
+	vis->opdraw->crossblit = GGI_sub_crossblit;
 
-	vis->opcolor->getgamma=GGI_sub_getgamma;
-	vis->opcolor->setgamma=GGI_sub_setgamma;
-	vis->opcolor->getgammamap=GGI_sub_getgammamap;
-	vis->opcolor->setgammamap=GGI_sub_setgammamap;
+	vis->opcolor->getgamma = GGI_sub_getgamma;
+	vis->opcolor->setgamma = GGI_sub_setgamma;
+	vis->opcolor->getgammamap = GGI_sub_getgammamap;
+	vis->opcolor->setgammamap = GGI_sub_setgammamap;
 
-	vis->opcolor->mapcolor=GGI_sub_mapcolor;
-	vis->opcolor->unmappixel=GGI_sub_unmappixel;
-	vis->opcolor->setpalvec=GGI_sub_setpalvec;
-	vis->opcolor->getpalvec=GGI_sub_getpalvec;
+	vis->opcolor->mapcolor = GGI_sub_mapcolor;
+	vis->opcolor->unmappixel = GGI_sub_unmappixel;
+	vis->opcolor->setpalvec = GGI_sub_setpalvec;
+	vis->opcolor->getpalvec = GGI_sub_getpalvec;
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
