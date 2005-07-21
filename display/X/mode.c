@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.51 2005/07/21 10:51:40 cegger Exp $
+/* $Id: mode.c,v 1.52 2005/07/21 11:29:06 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1271,12 +1271,13 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		unsigned long win_attribmask;
 		unsigned int win_height;
 
-		/* XXX: our priv->win height is multiplied by the number
-		 * of frames only if we are not -inwin or fullscreen...
-		 * Is this proper??? */
-		win_height = (unsigned) tm->virt.y;
-		win_height *=  priv->ok_to_resize ? tm->frames : 1;
 
+		if (!priv->ok_to_resize) {
+			/* -inwin or fullscreen window */
+			win_height = (unsigned) tm->virt.y;
+		} else {
+			win_height = (unsigned) tm->virt.y * tm->frames;
+		}
 		attrib.border_pixel = BlackPixel(priv->disp, vi->screen);
 
 		win_attribmask = CWColormap;
