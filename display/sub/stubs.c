@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.8 2005/07/21 06:57:05 cegger Exp $
+/* $Id: stubs.c,v 1.9 2005/07/21 07:22:07 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -88,7 +88,7 @@ int GGI_sub_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	return err;
 }
 
-int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int width,int length)
+int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int w,int h)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -98,14 +98,14 @@ int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int width,int length)
 	err = ggiDrawBox(priv->parent,
 				x + priv->position.x,
 				y + priv->position.y,
-				width, length);
+				w, h);
 	RESTORE_GC;
 	return err;
 }
 
 int GGI_sub_putbox(ggi_visual *vis, int x, int y,
-			int width, int length,
-			const void *buffer)
+			int w, int h,
+			const void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -115,15 +115,15 @@ int GGI_sub_putbox(ggi_visual *vis, int x, int y,
 	err = ggiPutBox(priv->parent,
 			x + priv->position.x,
 			y + priv->position.y,
-			width, length, buffer);
+			w, h, buf);
 	RESTORE_GC;
 	return err;
 }
 
 int GGI_sub_getbox(ggi_visual *vis,
 			int x, int y,
-			int width, int length,
-			void *buffer)
+			int w, int h,
+			void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -133,7 +133,7 @@ int GGI_sub_getbox(ggi_visual *vis,
 	err = ggiGetBox(priv->parent,
 			x + priv->position.x,
 			y + priv->position.y,
-			width, length, buffer);
+			w, h, buf);
 	RESTORE_GC;
 	return err;
 }
@@ -209,7 +209,7 @@ int GGI_sub_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return err;
 }
 
-int GGI_sub_drawvline(ggi_visual *vis, int x, int y, int height)
+int GGI_sub_drawvline(ggi_visual *vis, int x, int y, int h)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -218,7 +218,7 @@ int GGI_sub_drawvline(ggi_visual *vis, int x, int y, int height)
 	SETUP_AND_SAVE_GC;
 	err = ggiDrawVLine(priv->parent,
 			x + priv->position.x,
-			y + priv->position.y, height);
+			y + priv->position.y, h);
 	RESTORE_GC;
 	return err;
 }
@@ -265,7 +265,7 @@ int GGI_sub_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 	return err;
 }
 
-int GGI_sub_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_sub_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -274,12 +274,12 @@ int GGI_sub_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 	SETUP_AND_SAVE_GC;
 	err = ggiPutHLine(priv->parent,
 			x + priv->position.x,
-			y + priv->position.y, w, buffer);
+			y + priv->position.y, w, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_sub_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -288,12 +288,12 @@ int GGI_sub_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 	SETUP_AND_SAVE_GC;
 	err = ggiGetHLine(priv->parent,
 			x + priv->position.x,
-			y + priv->position.y, w, buffer);
+			y + priv->position.y, w, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_putvline(ggi_visual *vis, int x, int y, int height, const void *buffer)
+int GGI_sub_putvline(ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -302,12 +302,12 @@ int GGI_sub_putvline(ggi_visual *vis, int x, int y, int height, const void *buff
 	SETUP_AND_SAVE_GC;
 	err = ggiPutVLine(priv->parent,
 			x + priv->position.x,
-			y + priv->position.y, height, buffer);
+			y + priv->position.y, h, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_getvline(ggi_visual *vis, int x, int y, int height, void *buffer)
+int GGI_sub_getvline(ggi_visual *vis, int x, int y, int h, void *buf)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
@@ -316,7 +316,7 @@ int GGI_sub_getvline(ggi_visual *vis, int x, int y, int height, void *buffer)
 	SETUP_AND_SAVE_GC;
 	err = ggiGetVLine(priv->parent,
 			x + priv->position.x,
-			y + priv->position.y, height, buffer);
+			y + priv->position.y, h, buf);
 	RESTORE_GC;
 	return err;
 }
