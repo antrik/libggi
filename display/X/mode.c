@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.49 2005/04/29 22:05:28 cegger Exp $
+/* $Id: mode.c,v 1.50 2005/07/21 08:30:12 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1394,10 +1394,12 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		memcpy(ev.cmd.data, &data,
 		       sizeof(gii_xwin_cmddata_setparam));
 
+		DPRINT_MODE("X (setmode): sending event to gii\n");
 		giiEventSend(priv->inp, &ev);
 
 		if(priv->use_Xext & GGI_X_USE_VIDMODE) {	
 			/* Grab pointers */
+			DPRINT_MODE("X (setmode): grab pointers\n");
 			ev.cmd.code = GII_CMDCODE_PREFER_RELPTR;
 			giiEventSend(priv->inp, &ev);
 		}
