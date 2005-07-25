@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.14 2005/06/17 11:26:58 cegger Exp $
+/* $Id: dl.c,v 1.15 2005/07/25 12:24:24 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -49,6 +49,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 {
 	ggi_dlhandle hand;
 	char symname[GGI_SYMNAME_MAX+1], *nameptr;
+	const char *const_nameptr;
 
 	DPRINT_LIBS("_ggiLoadDL(\"%s\", 0x%x) called \n", filename, type);
 
@@ -66,14 +67,13 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 		return GGI_ENOFILE;
 	}
 
-	nameptr = strrchr(filename, '/');
-	if (!nameptr) {
-		nameptr = (char*)filename;
+	const_nameptr = (const char *)strrchr(filename, '/');
+	if (!const_nameptr) {
+		const_nameptr = filename;
 	} else {
-		nameptr++;
+		const_nameptr++;
 	}
-	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, nameptr);
-	symname[GGI_SYMNAME_MAX+1] = '\0';
+	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, const_nameptr);
 	nameptr = strrchr(symname, '.');
 	if (nameptr) {
 		*nameptr = '\0';
