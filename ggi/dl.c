@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.15 2005/07/25 12:24:24 cegger Exp $
+/* $Id: dl.c,v 1.16 2005/07/25 13:47:55 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -48,8 +48,8 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 				int type, ggi_dlhandle **dlh)
 {
 	ggi_dlhandle hand;
-	char symname[GGI_SYMNAME_MAX+1], *nameptr;
-	const char *const_nameptr;
+	char symname[GGI_SYMNAME_MAX+1], *extptr;
+	const char *nameptr;
 
 	DPRINT_LIBS("_ggiLoadDL(\"%s\", 0x%x) called \n", filename, type);
 
@@ -67,16 +67,16 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 		return GGI_ENOFILE;
 	}
 
-	const_nameptr = (const char *)strrchr(filename, '/');
-	if (!const_nameptr) {
-		const_nameptr = filename;
+	nameptr = (const char *)strrchr(filename, '/');
+	if (!nameptr) {
+		nameptr = filename;
 	} else {
-		const_nameptr++;
+		nameptr++;
 	}
-	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, const_nameptr);
-	nameptr = strrchr(symname, '.');
-	if (nameptr) {
-		*nameptr = '\0';
+	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, nameptr);
+	extptr = strrchr(symname, '.');
+	if (extptr) {
+		*extptr = '\0';
 	}
 
 	hand.entry = (ggifunc_dlentry*)ggGetSymbolAddress(hand.handle, symname);
