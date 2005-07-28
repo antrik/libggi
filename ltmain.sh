@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.262 2005/07/08 16:16:53) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.272 2005/07/28 11:00:35) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.262 2005/07/08 16:16:53) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.272 2005/07/28 11:00:35) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.262 2005/07/08 16:16:53"
-package_revision=1.1667.2.262
+TIMESTAMP=" 1.1667.2.272 2005/07/28 11:00:35"
+package_revision=1.1667.2.272
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1183,7 +1183,7 @@ extern \"C\" {
 	  if test -z "$export_symbols"; then
 	    export_symbols="$output_objdir/$outputname.exp"
 	    $run $RM $export_symbols
-	    $run eval "${SED} -n -e '/^: @PROGRAM@$/d' -e 's/^.* \(.*\)$/\1/p' "'< "$nlist" > "$export_symbols"'
+	    $run eval "${SED} -n -e '/^: @PROGRAM@ $/d' -e 's/^.* \(.*\)$/\1/p' "'< "$nlist" > "$export_symbols"'
 	    case $host in
 	    *cygwin* | *mingw* )
               $run eval "echo EXPORTS "'> "$output_objdir/$outputname.def"'
@@ -5394,6 +5394,9 @@ EOF
 		# The command line is too long to execute in one step.
 		func_echo "using reloadable object file for export list..."
 		skipped_export=:
+		# Break out early, otherwise skipped_export may be
+		# set to false by a later but shorter cmd.
+		break
 	      fi
 	    done
 	    IFS="$save_ifs"
@@ -5470,7 +5473,6 @@ EOF
 	  # The command line is too long to link in one step, link piecewise
 	  # or, if using GNU ld and skipped_export is not :, use a linker
 	  # script.
-	  func_echo "creating reloadable object files..."
 
 	  # Save the value of $output and $libobjs because we want to
 	  # use them later.  If we have whole_archive_flag_spec, we
