@@ -1,4 +1,4 @@
-/* $Id: glide.h,v 1.1 2001/05/12 23:03:19 cegger Exp $
+/* $Id: glide.h,v 1.2 2005/07/29 16:30:53 soyt Exp $
 ******************************************************************************
 
    LibGGI GLIDE target
@@ -53,7 +53,7 @@ typedef struct {
 	int           maxvfreq;
 	int           maxhfreq;
 	int           currentcard;
-	ggi_uint      fbmem;
+	unsigned int  fbmem;
 	GrHwConfiguration hwconf;
 	int setmodesuccess;
 	int		dohalt;

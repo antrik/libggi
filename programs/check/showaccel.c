@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.8 2005/01/25 11:50:43 pekberg Exp $
+/* $Id: showaccel.c,v 1.9 2005/07/29 16:30:53 soyt Exp $
 ******************************************************************************
 
    showaccel.c
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
 	/* The color translation table.
 	 */
-	ggi_uint paletteval[256];
+	ggi_pixel paletteval[256];
 
 	/* Initialize GGI. Error out, if it fails.
 	 */

@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.8 2004/09/08 19:18:28 cegger Exp $
+/* $Id: showaccel2.c,v 1.9 2005/07/29 16:30:53 soyt Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
 	/* The color translation table.
 	 */
-	ggi_uint paletteval[256];
+	ggi_pixel paletteval[256];
 
 	/* Initialize GGI. Error out, if it fails.
 	 */

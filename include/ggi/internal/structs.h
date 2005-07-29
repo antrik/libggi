@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.14 2005/01/25 12:03:45 pekberg Exp $
+/* $Id: structs.h,v 1.15 2005/07/29 16:30:53 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -72,7 +72,7 @@ typedef struct {
 
 typedef struct ggi_gc
 {
-	ggi_uint	version;
+	unsigned int	version;
 
 	ggi_pixel	fg_color;	/* foreground pixel value	*/
 	ggi_pixel	bg_color;	/* background pixel value	*/
