@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.161 2005/06/10 12:14:43 pekberg Exp $
+dnl $Id: configure.in,v 1.162 2005/07/29 16:45:53 soyt Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1440,6 +1440,7 @@ AC_SUBST(ggi_sysconfdir_to_libdir)
 AC_SUBST(ggi_sysconfdir)
 AC_SUBST(static_libdir)
 AC_SUBST(static_sysconfdir)
+AC_DEFINE([GG_NEED_OLD_INTTYPES], 1, [libggi has not been updated yet])
 AC_DEFINE_UNQUOTED([GGITAGLEN],$TAGLEN, [The length of the tag])
 AC_DEFINE_UNQUOTED([GGIPATHTAG],"$PATHTAG", [Tag to identify path to $ggi_conffile])
 AC_DEFINE_UNQUOTED([GGICONFFILE],"$ggi_conffile", [Name of LibGGI master config file])
