@@ -1,4 +1,4 @@
-.TH "ggi_mode" 3 "2004-11-28" "libggi-current" GGI
+.TH "ggi_mode" 3 "2005-07-30" "libggi-current" GGI
 .SH NAME
 \fBggi_mode\fR, \fBggi_coord\fR, \fBggi_graphtype\fR : LibGGI mode description
 .SH SYNOPSIS
@@ -6,12 +6,12 @@
 .nf
 #include <ggi/ggi.h>
 
-typedef struct { sint16 x, y; } ggi_coord;
+typedef struct { int16_t x, y; } ggi_coord;
 
-typedef uint32 ggi_graphtype;
+typedef uint32_t ggi_graphtype;
 
 typedef struct {
-      sint32          frames;
+      int32_t          frames;
       ggi_coord       visible;
       ggi_coord       virt;
       ggi_coord       size;

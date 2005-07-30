@@ -1,4 +1,4 @@
-.TH "ggi_directbuffer" 3 "2004-11-28" "libggi-current" GGI
+.TH "ggi_directbuffer" 3 "2005-07-30" "libggi-current" GGI
 .SH NAME
 \fBggi_directbuffer\fR, \fBggi_pixellinearbuffer\fR, \fBggi_pixelplanarbuffer\fR, \fBggi_samplelinearbuffer\fR, \fBggi_sampleplanarbuffer\fR : LibGGI direct buffer structure description
 .SH SYNOPSIS
@@ -7,7 +7,7 @@
 #include <ggi/ggi.h>
 
 typedef struct {
-      uint32          type;
+      uint32_t                type;
       int             frame;
 
       ggi_resource_t  resource;
@@ -16,8 +16,8 @@ typedef struct {
       void            *write;
 
       unsigned int    page_size;
-      uint32          noaccess;       
-      uint32          align;
+      uint32_t                noaccess;       
+      uint32_t                align;
 
       ggi_bufferlayout        layout;
 
