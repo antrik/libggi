@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2005/02/09 06:34:12 orzo Exp $
+/* $Id: mode.c,v 1.28 2005/07/30 11:38:52 cegger Exp $
 ******************************************************************************
 
    Mode management for XF86DGA
@@ -123,7 +123,7 @@ static int GGI_xf86dga_setorigin(ggi_visual * vis, int x, int y)
 	return 0;
 }
 
-static int xf86dga_acquire(ggi_resource * res, uint32 actype)
+static int xf86dga_acquire(ggi_resource * res, uint32_t actype)
 {
 	ggi_visual *vis;
 
@@ -314,7 +314,7 @@ int GGI_xf86dga_setmode(ggi_visual * vis, ggi_mode * tm)
 		    = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
 		LIBGGI_APPBUFS(vis)[i]->read
 		    = LIBGGI_APPBUFS(vis)[i]->write
-		    = (uint8 *) priv->fb + priv->pixperframe * i;
+		    = (uint8_t *) priv->fb + priv->pixperframe * i;
 		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
 		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
 		    = GT_ByPPP(priv->stride, tm->graphtype);

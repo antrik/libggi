@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/27 16:42:22 soyt Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -464,7 +464,7 @@ vtswitch_close(ggi_visual *vis)
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg *myargs = (ggi_linvtsw_arg *) argptr;
 	int err;

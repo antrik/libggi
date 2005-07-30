@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2005/01/23 21:42:56 nsouch Exp $
+/* $Id: mode.c,v 1.26 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -84,7 +84,7 @@ static void GGI_kgi_mode2ggi(ggi_mode *tm, kgi_image_mode_t *mode)
 	tm->dpp.y = 1;
 }
 
-static void install_font(uint8 *ptr) {
+static void install_font(uint8_t *ptr) {
 	int i;
 
 	for (i = 0; i < 256 * 8; i++) {
@@ -368,7 +368,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 		DPRINT("Font at %p, %i byte swatch at %p.\n", 
 			  priv->font, priv->swatch_size, priv->swatch);
 
-		install_font((uint8 *)priv->font);
+		install_font((uint8_t *)priv->font);
 	}
 	priv->swatch_gp = (kgi_u8_t *)(priv->swatch - priv->fb);
 	priv->font_gp = (kgi_u8_t *)(priv->font - priv->fb);

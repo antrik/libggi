@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2004/11/27 16:42:29 soyt Exp $
+/* $Id: mode.c,v 1.12 2005/07/30 11:38:52 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -301,7 +301,7 @@ do_mmap(ggi_visual *vis)
 
 	buf->frame = 0;
 	buf->type  = GGI_DB_SIMPLE_PLB|GGI_DB_NORMAL;
-	buf->read  = (uint8 *) priv->base;
+	buf->read  = (uint8_t *) priv->base;
 	buf->write = buf->read;
 	buf->page_size = 0;
 

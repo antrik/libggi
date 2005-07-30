@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2005/06/17 11:41:14 cegger Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -75,7 +75,7 @@ switchback(void *vis)
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg vtswarg;
 	GrHwConfiguration hwconf;

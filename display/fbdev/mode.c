@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2005/02/14 19:26:55 cegger Exp $
+/* $Id: mode.c,v 1.27 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -507,7 +507,7 @@ static int do_mmap(ggi_visual *vis)
 
 		buf->frame = i;
 		buf->type  = GGI_DB_NORMAL;
-		buf->read  = (uint8 *) priv->fb_ptr + i * priv->frame_size;
+		buf->read  = (uint8_t *) priv->fb_ptr + i * priv->frame_size;
 		buf->write = buf->read;
 
 		if (priv->fix.type == FB_TYPE_PLANES) {

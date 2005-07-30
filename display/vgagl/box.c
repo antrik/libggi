@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2004/12/01 23:08:24 cegger Exp $
+/* $Id: box.c,v 1.4 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: box stubs
@@ -43,7 +43,7 @@ int GGI_vgagl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *bu
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
-	const uint8 *buf = buffer;
+	const uint8_t *buf = buffer;
 
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 

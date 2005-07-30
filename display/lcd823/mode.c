@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/11/27 16:42:21 soyt Exp $
+/* $Id: mode.c,v 1.11 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -112,7 +112,7 @@ static int do_mmap(ggi_visual *vis)
 
 		buf->frame = i;
 		buf->type  = GGI_DB_NORMAL;
-		buf->read  = (uint8 *) priv->fb_ptr + i * priv->frame_size;
+		buf->read  = (uint8_t *) priv->fb_ptr + i * priv->frame_size;
 		buf->write = buf->read;
 
 		buf->type  |= GGI_DB_SIMPLE_PLB;
@@ -153,7 +153,7 @@ static int do_setmode(ggi_visual *vis)
 
 		LIBGGI_PAL(vis)->clut.size = nocols;
 		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(nocols * sizeof(ggi_color));
-		LIBGGI_PAL(vis)->priv = _ggi_malloc(256 * sizeof(uint16));
+		LIBGGI_PAL(vis)->priv = _ggi_malloc(256 * sizeof(uint16_t));
 		LIBGGI_PAL(vis)->setPalette  = GGI_lcd823_setPalette;
 		LIBGGI_PAL(vis)->getPrivSize = GGI_lcd823_getPrivSize;
 		/* Initialize palette */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2005/06/10 07:52:04 cegger Exp $
+/* $Id: visual.c,v 1.20 2005/07/30 11:38:52 cegger Exp $
 ******************************************************************************
 
    XF86DGA display target.
@@ -170,7 +170,7 @@ static int do_cleanup(ggi_visual * vis)
 
 
 static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 * dlret)
+		   const char *args, void *argptr, uint32_t * dlret)
 {
 	ggidga_priv *priv;
 	gg_option options[NUM_OPTS];
@@ -285,7 +285,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 					&priv->num_modes, &priv->dgamodes);
 
 	priv->x.inp = NULL;
-	if (tolower((uint8) options[OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8_t) options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_inputxwin_arg _args;
 		gii_input *inp;
 

@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2002/09/29 19:27:42 skids Exp $
+/* $Id: pixel.c,v 1.4 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Pixel functions
@@ -72,7 +72,7 @@ GGI_glide_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 	/* This is needed to handle big/little endianess */
 	switch (GLIDE_PRIV(vis)->bytes_per_pixel) {
 	case 4: {
-		uint32 pix;
+		uint32_t pix;
 		grLfbReadRegion(GLIDE_PRIV(vis)->readbuf, x, y,
 				1, 1, 1, &pix);
 		*pixel = pix;
@@ -80,14 +80,14 @@ GGI_glide_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 	}
 	case 3: {
 		/* FIXME? */
-		uint32 pix;
+		uint32_t pix;
 		grLfbReadRegion(GLIDE_PRIV(vis)->readbuf, x, y,
 				1, 1, 1, &pix);
 		*pixel = pix;
 		break;
 	}
 	case 2: {
-		uint16 pix;
+		uint16_t pix;
 		grLfbReadRegion(GLIDE_PRIV(vis)->readbuf, x, y,
 				1, 1, 1, &pix);
 		*pixel = pix;

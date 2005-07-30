@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.7 2004/12/01 23:08:24 cegger Exp $
+/* $Id: draw.c,v 1.8 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -110,7 +110,7 @@ int GGI_vcsa_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
 		diff = LIBGGI_GC(vis)->cliptl.x - x;
 		x += diff;
 		w -= diff;
-		buf = (const uint16 *) buf + diff;
+		buf = (const uint16_t *) buf + diff;
 	}
 
 	if (x+w > LIBGGI_GC(vis)->clipbr.x) {
@@ -152,7 +152,7 @@ int GGI_vcsa_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 		diff = LIBGGI_GC(vis)->cliptl.x - x;
 		x += diff;
 		w -= diff;
-		buf = (uint16 *) buf + diff;
+		buf = (uint16_t *) buf + diff;
 	}
 
 	if (x+w > LIBGGI_GC(vis)->clipbr.x) {

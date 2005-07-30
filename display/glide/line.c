@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.3 2004/12/01 23:08:07 cegger Exp $
+/* $Id: line.c,v 1.4 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Line functions
@@ -86,7 +86,7 @@ GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, const void *data)
 		int diff=(LIBGGI_GC(vis)->cliptl.x)-x;
 		x+=diff;
 		w-=diff;
-		data=((const uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
+		data=((const uint8_t *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
 	}
 	if (x+w>(LIBGGI_GC(vis)->clipbr.x)) {
 		w=(LIBGGI_GC(vis)->clipbr.x)-x;
@@ -111,7 +111,7 @@ GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, const void *data)
 		int diff=(LIBGGI_GC(vis)->cliptl.y)-y;
 		y+=diff;
 		h-=diff;
-		data=((const uint8 *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
+		data=((const uint8_t *)data)+diff*GLIDE_PRIV(vis)->bytes_per_pixel;
 	}
 	if (y+h>(LIBGGI_GC(vis)->clipbr.y)) {
 		h=(LIBGGI_GC(vis)->clipbr.y)-y;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2005/07/30 10:58:25 cegger Exp $
+/* $Id: mode.c,v 1.12 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -94,7 +94,7 @@ GGI_glide_gcchanged(ggi_visual *vis, int mask)
 }
 
 
-static int glide_acquire(ggi_resource *res, uint32 actype)
+static int glide_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_directbuffer *dbuf;
 	ggi_visual *vis;

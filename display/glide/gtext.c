@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2002/12/04 23:06:00 cegger Exp $
+/* $Id: gtext.c,v 1.3 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Text functions
@@ -41,9 +41,9 @@ GGI_glide16_putc(ggi_visual *vis, int x, int y, char ch)
 	int xc, yc;
 	int h = 8;
 	int w = 8;
-	uint8 buf[BUFSIZE];
-	uint16 *data = (uint16 *) buf;
-	uint8 *fontptr = font+((uint8)ch<<3);
+	uint8_t buf[BUFSIZE];
+	uint16_t *data = (uint16_t *) buf;
+	uint8_t *fontptr = font+((uint8_t)ch<<3);
 
 	/* Number of clipped lines for each of top, left, bottom, right. */
 	tc = LIBGGI_GC(vis)->cliptl.y - y;
@@ -78,7 +78,7 @@ GGI_glide16_putc(ggi_visual *vis, int x, int y, char ch)
 	}
 
 	for (yc = 0; yc < h; yc++) {
-		uint8 fontrow = *(fontptr++);
+		uint8_t fontrow = *(fontptr++);
 		fontrow <<= lc;
 		for (xc = 0; xc < w; xc++) {
 			*(data++) = (fontrow & BITMASK) ? LIBGGI_GC_FGCOLOR(vis)
@@ -89,7 +89,7 @@ GGI_glide16_putc(ggi_visual *vis, int x, int y, char ch)
 	}
 
 	grLfbWriteRegion(GLIDE_PRIV(vis)->writebuf, x, y,
-			 GLIDE_PRIV(vis)->src_format, w, h, 16, (uint16 *)buf);
+			 GLIDE_PRIV(vis)->src_format, w, h, 16, (uint16_t *)buf);
 	
 	return 0;
 }
@@ -101,9 +101,9 @@ GGI_glide32_putc(ggi_visual *vis, int x, int y, char ch)
 	int xc, yc;
 	int h = 8;
 	int w = 8;
-	uint8 buf[BUFSIZE];
-	uint32 *data = (uint32 *) buf;
-	uint8 *fontptr = font+((uint8)ch<<3);
+	uint8_t buf[BUFSIZE];
+	uint32_t *data = (uint32_t *) buf;
+	uint8_t *fontptr = font+((uint8_t)ch<<3);
 
 	/* Number of clipped lines for each of top, left, bottom, right. */
 	tc = LIBGGI_GC(vis)->cliptl.y - y;
@@ -138,7 +138,7 @@ GGI_glide32_putc(ggi_visual *vis, int x, int y, char ch)
 	}
 
 	for (yc = 0; yc < h; yc++) {
-		uint8 fontrow = *(fontptr++);
+		uint8_t fontrow = *(fontptr++);
 		fontrow <<= lc;
 		for (xc = 0; xc < w; xc++) {
 			*(data++) = (fontrow & BITMASK) ? LIBGGI_GC_FGCOLOR(vis)
@@ -149,7 +149,7 @@ GGI_glide32_putc(ggi_visual *vis, int x, int y, char ch)
 	}
 
 	grLfbWriteRegion(GLIDE_PRIV(vis)->writebuf, x, y,
-			 GLIDE_PRIV(vis)->src_format, w, h, 32, (uint32 *)buf);
+			 GLIDE_PRIV(vis)->src_format, w, h, 32, (uint32_t *)buf);
 	
 	return 0;
 }

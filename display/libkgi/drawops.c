@@ -1,4 +1,4 @@
-/* $Id: drawops.c,v 1.3 2004/12/01 23:08:07 cegger Exp $
+/* $Id: drawops.c,v 1.4 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: Channeling of GGI drawops through KGI batchop
@@ -66,7 +66,7 @@ int GGI_libkgi_setorigin(struct ggi_visual *vis, int x, int y)
 int GGI_libkgi_fillscreen(struct ggi_visual *vis) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	struct batchparm bp[5] = {
@@ -137,7 +137,7 @@ int GGI_libkgi_getcharsize(struct ggi_visual *vis,int *width,int *height)
 int GGI_libkgi_drawline(struct ggi_visual *vis,int x,int y,int xe,int ye)
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	struct batchparm bp[5] = {
@@ -163,7 +163,7 @@ int GGI_libkgi_drawline(struct ggi_visual *vis,int x,int y,int xe,int ye)
 int GGI_libkgi_drawhline(struct ggi_visual *vis,int x,int y,int w) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[4];
 	} block;
 	struct batchparm bp[4] = {
@@ -188,11 +188,11 @@ int GGI_libkgi_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buf
 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[5] = {
@@ -218,11 +218,11 @@ int GGI_libkgi_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buf
 int GGI_libkgi_gethline(struct ggi_visual *vis,int x,int y,int w,void *buf) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[5] = {
@@ -248,7 +248,7 @@ int GGI_libkgi_gethline(struct ggi_visual *vis,int x,int y,int w,void *buf)
 int GGI_libkgi_drawvline(struct ggi_visual *vis,int x,int y,int h) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[4];
 	} block;
 	struct batchparm bp[4] = {
@@ -272,11 +272,11 @@ int GGI_libkgi_drawvline(struct ggi_visual *vis,int x,int y,int h)
 int GGI_libkgi_putvline(struct ggi_visual *vis,int x,int y,int h,const void *buf) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[5] = {
@@ -302,11 +302,11 @@ int GGI_libkgi_putvline(struct ggi_visual *vis,int x,int y,int h,const void *buf
 int GGI_libkgi_getvline(struct ggi_visual *vis,int x,int y,int h,void *buf) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[5] = {
@@ -332,7 +332,7 @@ int GGI_libkgi_getvline(struct ggi_visual *vis,int x,int y,int h,void *buf)
 int GGI_libkgi_drawbox(struct ggi_visual *vis,int x,int y,int w,int h) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[5];
 	} block;
 	struct batchparm bp[5] = {
@@ -358,11 +358,11 @@ int GGI_libkgi_drawbox(struct ggi_visual *vis,int x,int y,int w,int h)
 int GGI_libkgi_putbox(struct ggi_visual *vis,int x,int y,int w,int h,const void *buf)
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[7];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[7] = {
@@ -392,11 +392,11 @@ int GGI_libkgi_putbox(struct ggi_visual *vis,int x,int y,int w,int h,const void 
 int GGI_libkgi_getbox(struct ggi_visual *vis,int x,int y,int w,int h,void *buf)
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[7];
 	} block;
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		void *parm;
 	} block2;
 	struct batchparm bp[7] = {
@@ -427,7 +427,7 @@ int GGI_libkgi_copybox(struct ggi_visual *vis,int x,int y,int w,int h,
 		       int nx,int ny) 
 {
 	union {
-		uint64 align;	/* Forces alignment (?) */
+		uint64_t align;	/* Forces alignment (?) */
 		int parms[7];
 	} block;
 	struct batchparm bp[7] = {

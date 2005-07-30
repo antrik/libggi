@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2004/11/27 16:42:22 soyt Exp $
+/* $Id: visual.c,v 1.12 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -301,7 +301,7 @@ static int do_cleanup(ggi_visual *vis)
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-                        const char *args, void *argptr, uint32 *dlret)
+                        const char *args, void *argptr, uint32_t *dlret)
 {
         gg_option options[NUM_OPTS];
         ggi_libkgi_priv *priv;

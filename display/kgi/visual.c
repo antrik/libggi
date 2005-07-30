@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2005/06/17 11:38:26 cegger Exp $
+/* $Id: visual.c,v 1.24 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -46,7 +46,7 @@ static const gg_option optlist[] =
 };
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	kgi_version_t version = { 0, 0, 1, 0 };
 	gg_option options[KGI_NUM_OPTS];
@@ -103,7 +103,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * behaviour of KGI display: let GGI open the input. Otherwise,
 	 * try to open the /dev/event corresponding to ower /dev/graphic
 	 */
-	if (tolower((uint8)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8_t)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
 
 		snprintf(eventname, 32, "kii:-device=/dev/event%i",
 			 KGI_CTX(vis).mapper.graphic);

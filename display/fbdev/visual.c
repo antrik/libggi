@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2005/06/17 11:30:08 cegger Exp $
+/* $Id: visual.c,v 1.30 2005/07/30 11:38:50 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -537,7 +537,7 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 #define MAX_DEV_LEN	63
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg vtswarg;
 	const char *devfile = NULL;
@@ -609,16 +609,16 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->inputs = FBDEV_INP_KBD | FBDEV_INP_MOUSE;
 
-	if (toupper((uint8)options[OPT_NOKBD].result[0]) != 'N') {
+	if (toupper((uint8_t)options[OPT_NOKBD].result[0]) != 'N') {
 		priv->inputs &= ~FBDEV_INP_KBD;
 	}
-	if (toupper((uint8)options[OPT_NOMOUSE].result[0]) != 'N') {
+	if (toupper((uint8_t)options[OPT_NOMOUSE].result[0]) != 'N') {
 		priv->inputs &= ~FBDEV_INP_MOUSE;
 	}
-	if (toupper((uint8)options[OPT_NOINPUT].result[0]) != 'N') {
+	if (toupper((uint8_t)options[OPT_NOINPUT].result[0]) != 'N') {
 		priv->inputs &= ~(FBDEV_INP_KBD | FBDEV_INP_MOUSE);
 	}
-	if (toupper((uint8)options[OPT_NOVT].result[0]) != 'N') {
+	if (toupper((uint8_t)options[OPT_NOVT].result[0]) != 'N') {
 		priv->inputs = 0;
 		novt = 1;
 	}
@@ -727,7 +727,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 			char *strptr = devicename;
 			char *chkptr;
 
-			while (!isdigit((uint8)*strptr)) {
+			while (!isdigit((uint8_t)*strptr)) {
 				if (*strptr == '\0') break;
 				strptr++;
 			}

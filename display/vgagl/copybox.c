@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: copybox.c,v 1.3 2005/07/30 11:38:51 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: copybox.
@@ -60,14 +60,14 @@ int GGI_vgagl_copybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 		return 0;
 	
 	if (ny < y) {
-		obox=(uint8 *)(LIBGGI_CURREAD(vis))+y*LIBGGI_FB_R_STRIDE(vis)+x;
-		nbox=(uint8 *)(LIBGGI_CURWRITE(vis))+ny*LIBGGI_FB_W_STRIDE(vis)+nx;
+		obox=(uint8_t *)(LIBGGI_CURREAD(vis))+y*LIBGGI_FB_R_STRIDE(vis)+x;
+		nbox=(uint8_t *)(LIBGGI_CURWRITE(vis))+ny*LIBGGI_FB_W_STRIDE(vis)+nx;
 		for (line=0; line<h; line++,obox+=LIBGGI_FB_R_STRIDE(vis),
 			     nbox+=LIBGGI_FB_W_STRIDE(vis))
 			memmove(nbox,obox,w);
 	} else {
-		obox=(uint8 *)(LIBGGI_CURREAD(vis))+(y+h-1)*LIBGGI_FB_R_STRIDE(vis)+x;
-		nbox=(uint8 *)(LIBGGI_CURWRITE(vis))+(ny+h-1)*LIBGGI_FB_W_STRIDE(vis)+nx;
+		obox=(uint8_t *)(LIBGGI_CURREAD(vis))+(y+h-1)*LIBGGI_FB_R_STRIDE(vis)+x;
+		nbox=(uint8_t *)(LIBGGI_CURWRITE(vis))+(ny+h-1)*LIBGGI_FB_W_STRIDE(vis)+nx;
 		for (line=0;line<h; line++,obox-=LIBGGI_FB_R_STRIDE(vis),
 			     nbox-=LIBGGI_FB_W_STRIDE(vis))
 			memmove(nbox,obox,w);
