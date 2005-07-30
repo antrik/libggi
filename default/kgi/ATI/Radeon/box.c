@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.6 2004/12/01 23:08:00 cegger Exp $
+/* $Id: box.c,v 1.7 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -30,7 +30,7 @@ int GGI_kgi_radeon_drawbox_2d(ggi_visual *vis, int x, int y, int w, int h)
 	struct {
 		cce_type3_header_t h;
 		cce_gui_control_t gc;
-		uint32 bp;
+		uint32_t bp;
 		cce_paint_t paint;
 	} packet;
 
@@ -228,7 +228,7 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 	} pkt;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} pkt2;
 	struct {
 		cce_type0_header_t h;
@@ -302,9 +302,9 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 		if ((y2 + h2) > h) h2 = h - y2;
 
 		if (pkt2.txoffset != 
-		    (uint32)(KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse)) {
+		    (uint32_t)(KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse)) {
 			pkt2.txoffset = 
-			  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+			  (uint32_t)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
 			RADEON_WRITEPACKET(vis, pkt2);
 		}
 		if (h2 != pkt4.tex_size.vsize) {

@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: line.c,v 1.2 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -32,9 +32,9 @@ int GGI_ati_mach64_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
         int dx,dy;
-	uint32 dst_cntl;
-	uint32 small,large;
-	uint32 err,inc,dec;
+	uint32_t dst_cntl;
+	uint32_t small,large;
+	uint32_t err,inc,dec;
 
 	if (vis->w_frame_num) {
 		y += vis->w_frame_num * LIBGGI_VIRTY(vis);
@@ -75,7 +75,7 @@ int GGI_ati_mach64_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
         wait_for_fifo(5,priv);
 
         /* Draw Bresenham line. */
-        aty_st_le32(DST_Y_X,((uint32) x << 16) | (uint32) y,priv);
+        aty_st_le32(DST_Y_X,((uint32_t) x << 16) | (uint32_t) y,priv);
         aty_st_le32(DST_BRES_ERR,err,priv);
         aty_st_le32(DST_BRES_INC,inc,priv);
         aty_st_le32(DST_BRES_DEC,dec,priv);

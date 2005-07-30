@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/07/13 06:48:15 cegger Exp $
+/* $Id: gtext.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Linear 1 character drawing.
@@ -35,8 +35,8 @@ int GGI_lin1_putc(ggi_visual *vis, int x, int y, char c)
 {
 	int h=8, stride, rev;
 
-	uint8 *src, *dest;
-	uint8 mask, mask0, mask1;
+	uint8_t *src, *dest;
+	uint8_t mask, mask0, mask1;
 	int shift0, shift1;
 
 	if ((x   >= LIBGGI_GC(vis)->clipbr.x)  || 
@@ -50,7 +50,7 @@ int GGI_lin1_putc(ggi_visual *vis, int x, int y, char c)
 		return ggiDrawBox(vis, x, y, 8, 8);
 	}
 
-	src = (uint8 *)(font) + ((int) (uint8) c << 3);
+	src = (uint8_t *)(font) + ((int) (uint8_t) c << 3);
 	rev = (LIBGGI_GC_BGCOLOR(vis) & 1);
 
 	if (y < LIBGGI_GC(vis)->cliptl.y) {
@@ -67,7 +67,7 @@ int GGI_lin1_putc(ggi_visual *vis, int x, int y, char c)
 	PREPARE_FB(vis);
 
 	stride = LIBGGI_FB_W_STRIDE(vis);
-	dest = (uint8 *) LIBGGI_CURWRITE(vis) + y*stride + (x>>3);
+	dest = (uint8_t *) LIBGGI_CURWRITE(vis) + y*stride + (x>>3);
 
 	if ((x & 7) == 0) {
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/27 16:41:56 soyt Exp $
+/* $Id: visual.c,v 1.6 2005/07/30 11:39:58 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -45,7 +45,7 @@
 struct ggi_visual_opdraw fallback_opdraw;
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 #if 0
 	ggi_gc *mygc;

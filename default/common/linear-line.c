@@ -1,4 +1,4 @@
-/* $Id: linear-line.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: linear-line.c,v 1.3 2005/07/30 11:39:56 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -81,7 +81,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 
 	w = LIBGGI_FB_W_STRIDE(vis);
   
-	fb = (FBTYPE *) (((uint8 *)LIBGGI_CURWRITE(vis))
+	fb = (FBTYPE *) (((uint8_t *)LIBGGI_CURWRITE(vis))
 			 + y1*w+x1*sizeof(FBTYPE));
   
 	if (dx==0) {
@@ -90,7 +90,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
    
 		for (i=dy;i>=0; i--) {
 			*fb = color;
-			fb = (FBTYPE *) (((uint8 *)fb) + w);
+			fb = (FBTYPE *) (((uint8_t *)fb) + w);
 		}
 		return 0;
 	}
@@ -109,7 +109,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 		w += sx*sizeof(FBTYPE);
 		for (i=dx;i>=0; i--) {
 			*fb = color;
-			fb = (FBTYPE *) (((uint8 *)fb) + w);
+			fb = (FBTYPE *) (((uint8_t *)fb) + w);
 		}
 		return 0;
 	}
@@ -158,7 +158,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					*fb = color;
 					fb++;
 				}
-				fb = (FBTYPE *) (((uint8 *)fb) + w);
+				fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				for (i=dy-1; i>0; i--) {
 					len = runlen;
 					e += adjup;
@@ -170,7 +170,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 						*fb = color;
 						fb++;
 					}
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
@@ -182,7 +182,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					*fb = color;
 					fb--;
 				}
-				fb = (FBTYPE *) (((uint8 *)fb) + w);
+				fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				for (i=dy-1; i>0; i--) {
 					len = runlen;
 					e += adjup;
@@ -194,7 +194,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 						*fb = color;
 						fb--;
 					}
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				} 
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
@@ -211,7 +211,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					*fb = color;
 					fb++;
 				}
-				fb = (FBTYPE *) (((uint8 *)fb) - w);
+				fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				for (i=dy-1; i>0; i--) {
 					len = runlen;
 					e += adjup;
@@ -223,7 +223,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 						*fb = color;
 						fb++;
 					}
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
@@ -235,7 +235,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					*fb = color;
 					fb--;
 				}
-				fb = (FBTYPE *) (((uint8 *)fb) - w);
+				fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				for (i=dy-1; i>0; i--) {
 					len = runlen;
 					e += adjup;
@@ -247,7 +247,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 						*fb = color;
 						fb--;
 					}
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				} 
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
@@ -298,7 +298,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 				}
 				for (;firstlen>0; firstlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				}
 				fb++;
 				for (i=dx-1; i>0; i--) {
@@ -310,13 +310,13 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					}
 					for (;len>0; len--) {
 						*fb = color;
-						fb = (FBTYPE *) (((uint8 *)fb) + w);
+						fb = (FBTYPE *) (((uint8_t *)fb) + w);
 					}
 					fb ++;
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				}
 				return 0;
 			} else { /* line goes LEFT */
@@ -325,7 +325,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 				}
 				for (;firstlen>0; firstlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				}
 				fb--;
 				for (i=dx-1; i>0; i--) {
@@ -337,13 +337,13 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					}
 					for (;len>0; len--) {
 						*fb = color;
-						fb = (FBTYPE *) (((uint8 *)fb) + w);
+						fb = (FBTYPE *) (((uint8_t *)fb) + w);
 					}
 					fb --;
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) + w);
+					fb = (FBTYPE *) (((uint8_t *)fb) + w);
 				}
 				return 0;
 			}
@@ -354,7 +354,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 				}
 				for (;firstlen>0; firstlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				}
 				fb++;
 				for (i=dx-1; i>0; i--) {
@@ -366,13 +366,13 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					}
 					for (;len>0; len--) {
 						*fb = color;
-						fb = (FBTYPE *) (((uint8 *)fb) - w);
+						fb = (FBTYPE *) (((uint8_t *)fb) - w);
 					}
 					fb ++;
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				}
 				return 0;
 			} else { /* line goes LEFT */
@@ -381,7 +381,7 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 				}
 				for (;firstlen>0; firstlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				}
 				fb--;
 				for (i=dx-1; i>0; i--) {
@@ -393,13 +393,13 @@ int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 					}
 					for (;len>0; len--) {
 						*fb = color;
-						fb = (FBTYPE *) (((uint8 *)fb) - w);
+						fb = (FBTYPE *) (((uint8_t *)fb) - w);
 					}
 					fb --;
 				}
 				for (;lastlen>0; lastlen--) {
 					*fb = color;
-					fb = (FBTYPE *) (((uint8 *)fb) - w);
+					fb = (FBTYPE *) (((uint8_t *)fb) - w);
 				}
 				return 0;
 			}

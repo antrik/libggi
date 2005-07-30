@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/11/14 15:47:42 cegger Exp $
+/* $Id: visual.c,v 1.5 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Mach64 acceleration sublib for kgi display target
@@ -40,7 +40,7 @@ static int GGI_kgi_mach64_flush(ggi_visual *vis, int x, int y,
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;
 

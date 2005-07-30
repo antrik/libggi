@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2005/03/11 20:08:18 cegger Exp $
+/* $Id: visual.c,v 1.14 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -64,7 +64,7 @@ ati_mach64_reset_GTC_3D_engine(const struct ati_mach64_priv *priv)
 
 static void ati_mach64_init_engine(ggi_visual *vis)
 {
-    uint32 pitch_value;
+    uint32_t pitch_value;
     int bpp,depth;
     struct ati_mach64_priv *priv;
 
@@ -198,7 +198,7 @@ static void ati_mach64_init_engine(ggi_visual *vis)
     wait_for_idle(priv);
 }
 
-static int ati_mach64_acquire(ggi_resource *res, uint32 actype)
+static int ati_mach64_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_visual *vis;
 
@@ -291,7 +291,7 @@ static int do_cleanup(ggi_visual *vis)
 	
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct ati_mach64_priv *priv;
@@ -300,7 +300,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int pixbytes;
 	int fd = LIBGGI_FD(vis);
 	int i;
-	uint32 addr;
+	uint32_t addr;
 
 	if (GT_SIZE(LIBGGI_GT(vis)) % 8 != 0 ||
 	    GT_SIZE(LIBGGI_GT(vis)) > 32 ||
@@ -335,11 +335,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("ati-mach64: Mapped MMIO region at %p\n",
 		       fbdevpriv->mmioaddr);
 #warning Not 64bit safe: Cast from pointer to integer of different size
-	priv->regbase = (uint32)fbdevpriv->mmioaddr;
+	priv->regbase = (uint32_t)fbdevpriv->mmioaddr;
 	addr = priv->regbase + 0x400;
 	for (i=0;i<256;i++) {
 	    priv->regaddr[i]=addr;
-	    addr+=sizeof(uint32);
+	    addr+=sizeof(uint32_t);
 	};
 
 	priv->has_3d = (fbdevpriv->orig_fix.accel == FB_ACCEL_ATI_MACH64GT);
@@ -401,7 +401,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fbdevpriv->idleaccel = ati_mach64_idleaccel;
 
 	/* Accelerate fonts if possible */
-	priv->font = (uint8 *)(font);
+	priv->font = (uint8_t *)(font);
 	usedmemend = LIBGGI_MODE(vis)->frames *
 		fbdevpriv->fix.line_length * LIBGGI_VIRTY(vis);
 	fontlen = 256*8;
@@ -410,7 +410,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("ati-mach64: usedmemend: %ld, fontoffset: %ld\n",
 		       usedmemend, priv->fontoffset);
 	if (usedmemend <= priv->fontoffset) {
-		memcpy((uint8*)fbdevpriv->fb_ptr + priv->fontoffset,
+		memcpy((uint8_t*)fbdevpriv->fb_ptr + priv->fontoffset,
 		       font, fontlen);
 		priv->charadd = FWIDTH*FHEIGHT;
 		vis->opdraw->putc = GGI_ati_mach64_fastputc;

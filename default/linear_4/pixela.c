@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:45 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:01 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -34,16 +34,16 @@
 
 int GGI_lin4_drawpixela(ggi_visual *vis,int x,int y)
 {
-	uint8 pel;
-/*	uint8 clr;*/
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+/*	uint8_t clr;*/
+	uint8_t *fb;
+	uint8_t xs;
 	
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
  	
 	/* Read-modify-write. */
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	/* This does:
@@ -60,15 +60,15 @@ int GGI_lin4_drawpixela(ggi_visual *vis,int x,int y)
 
 int GGI_lin4_drawpixel_nca(ggi_visual *vis,int x,int y)
 {
-	uint8 pel;
-/*	uint8 clr;*/
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+/*	uint8_t clr;*/
+	uint8_t *fb;
+	uint8_t xs;
 	
 	PREPARE_FB(vis);
 
 	/* Read-modify-write. */
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	/* This does:
@@ -85,13 +85,13 @@ int GGI_lin4_drawpixel_nca(ggi_visual *vis,int x,int y)
 
 int GGI_lin4_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 pel;
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+	uint8_t *fb;
+	uint8_t xs;
 	
 	PREPARE_FB(vis);
 
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	xs = (x & 1) << 2;
@@ -103,14 +103,14 @@ int GGI_lin4_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin4_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 pel;
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+	uint8_t *fb;
+	uint8_t xs;
 	
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
  	
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	xs = (x & 1) << 2;
@@ -123,11 +123,11 @@ int GGI_lin4_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 int GGI_lin4_getpixela(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	int pel;
-	uint8 xs;
+	uint8_t xs;
 	
 	PREPARE_FB(vis);
 
-	pel = *(uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
+	pel = *(uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
 
 	xs = (x & 1) << 2;
 	*pixel = (ggi_pixel)((pel & (0x0f << xs)) >> (xs ^ 4)); 

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2004/11/25 16:56:31 cegger Exp $
+/* $Id: color.c,v 1.4 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -61,7 +61,7 @@ ggi_pixel GGI_t32_mapcolor(ggi_visual *vis, const ggi_color *col)
 	int i;
 	int closest=0;
 
-	uint32 curdist;
+	uint32_t curdist;
 
 
 	curdist = (1 << 24) * 4;
@@ -72,7 +72,7 @@ ggi_pixel GGI_t32_mapcolor(ggi_visual *vis, const ggi_color *col)
 		int dg = (col->g - ansi_16_colors[i].g) >> 4;
 		int db = (col->b - ansi_16_colors[i].b) >> 4;
 
-		uint32 dist = (dr*dr) + (dg*dg) + (db*db);
+		uint32_t dist = (dr*dr) + (dg*dg) + (db*db);
 
 		if (dist == 0) {
 			/* direct hit */

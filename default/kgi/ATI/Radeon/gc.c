@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.5 2004/01/03 22:41:05 cegger Exp $
+/* $Id: gc.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -30,7 +30,7 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 	if (mask & GGI_GCCHANGED_FG) {
 		struct {
 			cce_type0_header_t h;
-			uint32 val;
+			uint32_t val;
 		} packet;
 
 		memset(&packet, 0, sizeof(packet));
@@ -50,10 +50,10 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 			col.r >>= 8;
 			col.g >>= 8;
 			col.b >>= 8;
-			packet.val = (uint32)col.a << 24 | 
-			  (uint32)col.r << 16 | 
-			  (uint32)col.g << 8 | 
-			  (uint32)col.b;
+			packet.val = (uint32_t)col.a << 24 | 
+			  (uint32_t)col.r << 16 | 
+			  (uint32_t)col.g << 8 | 
+			  (uint32_t)col.b;
 		}
 		RADEON_WRITEPACKET(vis, packet);
 	}
@@ -61,7 +61,7 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 
 		struct {
 	  		cce_type0_header_t h;
-			uint32 val;
+			uint32_t val;
 		} packet;
 
 
@@ -81,17 +81,17 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 			col.r >>= 8;
 			col.g >>= 8;
 			col.b >>= 8;
-			packet.val = (uint32)col.a << 24 | 
-			  (uint32)col.r << 16 | 
-			  (uint32)col.g << 8 | 
-			  (uint32)col.b;
+			packet.val = (uint32_t)col.a << 24 | 
+			  (uint32_t)col.r << 16 | 
+			  (uint32_t)col.g << 8 | 
+			  (uint32_t)col.b;
 		}
 		RADEON_WRITEPACKET(vis, packet);
 	}
 	if (mask & GGI_GCCHANGED_CLIP) {
 		struct {
 	  		cce_type0_header_t h;
-			uint32 val;
+			uint32_t val;
 		} packet;
 
 		/* TODO: mask out bad values. */
@@ -125,7 +125,7 @@ void GGI_kgi_radeon_gcchanged_2d(ggi_visual *vis, int mask) {
 void GGI_kgi_radeon_clut_ilut_sync(vis) {
         struct {
                 cce_type0_header_t h1;
-                uint32 clutidx;
+                uint32_t clutidx;
 		cce_type0_header_t h2;
 		clutdata[256];
         } pkt;	

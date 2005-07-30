@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2004/12/01 23:08:01 cegger Exp $
+/* $Id: box.c,v 1.5 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -32,16 +32,16 @@
 
 int GGI_lin16_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 {
-	uint32 *buf32;
-	uint16 *buf16;
-	uint32 val;
+	uint32_t *buf32;
+	uint16_t *buf16;
+	uint32_t val;
 	int linediff, oddx;
 
 	LIBGGICLIP_XYWH(vis, x, y, origw, h);
 	PREPARE_FB(vis);
 
 	val = LIBGGI_GC_FGCOLOR(vis) | (LIBGGI_GC_FGCOLOR(vis) << 16);
-	buf16 = (uint16*)((uint8*)LIBGGI_CURWRITE(vis)
+	buf16 = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(vis)
 			 + y*LIBGGI_FB_W_STRIDE(vis) + x*2);
 	linediff = LIBGGI_FB_W_STRIDE(vis) - origw*2;
 	if (x%2) oddx = 1;
@@ -54,16 +54,16 @@ int GGI_lin16_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 			w--;
 		}
 
-		buf32 = (uint32*) buf16;
+		buf32 = (uint32_t*) buf16;
 		while (w > 1) {
 			*(buf32++) = val;
 			w -= 2;
 		}
-		buf16 = (uint16*) buf32;
+		buf16 = (uint16_t*) buf32;
 		if (w) {
 			*(buf16++) = val;
 		}
-		buf16 = (uint16*) ((uint8*)buf16 + linediff);
+		buf16 = (uint16_t*) ((uint8_t*)buf16 + linediff);
 	}
 
 	return 0;
@@ -72,15 +72,15 @@ int GGI_lin16_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 
 int GGI_lin16_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
-	const uint16 *src = buffer;
-	uint8 *dest;
+	const uint16_t *src = buffer;
+	uint8_t *dest;
 	int srcwidth = w;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
 
 	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, *1);
 	PREPARE_FB(vis);
 	
-	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*2);
+	dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*2);
 
 	/* Width should be in bytes */
 	w *= 2;

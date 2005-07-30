@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2004/12/01 23:08:06 cegger Exp $
+/* $Id: hline.c,v 1.5 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -52,7 +52,7 @@ int GGI_stubs_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 
 int _GGI_stubs_L1_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	const uint8 *src = (const uint8 *) buffer;
+	const uint8_t *src = (const uint8_t *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
@@ -65,7 +65,7 @@ int _GGI_stubs_L1_puthline(ggi_visual *vis, int x, int y, int w, const void *buf
 
 int _GGI_stubs_L2_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	const uint16 *src = (const uint16 *) buffer;
+	const uint16_t *src = (const uint16_t *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
@@ -78,7 +78,7 @@ int _GGI_stubs_L2_puthline(ggi_visual *vis, int x, int y, int w, const void *buf
 
 int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	const uint8 *src = (const uint8 *) buffer;
+	const uint8_t *src = (const uint8_t *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *3);
 
@@ -92,7 +92,7 @@ int _GGI_stubs_L3_puthline(ggi_visual *vis, int x, int y, int w, const void *buf
 
 int _GGI_stubs_L4_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	const uint32 *src = (const uint32 *) buffer;
+	const uint32_t *src = (const uint32_t *) buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
@@ -107,12 +107,12 @@ int _GGI_stubs_L4_puthline(ggi_visual *vis, int x, int y, int w, const void *buf
 
 int _GGI_stubs_L1_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 {
-	uint8 *dest = (uint8 *) buffer;
+	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
 		
 	for (; w > 0; w--, x++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
-		*dest++ = (uint8) pix;
+		*dest++ = (uint8_t) pix;
 	}
 
 	return 0;
@@ -120,12 +120,12 @@ int _GGI_stubs_L1_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 int _GGI_stubs_L2_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 {
-	uint16 *dest = (uint16 *) buffer;
+	uint16_t *dest = (uint16_t *) buffer;
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
-		*dest++ = (uint16) pix;
+		*dest++ = (uint16_t) pix;
 	}
 
 	return 0;
@@ -133,14 +133,14 @@ int _GGI_stubs_L2_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 int _GGI_stubs_L3_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 {
-	uint8 *dest = (uint8 *) buffer;
+	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
-		*dest++ = (uint8) pix; pix >>= 8;
-		*dest++ = (uint8) pix; pix >>= 8;
-		*dest++ = (uint8) pix;
+		*dest++ = (uint8_t) pix; pix >>= 8;
+		*dest++ = (uint8_t) pix; pix >>= 8;
+		*dest++ = (uint8_t) pix;
 	}
 
 	return 0;
@@ -148,12 +148,12 @@ int _GGI_stubs_L3_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 
 int _GGI_stubs_L4_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 {
-	uint32 *dest = (uint32 *) buffer;
+	uint32_t *dest = (uint32_t *) buffer;
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
-		*dest++ = (uint32) pix;
+		*dest++ = (uint32_t) pix;
 	}
 
 	return 0;

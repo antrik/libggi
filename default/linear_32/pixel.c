@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2001/05/12 23:01:43 cegger Exp $
+/* $Id: pixel.c,v 1.2 2005/07/30 11:40:01 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -37,8 +37,8 @@ int GGI_lin32_drawpixel(ggi_visual *vis,int x,int y)
 {
 	CHECKXY(vis,x,y);
  
-	*((uint32 *) ((uint8 *)LIBGGI_CURWRITE(vis)
-	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32)))
+	*((uint32_t *) ((uint8_t *)LIBGGI_CURWRITE(vis)
+	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32_t)))
 		= LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
@@ -46,8 +46,8 @@ int GGI_lin32_drawpixel(ggi_visual *vis,int x,int y)
 
 int GGI_lin32_drawpixel_nc(ggi_visual *vis,int x,int y)
 {
-	*((uint32 *) ((uint8 *)LIBGGI_CURWRITE(vis)
-	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32)))
+	*((uint32_t *) ((uint8_t *)LIBGGI_CURWRITE(vis)
+	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32_t)))
 		= LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
@@ -55,8 +55,8 @@ int GGI_lin32_drawpixel_nc(ggi_visual *vis,int x,int y)
 
 int GGI_lin32_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	*((uint32 *) ((uint8 *)LIBGGI_CURWRITE(vis)
-	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32)))
+	*((uint32_t *) ((uint8_t *)LIBGGI_CURWRITE(vis)
+	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32_t)))
 		= col;
 
 	return 0;
@@ -66,8 +66,8 @@ int GGI_lin32_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	CHECKXY(vis,x,y);
 
-	*((uint32 *) ((uint8 *)LIBGGI_CURWRITE(vis)
-	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32)))
+	*((uint32_t *) ((uint8_t *)LIBGGI_CURWRITE(vis)
+	   + y*LIBGGI_FB_W_STRIDE(vis)+x*sizeof(uint32_t)))
 		= col;
 
 	return 0;
@@ -75,8 +75,8 @@ int GGI_lin32_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin32_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
-	*pixel = *((uint32 *) ((uint8 *)LIBGGI_CURREAD(vis)
-	   + y*LIBGGI_FB_R_STRIDE(vis)+x*sizeof(uint32)));
+	*pixel = *((uint32_t *) ((uint8_t *)LIBGGI_CURREAD(vis)
+	   + y*LIBGGI_FB_R_STRIDE(vis)+x*sizeof(uint32_t)));
 	
 	return 0;
 }

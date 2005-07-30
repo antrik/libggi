@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.5 2004/12/01 23:08:01 cegger Exp $
+/* $Id: line.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -45,7 +45,7 @@ int GGI_kgi_radeon_drawline_2d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 		cce_gui_control_t gc;
 		cce_scissor_t tl;
 		cce_scissor_t br;
-		uint32 bp;
+		uint32_t bp;
 		cce_polyline_t pl;
 	} packet;
 
@@ -136,7 +136,7 @@ int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, const void 
 	} packet;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} offsetpkt;
 
 
@@ -203,7 +203,7 @@ int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, const void 
 	}
 
 	offsetpkt.txoffset = 
-	  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+	  (uint32_t)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
 
 	RADEON_WRITEPACKET(vis, offsetpkt);
 
@@ -233,7 +233,7 @@ int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, const void 
 	} packet;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} offsetpkt;
 
 
@@ -300,7 +300,7 @@ int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, const void 
 	}
 
 	offsetpkt.txoffset = 
-	  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+	  (uint32_t)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
 
 	RADEON_WRITEPACKET(vis, offsetpkt);
 

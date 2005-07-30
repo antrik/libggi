@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2004/12/01 23:08:04 cegger Exp $
+/* $Id: box.c,v 1.5 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -32,14 +32,14 @@
 
 int GGI_lin8_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
-	uint8 *dest;
+	uint8_t *dest;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
-	uint8 col = LIBGGI_GC_FGCOLOR(vis);
+	uint8_t col = LIBGGI_GC_FGCOLOR(vis);
 
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
 	PREPARE_FB(vis);
 
-	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x);
+	dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (y*destwidth + x);
 
 	/* Optimized full-width case */
 	if (w == destwidth && x == 0) {
@@ -58,15 +58,15 @@ int GGI_lin8_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 int GGI_lin8_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
-	const uint8 *src = buffer;
-	uint8 *dest;
+	const uint8_t *src = buffer;
+	uint8_t *dest;
 	int srcwidth = w;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
 
 	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, *1);
 	PREPARE_FB(vis);
 
-	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x);
+	dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (y*destwidth + x);
 
 	/* Optimized full-width case */
 	if (w == destwidth && x == 0) {

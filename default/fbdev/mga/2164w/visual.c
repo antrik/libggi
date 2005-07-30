@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2005/03/11 20:08:19 cegger Exp $
+/* $Id: visual.c,v 1.12 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -35,7 +35,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-static int m2164w_acquire(ggi_resource *res, uint32 actype)
+static int m2164w_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_visual *vis;
 
@@ -122,7 +122,7 @@ static int do_cleanup(ggi_visual *vis)
 	
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct m2164w_priv *priv;
@@ -215,7 +215,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fbdevpriv->idleaccel = m2164w_idleaccel;
 
 	/* Accelerate fonts if possible */
-	priv->font = (uint8 *)(font);
+	priv->font = (uint8_t *)(font);
 	usedmemend = LIBGGI_MODE(vis)->frames *
 		fbdevpriv->fix.line_length * LIBGGI_VIRTY(vis);
 	fontlen = 256*8;
@@ -224,7 +224,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("mga-2164w: usedmemend: %ld, fontoffset: %ld\n",
 		       usedmemend, priv->fontoffset);
 	if (usedmemend <= priv->fontoffset) {
-		memcpy((uint8*)fbdevpriv->fb_ptr + priv->fontoffset,
+		memcpy((uint8_t*)fbdevpriv->fb_ptr + priv->fontoffset,
 		       font, fontlen);
 		priv->fontoffset *= 8; /* In bits */
 		priv->charadd = FWIDTH*FHEIGHT;

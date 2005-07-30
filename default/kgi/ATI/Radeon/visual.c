@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2004/11/27 16:41:56 soyt Exp $
+/* $Id: visual.c,v 1.15 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -63,9 +63,9 @@ static int rwframes_changed_3d(ggi_visual *vis) {
 	radeon_context_t *ctx;
 	struct {
 		cce_type0_header_t h1;
-		uint32 txoffset;
+		uint32_t txoffset;
 		cce_type0_header_t h2;
-		uint32 coloroffset;
+		uint32_t coloroffset;
 	} packet;
 
 	ctx = KGI_ACCEL_PRIV(vis);
@@ -92,7 +92,7 @@ static int origin_changed(ggi_visual *vis) {
 	ggi_graphtype gt;
 	struct {
 		cce_type0_header_t h1;
-		uint32 crtc_offset;
+		uint32_t crtc_offset;
 	} packet;
 
         db = _ggi_db_find_frame(vis, vis->d_frame_num);
@@ -128,7 +128,7 @@ static int origin_changed(ggi_visual *vis) {
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;
 	radeon_context_t *ctx;

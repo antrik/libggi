@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.7 2004/11/27 16:41:52 soyt Exp $
+/* $Id: gamma.c,v 1.8 2005/07/30 11:39:56 cegger Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -90,21 +90,21 @@ int GGI_color_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 		for (j=0; 
 		     (j < 256) && ((i + j) < vis->gamma->maxwrite_r);
 		     j++) {
-		  map[j].r = (uint16) floor(pow(intensity_r, ir) * 65536.0);
+		  map[j].r = (uint16_t) floor(pow(intensity_r, ir) * 65536.0);
 		  intensity_r += delta_r;
 		}
 		if (maxj < j) maxj = j;
 		for (j=0; 
 		     (j < 256) && ((i + j) < vis->gamma->maxwrite_g);
 		     j++) {
-		  map[j].g = (uint16) floor(pow(intensity_g, ig) * 65536.0);
+		  map[j].g = (uint16_t) floor(pow(intensity_g, ig) * 65536.0);
 		  intensity_g += delta_g;
 		}
 		if (maxj < j) maxj = j;
 		for (j=0; 
 		     (j < 256) && ((i + j) < vis->gamma->maxwrite_b);
 		     j++) {
-		  map[j].b = (uint16) floor(pow(intensity_b, ib) * 65536.0);
+		  map[j].b = (uint16_t) floor(pow(intensity_b, ib) * 65536.0);
 		  intensity_b += delta_b;
 		}
 		if (maxj < j) maxj = j;

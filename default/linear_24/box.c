@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2004/12/01 23:08:02 cegger Exp $
+/* $Id: box.c,v 1.4 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -32,22 +32,22 @@
 
 int GGI_lin24_drawbox(ggi_visual *vis, int origx, int y, int origw, int h)
 {
-	uint32 colors[3], *dest32;
-	uint8 *colp, *dest8;
+	uint32_t colors[3], *dest32;
+	uint8_t *colp, *dest8;
 	int i, linediff;
 	
 	LIBGGICLIP_XYWH(vis, origx, y, origw, h);
 	PREPARE_FB(vis);
 
-	colp = (uint8*) colors;
+	colp = (uint8_t*) colors;
 	for (i = 0; i < 4; i++) {
 		*colp++ = LIBGGI_GC_FGCOLOR(vis)      ;
 		*colp++ = LIBGGI_GC_FGCOLOR(vis) >>  8;
 		*colp++ = LIBGGI_GC_FGCOLOR(vis) >> 16;
 	}
-	colp = (uint8*) colors;
+	colp = (uint8_t*) colors;
 
-	dest8 = (uint8*)LIBGGI_CURWRITE(vis)
+	dest8 = (uint8_t*)LIBGGI_CURWRITE(vis)
 		+ y*LIBGGI_FB_W_STRIDE(vis) + origx*3;
 	linediff = LIBGGI_FB_W_STRIDE(vis) - origw*3;
 
@@ -62,14 +62,14 @@ int GGI_lin24_drawbox(ggi_visual *vis, int origx, int y, int origw, int h)
 			w--;
 			if (!w) goto end_of_loop;
 		}
-		dest32 = (uint32*)dest8;
+		dest32 = (uint32_t*)dest8;
 		while (w > 3) {
 			*dest32++ = colors[0];
 			*dest32++ = colors[1];
 			*dest32++ = colors[2];
 			w -= 4;
 		}
-		dest8 = (uint8*)dest32;
+		dest8 = (uint8_t*)dest32;
 		while (w) {
 			*dest8++ = colp[0];
 			*dest8++ = colp[1];
@@ -87,15 +87,15 @@ int GGI_lin24_drawbox(ggi_visual *vis, int origx, int y, int origw, int h)
 
 int GGI_lin24_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
-	const uint8 *src = buffer;
-	uint8 *dest;
+	const uint8_t *src = buffer;
+	uint8_t *dest;
 	int srcwidth = w*3;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
 
 	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, *3);
 	PREPARE_FB(vis);
 	
-	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*3);
+	dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*3);
 
 	/* Width should be in bytes */
 	w *= 3;

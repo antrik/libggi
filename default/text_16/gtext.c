@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: gtext.c,v 1.2 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -29,7 +29,7 @@
 
 
 #define PIXEL_ADDR(vis, x, y)  \
-        ((uint16 *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16) + x)
+        ((uint16_t *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16_t) + x)
 
 int GGI_t16_getcharsize(ggi_visual *vis, int *width, int *height)
 {

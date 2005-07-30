@@ -1,4 +1,4 @@
-/* $Id: pack.c,v 1.6 2005/06/09 18:26:17 cegger Exp $
+/* $Id: pack.c,v 1.7 2005/07/30 11:39:56 cegger Exp $
 ******************************************************************************
 
    Generic color packing
@@ -34,10 +34,10 @@
  */
 int GGI_color_L1_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
-        uint8 *dest = (uint8 *) buf;
+        uint8_t *dest = (uint8_t *) buf;
 		
         for (; len > 0; len--, cols++) {
-		*dest++ = (uint8) LIBGGIMapColor(vis, cols);
+		*dest++ = (uint8_t) LIBGGIMapColor(vis, cols);
  	}
 
 	return 0;
@@ -45,10 +45,10 @@ int GGI_color_L1_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, i
 
 int GGI_color_L2_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
-        uint16 *dest = (uint16 *) buf;
+        uint16_t *dest = (uint16_t *) buf;
 		
         for (; len > 0; len--, cols++) {
-		*dest++ = (uint16) LIBGGIMapColor(vis, cols);
+		*dest++ = (uint16_t) LIBGGIMapColor(vis, cols);
  	}
 
 	return 0;
@@ -56,14 +56,14 @@ int GGI_color_L2_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, i
 
 int GGI_color_L3_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
-        uint8 *dest = (uint8 *) buf;
+        uint8_t *dest = (uint8_t *) buf;
 		
         for (; len > 0; len--, cols++) {
 		ggi_pixel pix = LIBGGIMapColor(vis, cols);
 
-		*dest++ = (uint8) pix;  pix >>= 8;
-		*dest++ = (uint8) pix;  pix >>= 8;
-		*dest++ = (uint8) pix;
+		*dest++ = (uint8_t) pix;  pix >>= 8;
+		*dest++ = (uint8_t) pix;  pix >>= 8;
+		*dest++ = (uint8_t) pix;
  	}
 
 	return 0;
@@ -71,10 +71,10 @@ int GGI_color_L3_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, i
 
 int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, int len)
 {
-        uint32 *dest = (uint32 *) buf;
+        uint32_t *dest = (uint32_t *) buf;
 		
         for (; len > 0; len--, cols++) {
-		*dest++ = (uint32) LIBGGIMapColor(vis, cols);
+		*dest++ = (uint32_t) LIBGGIMapColor(vis, cols);
  	}
 
 	return 0;
@@ -88,7 +88,7 @@ int GGI_color_L4_packcolors(ggi_visual *vis, void *buf, const ggi_color *cols, i
  */
 int GGI_color_L1_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-	const uint8 *src = (const uint8 *)buf;
+	const uint8_t *src = (const uint8_t *)buf;
 		
         for (; len > 0; len--, src++, cols++) {
 		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
@@ -99,7 +99,7 @@ int GGI_color_L1_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L2_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-	const uint16 *src = (const uint16 *)buf;
+	const uint16_t *src = (const uint16_t *)buf;
 		
         for (; len > 0; len--, src++, cols++) {
 		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
@@ -110,7 +110,7 @@ int GGI_color_L2_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L3_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-	const uint8 *src = (const uint8 *) buf;
+	const uint8_t *src = (const uint8_t *) buf;
 		
         for (; len > 0; len--, src+=3, cols++) {
 
@@ -124,7 +124,7 @@ int GGI_color_L3_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols,
 
 int GGI_color_L4_unpackpixels(ggi_visual *vis, const void *buf, ggi_color *cols, int len)
 {
-	const uint32 *src = (const uint32 *) buf;
+	const uint32_t *src = (const uint32_t *) buf;
 		
         for (; len > 0; len--, src++, cols++) {
 		LIBGGIUnmapPixel(vis, (const ggi_pixel) *src, cols);
@@ -151,7 +151,7 @@ GGIpackcolors(...)
 	switch (LIBGGI_GT(vis)) {
 	case GT_1BIT:
 	{
-		uint8 tmp=0,*obuf=(uint8 *)outbuf;
+		uint8_t tmp=0,*obuf=(uint8_t *)outbuf;
 		int mask;
 		
 		mask=7;
@@ -167,11 +167,11 @@ GGIpackcolors(...)
 	break;
 	case GT_4BIT:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
+        uint8_t *obuf=(uint8_t *)outbuf;
 		
         for (i=0;i<len/2;i++)
-			*(obuf++)=(uint8)(LIBGGIMapColor(vis,(cols++)) << 4)
-				| (uint8)(LIBGGIMapColor(vis,(cols++)));
+			*(obuf++)=(uint8_t)(LIBGGIMapColor(vis,(cols++)) << 4)
+				| (uint8_t)(LIBGGIMapColor(vis,(cols++)));
 		
         if (len & 1) {
 			*obuf = LIBGGIMapColor(vis, cols) << 4;
@@ -180,25 +180,25 @@ GGIpackcolors(...)
 	break;
 	case GT_8BIT:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
+        uint8_t *obuf=(uint8_t *)outbuf;
 		
         for (i=0;i<len;i++)
-			*(obuf++)=(uint8)(LIBGGIMapColor(vis,(cols++)));
+			*(obuf++)=(uint8_t)(LIBGGIMapColor(vis,(cols++)));
  	}
 	break;
 	case GT_15BIT:
 	case GT_16BIT:
 	{
-		uint16 *obuf=(uint16 *)outbuf;
+		uint16_t *obuf=(uint16_t *)outbuf;
 		
 		for (i=0;i<len;i++) 
-			*(obuf++)=(uint16)(LIBGGIMapColor(vis,(cols++)));
+			*(obuf++)=(uint16_t)(LIBGGIMapColor(vis,(cols++)));
 	}
 	break;
 	case GT_24BIT:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
-        uint32 color;
+        uint8_t *obuf=(uint8_t *)outbuf;
+        uint32_t color;
 		
         for (i=0;i<len;i++) {
 			color=LIBGGIMapColor(vis,(cols++));
@@ -211,10 +211,10 @@ GGIpackcolors(...)
 	break;
 	case GT_32BIT:
 	{
-        uint32 *obuf=(uint32 *)outbuf;
+        uint32_t *obuf=(uint32_t *)outbuf;
 		
         for (i=0;i<len;i++)
-			*(obuf++)=(uint32)(LIBGGIMapColor(vis,(cols++)));
+			*(obuf++)=(uint32_t)(LIBGGIMapColor(vis,(cols++)));
 	}
 	break;
 	default:
@@ -228,9 +228,9 @@ GGIunpackpixels(...)
 	switch (GT_SIZE(LIBGGI_GT(vis))) {
 	case 1:
 	{
-		uint8 *ibuf=(uint8 *)outbuf;
+		uint8_t *ibuf=(uint8_t *)outbuf;
 		int mask;
-		uint32 tmp;
+		uint32_t tmp;
 		
 		mask=7;
 		for (i=0;i<len;i++) {
@@ -245,7 +245,7 @@ GGIunpackpixels(...)
 	break;
 	case 4:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
+        uint8_t *obuf=(uint8_t *)outbuf;
         unsigned int tmp;
 		
         for (i=0;i<len/2;i++) {
@@ -263,7 +263,7 @@ GGIunpackpixels(...)
 	break;
 	case 8:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
+        uint8_t *obuf=(uint8_t *)outbuf;
 		
         for (i=0;i<len;i++)
 			LIBGGIUnmapPixel(vis,*(obuf++),(cols++));
@@ -271,7 +271,7 @@ GGIunpackpixels(...)
 	break;
 	case 16:
 	{
-		uint16 *obuf=(uint16 *)outbuf;
+		uint16_t *obuf=(uint16_t *)outbuf;
 		
 		for (i=0;i<len;i++) 
 			LIBGGIUnmapPixel(vis,*(obuf++),(cols++));
@@ -279,8 +279,8 @@ GGIunpackpixels(...)
 	break;
 	case 24:
 	{
-        uint8 *obuf=(uint8 *)outbuf;
-        uint32 color;
+        uint8_t *obuf=(uint8 *)outbuf;
+        uint32_t color;
 		
         for (i=0;i<len;i++) {
 			color=obuf[0]+(obuf[1]<<8)+(obuf[2]<<16);
@@ -291,7 +291,7 @@ GGIunpackpixels(...)
 	break;
 	case 32:
 	{
-        uint32 *obuf=(uint32 *)outbuf;
+        uint32_t *obuf=(uint32_t *)outbuf;
 		
         for (i=0;i<len;i++)
 			LIBGGIUnmapPixel(vis,*(obuf++),(cols++));

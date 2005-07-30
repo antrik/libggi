@@ -1,4 +1,4 @@
-/* $Id: linmm_banked.h,v 1.1 2001/05/12 23:01:48 cegger Exp $
+/* $Id: linmm_banked.h,v 1.2 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    linmm_banked header file
@@ -28,10 +28,10 @@
 #ifndef _LINMM_BANKED_H
 #define _LINMM_BANKED_H
 
-extern uint8 *__localafb;
-extern uint8 *__localdfb;
-extern uint8 *__localrfb;
-extern uint8 *__localwfb;
+extern uint8_t *__localafb;
+extern uint8_t *__localdfb;
+extern uint8_t *__localrfb;
+extern uint8_t *__localwfb;
 
 /* Later these get fed from visual.c or CHECKXY global variables */
 #define BANKFB __localafb

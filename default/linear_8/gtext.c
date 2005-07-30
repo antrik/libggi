@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/07/13 06:52:32 cegger Exp $
+/* $Id: gtext.c,v 1.3 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -34,9 +34,9 @@ int GGI_lin8_putc(ggi_visual *vis, int x, int y, char c)
 #define char_width 8
 #define char_height 8
 	int offset, x_run, y_run;
-	uint8 *bitmap;
+	uint8_t *bitmap;
 
-	bitmap = (uint8 *)(font) + ( c * char_height );
+	bitmap = (uint8_t *)(font) + ( c * char_height );
 	x_run = char_width;
 	y_run = char_height;
 	offset = 0;
@@ -84,13 +84,13 @@ int GGI_lin8_putc(ggi_visual *vis, int x, int y, char c)
 
 	{
 		int y_iter;
-		register uint8 *fb;
+		register uint8_t *fb;
 		int add_stride;
 
 		PREPARE_FB(vis);
 
 		add_stride = LIBGGI_FB_W_STRIDE(vis);
-		fb = (uint8 *)LIBGGI_CURWRITE(vis) + ( y * add_stride ) + x;
+		fb = (uint8_t *)LIBGGI_CURWRITE(vis) + ( y * add_stride ) + x;
 		add_stride -= x_run;
 		y_run += y; x_run += x;
 
@@ -98,7 +98,7 @@ int GGI_lin8_putc(ggi_visual *vis, int x, int y, char c)
 		      fb += add_stride )
 		{
 			register int x_iter;
-			register uint8 row;
+			register uint8_t row;
 
 			row = *bitmap << offset;
 
@@ -106,8 +106,8 @@ int GGI_lin8_putc(ggi_visual *vis, int x, int y, char c)
 			      row <<= 1, fb++ )
 			{
 				*fb = ( row & 128 )
-				      ? (uint8)LIBGGI_GC_FGCOLOR(vis)
-				      : (uint8)LIBGGI_GC_BGCOLOR(vis);
+				      ? (uint8_t)LIBGGI_GC_FGCOLOR(vis)
+				      : (uint8_t)LIBGGI_GC_BGCOLOR(vis);
 			}
 		}
 	}

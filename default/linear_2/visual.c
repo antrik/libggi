@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2004/11/06 22:48:22 cegger Exp $
+/* $Id: visual.c,v 1.5 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
   Linear 2 bit graphics (high-pair-left)
@@ -29,7 +29,7 @@
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	/* Frame handling
 	 */

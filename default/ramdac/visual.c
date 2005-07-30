@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/27 16:42:13 soyt Exp $
+/* $Id: visual.c,v 1.8 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Generic RAMDAC via IOCTL driver
@@ -43,7 +43,7 @@ int GGI_ramdac_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *c
 int GGI_ramdac_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap);
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	int err;
 

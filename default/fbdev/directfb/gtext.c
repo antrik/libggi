@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2001/08/14 03:29:48 skids Exp $
+/* $Id: gtext.c,v 1.2 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for the fbdev target.
@@ -39,7 +39,7 @@ int GGI_directfb_getcharsize(ggi_visual *vis, int *width, int *height)
 }
 
 static inline void
-blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8 *field)
+blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 {
 	int xp, bp;
 	int ywidth = FHEIGHT;
@@ -83,7 +83,7 @@ int GGI_directfb_putc(ggi_visual *vis, int x, int y, char c)
 	LIBGGI_GC_FGCOLOR(vis) = LIBGGI_GC_BGCOLOR(vis);
 	drawbox(vis, x, y, FWIDTH);
 	LIBGGI_GC_FGCOLOR(vis) = fgcol;
-	blitchar(vis, x, y, fgcol, DIRECTFB_PRIV(vis)->font + (((uint8)c) << 3));
+	blitchar(vis, x, y, fgcol, DIRECTFB_PRIV(vis)->font + (((uint8_t)c) << 3));
 #endif
 
 	return 0;
@@ -115,7 +115,7 @@ int GGI_directfb_puts(ggi_visual *vis, int x, int y, const char *str)
 		if (x+FWIDTH >= tlx && x < brx) {
 			blitchar(vis, x, y, fgcol,
 				 DIRECTFB_PRIV(vis)->font
-				 + (((uint8)*str) << 3));
+				 + (((uint8_t)*str) << 3));
 			count++;
 		}
 	}
@@ -129,10 +129,10 @@ int GGI_directfb_puts(ggi_visual *vis, int x, int y, const char *str)
 int GGI_directfb_fastputc(ggi_visual *vis, int x, int y, char c)
 {
 #if 0
-	volatile uint8 *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	struct directfb_priv *priv = DIRECTFB_PRIV(vis);
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
-	uint32 ar3, dwgctl;
+	uint32_t ar3, dwgctl;
 	
 	y += yadd;
 
@@ -140,7 +140,7 @@ int GGI_directfb_fastputc(ggi_visual *vis, int x, int y, char c)
                           LIBGGI_VIRTX(vis), yadd);
 
 
-	ar3 = priv->fontoffset + priv->charadd * (uint8)c;
+	ar3 = priv->fontoffset + priv->charadd * (uint8_t)c;
 	dwgctl = OP_BITBLT | BOP_COPY | BLTMOD_BMONOWF | SHFTZERO |
 		SGNZERO | LINEAR;
 
@@ -172,7 +172,7 @@ int GGI_directfb_fastputs(ggi_visual *vis, int x, int y, const char *str)
 
 #if 0
 	while (*str && x < virtx) {
-		uint32 ar3 = priv->fontoffset + priv->charadd * (uint8)*str;
+		uint32_t ar3 = priv->fontoffset + priv->charadd * (uint8_t)*str;
 
 		if (ar3 != oldar3) {
 			oldar3 = ar3;

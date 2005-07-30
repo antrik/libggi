@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2002/11/16 19:06:30 skids Exp $
+/* $Id: pixel.c,v 1.3 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -35,16 +35,16 @@
 
 int GGI_lin4r_drawpixel(ggi_visual *vis,int x,int y)
 {
-	uint8 pel;
-/*	uint8 clr;*/
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+/*	uint8_t clr;*/
+	uint8_t *fb;
+	uint8_t xs;
 	
 	CHECKXY(vis,x,y);
  	
 	/* Read-modify-write. */
 	
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	/* This does:
@@ -61,14 +61,14 @@ int GGI_lin4r_drawpixel(ggi_visual *vis,int x,int y)
 
 int GGI_lin4r_drawpixel_nc(ggi_visual *vis,int x,int y)
 {
-	uint8 pel;
-/*	uint8 clr;*/
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+/*	uint8_t clr;*/
+	uint8_t *fb;
+	uint8_t xs;
 	
 	/* Read-modify-write. */
 	
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	/* This does:
@@ -85,11 +85,11 @@ int GGI_lin4r_drawpixel_nc(ggi_visual *vis,int x,int y)
 
 int GGI_lin4r_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 pel;
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+	uint8_t *fb;
+	uint8_t xs;
 	
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	xs = (x & 1) << 2;
@@ -101,13 +101,13 @@ int GGI_lin4r_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin4r_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 pel;
-	uint8 *fb;
-	uint8 xs;
+	uint8_t pel;
+	uint8_t *fb;
+	uint8_t xs;
 	
 	CHECKXY(vis,x,y);
  	
-	fb = (uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
+	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
 	xs = (x & 1) << 2;
@@ -119,9 +119,9 @@ int GGI_lin4r_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin4r_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
-	uint8 pel;
+	uint8_t pel;
 	
-	pel = *(uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
+	pel = *(uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
 
 	if (x & 1) {
 		*pixel = (ggi_pixel)(pel >> 4);

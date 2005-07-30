@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2001/05/12 23:01:39 cegger Exp $
+/* $Id: pixel.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Linear 1 pixel drawing.
@@ -31,10 +31,10 @@
 
 
 #define PIXEL_RADDR(vis,x,y)  \
-	((uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>3))
+	((uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>3))
 
 #define PIXEL_WADDR(vis,x,y)  \
-	((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>3))
+	((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>3))
 
 
 int GGI_lin1_drawpixel_nc(ggi_visual *vis, int x, int y)

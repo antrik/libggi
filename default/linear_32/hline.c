@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2004/12/01 23:08:03 cegger Exp $
+/* $Id: hline.c,v 1.5 2005/07/30 11:40:01 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -33,11 +33,11 @@
 static inline void
 do_drawhline(ggi_visual *vis, int x, int y, int w)
 {
-	uint32 *buf32;
-	uint32 color = LIBGGI_GC_FGCOLOR(vis);
+	uint32_t *buf32;
+	uint32_t color = LIBGGI_GC_FGCOLOR(vis);
 
 	PREPARE_FB(vis);
-	buf32 = (uint32*)((uint8*)LIBGGI_CURWRITE(vis)
+	buf32 = (uint32_t*)((uint8_t*)LIBGGI_CURWRITE(vis)
 			  + y*LIBGGI_FB_W_STRIDE(vis) + x*4);
 
 	while (w--) {
@@ -66,13 +66,13 @@ int GGI_lin32_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 
 int GGI_lin32_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
-	const uint32 *buf32 = buffer;
-	uint8  *mem;
+	const uint32_t *buf32 = buffer;
+	uint8_t  *mem;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf32, *1);
 	PREPARE_FB(vis);
 
-	mem = (uint8 *)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x*4;
+	mem = (uint8_t *)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x*4;
 	memcpy(mem, buf32, (size_t)(w*4));
 
 	return 0;
@@ -81,11 +81,11 @@ int GGI_lin32_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 
 int GGI_lin32_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
 {
-	uint8 *mem;
+	uint8_t *mem;
 
 	PREPARE_FB(vis);
 
-	mem = (uint8 *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x*4;
+	mem = (uint8_t *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x*4;
 
 	memcpy(buffer, mem, (size_t)(w*4));
 

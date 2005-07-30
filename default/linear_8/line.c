@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2001/05/12 23:01:46 cegger Exp $
+/* $Id: line.c,v 1.2 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -26,7 +26,7 @@
 */
 
 #include "lin8lib.h"
-#define FBTYPE uint8
+#define FBTYPE uint8_t
 #define GGIdrawline	GGI_lin8_drawline
 #include "../common/linear-line.c"
 

@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2003/07/05 22:13:40 cegger Exp $
+/* $Id: copybox.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -33,7 +33,7 @@ int GGI_ati_mach64_copybox(ggi_visual *vis, int x, int y, int w, int h,
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */
 		struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-		uint32 direction = DST_LAST_PEL;
+		uint32_t direction = DST_LAST_PEL;
     
 		y += vis->r_frame_num * LIBGGI_VIRTY(vis);
 		dsty += vis->w_frame_num * LIBGGI_VIRTY(vis);

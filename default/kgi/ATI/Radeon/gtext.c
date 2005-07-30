@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.5 2003/02/01 06:06:18 skids Exp $
+/* $Id: gtext.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon text acceleration
@@ -31,7 +31,7 @@ int GGI_kgi_radeon_putc_3d(ggi_visual *vis, int x, int y, char c)
 {
         struct {
 		cce_type0_header_t h1;
-		uint32 txcblend;
+		uint32_t txcblend;
                 cce_type3_header_t h2;
                 cce_se_se_vtx_fmt_t vfmt;
                 cce_se_se_vf_cntl_t vctl;
@@ -87,7 +87,7 @@ int GGI_kgi_radeon_puts_3d(ggi_visual *vis, int x, int y, const char *string)
 	int i, len, nx;
         struct {
 		cce_type0_header_t h1;
-		uint32 txcblend;
+		uint32_t txcblend;
                 cce_type3_header_t h2;
                 cce_se_se_vtx_fmt_t vfmt;
                 cce_se_se_vf_cntl_t vctl;
@@ -148,7 +148,7 @@ int GGI_kgi_radeon_puts_3d(ggi_visual *vis, int x, int y, const char *string)
 
 typedef struct
 {
-	uint32 dw1,dw2;
+	uint32_t dw1,dw2;
 } glyph;
 
 

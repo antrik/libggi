@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2001/05/12 23:01:37 cegger Exp $
+/* $Id: pixel.c,v 1.2 2005/07/30 11:39:58 cegger Exp $
 ******************************************************************************
 
    Interleave planar pixels (2 byte interleave).
@@ -29,20 +29,20 @@
 
 
 #define PIXEL_WADDR(vis,x,y)  \
-	((uint16 *) ((uint8 *) LIBGGI_CURWRITE(vis) +  \
+	((uint16_t *) ((uint8_t *) LIBGGI_CURWRITE(vis) +  \
 		(y) * LIBGGI_W_PLAN(vis).next_line) +  \
 		((x) >> 4) * GT_DEPTH(LIBGGI_GT(vis)))
 
 #define PIXEL_RADDR(vis,x,y)  \
-	((uint16 *) ((uint8 *) LIBGGI_CURREAD(vis)  +  \
+	((uint16_t *) ((uint8_t *) LIBGGI_CURREAD(vis)  +  \
 		(y) * LIBGGI_R_PLAN(vis).next_line) +  \
 		((x) >> 4) * GT_DEPTH(LIBGGI_GT(vis)))
 
 
 int GGI_ipl2_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 {
-	uint16 *dest = PIXEL_WADDR(vis, x, y);
-	uint16 mask = 0x8000 >> (x & 15);
+	uint16_t *dest = PIXEL_WADDR(vis, x, y);
+	uint16_t mask = 0x8000 >> (x & 15);
 
 	int i;
 
@@ -64,8 +64,8 @@ int GGI_ipl2_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	ggi_pixel col = 0;
 
-	uint16 *dest = PIXEL_RADDR(vis, x, y);
-	uint16 shift = 15 - (x & 15);
+	uint16_t *dest = PIXEL_RADDR(vis, x, y);
+	uint16_t shift = 15 - (x & 15);
 
 	int i, depth = GT_DEPTH(LIBGGI_GT(vis));
 

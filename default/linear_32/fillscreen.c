@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.1 2001/05/12 23:01:43 cegger Exp $
+/* $Id: fillscreen.c,v 1.2 2005/07/30 11:40:01 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -37,7 +37,7 @@ int GGI_lin32_fillscreen(ggi_visual *vis)
 	    LIBGGI_GC(vis)->cliptl.y==0 &&
 	    LIBGGI_GC(vis)->clipbr.x==LIBGGI_VIRTX(vis) &&
 	    LIBGGI_GC(vis)->clipbr.y==LIBGGI_VIRTY(vis)) {
-		uint32 *fb;
+		uint32_t *fb;
 		int x, y;
 		
 		PREPARE_FB(vis);
@@ -46,9 +46,9 @@ int GGI_lin32_fillscreen(ggi_visual *vis)
 		for (y=0; y < LIBGGI_VIRTY(vis); y++) {
 			for (x=0; x < LIBGGI_VIRTX(vis); x++)
 				*(fb++) = LIBGGI_GC_FGCOLOR(vis);
-			fb = (uint32 *)((uint8 *)fb
+			fb = (uint32_t *)((uint8_t *)fb
 					+ (LIBGGI_FB_W_STRIDE(vis)
-					   - LIBGGI_VIRTX(vis)*sizeof(uint32)));
+					   - LIBGGI_VIRTX(vis)*sizeof(uint32_t)));
 		}
 	} else
 		ggiDrawBox(vis, LIBGGI_GC(vis)->cliptl.x,LIBGGI_GC(vis)->cliptl.y,

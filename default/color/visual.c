@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2004/11/06 22:48:19 cegger Exp $
+/* $Id: visual.c,v 1.9 2005/07/30 11:39:56 cegger Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -90,7 +90,7 @@ static void do_setup_color_info(ggi_visual *vis)
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	vis->colorpriv = malloc(sizeof(color_priv));
 	if (vis->colorpriv == NULL) return GGI_ENOMEM;

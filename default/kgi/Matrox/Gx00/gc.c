@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: gc.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 gc acceleration
@@ -33,7 +33,7 @@ void GGI_kgi_Gx00_updatehwgc(ggi_visual *vis)
   int mask = GX00_CONTEXT(vis)->hwgc_mask;
 
   if (mask & GGI_GCCHANGED_FG) {
-    uint32 fcol = LIBGGI_GC_FGCOLOR(vis);
+    uint32_t fcol = LIBGGI_GC_FGCOLOR(vis);
     if (LIBGGI_GT(vis) == GT_15BIT) {
       /* In 5:5:5, bit15 originates from fcol<31> */
       fcol &= ~(1 << 31);
@@ -74,7 +74,7 @@ void GGI_kgi_Gx00_gcchanged(ggi_visual *vis, int mask)
 void GGI_kgi_Gx00_gcchanged(ggi_visual *vis, int mask)
 {
   if (mask & GGI_GCCHANGED_FG) {
-    uint32 fcol = LIBGGI_GC_FGCOLOR(vis);
+    uint32_t fcol = LIBGGI_GC_FGCOLOR(vis);
     if (LIBGGI_GT(vis) == GT_15BIT) {
       /* In 5:5:5, bit15 originates from fcol<31> */
       fcol &= ~(1 << 31);

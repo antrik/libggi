@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.7 2002/12/04 01:06:22 skids Exp $
+/* $Id: ggidirectfb.h,v 1.8 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -224,9 +224,9 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
     cardstate->modified |= SMF_COLOR;
     ggiUnmapPixel(vis, gc->fg_color, &newfgcolor);
     cardstate->color.a = 0; /* ?? */
-    cardstate->color.r = (uint8)(newfgcolor.r >> 8);
-    cardstate->color.g = (uint8)(newfgcolor.g >> 8);
-    cardstate->color.b = (uint8)(newfgcolor.b >> 8);
+    cardstate->color.r = (uint8_t)(newfgcolor.r >> 8);
+    cardstate->color.g = (uint8_t)(newfgcolor.g >> 8);
+    cardstate->color.b = (uint8_t)(newfgcolor.b >> 8);
     if (cardstate->drawingflags != DSDRAW_NOFX) {
       cardstate->drawingflags = DSDRAW_NOFX;
       cardstate->modified |= SMF_DRAWING_FLAGS;
@@ -243,9 +243,9 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
 
     ggiUnmapPixel(vis, gc->bg_color, &newbgcolor);
     dfb_config->layer_bg_color.a = 0; /* ?? */
-    dfb_config->layer_bg_color.r = (uint8)(newbgcolor.r >> 8);
-    dfb_config->layer_bg_color.g = (uint8)(newbgcolor.g >> 8);
-    dfb_config->layer_bg_color.b = (uint8)(newbgcolor.b >> 8);
+    dfb_config->layer_bg_color.r = (uint8_t)(newbgcolor.r >> 8);
+    dfb_config->layer_bg_color.g = (uint8_t)(newbgcolor.g >> 8);
+    dfb_config->layer_bg_color.b = (uint8_t)(newbgcolor.b >> 8);
     /* Force reread of the layer color.  Inefficient? */
     cardstate->modified |= SMF_DESTINATION;
     priv->oldbg = gc->bg_color;

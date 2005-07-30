@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2004/08/17 08:36:34 cegger Exp $
+/* $Id: gtext.c,v 1.4 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Linear 1 character drawing (high-bit-right)
@@ -33,8 +33,8 @@ int GGI_lin1r_putc(ggi_visual *vis, int x, int y, char c)
 {
 	int h=8, stride, rev;
 
-	uint8 *src, *dest;
-	uint8 mask, mask0, mask1 = 0;
+	uint8_t *src, *dest;
+	uint8_t mask, mask0, mask1 = 0;
 	int shift0, shift1;
 
 	if ((x   >= LIBGGI_GC(vis)->clipbr.x)  || 
@@ -48,7 +48,7 @@ int GGI_lin1r_putc(ggi_visual *vis, int x, int y, char c)
 		return ggiDrawBox(vis, x, y, 8, 8);
 	}
 
-	src = (uint8 *)(font) + ((int) (uint8) c << 3);
+	src = (uint8_t *)(font) + ((int) (uint8_t) c << 3);
 	rev = (LIBGGI_GC_BGCOLOR(vis) & 1);
 
 	if (y < LIBGGI_GC(vis)->cliptl.y) {
@@ -65,7 +65,7 @@ int GGI_lin1r_putc(ggi_visual *vis, int x, int y, char c)
 	PREPARE_FB(vis);
 
 	stride = LIBGGI_FB_W_STRIDE(vis);
-	dest = (uint8 *) LIBGGI_CURWRITE(vis) + y*stride + (x>>3);
+	dest = (uint8_t *) LIBGGI_CURWRITE(vis) + y*stride + (x>>3);
 
 	if ((x & 7) == 0) {
 
@@ -127,13 +127,13 @@ int GGI_lin1r_putc(ggi_visual *vis, int x, int y, char c)
 	
 	if (!rev) {
 		for(; h > 0; h--, dest += stride, src++) {
-			uint8 val = GGI_BITREV1(*src);
+			uint8_t val = GGI_BITREV1(*src);
 			dest[0] = ((val<<shift0)&mask0) | (dest[0]&~mask0);
 			dest[1] = ((val>>shift1)&mask1) | (dest[1]&~mask1);
 		}
 	} else {
 		for(; h > 0; h--, dest += stride, src++) {
-			uint8 val = ~GGI_BITREV1(*src);
+			uint8_t val = ~GGI_BITREV1(*src);
 			dest[0] = ((val<<shift0)&mask0) | (dest[0]&~mask0);
 			dest[1] = ((val>>shift1)&mask1) | (dest[1]&~mask1);
 		}

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: crossblit.c,v 1.2 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -30,21 +30,21 @@
 
 static inline void
 dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h, 
-	     ggi_visual *dst, int dx, int dy, uint32 srcfmt)
+	     ggi_visual *dst, int dx, int dy, uint32_t srcfmt)
 {
 /*	struct ati_mach64_priv *priv = ati_mach64_PRIV(dst);
-	volatile uint8 *mmioaddr = FBDEV_PRIV(dst)->mmioaddr;
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(dst)->mmioaddr;
 	int yadd = dst->w_frame_num * LIBGGI_VIRTY(dst);
-	volatile uint32 *dstptr;
-	uint32 dwgctl, bltmod = BLTMOD_BU32RGB;
-	uint16 opmode;
-	uint8 *srcptr;
+	volatile uint32_t *dstptr;
+	uint32_t dwgctl, bltmod = BLTMOD_BU32RGB;
+	uint16_t opmode;
+	uint8_t *srcptr;
 	int srcinc;
 	int maxpix;
 
 	dstptr = priv->dmaaddr;
 	srcinc = LIBGGI_FB_R_STRIDE(src);
-	srcptr = (uint8*) LIBGGI_CURWRITE(src) + sy*srcinc + sx*4;
+	srcptr = (uint8_t*) LIBGGI_CURWRITE(src) + sy*srcinc + sx*4;
 	srcinc -= w*4;
 	maxpix = priv->dma_len/4;
 
@@ -99,7 +99,7 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 
 				tmpw -= tmpw2;
 				while (tmpw2--) {
-					*(dstptr++) = *(((uint32*)srcptr)++);
+					*(dstptr++) = *(((uint32_t*)srcptr)++);
 				}
 				dstptr = priv->dmaaddr;
 			}
@@ -110,7 +110,7 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 			int tmpw = w;
 
 			while (tmpw--) {
-				*(dstptr++) = *(((uint32*)srcptr)++);
+				*(dstptr++) = *(((uint32_t*)srcptr)++);
 			}
 			srcptr += srcinc;
 			dstptr = priv->dmaaddr;
@@ -126,7 +126,7 @@ int GGI_ati_mach64_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	LIBGGICLIP_COPYBOX(dst, sx, sy, w, h, dx, dy);
 
 	if (src->r_frame && src->r_frame->layout == dst->w_frame->layout) {
-		uint32 srcformat
+		uint32_t srcformat
 			= src->r_frame->buffer.plb.pixelformat->stdformat;
 
 		PREPARE_FB(src);

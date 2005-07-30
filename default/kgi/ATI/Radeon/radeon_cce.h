@@ -1,4 +1,4 @@
-/* $Id: radeon_cce.h,v 1.5 2003/02/07 01:35:09 skids Exp $
+/* $Id: radeon_cce.h,v 1.6 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon CCE packet structures
@@ -25,8 +25,8 @@
 #ifndef _RADEON_CCE_H
 #define _RADEON_CCE_H
 
-typedef uint32 bits;
-typedef uint32 dword;
+typedef uint32_t bits;
+typedef uint32_t dword;
 
 typedef struct
 {

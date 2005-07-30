@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
+/* $Id: copybox.c,v 1.3 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    LibGGI linear 4 - copybox
@@ -33,7 +33,7 @@
 int
 GGI_lin4r_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	uint8 *src, *dest;
+	uint8_t *src, *dest;
 	int linew = LIBGGI_FB_W_STRIDE(vis);
 	int line;
 	int left, right;
@@ -51,8 +51,8 @@ GGI_lin4r_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 	PREPARE_FB(vis);
 
 	if (ny < y) {
-		src  = (uint8 *)LIBGGI_CURWRITE(vis) + y*linew  + (x/2);
-		dest = (uint8 *)LIBGGI_CURWRITE(vis) + ny*linew + (nx/2);
+		src  = (uint8_t *)LIBGGI_CURWRITE(vis) + y*linew  + (x/2);
+		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + ny*linew + (nx/2);
 		if (left) {
 			dest++;
 			src++;
@@ -68,8 +68,8 @@ GGI_lin4r_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 			}
 		}
 	} else {
-		src  = (uint8 *)LIBGGI_CURWRITE(vis) + (y+h-1)*linew + (x/2);
-		dest = (uint8 *)LIBGGI_CURWRITE(vis) + (ny+h-1)*linew+ (nx/2);
+		src  = (uint8_t *)LIBGGI_CURWRITE(vis) + (y+h-1)*linew + (x/2);
+		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (ny+h-1)*linew+ (nx/2);
 		if (left) {
 			dest++;
 			src++;

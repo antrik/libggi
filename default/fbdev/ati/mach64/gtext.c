@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.4 2004/08/25 21:27:50 cegger Exp $
+/* $Id: gtext.c,v 1.5 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -41,7 +41,7 @@
  * engine copies the data from video ram
  */
 
-static inline void draw_char(int hostwrites, uint32 * cdat,
+static inline void draw_char(int hostwrites, uint32_t * cdat,
 			     struct ati_mach64_priv *priv)
 {
 	/* feed a character to the engine */
@@ -66,7 +66,7 @@ int GGI_ati_mach64_putc(ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int hostwrites;
-	uint32 *cdat;
+	uint32_t *cdat;
 
 	/* Tell the engine what we want to do. */
 	set_dp_src(priv,
@@ -81,7 +81,7 @@ int GGI_ati_mach64_putc(ggi_visual * vis, int x, int y, char c)
 	aty_st_le32(DST_HEIGHT_WIDTH, (FWIDTH << 16) | FHEIGHT, priv);	/* Initiates operation. */
 
 	/* Feed the data to the engine */
-	cdat = (uint32 *) (priv->font + c * FHEIGHT);
+	cdat = (uint32_t *) (priv->font + c * FHEIGHT);
 	draw_char(hostwrites, cdat, priv);
 	return 0;
 }
@@ -90,7 +90,7 @@ int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int count, hostwrites;
-	uint32 *cdat;
+	uint32_t *cdat;
 
 	/* Tell the engine what we want to do. */
 	set_dp_src(priv,
@@ -110,7 +110,7 @@ int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 		aty_st_le32(DST_WIDTH, FWIDTH, priv);	/* Initiates operation. */
 
 		/* Feed the data to the engine */
-		cdat = (uint32 *) (priv->font + *str * FHEIGHT);
+		cdat = (uint32_t *) (priv->font + *str * FHEIGHT);
 		draw_char(hostwrites, cdat, priv);
 
 		count++;
@@ -122,7 +122,7 @@ int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 int GGI_ati_mach64_fastputc(ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
-	uint32 pitch, pix_width;
+	uint32_t pitch, pix_width;
 
 	/* Tell the engine what we want to do. */
 	set_dp_src(priv,
@@ -159,7 +159,7 @@ int GGI_ati_mach64_fastputs(ggi_visual * vis, int x, int y,
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int count;
-	uint32 pitch, pix_width;
+	uint32_t pitch, pix_width;
 
 	/* Tell the engine what we want to do. */
 	set_dp_src(priv,

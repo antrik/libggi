@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.16 2004/11/27 16:41:57 soyt Exp $
+/* $Id: crossblit.c,v 1.17 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -42,8 +42,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	 ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
-	uint16 cur_dst = 0;
-	uint16 *dstptr;
+	uint16_t cur_dst = 0;
+	uint16_t *dstptr;
 	int stride;
 
 	DPRINT_DRAW("linear-16: Fallback to slow crossblit.\n");
@@ -52,7 +52,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	cur_src++; /* assure safe init */
 	
 	stride = LIBGGI_FB_W_STRIDE(dst);
-	dstptr = (uint16*) ((uint8*)LIBGGI_CURWRITE(dst) + dy*stride + dx*2);
+	dstptr = (uint16_t*) ((uint8_t*)LIBGGI_CURWRITE(dst) + dy*stride + dx*2);
 
 	for (; h > 0; h--, sy++, dy++) {
 		int x;
@@ -69,7 +69,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 			}
 			*(dstptr+x) = cur_dst;
 		}
-		dstptr = (uint16*) ((uint8*)dstptr + stride);
+		dstptr = (uint16_t*) ((uint8_t*)dstptr + stride);
 	}
 }
 
@@ -79,14 +79,14 @@ static inline void
 crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	       ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 
 	DPRINT_DRAW("linear-16: direct memcpy crossblit.\n");
 	
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*2;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*2;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
 
 	w *= 2;		/* Use width in bytes. */
 
@@ -105,10 +105,10 @@ static inline void
 cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 	ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
-	uint16 conv_tab[16];
+	uint16_t conv_tab[16];
 
 	DPRINT_DRAW("linear-16: cb4to16.\n");
 
@@ -122,13 +122,13 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 		}
 	} while (0);
 
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx/2;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx/2;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
 
 	if ((sx ^ w) & 1) {
 		for (; h > 0; h--) {
-	    		uint16 *dstpw = (uint16*) dstp;
-			uint8  *srcpb = srcp;
+	    		uint16_t *dstpw = (uint16_t*) dstp;
+			uint8_t  *srcpb = srcp;
 			
 			int i = w / 8;
 			
@@ -161,8 +161,8 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 	}
 	else {
 		for (; h > 0; h--) {
-			uint16 *dstpw = (uint16*) dstp;
-			uint8  *srcpb = srcp;
+			uint16_t *dstpw = (uint16_t*) dstp;
+			uint8_t  *srcpb = srcp;
 			
 			int i = w / 8;
 
@@ -201,10 +201,10 @@ static inline void
 cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 		  ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
-	uint16 conv_tab[256];
+	uint16_t conv_tab[256];
 
 	DPRINT_DRAW("linear-16: cb8to16.\n");
 
@@ -219,12 +219,12 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
 		}
 	} while (0);
 
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
 
 	for (; h > 0; h--) {
-		uint16 *dstpw = (uint16*) dstp;
-		uint8  *srcpb = (uint8*)  srcp;
+		uint16_t *dstpw = (uint16_t*) dstp;
+		uint8_t  *srcpb = (uint8_t*)  srcp;
 		int i = w / 8;
 
 		/* Unroll manually. */
@@ -264,7 +264,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
  *   rshift/gshift/bshift.
  * sskip is the number of bytes to skip between shift values, in case the
  *   SWAR works best when the shift and mask values are interleaved, and/or
- *   in case the SWAR works best with different size values than sint32.
+ *   in case the SWAR works best with different size values than int32_t.
  * soff defines a bit offset added to bitshifts. The actual direction of the
  *   shift may be altered by this offset.
  * mask is the location to store the first element of the column in the 
@@ -307,8 +307,8 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
  */
 
 static inline void build_masktab(ggi_visual *src, ggi_visual *dst, 
-				 sint32 *rshift,sint32 *gshift,sint32 *bshift,
-				 sint32 *shift, int sskip, int soff,
+				 int32_t *rshift,int32_t *gshift,int32_t *bshift,
+				 int32_t *shift, int sskip, int soff,
 				 ggi_pixel *mask, int masklen, int mskip,
 				 int maskpost, int *nl, int *nr) {
 	int i, j;
@@ -411,11 +411,11 @@ if (stmp <= 15) {						\
  */
 static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	sint32 shifts[48], rshifts[24];
+	int32_t shifts[48], rshifts[24];
 	ggi_pixel masks[40], rmasks[24];
 	int nl, nr;
-	uint16 *stoprow, *dstp;
-	uint8 *srcp;
+	uint16_t *stoprow, *dstp;
+	uint8_t *srcp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-16: cb24to16.\n");
@@ -423,9 +423,9 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 40, 1, 0, &nl, &nr);
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint8_t*)LIBGGI_CURREAD(src) + 
 	  sy*(LIBGGI_FB_R_STRIDE(src)) + sx*3;
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src);
@@ -435,10 +435,10 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w * 3;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 	
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
@@ -553,7 +553,7 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 	int shifts[48], rshifts[16];
 	ggi_pixel masks[32], rmasks[16];
 	int nl, nr;
-	uint16 *stoprow, *dstp, *srcp;
+	uint16_t *stoprow, *dstp, *srcp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-16: cb16to16.\n");
@@ -561,9 +561,9 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 32, 1, 0, &nl, &nr);
 		
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint16_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/2;
@@ -573,10 +573,10 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 	
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
@@ -668,11 +668,11 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
  */
 static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	sint32 shifts[48], rshifts[32];
+	int32_t shifts[48], rshifts[32];
 	ggi_pixel masks[48], rmasks[32];
 	int nl, nr;
-	uint16 *stoprow, *dstp;
-	uint32 *srcp;
+	uint16_t *stoprow, *dstp;
+	uint32_t *srcp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-16: cb32to16.\n");
@@ -680,9 +680,9 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 16, shifts + 32, 
 		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint32_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/4;
@@ -692,10 +692,10 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
@@ -891,37 +891,37 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	char sbuf[48 * 4 + 7], *stab;
 	char mbuf[48 * 8 + 7], *mtab;
 	int nl, nr;
-	uint16 *stoprow, *dstp, *srcp;
+	uint16_t *stoprow, *dstp, *srcp;
 	int dstride, sstride, i;
 
 	DPRINT_DRAW("linear-16: cb16to16_64bitc.\n");
 
 	if (sizeof(char *) == 8) {
-		stab = sbuf + (8 - (((uint64)sbuf) % 8));
-		mtab = mbuf + (8 - (((uint64)mbuf) % 8));
+		stab = sbuf + (8 - (((uint64_t)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint64_t)mbuf) % 8));
 	}
 	else {
-		stab = sbuf + (8 - (((uint32)sbuf) % 8));
-		mtab = mbuf + (8 - (((uint32)mbuf) % 8));
+		stab = sbuf + (8 - (((uint32_t)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint32_t)mbuf) % 8));
 	}
 
-	build_masktab(src, dst, (sint32 *)stab, 
-		      (sint32 *)(stab + 64), 
-		      (sint32 *)(stab + 128),
-		      (sint32 *)stab, 1, 0,
+	build_masktab(src, dst, (int32_t *)stab, 
+		      (int32_t *)(stab + 64), 
+		      (int32_t *)(stab + 128),
+		      (int32_t *)stab, 1, 0,
 		      (ggi_pixel *)(mtab), 32, 2, 3, &nl, &nr);
 
 	for (i = 0; i < 32; i++) {
-		uint64 val;
+		uint64_t val;
 		val = *((ggi_pixel *)mtab + i * 2) & 0xffff;
 		val |= val << 16;
 		val |= val << 32;
-		*((uint64 *)mtab + i) = val;
+		*((uint64_t *)mtab + i) = val;
 	}
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint16_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/2;
@@ -931,7 +931,7 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	sstride -= w;
 
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
@@ -939,36 +939,36 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 
 			if ((stopcol > dstp + 3) && 
 			    !((sizeof(char *) == 8) ?
-			      ((uint64)dstp % 8) : ((uint32)dstp % 8))) {
+			      ((uint64_t)dstp % 8) : ((uint32_t)dstp % 8))) {
 				while (stopcol > dstp + 3) {
-					uint64 tmp64, cache64;
+					uint64_t tmp64, cache64;
 
 					tmp64 = 0;
-					cache64 = *((uint64 *)srcp);
+					cache64 = *((uint64_t *)srcp);
 					i = 0;
 
-					while (*((uint64 *)mtab + i)) {
+					while (*((uint64_t *)mtab + i)) {
 						tmp64 |= (cache64 << 
-							*((sint32 *)stab + i)) &
-						  *((uint64 *)mtab + i);
-						if (!*((sint32 *)stab + i)) 
+							*((int32_t *)stab + i)) &
+						  *((uint64_t *)mtab + i);
+						if (!*((int32_t *)stab + i)) 
 							goto doright64;
 						i++;
 					}
-					if (!*((sint32 *)stab + i)) 
+					if (!*((int32_t *)stab + i)) 
 						goto doright64;
 				done64:
-					*((uint64 *)dstp) = tmp64;
+					*((uint64_t *)dstp) = tmp64;
 					dstp+=4;
 					srcp+=4;
 					continue;
 					
 				doright64:
 					i++;
-					while (*((uint64 *)mtab + i)) {
+					while (*((uint64_t *)mtab + i)) {
 						tmp64 |= (cache64 >>
-							*((sint32 *)stab + i)) &
-						  *((uint64 *)mtab + i);
+							*((int32_t *)stab + i)) &
+						  *((uint64_t *)mtab + i);
 						i++;
 					}
 					goto done64;
@@ -980,15 +980,15 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 			cache = *srcp;
 			i = 0;
 
-			while (*((uint64 *)mtab + i)) {
+			while (*((uint64_t *)mtab + i)) {
 				tmp |= (cache << 
-					*((sint32 *)stab + i)) &
+					*((int32_t *)stab + i)) &
 				  *((ggi_pixel *)mtab + i * 2);
-				if (!*((sint32 *)stab + i)) 
+				if (!*((int32_t *)stab + i)) 
 				  goto doright;
 				i++;
 			}
-			if (!*((sint32 *)stab + i)) 
+			if (!*((int32_t *)stab + i)) 
 			  goto doright;
 		done:
 			*dstp = tmp;
@@ -998,9 +998,9 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 
 		doright:
 			i++;
-			while (*((uint64 *)mtab + i)) {
+			while (*((uint64_t *)mtab + i)) {
 				tmp |= (cache >>
-					*((sint32 *)stab + i)) &
+					*((int32_t *)stab + i)) &
 				  *((ggi_pixel *)mtab + i * 2);
 				i++;
 			}
@@ -1018,37 +1018,37 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	char sbuf[48 * 4 + 7], *stab;
 	char mbuf[48 * 8 + 7], *mtab;
 	int nl, nr;
-	uint16 *stoprow, *dstp;
-	uint32 *srcp;
+	uint16_t *stoprow, *dstp;
+	uint32_t *srcp;
 	int dstride, sstride, i;
 
 	DPRINT_DRAW("linear-16: cb32to16_64bitc.\n");
 
 	if (sizeof(char *) == 8) {
-		stab = sbuf + (8 - (((uint64)sbuf) % 8));
-		mtab = mbuf + (8 - (((uint64)mbuf) % 8));
+		stab = sbuf + (8 - (((uint64_t)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint64_t)mbuf) % 8));
 	}
 	else {
-		stab = sbuf + (8 - (((uint32)sbuf) % 8));
-		mtab = mbuf + (8 - (((uint32)mbuf) % 8));
+		stab = sbuf + (8 - (((uint32_t)sbuf) % 8));
+		mtab = mbuf + (8 - (((uint32_t)mbuf) % 8));
 	}
 
-	build_masktab(src, dst, (sint32 *)stab, 
-		      (sint32 *)(stab + 64), 
-		      (sint32 *)(stab + 128),
-		      (sint32 *)stab, 1, 0,
+	build_masktab(src, dst, (int32_t *)stab, 
+		      (int32_t *)(stab + 64), 
+		      (int32_t *)(stab + 128),
+		      (int32_t *)stab, 1, 0,
 		      (ggi_pixel *)(mtab), 48, 2, 3, &nl, &nr);
 
 	for (i = 0; i < 32; i++) {
-		uint64 val;
+		uint64_t val;
 		val = *((ggi_pixel *)mtab + i * 2) & 0xffff;
 		val |= val << 32;
-		*((uint64 *)mtab + i) = val;
+		*((uint64_t *)mtab + i) = val;
 	}
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint32_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/4;
@@ -1058,33 +1058,33 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 	sstride -= w;
 	
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
-			uint32 tmp;
+			uint32_t tmp;
 			ggi_pixel cache;
 
 			if ((stopcol > dstp + 3) && 
 			    !((sizeof(char *) == 8) ?
-			      ((uint64)dstp % 8) : ((uint32)dstp % 8))) {
+			      ((uint64_t)dstp % 8) : ((uint32_t)dstp % 8))) {
 				while (stopcol > dstp + 3) {
-					uint64 tmpa64, tmpb64;
-					uint64 cachea64, cacheb64;
+					uint64_t tmpa64, tmpb64;
+					uint64_t cachea64, cacheb64;
 
 					tmpa64 = 0;
 					tmpb64 = 0;
-					cachea64 = *((uint64 *)srcp);
-					cacheb64 = *((uint64 *)srcp + 1);
+					cachea64 = *((uint64_t *)srcp);
+					cacheb64 = *((uint64_t *)srcp + 1);
 					i = 0;
 
-					while (*((uint64 *)mtab + i)) {
+					while (*((uint64_t *)mtab + i)) {
 						tmpa64 |= (cachea64 << 
 							   *((int *)stab+i)) &
-						  *((uint64 *)mtab + i);
+						  *((uint64_t *)mtab + i);
 						tmpb64 |= (cacheb64 << 
 							   *((int *)stab+i)) &
-						  *((uint64 *)mtab + i);
+						  *((uint64_t *)mtab + i);
 						if (!*((int *)stab + i)) 
 							goto doright64;
 						i++;
@@ -1098,14 +1098,14 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 					tmpa64 |= tmpb64 << 32;
 					tmpb64 &= 0x0000ffff00000000LL;
 					tmpa64 |= tmpb64 << 16;
-					*((uint64 *)dstp) = tmpa64;
+					*((uint64_t *)dstp) = tmpa64;
 #else
 					tmpb64 |= tmpa64 >> 16;
 					tmpb64 &= 0x00000000ffffffffLL;
 					tmpb64 |= tmpa64 << 32;
 					tmpa64 &= 0x0000ffff00000000LL;
 					tmpb64 |= tmpa64 << 16;
-					*((uint64 *)dstp) = tmpb64;
+					*((uint64_t *)dstp) = tmpb64;
 #endif
 					dstp+=4;
 					srcp+=4;
@@ -1113,13 +1113,13 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 					
 				doright64:
 					i++;
-					while (*((uint64 *)mtab + i)) {
+					while (*((uint64_t *)mtab + i)) {
 						tmpa64 |= (cachea64 >>
 							   *((int *)stab+i)) &
-						  *((uint64 *)mtab + i);
+						  *((uint64_t *)mtab + i);
 						tmpb64 |= (cacheb64 >>
 							   *((int *)stab+i)) &
-						  *((uint64 *)mtab + i);
+						  *((uint64_t *)mtab + i);
 						i++;
 					}
 					goto done64;
@@ -1131,7 +1131,7 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 			cache = *srcp;
 			i = 0;
 
-			while (*((uint64 *)mtab + i)) {
+			while (*((uint64_t *)mtab + i)) {
 				tmp |= (cache << 
 					*((int *)stab + i)) &
 				  *((ggi_pixel *)mtab + i * 2);
@@ -1149,7 +1149,7 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 
 		doright:
 			i++;
-			while (*((uint64 *)mtab + i)) {
+			while (*((uint64_t *)mtab + i)) {
 				tmp |= (cache >>
 					*((int *)stab + i)) &
 				  *((ggi_pixel *)mtab + i * 2);
@@ -1239,12 +1239,12 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 				ggi_visual *dst, int dx, int dy) {
 	char tabbuf[8 * 96 + 7], *tab;
 	int nl, nr;
-	uint16 *stoprow, *dstp, *srcp;
+	uint16_t *stoprow, *dstp, *srcp;
 	int dstride, sstride, i;
 
 	DPRINT_DRAW("linear-16: cb16to16_mmx.\n");
 
-	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
+	tab = tabbuf + (8 - (((uint32_t)tabbuf) % 8));
 
 	build_masktab(src, dst, (int *)tab, 
 		      (int *)(tab + 256), (int *)(tab + 512), 
@@ -1253,14 +1253,14 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 
 	for (i = 0; i < 32; i++) {
 		*((unsigned long long *)tab + i*2) = *((int *)tab + i*4);
-		*((uint16 *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
-		*((uint16 *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
-		*((uint16 *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
+		*((uint16_t *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16_t *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16_t *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
 	}
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint16_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/2;
@@ -1270,7 +1270,7 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
@@ -1391,13 +1391,13 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	/* TODO: Align stuff here. */
 	char tabbuf[8 * 96 + 7], *tab;
 	int nl, nr;
-	uint16 *stoprow, *dstp;
-	uint32 *srcp;
+	uint16_t *stoprow, *dstp;
+	uint32_t *srcp;
 	int dstride, sstride, i, right;
 	
 	DPRINT_DRAW("linear-16: cb32to16_mmx.\n");
 
-	tab = tabbuf + (8 - (((uint32)tabbuf) % 8));
+	tab = tabbuf + (8 - (((uint32_t)tabbuf) % 8));
 
 	build_masktab(src, dst, (int *)tab, 
 		      (int *)(tab + 256), (int *)(tab + 512), 
@@ -1411,14 +1411,14 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 		*((unsigned long long *)tab + i*2) = 
 			*((int *)tab + i*4) + right;
 		if (!*((unsigned long long *)tab + i*2)) right = 16;
-		*((uint16 *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
-		*((uint16 *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
-		*((uint16 *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
+		*((uint16_t *)tab + i*8 + 6) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16_t *)tab + i*8 + 7) = *((ggi_pixel *)tab + i*4 + 2);
+		*((uint16_t *)tab + i*8 + 5) = *((ggi_pixel *)tab + i*4 + 2);   
 	}
 
-	dstp = (uint16*)((uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint16_t*)((uint8_t*)LIBGGI_CURWRITE(dst) + 
 			 dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*2);
-	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint32_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
 	dstride = LIBGGI_FB_W_STRIDE(dst)/2;
 	sstride = LIBGGI_FB_R_STRIDE(src)/4;
@@ -1428,11 +1428,11 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 	
 	while (stoprow > dstp) {
-		uint16 *stopcol;
+		uint16_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {
-			uint32 tmp;
+			uint32_t tmp;
 			ggi_pixel cache;
 
 			if ((stopcol > dstp + 7) && 

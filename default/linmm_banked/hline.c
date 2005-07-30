@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2004/12/01 23:08:05 cegger Exp $
+/* $Id: hline.c,v 1.4 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Generic 8, 16, 32 Banked Graphics library for GGI. Horizontal lines.
@@ -40,7 +40,7 @@ int GGIdrawhline(ggi_visual *vis,int x,int y,int w)
 {
 	ggi_pixel color;
 	unsigned int align;
-	uint8 *pixpt;
+	uint8_t *pixpt;
 
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) 
@@ -106,7 +106,7 @@ int GGIdrawhline_nc(ggi_visual *vis,int x,int y,int w)
 {
 	ggi_pixel color;
 	unsigned int align;
-	uint8 *pixpt;
+	uint8_t *pixpt;
 
 	color = LIBGGI_GC_FGCOLOR(vis);
 
@@ -157,8 +157,8 @@ int GGIdrawhline_nc(ggi_visual *vis,int x,int y,int w)
 
 int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
 { 
-	uint8 *pixpt;
-	const uint8 *buffer=(const uint8 *)buff;
+	uint8_t *pixpt;
+	const uint8_t *buffer=(const uint8_t *)buff;
 	unsigned int align;
 
 	/* Clipping */
@@ -168,7 +168,7 @@ int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
 		int diff=(LIBGGI_GC(vis)->cliptl.x)-x;
 		x+=diff;
 		w-=diff;
-		buffer=((uint8 *)buffer)+diff;
+		buffer=((uint8_t *)buffer)+diff;
 	}
 	if (x+w>(LIBGGI_GC(vis)->clipbr.x)) {
 		w=(LIBGGI_GC(vis)->clipbr.x)-x;
@@ -205,7 +205,7 @@ int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
 
 int GGIgethline(ggi_visual *vis,int x,int y,int w,void *buff)
 { 
-	uint8 *pixpt,*buffer=(uint8 *)buff;
+	uint8_t *pixpt,*buffer=(uint8_t *)buff;
 	unsigned int align;
 
 	CHECKXYW(vis,x,y,w);

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2002/10/05 18:39:06 fspacek Exp $
+/* $Id: box.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Mach64 box acceleration
@@ -45,7 +45,7 @@ int GGI_kgi_mach64_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 int GGI_kgi_mach64_copybox(ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
-	uint32 direction = MACH64_4C_DST_LAST_PEL;
+	uint32_t direction = MACH64_4C_DST_LAST_PEL;
 	
 	if ((w < 1) || (h < 1))
 		return 0;

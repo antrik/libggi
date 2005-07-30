@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2003/07/05 22:13:42 cegger Exp $
+/* $Id: gtext.c,v 1.3 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -55,7 +55,7 @@ GGIblit2c(ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
 			ggiPutPixel(vis,x+xp,y,color);
       			if (!(bp>>=1)) {
 				bp=0x80;
-				field = ((uint8 *) field) + 1;
+				field = ((uint8_t *) field) + 1;
 			}
     		}
 	}
@@ -65,7 +65,7 @@ GGIblit2c(ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
 
 int GGI_stubs_putc(ggi_visual *vis,int x,int y,char c)
 {
-	return GGIblit2c(vis, x, y, 8, 8, font+((uint8)c<<3));
+	return GGIblit2c(vis, x, y, 8, 8, font+((uint8_t)c<<3));
 }
 
 /* Write a null-terminated string of characters, returns the number of

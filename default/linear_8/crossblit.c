@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.9 2005/01/14 09:38:11 pekberg Exp $
+/* $Id: crossblit.c,v 1.10 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -42,7 +42,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 {
 	ggi_pixel cur_src;
 	ggi_pixel cur_dst = 0;
-	uint8 *dstptr;
+	uint8_t *dstptr;
 	int stride;
 
 	DPRINT_DRAW("linear-8: fallback to slow crossblit.\n");
@@ -51,7 +51,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	cur_src++; /* assure safe init */
 	
 	stride = LIBGGI_FB_W_STRIDE(dst);
-	dstptr = (uint8*) LIBGGI_CURWRITE(dst) + dy*stride + dx;
+	dstptr = (uint8_t*) LIBGGI_CURWRITE(dst) + dy*stride + dx;
 
 	for (; h > 0; h--, sy++, dy++) {
 		int x;
@@ -79,10 +79,10 @@ static inline void
 crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 		  ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
-	uint8 conv_tab[256];
+	uint8_t conv_tab[256];
 
 	DPRINT_DRAW("linear-8: crossblit_8_to_8.\n");
 
@@ -98,8 +98,8 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 		}
 	} while (0);
 
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
 
 	srcstride -= w;
 	dststride -= w;
@@ -135,14 +135,14 @@ static inline void
 crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	       ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 
 	DPRINT_DRAW("linear-8: DB-accelerating crossblit.\n");
 	
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx;
 
 	for (; h != 0; h--) {
 		memcpy(dstp, srcp, (size_t)(w));
@@ -162,9 +162,9 @@ int GGI_lin8_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	 */
 	if (src->r_frame && src->r_frame->layout == dst->w_frame->layout &&
 	    dst->w_frame->buffer.plb.pixelformat->stdformat != 0) {
-		uint32 srcformat
+		uint32_t srcformat
 			= src->r_frame->buffer.plb.pixelformat->stdformat;
-		uint32 dstformat
+		uint32_t dstformat
 			= dst->w_frame->buffer.plb.pixelformat->stdformat;
 		int pixels = w*h;
 

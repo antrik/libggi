@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
+/* $Id: box.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -32,7 +32,7 @@ int GGI_mga_g400_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */
 		struct mga_g400_priv *priv = MGA_G400_PRIV(vis);
-		volatile uint8 *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+		volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 		int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
 
 		y += yadd;
@@ -61,7 +61,7 @@ int GGI_mga_g400_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 int GGI_mga_g400_fillscreen(ggi_visual *vis)
 {
 	struct mga_g400_priv *priv = MGA_G400_PRIV(vis);
-	volatile uint8 *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	int virtx = LIBGGI_VIRTX(vis);
 	int virty = LIBGGI_VIRTY(vis);
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);

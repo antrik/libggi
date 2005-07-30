@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2003/01/10 23:28:05 ortalo Exp $
+/* $Id: box.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
    Matrox Gx00 box acceleration
 
@@ -89,8 +89,8 @@ int GGI_kgi_Gx00_copybox(ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
   sint32 ar5;
-  uint32 begin, end;
-  uint32 sgn = 0;
+  uint32_t begin, end;
+  uint32_t sgn = 0;
 
   if ((w <= 0)||(h <= 0))
     return 0;

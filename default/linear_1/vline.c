@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.2 2004/12/01 23:08:01 cegger Exp $
+/* $Id: vline.c,v 1.3 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -31,14 +31,14 @@
 
 int GGI_lin1_drawvline_nc(ggi_visual *vis,int x,int y,int height)
 {
-	uint8 *adr;
+	uint8_t *adr;
 	int i,sw,bm;
 
 	PREPARE_FB(vis);
 
 	bm=(0x80>>(x&7));
 	sw=LIBGGI_FB_W_STRIDE(vis);
-	adr=((uint8 *)(LIBGGI_CURWRITE(vis)));
+	adr=((uint8_t *)(LIBGGI_CURWRITE(vis)));
 	adr+=(x>>3)+y*sw;
 
 	if(LIBGGI_GC_FGCOLOR(vis)&1) 
@@ -51,8 +51,8 @@ int GGI_lin1_drawvline_nc(ggi_visual *vis,int x,int y,int height)
 
 int GGI_lin1_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
 { 
-	uint8 *adr;
-	const uint8 *buff=(const uint8 *)buffer;
+	uint8_t *adr;
+	const uint8_t *buff=(const uint8_t *)buffer;
 	int mask=0x80,sw,i,bm;
 
 	/* Clipping */
@@ -73,7 +73,7 @@ int GGI_lin1_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
 
 	bm=(0x80>>(x&7));
 	sw=LIBGGI_FB_W_STRIDE(vis);
-	adr=((uint8 *)(LIBGGI_CURWRITE(vis)));
+	adr=((uint8_t *)(LIBGGI_CURWRITE(vis)));
 	adr+=(x>>3)+y*sw;
 
 	for (i=0;i<height;i++,adr+=sw) {
@@ -93,13 +93,13 @@ int GGI_lin1_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
 
 int GGI_lin1_getvline(ggi_visual *vis,int x,int y,int height,void *buffer)
 { 
-	uint8 *adr,*buff=(uint8 *)buffer;
+	uint8_t *adr,*buff=(uint8_t *)buffer;
 	int mask,sw,i,bm;
 
 	PREPARE_FB(vis);
 
 	sw=LIBGGI_FB_R_STRIDE(vis);
-	adr=((uint8 *)(LIBGGI_CURREAD(vis)));
+	adr=((uint8_t *)(LIBGGI_CURREAD(vis)));
 	adr+=(x>>3)+y*sw;
 
 	bm=(0x80>>(x&7));

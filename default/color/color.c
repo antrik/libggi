@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.19 2005/01/20 21:20:37 cegger Exp $
+/* $Id: color.c,v 1.20 2005/07/30 11:39:56 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -65,7 +65,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 	color_palpriv *priv = COLOR_PALPRIV(vis);
 	ggi_color *pal;
 	ggi_pixel closest = 0;
-	uint32 closest_dist;
+	uint32_t closest_dist;
 	int pal_len;
 	int i, r, g, b;
 
@@ -97,7 +97,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
 #ifndef ABS
 #define ABS(val)	((val) < 0 ? -(val) : val)
 #endif
-		uint32 dist =
+		uint32_t dist =
 			ABS(r - pal[i].r) +
 			ABS(g - pal[i].g) +
 			ABS(b - pal[i].b);

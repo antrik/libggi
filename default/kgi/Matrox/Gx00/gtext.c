@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: gtext.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 text acceleration
@@ -32,7 +32,7 @@
 
 int GGI_kgi_Gx00_putc(ggi_visual *vis, int x, int y, char c)
 {
-  uint32 *cg = (uint32*)(font + ((uint8)c<<3));
+  uint32_t *cg = (uint32_t*)(font + ((uint8_t)c<<3));
 
   GGI_kgi_Gx00_updatehwgc(vis);
 

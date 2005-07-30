@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:46 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -37,7 +37,7 @@ int GGI_lin8_drawpixela(ggi_visual *vis,int x,int y)
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
  
-	*((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=LIBGGI_GC_FGCOLOR(vis);
+	*((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
 }
@@ -46,7 +46,7 @@ int GGI_lin8_drawpixel_nca(ggi_visual *vis,int x,int y)
 {
 	PREPARE_FB(vis);
 
-	*((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=LIBGGI_GC_FGCOLOR(vis);
+	*((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
 }
@@ -55,7 +55,7 @@ int GGI_lin8_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	PREPARE_FB(vis);
 
-	*((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=(col&0xff);
+	*((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=(col&0xff);
 
 	return 0;
 }
@@ -65,7 +65,7 @@ int GGI_lin8_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
 
-	*((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=(col&0xff);
+	*((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+x)=(col&0xff);
 
 	return 0;
 }
@@ -74,7 +74,7 @@ int GGI_lin8_getpixela(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	PREPARE_FB(vis);
 
-	*pixel=*((uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+x);
+	*pixel=*((uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+x);
 
 	return 0;
 }

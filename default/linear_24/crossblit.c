@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.9 2004/11/27 16:41:57 soyt Exp $
+/* $Id: crossblit.c,v 1.10 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -50,8 +50,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	 ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
-	uint32 cur_dst = 0;
-	uint8 *dstptr;
+	uint32_t cur_dst = 0;
+	uint8_t *dstptr;
 	int stride;
 
 	DPRINT_DRAW("linear-24: fallback to slow crossblit\n");
@@ -60,7 +60,7 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 	cur_src++; /* assure safe init */
 	
 	stride = LIBGGI_FB_W_STRIDE(dst);
-	dstptr = (uint8*)LIBGGI_CURWRITE(dst) + dy*stride + dx*3;
+	dstptr = (uint8_t*)LIBGGI_CURWRITE(dst) + dy*stride + dx*3;
 
 	for (; h > 0; h--, sy++, dy++) {
 		int x;
@@ -88,14 +88,14 @@ static inline void
 crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	       ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
 
 	DPRINT_DRAW("linear-24: simple memcpy crossblit.\n");
 	
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*3;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx*3;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
 
 	/* Width should be in bytes */
 	w *= 3;
@@ -116,10 +116,10 @@ static inline void
 cb4to24(ggi_visual *src, int sx, int sy, int w, int h,
 	ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
-	uint32 conv_tab[16];
+	uint32_t conv_tab[16];
 
 	DPRINT_DRAW("linear-24: cb4to24.\n");
 
@@ -133,14 +133,14 @@ cb4to24(ggi_visual *src, int sx, int sy, int w, int h,
 		}
 	} while (0);
 
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx/2;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx/2;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
 
 	dststride -= w*3;
 
 	if ((sx ^ w) & 1) {
 		for (; h > 0; h--) {
-			uint8  *srcpb = srcp;
+			uint8_t  *srcpb = srcp;
 			
 			int i = w / 8;
 
@@ -185,7 +185,7 @@ cb4to24(ggi_visual *src, int sx, int sy, int w, int h,
 	}
 	else {
 		for (; h > 0; h--) {
-			uint8 *srcpb = srcp;
+			uint8_t *srcpb = srcp;
 			
 			int i = w / 8;
 
@@ -237,10 +237,10 @@ static inline void
 cb8to24(ggi_visual *src, int sx, int sy, int w, int h,
 	ggi_visual *dst, int dx, int dy)
 {
-	uint8 *srcp, *dstp;
+	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
 	int dststride = LIBGGI_FB_W_STRIDE(dst);
-	uint32 conv_tab[256];
+	uint32_t conv_tab[256];
 
 	DPRINT_DRAW("linear-24: cb8to24.\n");
 
@@ -256,8 +256,8 @@ cb8to24(ggi_visual *src, int sx, int sy, int w, int h,
 		}
 	} while (0);
 
-	srcp = (uint8*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
+	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*3;
 
 	srcstride -= w;
 	dststride -= w*3;
@@ -319,7 +319,7 @@ cb8to24(ggi_visual *src, int sx, int sy, int w, int h,
  *   rshift/gshift/bshift.
  * sskip is the number of bytes to skip between shift values, in case the
  *   SWAR works best when the shift and mask values are interleaved, and/or
- *   in case the SWAR works best with different size values than sint32.
+ *   in case the SWAR works best with different size values than int32_t.
  * soff defines a bit offset added to bitshifts. The actual direction of the
  *   shift may be altered by this offset.
  * mask is the location to store the first element of the column in the 
@@ -362,8 +362,8 @@ cb8to24(ggi_visual *src, int sx, int sy, int w, int h,
  */
 
 static inline void build_masktab(ggi_visual *src, ggi_visual *dst, 
-				 sint32 *rshift,sint32 *gshift,sint32 *bshift,
-				 sint32 *shift, int sskip, int soff,
+				 int32_t *rshift,int32_t *gshift,int32_t *bshift,
+				 int32_t *shift, int sskip, int soff,
 				 ggi_pixel *mask, int masklen, int mskip,
 				 int maskpost, int *nl, int *nr) {
 	int i, j;
@@ -465,11 +465,11 @@ if (stmp <= 23) {						\
  */
 static inline void cb24to24(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	sint32 shifts[72], rshifts[24];
+	int32_t shifts[72], rshifts[24];
 	ggi_pixel masks[48], rmasks[24];
 	int nl, nr;
-	uint8 *stoprow, *dstp;
-	uint8 *srcp;
+	uint8_t *stoprow, *dstp;
+	uint8_t *srcp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-24: cb24to24.\n");
@@ -477,9 +477,9 @@ static inline void cb24to24(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 24, shifts + 48, 
 		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
 
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + 
 	  dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*3;
-	srcp = (uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint8_t*)LIBGGI_CURREAD(src) + 
 	  sy*(LIBGGI_FB_R_STRIDE(src)) + sx*3;
 	dstride = LIBGGI_FB_W_STRIDE(dst);
 	sstride = LIBGGI_FB_R_STRIDE(src);
@@ -489,10 +489,10 @@ static inline void cb24to24(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w * 3;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 	
 	while (stoprow > dstp) {
-		uint8 *stopcol;
+		uint8_t *stopcol;
 
 		stopcol = dstp + w * 3;
 		while (stopcol > dstp) {
@@ -616,11 +616,11 @@ static inline void cb24to24(ggi_visual *src, int sx, int sy, int w, int h,
  */
 static inline void cb16to24(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	sint32 shifts[72], rshifts[16];
+	int32_t shifts[72], rshifts[16];
 	ggi_pixel masks[40], rmasks[16];
 	int nl, nr;
-	uint8 *stoprow, *dstp;
-	uint16 *srcp;
+	uint8_t *stoprow, *dstp;
+	uint16_t *srcp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-24: cb16to24.\n");
@@ -628,9 +628,9 @@ static inline void cb16to24(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 24, shifts + 48,
 		      shifts, 1, 0, masks, 48, 1, 0, &nl, &nr);
 		
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + 
 	  dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*3;
-	srcp = (uint16*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint16_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*2);
 	dstride = LIBGGI_FB_W_STRIDE(dst);
 	sstride = LIBGGI_FB_R_STRIDE(src)/2;
@@ -640,10 +640,10 @@ static inline void cb16to24(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 
 	while (stoprow > dstp) {
-		uint8 *stopcol;
+		uint8_t *stopcol;
 		
 		stopcol = dstp + w * 3;
 		while (stopcol > dstp) {
@@ -751,11 +751,11 @@ static inline void cb16to24(ggi_visual *src, int sx, int sy, int w, int h,
  */
 static inline void cb32to24(ggi_visual *src, int sx, int sy, int w, int h, 
 			    ggi_visual *dst, int dx, int dy) {
-	sint32 shifts[72], rshifts[32];
+	int32_t shifts[72], rshifts[32];
 	ggi_pixel masks[56], rmasks[32];
 	int nl, nr;
-	uint32  *srcp;
-	uint8 *stoprow, *dstp;
+	uint32_t  *srcp;
+	uint8_t *stoprow, *dstp;
 	int dstride, sstride;
 	
 	DPRINT_DRAW("linear-24: cb32to24.\n");
@@ -763,9 +763,9 @@ static inline void cb32to24(ggi_visual *src, int sx, int sy, int w, int h,
 	build_masktab(src, dst, shifts, shifts + 24, shifts + 48, 
 		      shifts, 1, 0, masks, 56, 1, 0, &nl, &nr);
 
-	dstp = (uint8*)LIBGGI_CURWRITE(dst) + 
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + 
 	  dy*(LIBGGI_FB_W_STRIDE(dst)) + dx*3;
-	srcp = (uint32*)((uint8*)LIBGGI_CURREAD(src) + 
+	srcp = (uint32_t*)((uint8_t*)LIBGGI_CURREAD(src) + 
 			 sy*(LIBGGI_FB_R_STRIDE(src)) + sx*4);
 	dstride = LIBGGI_FB_W_STRIDE(dst);
 	sstride = LIBGGI_FB_R_STRIDE(src)/4;
@@ -775,10 +775,10 @@ static inline void cb32to24(ggi_visual *src, int sx, int sy, int w, int h,
 	sstride -= w;
 
 	memcpy(rmasks, masks + nl + 1, nr * sizeof(ggi_pixel));
-	memcpy(rshifts, shifts + nl + 1, nr * sizeof(sint32));
+	memcpy(rshifts, shifts + nl + 1, nr * sizeof(int32_t));
 
 	while (stoprow > dstp) {
-		uint8 *stopcol;
+		uint8_t *stopcol;
 		
 		stopcol = dstp + w;
 		while (stopcol > dstp) {

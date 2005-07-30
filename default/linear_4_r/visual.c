@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2004/11/06 22:48:23 cegger Exp $
+/* $Id: visual.c,v 1.6 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -29,7 +29,7 @@
 #include "lin4rlib.h"
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	/* Color mapping 
 	 */

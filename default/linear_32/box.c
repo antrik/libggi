@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2004/12/01 23:08:03 cegger Exp $
+/* $Id: box.c,v 1.5 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -32,14 +32,14 @@
 
 int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 {
-	uint32 *buf32;
-	uint32 color = LIBGGI_GC_FGCOLOR(vis);
+	uint32_t *buf32;
+	uint32_t color = LIBGGI_GC_FGCOLOR(vis);
 	int linediff;
 
 	LIBGGICLIP_XYWH(vis, x, y, origw, h);
 	PREPARE_FB(vis);
 
-	buf32 = (uint32*)((uint8*)LIBGGI_CURWRITE(vis)
+	buf32 = (uint32_t*)((uint8_t*)LIBGGI_CURWRITE(vis)
 			  + y*LIBGGI_FB_W_STRIDE(vis) + x*4);
 	linediff = LIBGGI_FB_W_STRIDE(vis) - origw*4;
 
@@ -48,7 +48,7 @@ int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 		while (w--) {
 			*(buf32++) = color;
 		}
-		buf32 = (uint32*) ((uint8*)buf32 + linediff);
+		buf32 = (uint32_t*) ((uint8_t*)buf32 + linediff);
 	}
 
 	return 0;
@@ -57,15 +57,15 @@ int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 
 int GGI_lin32_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
-	const uint32 *src = buffer;
-	uint8 *dest;
+	const uint32_t *src = buffer;
+	uint8_t *dest;
 	int srcwidth = w;
 	int destwidth = LIBGGI_FB_W_STRIDE(vis);
 
 	LIBGGICLIP_PUTBOX(vis,x,y,w,h,src,srcwidth, *1);
 	PREPARE_FB(vis);
 
-	dest = (uint8 *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*4);
+	dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (y*destwidth + x*4);
 
 	/* Width should be in bytes */
 	w *= 4;

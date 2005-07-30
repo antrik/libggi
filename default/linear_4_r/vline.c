@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.2 2004/12/01 23:08:04 cegger Exp $
+/* $Id: vline.c,v 1.3 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -36,15 +36,15 @@
 static inline void
 do_drawvline(ggi_visual *vis, int x, int y, int h)
 {
-	uint8 *ptr;
+	uint8_t *ptr;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
-	uint8 shift = (x & 1) ? 4 : 0;
-	uint8 color = LIBGGI_GC_FGCOLOR(vis) << shift;
-	uint8 mask = 0x0f << shift;
+	uint8_t shift = (x & 1) ? 4 : 0;
+	uint8_t color = LIBGGI_GC_FGCOLOR(vis) << shift;
+	uint8_t mask = 0x0f << shift;
 
 	PREPARE_FB(vis);
 
-	ptr = (uint8*)LIBGGI_CURWRITE(vis) + y*stride + x/2;
+	ptr = (uint8_t*)LIBGGI_CURWRITE(vis) + y*stride + x/2;
 
 	for(; h > 0; h--, ptr += stride) {
 		*ptr = color | (*ptr & mask);
@@ -70,17 +70,17 @@ int GGI_lin4r_drawvline_nc(ggi_visual *vis,int x,int y,int h)
 
 int GGI_lin4r_putvline(ggi_visual *vis,int x,int y,int h,const void *buffer)
 {
-	uint8 *ptr;
-	const uint8 *buf8=(const uint8 *)buffer;
+	uint8_t *ptr;
+	const uint8_t *buf8=(const uint8_t *)buffer;
 	int stride=LIBGGI_FB_W_STRIDE(vis);
-	uint8 shift = (x & 0x01) << 2;
-	uint8 mask = 0x0f << shift;
-	uint8 antishift = shift ^ 4;
+	uint8_t shift = (x & 0x01) << 2;
+	uint8_t mask = 0x0f << shift;
+	uint8_t antishift = shift ^ 4;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf8, /2);
 	PREPARE_FB(vis);
 
-	ptr=(uint8 *)LIBGGI_CURWRITE(vis)+y*((stride+x)>>1);
+	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*((stride+x)>>1);
 
 	for(; h > 1; h-=2, ptr+=(stride<<1)) {
 		*ptr=(*buf8 >> shift) | (*ptr & mask);
@@ -97,14 +97,14 @@ int GGI_lin4r_putvline(ggi_visual *vis,int x,int y,int h,const void *buffer)
 
 int GGI_lin4r_getvline(ggi_visual *vis,int x,int y,int h,void *buffer)
 {
-	uint8 *ptr,*buf8=(uint8 *)buffer;
+	uint8_t *ptr,*buf8=(uint8_t *)buffer;
 	int stride=LIBGGI_FB_W_STRIDE(vis);
-	uint8 shift = (x & 0x01) << 2;
-	uint8 mask = 0x0f << shift;
-	uint8 antishift = shift ^ 4;
+	uint8_t shift = (x & 0x01) << 2;
+	uint8_t mask = 0x0f << shift;
+	uint8_t antishift = shift ^ 4;
 	
 	PREPARE_FB(vis);
-	ptr = (uint8 *)LIBGGI_CURREAD(vis)+y*((stride+x)>>1);
+	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*((stride+x)>>1);
 
 	/* Warning: unnecessary bit operations ahead! */
 	for (; h > 1; h-=2, ptr+=stride<<1) {

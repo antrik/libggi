@@ -1,4 +1,4 @@
-/* $Id: m2164w.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: m2164w.h,v 1.3 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -48,20 +48,20 @@
 
 
 struct m2164w_priv {
-	uint32		dwgctl;
+	uint32_t		dwgctl;
 	ggi_pixel	oldfgcol;
 	ggi_pixel	oldbgcol;
 	ggi_coord	oldtl, oldbr;
 	int		oldyadd;
-	uint16		curopmode;
-	uint16		origopmode;
-	uint32		drawboxcmd;
+	uint16_t		curopmode;
+	uint16_t		origopmode;
+	uint32_t		drawboxcmd;
 	unsigned long	fontoffset;
 	int		charadd;
-	uint8	       *font;	/* Pointer to font in main RAM. */
-	uint32		mmio_len;
-	volatile uint32 *dmaaddr;
-	uint32		dma_len;
+	uint8_t	       *font;	/* Pointer to font in main RAM. */
+	uint32_t		mmio_len;
+	volatile uint32_t *dmaaddr;
+	uint32_t		dma_len;
 	ggifunc_crossblit	*crossblit;
 };
 
@@ -71,15 +71,15 @@ struct m2164w_priv {
 #include "mmio.h"
 
 /* Cast values for insertion in registers */
-#define RS16(val)	( (uint16)((sint16)(val)))
-#define RS18(val)	(((uint32)((sint32)(val)))&0x003ffff)
-#define RS24(val)	(((uint32)((sint32)(val)))&0x0ffffff)
-#define RS27(val)	(((uint32)((sint32)(val)))&0x7ffffff)
+#define RS16(val)	( (uint16_t)((sint16)(val)))
+#define RS18(val)	(((uint32_t)((sint32)(val)))&0x003ffff)
+#define RS24(val)	(((uint32_t)((sint32)(val)))&0x0ffffff)
+#define RS27(val)	(((uint32_t)((sint32)(val)))&0x7ffffff)
 
 
 /* Update GC components if needed */
 static inline void
-mga_gcupdate(volatile uint8 *mmioaddr, struct m2164w_priv *priv,
+mga_gcupdate(volatile uint8_t *mmioaddr, struct m2164w_priv *priv,
 	     ggi_mode *mode, ggi_gc *gc, int virtx, int yadd)
 {
 	int newfg = (gc->fg_color != priv->oldfgcol);

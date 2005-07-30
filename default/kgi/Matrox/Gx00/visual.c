@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2004/11/14 15:47:43 cegger Exp $
+/* $Id: visual.c,v 1.8 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -55,7 +55,7 @@ static int GGI_kgi_Gx00_flush(ggi_visual *vis, int x, int y,
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;
 	Gx00_context_t *ctx;
@@ -81,7 +81,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GX00_WRITE_REG(vis, LIBGGI_VIRTX(vis), PITCH);
 	/* Initializes the MACCESS fields */
 	{
-	  uint32 maccess = MACCESS_ZWIDTH_ZW16; /* NB: no fogging */
+	  uint32_t maccess = MACCESS_ZWIDTH_ZW16; /* NB: no fogging */
 	  switch (GT_ByPP(LIBGGI_GT(vis))) {
 	  case 1:
 	    maccess |= MACCESS_PWIDTH_PW8;

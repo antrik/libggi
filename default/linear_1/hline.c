@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2004/12/01 23:08:01 cegger Exp $
+/* $Id: hline.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -31,14 +31,14 @@
 
 int GGI_lin1_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 {
-	uint8 *adr;
+	uint8_t *adr;
 	int i,j,mask,color;
 
 	PREPARE_FB(vis);
 
 	color=(LIBGGI_GC_FGCOLOR(vis)&1)*0xFF;
 
-	adr=((uint8 *)(LIBGGI_CURWRITE(vis)));
+	adr=((uint8_t *)(LIBGGI_CURWRITE(vis)));
 	adr+=(x/8+y*LIBGGI_FB_W_STRIDE(vis));
 
 	/* Draw 'front' pixels */ 
@@ -69,10 +69,10 @@ int GGI_lin1_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 
 int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 { 
-	uint8 *adr;
-	const uint8 *buff=(const uint8 *)buffer;
+	uint8_t *adr;
+	const uint8_t *buff=(const uint8_t *)buffer;
 	int mask,i,j,diff=0;
-	uint8 foo,color;
+	uint8_t foo,color;
 
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) return 0;
@@ -88,7 +88,7 @@ int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 
 	PREPARE_FB(vis);
 
-	adr=((uint8 *)(LIBGGI_CURWRITE(vis)));
+	adr=((uint8_t *)(LIBGGI_CURWRITE(vis)));
 	adr+=(x/8+y*LIBGGI_FB_W_STRIDE(vis));
 
 	color=buff[0];
@@ -130,13 +130,13 @@ int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 
 int GGI_lin1_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
-	uint8 *adr,*buff=(uint8 *)buffer;
+	uint8_t *adr,*buff=(uint8_t *)buffer;
 	int mask,i,j;
-	uint8 color;
+	uint8_t color;
 
 	PREPARE_FB(vis);
 
-	adr=((uint8 *)(LIBGGI_CURREAD(vis)));
+	adr=((uint8_t *)(LIBGGI_CURREAD(vis)));
 	adr+=(x/8+y*LIBGGI_FB_R_STRIDE(vis));
 
 	if ((i=x&7)) {

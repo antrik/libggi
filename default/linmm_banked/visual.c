@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/27 16:42:13 soyt Exp $
+/* $Id: visual.c,v 1.7 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -51,17 +51,17 @@
 #define BANK_PAGE_SIZE (32 * 1024) /* Later get from new ioctl */
 #define MMAP_PAGE_SIZE ((PAGE_SIZE > BANK_PAGE_SIZE) ? PAGE_SIZE : BANK_PAGE_SIZE)
 
-uint8 *__localrfb=NULL;  /* Read only bank */
-uint8 *__localwfb=NULL;  /* Write-only bank */
-uint8 *__localafb=NULL;  /* Bank that anticipate ascending access */
-uint8 *__localdfb=NULL;  /* Bank that anticipates descending access */
+uint8_t *__localrfb=NULL;  /* Read only bank */
+uint8_t *__localwfb=NULL;  /* Write-only bank */
+uint8_t *__localafb=NULL;  /* Bank that anticipate ascending access */
+uint8_t *__localdfb=NULL;  /* Bank that anticipates descending access */
 static int __localafb_len;
 static int __localdfb_len;
 static int __localrfb_len;
 static int __localwfb_len;
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	if (LIBGGI_MODE(vis)) {
 		__localafb_len =
@@ -81,7 +81,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 
-	__localafb=(uint8 *)mmap(NULL,
+	__localafb=(uint8_t *)mmap(NULL,
 				 __localafb_len,
 				 PROT_READ | PROT_WRITE,
 				 MAP_SHARED,
@@ -93,7 +93,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		__localafb = NULL;
 	}
 
-	__localdfb=(uint8 *)mmap(NULL,
+	__localdfb=(uint8_t *)mmap(NULL,
 				 __localdfb_len,
 				 PROT_READ | PROT_WRITE,
 				 MAP_SHARED,
@@ -102,10 +102,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				 MMAP_PER_REGION_TYPE| 
 				 MMAP_PRIVATE | 8);
 	if ((long)(__localdfb) == MAP_FAILED) {
-		__localdfb = (uint8 *)NULL;
+		__localdfb = (uint8_t *)NULL;
 	}
 
-	__localrfb=(uint8 *)mmap(NULL,
+	__localrfb=(uint8_t *)mmap(NULL,
 				 __localrfb_len,
 				 PROT_READ,
 				 MAP_SHARED,
@@ -114,10 +114,10 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				 MMAP_PER_REGION_TYPE| 
 				 MMAP_PRIVATE | 16);
 	if ((long)(__localrfb) == MAP_FAILED) {
-		__localrfb = (uint8 *)NULL;
+		__localrfb = (uint8_t *)NULL;
 	}
 
-	__localwfb=(uint8 *)mmap(NULL,
+	__localwfb=(uint8_t *)mmap(NULL,
 				 __localwfb_len,
 				 PROT_WRITE,
 				 MAP_SHARED,
@@ -126,7 +126,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				 MMAP_PER_REGION_TYPE| 
 				 MMAP_PRIVATE | 32);
 	if ((long)(__localwfb) == MAP_FAILED) {
-		__localwfb = (uint8 *)NULL;
+		__localwfb = (uint8_t *)NULL;
 	}
 
 	/* Now attempt make-do with whatever the graphics hardware provided. */

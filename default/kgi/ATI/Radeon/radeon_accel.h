@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.10 2005/01/23 21:57:19 nsouch Exp $
+/* $Id: radeon_accel.h,v 1.11 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -36,39 +36,39 @@ typedef struct
 {
 
 	ggi_accel_t *accel;
-	uint32 ctx_loaded;
+	uint32_t ctx_loaded;
 
 	kgi_size_t swatch_inuse;
 #define RADEON_BAD_CTX 0
 #define RADEON_BASE_CTX 1
 	struct {
 		cce_type0_header_t h1;
-		uint32 rb3d_cntl;
-		uint32 rb3d_coloroffset;
-		uint32 re_width_height;
-		uint32 rb3d_colorpitch;
-		uint32 se_cntl;
-		uint32 se_coord_fmt;
+		uint32_t rb3d_cntl;
+		uint32_t rb3d_coloroffset;
+		uint32_t re_width_height;
+		uint32_t rb3d_colorpitch;
+		uint32_t se_cntl;
+		uint32_t se_coord_fmt;
 		cce_type0_header_t h2;
-		uint32 se_cntl_status;
+		uint32_t se_cntl_status;
 		cce_type0_header_t h3;
-		uint32 re_top_left;
+		uint32_t re_top_left;
 		cce_type0_header_t h4;
-		uint32 txablend;
+		uint32_t txablend;
 	} base_ctx;
 #define RADEON_SOLIDFILL_CTX 2
 	struct {
 		cce_type0_header_t h1;
-		uint32 pp_cntl;
+		uint32_t pp_cntl;
 	} solidfill_ctx;
 #define RADEON_COPYBOX_CTX 3
 	struct {
                 cce_type0_header_t h1;
-                uint32 pp_cntl;
+                uint32_t pp_cntl;
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
-                uint32 txoffset;
-		uint32 txcblend;
+                uint32_t txoffset;
+		uint32_t txcblend;
                 cce_type0_header_t h3;
                 pp_tex_size_t tex_size;
                 pp_txpitch_t txpitch;
@@ -76,18 +76,18 @@ typedef struct
 #define RADEON_PUT_CTX 4
 	struct {
                 cce_type0_header_t h1;
-                uint32 pp_cntl;
+                uint32_t pp_cntl;
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
-                uint32 txoffset;
-		uint32 txcblend;
+                uint32_t txoffset;
+		uint32_t txcblend;
                 cce_type0_header_t h3;
                 pp_tex_size_t tex_size;
                 pp_txpitch_t txpitch;
 	} put_ctx;
 #define RADEON_GUI2D_CTX 5
 	cce_pitch_offset_t src_pitch_offset;
-	uint32 dst_type;
+	uint32_t dst_type;
 	struct {
 		cce_type0_header_t h1;
 		cce_pitch_offset_t default_pitch_offset;
@@ -97,20 +97,20 @@ typedef struct
 #define RADEON_TEXT_CTX 6
 	struct {
                 cce_type0_header_t h1;
-                uint32 pp_cntl;
+                uint32_t pp_cntl;
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
-                uint32 txoffset;
-		uint32 txcblend;
+                uint32_t txoffset;
+		uint32_t txcblend;
 	} text_ctx;
 #define RADEON_CROSSBLIT_CTX 7
 	struct {
                 cce_type0_header_t h1;
-                uint32 pp_cntl;
+                uint32_t pp_cntl;
                 cce_type0_header_t h2;
                 pp_txformat_t txformat;
-                uint32 txoffset;
-		uint32 txcblend;
+                uint32_t txoffset;
+		uint32_t txcblend;
                 cce_type0_header_t h3;
                 pp_tex_size_t tex_size;
                 pp_txpitch_t txpitch;
@@ -142,8 +142,8 @@ GGI_ACCEL_WRITE_u32(RADEON_ACCEL(vis), val)
 
 #define RADEON_WRITEPACKET(vis, data)\
 do {									\
-		uint32 i = sizeof(data) / 4;				\
-		uint32 *ptr = (uint32*)&data;				\
+		uint32_t i = sizeof(data) / 4;				\
+		uint32_t *ptr = (uint32_t*)&data;				\
 		RADEON_CHECK(vis, sizeof(data) / 4);			\
 		while (i--)						\
 			RADEON_WRITE(vis, *ptr++);			\

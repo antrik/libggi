@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
+/* $Id: copybox.c,v 1.3 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    LibGGI linear 16 - copybox
@@ -33,7 +33,7 @@
 int
 GGI_lin16_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	uint8 *src, *dest;
+	uint8_t *src, *dest;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
 	int line;
 
@@ -41,14 +41,14 @@ GGI_lin16_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 	PREPARE_FB(vis);
 
 	if (ny < y) {
-		src  = (uint8 *)LIBGGI_CURREAD(vis)  + y*stride  + x*2;
-		dest = (uint8 *)LIBGGI_CURWRITE(vis) + ny*stride + nx*2;
+		src  = (uint8_t *)LIBGGI_CURREAD(vis)  + y*stride  + x*2;
+		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + ny*stride + nx*2;
 		for (line=0; line < h; line++, src += stride, dest += stride) {
 			memmove(dest, src, (size_t)(w*2));
 		}
 	} else {
-		src  = (uint8 *)LIBGGI_CURREAD(vis)  + (y+h-1)*stride  + x*2;
-		dest = (uint8 *)LIBGGI_CURWRITE(vis) + (ny+h-1)*stride + nx*2;
+		src  = (uint8_t *)LIBGGI_CURREAD(vis)  + (y+h-1)*stride  + x*2;
+		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (ny+h-1)*stride + nx*2;
 		for (line=0; line < h; line++, src -= stride, dest -= stride) {
 			memmove(dest, src, (size_t)(w*2));
 		}

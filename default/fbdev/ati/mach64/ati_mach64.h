@@ -1,4 +1,4 @@
-/* $Id: ati_mach64.h,v 1.5 2004/08/25 21:28:18 cegger Exp $
+/* $Id: ati_mach64.h,v 1.6 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 and rage pro acceleration for fbdev target
@@ -48,28 +48,28 @@
 
 
 struct ati_mach64_priv {
-	uint32 regaddr[256];	/* This approach saves more code than it
+	uint32_t regaddr[256];	/* This approach saves more code than it
 				   costs memory */
-	uint32 regbase;
-	uint32 dp_src;
-	uint32 dst_cntl;
+	uint32_t regbase;
+	uint32_t dp_src;
+	uint32_t dst_cntl;
 	unsigned long fontoffset;
-	uint8 *font;		/* Pointer to font in main RAM. */
+	uint8_t *font;		/* Pointer to font in main RAM. */
 	int charadd;
-	uint8 has_3d;		/* If true, reset 3d engine on init */
-/*	uint32          dwgctl; */
+	uint8_t has_3d;		/* If true, reset 3d engine on init */
+/*	uint32_t          dwgctl; */
 	ggi_pixel oldfgcol;
 	ggi_pixel oldbgcol;
 	ggi_coord oldtl, oldbr;
 
 #if 0
 	int		oldyadd;
-	uint16		curopmode;
-	uint16		origopmode;
-	uint32		drawboxcmd;
-	uint32		mmio_len;
-	volatile uint32 *dmaaddr;
-	uint32		dma_len;
+	uint16_t		curopmode;
+	uint16_t		origopmode;
+	uint32_t		drawboxcmd;
+	uint32_t		mmio_len;
+	volatile uint32_t *dmaaddr;
+	uint32_t		dma_len;
 	ggifunc_crossblit	*crossblit;
 #endif
 };
@@ -79,17 +79,17 @@ struct ati_mach64_priv {
 
 /* Cast values for insertion in registers */
 #if 0
-#define RS16(val)	( (uint16)((sint16)(val)))
-#define RS18(val)	(((uint32)((sint32)(val)))&0x003ffff)
-#define RS22(val)	(((uint32)((sint32)(val)))&0x03fffff)
-#define RS24(val)	(((uint32)((sint32)(val)))&0x0ffffff)
-#define RS27(val)	(((uint32)((sint32)(val)))&0x7ffffff)
+#define RS16(val)	( (uint16_t)((sint16)(val)))
+#define RS18(val)	(((uint32_t)((sint32)(val)))&0x003ffff)
+#define RS22(val)	(((uint32_t)((sint32)(val)))&0x03fffff)
+#define RS24(val)	(((uint32_t)((sint32)(val)))&0x0ffffff)
+#define RS27(val)	(((uint32_t)((sint32)(val)))&0x7ffffff)
 #endif
 
 /* Update GC components if needed */
 #if 0
 static inline void
-ati_gcupdate(volatile uint8 *mmioaddr, struct mga_g400_priv *priv,
+ati_gcupdate(volatile uint8_t *mmioaddr, struct mga_g400_priv *priv,
 	     ggi_mode *mode, ggi_gc *gc, int virtx, int yadd)
 {
 	int newfg = (gc->fg_color != priv->oldfgcol);
@@ -137,40 +137,40 @@ ggifunc_crossblit GGI_ati_mach64_crossblit;
 ggifunc_gcchanged GGI_ati_mach64_gcchanged;
 
 
-static inline uint32 aty_ld_le32(int regindex,
+static inline uint32_t aty_ld_le32(int regindex,
 				 const struct ati_mach64_priv *priv)
 {
 	/* Should be cleanly optimized by compiler */
 	if (regindex >= 0x400) {
 		regindex -= 0x400;
 #warning FIXME: This is not 64bit safe
-		return ((volatile uint32 *) (priv->regbase))[regindex / 4];
+		return ((volatile uint32_t *) (priv->regbase))[regindex / 4];
 	} else {
 #warning FIXME: This is not 64bit safe
 		return
-		    *((volatile uint32 *) (priv->regaddr[regindex / 4]));
+		    *((volatile uint32_t *) (priv->regaddr[regindex / 4]));
 	};
 }
 
-static inline void aty_st_le32(int regindex, uint32 val,
+static inline void aty_st_le32(int regindex, uint32_t val,
 			       const struct ati_mach64_priv *priv)
 {
 	/* Should be cleanly optimized by compiler */
 	if (regindex >= 0x400) {
 		regindex -= 0x400;
 #warning FIXME: This is not 64bit safe
-		((volatile uint32 *) (priv->regbase))[regindex / 4] = val;
+		((volatile uint32_t *) (priv->regbase))[regindex / 4] = val;
 	} else {
 #warning FIXME: This is not 64bit safe
-		*((volatile uint32 *) (priv->regaddr[regindex / 4])) = val;
+		*((volatile uint32_t *) (priv->regaddr[regindex / 4])) = val;
 	};
 }
 
-static inline void wait_for_fifo(uint16 entries,
+static inline void wait_for_fifo(uint16_t entries,
 				 const struct ati_mach64_priv *priv)
 {
 	while ((aty_ld_le32(FIFO_STAT, priv) & 0xffff) >
-	       ((uint32) (0x8000 >> entries)));
+	       ((uint32_t) (0x8000 >> entries)));
 }
 
 static inline void wait_for_idle(const struct ati_mach64_priv *priv)
@@ -179,7 +179,7 @@ static inline void wait_for_idle(const struct ati_mach64_priv *priv)
 	while ((aty_ld_le32(GUI_STAT, priv) & 1) != 0);
 }
 
-static inline void set_dp_src(struct ati_mach64_priv *priv, uint32 value)
+static inline void set_dp_src(struct ati_mach64_priv *priv, uint32_t value)
 {
 	if (priv->dp_src != value) {
 		wait_for_fifo(1, priv);
@@ -188,7 +188,7 @@ static inline void set_dp_src(struct ati_mach64_priv *priv, uint32 value)
 	};
 }
 
-static inline void set_dst_cntl(struct ati_mach64_priv *priv, uint32 value)
+static inline void set_dst_cntl(struct ati_mach64_priv *priv, uint32_t value)
 {
 	if (priv->dst_cntl != value) {
 		wait_for_fifo(1, priv);

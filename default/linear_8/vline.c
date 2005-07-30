@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2004/12/01 23:08:04 cegger Exp $
+/* $Id: vline.c,v 1.4 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,13 +32,13 @@
 static inline void
 do_drawvline(ggi_visual *vis, int x, int y, int h)
 {
-	uint8 *ptr;
+	uint8_t *ptr;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
-	uint8 color = LIBGGI_GC_FGCOLOR(vis);
+	uint8_t color = LIBGGI_GC_FGCOLOR(vis);
 
 	PREPARE_FB(vis);
 
-	ptr = (uint8*)LIBGGI_CURWRITE(vis) + y*stride + x;
+	ptr = (uint8_t*)LIBGGI_CURWRITE(vis) + y*stride + x;
 
 	for(; h > 0; h--, ptr += stride) {
 		*ptr = color;
@@ -64,14 +64,14 @@ int GGI_lin8_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 
 int GGI_lin8_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
-	uint8 *ptr;
-	const uint8 *buf8 = buffer;
+	uint8_t *ptr;
+	const uint8_t *buf8 = buffer;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf8, *1);
 	PREPARE_FB(vis);
 
-	ptr = ((uint8 *)LIBGGI_CURWRITE(vis)) + y*stride + x;
+	ptr = ((uint8_t *)LIBGGI_CURWRITE(vis)) + y*stride + x;
 
 	for(; h > 0; h--, ptr += stride) {
 		*ptr = *(buf8++); 
@@ -82,12 +82,12 @@ int GGI_lin8_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 
 int GGI_lin8_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 {
-	uint8 *ptr, *buf8;
+	uint8_t *ptr, *buf8;
 	int stride = LIBGGI_FB_R_STRIDE(vis);
 
 	PREPARE_FB(vis);
 
-	ptr = ((uint8 *)LIBGGI_CURREAD(vis)) + y*stride + x;
+	ptr = ((uint8_t *)LIBGGI_CURREAD(vis)) + y*stride + x;
 	buf8  = buffer;
 
 	for (; h > 0; h--, ptr += stride) {

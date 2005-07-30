@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2004/12/01 23:08:05 cegger Exp $
+/* $Id: vline.c,v 1.4 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -37,7 +37,7 @@
 /********************************/
 int GGIdrawvline(ggi_visual *vis,int x,int y,int h)
 {
-	uint8 *pixpt;
+	uint8_t *pixpt;
 	unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 	ggi_pixel color = LIBGGI_GC_FGCOLOR(vis);
 
@@ -66,7 +66,7 @@ int GGIdrawvline(ggi_visual *vis,int x,int y,int h)
 
 int GGIdrawvline_nc(ggi_visual *vis,int x,int y,int h)
 {
-	uint8 *pixpt;
+	uint8_t *pixpt;
 	unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 	ggi_pixel color = LIBGGI_GC_FGCOLOR(vis);
 	
@@ -85,8 +85,8 @@ int GGIdrawvline_nc(ggi_visual *vis,int x,int y,int h)
 
 int GGIputvline(ggi_visual *vis,int x,int y,int h,const void *buff)
 {
-  uint8 *pixpt;
-  const uint8 *buffer=(const uint8 *)buff;
+  uint8_t *pixpt;
+  const uint8_t *buffer=(const uint8_t *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 
 
@@ -117,8 +117,8 @@ int GGIputvline(ggi_visual *vis,int x,int y,int h,const void *buff)
 
 int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,const void *buff)
 {
-  uint8 *pixpt;
-  const uint8 *buffer=(const uint8 *)buff;
+  uint8_t *pixpt;
+  const uint8_t *buffer=(const uint8_t *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);
 
   pixpt = BANKFB + ((y * LIBGGI_FB_W_STRIDE(vis) + x) << LOGBYTPP);
@@ -135,7 +135,7 @@ int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,const void *buff)
 
 int GGIgetvline(ggi_visual *vis,int x,int y,int h,void *buff)
 {
-  uint8 *pixpt,*buffer=(uint8 *)buff;
+  uint8_t *pixpt,*buffer=(uint8_t *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);
   
   CHECKXYH(vis,x,y,h);

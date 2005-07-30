@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2004/11/27 16:41:54 soyt Exp $
+/* $Id: visual.c,v 1.21 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -37,7 +37,7 @@
 /* The default LibGGI font */
 #include <ggi/internal/font/8x8>
 
-static int directfb_acquire(ggi_resource *res, uint32 actype)
+static int directfb_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_visual *vis;
 
@@ -125,7 +125,7 @@ static int do_cleanup(ggi_visual *vis)
 	
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	DFBResult res;
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);

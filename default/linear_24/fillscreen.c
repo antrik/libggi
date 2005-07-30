@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.1 2001/05/12 23:01:40 cegger Exp $
+/* $Id: fillscreen.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -39,9 +39,9 @@ int GGI_lin24_fillscreen(ggi_visual *vis)
 	    LIBGGI_GC(vis)->clipbr.x==LIBGGI_VIRTX(vis) &&
 	    LIBGGI_GC(vis)->clipbr.y==LIBGGI_VIRTY(vis)) {
 		int col[3];
-		uint32 *buf;
+		uint32_t *buf;
 		int x,y;
-		uint8 *colp = (uint8 *)col;
+		uint8_t *colp = (uint8_t *)col;
 
 		PREPARE_FB(vis);
 		buf = LIBGGI_CURWRITE(vis);
@@ -57,7 +57,7 @@ int GGI_lin24_fillscreen(ggi_visual *vis)
 				*buf++=col[1];
 				*buf++=col[2];
 			}
-			buf = (uint32 *)((uint8 *)buf
+			buf = (uint32_t *)((uint8_t *)buf
 					 + (LIBGGI_FB_W_STRIDE(vis)
 					    - LIBGGI_VIRTX(vis)*4));
 		}

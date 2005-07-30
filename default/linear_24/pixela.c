@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:42 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -34,12 +34,12 @@
 
 int GGI_lin24_drawpixela(ggi_visual *vis,int x,int y)
 {
-	uint8 *adr;ggi_pixel col;
+	uint8_t *adr;ggi_pixel col;
 
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
  
-	adr=(uint8 *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
+	adr=(uint8_t *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
 	col=LIBGGI_GC_FGCOLOR(vis);
 
 	adr[0]=col;
@@ -51,11 +51,11 @@ int GGI_lin24_drawpixela(ggi_visual *vis,int x,int y)
 
 int GGI_lin24_drawpixel_nca(ggi_visual *vis,int x,int y)
 {
-	uint8 *adr;ggi_pixel col;
+	uint8_t *adr;ggi_pixel col;
  
 	PREPARE_FB(vis);
 
-	adr=(uint8 *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
+	adr=(uint8_t *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
 	col=LIBGGI_GC_FGCOLOR(vis);
 
 	adr[0]=col;
@@ -67,11 +67,11 @@ int GGI_lin24_drawpixel_nca(ggi_visual *vis,int x,int y)
 
 int GGI_lin24_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 *adr;
+	uint8_t *adr;
 
 	PREPARE_FB(vis);
 
-	adr=(uint8 *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
+	adr=(uint8_t *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
 
 	adr[0]=col;
 	adr[1]=(col>>=8);
@@ -82,12 +82,12 @@ int GGI_lin24_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin24_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
-	uint8 *adr;
+	uint8_t *adr;
 
 	CHECKXY(vis,x,y);
 	PREPARE_FB(vis);
 
-	adr=(uint8 *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
+	adr=(uint8_t *)LIBGGI_CURWRITE(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
 
 	adr[0]=col;
 	adr[1]=(col>>=8);
@@ -98,11 +98,11 @@ int GGI_lin24_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 
 int GGI_lin24_getpixela(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
-	uint8 *adr;
+	uint8_t *adr;
 
 	PREPARE_FB(vis);
 
-	adr=(uint8 *)LIBGGI_CURREAD(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
+	adr=(uint8_t *)LIBGGI_CURREAD(vis)+(y*LIBGGI_FB_R_STRIDE(vis)+x*3);
 
 	*pixel=adr[0]+(adr[1]<<8)+(adr[2]<<16);
 

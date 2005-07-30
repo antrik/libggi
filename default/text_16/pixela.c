@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -29,9 +29,9 @@
 
 
 #define PIXEL_RADDR(vis, x, y)  \
-	((uint16 *) LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis)/sizeof(uint16) + x)
+	((uint16_t *) LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis)/sizeof(uint16_t) + x)
 #define PIXEL_WADDR(vis, x, y)  \
-	((uint16 *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16) + x)
+	((uint16_t *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16_t) + x)
 
 
 int GGI_t16_drawpixela(ggi_visual *vis, int x, int y)

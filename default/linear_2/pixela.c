@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:40 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
 ******************************************************************************
 
    Linear 2 pixel drawing (high-pair-left)
@@ -29,10 +29,10 @@
 
 
 #define PIXEL_RADDR(vis,x,y)  \
-	((uint8 *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>2))
+	((uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>2))
 
 #define PIXEL_WADDR(vis,x,y)  \
-	((uint8 *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>2))
+	((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>2))
 
 
 int GGI_lin2_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)

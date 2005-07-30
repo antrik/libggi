@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.3 2005/01/23 21:57:20 nsouch Exp $
+/* $Id: Gx00_accel.h,v 1.4 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -150,9 +150,9 @@ typedef struct
 {
   ggi_accel_t *accel;
 
-  uint32 dwgctl; /* Drawing command (DWGCTL reg) cached */
-  uint32 dstorg; /* Destination surface origin (write frame) cached */
-  uint32 srcorg; /* Source surface origin (read frame) cached */
+  uint32_t dwgctl; /* Drawing command (DWGCTL reg) cached */
+  uint32_t dstorg; /* Destination surface origin (write frame) cached */
+  uint32_t srcorg; /* Source surface origin (read frame) cached */
 
   int hwgc_mask; /* Memorizes some differences between soft&hw gc */
 
@@ -203,7 +203,7 @@ GGI_ACCEL_WRITE_u32(GX00_ACCEL(vis), (val))
 /* Returns the number of available 32bits words in the
  * current buffer (remaining before flush).
  */
-static inline uint32 GX00_SPACE(ggi_visual_t vis)
+static inline uint32_t GX00_SPACE(ggi_visual_t vis)
 {
 #ifdef GX00_ACCEL_DEBUG
   fprintf(stderr, "Remaining space: %i 32bits words\n",
@@ -429,8 +429,8 @@ static void GX00_WRITE_TRIANGLE(ggi_visual_t vis,
 				mga_vertex_t *v2,
 				mga_vertex_t *v3)
 {
-  uint32 i;
-  uint32 *ptr;
+  uint32_t i;
+  uint32_t *ptr;
 
   if (GX00_CONTEXT(vis)->type != MGA_DMA_VERTEX_TRIANGLE_LIST)
     ggiPanic("Trying to write a triangle to a non-triangle list DMA!");
@@ -445,17 +445,17 @@ static void GX00_WRITE_TRIANGLE(ggi_visual_t vis,
   /* Indicate that some sync is needed with the accel engine */
   vis->accelactive = 1;
 
-  ptr = (uint32*)v1;
+  ptr = (uint32_t*)v1;
   i = sizeof(mga_vertex_t) / 4;
   while (i--)
     GX00_WRITE_u32(vis, *ptr++);
 
-  ptr = (uint32*)v2;
+  ptr = (uint32_t*)v2;
   i = sizeof(mga_vertex_t) / 4;
   while (i--)
     GX00_WRITE_u32(vis, *ptr++);
 
-  ptr = (uint32*)v3;
+  ptr = (uint32_t*)v3;
   i = sizeof(mga_vertex_t) / 4;
   while (i--)
     GX00_WRITE_u32(vis, *ptr++);

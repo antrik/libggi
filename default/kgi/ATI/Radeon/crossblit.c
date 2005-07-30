@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.4 2004/11/13 15:56:18 cegger Exp $
+/* $Id: crossblit.c,v 1.5 2005/07/30 11:39:59 cegger Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -78,7 +78,7 @@ static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx,
 	} pkt;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} pkt2;
 	struct {
 		cce_type0_header_t h;
@@ -123,9 +123,9 @@ static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx,
 		if ((y2 + h2) > h) h2 = h - y2;
 
 		if (pkt2.txoffset != 
-		    (uint32)(KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse)) {
+		    (uint32_t)(KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse)) {
 			pkt2.txoffset = 
-			  (uint32)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
+			  (uint32_t)KGI_PRIV(vis)->swatch_gp + ctx->swatch_inuse;
 			RADEON_WRITEPACKET(vis, pkt2);
 		}
 		if (h2 != pkt3.tex_size.vsize) {
@@ -187,7 +187,7 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 	} pkt;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} pkt2;
 	struct {
 		cce_type0_header_t h;
@@ -235,9 +235,9 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 		if ((y2 + h2) > h) h2 = h - y2;
 
 		if (pkt2.txoffset != 
-		    (uint32)(KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse)) {
+		    (uint32_t)(KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse)) {
 			pkt2.txoffset = 
-			  (uint32)KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse;
+			  (uint32_t)KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse;
 			RADEON_WRITEPACKET(dst, pkt2);
 		}
 		if (h2 != pkt3.tex_size.vsize) {
@@ -304,7 +304,7 @@ static inline int blit3d_get(ggi_visual *src, ggi_visual *dst,
 	} pkt;
 	struct {
 		cce_type0_header_t h;
-		uint32 txoffset;
+		uint32_t txoffset;
 	} pkt2;
 	struct {
 		cce_type0_header_t h;
@@ -354,9 +354,9 @@ static inline int blit3d_get(ggi_visual *src, ggi_visual *dst,
 		if ((y2 + h2) > h) h2 = h - y2;
 
 		if (pkt2.txoffset != 
-		    (uint32)(KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse)) {
+		    (uint32_t)(KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse)) {
 			pkt2.txoffset = 
-			  (uint32)KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse;
+			  (uint32_t)KGI_PRIV(dst)->swatch_gp + ctx->swatch_inuse;
 			RADEON_WRITEPACKET(dst, pkt2);
 		}
 		if (h2 != pkt3.tex_size.vsize) {

@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2003/07/05 22:13:41 cegger Exp $
+/* $Id: line.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -31,9 +31,9 @@
 int GGI_m2164w_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
 {
 	struct m2164w_priv *priv = M2164W_PRIV(vis);
-	volatile uint8 *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
-	uint32 dwgctl;
+	uint32_t dwgctl;
 
 	if (yadd) {
 		y += yadd;

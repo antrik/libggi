@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2004/12/01 23:08:04 cegger Exp $
+/* $Id: hline.c,v 1.5 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -35,7 +35,7 @@ int GGI_lin8_drawhline(ggi_visual *vis,int x,int y,int w)
 	LIBGGICLIP_XYW(vis, x, y, w);
 	PREPARE_FB(vis);
 
-	memset((uint8*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x,
+	memset((uint8_t*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x,
 	       (signed)LIBGGI_GC_FGCOLOR(vis), (size_t)(w));
 
 	return 0;
@@ -45,7 +45,7 @@ int GGI_lin8_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 {
 	PREPARE_FB(vis);
 
-        memset((uint8*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x,
+        memset((uint8_t*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x,
 	       (signed)LIBGGI_GC_FGCOLOR(vis), (size_t)(w));
 
 	return 0;
@@ -53,13 +53,13 @@ int GGI_lin8_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 
 int GGI_lin8_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 {
-	const uint8 *buf8 = buffer; 
-	uint8 *mem;
+	const uint8_t *buf8 = buffer; 
+	uint8_t *mem;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf8, *1);
 	PREPARE_FB(vis);
 
-	mem = (uint8*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x;
+	mem = (uint8_t*)LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis) + x;
 	memcpy(mem, buf8, (size_t)(w));
 
 	return 0;
@@ -67,11 +67,11 @@ int GGI_lin8_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 
 int GGI_lin8_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
-	uint8 *mem;
+	uint8_t *mem;
 
 	PREPARE_FB(vis);
 
-	mem = (uint8 *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x;
+	mem = (uint8_t *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x;
 
 	memcpy(buffer, mem, (size_t)(w));
 

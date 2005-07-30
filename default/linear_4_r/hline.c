@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2005/06/09 18:33:09 cegger Exp $
+/* $Id: hline.c,v 1.5 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -37,11 +37,11 @@
 static inline void
 do_drawhline(ggi_visual *vis, int x, int y, int w)
 {
-	uint8 *fb;
-	uint8 fg;
+	uint8_t *fb;
+	uint8_t fg;
 
-	fb = (uint8 *) LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x/2);
-	fg = (uint8) LIBGGI_GC_FGCOLOR(vis) | (LIBGGI_GC_FGCOLOR(vis)<<4);
+	fb = (uint8_t *) LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x/2);
+	fg = (uint8_t) LIBGGI_GC_FGCOLOR(vis) | (LIBGGI_GC_FGCOLOR(vis)<<4);
 	
 	PREPARE_FB(vis);
 
@@ -80,14 +80,14 @@ int GGI_lin4r_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 
 int GGI_lin4r_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
-	uint8 *fb;
-	uint16 color;
-	const uint8 *buf = (const uint8 *)buffer;
+	uint8_t *fb;
+	uint16_t color;
+	const uint8_t *buf = (const uint8_t *)buffer;
 
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buf, /2);
 	PREPARE_FB(vis);
 	
-	fb = (uint8*)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x/2);
+	fb = (uint8_t*)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x/2);
 	
 	/* Might as well take the memcpy speed up (multiple byte copy). */
 	if (!(x & 0x01)) {
@@ -122,13 +122,13 @@ int GGI_lin4r_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 
 int GGI_lin4r_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
-	uint8 *fb;
-	uint16 color;
-	uint8 *buf = (uint8 *)buffer;
+	uint8_t *fb;
+	uint16_t color;
+	uint8_t *buf = (uint8_t *)buffer;
 
 	PREPARE_FB(vis);
 
-	fb = (uint8*)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x/2);
+	fb = (uint8_t*)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x/2);
 	
 	/* If width is odd, the last 4 bits of the buffer's last
 	 * byte will hold an extraneous pixel.  No big deal. */

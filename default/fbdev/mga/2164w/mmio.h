@@ -1,4 +1,4 @@
-/* $Id: mmio.h,v 1.4 2003/07/05 22:13:41 cegger Exp $
+/* $Id: mmio.h,v 1.5 2005/07/30 11:39:57 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,44 +28,44 @@
 /* This file is included by m2164w.h */
 
 static inline void
-mga_out8(volatile uint8 *mmioaddr, uint8 value, uint32 reg)
+mga_out8(volatile uint8_t *mmioaddr, uint8_t value, uint32_t reg)
 {
-	*((volatile uint8*)(mmioaddr+reg)) = value;
+	*((volatile uint8_t*)(mmioaddr+reg)) = value;
 }
 
 static inline void
-mga_out16(volatile uint8 *mmioaddr, uint16 value, uint32 reg)
+mga_out16(volatile uint8_t *mmioaddr, uint16_t value, uint32_t reg)
 {
-	*((volatile uint16*)(mmioaddr+reg)) = value;
+	*((volatile uint16_t*)(mmioaddr+reg)) = value;
 }
 
 static inline void
-mga_out32(volatile uint8 *mmioaddr, uint32 value, uint32 reg)
+mga_out32(volatile uint8_t *mmioaddr, uint32_t value, uint32_t reg)
 {
-	*((volatile uint32*)(mmioaddr+reg)) = value;
+	*((volatile uint32_t*)(mmioaddr+reg)) = value;
 }
 
-static inline volatile uint8
-mga_in8(volatile uint8 *mmioaddr, uint32 reg)
+static inline volatile uint8_t
+mga_in8(volatile uint8_t *mmioaddr, uint32_t reg)
 {
-	return *((volatile uint8*)(mmioaddr+reg));
+	return *((volatile uint8_t*)(mmioaddr+reg));
 }
 
-static inline volatile uint16
-mga_in16(volatile uint8 *mmioaddr, uint32 reg)
+static inline volatile uint16_t
+mga_in16(volatile uint8_t *mmioaddr, uint32_t reg)
 {
-	return *((volatile uint16*)(mmioaddr+reg));
+	return *((volatile uint16_t*)(mmioaddr+reg));
 }
 
-static inline volatile uint32
-mga_in32(volatile uint8 *mmioaddr, uint32 reg)
+static inline volatile uint32_t
+mga_in32(volatile uint8_t *mmioaddr, uint32_t reg)
 {
-	return *((volatile uint32*)(mmioaddr+reg));
+	return *((volatile uint32_t*)(mmioaddr+reg));
 }
 
 /* Wait for fifo space */
 static inline void
-mga_waitfifo(volatile uint8 *mmioaddr, int space)
+mga_waitfifo(volatile uint8_t *mmioaddr, int space)
 {
 #ifdef GGI_LITTLE_ENDIAN
 	while (mga_in8(mmioaddr, FIFOSTATUS) < (unsigned)space) {
@@ -78,7 +78,7 @@ mga_waitfifo(volatile uint8 *mmioaddr, int space)
 
 /* Wait for idle accelerator */
 static inline void
-mga_waitidle(volatile uint8 *mmioaddr)
+mga_waitidle(volatile uint8_t *mmioaddr)
 {
 	while (mga_in32(mmioaddr, STATUS) & 0x10000) {
 	}
@@ -86,8 +86,8 @@ mga_waitidle(volatile uint8 *mmioaddr)
 
 /* Set the accelerator's foreground color */
 static inline void
-mga_setcol(volatile uint8 *mmioaddr, ggi_mode *mode, ggi_pixel pixelfg,
-	   uint32 reg)
+mga_setcol(volatile uint8_t *mmioaddr, ggi_mode *mode, ggi_pixel pixelfg,
+	   uint32_t reg)
 {
 	switch (GT_SIZE(mode->graphtype)) {
 	case 8:
@@ -116,7 +116,7 @@ mga_setcol(volatile uint8 *mmioaddr, ggi_mode *mode, ggi_pixel pixelfg,
 
 /* Set the accelerator's clipping rectangle */
 static inline void
-mga_setclip(volatile uint8 *mmioaddr, ggi_gc *gc, int virtx, int yadd)
+mga_setclip(volatile uint8_t *mmioaddr, ggi_gc *gc, int virtx, int yadd)
 {
 	int topy = gc->cliptl.y + yadd;
 	int boty = (gc->clipbr.y-1) + yadd;
@@ -133,8 +133,8 @@ mga_setclip(volatile uint8 *mmioaddr, ggi_gc *gc, int virtx, int yadd)
 
 /* Set dwgctl */
 static inline void
-mga_setdwgctl(volatile uint8 *mmioaddr, struct m2164w_priv *priv,
-	      uint32 dwgctl)
+mga_setdwgctl(volatile uint8_t *mmioaddr, struct m2164w_priv *priv,
+	      uint32_t dwgctl)
 {
 	mga_out32(mmioaddr, dwgctl, DWGCTL);
 	priv->dwgctl = dwgctl;

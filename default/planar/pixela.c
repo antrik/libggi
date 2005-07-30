@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2001/05/12 23:01:48 cegger Exp $
+/* $Id: pixela.c,v 1.2 2005/07/30 11:40:02 cegger Exp $
 ******************************************************************************
 
    Planar pixel handling.
@@ -29,18 +29,18 @@
 
 
 #define PIXEL_WADDR(vis,x,y)  \
-	((uint16 *) ((uint8 *) LIBGGI_CURWRITE(vis) +  \
+	((uint16_t *) ((uint8_t *) LIBGGI_CURWRITE(vis) +  \
 		(y) * LIBGGI_W_PLAN(vis).next_line) + ((x) >> 4))
 
 #define PIXEL_RADDR(vis,x,y)  \
-	((uint16 *) ((uint8 *) LIBGGI_CURREAD(vis) +  \
+	((uint16_t *) ((uint8_t *) LIBGGI_CURREAD(vis) +  \
 		(y) * LIBGGI_R_PLAN(vis).next_line) + ((x) >> 4))
 
 
 int GGI_pl_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
 {
-	uint16 *dest;
-	uint16 mask = 0x8000 >> (x & 15);
+	uint16_t *dest;
+	uint16_t mask = 0x8000 >> (x & 15);
 	int plane_add = LIBGGI_W_PLAN(vis).next_plane / 2;
 	int i;
 
@@ -66,8 +66,8 @@ int GGI_pl_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
 int GGI_pl_getpixela(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	ggi_pixel col = 0;
-	uint16 *dest;
-	uint16 shift = 15 - (x & 15);
+	uint16_t *dest;
+	uint16_t shift = 15 - (x & 15);
 	int plane_add = LIBGGI_R_PLAN(vis).next_plane / 2;
 	int i, depth = GT_DEPTH(LIBGGI_GT(vis));
 
