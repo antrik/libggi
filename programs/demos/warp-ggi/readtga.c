@@ -1,4 +1,4 @@
-/* $Id: readtga.c,v 1.4 2005/06/09 18:59:06 cegger Exp $
+/* $Id: readtga.c,v 1.5 2005/07/30 08:43:02 soyt Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -24,13 +24,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "rawpict.h"
-
-#include "config.h"
 
 struct TargaHeader {
 	unsigned char id;

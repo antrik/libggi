@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.18 2005/06/09 19:05:32 cegger Exp $
+/* $Id: cube3d.c,v 1.19 2005/07/30 08:43:02 soyt Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -15,6 +15,9 @@
 
 ******************************************************************************
 */
+
+/* For autoconf inline support */
+#include "config.h"
 
 /* Include the LibGGI declarations.
  */
@@ -36,9 +39,6 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
-/* For autoconf inline support */
-#include "config.h"
 
 /* We do shm here !
  */

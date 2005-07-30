@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.3 2004/10/04 11:28:26 pekberg Exp $
+/* $Id: pointer.c,v 1.4 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -27,6 +27,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 
 #include <stdio.h>

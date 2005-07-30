@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.8 2004/10/29 22:57:48 cegger Exp $
+/* $Id: monitest.c,v 1.9 2005/07/30 08:43:03 soyt Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -34,6 +34,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -245,7 +246,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.8 2004/10/29 22:57:48 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.9 2005/07/30 08:43:03 soyt Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };

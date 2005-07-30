@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.7 2005/06/09 18:46:12 cegger Exp $
+/* $Id: speed.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -15,9 +15,9 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

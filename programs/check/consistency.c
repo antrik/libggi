@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.7 2005/06/09 18:46:12 cegger Exp $
+/* $Id: consistency.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -15,6 +15,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 
 #include <stdio.h>

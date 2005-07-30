@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2005/07/21 07:27:48 cegger Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    Display-sub
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include <ggi/display/sub.h>
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,

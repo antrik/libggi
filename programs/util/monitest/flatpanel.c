@@ -1,4 +1,4 @@
-/* $Id: flatpanel.c,v 1.1 2001/05/12 23:03:53 cegger Exp $
+/* $Id: flatpanel.c,v 1.2 2005/07/30 08:43:03 soyt Exp $
 ******************************************************************************
 
    Monitest flat panel check routine
@@ -16,6 +16,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 
 #include "monitest.h"

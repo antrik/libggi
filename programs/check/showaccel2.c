@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.9 2005/07/29 16:30:53 soyt Exp $
+/* $Id: showaccel2.c,v 1.10 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -38,13 +38,12 @@ TODO: notify on exit (terminate with single keystroke then print final ratio.
 	Also account for different timeslices).
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 #include <ggi/gg.h>
 
 #include <stdlib.h>
 #include <unistd.h>
-
-#include "config.h"
 
 static ggi_visual_t vis;
 

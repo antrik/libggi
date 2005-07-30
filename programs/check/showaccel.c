@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.9 2005/07/29 16:30:53 soyt Exp $
+/* $Id: showaccel.c,v 1.10 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    showaccel.c
@@ -35,6 +35,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 #include <ggi/gg.h>
 
@@ -45,8 +46,6 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-
-#include "config.h"
 
 static ggi_visual_t vis;
 

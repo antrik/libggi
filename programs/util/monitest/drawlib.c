@@ -1,4 +1,4 @@
-/* $Id: drawlib.c,v 1.4 2004/09/08 17:51:02 cegger Exp $
+/* $Id: drawlib.c,v 1.5 2005/07/30 08:43:03 soyt Exp $
 ******************************************************************************
 
    Monitest drawing library: fields with stripes and stars, circle.
@@ -15,6 +15,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/ggi.h>
 #include "drawlib.h"
 

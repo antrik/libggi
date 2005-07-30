@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2005/07/21 06:56:17 cegger Exp $
+/* $Id: mode.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include <ggi/display/sub.h>
 
 int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
