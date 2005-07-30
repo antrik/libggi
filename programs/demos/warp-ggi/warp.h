@@ -1,4 +1,4 @@
-/* $Id: warp.h,v 1.2 2003/07/05 11:35:58 cegger Exp $
+/* $Id: warp.h,v 1.3 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -31,28 +31,28 @@
 #endif
 
 struct warp {
-   sint32 width, height, pixsize;
-   sint32 srclinelen, destlinelen;
+   int32_t width, height, pixsize;
+   int32_t srclinelen, destlinelen;
 
    void *offstable;
-   sint32 *disttable;
+   int32_t *disttable;
    void *source;
    void *framebuf;
 
-   sint32 ctable [1024];
-   sint32 sintable [1024+256];
+   int32_t ctable [1024];
+   int32_t sintable [1024+256];
 };
 
 
 /* Defined in dowarp.c */
 
-extern struct warp *initWarp (uint32 width, uint32 height, uint32 pixsize,
-                              void *source, uint32 srclinelen);
+extern struct warp *initWarp (uint32_t width, uint32_t height, uint32_t pixsize,
+                              void *source, uint32_t srclinelen);
 extern void disposeWarp (struct warp *w);
-extern void doWarp8bpp  (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
-extern void doWarp16bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
-extern void doWarp24bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
-extern void doWarp32bpp (struct warp *w, sint32 xw, sint32 yw, sint32 cw);
+extern void doWarp8bpp  (struct warp *w, int32_t xw, int32_t yw, int32_t cw);
+extern void doWarp16bpp (struct warp *w, int32_t xw, int32_t yw, int32_t cw);
+extern void doWarp24bpp (struct warp *w, int32_t xw, int32_t yw, int32_t cw);
+extern void doWarp32bpp (struct warp *w, int32_t xw, int32_t yw, int32_t cw);
 
 
 

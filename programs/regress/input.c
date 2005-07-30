@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.5 2005/06/09 19:19:08 cegger Exp $
+/* $Id: input.c,v 1.6 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -24,7 +24,7 @@
 #include "testsuite.inc.c"
 
 typedef struct ggi_originbounds {
-	uint32 first,last;
+	uint32_t first,last;
 } ggi_originbounds_t;
 
 ggi_visual_t vis;
@@ -35,8 +35,8 @@ static int ggi_findorigin(ggi_visual_t visual,ggi_originbounds_t *origins) {
 
 	gii_input_t     input;
 	gii_cmddata_getdevinfo dummy;
-	uint32 n;
-	uint32 origin;
+	uint32_t n;
+	uint32_t origin;
 	
 	input=ggiGetInput(visual);
 	origins->first=0xffffffff;origins->last=0x00000000;
@@ -139,7 +139,7 @@ static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
 			    gii_input_t *input, const char *visname,int islast) {
 
-	uint32 origins;
+	uint32_t origins;
 	gii_input_t newhand;
 	int haveone=0;
 	int errcode;

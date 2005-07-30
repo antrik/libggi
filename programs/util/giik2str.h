@@ -1,4 +1,4 @@
-/* $Id: giik2str.h,v 1.1 2003/07/06 14:01:21 cegger Exp $
+/* $Id: giik2str.h,v 1.2 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    Export symbols from giik2str
@@ -30,6 +30,6 @@
 
 #include <ggi/events.h>
 
-const char *giik2str(uint32 giik, int issym);
+const char *giik2str(uint32_t giik, int issym);
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: readpcx.c,v 1.5 2005/07/30 08:43:02 soyt Exp $
+/* $Id: readpcx.c,v 1.6 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -31,35 +31,35 @@
 #include "rawpict.h"
 
 struct pcx_header {
-	uint8 manufacturer;
-	uint8 version;
-	uint8 encoding;
-	uint8 bits_per_pixel;
-	uint8 xmin[2], ymin[2];
-	uint8 xmax[2], ymax[2];
-	uint8 hres[2];
-	uint8 vres[2];
+	uint8_t manufacturer;
+	uint8_t version;
+	uint8_t encoding;
+	uint8_t bits_per_pixel;
+	uint8_t xmin[2], ymin[2];
+	uint8_t xmax[2], ymax[2];
+	uint8_t hres[2];
+	uint8_t vres[2];
 
-	uint8 palette16[48];
-	uint8 reserved;
-	uint8 color_planes;
-	uint8 bytes_per_line[2];
-	uint8 palette_type[2];
-	uint8 filler[58];
+	uint8_t palette16[48];
+	uint8_t reserved;
+	uint8_t color_planes;
+	uint8_t bytes_per_line[2];
+	uint8_t palette_type[2];
+	uint8_t filler[58];
 };
 
 #define get16(x) ((x[1]<<8)|x[0])
 
-int readPCX(const char *name, struct raw_pict *rp, uint32 udepth)
+int readPCX(const char *name, struct raw_pict *rp, uint32_t udepth)
 {
 	FILE *f;
 	struct pcx_header header;
-	uint32 bpp;
-	sint32 p, c, err;
-	uint32 i, j;
-	uint32 width, height, cpl;
+	uint32_t bpp;
+	int32_t p, c, err;
+	uint32_t i, j;
+	uint32_t width, height, cpl;
 	ggi_color *palette;
-	uint8 *fbuf, *lptr, *pptr, *nextlptr, palbuf[4];
+	uint8_t *fbuf, *lptr, *pptr, *nextlptr, palbuf[4];
 
 	err = 0;
 
@@ -101,7 +101,7 @@ int readPCX(const char *name, struct raw_pict *rp, uint32 udepth)
 				bpp = cpl;
 
 		if ((!err)
-		    && (fbuf = (uint8 *) malloc(width * height * bpp))) {
+		    && (fbuf = (uint8_t *) malloc(width * height * bpp))) {
 			rp->framebuf = (void *) fbuf;
 			lptr = fbuf;
 

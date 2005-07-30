@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.17 2005/06/09 18:50:13 cegger Exp $
+/* $Id: cbconsist.c,v 1.18 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -104,7 +104,7 @@ static ggi_pixel cbconsist(cbcstate * s)
 	count = 0xffffffff >> (32 - GT_SIZE(s->smode.graphtype));
 
 	do {
-		uint32 num;
+		uint32_t num;
 		ggi_pixel curr;
 
 		num = box.x * box.y;

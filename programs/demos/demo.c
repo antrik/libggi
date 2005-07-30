@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.20 2005/01/25 11:47:19 pekberg Exp $
+/* $Id: demo.c,v 1.21 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -50,9 +50,9 @@
  */
 static int random_16_shift = 0;
 static int random_32_shift = 0;
-static inline uint16 random16(void)
+static inline uint16_t random16(void)
 {
-	uint16 rnd = random();
+	uint16_t rnd = random();
 	int shift = 16 - random_16_shift;
 	while (shift < 16) {
 		rnd |= random() << shift;
@@ -60,9 +60,9 @@ static inline uint16 random16(void)
 	} 
 	return rnd;
 }
-static inline uint32 random32(void)
+static inline uint32_t random32(void)
 {
-	uint32 rnd = random();
+	uint32_t rnd = random();
 	int shift = 32 - random_32_shift;
 	while(shift < 32) {
 		rnd |= random() << shift;
@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 	 * shifted in order to affect the most significant bit of the
 	 * colors.
 	 */
-	uint32 tmp_rand = RAND_MAX;
+	uint32_t tmp_rand = RAND_MAX;
 	while (tmp_rand < 0x8000U) {
 		++random_16_shift;
 		++random_32_shift;
@@ -1120,18 +1120,18 @@ int main(int argc, char **argv)
 		i = 0;
 		while ((TestTime() < 10) && (i < numplanes)) {
 			for (y = 0; (TestTime() < 15) && (y < vy); y++) {
-				uint8 *linestart;
-				linestart = (uint8 *)dbuf->write + 
+				uint8_t *linestart;
+				linestart = (uint8_t *)dbuf->write + 
 					stride2 * i + stride * y;
 				x = 0;
 				if (ggiKbhit(vis)) goto dbuf_tidy;
 				while (x < vx * (signed)GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
-					  *((uint32 *)linestart+x) = random32();
+					  *((uint32_t *)linestart+x) = random32();
 					  break;
 					case 16:
-					  *((uint16 *)linestart+x) = random16();
+					  *((uint16_t *)linestart+x) = random16();
 					  break;
 					case 8:
 					  *(linestart+x) = random();
@@ -1144,7 +1144,7 @@ int main(int argc, char **argv)
 		}
 
 		while (TestTime() < 10) {
-			uint8 *linestart;
+			uint8_t *linestart;
 
 			if (ggiKbhit(vis)) goto dbuf_tidy;
 
@@ -1152,15 +1152,15 @@ int main(int argc, char **argv)
 			y = random() % vy;
 			x = random() % (vx * GT_SIZE(type)/wordsize);
 
-			linestart = (uint8 *)dbuf->write + 
+			linestart = (uint8_t *)dbuf->write + 
 			  stride2 * i + stride * y;
 
 			switch(wordsize) {
 			case 32:
-				*((uint32 *)linestart+x) = random32();
+				*((uint32_t *)linestart+x) = random32();
 				break;
 			case 16:
-				*((uint16 *)linestart+x) = random16();
+				*((uint16_t *)linestart+x) = random16();
 				break;
 			case 8:
 				*(linestart+x) = random();
@@ -1182,7 +1182,7 @@ int main(int argc, char **argv)
 
 			c = 0;
 			while (TestTime() < 10) {
-				uint8 *linestart;
+				uint8_t *linestart;
 
 				if (ggiKbhit(vis)) goto dbuf_end;
 
@@ -1192,15 +1192,15 @@ int main(int argc, char **argv)
 				x *= GT_SIZE(type);
 				x /= wordsize;
 
-				linestart = (uint8 *)dbuf->write + 
+				linestart = (uint8_t *)dbuf->write + 
 				  stride2 * i + stride * y;
 
 				switch(wordsize) {
 				case 32:
-					*((uint32 *)linestart+x) = random32();
+					*((uint32_t *)linestart+x) = random32();
 					break;
 				case 16:
-					*((uint16 *)linestart+x) = random16();
+					*((uint16_t *)linestart+x) = random16();
 					break;
 				case 8:
 					*(linestart+x) = random();

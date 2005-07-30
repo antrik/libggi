@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.12 2005/07/30 08:43:02 soyt Exp $
+/* $Id: inputdump.c,v 1.13 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -53,21 +53,21 @@ static int placement = 0;
 
 typedef struct mydev_info
 {
-	uint32 origin;
+	uint32_t origin;
 	int known;
 
 	gii_cmddata_getdevinfo DI;
 	gii_cmddata_getvalinfo *VI[MAX_NR_VAL];
 	
-	sint32 axes[MAX_NR_VAL+4];
-	sint32 buttons[MAX_NR_BUT];  /* labels */
-	sint32 pbuttons[MAX_NR_BUT];  /* ptr-buttons */
+	int32_t axes[MAX_NR_VAL+4];
+	int32_t buttons[MAX_NR_BUT];  /* labels */
+	int32_t pbuttons[MAX_NR_BUT];  /* ptr-buttons */
 
 	ggi_coord top;
 	int val_h, ptr_h;
 	int val_x;
 
-	sint32 cur_x, cur_y, cur_z, cur_w;
+	int32_t cur_x, cur_y, cur_z, cur_w;
 
 } mydev_info;
 
@@ -96,7 +96,7 @@ static ggi_color white  = { 0xffff, 0xffff, 0xffff };
 	(float) ((r)->max - (r)->min)        \
 	)))
 
-static void draw_bar(int x, int y, sint32 val, gii_valrange *range)
+static void draw_bar(int x, int y, int32_t val, gii_valrange *range)
 {
 	int w = vis_ch.x * 13;
 	int h = vis_ch.y * 2 / 3 + 1;
@@ -284,7 +284,7 @@ static void calc_placement(ggi_coord *c)
 	}
 }
 
-static mydev_info *find_input_device(uint32 origin)
+static mydev_info *find_input_device(uint32_t origin)
 {
 	unsigned int i, j;
 
@@ -321,7 +321,7 @@ static mydev_info *find_input_device(uint32 origin)
 	calc_placement(& InputDevices[i]->top);
 	placement++; 
 
-	memset(InputDevices[i]->axes, 0, (MAX_NR_VAL+4) * sizeof(sint32));
+	memset(InputDevices[i]->axes, 0, (MAX_NR_VAL+4) * sizeof(int32_t));
 	for (j = 0; j < MAX_NR_BUT; j++) {
 		InputDevices[i]->buttons[j] = -1;
 		InputDevices[i]->pbuttons[j] = -1;
@@ -459,7 +459,7 @@ static void show_pbutton(gii_pbutton_event *ev)
 
 static void show_valuator(gii_val_event *ev)
 {
-	uint32 i;
+	uint32_t i;
 
 	if (do_show != SHOW_NIL) {
 		fprintf(stderr, "0x%02x..0x%02x =", ev->first,

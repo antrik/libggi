@@ -1,4 +1,4 @@
-/* $Id: dowarp.c,v 1.4 2005/07/30 08:43:02 soyt Exp $
+/* $Id: dowarp.c,v 1.5 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -32,7 +32,7 @@
 
 static void initSinTable(struct warp *w)
 {
-	sint32 *tptr, *tsinptr;
+	int32_t *tptr, *tsinptr;
 	double i;
 
 	tsinptr = tptr = w->sintable;
@@ -46,14 +46,14 @@ static void initSinTable(struct warp *w)
 
 static void initOffsTable(struct warp *w)
 {
-	sint32 width, height, len, y;
-	uint8 *source;
+	int32_t width, height, len, y;
+	uint8_t *source;
 	void **offptr;
 
 	offptr = w->offstable;
 	width = w->width;
 	height = w->height;
-	source = (uint8 *) w->source;
+	source = (uint8_t *) w->source;
 	len = w->srclinelen;
 
 	for (y = 0; y < height; y++) {
@@ -64,7 +64,7 @@ static void initOffsTable(struct warp *w)
 
 static void initDistTable(struct warp *w)
 {
-	sint32 halfw, halfh, *distptr;
+	int32_t halfw, halfh, *distptr;
 	double x, y, m;
 
 	halfw = w->width >> 1;
@@ -81,8 +81,8 @@ static void initDistTable(struct warp *w)
 			    << 1;
 }
 
-struct warp *initWarp(uint32 width, uint32 height, uint32 pixsize,
-		      void *source, uint32 srclinelen)
+struct warp *initWarp(uint32_t width, uint32_t height, uint32_t pixsize,
+		      void *source, uint32_t srclinelen)
 {
 	struct warp *w;
 
@@ -127,18 +127,18 @@ void disposeWarp(struct warp *w)
 
 void doWarp8bpp(struct warp *w, int xw, int yw, int cw)
 {
-	sint32 c, i, x, y, dx, dy, maxx, maxy;
-	sint32 width, height, *ctable, *ctptr, *distptr;
-	sint32 *sintable, *disttable;
-	uint8 *destptr, **offstable;
+	int32_t c, i, x, y, dx, dy, maxx, maxy;
+	int32_t width, height, *ctable, *ctptr, *distptr;
+	int32_t *sintable, *disttable;
+	uint8_t *destptr, **offstable;
 
 	ctptr = ctable = &(w->ctable[0]);
 	sintable = &(w->sintable[0]);
-	offstable = (uint8 **) w->offstable;
+	offstable = (uint8_t **) w->offstable;
 	distptr = disttable = w->disttable;
 	width = w->width;
 	height = w->height;
-	destptr = (uint8 *) w->framebuf;
+	destptr = (uint8_t *) w->framebuf;
 
 	c = 0;
 
@@ -189,18 +189,18 @@ void doWarp8bpp(struct warp *w, int xw, int yw, int cw)
 
 void doWarp16bpp(struct warp *w, int xw, int yw, int cw)
 {
-	sint32 c, i, x, y, dx, dy, maxx, maxy;
-	sint32 width, height, *ctable, *ctptr, *distptr;
-	sint32 *sintable, *disttable;
-	uint16 *destptr, **offstable;
+	int32_t c, i, x, y, dx, dy, maxx, maxy;
+	int32_t width, height, *ctable, *ctptr, *distptr;
+	int32_t *sintable, *disttable;
+	uint16_t *destptr, **offstable;
 
 	ctptr = ctable = &(w->ctable[0]);
 	sintable = &(w->sintable[0]);
-	offstable = (uint16 **) w->offstable;
+	offstable = (uint16_t **) w->offstable;
 	distptr = disttable = w->disttable;
 	width = w->width;
 	height = w->height;
-	destptr = (uint16 *) w->framebuf;
+	destptr = (uint16_t *) w->framebuf;
 
 	c = 0;
 
@@ -251,19 +251,19 @@ void doWarp16bpp(struct warp *w, int xw, int yw, int cw)
 
 void doWarp24bpp(struct warp *w, int xw, int yw, int cw)
 {
-	sint32 c, i, x, y, dx, dy, maxx, maxy;
-	sint32 width, height, *ctable, *ctptr, *distptr;
-	sint32 *sintable, *disttable;
-	uint8 *destptr, **offstable, *pptr;
+	int32_t c, i, x, y, dx, dy, maxx, maxy;
+	int32_t width, height, *ctable, *ctptr, *distptr;
+	int32_t *sintable, *disttable;
+	uint8_t *destptr, **offstable, *pptr;
 
 	ctptr = ctable = &(w->ctable[0]);
 	sintable = &(w->sintable[0]);
-	offstable = (uint8 **) w->offstable;
+	offstable = (uint8_t **) w->offstable;
 
 	distptr = disttable = w->disttable;
 	width = w->width;
 	height = w->height;
-	destptr = (uint8 *) w->framebuf;
+	destptr = (uint8_t *) w->framebuf;
 
 	c = 0;
 
@@ -317,19 +317,19 @@ void doWarp24bpp(struct warp *w, int xw, int yw, int cw)
 
 void doWarp32bpp(struct warp *w, int xw, int yw, int cw)
 {
-	sint32 c, i, x, y, dx, dy, maxx, maxy;
-	sint32 width, height, *ctable, *ctptr, *distptr;
-	sint32 *sintable, *disttable;
-	uint32 *destptr, **offstable;
+	int32_t c, i, x, y, dx, dy, maxx, maxy;
+	int32_t width, height, *ctable, *ctptr, *distptr;
+	int32_t *sintable, *disttable;
+	uint32_t *destptr, **offstable;
 
 	ctptr = ctable = &(w->ctable[0]);
 	sintable = &(w->sintable[0]);
-	offstable = (uint32 **) w->offstable;
+	offstable = (uint32_t **) w->offstable;
 	distptr = disttable = w->disttable;
 	width = w->width;
 
 	height = w->height;
-	destptr = (uint32 *) w->framebuf;
+	destptr = (uint32_t *) w->framebuf;
 
 	c = 0;
 

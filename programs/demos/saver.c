@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.10 2005/06/09 19:10:40 cegger Exp $
+/* $Id: saver.c,v 1.11 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -528,7 +528,7 @@ static void blank_screen2(int interactive)
 int main(int argc, char *argv[])
 {
 	int ic, ic2, cnt;
-	uint32 x;
+	uint32_t x;
 
 	if (ggiInit() != 0) {
 		fprintf(stderr,

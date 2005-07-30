@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2005/07/30 08:43:02 soyt Exp $
+/* $Id: color.c,v 1.5 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -28,12 +28,12 @@
 #include <stdlib.h>
 #include "rawpict.h"
 
-int convertbpp(struct raw_pict *rp, uint32 udepth)
+int convertbpp(struct raw_pict *rp, uint32_t udepth)
 {
 	int i, pixels = rp->width * rp->height;
-	uint8 *bp, *bp2, x;
-	uint16 *wp, r, g, b;
-	uint32 *lp;
+	uint8_t *bp, *bp2, x;
+	uint16_t *wp, r, g, b;
+	uint32_t *lp;
 	ggi_color *clut;
 
 	switch (rp->depth) {
@@ -43,8 +43,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 
 		switch (udepth) {
 		case 15:
-			wp = ((uint16 *) rp->framebuf) + pixels;
-			bp = ((uint8 *) rp->framebuf) + pixels;
+			wp = ((uint16_t *) rp->framebuf) + pixels;
+			bp = ((uint8_t *) rp->framebuf) + pixels;
 
 			for (i = 0; i < pixels; i++) {
 				x = *(--bp);
@@ -56,8 +56,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 			break;
 
 		case 16:
-			wp = ((uint16 *) rp->framebuf) + pixels;
-			bp = ((uint8 *) rp->framebuf) + pixels;
+			wp = ((uint16_t *) rp->framebuf) + pixels;
+			bp = ((uint8_t *) rp->framebuf) + pixels;
 
 			for (i = 0; i < pixels; i++) {
 				x = *(--bp);
@@ -69,8 +69,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 			break;
 
 		case 24:
-			bp2 = ((uint8 *) rp->framebuf) + 3 * pixels;
-			bp = ((uint8 *) rp->framebuf) + pixels;
+			bp2 = ((uint8_t *) rp->framebuf) + 3 * pixels;
+			bp = ((uint8_t *) rp->framebuf) + pixels;
 
 			for (i = 0; i < pixels; i++) {
 				x = *(--bp);
@@ -82,8 +82,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 			break;
 
 		case 32:
-			lp = ((uint32 *) rp->framebuf) + pixels;
-			bp = ((uint8 *) rp->framebuf) + pixels;
+			lp = ((uint32_t *) rp->framebuf) + pixels;
+			bp = ((uint8_t *) rp->framebuf) + pixels;
 
 			for (i = 0; i < pixels; i++) {
 				x = *(--bp);
@@ -98,8 +98,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 	case 24:
 		switch (udepth) {
 		case 15:
-			wp = ((uint16 *) rp->framebuf);
-			bp = ((uint8 *) rp->framebuf);
+			wp = ((uint16_t *) rp->framebuf);
+			bp = ((uint8_t *) rp->framebuf);
 
 			for (i = 0; i < pixels; i++) {
 				r = *bp++;
@@ -112,8 +112,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 			break;
 
 		case 16:
-			wp = ((uint16 *) rp->framebuf);
-			bp = ((uint8 *) rp->framebuf);
+			wp = ((uint16_t *) rp->framebuf);
+			bp = ((uint8_t *) rp->framebuf);
 
 			for (i = 0; i < pixels; i++) {
 				r = *bp++;
@@ -126,8 +126,8 @@ int convertbpp(struct raw_pict *rp, uint32 udepth)
 			break;
 
 		case 32:
-			lp = ((uint32 *) rp->framebuf) + pixels;
-			bp = ((uint8 *) rp->framebuf) + 3 * pixels;
+			lp = ((uint32_t *) rp->framebuf) + pixels;
+			bp = ((uint8_t *) rp->framebuf) + 3 * pixels;
 
 			for (i = 0; i < pixels; i++) {
 				b = *(--bp);

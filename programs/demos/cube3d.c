@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.19 2005/07/30 08:43:02 soyt Exp $
+/* $Id: cube3d.c,v 1.20 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -345,19 +345,19 @@ static ggi_pixel PatNomap(int posx, int posy, Texture * file)
 
 static ggi_pixel Plb8(int posx, int posy, Texture * file)
 {
-	return (ggi_pixel) * ((uint8 *) file->plb + posx +
+	return (ggi_pixel) * ((uint8_t *) file->plb + posx +
 			      posy * file->filex);
 }
 
 static ggi_pixel Plb16(int posx, int posy, Texture * file)
 {
-	return (ggi_pixel) * ((uint16 *) file->plb + posx +
+	return (ggi_pixel) * ((uint16_t *) file->plb + posx +
 			      posy * file->filex);
 }
 
 static ggi_pixel Plb32(int posx, int posy, Texture * file)
 {
-	return (ggi_pixel) * ((uint32 *) file->plb + posx +
+	return (ggi_pixel) * ((uint32_t *) file->plb + posx +
 			      posy * file->filex);
 }
 

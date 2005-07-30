@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.8 2005/07/30 08:43:02 soyt Exp $
+/* $Id: slimy.c,v 1.9 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -27,7 +27,7 @@
 
 static ggi_visual_t disp = NULL;
 static const ggi_directbuffer *dbuf;
-static uint8 *bitmap;
+static uint8_t *bitmap;
 
 static signed long int xcosv[1024 + 512];
 static signed long int ycosv[1024 + 512];
@@ -112,7 +112,7 @@ static void draw_rotation(int angle, int basex, int basey, int movex,
 {
 	unsigned int xrowadd, yrowadd, xcoladd, ycoladd;
 	unsigned int x, y, vx, vy, padd;
-	uint8 *fbptr;
+	uint8_t *fbptr;
 
 	xrowadd = ycosv[angle];
 	yrowadd = ycosv[angle + 256];

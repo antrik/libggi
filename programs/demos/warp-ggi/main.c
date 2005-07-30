@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.7 2005/07/30 08:43:02 soyt Exp $
+/* $Id: main.c,v 1.8 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -32,9 +32,9 @@
 
 /* Selects the best display mode for the picture, if possible */
 
-static int checkmode(uint32 width, uint32 height, uint32 depth,
-		     uint32 * swidth, uint32 * sheight, uint32 * smode,
-		     uint32 * spixsize)
+static int checkmode(uint32_t width, uint32_t height, uint32_t depth,
+		     uint32_t * swidth, uint32_t * sheight, uint32_t * smode,
+		     uint32_t * spixsize)
 {
 
 	switch (depth) {
@@ -110,8 +110,8 @@ static int checkmode(uint32 width, uint32 height, uint32 depth,
 #define fail(reason) { fprintf (stderr, reason); fflush (stderr); done = -1; }
 
 
-typedef void (func_warpfunc) (struct warp * w, sint32 xw, sint32 yw,
-			  sint32 cw);
+typedef void (func_warpfunc) (struct warp * w, int32_t xw, int32_t yw,
+			  int32_t cw);
 
 /* main program	*/
 
@@ -122,10 +122,10 @@ int main(int argc, char **argv)
 	struct raw_pict rp;
 	struct warp *w = NULL;
 	const char *picname = NULL;
-	uint32 swidth, sheight, smode, spixsize;
-	uint32 width, height, udepth = 0, stride;
-	sint32 err, step = 0, done = 0;
-	sint32 nextarg, i, tval;
+	uint32_t swidth, sheight, smode, spixsize;
+	uint32_t width, height, udepth = 0, stride;
+	int32_t err, step = 0, done = 0;
+	int32_t nextarg, i, tval;
 
 	func_warpfunc	*warpfunc;
 	swidth = sheight = smode = spixsize = 0;
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 2:
-			if (checkmode((uint32)rp.width, (uint32)rp.height, 
+			if (checkmode((uint32_t)rp.width, (uint32_t)rp.height, 
 				      udepth, &swidth, &sheight, &smode,
 				      &spixsize))
 				step++;
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 			tval = 0;
 
 			while (!ggiKbhit(disp)) {
-				sint32 xw, yw, cw;
+				int32_t xw, yw, cw;
 				char *src, *dest;
 
 				xw = (int) (sin((tval + 100) * M_PI / 128)
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 				if (width == stride) {
 					memcpy(dest, src, width * height);
 				} else {
-					uint32 y;
+					uint32_t y;
 
 					for (y = 0; y < height; y++) {
 						memcpy(dest, src, width);

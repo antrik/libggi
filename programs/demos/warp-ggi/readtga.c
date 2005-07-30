@@ -1,4 +1,4 @@
-/* $Id: readtga.c,v 1.5 2005/07/30 08:43:02 soyt Exp $
+/* $Id: readtga.c,v 1.6 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -44,11 +44,11 @@ struct TargaHeader {
 
 static inline int get16(int x)
 {
-	uint8 *p = (uint8 *) & x;
+	uint8_t *p = (uint8_t *) & x;
 	return (p[1] << 8) | p[0];
 }
 
-static inline void StoreBPP(uint8 * data, int value, unsigned int bpp)
+static inline void StoreBPP(uint8_t * data, int value, unsigned int bpp)
 {
 	memcpy(data, &value, bpp);
 }
@@ -66,16 +66,16 @@ static inline int RGBconv(int r, int g, int b, unsigned int bpp)
 	}
 }
 
-int readTGA(const char *name, struct raw_pict *rp, uint32 udepth)
+int readTGA(const char *name, struct raw_pict *rp, uint32_t udepth)
 {
 	FILE *is;
 	struct TargaHeader th;
 	int W, H;
-	uint8 *data;
+	uint8_t *data;
 	unsigned char ctrl;
 	unsigned char bgra[4];
-	uint8 *sl, *end_p;
-	uint32 bpp;
+	uint8_t *sl, *end_p;
+	uint32_t bpp;
 	int c, x, y;
 
 	if (!(is = fopen(name, "rb")))
@@ -117,7 +117,7 @@ int readTGA(const char *name, struct raw_pict *rp, uint32 udepth)
 	}
 	rp->depth = bpp << 3;
 
-	if (!(data = (uint8 *) malloc(W * H * bpp)))
+	if (!(data = (uint8_t *) malloc(W * H * bpp)))
 		return RPREAD_NOMEM;
 
 	end_p = data + W * H * bpp;

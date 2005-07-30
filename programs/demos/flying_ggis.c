@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.11 2005/06/09 19:10:40 cegger Exp $
+/* $Id: flying_ggis.c,v 1.12 2005/07/30 11:58:39 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -45,7 +45,7 @@
 #include "banner.inc.c"
 
 
-#define fixed  sint32   /* 16.16 */
+#define fixed  int32_t   /* 16.16 */
 
 #define DEFAULT_WIDTH   320
 #define DEFAULT_HEIGHT  200
@@ -94,7 +94,7 @@ typedef struct texture
         fixed millis;
         fixed speed;
 
-        uint8 color;
+        uint8_t color;
 } Texture;
 
 static Texture *texture_list;
@@ -146,15 +146,15 @@ static void setup_palette(void)
 	}
 }
 
-static uint8 trans_buffer[8192];
+static uint8_t trans_buffer[8192];
 
-static void translate_hline(int x, int y, int w, uint8 *data)
+static void translate_hline(int x, int y, int w, uint8_t *data)
 {
 	int ww = w;
 
-	uint8  *buf1 = (uint8  *) trans_buffer;
-	uint16 *buf2 = (uint16 *) trans_buffer;
-	uint32 *buf4 = (uint32 *) trans_buffer;
+	uint8_t  *buf1 = (uint8_t  *) trans_buffer;
+	uint16_t *buf2 = (uint16_t *) trans_buffer;
+	uint32_t *buf4 = (uint32_t *) trans_buffer;
 
 	switch (GT_ByPP(vis_mode.graphtype)) {
 	case 1:
@@ -195,7 +195,7 @@ static void update_frame(void)
 		ggiPutBox(vis, 0, 0, screen_width, screen_height, image_buf);
 	} else {
 		int y;
-		uint8 *src = (uint8 *) image_buf;
+		uint8_t *src = (uint8_t *) image_buf;
 
 		for (y=0; y < screen_height; y++) {
 			translate_hline(0, y, screen_width, src);
@@ -226,7 +226,7 @@ static void free_textures(void)
 	
 }
 
-static void add_texture(int x, int y, uint8 color)
+static void add_texture(int x, int y, uint8_t color)
 {
         Texture *t;
 
@@ -249,7 +249,7 @@ static void render_texture(int width, int height, Texture *t)
         int sx, sy, bx;
         int dx, dy;
 
-        uint8 *dest;
+        uint8_t *dest;
 
         height <<= 16;
         width  <<= 16;
