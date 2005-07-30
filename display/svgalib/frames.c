@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.2 2004/11/14 15:47:47 cegger Exp $
+/* $Id: frames.c,v 1.3 2005/07/30 08:50:17 cegger Exp $
 ******************************************************************************
 
    SVGA target: frame handling functions
@@ -25,6 +25,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <ggi/display/svgalib.h>
 
 int
