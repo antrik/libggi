@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.26 2005/06/19 20:45:55 cegger Exp $
+/* $Id: internal.c,v 1.27 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -31,7 +31,7 @@
 #include <ggi/internal/gg_replace.h>
 
 
-int _ggi_countbits(uint32 val)
+int _ggi_countbits(uint32_t val)
 {
 	int cnt;
 	for (cnt = 0; val != 0; val >>= 1) {
@@ -40,7 +40,7 @@ int _ggi_countbits(uint32 val)
 	return cnt;
 }
 
-int _ggi_mask2shift(uint32 mask)
+int _ggi_mask2shift(uint32_t mask)
 {
 	int shift;
 	for (shift = 32; mask != 0; mask >>= 1) {
@@ -412,12 +412,12 @@ int _ggi_match_palette(ggi_color *pal, int pal_len, const ggi_color *col)
 	int i, closest=0;
 	int r = col->r, g = col->g, b = col->b;
 
-	uint32 closest_dist = (1U << 31U);
+	uint32_t closest_dist = (1U << 31U);
 
 	for (i=0; i < pal_len; i++) {
 #undef ABS
 #define ABS(val)	((val) < 0 ? -(val) : val)
-		uint32 dist =
+		uint32_t dist =
 			ABS(r - pal[i].r) +
 			ABS(g - pal[i].g) +
 			ABS(b - pal[i].b);

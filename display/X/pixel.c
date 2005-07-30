@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.5 2005/03/28 20:33:35 pekberg Exp $
+/* $Id: pixel.c,v 1.6 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -191,26 +191,26 @@ int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 	    ) goto noswab;
 	
 	if (ximg->bits_per_pixel == 16) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) + 
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
-		*((uint8 *)pixel) = *(ximgptr + 1);
-		*((uint8 *)pixel + 1) = *(ximgptr);
+		*((uint8_t *)pixel) = *(ximgptr + 1);
+		*((uint8_t *)pixel + 1) = *(ximgptr);
 	}
 	else if (ximg->bits_per_pixel == 32) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) + 
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
-		*((uint8 *)pixel) = *(ximgptr + 3);
-		*((uint8 *)pixel + 1) = *(ximgptr + 2);
-		*((uint8 *)pixel + 2) = *(ximgptr + 1);
-		*((uint8 *)pixel + 3) = *(ximgptr);
+		*((uint8_t *)pixel) = *(ximgptr + 3);
+		*((uint8_t *)pixel + 1) = *(ximgptr + 2);
+		*((uint8_t *)pixel + 2) = *(ximgptr + 1);
+		*((uint8_t *)pixel + 3) = *(ximgptr);
 	}
 	else {
-		uint8 *ximgptr;
+		uint8_t *ximgptr;
 
 	noswab:
-		ximgptr = (uint8 *)(ximg->data) + 
+		ximgptr = (uint8_t *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
 		memcpy(pixel, ximgptr, (size_t)ximg->bits_per_pixel/8);
 	}

@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.3 2004/10/30 10:16:27 cegger Exp $
+/* $Id: trueemu.h,v 1.4 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -39,7 +39,7 @@
  **************************************************/
 
 
-#define TrueColor	sint32
+#define TrueColor	int32_t
 
 #define TC_RED(tc)	(((tc) >> 16) & 0xff)
 #define TC_GREEN(tc)	(((tc) >>  8) & 0xff)
@@ -49,7 +49,7 @@
 
 
 #define BLITFUNC(def)	void def(struct ggi_trueemu_priv *priv,  \
-				void *dest_raw, uint8 *src, int width)
+				void *dest_raw, uint8_t *src, int width)
 
 #ifndef MIN
 #define MIN(a, b)  ((a) < (b) ? (a) : (b))
@@ -111,13 +111,13 @@ typedef struct ggi_trueemu_priv {
 	
 	/* hicolor dither tables */
 
-	uint16 (* R)[4];	/* actually [256][4] */
-	uint16 (* G)[4];
-	uint16 (* B)[4];
+	uint16_t (* R)[4];	/* actually [256][4] */
+	uint16_t (* G)[4];
+	uint16_t (* B)[4];
 
 	/* palette dither table */
 
-	uint8 (* T)[4];		/* actually [32768][4] */
+	uint8_t (* T)[4];	/* actually [32768][4] */
 	
 	/* mansync info */
 

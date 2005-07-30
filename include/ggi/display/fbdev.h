@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.7 2004/11/27 16:42:45 soyt Exp $
+/* $Id: fbdev.h,v 1.8 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -49,21 +49,21 @@ ggifunc_kgicommand	GGI_fbdev_kgicommand;
 
 
 typedef struct ggi_fbdev_timing {
-	uint32 xres;		/* visible resolution		*/
-	uint32 yres;
-	uint32 xres_virtual;	/* virtual resolution		*/
-	uint32 yres_virtual;
-	uint32 bits_per_pixel;	/* guess what			*/
+	uint32_t xres;		/* visible resolution		*/
+	uint32_t yres;
+	uint32_t xres_virtual;	/* virtual resolution		*/
+	uint32_t yres_virtual;
+	uint32_t bits_per_pixel;/* guess what			*/
 
-	uint32 pixclock;	/* pixel clock in ps (pico seconds) */
-	uint32 left_margin;	/* time from sync to picture	*/
-	uint32 right_margin;	/* time from picture to sync	*/
-	uint32 upper_margin;	/* time from sync to picture	*/
-	uint32 lower_margin;
-	uint32 hsync_len;	/* length of horizontal sync	*/
-	uint32 vsync_len;	/* length of vertical sync	*/
-	uint32 sync;		/* see FB_SYNC_*		*/
-	uint32 vmode;		/* see FB_VMODE_*		*/
+	uint32_t pixclock;	/* pixel clock in ps (pico seconds) */
+	uint32_t left_margin;	/* time from sync to picture	*/
+	uint32_t right_margin;	/* time from picture to sync	*/
+	uint32_t upper_margin;	/* time from sync to picture	*/
+	uint32_t lower_margin;
+	uint32_t hsync_len;	/* length of horizontal sync	*/
+	uint32_t vsync_len;	/* length of vertical sync	*/
+	uint32_t sync;		/* see FB_SYNC_*		*/
+	uint32_t vmode;		/* see FB_VMODE_*		*/
 
 	struct ggi_fbdev_timing *next; /* pointer to next mode	*/
 } ggi_fbdev_timing;
@@ -95,9 +95,9 @@ typedef struct {
 	 * mutually exclusive in the fbdev API, so gamma reuses
 	 * the palette values.
 	 */
-	uint16 *reds;
-	uint16 *greens;
-	uint16 *blues;
+	uint16_t *reds;
+	uint16_t *greens;
+	uint16_t *blues;
 	ggi_gammastate gamma;
 	ggi_color *orig_cmap;	/* used to restore pre-GGI settings */
 	
@@ -120,7 +120,7 @@ typedef struct {
 	char   *accel;
 	int	have_accel;
 	void   *accelpriv;		/* Accel lib private data */
-	volatile uint8    *mmioaddr;	/* Faster access for accel lib */
+	volatile uint8_t  *mmioaddr;	/* Faster access for accel lib */
 	ggifunc_flush	  *flush;
 	ggifunc_idleaccel *idleaccel;
 

@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.5 2005/06/09 17:39:04 cegger Exp $
+/* $Id: fileio.c,v 1.6 2005/07/30 10:58:25 cegger Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -96,7 +96,7 @@ void _ggi_file_write_byte(ggi_visual *vis, unsigned int val)
 		_ggi_file_flush(vis);
 	}
 
-	priv->buffer[priv->buf_len] = (uint8) val;
+	priv->buffer[priv->buf_len] = (uint8_t) val;
 	priv->buf_len++;
 }
 

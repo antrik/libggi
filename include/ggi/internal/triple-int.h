@@ -1,4 +1,4 @@
-/* $Id: triple-int.h,v 1.4 2004/10/21 10:48:53 pekberg Exp $
+/* $Id: triple-int.h,v 1.5 2005/07/30 10:57:04 cegger Exp $
 ******************************************************************************
 
    Small functions for triple precision integer math.
@@ -63,14 +63,14 @@
 #ifdef GG_HAVE_INT64
 #ifdef INT32_C
 #if INT_MAX == INT32_C(2147483647)
-#define DTYPE_3 uint64
+#define DTYPE_3 uint64_t
 #endif
 #endif /* INT32_C */
 #endif /* GG_HAVE_INT64 */
 
 #ifdef INT16_C
 #if INT_MAX == INT16_C(32767)
-#define DTYPE_3 uint32
+#define DTYPE_3 uint32_t
 #endif
 #endif /* INT16_C */
 #endif /* HALF_MUL_DIVMOD_3 */

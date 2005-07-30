@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/27 16:42:17 soyt Exp $
+/* $Id: visual.c,v 1.13 2005/07/30 10:58:23 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -80,7 +80,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_aa_priv *priv;
 	void *lock;

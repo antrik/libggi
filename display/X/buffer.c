@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.29 2005/06/18 16:45:49 cegger Exp $
+/* $Id: buffer.c,v 1.30 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -36,7 +36,7 @@
 #include <ggi/display/x.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
-int GGI_X_db_acquire(ggi_resource_t res, uint32 actype) {
+int GGI_X_db_acquire(ggi_resource_t res, uint32_t actype) {
 	ggi_visual *vis;
 	vis = res->priv;
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) &&

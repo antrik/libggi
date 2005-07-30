@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2004/11/25 16:56:39 cegger Exp $
+/* $Id: color.c,v 1.8 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -31,7 +31,7 @@
 
 #include "TIvisual.h"
 
-#define GGI_COLOR_COMPONENT_TYPE uint16
+#define GGI_COLOR_COMPONENT_TYPE uint16_t
 
 #define THREE_THIRDS (GGI_COLOR_COMPONENT_TYPE)((1<<(GGI_COLOR_PRECISION+1))-1)
 #define TWO_THIRDS (GGI_COLOR_COMPONENT_TYPE)((1<<(GGI_COLOR_PRECISION+2))/3)
@@ -78,7 +78,7 @@ static inline chtype get_color_pair(ggi_visual *vis, int fg, int bg) {
 	return COLOR_PAIR(((COLORS-fg%COLORS-1)+(bg%COLORS*COLORS))%COLOR_PAIRS);
 }
 
-static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16 pixel)
+static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16_t pixel)
 {
 	struct TIhooks *tiinfo = TERMINFO_PRIV(vis);
 
@@ -89,7 +89,7 @@ static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16 pixel)
 		| tiinfo->color16_table[fg+(bg<<4)];
 }
 
-static inline chtype map_text32_to_ncurses(ggi_visual *vis, uint32 pixel)
+static inline chtype map_text32_to_ncurses(ggi_visual *vis, uint32_t pixel)
 {
 	chtype attributes = A_NORMAL;
 
@@ -112,7 +112,7 @@ static inline chtype map_text32_to_ncurses(ggi_visual *vis, uint32 pixel)
 static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
                                   int height)
 {
-	uint16 *fb_walk;
+	uint16_t *fb_walk;
 	int splitline;
 	int x_limit, y_limit;
 	int fb_width;
@@ -167,7 +167,7 @@ static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
 static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
                                   int height)
 {
-	uint32 *fb_walk;
+	uint32_t *fb_walk;
 	int splitline;
 	int x_limit, y_limit;
 	int fb_width;

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.11 2005/03/11 09:03:30 pekberg Exp $
+/* $Id: box.c,v 1.12 2005/07/30 10:58:27 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -115,7 +115,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf
 	TeleCmdGetPutData *p;
 	TeleEvent ev;
 
-	const uint8 *src = (const uint8 *)(buf);
+	const uint8_t *src = (const uint8_t *)(buf);
 	int srcwidth = w;
 	int stride = w * BYTES_PER_PIXEL(vis);
 
@@ -140,7 +140,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
 
-		uint8 *dest;
+		uint8_t *dest;
 
 		if (curx + ww > w)
 			ww = w - curx;
@@ -153,7 +153,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf
 		p->width  = ww;
 		p->height = hh;
 
-		dest = (uint8 *)(p->pixel);
+		dest = (uint8_t *)(p->pixel);
 
 		for (j = 0; j < hh; j++) {
 		  memcpy(&(dest[j * ww * BYTES_PER_PIXEL(vis)]),
@@ -192,7 +192,7 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 	TeleCmdGetPutData *p;
 	TeleEvent ev;
 
-	uint8 *dest = (uint8 *)buf;
+	uint8_t *dest = (uint8_t *)buf;
 	int stride = w * BYTES_PER_PIXEL(vis);
 
 	int xstep, ystep;
@@ -222,7 +222,7 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		int ww = (w < xstep) ? w : xstep;
 		int hh = (h < ystep) ? h : ystep;
 
-		uint8 *src;
+		uint8_t *src;
 
 		if (curx + ww > w)
 			ww = w - curx;
@@ -247,7 +247,7 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 		tele_receive_reply(vis, &ev, TELE_CMD_GETBOX, 
 					ev.sequence);
 
-		src = (uint8 *)p->pixel;
+		src = (uint8_t *)p->pixel;
 
 		for(j = 0; j < hh; ++j) {
 		  memcpy(&(dest[(j*stride + curx)]),

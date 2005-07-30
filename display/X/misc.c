@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.37 2005/06/09 17:15:36 cegger Exp $
+/* $Id: misc.c,v 1.38 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -445,7 +445,7 @@ void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc,
 		virty = 0;
 	}
 
-	xrect = malloc(frames * sizeof(XRectangle));
+	xrect = calloc(frames, sizeof(XRectangle));
 	if (xrect == NULL) return;
 
 	for (i = 0; i < frames; i++) {
@@ -566,6 +566,8 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 				(unsigned)w * 256, (unsigned)h, 
 				(unsigned)priv->vilist[priv->viidx].vi->depth);
 
+	DPRINT_MISC("_ggi_x_readback_fontdata: calling XCreateGC(%p,%p,0,0)\n",
+			priv->disp, priv->win);
 	pixgc = XCreateGC(priv->disp, priv->win, 0, 0);
 	XSetFont(priv->disp, pixgc, priv->textfont->fid);
 	_ggi_x_set_xclip(NULL, priv->disp, pixgc, 0, 0, w * 256, h);
@@ -594,12 +596,12 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 	    ) goto noswab;
 	
 	if (priv->fontimg->bits_per_pixel == 16) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(priv->fontimg->data) + 
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(priv->fontimg->data) + 
 		  (priv->fontimg->xoffset * priv->fontimg->bits_per_pixel)/8;
 		while (h--) {
 			int j;
-			uint8 tmp;
+			uint8_t tmp;
 			for (j = 0; j < w * 512; j += 2) {
 				tmp = *(ximgptr + j);
 				*(ximgptr + j) = *(ximgptr + j + 1);
@@ -609,12 +611,12 @@ void _ggi_x_readback_fontdata (ggi_visual *vis)
 		}
 	}
 	else if (priv->fontimg->bits_per_pixel == 32) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(priv->fontimg->data) + 
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(priv->fontimg->data) + 
 		  (priv->fontimg->xoffset * priv->fontimg->bits_per_pixel)/8;
 		while (h--) {
 			int j;
-			uint8 tmp;
+			uint8_t tmp;
 			for (j = 0; j < w * 1024; j += 4) {
 				tmp = *(ximgptr + j);
 				*(ximgptr + j) = *(ximgptr + j + 3);

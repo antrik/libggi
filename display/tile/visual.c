@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/06/09 18:10:37 cegger Exp $
+/* $Id: visual.c,v 1.15 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -55,7 +55,7 @@ static const char argument_format[] = "display-tile:\n\
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tile_priv *priv;
 	char target[1024];
@@ -92,7 +92,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	for (;;) {
 		sx = sy = vx = vy = 0;
 
-		while (*args && isspace((uint8)*args)) args++;
+		while (*args && isspace((uint8_t)*args)) args++;
 
 		if (! *args) break;
 
@@ -167,7 +167,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		/* check for ':' separator */
 
-		while (*args && isspace((uint8)*args)) args++;
+		while (*args && isspace((uint8_t)*args)) args++;
 
 		if (*args && (*args != ':')) {
 			fprintf(stderr, "display-tile: expecting ':' between targets.\n");

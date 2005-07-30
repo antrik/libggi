@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.5 2005/07/30 08:43:01 soyt Exp $
+/* $Id: teleserver.c,v 1.6 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -306,16 +306,16 @@ static void perf_CHECK(TeleUser *u, TeleEvent *ev)
 
 	/* get target to check mode */
 
-	mode.graphtype = (uint32) d->graphtype;
-	mode.frames    = (uint32) d->frames;
-	mode.visible.x = (sint16) d->visible.width;
-	mode.visible.y = (sint16) d->visible.height;
-	mode.virt.x    = (sint16) d->virt.width;
-	mode.virt.y    = (sint16) d->virt.height;
-	mode.size.x    = (sint16) d->size.width;
-	mode.size.y    = (sint16) d->size.height;
-	mode.dpp.x     = (sint16) d->dot.width;
-	mode.dpp.y     = (sint16) d->dot.height;
+	mode.graphtype = (ggi_graphtype) d->graphtype;
+	mode.frames    = (uint32_t) d->frames;
+	mode.visible.x = (int16_t) d->visible.width;
+	mode.visible.y = (int16_t) d->visible.height;
+	mode.virt.x    = (int16_t) d->virt.width;
+	mode.virt.y    = (int16_t) d->virt.height;
+	mode.size.x    = (int16_t) d->size.width;
+	mode.size.y    = (int16_t) d->size.height;
+	mode.dpp.x     = (int16_t) d->dot.width;
+	mode.dpp.y     = (int16_t) d->dot.height;
 
 	d->error = ggiCheckMode(vis, &mode);
 
@@ -361,14 +361,14 @@ static void perf_OPEN(TeleUser *u, TeleEvent *ev)
 
 	/* get target to check mode */
 
-	vis_mode.graphtype = (uint32) d->graphtype;
-	vis_mode.frames    = (uint32) d->frames;
-	vis_mode.visible.x = (sint16) d->visible.width;
-	vis_mode.visible.y = (sint16) d->visible.height;
-	vis_mode.virt.x    = (sint16) d->virt.width;
-	vis_mode.virt.y    = (sint16) d->virt.height;
-	vis_mode.dpp.x     = (sint16) d->dot.width;
-	vis_mode.dpp.y     = (sint16) d->dot.height;
+	vis_mode.graphtype = (ggi_graphtype) d->graphtype;
+	vis_mode.frames    = (uint32_t) d->frames;
+	vis_mode.visible.x = (int16_t) d->visible.width;
+	vis_mode.visible.y = (int16_t) d->visible.height;
+	vis_mode.virt.x    = (int16_t) d->virt.width;
+	vis_mode.virt.y    = (int16_t) d->virt.height;
+	vis_mode.dpp.x     = (int16_t) d->dot.width;
+	vis_mode.dpp.y     = (int16_t) d->dot.height;
 
 	d->error = ggiSetMode(vis, &vis_mode);
 
@@ -486,7 +486,7 @@ static void perf_GETBOX(TeleUser *u, TeleEvent *ev)
 	/* Get a pixel matrix */
 	TeleCmdGetPutData *d = (TeleCmdGetPutData *) ev->data;
 	T_Long reply_sequence;
-	uint8 *dest;
+	uint8_t *dest;
 
 	if ((d->x < 0) || (d->y < 0) ||
 	    (d->x + d->width  > vis_mode.virt.x) ||
@@ -510,7 +510,7 @@ static void perf_GETBOX(TeleUser *u, TeleEvent *ev)
 
 	ev->sequence = reply_sequence;
 
-	dest = (uint8 *)d->pixel;
+	dest = (uint8_t *)d->pixel;
 
 	ggiGetBox(vis, d->x, d->y, d->width, d->height, dest);
 

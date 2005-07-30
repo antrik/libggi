@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.20 2005/06/09 17:04:36 cegger Exp $
+/* $Id: vidmode.c,v 1.21 2005/07/30 10:58:23 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -441,7 +441,7 @@ static int ggi_xvidmode_restore_mode(ggi_visual * vis)
 }
 
 static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 * dlret)
+		   const char *args, void *argptr, uint32_t * dlret)
 {
 	ggi_x_priv *priv;
 	int x, y;

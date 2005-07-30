@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2005/06/17 11:42:39 cegger Exp $
+/* $Id: mode.c,v 1.13 2005/07/30 10:58:27 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -79,9 +79,9 @@ static int _ggi_quartz_load_mode_libs(ggi_visual *vis)
 	for (id = 1; 0 == vis->opdisplay->getapi(vis, id, sugname, args); id++) {
 		err = _ggiOpenDL(vis, sugname, args, NULL);
 		if (err) {
-		fprintf(stderr,
-			"display-quartz: Can't open the %s (%s) library.\n",
-			sugname, args);
+			fprintf(stderr,
+				"display-quartz: Can't open the %s (%s) library.\n",
+				sugname, args);
 			return err;
 		} else {
 			DPRINT_LIBS("GGI_quartz_setmode: success in loading "
@@ -160,7 +160,7 @@ int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh)
 	int width, height;
 	ggi_mode mode;
 	size_t fb_size;
-	uint8 *fb;
+	uint8_t *fb;
 	CGRect tmpBounds;
 	Rect contentRect;
 	int titleborder;
@@ -183,8 +183,10 @@ int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh)
 
 	mode.visible.x = width;
 	mode.visible.y = height;
+
 	fb_size = GT_ByPPP(mode.visible.x * mode.visible.y * mode.frames,
 			mode.graphtype);
+
 	if (manualrefresh) {
 		fb = realloc(priv->fb, fb_size);
 		if (fb == NULL) {
@@ -234,7 +236,7 @@ static void _GGIallocdbs(ggi_visual *vis)
 {
 	char target[GGI_MAX_APILEN];
 	int i;
-	uint8 *fb_ptr;
+	uint8_t *fb_ptr;
 	size_t stride;
 	ggi_mode tm;
 	ggi_quartz_priv *priv;

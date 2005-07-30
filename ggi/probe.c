@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.4 2004/11/27 16:42:45 soyt Exp $
+/* $Id: probe.c,v 1.5 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    LibGGI core - probe for targets.
@@ -33,7 +33,7 @@
 ggi_visual_t _ggiProbeTarget(void)
 {
 	int err;
-	uint32 dlret = 0;
+	uint32_t dlret = 0;
 	ggi_dlhandle *dlh = NULL;
 	ggi_visual_t vis = NULL;
 

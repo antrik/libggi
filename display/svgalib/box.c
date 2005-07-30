@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.6 2005/04/22 12:49:36 cegger Exp $
+/* $Id: box.c,v 1.7 2005/07/30 10:58:27 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -51,7 +51,7 @@ GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
-	const uint8 *buf = buffer;
+	const uint8_t *buf = buffer;
 
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 
@@ -59,7 +59,7 @@ GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 	if (SVGA_PRIV(vis)->ismodex
 		&& w%4 == 0
 		&& x%4 == 0) {
-		vga_copytoplanar256((uint8 *)buf, rowadd,
+		vga_copytoplanar256((uint8_t *)buf, rowadd,
 				    ((y*LIBGGI_VIRTX(vis) + x))/4,
 				    LIBGGI_VIRTX(vis)/4, w, h);
 	} else {

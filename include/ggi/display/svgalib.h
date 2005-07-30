@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.6 2004/11/24 13:44:38 cegger Exp $
+/* $Id: svgalib.h,v 1.7 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -79,8 +79,8 @@ typedef struct svga_priv {
 	PHYSZ_DATA
 
 	ggi_modelistmode *availmodes;
-	uint8	         *memorigin;
-	uint32	pixperframe;
+	uint8_t	         *memorigin;
+	uint32_t pixperframe;
 	int	islinear;
 	int	ismodex;
 	int	isbanked;

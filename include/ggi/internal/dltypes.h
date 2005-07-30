@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.10 2005/07/21 07:30:53 cegger Exp $
+/* $Id: dltypes.h,v 1.11 2005/07/30 10:57:04 cegger Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -47,14 +47,14 @@
 typedef int (ggifunc_dlentry)(int func, void **funcptr);
 
 typedef int (ggifunc_open)(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-			   const char *args, void *argptr, uint32 *dlret);
+			   const char *args, void *argptr, uint32_t *dlret);
 typedef int (ggifunc_exit)(struct ggi_visual *vis,
 			   struct ggi_dlhandle *dlh);
 typedef int (ggifunc_close)(struct ggi_visual *vis,
 			    struct ggi_dlhandle *dlh);
 
 /* Resource management */
-typedef int (ggifunc_resacquire)(struct ggi_resource *res, uint32 actype);
+typedef int (ggifunc_resacquire)(struct ggi_resource *res, uint32_t actype);
 typedef int (ggifunc_resrelease)(struct ggi_resource *res);
 
 

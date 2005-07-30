@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.10 2005/02/10 04:57:42 orzo Exp $
+/* $Id: modelist.inc,v 1.11 2005/07/30 10:58:24 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -249,7 +249,7 @@ static int _GGI_score_resolution(ggi_coord req, ggi_coord a)
 	return score;
 }
 
-static int _GGI_score_frames(sint32 req, sint32 a)
+static int _GGI_score_frames(int32_t req, int32_t a)
 {
 	int score;
 	if (a == req)

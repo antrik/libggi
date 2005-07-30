@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.37 2005/07/20 14:32:39 cegger Exp $
+/* $Id: mode.c,v 1.38 2005/07/30 10:58:24 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -39,7 +39,7 @@
 #include "../common/pixfmt-setup.inc"
 
 static int
-directx_acquire(ggi_resource *res, uint32 actype)
+directx_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_directbuffer *dbuf;
 	ggi_visual *vis;

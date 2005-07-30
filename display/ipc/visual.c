@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2005/06/09 17:54:19 cegger Exp $
+/* $Id: visual.c,v 1.19 2005/07/30 10:58:25 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -133,7 +133,7 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_ipc_priv *priv;
 	gg_option options[NUM_OPTS];

@@ -1,4 +1,4 @@
-/* $Id: libtele.h,v 1.3 2002/09/06 09:25:20 cegger Exp $
+/* $Id: libtele.h,v 1.4 2005/07/30 10:58:27 cegger Exp $
 ******************************************************************************
 
    libtele.h
@@ -34,7 +34,7 @@
 
 /*** TYPES ***/
 
-typedef sint32  T_Long;
+typedef int32_t  T_Long;
 
 
 /*** COMMON INFO ***/

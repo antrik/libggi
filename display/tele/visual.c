@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/27 16:42:26 soyt Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -63,7 +63,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tele_priv *priv;
 	int err = GGI_ENOMEM;

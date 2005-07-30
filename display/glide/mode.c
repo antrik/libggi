@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2004/11/27 16:42:20 soyt Exp $
+/* $Id: mode.c,v 1.11 2005/07/30 10:58:25 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -276,7 +276,7 @@ getglidefreq(glide_priv *priv, ggi_mode *mode)
 }
 
 static const struct {
-	sint16	x, y;
+	int16_t	x, y;
 	GrScreenResolution_t glideres;
 } glide_resolutions[] = {
 #if 0 /* As of Glide 2.51 these modes are not supported */

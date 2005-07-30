@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.4 2005/06/09 17:39:03 cegger Exp $
+/* $Id: file.h,v 1.5 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -45,9 +45,9 @@ typedef struct {
 
 	file_writer_func *writer;
 
-	int    fb_size;
-	int    fb_stride;
-	uint8 *fb_ptr;
+	int      fb_size;
+	int      fb_stride;
+	uint8_t *fb_ptr;
 	
 	int num_cols;
 
@@ -55,12 +55,12 @@ typedef struct {
 	int offset_pal;
 	int offset_image;
 
-	int    file_size;
-	uint8 *file_mmap;
+	int      file_size;
+	uint8_t *file_mmap;
 
 	/* output buffering */
 	int buf_len;
-	uint8 buffer[FILE_BUFFER_SIZE];
+	uint8_t buffer[FILE_BUFFER_SIZE];
 
 	char *flushcmd;
 	int   flushtotal;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2004/11/27 16:42:18 soyt Exp $
+/* $Id: visual.c,v 1.7 2005/07/30 10:58:24 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -34,7 +34,7 @@
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_auto_priv *priv;
 	ggi_visual **_vis;

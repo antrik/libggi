@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.12 2005/06/09 17:15:35 cegger Exp $
+/* $Id: hline.c,v 1.13 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    LibGGI - horizontal lines for display-x
@@ -187,22 +187,22 @@ int GGI_X_gethline_draw(ggi_visual *vis, int x, int y, int w, void *data)
 
 	if (ximg->bits_per_pixel == 16) {
 		int j;
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) +(ximg->xoffset * ximg->bits_per_pixel)/8;
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) +(ximg->xoffset * ximg->bits_per_pixel)/8;
 		for (j = 0; j < w * 2; j += 2) {
-		  *((uint8 *)data + j) = *(ximgptr + j + 1);
-		  *((uint8 *)data + j + 1) = *(ximgptr + j);
+		  *((uint8_t *)data + j) = *(ximgptr + j + 1);
+		  *((uint8_t *)data + j + 1) = *(ximgptr + j);
 		}
 	}
 	else if (ximg->bits_per_pixel == 32) {	
 		int j;
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) +(ximg->xoffset * ximg->bits_per_pixel)/8;
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) +(ximg->xoffset * ximg->bits_per_pixel)/8;
 		for (j = 0; j < w * 4; j += 4) {
-			*((uint8 *)data + j) = *(ximgptr + j + 3);
-			*((uint8 *)data + j + 1) = *(ximgptr + j + 2);
-			*((uint8 *)data + j + 2) = *(ximgptr + j + 1);
-			*((uint8 *)data + j + 3) = *(ximgptr + j);
+			*((uint8_t *)data + j) = *(ximgptr + j + 3);
+			*((uint8_t *)data + j + 1) = *(ximgptr + j + 2);
+			*((uint8_t *)data + j + 2) = *(ximgptr + j + 1);
+			*((uint8_t *)data + j + 3) = *(ximgptr + j);
 		}
 	}
 	else {

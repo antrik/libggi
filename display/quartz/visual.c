@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2005/06/09 17:17:57 cegger Exp $
+/* $Id: visual.c,v 1.9 2005/07/30 10:58:27 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -89,7 +89,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	int err;
 	ggi_quartz_priv *priv;
@@ -132,7 +132,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 				&(priv->physz));
 	if (err != GGI_OK) goto out;
 
-	if (tolower((uint8)options[OPT_NOMANSYNC].result[0]) == 'n') {
+	if (tolower((uint8_t)options[OPT_NOMANSYNC].result[0]) == 'n') {
 		priv->opmansync = malloc(sizeof(_ggi_opmansync));
 		if (priv->opmansync == NULL) {
 			err = GGI_ENOMEM;
@@ -147,7 +147,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}	/* if */
 
 	/* windowed mode is default */
-	if (tolower((uint8)options[OPT_FULLSCREEN].result[0]) != 'n') {
+	if (tolower((uint8_t)options[OPT_FULLSCREEN].result[0]) != 'n') {
 		/* switch over to fullscreen mode, if possible */
 		DPRINT_MISC("turn on fullscreen mode");
 		priv->fullscreen = 1;
@@ -216,7 +216,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opcolor->getgammamap	= GGI_quartz_getgammamap;
 #endif
 
-	if (tolower((uint8)options[OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_input *inp;
 		gii_inputquartz_arg _args;
 

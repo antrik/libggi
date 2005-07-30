@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.42 2005/06/17 11:26:58 cegger Exp $
+/* $Id: init.c,v 1.43 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -40,7 +40,7 @@
 
 
 /* Exported variables */
-uint32               _ggiDebug         = 0;
+uint32_t             _ggiDebug         = 0;
 void                 *_ggi_global_lock = NULL;
 
 /* Global variables */

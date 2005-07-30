@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.6 2005/05/21 15:17:33 cegger Exp $
+/* $Id: stubs.c,v 1.7 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -166,7 +166,7 @@ int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, co
 		while(length--) {
 			ggiPutHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
-				((const uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
+				((const uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
 	}
 
@@ -212,7 +212,7 @@ int GGI_tile_getbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 		while(length--) {
 			ggiGetHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
-				((uint8*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
+				((uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
 	}
 
@@ -395,7 +395,7 @@ int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,const void *buffer
 
 		ggiPutHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
-			((const uint8*)buffer + diff*rowadd));
+			((const uint8_t*)buffer + diff*rowadd));
 	}
 
 	return 0;
@@ -433,7 +433,7 @@ int GGI_tile_gethline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 
 		ggiGetHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
-			((uint8*)buffer + diff*rowadd));
+			((uint8_t*)buffer + diff*rowadd));
 	}
 
 	return 0;
@@ -525,7 +525,7 @@ int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,const void *buffe
 
 		ggiPutVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
-			((const uint8*)buffer + diff*rowadd));
+			((const uint8_t*)buffer + diff*rowadd));
  	}
 
 	return 0;
@@ -563,7 +563,7 @@ int GGI_tile_getvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 
 		ggiGetVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
-			((uint8*)buffer + diff*rowadd));
+			((uint8_t*)buffer + diff*rowadd));
  	}
 
 	return 0;

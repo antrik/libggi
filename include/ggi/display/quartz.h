@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.7 2005/01/29 13:53:38 cegger Exp $
+/* $Id: quartz.h,v 1.8 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -55,7 +55,7 @@ typedef struct {
 	ggi_visual *memvis;
 
 	size_t stride;
-	uint8 *fb;
+	uint8_t *fb;
 	size_t fb_size;
 
 	/* 0 == main display (only support single display) */

@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.4 2004/11/27 16:42:26 soyt Exp $
+/* $Id: input.c,v 1.5 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -39,7 +39,7 @@
 #include <ggi/keyboard.h>
 #include <ggi/events.h>
 
-static int translate_key(int key, uint32 *modifiers)
+static int translate_key(int key, uint32_t *modifiers)
 {
 	DPRINT("terminfo: TRANSLATEKEY %04x\n", key);
 

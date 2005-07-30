@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2005/06/09 18:00:20 cegger Exp $
+/* $Id: visual.c,v 1.14 2005/07/30 10:58:26 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -38,7 +38,7 @@
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_multi_priv *priv;
 	MultiVis *cur;
@@ -101,7 +101,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 							 the subvisual */
 		}
 
-		while (*args && isspace((uint8)*args)) args++;
+		while (*args && isspace((uint8_t)*args)) args++;
 
 		if (*args == 0) {
 			break;

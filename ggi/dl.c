@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.16 2005/07/25 13:47:55 pekberg Exp $
+/* $Id: dl.c,v 1.17 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -109,7 +109,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
  */
 int _ggiProbeDL(ggi_visual *vis, const char *name,
 		const char *args, void *argptr,
-		int type, ggi_dlhandle **dlh, uint32 *dlret)
+		int type, ggi_dlhandle **dlh, uint32_t *dlret)
 {
 	int err;
 	const char *filename;
@@ -154,7 +154,7 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
 {
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
-	uint32 dlret = 0;
+	uint32_t dlret = 0;
 	int err;
 
 	err = _ggiLoadDL(filename, symprefix, GGI_DLTYPE_EXTENSION, &dlh);
@@ -194,7 +194,7 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 {
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
-	uint32 dlret = 0;
+	uint32_t dlret = 0;
 	int err;
 
 	DPRINT_LIBS("_ggiAddDL(%p, \"%s\", \"%s\", 0x%x) called\n",

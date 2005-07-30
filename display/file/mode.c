@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/06/17 11:32:21 cegger Exp $
+/* $Id: mode.c,v 1.18 2005/07/30 10:58:25 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -157,7 +157,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 
 	/* Map the file into memory
 	 */
-	priv->file_mmap = (uint8 *) mmap(0, (size_t)priv->file_size, 
+	priv->file_mmap = (uint8_t *) mmap(0, (size_t)priv->file_size, 
 		PROT_READ | PROT_WRITE, MAP_SHARED, LIBGGI_FD(vis), 0);
 
 	DPRINT("display-file: File mmap'd at 0x%x.\n", priv->file_mmap);
@@ -475,7 +475,7 @@ int GGI_file_setflags(ggi_visual *vis, ggi_flags flags)
 int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
 {
  	ggi_file_priv   *priv     = FILE_PRIV(vis);
- 	uint8           *file_pal = priv->file_mmap + priv->offset_pal;
+ 	uint8_t         *file_pal = priv->file_mmap + priv->offset_pal;
  	ggi_color       *dest     = LIBGGI_PAL(vis)->clut.data + start;
  	const ggi_color *src      = colormap;	
 

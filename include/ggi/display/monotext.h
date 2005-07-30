@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.2 2003/12/13 21:12:03 mooz Exp $
+/* $Id: monotext.h,v 1.3 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -109,10 +109,10 @@ typedef struct ggi_monotext_priv {
 	long  fb_size;
 	
 	/* color info */
-	uint8 *greymap;
+	uint8_t *greymap;
 	ggi_color *colormap;
 
-	uint8 *rgb_to_grey;	/* index = RGB 5:5:5 */
+	uint8_t *rgb_to_grey;	/* index = RGB 5:5:5 */
 
 	ggi_float red_gamma;
 	ggi_float green_gamma;

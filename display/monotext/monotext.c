@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.8 2004/11/27 16:42:24 soyt Exp $
+/* $Id: monotext.c,v 1.9 2005/07/30 10:58:26 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -44,9 +44,9 @@
  **************************************************/
 
 
-static uint8 ascii_template[256*4*4];
+static uint8_t ascii_template[256*4*4];
 
-static uint8 greyblock_to_ascii[65536];
+static uint8_t greyblock_to_ascii[65536];
 
 
 static inline int count_bits(unsigned char *ch, int x, int y, int w, int h)
@@ -84,7 +84,7 @@ static void setup_templates(ggi_coord accuracy)
 	}
 }
 
-static inline int sum_of_squared_diffs(uint8 *ta, uint8 *tb, 
+static inline int sum_of_squared_diffs(uint8_t *ta, uint8_t *tb, 
 					ggi_coord accuracy)
 {
 	int n, diff;
@@ -100,7 +100,7 @@ static inline int sum_of_squared_diffs(uint8 *ta, uint8 *tb,
 	return result;
 }
 
-static int find_closest_char(uint8 *templ, ggi_coord accuracy)
+static int find_closest_char(uint8_t *templ, ggi_coord accuracy)
 {
 	int a, val;
 
@@ -121,7 +121,7 @@ static int find_closest_char(uint8 *templ, ggi_coord accuracy)
 	return min_char;
 }
 
-static void setup_rgb2grey_table(uint8 *map)
+static void setup_rgb2grey_table(uint8_t *map)
 {
 	int r, g, b, i;
 
@@ -139,7 +139,7 @@ static void setup_rgb2grey_table(uint8 *map)
 
 static void calc_accuracy_1x1(int _index, ggi_coord acc)
 {
-	uint8 templ[16];
+	uint8_t templ[16];
 
 	templ[0] = _index;
 
@@ -148,7 +148,7 @@ static void calc_accuracy_1x1(int _index, ggi_coord acc)
 
 static void calc_accuracy_1x2(int _index, ggi_coord acc)
 {
-	uint8 templ[16];
+	uint8_t templ[16];
 
 	templ[0] = _index >> 8;
 	templ[1] = _index & 0xff;
@@ -158,7 +158,7 @@ static void calc_accuracy_1x2(int _index, ggi_coord acc)
 
 static void calc_accuracy_2x2(int _index, ggi_coord acc)
 {
-	uint8 templ[16];
+	uint8_t templ[16];
 
 	templ[0] = ((_index >> 12) & 0xf) * 255 / 15;
 	templ[1] = ((_index >>  8) & 0xf) * 255 / 15;
@@ -170,7 +170,7 @@ static void calc_accuracy_2x2(int _index, ggi_coord acc)
 
 static void calc_accuracy_2x4(int _index, ggi_coord acc)
 {
-	uint8 templ[16];
+	uint8_t templ[16];
 
 	templ[0] = ((_index >> 14) & 0x3) * 255 / 3;
 	templ[1] = ((_index >> 12) & 0x3) * 255 / 3;
@@ -187,7 +187,7 @@ static void calc_accuracy_2x4(int _index, ggi_coord acc)
 
 static void calc_accuracy_4x4(int _index, ggi_coord acc)
 {
-	uint8 templ[16];
+	uint8_t templ[16];
 
 	templ[ 0] = (_index & 0x8000) ? 255 : 0;
 	templ[ 1] = (_index & 0x4000) ? 255 : 0;
@@ -214,8 +214,8 @@ static void calc_accuracy_4x4(int _index, ggi_coord acc)
 
 static void blitter_1x1(ggi_monotext_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8 *)  src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t *)  src;
+	uint16_t *d = (uint16_t *) dest;
 
 	for (; w > 0; w--, s++) {
 	
@@ -229,8 +229,8 @@ static void blitter_1x1(ggi_monotext_priv *priv, void *dest, void *src, int w)
 
 static void blitter_1x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8 *)  src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t *)  src;
+	uint16_t *d = (uint16_t *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 	int _index;
@@ -249,8 +249,8 @@ static void blitter_1x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 
 static void blitter_2x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8 *)  src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t *)  src;
+	uint16_t *d = (uint16_t *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 	int _index;
@@ -272,8 +272,8 @@ static void blitter_2x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 
 static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8 *)  src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t *)  src;
+	uint16_t *d = (uint16_t *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 	int _index;
@@ -300,8 +300,8 @@ static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 
 static void blitter_4x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8 *)  src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t *)  src;
+	uint16_t *d = (uint16_t *) dest;
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 	int _index;
@@ -344,12 +344,12 @@ static void blitter_4x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
  **************************************************/
 
 
-static uint8 src_buf[8192];
-static uint8 dest_buf[8192];
+static uint8_t src_buf[8192];
+static uint8_t dest_buf[8192];
 
 
 static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
-				   uint8 *src)
+				   uint8_t *src)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 

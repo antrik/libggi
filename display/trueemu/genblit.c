@@ -1,4 +1,4 @@
-/* $Id: genblit.c,v 1.1 2001/05/12 23:02:37 cegger Exp $
+/* $Id: genblit.c,v 1.2 2005/07/30 10:58:29 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : genblit
@@ -60,7 +60,7 @@
 
 static BLITFUNC(_ggi_trueemu_blit_b32_d0)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 0; width--) {
 		*dest++ = src[B_OFF];  /* blue */
@@ -76,7 +76,7 @@ static BLITFUNC(_ggi_trueemu_blit_b32_d0)
 
 static BLITFUNC(_ggi_trueemu_blit_b24_d0)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 0; width--) {
 		*dest++ = src[B_OFF];  /* blue */
@@ -91,7 +91,7 @@ static BLITFUNC(_ggi_trueemu_blit_b24_d0)
 
 static BLITFUNC(_ggi_trueemu_blit_b16_d0)
 {
-	uint16 *dest = dest_raw;
+	uint16_t *dest = dest_raw;
 
 	for (; width > 0; width--) {
 		*dest++ = HICOL_DITHER(0); src += SRC_STEP;
@@ -100,7 +100,7 @@ static BLITFUNC(_ggi_trueemu_blit_b16_d0)
 
 static BLITFUNC(_ggi_trueemu_blit_b16_d2_ev)
 {
-	uint16 *dest = dest_raw;
+	uint16_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = HICOL_DITHER(0); src += SRC_STEP;
@@ -114,7 +114,7 @@ static BLITFUNC(_ggi_trueemu_blit_b16_d2_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b16_d2_od)
 {
-	uint16 *dest = dest_raw;
+	uint16_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = HICOL_DITHER(1); src += SRC_STEP;
@@ -128,7 +128,7 @@ static BLITFUNC(_ggi_trueemu_blit_b16_d2_od)
 
 static BLITFUNC(_ggi_trueemu_blit_b16_d4_ev)
 {
-	uint16 *dest = dest_raw;
+	uint16_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = HICOL_DITHER(0); src += SRC_STEP;
@@ -142,7 +142,7 @@ static BLITFUNC(_ggi_trueemu_blit_b16_d4_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b16_d4_od)
 {
-	uint16 *dest = dest_raw;
+	uint16_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = HICOL_DITHER(3); src += SRC_STEP;
@@ -159,7 +159,7 @@ static BLITFUNC(_ggi_trueemu_blit_b16_d4_od)
 
 static BLITFUNC(_ggi_trueemu_blit_b8_d0)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 0; width--) {
 		*dest++ = PAL_DITHER(0, 0); src += SRC_STEP;
@@ -168,7 +168,7 @@ static BLITFUNC(_ggi_trueemu_blit_b8_d0)
 
 static BLITFUNC(_ggi_trueemu_blit_b8_d2_ev)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = PAL_DITHER(0, 0); src += SRC_STEP;
@@ -182,7 +182,7 @@ static BLITFUNC(_ggi_trueemu_blit_b8_d2_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b8_d2_od)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = PAL_DITHER(1, 0); src += SRC_STEP;
@@ -196,7 +196,7 @@ static BLITFUNC(_ggi_trueemu_blit_b8_d2_od)
 
 static BLITFUNC(_ggi_trueemu_blit_b8_d4_ev)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = PAL_DITHER(0, 0); src += SRC_STEP;
@@ -210,7 +210,7 @@ static BLITFUNC(_ggi_trueemu_blit_b8_d4_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b8_d4_od)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = PAL_DITHER(3, 0); src += SRC_STEP;
@@ -227,7 +227,7 @@ static BLITFUNC(_ggi_trueemu_blit_b8_d4_od)
 
 static BLITFUNC(_ggi_trueemu_blit_b4_d0)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = (PAL_DITHER(0, 0)) | 
@@ -242,7 +242,7 @@ static BLITFUNC(_ggi_trueemu_blit_b4_d0)
 
 static BLITFUNC(_ggi_trueemu_blit_b4_d2_ev)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = (PAL_DITHER(0, 0)) | 
@@ -257,7 +257,7 @@ static BLITFUNC(_ggi_trueemu_blit_b4_d2_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b4_d2_od)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = (PAL_DITHER(1, 0)) | 
@@ -272,7 +272,7 @@ static BLITFUNC(_ggi_trueemu_blit_b4_d2_od)
 
 static BLITFUNC(_ggi_trueemu_blit_b4_d4_ev)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = (PAL_DITHER(0, 0)) | 
@@ -287,7 +287,7 @@ static BLITFUNC(_ggi_trueemu_blit_b4_d4_ev)
 
 static BLITFUNC(_ggi_trueemu_blit_b4_d4_od)
 {
-	uint8 *dest = dest_raw;
+	uint8_t *dest = dest_raw;
 
 	for (; width > 1; width -= 2) {
 		*dest++ = (PAL_DITHER(3, 0)) | 

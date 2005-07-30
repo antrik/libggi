@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.1 2001/05/12 23:03:23 cegger Exp $
+/* $Id: vgl.h,v 1.2 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -63,9 +63,9 @@ ggifunc_setorigin	GGI_vgl_setorigin;
 
 typedef struct vgl_priv {
 	ggi_modelistmode *availmodes;
-	uint8	         *memorigin;
+	uint8_t	         *memorigin;
 	int		 *savepalette;
-	uint32	pixperframe;
+	uint32_t pixperframe;
 
 	int	vgl_init_done;
 	int	vgl_use_db;

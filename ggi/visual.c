@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/27 16:42:45 soyt Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -93,7 +93,7 @@ void *_ggi_realloc(void *ptr, size_t siz)
 ******************************************************************************
 */
 
-static uint32 _ggi_drvpriv_inuse = 0;
+static uint32_t _ggi_drvpriv_inuse = 0;
 
 int _ggi_alloc_drvpriv(void)
 {

@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.15 2004/12/01 23:08:27 cegger Exp $
+/* $Id: ggi.h,v 1.16 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -237,11 +237,11 @@ typedef struct {
 	 * to find out what each bit does:
 	 */
 
-	uint32		bitmeaning[sizeof(ggi_pixel)*8];
+	uint32_t	bitmeaning[sizeof(ggi_pixel)*8];
 
-	uint32		flags;		/* Pixelformat flags */
+	uint32_t	flags;		/* Pixelformat flags */
 
-	uint32		stdformat;	/* Standard format identifier */
+	uint32_t	stdformat;	/* Standard format identifier */
 	/* This one has only one use for the usermode application:
 	 * To quickly check, if two buffers are identical. If both
 	 * stdformats are the same and _NOT_ 0 (which means "WEIRD"),
@@ -313,7 +313,7 @@ typedef struct {
 */
 
 typedef struct {
-	uint32		type;		/* buffer type */
+	uint32_t	type;		/* buffer type */
 	int		frame;		/* framenumber (GGI_DB_NORMAL) */
  
 	/*	access info	*/
@@ -323,11 +323,11 @@ typedef struct {
 	void		*write;		/* buffer address for writes	*/
 	unsigned int	page_size;	/* zero for true linear buffers	*/
 
-	uint32		noaccess;	
+	uint32_t	noaccess;	
 	/* bitfield. bit x set means you may _not_ access this DB at the
 	   width of 2^x bytes. Usually 0, but _check_ it. */
 
-	uint32		align;
+	uint32_t	align;
 	/* bitfield. bit x set means you may only access this DB at the
 	   width of 2^x bytes, when the access is aligned to a multiple
 	   of 2^x. Note that bit 0 is a bit bogus here, but it should
@@ -403,7 +403,7 @@ GGIAPIFUNC const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis,
 #define ggiResourceRelease(res) \
 	(((res) == NULL) ? 0 : ggiResourceFastRelease((res)))
 #define ggiResourceMustAcquire(res)	((res) != NULL)
-GGIAPIFUNC int ggiResourceFastAcquire(ggi_resource_t res, uint32 actype);
+GGIAPIFUNC int ggiResourceFastAcquire(ggi_resource_t res, uint32_t actype);
 GGIAPIFUNC int ggiResourceFastRelease(ggi_resource_t res);
 
 /* Library management
@@ -498,7 +498,7 @@ GGIAPIFUNC int ggiGetGammaMap(ggi_visual_t vis,int s,int len,
 GGIAPIFUNC int ggiSetGammaMap(ggi_visual_t vis,int s,int len,
 			      const ggi_color *gammamap);
 
-GGIAPIFUNC int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning,
+GGIAPIFUNC int ggiGammaMax(ggi_visual_t vis, uint32_t bitmeaning,
 			   int *max_r, int *max_w);
 
 /* Origin handling

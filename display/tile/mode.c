@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/04/30 12:53:19 cegger Exp $
+/* $Id: mode.c,v 1.18 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -67,7 +67,7 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	*/
 
 	int rowadd, stride;
-	uint8 *buf;
+	uint8_t *buf;
 
 	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
 			vis, x, y, w, h, tryflag);
@@ -81,7 +81,7 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 		MANSYNC_ignore(vis);
 	}
 
-	rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8/sizeof(uint8);
+	rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8/sizeof(uint8_t);
 	stride = priv->d_frame->buffer.plb.stride;
 
 	for(i = 0; i<priv->numvis; i++) {
@@ -89,7 +89,7 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 		width = priv->vislist[i].size.x;
 		height = priv->vislist[i].size.y - 1;
 
-		buf = (uint8*)priv->d_frame->read +
+		buf = (uint8_t*)priv->d_frame->read +
 				stride * (priv->vislist[i].origin.y + vis->origin_y + height) +
 				rowadd * (priv->vislist[i].origin.x + vis->origin_x);
 

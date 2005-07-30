@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.34 2005/07/20 14:34:51 cegger Exp $
+/* $Id: visual.c,v 1.35 2005/07/30 10:58:24 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -105,7 +105,7 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 
 static int
 GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
-	const char *args, void *argptr, uint32 * dlret)
+	const char *args, void *argptr, uint32_t * dlret)
 {
 	int err = GGI_OK;
 	directx_priv *priv;
@@ -204,7 +204,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	ggigii.hWnd = priv->hWnd;
 	ggigii.hInstance = priv->hInstance;
 
-	if (tolower((uint8) options[OPT_NOINPUT].result[0]) == 'n' &&
+	if (tolower((uint8_t) options[OPT_NOINPUT].result[0]) == 'n' &&
 	    /* FIXME: dxinput doesn't work with -inwin yet; the following
 	       condition disables the default input target if -inwin has been
 	       specified */

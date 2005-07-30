@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.14 2004/12/14 20:39:25 cegger Exp $
+/* $Id: stubs.c,v 1.15 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -190,7 +190,7 @@ int  ggiGetGammaMap(ggi_visual_t vis,int s,int len,ggi_color *gammamap)
 int  ggiSetGammaMap(ggi_visual_t vis,int s,int len,const ggi_color *gammamap)
 { return vis->opcolor->setgammamap(vis,s,len,gammamap); }
 
-int ggiGammaMax(ggi_visual_t vis, uint32 bitmeaning, int *max_r, int *max_w)
+int ggiGammaMax(ggi_visual_t vis, uint32_t bitmeaning, int *max_r, int *max_w)
 {
 	if (!vis->gamma) return GGI_EARGINVAL;
 	switch(bitmeaning) {
@@ -348,7 +348,7 @@ int ggiGetWriteFrame(ggi_visual_t vis)
 /* Resource management
  */
 
-int ggiResourceFastAcquire(ggi_resource_t res, uint32 actype)
+int ggiResourceFastAcquire(ggi_resource_t res, uint32_t actype)
 {
 	return res->acquire(res, actype);
 }

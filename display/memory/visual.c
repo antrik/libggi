@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2005/06/17 11:34:20 cegger Exp $
+/* $Id: visual.c,v 1.29 2005/07/30 10:58:26 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -125,7 +125,7 @@ static const char *ftok(const char *pathname, int id)
 #endif /* HAVE_SHM && !HAVE_SYS_SHM_H && HAVE_WINDOWS_H */
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_memory_priv *priv;
 	gg_option options[NUM_OPTS];

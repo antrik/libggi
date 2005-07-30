@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.17 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: box.c,v 1.18 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -199,7 +199,7 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	XImage *ximg;
 	int     (*olderrorhandler) (Display *, XErrorEvent *);
 	int ret = 0;
-	uint8 *data8;
+	uint8_t *data8;
 	priv = GGIX_PRIV(vis);
 
 	/* TODO: chunk transfer for performance/memory profile.
@@ -236,9 +236,9 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	    ) goto noswab;
 
 	if (ximg->bits_per_pixel == 16) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 2;
-		data8 = (uint8 *)data;
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) + ximg->xoffset * 2;
+		data8 = (uint8_t *)data;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 2; j += 2) {
@@ -250,9 +250,9 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 		}
 	}
 	else if (ximg->bits_per_pixel == 32) {
-		uint8 *ximgptr;
-		ximgptr = (uint8 *)(ximg->data) + ximg->xoffset * 4;
-		data8 = (uint8 *)data;
+		uint8_t *ximgptr;
+		ximgptr = (uint8_t *)(ximg->data) + ximg->xoffset * 4;
+		data8 = (uint8_t *)data;
 		while (h--) {
 			int j;
 			for (j = 0; j < w * 4; j += 4) {
@@ -266,13 +266,13 @@ int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
 		}
 	}
 	else {
-		uint8 *ximgptr;
+		uint8_t *ximgptr;
 
 	noswab:
 
-		ximgptr = (uint8 *)(ximg->data) + 
+		ximgptr = (uint8_t *)(ximg->data) + 
 			(ximg->xoffset * ximg->bits_per_pixel)/8;
-		data8 = (uint8 *)data;
+		data8 = (uint8_t *)data;
 		while (h--) {
 			memcpy(data8, ximgptr,
 				(size_t)(w * ximg->bits_per_pixel)/8);

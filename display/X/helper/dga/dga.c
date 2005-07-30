@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.14 2005/02/18 23:53:56 orzo Exp $
+/* $Id: dga.c,v 1.15 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -344,7 +344,7 @@ static int ggi_xdga_makerenderer (ggi_visual *vis) {
 #endif
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_x_priv *priv;
 	int dgafeat, i, j;

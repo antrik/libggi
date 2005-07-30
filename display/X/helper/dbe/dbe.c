@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.8 2004/11/27 16:42:15 soyt Exp $
+/* $Id: dbe.c,v 1.9 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -32,7 +32,7 @@
 #include <X11/extensions/Xdbe.h>
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	int major_version, minor_version;

@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.9 2005/04/14 16:06:43 cegger Exp $
+/* $Id: types.h,v 1.10 2005/07/30 10:57:03 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -41,11 +41,11 @@
 
 #define        GGI_AUTO     (0)
 
-typedef struct { sint16	x, y; }					ggi_coord;
-typedef struct { long	x, y; }					ggi_subcoord;	
-typedef	uint32							ggi_pixel;
+typedef struct { int16_t x, y; }				ggi_coord;
+typedef struct { long	 x, y; }				ggi_subcoord;	
+typedef	int32_t							ggi_pixel;
 
-typedef	uint32							ggi_attr;
+typedef	int32_t							ggi_attr;
 #define	ATTR_FGCOLOR	0x0000FF00	/* fgcolor clut index	*/
 #define	ATTR_BGCOLOR	0x000000FF	/* bgcolor clut index	*/
 #define	ATTR_NORMAL	0x00000000	/* normal style		*/
@@ -60,15 +60,15 @@ typedef	uint32							ggi_attr;
 #define	ATTR_FONT	0xFF000000	/* font table		*/
 #define	ATTR_COLOR(fg, bg)	((bg & 0xFF) | ((fg & 0xFF) << 8))
 
-typedef struct { uint16 r,g,b,a; }				ggi_color;
-typedef struct { uint16	size; ggi_color	*data; }		ggi_clut;
+typedef struct { uint16_t r,g,b,a; }				ggi_color;
+typedef struct { uint16_t size; ggi_color *data; }		ggi_clut;
 
 #define	GGI_COLOR_PRECISION 16	/* 16 bit per R,G, B value	*/
 
 /*
  * Graphtypes
  */
-typedef uint32 ggi_graphtype;
+typedef uint32_t ggi_graphtype;
 
 #define GT_DEPTH_SHIFT		(0)
 #define GT_SIZE_SHIFT		(8)
@@ -137,7 +137,7 @@ typedef uint32 ggi_graphtype;
  */
 typedef struct		/* requested by user and changed by driver    */
 {
-	sint32		frames;		/* frames needed		    */
+	int32_t		frames;		/* frames needed		    */
 	ggi_coord	visible;	/* vis. pixels, may change slightly */
 	ggi_coord	virt;		/* virtual pixels, may change	    */
 	ggi_coord	size;		/* size of visible in mm	    */
@@ -280,7 +280,7 @@ typedef struct		/* requested by user and changed by driver    */
 #define GGI_REQSW_TARGET	0x04
 
 typedef struct {
-	uint32		request;
+	uint32_t	request;
 	ggi_mode	mode;
 	char		target[64];
 } ggi_cmddata_switchrequest;

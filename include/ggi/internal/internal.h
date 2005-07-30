@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.25 2005/06/09 16:55:18 cegger Exp $
+/* $Id: internal.h,v 1.26 2005/07/30 10:57:04 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -74,11 +74,11 @@ GGIAPIFUNC int _ggiAddDL(ggi_visual * vis, const char *drv, const char *args,
 			 void *argptr, int type);
 GGIAPIFUNC int _ggiProbeDL(ggi_visual * vis, const char * name,
 		const char * args, void * argptr,
-		int type, ggi_dlhandle ** dlh, uint32 * dlret);
+		int type, ggi_dlhandle ** dlh, uint32_t * dlret);
 
 /* internal.c */
-GGIAPIFUNC int _ggi_countbits(uint32 val);
-GGIAPIFUNC int _ggi_mask2shift(uint32 mask);
+GGIAPIFUNC int _ggi_countbits(uint32_t val);
+GGIAPIFUNC int _ggi_mask2shift(uint32_t mask);
 
 #define GGI_PIXFMT_GRAPHTYPE	0
 #define GGI_PIXFMT_CHANNEL	1

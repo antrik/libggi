@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.15 2005/07/29 16:30:53 soyt Exp $
+/* $Id: structs.h,v 1.16 2005/07/30 10:57:04 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -49,7 +49,7 @@ typedef struct ggi_resource *ggi_resource_t;
  * for (ABI compatability)
  */
 #define	GGI_VERSION_MK(st_rev)		((GGI_VERSION_DLL<<16)|st_rev)
-#define GGI_LIBRARY_REVISION(vers)	(((uint32)vers)>>16)
+#define GGI_LIBRARY_REVISION(vers)	(((uint32_t)vers)>>16)
 #define GGI_STRUCTURE_REVISION(vers)	((vers) & 0xFFFF)
 
 /*
@@ -143,10 +143,10 @@ struct ggi_resource;
 typedef struct ggi_resource {
 	ggifunc_resacquire *acquire;
 	ggifunc_resrelease *release;
-	void   *self;		/* The structure being locked */
-	void   *priv;		/* Private data needed for acquire/release: */
-	int	count;		/* Usage counter */
-	uint32	curactype;	/* Current access type */
+	void    *self;		/* The structure being locked */
+	void    *priv;		/* Private data needed for acquire/release: */
+	int      count;		/* Usage counter */
+	uint32_t curactype;	/* Current access type */
 } ggi_resource;
 
 

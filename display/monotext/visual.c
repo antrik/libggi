@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2005/06/09 17:58:26 cegger Exp $
+/* $Id: visual.c,v 1.11 2005/07/30 10:58:26 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -51,7 +51,7 @@ static const gg_option optlist[] =
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32 *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_monotext_priv *priv;
 	ggi_visual *parentvis;

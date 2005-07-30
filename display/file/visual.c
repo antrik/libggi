@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2004/11/27 16:42:19 soyt Exp $
+/* $Id: visual.c,v 1.10 2005/07/30 10:58:25 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -50,7 +50,7 @@ static const gg_option optlist[] =
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_file_priv *priv;
 	gg_option options[NUM_OPTS];

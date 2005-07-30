@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.9 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: gtext.c,v 1.10 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -46,7 +46,7 @@ int GGI_X_getcharsize_font(ggi_visual *vis, int *width, int *height)
 int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 {
 	ggi_x_priv *priv;
-	uint8  *datafg, *databg, *ptr;
+	uint8_t  *datafg, *databg, *ptr;
 	ggi_color *colors, gccolor;
 	int i, w, h;
 
@@ -84,7 +84,7 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
        		memcpy(colors + i, &gccolor, sizeof(ggi_color));
 	priv->slave->opcolor->packcolors(priv->slave, databg, colors, w * h);
 	free(colors);
-	ptr = (uint8 *)(priv->fontimg->data) + 
+	ptr = (uint8_t *)(priv->fontimg->data) + 
 	  (w * (unsigned int)(unsigned char)c + priv->fontimg->xoffset) * 
 	  priv->fontimg->bits_per_pixel / 8;
 	for (i = 0; i < h; i++) {

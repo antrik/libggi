@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.48 2005/06/09 17:15:37 cegger Exp $
+/* $Id: visual.c,v 1.49 2005/07/30 10:58:22 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -276,7 +276,7 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 
 {
 	int err, tmp1, tmp2, tmp3;  /* Return value, scratch variables */
@@ -558,7 +558,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
         }
 
-	if (tolower((uint8)options[OPT_NOINPUT].result[0]) == 'n') {
+	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_inputxwin_arg _args;
 		gii_input *inp;
                 

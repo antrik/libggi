@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/01/14 09:38:14 pekberg Exp $
+/* $Id: mode.c,v 1.18 2005/07/30 10:57:30 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -443,15 +443,15 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m)
  * for failure.
  */
 
-#define SKIPSPACE   while ((*s) && (isspace((uint8)*s) || (*s == '.'))) s++
+#define SKIPSPACE   while ((*s) && (isspace((uint8_t)*s) || (*s == '.'))) s++
  
 /* scan the integer from the string pointer s */
 
 #define SCANINT(x,def)                             \
 	SKIPSPACE;  x = def;                       \
-	if (isdigit((uint8) *s)) {                 \
+	if (isdigit((uint8_t) *s)) {                 \
 		x = *s++ - '0';                    \
-		while (isdigit((uint8) *s)) {      \
+		while (isdigit((uint8_t) *s)) {      \
 			x = x*10 + (*s++ - '0');   \
 		}                                  \
 	}                                          \
@@ -475,62 +475,65 @@ int ggiParseMode(const char * s, ggi_mode * m)
 
 		SKIPSPACE;
 
-		if ((tolower((uint8)*s)=='s') || isdigit((uint8)*s)) {	/* visible */
-			if (! isdigit((uint8)*s)) s++;
+		/* visible */
+		if ((tolower((uint8_t)*s)=='s') || isdigit((uint8_t)*s)) {
+			if (! isdigit((uint8_t)*s)) s++;
 			SCANINT(m->visible.x, GGI_AUTO);
-			if (tolower((uint8) *s) == 'x') {
+			if (tolower((uint8_t) *s) == 'x') {
 				s++; SCANINT(m->visible.y, GGI_AUTO);
 			}
-			if (tolower((uint8) *s) == 'x') {
+			if (tolower((uint8_t) *s) == 'x') {
 				s++; SCANINT(depth, GT_AUTO);
 				GT_SETDEPTH(m->graphtype, depth);
 			}
 			continue;
 		}
 		
-		if ((*s=='#') || (tolower((uint8) *s)=='v')) {	/* virtual */
+		/* virtual */
+		if ((*s=='#') || (tolower((uint8_t) *s)=='v')) {
 			s++; SCANINT(m->virt.x, GGI_AUTO);
-			if (tolower((uint8) *s) == 'x') {
+			if (tolower((uint8_t) *s) == 'x') {
 				s++; SCANINT(m->virt.y, GGI_AUTO);
 			}
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='f') {	/* frames */
+		/* frames */
+		if (tolower((uint8_t) *s)=='f') {
 			s++; SCANINT(m->frames, GGI_AUTO);
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='d') {  /* dpp */
+		if (tolower((uint8_t) *s)=='d') {  /* dpp */
 			s++; SCANINT(m->dpp.x, GGI_AUTO);
-			if (tolower((uint8) *s) == 'x') {
+			if (tolower((uint8_t) *s) == 'x') {
 				s++; SCANINT(m->dpp.y, GGI_AUTO);
 			}
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='p') {  /* palette */
+		if (tolower((uint8_t) *s)=='p') {  /* palette */
 			s++; SCANINT(depth, GT_AUTO);
 			GT_SETSCHEME(m->graphtype, GT_PALETTE);
 			GT_SETDEPTH(m->graphtype, depth);
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='c') {  /* truecolor */
+		if (tolower((uint8_t) *s)=='c') {  /* truecolor */
 			s++; SCANINT(depth, GT_AUTO);
 			GT_SETSCHEME(m->graphtype, GT_TRUECOLOR);
 			GT_SETDEPTH(m->graphtype, depth);
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='k') {  /* greyscale */
+		if (tolower((uint8_t) *s)=='k') {  /* greyscale */
 			s++; SCANINT(depth, GT_AUTO);
 			GT_SETSCHEME(m->graphtype, GT_GREYSCALE);
 			GT_SETDEPTH(m->graphtype, depth);
 			continue;
 		}
 
-		if (tolower((uint8) *s)=='t') {  /* text */
+		if (tolower((uint8_t) *s)=='t') {  /* text */
 			s++; SCANINT(depth, GT_AUTO);
 			GT_SETSCHEME(m->graphtype, GT_TEXT);
 			GT_SETDEPTH(m->graphtype, depth);
@@ -554,19 +557,19 @@ int ggiParseMode(const char * s, ggi_mode * m)
 		CHECKGTMODE("GT_TEXT16]", 10, GT_TEXT16);
 		CHECKGTMODE("GT_TEXT32]", 10, GT_TEXT32);
 	
-		if (tolower((uint8) *s) == 't') {  /* text */
+		if (tolower((uint8_t) *s) == 't') {  /* text */
 			GT_SETSCHEME(m->graphtype, GT_TEXT);
 			s++;
 		} else
-		if (tolower((uint8) *s) == 'p') {  /* palette */
+		if (tolower((uint8_t) *s) == 'p') {  /* palette */
 			GT_SETSCHEME(m->graphtype, GT_PALETTE);
 			s++;
 		} else
-		if (tolower((uint8) *s) == 'c') {  /* truecolor */
+		if (tolower((uint8_t) *s) == 'c') {  /* truecolor */
 			GT_SETSCHEME(m->graphtype, GT_TRUECOLOR);
 			s++;
 		} else
-		if (tolower((uint8) *s) == 'k') {  /* greyscale */
+		if (tolower((uint8_t) *s) == 'k') {  /* greyscale */
 			GT_SETSCHEME(m->graphtype, GT_GREYSCALE);
 			s++;
 		}
@@ -613,13 +616,13 @@ int ggiParseMode(const char * s, ggi_mode * m)
 	int yposition=0;
 	DPRINT_CORE("ggiParseMode(%p, %p) called\n", s, m);
 	*m = _ggiDefaultMode;
-#define SKIPSPACE   while ( (*s!='\000') && (isspace((uint8)*s)) ) s++;
+#define SKIPSPACE   while ( (*s!='\000') && (isspace((uint8_t)*s)) ) s++;
 /* scan the integer from the string pointer s */
 #define SCANINT(x)  SKIPSPACE;                 \
-		    if (isdigit((uint8)*s)){        \
+		    if (isdigit((uint8_t)*s)){        \
 		       x=*s-'0';               \
 	               s++;                    \
-		       while (isdigit((uint8)*s)){  \
+		       while (isdigit((uint8_t)*s)){  \
 			  x = x*10+ ((int)*s) -'0'; \
 			  s++;                 \
 		       }                       \
@@ -627,27 +630,27 @@ int ggiParseMode(const char * s, ggi_mode * m)
 		    SKIPSPACE
 	/* first number is visible-x: */
 	SCANINT(m->visible.x);
-	if (tolower((uint8)*s) == 'x') { /* now for the y */
+	if (tolower((uint8_t)*s) == 'x') { /* now for the y */
 		s++;
 		SCANINT(m->visible.y);
 	}
 	if (*s == '#'){ /* virtual starts here */
 		s++;
 		SCANINT(m->virt.x);
-		if (tolower((uint8)*s) == 'x') { /* now for the y */
+		if (tolower((uint8_t)*s) == 'x') { /* now for the y */
 			s++;
 			SCANINT(m->virt.y);
 		}
 	}
-	if (tolower((uint8)*s) == 'd') { /* dpp starts here */
+	if (tolower((uint8_t)*s) == 'd') { /* dpp starts here */
 		s++;
 		SCANINT(m->dpp.x);
-		if (tolower((uint8)*s) == 'x') { /* now for the y */
+		if (tolower((uint8_t)*s) == 'x') { /* now for the y */
 			s++;
 			SCANINT(m->dpp.y);
 		}
 	}
-	if (tolower((uint8)*s) == 'f') { /* frames starts here */
+	if (tolower((uint8_t)*s) == 'f') { /* frames starts here */
 		s++;
 		SCANINT(m->frames);
 	}
@@ -668,19 +671,19 @@ int ggiParseMode(const char * s, ggi_mode * m)
 		CHECKGTMODE("GT_TEXT32]", 10, GT_TEXT32) else
 		{
 			/* scheme */
-			if (tolower((uint8)*s) == 't') {  /* text mode */
+			if (tolower((uint8_t)*s) == 't') {  /* text mode */
 				GT_SETSCHEME(m->graphtype, GT_TEXT);
 				s++;
 			} else
-			if (tolower((uint8)*s) == 'p') {  /* palette mode */
+			if (tolower((uint8_t)*s) == 'p') {  /* palette mode */
 				GT_SETSCHEME(m->graphtype, GT_PALETTE);
 				s++;
 			} else
-			if (tolower((uint8)*s) == 'c') {  /* truecolor mode */
+			if (tolower((uint8_t)*s) == 'c') {  /* truecolor mode */
 				GT_SETSCHEME(m->graphtype, GT_TRUECOLOR);
 				s++;
 			} else
-			if (tolower((uint8)*s) == 'k') {  /* greyscale mode */
+			if (tolower((uint8_t)*s) == 'k') {  /* greyscale mode */
 				GT_SETSCHEME(m->graphtype, GT_GREYSCALE);
 				s++;
 			}

@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.8 2004/11/27 16:42:25 soyt Exp $
+/* $Id: palemu.c,v 1.9 2005/07/30 10:58:26 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -43,8 +43,8 @@
 
 static void blitter_1(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
-	uint8 *s = (uint8 *) src;
-	uint8 *d = (uint8 *) dest;
+	uint8_t *s = (uint8_t *) src;
+	uint8_t *d = (uint8_t *) dest;
 
 	for (; w > 0; w--) {
 		*d++ = priv->lookup[*s++];
@@ -53,8 +53,8 @@ static void blitter_1(ggi_palemu_priv *priv, void *dest, void *src, int w)
 
 static void blitter_2(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8  *) src;
-	uint16 *d = (uint16 *) dest;
+	uint8_t  *s = (uint8_t  *) src;
+	uint16_t *d = (uint16_t *) dest;
 
 	for (; w > 0; w--) {
 		*d++ = priv->lookup[*s++];
@@ -63,8 +63,8 @@ static void blitter_2(ggi_palemu_priv *priv, void *dest, void *src, int w)
 
 static void blitter_3(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
-	uint8 *s = (uint8 *) src;
-	uint8 *d = (uint8 *) dest;
+	uint8_t *s = (uint8_t *) src;
+	uint8_t *d = (uint8_t *) dest;
 
 	for (; w > 0; w--) {
 		ggi_pixel pix = priv->lookup[*s++];
@@ -77,8 +77,8 @@ static void blitter_3(ggi_palemu_priv *priv, void *dest, void *src, int w)
 
 static void blitter_4(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
-	uint8  *s = (uint8  *) src;
-	uint32 *d = (uint32 *) dest;
+	uint8_t  *s = (uint8_t  *) src;
+	uint32_t *d = (uint32_t *) dest;
 
 	for (; w > 0; w--) {
 		*d++ = priv->lookup[*s++];
@@ -100,8 +100,8 @@ int _ggi_palemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int old_r_frame = vis->r_frame_num;
-	uint8 src_buf[8192];
-	uint8 dest_buf[8192];
+	uint8_t src_buf[8192];
+	uint8_t dest_buf[8192];
 
 	priv->mem_opdraw->setreadframe(vis, vis->d_frame_num);
 	

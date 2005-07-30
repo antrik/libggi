@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2004/11/27 16:42:26 soyt Exp $
+/* $Id: mode.c,v 1.14 2005/07/30 10:58:28 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -117,8 +117,8 @@ static int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
   format->fg_mask       = (ggi_pixel)d->fg_mask;
   format->bg_mask       = (ggi_pixel)d->bg_mask;
   format->texture_mask  = (ggi_pixel)d->texture_mask;
-  format->flags         = (uint32)d->flags;
-  format->stdformat     = (uint32)d->stdformat;
+  format->flags         = (uint32_t)d->flags;
+  format->stdformat     = (uint32_t)d->stdformat;
 
   _ggi_build_pixfmt(format);
 
@@ -190,16 +190,16 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 		priv->mode_up = 1;
 	}
 
-	mode->graphtype = (uint32) w->graphtype;
-	mode->frames    = (uint32) w->frames;
-	mode->visible.x = (sint16) w->visible.width;
-	mode->visible.y = (sint16) w->visible.height;
-	mode->virt.x    = (sint16) w->virt.width;
-	mode->virt.y    = (sint16) w->virt.height;
-	mode->size.x    = (sint16) w->size.width;
-	mode->size.y    = (sint16) w->size.height;
-	mode->dpp.x     = (sint16) w->dot.width;
-	mode->dpp.y     = (sint16) w->dot.height;
+	mode->graphtype = (ggi_graphtype) w->graphtype;
+	mode->frames    = (uint32_t) w->frames;
+	mode->visible.x = (int16_t) w->visible.width;
+	mode->visible.y = (int16_t) w->visible.height;
+	mode->virt.x    = (int16_t) w->virt.width;
+	mode->virt.y    = (int16_t) w->virt.height;
+	mode->size.x    = (int16_t) w->size.width;
+	mode->size.y    = (int16_t) w->size.height;
+	mode->dpp.x     = (int16_t) w->dot.width;
+	mode->dpp.y     = (int16_t) w->dot.height;
 
 	priv->width  = mode->virt.x;
 	priv->height = mode->virt.y;
@@ -311,16 +311,16 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 	DPRINT_MODE("GGI_tele_checkmode: REPLY %d...\n", (int) w->error);
 
-	mode->graphtype = (uint32) w->graphtype;
-	mode->frames    = (uint32) w->frames;
-	mode->visible.x = (sint16) w->visible.width;
-	mode->visible.y = (sint16) w->visible.height;
-	mode->virt.x    = (sint16) w->virt.width;
-	mode->virt.y    = (sint16) w->virt.height;
-	mode->size.x    = (sint16) w->size.width;
-	mode->size.y    = (sint16) w->size.height;
-	mode->dpp.x     = (sint16) w->dot.width;
-	mode->dpp.y     = (sint16) w->dot.height;
+	mode->graphtype = (ggi_graphtype) w->graphtype;
+	mode->frames    = (uint32_t) w->frames;
+	mode->visible.x = (int16_t) w->visible.width;
+	mode->visible.y = (int16_t) w->visible.height;
+	mode->virt.x    = (int16_t) w->virt.width;
+	mode->virt.y    = (int16_t) w->virt.height;
+	mode->size.x    = (int16_t) w->size.width;
+	mode->size.y    = (int16_t) w->size.height;
+	mode->dpp.x     = (int16_t) w->dot.width;
+	mode->dpp.y     = (int16_t) w->dot.height;
 
 	return 0; /* w->error; */
 }

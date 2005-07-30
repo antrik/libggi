@@ -1,4 +1,4 @@
-/* $Id: ggi_debug.h,v 1.8 2005/03/09 11:04:19 pekberg Exp $
+/* $Id: ggi_debug.h,v 1.9 2005/07/30 10:57:04 cegger Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -44,7 +44,7 @@
 
 __BEGIN_DECLS
 
-GGIAPIVAR uint32   _ggiDebug;
+GGIAPIVAR uint32_t _ggiDebug;
 
 static inline void DPRINT(const char *form,...)        { DPRINTIF(_ggiDebug,DEBUG_ALL);    }
 static inline void DPRINT_CORE(const char *form,...)   { DPRINTIF(_ggiDebug,DEBUG_CORE);   }

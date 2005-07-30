@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2004/11/27 16:42:28 soyt Exp $
+/* $Id: visual.c,v 1.13 2005/07/30 10:58:29 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -76,7 +76,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_trueemu_priv *priv;
 	gg_option options[NUM_OPTS];
@@ -105,7 +105,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Find out the parent target. */
-	while (args && *args && isspace((uint8)*args)) {
+	while (args && *args && isspace((uint8_t)*args)) {
 		args++;
 	}
 

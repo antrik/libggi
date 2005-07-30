@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.35 2005/06/18 16:38:13 cegger Exp $
+/* $Id: shm.c,v 1.36 2005/07/30 10:58:23 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -311,7 +311,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 }
 
 static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32 *dlret)
+		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_x_priv *priv;
 	int major, minor;
