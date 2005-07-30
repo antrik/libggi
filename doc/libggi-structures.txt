@@ -16,12 +16,12 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  typedef struct { sint16 x, y; } ggi_coord;
+  typedef struct { int16_t x, y; } ggi_coord;
 
-  typedef uint32 ggi_graphtype;
+  typedef uint32_t ggi_graphtype;
 
   typedef struct {
-        sint32          frames;
+        int32_t          frames;
         ggi_coord       visible;
         ggi_coord       virt;
         ggi_coord       size;
@@ -140,9 +140,9 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  typedef struct { uint16 r,g,b,a; }   ggi_color;
+  typedef struct { uint16_t r,g,b,a; }   ggi_color;
 
-  typedef uint32   ggi_pixel;
+  typedef uint32_t   ggi_pixel;
 
 
 Description
@@ -271,11 +271,11 @@ Synopsis
 	 * to find out what each bit does:
 	 */
 
-	uint32		bitmeaning[sizeof(ggi_pixel)*8];
+	uint32_t		bitmeaning[sizeof(ggi_pixel)*8];
 
-	uint32		flags;		/* Pixelformat flags */
+	uint32_t		flags;		/* Pixelformat flags */
 
-	uint32		stdformat;	/* Standard format identifier */
+	uint32_t		stdformat;	/* Standard format identifier */
 	/* This one has only one use for the usermode application:
 	 * To quickly check, if two buffers are identical. If both
 	 * stdformats are the same and _NOT_ 0 (which means "WEIRD"),
@@ -320,7 +320,7 @@ Synopsis
   #include <ggi/ggi.h>
 
   typedef struct {
-	uint32		type;
+	uint32_t		type;
 	int		frame;
 
 	ggi_resource_t	resource;
@@ -329,8 +329,8 @@ Synopsis
 	void		*write;
 
 	unsigned int	page_size;
-	uint32		noaccess;	
-	uint32		align;
+	uint32_t		noaccess;	
+	uint32_t		align;
 
 	ggi_bufferlayout	layout;
 
@@ -545,9 +545,9 @@ Synopsis
   #include <ggi/ggi.h>
 
   /* a color consists of red, green, blue and alpha component */
-  typedef struct { uint16 r,g,b,a; }               ggi_color;
+  typedef struct { uint16_t r,g,b,a; }               ggi_color;
   /* color look up table */
-  typedef struct { uint16 size; ggi_color *data; } ggi_clut;
+  typedef struct { uint16_t size; ggi_color *data; } ggi_clut;
 
   enum ggi_colormap_region {
       GGI_COLORMAP_RW_REGION    = 0,

@@ -873,7 +873,7 @@ Synopsis
 			int s, int len, const ggi_color *gammamap);
 
   int ggiGammaMax(ggi_visual_t vis,
-			uint32 bitmeaning, int *max_r, int *max_w);
+			uint32_t bitmeaning, int *max_r, int *max_w);
 
 
 Description
@@ -1818,7 +1818,7 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiResourceAcquire(ggi_resource_t res, uint32 actype);
+  int ggiResourceAcquire(ggi_resource_t res, uint32_t actype);
 
   int ggiResourceRelease(ggi_resource_t res);
 
