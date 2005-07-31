@@ -6,8 +6,6 @@
 # Displays
 display-aa			display/aa.@DLLEXT@
 display-auto			display/auto.@DLLEXT@
-display-dga			display/xf86dga.@DLLEXT@
-display-xf86dga			display/xf86dga.@DLLEXT@
 display-directx			display/directx.@DLLEXT@
 display-file			display/file.@DLLEXT@
 display-fbdev			display/fbdev.@DLLEXT@
@@ -34,6 +32,8 @@ helper-vgagl			display/vgagl.@DLLEXT@
 display-vgl			display/vgl.@DLLEXT@
 display-wsfb			display/wsfb.@DLLEXT@
 display-x			display/X.@DLLEXT@
+alias	display-dga		display-x:-fullscreen
+alias	display-xf86dga		display-dga
 helper-x-evi			helper/helper_x_evi.@DLLEXT@
 helper-x-dbe			helper/helper_x_dbe.@DLLEXT@
 helper-x-dga			helper/helper_x_dga.@DLLEXT@
@@ -43,34 +43,34 @@ helper-mansync			display/mansync.@DLLEXT@
 helper-linux-vtswitch		display/linvtsw.@DLLEXT@
 
 # Display abbreviations
-aa				display/aa.@DLLEXT@
-auto				display/auto.@DLLEXT@
-directx				display/directx.@DLLEXT@
-dga				display/xf86dga.@DLLEXT@
-xf86dga				display/xf86dga.@DLLEXT@
-file				display/file.@DLLEXT@
-fbdev				display/fbdev.@DLLEXT@
-glide				display/glide.@DLLEXT@
-kgi				display/kgi.@DLLEXT@
-ipc				display/ipc.@DLLEXT@
-lcd823				display/lcd823.@DLLEXT@
-libkgi				display/kgilib.@DLLEXT@
-memory				display/memory.@DLLEXT@
-monotext			display/monotext.@DLLEXT@
-multi				display/multi.@DLLEXT@
-palemu				display/palemu.@DLLEXT@
-quartz				display/quartz.@DLLEXT@
-sub				display/sub.@DLLEXT@
-suidkgi				display/suidkgi.@DLLEXT@
-svga				display/svgalib.@DLLEXT@
-terminfo			display/terminfo.@DLLEXT@
-tele				display/tele.@DLLEXT@
-tile				display/tile.@DLLEXT@
-trueemu				display/trueemu.@DLLEXT@
-vcsa				display/vcsa.@DLLEXT@
-vgl				display/vgl.@DLLEXT@
-wsfb				display/wsfb.@DLLEXT@
-x				display/X.@DLLEXT@
+alias	aa		display-aa
+alias	auto		display-auto
+alias	directx		display-directx
+alias	dga		display-dga
+alias	xf86dga		display-xf86dga
+alias	file		display-file
+alias	fbdev		display-fbdev
+alias	glide		display-glide
+alias	kgi		display-kgi
+alias	ipc		display-ipc
+alias	lcd823		display-lcd823
+alias	libkgi		display-libkgi
+alias	memory		display-memory
+alias	monotext	display-monotext
+alias	multi		display-multi
+alias	palemu		display-palemu
+alias	quartz		display-quartz
+alias	sub		display-sub
+alias	suidkgi		display-suidkgi
+alias	svga		display-svga
+alias	terminfo	display-terminfo
+alias	tele		display-tele
+alias	tile		display-tile
+alias	trueemu		display-trueemu
+alias	vcsa		display-vcsa
+alias	vgl		display-vgl
+alias	wsfb		display-wsfb
+alias	x		display-x
 
 # Stubs library - generic drawing code goes here
 generic-stubs			default/stubs.@DLLEXT@
