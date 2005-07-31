@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
+/* $Id: box.c,v 1.4 2005/07/31 10:19:28 aldot Exp $
 ******************************************************************************
    Matrox Gx00 box acceleration
 
@@ -88,7 +88,7 @@ int GGI_kgi_Gx00_fillscreen(ggi_visual *vis)
 int GGI_kgi_Gx00_copybox(ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
-  sint32 ar5;
+  int32_t ar5;
   uint32_t begin, end;
   uint32_t sgn = 0;
 
