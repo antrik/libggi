@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.43 2005/07/30 10:57:30 cegger Exp $
+/* $Id: init.c,v 1.44 2005/07/31 15:59:21 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -242,7 +242,8 @@ ggi_visual *ggiOpen(const char *driver,...)
 	int  success=0;
 	void *argptr;
 	static int globalopencount=0;
-
+	struct gg_target_iter match;
+	
 	if (!_ggiLibIsUp) return NULL;
 
 	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
@@ -282,27 +283,18 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 	DPRINT_CORE("Loading driver %s\n",driver);
 
-	do {
-		if (ggParseTarget(driver,target,MAX_TARGET_LEN) == NULL) {
-			break;
-		}
+	success = 0;
 
-		if (strlen(target) == 0) {
-			fprintf(stderr, "LibGGI: Missing target descriptor !\n");
-			break;
-		}
-
-		cp=strchr(target, ':');
-
-		if (cp != NULL) {
-			*cp++ = 0;
-		}
-		if (_ggiOpenDL(vis,target,cp,argptr) == 0) {
+	match.input  = driver;
+	match.config = _ggiConfigHandle;
+	ggConfigIterTarget(&match);
+	GG_ITER_FOREACH(&match) {
+		if (_ggiOpenDL(vis,match.target,match.options,argptr) == 0) {
 			success = 1;
+			break;
 		}
-
-	} while (0);
-	
+	}
+	GG_ITER_DONE(&match);
 
 	if (success) {
 		ggLock(_ggiVisuals.mutex);
