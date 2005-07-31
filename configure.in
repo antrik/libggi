@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.163 2005/07/30 12:01:11 cegger Exp $
+dnl $Id: configure.in,v 1.164 2005/07/31 16:21:01 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -40,8 +40,6 @@ build_accel="yes"
 build_libkgi_target="no"
 build_suidkgi_target="no"
 build_memory_target="yes"
-build_dga_target="auto"
-internal_xf86dga="yes"
 build_terminfo_target="auto"
 
 dnl Linux specific Targets
@@ -160,12 +158,6 @@ build_memory_target=$enableval)
 AC_ARG_ENABLE(mansync,
 [  --disable-mansync       don't build the mansync helper],
 build_mansync_target=$enableval)
-AC_ARG_ENABLE(dga,
-[  --disable-dga           don't build the dga target],
-build_dga_target=$enableval)
-AC_ARG_ENABLE(internal-xf86dga,
-[  --disable-internal-xf86dga  don't use libggi internal xf86dga support],
-internal_xf86dga=$enableval)
 AC_ARG_ENABLE(terminfo,
 [  --disable-terminfo      don't build the terminfo target],
 build_terminfo_target=$enableval)
@@ -605,12 +597,10 @@ else
   AC_MSG_RESULT(yes)
 fi
 
-if test "x$build_x_target" != "xno" \
-	-o "x$build_dga_target" != "xno"; then
+if test "x$build_x_target" != "xno"; then
   AC_PATH_XTRA
   if test "x$no_x" = "xyes"; then
     build_x_target="no"
-    build_dga_target="no"
   else
 
 
@@ -631,7 +621,7 @@ dnl includes (/usr/X11R6/include on most systems).
     fi
 
     dnl XInitImage is not available on X11R5.
-    dnl Should the dga and/or xf86dga targets be disabled if
+    dnl Should the dga target be disabled if
     dnl XInitImage is not found?
     libs_old="$LIBS"
     LIBS="$LIBS $X_LIBS -lXext -lX11 $X_EXTRA_LIBS"
@@ -681,18 +671,6 @@ dnl includes (/usr/X11R6/include on most systems).
     if test -n "$x_includes" -a "x$x_includes" != "xNONE"; then
 	CFLAGS="$CFLAGS -I$x_includes"
 	CPPFLAGS="$CPPFLAGS -I$x_includes"
-    fi
-    if test "x$build_x_xf86dga_target" != "xno" -o "x$build_dga_target" != "xno"
-    then
-	if test "x$ac_cv_header_X11_extensions_xf86vmstr_h" != "xno"; then
-	AC_MSG_CHECKING(whether dga is working)
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <X11/Xlibint.h>
-#include <X11/extensions/xf86vmstr.h>
-#include <X11/extensions/Xext.h>
-	    ]], [[xXF86VidModeSetClientVersionReq *req;]])],[AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)
-	    build_dga_target="no"])
-	fi
     fi
     if test "x$build_x_xf86dga_target" != "xno"
     then
@@ -853,21 +831,6 @@ if test "x$build_vcsa_target" != "xno"; then
   if test "$ac_cv_header_linux_vt_h" != yes; then
     build_vcsa_target="no"
   fi
-fi
-
-AM_CONDITIONAL(INTERNAL_XF86DGA, test "x$internal_xf86dga" = "xyes")
-if test "x$build_dga_target" != "xno"; then
-  AC_CHECK_HEADER(X11/extensions/xf86dga.h,[
-  if test "x$internal_xf86dga" = "xyes"; then
-    AC_DEFINE([GGI_INTERNAL_XF86DGA], [1],
-		[Define if you want to use the included XF86DGA implementation.])
-  else
-	if test "x$ac_cv_header_X11_extensions_xf86dga_h" != "xyes" -o \
-		"x$ac_cv_header_X11_extensions_xf86vmode_h" != "xyes"; then
-		build_dga_target="no"
-	fi
-  fi
-  ], build_dga_target="no")
 fi
 
 if test "x$build_linvtsw_helper" != "xno"; then
@@ -1284,15 +1247,6 @@ else
   AC_MSG_RESULT(yes)
 fi
 
-AC_MSG_CHECKING(if we should build dga      target)
-if test "x$build_dga_target" = "xno"; then
-  AC_MSG_RESULT(no)
-else
-  DISPLAYSUBDIRS="$DISPLAYSUBDIRS xf86dga"
-  build_dga_target="yes"
-  AC_MSG_RESULT(yes)
-fi
-
 AC_MSG_CHECKING(if we should build linvtsw  helper)
 if test "x$build_linvtsw_helper" = "xno"; then
   AC_MSG_RESULT(no)
@@ -1493,7 +1447,6 @@ display/tile/Makefile
 display/trueemu/Makefile
 display/vcsa/Makefile
 display/vgagl/Makefile
-display/xf86dga/Makefile
 default/Makefile
 default/color/Makefile
 default/common/Makefile
