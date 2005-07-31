@@ -1,4 +1,4 @@
-/* $Id: ggitext.h,v 1.2 2005/06/09 19:32:11 cegger Exp $
+/* $Id: ggitext.h,v 1.3 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    Header for ggitext functions for formatted text output
@@ -11,7 +11,7 @@
    warranties of merchantability or fitness for a particular purpose.
    Use it at your own risk. the author is not responsible for any damage
    or consequences raised by use or inability to use this program.
- 
+
 ******************************************************************************
 */
 
@@ -32,14 +32,14 @@ int ggiGraphTextStringheight(ggi_visual_t  vis, const char * c);
 
 
 int ggiGraphTextPuts(ggi_visual_t  vis,
-		     int x, int y, int width, int height, 
+		     int x, int y, int width, int height,
 		     int flags,
 		     char * text );
 int ggiGraphTextLongPuts(ggi_visual_t  vis,
-		     int x, int y, int width, int height, 
+		     int x, int y, int width, int height,
 		     int flags,
 		     char * text );
-/* breaks text in individual lines (at \n points)*/ 
+/* breaks text in individual lines (at \n points)*/
 
 /* centering flags: */
 #define GGI_TEXT_CENTER 0
@@ -60,4 +60,4 @@ int ggiGraphTextLongPuts(ggi_visual_t  vis,
 /* this means positioning relative to the printed (and rotated) text,
    not to the "bounding box" */
 
-#define GGI_TEXT_FRAME 256 /* paint the box */ 
+#define GGI_TEXT_FRAME 256 /* paint the box */

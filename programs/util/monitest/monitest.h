@@ -1,4 +1,4 @@
-/* $Id: monitest.h,v 1.2 2003/07/05 14:04:25 cegger Exp $
+/* $Id: monitest.h,v 1.3 2005/07/31 15:30:41 soyt Exp $
 ******************************************************************************
 
    Monitest common declarations
@@ -11,7 +11,7 @@
    warranties of merchantability or fitness for a particular purpose.
    Use it at your own risk. the author is not responsible for any damage
    or consequences raised by use or inability to use this program.
- 
+
 ******************************************************************************
 */
 

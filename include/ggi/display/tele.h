@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.4 2003/12/13 21:12:03 mooz Exp $
+/* $Id: tele.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -38,7 +38,7 @@ typedef struct {
 
 	int connected;
 	int mode_up;
-	
+
 	TeleEvent *wait_event;
 
 	long wait_type;

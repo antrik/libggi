@@ -1,4 +1,4 @@
-/* $Id: swar.h,v 1.1 2005/01/13 22:46:50 cegger Exp $
+/* $Id: swar.h,v 1.2 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI SWAR support.
@@ -6,7 +6,7 @@
    Copyright (C) 1997 Jason McMullan		[jmcc@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
    Copyright (C) 2005 Christoph Egger
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation

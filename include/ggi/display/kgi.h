@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.16 2004/11/27 16:42:45 soyt Exp $
+/* $Id: kgi.h,v 1.17 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -225,7 +225,7 @@ union ggi_accel {
 #define GGI_ACCEL_WRITE_s8(a, val)  _GGI_ACCEL_WRITE(s8, a, val)
 
 /* This allows 16 lines of swatch plus space for the font even in the
- * largest/deepest mode possible with Radeon's 3D accel (2048x2048) 
+ * largest/deepest mode possible with Radeon's 3D accel (2048x2048)
  */
 #define GGI_KGI_FONTSIZE 16320
 #define GGI_KGI_MINSWATCH 131072

@@ -1,8 +1,8 @@
-/* $Id: ggi-defs.h,v 1.1 2004/02/23 14:25:30 pekberg Exp $
+/* $Id: ggi-defs.h,v 1.2 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
- 
+
    Copyright (C) 2004      Peter Ekberg		[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
@@ -24,7 +24,7 @@
 
 ******************************************************************************
 */
-              
+
 #ifndef _GGI_GGI_DEFS_H
 #define _GGI_GGI_DEFS_H
 

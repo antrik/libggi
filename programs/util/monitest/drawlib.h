@@ -1,4 +1,4 @@
-/* $Id: drawlib.h,v 1.1 2001/05/12 23:03:50 cegger Exp $
+/* $Id: drawlib.h,v 1.2 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    Monitest drawing library: fields with stripes and stars, circle.
@@ -11,7 +11,7 @@
    warranties of merchantability or fitness for a particular purpose.
    Use it at your own risk. the author is not responsible for any damage
    or consequences raised by use or inability to use this program.
- 
+
 ******************************************************************************
 */
 
@@ -26,7 +26,7 @@ void dotone(ggi_visual_t vis,
 void chessboardone(ggi_visual_t vis,
 		   int x1, int y1, int x2, int y2,
 		   ggi_pixel col1, ggi_pixel col2);
-                 
+
 void stripevert(ggi_visual_t vis,
 		int x1, int y1, int x2, int y2,
 		ggi_pixel col1, ggi_pixel col2, unsigned int s);

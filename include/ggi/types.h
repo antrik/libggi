@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.10 2005/07/30 10:57:03 cegger Exp $
+/* $Id: types.h,v 1.11 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -42,7 +42,7 @@
 #define        GGI_AUTO     (0)
 
 typedef struct { int16_t x, y; }				ggi_coord;
-typedef struct { long	 x, y; }				ggi_subcoord;	
+typedef struct { long	 x, y; }				ggi_subcoord;
 typedef	int32_t							ggi_pixel;
 
 typedef	int32_t							ggi_attr;
@@ -159,7 +159,7 @@ typedef struct		/* requested by user and changed by driver    */
 #define GGI_OP_OWNER_USER       0x0fff0000 /* Will never be allocated */
 
 /* The rest of the extensions will define their owner codes and opcodes
- * in their own headers.  A registry is kept here, but in comment form 
+ * in their own headers.  A registry is kept here, but in comment form
  * so as to reduce revision requirements between LibGGI and extensions.
  =======================================================================
  OPCODE REGISTRY:
@@ -219,7 +219,7 @@ typedef struct		/* requested by user and changed by driver    */
 #define GGI_PT_IS_OPCODE	0x0a000000 /* An opcode or command	     */
 #define GGI_PT_IS_SRC		0x10000000 /* Pertains to source, not dest   */
 #define GGI_PT_IS_INDEXED	0x20000000 /* Uses a LUT		     */
-#define GGI_PT_IS_MODE		0x60000000 /* An operational mode (pixel size, 
+#define GGI_PT_IS_MODE		0x60000000 /* An operational mode (pixel size,
 					    * pixel format, blend, etc.)     */
 #define GGI_PT_IS_SPECIAL	0xe0000000 /* Extension/target/chipset priv  */
 
@@ -227,7 +227,7 @@ typedef struct		/* requested by user and changed by driver    */
 #define GGI_PT_IN_MASK		0x0000ff00
 #define GGI_PT_IN_AXISMASK	0x00000f00
 #define GGI_PT_IN_UNITMASK	0x0000f000
-#define GGI_PT_IN_QTY		0x00000000 /* A generic quantity 	     */
+#define GGI_PT_IN_QTY		0x00000000 /* A generic quantity	     */
 #define GGI_PT_IN_X		0x00000100 /* X Axis			     */
 #define GGI_PT_IN_Y		0x00000200 /* Y Axis			     */
 #define GGI_PT_IN_ADDR		0x00000300 /* Linearized fb address	     */

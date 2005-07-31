@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.8 2005/07/30 11:39:57 cegger Exp $
+/* $Id: ggidirectfb.h,v 1.9 2005/07/31 15:30:34 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -185,9 +185,9 @@ struct directfb_priv {
 static inline void
 directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
 		  struct directfb_priv *priv,
-		  ggi_mode *mode, ggi_gc *gc, 
+		  ggi_mode *mode, ggi_gc *gc,
 		  int virtx, int yadd, DFBAccelerationMask accel)
-		  
+
 {
   CardState *cardstate;
   DFBConfig *dfb_config;
@@ -201,20 +201,20 @@ directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
     || (cardstate->blittingflags != DSBLIT_NOFX);
   newbg = (gc->bg_color != priv->oldbg)
     || (dfb_config->layer_bg_mode != DLBM_COLOR);
-  newclip = 
+  newclip =
     (gc->cliptl.x != cardstate->clip.x1) ||
     (gc->clipbr.x != cardstate->clip.x2) ||
     (gc->cliptl.y != cardstate->clip.y1) ||
     (gc->clipbr.y != cardstate->clip.y2);
   newsource = (cardstate->source != priv->oldsource);
-  
+
   if (! (newfg || newbg || newclip || newsource)) return;
 
   if (newclip) {
     cardstate->modified |= SMF_CLIP;
-    cardstate->clip.x1 = gc->cliptl.x; 
+    cardstate->clip.x1 = gc->cliptl.x;
     cardstate->clip.x2 = gc->clipbr.x;
-    cardstate->clip.y1 = gc->cliptl.y; 
+    cardstate->clip.y1 = gc->cliptl.y;
     cardstate->clip.y2 = gc->clipbr.y;
   }
 

@@ -1,4 +1,4 @@
-/* $Id: menu.h,v 1.2 2005/06/09 19:32:11 cegger Exp $
+/* $Id: menu.h,v 1.3 2005/07/31 15:30:41 soyt Exp $
 ******************************************************************************
 
    Universal menu for ggi
@@ -11,7 +11,7 @@
    warranties of merchantability or fitness for a particular purpose.
    Use it at your own risk. the author is not responsible for any damage
    or consequences raised by use or inability to use this program.
- 
+
 ******************************************************************************
 */
 
@@ -23,7 +23,7 @@
 
 #define MAXENTRIES 9
 /* indexes 0 .. 8 but keys 1 ..9.
-** any good solution for this??  
+** any good solution for this??
 */
 
 struct menuentry {
@@ -35,7 +35,7 @@ struct menuentry {
 
 struct menu {
 	struct window w;
-	 
+
 	int lastentry ;                      /* number of last used entry */
 	struct menuentry entry[MAXENTRIES] ;
 
@@ -64,7 +64,7 @@ struct menu {
 	int bottomtexty;
 	ggi_color bottomtextcolor;
 
-      
+
 
 	int titlex, titley;    /* automatically calculated ! */
 

@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.8 2005/07/30 10:57:03 cegger Exp $
+/* $Id: fbdev.h,v 1.9 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -41,7 +41,7 @@ ggifunc_setmode		GGI_fbdev_setmode;
 ggifunc_checkmode	GGI_fbdev_checkmode;
 ggifunc_getapi		GGI_fbdev_getapi;
 ggifunc_setflags	GGI_fbdev_setflags;
-		
+
 ggifunc_setorigin	GGI_fbdev_setorigin;
 ggifunc_setdisplayframe	GGI_fbdev_setdisplayframe;
 
@@ -69,7 +69,7 @@ typedef struct ggi_fbdev_timing {
 } ggi_fbdev_timing;
 
 /* Visual-specific private data */
-typedef struct {	
+typedef struct {
 	PHYSZ_DATA
 
 	/* Framebuffer info */
@@ -100,7 +100,7 @@ typedef struct {
 	uint16_t *blues;
 	ggi_gammastate gamma;
 	ggi_color *orig_cmap;	/* used to restore pre-GGI settings */
-	
+
 	/* Original mode on framebuffer */
 	struct fb_var_screeninfo orig_var;
 	struct fb_fix_screeninfo orig_fix;
@@ -113,7 +113,7 @@ typedef struct {
 	ggi_linvtsw_func *doswitch;
 	int inputs;
 	gii_input *inp;
-	
+
 	/* Acceleration */
 	int	iskgi;
 	ggi_gc *normalgc;

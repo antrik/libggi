@@ -11,14 +11,14 @@
 **	Copyright (C)	1999-2002	Johan Karlberg
 **					Rodolphe Ortalo
 **
-**	This file is distributed under the terms and conditions of the 
+**	This file is distributed under the terms and conditions of the
 **	MIT/X public license. Please see the file COPYRIGHT.MIT included
 **	with this software for details of these terms and conditions.
 **
 ** ----------------------------------------------------------------------------
 **	MAINTAINER	Rodolphe_Ortalo
 **
-**	$Id: Gx00.h,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+**	$Id: Gx00.h,v 1.2 2005/07/31 15:30:36 soyt Exp $
 */
 #ifndef _Matrox_Gx00_h_2
 #define _Matrox_Gx00_h_2

@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.11 2005/07/30 11:39:59 cegger Exp $
+/* $Id: radeon_accel.h,v 1.12 2005/07/31 15:30:35 soyt Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -176,7 +176,7 @@ do {									\
     default: break; }}							\
   RADEON_CONTEXT(vis)->ctx_loaded = whatctx;				\
 } while (0)
-	
+
 ggifunc_drawhline   GGI_kgi_radeon_drawhline;
 ggifunc_drawvline   GGI_kgi_radeon_drawvline;
 ggifunc_drawline    GGI_kgi_radeon_drawline_2d;

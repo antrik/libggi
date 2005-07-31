@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.3 2004/10/30 10:16:23 cegger Exp $
+/* $Id: aa.h,v 1.4 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -62,9 +62,9 @@ giifunc_sendevent	GII_aa_sendevent;
 #define MANSYNC_ignore(vis) MANSYNC_DECL_IGNORE(AA_PRIV(vis), vis)
 #define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(AA_PRIV(vis), vis)
 
-typedef struct { 
+typedef struct {
 	aa_context *context;
-	
+
 	MANSYNC_DATA;
 	void *aalock;
 

@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.4 2004/02/14 22:30:47 cegger Exp $
+/* $Id: vcsa.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -33,7 +33,7 @@
 
 /* Visual-private data */
 
-typedef struct {	
+typedef struct {
 	PHYSZ_DATA
 
 	int width;
@@ -53,7 +53,7 @@ typedef struct {
 #define VCSA_FLAG_SHADE  0x0200
 
 
-/** 
+/**
  ** LibGGI internal stuff
  **/
 

@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.4 2005/07/30 10:57:03 cegger Exp $
+/* $Id: trueemu.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -76,7 +76,7 @@
 	} while (0)
 
 
-/**************************************************** 
+/****************************************************
  **
  **  TrueEmu private data
  **
@@ -93,22 +93,22 @@ typedef struct ggi_trueemu_priv {
 	void *fb_ptr;
 	long  fb_size;
 	long  frame_size;
-	
+
 	/* 2D operations on memory buffer */
 
 	struct ggi_visual_opdraw *mem_opdraw;
 
 	ggi_coord dirty_tl;	/* dirty region */
 	ggi_coord dirty_br;
-	
+
 	/* blit information */
-	
+
 	BLITFUNC( (* blitter_even) );
 	BLITFUNC( (* blitter_odd) );
 
 	void *src_buf;
 	void *dest_buf;
-	
+
 	/* hicolor dither tables */
 
 	uint16_t (* R)[4];	/* actually [256][4] */
@@ -118,7 +118,7 @@ typedef struct ggi_trueemu_priv {
 	/* palette dither table */
 
 	uint8_t (* T)[4];	/* actually [32768][4] */
-	
+
 	/* mansync info */
 
 	void *flush_lock;
@@ -134,19 +134,19 @@ typedef struct trueemu_blits
 	BLITFUNC( (* blitter_b32_d0) );
 
 	BLITFUNC( (* blitter_b24_d0) );
-	
+
 	BLITFUNC( (* blitter_b16_d0) );
 	BLITFUNC( (* blitter_b16_d2_ev) );
 	BLITFUNC( (* blitter_b16_d2_od) );
 	BLITFUNC( (* blitter_b16_d4_ev) );
 	BLITFUNC( (* blitter_b16_d4_od) );
-	
+
 	BLITFUNC( (* blitter_b8_d0) );
 	BLITFUNC( (* blitter_b8_d2_ev) );
 	BLITFUNC( (* blitter_b8_d2_od) );
 	BLITFUNC( (* blitter_b8_d4_ev) );
 	BLITFUNC( (* blitter_b8_d4_od) );
-	
+
 	BLITFUNC( (* blitter_b4_d0) );
 	BLITFUNC( (* blitter_b4_d2_ev) );
 	BLITFUNC( (* blitter_b4_d2_od) );
@@ -206,8 +206,8 @@ extern TrueemuBlits _ggi_trueemu_blit32_table;
  **  TrueEmu private functions
  **
  ****************************************************/
- 
-  
+
+
 extern int _ggi_trueemu_Open(ggi_visual *vis);
 extern int _ggi_trueemu_Close(ggi_visual *vis);
 extern int _ggi_trueemu_Transfer(ggi_visual*vis, int x, int y, int w, int h);

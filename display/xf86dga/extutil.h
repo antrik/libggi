@@ -1,4 +1,4 @@
-/* $Id: extutil.h,v 1.5 2005/01/29 08:54:16 cegger Exp $ */
+/* $Id: extutil.h,v 1.6 2005/07/31 15:30:37 soyt Exp $ */
 /*
  * $XConsortium: extutil.h,v 1.15 94/10/07 15:36:33 kaleb Exp $
  *
@@ -26,7 +26,7 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from the X Consortium.
  *
  * Author:  Jim Fulton, MIT X Consortium
- * 
+ *
  *                     Xlib Extension-Writing Utilities
  *
  * This package contains utilities for writing the client API for various
@@ -182,7 +182,7 @@ extern XExtDisplayInfo *XextFindDisplay(
 /*
  * helper macros to generate code that is common to all extensions; caller
  * should prefix it with static if extension source is in one file; this
- * could be a utility function, but have to stack 6 unused arguments for 
+ * could be a utility function, but have to stack 6 unused arguments for
  * something that is called many, many times would be bad.
  */
 #define XEXT_GENERATE_FIND_DISPLAY(proc,extinfo,extname,hooks,nev,data) \

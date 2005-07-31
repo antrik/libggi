@@ -1,4 +1,4 @@
-/* $Id: libkgi.h,v 1.2 2004/02/14 22:30:47 cegger Exp $
+/* $Id: libkgi.h,v 1.3 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-LibKGI private structures and internal values
@@ -68,7 +68,7 @@ ggifunc_crossblit	GGI_libkgi_crossblit;
 
 
 /* Visual-specific private data */
-typedef struct {	
+typedef struct {
 	PHYSZ_DATA
 
 	/* Framebuffer info */

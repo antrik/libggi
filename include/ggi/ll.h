@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.9 2005/06/13 07:48:40 cegger Exp $
+/* $Id: ll.h,v 1.10 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -33,12 +33,12 @@
 
 /* IMPORTANT: This file is not for use in/with LibGGI itself.
  * ll.h contains structures common to lowlevel libraries, to prevent
- * lowlevel libraries from depending on each other.  This file 
+ * lowlevel libraries from depending on each other.  This file
  * should not be considered part of the LibGGI API even though it
  * is installed with LibGGI.  Nothing in the LibGGI source code
  * should ever include this file.  Don't include this file
  * directly in an application; It will be automatically included
- * with the headers of the libraries that need it.  
+ * with the headers of the libraries that need it.
  */
 
 
@@ -50,7 +50,7 @@
 #include <stdint.h>
 #endif
 
-/* Position/size of a lowlevel object on the screen. 
+/* Position/size of a lowlevel object on the screen.
  */
 struct ggi_ll_pos {
 	long x, y;		/* longs used for sub-pixel accuracy */
@@ -58,15 +58,15 @@ struct ggi_ll_pos {
 };
 typedef struct ggi_ll_pos * ggi_ll_pos_t;
 
-/* Magnification, internal content panning/flipping, tesselation. 
+/* Magnification, internal content panning/flipping, tesselation.
  */
 struct ggi_ll_lense {
-	long x, y;  
+	long x, y;
 	long w, h;
 };
 typedef struct ggi_ll_lense * ggi_ll_lense_t;
 
-/* Units/offset used when ggi_ll_pos is not using simple pixel model 
+/* Units/offset used when ggi_ll_pos is not using simple pixel model
  */
 enum ggi_ll_coordbase {
 
@@ -89,8 +89,8 @@ enum ggi_ll_coordbase {
 	/* Coordinates/lengths are given in 1/64th inches */
 	LL_COORDBASE_1_64_INCH  = 0x0008,
 
-	/* Flag -- when set, coordinates/lengths are given in 
-	 * above units / LibGAlloc props.sub.motor.div_max 
+	/* Flag -- when set, coordinates/lengths are given in
+	 * above units / LibGAlloc props.sub.motor.div_max
 	 */
 	LL_COORDBASE_UNIT       = 0x0000,
 	LL_COORDBASE_UNITS      = 0x0000,
@@ -109,16 +109,16 @@ enum ggi_ll_coordbase {
 	 * If set in the structure and not set in the request,
 	 * copy the structure on write.  If set in the both
 	 * do not copy the structure on write, and remove the flag
-	 * from the structure.  If set in the request but not in the 
+	 * from the structure.  If set in the request but not in the
 	 * structure, do not copy on write, but set the flag in the
-	 * structure.  Thus to set values in a shared cb but keep 
-	 * it shared, call the access function twice with the flag 
+	 * structure.  Thus to set values in a shared cb but keep
+	 * it shared, call the access function twice with the flag
 	 * asserted, the second time using 0 values for the coords.
 	 *
 	 * Threaded environments will have to lock this process themselves..
 	 */
 	LL_COORDBASE_COW	= 0x4000
-	
+
 
 };	/* ggi_ll_coordbase */
 
@@ -131,7 +131,7 @@ struct ggi_ll_cb {
 typedef struct ggi_ll_cb * ggi_ll_cb_t;
 
 
-/* direct access address, stride, pixfmt, current read/write/display frame 
+/* direct access address, stride, pixfmt, current read/write/display frame
  */
 struct ggi_ll_ststate {
 	int bitdepth, stride, w, h;
@@ -184,7 +184,7 @@ struct ggi_ll_stops {
 	const2storage_func      *const2storage;
 };
 
-/* Constant-fill values for absent channels 
+/* Constant-fill values for absent channels
 */
 struct ggi_ll_fgbg_gc {
 	ggi_storageval fgsrc, bgsrc;	/* default values for source      */
@@ -236,39 +236,39 @@ enum ggi_ll_rop {
   /* Pixel-wise ROP capabilities */
   /* Keying and math -- per-operand */
   LL_ROP_KEYVAL_OPERAND1  = 0x00010000, /* key on the first operand          */
-  LL_ROP_KEYVAL_SOURCE    = 0x00010000, 
+  LL_ROP_KEYVAL_SOURCE    = 0x00010000,
   LL_ROP_KEYMASK_OPERAND1 = 0x00020000, /* mask key on the 1st operand       */
-  LL_ROP_KEYMASK_SOURCE   = 0x00020000, 
+  LL_ROP_KEYMASK_SOURCE   = 0x00020000,
 
   LL_ROP_COEFF_OPERAND1   = 0x00040000, /* apply a cooefficient to 1st       */
   LL_ROP_COEFF_SOURCE     = 0x00040000, /* operand.  Implies Alpha channel   */
   LL_ROP_ALPHA_OPERAND1   = 0x00040000, /* used if approved for use with an  */
   LL_ROP_ALPHA_SOURCE     = 0x00040000, /* alpha-carrying tank.              */
-  
+
   LL_ROP_THRESH_OPERAND1  = 0x00080000, /* apply threshold to the 1st        */
   LL_ROP_THRESH_SOURCE    = 0x00080000, /* operand.  Implies Z channel used  */
   LL_ROP_DEPTH_OPERAND1   = 0x00080000, /* if approved for use with an       */
   LL_ROP_DEPTH_SOURCE     = 0x00080000, /* Z-carrying tank.                  */
-  
+
   LL_ROP_KEYVAL_OPERAND2  = 0x00100000, /* key on the 2nd operand            */
-  LL_ROP_KEYVAL_DEST      = 0x00100000, 
+  LL_ROP_KEYVAL_DEST      = 0x00100000,
   LL_ROP_KEYMASK_OPERAND2 = 0x00200000, /* mask key on the 2nd operand       */
-  LL_ROP_KEYMASK_DEST     = 0x00200000, 
-  
+  LL_ROP_KEYMASK_DEST     = 0x00200000,
+
   LL_ROP_COEFF_OPERAND2   = 0x00400000, /* apply a cooefficient to 2nd       */
   LL_ROP_COEFF_DEST       = 0x00400000, /* operand.  Implies Alpha channel   */
   LL_ROP_ALPHA_OPERAND2   = 0x00400000, /* used if approved for use with an  */
   LL_ROP_ALPHA_DEST       = 0x00400000, /* alpha-carrying tank or frame.     */
-  
+
   LL_ROP_THRESH_OPERAND2  = 0x00080000, /* apply threshold to the 2nd        */
   LL_ROP_THRESH_DEST      = 0x00080000, /* operand.  Implies Z channel used  */
   LL_ROP_DEPTH_OPERAND2   = 0x00080000, /* if approved for use with an       */
   LL_ROP_DEPTH_DEST       = 0x00080000, /* Z-carrying tank.                  */
-  
+
   /* Keying and math -- both operands */
   LL_ROP_ADD              = 0x01000000, /* add operands to form result       */
   LL_ROP_KEY_CMP          = 0x02000000, /* key on compare                    */
-  
+
   /* Stuff for pattern fills/filters.  Operand 1 only. */
   LL_ROP_TESSELATE        = 0x10000000, /* tesselate (pat fill/filter)       */
   LL_ROP_XWRAP            = 0x20000000, /* rotate/wrap/pin horizontally      */
@@ -280,22 +280,22 @@ enum ggi_ll_rop {
   LL_ROP_OPERAND2_AUX     = 0x08000000, /* Preprocesses another ROP's op2    */
   LL_ROP_DEST_AUX         = 0x08000000,
   LL_ROP_AUX              = 0x0c000000, /* Run side by side another ROP      */
-  
+
   /* Common combos (Principle of least surprise) */
   LL_ROP_ALPHA_CHANNEL    = 0x01440000, /* 2-operand ALPHA blend (assuming   */
   LL_ROP_ALPHA	          = 0x01440000, /* tanks/frame are alpha-carrying.)  */
   LL_ROP_ALPHA_AUX        = 0x0d440000, /* Alpha with separate buffer.       */
-  
+
   LL_ROP_Z_CHANNEL        = 0x02880000, /* 2-operand Z, in-channel           */
   LL_ROP_Z_AUX            = 0x0e880000, /* 2-operand Z, separate buffer      */
-  LL_ROP_Z                = 0x0e880000, 
+  LL_ROP_Z                = 0x0e880000,
 
   /* This flag must not be set for the above to be valid. */
   /* ISO C limits enum to int */
 #define  LL_ROP_ALT        0x80000000   /* Reserved for future use.          */
 
   LL_ROP_NOP              = 0x00000000, /* This rop does nothing.            */
-  
+
 };	/* ggi_ll_rop */
 
 /* Alpha Blends and Z/Alpha behaviors
@@ -353,7 +353,7 @@ enum ggi_ll_adjuster {
   LL_ADJ_ENDIAN8            = 0x2000,
   LL_ADJ_ENDIAN16           = 0x4000,
   LL_ADJ_ENDIAN32           = 0x8000,
-  
+
 };	/* ggi_ll_adjuster */
 
 /* Blend and keying rules */
@@ -366,7 +366,7 @@ typedef struct ggi_ll_math_gc * ggi_ll_math_gc_t;
 
 
 /* Now for the macro magic -- ll objects balance compactness with flexibility,
- * allowing objects to share any of the above structures for a small 
+ * allowing objects to share any of the above structures for a small
  * memory/runtime overhead.
  */
 #define GGI_LL_OBJ(NUM_ATTRIBS) \
@@ -374,9 +374,9 @@ typedef struct ggi_ll_math_gc * ggi_ll_math_gc_t;
         void *ptrs[NUM_ATTRIBS + 3];
         /* ptrs always contains { NULL, NULL, NULL, ...data... } */
 
-/* This struct should never be alloced or sizeof() taken.   It is 
+/* This struct should never be alloced or sizeof() taken.   It is
  * defined for the sake of bounds checkers.  Well, OK, to deceive bounds
- * checkers really.  :-) 
+ * checkers really.  :-)
  */
 #define GGI_LL_MAX_NUM_PTRS 16
 struct ggi_llobj {
@@ -395,7 +395,7 @@ struct ggi_llobj {
 
 #define GGI_LL_ATTRIB_MASK    0x0000000f
 
-/* Positioning 
+/* Positioning
  */
 #define GGI_LL_POS_SHIFT 28
 #define GGI_LL_POS_NUMPTRS 3
@@ -413,7 +413,7 @@ struct ggi_llobj {
 #define GGI_LL_POS(obj)		(ggi_ll_pos_t)GGI_LL_POS_SET(obj)
 
 
-/* Storage 
+/* Storage
  */
 #define GGI_LL_ST_SHIFT 24
 #define GGI_LL_ST_NUMPTRS 2
@@ -426,7 +426,7 @@ struct ggi_llobj {
 (obj)->ptrs[(((obj)->map>>GGI_LL_ST_SHIFT)&GGI_LL_ATTRIB_MASK)+1]
 #define GGI_LL_STSTATE(obj)	(ggi_ll_ststate_t)GGI_LL_STSTATE_SET(obj)
 
-/* GC 
+/* GC
  */
 #define GGI_LL_GC_SHIFT 20
 #define GGI_LL_GC_NUMPTRS 3
@@ -444,12 +444,12 @@ struct ggi_llobj {
 #define GGI_LL_MATHGC(obj)	(ggi_ll_math_gc_t)GGI_LL_MATHGC_SET(obj)
 
 
-/* LibGAlloc resource management 
+/* LibGAlloc resource management
  */
 #define GGI_LL_GA_SHIFT 16
 #define GGI_LL_GA_NUMPTRS 1
 
-/* reserved for target and extension-specific use 
+/* reserved for target and extension-specific use
  */
 #define GGI_LL_EXTPRIV_SHIFT 8
 #define GGI_LL_PRIV_SHIFT 4

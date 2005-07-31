@@ -1,10 +1,10 @@
-/* $Id: internal.h,v 1.26 2005/07/30 10:57:04 cegger Exp $
+/* $Id: internal.h,v 1.27 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
 
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation

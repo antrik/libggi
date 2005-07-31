@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.8 2004/06/04 11:41:14 pekberg Exp $
+/* $Id: memory.h,v 1.9 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -72,7 +72,7 @@ ggifunc_checkmode		GGI_memory_checkmode;
 ggifunc_setflags		GGI_memory_setflags;
 ggifunc_setPalette	GGI_memory_setPalette;
 
-enum memtype { 
+enum memtype {
 	MT_MALLOC, 	/* No parameters  : memory is malloced */
 	MT_EXTERN, 	/* only a pointer : draw there. Take care it
 			   is big enough. */

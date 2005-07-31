@@ -1,4 +1,4 @@
-/* $Id: xlib.h,v 1.1 2001/05/12 23:03:23 cegger Exp $
+/* $Id: xlib.h,v 1.2 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-Xlib: data
@@ -54,7 +54,7 @@ ggifunc_drawhline	GGI_Xlib_drawhline;
 ggifunc_puthline	GGI_Xlib_puthline;
 ggifunc_drawvline	GGI_Xlib_drawvline;
 ggifunc_putvline	GGI_Xlib_putvline;
-	 
+
 ggifunc_drawbox		GGI_Xlib_drawbox;
 ggifunc_putbox		GGI_Xlib_putbox;
 ggifunc_copybox		GGI_Xlib_copybox;

@@ -1,4 +1,4 @@
-/* $Id: sub.h,v 1.2 2005/07/21 07:27:46 cegger Exp $
+/* $Id: sub.h,v 1.3 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-sub: subwindows in a parent visual
@@ -30,7 +30,7 @@
 
 #include <ggi/internal/ggi-dl.h>
 
-typedef struct { 
+typedef struct {
 	ggi_visual	*parent;
 	ggi_coord	position;
 	ggi_coord	botright;

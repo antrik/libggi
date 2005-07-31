@@ -1,4 +1,4 @@
-/* $Id: glide.h,v 1.2 2005/07/29 16:30:53 soyt Exp $
+/* $Id: glide.h,v 1.3 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI GLIDE target
@@ -65,7 +65,7 @@ ggifunc_getmode		GGI_glide_getmode;
 ggifunc_setmode		GGI_glide_setmode;
 ggifunc_checkmode	GGI_glide_checkmode;
 ggifunc_getapi		GGI_glide_getapi;
-ggifunc_flush		GGI_glide_flush;	
+ggifunc_flush		GGI_glide_flush;
 
 ggifunc_setreadframe	GGI_glide_setreadframe;
 ggifunc_setwriteframe	GGI_glide_setwriteframe;

@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.4 2005/07/30 11:39:59 cegger Exp $
+/* $Id: Gx00_accel.h,v 1.5 2005/07/31 15:30:36 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -167,7 +167,7 @@ typedef struct
   kgi_u32_t dma2;
   kgi_u32_t dma3;
   kgi_u32_t dma4;
-	
+
 } Gx00_context_t;
 
 #define GX00_CONTEXT(vis) ((Gx00_context_t *)KGI_ACCEL_PRIV(vis))

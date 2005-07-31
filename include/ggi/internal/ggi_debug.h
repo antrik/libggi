@@ -1,11 +1,11 @@
-/* $Id: ggi_debug.h,v 1.9 2005/07/30 10:57:04 cegger Exp $
+/* $Id: ggi_debug.h,v 1.10 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    LibGGI debugging macros
-   
+
    Copyright (C) 2004      Eric Faurot	        [eric.faurot@gmail.com]
    Copyright (C) 1998-1999 Marcus Sundberg	[marcus@ggi-project.org]
-   
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation

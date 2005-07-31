@@ -1,4 +1,4 @@
-/* $Id: libtele.h,v 1.4 2005/07/30 10:58:27 cegger Exp $
+/* $Id: libtele.h,v 1.5 2005/07/31 15:30:37 soyt Exp $
 ******************************************************************************
 
    libtele.h
@@ -168,22 +168,22 @@ typedef struct tele_cmd_open_data
 	T_Long error;		/* replied: error value */
 
 	/* everything below is sent _and_ replied */
-	
+
 	T_Long graphtype;
 	T_Long frames;
-	
-	struct { 
-		T_Long width; 
+
+	struct {
+		T_Long width;
 		T_Long height;
 	} visible;
-		
-	struct { 
-		T_Long width; 
+
+	struct {
+		T_Long width;
 		T_Long height;
 	} virt;
 
-	struct { 
-		T_Long width; 
+	struct {
+		T_Long width;
 		T_Long height;
 	} dot;
 
@@ -232,7 +232,7 @@ typedef struct tele_cmd_drawbox_data
 	T_Long height;
 
 	T_Long pixel;
-	
+
 } TeleCmdDrawBoxData;
 
 typedef struct tele_cmd_copybox_data
@@ -243,7 +243,7 @@ typedef struct tele_cmd_copybox_data
 	T_Long dy;
 	T_Long width;
 	T_Long height;
-	
+
 } TeleCmdCopyBoxData;
 
 typedef struct tele_cmd_putstr_data
@@ -254,14 +254,14 @@ typedef struct tele_cmd_putstr_data
         T_Long fg;
         T_Long bg;
 	T_Long text[1];    /* raw: ASCII string, zero terminated */
-	
+
 } TeleCmdPutStrData;
 
 typedef struct tele_cmd_getcharsize_data
 {
 	T_Long width;
 	T_Long height;
-	
+
 } TeleCmdGetCharSizeData;
 
 typedef struct tele_cmd_drawline_data
@@ -272,14 +272,14 @@ typedef struct tele_cmd_drawline_data
 	T_Long ye;
 
 	T_Long pixel;
-	
+
 } TeleCmdDrawLineData;
 
 typedef struct tele_cmd_setorigin_data
 {
 	T_Long x;
 	T_Long y;
-	
+
 } TeleCmdSetOriginData;
 
 typedef struct tele_cmd_setframe_data
@@ -287,7 +287,7 @@ typedef struct tele_cmd_setframe_data
 	T_Long read;
 	T_Long write;
 	T_Long display;
-	
+
 } TeleCmdSetFrameData;
 
 typedef struct tele_cmd_setpalette_data
@@ -296,7 +296,7 @@ typedef struct tele_cmd_setpalette_data
 	T_Long len;
 
 	T_Long colors[1];    /* RGB 8:8:8 */
-	
+
 } TeleCmdSetPaletteData;
 
 
@@ -328,8 +328,8 @@ extern int tserver_read(TeleUser *u, TeleEvent *event);
 extern int tserver_write(TeleUser *u, TeleEvent *event);
 extern int tserver_close(TeleUser *u);
 
-extern void *tserver_new_event(TeleUser *u, TeleEvent *event, 
-			       TeleEventType type, 
+extern void *tserver_new_event(TeleUser *u, TeleEvent *event,
+			       TeleEventType type,
 			       int data_size, int raw_size);
 
 /*** CLIENT INFO ***/
@@ -351,8 +351,8 @@ extern int tclient_poll(TeleClient *c);
 extern int tclient_read(TeleClient *c, TeleEvent *event);
 extern int tclient_write(TeleClient *c, TeleEvent *event);
 
-extern void *tclient_new_event(TeleClient *c, TeleEvent *event, 
-			       TeleEventType type, 
+extern void *tclient_new_event(TeleClient *c, TeleEvent *event,
+			       TeleEventType type,
 			       int data_size, int raw_size);
 
 #endif /* _LIBTELE_H */

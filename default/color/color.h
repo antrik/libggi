@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.6 2003/12/13 21:12:02 mooz Exp $
+/* $Id: color.h,v 1.7 2005/07/31 15:30:33 soyt Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -57,8 +57,8 @@ ggifunc_unpackpixels	GGI_color_L4_unpackpixels;
 
 ggifunc_getpalvec	GGI_color_getpalvec;
 ggifunc_setpalvec	GGI_color_setpalvec;
-ggifunc_getgamma	GGI_color_getgamma;	
-ggifunc_setgamma	GGI_color_setgamma;	
+ggifunc_getgamma	GGI_color_getgamma;
+ggifunc_setgamma	GGI_color_setgamma;
 
 typedef struct {
 	/* total = length(mask) + shift(mask)

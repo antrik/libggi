@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.5 2005/07/30 10:57:03 cegger Exp $
+/* $Id: file.h,v 1.6 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -48,7 +48,7 @@ typedef struct {
 	int      fb_size;
 	int      fb_stride;
 	uint8_t *fb_ptr;
-	
+
 	int num_cols;
 
 	/* raw mode */
@@ -93,9 +93,9 @@ extern void _ggi_file_write_string(ggi_visual *vis, const unsigned char *str);
 extern void _ggi_file_write_zeros(ggi_visual *vis, int count);
 
 
-/* Image Writers 
+/* Image Writers
  */
- 
+
 extern file_detect_func _ggi_file_ppm_detect;
 extern file_writer_func _ggi_file_ppm_write;
 
@@ -107,7 +107,7 @@ extern int GGI_file_resetmode(ggi_visual *vis);
 
 /* LibGGI Interface
  */
- 
+
 ggifunc_getmode			GGI_file_getmode;
 ggifunc_setmode			GGI_file_setmode;
 ggifunc_checkmode		GGI_file_checkmode;

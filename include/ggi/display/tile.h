@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.5 2004/11/26 20:09:27 cegger Exp $
+/* $Id: tile.h,v 1.6 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -38,7 +38,7 @@ ggifunc_setmode		GGI_tile_setmode;
 ggifunc_checkmode	GGI_tile_checkmode;
 ggifunc_getapi		GGI_tile_getapi;
 ggifunc_setflags	GGI_tile_setflags;
-	
+
 ggifunc_flush		GGI_tile_flush_db;
 ggifunc_flush		GGI_tile_flush;
 

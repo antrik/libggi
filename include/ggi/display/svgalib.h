@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.7 2005/07/30 10:57:03 cegger Exp $
+/* $Id: svgalib.h,v 1.8 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -28,7 +28,7 @@
 
    Programs need SUID root. You really should use KGI :-)
 
-   See source for miscellaneous stuff. 
+   See source for miscellaneous stuff.
    The SVGAlib target also supports banked and modeX modes.
 
 ******************************************************************************

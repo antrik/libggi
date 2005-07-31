@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.3 2005/07/30 10:57:03 cegger Exp $
+/* $Id: monotext.h,v 1.4 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -58,7 +58,7 @@
 	} while (0)
 
 
-/**************************************************** 
+/****************************************************
  **
  **  MonoText private data
  **
@@ -70,7 +70,7 @@ ggifunc_checkmode	GGI_monotext_checkmode;
 ggifunc_getapi		GGI_monotext_getapi;
 ggifunc_flush		GGI_monotext_flush;
 ggifunc_setflags	GGI_monotext_setflags;
-	
+
 ggifunc_drawpixel	GGI_monotext_drawpixel_nc;
 ggifunc_drawpixel	GGI_monotext_drawpixel;
 ggifunc_drawhline	GGI_monotext_drawhline_nc;
@@ -107,7 +107,7 @@ typedef struct ggi_monotext_priv {
 	/* framebuffer */
 	void *fb_ptr;
 	long  fb_size;
-	
+
 	/* color info */
 	uint8_t *greymap;
 	ggi_color *colormap;
@@ -123,9 +123,9 @@ typedef struct ggi_monotext_priv {
 
 	ggi_coord dirty_tl;
 	ggi_coord dirty_br;
-	
+
 	/* blitter function */
-	void (* do_blit) (struct ggi_monotext_priv *priv, void *dest, 
+	void (* do_blit) (struct ggi_monotext_priv *priv, void *dest,
 			  void *src, int w);
 } ggi_monotext_priv;
 
@@ -136,11 +136,11 @@ typedef struct ggi_monotext_priv {
  **  MonoText private functions
  **
  ****************************************************/
- 
-  
+
+
 extern int _ggi_monotextOpen(ggi_visual *vis);
 extern int _ggi_monotextClose(ggi_visual *vis);
 extern int _ggi_monotextUpdate(ggi_visual*vis, int x, int y, int w, int h);
 extern int _ggi_monotextFlush(ggi_visual*vis);
- 
+
 #endif /* _GGI_DISPLAY_MONOTEXT_H */

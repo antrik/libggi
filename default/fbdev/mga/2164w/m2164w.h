@@ -1,4 +1,4 @@
-/* $Id: m2164w.h,v 1.4 2005/07/31 09:58:44 cegger Exp $
+/* $Id: m2164w.h,v 1.5 2005/07/31 15:30:34 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -109,7 +109,7 @@ mga_gcupdate(volatile uint8_t *mmioaddr, struct m2164w_priv *priv,
 		priv->oldbr.y = gc->clipbr.y;
 	}
 }
-	
+
 ggifunc_getcharsize	GGI_m2164w_getcharsize;
 ggifunc_putc		GGI_m2164w_putc;
 ggifunc_puts		GGI_m2164w_puts;

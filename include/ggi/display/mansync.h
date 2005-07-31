@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.5 2004/10/30 10:16:25 cegger Exp $
+/* $Id: mansync.h,v 1.6 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -53,7 +53,7 @@
 	int _GGI_mansync_start(vis);
 	int _GGI_mansync_stop(vis);
 		Start/stop mansync handling. (process,thread,etc.)
-		You don't need to explicitly call these; 
+		You don't need to explicitly call these;
 		MANSYNC_SETFLAGS does it for you.
 
 	int _GGI_mansync_ignore(vis);
@@ -119,7 +119,7 @@ typedef struct {
 	int (*ignore)(ggi_visual *vis);
 	int (*cont)(ggi_visual *vis);
 } _ggi_opmansync;
-	
+
 int _GGI_mansync_init(ggi_visual *vis);
 int _GGI_mansync_deinit(ggi_visual *vis);
 

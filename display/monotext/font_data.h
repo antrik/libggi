@@ -1,4 +1,4 @@
-/* $Id: font_data.h,v 1.1 2001/05/12 23:02:12 cegger Exp $
+/* $Id: font_data.h,v 1.2 2005/07/31 15:30:36 soyt Exp $
 ******************************************************************************
 
    Display-monotext: fonts
@@ -24,12 +24,12 @@
 
 ******************************************************************************
 */
- 
+
 /* Note: this font has been mangled slightly in order to get better
  * mappings to the ASCII characters.
  */
 
-static unsigned char font_data[127*8] = 
+static unsigned char font_data[127*8] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  /* ' ' */
 	0x30, 0x78, 0x78, 0x30, 0x30, 0x00, 0x30, 0x00,  /* '!' */

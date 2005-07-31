@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.16 2005/07/30 10:57:04 cegger Exp $
+/* $Id: structs.h,v 1.17 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -6,7 +6,7 @@
    ??? Add yourself in ???
    Copyright (C) 1998	   Andrew Apted		[andrew@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -91,27 +91,27 @@ enum ggi_colormap_region {
 
 typedef struct ggi_colormap {
 		ggi_clut clut;		/* color lookup table */
-		
+
 		size_t rw_start;	/* start index of r/w indeces */
 		size_t rw_stop;		/* end index of r/w indices */
 		size_t ro_start;	/* start index of r/o indices */
 		size_t ro_stop;		/* end index of r/o indices */
-		
+
 		void *priv;		/* hook for target specific data */
-		
+
 		/* Function hooks for target specific operations */
-		
+
 		/* Returns the size of the void *priv */
 		size_t (*getPrivSize)(ggi_visual_t vis);
-		
+
 		int (*setRW)(ggi_visual_t vis, size_t start, size_t end);
 		int (*setRO)(ggi_visual_t vis, size_t start, size_t end);
 		int (*getRW)(ggi_visual_t vis, size_t *start, size_t *end);
 		int (*getRO)(ggi_visual_t vis, size_t *start, size_t *end);
-		
+
 		/* sets the palette and automatically determine the rw/ro start/end indeces */
 		ggifunc_setPalette* setPalette;
-		
+
 		ssize_t (*findByColor)(ggi_visual_t vis, const ggi_color *color,
 				       enum ggi_colormap_region region);
 		ssize_t (*findByIdx)(ggi_visual_t vis, size_t idx,
@@ -123,7 +123,7 @@ typedef struct ggi_colormap {
 		int (*matchByIdx)(ggi_visual_t vis, size_t idx1, size_t idx2,
 				  enum ggi_colormap_region region);
 } ggi_colormap;
- 
+
 /* Gamma state structure. */
 typedef struct ggi_gammastate
 {
@@ -204,8 +204,8 @@ typedef struct {
 
 #define _GGI_NROF_HELPERS	20
 
-/* 
- * Increment the version number every time you add 
+/*
+ * Increment the version number every time you add
  * new features.
  */
 
@@ -218,8 +218,8 @@ typedef struct ggi_visual {
 	ggi_flags	flags;		/* Flags */
 
         /* used to be gamma. pad for binary compat until next major release. */
-        ggi_float	dummy1, dummy2, dummy3; 
-	
+        ggi_float	dummy1, dummy2, dummy3;
+
 	/*
 	  Integer values [9/15]
 	*/
@@ -254,7 +254,7 @@ typedef struct ggi_visual {
 
 	ggi_gc		 *gc;		/* Graphics context */
 	ggi_colormap *palette;		/* Current palette */
-	
+
 	ggi_mode	 *mode;		/* Current mode */
 	ggi_pixelformat	 *pixfmt;	/* Format of the pixels */
 	struct gii_input *input;	/* Input handle for visual */
@@ -342,10 +342,10 @@ struct ggi_visual_opcolor {
 	struct ggi_op_head head;
 
 /*------- Section: Color (6/10 slots) -------------*/
-	/* Map a color into a ggi_pixel - used for the drawinfo structure */	
+	/* Map a color into a ggi_pixel - used for the drawinfo structure */
 	ggifunc_mapcolor *mapcolor;
 
-	/* Map a ggi_pixel into a color */	
+	/* Map a ggi_pixel into a color */
 	ggifunc_unmappixel *unmappixel;
 
 	/* Pack a len size array of ggi_color into buffer - use getbpp! */
@@ -458,7 +458,7 @@ struct ggi_visual_opgc {
  * seems like overkill. Andy.
  */
 
-typedef enum { 
+typedef enum {
 	GGI_DB_STD_WEIRD=0,
 
 	GGI_DB_STD_1a8lbl=0x01000000,		/* Mono, low bit left */

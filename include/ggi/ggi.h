@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.16 2005/07/30 10:57:03 cegger Exp $
+/* $Id: ggi.h,v 1.17 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -44,9 +44,9 @@ typedef double ggi_float;
 
 #ifndef _INTERNAL_LIBGGI
 /* Opaque pointer types.
-   This little magic gains us some type checking. 
-   ANSI warning: If you have a really really weird machine (one that has 
-   different pointer sizes or types for different pointed-to objects), 
+   This little magic gains us some type checking.
+   ANSI warning: If you have a really really weird machine (one that has
+   different pointer sizes or types for different pointed-to objects),
    you might need to typedef void *ggi_*_t; instead.
  */
 struct ggi_h_dummy1 { char dummy1; };
@@ -72,7 +72,7 @@ typedef gii_val_event		ggi_val_event;
 typedef gii_event		ggi_event;
 
 
-/* 
+/*
  * Flags & Frames
  */
 
@@ -157,9 +157,9 @@ typedef unsigned int ggi_flags;
 */
 #define GGI_BM_TYPE_ATTRIB	0x020000
 
-#define 	GGI_BM_SUB_ALPHA		0x0100
+#define		GGI_BM_SUB_ALPHA		0x0100
 
-#define 	GGI_BM_SUB_BLINK		0x1000
+#define		GGI_BM_SUB_BLINK		0x1000
 #define		GGI_BM_SUB_INTENSITY		0x1100
 #define		GGI_BM_SUB_UNDERLINE		0x1200
 #define		GGI_BM_SUB_BOLD			0x1300
@@ -188,21 +188,21 @@ typedef struct {
 	int		depth;		/* Number of significant bits */
 	int		size;		/* Physical size in bits */
 
-	/* 
+	/*
 	 * Simple and common things first :
-	 * 
+	 *
 	 * Usage of the mask/shift pairs:
-	 * If new_value is the _sizeof(ggi_pixel)*8bit_ value of the thing 
+	 * If new_value is the _sizeof(ggi_pixel)*8bit_ value of the thing
 	 * you want to set, you do
 	 *
-	 * *pointer &= ~???_mask; 		// Mask out old bits 
+	 * *pointer &= ~???_mask;		// Mask out old bits
 	 * *pointer |= (new_value>>shift) & ???_mask;
-	 * 
+	 *
 	 * The reason to use 32 bit and "downshifting" is alignment
 	 * and extensibility. You can easily adjust to other datasizes
 	 * with a simple addition ...
 	 */
-	
+
 	/* Simple colors:
 	 */
 	ggi_pixel	red_mask;	/* Bitmask of red bits */
@@ -248,7 +248,7 @@ typedef struct {
 	 * you may use things like memcpy between them which will have
 	 * the desired effect ...
 	 */
-	
+
 } ggi_pixelformat;
 
 /* Pixelformat flags */
@@ -315,7 +315,7 @@ typedef struct {
 typedef struct {
 	uint32_t	type;		/* buffer type */
 	int		frame;		/* framenumber (GGI_DB_NORMAL) */
- 
+
 	/*	access info	*/
 	ggi_resource_t	resource;	/* If non-NULL you must acquire the
 					   buffer before using it */
@@ -323,7 +323,7 @@ typedef struct {
 	void		*write;		/* buffer address for writes	*/
 	unsigned int	page_size;	/* zero for true linear buffers	*/
 
-	uint32_t	noaccess;	
+	uint32_t	noaccess;
 	/* bitfield. bit x set means you may _not_ access this DB at the
 	   width of 2^x bytes. Usually 0, but _check_ it. */
 
@@ -360,7 +360,7 @@ typedef struct {
 
 /*
 ******************************************************************************
- LibGGI function definitions 
+ LibGGI function definitions
 ******************************************************************************
 */
 __BEGIN_DECLS
@@ -516,7 +516,7 @@ GGIAPIFUNC int ggiGetDisplayFrame(ggi_visual_t vis);
 GGIAPIFUNC int ggiGetReadFrame(ggi_visual_t vis);
 GGIAPIFUNC int ggiGetWriteFrame(ggi_visual_t vis);
 
-/* Generic drawing routines 
+/* Generic drawing routines
  */
 GGIAPIFUNC int ggiFillscreen(ggi_visual_t vis);
 
@@ -541,7 +541,7 @@ GGIAPIFUNC int ggiCopyBox(ggi_visual_t vis,int x,int y,int w,int h,
 GGIAPIFUNC int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
 			    ggi_visual_t dst,int dx,int dy);
 
-/* Text drawing routines 
+/* Text drawing routines
 */
 GGIAPIFUNC int ggiPutc(ggi_visual_t vis,int x,int y,char c);
 GGIAPIFUNC int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
@@ -552,7 +552,7 @@ GGIAPIFUNC int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
 GGIAPIFUNC gii_event_mask	ggiEventPoll(ggi_visual_t vis,
 					     gii_event_mask mask,
 					     struct timeval *t);
-GGIAPIFUNC int 			ggiEventsQueued(ggi_visual_t vis,
+GGIAPIFUNC int			ggiEventsQueued(ggi_visual_t vis,
 						gii_event_mask mask);
 GGIAPIFUNC int			ggiEventRead(ggi_visual_t vis, gii_event *ev,
 					     gii_event_mask mask);
@@ -564,7 +564,7 @@ GGIAPIFUNC int			ggiEventSend(ggi_visual_t vis, gii_event *ev);
 GGIAPIFUNC gii_input_t		ggiJoinInputs(ggi_visual_t vis,
 					      gii_input_t inp);
 GGIAPIFUNC gii_input_t		ggiDetachInput(ggi_visual_t vis);
-                          
+
 #define ggiAddEventMask(vis,mask)  \
 		ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
 #define ggiRemoveEventMask(vis,mask)  \

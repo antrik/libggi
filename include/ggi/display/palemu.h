@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.4 2004/10/30 10:16:27 cegger Exp $
+/* $Id: palemu.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -64,7 +64,7 @@
 	} while (0)
 
 
-/**************************************************** 
+/****************************************************
  **
  **  PalEmu private data
  **
@@ -73,7 +73,7 @@
 
 typedef struct ggi_palemu_priv {
 	int flags;
-	
+
 	ggi_visual_t parent;
 	ggi_mode mode;
 
@@ -81,7 +81,7 @@ typedef struct ggi_palemu_priv {
 	void *fb_ptr;
 	long  fb_size;
 	long  frame_size;
-	
+
 	/* color info */
 	ggi_pixel *lookup;
 	ggi_color *palette;
@@ -95,9 +95,9 @@ typedef struct ggi_palemu_priv {
 
 	ggi_coord dirty_tl;
 	ggi_coord dirty_br;
-	
+
 	/* blitter function */
-	void (* do_blit) (struct ggi_palemu_priv *priv, void *dest, 
+	void (* do_blit) (struct ggi_palemu_priv *priv, void *dest,
 			  void *src, int w);
 
 	/* mansync info */
@@ -114,8 +114,8 @@ typedef struct ggi_palemu_priv {
  **  PalEmu private functions
  **
  ****************************************************/
- 
-  
+
+
 extern int _ggi_palemu_Open(ggi_visual *vis);
 extern int _ggi_palemu_Close(ggi_visual *vis);
 extern int _ggi_palemu_Transfer(ggi_visual*vis, int x, int y, int w, int h);
@@ -127,8 +127,8 @@ extern int _ggi_palemu_Flush(ggi_visual*vis);
  **  PalEmu internal interfaces
  **
  ****************************************************/
- 
-  
+
+
 ggifunc_getmode         GGI_palemu_getmode;
 ggifunc_setmode         GGI_palemu_setmode;
 ggifunc_checkmode       GGI_palemu_checkmode;

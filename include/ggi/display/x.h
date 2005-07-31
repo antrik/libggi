@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.19 2005/06/09 17:04:36 cegger Exp $
+/* $Id: x.h,v 1.20 2005/07/31 15:30:39 soyt Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -38,9 +38,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-/* These may later be moved into an improved modelist.inc to allow 
+/* These may later be moved into an improved modelist.inc to allow
  * targets that have more then one option for getting modelists
- * to overload the default behavior. 
+ * to overload the default behavior.
  */
 typedef int (*ggi_modelist_getlist)(ggi_visual *vis);
 typedef int (*ggi_modelist_restore)(ggi_visual *vis);
@@ -52,14 +52,14 @@ typedef int (*ggi_modelist_enter)(ggi_visual *vis, int num);
  * Return the 'num's mode from the modelist indicating success.
  * Negative return code indicates an error or GGI_ENOTFOUND.
  */
-typedef int (*ggi_modelist_validate)(ggi_visual *vis, intptr_t num, 
+typedef int (*ggi_modelist_validate)(ggi_visual *vis, intptr_t num,
 				     ggi_mode *maxed);
 
 typedef struct {
   ggi_modelist_getlist	getlist;  /* Get/sort modelist, store original mode. */
   ggi_modelist_restore	restore;  /* Restore original mode and free list.    */
   ggi_modelist_enter		enter;	  /* Enter given mode (called by setmode).   */
-  ggi_modelist_validate validate; /* Check/complete a ggi_mode structure 
+  ggi_modelist_validate validate; /* Check/complete a ggi_mode structure
 				     												 based on a given mode. */
 } ggi_modelist_funcs;
 
@@ -159,7 +159,7 @@ typedef struct ggi_x_priv {
 	/* Hooks to ferry a few core ops w/o using symbol tables */
 	ggifunc_resacquire	*acquire;
 	ggifunc_resrelease	*release;
-	int			(*flush_cmap)(ggi_visual *vis);	
+	int			(*flush_cmap)(ggi_visual *vis);
 
 	/* This boolean tells whether or not we are managing the window
 	 * size.  Its true unless we have -inwin= or -fullscreen. */
@@ -167,11 +167,11 @@ typedef struct ggi_x_priv {
 
 	ggifunc_checkmode	*shmhack_checkmode_fixed;
 
-	/* We shouldn't have to ferry this, but will until we figure out 
-	   how to unhook MIT-SHM's XCloseDisplay hook so we can close it 
+	/* We shouldn't have to ferry this, but will until we figure out
+	   how to unhook MIT-SHM's XCloseDisplay hook so we can close it
 	   gracefully.
 	*/
-	void			(*shmhack_free_cmaps)(ggi_visual *vis);	
+	void			(*shmhack_free_cmaps)(ggi_visual *vis);
 
 } ggi_x_priv;
 
@@ -197,13 +197,13 @@ void _GGI_X_freedbs(ggi_visual *, ggi_x_priv *);
 /* Protos for utility functions in misc.c */
 void _ggi_x_build_vilist(ggi_visual *vis);
 ggi_graphtype _ggi_x_scheme_vs_class(ggi_graphtype gt, ggi_x_vi *vi);
-int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm, 
+int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
 			ggi_x_vi *vi, ggi_mode *suggest);
 void _ggi_x_free_colormaps(ggi_visual *vis);
 void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi);
 void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
 int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm);
-void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc, 
+void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc,
 		      int x, int y, int w, int h);
 void _ggi_x_create_dot_cursor(ggi_visual *vis);
 void _ggi_x_create_invisible_cursor(ggi_visual *vis);
@@ -256,9 +256,9 @@ if (priv->dirtytl.x >= _x && priv->dirtybr.x <= _x + _w-1) {		\
 #define GGI_X_MAYBE_SYNC(_vis) \
 if (!(LIBGGI_FLAGS(_vis) & GGIFLAG_ASYNC)) XFlush(GGIX_PRIV(_vis)->disp);
 
-#define GGI_X_READ_Y  (y + LIBGGI_VIRTY(vis) * vis->r_frame_num) 
-#define GGI_X_WRITE_Y (y + LIBGGI_VIRTY(vis) * vis->w_frame_num) 
-#define GGI_X_DISPLAY_Y (y + LIBGGI_VIRTY(vis) * vis->d_frame_num) 
+#define GGI_X_READ_Y  (y + LIBGGI_VIRTY(vis) * vis->r_frame_num)
+#define GGI_X_WRITE_Y (y + LIBGGI_VIRTY(vis) * vis->w_frame_num)
+#define GGI_X_DISPLAY_Y (y + LIBGGI_VIRTY(vis) * vis->d_frame_num)
 
 ggifunc_gcchanged	GGI_X_gcchanged;
 

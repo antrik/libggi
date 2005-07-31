@@ -1,4 +1,4 @@
-/* $Id: radeon_cce.h,v 1.6 2005/07/30 11:39:59 cegger Exp $
+/* $Id: radeon_cce.h,v 1.7 2005/07/31 15:30:35 soyt Exp $
 ******************************************************************************
 
    ATI Radeon CCE packet structures
@@ -74,15 +74,15 @@ typedef struct
 		reserved            : 1,
 		gmc_wr_msk_dis      : 1,
 		brush_flag          : 1;
-	
+
 } cce_gui_control_t;
 
-/* defines for cce_gui_control_t.win31_rop 
+/* defines for cce_gui_control_t.win31_rop
 */
 #define ROP3_PATCOPY				0xF0
 #define ROP3_SRCCOPY				0xCC
 
-/* setup bodies (used depending on bits 0-7 or gui_control_t) 
+/* setup bodies (used depending on bits 0-7 or gui_control_t)
 */
 typedef struct
 {
@@ -100,25 +100,25 @@ typedef struct
 	bits	x      : 14,
 		dummy  : 2,
 		y      : 14;
-	
+
 } cce_scissor_t;
 
 typedef struct
 {
-	
+
 	bits	x       : 5,
 		dummy   : 3,
 		y       : 5,
 		dummy2  : 3,
 		initial : 5;
-	
+
 } cce_brush_y_x_t;
 
 typedef struct
 {
 
 	bits value : 32;
-	
+
 } cce_color_t;
 
 /* brush packet structures for each BRUSH_TYPE */
@@ -136,7 +136,7 @@ typedef struct
 
 	cce_color_t frgrd_color;
 	dword mono_bmp_1, mono_bmp_2;
-	      
+
 } cce_brush_packet_1_t;
 
 typedef struct
@@ -144,7 +144,7 @@ typedef struct
 
 	cce_color_t bkgrd_color, frgrd_color;
 	dword mono_bmp_1;
-	      
+
 } cce_brush_packet_6_t;
 
 typedef struct
@@ -152,14 +152,14 @@ typedef struct
 
 	cce_color_t frgrd_color;
 	dword mono_bmp_1;
-	      
+
 } cce_brush_packet_7_t;
 
 typedef struct
 {
-	
+
 	dword color_bmp[16];
-	
+
 } cce_brush_packet_10_8bpp_t;
 
 typedef struct
@@ -173,8 +173,8 @@ typedef struct
 {
 
 	dword color_bmp[16*4];
-	
-} cce_brush_packet_10_24bpp_t, 
+
+} cce_brush_packet_10_24bpp_t,
   cce_brush_packet_10_32bpp_t;
 
 typedef struct
@@ -182,7 +182,7 @@ typedef struct
 
 	cce_color_t frgrd_color;
 
-} cce_brush_packet_13_t, 
+} cce_brush_packet_13_t,
   cce_brush_packet_14_t;
 
 /* DATA_BLOCK structures */
@@ -217,7 +217,7 @@ typedef struct
 	     src_h1 : 14,
 	     dummy  : 2,
 	     src_w1 : 14;
-	     
+
 } cce_bitblt_t;
 
 typedef struct
@@ -229,7 +229,7 @@ typedef struct
 
 } cce_smalltext_t;
 
-typedef struct 
+typedef struct
 {
 
 	bits dx : 8,
@@ -342,7 +342,7 @@ typedef struct
 #define PP_CNTL 0x1c38 /* also 0x2c38 */
 
 /* X_LEFT 10:0 Y_TOP 26:16 */
-#define RE_TOP_LEFT 0x26c0 
+#define RE_TOP_LEFT 0x26c0
 
 /* WIDTH 10:0 (minus 1) HEIGHT 26:16 (minus 1) */
 #define RE_WIDTH_HEIGHT 0x1c44 /* also 0x2644 */
@@ -371,7 +371,7 @@ typedef struct
 11=YUV422 packed (VYUY)
 12=YUV422 packed (YVYU)
 14=aYUV444
-15=ARGB4444 
+15=ARGB4444
 
 */
 

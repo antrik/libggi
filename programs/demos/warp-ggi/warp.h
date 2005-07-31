@@ -1,16 +1,16 @@
-/* $Id: warp.h,v 1.3 2005/07/30 11:58:39 cegger Exp $
+/* $Id: warp.h,v 1.4 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
-  
+
    Warp-GGI
- 
+
    General Graphics Interface demo: realtime picture 'gooing'
    Written by Emmanuel Marty <core@ggi-project.org>
 
    warp.h: definitions for warping
-  
+
    This is a demonstration of LibGGI's functions and can be used as a
    reference programming example.
-  
+
    This software is placed in the public domain and can be used
    freely for any purpose. It comes with absolutely NO WARRANTY,
    either expressed or implied, including, but not limited to the

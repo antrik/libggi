@@ -1,4 +1,4 @@
-/* $Id: suidhook.h,v 1.2 2002/09/08 21:37:46 soyt Exp $
+/* $Id: suidhook.h,v 1.3 2005/07/31 15:30:36 soyt Exp $
 ******************************************************************************
 
    Display-SUID: definitions
@@ -46,7 +46,7 @@ typedef struct suid_hook
 
 	int vt_fd;
 	void *vt_priv;
-	
+
 	size_t	mmap_length;
 
 	/* ... */
@@ -81,7 +81,7 @@ ggifunc_checkmode	GGI_suidkgi_checkmode;
 ggifunc_getapi		GGI_suidkgi_getapi;
 ggifunc_setflags	GGI_suidkgi_setflags;
 ggifunc_kgicommand	GGI_suidkgi_kgicommand;
-		
+
 ggifunc_setpalvec	GGI_suidkgi_setpalvec;
 ggifunc_setorigin	GGI_suidkgi_setorigin;
 ggifunc_setdisplayframe	GGI_suidkgi_setdisplayframe;

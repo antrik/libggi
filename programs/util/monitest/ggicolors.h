@@ -1,4 +1,4 @@
-/* $Id: ggicolors.h,v 1.1 2001/05/12 23:03:50 cegger Exp $
+/* $Id: ggicolors.h,v 1.2 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    Some color definitions
@@ -11,7 +11,7 @@
    warranties of merchantability or fitness for a particular purpose.
    Use it at your own risk. the author is not responsible for any damage
    or consequences raised by use or inability to use this program.
- 
+
 ******************************************************************************
 */
 

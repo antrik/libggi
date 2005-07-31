@@ -1,10 +1,10 @@
-/* $Id: plat.h,v 1.2 2002/09/08 21:37:48 soyt Exp $
+/* $Id: plat.h,v 1.3 2005/07/31 15:30:40 soyt Exp $
 ******************************************************************************
 
    LibGGI platform specific definitions
 
    Copyright (C) 1998	Marcus Sundberg		[marcus@ggi-project.org]
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation

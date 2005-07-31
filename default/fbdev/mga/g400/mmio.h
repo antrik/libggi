@@ -1,4 +1,4 @@
-/* $Id: mmio.h,v 1.4 2005/07/30 11:39:57 cegger Exp $
+/* $Id: mmio.h,v 1.5 2005/07/31 15:30:35 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -91,12 +91,12 @@ mga_setcol(volatile uint8_t *mmioaddr, ggi_mode *mode, ggi_pixel pixelfg,
 {
 	switch (GT_SIZE(mode->graphtype)) {
 	case 8:
-		pixelfg &= 0xff;   
+		pixelfg &= 0xff;
 		pixelfg |= (pixelfg << 8) |
 			(pixelfg << 16) | (pixelfg << 24);
 		break;
 	case 16:
-		pixelfg &= 0xffff;   
+		pixelfg &= 0xffff;
 		pixelfg |= pixelfg << 16;
 		break;
 #ifdef GGI_LITTLE_ENDIAN

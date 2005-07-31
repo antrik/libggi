@@ -1,8 +1,8 @@
-/* $Id: ggi-unix.h,v 1.2 2004/02/23 14:25:30 pekberg Exp $
+/* $Id: ggi-unix.h,v 1.3 2005/07/31 15:30:38 soyt Exp $
 ******************************************************************************
 
    LibGGI UNIX-specific API header file
- 
+
    Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
 
    Permission is hereby granted, free of charge, to any person obtaining a
@@ -24,7 +24,7 @@
 
 ******************************************************************************
 */
-              
+
 #ifndef _GGI_GGI_UNIX_H
 #define _GGI_GGI_UNIX_H
 

@@ -1,4 +1,4 @@
-/* $Id: mga_g400.h,v 1.4 2005/07/31 09:58:44 cegger Exp $
+/* $Id: mga_g400.h,v 1.5 2005/07/31 15:30:35 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -110,7 +110,7 @@ mga_gcupdate(volatile uint8_t *mmioaddr, struct mga_g400_priv *priv,
 		priv->oldbr.y = gc->clipbr.y;
 	}
 }
-	
+
 ggifunc_getcharsize	GGI_mga_g400_getcharsize;
 ggifunc_putc		GGI_mga_g400_putc;
 ggifunc_puts		GGI_mga_g400_puts;
