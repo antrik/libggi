@@ -1,4 +1,4 @@
-/* $Id: mga_g400.h,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: mga_g400.h,v 1.4 2005/07/31 09:58:44 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -71,11 +71,11 @@ struct mga_g400_priv {
 #include "mmio.h"
 
 /* Cast values for insertion in registers */
-#define RS16(val)	( (uint16_t)((sint16)(val)))
-#define RS18(val)	(((uint32_t)((sint32)(val)))&0x003ffff)
-#define RS22(val)	(((uint32_t)((sint32)(val)))&0x03fffff)
-#define RS24(val)	(((uint32_t)((sint32)(val)))&0x0ffffff)
-#define RS27(val)	(((uint32_t)((sint32)(val)))&0x7ffffff)
+#define RS16(val)	( (uint16_t)((int16_t)(val)))
+#define RS18(val)	(((uint32_t)((int32_t)(val)))&0x003ffff)
+#define RS22(val)	(((uint32_t)((int32_t)(val)))&0x03fffff)
+#define RS24(val)	(((uint32_t)((int32_t)(val)))&0x0ffffff)
+#define RS27(val)	(((uint32_t)((int32_t)(val)))&0x7ffffff)
 
 
 /* Update GC components if needed */

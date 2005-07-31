@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: copybox.c,v 1.4 2005/07/31 09:58:44 cegger Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -35,8 +35,8 @@ int GGI_mga_g400_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	int virtx = LIBGGI_VIRTX(vis);
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
-	sint32 ar5 = virtx;
-	sint32 begin, end;
+	int32_t ar5 = virtx;
+	int32_t begin, end;
 	uint32_t sgn = 0;
 	uint32_t dwgctl;
 

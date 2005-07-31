@@ -1,4 +1,4 @@
-/* $Id: ati_mach64.h,v 1.6 2005/07/30 11:39:57 cegger Exp $
+/* $Id: ati_mach64.h,v 1.7 2005/07/31 09:58:43 cegger Exp $
 ******************************************************************************
 
    LibGGI - ATI mach64 and rage pro acceleration for fbdev target
@@ -79,11 +79,11 @@ struct ati_mach64_priv {
 
 /* Cast values for insertion in registers */
 #if 0
-#define RS16(val)	( (uint16_t)((sint16)(val)))
-#define RS18(val)	(((uint32_t)((sint32)(val)))&0x003ffff)
-#define RS22(val)	(((uint32_t)((sint32)(val)))&0x03fffff)
-#define RS24(val)	(((uint32_t)((sint32)(val)))&0x0ffffff)
-#define RS27(val)	(((uint32_t)((sint32)(val)))&0x7ffffff)
+#define RS16(val)	( (uint16_t)((int16_t)(val)))
+#define RS18(val)	(((uint32_t)((int32_t)(val)))&0x003ffff)
+#define RS22(val)	(((uint32_t)((int32_t)(val)))&0x03fffff)
+#define RS24(val)	(((uint32_t)((int32_t)(val)))&0x0ffffff)
+#define RS27(val)	(((uint32_t)((int32_t)(val)))&0x7ffffff)
 #endif
 
 /* Update GC components if needed */
