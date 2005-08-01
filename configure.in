@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.164 2005/07/31 16:21:01 cegger Exp $
+dnl $Id: configure.in,v 1.165 2005/08/01 11:31:03 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -289,6 +289,11 @@ dnl Checks for header files.
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
+
+if test "$ac_cv_header_inttypes_h" != "yes"; then
+  AC_DEFINE(GG_NEED_INTTYPES, 1,
+	    [Tell libgg to define integer types when building])
+fi
 
 AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
