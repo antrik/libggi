@@ -1,4 +1,4 @@
-/* $Id: triple-int.h,v 1.6 2005/08/01 12:56:37 pekberg Exp $
+/* $Id: triple-int.h,v 1.7 2005/08/02 11:26:28 pekberg Exp $
 ******************************************************************************
 
    Small functions for triple precision integer math.
@@ -398,7 +398,7 @@ static inline void _divmod_full_3(
 	unsigned bit;
 	unsigned tmp[3];
 	int overflow = 0;
-	unsigned _y[3], y2[2];
+	unsigned _y[3], y2[3];
 	unsigned _r[3];
 
 	/* How to normalize y? */
