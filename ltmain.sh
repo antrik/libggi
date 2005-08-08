@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.274 2005/07/30 15:52:45) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.281 2005/08/08 10:45:17) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.274 2005/07/30 15:52:45) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.281 2005/08/08 10:45:17) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.274 2005/07/30 15:52:45"
-package_revision=1.1667.2.274
+TIMESTAMP=" 1.1667.2.281 2005/08/08 10:45:17"
+package_revision=1.1667.2.281
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -3801,14 +3801,19 @@ func_mode_link ()
 	  # Convert "-framework foo" to "foo.ltframework"
 	  if test -n "$inherited_linker_flags"; then
 	    tmp_inherited_linker_flags=`$ECHO "X$inherited_linker_flags" | $Xsed -e 's/-framework \([^ $]*\)/\1.ltframework/g'`
-	    new_inherited_linker_flags="$new_inherited_linker_flags $tmp_inherited_linker_flags"
+		for tmp_inherited_linker_flag in $tmp_inherited_linker_flags; do
+		  case " $new_inherited_linker_flags " in
+		    *" tmp_inherited_linker_flag "*) ;;
+		    *) new_inherited_linker_flags="$new_inherited_linker_flags $tmp_inherited_linker_flags";;
+		  esac
+		done
 	  fi
 	  dependency_libs=`$ECHO "X $dependency_libs" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
 	  ;;
 	esac
 	if test "$linkmode,$pass" = "prog,link"; then
-	  compile_deplibs="$inherited_linker_flags $compile_deplibs"
-	  finalize_deplibs="$inherited_linker_flags $finalize_deplibs"
+	  compile_deplibs="$new_inherited_linker_flags $compile_deplibs"
+	  finalize_deplibs="$new_inherited_linker_flags $finalize_deplibs"
 	else
 	  compiler_flags="$compiler_flags $inherited_linker_flags"
 	fi
@@ -5466,8 +5471,9 @@ EOF
 	  fi
 	fi
 
-	if test "X$skipped_export" != "X:" && len=`expr "X$test_cmds" : ".*"` &&
-	   test "$len" -le "$max_cmd_len" || test "$max_cmd_len" -le -1; then
+	if test "X$skipped_export" != "X:" &&
+	   len=`expr "X$test_cmds" : ".*" 2>/dev/null` &&
+	  test "$len" -le "$max_cmd_len" || test "$max_cmd_len" -le -1; then
 	  :
 	else
 	  # The command line is too long to link in one step, link piecewise
@@ -5514,7 +5520,7 @@ EOF
 	    do
 	      eval test_cmds=\"$reload_cmds $objlist $last_robj\"
 	      if test "X$objlist" = X ||
-		 { len=`expr "X$test_cmds" : ".*"` &&
+		 { len=`expr "X$test_cmds" : ".*" 2>/dev/null` &&
 		   test "$len" -le "$max_cmd_len"; }; then
 		objlist="$objlist $obj"
 	      else
@@ -6177,7 +6183,7 @@ const char *program_name = NULL;
 
 void * xmalloc (size_t num);
 char * xstrdup (const char *string);
-char * basename (const char *name);
+const char * base_name (const char *name);
 char * find_executable(const char *wrapper);
 int    check_executable(const char *path);
 char * strendzap(char *str, const char *pat);
@@ -6189,14 +6195,14 @@ main (int argc, char *argv[])
   char **newargz;
   int i;
 
-  program_name = (char *) xstrdup ((char *) basename (argv[0]));
+  program_name = (char *) xstrdup (base_name (argv[0]));
   DEBUG("(main) argv[0]      : %s\n",argv[0]);
   DEBUG("(main) program_name : %s\n",program_name);
   newargz = XMALLOC(char *, argc+2);
 EOF
 
 	    cat >> $cwrappersource <<EOF
-  newargz[0] = "$SHELL";
+  newargz[0] = (char *) xstrdup("$SHELL");
 EOF
 
 	    cat >> $cwrappersource <<"EOF"
@@ -6253,8 +6259,8 @@ xstrdup (const char *string)
 ;
 }
 
-char *
-basename (const char *name)
+const char *
+base_name (const char *name)
 {
   const char *base;
 
@@ -6267,7 +6273,7 @@ basename (const char *name)
   for (base = name; *name; name++)
     if (IS_DIR_SEPARATOR (*name))
       base = name + 1;
-  return (char *) base;
+  return base;
 }
 
 int
@@ -6717,8 +6723,8 @@ fi\
 	fi
 	eval cmds=\"$old_archive_cmds\"
 
-	if len=`expr "X$cmds" : ".*"` &&
-	     test "$len" -le "$max_cmd_len" || test "$max_cmd_len" -le -1; then
+	if len=`expr "X$cmds" : ".*" 2>/dev/null` &&
+	   test "$len" -le "$max_cmd_len" || test "$max_cmd_len" -le -1; then
 	  cmds=$old_archive_cmds
 	else
 	  # the command line is too long to link in one step, link in parts
@@ -6738,7 +6744,7 @@ fi\
 	    oldobjs="$objlist $obj"
 	    objlist="$objlist $obj"
 	    eval test_cmds=\"$old_archive_cmds\"
-	    if len=`expr "X$test_cmds" : ".*"` &&
+	    if len=`expr "X$test_cmds" : ".*" 2>/dev/null` &&
 	       test "$len" -le "$max_cmd_len"; then
 	      :
 	    else
