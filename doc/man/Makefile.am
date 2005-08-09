@@ -130,7 +130,6 @@ man_MANS = \
            display-vcsa.7 \
            display-vgl.7 \
            display-x.7 \
-           display-dga.7 \
            triple-int.7 \
            assign_3.3 \
            assign_int_3.3 \
