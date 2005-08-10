@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.281 2005/08/08 10:45:17) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.283 2005/08/10 06:25:33) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.281 2005/08/08 10:45:17) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.283 2005/08/10 06:25:33) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.281 2005/08/08 10:45:17"
-package_revision=1.1667.2.281
+TIMESTAMP=" 1.1667.2.283 2005/08/10 06:25:33"
+package_revision=1.1667.2.283
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -3801,19 +3801,14 @@ func_mode_link ()
 	  # Convert "-framework foo" to "foo.ltframework"
 	  if test -n "$inherited_linker_flags"; then
 	    tmp_inherited_linker_flags=`$ECHO "X$inherited_linker_flags" | $Xsed -e 's/-framework \([^ $]*\)/\1.ltframework/g'`
-		for tmp_inherited_linker_flag in $tmp_inherited_linker_flags; do
-		  case " $new_inherited_linker_flags " in
-		    *" tmp_inherited_linker_flag "*) ;;
-		    *) new_inherited_linker_flags="$new_inherited_linker_flags $tmp_inherited_linker_flags";;
-		  esac
-		done
+	    new_inherited_linker_flags="$new_inherited_linker_flags $tmp_inherited_linker_flags"
 	  fi
 	  dependency_libs=`$ECHO "X $dependency_libs" | $Xsed -e 's% \([^ $]*\).ltframework% -framework \1%g'`
 	  ;;
 	esac
 	if test "$linkmode,$pass" = "prog,link"; then
-	  compile_deplibs="$new_inherited_linker_flags $compile_deplibs"
-	  finalize_deplibs="$new_inherited_linker_flags $finalize_deplibs"
+	  compile_deplibs="$inherited_linker_flags $compile_deplibs"
+	  finalize_deplibs="$inherited_linker_flags $finalize_deplibs"
 	else
 	  compiler_flags="$compiler_flags $inherited_linker_flags"
 	fi
