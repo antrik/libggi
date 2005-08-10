@@ -233,7 +233,7 @@ See Also
 --------
 
 :man:`libgii(7)`, :man:`ggiInit(3)`,
-:man:`display-aa(7)`, :man:`display-dga(7)`,
+:man:`display-aa(7)`,
 :man:`display-directx(7)`, :man:`display-fbdev(7)`,
 :man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-macosx(7)`,
 :man:`display-memory(7)`, :man:`display-monotext(7)`, :man:`display-multi(7)`,
@@ -267,4 +267,3 @@ See Also
 .. include:: ../display/vcsa/man.txt
 .. include:: ../display/vgl/man.txt
 .. include:: ../display/X/man.txt
-.. include:: ../display/xf86dga/man.txt
