@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.11 2005/07/31 15:30:38 soyt Exp $
+/* $Id: types.h,v 1.12 2005/08/12 18:48:23 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -43,9 +43,9 @@
 
 typedef struct { int16_t x, y; }				ggi_coord;
 typedef struct { long	 x, y; }				ggi_subcoord;
-typedef	int32_t							ggi_pixel;
+typedef	uint32_t						ggi_pixel;
 
-typedef	int32_t							ggi_attr;
+typedef	uint32_t						ggi_attr;
 #define	ATTR_FGCOLOR	0x0000FF00	/* fgcolor clut index	*/
 #define	ATTR_BGCOLOR	0x000000FF	/* bgcolor clut index	*/
 #define	ATTR_NORMAL	0x00000000	/* normal style		*/
