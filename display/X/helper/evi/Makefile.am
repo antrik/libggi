@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.X"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.X.evi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
 helper_x_evi_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg \
 	$(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)
