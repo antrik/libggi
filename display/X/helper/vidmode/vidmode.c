@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.21 2005/07/30 10:58:23 cegger Exp $
+/* $Id: vidmode.c,v 1.22 2005/08/14 16:13:33 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -252,18 +252,24 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode *m, XF86VidModeModeInfo *vidmod
 ((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
 #define SCREENDPIY \
 ((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
-		m->size.x = GGI_AUTO;
-		m->size.y = GGI_AUTO;
-		_ggi_physz_figure_size(m, priv->physzflags,
-				       &(priv->physz), SCREENDPIX,
-				       SCREENDPIY, SCREENW, SCREENH);
+
+	m->size.x = GGI_AUTO;
+	m->size.y = GGI_AUTO;
+
+	DPRINT_MODE("\tcalculate physical size for visible size (%i,%i)\n",
+			m->visible.x, m->visible.y);
+
+	_ggi_physz_figure_size(m, priv->physzflags,
+			       &(priv->physz), SCREENDPIX,
+			       SCREENDPIY, SCREENW, SCREENH);
 #undef SCREENWMM
 #undef SCREENW
 #undef SCREENHMM
 #undef SCREENH
 #undef SCREENDPIX
 #undef SCREENDPIY
-		DPRINT_MODE("\tphysz size: %d %d\n",m->size.x, m->size.y);
+
+	DPRINT_MODE("\tphysz size: %d %d\n",m->size.x, m->size.y);
 		
 }
 
