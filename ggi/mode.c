@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2005/07/30 10:57:30 cegger Exp $
+/* $Id: mode.c,v 1.19 2005/08/15 18:50:58 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -970,6 +970,20 @@ int _ggi_physz_figure_size(ggi_mode *mode, int physzflag, const ggi_coord *op_sz
 		/* find absolute size in mm */
 		xsize = mode->visible.x * mode->dpp.x * 254 / xsize / 10;
 		ysize = mode->visible.y * mode->dpp.y * 254 / ysize / 10;
+
+	} else if (physzflag & GGI_PHYSZ_MM) {
+		xsize = (physzflag & GGI_PHYSZ_OVERRIDE) ? op_sz->x : dpix;
+		ysize = (physzflag & GGI_PHYSZ_OVERRIDE) ? op_sz->y : dpiy;
+		if (xsize <= 0 || ysize <= 0) {
+			xsize = op_sz->x;
+			ysize = op_sz->y;
+		}
+		if (xsize <= 0 || ysize <= 0) goto nosize;
+		/* Now xsize and ysize are in mm, but scale them
+		 * to mode->visible */
+		xsize = xsize * mode->visible.x / dsx;
+		ysize = ysize * mode->visible.y / dsy;
+
 	} else {
 		if (physzflag & GGI_PHYSZ_OVERRIDE) {
 			xsize = op_sz->x;

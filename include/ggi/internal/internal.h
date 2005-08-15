@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.27 2005/07/31 15:30:40 soyt Exp $
+/* $Id: internal.h,v 1.28 2005/08/15 18:51:00 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -105,6 +105,7 @@ GGIAPIFUNC void _ggiSetDefaultMode(const char *str);
 
 #define GGI_PHYSZ_OVERRIDE	1
 #define GGI_PHYSZ_DPI		2
+#define GGI_PHYSZ_MM		4
 GGIAPIFUNC int _ggi_physz_parse_option(const char *optstr, int *physzflag,
 				       ggi_coord * physz);
 GGIAPIFUNC int _ggi_physz_figure_visible(ggi_mode *mode, int def_x, int def_y,

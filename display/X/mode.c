@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.52 2005/07/21 11:29:06 cegger Exp $
+/* $Id: mode.c,v 1.53 2005/08/15 18:51:00 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -209,15 +209,12 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 	if( reqy != GGI_AUTO && reqy > sug->virt.y )
 		sug->virt.y = reqy;
 
-	
-#define SCREENPIX ( screenwmm<=0 ?  0 :  screenw * 254 / screenwmm / 10 )
-#define SCREENPIY ( screenhmm<=0 ?  0 :  screenh * 254 / screenhmm / 10 )
-
 	/* Now for size... */
-	_ggi_physz_figure_size( sug, priv->physzflags, &(priv->physz),
-				(signed) SCREENPIX,
-				(signed) SCREENPIY,
+	_ggi_physz_figure_size( sug, GGI_PHYSZ_MM, &(priv->physz),
+				(signed) screenwmm,
+				(signed) screenhmm,
 				(signed) screenw, (signed) screenh );
+
 
 	/* Want frames? You bet! */
 	sug->frames = 
