@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.24 2005/08/15 15:18:33 cegger Exp $
+/* $Id: vidmode.c,v 1.25 2005/08/15 15:55:12 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -253,7 +253,7 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode * m,
 #define SCREENDPIX \
 ((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
 #define SCREENDPIY \
-((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
+((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.y * 254 / SCREENHMM / 10))
 
 	m->size.x = GGI_AUTO;
 	m->size.y = GGI_AUTO;

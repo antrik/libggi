@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.17 2005/08/15 15:18:32 cegger Exp $
+/* $Id: dga.c,v 1.18 2005/08/15 15:55:12 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -235,7 +235,8 @@ static void ggi_xdga_checkmode_adapt(ggi_mode * m, XDGAMode * dgamode,
 #define SCREENDPIX \
 ((SCREENWMM <= 0) ?  0 : (SCREENW * m->dpp.x * 254 / SCREENWMM / 10))
 #define SCREENDPIY \
-((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.x * 254 / SCREENHMM / 10))
+((SCREENHMM <= 0) ?  0 : (SCREENH * m->dpp.y * 254 / SCREENHMM / 10))
+
 	m->size.x = GGI_AUTO;
 	m->size.y = GGI_AUTO;
 	_ggi_physz_figure_size(m, priv->physzflags,
