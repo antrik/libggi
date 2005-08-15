@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.16 2005/08/15 12:43:25 cegger Exp $
+/* $Id: dga.c,v 1.17 2005/08/15 15:18:32 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -380,6 +380,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	priv->createfb = ggi_xdga_mmap;
 	priv->createdrawable = ggi_xdga_makerenderer;
 #endif
+	priv->ok_to_resize = 0;
 
 	ggi_xdga_getmodelist(vis);
 

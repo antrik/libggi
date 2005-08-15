@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.23 2005/08/15 12:37:13 cegger Exp $
+/* $Id: vidmode.c,v 1.24 2005/08/15 15:18:33 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -484,6 +484,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	}
 	DPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", x, y);
 
+	priv->ok_to_resize = 0;
 	ggi_xvidmode_getmodelist(vis);
 
 	/*
