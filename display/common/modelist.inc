@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.11 2005/07/30 10:58:24 cegger Exp $
+/* $Id: modelist.inc,v 1.12 2005/08/17 12:55:15 pekberg Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -403,7 +403,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 static
 int _GGI_generic_checkmode_finish(ggi_checkmode_t * cm,
 				  ggi_mode * mode,
-				  intptr_t *mode_extra )
+				  intptr_t * mode_extra )
 {
 	int retv;
 
@@ -460,7 +460,7 @@ int _GGI_modelist_checkmode(ggi_modelist * ml, ggi_mode_padded * tm)
 	ggi_checkmode_t *cm =
 		_GGI_generic_checkmode_create();
 
-	_GGI_generic_checkmode_init( cm, &tm.mode );
+	_GGI_generic_checkmode_init( cm, &tm->mode );
 
 	for (i = 0; i < ml->n; i++, p++) {
 
@@ -470,7 +470,7 @@ int _GGI_modelist_checkmode(ggi_modelist * ml, ggi_mode_padded * tm)
 		_GGI_generic_checkmode_update( cm, &p->mode, p->user_data );
 	}
 
-	retv = _GGI_generic_checkmode_finish( &cm, &tm->mode, &tm->user_data );
+	retv = _GGI_generic_checkmode_finish( cm, &tm->mode, &tm->user_data );
 	_GGI_generic_checkmode_destroy(cm);
 	return retv;
 }
