@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.26 2005/08/15 18:51:02 cegger Exp $
+/* $Id: vidmode.c,v 1.27 2005/08/17 13:08:13 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -239,6 +239,9 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode * m,
 
 	m->visible.x = vidmode->hdisplay;
 	m->visible.y = vidmode->vdisplay;
+
+	m->virt.x = GGI_AUTO;
+	m->virt.y = GGI_AUTO;
 
 	m->dpp.x = 1;
 	m->dpp.y = 1;
