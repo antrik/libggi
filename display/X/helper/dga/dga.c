@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.19 2005/08/15 18:51:01 cegger Exp $
+/* $Id: dga.c,v 1.20 2005/08/17 13:47:48 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -57,7 +57,7 @@ static int ggi_xdga_getmodelist(ggi_visual * vis)
 
 #if 0
 
-priv->modes = calloc(sizeof(ggi_modelistmode), priv->modes_num);
+priv->modes = calloc(priv->modes_num, sizeof(ggi_modelistmode));
 if (priv->modes == NULL) {
 	XFree(priv->modes_priv);
 	return GGI_ENOMEM;
