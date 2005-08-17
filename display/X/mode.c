@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.53 2005/08/15 18:51:00 cegger Exp $
+/* $Id: mode.c,v 1.54 2005/08/17 09:29:18 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -1157,8 +1157,8 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	if( ! priv->ok_to_resize ) {
 		/* XXX: Cleanup question: is this check neccessary? */
 		destroychild = destroychild && priv->win != priv->parentwin;
-		destroyparent = 0;
-		createparent = 0;
+		if (priv->parentwin == None) destroyparent = 0;
+		if (priv->parentwin != None) createparent = 0;
 	}
 
 	if( destroychild )
