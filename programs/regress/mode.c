@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2005/02/07 11:20:15 pekberg Exp $
+/* $Id: mode.c,v 1.12 2005/08/17 12:52:42 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -17,12 +17,19 @@
 
 
 #include "config.h"
+#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/ggi.h>
 #include <ggi/errors.h>
 
 #include <string.h>
 
 #include "testsuite.inc.c"
+
+#include <ggi/display/modelist.h>
+#define WANT_MODELIST2
+#define WANT_LIST_CHECKMODE
+#include "../../display/common/modelist.inc"
 
 
 static void testcase1(const char *desc)
@@ -473,6 +480,73 @@ static void testcase8(const char *desc)
 }
 
 
+static void testcase9(const char *desc)
+{
+	int err;
+	ggi_modelist *ml;
+	ggi_mode_padded mp;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	ml = _GGI_modelist_create(2);
+
+	mp.mode.frames = 1;
+	mp.mode.visible.x = 100;
+	mp.mode.visible.y = 100;
+	mp.mode.virt.x = 100;
+	mp.mode.virt.y = 100;
+	mp.mode.size.x = 100;
+	mp.mode.size.x = 100;
+	mp.mode.graphtype = GT_32BIT;
+	mp.mode.dpp.x = 1;
+	mp.mode.dpp.y = 1;
+	mp.user_data = NULL;
+	_GGI_modelist_append(ml, &mp);
+
+	mp.mode.frames = 1;
+	mp.mode.visible.x = 200;
+	mp.mode.visible.y = 200;
+	mp.mode.virt.x = 200;
+	mp.mode.virt.y = 200;
+	mp.mode.size.x = 200;
+	mp.mode.size.x = 200;
+	mp.mode.graphtype = GT_16BIT;
+	mp.mode.dpp.x = 1;
+	mp.mode.dpp.y = 1;
+	mp.user_data = NULL;
+	_GGI_modelist_append(ml, &mp);
+
+	mp.mode.frames = GGI_AUTO;
+	mp.mode.visible.x = GGI_AUTO;
+	mp.mode.visible.y = GGI_AUTO;
+	mp.mode.virt.x = GGI_AUTO;
+	mp.mode.virt.y = GGI_AUTO;
+	mp.mode.size.x = 200;
+	mp.mode.size.x = 200;
+	mp.mode.graphtype = GT_AUTO;
+	mp.mode.dpp.x = GGI_AUTO;
+	mp.mode.dpp.y = GGI_AUTO;
+	mp.user_data = NULL;
+	err = _GGI_modelist_checkmode(ml, &mp);
+
+	_GGI_modelist_destroy(ml);
+
+	if (err != GGI_OK) {
+		printfailure("_GGI_modelist_checkmode() failed even though there is a match!\n");
+		return;
+	}
+
+	if (mp.mode.size.x != 200 || mp.mode.size.y != 200) {
+		printfailure("_GGI_modelist_checkmode() suggested the wrong mode!\n");
+		return;
+	}
+
+	printsuccess();
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -481,11 +555,12 @@ int main(int argc, char * const argv[])
 	testcase1("Check that ggiCheckMode() doesn't return GGI_AUTO");
 	testcase2("Check that ggiSetMode() can actually set the mode that has been suggested by ggiCheckMode");
 	testcase3("Check setting a mode with a given number of frames");
-	testcase4("Check setting a mode by it's physical size");
+	testcase4("Check setting a mode by its physical size");
 	testcase5("Set up the mode in the ggiterm way");
 	testcase6("Check that re-setting of a different mode works [async mode]");
 	testcase7("Check that re-setting of a different mode works [sync mode]");
 	testcase8("Check checking then setting a mode with braindamaged visual size");
+	testcase9("Check modelist");
 
 	printsummary();
 
