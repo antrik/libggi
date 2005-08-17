@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.57 2005/08/17 12:26:12 cegger Exp $
+/* $Id: mode.c,v 1.58 2005/08/17 12:53:55 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -142,8 +142,15 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 	}
 	else {
 		/* Root window or fullscreen.. */
-		if (m->visible.x == GGI_AUTO) m->visible.x = screenw;
-		if (m->visible.y == GGI_AUTO) m->visible.y = screenh;
+	        char inroot = 0; 
+		if(priv->parentwin == RootWindow(priv->disp, vi->vi->screen))
+		  inroot = 1;
+                
+		if( (m->visible.x == GGI_AUTO) || inroot )
+		  m->visible.x = screenw;
+	
+		if( (m->visible.y == GGI_AUTO) || inroot )
+		  m->visible.y = screenh;
 	}
 	
 }
@@ -318,7 +325,17 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 
 	auto_virt = ((tm->virt.x == GGI_AUTO) && (tm->virt.y == GGI_AUTO));
 
+	DPRINT_MODE("vis %dx%d virt %dx%d size %dx%d\n",
+		    tm->visible.x, tm->visible.y,
+		    tm->virt.x, tm->virt.y,
+		    tm->size.x, tm->size.y);
+
 	rc = GGI_X_checkmode_internal(vis, tm, &vi_idx);
+
+	DPRINT_MODE("vis %dx%d virt %dx%d size %dx%d\n",
+		    tm->visible.x, tm->visible.y,
+		    tm->virt.x, tm->virt.y,
+		    tm->size.x, tm->size.y);
 
 	if (rc==GGI_OK && priv->mlfuncs.validate != NULL) {
 		priv->cur_mode = priv->mlfuncs.validate(vis, -1, tm);
