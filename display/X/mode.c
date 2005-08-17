@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.55 2005/08/17 09:40:27 cegger Exp $
+/* $Id: mode.c,v 1.56 2005/08/17 10:05:43 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -807,7 +807,9 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 		if (err) goto err0;
 	}
 
-	if( !priv->ok_to_resize && priv->win == root ) {
+	if( !priv->ok_to_resize && 
+	    priv->win == root   && 
+	    root != None ) {
 		/* Turn off CWBackingStore for -inwin=root.
 		 * XXX: We are setting CWColormap, do we only
 		 * want this for -inwin=root? */
