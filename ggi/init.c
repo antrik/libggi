@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.44 2005/07/31 15:59:21 soyt Exp $
+/* $Id: init.c,v 1.45 2005/08/18 12:19:08 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -195,6 +195,12 @@ int ggiExit(void)
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
 	_ggiLibIsUp = 0;
+
+	/* Reset global variables to initialization value.
+	 * Otherwise there's a memory corruption when libggi
+	 * is re-initialized within an application. */
+	_ggiConfigHandle = NULL;
+	_ggi_global_lock = NULL;
 
 	DPRINT_CORE("ggiExit: done!\n");
 	return 0;
