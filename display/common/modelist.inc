@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.13 2005/08/17 13:11:47 cegger Exp $
+/* $Id: modelist.inc,v 1.14 2005/08/19 21:41:11 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -368,7 +368,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		if (p->visible.y > cm->sug.visible.y)
 			cm->req.visible.y = p->visible.y;
 		else
-			cm->req.visible.x = cm->sug.visible.y;
+			cm->req.visible.y = cm->sug.visible.y;
 	}
 	if( maxamize_depth ) {
 		if( GT_DEPTH(p->graphtype) > GT_DEPTH(cm->sug.graphtype) )
