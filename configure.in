@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.165 2005/08/01 11:31:03 pekberg Exp $
+dnl $Id: configure.in,v 1.166 2005/08/19 08:45:54 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -114,7 +114,7 @@ LT_INIT([disable-static win32-dll])
 dnl ========================================================================
 dnl Generate libtool
 
-GGI_GENLIBTOOL
+LT_OUTPUT
 
 dnl ========================================================================
 dnl User selectable options
