@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.40 2005/08/19 22:53:20 cegger Exp $
+/* $Id: misc.c,v 1.41 2005/08/19 23:38:06 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -63,9 +63,9 @@ int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis)
 	if ((than->class==TrueColor)  && (cthis->class==PseudoColor)) return 1;
 	if ((cthis->class==TrueColor)  && (than->class==PseudoColor)) return -1;
 
-	/* prefer palette to gammamap if the depth is the same */
-	if ((than->class==DirectColor)&& (cthis->class==PseudoColor)) return 1;
-	if ((cthis->class==DirectColor)&& (than->class==PseudoColor)) return -1;
+	/* prefer gammamap to palette if the depth is the same */
+	if ((than->class==PseudoColor)&& (cthis->class==DirectColor)) return 1;
+	if ((cthis->class==PseudoColor)&& (than->class==DirectColor)) return -1;
 
 	/* prefer truecolor to static color */
 	if ((than->class==StaticColor) && (cthis->class==TrueColor))  return 1;
