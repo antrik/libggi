@@ -20,5 +20,5 @@ echo "Running autoheader..."
 autoheader
 echo "Running automake..."
 automake --add-missing
-echo "Running autoconf - generating configure..."
+echo "Running autoconf..."
 autoconf
