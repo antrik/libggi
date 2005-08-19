@@ -323,39 +323,6 @@ AC_CHECK_FUNCS([strcasecmp strncasecmp \
 
 
 
-dnl ----- genlibtool.m4 -----
-dnl Generate libtool
-
-AC_DEFUN([GGI_GENLIBTOOL],
-[
-
-AC_MSG_NOTICE([======= Running genlibtool now =======])
-
-dnl Safe confdefs.h and config.log
-cp ./confdefs.h ./conf.bak
-mv ./config.log ./conf.log
-
-save_cache_file="$cache_file"
-cache_file=./genlibtool.cache
->$cache_file
-AC_CACHE_SAVE
-cache_file="$save_cache_file"
-
-$SHELL ${srcdir}/genlibtool --quiet --cache-file=./genlibtool.cache
-
-dnl Restore confdefs.h and config.log
-if test ! -f ./confdefs.h; then
-        mv ./conf.bak ./confdefs.h
-        cat ./config.log >>./conf.log
-        mv ./conf.log ./config.log
-fi
-
-AC_MSG_NOTICE([======= genlibtool finished ==========])
-
-])
-
-
-
 dnl ----- checklib.m4 -----
 dnl Check for libs using libtool
 
