@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.15 2005/08/20 10:19:41 cegger Exp $
+/* $Id: modelist.inc,v 1.16 2005/08/20 10:30:00 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -216,7 +216,7 @@ static void _GGI_write_subscore(int *score, int subscore)
 }
 
 /* This function currently considers only the color depth
- * and not other aspects of the graphtype. */
+ * of the graphtype. */
 static int _GGI_score_gt_depth(ggi_graphtype req, ggi_graphtype a)
 {
 	int score;
@@ -233,6 +233,8 @@ static int _GGI_score_gt_depth(ggi_graphtype req, ggi_graphtype a)
 	return score;
 }
 
+/* This function currently considers only the color scheme
+ * of the graphtype. */
 static int _GGI_score_gt_scheme(ggi_graphtype req, ggi_graphtype a)
 {
 	int score;
