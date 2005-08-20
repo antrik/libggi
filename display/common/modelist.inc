@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.14 2005/08/19 21:41:11 cegger Exp $
+/* $Id: modelist.inc,v 1.15 2005/08/20 10:19:41 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -217,7 +217,7 @@ static void _GGI_write_subscore(int *score, int subscore)
 
 /* This function currently considers only the color depth
  * and not other aspects of the graphtype. */
-static int _GGI_score_graphtype(ggi_graphtype req, ggi_graphtype a)
+static int _GGI_score_gt_depth(ggi_graphtype req, ggi_graphtype a)
 {
 	int score;
 	if (GT_DEPTH(a) == GT_DEPTH(req))
@@ -229,6 +229,133 @@ static int _GGI_score_graphtype(ggi_graphtype req, ggi_graphtype a)
 
 	_GGI_write_subscore(&score,
 			    abs(GT_DEPTH(a) - GT_DEPTH(req)));
+
+	return score;
+}
+
+static int _GGI_score_gt_scheme(ggi_graphtype req, ggi_graphtype a)
+{
+	int score;
+	if (GT_SCHEME(a) == GT_SCHEME(req)) {
+		score = 0;
+	} else {
+		switch (GT_SCHEME(req)) {
+		case GT_TEXT:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_GREYSCALE:
+			case GT_PALETTE:
+			case GT_STATIC_PALETTE:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_TRUECOLOR:
+			switch (GT_SCHEME(a)) {
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_GREYSCALE:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_PALETTE:
+			case GT_STATIC_PALETTE:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_PALETTE:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_STATIC_PALETTE:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_PALETTE:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_SUBSAMPLE_YUV:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_SUBSAMPLE_U_YCRBR:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_SUBSAMPLE_U_YCRBR:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_S_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		case GT_SUBSAMPLE_S_YCRBR:
+			switch (GT_SCHEME(a)) {
+			case GT_TRUECOLOR:
+			case GT_SUBSAMPLE_YUV:
+			case GT_SUBSAMPLE_U_YCRBR:
+				score = 1;
+				break;
+			default:
+				score = 2;
+				break;
+			}
+
+		default:
+			score = 2;
+			break;
+		}
+	}
+
+
+	_GGI_write_subscore(&score,
+			    abs(GT_SCHEME(a) - GT_SCHEME(req)));
 
 	return score;
 }
@@ -277,8 +404,14 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 	 * or maybe let the user override the default_mode_cmp function
 	 * entirely and chain to it only if they want. */
 
-	tmp = _GGI_score_graphtype(requested->graphtype, a->graphtype)
-	    - _GGI_score_graphtype(requested->graphtype, b->graphtype);
+	tmp = _GGI_score_gt_depth(requested->graphtype, a->graphtype)
+	    - _GGI_score_gt_depth(requested->graphtype, b->graphtype);
+
+	if (tmp != 0)
+		return tmp;
+
+	tmp = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
+	    - _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
 
 	if (tmp != 0)
 		return tmp;
