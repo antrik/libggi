@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.15 2005/06/17 11:36:44 cegger Exp $
+/* $Id: libtele.c,v 1.16 2005/08/26 09:14:38 aldot Exp $
 ******************************************************************************
 
    libtele.c
@@ -100,7 +100,7 @@ static void reverse_longwords(TeleEvent *ev)
 	start++;
 
 	for (count = ev->rawstart - 1; count > 0; count--) {
-		
+
 		T_Long val = *start;
 
 		*start++ = ((val & 0xff000000) >> 24) |
@@ -127,7 +127,7 @@ static int do_poll_event(int fd)
 		FD_SET(fd, &fds);
 
 		tv.tv_sec = tv.tv_usec = 0;
-	
+
 		err = select(fd+1, &fds, NULL, NULL, &tv);
 
 	} while ((err < 0) && (errno == EINTR));
@@ -154,7 +154,7 @@ static int do_read_event(int sock_fd, TeleEvent *ev)
 		num = read(sock_fd, buf, 1);
 
 	} while ((num < 0) && (errno == EINTR));
-	
+
 	if (num < 0) {
 		switch (errno) {
 		case EPIPE:
@@ -174,7 +174,7 @@ static int do_read_event(int sock_fd, TeleEvent *ev)
 		}
 
 		perror("libtele: read_event");
-		return num; 
+		return num;
 	}
 
 	if ((num == 0) || (ev->size <= 1)) {
@@ -231,10 +231,10 @@ static int do_read_event(int sock_fd, TeleEvent *ev)
 			}
 
 			perror("libtele: read_event");
-			return num; 
+			return num;
 		}
 	}
-		
+
 	if (((ev->endian != TELE_BIG_ENDIAN) &&
 	     (ev->endian != TELE_LITTLE_ENDIAN)) ||
 	    (ev->rawstart > ev->size)) {
@@ -286,7 +286,7 @@ static int do_write_event(int sock_fd, TeleEvent *ev)
 			}
 
 			perror("libtele: write_event");
-			return num; 
+			return num;
 		}
 	}
 
@@ -344,7 +344,7 @@ static int tclient_write_flush(TeleClient *c)
 			fcntl(sock_fd, F_SETFL,
 				fnctl(sock_fd, F_GETFL) | O_NONBLOCK);
 
-			return num; 
+			return num;
 		}
 	}
 
@@ -358,7 +358,7 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 {
 	int num, len;
 	int evsize = ev->size*4;
-	int sock_fd = c->sock_fd; 
+	int sock_fd = c->sock_fd;
 	unsigned char *buf = ((unsigned char *) c->writebuf) + c->writebuf_tail;
 
 	/* Head minus tail equals body :-) */
@@ -368,7 +368,7 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 	if (c->writebuf_head + evsize > TELE_WRITEBUF_LEN) {
 		tclient_write_flush(c);
 	}
-	
+
 	/* Event is larger than buffer!  Do a blocking write. */
 	if (evsize > TELE_WRITEBUF_LEN) {
 		do_write_event(c->sock_fd, ev);
@@ -378,7 +378,7 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 	/* Copy event to end of buffer (really the head :) */
 	memcpy(buf + c->writebuf_head, ev, (size_t)evsize);
 	c->writebuf_head += evsize;
-	
+
 	while (len > 0) {
 
 		num = write(sock_fd, buf, len);
@@ -414,12 +414,12 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 
 			case EWOULDBLOCK:
 			case EAGAIN:
-				
-				return 0;	/* Ok, we queued it */ 
+
+				return 0;	/* Ok, we queued it */
 			}
 
 			perror("libtele: write_nonblock");
-			return num; 
+			return num;
 		}
 	}
 
@@ -427,17 +427,16 @@ static int tclient_write_nonblock(TeleClient *c, TeleEvent *ev)
 }
 #endif
 
-static void *do_prepare_event(TeleEvent *event, TeleEventType type, 
+static void *do_prepare_event(TeleEvent *event, TeleEventType type,
 			      int data_size, int raw_size,
 			      T_Long sequence)
 {
 	TeleEvent *ev = event;
-	
+
 	int size = TELE_MINIMAL_EVENT + ((data_size + raw_size + 3) / 4);
 
 	struct timeval cur_time;
 
-	
 	if ((data_size % 4) != 0) {
 		fprintf(stderr, "DO_PREPARE_EVENT: ILLEGAL DATA SIZE ! "
 			"(%d bytes)\n", data_size);
@@ -458,7 +457,7 @@ static void *do_prepare_event(TeleEvent *event, TeleEventType type,
 	ev->type = type;
 	ev->device = 0;
 	ev->sequence = sequence;
-	
+
 	ev->time.sec  = cur_time.tv_sec;
 	ev->time.nsec = cur_time.tv_usec * 1000;
 
@@ -491,7 +490,7 @@ static int tclient_open_unix(TeleClient *c, const char *addr)
 	}
 
 	do {
-		err = connect(c->sock_fd, (struct sockaddr *) &dest_un, 
+		err = connect(c->sock_fd, (struct sockaddr *) &dest_un,
 			      sizeof(dest_un));
 	} while ((err < 0) && (errno == EINTR));
 
@@ -547,7 +546,7 @@ static int tclient_connect(int fd, struct sockaddr *serv_addr, int addrlen)
 		fprintf(stderr, "tclient: connect\n");
 		return -1;
 	}
-	
+
 	return TELE_OK;
 
 #if 0
@@ -659,14 +658,14 @@ int tclient_open(TeleClient *c, const char *addrspec)
 	/* Inet sockets */
 	if (n==0 || !strncmp(addrspec, "inet", n)) {
 		fprintf(stderr, "tclient: Trying inet socket (%s)...\n", addr);
-		
+
 		err = tclient_open_inet(c, addr);
 	}
 	/* Unix domain sockets */
 	else if (!strncmp(addrspec, "unix", n)) {
 #ifdef HAVE_UNIX_DOMAIN_SOCKET
 		fprintf(stderr, "tclient: Trying unix socket (%s)...\n", addr);
-		
+
 		err = tclient_open_unix(c, addr);
 #else /* HAVE_UNIX_DOMAIN_SOCKET */
 		fprintf(stderr, "tclient: Unix-domain sockets not supported\n");
@@ -691,14 +690,14 @@ int tclient_open(TeleClient *c, const char *addrspec)
 #ifdef SIGPIPE
 	signal(SIGPIPE, SIG_IGN);
 #endif
-	
+
 	/* Calculate sequence counter */
 
 	c->seq_ctr = calc_initial_seq_ctr();
-	
+
 	return err;
 }
-	
+
 int tclient_close(TeleClient *c)
 {
 	close(c->sock_fd);
@@ -706,7 +705,7 @@ int tclient_close(TeleClient *c)
 	return TELE_OK;
 }
 
-void *tclient_new_event(TeleClient *c, TeleEvent *event, 
+void *tclient_new_event(TeleClient *c, TeleEvent *event,
 		        TeleEventType type, int data_size, int raw_size)
 {
 	event->endian = c->endianness;
@@ -765,7 +764,7 @@ int tserver_init(TeleServer *s, int display)
 		fprintf(stderr, "tserver: Bad display (%d).\n", display);
 		return -1;
 	}
-	
+
 	display %= 10;
 
 	s->inet = inet;
@@ -784,7 +783,7 @@ int tserver_init(TeleServer *s, int display)
 		me_len = sizeof(me_in);
 
 		s->conn_fd = socket(AF_INET, SOCK_STREAM, 0);
-	
+
 	} else {
 #ifdef HAVE_UNIX_DOMAIN_SOCKET
 		fprintf(stderr, "tserver: Creating unix socket... [%d]\n",
@@ -792,9 +791,9 @@ int tserver_init(TeleServer *s, int display)
 
 		me_un.sun_family = AF_UNIX;
 
-		sprintf(me_un.sun_path, "%s%d", TELE_FIFO_BASE, 
+		sprintf(me_un.sun_path, "%s%d", TELE_FIFO_BASE,
 			s->display);
-		
+
 		me = (struct sockaddr *) &me_un;
 		me_len = sizeof(me_un);
 
@@ -866,7 +865,7 @@ int tserver_open(TeleServer *s, TeleUser *u)
 	if (s->inet) {
 		you = (struct sockaddr *) &you_in;
 		you_len = sizeof(you_in);
-	} 
+	}
 #ifdef HAVE_UNIX_DOMAIN_SOCKET
 	else {
 		you = (struct sockaddr *) &you_un;
@@ -890,15 +889,15 @@ int tserver_open(TeleServer *s, TeleUser *u)
 #ifdef SIGPIPE
 	signal(SIGPIPE, SIG_IGN);
 #endif
-	
+
 	/* Calculate sequence counter */
 
 	u->seq_ctr = calc_initial_seq_ctr();
-	
+
 	return TELE_OK;
 }
 
-void *tserver_new_event(TeleUser *u, TeleEvent *event, 
+void *tserver_new_event(TeleUser *u, TeleEvent *event,
 		        TeleEventType type, int data_size, int raw_size)
 {
 	event->endian = u->server->endianness;
@@ -939,7 +938,7 @@ int tserver_write(TeleUser *u, TeleEvent *event)
 
 int tserver_close(TeleUser *u)
 {
-	close(u->sock_fd); 
+	close(u->sock_fd);
 
 	return TELE_OK;
 }
