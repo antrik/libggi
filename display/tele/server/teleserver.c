@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.6 2005/07/30 10:58:28 cegger Exp $
+/* $Id: teleserver.c,v 1.7 2005/08/26 08:07:55 pekberg Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -605,7 +605,8 @@ static void perf_PUTSTR(TeleUser *u, TeleCmdPutStrData *d)
 	char s[d->length + 1];
 #endif
 
-	for(i = 0; i <= d->length; ++i) {
+	s[d->length] = '\0';
+	for(i = 0; i < d->length; ++i) {
 		s[i] = (char)(d->text[i] & 0xFF);
 	}	/* for */
 
