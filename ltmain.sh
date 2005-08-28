@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.1667.2.292 2005/08/18 17:09:24) 1.9g
+# ltmain.sh (GNU libtool 1.1667.2.298 2005/08/24 15:58:19) 1.9g
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.1667.2.292 2005/08/18 17:09:24) 1.9g
+#       $progname:		(GNU libtool 1.1667.2.298 2005/08/24 15:58:19) 1.9g
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=1.9g
-TIMESTAMP=" 1.1667.2.292 2005/08/18 17:09:24"
-package_revision=1.1667.2.292
+TIMESTAMP=" 1.1667.2.298 2005/08/24 15:58:19"
+package_revision=1.1667.2.298
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2293,11 +2293,14 @@ func_mode_install ()
 
 	  if test "$#" -gt 0; then
 	    # Delete the old symlinks, and create new ones.
+	    # Try `ln -sf' first, because the `ln' binary might depend on
+	    # the symlink we replace!  Solaris /bin/ln does not understand -f,
+	    # so we also need to try rm && ln -s.
 	    for linkname
 	    do
 	      if test "$linkname" != "$realname"; then
-		$show "(cd $destdir && $RM $linkname && $LN_S $realname $linkname)"
-		$run eval "(cd $destdir && $RM $linkname && $LN_S $realname $linkname)"
+		$show "(cd $destdir && { $LN_S -f $realname $linkname || { $RM $linkname && $LN_S $realname $linkname; }; })"
+		$run eval "(cd $destdir && { $LN_S -f $realname $linkname || { $RM $linkname && $LN_S $realname $linkname; }; })"
 	      fi
 	    done
 	  fi
@@ -6198,7 +6201,7 @@ EOF
 	    esac
 
 	    cat >> $cwrappersource <<"EOF"
-  return 0;
+  return 127;
 }
 
 void *
