@@ -20,7 +20,7 @@ Description
 -----------
 
 `triple-int` is a collection of math routines that operates on an
-array of 3 unsigned intergers, treating them as a single integer
+array of 3 unsigned integers, treating them as a single integer
 with triple precision.
 
 `triple-int` uses a 2-complement representation for negative values.
@@ -75,8 +75,8 @@ Description
 `assign_3` assigns the value of one existing `triple-int` `r` to another
 `triple-int` `l`.
 
-`assign_int_3` and `assign_unsigned_3` assignes the argument `r` to
-the least significant possition of the `triple-int` `l`. `assign_int_3`
+`assign_int_3` and `assign_unsigned_3` assigns the argument `r` to
+the least significant position of the `triple-int` `l`. `assign_int_3`
 extends the sign, while `assign_unsigned_3` does not.
 
 
@@ -363,7 +363,7 @@ See Also
 
 
 
-Binary arithmentic triple-int operations
+Binary arithmetic triple-int operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 add_3 sub_3 mul_3 divmod_3
