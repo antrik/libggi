@@ -364,7 +364,7 @@ See Also
 
 
 Binary arithmetic triple-int operations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 3 add_3 sub_3 mul_3 divmod_3
 
