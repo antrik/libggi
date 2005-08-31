@@ -2,6 +2,14 @@
 
 TOOL=$1
 
+# check presence
+$TOOL --version >/dev/null 2>&1
+if test $? -ne 0; then
+	printf "$TOOL not found.\n"
+	printf "Check that PATH is set right and $TOOL is installed at all\n"
+	exit 127
+fi
+
 have_version=`$TOOL --version | head -n 1 | sed -e 's;[A-Za-z() ]*; ;'`
 wanted_version=$2
 required_version=$wanted_version
