@@ -14,5 +14,3 @@ sublibdir = $(libdir)/$(ggi_subdir)/display
 EXTRA_DIST = EXPSYMS libtele.h
 
 MAINTAINERCLEANFILES = Makefile.in
-
-SUBDIRS = server

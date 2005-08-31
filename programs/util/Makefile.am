@@ -1,7 +1,7 @@
 INCLUDES = -I${top_srcdir}/include ${extra_includes}
 LDADD = ${top_builddir}/ggi/libggi.la
 
-SUBDIRS = monitest
+SUBDIRS = monitest ggiteleserver
 
 EXTRA_PROGRAMS = tunemode ggicalibrate ipaq_ggicalibrate
 noinst_PROGRAMS = inputdump $(OPTUTILS)
@@ -14,4 +14,3 @@ inputdump_SOURCES = giik2str.c inputdump.c
 EXTRA_DIST = giik2str.h
 
 MAINTAINERCLEANFILES = Makefile.in
-
