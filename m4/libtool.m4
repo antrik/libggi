@@ -37,7 +37,7 @@ m4_define([_LT_COPYING], [dnl
 # the same distribution terms that you use for the rest of that program.
 ])
 
-# serial 50 LT_INIT
+# serial 51 LT_INIT
 
 
 # LT_PREREQ(VERSION)
@@ -83,8 +83,8 @@ m4_define([LT_INIT])
 ])# _LT_INIT
 
 # Old names:
-AU_DEFUN([AC_PROG_LIBTOOL], [LT_INIT])
-AU_DEFUN([AM_PROG_LIBTOOL], [LT_INIT])
+AU_ALIAS([AC_PROG_LIBTOOL], [LT_INIT])
+AU_ALIAS([AM_PROG_LIBTOOL], [LT_INIT])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_PROG_LIBTOOL], [])
 dnl AC_DEFUN([AM_PROG_LIBTOOL], [])
@@ -104,6 +104,17 @@ m4_defun([_LT_CC_BASENAME],
 done
 cc_basename=`$ECHO "X$cc_temp" | $Xsed -e 's%.*/%%' -e "s%^$host_alias-%%"`
 ])
+
+
+# _LT_FILEUTILS_DEFAULTS
+# ----------------------
+# It is okay to use these file commands and assume they have been set
+# sensibly after `m4_require([_LT_FILEUTILS_DEFAULTS])'.
+m4_defun([_LT_FILEUTILS_DEFAULTS],
+[: ${CP="cp -f"}
+: ${MV="mv -f"}
+: ${RM="rm -f"}
+])# _LT_FILEUTILS_DEFAULTS
 
 
 # _LT_SETUP
@@ -133,6 +144,8 @@ _LT_DECL([objext], [ac_objext], [0], [Object file suffix (normally "o")])dnl
 AC_REQUIRE([AC_EXEEXT])dnl
 _LT_DECL([], [exeext], [0], [Executable file suffix (normally "")])dnl
 dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
+m4_require([_LT_CHECK_XSI_SHELL])dnl
 m4_require([_LT_CMD_RELOAD])dnl
 m4_require([_LT_CHECK_MAGIC_METHOD])dnl
 m4_require([_LT_CMD_OLD_ARCHIVE])dnl
@@ -184,9 +197,6 @@ delay_single_quote_subst='s/'\''/'\'\\\\\\\'\''/g'
 # Sed substitution to avoid accidental globbing in evaled expressions
 no_glob_subst='s/\*/\\\*/g'
 
-# Constants:
-RM="rm -f"
-
 # Global variables:
 ofile=libtool
 can_build_shared=yes
@@ -219,11 +229,6 @@ file_magic*)
   ;;
 esac
 
-AC_ARG_ENABLE([libtool-lock],
-    [AS_HELP_STRING([--disable-libtool-lock],
-	[avoid locking (might break parallel builds)])])
-test "x$enable_libtool_lock" != xno && enable_libtool_lock=yes
-
 # Use C for the default configuration in the libtool script
 LT_SUPPORTED_TAG([CC])
 _LT_LANG_C_CONFIG
@@ -243,7 +248,6 @@ m4_defun([_LT_PROG_LTMAIN],
 _LT_CONFIG_LIBTOOL_INIT([ac_aux_dir='$ac_aux_dir'])
 ltmain="$ac_aux_dir/ltmain.sh"
 ])# _LT_PROG_LTMAIN
-
 
 
 ## ------------------------------------- ##
@@ -492,13 +496,27 @@ compiler='$compiler_DEFAULT'
 # Quote evaled strings.
 for var in lt_decl_all_varnames([[ \
 ]], lt_decl_quote_varnames); do
-    eval "lt_\$var=\\\\\\"\\\`\\\$ECHO \\"X\\\$\$var\\" | \\\$Xsed -e \\"\\\$sed_quote_subst\\"\\\`\\\\\\""
+    case \`eval \\\\\$ECHO "X\\\\\$\$var"\` in
+    *[[\\\\\\\`\\"\\\$]]*)
+      eval "lt_\$var=\\\\\\"\\\`\\\$ECHO \\"X\\\$\$var\\" | \\\$Xsed -e \\"\\\$sed_quote_subst\\"\\\`\\\\\\""
+      ;;
+    *)
+      eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
+      ;;
+    esac
 done
 
 # Double-quote double-evaled strings.
 for var in lt_decl_all_varnames([[ \
 ]], lt_decl_dquote_varnames); do
-    eval "lt_\$var=\\\\\\"\\\`\\\$ECHO \\"X\\\$\$var\\" | \\\$Xsed -e \\"\\\$double_quote_subst\\" -e \\"\\\$sed_quote_subst\\" -e \\"\\\$delay_variable_subst\\"\\\`\\\\\\""
+    case \`eval \\\\\$ECHO "X\\\\\$\$var"\` in
+    *[[\\\\\\\`\\"\\\$]]*)
+      eval "lt_\$var=\\\\\\"\\\`\\\$ECHO \\"X\\\$\$var\\" | \\\$Xsed -e \\"\\\$double_quote_subst\\" -e \\"\\\$sed_quote_subst\\" -e \\"\\\$delay_variable_subst\\"\\\`\\\\\\""
+      ;;
+    *)
+      eval "lt_\$var=\\\\\\"\\\$\$var\\\\\\""
+      ;;
+    esac
 done
 
 # Fix-up fallback echo if it was mangled by the above quoting rules.
@@ -627,7 +645,8 @@ fi
 # to config.status for appending the configuration named by TAG from the
 # matching tagged config vars.
 m4_defun([_LT_CONFIG],
-[_LT_CONFIG_SAVE_COMMANDS([
+[m4_require([_LT_FILEUTILS_DEFAULTS])dnl
+_LT_CONFIG_SAVE_COMMANDS([
   m4_define([_LT_TAG], m4_if([$1], [], [C], [$1]))dnl
   m4_if(_LT_TAG, [C], [
     # See if we are running on zsh, and set the options which allow our
@@ -649,7 +668,7 @@ m4_defun([_LT_CONFIG],
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 _LT_COPYING
-
+# TEST SUITE MARKER ## BEGIN SOURCABLE
 _LT_LIBTOOL_TAGS
 
 # ### BEGIN LIBTOOL CONFIG
@@ -683,7 +702,13 @@ _LT_EOF
   # if finds mixed CR/LF and LF-only lines.  Since sed operates in
   # text mode, it properly converts lines to CR/LF.  This bash problem
   # is reportedly fixed, but why not run on old versions too?
-  sed '$q' "$ltmain" >> "$cfgfile" || (rm -f "$cfgfile"; exit 1)
+  sed '/^# Generated shell functions inserted here/q' "$ltmain" >> "$cfgfile" \
+    || (rm -f "$cfgfile"; exit 1)
+
+  _LT_PROG_XSI_SHELLFNS
+
+  sed -n '/^# Generated shell functions inserted here/,$p' "$ltmain" >> "$cfgfile" \
+    || (rm -f "$cfgfile"; exit 1)
 
   mv -f "$cfgfile" "$ofile" ||
     (rm -f "$ofile" && cp "$cfgfile" "$ofile" && rm -f "$cfgfile")
@@ -894,7 +919,7 @@ if test "X[$]1" = X--no-reexec; then
 elif test "X[$]1" = X--fallback-echo; then
   # Avoid inline document here, it may be left over
   :
-elif test "X`($ECHO '\t') 2>/dev/null`" = 'X\t' ; then
+elif test "X`{ $ECHO '\t'; } 2>/dev/null`" = 'X\t' ; then
   # Yippee, $ECHO works!
   :
 else
@@ -920,17 +945,16 @@ if test -z "$lt_ECHO"; then
     # find a string as large as possible, as long as the shell can cope with it
     for cmd in 'sed 50q "[$]0"' 'sed 20q "[$]0"' 'sed 10q "[$]0"' 'sed 2q "[$]0"' 'echo test'; do
       # expected sizes: less than 2Kb, 1Kb, 512 bytes, 16 bytes, ...
-      if (echo_test_string=`eval $cmd`) 2>/dev/null &&
-         echo_test_string=`eval $cmd` &&
-         (test "X$echo_test_string" = "X$echo_test_string") 2>/dev/null
+      if { echo_test_string=`eval $cmd`; } 2>/dev/null &&
+	 { test "X$echo_test_string" = "X$echo_test_string"; } 2>/dev/null
       then
         break
       fi
     done
   fi
 
-  if test "X`($ECHO '\t') 2>/dev/null`" = 'X\t' &&
-     echo_testing_string=`($ECHO "$echo_test_string") 2>/dev/null` &&
+  if test "X`{ $ECHO '\t'; } 2>/dev/null`" = 'X\t' &&
+     echo_testing_string=`{ $ECHO "$echo_test_string"; } 2>/dev/null` &&
      test "X$echo_testing_string" = "X$echo_test_string"; then
     :
   else
@@ -955,12 +979,12 @@ if test -z "$lt_ECHO"; then
 
     if test "X$ECHO" = Xecho; then
       # We didn't find a better echo, so look for alternatives.
-      if test "X`(print -r '\t') 2>/dev/null`" = 'X\t' &&
-         echo_testing_string=`(print -r "$echo_test_string") 2>/dev/null` &&
+      if test "X`{ print -r '\t'; } 2>/dev/null`" = 'X\t' &&
+         echo_testing_string=`{ print -r "$echo_test_string"; } 2>/dev/null` &&
          test "X$echo_testing_string" = "X$echo_test_string"; then
         # This shell has a builtin print -r that does the trick.
         ECHO='print -r'
-      elif (test -f /bin/ksh || test -f /bin/ksh$ac_exeext) &&
+      elif { test -f /bin/ksh || test -f /bin/ksh$ac_exeext; } &&
 	   test "X$CONFIG_SHELL" != X/bin/ksh; then
         # If we have ksh, try running configure again with it.
         ORIGINAL_CONFIG_SHELL=${CONFIG_SHELL-/bin/sh}
@@ -971,8 +995,8 @@ if test -z "$lt_ECHO"; then
       else
         # Try using printf.
         ECHO='printf %s\n'
-        if test "X`($ECHO '\t') 2>/dev/null`" = 'X\t' &&
-	   echo_testing_string=`($ECHO "$echo_test_string") 2>/dev/null` &&
+        if test "X`{ $ECHO '\t'; } 2>/dev/null`" = 'X\t' &&
+	   echo_testing_string=`{ $ECHO "$echo_test_string"; } 2>/dev/null` &&
 	   test "X$echo_testing_string" = "X$echo_test_string"; then
 	  # Cool, printf works
 	  :
@@ -995,7 +1019,7 @@ if test -z "$lt_ECHO"; then
 	  prev=:
 
 	  for cmd in 'echo test' 'sed 2q "[$]0"' 'sed 10q "[$]0"' 'sed 20q "[$]0"' 'sed 50q "[$]0"'; do
-	    if (test "X$echo_test_string" = "X`eval $cmd`") 2>/dev/null
+	    if { test "X$echo_test_string" = "X`eval $cmd`"; } 2>/dev/null
 	    then
 	      break
 	    fi
@@ -1199,6 +1223,7 @@ _LT_TAGDECL([], [old_archive_cmds], [2],
 # Check whether the given compiler option works
 AC_DEFUN([_LT_COMPILER_OPTION],
 [AC_REQUIRE([AC_OBJEXT])dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 m4_require([_LT_DECL_SED])dnl
 AC_CACHE_CHECK([$1], [$2],
   [$2=no
@@ -1239,7 +1264,7 @@ fi
 ])# _LT_COMPILER_OPTION
 
 # Old name:
-AU_DEFUN([AC_LIBTOOL_COMPILER_OPTION], [_LT_COMPILER_OPTION])
+AU_ALIAS([AC_LIBTOOL_COMPILER_OPTION], [_LT_COMPILER_OPTION])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBTOOL_COMPILER_OPTION], [])
 
@@ -1249,7 +1274,8 @@ dnl AC_DEFUN([AC_LIBTOOL_COMPILER_OPTION], [])
 # ----------------------------------------------------
 # Check whether the given linker option works
 AC_DEFUN([_LT_LINKER_OPTION],
-[AC_CACHE_CHECK([$1], [$2],
+[m4_require([_LT_FILEUTILS_DEFAULTS])dnl
+AC_CACHE_CHECK([$1], [$2],
   [$2=no
    save_LDFLAGS="$LDFLAGS"
    LDFLAGS="$LDFLAGS $3"
@@ -1281,7 +1307,7 @@ fi
 ])# _LT_LINKER_OPTION
 
 # Old name:
-AU_DEFUN([AC_LIBTOOL_LINKER_OPTION], [_LT_LINKER_OPTION])
+AU_ALIAS([AC_LIBTOOL_LINKER_OPTION], [_LT_LINKER_OPTION])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBTOOL_LINKER_OPTION], [])
 
@@ -1365,8 +1391,8 @@ AC_CACHE_VAL([lt_cv_sys_max_cmd_len], [dnl
     # If test is not a shell built-in, we'll probably end up computing a
     # maximum length that is only half of the actual maximum length, but
     # we can't tell.
-    while (test "X"`$SHELL [$]0 --fallback-echo "X$teststring$teststring" 2>/dev/null` \
-	       = "XX$teststring$teststring") >/dev/null 2>&1 &&
+    while { test "X"`$SHELL [$]0 --fallback-echo "X$teststring$teststring" 2>/dev/null` \
+	       = "XX$teststring$teststring"; } >/dev/null 2>&1 &&
 	    test $i != 17 # 1/2 MB should be enough
     do
       i=`expr $i + 1`
@@ -1393,7 +1419,7 @@ _LT_DECL([], [max_cmd_len], [0],
 ])# LT_CMD_MAX_LEN
 
 # Old name:
-AU_DEFUN([AC_LIBTOOL_SYS_MAX_CMD_LEN], [LT_CMD_MAX_LEN])
+AU_ALIAS([AC_LIBTOOL_SYS_MAX_CMD_LEN], [LT_CMD_MAX_LEN])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBTOOL_SYS_MAX_CMD_LEN], [])
 
@@ -1613,7 +1639,7 @@ _LT_DECL([dlopen_self_static], [enable_dlopen_self_static], [0],
 ])# LT_SYS_DLOPEN_SELF
 
 # Old name:
-AU_DEFUN([AC_LIBTOOL_DLOPEN_SELF], [LT_SYS_DLOPEN_SELF])
+AU_ALIAS([AC_LIBTOOL_DLOPEN_SELF], [LT_SYS_DLOPEN_SELF])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBTOOL_DLOPEN_SELF], [])
 
@@ -1624,6 +1650,7 @@ dnl AC_DEFUN([AC_LIBTOOL_DLOPEN_SELF], [])
 # This macro does not hard code the compiler like AC_PROG_CC_C_O.
 m4_defun([_LT_COMPILER_C_O],
 [AC_REQUIRE([AC_OBJEXT])dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 m4_require([_LT_TAG_COMPILER])dnl
 AC_CACHE_CHECK([if $compiler supports -c -o file.$ac_objext],
   [_LT_TAGVAR(lt_cv_prog_compiler_c_o, $1)],
@@ -1665,7 +1692,7 @@ AC_CACHE_CHECK([if $compiler supports -c -o file.$ac_objext],
    test -d out/ii_files && $RM out/ii_files/* && rmdir out/ii_files
    $RM out/* && rmdir out
    cd ..
-   rmdir conftest
+   $RM -r conftest
    $RM conftest*
 ])
 _LT_TAGDECL([compiler_c_o], [lt_cv_prog_compiler_c_o], [1],
@@ -1678,7 +1705,7 @@ _LT_TAGDECL([compiler_c_o], [lt_cv_prog_compiler_c_o], [1],
 # Check to see if we can do hard links to lock some files if needed
 m4_defun([_LT_COMPILER_FILE_LOCKS],
 [m4_require([_LT_ENABLE_LOCK])dnl
-
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 _LT_COMPILER_C_O([$1])
 
 hard_links="nottested"
@@ -1806,7 +1833,8 @@ _LT_DECL([], [striplib], [1])
 # -----------------------------
 # PORTME Fill in your ld.so characteristics
 m4_defun([_LT_SYS_DYNAMIC_LINKER],
-[m4_require([_LT_DECL_EGREP])
+[m4_require([_LT_DECL_EGREP])dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 AC_MSG_CHECKING([dynamic linker characteristics])
 m4_case([$1],
 	[C], [withGCC=$GCC],
@@ -1949,7 +1977,7 @@ cygwin* | mingw* | pw32*)
       $install_prog $dir/$dlname \$dldir/$dlname~
       chmod a+x \$dldir/$dlname~
       if test -n '\''$stripme'\'' && test -n '\''$striplib'\''; then
-        $run eval '\''$striplib \$dldir/$dlname'\'' || exit \$?;
+        eval '\''$striplib \$dldir/$dlname'\'' || exit \$?;
       fi'
     postuninstall_cmds='dldll=`$SHELL 2>&1 -c '\''. $file; echo \$dlname'\''`~
       dlpath=$dir/\$dldll~
@@ -2394,13 +2422,13 @@ _LT_DECL([], [version_type], [0], [Library versioning type])
 _LT_DECL([], [runpath_var], [0],  [Shared library runtime path variable])
 _LT_DECL([], [shlibpath_var], [0],[Shared library path variable])
 _LT_DECL([], [shlibpath_overrides_runpath], [0],
-    [Is shibpath searched before the hard-coded library search path?])
+    [Is shlibpath searched before the hard-coded library search path?])
 _LT_DECL([], [libname_spec], [1], [Format of library name prefix])
 _LT_DECL([], [library_names_spec], [1],
-    [List of archive names.  First name is the real one, the rest are links.
-    The last name is the one that the linker finds with -lNAME])
+    [[List of archive names.  First name is the real one, the rest are links.
+    The last name is the one that the linker finds with -lNAME]])
 _LT_DECL([], [soname_spec], [1],
-    [The coded name of the library, if different from the real name])
+    [[The coded name of the library, if different from the real name]])
 _LT_DECL([], [postinstall_cmds], [2],
     [Command to use after installation of a shared archive])
 _LT_DECL([], [postuninstall_cmds], [2],
@@ -2408,8 +2436,8 @@ _LT_DECL([], [postuninstall_cmds], [2],
 _LT_DECL([], [finish_cmds], [2],
     [Commands used to finish a libtool library installation in a directory])
 _LT_DECL([], [finish_eval], [1],
-    [As "finish_cmds", except a single script fragment to be evaled but
-    not shown])
+    [[As "finish_cmds", except a single script fragment to be evaled but
+    not shown]])
 _LT_DECL([], [hardcode_into_libs], [0],
     [Whether we should hardcode library paths into libraries])
 _LT_DECL([], [sys_lib_search_path_spec], [2],
@@ -2480,11 +2508,11 @@ else
   AC_MSG_RESULT(no)
 fi
 _LT_DECL([], [MAGIC_CMD], [0],
-	 [Used to examine libraries when file_magic_cmd begins "file"])dnl
+	 [Used to examine libraries when file_magic_cmd begins with "file"])dnl
 ])# _LT_PATH_TOOL_PREFIX
 
 # Old name:
-AU_DEFUN([AC_PATH_TOOL_PREFIX], [_LT_PATH_TOOL_PREFIX])
+AU_ALIAS([AC_PATH_TOOL_PREFIX], [_LT_PATH_TOOL_PREFIX])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_PATH_TOOL_PREFIX], [])
 
@@ -2595,8 +2623,8 @@ _LT_TAGDECL([], [LD], [1], [The linker used to build libraries])
 ])# LT_PATH_LD
 
 # Old names:
-AU_DEFUN([AM_PROG_LD], [LT_PATH_LD])
-AU_DEFUN([AC_PROG_LD], [LT_PATH_LD])
+AU_ALIAS([AM_PROG_LD], [LT_PATH_LD])
+AU_ALIAS([AC_PROG_LD], [LT_PATH_LD])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AM_PROG_LD], [])
 dnl AC_DEFUN([AC_PROG_LD], [])
@@ -2838,9 +2866,11 @@ _LT_DECL([], [file_magic_cmd], [1],
 
 # LT_PATH_NM
 # ----------
-# find the pathname to a BSD-compatible name lister
+# find the pathname to a BSD- or MS-compatible name lister
 AC_DEFUN([LT_PATH_NM],
-[AC_CACHE_CHECK([for BSD-compatible nm], lt_cv_path_NM,
+[AC_REQUIRE([AC_PROG_CC])dnl
+AC_REQUIRE([AC_OBJEXT])dnl
+AC_CACHE_CHECK([for BSD- or MS-compatible name lister (nm)], lt_cv_path_NM,
 [if test -n "$NM"; then
   # Let the user override the test.
   lt_cv_path_NM="$NM"
@@ -2877,15 +2907,40 @@ else
   IFS="$lt_save_ifs"
   test -z "$lt_cv_path_NM" && lt_cv_path_NM=nm
 fi])
-NM="$lt_cv_path_NM"
+if test "$lt_cv_path_NM" != "no"; then
+  NM="$lt_cv_path_NM"
+else
+  # Didn't find any BSD compatible name lister, look for dumpbin.
+  AC_CHECK_TOOL(DUMPBIN, [dumpbin -symbols], :)
+  AC_SUBST([DUMPBIN])
+  if test "$DUMPBIN" != ":"; then
+    NM="$DUMPBIN"
+  fi
+fi
 test -z "$NM" && NM=nm
 AC_SUBST([NM])
-_LT_DECL([], [NM], [1], [A BSD-compatible nm program])dnl
+_LT_DECL([], [NM], [1], [A BSD- or MS-compatible name lister])dnl
+
+AC_CACHE_CHECK([the name lister ($NM) interface], [lt_cv_nm_interface],
+  [lt_cv_nm_interface="BSD nm"
+  printf "int some_variable = 0;" > conftest.$ac_ext
+  (eval echo "\"\$as_me:__oline__: $ac_compile\"" >&AS_MESSAGE_LOG_FD)
+  (eval "$ac_compile" 2>conftest.err)
+  cat conftest.err >&AS_MESSAGE_LOG_FD
+  (eval echo "\"\$as_me:__oline__: $NM \\\"conftest.$ac_objext\\\"\"" >&AS_MESSAGE_LOG_FD)
+  (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
+  cat conftest.err >&AS_MESSAGE_LOG_FD
+  (eval echo "\"\$as_me:__oline__: output\"" >&AS_MESSAGE_LOG_FD)
+  cat conftest.out >&AS_MESSAGE_LOG_FD
+  if $GREP 'External.*some_variable' conftest.out > /dev/null; then
+    lt_cv_nm_interface="MS dumpbin"
+  fi
+  rm -f conftest*])
 ])# LT_PATH_NM
 
 # Old names:
-AU_DEFUN([AM_PROG_NM], [LT_PATH_NM])
-AU_DEFUN([AC_PROG_NM], [LT_PATH_NM])
+AU_ALIAS([AM_PROG_NM], [LT_PATH_NM])
+AU_ALIAS([AC_PROG_NM], [LT_PATH_NM])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AM_PROG_NM], [])
 dnl AC_DEFUN([AC_PROG_NM], [])
@@ -2913,7 +2968,7 @@ AC_SUBST([LIBM])
 ])# LT_LIB_M
 
 # Old name:
-AU_DEFUN([AC_CHECK_LIBM], [LT_LIB_M])
+AU_ALIAS([AC_CHECK_LIBM], [LT_LIB_M])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_CHECK_LIBM], [])
 
@@ -3017,7 +3072,19 @@ for ac_symprfx in "" "_"; do
   symxfrm="\\1 $ac_symprfx\\2 \\2"
 
   # Write the raw and C identifiers.
-  lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*$ac_symprfx$sympat$opt_cr$/$symxfrm/p'"
+  if test "$lt_cv_nm_interface" = "MS dumpbin"; then
+    # Fake it for dumpbin and say T for any non-static function
+    # and D for any global variable.
+    # Also find C++ and __fastcall symbols from MSVC++,
+    # which start with @ or ?.
+    lt_cv_sys_global_symbol_pipe="$SED -n -e ['/ UNDEF [^|]*()/d; / 00* UNDEF /d;
+	s/.*().*External *| *$ac_symprfx$sympat.*/T $ac_symprfx\1 \1/p;
+	s/.*External *| *$ac_symprfx$sympat.*/D $ac_symprfx\1 \1/p;
+	s/.*().*External *| *\([@?][_A-Za-z0-9@?]*\).*/T \1 \1/p;
+	s/.*External *| *\([@?][_A-Za-z0-9@?]*\).*/D \1 \1/p']"
+  else
+    lt_cv_sys_global_symbol_pipe="sed -n -e 's/^.*[[ 	]]\($symcode$symcode*\)[[ 	]][[ 	]]*$ac_symprfx$sympat$opt_cr$/$symxfrm/p'"
+  fi
 
   # Check to see that the pipe works correctly.
   pipe_works=no
@@ -3689,6 +3756,7 @@ _LT_TAGDECL([link_static_flag], [lt_prog_compiler_static], [1],
 m4_defun([_LT_LINKER_SHLIBS],
 [AC_REQUIRE([LT_PATH_LD])dnl
 AC_REQUIRE([LT_PATH_NM])dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 m4_require([_LT_DECL_EGREP])dnl
 m4_require([_LT_CMD_GLOBAL_SYMBOLS])dnl
 AC_MSG_CHECKING([whether the $compiler linker ($LD) supports shared libraries])
@@ -3776,7 +3844,7 @@ m4_if([$1], [CXX], [
     # are reset later if shared libraries are not supported. Putting them
     # here allows them to be overridden if necessary.
     runpath_var=LD_RUN_PATH
-    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath ${wl}$libdir'
+    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
     _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
     # ancient GNU ld didn't support --whole-archive et. al.
     if $LD --help 2>&1 | $GREP 'no-whole-archive' > /dev/null; then
@@ -4014,6 +4082,7 @@ _LT_EOF
       _LT_TAGVAR(hardcode_direct, $1)=yes
       _LT_TAGVAR(hardcode_libdir_separator, $1)=':'
       _LT_TAGVAR(link_all_deplibs, $1)=yes
+      _LT_TAGVAR(file_list_spec, $1)='${wl}-f,'
 
       if test "$GCC" = yes; then
 	case $host_os in aix4.[[012]]|aix4.[[012]].*)
@@ -4654,8 +4723,8 @@ _LT_TAGDECL([], [hardcode_libdir_flag_spec], [1],
     [Flag to hardcode $libdir into a binary during linking.
     This must work even if $libdir does not exist])
 _LT_TAGDECL([], [hardcode_libdir_flag_spec_ld], [1],
-    [If ld is used when linking, flag to hardcode $libdir into a binary
-    during linking.  This must work even if $libdir does not exist])
+    [[If ld is used when linking, flag to hardcode $libdir into a binary
+    during linking.  This must work even if $libdir does not exist]])
 _LT_TAGDECL([], [hardcode_libdir_separator], [1],
     [Whether we need a single "-rpath" flag with a separated argument])
 _LT_TAGDECL([], [hardcode_direct], [0],
@@ -4686,6 +4755,10 @@ _LT_TAGDECL([], [exclude_expsyms], [1],
     [Symbols that should not be listed in the preloaded symbols])
 _LT_TAGDECL([], [include_expsyms], [1],
     [Symbols that must always be exported])
+_LT_TAGDECL([], [prelink_cmds], [2],
+    [Commands necessary for linking programs (against libraries) with templates])
+_LT_TAGDECL([], [file_list_spec], [1],
+    [Specify filename containing input files])
 dnl FIXME: Not yet implemented
 dnl _LT_TAGDECL([], [thread_safe_flag_spec], [1],
 dnl    [Compiler flag to generate thread safe objects])
@@ -4824,6 +4897,7 @@ popdef([AC_MSG_ERROR])
 m4_defun([_LT_LANG_CXX_CONFIG],
 [AC_REQUIRE([_LT_PROG_CXX])dnl
 AC_REQUIRE([LT_SYS_DLOPEN_SELF])dnl
+m4_require([_LT_FILEUTILS_DEFAULTS])dnl
 m4_require([_LT_DECL_EGREP])dnl
 
 AC_LANG_PUSH(C++)
@@ -4915,7 +4989,7 @@ if test "$_lt_caught_CXX_error" != yes; then
         _LT_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname -o $lib'
         _LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
 
-        _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath ${wl}$libdir'
+        _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
         _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
 
         # If archive_cmds runs LD, not CC, wlarc should be empty
@@ -4999,6 +5073,7 @@ if test "$_lt_caught_CXX_error" != yes; then
         _LT_TAGVAR(hardcode_direct, $1)=yes
         _LT_TAGVAR(hardcode_libdir_separator, $1)=':'
         _LT_TAGVAR(link_all_deplibs, $1)=yes
+        _LT_TAGVAR(file_list_spec, $1)='${wl}-f,'
 
         if test "$GXX" = yes; then
           case $host_os in aix4.[[012]]|aix4.[[012]].*)
@@ -5385,7 +5460,7 @@ if test "$_lt_caught_CXX_error" != yes; then
 	    # dependencies.
 	    output_verbose_link_cmd='templist=`$CC $CFLAGS -v conftest.$objext -o libconftest$shared_ext 2>&1 | $GREP "ld"`; rm -f libconftest$shared_ext; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; $ECHO "X$list" | $Xsed'
 
-	    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath,$libdir'
+	    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath,$libdir'
 	    _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
 
 	    # Archives containing C++ object files must be created using
@@ -5419,8 +5494,31 @@ if test "$_lt_caught_CXX_error" != yes; then
 	    ;;
           pgCC*)
             # Portland Group C++ compiler
-            _LT_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname -o $lib'
-            _LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $pic_flag $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname ${wl}-retain-symbols-file ${wl}$export_symbols -o $lib'
+ 	    case `$CC -V` in
+ 	    *pgCC\ [[1-5]]*)
+ 	      _LT_TAGVAR(prelink_cmds, $1)='tpldir=Template.dir~
+ 		rm -rf $tpldir~
+ 		$CC --prelink_objects --instantiation_dir $tpldir $objs $libobjs $compile_deplibs~
+ 		compile_command="$compile_command `find $tpldir -name \*.o | $NL2SP`"'
+ 	      _LT_TAGVAR(old_archive_cmds, $1)='tpldir=Template.dir~
+ 		rm -rf $tpldir~
+ 		$CC --prelink_objects --instantiation_dir $tpldir $oldobjs$old_deplibs~
+ 		$AR $AR_FLAGS $oldlib$oldobjs$old_deplibs `find $tpldir -name \*.o | $NL2SP`~
+ 		$RANLIB $oldlib'
+ 	      _LT_TAGVAR(archive_cmds, $1)='tpldir=Template.dir~
+ 		rm -rf $tpldir~
+ 		$CC --prelink_objects --instantiation_dir $tpldir $predep_objects $libobjs $deplibs $convenience $postdep_objects~
+ 		$CC -shared $pic_flag $predep_objects $libobjs $deplibs `find $tpldir -name \*.o | $NL2SP` $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname -o $lib'
+ 	      _LT_TAGVAR(archive_expsym_cmds, $1)='tpldir=Template.dir~
+ 		rm -rf $tpldir~
+ 		$CC --prelink_objects --instantiation_dir $tpldir $predep_objects $libobjs $deplibs $convenience $postdep_objects~
+ 		$CC -shared $pic_flag $predep_objects $libobjs $deplibs `find $tpldir -name \*.o | $NL2SP` $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname ${wl}-retain-symbols-file ${wl}$export_symbols -o $lib'
+ 	      ;;
+ 	    *) # Version 6 will use weak symbols
+ 	      _LT_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname -o $lib'
+ 	      _LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared $pic_flag $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-soname ${wl}$soname ${wl}-retain-symbols-file ${wl}$export_symbols -o $lib'
+ 	      ;;
+ 	    esac
 
 	    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}--rpath ${wl}$libdir'
 	    _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
@@ -5774,7 +5872,8 @@ AC_LANG_POP
 # Parse the compiler output and extract the necessary
 # objects, libraries and library flags.
 m4_defun([_LT_SYS_HIDDEN_LIBDEPS],
-[# Dependencies to place before and after the object being linked:
+[m4_require([_LT_FILEUTILS_DEFAULTS])dnl
+# Dependencies to place before and after the object being linked:
 _LT_TAGVAR(predep_objects, $1)=
 _LT_TAGVAR(postdep_objects, $1)=
 _LT_TAGVAR(predeps, $1)=
@@ -5919,6 +6018,9 @@ m4_if([$1], [CXX],
 solaris*)
   case $cc_basename in
   CC*)
+    # Adding this requires a known-good setup of shared libraries for
+    # Sun compiler versions before 5.6, else PIC objects from an old
+    # archive will be linked into the output, leading to subtle bugs.
     _LT_TAGVAR(postdeps,$1)='-lCstd -lCrun'
     ;;
   esac
@@ -5929,7 +6031,7 @@ case " $_LT_TAGVAR(postdeps, $1) " in
 *" -lc "*) _LT_TAGVAR(archive_cmds_need_lc, $1)=no ;;
 esac
 _LT_TAGDECL([], [predep_objects], [1],
-    [Dependencies to place before and after  the objects being linked to
+    [Dependencies to place before and after the objects being linked to
     create a shared library])
 _LT_TAGDECL([], [postdep_objects], [1])
 _LT_TAGDECL([], [predeps], [1])
@@ -6328,7 +6430,7 @@ AC_DEFUN([LT_PROG_GCJ],
 ])
 
 # Old name:
-AU_DEFUN([LT_AC_PROG_GCJ], [LT_PROG_GCJ])
+AU_ALIAS([LT_AC_PROG_GCJ], [LT_PROG_GCJ])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([LT_AC_PROG_GCJ], [])
 
@@ -6340,7 +6442,7 @@ AC_DEFUN([LT_PROG_RC],
 ])
 
 # Old name:
-AU_DEFUN([LT_AC_PROG_RC], [LT_PROG_RC])
+AU_ALIAS([LT_AC_PROG_RC], [LT_PROG_RC])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([LT_AC_PROG_RC], [])
 
@@ -6353,7 +6455,7 @@ m4_defun([_LT_DECL_EGREP],
 [AC_REQUIRE([AC_PROG_EGREP])dnl
 AC_REQUIRE([AC_PROG_FGREP])dnl
 test -z "$GREP" && GREP=grep
-_LT_DECL([], [GREP], [1], [A grep program that handles long line])
+_LT_DECL([], [GREP], [1], [A grep program that handles long lines])
 _LT_DECL([], [EGREP], [1], [An ERE matcher])
 _LT_DECL([], [FGREP], [1], [A literal string matcher])
 dnl Non-bleeding-edge autoconf doesn't subst GREP, so do it here too
@@ -6435,3 +6537,98 @@ AC_SUBST([SED])
 AC_MSG_RESULT([$SED])
 ])#AC_PROG_SED
 ])#m4_ifndef
+
+# _LT_CHECK_XSI_SHELL
+# -------------------
+# define func_basename as either Bourne or XSI compatible
+m4_defun([_LT_CHECK_XSI_SHELL],
+[AC_MSG_CHECKING([whether the shell understands some XSI constructs])
+# Try some XSI features
+xsi_shell=no
+( _lt_dummy="a/b/c"
+  test "${_lt_dummy##*/},${_lt_dummy%/*},"${_lt_dummy%"$_lt_dummy"}, \
+      = c,a/b,, ) >/dev/null 2>&1 \
+  && xsi_shell=yes
+AC_MSG_RESULT([$xsi_shell])
+_LT_CONFIG_LIBTOOL_INIT([xsi_shell='$xsi_shell'])
+])# _LT_CHECK_XSI_SHELL
+
+# _LT_PROG_XSI_SHELLFNS
+# ---------------------
+# Bourne and XSI compatible variants of some useful shell functions.
+m4_defun([_LT_PROG_XSI_SHELLFNS],
+[case $xsi_shell in
+  yes)
+    cat << \_LT_EOF >> "$cfgfile"
+# func_dirname file append nondir_replacement
+# Compute the dirname of FILE.  If nonempty, add APPEND to the result,
+# otherwise set result to NONDIR_REPLACEMENT.
+func_dirname ()
+{
+  case ${1} in
+    */*) func_dirname_result="${1%/*}${2}" ;;
+    *  ) func_dirname_result="${3}" ;;
+  esac
+}
+
+# func_basename file
+func_basename ()
+{
+  func_basename_result="${1##*/}"
+}
+
+# func_stripname prefix suffix name
+# strip PREFIX and SUFFIX off of NAME.
+# PREFIX and SUFFIX must not contain globbing or regex special
+# characters, hashes, percent signs, but SUFFIX may contain a leading
+# dot (in which case that matches only a dot).
+func_stripname ()
+{
+  # pdksh 5.2.14 does not do ${X%$Y} correctly if both X and Y are
+  # positional parameters, so assign one to ordinary parameter first.
+  func_stripname_result=${3}
+  func_stripname_result=${func_stripname_result#"${1}"}
+  func_stripname_result=${func_stripname_result%"${2}"}
+}
+_LT_EOF
+    ;;
+  *) # Bourne compatible functions.
+    cat << \_LT_EOF >> "$cfgfile"
+# func_dirname file append nondir_replacement
+# Compute the dirname of FILE.  If nonempty, add APPEND to the result,
+# otherwise set result to NONDIR_REPLACEMENT.
+func_dirname ()
+{
+  # Extract subdirectory from the argument.
+  func_dirname_result=`$ECHO "X${1}" | $Xsed -e "$dirname"`
+  if test "X$func_dirname_result" = "X${1}"; then
+    func_dirname_result="${3}"
+  else
+    func_dirname_result="$func_dirname_result${2}"
+  fi
+}
+
+# func_basename file
+func_basename ()
+{
+  func_basename_result=`$ECHO "X${1}" | $Xsed -e "$basename"`
+}
+
+# func_stripname prefix suffix name
+# strip PREFIX and SUFFIX off of NAME.
+# PREFIX and SUFFIX must not contain globbing or regex special
+# characters, hashes, percent signs, but SUFFIX may contain a leading
+# dot (in which case that matches only a dot).
+# func_strip_suffix prefix name
+func_stripname ()
+{
+  case ${2} in
+    .*) func_stripname_result=`$ECHO "X${3}" \
+           | $Xsed -e "s%^${1}%%" -e "s%\\\\${2}\$%%"`;;
+    *)  func_stripname_result=`$ECHO "X${3}" \
+           | $Xsed -e "s%^${1}%%" -e "s%${2}\$%%"`;;
+  esac
+}
+_LT_EOF
+esac
+])

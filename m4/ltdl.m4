@@ -5,7 +5,7 @@
 # unlimited permission to copy and/or distribute it, with or without
 # modifications, as long as this notice is preserved.
 
-# serial 7 LTDL_INIT
+# serial 8 LTDL_INIT
 
 # LT_WITH_LTDL([DIRECTORY])
 # -------------------------
@@ -52,7 +52,7 @@ AC_CONFIG_SUBDIRS(m4_if($#, 1, [$1], [libltdl]))
 ])# LT_WITH_LTDL
 
 # Old name:
-AU_DEFUN([AC_WITH_LTDL], [LT_WITH_LTDL])
+AU_ALIAS([AC_WITH_LTDL], [LT_WITH_LTDL])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_WITH_LTDL], [])
 
@@ -61,13 +61,13 @@ dnl AC_DEFUN([AC_WITH_LTDL], [])
 # -----------------------------
 # sets LIBLTDL to the link flags for the libltdl convenience library and
 # LTDLINCL to the include flags for the libltdl header and adds
-# --enable-ltdl-convenience to the configure arguments.  Note that LIBLTDL
-# and LTDLINCL are not AC_SUBSTed, nor is AC_CONFIG_SUBDIRS called.  If
-# DIRECTORY is not provided, it is assumed to be `libltdl'.  LIBLTDL will
-# be prefixed with '${top_builddir}/' and LTDLINCL will be prefixed with
-# '${top_srcdir}/' (note the single quotes!).  If your package is not
-# flat and you're not using automake, define top_builddir and
-# top_srcdir appropriately in the Makefiles.
+# --enable-ltdl-convenience to the configure arguments.  Note that
+# AC_CONFIG_SUBDIRS is not called here.  If DIRECTORY is not provided,
+# it is assumed to be `libltdl'.  LIBLTDL will be prefixed with
+# '${top_builddir}/' and LTDLINCL will be prefixed with '${top_srcdir}/'
+# (note the single quotes!).  If your package is not flat and you're not
+# using automake, define top_builddir and top_srcdir appropriately in
+# the Makefiles.
 AC_DEFUN([LTDL_CONVENIENCE],
 [case $enable_ltdl_convenience in
   no) AC_MSG_ERROR([this package needs a convenience libltdl]) ;;
@@ -86,7 +86,7 @@ AC_SUBST([INCLTDL])
 ])# LTDL_CONVENIENCE
 
 # Old name:
-AU_DEFUN([AC_LIBLTDL_CONVENIENCE], [LTDL_CONVENIENCE])
+AU_ALIAS([AC_LIBLTDL_CONVENIENCE], [LTDL_CONVENIENCE])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBLTDL_CONVENIENCE], [])
 
@@ -131,17 +131,22 @@ AC_SUBST([INCLTDL])
 ])# LTDL_INSTALLABLE
 
 # Old name:
-AU_DEFUN([AC_LIBLTDL_INSTALLABLE], [LTDL_INSTALLABLE])
+AU_ALIAS([AC_LIBLTDL_INSTALLABLE], [LTDL_INSTALLABLE])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIBLTDL_INSTALLABLE], [])
 
 
-# LTDL_INIT
-# ---------
+# LTDL_INIT([DIRECTORY])
+# ----------------------
 # Perform all the checks necessary for compilation of the ltdl objects
 #  -- including compiler checks and header checks.
 AC_DEFUN([LTDL_INIT],
-[AC_REQUIRE([AC_PROG_CC])dnl
+[m4_if([$#], 1, [m4_divert_push([DEFAULTS])dnl
+# libltdl will be built in the named DIRECTORY, relative to $top_builddir.
+lt_ltdl_dir='$1'
+m4_divert_pop([DEFAULTS])])dnl
+
+AC_REQUIRE([AC_PROG_CC])dnl
 AC_REQUIRE([AC_C_CONST])dnl
 AC_REQUIRE([AC_HEADER_STDC])dnl
 AC_REQUIRE([AC_HEADER_DIRENT])dnl
@@ -185,7 +190,7 @@ AC_SUBST([LTDLOPEN])
 ])# LTDL_INIT
 
 # Old name:
-AU_DEFUN([AC_LIB_LTDL], [LTDL_INIT])
+AU_ALIAS([AC_LIB_LTDL], [LTDL_INIT])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LIB_LTDL], [])
 
@@ -286,7 +291,7 @@ fi
 ])# LT_SYS_DLOPEN_DEPLIBS
 
 # Old name:
-AU_DEFUN([AC_LTDL_SYS_DLOPEN_DEPLIBS], [LT_SYS_DLOPEN_DEPLIBS])
+AU_ALIAS([AC_LTDL_SYS_DLOPEN_DEPLIBS], [LT_SYS_DLOPEN_DEPLIBS])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_SYS_DLOPEN_DEPLIBS], [])
 
@@ -309,7 +314,7 @@ fi
 ])# LT_SYS_MODULE_EXT
 
 # Old name:
-AU_DEFUN([AC_LTDL_SHLIBEXT], [LT_SYS_MODULE_EXT])
+AU_ALIAS([AC_LTDL_SHLIBEXT], [LT_SYS_MODULE_EXT])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_SHLIBEXT], [])
 
@@ -328,7 +333,7 @@ fi
 ])# LT_SYS_MODULE_PATH
 
 # Old name:
-AU_DEFUN([AC_LTDL_SHLIBPATH], [LT_SYS_MODULE_PATH])
+AU_ALIAS([AC_LTDL_SHLIBPATH], [LT_SYS_MODULE_PATH])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_SHLIBPATH], [])
 
@@ -356,7 +361,7 @@ fi
 ])# LT_SYS_DLSEARCH_PATH
 
 # Old name:
-AU_DEFUN([AC_LTDL_SYSSEARCHPATH], [LT_SYS_DLSEARCH_PATH])
+AU_ALIAS([AC_LTDL_SYSSEARCHPATH], [LT_SYS_DLSEARCH_PATH])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_SYSSEARCHPATH], [])
 
@@ -387,6 +392,9 @@ AC_DEFUN([LT_LIB_DLLOAD],
 LT_DLLOADERS=
 AC_SUBST([LT_DLLOADERS])
 
+test "X${lt_ltdl_dir-.}" != X. &&
+    lt_ltdl_dir=`echo "$lt_ltdl_dir/" | sed 's,/*$,/,'`
+
 AC_LANG_PUSH([C])
 
 LIBADD_DLOPEN=
@@ -394,7 +402,7 @@ AC_CHECK_LIB([dl], [dlopen],
 	[AC_DEFINE([HAVE_LIBDL], [1],
 		   [Define if you have the libdl library or equivalent.])
 	LIBADD_DLOPEN="-ldl" libltdl_cv_lib_dl_dlopen="yes"
-	LT_DLLOADERS="$LT_DLLOADERS dlopen.la"],
+	LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}dlopen.la"],
     [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#if HAVE_DLFCN_H
 #  include <dlfcn.h>
 #endif
@@ -402,12 +410,12 @@ AC_CHECK_LIB([dl], [dlopen],
 	    [AC_DEFINE([HAVE_LIBDL], [1],
 		       [Define if you have the libdl library or equivalent.])
 	    libltdl_cv_func_dlopen="yes"
-	    LT_DLLOADERS="$LT_DLLOADERS dlopen.la"],
+	    LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}dlopen.la"],
 	[AC_CHECK_LIB([svld], [dlopen],
 		[AC_DEFINE([HAVE_LIBDL], [1],
 			 [Define if you have the libdl library or equivalent.])
 	        LIBADD_DLOPEN="-lsvld" libltdl_cv_func_dlopen="yes"
-		LT_DLLOADERS="$LT_DLLOADERS dlopen.la"])])])
+		LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}dlopen.la"])])])
 if test x"$libltdl_cv_func_dlopen" = xyes || test x"$libltdl_cv_lib_dl_dlopen" = xyes
 then
   lt_save_LIBS="$LIBS"
@@ -421,11 +429,11 @@ LIBADD_SHL_LOAD=
 AC_CHECK_FUNC([shl_load],
 	[AC_DEFINE([HAVE_SHL_LOAD], [1],
 		   [Define if you have the shl_load function.])
-	LT_DLLOADERS="$LT_DLLOADERS shl_load.la"],
+	LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}shl_load.la"],
     [AC_CHECK_LIB([dld], [shl_load],
 	    [AC_DEFINE([HAVE_SHL_LOAD], [1],
 		       [Define if you have the shl_load function.])
-	    LT_DLLOADERS="$LT_DLLOADERS shl_load.la"
+	    LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}shl_load.la"
 	    LIBADD_SHL_LOAD="-ldld"])])
 AC_SUBST([LIBADD_SHL_LOAD])
 
@@ -435,20 +443,20 @@ darwin[[1567]].*)
   AC_CHECK_FUNC([_dyld_func_lookup],
 	[AC_DEFINE([HAVE_DYLD], [1],
 		   [Define if you have the _dyld_func_lookup function.])
-	LT_DLLOADERS="$LT_DLLOADERS dyld.la"])
+	LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}dyld.la"])
   ;;
 beos*)
-  LT_DLLOADERS="$LT_DLLOADERS load_add_on.la"
+  LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}load_add_on.la"
   ;;
 cygwin* | mingw* | os2* | pw32*)
-  LT_DLLOADERS="$LT_DLLOADERS loadlibrary.la"
+  LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}loadlibrary.la"
   ;;
 esac
 
 AC_CHECK_LIB([dld], [dld_link],
 	[AC_DEFINE([HAVE_DLD], [1],
 		   [Define if you have the GNU dld library.])
-		LT_DLLOADERS="$LT_DLLOADERS dld_link.la"])
+		LT_DLLOADERS="$LT_DLLOADERS ${lt_ltdl_dir}dld_link.la"])
 AC_SUBST([LIBADD_DLD_LINK])
 
 m4_pattern_allow([^LT_DLPREOPEN$])
@@ -471,7 +479,7 @@ AC_LANG_POP
 ])# LT_LIB_DLLOAD
 
 # Old name:
-AU_DEFUN([AC_LTDL_DLLIB], [LT_LIB_DLLOAD])
+AU_ALIAS([AC_LTDL_DLLIB], [LT_LIB_DLLOAD])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_DLLIB], [])
 
@@ -484,10 +492,10 @@ AC_DEFUN([LT_SYS_SYMBOL_USCORE],
 AC_CACHE_CHECK([for _ prefix in compiled symbols],
   [lt_cv_sys_symbol_underscore],
   [lt_cv_sys_symbol_underscore=no
-  cat > conftest.$ac_ext <<EOF
+  cat > conftest.$ac_ext <<_LT_EOF
 void nm_test_func(){}
 int main(){nm_test_func;return 0;}
-EOF
+_LT_EOF
   if AC_TRY_EVAL(ac_compile); then
     # Now try to grab the symbols.
     ac_nlist=conftest.nm
@@ -516,7 +524,7 @@ EOF
 ])# LT_SYS_SYMBOL_USCORE
 
 # Old name:
-AU_DEFUN([AC_LTDL_SYMBOL_USCORE], [LT_SYS_SYMBOL_USCORE])
+AU_ALIAS([AC_LTDL_SYMBOL_USCORE], [LT_SYS_SYMBOL_USCORE])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_SYMBOL_USCORE], [])
 
@@ -548,6 +556,6 @@ fi
 ])# LT_FUNC_DLSYM_USCORE
 
 # Old name:
-AU_DEFUN([AC_LTDL_DLSYM_USCORE], [LT_FUNC_DLSYM_USCORE])
+AU_ALIAS([AC_LTDL_DLSYM_USCORE], [LT_FUNC_DLSYM_USCORE])
 dnl aclocal-1.4 backwards compatibility:
 dnl AC_DEFUN([AC_LTDL_DLSYM_USCORE], [])
