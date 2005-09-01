@@ -11,16 +11,18 @@ bin_PROGRAMS = ${INSTDEMOS}
 noinst_PROGRAMS = demo flying_ggis pageflip saver slimy stars \
 	textdemo $(OPTDEMOS)
 
+libggi = ${top_builddir}/ggi/libggi.la -lgg
+
 # -lgg is needed for ggUSleep() and ggCurTime()
-demo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
-flying_ggis_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-pageflip_LDADD =  ${top_builddir}/ggi/libggi.la -lgg -lm
-saver_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-slimy_LDADD = ${top_builddir}/ggi/libggi.la -lm
-stars_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-wrap_LDADD =  ${top_builddir}/ggi/libggi.la -lgg $(bsdsock_libs)
-cube3d_LDADD = ${top_builddir}/ggi/libggi.la -lgg -lm
-textdemo_LDADD =  ${top_builddir}/ggi/libggi.la -lgg
+demo_LDADD =  ${libggi}
+flying_ggis_LDADD = ${libggi} -lm
+pageflip_LDADD = ${libggi} -lm
+saver_LDADD = ${libggi} -lm
+slimy_LDADD = ${libggi} -lm
+stars_LDADD = ${libggi} -lm
+wrap_LDADD = ${libggi} $(bsdsock_libs)
+cube3d_LDADD = ${libggi} -lm
+textdemo_LDADD = ${libggi}
 
 EXTRA_DIST = cube3d.txt demo.txt banner.inc.c
 
