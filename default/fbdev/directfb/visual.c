@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2005/07/30 11:39:57 cegger Exp $
+/* $Id: visual.c,v 1.22 2005/09/01 22:34:07 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -469,9 +469,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 EXPORTFUNC
-int GGIdl_directfb(int func, void **funcptr);
+int GGIdl_fbdev_directfb(int func, void **funcptr);
 
-int GGIdl_directfb(int func, void **funcptr)
+int GGIdl_fbdev_directfb(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:

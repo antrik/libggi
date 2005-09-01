@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2005/07/30 11:39:57 cegger Exp $
+/* $Id: visual.c,v 1.13 2005/09/01 22:32:03 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -272,9 +272,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 EXPORTFUNC
-int GGIdl_m2164w(int func, void **funcptr);
+int GGIdl_fbdev_m2164w(int func, void **funcptr);
 
-int GGIdl_m2164w(int func, void **funcptr)
+int GGIdl_fbdev_m2164w(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:

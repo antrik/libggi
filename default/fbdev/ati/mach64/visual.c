@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/07/30 11:39:57 cegger Exp $
+/* $Id: visual.c,v 1.15 2005/09/01 22:32:03 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -456,9 +456,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 EXPORTFUNC
-int GGIdl_mach64(int func, void **funcptr);
+int GGIdl_fbdev_mach64(int func, void **funcptr);
 
-int GGIdl_mach64(int func, void **funcptr)
+int GGIdl_fbdev_mach64(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
