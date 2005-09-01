@@ -113,7 +113,7 @@ endif
 #        builtins_libs += $(top_builddir)/display/wsfb/libwsfb.la
 #endif
 if BUILTIN_DISPLAY_X
-        builtins_libs += $(top_builddir)/display/X/libX.la
+        builtins_libs += $(top_builddir)/display/X/libx.la
 endif
 if BUILTIN_HELPER_X_DBE
         builtins_libs += $(top_builddir)/display/X/helper/dbe/libhelper_x_dbe.la
