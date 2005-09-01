@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.45 2005/08/18 12:19:08 cegger Exp $
+/* $Id: init.c,v 1.46 2005/09/01 13:11:57 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -57,6 +57,8 @@ static int            _ggiLibIsUp      = 0;
 static char           ggiconfstub[512] = GGICONFDIR;
 static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
 
+void _ggiInitBuiltins(void);
+void _ggiExitBuiltins(void);
 
 
 /* 
@@ -153,6 +155,7 @@ int ggiInit(void)
 	err = ggLoadConfig(conffile, &_ggiConfigHandle);
 	free(conffile);
 	if (err == GGI_OK) {
+		_ggiInitBuiltins();
 		DPRINT_CORE("ggiInit() successfull\n");
 		return GGI_OK;
 	}
@@ -191,6 +194,8 @@ int ggiExit(void)
 	ggLockDestroy(_ggi_global_lock);
 
 	ggiExtensionExit();
+
+	_ggiExitBuiltins();
 
 	ggFreeConfig(_ggiConfigHandle);
 	giiExit();
