@@ -1,15 +1,11 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-linear_32_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
-linear_32_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
-		-avoid-version -export-symbols $(srcdir)/EXPSYMS
+liblinear_32_la_LIBADD =
 
-sublib_LTLIBRARIES = linear_32.la
+noinst_LTLIBRARIES = liblinear_32.la
 
-linear_32_la_SOURCES = box.c copybox.c crossblit.c hline.c line.c pixel.c \
+liblinear_32_la_SOURCES = box.c copybox.c crossblit.c hline.c line.c pixel.c \
 	pixela.c visual.c vline.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/default
 
 EXTRA_DIST = EXPSYMS lin32lib.h
 

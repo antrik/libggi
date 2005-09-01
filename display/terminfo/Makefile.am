@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.terminfo"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-terminfo_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg $(terminfolibs)
-terminfo_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libterminfo_la_LIBADD = $(terminfolibs)
 
-sublib_LTLIBRARIES = terminfo.la
+noinst_LTLIBRARIES = libterminfo.la
 
-terminfo_la_SOURCES = color.c input.c mode.c visual.c ncurses.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libterminfo_la_SOURCES = color.c input.c mode.c visual.c ncurses.c
 
 EXTRA_DIST = EXPSYMS TIvisual.h
 

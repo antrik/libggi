@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = 1.4 foreign
 
-SUBDIRS = include ggi display default extensions programs doc m4 dist
+SUBDIRS = include display default ggi display-shared default-shared extensions programs doc m4 dist
 
 ggiconfdatadir = $(sysconfdir)/$(ggi_subdir)
 ggiconfdata_DATA = libggi.conf

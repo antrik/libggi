@@ -1,0 +1,132 @@
+if BUILTIN_DISPLAY
+        builtins_libs += $(top_builddir)/display/auto/libauto.la
+endif
+if BUILTIN_DEFAULT
+        builtins_libs += $(top_builddir)/default/stubs/libstubs.la
+        builtins_libs += $(top_builddir)/default/pseudo_stubs/libpseudo_stubs.la
+        builtins_libs += $(top_builddir)/default/color/libcolor.la
+        builtins_libs += $(top_builddir)/default/text_16/libtext_16.la
+        builtins_libs += $(top_builddir)/default/text_32/libtext_32.la
+        builtins_libs += $(top_builddir)/default/linear_1/liblinear_1.la
+        builtins_libs += $(top_builddir)/default/linear_16/liblinear_16.la
+        builtins_libs += $(top_builddir)/default/linear_1_r/liblinear_1_r.la
+        builtins_libs += $(top_builddir)/default/linear_2/liblinear_2.la
+        builtins_libs += $(top_builddir)/default/linear_24/liblinear_24.la
+        builtins_libs += $(top_builddir)/default/linear_32/liblinear_32.la
+        builtins_libs += $(top_builddir)/default/linear_4/liblinear_4.la
+        builtins_libs += $(top_builddir)/default/linear_4_r/liblinear_4_r.la
+        builtins_libs += $(top_builddir)/default/linear_8/liblinear_8.la
+        builtins_libs += $(top_builddir)/default/planar/libplanar.la
+        builtins_libs += $(top_builddir)/default/ilbm/libilbm.la
+        builtins_libs += $(top_builddir)/default/iplanar_2p/libiplanar_2p.la
+endif
+if BUILTIN_DEFAULT_FBDEV_DIRECTFB
+        builtins_libs += $(top_builddir)/default/fbdev/directfb/libdirectfb.la
+        builtins_libs += $(top_builddir)/default/fbdev/directfb/libdirectfbglobal.la
+endif
+if BUILTIN_DEFAULT_FBDEV_ACCEL
+        builtins_libs += $(top_builddir)/default/fbdev/mga/2164w/libm2164w.la
+        builtins_libs += $(top_builddir)/default/fbdev/mga/g400/libmga_g400.la
+        builtins_libs += $(top_builddir)/default/fbdev/ati/mach64/libmach64.la
+endif
+if BUILTIN_DEFAULT_KGI_ACCEL
+        builtins_libs += $(top_builddir)/default/kgi/ATI/Mach64/libmach64.la
+        builtins_libs += $(top_builddir)/default/kgi/ATI/Radeon/libradeon.la
+        builtins_libs += $(top_builddir)/default/kgi/Matrox/Gx00/libGx00.la
+endif
+if BUILTIN_DISPLAY_AA
+        builtins_libs += $(top_builddir)/display/aa/libaa.la
+endif
+if BUILTIN_DISPLAY_DIRECTX
+        builtins_libs += $(top_builddir)/display/directx/libdirectx.la
+endif
+if BUILTIN_DISPLAY_FBDEV
+        builtins_libs += $(top_builddir)/display/fbdev/libfbdev.la
+endif
+if BUILTIN_DISPLAY_FILE
+        builtins_libs += $(top_builddir)/display/file/libfile.la
+endif
+if BUILTIN_DISPLAY_GLIDE
+        builtins_libs += $(top_builddir)/display/glide/libglide.la
+endif
+if BUILTIN_DISPLAY_IPC
+        builtins_libs += $(top_builddir)/display/ipc/libipc.la
+endif
+if BUILTIN_DISPLAY_KGI
+        builtins_libs += $(top_builddir)/display/kgi/libkgi.la
+endif
+if BUILTIN_DISPLAY_LCD823
+        builtins_libs += $(top_builddir)/display/lcd823/liblcd823.la
+endif
+if BUILTIN_DISPLAY_LIBKGI
+        builtins_libs += $(top_builddir)/display/libkgi/libkgilib.la
+endif
+if BUILTIN_HELPER_LINVTSW
+        builtins_libs += $(top_builddir)/display/linvtsw/liblinvtsw.la
+endif
+if BUILTIN_HELPER_MANSYNC
+        builtins_libs += $(top_builddir)/display/mansync/libmansync.la
+endif
+if BUILTIN_DISPLAY_MEMORY
+        builtins_libs += $(top_builddir)/display/memory/libmemory.la
+endif
+if BUILTIN_DISPLAY_MONOTEXT
+        builtins_libs += $(top_builddir)/display/monotext/libmonotext.la
+endif
+if BUILTIN_DISPLAY_MULTI
+        builtins_libs += $(top_builddir)/display/multi/libmulti.la
+endif
+if BUILTIN_DISPLAY_PALEMU
+        builtins_libs += $(top_builddir)/display/palemu/libpalemu.la
+endif
+if BUILTIN_DISPLAY_QUARTZ
+        builtins_libs += $(top_builddir)/display/quartz/libquartz.la
+endif
+if BUILTIN_DISPLAY_SUB
+        builtins_libs += $(top_builddir)/display/sub/libsub.la
+endif
+if BUILTIN_DISPLAY_SVGALIB
+        builtins_libs += $(top_builddir)/display/svgalib/libsvgalib.la
+endif
+if BUILTIN_DISPLAY_TELE
+        builtins_libs += $(top_builddir)/display/tele/libtele.la
+endif
+if BUILTIN_DISPLAY_TERMINFO
+        builtins_libs += $(top_builddir)/display/terminfo/libterminfo.la
+endif
+if BUILTIN_DISPLAY_TILE
+        builtins_libs += $(top_builddir)/display/tile/libtile.la
+endif
+if BUILTIN_DISPLAY_TRUEEMU
+        builtins_libs += $(top_builddir)/display/trueemu/libtrueemu.la
+endif
+if BUILTIN_DISPLAY_VCSA
+        builtins_libs += $(top_builddir)/display/vcsa/libvcsa.la
+endif
+if BUILTIN_HELPER_VGAGL
+        builtins_libs += $(top_builddir)/display/vgagl/libvgagl.la
+endif
+if BUILTIN_DISPLAY_VGL
+        builtins_libs += $(top_builddir)/display/vgl/libvgl.la
+endif
+#if BUILTIN_DISPLAY_WSFB
+#        builtins_libs += $(top_builddir)/display/wsfb/libwsfb.la
+#endif
+if BUILTIN_DISPLAY_X
+        builtins_libs += $(top_builddir)/display/X/libX.la
+endif
+if BUILTIN_HELPER_X_DBE
+        builtins_libs += $(top_builddir)/display/X/helper/dbe/libhelper_x_dbe.la
+endif
+if BUILTIN_HELPER_X_DGA
+        builtins_libs += $(top_builddir)/display/X/helper/dga/libhelper_x_dga.la
+endif
+if BUILTIN_HELPER_X_EVI
+        builtins_libs += $(top_builddir)/display/X/helper/evi/libhelper_x_evi.la
+endif
+if BUILTIN_HELPER_X_SHM
+        builtins_libs += $(top_builddir)/display/X/helper/shm/libhelper_x_shm.la
+endif
+if BUILTIN_HELPER_X_VIDMODE
+        builtins_libs += $(top_builddir)/display/X/helper/vidmode/libhelper_x_vidmode.la
+endif

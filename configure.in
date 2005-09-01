@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.168 2005/09/01 07:50:33 cegger Exp $
+dnl $Id: configure.in,v 1.169 2005/09/01 11:23:44 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -106,10 +106,10 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
-dnl Make Objective-C work with automake 1.7.x
+dnl Make Objective-C work with automake >= 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)
 
-LT_INIT([disable-static win32-dll])
+LT_INIT([win32-dll])
 
 dnl ========================================================================
 dnl Generate libtool
@@ -580,6 +580,22 @@ DISPLAYSUBDIRS=""
 DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
 XSUBDIRS=""
 FBDEVSUBDIRS=""
+DISPLAYMODULES=""
+DEFAULTMODULES=""
+
+if test "$enable_shared" = "yes"; then
+  DISPLAYMODULES="auto.la"
+  DEFAULTMODULES="stubs.la pseudo_stubs.la color.la text_16.la text_32.la linear_1.la linear_1_r.la linear_2.la linear_4.la linear_4_r.la linear_8.la linear_16.la linear_24.la linear_32.la planar.la ilbm.la iplanar_2p.la"
+fi
+if test "$enable_static" = "yes"; then
+  AC_DEFINE(BUILTIN_DEFAULT, 1, [Support for builtin default renderers])
+  AC_DEFINE(BUILTIN_DISPLAY, 1, [Support for builtin display targets])
+fi
+AM_CONDITIONAL(BUILTIN_DEFAULT,
+		test "$enable_static" = "yes")
+AM_CONDITIONAL(BUILTIN_DISPLAY,
+		test "$enable_static" = "yes")
+
 
 memory_dependent="x"
 if test "x$build_memory_target" = "xno"; then
@@ -602,9 +618,19 @@ if test "x$build_mansync_helper" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS mansync"
   TESTSUBDIRS="$TESTSUBDIRS display.mansync"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES mansync.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BULITIN_HELPER_MANSYNC, 1, [Support for builtin helper-mansync])
+  fi
   build_mansync_helper="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_HELPER_MANSYNC,
+		test "$enable_static" = "yes" -a \
+			"x$build_mansync_helper" != "xno")
+
 
 if test "x$build_x_target" != "xno"; then
   AC_PATH_XTRA
@@ -964,6 +990,12 @@ if test "x$build_x_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
   TESTSUBDIRS="$TESTSUBDIRS display.x"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES X.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_X, 1, [Support for builtin display-x])
+  fi
   build_x_target="yes"
   AC_MSG_RESULT(yes)
 
@@ -972,6 +1004,12 @@ else
 	AC_MSG_RESULT(no)
   else
 	XSUBDIRS="$XSUBDIRS dbe"
+	if test "$enable_shared" = "yes"; then
+	  DISPLAYMODULES="$DISPLAYMODULES helper_x_dbe.la"
+	fi
+	if test "$enable_static" = "yes"; then
+	  AC_DEFINE(BUILTIN_HELPER_X_DBE, 1, [Support for builtin helper-x-dbe])
+	fi
 	AC_MSG_RESULT(yes)
   fi
 
@@ -980,6 +1018,12 @@ else
 	AC_MSG_RESULT(no)
   else
 	XSUBDIRS="$XSUBDIRS evi"
+	if test "$enable_shared" = "yes"; then
+	  DISPLAYMODULES="$DISPLAYMODULES helper_x_evi.la"
+	fi
+	if test "$enable_static" = "yes"; then
+	  AC_DEFINE(BUILTIN_HELPER_X_EVI, 1, [Support for builtin helper-x-evi])
+	fi
 	AC_MSG_RESULT(yes)
   fi
 
@@ -988,6 +1032,12 @@ else
 	AC_MSG_RESULT(no)
   else
 	XSUBDIRS="$XSUBDIRS shm"
+	if test "$enable_shared" = "yes"; then
+	  DISPLAYMODULES="$DISPLAYMODULES helper_x_shm.la"
+	fi
+	if test "$enable_static" = "yes"; then
+	  AC_DEFINE(BUILTIN_HELPER_X_SHM, 1, [Support for builtin helper-x-shm])
+	fi
 	AC_MSG_RESULT(yes)
   fi
 
@@ -996,6 +1046,12 @@ else
 	AC_MSG_RESULT(no)
   else
 	XSUBDIRS="$XSUBDIRS dga"
+	if test "$enable_shared" = "yes"; then
+	  DISPLAYMODULES="$DISPLAYMODULES helper_x_dga.la"
+	fi
+	if test "$enable_static" = "yes"; then
+	  AC_DEFINE(BUILTIN_HELPER_X_DGA, 1, [Support for builtin helper-x-dga])
+	fi
 	AC_MSG_RESULT(yes)
   fi
 
@@ -1004,18 +1060,54 @@ else
 	AC_MSG_RESULT(no)
   else
 	XSUBDIRS="$XSUBDIRS vidmode"
+	if test "$enable_shared" = "yes"; then
+	  DISPLAYMODULES="$DISPLAYMODULES helper_x_vidmode.la"
+	fi
+	if test "$enable_static" = "yes"; then
+	  AC_DEFINE(BUILTIN_HELPER_X_VIDMODE, 1, [Support for builtin helper-x-vidmode])
+	fi
 	AC_MSG_RESULT(yes)
   fi
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_X,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_target" != "xno")
+AM_CONDITIONAL(BUILTIN_HELPER_X_DBE,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_dbe_target" != "xno")
+AM_CONDITIONAL(BUILTIN_HELPER_X_EVI,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_evi_target" != "xno")
+AM_CONDITIONAL(BUILTIN_HELPER_X_SHM,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_shm_target" != "xno")
+AM_CONDITIONAL(BUILTIN_HELPER_X_DGA,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_xf86dga_target" != "xno")
+AM_CONDITIONAL(BUILTIN_HELPER_X_VIDMODE,
+		test "$enable_static" = "yes" -a \
+			"x$build_x_xf86vmode_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build libkgi   target)
 if test "x$build_libkgi_target" = "xno"; then
-   AC_MSG_RESULT(no)
- else
-   DISPLAYSUBDIRS="$DISPLAYSUBDIRS libkgi"
-   build_libkgi_target="yes"
-   AC_MSG_RESULT(yes)
+  AC_MSG_RESULT(no)
+else
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS libkgi"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES kgilib.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_LIBKGI, 1, [Support for builtin display-libkgi])
+  fi
+  build_libkgi_target="yes"
+  AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_LIBKGI,
+		test "$enable_static" = "yes" -a \
+			"x$build_libkgi_target" != "xno")
+
+
 
 AC_MSG_CHECKING(if we should build kgi/accel      target)
 if test "x$build_kgi_target" = "xno"; then
@@ -1023,13 +1115,33 @@ if test "x$build_kgi_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS kgi"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES kgi.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_KGI, 1, [Support for builtin display-kgi])
+  fi
+
   if test "x$build_accel" != "xno"; then
     DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
+    if test "$enable_shared" = "yes"; then
+      DEFAULTMODULES="$DEFAULTMODULES kgi_mach64.la kgi_radeon.la kgi_Gx00.la"
+    fi
+    if test "$enable_static" = "yes"; then
+      AC_DEFINE(BUILTIN_DEFAULT_KGI_ACCEL, 1, [Support for builtin default-kgi-accel])
+    fi
     build_accel="yes"
   fi
   build_kgi_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_KGI,
+		test "$enable_static" = "yes" -a \
+			"x$build_kgi_target" != "xno")
+AM_CONDITIONAL(BUILTIN_DEFAULT_KGI_ACCEL,
+		test "$enable_static" = "yes" -a \
+			"x$build_accel" != "xno")
+
 
 AC_MSG_CHECKING(if we should build aa       target)
 if test "x$build_aa_target" = "xno"; then
@@ -1037,28 +1149,58 @@ if test "x$build_aa_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS aa"
   TESTSUBDIRS="$TESTSUBDIRS display.aa"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES aa.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_AA, 1, [Support for builtin display-aa])
+  fi
   build_aa_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_AA,
+		test "$enable_static" = "yes" -a \
+			"x$build_aa_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build directx  target)
 if test "x$build_directx_target" != "xno"; then
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS directx"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES directx.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_DIRECTX, 1, [Support for builtin display-directx])
+  fi
   build_directx_target="yes"
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_DIRECTX,
+		test "$enable_static" = "yes" -a \
+			"x$build_directx_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build quartz   target)
 if test "x$build_quartz_target" != "xno"; then
-   DISPLAYSUBDIRS="$DISPLAYSUBDIRS quartz"
-   TESTSUBDIRS="$TESTSUBDIRS display.quartz"
-   build_quartz_target="yes"
-   AC_MSG_RESULT(yes)
+  DISPLAYSUBDIRS="$DISPLAYSUBDIRS quartz"
+  TESTSUBDIRS="$TESTSUBDIRS display.quartz"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES quartz.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_QUARTZ, 1, [Support for builtin display-quartz])
+  fi
+  build_quartz_target="yes"
+  AC_MSG_RESULT(yes)
 else
-   AC_MSG_RESULT(no)
+  AC_MSG_RESULT(no)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_QUARTZ,
+		test "$enable_static" = "yes" -a \
+			"x$build_quartz_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build fbdev    target)
 if test "x$build_fbdev_target" = "xno"; then
@@ -1074,6 +1216,14 @@ else
   if test "x$have_new_fbdev" = "xyes"; then
     DEFAULTSUBDIRS="$DEFAULTSUBDIRS fbdev"
   fi
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES fbdev.la"
+    DEFAULTMODULES="$DEFAULTMODULES fbdev_m2164w.la fbdev_mach64.la fbdev_mga_g400.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_FBDEV, 1, [Support for builtin display-fbdev])
+    AC_DEFINE(BUILTIN_DEFAULT_FBDEV_ACCEL, 1, [Support for builtin fbdev-accel])
+  fi
   build_fbdev_target="yes"
   AC_MSG_RESULT(yes)
 
@@ -1083,38 +1233,84 @@ else
   else
     build_directfb_renderer="yes"
     FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
+    if test "$enable_shared" = "yes"; then
+      DEFAULTMODULES="$DEFAULTMODULES directfb.la directfbglobal.la"
+    fi
+    if test "$enable_static" = "yes"; then
+      AC_DEFINE(BUILTIN_DEFAULT_FBDEV_DIRECTFB, 1, [Support for builtin default-fbdev-directfb])
+    fi
     AC_DEFINE_UNQUOTED([DIRECTFB_DRIVER_DIR],"$directfb_driver_dir",
 		[Where to look for DirectFB modules])
     AC_MSG_RESULT(yes)
   fi
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_FBDEV,
+		test "$enable_static" = "yes" -a \
+			"x$build_fbdev_target" != "xno")
+AM_CONDITIONAL(BUILTIN_DEFAULT_FBDEV_ACCEL,
+		test "$enable_static" = "yes" -a \
+			"x$build_fbdev_target" != "xno")
+AM_CONDITIONAL(BUILTIN_DEFAULT_FBDEV_DIRECTFB,
+		test "$enable_static" = "yes" -a \
+			"x$build_directfb_renderer" != "xno")
+
 
 AC_MSG_CHECKING(if we should build file     target)
 if test "x$build_file_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS file"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES file.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_FILE, 1, [Support for builtin display-file])
+  fi
   build_file_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_FILE,
+		test "$enable_static" = "yes" -a \
+			"x$build_file_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build glide    target)
 if test "x$build_glide_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS glide"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES glide.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_GLIDE, 1, [Support for builtin display-glide])
+  fi
   build_glide_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_GLIDE,
+		test "$enable_static" = "yes" -a \
+			"x$build_glide_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build ipc      target)
 if test "x$build_ipc_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS ipc"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES ipc.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_IPC, 1, [Support for builtin display-ipc])
+  fi
   build_ipc_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_IPC,
+		test "$enable_static" = "yes" -a \
+			"x$build_ipc_target" != "xno")
+
 
 dnl AC_MSG_CHECKING(if we should build suidkgi  target)
 dnl if test "x$build_suidkgi_target" = "xno"; then
@@ -1126,41 +1322,82 @@ dnl   build_suidkgi_target="yes"
 dnl   AC_MSG_RESULT(yes)
 dnl fi
 
+
 AC_MSG_CHECKING(if we should build lcd823   target)
 if test "x$build_lcd823_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS lcd823"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES lcd823.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_LCD823, 1, [Support for builtin display-lcd823])
+  fi
   build_lcd823_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_LCD823,
+		test "$enable_static" = "yes" -a \
+			"x$build_lcd823_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build memory   target)
 if test "x$build_memory_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS memory"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES memory.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_MEMORY, 1, [Support for builtin display-memory])
+  fi
   build_memory_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_MEMORY,
+		test "$enable_static" = "yes" -a \
+			"x$build_memory_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build monotext target)
 if test "x$build_monotext_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS monotext"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES monotext.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_MONOTEXT, 1, [Support for builtin display-monotext])
+  fi
   build_monotext_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_MONOTEXT,
+		test "$enable_static" = "yes" -a \
+			"x$build_monotext_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build multi    target)
 if test "x$build_multi_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS multi"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES multi.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_MULTI, 1, [Support for builtin display-multi])
+  fi
   build_multi_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_MULTI,
+		test "$enable_static" = "yes" -a \
+			"x$build_multi_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build palemu   target)
 if test "x$build_palemu_target" = "xno"; then
@@ -1168,63 +1405,133 @@ if test "x$build_palemu_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS palemu"
   TESTSUBDIRS="$TESTSUBDIRS display.palemu"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES palemu.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_PALEMU, 1, [Support for builtin display-palemu])
+  fi
   build_palemu_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_PALEMU,
+		test "$enable_static" = "yes" -a \
+			"x$build_palemu_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build sub      target)
 if test "x$build_sub_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS sub"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES sub.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_SUB, 1, [Support for builtin display-sub])
+  fi
   build_sub_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_SUB,
+		test "$enable_static" = "yes" -a \
+			"x$build_sub_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build vgl      target)
 if test "x$build_vgl_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS vgl"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES vgl.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_VGL, 1, [Support for builtin display-vgl])
+  fi
   build_vgl_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_VGL,
+		test "$enable_static" = "yes" -a \
+			"x$build_vgl_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build svga     target)
 if test "x$build_svga_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS svgalib"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES svgalib.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_SVGALIB, 1, [Support for builtin display-svgalib])
+  fi
   build_svga_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_SVGALIB,
+		test "$enable_static" = "yes" -a \
+			"x$build_svga_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build vgagl    helper (used by svga target))
 if test "x$build_vgagl_helper" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS vgagl"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES vgagl.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_HELPER_VGAGL, 1, [Support for builtin helper-vgagl])
+  fi
   build_vgagl_helper="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_HELPER_VGAGL,
+		test "$enable_static" = "yes" -a \
+			"x$build_vgagl_helper" != "xno")
+
 
 AC_MSG_CHECKING(if we should build tele     target)
 if test "x$build_tele_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS tele"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES tele.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_TELE, 1, [Support for builtin display-tele])
+  fi
   build_tele_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_TELE,
+		test "$enable_static" = "yes" -a \
+			"x$build_tele_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build terminfo target)
 if test "x$build_terminfo_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS terminfo"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES terminfo.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_TERMINFO, 1, [Support for builtin display-terminfo])
+  fi
   build_terminfo_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_TERMINFO,
+		test "$enable_static" = "yes" -a \
+			"x$build_terminfo_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build tile     target)
 if test "x$build_tile_target" = "xno"; then
@@ -1232,9 +1539,19 @@ if test "x$build_tile_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS tile"
   TESTSUBDIRS="$TESTSUBDIRS display.tile"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES tile.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_TILE, 1, [Support for builtin display-tile])
+  fi
   build_tile_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_TILE,
+		test "$enable_static" = "yes" -a \
+			"x$build_tile_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build trueemu  target)
 if test "x$build_trueemu_target" = "xno"; then
@@ -1242,27 +1559,57 @@ if test "x$build_trueemu_target" = "xno"; then
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS trueemu"
   TESTSUBDIRS="$TESTSUBDIRS display.trueemu"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES trueemu.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_TRUEEMU, 1, [Support for builtin display-trueemu])
+  fi
   build_trueemu_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_TRUEEMU,
+		test "$enable_static" = "yes" -a \
+			"x$build_trueemu_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build vcsa     target)
 if test "x$build_vcsa_target" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS vcsa"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES vcsa.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_DISPLAY_VCSA, 1, [Support for builtin display-vcsa])
+  fi
   build_vcsa_target="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_DISPLAY_VCSA,
+		test "$enable_static" = "yes" -a \
+			"x$build_vcsa_target" != "xno")
+
 
 AC_MSG_CHECKING(if we should build linvtsw  helper)
 if test "x$build_linvtsw_helper" = "xno"; then
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS linvtsw"
+  if test "$enable_shared" = "yes"; then
+    DISPLAYMODULES="$DISPLAYMODULES linvtsw.la"
+  fi
+  if test "$enable_static" = "yes"; then
+    AC_DEFINE(BUILTIN_HELPER_LINVTSW, 1, [Support for builtin helper-linvtsw])
+  fi
   build_linvtsw_helper="yes"
   AC_MSG_RESULT(yes)
 fi
+AM_CONDITIONAL(BUILTIN_HELPER_LINVTSW,
+		test "$enable_static" = "yes" -a \
+			"x$build_linvtsw_helper" != "xno")
+
 
 
 dnl ========================================================================
@@ -1345,6 +1692,8 @@ AC_SUBST(DISPLAYSUBDIRS)
 AC_SUBST(DEFAULTSUBDIRS)
 AC_SUBST(XSUBDIRS)
 AC_SUBST(FBDEVSUBDIRS)
+AC_SUBST(DISPLAYMODULES)
+AC_SUBST(DEFAULTMODULES)
 
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
@@ -1488,6 +1837,8 @@ default/fbdev/mga/2164w/Makefile
 default/fbdev/mga/g400/Makefile
 default/fbdev/ati/Makefile
 default/fbdev/ati/mach64/Makefile
+display-shared/Makefile
+default-shared/Makefile
 extensions/Makefile
 extensions/test/Makefile
 programs/Makefile

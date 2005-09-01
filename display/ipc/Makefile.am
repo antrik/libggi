@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.ipc"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-ipc_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg $(bsdsock_libs)
-ipc_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libipc_la_LIBADD = $(bsdsock_libs)
 
-sublib_LTLIBRARIES = ipc.la
+noinst_LTLIBRARIES = libipc.la
 
-ipc_la_SOURCES = mode.c visual.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libipc_la_SOURCES = mode.c visual.c
 
 EXTRA_DIST = EXPSYMS
 

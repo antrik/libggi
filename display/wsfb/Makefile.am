@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.wsfb"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-wsfb_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
-wsfb_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libwsfb_la_LIBADD =
 
-sublib_LTLIBRARIES = wsfb.la
+noinst_LTLIBRARIES = libwsfb.la
 
-wsfb_la_SOURCES = mode.c visual.c #draw.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libwsfb_la_SOURCES = mode.c visual.c #draw.c
 
 EXTRA_DIST = EXPSYMS
 

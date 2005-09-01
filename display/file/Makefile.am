@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.file"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-file_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
-file_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libfile_la_LIBADD =
 
-sublib_LTLIBRARIES = file.la
+noinst_LTLIBRARIES = libfile.la
 
-file_la_SOURCES = fileio.c mode.c ppm.c visual.c
-
-sublibdir = $(libdir)/ggi/display
+libfile_la_SOURCES = fileio.c mode.c ppm.c visual.c
 
 EXTRA_DIST = EXPSYMS
 

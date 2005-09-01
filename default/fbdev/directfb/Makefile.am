@@ -2,22 +2,16 @@ AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
 SUBDIRS = core
 
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-directfb_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
-directfb_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libdirectfb_la_LIBADD =
 
-directfbglobal_la_LIBADD = 
-directfbglobal_la_LDFLAGS = -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS.global
+libdirectfbglobal_la_LIBADD = 
 
-sublib_LTLIBRARIES = directfb.la directfbglobal.la
+noinst_LTLIBRARIES = libdirectfb.la libdirectfbglobal.la
 
-directfb_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
+libdirectfb_la_SOURCES = box.c copybox.c crossblit.c gtext.c hline.c line.c \
 	visual.c vline.c
 
-directfbglobal_la_SOURCES = directfbglobal.c
-
-sublibdir = $(libdir)/ggi/default/fbdev/directfb
+libdirectfbglobal_la_SOURCES = directfbglobal.c
 
 EXTRA_DIST = EXPSYMS EXPSYMS.global ggidirectfb.h
 

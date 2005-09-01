@@ -1,15 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.directx"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-directx_la_LIBADD = $(top_builddir)/ggi/libggi.la \
-	-lddraw -lgdi32 -luser32
-directx_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
-	-avoid-version -export-symbols $(srcdir)/EXPSYMS
+libdirectx_la_LIBADD = -lddraw -lgdi32 -luser32
 
-sublib_LTLIBRARIES = directx.la
+noinst_LTLIBRARIES = libdirectx.la
 
-directx_la_SOURCES = ddinit.c mode.c visual.c dxguid.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libdirectx_la_SOURCES = ddinit.c mode.c visual.c dxguid.c
 
 EXTRA_DIST = EXPSYMS cursor.inc ddinit.h
 

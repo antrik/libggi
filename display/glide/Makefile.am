@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.glide"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-glide_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg -lglide2x -lm
-glide_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libglide_la_LIBADD = -lglide2x -lm
 
-sublib_LTLIBRARIES = glide.la
+noinst_LTLIBRARIES = libglide.la
 
-glide_la_SOURCES = box.c fb.c gtext.c line.c mode.c pixel.c visual.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libglide_la_SOURCES = box.c fb.c gtext.c line.c mode.c pixel.c visual.c
 
 EXTRA_DIST = EXPSYMS
 

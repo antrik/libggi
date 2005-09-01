@@ -1,15 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.kgi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-kgi_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
-kgi_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libkgi_la_LIBADD =
 
+noinst_LTLIBRARIES = libkgi.la
 
-sublib_LTLIBRARIES = kgi.la
-
-kgi_la_SOURCES = mode.c visual.c kgi.c color.c accel.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libkgi_la_SOURCES = mode.c visual.c kgi.c color.c accel.c
 
 kgiconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 kgiconf_DATA = kgi.conf

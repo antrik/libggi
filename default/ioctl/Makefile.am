@@ -1,13 +1,9 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-ioctl_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg
-ioctl_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
-		-avoid-version -export-symbols $(srcdir)/EXPSYMS
+libioctl_la_LIBADD =
 
-sublib_LTLIBRARIES = ioctl.la
+noinst_LTLIBRARIES = libioctl.la
 
-ioctl_la_SOURCES = box.c copybox.c line.c visual.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/default
+libioctl_la_SOURCES = box.c copybox.c line.c visual.c
 
 EXTRA_DIST = EXPSYMS ioctllib.h

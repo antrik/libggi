@@ -2,6 +2,6 @@
 # config-name			library_name
 # ------------			--------------------------
 
-kgi-mach64			default/kgi/mach64.@DLLEXT@
-kgi-radeon			default/kgi/radeon.@DLLEXT@
-kgi-Gx00			default/kgi/Gx00.@DLLEXT@
+kgi-mach64			default/kgi/kgi_mach64.@DLLEXT@
+kgi-radeon			default/kgi/kgi_radeon.@DLLEXT@
+kgi-Gx00			default/kgi/kgi_Gx00.@DLLEXT@

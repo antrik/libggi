@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-color_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgg -lm
-color_la_LDFLAGS = $(extra_libraries) -module -no-undefined \
-		-avoid-version -export-symbols $(srcdir)/EXPSYMS
+libcolor_la_LIBADD = -lm
 
-sublib_LTLIBRARIES = color.la
+noinst_LTLIBRARIES = libcolor.la
 
-color_la_SOURCES = color.c pack.c gamma.c visual.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/default
+libcolor_la_SOURCES = color.c pack.c gamma.c visual.c
 
 EXTRA_DIST = EXPSYMS color.h
 

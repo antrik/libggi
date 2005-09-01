@@ -1,14 +1,10 @@
 AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.memory"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
-memory_la_LIBADD = $(top_builddir)/ggi/libggi.la -lgii -lgg
-memory_la_LDFLAGS = $(extra_libraries) -module -no-undefined -avoid-version \
-	-export-symbols $(srcdir)/EXPSYMS
+libmemory_la_LIBADD =
 
-sublib_LTLIBRARIES = memory.la
+noinst_LTLIBRARIES = libmemory.la
 
-memory_la_SOURCES = mode.c visual.c
-
-sublibdir = $(libdir)/$(ggi_subdir)/display
+libmemory_la_SOURCES = mode.c visual.c
 
 EXTRA_DIST = EXPSYMS
 
