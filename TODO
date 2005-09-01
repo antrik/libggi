@@ -34,8 +34,10 @@ Due : ????-??-??
 - make use of libgii's enhanced dl system:
   allow single library to serve multiple suggest strings
   (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
-- make use of libgii's enhanced config file system:
+* make use of libgii's enhanced config file system:
   aliases, in-file option strings, wildcards (also see above URL)
+  (Eric Faurot)
+* building modules as built-in (Christoph Egger)
 
 
 [Target specific issues]
@@ -109,12 +111,14 @@ New X Target:
   each frame its own window. Set the frame being displayed to the
   frontbuffer, the write frame to the backbuffer.
   If display frame == write frame, render onto dbe's expose buffer.
-- dga helper for new display-X: allow -inwin=root visuals to use dga,
+* dga helper for new display-X: allow -inwin=root visuals to use dga,
   and overload the normal operations with dga acceleration.  This can
   only be done after vidmode support.
-- vidmode helper for new display-X: set the X server resolution, either
+  (Orzo)
+* vidmode helper for new display-X: set the X server resolution, either
   for -inwin=root, or cleverly positioning a non-root window so the 
   borders are of the side of the screen.
+  (Vincent Cruz)
 - Investigate emulating lower fixed-palette bitdepths and find out how to
   get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
   Basically since X provides various "visuals" some of which are lower
@@ -173,9 +177,9 @@ Long-term plan
 ------------------------------------------
 
 - improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
-- move display autodetection routines into a display-auto sublib, and
+* move display autodetection routines into a display-auto sublib, and
   create display-auto-linux, display-auto-bsd, etc, mapping them to
-  display-auto in libggi.conf.
+  display-auto in libggi.conf. (Christoph Egger)
 
 ------------------------------------------
 Things that will induce API additions
