@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.167 2005/08/31 21:56:08 cegger Exp $
+dnl $Id: configure.in,v 1.168 2005/09/01 07:50:33 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -322,6 +322,10 @@ dnl Disable targets requiring non-existing headers
 if test "x$ac_cv_header_sys_shm_h" != "xyes"; then
 	build_x_shm_target="no"
 	build_ipc_target="no"
+fi
+
+if test "x$ac_cv_header_ddraw_h" != "xyes"; then
+	build_directx_target="no"
 fi
 
 dnl ========================================================================
@@ -1038,8 +1042,7 @@ else
 fi
 
 AC_MSG_CHECKING(if we should build directx  target)
-if test "x$build_directx_target" != "xno" -a \
-	"x$ac_cv_header_ddraw_h" = "xyes"; then
+if test "x$build_directx_target" != "xno"; then
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS directx"
   build_directx_target="yes"
   AC_MSG_RESULT(yes)
