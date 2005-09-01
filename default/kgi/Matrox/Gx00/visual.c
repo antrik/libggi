@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2005/07/30 11:39:59 cegger Exp $
+/* $Id: visual.c,v 1.9 2005/09/01 22:36:09 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -158,9 +158,9 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 EXPORTFUNC
-int GGIdl_Gx00(int func, void **funcptr);
+int GGIdl_kgi_Gx00(int func, void **funcptr);
 
-int GGIdl_Gx00(int func, void **funcptr)
+int GGIdl_kgi_Gx00(int func, void **funcptr)
 {
 	switch (func) {
 	case GGIFUNC_open:
