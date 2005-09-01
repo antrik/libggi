@@ -118,36 +118,35 @@ generic-ioctl 			default/ioctl.@DLLEXT@
 .include @ggi_sysconfdir@/libggibuf.conf
 
 
+#
 # Builtins
+#
+generic-color		/@libggi:GGIdl_color
 
-display-color		/@libggi:GGIdl_color
-display-mach64		/@libggi:GGIdl_mach64
-display-directfb	/@libggi:GGIdl_directfb
-display-directfb	/@libggi:GGIdl_directfb
-display-m2164w		/@libggi:GGIdl_m2164w
-display-mga-g400	/@libggi:GGIdl_mga_g400
-display-ilbm		/@libggi:GGIdl_ilbm
-display-ioctl		/@libggi:GGIdl_ioctl
-display-iplanar-2p	/@libggi:GGIdl_iplanar_2p
-display-mach64		/@libggi:GGIdl_mach64
-display-radeon		/@libggi:GGIdl_radeon
-display-Gx00		/@libggi:GGIdl_Gx00
-display-linear-1	/@libggi:GGIdl_linear_1
-display-linear-16	/@libggi:GGIdl_linear_16
-display-linear-1-r	/@libggi:GGIdl_linear_1_r
-display-linear-2	/@libggi:GGIdl_linear_2
-display-linear-24	/@libggi:GGIdl_linear_24
-display-linear-32	/@libggi:GGIdl_linear_32
-display-linear-4	/@libggi:GGIdl_linear_4
-display-linear-4-r	/@libggi:GGIdl_linear_4_r
-display-linear-8	/@libggi:GGIdl_linear_8
-display-linmm-banked	/@libggi:GGIdl_linmm_banked
-display-planar		/@libggi:GGIdl_planar
-display-pseudo-stubs	/@libggi:GGIdl_pseudo_stubs
-display-ramdac		/@libggi:GGIdl_ramdac
-display-stubs		/@libggi:GGIdl_stubs
-display-text-16		/@libggi:GGIdl_text_16
-display-text-32		/@libggi:GGIdl_text_32
+generic-planar		/@libggi:GGIdl_planar
+generic-ilbm		/@libggi:GGIdl_ilbm
+generic-iplanar-2p	/@libggi:GGIdl_iplanar_2p
+
+generic-pseudo-stubs	/@libggi:GGIdl_pseudo_stubs
+generic-stubs		/@libggi:GGIdl_stubs
+
+generic-linear-1	/@libggi:GGIdl_linear_1
+generic-linear-1-r	/@libggi:GGIdl_linear_1_r
+generic-linear-2	/@libggi:GGIdl_linear_2
+generic-linear-4	/@libggi:GGIdl_linear_4
+generic-linear-4-r	/@libggi:GGIdl_linear_4_r
+generic-linear-8	/@libggi:GGIdl_linear_8
+generic-linear-16	/@libggi:GGIdl_linear_16
+generic-linear-24	/@libggi:GGIdl_linear_24
+generic-linear-32	/@libggi:GGIdl_linear_32
+generic-linmm-banked	/@libggi:GGIdl_linmm_banked
+
+generic-text-16		/@libggi:GGIdl_text_16
+generic-text-32		/@libggi:GGIdl_text_32
+
+generic-ramdac		/@libggi:GGIdl_ramdac
+generic-ioctl		/@libggi:GGIdl_ioctl
+
 display-aa		/@libggi:GGIdl_aa
 display-auto		/@libggi:GGIdl_auto
 display-directx		/@libggi:GGIdl_directx
@@ -158,8 +157,6 @@ display-ipc		/@libggi:GGIdl_ipc
 display-kgi		/@libggi:GGIdl_kgi
 display-lcd823		/@libggi:GGIdl_lcd823
 display-libkgi		/@libggi:GGIdl_libkgi
-display-linvtsw		/@libggi:GGIdl_linvtsw
-display-mansync		/@libggi:GGIdl_mansync
 display-memory		/@libggi:GGIdl_memory
 display-monotext	/@libggi:GGIdl_monotext
 display-multi		/@libggi:GGIdl_multi
@@ -173,12 +170,15 @@ display-terminfo	/@libggi:GGIdl_terminfo
 display-tile		/@libggi:GGIdl_tile
 display-trueemu		/@libggi:GGIdl_trueemu
 display-vcsa		/@libggi:GGIdl_vcsa
-display-vgagl		/@libggi:GGIdl_vgagl
+helper-vgagl		/@libggi:GGIdl_vgagl
 display-vgl		/@libggi:GGIdl_vgl
 display-wsfb		/@libggi:GGIdl_wsfb
-display-X		/@libggi:GGIdl_X
-HELPER-X-DBE		/@libggi:GGIdl_helper_x_dbe
-HELPER-X-DGA		/@libggi:GGIdl_helper_x_dga
-HELPER-X-EVI		/@libggi:GGIdl_helper_x_evi
-HELPER-X-SHM		/@libggi:GGIdl_helper_x_shm
-HELPER-X-VIDMODE	/@libggi:GGIdl_helper_x_vidmode
+display-x		/@libggi:GGIdl_X
+helper-x-dbe		/@libggi:GGIdl_helper_x_dbe
+helper-x-dga		/@libggi:GGIdl_helper_x_dga
+helper-x-evi		/@libggi:GGIdl_helper_x_evi
+helper-x-shm		/@libggi:GGIdl_helper_x_shm
+helper-x-vidmode	/@libggi:GGIdl_helper_x_vidmode
+helper-linux-vtswitch	/@libggi:GGIdl_linvtsw
+helper-mansync		/@libggi:GGIdl_mansync
+
