@@ -38,11 +38,11 @@ fbdev_directfbglobal_la_LDFLAGS = -rpath $(defaultlibdir)/fbdev/directfbglobal {
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/directfbglobal/EXPSYMS
 
-fbdev_m2164w_la_LIBADD = $(top_builddir)/default/fbdev/mga/m2164w/libm2164w.la ${libggi}
+fbdev_m2164w_la_LIBADD = $(top_builddir)/default/fbdev/mga/2164w/libm2164w.la ${libggi}
 fbdev_m2164w_la_SOURCES =
 fbdev_m2164w_la_LDFLAGS = -rpath $(defaultlibdir)/fbdev/mga {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
-	-export-symbols ${top_srcdir}/default/fbdev/mga/m2164w/EXPSYMS
+	-export-symbols ${top_srcdir}/default/fbdev/mga/2164w/EXPSYMS
 
 fbdev_mga_g400_la_LIBADD = $(top_builddir)/default/fbdev/mga/g400/libmga_g400.la ${libggi}
 fbdev_mga_g400_la_SOURCES =
