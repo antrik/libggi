@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.170 2005/09/02 08:16:05 cegger Exp $
+dnl $Id: configure.in,v 1.171 2005/09/02 14:29:57 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -624,7 +624,7 @@ else
     DISPLAYMODULES="$DISPLAYMODULES mansync.la"
   fi
   if test "$enable_static" = "yes"; then
-    AC_DEFINE(BULITIN_HELPER_MANSYNC, 1, [Support for builtin helper-mansync])
+    AC_DEFINE(BUILTIN_HELPER_MANSYNC, 1, [Support for builtin helper-mansync])
   fi
   build_mansync_helper="yes"
   AC_MSG_RESULT(yes)
