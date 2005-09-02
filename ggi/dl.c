@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.17 2005/07/30 10:57:30 cegger Exp $
+/* $Id: dl.c,v 1.18 2005/09/02 12:46:57 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -45,7 +45,8 @@
 /* Open the dynamic libary requested
  */
 static int _ggiLoadDL(const char *filename, const char *symprefix,
-				int type, ggi_dlhandle **dlh)
+		      int type, ggi_dlhandle **dlh,
+		      const char *realsym)
 {
 	ggi_dlhandle hand;
 	char symname[GGI_SYMNAME_MAX+1], *extptr;
@@ -67,18 +68,24 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 		return GGI_ENOFILE;
 	}
 
+	/* HACK if a realsym is given, use that immediatly */
+	if(realsym) {
+		strlcpy(symname, realsym, GGI_SYMNAME_MAX);
+		goto getsymbol;
+	}
 	nameptr = (const char *)strrchr(filename, '/');
 	if (!nameptr) {
 		nameptr = filename;
 	} else {
 		nameptr++;
 	}
+	
 	snprintf(symname, GGI_SYMNAME_MAX+1, "%s%s", symprefix, nameptr);
 	extptr = strrchr(symname, '.');
 	if (extptr) {
 		*extptr = '\0';
 	}
-
+getsymbol:
 	hand.entry = (ggifunc_dlentry*)ggGetSymbolAddress(hand.handle, symname);
 	DPRINT_LIBS("&(%s) = %p\n", symname, hand.entry);
 	if (hand.entry == NULL) {
@@ -112,22 +119,30 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 		int type, ggi_dlhandle **dlh, uint32_t *dlret)
 {
 	int err;
-	const char *filename;
+	struct gg_location_iter match;
 
 	DPRINT_LIBS("_ggiProbeDL(%p, \"%s\", \"%s\", %p, 0x%x) called\n",
 			vis, name, args ? args : "(null)", argptr, type);
-
-	filename = ggMatchConfig(_ggiConfigHandle, name, NULL);
-	if (filename == NULL) {
-		DPRINT_LIBS("LibGGI: no config entry for sublib: %s\n",
-				name);
-		return GGI_ENOMATCH;
+	
+	match.name = name;
+	match.config = _ggiConfigHandle;
+	ggConfigIterLocation(&match);
+	err =  GGI_ENOMATCH;
+	GG_ITER_FOREACH(&match) {
+		if(( err = _ggiLoadDL(match.location,
+				      GGI_SYMNAME_PREFIX, type, dlh,
+				      match.symbol)) == GGI_OK) {
+			break;
+		}
 	}
-
-	err = _ggiLoadDL(filename, GGI_SYMNAME_PREFIX, type, dlh);
-	DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, *dlh);
-	if (err) return err;
-
+	GG_ITER_DONE(&match);
+	
+	if(err) {
+		DPRINT_LIBS("LibGGI: could not prob lib for sublib: %s\n",
+			    name);
+		return err;
+	}
+	
 	dlh[0]->type = type;
 	dlh[0]->visual = vis;
 
@@ -157,7 +172,7 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
 	uint32_t dlret = 0;
 	int err;
 
-	err = _ggiLoadDL(filename, symprefix, GGI_DLTYPE_EXTENSION, &dlh);
+	err = _ggiLoadDL(filename, symprefix, GGI_DLTYPE_EXTENSION, &dlh, NULL);
 	DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
 	if (err) return NULL;
 	
