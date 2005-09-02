@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.18 2005/09/02 12:46:57 soyt Exp $
+/* $Id: dl.c,v 1.19 2005/09/02 13:45:46 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -70,7 +70,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 
 	/* HACK if a realsym is given, use that immediatly */
 	if(realsym) {
-		strlcpy(symname, realsym, GGI_SYMNAME_MAX);
+		ggstrlcpy(symname, realsym, GGI_SYMNAME_MAX);
 		goto getsymbol;
 	}
 	nameptr = (const char *)strrchr(filename, '/');
@@ -149,7 +149,7 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 	err = dlh[0]->open(vis, *dlh, args, argptr, dlret);
 	DPRINT_LIBS("%d = dlh[0]->open(%p, %p, \"%s\", %p, %d) - %s\n",
 		       err, vis, *dlh, args ? args : "(null)", argptr, *dlret,
-		       filename);
+		       name);
 	if (err) {
 		ggFreeModule(dlh[0]->handle);
 		free(*dlh);
