@@ -11,6 +11,11 @@ EXTRA_LTLIBRARIES = color.la fbdev_directfb.la fbdev_directfbglobal.la \
 
 defaultlib_LTLIBRARIES = @DEFAULTMODULES@
 
+defaultlib_fbdev_LTLIBRARIES = @DEFAULTFBDEVMODULES@
+defaultlib_kgi_LTLIBRARIES = @DEFAULTKGIMODULES@
+defaultlib_fbdevdir = ${defaultlibdir}/fbdev
+defaultlib_kgidir = ${defaultlibdir}/kgi
+
 libggi = ${top_builddir}/ggi/libggi.la
 
 
@@ -22,31 +27,31 @@ color_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
 
 fbdev_mach64_la_LIBADD = $(defaultdir)/fbdev/ati/mach64/libmach64.la ${libggi}
 fbdev_mach64_la_SOURCES =
-fbdev_mach64_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+fbdev_mach64_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/ati/mach64/EXPSYMS
 
 fbdev_directfb_la_LIBADD = $(defaultdir)/fbdev/directfb/libdirectfb.la ${libggi}
 fbdev_directfb_la_SOURCES =
-fbdev_directfb_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+fbdev_directfb_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/directfb/EXPSYMS
 
 fbdev_directfbglobal_la_LIBADD = $(defaultdir)/fbdev/directfbglobal/libdirectfbglobal.la ${libggi}
 fbdev_directfbglobal_la_SOURCES =
-fbdev_directfbglobal_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+fbdev_directfbglobal_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/directfbglobal/EXPSYMS
 
 fbdev_m2164w_la_LIBADD = $(defaultdir)/fbdev/mga/2164w/libm2164w.la ${libggi}
 fbdev_m2164w_la_SOURCES =
-fbdev_m2164w_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+fbdev_m2164w_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/mga/2164w/EXPSYMS
 
 fbdev_mga_g400_la_LIBADD = $(defaultdir)/fbdev/mga/g400/libmga_g400.la ${libggi}
 fbdev_mga_g400_la_SOURCES =
-fbdev_mga_g400_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+fbdev_mga_g400_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/fbdev/mga/g400/EXPSYMS
 
@@ -70,19 +75,19 @@ iplanar_2p_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
 
 kgi_mach64_la_LIBADD = $(defaultdir)/kgi/ATI/Mach64/libmach64.la ${libggi}
 kgi_mach64_la_SOURCES =
-kgi_mach64_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+kgi_mach64_la_LDFLAGS = -rpath ${defaultlib_kgidir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/kgi/ATI/Mach64/EXPSYMS
 
 kgi_radeon_la_LIBADD = $(defaultdir)/kgi/ATI/Radeon/libradeon.la ${libggi}
 kgi_radeon_la_SOURCES =
-kgi_radeon_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+kgi_radeon_la_LDFLAGS = -rpath ${defaultlib_kgidir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/kgi/ATI/Radeon/EXPSYMS
 
 kgi_Gx00_la_LIBADD = $(defaultdir)/kgi/Matrox/Gx00/libGx00.la ${libggi}
 kgi_Gx00_la_SOURCES =
-kgi_Gx00_la_LDFLAGS = -rpath ${defaultlibdir} {extra_libraries} \
+kgi_Gx00_la_LDFLAGS = -rpath ${defaultlib_kgidir} {extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/kgi/Matrox/Gx00/EXPSYMS
 

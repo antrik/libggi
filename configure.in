@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.169 2005/09/01 11:23:44 cegger Exp $
+dnl $Id: configure.in,v 1.170 2005/09/02 08:16:05 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -582,6 +582,8 @@ XSUBDIRS=""
 FBDEVSUBDIRS=""
 DISPLAYMODULES=""
 DEFAULTMODULES=""
+DEFAULTFBDEVMODULES=""
+DEFAULTKGIMODULES=""
 
 if test "$enable_shared" = "yes"; then
   DISPLAYMODULES="auto.la"
@@ -1125,7 +1127,7 @@ else
   if test "x$build_accel" != "xno"; then
     DEFAULTSUBDIRS="$DEFAULTSUBDIRS kgi"
     if test "$enable_shared" = "yes"; then
-      DEFAULTMODULES="$DEFAULTMODULES kgi_mach64.la kgi_radeon.la kgi_Gx00.la"
+      DEFAULTKGIMODULES="$DEFAULTKGIMODULES kgi_mach64.la kgi_radeon.la kgi_Gx00.la"
     fi
     if test "$enable_static" = "yes"; then
       AC_DEFINE(BUILTIN_DEFAULT_KGI_ACCEL, 1, [Support for builtin default-kgi-accel])
@@ -1218,7 +1220,7 @@ else
   fi
   if test "$enable_shared" = "yes"; then
     DISPLAYMODULES="$DISPLAYMODULES fbdev.la"
-    DEFAULTMODULES="$DEFAULTMODULES fbdev_m2164w.la fbdev_mach64.la fbdev_mga_g400.la"
+    DEFAULTFBDEVMODULES="$DEFAULTFBDEVMODULES fbdev_m2164w.la fbdev_mach64.la fbdev_mga_g400.la"
   fi
   if test "$enable_static" = "yes"; then
     AC_DEFINE(BUILTIN_DISPLAY_FBDEV, 1, [Support for builtin display-fbdev])
@@ -1234,7 +1236,7 @@ else
     build_directfb_renderer="yes"
     FBDEVSUBDIRS="$FBDEVSUBDIRS directfb"
     if test "$enable_shared" = "yes"; then
-      DEFAULTMODULES="$DEFAULTMODULES directfb.la directfbglobal.la"
+      DEFAULTFBDEVMODULES="$DEFAULTFBDEVMODULES directfb.la directfbglobal.la"
     fi
     if test "$enable_static" = "yes"; then
       AC_DEFINE(BUILTIN_DEFAULT_FBDEV_DIRECTFB, 1, [Support for builtin default-fbdev-directfb])
@@ -1694,6 +1696,8 @@ AC_SUBST(XSUBDIRS)
 AC_SUBST(FBDEVSUBDIRS)
 AC_SUBST(DISPLAYMODULES)
 AC_SUBST(DEFAULTMODULES)
+AC_SUBST(DEFAULTFBDEVMODULES)
+AC_SUBST(DEFAULTKGIMODULES)
 
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
