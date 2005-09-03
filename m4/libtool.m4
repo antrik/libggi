@@ -56,6 +56,8 @@ m4_defun([LT_PREREQ],
 AC_DEFUN([LT_INIT],
 [AC_PREREQ([2.58])dnl We use AC_INCLUDES_DEFAULT
 AC_BEFORE([$0], [LT_LANG])dnl
+AC_BEFORE([$0], [LT_OUTPUT])dnl
+
 dnl Autoconf doesn't catch unexpanded LT_ macros by default:
 m4_pattern_forbid([^_?LT_[A-Z_]+$])dnl
 m4_pattern_allow([^(_LT_EOF|LT_DLGLOBAL|LT_DLLAZY_OR_NOW)$])dnl
@@ -65,6 +67,7 @@ AC_REQUIRE([LTOPTIONS_VERSION])dnl
 AC_REQUIRE([LTSUGAR_VERSION])dnl
 AC_REQUIRE([LTVERSION_VERSION])dnl
 m4_require([_LT_PROG_LTMAIN])dnl
+m4_require([_LT_SET_OPTIONS], [_LT_SET_OPTIONS([$1])])dnl
 
 # This can be used to rebuild libtool when needed
 LIBTOOL_DEPS="$ltmain"
@@ -72,9 +75,6 @@ LIBTOOL_DEPS="$ltmain"
 # Always use our own libtool.
 LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 AC_SUBST(LIBTOOL)dnl
-
-# Set options
-_LT_SET_OPTIONS([$1])dnl
 
 _LT_SETUP
 
@@ -536,11 +536,7 @@ _LT_OUTPUT_LIBTOOL_INIT
 # AC_OUTPUT is called), incase it is used in configure for compilation
 # tests.
 AC_DEFUN([LT_OUTPUT],
-[dnl This macro can only work once all the language testing is completed
-AC_BEFORE([LT_INIT], [LT_OUTPUT])
-AC_BEFORE([LT_LANG], [LT_OUTPUT])
-
-: ${CONFIG_LT=./config.lt}
+[: ${CONFIG_LT=./config.lt}
 AC_MSG_NOTICE([creating $CONFIG_LT])
 cat >"$CONFIG_LT" <<_LTEOF
 #! $SHELL
@@ -750,7 +746,8 @@ m4_define([_LT_TAGS], [])
 # -------------
 # Enable libtool support for the given language if not already enabled.
 AC_DEFUN([LT_LANG],
-[m4_case([$1],
+[AC_BEFORE([$0], [LT_OUTPUT])dnl
+m4_case([$1],
   [C],			[_LT_LANG(C)],
   [C++],		[_LT_LANG(CXX)],
   [Java],		[_LT_LANG(GCJ)],
@@ -1202,10 +1199,10 @@ old_postuninstall_cmds=
 if test -n "$RANLIB"; then
   case $host_os in
   openbsd*)
-    old_postinstall_cmds="\$RANLIB -t \$oldlib~$old_postinstall_cmds"
+    old_postinstall_cmds="$old_postinstall_cmds~\$RANLIB -t \$oldlib"
     ;;
   *)
-    old_postinstall_cmds="\$RANLIB \$oldlib~$old_postinstall_cmds"
+    old_postinstall_cmds="$old_postinstall_cmds~\$RANLIB \$oldlib"
     ;;
   esac
   old_archive_cmds="$old_archive_cmds~\$RANLIB \$oldlib"
@@ -4888,6 +4885,8 @@ fi
 popdef([AC_MSG_ERROR])
 ])# _LT_PROG_CXX
 
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([_LT_PROG_CXX], [])
 
 # _LT_LANG_CXX_CONFIG([TAG])
 # --------------------------
@@ -6055,6 +6054,8 @@ fi
 popdef([AC_MSG_ERROR])
 ])# _LT_PROG_F77
 
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([_LT_PROG_F77], [])
 
 # _LT_LANG_F77_CONFIG([TAG])
 # --------------------------
@@ -6188,6 +6189,8 @@ fi
 popdef([AC_MSG_ERROR])
 ])# _LT_PROG_FC
 
+dnl aclocal-1.4 backwards compatibility:
+dnl AC_DEFUN([_LT_PROG_FC], [])
 
 # _LT_LANG_FC_CONFIG([TAG])
 # --------------------------
