@@ -1,4 +1,4 @@
-/* $Id: dowarp.c,v 1.5 2005/07/30 11:58:39 cegger Exp $
+/* $Id: dowarp.c,v 1.6 2005/09/05 01:32:10 pekberg Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -125,7 +125,7 @@ void disposeWarp(struct warp *w)
 	}
 }
 
-void doWarp8bpp(struct warp *w, int xw, int yw, int cw)
+void doWarp8bpp(struct warp *w, int32_t xw, int32_t yw, int32_t cw)
 {
 	int32_t c, i, x, y, dx, dy, maxx, maxy;
 	int32_t width, height, *ctable, *ctptr, *distptr;
@@ -187,7 +187,7 @@ void doWarp8bpp(struct warp *w, int xw, int yw, int cw)
 	goto yclipok;
 }
 
-void doWarp16bpp(struct warp *w, int xw, int yw, int cw)
+void doWarp16bpp(struct warp *w, int32_t xw, int32_t yw, int32_t cw)
 {
 	int32_t c, i, x, y, dx, dy, maxx, maxy;
 	int32_t width, height, *ctable, *ctptr, *distptr;
@@ -249,7 +249,7 @@ void doWarp16bpp(struct warp *w, int xw, int yw, int cw)
 	goto yclipok;
 }
 
-void doWarp24bpp(struct warp *w, int xw, int yw, int cw)
+void doWarp24bpp(struct warp *w, int32_t xw, int32_t yw, int32_t cw)
 {
 	int32_t c, i, x, y, dx, dy, maxx, maxy;
 	int32_t width, height, *ctable, *ctptr, *distptr;
@@ -315,7 +315,7 @@ void doWarp24bpp(struct warp *w, int xw, int yw, int cw)
 	goto yclipok;
 }
 
-void doWarp32bpp(struct warp *w, int xw, int yw, int cw)
+void doWarp32bpp(struct warp *w, int32_t xw, int32_t yw, int32_t cw)
 {
 	int32_t c, i, x, y, dx, dy, maxx, maxy;
 	int32_t width, height, *ctable, *ctptr, *distptr;
