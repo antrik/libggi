@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.49 2005/07/20 14:31:19 cegger Exp $
+/* $Id: ddinit.c,v 1.50 2005/09/05 05:15:36 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -359,6 +359,7 @@ DDNotifyResize(ggi_visual *vis, int xsize, int ysize)
 {
 	ggi_event ev;
 	ggi_cmddata_switchrequest *swreq;
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	DPRINT_DRAW("DDNotifyResize(%p, %dx%d) called\n",
 		       vis, xsize, ysize);
@@ -400,7 +401,7 @@ DDNotifyResize(ggi_visual *vis, int xsize, int ysize)
 	swreq->mode.size.x = GGI_AUTO;
 	swreq->mode.size.y = GGI_AUTO;
 
-	_giiSafeAdd(vis->input, &ev);
+	_giiSafeAdd(priv->inp, &ev);
 }
 
 
