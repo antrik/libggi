@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.171 2005/09/02 14:29:57 cegger Exp $
+dnl $Id: configure.in,v 1.172 2005/09/05 10:15:37 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -988,6 +988,11 @@ dnl Check for targets
 
 AC_MSG_CHECKING(if we should build x        target)
 if test "x$build_x_target" = "xno"; then
+  build_x_dbe_target="no"
+  build_x_evi_target="no"
+  build_x_shm_target="no"
+  build_x_xf86dga_target="no"
+  build_x_xf86vmode_target="no"
   AC_MSG_RESULT(no)
 else
   DISPLAYSUBDIRS="$DISPLAYSUBDIRS X"
