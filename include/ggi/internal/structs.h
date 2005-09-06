@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.17 2005/07/31 15:30:40 soyt Exp $
+/* $Id: structs.h,v 1.18 2005/09/06 15:22:58 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -242,7 +242,8 @@ typedef struct ggi_visual {
 	struct ggi_visual_opgc      *opgc;	/* GC operations */
 	struct ggi_visual_opcolor   *opcolor;	/* Color & Palette Ops */
 	struct ggi_visual_opdraw    *opdraw;	/* Drawing operations */
-	void	*opdummy[6];			/* For future expansion */
+	void	*opdummy[5];			/* For future expansion */
+	GG_SLIST_HEAD(generic_ext,ggi_dlhandle_l) generic_ext; /* extensions for generic libs */
 
 	/*
 	  Other pointers [36/36] (Adding stuff to the end of the visual is no

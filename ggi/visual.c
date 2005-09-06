@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2005/07/30 10:57:30 cegger Exp $
+/* $Id: visual.c,v 1.11 2005/09/06 15:22:58 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -161,12 +161,14 @@ static void _ggi_init_allops(ggi_visual *vis, int initall)
 
 static void _ggiCloseDL(ggi_visual *vis, int zapall)
 {
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->generic_ext));
 	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
 	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
 
+	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->generic_ext));
 	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
@@ -233,6 +235,7 @@ ggi_visual *_ggiNewVisual(void)
 
 	GG_SLIST_INIT(&LIBGGI_DLHANDLE(vis));
 	GG_SLIST_INIT(&vis->extlib);
+	GG_SLIST_INIT(&vis->generic_ext);
 
 	vis->d_frame_num = vis->r_frame_num = vis->w_frame_num = 0;
 	vis->r_frame = vis->w_frame = NULL;
