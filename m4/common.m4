@@ -336,3 +336,13 @@ AC_DEFUN([GGI_CHECK_LIB],
      CC="$save_CC"
      $4])
 ])
+
+dnl ----- checkint.m4 -----
+dnl Add fallback if C99 inttypes are not there...
+AC_DEFUN([GGI_NEED_INTTYPES],
+[
+if test "$ac_cv_header_inttypes_h" != "yes"; then
+  AC_DEFINE(GG_NEED_INTTYPES, 1,
+	    [Tell libgg to define integer types when building])
+fi
+])
