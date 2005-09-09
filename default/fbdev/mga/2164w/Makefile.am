@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.fbdev.mga.2164w"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libm2164w_la_LIBADD =
 

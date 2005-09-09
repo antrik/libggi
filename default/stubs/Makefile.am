@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default"'
+AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.stubs"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libstubs_la_LIBADD =
 
