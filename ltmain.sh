@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2066 2005/09/08 08:25:34) 2.1a
+# ltmain.sh (GNU libtool 1.2073 2005/09/13 07:28:11) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2066 2005/09/08 08:25:34) 2.1a
+#       $progname:		(GNU libtool 1.2073 2005/09/13 07:28:11) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2066 2005/09/08 08:25:34"
-package_revision=1.2066
+TIMESTAMP=" 1.2073 2005/09/13 07:28:11"
+package_revision=1.2073
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1288,15 +1288,15 @@ extern \"C\" {
 	    }
 	  else
 	    $opt_dry_run || {
-	      eval "${SED} -e 's/\([ ][.*^$]\)/\\\1/g' -e 's/^/ /' -e 's/$/$/'"' < "$export_symbols" > "$output_objdir/$outputname.exp"'
+	      eval "${SED} -e 's/\([].[*^$]\)/\\\\\1/g' -e 's/^/ /' -e 's/$/$/'"' < "$export_symbols" > "$output_objdir/$outputname.exp"'
+	      eval '$GREP -f "$output_objdir/$outputname.exp" < "$nlist" > "$nlist"T'
+	      eval '$MV "$nlist"T "$nlist"'
 	      case $host in
 	        *cygwin | *mingw* )
 	          eval "echo EXPORTS "'> "$output_objdir/$outputname.def"'
-	          eval 'cat "$output_objdir/$outputname.exp" >> "$output_objdir/$outputname.def"'
+	          eval 'cat "$nlist" >> "$output_objdir/$outputname.def"'
 	          ;;
 	      esac
-	      eval '$GREP -f "$output_objdir/$outputname.exp" < "$nlist" > "$nlist"T'
-	      eval '$MV "$nlist"T "$nlist"'
 	    }
 	  fi
 	fi
@@ -3773,7 +3773,7 @@ func_mode_link ()
 
 	if test "$found" = yes || test -f "$lib"; then :
 	else
-	  func_fatal_error "cannot find the library \`$lib'"
+	  func_fatal_error "cannot find the library \`$lib' or unhandled argument \`$deplib'"
 	fi
 
 	# Check to see that this really is a libtool archive.
