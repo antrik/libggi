@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.175 2005/09/07 11:58:21 pekberg Exp $
+dnl $Id: configure.in,v 1.176 2005/09/14 16:45:13 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -581,6 +581,7 @@ DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r lin
 XSUBDIRS=""
 FBDEVSUBDIRS=""
 DISPLAYMODULES=""
+HELPERMODULES=""
 DEFAULTMODULES=""
 DEFAULTFBDEVMODULES=""
 DEFAULTKGIMODULES=""
@@ -1012,7 +1013,7 @@ else
   else
 	XSUBDIRS="$XSUBDIRS dbe"
 	if test "$enable_shared" = "yes"; then
-	  DISPLAYMODULES="$DISPLAYMODULES helper_x_dbe.la"
+	  HELPERMODULES="$HELPERMODULES helper_x_dbe.la"
 	fi
 	if test "$enable_static" = "yes"; then
 	  AC_DEFINE(BUILTIN_HELPER_X_DBE, 1, [Support for builtin helper-x-dbe])
@@ -1026,7 +1027,7 @@ else
   else
 	XSUBDIRS="$XSUBDIRS evi"
 	if test "$enable_shared" = "yes"; then
-	  DISPLAYMODULES="$DISPLAYMODULES helper_x_evi.la"
+	  HELPERMODULES="$HELPERMODULES helper_x_evi.la"
 	fi
 	if test "$enable_static" = "yes"; then
 	  AC_DEFINE(BUILTIN_HELPER_X_EVI, 1, [Support for builtin helper-x-evi])
@@ -1040,7 +1041,7 @@ else
   else
 	XSUBDIRS="$XSUBDIRS shm"
 	if test "$enable_shared" = "yes"; then
-	  DISPLAYMODULES="$DISPLAYMODULES helper_x_shm.la"
+	  HELPERMODULES="$HELPERMODULES helper_x_shm.la"
 	fi
 	if test "$enable_static" = "yes"; then
 	  AC_DEFINE(BUILTIN_HELPER_X_SHM, 1, [Support for builtin helper-x-shm])
@@ -1054,7 +1055,7 @@ else
   else
 	XSUBDIRS="$XSUBDIRS dga"
 	if test "$enable_shared" = "yes"; then
-	  DISPLAYMODULES="$DISPLAYMODULES helper_x_dga.la"
+	  HELPERMODULES="$HELPERMODULES helper_x_dga.la"
 	fi
 	if test "$enable_static" = "yes"; then
 	  AC_DEFINE(BUILTIN_HELPER_X_DGA, 1, [Support for builtin helper-x-dga])
@@ -1068,7 +1069,7 @@ else
   else
 	XSUBDIRS="$XSUBDIRS vidmode"
 	if test "$enable_shared" = "yes"; then
-	  DISPLAYMODULES="$DISPLAYMODULES helper_x_vidmode.la"
+	  HELPERMODULES="$HELPERMODULES helper_x_vidmode.la"
 	fi
 	if test "$enable_static" = "yes"; then
 	  AC_DEFINE(BUILTIN_HELPER_X_VIDMODE, 1, [Support for builtin helper-x-vidmode])
@@ -1700,6 +1701,7 @@ AC_SUBST(DEFAULTSUBDIRS)
 AC_SUBST(XSUBDIRS)
 AC_SUBST(FBDEVSUBDIRS)
 AC_SUBST(DISPLAYMODULES)
+AC_SUBST(HELPERMODULES)
 AC_SUBST(DEFAULTMODULES)
 AC_SUBST(DEFAULTFBDEVMODULES)
 AC_SUBST(DEFAULTKGIMODULES)

@@ -10,6 +10,9 @@ EXTRA_LTLIBRARIES = aa.la auto.la directx.la fbdev.la file.la \
 
 displaylib_LTLIBRARIES = @DISPLAYMODULES@
 
+helperlib_LTLIBRARIES = @HELPERMODULES@
+helperlibdir = ${libdir}/${ggi_subdir}/helper
+
 libggi = ${top_builddir}/ggi/libggi.la
 
 aa_la_LIBADD = ${displaydir}/aa/libaa.la ${libggi}
@@ -184,31 +187,31 @@ wsfb_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
 
 helper_x_dbe_la_LIBADD = ${displaydir}/X/helper/dbe/libhelper_x_dbe.la ${libggi}
 helper_x_dbe_la_SOURCES =
-helper_x_dbe_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+helper_x_dbe_la_LDFLAGS = -rpath $(helperlibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/X/helper/dbe/EXPSYMS
 
 helper_x_dga_la_LIBADD = ${displaydir}/X/helper/dga/libhelper_x_dga.la ${libggi}
 helper_x_dga_la_SOURCES =
-helper_x_dga_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+helper_x_dga_la_LDFLAGS = -rpath $(helperlibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/X/helper/dga/EXPSYMS
 
 helper_x_evi_la_LIBADD = ${displaydir}/X/helper/evi/libhelper_x_evi.la ${libggi}
 helper_x_evi_la_SOURCES =
-helper_x_evi_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+helper_x_evi_la_LDFLAGS = -rpath $(helperlibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/X/helper/evi/EXPSYMS
 
 helper_x_shm_la_LIBADD = ${displaydir}/X/helper/shm/libhelper_x_shm.la ${libggi}
 helper_x_shm_la_SOURCES =
-helper_x_shm_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+helper_x_shm_la_LDFLAGS = -rpath $(helperlibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/X/helper/shm/EXPSYMS
 
 helper_x_vidmode_la_LIBADD = ${displaydir}/X/helper/vidmode/libhelper_x_vidmode.la ${libggi}
 helper_x_vidmode_la_SOURCES =
-helper_x_vidmode_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+helper_x_vidmode_la_LDFLAGS = -rpath $(helperlibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/X/helper/vidmode/EXPSYMS
 
