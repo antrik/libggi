@@ -7,7 +7,7 @@ ggiconfdata_DATA = libggi.conf
 
 noinst_PROGRAMS = patchlib
 
-DISTCLEANFILES = libggi.conf
+DISTCLEANFILES = libggi.conf config.lt
 
 MAINTAINERCLEANFILES = Makefile.in acinclude.m4 aclocal.m4 config.h.in \
 	configure
