@@ -5,7 +5,7 @@ triple-int Functions
 triple-int General Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 7 triple-int
+.. manpage:: 7 ggidev-triple-int
 
 
 Synopsis
@@ -38,13 +38,13 @@ operate as if the `triple-int` is signed.
 
 See Also
 --------
-:man:`assign_3(3)`, :man:`assign_int_3(3)`, :man:`assign_unsigned_3(3)`,
-:man:`sign_3(3)`, :man:`bits_3(3)`, :man:`eq0_3(3)`, :man:`gt0_3(3)`,
-:man:`ge0_3(3)`, :man:`lt0_3(3)`, :man:`le0_3(3)`,
-:man:`eq_3(3)`, :man:`ge_3(3)`,
-:man:`invert_3(3)`, :man:`lshift_3(3)`, :man:`rshift_3(3)`,
-:man:`inc_3(3)`, :man:`dec_3(3)`, :man:`negate_3(3)`, :man:`abs_3(3)`,
-:man:`add_3(3)`, :man:`sub_3(3)`, :man:`mul_3(3)`, :man:`divmod_3(3)`
+:man:`ggidev-assign_3(3)`, :man:`ggidev-assign_int_3(3)`, :man:`ggidev-assign_unsigned_3(3)`,
+:man:`ggidev-sign_3(3)`, :man:`ggidev-bits_3(3)`, :man:`ggidev-eq0_3(3)`, :man:`ggidev-gt0_3(3)`,
+:man:`ggidev-ge0_3(3)`, :man:`ggidev-lt0_3(3)`, :man:`ggidev-le0_3(3)`,
+:man:`ggidev-eq_3(3)`, :man:`ggidev-ge_3(3)`,
+:man:`ggidev-invert_3(3)`, :man:`ggidev-lshift_3(3)`, :man:`ggidev-rshift_3(3)`,
+:man:`ggidev-inc_3(3)`, :man:`ggidev-dec_3(3)`, :man:`ggidev-negate_3(3)`, :man:`ggidev-abs_3(3)`,
+:man:`ggidev-add_3(3)`, :man:`ggidev-sub_3(3)`, :man:`ggidev-mul_3(3)`, :man:`ggidev-divmod_3(3)`
 
 
 
@@ -52,7 +52,7 @@ See Also
 Initialize a triple-int
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 assign_3 assign_int_3 assign_unsigned_3
+.. manpage:: 3 ggidev-assign_3 ggidev-assign_int_3 ggidev-assign_unsigned_3
 
 
 Synopsis
@@ -102,7 +102,7 @@ Assign some values to `triple-ints`::
 See Also
 --------
 
-:man:`triple-int(7)`
+:man:`ggidev-triple-int(7)`
 
 
 
@@ -110,7 +110,7 @@ See Also
 triple-int properties
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 sign_3 bits_3 eq0_3 gt0_3 ge0_3 lt0_3 le0_3
+.. manpage:: 3 ggidev-sign_3 ggidev-bits_3 ggidev-eq0_3 ggidev-gt0_3 ggidev-ge0_3 ggidev-lt0_3 ggidev-le0_3
 
 
 Synopsis
@@ -180,7 +180,7 @@ Some `triple-int` tests::
 See Also
 --------
 
-:man:`triple-int(7)`, :man:`assign_int_3(3)`
+:man:`ggidev-triple-int(7)`, :man:`ggidev-assign_int_3(3)`
 
 
 
@@ -188,7 +188,7 @@ See Also
 triple-int comparisons
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 eq_3 ge_3
+.. manpage:: 3 ggidev-eq_3 ggidev-ge_3
 
 
 Synopsis
@@ -237,7 +237,7 @@ Some `triple-int` comparisons::
 See Also
 --------
 
-:man:`triple-int(7)`, :man:`assign_int_3(3)`
+:man:`ggidev-triple-int(7)`, :man:`ggidev-assign_int_3(3)`
 
 
 
@@ -245,7 +245,7 @@ See Also
 Bitwise triple-int operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 invert_3 lshift_3 rshift_3
+.. manpage:: 3 ggidev-invert_3 ggidev-lshift_3 ggidev-rshift_3
 
 
 Synopsis
@@ -297,7 +297,7 @@ Some bitwise operations on `triple-ints`::
 See Also
 --------
 
-:man:`triple-int(7)`, :man:`assign_int_3(3)`
+:man:`ggidev-triple-int(7)`, :man:`ggidev-assign_int_3(3)`
 
 
 
@@ -305,7 +305,7 @@ See Also
 Unary arithmetic triple-int operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 inc_3 dec_3 negate_3 abs_3
+.. manpage:: 3 ggidev-inc_3 ggidev-dec_3 ggidev-negate_3 ggidev-abs_3
 
 
 Synopsis
@@ -358,7 +358,7 @@ Some unary arithmetic operations on `triple-ints`::
 See Also
 --------
 
-:man:`triple-int(7)`, :man:`assign_int_3(3)`
+:man:`ggidev-triple-int(7)`, :man:`ggidev-assign_int_3(3)`
 
 
 
@@ -366,7 +366,7 @@ See Also
 Binary arithmetic triple-int operations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 add_3 sub_3 mul_3 divmod_3
+.. manpage:: 3 ggidev-add_3 ggidev-sub_3 ggidev-mul_3 ggidev-divmod_3
 
 
 Synopsis

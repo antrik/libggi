@@ -1,0 +1,36 @@
+.TH "ggidev-triple-int" 7 "2005-09-18" "libggi-current" GGI
+.SH NAME
+\fBggidev-triple-int\fR : triple-int General Information
+.SH SYNOPSIS
+.nb
+.nf
+#include <ggi/internal/triple-int.h>
+.fi
+
+.SH DESCRIPTION
+\fBtriple-int\fR is a collection of math routines that operates on an
+array of 3 unsigned integers, treating them as a single integer
+with triple precision.
+
+\fBtriple-int\fR uses a 2-complement representation for negative values.
+
+The most significant part of the \fBtriple-int\fR is stored at the
+highest index in the array representation.
+
+A \fBtriple-int\fR is typically declared as follows:
+
+.nb
+.nf
+unsigned x[3];
+.fi
+
+Don't let the above unsigned keyword fool you, all the routines
+operate as if the \fBtriple-int\fR is signed.
+.SH SEE ALSO
+\f(CWggidev-assign_3(3)\fR, \f(CWggidev-assign_int_3(3)\fR, \f(CWggidev-assign_unsigned_3(3)\fR,
+\f(CWggidev-sign_3(3)\fR, \f(CWggidev-bits_3(3)\fR, \f(CWggidev-eq0_3(3)\fR, \f(CWggidev-gt0_3(3)\fR,
+\f(CWggidev-ge0_3(3)\fR, \f(CWggidev-lt0_3(3)\fR, \f(CWggidev-le0_3(3)\fR,
+\f(CWggidev-eq_3(3)\fR, \f(CWggidev-ge_3(3)\fR,
+\f(CWggidev-invert_3(3)\fR, \f(CWggidev-lshift_3(3)\fR, \f(CWggidev-rshift_3(3)\fR,
+\f(CWggidev-inc_3(3)\fR, \f(CWggidev-dec_3(3)\fR, \f(CWggidev-negate_3(3)\fR, \f(CWggidev-abs_3(3)\fR,
+\f(CWggidev-add_3(3)\fR, \f(CWggidev-sub_3(3)\fR, \f(CWggidev-mul_3(3)\fR, \f(CWggidev-divmod_3(3)\fR

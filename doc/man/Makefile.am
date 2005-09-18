@@ -130,29 +130,29 @@ man_MANS = \
            display-vcsa.7 \
            display-vgl.7 \
            display-x.7 \
-           triple-int.7 \
-           assign_3.3 \
-           assign_int_3.3 \
-           assign_unsigned_3.3 \
-           sign_3.3 \
-           bits_3.3 \
-           eq0_3.3 \
-           gt0_3.3 \
-           ge0_3.3 \
-           lt0_3.3 \
-           le0_3.3 \
-           eq_3.3 \
-           ge_3.3 \
-           invert_3.3 \
-           lshift_3.3 \
-           rshift_3.3 \
-           inc_3.3 \
-           dec_3.3 \
-           negate_3.3 \
-           abs_3.3 \
-           add_3.3 \
-           sub_3.3 \
-           mul_3.3 \
-           divmod_3.3
+           ggidev-triple-int.7 \
+           ggidev-assign_3.3 \
+           ggidev-assign_int_3.3 \
+           ggidev-assign_unsigned_3.3 \
+           ggidev-sign_3.3 \
+           ggidev-bits_3.3 \
+           ggidev-eq0_3.3 \
+           ggidev-gt0_3.3 \
+           ggidev-ge0_3.3 \
+           ggidev-lt0_3.3 \
+           ggidev-le0_3.3 \
+           ggidev-eq_3.3 \
+           ggidev-ge_3.3 \
+           ggidev-invert_3.3 \
+           ggidev-lshift_3.3 \
+           ggidev-rshift_3.3 \
+           ggidev-inc_3.3 \
+           ggidev-dec_3.3 \
+           ggidev-negate_3.3 \
+           ggidev-abs_3.3 \
+           ggidev-add_3.3 \
+           ggidev-sub_3.3 \
+           ggidev-mul_3.3 \
+           ggidev-divmod_3.3
 
 EXTRA_DIST = $(man_MANS)
