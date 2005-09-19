@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.22 2005/09/19 15:50:03 cegger Exp $
+/* $Id: dl.c,v 1.23 2005/09/19 17:08:55 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -129,11 +129,10 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 	ggConfigIterLocation(&match);
 	err =  GGI_ENOMATCH;
 	GG_ITER_FOREACH(&match) {
-		if(( err = _ggiLoadDL(match.location,
-				      GGI_SYMNAME_PREFIX, type, dlh,
-				      match.symbol)) == GGI_OK) {
-			break;
-		}
+		err = _ggiLoadDL(match.location,
+				GGI_SYMNAME_PREFIX, type, dlh,
+				match.symbol);
+		if (err == GGI_OK) break;
 	}
 	GG_ITER_DONE(&match);
 	
@@ -171,13 +170,14 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
 	uint32_t dlret = 0;
-	int err = GGI_ENODEVICE;
+	int err;
 	struct gg_location_iter match;
 
 
 	match.config = conffilehandle;
 	match.name = api;
 	ggConfigIterLocation(&match);
+	err = GGI_ENOMATCH;
 	GG_ITER_FOREACH(&match) {
 		DPRINT_LIBS("Try to load %s\n", match.location);
 		err = _ggiLoadDL(match.location, symprefix,
