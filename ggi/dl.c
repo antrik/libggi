@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.21 2005/09/19 07:45:15 cegger Exp $
+/* $Id: dl.c,v 1.22 2005/09/19 15:50:03 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -171,7 +171,7 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
 	uint32_t dlret = 0;
-	int err = 0;
+	int err = GGI_ENODEVICE;
 	struct gg_location_iter match;
 
 
