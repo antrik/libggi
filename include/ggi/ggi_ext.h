@@ -1,4 +1,4 @@
-/* $Id: ggi_ext.h,v 1.7 2005/06/09 19:51:00 cegger Exp $
+/* $Id: ggi_ext.h,v 1.8 2005/09/19 07:45:15 cegger Exp $
 ******************************************************************************
 
    Copyright (C) 1998      Andreas Beck		[becka@ggi-project.org]
@@ -47,7 +47,8 @@ GGIAPIFUNC int          ggiExtensionUnregister(ggi_extid id);
 GGIAPIFUNC int          ggiExtensionAttach(ggi_visual_t vis,ggi_extid id);
 GGIAPIFUNC int          ggiExtensionDetach(ggi_visual_t vis,ggi_extid id);
 GGIAPIFUNC ggi_lib_id   ggiExtensionLoadDL(ggi_visual_t vis,
-					   const char *filename,
+					   const void *conffilehandle,
+					   const char *api,
 					   const char *args, void *argptr,
 					   const char *symprefix);
 

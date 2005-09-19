@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.28 2005/08/15 18:51:00 cegger Exp $
+/* $Id: internal.h,v 1.29 2005/09/19 07:45:15 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -63,7 +63,9 @@ GGIAPIFUNC ggi_directbuffer *_ggi_db_find_frame(ggi_visual * vis,
 						int frameno);
 
 /* dl.c */
-GGIAPIFUNC ggi_dlhandle *_ggiAddExtDL(ggi_visual * vis, const char *filename,
+GGIAPIFUNC ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis,
+				      const void *conffilehandle,
+				      const char *api,
 				      const char *args, void *argptr,
 				      const char *symprefix);
 GGIAPIFUNC int _ggiOpenDL(ggi_visual * vis, const char *name,

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.15 2005/07/30 10:57:30 cegger Exp $
+/* $Id: stubs.c,v 1.16 2005/09/19 07:45:15 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -49,11 +49,13 @@ const ggi_pixelformat *ggiGetPixelFormat(ggi_visual *vis)
 
 /*************** Lib management ***********************/
 
-ggi_lib_id ggiExtensionLoadDL(ggi_visual_t vis, const char *filename,
+ggi_lib_id ggiExtensionLoadDL(ggi_visual_t vis, const void *conffilehandle,
+			      const char *api,
 			      const char *args, void *argptr,
 			      const char *symprefix)
 {
-	return (ggi_lib_id)_ggiAddExtDL(vis, filename, args, argptr,
+	return (ggi_lib_id)_ggiAddExtDL(vis, conffilehandle,
+					api, args, argptr,
 					symprefix);
 }
 

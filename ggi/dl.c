@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.20 2005/09/06 15:22:58 pekberg Exp $
+/* $Id: dl.c,v 1.21 2005/09/19 07:45:15 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -163,23 +163,36 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 
 /* Add an extension DL
  */
-ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const char *filename,
+ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
+			   const char *api,
 			   const char *args, void *argptr,
 			   const char *symprefix)
 {
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
 	uint32_t dlret = 0;
-	int err;
+	int err = 0;
+	struct gg_location_iter match;
 
-	err = _ggiLoadDL(filename, symprefix, GGI_DLTYPE_EXTENSION, &dlh, NULL);
-	DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
+
+	match.config = conffilehandle;
+	match.name = api;
+	ggConfigIterLocation(&match);
+	GG_ITER_FOREACH(&match) {
+		DPRINT_LIBS("Try to load %s\n", match.location);
+		err = _ggiLoadDL(match.location, symprefix,
+				GGI_DLTYPE_EXTENSION, &dlh,
+				match.symbol);
+		DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
+		if (!err) break;
+	}
+	GG_ITER_DONE(&match);
 	if (err) return NULL;
-	
+
+
 	err = dlh->open(vis, dlh, args, argptr, &dlret);
-	DPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d) - %s\n",
-		       err, vis, dlh, args ? args : "(null)", argptr, dlret,
-		       filename);
+	DPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d)\n",
+		       err, vis, dlh, args ? args : "(null)", argptr, dlret);
 	if (err) {
 		ggFreeModule(dlh->handle);
 		free(dlh);
