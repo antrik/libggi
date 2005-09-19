@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.23 2005/09/19 17:08:55 cegger Exp $
+/* $Id: dl.c,v 1.24 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -114,18 +114,18 @@ getsymbol:
 
 /* Probe a DL
  */
-int _ggiProbeDL(ggi_visual *vis, const char *name,
-		const char *args, void *argptr,
+int _ggiProbeDL(ggi_visual *vis, const void *conffilehandle,
+		const char *api, const char *args, void *argptr,
 		int type, ggi_dlhandle **dlh, uint32_t *dlret)
 {
 	int err;
 	struct gg_location_iter match;
 
 	DPRINT_LIBS("_ggiProbeDL(%p, \"%s\", \"%s\", %p, 0x%x) called\n",
-			vis, name, args ? args : "(null)", argptr, type);
+			vis, api, args ? args : "(null)", argptr, type);
 	
-	match.name = name;
-	match.config = _ggiConfigHandle;
+	match.name = api;
+	match.config = conffilehandle;
 	ggConfigIterLocation(&match);
 	err =  GGI_ENOMATCH;
 	GG_ITER_FOREACH(&match) {
@@ -138,7 +138,7 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 	
 	if(err) {
 		DPRINT_LIBS("LibGGI: could not prob lib for sublib: %s\n",
-			    name);
+			    api);
 		return err;
 	}
 	
@@ -148,7 +148,7 @@ int _ggiProbeDL(ggi_visual *vis, const char *name,
 	err = dlh[0]->open(vis, *dlh, args, argptr, dlret);
 	DPRINT_LIBS("%d = dlh[0]->open(%p, %p, \"%s\", %p, %d) - %s\n",
 		       err, vis, *dlh, args ? args : "(null)", argptr, *dlret,
-		       name);
+		       api);
 	if (err) {
 		ggFreeModule(dlh[0]->handle);
 		free(*dlh);
@@ -219,8 +219,9 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
 }
 
 /****** Open and Close a DL *********/
-int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
-	      void *argptr, int type)
+int _ggiAddDL(ggi_visual *vis, const void *conffilehandle,
+	      const char *api, const char *args, void *argptr,
+	      int type)
 {
 	ggi_dlhandle_l *tmp;
 	ggi_dlhandle *dlh;
@@ -228,9 +229,10 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 	int err;
 
 	DPRINT_LIBS("_ggiAddDL(%p, \"%s\", \"%s\", 0x%x) called\n",
-		       vis, name, args ? args : "(null)", type);
+		       vis, api, args ? args : "(null)", type);
 
-	err = _ggiProbeDL(vis, name, args, argptr, type, &dlh, &dlret);
+	err = _ggiProbeDL(vis, conffilehandle, api,
+			args, argptr, type, &dlh, &dlret);
 	if (err) return err;
 
 	if (type == GGI_DLTYPE_INTERNAL) {
@@ -280,7 +282,7 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 	if (dlh->usecnt == 0) {
 		fprintf(stderr,
 			"LibGGI: %s (%s) -> 0x%.8x - no operations in this library\n",
-			name, args ? args : "(null)", dlret);
+			api, args ? args : "(null)", dlret);
 		ggFreeModule(dlh->handle);
 		free(dlh);
 		return GGI_ENOFUNC;
@@ -291,15 +293,16 @@ int _ggiAddDL(ggi_visual *vis, const char *name, const char *args,
 		GG_SLIST_INSERT_HEAD(&LIBGGI_DLHANDLE(vis), tmp, dllist);
 	}
 
-	dlh->name = strdup(name);
+	dlh->name = strdup(api);
 
 	return 0;
 }
 
-int
-_ggiOpenDL(ggi_visual *vis, const char *name, const char *args, void *argptr)
+int _ggiOpenDL(ggi_visual *vis, const void *conffilehandle,
+		const char *api, const char *args, void *argptr)
 {
-	return _ggiAddDL(vis, name, args, argptr, GGI_DLTYPE_INTERNAL);
+	return _ggiAddDL(vis, conffilehandle,
+			api, args, argptr, GGI_DLTYPE_INTERNAL);
 }
 
 void _ggiExitDL(ggi_visual *vis, ggi_dlhandle_l *lib)

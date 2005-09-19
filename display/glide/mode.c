@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2005/07/30 11:38:50 cegger Exp $
+/* $Id: mode.c,v 1.13 2005/09/19 18:46:42 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -479,7 +479,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 	for (id = 1; GGI_glide_getapi(vis, id, libname, libargs) == 0; id++) {
 		int err;
 
-		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr, "display-glide: Error opening the "
 				"%s (%s) library\n", libname, libargs);

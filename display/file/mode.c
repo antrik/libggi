@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2005/07/30 10:58:25 cegger Exp $
+/* $Id: mode.c,v 1.19 2005/09/19 18:46:41 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -307,7 +307,8 @@ static int _ggi_domode(ggi_visual *vis)
 	DPRINT("display-file: _ggi_domode: got mmap\n");
 
 	for(i=1; GGI_file_getapi(vis, i, name, args) == 0; i++) {
-		err = _ggiOpenDL(vis, name, args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+				name, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-file: Can't open the "
 				"%s (%s) library.\n", name, args);

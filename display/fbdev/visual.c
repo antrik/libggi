@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2005/07/30 11:38:50 cegger Exp $
+/* $Id: visual.c,v 1.31 2005/09/19 18:46:41 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -665,7 +665,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		if (_ggiAddDL(vis, "helper-linux-vtswitch", NULL, &vtswarg, 0)
+		if (_ggiAddDL(vis, _ggiGetConfigHandle(),
+				"helper-linux-vtswitch", NULL, &vtswarg, 0)
 		    == 0) {
 			vtnum = vtswarg.vtnum;
 			priv->doswitch = vtswarg.doswitch;

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.29 2005/09/19 07:45:15 cegger Exp $
+/* $Id: internal.h,v 1.30 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -49,9 +49,6 @@ __BEGIN_DECLS
 /* Exported variables */
 GGIAPIVAR void *_ggi_global_lock;
 
-/* conf.c */
-extern void *_ggiConfigHandle;
-
 /* db.c */
 GGIAPIFUNC ggi_directbuffer *_ggi_db_get_new(void);
 GGIAPIFUNC void _ggi_db_free(ggi_directbuffer * db);
@@ -68,15 +65,19 @@ GGIAPIFUNC ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis,
 				      const char *api,
 				      const char *args, void *argptr,
 				      const char *symprefix);
-GGIAPIFUNC int _ggiOpenDL(ggi_visual * vis, const char *name,
-			  const char *args, void *argptr);
+GGIAPIFUNC int _ggiOpenDL(ggi_visual * vis, const void *conffilehandle,
+			const char *api, const char *args, void *argptr);
 GGIAPIFUNC void _ggiExitDL(ggi_visual * vis, ggi_dlhandle_l * lib);
 GGIAPIFUNC void _ggiZapDL(ggi_visual * vis, ggi_dlhandle_l ** lib);
-GGIAPIFUNC int _ggiAddDL(ggi_visual * vis, const char *drv, const char *args,
-			 void *argptr, int type);
-GGIAPIFUNC int _ggiProbeDL(ggi_visual * vis, const char * name,
-		const char * args, void * argptr,
+GGIAPIFUNC int _ggiAddDL(ggi_visual * vis, const void *conffilehandle,
+			const char *api, const char *args, void *argptr,
+			int type);
+GGIAPIFUNC int _ggiProbeDL(ggi_visual * vis, const void *conffilehandle,
+		const char * api, const char * args, void * argptr,
 		int type, ggi_dlhandle ** dlh, uint32_t * dlret);
+
+/* init.c */
+GGIAPIFUNC const void *_ggiGetConfigHandle(void);
 
 /* internal.c */
 GGIAPIFUNC int _ggi_countbits(uint32_t val);

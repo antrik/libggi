@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2005/02/15 08:07:32 cegger Exp $
+/* $Id: mode.c,v 1.15 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -141,7 +141,8 @@ static int do_setmode(ggi_visual *vis)
 
 	/* load libraries */
 	for (id=1; GGI_trueemu_getapi(vis, id, libname, libargs) == 0; id++) {
-		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+				libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr,"display-tryeeny: Error opening the "
 				"%s (%s) library.\n", libname, libargs);

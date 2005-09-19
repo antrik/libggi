@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2004/11/27 16:42:25 soyt Exp $
+/* $Id: mode.c,v 1.5 2005/09/19 18:46:43 cegger Exp $
 ******************************************************************************
 
    Display-SUID
@@ -140,12 +140,12 @@ static int _GGIdomode(ggi_visual *vis)
 
 	_GGIgetmmio(vis);
 
-	err = _ggiOpenDL(vis, "generic-stubs", "", NULL);
+	err = _ggiOpenDL(vis, _ggiGetConfigHandle(), "generic-stubs", "", NULL);
 	if (err) {
 		fprintf(stderr, "display-suidkgi: Can't load the \"generic-stubs\" library\n");
 	}
 
-	err = _ggiOpenDL(vis, "generic-color", "", NULL);
+	err = _ggiOpenDL(vis, _ggiGetConfigHandle(), "generic-color", "", NULL);
 	if (err) {
 		fprintf(stderr,"display-suidkgi: Can't load the \"generic-color\" library\n");
 	}
@@ -164,7 +164,7 @@ static int _GGIdomode(ggi_visual *vis)
 		}
 
 		DPRINT("display-suid - attempting %s (%s)\n",sug.name,sug.args);
-		err = _ggiOpenDL(vis, sug.name, sug.args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), sug.name, sug.args, NULL);
 		if (err) {
 			fprintf(stderr,"display-suidkgi: Can't find an appropriate "
 				       "library for %s (%s)\n",

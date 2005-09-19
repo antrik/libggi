@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.49 2005/07/30 10:58:22 cegger Exp $
+/* $Id: visual.c,v 1.50 2005/09/19 18:46:40 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -37,6 +37,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <ggi/internal/gg_replace.h>
+
 
 /* Options honored by this target */
 static const gg_option optlist[] =
@@ -464,7 +465,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Try the extensions that haven't been disabled. */
 #define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
-	err = _ggiAddDL(vis, helper, NULL, NULL, 0);		\
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),		\
+			helper, NULL, NULL, 0);			\
 	if (err) {						\
 		fprintf(stderr, "X: Cannot load %s\n", helper);	\
 		priv->use_Xext &= ~flag;			\
@@ -529,7 +531,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->opmansync == NULL) {
 		goto out;
 	}
-	err = _ggiAddDL(vis, "helper-mansync", NULL, priv->opmansync, 0);
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+			"helper-mansync", NULL, priv->opmansync, 0);
 	if (err) {
 		fprintf(stderr,
 			"display-X: Cannot load required helper-mansync!\n");

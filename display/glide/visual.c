@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2005/07/30 11:38:50 cegger Exp $
+/* $Id: visual.c,v 1.11 2005/09/19 18:46:42 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -148,7 +148,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		err = _ggiAddDL(vis, "helper-linux-vtswitch", NULL,
+		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+				"helper-linux-vtswitch", NULL,
 				&vtswarg, 0);
 		if (err) {
 			vtnum = -1;

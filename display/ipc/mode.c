@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/11/27 16:42:20 soyt Exp $
+/* $Id: mode.c,v 1.17 2005/09/19 18:46:42 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -143,7 +143,8 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	DPRINT("display-ipc: _GGIdomode: got framebuffer memory\n");
 
 	for(i=1; 0==GGI_ipc_getapi(vis, i, name, args); i++) {
-		err = _ggiOpenDL(vis, name, args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+				name, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-ipc: Can't open the "
 				"%s (%s) library.\n", name, args);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2004/11/27 16:42:28 soyt Exp $
+/* $Id: mode.c,v 1.17 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -242,7 +242,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 	_ggiZapMode(vis, 0);
 
 	for(id = 1; 0 == GGI_vgl_getapi(vis, id, sugname, args); id++) {
-		if (_ggiOpenDL(vis, sugname, args, NULL)) {
+		if (_ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL)) {
 			fprintf(stderr,"display-vgl: Can't open the %s (%s) library.\n",
 				sugname, args);
 			return GGI_EFATAL;

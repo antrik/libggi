@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.38 2005/07/30 10:58:24 cegger Exp $
+/* $Id: mode.c,v 1.39 2005/09/19 18:46:40 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -425,7 +425,8 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 	if (!compatible) {
 		for (id = 1; !GGI_directx_getapi(vis, id, lib, args); id++) {
-			int rc = _ggiOpenDL(vis, lib, args, NULL);
+			int rc = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+					lib, args, NULL);
 			if (rc != 0) {
 				fprintf(stderr,
 					"display-directx: Error opening the "

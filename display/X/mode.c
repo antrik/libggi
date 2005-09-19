@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.58 2005/08/17 12:53:55 mooz Exp $
+/* $Id: mode.c,v 1.59 2005/09/19 18:46:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -373,7 +373,7 @@ static int ggi_x_load_mode_libs(ggi_visual *vis)
 
 	_ggiZapMode(vis, 0);
         for (id=1; 0 == vis->opdisplay->getapi(vis,id,sugname,args); id++) {
-		err = _ggiOpenDL(vis, sugname, args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL);
 		if (err) {
 			fprintf(stderr,
 				"display-x: Can't open the %s (%s) library.\n",

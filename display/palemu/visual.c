@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/07/30 10:58:27 cegger Exp $
+/* $Id: visual.c,v 1.15 2005/09/19 18:46:43 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -152,7 +152,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
 
 	/* Setup mansync */
-	err = _ggiAddDL(vis, "helper-mansync", NULL, priv->opmansync, 0);
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+			"helper-mansync", NULL, priv->opmansync, 0);
 	if (err) {
 		fprintf(stderr,
 			"display-palemu: Cannot load helper-mansync!\n");

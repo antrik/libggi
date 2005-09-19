@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2005/07/30 10:58:28 cegger Exp $
+/* $Id: mode.c,v 1.19 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -161,7 +161,7 @@ static int _GGIdomode(ggi_visual *vis)
 	_ggiZapMode(vis, 0);
 
 	for (id=1; 0==GGI_tile_getapi(vis, id, sugname, args); id++) {
-		err = _ggiOpenDL(vis, sugname, args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL);
 		if (err) {
 			fprintf(stderr, "display-tile: Can't open the %s (%s) library.\n",
 				sugname, args);

@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.46 2005/09/01 13:11:57 cegger Exp $
+/* $Id: init.c,v 1.47 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -61,9 +61,22 @@ void _ggiInitBuiltins(void);
 void _ggiExitBuiltins(void);
 
 
+
+/* 
+ * Returns the handle of the config file
+ */
+
+
+const void *_ggiGetConfigHandle(void)
+{
+	return _ggiConfigHandle;
+}
+
+
 /* 
  * Returns the directory where global config files are kept
  */
+
 
 const char *ggiGetConfDir(void)
 {
@@ -300,7 +313,9 @@ ggi_visual *ggiOpen(const char *driver,...)
 	match.config = _ggiConfigHandle;
 	ggConfigIterTarget(&match);
 	GG_ITER_FOREACH(&match) {
-		if (_ggiOpenDL(vis,match.target,match.options,argptr) == 0) {
+		if (_ggiOpenDL(vis, _ggiConfigHandle,
+			match.target,match.options,argptr) == 0)
+		{
 			success = 1;
 			break;
 		}

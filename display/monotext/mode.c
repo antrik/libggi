@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2004/11/27 16:42:24 soyt Exp $
+/* $Id: mode.c,v 1.16 2005/09/19 18:46:42 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -142,7 +142,8 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 	
 	/* Load libraries */
 	for(id=1; GGI_monotext_getapi(vis, id, libname, libargs) == 0; id++) {
-		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+				libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr, "display-monotext: Error opening "
 				" %s (%s) library.\n", libname, libargs);

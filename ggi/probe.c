@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.5 2005/07/30 10:57:30 cegger Exp $
+/* $Id: probe.c,v 1.6 2005/09/19 18:46:44 cegger Exp $
 ******************************************************************************
 
    LibGGI core - probe for targets.
@@ -38,7 +38,7 @@ ggi_visual_t _ggiProbeTarget(void)
 	ggi_visual_t vis = NULL;
 
 	DPRINT_CORE("Launch display-auto\n");
-	err = _ggiProbeDL(NULL, "display-auto", NULL, &vis, 0,
+	err = _ggiProbeDL(NULL, _ggiGetConfigHandle(), "display-auto", NULL, &vis, 0,
 			  &dlh, &dlret);
 	if (err) {
 		DPRINT_CORE("display-auto failed\n");

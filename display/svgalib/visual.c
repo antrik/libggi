@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2005/07/30 10:58:27 cegger Exp $
+/* $Id: visual.c,v 1.23 2005/09/19 18:46:43 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -463,7 +463,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		err = _ggiAddDL(vis, "helper-linux-vtswitch", NULL,
+		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+				"helper-linux-vtswitch", NULL,
 				&vtswarg, 0);
 		if (!err) {
 			vtnum = vtswarg.vtnum;

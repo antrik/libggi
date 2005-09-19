@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2005/07/30 11:38:51 cegger Exp $
+/* $Id: mode.c,v 1.27 2005/09/19 18:46:42 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -382,7 +382,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 	vis->accelactive = 0;   /* new changed() traversal for renderers */
 
 	for(id = 1; 0 == GGI_kgi_getapi(vis, id, sugname, args); ++id){
-		if(_ggiOpenDL(vis, sugname, args, NULL)){
+		if(_ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL)){
 			DPRINT_LIBS("kgi: can't open %s\n", sugname);
 			if (id < 4) return GGI_EFATAL;
 			else continue;

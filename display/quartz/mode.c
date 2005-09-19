@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2005/07/30 10:58:27 cegger Exp $
+/* $Id: mode.c,v 1.14 2005/09/19 18:46:43 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -77,7 +77,7 @@ static int _ggi_quartz_load_mode_libs(ggi_visual *vis)
 
 	_ggiZapMode(vis, 0);
 	for (id = 1; 0 == vis->opdisplay->getapi(vis, id, sugname, args); id++) {
-		err = _ggiOpenDL(vis, sugname, args, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL);
 		if (err) {
 			fprintf(stderr,
 				"display-quartz: Can't open the %s (%s) library.\n",

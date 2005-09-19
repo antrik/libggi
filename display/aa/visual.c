@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2005/07/30 10:58:23 cegger Exp $
+/* $Id: visual.c,v 1.14 2005/09/19 18:46:40 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -133,7 +133,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->fastrender = (*args && options[OPT_FASTRENDER].result[0] == 'y');
 	}
 
-	err = _ggiAddDL(vis, "helper-mansync", NULL, priv->opmansync, 0);
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+			"helper-mansync", NULL, priv->opmansync, 0);
 	if (err) {
 		fprintf(stderr, 
 			"display-aa: Cannot load required helper-mansync!\n");

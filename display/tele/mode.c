@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2005/07/30 10:58:28 cegger Exp $
+/* $Id: mode.c,v 1.15 2005/09/19 18:46:43 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -212,7 +212,8 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	/* load libraries */
 	for (id=1; 0==GGI_tele_getapi(vis, id, libname, libargs); id++) {
-		err = _ggiOpenDL(vis, libname, libargs, NULL);
+		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+				libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr,"display-tele: Can't open the "
 				"%s (%s) library.\n", libname, libargs);
