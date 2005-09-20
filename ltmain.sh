@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2073 2005/09/13 07:28:11) 2.1a
+# ltmain.sh (GNU libtool 1.2081 2005/09/20 12:12:22) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2073 2005/09/13 07:28:11) 2.1a
+#       $progname:		(GNU libtool 1.2081 2005/09/20 12:12:22) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2073 2005/09/13 07:28:11"
-package_revision=1.2073
+TIMESTAMP=" 1.2081 2005/09/20 12:12:22"
+package_revision=1.2081
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -3254,8 +3254,10 @@ func_mode_link ()
       # -xarch=*, -xtarget=* enable 64-bit mode on the Sun compiler
       # +DA*, +DD* enable 64-bit mode on the HP compiler
       # -q* pass through compiler args for the IBM compiler
-      # -m* pass through architecture-specific compiler args for GCC
-      -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*)
+      # -m*, -t[45]*, -txscale* pass through architecture-specific
+      # compiler args for GCC
+      -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
+      -t[45]*|-txscale*)
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
         compile_command="$compile_command $arg"
