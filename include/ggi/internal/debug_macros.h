@@ -147,6 +147,8 @@ static inline void _dmessage(unsigned int state,
 
 #else   /* DEBUG */
 
+#define DMESSAGE(state, severity, level, field) do {}while(0)
+
 #define DNOTICE0(state, field)  do{}while(0)
 #define DWARNING0(state, field) do{}while(0)
 #define DERROR0(state, field)   do{}while(0)
