@@ -7,10 +7,12 @@ AC_ARG_WITH([gii],
 [  --with-gii=DIR          use the LibGII installed DIR],
 CFLAGS="$CFLAGS -I$withval/include"
   CPPFLAGS="$CPPFLAGS -I$withval/include"
-  LDFLAGS="$LDFLAGS -L$withval/lib",
+  LDFLAGS="$LDFLAGS -L$withval/lib"
+  DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS --with-gii=$withval",
 CFLAGS="$CFLAGS -I$prefix/include"
   CPPFLAGS="$CPPFLAGS -I$prefix/include"
-  LDFLAGS="$LDFLAGS -L$prefix/lib")
+  LDFLAGS="$LDFLAGS -L$prefix/lib"
+  DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS --with-gii=$prefix")
 
 ])
 
@@ -28,6 +30,7 @@ AC_ARG_WITH([uninst-gii],
      gii_top_builddir="`cd "$withval" ; pwd`"
      gii_top_srcdir="$gii_top_builddir/`cd "$withval" ; sed -n -e 's/^top_srcdir[       ]*=[    ]*//p' Makefile`"
      gii_top_srcdir="`cd $gii_top_srcdir ; pwd`"
+     DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS --with-uninst-gii=$gii_top_builddir"
    fi
    if test -d "$gii_top_builddir" -a -d "$gii_top_srcdir" ; then
      if test "$gii_top_builddir" = "$gii_top_srcdir" ; then
