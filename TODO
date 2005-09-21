@@ -15,29 +15,17 @@ Due : ????-??-??
 
 + Verify and fix cross-compilation to other architectures
 
-* update build system to libtool 2.0, make use of latest
-  autotools features (Christoph Egger)
-
 - add support for non-gcc compilers
 
 [Common issues]
 
 - libKGI-target (compiling framework)
-+ improve modelist.inc -- reduce amount of per-target code necessary to use 
-  a modelist by providing sensible constructor/destructor which fills out 
-  default values automatically.  Perhaps move to helper lib.
 - add helper target for dirty-region management -- keep refreshes from 
   backbuffer to a (practical) minimum as updating untouched data wastes
   bus bandwidth.
-* look at  egrep -Hirn "return[[:space:]]*\-\w+;"  and peruse proper defines for
-  retval where applicable (Christoph Egger)
 - make use of libgii's enhanced dl system:
   allow single library to serve multiple suggest strings
   (see http://marc.theaimsgroup.com/?l=ggi-develop&m=105063854017420&w=2)
-* make use of libgii's enhanced config file system:
-  aliases, in-file option strings, wildcards (also see above URL)
-  (Eric Faurot)
-* building modules as built-in (Christoph Egger)
 
 
 [Target specific issues]
@@ -111,14 +99,6 @@ New X Target:
   each frame its own window. Set the frame being displayed to the
   frontbuffer, the write frame to the backbuffer.
   If display frame == write frame, render onto dbe's expose buffer.
-* dga helper for new display-X: allow -inwin=root visuals to use dga,
-  and overload the normal operations with dga acceleration.  This can
-  only be done after vidmode support.
-  (Orzo)
-* vidmode helper for new display-X: set the X server resolution, either
-  for -inwin=root, or cleverly positioning a non-root window so the 
-  borders are of the side of the screen.
-  (Vincent Cruz)
 - Investigate emulating lower fixed-palette bitdepths and find out how to
   get those neat 8-bpp-pseudocolor-window-on-24bpp-server visuals to work.
   Basically since X provides various "visuals" some of which are lower
@@ -177,9 +157,6 @@ Long-term plan
 ------------------------------------------
 
 - improve fbdev mode negotiation.  Option to obey /etc/fb.modes or not.
-* move display autodetection routines into a display-auto sublib, and
-  create display-auto-linux, display-auto-bsd, etc, mapping them to
-  display-auto in libggi.conf. (Christoph Egger)
 
 ------------------------------------------
 Things that will induce API additions
