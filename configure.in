@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.177 2005/09/21 09:27:40 cegger Exp $
+dnl $Id: configure.in,v 1.178 2005/09/21 12:40:56 aldot Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1762,6 +1762,11 @@ AC_SUBST(ggi_sysconfdir_to_libdir)
 AC_SUBST(ggi_sysconfdir)
 AC_SUBST(static_libdir)
 AC_SUBST(static_sysconfdir)
+
+# For distcheck we need to eventually pass the location where gii can be
+# found. This is done with --with-gii= or --with-uninst-gii= as usual.
+AC_SUBST([DISTCHECK_CONFIGURE_FLAGS])
+
 AC_DEFINE_UNQUOTED([GGITAGLEN],$TAGLEN, [The length of the tag])
 AC_DEFINE_UNQUOTED([GGIPATHTAG],"$PATHTAG", [Tag to identify path to $ggi_conffile])
 AC_DEFINE_UNQUOTED([GGICONFFILE],"$ggi_conffile", [Name of LibGGI master config file])
