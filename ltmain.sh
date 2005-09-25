@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2087 2005/09/22 07:46:01) 2.1a
+# ltmain.sh (GNU libtool 1.2093 2005/09/25 07:35:55) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2087 2005/09/22 07:46:01) 2.1a
+#       $progname:		(GNU libtool 1.2093 2005/09/25 07:35:55) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2087 2005/09/22 07:46:01"
-package_revision=1.2087
+TIMESTAMP=" 1.2093 2005/09/25 07:35:55"
+package_revision=1.2093
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1121,12 +1121,11 @@ func_win32_libid ()
     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null |
        $EGREP 'file format pe-i386(.*architecture: i386)?' >/dev/null ; then
       win32_nmres=`eval $NM -f posix -A $1 |
-	sed -n -e '1,100{/ I /{x;/import/!{s/^/import/;h;p;};x;};}'`
-      if test "X$win32_nmres" = "Ximport" ; then
-	win32_libid_type="x86 archive import"
-      else
-	win32_libid_type="x86 archive static"
-      fi
+	sed -n -e '1,100{/ I /{s,.*,import,;p;q;};}'`
+      case $win32_nmres in
+      import*)  win32_libid_type="x86 archive import";;
+      *)        win32_libid_type="x86 archive static";;
+      esac
     fi
     ;;
   *DLL*)
@@ -3037,11 +3036,11 @@ func_mode_link ()
       -l*)
 	if test "X$arg" = "X-lc" || test "X$arg" = "X-lm"; then
 	  case $host in
-	  *-*-cygwin* | *-*-pw32* | *-*-beos*)
+	  *-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-beos*)
 	    # These systems don't actually have a C or math library (as such)
 	    continue
 	    ;;
-	  *-*-mingw* | *-*-os2*)
+	  *-*-os2*)
 	    # These systems don't actually have a C library (as such)
 	    test "X$arg" = "X-lc" && continue
 	    ;;
@@ -5373,9 +5372,7 @@ EOF
 	# Use standard objects if they are pic
 	test -z "$pic_flag" && libobjs=`$ECHO "X$libobjs" | $SP2NL | $Xsed -e "$lo2o" | $NL2SP`
 
-	user_export_symbols="$export_symbols"
-
-	filt_export_symbols=
+	orig_export_symbols=
 	case $host_os in
 	cygwin* | mingw*)
 	  if test -n "$export_symbols" && test -z "$export_symbols_regex"; then
@@ -5387,7 +5384,7 @@ EOF
 	      # export_symbols gets reassigned inside the "prepare
 	      # the list of exported symbols" if statement, so the
 	      # include_expsyms logic still works.
-	      filt_export_symbols="$export_symbols"
+	      orig_export_symbols="$export_symbols"
 	      export_symbols=
 	      always_export_symbols=yes
 	    fi
@@ -5428,22 +5425,12 @@ EOF
 	fi
 
 	if test -n "$export_symbols" && test -n "$include_expsyms"; then
-	  if test -n "$user_export_symbols"; then
-	    # don't clobber user provided file
-	    tmp_export_symbols="$output_objdir/$libname.expT"
-	    $opt_dry_run || cp "$user_export_symbols" "$tmp_export_symbols"
-	  else
-	    tmp_export_symbols="$export_symbols"
-	  fi
-	  if test -n "$filt_export_symbols"; then
-	    filt_export_symbols="$tmp_export_symbols"
-	  else
-	    export_symbols="$tmp_export_symbols"
-	  fi
+	  tmp_export_symbols="$export_symbols"
+	  test -n "$orig_export_symbols" && tmp_export_symbols="$orig_export_symbols"
 	  $opt_dry_run || eval '$ECHO "X$include_expsyms" | $Xsed | $SP2NL >> "$tmp_export_symbols"'
 	fi
 
-	if test "X$skipped_export" != "X:" && test -n "$filt_export_symbols"; then
+	if test "X$skipped_export" != "X:" && test -n "$orig_export_symbols"; then
 	  # The given exports_symbols file has to be filtered, so filter it.
 	  func_echo "filter symbol list for \`$libname.la' to tag DATA exports"
 	  # FIXME: $output_objdir/$libname.filter potentially contains lots of
@@ -5453,7 +5440,7 @@ EOF
 	  # isn't a blessed tool.
 	  $opt_dry_run || $SED -e '/[ ,]DATA/!d;s,\(.*\)\([ \,].*\),s|^\1$|\1\2|,' < $export_symbols > $output_objdir/$libname.filter
 	  export_symbols=$output_objdir/$libname.def
-	  $opt_dry_run || $SED -f $output_objdir/$libname.filter < $filt_export_symbols > $export_symbols
+	  $opt_dry_run || $SED -f $output_objdir/$libname.filter < $orig_export_symbols > $export_symbols
 	fi
 
 	tmp_deplibs=
