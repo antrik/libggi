@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.5 2005/07/30 11:40:01 cegger Exp $
+/* $Id: hline.c,v 1.6 2005/09/29 07:31:14 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -55,7 +55,8 @@ do_drawhline(ggi_visual *vis, int x, int y, int w)
 
 	/* Dangling right pixel. */
 	if (w & 0x01) {
-		*(fb+(w/2)) = (*(fb+(w/2)) & 0x0F) | (fg & 0xF0);
+		fb += w/2;
+		*fb = (*fb & 0x0F) | (fg & 0xF0);
 	}
 }
 
