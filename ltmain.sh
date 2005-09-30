@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2093 2005/09/25 07:35:55) 2.1a
+# ltmain.sh (GNU libtool 1.2105 2005/09/30 01:13:38) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2093 2005/09/25 07:35:55) 2.1a
+#       $progname:		(GNU libtool 1.2105 2005/09/30 01:13:38) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2093 2005/09/25 07:35:55"
-package_revision=1.2093
+TIMESTAMP=" 1.2105 2005/09/30 01:13:38"
+package_revision=1.2105
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -5372,6 +5372,13 @@ EOF
 	# Use standard objects if they are pic
 	test -z "$pic_flag" && libobjs=`$ECHO "X$libobjs" | $SP2NL | $Xsed -e "$lo2o" | $NL2SP`
 
+	delfiles=
+	if test -n "$export_symbols$include_expsyms"; then
+	  $opt_dry_run || cp "$export_symbols" "$output_objdir/$libname.uexp"
+	  export_symbols="$output_objdir/$libname.uexp"
+	  delfiles="$delfiles $export_symbols"
+	fi
+
 	orig_export_symbols=
 	case $host_os in
 	cygwin* | mingw*)
@@ -5424,7 +5431,7 @@ EOF
 	  fi
 	fi
 
-	if test -n "$export_symbols" && test -n "$include_expsyms"; then
+	if test -n "$export_symbols$include_expsyms"; then
 	  tmp_export_symbols="$export_symbols"
 	  test -n "$orig_export_symbols" && tmp_export_symbols="$orig_export_symbols"
 	  $opt_dry_run || eval '$ECHO "X$include_expsyms" | $Xsed | $SP2NL >> "$tmp_export_symbols"'
@@ -5439,6 +5446,7 @@ EOF
 	  # global variables. join(1) would be nice here, but unfortunately
 	  # isn't a blessed tool.
 	  $opt_dry_run || $SED -e '/[ ,]DATA/!d;s,\(.*\)\([ \,].*\),s|^\1$|\1\2|,' < $export_symbols > $output_objdir/$libname.filter
+	  delfiles="$delfiles $export_symbols $output_objdir/$libname.filter"
 	  export_symbols=$output_objdir/$libname.def
 	  $opt_dry_run || $SED -f $output_objdir/$libname.filter < $orig_export_symbols > $export_symbols
 	fi
@@ -5524,7 +5532,6 @@ EOF
 	  test_cmds=
 	  concat_cmds=
 	  objlist=
-	  delfiles=
 	  last_robj=
 	  k=1
 
@@ -5651,9 +5658,10 @@ EOF
 	      cmds=$archive_cmds
 	    fi
 	  fi
+	fi
 
-	  # Append the command to remove the reloadable object files
-	  # to the just-reset $cmds.
+	if test -n "$delfiles"; then
+	  # Append the command to remove temporary files to $cmds.
 	  eval cmds=\"\$cmds~\$RM $delfiles\"
 	fi
 
