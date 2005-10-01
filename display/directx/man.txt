@@ -28,10 +28,10 @@ Options
     used to embed a LibGGI application into a DirectX application. The
     value should be a DirectX window ID expressed as a decimal,
     hexadecimal or octal number in C syntax. The special string "root"
-    will cause the application to run in the root window. Note that in the root window,
-    you may need to explicitly select a LibGII input source using the
-    `GGI_INPUT` environment variable as Windows will absorb all events
-    sent to the window.
+    will cause the application to run in the root window. Note that in
+    the root window, you may need to explicitly select a LibGII input
+    source using the `GGI_INPUT` environment variable as Windows will
+    absorb all events sent to the window.
     When using the root window other features (like direct framebuffer
     access and video hardware mode selection) may be available which
     are not available when the application is running in a normal window.
