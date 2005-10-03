@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.4 2005/06/09 19:51:01 cegger Exp $
+/* $Id: ext.c,v 1.5 2005/10/03 09:01:47 cegger Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -213,7 +213,8 @@ int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 	if (--LIBGGI_EXTAC(vis, id)) {
 		return LIBGGI_EXTAC(vis, id);
 	}
-	
+
+	free(vis->extlist);	
 	free(LIBGGI_EXT(vis, id));
 	LIBGGI_EXT(vis, id) = NULL;  /* Make sure ... */
 
