@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.5 2005/10/03 09:01:47 cegger Exp $
+/* $Id: ext.c,v 1.6 2005/10/03 11:56:06 cegger Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -6,7 +6,7 @@
    Copyright (C) 1997 Jason McMullan		[jmcc@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
    Copyright (C) 2005 Christoph Egger
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -59,14 +59,14 @@ int ggiExtensionInit(void)
 int ggiExtensionExit(void)
 {
 	ggi_extension *tmp;
-	
+
 	while((tmp = GG_TAILQ_FIRST(&_ggiExtension)) != NULL) {
 		REMOVE_EXTENSION(tmp);
 		free(tmp);
 	}
-	
+
 	LIB_ASSERT(HAVE_NO_EXTENSIONS, "ggi extension list not empty at shutdown\n");
-	
+
 	return 0;
 }
 
@@ -75,12 +75,13 @@ int ggiExtensionExit(void)
   (ggi_extid) that can be used to address this extension.
 */
 ggi_extid
-ggiExtensionRegister(const char *name, size_t size, int (*change)(ggi_visual_t, int))
+ggiExtensionRegister(const char *name, size_t size,
+			int (*change)(ggi_visual_t, int))
 {
 	ggi_extension *tmp, *ext;
 
 	DPRINT_CORE("ggiExtensionRegister(\"%s\", %d, %p) called\n",
-		       name, size, change);
+			name, size, change);
 	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
 			if (strcmp(tmp->name, name) == 0) {
@@ -136,7 +137,7 @@ int ggiExtensionUnregister(ggi_extid id)
 		REMOVE_EXTENSION(tmp);
 
 		DPRINT_CORE("ggiExtensionUnregister: removing last copy of extension %s\n",
-			       tmp->name);
+				tmp->name);
 
 		free(tmp);
 
@@ -151,11 +152,11 @@ int ggiExtensionUnregister(ggi_extid id)
   The extension has to be registered for that.
   RC: negative  Error.
        x	for the number of times this extension had already been
-         	registered to that visual. So
-       0 	means you installed the extension as the first one. Note that
-     >=0 	should be regarded as "success". It is legal to attach an 
-         	extension multiple times. You might want to set up private
-         	data if RC==0.
+        	registered to that visual. So
+       0	means you installed the extension as the first one. Note that
+     >=0	should be regarded as "success". It is legal to attach an
+        	extension multiple times. You might want to set up private
+        	data if RC==0.
 */
 int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 {
@@ -173,7 +174,7 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
 	if (vis->numknownext <= id) {
 		ggi_extlist *newlist;
 		int extsize = sizeof(*vis->extlist);
-		
+
 		newlist = realloc(vis->extlist, extsize * (id + 1U));
 		if (newlist == NULL) return GGI_ENOMEM;
 
@@ -207,14 +208,13 @@ int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 	DPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
 
 	if (vis->numknownext <= id || LIBGGI_EXTAC(vis, id) == 0) {
-	     	return GGI_EARGINVAL;
+		return GGI_EARGINVAL;
 	}
 
 	if (--LIBGGI_EXTAC(vis, id)) {
 		return LIBGGI_EXTAC(vis, id);
 	}
 
-	free(vis->extlist);	
 	free(LIBGGI_EXT(vis, id));
 	LIBGGI_EXT(vis, id) = NULL;  /* Make sure ... */
 
@@ -226,16 +226,16 @@ int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
 	ggi_extension *tmp = NULL;
 
 	DPRINT_CORE("ggiIndicateChange(%p, 0x%x) called\n",
-		       vis, whatchanged);
+			vis, whatchanged);
 
 	/* Tell all attached extensions on this visual */
 	DPRINT_CORE("ggiIndicateChange: %i changed for %p.\n",
-		       whatchanged, vis);
+			whatchanged, vis);
 
 	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
 			if (tmp->id < vis->numknownext &&
-			    LIBGGI_EXTAC(vis, tmp->id))
+			   LIBGGI_EXTAC(vis, tmp->id))
 			{
 				tmp->paramchange(vis, whatchanged);
 			}
