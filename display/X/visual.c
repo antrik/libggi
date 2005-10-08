@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.51 2005/10/08 12:49:55 cegger Exp $
+/* $Id: visual.c,v 1.52 2005/10/08 13:26:32 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -253,10 +253,7 @@ skip3:
 
 	DPRINT_MISC("GGIclose: free mansync\n");
 	if (priv->opmansync)	    free(priv->opmansync);
-
  skip2:
-	DPRINT_MISC("GGIclose: free gc\n");
-	if (priv->gc)		    XFreeGC(priv->disp, priv->gc);
 	DPRINT_MISC("GGIclose: destroy flushlock\n");
 	if (priv->flushlock)	    ggLockDestroy(priv->flushlock);
 	DPRINT_MISC("GGIclose: destroy xliblock\n");
