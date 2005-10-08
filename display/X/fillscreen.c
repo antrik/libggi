@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.9 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: fillscreen.c,v 1.10 2005/10/08 11:20:05 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Fillscreenfunctions for X.
@@ -107,6 +107,8 @@ int GGI_X_fillscreen_slave_draw(ggi_visual *vis)
 			gc, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis) );
 	}
 	GGI_X_MAYBE_SYNC(vis);
+	XFreeGC(priv->disp, gc);
+
 	GGI_X_UNLOCK_XLIB(vis);
 	return GGI_OK;
 }
