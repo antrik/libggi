@@ -1830,8 +1830,10 @@ _LT_DECL([], [striplib], [1])
 # -----------------------------
 # PORTME Fill in your ld.so characteristics
 m4_defun([_LT_SYS_DYNAMIC_LINKER],
-[m4_require([_LT_DECL_EGREP])dnl
+[AC_REQUIRE([AC_CANONICAL_HOST])dnl
+m4_require([_LT_DECL_EGREP])dnl
 m4_require([_LT_FILEUTILS_DEFAULTS])dnl
+m4_require([_LT_DECL_SED])dnl
 AC_MSG_CHECKING([dynamic linker characteristics])
 m4_case([$1],
 	[C], [withGCC=$GCC],
@@ -2925,7 +2927,7 @@ _LT_DECL([], [NM], [1], [A BSD- or MS-compatible name lister])dnl
 
 AC_CACHE_CHECK([the name lister ($NM) interface], [lt_cv_nm_interface],
   [lt_cv_nm_interface="BSD nm"
-  printf "int some_variable = 0;" > conftest.$ac_ext
+  echo "int some_variable = 0;" > conftest.$ac_ext
   (eval echo "\"\$as_me:__oline__: $ac_compile\"" >&AS_MESSAGE_LOG_FD)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&AS_MESSAGE_LOG_FD
@@ -4952,7 +4954,7 @@ if test "$_lt_caught_CXX_error" != yes; then
   lt_simple_compile_test_code="int some_variable = 0;\n"
 
   # Code to be used in simple link tests
-  lt_simple_link_test_code='int main(int, char *[]) { return(0); }\n'
+  lt_simple_link_test_code='int main(int, char *[[]]) { return(0); }\n'
 
   # ltmain only uses $CC for tagged configurations so make sure $CC is set.
   _LT_TAG_COMPILER
@@ -5170,6 +5172,18 @@ if test "$_lt_caught_CXX_error" != yes; then
           fi
         fi
         ;;
+
+      beos*)
+	if $LD --help 2>&1 | $GREP ': supported targets:.* elf' > /dev/null; then
+	  _LT_TAGVAR(allow_undefined_flag, $1)=unsupported
+	  # Joseph Beckenbach <jrb3@best.com> says some releases of gcc
+	  # support --undefined.  This deserves some investigation.  FIXME
+	  _LT_TAGVAR(archive_cmds, $1)='$CC -nostart $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+	else
+	  _LT_TAGVAR(ld_shlibs, $1)=no
+	fi
+	;;
+
       chorus*)
         case $cc_basename in
           *)

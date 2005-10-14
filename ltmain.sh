@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2108 2005/09/30 16:00:21) 2.1a
+# ltmain.sh (GNU libtool 1.2132 2005/10/14 15:43:07) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2108 2005/09/30 16:00:21) 2.1a
+#       $progname:		(GNU libtool 1.2132 2005/10/14 15:43:07) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2108 2005/09/30 16:00:21"
-package_revision=1.2108
+TIMESTAMP=" 1.2132 2005/10/14 15:43:07"
+package_revision=1.2132
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
