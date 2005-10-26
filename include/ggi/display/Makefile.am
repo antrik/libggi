@@ -1,12 +1,12 @@
 ggiincludedir = ${includedir}/ggi/display
-ggiinclude_HEADERS = auto.h \
-	sub.h tile.h multi.h trueemu.h palemu.h \
-	linvtsw.h mansync.h modelist.h \
-	x.h xf86dga.h xevi.h xlib.h xcommon.h \
-	libkgi.h kgi.h fbdev.h glide.h lcd823.h svgalib.h \
-	ipc.h memory.h tele.h file.h \
-	aa.h monotext.h vcsa.h \
-	directx.h quartz.h vgl.h
+ggiinclude_HEADERS = aa.h auto.h directx.h \
+	fbdev.h file.h glide.h ipc.h \
+	kgi.h lcd823.h libkgi.h linvtsw.h \
+	mansync.h memory.h modelist.h \
+	monotext.h multi.h palemu.h \
+	quartz.h sub.h svgalib.h \
+	tele.h tile.h trueemu.h \
+	x.h xcommon.h xevi.h xf86dga.h xlib.h \
+	vcsa.h vgl.h
 
 MAINTAINERCLEANFILES = Makefile.in
-
