@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.21 2005/08/17 14:59:47 cegger Exp $
+/* $Id: dga.c,v 1.22 2005/10/30 08:25:20 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -267,7 +267,7 @@ static int ggi_xdga_validate_mode(ggi_visual * vis, int num,
 	ggi_x_priv *priv;
 	XDGAMode *dgamodes;
 	ggi_checkmode_t *cm;
-	int i;
+	intptr_t i;
 	int err;
 	int no_modes = 1;	/* true we haven't found a mode */
 
