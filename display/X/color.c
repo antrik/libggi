@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.25 2005/06/09 17:15:35 cegger Exp $
+/* $Id: color.c,v 1.26 2005/10/30 14:57:50 cegger Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -158,7 +158,7 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 		start = priv->ncols - len;
 	}
 
-	if ( ((int)(start+len) > priv->ncols )
+	if ( ((start+len) > priv->ncols )
 	    || (start < 0) )
 	{
 		return GGI_ENOSPACE;
@@ -223,9 +223,9 @@ int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	if (priv->vilist[priv->viidx].vi->class != TrueColor &&
 	    priv->vilist[priv->viidx].vi->class != DirectColor) return GGI_ENOMATCH;
 
-	if (colormap==NULL) return GGI_EARGINVAL;
-	if (start < 0 || start >= priv->ncols) return GGI_ENOSPACE;
-	if (len > priv->ncols) return GGI_ENOSPACE;
+	if (colormap == NULL) return GGI_EARGINVAL;
+	if (start < 0 || (unsigned)start >= priv->ncols) return GGI_ENOSPACE;
+	if ((unsigned)len > priv->ncols) return GGI_ENOSPACE;
 
 	i = 0;
 	do {
@@ -261,7 +261,7 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	ggi_x_priv *priv;
 	Colormap defcmap;
 	XColor xcell;
-	int i, j;
+	unsigned int i, j, offset;
 	ggi_pixelformat *fmt;
 
 	fmt = LIBGGI_PIXFMT(vis);
@@ -321,37 +321,37 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 		/* Install colormap */
 		XInstallColormap(priv->disp, priv->cmap);
 		return;
+
 	} else if (vi->class != DirectColor) {
+
 		LIB_ASSERT(vi->class == TrueColor, "Unknown class!\n");
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocNone);
 		if (priv->cmap == None) return;
 		if (vi->class != TrueColor) return;
+
 	} else {
+
 		LIB_ASSERT(vi->class == DirectColor, "Unknown class!\n");
 		DPRINT("Filmed on location in DirectColor\n");
 		vis->opcolor->setgammamap = GGI_X_setgammamap;
 		priv->cmap = XCreateColormap(priv->disp, priv->parentwin,
 					     vi->visual, AllocAll);
 		if (priv->cmap == None) return;
-		vis->gamma->maxwrite_r = 1 << _ggi_countbits(fmt->red_mask);
-		vis->gamma->maxwrite_g = 1 << _ggi_countbits(fmt->green_mask);
-		vis->gamma->maxwrite_b = 1 << _ggi_countbits(fmt->blue_mask);
+		vis->gamma->maxwrite_r = 1 << _ggi_countbits(vi->red_mask);
+		vis->gamma->maxwrite_g = 1 << _ggi_countbits(vi->green_mask);
+		vis->gamma->maxwrite_b = 1 << _ggi_countbits(vi->blue_mask);
 	}
-        /* Install colormap */
-        XInstallColormap(priv->disp, priv->cmap);
+	/* Install colormap */
+	XInstallColormap(priv->disp, priv->cmap);
 
 	vis->opcolor->getgammamap = GGI_X_getgammamap;
-	vis->gamma->maxread_r = _ggi_countbits(fmt->red_mask);
-	vis->gamma->maxread_g = _ggi_countbits(fmt->green_mask);
-	vis->gamma->maxread_b = _ggi_countbits(fmt->blue_mask);
-	priv->ncols = vis->gamma->maxread_r;
-	if (priv->ncols < vis->gamma->maxread_g)
-		priv->ncols = vis->gamma->maxread_g;
-	if (priv->ncols < vis->gamma->maxread_b)
-		priv->ncols = vis->gamma->maxread_b;
-	priv->ncols = 1 << priv->ncols;
-	APP_ASSERT(priv->ncols > 0, "X: Spurious Pixel Format");
+	vis->gamma->maxread_r = _ggi_countbits(vi->red_mask);
+	vis->gamma->maxread_g = _ggi_countbits(vi->green_mask);
+	vis->gamma->maxread_b = _ggi_countbits(vi->blue_mask);
+
+	priv->ncols = vi->colormap_size;
+	LIB_ASSERT(priv->ncols > 0, "X: Spurious Pixel Format");
 
 	/* Fill the colormap with the original colors (or just read) */
 	priv->gammamap = calloc((size_t)priv->ncols, sizeof(XColor));
@@ -365,26 +365,36 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	priv->gamma.start = 0;
 	priv->gamma.len = priv->ncols;
 
+	/* DirectColor: The pixel field is divided into 3 fields;
+	 * one for each primary color and each of the fields
+	 * selects an entry in a separate lookup table each of
+	 * which holds the intensity of the appropriate primary
+	 * color.
+	 */
+
 	i = j = 0;
+	offset = (0x80000000 >> (vis->gamma->maxread_r - 1));
 	do {
 		priv->gammamap[j].pixel = 
 			(i >> fmt->red_shift) & fmt->red_mask;
 		j++;
-		i += (0x80000000 >> (vis->gamma->maxread_r - 1));
+		i += offset;
 	} while (i);
 	i = j = 0;
+	offset = (0x80000000 >> (vis->gamma->maxread_g - 1));
 	do {
 		priv->gammamap[j].pixel |= 
 			(i >> fmt->green_shift) & fmt->green_mask;
 		j++;
-		i += (0x80000000 >> (vis->gamma->maxread_g - 1));
+		i += offset;
 	} while (i);
 	i = j = 0;
+	offset = (0x80000000 >> (vis->gamma->maxread_b - 1));
 	do {
 		priv->gammamap[j].pixel |= 
 			(i >> fmt->blue_shift) & fmt->blue_mask;
 		j++;
-		i += (0x80000000 >> (vis->gamma->maxread_b - 1));
+		i += offset;
 	} while (i);
 	vis->gamma->maxread_r = 1 << vis->gamma->maxread_r;
 	vis->gamma->maxread_g = 1 << vis->gamma->maxread_g;
@@ -399,11 +409,11 @@ void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
 	for (i = 0; i < priv->ncols; i++) {
 		priv->gammamap[i].flags = 0;
 	}
-	for (i = 0; i < vis->gamma->maxread_r; i++)
+	for (i = 0; i < (unsigned)vis->gamma->maxread_r; i++)
 		priv->gammamap[i].flags |= DoRed;
-	for (i = 0; i < vis->gamma->maxread_g; i++)
+	for (i = 0; i < (unsigned)vis->gamma->maxread_g; i++)
 		priv->gammamap[i].flags |= DoGreen;
-	for (i = 0; i < vis->gamma->maxread_b; i++)
+	for (i = 0; i < (unsigned)vis->gamma->maxread_b; i++)
 		priv->gammamap[i].flags |= DoBlue;
 
 	if (vi->class != DirectColor) return;
