@@ -2,7 +2,7 @@
 
 version_check=yes
 
-for opt; do
+for opt in $@; do
   case "$opt" in
   --force)
     version_check=no
