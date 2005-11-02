@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2133 2005/10/17 14:06:35) 2.1a
+# ltmain.sh (GNU libtool 1.2155 2005/11/02 17:43:50) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2133 2005/10/17 14:06:35) 2.1a
+#       $progname:		(GNU libtool 1.2155 2005/11/02 17:43:50) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2133 2005/10/17 14:06:35"
-package_revision=1.2133
+TIMESTAMP=" 1.2155 2005/11/02 17:43:50"
+package_revision=1.2155
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2658,14 +2658,15 @@ func_mode_link ()
 	    compile_command="$compile_command $link_static_flag"
 	    finalize_command="$finalize_command $link_static_flag"
 	  fi
+	  prefer_static_libs=yes
 	else
 	  if test -z "$pic_flag" && test -n "$link_static_flag"; then
 	    dlopen_self=$dlopen_self_static
 	  fi
+	  prefer_static_libs=built
 	fi
 	build_libtool_libs=no
 	build_old_libs=yes
-	prefer_static_libs=yes
 	break
 	;;
       esac
@@ -4038,8 +4039,12 @@ func_mode_link ()
 	fi
 
 	link_static=no # Whether the deplib will be linked statically
+	use_static_libs=$prefer_static_libs
+	if test "$use_static_libs" = built && test "$installed" = yes; then
+	  use_static_libs=no
+	fi
 	if test -n "$library_names" &&
-	   { test "$prefer_static_libs" = no || test -z "$old_library"; }; then
+	   { test "$use_static_libs" = no || test -z "$old_library"; }; then
 	  case $host in
 	  *cygwin* | *mingw*)
 	      # No point in relinking DLLs because paths are not encoded
