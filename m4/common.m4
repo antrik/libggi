@@ -346,3 +346,35 @@ if test "$ac_cv_header_inttypes_h" != "yes"; then
 	    [Tell libgg to define integer types when building])
 fi
 ])
+
+
+dnl ------ checktarget.m4 ----
+dnl Check whether to build a target
+dnl Requires 7 arguments
+dnl $1: target name
+dnl $2: build_ variable
+dnl $3: *SUBDIRS
+dnl $4: *MODULES
+dnl $5: directory
+dnl $6: libname (.la)
+dnl $7: BUILTIN_* ac_define
+
+AC_DEFUN([GGI_CHECK_TARGET],
+[
+  AC_MSG_CHECKING([if we should build ]$1)
+  if test "x$$2" = "xno"; then
+    AC_MSG_RESULT([no])
+  else
+    $3="$$3 $5"
+    if test "$enable_shared" = "yes"; then
+      $4="$$4 $6"
+    fi
+    if test "$enable_static" = "yes"; then
+      AC_DEFINE($7, 1, [Support for builtin ]$1)
+    fi
+    AC_MSG_RESULT(yes)
+  fi
+  AM_CONDITIONAL($6,
+		test "$enable_static" = "yes" -a \
+			"x$$2" != "xno")
+])
