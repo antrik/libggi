@@ -374,7 +374,7 @@ AC_DEFUN([GGI_CHECK_TARGET],
     fi
     AC_MSG_RESULT(yes)
   fi
-  AM_CONDITIONAL($6,
+  AM_CONDITIONAL($7,
 		test "$enable_static" = "yes" -a \
 			"x$$2" != "xno")
 ])
