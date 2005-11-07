@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2155 2005/11/02 17:43:50) 2.1a
+# ltmain.sh (GNU libtool 1.2160 2005/11/06 12:59:52) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2155 2005/11/02 17:43:50) 2.1a
+#       $progname:		(GNU libtool 1.2160 2005/11/06 12:59:52) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2155 2005/11/02 17:43:50"
-package_revision=1.2155
+TIMESTAMP=" 1.2160 2005/11/06 12:59:52"
+package_revision=1.2160
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -3053,6 +3053,15 @@ func_mode_link ()
 	    # Rhapsody C and math libraries are in the System framework
 	    deplibs="$deplibs System.ltframework"
 	    continue
+	    ;;
+	  *-*-sco3.2v5* | *-*-sco5v6*)
+	    # Causes problems with __ctype
+	    test "X$arg" = "X-lc" && continue
+	    ;;
+	  *-*-sysv4.2uw2* | *-*-sysv5* | *-*-unixware* | *-*-OpenUNIX*)
+	    # Compiler inserts libc in the correct place for threads to work
+	    test "X$arg" = "X-lc" && continue
+	    ;;
 	  esac
 	elif test "X$arg" = "X-lc_r"; then
 	 case $host in
@@ -4942,8 +4951,13 @@ func_mode_link ()
 	    ;;
 	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly*)
 	    # Do not include libc due to us having libc/libc_r.
-	    test "X$arg" = "X-lc" && continue
 	    ;;
+	  *-*-sco3.2v5* | *-*-sco5v6*)
+	    # Causes problems with __ctype
+	    ;;
+	  *-*-sysv4.2uw2* | *-*-sysv5* | *-*-unixware* | *-*-OpenUNIX*)
+	    # Compiler inserts libc in the correct place for threads to work
+ 	    ;;
  	  *)
 	    # Add libc to deplibs on all other systems if necessary.
 	    if test "$build_libtool_need_lc" = "yes"; then
