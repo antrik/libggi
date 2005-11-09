@@ -358,11 +358,16 @@ dnl $4: *MODULES
 dnl $5: directory
 dnl $6: libname (.la)
 dnl $7: BUILTIN_* ac_define
+dnl $8: Optional: quoted action on failure
+dnl $9: Optional: quoted action on success
+dnl Hint: It is not possible to nest GGI_CHECK_TARGET
+dnl     because AM_CONDITIONAL may not be within an if
 
 AC_DEFUN([GGI_CHECK_TARGET],
 [
   AC_MSG_CHECKING([if we should build ]$1)
   if test "x$$2" = "xno"; then
+    $8
     AC_MSG_RESULT([no])
   else
     $3="$$3 $5"
@@ -372,7 +377,9 @@ AC_DEFUN([GGI_CHECK_TARGET],
     if test "$enable_static" = "yes"; then
       AC_DEFINE($7, 1, [Support for builtin ]$1)
     fi
-    AC_MSG_RESULT(yes)
+    $2="yes"
+    $9
+    AC_MSG_RESULT([yes])
   fi
   AM_CONDITIONAL($7,
 		test "$enable_static" = "yes" -a \
