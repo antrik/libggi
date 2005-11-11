@@ -338,6 +338,10 @@ m4_define([_LT_TAGDECL], [_LT_DECL([$1], [$2], [$3], [$4], [yes])])
 # ------------------------------------------------
 m4_define([lt_decl_tag_varnames],
 [_lt_decl_filter([tagged?], [yes], $@)])
+
+
+# _lt_decl_filter(SUBKEY, VALUE, [SEPARATOR], [VARNAME1..])
+# ---------------------------------------------------------
 m4_define([_lt_decl_filter],
 [m4_case([$#],
   [0], [m4_fatal([$0: too few arguments: $#])],
@@ -2452,6 +2456,15 @@ uts4*)
 esac
 AC_MSG_RESULT([$dynamic_linker])
 test "$dynamic_linker" = no && can_build_shared=no
+
+variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
+if test "$GCC" = yes; then
+  variables_saved_for_relink="$variables_saved_for_relink GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
+fi
+
+_LT_DECL([], [variables_saved_for_relink], [1],
+    [Variables whose values should be saved in libtool wrapper scripts and
+    restored at link time])
 _LT_DECL([], [need_lib_prefix], [0],
     [Do we need the "lib" prefix for modules?])
 _LT_DECL([], [need_version], [0], [Do we need a version for libraries?])
@@ -4393,25 +4406,15 @@ _LT_EOF
 	esac
       fi
       if test "$with_gnu_ld" = no; then
-	case $host_cpu in
-	hppa*64*)
-	  _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
-	  _LT_TAGVAR(hardcode_libdir_separator, $1)=:
-	  _LT_TAGVAR(hardcode_direct, $1)=no
-	  _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
-	  ;;
-	ia64*)
-	  _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='-L$libdir'
-	  _LT_TAGVAR(hardcode_direct, $1)=no
-	  _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
+	_LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
+	_LT_TAGVAR(hardcode_libdir_separator, $1)=:
 
-	  # hardcode_minus_L: Not really in the search PATH,
-	  # but as the default location of the library.
-	  _LT_TAGVAR(hardcode_minus_L, $1)=yes
+	case $host_cpu in
+	hppa*64*|ia64*)
+	  _LT_TAGVAR(hardcode_direct, $1)=no
+	  _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
 	  ;;
 	*)
-	  _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
-	  _LT_TAGVAR(hardcode_libdir_separator, $1)=:
 	  _LT_TAGVAR(hardcode_direct, $1)=yes
 	  _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}-E'
 
@@ -4694,14 +4697,6 @@ _LT_DECL([], [shrext_cmds], [1], [Shared library suffix (normally ".so")])dnl
 _LT_DECL([], [extract_expsyms_cmds], [2],
     [The commands to extract the exported symbol list from a shared archive])
 
-variables_saved_for_relink="PATH $shlibpath_var $runpath_var"
-if test "$GCC" = yes; then
-  variables_saved_for_relink="$variables_saved_for_relink GCC_EXEC_PREFIX COMPILER_PATH LIBRARY_PATH"
-fi
-_LT_DECL([], [variables_saved_for_relink], [1],
-    [Variables whose values should be saved in libtool wrapper scripts and
-    restored at link time])
-
 #
 # Do we need to explicitly link libc?
 #
@@ -4729,6 +4724,7 @@ x|xyes)
         libobjs=conftest.$ac_objext
         deplibs=
         wl=$_LT_TAGVAR(lt_prog_compiler_wl, $1)
+	pic_flag=$_LT_TAGVAR(lt_prog_compiler_pic, $1)
         compiler_flags=-v
         linker_flags=-v
         verstring=
@@ -5019,12 +5015,12 @@ if test "$_lt_caught_CXX_error" != yes; then
   if test -n "${lt_cv_prog_gnu_ldcxx+set}"; then
     lt_cv_prog_gnu_ld=$lt_cv_prog_gnu_ldcxx
   else
-    unset lt_cv_prog_gnu_ld
+    $as_unset lt_cv_prog_gnu_ld
   fi
   if test -n "${lt_cv_path_LDCXX+set}"; then
     lt_cv_path_LD=$lt_cv_path_LDCXX
   else
-    unset lt_cv_path_LD
+    $as_unset lt_cv_path_LD
   fi
   test -z "${LDCXX+set}" || LD=$LDCXX
   CC=${CXX-"c++"}
@@ -5407,32 +5403,21 @@ if test "$_lt_caught_CXX_error" != yes; then
 
       hpux10*|hpux11*)
         if test $with_gnu_ld = no; then
+  	  _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
+  	  _LT_TAGVAR(hardcode_libdir_separator, $1)=:
+
           case $host_cpu in
-            hppa*64*)
-  	      _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
-  	      _LT_TAGVAR(hardcode_libdir_separator, $1)=:
-              ;;
-            ia64*)
-  	      _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='-L$libdir'
+            hppa*64*|ia64*)
               ;;
             *)
-  	      _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}+b ${wl}$libdir'
-  	      _LT_TAGVAR(hardcode_libdir_separator, $1)=:
   	      _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}-E'
               ;;
           esac
         fi
         case $host_cpu in
-          hppa*64*)
+          hppa*64*|ia64*)
             _LT_TAGVAR(hardcode_direct, $1)=no
             _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
-            ;;
-          ia64*)
-            _LT_TAGVAR(hardcode_direct, $1)=no
-            _LT_TAGVAR(hardcode_shlibpath_var, $1)=no
-            _LT_TAGVAR(hardcode_minus_L, $1)=yes # Not in the search PATH,
-  					         # but as the default
-  					         # location of the library.
             ;;
           *)
             _LT_TAGVAR(hardcode_direct, $1)=yes
@@ -5450,7 +5435,7 @@ if test "$_lt_caught_CXX_error" != yes; then
           aCC*)
   	    case $host_cpu in
   	      hppa*64*|ia64*)
-  	        _LT_TAGVAR(archive_cmds, $1)='$LD -b +h $soname -o $lib $linker_flags $libobjs $deplibs'
+  	        _LT_TAGVAR(archive_cmds, $1)='$CC -b ${wl}+h ${wl}$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
   	        ;;
   	      *)
   	        _LT_TAGVAR(archive_cmds, $1)='$CC -b ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
@@ -5471,7 +5456,7 @@ if test "$_lt_caught_CXX_error" != yes; then
   	      if test $with_gnu_ld = no; then
   	        case $host_cpu in
   	          ia64*|hppa*64*)
-  	            _LT_TAGVAR(archive_cmds, $1)='$LD -b +h $soname -o $lib $linker_flags $libobjs $deplibs'
+  	            _LT_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib -fPIC ${wl}+h ${wl}$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
   	            ;;
   	          *)
   	            _LT_TAGVAR(archive_cmds, $1)='$CC -shared -nostdlib -fPIC ${wl}+h ${wl}$soname ${wl}+b ${wl}$install_libdir -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
@@ -6225,8 +6210,6 @@ if test "$_lt_disable_F77" != yes; then
     test "$enable_shared" = yes || enable_static=yes
     AC_MSG_RESULT([$enable_static])
 
-    test "$_LT_TAGVAR(ld_shlibs, $1)" = no && can_build_shared=no
-
     _LT_TAGVAR(GCC, $1)="$G77"
     _LT_TAGVAR(LD, $1)="$LD"
 
@@ -6359,8 +6342,6 @@ if test "$_lt_disable_FC" != yes; then
     # Make sure either enable_shared or enable_static is yes.
     test "$enable_shared" = yes || enable_static=yes
     AC_MSG_RESULT([$enable_static])
-
-    test "$_LT_TAGVAR(ld_shlibs, $1)" = no && can_build_shared=no
 
     _LT_TAGVAR(GCC, $1)="$ac_cv_fc_compiler_gnu"
     _LT_TAGVAR(LD, $1)="$LD"

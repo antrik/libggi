@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2160 2005/11/06 12:59:52) 2.1a
+# ltmain.sh (GNU libtool 1.2178 2005/11/10 18:32:40) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2160 2005/11/06 12:59:52) 2.1a
+#       $progname:		(GNU libtool 1.2178 2005/11/10 18:32:40) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2160 2005/11/06 12:59:52"
-package_revision=1.2160
+TIMESTAMP=" 1.2178 2005/11/10 18:32:40"
+package_revision=1.2178
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -1121,7 +1121,7 @@ func_win32_libid ()
     if eval $OBJDUMP -f $1 | $SED -e '10q' 2>/dev/null |
        $EGREP 'file format pe-i386(.*architecture: i386)?' >/dev/null ; then
       win32_nmres=`eval $NM -f posix -A $1 |
-	sed -n -e '1,100{/ I /{s,.*,import,;p;q;};}'`
+	$SED -n -e '1,100{/ I /{s,.*,import,;p;q;};}'`
       case $win32_nmres in
       import*)  win32_libid_type="x86 archive import";;
       *)        win32_libid_type="x86 archive static";;
@@ -4169,7 +4169,10 @@ func_mode_link ()
 	      if test "$hardcode_direct" = no; then
 		add="$dir/$linklib"
 		case $host in
-		  *-*-sco3.2v5* ) add_dir="-L$dir" ;;
+		  *-*-sco3.2v5.0.[024]*) add_dir="-L$dir" ;;
+		  *-*-sysv4*uw2*) add_dir="-L$dir" ;;
+		  *-*-sysv5OpenUNIX* | *-*-sysv5UnixWare7.[01].[10]* | \
+		    *-*-unixware7*) add_dir="-L$dir" ;;
 		  *-*-darwin* )
 		    # if the lib is a (non-dlopened) module then we can not
 		    # link against it, someone is ignoring the earlier warnings
