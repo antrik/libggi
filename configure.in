@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.180 2005/12/14 21:39:38 pekberg Exp $
+dnl $Id: configure.in,v 1.181 2005/12/17 22:44:57 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -9,7 +9,7 @@ AC_INIT([libggi],[2.3.0],[http://www.ggi-project.org/contact.html])
 AC_CONFIG_SRCDIR([include/ggi/ggi.h])
 AC_CONFIG_MACRO_DIR(m4)
 
-AM_INIT_AUTOMAKE([libggi],[2.3.0],[-])
+AM_INIT_AUTOMAKE([1.9 foreign])
 
 AM_MAINTAINER_MODE
 
