@@ -40,10 +40,10 @@
 #define DEBUG_SYNC	0x40000000 /* debug sync           */
 #define DEBUG_LEVEL     0x30000000 /* debug level mask     */
 
-#define DEBUG_0         0x00000000
-#define DEBUG_1         0x10000000
-#define DEBUG_2         0x20000000
-#define DEBUG_3         0x30000000
+#define DEBUG_0         (uint32_t)0x00000000
+#define DEBUG_1         (uint32_t)0x10000000
+#define DEBUG_2         (uint32_t)0x20000000
+#define DEBUG_3         (uint32_t)0x30000000
 
 #define DEBUG_NOTICE   " "
 #define DEBUG_WARNING  "!! Warning: "
