@@ -100,7 +100,8 @@ III) Compilation:
 
 	From the libggi directory, issue the following commands:
 
-	  ./configure --prefix=/usr
+	  ./configure --prefix=/usr LDFLAGS="-Wl,--enable-auto-import
+	  	-Wl,--enable-runtime-pseudo-reloc"
 	  make
 	  make install
 
