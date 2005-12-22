@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.181 2005/12/17 22:44:57 cegger Exp $
+dnl $Id: configure.in,v 1.182 2005/12/22 13:16:18 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -273,6 +273,16 @@ do_vis=$enableval)
 AC_ARG_ENABLE(mvi,
 [  --disable-mvi           don't build MVI SWAR code],
 do_mvi=$enableval)
+
+
+AC_ARG_ENABLE(conffile,
+[  --disable-conffile      build with builtin configuration only],
+use_conffile=$enableval
+if test "$use_conffile" = no; then
+  ggi_conffile=
+fi
+)
+
 
 dnl Support the --with-extra-libs and --with-extra-includes command line
 dnl options to 'configure'. 
@@ -1479,11 +1489,18 @@ case "${host}" in
 	;;
 esac
 
+if test "$use_conffile" != no; then
+  AC_DEFINE(HAVE_CONFFILE, 1,
+  	[Define to 1 to read config from GGICONFDIR/GGICONFFILE])
+fi
+
+
 AC_SUBST(ggi_subdir)
 AC_SUBST(ggi_sysconfdir_to_libdir)
 AC_SUBST(ggi_sysconfdir)
 AC_SUBST(static_libdir)
 AC_SUBST(static_sysconfdir)
+AC_SUBST(ggi_conffile)
 
 # For distcheck we need to eventually pass the location where gii can be
 # found. This is done with --with-gii= or --with-uninst-gii= as usual.

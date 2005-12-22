@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.1 2005/09/01 11:23:47 cegger Exp $
+/* $Id: builtins.c,v 1.2 2005/12/22 13:16:18 pekberg Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -340,3 +340,10 @@ void _ggiExitBuiltins(void)
 {
 	ggDelScope(_builtins);
 }
+
+#ifndef HAVE_CONFFILE
+const char const *_ggibuiltinconf[] = {
+#include "builtins.inc"
+       NULL
+};
+#endif /* HAVE_CONFFILE */

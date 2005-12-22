@@ -16,4 +16,11 @@ libggi_la_LDFLAGS = $(extra_libraries) -version-info 2:3:0 -no-undefined \
 
 EXTRA_DIST = EXPSYMS ext.h swar.h
 
+MOSTLYCLEANFILES = builtins.inc
 MAINTAINERCLEANFILES = Makefile.in
+
+builtins.c: builtins.inc
+
+builtins.inc: $(top_srcdir)/libggi.conf.in
+	$(SED) -n -e '/^[.]/d;/@DLLEXT[@]/d;s/\(.*\)/\"\1\",/;p' \
+	>$@ <$(top_srcdir)/libggi.conf.in

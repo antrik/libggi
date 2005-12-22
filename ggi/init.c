@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.47 2005/09/19 18:46:44 cegger Exp $
+/* $Id: init.c,v 1.48 2005/12/22 13:16:18 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -54,8 +54,12 @@ static struct {
 } _ggiVisuals;	/* This is for remembering visuals. */
 
 static int            _ggiLibIsUp      = 0;
+#ifdef HAVE_CONFFILE
 static char           ggiconfstub[512] = GGICONFDIR;
 static char          *ggiconfdir       = ggiconfstub + GGITAGLEN;
+#else
+extern const char const *_ggibuiltinconf[];
+#endif
 
 void _ggiInitBuiltins(void);
 void _ggiExitBuiltins(void);
@@ -80,12 +84,16 @@ const void *_ggiGetConfigHandle(void)
 
 const char *ggiGetConfDir(void)
 {
+#ifdef HAVE_CONFFILE
 #if defined(__WIN32__) && !defined(__CYGWIN__)
 	/* On Win32 we allow overriding of the compiled in path. */
 	const char *envdir = getenv("GGI_CONFDIR");
 	if (envdir) return envdir;
 #endif
 	return ggiconfdir;
+#else /* HAVE_CONFFILE */
+	return NULL;
+#endif /* HAVE_CONFFILE */
 }
 
 /*
@@ -151,6 +159,7 @@ int ggiInit(void)
 	}
 
 
+#ifdef HAVE_CONFFILE
 	confdir = ggiGetConfDir();
 	/* two extra bytes needed. One for the slash and one for the terminator (\0) */
 	conffile = malloc(strlen(confdir) + 1 + strlen(GGICONFFILE)+1);
@@ -167,6 +176,18 @@ int ggiInit(void)
 
 	err = ggLoadConfig(conffile, &_ggiConfigHandle);
 	free(conffile);
+#else
+	{
+		char arrayconf[40];
+		snprintf(arrayconf, 40, "array@%p", _ggibuiltinconf);
+		err = ggLoadConfig(arrayconf, &_ggiConfigHandle);
+		if (err != GGI_OK) {
+			fprintf(stderr, "LibGGI: fatal error - "
+					"could not load builtin config\n");
+			goto err4;
+		}
+	}
+#endif /* HAVE_CONFFILE */
 	if (err == GGI_OK) {
 		_ggiInitBuiltins();
 		DPRINT_CORE("ggiInit() successfull\n");
