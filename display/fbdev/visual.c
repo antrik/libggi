@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2005/09/19 18:46:41 cegger Exp $
+/* $Id: visual.c,v 1.32 2005/12/27 16:30:14 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -687,7 +687,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		const char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
-			sprintf(strbuf, "linux-kbd:/dev/tty%d", vtnum);
+			snprintf(strbuf, 64, "linux-kbd:/dev/tty%d", vtnum);
 			inputstr = strbuf;
 		}
 
