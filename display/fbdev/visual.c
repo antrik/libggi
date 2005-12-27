@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.33 2005/12/27 16:33:21 cegger Exp $
+/* $Id: visual.c,v 1.34 2005/12/27 19:06:39 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -135,6 +135,7 @@ switchreq(void *arg)
 	ev.cmd.code = GGICMD_REQUEST_SWITCH;
 	data->request = GGI_REQSW_UNMAP;
 
+	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
 	_giiSafeAdd(vis->input, &ev);
 
 	priv->switchpending = 1;
@@ -178,6 +179,7 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
+	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
 	_giiSafeAdd(vis->input, &ev);
 	DPRINT_MISC("fbdev: EXPOSE sent.\n");
 
