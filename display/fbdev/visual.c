@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2005/12/27 16:30:14 cegger Exp $
+/* $Id: visual.c,v 1.33 2005/12/27 16:33:21 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -694,7 +694,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->input = giiOpen(inputstr, NULL);
 		if (vis->input == NULL) {
 			if (vtnum != -1) {
-				sprintf(strbuf, "linux-kbd:/dev/vc/%d", vtnum);
+				snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d",
+					vtnum);
 				vis->input = giiOpen(inputstr, NULL);
 			}
 			if (vis->input == NULL) {
@@ -738,12 +739,12 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #endif
 	} else {
 		devfile = devicename;
-		sprintf(devicename, "/dev/fb%d", fbnum);
+		snprintf(devicename, MAX_DEV_LEN, "/dev/fb%d", fbnum);
 		LIBGGI_FD(vis) = open(devicename, O_RDWR);
 		if (LIBGGI_FD(vis) < 0) {
 			classicname_failed=1;
 			classicname_errno=errno;
-			sprintf(devicename, "/dev/fb/%d", fbnum);
+			snprintf(devicename, MAX_DEV_LEN, "/dev/fb/%d", fbnum);
 			LIBGGI_FD(vis) = open(devicename, O_RDWR);
 		}
 	}
