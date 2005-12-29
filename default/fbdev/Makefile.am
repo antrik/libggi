@@ -1,6 +1,6 @@
-SUBDIRS = mga ati $(FBDEVSUBDIRS)
+SUBDIRS = ati mga $(FBDEVSUBDIRS)
 
-DIST_SUBDIRS = mga directfb ati
+DIST_SUBDIRS = ati directfb mga
 
 MAINTAINERCLEANFILES = Makefile.in
 
