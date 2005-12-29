@@ -18,7 +18,7 @@ helper-fbdev-directfb-global	default/fbdev/directfb/directfbglobal.@DLLEXT@
 # FB_ACCEL_DEC_TGA		7       DEC 21030 TGA
 
 # FB_ACCEL_ATI_MACH64CT		8       ATI Mach 64CT family
-fb-accel-0a-linear-*		default/fbdev/ati/fbdev_mach64.@DLLEXT@
+fb-accel-0a-linear-*		default/fbdev/fbdev_mach64.@DLLEXT@
 
 # FB_ACCEL_ATI_MACH64VT		9       ATI Mach 64CT family VT class
 # FB_ACCEL_ATI_MACH64GT		10      ATI Mach 64CT family GT class
