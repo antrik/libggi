@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.24 2005/09/19 18:46:44 cegger Exp $
+/* $Id: dl.c,v 1.25 2005/12/29 23:44:09 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -137,7 +137,7 @@ int _ggiProbeDL(ggi_visual *vis, const void *conffilehandle,
 	GG_ITER_DONE(&match);
 	
 	if(err) {
-		DPRINT_LIBS("LibGGI: could not prob lib for sublib: %s\n",
+		DPRINT_LIBS("LibGGI: could not probe lib for sublib: %s\n",
 			    api);
 		return err;
 	}
