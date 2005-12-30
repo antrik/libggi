@@ -25,6 +25,7 @@ if BUILTIN_DEFAULT_FBDEV_DIRECTFB
   builtins_libs += $(top_builddir)/default/fbdev/directfb/libdirectfbglobal.la
 endif
 if BUILTIN_DEFAULT_FBDEV_ACCEL
+  builtins_libs += $(top_builddir)/default/fbdev/3dlabs/pm2/libpm2.la
   builtins_libs += $(top_builddir)/default/fbdev/mga/2164w/libm2164w.la
   builtins_libs += $(top_builddir)/default/fbdev/mga/g400/libmga_g400.la
   builtins_libs += $(top_builddir)/default/fbdev/ati/mach64/libmach64.la

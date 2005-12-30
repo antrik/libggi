@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.2 2005/12/22 13:16:18 pekberg Exp $
+/* $Id: builtins.c,v 1.3 2005/12/30 23:49:05 cegger Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -57,6 +57,7 @@ ggifunc_dlinit GGIdl_auto;
 #endif
 
 #ifdef BUILTIN_DEFAULT_FBDEV_ACCEL
+ggifunc_dlinit GGIdl_fbdev_3dlabs_pm2;
 ggifunc_dlinit GGIdl_fbdev_mach64;
 ggifunc_dlinit GGIdl_fbdev_m2164w;
 ggifunc_dlinit GGIdl_fbdev_mga_g400;
@@ -201,6 +202,7 @@ static struct target _targets[] = {
 #endif
 
 #ifdef BUILTIN_DEFAULT_FBDEV_ACCEL
+	{ "GGIdl_3dlabs_pm2", &GGIdl_fbdev_3dlabs_pm2 },
         { "GGIdl_mach64", &GGIdl_fbdev_mach64 },
         { "GGIdl_m2164w", &GGIdl_fbdev_m2164w },
         { "GGIdl_mga_g400", &GGIdl_fbdev_mga_g400 },
