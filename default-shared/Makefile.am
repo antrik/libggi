@@ -1,7 +1,8 @@
 defaultdir=$(top_builddir)/default
 defaultlibdir = ${libdir}/${ggi_subdir}/default
 
-EXTRA_LTLIBRARIES = color.la fbdev_directfb.la fbdev_directfbglobal.la \
+EXTRA_LTLIBRARIES = color.la fbdev_3dlabs_pm2.la \
+	fbdev_directfb.la fbdev_directfbglobal.la \
 	fbdev_m2164w.la fbdev_mach64.la fbdev_mga_g400.la \
 	ilbm.la ioctl.la iplanar_2p.la kgi_Gx00.la kgi_mach64.la \
 	kgi_radeon.la linear_1.la linear_16.la linear_1_r.la \
@@ -24,6 +25,12 @@ color_la_SOURCES =
 color_la_LDFLAGS = -rpath ${defaultlibdir} ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/color/EXPSYMS
+
+fbdev_3dlabs_pm2_la_LIBADD = $(defaultdir)/fbdev/3dlabs/pm2/libpm2.la ${libggi}
+fbdev_3dlabs_pm2_la_SOURCES =
+fbdev_3dlabs_pm2_la_LDFLAGS = -rpath ${defaultlib_fbdevdir} ${extra_libraries} \
+	-shared -module -no-undefined -avoid-version \
+	-export-symbols ${top_srcdir}/default/fbdev/3dlabs/pm2/EXPSYMS
 
 fbdev_mach64_la_LIBADD = $(defaultdir)/fbdev/ati/mach64/libmach64.la ${libggi}
 fbdev_mach64_la_SOURCES =
