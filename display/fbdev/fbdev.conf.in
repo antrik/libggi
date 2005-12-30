@@ -27,6 +27,7 @@ fb-accel-0a-linear-*		default/fbdev/fbdev_mach64.@DLLEXT@
 # FB_ACCEL_SUN_LEO		13      Sun leo/zx
 # FB_ACCEL_IMS_TWINTURBO	14	IMS Twin Turbo
 # FB_ACCEL_3DLABS_PERMEDIA2	15	3Dlabs Permedia 2
+fb-accel-00-linear-*		default/fbdev/fbdev_3dlabs_pm2.@DLLEXT@
 
 # FB_ACCEL_MATROX_MGA2064W	16      Matrox MGA2064W (Millenium)
 fb-generic-10-linear-4		default/linear_4_r.@DLLEXT@
