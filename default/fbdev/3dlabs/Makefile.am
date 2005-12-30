@@ -1,0 +1,6 @@
+SUBDIRS = pm2
+
+DIST_SUBDIRS = pm2
+
+MAINTAINERCLEANFILES = Makefile.in
+
