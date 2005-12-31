@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: vline.c,v 1.2 2005/12/31 22:22:01 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3DLabs Permedia 2 acceleration for fbdev target
@@ -52,7 +52,9 @@ int GGI_3dlabs_pm2_drawvline(ggi_visual *vis, int x, int y, int h)
 	pm2_out32(mmioaddr, 1 << 16, PM2R_D_Y);
 
 	pm2_out32(mmioaddr, h, PM2R_COUNT);
-	pm2_out32(mmioaddr, PM2F_RENDER_LINE, PM2R_RENDER);
+	pm2_out32(mmioaddr, PM2F_RENDER_LINE
+		| PM2F_RENDER_XPOSITIVE | PM2F_RENDER_YPOSITIVE,
+		PM2R_RENDER);
 
 	vis->accelactive = 1;
 
