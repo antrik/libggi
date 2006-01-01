@@ -1,4 +1,4 @@
-/* $Id: 3dlabs_pm2.h,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: 3dlabs_pm2.h,v 1.2 2006/01/01 09:18:17 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia2 acceleration for fbdev target
@@ -61,6 +61,7 @@ struct _3dlabs_pm2_priv {
 	uint16_t	origopmode;
 	unsigned long	fontoffset;
 	int		charadd;
+	int		fifosize;
 	uint8_t	       *font;	/* Pointer to font in main RAM. */
 	uint32_t	mmio_len;
 #if 0
@@ -142,5 +143,13 @@ ggifunc_fillscreen	GGI_3dlabs_pm2_fillscreen;
 #if 0
 ggifunc_crossblit	GGI_3dlabs_pm2_crossblit;
 #endif
+
+ggifunc_putbox		GGI_3dlabs_pm2_putbox;
+ggifunc_puthline	GGI_3dlabs_pm2_puthline;
+ggifunc_putvline	GGI_3dlabs_pm2_putvline;
+
+ggifunc_getbox		GGI_3dlabs_pm2_getbox;
+ggifunc_gethline	GGI_3dlabs_pm2_gethline;
+ggifunc_getvline	GGI_3dlabs_pm2_getvline;
 
 #endif /* _GGIFBDEV_3DLABS_PM2_H */

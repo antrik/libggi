@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: box.c,v 1.2 2006/01/01 09:18:17 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -62,6 +62,8 @@ int GGI_3dlabs_pm2_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 			PM2F_RENDER_RECTANGLE | PM2F_RENDER_XPOSITIVE
 			| PM2F_RENDER_YPOSITIVE /* | PM2F_RENDER_FASTFILL */,
 			PM2R_RENDER);
+
+		priv->oldfgcol = ~priv->oldfgcol;
 #endif		
 		vis->accelactive = 1;
 	}
@@ -92,6 +94,258 @@ int GGI_3dlabs_pm2_fillscreen(ggi_visual *vis)
 		PM2R_RENDER);
 
 	vis->accelactive = 1;
+
+	return 0;
+}
+
+
+static void move32(uint32_t *dest,
+		const uint32_t *src,
+		unsigned int size)
+{
+#if 0
+	if ((const uintptr_t)src & 0x03UL) {
+		const uint8_t *pchar;
+		while (size & ~0x03) {
+			pchar = (const uint8_t *)(src + 0);
+			*(dest + 0) = (((uint32_t)pchar[0] << 24) |
+				       ((uint32_t)pchar[1] << 16) |
+				       ((uint32_t)pchar[2] <<  8) |
+				       ((uint32_t)pchar[3] <<  0));
+			pchar = (const uint8_t *)(src + 1);
+			*(dest + 1) = (((uint32_t)pchar[0] << 24) |
+				       ((uint32_t)pchar[1] << 16) |
+				       ((uint32_t)pchar[2] <<  8) |
+				       ((uint32_t)pchar[3] <<  0));
+			pchar = (const uint8_t *)(src + 2);
+			*(dest + 2) = (((uint32_t)pchar[0] << 24) |
+				       ((uint32_t)pchar[1] << 16) |
+				       ((uint32_t)pchar[2] <<  8) |
+				       ((uint32_t)pchar[3] <<  0));
+			pchar = (const uint8_t *)(src + 3);
+			*(dest + 3) = (((uint32_t)pchar[0] << 24) |
+				       ((uint32_t)pchar[1] << 16) |
+				       ((uint32_t)pchar[2] <<  8) |
+				       ((uint32_t)pchar[3] <<  0));
+			src += 4;
+			dest += 4;
+			size -= 4;
+		}
+
+		if (size == 0) return;
+		pchar = (const uint8_t *)(src + 0);
+		*(dest + 0) = (((uint32_t)pchar[0] << 24) |
+			       ((uint32_t)pchar[1] << 16) |
+			       ((uint32_t)pchar[2] <<  8) |
+			       ((uint32_t)pchar[3] <<  0));
+		if (size == 1) return;
+		pchar = (const uint8_t *)(src + 1);
+		*(dest + 1) = (((uint32_t)pchar[0] << 24) |
+			       ((uint32_t)pchar[1] << 16) |
+			       ((uint32_t)pchar[2] <<  8) |
+			       ((uint32_t)pchar[3] <<  0));
+		if (size == 2) return;
+		pchar = (const uint8_t *)(src + 2);
+		*(dest + 2) = (((uint32_t)pchar[0] << 24) |
+			       ((uint32_t)pchar[1] << 16) |
+			       ((uint32_t)pchar[2] <<  8) |
+			       ((uint32_t)pchar[3] <<  0));
+	} else {
+		while (size & ~0x03) {
+			*dest = *src;
+			*(dest + 1) = *(src + 1);
+			*(dest + 2) = *(src + 2);
+			*(dest + 3) = *(src + 3);
+			src += 4;
+			dest += 4;
+			size -= 4;
+		}
+		if (size == 0) return;
+		*dest = *src;
+		if (size == 1) return;
+		*(dest + 1) = *(src + 1);
+		if (size == 2) return;
+		*(dest + 2) = *(src + 2);
+	}
+#else
+	while (size--) {
+		*dest++ = *src++;
+	}
+#endif
+}
+
+int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
+			const void *buf)
+{
+	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);
+	int count;
+	uint32_t srcwidth;
+	const uint8_t *src;
+	const uint32_t *srcp;
+	uint32_t *dest;
+
+	/* 0 width is not OK! */
+	if (w == 0 || h == 0) return 0;
+
+
+	DPRINT_DRAW("putbox(%p, %i,%i, %i,%i, %p) entered\n",
+		vis, x, y, w, h, buf);
+
+	y += yadd;
+
+	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
+		srcwidth = GT_ByPPP(w, LIBGGI_GT(vis));
+	} else {
+		srcwidth = w * GT_ByPP(LIBGGI_GT(vis));
+	}
+
+	pm2_gcupdate(mmioaddr, priv, LIBGGI_MODE(vis), LIBGGI_GC(vis),
+			yadd);
+
+	pm2_waitfifo(mmioaddr, 6);
+
+	/* Setting for Image download from Host */
+	pm2_out32(mmioaddr, priv->pprod, PM2R_FB_READ_MODE);
+	pm2_out32(mmioaddr, UNIT_ENABLE, PM2R_FB_WRITE_MODE);
+	pm2_out32(mmioaddr, UNIT_DISABLE, PM2R_COLOR_DDA_MODE);
+
+	pm2_loadcoord(mmioaddr, x,y, w,h);
+	pm2_out32(mmioaddr,
+		PM2F_RENDER_RECTANGLE | PM2F_RENDER_XPOSITIVE
+		| PM2F_RENDER_YPOSITIVE | PM2F_RENDER_SYNC_ON_HOST,
+		PM2R_RENDER);
+
+	src = (const uint8_t *)buf;
+	dest = (uint32_t *)((volatile uint8_t *)
+			(mmioaddr + PM2R_OUT_FIFO + 4));
+
+	while (h--) {
+		count = w;
+		srcp = (const uint32_t *)src;
+		while (count >= priv->fifosize) {
+			pm2_waitfifo(mmioaddr, priv->fifosize);
+			/* 0x0155 is the TAG for FBSourceData */
+			pm2_out32(mmioaddr,
+				((priv->fifosize - 2) << 16) | 0x0155,
+				PM2R_OUT_FIFO);
+
+			move32(dest, srcp, priv->fifosize - 1);
+
+			count -= priv->fifosize - 1;
+			srcp += priv->fifosize - 1;
+		}
+		if (count) {
+			pm2_waitfifo(mmioaddr, count + 1);
+			pm2_out32(mmioaddr,
+				((count - 1) << 16) | 0x0155,
+				PM2R_OUT_FIFO);
+
+			move32(dest, srcp, count);
+		}
+		src += srcwidth;
+	}
+
+#if 1
+	/* Re-enable fb readmode when done */
+	pm2_waitfifo(mmioaddr, 2);
+	pm2_out32(mmioaddr, 0, PM2R_WAIT_FOR_COMPLETION);
+	pm2_out32(mmioaddr, priv->pprod, PM2R_FB_READ_MODE);
+#else
+	pm2_waitidle(mmioaddr);
+#endif
+
+	priv->oldfgcol = ~priv->oldfgcol;
+
+	vis->accelactive = 1;
+
+	return 0;
+}
+
+
+int GGI_3dlabs_pm2_getbox(ggi_visual *vis, int x, int y, int w, int h,
+			void *buf)
+{
+	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
+	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
+	int yadd = vis->r_frame_num * LIBGGI_VIRTY(vis);
+	int count;
+	uint32_t destwidth;
+	const uint32_t *src;
+	uint8_t *dest;
+	uint32_t *destp;
+
+	/* 0 width is not OK! */
+	if (w == 0 || h == 0) return 0;
+
+	DPRINT_DRAW("getbox(%p, %i,%i, %i,%i, %p) entered\n",
+		vis, x, y, w, h, buf);
+
+	y += yadd;
+
+	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
+		destwidth = GT_ByPPP(w, LIBGGI_GT(vis));
+	} else {
+		destwidth = w * GT_ByPP(LIBGGI_GT(vis));
+	}
+
+	pm2_gcupdate(mmioaddr, priv, LIBGGI_MODE(vis), LIBGGI_GC(vis),
+			yadd);
+
+	pm2_waitfifo(mmioaddr, 6);
+
+	/* Setting for Image upload to Host */
+	pm2_out32(mmioaddr, priv->pprod | PM2F_FB_READ_DEST_ENABLE,
+		PM2R_FB_READ_MODE);
+	pm2_out32(mmioaddr, UNIT_DISABLE, PM2R_FB_WRITE_MODE);
+	pm2_out32(mmioaddr, UNIT_DISABLE, PM2R_COLOR_DDA_MODE);
+
+	pm2_loadcoord(mmioaddr, x,y, w,h);
+	pm2_out32(mmioaddr,
+		PM2F_RENDER_RECTANGLE | PM2F_RENDER_XPOSITIVE
+		| PM2F_RENDER_YPOSITIVE | PM2F_RENDER_SYNC_ON_HOST,
+		PM2R_RENDER);
+
+	dest = (uint8_t *)buf;
+	src = (const uint32_t *)((volatile uint8_t *)
+			(mmioaddr + PM2R_OUT_FIFO + 4));
+
+#if 0
+	while (h--) {
+		count = w;
+		destp = (const uint32_t *)src;
+		while (count >= priv->fifosize) {
+			pm2_waitfifo(mmioaddr, priv->fifosize);
+			/* 0x0153 is the TAG for FBColor */
+			pm2_out32(mmioaddr,
+				((priv->fifosize - 2) << 16) | 0x0153,
+				PM2R_OUT_FIFO);
+
+			move32(destp, src, priv->fifosize - 1);
+
+			count -= priv->fifosize - 1;
+			destp += priv->fifosize - 1;
+		}
+		if (count) {
+			pm2_waitfifo(mmioaddr, count + 1);
+			pm2_out32(mmioaddr,
+				((count - 1) << 16) | 0x0153,
+				PM2R_OUT_FIFO);
+
+			move32(destp, src, count);
+		}
+		dest += destwidth;
+	}
+#endif
+
+	/* Re-enable fb read/write mode when done */
+	pm2_waitfifo(mmioaddr, 3);
+	pm2_out32(mmioaddr, 0, PM2R_WAIT_FOR_COMPLETION);
+	pm2_out32(mmioaddr, priv->pprod, PM2R_FB_READ_MODE);
+	pm2_out32(mmioaddr, UNIT_ENABLE, PM2R_FB_WRITE_MODE);
+
+	priv->oldfgcol = ~priv->oldfgcol;
 
 	return 0;
 }
