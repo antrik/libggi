@@ -1,4 +1,4 @@
-/* $Id: mmio.h,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: mmio.h,v 1.2 2006/01/01 09:50:36 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3DLabs Permedia2 acceleration for fbdev target
@@ -149,3 +149,13 @@ pm2_loadrop(volatile uint8_t *mmioaddr, int rop)
 	pm2_out32(mmioaddr, rop << 1 | UNIT_ENABLE, PM2R_LOGICAL_OP_MODE);
 }
 
+
+static inline void
+pm2_move32(uint32_t *dest,
+	const uint32_t *src,
+	unsigned int size)
+{
+	while (size--) {
+		*dest++ = *src++;
+	}
+}

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2006/01/01 09:18:17 cegger Exp $
+/* $Id: box.c,v 1.3 2006/01/01 09:50:37 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -99,81 +99,6 @@ int GGI_3dlabs_pm2_fillscreen(ggi_visual *vis)
 }
 
 
-static void move32(uint32_t *dest,
-		const uint32_t *src,
-		unsigned int size)
-{
-#if 0
-	if ((const uintptr_t)src & 0x03UL) {
-		const uint8_t *pchar;
-		while (size & ~0x03) {
-			pchar = (const uint8_t *)(src + 0);
-			*(dest + 0) = (((uint32_t)pchar[0] << 24) |
-				       ((uint32_t)pchar[1] << 16) |
-				       ((uint32_t)pchar[2] <<  8) |
-				       ((uint32_t)pchar[3] <<  0));
-			pchar = (const uint8_t *)(src + 1);
-			*(dest + 1) = (((uint32_t)pchar[0] << 24) |
-				       ((uint32_t)pchar[1] << 16) |
-				       ((uint32_t)pchar[2] <<  8) |
-				       ((uint32_t)pchar[3] <<  0));
-			pchar = (const uint8_t *)(src + 2);
-			*(dest + 2) = (((uint32_t)pchar[0] << 24) |
-				       ((uint32_t)pchar[1] << 16) |
-				       ((uint32_t)pchar[2] <<  8) |
-				       ((uint32_t)pchar[3] <<  0));
-			pchar = (const uint8_t *)(src + 3);
-			*(dest + 3) = (((uint32_t)pchar[0] << 24) |
-				       ((uint32_t)pchar[1] << 16) |
-				       ((uint32_t)pchar[2] <<  8) |
-				       ((uint32_t)pchar[3] <<  0));
-			src += 4;
-			dest += 4;
-			size -= 4;
-		}
-
-		if (size == 0) return;
-		pchar = (const uint8_t *)(src + 0);
-		*(dest + 0) = (((uint32_t)pchar[0] << 24) |
-			       ((uint32_t)pchar[1] << 16) |
-			       ((uint32_t)pchar[2] <<  8) |
-			       ((uint32_t)pchar[3] <<  0));
-		if (size == 1) return;
-		pchar = (const uint8_t *)(src + 1);
-		*(dest + 1) = (((uint32_t)pchar[0] << 24) |
-			       ((uint32_t)pchar[1] << 16) |
-			       ((uint32_t)pchar[2] <<  8) |
-			       ((uint32_t)pchar[3] <<  0));
-		if (size == 2) return;
-		pchar = (const uint8_t *)(src + 2);
-		*(dest + 2) = (((uint32_t)pchar[0] << 24) |
-			       ((uint32_t)pchar[1] << 16) |
-			       ((uint32_t)pchar[2] <<  8) |
-			       ((uint32_t)pchar[3] <<  0));
-	} else {
-		while (size & ~0x03) {
-			*dest = *src;
-			*(dest + 1) = *(src + 1);
-			*(dest + 2) = *(src + 2);
-			*(dest + 3) = *(src + 3);
-			src += 4;
-			dest += 4;
-			size -= 4;
-		}
-		if (size == 0) return;
-		*dest = *src;
-		if (size == 1) return;
-		*(dest + 1) = *(src + 1);
-		if (size == 2) return;
-		*(dest + 2) = *(src + 2);
-	}
-#else
-	while (size--) {
-		*dest++ = *src++;
-	}
-#endif
-}
-
 int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
 			const void *buf)
 {
@@ -231,7 +156,7 @@ int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
 				((priv->fifosize - 2) << 16) | 0x0155,
 				PM2R_OUT_FIFO);
 
-			move32(dest, srcp, priv->fifosize - 1);
+			pm2_move32(dest, srcp, priv->fifosize - 1);
 
 			count -= priv->fifosize - 1;
 			srcp += priv->fifosize - 1;
@@ -242,7 +167,7 @@ int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
 				((count - 1) << 16) | 0x0155,
 				PM2R_OUT_FIFO);
 
-			move32(dest, srcp, count);
+			pm2_move32(dest, srcp, count);
 		}
 		src += srcwidth;
 	}
@@ -322,7 +247,7 @@ int GGI_3dlabs_pm2_getbox(ggi_visual *vis, int x, int y, int w, int h,
 				((priv->fifosize - 2) << 16) | 0x0153,
 				PM2R_OUT_FIFO);
 
-			move32(destp, src, priv->fifosize - 1);
+			pm2_move32(destp, src, priv->fifosize - 1);
 
 			count -= priv->fifosize - 1;
 			destp += priv->fifosize - 1;
@@ -333,7 +258,7 @@ int GGI_3dlabs_pm2_getbox(ggi_visual *vis, int x, int y, int w, int h,
 				((count - 1) << 16) | 0x0153,
 				PM2R_OUT_FIFO);
 
-			move32(destp, src, count);
+			pm2_move32(destp, src, count);
 		}
 		dest += destwidth;
 	}
