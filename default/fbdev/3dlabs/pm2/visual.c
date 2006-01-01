@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2006/01/01 09:52:25 cegger Exp $
+/* $Id: visual.c,v 1.4 2006/01/01 10:27:22 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev 3DLabs Permedia2 acceleration
@@ -417,10 +417,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (GT_SIZE(LIBGGI_GT(vis)) == 32) {
 		vis->opdraw->putbox = GGI_3dlabs_pm2_putbox;
 		vis->opdraw->puthline = GGI_3dlabs_pm2_puthline;
+		vis->opdraw->putvline = GGI_3dlabs_pm2_putvline;
 	}
-#if 0
-	vis->opdraw->putvline = GGI_3dlabs_pm2_putvline;
-#endif
 
 #if 0
 	vis->opdraw->getbox = GGI_3dlabs_pm2_getbox;
