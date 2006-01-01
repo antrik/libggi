@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.2 2006/01/01 09:18:19 cegger Exp $
+/* $Id: visual.c,v 1.3 2006/01/01 09:52:25 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev 3DLabs Permedia2 acceleration
@@ -414,10 +414,11 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->fillscreen = GGI_3dlabs_pm2_fillscreen;
 
 	/* ggiPutBox only works on 32bit modes so far */
-	if (GT_SIZE(LIBGGI_GT(vis)) == 32)
+	if (GT_SIZE(LIBGGI_GT(vis)) == 32) {
 		vis->opdraw->putbox = GGI_3dlabs_pm2_putbox;
+		vis->opdraw->puthline = GGI_3dlabs_pm2_puthline;
+	}
 #if 0
-	vis->opdraw->puthline = GGI_3dlabs_pm2_puthline;
 	vis->opdraw->putvline = GGI_3dlabs_pm2_putvline;
 #endif
 
