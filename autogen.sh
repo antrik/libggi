@@ -24,9 +24,8 @@ fi
 
 touch ChangeLog
 
-cat m4/*.m4 > acinclude.m4
 echo "Running aclocal..."
-aclocal
+aclocal -I m4
 echo "Running autoheader..."
 autoheader
 echo "Running automake..."
