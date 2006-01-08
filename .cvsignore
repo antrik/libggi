@@ -1,6 +1,5 @@
 Makefile.in
 configure
-acinclude.m4
 aclocal.m4
 config.h.in
 stamp-h.in
