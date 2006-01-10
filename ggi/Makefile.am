@@ -21,4 +21,4 @@ MOSTLYCLEANFILES = builtins.inc
 MAINTAINERCLEANFILES = Makefile.in
 
 $(top_builddir)/ggi/builtins.inc: $(top_srcdir)/libggi.conf.in
-	$(AWK) -f $(srcdir)/genconf.awk $(top_srcdir) libggi.conf.in >$@
+	SED=$(SED) $(srcdir)/genconf.sh $(top_srcdir) libggi.conf.in >$@
