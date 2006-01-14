@@ -1,9 +1,10 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2235 2005/12/19 16:29:38) 2.1a
+# ltmain.sh (GNU libtool 1.2245 2006/01/13 10:07:33) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
+# Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -63,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2235 2005/12/19 16:29:38) 2.1a
+#       $progname:		(GNU libtool 1.2245 2006/01/13 10:07:33) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2235 2005/12/19 16:29:38"
-package_revision=1.2235
+TIMESTAMP=" 1.2245 2006/01/13 10:07:33"
+package_revision=1.2245
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -4037,7 +4038,7 @@ func_mode_link ()
 	      # Make sure the rpath contains only unique directories.
 	      case "$temp_rpath " in
 	      *"$absdir:"*) ;;
-	      *) temp_rpath="$temp_rpath:$absdir" ;;
+	      *) temp_rpath="$temp_rpath$absdir:" ;;
 	      esac
 	    fi
 
