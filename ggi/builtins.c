@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.3 2005/12/30 23:49:05 cegger Exp $
+/* $Id: builtins.c,v 1.4 2006/01/16 21:22:05 pekberg Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -335,7 +335,7 @@ void _ggiExitBuiltins(void);
 
 void _ggiInitBuiltins(void)
 {
-	_builtins = ggNewScope("/@libggi", NULL, &_builtins_get,  NULL);
+	_builtins = ggNewScope("@libggi", NULL, &_builtins_get,  NULL);
 }
 
 void _ggiExitBuiltins(void)
