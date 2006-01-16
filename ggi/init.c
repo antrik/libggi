@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.48 2005/12/22 13:16:18 pekberg Exp $
+/* $Id: init.c,v 1.49 2006/01/16 21:25:50 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -64,6 +64,20 @@ extern const char const *_ggibuiltinconf[];
 void _ggiInitBuiltins(void);
 void _ggiExitBuiltins(void);
 
+
+#ifdef PIC
+/* Dynamic version */
+#define CONF_OFFSET (0)
+#define CONF_SIZE (strlen(ggiGetConfDir()) + 1 + strlen(GGICONFFILE) + 1)
+#define CONF_FORMAT "%s/%s"
+#else /* PIC */
+/* Static version, with a config stub to disable dynamic modules */
+#define CONF_STUB ".directive no-dynamic-modules\n.require "
+#define CONF_OFFSET (40)
+#define CONF_SIZE (CONF_OFFSET + strlen(CONF_STUB) + \
+		   strlen(ggiGetConfDir()) + 1 + strlen(GGICONFFILE) + 2)
+#define CONF_FORMAT CONF_STUB "%s/%s\n"
+#endif /* PIC */
 
 
 /* 
@@ -162,21 +176,24 @@ int ggiInit(void)
 #ifdef HAVE_CONFFILE
 	confdir = ggiGetConfDir();
 	/* two extra bytes needed. One for the slash and one for the terminator (\0) */
-	conffile = malloc(strlen(confdir) + 1 + strlen(GGICONFFILE)+1);
+	conffile = malloc(CONF_SIZE);
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
 		err = GGI_ENOMEM;
 		goto err4;
 	}
 
+#ifndef PIC
+	snprintf(conffile, CONF_OFFSET, "string@%p", conffile + CONF_OFFSET);
+#endif
 	/* Note, sprintf() is safe here since conffile is dynamically
 	 * allocated
 	 */
-	sprintf(conffile, "%s/%s", confdir, GGICONFFILE);
+	sprintf(conffile + CONF_OFFSET, CONF_FORMAT, confdir, GGICONFFILE);
 
 	err = ggLoadConfig(conffile, &_ggiConfigHandle);
 	free(conffile);
-#else
+#else /* HAVE_CONFFILE */
 	{
 		char arrayconf[40];
 		snprintf(arrayconf, 40, "array@%p", _ggibuiltinconf);
@@ -190,7 +207,7 @@ int ggiInit(void)
 #endif /* HAVE_CONFFILE */
 	if (err == GGI_OK) {
 		_ggiInitBuiltins();
-		DPRINT_CORE("ggiInit() successfull\n");
+		DPRINT_CORE("ggiInit() successful\n");
 		return GGI_OK;
 	}
 	fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
