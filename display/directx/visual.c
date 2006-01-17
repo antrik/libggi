@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2005/07/30 10:58:24 cegger Exp $
+/* $Id: visual.c,v 1.36 2006/01/17 22:56:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -89,7 +89,7 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	GGI_directx_Lock(priv->cs);
-	DDShutdown(priv);
+	GGI_directx_DDShutdown(priv);
 	GGI_directx_Unlock(priv->cs);
 	GGI_directx_LockDestroy(priv->cs);
 	GGI_directx_LockDestroy(priv->spincs);
@@ -196,7 +196,7 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		priv->fullscreen = 1;
 	}
 
-	if (!DDInit(vis)) {
+	if (!GGI_directx_DDInit(vis)) {
 		err = GGI_ENODEVICE;
 		goto err3;
 	}

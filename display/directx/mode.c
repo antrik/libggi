@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.39 2005/09/19 18:46:40 cegger Exp $
+/* $Id: mode.c,v 1.40 2006/01/17 22:56:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -97,7 +97,7 @@ GGI_directx_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	GGI_directx_Lock(priv->cs);
-	DDRedraw(vis, x, y, w, h);
+	GGI_directx_DDRedraw(vis, x, y, w, h);
 	GGI_directx_Unlock(priv->cs);
 	return 0;
 }
@@ -184,9 +184,9 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 		mode->dpp.y = 1;
 
 	if (priv->fullscreen) {
-		if (!DDMatchMode(vis, mode, &depth, &defwidth, &defheight)) {
+		if (!GGI_directx_DDMatchMode(vis, mode, &depth,
+					     &defwidth, &defheight))
 			err = GGI_ENOMATCH;
-		}
 		deftype = depth_to_graphtype(depth);
 		if (mode->graphtype != GT_AUTO && mode->graphtype != deftype)
 			err = GGI_ENOMATCH;
@@ -374,7 +374,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	DDChangeMode(vis, mode);
+	GGI_directx_DDChangeMode(vis, mode);
 
 	vis->d_frame_num = 0;
 	vis->r_frame_num = 0;
@@ -515,7 +515,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 	DPRINT_COLOR("setPalette success\n");
 
 /*	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))*/
-		DDChangePalette(vis);
+		GGI_directx_DDChangePalette(vis);
 
 	GGI_directx_Unlock(priv->cs);
 
@@ -536,7 +536,7 @@ GGI_directx_setorigin(ggi_visual *vis, int x, int y)
 	vis->origin_x = x;
 	vis->origin_y = y;
 	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)
-		DDRedrawAll(vis);
+		GGI_directx_DDRedrawAll(vis);
 	return 0;
 }
 

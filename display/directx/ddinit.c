@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.51 2006/01/17 04:42:47 pekberg Exp $
+/* $Id: ddinit.c,v 1.52 2006/01/17 22:56:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -48,7 +48,7 @@ static long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int
-DDInit(ggi_visual *vis)
+GGI_directx_DDInit(ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* get the application instance */
@@ -64,7 +64,7 @@ DDInit(ggi_visual *vis)
 	} else {
 		/* start the event loop here */
 		if (!DDCreateThread(vis)) {
-			DDShutdown(priv);
+			GGI_directx_DDShutdown(priv);
 			return 0;
 		}
 	}
@@ -72,7 +72,7 @@ DDInit(ggi_visual *vis)
 }
 
 void
-DDShutdown(directx_priv *priv)
+GGI_directx_DDShutdown(directx_priv *priv)
 {
 	void *res;
 
@@ -229,7 +229,7 @@ next:
 }
 
 int
-DDMatchMode(ggi_visual *vis, ggi_mode *mode,
+GGI_directx_DDMatchMode(ggi_visual *vis, ggi_mode *mode,
 	    int *depth, int *defwidth, int *defheight)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
@@ -258,7 +258,7 @@ DDMatchMode(ggi_visual *vis, ggi_mode *mode,
 }
 
 int
-DDChangeMode(ggi_visual *vis, ggi_mode *mode)
+GGI_directx_DDChangeMode(ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* destroy any existing surface */
@@ -284,7 +284,7 @@ DDChangeMode(ggi_visual *vis, ggi_mode *mode)
 }
 
 void
-DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
+GGI_directx_DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
@@ -326,7 +326,7 @@ DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 void
-DDRedrawAll(ggi_visual *vis)
+GGI_directx_DDRedrawAll(ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
@@ -516,7 +516,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return 0;
 		}
 		if(priv->lpddp)
-			DDChangePalette(vis);
+			GGI_directx_DDChangePalette(vis);
 		GGI_directx_Lock(priv->spincs);
 		priv->setpalette = 1;
 		GGI_directx_Unlock(priv->spincs);
@@ -537,7 +537,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				PostMessage(hWnd, WM_USER, wParam, lParam);
 			return 0;
 		}
-		DDRedrawAll(vis);
+		GGI_directx_DDRedrawAll(vis);
 		GGI_directx_Unlock(priv->cs);
 		return 0;
 
@@ -577,7 +577,8 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						priv->lppdds);
 			}
 			hdc = BeginPaint(hWnd, &ps);
-			DDRedraw(vis,
+			GGI_directx_DDRedraw(
+				vis,
 				vis->origin_x + ps.rcPaint.left,
 				vis->origin_y + ps.rcPaint.top,
 				ps.rcPaint.right - ps.rcPaint.left,
@@ -631,7 +632,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GGI_directx_Unlock(priv->cs);
 			break;
 		}
-		DDChangePalette(vis);
+		GGI_directx_DDChangePalette(vis);
 		GGI_directx_Unlock(priv->cs);
 		return TRUE;
 
@@ -864,7 +865,8 @@ DDCreateThread(ggi_visual *vis)
 }
 
 
-int DDChangePalette(ggi_visual *vis)
+int
+GGI_directx_DDChangePalette(ggi_visual *vis)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	int start       = LIBGGI_PAL(vis)->rw_start;

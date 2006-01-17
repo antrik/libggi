@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.18 2005/01/19 20:55:29 pekberg Exp $
+/* $Id: ddinit.h,v 1.19 2006/01/17 22:56:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -51,13 +51,13 @@ typedef struct directx_fullscreen
 
 __BEGIN_DECLS
 
-int DDInit(ggi_visual *vis);
-void DDShutdown(directx_priv *priv);
-void DDRedraw(ggi_visual *vis, int x, int y, int w, int h);
-void DDRedrawAll(ggi_visual *vis);
-int DDChangeMode(ggi_visual *vis, ggi_mode *mode);
-int DDMatchMode(ggi_visual *vis, ggi_mode *mode,
-		int *depth, int *defwidth, int *defheight);
-int DDChangePalette(ggi_visual *vis);
+int GGI_directx_DDInit(ggi_visual *vis);
+void GGI_directx_DDShutdown(directx_priv *priv);
+void GGI_directx_DDRedraw(ggi_visual *vis, int x, int y, int w, int h);
+void GGI_directx_DDRedrawAll(ggi_visual *vis);
+int GGI_directx_DDChangeMode(ggi_visual *vis, ggi_mode *mode);
+int GGI_directx_DDMatchMode(ggi_visual *vis, ggi_mode *mode,
+			    int *depth, int *defwidth, int *defheight);
+int GGI_directx_DDChangePalette(ggi_visual *vis);
 
 __END_DECLS
