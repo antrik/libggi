@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.49 2006/01/16 21:25:50 pekberg Exp $
+/* $Id: init.c,v 1.50 2006/01/17 16:14:36 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -68,14 +68,14 @@ void _ggiExitBuiltins(void);
 #ifdef PIC
 /* Dynamic version */
 #define CONF_OFFSET (0)
-#define CONF_SIZE (strlen(ggiGetConfDir()) + 1 + strlen(GGICONFFILE) + 1)
+#define CONF_SIZE (strlen(confdir) + 1 + strlen(GGICONFFILE) + 1)
 #define CONF_FORMAT "%s/%s"
 #else /* PIC */
 /* Static version, with a config stub to disable dynamic modules */
-#define CONF_STUB ".directive no-dynamic-modules\n.require "
+#define CONF_STUB ".set ignore-dynamic-modules\n.require "
 #define CONF_OFFSET (40)
 #define CONF_SIZE (CONF_OFFSET + strlen(CONF_STUB) + \
-		   strlen(ggiGetConfDir()) + 1 + strlen(GGICONFFILE) + 2)
+		   strlen(confdir) + 1 + strlen(GGICONFFILE) + 2)
 #define CONF_FORMAT CONF_STUB "%s/%s\n"
 #endif /* PIC */
 
