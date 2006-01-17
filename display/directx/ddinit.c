@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.50 2005/09/05 05:15:36 pekberg Exp $
+/* $Id: ddinit.c,v 1.51 2006/01/17 04:42:47 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -843,8 +843,6 @@ DDCreateThread(ggi_visual *vis)
 #ifdef __CYGWIN__
 	if (pthread_create((pthread_t *)&priv->hThread, NULL, DDEventLoop, vis))
 		priv->nThreadID = 0;
-	else
-		priv->nThreadID = ~0;
 	/*
 	priv->hThread = CreateThread(NULL, 0,
 				     (LPTHREAD_START_ROUTINE) DDEventLoop,
