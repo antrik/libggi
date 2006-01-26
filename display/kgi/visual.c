@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2005/07/30 11:38:51 cegger Exp $
+/* $Id: visual.c,v 1.25 2006/01/26 22:35:10 pekberg Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -53,7 +53,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gii_input *inp;
 	char *eventname[32];
 
-	KGI_PRIV(vis) = calloc(1, sizeof(ggi_kgi_priv));
+	LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_kgi_priv));
 	if (KGI_PRIV(vis) == NULL)
 		return GGI_ENOMEM;
 
