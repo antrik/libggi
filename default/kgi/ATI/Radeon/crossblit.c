@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.5 2005/07/30 11:39:59 cegger Exp $
+/* $Id: crossblit.c,v 1.6 2006/01/26 23:03:39 pekberg Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -66,6 +66,7 @@ static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx,
 			 int wb, int sb, int sb32, int h2)
 {
 	int y2;
+	char *chbuf = (char *)buf;
 
 	struct {
 		cce_type3_header_t h;
@@ -148,9 +149,9 @@ static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx,
 		y2 += h2;
 		while (h2--) {
 			memcpy(KGI_PRIV(vis)->swatch + ctx->swatch_inuse,
-			       (char *)buf, wb);
+			       chbuf, wb);
 			ctx->swatch_inuse += sb32;
-			(char *)buf += sb;
+			chbuf += sb;
 		}
 	
 		RADEON_WRITEPACKET(vis, pkt);
@@ -175,6 +176,7 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 {
 	int y2;
 	ggi_color *tmp;
+	char *chbuf = (char *)buf;
 
 	struct {
 		cce_type3_header_t h;
@@ -259,13 +261,13 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 			
 		y2 += h2;
 		while (h2--) {
-			ggiUnpackPixels(src, buf, tmp, w);
+			ggiUnpackPixels(src, chbuf, tmp, w);
 			ggiPackColors(dst, 
 				      KGI_PRIV(dst)->swatch +
 				      ctx->swatch_inuse,
 				      tmp, w);
 			ctx->swatch_inuse += sb32;
-			(char *)buf += sb;
+			chbuf += sb;
 		}
 	
 		RADEON_WRITEPACKET(dst, pkt);
