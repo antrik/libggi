@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.7 2005/07/30 11:39:59 cegger Exp $
+/* $Id: box.c,v 1.8 2006/01/26 22:48:49 pekberg Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -216,6 +216,7 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 {
 	int y2, h2, wb, w32;
 	radeon_context_t *ctx;
+	char *chbuf = (char *)buf;
 
 	struct {
 		cce_type3_header_t h;
@@ -327,9 +328,9 @@ int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h,
 		y2 += h2;
 		while (h2--) {
 			memcpy(KGI_PRIV(vis)->swatch + ctx->swatch_inuse,
-			       (char *)buf, wb);
+			       chbuf, wb);
 			ctx->swatch_inuse += w32;
-			(char *)buf += wb;
+			chbuf += wb;
 		}
 	
 		RADEON_WRITEPACKET(vis, pkt);
