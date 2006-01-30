@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2005/07/30 11:40:00 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/01/30 20:53:23 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -102,9 +102,12 @@ int GGIdl_linear_16(int func, void **funcptr);
 
 int GGIdl_linear_16(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:
