@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2005/09/19 18:46:44 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/01/30 19:31:03 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -288,15 +288,22 @@ int GGIdl_tile(int func, void **funcptr);
 
 int GGIdl_tile(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = (void *)GGIexit;
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;
