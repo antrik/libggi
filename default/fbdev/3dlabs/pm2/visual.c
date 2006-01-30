@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2006/01/01 10:27:22 cegger Exp $
+/* $Id: visual.c,v 1.5 2006/01/30 21:22:41 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev 3DLabs Permedia2 acceleration
@@ -448,15 +448,20 @@ int GGIdl_fbdev_3dlabs_pm2(int func, void **funcptr);
 
 int GGIdl_fbdev_3dlabs_pm2(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

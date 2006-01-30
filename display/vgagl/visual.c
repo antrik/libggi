@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2005/07/30 11:38:51 cegger Exp $
+/* $Id: visual.c,v 1.6 2006/01/30 21:52:19 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: initialization
@@ -82,9 +82,12 @@ int GGIdl_vgagl(int func, void **funcptr);
 
 int GGIdl_vgagl(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

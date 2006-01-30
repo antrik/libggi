@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2005/07/30 11:38:52 cegger Exp $
+/* $Id: visual.c,v 1.10 2006/01/30 21:53:51 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -315,15 +315,20 @@ int GGIdl_vgl(int func, void **funcptr);
 
 int GGIdl_vgl(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

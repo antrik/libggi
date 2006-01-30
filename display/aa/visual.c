@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2005/09/19 18:46:40 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/01/30 21:35:54 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -220,15 +220,22 @@ int GGIdl_aa(int func, void **funcptr);
 
 int GGIdl_aa(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = (void *)GGIexit;
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

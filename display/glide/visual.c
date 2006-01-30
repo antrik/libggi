@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2005/09/19 18:46:42 cegger Exp $
+/* $Id: visual.c,v 1.12 2006/01/30 21:38:57 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -254,15 +254,20 @@ int GGIdl_glide(int func, void **funcptr);
 
 int GGIdl_glide(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2005/09/01 22:36:09 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/01/30 21:18:08 cegger Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -347,9 +347,12 @@ int GGIdl_kgi_radeon(int func, void **funcptr);
 
 int GGIdl_kgi_radeon(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:

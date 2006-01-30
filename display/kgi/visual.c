@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/01/26 22:35:10 pekberg Exp $
+/* $Id: visual.c,v 1.26 2006/01/30 21:41:08 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -144,15 +144,20 @@ int GGIdl_kgi(int func, void **funcptr);
 
 int GGIdl_kgi(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;

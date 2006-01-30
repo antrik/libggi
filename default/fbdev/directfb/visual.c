@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2005/09/01 22:34:07 cegger Exp $
+/* $Id: visual.c,v 1.23 2006/01/30 21:26:39 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -473,15 +473,20 @@ int GGIdl_fbdev_directfb(int func, void **funcptr);
 
 int GGIdl_fbdev_directfb(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+	ggifunc_close **closeptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		*funcptr = (void *)GGIclose;
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
 		return 0;
 	default:
 		*funcptr = NULL;
