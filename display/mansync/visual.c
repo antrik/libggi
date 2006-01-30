@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2005/07/30 10:58:26 cegger Exp $
+/* $Id: visual.c,v 1.7 2006/01/30 18:24:57 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -64,9 +64,12 @@ int GGIdl_mansync(int func, void **funcptr);
 
 int GGIdl_mansync(int func, void **funcptr)
 {
+	ggifunc_open **openptr;
+
 	switch (func) {
 	case GGIFUNC_open:
-		*funcptr = (void *)GGIopen;
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 	case GGIFUNC_close:
