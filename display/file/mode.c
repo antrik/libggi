@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2005/09/19 18:46:41 cegger Exp $
+/* $Id: mode.c,v 1.20 2006/02/02 20:02:54 pekberg Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -127,7 +127,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 
 	padding = priv->offset_image - priv->offset_pal - priv->num_cols*3;
 	
-	DPRINT("display-file: stride=0x%x padding=0x%x "
+	DPRINT("stride=0x%x padding=0x%x "
 		"offset_image=0x%x file_size=0x%x", priv->fb_stride, 
 		padding, priv->offset_image, priv->file_size);
 		
@@ -160,7 +160,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 	priv->file_mmap = (uint8_t *) mmap(0, (size_t)priv->file_size, 
 		PROT_READ | PROT_WRITE, MAP_SHARED, LIBGGI_FD(vis), 0);
 
-	DPRINT("display-file: File mmap'd at 0x%x.\n", priv->file_mmap);
+	DPRINT("File mmap'd at 0x%x.\n", priv->file_mmap);
 
 	if (priv->file_mmap == MAP_FAILED) {
 		perror("display-file: mmap failed");
@@ -210,7 +210,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 		priv->fb_ptr = malloc((size_t)priv->fb_size);
 
 		if (priv->fb_ptr == NULL) {
-			DPRINT_MODE("display-file: Out of memory!");
+			DPRINT_MODE("Out of memory!");
 			return GGI_ENOMEM;
 		}
 	}
@@ -298,13 +298,13 @@ static int _ggi_domode(ggi_visual *vis)
 	_ggiZapMode(vis, 0);
 	_ggi_freedbs(vis);
 
-	DPRINT("display-file: _ggi_domode: zapped\n");
+	DPRINT("_ggi_domode: zapped\n");
 
 	if ((err = _ggi_getmmap(vis)) != 0) {
 		return err;
 	}
 
-	DPRINT("display-file: _ggi_domode: got mmap\n");
+	DPRINT("_ggi_domode: got mmap\n");
 
 	for(i=1; GGI_file_getapi(vis, i, name, args) == 0; i++) {
 		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
@@ -314,7 +314,7 @@ static int _ggi_domode(ggi_visual *vis)
 				"%s (%s) library.\n", name, args);
 			return GGI_EFATAL;
 		} else {
-			DPRINT_LIBS("display-file: Success in loading "
+			DPRINT_LIBS("Success in loading "
 				       "%s (%s)\n", name, args);
 		}
 	}
@@ -336,7 +336,7 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 		return GGI_EARGINVAL;
 	}
 	
-	DPRINT_MODE("display-file: setmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("setmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -350,12 +350,12 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 	err = _ggi_domode(vis);
 
 	if (err) {
-		DPRINT("display-file: domode failed (%d)\n",err);
+		DPRINT("domode failed (%d)\n",err);
 		return err;
 	}
 
 	ggiIndicateChange(vis, GGI_CHG_APILIST);
-	DPRINT("display-file: change indicated\n",err);
+	DPRINT("change indicated\n",err);
 
 	priv->flushtotal = 0;
 	gettimeofday(&priv->flushlast,NULL);
@@ -366,7 +366,7 @@ int GGI_file_resetmode(ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
-	DPRINT("display-file: GGIresetmode(%p)\n", vis);
+	DPRINT("GGIresetmode(%p)\n", vis);
 
 	if (priv->flags & FILEFLAG_RAW) {
 		munmap((void *)priv->file_mmap, (unsigned)priv->file_size);
@@ -392,7 +392,7 @@ int GGI_file_checkmode(ggi_visual *vis, ggi_mode *mode)
 	/* ggi_file_priv *priv = FILE_PRIV(vis); */
 	int err = 0;
 
-	DPRINT_MODE("display-file: checkmode %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -443,7 +443,7 @@ int GGI_file_checkmode(ggi_visual *vis, ggi_mode *mode)
 	}
 	mode->size.x = mode->size.y = GGI_AUTO;
 
-	DPRINT_MODE("display-file: result %d %dx%d#%dx%dF%d[0x%02x]\n",
+	DPRINT_MODE("result %d %dx%d#%dx%dF%d[0x%02x]\n",
 			err, mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
@@ -453,7 +453,7 @@ int GGI_file_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 int GGI_file_getmode(ggi_visual *vis, ggi_mode *mode)
 {
-	DPRINT("display-file: GGIgetmode(%p,%p)\n", vis, mode);
+	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
 
 	if (vis==NULL || mode==NULL || LIBGGI_MODE(vis)==NULL) {
 		return GGI_EARGINVAL;
@@ -480,7 +480,7 @@ int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_c
  	ggi_color       *dest     = LIBGGI_PAL(vis)->clut.data + start;
  	const ggi_color *src      = colormap;	
 
-	DPRINT("display-file: setpalette.\n");
+	DPRINT("setpalette.\n");
     
 	file_pal += start * 3;
 

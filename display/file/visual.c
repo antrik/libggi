@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/01/30 18:23:12 cegger Exp $
+/* $Id: visual.c,v 1.12 2006/02/02 20:02:54 pekberg Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -57,7 +57,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	double fltime;
 	int err = GGI_ENOMEM;
 
-	DPRINT_MISC("display-file: coming up (filename='%s').\n", args);
+	DPRINT_MISC("coming up (filename='%s').\n", args);
 
 	if (!args || !args[0]) {
 		fprintf(stderr, "display-file: Missing filename.\n");
@@ -132,7 +132,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
-	DPRINT_MISC("display-file: going down.\n");
+	DPRINT_MISC("going down.\n");
 
 	if (priv->fb_ptr != NULL) {
 		GGI_file_resetmode(vis);
