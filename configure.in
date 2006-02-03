@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.183 2005/12/30 23:44:38 cegger Exp $
+dnl $Id: configure.in,v 1.184 2006/02/03 11:39:06 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -378,7 +378,7 @@ dnl Checks for library functions.
 
 AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
-AC_FUNC_MMAP
+GGI_FUNC_MMAP_FILEIO
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
 	random herror gethostbyname sigpending fork kill)
@@ -751,7 +751,7 @@ if test "x$build_aa_target" != "xno"; then
 	build_aa_target="no")
 fi
 
-if test "x$ac_cv_func_mmap_fixed_mapped" != "xyes"; then 
+if test "x$ggi_cv_func_mmap_fileio" != "xyes"; then 
   build_fbdev_target="no"
   build_file_target="no"
   build_kgi_target="no"
