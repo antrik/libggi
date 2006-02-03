@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2250 2006/01/24 07:43:48) 2.1a
+# ltmain.sh (GNU libtool 1.2257 2006/02/03 09:37:03) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2250 2006/01/24 07:43:48) 2.1a
+#       $progname:		(GNU libtool 1.2257 2006/02/03 09:37:03) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2250 2006/01/24 07:43:48"
-package_revision=1.2250
+TIMESTAMP=" 1.2257 2006/02/03 09:37:03"
+package_revision=1.2257
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -4043,11 +4043,13 @@ func_mode_link ()
 
 	if test "$linkmode,$pass" = "prog,link"; then
 	  if test -n "$library_names" &&
-	     { test "$prefer_static_libs" = no || test -z "$old_library"; }; then
+	     { { test "$prefer_static_libs" = no ||
+	         test "$prefer_static_libs,$installed" = "built,yes"; } ||
+	       test -z "$old_library"; }; then
 	    # We need to hardcode the library path
 	    if test -n "$shlibpath_var" && test -z "$avoidtemprpath" ; then
 	      # Make sure the rpath contains only unique directories.
-	      case "$temp_rpath " in
+	      case "$temp_rpath:" in
 	      *"$absdir:"*) ;;
 	      *) temp_rpath="$temp_rpath$absdir:" ;;
 	      esac
@@ -7337,3 +7339,4 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # mode:shell-script
 # sh-indentation:2
 # End:
+# vi:sw=2
