@@ -114,6 +114,7 @@ man_MANS = \
            display-fbdev.7 \
            display-file.7 \
            display-glide.7 \
+           display-kgi.7 \
            display-mansync.7 \
            display-memory.7 \
            display-monotext.7 \
