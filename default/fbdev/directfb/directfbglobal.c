@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.14 2005/09/01 22:34:07 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.15 2006/02/04 22:11:45 soyt Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -233,5 +233,3 @@ FusionResult reactor_attach (FusionReactor *reactor,
   /* Only Matrox BES uses this.  Will find out more someday. */
   return FUSION_SUCCESS;
 }
-
-#include <ggi/internal/ggidlinit.h>

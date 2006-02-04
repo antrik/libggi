@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.37 2006/01/30 17:43:16 cegger Exp $
+/* $Id: shm.c,v 1.38 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -476,5 +476,3 @@ int GGIdl_helper_x_shm(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

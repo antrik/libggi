@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/01/30 21:15:22 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -251,5 +251,3 @@ int GGIdl_linmm_banked(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

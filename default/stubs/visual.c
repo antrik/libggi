@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2006/01/30 19:33:50 cegger Exp $
+/* $Id: visual.c,v 1.8 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -112,5 +112,3 @@ int GGIdl_stubs(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-		
-#include <ggi/internal/ggidlinit.h>

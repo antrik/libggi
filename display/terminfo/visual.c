@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/01/30 21:49:41 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -406,5 +406,3 @@ int GGIdl_terminfo(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

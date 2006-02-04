@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2006/01/30 21:37:39 cegger Exp $
+/* $Id: visual.c,v 1.36 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -889,5 +889,3 @@ int GGIdl_fbdev(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

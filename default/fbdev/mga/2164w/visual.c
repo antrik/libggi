@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/01/30 21:28:31 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev mga2164w acceleration
@@ -297,5 +297,3 @@ int GGIdl_fbdev_m2164w(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

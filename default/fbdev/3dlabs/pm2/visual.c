@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2006/01/30 21:22:41 cegger Exp $
+/* $Id: visual.c,v 1.6 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev 3DLabs Permedia2 acceleration
@@ -469,5 +469,3 @@ int GGIdl_fbdev_3dlabs_pm2(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

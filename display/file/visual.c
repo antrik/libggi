@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/02/02 20:02:54 pekberg Exp $
+/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -174,5 +174,3 @@ int GGIdl_file(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

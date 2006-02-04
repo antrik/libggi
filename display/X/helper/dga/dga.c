@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.23 2006/01/31 05:51:50 cegger Exp $
+/* $Id: dga.c,v 1.24 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -437,5 +437,3 @@ int GGIdl_helper_x_dga(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

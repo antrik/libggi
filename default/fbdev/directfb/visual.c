@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2006/01/30 21:26:39 cegger Exp $
+/* $Id: visual.c,v 1.24 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -494,5 +494,3 @@ int GGIdl_fbdev_directfb(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/01/30 21:53:51 cegger Exp $
+/* $Id: visual.c,v 1.11 2006/02/04 22:11:48 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -336,5 +336,3 @@ int GGIdl_vgl(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

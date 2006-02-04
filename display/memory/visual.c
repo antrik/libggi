@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2006/01/30 18:27:04 cegger Exp $
+/* $Id: visual.c,v 1.31 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -384,5 +384,3 @@ int GGIdl_memory(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

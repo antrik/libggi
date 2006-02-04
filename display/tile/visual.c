@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/01/30 19:31:03 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -311,5 +311,3 @@ int GGIdl_tile(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

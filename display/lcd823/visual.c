@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/01/30 21:42:34 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -204,5 +204,3 @@ int GGIdl_lcd823(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

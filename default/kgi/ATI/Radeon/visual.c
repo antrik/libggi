@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/01/30 21:18:08 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -364,5 +364,3 @@ int GGIdl_kgi_radeon(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

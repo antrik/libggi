@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/01/30 18:43:29 cegger Exp $
+/* $Id: visual.c,v 1.21 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -300,6 +300,3 @@ int GGIdl_ipc(int func, void **funcptr)
   
 	return GGI_ENOTFOUND;
 }	/* GGIdl_ipc */
-
-
-#include <ggi/internal/ggidlinit.h>

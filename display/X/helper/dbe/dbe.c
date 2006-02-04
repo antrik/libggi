@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.10 2006/01/30 18:04:46 cegger Exp $
+/* $Id: dbe.c,v 1.11 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -82,5 +82,3 @@ int GGIdl_helper_x_dbe(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

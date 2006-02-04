@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2006/01/30 21:17:01 cegger Exp $
+/* $Id: visual.c,v 1.8 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    ATI Mach64 acceleration sublib for kgi display target
@@ -113,5 +113,3 @@ int GGIdl_kgi_mach64(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

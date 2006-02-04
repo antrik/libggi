@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2006/01/30 21:41:08 cegger Exp $
+/* $Id: visual.c,v 1.27 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -165,5 +165,3 @@ int GGIdl_kgi(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

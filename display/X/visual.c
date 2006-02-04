@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.53 2006/01/30 18:10:50 cegger Exp $
+/* $Id: visual.c,v 1.54 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -657,5 +657,3 @@ int GGIdl_X(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

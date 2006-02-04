@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.28 2006/01/30 13:44:50 pekberg Exp $
+/* $Id: vidmode.c,v 1.29 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -533,5 +533,3 @@ int GGIdl_helper_x_vidmode(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

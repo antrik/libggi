@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/01/30 18:19:12 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -99,5 +99,3 @@ int GGIdl_auto(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

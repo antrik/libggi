@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.50 2006/01/17 16:14:36 pekberg Exp $
+/* $Id: init.c,v 1.51 2006/02/04 22:11:48 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -463,5 +463,3 @@ int ggiClose(ggi_visual *visual)
 
 	return 0;
 }
-
-#include <ggi/internal/ggilibinit.h>

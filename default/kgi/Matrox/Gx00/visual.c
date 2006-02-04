@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/01/30 21:20:20 cegger Exp $
+/* $Id: visual.c,v 1.11 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -181,5 +181,3 @@ int GGIdl_kgi_Gx00(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

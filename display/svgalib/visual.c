@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/01/30 18:39:08 cegger Exp $
+/* $Id: visual.c,v 1.25 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -566,5 +566,3 @@ int GGIdl_svgalib(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

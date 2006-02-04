@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/01/30 21:25:09 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -481,5 +481,3 @@ int GGIdl_fbdev_mach64(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

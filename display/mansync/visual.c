@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2006/01/30 18:24:57 cegger Exp $
+/* $Id: visual.c,v 1.8 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -81,5 +81,3 @@ int GGIdl_mansync(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

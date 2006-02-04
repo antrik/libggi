@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2006/01/30 21:11:29 cegger Exp $
+/* $Id: visual.c,v 1.7 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
   Interleaved planar graphics (with 2 byte interleave).
@@ -73,5 +73,3 @@ int GGIdl_iplanar_2p(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

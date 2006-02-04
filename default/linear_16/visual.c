@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/01/30 20:53:23 cegger Exp $
+/* $Id: visual.c,v 1.10 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -119,5 +119,3 @@ int GGIdl_linear_16(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-		
-#include <ggi/internal/ggidlinit.h>

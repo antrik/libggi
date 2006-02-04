@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.6 2006/01/30 20:22:33 cegger Exp $
+/* $Id: visual.c,v 1.7 2006/02/04 22:11:45 soyt Exp $
 ******************************************************************************
 
   Linear 2 bit graphics (high-pair-left)
@@ -74,5 +74,3 @@ int GGIdl_linear_2(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

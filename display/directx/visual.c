@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.37 2006/01/30 18:32:42 pekberg Exp $
+/* $Id: visual.c,v 1.38 2006/02/04 22:11:46 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -280,5 +280,3 @@ GGIdl_directx(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

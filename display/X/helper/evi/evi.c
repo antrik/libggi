@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.10 2006/01/31 05:49:58 cegger Exp $
+/* $Id: evi.c,v 1.11 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -133,5 +133,3 @@ int GGIdl_helper_x_evi(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

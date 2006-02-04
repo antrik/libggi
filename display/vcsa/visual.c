@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/01/30 21:51:18 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/02/04 22:11:48 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -292,5 +292,3 @@ int GGIdl_vcsa(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/01/30 21:55:18 cegger Exp $
+/* $Id: visual.c,v 1.11 2006/02/04 22:11:48 soyt Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -238,6 +238,3 @@ int GGIdl_wsfb(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-
-#include <ggi/internal/ggidlinit.h>

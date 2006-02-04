@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/01/30 18:35:47 cegger Exp $
+/* $Id: visual.c,v 1.12 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -314,5 +314,3 @@ int GGIdl_quartz(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }	/* GGIdl_quartz */
-
-#include <ggi/internal/ggidlinit.h>

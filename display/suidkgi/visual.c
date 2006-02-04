@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/01/30 21:48:11 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-SUID: initialization
@@ -276,5 +276,3 @@ int GGIdl_suidkgi(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

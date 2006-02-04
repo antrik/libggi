@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/01/30 18:46:25 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -239,5 +239,3 @@ int GGIdl_palemu(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

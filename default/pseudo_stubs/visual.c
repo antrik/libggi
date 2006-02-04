@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2006/01/30 21:33:27 cegger Exp $
+/* $Id: visual.c,v 1.6 2006/02/04 22:11:46 soyt Exp $
 ******************************************************************************
 
    Generic library for pseudo targets
@@ -58,5 +58,3 @@ int GGIdl_pseudo_stubs(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-		
-#include <ggi/internal/ggidlinit.h>

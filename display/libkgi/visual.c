@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/01/30 21:44:20 cegger Exp $
+/* $Id: visual.c,v 1.14 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -457,5 +457,3 @@ int GGIdl_kgilib(int func, void **funcptr)
 
         return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>

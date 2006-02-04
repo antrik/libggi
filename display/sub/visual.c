@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/01/30 18:49:23 cegger Exp $
+/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
 ******************************************************************************
 
    Display-sub
@@ -144,5 +144,3 @@ int GGIdl_sub(int func, void **funcptr)
 
 	return GGI_ENOTFOUND;
 }
-
-#include <ggi/internal/ggidlinit.h>
