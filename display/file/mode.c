@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/02/02 20:02:54 pekberg Exp $
+/* $Id: mode.c,v 1.21 2006/02/04 06:32:17 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -232,7 +232,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 	LIBGGI_APPBUFS(vis)[0]->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 
 	/* Set up palette */
-  if (LIBGGI_PAL(vis)->clut.data) {
+	if (LIBGGI_PAL(vis)->clut.data) {
  		free(LIBGGI_PAL(vis)->clut.data);
  		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
