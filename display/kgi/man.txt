@@ -1,0 +1,48 @@
+KGI - Kernel Graphics Interface display
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-kgi
+
+Synopsis
+--------
+
+::
+
+  display-kgi: [-no3d] [-noinput] [-swatchsize]
+
+
+Description
+-----------
+
+display-kgi opens /dev/graphic[0-1] for allocating a KGI device.
+
+Note that /dev/graphic does not behave the same way on Linux and FreeBSD. 
+Particularly, on FreeBSD, /dev/graphic0 is not used to open directly the 
+device 0 but to negociate the usgae of other /dev/graphic[1-9] devices. 
+Especially, when opening /dev/graphic0, the user must first get a unit and 
+later attach it. This way, the KGI device instance and the /dev/graphic 
+instance are different things (FreeBSD contraint due to file/process 
+relationships in the kernel).
+
+If GGI_INPUT or GII_INPUT is set, it overrides the default
+behaviour of display-kgi: let GGI open the input. Otherwise,
+display-kgi tries to open the /dev/event corresponding to ists /dev/graphic.
+
+
+Options
+-------
+
+``-no3d``
+    not in use for now
+
+``-noinput``
+    Do not open any libraries for keyboard & mouse input.
+
+``-swatchsize``
+    auto by default
+
+
+Features
+--------
+
+- Accelerated if supported by the KGI implementation
