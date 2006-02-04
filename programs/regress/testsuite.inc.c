@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.6 2005/01/25 11:52:45 pekberg Exp $
+/* $Id: testsuite.inc.c,v 1.7 2006/02/04 08:48:09 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -17,7 +17,6 @@
 
 #include "config.h"
 
-#include <ggi/internal/gg_replace.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -33,6 +32,8 @@
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
+
+#include <ggi/internal/gg_replace.h>
 
 
 /* EXPECTED2PASS is used for testcases that are expected to pass.
@@ -99,15 +100,19 @@ static void printteststart(const char *file, const char *funcname,
 }
 
 
-#ifdef _MSC_VER
-#define printassert()
-#else
-#define printassert(x, fmt...)	\
-	if (!(x)) {		\
-		printf(fmt);	\
-		fflush(stdout);	\
+#ifdef __STDC_VERSION__ >= 199901L || __STDC_VERSION__ >= 199904L
+/* __VA_ARGS__ can only appear in the expansion of
+ * a C99 variadic macro - see 6.10.3.5 and 6.10.8 in ANSI C99
+ */
+#define printassert(x, ...)		\
+	if (!(x)) {			\
+		printf(__VA_ARGS__);	\
+		fflush(stdout);		\
 		num_asserterrors++;	\
 	}
+#else
+	/* This is pre ANSI C99 */
+#define printassert
 #endif
 
 
