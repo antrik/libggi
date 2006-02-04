@@ -1,4 +1,4 @@
-/* $Id: testsuite.inc.c,v 1.7 2006/02/04 08:48:09 cegger Exp $
+/* $Id: testsuite.inc.c,v 1.8 2006/02/04 16:11:39 cegger Exp $
 ******************************************************************************
 
    common.c - framework for c based regression tests
@@ -100,7 +100,7 @@ static void printteststart(const char *file, const char *funcname,
 }
 
 
-#ifdef __STDC_VERSION__ >= 199901L || __STDC_VERSION__ >= 199904L
+#if __STDC_VERSION__ >= 199901L || __STDC_VERSION__ >= 199904L
 /* __VA_ARGS__ can only appear in the expansion of
  * a C99 variadic macro - see 6.10.3.5 and 6.10.8 in ANSI C99
  */
