@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2257 2006/02/03 09:37:03) 2.1a
+# ltmain.sh (GNU libtool 1.2262 2006/02/05 11:06:31) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2257 2006/02/03 09:37:03) 2.1a
+#       $progname:		(GNU libtool 1.2262 2006/02/05 11:06:31) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2257 2006/02/03 09:37:03"
-package_revision=1.2257
+TIMESTAMP=" 1.2262 2006/02/05 11:06:31"
+package_revision=1.2262
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -565,6 +565,8 @@ execute_dlfiles=
 preserve_args=
 lo2o="s/\\.lo\$/.${objext}/"
 o2lo="s/\\.${objext}\$/.lo/"
+extracted_archives=
+extracted_serial=0
 
 opt_dry_run=false
 opt_duplicate_deps=false
@@ -1507,7 +1509,17 @@ func_extract_archives ()
       esac
       func_basename "$my_xlib"
       my_xlib="$func_basename_result"
-      my_xdir="$my_gentop/$my_xlib"
+      my_xlib_u=$my_xlib
+      while :; do
+        case " $extracted_archives " in
+	*" $my_xlib_u "*)
+	  extracted_serial=`expr $extracted_serial + 1`
+	  my_xlib_u=lt$extracted_serial-$my_xlib ;;
+	*) break ;;
+	esac
+      done
+      extracted_archives="$extracted_archives $my_xlib_u"
+      my_xdir="$my_gentop/$my_xlib_u"
 
       func_mkdir_p "$my_xdir"
 
@@ -5043,13 +5055,12 @@ func_mode_link ()
 	  int main() { return 0; }
 EOF
 	  $opt_dry_run || $RM conftest
-	  $LTCC $LTCFLAGS -o conftest conftest.c $deplibs
-	  if test "$?" -eq 0 ; then
+	  if $LTCC $LTCFLAGS -o conftest conftest.c $deplibs; then
 	    ldd_output=`ldd conftest`
 	    for i in $deplibs; do
 	      name=`expr $i : '-l\(.*\)'`
 	      # If $name is empty we are operating on a -L argument.
-	      if test "$name" != "" && test "$name" -ne "0"; then
+	      if test "$name" != "" && test "$name" != "0"; then
 		if test "X$allow_libtool_libs_with_static_runtimes" = "Xyes" ; then
 		  case " $predeps $postdeps " in
 		  *" $i "*)
@@ -5088,9 +5099,7 @@ EOF
 	      # If $name is empty we are operating on a -L argument.
 	      if test "$name" != "" && test "$name" != "0"; then
 		$opt_dry_run || $RM conftest
-		$LTCC $LTCFLAGS -o conftest conftest.c $i
-		# Did it work?
-		if test "$?" -eq 0 ; then
+		if $LTCC $LTCFLAGS -o conftest conftest.c $i; then
 		  ldd_output=`ldd conftest`
 		  if test "X$allow_libtool_libs_with_static_runtimes" = "Xyes" ; then
 		    case " $predeps $postdeps " in
@@ -5122,7 +5131,7 @@ EOF
 		  droppeddeps=yes
 		  $ECHO
 		  $ECHO "*** Warning!  Library $i is needed by this library but I was not able to"
-		  $ECHO "***  make it link in!  You will probably need to install it or some"
+		  $ECHO "*** make it link in!  You will probably need to install it or some"
 		  $ECHO "*** library that it depends on before this library will be fully"
 		  $ECHO "*** functional.  Installing it before continuing would be even better."
 		fi
