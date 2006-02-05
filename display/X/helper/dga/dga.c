@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.24 2006/02/04 22:11:46 soyt Exp $
+/* $Id: dga.c,v 1.25 2006/02/05 09:49:58 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -261,7 +261,7 @@ static void ggi_xdga_checkmode_adapt(ggi_mode * m, XDGAMode * dgamode,
 
 /* This function performs the CheckMode operation and returns
  * the number of the best mode.  */
-static int ggi_xdga_validate_mode(ggi_visual * vis, int num,
+static int ggi_xdga_validate_mode(ggi_visual * vis, intptr_t num,
 				  ggi_mode * mode)
 {
 	ggi_x_priv *priv;
