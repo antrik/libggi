@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.16 2005/08/26 09:14:38 aldot Exp $
+/* $Id: libtele.c,v 1.17 2006/02/05 14:20:59 soyt Exp $
 ******************************************************************************
 
    libtele.c
@@ -27,7 +27,6 @@
 */
 
 #include "config.h"
-#include <ggi/internal/plat.h>
 #include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 

@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.30 2005/09/19 18:46:44 cegger Exp $
+/* $Id: internal.h,v 1.31 2006/02/05 14:20:59 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -35,7 +35,6 @@
 #include <ggi/gg.h>
 #include <ggi/ggi-defs.h>
 #include <ggi/internal/gii.h>
-#include <ggi/internal/plat.h>
 #include <ggi/internal/structs.h>
 
 
