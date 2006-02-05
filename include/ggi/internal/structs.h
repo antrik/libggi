@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.18 2005/09/06 15:22:58 pekberg Exp $
+/* $Id: structs.h,v 1.19 2006/02/05 17:39:34 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -165,7 +165,7 @@ typedef struct ggi_resource {
 */
 
 typedef struct ggi_dlhandle {
-	gg_module *handle;
+	gg_scope *handle;
 	char   *name;
 	int	usecnt;
 	int 	type;

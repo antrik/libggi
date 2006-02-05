@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.25 2005/12/29 23:44:09 cegger Exp $
+/* $Id: dl.c,v 1.26 2006/02/05 17:39:34 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -57,11 +57,7 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 	hand.name = NULL;
 	hand.usecnt = 0;
 
-	if (type & GGI_DLTYPE_GLOBAL) {
-		hand.handle = ggLoadModule(filename, GG_MODULE_GLOBAL);
-	} else {
-		hand.handle = ggLoadModule(filename, 0);
-	}
+	hand.handle = ggGetScope(filename);
 	DPRINT_LIBS("hand.handle=%p\n", hand.handle);
 	if (hand.handle == NULL) {
 		DPRINT_LIBS("Error loading module %s\n", filename);
@@ -86,10 +82,10 @@ static int _ggiLoadDL(const char *filename, const char *symprefix,
 		*extptr = '\0';
 	}
 getsymbol:
-	hand.entry = (ggifunc_dlentry*)ggGetSymbolAddress(hand.handle, symname);
+	hand.entry = (ggifunc_dlentry*)ggFromScope(hand.handle, symname);
 	DPRINT_LIBS("&(%s) = %p\n", symname, hand.entry);
 	if (hand.entry == NULL) {
-		ggFreeModule(hand.handle);
+		ggDelScope(hand.handle);
 		return GGI_ENOFUNC;
 	}
 
@@ -103,7 +99,7 @@ getsymbol:
 
 	*dlh = malloc(sizeof(**dlh));
 	if (*dlh == NULL) {
-		ggFreeModule(hand.handle);
+		ggDelScope(hand.handle);
 		return GGI_ENOMEM;
 	}
 	memcpy(*dlh, &hand, sizeof(ggi_dlhandle));
@@ -150,7 +146,7 @@ int _ggiProbeDL(ggi_visual *vis, const void *conffilehandle,
 		       err, vis, *dlh, args ? args : "(null)", argptr, *dlret,
 		       api);
 	if (err) {
-		ggFreeModule(dlh[0]->handle);
+		ggDelScope(dlh[0]->handle);
 		free(*dlh);
 		*dlh = NULL;
 		return err;
@@ -194,7 +190,7 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
 	DPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d)\n",
 		       err, vis, dlh, args ? args : "(null)", argptr, dlret);
 	if (err) {
-		ggFreeModule(dlh->handle);
+		ggDelScope(dlh->handle);
 		free(dlh);
 		return NULL;
 	}
@@ -283,7 +279,7 @@ int _ggiAddDL(ggi_visual *vis, const void *conffilehandle,
 		fprintf(stderr,
 			"LibGGI: %s (%s) -> 0x%.8x - no operations in this library\n",
 			api, args ? args : "(null)", dlret);
-		ggFreeModule(dlh->handle);
+		ggDelScope(dlh->handle);
 		free(dlh);
 		return GGI_ENOFUNC;
 	} else {
@@ -332,7 +328,7 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 			}
 			DPRINT_LIBS("Closing handle: 0x%x\n",
 				       libtmp->handle->handle);
-			ggFreeModule(libtmp->handle->handle);
+			ggDelScope(libtmp->handle->handle);
 
 			/* Now, clean up the master visual */
 			prev = &GG_SLIST_FIRST(&LIBGGI_DLHANDLE(vis));
