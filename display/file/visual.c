@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.14 2006/02/05 18:38:52 pekberg Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -128,7 +128,15 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+/* Do the work part of the cleanup in exit instead of in close
+ * as the default helper libs are cleaning up in close, but are
+ * earlier in the chain, i.e. they are still accessible when
+ * display-file is in exit, not so when it is in close. This is
+ * unclean and will break when/if some default lib cleans up in
+ * exit, but it is a workaround to get display-file to write
+ * the last dump before the visual closes.
+ */
+static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -137,6 +145,14 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->fb_ptr != NULL) {
 		GGI_file_resetmode(vis);
 	}
+
+	return 0;
+}
+
+
+static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	ggi_file_priv *priv = FILE_PRIV(vis);
 
 	free(priv->filename);
 	free(priv->flushcmd);
@@ -154,6 +170,7 @@ int GGIdl_file(int func, void **funcptr);
 int GGIdl_file(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
 	ggifunc_close **closeptr;
 
 	switch (func) {
@@ -162,7 +179,8 @@ int GGIdl_file(int func, void **funcptr)
 		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = NULL;
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
 		return 0;
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
