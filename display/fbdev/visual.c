@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.36 2006/02/04 22:11:46 soyt Exp $
+/* $Id: visual.c,v 1.37 2006/02/05 08:43:21 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -179,6 +179,7 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
+	LIB_ASSERT(vis != NULL, "invalid visual\n");
 	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
 	_giiSafeAdd(vis->input, &ev);
 	DPRINT_MISC("fbdev: EXPOSE sent.\n");
