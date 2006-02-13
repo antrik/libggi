@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.6 2005/07/30 11:58:39 cegger Exp $
+/* $Id: giik2str.c,v 1.7 2006/02/13 19:22:06 soyt Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#include <ggi/events.h>
 
 #include <stdio.h>
 #include <ctype.h>
