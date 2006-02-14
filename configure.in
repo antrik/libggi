@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.184 2006/02/03 11:39:06 pekberg Exp $
+dnl $Id: configure.in,v 1.185 2006/02/14 08:31:27 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -447,23 +447,23 @@ if test "x$do_64bitc" = "xyes"; then
 		[Defines for SWAR selection])
 fi
 
-AC_CC_CAN_EMMS
+GGI_CC_CAN_EMMS
 if test "x$do_mmx" = "xyes"; then 
-   if test "x$ac_cc_can_emms" != "xyes"; then
+   if test "x$ggi_cv_cc_can_emms" != "xyes"; then
       AC_MSG_ERROR([MMX requested, but compiler cannot compile MMX!])
       do_mmx=no
    fi
 fi
 if test "x$do_mmx" = "xbuild"; then
-   AC_CPU_CAN_EMMS
-   if test "x$ac_cpu_can_emms" = "xyes"; then
+   GGI_CPU_CAN_EMMS
+   if test "x$ggi_cv_cpu_can_emms" = "xyes"; then
       do_mmx=auto
    else
       do_mmx=no
    fi
 fi
 if test "x$do_mmx" = "xauto"; then
-   if test "x$ac_cc_can_emms" = "xyes"; then
+   if test "x$ggi_cv_cc_can_emms" = "xyes"; then
       do_mmx=yes
    else
       do_mmx=no
@@ -474,23 +474,23 @@ if test "x$do_mmx" = "xyes"; then
 		[Defines for SWAR selection])
 fi
 
-AC_CC_CAN_FEMMS
+GGI_CC_CAN_FEMMS
 if test "x$do_3dnow" = "xyes"; then
-   if test "x$ac_cc_can_femms" != "xyes"; then
+   if test "x$ggi_cv_cc_can_femms" != "xyes"; then
       AC_MSG_ERROR([3DNOW requested, but compiler cannot compile 3DNOW!])
       do_3dnow=no
    fi
 fi
 if test "x$do_3dnow" = "xbuild"; then
-   AC_CPU_CAN_FEMMS
-   if test "x$ac_cpu_can_femms" = "xyes"; then
+   GGI_CPU_CAN_FEMMS
+   if test "x$ggi_cv_cpu_can_femms" = "xyes"; then
       do_3dnow=auto
    else
       do_3dnow=no
    fi
 fi
 if test "x$do_3dnow" = "xauto"; then
-   if test "x$ac_cc_can_femms" = "xyes"; then
+   if test "x$ggi_cv_cc_can_femms" = "xyes"; then
       do_3dnow=yes
    else
       do_3dnow=no
@@ -501,23 +501,23 @@ if test "x$do_3dnow" = "xyes"; then
 		[Defines for SWAR selection])
 fi
 
-AC_CC_CAN_FALIGNDATA
+GGI_CC_CAN_FALIGNDATA
 if test "x$do_vis" = "xyes"; then
-   if test "x$ac_cc_can_faligndata" != "xyes"; then
+   if test "x$ggi_cv_cc_can_faligndata" != "xyes"; then
       AC_MSG_ERROR([VIS requested, but compiler cannot compile VIS!])
       do_vis=no
    fi
 fi
 if test "x$do_vis" = "xbuild"; then
-   AC_CPU_CAN_FALIGNDATA
-   if test "x$ac_cpu_can_faligndata" = "xyes"; then
+   GGI_CPU_CAN_FALIGNDATA
+   if test "x$ggi_cv_cpu_can_faligndata" = "xyes"; then
       do_vis=auto
    else
       do_vis=no
    fi
 fi
 if test "x$do_vis" = "xauto"; then
-   if test "x$ac_cc_can_faligndata" = "xyes"; then
+   if test "x$ggi_cv_cc_can_faligndata" = "xyes"; then
       do_vis=yes
    else
       do_vis=no
@@ -528,23 +528,23 @@ if test "x$do_vis" = "xyes"; then
 		[Defines for SWAR selection])
 fi
 
-AC_CC_CAN_PKLB
+GGI_CC_CAN_PKLB
 if test "x$do_mvi" = "xyes"; then
-   if test "x$ac_cc_can_pklb" != "xyes"; then
+   if test "x$ggi_cv_cc_can_pklb" != "xyes"; then
       AC_MSG_ERROR([MVI requested, but compiler cannot compile MVI!])
       do_mvi=no
    fi
 fi
 if test "x$do_mvi" = "xbuild"; then
-   AC_CPU_CAN_PKLB
-   if test "x$ac_cpu_can_pklb" = "xyes"; then
+   GGI_CPU_CAN_PKLB
+   if test "x$ggi_cv_cpu_can_pklb" = "xyes"; then
       do_mvi=auto
    else
       do_mvi=no
    fi
 fi
 if test "x$do_mvi" = "xauto"; then
-   if test "x$ac_cc_can_pklb" = "xyes"; then
+   if test "x$ggi_cv_cc_can_pklb" = "xyes"; then
       do_mvi=yes
    else
       do_mvi=no
