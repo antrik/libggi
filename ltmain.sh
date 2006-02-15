@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2262 2006/02/05 11:06:31) 2.1a
+# ltmain.sh (GNU libtool 1.2270 2006/02/15 09:33:47) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -59,12 +59,12 @@
 # When reporting a bug, please describe a test case to reproduce it and
 # include the following information:
 #
-#       host-triplet:	
+#       host-triplet:	$host
 #       shell:		$SHELL
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2262 2006/02/05 11:06:31) 2.1a
+#       $progname:		(GNU libtool 1.2270 2006/02/15 09:33:47) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2262 2006/02/05 11:06:31"
-package_revision=1.2262
+TIMESTAMP=" 1.2270 2006/02/15 09:33:47"
+package_revision=1.2270
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -507,6 +507,7 @@ func_help ()
         s/^# //
 	s/^# *$//
 	s*\$progname*'$progname'*
+	s*\$host*'"$host"'*
 	s*\$SHELL*'"$SHELL"'*
 	s*\$LTCC*'"$LTCC"'*
 	s*\$LTCFLAGS*'"$LTCFLAGS"'*
@@ -5868,12 +5869,14 @@ EOF
       reload_conv_objs=
       gentop=
       # reload_cmds runs $LD directly, so let us get rid of
-      # -Wl from whole_archive_flag_spec
+      # -Wl from whole_archive_flag_spec and hope we can get by with
+      # turning comma into space..
       wl=
 
       if test -n "$convenience"; then
 	if test -n "$whole_archive_flag_spec"; then
-	  eval reload_conv_objs=\"\$reload_objs $whole_archive_flag_spec\"
+	  eval tmp_whole_archive_flags=\"$whole_archive_flag_spec\"
+	  reload_conv_objs=$reload_objs\ `$ECHO "X$tmp_whole_archive_flags" | $Xsed -e 's|,| |g'`
 	else
 	  gentop="$output_objdir/${obj}x"
 	  generated="$generated $gentop"
@@ -6634,6 +6637,20 @@ EOF
 # metacharacters that are still active within double-quoted strings.
 Xsed='${SED} -e 1s/^X//'
 sed_quote_subst='$sed_quote_subst'
+
+# Be Bourne compatible
+if test -n \"\${ZSH_VERSION+set}\" && (emulate sh) >/dev/null 2>&1; then
+  emulate sh
+  NULLCMD=:
+  # Zsh 3.x and 4.x performs word splitting on \${1+\"\$@\"}, which
+  # is contrary to our usage.  Disable this feature.
+  alias -g '\${1+\"\$@\"}'='\"\$@\"'
+  setopt NO_GLOB_SUBST
+else
+  case \`(set -o) 2>/dev/null\` in *posix*) set -o posix;; esac
+fi
+BIN_SH=xpg4; export BIN_SH # for Tru64
+DUALCASE=1; export DUALCASE # for MKS sh
 
 # The HP-UX ksh and POSIX shell print the target directory to stdout
 # if CDPATH is set.
