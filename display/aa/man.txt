@@ -21,7 +21,7 @@ __ http://aa-project.sourceforge.net/aalib/
 Environment variables
 ---------------------
 
-AA-lib options may be specified using the the `AA_OPTS` variable.
+AA-lib options may be specified using the the `AAOPTS` variable.
 
 
 Features
