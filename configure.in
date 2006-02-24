@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.185 2006/02/14 08:31:27 pekberg Exp $
+dnl $Id: configure.in,v 1.186 2006/02/24 21:34:52 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1356,12 +1356,19 @@ dnl ========================================================================
 dnl Finally add some flags
 
 dnl _THREAD_SAFE is used instead of _REENTRANT on some systems
-CFLAGS="$CFLAGS -D_REENTRANT -D_THREAD_SAFE"
+AM_CFLAGS="$AM_CFLAGS -D_REENTRANT -D_THREAD_SAFE"
 
-if test "x$use_debug" = "xyes"; then
-  CFLAGS="$CFLAGS -DDEBUG"
+if test "x$use_debug" != "xno"; then
+  case " $CFLAGS $AM_CFLAGS " in
+  *" -DDEBUG "*) ;; # -DDEBUG already present, don't add.
+  *) AM_CFLAGS="$AM_CFLAGS -DDEBUG" ;;
+  esac
+
   if test "x$ac_cv_prog_cc_g" = "xyes"; then
-    CFLAGS="$CFLAGS -g"
+    case " $CFLAGS $AM_CFLAGS " in
+    *" -g "*) ;; # -g already present, don't add.
+    *) AM_CFLAGS="$AM_CFLAGS -g" ;;
+    esac
   fi
 fi
 
@@ -1369,22 +1376,22 @@ if test "$ac_cv_c_compiler_gnu" = "yes"; then
     GGI_CC_CHECK4_OPTION([std=gnu99])
 
     # Common warning flags
-    CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wsign-compare"
-    CFLAGS="$CFLAGS -Wstrict-prototypes -Wswitch"
-    CFLAGS="$CFLAGS -Wmissing-prototypes -Wreturn-type -Wshadow"
+    AM_CFLAGS="$AM_CFLAGS -Wall -Wpointer-arith -Wsign-compare"
+    AM_CFLAGS="$AM_CFLAGS -Wstrict-prototypes -Wswitch"
+    AM_CFLAGS="$AM_CFLAGS -Wmissing-prototypes -Wreturn-type -Wshadow"
 
     # Advanced warning flags
-    CFLAGS="$CFLAGS -Wnested-externs -Wredundant-decls"
-    CFLAGS="$CFLAGS -Wuninitialized -Wcast-qual -Wwrite-strings"
+    AM_CFLAGS="$AM_CFLAGS -Wnested-externs -Wredundant-decls"
+    AM_CFLAGS="$AM_CFLAGS -Wuninitialized -Wcast-qual -Wwrite-strings"
     if test "x$cc_has_werror_implicit_function_declaration" = "xyes"; then
-      CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
+      AM_CFLAGS="$AM_CFLAGS -Werror-implicit-function-declaration"
     fi
 
      # Buggy warning flag
-    # CFLAGS="$CFLAGS -Wconversion"
+    # AM_CFLAGS="$AM_CFLAGS -Wconversion"
 
     # Super advanced (only used for building releases)
-    # CFLAGS="$CFLAGS -Werror"
+    # AM_CFLAGS="$AM_CFLAGS -Werror"
 fi
 
 
@@ -1398,14 +1405,14 @@ int main(void) {
   printf("Hello, %s !\n", __PRETTY_FUNCTION__);
   return 0;
 }
-]])],[],[CFLAGS="$CFLAGS -D__PRETTY_FUNCTION__=\\\"?\\\""])
+]])],[],[AM_CFLAGS="$AM_CFLAGS -D__PRETTY_FUNCTION__=\\\"?\\\""])
 
 # Check for darwin at the very end and set up the Objective C compiler
 # We do this here so that we get the full CFLAGS into OBJCFLAGS
 case "$host" in
     *-*-darwin*)
         OBJC="cc"
-        OBJCFLAGS="$CFLAGS"
+        OBJCFLAGS="$CFLAGS $AM_CFLAGS"
         OBJCDEPMODE="$CCDEPMODE"
 	OBJCCOMPILE="$CCCOMPILE"
         AC_SUBST(OBJC)
@@ -1437,6 +1444,9 @@ AC_SUBST(HELPERMODULES)
 AC_SUBST(DEFAULTMODULES)
 AC_SUBST(DEFAULTFBDEVMODULES)
 AC_SUBST(DEFAULTKGIMODULES)
+AC_SUBST(AM_CFLAGS)
+AC_SUBST(AM_CPPFLAGS)
+AC_SUBST(AM_LDFLAGS)
 
 dnl Target specific substitutions
 AC_SUBST(terminfolibs)
