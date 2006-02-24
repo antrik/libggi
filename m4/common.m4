@@ -25,9 +25,10 @@ if test -n "$2"; then
 	activate=$2
 fi
 
-if test $activate -eq 0 -o "$cc_tmp" != "yes"; then
-	CFLAGS="$save_CFLAGS"
+if test $activate -ne 0 -a "$cc_tmp" = "yes"; then
+	AM_CFLAGS="$AM_CFLAGS -$1"
 fi
+CFLAGS="$save_CFLAGS"
 
 
 AC_MSG_RESULT([$cc_tmp])
