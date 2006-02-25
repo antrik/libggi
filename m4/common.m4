@@ -330,11 +330,23 @@ dnl Check for libs using libtool
 AC_DEFUN([GGI_CHECK_LIB],
 [
    save_CC="$CC"
+   save_CFLAGS="$CFLAGS"
+   save_CPPFLAGS="$CPPFLAGS"
+   save_LDFLAGS="$LDFLAGS"
    CC="$SHELL ./libtool --mode=link $CC"
+   CFLAGS="$AM_CFLAGS $CFLAGS"
+   CPPFLAGS="$AM_CPPFLAGS $CPPFLAGS"
+   LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    AC_CHECK_LIB($1, $2, [
      CC="$save_CC"
+     CFLAGS="$save_CFLAGS"
+     CPPFLAGS="$save_CPPFLAGS"
+     LDFLAGS="$save_LDFLAGS"
      $3], [
      CC="$save_CC"
+     CFLAGS="$save_CFLAGS"
+     CPPFLAGS="$save_CPPFLAGS"
+     LDFLAGS="$save_LDFLAGS"
      $4])
 ])
 
