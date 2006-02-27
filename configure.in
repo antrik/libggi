@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.186 2006/02/24 21:34:52 pekberg Exp $
+dnl $Id: configure.in,v 1.187 2006/02/27 12:47:35 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -111,6 +111,8 @@ AC_PROG_RANLIB
 
 dnl Make Objective-C work with automake >= 1.7.x
 AM_CONDITIONAL([am__fastdepOBJC], false)
+
+GGI_SAVE_USER_VARS
 
 LT_INIT([win32-dll])
 
@@ -1430,6 +1432,8 @@ esac
 
 dnl ========================================================================
 dnl Write output
+
+GGI_RESTORE_USER_VARS
 
 AC_SUBST(sublib_libs)
 AC_SUBST(bsdsock_libs)
