@@ -398,3 +398,27 @@ AC_DEFUN([GGI_CHECK_TARGET],
 		test "$enable_static" = "yes" -a \
 			"x$$2" != "xno")
 ])
+
+
+
+dnl User variables
+dnl We want to use AM_CFLAGS et al during configure, but
+dnl autoconf is not fully automake aware. So, we have to
+dnl reuse CFLAGS et al during configure to mimic what
+dnl happens during build.
+dnl (Empty placeholders for now, since the various
+dnl  consumers are not ready for CFLAGS et al to be restored.)
+AC_DEFUN([GGI_SAVE_USER_VARS])
+[
+dnl	ggi_save_user_CFLAGS="$CFLAGS"
+dnl	ggi_save_user_CPPFLAGS="$CPPFLAGS"
+dnl	ggi_save_user_LDFLAGS="$LDFLAGS"
+])
+
+dnl User variables
+AC_DEFUN([GGI_RESTORE_USER_VARS])
+[
+dnl	CFLAGS="$ggi_save_user_CFLAGS"
+dnl	CPPFLAGS="$ggi_save_user_CPPFLAGS"
+dnl	LDFLAGS="$ggi_save_user_LDFLAGS"
+])
