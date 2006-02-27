@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.ilbm"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.ilbm"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libilbm_la_LIBADD =
 

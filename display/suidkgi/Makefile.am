@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.suidkgi"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.suidkgi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) -DLINUX_SUID
 libsuidkgi_la_LIBADD = suidkgi.o
 

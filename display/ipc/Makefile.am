@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.ipc"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.ipc"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libipc_la_LIBADD = $(bsdsock_libs)
 

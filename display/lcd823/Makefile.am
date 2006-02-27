@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.lcd823"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.lcd823"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 liblcd823_la_LIBADD =
 

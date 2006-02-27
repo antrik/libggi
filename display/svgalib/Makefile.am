@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.svgalib"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.svgalib"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libsvgalib_la_LIBADD = -lvga
 

@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.auto"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.auto"'
 
 EXTRA_DIST =
 

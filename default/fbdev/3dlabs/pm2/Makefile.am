@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.fbdev.3dlabs.pm2"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.fbdev.3dlabs.pm2"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libpm2_la_LIBADD =
 

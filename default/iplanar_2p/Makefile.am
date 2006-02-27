@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.iplanar_2p"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.iplanar_2p"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libiplanar_2p_la_LIBADD =
 

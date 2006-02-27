@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.monotext"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.monotext"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libmonotext_la_LIBADD = -lm
 

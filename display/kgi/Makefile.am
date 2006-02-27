@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.kgi"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.kgi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libkgi_la_LIBADD =
 

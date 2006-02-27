@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.ioctl"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.ioctl"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libioctl_la_LIBADD =
 

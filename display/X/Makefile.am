@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.X"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.X"'
 SUBDIRS = helper
 DIST_SUBDIRS = helper
 INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)

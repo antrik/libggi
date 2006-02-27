@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.ramdac"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.ramdac"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libramdac_la_LIBADD =
 

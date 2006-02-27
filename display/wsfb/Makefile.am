@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.wsfb"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.wsfb"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libwsfb_la_LIBADD =
 

@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.linear_16"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.linear_16"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 liblinear_16_la_LIBADD =
 

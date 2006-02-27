@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.vgl"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.vgl"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libvgl_la_LIBADD = -lvgl
 

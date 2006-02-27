@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.default.kgi.Matrox.Gx00"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.kgi.Matrox.Gx00"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libGx00_la_LIBADD =
 

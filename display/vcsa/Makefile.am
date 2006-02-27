@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.vcsa"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.vcsa"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libvcsa_la_LIBADD =
 

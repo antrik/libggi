@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.tile"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.tile"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libtile_la_LIBADD =
 

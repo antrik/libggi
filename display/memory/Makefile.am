@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.memory"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.memory"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libmemory_la_LIBADD =
 

@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.palemu"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.palemu"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libpalemu_la_LIBADD =
 

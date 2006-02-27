@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -no-cpp-precomp -I/System/Library/Frameworks -DDEBUG_NAMESPACE='"libggi.display.quartz"'
+AM_CPPFLAGS += -no-cpp-precomp -I/System/Library/Frameworks -DDEBUG_NAMESPACE='"libggi.display.quartz"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libquartz_la_LIBADD =
 

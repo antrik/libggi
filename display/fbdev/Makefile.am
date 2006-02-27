@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.fbdev"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.fbdev"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libfbdev_la_LIBADD =
 

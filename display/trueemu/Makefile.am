@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.trueemu"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.trueemu"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libtrueemu_la_LIBADD =
 

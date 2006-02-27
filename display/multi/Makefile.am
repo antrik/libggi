@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DDEBUG_NAMESPACE='"libggi.display.multi"'
+AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.multi"'
 INCLUDES = -I$(top_srcdir)/include $(extra_includes)
 libmulti_la_LIBADD =
 
