@@ -147,6 +147,7 @@ if test -n "$use_extra_includes" && \
     fi
   done
   IFS=$ac_save_ifs
+  AM_CPPFLAGS="$AM_CPPFLAGS $extra_includes"
   CPPFLAGS="$CPPFLAGS $extra_includes"
 fi
 
@@ -167,6 +168,7 @@ if test -n "$use_extra_libs" && \
      fi
    done
    IFS=$ac_save_ifs
+   AM_LDFLAGS="$AM_LDFLAGS $extra_libraries"
    LDFLAGS="$LDFLAGS $extra_libraries"
 fi
 
@@ -330,23 +332,11 @@ dnl Check for libs using libtool
 AC_DEFUN([GGI_CHECK_LIB],
 [
    save_CC="$CC"
-   save_CFLAGS="$CFLAGS"
-   save_CPPFLAGS="$CPPFLAGS"
-   save_LDFLAGS="$LDFLAGS"
    CC="$SHELL ./libtool --mode=link $CC"
-   CFLAGS="$AM_CFLAGS $CFLAGS"
-   CPPFLAGS="$AM_CPPFLAGS $CPPFLAGS"
-   LDFLAGS="$AM_LDFLAGS $LDFLAGS"
    AC_CHECK_LIB($1, $2, [
      CC="$save_CC"
-     CFLAGS="$save_CFLAGS"
-     CPPFLAGS="$save_CPPFLAGS"
-     LDFLAGS="$save_LDFLAGS"
      $3], [
      CC="$save_CC"
-     CFLAGS="$save_CFLAGS"
-     CPPFLAGS="$save_CPPFLAGS"
-     LDFLAGS="$save_LDFLAGS"
      $4])
 ])
 
@@ -408,17 +398,17 @@ dnl reuse CFLAGS et al during configure to mimic what
 dnl happens during build.
 dnl (Empty placeholders for now, since the various
 dnl  consumers are not ready for CFLAGS et al to be restored.)
-AC_DEFUN([GGI_SAVE_USER_VARS])
+AC_DEFUN([GGI_SAVE_USER_VARS],
 [
-dnl	ggi_save_user_CFLAGS="$CFLAGS"
-dnl	ggi_save_user_CPPFLAGS="$CPPFLAGS"
-dnl	ggi_save_user_LDFLAGS="$LDFLAGS"
+	ggi_save_user_CFLAGS="$CFLAGS"
+	ggi_save_user_CPPFLAGS="$CPPFLAGS"
+	ggi_save_user_LDFLAGS="$LDFLAGS"
 ])
 
 dnl User variables
-AC_DEFUN([GGI_RESTORE_USER_VARS])
+AC_DEFUN([GGI_RESTORE_USER_VARS],
 [
-dnl	CFLAGS="$ggi_save_user_CFLAGS"
-dnl	CPPFLAGS="$ggi_save_user_CPPFLAGS"
-dnl	LDFLAGS="$ggi_save_user_LDFLAGS"
+	CFLAGS="$ggi_save_user_CFLAGS"
+	CPPFLAGS="$ggi_save_user_CPPFLAGS"
+	LDFLAGS="$ggi_save_user_LDFLAGS"
 ])
