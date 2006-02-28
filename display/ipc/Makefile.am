@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.ipc"'
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libipc_la_LIBADD = $(bsdsock_libs)
 
 noinst_LTLIBRARIES = libipc.la

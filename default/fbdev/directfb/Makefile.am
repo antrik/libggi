@@ -1,7 +1,7 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.fbdev.directfb"'
 SUBDIRS = core
 
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libdirectfb_la_LIBADD =
 
 libdirectfbglobal_la_LIBADD = 

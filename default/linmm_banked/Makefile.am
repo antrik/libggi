@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.linmm_banked"'
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 liblinmm_banked_la_LIBADD =
 
 noinst_LTLIBRARIES = liblinmm_banked.la

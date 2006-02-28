@@ -2,7 +2,7 @@ AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.auto"'
 
 EXTRA_DIST =
 
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libauto_la_LIBADD =
 
 noinst_LTLIBRARIES = libauto.la

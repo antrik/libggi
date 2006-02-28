@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.tele"'
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libtele_la_LIBADD = $(bsdsock_libs)
 
 noinst_LTLIBRARIES = libtele.la

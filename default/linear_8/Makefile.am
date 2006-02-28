@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.linear_8"'
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 liblinear_8_la_LIBADD =
 
 noinst_LTLIBRARIES = liblinear_8.la

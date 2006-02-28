@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.default.kgi.ATI.Mach64"'
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libmach64_la_LIBADD =
 
 noinst_LTLIBRARIES = libmach64.la

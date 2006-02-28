@@ -1,5 +1,5 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.suidkgi"' -DLINUX_SUID
-INCLUDES = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES = -I$(top_srcdir)/include
 libsuidkgi_la_LIBADD = suidkgi.o
 
 noinst_LTLIBRARIES = libsuidkgi.la

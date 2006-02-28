@@ -1,4 +1,4 @@
-INCLUDES = -I${top_srcdir}/include ${extra_includes}
+INCLUDES = -I${top_srcdir}/include
 
 noinst_PROGRAMS = exttest1
 

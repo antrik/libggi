@@ -1,7 +1,7 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.X"'
 SUBDIRS = helper
 DIST_SUBDIRS = helper
-INCLUDES = -I$(top_srcdir)/include $(extra_includes) $(X_CFLAGS)
+INCLUDES = -I$(top_srcdir)/include $(X_CFLAGS)
 libx_la_LIBADD = $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
 
 noinst_LTLIBRARIES = libx.la

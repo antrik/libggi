@@ -3,7 +3,7 @@ builtins_libs =
 include $(srcdir)/builtins.am
 
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi"' -DBUILDING_LIBGGI
-INCLUDES  = -I$(top_srcdir)/include $(extra_includes)
+INCLUDES  = -I$(top_srcdir)/include
 
 libggi_la_LIBADD = $(builtins_libs) -lgii -lgg
 lib_LTLIBRARIES = libggi.la
