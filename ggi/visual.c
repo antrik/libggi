@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2005/09/06 15:22:58 pekberg Exp $
+/* $Id: visual.c,v 1.12 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -53,7 +53,7 @@ static int _default_error(void)
 */
 
 void _ggi_mem_error(void) {
-	ggiPanic("LibGGI is out of memory!\n");
+	ggPanic("LibGGI is out of memory!\n");
 }
 
 void *_ggi_malloc(size_t siz)
@@ -144,7 +144,7 @@ static void *_ggi_init_op(struct ggi_op_head *head, int numfuncs)
 	return head;
 }
 
-static void _ggi_init_allops(ggi_visual *vis, int initall)
+static void _ggi_init_allops(struct ggi_visual *vis, int initall)
 {
 	_ggi_init_op((struct ggi_op_head *)vis->opdraw, GGI_OPDRAW_NUMFUNCS);
 	vis->opdraw->head.version	= GGI_VERSION_VISUAL_OPDRAW;
@@ -159,7 +159,7 @@ static void _ggi_init_allops(ggi_visual *vis, int initall)
 	}
 }
 
-static void _ggiCloseDL(ggi_visual *vis, int zapall)
+static void _ggiCloseDL(struct ggi_visual *vis, int zapall)
 {
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->generic_ext));
 	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
@@ -176,15 +176,15 @@ static void _ggiCloseDL(ggi_visual *vis, int zapall)
 	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
 }
 
-void _ggiZapMode(ggi_visual *vis, int zapall)
+void _ggiZapMode(struct ggi_visual *vis, int zapall)
 {
 	_ggiCloseDL(vis, zapall);
 	_ggi_init_allops(vis, zapall);
 }
 
-ggi_visual *_ggiNewVisual(void)
+struct ggi_visual *_ggiNewVisual(void)
 {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 
 	vis = malloc(sizeof(*vis));
 	if (vis == NULL) return NULL;
@@ -254,8 +254,6 @@ ggi_visual *_ggiNewVisual(void)
  	LIBGGI_PAL(vis)->ro_stop   = 0;
  	LIBGGI_PAL(vis)->priv      = NULL;
 
-	vis->input = NULL;
-
 	_ggi_init_allops(vis, 1);
 
 	return vis;
@@ -286,12 +284,8 @@ ggi_visual *_ggiNewVisual(void)
 }
 
 
-void _ggiDestroyVisual(ggi_visual *vis)
+void _ggiDestroyVisual(struct ggi_visual *vis)
 {
-	if (vis->input) {
-		giiClose(vis->input);
-		vis->input=NULL;
-	}
 	_ggiCloseDL(vis, 1);
 
 	if (LIBGGI_PAL(vis)) {

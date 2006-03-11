@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.187 2006/02/27 12:47:35 pekberg Exp $
+dnl $Id: configure.in,v 1.188 2006/03/11 18:49:11 soyt Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -394,15 +394,16 @@ if test "x$ac_cv_header_ggi_gii_h" != "xyes"; then
 		LibGGI. Please compile LibGII first.])
 fi
 
-GGI_CHECK_LIB(gii,giiInit,
-  GGI_CHECK_LIB(gg,ggGetSwarType,
-	foo=bar,
-	AC_MSG_ERROR([You have an obsolete LibGII version installed!])
-  ),
-  AC_MSG_ERROR([LibGII is not properly installed on the system.
-		You need LibGII for building LibGGI. Please compile
-		LibGII first.])
-)
+dnl === LibGII is not required now.
+dnl GGI_CHECK_LIB(gii,giiInit,
+dnl   GGI_CHECK_LIB(gg,ggGetSwarType,
+dnl 	foo=bar,
+dnl 	AC_MSG_ERROR([You have an obsolete LibGII version installed!])
+dnl   ),
+dnl   AC_MSG_ERROR([LibGII is not properly installed on the system.
+dnl 		You need LibGII for building LibGGI. Please compile
+dnl 		LibGII first.])
+dnl )
 
 
 

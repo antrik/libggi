@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.17 2005/07/31 15:30:38 soyt Exp $
+/* $Id: ggi.h,v 1.18 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -33,14 +33,18 @@
 #ifndef _GGI_GGI_H
 #define _GGI_GGI_H
 
+#include <ggi/gg.h>
+#include <ggi/gg-api.h>
 #include <ggi/types.h>
-#include <ggi/gii.h>
 #include <ggi/ggi-defs.h>
 
 #include <stdio.h>     /* need FILE for ggiFPrintMode */
 
 /* Do we need double here? */
 typedef double ggi_float;
+
+typedef struct gg_stem * ggi_visual_t;
+
 
 #ifndef _INTERNAL_LIBGGI
 /* Opaque pointer types.
@@ -49,28 +53,8 @@ typedef double ggi_float;
    different pointer sizes or types for different pointed-to objects),
    you might need to typedef void *ggi_*_t; instead.
  */
-struct ggi_h_dummy1 { char dummy1; };
-struct ggi_h_dummy2 { char dummy2; };
-typedef struct ggi_h_dummy1 *ggi_visual_t;
-typedef struct ggi_h_dummy2 *ggi_resource_t;
+typedef void *ggi_resource_t;
 #endif
-
-/*
- * Convenience typedefs for compatibility with pre-GII applications.
- */
-
-typedef gii_event_type		ggi_event_type;
-typedef gii_event_mask		ggi_event_mask;
-typedef gii_any_event		ggi_any_event;
-typedef gii_cmd_nodata_event	ggi_cmd_nodata_event;
-typedef gii_cmd_event		ggi_cmd_event;
-typedef gii_expose_event	ggi_expose_event;
-typedef gii_key_event		ggi_key_event;
-typedef gii_pmove_event		ggi_pmove_event;
-typedef gii_pbutton_event	ggi_pbutton_event;
-typedef gii_val_event		ggi_val_event;
-typedef gii_event		ggi_event;
-
 
 /*
  * Flags & Frames
@@ -365,6 +349,8 @@ typedef struct {
 */
 __BEGIN_DECLS
 
+extern struct gg_api *libggi;
+
 /* Get the master config dir
  */
 GGIAPIFUNC const char *ggiGetConfDir(void);
@@ -373,12 +359,13 @@ GGIAPIFUNC const char *ggiGetConfDir(void);
  */
 GGIAPIFUNC int  ggiInit(void);
 GGIAPIFUNC int  ggiExit(void);
-GGIAPIFUNC void ggiPanic(const char *format,...);
+
+#define ggiPanic ggPanic
 
 /* Open a new visual - use display `NULL' for the default visual
  */
-GGIAPIFUNC ggi_visual_t ggiOpen(const char *display,...);
-GGIAPIFUNC int          ggiClose(ggi_visual_t vis);
+GGIAPIFUNC int  ggiOpen(ggi_visual_t vis, const char *display,...);
+GGIAPIFUNC int  ggiClose(ggi_visual_t vis);
 
 /* Get/Set info
  */
@@ -546,29 +533,6 @@ GGIAPIFUNC int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
 GGIAPIFUNC int ggiPutc(ggi_visual_t vis,int x,int y,char c);
 GGIAPIFUNC int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
 GGIAPIFUNC int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
-
-/* Event handling
- */
-GGIAPIFUNC gii_event_mask	ggiEventPoll(ggi_visual_t vis,
-					     gii_event_mask mask,
-					     struct timeval *t);
-GGIAPIFUNC int			ggiEventsQueued(ggi_visual_t vis,
-						gii_event_mask mask);
-GGIAPIFUNC int			ggiEventRead(ggi_visual_t vis, gii_event *ev,
-					     gii_event_mask mask);
-GGIAPIFUNC int			ggiSetEventMask(ggi_visual_t vis,
-						gii_event_mask evm);
-GGIAPIFUNC gii_event_mask	ggiGetEventMask(ggi_visual_t vis);
-GGIAPIFUNC int			ggiEventSend(ggi_visual_t vis, gii_event *ev);
-#define				ggiGetInput(vis)   ggiJoinInputs(vis, NULL)
-GGIAPIFUNC gii_input_t		ggiJoinInputs(ggi_visual_t vis,
-					      gii_input_t inp);
-GGIAPIFUNC gii_input_t		ggiDetachInput(ggi_visual_t vis);
-
-#define ggiAddEventMask(vis,mask)  \
-		ggiSetEventMask((vis), ggiGetEventMask((vis)) | (mask))
-#define ggiRemoveEventMask(vis,mask)  \
-		ggiSetEventMask((vis), ggiGetEventMask((vis)) & ~(mask))
 
 /* Convenience functions */
 

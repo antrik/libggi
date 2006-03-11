@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.4 2004/11/14 15:47:50 cegger Exp $
+/* $Id: gc.c,v 1.5 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. GC handling
@@ -28,8 +28,9 @@
 #include "config.h"
 #include <ggi/internal/internal.h>
 
-int ggiSetGCForeground(ggi_visual *vis,ggi_pixel color)
+int ggiSetGCForeground(ggi_visual_t v,ggi_pixel color)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIBGGI_GC(vis)->fg_color=color;
 	LIBGGI_GC(vis)->version++;
 
@@ -39,8 +40,9 @@ int ggiSetGCForeground(ggi_visual *vis,ggi_pixel color)
 	return 0;
 }
 
-int ggiSetGCBackground(ggi_visual *vis,ggi_pixel color)
+int ggiSetGCBackground(ggi_visual_t v,ggi_pixel color)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIBGGI_GC(vis)->bg_color=color;
 	LIBGGI_GC(vis)->version++;
 
@@ -50,20 +52,23 @@ int ggiSetGCBackground(ggi_visual *vis,ggi_pixel color)
 	return 0;
 }
 
-int ggiGetGCForeground(ggi_visual *vis,ggi_pixel *color)
+int ggiGetGCForeground(ggi_visual_t v,ggi_pixel *color)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	*color=LIBGGI_GC(vis)->fg_color;
 	return 0;
 }
 
-int ggiGetGCBackground(ggi_visual *vis,ggi_pixel *color)
+int ggiGetGCBackground(ggi_visual_t v,ggi_pixel *color)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	*color=LIBGGI_GC(vis)->bg_color;
 	return 0;
 }
 
-int ggiSetGCClipping(ggi_visual_t vis,int left,int top,int right,int bottom)
+int ggiSetGCClipping(ggi_visual_t v,int left,int top,int right,int bottom)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	if ((left < 0) || (top < 0) || 
 	    (right  > LIBGGI_VIRTX(vis)) || 
 	    (bottom > LIBGGI_VIRTY(vis)) ||
@@ -86,8 +91,9 @@ int ggiSetGCClipping(ggi_visual_t vis,int left,int top,int right,int bottom)
 }
 
 
-int ggiGetGCClipping(ggi_visual_t vis,int *left,int *top,int *right,int *bottom)
+int ggiGetGCClipping(ggi_visual_t v,int *left,int *top,int *right,int *bottom)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	*left   = LIBGGI_GC(vis)->cliptl.x;
 	*top    = LIBGGI_GC(vis)->cliptl.y;
 	*right  = LIBGGI_GC(vis)->clipbr.x;

@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.6 2005/10/03 11:56:06 cegger Exp $
+/* $Id: ext.c,v 1.7 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -76,7 +76,7 @@ int ggiExtensionExit(void)
 */
 ggi_extid
 ggiExtensionRegister(const char *name, size_t size,
-			int (*change)(ggi_visual_t, int))
+			int (*change)(struct ggi_visual *, int))
 {
 	ggi_extension *tmp, *ext;
 
@@ -158,8 +158,9 @@ int ggiExtensionUnregister(ggi_extid id)
         	extension multiple times. You might want to set up private
         	data if RC==0.
 */
-int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
+int ggiExtensionAttach(ggi_visual_t v, ggi_extid id)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	ggi_extension *tmp = NULL;
 
 	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
@@ -203,8 +204,9 @@ int ggiExtensionAttach(ggi_visual *vis, ggi_extid id)
      >=0	should be regarded as "success". It is legal to attach an 
 		extension multiple times.
 */
-int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
+int ggiExtensionDetach(ggi_visual_t v, ggi_extid id)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	DPRINT_CORE("ggiExtensionDetach(%p, %d) called\n", vis, id);
 
 	if (vis->numknownext <= id || LIBGGI_EXTAC(vis, id) == 0) {
@@ -221,8 +223,9 @@ int ggiExtensionDetach(ggi_visual *vis, ggi_extid id)
 	return 0;
 }
 
-int ggiIndicateChange(ggi_visual_t vis, int whatchanged)
+int ggiIndicateChange(ggi_visual_t v, int whatchanged)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	ggi_extension *tmp = NULL;
 
 	DPRINT_CORE("ggiIndicateChange(%p, 0x%x) called\n",

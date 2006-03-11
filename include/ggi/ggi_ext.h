@@ -1,4 +1,4 @@
-/* $Id: ggi_ext.h,v 1.8 2005/09/19 07:45:15 cegger Exp $
+/* $Id: ggi_ext.h,v 1.9 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    Copyright (C) 1998      Andreas Beck		[becka@ggi-project.org]
@@ -42,7 +42,7 @@ typedef int ggi_extid;	/* Don't rely on that ! */
 __BEGIN_DECLS
 
 GGIAPIFUNC ggi_extid    ggiExtensionRegister(const char *name, size_t size,
-			  int (*paramchange)(ggi_visual_t,int whatchanged));
+			  int (*paramchange)(struct ggi_visual *,int whatchanged));
 GGIAPIFUNC int          ggiExtensionUnregister(ggi_extid id);
 GGIAPIFUNC int          ggiExtensionAttach(ggi_visual_t vis,ggi_extid id);
 GGIAPIFUNC int          ggiExtensionDetach(ggi_visual_t vis,ggi_extid id);

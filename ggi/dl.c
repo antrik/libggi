@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.26 2006/02/05 17:39:34 soyt Exp $
+/* $Id: dl.c,v 1.27 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -110,7 +110,7 @@ getsymbol:
 
 /* Probe a DL
  */
-int _ggiProbeDL(ggi_visual *vis, const void *conffilehandle,
+int _ggiProbeDL(struct ggi_visual *vis, const void *conffilehandle,
 		const char *api, const char *args, void *argptr,
 		int type, ggi_dlhandle **dlh, uint32_t *dlret)
 {
@@ -158,7 +158,7 @@ int _ggiProbeDL(ggi_visual *vis, const void *conffilehandle,
 
 /* Add an extension DL
  */
-ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
+ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, const void *conffilehandle,
 			   const char *api,
 			   const char *args, void *argptr,
 			   const char *symprefix)
@@ -215,7 +215,7 @@ ggi_dlhandle *_ggiAddExtDL(ggi_visual *vis, const void *conffilehandle,
 }
 
 /****** Open and Close a DL *********/
-int _ggiAddDL(ggi_visual *vis, const void *conffilehandle,
+int _ggiAddDL(struct ggi_visual *vis, const void *conffilehandle,
 	      const char *api, const char *args, void *argptr,
 	      int type)
 {
@@ -294,14 +294,14 @@ int _ggiAddDL(ggi_visual *vis, const void *conffilehandle,
 	return 0;
 }
 
-int _ggiOpenDL(ggi_visual *vis, const void *conffilehandle,
+int _ggiOpenDL(struct ggi_visual *vis, const void *conffilehandle,
 		const char *api, const char *args, void *argptr)
 {
 	return _ggiAddDL(vis, conffilehandle,
 			api, args, argptr, GGI_DLTYPE_INTERNAL);
 }
 
-void _ggiExitDL(ggi_visual *vis, ggi_dlhandle_l *lib)
+void _ggiExitDL(struct ggi_visual *vis, ggi_dlhandle_l *lib)
 {
 	for (; lib != NULL; lib = GG_SLIST_NEXT(lib, dllist)) {
 		if (lib->handle->exit) {
@@ -310,7 +310,7 @@ void _ggiExitDL(ggi_visual *vis, ggi_dlhandle_l *lib)
 	}
 }
 
-static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
+static void _ggiRemoveDL(struct ggi_visual *vis, ggi_dlhandle_l **lib)
 {
 	ggi_dlhandle_l *tmp, **prev;
 	ggi_dlhandle_l *libtmp, **libprev, *libnext;
@@ -351,7 +351,7 @@ static void _ggiRemoveDL(ggi_visual *vis, ggi_dlhandle_l **lib)
 	}
 }
 
-void _ggiZapDL(ggi_visual *vis, ggi_dlhandle_l **lib)
+void _ggiZapDL(struct ggi_visual *vis, ggi_dlhandle_l **lib)
 {
 	ggi_dlhandle_l *tmp, *next;
 

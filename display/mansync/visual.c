@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.9 2006/03/11 18:49:11 soyt Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -45,7 +45,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	_ggi_opmansync *ops = (_ggi_opmansync *) argptr;
 	
 	if (ops == NULL) {
-		ggiPanic("Target tried to use mansync helper in a wrong way!\n");
+		ggPanic("Target tried to use mansync helper in a wrong way!\n");
 	}
 
 	ops->init   = _GGI_mansync_init;

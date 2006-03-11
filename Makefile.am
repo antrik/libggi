@@ -1,5 +1,4 @@
 SUBDIRS = include display default ggi display-shared default-shared extensions programs doc m4 dist
-
 ggiconfdatadir = $(sysconfdir)/$(ggi_subdir)
 ggiconfdata_DATA = $(ggi_conffile)
 

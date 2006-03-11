@@ -1,4 +1,4 @@
-/* $Id: ggi-dl.h,v 1.3 2004/09/13 09:35:20 cegger Exp $
+/* $Id: ggi-dl.h,v 1.4 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
@@ -31,7 +31,6 @@
 #define _GGI_INTERNAL_GGI_DL_H
 
 #include <ggi/types.h>
-#include <ggi/internal/gii-dl.h>
 #include <ggi/internal/internal.h>
 #include <ggi/internal/dltypes.h>
 

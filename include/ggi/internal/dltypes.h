@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.11 2005/07/30 10:57:04 cegger Exp $
+/* $Id: dltypes.h,v 1.12 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -74,8 +74,6 @@ typedef int (ggifunc_flush)(struct ggi_visual *vis, int x, int y, int w, int h,
 /* Idle the accelerator */
 typedef int (ggifunc_idleaccel)(struct ggi_visual *vis);
 
-/* Sending events to a visual */
-typedef int (ggifunc_sendevent)(struct ggi_visual *vis,	ggi_event *event);
 
 /* Frame handling
  */

@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.5 2004/11/27 16:42:44 soyt Exp $
+/* $Id: colormap.c,v 1.6 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -30,13 +30,13 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-size_t _ggiColormapGetPrivsize(ggi_visual_t vis)
+size_t _ggiColormapGetPrivsize(struct ggi_visual *vis)
 {
 	return LIBGGI_PAL(vis)->getPrivSize(vis);
 }	/* _ggiColormapGetPrivsize */
 
 
-int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end)
+int _ggiColormapSetRW(struct ggi_visual *vis, size_t start, size_t end)
 {
 	size_t ro_start, ro_stop;
 	ggi_colormap *map = LIBGGI_PAL(vis);
@@ -60,7 +60,7 @@ int _ggiColormapSetRW(ggi_visual_t vis, size_t start, size_t end)
 }	/* _ggiColormapSetRW */
 
 
-int _ggiColormapGetRW(ggi_visual_t vis, size_t *start, size_t *end)
+int _ggiColormapGetRW(struct ggi_visual *vis, size_t *start, size_t *end)
 {
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
@@ -72,7 +72,7 @@ int _ggiColormapGetRW(ggi_visual_t vis, size_t *start, size_t *end)
 }	/* _ggiColormapGetRW */
 
 
-int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end)
+int _ggiColormapSetRO(struct ggi_visual *vis, size_t start, size_t end)
 {
 	size_t rw_start, rw_stop;
 	ggi_colormap *map = LIBGGI_PAL(vis);
@@ -96,7 +96,7 @@ int _ggiColormapSetRO(ggi_visual_t vis, size_t start, size_t end)
 }	/* _ggiColormapSetRO */
 
 
-int _ggiColormapGetRO(ggi_visual_t vis, size_t *start, size_t *end)
+int _ggiColormapGetRO(struct ggi_visual *vis, size_t *start, size_t *end)
 {
 	ggi_colormap *map = LIBGGI_PAL(vis);
 
@@ -109,14 +109,14 @@ int _ggiColormapGetRO(ggi_visual_t vis, size_t *start, size_t *end)
 
 
 
-int _ggiColormapSetPalette(ggi_visual_t vis, size_t start,
+int _ggiColormapSetPalette(struct ggi_visual *vis, size_t start,
 				size_t size, const ggi_color *cmap)
 {
 	return LIBGGI_PAL(vis)->setPalette(vis, start, size, cmap);
 }	/* _ggiColormapSetPalette */
 
 
-ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
+ssize_t _ggiColormapFindByColor(struct ggi_visual *vis, const ggi_color *color,
 				enum ggi_colormap_region region)
 {
 	size_t idx;
@@ -147,7 +147,7 @@ ssize_t _ggiColormapFindByColor(ggi_visual_t vis, const ggi_color *color,
 }	/* _ggiColormapFindByColor */
 
 
-ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
+ssize_t _ggiColormapFindByIdx(struct ggi_visual *vis, size_t idx,
 				enum ggi_colormap_region region)
 {
 	size_t idx_tmp;
@@ -197,7 +197,7 @@ ssize_t _ggiColormapFindByIdx(ggi_visual_t vis, size_t idx,
 
 
 
-int _ggiColormapMatchByColor(ggi_visual_t vis, const ggi_color *color1,
+int _ggiColormapMatchByColor(struct ggi_visual *vis, const ggi_color *color1,
 				const ggi_color *color2,
 				enum ggi_colormap_region region)
 {
@@ -210,7 +210,7 @@ int _ggiColormapMatchByColor(ggi_visual_t vis, const ggi_color *color1,
 
 
 
-int _ggiColormapMatchByIdx(ggi_visual_t vis, size_t idx1, size_t idx2,
+int _ggiColormapMatchByIdx(struct ggi_visual *vis, size_t idx1, size_t idx2,
 				enum ggi_colormap_region region)
 {
 	size_t rw_start, rw_stop;

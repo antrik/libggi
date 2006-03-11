@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.19 2006/02/05 17:39:34 soyt Exp $
+/* $Id: structs.h,v 1.20 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -32,7 +32,6 @@
 
 struct ggi_visual;
 struct ggi_resource;
-typedef struct ggi_visual *ggi_visual_t;
 typedef struct ggi_dlhandle *ggi_lib_id;
 typedef struct ggi_resource *ggi_resource_t;
 
@@ -102,25 +101,25 @@ typedef struct ggi_colormap {
 		/* Function hooks for target specific operations */
 
 		/* Returns the size of the void *priv */
-		size_t (*getPrivSize)(ggi_visual_t vis);
+		size_t (*getPrivSize)(struct ggi_visual *vis);
 
-		int (*setRW)(ggi_visual_t vis, size_t start, size_t end);
-		int (*setRO)(ggi_visual_t vis, size_t start, size_t end);
-		int (*getRW)(ggi_visual_t vis, size_t *start, size_t *end);
-		int (*getRO)(ggi_visual_t vis, size_t *start, size_t *end);
+		int (*setRW)(struct ggi_visual *vis, size_t start, size_t end);
+		int (*setRO)(struct ggi_visual *vis, size_t start, size_t end);
+		int (*getRW)(struct ggi_visual *vis, size_t *start, size_t *end);
+		int (*getRO)(struct ggi_visual *vis, size_t *start, size_t *end);
 
 		/* sets the palette and automatically determine the rw/ro start/end indeces */
 		ggifunc_setPalette* setPalette;
 
-		ssize_t (*findByColor)(ggi_visual_t vis, const ggi_color *color,
+		ssize_t (*findByColor)(struct ggi_visual *vis, const ggi_color *color,
 				       enum ggi_colormap_region region);
-		ssize_t (*findByIdx)(ggi_visual_t vis, size_t idx,
+		ssize_t (*findByIdx)(struct ggi_visual *vis, size_t idx,
 				     enum ggi_colormap_region region);
-		int (*matchByColor)(ggi_visual_t vis,
+		int (*matchByColor)(struct ggi_visual *vis,
 				    const ggi_color *color1,
 				    const ggi_color *color2,
 				    enum ggi_colormap_region region);
-		int (*matchByIdx)(ggi_visual_t vis, size_t idx1, size_t idx2,
+		int (*matchByIdx)(struct ggi_visual *vis, size_t idx1, size_t idx2,
 				  enum ggi_colormap_region region);
 } ggi_colormap;
 
@@ -187,7 +186,7 @@ typedef struct ggi_extension {
 	int id;
 	int initcount;
 	size_t size;
-	int (*paramchange)(ggi_visual_t,int whatchanged);
+	int (*paramchange)(struct ggi_visual*,int whatchanged);
 	GG_TAILQ_ENTRY(ggi_extension) extlist;
 } ggi_extension;
 
@@ -210,7 +209,7 @@ typedef struct {
  */
 
 #define GGI_VERSION_VISUAL	GGI_VERSION_MK(1)
-typedef struct ggi_visual {
+struct ggi_visual {
 	unsigned int       version;
 	void		  *mutex;	/* Lock when changing.. */
 	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
@@ -258,7 +257,7 @@ typedef struct ggi_visual {
 
 	ggi_mode	 *mode;		/* Current mode */
 	ggi_pixelformat	 *pixfmt;	/* Format of the pixels */
-	struct gii_input *input;	/* Input handle for visual */
+
 	void	         *targetpriv;	/* Target private data */
 
 	ggi_db_list 	 *app_dbs;	/* List of public DBs */
@@ -275,7 +274,10 @@ typedef struct ggi_visual {
 	void		*helperpriv;    /* Helper library private data */
 	ggi_gammastate	*gamma;		/* was genericpriv (obselete) */
 	void		*colorpriv;	/* Color library private data */
-} ggi_visual;
+
+	/* API */
+	struct gg_stem *stem;
+};
 
 #define GGI_DL_ERROR		0x80000000
 #define GGI_DL_OPDISPLAY	0x00000001
@@ -328,7 +330,7 @@ struct ggi_visual_opdisplay {
 
 /*------- Section: Event management (0/5 slots) ------------*/
 
-	ggifunc_sendevent *sendevent;
+/*	ggifunc_sendevent *sendevent; */
 
 	void	*dummy_event[4];/* Place holder */
 

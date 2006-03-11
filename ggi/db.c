@@ -1,4 +1,4 @@
-/* $Id: db.c,v 1.5 2004/11/27 16:42:44 soyt Exp $
+/* $Id: db.c,v 1.6 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    DirectBuffer handling.
@@ -117,7 +117,7 @@ int _ggi_db_move_buffer(ggi_db_list *dst, ggi_db_list *src, int idx)
 }
 
 
-ggi_directbuffer *_ggi_db_find_frame(ggi_visual *vis, int frameno)
+ggi_directbuffer *_ggi_db_find_frame(struct ggi_visual *vis, int frameno)
 {
 	int i;
 
@@ -143,13 +143,15 @@ ggi_directbuffer *_ggi_db_find_frame(ggi_visual *vis, int frameno)
 
 /************** DirectBuffer calls ****************/
 
-int  ggiDBGetNumBuffers(ggi_visual *vis)
+int  ggiDBGetNumBuffers(ggi_visual_t v)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	return LIBGGI_APPLIST(vis)->num;
 }
 
-const ggi_directbuffer *ggiDBGetBuffer(ggi_visual *vis, int bufnum)
+const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t v, int bufnum)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	if (bufnum >= 0 && bufnum < LIBGGI_APPLIST(vis)->num)
 		return LIBGGI_APPLIST(vis)->bufs[bufnum];
 	return NULL;

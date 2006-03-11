@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.27 2005/07/30 10:57:30 cegger Exp $
+/* $Id: internal.c,v 1.28 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -319,7 +319,7 @@ err0:
    don't use the same format as GGI_DB_STD_*, though it would be
    nice if we could change GGI_DB_STD_* and depricate old values. */
 /* TODO: flesh this out                                       */
-int _ggi_build_pixfmtstr (ggi_visual *vis, char *pixfmtstr,
+int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags)
 {
 	LIB_ASSERT(vis != NULL, "Invalid visual");
@@ -441,7 +441,7 @@ int _ggi_match_palette(ggi_color *pal, int pal_len, const ggi_color *col)
 	return closest;
 }
 
-int _ggi_default_setreadframe(ggi_visual *vis, int num)
+int _ggi_default_setreadframe(struct ggi_visual *vis, int num)
 {
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
@@ -455,7 +455,7 @@ int _ggi_default_setreadframe(ggi_visual *vis, int num)
         return 0;
 }
 
-int _ggi_default_setwriteframe(ggi_visual *vis, int num)
+int _ggi_default_setwriteframe(struct ggi_visual *vis, int num)
 {
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 

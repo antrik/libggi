@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.51 2006/02/04 22:11:48 soyt Exp $
+/* $Id: init.c,v 1.52 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -42,6 +42,11 @@
 /* Exported variables */
 uint32_t             _ggiDebug         = 0;
 void                 *_ggi_global_lock = NULL;
+
+/* The libggi API */
+static int _ggiInit(struct gg_api*);
+static struct gg_api _libggi = GG_API("ggi", GG_VERSION(3,0,0,0), _ggiInit);
+struct gg_api * libggi = &_libggi;
 
 /* Global variables */
 void                 *_ggiConfigHandle = NULL;
@@ -110,18 +115,62 @@ const char *ggiGetConfDir(void)
 #endif /* HAVE_CONFFILE */
 }
 
+
+static int
+_ggiAttach(struct gg_api* api, struct gg_stem *stem)
+{
+	struct ggi_visual *vis;
+	
+	if((vis = _ggiNewVisual()) == NULL) {
+		return GGI_ENOMEM;
+	}
+	
+	vis->stem = stem;
+	GGI_PRIV(stem) = vis;
+	
+	return GGI_OK;
+}
+
+static void
+_ggiDetach(struct gg_api* api, struct gg_stem *stem)
+{
+	struct ggi_visual *vis;
+	vis = GGI_VISUAL(stem);
+	ggiClose(stem);
+	free(vis);
+}
+
 /*
  * Initialize the structures for the library
  */
 
 int ggiInit(void)
 {
+	return ggInitAPI(libggi);
+}
+
+static int _ggiAttach(struct gg_api*, struct gg_stem *);
+static void _ggiDetach(struct gg_api*, struct gg_stem *);
+static void _ggiExit(struct gg_api*);
+
+
+static int
+_ggiInit(struct gg_api* api)
+{
 	int err;
 	const char *str, *confdir;
 	char *conffile;
-
-	_ggiLibIsUp++;
-	if (_ggiLibIsUp > 1) return 0;	/* Initialize only at first call. */
+	
+	api->ops.exit   = _ggiExit;
+	api->ops.attach = _ggiAttach;
+	api->ops.detach = _ggiDetach;
+/*
+	api->ops.open   = _ggiOpenModule;
+	api->ops.close  = _ggiCloseModule;
+	api->ops.env       = _ggiGetEnv;
+	api->ops.publisher = _ggiGetPublisher;
+	api->ops.dump      = _ggiDump;
+*/
 
 	err = _ggiSwarInit();
 	if (err) return err;
@@ -151,12 +200,6 @@ int ggiInit(void)
 	str = getenv("GGI_DEFMODE");
 	if (str != NULL) {
 		_ggiSetDefaultMode(str);
-	}
-
-	err = giiInit();
-	if (err) {
-		fprintf(stderr, "LibGGI: unable to initialize LibGII\n");
-		goto err1;
 	}
 
 	_ggiVisuals.mutex = ggLockCreate();
@@ -218,7 +261,6 @@ err4:
 err3:
 	ggLockDestroy(_ggiVisuals.mutex);
 err2:
-	giiExit();
 	_ggiLibIsUp--;
 err1:
 	ggiExtensionExit();
@@ -228,17 +270,17 @@ err0:
 
 int ggiExit(void)
 {
-	DPRINT_CORE("ggiExit called\n");
-	if (!_ggiLibIsUp) return GGI_ENOTALLOC;
+	return ggExitAPI(libggi);
+}
 
-	if (_ggiLibIsUp > 1) {
-		_ggiLibIsUp--;
-		return _ggiLibIsUp;
-	}
+void _ggiExit(struct gg_api *api)
+{
+
+	DPRINT_CORE("ggiExit called\n");
 
 	DPRINT_CORE("ggiExit: really destroying.\n");
 	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
-		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual));
+		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual)->stem);
 	}
 
 	ggLockDestroy(_ggiVisuals.mutex);
@@ -249,7 +291,6 @@ int ggiExit(void)
 	_ggiExitBuiltins();
 
 	ggFreeConfig(_ggiConfigHandle);
-	giiExit();
 	_ggiLibIsUp = 0;
 
 	/* Reset global variables to initialization value.
@@ -259,22 +300,6 @@ int ggiExit(void)
 	_ggi_global_lock = NULL;
 
 	DPRINT_CORE("ggiExit: done!\n");
-	return 0;
-}
-
-void ggiPanic(const char *format,...)
-{
-	va_list ap;
-
-	DPRINT_CORE("ggiPanic called\n");
-
-	va_start(ap,format);
-	vfprintf(stderr,format,ap);
-	fflush(stderr);
-	va_end(ap);
-
-	while(ggiExit()>0);	/* kill all instances ! */
-	exit(1);
 }
 
 /* Make sure str contains a valid variable name. Kill everything but
@@ -292,12 +317,11 @@ static void mangle_variable(char *str)
 
 /* Opens a visual.
  */
-ggi_visual *ggiOpen(const char *driver,...)
+int ggiOpen(ggi_visual_t stem, const char *driver,...)
 {
 #define MAX_TARGET_LEN	1024
-
+	
 	va_list drivers;
-	ggi_visual *vis;
 	char *cp, *inplist;
 	char str[MAX_TARGET_LEN];
 	char target[MAX_TARGET_LEN];
@@ -305,13 +329,14 @@ ggi_visual *ggiOpen(const char *driver,...)
 	void *argptr;
 	static int globalopencount=0;
 	struct gg_target_iter match;
-	
-	if (!_ggiLibIsUp) return NULL;
+	struct ggi_visual *vis;
+	int ret;	
 
 	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
-
+	
+	vis = GGI_VISUAL(stem);
+	
 	if (driver == NULL) {
-		void *ret;
 
 		/* If GGI_DISPLAY is set, use it. Fall back to "auto" 
 		 * otherwise.
@@ -319,23 +344,17 @@ ggi_visual *ggiOpen(const char *driver,...)
 
 		cp=getenv("GGI_DISPLAY");
 		if (cp != NULL) {
-			ret = ggiOpen(cp,NULL);
+			ret = ggiOpen(stem, cp,NULL);
 			return ret;
 		}
 		driver = "auto";
 	}
 	if (strcmp(driver,"auto") == 0) {
 
-		void *ret;
-
 		ggDPrintf(1, "LibGGI", "No explicit target specified.\n");
 
 		ret = _ggiProbeTarget();
 		return ret;
-	}
-
-	if ((vis = _ggiNewVisual()) == NULL) {
-		return NULL;
 	}
 
 	va_start(drivers, driver);
@@ -371,53 +390,7 @@ ggi_visual *ggiOpen(const char *driver,...)
 		DPRINT_CORE("ggiOpen: failure\n");
 		return NULL;
 	}
-
-	DPRINT_CORE("Loading extra inputs/filters for %s\n",driver);
-
-	inplist=NULL;
-
-	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s_%d", target, ++globalopencount);
-	mangle_variable(str);
-	if (!inplist) { 
-		inplist = getenv(str);
-		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
-	}
-
-	snprintf(str, MAX_TARGET_LEN, "GGI_INPUT_%s", target);
-	mangle_variable(str);
-	if (!inplist) {
-		inplist = getenv(str);
-		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
-	}
-
-	strcpy(str,"GGI_INPUT");
-	if (!inplist) {
-		inplist = getenv(str);
-		DPRINT_CORE("Checking %s : %s\n",str,inplist ? inplist : "(nil)");
-	}
-
-	if (inplist) {
-		gii_input *inp = giiOpen(inplist, NULL);
-
-		if (inp == NULL) {
-			fprintf(stderr, "LibGGI: failed to load input: %s\n",
-				inplist);
-		} else {
-			vis->input = giiJoinInputs(vis->input, inp);
-		}
-	}
-
-	if (vis->input == NULL) {
-		/* Add dummy input source so we can use sendevent */
-		vis->input = giiOpen("null", NULL);
-		if (vis->input == NULL) {
-			/* Something is wrong here - bail out */
-			DPRINT_CORE("Cannot open input-null\n");
-			ggiClose(vis);
-			return NULL;
-		}
-	}
-
+	
 	return vis;
 #undef MAX_TARGET_LEN
 }
@@ -426,10 +399,12 @@ ggi_visual *ggiOpen(const char *driver,...)
  *	Closes the requested visual
  *      Returns 0 on success, < 0 on error
  */
-int ggiClose(ggi_visual *visual)
+int ggiClose(ggi_visual_t v)
 {
-	ggi_visual *vis,*pvis=NULL;
-
+	struct ggi_visual *vis,*visual,*pvis=NULL;
+	
+	visual = GGI_VISUAL(v);
+	
 	DPRINT_CORE("ggiClose(\"%p\") called\n", visual);
 
 	if (!_ggiLibIsUp) return GGI_ENOTALLOC;

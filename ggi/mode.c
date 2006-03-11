@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2005/08/15 18:50:58 cegger Exp $
+/* $Id: mode.c,v 1.20 2006/03/11 18:49:12 soyt Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -76,8 +76,9 @@ static void _ggiCheck4Defaults(ggi_mode *tm)
 /* set any mode (text/graphics) */
 /********************************/
 
-int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
+int ggiSetMode(ggi_visual_t v,ggi_mode *tm)
 { 
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	int retval;
 	ggi_mode oldmode;
 
@@ -114,24 +115,24 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 		ggi_color col;
 
 		DPRINT_CORE("ggiSetMode: set to frame 0, origin = {0,0}\n");
-		ggiSetDisplayFrame(vis, 0);
-		ggiSetReadFrame(vis, 0);
-		ggiSetOrigin(vis,0,0);
+		ggiSetDisplayFrame(v, 0);
+		ggiSetReadFrame(v, 0);
+		ggiSetOrigin(v,0,0);
 		DPRINT_CORE("ggiSetMode: set GC\n");
 		/* Set clipping rectangle to the full (virtual) screen */
-		ggiSetGCClipping(vis,0,0,tm->virt.x,tm->virt.y);
+		ggiSetGCClipping(v,0,0,tm->virt.x,tm->virt.y);
 		DPRINT_CORE("ggiSetMode: success (vis %dx%d virt %dx%d)\n",
 			    tm->visible.x,tm->visible.y,tm->virt.x,tm->virt.y);
 		/* Set foreground and background to black */
 		col.r = 0;
 		col.g = 0;
 		col.b = 0;
-		ggiSetGCForeground(vis, ggiMapColor(vis, &col));
-		ggiSetGCBackground(vis, ggiMapColor(vis, &col));
+		ggiSetGCForeground(v, ggiMapColor(v, &col));
+		ggiSetGCBackground(v, ggiMapColor(v, &col));
 		/* Clear frames to black */
 		for (i = 0; i < tm->frames; i++) {
 			DPRINT_CORE("ggiSetMode: SetWriteFrame %d\n", i);
-			ggiSetWriteFrame(vis, i);
+			ggiSetWriteFrame(v, i);
 #ifdef DEBUG
 			if (vis->w_frame) {
 				DPRINT_CORE("ggiSetMode: frame address: "
@@ -139,10 +140,10 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 			}
 #endif
 			DPRINT_CORE("ggiSetMode: FillScreen %d\n", i);
-			ggiFillscreen(vis);
+			ggiFillscreen(v);
 		}
-		ggiSetWriteFrame(vis, 0);
-		ggiFlush(vis);
+		ggiSetWriteFrame(v, 0);
+		ggiFlush(v);
 	}
 
 	DPRINT_CORE("ggiSetMode: done!\n");
@@ -155,8 +156,9 @@ int ggiSetMode(ggi_visual *vis,ggi_mode *tm)
 /* check any mode (text/graphics) */
 /**********************************/
 
-int ggiCheckMode(ggi_visual *vis,ggi_mode *tm)
+int ggiCheckMode(ggi_visual_t v, ggi_mode *tm)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(vis != NULL, "ggiCheckMode: vis == NULL");
 	APP_ASSERT(tm != NULL,  "ggiCheckMode: tm == NULL");
 
@@ -170,8 +172,9 @@ int ggiCheckMode(ggi_visual *vis,ggi_mode *tm)
 /* get the current mode */
 /************************/
 
-int ggiGetMode(ggi_visual *vis,ggi_mode *tm)
+int ggiGetMode(ggi_visual_t v,ggi_mode *tm)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(vis != NULL, "ggiGetMode: vis != NULL");
 	APP_ASSERT(tm != NULL,  "ggiGetMode: tm != NULL");
 
@@ -183,7 +186,7 @@ int ggiGetMode(ggi_visual *vis,ggi_mode *tm)
 /******************/
 /* set a textmode */
 /******************/
-int ggiSetTextMode(ggi_visual *vis,int cols,int rows,
+int ggiSetTextMode(ggi_visual_t v, int cols,int rows,
 				   int vcols,int vrows,
 				   int fontsizex,int fontsizey,
 				   ggi_graphtype type)
@@ -191,7 +194,7 @@ int ggiSetTextMode(ggi_visual *vis,int cols,int rows,
 	ggi_mode mode;
 	
 	DPRINT_CORE("ggiSetTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x) called\n",
-		    cols, rows, vcols, vrows, fontsizex, fontsizey, type);
+		    v, cols, rows, vcols, vrows, fontsizex, fontsizey, type);
 	
 	mode.frames    = GGI_AUTO;
 	mode.visible.x = cols;
@@ -203,13 +206,13 @@ int ggiSetTextMode(ggi_visual *vis,int cols,int rows,
 	mode.dpp.x     = fontsizex;
 	mode.dpp.y     = fontsizey;
 	
-	return ggiSetMode(vis,&mode);
+	return ggiSetMode(v,&mode);
 }
 
 /*************************/
 /* check a text mode */
 /*************************/
-int ggiCheckTextMode(ggi_visual *vis,int cols,int rows,
+int ggiCheckTextMode(ggi_visual_t v, int cols,int rows,
 				     int vcols,int vrows,
 				     int fontsizex,int fontsizey,
 				     ggi_graphtype type,
@@ -219,7 +222,7 @@ int ggiCheckTextMode(ggi_visual *vis,int cols,int rows,
 	ggi_mode mode;
         
 	DPRINT_CORE("ggiCheckTextMode(%p, %d, %d, %d, %d, %d, %d, 0x%x, %p) called\n",
-		    vis, cols, rows, vcols, vrows, fontsizex, fontsizey,
+		    v, cols, rows, vcols, vrows, fontsizex, fontsizey,
 		    type, md);
 	
 	mode.frames    = GGI_AUTO;
@@ -232,7 +235,7 @@ int ggiCheckTextMode(ggi_visual *vis,int cols,int rows,
 	mode.dpp.x     = fontsizex;
 	mode.dpp.y     = fontsizey;
 
-	rc = ggiCheckMode(vis,&mode);
+	rc = ggiCheckMode(v,&mode);
 	if (md) *md = mode;	/* give back the mode if asked for. */
 	return rc;
 }
@@ -240,12 +243,12 @@ int ggiCheckTextMode(ggi_visual *vis,int cols,int rows,
 /***********************/
 /* set a graphics mode */
 /***********************/
-int ggiSetGraphMode(ggi_visual *vis,int xsize,int ysize,
+int ggiSetGraphMode(ggi_visual_t v,int xsize,int ysize,
 		    int xvirtual,int yvirtual,ggi_graphtype type)
 {
 	ggi_mode mode;
 	DPRINT_CORE("ggiSetGraphMode(%p, %d, %d, %d, %d, 0x%x) called\n",
-		    vis, xsize, ysize, xvirtual, yvirtual, type);
+		    v, xsize, ysize, xvirtual, yvirtual, type);
 	
 	mode.frames    = GGI_AUTO;
 	mode.visible.x = xsize;
@@ -256,13 +259,13 @@ int ggiSetGraphMode(ggi_visual *vis,int xsize,int ysize,
 	mode.graphtype = type;
 	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
 	
-	return ggiSetMode(vis,&mode);
+	return ggiSetMode(v,&mode);
 }
 
 /*************************/
 /* check a graphics mode */
 /*************************/
-int ggiCheckGraphMode(ggi_visual *visual,int xsize,int ysize,
+int ggiCheckGraphMode(ggi_visual_t v,int xsize,int ysize,
 		      int xvirtual,int yvirtual,ggi_graphtype type,
 		      ggi_mode *md)
 {
@@ -270,7 +273,7 @@ int ggiCheckGraphMode(ggi_visual *visual,int xsize,int ysize,
 	ggi_mode mode;
 	
 	DPRINT_CORE("ggiCheckGraphMode(%p, %d, %d, %d, %d, 0x%x, %p) called\n",
-		    visual, xsize, ysize, xvirtual, yvirtual, type, md);
+		    v, xsize, ysize, xvirtual, yvirtual, type, md);
 	
 	mode.frames    = GGI_AUTO;
 	mode.visible.x = xsize;
@@ -281,7 +284,7 @@ int ggiCheckGraphMode(ggi_visual *visual,int xsize,int ysize,
 	mode.graphtype = type;
 	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
 
-	rc = ggiCheckMode(visual,&mode);
+	rc = ggiCheckMode(v,&mode);
 	if (md) *md = mode;	/* give back the mode if asked for. */
 	return rc;
 }
@@ -290,12 +293,12 @@ int ggiCheckGraphMode(ggi_visual *visual,int xsize,int ysize,
 /*
   Set a graphics mode with frames
 */
-int ggiSetSimpleMode(ggi_visual *vis, int xsize, int ysize, int frames,
+int ggiSetSimpleMode(ggi_visual_t v, int xsize, int ysize, int frames,
 		     ggi_graphtype type)
 {
 	ggi_mode mode;
 	DPRINT_CORE("ggiSetSimpleMode(%p, %d, %d, %d, 0x%x) called\n",
-		    vis, xsize, ysize, frames, type);
+		    v, xsize, ysize, frames, type);
 	
 	mode.frames    = frames;
 	mode.visible.x = xsize;
@@ -305,13 +308,13 @@ int ggiSetSimpleMode(ggi_visual *vis, int xsize, int ysize, int frames,
 	mode.graphtype = type;
 	mode.dpp.x     = mode.dpp.y = GGI_AUTO;
 	
-	return ggiSetMode(vis, &mode);
+	return ggiSetMode(v, &mode);
 }
 
 /*
   Check a graphics mode with frames
 */
-int ggiCheckSimpleMode(ggi_visual *visual, int xsize, int ysize, int frames,
+int ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
 		       ggi_graphtype type, ggi_mode *md)
 {
 	int rc;
