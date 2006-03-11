@@ -7,7 +7,7 @@ noinst_PROGRAMS = patchlib
 
 DISTCLEANFILES = libggi.conf config.lt
 
-MAINTAINERCLEANFILES = Makefile.in acinclude.m4 aclocal.m4 config.h.in \
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.h.in \
 	configure
 
 EXTRA_DIST = ChangeLog.1999 ChangeLog FAQ INSTALL.autoconf \
