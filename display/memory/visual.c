@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.32 2006/03/12 10:59:35 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -31,6 +31,7 @@
 #include <string.h>
 
 #include "config.h"
+#include <ggi/gii-events.h>
 #include <ggi/display/memory.h>
 #include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi_debug.h>
@@ -52,10 +53,10 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-static ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
+static gii_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 {
 	ggi_memory_priv *priv=inp->priv;
-	ggi_event ev;
+	gii_event ev;
 	int rc=0;
 	
 	while(priv->inputoffset!=priv->inputbuffer->writeoffset)
@@ -72,7 +73,7 @@ static ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 		priv->inputoffset += ev.any.size;
 		rc |= 1<<ev.any.type;
 		if (priv->inputoffset >= (signed)(INPBUFSIZE 
-			- sizeof(ggi_event)
+			- sizeof(gii_event)
 			- sizeof(priv->inputbuffer->writeoffset)-10)) 
 		{
 			priv->inputoffset=0;
@@ -81,7 +82,7 @@ static ggi_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 	return rc;
 }
 
-static int GII_memory_send(gii_input_t inp, ggi_event *event)
+static int GII_memory_send(gii_input_t inp, gii_event *event)
 {
 	ggi_memory_priv *priv=inp->priv;
 	size_t size = event->any.size;
@@ -91,7 +92,7 @@ static int GII_memory_send(gii_input_t inp, ggi_event *event)
 		event,size);
 	priv->inputbuffer->writeoffset+=size;
 	if (priv->inputbuffer->writeoffset >= (signed)(INPBUFSIZE 
-		- sizeof(ggi_event)
+		- sizeof(gii_event)
 		- sizeof(priv->inputbuffer->writeoffset)-10))
 	{
 		priv->inputbuffer->writeoffset=0;
@@ -124,7 +125,7 @@ static const char *ftok(const char *pathname, int id)
 
 #endif /* HAVE_SHM && !HAVE_SYS_SHM_H && HAVE_WINDOWS_H */
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_memory_priv *priv;
@@ -321,7 +322,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	_GGI_memory_resetmode(vis);
 
