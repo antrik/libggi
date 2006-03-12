@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.189 2006/03/12 11:41:05 soyt Exp $
+dnl $Id: configure.in,v 1.190 2006/03/12 15:52:09 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -359,6 +359,8 @@ AC_TYPE_SIGNAL
 
 GGI_DLLEXT
 GGI_CHECKOS
+OS=`echo $os | sed -e 's,...\(.*\),\1,'`  dnl strip off 'os_'
+AC_SUBST(OS)
 
 dnl check for socklen_t
 dnl Define HAVE_SOCKLEN_T if found.

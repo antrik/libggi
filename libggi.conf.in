@@ -81,7 +81,7 @@ alias	display-auto-unix	(try-x):(aa)
 
 # Config should set one. The other solution is to use
 # display-auto-<any> directly in ggi/init.c
-#alias  display-auto	        display-auto-@ARCH@
+#alias  display-auto	        display-auto-@OS@
 alias   display-auto		display-auto-unix
 
 # Stubs library - generic drawing code goes here
