@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.20 2005/07/31 15:30:39 soyt Exp $
+/* $Id: x.h,v 1.21 2006/03/12 07:40:47 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -42,9 +42,9 @@
  * targets that have more then one option for getting modelists
  * to overload the default behavior.
  */
-typedef int (*ggi_modelist_getlist)(ggi_visual *vis);
-typedef int (*ggi_modelist_restore)(ggi_visual *vis);
-typedef int (*ggi_modelist_enter)(ggi_visual *vis, int num);
+typedef int (*ggi_modelist_getlist)(struct ggi_visual *vis);
+typedef int (*ggi_modelist_restore)(struct ggi_visual *vis);
+typedef int (*ggi_modelist_enter)(struct ggi_visual *vis, int num);
 
 /* Validate the 'num's mode, if it fits into the 'maxed' mode.
  * If 'num' is negative, then search for the best mode that
@@ -52,7 +52,7 @@ typedef int (*ggi_modelist_enter)(ggi_visual *vis, int num);
  * Return the 'num's mode from the modelist indicating success.
  * Negative return code indicates an error or GGI_ENOTFOUND.
  */
-typedef int (*ggi_modelist_validate)(ggi_visual *vis, intptr_t num,
+typedef int (*ggi_modelist_validate)(struct ggi_visual *vis, intptr_t num,
 				     ggi_mode *maxed);
 
 typedef struct {
@@ -72,10 +72,10 @@ typedef struct {
 #define GGI_X_VI_NON_FB 1
 } ggi_x_vi;
 
-typedef int  (*ggi_x_createfb)(ggi_visual *vis);	/* MMAP/alloc fb/db  */
-typedef void (*ggi_x_freefb)(ggi_visual *vis);		/* clean up fb/db    */
-typedef int  (*ggi_x_createdrawable)(ggi_visual *vis);	/* prepare renderer  */
-typedef void (*ggi_x_createcursor)(ggi_visual *vis);	/* load mouse sprite */
+typedef int  (*ggi_x_createfb)(struct ggi_visual *vis);	/* MMAP/alloc fb/db  */
+typedef void (*ggi_x_freefb)(struct ggi_visual *vis);		/* clean up fb/db    */
+typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* prepare renderer  */
+typedef void (*ggi_x_createcursor)(struct ggi_visual *vis);	/* load mouse sprite */
 
 struct ggi_x_priv;
 
@@ -125,8 +125,8 @@ typedef struct ggi_x_priv {
 	XImage	    *fontimg;
 
 	void        *xliblock;
-	void        (*lock_xlib)(ggi_visual *vis);
-	void        (*unlock_xlib)(ggi_visual *vis);
+	void        (*lock_xlib)(struct ggi_visual *vis);
+	void        (*unlock_xlib)(struct ggi_visual *vis);
 	void        *flushlock;
 
 	int         wintype;
@@ -143,7 +143,7 @@ typedef struct ggi_x_priv {
 	ggi_x_checkmode_adjust cm_adjust; /* adjust ggi_mode to meet request */
 
 	XImage	    *ximage;
-	ggi_visual	*slave;
+	struct ggi_visual	*slave;
 
 	/* Modelist management */
 	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads */
@@ -159,7 +159,7 @@ typedef struct ggi_x_priv {
 	/* Hooks to ferry a few core ops w/o using symbol tables */
 	ggifunc_resacquire	*acquire;
 	ggifunc_resrelease	*release;
-	int			(*flush_cmap)(ggi_visual *vis);
+	int			(*flush_cmap)(struct ggi_visual *vis);
 
 	/* This boolean tells whether or not we are managing the window
 	 * size.  Its true unless we have -inwin= or -fullscreen. */
@@ -171,7 +171,7 @@ typedef struct ggi_x_priv {
 	   how to unhook MIT-SHM's XCloseDisplay hook so we can close it
 	   gracefully.
 	*/
-	void			(*shmhack_free_cmaps)(ggi_visual *vis);
+	void			(*shmhack_free_cmaps)(struct ggi_visual *vis);
 
 } ggi_x_priv;
 
@@ -181,11 +181,11 @@ typedef struct ggi_x_priv {
 #define GGI_X_UNLOCK_XLIB(vis) (GGIX_PRIV(vis)->unlock_xlib(vis))
 
 /* Defined in mode.c */
-int _ggi_x_do_blit(ggi_visual_t vis, int x, int y, int w, int h);
-int _ggi_x_resize (ggi_visual_t vis, int w, int h, ggi_event *ev);
+int _ggi_x_do_blit(struct ggi_visual *vis, int x, int y, int w, int h);
+int _ggi_x_resize (struct ggi_visual *vis, int w, int h, ggi_event *ev);
 
 /* Defined in visual.c */
-void _GGI_X_freedbs(ggi_visual *, ggi_x_priv *);
+void _GGI_X_freedbs(struct ggi_visual *, ggi_x_priv *);
 
 #define MANSYNC_init(vis)   MANSYNC_DECL_INIT(GGIX_PRIV(vis), vis)
 #define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(GGIX_PRIV(vis), vis)
@@ -195,19 +195,19 @@ void _GGI_X_freedbs(ggi_visual *, ggi_x_priv *);
 #define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(GGIX_PRIV(vis), vis)
 
 /* Protos for utility functions in misc.c */
-void _ggi_x_build_vilist(ggi_visual *vis);
+void _ggi_x_build_vilist(struct ggi_visual *vis);
 ggi_graphtype _ggi_x_scheme_vs_class(ggi_graphtype gt, ggi_x_vi *vi);
-int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm,
+int _ggi_x_fit_geometry(struct ggi_visual *vis, ggi_mode *tm,
 			ggi_x_vi *vi, ggi_mode *suggest);
-void _ggi_x_free_colormaps(ggi_visual *vis);
-void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi);
-void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
-int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm);
-void _ggi_x_set_xclip(ggi_visual *vis, Display *disp, GC gc,
+void _ggi_x_free_colormaps(struct ggi_visual *vis);
+void _ggi_x_create_colormaps(struct ggi_visual *vis, XVisualInfo *vi);
+void _ggi_x_build_pixfmt(struct ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi);
+int _ggi_x_dress_parentwin(struct ggi_visual *vis, ggi_mode *tm);
+void _ggi_x_set_xclip(struct ggi_visual *vis, Display *disp, GC gc,
 		      int x, int y, int w, int h);
-void _ggi_x_create_dot_cursor(ggi_visual *vis);
-void _ggi_x_create_invisible_cursor(ggi_visual *vis);
-void _ggi_x_readback_fontdata(ggi_visual *vis);
+void _ggi_x_create_dot_cursor(struct ggi_visual *vis);
+void _ggi_x_create_invisible_cursor(struct ggi_visual *vis);
+void _ggi_x_readback_fontdata(struct ggi_visual *vis);
 
 int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype this);
 int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis);
@@ -217,14 +217,14 @@ int _ggi_x_is_better_screen(Screen *than, Screen *cthis);
 /* buffer.c prototypes */
 ggifunc_resacquire GGI_X_db_acquire;
 ggifunc_resrelease GGI_X_db_release;
-int GGI_X_setdisplayframe_child(ggi_visual *vis, int num);
-int GGI_X_setorigin_child(ggi_visual *vis, int x, int y);
-int GGI_X_setreadframe_slave(ggi_visual *vis, int num);
-int GGI_X_setwriteframe_slave(ggi_visual *vis, int num);
-XImage *_ggi_x_create_ximage(ggi_visual *vis, char *data, int w, int h);
-int _ggi_x_createfb(ggi_visual *vis);
-void _ggi_x_freefb(ggi_visual *vis);
-int GGI_X_create_window_drawable (ggi_visual *vis);
+int GGI_X_setdisplayframe_child(struct ggi_visual *vis, int num);
+int GGI_X_setorigin_child(struct ggi_visual *vis, int x, int y);
+int GGI_X_setreadframe_slave(struct ggi_visual *vis, int num);
+int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num);
+XImage *_ggi_x_create_ximage(struct ggi_visual *vis, char *data, int w, int h);
+int _ggi_x_createfb(struct ggi_visual *vis);
+void _ggi_x_freefb(struct ggi_visual *vis);
+int GGI_X_create_window_drawable (struct ggi_visual *vis);
 gii_inputxwin_exposefunc GGI_X_expose;
 ggifunc_flush GGI_X_flush_ximage_child;
 
@@ -335,7 +335,7 @@ ggifunc_getcharsize	GGI_X_getcharsize_font;
 
 
 /* color.c protos */
-int _ggi_x_flush_cmap (ggi_visual *vis);
+int _ggi_x_flush_cmap (struct ggi_visual *vis);
 ggifunc_setPalette	GGI_X_setPalette;
 ggifunc_setgammamap	GGI_X_setgammamap;
 ggifunc_getgammamap	GGI_X_getgammamap;
