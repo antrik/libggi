@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2006/03/12 08:42:23 cegger Exp $
+/* $Id: mode.c,v 1.28 2006/03/12 09:45:45 soyt Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -389,13 +389,11 @@ int GGI_memory_setflags(struct ggi_visual *vis,ggi_flags flags)
 	return 0;
 }
 
-int GGI_memory_setPalette(ggi_visual_t v,size_t start,size_t size,const ggi_color *colormap)
+int GGI_memory_setPalette(struct ggi_visual *vis,size_t start,size_t size,const ggi_color *colormap)
 {
-	struct ggi_visual *vis;
 	DPRINT("memory setpalette.\n");
 
-	vis = GGI_VISUAL(v);	                      
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color)); 
-	
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
+
 	return 0;
 }
