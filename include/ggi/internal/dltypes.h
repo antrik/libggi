@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.13 2006/03/12 10:38:34 soyt Exp $
+/* $Id: dltypes.h,v 1.14 2006/03/12 22:39:11 cegger Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -59,16 +59,16 @@ typedef int (ggifunc_resrelease)(struct ggi_resource *res);
 
 
 /* Mode Setting routines */
-typedef int (ggifunc_getmode)(struct ggi_visual *vis,ggi_mode *tm);
-typedef int (ggifunc_setmode)(struct ggi_visual *vis,ggi_mode *tm);
-typedef int (ggifunc_checkmode)(struct ggi_visual *vis,ggi_mode *tm);
+typedef int (ggifunc_getmode)(ggi_visual_t v,ggi_mode *tm);
+typedef int (ggifunc_setmode)(ggi_visual_t v,ggi_mode *tm);
+typedef int (ggifunc_checkmode)(ggi_visual_t v,ggi_mode *tm);
 
 /* Flag settings */
-typedef int (ggifunc_setflags)(struct ggi_visual *vis,ggi_flags flags);
+typedef int (ggifunc_setflags)(ggi_visual_t v,ggi_flags flags);
 
 /* Flushing the display
  */
-typedef int (ggifunc_flush)(struct ggi_visual *vis, int x, int y, int w, int h,
+typedef int (ggifunc_flush)(ggi_visual_t v, int x, int y, int w, int h,
 			    int tryflag);
 
 /* Idle the accelerator */
@@ -77,62 +77,62 @@ typedef int (ggifunc_idleaccel)(struct ggi_visual *vis);
 
 /* Frame handling
  */
-typedef int (ggifunc_setdisplayframe)(struct ggi_visual *vis, int num);
-typedef int (ggifunc_setreadframe)(struct ggi_visual *vis, int num);
-typedef int (ggifunc_setwriteframe)(struct ggi_visual *vis, int num);
+typedef int (ggifunc_setdisplayframe)(ggi_visual_t v, int num);
+typedef int (ggifunc_setreadframe)(ggi_visual_t v, int num);
+typedef int (ggifunc_setwriteframe)(ggi_visual_t v, int num);
 
-typedef ggi_pixel (ggifunc_mapcolor)(struct ggi_visual *vis,const ggi_color *color);
-typedef int (ggifunc_unmappixel)(struct ggi_visual *vis,ggi_pixel pixel,ggi_color *color);
-typedef int (ggifunc_packcolors)(struct ggi_visual *vis,void *buf,const ggi_color *colors,int len);
-typedef int (ggifunc_unpackpixels)(struct ggi_visual *vis,const void *buf,ggi_color *colors,int len);
+typedef ggi_pixel (ggifunc_mapcolor)(ggi_visual_t v,const ggi_color *color);
+typedef int (ggifunc_unmappixel)(ggi_visual_t v,ggi_pixel pixel,ggi_color *color);
+typedef int (ggifunc_packcolors)(ggi_visual_t v,void *buf,const ggi_color *colors,int len);
+typedef int (ggifunc_unpackpixels)(ggi_visual_t v,const void *buf,ggi_color *colors,int len);
 
-typedef int (ggifunc_setpalvec)(struct ggi_visual *vis,int start,int len,const ggi_color *colormap);
-typedef int (ggifunc_getpalvec)(struct ggi_visual *vis,int start,int len,ggi_color *colormap);
+typedef int (ggifunc_setpalvec)(ggi_visual_t v,int start,int len,const ggi_color *colormap);
+typedef int (ggifunc_getpalvec)(ggi_visual_t v,int start,int len,ggi_color *colormap);
 
 /* Colormap */
-typedef int (ggifunc_setPalette)(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *cmap);
+typedef int (ggifunc_setPalette)(ggi_visual_t v, size_t start, size_t size, const ggi_color *cmap);
 
 /* Gamma correction */
-typedef int (ggifunc_getgamma)(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_float *b);
-typedef int (ggifunc_setgamma)(struct ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b);
-typedef int (ggifunc_setgammamap)(struct ggi_visual *vis,int start,int len,const ggi_color *gammamap);
-typedef int (ggifunc_getgammamap)(struct ggi_visual *vis,int start,int len,ggi_color *gammamap);
+typedef int (ggifunc_getgamma)(ggi_visual_t v,ggi_float *r,ggi_float *g,ggi_float *b);
+typedef int (ggifunc_setgamma)(ggi_visual_t v,ggi_float r,ggi_float g,ggi_float b);
+typedef int (ggifunc_setgammamap)(ggi_visual_t v,int start,int len,const ggi_color *gammamap);
+typedef int (ggifunc_getgammamap)(ggi_visual_t v,int start,int len,ggi_color *gammamap);
 
-typedef int (ggifunc_setorigin)(struct ggi_visual *vis,int x,int y);
+typedef int (ggifunc_setorigin)(ggi_visual_t v,int x,int y);
 
-typedef int (ggifunc_putc)(struct ggi_visual *vis,int x,int y,char c);
-typedef int (ggifunc_puts)(struct ggi_visual *vis,int x,int y,const char *str);
-typedef int (ggifunc_getcharsize)(struct ggi_visual *vis,int *width,int *height);
+typedef int (ggifunc_putc)(ggi_visual_t v,int x,int y,char c);
+typedef int (ggifunc_puts)(ggi_visual_t v,int x,int y,const char *str);
+typedef int (ggifunc_getcharsize)(ggi_visual_t v,int *width,int *height);
 
 /* Generic drawing routines
  */
-typedef int (ggifunc_fillscreen)(struct ggi_visual *vis);
+typedef int (ggifunc_fillscreen)(ggi_visual_t v);
 
-typedef int (ggifunc_drawpixel_nc)(struct ggi_visual *vis,int x,int y);
-typedef int (ggifunc_drawpixel)(struct ggi_visual *vis,int x,int y);
-typedef int (ggifunc_putpixel_nc)(struct ggi_visual *vis,int x,int y,ggi_pixel pixel);
-typedef int (ggifunc_putpixel)(struct ggi_visual *vis,int x,int y,ggi_pixel pixel);
-typedef int (ggifunc_getpixel)(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel);
+typedef int (ggifunc_drawpixel_nc)(ggi_visual_t v,int x,int y);
+typedef int (ggifunc_drawpixel)(ggi_visual_t v,int x,int y);
+typedef int (ggifunc_putpixel_nc)(ggi_visual_t v,int x,int y,ggi_pixel pixel);
+typedef int (ggifunc_putpixel)(ggi_visual_t v,int x,int y,ggi_pixel pixel);
+typedef int (ggifunc_getpixel)(ggi_visual_t v,int x,int y,ggi_pixel *pixel);
 
-typedef int (ggifunc_drawline)(struct ggi_visual *vis,int x,int y,int xe,int ye);
+typedef int (ggifunc_drawline)(ggi_visual_t v,int x,int y,int xe,int ye);
 
-typedef int (ggifunc_drawhline_nc)(struct ggi_visual *vis,int x,int y,int w);
-typedef int (ggifunc_drawhline)(struct ggi_visual *vis,int x,int y,int w);
-typedef int (ggifunc_puthline)(struct ggi_visual *vis,int x,int y,int w,const void *buf);
-typedef int (ggifunc_gethline)(struct ggi_visual *vis,int x,int y,int w,void *buf);
+typedef int (ggifunc_drawhline_nc)(ggi_visual_t v,int x,int y,int w);
+typedef int (ggifunc_drawhline)(ggi_visual_t v,int x,int y,int w);
+typedef int (ggifunc_puthline)(ggi_visual_t v,int x,int y,int w,const void *buf);
+typedef int (ggifunc_gethline)(ggi_visual_t v,int x,int y,int w,void *buf);
 
-typedef int (ggifunc_drawvline_nc)(struct ggi_visual *vis,int x,int y,int h);
-typedef int (ggifunc_drawvline)(struct ggi_visual *vis,int x,int y,int h);
-typedef int (ggifunc_putvline)(struct ggi_visual *vis,int x,int y,int h,const void *buf);
-typedef int (ggifunc_getvline)(struct ggi_visual *vis,int x,int y,int h,void *buf);
+typedef int (ggifunc_drawvline_nc)(ggi_visual_t v,int x,int y,int h);
+typedef int (ggifunc_drawvline)(ggi_visual_t v,int x,int y,int h);
+typedef int (ggifunc_putvline)(ggi_visual_t v,int x,int y,int h,const void *buf);
+typedef int (ggifunc_getvline)(ggi_visual_t v,int x,int y,int h,void *buf);
 
-typedef int (ggifunc_drawbox)(struct ggi_visual *vis,int x,int y,int w,int h);
-typedef int (ggifunc_putbox)(struct ggi_visual *vis,int x,int y,int w,int h,const void *buf);
-typedef int (ggifunc_getbox)(struct ggi_visual *vis,int x,int y,int w,int h,void *buf);
+typedef int (ggifunc_drawbox)(ggi_visual_t v,int x,int y,int w,int h);
+typedef int (ggifunc_putbox)(ggi_visual_t v,int x,int y,int w,int h,const void *buf);
+typedef int (ggifunc_getbox)(ggi_visual_t v,int x,int y,int w,int h,void *buf);
 
-typedef int (ggifunc_copybox)(struct ggi_visual *vis,int x,int y,int w,int h,int nx,int ny);
-typedef int (ggifunc_crossblit)(struct ggi_visual *src,int sx,int sy,int w,int h,
-		 struct ggi_visual *dst,int dx,int dy);
+typedef int (ggifunc_copybox)(ggi_visual_t v,int x,int y,int w,int h,int nx,int ny);
+typedef int (ggifunc_crossblit)(ggi_visual_t src,int sx,int sy,int w,int h,
+		 ggi_visual_t dst,int dx,int dy);
 
 typedef void (ggifunc_gcchanged)(struct ggi_visual *vis,int mask);
 typedef int  (ggifunc_getapi)(struct ggi_visual *vis, int num, char *apiname, char *arguments);
