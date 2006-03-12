@@ -74,15 +74,16 @@ alias	x		display-x
 # auto
 alias   try-x		(x):(x:-noshm)
 alias	display-auto-win32	(directx):(try-x):(aa)
+alias	display-auto-win32_cygwin	display-auto-win32
+alias   display-auto-win32_mingw	display-auto-win32
 alias	display-auto-darwin	(quartz):(try-x):(aa)
 alias   display-auto-linux	(try-x):(fbdev):(svga):(aa)
 alias	display-auto-freebsd	(try-x):(kgi:/dev/graphic):(vgl):(aa)
-alias	display-auto-unix	(try-x):(aa)
+alias	display-auto-default	(try-x):(aa)
 
 # Config should set one. The other solution is to use
 # display-auto-<any> directly in ggi/init.c
-#alias  display-auto	        display-auto-@OS@
-alias   display-auto		display-auto-unix
+alias  display-auto	        display-auto-@OS@
 
 # Stubs library - generic drawing code goes here
 generic-stubs			default/stubs.@DLLEXT@
