@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.1 2001/05/12 23:01:49 cegger Exp $
+/* $Id: crossblit.c,v 1.2 2006/03/12 22:47:30 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,15 +32,17 @@
 
 /* Cross blitting of a rectangular area.
  */
-int GGI_stubs_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			ggi_visual *dst, int dx, int dy)
+int GGI_stubs_crossblit(ggi_visual_t src, int sx, int sy, int w, int h, 
+			ggi_visual_t dst, int dx, int dy)
 {
+	struct ggi_visual *srcvis = GGI_VISUAL(src);
+	struct ggi_visual *dstvis = GGI_VISUAL(dst);
 	ggi_pixel cur_src;
 	ggi_pixel cur_dst = 0;
 
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_COPYBOX(dstvis,sx,sy,w,h,dx,dy);
 	
-	LIBGGIGetPixel(src, sx, sy, &cur_src);
+	LIBGGIGetPixel(srcvis, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
 
 	for (; h > 0; h--, sy++, dy++) {
@@ -48,16 +50,16 @@ int GGI_stubs_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 		for (x=0; x < w; x++) {
 			ggi_pixel pixel;
 
-			LIBGGIGetPixel(src, sx+x, sy, &pixel);
+			LIBGGIGetPixel(srcvis, sx+x, sy, &pixel);
 			if (pixel != cur_src) {
 				ggi_color col;
-				LIBGGIUnmapPixel(src, pixel, &col);
+				LIBGGIUnmapPixel(srcvis, pixel, &col);
 
-				cur_dst = LIBGGIMapColor(dst, &col);
+				cur_dst = LIBGGIMapColor(dstvis, &col);
 				cur_src = pixel;
 			}
 			
-			LIBGGIPutPixelNC(dst, dx+x, dy, cur_dst);
+			LIBGGIPutPixelNC(dstvis, dx+x, dy, cur_dst);
 		}
 	}
 

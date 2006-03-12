@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.5 2005/07/30 11:40:03 cegger Exp $
+/* $Id: box.c,v 1.6 2006/03/12 22:47:30 cegger Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -29,8 +29,9 @@
 
 #include "stublib.h"
 
-int GGI_stubs_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_stubs_drawbox(ggi_visual_t v, int x, int y, int w, int h)
 {
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	/* Do correct clipping so we can use faster _ggiDrawHLineNC */
   
 	if (y < LIBGGI_GC(vis)->cliptl.y) {
@@ -60,8 +61,9 @@ int GGI_stubs_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_stubs_putbox(ggi_visual_t v, int x, int y, int w, int h, const void *buffer)
 { 
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	const uint8_t *src = (const uint8_t *) buffer;
 	int rowadd;
 
@@ -90,14 +92,15 @@ int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *bu
 	}
 	
 	for (; h > 0; h--, y++, src += rowadd) {
-		ggiPutHLine(vis, x, y, w, src);
+		ggiPutHLine(v, x, y, w, src);
 	}
 
 	return 0;
 }
 
-int GGI_stubs_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_stubs_getbox(ggi_visual_t v, int x, int y, int w, int h, void *buffer)
 { 
+	struct ggi_visual *vis = GGI_VISUAL(v);
 	uint8_t *dest = (uint8_t *) buffer;
 	int rowadd;
 
@@ -111,7 +114,7 @@ int GGI_stubs_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 	}
 
 	for (; h > 0; h--, y++, dest += rowadd) {
-		ggiGetHLine(vis, x, y, w, dest);
+		ggiGetHLine(v, x, y, w, dest);
 	}
 
 	return 0;
