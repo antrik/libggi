@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.52 2006/03/11 18:49:12 soyt Exp $
+/* $Id: init.c,v 1.53 2006/03/12 11:41:05 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -337,42 +337,29 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 	vis = GGI_VISUAL(stem);
 	
 	if (driver == NULL) {
-
 		/* If GGI_DISPLAY is set, use it. Fall back to "auto" 
 		 * otherwise.
 		 */
-
-		cp=getenv("GGI_DISPLAY");
-		if (cp != NULL) {
-			ret = ggiOpen(stem, cp,NULL);
-			return ret;
-		}
-		driver = "auto";
+		if((driver = getenv("GGI_DISPLAY")) == NULL)
+			driver = "display-auto";
+		
+	} else {
+		va_start(drivers, driver);
+		argptr = va_arg(drivers, void *);
+		va_end(drivers);
 	}
-	if (strcmp(driver,"auto") == 0) {
-
-		ggDPrintf(1, "LibGGI", "No explicit target specified.\n");
-
-		ret = _ggiProbeTarget();
-		return ret;
-	}
-
-	va_start(drivers, driver);
-
-	argptr = va_arg(drivers, void *);
-	va_end(drivers);
-
-	DPRINT_CORE("Loading driver %s\n",driver);
-
+	
+	DPRINT_CORE("Loading driver %s\n", driver);
+	
 	success = 0;
 
 	match.input  = driver;
 	match.config = _ggiConfigHandle;
 	ggConfigIterTarget(&match);
 	GG_ITER_FOREACH(&match) {
+		DPRINT_CORE("Trying %s with options \"%s\"\n", match.target, match.options);
 		if (_ggiOpenDL(vis, _ggiConfigHandle,
-			match.target,match.options,argptr) == 0)
-		{
+			       match.target,match.options,argptr) == 0) {
 			success = 1;
 			break;
 		}

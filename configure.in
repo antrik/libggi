@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.188 2006/03/11 18:49:11 soyt Exp $
+dnl $Id: configure.in,v 1.189 2006/03/12 11:41:05 soyt Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -600,7 +600,7 @@ DEFAULTFBDEVMODULES=""
 DEFAULTKGIMODULES=""
 
 if test "$enable_shared" = "yes"; then
-  DISPLAYMODULES="auto.la"
+#  DISPLAYMODULES="auto.la"
   DEFAULTMODULES="stubs.la pseudo_stubs.la color.la text_16.la text_32.la linear_1.la linear_1_r.la linear_2.la linear_4.la linear_4_r.la linear_8.la linear_16.la linear_24.la linear_32.la planar.la ilbm.la iplanar_2p.la"
 fi
 if test "$enable_static" = "yes"; then
@@ -1546,7 +1546,6 @@ display/X/helper/evi/Makefile
 display/X/helper/dbe/Makefile
 display/X/helper/shm/Makefile
 display/aa/Makefile
-display/auto/Makefile
 display/common/Makefile
 display/directx/Makefile
 display/quartz/Makefile

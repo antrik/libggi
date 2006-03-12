@@ -1,5 +1,5 @@
 if BUILTIN_DISPLAY
-  builtins_libs += $(top_builddir)/display/auto/libauto.la
+# builtins_libs += $(top_builddir)/display/auto/libauto.la
 endif
 if BUILTIN_DEFAULT
   builtins_libs += $(top_builddir)/default/stubs/libstubs.la

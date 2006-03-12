@@ -9,7 +9,7 @@ libggi_la_LIBADD = $(builtins_libs) -lgg
 lib_LTLIBRARIES = libggi.la
 
 libggi_la_SOURCES = builtins.c colormap.c db.c dl.c ext.c \
-	gc.c init.c internal.c mode.c probe.c stubs.c swar.c \
+	gc.c init.c internal.c mode.c stubs.c swar.c \
 	visual.c
 BUILT_SOURCES = $(top_builddir)/ggi/builtins.inc
 libggi_la_LDFLAGS = $(extra_libraries) -version-info 2:3:0 -no-undefined \

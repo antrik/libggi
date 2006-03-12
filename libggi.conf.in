@@ -5,7 +5,6 @@
 # ------------			--------------------------	--------
 # Displays
 display-aa			display/aa.@DLLEXT@
-display-auto			display/auto.@DLLEXT@
 display-directx			display/directx.@DLLEXT@
 display-file			display/file.@DLLEXT@
 display-fbdev			display/fbdev.@DLLEXT@
@@ -71,6 +70,19 @@ alias	vcsa		display-vcsa
 alias	vgl		display-vgl
 alias	wsfb		display-wsfb
 alias	x		display-x
+
+# auto
+alias   try-x		(x):(x:-noshm)
+alias	display-auto-win32	(directx):(try-x):(aa)
+alias	display-auto-darwin	(quartz):(try-x):(aa)
+alias   display-auto-linux	(try-x):(fbdev):(svga):(aa)
+alias	display-auto-freebsd	(try-x):(kgi:/dev/graphic):(vgl):(aa)
+alias	display-auto-unix	(try-x):(aa)
+
+# Config should set one. The other solution is to use
+# display-auto-<any> directly in ggi/init.c
+#alias  display-auto	        display-auto-@ARCH@
+alias   display-auto		display-auto-unix
 
 # Stubs library - generic drawing code goes here
 generic-stubs			default/stubs.@DLLEXT@

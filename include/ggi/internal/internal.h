@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.32 2006/03/11 18:49:12 soyt Exp $
+/* $Id: internal.h,v 1.33 2006/03/12 11:41:06 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -120,9 +120,6 @@ GGIAPIFUNC int _ggi_physz_figure_size(ggi_mode * mode, int physzflag,
 				      const ggi_coord * op_sz,
 				      int dpix, int dpiy,
 				      int dsx, int dsy);
-
-/* probe.c */
-GGIAPIFUNC ggi_visual_t _ggiProbeTarget(void);
 
 /* stubs.c */
 GGIAPIFUNC int _ggiInternFlush(struct ggi_visual *vis, int x, int y, int w, int h,
