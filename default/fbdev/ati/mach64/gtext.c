@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.5 2005/07/30 11:39:57 cegger Exp $
+/* $Id: gtext.c,v 1.6 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -53,7 +53,7 @@ static inline void draw_char(int hostwrites, uint32_t * cdat,
 	};
 }
 
-int GGI_ati_mach64_getcharsize(ggi_visual * vis, int *width, int *height)
+int GGI_ati_mach64_getcharsize(struct ggi_visual * vis, int *width, int *height)
 {
 	/* The stubs' font is 8x8, so that is what we return */
 	*width = FWIDTH;
@@ -62,7 +62,7 @@ int GGI_ati_mach64_getcharsize(ggi_visual * vis, int *width, int *height)
 	return 0;
 }
 
-int GGI_ati_mach64_putc(ggi_visual * vis, int x, int y, char c)
+int GGI_ati_mach64_putc(struct ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int hostwrites;
@@ -86,7 +86,7 @@ int GGI_ati_mach64_putc(ggi_visual * vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
+int GGI_ati_mach64_puts(struct ggi_visual * vis, int x, int y, const char *str)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int count, hostwrites;
@@ -119,7 +119,7 @@ int GGI_ati_mach64_puts(ggi_visual * vis, int x, int y, const char *str)
 	return count;
 }
 
-int GGI_ati_mach64_fastputc(ggi_visual * vis, int x, int y, char c)
+int GGI_ati_mach64_fastputc(struct ggi_visual * vis, int x, int y, char c)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	uint32_t pitch, pix_width;
@@ -154,7 +154,7 @@ int GGI_ati_mach64_fastputc(ggi_visual * vis, int x, int y, char c)
 }
 
 
-int GGI_ati_mach64_fastputs(ggi_visual * vis, int x, int y,
+int GGI_ati_mach64_fastputs(struct ggi_visual * vis, int x, int y,
 			    const char *str)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: gtext.c,v 1.4 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -29,7 +29,7 @@
 #include "m2164w.h"
 
 
-int GGI_m2164w_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_m2164w_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	/* The stubs' font is 8x8, so that is what we return */
 	*width = FWIDTH;
@@ -39,7 +39,7 @@ int GGI_m2164w_getcharsize(ggi_visual *vis, int *width, int *height)
 }
 
 static inline void
-blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
+blitchar(struct ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 {
 	int xp, bp;
 	int ywidth = FHEIGHT;
@@ -61,7 +61,7 @@ blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 
 
 static inline void
-drawbox(ggi_visual *vis, int x, int y, int w)
+drawbox(struct ggi_visual *vis, int x, int y, int w)
 {
 	struct m2164w_priv *priv = M2164W_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
@@ -87,7 +87,7 @@ drawbox(ggi_visual *vis, int x, int y, int w)
 }
 
 
-int GGI_m2164w_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_m2164w_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_pixel fgcol = LIBGGI_GC_FGCOLOR(vis);
 
@@ -99,7 +99,7 @@ int GGI_m2164w_putc(ggi_visual *vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_m2164w_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_m2164w_puts(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	ggi_pixel fgcol = LIBGGI_GC_FGCOLOR(vis);
 	int len, count;
@@ -133,7 +133,7 @@ int GGI_m2164w_puts(ggi_visual *vis, int x, int y, const char *str)
 }
 
 
-int GGI_m2164w_fastputc(ggi_visual *vis, int x, int y, char c)
+int GGI_m2164w_fastputc(struct ggi_visual *vis, int x, int y, char c)
 {
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	struct m2164w_priv *priv = M2164W_PRIV(vis);
@@ -168,7 +168,7 @@ int GGI_m2164w_fastputc(ggi_visual *vis, int x, int y, char c)
 }
 
 
-int GGI_m2164w_fastputs(ggi_visual *vis, int x, int y, const char *str)
+int GGI_m2164w_fastputs(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	struct m2164w_priv *priv = M2164W_PRIV(vis);

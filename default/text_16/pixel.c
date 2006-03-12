@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2005/07/30 11:40:03 cegger Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -34,7 +34,7 @@
 	((uint16_t *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16_t) + x)
 
 
-int GGI_t16_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_t16_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
  
@@ -43,21 +43,21 @@ int GGI_t16_drawpixel(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_t16_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_t16_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	*PIXEL_WADDR(vis, x, y) = LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
 }
 
-int GGI_t16_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_t16_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	*PIXEL_WADDR(vis, x, y) = col;
 
 	return 0;
 }
 
-int GGI_t16_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_t16_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	CHECKXY(vis, x, y);
 
@@ -66,7 +66,7 @@ int GGI_t16_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_t16_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_t16_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 { 
 	*pixel = *PIXEL_RADDR(vis, x, y);
 

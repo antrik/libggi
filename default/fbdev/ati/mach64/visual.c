@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.18 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -62,7 +62,7 @@ ati_mach64_reset_GTC_3D_engine(const struct ati_mach64_priv *priv)
         usleep(GTC_3D_RESET_DELAY);
 }
 
-static void ati_mach64_init_engine(ggi_visual *vis)
+static void ati_mach64_init_engine(struct ggi_visual *vis)
 {
     uint32_t pitch_value;
     int bpp,depth;
@@ -200,7 +200,7 @@ static void ati_mach64_init_engine(ggi_visual *vis)
 
 static int ati_mach64_acquire(ggi_resource *res, uint32_t actype)
 {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 
 	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE)) {
 		return GGI_EARGINVAL;
@@ -228,7 +228,7 @@ static int ati_mach64_release(ggi_resource *res)
 	return 0;
 }
 
-static int ati_mach64_idleaccel(ggi_visual *vis)
+static int ati_mach64_idleaccel(struct ggi_visual *vis)
 {
 	DPRINT_DRAW("ati_mach64_idleaccel(%p) called \n", vis);
 
@@ -241,7 +241,7 @@ static int ati_mach64_idleaccel(ggi_visual *vis)
 }
 
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct ati_mach64_priv *priv = NULL;
@@ -290,7 +290,7 @@ static int do_cleanup(ggi_visual *vis)
 }
 	
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
@@ -449,7 +449,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

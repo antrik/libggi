@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.1 2001/05/12 23:01:49 cegger Exp $
+/* $Id: fillscreen.c,v 1.2 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,7 +32,7 @@
 /* fill (erase) the (virtual) screen */
 /*************************************/
 
-int GGI_stubs_fillscreen(ggi_visual *vis)
+int GGI_stubs_fillscreen(struct ggi_visual *vis)
 {
 	/* Clipping is simple here */
 	return ggiDrawBox(vis,

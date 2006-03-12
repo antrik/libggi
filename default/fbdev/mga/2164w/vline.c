@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: vline.c,v 1.4 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "m2164w.h"
 
 
-int GGI_m2164w_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_m2164w_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	struct m2164w_priv *priv = M2164W_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;

@@ -1,4 +1,4 @@
-/* $Id: linear-line.c,v 1.3 2005/07/30 11:39:56 cegger Exp $
+/* $Id: linear-line.c,v 1.4 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -38,7 +38,7 @@
    buffer type and then include this file.
    */
 
-int GGIdrawline(ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
+int GGIdrawline(struct ggi_visual *vis,int orig_x1,int orig_y1,int orig_x2,int orig_y2)
 {
 	int orig_dx,orig_dy,sx,sy;
 	int dx,dy;

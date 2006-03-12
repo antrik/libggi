@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.12 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -54,7 +54,7 @@ static int calc_nbits(ggi_pixel mask)
 }
 
 
-static void do_setup_color_info(ggi_visual *vis)
+static void do_setup_color_info(struct ggi_visual *vis)
 {
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR) {
 		color_truepriv *priv = vis->colorpriv;
@@ -89,7 +89,7 @@ static void do_setup_color_info(ggi_visual *vis)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	vis->colorpriv = malloc(sizeof(color_priv));
@@ -172,7 +172,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	free(vis->colorpriv);
 

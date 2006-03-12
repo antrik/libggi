@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2002/12/23 13:17:35 ortalo Exp $
+/* $Id: line.c,v 1.2 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 line acceleration
@@ -27,7 +27,7 @@
 #include "Gx00.h"
 #include "Gx00_accel.h"
 
-int GGI_kgi_Gx00_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_kgi_Gx00_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 /*	GGI_kgi_Gx00_drawline(vis, x, y, x + w - 1, y);
 */	GGI_kgi_Gx00_drawbox(vis, x, y, w, 1);
@@ -35,7 +35,7 @@ int GGI_kgi_Gx00_drawhline(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_kgi_Gx00_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_kgi_Gx00_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 /*	GGI_kgi_Gx00_drawline(vis, x, y, x, y + h - 1);
 */	GGI_kgi_Gx00_drawbox(vis, x, y, 1, h);
@@ -43,17 +43,17 @@ int GGI_kgi_Gx00_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_kgi_Gx00_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_kgi_Gx00_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	return GGI_kgi_Gx00_drawbox_nc(vis, x, y, w, 1);
 }
 
-int GGI_kgi_Gx00_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_kgi_Gx00_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	return GGI_kgi_Gx00_drawbox_nc(vis, x, y, 1, h);
 }
 
-int GGI_kgi_Gx00_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_kgi_Gx00_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
   GGI_kgi_Gx00_updatehwgc(vis);
 

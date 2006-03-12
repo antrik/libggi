@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2006/01/01 09:50:37 cegger Exp $
+/* $Id: box.c,v 1.4 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "3dlabs_pm2.h"
 
 
-int GGI_3dlabs_pm2_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_3dlabs_pm2_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */
 		struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
@@ -72,7 +72,7 @@ int GGI_3dlabs_pm2_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 
-int GGI_3dlabs_pm2_fillscreen(ggi_visual *vis)
+int GGI_3dlabs_pm2_fillscreen(struct ggi_visual *vis)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
@@ -99,7 +99,7 @@ int GGI_3dlabs_pm2_fillscreen(ggi_visual *vis)
 }
 
 
-int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_3dlabs_pm2_putbox(struct ggi_visual *vis, int x, int y, int w, int h,
 			const void *buf)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
@@ -189,7 +189,7 @@ int GGI_3dlabs_pm2_putbox(ggi_visual *vis, int x, int y, int w, int h,
 }
 
 
-int GGI_3dlabs_pm2_getbox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_3dlabs_pm2_getbox(struct ggi_visual *vis, int x, int y, int w, int h,
 			void *buf)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);

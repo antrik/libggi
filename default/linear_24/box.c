@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2005/07/30 11:40:00 cegger Exp $
+/* $Id: box.c,v 1.5 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -30,7 +30,7 @@
 #include "lin24lib.h"
 
 
-int GGI_lin24_drawbox(ggi_visual *vis, int origx, int y, int origw, int h)
+int GGI_lin24_drawbox(struct ggi_visual *vis, int origx, int y, int origw, int h)
 {
 	uint32_t colors[3], *dest32;
 	uint8_t *colp, *dest8;
@@ -85,7 +85,7 @@ int GGI_lin24_drawbox(ggi_visual *vis, int origx, int y, int origw, int h)
 }
 
 
-int GGI_lin24_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_lin24_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
 	const uint8_t *src = buffer;
 	uint8_t *dest;

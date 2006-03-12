@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2005/07/30 11:40:02 cegger Exp $
+/* $Id: hline.c,v 1.5 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Generic 8, 16, 32 Banked Graphics library for GGI. Horizontal lines.
@@ -36,7 +36,7 @@
 /* draw/get/put a horizontal line */
 /**********************************/
 
-int GGIdrawhline(ggi_visual *vis,int x,int y,int w)
+int GGIdrawhline(struct ggi_visual *vis,int x,int y,int w)
 {
 	ggi_pixel color;
 	unsigned int align;
@@ -102,7 +102,7 @@ int GGIdrawhline(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGIdrawhline_nc(ggi_visual *vis,int x,int y,int w)
+int GGIdrawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 {
 	ggi_pixel color;
 	unsigned int align;
@@ -155,7 +155,7 @@ int GGIdrawhline_nc(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
+int GGIputhline(struct ggi_visual *vis,int x,int y,int w,const void *buff)
 { 
 	uint8_t *pixpt;
 	const uint8_t *buffer=(const uint8_t *)buff;
@@ -203,7 +203,7 @@ int GGIputhline(ggi_visual *vis,int x,int y,int w,const void *buff)
 	return 0;
 }
 
-int GGIgethline(ggi_visual *vis,int x,int y,int w,void *buff)
+int GGIgethline(struct ggi_visual *vis,int x,int y,int w,void *buff)
 { 
 	uint8_t *pixpt,*buffer=(uint8_t *)buff;
 	unsigned int align;

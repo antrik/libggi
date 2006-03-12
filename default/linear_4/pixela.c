@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.2 2005/07/30 11:40:01 cegger Exp $
+/* $Id: pixela.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -32,7 +32,7 @@
 /* draw/get/put a single pixel */
 /*******************************/
 
-int GGI_lin4_drawpixela(ggi_visual *vis,int x,int y)
+int GGI_lin4_drawpixela(struct ggi_visual *vis,int x,int y)
 {
 	uint8_t pel;
 /*	uint8_t clr;*/
@@ -58,7 +58,7 @@ int GGI_lin4_drawpixela(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_lin4_drawpixel_nca(ggi_visual *vis,int x,int y)
+int GGI_lin4_drawpixel_nca(struct ggi_visual *vis,int x,int y)
 {
 	uint8_t pel;
 /*	uint8_t clr;*/
@@ -83,7 +83,7 @@ int GGI_lin4_drawpixel_nca(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_lin4_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin4_putpixel_nca(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	uint8_t pel;
 	uint8_t *fb;
@@ -101,7 +101,7 @@ int GGI_lin4_putpixel_nca(ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin4_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin4_putpixela(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	uint8_t pel;
 	uint8_t *fb;
@@ -120,7 +120,7 @@ int GGI_lin4_putpixela(ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin4_getpixela(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int GGI_lin4_getpixela(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	int pel;
 	uint8_t xs;

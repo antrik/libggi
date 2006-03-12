@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.8 2006/01/26 22:48:49 pekberg Exp $
+/* $Id: box.c,v 1.9 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
    ATI Radeon box acceleration
 
@@ -25,7 +25,7 @@
 #include "radeon_accel.h"
 #include <string.h>
 
-int GGI_kgi_radeon_drawbox_2d(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_radeon_drawbox_2d(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	struct {
 		cce_type3_header_t h;
@@ -62,7 +62,7 @@ int GGI_kgi_radeon_drawbox_2d(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 
-int GGI_kgi_radeon_drawbox_3d(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_radeon_drawbox_3d(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	struct {
 		cce_type3_header_t h;
@@ -104,7 +104,7 @@ int GGI_kgi_radeon_drawbox_3d(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_kgi_radeon_copybox_2d(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_kgi_radeon_copybox_2d(struct ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
 	radeon_context_t *ctx;
@@ -147,7 +147,7 @@ int GGI_kgi_radeon_copybox_2d(ggi_visual *vis, int x, int y, int w, int h,
 	return 0;
 }
 
-int GGI_kgi_radeon_copybox_3d(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_kgi_radeon_copybox_3d(struct ggi_visual *vis, int x, int y, int w, int h,
 			      int nx, int ny)
 {
 
@@ -211,7 +211,7 @@ int GGI_kgi_radeon_copybox_3d(ggi_visual *vis, int x, int y, int w, int h,
 }
 
 
-int GGI_kgi_radeon_putbox_3d(ggi_visual *vis, int x, int y, int w, int h, 
+int GGI_kgi_radeon_putbox_3d(struct ggi_visual *vis, int x, int y, int w, int h, 
 			     const void *buf)
 {
 	int y2, h2, wb, w32;

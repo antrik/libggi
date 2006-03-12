@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: line.c,v 1.4 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "mga_g400.h"
 
 
-int GGI_mga_g400_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
+int GGI_mga_g400_drawline(struct ggi_visual *vis, int x, int y, int x2, int y2)
 {
 	struct mga_g400_priv *priv = MGA_G400_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;

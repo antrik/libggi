@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.17 2005/07/30 11:40:00 cegger Exp $
+/* $Id: crossblit.c,v 1.18 2006/03/12 23:15:07 soyt Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -38,8 +38,8 @@
 /* Default fallback to lower GGI primitive functions (slow).
  */
 static inline void
-fallback(ggi_visual *src, int sx, int sy, int w, int h, 
-	 ggi_visual *dst, int dx, int dy)
+fallback(struct ggi_visual *src, int sx, int sy, int w, int h, 
+	 struct ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
 	uint16_t cur_dst = 0;
@@ -76,8 +76,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 /* Blitting between identical visuals... simple memcpy.
  */
 static inline void
-crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
-	       ggi_visual *dst, int dx, int dy)
+crossblit_same(struct ggi_visual *src, int sx, int sy, int w, int h,
+	       struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -102,8 +102,8 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
  * avoid a lot of bit-fiddling.
  */
 static inline void
-cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
-	ggi_visual *dst, int dx, int dy)
+cb4to16(struct ggi_visual *src, int sx, int sy, int w, int h,
+	struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -198,8 +198,8 @@ cb4to16(ggi_visual *src, int sx, int sy, int w, int h,
 /* 8 bit to 16 bit crossblitting.
  */
 static inline void
-cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
-		  ggi_visual *dst, int dx, int dy)
+cb8to16(struct ggi_visual *src, int sx, int sy, int w, int h,
+	struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -306,7 +306,7 @@ cb8to16(ggi_visual *src, int sx, int sy, int w, int h,
  *   
  */
 
-static inline void build_masktab(ggi_visual *src, ggi_visual *dst, 
+static inline void build_masktab(struct ggi_visual *src, struct ggi_visual *dst, 
 				 int32_t *rshift,int32_t *gshift,int32_t *bshift,
 				 int32_t *shift, int sskip, int soff,
 				 ggi_pixel *mask, int masklen, int mskip,
@@ -409,8 +409,8 @@ if (stmp <= 15) {						\
 
 /* 24 bit to 16 bit crossblitting.
  */
-static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb24to16(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int32_t shifts[48], rshifts[24];
 	ggi_pixel masks[40], rmasks[24];
 	int nl, nr;
@@ -548,8 +548,8 @@ static inline void cb24to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 16 bit to 16 bit crossblitting.
  */
-static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb16to16(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int shifts[48], rshifts[16];
 	ggi_pixel masks[32], rmasks[16];
 	int nl, nr;
@@ -666,8 +666,8 @@ static inline void cb16to16(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 32 bit to 16 bit crossblitting.
  */
-static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb32to16(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int32_t shifts[48], rshifts[32];
 	ggi_pixel masks[48], rmasks[32];
 	int nl, nr;
@@ -818,8 +818,8 @@ static inline void cb32to16(ggi_visual *src, int sx, int sy, int w, int h,
 /* Main function hook -- does some common-case preprocessing and
  * dispatches to one of the above functions.
  */
-int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			ggi_visual *dst, int dx, int dy)
+int GGI_lin16_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			struct ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
 
@@ -886,8 +886,8 @@ int GGI_lin16_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 16 bit to 16 bit crossblitting using 64Bit C SWAR.
  */
-static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w, 
-				   int h, ggi_visual *dst, int dx, int dy) {
+static inline void cb16to16_64bitc(struct ggi_visual *src, int sx, int sy, int w, 
+				   int h, struct ggi_visual *dst, int dx, int dy) {
 	char sbuf[48 * 4 + 7], *stab;
 	char mbuf[48 * 8 + 7], *mtab;
 	int nl, nr;
@@ -1013,8 +1013,8 @@ static inline void cb16to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 
 /* 32 bit to 16 bit crossblitting using 64bit C SWAR.
  */
-static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w, 
-				   int h, ggi_visual *dst, int dx, int dy) {
+static inline void cb32to16_64bitc(struct ggi_visual *src, int sx, int sy, int w, 
+				   int h, struct ggi_visual *dst, int dx, int dy) {
 	char sbuf[48 * 4 + 7], *stab;
 	char mbuf[48 * 8 + 7], *mtab;
 	int nl, nr;
@@ -1167,8 +1167,8 @@ static inline void cb32to16_64bitc(ggi_visual *src, int sx, int sy, int w,
 /* Main function hook for 64bit C SWAR -- does some common-case preprocessing 
  * and dispatches to one of the above functions.
  */
-int GGI_lin16_crossblit_64bitc(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy)
+int GGI_lin16_crossblit_64bitc(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
 	PREPARE_FB(dst);
@@ -1235,8 +1235,8 @@ int GGI_lin16_crossblit_64bitc(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 16 bit to 16 bit crossblitting using MMX SWAR.
  */
-static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
-				ggi_visual *dst, int dx, int dy) {
+static inline void cb16to16_mmx(struct ggi_visual *src, int sx, int sy, int w, int h, 
+				struct ggi_visual *dst, int dx, int dy) {
 	char tabbuf[8 * 96 + 7], *tab;
 	int nl, nr;
 	uint16_t *stoprow, *dstp, *srcp;
@@ -1386,8 +1386,8 @@ static inline void cb16to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 32 bit to 16 bit crossblitting using MMX SWAR.
  */
-static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
-				ggi_visual *dst, int dx, int dy) {
+static inline void cb32to16_mmx(struct ggi_visual *src, int sx, int sy, int w, int h, 
+				struct ggi_visual *dst, int dx, int dy) {
 	/* TODO: Align stuff here. */
 	char tabbuf[8 * 96 + 7], *tab;
 	int nl, nr;
@@ -1556,8 +1556,8 @@ static inline void cb32to16_mmx(ggi_visual *src, int sx, int sy, int w, int h,
 /* Main function hook for MMX SWAR -- does some common-case preprocessing 
  * and dispatches to one of the above functions.
  */
-int GGI_lin16_crossblit_mmx(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy)
+int GGI_lin16_crossblit_mmx(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
 	PREPARE_FB(dst);

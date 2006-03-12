@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.4 2002/03/23 05:50:24 skids Exp $
+/* $Id: copybox.c,v 1.5 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "ggidirectfb.h"
 
 
-int GGI_directfb_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_directfb_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 		       int dstx, int dsty)
 {
 	struct directfb_priv *priv = DIRECTFB_PRIV(vis);

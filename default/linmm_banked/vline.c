@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.4 2005/07/30 11:40:02 cegger Exp $
+/* $Id: vline.c,v 1.5 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -35,7 +35,7 @@
 /********************************/
 /* draw/get/put a vertical line */
 /********************************/
-int GGIdrawvline(ggi_visual *vis,int x,int y,int h)
+int GGIdrawvline(struct ggi_visual *vis,int x,int y,int h)
 {
 	uint8_t *pixpt;
 	unsigned int w=LIBGGI_FB_W_STRIDE(vis);
@@ -64,7 +64,7 @@ int GGIdrawvline(ggi_visual *vis,int x,int y,int h)
   return 0;
 }
 
-int GGIdrawvline_nc(ggi_visual *vis,int x,int y,int h)
+int GGIdrawvline_nc(struct ggi_visual *vis,int x,int y,int h)
 {
 	uint8_t *pixpt;
 	unsigned int w=LIBGGI_FB_W_STRIDE(vis);
@@ -83,7 +83,7 @@ int GGIdrawvline_nc(ggi_visual *vis,int x,int y,int h)
 
 
 
-int GGIputvline(ggi_visual *vis,int x,int y,int h,const void *buff)
+int GGIputvline(struct ggi_visual *vis,int x,int y,int h,const void *buff)
 {
   uint8_t *pixpt;
   const uint8_t *buffer=(const uint8_t *)buff;
@@ -115,7 +115,7 @@ int GGIputvline(ggi_visual *vis,int x,int y,int h,const void *buff)
 }
 
 
-int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,const void *buff)
+int GGIputvline_nc(struct ggi_visual *vis,int x,int y,int h,const void *buff)
 {
   uint8_t *pixpt;
   const uint8_t *buffer=(const uint8_t *)buff;
@@ -133,7 +133,7 @@ int GGIputvline_nc(ggi_visual *vis,int x,int y,int h,const void *buff)
   return 0;
 }
 
-int GGIgetvline(ggi_visual *vis,int x,int y,int h,void *buff)
+int GGIgetvline(struct ggi_visual *vis,int x,int y,int h,void *buff)
 {
   uint8_t *pixpt,*buffer=(uint8_t *)buff;
   unsigned int w=LIBGGI_FB_W_STRIDE(vis);

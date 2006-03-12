@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.10 2005/07/30 11:40:02 cegger Exp $
+/* $Id: crossblit.c,v 1.11 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -37,8 +37,8 @@
 
 /* Default fallback */
 static inline void
-fallback(ggi_visual *src, int sx, int sy, int w, int h, 
-	 ggi_visual *dst, int dx, int dy)
+fallback(struct ggi_visual *src, int sx, int sy, int w, int h, 
+	 struct ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
 	ggi_pixel cur_dst = 0;
@@ -76,8 +76,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 /* 8 bit to 8 bit crossblitting.
  */
 static inline void
-crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
-		  ggi_visual *dst, int dx, int dy)
+crossblit_8_to_8(struct ggi_visual *src, int sx, int sy, int w, int h,
+		  struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -132,8 +132,8 @@ crossblit_8_to_8(ggi_visual *src, int sx, int sy, int w, int h,
 /* Blitting between identical visuals
  */
 static inline void
-crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
-	       ggi_visual *dst, int dx, int dy)
+crossblit_same(struct ggi_visual *src, int sx, int sy, int w, int h,
+	       struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -151,8 +151,8 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
 	}
 }
 
-int GGI_lin8_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			ggi_visual *dst, int dx, int dy)
+int GGI_lin8_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			struct ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
 	PREPARE_FB(dst);

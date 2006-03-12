@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2005/07/30 11:40:00 cegger Exp $
+/* $Id: vline.c,v 1.4 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -30,7 +30,7 @@
 
 
 static inline void
-do_drawvline(ggi_visual *vis, int x, int y, int h)
+do_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	uint8_t *ptr;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
@@ -50,7 +50,7 @@ do_drawvline(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int GGI_lin24_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_lin24_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	LIBGGICLIP_XYH(vis, x, y, h);
 	
@@ -60,7 +60,7 @@ int GGI_lin24_drawvline(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int GGI_lin24_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_lin24_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	do_drawvline(vis, x, y, h);
 
@@ -68,7 +68,7 @@ int GGI_lin24_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int GGI_lin24_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int GGI_lin24_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	uint8_t *ptr;
 	const uint8_t *buf8 = buffer;
@@ -90,7 +90,7 @@ int GGI_lin24_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 }
 
 
-int GGI_lin24_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int GGI_lin24_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint8_t *ptr, *buf8;
 	int stride = LIBGGI_FB_R_STRIDE(vis);

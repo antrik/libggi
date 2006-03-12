@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.5 2005/07/30 11:40:02 cegger Exp $
+/* $Id: hline.c,v 1.6 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -30,7 +30,7 @@
 #include "lin8lib.h"
 
 
-int GGI_lin8_drawhline(ggi_visual *vis,int x,int y,int w)
+int GGI_lin8_drawhline(struct ggi_visual *vis,int x,int y,int w)
 {
 	LIBGGICLIP_XYW(vis, x, y, w);
 	PREPARE_FB(vis);
@@ -41,7 +41,7 @@ int GGI_lin8_drawhline(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGI_lin8_drawhline_nc(ggi_visual *vis,int x,int y,int w)
+int GGI_lin8_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 {
 	PREPARE_FB(vis);
 
@@ -51,7 +51,7 @@ int GGI_lin8_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGI_lin8_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
+int GGI_lin8_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
 {
 	const uint8_t *buf8 = buffer; 
 	uint8_t *mem;
@@ -65,7 +65,7 @@ int GGI_lin8_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 	return 0;
 }
 
-int GGI_lin8_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_lin8_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
 	uint8_t *mem;
 

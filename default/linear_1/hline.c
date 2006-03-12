@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
+/* $Id: hline.c,v 1.4 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -29,7 +29,7 @@
 #include "lin1lib.h"
 
 
-int GGI_lin1_drawhline_nc(ggi_visual *vis,int x,int y,int w)
+int GGI_lin1_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 {
 	uint8_t *adr;
 	int i,j,mask,color;
@@ -67,7 +67,7 @@ int GGI_lin1_drawhline_nc(ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
-int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
+int GGI_lin1_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
 { 
 	uint8_t *adr;
 	const uint8_t *buff=(const uint8_t *)buffer;
@@ -128,7 +128,7 @@ int GGI_lin1_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 	return 0;
 }
 
-int GGI_lin1_gethline(ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_lin1_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
 	uint8_t *adr,*buff=(uint8_t *)buffer;
 	int mask,i,j;

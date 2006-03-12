@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.1 2002/04/08 11:34:08 cegger Exp $
+/* $Id: hline.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "ati_mach64.h"
 
 
-int GGI_ati_mach64_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_ati_mach64_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);

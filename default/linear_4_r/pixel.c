@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2005/07/30 11:40:02 cegger Exp $
+/* $Id: pixel.c,v 1.4 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -33,7 +33,7 @@
 /* draw/get/put a single pixel */
 /*******************************/
 
-int GGI_lin4r_drawpixel(ggi_visual *vis,int x,int y)
+int GGI_lin4r_drawpixel(struct ggi_visual *vis,int x,int y)
 {
 	uint8_t pel;
 /*	uint8_t clr;*/
@@ -59,7 +59,7 @@ int GGI_lin4r_drawpixel(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_lin4r_drawpixel_nc(ggi_visual *vis,int x,int y)
+int GGI_lin4r_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 {
 	uint8_t pel;
 /*	uint8_t clr;*/
@@ -83,7 +83,7 @@ int GGI_lin4r_drawpixel_nc(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_lin4r_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin4r_putpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	uint8_t pel;
 	uint8_t *fb;
@@ -99,7 +99,7 @@ int GGI_lin4r_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin4r_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin4r_putpixel(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	uint8_t pel;
 	uint8_t *fb;
@@ -117,7 +117,7 @@ int GGI_lin4r_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin4r_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int GGI_lin4r_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	uint8_t pel;
 	

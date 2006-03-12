@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2005/07/30 11:40:02 cegger Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:11 soyt Exp $
 ******************************************************************************
 
    Planar pixel handling.
@@ -37,7 +37,7 @@
 		(y) * LIBGGI_R_PLAN(vis).next_line) + ((x) >> 4))
 
 
-int GGI_pl_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_pl_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	uint16_t *dest = PIXEL_WADDR(vis, x, y);
 	uint16_t mask = 0x8000 >> (x & 15);
@@ -60,7 +60,7 @@ int GGI_pl_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 }
 
 
-int GGI_pl_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_pl_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	ggi_pixel col = 0;
 

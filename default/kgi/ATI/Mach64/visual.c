@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.9 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Mach64 acceleration sublib for kgi display target
@@ -30,7 +30,7 @@
 
 #include "mach64_accel.h"
 
-static int GGI_kgi_mach64_flush(ggi_visual *vis, int x, int y,
+static int GGI_kgi_mach64_flush(struct ggi_visual *vis, int x, int y,
 				int w, int h, int tryflag)
 {
 	MACH64_FLUSH(vis);
@@ -39,7 +39,7 @@ static int GGI_kgi_mach64_flush(ggi_visual *vis, int x, int y,
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;

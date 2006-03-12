@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.4 2005/07/30 11:40:01 cegger Exp $
+/* $Id: vline.c,v 1.5 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -30,7 +30,7 @@
 
 
 static inline void
-do_drawvline(ggi_visual *vis, int x, int y, int h)
+do_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	uint32_t *ptr;
 	int stride = LIBGGI_FB_W_STRIDE(vis)/4;
@@ -45,7 +45,7 @@ do_drawvline(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int GGI_lin32_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_lin32_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	LIBGGICLIP_XYH(vis, x, y, h);
 	
@@ -54,14 +54,14 @@ int GGI_lin32_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_lin32_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_lin32_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	do_drawvline(vis, x, y, h);
 
 	return 0;
 }
 
-int GGI_lin32_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int GGI_lin32_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	uint32_t *ptr;
 	const uint32_t *buf32 = buffer;
@@ -79,7 +79,7 @@ int GGI_lin32_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
 	return 0;
 }
 
-int GGI_lin32_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int GGI_lin32_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint32_t *ptr, *buf32;
 	int stride = LIBGGI_FB_R_STRIDE(vis)/4;

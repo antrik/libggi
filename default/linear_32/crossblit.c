@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.13 2005/07/30 11:40:01 cegger Exp $
+/* $Id: crossblit.c,v 1.14 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -37,8 +37,8 @@
 
 /* Default fallback */
 static inline void
-fallback(ggi_visual *src, int sx, int sy, int w, int h, 
-	 ggi_visual *dst, int dx, int dy)
+fallback(struct ggi_visual *src, int sx, int sy, int w, int h, 
+	 struct ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
 	uint32_t cur_dst = 0;
@@ -75,8 +75,8 @@ fallback(ggi_visual *src, int sx, int sy, int w, int h,
 /* Blitting between identical visuals... simple memcpy.
  */
 static inline void
-crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
-	       ggi_visual *dst, int dx, int dy)
+crossblit_same(struct ggi_visual *src, int sx, int sy, int w, int h,
+	       struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	uint32_t *srcp32, *dstp32;
@@ -111,8 +111,8 @@ crossblit_same(ggi_visual *src, int sx, int sy, int w, int h,
  * avoid a lot of bit-fiddling.  Would this be faster considering cache?
  */
 static inline void
-cb4to32(ggi_visual *src, int sx, int sy, int w, int h,
-	ggi_visual *dst, int dx, int dy)
+cb4to32(struct ggi_visual *src, int sx, int sy, int w, int h,
+	struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -207,8 +207,8 @@ cb4to32(ggi_visual *src, int sx, int sy, int w, int h,
 /* 8 bit to 32 bit crossblitting.
  */
 static inline void
-cb8to32(ggi_visual *src, int sx, int sy, int w, int h,
-	ggi_visual *dst, int dx, int dy)
+cb8to32(struct ggi_visual *src, int sx, int sy, int w, int h,
+	struct ggi_visual *dst, int dx, int dy)
 {
 	uint8_t *srcp, *dstp;
 	int srcstride = LIBGGI_FB_R_STRIDE(src);
@@ -317,7 +317,7 @@ cb8to32(ggi_visual *src, int sx, int sy, int w, int h,
  *   
  */
 
-static inline void build_masktab(ggi_visual *src, ggi_visual *dst, 
+static inline void build_masktab(struct ggi_visual *src, struct ggi_visual *dst, 
 				 int32_t *rshift,int32_t *gshift,int32_t *bshift,
 				 int32_t *shift, int sskip, int soff,
 				 ggi_pixel *mask, int masklen, int mskip,
@@ -419,8 +419,8 @@ if (stmp <= 31) {						\
 
 /* 24 bit to 32 bit crossblitting.
  */
-static inline void cb24to32(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb24to32(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int32_t shifts[96], rshifts[24];
 	ggi_pixel masks[56], rmasks[24];
 	int nl, nr;
@@ -604,8 +604,8 @@ static inline void cb24to32(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 16 bit to 32 bit crossblitting.
  */
-static inline void cb16to32(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb16to32(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int32_t shifts[96], rshifts[16];
 	ggi_pixel masks[48], rmasks[16];
 	int nl, nr;
@@ -755,8 +755,8 @@ static inline void cb16to32(ggi_visual *src, int sx, int sy, int w, int h,
 
 /* 32 bit to 32 bit crossblitting.
  */
-static inline void cb32to32(ggi_visual *src, int sx, int sy, int w, int h, 
-			    ggi_visual *dst, int dx, int dy) {
+static inline void cb32to32(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			    struct ggi_visual *dst, int dx, int dy) {
 	int32_t shifts[96], rshifts[32];
 	ggi_pixel masks[64], rmasks[32];
 	int nl, nr;
@@ -938,8 +938,8 @@ static inline void cb32to32(ggi_visual *src, int sx, int sy, int w, int h,
 /* Main function hook -- does some common-case preprocessing and
  * dispatches to one of the above functions.
  */
-int GGI_lin32_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			ggi_visual *dst, int dx, int dy)
+int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			struct ggi_visual *dst, int dx, int dy)
 {
 	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
 

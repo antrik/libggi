@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:09 soyt Exp $
 ******************************************************************************
 
    Generic Banked 8,16,32Bpp MMAP Graphics library for GGI. Pixels.
@@ -36,7 +36,7 @@
 /* draw/get/put a single pixel */
 /*******************************/
 
-int GGIdrawpixel(ggi_visual *vis,int x,int y)
+int GGIdrawpixel(struct ggi_visual *vis,int x,int y)
 {
         /* This already clips right */
 	CHECKXY(vis,x,y);
@@ -49,7 +49,7 @@ int GGIdrawpixel(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGIdrawpixel_nc(ggi_visual *vis,int x,int y)
+int GGIdrawpixel_nc(struct ggi_visual *vis,int x,int y)
 {
 	/* Supports only 8, 16, 32 bit modes -- 
 	   impossible to pixel nonaligned */ 
@@ -59,7 +59,7 @@ int GGIdrawpixel_nc(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGIputpixel_nc(ggi_visual *vis,int x, int y, ggi_pixel color)
+int GGIputpixel_nc(struct ggi_visual *vis,int x, int y, ggi_pixel color)
 { 
 	/* Supports only 8, 16, 32 bit modes -- 
 	   impossible to pixel nonaligned */ 
@@ -69,7 +69,7 @@ int GGIputpixel_nc(ggi_visual *vis,int x, int y, ggi_pixel color)
 	return 0;
 }
 
-int GGIputpixel(ggi_visual *vis,int x, int y, ggi_pixel color)
+int GGIputpixel(struct ggi_visual *vis,int x, int y, ggi_pixel color)
 { 
 	CHECKXY(vis,x,y);
 
@@ -81,7 +81,7 @@ int GGIputpixel(ggi_visual *vis,int x, int y, ggi_pixel color)
 	return 0;
 }
 
-int GGIgetpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int GGIgetpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	/* Supports only 8, 16, 32 bit modes -- 
 	   impossible to pixel nonaligned */

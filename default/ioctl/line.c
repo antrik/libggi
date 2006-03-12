@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: line.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -36,7 +36,7 @@
 #define SPEED_TRESHOLD 15
 
 
-int GGIdrawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
+int GGIdrawline(struct ggi_visual *vis,int x1,int y1,int x2,int y2)
 {
 	int RC;
 	int result;

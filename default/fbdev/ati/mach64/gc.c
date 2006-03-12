@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.2 2003/07/05 22:13:40 cegger Exp $
+/* $Id: gc.c,v 1.3 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - Mach 64 / Rage Pro acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "ati_mach64.h"
 
 
-void GGI_ati_mach64_gcchanged(struct ggi_visual *vis, int mask)
+void GGI_ati_mach64_gcchanged(struct struct ggi_visual *vis, int mask)
 {
 	struct ggi_gc *gc;
 	struct ati_mach64_priv *priv;

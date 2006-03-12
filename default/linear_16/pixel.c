@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -33,7 +33,7 @@
 /* draw/get/put a single pixel */
 /*******************************/
 
-int GGI_lin16_drawpixel(ggi_visual *vis,int x,int y)
+int GGI_lin16_drawpixel(struct ggi_visual *vis,int x,int y)
 {
 	CHECKXY(vis,x,y);
  
@@ -42,21 +42,21 @@ int GGI_lin16_drawpixel(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_lin16_drawpixel_nc(ggi_visual *vis,int x,int y)
+int GGI_lin16_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 {
 	*(((uint16_t *)LIBGGI_CURWRITE(vis))+y*LIBGGI_FB_W_STRIDE(vis)/2+x)=LIBGGI_GC_FGCOLOR(vis);
 
 	return 0;
 }
 
-int GGI_lin16_putpixel_nc(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin16_putpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	*(((uint16_t *)LIBGGI_CURWRITE(vis))+y*LIBGGI_FB_W_STRIDE(vis)/2+x)=col;
 
 	return 0;
 }
 
-int GGI_lin16_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
+int GGI_lin16_putpixel(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 { 
 	CHECKXY(vis,x,y);
 
@@ -65,7 +65,7 @@ int GGI_lin16_putpixel(ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin16_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int GGI_lin16_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	*pixel=*(((uint16_t *)LIBGGI_CURREAD(vis))+y*LIBGGI_FB_R_STRIDE(vis)/2+x);
 

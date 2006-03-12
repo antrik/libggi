@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.1 2002/10/05 18:39:06 fspacek Exp $
+/* $Id: gc.c,v 1.2 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Mach64 gc acceleration
@@ -27,7 +27,7 @@
 
 #include "mach64_accel.h"
 
-void GGI_kgi_mach64_gcchanged(ggi_visual *vis, int mask)
+void GGI_kgi_mach64_gcchanged(struct ggi_visual *vis, int mask)
 {
 	if(mask & GGI_GCCHANGED_FG){
 		MACH64_CHECK(vis, 2);

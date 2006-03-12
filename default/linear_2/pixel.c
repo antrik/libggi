@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
 ******************************************************************************
 
    Linear 2 pixel drawing (high-pair-left)
@@ -35,7 +35,7 @@
 	((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>2))
 
 
-int GGI_lin2_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_lin2_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	int shift = (3 - (x & 3)) << 1;
 	
@@ -45,7 +45,7 @@ int GGI_lin2_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin2_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_lin2_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	int shift = (3 - (x & 3)) << 1;
 

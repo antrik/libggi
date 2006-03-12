@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.5 2005/07/30 11:40:01 cegger Exp $
+/* $Id: hline.c,v 1.6 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -31,7 +31,7 @@
 
 
 static inline void
-do_drawhline(ggi_visual *vis, int x, int y, int w)
+do_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	uint32_t *buf32;
 	uint32_t color = LIBGGI_GC_FGCOLOR(vis);
@@ -46,7 +46,7 @@ do_drawhline(ggi_visual *vis, int x, int y, int w)
 }
 
 
-int GGI_lin32_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_lin32_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	LIBGGICLIP_XYW(vis, x, y, w);
 
@@ -56,7 +56,7 @@ int GGI_lin32_drawhline(ggi_visual *vis, int x, int y, int w)
 }
 
 
-int GGI_lin32_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_lin32_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	do_drawhline(vis, x, y, w);
 	
@@ -64,7 +64,7 @@ int GGI_lin32_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 }
 
 
-int GGI_lin32_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_lin32_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 {
 	const uint32_t *buf32 = buffer;
 	uint8_t  *mem;
@@ -79,7 +79,7 @@ int GGI_lin32_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 }
 
 
-int GGI_lin32_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_lin32_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 {
 	uint8_t *mem;
 

@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: copybox.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - Permedia2 acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "3dlabs_pm2.h"
 
 
-int GGI_3dlabs_pm2_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_3dlabs_pm2_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 		       int dstx, int dsty)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);

@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: copybox.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Copybox
@@ -38,7 +38,7 @@
 /* BitBlt */
 /**********/
 
-int GGIcopybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
+int GGIcopybox(struct ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 {
 	int RC;
 	int result;

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2004/11/25 16:56:31 cegger Exp $
+/* $Id: color.c,v 1.4 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -50,7 +50,7 @@ static ggi_color ansi_16_colors[16] =
 	{ 0xffff, 0xffff, 0xffff }
 };
 
-ggi_pixel GGI_t16_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_t16_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	/* index shadows index() declared in <strings.h> */
 	int _index;
@@ -68,7 +68,7 @@ ggi_pixel GGI_t16_mapcolor(ggi_visual *vis, const ggi_color *col)
 /* Map pixel to color
  */
 
-int GGI_t16_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
+int GGI_t16_unmappixel(struct ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	*col = ansi_16_colors[(pixel & 0x0f00) >> 8];
 

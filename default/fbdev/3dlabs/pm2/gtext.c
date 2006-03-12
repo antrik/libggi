@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: gtext.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - 3DLabs Permedia 2 acceleration for fbdev target
@@ -29,7 +29,7 @@
 #include "3dlabs_pm2.h"
 
 
-int GGI_3dlabs_pm2_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_3dlabs_pm2_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	/* The stubs' font is 8x8, so that is what we return */
 	*width = FWIDTH;
@@ -39,7 +39,7 @@ int GGI_3dlabs_pm2_getcharsize(ggi_visual *vis, int *width, int *height)
 }
 
 static inline void
-blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
+blitchar(struct ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 {
 	int xp, bp;
 	int ywidth = FHEIGHT;
@@ -59,7 +59,7 @@ blitchar(ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 	}
 }
 
-int GGI_3dlabs_pm2_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_3dlabs_pm2_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_pixel fgcol = LIBGGI_GC_FGCOLOR(vis);
 
@@ -71,7 +71,7 @@ int GGI_3dlabs_pm2_putc(ggi_visual *vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_3dlabs_pm2_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_3dlabs_pm2_puts(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	ggi_pixel fgcol = LIBGGI_GC_FGCOLOR(vis);
 	int len, count;
@@ -105,7 +105,7 @@ int GGI_3dlabs_pm2_puts(ggi_visual *vis, int x, int y, const char *str)
 }
 
 #if 0
-int GGI_3dlabs_pm2_fastputc(ggi_visual *vis, int x, int y, char c)
+int GGI_3dlabs_pm2_fastputc(struct ggi_visual *vis, int x, int y, char c)
 {
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
@@ -140,7 +140,7 @@ int GGI_3dlabs_pm2_fastputc(ggi_visual *vis, int x, int y, char c)
 }
 
 
-int GGI_3dlabs_pm2_fastputs(ggi_visual *vis, int x, int y, const char *str)
+int GGI_3dlabs_pm2_fastputs(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);

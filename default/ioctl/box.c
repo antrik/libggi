@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: box.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -36,7 +36,7 @@
 #define SPEED_TRESHOLD 7
 
 
-int GGIdrawbox(ggi_visual *vis,int x,int y,int width,int length)
+int GGIdrawbox(struct ggi_visual *vis,int x,int y,int width,int length)
 {
 	int RC;
 	int result;
@@ -61,12 +61,12 @@ int GGIdrawbox(ggi_visual *vis,int x,int y,int width,int length)
 	return RC;
 }
 
-static int lower_fillscreen(ggi_visual *vis)
+static int lower_fillscreen(struct ggi_visual *vis)
 {
 	return GGIdrawbox(vis,0,0,LIBGGI_VIRTX(vis),LIBGGI_VIRTY(vis));
 }
 
-int GGIfillscreen(ggi_visual *vis)
+int GGIfillscreen(struct ggi_visual *vis)
 {
 	int RC;
 	int result;

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2006/01/26 23:03:39 pekberg Exp $
+/* $Id: crossblit.c,v 1.7 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -25,7 +25,7 @@
 #include "radeon_accel.h"
 #include <string.h>
 
-static inline void blit3dctx(ggi_visual *vis,  radeon_context_t *ctx,
+static inline void blit3dctx(struct ggi_visual *vis,  radeon_context_t *ctx,
 			     int sb32, int w32, int h2, pp_txformat_t txformat)
 {
         struct {
@@ -61,7 +61,7 @@ static inline void blit3dctx(ggi_visual *vis,  radeon_context_t *ctx,
         }
 }
 
-static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx, 
+static inline int blit3d(struct ggi_visual *vis, radeon_context_t *ctx, 
 			 int x, int y, int w, int h, void *buf, 
 			 int wb, int sb, int sb32, int h2)
 {
@@ -169,7 +169,7 @@ static inline int blit3d(ggi_visual *vis, radeon_context_t *ctx,
 }
 
 
-static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst, 
+static inline int blit3d_pack(struct ggi_visual *src, ggi_visual *dst, 
 			      radeon_context_t *ctx, 
 			      int x, int y, int w, int h, void *buf, 
 			      int sb, int sb32, int h2)
@@ -286,7 +286,7 @@ static inline int blit3d_pack(ggi_visual *src, ggi_visual *dst,
 }
 
 
-static inline int blit3d_get(ggi_visual *src, ggi_visual *dst, 
+static inline int blit3d_get(struct ggi_visual *src, ggi_visual *dst, 
 			     radeon_context_t *ctx, 
 			     int x, int y, int w, int h,
 			     int wg, int sx, int sy, int sb32, int h2)
@@ -407,11 +407,11 @@ static inline int blit3d_get(ggi_visual *src, ggi_visual *dst,
 }
 
 
-int GGI_kgi_radeon_crossblit_3d (ggi_visual *src, int sx, int sy, int w, 
-				 int h, ggi_visual *dst, int dx, int dy) 
+int GGI_kgi_radeon_crossblit_3d (struct ggi_visual *src, int sx, int sy, int w, 
+				 int h, struct ggi_visual *dst, int dx, int dy) 
 {
 	int wb, sb, sb32, h2, get;
-	ggi_visual *trn;
+	struct ggi_visual *trn;
 	radeon_context_t *ctx;
 	char *buf;
 	pp_txformat_t txformat;

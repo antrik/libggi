@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2005/07/30 11:40:03 cegger Exp $
+/* $Id: gtext.c,v 1.3 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -31,7 +31,7 @@
 #define PIXEL_ADDR(vis, x, y)  \
         ((uint16_t *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16_t) + x)
 
-int GGI_t16_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_t16_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	/* In text mode, the charsize is just 1x1 pixels */
 
@@ -39,7 +39,7 @@ int GGI_t16_getcharsize(ggi_visual *vis, int *width, int *height)
 	return 0;
 }
 
-int GGI_t16_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_t16_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	CHECKXY(vis, x, y);
 	PREPARE_FB(vis);

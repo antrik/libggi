@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.12 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -33,7 +33,7 @@
 #include "kgi/config.h"
 #include "Gx00_accel.h"
 
-int GGI_kgi_Gx00_idleaccel(ggi_visual *vis)
+int GGI_kgi_Gx00_idleaccel(struct ggi_visual *vis)
 {
   int i;
   /* We flush all buffers one after the other */
@@ -48,13 +48,13 @@ int GGI_kgi_Gx00_idleaccel(ggi_visual *vis)
   return 0;
 }
 
-static int GGI_kgi_Gx00_flush(ggi_visual *vis, int x, int y,
+static int GGI_kgi_Gx00_flush(struct ggi_visual *vis, int x, int y,
 				int w, int h, int tryflag)
 {
   return GGI_kgi_Gx00_idleaccel(vis);
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;
@@ -149,7 +149,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	free(KGI_ACCEL_PRIV(vis));
 	KGI_ACCEL_PRIV(vis) = NULL;

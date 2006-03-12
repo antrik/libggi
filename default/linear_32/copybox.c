@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.3 2005/07/30 11:40:01 cegger Exp $
+/* $Id: copybox.c,v 1.4 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
    
    LibGGI linear 32 - copybox
@@ -31,7 +31,7 @@
 
 
 int
-GGI_lin32_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+GGI_lin32_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	uint8_t *src, *dest;
 	int stride = LIBGGI_FB_W_STRIDE(vis);

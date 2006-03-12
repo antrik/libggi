@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
+/* $Id: gtext.c,v 1.7 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Radeon text acceleration
@@ -27,7 +27,7 @@
 #include "radeon_accel.h"
 
 
-int GGI_kgi_radeon_putc_3d(ggi_visual *vis, int x, int y, char c)
+int GGI_kgi_radeon_putc_3d(struct ggi_visual *vis, int x, int y, char c)
 {
         struct {
 		cce_type0_header_t h1;
@@ -82,7 +82,7 @@ int GGI_kgi_radeon_putc_3d(ggi_visual *vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_kgi_radeon_puts_3d(ggi_visual *vis, int x, int y, const char *string)
+int GGI_kgi_radeon_puts_3d(struct ggi_visual *vis, int x, int y, const char *string)
 {
 	int i, len, nx;
         struct {
@@ -154,7 +154,7 @@ typedef struct
 
 /* TODO: Use a BLT instead, because the smallchar_t doesn't support bgcolor */
 
-int GGI_kgi_radeon_putc_2d(ggi_visual *vis, int x, int y, char c)
+int GGI_kgi_radeon_putc_2d(struct ggi_visual *vis, int x, int y, char c)
 {
 	struct {
 	
@@ -203,7 +203,7 @@ int GGI_kgi_radeon_putc_2d(ggi_visual *vis, int x, int y, char c)
 
 /* TODO: Use a BLT instead, because the smallchar_t doesn't support bgcolor */
 
-int GGI_kgi_radeon_puts_2d(ggi_visual *vis, int x, int y, const char *string)
+int GGI_kgi_radeon_puts_2d(struct ggi_visual *vis, int x, int y, const char *string)
 {
 	struct {
 	
@@ -257,7 +257,7 @@ int GGI_kgi_radeon_puts_2d(ggi_visual *vis, int x, int y, const char *string)
 	return 0;
 }
 
-int GGI_kgi_radeon_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_kgi_radeon_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	*width = *height = 8;
 	

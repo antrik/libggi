@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.2 2005/07/30 11:39:58 cegger Exp $
+/* $Id: pixel.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Interleave planar pixels (2 byte interleave).
@@ -39,7 +39,7 @@
 		((x) >> 4) * GT_DEPTH(LIBGGI_GT(vis)))
 
 
-int GGI_ipl2_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_ipl2_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	uint16_t *dest = PIXEL_WADDR(vis, x, y);
 	uint16_t mask = 0x8000 >> (x & 15);
@@ -60,7 +60,7 @@ int GGI_ipl2_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_ipl2_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_ipl2_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	ggi_pixel col = 0;
 

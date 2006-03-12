@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.1 2001/05/12 23:01:50 cegger Exp $
+/* $Id: line.c,v 1.2 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -38,7 +38,7 @@
    run-lengths when they are clipped to get pixel-perfect rasterization.
 */
 
-int GGI_stubs_drawline(ggi_visual *vis, int orig_x1, int orig_y1,
+int GGI_stubs_drawline(struct ggi_visual *vis, int orig_x1, int orig_y1,
 		       int orig_x2, int orig_y2)
 {
 	int orig_dx, orig_dy, sx, sy;

@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.8 2005/07/30 11:39:56 cegger Exp $
+/* $Id: gamma.c,v 1.9 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -37,7 +37,7 @@
 #include "color.h"
 #include <ggi/internal/ggi_debug.h>
 
-int GGI_color_getgamma(ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
+int GGI_color_getgamma(struct ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
 {
 	if (!vis->gamma) {
 		*r = *g = *b = 1.0;	/* principal of least surprise */
@@ -50,7 +50,7 @@ int GGI_color_getgamma(ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b
 	return GGI_OK;
 }
 
-int GGI_color_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
+int GGI_color_setgamma(struct ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 {
 	int err, i;
 	ggi_float ir, ig, ib;

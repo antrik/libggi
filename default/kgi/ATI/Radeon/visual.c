@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.19 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Radeon acceleration sublib for kgi display target
@@ -29,14 +29,14 @@
 
 #include "radeon_accel.h"
 
-static int GGI_kgi_radeon_flush(ggi_visual *vis, int x, int y,
+static int GGI_kgi_radeon_flush(struct ggi_visual *vis, int x, int y,
 				int w, int h, int tryflag)
 {
 	RADEON_FLUSH(vis);
 	return 0;
 }
 
-static int rwframes_changed_2d(ggi_visual *vis) {
+static int rwframes_changed_2d(struct ggi_visual *vis) {
 	radeon_context_t *ctx;
 	struct {
 		cce_type0_header_t h1;
@@ -58,7 +58,7 @@ static int rwframes_changed_2d(ggi_visual *vis) {
 	return 0;
 }
 
-static int rwframes_changed_3d(ggi_visual *vis) {
+static int rwframes_changed_3d(struct ggi_visual *vis) {
 
 	radeon_context_t *ctx;
 	struct {
@@ -87,7 +87,7 @@ static int rwframes_changed_3d(ggi_visual *vis) {
 	return 0;
 }
 
-static int origin_changed(ggi_visual *vis) {
+static int origin_changed(struct ggi_visual *vis) {
         ggi_directbuffer *db;
 	ggi_graphtype gt;
 	struct {
@@ -127,7 +127,7 @@ static int origin_changed(ggi_visual *vis) {
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_accel_t *accel;
@@ -332,7 +332,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;	
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	free(KGI_ACCEL_PRIV(vis));
 	KGI_ACCEL_PRIV(vis) = NULL;

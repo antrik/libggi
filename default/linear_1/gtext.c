@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
+/* $Id: gtext.c,v 1.4 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Linear 1 character drawing.
@@ -31,7 +31,7 @@
 #include <ggi/internal/font/8x8>
 
 
-int GGI_lin1_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_lin1_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	int h=8, stride, rev;
 

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2002/03/23 05:50:24 skids Exp $
+/* $Id: box.c,v 1.4 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver acceleration for the fbdev target
@@ -28,7 +28,7 @@
 #include "ggidirectfb.h"
 
 
-int GGI_directfb_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_directfb_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */
 		struct directfb_priv *priv = DIRECTFB_PRIV(vis);
@@ -55,7 +55,7 @@ int GGI_directfb_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 
-int GGI_directfb_fillscreen(ggi_visual *vis)
+int GGI_directfb_fillscreen(struct ggi_visual *vis)
 {
 	struct directfb_priv *priv = DIRECTFB_PRIV(vis);
 	int virtx = LIBGGI_VIRTX(vis);

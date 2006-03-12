@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2005/07/31 10:19:28 aldot Exp $
+/* $Id: box.c,v 1.5 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
    Matrox Gx00 box acceleration
 
@@ -27,7 +27,7 @@
 #include "Gx00.h"
 #include "Gx00_accel.h"
 
-int GGI_kgi_Gx00_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_Gx00_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
   /* TODO: Question what should happen if w or h are negative */
   if ((w <= 0)||(h <= 0))
@@ -54,7 +54,7 @@ int GGI_kgi_Gx00_drawbox(ggi_visual *vis, int x, int y, int w, int h)
   return 0;
 }
 
-int GGI_kgi_Gx00_drawbox_nc(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_Gx00_drawbox_nc(struct ggi_visual *vis, int x, int y, int w, int h)
 {
   if ((w <= 0)||(h <= 0))
     return 0;
@@ -79,13 +79,13 @@ int GGI_kgi_Gx00_drawbox_nc(ggi_visual *vis, int x, int y, int w, int h)
   return 0;
 }
 
-int GGI_kgi_Gx00_fillscreen(ggi_visual *vis)
+int GGI_kgi_Gx00_fillscreen(struct ggi_visual *vis)
 {
   return
     GGI_kgi_Gx00_drawbox_nc(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 }
 
-int GGI_kgi_Gx00_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_kgi_Gx00_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
   int32_t ar5;

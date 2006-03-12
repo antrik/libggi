@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.15 2006/02/04 22:11:45 soyt Exp $ */
+/* $Id: directfbglobal.c,v 1.16 2006/03/12 23:15:05 soyt Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -7,7 +7,7 @@
 /* Needed for memory_virtual/memory_physical functions */
 static void *ggi_fbdev_dfb_framebuffer_base; 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
   struct fbdev_directfb_global *globals;
@@ -20,7 +20,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
   return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
   return 0;
 }

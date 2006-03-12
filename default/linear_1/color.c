@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2005/07/30 11:39:59 cegger Exp $
+/* $Id: color.c,v 1.4 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Linear 1 pixel handling
@@ -31,7 +31,7 @@
 
 /* Pack the colors into an array
  */
-int GGI_lin1_packcolors(ggi_visual *vis, void *outbuf, const ggi_color *cols,int len)
+int GGI_lin1_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *cols,int len)
 {
 	uint8_t tmp=0,*obuf=(uint8_t *)outbuf;
 	int mask,i;
@@ -51,7 +51,7 @@ int GGI_lin1_packcolors(ggi_visual *vis, void *outbuf, const ggi_color *cols,int
 	
 /* Unpack into the ggi_color array the values of the pixels
  */
-int GGI_lin1_unpackpixels(ggi_visual *vis,const void *inbuf,ggi_color *cols,int len)
+int GGI_lin1_unpackpixels(struct ggi_visual *vis,const void *inbuf,ggi_color *cols,int len)
 {
 	uint8_t *ibuf=(uint8_t *)inbuf;
 	int i,mask;

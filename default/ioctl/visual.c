@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.9 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -42,9 +42,9 @@
 #endif
 
 
-struct ggi_visual_opdraw fallback_opdraw;
+struct struct ggi_visual_opdraw fallback_opdraw;
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 #if 0
@@ -88,7 +88,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	/* FIXME unmap GC. */
 #if 0

@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.5 2005/07/30 11:40:03 cegger Exp $
+/* $Id: vline.c,v 1.6 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Generic vertical lines.
@@ -30,7 +30,7 @@
 #include "stublib.h"
 
 
-int GGI_stubs_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_stubs_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	LIBGGICLIP_XYH(vis, x, y, h);
 
@@ -41,7 +41,7 @@ int GGI_stubs_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_stubs_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_stubs_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	for (; h > 0; h--, y++) {
 		LIBGGIDrawPixelNC(vis, x, y);
@@ -51,7 +51,7 @@ int GGI_stubs_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int _GGI_stubs_L1_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	const uint8_t *src = (const uint8_t *) buffer;
 
@@ -64,7 +64,7 @@ int _GGI_stubs_L1_putvline(ggi_visual *vis, int x, int y, int h, const void *buf
 	return 0;
 }
 
-int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int _GGI_stubs_L2_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	const uint16_t *src = (const uint16_t *) buffer;
 
@@ -77,7 +77,7 @@ int _GGI_stubs_L2_putvline(ggi_visual *vis, int x, int y, int h, const void *buf
 	return 0;
 }
 
-int _GGI_stubs_L3_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int _GGI_stubs_L3_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	const uint8_t *src = (const uint8_t *) buffer;
 
@@ -91,7 +91,7 @@ int _GGI_stubs_L3_putvline(ggi_visual *vis, int x, int y, int h, const void *buf
 	return 0;
 }
 
-int _GGI_stubs_L4_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int _GGI_stubs_L4_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	const uint32_t *src = (const uint32_t *) buffer;
 
@@ -105,7 +105,7 @@ int _GGI_stubs_L4_putvline(ggi_visual *vis, int x, int y, int h, const void *buf
 }
 
 
-int _GGI_stubs_L1_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L1_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
@@ -118,7 +118,7 @@ int _GGI_stubs_L1_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L2_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L2_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint16_t *dest = (uint16_t *) buffer;
 	ggi_pixel pix;
@@ -131,7 +131,7 @@ int _GGI_stubs_L2_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L3_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L3_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
@@ -146,7 +146,7 @@ int _GGI_stubs_L3_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
 	return 0;
 }
 
-int _GGI_stubs_L4_getvline(ggi_visual *vis, int x, int y, int h, void *buffer)
+int _GGI_stubs_L4_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint32_t *dest = (uint32_t *) buffer;
 

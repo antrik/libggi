@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.12 2004/11/27 16:41:53 soyt Exp $
+/* $Id: clip.c,v 1.13 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -132,7 +132,7 @@ static void CeilDiv_3(unsigned _ceil[3], unsigned a[3], unsigned b[3])
 	}
 }
 
-static int _ggi_clip2d_3(ggi_visual *vis,
+static int _ggi_clip2d_3(struct ggi_visual *vis,
 			     int *_x0, int *_y0,
 			     int *_x1, int *_y1,
 			     int *clip_first, int *clip_last)
@@ -455,7 +455,7 @@ static int CeilDiv(int a,int b)
 
 #define MAX_DIFF (INT_MAX >> (sizeof(int)*4))
 
-static int _ggi_clip2d(ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
+static int _ggi_clip2d(struct ggi_visual *vis,int *_x0, int *_y0, int *_x1, int *_y1,
 		       int *clip_first, int *clip_last)
 {
 	int first,last, code;

@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
+/* $Id: gc.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 gc acceleration
@@ -28,7 +28,7 @@
 #include "Gx00.h"
 #include "Gx00_accel.h"
 
-void GGI_kgi_Gx00_updatehwgc(ggi_visual *vis)
+void GGI_kgi_Gx00_updatehwgc(struct ggi_visual *vis)
 {
   int mask = GX00_CONTEXT(vis)->hwgc_mask;
 
@@ -62,7 +62,7 @@ void GGI_kgi_Gx00_updatehwgc(ggi_visual *vis)
   GX00_CONTEXT(vis)->hwgc_mask = 0;
 }
 
-void GGI_kgi_Gx00_gcchanged(ggi_visual *vis, int mask)
+void GGI_kgi_Gx00_gcchanged(struct ggi_visual *vis, int mask)
 {
   GX00_CONTEXT(vis)->hwgc_mask |= mask;
 }
@@ -71,7 +71,7 @@ void GGI_kgi_Gx00_gcchanged(ggi_visual *vis, int mask)
 /* Initial direct implementation: performance problems wrt DirectBuffer
  * accesses.
  */
-void GGI_kgi_Gx00_gcchanged(ggi_visual *vis, int mask)
+void GGI_kgi_Gx00_gcchanged(struct ggi_visual *vis, int mask)
 {
   if (mask & GGI_GCCHANGED_FG) {
     uint32_t fcol = LIBGGI_GC_FGCOLOR(vis);

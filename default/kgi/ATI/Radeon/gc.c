@@ -1,4 +1,4 @@
-/* $Id: gc.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
+/* $Id: gc.c,v 1.7 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Radeon gc acceleration
@@ -26,7 +26,7 @@
 #include "radeon_accel.h"
 #include <string.h>
 
-void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
+void GGI_kgi_radeon_gcchanged_3d(struct ggi_visual *vis, int mask) {
 	if (mask & GGI_GCCHANGED_FG) {
 		struct {
 			cce_type0_header_t h;
@@ -113,7 +113,7 @@ void GGI_kgi_radeon_gcchanged_3d(ggi_visual *vis, int mask) {
 	}
 }
 
-void GGI_kgi_radeon_gcchanged_2d(ggi_visual *vis, int mask) {
+void GGI_kgi_radeon_gcchanged_2d(struct ggi_visual *vis, int mask) {
 	/* Nothing to do because the scissors don't work in a desirable 
 	 * manner when using the GUI2D engine through CCE -- clip must be
 	 * sent with each 2D packet.  Solid colors are also sent in packet.

@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
+/* $Id: pixela.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
 ******************************************************************************
 
    Linear 1 pixel drawing (high-bit-right)
@@ -35,7 +35,7 @@
 	((uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>3))
 
 
-int GGI_lin1r_drawpixel_nca(ggi_visual *vis, int x, int y)
+int GGI_lin1r_drawpixel_nca(struct ggi_visual *vis, int x, int y)
 {
 	PREPARE_FB(vis);
 
@@ -48,7 +48,7 @@ int GGI_lin1r_drawpixel_nca(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_lin1r_drawpixela(ggi_visual *vis, int x, int y)
+int GGI_lin1r_drawpixela(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 	PREPARE_FB(vis);
@@ -62,7 +62,7 @@ int GGI_lin1r_drawpixela(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_lin1r_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_lin1r_putpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	PREPARE_FB(vis);
 
@@ -75,7 +75,7 @@ int GGI_lin1r_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin1r_putpixela(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_lin1r_putpixela(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	CHECKXY(vis, x, y);
 
@@ -90,7 +90,7 @@ int GGI_lin1r_putpixela(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin1r_getpixela(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_lin1r_getpixela(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	PREPARE_FB(vis);
 

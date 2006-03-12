@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
+/* $Id: gtext.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    Matrox Gx00 text acceleration
@@ -30,7 +30,7 @@
 
 #define GX00_FONTSIZE 8
 
-int GGI_kgi_Gx00_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_kgi_Gx00_putc(struct ggi_visual *vis, int x, int y, char c)
 {
   uint32_t *cg = (uint32_t*)(font + ((uint8_t)c<<3));
 
@@ -62,14 +62,14 @@ int GGI_kgi_Gx00_putc(ggi_visual *vis, int x, int y, char c)
   return 0;
 }
 
-int GGI_kgi_Gx00_puts(ggi_visual *vis, int x, int y, const char *string)
+int GGI_kgi_Gx00_puts(struct ggi_visual *vis, int x, int y, const char *string)
 {
   /* TODO: Implement if it really seems useful */
 
   return 0;
 }
 
-int GGI_kgi_Gx00_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_kgi_Gx00_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
   *width = *height = GX00_FONTSIZE;
   

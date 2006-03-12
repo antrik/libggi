@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.7 2006/03/12 22:56:28 cegger Exp $
+/* $Id: box.c,v 1.8 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -29,7 +29,7 @@
 
 #include "stublib.h"
 
-int GGI_stubs_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_stubs_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	/* Do correct clipping so we can use faster _ggiDrawHLineNC */
   
@@ -60,7 +60,7 @@ int GGI_stubs_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_stubs_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	const uint8_t *src = (const uint8_t *) buffer;
 	int rowadd;
@@ -96,7 +96,7 @@ int GGI_stubs_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *bu
 	return 0;
 }
 
-int GGI_stubs_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_stubs_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 { 
 	uint8_t *dest = (uint8_t *) buffer;
 	int rowadd;

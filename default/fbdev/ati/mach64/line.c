@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2005/07/30 11:39:57 cegger Exp $
+/* $Id: line.c,v 1.3 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "ati_mach64.h"
 
 
-int GGI_ati_mach64_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
+int GGI_ati_mach64_drawline(struct ggi_visual *vis, int x, int y, int x2, int y2)
 {
 	struct ati_mach64_priv *priv = ATI_MACH64_PRIV(vis);
         int dx,dy;

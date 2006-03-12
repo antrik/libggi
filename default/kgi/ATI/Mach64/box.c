@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.2 2005/07/30 11:39:59 cegger Exp $
+/* $Id: box.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Mach64 box acceleration
@@ -27,7 +27,7 @@
 
 #include "mach64_accel.h"
 
-int GGI_kgi_mach64_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_kgi_mach64_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	MACH64_CHECK(vis, 6);
 	MACH64_WRITE(vis, MACH64_DST_CNTL);
@@ -42,7 +42,7 @@ int GGI_kgi_mach64_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_kgi_mach64_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_kgi_mach64_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 			   int nx, int ny)
 {
 	uint32_t direction = MACH64_4C_DST_LAST_PEL;

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.20 2005/07/30 11:39:56 cegger Exp $
+/* $Id: color.c,v 1.21 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -31,7 +31,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
+int GGI_color_getpalvec(struct ggi_visual *vis, int start, int len, ggi_color *colmap)
 {
 	if (start < 0 || start+len > COLOR_PALPRIV(vis)->numcols)
 		return GGI_ENOSPACE;
@@ -41,7 +41,7 @@ int GGI_color_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colmap)
 	return 0;
 }
 
-int GGI_color_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colmap)
+int GGI_color_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colmap)
 {
 	if (start == GGI_PALETTE_DONTCARE) start = 0;
 		
@@ -60,7 +60,7 @@ int GGI_color_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *co
  * http://www5.informatik.uni-erlangen.de/vampire/stuff/zinsser_vmv03.pdf
  */
 
-ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_color_PAL_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	color_palpriv *priv = COLOR_PALPRIV(vis);
 	ggi_color *pal;
@@ -130,7 +130,7 @@ ggi_pixel GGI_color_PAL_mapcolor(ggi_visual *vis, const ggi_color *col)
  * optimizations are for older CPUs and likely don't make much difference 
  * on CPUs which implement branch prediction.
  */
-ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_color_TRUE16_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
@@ -148,7 +148,7 @@ ggi_pixel GGI_color_TRUE16_mapcolor(ggi_visual *vis, const ggi_color *col)
 	return ret;
 }
 
-ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_color_TRUE_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 	color_truepriv *priv = vis->colorpriv;
@@ -166,7 +166,7 @@ ggi_pixel GGI_color_TRUE_mapcolor(ggi_visual *vis, const ggi_color *col)
 	return ret;
 }
 
-ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_color_GREY_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
 	
@@ -187,7 +187,7 @@ ggi_pixel GGI_color_GREY_mapcolor(ggi_visual *vis, const ggi_color *col)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
+int GGI_color_PAL_unmappixel(struct ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	LIB_ASSERT(LIBGGI_PAL(vis) != NULL, 
 			"PAL_unmappixel with LIBGGI_PAL(vis)==NULL");
@@ -203,7 +203,7 @@ int GGI_color_PAL_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 }
 
 /* This format is common enough to deserve an optimized implementation. */
-int GGI_color_TRUE16_unmappixel_4to7(ggi_visual *vis, ggi_pixel pixel, 
+int GGI_color_TRUE16_unmappixel_4to7(struct ggi_visual *vis, ggi_pixel pixel, 
 				     ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
@@ -222,7 +222,7 @@ int GGI_color_TRUE16_unmappixel_4to7(ggi_visual *vis, ggi_pixel pixel,
 }
 
 
-int GGI_color_TRUE_unmappixel_gte8(ggi_visual *vis, ggi_pixel pixel, 
+int GGI_color_TRUE_unmappixel_gte8(struct ggi_visual *vis, ggi_pixel pixel, 
 	  ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
@@ -237,7 +237,7 @@ int GGI_color_TRUE_unmappixel_gte8(ggi_visual *vis, ggi_pixel pixel,
 	return 0;
 }
 
-int GGI_color_TRUE_unmappixel_gte4(ggi_visual *vis, ggi_pixel pixel, 
+int GGI_color_TRUE_unmappixel_gte4(struct ggi_visual *vis, ggi_pixel pixel, 
 				   ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
@@ -256,7 +256,7 @@ int GGI_color_TRUE_unmappixel_gte4(ggi_visual *vis, ggi_pixel pixel,
 }
 
 
-int GGI_color_TRUE_unmappixel_gte2(ggi_visual *vis, ggi_pixel pixel, 
+int GGI_color_TRUE_unmappixel_gte2(struct ggi_visual *vis, ggi_pixel pixel, 
 				   ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
@@ -278,7 +278,7 @@ int GGI_color_TRUE_unmappixel_gte2(ggi_visual *vis, ggi_pixel pixel,
 }
 
 /* For the rare but extremely painful cases. */
-int GGI_color_TRUE_unmappixel_gte1(ggi_visual *vis, ggi_pixel pixel, 
+int GGI_color_TRUE_unmappixel_gte1(struct ggi_visual *vis, ggi_pixel pixel, 
 				   ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
@@ -307,7 +307,7 @@ int GGI_color_TRUE_unmappixel_gte1(ggi_visual *vis, ggi_pixel pixel,
 	return 0;
 }
 
-int GGI_color_GREY_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
+int GGI_color_GREY_unmappixel(struct ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	col->r = col->g = col->b = (pixel << COLOR_GREYPRIV(vis)->shift) >> 8;
 

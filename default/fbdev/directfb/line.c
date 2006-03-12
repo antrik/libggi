@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2002/03/23 05:50:24 skids Exp $
+/* $Id: line.c,v 1.3 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB driver Acceleration for the fbdev target
@@ -28,7 +28,7 @@
 #include "ggidirectfb.h"
 
 
-int GGI_directfb_drawline(ggi_visual *vis, int x, int y, int x2, int y2)
+int GGI_directfb_drawline(struct ggi_visual *vis, int x, int y, int x2, int y2)
 {
 	struct directfb_priv *priv = DIRECTFB_PRIV(vis);
 	int yadd = vis->w_frame_num * LIBGGI_VIRTY(vis);

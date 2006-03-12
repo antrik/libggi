@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: copybox.c,v 1.4 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - ATI Mach64 acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "ati_mach64.h"
 
 
-int GGI_ati_mach64_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_ati_mach64_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 		       int dstx, int dsty)
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2005/07/30 11:39:57 cegger Exp $
+/* $Id: crossblit.c,v 1.3 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - DirectFB acceleration for fbdev target 
@@ -29,8 +29,8 @@
 
 
 static inline void
-dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h, 
-	     ggi_visual *dst, int dx, int dy, uint32_t srcfmt)
+dbblit_32bpp(struct ggi_visual *src, int sx, int sy, int w, int h, 
+	     struct ggi_visual *dst, int dx, int dy, uint32_t srcfmt)
 {
 
   /* Later */
@@ -124,8 +124,8 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 }
 
 
-int GGI_directfb_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			 ggi_visual *dst, int dx, int dy)
+int GGI_directfb_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			 struct ggi_visual *dst, int dx, int dy)
 {
 
   /* Later */

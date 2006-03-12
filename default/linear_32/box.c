@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.5 2005/07/30 11:40:00 cegger Exp $
+/* $Id: box.c,v 1.6 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -30,7 +30,7 @@
 #include "lin32lib.h"
 
 
-int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
+int GGI_lin32_drawbox(struct ggi_visual *vis, int x, int y, int origw, int h)
 {
 	uint32_t *buf32;
 	uint32_t color = LIBGGI_GC_FGCOLOR(vis);
@@ -55,7 +55,7 @@ int GGI_lin32_drawbox(ggi_visual *vis, int x, int y, int origw, int h)
 }
 
 
-int GGI_lin32_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_lin32_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 {
 	const uint32_t *src = buffer;
 	uint8_t *dest;

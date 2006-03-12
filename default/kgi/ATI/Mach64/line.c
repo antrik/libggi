@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2004/11/27 16:41:56 soyt Exp $
+/* $Id: line.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Mach64 line acceleration
@@ -26,7 +26,7 @@
 
 #include "mach64_accel.h"
 
-int GGI_kgi_mach64_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_kgi_mach64_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	DPRINT_LIBS("drawhline\n");
 	GGI_kgi_mach64_drawbox(vis, x, y, w, 1);
@@ -34,7 +34,7 @@ int GGI_kgi_mach64_drawhline(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_kgi_mach64_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_kgi_mach64_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
         DPRINT_LIBS("drawvline\n");
 	GGI_kgi_mach64_drawbox(vis, x, y, 1, h);
@@ -42,7 +42,7 @@ int GGI_kgi_mach64_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_kgi_mach64_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_kgi_mach64_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	short dx, dy;
 	long minDelta, maxDelta;

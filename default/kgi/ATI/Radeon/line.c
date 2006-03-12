@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.6 2005/07/30 11:39:59 cegger Exp $
+/* $Id: line.c,v 1.7 2006/03/12 23:15:06 soyt Exp $
 ******************************************************************************
 
    ATI Radeon line acceleration
@@ -25,19 +25,19 @@
 #include "radeon_accel.h"
 #include <string.h>
 
-int GGI_kgi_radeon_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_kgi_radeon_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	vis->opdraw->drawbox(vis, x, y, w, 1);
 	return 0;
 }
 
-int GGI_kgi_radeon_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_kgi_radeon_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	vis->opdraw->drawbox(vis, x, y, 1, h);
 	return 0;
 }
 
-int GGI_kgi_radeon_drawline_2d(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_kgi_radeon_drawline_2d(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	struct {
 	
@@ -81,7 +81,7 @@ int GGI_kgi_radeon_drawline_2d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_kgi_radeon_drawline_3d(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_kgi_radeon_drawline_3d(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	struct {
 		cce_type3_header_t h;
@@ -120,7 +120,7 @@ int GGI_kgi_radeon_drawline_3d(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, const void *buf)
+int GGI_kgi_radeon_puthline_3d(struct ggi_visual *vis, int x, int y, int w, const void *buf)
 {
 	int wb, w32;
 	radeon_context_t *ctx;
@@ -217,7 +217,7 @@ int GGI_kgi_radeon_puthline_3d(ggi_visual *vis, int x, int y, int w, const void 
 }
 
 
-int GGI_kgi_radeon_putvline_3d(ggi_visual *vis, int x, int y, int h, const void *buf)
+int GGI_kgi_radeon_putvline_3d(struct ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	int wb, w32;
 	radeon_context_t *ctx;

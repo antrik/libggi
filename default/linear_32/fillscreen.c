@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.2 2005/07/30 11:40:01 cegger Exp $
+/* $Id: fillscreen.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -31,7 +31,7 @@
 #include "lin32lib.h"
 
 
-int GGI_lin32_fillscreen(ggi_visual *vis)
+int GGI_lin32_fillscreen(struct ggi_visual *vis)
 {
 	if (LIBGGI_GC(vis)->cliptl.x==0 &&
 	    LIBGGI_GC(vis)->cliptl.y==0 &&

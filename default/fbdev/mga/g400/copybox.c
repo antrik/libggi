@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.4 2005/07/31 09:58:44 cegger Exp $
+/* $Id: copybox.c,v 1.5 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "mga_g400.h"
 
 
-int GGI_mga_g400_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_mga_g400_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 		       int dstx, int dsty)
 {
 	struct mga_g400_priv *priv = MGA_G400_PRIV(vis);

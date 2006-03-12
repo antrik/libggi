@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2005/07/30 11:40:03 cegger Exp $
+/* $Id: gtext.c,v 1.4 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,7 +32,7 @@
 
 #include <ggi/internal/font/8x8>
 
-int GGI_stubs_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_stubs_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	/* The stubs' font is 8x8, so that is what we return */
 
@@ -41,7 +41,7 @@ int GGI_stubs_getcharsize(ggi_visual *vis, int *width, int *height)
 }
 
 static inline int 
-GGIblit2c(ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
+GGIblit2c(struct ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
 {
 	int xp,bp;
 	ggi_pixel color;
@@ -63,7 +63,7 @@ GGIblit2c(ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *field)
 	return 0;
 }
 
-int GGI_stubs_putc(ggi_visual *vis,int x,int y,char c)
+int GGI_stubs_putc(struct ggi_visual *vis,int x,int y,char c)
 {
 	return GGIblit2c(vis, x, y, 8, 8, font+((uint8_t)c<<3));
 }
@@ -72,7 +72,7 @@ int GGI_stubs_putc(ggi_visual *vis,int x,int y,char c)
  * characters at least partially displayed 
  */
 
-int GGI_stubs_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_stubs_puts(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	int count;
 	int char_w, char_h;

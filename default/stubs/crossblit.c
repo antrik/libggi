@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.3 2006/03/12 22:56:28 cegger Exp $
+/* $Id: crossblit.c,v 1.4 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,8 +32,8 @@
 
 /* Cross blitting of a rectangular area.
  */
-int GGI_stubs_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			ggi_visual *dst, int dx, int dy)
+int GGI_stubs_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			struct ggi_visual *dst, int dx, int dy)
 {
 	ggi_pixel cur_src;
 	ggi_pixel cur_dst = 0;

@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.2 2005/07/30 11:40:00 cegger Exp $
+/* $Id: fillscreen.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -32,7 +32,7 @@
 
 
 #warning FIXME: LIBGGI_FB_W_STRIDE(vis)%12 != 0 case not supported
-int GGI_lin24_fillscreen(ggi_visual *vis)
+int GGI_lin24_fillscreen(struct ggi_visual *vis)
 {
   	if (LIBGGI_GC(vis)->cliptl.x==0 &&
 	    LIBGGI_GC(vis)->cliptl.y==0 &&

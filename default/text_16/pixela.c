@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.2 2005/07/30 11:40:03 cegger Exp $
+/* $Id: pixela.c,v 1.3 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -34,7 +34,7 @@
 	((uint16_t *) LIBGGI_CURWRITE(vis) + y*LIBGGI_FB_W_STRIDE(vis)/sizeof(uint16_t) + x)
 
 
-int GGI_t16_drawpixela(ggi_visual *vis, int x, int y)
+int GGI_t16_drawpixela(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 	PREPARE_FB(vis);
@@ -44,7 +44,7 @@ int GGI_t16_drawpixela(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_t16_drawpixel_nca(ggi_visual *vis, int x, int y)
+int GGI_t16_drawpixel_nca(struct ggi_visual *vis, int x, int y)
 {
 	PREPARE_FB(vis);
 
@@ -53,7 +53,7 @@ int GGI_t16_drawpixel_nca(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_t16_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_t16_putpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	PREPARE_FB(vis);
 
@@ -62,7 +62,7 @@ int GGI_t16_putpixel_nca(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_t16_putpixela(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_t16_putpixela(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	CHECKXY(vis, x, y);
 	PREPARE_FB(vis);
@@ -72,7 +72,7 @@ int GGI_t16_putpixela(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_t16_getpixela(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_t16_getpixela(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 { 
 	PREPARE_FB(vis);
 

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.3 2005/07/30 11:39:57 cegger Exp $
+/* $Id: box.c,v 1.4 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "m2164w.h"
 
 
-int GGI_m2164w_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_m2164w_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	if (w > 0 && h > 0) {	/* 0 width is not OK! */
 		struct m2164w_priv *priv = M2164W_PRIV(vis);
@@ -58,7 +58,7 @@ int GGI_m2164w_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 
-int GGI_m2164w_fillscreen(ggi_visual *vis)
+int GGI_m2164w_fillscreen(struct ggi_visual *vis)
 {
 	struct m2164w_priv *priv = M2164W_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;

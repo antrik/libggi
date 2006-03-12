@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.1 2005/12/30 23:39:35 cegger Exp $
+/* $Id: crossblit.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -29,8 +29,8 @@
 
 #if 0
 static inline void
-dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h, 
-	     ggi_visual *dst, int dx, int dy, uint32_t srcfmt)
+dbblit_32bpp(struct ggi_visual *src, int sx, int sy, int w, int h, 
+	     struct ggi_visual *dst, int dx, int dy, uint32_t srcfmt)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(dst);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(dst)->mmioaddr;
@@ -126,8 +126,8 @@ dbblit_32bpp(ggi_visual *src, int sx, int sy, int w, int h,
 }
 
 
-int GGI_3dlabs_pm2_crossblit(ggi_visual *src, int sx, int sy, int w, int h, 
-			 ggi_visual *dst, int dx, int dy)
+int GGI_3dlabs_pm2_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
+			 struct ggi_visual *dst, int dx, int dy)
 {
 	/* Software clip so we don't read/write unused data. */
 	LIBGGICLIP_COPYBOX(dst, sx, sy, w, h, dx, dy);

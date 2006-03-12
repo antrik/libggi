@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.6 2006/03/12 22:56:28 cegger Exp $
+/* $Id: copybox.c,v 1.7 2006/03/12 23:15:12 soyt Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -31,7 +31,7 @@
 #define MAX_STACKBYTES	4096
 
 static inline void
-do_copy(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
+do_copy(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 {
 		if (ny > y) {
 			for (y+=h-1, ny+=h-1; h > 0; h--, y--, ny--) {
@@ -48,7 +48,7 @@ do_copy(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 
 
 int
-GGI_stubs_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+GGI_stubs_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	size_t size;
 

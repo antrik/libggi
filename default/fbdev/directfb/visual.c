@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/02/04 22:11:45 soyt Exp $
+/* $Id: visual.c,v 1.25 2006/03/12 23:15:05 soyt Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -39,7 +39,7 @@
 
 static int directfb_acquire(ggi_resource *res, uint32_t actype)
 {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 
 	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE)) {
 		return GGI_EARGINVAL;
@@ -68,7 +68,7 @@ static int directfb_release(ggi_resource *res)
 }
 
 static int
-directfb_idleaccel(ggi_visual *vis)
+directfb_idleaccel(struct ggi_visual *vis)
 {
 
 	GraphicsDevice *device = &(DIRECTFB_PRIV(vis)->device);
@@ -81,7 +81,7 @@ directfb_idleaccel(ggi_visual *vis)
 }
 
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *fbdevpriv = FBDEV_PRIV(vis);
 	struct directfb_priv *priv = NULL;
@@ -124,7 +124,7 @@ static int do_cleanup(ggi_visual *vis)
 }
 	
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	DFBResult res;
@@ -462,7 +462,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

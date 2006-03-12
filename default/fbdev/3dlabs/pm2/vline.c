@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2006/01/01 10:27:23 cegger Exp $
+/* $Id: vline.c,v 1.4 2006/03/12 23:15:04 soyt Exp $
 ******************************************************************************
 
    LibGGI - 3DLabs Permedia 2 acceleration for fbdev target
@@ -28,7 +28,7 @@
 #include "3dlabs_pm2.h"
 
 
-int GGI_3dlabs_pm2_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_3dlabs_pm2_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
@@ -61,7 +61,7 @@ int GGI_3dlabs_pm2_drawvline(ggi_visual *vis, int x, int y, int h)
 }
 
 
-int GGI_3dlabs_pm2_putvline(ggi_visual *vis, int x, int y, int h,
+int GGI_3dlabs_pm2_putvline(struct ggi_visual *vis, int x, int y, int h,
 			const void *buf)
 {
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
