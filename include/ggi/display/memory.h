@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.9 2005/07/31 15:30:39 soyt Exp $
+/* $Id: memory.h,v 1.10 2006/03/12 08:42:22 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -111,6 +111,6 @@ typedef struct {
 
 #define MEMORY_PRIV(vis) ((ggi_memory_priv *)LIBGGI_PRIVATE(vis))
 
-int _GGI_memory_resetmode(ggi_visual *vis);
+int _GGI_memory_resetmode(struct ggi_visual *vis);
 
 #endif /* _GGI_DISPLAY_MEMORY_H */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.27 2006/03/12 08:42:23 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -43,17 +43,17 @@
 /* Used to prevent ggiSetMode core code from destroying data
  * by calling fillscreen when -noblank option is specified.
  */
-static int _strawman_fillscreen(ggi_visual *vis) {
+static int _strawman_fillscreen(struct ggi_visual *vis) {
 	if (vis->w_frame_num == LIBGGI_MODE(vis)->frames - 1) 
 		vis->opdraw->fillscreen = MEMORY_PRIV(vis)->oldfillscreen;
 	return GGI_OK;
 }
 
-static int _dummy_setdisplayframe(ggi_visual *vis, int frame) {
+static int _dummy_setdisplayframe(struct ggi_visual *vis, int frame) {
 	return GGI_OK;
 }
 
-static void _GGIfreedbs(ggi_visual *vis) 
+static void _GGIfreedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -69,7 +69,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 /*
  * _Attempt_ to get the default framebuffer.. 
  */
-static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
+static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int i;
 	char *fbaddr;
@@ -170,7 +170,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_memory_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
@@ -209,7 +209,7 @@ int GGI_memory_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 	return GGI_ENOMATCH;
 }
 
-static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
+static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err, i;
 	char	name[GGI_MAX_APILEN];
@@ -256,7 +256,7 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
 	ggi_memory_priv *priv;
@@ -267,7 +267,7 @@ int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
 	
-	err = ggiCheckMode(vis, mode);
+	err = ggiCheckMode(vis->stem, mode);
 	if (err < 0) {
 		DPRINT("GGI_memory_setmode: ggiCheckMode() failed with error %i\n", err);
 		return err;
@@ -291,13 +291,13 @@ int GGI_memory_setmode(ggi_visual *vis, ggi_mode *mode)
 		priv->inputbuffer->visframe=0;
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 	DPRINT("display-memory:GGIsetmode: change indicated\n",err);
 
 	return 0;
 }
 
-int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_memory_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 
@@ -351,7 +351,7 @@ int GGI_memory_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;	
 }
 
-int GGI_memory_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_memory_priv *priv;
 	ggi_mode mymode;
@@ -373,7 +373,7 @@ int GGI_memory_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int _GGI_memory_resetmode(ggi_visual *vis)
+int _GGI_memory_resetmode(struct ggi_visual *vis)
 {
 	DPRINT("display-memory: GGIresetmode(%p)\n", vis);
 
@@ -382,17 +382,19 @@ int _GGI_memory_resetmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_memory_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_memory_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 	return 0;
 }
 
-int GGI_memory_setPalette(ggi_visual_t vis,size_t start,size_t size,const ggi_color *colormap)
+int GGI_memory_setPalette(ggi_visual_t v,size_t start,size_t size,const ggi_color *colormap)
 {
+	struct ggi_visual *vis;
 	DPRINT("memory setpalette.\n");
-	                      
+
+	vis = GGI_VISUAL(v);	                      
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color)); 
 	
 	return 0;
