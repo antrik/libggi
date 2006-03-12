@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.53 2006/03/12 11:41:05 soyt Exp $
+/* $Id: init.c,v 1.54 2006/03/12 12:26:02 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -149,8 +149,6 @@ int ggiInit(void)
 	return ggInitAPI(libggi);
 }
 
-static int _ggiAttach(struct gg_api*, struct gg_stem *);
-static void _ggiDetach(struct gg_api*, struct gg_stem *);
 static void _ggiExit(struct gg_api*);
 
 
@@ -206,13 +204,13 @@ _ggiInit(struct gg_api* api)
 	if (_ggiVisuals.mutex == NULL) {
 		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
 		err = GGI_EUNKNOWN;
-		goto err2;
+		goto err1;
 	}
 	_ggi_global_lock = ggLockCreate();
 	if (_ggi_global_lock == NULL) {
 		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
 		err = GGI_EUNKNOWN;
-		goto err3;
+		goto err2;
 	}
 
 
@@ -223,7 +221,7 @@ _ggiInit(struct gg_api* api)
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
 		err = GGI_ENOMEM;
-		goto err4;
+		goto err3;
 	}
 
 #ifndef PIC
@@ -244,7 +242,7 @@ _ggiInit(struct gg_api* api)
 		if (err != GGI_OK) {
 			fprintf(stderr, "LibGGI: fatal error - "
 					"could not load builtin config\n");
-			goto err4;
+			goto err3;
 		}
 	}
 #endif /* HAVE_CONFFILE */
@@ -256,13 +254,12 @@ _ggiInit(struct gg_api* api)
 	fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
 
 
-err4:
-	ggLockDestroy(_ggi_global_lock);
 err3:
-	ggLockDestroy(_ggiVisuals.mutex);
+	ggLockDestroy(_ggi_global_lock);
 err2:
-	_ggiLibIsUp--;
+	ggLockDestroy(_ggiVisuals.mutex);
 err1:
+	_ggiLibIsUp--;
 	ggiExtensionExit();
 err0:
 	return err;
@@ -302,35 +299,15 @@ void _ggiExit(struct gg_api *api)
 	DPRINT_CORE("ggiExit: done!\n");
 }
 
-/* Make sure str contains a valid variable name. Kill everything but
- * [a-zA-Z0-9].
- */
-static void mangle_variable(char *str)
-{
-	for(;*str;str++) {
-		/**/ if ( ( *str>='A' && *str<='Z' ) ||
-			  ( *str>='0' && *str<='9' ) ) continue;
-		else if (   *str>='a' && *str<='z' ) *str+='A'-'a';
-		else *str='_';
-	}
-}
-
 /* Opens a visual.
  */
 int ggiOpen(ggi_visual_t stem, const char *driver,...)
 {
-#define MAX_TARGET_LEN	1024
-	
 	va_list drivers;
-	char *cp, *inplist;
-	char str[MAX_TARGET_LEN];
-	char target[MAX_TARGET_LEN];
-	int  success=0;
-	void *argptr;
-	static int globalopencount=0;
+	int  success = 0;
+	void *argptr = NULL;
 	struct gg_target_iter match;
 	struct ggi_visual *vis;
-	int ret;	
 
 	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
 	
@@ -371,15 +348,14 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 		GG_SLIST_INSERT_HEAD(&_ggiVisuals.visual, vis, vislist);
 		_ggiVisuals.visuals++;
 		ggUnlock(_ggiVisuals.mutex);
-		DPRINT_CORE("ggiOpen: returning %p\n", vis);
+		DPRINT_CORE("ggiOpen: success\n");
 	} else {
 		_ggiDestroyVisual(vis);
 		DPRINT_CORE("ggiOpen: failure\n");
-		return NULL;
+		return GGI_ENOTFOUND;
 	}
 	
-	return vis;
-#undef MAX_TARGET_LEN
+	return GGI_OK;
 }
 	
 /* ggiClose
