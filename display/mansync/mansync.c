@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.13 2005/01/25 11:43:31 pekberg Exp $
+/* $Id: mansync.c,v 1.14 2006/03/12 07:24:58 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -64,7 +64,7 @@ struct mansync_hook {
 
 static int _GGI_mansync_task(struct gg_task *task)
 {
-	ggi_visual *vis = task->hook;
+	struct ggi_visual *vis = task->hook;
 
 	if (MANSYNC_IGNORE(vis))
 		return 0;
@@ -81,7 +81,7 @@ static int _GGI_mansync_task(struct gg_task *task)
 }
 
 
-int _GGI_mansync_init(ggi_visual *vis)
+int _GGI_mansync_init(struct ggi_visual *vis)
 {
 	MANSYNC_PRIV(vis) = _ggi_malloc(sizeof(struct mansync_hook));
 	memset(&MANSYNC_TASK(vis), 0, sizeof(struct gg_task));
@@ -93,7 +93,7 @@ int _GGI_mansync_init(ggi_visual *vis)
 }
 
 
-int _GGI_mansync_deinit(ggi_visual *vis)
+int _GGI_mansync_deinit(struct ggi_visual *vis)
 {
 	LIB_ASSERT(!MANSYNC_HOOK(vis)->running,
 		"Can't deinit mansync as long as mansync is running");
@@ -105,7 +105,7 @@ int _GGI_mansync_deinit(ggi_visual *vis)
 }
 
 
-int _GGI_mansync_start(ggi_visual *vis)
+int _GGI_mansync_start(struct ggi_visual *vis)
 {
 	int rc = GGI_OK;
 	int fpsrate = 0;
@@ -144,7 +144,7 @@ int _GGI_mansync_start(ggi_visual *vis)
 }
 
 
-int _GGI_mansync_stop(ggi_visual *vis)
+int _GGI_mansync_stop(struct ggi_visual *vis)
 {
 	int ret;
 
@@ -173,7 +173,7 @@ int _GGI_mansync_stop(ggi_visual *vis)
  * within flush, which is called from the task handler.
  */
 
-int _GGI_mansync_ignore(ggi_visual *vis)
+int _GGI_mansync_ignore(struct ggi_visual *vis)
 {
 	DPRINT("_GGI_mansync_ignore() (MANSYNC_TASK) called.\n");
 
@@ -186,7 +186,7 @@ int _GGI_mansync_ignore(ggi_visual *vis)
 }
 
 
-int _GGI_mansync_cont(ggi_visual *vis)
+int _GGI_mansync_cont(struct ggi_visual *vis)
 {
 	DPRINT("_GGI_mansync_cont() (MANSYNC_TASK) called.\n");
 

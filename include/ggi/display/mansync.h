@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.6 2005/07/31 15:30:39 soyt Exp $
+/* $Id: mansync.h,v 1.7 2006/03/12 07:24:57 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -110,24 +110,24 @@
 /* Exported functions */
 
 typedef struct {
-	int (*init)(ggi_visual *vis);
-	int (*deinit)(ggi_visual *vis);
+	int (*init)(struct ggi_visual *vis);
+	int (*deinit)(struct ggi_visual *vis);
 
-	int (*start)(ggi_visual *vis);
-	int (*stop)(ggi_visual *vis);
+	int (*start)(struct ggi_visual *vis);
+	int (*stop)(struct ggi_visual *vis);
 
-	int (*ignore)(ggi_visual *vis);
-	int (*cont)(ggi_visual *vis);
+	int (*ignore)(struct ggi_visual *vis);
+	int (*cont)(struct ggi_visual *vis);
 } _ggi_opmansync;
 
-int _GGI_mansync_init(ggi_visual *vis);
-int _GGI_mansync_deinit(ggi_visual *vis);
+int _GGI_mansync_init(struct ggi_visual *vis);
+int _GGI_mansync_deinit(struct ggi_visual *vis);
 
-int _GGI_mansync_start(ggi_visual *vis);
-int _GGI_mansync_stop(ggi_visual *vis);
+int _GGI_mansync_start(struct ggi_visual *vis);
+int _GGI_mansync_stop(struct ggi_visual *vis);
 
-int _GGI_mansync_ignore(ggi_visual *vis);
-int _GGI_mansync_cont(ggi_visual *vis);
+int _GGI_mansync_ignore(struct ggi_visual *vis);
+int _GGI_mansync_cont(struct ggi_visual *vis);
 
 
 /* Convenience macro */

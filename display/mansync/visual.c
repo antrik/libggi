@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/03/11 18:49:11 soyt Exp $
+/* $Id: visual.c,v 1.10 2006/03/12 07:24:58 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -39,7 +39,7 @@
 #include <ggi/display/mansync.h>
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	_ggi_opmansync *ops = (_ggi_opmansync *) argptr;
