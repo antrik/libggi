@@ -1,4 +1,4 @@
-/* $Id: probe.c,v 1.5 2004/11/27 16:42:18 soyt Exp $
+/* $Id: probe.c,v 1.6 2006/03/12 07:15:49 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -49,7 +49,7 @@ static inline void _ggi_setup_display(char *display,
 
 
 
-ggi_visual_t _GGI_auto_findOptimalTarget(ggi_auto_priv *priv)
+struct ggi_visual *_GGI_auto_findOptimalTarget(ggi_auto_priv *priv)
 {
 	int i, j;
 	ggi_visual_t vis = NULL;

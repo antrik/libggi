@@ -1,4 +1,4 @@
-/* $Id: auto.h,v 1.1 2004/01/29 13:49:34 cegger Exp $
+/* $Id: auto.h,v 1.2 2006/03/12 07:15:49 cegger Exp $
 ******************************************************************************
 
    Header for auto target.
@@ -61,7 +61,7 @@ typedef struct {
 
 
 /* probe.c */
-ggi_visual_t _GGI_auto_findOptimalTarget(ggi_auto_priv *priv);
+struct ggi_visual *_GGI_auto_findOptimalTarget(ggi_auto_priv *priv);
 
 
 /* <os>.c */

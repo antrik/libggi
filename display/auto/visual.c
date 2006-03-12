@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/02/04 22:11:46 soyt Exp $
+/* $Id: visual.c,v 1.10 2006/03/12 07:15:49 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -33,17 +33,17 @@
 #include <ggi/display/auto.h>
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_auto_priv *priv;
-	ggi_visual **_vis;
+	struct ggi_visual **_vis;
 
 	DPRINT_LIBS("display-auto: Starting\n");
 
 	LIB_ASSERT(argptr != NULL, "Detected invalid pointer");
 
-	_vis = (ggi_visual **)argptr;
+	_vis = (struct ggi_visual **)argptr;
 
 	priv = calloc((size_t)(1), sizeof(ggi_auto_priv));
 	if (priv == NULL) return GGI_ENOMEM;
