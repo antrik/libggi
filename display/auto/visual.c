@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/03/12 07:15:49 cegger Exp $
+/* $Id: visual.c,v 1.11 2006/03/12 07:18:11 cegger Exp $
 ******************************************************************************
 
    Auto target for GGI.
@@ -59,13 +59,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return 0;
 }
 
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return 0;
 }
