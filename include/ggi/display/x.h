@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.21 2006/03/12 07:40:47 cegger Exp $
+/* $Id: x.h,v 1.22 2006/03/12 07:52:24 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -31,6 +31,7 @@
 #define _GGI_DISPLAY_X_H
 
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/gii-events.h>
 #include <ggi/input/xwin.h>
 #include <ggi/display/mansync.h>
 #include <ggi/display/modelist.h>
@@ -182,7 +183,7 @@ typedef struct ggi_x_priv {
 
 /* Defined in mode.c */
 int _ggi_x_do_blit(struct ggi_visual *vis, int x, int y, int w, int h);
-int _ggi_x_resize (struct ggi_visual *vis, int w, int h, ggi_event *ev);
+int _ggi_x_resize (struct ggi_visual *vis, int w, int h, gii_event *ev);
 
 /* Defined in visual.c */
 void _GGI_X_freedbs(struct ggi_visual *, ggi_x_priv *);
