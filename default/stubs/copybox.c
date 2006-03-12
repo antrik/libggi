@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.5 2006/03/12 22:47:30 cegger Exp $
+/* $Id: copybox.c,v 1.6 2006/03/12 22:56:28 cegger Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -31,7 +31,7 @@
 #define MAX_STACKBYTES	4096
 
 static inline void
-do_copy(ggi_visual_t vis, int x, int y, int w, int h, int nx, int ny, void *buf)
+do_copy(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 {
 		if (ny > y) {
 			for (y+=h-1, ny+=h-1; h > 0; h--, y--, ny--) {
@@ -48,9 +48,8 @@ do_copy(ggi_visual_t vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 
 
 int
-GGI_stubs_copybox(ggi_visual_t v, int x, int y, int w, int h, int nx, int ny)
+GGI_stubs_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
-	struct ggi_visual *vis = GGI_VISUAL(v);
 	size_t size;
 
 	LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
@@ -59,12 +58,12 @@ GGI_stubs_copybox(ggi_visual_t v, int x, int y, int w, int h, int nx, int ny)
 	if (size <= MAX_STACKBYTES) {
 		uint8_t buf[MAX_STACKBYTES];
 
-		do_copy(v, x, y, w, h, nx, ny, buf);
+		do_copy(vis, x, y, w, h, nx, ny, buf);
 	} else {
 		uint8_t *buf = malloc(size);
 
 		if (!buf) return GGI_ENOMEM;
-		do_copy(v, x, y, w, h, nx, ny, buf);
+		do_copy(vis, x, y, w, h, nx, ny, buf);
 		free(buf);
 	}
 
