@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.7 2005/07/30 11:38:51 cegger Exp $
+/* $Id: color.c,v 1.8 2006/03/14 14:14:44 pekberg Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -31,6 +31,7 @@
 #include <sys/ioctl.h>
 
 #include <ggi/display/lcd823.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.13 2006/03/14 14:14:45 pekberg Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <ggi/display/lcd823.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/ggi-auto.inc"
 
