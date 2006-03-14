@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.190 2006/03/12 15:52:09 cegger Exp $
+dnl $Id: configure.in,v 1.191 2006/03/14 05:23:33 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -307,7 +307,7 @@ AC_HEADER_STDC
 
 GGI_NEED_INTTYPES
 
-AC_CHECK_HEADERS(ggi/gii.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
+AC_CHECK_HEADERS(ggi/gg.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
@@ -390,23 +390,18 @@ AC_CHECK_FUNCS(gettimeofday select strdup strerror setenv putenv getopt \
 dnl ========================================================================
 dnl LibGII must be built
 
-if test "x$ac_cv_header_ggi_gii_h" != "xyes"; then
-  AC_MSG_ERROR([Either wrong include path is used or LibGII is
-		not properly installed on the system. You need LibGII for building
-		LibGGI. Please compile LibGII first.])
+if test "x$ac_cv_header_ggi_gg_h" != "xyes"; then
+  AC_MSG_ERROR([Either wrong include path is used or libgg is
+		not properly installed on the system. You need libgg for building
+		libggi. Please compile libgg first.])
 fi
 
-dnl === LibGII is not required now.
-dnl GGI_CHECK_LIB(gii,giiInit,
-dnl   GGI_CHECK_LIB(gg,ggGetSwarType,
-dnl 	foo=bar,
-dnl 	AC_MSG_ERROR([You have an obsolete LibGII version installed!])
-dnl   ),
-dnl   AC_MSG_ERROR([LibGII is not properly installed on the system.
-dnl 		You need LibGII for building LibGGI. Please compile
-dnl 		LibGII first.])
-dnl )
-
+GGI_CHECK_LIB(gg,ggInit,
+	foo=bar,
+	AC_MSG_ERROR([libgg is not properly installed on the system.
+		You need libgg for building libggi. Please build
+		libgg first.])
+)
 
 
 dnl ========================================================================
@@ -602,7 +597,7 @@ DEFAULTFBDEVMODULES=""
 DEFAULTKGIMODULES=""
 
 if test "$enable_shared" = "yes"; then
-#  DISPLAYMODULES="auto.la"
+  DISPLAYMODULES=""
   DEFAULTMODULES="stubs.la pseudo_stubs.la color.la text_16.la text_32.la linear_1.la linear_1_r.la linear_2.la linear_4.la linear_4_r.la linear_8.la linear_16.la linear_24.la linear_32.la planar.la ilbm.la iplanar_2p.la"
 fi
 if test "$enable_static" = "yes"; then
