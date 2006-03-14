@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
+/* $Id: speed.c,v 1.9 2006/03/14 21:02:33 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -30,6 +30,9 @@
 #endif
 #ifndef CLK_TCK
 #include <time.h>
+#endif
+#ifndef CLK_TCK
+# define  CLK_TCK	_SC_CLK_TCK
 #endif
 
 static struct {
