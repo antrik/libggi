@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.10 2006/03/14 13:31:17 pekberg Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/lcd823.h>
 
 #include <stdio.h>
