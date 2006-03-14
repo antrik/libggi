@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.20 2006/03/11 18:49:12 soyt Exp $
+/* $Id: structs.h,v 1.21 2006/03/14 18:20:47 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -276,7 +276,7 @@ struct ggi_visual {
 	void		*colorpriv;	/* Color library private data */
 
 	/* API */
-	struct gg_stem *stem;
+	struct gg_stem *stem;		/* backpointer to where this visual is attached to */
 };
 
 #define GGI_DL_ERROR		0x80000000
