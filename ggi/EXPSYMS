@@ -114,3 +114,4 @@ ggiSetTextMode
 ggiSetWriteFrame
 ggiUnmapPixel
 ggiUnpackPixels
+libggi
