@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.22 2006/03/17 13:54:28 pekberg Exp $
+/* $Id: demo.c,v 1.23 2006/03/17 14:33:51 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -111,11 +111,9 @@ ggiKbhit(ggi_visual_t vis)
 {
 	struct timeval t={0,0};
 	int res;
-	printf("khbit?\n");
-	res = giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t);
-	printf(res != emZero ? "yes" : "no");
-	
-	return (res != emZero);
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
 }
 
 int
