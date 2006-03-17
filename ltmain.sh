@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2270 2006/02/15 09:33:47) 2.1a
+# ltmain.sh (GNU libtool 1.2276 2006/03/17 04:20:17) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2270 2006/02/15 09:33:47) 2.1a
+#       $progname:		(GNU libtool 1.2276 2006/03/17 04:20:17) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,18 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2270 2006/02/15 09:33:47"
-package_revision=1.2270
+TIMESTAMP=" 1.2276 2006/03/17 04:20:17"
+package_revision=1.2276
+
+# NLS nuisances: We save the old values to restore during execute mode.
+# AS_SHELL_SANITIZE will take care of unsetting.
+for lt_var in \
+  LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
+  LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER \
+  LC_TELEPHONE LC_TIME
+do
+  eval "test \"\${$lt_var+set}\" = set && save_$lt_var=\$$lt_var"
+done
 
 ## --------------------- ##
 ## M4sh Initialization.  ##
@@ -2078,12 +2088,17 @@ func_mode_execute ()
       fi
 
       # Restore saved environment variables
-      if test "${save_LC_ALL+set}" = set; then
-	LC_ALL="$save_LC_ALL"; export LC_ALL
-      fi
-      if test "${save_LANG+set}" = set; then
-	LANG="$save_LANG"; export LANG
-      fi
+      for lt_var in \
+	LANG LANGUAGE LC_ADDRESS LC_ALL LC_COLLATE LC_CTYPE LC_IDENTIFICATION \
+	LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER \
+	LC_TELEPHONE LC_TIME
+      do
+	eval "if test \"\${save_$lt_var+set}\" = set; then
+                $lt_var=\$save_$lt_var; export $lt_var
+	      else
+		$as_unset $lt_var
+	      fi"
+      done
 
       # Now prepare to actually exec the command.
       exec_cmd="\$cmd$args"
@@ -4951,11 +4966,11 @@ func_mode_link ()
       fi
 
       # Eliminate all temporary directories.
-      for path in $notinst_path; do
-	lib_search_path=`$ECHO "X$lib_search_path " | $Xsed -e 's% $path % %g'`
-	deplibs=`$ECHO "X$deplibs " | $Xsed -e 's% -L$path % %g'`
-	dependency_libs=`$ECHO "X$dependency_libs " | $Xsed -e 's% -L$path % %g'`
-      done
+      #for path in $notinst_path; do
+      #	lib_search_path=`$ECHO "X$lib_search_path " | $Xsed -e "s% $path % %g"`
+      #	deplibs=`$ECHO "X$deplibs " | $Xsed -e "s% -L$path % %g"`
+      #	dependency_libs=`$ECHO "X$dependency_libs " | $Xsed -e "s% -L$path % %g"`
+      #done
 
       if test -n "$xrpath"; then
 	# If the user specified any rpath flags, then add them.

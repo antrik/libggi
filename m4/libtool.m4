@@ -2157,7 +2157,7 @@ freebsd* | dragonfly*)
     shlibpath_overrides_runpath=no
     hardcode_into_libs=yes
     ;;
-  freebsd*) # from 4.6 on
+  *) # from 4.6 on, and DragonFly
     shlibpath_overrides_runpath=yes
     hardcode_into_libs=yes
     ;;
@@ -6748,6 +6748,7 @@ do
     done
   done
 done
+IFS=$as_save_IFS
 lt_ac_max=0
 lt_ac_count=0
 # Add /usr/xpg4/bin/sed as it is typically found on Solaris
