@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.38 2006/02/04 22:11:46 soyt Exp $
+/* $Id: visual.c,v 1.39 2006/03/17 14:37:17 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -28,6 +28,7 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
@@ -36,12 +37,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "ddinit.h"
-
-
-typedef struct {
-	HANDLE hWnd;
-	HINSTANCE hInstance;
-} GGIGII, *lpGGIGII;
 
 
 static const gg_option optlist[] = {
@@ -64,12 +59,12 @@ static const gg_option optlist[] = {
 
 
 static int
-GGI_directx_setflags(ggi_visual *vis, ggi_flags flags)
+GGI_directx_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis);
+		ggiFlush(vis->stem);
 	/* Clear out unknown flags */
 	LIBGGI_FLAGS(vis) = flags & GGIFLAG_ASYNC;
 
@@ -84,7 +79,7 @@ GGI_directx_setflags(ggi_visual *vis, ggi_flags flags)
 }
 
 static int
-GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
+GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
@@ -104,12 +99,12 @@ GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
 
 
 static int
-GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
-	const char *args, void *argptr, uint32_t * dlret)
+GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+	const char *args, void *argptr, uint32_t *dlret)
 {
 	int err = GGI_OK;
 	directx_priv *priv;
-	GGIGII ggigii;
+	gii_inputdx_arg inputdx;
 	gg_option options[NUM_OPTS];
 
 	DPRINT("DirectX-target starting\n");
@@ -201,8 +196,9 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		goto err3;
 	}
 
-	ggigii.hWnd = priv->hWnd;
-	ggigii.hInstance = priv->hInstance;
+	inputdx.hWnd = priv->hWnd;
+	inputdx.settings_changed = NULL;
+	inputdx.settings_changed_arg = NULL;
 
 	if (tolower((uint8_t) options[OPT_NOINPUT].result[0]) == 'n' &&
 	    /* FIXME: dxinput doesn't work with -inwin yet; the following
@@ -210,9 +206,15 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	       specified */
 	    (!priv->hParent ||
 	     getenv("GGI_INPUT") || getenv("GGI_INPUT_directx"))) {
-		gii_input *inp;
+		struct gg_module *inp;
+		struct gg_api *gii;
 
-		inp = giiOpen("directx", &ggigii, NULL);
+		if ((gii = ggGetAPIByName("gii")) != NULL) {
+			if (STEM_HAS_API(vis->stem, gii)) {
+				inp = ggOpenModule(gii, vis->stem, "input-directx", NULL, &inputdx);
+			}
+		}
+
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open directx inputlib\n");
 			GGIclose(vis, dlh);
@@ -221,11 +223,17 @@ GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 		}
 
 		priv->inp = inp;
+#if 0
+FIXME
 		/* Now join the new event source in. */
 		vis->input = giiJoinInputs(vis->input, inp);
+#endif
 	} else {
 		priv->inp = NULL;
 	}
+
+	priv->settings_changed = inputdx.settings_changed;
+	priv->settings_changed_arg = inputdx.settings_changed_arg;
 
 	vis->opdisplay->setmode = GGI_directx_setmode;
 	vis->opdisplay->getmode = GGI_directx_getmode;

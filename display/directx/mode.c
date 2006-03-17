@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.40 2006/01/17 22:56:12 pekberg Exp $
+/* $Id: mode.c,v 1.41 2006/03/17 14:37:17 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -42,7 +42,7 @@ static int
 directx_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_directbuffer *dbuf;
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	directx_priv *priv;
 	int bufnum;
 
@@ -93,7 +93,7 @@ directx_release(ggi_resource *res)
 }
 
 int
-GGI_directx_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+GGI_directx_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	GGI_directx_Lock(priv->cs);
@@ -103,7 +103,7 @@ GGI_directx_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 }
 
 int
-GGI_directx_getapi(ggi_visual * vis, int num, char *apiname, char *arguments)
+GGI_directx_getapi(struct ggi_visual * vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch (num) {
@@ -156,7 +156,7 @@ depth_to_graphtype(int depth)
 }
 
 static int
-do_checkmode(ggi_visual *vis, ggi_mode *mode)
+do_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int err = GGI_OK;
@@ -302,13 +302,13 @@ do_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 
 int
-GGI_directx_checkmode(ggi_visual *vis, ggi_mode *mode)
+GGI_directx_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	return do_checkmode(vis, mode);
 }
 
 static int
-compatible_mode(ggi_visual *vis, ggi_mode *mode)
+compatible_mode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
@@ -326,7 +326,7 @@ compatible_mode(ggi_visual *vis, ggi_mode *mode)
 }
 
 static void
-free_dbs(ggi_visual *vis)
+free_dbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -337,7 +337,7 @@ free_dbs(ggi_visual *vis)
 }
 
 int
-GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
+GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int i, id, ret;
@@ -463,7 +463,7 @@ GGI_directx_setmode(ggi_visual *vis, ggi_mode *mode)
 
 
 int
-GGI_directx_getmode(ggi_visual *vis, ggi_mode *tm)
+GGI_directx_getmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
@@ -523,7 +523,7 @@ GGI_directx_setpalvec(struct ggi_visual *vis,
 }
 
 int
-GGI_directx_setorigin(ggi_visual *vis, int x, int y)
+GGI_directx_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	if (x < 0)
 		return GGI_EARGINVAL;
@@ -541,7 +541,7 @@ GGI_directx_setorigin(ggi_visual *vis, int x, int y)
 }
 
 int
-GGI_directx_setdisplayframe(ggi_visual *vis, int num)
+GGI_directx_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 

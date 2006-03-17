@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.52 2006/01/17 22:56:12 pekberg Exp $
+/* $Id: ddinit.c,v 1.53 2006/03/17 14:37:16 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -27,6 +27,7 @@
 */
 
 #include "config.h"
+#undef HANDLE
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include "ddinit.h"
@@ -38,8 +39,8 @@
 #endif
 
 static void DDCreateClass(directx_priv *priv);
-static int DDCreateWindow(ggi_visual *vis);
-static int DDCreateThread(ggi_visual *vis);
+static int DDCreateWindow(struct ggi_visual *vis);
+static int DDCreateThread(struct ggi_visual *vis);
 static int DDCreateSurface(directx_priv *priv, ggi_mode *mode);
 static void DDDestroySurface(directx_priv *priv);
 static void DDChangeWindow(directx_priv *priv, DWORD width, DWORD height);
@@ -48,7 +49,7 @@ static long FAR PASCAL
 WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int
-GGI_directx_DDInit(ggi_visual *vis)
+GGI_directx_DDInit(struct ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* get the application instance */
@@ -138,7 +139,7 @@ GGI_directx_DDShutdown(directx_priv *priv)
 
 typedef struct matchmode
 {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	ggi_mode *mode;
 	int x, y;
 	int bestx, besty;
@@ -229,7 +230,7 @@ next:
 }
 
 int
-GGI_directx_DDMatchMode(ggi_visual *vis, ggi_mode *mode,
+GGI_directx_DDMatchMode(struct ggi_visual *vis, ggi_mode *mode,
 	    int *depth, int *defwidth, int *defheight)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
@@ -258,7 +259,7 @@ GGI_directx_DDMatchMode(ggi_visual *vis, ggi_mode *mode,
 }
 
 int
-GGI_directx_DDChangeMode(ggi_visual *vis, ggi_mode *mode)
+GGI_directx_DDChangeMode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	/* destroy any existing surface */
@@ -284,7 +285,7 @@ GGI_directx_DDChangeMode(ggi_visual *vis, ggi_mode *mode)
 }
 
 void
-GGI_directx_DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
+GGI_directx_DDRedraw(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
@@ -326,7 +327,7 @@ GGI_directx_DDRedraw(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 void
-GGI_directx_DDRedrawAll(ggi_visual *vis)
+GGI_directx_DDRedrawAll(struct ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	RECT SrcWinPos, DestWinPos;
@@ -355,8 +356,10 @@ GGI_directx_DDRedrawAll(ggi_visual *vis)
 /* internal routines ********************************************************/
 
 static void
-DDNotifyResize(ggi_visual *vis, int xsize, int ysize)
+DDNotifyResize(struct ggi_visual *vis, int xsize, int ysize)
 {
+#if 0
+FIXME
 	ggi_event ev;
 	ggi_cmddata_switchrequest *swreq;
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
@@ -402,11 +405,12 @@ DDNotifyResize(ggi_visual *vis, int xsize, int ysize)
 	swreq->mode.size.y = GGI_AUTO;
 
 	_giiSafeAdd(priv->inp, &ev);
+#endif
 }
 
 
 static void
-DDSizing(ggi_visual *vis, WPARAM wParam, LPRECT rect)
+DDSizing(struct ggi_visual *vis, WPARAM wParam, LPRECT rect)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int xsize, ysize;
@@ -491,7 +495,7 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT dirty;
 	HDC hdc;
-	ggi_visual *vis = (ggi_visual *) GetWindowLong(hWnd, GWL_USERDATA);
+	struct ggi_visual *vis = (struct ggi_visual *) GetWindowLong(hWnd, GWL_USERDATA);
 	directx_priv *priv = NULL;
 	HRESULT hr;
 
@@ -648,18 +652,10 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_SETTINGCHANGE:
-		if (priv->inp) {
-			gii_event ev;
-
+		if (priv->settings_changed) {
 			DPRINT("tell inputlib about "
-				  "new system parameters\n");
-
-			ev.cmd.size = sizeof(gii_cmd_event);
-			ev.cmd.type = evCommand;
-			ev.cmd.target = priv->inp->origin;
-			ev.cmd.code = GII_CMDCODE_DXSETTINGCHANGE;
-
-			giiEventSend(priv->inp, &ev);
+				"new system parameters\n");
+			priv->settings_changed(priv->settings_changed_arg);
 			return 0;
 		}
 		break;
@@ -713,7 +709,7 @@ DDCreateClass(directx_priv *priv)
 /* create the GGI window */
 
 static int
-DDCreateWindow(ggi_visual *vis)
+DDCreateWindow(struct ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	int w = 640, h = 480;	/* default window size */
@@ -772,7 +768,7 @@ static unsigned __stdcall
 DDEventLoop(void *lpParm)
 {
 	MSG msg;
-	ggi_visual *vis = (ggi_visual *) lpParm;
+	struct ggi_visual *vis = (struct ggi_visual *) lpParm;
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	priv->nThreadID = GetCurrentThreadId();
@@ -837,7 +833,7 @@ DDEventLoop(void *lpParm)
 }
 
 static int
-DDCreateThread(ggi_visual *vis)
+DDCreateThread(struct ggi_visual *vis)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	priv->hInit = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -866,7 +862,7 @@ DDCreateThread(ggi_visual *vis)
 
 
 int
-GGI_directx_DDChangePalette(ggi_visual *vis)
+GGI_directx_DDChangePalette(struct ggi_visual *vis)
 {
 	directx_priv *priv = LIBGGI_PRIVATE(vis);
 	int start       = LIBGGI_PAL(vis)->rw_start;

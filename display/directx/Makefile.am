@@ -1,6 +1,6 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.directx"'
 INCLUDES = -I$(top_srcdir)/include
-libdirectx_la_LIBADD = -lddraw -lgdi32 -luser32
+libdirectx_la_LIBADD = -lgg -lddraw -lgdi32 -luser32
 
 noinst_LTLIBRARIES = libdirectx.la
 

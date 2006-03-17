@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.17 2005/01/27 08:17:16 pekberg Exp $
+/* $Id: directx.h,v 1.18 2006/03/17 14:37:15 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -29,9 +29,11 @@
 #ifndef _GGI_DISPLAY_DIRECTX_H
 #define _GGI_DISPLAY_DIRECTX_H
 
+#include <ggi/gg.h>
 #include <ggi/internal/ggi-dl.h>
 #include <windows.h>
 #include <ddraw.h>
+#include <ggi/input/directx.h>
 
 #define GGI_DISPLAY_DIRECTX_FRAMES (16)
 
@@ -76,8 +78,7 @@ typedef struct directx_priv
 	int cursortype;
 	HCURSOR hCursor;
 	UINT timer_id;
-
-	gii_input *inp;
+	struct gg_module *inp;
 	HANDLE cs;
 	HANDLE spincs;
 	int redraw;
@@ -100,6 +101,9 @@ typedef struct directx_priv
 	int ymax;
 	int xstep;
 	int ystep;
+
+	gii_inputdx_settings_changed *settings_changed;
+	void *settings_changed_arg;
 
 	HANDLE hThread, hInit;
 	DWORD nThreadID;
