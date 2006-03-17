@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.20 2005/07/30 11:58:39 cegger Exp $
+/* $Id: cube3d.c,v 1.21 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -831,7 +831,7 @@ int main(int argc, char **argv)
 		sprintf(text, "display-memory:-input:shmid:%d", shmid[x]);
 
 		if ((memvis[x] = ggiOpen(text, NULL)) == NULL) {
-			ggiPanic("Ouch - can't open the shmem target %d !",
+			ggPanic("Ouch - can't open the shmem target %d !",
 				 x);
 		}
 
@@ -843,7 +843,7 @@ int main(int argc, char **argv)
 
 		/* Check for errors */
 		if (err)
-			ggiPanic
+			ggPanic
 			    ("Ouch - can't setmode on shmem target %d !",
 			     x);
 

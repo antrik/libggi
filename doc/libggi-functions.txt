@@ -185,7 +185,7 @@ Open and closing default visual::
   ggi_visual_t vis = ggiOpen(NULL);
 
   if(vis==NULL) {
-        ggiPanic("Couldn't open default visual!\n");
+        ggPanic("Couldn't open default visual!\n");
   }
 
   /* do stuff */

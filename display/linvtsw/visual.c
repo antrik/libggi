@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.13 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -470,7 +470,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err;
 
 	if (myargs == NULL) {
-		ggiPanic("Target tried to use linvtsw helper in a wrong way!\n");
+		ggPanic("Target tried to use linvtsw helper in a wrong way!\n");
 	}
 
 	DPRINT_MISC("L/vtswitch: GGIdlinit(%p,...) called\n", vis);

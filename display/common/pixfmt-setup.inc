@@ -1,4 +1,4 @@
-/* $Id: pixfmt-setup.inc,v 1.2 2004/11/14 15:47:44 cegger Exp $
+/* $Id: pixfmt-setup.inc,v 1.3 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Set up vis->pixfmt for 'default' modes when the target doesn't care. 
@@ -78,7 +78,7 @@ static int setup_pixfmt(ggi_pixelformat *pixfmt, ggi_graphtype gt)
 	}
 
 
-	ggiPanic("SETUP_PIXFMT: called with unsupported graphtype!"
+	ggPanic("SETUP_PIXFMT: called with unsupported graphtype!"
 		" (0x%08x)\n"
 		"Please report this error to the target maintainer", gt);
 

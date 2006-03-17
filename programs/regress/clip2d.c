@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.28 2005/06/09 19:16:32 cegger Exp $
+/* $Id: clip2d.c,v 1.29 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -478,7 +478,7 @@ int main(int argc, char * const argv[])
 
 	rc = ggiCheckSimpleMode(vis, MODE_SIZE_X, MODE_SIZE_Y, 1, GT_AUTO, &tm);
 	rc = ggiSetMode(vis, &tm);
-	if (rc < 0) ggiPanic("Mode initialization failed.");
+	if (rc < 0) ggPanic("Mode initialization failed.");
 
 	if(tm.graphtype & GT_PALETTE)
 		ggiSetColorfulPalette(vis);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.19 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -110,7 +110,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* Avoid overflowing tables. If someone ever needs more than
 		   256 we'll do dynamic allocation instead. */
 		if (i==MAX_VISUALS) {
-			ggiPanic("display-tile: FIXME: visual limit reached!\n");
+			ggPanic("display-tile: FIXME: visual limit reached!\n");
 		}
 
 		err = GGI_EARGINVAL;

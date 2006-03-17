@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/03/12 23:15:09 soyt Exp $
+/* $Id: visual.c,v 1.11 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -76,7 +76,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT("rfb is this big: %d\n",__localrfb_len);
 		DPRINT("wfb is this big: %d\n",__localwfb_len);
 	} else {
-		ggiPanic("linmm_banked: NULL mode provided...\n");
+		ggPanic("linmm_banked: NULL mode provided...\n");
 		return GGI_ENOFUNC;
 	}
 

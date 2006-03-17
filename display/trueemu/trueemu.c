@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.7 2005/06/09 18:20:36 cegger Exp $
+/* $Id: trueemu.c,v 1.8 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -405,7 +405,7 @@ static int lookup_pastel(int r, int g, int b)
 
 	/* Oops, pastel array has a hole in it */
 
-	ggiPanic("Pastel array has a hole in it.\n");
+	ggPanic("Pastel array has a hole in it.\n");
 	return 0;
 }
 

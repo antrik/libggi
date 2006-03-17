@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.5 2005/07/31 15:30:36 soyt Exp $
+/* $Id: Gx00_accel.h,v 1.6 2006/03/17 21:55:41 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -237,7 +237,7 @@ static inline void GX00_RESET(ggi_visual_t vis, mga_dma_buffer_type_t type)
       GX00_WRITE_u32(vis, MGAG_ACCEL_TAG_WARP_TRIANGLE_LIST);
       break;
     default:
-      ggiPanic("Unknown reset buffer type (%i)", type);
+      ggPanic("Unknown reset buffer type (%i)", type);
       break;
     }
   GX00_CONTEXT(vis)->type = type;
@@ -246,7 +246,7 @@ static inline void GX00_RESET(ggi_visual_t vis, mga_dma_buffer_type_t type)
 static void _GX00_REGS_FINALIZE(ggi_visual_t vis)
 {
   if (GX00_CONTEXT(vis)->type != MGA_DMA_GENERAL_PURPOSE)
-    ggiPanic("Trying to flush regs to a non general purpose DMA!");
+    ggPanic("Trying to flush regs to a non general purpose DMA!");
 
   /* Finish the output */
   switch (GX00_CONTEXT(vis)->entry)
@@ -361,7 +361,7 @@ static inline void GX00_FLUSH_START(ggi_visual_t vis)
 static void GX00_WRITE_REG(ggi_visual_t vis, kgi_u32_t val, kgi_u32_t reg)
 {
   if (GX00_CONTEXT(vis)->type != MGA_DMA_GENERAL_PURPOSE)
-    ggiPanic("Trying to write a register to a non general purpose DMA!");
+    ggPanic("Trying to write a register to a non general purpose DMA!");
 
 #ifdef GX00_ACCEL_DEBUG_2
   fprintf(stderr, "Writing %.8x to reg %.8x reg\n", val, reg);
@@ -396,7 +396,7 @@ static void GX00_WRITE_REG(ggi_visual_t vis, kgi_u32_t val, kgi_u32_t reg)
       GX00_CONTEXT(vis)->entry = MGA_DMA_FIRST_ENTRY;
       break;
     case MGA_DMA_NOMORE_ENTRY:
-      ggiPanic("Incorrect DMA entry state!");
+      ggPanic("Incorrect DMA entry state!");
       break;
     }
 }
@@ -433,7 +433,7 @@ static void GX00_WRITE_TRIANGLE(ggi_visual_t vis,
   uint32_t *ptr;
 
   if (GX00_CONTEXT(vis)->type != MGA_DMA_VERTEX_TRIANGLE_LIST)
-    ggiPanic("Trying to write a triangle to a non-triangle list DMA!");
+    ggPanic("Trying to write a triangle to a non-triangle list DMA!");
 
   if (GX00_SPACE(vis) < (3 * (sizeof(mga_vertex_t)/4)))
     {

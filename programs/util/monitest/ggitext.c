@@ -1,4 +1,4 @@
-/* $Id: ggitext.c,v 1.5 2005/07/30 08:43:03 soyt Exp $
+/* $Id: ggitext.c,v 1.6 2006/03/17 21:55:43 cegger Exp $
 ******************************************************************************
 
    Implementation of ggitext: routines for formatted text output
@@ -186,7 +186,7 @@ int ggiGraphTextLongPuts(ggi_visual_t vis,
 		/*printf ("allocating line header");*/
 		currline->next = (struct line *) malloc(sizeof(struct line));
 		if (currline->next == NULL){
-			ggiPanic("Out of memory");
+			ggPanic("Out of memory");
 		}
 		currline = currline -> next;
 		currline -> next = NULL;
@@ -211,7 +211,7 @@ int ggiGraphTextLongPuts(ggi_visual_t vis,
 		tmpdest = (char *) malloc(sizeof(char)*
 					  (currline->cpl+1));
 		if ( (currline->text = tmpdest) == NULL){
-			ggiPanic("Out of memory");
+			ggPanic("Out of memory");
 		}
 		currline -> width  = 0;
 		currline -> height = 0;

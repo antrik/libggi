@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.9 2005/07/30 11:58:39 cegger Exp $
+/* $Id: slimy.c,v 1.10 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -193,7 +193,7 @@ static void InitGraphics(void)
 	}
 
 	if (!(disp = ggiOpen(NULL))) {
-		ggiPanic("Unable to open default visual, exiting.\n");
+		ggPanic("Unable to open default visual, exiting.\n");
 	}
 
 	ggiSetFlags(disp, GGIFLAG_ASYNC);

@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.10 2005/07/30 11:58:40 cegger Exp $
+/* $Id: monitest.c,v 1.11 2006/03/17 21:55:43 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -246,7 +246,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.10 2005/07/30 11:58:40 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.11 2006/03/17 21:55:43 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -478,7 +478,7 @@ static int changeresmenu(void)
 			testpattern(vis);	/* clear menu */
 			return (0);
 		default:
-			ggiPanic("Internal error, wrong menu selection");
+			ggPanic("Internal error, wrong menu selection");
 		}
 		/* try mode */
 		if (ggiCheckSimpleMode
@@ -570,7 +570,7 @@ static int mainmenu(void)
 			return 0;
 			break; /* never get here */
 		default:
-			ggiPanic("Internal error, wrong menu selection");
+			ggPanic("Internal error, wrong menu selection");
 		}
 	}
 	return 0; /* never get here */
@@ -599,7 +599,7 @@ int main(int argc, char **argv)
 
 	vis = ggiOpen(NULL);	/* Null gives the default visual */
 	if (vis == NULL) {
-		ggiPanic("unable to open default visual, exiting.\n");
+		ggPanic("unable to open default visual, exiting.\n");
 	}
 
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
@@ -616,7 +616,7 @@ int main(int argc, char **argv)
 	printf("\n");
 
 	if (ggiSetMode(vis, &mo) != 0) {
-		ggiPanic("unable to set any mode at all, exiting!\n");
+		ggPanic("unable to set any mode at all, exiting!\n");
 		return 2;
 	}
 

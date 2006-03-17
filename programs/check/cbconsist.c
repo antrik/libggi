@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.18 2005/07/30 11:58:39 cegger Exp $
+/* $Id: cbconsist.c,v 1.19 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -359,7 +359,7 @@ int main(int argc, char **argv)
 		ggiCheckSimpleMode(s.svis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.smode);
 		if (ggiSetMode(s.svis, &s.smode) < 0) {
-			ggiPanic("Source Visual: Mode setting failed!\n");
+			ggPanic("Source Visual: Mode setting failed!\n");
 			exit(1);
 		}
 		if (GT_SCHEME(s.smode.graphtype) == GT_PALETTE)
@@ -380,7 +380,7 @@ int main(int argc, char **argv)
 		ggiCheckSimpleMode(s.dvis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.dmode);
 		if (ggiSetMode(s.dvis, &s.dmode)) {
-			ggiPanic("Destination Visual: Mode setting failed!\n");
+			ggPanic("Destination Visual: Mode setting failed!\n");
 			exit(1);
 		}
 		if (GT_SCHEME(s.dmode.graphtype) == GT_PALETTE)

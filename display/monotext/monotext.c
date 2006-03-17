@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.9 2005/07/30 10:58:26 cegger Exp $
+/* $Id: monotext.c,v 1.10 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -485,7 +485,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 		priv->do_blit = &blitter_4x4;
 
 	} else {
-		ggiPanic("display-monotext: INTERNAL ERROR: "
+		ggPanic("display-monotext: INTERNAL ERROR: "
 			"ACCURACY %dx%d not supported.\n", 
 			priv->accuracy.x, priv->accuracy.y);
 		exit(1);

@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.13 2005/06/09 19:10:40 cegger Exp $
+/* $Id: wrap.c,v 1.14 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -129,7 +129,7 @@ static void init_client(client_t * client, ggi_mode * mode,
 	sprintf(text, "display-memory:-input:shmid:%d", client->shmid);
 
 	if ((client->visual = ggiOpen(text, NULL)) == NULL) {
-		ggiPanic("Ouch - can't open the shmem target !");
+		ggPanic("Ouch - can't open the shmem target !");
 	}	/* if */
 
 	mode->frames = 1;

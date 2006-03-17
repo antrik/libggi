@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.12 2005/07/30 11:58:39 cegger Exp $
+/* $Id: flying_ggis.c,v 1.13 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -462,7 +462,7 @@ int main(int argc, char **argv)
         vis = ggiOpen(target_str, NULL);
 
         if (vis == NULL) {
-                ggiPanic("Failed to open visual.\n");
+                ggPanic("Failed to open visual.\n");
         }
 
 	if(async)
@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 	ggiCheckMode(vis, &vis_mode);
 
         if (ggiSetMode(vis, &vis_mode) < 0) {
-		ggiPanic("%s: mode refused.\n", argv[0]);
+		ggPanic("%s: mode refused.\n", argv[0]);
 	}
 	
         setup_palette();

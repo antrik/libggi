@@ -1,4 +1,4 @@
-/* $Id: mansync.inc.c,v 1.3 2004/10/11 19:01:23 cegger Exp $
+/* $Id: mansync.inc.c,v 1.4 2006/03/17 21:55:43 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for correct mansync usage.
@@ -149,7 +149,7 @@ int main(int argc, char * const argv[])
 	printdesc("Regression testsuite for display-x(7).\n\n");
 
 	rc = ggiInit();
-	if (rc < 0) ggiPanic("Couldn't initialize libggi");
+	if (rc < 0) ggPanic("Couldn't initialize libggi");
 
 	testcase1("See, if mansync actually runs in SYNC mode - sets up the mode the same way as XGGI does");
 

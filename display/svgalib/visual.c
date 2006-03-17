@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.26 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -351,7 +351,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         }
 	
 	if (__svgalib_tty_fd == GSW_MAGIC) {
-		ggiPanic("SVGAlib target called from the SVGAlib wrapper!"
+		ggPanic("SVGAlib target called from the SVGAlib wrapper!"
 			 " Terminating.\n");
 	}
 	

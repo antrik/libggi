@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/03/12 23:15:06 soyt Exp $
+/* $Id: visual.c,v 1.13 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 acceleration sublib for kgi display target
@@ -99,7 +99,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	    maccess |= MACCESS_PWIDTH_PW24;
 	    break;
 	  default:
-	    ggiPanic("Unknown depth size!");
+	    ggPanic("Unknown depth size!");
 	    break;
 	  }
 	  /* TODO: check? -- ortalo: maccess |= MACCESS_NODITHER; */

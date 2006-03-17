@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.7 2005/07/30 08:43:02 soyt Exp $
+/* $Id: stars.c,v 1.8 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 	vis = InitVisual(NULL);	/* Null gives the default visual */
 	if (vis == NULL) {
-		ggiPanic("unable to open default visual, exiting.\n");
+		ggPanic("unable to open default visual, exiting.\n");
 	}
 	InitStars();
 
@@ -220,7 +220,7 @@ void SetupNewVisual(ggi_visual_t setvis)
 		ggi_color *Palette = malloc(sizeof(ggi_color) * nocols);
 
 		if (Palette == NULL) {
-			ggiPanic("Unable to allocate temporary memory!\n");
+			ggPanic("Unable to allocate temporary memory!\n");
 		}
 
 		for (i = 0; i < nocols; i++) {
@@ -259,7 +259,7 @@ ggi_visual_t InitVisual(const char *visname)
 
 	if (ggiSetSimpleMode(newvis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO)
 	    != 0) {
-		ggiPanic("Cannot set default mode!\n");
+		ggPanic("Cannot set default mode!\n");
 	}
 
 	SetupNewVisual(newvis);

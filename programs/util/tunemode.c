@@ -1,4 +1,4 @@
-/* $Id: tunemode.c,v 1.7 2005/07/30 11:58:39 cegger Exp $
+/* $Id: tunemode.c,v 1.8 2006/03/17 21:55:43 cegger Exp $
 ***********************************************************************
 
    Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
@@ -99,7 +99,7 @@ void parse_file(char *name)
 	FILE *infile;
 
 	if ((infile = fopen(name, "r")) == NULL)
-		ggiPanic("Can't open input-file !");
+		ggPanic("Can't open input-file !");
 
 	while (!feof(infile)) {
 		fgets(buffer, 1024, infile);
@@ -533,7 +533,7 @@ void download(void)
 	int x;
 
 	if (ggi_ioctl(MONITOR_CLEARPREF, NULL))
-		ggiPanic
+		ggPanic
 		    ("Clear preferred modes failed.Is the timelist-driver loaded ?");
 
 	for (x = 0; x < pref_num; x++) {

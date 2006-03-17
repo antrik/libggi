@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.11 2005/07/30 11:58:39 cegger Exp $
+/* $Id: saver.c,v 1.12 2006/03/17 21:55:42 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -63,7 +63,7 @@ static int getic(void)
 
 	if ((hand = fopen("/proc/interrupts", "r")) == NULL) {
 		perror("open /proc/interrupts");
-		ggiPanic("Do you have /proc mounted ?\n");
+		ggPanic("Do you have /proc mounted ?\n");
 	}
 
 	while (!feof(hand)) {
@@ -454,7 +454,7 @@ static void blank_screen2(int interactive)
 
 	if (ggiSetSimpleMode
 	    (visual, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT)) {
-		ggiPanic("Cannot open one of the default modes.");
+		ggPanic("Cannot open one of the default modes.");
 	} else {
 		ggi_mode mode;
 
@@ -560,14 +560,14 @@ int main(int argc, char *argv[])
 				if (++cnt >= timeout) {
 					if ((visual =
 					     ggiOpen(NULL)) == NULL) {
-						ggiPanic
+						ggPanic
 						    ("cannot open default visual.\n");
 					}
 
 					if (ggiSetSimpleMode
 					    (visual, GGI_AUTO, GGI_AUTO,
 					     GGI_AUTO, GT_8BIT)) {
-						ggiPanic
+						ggPanic
 						    ("cannot set 8bpp mode.");
 					} else {
 						ggi_mode mode;

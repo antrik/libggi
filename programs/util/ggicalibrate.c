@@ -1,4 +1,4 @@
-/* $Id: ggicalibrate.c,v 1.5 2004/09/18 10:37:59 cegger Exp $
+/* $Id: ggicalibrate.c,v 1.6 2006/03/17 21:55:43 cegger Exp $
 ******************************************************************************
 
    h3600 GGI calibration Application
@@ -420,7 +420,7 @@ static int initGGI(void)
 	vis = ggiOpen(NULL, NULL);
 
 	if (vis == NULL) {
-		ggiPanic("Failed to open visual.\n");
+		ggPanic("Failed to open visual.\n");
 	}
 
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
@@ -428,7 +428,7 @@ static int initGGI(void)
 	ggiCheckMode(vis, &vis_mode);
 
 	if (ggiSetMode(vis, &vis_mode) < 0) {
-		ggiPanic("mode refused.\n");
+		ggPanic("mode refused.\n");
 	}
 
 	/* Find the colors "white" and "black". */
