@@ -11,7 +11,7 @@ bin_PROGRAMS = ${INSTDEMOS}
 noinst_PROGRAMS = demo flying_ggis pageflip saver slimy stars \
 	textdemo $(OPTDEMOS)
 
-libggi = ${top_builddir}/ggi/libggi.la -lgg
+libggi = ${top_builddir}/ggi/libggi.la -lgii -lgg
 
 # -lgg is needed for ggUSleep() and ggCurTime()
 demo_LDADD =  ${libggi}

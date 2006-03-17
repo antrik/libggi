@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.21 2005/07/30 11:58:39 cegger Exp $
+/* $Id: demo.c,v 1.22 2006/03/17 13:54:28 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -32,8 +32,10 @@
 
 /* Include the LibGGI declarations.
  */
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
+#include <ggi/ggi.h>
 
 /* Include the necessary headers used for e.g. error-reporting.
  */
@@ -103,6 +105,30 @@ static void usage(const char *prog)
 	exit(1);
 }
 
+
+int
+ggiKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+	int res;
+	printf("khbit?\n");
+	res = giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t);
+	printf(res != emZero ? "yes" : "no");
+	
+	return (res != emZero);
+}
+
+int
+ggiGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead((gii_input)vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
 /* Wait for a keypress. Shut down everything, if "q" is pressed.
  */
 static void waitabit(void)
@@ -121,15 +147,15 @@ static void waitabit(void)
 	{
 #if 1
 		struct timeval tv={5,0};
-		key=ggiEventPoll(vis,emKeyPress,&tv);
+		key=giiEventPoll((gii_input)vis,emKeyPress,&tv);
 		if (! (key & emKeyPress)) return;
 		key = ggiGetc(vis);
 #else
 		gii_event ev;
 		ggUSleep(5000000);
-		if (! (ggiEventsQueued(vis, emKeyPress | emKeyRepeat)))
+		if (! (giiEventsQueued((gii_input)vis, emKeyPress | emKeyRepeat)))
 			return;
-		ggiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+		giiEventRead((gii_input)vis, &ev, emKeyPress | emKeyRepeat);
 		key = ev.key.sym;
 #endif
 	} else {
@@ -376,14 +402,50 @@ int main(int argc, char **argv)
 	/* Set up the random number generator. */
 	srandom((unsigned)time(NULL));
 
-	/* Initialize the GGI library. This must be called before any other 
-	 * GGI function. Otherwise behaviour is undefined.
+	/* Initialize the GII library. This must be called before any other
+	 * GII function.
 	 */
-	if (ggiInit() != 0) {
-		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
-			prog);
+	if (ggInitAPI(libgii) != 0) {
+		fprintf(stderr, "%s: unable to initialize libgii, exiting.\n",
+			argv[0]);
 		exit(1);
 	}
+
+	/* Initialize the GGI library. This must be called before any other
+	 * GGI function.
+	 */
+	if (ggInitAPI(libggi) != 0) {
+		fprintf(stderr, "%s: unable to initialize libggi, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+	/* Create a new stem
+	 */
+	if((vis = ggNewStem()) == NULL) {
+		fprintf(stderr, "%s: unable to create new stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+	/* Bless that stem with the LibGII API.
+	 */
+	if(ggAttach(libgii, vis) < 0) {
+		fprintf(stderr, "%s: unable to attach libgii, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+	/* Bless that stem with the LibGGI API.
+	 */
+	if(ggAttach(libggi, vis) < 0) {
+		fprintf(stderr, "%s: unable to attach libggi, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+        /* First test the nulldevice ...
+	 */
 
 	if (target_name == NULL) {
 
@@ -393,7 +455,7 @@ int main(int argc, char **argv)
 		 * GGI_DISPLAY environment variable.
 		 */
 
-		vis=ggiOpen(NULL);
+		err=ggiOpen(vis, NULL);
 	} else {
 
 		/* Open a specific visual.  Note the NULL, which is used
@@ -402,10 +464,10 @@ int main(int argc, char **argv)
 		 * having either 0 or 1 names in the list).
 		 */
 		
-		vis=ggiOpen(target_name, NULL);
+		err=ggiOpen(vis, target_name, NULL);
 	}
 
-	if (vis == NULL) {
+	if (err) {
 		fprintf(stderr,
 			"%s: unable to open default visual, exiting.\n",
 			prog);
@@ -653,9 +715,16 @@ int main(int argc, char **argv)
 	 * in memory. You can draw on it as you would on a screen.
 	 * Nifty for preparing things in the background.
 	 */
-	if ((memvis=ggiOpen("display-memory", NULL)) == NULL) {
+	if ((memvis = ggNewStem()) == NULL)
 		goto no_mem_targ;
-	}
+
+	/* Bless that stem with the LibGGI API.
+	 */
+	if (ggAttach(libggi, memvis) < 0)
+		goto no_mem_targ;
+
+	if (ggiOpen(memvis, "display-memory", NULL))
+		goto no_mem_targ;
 
 	/* Set it to a small 32 bit mode. 
 	 */
