@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.22 2006/03/20 20:31:43 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -132,7 +132,7 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_ipc_priv *priv;
@@ -263,7 +263,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }	/* GGIopen */
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	_GGI_ipc_resetmode(vis);
 	shmdt(IPC_PRIV(vis)->memptr); 

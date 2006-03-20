@@ -1,4 +1,4 @@
-/* $Id: multi.h,v 1.4 2005/01/25 12:01:28 pekberg Exp $
+/* $Id: multi.h,v 1.5 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-multi: definitions
@@ -83,7 +83,7 @@ typedef struct multi_vis
 {
 	GG_SLIST_ENTRY(multi_vis) visuals;
 
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 
 	/* ... visual-specific info here */
 

@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
+/* $Id: trueemu.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -85,7 +85,7 @@
 typedef struct ggi_trueemu_priv {
 	int flags;
 
-	ggi_visual_t parent;
+	struct ggi_visual *parent;
 	ggi_mode mode;
 
 	/* framebuffer */
@@ -208,11 +208,11 @@ extern TrueemuBlits _ggi_trueemu_blit32_table;
  ****************************************************/
 
 
-extern int _ggi_trueemu_Open(ggi_visual *vis);
-extern int _ggi_trueemu_Close(ggi_visual *vis);
-extern int _ggi_trueemu_Transfer(ggi_visual*vis, int x, int y, int w, int h);
-extern int _ggi_trueemu_Flush(ggi_visual*vis);
-extern int _ggi_trueemu_NewMode(ggi_visual *vis);
+extern int _ggi_trueemu_Open(struct ggi_visual *vis);
+extern int _ggi_trueemu_Close(struct ggi_visual *vis);
+extern int _ggi_trueemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h);
+extern int _ggi_trueemu_Flush(struct ggi_visual *vis);
+extern int _ggi_trueemu_NewMode(struct ggi_visual *vis);
 
 
 /****************************************************
@@ -252,7 +252,7 @@ ggifunc_setdisplayframe	GGI_trueemu_setdisplayframe;
 ggifunc_setreadframe	GGI_trueemu_setreadframe;
 ggifunc_setwriteframe	GGI_trueemu_setwriteframe;
 
-extern int GGI_trueemu_resetmode(ggi_visual *vis);
+extern int GGI_trueemu_resetmode(struct ggi_visual *vis);
 
 
 #define MANSYNC_init(vis)   MANSYNC_DECL_INIT(TRUEEMU_PRIV(vis), vis)

@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
+/* $Id: tele.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -61,9 +61,9 @@ typedef struct {
 
 /* internal functions */
 
-int GGI_tele_resetmode(ggi_visual *vis);
+int GGI_tele_resetmode(struct ggi_visual *vis);
 
-int tele_receive_reply(ggi_visual *vis, TeleEvent *ev, long type, long seq);
+int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev, long type, long seq);
 
 giifunc_eventpoll GII_tele_poll;
 

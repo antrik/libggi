@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.17 2005/07/31 15:30:38 soyt Exp $
+/* $Id: kgi.h,v 1.18 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -88,7 +88,7 @@ kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource);
 
 typedef union ggi_accel ggi_accel_t;
 
-typedef ggi_accel_t *ggifunc_map_accel(ggi_visual_t vis, kgi_u_t resource,
+typedef ggi_accel_t *ggifunc_map_accel(struct ggi_visual_t vis, kgi_u_t resource,
                                        kgi_u_t min, kgi_u_t max,
 				       kgi_u_t buf, kgi_u_t priority);
 
@@ -99,7 +99,7 @@ ggifunc_getapi		GGI_kgi_getapi;
 ggifunc_setflags        GGI_kgi_setflags;
 
 ggifunc_setPalette	GGI_kgi_setPalette;
-size_t GGI_kgi_getPrivSize(ggi_visual_t);
+size_t GGI_kgi_getPrivSize(struct ggi_visual_t);
 ggifunc_map_accel       GGI_kgi_map_accelerator;
 
 #define KGI_PRIV(vis) ((ggi_kgi_priv *)LIBGGI_PRIVATE(vis))
@@ -127,8 +127,8 @@ typedef struct {
 	ggifunc_map_accel *map_accel;
 
 	/* Accelerator callbacks for frames/origin. */
-	int (*origin_changed)(ggi_visual_t vis);
-	int (*rwframes_changed)(ggi_visual_t vis);
+	int (*origin_changed)(struct ggi_visual_t vis);
+	int (*rwframes_changed)(struct ggi_visual_t vis);
 
 	/* Accelerator target private data pointer */
 	void *accel_priv;

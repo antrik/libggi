@@ -1,4 +1,4 @@
-/* $Id: xf86dga.h,v 1.5 2005/02/03 18:10:17 orzo Exp $
+/* $Id: xf86dga.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    XFree86 Direct Graphics Access target for LibGGI
@@ -136,7 +136,7 @@ ggifunc_setPalette GGI_xf86dga_setPalette;
 ggifunc_drawbox GGI_xf86dga_drawbox;
 ggifunc_copybox GGI_xf86dga_copybox;
 
-void _GGI_xf86dga_freedbs(ggi_visual *);
+void _GGI_xf86dga_freedbs(struct ggi_visual *);
 
 #define DGA_PRIV(vis) ((ggidga_priv *)LIBGGI_PRIVATE(vis))
 

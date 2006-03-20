@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.6 2005/07/31 15:30:39 soyt Exp $
+/* $Id: tile.h,v 1.7 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -89,7 +89,7 @@ typedef struct {
 
 	int numvis;
 	struct {
-		ggi_visual_t vis;
+		struct ggi_visual *vis;
 		ggi_coord origin;	/* Start of tile. Also clip area topleft. */
 		ggi_coord clipbr;	/* Clip area bottom right. */
 		ggi_coord size;		/* Dimensions of tile. */
@@ -112,6 +112,6 @@ typedef struct {
 
 
 /* Prototypes */
-void _GGI_tile_freedbs(ggi_visual *vis);
+void _GGI_tile_freedbs(struct ggi_visual *vis);
 
 #endif /* _GGI_DISPLAY_TILE_H */

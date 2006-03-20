@@ -1,4 +1,4 @@
-/* $Id: xlib.h,v 1.2 2005/07/31 15:30:39 soyt Exp $
+/* $Id: xlib.h,v 1.3 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-Xlib: data
@@ -75,7 +75,7 @@ typedef struct {
 #define GGIXLIB_PRIV(vis) ((ggi_xlib_priv *)LIBGGI_PRIVATE(vis))
 
 /* Defined in mode.c */
-int _ggi_x_resize (ggi_visual_t vis, int w, int h, ggi_event *ev);
+int _ggi_x_resize (struct ggi_visual *vis, int w, int h, ggi_event *ev);
 
 #define XLIB_DOSYNC(vis) \
 {\

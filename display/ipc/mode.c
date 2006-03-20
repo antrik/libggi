@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/03/20 20:31:43 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -41,7 +41,7 @@
 #include "../common/ggi-auto.inc"
 #include "../common/gt-auto.inc"
 
-static void _GGIfreedbs(ggi_visual *vis) 
+static void _GGIfreedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -55,7 +55,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 /*
  * _Attempt_ to get the default framebuffer.. 
  */
-static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
+static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 {
 	char *fbaddr;
 
@@ -90,7 +90,7 @@ static int alloc_fb(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_ipc_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
@@ -125,7 +125,7 @@ int GGI_ipc_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 	return GGI_ENOMATCH;
 }
 
-static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
+static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err, i;
 	char	name[GGI_MAX_APILEN];
@@ -162,7 +162,7 @@ static int _GGIdomode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
 
@@ -170,7 +170,7 @@ int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
 	
-	if ((err=ggiCheckMode(vis, mode)) != 0)	return err;
+	if ((err=ggiCheckMode(vis->stem, mode)) != 0)	return err;
 
 	/* some elements of the mode setup rely on this. */
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
@@ -190,13 +190,13 @@ int GGI_ipc_setmode(ggi_visual *vis, ggi_mode *mode)
 		IPC_PRIV(vis)->inputbuffer->visframe=0;
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 	DPRINT("display-ipc:GGIsetmode: change indicated\n",err);
 
 	return 0;
 }
 
-int GGI_ipc_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_ipc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 
@@ -255,7 +255,7 @@ int GGI_ipc_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;	
 }
 
-int GGI_ipc_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_ipc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_mode mymode;
 	DPRINT("display-ipc: GGIgetmode(%p,%p)\n", vis, mode);
@@ -274,7 +274,7 @@ int GGI_ipc_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int _GGI_ipc_resetmode(ggi_visual *vis)
+int _GGI_ipc_resetmode(struct ggi_visual *vis)
 {
 	DPRINT("display-ipc: GGIresetmode(%p)\n", vis);
 
@@ -283,7 +283,7 @@ int _GGI_ipc_resetmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_ipc_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_ipc_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 
@@ -292,7 +292,7 @@ int GGI_ipc_setflags(ggi_visual *vis,ggi_flags flags)
 	return 0;
 }
 
-int GGI_ipc_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
+int GGI_ipc_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	DPRINT("ipc setpalette.\n");
 	              

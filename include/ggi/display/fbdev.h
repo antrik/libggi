@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.9 2005/07/31 15:30:38 soyt Exp $
+/* $Id: fbdev.h,v 1.10 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -141,7 +141,7 @@ typedef struct {
 
 /* Multihead safe ioctls */
 #ifdef FBDEV_MH
-static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
+static inline int fbdev_doioctl(struct ggi_visual *vis, unsigned long req, void *arg)
 {
 	struct fb_con2fbmap conmap;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
@@ -172,7 +172,7 @@ static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
 	}
 }
 #else
-static inline int fbdev_doioctl(ggi_visual *vis, unsigned long req, void *arg)
+static inline int fbdev_doioctl(struct ggi_visual *vis, unsigned long req, void *arg)
 {
 	return ioctl(LIBGGI_FD(vis), req, arg);
 }

@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
+/* $Id: palemu.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -74,7 +74,7 @@
 typedef struct ggi_palemu_priv {
 	int flags;
 
-	ggi_visual_t parent;
+	struct ggi_visual *parent;
 	ggi_mode mode;
 
 	/* framebuffer */
@@ -116,10 +116,10 @@ typedef struct ggi_palemu_priv {
  ****************************************************/
 
 
-extern int _ggi_palemu_Open(ggi_visual *vis);
-extern int _ggi_palemu_Close(ggi_visual *vis);
-extern int _ggi_palemu_Transfer(ggi_visual*vis, int x, int y, int w, int h);
-extern int _ggi_palemu_Flush(ggi_visual*vis);
+extern int _ggi_palemu_Open(struct ggi_visual *vis);
+extern int _ggi_palemu_Close(struct ggi_visual *vis);
+extern int _ggi_palemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h);
+extern int _ggi_palemu_Flush(struct ggi_visual*vis);
 
 
 /****************************************************
@@ -163,7 +163,7 @@ ggifunc_setdisplayframe	GGI_palemu_setdisplayframe;
 ggifunc_setreadframe	GGI_palemu_setreadframe;
 ggifunc_setwriteframe	GGI_palemu_setwriteframe;
 
-extern int GGI_palemu_resetmode(ggi_visual *vis);
+extern int GGI_palemu_resetmode(struct ggi_visual *vis);
 
 
 #define MANSYNC_init(vis)   MANSYNC_DECL_INIT(PALEMU_PRIV(vis), vis)

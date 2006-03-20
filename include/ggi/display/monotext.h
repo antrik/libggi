@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.4 2005/07/31 15:30:39 soyt Exp $
+/* $Id: monotext.h,v 1.5 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -95,7 +95,7 @@ ggifunc_setorigin	GGI_monotext_setorigin;
 ggifunc_setPalette	GGI_monotext_setPalette;
 
 typedef struct ggi_monotext_priv {
-	ggi_visual_t parent;
+	struct ggi_visual *parent;
 
 	int flags;
 	int parent_gt;
@@ -138,9 +138,9 @@ typedef struct ggi_monotext_priv {
  ****************************************************/
 
 
-extern int _ggi_monotextOpen(ggi_visual *vis);
-extern int _ggi_monotextClose(ggi_visual *vis);
-extern int _ggi_monotextUpdate(ggi_visual*vis, int x, int y, int w, int h);
-extern int _ggi_monotextFlush(ggi_visual*vis);
+extern int _ggi_monotextOpen(struct ggi_visual *vis);
+extern int _ggi_monotextClose(struct ggi_visual *vis);
+extern int _ggi_monotextUpdate(struct ggi_visual *vis, int x, int y, int w, int h);
+extern int _ggi_monotextFlush(struct ggi_visual*vis);
 
 #endif /* _GGI_DISPLAY_MONOTEXT_H */

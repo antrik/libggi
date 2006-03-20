@@ -1,4 +1,4 @@
-/* $Id: glide.h,v 1.3 2005/07/31 15:30:38 soyt Exp $
+/* $Id: glide.h,v 1.4 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target
@@ -93,7 +93,7 @@ ggifunc_getbox		GGI_glide_getbox;
 ggifunc_putc		GGI_glide16_putc;
 ggifunc_putc		GGI_glide32_putc;
 
-void _GGI_glide_freedbs(ggi_visual *vis);
+void _GGI_glide_freedbs(struct ggi_visual *vis);
 
 #define GLIDE_PRIV(vis) ((glide_priv *)LIBGGI_PRIVATE(vis))
 

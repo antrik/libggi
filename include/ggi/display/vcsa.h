@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.5 2005/07/31 15:30:39 soyt Exp $
+/* $Id: vcsa.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -75,7 +75,7 @@ ggifunc_gethline	GGI_vcsa_gethline;
 ggifunc_mapcolor	GGI_vcsa_mapcolor;
 ggifunc_unmappixel	GGI_vcsa_unmappixel;
 
-extern int GGI_vcsa_resetmode(ggi_visual *vis);
+extern int GGI_vcsa_resetmode(struct ggi_visual *vis);
 
 
 #endif /* _GGI_DISPLAY_VCSA_H */

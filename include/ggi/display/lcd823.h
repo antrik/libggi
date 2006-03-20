@@ -1,4 +1,4 @@
-/* $Id: lcd823.h,v 1.3 2005/07/31 15:30:39 soyt Exp $
+/* $Id: lcd823.h,v 1.4 2006/03/20 20:28:38 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -37,7 +37,7 @@ ggifunc_getapi		GGI_lcd823_getapi;
 ggifunc_setflags	GGI_lcd823_setflags;
 
 ggifunc_setPalette	GGI_lcd823_setPalette;
-size_t GGI_lcd823_getPrivSize(ggi_visual_t);
+size_t GGI_lcd823_getPrivSize(struct ggi_visual_t);
 ggifunc_setorigin	GGI_lcd823_setorigin;
 ggifunc_setdisplayframe	GGI_lcd823_setdisplayframe;
 
