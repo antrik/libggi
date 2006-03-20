@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.192 2006/03/20 12:56:12 pekberg Exp $
+dnl $Id: configure.in,v 1.193 2006/03/20 12:56:53 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -68,7 +68,7 @@ dnl PseudoTargets
 build_multi_target="yes"
 build_tile_target="auto"
 build_palemu_target="auto"
-build_truemu_target="auto"
+build_trueemu_target="auto"
 build_sub_target="auto"
 build_ipc_target="auto"
 build_tele_target="auto"
