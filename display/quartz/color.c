@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.2 2005/01/18 19:40:34 cegger Exp $
+/* $Id: color.c,v 1.3 2006/03/20 19:56:27 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -35,7 +35,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_quartz_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)
+int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	CGTableCount  i;
 	CGDeviceColor color;
@@ -145,7 +145,7 @@ int GGI_quartz_getgamma(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_flo
 }	/* GGI_quartz_getgamma */
 
 
-int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+int GGI_quartz_setgammamap(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	int i;
 	ggi_quartz_priv *priv;
@@ -200,7 +200,7 @@ int GGI_quartz_setgammamap(ggi_visual *vis, int start, int len, const ggi_color 
 }	/* GGI_quartz_setgammamap */
 
 
-int GGI_quartz_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_quartz_getgammamap(struct ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
 	ggi_quartz_priv *priv = QUARTZ_PRIV(vis);
 

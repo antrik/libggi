@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.15 2006/03/20 19:56:27 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -42,7 +42,7 @@
 
 
 
-int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_quartz_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	*arguments = '\0';
 
@@ -70,7 +70,7 @@ int GGI_quartz_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 }	/* GGI_quartz_getapi */
 
 
-static int _ggi_quartz_load_mode_libs(ggi_visual *vis)
+static int _ggi_quartz_load_mode_libs(struct ggi_visual *vis)
 {
 	int err, id;
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
@@ -88,7 +88,7 @@ static int _ggi_quartz_load_mode_libs(ggi_visual *vis)
 				"%s (%s)\n", sugname, args);
 		}
 	}
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	return 0;
 }	/* _ggi_quartz_load_mode_libs */
@@ -107,7 +107,7 @@ static int _GGInumberForKey( CFDictionaryRef desc, CFStringRef key )
 }	/* _GGInumberForKey */
 
 
-static int _ggi_load_slaveops(ggi_visual *vis)
+static int _ggi_load_slaveops(struct ggi_visual *vis)
 {
 	ggi_quartz_priv *priv;
 	priv = QUARTZ_PRIV(vis);
@@ -155,7 +155,7 @@ static int _ggi_load_slaveops(ggi_visual *vis)
 
 
 
-int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh)
+int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 {
 	int width, height;
 	ggi_mode mode;
@@ -209,7 +209,7 @@ int _GGI_quartz_updateWindowContext(ggi_visual *vis, int manualrefresh)
 }	/* _GGI_quartz_updateWindowContext */
 
 
-static void _GGIfreedbs(ggi_visual *vis)
+static void _GGIfreedbs(struct ggi_visual *vis)
 {
 	int i;
 	ggi_quartz_priv *priv;
@@ -222,7 +222,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 	}	/* for */
 
 	if (priv->memvis != NULL) {
-		ggiClose(priv->memvis);
+		ggiClose(priv->memvis->stem);
 		priv->memvis = NULL;
 	}
 	if (priv->fb != NULL) {
@@ -232,7 +232,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 }	/* _GGIfreedbs */
 
 
-static void _GGIallocdbs(ggi_visual *vis)
+static void _GGIallocdbs(struct ggi_visual *vis)
 {
 	char target[GGI_MAX_APILEN];
 	int i;
@@ -335,7 +335,7 @@ err0:
 
 
 
-static int GGI_quartz_checkmode_fullscreen(ggi_visual *vis, ggi_mode *mode)
+static int GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 	ggi_quartz_priv *priv;
@@ -439,7 +439,7 @@ static int GGI_quartz_checkmode_fullscreen(ggi_visual *vis, ggi_mode *mode)
 }	/* GGI_quartz_checkmode_fullscreen */
 
 
-static int GGI_quartz_checkmode_windowed(ggi_visual *vis, ggi_mode *mode)
+static int GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 
@@ -490,7 +490,7 @@ static int GGI_quartz_checkmode_windowed(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_quartz_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_quartz_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err;
 	ggi_quartz_priv *priv;
@@ -513,7 +513,7 @@ int GGI_quartz_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 
 
-static int GGI_quartz_setmode_fullscreen(ggi_visual *vis, ggi_mode *mode)
+static int GGI_quartz_setmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err;
 	ggi_quartz_priv *priv;
@@ -564,7 +564,7 @@ static int GGI_quartz_setmode_fullscreen(ggi_visual *vis, ggi_mode *mode)
 }	/* GGI_quartz_setmode_fullscreen */
 
 
-static void _create_menu(ggi_visual *vis)
+static void _create_menu(struct ggi_visual *vis)
 {
 	MenuRef windMenu;
 
@@ -583,7 +583,7 @@ static void _create_menu(ggi_visual *vis)
 }
 
 
-static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
+static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_quartz_priv *priv;
 	CFStringRef titleKey;
@@ -669,7 +669,7 @@ static int GGI_quartz_setmode_windowed(ggi_visual *vis, ggi_mode *mode)
 }	/* GGI_quartz_setmode_windowed */
 
 
-int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_quartz_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_quartz_priv *priv;
 	int err;
@@ -679,7 +679,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 	DPRINT_MODE("GGI_quartz_setmode: called\n");
 	APP_ASSERT(vis != NULL, "GGI_quartz_setmode: Visual == NULL");
 
-	if ((err = ggiCheckMode(vis, mode)) != 0) return err;
+	if ((err = ggiCheckMode(vis->stem, mode)) != 0) return err;
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
@@ -706,7 +706,7 @@ int GGI_quartz_setmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_quartz_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT_MISC("GGI_quartz_getmode(%p,%p)\n", vis, mode);
 
@@ -716,7 +716,7 @@ int GGI_quartz_getmode(ggi_visual *vis, ggi_mode *mode)
 }	/* GGI_quartz_getmode */
 
 
-int GGI_quartz_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_quartz_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	ggi_quartz_priv *priv;
 
@@ -724,7 +724,7 @@ int GGI_quartz_setflags(ggi_visual *vis, ggi_flags flags)
 
 	priv = QUARTZ_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis);
+		ggiFlush(vis->stem);
 
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */
@@ -738,7 +738,7 @@ int GGI_quartz_setflags(ggi_visual *vis, ggi_flags flags)
 }	/* GGI_quartz_setflags */
 
 
-int GGI_quartz_flush(ggi_visual *vis,
+int GGI_quartz_flush(struct ggi_visual *vis,
 		int x, int y, int w, int h, int tryflag)
 {
 	ggi_quartz_priv *priv;

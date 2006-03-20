@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.13 2006/03/20 19:56:27 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -51,14 +51,14 @@ static const gg_option optlist[] =
 
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_quartz_priv *priv;
 
 	priv = QUARTZ_PRIV(vis);
 
 	if (priv->memvis != NULL) {
-		ggiClose(priv->memvis);
+		ggiClose(priv->memvis->stem);
 		free(priv->fb);
 	}
 
@@ -88,7 +88,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }	/* GGIclose */
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	int err;
@@ -218,7 +218,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 #endif
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
-		gii_input *inp;
+		struct gg_module *inp;
 		gii_inputquartz_arg _args;
 
 		_args.theWindow = priv->theWindow;
@@ -235,8 +235,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}	/* if */
 
 		priv->inp = inp;
-		/* Now join the new event source in. */
-		vis->input = giiJoinInputs(vis->input, inp);
 	} else {
 
 		DPRINT_MISC("no input handling\n");
@@ -269,7 +267,7 @@ err0:
 }	/* GGIopen */
 
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
 	LIB_ASSERT(QUARTZ_PRIV(vis) != NULL, "GGIexit: QUARTZ_PRIV(vis) == NULL\n");
