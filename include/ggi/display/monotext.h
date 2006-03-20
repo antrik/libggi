@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.5 2006/03/20 20:28:38 cegger Exp $
+/* $Id: monotext.h,v 1.6 2006/03/20 20:35:14 cegger Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -54,7 +54,7 @@
 
 #define UPDATE_SYNC  \
 	do { if (! (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC))  \
-		ggiFlush(vis);  \
+		ggiFlush(vis->stem);  \
 	} while (0)
 
 
