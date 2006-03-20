@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.4 2005/03/28 20:33:34 pekberg Exp $
+/* $Id: line.c,v 1.5 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Arbitrary lines for display-X
@@ -28,7 +28,7 @@
 #include "../../default/common/clip.c"
 #include <ggi/display/x.h>
 
-int GGI_X_drawline_slave(ggi_visual *vis,int x1, int y1, int x2, int y2)
+int GGI_X_drawline_slave(struct ggi_visual *vis,int x1, int y1, int x2, int y2)
 {
 	ggi_x_priv *priv;
 	int dummy;
@@ -42,7 +42,7 @@ int GGI_X_drawline_slave(ggi_visual *vis,int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_X_drawline_slave_draw(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_X_drawline_slave_draw(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -60,7 +60,7 @@ int GGI_X_drawline_slave_draw(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_X_drawline_draw(ggi_visual *vis,int x1,int y1,int x2,int y2)
+int GGI_X_drawline_draw(struct ggi_visual *vis,int x1,int y1,int x2,int y2)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);

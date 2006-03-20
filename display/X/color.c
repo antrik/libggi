@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.26 2005/10/30 14:57:50 cegger Exp $
+/* $Id: color.c,v 1.27 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    Color functions for the X target.
@@ -38,7 +38,7 @@
  */
 #define COLOR_THRESHOLD(num,max)  1   /*  ((num)*4 >= (max)*3)  */
 
-static int _ggi_smart_allocate(ggi_visual *vis, int len, const ggi_color *cols)
+static int _ggi_smart_allocate(struct ggi_visual *vis, int len, const ggi_color *cols)
 {
 	ggi_x_priv *priv;
 	ggi_color X_pal[256];
@@ -89,7 +89,7 @@ static int _ggi_smart_allocate(ggi_visual *vis, int len, const ggi_color *cols)
 	return 0;
 }
 
-int _ggi_x_flush_cmap (ggi_visual *vis) {
+int _ggi_x_flush_cmap (struct ggi_visual *vis) {
 	ggi_x_priv *priv;
 
 	priv = GGIX_PRIV(vis);
@@ -138,7 +138,7 @@ int _ggi_x_flush_cmap (ggi_visual *vis) {
 	return 0;
 }
 
-int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color *colormap)
+int GGI_X_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	
@@ -181,7 +181,7 @@ int GGI_X_setPalette(ggi_visual_t vis, size_t start, size_t len, const ggi_color
 	return 0;
 }
 
-int GGI_X_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+int GGI_X_setgammamap(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	ggi_x_priv *priv;
 	int i;
@@ -214,7 +214,7 @@ int GGI_X_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colo
 	return 0;
 }
 
-int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_X_getgammamap(struct ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
 	ggi_x_priv *priv;
 	int i;
@@ -237,7 +237,7 @@ int GGI_X_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
 	return 0;
 }
 
-void _ggi_x_free_colormaps(ggi_visual *vis)
+void _ggi_x_free_colormaps(struct ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -256,7 +256,7 @@ void _ggi_x_free_colormaps(ggi_visual *vis)
 }
 
 /* This function may fail, if so priv->cmap will be set to None */
-void _ggi_x_create_colormaps(ggi_visual *vis, XVisualInfo *vi)
+void _ggi_x_create_colormaps(struct ggi_visual *vis, XVisualInfo *vi)
 {
 	ggi_x_priv *priv;
 	Colormap defcmap;

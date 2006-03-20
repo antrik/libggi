@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.54 2006/02/04 22:11:46 soyt Exp $
+/* $Id: visual.c,v 1.55 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -76,7 +76,7 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-static int GGI_X_getapi(ggi_visual *vis,int num,
+static int GGI_X_getapi(struct ggi_visual *vis,int num,
 			char *apiname ,char *arguments)
 {
 	*arguments = '\0';
@@ -94,23 +94,23 @@ static int GGI_X_getapi(ggi_visual *vis,int num,
 	return GGI_ENOMATCH;
 }
 
-void GGI_X_gcchanged(ggi_visual *vis, int mask)
+void GGI_X_gcchanged(struct ggi_visual *vis, int mask)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	if (!priv->slave) goto noslave;
 	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggiSetGCClipping(priv->slave,
+		ggiSetGCClipping(priv->slave->stem,
 				 LIBGGI_GC(vis)->cliptl.x,
 				 LIBGGI_GC(vis)->cliptl.y, 
 				 LIBGGI_GC(vis)->clipbr.x,
 				 LIBGGI_GC(vis)->clipbr.y);
 	}
 	if ((mask & GGI_GCCHANGED_FG)) {
-		ggiSetGCForeground(priv->slave, LIBGGI_GC_FGCOLOR(vis));
+		ggiSetGCForeground(priv->slave->stem, LIBGGI_GC_FGCOLOR(vis));
 	}
 	if ((mask & GGI_GCCHANGED_BG)) {
-		ggiSetGCBackground(priv->slave, LIBGGI_GC_BGCOLOR(vis));
+		ggiSetGCBackground(priv->slave->stem, LIBGGI_GC_BGCOLOR(vis));
 	}
 
 	if (priv->drawable == None) return; /* No Xlib clipping */
@@ -139,11 +139,11 @@ void GGI_X_gcchanged(ggi_visual *vis, int mask)
 	}
 }
 
-static int GGI_X_setflags(ggi_visual *vis, ggi_flags flags) {
+static int GGI_X_setflags(struct ggi_visual *vis, ggi_flags flags) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis);
+		ggiFlush(vis->stem);
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
@@ -159,13 +159,13 @@ static int GGI_X_setflags(ggi_visual *vis, ggi_flags flags) {
 	return GGI_OK;
 }
 
-static void GGI_X_lock_xlib(ggi_visual *vis)
+static void GGI_X_lock_xlib(struct ggi_visual *vis)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	ggLock(priv->xliblock);
 }
 
-static void GGI_X_unlock_xlib(ggi_visual *vis)
+static void GGI_X_unlock_xlib(struct ggi_visual *vis)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	if (ggTryLock(priv->flushlock) == 0)
@@ -173,7 +173,7 @@ static void GGI_X_unlock_xlib(ggi_visual *vis)
 	ggUnlock(priv->xliblock);
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -185,7 +185,14 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
-	if (priv->slave) ggiClose(priv->slave);
+	if (priv->inp)
+		ggCloseModule(priv->inp);
+	priv->inp = NULL;
+
+	if (priv->slave) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+	}
 	priv->slave = NULL;
 
 	DPRINT_MISC("GGIclose: call freefb hook\n");
@@ -276,7 +283,7 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 			      ggi_x_priv *priv );
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 
 {
@@ -563,7 +570,8 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		gii_inputxwin_arg _args;
-		gii_input *inp;
+		struct gg_module *inp = NULL;
+		struct gg_api *gii;
                 
 		_args.disp = priv->disp;
 		_args.ptralwaysrel = 0;
@@ -579,8 +587,14 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.unlockfunc = (gii_inputxwin_unlockfunc*)priv->unlock_xlib;
                 _args.unlockarg = vis;
                 
-		inp = giiOpen("xwin", &_args, NULL);
-		DPRINT_MISC("X: giiOpen returned with %p\n", inp);
+		if ((gii = ggGetAPIByName("gii")) != NULL) {
+			if (STEM_HAS_API(vis->stem, gii)) {
+				inp = ggOpenModule(gii, vis->stem,
+					"input-xwin", NULL, &_args);
+			}
+		}
+
+		DPRINT_MISC("X: ggOpenModule returned with %p\n", inp);
 
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open xwin inputlib\n");
@@ -589,8 +603,6 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		priv->inp = inp;
-		/* Now join the new event source in. */
-		vis->input = giiJoinInputs(vis->input, inp);
 	}
 	else {
 		priv->inp = NULL;
@@ -615,7 +627,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL");
 	LIB_ASSERT(GGIX_PRIV(vis) != NULL, "GGIexit: GGIX_PRIV(vis) == NULL");

@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.30 2005/07/30 10:58:22 cegger Exp $
+/* $Id: buffer.c,v 1.31 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -37,7 +37,7 @@
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 int GGI_X_db_acquire(ggi_resource_t res, uint32_t actype) {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	vis = res->priv;
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) &&
 	    (vis->w_frame->resource == res) && 
@@ -50,14 +50,14 @@ int GGI_X_db_acquire(ggi_resource_t res, uint32_t actype) {
 }
 
 int GGI_X_db_release(ggi_resource_t res) {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	vis = res->priv;
 	if ((vis->w_frame->resource == res) && 
 	    (res->curactype & GGI_ACTYPE_WRITE)) {
 		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
 			if (GGIX_PRIV(vis)->opmansync) MANSYNC_start(vis);
 		} else {
-			ggiFlush(vis);
+			ggiFlush(vis->stem);
 		}
 	}
 	res->curactype = 0;
@@ -65,7 +65,7 @@ int GGI_X_db_release(ggi_resource_t res) {
 	return 0;
 }
 
-int GGI_X_setdisplayframe_child(ggi_visual *vis, int num) {
+int GGI_X_setdisplayframe_child(struct ggi_visual *vis, int num) {
 
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -78,7 +78,7 @@ int GGI_X_setdisplayframe_child(ggi_visual *vis, int num) {
 	return 0;
 }
 
-int GGI_X_setorigin_child(ggi_visual *vis, int x, int y) {
+int GGI_X_setorigin_child(struct ggi_visual *vis, int x, int y) {
 
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -96,7 +96,7 @@ int GGI_X_setorigin_child(ggi_visual *vis, int x, int y) {
 	return 0;
 }
 
-int GGI_X_setreadframe_slave(ggi_visual *vis, int num) {
+int GGI_X_setreadframe_slave(struct ggi_visual *vis, int num) {
 	int err;
 	ggi_x_priv *priv;
 	
@@ -108,7 +108,7 @@ int GGI_X_setreadframe_slave(ggi_visual *vis, int num) {
 	return err;
 }
 
-int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
+int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 	int err;
 	ggi_x_priv *priv;
 	ggi_directbuffer *db;
@@ -136,7 +136,7 @@ int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
 			vis->w_frame = db;
 		}
 	} else {
-	  	ggiFlush(vis);
+	  	ggiFlush(vis->stem);
 		vis->w_frame_num = num;
 		vis->w_frame = db;
 	}
@@ -147,13 +147,16 @@ int GGI_X_setwriteframe_slave(ggi_visual *vis, int num) {
 }
 
 /* XImage allocation for normal client-side buffer */
-void _ggi_x_freefb(ggi_visual *vis) {
+void _ggi_x_freefb(struct ggi_visual *vis) {
 	ggi_x_priv *priv;
 	int i, first, last;
 
 	priv = GGIX_PRIV(vis);
 
-	if (priv->slave) ggiClose(priv->slave);
+	if (priv->slave) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+	}
 	priv->slave = NULL;
 	if (priv->ximage) {
 #ifndef HAVE_XINITIMAGE
@@ -180,11 +183,12 @@ void _ggi_x_freefb(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-int _ggi_x_createfb(ggi_visual *vis)
+int _ggi_x_createfb(struct ggi_visual *vis)
 {
 	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
 	ggi_x_priv *priv;
+	struct gg_stem *stem;
 	int i;
 
 	priv = GGIX_PRIV(vis);
@@ -220,18 +224,39 @@ int _ggi_x_createfb(ggi_visual *vis)
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer", 
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	priv->slave = ggiOpen(target, priv->fb);
-	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
+	stem = ggNewStem();
+	if (stem == NULL) {
 		free(priv->fb);
 		priv->fb = NULL;
 		return GGI_ENOMEM;
 	}
-	
+	if (ggiAttach(stem) != GGI_OK) {
+		ggDelStem(stem);
+		free(priv->fb);
+		priv->fb = NULL;
+		return GGI_ENOMEM;
+	}
+	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
+		ggDelStem(stem);
+		free(priv->fb);
+		priv->fb = NULL;
+		return GGI_ENOMEM;
+	}
+	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+	if (ggiSetMode(priv->slave->stem, &tm)) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+		free(priv->fb);
+		priv->fb = NULL;
+		return GGI_ENOMEM;
+	}
+
 	priv->ximage = _ggi_x_create_ximage( vis, (char*)priv->fb,
 					     LIBGGI_VIRTX(vis), 
 					     LIBGGI_VIRTY(vis) );
 	if (priv->ximage == NULL) {
-		ggiClose(priv->slave);
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
 		priv->slave = NULL;
 		free(priv->fb);
 		priv->fb = NULL;
@@ -282,7 +307,7 @@ int _ggi_x_createfb(ggi_visual *vis)
 	return GGI_OK;
 }
 
-static int GGI_X_flush_draw(ggi_visual *vis, 
+static int GGI_X_flush_draw(struct ggi_visual *vis, 
 		     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
@@ -307,7 +332,7 @@ static int GGI_X_flush_draw(ggi_visual *vis,
 	return 0;
 }
 
-int GGI_X_create_window_drawable (ggi_visual *vis) {
+int GGI_X_create_window_drawable (struct ggi_visual *vis) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
@@ -368,7 +393,7 @@ int GGI_X_create_window_drawable (ggi_visual *vis) {
 }
 
 int GGI_X_expose(void *arg, int x, int y, int w, int h) {
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	ggi_x_priv *priv;
 	int err;
 	vis = arg;
@@ -386,7 +411,7 @@ int GGI_X_expose(void *arg, int x, int y, int w, int h) {
 	return err;
 }
 
-int GGI_X_flush_ximage_child(ggi_visual *vis, 
+int GGI_X_flush_ximage_child(struct ggi_visual *vis, 
 			     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
@@ -453,4 +478,3 @@ int GGI_X_flush_ximage_child(ggi_visual *vis,
 	if (priv->opmansync && mansync) MANSYNC_cont(vis);
 	return 0;
 }
-

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.59 2005/09/19 18:46:40 cegger Exp $
+/* $Id: mode.c,v 1.60 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -275,7 +275,7 @@ int _GGI_X_checkmode_compare_visuals( ggi_mode *requested,
 #include "../common/modelist.inc"
 
 static
-int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
+int GGI_X_checkmode_internal( struct ggi_visual *vis, ggi_mode *tm, int *viidx )
 {
 	int i;
 	intptr_t viidx_ptr;
@@ -317,7 +317,7 @@ int GGI_X_checkmode_internal( ggi_visual *vis, ggi_mode *tm, int *viidx )
 
 
 
-int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_X_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
@@ -366,7 +366,7 @@ int GGI_X_checkmode(ggi_visual *vis, ggi_mode *tm)
 		
 }
 
-static int ggi_x_load_mode_libs(ggi_visual *vis)
+static int ggi_x_load_mode_libs(struct ggi_visual *vis)
 {
 	int err,id;
 	char sugname[GGI_MAX_APILEN],args[GGI_MAX_APILEN];
@@ -384,12 +384,12 @@ static int ggi_x_load_mode_libs(ggi_visual *vis)
 				       "%s (%s)\n", sugname, args);
 		}
         }
-        ggiIndicateChange(vis, GGI_CHG_APILIST);
+        ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
         return 0;
 }
 
-static void _ggi_x_load_slaveops(ggi_visual *vis) {
+static void _ggi_x_load_slaveops(struct ggi_visual *vis) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
@@ -421,7 +421,7 @@ static void _ggi_x_load_slaveops(ggi_visual *vis) {
 }
 
 
-int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
+int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 {
 	int err, viidx;
 	XEvent event;
@@ -691,6 +691,8 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 	/* if */
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
+#if 0
+FIXME
 		gii_event ev;
 		gii_xwin_cmddata_setparam data;
 
@@ -722,6 +724,7 @@ int GGI_X_setmode(ggi_visual * vis, ggi_mode * tm)
 			ev.cmd.code = GII_CMDCODE_PREFER_RELPTR;
 			giiEventSend(priv->inp, &ev);
 		}
+#endif
 	}
 
 	DPRINT_MODE("X (setmode): set dirty region\n");
@@ -752,7 +755,7 @@ err0:
 /************************/
 /* get the current mode */
 /************************/
-int GGI_X_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_X_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	APP_ASSERT(vis != NULL, "GGIgetmode: Visual == NULL");
 
@@ -764,7 +767,7 @@ int GGI_X_getmode(ggi_visual *vis,ggi_mode *tm)
 
 #if 0
 
-int _ggi_x_resize(ggi_visual_t vis, int w, int h, ggi_event *ev)
+int _ggi_x_resize(struct ggi_visual_t vis, int w, int h, ggi_event *ev)
 {
 	ggi_cmddata_switchrequest *swreq;
 

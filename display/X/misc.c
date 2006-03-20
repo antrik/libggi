@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.41 2005/08/19 23:38:06 cegger Exp $
+/* $Id: misc.c,v 1.42 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -111,7 +111,7 @@ int _ggi_x_is_better_screen(Screen *than, Screen *cthis)
 /* We cross index and pre-sort the various informational items;
  * This reduces code complexity in checkmode.
  */
-void _ggi_x_build_vilist(ggi_visual *vis)
+void _ggi_x_build_vilist(struct ggi_visual *vis)
 {
 	int viidx, more;
 	int nvisuals;
@@ -263,7 +263,7 @@ case cls: return(GT_CONSTRUCT(depth, scheme, size))
  * In either case, suggest is filled with a suggested mode.
  * Note this function may be called with tm == suggest.
  */
-int _ggi_x_fit_geometry(ggi_visual *vis, ggi_mode *tm, 
+int _ggi_x_fit_geometry(struct ggi_visual *vis, ggi_mode *tm, 
 			ggi_x_vi *vi, ggi_mode *suggest)
 {
 	ggi_x_priv     *priv;
@@ -376,7 +376,7 @@ int _ggi_x_is_better_gt(ggi_graphtype than, ggi_graphtype cthis) {
 	return 0;
 }
 
-void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi)
+void _ggi_x_build_pixfmt(struct ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi)
 {
 	ggi_pixelformat *fmt;
 
@@ -403,7 +403,7 @@ void _ggi_x_build_pixfmt(ggi_visual *vis, ggi_mode *tm, XVisualInfo *vi)
 }
 
 /* Make a newly created parent window presentable */
-int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
+int _ggi_x_dress_parentwin(struct ggi_visual *vis, ggi_mode *tm)
 {
 	int rc;
 	XSizeHints      hint;
@@ -428,7 +428,7 @@ int _ggi_x_dress_parentwin(ggi_visual *vis, ggi_mode *tm)
 	return rc;
 }
 
-void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc, 
+void _ggi_x_set_xclip (struct ggi_visual *vis, Display *disp, GC gc, 
 		       int x, int y, int w, int h)
 {
 	XRectangle *xrect;
@@ -454,7 +454,7 @@ void _ggi_x_set_xclip (ggi_visual *vis, Display *disp, GC gc,
 	free(xrect);
 }
 
-void _ggi_x_create_dot_cursor (ggi_visual *vis)
+void _ggi_x_create_dot_cursor (struct ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	Pixmap crsrpix, crsrmask;
@@ -499,7 +499,7 @@ void _ggi_x_create_dot_cursor (ggi_visual *vis)
 }
 
 
-void _ggi_x_create_invisible_cursor (ggi_visual *vis)
+void _ggi_x_create_invisible_cursor (struct ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	Pixmap crsrpix, crsrmask;
@@ -544,7 +544,7 @@ void _ggi_x_create_invisible_cursor (ggi_visual *vis)
         XFreePixmap(priv->disp, crsrmask);
 }
 
-void _ggi_x_readback_fontdata (ggi_visual *vis)
+void _ggi_x_readback_fontdata (struct ggi_visual *vis)
 {
 	ggi_x_priv *priv;
 	Pixmap fontpix;
@@ -633,7 +633,7 @@ noswab:
 
 
 #ifndef HAVE_XINITIMAGE
-XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
+XImage *_ggi_x_create_ximage( struct ggi_visual *vis, char *data, int w, int h )
 {
 	ggi_x_priv *priv;
 	XImage *img0;
@@ -663,7 +663,7 @@ XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
  * This function was written because XCreateImage() is not
  * DGA compatible as it requires a visual.
  * The XImage should be freed with free() instead of XFree(). */
-XImage *_ggi_x_create_ximage( ggi_visual *vis, char *data, int w, int h )
+XImage *_ggi_x_create_ximage( struct ggi_visual *vis, char *data, int w, int h )
 {
 	ggi_pixelformat *fmt;
 	ggi_x_priv *priv;

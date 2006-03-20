@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.18 2005/07/30 10:58:22 cegger Exp $
+/* $Id: box.c,v 1.19 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    LibGGI - boxes for display-x
@@ -33,7 +33,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 
-int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_X_drawbox_slave(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -46,7 +46,7 @@ int GGI_X_drawbox_slave(ggi_visual *vis, int x, int y, int w, int h)
 	return GGI_OK;
 }
 
-int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, const void *data)
+int GGI_X_putbox_slave(struct ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -59,7 +59,7 @@ int GGI_X_putbox_slave(ggi_visual *vis, int x, int y, int w, int h, const void *
 	return GGI_OK;
 }
 
-int GGI_X_getbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_X_getbox_slave(struct ggi_visual *vis, int x, int y, int w, int h, void *data)
 {	
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -70,7 +70,7 @@ int GGI_X_getbox_slave(ggi_visual *vis, int x, int y, int w, int h, void *data)
 	return (priv->slave->opdraw->getbox(priv->slave, x, y, w, h, data));
 }
 
-int GGI_X_copybox_slave(ggi_visual *vis, int x, int y, 
+int GGI_X_copybox_slave(struct ggi_visual *vis, int x, int y, 
 			int w, int h, int nx, int ny)
 {
 	ggi_x_priv *priv;
@@ -84,7 +84,7 @@ int GGI_X_copybox_slave(ggi_visual *vis, int x, int y,
 	return GGI_OK;
 }
 
-int GGI_X_drawbox_slave_draw(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_X_drawbox_slave_draw(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -103,7 +103,7 @@ int GGI_X_drawbox_slave_draw(ggi_visual *vis, int x, int y, int w, int h)
 	return GGI_OK;
 }
 
-int GGI_X_copybox_slave_draw(ggi_visual *vis, int x, int y, 
+int GGI_X_copybox_slave_draw(struct ggi_visual *vis, int x, int y, 
 			     int w, int h, int nx, int ny)
 {
 	ggi_x_priv *priv;
@@ -126,7 +126,7 @@ int GGI_X_copybox_slave_draw(ggi_visual *vis, int x, int y,
 	return GGI_OK;
 }
 
-int GGI_X_drawbox_draw(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_X_drawbox_draw(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -140,7 +140,7 @@ int GGI_X_drawbox_draw(ggi_visual *vis, int x, int y, int w, int h)
 	return GGI_OK;
 }
 
-int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *data)
+int GGI_X_putbox_draw(struct ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	XImage *ximg;
 	ggi_x_priv *priv;
@@ -169,7 +169,7 @@ int GGI_X_putbox_draw(ggi_visual *vis, int x, int y, int w, int h, const void *d
 	return GGI_OK;
 }
 
-int GGI_X_copybox_draw(ggi_visual *vis, int x, int y, 
+int GGI_X_copybox_draw(struct ggi_visual *vis, int x, int y, 
 		       int w, int h, int nx, int ny)
 {
 	ggi_x_priv *priv;
@@ -193,7 +193,7 @@ static int errorhandler (Display * disp, XErrorEvent * event)
 	return 0;
 }
 
-int GGI_X_getbox_draw(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_X_getbox_draw(struct ggi_visual *vis, int x, int y, int w, int h, void *data)
 {
 	ggi_x_priv *priv;
 	XImage *ximg;

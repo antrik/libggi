@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.15 2005/07/30 10:58:22 cegger Exp $
+/* $Id: vline.c,v 1.16 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    LibGGI - vertical lines for display-x
@@ -32,7 +32,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 
-int GGI_X_drawvline_slave(ggi_visual *vis, int x, int y, int h)
+int GGI_X_drawvline_slave(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -43,7 +43,7 @@ int GGI_X_drawvline_slave(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_drawvline_nc_slave(ggi_visual *vis, int x, int y, int h)
+int GGI_X_drawvline_nc_slave(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -53,7 +53,7 @@ int GGI_X_drawvline_nc_slave(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_putvline_slave(ggi_visual *vis, int x, int y, int h, const void *data)
+int GGI_X_putvline_slave(struct ggi_visual *vis, int x, int y, int h, const void *data)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -65,7 +65,7 @@ int GGI_X_putvline_slave(ggi_visual *vis, int x, int y, int h, const void *data)
 	return 0;
 }
 
-int GGI_X_getvline_slave(ggi_visual *vis, int x, int y, int h, void *data)
+int GGI_X_getvline_slave(struct ggi_visual *vis, int x, int y, int h, void *data)
 {	
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -74,7 +74,7 @@ int GGI_X_getvline_slave(ggi_visual *vis, int x, int y, int h, void *data)
 	return (priv->slave->opdraw->getvline(priv->slave, x, y, h, data));
 }
 
-int GGI_X_drawvline_slave_draw(ggi_visual *vis, int x, int y, int h)
+int GGI_X_drawvline_slave_draw(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -90,7 +90,7 @@ int GGI_X_drawvline_slave_draw(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_drawvline_nc_slave_draw(ggi_visual *vis, int x, int y, int h)
+int GGI_X_drawvline_nc_slave_draw(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -105,7 +105,7 @@ int GGI_X_drawvline_nc_slave_draw(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_drawvline_draw(ggi_visual *vis, int x, int y, int h)
+int GGI_X_drawvline_draw(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -118,7 +118,7 @@ int GGI_X_drawvline_draw(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_X_putvline_draw(ggi_visual *vis, int x, int y, int h, const void *data)
+int GGI_X_putvline_draw(struct ggi_visual *vis, int x, int y, int h, const void *data)
 {
         XImage *ximg;
 	ggi_x_priv *priv;
@@ -151,7 +151,7 @@ static int errorhandler (Display * disp, XErrorEvent * event)
 	return 0;
 }
 
-int GGI_X_getvline_draw(ggi_visual *vis, int x, int y, int h, void *data)
+int GGI_X_getvline_draw(struct ggi_visual *vis, int x, int y, int h, void *data)
 {	
 	ggi_x_priv *priv;
 	XImage *ximg;

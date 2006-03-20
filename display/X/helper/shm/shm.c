@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.38 2006/02/04 22:11:46 soyt Exp $
+/* $Id: shm.c,v 1.39 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -54,7 +54,7 @@ static int shmerrorhandler (Display * disp, XErrorEvent * event)
 	return 0;
 }
 
-static int GGI_XSHM_flush_ximage_child(ggi_visual *vis, 
+static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis, 
 			     int x, int y, int w, int h, int tryflag)
 {
 	ggi_x_priv *priv;
@@ -120,7 +120,7 @@ static int GGI_XSHM_flush_ximage_child(ggi_visual *vis,
 }
 
 /* XImage allocation for normal client-side buffer */
-static void _ggi_xshm_free_ximage(ggi_visual *vis) {
+static void _ggi_xshm_free_ximage(struct ggi_visual *vis) {
 	ggi_x_priv *priv;
 	int i, first, last;
 	XShmSegmentInfo *myshminfo;
@@ -129,7 +129,10 @@ static void _ggi_xshm_free_ximage(ggi_visual *vis) {
 	myshminfo = priv->priv;
 	if (myshminfo == NULL) return;
 
-	if (priv->slave) ggiClose(priv->slave);
+	if (priv->slave) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+	}
 	priv->slave = NULL;
 
 	if (priv->ximage) {
@@ -161,11 +164,12 @@ static void _ggi_xshm_free_ximage(ggi_visual *vis) {
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
-static int _ggi_xshm_create_ximage(ggi_visual *vis)
+static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 {
 	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
 	ggi_x_priv *priv;
+	struct gg_stem *stem;
 	int i;
 	XShmSegmentInfo *myshminfo;
 
@@ -293,8 +297,26 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	priv->slave = ggiOpen(target, priv->fb);
-	if (priv->slave == NULL || ggiSetMode(priv->slave, &tm)) {
+	stem = ggNewStem();
+	if (stem == NULL) {
+		_ggi_xshm_free_ximage(vis);
+		return GGI_ENOMEM;
+	}
+	if (ggiAttach(stem) != GGI_OK) {
+		ggDelStem(stem);
+		_ggi_xshm_free_ximage(vis);
+		return GGI_ENOMEM;
+	}
+	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
+		ggDelStem(stem);
+		_ggi_xshm_free_ximage(vis);
+		return GGI_ENOMEM;
+	}
+	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+	if (ggiSetMode(priv->slave->stem, &tm)) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+		priv->slave = NULL;
 		_ggi_xshm_free_ximage(vis);
 		return GGI_ENOMEM;
 	}
@@ -310,7 +332,7 @@ static int _ggi_xshm_create_ximage(ggi_visual *vis)
 	return GGI_OK;
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_x_priv *priv;
@@ -333,7 +355,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return GGI_OK;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -345,7 +367,14 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
-	if (priv->slave) ggiClose(priv->slave);
+	if (priv->inp)
+		ggCloseModule(priv->inp);
+	priv->inp = NULL;
+
+	if (priv->slave) {
+		ggiClose(priv->slave->stem);
+		ggDelStem(priv->slave->stem);
+	}
 	priv->slave = NULL;
 
 	if (priv->freefb) priv->freefb(vis);

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.10 2005/07/30 10:58:22 cegger Exp $
+/* $Id: gtext.c,v 1.11 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Textfunctions for X.
@@ -31,7 +31,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/x.h>
 
-int GGI_X_getcharsize_font(ggi_visual *vis, int *width, int *height)
+int GGI_X_getcharsize_font(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -43,7 +43,7 @@ int GGI_X_getcharsize_font(ggi_visual *vis, int *width, int *height)
 	return 0;
 }
 
-int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
+int GGI_X_putc_slave_draw(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_x_priv *priv;
 	uint8_t  *datafg, *databg, *ptr;
@@ -122,7 +122,7 @@ int GGI_X_putc_slave_draw(ggi_visual *vis, int x, int y, char c)
 	return 0;
 }
 
-int GGI_X_putc_draw(ggi_visual *vis, int x, int y, char c)
+int GGI_X_putc_draw(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -148,5 +148,3 @@ int GGI_X_putc_draw(ggi_visual *vis, int x, int y, char c)
 
 	return 0;
 }
-
-

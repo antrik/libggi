@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.6 2005/07/30 10:58:22 cegger Exp $
+/* $Id: pixel.c,v 1.7 2006/03/20 14:12:14 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -36,7 +36,7 @@
 /* draw/get/put a single pixel */
 /*******************************/
 
-int GGI_X_drawpixel_slave(ggi_visual *vis, int x, int y)
+int GGI_X_drawpixel_slave(struct ggi_visual *vis, int x, int y)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -47,7 +47,7 @@ int GGI_X_drawpixel_slave(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_X_drawpixel_nc_slave(ggi_visual *vis, int x, int y)
+int GGI_X_drawpixel_nc_slave(struct ggi_visual *vis, int x, int y)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -57,7 +57,7 @@ int GGI_X_drawpixel_nc_slave(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_X_putpixel_slave(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_X_putpixel_slave(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -68,7 +68,7 @@ int GGI_X_putpixel_slave(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_X_putpixel_nc_slave(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_X_putpixel_nc_slave(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -78,7 +78,7 @@ int GGI_X_putpixel_nc_slave(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_X_getpixel_slave(ggi_visual *vis,int x, int y, ggi_pixel *pixel)
+int GGI_X_getpixel_slave(struct ggi_visual *vis,int x, int y, ggi_pixel *pixel)
 {	
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -87,7 +87,7 @@ int GGI_X_getpixel_slave(ggi_visual *vis,int x, int y, ggi_pixel *pixel)
 	return (priv->slave->opdraw->getpixel(priv->slave, x, y, pixel));
 }
 
-int GGI_X_drawpixel_slave_draw(ggi_visual *vis, int x, int y)
+int GGI_X_drawpixel_slave_draw(struct ggi_visual *vis, int x, int y)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -102,7 +102,7 @@ int GGI_X_drawpixel_slave_draw(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_X_drawpixel_nc_slave_draw(ggi_visual *vis, int x, int y)
+int GGI_X_drawpixel_nc_slave_draw(struct ggi_visual *vis, int x, int y)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -116,7 +116,7 @@ int GGI_X_drawpixel_nc_slave_draw(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_X_drawpixel_draw(ggi_visual *vis, int x, int y)
+int GGI_X_drawpixel_draw(struct ggi_visual *vis, int x, int y)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -128,7 +128,7 @@ int GGI_X_drawpixel_draw(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_X_putpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_X_putpixel_draw(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
@@ -151,7 +151,7 @@ static int errorhandler (Display * disp, XErrorEvent * event)
   return 0;
 }
 
-int GGI_X_getpixel_draw(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_X_getpixel_draw(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {	
 	ggi_x_priv *priv;
 	XImage *ximg;
