@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2006/02/04 06:32:17 cegger Exp $
+/* $Id: mode.c,v 1.22 2006/03/20 20:06:32 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -55,7 +55,7 @@
 #define write_zeros	_ggi_file_write_zeros
 #define write_flush	_ggi_file_flush
 
-static void dowritefile(ggi_visual *vis)
+static void dowritefile(struct ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	char cmdbuf[1024];
@@ -75,7 +75,7 @@ static void dowritefile(ggi_visual *vis)
 	priv->flushcnt++;
 }
 
-static int GGI_file_flush(ggi_visual *vis, 
+static int GGI_file_flush(struct ggi_visual *vis, 
 			int x, int y, int w, int h, int tryflag)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
@@ -104,7 +104,7 @@ static int GGI_file_flush(ggi_visual *vis,
 	return 0;
 }
 
-static int _ggi_rawstuff(ggi_visual *vis)
+static int _ggi_rawstuff(struct ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -173,7 +173,7 @@ static int _ggi_rawstuff(ggi_visual *vis)
 	return 0;
 }
 
-static int _ggi_getmmap(ggi_visual *vis)
+static int _ggi_getmmap(struct ggi_visual *vis)
 {
 	int rc = GGI_OK;
 	ggi_file_priv *priv = FILE_PRIV(vis);
@@ -245,7 +245,7 @@ static int _ggi_getmmap(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_file_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_file_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
 
@@ -279,7 +279,7 @@ int GGI_file_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 	return GGI_ENOMATCH;
 }
 
-static void _ggi_freedbs(ggi_visual *vis) 
+static void _ggi_freedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -289,7 +289,7 @@ static void _ggi_freedbs(ggi_visual *vis)
 	}
 }
 
-static int _ggi_domode(ggi_visual *vis)
+static int _ggi_domode(struct ggi_visual *vis)
 {
 	int err, i;
 	char name[GGI_MAX_APILEN];
@@ -327,7 +327,7 @@ static int _ggi_domode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_file_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	int err;
@@ -341,7 +341,7 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	if ((err = ggiCheckMode(vis, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
 		return err;
 	}
 
@@ -354,7 +354,7 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 	DPRINT("change indicated\n",err);
 
 	priv->flushtotal = 0;
@@ -362,7 +362,7 @@ int GGI_file_setmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_file_resetmode(ggi_visual *vis)
+int GGI_file_resetmode(struct ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -387,7 +387,7 @@ int GGI_file_resetmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_file_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_file_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	/* ggi_file_priv *priv = FILE_PRIV(vis); */
 	int err = 0;
@@ -451,7 +451,7 @@ int GGI_file_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;	
 }
 
-int GGI_file_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_file_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
 
@@ -464,7 +464,7 @@ int GGI_file_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_file_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_file_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 
@@ -473,7 +473,7 @@ int GGI_file_setflags(ggi_visual *vis, ggi_flags flags)
 	return 0;
 }
 
-int GGI_file_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
+int GGI_file_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
  	ggi_file_priv   *priv     = FILE_PRIV(vis);
  	uint8_t         *file_pal = priv->file_mmap + priv->offset_pal;

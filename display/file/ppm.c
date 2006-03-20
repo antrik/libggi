@@ -1,4 +1,4 @@
-/* $Id: ppm.c,v 1.7 2005/06/17 11:32:21 cegger Exp $
+/* $Id: ppm.c,v 1.8 2006/03/20 20:06:32 cegger Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -51,7 +51,7 @@ int _ggi_file_ppm_detect(char *filename)
 	return (strcmp(filename + (len-4), ".ppm") == 0);
 }
 
-void _ggi_file_ppm_write(ggi_visual *vis)
+void _ggi_file_ppm_write(struct ggi_visual *vis)
 {
 	unsigned char buf[200];
 
@@ -72,7 +72,7 @@ void _ggi_file_ppm_write(ggi_visual *vis)
 
 	/* write out the pixels */
 
-	ggiGetPixel(vis, 0, 0, &last);
+	ggiGetPixel(vis->stem, 0, 0, &last);
 	last = ~last;	/* must be different from first pixel */
 
 	for (y=0; y < LIBGGI_VIRTY(vis); y++)
@@ -80,10 +80,10 @@ void _ggi_file_ppm_write(ggi_visual *vis)
 
 		ggi_pixel pix;
 
-		ggiGetPixel(vis, x, y, &pix);
+		ggiGetPixel(vis->stem, x, y, &pix);
 
 		if (pix != last) {
-			ggiUnmapPixel(vis, pix, &col);
+			ggiUnmapPixel(vis->stem, pix, &col);
 		}
 
 		_ggi_file_write_byte(vis, (unsigned)(col.r >> 8));

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/02/05 18:38:52 pekberg Exp $
+/* $Id: visual.c,v 1.15 2006/03/20 20:06:32 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -49,7 +49,7 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_file_priv *priv;
@@ -136,7 +136,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
  * exit, but it is a workaround to get display-file to write
  * the last dump before the visual closes.
  */
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -150,7 +150,7 @@ static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 

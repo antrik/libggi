@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.6 2005/07/30 10:58:25 cegger Exp $
+/* $Id: fileio.c,v 1.7 2006/03/20 20:06:32 cegger Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -39,7 +39,7 @@
 #include <ggi/display/file.h>
 
 
-int _ggi_file_create_file(ggi_visual *vis, const char *filename)
+int _ggi_file_create_file(struct ggi_visual *vis, const char *filename)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -55,7 +55,7 @@ int _ggi_file_create_file(ggi_visual *vis, const char *filename)
 	return 0;
 }
 
-void _ggi_file_close_file(ggi_visual *vis)
+void _ggi_file_close_file(struct ggi_visual *vis)
 {
 	_ggi_file_flush(vis);
 
@@ -64,14 +64,14 @@ void _ggi_file_close_file(ggi_visual *vis)
 	LIBGGI_FD(vis) = -1;
 }
 
-void _ggi_file_rewind(ggi_visual *vis)
+void _ggi_file_rewind(struct ggi_visual *vis)
 {
 	_ggi_file_flush(vis);
 
 	lseek(LIBGGI_FD(vis),0L,SEEK_SET);
 }
 
-void _ggi_file_flush(ggi_visual *vis)
+void _ggi_file_flush(struct ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 
@@ -88,7 +88,7 @@ void _ggi_file_flush(ggi_visual *vis)
 	priv->buf_len = 0;
 }
 
-void _ggi_file_write_byte(ggi_visual *vis, unsigned int val)
+void _ggi_file_write_byte(struct ggi_visual *vis, unsigned int val)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	
@@ -100,7 +100,7 @@ void _ggi_file_write_byte(ggi_visual *vis, unsigned int val)
 	priv->buf_len++;
 }
 
-void _ggi_file_write_word(ggi_visual *vis, unsigned int val)
+void _ggi_file_write_word(struct ggi_visual *vis, unsigned int val)
 {
 #ifdef GGI_BIG_ENDIAN
 	val = GGI_BYTEREV16(val);
@@ -109,14 +109,14 @@ void _ggi_file_write_word(ggi_visual *vis, unsigned int val)
 	_ggi_file_write_byte(vis, val & 0xff);
 }
 
-void _ggi_file_write_string(ggi_visual *vis, const unsigned char *str)
+void _ggi_file_write_string(struct ggi_visual *vis, const unsigned char *str)
 {
 	for (; *str; str++) {
 		_ggi_file_write_byte(vis, (const unsigned char) *str);
 	}
 }
 
-void _ggi_file_write_zeros(ggi_visual *vis, int count)
+void _ggi_file_write_zeros(struct ggi_visual *vis, int count)
 {
 	while(count--) {
 		_ggi_file_write_byte(vis, 0);
