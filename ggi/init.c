@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.54 2006/03/12 12:26:02 soyt Exp $
+/* $Id: init.c,v 1.55 2006/03/20 09:25:09 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -298,6 +298,18 @@ void _ggiExit(struct gg_api *api)
 
 	DPRINT_CORE("ggiExit: done!\n");
 }
+
+
+int ggiAttach(struct gg_stem *s)
+{
+	return ggAttach(libggi, s);
+}
+
+int ggiDetach(struct gg_stem *s)
+{
+	return ggDetach(libggi, s);
+}
+
 
 /* Opens a visual.
  */

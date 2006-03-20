@@ -37,6 +37,7 @@ _ggi_smart_match_palettes
 _ggi_physz_parse_option
 _ggi_physz_figure_visible
 _ggi_physz_figure_size
+ggiAttach
 ggiCheckGraphMode
 ggiCheckMode
 ggiCheckSimpleMode
@@ -46,6 +47,7 @@ ggiCopyBox
 ggiCrossBlit
 ggiDBGetBuffer
 ggiDBGetNumBuffers
+ggiDetach
 ggiDrawBox
 ggiDrawHLine
 ggiDrawLine

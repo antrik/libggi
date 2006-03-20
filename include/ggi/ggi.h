@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.19 2006/03/20 08:58:55 pekberg Exp $
+/* $Id: ggi.h,v 1.20 2006/03/20 09:25:09 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -359,6 +359,11 @@ GGIAPIFUNC const char *ggiGetConfDir(void);
  */
 GGIAPIFUNC int  ggiInit(void);
 GGIAPIFUNC int  ggiExit(void);
+
+/*
+ */
+GGIAPIFUNC int  ggiAttach(struct gg_stem *);
+GGIAPIFUNC int  ggiDetach(struct gg_stem *);
 
 #define ggiPanic ggPanic
 
