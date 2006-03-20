@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.4 2006/03/20 17:50:01 pekberg Exp $
+/* $Id: exttest1.c,v 1.5 2006/03/20 17:51:21 pekberg Exp $
 ******************************************************************************
 
    Test extension test.
@@ -57,7 +57,7 @@ main(void)
 	ggiSetSimpleMode(vis1, 320, 400, 1, GT_8BIT);
 	ggiTest1Attach(vis1);
 	ggiTest1PrintLocaldata(vis1);
-//	ggiTest2PrintLocaldata(vis1); /* This is illegal. Should hopefully segfault. */
+/*	ggiTest2PrintLocaldata(vis1); This is illegal. Should hopefully segfault. */
 	ggiTest1SetLocaldata  (vis1,"Localdata1 changed.");
 	ggiTest1PrintLocaldata(vis1);
 	ggiTest1Detach(vis1);
