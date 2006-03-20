@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.18 2006/03/11 18:49:12 soyt Exp $
+/* $Id: ggi.h,v 1.19 2006/03/20 08:58:55 pekberg Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -533,11 +533,6 @@ GGIAPIFUNC int ggiCrossBlit(ggi_visual_t src,int sx,int sy,int w,int h,
 GGIAPIFUNC int ggiPutc(ggi_visual_t vis,int x,int y,char c);
 GGIAPIFUNC int ggiPuts(ggi_visual_t vis,int x,int y,const char *str);
 GGIAPIFUNC int ggiGetCharSize(ggi_visual_t vis,int *width,int *height);
-
-/* Convenience functions */
-
-GGIAPIFUNC int ggiKbhit(ggi_visual_t vis);
-GGIAPIFUNC int ggiGetc(ggi_visual_t vis);
 
 __END_DECLS
 
