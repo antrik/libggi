@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.6 2005/06/09 18:40:45 cegger Exp $
+/* $Id: test1.c,v 1.7 2006/03/20 17:50:01 pekberg Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -41,7 +41,7 @@
 /* Extension ID. Defaulting to -1 should make segfault on abuse more likely ... */
 ggi_extid ggiTest1ID=-1;
 
-static int changed(ggi_visual_t vis,int whatchanged)
+static int changed(struct ggi_visual *vis,int whatchanged)
 {
 	printf("changed called for extension 1 - vis=%p, %i \n",
 		(void *)vis, whatchanged);
@@ -52,7 +52,7 @@ static int changed(ggi_visual_t vis,int whatchanged)
 			char api[GGI_MAX_APILEN];
 			char args[GGI_MAX_APILEN];
 			for (temp=0;
-			    0 == ggiGetAPI(vis, temp, api, args);
+			    0 == ggiGetAPI(vis->stem, temp, api, args);
 			    temp++)
 			{
 				ggstrlcat(api,"-test1", sizeof(api));
@@ -83,14 +83,16 @@ int ggiTest1Exit(void)
 	return rc;
 }
 
-int ggiTest1Attach(ggi_visual_t vis)
+int ggiTest1Attach(ggi_visual_t v)
 {
 	int rc;
-	rc=ggiExtensionAttach(vis,ggiTest1ID);
+	struct ggi_visual *vis;
+	rc=ggiExtensionAttach(v,ggiTest1ID);
 	printf("Attached Test1 extension to %p. rc=%i\n",
-		(void *)vis, rc);
+		(void *)v, rc);
 
 	if (rc==0) {	/* We are actually creating the primary instance. */
+		vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
 		strcpy(LIBGGI_EXT(vis,ggiTest1ID),"Test 1 private Data !");
 		/* Now fake an "API change" so the right libs get loaded */
 		changed(vis,GGI_CHG_APILIST);
@@ -99,22 +101,24 @@ int ggiTest1Attach(ggi_visual_t vis)
 	return rc;
 }
 
-int ggiTest1Detach(ggi_visual_t vis)
+int ggiTest1Detach(ggi_visual_t v)
 {
 	int rc;
-	rc=ggiExtensionDetach(vis,ggiTest1ID);
+	rc=ggiExtensionDetach(v,ggiTest1ID);
 	printf("Detached Test1 extension from %p. rc=%i\n",
-		(void *)vis, rc);
+		(void *)v, rc);
 
 	return rc;
 }
 
-void ggiTest1PrintLocaldata(ggi_visual_t vis)
+void ggiTest1PrintLocaldata(ggi_visual_t v)
 {
+	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
 	printf("%s\n",(char *)LIBGGI_EXT(vis,ggiTest1ID));
 }
 
-void ggiTest1SetLocaldata  (ggi_visual_t vis,const char *content)
+void ggiTest1SetLocaldata  (ggi_visual_t v,const char *content)
 {
+	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
 	strcpy(LIBGGI_EXT(vis,ggiTest1ID),content);
 }

@@ -1,4 +1,4 @@
-/* $Id: test2.c,v 1.5 2005/06/09 18:40:45 cegger Exp $
+/* $Id: test2.c,v 1.6 2006/03/20 17:50:01 pekberg Exp $
 ******************************************************************************
 
    Test extension test2.c
@@ -43,7 +43,7 @@
 /* Extension ID. Defaulting to -1 should make segfault on abuse more likely ... */
 ggi_extid ggiTest2ID=-1;
 
-static int changed(ggi_visual_t vis,int whatchanged)
+static int changed(struct ggi_visual *vis,int whatchanged)
 {
 	printf("load extension 2 - vis: %p %i\n",
 		(void *)vis, whatchanged);
@@ -71,40 +71,44 @@ int ggiTest2Exit(void)
 	return rc;
 }
 
-int ggiTest2Attach(ggi_visual_t vis)
+int ggiTest2Attach(ggi_visual_t v)
 {
 	int rc;
-	rc=ggiExtensionAttach(vis,ggiTest2ID);
+	struct ggi_visual *vis;
+	rc=ggiExtensionAttach(v,ggiTest2ID);
 	printf("Attached Test2 extension to %p. rc=%i\n",
-		(void *)vis, rc);
+		(void *)v, rc);
 
 	if (rc==0) {	/* We are actually creating the primary instance. */
-		ggiTest1Attach(vis);
+		ggiTest1Attach(v);
+		vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
 		strcpy(LIBGGI_EXT(vis,ggiTest2ID),"Test 2 private Data !");
 	}
 
 	return rc;
 }
 
-int ggiTest2Detach(ggi_visual_t vis)
+int ggiTest2Detach(ggi_visual_t v)
 {
 	int rc;
-	rc=ggiExtensionDetach(vis,ggiTest2ID);
+	rc=ggiExtensionDetach(v,ggiTest2ID);
 	printf("Detached Test2 extension from %p. rc=%i\n",
-		(void *)vis, rc);
-	if (rc==0) ggiTest1Detach(vis);
+		(void *)v, rc);
+	if (rc==0) ggiTest1Detach(v);
 
 	return rc;
 }
 
-void ggiTest2PrintLocaldata(ggi_visual_t vis)
+void ggiTest2PrintLocaldata(ggi_visual_t v)
 {
-	ggiTest1PrintLocaldata(vis);
+	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
+	ggiTest1PrintLocaldata(v);
 	printf("%s\n",(char *)LIBGGI_EXT(vis,ggiTest2ID));
 }
 
-void ggiTest2SetLocaldata  (ggi_visual_t vis,const char *content)
+void ggiTest2SetLocaldata  (ggi_visual_t v,const char *content)
 {
+	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
 	strcpy(LIBGGI_EXT(vis,ggiTest2ID),content);
 }
 

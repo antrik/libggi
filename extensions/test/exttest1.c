@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.3 2005/07/30 08:43:01 soyt Exp $
+/* $Id: exttest1.c,v 1.4 2006/03/20 17:50:01 pekberg Exp $
 ******************************************************************************
 
    Test extension test.
@@ -40,13 +40,16 @@ main(void)
 {
 	ggi_visual_t vis1,vis2;
 	int temp;
+	ggInit();
+	vis1 = ggNewStem();
 	ggiInit();
+	ggiAttach(vis1);
 	printf("O.K.\n");
 
 	temp=ggiTest1Init();printf("Init1 : %i\n",temp);
 	temp=ggiTest1Init();printf("Init1b: %i\n",temp);
 
-	vis1=ggiOpen("display-memory",NULL);
+	ggiOpen(vis1, "display-memory",NULL);
 	ggiSetSimpleMode(vis1, 320, 200, 1, GT_8BIT);
 	ggiSetSimpleMode(vis1, 320, 400, 1, GT_8BIT);
 
@@ -54,16 +57,18 @@ main(void)
 	ggiSetSimpleMode(vis1, 320, 400, 1, GT_8BIT);
 	ggiTest1Attach(vis1);
 	ggiTest1PrintLocaldata(vis1);
-/*	ggiTest2PrintLocaldata(vis1); This is illegal. Should hopefully segfault. */
+//	ggiTest2PrintLocaldata(vis1); /* This is illegal. Should hopefully segfault. */
 	ggiTest1SetLocaldata  (vis1,"Localdata1 changed.");
 	ggiTest1PrintLocaldata(vis1);
 	ggiTest1Detach(vis1);
 	ggiTest1Detach(vis1);
 	ggiTest1Detach(vis1);
 
+	vis2 = ggNewStem();
 	temp=ggiTest2Init();printf("Init2 : %i\n",temp);
 
-	vis2=ggiOpen("display-memory",NULL);
+	ggiAttach(vis2);
+	ggiOpen(vis2, "display-memory",NULL);
 	ggiSetSimpleMode(vis2, 320, 200, 1, GT_8BIT);
 
 	ggiTest2Attach(vis2);
@@ -78,6 +83,9 @@ main(void)
 	ggiClose(vis1);
 	ggiClose(vis2);
 
+	ggiDetach(vis1);
+	ggiDetach(vis2);
+
 	ggiTest2Exit();
 	ggiTest2Exit();
 
@@ -86,5 +94,6 @@ main(void)
 	ggiTest1Exit();
 
 	ggiExit();
+	ggExit();
 	return 0;
 }
