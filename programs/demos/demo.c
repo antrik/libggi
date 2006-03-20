@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.24 2006/03/20 09:39:13 pekberg Exp $
+/* $Id: demo.c,v 1.25 2006/03/20 13:11:34 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -1416,6 +1416,7 @@ no_mem_targ2:
 		fprintf(stderr, "%s: unable to detach libggi, exiting.\n",
 			argv[0]);
 		exit(1);
+	}
 
 	/* Detach the LibGII API from the stem.
 	 */
@@ -1425,11 +1426,7 @@ no_mem_targ2:
 		exit(1);
 	}
 
-	if(ggDelStem(vis) < 0) {
-		fprintf(stderr, "%s: unable to delete stem, exiting.\n",
-			argv[0]);
-		exit(1);
-	}
+	ggDelStem(vis);
 
 	/* Now close down LibGGI. Every LibGGI call except ggiInit has
 	 * undefined behaviour now. It is not recommended to needlessly
