@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.3 2004/09/12 20:13:40 cegger Exp $
+/* $Id: text.c,v 1.4 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: displaying text
@@ -34,14 +34,14 @@
 #undef putc
 
 
-int GGI_monotext_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_monotext_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	int char_w, char_h;
 	int err;
 	
-	ggiGetCharSize(vis, &char_w, &char_h);
+	ggiGetCharSize(vis->stem, &char_w, &char_h);
 
 	UPDATE_MOD(priv, x, y, char_w, char_h);
 	

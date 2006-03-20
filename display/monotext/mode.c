@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.17 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -39,7 +39,7 @@ static int target_width  = 80;
 static int target_height = 25;
 
 
-static void _GGIfreedbs(ggi_visual *vis) 
+static void _GGIfreedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -49,7 +49,7 @@ static void _GGIfreedbs(ggi_visual *vis)
 	}
 }
 
-int GGI_monotext_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_monotext_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -77,7 +77,7 @@ int GGI_monotext_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
  * Attempt to get the default framebuffer.
  */
 
-static int do_dbstuff(ggi_visual *vis)
+static int do_dbstuff(struct ggi_visual *vis)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
@@ -117,7 +117,7 @@ static int do_dbstuff(ggi_visual *vis)
 	return 0;
 }
 
-static int do_setmode(ggi_visual *vis, ggi_mode *mode)
+static int do_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
@@ -186,7 +186,7 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 	
 	LIBGGI_PAL(vis)->setPalette=GGI_monotext_setPalette;
 	
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	DPRINT_MODE("display-monotext: Attempting to setmode on parent "
 		       "visual...\n");
@@ -194,7 +194,7 @@ static int do_setmode(ggi_visual *vis, ggi_mode *mode)
 	return _ggi_monotextOpen(vis);
 }
 
-int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_monotext_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
 
@@ -206,7 +206,7 @@ int GGI_monotext_setmode(ggi_visual *vis, ggi_mode *mode)
 	DPRINT_MODE("display-monotext: setmode %dx%d (gt=%d)\n",
 		       mode->visible.x, mode->visible.y, mode->graphtype);
 
-	if ((err = ggiCheckMode(vis, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
 		return err;
 	}
 
@@ -263,7 +263,7 @@ static int calc_squish(ggi_monotext_priv *priv, ggi_mode *mode,
 	return 0;
 }
 
-int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_monotext_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err = 0;
@@ -341,7 +341,7 @@ int GGI_monotext_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
-int GGI_monotext_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_monotext_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT_MODE("display-monotext: getmode.\n");
 
@@ -350,7 +350,7 @@ int GGI_monotext_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_monotext_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_monotext_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
@@ -359,7 +359,7 @@ int GGI_monotext_setflags(ggi_visual *vis, ggi_flags flags)
 }
 
 int
-GGI_monotext_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+GGI_monotext_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;

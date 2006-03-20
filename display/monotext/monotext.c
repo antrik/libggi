@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.10 2006/03/17 21:55:42 cegger Exp $
+/* $Id: monotext.c,v 1.11 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -348,7 +348,7 @@ static uint8_t src_buf[8192];
 static uint8_t dest_buf[8192];
 
 
-static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
+static inline void get_source_lines(struct ggi_visual *vis, int x, int y, int w,
 				   uint8_t *src)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
@@ -360,7 +360,7 @@ static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
 
 	for (j=0; j < priv->accuracy.y; j++, y+=priv->squish.y, src+=stride) {
 
-		ggiGetHLine(vis, x, y, w, src);
+		ggiGetHLine(vis->stem, x, y, w, src);
 		
 		for (i=0; i < num_w; i++) {
 			src[i] = priv->greymap[src[i * priv->squish.x]];
@@ -368,7 +368,7 @@ static inline void get_source_lines(ggi_visual *vis, int x, int y, int w,
 	}
 }
 
-int _ggi_monotextUpdate(ggi_visual *vis, int x, int y, int w, int h)
+int _ggi_monotextUpdate(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
@@ -395,18 +395,18 @@ int _ggi_monotextUpdate(ggi_visual *vis, int x, int y, int w, int h)
 
 		(* priv->do_blit)(priv, dest_buf, src_buf, w);
 
-		ggiPutHLine(priv->parent, x / step_x, y / step_y, w / step_x, 
+		ggiPutHLine(priv->parent->stem, x / step_x, y / step_y, w / step_x, 
 			    dest_buf);
 	}
 
 	if (! (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
-		ggiFlush(priv->parent);
+		ggiFlush(priv->parent->stem);
 	}
 	
 	return 0;
 }
 
-int _ggi_monotextFlush(ggi_visual *vis)
+int _ggi_monotextFlush(struct ggi_visual *vis)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
@@ -432,7 +432,7 @@ int _ggi_monotextFlush(ggi_visual *vis)
 	return 0;
 }
 
-int _ggi_monotextOpen(ggi_visual *vis)
+int _ggi_monotextOpen(struct ggi_visual *vis)
 {
 	int rc;
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
@@ -456,7 +456,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 	priv->red_gamma = priv->green_gamma = priv->blue_gamma = 1.0;
 
 	/* set the parent mode */
-	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
+	rc = ggiSetTextMode(priv->parent->stem, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
 		(unsigned)(priv->parent_gt));
 	if (rc < 0) {
@@ -511,7 +511,7 @@ int _ggi_monotextOpen(ggi_visual *vis)
 	return 0;
 }
 
-int _ggi_monotextClose(ggi_visual *vis)
+int _ggi_monotextClose(struct ggi_visual *vis)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
@@ -525,7 +525,7 @@ int _ggi_monotextClose(ggi_visual *vis)
 		free(priv->rgb_to_grey);
 	}
 
-	ggiClose(priv->parent);
+	ggiClose(priv->parent->stem);
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.5 2005/05/21 15:07:50 cegger Exp $
+/* $Id: draw.c,v 1.6 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -35,7 +35,7 @@
 
 /* (!!! FIXME some of these are confused) */
 
-int GGI_monotext_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_monotext_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -50,7 +50,7 @@ int GGI_monotext_drawpixel_nc(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_monotext_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_monotext_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -65,7 +65,7 @@ int GGI_monotext_drawpixel(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_monotext_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_monotext_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -80,7 +80,7 @@ int GGI_monotext_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_monotext_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_monotext_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -95,7 +95,7 @@ int GGI_monotext_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_monotext_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_monotext_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -116,7 +116,7 @@ int GGI_monotext_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return 0;
 }
 
-int GGI_monotext_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_monotext_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -131,7 +131,7 @@ int GGI_monotext_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	return err;
 }
 
-int GGI_monotext_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_monotext_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -146,7 +146,7 @@ int GGI_monotext_drawhline(ggi_visual *vis, int x, int y, int w)
 	return err;
 }
 
-int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_monotext_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -161,7 +161,7 @@ int GGI_monotext_puthline(ggi_visual *vis, int x, int y, int w, const void *buff
 	return err;
 }
 
-int GGI_monotext_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_monotext_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -176,7 +176,7 @@ int GGI_monotext_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_monotext_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_monotext_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -191,7 +191,7 @@ int GGI_monotext_drawvline(ggi_visual *vis, int x, int y, int h)
 	return 0;
 }
 
-int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int GGI_monotext_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -215,7 +215,7 @@ int GGI_monotext_putvline(ggi_visual *vis, int x, int y, int h, const void *buff
  * the affected area is relatively large. 
  */
  
-int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_monotext_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -227,7 +227,7 @@ int GGI_monotext_putbox(ggi_visual *vis, int x, int y, int w, int h, const void 
 	return _ggi_monotextUpdate(vis, x, y, w, h);
 }
 
-int GGI_monotext_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_monotext_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -239,7 +239,7 @@ int GGI_monotext_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return _ggi_monotextUpdate(vis, x, y, w, h);
 }
 
-int GGI_monotext_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+int GGI_monotext_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -251,8 +251,8 @@ int GGI_monotext_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, in
 	return _ggi_monotextUpdate(vis, nx, ny, w, h);
 }
 
-int GGI_monotext_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
-                 ggi_visual *vis, int dx, int dy)
+int GGI_monotext_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+                 struct ggi_visual *vis, int dx, int dy)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -265,7 +265,7 @@ int GGI_monotext_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 	return _ggi_monotextUpdate(vis, dx, dy, w, h);
 }
 
-int GGI_monotext_fillscreen(ggi_visual *vis)
+int GGI_monotext_fillscreen(struct ggi_visual *vis)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
@@ -285,7 +285,7 @@ int GGI_monotext_fillscreen(ggi_visual *vis)
 /* The following functions are just pass-throughs to the parent visual.
  */
 
-int GGI_monotext_setorigin(ggi_visual *vis, int x, int y)
+int GGI_monotext_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 

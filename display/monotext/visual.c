@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.14 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -50,11 +50,11 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_monotext_priv *priv;
-	ggi_visual *parentvis;
+	struct ggi_visual *parentvis;
 	gg_option options[NUM_OPTS];
 	char target[1024] = "";
 	int  val;
@@ -143,7 +143,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 

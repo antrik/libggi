@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2005/07/30 10:58:28 cegger Exp $
+/* $Id: color.c,v 1.9 2006/03/20 20:44:53 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -64,7 +64,7 @@ static const ggi_color vga16_palette[16] = {
 
 #undef GGI_COLOR_COMPONENT_TYPE
 
-static inline chtype map_char_to_chtype(ggi_visual *vis, unsigned int c) {
+static inline chtype map_char_to_chtype(struct ggi_visual *vis, unsigned int c) {
 	struct TIhooks *tiinfo;
 	tiinfo = TERMINFO_PRIV(vis);
 	switch (c) {
@@ -73,12 +73,12 @@ static inline chtype map_char_to_chtype(ggi_visual *vis, unsigned int c) {
 	}
 }
 
-static inline chtype get_color_pair(ggi_visual *vis, int fg, int bg) {
+static inline chtype get_color_pair(struct ggi_visual *vis, int fg, int bg) {
 	if ( COLOR_PAIRS == 0 ) return 0;
 	return COLOR_PAIR(((COLORS-fg%COLORS-1)+(bg%COLORS*COLORS))%COLOR_PAIRS);
 }
 
-static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16_t pixel)
+static inline chtype map_text16_to_ncurses(struct ggi_visual *vis, uint16_t pixel)
 {
 	struct TIhooks *tiinfo = TERMINFO_PRIV(vis);
 
@@ -89,7 +89,7 @@ static inline chtype map_text16_to_ncurses(ggi_visual *vis, uint16_t pixel)
 		| tiinfo->color16_table[fg+(bg<<4)];
 }
 
-static inline chtype map_text32_to_ncurses(ggi_visual *vis, uint32_t pixel)
+static inline chtype map_text32_to_ncurses(struct ggi_visual *vis, uint32_t pixel)
 {
 	chtype attributes = A_NORMAL;
 
@@ -109,7 +109,7 @@ static inline chtype map_text32_to_ncurses(ggi_visual *vis, uint32_t pixel)
 		attributes | get_color_pair(vis, fg, bg);
 }
 
-static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
+static int paint_ncurses_window16(struct ggi_visual *vis, WINDOW *win, int width,
                                   int height)
 {
 	uint16_t *fb_walk;
@@ -164,7 +164,7 @@ static int paint_ncurses_window16(ggi_visual *vis, WINDOW *win, int width,
 	return 0;
 }
 
-static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
+static int paint_ncurses_window32(struct ggi_visual *vis, WINDOW *win, int width,
                                   int height)
 {
 	uint32_t *fb_walk;
@@ -219,7 +219,7 @@ static int paint_ncurses_window32(ggi_visual *vis, WINDOW *win, int width,
 	return 0;
 }
 
-int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
+int paint_ncurses_window(struct ggi_visual *vis, WINDOW *win, int width, int height)
 {
 	switch (LIBGGI_GT(vis)) {
 	case GT_TEXT16: return paint_ncurses_window16(vis, win, width, height);
@@ -229,7 +229,7 @@ int paint_ncurses_window(ggi_visual *vis, WINDOW *win, int width, int height)
 }
 
 #if 0
-ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_terminfo_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	switch (LIBGGI_GT(vis)) {
 	case GT_TEXT16: {
@@ -253,7 +253,7 @@ ggi_pixel GGI_terminfo_mapcolor(ggi_visual *vis, const ggi_color *col)
 	}
 }
 
-int GGI_terminfo_unmappixel(ggi_visual *vis, ggi_pixel pix, ggi_color *col)
+int GGI_terminfo_unmappixel(struct ggi_visual *vis, ggi_pixel pix, ggi_color *col)
 {
 	switch (LIBGGI_GT(vis)) {
 	case GT_TEXT16: {

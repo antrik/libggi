@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.6 2004/10/31 14:25:04 cegger Exp $
+/* $Id: TIvisual.h,v 1.7 2006/03/20 20:44:53 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -57,7 +57,7 @@ struct TIhooks {
 	int virgin;
 	chtype color16_table[256];
 	chtype charmap[256];
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	int physzflags;
 	ggi_coord physz;
 };
@@ -85,5 +85,5 @@ ggifunc_setflags	GGI_terminfo_setflags;
 giifunc_eventpoll	GII_terminfo_eventpoll;
 giifunc_sendevent	GII_terminfo_sendevent;
 
-extern int paint_ncurses_window(ggi_visual *, WINDOW *, int, int);
-extern void _GGI_terminfo_freedbs(ggi_visual *);
+extern int paint_ncurses_window(struct ggi_visual *, WINDOW *, int, int);
+extern void _GGI_terminfo_freedbs(struct ggi_visual *);

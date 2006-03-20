@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.17 2006/03/20 20:44:53 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -35,7 +35,7 @@
 
 #include "../common/pixfmt-setup.inc"
 
-static int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
+static int GGI_terminfo_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
@@ -56,7 +56,7 @@ static int GGI_terminfo_setorigin(ggi_visual *vis, int x, int y)
 }
 
 #if 0
-int GGI_terminfo_setsplitline(ggi_visual *vis, int line)
+int GGI_terminfo_setsplitline(struct ggi_visual *vis, int line)
 {
 	struct TIhooks *priv;
 	ggi_mode *mode;
@@ -77,7 +77,7 @@ int GGI_terminfo_setsplitline(ggi_visual *vis, int line)
 }
 #endif
 
-int GGI_terminfo_flush(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_terminfo_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 		       int tryflag)
 {
 	struct TIhooks *priv;
@@ -94,7 +94,7 @@ int GGI_terminfo_flush(ggi_visual *vis, int x, int y, int w, int h,
 	return 0;
 }
 
-int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_terminfo_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -117,7 +117,7 @@ int GGI_terminfo_getapi(ggi_visual *vis, int num, char *apiname, char *arguments
 	return GGI_ENOMATCH;
 }
 
-static int _GGI_terminfo_loadstubs(ggi_visual *vis)
+static int _GGI_terminfo_loadstubs(struct ggi_visual *vis)
 {
 	int i, err;
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
@@ -139,7 +139,7 @@ static int _GGI_terminfo_loadstubs(ggi_visual *vis)
 	return 0;
 }
 
-static int _GGI_terminfo_domode(ggi_visual *vis)
+static int _GGI_terminfo_domode(struct ggi_visual *vis)
 {
 	struct TIhooks *priv = TERMINFO_PRIV(vis);
 
@@ -171,7 +171,7 @@ static int _GGI_terminfo_domode(ggi_visual *vis)
 	return 0;
 } 
 
-int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_terminfo_setmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	struct TIhooks *priv;
 	int status;
@@ -216,7 +216,7 @@ int GGI_terminfo_setmode(ggi_visual *vis, ggi_mode *tm)
 	return _GGI_terminfo_domode(vis);
 }
 
-int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_terminfo_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	struct TIhooks *priv = TERMINFO_PRIV(vis);
 	int xdpp, ydpp;
@@ -268,7 +268,7 @@ int GGI_terminfo_checkmode(ggi_visual *vis, ggi_mode *tm)
 	return err;
 }
 
-int GGI_terminfo_getmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_terminfo_getmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 	DPRINT("display-terminfo: getmode mode %8x %dx%d (%dx%d dots, %dx%d font)\n",
@@ -279,7 +279,7 @@ int GGI_terminfo_getmode(ggi_visual *vis, ggi_mode *tm)
 	return 0;
 }
 
-int GGI_terminfo_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_terminfo_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	/* Doesn't support sync mode */
 	LIBGGI_FLAGS(vis) = flags;

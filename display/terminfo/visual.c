@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.18 2006/03/20 20:44:53 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -47,7 +47,7 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ	2
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-void _GGI_terminfo_freedbs(ggi_visual *vis)
+void _GGI_terminfo_freedbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -187,7 +187,7 @@ static void construct_charmap(chtype charmap[256])
 	/* what, no euro symbol? :) */
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	struct TIhooks *priv;
@@ -346,7 +346,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	struct TIhooks *priv;
 

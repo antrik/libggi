@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2005/06/09 17:58:26 cegger Exp $
+/* $Id: color.c,v 1.9 2006/03/20 20:41:05 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -34,7 +34,7 @@
 #include <string.h>
 
 
-int GGI_monotext_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *colormap)
+int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	const ggi_color *src = colormap;
