@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.8 2005/07/30 10:57:03 cegger Exp $
+/* $Id: quartz.h,v 1.9 2006/03/20 19:35:38 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -52,7 +52,7 @@ typedef struct {
 	CGDataProviderRef dataProviderRef;
 	CGImageRef image;
 
-	ggi_visual *memvis;
+	struct ggi_visual *memvis;
 
 	size_t stride;
 	uint8_t *fb;
@@ -82,7 +82,7 @@ typedef struct {
 	int enableUserResize;
 
 	/* functions for use of extensions */
-	int (*updateWindowContext)(ggi_visual *vis, int manualrefresh);
+	int (*updateWindowContext)(struct ggi_visual *vis, int manualrefresh);
 } ggi_quartz_priv;
 
 
