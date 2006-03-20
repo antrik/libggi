@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.56 2006/03/20 17:42:21 pekberg Exp $
+/* $Id: init.c,v 1.57 2006/03/20 17:43:30 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -134,10 +134,7 @@ _ggiAttach(struct gg_api* api, struct gg_stem *stem)
 static void
 _ggiDetach(struct gg_api* api, struct gg_stem *stem)
 {
-	struct ggi_visual *vis;
-	vis = GGI_VISUAL(stem);
 	ggiClose(stem);
-	free(vis);
 }
 
 /*
