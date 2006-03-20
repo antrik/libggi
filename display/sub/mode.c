@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
+/* $Id: mode.c,v 1.9 2006/03/20 20:20:39 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -30,7 +30,7 @@
 #include "config.h"
 #include <ggi/display/sub.h>
 
-int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_sub_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	if(num == 0) {
@@ -41,7 +41,7 @@ int GGI_sub_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-int GGI_sub_setmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_sub_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_sub_priv *subinfo = SUB_PRIV(vis);
 	subinfo->position.x = tm->visible.x;
@@ -58,7 +58,7 @@ int GGI_sub_setmode(ggi_visual *vis,ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_sub_checkmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_sub_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	return -1;
 }
@@ -66,7 +66,7 @@ int GGI_sub_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_sub_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_sub_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	memcpy(tm,LIBGGI_MODE(vis),sizeof(ggi_mode));
 	tm->visible.x = tm->virt.x;
@@ -78,7 +78,7 @@ int GGI_sub_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_sub_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	int rc;
 	ggi_sub_priv *priv = SUB_PRIV(vis);
@@ -92,7 +92,7 @@ int GGI_sub_setflags(ggi_visual *vis,ggi_flags flags)
 	return 0;	
 }
 
-int GGI_sub_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_sub_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	return _ggiInternFlush(priv->parent, x + priv->position.x, 

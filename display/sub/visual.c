@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.14 2006/03/20 20:20:39 cegger Exp $
 ******************************************************************************
 
    Display-sub
@@ -32,7 +32,7 @@
 #include "config.h"
 #include <ggi/display/sub.h>
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_sub_priv *priv;
@@ -109,7 +109,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	free(LIBGGI_GC(vis));
 	free(SUB_PRIV(vis));

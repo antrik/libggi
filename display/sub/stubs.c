@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.10 2005/07/21 07:27:47 cegger Exp $
+/* $Id: stubs.c,v 1.11 2006/03/20 20:20:39 cegger Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -74,28 +74,28 @@
 */
 
 /* NB: Here the src is not directly translated... */
-int GGI_sub_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
-		      ggi_visual *vis, int dx, int dy)
+int GGI_sub_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+		      struct ggi_visual *vis, int dx, int dy)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis); /* Destination is subvisual */
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiCrossBlit(src, sx, sy, w, h, priv->parent,
+	err = ggiCrossBlit(src->stem, sx, sy, w, h, priv->parent->stem,
 		      dx + priv->position.x, dy + priv->position.y);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int w,int h)
+int GGI_sub_drawbox(struct ggi_visual *vis,int x,int y,int w,int h)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawBox(priv->parent,
+	err = ggiDrawBox(priv->parent->stem,
 				x + priv->position.x,
 				y + priv->position.y,
 				w, h);
@@ -103,7 +103,7 @@ int GGI_sub_drawbox(ggi_visual *vis,int x,int y,int w,int h)
 	return err;
 }
 
-int GGI_sub_putbox(ggi_visual *vis, int x, int y,
+int GGI_sub_putbox(struct ggi_visual *vis, int x, int y,
 			int w, int h,
 			const void *buf)
 { 
@@ -112,7 +112,7 @@ int GGI_sub_putbox(ggi_visual *vis, int x, int y,
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPutBox(priv->parent,
+	err = ggiPutBox(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y,
 			w, h, buf);
@@ -120,7 +120,7 @@ int GGI_sub_putbox(ggi_visual *vis, int x, int y,
 	return err;
 }
 
-int GGI_sub_getbox(ggi_visual *vis,
+int GGI_sub_getbox(struct ggi_visual *vis,
 			int x, int y,
 			int w, int h,
 			void *buf)
@@ -130,7 +130,7 @@ int GGI_sub_getbox(ggi_visual *vis,
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiGetBox(priv->parent,
+	err = ggiGetBox(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y,
 			w, h, buf);
@@ -138,28 +138,28 @@ int GGI_sub_getbox(ggi_visual *vis,
 	return err;
 }
 
-int GGI_sub_fillscreen(ggi_visual *vis)
+int GGI_sub_fillscreen(struct ggi_visual *vis)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawBox(priv->parent, priv->position.x, priv->position.y,
+	err = ggiDrawBox(priv->parent->stem, priv->position.x, priv->position.y,
 					priv->botright.x - priv->position.x,
 					priv->botright.y - priv->position.y);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_sub_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPutc(priv->parent,
+	err = ggiPutc(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, c);
 	RESTORE_GC;
@@ -167,14 +167,14 @@ int GGI_sub_putc(ggi_visual *vis, int x, int y, char c)
 }
 
 
-int GGI_sub_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_sub_puts(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPuts(priv->parent,
+	err = ggiPuts(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, str);
 	RESTORE_GC;
@@ -182,161 +182,161 @@ int GGI_sub_puts(ggi_visual *vis, int x, int y, const char *str)
 }
 
 
-int GGI_sub_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_sub_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiGetCharSize(priv->parent, width, height);
+	return ggiGetCharSize(priv->parent->stem, width, height);
 }
 
-int GGI_sub_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_sub_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawHLine(priv->parent,
+	err = ggiDrawHLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, w);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_sub_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawLine(priv->parent,
+	err = ggiDrawLine(priv->parent->stem,
 			x1 + priv->position.x, y1 + priv->position.y,
 			x2 + priv->position.x, y2 + priv->position.y);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_sub_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawVLine(priv->parent,
+	err = ggiDrawVLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, h);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_sub_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiDrawPixel(priv->parent,
+	err = ggiDrawPixel(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_sub_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPutPixel(priv->parent,
+	err = ggiPutPixel(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, col);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_sub_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiGetPixel(priv->parent,
+	err = ggiGetPixel(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, col);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
+int GGI_sub_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPutHLine(priv->parent,
+	err = ggiPutHLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, w, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
+int GGI_sub_gethline(struct ggi_visual *vis, int x, int y, int w, void *buf)
 { 
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiGetHLine(priv->parent,
+	err = ggiGetHLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, w, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_putvline(ggi_visual *vis, int x, int y, int h, const void *buf)
+int GGI_sub_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiPutVLine(priv->parent,
+	err = ggiPutVLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, h, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_getvline(ggi_visual *vis, int x, int y, int h, void *buf)
+int GGI_sub_getvline(struct ggi_visual *vis, int x, int y, int h, void *buf)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiGetVLine(priv->parent,
+	err = ggiGetVLine(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y, h, buf);
 	RESTORE_GC;
 	return err;
 }
 
-int GGI_sub_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+int GGI_sub_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 	int err;
 	IS_SAVING_GC;
 
 	SETUP_AND_SAVE_GC;
-	err = ggiCopyBox(priv->parent,
+	err = ggiCopyBox(priv->parent->stem,
 			x + priv->position.x,
 			y + priv->position.y,
 			w, h, nx, ny);
@@ -348,62 +348,62 @@ int GGI_sub_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 **	Simple "call parent" functions
 */
 
-int GGI_sub_setgammamap(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+int GGI_sub_setgammamap(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
-	return ggiSetGammaMap(priv->parent, start, len, colormap);
+	return ggiSetGammaMap(priv->parent->stem, start, len, colormap);
 }
 
-int GGI_sub_getgammamap(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_sub_getgammamap(struct ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiGetGammaMap(priv->parent, start, len, colormap);
+	return ggiGetGammaMap(priv->parent->stem, start, len, colormap);
 }
 
 
-int GGI_sub_getgamma(ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
+int GGI_sub_getgamma(struct ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiGetGamma(priv->parent,r,g,b);
+	return ggiGetGamma(priv->parent->stem,r,g,b);
 }
 
-int GGI_sub_setgamma(ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
+int GGI_sub_setgamma(struct ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
-	return ggiSetGamma(priv->parent,r,g,b);
+	return ggiSetGamma(priv->parent->stem,r,g,b);
 } 
 
-ggi_pixel GGI_sub_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_sub_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiMapColor(priv->parent, col);
+	return ggiMapColor(priv->parent->stem, col);
 }
 
-int GGI_sub_unmappixel(ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
+int GGI_sub_unmappixel(struct ggi_visual *vis, ggi_pixel pixel, ggi_color *col)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiUnmapPixel(priv->parent, pixel, col);
+	return ggiUnmapPixel(priv->parent->stem, pixel, col);
 }
 
-int GGI_sub_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+int GGI_sub_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	/* Should we allow that ? */
-	return ggiSetPalette(priv->parent, start, len, colormap);
+	return ggiSetPalette(priv->parent->stem, start, len, colormap);
 }
 
-int GGI_sub_getpalvec(ggi_visual *vis, int start, int len, ggi_color *colormap)
+int GGI_sub_getpalvec(struct ggi_visual *vis, int start, int len, ggi_color *colormap)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	return ggiGetPalette(priv->parent, start, len, colormap);
+	return ggiGetPalette(priv->parent->stem, start, len, colormap);
 }
