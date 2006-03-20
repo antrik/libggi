@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.6 2005/07/31 15:30:38 soyt Exp $
+/* $Id: file.h,v 1.7 2006/03/20 20:01:17 cegger Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -33,7 +33,7 @@
 
 
 typedef int  (file_detect_func)(char *filename);
-typedef void (file_writer_func)(ggi_visual *vis);
+typedef void (file_writer_func)(struct ggi_visual *vis);
 
 #define FILE_BUFFER_SIZE  1024
 
@@ -82,15 +82,15 @@ typedef struct {
 /* File Primitives
  */
 
-extern int  _ggi_file_create_file(ggi_visual *vis, const char *filename);
-extern void _ggi_file_close_file(ggi_visual *vis);
-extern void _ggi_file_rewind(ggi_visual *vis);
-extern void _ggi_file_flush(ggi_visual *vis);
+extern int  _ggi_file_create_file(struct ggi_visual *vis, const char *filename);
+extern void _ggi_file_close_file(struct ggi_visual *vis);
+extern void _ggi_file_rewind(struct ggi_visual *vis);
+extern void _ggi_file_flush(struct ggi_visual *vis);
 
-extern void _ggi_file_write_byte(ggi_visual *vis, unsigned int val);
-extern void _ggi_file_write_word(ggi_visual *vis, unsigned int val);
-extern void _ggi_file_write_string(ggi_visual *vis, const unsigned char *str);
-extern void _ggi_file_write_zeros(ggi_visual *vis, int count);
+extern void _ggi_file_write_byte(struct ggi_visual *vis, unsigned int val);
+extern void _ggi_file_write_word(struct ggi_visual *vis, unsigned int val);
+extern void _ggi_file_write_string(struct ggi_visual *vis, const unsigned char *str);
+extern void _ggi_file_write_zeros(struct ggi_visual *vis, int count);
 
 
 /* Image Writers
@@ -102,7 +102,7 @@ extern file_writer_func _ggi_file_ppm_write;
 /* Misc
  */
 
-extern int GGI_file_resetmode(ggi_visual *vis);
+extern int GGI_file_resetmode(struct ggi_visual *vis);
 
 
 /* LibGGI Interface
