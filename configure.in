@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.191 2006/03/14 05:23:33 cegger Exp $
+dnl $Id: configure.in,v 1.192 2006/03/20 12:56:12 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -417,7 +417,7 @@ if test "x$do_noswar" = "xyes"; then
 		[Defines for SWAR selection])
 fi
 
-AC_MSG_CHECKING(if LibGII build detected working int64)
+AC_MSG_CHECKING(if LibGG build detected working int64)
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[
 #include <ggi/system.h>
 #ifdef GG_HAVE_INT64
