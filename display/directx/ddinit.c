@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.53 2006/03/17 14:37:16 pekberg Exp $
+/* $Id: ddinit.c,v 1.54 2006/03/20 08:52:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -652,12 +652,15 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_SETTINGCHANGE:
+		GGI_directx_Lock(priv->cs);
 		if (priv->settings_changed) {
 			DPRINT("tell inputlib about "
 				"new system parameters\n");
 			priv->settings_changed(priv->settings_changed_arg);
+			GGI_directx_Unlock(priv->cs);
 			return 0;
 		}
+		GGI_directx_Unlock(priv->cs);
 		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);

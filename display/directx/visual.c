@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.39 2006/03/17 14:37:17 pekberg Exp $
+/* $Id: visual.c,v 1.40 2006/03/20 08:52:11 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -82,6 +82,14 @@ static int
 GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+
+	GGI_directx_Lock(priv->cs);
+	priv->settings_changed = NULL;
+	GGI_directx_Unlock(priv->cs);
+	if (priv->inp) {
+		ggCloseModule(priv->inp);
+		priv->inp = NULL;
+	}
 
 	GGI_directx_Lock(priv->cs);
 	GGI_directx_DDShutdown(priv);
@@ -206,31 +214,24 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	       specified */
 	    (!priv->hParent ||
 	     getenv("GGI_INPUT") || getenv("GGI_INPUT_directx"))) {
-		struct gg_module *inp;
+		struct gg_module *inp = NULL;
 		struct gg_api *gii;
 
 		if ((gii = ggGetAPIByName("gii")) != NULL) {
 			if (STEM_HAS_API(vis->stem, gii)) {
-				inp = ggOpenModule(gii, vis->stem, "input-directx", NULL, &inputdx);
+				inp = ggOpenModule(gii, vis->stem,
+					"input-directx", NULL, &inputdx);
 			}
 		}
 
-		if (inp == NULL) {
-			DPRINT_MISC("Unable to open directx inputlib\n");
-			GGIclose(vis, dlh);
-			err = GGI_ENODEVICE;
-			goto err3;
-		}
+		if (!inp)
+			DPRINT_MISC("Unable to open input-directx, "
+				"going on without it\n");
 
 		priv->inp = inp;
-#if 0
-FIXME
-		/* Now join the new event source in. */
-		vis->input = giiJoinInputs(vis->input, inp);
-#endif
-	} else {
-		priv->inp = NULL;
 	}
+	else
+		priv->inp = NULL;
 
 	priv->settings_changed = inputdx.settings_changed;
 	priv->settings_changed_arg = inputdx.settings_changed_arg;
