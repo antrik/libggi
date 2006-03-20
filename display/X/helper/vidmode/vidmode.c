@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.29 2006/02/04 22:11:46 soyt Exp $
+/* $Id: vidmode.c,v 1.30 2006/03/20 14:47:01 neiljp Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -57,7 +57,7 @@ typedef struct {
 /*
   Clean up 
 */
-static void ggi_xvidmode_cleanup(ggi_visual * vis)
+static void ggi_xvidmode_cleanup(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
@@ -78,7 +78,7 @@ static void ggi_xvidmode_cleanup(ggi_visual * vis)
 /*
   Check video mode
 */
-static int ggi_xvidmode_getmodelist(ggi_visual * vis)
+static int ggi_xvidmode_getmodelist(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv;
 	ggi_x_vidmode *vidmode;
@@ -141,7 +141,7 @@ error_device:
 /* 
    Set video mode
 */
-static int ggi_xvidmode_enter_mode(ggi_visual * vis, int num)
+static int ggi_xvidmode_enter_mode(struct ggi_visual * vis, int num)
 {
 	ggi_x_priv *priv;
 
@@ -280,7 +280,7 @@ static void ggi_vidmode_checkmode_adapt(ggi_mode * m,
 
 /* This function performs the CheckMode operation and returns
  * the number of the best mode.  */
-static int ggi_xvidmode_validate_mode(ggi_visual * vis, intptr_t num,
+static int ggi_xvidmode_validate_mode(struct ggi_visual * vis, intptr_t num,
 				      ggi_mode * mode)
 {
 	ggi_x_priv *priv;
@@ -444,7 +444,7 @@ static int ggi_xvidmode_validate_mode(ggi_visual * vis, intptr_t num,
 /*
   Restore video mode
 */
-static int ggi_xvidmode_restore_mode(ggi_visual * vis)
+static int ggi_xvidmode_restore_mode(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	ggi_x_vidmode *vidmode = (ggi_x_vidmode *) priv->modes_priv;
@@ -469,7 +469,7 @@ static int ggi_xvidmode_restore_mode(ggi_visual * vis)
 	return GGI_OK;
 }
 
-static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual * vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t * dlret)
 {
 	ggi_x_priv *priv;
@@ -500,7 +500,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	return GGI_OK;
 }
 
-static int GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
 {
 	ggi_xvidmode_restore_mode(vis);
 	ggi_xvidmode_cleanup(vis);
