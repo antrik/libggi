@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.33 2006/03/20 09:33:13 soyt Exp $
+/* $Id: visual.c,v 1.34 2006/03/20 18:54:52 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -52,7 +52,8 @@ static const gg_option optlist[] =
 #define OPT_NOBLANK	4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
-/*
+
+#if 0
 static gii_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 {
 	ggi_memory_priv *priv=inp->priv;
@@ -64,7 +65,7 @@ static gii_event_mask GII_memory_poll(gii_input_t inp, void *arg)
 		if (priv->inputbuffer->buffer[priv->inputoffset++]!=MEMINPMAGIC)
 		{
 			DPRINT_MISC("OUT OF SYNC in meminput !\n");
-			priv->inputoffset=0;	/* Try to resync * /
+			priv->inputoffset=0;	/* Try to resync */
 			return 0;
 		}
 		memcpy(&ev, &(priv->inputbuffer->buffer[priv->inputoffset]),
@@ -97,11 +98,11 @@ static int GII_memory_send(gii_input_t inp, gii_event *event)
 	{
 		priv->inputbuffer->writeoffset=0;
 	}
-	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]=MEMINPMAGIC-1;	/* "break"-symbol * /
+	priv->inputbuffer->buffer[priv->inputbuffer->writeoffset]=MEMINPMAGIC-1;	/* "break"-symbol */
 
 	return 0;
 }
-*/
+#endif
 
 static int GGI_memory_flush(struct ggi_visual *vis, 
 			    int x, int y, int w, int h, int tryflag) {
@@ -183,7 +184,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				priv->memtype=MT_SHMID;
 				if (options[OPT_INPUT].result[0])
 				{
-					/*priv->inputbuffer=priv->memptr;*/
+#if 0
+					priv->inputbuffer=priv->memptr;
+#endif
 					priv->memptr=(char *)priv->memptr+INPBUFSIZE;
 					DPRINT("display-memory: moved mem to %p for input-buffer.\n",
 						priv->memptr);
@@ -212,7 +215,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				priv->memtype=MT_SHMID;
 				if (options[OPT_INPUT].result[0])
 				{
-					/*priv->inputbuffer=priv->memptr;*/
+#if 0
+					priv->inputbuffer=priv->memptr;
+#endif
 					priv->memptr=(char *)priv->memptr+INPBUFSIZE;
 					DPRINT("display-memory: moved mem to %p for input-buffer.\n",
 						priv->memptr);
@@ -278,7 +283,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->checkmode=GGI_memory_checkmode;
 	vis->opdisplay->setflags=GGI_memory_setflags;
 
-	/*
+#if 0	
 	if (priv->inputbuffer)
 	{
 		gii_input *inp;
@@ -292,7 +297,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 
-		/* First allocate a new gii_input descriptor. * /
+		/* First allocate a new gii_input descriptor. */
 
 		if (NULL==(inp=_giiInputAlloc()))
 		{
@@ -301,24 +306,24 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		DPRINT_MISC("gii inp=%p\n",inp);
 
-		/* Now fill in the blanks. * /
+		/* Now fill in the blanks. */
 
-		inp->priv=priv;	/* We need that in poll() * /
-		priv->inputbuffer->writeoffset=0; /* Not too good, but ... * /
+		inp->priv=priv;	/* We need that in poll() */
+		priv->inputbuffer->writeoffset=0; /* Not too good, but ... */
 		inp->targetcan= emAll;
 		inp->GIIseteventmask(inp,inp->targetcan);
-		inp->maxfd=0;	/* This is polled. * /
+		inp->maxfd=0;	/* This is polled. */
 		inp->flags|=GII_FLAGS_HASPOLLED;
 
 		inp->GIIeventpoll=GII_memory_poll;
 		inp->GIIsendevent=GII_memory_send;
 
-		/* Now join the new event source in. * /
+		/* Now join the new event source in. */
 		vis->input=giiJoinInputs(vis->input,inp);
 		out:
 		while(0){};
 	}
-	*/
+#endif
 	
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
