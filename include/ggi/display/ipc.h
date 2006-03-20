@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.6 2004/02/14 22:30:47 cegger Exp $
+/* $Id: ipc.h,v 1.7 2006/03/20 20:22:23 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -89,6 +89,6 @@ typedef struct
 
 #define IPC_PRIV(vis) ((ggi_ipc_priv *)LIBGGI_PRIVATE(vis))
 
-int _GGI_ipc_resetmode(ggi_visual *vis);
+int _GGI_ipc_resetmode(struct ggi_visual *vis);
 
 #endif /* _GGI_DISPLAY_IPC_H */
