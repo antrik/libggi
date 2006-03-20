@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.55 2006/03/20 09:25:09 soyt Exp $
+/* $Id: init.c,v 1.56 2006/03/20 17:42:21 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -179,6 +179,8 @@ _ggiInit(struct gg_api* api)
 		goto err0;
 	}
 
+	_ggiLibIsUp = 1;
+
 	_ggiVisuals.visuals = 0;
 	GG_SLIST_INIT(&_ggiVisuals.visual);
 
@@ -259,7 +261,7 @@ err3:
 err2:
 	ggLockDestroy(_ggiVisuals.mutex);
 err1:
-	_ggiLibIsUp--;
+	_ggiLibIsUp = 0;
 	ggiExtensionExit();
 err0:
 	return err;
