@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.23 2006/03/17 14:33:51 pekberg Exp $
+/* $Id: demo.c,v 1.24 2006/03/20 09:39:13 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -110,7 +110,6 @@ int
 ggiKbhit(ggi_visual_t vis)
 {
 	struct timeval t={0,0};
-	int res;
 
 	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
 		!= emZero);
@@ -403,7 +402,7 @@ int main(int argc, char **argv)
 	/* Initialize the GII library. This must be called before any other
 	 * GII function.
 	 */
-	if (ggInitAPI(libgii) != 0) {
+	if (giiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize libgii, exiting.\n",
 			argv[0]);
 		exit(1);
@@ -412,7 +411,7 @@ int main(int argc, char **argv)
 	/* Initialize the GGI library. This must be called before any other
 	 * GGI function.
 	 */
-	if (ggInitAPI(libggi) != 0) {
+	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize libggi, exiting.\n",
 			argv[0]);
 		exit(1);
@@ -428,7 +427,7 @@ int main(int argc, char **argv)
 
 	/* Bless that stem with the LibGII API.
 	 */
-	if(ggAttach(libgii, vis) < 0) {
+	if(giiAttach(vis) < 0) {
 		fprintf(stderr, "%s: unable to attach libgii, exiting.\n",
 			argv[0]);
 		exit(1);
@@ -436,7 +435,7 @@ int main(int argc, char **argv)
 
 	/* Bless that stem with the LibGGI API.
 	 */
-	if(ggAttach(libggi, vis) < 0) {
+	if(ggiAttach(vis) < 0) {
 		fprintf(stderr, "%s: unable to attach libggi, exiting.\n",
 			argv[0]);
 		exit(1);
@@ -718,11 +717,11 @@ int main(int argc, char **argv)
 
 	/* Bless that stem with the LibGGI API.
 	 */
-	if (ggAttach(libggi, memvis) < 0)
-		goto no_mem_targ;
+	if (ggiAttach(memvis) < 0)
+		goto no_mem_targ2;
 
 	if (ggiOpen(memvis, "display-memory", NULL))
-		goto no_mem_targ;
+		goto no_mem_targ1;
 
 	/* Set it to a small 32 bit mode. 
 	 */
@@ -766,6 +765,10 @@ int main(int argc, char **argv)
 	printf("CrossBlit(): %d blits\n", i);
 
 	ggiClose(memvis);
+no_mem_targ1:
+	ggiDetach(memvis);
+no_mem_targ2:
+	ggDelStem(memvis);
 	
 	no_mem_targ:
 
@@ -1407,11 +1410,38 @@ int main(int argc, char **argv)
 	 */
 	ggiClose(vis);
 
-	/* Now close down LibGGI. Every LibGGI call except ggiInit has 
+	/* Detach the LibGGI API from the stem.
+	 */
+	if(ggiDetach(vis) < 0) {
+		fprintf(stderr, "%s: unable to detach libggi, exiting.\n",
+			argv[0]);
+		exit(1);
+
+	/* Detach the LibGII API from the stem.
+	 */
+	if(giiDetach(vis) < 0) {
+		fprintf(stderr, "%s: unable to detach libgii, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+	if(ggDelStem(vis) < 0) {
+		fprintf(stderr, "%s: unable to delete stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
+	/* Now close down LibGGI. Every LibGGI call except ggiInit has
 	 * undefined behaviour now. It is not recommended to needlessly
 	 * deinit-reinit LibGGI, but it's possible.
 	 */
 	ggiExit();
+
+	/* Now close down LibGII. Every LibGII call except giiInit has
+	 * undefined behaviour now. It is not recommended to needlessly
+	 * deinit-reinit LibGII, but it's possible.
+	 */
+	giiExit();
 
 	/* Terminate the program.
 	 */
