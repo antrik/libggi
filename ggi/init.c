@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.57 2006/03/20 17:43:30 pekberg Exp $
+/* $Id: init.c,v 1.58 2006/03/21 15:51:53 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -119,22 +119,14 @@ const char *ggiGetConfDir(void)
 static int
 _ggiAttach(struct gg_api* api, struct gg_stem *stem)
 {
-	struct ggi_visual *vis;
-	
-	if((vis = _ggiNewVisual()) == NULL) {
-		return GGI_ENOMEM;
-	}
-	
-	vis->stem = stem;
-	GGI_PRIV(stem) = vis;
-	
 	return GGI_OK;
 }
 
 static void
 _ggiDetach(struct gg_api* api, struct gg_stem *stem)
 {
-	ggiClose(stem);
+	if (GGI_PRIV(stem))
+		ggiClose(stem);
 }
 
 /*
@@ -322,7 +314,12 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 
 	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
 	
-	vis = GGI_VISUAL(stem);
+	if((vis = _ggiNewVisual()) == NULL) {
+		return GGI_ENOMEM;
+	}
+	
+	vis->stem = stem;
+	GGI_PRIV(stem) = vis;
 	
 	if (driver == NULL) {
 		/* If GGI_DISPLAY is set, use it. Fall back to "auto" 
@@ -362,6 +359,7 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 		DPRINT_CORE("ggiOpen: success\n");
 	} else {
 		_ggiDestroyVisual(vis);
+		GGI_PRIV(stem) = NULL;
 		DPRINT_CORE("ggiOpen: failure\n");
 		return GGI_ENOTFOUND;
 	}
@@ -406,7 +404,9 @@ int ggiClose(ggi_visual_t v)
 	
 	ggUnlock(_ggiVisuals.mutex);
 
+	vis->stem = NULL;
 	_ggiDestroyVisual(vis);
+	GGI_PRIV(v) = NULL;
 
 	DPRINT_CORE("ggiClose: done!\n");
 
