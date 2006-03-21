@@ -247,7 +247,6 @@ See Also
 .. include:: ../programs/demos/demo.txt
 
 .. include:: ../display/aa/man.txt
-.. include:: ../display/auto/man.txt
 .. include:: ../display/directx/man.txt
 .. include:: ../display/fbdev/man.txt
 .. include:: ../display/file/man.txt
