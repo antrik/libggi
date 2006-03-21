@@ -109,7 +109,6 @@ man_MANS = \
            ggi-demo.1 \
            demo.1 \
            display-aa.7 \
-           display-auto.7 \
            display-directx.7 \
            display-fbdev.7 \
            display-file.7 \
