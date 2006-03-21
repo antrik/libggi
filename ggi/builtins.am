@@ -1,6 +1,3 @@
-if BUILTIN_DISPLAY
-# builtins_libs += $(top_builddir)/display/auto/libauto.la
-endif
 if BUILTIN_DEFAULT
   builtins_libs += $(top_builddir)/default/stubs/libstubs.la
   builtins_libs += $(top_builddir)/default/pseudo_stubs/libpseudo_stubs.la
