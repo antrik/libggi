@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -37,7 +37,7 @@
 #include "../common/gt-auto.inc"
 
 
-static void _GGI_palemu_freedbs(ggi_visual *vis) 
+static void _GGI_palemu_freedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -47,7 +47,7 @@ static void _GGI_palemu_freedbs(ggi_visual *vis)
 	}
 }
 
-int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_palemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 
@@ -80,7 +80,7 @@ int GGI_palemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
  * Attempt to get the default framebuffer.
  */
 
-static int do_dbstuff(ggi_visual *vis)
+static int do_dbstuff(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int i;
@@ -139,7 +139,7 @@ static int do_dbstuff(ggi_visual *vis)
 	return 0;
 }
 
-static int do_setmode(ggi_visual *vis)
+static int do_setmode(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -207,7 +207,7 @@ static int do_setmode(ggi_visual *vis)
 	vis->opdraw->setwriteframe=GGI_palemu_setwriteframe;
 	vis->opdraw->setdisplayframe=GGI_palemu_setdisplayframe;
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	/* set initial frames */
 	priv->mem_opdraw->setreadframe(vis, 0);
@@ -216,7 +216,7 @@ static int do_setmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int err;
@@ -228,7 +228,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 
 	MANSYNC_ignore(vis);
 
-	if ((err = ggiCheckMode(vis, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
 		return err;
 	}
 
@@ -255,7 +255,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	}
 
 	/* Initialize palette */
-	ggiSetColorfulPalette(vis);
+	ggiSetColorfulPalette(vis->stem);
 
 	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);
@@ -265,7 +265,7 @@ int GGI_palemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_palemu_resetmode(ggi_visual *vis)
+int GGI_palemu_resetmode(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -284,7 +284,7 @@ int GGI_palemu_resetmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	ggi_mode par_mode;
@@ -353,7 +353,7 @@ int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 
 	par_mode.graphtype = priv->mode.graphtype;
 
-	tmperr = ggiCheckMode(priv->parent, &par_mode);
+	tmperr = ggiCheckMode(priv->parent->stem, &par_mode);
 	if (tmperr) err = tmperr;
 
 	mode->visible = par_mode.visible;
@@ -382,7 +382,7 @@ int GGI_palemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
-int GGI_palemu_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_palemu_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
 		DPRINT_MODE("display-palemu: vis/mode == NULL\n");
@@ -396,7 +396,7 @@ int GGI_palemu_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_palemu_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_palemu_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 
@@ -406,7 +406,7 @@ int GGI_palemu_setflags(ggi_visual *vis, ggi_flags flags)
 	return 0;
 }
 
-int GGI_palemu_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_palemu_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int err;

@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.4 2004/09/03 18:42:01 cegger Exp $
+/* $Id: text.c,v 1.5 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: text
@@ -36,13 +36,13 @@
 #undef putc
 
 
-int GGI_palemu_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_palemu_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int char_w;
 	int char_h;
 
-	ggiGetCharSize(vis, &char_w, &char_h);
+	ggiGetCharSize(vis->stem, &char_w, &char_h);
 
 	UPDATE_MOD(vis, x, y, char_w, char_h);
 
@@ -50,10 +50,10 @@ int GGI_palemu_putc(ggi_visual *vis, int x, int y, char c)
 }
 
 #if 0
-int GGI_palemu_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_palemu_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	return ggiGetCharSize(priv->parent, width, height);
+	return ggiGetCharSize(priv->parent->stem, width, height);
 }
 #endif

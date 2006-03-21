@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.18 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -46,7 +46,7 @@ static const gg_option optlist[] =
 
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -57,7 +57,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	}
 
 	if (priv->parent != NULL) {
-		ggiClose(priv->parent);
+		ggiClose(priv->parent->stem);
 	}
 
 	ggLockDestroy(priv->flush_lock);
@@ -71,7 +71,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_palemu_priv *priv;
@@ -149,7 +149,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freeopmansync;
 	}
 
-	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
+	ggiSetFlags(priv->parent->stem, GGIFLAG_ASYNC);
 
 	/* Setup mansync */
 	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
@@ -198,7 +198,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	if (PALEMU_PRIV(vis) && PALEMU_PRIV(vis)->opmansync) {
 		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {

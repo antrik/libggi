@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.3 2004/11/13 15:56:23 cegger Exp $
+/* $Id: frames.c,v 1.4 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: frame handling
@@ -33,14 +33,14 @@
 #include <string.h>
 
 
-int GGI_palemu_setreadframe(ggi_visual *vis, int num)
+int GGI_palemu_setreadframe(struct ggi_visual *vis, int num)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
 	return priv->mem_opdraw->setreadframe(vis, num);
 }
 
-int GGI_palemu_setwriteframe(ggi_visual *vis, int num)
+int GGI_palemu_setwriteframe(struct ggi_visual *vis, int num)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -49,7 +49,7 @@ int GGI_palemu_setwriteframe(ggi_visual *vis, int num)
 	return priv->mem_opdraw->setwriteframe(vis, num);
 }
 
-int GGI_palemu_setdisplayframe(ggi_visual *vis, int num)
+int GGI_palemu_setdisplayframe(struct ggi_visual *vis, int num)
 {
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 

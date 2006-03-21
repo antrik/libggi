@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.3 2004/12/01 23:08:08 cegger Exp $
+/* $Id: draw.c,v 1.4 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: draw
@@ -35,7 +35,7 @@
  * limit the area blitted to the parent at ggiFlush() time.
  */
 
-int GGI_palemu_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_palemu_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -44,7 +44,7 @@ int GGI_palemu_drawpixel_nc(ggi_visual *vis, int x, int y)
 	return priv->mem_opdraw->drawpixel_nc(vis, x, y);
 }
 
-int GGI_palemu_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_palemu_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -53,7 +53,7 @@ int GGI_palemu_drawpixel(ggi_visual *vis, int x, int y)
 	return priv->mem_opdraw->drawpixel(vis, x, y);
 }
 
-int GGI_palemu_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_palemu_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -62,7 +62,7 @@ int GGI_palemu_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return priv->mem_opdraw->putpixel_nc(vis, x, y, col);
 }
 
-int GGI_palemu_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_palemu_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -71,7 +71,7 @@ int GGI_palemu_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return priv->mem_opdraw->putpixel(vis, x, y, col);
 }
 
-int GGI_palemu_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_palemu_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -86,7 +86,7 @@ int GGI_palemu_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return priv->mem_opdraw->drawline(vis, x1, y1, x2, y2);
 }
 
-int GGI_palemu_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_palemu_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -95,7 +95,7 @@ int GGI_palemu_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	return priv->mem_opdraw->drawhline_nc(vis, x, y, w);
 }
 
-int GGI_palemu_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_palemu_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -104,7 +104,7 @@ int GGI_palemu_drawhline(ggi_visual *vis, int x, int y, int w)
 	return priv->mem_opdraw->drawhline(vis, x, y, w);
 }
 
-int GGI_palemu_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_palemu_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -113,7 +113,7 @@ int GGI_palemu_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer
 	return priv->mem_opdraw->puthline(vis, x, y, w, buffer);
 }
 
-int GGI_palemu_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_palemu_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -122,7 +122,7 @@ int GGI_palemu_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 	return priv->mem_opdraw->drawvline_nc(vis, x, y, h);
 }
 
-int GGI_palemu_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_palemu_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -131,7 +131,7 @@ int GGI_palemu_drawvline(ggi_visual *vis, int x, int y, int h)
 	return priv->mem_opdraw->drawvline(vis, x, y, h);
 }
 
-int GGI_palemu_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int GGI_palemu_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -140,7 +140,7 @@ int GGI_palemu_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer
 	return priv->mem_opdraw->putvline(vis, x, y, h, buffer);
 }
 
-int GGI_palemu_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_palemu_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -149,7 +149,7 @@ int GGI_palemu_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *b
 	return priv->mem_opdraw->putbox(vis, x, y, w, h, buffer);
 }
 
-int GGI_palemu_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_palemu_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -158,7 +158,7 @@ int GGI_palemu_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return priv->mem_opdraw->drawbox(vis, x, y, w, h);
 }
 
-int GGI_palemu_fillscreen(ggi_visual *vis)
+int GGI_palemu_fillscreen(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -171,7 +171,7 @@ int GGI_palemu_fillscreen(ggi_visual *vis)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_palemu_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+int GGI_palemu_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -180,8 +180,8 @@ int GGI_palemu_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int 
 	return priv->mem_opdraw->copybox(vis, x, y, w, h, nx, ny);
 }
 
-int GGI_palemu_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
-			 ggi_visual *vis, int dx, int dy)
+int GGI_palemu_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+			 struct ggi_visual *vis, int dx, int dy)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	
@@ -197,13 +197,13 @@ int GGI_palemu_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
 /* The following functions are just pass-throughs to the parent visual.
  */
 
-int GGI_palemu_setorigin(ggi_visual *vis, int x, int y)
+int GGI_palemu_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	int err;
 	
-	if ((err = ggiSetOrigin(priv->parent, x, y)) != 0) {
+	if ((err = ggiSetOrigin(priv->parent->stem, x, y)) != 0) {
 		return err;
 	}
 

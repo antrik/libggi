@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.9 2005/07/30 10:58:26 cegger Exp $
+/* $Id: palemu.c,v 1.10 2006/03/21 20:46:34 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -96,7 +96,7 @@ static void blitter_4(ggi_palemu_priv *priv, void *dest, void *src, int w)
  * (Y/N), and (b) direct access to destination (Y/N).
  */
 		
-int _ggi_palemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
+int _ggi_palemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	int old_r_frame = vis->r_frame_num;
@@ -108,11 +108,11 @@ int _ggi_palemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
 	/* do transfer */
 	for (; h > 0; h--, y++) {
 
-		ggiGetHLine(vis, x, y, w, src_buf);
+		ggiGetHLine(vis->stem, x, y, w, src_buf);
 			
 		(* priv->do_blit)(priv, dest_buf, src_buf, w);
 
-		ggiPutHLine(priv->parent, x, y, w, dest_buf);
+		ggiPutHLine(priv->parent->stem, x, y, w, dest_buf);
 	}
 
 	priv->mem_opdraw->setreadframe(vis, old_r_frame);
@@ -120,7 +120,7 @@ int _ggi_palemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int _ggi_palemu_Flush(ggi_visual *vis)
+int _ggi_palemu_Flush(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -149,7 +149,7 @@ int _ggi_palemu_Flush(ggi_visual *vis)
 	return 0;
 }
 
-int _ggi_palemu_Open(ggi_visual *vis)
+int _ggi_palemu_Open(struct ggi_visual *vis)
 {
 	int rc;
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
@@ -161,7 +161,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 
 	/* set the parent mode */
 	
-	rc = ggiSetMode(priv->parent, &priv->mode);
+	rc = ggiSetMode(priv->parent->stem, &priv->mode);
 	if (rc < 0) {
 		DPRINT("display-palemu: Couldn't set parent mode.\n");
 		return rc;
@@ -211,7 +211,7 @@ int _ggi_palemu_Open(ggi_visual *vis)
 	return 0;
 }
 
-int _ggi_palemu_Close(ggi_visual *vis)
+int _ggi_palemu_Close(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
