@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.193 2006/03/20 12:56:53 pekberg Exp $
+dnl $Id: configure.in,v 1.194 2006/03/21 19:59:06 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -313,16 +313,18 @@ sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
 sys/socket.h netinet/in.h netdb.h windows.h linux/h3600_ts.h \
 asm/sharp_ts.h \
-ApplicationServices/ApplicationServices.h)
+ApplicationServices/ApplicationServices.h, [], [], [AC_INCLUDES_DEFAULT])
 
 AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h, [], [],
-	[#ifdef HAVE_WINDOWS_H
+	[AC_INCLUDES_DEFAULT
+	 #ifdef HAVE_WINDOWS_H
 	 # include <windows.h>
 	 #endif])
 
-AC_CHECK_HEADERS([sys/fbio.h])
+AC_CHECK_HEADERS([sys/fbio.h], [], [], [AC_INCLUDES_DEFAULT])
 AC_CHECK_HEADERS([vgl.h], [], [],
-	[#ifdef HAVE_SYS_FBIO_H
+	[AC_INCLUDES_DEFAULT
+	 #ifdef HAVE_SYS_FBIO_H
 	 # include <sys/fbio.h>
 	 #endif])
 
