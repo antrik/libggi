@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.12 2005/06/09 18:46:12 cegger Exp $
+/* $Id: findleaks.c,v 1.13 2006/03/21 12:38:16 pekberg Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -16,6 +16,8 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/gii.h>
 #include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -118,6 +120,22 @@ main(int argc, char *argv[])
 
 	binit = get_size();
 	a_binit = _get_ggi_alloced();
+	if (giiInit() != 0)
+		err("first giiInit() failed!\n");
+
+	prev = get_size();
+	aprev = _get_ggi_alloced();
+	for (i=2; i <= 80; i++) {
+		putchar('.');
+		fflush(stdout);
+		giiExit();
+		if (giiInit() != 0)
+			err("giiInit() number %d failed\n", i);
+	}
+	curr = get_size();
+	acurr = _get_ggi_alloced();
+	inform_mem("\ngiiInit()\n", prev, curr, aprev, acurr);
+
 	if (ggiInit() != 0)
 		err("first ggiInit() failed!\n");
 
@@ -134,7 +152,55 @@ main(int argc, char *argv[])
 	acurr = _get_ggi_alloced();
 	inform_mem("\nggiInit()\n", prev, curr, aprev, acurr);
 
-	if ((vis = ggiOpen(NULL)) == NULL)
+	if ((vis = ggNewStem()) == NULL)
+		err("first ggNewStem() failed!\n");
+
+	prev = get_size();
+	aprev = _get_ggi_alloced();
+	for (i=2; i <= 80; i++) {
+		putchar('.');
+		fflush(stdout);
+		ggDelStem(vis);
+		if ((vis = ggNewStem()) == NULL)
+			err("ggNewStem() number %d failed\n", i);
+	}
+	curr = get_size();
+	acurr = _get_ggi_alloced();
+	inform_mem("\nggNewStem()\n", prev, curr, aprev, acurr);
+
+	if (giiAttach(vis) != 0)
+		err("first giiAttach() failed!\n");
+
+	prev = get_size();
+	aprev = _get_ggi_alloced();
+	for (i=2; i <= 80; i++) {
+		putchar('.');
+		fflush(stdout);
+		giiDetach(vis);
+		if (giiAttach(vis) != 0)
+			err("giiAttach() number %d failed\n", i);
+	}
+	curr = get_size();
+	acurr = _get_ggi_alloced();
+	inform_mem("\ngiiAttach()\n", prev, curr, aprev, acurr);
+
+	if (ggiAttach(vis) != 0)
+		err("first ggiAttach() failed!\n");
+
+	prev = get_size();
+	aprev = _get_ggi_alloced();
+	for (i=2; i <= 80; i++) {
+		putchar('.');
+		fflush(stdout);
+		ggiDetach(vis);
+		if (ggiAttach(vis) != 0)
+			err("ggiAttach() number %d failed\n", i);
+	}
+	curr = get_size();
+	acurr = _get_ggi_alloced();
+	inform_mem("\nggiAttach()\n", prev, curr, aprev, acurr);
+
+	if (ggiOpen(vis, NULL) != 0)
 		err("first ggiOpen() failed!\n");
 
 	prev = get_size();
@@ -143,7 +209,7 @@ main(int argc, char *argv[])
 		putchar('.');
 		fflush(stdout);
 		ggiClose(vis);
-		if ((vis = ggiOpen(NULL)) == NULL)
+		if (ggiOpen(vis, NULL) != 0)
 			err("ggiOpen() number %d failed\n", i);
 	}
 	curr = get_size();
@@ -181,7 +247,9 @@ main(int argc, char *argv[])
 	acurr = _get_ggi_alloced();
 	inform_mem("\nggiSetSimpleMode()\n", prev, curr, aprev, acurr);
 
+	ggDelStem(vis);
 	ggiExit();
+	giiExit();
 
 	curr = get_size();
 	acurr = _get_ggi_alloced();

@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.10 2005/07/30 08:43:01 soyt Exp $
+/* $Id: showaccel.c,v 1.11 2006/03/21 12:38:16 pekberg Exp $
 ******************************************************************************
 
    showaccel.c
@@ -36,8 +36,9 @@
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
 
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -48,6 +49,15 @@
 #endif
 
 static ggi_visual_t vis;
+
+int
+myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
 
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).
@@ -101,17 +111,41 @@ int main(int argc, char *argv[])
 	 */
 	ggi_pixel paletteval[256];
 
-	/* Initialize GGI. Error out, if it fails.
+	/* Initialize GII/GGI. Error out, if it fails.
 	 */
+	if (giiInit() != 0) {
+		fprintf(stderr, "%s: unable to initialize LibGII, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
 		exit(1);
 	}
+	if ((vis=ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"%s: unable to create stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (giiAttach(vis) != 0) {
+		fprintf(stderr,
+			"%s: unable to attach gii api to stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiAttach(vis) != 0) {
+		fprintf(stderr,
+			"%s: unable to attach ggi api to stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
 	/* Open the default GGI visual. Exit on error.
 	 */
-	if ((vis=ggiOpen(NULL)) == NULL) {
+	if (ggiOpen(vis, NULL) != 0) {
 		ggiExit();
+		giiExit();
 		fprintf(stderr,
 			"%s: unable to open default visual, exiting.\n",
 			argv[0]);
@@ -222,7 +256,7 @@ int main(int argc, char *argv[])
 
 				/* In case the user hit a key, he wants to quit.
 				 */
-				if (ggiKbhit(vis)) break;
+				if (myKbhit(vis)) break;
 			}
 		}
 		/* Print the measured data
@@ -234,6 +268,9 @@ int main(int argc, char *argv[])
 	/* Close down LibGGI.
 	 */
 	ggiClose(vis);
-	ggiExit();
+        ggDelStem(vis);
+
+        ggiExit();
+        giiExit();
 	return(0);
 }

@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.9 2004/09/09 08:50:34 pekberg Exp $
+/* $Id: checkmode.c,v 1.10 2006/03/21 12:38:16 pekberg Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -505,7 +505,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.9 2004/09/09 08:50:34 pekberg Exp $\n");
+	printf("$Id: checkmode.c,v 1.10 2006/03/21 12:38:16 pekberg Exp $\n");
 	exit(0);
 }
 
@@ -571,7 +571,19 @@ int main(int argc, char **argv)
 			argv[0]);
 		exit(1);
 	}
-	if ((vis=ggiOpen(NULL)) == NULL) {
+	if ((vis=ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"%s: unable to create stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiAttach(vis) != 0) {
+		fprintf(stderr,
+			"%s: unable to attach ggi api to stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiOpen(vis, NULL) != 0) {
 		fprintf(stderr,
 			"%s: unable to open default visual, exiting.\n",
 			argv[0]);
@@ -588,6 +600,7 @@ int main(int argc, char **argv)
 	}
 
         ggiClose(vis);
+        ggDelStem(vis);
 
         ggiExit();
 
