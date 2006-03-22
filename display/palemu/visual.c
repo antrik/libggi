@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: visual.c,v 1.20 2006/03/22 00:31:34 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -193,7 +193,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				ggGetPublisher(api, priv->parent,
 					GII_PUBLISHER_SOURCE_CHANGE),
 				transfer_gii_src, vis->stem);
-			
 		}
 	}
 	if (ggiOpen(priv->parent, target, NULL) < 0) {
