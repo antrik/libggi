@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2004/12/01 23:08:24 cegger Exp $
+/* $Id: vline.c,v 1.4 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: vertical lines
@@ -35,7 +35,7 @@
 /* draw a vertical line */
 /********************************/
 
-int GGI_vgagl_drawvline(ggi_visual *vis,int x,int y,int height)
+int GGI_vgagl_drawvline(struct ggi_visual *vis,int x,int y,int height)
 {
 	/* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -55,13 +55,13 @@ int GGI_vgagl_drawvline(ggi_visual *vis,int x,int y,int height)
 	return 0;
 }
 
-int GGI_vgagl_drawvline_nc(ggi_visual *vis,int x,int y,int height)
+int GGI_vgagl_drawvline_nc(struct ggi_visual *vis,int x,int y,int height)
 {
 	gl_line(x,y,x,y+height-1,LIBGGI_GC_FGCOLOR(vis));	
 	return 0;
 }
 
-int GGI_vgagl_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer)
+int GGI_vgagl_putvline(struct ggi_visual *vis,int x,int y,int height,const void *buffer)
 {
         /* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -82,7 +82,7 @@ int GGI_vgagl_putvline(ggi_visual *vis,int x,int y,int height,const void *buffer
 	return 0;
 }
 
-int GGI_vgagl_getvline(ggi_visual *vis,int x,int y,int height,void *buffer)
+int GGI_vgagl_getvline(struct ggi_visual *vis,int x,int y,int height,void *buffer)
 {
 	gl_getbox(x, y, 1, height, buffer);
 

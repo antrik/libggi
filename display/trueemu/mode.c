@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2005/09/19 18:46:44 cegger Exp $
+/* $Id: mode.c,v 1.16 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -38,7 +38,7 @@
 #include "../common/gt-auto.inc"
 
 
-static void _GGI_trueemu_freedbs(ggi_visual *vis) 
+static void _GGI_trueemu_freedbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -48,7 +48,7 @@ static void _GGI_trueemu_freedbs(ggi_visual *vis)
 	}
 }
 
-int GGI_trueemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_trueemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 
@@ -76,7 +76,7 @@ int GGI_trueemu_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-static int do_dbstuff(ggi_visual *vis)
+static int do_dbstuff(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	int i;
@@ -127,7 +127,7 @@ static int do_dbstuff(ggi_visual *vis)
 	return 0;
 }
 
-static int do_setmode(ggi_visual *vis)
+static int do_setmode(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
@@ -193,7 +193,7 @@ static int do_setmode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_trueemu_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_trueemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	int err;
@@ -239,7 +239,7 @@ int GGI_trueemu_setmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_trueemu_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_trueemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	ggi_mode par_mode;
@@ -326,7 +326,7 @@ int GGI_trueemu_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
-int GGI_trueemu_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_trueemu_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
 		DPRINT("display-trueemu: vis/mode == NULL\n");
@@ -341,7 +341,7 @@ int GGI_trueemu_getmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_trueemu_resetmode(ggi_visual *vis)
+int GGI_trueemu_resetmode(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -358,7 +358,7 @@ int GGI_trueemu_resetmode(ggi_visual *vis)
 }
 
 
-int GGI_trueemu_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_trueemu_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 
@@ -369,7 +369,7 @@ int GGI_trueemu_setflags(ggi_visual *vis, ggi_flags flags)
 }
 
 
-int GGI_trueemu_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_trueemu_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	

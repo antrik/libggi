@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2005/07/30 11:38:51 cegger Exp $
+/* $Id: box.c,v 1.5 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: box stubs
@@ -30,7 +30,7 @@
 #include "vgaglvis.h"
 
 
-int GGI_vgagl_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_vgagl_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
 
@@ -39,7 +39,7 @@ int GGI_vgagl_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_vgagl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_vgagl_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
@@ -52,7 +52,7 @@ int GGI_vgagl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *bu
 	return 0;
 }
 
-int GGI_vgagl_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buffer)
+int GGI_vgagl_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *buffer)
 { 
 	gl_getbox(x, y, w, h, buffer);
 

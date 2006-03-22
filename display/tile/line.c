@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.7 2005/05/21 15:17:33 cegger Exp $
+/* $Id: line.c,v 1.8 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Tile target: clipped-line function in non-DB mode
@@ -250,7 +250,7 @@ static int _ggi_clip2d(ggi_coord cliptl, ggi_coord clipbr,
 	}
 }
 
-int GGI_tile_drawline(ggi_visual * vis, int _x, int _y, int _xe, int _ye)
+int GGI_tile_drawline(struct ggi_visual * vis, int _x, int _y, int _xe, int _ye)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 #define cliptl	(priv->vislist[i].origin)

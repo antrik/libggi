@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.4 2005/07/30 11:38:51 cegger Exp $
+/* $Id: hline.c,v 1.5 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: horizontal lines
@@ -30,7 +30,7 @@
 #include "vgaglvis.h"
 
 
-int GGI_vgagl_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_vgagl_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	LIBGGICLIP_XYW(vis, x, y, w);
 
@@ -39,14 +39,14 @@ int GGI_vgagl_drawhline(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_vgagl_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_vgagl_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	gl_hline(x, y, x+w-1, LIBGGI_GC_FGCOLOR(vis));
 
 	return 0;
 }
 
-int GGI_vgagl_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_vgagl_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	const uint8_t *buf = buffer;
@@ -58,7 +58,7 @@ int GGI_vgagl_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
 	return 0;
 }
 
-int GGI_vgagl_gethline(ggi_visual *vis, int x, int y, int w, void *buffer)
+int GGI_vgagl_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 { 
 	gl_getbox(x, y, w, 1, buffer);
 

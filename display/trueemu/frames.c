@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.3 2004/11/14 15:47:48 cegger Exp $
+/* $Id: frames.c,v 1.4 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: frame handling
@@ -33,14 +33,14 @@
 #include <string.h>
 
 
-int GGI_trueemu_setreadframe(ggi_visual *vis, int num)
+int GGI_trueemu_setreadframe(struct ggi_visual *vis, int num)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
 	return priv->mem_opdraw->setreadframe(vis, num);
 }
 
-int GGI_trueemu_setwriteframe(ggi_visual *vis, int num)
+int GGI_trueemu_setwriteframe(struct ggi_visual *vis, int num)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -49,7 +49,7 @@ int GGI_trueemu_setwriteframe(ggi_visual *vis, int num)
 	return priv->mem_opdraw->setwriteframe(vis, num);
 }
 
-int GGI_trueemu_setdisplayframe(ggi_visual *vis, int num)
+int GGI_trueemu_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	/* ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis); */
 

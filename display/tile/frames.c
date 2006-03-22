@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.5 2005/05/21 15:17:33 cegger Exp $
+/* $Id: frames.c,v 1.6 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -31,7 +31,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_tile_setdisplayframe_db(ggi_visual *vis, int num)
+int GGI_tile_setdisplayframe_db(struct ggi_visual *vis, int num)
 {
 	ggi_directbuffer *db;
 
@@ -51,7 +51,7 @@ int GGI_tile_setdisplayframe_db(ggi_visual *vis, int num)
 	return 0;
 }
 
-int GGI_tile_setdisplayframe(ggi_visual *vis, int num)
+int GGI_tile_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -65,7 +65,7 @@ int GGI_tile_setdisplayframe(ggi_visual *vis, int num)
 	return 0;
 }
 
-int GGI_tile_setreadframe(ggi_visual *vis, int num)
+int GGI_tile_setreadframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -79,7 +79,7 @@ int GGI_tile_setreadframe(ggi_visual *vis, int num)
 	return 0;
 }
 
-int GGI_tile_setwriteframe(ggi_visual *vis, int num)
+int GGI_tile_setwriteframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;

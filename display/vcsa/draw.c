@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.8 2005/07/30 11:38:51 cegger Exp $
+/* $Id: draw.c,v 1.9 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -35,7 +35,7 @@
 	lseek(LIBGGI_FD(vis), 4 + (y)*(priv)->width*2 + (x)*2, SEEK_SET)
 
 
-int GGI_vcsa_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel p)
+int GGI_vcsa_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel p)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
@@ -56,7 +56,7 @@ int GGI_vcsa_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel p)
 	return 0;
 }
 
-int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_vcsa_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
@@ -94,7 +94,7 @@ int GGI_vcsa_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_vcsa_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
+int GGI_vcsa_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buf)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
@@ -136,7 +136,7 @@ int GGI_vcsa_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
 	return 0;
 }
 
-int GGI_vcsa_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
+int GGI_vcsa_gethline(struct ggi_visual *vis, int x, int y, int w, void *buf)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
@@ -182,7 +182,7 @@ int GGI_vcsa_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_vcsa_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *p)
+int GGI_vcsa_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *p)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 
@@ -207,21 +207,21 @@ int GGI_vcsa_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *p)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_vcsa_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_vcsa_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	*width = *height = 1;
 	
 	return 0;
 }
 
-int GGI_vcsa_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_vcsa_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	return ggiPutPixel(vis, x, y, (c & 0xff) |
 		((LIBGGI_GC_BGCOLOR(vis) & 0x0f00) << 4) |
 		 (LIBGGI_GC_FGCOLOR(vis) & 0x0f00));
 }
 
-int GGI_vcsa_puts(ggi_visual *vis, int x, int y, const char *str)
+int GGI_vcsa_puts(struct ggi_visual *vis, int x, int y, const char *str)
 {
 	unsigned short buf[256];
 

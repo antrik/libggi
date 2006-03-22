@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2005/05/21 15:17:33 cegger Exp $
+/* $Id: color.c,v 1.7 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -28,17 +28,17 @@
 #include "config.h"
 #include <ggi/display/tile.h>
 
-ggi_pixel GGI_tile_mapcolor(ggi_visual *vis, const ggi_color *col)
+ggi_pixel GGI_tile_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	return ggiMapColor(TILE_PRIV(vis)->vislist[0].vis, col);
 }
 
-int GGI_tile_unmappixel(ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
+int GGI_tile_unmappixel(struct ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 {
 	return ggiUnmapPixel(TILE_PRIV(vis)->vislist[0].vis, pixel, col);
 }
 
-int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colormap)
+int GGI_tile_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -52,7 +52,7 @@ int GGI_tile_setpalvec(ggi_visual *vis,int start,int len,const ggi_color *colorm
 	return 0;
 }
 
-int GGI_tile_getpalvec(ggi_visual *vis,int start,int len,ggi_color *colormap)
+int GGI_tile_getpalvec(struct ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
 	return ggiGetPalette(TILE_PRIV(vis)->vislist[0].vis, start, len, colormap);
 }

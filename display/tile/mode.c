@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2005/09/19 18:46:44 cegger Exp $
+/* $Id: mode.c,v 1.20 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -39,12 +39,12 @@
 
 #include "../common/gt-auto.inc"
 
-int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i, width, height;
 	int nx, ny, nw, nh;
-	ggi_visual_t currvis;
+	struct ggi_visual *currvis;
 
 #if 0
 	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
@@ -122,7 +122,7 @@ int GGI_tile_flush_db(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 	return 0;
 }
 
-int GGI_tile_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_tile_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -153,7 +153,7 @@ int GGI_tile_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 }
 
 
-static int _GGIdomode(ggi_visual *vis)
+static int _GGIdomode(struct ggi_visual *vis)
 {
 	int err, id;
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
@@ -222,11 +222,11 @@ static int _GGIdomode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_tile_priv *priv;
 	/*int, currbuf, maxbuf=0;*/
-	ggi_visual_t currvis;
+	struct ggi_visual *currvis;
 	ggi_mode sugmode;
 	int depth, err, i;
 
@@ -348,7 +348,7 @@ int GGI_tile_setmode(ggi_visual *vis,ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_mode sugmode;
@@ -425,7 +425,7 @@ int GGI_tile_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_tile_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_tile_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	memcpy(tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
@@ -435,7 +435,7 @@ int GGI_tile_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 
@@ -455,7 +455,7 @@ int GGI_tile_setflags(ggi_visual *vis,ggi_flags flags)
 	return 0;
 }
 
-int GGI_tile_setorigin(ggi_visual *vis,int x,int y)
+int GGI_tile_setorigin(struct ggi_visual *vis,int x,int y)
 {
 	ggi_mode *mode=LIBGGI_MODE(vis);
 

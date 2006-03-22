@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.9 2005/07/30 11:38:52 cegger Exp $
+/* $Id: draw.c,v 1.10 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -30,7 +30,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 int
-GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+GGI_vgl_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;
@@ -47,7 +47,7 @@ GGI_vgl_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 	return 0;
 }
 
-int GGI_vgl_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_vgl_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	LIBGGICLIP_XYWH(vis, x, y, w, h);
   
@@ -56,14 +56,14 @@ int GGI_vgl_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int GGI_vgl_drawline(ggi_visual *vis,int x,int y,int xe,int ye)
+int GGI_vgl_drawline(struct ggi_visual *vis,int x,int y,int xe,int ye)
 {
 	VGLLine(VGLDisplay, x, y, xe, ye, (long)LIBGGI_GC_FGCOLOR(vis));
 
 	return 0;
 }
 
-int GGI_vgl_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
+int GGI_vgl_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
 {
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	const byte *buf = buffer;
@@ -75,14 +75,14 @@ int GGI_vgl_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
 	return 0;
 }
 
-int GGI_vgl_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_vgl_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	VGLLine(VGLDisplay, x, y, x+w-1, y, (long)LIBGGI_GC_FGCOLOR(vis));
 
 	return 0;
 }
 
-int GGI_vgl_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_vgl_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	LIBGGICLIP_XYW(vis, x, y, w);
 
@@ -91,7 +91,7 @@ int GGI_vgl_drawhline(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_vgl_drawvline(ggi_visual *vis, int x, int y, int height)
+int GGI_vgl_drawvline(struct ggi_visual *vis, int x, int y, int height)
 {
 	/* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -112,7 +112,7 @@ int GGI_vgl_drawvline(ggi_visual *vis, int x, int y, int height)
 	return 0;
 }
 
-int GGI_vgl_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_vgl_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	VGLLine(VGLDisplay, x, y, x, y+h-1, (long)LIBGGI_GC_FGCOLOR(vis));
 	
@@ -120,7 +120,7 @@ int GGI_vgl_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 }
 
 int
-GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+GGI_vgl_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	vgl_priv *priv = VGL_PRIV(vis);
 	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
@@ -157,7 +157,7 @@ GGI_vgl_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap
 	return 0;
 }
 
-int GGI_vgl_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_vgl_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 
 	*col = (ggi_pixel)VGLGetXY(VGLDisplay, x, y);
@@ -165,7 +165,7 @@ int GGI_vgl_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 	return 0;
 }
 
-int GGI_vgl_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_vgl_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	CHECKXY(vis, x, y);
 
@@ -174,14 +174,14 @@ int GGI_vgl_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_vgl_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_vgl_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	VGLSetXY(VGLDisplay, x, y, (long)col);
 
 	return 0;
 }
 
-int GGI_vgl_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_vgl_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 
@@ -190,7 +190,7 @@ int GGI_vgl_drawpixel(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_vgl_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_vgl_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	VGLSetXY(VGLDisplay, x, y, (long)LIBGGI_GC_FGCOLOR(vis));
 

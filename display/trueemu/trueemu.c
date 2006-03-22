@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.8 2006/03/17 21:55:42 cegger Exp $
+/* $Id: trueemu.c,v 1.9 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -277,7 +277,7 @@ static void load_121_palette(ggi_color *colormap)
 }
 
 
-static void setup_palette(ggi_visual *vis)
+static void setup_palette(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -704,7 +704,7 @@ static void calc_bw_dither(ggi_trueemu_priv *priv, int shift)
 }
 #endif
 
-static void setup_dithering(ggi_visual *vis)
+static void setup_dithering(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	TrueemuBlits *B;
@@ -817,7 +817,7 @@ static void setup_dithering(ggi_visual *vis)
  **************************************************/
 
 
-int _ggi_trueemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
+int _ggi_trueemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -845,7 +845,7 @@ int _ggi_trueemu_Transfer(ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int _ggi_trueemu_Flush(ggi_visual *vis)
+int _ggi_trueemu_Flush(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	int sx = priv->dirty_tl.x; int sy = priv->dirty_tl.y;
@@ -867,7 +867,7 @@ int _ggi_trueemu_Flush(ggi_visual *vis)
 }
 
 
-int _ggi_trueemu_Close(ggi_visual *vis)
+int _ggi_trueemu_Close(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -893,7 +893,7 @@ int _ggi_trueemu_Close(ggi_visual *vis)
 }
 
 
-int _ggi_trueemu_Open(ggi_visual *vis)
+int _ggi_trueemu_Open(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	size_t bufsize;
@@ -940,7 +940,7 @@ int _ggi_trueemu_Open(ggi_visual *vis)
 
 
 #if 0
-int _ggi_trueemu_NewMode(ggi_visual *vis)
+int _ggi_trueemu_NewMode(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -968,7 +968,7 @@ int _ggi_trueemu_NewMode(ggi_visual *vis)
 	return ggiFlush(vis);
 }
 
-static void cycle_dither(ggi_visual *vis)
+static void cycle_dither(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -994,7 +994,7 @@ static void cycle_dither(ggi_visual *vis)
 	_ggi_trueemu_NewMode(vis);
 }
 
-static void cycle_palette(ggi_visual *vis)
+static void cycle_palette(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	int old_pal = priv->flags & TE_PALETTE_MASK;

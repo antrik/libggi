@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/02/04 22:11:48 soyt Exp $
+/* $Id: visual.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -39,9 +39,9 @@ static int usagecounter = 0;
 
 
 
-void _GGI_vgl_freedbs(ggi_visual *vis);
+void _GGI_vgl_freedbs(struct ggi_visual *vis);
 
-void _GGI_vgl_freedbs(ggi_visual *vis)
+void _GGI_vgl_freedbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -51,7 +51,7 @@ void _GGI_vgl_freedbs(ggi_visual *vis)
 	}
 }
 
-static int _GGIcheckvglmodes(ggi_visual *vis)
+static int _GGIcheckvglmodes(struct ggi_visual *vis)
 {
 	struct video_info modeinfo;
 	int modes = 0, error;
@@ -112,7 +112,7 @@ static int _GGIcheckvglmodes(ggi_visual *vis)
 }
 
 static int 
-GGI_vgl_sendevent(ggi_visual *vis, gii_event *ev)
+GGI_vgl_sendevent(struct ggi_visual *vis, gii_event *ev)
 {
 	DPRINT_MISC("GGI_vgl_sendevent() called\n");
 
@@ -153,7 +153,7 @@ GGI_vgl_sendevent(ggi_visual *vis, gii_event *ev)
 	return GGI_EEVUNKNOWN;
 }
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	vgl_priv *priv = VGL_PRIV(vis);
 
@@ -184,7 +184,7 @@ static int do_cleanup(ggi_visual *vis)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	vgl_priv *priv;
@@ -304,7 +304,7 @@ error:
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

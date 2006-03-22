@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.3 2004/12/01 23:08:23 cegger Exp $
+/* $Id: stubs.c,v 1.4 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : stubs
@@ -36,7 +36,7 @@
  * limit the area blit to the parent at ggiFlush() time.
  */
 
-int GGI_trueemu_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_trueemu_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -45,7 +45,7 @@ int GGI_trueemu_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return priv->mem_opdraw->putpixel_nc(vis, x, y, col);
 }
 
-int GGI_trueemu_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_trueemu_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -54,7 +54,7 @@ int GGI_trueemu_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return priv->mem_opdraw->putpixel(vis, x, y, col);
 }
 
-int GGI_trueemu_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_trueemu_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -63,7 +63,7 @@ int GGI_trueemu_drawpixel_nc(ggi_visual *vis, int x, int y)
 	return priv->mem_opdraw->drawpixel_nc(vis, x, y);
 }
 
-int GGI_trueemu_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_trueemu_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -72,7 +72,7 @@ int GGI_trueemu_drawpixel(ggi_visual *vis, int x, int y)
 	return priv->mem_opdraw->drawpixel(vis, x, y);
 }
 
-int GGI_trueemu_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
+int GGI_trueemu_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -87,7 +87,7 @@ int GGI_trueemu_drawline(ggi_visual *vis, int x1, int y1, int x2, int y2)
 	return priv->mem_opdraw->drawline(vis, x1, y1, x2, y2);
 }
 
-int GGI_trueemu_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_trueemu_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -96,7 +96,7 @@ int GGI_trueemu_drawvline_nc(ggi_visual *vis, int x, int y, int h)
 	return priv->mem_opdraw->drawvline_nc(vis, x, y, h);
 }
 
-int GGI_trueemu_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_trueemu_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -105,7 +105,7 @@ int GGI_trueemu_drawvline(ggi_visual *vis, int x, int y, int h)
 	return priv->mem_opdraw->drawvline(vis, x, y, h);
 }
 
-int GGI_trueemu_putvline(ggi_visual *vis, int x, int y, int h, const void *buffer)
+int GGI_trueemu_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -116,7 +116,7 @@ int GGI_trueemu_putvline(ggi_visual *vis, int x, int y, int h, const void *buffe
 
 #undef putc
 
-int GGI_trueemu_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_trueemu_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -134,7 +134,7 @@ int GGI_trueemu_putc(ggi_visual *vis, int x, int y, char c)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_trueemu_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_trueemu_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -143,7 +143,7 @@ int GGI_trueemu_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	return priv->mem_opdraw->drawhline_nc(vis, x, y, w);
 }
 
-int GGI_trueemu_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_trueemu_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -152,7 +152,7 @@ int GGI_trueemu_drawhline(ggi_visual *vis, int x, int y, int w)
 	return priv->mem_opdraw->drawhline(vis, x, y, w);
 }
 
-int GGI_trueemu_puthline(ggi_visual *vis, int x, int y, int w, const void *buffer)
+int GGI_trueemu_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -161,7 +161,7 @@ int GGI_trueemu_puthline(ggi_visual *vis, int x, int y, int w, const void *buffe
 	return priv->mem_opdraw->puthline(vis, x, y, w, buffer);
 }
 
-int GGI_trueemu_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+int GGI_trueemu_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -170,7 +170,7 @@ int GGI_trueemu_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *
 	return priv->mem_opdraw->putbox(vis, x, y, w, h, buffer);
 }
 
-int GGI_trueemu_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_trueemu_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -179,7 +179,7 @@ int GGI_trueemu_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 	return priv->mem_opdraw->drawbox(vis, x, y, w, h);
 }
 
-int GGI_trueemu_fillscreen(ggi_visual *vis)
+int GGI_trueemu_fillscreen(struct ggi_visual *vis)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -192,7 +192,7 @@ int GGI_trueemu_fillscreen(ggi_visual *vis)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_trueemu_copybox(ggi_visual *vis, int x, int y, int w, int h, 
+int GGI_trueemu_copybox(struct ggi_visual *vis, int x, int y, int w, int h, 
 			int nx, int ny)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
@@ -202,8 +202,8 @@ int GGI_trueemu_copybox(ggi_visual *vis, int x, int y, int w, int h,
 	return priv->mem_opdraw->copybox(vis, x, y, w, h, nx, ny);
 }
 
-int GGI_trueemu_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
-                	  ggi_visual *vis, int dx, int dy)
+int GGI_trueemu_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+                	  struct ggi_visual *vis, int dx, int dy)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -222,7 +222,7 @@ int GGI_trueemu_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
  * (especially when the parent uses acceleration).
  */
 
-int GGI_trueemu_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+int GGI_trueemu_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	int err;
@@ -246,7 +246,7 @@ int GGI_trueemu_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int
 /* The following functions are just pass-throughs to the parent visual.
  */
 
-int GGI_trueemu_setorigin(ggi_visual *vis, int x, int y)
+int GGI_trueemu_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 
@@ -263,7 +263,7 @@ int GGI_trueemu_setorigin(ggi_visual *vis, int x, int y)
 }
 
 #if 0
-int GGI_trueemu_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_trueemu_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 

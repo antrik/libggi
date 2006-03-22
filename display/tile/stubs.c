@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.7 2005/07/30 10:58:28 cegger Exp $
+/* $Id: stubs.c,v 1.8 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <ggi/display/tile.h>
 
-int GGI_tile_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -50,11 +50,11 @@ int GGI_tile_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 
 /* Hack: Copy GC changes to each child visual. */
 
-void GGI_tile_gcchanged(ggi_visual *vis, int mask)
+void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
-	ggi_visual *currvis;
+	struct ggi_visual *currvis;
 
 	/* Irrelevant. */
 	if(mask & GGI_GCCHANGED_CLIP)
@@ -85,7 +85,7 @@ void GGI_tile_gcchanged(ggi_visual *vis, int mask)
 /* draw/get/put a box */
 /**********************/
 
-int GGI_tile_drawbox(ggi_visual *vis, int _x, int _y, int _width, int _length)
+int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;
@@ -127,7 +127,7 @@ int GGI_tile_drawbox(ggi_visual *vis, int _x, int _y, int _width, int _length)
 	return 0;
 }
 
-int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, const void *buffer)
+int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length, const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -173,7 +173,7 @@ int GGI_tile_putbox(ggi_visual *vis, int _x, int _y, int _width, int _length, co
 	return 0;
 }
 
-int GGI_tile_getbox(ggi_visual *vis, int _x, int _y, int _width, int _length, void *buffer)
+int GGI_tile_getbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length, void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -219,7 +219,7 @@ int GGI_tile_getbox(ggi_visual *vis, int _x, int _y, int _width, int _length, vo
 	return 0;
 }
 
-int GGI_tile_copybox(ggi_visual *vis, int x, int y, int width, int height,
+int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height,
 		     int nx,int ny)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
@@ -261,7 +261,7 @@ int GGI_tile_copybox(ggi_visual *vis, int x, int y, int width, int height,
 	return 0;
 }
 
-int GGI_tile_fillscreen(ggi_visual *vis)
+int GGI_tile_fillscreen(struct ggi_visual *vis)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -273,7 +273,7 @@ int GGI_tile_fillscreen(ggi_visual *vis)
 }
 
 #if 0
-int GGI_tile_putc(ggi_visual *vis,int x,int y,char c)
+int GGI_tile_putc(struct ggi_visual *vis,int x,int y,char c)
 {
 	int err=EOK;
 	int i;
@@ -286,7 +286,7 @@ int GGI_tile_putc(ggi_visual *vis,int x,int y,char c)
 }
 
 
-int GGI_tile_puts(ggi_visual *vis,int x,int y,const char *str)
+int GGI_tile_puts(struct ggi_visual *vis,int x,int y,const char *str)
 {
 	int err=EOK;
 	int i;
@@ -298,7 +298,7 @@ int GGI_tile_puts(ggi_visual *vis,int x,int y,const char *str)
 	return err;
 }
 
-int GGI_tile_drawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
+int GGI_tile_drawline(struct ggi_visual *vis,int x1,int y1,int x2,int y2)
 {
 	int err=EOK;
 	int i;
@@ -311,7 +311,7 @@ int GGI_tile_drawline(ggi_visual *vis,int x1,int y1,int x2,int y2)
 }
 #endif
 
-int GGI_tile_drawhline_nc(ggi_visual *vis,int _x,int y,int _width)
+int GGI_tile_drawhline_nc(struct ggi_visual *vis,int _x,int y,int _width)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;
@@ -345,7 +345,7 @@ int GGI_tile_drawhline_nc(ggi_visual *vis,int _x,int y,int _width)
 	return 0;
 }
 
-int GGI_tile_drawhline(ggi_visual *vis,int x,int y,int w)
+int GGI_tile_drawhline(struct ggi_visual *vis,int x,int y,int w)
 {
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) return 0;
@@ -363,7 +363,7 @@ int GGI_tile_drawhline(ggi_visual *vis,int x,int y,int w)
 		return 0;	/* ??? Shouldn't this be an error? */
 }
 
-int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,const void *buffer)
+int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -401,7 +401,7 @@ int GGI_tile_puthline(ggi_visual *vis,int _x,int y,int _width,const void *buffer
 	return 0;
 }
 
-int GGI_tile_gethline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
+int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -439,7 +439,7 @@ int GGI_tile_gethline(ggi_visual *vis,int _x,int y,int _width,void *buffer)
 	return 0;
 }
 
-int GGI_tile_drawvline_nc(ggi_visual *vis,int x,int _y,int _height)
+int GGI_tile_drawvline_nc(struct ggi_visual *vis,int x,int _y,int _height)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;
@@ -473,7 +473,7 @@ int GGI_tile_drawvline_nc(ggi_visual *vis,int x,int _y,int _height)
 	return 0;
 }
 
-int GGI_tile_drawvline(ggi_visual *vis,int x,int y,int height)
+int GGI_tile_drawvline(struct ggi_visual *vis,int x,int y,int height)
 {
 	/* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -493,7 +493,7 @@ int GGI_tile_drawvline(ggi_visual *vis,int x,int y,int height)
 		return 0;	/* ??? Shouldn't this be an error? */
 }
 
-int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,const void *buffer)
+int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -531,7 +531,7 @@ int GGI_tile_putvline(ggi_visual *vis,int x,int _y,int _height,const void *buffe
 	return 0;
 }
 
-int GGI_tile_getvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
+int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
@@ -569,7 +569,7 @@ int GGI_tile_getvline(ggi_visual *vis,int x,int _y,int _height,void *buffer)
 	return 0;
 }
 
-int GGI_tile_drawpixel_nc(ggi_visual *vis,int x,int y)
+int GGI_tile_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;
@@ -591,13 +591,13 @@ int GGI_tile_drawpixel_nc(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_tile_drawpixel(ggi_visual *vis,int x,int y)
+int GGI_tile_drawpixel(struct ggi_visual *vis,int x,int y)
 {
 	CHECKXY(vis,x,y);
 	return GGI_tile_drawpixel_nc(vis, x, y);
 }
 
-int GGI_tile_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_tile_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;
@@ -619,13 +619,13 @@ int GGI_tile_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_tile_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_tile_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	CHECKXY(vis,x,y);
 	return GGI_tile_putpixel_nc(vis, x, y, col);
 }
 
-int GGI_tile_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_tile_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	ggi_coord cliptl, clipbr;

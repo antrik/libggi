@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2005/09/19 18:46:44 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -35,14 +35,14 @@
 #include <ggi/display/vgl.h>
 #include <ggi/internal/ggi_debug.h>
 
-void _GGI_vgl_freedbs(ggi_visual *);
+void _GGI_vgl_freedbs(struct ggi_visual *);
 
-int GGI_vgl_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_vgl_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	return 0;
 }
 	
-int GGI_vgl_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_vgl_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	struct vgl_priv *priv = VGL_PRIV(vis);
 
@@ -78,7 +78,7 @@ int GGI_vgl_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 { 
 	struct vgl_priv *priv = VGL_PRIV(vis);
 	ggi_graphtype gt = tm->graphtype;
@@ -290,7 +290,7 @@ int GGI_vgl_setmode(ggi_visual *vis, ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_vgl_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_vgl_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	vgl_priv *priv = VGL_PRIV(vis);
 	int ret, err = 0;
@@ -353,7 +353,7 @@ int GGI_vgl_checkmode(ggi_visual *vis, ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_vgl_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_vgl_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
@@ -366,7 +366,7 @@ int GGI_vgl_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_vgl_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_vgl_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
@@ -376,7 +376,7 @@ int GGI_vgl_setflags(ggi_visual *vis,ggi_flags flags)
 /*********************/
 /* change the origin */
 /*********************/
-int GGI_vgl_setorigin(ggi_visual *vis,int x,int y)
+int GGI_vgl_setorigin(struct ggi_visual *vis,int x,int y)
 {
 	ggi_mode *mode=LIBGGI_MODE(vis);
 

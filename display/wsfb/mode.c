@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2005/07/30 11:38:52 cegger Exp $
+/* $Id: mode.c,v 1.13 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -40,9 +40,9 @@
 
 #include "../common/pixfmt-setup.inc"
 
-static int do_mmap(ggi_visual *);
+static int do_mmap(struct ggi_visual *);
 
-int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_wsfb_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	//struct wsfb_priv *priv = WSFB_PRIV(vis);
 	DPRINT("GGI_wsfb_getapi called\n");
@@ -71,7 +71,7 @@ int GGI_wsfb_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_wsfb_setmode(struct ggi_visual *vis, ggi_mode *tm)
 { 
 	struct wsfb_priv *priv = WSFB_PRIV(vis);
 	//ggi_graphtype gt = tm->graphtype;
@@ -142,7 +142,7 @@ int GGI_wsfb_setmode(ggi_visual *vis, ggi_mode *tm)
 /* check any mode (text/graphics) */
 /* return < 0 on any error, but set things to what should be working values */
 /**********************************/
-int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_wsfb_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	int err = 0;
@@ -218,7 +218,7 @@ int GGI_wsfb_checkmode(ggi_visual *vis, ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_wsfb_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	APP_ASSERT(vis != NULL, "GGIgetmode(wsfb): Visual == NULL");
 
@@ -230,7 +230,7 @@ int GGI_wsfb_getmode(ggi_visual *vis,ggi_mode *tm)
 
 
 int
-GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colormap)
+GGI_wsfb_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	int nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
@@ -266,7 +266,7 @@ GGI_wsfb_setpalvec(ggi_visual *vis, int start, int len, const ggi_color *colorma
 
 
 static int
-do_mmap(ggi_visual *vis)
+do_mmap(struct ggi_visual *vis)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);

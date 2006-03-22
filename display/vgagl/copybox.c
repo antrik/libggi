@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.3 2005/07/30 11:38:51 cegger Exp $
+/* $Id: copybox.c,v 1.4 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: copybox.
@@ -31,7 +31,7 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
-int GGI_vgagl_copybox(ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
+int GGI_vgagl_copybox(struct ggi_visual *vis,int x,int y,int w,int h,int nx,int ny)
 {
 	int line;
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/02/04 22:11:48 soyt Exp $
+/* $Id: visual.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -32,7 +32,7 @@
 
 static int usagecounter = 0;
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	int rc = 0;
 	wsfb_priv *priv = WSFB_PRIV(vis);
@@ -77,7 +77,7 @@ static int do_cleanup(ggi_visual *vis)
 }	/* do_cleanup */
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	wsfb_priv *priv = NULL;
@@ -204,7 +204,7 @@ error:
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	DPRINT("GGIclose\n");
 	return do_cleanup(vis);

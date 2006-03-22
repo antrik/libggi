@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/03/17 21:55:42 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/03/22 19:26:47 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -34,7 +34,7 @@
 #include <ggi/display/tile.h>
 #include <ggi/internal/ggi_debug.h>
 
-void _GGI_tile_freedbs(ggi_visual *vis)
+void _GGI_tile_freedbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -54,7 +54,7 @@ static const char argument_format[] = "display-tile:\n\
     and ... is more tiles following the same format as above...\n";
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tile_priv *priv;
@@ -234,7 +234,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i;
@@ -264,7 +264,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 

@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.2 2002/09/08 21:37:47 soyt Exp $
+/* $Id: fillscreen.c,v 1.3 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: fill screen
@@ -29,7 +29,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include "vgaglvis.h"
 
-int GGI_vgagl_fillscreen(ggi_visual *vis)
+int GGI_vgagl_fillscreen(struct ggi_visual *vis)
 {
 	if (LIBGGICLIP_FULLSCREEN(vis)) {
 		gl_clearscreen(LIBGGI_GC_FGCOLOR(vis));

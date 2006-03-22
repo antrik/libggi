@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2006/02/04 22:11:48 soyt Exp $
+/* $Id: visual.c,v 1.8 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: initialization
@@ -33,7 +33,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include "vgaglvis.h"
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	if (args == NULL || strncmp(args, "sVgALIb", 7) != 0) {

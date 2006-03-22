@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.17 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -50,7 +50,7 @@ static const gg_option optlist[] =
 
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(vis);
 	
@@ -75,7 +75,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_trueemu_priv *priv;
@@ -234,7 +234,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 		MANSYNC_stop(vis);

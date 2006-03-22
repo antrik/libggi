@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2005/09/19 18:46:44 cegger Exp $
+/* $Id: mode.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -42,7 +42,7 @@
 #include "../common/ggi-auto.inc"
 
 
-int GGI_vcsa_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_vcsa_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 
@@ -57,7 +57,7 @@ int GGI_vcsa_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_vcsa_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
@@ -108,14 +108,14 @@ int GGI_vcsa_setmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_vcsa_resetmode(ggi_visual *vis)
+int GGI_vcsa_resetmode(struct ggi_visual *vis)
 {
 	/* Nothing to do .. */
 
 	return 0;
 }
 	
-int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_vcsa_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 	int err;
@@ -193,7 +193,7 @@ int GGI_vcsa_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
-int GGI_vcsa_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_vcsa_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT_MODE("display-vcsa: getmode\n");
 	
@@ -202,7 +202,7 @@ int GGI_vcsa_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_vcsa_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_vcsa_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
