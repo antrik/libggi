@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/03/22 00:31:34 pekberg Exp $
+/* $Id: visual.c,v 1.21 2006/03/22 01:04:31 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -61,6 +61,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->parent != NULL) {
 		ggiClose(priv->parent);
+		ggDelStem(priv->parent);
 	}
 
 	ggLockDestroy(priv->flush_lock);
