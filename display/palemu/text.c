@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.5 2006/03/21 20:46:34 cegger Exp $
+/* $Id: text.c,v 1.6 2006/03/22 00:17:52 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: text
@@ -54,6 +54,6 @@ int GGI_palemu_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	return ggiGetCharSize(priv->parent->stem, width, height);
+	return ggiGetCharSize(priv->parent, width, height);
 }
 #endif

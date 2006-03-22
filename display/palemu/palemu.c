@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.10 2006/03/21 20:46:34 cegger Exp $
+/* $Id: palemu.c,v 1.11 2006/03/22 00:17:52 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -112,7 +112,7 @@ int _ggi_palemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 			
 		(* priv->do_blit)(priv, dest_buf, src_buf, w);
 
-		ggiPutHLine(priv->parent->stem, x, y, w, dest_buf);
+		ggiPutHLine(priv->parent, x, y, w, dest_buf);
 	}
 
 	priv->mem_opdraw->setreadframe(vis, old_r_frame);
@@ -161,7 +161,7 @@ int _ggi_palemu_Open(struct ggi_visual *vis)
 
 	/* set the parent mode */
 	
-	rc = ggiSetMode(priv->parent->stem, &priv->mode);
+	rc = ggiSetMode(priv->parent, &priv->mode);
 	if (rc < 0) {
 		DPRINT("display-palemu: Couldn't set parent mode.\n");
 		return rc;

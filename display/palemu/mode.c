@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/03/21 20:46:34 cegger Exp $
+/* $Id: mode.c,v 1.19 2006/03/22 00:17:52 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -353,7 +353,7 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	par_mode.graphtype = priv->mode.graphtype;
 
-	tmperr = ggiCheckMode(priv->parent->stem, &par_mode);
+	tmperr = ggiCheckMode(priv->parent, &par_mode);
 	if (tmperr) err = tmperr;
 
 	mode->visible = par_mode.visible;
@@ -418,7 +418,7 @@ int GGI_palemu_flush(struct ggi_visual *vis, int x, int y, int w, int h, int try
 	err = _ggi_palemu_Flush(vis);
 
 	if (! err) {
-		err = _ggiInternFlush(priv->parent, x, y, w, h, tryflag);
+		err = _ggiInternFlush(GGI_VISUAL(priv->parent), x, y, w, h, tryflag);
 	}
 
 	ggUnlock(priv->flush_lock);

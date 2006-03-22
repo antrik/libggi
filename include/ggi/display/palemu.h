@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
+/* $Id: palemu.h,v 1.7 2006/03/22 00:17:52 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -74,7 +74,7 @@
 typedef struct ggi_palemu_priv {
 	int flags;
 
-	struct ggi_visual *parent;
+	ggi_visual_t parent;
 	ggi_mode mode;
 
 	/* framebuffer */

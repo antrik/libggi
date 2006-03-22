@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/03/21 20:46:34 cegger Exp $
+/* $Id: visual.c,v 1.19 2006/03/22 00:17:52 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 
 #include "config.h"
 #include <ggi/display/palemu.h>
@@ -57,7 +60,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	}
 
 	if (priv->parent != NULL) {
-		ggiClose(priv->parent->stem);
+		ggiClose(priv->parent);
 	}
 
 	ggLockDestroy(priv->flush_lock);
@@ -71,6 +74,18 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+static int
+transfer_gii_src(void *arg, int flag, void *data)
+{
+	struct gg_stem *stem = arg;
+	ggi_palemu_priv *priv = PALEMU_PRIV(GGI_VISUAL(stem));
+	struct gii_source *src = data;
+
+	if (flag == GII_PUBLISH_SOURCE_OPENED)
+		giiTransfer(priv->parent, stem, src->origin);
+	return 0;
+}
+
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
@@ -78,6 +93,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gg_option options[NUM_OPTS];
 	char target[1024];
 	int err = GGI_ENOMEM;
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
 
 	DPRINT("display-palemu: GGIopen start.\n");
 
@@ -140,16 +157,64 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggiParseMode(options[OPT_PARENT].result, &priv->mode);
 
 	DPRINT("display-palemu: opening target: %s\n", target);
-	priv->parent = ggiOpen(target, NULL);
+	priv->parent = ggNewStem();
 	if (priv->parent == NULL) {
 		fprintf(stderr,
-			"display-palemu: Failed to open target: '%s'\n",
+			"display-palemu: Failed to create stem for target: '%s'\n",
 			target);
 		err = GGI_ENODEVICE;
 		goto out_freeopmansync;
 	}
+	/* FIXME! Should iterate over the apis attached to vis->stem
+	 * instead of only looking for ggi and gii.
+	 */
+	if (ggiAttach(priv->parent) < 0) {
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		fprintf(stderr,
+			"display-palemu: Failed to attach ggi to stem for target: '%s'\n",
+			target);
+		err = GGI_ENODEVICE;
+		goto out_freeopmansync;
+	}
+	if ((api = ggGetAPIByName("gii")) != NULL) {
+		/* FIXME! This should probably be done in pseudo-stubs-gii */
+		if (STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, priv->parent) < 0) {
+				ggDelStem(priv->parent);
+				priv->parent = NULL;
+				fprintf(stderr,
+					"display-palemu: Failed to attach gii to stem for target: '%s'\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto out_freeopmansync;
+			}
+			obs = ggAddObserver(
+				ggGetPublisher(api, priv->parent,
+					GII_PUBLISHER_SOURCE_CHANGE),
+				transfer_gii_src, vis->stem);
+			
+		}
+	}
+	if (ggiOpen(priv->parent, target, NULL) < 0) {
+		if (obs) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
+		fprintf(stderr,
+			"display-palemu: Failed to open target: '%s'\n",
+			target);
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		err = GGI_ENODEVICE;
+		goto out_freeopmansync;
+	}
+	if (obs) {
+		ggDelObserver(obs);
+		obs = NULL;
+	}
 
-	ggiSetFlags(priv->parent->stem, GGIFLAG_ASYNC);
+	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
 
 	/* Setup mansync */
 	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
@@ -164,12 +229,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	MANSYNC_init(vis);
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 		MANSYNC_start(vis);
-	}
-
-	/* add giiInputs, if we have them */
-	if (priv->parent->input) {
-		vis->input = giiJoinInputs(vis->input, priv->parent->input);
-		priv->parent->input = NULL; /* destroy old reference */
 	}
 
 	/* Has mode management */

@@ -1,6 +1,6 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.palemu"'
 INCLUDES = -I$(top_srcdir)/include
-libpalemu_la_LIBADD =
+libpalemu_la_LIBADD = -lgii -lgg
 
 noinst_LTLIBRARIES = libpalemu.la
 
