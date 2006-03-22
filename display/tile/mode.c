@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/03/22 19:26:47 cegger Exp $
+/* $Id: mode.c,v 1.21 2006/03/22 19:54:46 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -94,7 +94,7 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 				rowadd * (priv->vislist[i].origin.x + vis->origin_x);
 
 		do {
-			ggiPutHLine(currvis, 0, height, width, buf);
+			ggiPutHLine(currvis->stem, 0, height, width, buf);
 			buf -= stride;
 		} while(height--);
 #endif
@@ -217,7 +217,7 @@ static int _GGIdomode(struct ggi_visual *vis)
 	vis->opcolor->setpalvec=GGI_tile_setpalvec;
 	vis->opcolor->getpalvec=GGI_tile_getpalvec;
 	
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	return 0;
 }
@@ -282,7 +282,7 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 		/* Set mode mantra from lib/libggi/mode.c.  Be careful here.
 		   See GGIcheckmode() for why we do this. */
 
-		err = ggiSetMode(currvis, &sugmode);
+		err = ggiSetMode(currvis->stem, &sugmode);
 		if (err) {
 			fprintf(stderr, "display-tile: Error setting mode on visual #%d!\n", i);
 			return err;
@@ -401,7 +401,7 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 		sugmode.dpp  = tm->dpp;
 		sugmode.size = tm->size;
 
-		err = ggiCheckMode(priv->vislist[i].vis, &sugmode);
+		err = ggiCheckMode(priv->vislist[i].vis->stem, &sugmode);
 		if (err) {
 			/* Forget searching all visuals for the source of
 			   error, it's way too complicated. Just say fail
@@ -448,7 +448,7 @@ int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
 	} else {
 		int i;
 		for (i = 0; i<priv->numvis; i++) {
-			ggiSetFlags(priv->vislist[i].vis, flags);
+			ggiSetFlags(priv->vislist[i].vis->stem, flags);
 		}
 	}	
 

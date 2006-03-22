@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.8 2006/03/22 19:26:47 cegger Exp $
+/* $Id: stubs.c,v 1.9 2006/03/22 19:54:46 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -41,7 +41,7 @@ int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 	int i;
 
 	for (i=0; i < priv->numvis; i++) {
-		ggiFlushRegion(priv->vislist[i].vis, x, y, w, h);
+		ggiFlushRegion(priv->vislist[i].vis->stem, x, y, w, h);
 	}
 
 	return 0;
@@ -120,7 +120,7 @@ int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _le
 		if (length <= 0 || width <= 0 )
 			continue;
 
-		ggiDrawBox(priv->vislist[i].vis,
+		ggiDrawBox(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, width, length);
 	}
 
@@ -164,7 +164,7 @@ int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiPutHLine(priv->vislist[i].vis,
+			ggiPutHLine(priv->vislist[i].vis->stem,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((const uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -210,7 +210,7 @@ int GGI_tile_getbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiGetHLine(priv->vislist[i].vis,
+			ggiGetHLine(priv->vislist[i].vis->stem,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -241,7 +241,7 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 			continue;
 		}
 
-		return ggiCopyBox(priv->vislist[i].vis,
+		return ggiCopyBox(priv->vislist[i].vis->stem,
 				  x - cliptl.x, y - cliptl.y, width, height,
 				  nx - cliptl.x, ny - cliptl.y);
 	}
@@ -253,8 +253,8 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 		return GGI_ENOMEM;
 	}
 
-	ggiGetBox(vis, x, y, width, height, buf);
-	ggiPutBox(vis, nx, ny, width, height, buf);
+	ggiGetBox(vis->stem, x, y, width, height, buf);
+	ggiPutBox(vis->stem, nx, ny, width, height, buf);
 
 	free(buf);
 
@@ -267,7 +267,7 @@ int GGI_tile_fillscreen(struct ggi_visual *vis)
 	int i;
 
 	for(i = 0; i<priv->numvis; i++)
-		ggiFillscreen(priv->vislist[i].vis);
+		ggiFillscreen(priv->vislist[i].vis->stem);
 
 	return 0;
 }
@@ -393,7 +393,7 @@ int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void 
 		if (width <= 0)
 			continue;
 
-		ggiPutHLine(priv->vislist[i].vis,
+		ggiPutHLine(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, width,
 			((const uint8_t*)buffer + diff*rowadd));
 	}
@@ -431,7 +431,7 @@ int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffe
 		if (width <= 0)
 			continue;
 
-		ggiGetHLine(priv->vislist[i].vis,
+		ggiGetHLine(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, width,
 			((uint8_t*)buffer + diff*rowadd));
 	}
@@ -523,7 +523,7 @@ int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void
 		if (length <= 0)
 			continue;
 
-		ggiPutVLine(priv->vislist[i].vis,
+		ggiPutVLine(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, length,
 			((const uint8_t*)buffer + diff*rowadd));
  	}
@@ -561,7 +561,7 @@ int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buff
 		if (length <= 0)
 			continue;
 
-		ggiGetVLine(priv->vislist[i].vis,
+		ggiGetVLine(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, length,
 			((uint8_t*)buffer + diff*rowadd));
  	}
@@ -612,7 +612,7 @@ int GGI_tile_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		ggiPutPixel(priv->vislist[i].vis,
+		ggiPutPixel(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 
@@ -639,7 +639,7 @@ int GGI_tile_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
-		return ggiGetPixel(priv->vislist[i].vis,
+		return ggiGetPixel(priv->vislist[i].vis->stem,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 

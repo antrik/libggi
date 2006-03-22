@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/03/22 19:26:47 cegger Exp $
+/* $Id: visual.c,v 1.21 2006/03/22 19:54:46 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -162,7 +162,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (priv->use_db) {
 			/* Don't need SYNC mode, we do it ourselves */
-			ggiSetFlags(priv->vislist[i].vis, GGIFLAG_ASYNC);
+			ggiSetFlags(priv->vislist[i].vis->stem, GGIFLAG_ASYNC);
 		}
 
 		/* check for ':' separator */
