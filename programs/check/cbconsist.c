@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.19 2006/03/17 21:55:42 cegger Exp $
+/* $Id: cbconsist.c,v 1.20 2006/03/22 04:04:05 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -252,11 +252,23 @@ static int mkmemvis(int i, const char **str,
 	if (i > MAX_MEMVIS_FMTS - 1)
 		return -1;
 	*str = memvis_fmts[i];
-	*vis = ggiOpen(*str);
-	if (!*vis) {
+	if ((*vis=ggNewStem()) == NULL) {
 		fprintf(stderr,
-			"Could not open memory source visual (%s)!\n",
-			*str);
+			"unable to create stem, exiting.\n");
+		return -1;
+	}
+
+	if (ggiAttach(*vis) < 0) {
+		ggDelStem(*vis);
+		fprintf(stderr,
+			"unable to attach ggi api, exiting.\n");
+		return -1;
+	}
+
+	if (ggiOpen(*vis, *str, NULL) < 0) {
+		ggDelStem(*vis);
+		fprintf(stderr,
+			"unable to open default visual, exiting.\n");
 		return -1;
 	}
 	ggiSetFlags(*vis, GGIFLAG_ASYNC);
@@ -351,10 +363,12 @@ int main(int argc, char **argv)
 		BAILOUT("Unable to initialize LibGGI, exiting.\n", err0);
 
 	if (s.flags & CBC_REALSRC) {
-		s.svis = ggiOpen(s.svisstr);
-		if (!s.svis)
-			BAILOUT("Could not open source visual, exiting\n",
-				err1);
+		if ((s.svis=ggNewStem()) == NULL)
+			BAILOUT("unable to create stem, exiting.\n", err1);
+		if (ggiAttach(s.svis) < 0)
+			BAILOUT("unable to attach ggi api, exiting.\n", err2);
+		if (ggiOpen(s.svis, NULL) < 0)
+			BAILOUT("unable to open source visual, exiting.\n", err2);
 		ggiSetFlags(s.svis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.svis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.smode);
@@ -372,10 +386,12 @@ int main(int argc, char **argv)
 	}
 
 	if (s.flags & CBC_REALDST) {
-		s.dvis = ggiOpen(s.dvisstr);
-		if (!s.dvis)
-			BAILOUT("Could not open source visual, exiting\n",
-				err2);
+		if ((s.dvis=ggNewStem()) == NULL)
+			BAILOUT("unable to create stem, exiting.\n", err2);
+		if (ggiAttach(s.dvis) < 0)
+			BAILOUT("unable to attach ggi api, exiting.\n", err3);
+		if (ggiOpen(s.dvis, NULL) < 0)
+			BAILOUT("unable to open source visual, exiting.\n", err3);
 		ggiSetFlags(s.dvis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.dvis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.dmode);
@@ -439,7 +455,7 @@ int main(int argc, char **argv)
 					goto err2;
 				}
 				fprintf(stdout, "%i bad values.\n", res);
-				ggiClose(s.svis);
+				ggDelStem(s.svis);
 			}
 			i++;
 		}
@@ -469,7 +485,7 @@ int main(int argc, char **argv)
 					goto err4;
 				}
 				fprintf(stdout, "%i bad values.\n", res);
-				ggiClose(s.dvis);
+				ggDelStem(s.dvis);
 			}
 			i++;
 		}
@@ -507,26 +523,28 @@ int main(int argc, char **argv)
 					}
 					fprintf(stdout, "%i bad values.\n",
 						res);
-					ggiClose(s.svis);
+					ggDelStem(s.svis);
 				}
 				j++;
 			}
-			ggiClose(s.dvis);
+			ggDelStem(s.dvis);
 			i++;
 		}
 	}
 
       err4:
 	if (!(s.flags & CBC_REALDST))
-		ggiClose(s.dvis);
+		ggDelStem(s.dvis);
 	if (!(s.flags & CBC_REALSRC))
-		ggiClose(s.svis);
+		ggDelStem(s.svis);
 	goto err1;
 
       err3:
-	ggiClose(s.dvis);
+	if (s.flags & CBC_REALDST)
+		ggDelStem(s.dvis);
       err2:
-	ggiClose(s.svis);
+	if (s.flags & CBC_REALSRC)
+		ggDelStem(s.svis);
       err1:
 	ggiExit();
       err0:

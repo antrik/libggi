@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.6 2005/07/30 08:43:02 soyt Exp $
+/* $Id: structs.c,v 1.7 2006/03/22 04:04:05 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -177,7 +177,19 @@ static int setup_mode(void)
 	const ggi_directbuffer *buf;
 	ggi_mode gmode;
 
-	if ((visual=ggiOpen(NULL)) == NULL) {
+	if ((visual=ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"unable to create stem, exiting.\n");
+		return -1;
+	}
+
+	if (ggiAttach(visual) < 0) {
+		fprintf(stderr,
+			"unable to attach ggi api, exiting.\n");
+		return -1;
+	}
+
+	if (ggiOpen(visual, NULL) < 0) {
 		fprintf(stderr,
 			"unable to open default visual, exiting.\n");
 		return -1;
@@ -272,6 +284,8 @@ main(int argc,char **argv)
 	}
 
 	if (setup_mode()) {
+		if (visual)
+			ggDelStem(visual);
 		ggiExit();
 		return 2;
 	}
@@ -281,7 +295,7 @@ main(int argc,char **argv)
 		tests[testnum].func();
 	}
 
-	ggiClose(visual);
+	ggDelStem(visual);
 	ggiExit();	
 
 	return 0;

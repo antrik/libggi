@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.8 2005/07/30 08:43:01 soyt Exp $
+/* $Id: consistency.c,v 1.9 2006/03/22 04:04:05 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -619,7 +619,19 @@ static int setup_mode(void)
 	ggi_color map[256];
 	ggi_mode gmode;
 
-	if ((mode.vis=ggiOpen(NULL)) == NULL) {
+	if ((mode.vis=ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"unable to create stem, exiting.\n");
+		exit(1);
+	}
+
+	if (ggiAttach(mode.vis) < 0) {
+		fprintf(stderr,
+			"unable to attach ggi api, exiting.\n");
+		exit(1);
+	}
+
+	if (ggiOpen(mode.vis, NULL) < 0) {
 		fprintf(stderr,
 			"unable to open default visual, exiting.\n");
 		exit(1);
@@ -675,7 +687,7 @@ main(int argc,char **argv)
 		tests[testnum].func();
 	}
 
-	ggiClose(mode.vis);
+	ggDelStem(mode.vis);
 	ggiExit();
 
 	return 0;
