@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.10 2005/07/30 08:43:01 soyt Exp $
+/* $Id: showaccel2.c,v 1.11 2006/03/22 04:45:59 pekberg Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -39,13 +39,22 @@ TODO: notify on exit (terminate with single keystroke then print final ratio.
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
 
 #include <stdlib.h>
 #include <unistd.h>
 
 static ggi_visual_t vis;
+
+static int myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
 
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).
@@ -103,15 +112,46 @@ int main(int argc, char *argv[])
 
 	/* Initialize GGI. Error out, if it fails.
 	 */
+	if (giiInit() != 0) {
+		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
 	if (ggiInit() != 0) {
+		giiExit();
+		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if ((vis=ggNewStem()) == NULL) {
+		ggiExit();
+		giiExit();
+		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (giiAttach(vis) < 0) {
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiAttach(vis) < 0) {
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
 		exit(1);
 	}
 	/* Open the default GGI visual. Exit on error.
 	 */
-	if ((vis=ggiOpen(NULL)) == NULL) {
+	if (ggiOpen(vis, NULL) < 0) {
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		fprintf(stderr,
 			"%s: unable to open default visual, exiting.\n",
 			argv[0]);
@@ -214,7 +254,7 @@ int main(int argc, char *argv[])
 					}
 					/* bail out if user hit a key
 					 */
-					if (ggiKbhit(vis))
+					if (myKbhit(vis))
 					{
 						break;
 					}
@@ -254,7 +294,7 @@ int main(int argc, char *argv[])
 					}
 					/* bail out if user hit a key
 					 */
-					if (ggiKbhit(vis))
+					if (myKbhit(vis))
 					{
 						break;
 					}
@@ -273,7 +313,8 @@ int main(int argc, char *argv[])
 
 	/* Close down LibGGI.
 	 */
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
+	giiExit();
 	return(0);
 }

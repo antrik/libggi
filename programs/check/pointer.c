@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.4 2005/07/30 08:43:01 soyt Exp $
+/* $Id: pointer.c,v 1.5 2006/03/22 04:45:59 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -28,6 +28,8 @@
 */
 
 #include "config.h"
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -52,14 +54,34 @@ main(int argc, char **argv)
 	ggi_color color;
 	char tmpstr[2000];
 
+	if (giiInit() != 0) {
+		fprintf(stderr, "%s: unable to initialize LibGII, exiting.\n",
+			argv[0]);
+		goto out;
+	}
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
 		goto out;
 	}
 
-	vis = ggiOpen(NULL);
-	if (vis == NULL) {
+	vis = ggNewStem();
+	if (!vis) {
+		fprintf(stderr, "%s: unable to creat stem, exiting.\n",
+			argv[0]);
+		goto out;
+	}
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr, "%s: unable to attach ggi, exiting.\n",
+			argv[0]);
+		goto out;
+	}
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr, "%s: unable to attach gii, exiting.\n",
+			argv[0]);
+		goto out;
+	}
+	if (ggiOpen(vis, NULL) < 0) {
 		fprintf(stderr, "%s: unable to open visual, exiting.\n",
 			argv[0]);
 		goto out;
@@ -96,18 +118,18 @@ main(int argc, char **argv)
 	else
 		box_size = 2 * ch_y;
 
-	ggiAddEventMask(vis, emPtrRelative | emPtrAbsolute);
+	giiAddEventMask(vis, emPtrRelative | emPtrAbsolute);
 
 	while (!quit) {
 		int n;
 
-		ggiEventPoll(vis, emAll, NULL);
+		giiEventPoll(vis, emAll, NULL);
 
-		n = ggiEventsQueued(vis, emAll);
+		n = giiEventsQueued(vis, emAll);
 
 		while (n--) {
-			ggi_event event;
-			ggiEventRead(vis, &event, emAll);
+			gii_event event;
+			giiEventRead(vis, &event, emAll);
 	
 			if (event.any.type == evPtrRelative) {
 				ox = rx;
@@ -143,7 +165,10 @@ main(int argc, char **argv)
 			}
 			
 			else if (event.any.type == evKeyPress) {
-				quit = 1;
+				if (event.key.label == GIIUC_Escape)
+					quit = 1;
+				if (event.key.label == GIIUC_Q)
+					quit = 1;
 				break;
 			}
 
@@ -204,8 +229,9 @@ main(int argc, char **argv)
 
 out:
 	if (vis)
-		ggiClose(vis);
-	ggiExit();	
+		ggDelStem(vis);
+	ggiExit();
+	giiExit();
 
 	return 0;
 }

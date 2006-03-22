@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.10 2006/03/14 21:14:42 pekberg Exp $
+/* $Id: speed.c,v 1.11 2006/03/22 04:45:59 pekberg Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -515,7 +515,19 @@ static int setup_mode(void)
 	ggi_color map[256];
 	ggi_mode gmode;
 
-	if ((mode.vis=ggiOpen(NULL)) == NULL) {
+	if ((mode.vis=ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"unable to create stem, exiting.\n");
+		exit(1);
+	}
+
+	if (ggiAttach(mode.vis) < 0) {
+		fprintf(stderr,
+			"unable to attach ggi, exiting.\n");
+		exit(1);
+	}
+
+	if (ggiOpen(mode.vis, NULL) < 0) {
 		fprintf(stderr,
 			"unable to open default visual, exiting.\n");
 		exit(1);
@@ -568,7 +580,7 @@ main(int argc,char **argv)
 		tests[testnum].func();
 	}
 
-	ggiClose(mode.vis);
+	ggDelStem(mode.vis);
 	ggiExit();	
 
 	return 0;

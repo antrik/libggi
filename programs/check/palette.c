@@ -1,4 +1,4 @@
-/* $Id: palette.c,v 1.2 2004/11/22 16:39:58 cegger Exp $
+/* $Id: palette.c,v 1.3 2006/03/22 04:45:59 pekberg Exp $
 ******************************************************************************
 
    This is a test program for palette handling.
@@ -35,14 +35,20 @@ static void testcase1(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem() failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err >= 0, "ggiAttach() failed\n");
+
+	err = ggiOpen(vis, NULL);
+	printassert(err >= 0, "ggiOpen() failed\n");
 
 	err = ggiSetGraphMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT);
 	if(err < 0) {
 		printassert(0, "Palettized mode not available.\n");
 		printsuccess();
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -53,7 +59,7 @@ static void testcase1(const char *desc)
 	err = ggiSetPalette(vis, GGI_PALETTE_DONTCARE, 1, &green);
 	if (err < 0) {
 		printfailure("Unable to install colormap with one entry.\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -64,7 +70,7 @@ static void testcase1(const char *desc)
 	ggiUnmapPixel(vis, err, &back);
 	if(green.r != back.r || green.g != back.g || green.b != back.b) {
 		printfailure("Unexpected color from ggiUnmapPixel.\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -77,7 +83,7 @@ static void testcase1(const char *desc)
 	ggUSleep(5000000);
 	printsuccess();
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 }
 
