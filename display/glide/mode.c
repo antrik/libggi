@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.14 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -42,7 +42,7 @@
 
 
 static void
-GGI_glide_gcchanged(ggi_visual *vis, int mask)
+GGI_glide_gcchanged(struct ggi_visual *vis, int mask)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 
@@ -97,7 +97,7 @@ GGI_glide_gcchanged(ggi_visual *vis, int mask)
 static int glide_acquire(ggi_resource *res, uint32_t actype)
 {
 	ggi_directbuffer *dbuf;
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	int bufnum;
 	int type;
 	GrBuffer_t buffer;
@@ -175,7 +175,7 @@ static int glide_acquire(ggi_resource *res, uint32_t actype)
 static int glide_release(ggi_resource *res)
 {
 	ggi_directbuffer *dbuf;
-	ggi_visual *vis;
+	struct ggi_visual *vis;
 	int bufnum;
 	GrBuffer_t buffer;
 
@@ -215,14 +215,14 @@ static int glide_release(ggi_resource *res)
 }
 
 
-int GGI_glide_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_glide_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	grSstIdle();
 	
 	return 0;
 }
 
-int GGI_glide_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_glide_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -352,7 +352,7 @@ res2glideres(glide_priv *priv, ggi_mode *mode,
 }
 
 		
-int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_glide_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int rc = GGI_OK;
 	glide_priv *priv = GLIDE_PRIV(vis);
@@ -539,7 +539,7 @@ int GGI_glide_setmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_glide_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	GrScreenResolution_t resolution; /* Dummy */
 	int err = 0;
@@ -591,7 +591,7 @@ int GGI_glide_checkmode(ggi_visual *vis, ggi_mode *tm)
 /*
 ** Get the current mode
 */
-int GGI_glide_getmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_glide_getmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	APP_ASSERT(vis != NULL,
 		"display-glide: GGIgetmode: Visual == NULL");

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2004/10/28 21:19:59 cegger Exp $
+/* $Id: mode.c,v 1.7 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    Display-multi: mode management
@@ -37,7 +37,7 @@
 #include <string.h>
 
 
-int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_multi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 { 
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
@@ -67,7 +67,7 @@ int GGI_multi_setmode(ggi_visual *vis, ggi_mode *tm)
 }
 
 
-static int try_checkmode(ggi_visual *vis, ggi_mode *tm, int count)
+static int try_checkmode(struct ggi_visual *vis, ggi_mode *tm, int count)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
@@ -91,13 +91,13 @@ static int try_checkmode(ggi_visual *vis, ggi_mode *tm, int count)
 }
 
 
-int GGI_multi_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_multi_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	return try_checkmode(vis, tm, 0);
 }
 
 
-int GGI_multi_getmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_multi_getmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 
@@ -105,7 +105,7 @@ int GGI_multi_getmode(ggi_visual *vis, ggi_mode *tm)
 }
 
 
-int GGI_multi_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_multi_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;
@@ -124,7 +124,7 @@ int GGI_multi_setflags(ggi_visual *vis,ggi_flags flags)
 }
                 
 
-int GGI_multi_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_multi_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 	MultiVis *cur;

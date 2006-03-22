@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.4 2004/09/13 09:16:13 cegger Exp $
+/* $Id: pixel.c,v 1.5 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: pixels
@@ -30,7 +30,7 @@
 #include <ggi/display/svgalib.h>
 
 
-int GGI_svga_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_svga_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 	
@@ -40,7 +40,7 @@ int GGI_svga_drawpixel(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_svga_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_svga_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
 	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_VIRTY(vis));
@@ -48,7 +48,7 @@ int GGI_svga_drawpixel_nc(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_svga_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_svga_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	vga_setcolor(col);
 	vga_drawpixel(x, y + vis->w_frame_num * LIBGGI_VIRTY(vis));
@@ -56,7 +56,7 @@ int GGI_svga_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_svga_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_svga_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	CHECKXY(vis, x, y);
 
@@ -66,7 +66,7 @@ int GGI_svga_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_svga_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int GGI_svga_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 { 
 	*pixel = 
 		vga_getpixel(x, y+vis->r_frame_num * LIBGGI_VIRTY(vis));

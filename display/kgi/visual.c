@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.28 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -45,7 +45,7 @@ static const gg_option optlist[] =
 	{ "noinput",  "no" }
 };
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	kgi_version_t version = { 0, 0, 1, 0 };
@@ -130,7 +130,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return GGI_ENOMEM;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	if (LIBGGI_FD(vis) > -1)
 		close(LIBGGI_FD(vis));

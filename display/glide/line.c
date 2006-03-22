@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.4 2005/07/30 11:38:50 cegger Exp $
+/* $Id: line.c,v 1.5 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Line functions
@@ -31,7 +31,7 @@
 
 
 int
-GGI_glide_drawline(ggi_visual *vis,int x,int y,int xe,int ye)
+GGI_glide_drawline(struct ggi_visual *vis,int x,int y,int xe,int ye)
 {
 	GrVertex end = GLIDE_PRIV(vis)->fgvertex;
 	
@@ -46,7 +46,7 @@ GGI_glide_drawline(ggi_visual *vis,int x,int y,int xe,int ye)
 }
 
 int
-GGI_glide_drawhline(ggi_visual *vis,int x,int y,int w)
+GGI_glide_drawhline(struct ggi_visual *vis,int x,int y,int w)
 {
 	GrVertex end = GLIDE_PRIV(vis)->fgvertex;
 	
@@ -61,7 +61,7 @@ GGI_glide_drawhline(ggi_visual *vis,int x,int y,int w)
 }
 
 int
-GGI_glide_drawvline(ggi_visual *vis,int x,int y,int h)
+GGI_glide_drawvline(struct ggi_visual *vis,int x,int y,int h)
 {
 	GrVertex end = GLIDE_PRIV(vis)->fgvertex;
 	
@@ -76,7 +76,7 @@ GGI_glide_drawvline(ggi_visual *vis,int x,int y,int h)
 }
 
 int
-GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, const void *data)
+GGI_glide_puthline(struct ggi_visual *vis, int x, int y, int w, const void *data)
 {
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) {
@@ -101,7 +101,7 @@ GGI_glide_puthline(ggi_visual *vis, int x, int y, int w, const void *data)
 }
 
 int
-GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, const void *data)
+GGI_glide_putvline(struct ggi_visual *vis, int x, int y, int h, const void *data)
 {
 	/* Clipping */
 	if (x<(LIBGGI_GC(vis)->cliptl.x) || x>=(LIBGGI_GC(vis)->clipbr.x)) {
@@ -126,7 +126,7 @@ GGI_glide_putvline(ggi_visual *vis, int x, int y, int h, const void *data)
 }
 
 int
-GGI_glide_gethline(ggi_visual *vis, int x, int y, int w, void *data)
+GGI_glide_gethline(struct ggi_visual *vis, int x, int y, int w, void *data)
 {
 	grLfbReadRegion(GLIDE_PRIV(vis)->readbuf, x, y,
 			 w, 1, GLIDE_PRIV(vis)->bytes_per_pixel*w, data);
@@ -134,7 +134,7 @@ GGI_glide_gethline(ggi_visual *vis, int x, int y, int w, void *data)
 }
 
 int
-GGI_glide_getvline(ggi_visual *vis, int x, int y, int h, void *data)
+GGI_glide_getvline(struct ggi_visual *vis, int x, int y, int h, void *data)
 {
 	grLfbReadRegion(GLIDE_PRIV(vis)->readbuf, x, y,
 			 1, h, GLIDE_PRIV(vis)->bytes_per_pixel, data);

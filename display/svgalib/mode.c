@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.29 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -71,7 +71,7 @@ int _ggi_svgalib_setmode(int mode)
 	return ret;
 }
 
-static int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
+static int GGI_svga_setorigin(struct ggi_visual *vis,int x,int y)
 {
 	struct svga_priv *priv = SVGA_PRIV(vis);
 	if (x != 0 || y<0 || y > LIBGGI_VIRTY(vis) )
@@ -87,12 +87,12 @@ static int GGI_svga_setorigin(ggi_visual *vis,int x,int y)
 	return 0;
 }
 
-int GGI_svga_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_svga_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	return 0;
 }
 	
-int GGI_svga_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_svga_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -154,7 +154,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 	return modenum;
 }
 
-int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_svga_setmode(struct ggi_visual *vis, ggi_mode *tm)
 { 
 	struct svga_priv *priv = SVGA_PRIV(vis);
 	int modenum;
@@ -318,7 +318,7 @@ int GGI_svga_setmode(ggi_visual *vis, ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_svga_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	svga_priv *priv = SVGA_PRIV(vis);
 	vga_modeinfo *vmi = NULL;
@@ -390,7 +390,7 @@ int GGI_svga_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_svga_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_svga_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	DPRINT("In GGIgetmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
@@ -403,7 +403,7 @@ int GGI_svga_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_svga_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_svga_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */

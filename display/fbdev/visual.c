@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.37 2006/02/05 08:43:21 cegger Exp $
+/* $Id: visual.c,v 1.38 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -112,14 +112,14 @@ static const gg_option optlist[] =
 #define MAX_DEV_LEN	63
 #define DEFAULT_FBNUM	0
 
-extern int GGI_fbdev_mode_reset(ggi_visual *vis);
-extern void GGI_fbdev_color0(ggi_visual *vis);
-extern void GGI_fbdev_color_free(ggi_visual *vis);
+extern int GGI_fbdev_mode_reset(struct ggi_visual *vis);
+extern void GGI_fbdev_color0(struct ggi_visual *vis);
+extern void GGI_fbdev_color_free(struct ggi_visual *vis);
 
 static void
 switchreq(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
@@ -145,7 +145,7 @@ switchreq(void *arg)
 static void
 switching(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	DPRINT_MISC("display-fbdev: switching(%p) called\n", vis);
@@ -164,7 +164,7 @@ switching(void *arg)
 static void
 switchback(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	gii_event ev;
 
@@ -206,7 +206,7 @@ switchback(void *arg)
 
 
 static int 
-GGI_fbdev_sendevent(ggi_visual *vis, gii_event *ev)
+GGI_fbdev_sendevent(struct ggi_visual *vis, gii_event *ev)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
@@ -248,7 +248,7 @@ GGI_fbdev_sendevent(ggi_visual *vis, gii_event *ev)
 
 
 static int
-GGI_fbdev_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+GGI_fbdev_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	
@@ -258,7 +258,7 @@ GGI_fbdev_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 }
 
 static int
-GGI_fbdev_idleaccel(ggi_visual *vis)
+GGI_fbdev_idleaccel(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
@@ -269,7 +269,7 @@ GGI_fbdev_idleaccel(ggi_visual *vis)
 	return 0;
 }
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_fbdev_timing *curtim;
@@ -539,7 +539,7 @@ get_timings(ggi_fbdev_priv *priv, const char *name)
 
 #define MAX_DEV_LEN	63
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg vtswarg;
@@ -858,7 +858,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

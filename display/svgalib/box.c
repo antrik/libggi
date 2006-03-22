@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.7 2005/07/30 10:58:27 cegger Exp $
+/* $Id: box.c,v 1.8 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -30,7 +30,7 @@
 #include <ggi/display/svgalib.h>
 
 
-int GGI_svga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_svga_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	int x2;
   
@@ -47,7 +47,7 @@ int GGI_svga_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }
 
 int
-GGI_svga_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+GGI_svga_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
 { 
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	int rowadd = w * pixelsize;

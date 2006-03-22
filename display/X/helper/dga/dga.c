@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.25 2006/02/05 09:49:58 cegger Exp $
+/* $Id: dga.c,v 1.26 2006/03/22 20:22:26 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -35,7 +35,7 @@
 #include <string.h>
 #include <ggi/input/xf86dga.h>
 
-static int ggi_xdga_getmodelist(ggi_visual * vis)
+static int ggi_xdga_getmodelist(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv;
 	XDGAMode *modes;
@@ -100,7 +100,7 @@ return GGI_OK;
 
 #endif
 
-static int ggi_xdga_restore_mode(ggi_visual * vis)
+static int ggi_xdga_restore_mode(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv;
 	int screen;
@@ -119,7 +119,7 @@ static int ggi_xdga_restore_mode(ggi_visual * vis)
 	return GGI_OK;
 }
 
-static int ggi_xdga_enter_mode(ggi_visual * vis, int num)
+static int ggi_xdga_enter_mode(struct ggi_visual * vis, int num)
 {
 	XDGADevice *dev;
 	XDGAMode *modes;
@@ -261,7 +261,7 @@ static void ggi_xdga_checkmode_adapt(ggi_mode * m, XDGAMode * dgamode,
 
 /* This function performs the CheckMode operation and returns
  * the number of the best mode.  */
-static int ggi_xdga_validate_mode(ggi_visual * vis, intptr_t num,
+static int ggi_xdga_validate_mode(struct ggi_visual * vis, intptr_t num,
 				  ggi_mode * mode)
 {
 	ggi_x_priv *priv;
@@ -322,7 +322,7 @@ static int ggi_xdga_validate_mode(ggi_visual * vis, intptr_t num,
 
 
 #if 0
-static int ggi_xdga_mmap(ggi_visual * vis)
+static int ggi_xdga_mmap(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv;
 
@@ -334,7 +334,7 @@ static int ggi_xdga_mmap(ggi_visual * vis)
 	return GGI_OK;
 }
 
-static int ggi_xdga_makerenderer(ggi_visual * vis)
+static int ggi_xdga_makerenderer(struct ggi_visual * vis)
 {
 	ggi_x_priv *priv;
 	XDGADevice *dev;
@@ -357,7 +357,7 @@ static int ggi_xdga_makerenderer(ggi_visual * vis)
 
 #endif
 
-static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual * vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t * dlret)
 {
 	ggi_x_priv *priv;
@@ -401,7 +401,7 @@ static int GGIopen(ggi_visual * vis, struct ggi_dlhandle *dlh,
 	return GGI_OK;
 }
 
-static int GGIclose(ggi_visual * vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 

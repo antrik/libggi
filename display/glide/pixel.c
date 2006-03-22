@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.4 2005/07/30 11:38:50 cegger Exp $
+/* $Id: pixel.c,v 1.5 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Pixel functions
@@ -32,7 +32,7 @@
 
 
 int
-GGI_glide_drawpixel(ggi_visual *vis,int x,int y)
+GGI_glide_drawpixel(struct ggi_visual *vis,int x,int y)
 {
 	GLIDE_PRIV(vis)->fgvertex.x = x;
 	GLIDE_PRIV(vis)->fgvertex.y = y;
@@ -43,7 +43,7 @@ GGI_glide_drawpixel(ggi_visual *vis,int x,int y)
 }
 
 int
-GGI_glide_putpixel(ggi_visual *vis, int x, int y, ggi_pixel pix)
+GGI_glide_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel pix)
 {
 	color_truepriv *colorpriv = vis->colorpriv;
 	GrVertex vert;
@@ -67,7 +67,7 @@ GGI_glide_putpixel(ggi_visual *vis, int x, int y, ggi_pixel pix)
 }
 
 int
-GGI_glide_getpixel(ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+GGI_glide_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 {
 	/* This is needed to handle big/little endianess */
 	switch (GLIDE_PRIV(vis)->bytes_per_pixel) {

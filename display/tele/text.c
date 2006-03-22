@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.9 2005/01/25 11:47:18 pekberg Exp $
+/* $Id: text.c,v 1.10 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -40,7 +40,7 @@
 #endif
 
 
-int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)
+int GGI_tele_getcharsize(struct ggi_visual *vis, int *width, int *height)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetCharSizeData *p;
@@ -68,7 +68,7 @@ int GGI_tele_getcharsize(ggi_visual *vis, int *width, int *height)
 }	/* GGI_tele_getcharsize */
 
 
-int GGI_tele_putc(ggi_visual *vis, int x, int y, char c)
+int GGI_tele_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	char s[2];
 	s[0] = c; s[1] = '\0';
@@ -78,7 +78,7 @@ int GGI_tele_putc(ggi_visual *vis, int x, int y, char c)
 
 
 
-int GGI_tele_puts(ggi_visual *vis, int x, int y, const char * s)
+int GGI_tele_puts(struct ggi_visual *vis, int x, int y, const char * s)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdPutStrData *p;

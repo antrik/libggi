@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2006/03/17 21:55:42 cegger Exp $
+/* $Id: visual.c,v 1.27 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -94,7 +94,7 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ       0
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-void _GGI_svga_freedbs(ggi_visual *vis)
+void _GGI_svga_freedbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -105,7 +105,7 @@ void _GGI_svga_freedbs(ggi_visual *vis)
 }
 
 
-static int _GGIchecksvgamodes(ggi_visual *vis)
+static int _GGIchecksvgamodes(struct ggi_visual *vis)
 {
 	int modes = 0;
 	int i;
@@ -173,7 +173,7 @@ static int _GGIchecksvgamodes(ggi_visual *vis)
 
 
 static void 
-do_setpalette(ggi_visual *vis)
+do_setpalette(struct ggi_visual *vis)
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
 	int len = 1 << GT_DEPTH(gt);
@@ -185,7 +185,7 @@ do_setpalette(ggi_visual *vis)
 static void
 switching(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	svga_priv *priv = SVGA_PRIV(vis);
 
 #if 0
@@ -200,7 +200,7 @@ switching(void *arg)
 static void
 switchreq(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	svga_priv *priv = SVGA_PRIV(vis);
 	gii_event ev;
 	ggi_cmddata_switchrequest *data;
@@ -224,7 +224,7 @@ switchreq(void *arg)
 static void
 switchback(void *arg)
 {
-	ggi_visual *vis = arg;
+	struct ggi_visual *vis = arg;
 	gii_event ev;
 
 	DPRINT_MISC("display-svga: switched_back() called\n");
@@ -248,7 +248,7 @@ switchback(void *arg)
 
 
 static int 
-GGI_svga_sendevent(ggi_visual *vis, gii_event *ev)
+GGI_svga_sendevent(struct ggi_visual *vis, gii_event *ev)
 {
 	svga_priv *priv = SVGA_PRIV(vis);
 
@@ -294,7 +294,7 @@ GGI_svga_sendevent(ggi_visual *vis, gii_event *ev)
 #define GSW_MAGIC	(-4711)
 extern int __svgalib_tty_fd;
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	svga_priv *priv = SVGA_PRIV(vis);
 
@@ -327,7 +327,7 @@ static int do_cleanup(ggi_visual *vis)
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	gg_option options[NUM_OPTS];
@@ -534,7 +534,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/03/14 15:18:31 pekberg Exp $
+/* $Id: visual.c,v 1.12 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-lcd823: visual handling
@@ -47,17 +47,17 @@
 #define LCD_DEVNAME	"/dev/lcd823"
 
 
-extern void _GGI_lcd823_free_dbs(ggi_visual *vis);
+extern void _GGI_lcd823_free_dbs(struct ggi_visual *vis);
 
 
 static int
-GGI_lcd823_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+GGI_lcd823_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	return 0;
 }
 
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
 	ggi_lcd823_priv *priv = LCD823_PRIV(vis);
 
@@ -99,7 +99,7 @@ static int do_cleanup(ggi_visual *vis)
 
 #define MAX_DEV_LEN	63
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_lcd823_priv *priv;
@@ -173,7 +173,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	return do_cleanup(vis);
 }

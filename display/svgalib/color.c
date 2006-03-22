@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.12 2005/07/30 10:58:27 cegger Exp $
+/* $Id: color.c,v 1.13 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -35,7 +35,7 @@
 
 
 int
-GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
+GGI_svga_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	int *vgaptr;
 	size_t i;
@@ -66,7 +66,7 @@ GGI_svga_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *
 	return 0;
 }
 
-size_t GGI_svga_getPrivSize(ggi_visual_t vis)
+size_t GGI_svga_getPrivSize(struct ggi_visual *vis)
 {
   return (3 * LIBGGI_PAL(vis)->clut.size * sizeof(int));
 }

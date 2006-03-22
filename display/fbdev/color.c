@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.15 2005/06/10 07:43:00 cegger Exp $
+/* $Id: color.c,v 1.16 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -36,21 +36,21 @@
 #include <ggi/display/fbdev.h>
 #include <ggi/internal/ggi_debug.h>
 
-void GGI_fbdev_color0(ggi_visual *vis);
-void GGI_fbdev_color_free(ggi_visual *vis);
-void GGI_fbdev_color_setup(ggi_visual *vis);
+void GGI_fbdev_color0(struct ggi_visual *vis);
+void GGI_fbdev_color_free(struct ggi_visual *vis);
+void GGI_fbdev_color_setup(struct ggi_visual *vis);
 
-static int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len, 
+static int GGI_fbdev_getgammamap(struct ggi_visual *vis, int start, int len, 
 				 ggi_color *colormap);
-static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len, 
+static int GGI_fbdev_setgammamap(struct ggi_visual *vis, int start, int len, 
 				 const ggi_color *colormap);
-static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t end, 
+static int GGI_fbdev_setPalette(struct ggi_visual *vis, size_t start, size_t end, 
 			       const ggi_color *colormap);
-static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis);
+static size_t GGI_fbdev_getPrivSize(struct ggi_visual_t vis);
 
 
 /* Zeros out the palette/gamma entries.  Called before changing modes. */
-void GGI_fbdev_color0(ggi_visual *vis)
+void GGI_fbdev_color0(struct ggi_visual *vis)
 {
 	if (LIBGGI_PAL(vis)->clut.data == NULL) return; /* New visual. */
 	vis->opcolor->setpalvec(vis, 0, 1 << GT_DEPTH(LIBGGI_GT(vis)),
@@ -60,7 +60,7 @@ void GGI_fbdev_color0(ggi_visual *vis)
 }
 
 /* Free palette/gamma entries.  Called before changing modes. */
-void GGI_fbdev_color_free(ggi_visual *vis)
+void GGI_fbdev_color_free(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
@@ -88,7 +88,7 @@ void GGI_fbdev_color_free(ggi_visual *vis)
 	LIBGGI_PAL(vis)->clut.data = NULL;
 }
 
-void GGI_fbdev_color_setup(ggi_visual *vis)
+void GGI_fbdev_color_setup(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	struct fb_cmap cmap;
@@ -203,7 +203,7 @@ void GGI_fbdev_color_setup(ggi_visual *vis)
 
 }
 
-static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size, 
+static int GGI_fbdev_setPalette(struct ggi_visual *vis, size_t start, size_t size, 
 			       const ggi_color *colormap)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
@@ -246,7 +246,7 @@ static int GGI_fbdev_setPalette(ggi_visual *vis, size_t start, size_t size,
  * Since this is the case we reuse some of the priv/vis palette members.
  *
  */
-static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len, 
+static int GGI_fbdev_setgammamap(struct ggi_visual *vis, int start, int len, 
 				 const ggi_color *colormap)
 {
 	ggi_fbdev_priv *priv;
@@ -287,7 +287,7 @@ static int GGI_fbdev_setgammamap(ggi_visual *vis, int start, int len,
 }
 
 /* This could be moved to default/color as a stub.  It isn't fbdev-local. */
-int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len, 
+int GGI_fbdev_getgammamap(struct ggi_visual *vis, int start, int len, 
 			  ggi_color *colormap)
 {
 	ggi_fbdev_priv *priv;
@@ -313,7 +313,7 @@ int GGI_fbdev_getgammamap(ggi_visual *vis, int start, int len,
 	return 0;
 }
 
-static size_t GGI_fbdev_getPrivSize(ggi_visual_t vis) 
+static size_t GGI_fbdev_getPrivSize(struct ggi_visual *vis) 
 {
 	return (LIBGGI_PAL(vis)->clut.size * 3);
 }

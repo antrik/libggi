@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.10 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    Display-SUID: initialization
@@ -41,7 +41,7 @@ int _suidtarget_dev_mem=-1;
 
 extern struct kgi_device  mydevice;
 
-static ggi_visual *_vis;  /* unix signal handlers suck ass */
+static struct ggi_visual *_vis;  /* unix signal handlers suck ass */
 
 static void get_killed(int signum)
 {
@@ -56,7 +56,7 @@ static void get_killed(int signum)
 
 
 static int
-GGI_suidkgi_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+GGI_suidkgi_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	/* Mainly here to stop those annoying '_default_error' messages
 	 * in the debugging output.
@@ -68,7 +68,7 @@ extern ggi_pixel law_base;
 
 int suidkgi_init_module(void);
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t_t_t *dlret)
 {
 	ggi_mode mode;
@@ -205,7 +205,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
   	suid_hook *priv = SUIDHOOK(vis);
 	ggi_mode mode;

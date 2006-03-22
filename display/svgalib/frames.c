@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.3 2005/07/30 08:50:17 cegger Exp $
+/* $Id: frames.c,v 1.4 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGA target: frame handling functions
@@ -29,7 +29,7 @@
 #include <ggi/display/svgalib.h>
 
 int
-GGI_svga_setreadframe(ggi_visual *vis, int num)
+GGI_svga_setreadframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;
@@ -40,7 +40,7 @@ GGI_svga_setreadframe(ggi_visual *vis, int num)
 }
 
 int
-GGI_svga_setwriteframe(ggi_visual *vis, int num)
+GGI_svga_setwriteframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;
@@ -51,7 +51,7 @@ GGI_svga_setwriteframe(ggi_visual *vis, int num)
 }
 
 int
-GGI_svga_setdisplayframe(ggi_visual *vis, int num)
+GGI_svga_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.4 2002/09/08 21:37:47 soyt Exp $
+/* $Id: draw.c,v 1.5 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -32,13 +32,13 @@
 #include <ggi/display/tele.h>
 
 
-int GGI_tele_drawpixel_nc(ggi_visual *vis, int x, int y)
+int GGI_tele_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	return GGI_tele_putpixel_nc(vis, x, y, LIBGGI_GC_FGCOLOR(vis));
 }	/* GGI_tele_drawpixel_nc */
 
 
-int GGI_tele_drawpixel(ggi_visual *vis, int x, int y)
+int GGI_tele_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	CHECKXY(vis, x, y);
 
@@ -76,7 +76,7 @@ int GGI_tele_drawline(struct ggi_visual *vis, int x,int y, int xe,int ye)
 
 /* FIXME !!! this is confused */
 
-int GGI_tele_drawbox_nc(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_tele_drawbox_nc(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdDrawBoxData *p;
@@ -102,7 +102,7 @@ int GGI_tele_drawbox_nc(ggi_visual *vis, int x, int y, int w, int h)
 }	/* GGI_tele_drawbox_nc */
 
 
-int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_tele_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdDrawBoxData *p;
@@ -130,7 +130,7 @@ int GGI_tele_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 }	/* GGI_tele_drawbox */
 
 
-int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h,
+int GGI_tele_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
 			int nx, int ny)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
@@ -163,25 +163,25 @@ int GGI_tele_copybox(ggi_visual *vis, int x, int y, int w, int h,
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_tele_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_tele_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	return GGI_tele_drawbox_nc(vis, x, y, w, 1);
 }	/* GGI_tele_drawhline_nc */
 
 
-int GGI_tele_drawvline_nc(ggi_visual *vis, int x, int y, int h)
+int GGI_tele_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	return GGI_tele_drawbox_nc(vis, x, y, 1, h);
 }	/* GGI_tele_drawvline_nc */
 
 
-int GGI_tele_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_tele_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	return GGI_tele_drawbox(vis, x, y, w, 1);
 }	/* GGI_tele_drawhline */
 
 
-int GGI_tele_drawvline(ggi_visual *vis, int x, int y, int h)
+int GGI_tele_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	return GGI_tele_drawbox(vis, x, y, 1, h);
 }	/* GGI_tele_drawvline */

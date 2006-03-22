@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.6 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    Display-SUID
@@ -30,12 +30,12 @@
 #include <signal.h>
 
 
-int GGI_suidkgi_kgicommand(ggi_visual *vis,int cmd,void *args)
+int GGI_suidkgi_kgicommand(struct ggi_visual *vis,int cmd,void *args)
 {
 	return graph_ioctl(cmd,args);
 }
 
-int GGI_suidkgi_setorigin(ggi_visual *vis,int x,int y)
+int GGI_suidkgi_setorigin(struct ggi_visual *vis,int x,int y)
 {
 	ggi_coord where;
 	int err;
@@ -58,7 +58,7 @@ int GGI_suidkgi_setorigin(ggi_visual *vis,int x,int y)
 }
 
 #if 0
-int GGI_suidkgi_setsplitline(ggi_visual *vis,int y)
+int GGI_suidkgi_setsplitline(struct ggi_visual *vis,int y)
 {
 	if (y<0 || y > LIBGGI_Y(vis)) return GGI_ENOSPACE;
 
@@ -72,7 +72,7 @@ void get_primary_fb(long *sz,long *psz,long *pstart);
 /*
  * _Attempt_ to get the default framebuffer.. 
  */
-static void _GGIgetmmio(ggi_visual *vis)
+static void _GGIgetmmio(struct ggi_visual *vis)
 {
 	suid_hook *priv = SUIDHOOK(vis);
 
@@ -133,7 +133,7 @@ static void _GGIgetmmio(ggi_visual *vis)
 	}
 }
 
-static int _GGIdomode(ggi_visual *vis)
+static int _GGIdomode(struct ggi_visual *vis)
 {
 	int err;
 	kgi_suggest sug;
@@ -274,7 +274,7 @@ static void mode_kgi2ggi(kgi_modereq *km, ggi_mode *gm)
 	}
 }
 
-int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_suidkgi_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	int err;
 	suid_hook *priv = SUIDHOOK(vis);
@@ -316,7 +316,7 @@ int GGI_suidkgi_setmode(ggi_visual *vis,ggi_mode *tm)
 	return _GGIdomode(vis);
 }
 
-int GGI_suidkgi_checkmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_suidkgi_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	kgi_modereq km;
 	int rc;
@@ -331,7 +331,7 @@ int GGI_suidkgi_checkmode(ggi_visual *vis,ggi_mode *tm)
 	return rc;
 }
 
-int GGI_suidkgi_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_suidkgi_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	kgi_modereq km;
 	int rc;
@@ -347,7 +347,7 @@ int GGI_suidkgi_getmode(ggi_visual *vis,ggi_mode *tm)
 }
 
 
-int GGI_suidkgi_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_suidkgi_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 
@@ -355,7 +355,7 @@ int GGI_suidkgi_setflags(ggi_visual *vis,ggi_flags flags)
 }
 
 
-void handle_switched_away(ggi_visual *vis)
+void handle_switched_away(struct ggi_visual *vis)
 {
 	/* Reset the graphic card into text mode, ready for console
 	 * switching.  VT switching remains disabled during this
@@ -370,7 +370,7 @@ void handle_switched_away(ggi_visual *vis)
 }
 
 
-void handle_switched_back(ggi_visual *vis)
+void handle_switched_back(struct ggi_visual *vis)
 {
 	/* Restore the graphic card to the mode it was in before
 	 * switched away.  VT switching remains disabled during this

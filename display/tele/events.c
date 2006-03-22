@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.7 2005/01/25 11:47:18 pekberg Exp $
+/* $Id: events.c,v 1.8 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -225,7 +225,7 @@ gii_event_mask GII_tele_poll(gii_input *inp, void *arg)
 /* ---------------------------------------------------------------------- */
 
 
-int tele_receive_reply(ggi_visual *vis, TeleEvent *ev, 
+int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev, 
 			   long type, long seq)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.15 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -36,7 +36,7 @@ static const gg_option optlist[] =
 #define OPT_PHYSZ       0
 #define NUM_OPTS        (sizeof(optlist)/sizeof(gg_option))
 
-int GGI_libkgi_flush(ggi_visual *vis, int x, int y, int w, int h, 
+int GGI_libkgi_flush(struct ggi_visual *vis, int x, int y, int w, int h, 
 			    int tryflag)
 {
         ggi_libkgi_priv *priv = LIBKGI_PRIV(vis);
@@ -52,7 +52,7 @@ int GGI_libkgi_flush(ggi_visual *vis, int x, int y, int w, int h,
 /* kgicommand obselete */
 
 
-int GGI_libkgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_libkgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 
@@ -82,7 +82,7 @@ int GGI_libkgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
         return GGI_ENOMATCH;
 }
 
-int GGI_libkgi_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_libkgi_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
   fprintf(stderr, "GGI_libkgi_setflags\n");
         LIBGGI_FLAGS(vis) = flags;
@@ -90,7 +90,7 @@ int GGI_libkgi_setflags(ggi_visual *vis, ggi_flags flags)
         return 0;
 }
 
-int GGI_libkgi_idleaccel(ggi_visual *vis)
+int GGI_libkgi_idleaccel(struct ggi_visual *vis)
 {
         ggi_libkgi_priv *priv = LIBKGI_PRIV(vis);
 
@@ -103,7 +103,7 @@ int GGI_libkgi_idleaccel(ggi_visual *vis)
         return 0;
 }
 
-int GGI_libkgi_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_libkgi_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
         DPRINT_MODE("display-libkgi: getmode\n");
         
@@ -112,7 +112,7 @@ int GGI_libkgi_getmode(ggi_visual *vis, ggi_mode *mode)
         return 0;
 }
 
-int GGI_libkgi_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_libkgi_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
         int err;
 	ggiGA_resource_list reqlist;
@@ -183,7 +183,7 @@ int GGI_libkgi_checkmode(ggi_visual *vis, ggi_mode *mode)
         return 0;
 }
 
-int GGI_libkgi_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_libkgi_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
         int err;
 	ggiGA_resource_list reqlist;
@@ -265,7 +265,7 @@ int GGI_libkgi_sendevent (struct ggi_visual *vis, ggi_event *event)
 	return 0;
 }
 
-static int do_cleanup(ggi_visual *vis)
+static int do_cleanup(struct ggi_visual *vis)
 {
         ggi_libkgi_priv *priv = LIBKGI_PRIV(vis);
 
@@ -300,7 +300,7 @@ static int do_cleanup(ggi_visual *vis)
         return 0;
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
                         const char *args, void *argptr, uint32_t *dlret)
 {
         gg_option options[NUM_OPTS];
@@ -426,7 +426,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
         return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
         return do_cleanup(vis);
 }

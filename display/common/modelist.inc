@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.16 2005/08/20 10:30:00 cegger Exp $
+/* $Id: modelist.inc,v 1.17 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -33,7 +33,7 @@
 #endif
 
 #ifdef WANT_CHECKONEBPP
-static int _GGIcheckonebpp(ggi_visual * vis, ggi_mode * tm,
+static int _GGIcheckonebpp(struct ggi_visual * vis, ggi_mode * tm,
 			   ggi_modelistmode * gm)
 {
 	int i = 0, bestw = 0, besth = 0;
@@ -76,7 +76,7 @@ static int _GGIcheckonebpp(ggi_visual * vis, ggi_mode * tm,
 #endif
 
 #ifdef WANT_GETHIGHBPP
-static int _GGIgethighbpp(ggi_visual * vis, ggi_mode * tm,
+static int _GGIgethighbpp(struct ggi_visual * vis, ggi_mode * tm,
 			  ggi_modelistmode * gm)
 {
 	int i = 0, bestw = 0, besth = 0, bestbpp = 0, bestgt = GT_AUTO;
@@ -105,7 +105,7 @@ static int _GGIgethighbpp(ggi_visual * vis, ggi_mode * tm,
 #endif
 
 #ifdef WANT_CHECKAUTOBPP
-static int _GGIcheckautobpp(ggi_visual * vis, ggi_mode * tm,
+static int _GGIcheckautobpp(struct ggi_visual * vis, ggi_mode * tm,
 			    ggi_modelistmode * gm)
 {
 	int i = 0, ret = 0, bestw = 0, besth = 0, bestbpp = 0, bestgt =

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2006/03/14 14:14:45 pekberg Exp $
+/* $Id: mode.c,v 1.14 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -40,7 +40,7 @@
 #define YRES	480
 
 
-void _GGI_lcd823_free_dbs(ggi_visual *vis) 
+void _GGI_lcd823_free_dbs(struct ggi_visual *vis) 
 {
 	int first = LIBGGI_APPLIST(vis)->first_targetbuf;
 	int last = LIBGGI_APPLIST(vis)->last_targetbuf;
@@ -56,7 +56,7 @@ void _GGI_lcd823_free_dbs(ggi_visual *vis)
 }
 
 
-int GGI_lcd823_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_lcd823_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	int size = GT_SIZE(LIBGGI_GT(vis));
 
@@ -86,7 +86,7 @@ int GGI_lcd823_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 }
 
 
-static int do_mmap(ggi_visual *vis)
+static int do_mmap(struct ggi_visual *vis)
 {
 	ggi_lcd823_priv *priv = LCD823_PRIV(vis);
 	ggi_graphtype gt = LIBGGI_GT(vis);
@@ -126,7 +126,7 @@ static int do_mmap(ggi_visual *vis)
 }
 
 
-static int do_setmode(ggi_visual *vis)
+static int do_setmode(struct ggi_visual *vis)
 {
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	ggi_graphtype gt;
@@ -169,7 +169,7 @@ static int do_setmode(ggi_visual *vis)
 }
 
 
-int GGI_lcd823_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_lcd823_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
 
@@ -204,7 +204,7 @@ int GGI_lcd823_setmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_lcd823_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 
@@ -257,7 +257,7 @@ int GGI_lcd823_checkmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_lcd823_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_lcd823_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT_MODE("display-lcd823: getmode\n");
 
@@ -267,7 +267,7 @@ int GGI_lcd823_getmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_lcd823_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_lcd823_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

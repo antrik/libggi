@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.11 2005/01/23 21:57:20 nsouch Exp $
+/* $Id: color.c,v 1.12 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -39,7 +39,7 @@
 
 
 int
-GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
+GGI_kgi_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	kgic_ilut_set_request_t ilut;
 	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
@@ -81,7 +81,7 @@ GGI_kgi_setPalette(ggi_visual *vis, size_t start, size_t len, const ggi_color *c
 	return 0;
 }
 
-size_t GGI_kgi_getPrivSize(ggi_visual_t vis)
+size_t GGI_kgi_getPrivSize(struct ggi_visual_t vis)
 {
   return (3 * LIBGGI_PAL(vis)->clut.size * sizeof(int));
 }

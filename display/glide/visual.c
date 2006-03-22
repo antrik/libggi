@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.14 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -35,7 +35,7 @@
 #include <ggi/internal/gg_replace.h>
 
 
-void _GGI_glide_freedbs(ggi_visual *vis)
+void _GGI_glide_freedbs(struct ggi_visual *vis)
 {
 	int i;
 	int first = LIBGGI_APPLIST(vis)->first_targetbuf;
@@ -59,7 +59,7 @@ void _GGI_glide_freedbs(ggi_visual *vis)
 static void
 switching(void *vis)
 {
-	if (GLIDE_PRIV((ggi_visual*)vis)->setmodesuccess) {
+	if (GLIDE_PRIV((struct ggi_visual*)vis)->setmodesuccess) {
 		grSstControl(GR_CONTROL_DEACTIVATE);
 	}
 }
@@ -68,13 +68,13 @@ switching(void *vis)
 static void
 switchback(void *vis)
 {
-	if (GLIDE_PRIV((ggi_visual*)vis)->setmodesuccess) {
+	if (GLIDE_PRIV((struct ggi_visual*)vis)->setmodesuccess) {
 		grSstControl(GR_CONTROL_ACTIVATE);
 	}
 }
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg vtswarg;
@@ -233,7 +233,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	glide_priv *priv = MONOTEXT_PRIV(vis);
 

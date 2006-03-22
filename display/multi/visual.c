@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.17 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    Display-multi: initialization
@@ -37,7 +37,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_multi_priv *priv;
@@ -196,7 +196,7 @@ static void destroyvisuals(MultiVis *cur)
 	free(cur);
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_multi_priv *mm = GGIMULTI_PRIV(vis);
 

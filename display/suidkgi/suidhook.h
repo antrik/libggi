@@ -1,4 +1,4 @@
-/* $Id: suidhook.h,v 1.3 2005/07/31 15:30:36 soyt Exp $
+/* $Id: suidhook.h,v 1.4 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    Display-SUID: definitions
@@ -63,13 +63,13 @@ extern int _suidtarget_dev_mem;	/* Required as global for the KGI module */
 
 /* Linux_common routines */
 
-int  vtswitch_open(ggi_visual *vis);
-void vtswitch_close(ggi_visual *vis);
+int  vtswitch_open(struct ggi_visual *vis);
+void vtswitch_close(struct ggi_visual *vis);
 
 
 /* Internal stuff */
 
-int GGIdlcleanup(ggi_visual *vis);
+int GGIdlcleanup(struct ggi_visual *vis);
 int graph_ioctl(unsigned int cmd, ...);
 
 

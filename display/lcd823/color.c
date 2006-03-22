@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2006/03/14 14:14:44 pekberg Exp $
+/* $Id: color.c,v 1.9 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -35,7 +35,7 @@
 
 
 int
-GGI_lcd823_setPalette(ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
+GGI_lcd823_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
 	uint16_t          *pal  = (uint16_t*)(LIBGGI_PAL(vis)->priv);
 	size_t nocols = 1 << GT_DEPTH(LIBGGI_GT(vis));
@@ -60,7 +60,7 @@ GGI_lcd823_setPalette(ggi_visual *vis, size_t start, size_t size, const ggi_colo
 	return 0;
 }
 
-size_t GGI_lcd823_getPrivSize(ggi_visual_t vis)
+size_t GGI_lcd823_getPrivSize(struct ggi_visual_t vis)
 {
   return (256 * sizeof(uint16_t));
 }

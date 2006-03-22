@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.12 2005/07/30 10:58:27 cegger Exp $
+/* $Id: box.c,v 1.13 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -38,7 +38,7 @@
 #define MAX_PIXELS(vis)		\
 	TELE_MAXIMUM_RAW(TeleCmdGetPutData) / BYTES_PER_PIXEL(vis)
 
-int GGI_tele_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_tele_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
@@ -66,7 +66,7 @@ int GGI_tele_putpixel_nc(ggi_visual *vis, int x, int y, ggi_pixel col)
 
 
 
-int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_tele_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
@@ -109,7 +109,7 @@ int GGI_tele_getpixel(ggi_visual *vis, int x, int y, ggi_pixel *col)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf)
+int GGI_tele_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buf)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
@@ -186,7 +186,7 @@ int GGI_tele_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *buf
 
 /* ---------------------------------------------------------------------- */
 
-int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
+int GGI_tele_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *buf)
 { 
  	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;
@@ -272,8 +272,8 @@ int GGI_tele_getbox(ggi_visual *vis, int x, int y, int w, int h, void *buf)
 
 
 
-int GGI_tele_crossblit(ggi_visual *src, int sx, int sy, int w, int h,
-                       ggi_visual *vis, int dx, int dy)
+int GGI_tele_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+                       struct ggi_visual *vis, int dx, int dy)
 { 
 	int err = 0;
 	ggi_pixel * packed_buf;
@@ -322,7 +322,7 @@ err0:
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_tele_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
+int GGI_tele_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	CHECKXY(vis, x, y);
 
@@ -330,25 +330,25 @@ int GGI_tele_putpixel(ggi_visual *vis, int x, int y, ggi_pixel col)
 }	/* GGI_tele_putpixel */
 
 
-int GGI_tele_puthline(ggi_visual *vis, int x, int y, int w, const void *buf)
+int GGI_tele_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, w, 1, buf);
 }	/* GGI_tele_puthline */
 
 
-int GGI_tele_putvline(ggi_visual *vis, int x, int y, int h, const void *buf)
+int GGI_tele_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buf)
 {
 	return GGI_tele_putbox(vis, x, y, 1, h, buf);
 }	/* GGI_tele_putvline */
 
 
-int GGI_tele_gethline(ggi_visual *vis, int x, int y, int w, void *buf)
+int GGI_tele_gethline(struct ggi_visual *vis, int x, int y, int w, void *buf)
 {
 	return GGI_tele_getbox(vis, x, y, w, 1, buf);
 }	/* GGI_tele_gethline */
 
 
-int GGI_tele_getvline(ggi_visual *vis, int x, int y, int h, void *buf)
+int GGI_tele_getvline(struct ggi_visual *vis, int x, int y, int h, void *buf)
 {
 	return GGI_tele_getbox(vis, x, y, 1, h, buf);
 }	/* GGI_tele_getvline */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/02/04 22:11:47 soyt Exp $
+/* $Id: visual.c,v 1.13 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -37,7 +37,7 @@
 #include <ggi/display/tele.h>
 
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 
@@ -62,7 +62,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tele_priv *priv;
@@ -147,7 +147,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-int GGI_tele_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_tele_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleEvent ev;

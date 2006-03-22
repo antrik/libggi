@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2005/07/30 11:38:50 cegger Exp $
+/* $Id: box.c,v 1.5 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Box functions
@@ -31,14 +31,14 @@
 #include <ggi/display/glide.h>
 
 int
-GGI_glide_fillscreen(ggi_visual *vis)
+GGI_glide_fillscreen(struct ggi_visual *vis)
 {
 	grBufferClear(LIBGGI_GC(vis)->fg_color, 0, GR_WDEPTHVALUE_FARTHEST);
 	
 	return 0;
 }
 
-int GGI_glide_drawbox(ggi_visual *vis, int x, int y, int w, int h)
+int GGI_glide_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 	GrVertex br = priv->fgvertex;
@@ -60,7 +60,7 @@ int GGI_glide_drawbox(ggi_visual *vis, int x, int y, int w, int h)
 
 }
 
-int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *data)
+int GGI_glide_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *data)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 	int bpp = priv->bytes_per_pixel;
@@ -94,7 +94,7 @@ int GGI_glide_putbox(ggi_visual *vis, int x, int y, int w, int h, const void *da
 	return 0;
 }
 
-int GGI_glide_getbox(ggi_visual *vis, int x, int y, int w, int h, void *data)
+int GGI_glide_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *data)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 	grLfbReadRegion(priv->readbuf, x, y, w, h,
@@ -103,7 +103,7 @@ int GGI_glide_getbox(ggi_visual *vis, int x, int y, int w, int h, void *data)
 }
 
 #if 0 /* Doesn't seem to make any difference... */
-int GGI_glide_copybox(ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+int GGI_glide_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
 {
 	glide_priv *priv = GLIDE_PRIV(vis);
 	void *chunkbuf;

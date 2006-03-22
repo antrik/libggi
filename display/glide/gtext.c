@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.3 2005/07/30 11:38:50 cegger Exp $
+/* $Id: gtext.c,v 1.4 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Text functions
@@ -35,7 +35,7 @@
 #define BUFSIZE		8*8*sizeof(ggi_pixel)
 
 int
-GGI_glide16_putc(ggi_visual *vis, int x, int y, char ch)
+GGI_glide16_putc(struct ggi_visual *vis, int x, int y, char ch)
 {
 	int tc, lc, rc, bc;
 	int xc, yc;
@@ -95,7 +95,7 @@ GGI_glide16_putc(ggi_visual *vis, int x, int y, char ch)
 }
 
 int
-GGI_glide32_putc(ggi_visual *vis, int x, int y, char ch)
+GGI_glide32_putc(struct ggi_visual *vis, int x, int y, char ch)
 {
 	int tc, lc, rc, bc;
 	int xc, yc;

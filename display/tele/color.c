@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2004/11/14 15:47:48 cegger Exp $
+/* $Id: color.c,v 1.11 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -39,7 +39,7 @@
 #define MAX_COLORS  TELE_MAXIMUM_TLONG(TeleCmdSetPaletteData)
 
 
-int GGI_tele_setPalette(ggi_visual_t vis, size_t start, size_t size, const ggi_color *cols)
+int GGI_tele_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *cols)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdSetPaletteData *c;

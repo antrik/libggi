@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2005/09/19 18:46:40 cegger Exp $
+/* $Id: mode.c,v 1.19 2006/03/22 20:22:26 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -35,7 +35,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_aa_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
 {
 	*arguments = '\0';
 	switch(num) {
@@ -56,7 +56,7 @@ int GGI_aa_getapi(ggi_visual *vis,int num, char *apiname ,char *arguments)
 }
 
 
-static int _GGIdomode(ggi_visual *vis)
+static int _GGIdomode(struct ggi_visual *vis)
 {
 	int err,id;
 	char sugname[GGI_MAX_APILEN],args[GGI_MAX_APILEN];
@@ -99,7 +99,7 @@ static int _GGIdomode(ggi_visual *vis)
 	return 0;
 }
 
-int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
+int GGI_aa_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_aa_priv *priv = AA_PRIV(vis);
 	aa_palette  *pal  = (aa_palette*)(LIBGGI_PAL(vis)->priv);
@@ -132,7 +132,7 @@ int GGI_aa_flush(ggi_visual *vis, int x, int y, int w, int h, int tryflag)
  *
  * We try to work around as much as possible.
  */
-static int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
+static int _GGIcursorycheckmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	int err = 0;
 	
@@ -243,7 +243,7 @@ static int _GGIcursorycheckmode(ggi_visual *vis, ggi_mode *tm)
 
 
 
-int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_aa_priv *priv; 
 	struct aa_hardware_params ap = aa_defparams;
@@ -342,7 +342,7 @@ int GGI_aa_setmode(ggi_visual *vis,ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_aa_checkmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_aa_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	int nx, ny;
 	int err = _GGIcursorycheckmode(vis, tm);
@@ -392,7 +392,7 @@ int GGI_aa_checkmode(ggi_visual *vis,ggi_mode *tm)
 /************************/
 /* get the current mode */
 /************************/
-int GGI_aa_getmode(ggi_visual *vis,ggi_mode *tm)
+int GGI_aa_getmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	DPRINT("In GGI_aa_getmode(%p,%p)\n",vis,tm);
 	if (vis==NULL)
@@ -407,7 +407,7 @@ int GGI_aa_getmode(ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_aa_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_aa_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 
@@ -421,7 +421,7 @@ int GGI_aa_setflags(ggi_visual *vis,ggi_flags flags)
 /*************************/
 /* get private cmap size */
 /*************************/
-size_t GGI_aa_getPrivSize(ggi_visual_t vis)
+size_t GGI_aa_getPrivSize(struct ggi_visual *vis)
 {
  	return sizeof(aa_palette);
 }

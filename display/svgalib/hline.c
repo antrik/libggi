@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2005/07/30 10:58:27 cegger Exp $
+/* $Id: hline.c,v 1.8 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: horizontal lines
@@ -30,7 +30,7 @@
 #include <ggi/display/svgalib.h>
 
 
-int GGI_svga_drawhline(ggi_visual *vis, int x, int y, int w)
+int GGI_svga_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	LIBGGICLIP_XYW(vis, x, y, w);
 
@@ -41,7 +41,7 @@ int GGI_svga_drawhline(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_svga_drawhline_nc(ggi_visual *vis, int x, int y, int w)
+int GGI_svga_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	vga_setcolor(LIBGGI_GC_FGCOLOR(vis));
 	y += vis->w_frame_num * LIBGGI_VIRTY(vis);
@@ -50,7 +50,7 @@ int GGI_svga_drawhline_nc(ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-int GGI_svga_puthline(ggi_visual *vis,int x,int y,int w,const void *buffer)
+int GGI_svga_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
 {
 	int pixelsize = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	const uint8_t *buf = buffer;

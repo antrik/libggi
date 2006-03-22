@@ -1,4 +1,4 @@
-/* $Id: fb.c,v 1.3 2004/11/14 15:47:45 cegger Exp $
+/* $Id: fb.c,v 1.4 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Framebuffer handling
@@ -31,7 +31,7 @@
 
 
 int
-GGI_glide_setdisplayframe(ggi_visual *vis, int num)
+GGI_glide_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;
@@ -57,7 +57,7 @@ GGI_glide_setdisplayframe(ggi_visual *vis, int num)
 }
 
 int
-GGI_glide_setreadframe(ggi_visual *vis, int num)
+GGI_glide_setreadframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;
@@ -73,7 +73,7 @@ GGI_glide_setreadframe(ggi_visual *vis, int num)
 }
 
 int
-GGI_glide_setwriteframe(ggi_visual *vis, int num)
+GGI_glide_setwriteframe(struct ggi_visual *vis, int num)
 {
 	if (num < 0 || num >= LIBGGI_MODE(vis)->frames) {
 		return GGI_ENOSPACE;

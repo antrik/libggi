@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/03/17 21:55:42 cegger Exp $
+/* $Id: visual.c,v 1.14 2006/03/22 20:22:28 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -71,7 +71,7 @@ static int	vt_switched_away;
 static int	switchpending = 0;
 
 struct vislist {
-	ggi_visual	*vis;
+	struct ggi_visual	*vis;
 	ggi_linvtsw_arg  args;
 	struct vislist	*next;
 };
@@ -82,7 +82,7 @@ static struct vislist *vtvisuals = NULL;
 
 
 static int
-vt_add_vis(ggi_visual *vis, ggi_linvtsw_arg *args)
+vt_add_vis(struct ggi_visual *vis, ggi_linvtsw_arg *args)
 {
 	struct vislist *curr = vtvisuals, *newent;
 
@@ -105,7 +105,7 @@ vt_add_vis(ggi_visual *vis, ggi_linvtsw_arg *args)
 
 
 static int
-vt_del_vis(ggi_visual *vis)
+vt_del_vis(struct ggi_visual *vis)
 {
 	struct vislist *curr, *prev = NULL;
 
@@ -140,7 +140,7 @@ vt_del_vis(ggi_visual *vis)
 #endif
 
 
-static ggi_visual *vtvisual;
+static struct ggi_visual *vtvisual;
 
 
 static inline void
@@ -288,7 +288,7 @@ static char nopermstring[] =
 "L/vtswitch: You are not running on a virtual console and do not have\n\tpermission to open a new one\n";
 
 static int
-vtswitch_open(ggi_visual *vis)
+vtswitch_open(struct ggi_visual *vis)
 {
 	char filename[80];
 	int fd, dodetach = 0;
@@ -441,7 +441,7 @@ vtswitch_open(ggi_visual *vis)
 
 
 static void
-vtswitch_close(ggi_visual *vis)
+vtswitch_close(struct ggi_visual *vis)
 {
 	struct vt_mode qry_mode;
 
@@ -463,7 +463,7 @@ vtswitch_close(ggi_visual *vis)
 	DPRINT_MISC("L/vtswitch: close OK.\n");
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_linvtsw_arg *myargs = (ggi_linvtsw_arg *) argptr;
@@ -522,7 +522,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	/* Make sure we're only called once */
 	if (refcount == 0) return 0;

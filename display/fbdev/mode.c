@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2005/09/19 18:46:41 cegger Exp $
+/* $Id: mode.c,v 1.29 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -51,10 +51,10 @@
 #define FB_KLUDGE_FONTX	 8
 #define FB_KLUDGE_FONTY	16
 
-extern void GGI_fbdev_color0(ggi_visual *vis);
-extern void GGI_fbdev_color_free(ggi_visual *vis);
-extern void GGI_fbdev_color_setup(ggi_visual *vis);
-int GGI_fbdev_mode_reset(ggi_visual *vis);
+extern void GGI_fbdev_color0(struct ggi_visual *vis);
+extern void GGI_fbdev_color_free(struct ggi_visual *vis);
+extern void GGI_fbdev_color_setup(struct ggi_visual *vis);
+int GGI_fbdev_mode_reset(struct ggi_visual *vis);
 
 #include <ggi/display/modelist.h>
 
@@ -62,10 +62,10 @@ int GGI_fbdev_mode_reset(ggi_visual *vis);
 #include "../common/modelist.inc"
 
 static 
-int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
+int _GGI_fbdev_do_checkmode(struct ggi_visual *vis, ggi_mode *mode,
                             struct ggi_fbdev_timing **timing_);
 
-static void _GGI_free_dbs(ggi_visual *vis) 
+static void _GGI_free_dbs(struct ggi_visual *vis) 
 {
 	int i;
 
@@ -86,13 +86,13 @@ static void clear_fbmem(void *mem, unsigned long len)
 }
 
 
-int GGI_fbdev_kgicommand(ggi_visual *vis, int cmd,void *args)
+int GGI_fbdev_kgicommand(struct ggi_visual *vis, int cmd,void *args)
 {
 	return fbdev_doioctl(vis, (unsigned)cmd, args);
 }
         
 
-int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_fbdev_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	int size = GT_SIZE(LIBGGI_GT(vis));
@@ -192,7 +192,7 @@ int GGI_fbdev_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 
 
 static void
-ggimode2var(ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
+ggimode2var(struct ggi_visual *vis, ggi_mode *mode, struct fb_var_screeninfo *var)
 {
 	var->xres = mode->visible.x * mode->dpp.x;
 	var->yres = mode->visible.y * mode->dpp.y;
@@ -239,7 +239,7 @@ timing2var( struct ggi_fbdev_timing *timing, struct fb_var_screeninfo *var,
 }
 
 static void
-var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
+var2ggimode(struct ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 	    int frames)
 {
 	mode->visible.x = var->xres;
@@ -285,7 +285,7 @@ var2ggimode(ggi_visual *vis, struct fb_var_screeninfo *var, ggi_mode *mode,
 #define SKIPWHITE(ptr) while(*(ptr)==' '||*(ptr)=='\t'||*(ptr)=='\n'){(ptr)++;}
 
 
-static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
+static int do_change_mode(struct ggi_visual *vis, struct fb_var_screeninfo *var)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);
@@ -389,7 +389,7 @@ static int do_change_mode(ggi_visual *vis, struct fb_var_screeninfo *var)
 }
 
 
-static int do_mmap(ggi_visual *vis)
+static int do_mmap(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	ggi_graphtype gt;
@@ -540,7 +540,7 @@ static int do_mmap(ggi_visual *vis)
 }
 
 
-static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
+static int do_setmode(struct ggi_visual *vis, struct fb_var_screeninfo *var)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
@@ -599,7 +599,7 @@ static int do_setmode(ggi_visual *vis, struct fb_var_screeninfo *var)
 }
 
 
-int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_fbdev_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	struct fb_var_screeninfo var;
 	struct ggi_fbdev_timing *timing;
@@ -633,7 +633,7 @@ int GGI_fbdev_setmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_fbdev_mode_reset(ggi_visual *vis)
+int GGI_fbdev_mode_reset(struct ggi_visual *vis)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
@@ -783,7 +783,7 @@ void _GGI_fbdev_checkmode_adjust( ggi_mode *req,
  * file and search for the best matching mode. 
  */
 static 
-int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
+int _GGI_fbdev_do_checkmode(struct ggi_visual *vis, ggi_mode *mode,
                             struct ggi_fbdev_timing **timing_)
 {
 	int err = GGI_OK;
@@ -893,13 +893,13 @@ int _GGI_fbdev_do_checkmode(ggi_visual *vis, ggi_mode *mode,
 	return err;
 }
 
-int GGI_fbdev_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_fbdev_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	return _GGI_fbdev_do_checkmode( vis, mode, NULL );
 }
 
 
-int GGI_fbdev_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_fbdev_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT_MODE("display-fbdev: getmode\n");
 	
@@ -909,7 +909,7 @@ int GGI_fbdev_getmode(ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_fbdev_setflags(ggi_visual *vis, ggi_flags flags)
+int GGI_fbdev_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/02/04 22:11:46 soyt Exp $
+/* $Id: visual.c,v 1.17 2006/03/22 20:22:26 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -47,7 +47,7 @@ static gg_option optlist[] =
 
 
 
-void _GGI_aa_freedbs(ggi_visual *vis)
+void _GGI_aa_freedbs(struct ggi_visual *vis)
 {
 	int i;
 
@@ -57,7 +57,7 @@ void _GGI_aa_freedbs(ggi_visual *vis)
 	}
 }
 
-static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_aa_priv *priv = AA_PRIV(vis);
 
@@ -79,7 +79,7 @@ static int GGIclose(ggi_visual *vis, struct ggi_dlhandle *dlh)
 	return 0;
 }
 
-static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_aa_priv *priv;
@@ -207,7 +207,7 @@ static int GGIopen(ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return err;
 }
 
-static int GGIexit(ggi_visual *vis, struct ggi_dlhandle *dlh)
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	MANSYNC_deinit(vis);
 

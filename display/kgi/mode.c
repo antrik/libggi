@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2005/09/19 18:46:42 cegger Exp $
+/* $Id: mode.c,v 1.28 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -102,7 +102,7 @@ static void install_font(uint8_t *ptr) {
 }
 
 static
-int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
+int GGI_kgi_set_origin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_kgi_priv *priv;
 
@@ -121,7 +121,7 @@ int GGI_kgi_set_origin(ggi_visual *vis, int x, int y)
 }
 
 static
-int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
+int GGI_kgi_set_display_frame(struct ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv = KGI_PRIV(vis);
 
@@ -137,7 +137,7 @@ int GGI_kgi_set_display_frame(ggi_visual *vis, int num)
 }
 
 static
-int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
+int GGI_kgi_set_read_frame(struct ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
         ggi_directbuffer *db;
@@ -157,7 +157,7 @@ int GGI_kgi_set_read_frame(ggi_visual *vis, int num)
 }
 
 static
-int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
+int GGI_kgi_set_write_frame(struct ggi_visual *vis, int num)
 {
 	ggi_kgi_priv *priv;
 	ggi_directbuffer *db;
@@ -179,7 +179,7 @@ int GGI_kgi_set_write_frame(ggi_visual *vis, int num)
 }
 
 
-int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
+int GGI_kgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
 	*arguments = '\0';
 	switch(num){
@@ -235,13 +235,13 @@ int GGI_kgi_getapi(ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-int GGI_kgi_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_kgi_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
         memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
         return 0;
 }
 
-int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	const kgic_mapper_resource_info_result_t *fb;
 	int id, i;
@@ -432,7 +432,7 @@ int GGI_kgi_setmode(ggi_visual *vis, ggi_mode *tm)
 /**********************************/
 /* check any mode (text/graphics) */
 /**********************************/
-int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
+int GGI_kgi_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	kgi_image_mode_t mode;
 	int frames, virty;
@@ -543,7 +543,7 @@ int GGI_kgi_checkmode(ggi_visual *vis, ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_kgi_setflags(ggi_visual *vis,ggi_flags flags)
+int GGI_kgi_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 	/* Only raise supported flags */

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2005/09/19 18:46:43 cegger Exp $
+/* $Id: mode.c,v 1.16 2006/03/22 20:22:29 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -40,7 +40,7 @@
 #include <ggi/display/tele.h>
 
 
-static int GGI_tele_getapi(ggi_visual *vis, int num,
+static int GGI_tele_getapi(struct ggi_visual *vis, int num,
 			char *apiname, char *arguments)
 {
 	ggi_graphtype gt = LIBGGI_GT(vis);
@@ -65,7 +65,7 @@ static int GGI_tele_getapi(ggi_visual *vis, int num,
 	return GGI_ENOMATCH;
 }
 
-int GGI_tele_resetmode(ggi_visual *vis)
+int GGI_tele_resetmode(struct ggi_visual *vis)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleEvent ev;
@@ -86,7 +86,7 @@ int GGI_tele_resetmode(ggi_visual *vis)
 	return tclient_write(priv->client, &ev);
 }
 
-static int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
+static int GGI_tele_getpixelfmt(struct ggi_visual *vis, ggi_pixelformat * format)
 {
   ggi_tele_priv *priv = TELE_PRIV(vis);
   int err;
@@ -125,7 +125,7 @@ static int GGI_tele_getpixelfmt(ggi_visual *vis, ggi_pixelformat * format)
   return err;
 }
 
-int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_tele_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdOpenData *w;
@@ -256,7 +256,7 @@ int GGI_tele_setmode(ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
-int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_tele_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdOpenData *w;
@@ -326,7 +326,7 @@ int GGI_tele_checkmode(ggi_visual *vis, ggi_mode *mode)
 	return 0; /* w->error; */
 }
 
-int GGI_tele_getmode(ggi_visual *vis, ggi_mode *mode)
+int GGI_tele_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 
@@ -339,7 +339,7 @@ int GGI_tele_getmode(ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_tele_setorigin(ggi_visual *vis, int x, int y)
+int GGI_tele_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdSetOriginData *d;

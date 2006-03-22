@@ -1,4 +1,4 @@
-/* $Id: pan.c,v 1.7 2004/11/27 16:42:19 soyt Exp $
+/* $Id: pan.c,v 1.8 2006/03/22 20:22:27 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -35,7 +35,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
+int GGI_fbdev_setorigin(struct ggi_visual *vis, int x, int y)
 {
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 	int max_x = LIBGGI_VIRTX(vis) - LIBGGI_X(vis);
@@ -76,7 +76,7 @@ int GGI_fbdev_setorigin(ggi_visual *vis, int x, int y)
 	return 0;
 }
 
-int GGI_fbdev_setdisplayframe(ggi_visual *vis, int num)
+int GGI_fbdev_setdisplayframe(struct ggi_visual *vis, int num)
 {
         ggi_directbuffer *db = _ggi_db_find_frame(vis, num);
 
