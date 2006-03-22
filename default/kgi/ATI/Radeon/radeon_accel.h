@@ -1,4 +1,4 @@
-/* $Id: radeon_accel.h,v 1.12 2005/07/31 15:30:35 soyt Exp $
+/* $Id: radeon_accel.h,v 1.13 2006/03/22 20:29:10 cegger Exp $
 ******************************************************************************
 
    ATI Radeon sublib function prototypes
@@ -197,6 +197,6 @@ ggifunc_puthline    GGI_kgi_radeon_putvline_3d;
 ggifunc_crossblit   GGI_kgi_radeon_crossblit_3d;
 ggifunc_getcharsize GGI_kgi_radeon_getcharsize;
 
-void GGI_kgi_radeon_clut_ilut_sync(ggi_visual *vis);
+void GGI_kgi_radeon_clut_ilut_sync(struct ggi_visual *vis);
 
 #endif

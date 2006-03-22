@@ -1,4 +1,4 @@
-/* $Id: Gx00_accel.h,v 1.6 2006/03/17 21:55:41 cegger Exp $
+/* $Id: Gx00_accel.h,v 1.7 2006/03/22 20:29:10 cegger Exp $
 ******************************************************************************
 
    Matrox Gx00 accel sublib function prototypes
@@ -203,7 +203,7 @@ GGI_ACCEL_WRITE_u32(GX00_ACCEL(vis), (val))
 /* Returns the number of available 32bits words in the
  * current buffer (remaining before flush).
  */
-static inline uint32_t GX00_SPACE(ggi_visual_t vis)
+static inline uint32_t GX00_SPACE(struct ggi_visual *vis)
 {
 #ifdef GX00_ACCEL_DEBUG
   fprintf(stderr, "Remaining space: %i 32bits words\n",
@@ -214,7 +214,7 @@ static inline uint32_t GX00_SPACE(ggi_visual_t vis)
 	  ((GX00_ACCEL(vis)->u32.current) & GX00_BUFFER_MASK32));
 }
 
-static inline void GX00_INIT(ggi_visual_t vis)
+static inline void GX00_INIT(struct ggi_visual *vis)
 {
   GX00_CONTEXT(vis)->type = MGA_DMA_GENERAL_PURPOSE;
   GX00_CONTEXT(vis)->entry = MGA_DMA_FIRST_ENTRY;
@@ -222,7 +222,7 @@ static inline void GX00_INIT(ggi_visual_t vis)
   GX00_WRITE_u32(vis, MGAG_ACCEL_TAG_DRAWING_ENGINE);
 }
 
-static inline void GX00_RESET(ggi_visual_t vis, mga_dma_buffer_type_t type)
+static inline void GX00_RESET(struct ggi_visual *vis, mga_dma_buffer_type_t type)
 {
   _GX00_FLUSH(vis);
   switch (type)
@@ -243,7 +243,7 @@ static inline void GX00_RESET(ggi_visual_t vis, mga_dma_buffer_type_t type)
   GX00_CONTEXT(vis)->type = type;
 }
 
-static void _GX00_REGS_FINALIZE(ggi_visual_t vis)
+static void _GX00_REGS_FINALIZE(struct ggi_visual *vis)
 {
   if (GX00_CONTEXT(vis)->type != MGA_DMA_GENERAL_PURPOSE)
     ggPanic("Trying to flush regs to a non general purpose DMA!");
@@ -347,7 +347,7 @@ static void _GX00_REGS_FINALIZE(ggi_visual_t vis)
   GX00_CONTEXT(vis)->dma_regs = 0;
 }
 
-static inline void GX00_FLUSH_START(ggi_visual_t vis)
+static inline void GX00_FLUSH_START(struct ggi_visual *vis)
 {
 #ifdef GX00_ACCEL_DEBUG
   fprintf(stderr, "Starting an accel flush and reset\n");
@@ -358,7 +358,7 @@ static inline void GX00_FLUSH_START(ggi_visual_t vis)
   GX00_RESET(vis, GX00_CONTEXT(vis)->type);
 }
 
-static void GX00_WRITE_REG(ggi_visual_t vis, kgi_u32_t val, kgi_u32_t reg)
+static void GX00_WRITE_REG(struct ggi_visual *vis, kgi_u32_t val, kgi_u32_t reg)
 {
   if (GX00_CONTEXT(vis)->type != MGA_DMA_GENERAL_PURPOSE)
     ggPanic("Trying to write a register to a non general purpose DMA!");
@@ -402,21 +402,21 @@ static void GX00_WRITE_REG(ggi_visual_t vis, kgi_u32_t val, kgi_u32_t reg)
 }
 
 /* Cached versions */
-static inline void GX00_WRITE_DWGCTL(ggi_visual_t vis, kgi_u32_t val)
+static inline void GX00_WRITE_DWGCTL(struct ggi_visual *vis, kgi_u32_t val)
 {
   if (GX00_CONTEXT(vis)->dwgctl == val)
     return;
   GX00_CONTEXT(vis)->dwgctl = val;
   GX00_WRITE_REG(vis, val, DWGCTL);
 }
-static inline void GX00_WRITE_DSTORG(ggi_visual_t vis, kgi_u32_t val)
+static inline void GX00_WRITE_DSTORG(struct ggi_visual *vis, kgi_u32_t val)
 {
   if (GX00_CONTEXT(vis)->dstorg == val)
     return;
   GX00_CONTEXT(vis)->dstorg = val;
   GX00_WRITE_REG(vis, val, DSTORG);
 }
-static inline void GX00_WRITE_SRCORG(ggi_visual_t vis, kgi_u32_t val)
+static inline void GX00_WRITE_SRCORG(struct ggi_visual *vis, kgi_u32_t val)
 {
   if (GX00_CONTEXT(vis)->srcorg == val)
     return;
@@ -424,7 +424,7 @@ static inline void GX00_WRITE_SRCORG(ggi_visual_t vis, kgi_u32_t val)
   GX00_WRITE_REG(vis, val, SRCORG);
 }
 
-static void GX00_WRITE_TRIANGLE(ggi_visual_t vis,
+static void GX00_WRITE_TRIANGLE(struct ggi_visual *vis,
 				mga_vertex_t *v1,
 				mga_vertex_t *v2,
 				mga_vertex_t *v3)
@@ -462,7 +462,7 @@ static void GX00_WRITE_TRIANGLE(ggi_visual_t vis,
 }
 
 /* Internal hardware-gc update function */
-void GGI_kgi_Gx00_updatehwgc(ggi_visual*);
+void GGI_kgi_Gx00_updatehwgc(struct ggi_visual *);
 
 ggifunc_drawhline   GGI_kgi_Gx00_drawhline;
 ggifunc_drawvline   GGI_kgi_Gx00_drawvline;

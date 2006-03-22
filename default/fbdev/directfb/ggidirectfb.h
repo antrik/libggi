@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.9 2005/07/31 15:30:34 soyt Exp $
+/* $Id: ggidirectfb.h,v 1.10 2006/03/22 20:29:10 cegger Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -183,7 +183,7 @@ struct directfb_priv {
 
 /* Update GC components if needed */
 static inline void
-directfb_gcupdate(ggi_visual_t vis, /* Only used when unmappixel() needed. */
+directfb_gcupdate(struct ggi_visual *vis, /* Only used when unmappixel() needed. */
 		  struct directfb_priv *priv,
 		  ggi_mode *mode, ggi_gc *gc,
 		  int virtx, int yadd, DFBAccelerationMask accel)
