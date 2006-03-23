@@ -2,6 +2,250 @@
 LibGGI Documentation
 ====================
 
+LibGGI Library
+==============
+
+
+A fast, simple, small and flexible user-space graphics library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 libggi
+
+
+Description
+-----------
+
+LibGGI is a fast, simple, small and flexible user-space graphics
+library developed by the `GGI Project`__. It attempts to abstract the
+many different graphics output systems existing under Unix (and in the
+future, other platforms). The support for all of these different types
+of displays and hardware are provided by dynamically-loaded
+mini-libraries.
+
+__ http://www.ggi-project.org/
+
+
+LibGGI can transparently (to the LibGGI-using application) display
+graphics on an X window, under SVGAlib, fbcon (Linux framebuffer
+driver), or the glide library, through their respective graphics
+drivers, or targets.  There are also some other targets which display
+through another target, such as multi to display simultaneously on
+multiple displays at once, and tile to tile your display to different
+monitors.
+
+
+LibGGI supports acceleration of graphics primitives where possible.
+
+
+LibGGI is a very generic piece of software, that will run on about
+every platform that has remotely heard of POSIX (ports to other
+systems such as Win32 are available, too) and on many display subsystems.
+
+
+Environment variables
+---------------------
+
+
+The following outlines the environment variables, intended for the
+user, which affect the behaviour of LibGGI:
+
+
+`DISPLAY`
+    If set, LibGGI assumes that you want to use the X target.  This
+    setting is overridden by the `GGI_DISPLAY` variable.
+
+`GGI_DISPLAY`
+   Specifies the default target used when the application calls
+   :man:`ggiOpen(3)` with `NULL` argument.
+
+   The default target is specified using a target-spec:
+   ``target:targetargs`` where :p:`target` is the name of the target,
+   and :p:`targetargs` are any target-specific arguments.
+
+   If neither this variable nor `DISPLAY` is set, then the following
+   targets are tried in order until one works: `fbdev`, `svga`, `aa`
+
+`GGI_INPUT_target_n`, `GGI_INPUT_target`, `GGI_INPUT`
+   `GGI_INPUT_target` specifies extra LibGII input sources and/or
+   filters for visuals using :p:`target`
+
+   Multiple inputs can be specified by enclosing each
+   input-spec in parentheses and separating them with semicolons:
+   ``(i1):(i2):...``
+
+   The inputs specified by `GGI_INPUT_target_n` are only opened at the
+   :p:`n`'th call of :man:`ggiOpen(3)`. This is used for misbehaving
+   applications that do not allow the user to specify inputs for the
+   different targets that it opens.
+
+   The `GGI_INPUT` variable specifies input settings for all other
+   targets not specified using the other two variable forms.
+
+`GGI_DEFMODE`   
+   Specifies the default mode, which is used for mode negotiation with
+   LibGGI applications.  Specifically, when `GGI_AUTO` or `GT_AUTO`
+   are specified in a mode setting call they will be replaced with
+   values from `GGI_DEFMODE` before calling the target's own
+   `ggiSetMode` implementation.
+
+   The format is: (all on one line)
+   ``S w x h x depth V w x h D w x h F frames [scheme depth size]``
+   Anything and everything can be omitted, except tokens indicating
+   what the next token is.
+
+   Any omitted values default to `GGI_AUTO` (or `GT_AUTO` for the
+   graphtype).  Whitespace and '.' symbols are ignored.  Character
+   tokens are case-insensitive.  If certain values are not possible,
+   they are overridden by the target.
+
+   S
+       Denotes the visible size of the visual.  Totally optional, as
+       dimensions without a specifier are considered to be the visible
+       dimensions.
+       
+       :p:`w` and :p:`h` are the width and height in pixels.
+    
+   V
+       Denotes virtual size, the total drawing area available to the
+       application.  The virtual size must be equal or greater than
+       the visible size.
+
+   D
+       Denotes the number of dots per pixel.  For graphic modes, this
+       is always 1x1, and for text modes, this is the size of the
+       character cell.
+
+   F
+       Denotes number of frames available to the
+       application. Applications can switch between different frames
+       for double-buffering, etc.
+
+   []
+       Delimits the graphic type.
+       
+       :p:`scheme`
+           One of:
+	   
+	   - C : GT_TRUECOLOR
+	   - P : GT_PALETTE
+	   - K : GT_GREYSCALE
+	   - T : GT_TEXT
+
+       :p:`depth`
+	   Pixel depth in number of bits.
+
+       :p:`size`   
+           Size of pixel in number of bits, including padding.
+
+       Instead of :p:`scheme`, :p:`depth`, :p:`size`, it is also possible
+       to specify the graphtype by using one of the following:
+
+       - GT_1BIT
+       - GT_2BIT
+       - GT_4BIT
+       - GT_8BIT
+       - GT_15BIT
+       - GT_16BIT
+       - GT_24BIT
+       - GT_32BIT
+       - GT_TEXT16
+       - GT_TEXT32
+
+`GGI_DEBUG`
+    The debugging level for LibGGI:
+    
+    0 or unset
+        debug output is off; debugging is off
+    
+    255
+	all debug output is on
+    
+    You may also bitwise-or any of the following together:
+    
+    - 2 : debug core
+    - 4 : debug mode setting
+    - 8 : debug color handling
+    - 16 : debug drawing
+    - 32 : misc debugging output
+    - 64 : debug dynamic library handling
+    - 128 : debug event handling
+    
+    The debugging output can be quite verbose and in most cases you
+    should redirect stderr so that it does not interfere with your
+    program's output.
+
+`GGI_DEBUGSYNC`
+    Turn on synchronous debugging output, flushing the output buffers
+    before returning from `DPRINT` calls.
+
+`GGI_CONFDIR`
+    Override compiled-in path to global config files (Win32 only,
+    but not Cygwin).
+
+`GGI_NEWVT`
+    If set, causes a new virtual console to be allocated for some
+    Linux-console-based targets (currently `fbdev` and `glide`).
+
+`GGI_MANSYNC_FPS`
+    This variable specifies the framerate for targets emulating
+    synchronous mode. The default is 20fps.  If you are experiencing
+    problems with the X target over relatively slow remote connections
+    it might be due to connection overload. You might want to try with
+    a lower `GGI_MANSYNC_FPS` setting.
+
+
+Examples
+--------
+
+Example `GGI_DISPLAY` settings::
+
+  # see ASCII art flying GGIs
+
+  $ GGI_DISPLAY=aa ./flying_ggis
+
+
+  # see demo on both machine "crono" next door and local
+  # X at the same time
+ 
+  $ GGI_DISPLAY=multi:(Xlib:crono:0.0):(X::0.0) ./demo
+
+
+Example `GGI_INPUT` string::
+
+  $ export GGI_INPUT=linux-mouse:auto
+ 
+  # for "multi" target only
+ 
+  $ export GGI_INPUT_multi=linux-mouse:auto
+ 
+
+Examples of `GGI_DEFMODE` strings:
+
+- ``640x480`` : just the visible size
+- ``640x480#640x960`` : same size, but double-height virtual screen
+- ``#1024x768`` : only virtual size defined
+- ``80x40[T]`` : (default-fontsized) text mode with 80x40 characters
+- ``#x100[T]`` : text mode with 100 virtual lines
+- ``640x400[8]`` : 640x400 at 8 bits per pixel
+- ``640x480[GT_8BIT]`` : same as above, but palettized
+- ``320x200[C15]`` : 320x200 with 32768 colors (hicolor)
+- ``320x200[C/16]`` : 320x200 with 16-bit pixels (also hicolor) 
+- ``320x200[C24/32]``, ``320x200[GT_32BIT]`` : 320x200, with 32-bit pixels for 16777216 colors (truecolor)
+- ``640x480F2[GT_16BIT]`` : 16-bit-color 640x480 with two buffers
+
+See Also
+--------
+
+:man:`libgii(7)`, :man:`ggiInit(3)`,
+:man:`display-aa(7)`,
+:man:`display-directx(7)`, :man:`display-fbdev(7)`,
+:man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-macosx(7)`,
+:man:`display-memory(7)`, :man:`display-monotext(7)`, :man:`display-multi(7)`,
+:man:`display-palemu(7)`, :man:`display-sub(7)`, :man:`display-svgalib(7)`,
+:man:`display-tele(7)`, :man:`display-tile(7)`, :man:`display-trueemu(7)`,
+:man:`display-vcsa(7)`, :man:`display-vgl(7)`, :man:`display-x(7)`
+
+
 .. include:: libggi-functions.txt
 
 .. include:: libggi-structures.txt
