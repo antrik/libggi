@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 man_MANS = \
+           libggi.7 \
            ggiInit.3 \
            ggiExit.3 \
            ggiPanic.3 \
@@ -103,11 +104,6 @@ man_MANS = \
            ggi_sampleplanarbuffer.3 \
            ggi_colormap.3 \
            ggi_colormap_region.3 \
-           libggi.7 \
-           monitest.1 \
-           cube3d.1 \
-           ggi-demo.1 \
-           demo.1 \
            display-aa.7 \
            display-directx.7 \
            display-fbdev.7 \
@@ -130,6 +126,10 @@ man_MANS = \
            display-vcsa.7 \
            display-vgl.7 \
            display-x.7 \
+           monitest.1 \
+           cube3d.1 \
+           ggi-demo.1 \
+           demo.1 \
            ggidev-triple-int.7 \
            ggidev-assign_3.3 \
            ggidev-assign_int_3.3 \
