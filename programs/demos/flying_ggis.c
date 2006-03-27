@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.13 2006/03/17 21:55:42 cegger Exp $
+/* $Id: flying_ggis.c,v 1.14 2006/03/27 13:10:43 pekberg Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -26,8 +26,10 @@
 # define random		rand
 #endif
 
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
+#include <ggi/ggi.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -453,15 +455,33 @@ int main(int argc, char **argv)
 
         /* setup graphics mode */
 
+	if (giiInit() != 0) {
+		fprintf(stderr, "%s: unable to initialize LibGII, exiting.\n",
+			argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
 	if (ggiInit() != 0) {
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-        vis = ggiOpen(target_str, NULL);
+        vis = ggNewStem();
 
         if (vis == NULL) {
+                ggPanic("Failed to open visual.\n");
+        }
+
+	if (giiAttach(vis) < 0) {
+		ggPanic("Failed to attach LibGII.\n");
+	}
+
+	if (ggiAttach(vis) < 0) {
+		ggPanic("Failed to attach LibGGI.\n");
+	}
+
+        if (ggiOpen(vis, target_str, NULL) < 0) {
                 ggPanic("Failed to open visual.\n");
         }
 
@@ -501,12 +521,12 @@ int main(int argc, char **argv)
 
                 struct timeval tv = { 0, 10000 };
 
-                if (ggiEventPoll(vis, emKeyPress|emPtrRelative, &tv)) {
+                if (giiEventPoll(vis, emKeyPress|emPtrRelative, &tv)) {
 		
-			ggi_event ev;
+			gii_event ev;
 			int done=0;
 
-			ggiEventRead(vis, &ev, emKeyPress|emPtrRelative);
+			giiEventRead(vis, &ev, emKeyPress|emPtrRelative);
 
 			if (ev.any.type == evKeyPress) {
 				switch (ev.key.sym) {
@@ -583,7 +603,8 @@ int main(int argc, char **argv)
 
         free_textures();
 
-        ggiClose(vis);
+        ggDelStem(vis);
         ggiExit();
+        giiExit();
 	return 0;
 }

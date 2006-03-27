@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.10 2006/03/17 21:55:42 cegger Exp $
+/* $Id: pageflip.c,v 1.11 2006/03/27 13:10:43 pekberg Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -32,8 +32,10 @@
 # define srandom	srand
 #endif
 
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
+#include <ggi/ggi.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +44,16 @@
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 static ggi_color white = { 0xffff, 0xffff, 0xffff };
+
+static int myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
 
 static void animate_one_frame(ggi_visual_t vis, int x, int y, int w, int h,
 			      ggi_pixel * buf, int x2)
@@ -126,16 +138,47 @@ int main(int argc, char *argv[])
 	srandom((unsigned)time(NULL));
 
 	/* Initialize LibGGI */
-	if (ggiInit()) {
+	if (giiInit() < 0) {
+		fprintf(stderr, "Cannot initialize LibGII!\n");
+		return 1;
+	}
+
+	if (ggiInit() < 0) {
 		fprintf(stderr, "Cannot initialize LibGGI!\n");
+		giiExit();
+		return 1;
+	}
+
+	vis = ggNewStem();
+	if (!vis) {
+		fprintf(stderr, "Cannot open create stem!\n");
+		ggiExit();
+		giiExit();
+		return 1;
+	}
+
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr, "Cannot attach LibGII!\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		return 1;
+	}
+
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr, "Cannot attach LibGGI!\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
 		return 1;
 	}
 
 	/* Open default visual */
-	vis = ggiOpen(NULL);
-	if (!vis) {
+	if (ggiOpen(vis, NULL) < 0) {
 		fprintf(stderr, "Cannot open default visual!\n");
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		return 1;
 	}
 
@@ -152,8 +195,9 @@ int main(int argc, char *argv[])
 
 	if (ggiSetMode(vis, &mode)) {
 		fprintf(stderr, "Cannot set mode!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		return 1;
 	}
 
@@ -169,8 +213,9 @@ int main(int argc, char *argv[])
 
 		if (ggiSetWriteFrame(vis, i)) {
 			fprintf(stderr, "Cannot set write frame!\n");
-			ggiClose(vis);
+			ggDelStem(vis);
 			ggiExit();
+			giiExit();
 			return 1;
 		}
 
@@ -230,9 +275,9 @@ int main(int argc, char *argv[])
 			struct timeval tv = { 0, 0 };
 			int key;
 
-			key = ggiEventPoll(vis, emKeyPress, &tv);
+			key = giiEventPoll(vis, emKeyPress, &tv);
 			if (key & emKeyPress)
-				c = ggiGetc(vis);
+				c = myGetc(vis);
 			ggUSleep(50000);
 			animate(vis, &mode, j);
 			j++;
@@ -243,7 +288,8 @@ int main(int argc, char *argv[])
 	} while (c != 'q' && c != 'Q' && c != 'x' && c != 'X' &&
 		 c != GIIUC_Escape);
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
+	giiExit();
 	return 0;
 }

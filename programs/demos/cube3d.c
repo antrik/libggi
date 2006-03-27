@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.21 2006/03/17 21:55:42 cegger Exp $
+/* $Id: cube3d.c,v 1.22 2006/03/27 13:10:42 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -21,7 +21,9 @@
 
 /* Include the LibGGI declarations.
  */
+#include <ggi/gg.h>
 #include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
 
 /* Include the necessary headers used for e.g. error-reporting.
@@ -729,17 +731,51 @@ int main(int argc, char **argv)
 
 	/* Open up GGI and a visual.
 	 */
-	if (ggiInit() != 0) {
-		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
+	if (giiInit() < 0) {
+		fprintf(stderr, "unable to initialize LibGII, exiting.\n");
 		exit(1);
 	}
 
-	vis = ggiOpen(NULL);
+	if (ggiInit() < 0) {
+		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
+		giiExit();
+		exit(1);
+	}
+
+	vis = ggNewStem();
 
 	if (vis == NULL) {
 		fprintf(stderr,
-			"unable to open default visual, exiting.\n");
+			"unable to create stem, exiting.\n");
 		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr,
+			"unable to attach gii, exiting.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr,
+			"unable to attach ggi, exiting.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (ggiOpen(vis, NULL) < 0) {
+		fprintf(stderr,
+			"unable to open default visual, exiting.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
 		exit(1);
 	}
 
@@ -757,8 +793,9 @@ int main(int argc, char **argv)
 
 	if (err) {
 		fprintf(stderr, "Can't set mode\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		return 2;
 	}
 	if (mode.frames > 1)
@@ -830,7 +867,22 @@ int main(int argc, char **argv)
 		 */
 		sprintf(text, "display-memory:-input:shmid:%d", shmid[x]);
 
-		if ((memvis[x] = ggiOpen(text, NULL)) == NULL) {
+		if ((memvis[x] = ggNewStem()) == NULL) {
+			ggPanic("Ouch - can't create shmem stem %d !",
+				 x);
+		}
+
+		if (giiAttach(memvis[x]) < 0) {
+			ggPanic("Ouch - can't attach LibGII to shmem stem %d !",
+				 x);
+		}
+
+		if (ggiAttach(memvis[x]) < 0) {
+			ggPanic("Ouch - can't attach LibGGI to shmem stem %d !",
+				 x);
+		}
+
+		if (ggiOpen(memvis[x], text, NULL) < 0) {
 			ggPanic("Ouch - can't open the shmem target %d !",
 				 x);
 		}
@@ -1059,9 +1111,9 @@ int main(int argc, char **argv)
 
 		tv.tv_sec = tv.tv_usec = 0;
 
-		while (ggiEventPoll(vis, emAll, &tv)) {
-			ggi_event event;
-			ggiEventRead(vis, &event, emAll);
+		while (giiEventPoll(vis, emAll, &tv)) {
+			gii_event event;
+			giiEventRead(vis, &event, emAll);
 
 			if (event.any.type == evKeyPress) {
 				if (!is_escape) {
@@ -1069,10 +1121,7 @@ int main(int argc, char **argv)
 						is_escape = 1;
 					else {
 					      sendit:
-						giiEventSend(ggiJoinInputs
-							     (memvis
-							      [active_face],
-							      NULL),
+						giiEventSend(memvis[active_face],
 							     &event);
 						is_escape = 0;
 						continue;
@@ -1180,9 +1229,7 @@ int main(int argc, char **argv)
 					}
 				}
 			} else {
-				giiEventSend(ggiJoinInputs
-					     (memvis[active_face], NULL),
-					     &event);
+				giiEventSend(memvis[active_face], &event);
 			}
 		}
 		if (frame >= 0)
@@ -1203,7 +1250,7 @@ int main(int argc, char **argv)
 		if (the_textures[x].pid != 0)
 			TerminateProcess((HANDLE)the_textures[x].pid, 1);
 #endif
-		ggiClose(memvis[x]);
+		ggDelStem(memvis[x]);
 
 		/* this makes the memory detach when all programs using this memory
 		 * complete (according to SVR4 standard).
@@ -1215,7 +1262,7 @@ int main(int argc, char **argv)
 		 */
 		shmctl(shmid[x], IPC_RMID, NULL);
 	}
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 	return 0;
 }
