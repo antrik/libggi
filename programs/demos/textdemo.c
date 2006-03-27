@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.9 2005/06/09 19:10:40 cegger Exp $
+/* $Id: textdemo.c,v 1.10 2006/03/27 14:50:34 pekberg Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -16,8 +16,9 @@
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -28,6 +29,17 @@
 
 static ggi_visual_t vis;
 
+static int
+myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
 int main(int argc, char *argv[])
 {
 	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
@@ -37,17 +49,41 @@ int main(int argc, char *argv[])
 	const char *hello = "Hello World";
 	ggi_mode mode;
 
+	if (giiInit() != 0) {
+		fprintf(stderr,
+			"%s: unable to initialize LibGII, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
 	if (ggiInit() != 0) {
 		fprintf(stderr,
 			"%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
 		exit(1);
 	}
-	if ((vis = ggiOpen(NULL)) == NULL) {
+	if ((vis = ggNewStem()) == NULL) {
+		fprintf(stderr,
+			"%s: unable to create stem, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr,
+			"%s: unable to attach LibGII, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr,
+			"%s: unable to attach LibGGI, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+	if (ggiOpen(vis, NULL) < 0) {
 		fprintf(stderr,
 			"%s: unable to open default visual, retrying with terminfo.\n",
 			argv[0]);
-		if ((vis = ggiOpen("terminfo", NULL)) == NULL) {
+		if (ggiOpen(vis, "terminfo", NULL) < 0) {
 			fprintf(stderr,
 				"%s: unable to open terminfo, exiting.\n",
 				argv[0]);
@@ -60,7 +96,7 @@ int main(int argc, char *argv[])
 			"%s: unable to set text mode, retrying with terminfo.\n",
 			argv[0]);
 		ggiClose(vis);
-		if ((vis = ggiOpen("terminfo", NULL)) == NULL) {
+		if (ggiOpen(vis, "terminfo", NULL) < 0) {
 			fprintf(stderr,
 				"%s: unable to open terminfo, exiting.\n",
 				argv[0]);
@@ -82,8 +118,9 @@ int main(int argc, char *argv[])
 	if (mode.visible.y < 17 || mode.visible.x < 52) {
 		fprintf(stderr,
 			"Need at least 52x17 chars for this demo\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		exit(-1);
 	}
 
@@ -100,7 +137,7 @@ int main(int argc, char *argv[])
 	ggiPuts(vis, (mode.visible.x - 7) / 2, mode.visible.y / 2, hello);
 	ggiFlush(vis);
 
-	ggiGetc(vis);
+	myGetc(vis);
 
 	for (a = 0; a <= 0xff; a++) {
 		ggiSetGCForeground(vis, (unsigned) (a) << 8);
@@ -111,7 +148,7 @@ int main(int argc, char *argv[])
 		ggUSleep(20000);
 	}
 
-	ggiGetc(vis);
+	myGetc(vis);
 
 	ggiSetGCForeground(vis, 1 << 8);
 	for (a = 0; a < mode.visible.y; a++) {
@@ -173,9 +210,10 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	ggiGetc(vis);
+	myGetc(vis);
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
+	giiExit();
 	return 0;
 }

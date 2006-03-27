@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.10 2006/03/17 21:55:42 cegger Exp $
+/* $Id: slimy.c,v 1.11 2006/03/27 14:50:34 pekberg Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -14,6 +14,8 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/gii.h>
 #include <ggi/ggi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,13 +42,35 @@ static int show_fps = 0;
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 
+static int
+myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
+
+static int
+myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
+
 
 static void fail(const char *reason)
 {
 	fprintf(stderr, "%s", reason);
 	if (disp != NULL) {
-		ggiClose(disp);
+		ggDelStem(disp);
 		ggiExit();
+		giiExit();
 	}
 	exit(1);
 }
@@ -187,13 +211,31 @@ static void InitGraphics(void)
 {
 	ggi_mode m;
 
-	if (ggiInit() < 0) {
+	if (giiInit() < 0) {
 		fprintf(stderr, "Unable to initialize LibGGI, exiting.\n");
 		exit(1);
 	}
 
-	if (!(disp = ggiOpen(NULL))) {
-		ggPanic("Unable to open default visual, exiting.\n");
+	if (ggiInit() < 0) {
+		fprintf(stderr, "Unable to initialize LibGGI, exiting.\n");
+		giiExit();
+		exit(1);
+	}
+
+	if (!(disp = ggNewStem())) {
+		ggPanic("Unable to create stem, exiting.\n");
+	}
+
+	if (giiAttach(disp) < 0) {
+		fail("Unable to attach LibGII, exiting.\n");
+	}
+
+	if (ggiAttach(disp) < 0) {
+		fail("Unable to attach LibGGI, exiting.\n");
+	}
+
+	if (ggiOpen(disp, NULL) < 0) {
+		fail("Unable to open default visual, exiting.\n");
 	}
 
 	ggiSetFlags(disp, GGIFLAG_ASYNC);
@@ -220,8 +262,9 @@ static void InitGraphics(void)
 
 static void CloseGraphics(void)
 {
-	ggiClose(disp);
+	ggDelStem(disp);
 	ggiExit();
+	giiExit();
 }
 
 static void RunSpinner(void)
@@ -251,8 +294,8 @@ static void RunSpinner(void)
 	a = 0;
 	tt = time(NULL);
 	do {
-		if (ggiKbhit(disp)) {
-			int key = ggiGetc(disp);
+		if (myKbhit(disp)) {
+			int key = myGetc(disp);
 			if ((key == 'f') || (key == 'F'))
 				show_fps = !show_fps;
 			else

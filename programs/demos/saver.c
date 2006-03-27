@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.12 2006/03/17 21:55:42 cegger Exp $
+/* $Id: saver.c,v 1.13 2006/03/27 14:50:34 pekberg Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -16,8 +16,9 @@
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +28,28 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+
+
+static int
+myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
+
+static int
+myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
 
 
 /* The time in minutes till activation
@@ -118,7 +141,7 @@ static void ge_stars(void)
 	y = 0;
 	da = nda = 0.0;
 	dz = ndz = 0.0;
-	while (!ggiKbhit(visual)) {
+	while (!myKbhit(visual)) {
 
 		if (rand01() < 0.001)
 			nda = (rand01() - 0.5) / 200.0;
@@ -189,7 +212,7 @@ static void ge_stars3d(void)
 	y = 0;
 	da = nda = 0.0;
 	dz = ndz = 0.0;
-	while (!ggiKbhit(visual)) {
+	while (!myKbhit(visual)) {
 		if (rand01() < 0.001)
 			nda = (rand01() - 0.5) / 500.0;
 		da = (nda + 999.0 * da) / 1000.0;
@@ -258,10 +281,10 @@ static void ge_bounce(void)
 	c = 0;
 	ggiSetGCForeground(visual, c);
 	ggiFillscreen(visual);
-	while (!ggiKbhit(visual)) {
+	while (!myKbhit(visual)) {
 		dx = (rand() % 0x1ff) / 255.0 - 1;
 		dy = (rand() % 0x3ff) / 511.0 - 0.3;
-		while (!ggiKbhit(visual)) {
+		while (!myKbhit(visual)) {
 			x += dx;
 			y += dy;
 			if (x < 10 || x > xsize - 11) {
@@ -306,7 +329,7 @@ static void ge_crazy(void)
 
 	for (x = -(ysize - 1);;) {
 
-		if (ggiKbhit(visual))
+		if (myKbhit(visual))
 			break;
 
 		y = x;
@@ -341,7 +364,7 @@ static void ge_pong(void)
 	dx = 1;
 	dy = 1;
 	while (1) {
-		if (ggiKbhit(visual))
+		if (myKbhit(visual))
 			break;
 
 		if (!(x & 3))
@@ -362,6 +385,10 @@ static void ge_pong(void)
 		ggiDrawCircle(visual, x, y, 3);
 		ggiDrawCircle(visual, x, y, 2);
 		ggiDrawCircle(visual, x, y, 1);
+#else
+		ggiDrawBox(visual, x-2, y-2, 5, 5);
+		ggiDrawBox(visual, x-1, y-1, 3, 3);
+		ggiDrawBox(visual, x, y, 1, 1);
 #endif
 		x += dx;
 		y += dy;
@@ -370,6 +397,10 @@ static void ge_pong(void)
 		ggiDrawCircle(visual, x, y, 3);
 		ggiDrawCircle(visual, x, y, 2);
 		ggiDrawCircle(visual, x, y, 1);
+#else
+		ggiDrawBox(visual, x-2, y-2, 5, 5);
+		ggiDrawBox(visual, x-1, y-1, 3, 3);
+		ggiDrawBox(visual, x, y, 1, 1);
 #endif
 		ggiSetGCForeground(visual, 1);
 		h = y;
@@ -388,7 +419,7 @@ static void ge_pong(void)
 static void ge_vesa_blank(void)
 {
 	ggiMonPower(PWR_STANDBY);
-	while (!ggiKbhit(visual));
+	while (!myKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -397,7 +428,7 @@ static void ge_vesa_blank(void)
 static void ge_vesa_blank2(void)
 {
 	ggiMonPower(PWR_SUSPEND);
-	while (!ggiKbhit(visual));
+	while (!myKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -406,7 +437,7 @@ static void ge_vesa_blank2(void)
 static void ge_vesa_blank3(void)
 {
 	ggiMonPower(PWR_OFF);
-	while (!ggiKbhit(visual));
+	while (!myKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -436,8 +467,8 @@ static void do_saver(void)
 	ggiSetGCForeground(visual, 0);
 	ggiFillscreen(visual);
 	SaverActive->func();
-	while (ggiKbhit(visual))
-		ggiGetc(visual);
+	while (myKbhit(visual))
+		myGetc(visual);
 }
 
 /* Show the setup-menu.
@@ -447,7 +478,22 @@ static void blank_screen2(int interactive)
 	int c;
 	char hlpbuf[128];
 
-	if ((visual = ggiOpen(NULL)) == NULL) {
+	if ((visual = ggNewStem()) == NULL) {
+		fprintf(stderr, "cannot create stem.\n");
+		exit(1);
+	}
+
+	if (giiAttach(visual) < 0) {
+		fprintf(stderr, "cannot attach LibGII.\n");
+		exit(1);
+	}
+
+	if (ggiAttach(visual) < 0) {
+		fprintf(stderr, "cannot attach LibGGI.\n");
+		exit(1);
+	}
+
+	if (ggiOpen(visual, NULL) < 0) {
 		fprintf(stderr, "cannot open device.\n");
 		exit(1);
 	}
@@ -486,7 +532,7 @@ static void blank_screen2(int interactive)
 		sprintf(hlpbuf, "+/- Time: %4d minutes", timeout);
 		ggiPuts(visual, 10, 70, hlpbuf);
 		ggiPuts(visual, 10, 100, "Switch away to activate");
-		c = ggiGetc(visual);
+		c = myGetc(visual);
 		switch (c) {
 		case '+':
 			if (timeout < 1440)
@@ -512,15 +558,16 @@ static void blank_screen2(int interactive)
 		case '\x1b':
 		case 'q':
 			ggiSetGCForeground(visual, 0);
-			ggiClose(visual);
+			ggDelStem(visual);
 			ggiExit();
+			giiExit();
 			exit(0);
 		default:
 			printf("Sym is %x.\n", c);
 			break;
 		}
 	}
-	ggiClose(visual);
+	ggDelStem(visual);
 }
 
 /* Main function. Wait for timeout, then activate the saver.
@@ -530,10 +577,18 @@ int main(int argc, char *argv[])
 	int ic, ic2, cnt;
 	uint32_t x;
 
+	if (giiInit() != 0) {
+		fprintf(stderr,
+			"%s: unable to initialize LibGII, exiting.\n",
+			argv[0]);
+		exit(1);
+	}
+
 	if (ggiInit() != 0) {
 		fprintf(stderr,
 			"%s: unable to initialize LibGGI, exiting.\n",
 			argv[0]);
+		giiExit();
 		exit(1);
 	}
 
@@ -559,7 +614,22 @@ int main(int argc, char *argv[])
 			if ((ic2 = getic()) == ic) {
 				if (++cnt >= timeout) {
 					if ((visual =
-					     ggiOpen(NULL)) == NULL) {
+					     ggNewStem()) == NULL) {
+						ggPanic
+						    ("cannot create stem.\n");
+					}
+
+					if (giiAttach(visual) < 0) {
+						ggPanic
+						    ("cannot attach LibGII.\n");
+					}
+
+					if (ggiAttach(visual) < 0) {
+						ggPanic
+						    ("cannot attach LibGGI.\n");
+					}
+
+					if (ggiOpen(visual, NULL) < 0) {
 						ggPanic
 						    ("cannot open default visual.\n");
 					}
@@ -577,7 +647,7 @@ int main(int argc, char *argv[])
 						ysize = mode.visible.y;
 					}
 					do_saver();
-					ggiClose(visual);
+					ggDelStem(visual);
 					cnt = 0;
 				}
 			} else {
@@ -587,7 +657,8 @@ int main(int argc, char *argv[])
 			ggUSleep(60000);
 		}
 
-	ggiClose(visual);
+	ggDelStem(visual);
 	ggiExit();
+	giiExit();
 	return (0);
 }

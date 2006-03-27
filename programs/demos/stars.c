@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.8 2006/03/17 21:55:42 cegger Exp $
+/* $Id: stars.c,v 1.9 2006/03/27 14:50:34 pekberg Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -36,8 +36,9 @@
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/ggi.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -68,6 +69,26 @@ static void CleanUp(void);
 static void InitStars(void);
 static void Transform(int *ta, int *tb);
 
+static int
+myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
+
+static int
+myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
 int main(int argc, char **argv)
 {
 	int i, quit = 0;
@@ -85,6 +106,11 @@ int main(int argc, char **argv)
 	}
 	if (argc > 3) {
 		speed = atof(argv[3]);
+	}
+
+	if (giiInit() != 0) {
+		fprintf(stderr, "unable to initialize LibGII, exiting.\n");
+		exit(1);
 	}
 
 	if (ggiInit() != 0) {
@@ -135,8 +161,8 @@ int main(int argc, char **argv)
 		angle += speed;
 		head = (head + 1) % 60;
 		tail = (tail + 1) % 60;
-		if (ggiKbhit(curvis)) {
-			int key = ggiGetc(curvis);
+		if (myKbhit(curvis)) {
+			int key = myGetc(curvis);
 
 			switch (key) {
 			case ' ':
@@ -147,7 +173,7 @@ int main(int argc, char **argv)
 						curvis = dgavis;
 					}
 				} else {
-					ggiClose(dgavis);
+					ggDelStem(dgavis);
 					dgavis = NULL;
 					SetupNewVisual(vis);
 					curvis = vis;
@@ -182,12 +208,13 @@ void Transform(int *ta, int *tb)
 void CleanUp(void)
 {
 	if (dgavis) {
-		ggiClose(dgavis);
+		ggDelStem(dgavis);
 	}
 	if (vis) {
-		ggiClose(vis);
+		ggDelStem(vis);
 	}
 	ggiExit();
+	giiExit();
 }
 
 void InitStars(void)
@@ -251,8 +278,20 @@ ggi_visual_t InitVisual(const char *visname)
 {
 	ggi_visual_t newvis;
 
+	if ((newvis = ggNewStem()) == NULL) {
+		return NULL;
+	}
+	if (giiAttach(newvis) < 0) {
+		ggDelStem(newvis);
+		return NULL;
+	}
+	if (ggiAttach(newvis) < 0) {
+		ggDelStem(newvis);
+		return NULL;
+	}
 	/* Adding an extra NULL when visname is NULL doesn't hurt */
-	if ((newvis = ggiOpen(visname, NULL)) == NULL) {
+	if (ggiOpen(newvis, visname, NULL)< 0) {
+		ggDelStem(newvis);
 		return NULL;
 	}
 	ggiSetFlags(newvis, GGIFLAG_ASYNC);
