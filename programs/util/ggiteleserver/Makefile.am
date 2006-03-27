@@ -4,7 +4,7 @@ INCLUDES = -I$(top_srcdir)/include
 bin_PROGRAMS = ggiteleserver
 
 ggiteleserver_SOURCES = ${top_builddir}/programs/util/ggiteleserver/libtele.c teleserver.c
-ggiteleserver_LDADD = $(top_builddir)/ggi/libggi.la $(bsdsock_libs)
+ggiteleserver_LDADD = $(top_builddir)/ggi/libggi.la -lgii -lgg $(bsdsock_libs)
 
 EXTRA_DIST = teleserver.c
 

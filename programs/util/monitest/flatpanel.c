@@ -1,4 +1,4 @@
-/* $Id: flatpanel.c,v 1.2 2005/07/30 08:43:03 soyt Exp $
+/* $Id: flatpanel.c,v 1.3 2006/03/27 19:46:31 pekberg Exp $
 ******************************************************************************
 
    Monitest flat panel check routine
@@ -17,6 +17,8 @@
 */
 
 #include "config.h"
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
 
 #include "monitest.h"
@@ -52,15 +54,15 @@ void flatpanel(ggi_visual_t vis)
 		int tmpold, tmpnew;
 		int events;
 		int fillcol;
-		ggi_event event;
+		gii_event event;
 		
 		ggiSetGCForeground(vis, COL(fgcol));
 		ggiDrawBox(vis, mousex, mousey, boxsizex, boxsizey);
 		ggiFlushRegion(vis, flushx, flushy, flushw, flushh);
 
 		/* Wait for event(s) to come in */
-		ggiEventPoll(vis, emKey|emPointer, NULL);
-		events = ggiEventsQueued(vis, emKey|emPointer);
+		giiEventPoll(vis, emKey|emPointer, NULL);
+		events = giiEventsQueued(vis, emKey|emPointer);
 
 		oldmx = mousex;
 		oldmy = mousey;
@@ -70,7 +72,7 @@ void flatpanel(ggi_visual_t vis)
 		fillcol = -1;
 
 		while (events--) {
-			ggiEventRead(vis, &event, emKey|emPointer);
+			giiEventRead(vis, &event, emKey|emPointer);
 
 			switch(event.any.type) {
 			case evPtrButtonPress:

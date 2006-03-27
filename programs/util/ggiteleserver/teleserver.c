@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.1 2005/08/31 21:54:03 cegger Exp $
+/* $Id: teleserver.c,v 1.2 2006/03/27 19:46:30 pekberg Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -37,8 +37,10 @@
 */
 
 #include "config.h"
-#include <ggi/ggi.h>
 #include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
+#include <ggi/ggi.h>
 
 #include "libtele.h"
 
@@ -86,7 +88,7 @@ static void close_connection(int abnormal)
 		tserver_close(user);
 		user = NULL;
 
-		ggiClose(vis);
+		ggDelStem(vis);
 		mode_up = 0;
 	}
 }
@@ -116,20 +118,42 @@ static void handle_connection(void)
 		return;
 	}
 
-	if (NULL == target_name)
-	  vis = ggiOpen(NULL);
-	else
-	  vis = ggiOpen(target_name, NULL);
+	vis = ggNewStem();
 
 	if (vis == NULL) {
-		fprintf(stderr, "teleserver: Couldn't open GGI visual.\n");
+		fprintf(stderr, "teleserver: Couldn't create stem.\n");
 		ggiExit();
+		giiExit();
+		exit(2);
+	}
+
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr, "teleserver: Couldn't attach LibGII.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(2);
+	}
+
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr, "teleserver: Couldn't attach LibGGI.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(2);
+	}
+
+	if (ggiOpen(vis, target_name, NULL) < 0) {
+		fprintf(stderr, "teleserver: Couldn't open GGI visual.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
 		exit(2);
 	}
 
 	if (tserver_open(&serv, u) < 0) {
 		fprintf(stderr, "tserver_open < 0\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		return;
 	}
 
@@ -139,7 +163,7 @@ static void handle_connection(void)
 /* pretty crap. oh well */
 #define HASH_ORIG(o) ((((o) & 0x1f00) >> 6) | ((o) & 0x03))
 
-static int translate_to_tele(TeleUser *u, TeleEvent *g, ggi_event *ev)
+static int translate_to_tele(TeleUser *u, TeleEvent *g, gii_event *ev)
 {
 	switch (ev->any.type) {
 
@@ -264,12 +288,12 @@ static int translate_to_tele(TeleUser *u, TeleEvent *g, ggi_event *ev)
 
 static void handle_event(void)
 {
-	ggi_event ev;
+	gii_event ev;
 
 	TeleEvent g_ev;
 
 
-	ggiEventRead(vis, &ev, emAll);
+	giiEventRead(vis, &ev, emAll);
 
 	if ((ev.any.type == evKeyPress) &&
 	    (ev.key.sym == GIIK_F12)) {
@@ -812,6 +836,11 @@ int main(int argc, char *argv[])
 
 	/* open visual */
 
+	if (giiInit() < 0) {
+		fprintf(stderr, "teleserver: Error initializing GII.\n");
+		return 1;
+	}
+
 	if (ggiInit() < 0) {
 		fprintf(stderr, "teleserver: Error initializing GGI.\n");
 		return 1;
@@ -819,6 +848,7 @@ int main(int argc, char *argv[])
 
 	if (tserver_init(&serv, display_num) < 0) {
 		ggiExit();
+		giiExit();
 		return 3;
 	}
 
@@ -848,7 +878,7 @@ int main(int argc, char *argv[])
 
 		tv.tv_sec = tv.tv_usec = 0;
 
-		if (mode_up && (ggiEventPoll(vis, emAll, &tv) != 0)) {
+		if (mode_up && (giiEventPoll(vis, emAll, &tv) != 0)) {
 			handle_event();
 			busy++;
 		}
@@ -881,6 +911,7 @@ int main(int argc, char *argv[])
 	tserver_exit(&serv);
 
 	ggiExit();
+	giiExit();
 
 	return 0;
 }

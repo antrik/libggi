@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.11 2006/03/17 21:55:43 cegger Exp $
+/* $Id: monitest.c,v 1.12 2006/03/27 19:46:31 pekberg Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -35,6 +35,9 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -67,15 +70,27 @@ static void usage(const char *prog)
 	exit(1);
 }
 
+static int
+myGetc(ggi_visual_t vis)
+{
+	gii_event ev;
+
+	/* Block until we get a key. */
+	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+
+	return ev.key.sym;
+}
+
 int waitabit(ggi_visual_t _vis)
 {
 	int key;
-	key = ggiGetc(_vis);
+	key = myGetc(_vis);
 
 	if (toupper((uint8_t)key) == 'Q') {
 		/* Q pressed */
-		ggiClose(_vis);
+		ggDelStem(_vis);
 		ggiExit();
+		giiExit();
 		exit(1);
 	} else if (key == GIIUC_Escape || toupper((uint8_t)key) == 'B') {
 		return 1;
@@ -246,7 +261,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.11 2006/03/17 21:55:43 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.12 2006/03/27 19:46:31 pekberg Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -592,13 +607,31 @@ int main(int argc, char **argv)
 	}
 
 
-	if (ggiInit() < 0) {
+	if (giiInit() < 0) {
 		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
 		exit(1);
 	}
 
-	vis = ggiOpen(NULL);	/* Null gives the default visual */
+	if (ggiInit() < 0) {
+		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
+		giiExit();
+		exit(1);
+	}
+
+	vis = ggNewStem();
 	if (vis == NULL) {
+		ggPanic("unable to create stem, exiting.\n");
+	}
+
+	if (giiAttach(vis) < 0) {
+		ggPanic("unable to attach LibGII, exiting.\n");
+	}
+
+	if (ggiAttach(vis) < 0) {
+		ggPanic("unable to attach LibGGI, exiting.\n");
+	}
+
+	if (ggiOpen(vis, NULL) < 0) { /* Null gives the default visual */
 		ggPanic("unable to open default visual, exiting.\n");
 	}
 
@@ -635,9 +668,11 @@ int main(int argc, char **argv)
 
 	mainmenu();
 
-	ggiClose(vis);
+	ggDelStem(vis);
 
 	ggiExit();
+
+	giiExit();
 
 	return 0;
 }

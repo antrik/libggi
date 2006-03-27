@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.4 2005/07/30 08:43:03 soyt Exp $
+/* $Id: menu.c,v 1.5 2006/03/27 19:46:31 pekberg Exp $
 ******************************************************************************
 
    Universal menu for ggi
@@ -16,6 +16,8 @@
 */
 
 #include "config.h"
+#include <ggi/gii.h>
+#include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
 #include <stdio.h>
 
@@ -179,7 +181,7 @@ int do_menu(struct menu * m , int selected)
 	int i;
 
 	int evmask;
-	ggi_event ev;
+	gii_event ev;
 	struct timeval t={0,0};
 	int oldselection = selected;
 
@@ -226,10 +228,10 @@ int do_menu(struct menu * m , int selected)
 
 		/* get a keypress */
 		evmask = emKey;
-		ggiEventPoll(m->w.vis, evmask, NULL);
-		while (ggiEventPoll(m->w.vis, evmask,&t)){
+		giiEventPoll(m->w.vis, evmask, NULL);
+		while (giiEventPoll(m->w.vis, evmask,&t)){
 			do {
-				ggiEventRead(m->w.vis,&ev, evmask);
+				giiEventRead(m->w.vis,&ev, evmask);
 			} while (!((1<<ev.any.type)&evmask));
 			switch(ev.any.type){
 			case evKeyPress:
