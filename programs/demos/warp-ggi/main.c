@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.8 2005/07/30 11:58:39 cegger Exp $
+/* $Id: main.c,v 1.9 2006/03/27 11:39:40 pekberg Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -20,6 +20,8 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/gii.h>
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -28,6 +30,15 @@
 
 #include "rawpict.h"
 #include "warp.h"
+
+static int
+myKbhit(ggi_visual_t vis)
+{
+	struct timeval t={0,0};
+
+	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+		!= emZero);
+}
 
 
 /* Selects the best display mode for the picture, if possible */
@@ -212,12 +223,31 @@ int main(int argc, char **argv)
 			break;
 
 		case 3:
-			if (ggiInit() < 0)
+			if (giiInit() < 0) {
 				fail("Error initializing LibGGI.\n");
-
-			if ((disp = ggiOpen(NULL)))
-				step++;
-			else
+				break;
+			}
+			if (ggiInit() < 0) {
+				giiExit();
+				fail("Error initializing LibGII.\n");
+				break;
+			}
+			if (!(disp = ggNewStem())) {
+				ggiExit();
+				giiExit();
+				fail("Error creating stem.\n");
+				break;
+			}
+			step++;
+			if (giiAttach(disp) < 0) {
+				fail("Error attaching GII to stem.\n");
+				break;
+			}
+			if (ggiAttach(disp) < 0) {
+				fail("Error attaching GGI to stem.\n");
+				break;
+			}
+			if (ggiOpen(disp, NULL) < 0)
 				fail("Error opening GGI display.\n");
 			break;
 
@@ -280,11 +310,11 @@ int main(int argc, char **argv)
 			else
 				warpfunc = doWarp32bpp;
 
-			while (ggiKbhit(disp));
+			while (myKbhit(disp));
 
 			tval = 0;
 
-			while (!ggiKbhit(disp)) {
+			while (!myKbhit(disp)) {
 				int32_t xw, yw, cw;
 				char *src, *dest;
 
@@ -337,8 +367,11 @@ int main(int argc, char **argv)
 			break;
 		}
 
-	if (step > 3)
-		ggiClose(disp);
+	if (step > 3) {
+		ggDelStem(disp);
+		ggiExit();
+		giiExit();
+	}
 
 	if (step > 2)
 		disposeWarp(w);
