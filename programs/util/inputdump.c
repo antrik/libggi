@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.13 2005/07/30 11:58:39 cegger Exp $
+/* $Id: inputdump.c,v 1.14 2006/03/27 08:08:47 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -26,6 +26,8 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/gii.h>
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -56,8 +58,8 @@ typedef struct mydev_info
 	uint32_t origin;
 	int known;
 
-	gii_cmddata_getdevinfo DI;
-	gii_cmddata_getvalinfo *VI[MAX_NR_VAL];
+	struct gii_cmddata_devinfo DI;
+	struct gii_cmddata_valinfo *VI[MAX_NR_VAL];
 	
 	int32_t axes[MAX_NR_VAL+4];
 	int32_t buttons[MAX_NR_BUT];  /* labels */
@@ -208,7 +210,7 @@ static void draw_inp_device(mydev_info *M)
 	ggiSetGCForeground(vis, ggiMapColor(vis, &yellow));
 
 	ggiPuts(vis, M->top.x, M->top.y, "              ");
-	ggiPuts(vis, M->top.x, M->top.y, M->known ? M->DI.longname : buf);
+	ggiPuts(vis, M->top.x, M->top.y, M->known ? M->DI.devname : buf);
 
 	if (M->val_h > 0) {
 		for (i=0; i < M->val_h; i++) {
@@ -493,8 +495,8 @@ static void show_valuator(gii_val_event *ev)
 static void show_devinfo(gii_cmd_event *ev)
 {	
 	gii_event qev;
-	gii_cmddata_getdevinfo *DI = (void *) ev->data;
-	gii_cmddata_getvalinfo *VI = (void *) &qev.cmd.data;
+	struct gii_cmddata_devinfo *DI = (void *) ev->data;
+	struct gii_cmddata_valinfo *VI = (void *) &qev.cmd.data;
 	
 	int s = (do_show != SHOW_NIL);
 
@@ -504,24 +506,24 @@ static void show_devinfo(gii_cmd_event *ev)
 	}
 	
 	if (s) {
-	  fprintf(stderr, "short='%s' long='%s'\n"
-		"    axes=%u buttons=%u generate=0x%06x\n", 
-		DI->shortname, DI->longname,
-		DI->num_axes, DI->num_buttons, DI->can_generate);
+	  fprintf(stderr, "name='%s'\n"
+		"    valuators=%u buttons=%u generate=0x%06x\n", 
+		DI->devname,
+		DI->num_valuators, DI->num_buttons, DI->can_generate);
 	}
 
 	/* ask device for valuator info */
 
-	if (DI->num_axes > 0) {
+	if (DI->num_valuators > 0) {
 		qev.any.size   = sizeof(gii_cmd_event);
 		qev.any.type   = evCommand;
 		qev.any.origin = GII_EV_ORIGIN_NONE;
 		qev.any.target = GII_EV_TARGET_ALL;
-		qev.cmd.code   = GII_CMDCODE_GETVALINFO;
+		qev.cmd.code   = GII_CMDCODE_VALUATOR_INFO;
 
 		VI->number = GII_VAL_QUERY_ALL;
 		
-		giiEventSend(ggiJoinInputs(vis, NULL), &qev);
+		giiEventSend(vis, &qev);
 	}
 
 	/* update display */
@@ -530,14 +532,14 @@ static void show_devinfo(gii_cmd_event *ev)
 		cur_dev->DI = *DI;
 		cur_dev->known = 1;
 
-		if (cur_dev->DI.num_axes >= MAX_NR_VAL) {
-			cur_dev->DI.num_axes = MAX_NR_VAL-1;
+		if (cur_dev->DI.num_valuators >= MAX_NR_VAL) {
+			cur_dev->DI.num_valuators = MAX_NR_VAL-1;
 		}
 		if (cur_dev->DI.num_buttons >= MAX_NR_BUT) {
 			cur_dev->DI.num_buttons = MAX_NR_BUT-1;
 		}
 
-		cur_dev->val_h = cur_dev->DI.num_axes;
+		cur_dev->val_h = cur_dev->DI.num_valuators;
 		if (cur_dev->val_h > MAX_DRAW_VAL) {
 			/* Only draw this many valuators. */
 			cur_dev->val_h = MAX_DRAW_VAL;
@@ -555,7 +557,7 @@ static void show_valinfo(gii_cmd_event *ev)
 {
 	int s = (do_show != SHOW_NIL);
 
-	gii_cmddata_getvalinfo *VI = (void *) ev->data;
+	struct gii_cmddata_valinfo *VI = (void *) ev->data;
 	
 	if (ev->origin & GII_EV_ORIGIN_SENDEVENT) {
 		if (s) fprintf(stderr, "(empty query)\n");
@@ -606,7 +608,7 @@ static void show_valinfo(gii_cmd_event *ev)
 		}
 
 		cur_dev->VI[VI->number] =
-			malloc(sizeof(gii_cmddata_getvalinfo));
+			malloc(sizeof(struct gii_cmddata_valinfo));
 
 		*cur_dev->VI[VI->number] = *VI;
 
@@ -621,13 +623,13 @@ static void show_command(gii_cmd_event *ev)
 	int s = (do_show != SHOW_NIL);
 
 	switch (ev->code) {
-		case GII_CMDCODE_GETDEVINFO:
-			if (s) fprintf(stderr, "GetDevInfo: ");
+		case GII_CMDCODE_DEVICE_INFO:
+			if (s) fprintf(stderr, "DevInfo: ");
 			show_devinfo(ev);
 			return;
 
-		case GII_CMDCODE_GETVALINFO:
-			if (s) fprintf(stderr, "GetValInfo: ");
+		case GII_CMDCODE_VALUATOR_INFO:
+			if (s) fprintf(stderr, "ValInfo: ");
 			show_valinfo(ev);
 			return;
 	}
@@ -817,16 +819,46 @@ int main(int argc, char **argv)
 
 	/* setup graphics mode */
 
+	if (giiInit() != 0) {
+		fprintf(stderr, "Unable to initialize LibGII, exiting.\n");
+		exit(1);
+	}
+
 	if (ggiInit() != 0) {
 		fprintf(stderr, "Unable to initialize LibGGI, exiting.\n");
 		exit(1);
 	}
 
-	vis = ggiOpen(target_str, NULL);
+	vis = ggNewStem();
 
 	if (vis == NULL) {
-		fprintf(stderr, "Failed to open visual.\n");
+		fprintf(stderr, "Failed to create stem.\n");
 		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (giiAttach(vis) < 0) {
+		fprintf(stderr, "Failed to attach libgii to stem.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (ggiAttach(vis) < 0) {
+		fprintf(stderr, "Failed to attach libgii to stem.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
+		exit(1);
+	}
+
+	if (ggiOpen(vis, target_str, NULL) < 0) {
+		fprintf(stderr, "Failed to open visual.\n");
+		ggDelStem(vis);
+		ggiExit();
+		giiExit();
 		exit(1);
 	}
 
@@ -836,8 +868,9 @@ int main(int argc, char **argv)
 
 	if (ggiSetMode(vis, &vis_mode) < 0) {
 		fprintf(stderr, "Could not set mode.\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		exit(1);
 	}
 
@@ -857,7 +890,7 @@ int main(int argc, char **argv)
 	/* add extra input */
 
 	if (input_str) {
-		ggiJoinInputs(vis, giiOpen(input_str, NULL));
+		giiOpen(vis, input_str, NULL);
 	}
 
 	/* main loop */
@@ -865,12 +898,12 @@ int main(int argc, char **argv)
 	do {
 		int n;
 
-		ggiEventPoll(vis, emAll, NULL);
+		giiEventPoll(vis, emAll, NULL);
 		
-		n = ggiEventsQueued(vis, emAll);
+		n = giiEventsQueued(vis, emAll);
 
 		while (n) {
-			ggiEventRead(vis, &ev, emAll);
+			giiEventRead(vis, &ev, emAll);
 			
 			if ((ev.any.type == evKeyPress) && 
 			    (ev.key.sym == GIIUC_Escape)) {
@@ -885,8 +918,9 @@ int main(int argc, char **argv)
 		ggiFlush(vis);
 	} while (! quit);
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
+	giiExit();
 
 	exit(0);
 }

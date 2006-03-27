@@ -1,4 +1,4 @@
-/* $Id: giik2str.h,v 1.3 2006/02/13 19:22:06 soyt Exp $
+/* $Id: giik2str.h,v 1.4 2006/03/27 08:08:46 pekberg Exp $
 ******************************************************************************
 
    Export symbols from giik2str
@@ -29,6 +29,7 @@
 #define _GIIK2STR_H
 
 #include <ggi/gii-events.h>
+#include <ggi/gii-keyboard.h>
 
 const char *giik2str(uint32_t giik, int issym);
 
