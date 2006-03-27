@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.12 2006/03/22 20:22:28 cegger Exp $
+/* $Id: stubs.c,v 1.13 2006/03/27 21:02:31 cegger Exp $
 ******************************************************************************
 
    Display-multi: stubs
@@ -44,15 +44,15 @@ void GGI_multi_gcchanged(struct ggi_visual *vis, int mask)
 		ggi_gc *gc = LIBGGI_GC(vis);
 
 		if (mask & GGI_GCCHANGED_FG) {
-			ggiSetGCForeground(cur->vis, gc->fg_color);
+			ggiSetGCForeground(cur->vis->stem, gc->fg_color);
 		}
 		
 		if (mask & GGI_GCCHANGED_BG) {
-			ggiSetGCBackground(cur->vis, gc->bg_color);
+			ggiSetGCBackground(cur->vis->stem, gc->bg_color);
 		}
 
 		if (mask & GGI_GCCHANGED_CLIP) {
-			ggiSetGCClipping(cur->vis, 
+			ggiSetGCClipping(cur->vis->stem, 
 					 gc->cliptl.x, gc->cliptl.y,
 					 gc->clipbr.x, gc->clipbr.y);
 		}
@@ -92,7 +92,7 @@ int GGI_multi_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiDrawBox(cur->vis, x, y, w, h) != 0) err = -1;
+		if (ggiDrawBox(cur->vis->stem, x, y, w, h) != 0) err = -1;
 	}
 
 	return err;
@@ -105,7 +105,7 @@ int GGI_multi_puthline(struct ggi_visual *vis, int x, int y, int w, const void *
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiPutHLine(cur->vis, x, y, w, buffer) != 0) err = -1;
+		if (ggiPutHLine(cur->vis->stem, x, y, w, buffer) != 0) err = -1;
 	}
 
 	return err;
@@ -118,7 +118,7 @@ int GGI_multi_putvline(struct ggi_visual *vis, int x, int y, int h, const void *
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiPutVLine(cur->vis, x, y, h, buffer) != 0) err = -1;
+		if (ggiPutVLine(cur->vis->stem, x, y, h, buffer) != 0) err = -1;
 	}
 
 	return err;
@@ -131,7 +131,7 @@ int GGI_multi_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const v
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiPutBox(cur->vis, x, y, w, h, buffer) != 0) err = -1;
+		if (ggiPutBox(cur->vis->stem, x, y, w, h, buffer) != 0) err = -1;
 	}
 
 	return err;
@@ -145,7 +145,7 @@ int GGI_multi_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiCrossBlit(src, sx, sy, w, h, cur->vis, dx, dy) != 0) {
+		if (ggiCrossBlit(src->stem, sx, sy, w, h, cur->vis->stem, dx, dy) != 0) {
 			err = -1;
 		}
 	}
@@ -160,7 +160,7 @@ int GGI_multi_fillscreen(struct ggi_visual *vis)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiFillscreen(cur->vis) != 0) err = -1;
+		if (ggiFillscreen(cur->vis->stem) != 0) err = -1;
 	}
 
 	return err;
@@ -173,7 +173,7 @@ int GGI_multi_putc(struct ggi_visual *vis, int x, int y, char c)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiPutc(cur->vis, x, y, c) != 0) err = -1;
+		if (ggiPutc(cur->vis->stem, x, y, c) != 0) err = -1;
 	}
 
 	return err;
@@ -186,7 +186,7 @@ int GGI_multi_puts(struct ggi_visual *vis, int x, int y, const char *str)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiPuts(cur->vis, x, y, str) != 0) err = -1;
+		if (ggiPuts(cur->vis->stem, x, y, str) != 0) err = -1;
 	}
 
 	return err;
@@ -199,7 +199,7 @@ int GGI_multi_drawhline(struct ggi_visual *vis, int x, int y, int w)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiDrawHLine(cur->vis, x, y, w) != 0) err = -1;
+		if (ggiDrawHLine(cur->vis->stem, x, y, w) != 0) err = -1;
 	}
 
 	return err;
@@ -212,7 +212,7 @@ int GGI_multi_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiDrawLine(cur->vis, x1, y1, x2, y2) != 0) err = -1;
+		if (ggiDrawLine(cur->vis->stem, x1, y1, x2, y2) != 0) err = -1;
 	}
 
 	return err;
@@ -225,7 +225,7 @@ int GGI_multi_drawvline(struct ggi_visual *vis, int x, int y, int h)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiDrawVLine(cur->vis, x, y, h) != 0) err = -1;
+		if (ggiDrawVLine(cur->vis->stem, x, y, h) != 0) err = -1;
 	}
 
 	return err;
@@ -238,7 +238,7 @@ int GGI_multi_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiCopyBox(cur->vis, x, y, w, h, nx, ny) != 0) err = -1;
+		if (ggiCopyBox(cur->vis->stem, x, y, w, h, nx, ny) != 0) err = -1;
 	}
 
 	return err;
@@ -251,7 +251,7 @@ int GGI_multi_setgamma(struct ggi_visual *vis, ggi_float r, ggi_float g, ggi_flo
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiSetGamma(cur->vis, r, g, b) != 0) err = -1;
+		if (ggiSetGamma(cur->vis->stem, r, g, b) != 0) err = -1;
 	}
 
 	return err;
@@ -264,7 +264,7 @@ int GGI_multi_setgammamap(struct ggi_visual *vis, int start, int len, const ggi_
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiSetGammaMap(cur->vis, start, len, cmap) != 0) err = -1;
+		if (ggiSetGammaMap(cur->vis->stem, start, len, cmap) != 0) err = -1;
 	}
 
 	return err;
@@ -278,7 +278,7 @@ int GGI_multi_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_co
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiSetPalette(cur->vis, start, len, cmap) != 0) err = -1;
+		if (ggiSetPalette(cur->vis->stem, start, len, cmap) != 0) err = -1;
 	}
 
 	return err;
@@ -292,7 +292,7 @@ int GGI_multi_setorigin(struct ggi_visual *vis, int x, int y)
 	int err = 0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiSetOrigin(cur->vis, x, y) != 0) err = -1;
+		if (ggiSetOrigin(cur->vis->stem, x, y) != 0) err = -1;
 	}
 
 	if (! err) {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2006/03/20 20:20:39 cegger Exp $
+/* $Id: mode.c,v 1.10 2006/03/27 21:06:14 cegger Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -83,7 +83,7 @@ int GGI_sub_setflags(struct ggi_visual *vis,ggi_flags flags)
 	int rc;
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	rc = ggiSetFlags(priv->parent, flags);
+	rc = ggiSetFlags(priv->parent->stem, flags);
 	if (rc < 0) return rc;
 
 	LIBGGI_FLAGS(vis) = flags;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2006/03/22 20:22:28 cegger Exp $
+/* $Id: mode.c,v 1.8 2006/03/27 21:02:31 cegger Exp $
 ******************************************************************************
 
    Display-multi: mode management
@@ -43,22 +43,22 @@ int GGI_multi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	MultiVis *cur;
 	int err;
 
-	err = ggiCheckMode(vis, tm);
+	err = ggiCheckMode(vis->stem, tm);
 	if (err) return err;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		err = ggiSetMode(cur->vis, tm);
+		err = ggiSetMode(cur->vis->stem, tm);
 		if (err != 0) {
 			if (cur == GG_SLIST_FIRST(&priv->vis_list))
 				return err;
 			return GGI_EFATAL;
 		}
-		if (ggiSetMode(cur->vis, tm) != 0) err = -1;
+		if (ggiSetMode(cur->vis->stem, tm) != 0) err = -1;
 	}
 
 	/* We hope that the pixelformat is the same on all child visuals */
 	memcpy(LIBGGI_PIXFMT(vis),
-		ggiGetPixelFormat(GG_SLIST_FIRST(&priv->vis_list)->vis),
+		ggiGetPixelFormat(GG_SLIST_FIRST(&priv->vis_list)->vis->stem),
 		sizeof(ggi_pixelformat));
 
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
@@ -80,7 +80,7 @@ static int try_checkmode(struct ggi_visual *vis, ggi_mode *tm, int count)
 	}
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		err = ggiCheckMode(cur->vis, tm);
+		err = ggiCheckMode(cur->vis->stem, tm);
 		if (err) {
 			try_checkmode(vis, tm, count);
 			return err;
@@ -101,7 +101,7 @@ int GGI_multi_getmode(struct ggi_visual *vis, ggi_mode *tm)
 {
 	ggi_multi_priv *priv = GGIMULTI_PRIV(vis);
 
-	return ggiGetMode(GG_SLIST_FIRST(&priv->vis_list)->vis, tm);
+	return ggiGetMode(GG_SLIST_FIRST(&priv->vis_list)->vis->stem, tm);
 }
 
 
@@ -113,7 +113,7 @@ int GGI_multi_setflags(struct ggi_visual *vis,ggi_flags flags)
 	int err=0;
 
 	GG_SLIST_FOREACH(cur, &priv->vis_list, visuals) {
-		if (ggiSetFlags(cur->vis, flags) != 0) err = -1;
+		if (ggiSetFlags(cur->vis->stem, flags) != 0) err = -1;
 	}
 
 	LIBGGI_FLAGS(vis) = flags;
