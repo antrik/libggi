@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/03/20 19:56:27 cegger Exp $
+/* $Id: visual.c,v 1.14 2006/03/27 20:43:26 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -218,15 +218,24 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 #endif
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
-		struct gg_module *inp;
+		struct gg_module *inp = NULL;
 		gii_inputquartz_arg _args;
+		struct gg_api *gii;
 
 		_args.theWindow = priv->theWindow;
 
 		_args.gglock = NULL;
 
 		DPRINT_MISC("open input-quartz\n");
-		inp = giiOpen("input-quartz", &_args, NULL);
+		gii = ggGetAPIByName("gii");
+		if (gii != NULL) {
+			if (STEM_HAS_API(vis->stem, gii)) {
+				inp = ggOpenModule(gii, vis->stem,
+					"input-quartz", NULL, &_args);
+			}
+		}
+
+		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open quartz inputlib\n");
 			err = GGI_ENODEVICE;
