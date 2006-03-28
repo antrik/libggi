@@ -1,4 +1,4 @@
-/* $Id: mansync.inc.c,v 1.4 2006/03/17 21:55:43 cegger Exp $
+/* $Id: mansync.inc.c,v 1.5 2006/03/28 07:17:08 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for correct mansync usage.
@@ -43,8 +43,20 @@ static void testcase1(const char *desc)
 	if (dontrun) return;
 
 
-	vis = ggiOpen(DISPLAYSTR, NULL);
+	vis = ggNewStem();
 	if (vis == NULL) {
+		printfailure("Couldn't create stem for %s", DISPLAYSTR);
+		return;
+	}
+
+	ret = ggiAttach(vis);
+	if (ret != 0) {
+		printfailure("Couldn't attach LibGGI to %s stem", DISPLAYSTR);
+		return;
+	}
+
+	ret = ggiOpen(vis, DISPLAYSTR, NULL);
+	if (ret != 0) {
 		printfailure("Couldn't open %s", DISPLAYSTR);
 		return;
 	}
@@ -62,7 +74,7 @@ static void testcase1(const char *desc)
 
 	/* stop mansync. If it runs as it should,
 	 * we don't fail with an assertion here */
-	ret = MANSYNC_stop(vis);
+	ret = MANSYNC_stop(STEM_API_DATA(vis, libggi, struct ggi_visual*));
 	if (ret != 0) {
 		printfailure("BUG: mansync not running - forgot to call "
 			"MANSYNC_start(vis) right after MANSYNC_init(vis)?\n");
@@ -70,7 +82,7 @@ static void testcase1(const char *desc)
 	}
 
 	/* now restart it */
-	ret = MANSYNC_start(vis);
+	ret = MANSYNC_start(STEM_API_DATA(vis, libggi, struct ggi_visual*));
 	if (ret != 0) {
 		printfailure("BUG: mansync couldn't be relaunched\n");
 		goto exit_testcase;
@@ -133,7 +145,7 @@ static void testcase1(const char *desc)
 
 
 exit_testcase:
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
