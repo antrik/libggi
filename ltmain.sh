@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2276 2006/03/17 04:20:17) 2.1a
+# ltmain.sh (GNU libtool 1.2284 2006/03/28 18:11:28) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2276 2006/03/17 04:20:17) 2.1a
+#       $progname:		(GNU libtool 1.2284 2006/03/28 18:11:28) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2276 2006/03/17 04:20:17"
-package_revision=1.2276
+TIMESTAMP=" 1.2284 2006/03/28 18:11:28"
+package_revision=1.2284
 
 # NLS nuisances: We save the old values to restore during execute mode.
 # AS_SHELL_SANITIZE will take care of unsetting.
@@ -793,9 +793,9 @@ The following components of LINK-COMMAND are treated specially:
   -dlpreopen FILE   link in FILE and add its symbols to lt_preloaded_symbols
   -export-dynamic   allow symbols from OUTPUT-FILE to be resolved with dlsym(3)
   -export-symbols SYMFILE
-		    try to export only the symbols listed in SYMFILE
+                    try to export only the symbols listed in SYMFILE
   -export-symbols-regex REGEX
-		    try to export only the symbols matching REGEX
+                    try to export only the symbols matching REGEX
   -LLIBDIR          search LIBDIR for required installed libraries
   -lNAME            OUTPUT-FILE requires the installed library libNAME
   -module           build a library that can dlopened
@@ -811,9 +811,11 @@ The following components of LINK-COMMAND are treated specially:
   -R[ ]LIBDIR       add LIBDIR to the runtime path of programs and libraries
   -shared           only do dynamic linking of libtool libraries
   -shrext SUFFIX    override the standard shared library file extension
-  -static           do not do any dynamic linking of libtool libraries
+  -static           do not do any dynamic linking of uninstalled libtool libraries
+  -static-libtool-libs
+                    do not do any dynamic linking of libtool libraries
   -version-info CURRENT[:REVISION[:AGE]]
-		    specify library version info [each variable defaults to 0]
+                    specify library version info [each variable defaults to 0]
   -weak LIBNAME     declare that the target provides the LIBNAME interface
 
 All other options (arguments beginning with \`-') are ignored.
@@ -2707,8 +2709,9 @@ func_mode_link ()
 	build_old_libs=no
 	break
 	;;
-      -all-static | -static)
-	if test "X$arg" = "X-all-static"; then
+      -all-static | -static | -static-libtool-libs)
+	case $arg in
+	-all-static)
 	  if test "$build_libtool_libs" = yes && test -z "$link_static_flag"; then
 	    func_warning "complete static linking is impossible in this configuration"
 	  fi
@@ -2719,12 +2722,20 @@ func_mode_link ()
 	    finalize_command="$finalize_command $link_static_flag"
 	  fi
 	  prefer_static_libs=yes
-	else
+	  ;;
+	-static)
 	  if test -z "$pic_flag" && test -n "$link_static_flag"; then
 	    dlopen_self=$dlopen_self_static
 	  fi
 	  prefer_static_libs=built
-	fi
+	  ;;
+	-static-libtool-libs)
+	  if test -z "$pic_flag" && test -n "$link_static_flag"; then
+	    dlopen_self=$dlopen_self_static
+	  fi
+	  prefer_static_libs=yes
+	  ;;
+	esac
 	build_libtool_libs=no
 	build_old_libs=yes
 	break
@@ -3245,7 +3256,7 @@ func_mode_link ()
 	continue
 	;;
 
-      -static)
+      -static | -static-libtool-libs)
 	# The effects of -static are defined in a previous loop.
 	# We used to do the same as -all-static on platforms that
 	# didn't have a PIC flag, but the assumption that the effects
