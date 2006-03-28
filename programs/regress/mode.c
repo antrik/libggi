@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2005/08/17 12:52:42 pekberg Exp $
+/* $Id: mode.c,v 1.13 2006/03/28 07:37:53 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -45,8 +45,14 @@ static void testcase1(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	err = ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
 	if (err == GGI_OK) {
@@ -93,7 +99,7 @@ static void testcase1(const char *desc)
 	}
 
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
@@ -114,8 +120,14 @@ static void testcase2(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	err = ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
 
@@ -126,7 +138,7 @@ static void testcase2(const char *desc)
 		return;
 	}
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
@@ -147,13 +159,19 @@ static void testcase3(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	err = ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, 2, GT_AUTO, &mode);
 	printassert(err == GGI_OK, "frames are apparently not supported\n");
 	if (err != GGI_OK) {
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		printsuccess();
 		return;
@@ -166,7 +184,7 @@ static void testcase3(const char *desc)
 		return;
 	}
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 
@@ -188,14 +206,20 @@ static void testcase4(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	err = ggiCheckSimpleMode(
 		vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
 	printassert(err == GGI_OK, "ggiCheckSimpleMode: can't find a mode\n");
 	if(err != GGI_OK) {
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		printsuccess();
 		return;
@@ -204,7 +228,7 @@ static void testcase4(const char *desc)
 	printassert(mode.size.x != GGI_AUTO && mode.size.y != GGI_AUTO,
 		"physical size is apparently not supported\n");
 	if(mode.size.x == GGI_AUTO || mode.size.y == GGI_AUTO) {
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		printsuccess();
 		return;
@@ -224,7 +248,7 @@ static void testcase4(const char *desc)
 
 	/* This mode should be there */
 	err = ggiCheckMode(vis, &mode);
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	if (err != GGI_OK) {
@@ -266,8 +290,14 @@ static void testcase5(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
 
@@ -276,7 +306,7 @@ static void testcase5(const char *desc)
 				GT_AUTO, &sug_mode);
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: No graphic mode available\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -301,11 +331,12 @@ static void testcase5(const char *desc)
 	err = ggiSetMode(vis, &final_mode);
 	if (err) {
 		printfailure("ggiSetMode() failed although ggiCheckGraphMode() was OK!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		return;
 	}
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
@@ -325,8 +356,14 @@ static void testcase6(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	/* async mode disables mansync if used */
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
@@ -336,7 +373,7 @@ static void testcase6(const char *desc)
 				GT_AUTO, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -344,7 +381,7 @@ static void testcase6(const char *desc)
 	err = ggiSetMode(vis, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -354,7 +391,7 @@ static void testcase6(const char *desc)
 				GT_AUTO, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -362,13 +399,13 @@ static void testcase6(const char *desc)
 	err = ggiSetMode(vis, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
 
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
@@ -388,8 +425,14 @@ static void testcase7(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	/* sync mode enables mansync if used */
 
@@ -398,7 +441,7 @@ static void testcase7(const char *desc)
 				GT_AUTO, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -406,7 +449,7 @@ static void testcase7(const char *desc)
 	err = ggiSetMode(vis, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -416,7 +459,7 @@ static void testcase7(const char *desc)
 				GT_AUTO, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
@@ -424,13 +467,13 @@ static void testcase7(const char *desc)
 	err = ggiSetMode(vis, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
 
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
@@ -450,8 +493,14 @@ static void testcase8(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggiOpen(NULL);
-	printassert(vis != NULL, "ggiOpen() failed\n");
+	vis = ggNewStem();
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiAttach(vis);
+	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
 
 	mode.virt.x = mode.virt.y = GGI_AUTO;
 	mode.visible.x = mode.visible.y = GGI_AUTO;
@@ -467,12 +516,12 @@ static void testcase8(const char *desc)
 	err = ggiSetMode(vis, &mode);
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() failed even though ggiCheckMode() was called!\n");
-		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
 		return;
 	}
 
-	ggiClose(vis);
+	ggDelStem(vis);
 	ggiExit();
 
 	printsuccess();
