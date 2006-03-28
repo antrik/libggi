@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.7 2006/03/28 07:18:07 pekberg Exp $
+/* $Id: init.c,v 1.8 2006/03/28 08:59:45 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -147,6 +147,7 @@ static void testcase4(const char *desc)
 	if (dontrun) return;
 
 #if 0
+This is not possible and segfaults with gg-api.
 	err = ggiClose(NULL);
 	if (err != GGI_ENOTALLOC) {
 		printfailure("ggiClose: expected return value: %i\n"
@@ -164,6 +165,7 @@ static void testcase4(const char *desc)
 	}
 
 #if 0
+This is not possible and segfaults with gg-api.
 	err = ggiClose(NULL);
 	if (err != GGI_EARGINVAL) {
 		printfailure("ggiClose: expected return value: %i\n"
