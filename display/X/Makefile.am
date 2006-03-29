@@ -7,7 +7,7 @@ libx_la_LIBADD = $(X_LIBS) -lX11 $(X_EXTRA_LIBS)
 noinst_LTLIBRARIES = libx.la
 
 libx_la_SOURCES = pixel.c hline.c vline.c box.c line.c fillscreen.c gtext.c \
-	       visual.c mode.c buffer.c color.c misc.c 
+	       visual.c mode.c buffer.c color.c misc.c listener.c
 
 EXTRA_DIST = EXPSYMS
 
