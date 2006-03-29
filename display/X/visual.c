@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.55 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: visual.c,v 1.56 2006/03/29 04:15:37 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -569,18 +569,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
         }
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
-		gii_inputxwin_arg _args;
+		struct gii_inputxwin_arg _args;
 		struct gg_module *inp = NULL;
 		struct gg_api *gii;
                 
 		_args.disp = priv->disp;
-		_args.ptralwaysrel = 0;
 		_args.wait = 1;
-                _args.exposefunc = (gii_inputxwin_exposefunc*)GGI_X_expose;
-		if (priv->createfb == NULL) _args.exposefunc = NULL;
 		_args.exposearg = vis;
-      /* _args.resizefunc = (gii_inputxwin_resizefunc*)GGI_X_resize;*/
-		_args.resizefunc = NULL;
                 _args.resizearg = vis;
 		_args.lockfunc = (gii_inputxwin_lockfunc*)priv->lock_xlib;
                 _args.lockarg = vis;

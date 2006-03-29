@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.23 2006/03/20 14:39:19 pekberg Exp $
+/* $Id: x.h,v 1.24 2006/03/29 04:15:36 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -226,7 +226,7 @@ XImage *_ggi_x_create_ximage(struct ggi_visual *vis, char *data, int w, int h);
 int _ggi_x_createfb(struct ggi_visual *vis);
 void _ggi_x_freefb(struct ggi_visual *vis);
 int GGI_X_create_window_drawable (struct ggi_visual *vis);
-gii_inputxwin_exposefunc GGI_X_expose;
+int GGI_X_expose(void *arg, int x, int y, int w, int h);
 ggifunc_flush GGI_X_flush_ximage_child;
 
 #define GGI_X_DIRTY(vis, _x, _y, _w, _h) do {               		\
