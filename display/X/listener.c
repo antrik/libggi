@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.1 2006/03/29 04:38:52 cegger Exp $
+/* $Id: listener.c,v 1.2 2006/03/29 04:55:15 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -58,15 +58,8 @@ int GGI_X_listener(void *arg, int flag, void *data)
 			expose->x, expose->y, expose->w, expose->h);
 	}
 
-	if (flag & GII_CMDCODE_XWINSETPARAM) {
-		struct gii_cmddata_xwinsetparam *param;
-
-		param = (struct gii_cmddata_xwinsetparam *)data;
-
-		/* todo: move code from setmode here */
-	}
-
-	/* GII_CMDCODE_XWINPOINTER is not relevant here.
+	/* GII_CMDCODE_XWINPOINTER and GII_CMDCODE_XWINSETPARAM
+	 * are not relevant here.
 	 * So we ignore this event.
 	 */
 	return 0;
