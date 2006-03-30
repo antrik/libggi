@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.60 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: mode.c,v 1.61 2006/03/30 04:42:38 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -691,6 +691,26 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	/* if */
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
+		struct gii_xwin_cmddata_setparam data;
+		struct gii_xwin_cmddata_pointer  dataptr;
+
+
+
+		if(priv->use_Xext & GGI_X_USE_VIDMODE) {	
+			/* Grab pointers */
+			DPRINT_MODE("X (setmode): grab pointers\n");
+		}
+
+
+		DPRINT_MODE("X (setmode): tell inputlib about new window\n");
+		data.win = priv->win;
+		if (data.win == None) {
+			data.win = priv->parentwin;
+		}
+		data.parentwin = priv->parentwin;
+		ggNotifyObservers(priv->publisher, GII_CMDCODE_XWINSETPARAM,
+				vis->stem);
+
 #if 0
 FIXME
 		gii_event ev;
