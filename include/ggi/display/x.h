@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.25 2006/03/29 04:38:52 cegger Exp $
+/* $Id: x.h,v 1.26 2006/03/30 04:25:33 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -154,6 +154,7 @@ typedef struct ggi_x_priv {
 	int	 modes_num;			/* number of modes in list.  */
 
 	struct gg_module   *inp;
+	struct gg_observer *observer;
 
 	void	*priv; 		/* for extra handles (dga) */
 
