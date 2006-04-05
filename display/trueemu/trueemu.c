@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.9 2006/03/22 19:26:48 cegger Exp $
+/* $Id: trueemu.c,v 1.10 2006/04/05 04:11:37 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -302,8 +302,8 @@ static void setup_palette(struct ggi_visual *vis)
 				load_332_palette(colormap);
 			}
 
-			ggiSetPalette(priv->parent, 0, 256, colormap);
-			ggiFlush(priv->parent);
+			ggiSetPalette(priv->parent->stem, 0, 256, colormap);
+			ggiFlush(priv->parent->stem);
 			return;
 		}
 
@@ -315,8 +315,8 @@ static void setup_palette(struct ggi_visual *vis)
 				load_121_palette(colormap);
 			}
 
-			ggiSetPalette(priv->parent, 0, 16, colormap);
-			ggiFlush(priv->parent);
+			ggiSetPalette(priv->parent->stem, 0, 16, colormap);
+			ggiFlush(priv->parent->stem);
 			return;
 		}
 	}
@@ -829,7 +829,7 @@ int _ggi_trueemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 	/* do transfer, one horizontal line at a time */
 	for (; h > 0; h--, y++) {
 		/* !!! FIX for FRAMES */
-		ggiGetHLine(vis, x, y, w, priv->src_buf);
+		ggiGetHLine(vis->stem, x, y, w, priv->src_buf);
 
 		if (y & 1) {
 			priv->blitter_odd(priv,  priv->dest_buf,
@@ -839,7 +839,7 @@ int _ggi_trueemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 					   priv->src_buf, w);
 		}
 
-		ggiPutHLine(priv->parent, x, y, w, priv->dest_buf);
+		ggiPutHLine(priv->parent->stem, x, y, w, priv->dest_buf);
 	}
 
 	return 0;
@@ -909,7 +909,7 @@ int _ggi_trueemu_Open(struct ggi_visual *vis)
 	 */
 
 	/* Set the parent mode */
-	err = ggiSetMode(priv->parent, &priv->mode);
+	err = ggiSetMode(priv->parent->stem, &priv->mode);
 	if (err < 0) {
 		DPRINT_MODE("display-trueemu: Couldn't set parent mode.\n");
 		return err;
