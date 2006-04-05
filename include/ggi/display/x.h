@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.27 2006/03/30 04:42:38 cegger Exp $
+/* $Id: x.h,v 1.28 2006/04/05 04:10:39 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -114,7 +114,7 @@ typedef struct ggi_x_priv {
 
 	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
 	int         activecmap;
-	int         ncols;		/* Number of colors in the colormap */
+	unsigned int ncols;		/* Number of colors in the colormap */
 	XColor      *gammamap;
 	ggi_gammastate gamma;
 
