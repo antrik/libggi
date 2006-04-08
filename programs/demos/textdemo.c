@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.10 2006/03/27 14:50:34 pekberg Exp $
+/* $Id: textdemo.c,v 1.11 2006/04/08 08:37:59 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -30,12 +30,12 @@
 static ggi_visual_t vis;
 
 static int
-myGetc(ggi_visual_t vis)
+myGetc(ggi_visual_t _vis)
 {
 	gii_event ev;
 
 	/* Block until we get a key. */
-	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+	giiEventRead(_vis, &ev, emKeyPress | emKeyRepeat);
 
 	return ev.key.sym;
 }

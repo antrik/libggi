@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.11 2006/03/21 12:38:16 pekberg Exp $
+/* $Id: showaccel.c,v 1.12 2006/04/08 08:34:02 cegger Exp $
 ******************************************************************************
 
    showaccel.c
@@ -50,12 +50,12 @@
 
 static ggi_visual_t vis;
 
-int
-myKbhit(ggi_visual_t vis)
+static int
+myKbhit(ggi_visual_t _vis)
 {
 	struct timeval t={0,0};
 
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
 		!= emZero);
 }
 

@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.25 2006/03/20 13:11:34 pekberg Exp $
+/* $Id: demo.c,v 1.26 2006/04/08 08:37:59 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -106,22 +106,22 @@ static void usage(const char *prog)
 }
 
 
-int
-ggiKbhit(ggi_visual_t vis)
+static int
+ggiKbhit(ggi_visual_t _vis)
 {
 	struct timeval t={0,0};
 
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
 		!= emZero);
 }
 
-int
-ggiGetc(ggi_visual_t vis)
+static int
+ggiGetc(ggi_visual_t _vis)
 {
 	gii_event ev;
 
 	/* Block until we get a key. */
-	giiEventRead((gii_input)vis, &ev, emKeyPress | emKeyRepeat);
+	giiEventRead((gii_input)_vis, &ev, emKeyPress | emKeyRepeat);
 
 	return ev.key.sym;
 }

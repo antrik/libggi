@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.9 2006/03/27 14:50:34 pekberg Exp $
+/* $Id: stars.c,v 1.10 2006/04/08 08:37:59 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -70,21 +70,21 @@ static void InitStars(void);
 static void Transform(int *ta, int *tb);
 
 static int
-myKbhit(ggi_visual_t vis)
+myKbhit(ggi_visual_t _vis)
 {
 	struct timeval t={0,0};
 
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
+	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
 		!= emZero);
 }
 
 static int
-myGetc(ggi_visual_t vis)
+myGetc(ggi_visual_t _vis)
 {
 	gii_event ev;
 
 	/* Block until we get a key. */
-	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
+	giiEventRead(_vis, &ev, emKeyPress | emKeyRepeat);
 
 	return ev.key.sym;
 }
