@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.58 2006/03/30 04:42:38 cegger Exp $
+/* $Id: visual.c,v 1.59 2006/04/08 08:22:18 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -588,11 +588,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			if (STEM_HAS_API(vis->stem, gii)) {
 				inp = ggOpenModule(gii, vis->stem,
 					"input-xwin", NULL, &_args);
-				publisher = giiXwinGetPublisher(inp);
+#if 0
+				publisher = ???(inp);
 				observer = ggAddObserver(publisher, GGI_X_listener,
 						vis->stem);
 				priv->publisher = publisher;
 				priv->observer = observer;
+#endif
 			}
 		}
 
