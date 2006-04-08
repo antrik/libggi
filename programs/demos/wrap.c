@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.14 2006/03/17 21:55:42 cegger Exp $
+/* $Id: wrap.c,v 1.15 2006/04/08 08:51:18 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -23,7 +23,7 @@
  */
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
-#include <ggi/ggi-unix.h>
+#include <ggi/gii-unix.h>
 
 /* Include the necessary headers used for e.g. error-reporting.
  */
@@ -77,7 +77,7 @@
 
 struct client_t {
 	ggi_visual_t visual;
-	const char socket[PATH_MAX];
+	char socket[PATH_MAX];
 	int sockfd;
 	int semid;
 	int shmid;
@@ -108,7 +108,7 @@ static void init_client(client_t * client, ggi_mode * mode,
 
 	address.sun_family = AF_UNIX;
 	strcpy(address.sun_path, tmpnam(0));
-	strcpy((char *)client->socket, address.sun_path);
+	ggstrlcpy(client->socket, address.sun_path, sizeof(client->socket));
 
 	if (bind(client->sockfd, (const struct sockaddr *) (&address),
 		 sizeof(struct sockaddr_un))) {
@@ -128,7 +128,7 @@ static void init_client(client_t * client, ggi_mode * mode,
 	 */
 	sprintf(text, "display-memory:-input:shmid:%d", client->shmid);
 
-	if ((client->visual = ggiOpen(text, NULL)) == NULL) {
+	if ((ggiOpen(client->visual, text, NULL)) < 0) {
 		ggPanic("Ouch - can't open the shmem target !");
 	}	/* if */
 
@@ -184,22 +184,22 @@ static int wait_for_something(ggi_visual_t master, client_t * client)
 	/* wait for the client to notify us
 	 */
 	fd_set fds;
-	ggi_event event;
-	ggi_event_mask mask;
+	gii_event event;
+	gii_event_mask mask;
 	int nfds;
 
 	FD_SET(client->sockfd, &fds);
 	mask = emAll;
 	nfds =
-	    ggiEventSelect(master, &mask, client->sockfd + 1, &fds, 0, 0,
+	    giiEventSelect(master, &mask, client->sockfd + 1, &fds, 0, 0,
 			   0);
 	if (nfds == -1) {
 		if (errno == EINTR || errno == EAGAIN)
 			errno = 0;
 		return 0;
 	} else if (nfds == 0) {
-		ggiEventRead(master, &event, mask);
-		ggiEventSend(client->visual, &event);
+		giiEventRead(master, &event, mask);
+		giiEventSend(client->visual, &event);
 		return 0;
 	} else if (FD_ISSET(client->sockfd, &fds)) {
 		return 1;
@@ -232,6 +232,7 @@ static int repair_screen(client_t * client, ggi_visual_t visual)
 
 int main(int argc, char **argv)
 {
+	int rc;
 	ggi_visual_t visual;
 	ggi_mode mode = {	/* This will cause the default mode to be set */
 		1,		/* 1 frame */
@@ -263,8 +264,8 @@ int main(int argc, char **argv)
 		exit(1);
 	}	/* if */
 
-	visual = ggiOpen(NULL);
-	if (visual == NULL) {
+	rc = ggiOpen(visual, NULL);
+	if (rc < 0) {
 		fprintf(stderr,
 			"unable to open default visual, exiting.\n");
 		ggiExit();
