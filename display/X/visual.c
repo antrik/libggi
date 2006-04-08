@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.59 2006/04/08 08:22:18 cegger Exp $
+/* $Id: visual.c,v 1.60 2006/04/08 10:16:30 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -191,7 +191,6 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->slave) {
 		ggiClose(priv->slave->stem);
-		ggDelStem(priv->slave->stem);
 	}
 	priv->slave = NULL;
 
