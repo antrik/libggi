@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.39 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: shm.c,v 1.40 2006/04/11 16:57:11 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -131,7 +131,6 @@ static void _ggi_xshm_free_ximage(struct ggi_visual *vis) {
 
 	if (priv->slave) {
 		ggiClose(priv->slave->stem);
-		ggDelStem(priv->slave->stem);
 	}
 	priv->slave = NULL;
 
