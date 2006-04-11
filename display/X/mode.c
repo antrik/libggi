@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.61 2006/03/30 04:42:38 cegger Exp $
+/* $Id: mode.c,v 1.62 2006/04/11 17:57:10 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -709,7 +709,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		}
 		data.parentwin = priv->parentwin;
 		ggNotifyObservers(priv->publisher, GII_CMDCODE_XWINSETPARAM,
-				vis->stem);
+				&data);
 
 #if 0
 FIXME
