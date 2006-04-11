@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.2 2006/03/29 04:55:15 cegger Exp $
+/* $Id: listener.c,v 1.3 2006/04/11 18:06:19 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -34,8 +34,7 @@
 
 int GGI_X_listener(void *arg, int flag, void *data)
 {
-	ggi_visual_t stem = arg;
-	struct ggi_visual *vis = GGI_VISUAL(stem);
+	struct ggi_visual *vis = arg;
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	if (flag & GII_CMDCODE_RESIZE) {
