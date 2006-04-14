@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.10 2006/03/20 19:37:37 cegger Exp $
+/* $Id: quartz.h,v 1.11 2006/04/14 19:24:39 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -78,6 +78,8 @@ typedef struct {
 	ggi_gammastate	gamma;
 
 	struct gg_module *inp;
+	struct gg_publisher *publisher;
+	struct gg_observer *observer;
 
 	int enableUserResize;
 

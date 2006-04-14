@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2006/03/20 19:56:27 cegger Exp $
+/* $Id: mode.c,v 1.16 2006/04/14 19:24:39 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -641,22 +641,13 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 			/* Install event handler */
 			DPRINT_MODE("Do not install event handler\n");
 		} else {
-			gii_event ev;
 			gii_quartz_cmddata_setparam data;
 
-			DPRINT_MODE("update input-quartz event handler\n");
 			data.theWindow = priv->theWindow;
 			data.flags = GII_QZFLAG_UPDATE_WINDOW;
 
-			ev.cmd.size = sizeof(gii_cmd_event);
-			ev.cmd.type = evCommand;
-			ev.cmd.target = priv->inp->origin;
-			ev.cmd.code = GII_CMDCODE_QZSETPARAM;
-
-			/* Assure aligned memory access. */
-			memcpy(ev.cmd.data, &data, sizeof(gii_quartz_cmddata_setparam));
-
-			giiEventSend(priv->inp, &ev);
+			ggNotifyObservers(priv->publisher, GII_CMDCODE_QZSETPARAM,
+					&data);
 		}
 	}
 
