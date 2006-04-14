@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.62 2006/04/11 18:06:19 cegger Exp $
+/* $Id: visual.c,v 1.63 2006/04/14 19:29:29 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -572,8 +572,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gii_inputxwin_arg _args;
 		struct gg_module *inp = NULL;
 		struct gg_api *gii;
-		struct gg_publisher *publisher;
-		struct gg_observer *observer;
 
 		_args.disp = priv->disp;
 		_args.wait = 1;
@@ -584,16 +582,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.unlockfunc = (gii_inputxwin_unlockfunc*)priv->unlock_xlib;
                 _args.unlockarg = vis;
                 
-		if ((gii = ggGetAPIByName("gii")) != NULL) {
-			if (STEM_HAS_API(vis->stem, gii)) {
-				inp = ggOpenModule(gii, vis->stem,
+		gii = ggGetAPIByName("gii");
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
 					"input-xwin", NULL, &_args);
-				publisher = ggGetPublisher(gii, vis->stem, GII_PUBLISHER_SOURCE_CHANGE);
-				observer = ggAddObserver(publisher, GGI_X_listener,
-						vis);
-				priv->publisher = publisher;
-				priv->observer = observer;
-			}
+			priv->publisher = ggGetPublisher(gii,
+					vis->stem, GII_PUBLISHER_SOURCE_CHANGE);
+			priv->observer = ggAddObserver(priv->publisher, GGI_X_listener,
+					vis);
 		}
 
 		DPRINT_MISC("X: ggOpenModule returned with %p\n", inp);
