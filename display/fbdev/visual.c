@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.38 2006/03/22 20:22:27 cegger Exp $
+/* $Id: visual.c,v 1.39 2006/04/14 16:46:54 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -31,6 +31,8 @@
 #include <ggi/display/linvtsw.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,7 +128,7 @@ switchreq(void *arg)
 
 	DPRINT_MISC("display-fbdev: switchreq(%p) called\n", vis);
 
-	_giiEventBlank(&ev, sizeof(gii_cmd_event));
+	giiEventBlank(&ev, sizeof(gii_cmd_event));
 
 	data = (void *)ev.cmd.data;
 
@@ -136,7 +138,7 @@ switchreq(void *arg)
 	data->request = GGI_REQSW_UNMAP;
 
 	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
-	_giiSafeAdd(vis->input, &ev);
+	giiSafeAdd(vis->input, &ev);
 
 	priv->switchpending = 1;
 }
@@ -170,7 +172,7 @@ switchback(void *arg)
 
 	DPRINT_MISC("display-fbdev: switched_back(%p) called\n", vis);
 
-	_giiEventBlank(&ev, sizeof(gii_expose_event));
+	giiEventBlank(&ev, sizeof(gii_expose_event));
 
 	ev.any.size   = sizeof(gii_expose_event);
 	ev.any.type   = evExpose;
@@ -181,7 +183,7 @@ switchback(void *arg)
 
 	LIB_ASSERT(vis != NULL, "invalid visual\n");
 	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
-	_giiSafeAdd(vis->input, &ev);
+	giiSafeAdd(vis->input, &ev);
 	DPRINT_MISC("fbdev: EXPOSE sent.\n");
 
 #if 0
@@ -289,9 +291,10 @@ static int do_cleanup(struct ggi_visual *vis)
 		GGI_fbdev_mode_reset(vis);
 	}
 
-	if (vis->input != NULL) {
-		giiClose(vis->input);
-		vis->input = NULL;
+	if (priv->inp != NULL) {
+		/* XXX how do we handle multiple input modules? */
+		ggCloseModule(priv->inp);
+		priv->inp = NULL;
 	}
 
 	if (priv->normalgc) {
@@ -552,6 +555,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	const char *modedb = DEFAULT_MODEDB;
 	gg_option options[NUM_OPTS];
 	ggi_fbdev_priv *priv;
+	struct gg_api *gii;
 
 	DPRINT("display-fbdev: GGIdlinit start.\n");
 
@@ -575,6 +579,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
+	gii = ggGetAPIByName("gii");
 	priv = calloc(1, sizeof(ggi_fbdev_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
@@ -686,6 +691,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Open keyboard and mouse input */
 	if (priv->inputs & FBDEV_INP_KBD) {
+		struct gg_module *inp;
 		char strbuf[64];
 		const char *inputstr = "input-linux-kbd";
 
@@ -694,32 +700,42 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			inputstr = strbuf;
 		}
 
-		vis->input = giiOpen(inputstr, NULL);
-		if (vis->input == NULL) {
-			if (vtnum != -1) {
-				snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d",
-					vtnum);
-				vis->input = giiOpen(inputstr, NULL);
-			}
-			if (vis->input == NULL) {
-				fprintf(stderr,
-"display-fbdev: Unable to open linux-kbd, trying stdin input.\n");
-				/* We're on the Linux console so we want
-				   ansikey. */
-				vis->input = giiOpen("stdin:ansikey", NULL);
-				if (vis->input == NULL) {
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+				inputstr, NULL, NULL);
+			if (inp == NULL) {
+				if (vtnum != -1) {
+					snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d",
+						vtnum);
+					inp = ggOpenModule(gii, vis->stem,
+						inputstr, NULL, NULL);
+				}
+				if (inp == NULL) {
 					fprintf(stderr,
-"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
-					do_cleanup(vis);
-					return GGI_ENODEVICE;
+	"display-fbdev: Unable to open linux-kbd, trying stdin input.\n");
+					/* We're on the Linux console so we want
+					   ansikey. */
+					inp = ggOpenModule(gii, vis->stem,
+						"stdin:ansikey", NULL, NULL);
+					if (inp == NULL) {
+						fprintf(stderr,
+	"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
+						do_cleanup(vis);
+						return GGI_ENODEVICE;
+					}
 				}
 			}
+			/* XXX How do we handle multiple input modules? */
+			priv->inp = inp;
 		}
 	}
 	if (priv->inputs & FBDEV_INP_MOUSE) {
-		gii_input *inp;
-		if ((inp = giiOpen("linux-mouse:auto", &args, NULL)) != NULL) {
-			vis->input = giiJoinInputs(vis->input, inp);
+		struct gg_module *inp;
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+				"linux-mouse:auto", NULL, &args);
+			/* XXX How do we handle multiple input modules? */
+			priv->inp = inp;
 		}
 	}
 
