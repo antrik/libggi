@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.10 2006/03/20 20:28:38 cegger Exp $
+/* $Id: fbdev.h,v 1.11 2006/04/14 16:42:35 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -112,7 +112,7 @@ typedef struct {
 	int ismapped;
 	ggi_linvtsw_func *doswitch;
 	int inputs;
-	gii_input *inp;
+	struct gg_module *inp;
 
 	/* Acceleration */
 	int	iskgi;
