@@ -4,14 +4,10 @@ _ggi_global_lock
 _ggiAddDL
 _ggiExitDL
 _ggiZapDL
-_ggiDrawHLineNC
-_ggiDrawPixelNC
-_ggiDrawVLineNC
 _ggiGetSwarType
 _ggiIdleAccel
 _ggiInternFlush
 _ggiOpenDL
-_ggiPutPixelNC
 _ggiSendKGICommand
 _ggiZapMode
 _ggi_alloc_drvpriv

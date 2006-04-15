@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.33 2006/03/12 11:41:06 soyt Exp $
+/* $Id: internal.h,v 1.34 2006/04/15 09:39:00 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -124,10 +124,6 @@ GGIAPIFUNC int _ggi_physz_figure_size(ggi_mode * mode, int physzflag,
 /* stubs.c */
 GGIAPIFUNC int _ggiInternFlush(struct ggi_visual *vis, int x, int y, int w, int h,
 			       int tryflag);
-GGIAPIFUNC int _ggiPutPixelNC(struct ggi_visual *vis, int x, int y, ggi_pixel p);
-GGIAPIFUNC int _ggiDrawPixelNC(struct ggi_visual *vis, int x, int y);
-GGIAPIFUNC int _ggiDrawHLineNC(struct ggi_visual *vis, int x, int y, int w);
-GGIAPIFUNC int _ggiDrawVLineNC(struct ggi_visual *vis, int x, int y, int h);
 GGIAPIFUNC int _ggiIdleAccel(struct ggi_visual *vis);
 GGIAPIFUNC int _ggiSendKGICommand(struct ggi_visual *vis, int cmd, void *arg);
 
@@ -239,5 +235,101 @@ __END_DECLS
 #define LIBGGI_W_PLAN(vis)	((vis)->w_frame->buffer.plan)
 
 #define LIBGGI_PAL(vis)		((vis)->palette)
+
+/*
+******************************************************************************
+ Mirror API as macros for use within targets
+ The difference is, they expect a visual rather a stem as argument 
+******************************************************************************
+*/
+
+#define _ggiSetFlags(vis, flags)	(vis)->opdisplay->setflags((vis),(flags))
+#define _ggiGetAPI(vis, num, apiname, arguments)	\
+		(vis)->opdisplay->getapi((vis),(num),(apiname),(arguments))
+#define _ggiFlushRegion(vis, x,y, w,h)			\
+		(vis)->opdisplay->flush((vis), (x),(y), (w),(h), 1)
+#define _ggiFlush(vis)					\
+		_ggiFlushRegion((vis), 0, 0,		\
+			LIBGGI_VIRTX((vis)), LIBGGI_VIRTY((vis)))
+#define _ggiSetPalette(vis, s, len, cmap)		\
+		(vis)->opcolor->setpalvec((vis),(s),(len),(cmap))
+#define _ggiGetPalette(vis, s, len, cmap)		\
+		(vis)->opcolor->getpalvec((vis),(s),(len),(cmap))
+#define _ggiMapColor(vis, col)				\
+		(vis)->opcolor->mapcolor((vis),(col))
+#define _ggiUnmapPixel(vis, pixel, col)			\
+		(vis)->opcolor->unmappixel((vis),(pixel),(col))
+#define _ggiPackColors(vis, buf, cols, len)		\
+		(vis)->opcolor->packcolors((vis), (buf), (cols), (len))
+#define _ggiUnpackPixels(vis, buf, cols, len)		\
+		(vis)->opcolor->unpackpixels((vis), (buf), (cols), (len))
+#define _ggiGetGamma(vis, r, g, b)			\
+		(vis)->opcolor->getgamma((vis),(r),(g),(b))
+#define _ggiSetGamma(vis, r, g, b)			\
+		(vis)->opcolor->setgamma((vis),(r),(g),(b))
+#define _ggiSetGammaMap(vis, s, len, gammamap)		\
+		(vis)->opcolor->setgammamap((vis), (s), (len), (gammamap))
+#define _ggiGetGammaMap(vis, s, len, gammamap)		\
+		(vis)->opcolor->getgammamap((vis), (s), (len), (gammamap))
+#define _ggiSetOrigin(vis, x,y)				\
+		(vis)->opdraw->setorigin((vis),(x),(y))
+#define _ggiPutc(vis, x,y,c)				\
+		(vis)->opdraw->putc((vis),(x),(y),(c))
+#define _ggiPuts(vis, x,y, str)				\
+		(vis)->opdraw->puts((vis),(x),(y),(str))
+#define _ggiGetCharSize(vis, width, height)		\
+		(vis)->opdraw->getcharsize((vis),(width),(height))
+#define _ggiFillscreen(vis)				\
+		(vis)->opdraw->fillscreen((vis))
+#define _ggiDrawPixelNC(vis, x,y)			\
+		(vis)->opdraw->drawpixel_nc((vis),(x),(y))
+#define _ggiDrawPixel(vis, x,y)				\
+		(vis)->opdraw->drawpixel((vis),(x),(y))
+#define _ggiPutPixelNC(vis, x,y, col)			\
+		(vis)->opdraw->putpixel_nc((vis),(x),(y),(col))
+#define _ggiPutPixel(vis, x,y, col)			\
+		(vis)->opdraw->putpixel((vis),(x),(y),(col))
+#define _ggiGetPixel(vis, x,y, col)			\
+		(vis)->opdraw->getpixel((vis),(x),(y),(col))
+
+#define _ggiDrawLine(vis, x,y, xe,ye)			\
+		(vis)->opdraw->drawline((vis),(x),(y),(xe),(ye))
+#define _ggiDrawHLineNC(vis, x,y, w)			\
+		(vis)->opdraw->drawhline_nc((vis),(x),(y),(w))
+#define _ggiDrawHLine(vis, x,y, w)			\
+		(vis)->opdraw->drawhline((vis),(x),(y),(w))
+#define _ggiPutHLine(vis, x,y, w, buf)			\
+		(vis)->opdraw->puthline((vis),(x),(y),(w),(buf))
+#define _ggiGetHLine(vis, x,y, w, buf)			\
+		(vis)->opdraw->gethline((vis),(x),(y),(w), (buf))
+#define _ggiDrawVLineNC(vis, x,y, h)			\
+		(vis)->opdraw->drawvline_nc((vis),(x),(y), (h))
+#define _ggiDrawVLine(vis, x,y, h)			\
+		(vis)->opdraw->drawvline((vis),(x),(y), (h))
+#define _ggiPutVLine(vis, x,y, h, buf)			\
+		(vis)->opdraw->putvline((vis),(x),(y),(h),(buf))
+#define _ggiGetVLine(vis, x,y, h, buf)			\
+		(vis)->opdraw->getvline((vis),(x),(y),(h),(buf))
+#define _ggiDrawBox(vis, x,y, w,h)			\
+		(vis)->opdraw->drawbox((vis),(x),(y),(w),(h))
+#define _ggiPutBox(vis, x,y, w,h, buf)			\
+		(vis)->opdraw->putbox((vis),(x),(y),(w),(h), (buf))
+#define _ggiGetBox(vis, x,y, w,h, buf)			\
+		(vis)->opdraw->getbox((vis),(x),(y),(w),(h), (buf))
+#define _ggiCopyBox(vis, x,y, w,h, nx,ny)		\
+		(vis)->opdraw->copybox((vis),(x),(y),(w),(h),(nx),(ny))
+#define _ggiCrossBlit(s, sx,sy, w,h, d, dx,dy)		\
+		(d)->opdraw->crossblit((s),(sx),(sy),(w),(h),(d),(dx),(dy))
+
+#define _ggiSetDisplayFrame(vis, frameno)		\
+		(vis)->opdraw->setdisplayframe((vis),(frameno))
+#define _ggiSetReadFrame(vis, frameno)			\
+		(vis)->opdraw->setreadframe((vis),(frameno))
+#define _ggiSetWriteFrame(vis, frameno)			\
+		(vis)->opdraw->setwriteframe((vis),(frameno))
+#define _ggiGetDisplayFrame(vis)	(vis)->d_frame_num
+#define _ggiGetReadFrame(vis)		(vis)->r_frame_num
+#define _ggiGetWriteFrame(vis)		(vis)->w_frame_num
+
 
 #endif	/* _GGI_INTERNAL_H */
