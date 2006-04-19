@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.9 2006/03/22 19:54:46 cegger Exp $
+/* $Id: stubs.c,v 1.10 2006/04/19 21:22:22 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -41,7 +41,7 @@ int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 	int i;
 
 	for (i=0; i < priv->numvis; i++) {
-		ggiFlushRegion(priv->vislist[i].vis->stem, x, y, w, h);
+		ggiFlushRegion(priv->vislist[i].vis, x, y, w, h);
 	}
 
 	return 0;
@@ -61,7 +61,7 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 		mask &= ~GGI_GCCHANGED_CLIP;
 
 	for(i=0; i<priv->numvis; i++) {
-		currvis = priv->vislist[i].vis;
+		currvis = GGI_VISUAL(priv->vislist[i].vis);
 
 #if 0	/* Don't blindly copy the GC. */
 		memcpy(LIBGGI_GC(currvis), LIBGGI_GC(vis), sizeof(ggi_gc));
@@ -120,7 +120,7 @@ int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _le
 		if (length <= 0 || width <= 0 )
 			continue;
 
-		ggiDrawBox(priv->vislist[i].vis->stem,
+		ggiDrawBox(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width, length);
 	}
 
@@ -164,7 +164,7 @@ int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiPutHLine(priv->vislist[i].vis->stem,
+			ggiPutHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((const uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -210,7 +210,7 @@ int GGI_tile_getbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiGetHLine(priv->vislist[i].vis->stem,
+			ggiGetHLine(priv->vislist[i].vis,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -241,7 +241,7 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 			continue;
 		}
 
-		return ggiCopyBox(priv->vislist[i].vis->stem,
+		return ggiCopyBox(priv->vislist[i].vis,
 				  x - cliptl.x, y - cliptl.y, width, height,
 				  nx - cliptl.x, ny - cliptl.y);
 	}
@@ -267,7 +267,7 @@ int GGI_tile_fillscreen(struct ggi_visual *vis)
 	int i;
 
 	for(i = 0; i<priv->numvis; i++)
-		ggiFillscreen(priv->vislist[i].vis->stem);
+		ggiFillscreen(priv->vislist[i].vis);
 
 	return 0;
 }
@@ -338,7 +338,7 @@ int GGI_tile_drawhline_nc(struct ggi_visual *vis,int _x,int y,int _width)
 		if (width <= 0)
 			continue;
 
-		_ggiDrawHLineNC(priv->vislist[i].vis,
+		_ggiDrawHLineNC(GGI_VISUAL(priv->vislist[i].vis),
 			x - cliptl.x, y - cliptl.y, width);
 	}
 
@@ -393,7 +393,7 @@ int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void 
 		if (width <= 0)
 			continue;
 
-		ggiPutHLine(priv->vislist[i].vis->stem,
+		ggiPutHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
 			((const uint8_t*)buffer + diff*rowadd));
 	}
@@ -431,7 +431,7 @@ int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffe
 		if (width <= 0)
 			continue;
 
-		ggiGetHLine(priv->vislist[i].vis->stem,
+		ggiGetHLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, width,
 			((uint8_t*)buffer + diff*rowadd));
 	}
@@ -466,7 +466,7 @@ int GGI_tile_drawvline_nc(struct ggi_visual *vis,int x,int _y,int _height)
 		if (length <= 0)
 			continue;
 
-		_ggiDrawVLineNC(priv->vislist[i].vis,
+		_ggiDrawVLineNC(GGI_VISUAL(priv->vislist[i].vis),
 			x - cliptl.x, y - cliptl.y, length);
  	}
 
@@ -523,7 +523,7 @@ int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void
 		if (length <= 0)
 			continue;
 
-		ggiPutVLine(priv->vislist[i].vis->stem,
+		ggiPutVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
 			((const uint8_t*)buffer + diff*rowadd));
  	}
@@ -561,7 +561,7 @@ int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buff
 		if (length <= 0)
 			continue;
 
-		ggiGetVLine(priv->vislist[i].vis->stem,
+		ggiGetVLine(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, length,
 			((uint8_t*)buffer + diff*rowadd));
  	}
@@ -584,7 +584,7 @@ int GGI_tile_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		_ggiDrawPixelNC(priv->vislist[i].vis,
+		_ggiDrawPixelNC(GGI_VISUAL(priv->vislist[i].vis),
 			x - cliptl.x, y - cliptl.y);
 	}
 
@@ -612,7 +612,7 @@ int GGI_tile_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		ggiPutPixel(priv->vislist[i].vis->stem,
+		ggiPutPixel(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 
@@ -639,7 +639,7 @@ int GGI_tile_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
-		return ggiGetPixel(priv->vislist[i].vis->stem,
+		return ggiGetPixel(priv->vislist[i].vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 

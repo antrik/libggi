@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2006/03/22 19:54:46 cegger Exp $
+/* $Id: mode.c,v 1.22 2006/04/19 21:22:22 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -44,7 +44,7 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	int i, width, height;
 	int nx, ny, nw, nh;
-	struct ggi_visual *currvis;
+	ggi_visual_t currvis;
 
 #if 0
 	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
@@ -85,16 +85,19 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 	stride = priv->d_frame->buffer.plb.stride;
 
 	for(i = 0; i<priv->numvis; i++) {
+		struct ggi_visual *_vis;
+
 		currvis = priv->vislist[i].vis;
 		width = priv->vislist[i].size.x;
 		height = priv->vislist[i].size.y - 1;
+		_vis = GGI_VISUAL(currvis);
 
 		buf = (uint8_t*)priv->d_frame->read +
 				stride * (priv->vislist[i].origin.y + vis->origin_y + height) +
 				rowadd * (priv->vislist[i].origin.x + vis->origin_x);
 
 		do {
-			ggiPutHLine(currvis->stem, 0, height, width, buf);
+			ggiPutHLine(currvis, 0, height, width, buf);
 			buf -= stride;
 		} while(height--);
 #endif
@@ -104,13 +107,13 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 		ny = y - priv->vislist[i].origin.y;
 		nh = h - priv->vislist[i].origin.y;
 		if (nx < 0) nx = 0;
-		else if (nx > LIBGGI_X(currvis)) continue;
+		else if (nx > LIBGGI_X(_vis)) continue;
 		if (ny < 0) ny = 0;
-		else if (ny > LIBGGI_Y(currvis)) continue;
-		if (nx + nw > LIBGGI_X(currvis)) nw = LIBGGI_X(currvis) - nx;
-		if (ny + nh > LIBGGI_Y(currvis)) nh = LIBGGI_Y(currvis) - ny;
+		else if (ny > LIBGGI_Y(_vis)) continue;
+		if (nx + nw > LIBGGI_X(_vis)) nw = LIBGGI_X(_vis) - nx;
+		if (ny + nh > LIBGGI_Y(_vis)) nh = LIBGGI_Y(_vis) - ny;
 
-		_ggiInternFlush(currvis, nx, ny, nw, nh, tryflag);
+		_ggiInternFlush(_vis, nx, ny, nw, nh, tryflag);
 	}
 	
 	if(priv->use_db) {
@@ -226,7 +229,7 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_tile_priv *priv;
 	/*int, currbuf, maxbuf=0;*/
-	struct ggi_visual *currvis;
+	ggi_visual_t currvis;
 	ggi_mode sugmode;
 	int depth, err, i;
 
@@ -267,11 +270,14 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 	}
 	
 	for (i = 0; i<priv->numvis; i++) {
+		struct ggi_visual *_vis;
+
 		currvis = priv->vislist[i].vis;
 		sugmode = *tm;
 		sugmode.visible.x = priv->vislist[i].size.x;
 		sugmode.visible.y = priv->vislist[i].size.y;
-		sugmode.virt.x=sugmode.virt.y=GGI_AUTO;
+		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
+		_vis = GGI_VISUAL(currvis);
 
 		/* Multiple buffering is handled by us in DB mode */
 		if(priv->use_db)
@@ -282,7 +288,7 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 		/* Set mode mantra from lib/libggi/mode.c.  Be careful here.
 		   See GGIcheckmode() for why we do this. */
 
-		err = ggiSetMode(currvis->stem, &sugmode);
+		err = ggiSetMode(currvis, &sugmode);
 		if (err) {
 			fprintf(stderr, "display-tile: Error setting mode on visual #%d!\n", i);
 			return err;
@@ -321,7 +327,7 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 	}
 
 	/* Assume first visual's pixelformat properties */
-	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(priv->vislist[0].vis), 
+	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(GGI_VISUAL(priv->vislist[0].vis)), 
 		sizeof(ggi_pixelformat));
 
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
@@ -401,7 +407,7 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 		sugmode.dpp  = tm->dpp;
 		sugmode.size = tm->size;
 
-		err = ggiCheckMode(priv->vislist[i].vis->stem, &sugmode);
+		err = ggiCheckMode(priv->vislist[i].vis, &sugmode);
 		if (err) {
 			/* Forget searching all visuals for the source of
 			   error, it's way too complicated. Just say fail
@@ -448,7 +454,7 @@ int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
 	} else {
 		int i;
 		for (i = 0; i<priv->numvis; i++) {
-			ggiSetFlags(priv->vislist[i].vis->stem, flags);
+			ggiSetFlags(priv->vislist[i].vis, flags);
 		}
 	}	
 

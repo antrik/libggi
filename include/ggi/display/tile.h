@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.7 2006/03/20 20:28:38 cegger Exp $
+/* $Id: tile.h,v 1.8 2006/04/19 21:22:21 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -89,7 +89,7 @@ typedef struct {
 
 	int numvis;
 	struct {
-		struct ggi_visual *vis;
+		ggi_visual_t vis;
 		ggi_coord origin;	/* Start of tile. Also clip area topleft. */
 		ggi_coord clipbr;	/* Clip area bottom right. */
 		ggi_coord size;		/* Dimensions of tile. */

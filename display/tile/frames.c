@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.7 2006/03/22 19:54:46 cegger Exp $
+/* $Id: frames.c,v 1.8 2006/04/19 21:22:22 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -58,7 +58,7 @@ int GGI_tile_setdisplayframe(struct ggi_visual *vis, int num)
 	int rc;
 
 	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetDisplayFrame(priv->vislist[i].vis->stem, num);
+		rc = ggiSetDisplayFrame(priv->vislist[i].vis, num);
 		if (rc < 0) return rc;
 	}
 
@@ -72,7 +72,7 @@ int GGI_tile_setreadframe(struct ggi_visual *vis, int num)
 	int rc;
 
 	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetReadFrame(priv->vislist[i].vis->stem, num);
+		rc = ggiSetReadFrame(priv->vislist[i].vis, num);
 		if (rc < 0) return rc;
 	}
 
@@ -86,7 +86,7 @@ int GGI_tile_setwriteframe(struct ggi_visual *vis, int num)
 	int rc;
 
 	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetWriteFrame(priv->vislist[i].vis->stem, num);
+		rc = ggiSetWriteFrame(priv->vislist[i].vis, num);
 		if (rc < 0) return rc;
 	}
 

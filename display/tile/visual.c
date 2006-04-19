@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/03/22 19:54:46 cegger Exp $
+/* $Id: visual.c,v 1.22 2006/04/19 21:22:22 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -33,6 +33,10 @@
 #include "config.h"
 #include <ggi/display/tile.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
+
 
 void _GGI_tile_freedbs(struct ggi_visual *vis)
 {
@@ -44,6 +48,28 @@ void _GGI_tile_freedbs(struct ggi_visual *vis)
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
 	}
 }
+
+
+static int
+transfer_gii_src(void *arg, int flag, void *data)
+{
+	struct ggi_visual *vis = arg;
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct gii_source *src = data;
+
+	if (flag == GII_PUBLISH_SOURCE_OPENED) {
+		int i;
+
+		DPRINT_MISC("transfer_gii_src: Collect input source: %i\n",
+			src->origin);
+		for (i = 0; i < priv->numvis; i++) {
+			/* Ignore error for child-visuals we already transfered */
+			giiTransfer(priv->vislist[i].vis, vis->stem, src->origin);
+		}
+	}
+	return 0;
+}
+
 
 
 static const char argument_format[] = "display-tile:\n\
@@ -61,6 +87,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	char target[1024];
 	int sx, sy, vx, vy, n, i=0;
 	int err = GGI_ENOMEM;
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
 
 	DPRINT_LIBS("GGIopen(%p, %p, %s, %p, %u) entered\n",
 			(void *)vis, (void *)dlh, args, argptr, dlret);
@@ -87,6 +115,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->buf = NULL;
 	priv->use_db = 1;
+
+	api = ggGetAPIByName("gii");
 
 	/* parse each visual */
 	for (;;) {
@@ -133,7 +163,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->vislist[i].size.x = vx;
 		priv->vislist[i].size.y = vy;
 
-		args = ggParseTarget(args, target, 1024);
+		args = ggParseTarget(args, target, sizeof(target));
 
 		if (! args) {
 			fprintf(stderr,"display-tile: parsetarget error.\n");
@@ -141,28 +171,68 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		if (*target == '\0') {
-			strcpy(target, "auto");
+			ggstrlcpy(target, "auto", sizeof(target));
 		}
 
 		DPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
 			i, target, sx, sy, vx, vy);
 
-		if (! (priv->vislist[i].vis = ggiOpen(target,NULL)) ) {
-			fprintf(stderr,"display-tile: Opening of target %s failed.\n", target);
+		priv->vislist[i].vis = ggNewStem();
+		if (priv->vislist[i].vis == NULL) {
+			fprintf(stderr,
+				"display-tile: Failed to create stem for target '%s'\n",
+				target);
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
+		/* XXX Should iterate over the apis attached to vis->stem
+		 * instead of only looking for ggi and gii.
+		 */
+		if (ggiAttach(priv->vislist[i].vis) < 0) {
+			ggDelStem(priv->vislist[i].vis);
+			priv->vislist[i].vis = NULL;
+			fprintf(stderr,
+				"display-tile: Failed to attach ggi to stem for target '%s'\n",
+				target);
+			err = GGI_ENODEVICE;
+			goto out_freeopmansync;
+		}
+		if (api != NULL && STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, priv->vislist[i].vis) < 0) {
+				ggDelStem(priv->vislist[i].vis);
+				priv->vislist[i].vis = NULL;
+				fprintf(stderr,
+					"display-tile: Failed to attach gii to stem for target '%s'\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto out_freeopmansync;
+			}
+			obs = ggAddObserver(ggGetPublisher(api, priv->vislist[i].vis,
+						GII_PUBLISHER_SOURCE_CHANGE),
+					transfer_gii_src, vis);
+		}
+
+		if (ggiOpen(priv->vislist[i].vis, target,NULL) < 0) {
+			if (obs != NULL) {
+				ggDelObserver(obs);
+				obs = NULL;
+			}
+			fprintf(stderr,"display-tile: Opening of target %s failed.\n", target);
+			ggDelStem(priv->vislist[i].vis);
+			priv->vislist[i].vis = NULL;
+			err = GGI_ENODEVICE;
+			goto out_freeopmansync;
+		}
+		if (obs != NULL) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
 
 		DPRINT_MISC("GGIopen: Collect input sources\n");
-		/* Add giiInputs, if we have them. */
-		if (priv->vislist[i].vis->input) {
-			vis->input=giiJoinInputs(vis->input,priv->vislist[i].vis->input);
-			priv->vislist[i].vis->input=NULL;	/* Destroy old reference */
-		}
 
 		if (priv->use_db) {
 			/* Don't need SYNC mode, we do it ourselves */
-			ggiSetFlags(priv->vislist[i].vis->stem, GGIFLAG_ASYNC);
+			ggiSetFlags(priv->vislist[i].vis, GGIFLAG_ASYNC);
 		}
 
 		/* check for ':' separator */
