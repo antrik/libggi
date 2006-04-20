@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2006/04/19 21:22:22 cegger Exp $
+/* $Id: visual.c,v 1.23 2006/04/20 16:56:25 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -49,23 +49,19 @@ void _GGI_tile_freedbs(struct ggi_visual *vis)
 	}
 }
 
+struct transfer {
+	struct gg_stem *src;
+	struct gg_stem *dst;
+};
 
 static int
 transfer_gii_src(void *arg, int flag, void *data)
 {
-	struct ggi_visual *vis = arg;
-	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct transfer *xfer = arg;
 	struct gii_source *src = data;
 
 	if (flag == GII_PUBLISH_SOURCE_OPENED) {
-		int i;
-
-		DPRINT_MISC("transfer_gii_src: Collect input source: %i\n",
-			src->origin);
-		for (i = 0; i < priv->numvis; i++) {
-			/* Ignore error for child-visuals we already transfered */
-			giiTransfer(priv->vislist[i].vis, vis->stem, src->origin);
-		}
+		giiTransfer(xfer->src, xfer->dst, src->origin);
 	}
 	return 0;
 }
@@ -89,6 +85,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = GGI_ENOMEM;
 	struct gg_api *api;
 	struct gg_observer *obs = NULL;
+	struct transfer xfer;
 
 	DPRINT_LIBS("GGIopen(%p, %p, %s, %p, %u) entered\n",
 			(void *)vis, (void *)dlh, args, argptr, dlret);
@@ -207,9 +204,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freeopmansync;
 			}
+			xfer.src = priv->vislist[i].vis;
+			xfer.dst = vis->stem;
 			obs = ggAddObserver(ggGetPublisher(api, priv->vislist[i].vis,
 						GII_PUBLISHER_SOURCE_CHANGE),
-					transfer_gii_src, vis);
+					transfer_gii_src, &xfer);
 		}
 
 		if (ggiOpen(priv->vislist[i].vis, target,NULL) < 0) {
