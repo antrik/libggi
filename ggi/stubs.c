@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.18 2006/04/15 09:39:00 cegger Exp $
+/* $Id: stubs.c,v 1.19 2006/04/28 08:56:02 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -36,17 +36,20 @@
 int ggiSetFlags(ggi_visual_t v,ggi_flags flags)
 {  
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetFlags(vis, flags);
 }
 ggi_flags ggiGetFlags(ggi_visual_t v)
 {  
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return LIBGGI_FLAGS(vis);
 }
 
 const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return LIBGGI_PIXFMT(vis);
 }
 
@@ -58,6 +61,7 @@ ggi_lib_id ggiExtensionLoadDL(ggi_visual_t v, const void *conffilehandle,
 			      const char *symprefix)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return (ggi_lib_id)_ggiAddExtDL(vis, conffilehandle,
 					api, args, argptr,
 					symprefix);
@@ -66,6 +70,7 @@ ggi_lib_id ggiExtensionLoadDL(ggi_visual_t v, const void *conffilehandle,
 int ggiGetAPI(ggi_visual_t v, int num, char *apiname, char *arguments)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return vis->opdisplay->getapi(vis, num, apiname, arguments);
 }
 
@@ -77,12 +82,14 @@ int ggiGetAPI(ggi_visual_t v, int num, char *apiname, char *arguments)
 int ggiFlush(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiFlush(vis);
 }
 
 int ggiFlushRegion(ggi_visual_t v, int x, int y, int w, int h)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	/* Do sanity check here so targets can assume correct values */
 	if (x < 0) x = 0;
 	else if (x > LIBGGI_VIRTX(vis)) return GGI_EARGINVAL;
@@ -118,6 +125,7 @@ int ggiSetPalette(ggi_visual_t v,int s,int len,const ggi_color *cmap)
 { 
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(cmap != NULL, "ggiSetPalette() called with NULL colormap.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if (cmap == NULL) return GGI_EARGINVAL;
 	return _ggiSetPalette(vis, s, len, cmap);
 }
@@ -127,6 +135,7 @@ int ggiGetPalette(ggi_visual_t v,int s,int len,ggi_color *cmap)
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(!( (cmap == NULL) && (len > 0)),
 		"ggiGetPalette() called with NULL colormap when len>0.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if ( (cmap == NULL) && (len > 0)) return GGI_EARGREQ;
 	return _ggiGetPalette(vis, s, len, cmap);
 }
@@ -135,6 +144,7 @@ ggi_pixel ggiMapColor(ggi_visual_t v, const ggi_color *col)
 { 
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(col != NULL, "ggiMapColor() called with NULL color.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if (col == NULL) return GGI_EARGINVAL;
 	return _ggiMapColor(vis, col);
 }
@@ -143,6 +153,7 @@ int ggiUnmapPixel(ggi_visual_t v,ggi_pixel pixel,ggi_color *col)
 { 
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(col != NULL, "ggiUnmapPixel() called with NULL color.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if (col == NULL) return GGI_EARGINVAL;
 	return _ggiUnmapPixel(vis, pixel, col);
 }
@@ -152,6 +163,7 @@ int ggiPackColors(ggi_visual_t v,void *buf,const ggi_color *cols,int len)
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(!( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ),
 		"ggiUnpackPixels() called with NULL pixel-buffer or color-buffer when len>0.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if ( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ) return GGI_EARGREQ;
 	return _ggiPackColors(vis, buf, cols, len);
 }
@@ -161,6 +173,7 @@ int ggiUnpackPixels(ggi_visual_t v,const void *buf,ggi_color *cols,int len)
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	APP_ASSERT(!( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ),
 		"ggiUnpackPixels() called with NULL pixel-buffer or color-buffer when len>0.");
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if ( ( (cols == NULL) || (buf == NULL) ) && (len > 0) ) return GGI_EARGREQ;
 	return _ggiUnpackPixels(vis, buf, cols, len);
 }
@@ -173,6 +186,7 @@ int ggiSetColorfulPalette(ggi_visual_t v)
 	int numcols = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	ggi_color *pal;
 
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if (GT_SCHEME(LIBGGI_GT(vis)) != GT_PALETTE) return GGI_EARGINVAL;
 
 	pal = malloc(sizeof(ggi_color) * numcols);
@@ -196,30 +210,35 @@ int ggiSetColorfulPalette(ggi_visual_t v)
 int  ggiGetGamma(ggi_visual_t v,ggi_float *r,ggi_float *g,ggi_float *b)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetGamma(vis, r,g,b);
 }
 
 int  ggiSetGamma(ggi_visual_t v,ggi_float  r,ggi_float  g,ggi_float  b)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetGamma(vis, r,g,b);
 }
 
 int  ggiGetGammaMap(ggi_visual_t v,int s,int len,ggi_color *gammamap)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetGammaMap(vis, s, len, gammamap);
 }
 
 int  ggiSetGammaMap(ggi_visual_t v,int s,int len,const ggi_color *gammamap)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetGammaMap(vis, s, len, gammamap);
 }
 
 int ggiGammaMax(ggi_visual_t v, uint32_t bitmeaning, int *max_r, int *max_w)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	if (!vis->gamma) return GGI_EARGINVAL;
 	switch(bitmeaning) {
 	case GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED:
@@ -260,12 +279,14 @@ int ggiGammaMax(ggi_visual_t v, uint32_t bitmeaning, int *max_r, int *max_w)
 int ggiSetOrigin(ggi_visual_t v,int x,int y)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetOrigin(vis, x,y);
 }
 
 int ggiGetOrigin(ggi_visual_t v,int *x, int *y)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	*x = vis->origin_x; *y = vis->origin_y;
 	return 0;
 }
@@ -276,24 +297,28 @@ int ggiGetOrigin(ggi_visual_t v,int *x, int *y)
 int ggiPutc(ggi_visual_t v,int x,int y,char c)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPutc(vis, x,y, c);
 }
 
 int ggiPuts(ggi_visual_t v,int x,int y,const char *str)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPuts(vis, x,y, str);
 }
 
 int ggiGetCharSize(ggi_visual_t v, int *width, int *height)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetCharSize(vis, width, height);
 }
 
 int ggiFillscreen(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiFillscreen(vis);
 }
 
@@ -301,18 +326,21 @@ int ggiFillscreen(ggi_visual_t v)
 int ggiDrawPixel(ggi_visual_t v,int x,int y)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiDrawPixel(vis, x,y);
 }
 
 int ggiPutPixel(ggi_visual_t v,int x,int y,ggi_pixel col)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPutPixel(vis, x,y, col);
 }
 
 int ggiGetPixel(ggi_visual_t v,int x,int y,ggi_pixel *col)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetPixel(vis, x,y, col);
 }
 
@@ -321,60 +349,70 @@ int ggiGetPixel(ggi_visual_t v,int x,int y,ggi_pixel *col)
 int ggiDrawLine(ggi_visual_t v,int x,int y,int xe,int ye)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiDrawLine(vis, x,y, xe,ye);
 }
 
 int ggiDrawHLine(ggi_visual_t v,int x,int y,int w)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiDrawHLine(vis, x,y, w);
 }
 
 int ggiPutHLine(ggi_visual_t v,int x,int y,int w,const void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPutHLine(vis, x,y, w, buf);
 }
 
 int ggiGetHLine(ggi_visual_t v,int x,int y,int w,void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetHLine(vis, x,y, w, buf);
 }
 
 int ggiDrawVLine(ggi_visual_t v,int x,int y,int h)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiDrawVLine(vis, x,y, h);
 }
 
 int ggiPutVLine(ggi_visual_t v,int x,int y,int h,const void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPutVLine(vis, x,y, h, buf);
 }
 
 int ggiGetVLine(ggi_visual_t v,int x,int y,int h,void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetVLine(vis, x,y, h, buf);
 }
 
 int ggiDrawBox(ggi_visual_t v,int x,int y,int w,int h)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiDrawBox(vis, x,y, w,h);
 }
 
 int ggiPutBox(ggi_visual_t v,int x,int y,int w,int h,const void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiPutBox(vis, x,y, w,h, buf);
 }
 
 int ggiGetBox(ggi_visual_t v,int x,int y,int w,int h,void *buf)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetBox(vis, x,y, w,h, buf);
 }
 
@@ -382,6 +420,7 @@ int ggiGetBox(ggi_visual_t v,int x,int y,int w,int h,void *buf)
 int ggiCopyBox(ggi_visual_t v,int x,int y,int w,int h,int nx,int ny)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiCopyBox(vis, x,y, w,h, nx,ny);
 }
 
@@ -391,6 +430,8 @@ int ggiCrossBlit(ggi_visual_t s,int sx,int sy,int w,int h,
 	struct ggi_visual *src = GGI_VISUAL(s);
 	struct ggi_visual *dst = GGI_VISUAL(d);
 
+	LIB_ASSERT(src != NULL, "broken/invalid visual\n");
+	LIB_ASSERT(dst != NULL, "broken/invalid visual\n");
 
 	if (src == dst) {
 		return _ggiCopyBox(dst, sx, sy, w, h, dx, dy);
@@ -407,36 +448,42 @@ int ggiCrossBlit(ggi_visual_t s,int sx,int sy,int w,int h,
 int ggiSetDisplayFrame(ggi_visual_t v, int frameno)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetDisplayFrame(vis, frameno);
 }
 
 int ggiSetReadFrame(ggi_visual_t v, int frameno)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetReadFrame(vis, frameno);
 }
 
 int ggiSetWriteFrame(ggi_visual_t v, int frameno)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetWriteFrame(vis, frameno);
 }
 
 int ggiGetDisplayFrame(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetDisplayFrame(vis);
 }
 
 int ggiGetReadFrame(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetReadFrame(vis);
 }
 
 int ggiGetWriteFrame(ggi_visual_t v)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
+	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetWriteFrame(vis);
 }
 
