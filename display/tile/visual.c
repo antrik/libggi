@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2006/04/20 16:56:25 cegger Exp $
+/* $Id: visual.c,v 1.24 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -110,6 +110,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_freegc;
 	}
 
+	GG_TAILQ_INIT(&priv->vislist);
 	priv->buf = NULL;
 	priv->use_db = 1;
 
@@ -117,6 +118,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* parse each visual */
 	for (;;) {
+		struct multi_vis *mvis;
 		sx = sy = vx = vy = 0;
 
 		while (*args && isspace((uint8_t)*args)) args++;
@@ -134,12 +136,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			args += 6; continue;
 		}
 
-		/* Avoid overflowing tables. If someone ever needs more than
-		   256 we'll do dynamic allocation instead. */
-		if (i==MAX_VISUALS) {
-			ggPanic("display-tile: FIXME: visual limit reached!\n");
-		}
-
 		err = GGI_EARGINVAL;
 
 		if ((sscanf(args, "%d , %d , %d , %d %n", &sx, &sy,
@@ -155,10 +151,16 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out_freeopmansync;
 		}
 
-		priv->vislist[i].origin.x = sx;
-		priv->vislist[i].origin.y = sy;
-		priv->vislist[i].size.x = vx;
-		priv->vislist[i].size.y = vy;
+		mvis = calloc(1, sizeof(struct multi_vis));
+		if (mvis == NULL) {
+			fprintf(stderr, "display-tile: out of memory\n");
+			goto out_freeopmansync;
+		}
+
+		mvis->origin.x = sx;
+		mvis->origin.y = sy;
+		mvis->size.x = vx;
+		mvis->size.y = vy;
 
 		args = ggParseTarget(args, target, sizeof(target));
 
@@ -174,8 +176,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
 			i, target, sx, sy, vx, vy);
 
-		priv->vislist[i].vis = ggNewStem();
-		if (priv->vislist[i].vis == NULL) {
+		mvis->vis = ggNewStem();
+		if (mvis->vis == NULL) {
 			fprintf(stderr,
 				"display-tile: Failed to create stem for target '%s'\n",
 				target);
@@ -185,9 +187,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* XXX Should iterate over the apis attached to vis->stem
 		 * instead of only looking for ggi and gii.
 		 */
-		if (ggiAttach(priv->vislist[i].vis) < 0) {
-			ggDelStem(priv->vislist[i].vis);
-			priv->vislist[i].vis = NULL;
+		if (ggiAttach(mvis->vis) < 0) {
+			ggDelStem(mvis->vis);
+			mvis->vis = NULL;
 			fprintf(stderr,
 				"display-tile: Failed to attach ggi to stem for target '%s'\n",
 				target);
@@ -195,30 +197,30 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out_freeopmansync;
 		}
 		if (api != NULL && STEM_HAS_API(vis->stem, api)) {
-			if (ggAttach(api, priv->vislist[i].vis) < 0) {
-				ggDelStem(priv->vislist[i].vis);
-				priv->vislist[i].vis = NULL;
+			if (ggAttach(api, mvis->vis) < 0) {
+				ggDelStem(mvis->vis);
+				mvis->vis = NULL;
 				fprintf(stderr,
 					"display-tile: Failed to attach gii to stem for target '%s'\n",
 					target);
 				err = GGI_ENODEVICE;
 				goto out_freeopmansync;
 			}
-			xfer.src = priv->vislist[i].vis;
+			xfer.src = mvis->vis;
 			xfer.dst = vis->stem;
-			obs = ggAddObserver(ggGetPublisher(api, priv->vislist[i].vis,
+			obs = ggAddObserver(ggGetPublisher(api, mvis->vis,
 						GII_PUBLISHER_SOURCE_CHANGE),
 					transfer_gii_src, &xfer);
 		}
 
-		if (ggiOpen(priv->vislist[i].vis, target,NULL) < 0) {
+		if (ggiOpen(mvis->vis, target,NULL) < 0) {
 			if (obs != NULL) {
 				ggDelObserver(obs);
 				obs = NULL;
 			}
 			fprintf(stderr,"display-tile: Opening of target %s failed.\n", target);
-			ggDelStem(priv->vislist[i].vis);
-			priv->vislist[i].vis = NULL;
+			ggDelStem(mvis->vis);
+			mvis->vis = NULL;
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
@@ -231,7 +233,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (priv->use_db) {
 			/* Don't need SYNC mode, we do it ourselves */
-			ggiSetFlags(priv->vislist[i].vis, GGIFLAG_ASYNC);
+			ggiSetFlags(mvis->vis, GGIFLAG_ASYNC);
 		}
 
 		/* check for ':' separator */
@@ -246,11 +248,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (*args == ':') args++;
 		i++;
+
+		tile_INSERT(priv, mvis);
 	}
 
-	priv->numvis=i;
-
-	if (priv->numvis == 0) {
+	if (i == 0) {
 		fprintf(stderr, "display-tile needs the real targets as arguments.\n");
 		err = GGI_EARGINVAL;
 		goto out_freeopmansync;
@@ -290,9 +292,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_closevisuals:
 	/* Close opened visuals. */
-	while (i--) {
-		ggiClose(priv->vislist[i].vis);
+#if 0
+	tile_FOREACH(priv->vislist, i) {
+		ggiClose();
 	}
+#endif
   out_freeopmansync:
 	free(priv->opmansync);
   out_freegc:
@@ -306,7 +310,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 
 	DPRINT_LIBS("GGIclose(%p, %p) entered\n",
 			(void *)vis, (void *)dlh);
@@ -321,8 +325,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	 * if external dependencies (like saving/restoring state on subsystems
 	 * that are used by multiple targets).
 	 */
-	for (i = priv->numvis; i>=0; i--) {
-		ggiClose(priv->vislist[i].vis);
+	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+		elm = tile_FIRST(priv);
+		tile_REMOVE(priv, elm);
+		ggiClose(elm->vis);
+		free(elm);		
 	}
 
 	free(priv->opmansync);

@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.8 2006/04/19 21:22:21 cegger Exp $
+/* $Id: tile.h,v 1.9 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -82,18 +82,21 @@ ggifunc_unmappixel	GGI_tile_unmappixel;
 ggifunc_setpalvec	GGI_tile_setpalvec;
 ggifunc_getpalvec	GGI_tile_getpalvec;
 
-#define MAX_VISUALS 256		/* This is an outrage! */
+
+struct multi_vis {
+
+	GG_TAILQ_ENTRY(multi_vis) visuals;
+
+	ggi_visual_t vis;
+	ggi_coord origin;		/* Start of tile. Also clip area topleft. */
+	ggi_coord clipbr;		/* Clip area bottom right. */
+	ggi_coord size;			/* Dimensions of tile. */
+};
 
 typedef struct {
 	int use_db;			/* Emulate DirectBuffer ? */
 
-	int numvis;
-	struct {
-		ggi_visual_t vis;
-		ggi_coord origin;	/* Start of tile. Also clip area topleft. */
-		ggi_coord clipbr;	/* Clip area bottom right. */
-		ggi_coord size;		/* Dimensions of tile. */
-	} vislist[MAX_VISUALS];
+	GG_TAILQ_HEAD(vislist, multi_vis) vislist;
 
 	void *buf;			/* Blitting buffer */
 	ggi_directbuffer *d_frame;	/* Current display frame */
@@ -102,6 +105,11 @@ typedef struct {
 } ggi_tile_priv;
 
 #define TILE_PRIV(vis)	((ggi_tile_priv *)LIBGGI_PRIVATE(vis))
+
+#define tile_FOREACH(tile, idx)	GG_TAILQ_FOREACH(idx, &(tile->vislist), visuals)
+#define tile_INSERT(tile, idx)	GG_TAILQ_INSERT_TAIL(&(tile->vislist), idx, visuals)
+#define tile_REMOVE(tile, idx)	GG_TAILQ_REMOVE(&(tile->vislist), idx, visuals)
+#define tile_FIRST(tile)	GG_TAILQ_FIRST(&(tile->vislist))
 
 #define MANSYNC_init(vis)   MANSYNC_DECL_INIT(TILE_PRIV(vis), vis)
 #define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(TILE_PRIV(vis), vis)

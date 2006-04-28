@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.10 2006/04/19 21:22:22 cegger Exp $
+/* $Id: stubs.c,v 1.11 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -38,10 +38,10 @@
 int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 
-	for (i=0; i < priv->numvis; i++) {
-		ggiFlushRegion(priv->vislist[i].vis, x, y, w, h);
+	tile_FOREACH(priv, elm) {
+		ggiFlushRegion(elm->vis, x, y, w, h);
 	}
 
 	return 0;
@@ -53,15 +53,15 @@ int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 	struct ggi_visual *currvis;
 
 	/* Irrelevant. */
 	if(mask & GGI_GCCHANGED_CLIP)
 		mask &= ~GGI_GCCHANGED_CLIP;
 
-	for(i=0; i<priv->numvis; i++) {
-		currvis = GGI_VISUAL(priv->vislist[i].vis);
+	tile_FOREACH(priv, elm) {
+		currvis = GGI_VISUAL(elm->vis);
 
 #if 0	/* Don't blindly copy the GC. */
 		memcpy(LIBGGI_GC(currvis), LIBGGI_GC(vis), sizeof(ggi_gc));
@@ -88,12 +88,13 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i, x, y, width, length, diff;
+	int x, y, width, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -120,7 +121,7 @@ int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _le
 		if (length <= 0 || width <= 0 )
 			continue;
 
-		ggiDrawBox(priv->vislist[i].vis,
+		ggiDrawBox(elm->vis,
 			x - cliptl.x, y - cliptl.y, width, length);
 	}
 
@@ -130,13 +131,14 @@ int GGI_tile_drawbox(struct ggi_visual *vis, int _x, int _y, int _width, int _le
 int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length, const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, x, y, width, length, diff;
+	int x, y, width, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -164,9 +166,9 @@ int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiPutHLine(priv->vislist[i].vis,
+			ggiPutHLine(elm->vis,
 				x - cliptl.x, y - cliptl.y + length, width,
-				((const uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
+				((const uint8_t*)buffer + rowadd*_width * (y-_y+length) + rowadd * (x-_x)));
 		}
 	}
 
@@ -176,13 +178,14 @@ int GGI_tile_putbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 int GGI_tile_getbox(struct ggi_visual *vis, int _x, int _y, int _width, int _length, void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, x, y, width, length, diff;
+	int x, y, width, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		y = _y;
 		width = _width;
@@ -210,7 +213,7 @@ int GGI_tile_getbox(struct ggi_visual *vis, int _x, int _y, int _width, int _len
 			continue;
 
 		while(length--) {
-			ggiGetHLine(priv->vislist[i].vis,
+			ggiGetHLine(elm->vis,
 				x - cliptl.x, y - cliptl.y + length, width,
 				((uint8_t*)buffer + rowadd*_width*(y-_y+length) + rowadd*(x-_x)));
 		}
@@ -223,16 +226,16 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 		     int nx,int ny)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
 	char *buf;
-	int i;
 
 	/* We check if both the source and destination of the copy are wholely
 	   contained in one of the tile visuals.
 	*/
-	for (i=0; i < priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 		    x + width > clipbr.x || y + height > clipbr.y ||
@@ -241,7 +244,7 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 			continue;
 		}
 
-		return ggiCopyBox(priv->vislist[i].vis,
+		return ggiCopyBox(elm->vis,
 				  x - cliptl.x, y - cliptl.y, width, height,
 				  nx - cliptl.x, ny - cliptl.y);
 	}
@@ -264,10 +267,11 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 int GGI_tile_fillscreen(struct ggi_visual *vis)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 
-	for(i = 0; i<priv->numvis; i++)
-		ggiFillscreen(priv->vislist[i].vis);
+	tile_FOREACH(priv, elm) {
+		ggiFillscreen(elm->vis);
+	}
 
 	return 0;
 }
@@ -276,11 +280,12 @@ int GGI_tile_fillscreen(struct ggi_visual *vis)
 int GGI_tile_putc(struct ggi_visual *vis,int x,int y,char c)
 {
 	int err=EOK;
-	int i;
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 
-	for (i = 0; i < priv->numvis; i++)
+	tile_FOREACH(priv, elm) {
 		err = ggiPutc(priv->vislist[i].vis,x,y,c);
+	}
 
 	return err;
 }
@@ -314,12 +319,13 @@ int GGI_tile_drawline(struct ggi_visual *vis,int x1,int y1,int x2,int y2)
 int GGI_tile_drawhline_nc(struct ggi_visual *vis,int _x,int y,int _width)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i, x, width, diff;
+	int x, width, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		width = _width;
 
@@ -338,7 +344,7 @@ int GGI_tile_drawhline_nc(struct ggi_visual *vis,int _x,int y,int _width)
 		if (width <= 0)
 			continue;
 
-		_ggiDrawHLineNC(GGI_VISUAL(priv->vislist[i].vis),
+		_ggiDrawHLineNC(GGI_VISUAL(elm->vis),
 			x - cliptl.x, y - cliptl.y, width);
 	}
 
@@ -366,13 +372,14 @@ int GGI_tile_drawhline(struct ggi_visual *vis,int x,int y,int w)
 int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, x, width, diff;
+	int x, width, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		width = _width;
 
@@ -393,9 +400,9 @@ int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void 
 		if (width <= 0)
 			continue;
 
-		ggiPutHLine(priv->vislist[i].vis,
+		ggiPutHLine(elm->vis,
 			x - cliptl.x, y - cliptl.y, width,
-			((const uint8_t*)buffer + diff*rowadd));
+			((const uint8_t*)buffer + diff * rowadd));
 	}
 
 	return 0;
@@ -404,13 +411,14 @@ int GGI_tile_puthline(struct ggi_visual *vis,int _x,int y,int _width,const void 
 int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, x, width, diff;
+	int x, width, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		x = _x;
 		width = _width;
 
@@ -431,9 +439,9 @@ int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffe
 		if (width <= 0)
 			continue;
 
-		ggiGetHLine(priv->vislist[i].vis,
+		ggiGetHLine(elm->vis,
 			x - cliptl.x, y - cliptl.y, width,
-			((uint8_t*)buffer + diff*rowadd));
+			((uint8_t*)buffer + diff * rowadd));
 	}
 
 	return 0;
@@ -442,12 +450,13 @@ int GGI_tile_gethline(struct ggi_visual *vis,int _x,int y,int _width,void *buffe
 int GGI_tile_drawvline_nc(struct ggi_visual *vis,int x,int _y,int _height)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i, y, length, diff;
+	int y, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		y = _y;
 		length = _height;
 
@@ -466,7 +475,7 @@ int GGI_tile_drawvline_nc(struct ggi_visual *vis,int x,int _y,int _height)
 		if (length <= 0)
 			continue;
 
-		_ggiDrawVLineNC(GGI_VISUAL(priv->vislist[i].vis),
+		_ggiDrawVLineNC(GGI_VISUAL(elm->vis),
 			x - cliptl.x, y - cliptl.y, length);
  	}
 
@@ -496,13 +505,14 @@ int GGI_tile_drawvline(struct ggi_visual *vis,int x,int y,int height)
 int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, y, length, diff;
+	int y, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		y = _y;
 		length = _height;
 
@@ -523,9 +533,9 @@ int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void
 		if (length <= 0)
 			continue;
 
-		ggiPutVLine(priv->vislist[i].vis,
+		ggiPutVLine(elm->vis,
 			x - cliptl.x, y - cliptl.y, length,
-			((const uint8_t*)buffer + diff*rowadd));
+			((const uint8_t*)buffer + diff * rowadd));
  	}
 
 	return 0;
@@ -534,13 +544,14 @@ int GGI_tile_putvline(struct ggi_visual *vis,int x,int _y,int _height,const void
 int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buffer)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	int rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8;
 	ggi_coord cliptl, clipbr;
-	int i, y, length, diff;
+	int y, length, diff;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 		y = _y;
 		length = _height;
 
@@ -561,9 +572,9 @@ int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buff
 		if (length <= 0)
 			continue;
 
-		ggiGetVLine(priv->vislist[i].vis,
+		ggiGetVLine(elm->vis,
 			x - cliptl.x, y - cliptl.y, length,
-			((uint8_t*)buffer + diff*rowadd));
+			((uint8_t*)buffer + diff * rowadd));
  	}
 
 	return 0;
@@ -572,19 +583,19 @@ int GGI_tile_getvline(struct ggi_visual *vis,int x,int _y,int _height,void *buff
 int GGI_tile_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		_ggiDrawPixelNC(GGI_VISUAL(priv->vislist[i].vis),
+		_ggiDrawPixelNC(GGI_VISUAL(elm->vis),
 			x - cliptl.x, y - cliptl.y);
 	}
 
@@ -600,19 +611,19 @@ int GGI_tile_drawpixel(struct ggi_visual *vis,int x,int y)
 int GGI_tile_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
 		/* Do we disallow overlapping tiles? */
-		ggiPutPixel(priv->vislist[i].vis,
+		ggiPutPixel(elm->vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 
@@ -628,18 +639,18 @@ int GGI_tile_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 int GGI_tile_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_coord cliptl, clipbr;
-	int i;
 
-	for(i=0; i<priv->numvis; i++) {
-		cliptl = priv->vislist[i].origin;
-		clipbr = priv->vislist[i].clipbr;
+	tile_FOREACH(priv, elm) {
+		cliptl = elm->origin;
+		clipbr = elm->clipbr;
 
 		if (x < cliptl.x || y < cliptl.y ||
 			x >= clipbr.x || y >= clipbr.y)
 			continue;
 
-		return ggiGetPixel(priv->vislist[i].vis,
+		return ggiGetPixel(elm->vis,
 			x - cliptl.x, y - cliptl.y, col);
 	}
 

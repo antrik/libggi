@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.8 2006/04/19 21:22:22 cegger Exp $
+/* $Id: frames.c,v 1.9 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -54,11 +54,11 @@ int GGI_tile_setdisplayframe_db(struct ggi_visual *vis, int num)
 int GGI_tile_setdisplayframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 	int rc;
 
-	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetDisplayFrame(priv->vislist[i].vis, num);
+	tile_FOREACH(priv, elm) {
+		rc = ggiSetDisplayFrame(elm->vis, num);
 		if (rc < 0) return rc;
 	}
 
@@ -68,11 +68,11 @@ int GGI_tile_setdisplayframe(struct ggi_visual *vis, int num)
 int GGI_tile_setreadframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 	int rc;
 
-	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetReadFrame(priv->vislist[i].vis, num);
+	tile_FOREACH(priv, elm) {
+		rc = ggiSetReadFrame(elm->vis, num);
 		if (rc < 0) return rc;
 	}
 
@@ -82,11 +82,11 @@ int GGI_tile_setreadframe(struct ggi_visual *vis, int num)
 int GGI_tile_setwriteframe(struct ggi_visual *vis, int num)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 	int rc;
 
-	for(i = 0; i < priv->numvis; i++) {
-		rc = ggiSetWriteFrame(priv->vislist[i].vis, num);
+	tile_FOREACH(priv, elm) {
+		rc = ggiSetWriteFrame(elm->vis, num);
 		if (rc < 0) return rc;
 	}
 

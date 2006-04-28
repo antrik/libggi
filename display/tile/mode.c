@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2006/04/19 21:22:22 cegger Exp $
+/* $Id: mode.c,v 1.23 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -42,7 +42,8 @@
 int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tryflag)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i, width, height;
+	struct multi_vis *elm;
+	int width, height;
 	int nx, ny, nw, nh;
 	ggi_visual_t currvis;
 
@@ -50,14 +51,14 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 	DPRINT_MISC("GGI_tile_flush_db(%p, %i, %i, %i, %i, %i) entered\n",
 			vis, x, y, w, h, tryflag);
 
-	for(i = 0; i < priv->numvis; i++) {
-		currvis = priv->vislist[i].vis;
-		width = priv->vislist[i].size.x;
-		height = priv->vislist[i].size.y;
+	tile_FOREACH(priv, elm) {
+		currvis = elm->vis;
+		width = elm->size.x;
+		height = elm->size.y;
 		
 		ggiGetBox(vis, 
-			priv->vislist[i].origin.x+vis->origin_x, 
-			priv->vislist[i].origin.y+vis->origin_y,
+			elm->origin.x + vis->origin_x, 
+			elm->origin.y + vis->origin_y,
 			width, height, priv->buf);
 		ggiPutBox(currvis, 0, 0, width, height, priv->buf);
 
@@ -84,17 +85,17 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 	rowadd = (LIBGGI_PIXFMT(vis)->size+7)/8/sizeof(uint8_t);
 	stride = priv->d_frame->buffer.plb.stride;
 
-	for(i = 0; i<priv->numvis; i++) {
+	tile_FOREACH(priv, elm) {
 		struct ggi_visual *_vis;
 
-		currvis = priv->vislist[i].vis;
-		width = priv->vislist[i].size.x;
-		height = priv->vislist[i].size.y - 1;
+		currvis = elm->vis;
+		width = elm->size.x;
+		height = elm->size.y - 1;
 		_vis = GGI_VISUAL(currvis);
 
 		buf = (uint8_t*)priv->d_frame->read +
-				stride * (priv->vislist[i].origin.y + vis->origin_y + height) +
-				rowadd * (priv->vislist[i].origin.x + vis->origin_x);
+				stride * (elm->origin.y + vis->origin_y + height) +
+				rowadd * (elm->origin.x + vis->origin_x);
 
 		do {
 			ggiPutHLine(currvis, 0, height, width, buf);
@@ -102,10 +103,10 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 		} while(height--);
 #endif
 
-		nx = x - priv->vislist[i].origin.x;
-		nw = w - priv->vislist[i].origin.x;
-		ny = y - priv->vislist[i].origin.y;
-		nh = h - priv->vislist[i].origin.y;
+		nx = x - elm->origin.x;
+		nw = w - elm->origin.x;
+		ny = y - elm->origin.y;
+		nh = h - elm->origin.y;
 		if (nx < 0) nx = 0;
 		else if (nx > LIBGGI_X(_vis)) continue;
 		if (ny < 0) ny = 0;
@@ -228,6 +229,7 @@ static int _GGIdomode(struct ggi_visual *vis)
 int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_tile_priv *priv;
+	struct multi_vis *elm;
 	/*int, currbuf, maxbuf=0;*/
 	ggi_visual_t currvis;
 	ggi_mode sugmode;
@@ -269,13 +271,14 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 		}
 	}
 	
-	for (i = 0; i<priv->numvis; i++) {
+	i = 0;
+	tile_FOREACH(priv, elm) {
 		struct ggi_visual *_vis;
 
-		currvis = priv->vislist[i].vis;
+		currvis = elm->vis;
 		sugmode = *tm;
-		sugmode.visible.x = priv->vislist[i].size.x;
-		sugmode.visible.y = priv->vislist[i].size.y;
+		sugmode.visible.x = elm->size.x;
+		sugmode.visible.y = elm->size.y;
 		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
 		_vis = GGI_VISUAL(currvis);
 
@@ -299,24 +302,25 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 		if(!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
 
-			priv->vislist[i].clipbr.x = priv->vislist[i].origin.x + priv->vislist[i].size.x;
-			if(priv->vislist[i].clipbr.x > tm->virt.x)
-				priv->vislist[i].clipbr.x = tm->virt.x;
+			elm->clipbr.x = elm->origin.x + elm->size.x;
+			if (elm->clipbr.x > tm->virt.x)
+				elm->clipbr.x = tm->virt.x;
 
-			priv->vislist[i].clipbr.y = priv->vislist[i].origin.y + priv->vislist[i].size.y;
-			if(priv->vislist[i].clipbr.y > tm->virt.y)
-				priv->vislist[i].clipbr.y = tm->virt.y;
+			elm->clipbr.y = elm->origin.y + elm->size.y;
+			if (elm->clipbr.y > tm->virt.y)
+				elm->clipbr.y = tm->virt.y;
 		}
+		i++;
 
 #if 0
 		/* This is to determine the largest buffer size needed for copybox */
-		currbuf = priv->vislist[i].size.x * priv->vislist[i].size.y;
-		if(currbuf > maxbuf) maxbuf=currbuf;
+		currbuf = elm->size.x * elm->size.y;
+		if (currbuf > maxbuf) maxbuf = currbuf;
 	}
 
 	if (priv->buf) {
 		free(priv->buf);
-		priv->buf=NULL;
+		priv->buf = NULL;
 	}
 	
 	priv->buf = malloc(maxbuf*depth/8);
@@ -326,8 +330,9 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 #endif
 	}
 
+	elm = tile_FIRST(priv);
 	/* Assume first visual's pixelformat properties */
-	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(GGI_VISUAL(priv->vislist[0].vis)), 
+	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(GGI_VISUAL(elm->vis)), 
 		sizeof(ggi_pixelformat));
 
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
@@ -357,36 +362,37 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 	ggi_mode sugmode;
 	int err, i;
 
 	/* Find out the "bounding rectangle" for GGI_AUTO values */
-	if(tm->virt.x==GGI_AUTO) {
+	if(tm->virt.x == GGI_AUTO) {
 		int x;
-		tm->virt.x=0;
-		for(i = 0; i<priv->numvis; i++) {
-			x = priv->vislist[i].origin.x
-				+ priv->vislist[i].size.x;
+		tm->virt.x = 0;
+		tile_FOREACH(priv, elm) {
+			x = elm->origin.x
+				+ elm->size.x;
 			if (x > tm->virt.x) tm->virt.x = x;
 		}
 	}
-	if (tm->virt.y==GGI_AUTO) {
+	if (tm->virt.y == GGI_AUTO) {
 		int y;
-		tm->virt.y=0;
-		for(i = 0; i<priv->numvis; i++) {
-			y = priv->vislist[i].origin.y
-				+ priv->vislist[i].size.y;
+		tm->virt.y = 0;
+		tile_FOREACH(priv, elm) {
+			y = elm->origin.y
+				+ elm->size.y;
 			if (y > tm->virt.y) tm->virt.y = y;
 		}
 	}
 
 	/* We ignore visible size */
-	if(tm->visible.x==GGI_AUTO)
-		tm->visible.x=tm->virt.x;
-	if(tm->visible.y==GGI_AUTO)
-		tm->visible.y=tm->virt.y;
+	if (tm->visible.x == GGI_AUTO)
+		tm->visible.x = tm->virt.x;
+	if (tm->visible.y == GGI_AUTO)
+		tm->visible.y = tm->virt.y;
 
-	if(tm->frames==GGI_AUTO)
+	if (tm->frames == GGI_AUTO)
 		tm->frames = 1;
 
 	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
@@ -394,20 +400,21 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 	}
 	tm->size.x = tm->size.y = GGI_AUTO;
 
-	for(i = 0; i < priv->numvis; i++) {
+	i = 0;
+	tile_FOREACH(priv, elm) {
 		/* Note that we don't use ggiCheckMode() since we don't want 
 		   GGI_AUTO to be substituted by GGI_DEFMODE values */
 		   
 		sugmode.frames = priv->use_db ? 1 : tm->frames;
-		sugmode.visible.x = priv->vislist[i].size.x;
-		sugmode.visible.y = priv->vislist[i].size.y;
+		sugmode.visible.x = elm->size.x;
+		sugmode.visible.y = elm->size.y;
 		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
 		sugmode.size.x = sugmode.size.y = GGI_AUTO;
 		sugmode.graphtype = tm->graphtype;
 		sugmode.dpp  = tm->dpp;
 		sugmode.size = tm->size;
 
-		err = ggiCheckMode(priv->vislist[i].vis, &sugmode);
+		err = ggiCheckMode(elm->vis, &sugmode);
 		if (err) {
 			/* Forget searching all visuals for the source of
 			   error, it's way too complicated. Just say fail
@@ -415,14 +422,14 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 			memset(tm, 0, sizeof(ggi_mode));
 
 			fprintf(stderr,
-				"display-tile: ggiCheckMode() on visual #%d error -- please explicitly specify correct mode instead.\n",
-				i);
+				"display-tile: ggiCheckMode() on visual #%d error -- please explicitly specify correct mode instead.\n", i);
 			return err;
 		}
                 /* Fill out any remaining GT_AUTO fields in the
                  * graphtype.
                  */
 		tm->graphtype = _GGIhandle_gtauto(sugmode.graphtype);
+		i++;
 	}
 
 	return 0;
@@ -444,6 +451,7 @@ int GGI_tile_getmode(struct ggi_visual *vis,ggi_mode *tm)
 int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
 
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unkown flags don't take. */
@@ -452,9 +460,8 @@ int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
 	if (priv->use_db) {
 		MANSYNC_SETFLAGS(vis, flags);
 	} else {
-		int i;
-		for (i = 0; i<priv->numvis; i++) {
-			ggiSetFlags(priv->vislist[i].vis, flags);
+		tile_FOREACH(priv, elm) {
+			ggiSetFlags(elm->vis, flags);
 		}
 	}	
 

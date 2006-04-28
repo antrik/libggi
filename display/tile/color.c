@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2006/04/19 21:22:22 cegger Exp $
+/* $Id: color.c,v 1.10 2006/04/28 06:05:37 cegger Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -30,22 +30,28 @@
 
 ggi_pixel GGI_tile_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
-	return ggiMapColor(TILE_PRIV(vis)->vislist[0].vis, col);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *first = tile_FIRST(priv);
+
+	return ggiMapColor(first->vis, col);
 }
 
 int GGI_tile_unmappixel(struct ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 {
-	return ggiUnmapPixel(TILE_PRIV(vis)->vislist[0].vis, pixel, col);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *first = tile_FIRST(priv);
+
+	return ggiUnmapPixel(first->vis, pixel, col);
 }
 
 int GGI_tile_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_color *colormap)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	int i;
+	struct multi_vis *elm;
 	int rc;
 
-	for (i = 0; i < priv->numvis; i++) {
-		rc = ggiSetPalette(priv->vislist[i].vis, start, len, colormap);
+	tile_FOREACH(priv, elm) {
+		rc = ggiSetPalette(elm->vis, start, len, colormap);
 		if (rc < 0) return rc;
 	}
 
@@ -54,5 +60,8 @@ int GGI_tile_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_color 
 
 int GGI_tile_getpalvec(struct ggi_visual *vis,int start,int len,ggi_color *colormap)
 {
-	return ggiGetPalette(TILE_PRIV(vis)->vislist[0].vis, start, len, colormap);
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *first = tile_FIRST(priv);
+
+	return ggiGetPalette(first->vis, start, len, colormap);
 }
