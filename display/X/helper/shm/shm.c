@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.40 2006/04/11 16:57:11 cegger Exp $
+/* $Id: shm.c,v 1.41 2006/04/28 07:41:40 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -372,7 +372,6 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->slave) {
 		ggiClose(priv->slave->stem);
-		ggDelStem(priv->slave->stem);
 	}
 	priv->slave = NULL;
 
