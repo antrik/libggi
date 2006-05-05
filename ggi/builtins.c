@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.6 2006/03/21 19:29:36 cegger Exp $
+/* $Id: builtins.c,v 1.7 2006/05/05 21:20:15 cegger Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -111,9 +111,6 @@ ggifunc_dlinit GGIdl_memory;
 #ifdef BUILTIN_DISPLAY_MONOTEXT
 ggifunc_dlinit GGIdl_monotext;
 #endif
-#ifdef BUILTIN_DISPLAY_MULTI
-ggifunc_dlinit GGIdl_multi;
-#endif
 #ifdef BUILTIN_DISPLAY_PALEMU
 ggifunc_dlinit GGIdl_palemu;
 #endif
@@ -133,6 +130,7 @@ ggifunc_dlinit GGIdl_tele;
 ggifunc_dlinit GGIdl_terminfo;
 #endif
 #ifdef BUILTIN_DISPLAY_TILE
+ggifunc_dlinit GGIdl_multi;
 ggifunc_dlinit GGIdl_tile;
 #endif
 #ifdef BUILTIN_DISPLAY_TRUEEMU
@@ -255,9 +253,6 @@ static struct target _targets[] = {
 #ifdef BUILTIN_DISPLAY_MONOTEXT
         { "GGIdl_monotext", &GGIdl_monotext },
 #endif
-#ifdef BUILTIN_DISPLAY_MULTI
-        { "GGIdl_multi", &GGIdl_multi },
-#endif
 #ifdef BUILTIN_DISPLAY_PALEMU
         { "GGIdl_palemu", &GGIdl_palemu },
 #endif
@@ -277,6 +272,7 @@ static struct target _targets[] = {
         { "GGIdl_terminfo", &GGIdl_terminfo },
 #endif
 #ifdef BUILTIN_DISPLAY_TILE
+        { "GGIdl_multi", &GGIdl_multi },
         { "GGIdl_tile", &GGIdl_tile },
 #endif
 #ifdef BUILTIN_DISPLAY_TRUEEMU

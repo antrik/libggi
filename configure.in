@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.194 2006/03/21 19:59:06 pekberg Exp $
+dnl $Id: configure.in,v 1.195 2006/05/05 21:20:15 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -65,7 +65,6 @@ dnl MacOS X specific Targets
 build_quartz_target="auto"
 
 dnl PseudoTargets
-build_multi_target="yes"
 build_tile_target="auto"
 build_palemu_target="auto"
 build_trueemu_target="auto"
@@ -216,9 +215,6 @@ build_quartz_target=$enableval)
 
 
 dnl PseudoTargets
-AC_ARG_ENABLE(multi,
-[  --disable-multi         don't build the multi target],
-build_multi_target=$enableval)
 AC_ARG_ENABLE(tile,
 [  --disable-tile          don't build the tile target],
 build_tile_target=$enableval)
@@ -1260,11 +1256,6 @@ GGI_CHECK_TARGET(display-monotext, build_monotext_target,
 		BUILTIN_DISPLAY_MONOTEXT)
 
 
-GGI_CHECK_TARGET(display-multi, build_multi_target,
-		DISPLAYSUBDIRS, DISPLAYMODULES, multi, multi.la,
-		BUILTIN_DISPLAY_MULTI)
-
-
 GGI_CHECK_TARGET(display-palemu, build_palemu_target,
 		DISPLAYSUBDIRS, DISPLAYMODULES, palemu, palemu.la,
 		BUILTIN_DISPLAY_PALEMU,
@@ -1559,7 +1550,6 @@ display/linvtsw/Makefile
 display/mansync/Makefile
 display/memory/Makefile
 display/monotext/Makefile
-display/multi/Makefile
 display/palemu/Makefile
 display/sub/Makefile
 display/svgalib/Makefile
