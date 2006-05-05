@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.11 2006/04/28 06:05:37 cegger Exp $
+/* $Id: stubs.c,v 1.12 2006/05/05 21:16:58 cegger Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -55,27 +55,37 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	struct multi_vis *elm;
 	struct ggi_visual *currvis;
+	ggi_gc *gc;
 
 	/* Irrelevant. */
-	if(mask & GGI_GCCHANGED_CLIP)
+	if ((!priv->multi_mode) && (mask & GGI_GCCHANGED_CLIP))
 		mask &= ~GGI_GCCHANGED_CLIP;
 
+	gc = LIBGGI_GC(vis);
 	tile_FOREACH(priv, elm) {
 		currvis = GGI_VISUAL(elm->vis);
 
+		if (!priv->multi_mode) {
+			gc = LIBGGI_GC(currvis);
+		}
+
 #if 0	/* Don't blindly copy the GC. */
-		memcpy(LIBGGI_GC(currvis), LIBGGI_GC(vis), sizeof(ggi_gc));
+		memcpy(LIBGGI_GC(currvis), gc, sizeof(ggi_gc));
 #else
-		if(mask & GGI_GCCHANGED_FG)
-			LIBGGI_GC(currvis)->fg_color=LIBGGI_GC(vis)->fg_color;
+		if (mask & GGI_GCCHANGED_FG)
+			gc->fg_color = LIBGGI_GC(vis)->fg_color;
 
-		if(mask & GGI_GCCHANGED_BG)
-			LIBGGI_GC(currvis)->bg_color=LIBGGI_GC(vis)->bg_color;
+		if (mask & GGI_GCCHANGED_BG)
+			gc->bg_color = LIBGGI_GC(vis)->bg_color;
 
-		LIBGGI_GC(currvis)->version++;
+		if (mask & GGI_GCCHANGED_CLIP)
+			ggiSetGCClipping(currvis->stem,
+					gc->cliptl.x, gc->cliptl.y,
+					gc->clipbr.x, gc->clipbr.y);
+		gc->version++;
 #endif
 
-		if(currvis->opgc->gcchanged)
+		if ((!priv->multi_mode) && (currvis->opgc->gcchanged))
 			currvis->opgc->gcchanged(currvis, mask);
 	}
 }

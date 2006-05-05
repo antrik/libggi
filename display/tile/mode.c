@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2006/04/28 06:05:37 cegger Exp $
+/* $Id: mode.c,v 1.24 2006/05/05 21:16:58 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -277,9 +277,11 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 		currvis = elm->vis;
 		sugmode = *tm;
-		sugmode.visible.x = elm->size.x;
-		sugmode.visible.y = elm->size.y;
 		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
+		if (!priv->multi_mode) {
+			sugmode.visible.x = elm->size.x;
+			sugmode.visible.y = elm->size.y;
+		}
 		_vis = GGI_VISUAL(currvis);
 
 		/* Multiple buffering is handled by us in DB mode */
@@ -425,6 +427,7 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 				"display-tile: ggiCheckMode() on visual #%d error -- please explicitly specify correct mode instead.\n", i);
 			return err;
 		}
+
                 /* Fill out any remaining GT_AUTO fields in the
                  * graphtype.
                  */

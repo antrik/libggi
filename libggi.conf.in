@@ -15,7 +15,7 @@ display-lcd823			display/lcd823.@DLLEXT@
 display-libkgi			display/kgilib.@DLLEXT@
 display-memory			display/memory.@DLLEXT@
 display-monotext		display/monotext.@DLLEXT@
-display-multi			display/multi.@DLLEXT@
+display-multi			display/tile.@DLLEXT@:GGIdl_multi
 display-palemu			display/palemu.@DLLEXT@
 display-quartz			display/quartz.@DLLEXT@
 display-sub			display/sub.@DLLEXT@
@@ -24,7 +24,7 @@ display-svga			display/svgalib.@DLLEXT@
 display-svgalib			display/svgalib.@DLLEXT@
 display-terminfo		display/terminfo.@DLLEXT@
 display-tele			display/tele.@DLLEXT@
-display-tile			display/tile.@DLLEXT@
+display-tile			display/tile.@DLLEXT@:GGIdl_tile
 display-trueemu			display/trueemu.@DLLEXT@
 display-vcsa			display/vcsa.@DLLEXT@
 helper-vgagl			display/vgagl.@DLLEXT@

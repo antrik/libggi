@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/04/28 06:05:37 cegger Exp $
+/* $Id: visual.c,v 1.25 2006/05/05 21:16:58 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -76,11 +76,12 @@ static const char argument_format[] = "display-tile:\n\
     and ... is more tiles following the same format as above...\n";
 
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tile_priv *priv;
 	char target[1024];
+	struct multi_vis *mvis;
 	int sx, sy, vx, vy, n, i=0;
 	int err = GGI_ENOMEM;
 	struct gg_api *api;
@@ -113,12 +114,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GG_TAILQ_INIT(&priv->vislist);
 	priv->buf = NULL;
 	priv->use_db = 1;
+	priv->multi_mode = 0;
 
 	api = ggGetAPIByName("gii");
 
 	/* parse each visual */
 	for (;;) {
-		struct multi_vis *mvis;
 		sx = sy = vx = vy = 0;
 
 		while (*args && isspace((uint8_t)*args)) args++;
@@ -292,11 +293,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_closevisuals:
 	/* Close opened visuals. */
-#if 0
-	tile_FOREACH(priv->vislist, i) {
-		ggiClose();
+	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+		mvis = tile_FIRST(priv);
+		tile_REMOVE(priv, mvis);
+		ggiClose(mvis->vis);
+		free(mvis);
 	}
-#endif
   out_freeopmansync:
 	free(priv->opmansync);
   out_freegc:
@@ -306,6 +308,170 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	return err;
 }
+
+static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+		const char *args, void *argptr, uint32_t *dlret)
+{
+	ggi_tile_priv *priv;
+	struct multi_vis *mvis;
+	char target[1024];
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
+	struct transfer xfer;
+	int err = GGI_ENOMEM;
+	int i;
+
+	if (!args || *args == '\0') {
+		fprintf(stderr, "display-multi: missing target names.\n");
+		return GGI_EARGREQ;
+	}
+
+	priv = calloc(1, sizeof(ggi_tile_priv));
+	if (priv == NULL) return GGI_ENOMEM;
+	LIBGGI_PRIVATE(vis) = priv;
+
+	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	if (LIBGGI_GC(vis) == NULL) {
+		goto out_freepriv;
+	}
+
+	
+	GG_TAILQ_INIT(&(priv->vislist));
+
+	err = GGI_EARGINVAL;
+	priv->buf = NULL;
+	priv->use_db = 0;
+	priv->multi_mode = 1;
+
+	api = ggGetAPIByName("gii");
+	i = 0;
+	for (;;) {
+		if (! *args) break;
+
+		args = ggParseTarget(args, target, 1024);
+
+		if (args == NULL) {
+			goto out_freeall;
+		}
+
+		if (*target == '\0') {
+			ggstrlcpy(target, "display-auto", sizeof(target));
+		}
+
+		mvis = calloc(1, sizeof(struct multi_vis));
+		if (mvis == NULL) continue;
+
+		DPRINT("display-multi: opening sub #%d: %s\n",
+			i, target);
+
+		mvis->origin.x = 0;
+		mvis->origin.y = 0;
+		mvis->size.x = 0;
+		mvis->size.y = 0;
+
+
+		mvis->vis = ggNewStem();
+		if (mvis->vis == NULL) {
+			fprintf(stderr,
+				"display-multi: Failed to create stem for target '%s'\n",
+				target);
+			err = GGI_ENODEVICE;
+			goto out_freeall;
+		}
+		/* XXX Should iterate over the apis attached to vis->stem
+		 * instead of only looking for ggi and gii.
+		 */
+		if (ggiAttach(mvis->vis) < 0) {
+			ggDelStem(mvis->vis);
+			mvis->vis = NULL;
+			fprintf(stderr,
+				"display-multi: Failed to attach ggi to stem for target '%s'\n",
+				target);
+			err = GGI_ENODEVICE;
+			goto out_freeall;
+		}
+		if (api != NULL && STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, mvis->vis) < 0) {
+				ggDelStem(mvis->vis);
+				mvis->vis = NULL;
+				fprintf(stderr,
+					"display-multi: Failed to attach gii to stem for target '%s'\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto out_freeall;
+			}
+			xfer.dst = mvis->vis;
+			xfer.src = mvis->vis;
+			obs = ggAddObserver(ggGetPublisher(api, mvis->vis,
+						GII_PUBLISHER_SOURCE_CHANGE),
+					transfer_gii_src, &xfer);
+		}
+
+		ggiOpen(mvis->vis, target, NULL);
+		if (mvis->vis == NULL) {
+			if (obs != NULL) {
+				ggDelObserver(obs);
+				obs = NULL;
+			}
+			fprintf(stderr, "display-multi: failed trying "
+				"to open %s\n", target);
+			ggDelStem(mvis->vis);
+			err = GGI_ENODEVICE;
+			goto out_freeall;
+		}
+		if (obs != NULL) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
+
+		/* check for ':' separator */
+		while (*args && isspace((uint8_t)*args)) args++;
+
+		if (*args && (*args != ':')) {
+			fprintf(stderr, "display-multi: args: %c\n", *args);
+			fprintf(stderr, "display-multi: expecting ':' between targets.\n");
+			err = GGI_EARGINVAL;
+			goto out_freeall;
+		}
+
+		args++; /* skip ':' */
+
+		/* add to list */
+		i++;
+		tile_INSERT(priv, mvis);
+	}	
+	
+	if (i == 0) {
+		fprintf(stderr, "display-multi: no targets specified\n");
+		err = GGI_EARGINVAL;
+		goto out_freepriv;
+	}
+
+	vis->opdisplay->getmode = GGI_tile_getmode;
+	vis->opdisplay->setmode = GGI_tile_setmode;
+	vis->opdisplay->checkmode = GGI_tile_checkmode;
+	vis->opdisplay->setflags = GGI_tile_setflags;
+	vis->opdisplay->getapi = GGI_tile_getapi;
+	vis->opdisplay->flush = GGI_tile_flush;
+
+	*dlret = GGI_DL_OPDISPLAY | GGI_DL_OPCOLOR
+		| GGI_DL_OPDRAW | GGI_DL_OPGC;
+	return 0;
+
+  out_freeall:
+	/* Close opened visuals */
+	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+		mvis = tile_FIRST(priv);
+		tile_REMOVE(priv, mvis);
+		ggiClose(mvis->vis);
+		free(mvis);
+	}
+  out_freepriv:
+	free(priv);
+
+	return err;
+}
+
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
@@ -371,7 +537,36 @@ int GGIdl_tile(int func, void **funcptr)
 	switch (func) {
 	case GGIFUNC_open:
 		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
+		*openptr = GGIopen_tile;
+		return 0;
+	case GGIFUNC_exit:
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
+		return 0;
+	case GGIFUNC_close:
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}
+
+	return GGI_ENOTFOUND;
+}
+
+EXPORTFUNC
+int GGIdl_multi(int func, void **funcptr);
+
+int GGIdl_multi(int func, void **funcptr)
+{
+	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
+	ggifunc_close **closeptr;
+
+	switch (func) {
+	case GGIFUNC_open:
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen_multi;
 		return 0;
 	case GGIFUNC_exit:
 		exitptr = (ggifunc_exit **)funcptr;
