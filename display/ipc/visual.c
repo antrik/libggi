@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2006/03/20 20:31:43 cegger Exp $
+/* $Id: visual.c,v 1.23 2006/05/06 15:06:07 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -28,6 +28,7 @@
 #include "config.h"
 #include <ggi/display/ipc.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/gii-events.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -55,10 +56,10 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
-static ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
+static gii_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 {
 	ggi_ipc_priv *priv=inp->priv;
-	ggi_event ev;
+	gii_event ev;
 	int rc=0;
   
 	while(priv->inputoffset!=priv->inputbuffer->writeoffset) {
@@ -76,7 +77,7 @@ static ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 		_giiEvQueueAdd(inp, &ev);
 		priv->inputoffset += ev.any.size;
 		rc |= 1 << ev.any.type;
-		if (priv->inputoffset >= (signed)(INPBUFSIZE - sizeof(ggi_event)
+		if (priv->inputoffset >= (signed)(INPBUFSIZE - sizeof(gii_event)
 		    - sizeof(priv->inputbuffer->writeoffset) - 10))
 		{
 			priv->inputoffset=0;
@@ -86,7 +87,7 @@ static ggi_event_mask GII_ipc_poll(gii_input_t inp, void *arg)
 }	/* GII_ipc_poll */
 
 
-static int GII_ipc_send(gii_input_t inp, ggi_event *event)
+static int GII_ipc_send(gii_input_t inp, gii_event *event)
 {
 	ggi_ipc_priv *priv=inp->priv;
 	size_t size = event->any.size;
@@ -97,7 +98,7 @@ static int GII_ipc_send(gii_input_t inp, ggi_event *event)
 
 	priv->inputbuffer->writeoffset += size;
 	if (priv->inputbuffer->writeoffset
-	  >= (signed)(INPBUFSIZE - sizeof(ggi_event)
+	  >= (signed)(INPBUFSIZE - sizeof(gii_event)
 		- sizeof(priv->inputbuffer->writeoffset) - 10))
 	{
 		priv->inputbuffer->writeoffset=0;
