@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.19 2006/03/22 03:38:04 pekberg Exp $
+/* $Id: crossblit.c,v 1.20 2006/05/19 07:11:42 pekberg Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -130,9 +130,7 @@ cb4to16(struct ggi_visual *src, int sx, int sy, int w, int h,
 	    		uint16_t *dstpw = (uint16_t*) dstp;
 			uint8_t  *srcpb = srcp;
 			
-			int i = w / 8;
-			if (w & 0x7)
-				++i;
+			int i = (w + 7) / 8;
 			
 			/* Unroll manually. */
 			switch (w & 0x7) {
@@ -166,9 +164,7 @@ cb4to16(struct ggi_visual *src, int sx, int sy, int w, int h,
 			uint16_t *dstpw = (uint16_t*) dstp;
 			uint8_t  *srcpb = srcp;
 			
-			int i = w / 8;
-			if (w & 0x7)
-				++i;
+			int i = (w + 7) / 8;
 
 			/* Unroll manually. */			
 			switch (w & 0x7) {
@@ -229,9 +225,7 @@ cb8to16(struct ggi_visual *src, int sx, int sy, int w, int h,
 	for (; h > 0; h--) {
 		uint16_t *dstpw = (uint16_t*) dstp;
 		uint8_t  *srcpb = (uint8_t*)  srcp;
-		int i = w / 8;
-		if (w & 0x7)
-			++i;
+		int i = (w + 7) / 8;
 
 		/* Unroll manually. */
 		switch (w & 0x7) {

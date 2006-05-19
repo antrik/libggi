@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.12 2006/03/22 03:38:04 pekberg Exp $
+/* $Id: crossblit.c,v 1.13 2006/05/19 07:11:42 pekberg Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -142,9 +142,7 @@ cb4to24(struct ggi_visual *src, int sx, int sy, int w, int h,
 		for (; h > 0; h--) {
 			uint8_t  *srcpb = srcp;
 			
-			int i = w / 8;
-			if (w & 0x7)
-				++i;
+			int i = (w + 7) / 8;
 
 			/* Unroll manually. */
 			switch (w & 0x7) {
@@ -189,9 +187,7 @@ cb4to24(struct ggi_visual *src, int sx, int sy, int w, int h,
 		for (; h > 0; h--) {
 			uint8_t *srcpb = srcp;
 			
-			int i = w / 8;
-			if (w & 0x7)
-				++i;
+			int i = (w + 7) / 8;
 
 			/* Unroll manually. */			
 			switch (w & 0x7) {
@@ -266,9 +262,7 @@ cb8to24(struct ggi_visual *src, int sx, int sy, int w, int h,
 	dststride -= w*3;
 
 	for (; h > 0; h--) {
-		int i = w / 8;
-		if (w & 0x7)
-			++i;
+		int i = (w + 7) / 8;
 
 		/* We don't believe in the optimizing capabilities of the
 		 * compiler hence unroll manually.

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.12 2006/03/22 03:38:04 pekberg Exp $
+/* $Id: crossblit.c,v 1.13 2006/05/19 07:11:43 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -105,9 +105,7 @@ crossblit_8_to_8(struct ggi_visual *src, int sx, int sy, int w, int h,
 	dststride -= w;
 
 	for (; h > 0; h--) {
-		int i = w / 8;
-		if (w & 0x7)
-			++i;
+		int i = (w + 7) / 8;
 
 		/* We don't believe in the optimizing capabilities of the
 		 * compiler hence unroll manually.
