@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.5 2006/03/20 20:28:38 cegger Exp $
+/* $Id: aa.h,v 1.6 2006/06/15 12:10:51 cegger Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -42,7 +42,7 @@ ggifunc_getapi 		GGI_aa_getapi;
 ggifunc_setflags	GGI_aa_setflags;
 
 ggifunc_setPalette	GGI_aa_setPalette;
-size_t GGI_aa_getPrivSize(struct ggi_visual_t);
+size_t GGI_aa_getPrivSize(struct ggi_visual *vis);
 
 giifunc_eventpoll	GII_aa_poll;
 /*
