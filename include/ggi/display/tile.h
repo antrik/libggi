@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.9 2006/04/28 06:05:37 cegger Exp $
+/* $Id: tile.h,v 1.10 2006/07/13 05:19:24 cegger Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -83,6 +83,7 @@ ggifunc_setpalvec	GGI_tile_setpalvec;
 ggifunc_getpalvec	GGI_tile_getpalvec;
 
 
+
 struct multi_vis {
 
 	GG_TAILQ_ENTRY(multi_vis) visuals;
@@ -95,6 +96,7 @@ struct multi_vis {
 
 typedef struct {
 	int use_db;			/* Emulate DirectBuffer ? */
+	int multi_mode;			/* multi mode */
 
 	GG_TAILQ_HEAD(vislist, multi_vis) vislist;
 
