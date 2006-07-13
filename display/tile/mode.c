@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2006/05/05 21:16:58 cegger Exp $
+/* $Id: mode.c,v 1.25 2006/07/13 22:51:49 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -304,11 +304,21 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 		if(!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
 
-			elm->clipbr.x = elm->origin.x + elm->size.x;
+			if (!elm->size.x)
+				elm->clipbr.x = elm->origin.x + sugmode.visible.x;
+			else
+				elm->clipbr.x = elm->origin.x + elm->size.x;
+			if (!tm->virt.x)
+				tm->virt.x = sugmode.virt.x;
 			if (elm->clipbr.x > tm->virt.x)
 				elm->clipbr.x = tm->virt.x;
 
-			elm->clipbr.y = elm->origin.y + elm->size.y;
+			if (!elm->size.y)
+				elm->clipbr.y = elm->origin.y + sugmode.visible.y;
+			else
+				elm->clipbr.y = elm->origin.y + elm->size.y;
+			if (!tm->virt.y)
+				tm->virt.y = sugmode.virt.y;
 			if (elm->clipbr.y > tm->virt.y)
 				elm->clipbr.y = tm->virt.y;
 		}
