@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.10 2006/07/13 05:19:24 cegger Exp $
+/* $Id: tile.h,v 1.11 2006/07/14 02:36:16 pekberg Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -112,6 +112,7 @@ typedef struct {
 #define tile_INSERT(tile, idx)	GG_TAILQ_INSERT_TAIL(&(tile->vislist), idx, visuals)
 #define tile_REMOVE(tile, idx)	GG_TAILQ_REMOVE(&(tile->vislist), idx, visuals)
 #define tile_FIRST(tile)	GG_TAILQ_FIRST(&(tile->vislist))
+#define tile_EMPTY(tile)	GG_TAILQ_EMPTY(&(tile->vislist))
 
 #define MANSYNC_init(vis)   MANSYNC_DECL_INIT(TILE_PRIV(vis), vis)
 #define MANSYNC_deinit(vis) MANSYNC_DECL_DEINIT(TILE_PRIV(vis), vis)

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2006/07/13 22:50:07 pekberg Exp $
+/* $Id: visual.c,v 1.27 2006/07/14 02:35:48 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -253,7 +253,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		tile_INSERT(priv, mvis);
 	}
 
-	if (i == 0) {
+	if (tile_EMPTY(priv)) {
 		fprintf(stderr, "display-tile needs the real targets as arguments.\n");
 		err = GGI_EARGINVAL;
 		goto out_freeopmansync;
@@ -293,7 +293,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_closevisuals:
 	/* Close opened visuals. */
-	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+	while (!tile_EMPTY(priv)) {
 		mvis = tile_FIRST(priv);
 		tile_REMOVE(priv, mvis);
 		ggiClose(mvis->vis);
@@ -319,7 +319,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	struct gg_observer *obs = NULL;
 	struct transfer xfer;
 	int err = GGI_ENOMEM;
-	int i;
+	int i = 0;
 
 	if (!args || *args == '\0') {
 		fprintf(stderr, "display-multi: missing target names.\n");
@@ -344,7 +344,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->multi_mode = 1;
 
 	api = ggGetAPIByName("gii");
-	i = 0;
+
 	for (;;) {
 		if (! *args) break;
 
@@ -441,7 +441,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		tile_INSERT(priv, mvis);
 	}	
 	
-	if (i == 0) {
+	if (tile_EMPTY(priv)) {
 		fprintf(stderr, "display-multi: no targets specified\n");
 		err = GGI_EARGINVAL;
 		goto out_freepriv;
@@ -459,7 +459,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_freeall:
 	/* Close opened visuals */
-	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+	while (!tile_EMPTY(priv)) {
 		mvis = tile_FIRST(priv);
 		tile_REMOVE(priv, mvis);
 		ggiClose(mvis->vis);
@@ -490,7 +490,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	 * if external dependencies (like saving/restoring state on subsystems
 	 * that are used by multiple targets).
 	 */
-	while (!GG_TAILQ_EMPTY(&(priv->vislist))) {
+	while (!tile_EMPTY(priv)) {
 		elm = tile_FIRST(priv);
 		tile_REMOVE(priv, elm);
 		ggiClose(elm->vis);
