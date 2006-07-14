@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2006/07/14 02:35:48 pekberg Exp $
+/* $Id: visual.c,v 1.28 2006/07/14 02:39:40 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -400,8 +400,8 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freeall;
 			}
-			xfer.dst = mvis->vis;
 			xfer.src = mvis->vis;
+			xfer.dst = vis->stem;
 			obs = ggAddObserver(ggGetPublisher(api, mvis->vis,
 						GII_PUBLISHER_SOURCE_CHANGE),
 					transfer_gii_src, &xfer);
