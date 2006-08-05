@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.12 2006/05/05 21:16:58 cegger Exp $
+/* $Id: stubs.c,v 1.13 2006/08/05 09:25:04 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -65,18 +65,18 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 	tile_FOREACH(priv, elm) {
 		currvis = GGI_VISUAL(elm->vis);
 
+#if 0	/* Don't blindly copy the GC. */
 		if (!priv->multi_mode) {
 			gc = LIBGGI_GC(currvis);
 		}
 
-#if 0	/* Don't blindly copy the GC. */
 		memcpy(LIBGGI_GC(currvis), gc, sizeof(ggi_gc));
 #else
 		if (mask & GGI_GCCHANGED_FG)
-			gc->fg_color = LIBGGI_GC(vis)->fg_color;
+			LIBGGI_GC(currvis)->fg_color = gc->fg_color;
 
 		if (mask & GGI_GCCHANGED_BG)
-			gc->bg_color = LIBGGI_GC(vis)->bg_color;
+			LIBGGI_GC(currvis)->bg_color = gc->bg_color;
 
 		if (mask & GGI_GCCHANGED_CLIP)
 			ggiSetGCClipping(currvis->stem,
