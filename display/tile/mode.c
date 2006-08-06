@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2006/07/13 22:51:49 pekberg Exp $
+/* $Id: mode.c,v 1.26 2006/08/06 19:50:26 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -277,8 +277,11 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 		currvis = elm->vis;
 		sugmode = *tm;
-		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
-		if (!priv->multi_mode) {
+		if (priv->multi_mode) {
+			sugmode.visible.x = tm->visible.x;
+			sugmode.visible.y = tm->visible.y;
+		} else {
+			sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
 			sugmode.visible.x = elm->size.x;
 			sugmode.visible.y = elm->size.y;
 		}
@@ -301,7 +304,7 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 		DPRINT("Success setting mode for visual #%d\n", i);
 
-		if(!priv->use_db) {
+		if (!priv->multi_mode && !priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
 
 			if (!elm->size.x)
@@ -414,14 +417,21 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 
 	i = 0;
 	tile_FOREACH(priv, elm) {
-		/* Note that we don't use ggiCheckMode() since we don't want 
-		   GGI_AUTO to be substituted by GGI_DEFMODE values */
-		   
+		ggi_coord size;
+
+		size.x = (tm->virt.x != GGI_AUTO) ? tm->virt.x : tm->visible.x;
+		size.y = (tm->virt.y != GGI_AUTO) ? tm->virt.y : tm->visible.y;
+ 
 		sugmode.frames = priv->use_db ? 1 : tm->frames;
+		if (priv->multi_mode) {
+			elm->size.x = elm->clipbr.x = size.x;
+			elm->size.y = elm->clipbr.y = size.y;
+			sugmode.virt = tm->virt; 
+		} else {
+			sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
+		}
 		sugmode.visible.x = elm->size.x;
 		sugmode.visible.y = elm->size.y;
-		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
-		sugmode.size.x = sugmode.size.y = GGI_AUTO;
 		sugmode.graphtype = tm->graphtype;
 		sugmode.dpp  = tm->dpp;
 		sugmode.size = tm->size;
