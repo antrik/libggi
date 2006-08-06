@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.14 2006/08/06 06:00:55 pekberg Exp $
+/* $Id: stubs.c,v 1.15 2006/08/06 07:19:45 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -252,27 +252,29 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 		     int nx,int ny)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
-	struct multi_vis *elm;
-	ggi_coord cliptl, clipbr;
 	char *buf;
 
-	/* We check if both the source and destination of the copy are wholely
-	   contained in one of the tile visuals.
-	*/
-	tile_FOREACH(priv, elm) {
-		cliptl = elm->origin;
-		clipbr = elm->clipbr;
+	if (!priv->multi_mode) {
+		struct multi_vis *elm;
+		ggi_coord cliptl, clipbr;
+		/* We check if both the source and destination of the copy are wholely
+		   contained in one of the tile visuals.
+		*/
+		tile_FOREACH(priv, elm) {
+			cliptl = elm->origin;
+			clipbr = elm->clipbr;
 
-		if (x < cliptl.x || y < cliptl.y ||
-		    x + width > clipbr.x || y + height > clipbr.y ||
-		    nx < cliptl.x || ny < cliptl.y ||
-		    nx + width > clipbr.x || ny + height > clipbr.y) {
-			continue;
+			if (x < cliptl.x || y < cliptl.y ||
+			    x + width > clipbr.x || y + height > clipbr.y ||
+			    nx < cliptl.x || ny < cliptl.y ||
+			    nx + width > clipbr.x || ny + height > clipbr.y) {
+				continue;
+			}
+
+			return ggiCopyBox(elm->vis,
+					  x - cliptl.x, y - cliptl.y, width, height,
+					  nx - cliptl.x, ny - cliptl.y);
 		}
-
-		return ggiCopyBox(elm->vis,
-				  x - cliptl.x, y - cliptl.y, width, height,
-				  nx - cliptl.x, ny - cliptl.y);
 	}
 
 	/* ARGGH!!! */
