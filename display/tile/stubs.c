@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.13 2006/08/05 09:25:04 pekberg Exp $
+/* $Id: stubs.c,v 1.14 2006/08/06 06:00:55 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -50,6 +50,13 @@ int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 
 /* Hack: Copy GC changes to each child visual. */
 
+#ifndef max
+#define max(x,y) ((x)>(y)?(x):(y))
+#endif
+#ifndef min
+#define min(x,y) ((x)<(y)?(x):(y))
+#endif
+
 void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
@@ -58,7 +65,7 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 	ggi_gc *gc;
 
 	/* Irrelevant. */
-	if ((!priv->multi_mode) && (mask & GGI_GCCHANGED_CLIP))
+	if ((priv->use_db) && (mask & GGI_GCCHANGED_CLIP))
 		mask &= ~GGI_GCCHANGED_CLIP;
 
 	gc = LIBGGI_GC(vis);
@@ -78,10 +85,19 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 		if (mask & GGI_GCCHANGED_BG)
 			LIBGGI_GC(currvis)->bg_color = gc->bg_color;
 
-		if (mask & GGI_GCCHANGED_CLIP)
-			ggiSetGCClipping(currvis->stem,
+		if (mask & GGI_GCCHANGED_CLIP) {
+			if (priv->multi_mode)
+				ggiSetGCClipping(currvis->stem,
 					gc->cliptl.x, gc->cliptl.y,
 					gc->clipbr.x, gc->clipbr.y);
+			else
+				ggiSetGCClipping(currvis->stem,
+					max(elm->origin.x, gc->cliptl.x) - elm->origin.x,
+					max(elm->origin.y, gc->cliptl.y) - elm->origin.y,
+					min(elm->clipbr.x, gc->clipbr.x) - elm->origin.x,
+					min(elm->clipbr.y, gc->clipbr.y) - elm->origin.y);
+		}
+
 		gc->version++;
 #endif
 
