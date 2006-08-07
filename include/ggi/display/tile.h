@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.11 2006/07/14 02:36:16 pekberg Exp $
+/* $Id: tile.h,v 1.12 2006/08/07 20:40:08 pekberg Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -36,6 +36,7 @@
 ggifunc_getmode		GGI_tile_getmode;
 ggifunc_setmode		GGI_tile_setmode;
 ggifunc_checkmode	GGI_tile_checkmode;
+ggifunc_checkmode	GGI_tile_checkmode_multi;
 ggifunc_getapi		GGI_tile_getapi;
 ggifunc_setflags	GGI_tile_setflags;
 
@@ -75,6 +76,7 @@ ggifunc_gcchanged	GGI_tile_gcchanged;
 
 ggifunc_setdisplayframe	GGI_tile_setdisplayframe_db;
 ggifunc_setorigin	GGI_tile_setorigin;
+ggifunc_setorigin	GGI_tile_setorigin_multi;
 
 ggifunc_mapcolor	GGI_tile_mapcolor;
 ggifunc_unmappixel	GGI_tile_unmappixel;

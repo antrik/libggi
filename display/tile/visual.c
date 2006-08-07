@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2006/08/07 19:52:24 pekberg Exp $
+/* $Id: visual.c,v 1.30 2006/08/07 20:40:09 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -449,7 +449,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	vis->opdisplay->getmode = GGI_tile_getmode;
 	vis->opdisplay->setmode = GGI_tile_setmode;
-	vis->opdisplay->checkmode = GGI_tile_checkmode;
+	vis->opdisplay->checkmode = GGI_tile_checkmode_multi;
 	vis->opdisplay->setflags = GGI_tile_setflags;
 	vis->opdisplay->getapi = GGI_tile_getapi;
 	vis->opdisplay->flush = GGI_tile_flush;

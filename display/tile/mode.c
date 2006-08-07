@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2006/08/06 19:50:26 cegger Exp $
+/* $Id: mode.c,v 1.27 2006/08/07 20:40:08 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -216,6 +216,10 @@ static int _GGIdomode(struct ggi_visual *vis)
 		vis->opdraw->setorigin=GGI_tile_setorigin;
 	}
 
+	if (TILE_PRIV(vis)->multi_mode) {
+		vis->opdraw->setorigin=GGI_tile_setorigin_multi;
+	}
+
 	vis->opcolor->mapcolor=GGI_tile_mapcolor;
 	vis->opcolor->unmappixel=GGI_tile_unmappixel;
 	vis->opcolor->setpalvec=GGI_tile_setpalvec;
@@ -237,11 +241,15 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 	DPRINT_MODE("GGI_tile_setmode(%p, %p) entered\n",
 			(void *)vis, (void *)tm);
-	err = GGI_tile_checkmode(vis, tm);
-	if (err) return err;
-	
+
 	priv = TILE_PRIV(vis);
 
+	if (!priv->multi_mode)
+		err = GGI_tile_checkmode(vis, tm);
+	else
+		err = GGI_tile_checkmode_multi(vis, tm);
+	if (err) return err;
+	
 	depth = GT_SIZE(tm->graphtype);
 
 	if (priv->use_db) {
@@ -277,13 +285,9 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 		currvis = elm->vis;
 		sugmode = *tm;
-		if (priv->multi_mode) {
-			sugmode.visible.x = tm->visible.x;
-			sugmode.visible.y = tm->visible.y;
-		} else {
+		if (!priv->multi_mode) {
 			sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
-			sugmode.visible.x = elm->size.x;
-			sugmode.visible.y = elm->size.y;
+			sugmode.visible = elm->size;
 		}
 		_vis = GGI_VISUAL(currvis);
 
@@ -304,15 +308,13 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 		DPRINT("Success setting mode for visual #%d\n", i);
 
-		if (!priv->multi_mode && !priv->use_db) {
+		if (!priv->use_db) {
 			/* Adjust clipping rectangle for mode dimensions. */
 
 			if (!elm->size.x)
 				elm->clipbr.x = elm->origin.x + sugmode.visible.x;
 			else
 				elm->clipbr.x = elm->origin.x + elm->size.x;
-			if (!tm->virt.x)
-				tm->virt.x = sugmode.virt.x;
 			if (elm->clipbr.x > tm->virt.x)
 				elm->clipbr.x = tm->virt.x;
 
@@ -320,8 +322,6 @@ int GGI_tile_setmode(struct ggi_visual *vis,ggi_mode *tm)
 				elm->clipbr.y = elm->origin.y + sugmode.visible.y;
 			else
 				elm->clipbr.y = elm->origin.y + elm->size.y;
-			if (!tm->virt.y)
-				tm->virt.y = sugmode.virt.y;
 			if (elm->clipbr.y > tm->virt.y)
 				elm->clipbr.y = tm->virt.y;
 		}
@@ -380,25 +380,32 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 	struct multi_vis *elm;
 	ggi_mode sugmode;
 	int err, i;
+	ggi_coord min_virt;
+
+	err = GGI_OK;
 
 	/* Find out the "bounding rectangle" for GGI_AUTO values */
-	if(tm->virt.x == GGI_AUTO) {
-		int x;
-		tm->virt.x = 0;
-		tile_FOREACH(priv, elm) {
-			x = elm->origin.x
-				+ elm->size.x;
-			if (x > tm->virt.x) tm->virt.x = x;
-		}
+	min_virt.x = min_virt.y = 0;
+	tile_FOREACH(priv, elm) {
+		i = elm->origin.x
+			+ elm->size.x;
+		if (i > min_virt.x) min_virt.x = i;
+
+		i = elm->origin.y
+			+ elm->size.y;
+		if (i > min_virt.y) min_virt.y = i;
 	}
-	if (tm->virt.y == GGI_AUTO) {
-		int y;
-		tm->virt.y = 0;
-		tile_FOREACH(priv, elm) {
-			y = elm->origin.y
-				+ elm->size.y;
-			if (y > tm->virt.y) tm->virt.y = y;
-		}
+	if (tm->virt.x == GGI_AUTO)
+		tm->virt.x = min_virt.x;
+	else if (tm->virt.x < min_virt.x) {
+		err = GGI_ENOMATCH;
+		tm->virt.x = min_virt.x;
+	}
+	if (tm->virt.y == GGI_AUTO)
+		tm->virt.y = min_virt.y;
+	else if (tm->virt.y < min_virt.y) {
+		err = GGI_ENOMATCH;
+		tm->virt.y = min_virt.y;
 	}
 
 	/* We ignore visible size */
@@ -406,38 +413,35 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 		tm->visible.x = tm->virt.x;
 	if (tm->visible.y == GGI_AUTO)
 		tm->visible.y = tm->virt.y;
+	if (!priv->use_db) {
+		if (tm->visible.x < tm->virt.x) {
+			err = GGI_ENOMATCH;
+			tm->visible.x = tm->virt.x;
+		}
+		if (tm->visible.y < tm->virt.y) {
+			err = GGI_ENOMATCH;
+			tm->visible.y = tm->virt.y;
+		}
+	}
 
 	if (tm->frames == GGI_AUTO)
 		tm->frames = 1;
 
-	if (tm->size.x != GGI_AUTO || tm->size.y != GGI_AUTO) {
-		err = -1;
-	}
 	tm->size.x = tm->size.y = GGI_AUTO;
 
 	i = 0;
 	tile_FOREACH(priv, elm) {
-		ggi_coord size;
+		int suberr;
 
-		size.x = (tm->virt.x != GGI_AUTO) ? tm->virt.x : tm->visible.x;
-		size.y = (tm->virt.y != GGI_AUTO) ? tm->virt.y : tm->visible.y;
- 
 		sugmode.frames = priv->use_db ? 1 : tm->frames;
-		if (priv->multi_mode) {
-			elm->size.x = elm->clipbr.x = size.x;
-			elm->size.y = elm->clipbr.y = size.y;
-			sugmode.virt = tm->virt; 
-		} else {
-			sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
-		}
-		sugmode.visible.x = elm->size.x;
-		sugmode.visible.y = elm->size.y;
+		sugmode.visible = elm->size;
+		sugmode.virt.x = sugmode.virt.y = GGI_AUTO;
+		sugmode.size.x = sugmode.size.y = GGI_AUTO;
 		sugmode.graphtype = tm->graphtype;
 		sugmode.dpp  = tm->dpp;
-		sugmode.size = tm->size;
 
-		err = ggiCheckMode(elm->vis, &sugmode);
-		if (err) {
+		suberr = ggiCheckMode(elm->vis, &sugmode);
+		if (suberr) {
 			/* Forget searching all visuals for the source of
 			   error, it's way too complicated. Just say fail
 			   with impossible mode */
@@ -445,7 +449,7 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 
 			fprintf(stderr,
 				"display-tile: ggiCheckMode() on visual #%d error -- please explicitly specify correct mode instead.\n", i);
-			return err;
+			return suberr;
 		}
 
                 /* Fill out any remaining GT_AUTO fields in the
@@ -455,7 +459,35 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 		i++;
 	}
 
+	return err;
+}
+
+static int try_checkmode_multi(struct ggi_visual *vis, ggi_mode *tm, int count)
+{
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
+	int err;
+
+	count++;
+	if (count > 10) {
+		/* Can't find any mode useable by all child visuals */
+		return GGI_EFATAL;
+	}
+
+	tile_FOREACH(priv, elm) {
+		err = ggiCheckMode(elm->vis, tm);
+		if (err) {
+			try_checkmode_multi(vis, tm, count);
+			return err;
+		}
+	}
+
 	return 0;
+}
+
+int GGI_tile_checkmode_multi(struct ggi_visual *vis, ggi_mode *tm)
+{
+	return try_checkmode_multi(vis, tm, 0);
 }
 
 /************************/
@@ -503,4 +535,23 @@ int GGI_tile_setorigin(struct ggi_visual *vis,int x,int y)
 	vis->origin_y=y;
 	
 	return 0;
+}
+
+int GGI_tile_setorigin_multi(struct ggi_visual *vis,int x,int y)
+{
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *elm;
+	int err = 0;
+
+	tile_FOREACH(priv, elm) {
+		if (ggiSetOrigin(elm->vis, x, y) != 0)
+			err = -1;
+	}
+
+	if (!err) {
+		vis->origin_x = x;
+		vis->origin_y = y;
+	}
+	
+	return err;
 }
