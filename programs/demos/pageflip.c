@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.11 2006/03/27 13:10:43 pekberg Exp $
+/* $Id: pageflip.c,v 1.12 2006/08/07 20:18:49 pekberg Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -266,14 +266,15 @@ int main(int argc, char *argv[])
 		if (ggiSetDisplayFrame(vis, i)) {
 			ggPanic("Cannot set display frame!\n");
 		}
-		/* Flush command before waiting for input */
-		ggiFlush(vis);
 
 		/* Wait */
 		c = GIIK_VOID;
 		do {
 			struct timeval tv = { 0, 0 };
 			int key;
+
+			/* Flush command before waiting for input */
+			ggiFlush(vis);
 
 			key = giiEventPoll(vis, emKeyPress, &tv);
 			if (key & emKeyPress)
