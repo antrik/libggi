@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2006/07/14 02:39:40 pekberg Exp $
+/* $Id: visual.c,v 1.29 2006/08/07 19:52:24 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -462,7 +462,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	while (!tile_EMPTY(priv)) {
 		mvis = tile_FIRST(priv);
 		tile_REMOVE(priv, mvis);
-		ggiClose(mvis->vis);
+		ggDelStem(mvis->vis);
 		free(mvis);
 	}
   out_freepriv:
@@ -493,7 +493,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	while (!tile_EMPTY(priv)) {
 		elm = tile_FIRST(priv);
 		tile_REMOVE(priv, elm);
-		ggiClose(elm->vis);
+		ggDelStem(elm->vis);
 		free(elm);		
 	}
 
