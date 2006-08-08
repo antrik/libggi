@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.16 2006/08/07 20:40:09 pekberg Exp $
+/* $Id: stubs.c,v 1.17 2006/08/08 20:37:40 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -102,7 +102,7 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 		gc->version++;
 #endif
 
-		if ((!priv->multi_mode) && (currvis->opgc->gcchanged))
+		if (currvis->opgc->gcchanged)
 			currvis->opgc->gcchanged(currvis, mask);
 	}
 }
