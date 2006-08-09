@@ -37,7 +37,7 @@ m4_define([_LT_COPYING], [dnl
 # the same distribution terms that you use for the rest of that program.
 ])
 
-# serial 52 LT_INIT
+# serial 53 LT_INIT
 
 
 # LT_PREREQ(VERSION)
@@ -606,7 +606,7 @@ do
     -*) AC_MSG_ERROR([unrecognized option: $[1]
 Try `$[0] --help' for more information.]) ;;
 
-    *) AC_MSG_ERROR([unrecognised argument: $[1]
+    *) AC_MSG_ERROR([unrecognized argument: $[1]
 Try `$[0] --help for more information.]) ;;
   esac
   shift
@@ -852,7 +852,7 @@ compiler=$CC
 # the simple compiler test code.
 m4_defun([_LT_COMPILER_BOILERPLATE],
 [ac_outfile=conftest.$ac_objext
-printf "$lt_simple_compile_test_code" >conftest.$ac_ext
+echo "$lt_simple_compile_test_code" >conftest.$ac_ext
 eval "$ac_compile" 2>&1 >/dev/null | $SED '/^$/d; /^ *+/d' >conftest.err
 _lt_compiler_boilerplate=`cat conftest.err`
 $RM conftest*
@@ -865,7 +865,7 @@ $RM conftest*
 # the simple link test code.
 m4_defun([_LT_LINKER_BOILERPLATE],
 [ac_outfile=conftest.$ac_objext
-printf "$lt_simple_link_test_code" >conftest.$ac_ext
+echo "$lt_simple_link_test_code" >conftest.$ac_ext
 eval "$ac_link" 2>&1 >/dev/null | $SED '/^$/d; /^ *+/d' >conftest.err
 _lt_linker_boilerplate=`cat conftest.err`
 $RM conftest*
@@ -1256,7 +1256,7 @@ m4_require([_LT_DECL_SED])dnl
 AC_CACHE_CHECK([$1], [$2],
   [$2=no
    m4_if([$4], , [ac_outfile=conftest.$ac_objext], [ac_outfile=$4])
-   printf "$lt_simple_compile_test_code" > conftest.$ac_ext
+   echo "$lt_simple_compile_test_code" > conftest.$ac_ext
    lt_compiler_flag="$3"
    # Insert the option either (1) after the last *FLAGS variable, or
    # (2) before a word containing "conftest.", or (3) at the end.
@@ -1308,7 +1308,7 @@ AC_CACHE_CHECK([$1], [$2],
   [$2=no
    save_LDFLAGS="$LDFLAGS"
    LDFLAGS="$LDFLAGS $3"
-   printf "$lt_simple_link_test_code" > conftest.$ac_ext
+   echo "$lt_simple_link_test_code" > conftest.$ac_ext
    if (eval $ac_link 2>conftest.err) && test -s conftest$ac_exeext; then
      # The linker can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -1707,7 +1707,7 @@ AC_CACHE_CHECK([if $compiler supports -c -o file.$ac_objext],
    mkdir conftest
    cd conftest
    mkdir out
-   printf "$lt_simple_compile_test_code" > conftest.$ac_ext
+   echo "$lt_simple_compile_test_code" > conftest.$ac_ext
 
    lt_compiler_flag="-o out/conftest2.$ac_objext"
    # Insert the option either (1) after the last *FLAGS variable, or
@@ -2545,7 +2545,7 @@ _LT_DECL([], [sys_lib_dlsearch_path_spec], [2],
 
 # _LT_PATH_TOOL_PREFIX(TOOL)
 # --------------------------
-# find a file program which can recognise shared library
+# find a file program which can recognize shared library
 AC_DEFUN([_LT_PATH_TOOL_PREFIX],
 [m4_require([_LT_DECL_EGREP])dnl
 AC_MSG_CHECKING([for $1])
@@ -2615,7 +2615,7 @@ dnl AC_DEFUN([AC_PATH_TOOL_PREFIX], [])
 
 # _LT_PATH_MAGIC
 # --------------
-# find a file program which can recognise a shared library
+# find a file program which can recognize a shared library
 m4_defun([_LT_PATH_MAGIC],
 [_LT_PATH_TOOL_PREFIX(${ac_tool_prefix}file, /usr/bin$PATH_SEPARATOR$PATH)
 if test -z "$lt_cv_path_MAGIC_CMD"; then
@@ -2777,7 +2777,7 @@ _LT_DECL([], [reload_cmds], [2])dnl
 #  -- PORTME fill in with the dynamic library characteristics
 m4_defun([_LT_CHECK_MAGIC_METHOD],
 [m4_require([_LT_DECL_EGREP])
-AC_CACHE_CHECK([how to recognise dependent libraries],
+AC_CACHE_CHECK([how to recognize dependent libraries],
 lt_cv_deplibs_check_method,
 [lt_cv_file_magic_cmd='$MAGIC_CMD'
 lt_cv_file_magic_test_file=
@@ -4911,7 +4911,7 @@ x|xyes)
       # to ld, don't add -lc before -lgcc.
       AC_MSG_CHECKING([whether -lc should be explicitly linked in])
       $RM conftest*
-      printf "$lt_simple_compile_test_code" > conftest.$ac_ext
+      echo "$lt_simple_compile_test_code" > conftest.$ac_ext
 
       if AC_TRY_EVAL(ac_compile) 2>conftest.err; then
         soname=conftest
@@ -5039,10 +5039,10 @@ objext=o
 _LT_TAGVAR(objext, $1)=$objext
 
 # Code to be used in simple compile tests
-lt_simple_compile_test_code="int some_variable = 0;\n"
+lt_simple_compile_test_code="int some_variable = 0;"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='int main(){return(0);}\n'
+lt_simple_link_test_code='int main(){return(0);}'
 
 _LT_TAG_COMPILER
 # Save the default compiler, since it gets overwritten when the other
@@ -5174,10 +5174,10 @@ _LT_TAGVAR(objext, $1)=$objext
 # and will be corrupted by setting them based on a non-working compiler.
 if test "$_lt_caught_CXX_error" != yes; then
   # Code to be used in simple compile tests
-  lt_simple_compile_test_code="int some_variable = 0;\n"
+  lt_simple_compile_test_code="int some_variable = 0;"
 
   # Code to be used in simple link tests
-  lt_simple_link_test_code='int main(int, char *[[]]) { return(0); }\n'
+  lt_simple_link_test_code='int main(int, char *[[]]) { return(0); }'
 
   # ltmain only uses $CC for tagged configurations so make sure $CC is set.
   _LT_TAG_COMPILER
@@ -6338,7 +6338,20 @@ linux*)
   case `$CC -V 2>&1 | sed 5q` in
   *Sun\ C*)
     # Sun C++ 5.9
-    _LT_TAGVAR(postdeps,$1)='-lCstd -lCrun'
+
+    # The more standards-conforming stlport4 library is
+    # incompatible with the Cstd library. Avoid specifying
+    # it if it's in CXXFLAGS. Ignore libCrun as
+    # -library=stlport4 depends on it.
+    case " $CXX $CXXFLAGS " in
+    *" -library=stlport4 "*)
+      solaris_use_stlport4=yes
+      ;;
+    esac
+
+    if test "$solaris_use_stlport4" != yes; then
+      _LT_TAGVAR(postdeps,$1)='-library=Cstd -library=Crun'
+    fi
     ;;
   esac
   ;;
@@ -6346,10 +6359,22 @@ linux*)
 solaris*)
   case $cc_basename in
   CC*)
+    # The more standards-conforming stlport4 library is
+    # incompatible with the Cstd library. Avoid specifying
+    # it if it's in CXXFLAGS. Ignore libCrun as
+    # -library=stlport4 depends on it.
+    case " $CXX $CXXFLAGS " in
+    *" -library=stlport4 "*)
+      solaris_use_stlport4=yes
+      ;;
+    esac
+
     # Adding this requires a known-good setup of shared libraries for
     # Sun compiler versions before 5.6, else PIC objects from an old
     # archive will be linked into the output, leading to subtle bugs.
-    _LT_TAGVAR(postdeps,$1)='-lCstd -lCrun'
+    if test "$solaris_use_stlport4" != yes; then
+      _LT_TAGVAR(postdeps,$1)='-library=Cstd -library=Crun'
+    fi
     ;;
   esac
   ;;
@@ -6432,10 +6457,17 @@ _LT_TAGVAR(objext, $1)=$objext
 # and will be corrupted by setting them based on a non-working compiler.
 if test "$_lt_disable_F77" != yes; then
   # Code to be used in simple compile tests
-  lt_simple_compile_test_code="      subroutine t\n      return\n      end\n"
+  lt_simple_compile_test_code="\
+      subroutine t
+      return
+      end
+"
 
   # Code to be used in simple link tests
-  lt_simple_link_test_code="      program t\n      end\n"
+  lt_simple_link_test_code="\
+      program t
+      end
+"
 
   # ltmain only uses $CC for tagged configurations so make sure $CC is set.
   _LT_TAG_COMPILER
@@ -6566,10 +6598,17 @@ _LT_TAGVAR(objext, $1)=$objext
 # and will be corrupted by setting them based on a non-working compiler.
 if test "$_lt_disable_FC" != yes; then
   # Code to be used in simple compile tests
-  lt_simple_compile_test_code="      subroutine t\n      return\n      end\n"
+  lt_simple_compile_test_code="\
+      subroutine t
+      return
+      end
+"
 
   # Code to be used in simple link tests
-  lt_simple_link_test_code="      program t\n      end\n"
+  lt_simple_link_test_code="\
+      program t
+      end
+"
 
   # ltmain only uses $CC for tagged configurations so make sure $CC is set.
   _LT_TAG_COMPILER
@@ -6657,10 +6696,10 @@ objext=o
 _LT_TAGVAR(objext, $1)=$objext
 
 # Code to be used in simple compile tests
-lt_simple_compile_test_code="class foo {}\n"
+lt_simple_compile_test_code="class foo {}"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='public class conftest { public static void main(String[[]] argv) {}; }\n'
+lt_simple_link_test_code='public class conftest { public static void main(String[[]] argv) {}; }'
 
 # ltmain only uses $CC for tagged configurations so make sure $CC is set.
 _LT_TAG_COMPILER
@@ -6719,7 +6758,7 @@ objext=o
 _LT_TAGVAR(objext, $1)=$objext
 
 # Code to be used in simple compile tests
-lt_simple_compile_test_code='sample MENU { MENUITEM "&Soup", 100, CHECKED }\n'
+lt_simple_compile_test_code='sample MENU { MENUITEM "&Soup", 100, CHECKED }'
 
 # Code to be used in simple link tests
 lt_simple_link_test_code="$lt_simple_compile_test_code"
