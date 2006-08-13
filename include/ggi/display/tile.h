@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.12 2006/08/07 20:40:08 pekberg Exp $
+/* $Id: tile.h,v 1.13 2006/08/13 18:36:46 pekberg Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -80,6 +80,7 @@ ggifunc_setorigin	GGI_tile_setorigin_multi;
 
 ggifunc_mapcolor	GGI_tile_mapcolor;
 ggifunc_unmappixel	GGI_tile_unmappixel;
+ggifunc_packcolors	GGI_tile_packcolors;
 
 ggifunc_setpalvec	GGI_tile_setpalvec;
 ggifunc_getpalvec	GGI_tile_getpalvec;

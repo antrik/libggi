@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2006/08/07 20:40:08 pekberg Exp $
+/* $Id: mode.c,v 1.28 2006/08/13 18:36:47 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -222,6 +222,7 @@ static int _GGIdomode(struct ggi_visual *vis)
 
 	vis->opcolor->mapcolor=GGI_tile_mapcolor;
 	vis->opcolor->unmappixel=GGI_tile_unmappixel;
+	vis->opcolor->packcolors=GGI_tile_packcolors;
 	vis->opcolor->setpalvec=GGI_tile_setpalvec;
 	vis->opcolor->getpalvec=GGI_tile_getpalvec;
 	

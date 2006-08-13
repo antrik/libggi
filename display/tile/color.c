@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2006/04/28 06:05:37 cegger Exp $
+/* $Id: color.c,v 1.11 2006/08/13 18:36:47 pekberg Exp $
 ******************************************************************************
 
    Tile target: color management
@@ -42,6 +42,14 @@ int GGI_tile_unmappixel(struct ggi_visual *vis,ggi_pixel pixel,ggi_color *col)
 	struct multi_vis *first = tile_FIRST(priv);
 
 	return ggiUnmapPixel(first->vis, pixel, col);
+}
+
+int GGI_tile_packcolors(struct ggi_visual *vis,void *buf,const ggi_color *cols,int len)
+{
+	ggi_tile_priv *priv = TILE_PRIV(vis);
+	struct multi_vis *first = tile_FIRST(priv);
+
+	return ggiPackColors(first->vis, buf, cols, len);
 }
 
 int GGI_tile_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_color *colormap)
