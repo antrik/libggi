@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2006/08/13 18:36:47 pekberg Exp $
+/* $Id: mode.c,v 1.29 2006/08/14 06:38:42 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -104,9 +104,9 @@ int GGI_tile_flush_db(struct ggi_visual *vis, int x, int y, int w, int h, int tr
 #endif
 
 		nx = x - elm->origin.x;
-		nw = w - elm->origin.x;
+		nw = w;
 		ny = y - elm->origin.y;
-		nh = h - elm->origin.y;
+		nh = h;
 		if (nx < 0) nx = 0;
 		else if (nx > LIBGGI_X(_vis)) continue;
 		if (ny < 0) ny = 0;

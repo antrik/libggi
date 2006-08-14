@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.18 2006/08/14 06:32:34 pekberg Exp $
+/* $Id: stubs.c,v 1.19 2006/08/14 06:38:42 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -45,9 +45,9 @@ int GGI_tile_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 		int nx, ny, nw, nh;
 
 		nx = x - elm->origin.x;
-		nw = w - elm->origin.x;
+		nw = w;
 		ny = y - elm->origin.y;
-		nh = h - elm->origin.y;
+		nh = h;
 		if (nx < 0) nx = 0;
 		else if (nx > LIBGGI_X(sub)) continue;
 		if (ny < 0) ny = 0;
