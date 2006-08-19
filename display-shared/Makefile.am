@@ -6,7 +6,7 @@ EXTRA_LTLIBRARIES = aa.la auto.la directx.la fbdev.la file.la \
 	helper_x_shm.la helper_x_vidmode.la ipc.la kgi.la lcd823.la \
 	kgilib.la linvtsw.la mansync.la memory.la monotext.la \
 	palemu.la sub.la svgalib.la tele.la terminfo.la tile.la trueemu.la \
-	suidkgi.la vcsa.la vgagl.la vgl.la wsfb.la quartz.la X.la
+	suidkgi.la vcsa.la vgagl.la vgl.la vnc.la wsfb.la quartz.la X.la
 
 displaylib_LTLIBRARIES = @DISPLAYMODULES@
 
@@ -172,6 +172,12 @@ vgl_la_SOURCES =
 vgl_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/vgl/EXPSYMS
+
+vnc_la_LIBADD = ${displaydir}/vnc/libvnc.la ${libggi}
+vnc_la_SOURCES =
+vnc_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
+	-shared -module -no-undefined -avoid-version \
+	-export-symbols ${top_srcdir}/display/vnc/EXPSYMS
 
 wsfb_la_LIBADD = ${displaydir}/wsfb/libwsfb.la ${libggi}
 wsfb_la_SOURCES =

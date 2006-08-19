@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.7 2006/05/05 21:20:15 cegger Exp $
+/* $Id: builtins.c,v 1.8 2006/08/19 23:31:31 pekberg Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -145,6 +145,9 @@ ggifunc_dlinit GGIdl_vgagl;
 #ifdef BUILTIN_DISPLAY_VGL
 ggifunc_dlinit GGIdl_vgl;
 #endif
+#ifdef BUILTIN_DISPLAY_VNC
+ggifunc_dlinit GGIdl_vnc;
+#endif
 #ifdef BUILTIN_DISPLAY_WSFB
 ggifunc_dlinit GGIdl_wsfb;
 #endif
@@ -286,6 +289,9 @@ static struct target _targets[] = {
 #endif
 #ifdef BUILTIN_DISPLAY_VGL
         { "GGIdl_vgl", &GGIdl_vgl },
+#endif
+#ifdef BUILTIN_DISPLAY_VNC
+        { "GGIdl_vnc", &GGIdl_vnc },
 #endif
 #ifdef BUILTIN_DISPLAY_WSFB
         { "GGIdl_wsfb", &GGIdl_wsfb },

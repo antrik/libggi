@@ -29,6 +29,7 @@ display-trueemu			display/trueemu.@DLLEXT@
 display-vcsa			display/vcsa.@DLLEXT@
 helper-vgagl			display/vgagl.@DLLEXT@
 display-vgl			display/vgl.@DLLEXT@
+display-vnc			display/vnc.@DLLEXT@
 display-wsfb			display/wsfb.@DLLEXT@
 display-x			display/X.@DLLEXT@
 alias	display-dga		display-x:-fullscreen
@@ -68,6 +69,7 @@ alias	tile		display-tile
 alias	trueemu		display-trueemu
 alias	vcsa		display-vcsa
 alias	vgl		display-vgl
+alias	vnc		display-vnc
 alias	wsfb		display-wsfb
 alias	x		display-x
 
@@ -185,6 +187,7 @@ display-trueemu		@libggi:GGIdl_trueemu
 display-vcsa		@libggi:GGIdl_vcsa
 helper-vgagl		@libggi:GGIdl_vgagl
 display-vgl		@libggi:GGIdl_vgl
+display-vnc		@libggi:GGIdl_vnc
 display-wsfb		@libggi:GGIdl_wsfb
 display-x		@libggi:GGIdl_X
 helper-x-dbe		@libggi:GGIdl_helper_x_dbe

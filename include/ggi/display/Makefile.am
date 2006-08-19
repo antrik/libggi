@@ -6,7 +6,7 @@ ggiinclude_HEADERS = aa.h auto.h directx.h \
 	monotext.h multi.h palemu.h \
 	quartz.h sub.h svgalib.h \
 	tele.h tile.h trueemu.h \
-	x.h xcommon.h xevi.h xf86dga.h xlib.h \
-	vcsa.h vgl.h
+	vcsa.h vgl.h vnc.h \
+	x.h xcommon.h xevi.h xf86dga.h xlib.h
 
 MAINTAINERCLEANFILES = Makefile.in

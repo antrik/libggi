@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.195 2006/05/05 21:20:15 cegger Exp $
+dnl $Id: configure.in,v 1.196 2006/08/19 23:31:31 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -71,6 +71,7 @@ build_trueemu_target="auto"
 build_sub_target="auto"
 build_ipc_target="auto"
 build_tele_target="auto"
+build_vnc_target="auto"
 
 dnl Helpers
 build_mansync_helper="yes"
@@ -233,6 +234,9 @@ build_ipc_target=$enableval)
 AC_ARG_ENABLE(tele,
 [  --disable-tele          don't build the tele target],
 build_tele_target=$enableval)
+AC_ARG_ENABLE(vnc,
+[  --disable-vnc           don't build the vnc target],
+build_vnc_target=$enableval)
 
 
 dnl Helpers
@@ -1316,6 +1320,11 @@ GGI_CHECK_TARGET(display-tele, build_tele_target,
 		BUILTIN_DISPLAY_TELE)
 
 
+GGI_CHECK_TARGET(display-vnc, build_vnc_target,
+		DISPLAYSUBDIRS, DISPLAYMODULES, vnc, vnc.la,
+		BUILTIN_DISPLAY_VNC)
+
+
 GGI_CHECK_TARGET(display-terminfo, build_terminfo_target,
 		DISPLAYSUBDIRS, DISPLAYMODULES, terminfo, terminfo.la,
 		BUILTIN_DISPLAY_TERMINFO)
@@ -1556,6 +1565,7 @@ display/svgalib/Makefile
 display/vgl/Makefile
 display/wsfb/Makefile
 display/tele/Makefile
+display/vnc/Makefile
 display/terminfo/Makefile
 display/tile/Makefile
 display/trueemu/Makefile

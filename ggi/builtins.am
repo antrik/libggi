@@ -104,6 +104,9 @@ endif
 if BUILTIN_DISPLAY_VGL
   builtins_libs += $(top_builddir)/display/vgl/libvgl.la
 endif
+if BUILTIN_DISPLAY_VNC
+  builtins_libs += $(top_builddir)/display/vnc/libvnc.la
+endif
 #if BUILTIN_DISPLAY_WSFB
 #  builtins_libs += $(top_builddir)/display/wsfb/libwsfb.la
 #endif
