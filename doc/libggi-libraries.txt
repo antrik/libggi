@@ -21,6 +21,7 @@ LibGGI Libraries and utilities
 .. include:: ../display/trueemu/man.txt
 .. include:: ../display/vcsa/man.txt
 .. include:: ../display/vgl/man.txt
+.. include:: ../display/vnc/man.txt
 .. include:: ../display/X/man.txt
 
 .. include:: ../programs/util/monitest/monitest.txt

@@ -1,0 +1,47 @@
+Display on vnc clinet over a network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage:: 7 display-vnc
+
+Synopsis
+--------
+
+::
+
+  display-vnc: [-display=<dpy>]
+
+
+Description
+-----------
+
+Provides a linear framebuffer in main memory. A vnc client that
+connects gets to see a copy of this framebuffer. The protocol
+used is the remote framebuffer protocol, or the RFB protocol for
+short.
+
+The supported RFB protocol versions are 3.3, 3.7 and 3.8.
+
+
+Options
+-------
+
+``-display=<dpy>``
+    The display number clients should connect to. Display number 0 is
+    equivalent of tcp port 5900.
+    
+
+Features
+--------
+
+- Unaccelerated.
+
+
+Bugs
+----
+
+- Clients are not authenticated.
+- The raw encoding is the only supported encoding.
+- Special keys (i.e. shift, escape, etc) needs to be converted.
+- A DoS attack is easy as an existing client id disconnected as soon
+  as a new one connects.
+- Palettized modes don't appear to work...
