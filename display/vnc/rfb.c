@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.1 2006/08/19 23:31:32 pekberg Exp $
+/* $Id: rfb.c,v 1.2 2006/08/20 05:07:16 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -150,14 +150,18 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	mode.dpp.x = mode.dpp.y = 1;
 
 	i = 0;
-	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-pixfmt=");
-
-	/* Need a visual to call _ggi_build_pixfmtstr, so fake one... */
-	fake_vis.pixfmt = &pixfmt;
-	fake_vis.mode = &mode;
-	memset(target + i, '\0', sizeof(target) - i);
-	_ggi_build_pixfmtstr(&fake_vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
-	i = strlen(target);
+	if (priv->buf[7]) {
+		i += snprintf(target, GGI_MAX_APILEN, "display-memory:-pixfmt=");
+	
+		/* Need a visual to call _ggi_build_pixfmtstr, so fake one... */
+		fake_vis.pixfmt = &pixfmt;
+		fake_vis.mode = &mode;
+		memset(target + i, '\0', sizeof(target) - i);
+		_ggi_build_pixfmtstr(&fake_vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
+		i = strlen(target);
+	}
+	else
+		i += snprintf(target, GGI_MAX_APILEN, "display-memory");
 
 	stem = ggNewStem();
 	if (stem == NULL) {

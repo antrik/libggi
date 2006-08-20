@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.1 2006/08/19 23:31:32 pekberg Exp $
+/* $Id: mode.c,v 1.2 2006/08/20 05:07:16 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: mode management
@@ -353,5 +353,7 @@ int GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
 
 int GGI_vnc_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
 {
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
+
 	return 0;
 }
