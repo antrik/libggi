@@ -49,5 +49,5 @@ Bugs
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.
 - Palettized modes don't appear to work...
-- The randmo challenge is created with the libc rand() function, which
+- The random challenge is created with the libc rand() function, which
   may subvert applications depending on the rand() sequence.
