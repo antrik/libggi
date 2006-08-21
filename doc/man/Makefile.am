@@ -113,7 +113,6 @@ man_MANS = \
            display-mansync.7 \
            display-memory.7 \
            display-monotext.7 \
-           display-multi.7 \
            display-palemu.7 \
            display-quartz.7 \
            display-sub.7 \
@@ -122,9 +121,11 @@ man_MANS = \
            ggiteleserver.1 \
            display-terminfo.7 \
            display-tile.7 \
+           display-multi.7 \
            display-trueemu.7 \
            display-vcsa.7 \
            display-vgl.7 \
+           display-vnc.7 \
            display-x.7 \
            monitest.1 \
            cube3d.1 \
