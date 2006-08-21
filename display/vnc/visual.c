@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2006/08/19 23:31:32 pekberg Exp $
+/* $Id: visual.c,v 1.2 2006/08/21 21:05:41 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: initialization
@@ -25,6 +25,8 @@
 ******************************************************************************
 */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,17 +38,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include "config.h"
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
 
+#include "d3des.h"
+
 static const gg_option optlist[] =
 {
 	{ "display", "no" },
+	{ "passwd",  "" },
 };
 
 #define OPT_DISPLAY	0
+#define OPT_PASSWD	1
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -103,6 +108,26 @@ GGIopen(struct ggi_visual *vis,
 		priv->display = strtoul(options[OPT_DISPLAY].result, NULL, 0);
 	else
 		priv->display = 0;
+
+	if (options[OPT_PASSWD].result[0] != '\0') {
+		char passwd[8];
+		int i;
+
+		priv->passwd = 1;
+		memset(passwd, 0, sizeof(passwd));
+		strncpy(passwd, options[OPT_PASSWD].result, 8);
+
+		/* Should apparently bitreverse the password bytes.
+		 * I just love undocumented quirks to standard algorithms...
+		 */
+		for (i = 0; i < 8; ++i)
+			passwd[i] = GGI_BITREV1(passwd[i]);
+
+		deskey(passwd, EN0);
+		cpkey(priv->cooked_key);
+	}
+	else
+		priv->passwd = 0;
 
 	priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 	if (priv->sfd == -1) {

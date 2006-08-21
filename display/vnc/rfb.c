@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.2 2006/08/20 05:07:16 pekberg Exp $
+/* $Id: rfb.c,v 1.3 2006/08/21 21:05:41 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -42,6 +42,8 @@
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
+
+#include "d3des.h"
 
 static int vnc_client_run(struct ggi_visual *vis);
 
@@ -530,7 +532,16 @@ vnc_client_challenge(struct ggi_visual *vis)
 		/* wait for more data */
 		return 0;
 
-	DPRINT("TODO: check response.\n");
+	if (priv->passwd) {
+		usekey(priv->cooked_key);
+		des(&priv->challenge[0], &priv->challenge[0]);
+		des(&priv->challenge[8], &priv->challenge[8]);
+		if (memcmp(priv->challenge, priv->buf, sizeof(priv->challenge))) {
+			/* bad password */
+			DPRINT("bad password.\n");
+			return -1;
+		}
+	}
 
 	priv->buf_size = 0;
 	priv->client_action = vnc_client_init;
@@ -548,8 +559,8 @@ vnc_client_security(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int security_type;
-	uint32_t challenge[4] = { 0xdeadbeef, 0xdeadbeef, 0xdeadbeef, 0xdeadbeef };
 	uint32_t ok = htonl(0);
+	int i;
 
 	DPRINT("client_security\n");
 
@@ -565,6 +576,8 @@ vnc_client_security(struct ggi_visual *vis)
 	security_type = priv->buf[0];
 	switch (security_type) {
 	case 1:
+		if (priv->passwd)
+			break;
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
@@ -572,24 +585,30 @@ vnc_client_security(struct ggi_visual *vis)
 
 		/* ok */
 		write(priv->cfd, &ok, sizeof(ok));
-		break;
+		return 0;
 
 	case 2:
+		if (!priv->passwd)
+			break;
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_challenge;
+
+		/* should find some other way to get random numbers.
+		 * probably open /dev/urandom if that exists.
+		 * using rand will possibly subvert the ggi user.
+		 */
+		for (i = 0; i < 16; ++i)
+			priv->challenge[i] = rand();
 
 		/* block signals? */
 
 		/* challenge client */
-		write(priv->cfd, &challenge, sizeof(challenge));
-		break;
-
-	default:
-		DPRINT("Invalid security type requested (%u)\n", security_type);
-		return -1;
+		write(priv->cfd, &priv->challenge, sizeof(priv->challenge));
+		return 0;
 	}
 
-	return 0;
+	DPRINT("Invalid security type requested (%u)\n", security_type);
+	return -1;
 }
 
 static int
@@ -598,7 +617,7 @@ vnc_client_version(struct ggi_visual *vis)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int major, minor;
 	char str[13];
-	unsigned char security[] = { 2, 1, 2 };
+	unsigned char security[] = { 1, 0 };
 
 	if (priv->buf_size > 12) {
 		DPRINT("Too much data.\n");
@@ -636,20 +655,29 @@ vnc_client_version(struct ggi_visual *vis)
 	priv->protover = minor;
 
 	if (priv->protover <= 3) {
-		unsigned char security[] = { 0, 0, 0, 1 };
+		uint32_t security_v3;
 	
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
 		/* block signals? */
 
-		/* ok, no security */
-		write(priv->cfd, &security, sizeof(security));
+		/* ok, decide security */
+		security_v3 = htonl(priv->passwd ? 2 : 1);
+		write(priv->cfd, &security_v3, sizeof(security_v3));
+		if (priv->passwd) {
+			/* fake a client request of vnc auth security type */
+			priv->buf[0] = 2;
+			priv->buf_size = 1;
+			return vnc_client_security(vis);
+		}
 		return 0;
 	}
 
 	priv->buf_size = 0;
 	priv->client_action = vnc_client_security;
+
+	security[1] = priv->passwd ? 2 : 1;
 
 	/* block signals? */
 

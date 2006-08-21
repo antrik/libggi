@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.1 2006/08/19 23:31:32 pekberg Exp $
+/* $Id: vnc.h,v 1.2 2006/08/21 21:05:41 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -55,6 +55,10 @@ typedef struct {
 	struct ggi_visual *client_vis;
 	int palette_dirty;
 	int reverse_endian;
+
+	int           passwd;
+	unsigned long cooked_key[32];
+	uint8_t       challenge[16];
 } ggi_vnc_priv;
 
 

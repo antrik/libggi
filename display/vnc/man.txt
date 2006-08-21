@@ -8,7 +8,7 @@ Synopsis
 
 ::
 
-  display-vnc: [-display=<dpy>]
+  display-vnc: [-display=<dpy>] [-passwd=<pass>]
 
 
 Description
@@ -28,7 +28,11 @@ Options
 ``-display=<dpy>``
     The display number clients should connect to. Display number 0 is
     equivalent of tcp port 5900.
-    
+
+``-passwd=<pass>``
+    The vnc client has to successfully encrypt a random challenge
+    with the stated password in order to connect.
+
 
 Features
 --------
@@ -39,10 +43,11 @@ Features
 Bugs
 ----
 
-- Clients are not authenticated.
 - The raw encoding is the only supported encoding.
 - Always updates the whole framebuffer, no matter what.
 - Special keys (i.e. shift, escape, etc) needs to be converted.
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.
 - Palettized modes don't appear to work...
+- The randmo challenge is created with the libc rand() function, which
+  may subvert applications depending on the rand() sequence.
