@@ -1,10 +1,10 @@
-.TH "display-vnc" 7 "2006-08-20" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-08-21" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc clinet over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-display=<dpy>]
+display-vnc: [-display=<dpy>] [-passwd=<pass>]
 .fi
 
 .SH DESCRIPTION
@@ -20,14 +20,17 @@ The supported RFB protocol versions are 3.3, 3.7 and 3.8.
 The display number clients should connect to. Display number 0 is
 equivalent of tcp port 5900.
 
+.TP
+\f(CW-passwd=<pass>\fR
+The vnc client has to successfully encrypt a random challenge
+with the stated password in order to connect.
+
 .PP
 .SH FEATURES
 .IP \(bu 4
 Unaccelerated.
 .PP
 .SH BUGS
-.IP \(bu 4
-Clients are not authenticated.
 .IP \(bu 4
 The raw encoding is the only supported encoding.
 .IP \(bu 4
@@ -39,4 +42,7 @@ A DoS attack is easy as an existing client is disconnected as soon
 as a new one connects.
 .IP \(bu 4
 Palettized modes don't appear to work...
+.IP \(bu 4
+The random challenge is created with the libc rand() function, which
+may subvert applications depending on the rand() sequence.
 .PP
