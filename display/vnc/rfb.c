@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.6 2006/08/22 07:57:40 pekberg Exp $
+/* $Id: rfb.c,v 1.7 2006/08/22 19:04:34 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -726,6 +726,26 @@ vnc_close_client(struct ggi_visual *vis, int cfd)
 }
 
 void
+GGI_vnc_new_client_finish(struct ggi_visual *vis)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	long flags;
+
+	DPRINT("new_client(%d)\n", priv->cfd);
+	priv->add_cfd(priv->gii_ctx, priv->cfd);
+
+	flags = fcntl(priv->cfd, F_GETFL);
+	fcntl(priv->cfd, F_SETFL, flags | O_NONBLOCK);
+
+	priv->client_action = vnc_client_version;
+
+	/* block signals? */
+
+	/* Support max protocol version 3.8 */
+	write(priv->cfd, "RFB 003.008\n", 12);
+}
+
+void
 GGI_vnc_new_client(void *arg)
 {
 	struct ggi_visual *vis = arg;
@@ -746,20 +766,9 @@ GGI_vnc_new_client(void *arg)
 	}
 
 	vnc_close_client(vis, priv->cfd);
-
-	DPRINT("new_client(%d)\n", cfd);
 	priv->cfd = cfd;
-	priv->add_cfd(priv->gii_ctx, cfd);
 
-	flags = fcntl(cfd, F_GETFL);
-	fcntl(cfd, F_SETFL, flags | O_NONBLOCK);
-
-	priv->client_action = vnc_client_version;
-
-	/* block signals? */
-
-	/* Support max protocol version 3.8 */
-	write(cfd, "RFB 003.008\n", 12);
+	GGI_vnc_new_client_finish(vis);
 }
 
 void

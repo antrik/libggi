@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.3 2006/08/22 07:48:00 pekberg Exp $
+/* $Id: vnc.h,v 1.4 2006/08/22 19:04:34 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -65,6 +65,8 @@ typedef struct {
 
 gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
+
+void GGI_vnc_new_client_finish(struct ggi_visual *vis);
 
 
 #define VNC_PRIV(vis)	((ggi_vnc_priv *) LIBGGI_PRIVATE(vis))

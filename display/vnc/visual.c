@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.4 2006/08/22 07:48:00 pekberg Exp $
+/* $Id: visual.c,v 1.5 2006/08/22 19:04:34 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: initialization
@@ -44,6 +44,9 @@
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
 #endif
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
 
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
@@ -53,12 +56,14 @@
 
 static const gg_option optlist[] =
 {
+	{ "client",  "" },
 	{ "display", "no" },
 	{ "passwd",  "" },
 };
 
-#define OPT_DISPLAY	0
-#define OPT_PASSWD	1
+#define OPT_CLIENT	0
+#define OPT_DISPLAY	1
+#define OPT_PASSWD	2
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -142,34 +147,34 @@ GGIopen(struct ggi_visual *vis,
 	else
 		priv->passwd = 0;
 
-	priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
-	if (priv->sfd == -1) {
-		err = GGI_ENODEVICE;
-		goto out_freegc;
+	if (options[OPT_CLIENT].result[0] == '\0') {
+		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+		if (priv->sfd == -1) {
+			err = GGI_ENODEVICE;
+			goto out_freegc;
+		}
+
+		memset(&sa, 0, sizeof(sa));
+		sa.sin_family = AF_INET;
+		sa.sin_addr.s_addr = htonl(INADDR_ANY);
+		sa.sin_port = htons(5900 + priv->display);
+
+		if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
+			err = GGI_ENODEVICE;
+			fprintf(stderr,
+				"display-vnc: bind failed\n");
+			goto out_closefds;
+		}
+
+		if (listen(priv->sfd, 3)) {
+			err = GGI_ENODEVICE;
+			fprintf(stderr,
+				"display-vnc: listen failed\n");
+			goto out_closefds;
+		}
+
+		DPRINT("Now listening for connections.\n");
 	}
-
-	memset(&sa, 0, sizeof(sa));
-	sa.sin_family = AF_INET;
-	sa.sin_addr.s_addr = htonl(INADDR_ANY);
-	sa.sin_port = htons(5900 + priv->display);
-
-	if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
-		err = GGI_ENODEVICE;
-		fprintf(stderr,
-			"display-vnc: bind failed\n");
-		goto out_closesfd;
-	}
-
-	if (listen(priv->sfd, 3)) {
-		err = GGI_ENODEVICE;
-		fprintf(stderr,
-			"display-vnc: listen failed\n");
-		goto out_closesfd;
-	}
-
-	DPRINT("Now listening for connections.\n");
-
-	priv->cfd = -1;
 
 	iargs.sfd         = priv->sfd;
 	iargs.new_client  = GGI_vnc_new_client;
@@ -181,7 +186,7 @@ GGIopen(struct ggi_visual *vis,
 		err = GGI_ENODEVICE;
 		fprintf(stderr,
 			"display-vnc: gii not attached to stem\n");
-		goto out_closesfd;
+		goto out_closefds;
 	}
 
 	inp = ggOpenModule(gii, vis->stem, "input-vnc", NULL, &iargs);
@@ -192,7 +197,7 @@ GGIopen(struct ggi_visual *vis,
 		fprintf(stderr,
 			"display-vnc: unable to open vnc inputlib\n");
 		err = GGI_ENODEVICE;
-		goto out_closesfd;
+		goto out_closefds;
 	}
 
 	priv->inp         = inp;
@@ -200,6 +205,36 @@ GGIopen(struct ggi_visual *vis,
 	priv->del_cfd     = iargs.del_cfd;
 	priv->key         = iargs.key;
 	priv->gii_ctx     = iargs.gii_ctx;
+
+	if (options[OPT_CLIENT].result[0] != '\0') {
+		struct hostent *h;
+
+		h = gethostbyname(options[OPT_CLIENT].result);
+
+		if (!h) {
+			fprintf(stderr, "display-vnc: gethostbyname error\n");
+			err = GGI_ENODEVICE;
+			goto out_closefds;
+		}
+
+		priv->cfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+		if (priv->cfd == -1) {
+			err = GGI_ENODEVICE;
+			goto out_closefds;
+		}
+
+		memset(&sa, 0, sizeof(sa));
+		sa.sin_family      = AF_INET;
+		sa.sin_addr        = *((struct in_addr *)h->h_addr);
+		sa.sin_port        = htons(5500 + priv->display);
+
+		if (connect(priv->cfd, (struct sockaddr *)&sa, sizeof(sa))) {
+			err = GGI_ENODEVICE;
+			goto out_closefds;
+		}
+
+		GGI_vnc_new_client_finish(vis);
+	}
 
 	vis->opdisplay->getmode=GGI_vnc_getmode;
 	vis->opdisplay->setmode=GGI_vnc_setmode;
@@ -210,8 +245,11 @@ GGIopen(struct ggi_visual *vis,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
-out_closesfd:
-  	close(priv->sfd);
+out_closefds:
+	if (priv->sfd != -1)
+		close(priv->sfd);
+	if (priv->cfd != -1)
+		close(priv->cfd);
 out_freegc:
 	free(LIBGGI_GC(vis));
 out_freepriv:
