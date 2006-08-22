@@ -31,7 +31,9 @@ Options
 
 ``-passwd=<pass>``
     The vnc client has to successfully encrypt a random challenge
-    with the stated password in order to connect.
+    with the stated password in order to connect. In the password,
+    only the eight first characters and the seven least significant
+    bits of every character are used in the authentication.
 
 
 Features
@@ -49,5 +51,3 @@ Bugs
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.
 - Palettized modes don't appear to work...
-- The random challenge is created with the libc rand() function, which
-  may subvert applications depending on the rand() sequence.

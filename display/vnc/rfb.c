@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.4 2006/08/22 04:10:22 pekberg Exp $
+/* $Id: rfb.c,v 1.5 2006/08/22 07:48:00 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -543,11 +543,13 @@ vnc_client_challenge(struct ggi_visual *vis)
 		return 0;
 
 	if (priv->passwd) {
+		uint8_t good_response[16];
+
 		usekey(priv->cooked_key);
-		des(&priv->challenge[0], &priv->challenge[0]);
-		des(&priv->challenge[8], &priv->challenge[8]);
-		if (memcmp(priv->challenge, priv->buf, sizeof(priv->challenge))) {
-			/* bad password */
+		des(&priv->challenge[0], &good_response[0]);
+		des(&priv->challenge[8], &good_response[8]);
+
+		if (memcmp(good_response, priv->buf, sizeof(good_response))) {
 			DPRINT("bad password.\n");
 			return -1;
 		}
@@ -571,6 +573,8 @@ vnc_client_security(struct ggi_visual *vis)
 	unsigned int security_type;
 	uint32_t ok = htonl(0);
 	int i;
+	int s;
+	struct timeval now;
 
 	DPRINT("client_security\n");
 
@@ -603,17 +607,27 @@ vnc_client_security(struct ggi_visual *vis)
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_challenge;
 
-		/* should find some other way to get random numbers.
-		 * probably open /dev/urandom if that exists.
-		 * using rand will possibly subvert the ggi user.
-		 */
-		for (i = 0; i < 16; ++i)
-			priv->challenge[i] = rand();
+		/* Try mix in some bits that will change with time */
+		ggCurTime(&now);
+		s = sizeof(now.tv_sec) < 8 ? sizeof(now.tv_sec) : 8;
+		for (i = s - 1; i >= 0; --i)
+			priv->challenge[i] ^= *(((uint8_t *)&now.tv_sec) + i);
+		s = sizeof(now.tv_usec) < 8 ? sizeof(now.tv_usec) : 8;
+		for (i = s - 1; i >= 0; --i)
+			priv->challenge[i] ^= *(((uint8_t *)&now.tv_usec) + i);
+
+		/* scramble using des to get the final challenge */
+		usekey(priv->randomizer);
+		des(&priv->challenge[0], &priv->challenge[0]);
+		/* chain the two blocks to propagate the "randomness" */
+		for (i = 0; i < 8; ++i)
+			priv->challenge[i + 8] ^= priv->challenge[i];
+		des(&priv->challenge[8], &priv->challenge[8]);
 
 		/* block signals? */
 
 		/* challenge client */
-		write(priv->cfd, &priv->challenge, sizeof(priv->challenge));
+		write(priv->cfd, priv->challenge, sizeof(priv->challenge));
 		return 0;
 	}
 

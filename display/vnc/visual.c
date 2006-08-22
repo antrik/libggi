@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.3 2006/08/22 04:10:22 pekberg Exp $
+/* $Id: visual.c,v 1.4 2006/08/22 07:48:00 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: initialization
@@ -132,6 +132,12 @@ GGIopen(struct ggi_visual *vis,
 
 		deskey(passwd, EN0);
 		cpkey(priv->cooked_key);
+
+		/* Pick some random password, and use the des algorithm to
+		 * generate pseudo random numbers.
+		 */
+		deskey("random17", EN0);
+		cpkey(priv->randomizer);
 	}
 	else
 		priv->passwd = 0;
