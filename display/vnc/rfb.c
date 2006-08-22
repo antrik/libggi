@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.3 2006/08/21 21:05:41 pekberg Exp $
+/* $Id: rfb.c,v 1.4 2006/08/22 04:10:22 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -29,14 +29,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 #include <ctype.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#include <fcntl.h>
+#endif
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h> 
+#endif
 
 #include <sys/types.h>
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 #include <ggi/gg.h>
 #include <ggi/display/vnc.h>
@@ -710,7 +720,11 @@ GGI_vnc_new_client(void *arg)
 	struct ggi_visual *vis = arg;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	struct sockaddr_in sa;
+#ifdef HAVE_SOCKLEN_T
 	socklen_t sa_len = sizeof(sa);
+#else
+	int sa_len = sizeof(sa);
+#endif
 	int cfd;
 	long flags;
 

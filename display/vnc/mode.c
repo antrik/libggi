@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.2 2006/08/20 05:07:16 pekberg Exp $
+/* $Id: mode.c,v 1.3 2006/08/22 04:10:22 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: mode management
@@ -25,16 +25,17 @@
 ******************************************************************************
 */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-
-#include "config.h"
 #include <ggi/display/vnc.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */

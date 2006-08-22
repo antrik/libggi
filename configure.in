@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.197 2006/08/22 03:46:34 pekberg Exp $
+dnl $Id: configure.in,v 1.198 2006/08/22 04:10:22 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -612,11 +612,12 @@ AM_CONDITIONAL(BUILTIN_DISPLAY,
 		test "$enable_static" = "yes")
 
 
-memory_dependent="x"
+memory_dependent="x vnc"
 if test "x$build_memory_target" = "xno"; then
   AC_MSG_WARN(the following targets depend on the memory target)
   AC_MSG_WARN(and will not be built: $memory_dependent)
   build_x_target="no"
+  build_vnc_target="no"
 fi
 
 mansync_dependent="x aa tile palemu trueemu"
