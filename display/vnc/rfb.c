@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.5 2006/08/22 07:48:00 pekberg Exp $
+/* $Id: rfb.c,v 1.6 2006/08/22 07:57:40 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -573,7 +573,6 @@ vnc_client_security(struct ggi_visual *vis)
 	unsigned int security_type;
 	uint32_t ok = htonl(0);
 	int i;
-	int s;
 	struct timeval now;
 
 	DPRINT("client_security\n");
@@ -607,14 +606,12 @@ vnc_client_security(struct ggi_visual *vis)
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_challenge;
 
-		/* Try mix in some bits that will change with time */
+		/* Mix in some bits that will change with time */
 		ggCurTime(&now);
-		s = sizeof(now.tv_sec) < 8 ? sizeof(now.tv_sec) : 8;
-		for (i = s - 1; i >= 0; --i)
-			priv->challenge[i] ^= *(((uint8_t *)&now.tv_sec) + i);
-		s = sizeof(now.tv_usec) < 8 ? sizeof(now.tv_usec) : 8;
-		for (i = s - 1; i >= 0; --i)
-			priv->challenge[i] ^= *(((uint8_t *)&now.tv_usec) + i);
+		for (i = 0; i < sizeof(now.tv_sec); ++i)
+			priv->challenge[i & 7] ^= *(((uint8_t *)&now.tv_sec) + i);
+		for (i = 0; i < sizeof(now.tv_usec); ++i)
+			priv->challenge[i & 7] ^= *(((uint8_t *)&now.tv_usec) + i);
 
 		/* scramble using des to get the final challenge */
 		usekey(priv->randomizer);
