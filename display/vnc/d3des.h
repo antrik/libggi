@@ -10,8 +10,8 @@
  *	(GEnie : OUTER; CIS : [71755,204])
  */
  
-#define D2_DES		/* include double-length support */
-#define D3_DES		/* include triple-length support */
+/*#define D2_DES*/		/* include double-length support */
+/*#define D3_DES*/		/* include triple-length support */
  
 #ifdef D3_DES
 #ifndef D2_DES
