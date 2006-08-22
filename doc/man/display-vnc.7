@@ -1,10 +1,10 @@
-.TH "display-vnc" 7 "2006-08-21" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-08-22" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc clinet over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-display=<dpy>] [-passwd=<pass>]
+display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
 .fi
 
 .SH DESCRIPTION
@@ -16,14 +16,26 @@ short.
 The supported RFB protocol versions are 3.3, 3.7 and 3.8.
 .SH OPTIONS
 .TP
-\f(CW-display=<dpy>\fR
-The display number clients should connect to. Display number 0 is
-equivalent of tcp port 5900.
+\f(CW-client=<host>\fR
+Make a connection to \fIhost\fR, instead of waiting for clients to
+connect. A vnc viewer in listening mode is expected to be found on
+\fIhost\fR.
 
 .TP
-\f(CW-passwd=<pass>\fR
+\f(CW-display=<dpy>\fR
+The display number clients should connect to. Display number 0 is
+equivalent to tcp port 5900.
+
+If the \fI-client\fR option is also given, this is instead the display
+number this server connects to, and display number 0 is equivalent
+to tcp port 5500 in that case.
+
+.TP
+\f(CW-passwd=<password>\fR
 The vnc client has to successfully encrypt a random challenge
-with the stated password in order to connect.
+with the stated \fIpassword\fR in order to connect. In the
+\fIpassword\fR, only the eight first characters and the seven least
+significant bits of every character are used in the authentication.
 
 .PP
 .SH FEATURES
@@ -42,7 +54,4 @@ A DoS attack is easy as an existing client is disconnected as soon
 as a new one connects.
 .IP \(bu 4
 Palettized modes don't appear to work...
-.IP \(bu 4
-The random challenge is created with the libc rand() function, which
-may subvert applications depending on the rand() sequence.
 .PP
