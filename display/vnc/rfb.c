@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.7 2006/08/22 19:04:34 pekberg Exp $
+/* $Id: rfb.c,v 1.8 2006/08/23 07:11:27 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -385,6 +385,8 @@ static int
 vnc_client_pointer(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	uint16_t x;
+	uint16_t y;
 
 	DPRINT("client_pointer\n");
 
@@ -393,6 +395,10 @@ vnc_client_pointer(struct ggi_visual *vis)
 		priv->client_action = vnc_client_pointer;
 		return 0;
 	}
+
+	memcpy(&x, &priv->buf[2], sizeof(x));
+	memcpy(&y, &priv->buf[4], sizeof(y));
+	priv->pointer(priv->gii_ctx, priv->buf[1], ntohs(x), ntohs(y));
 
 	return vnc_remove(vis, 6);
 }

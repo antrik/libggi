@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.4 2006/08/22 19:04:34 pekberg Exp $
+/* $Id: vnc.h,v 1.5 2006/08/23 07:11:27 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -46,6 +46,7 @@ typedef struct {
 	gii_vnc_add_cfd *add_cfd;
 	gii_vnc_del_cfd *del_cfd;
 	gii_vnc_key     *key;
+	gii_vnc_pointer *pointer;
 	void *gii_ctx;
 
 	unsigned char buf[256];

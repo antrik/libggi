@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.5 2006/08/22 19:04:34 pekberg Exp $
+/* $Id: visual.c,v 1.6 2006/08/23 07:11:27 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: initialization
@@ -204,6 +204,7 @@ GGIopen(struct ggi_visual *vis,
 	priv->add_cfd     = iargs.add_cfd;
 	priv->del_cfd     = iargs.del_cfd;
 	priv->key         = iargs.key;
+	priv->pointer     = iargs.pointer;
 	priv->gii_ctx     = iargs.gii_ctx;
 
 	if (options[OPT_CLIENT].result[0] != '\0') {
