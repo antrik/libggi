@@ -60,9 +60,7 @@ static unsigned char pc2[48] = {
 	40, 51, 30, 36, 46, 54,	29, 39, 50, 44, 32, 47,
 	43, 48, 38, 55, 33, 52,	45, 41, 49, 35, 28, 31 };
  
-void deskey(key, edf)	/* Thanks to James Gillogly & Phil Karn! */
-unsigned char *key;
-short edf;
+void deskey(unsigned char *key, short edf)	/* Thanks to James Gillogly & Phil Karn! */
 {
 	int i, j, l, m, n;
 	unsigned char pc1m[56], pcr[56];
@@ -95,10 +93,9 @@ short edf;
 		}
 	cookey(kn);
 	return;
-	}
+}
  
-static void cookey(raw1)
-unsigned long *raw1;
+static void cookey(unsigned long *raw1)
 {
 	unsigned long *cook, *raw0;
 	unsigned long dough[32];
@@ -118,30 +115,27 @@ unsigned long *raw1;
 		}
 	usekey(dough);
 	return;
-	}
+}
  
-void cpkey(into)
-unsigned long *into;
+void cpkey(unsigned long *into)
 {
 	unsigned long *from, *endp;
  
 	from = KnL, endp = &KnL[32];
 	while( from < endp ) *into++ = *from++;
 	return;
-	}
+}
  
-void usekey(from)
-unsigned long *from;
+void usekey(unsigned long *from)
 {
 	unsigned long *to, *endp;
  
 	to = KnL, endp = &KnL[32];
 	while( to < endp ) *to++ = *from++;
 	return;
-	}
+}
  
-void des(inblock, outblock)
-unsigned char *inblock, *outblock;
+void des(unsigned char *inblock, unsigned char *outblock)
 {
 	unsigned long work[2];
  
@@ -149,12 +143,10 @@ unsigned char *inblock, *outblock;
 	desfunc(work, KnL);
 	unscrun(work, outblock);
 	return;
-	}
+}
  
 
-static void scrunch(outof, into)
-unsigned char *outof;
-unsigned long *into;
+static void scrunch(unsigned char *outof, unsigned long *into)
 {
 	*into 	 = (*outof++ & 0xffL) << 24;
 	*into 	|= (*outof++ & 0xffL) << 16;
@@ -165,12 +157,10 @@ unsigned long *into;
 	*into 	|= (*outof++ & 0xffL) << 8;
 	*into	|= (*outof   & 0xffL);
 	return;
-	}
+}
 
  
-static void unscrun(outof, into)
-unsigned long *outof;
-unsigned char *into;
+static void unscrun(unsigned long *outof, unsigned char *into)
 {
 	*into++ = (*outof >> 24) & 0xffL;
 	*into++ = (*outof >> 16) & 0xffL;
@@ -181,7 +171,7 @@ unsigned char *into;
 	*into++ = (*outof >>  8) & 0xffL;
 	*into   =  *outof	 & 0xffL;
 	return;
-	}
+}
  
 static unsigned long SP1[64] = {
 	0x01010400L, 0x00000000L, 0x00010000L, 0x01010404L,
@@ -327,8 +317,7 @@ static unsigned long SP8[64] = {
 	0x10041040L, 0x00041000L, 0x00041000L, 0x00001040L,
 	0x00001040L, 0x00040040L, 0x10000000L, 0x10041000L };
  
-static void desfunc(block, keys)
-unsigned long *block, *keys;
+static void desfunc(unsigned long *block, unsigned long *keys)
 {
 	unsigned long fval, work, right, leftt;
 	int round;
@@ -378,7 +367,7 @@ unsigned long *block, *keys;
 		fval |= SP4[(work >> 16) & 0x3fL];
 		fval |= SP2[(work >> 24) & 0x3fL];
 		right ^= fval;
-		}
+	}
 		
 	right = (right << 31) | (right >> 1);
 	work = (leftt ^ right) & 0xaaaaaaaaL;
@@ -400,13 +389,11 @@ unsigned long *block, *keys;
 	*block++ = right;
 	*block = leftt;
 	return;
-	}
+}
  
 #ifdef D2_DES
  
-void des2key(hexkey, mode)		/* stomps on Kn3 too */
-unsigned char *hexkey;			/* unsigned char[16] */
-short mode;
+void des2key(unsigned char hexkey[], short mode)		/* stomps on Kn3 too */
 {
 	short revmod;
  
@@ -416,10 +403,9 @@ short mode;
 	deskey(hexkey, mode);
 	cpkey(Kn3);					/* Kn3 = KnL */
 	return;
-	}
+}
 	
-void Ddes(from, into)
-unsigned char *from, *into;		/* unsigned char[8] */
+void Ddes(unsigned char from[], unsigned char into[])
 {
 	unsigned long work[2];
  
@@ -429,11 +415,9 @@ unsigned char *from, *into;		/* unsigned char[8] */
 	desfunc(work, Kn3);
 	unscrun(work, into);
 	return;
-	}
+}
  
-void D2des(from, into)
-unsigned char *from;			/* unsigned char[16] */
-unsigned char *into;			/* unsigned char[16] */
+void D2des(unsigned char from[], unsigned char into[])
 {
 	unsigned long *right, *l1, swap;
 	unsigned long leftt[2], bufR[2];
@@ -457,11 +441,9 @@ unsigned char *into;			/* unsigned char[16] */
 	unscrun(leftt, into);
 	unscrun(right, &into[8]);
 	return;
-	}
+}
  
-void makekey(aptr, kptr)
-char *aptr;				/* NULL-terminated  */
-unsigned char *kptr;		/* unsigned char[8] */
+void makekey(char *aptr, unsigned char kptr[])
 {
 	unsigned char *store;
 	int first, i;
@@ -476,17 +458,15 @@ unsigned char *kptr;		/* unsigned char[8] */
 		for( i = 0; i < 8 && (*aptr != '\0'); i++ ) {
 			*store++ ^= *aptr & 0x7f;
 			*aptr++ = '\0';
-			}
+		}
 		Ddes(kptr, kptr);
 		first = 0;
-		}
+	}
 	useDkey(savek);
 	return;
-	}
+}
  
-void make2key(aptr, kptr)
-char *aptr;				/* NULL-terminated   */
-unsigned char *kptr;		/* unsigned char[16] */
+void make2key(char *aptr, unsigned char kptr[])
 {
 	unsigned char *store;
 	int first, i;
@@ -501,18 +481,17 @@ unsigned char *kptr;		/* unsigned char[16] */
 		for( i = 0; i < 16 && (*aptr != '\0'); i++ ) {
 			*store++ ^= *aptr & 0x7f;
 			*aptr++ = '\0';
-			}
+		}
 		D2des(kptr, kptr);
 		first = 0;
-		}
+	}
 	useDkey(savek);
 	return;
-	}
+}
  
 #ifndef D3_DES	/* D2_DES only */
  
-void cp2key(into)
-unsigned long *into;	/* unsigned long[64] */
+void cp2key(unsigned long into[])
 {
 	unsigned long *from, *endp;
  
@@ -521,10 +500,9 @@ unsigned long *into;	/* unsigned long[64] */
 	from = KnR, endp = &KnR[32];
 	while( from < endp ) *into++ = *from++;
 	return;
-	}
+}
  
-void use2key(from)				/* stomps on Kn3 too */
-unsigned long *from;	/* unsigned long[64] */
+void use2key(unsigned long from[])				/* stomps on Kn3 too */
 {
 	unsigned long *to, *endp;
  
@@ -534,13 +512,11 @@ unsigned long *from;	/* unsigned long[64] */
 	while( to < endp ) *to++ = *from++;
 	cpkey(Kn3);					/* Kn3 = KnL */
 	return;
-	}
+}
  
 #else	/* D3_DES too */
  
-void des3key(hexkey, mode)
-unsigned char *hexkey;			/* unsigned char[24] */
-short mode;
+void des3key(unsigned char hexkey[], short mode)
 {
 	unsigned char *first, *third;
 	short revmod;
@@ -549,22 +525,20 @@ short mode;
 		revmod = DE1;
 		first = hexkey;
 		third = &hexkey[16];
-		}
-	else {
+	} else {
 		revmod = EN0;
 		first = &hexkey[16];
 		third = hexkey;
-		}
+	}
 	deskey(&hexkey[8], revmod);
 	cpkey(KnR);
 	deskey(third, mode);
 	cpkey(Kn3);
 	deskey(first, mode);
 	return;
-	}
+}
  
-void cp3key(into)
-unsigned long *into;	/* unsigned long[96] */
+void cp3key(unsinged long into[])
 {
 	unsigned long *from, *endp;
  
@@ -575,10 +549,9 @@ unsigned long *into;	/* unsigned long[96] */
 	from = Kn3, endp = &Kn3[32];
 	while( from < endp ) *into++ = *from++;
 	return;
-	}
+}
  
-void use3key(from)
-unsigned long *from;	/* unsigned long[96] */
+void use3key(unsigned long from[])
 {
 	unsigned long *to, *endp;
  
@@ -589,13 +562,11 @@ unsigned long *from;	/* unsigned long[96] */
 	to = Kn3, endp = &Kn3[32];
 	while( to < endp ) *to++ = *from++;
 	return;
-	}
+}
  
 static void D3des(unsigned char *, unsigned char *);
  
-static void D3des(from, into)	/* amateur theatrics */
-unsigned char *from;			/* unsigned char[24] */
-unsigned char *into;			/* unsigned char[24] */
+static void D3des(unsigned char *from, unsigned char *into)	/* amateur theatrics */
 {
 	unsigned long swap, leftt[2], middl[2], right[2];
 	
@@ -627,11 +598,9 @@ unsigned char *into;			/* unsigned char[24] */
 	unscrun(middl, &into[8]);
 	unscrun(right, &into[16]);
 	return;
-	}	
+}	
 	
-void make3key(aptr, kptr)
-char *aptr;				/* NULL-terminated   */
-unsigned char *kptr;		/* unsigned char[24] */
+void make3key(char *aptr, unsigned char *kptr)
 {
 	unsigned char *store;
 	int first, i;
@@ -646,13 +615,13 @@ unsigned char *kptr;		/* unsigned char[24] */
 		for( i = 0; i < 24 && (*aptr != '\0'); i++ ) {
 			*store++ ^= *aptr & 0x7f;
 			*aptr++ = '\0';
-			}
+		}
 		D3des(kptr, kptr);
 		first = 0;
-		}
+	}
 	use3key(savek);
 	return;
-	}
+}
  
 #endif	/* D3_DES */
 #endif	/* D2_DES */
