@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.13 2006/05/19 07:11:43 pekberg Exp $
+/* $Id: crossblit.c,v 1.14 2006/08/25 12:52:33 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -174,9 +174,13 @@ int GGI_lin8_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 		 * fall back to the default.
 		 */
 		if (srcformat == dstformat && pixels > 512) {
-			if (memcmp(dst->palette, src->palette,
-				   sizeof(ggi_color)*256) == 0) {
-				crossblit_same(src, sx, sy, w, h, dst, dx, dy);
+			if ((dst->palette->clut.size ==
+				src->palette->clut.size) &&
+			    !memcmp(dst->palette->clut.data,
+			    	src->palette->clut.data,
+				sizeof(ggi_color)*dst->palette->clut.size)) {
+				crossblit_same(src, sx, sy, w, h,
+					       dst, dx, dy);
 			} else {
 				crossblit_8_to_8(src, sx, sy, w, h,
 						 dst, dx, dy);
