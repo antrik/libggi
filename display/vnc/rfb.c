@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.8 2006/08/23 07:11:27 pekberg Exp $
+/* $Id: rfb.c,v 1.9 2006/08/25 13:01:25 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -263,9 +263,16 @@ vnc_client_update(struct ggi_visual *vis)
 		return 0;
 	}
 
+	if (!priv->client_vis)
+		cvis = vis;
+	else {
+		cvis = priv->client_vis;
+		ggiCrossBlit(vis->stem, 0, 0, LIBGGI_VIRTX(cvis), LIBGGI_VIRTY(cvis), cvis->stem, 0, 0);
+	}
+
 	if (priv->palette_dirty) {
 		unsigned char *vnc_palette;
-		int colors = GT_DEPTH(LIBGGI_GT(vis)) << 1;
+		int colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
 		ggi_color ggi_palette[256];
 		int i;
 
@@ -276,31 +283,20 @@ vnc_client_update(struct ggi_visual *vis)
 		vnc_palette[1] = 0;
 		vnc_palette[2] = 0;
 		vnc_palette[3] = 0;
-		vnc_palette[4] = 0;
-		vnc_palette[5] = colors;
+		vnc_palette[4] = colors >> 8;
+		vnc_palette[5] = colors & 0xff;
 
 		for (i = 0; i < colors; ++i) {
-			uint16_t tmp;
-			tmp = htons(ggi_palette[i].r);
-			vnc_palette[6 + 6 * i + 0] = tmp >> 8;
-			vnc_palette[6 + 6 * i + 1] = tmp & 0xff;
-			tmp = htons(ggi_palette[i].g);
-			vnc_palette[6 + 6 * i + 2] = tmp >> 8;
-			vnc_palette[6 + 6 * i + 3] = tmp & 0xff;
-			tmp = htons(ggi_palette[i].b);
-			vnc_palette[6 + 6 * i + 4] = tmp >> 8;
-			vnc_palette[6 + 6 * i + 5] = tmp & 0xff;
+			vnc_palette[6 + 6 * i + 0] = ggi_palette[i].r >> 8;
+			vnc_palette[6 + 6 * i + 1] = ggi_palette[i].r & 0xff;
+			vnc_palette[6 + 6 * i + 2] = ggi_palette[i].g >> 8;
+			vnc_palette[6 + 6 * i + 3] = ggi_palette[i].g & 0xff;
+			vnc_palette[6 + 6 * i + 4] = ggi_palette[i].b >> 8;
+			vnc_palette[6 + 6 * i + 5] = ggi_palette[i].b & 0xff;
 		}
 
 		write(priv->cfd, vnc_palette, 6 + 6 * colors);
 		priv->palette_dirty = 0;
-	}
-
-	if (!priv->client_vis)
-		cvis = vis;
-	else {
-		cvis = priv->client_vis;
-		ggiCrossBlit(vis->stem, 0, 0, LIBGGI_VIRTX(cvis), LIBGGI_VIRTY(cvis), cvis->stem, 0, 0);
 	}
 
 	db = ggiDBGetBuffer(cvis->stem, 0);
