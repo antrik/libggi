@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.10 2006/08/26 05:17:16 pekberg Exp $
+/* $Id: rfb.c,v 1.11 2006/08/26 05:20:19 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -464,6 +464,28 @@ vnc_client_run(struct ggi_visual *vis)
 }
 
 static int
+color_max(ggi_pixel mask)
+{
+	while (!(mask & 1))
+		mask >>= 1;
+
+	return mask;
+}
+
+static int
+color_shift(ggi_pixel mask)
+{
+	int shift = 0;
+
+	while (!(mask & 1)) {
+		mask >>= 1;
+		++shift;
+	}
+
+	return shift;
+}
+
+static int
 vnc_client_init(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -502,15 +524,15 @@ vnc_client_init(struct ggi_visual *vis)
 #endif
 	server_init[7] = GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR;
 	pixfmt = LIBGGI_PIXFMT(vis);
-	tmp16 = htons(pixfmt->red_mask >> pixfmt->red_shift);
+	tmp16 = htons(color_max(pixfmt->red_mask));
 	memcpy(&server_init[8],  &tmp16, sizeof(tmp16));
-	tmp16 = htons(pixfmt->green_mask >> pixfmt->green_shift);
+	tmp16 = htons(color_max(pixfmt->green_mask));
 	memcpy(&server_init[10], &tmp16, sizeof(tmp16));
-	tmp16 = htons(pixfmt->blue_mask >> pixfmt->blue_shift);
+	tmp16 = htons(color_max(pixfmt->blue_mask));
 	memcpy(&server_init[12], &tmp16, sizeof(tmp16));
-	server_init[14] = pixfmt->red_shift;
-	server_init[15] = pixfmt->green_shift;
-	server_init[16] = pixfmt->blue_shift;
+	server_init[14] = color_shift(pixfmt->red_mask);
+	server_init[15] = color_shift(pixfmt->green_mask);
+	server_init[16] = color_shift(pixfmt->blue_mask);
 	server_init[17] = 0;
 	server_init[18] = 0;
 	server_init[19] = 0;
