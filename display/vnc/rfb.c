@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.9 2006/08/25 13:01:25 pekberg Exp $
+/* $Id: rfb.c,v 1.10 2006/08/26 05:17:16 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -508,13 +508,12 @@ vnc_client_init(struct ggi_visual *vis)
 	memcpy(&server_init[10], &tmp16, sizeof(tmp16));
 	tmp16 = htons(pixfmt->blue_mask >> pixfmt->blue_shift);
 	memcpy(&server_init[12], &tmp16, sizeof(tmp16));
-	server_init[13] = pixfmt->red_shift;
-	server_init[14] = pixfmt->green_shift;
-	server_init[15] = pixfmt->blue_shift;
-	server_init[16] = 0;
+	server_init[14] = pixfmt->red_shift;
+	server_init[15] = pixfmt->green_shift;
+	server_init[16] = pixfmt->blue_shift;
 	server_init[17] = 0;
 	server_init[18] = 0;
-	server_init[19] = 12;
+	server_init[19] = 0;
 	tmp32 = htonl(10);
 	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
 	memcpy(&server_init[24], "GGI on vnc", ntohl(tmp32));
