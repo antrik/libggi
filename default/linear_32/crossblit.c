@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.16 2006/05/19 07:11:42 pekberg Exp $
+/* $Id: crossblit.c,v 1.17 2006/08/26 03:32:12 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -969,14 +969,6 @@ int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	case 16:
-		if (!dst->w_frame->buffer.plb.pixelformat->stdformat) 
-		  goto notsame;
-		if (dst->w_frame->buffer.plb.pixelformat->stdformat !=
-		    src->r_frame->buffer.plb.pixelformat->stdformat) 
-		  goto notsame;
-		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
-		return 0;
-	notsame:
 		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb16to32(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
@@ -987,6 +979,14 @@ int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	case 32:
+		if (!dst->w_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		if (dst->w_frame->buffer.plb.pixelformat->stdformat !=
+		    src->r_frame->buffer.plb.pixelformat->stdformat) 
+		  goto notsame;
+		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
+		return 0;
+	notsame:
 		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to32(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
