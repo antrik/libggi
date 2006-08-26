@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.11 2006/08/26 05:20:19 pekberg Exp $
+/* $Id: rfb.c,v 1.12 2006/08/26 07:20:19 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -493,6 +493,7 @@ vnc_client_init(struct ggi_visual *vis)
 	uint16_t tmp16;
 	uint32_t tmp32;
 	ggi_pixelformat *pixfmt;
+	int size;
 
 	DPRINT("client_init\n");
 
@@ -515,7 +516,14 @@ vnc_client_init(struct ggi_visual *vis)
 	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
 	tmp16 = htons(LIBGGI_VIRTY(vis));
 	memcpy(&server_init[2],  &tmp16, sizeof(tmp16));
-	server_init[4] = GT_SIZE(LIBGGI_GT(vis));
+	size = GT_SIZE(LIBGGI_GT(vis));
+	if (size <= 8)
+		size = 8;
+	else if (size <= 16)
+		size = 16;
+	else
+		size = 32;
+	server_init[4] = size;
 	server_init[5] = GT_DEPTH(LIBGGI_GT(vis));
 #ifdef GGI_BIG_ENDIAN
 	server_init[6] = 1;
