@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-08-22" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-08-27" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc clinet over a network
 .SH SYNOPSIS
@@ -46,12 +46,10 @@ Unaccelerated.
 .IP \(bu 4
 The raw encoding is the only supported encoding.
 .IP \(bu 4
-Always updates the whole framebuffer, no matter what.
-.IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
 .IP \(bu 4
 A DoS attack is easy as an existing client is disconnected as soon
 as a new one connects.
 .IP \(bu 4
-Palettized modes don't appear to work...
+Palette changes does not trigger a refresh on the client.
 .PP
