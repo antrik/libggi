@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.28 2006/04/05 04:10:39 cegger Exp $
+/* $Id: x.h,v 1.29 2006/08/27 19:42:42 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -57,19 +57,19 @@ typedef int (*ggi_modelist_validate)(struct ggi_visual *vis, intptr_t num,
 				     ggi_mode *maxed);
 
 typedef struct {
-  ggi_modelist_getlist	getlist;  /* Get/sort modelist, store original mode. */
-  ggi_modelist_restore	restore;  /* Restore original mode and free list.    */
-  ggi_modelist_enter		enter;	  /* Enter given mode (called by setmode).   */
-  ggi_modelist_validate validate; /* Check/complete a ggi_mode structure
-				     												 based on a given mode. */
+	ggi_modelist_getlist getlist;	/* Get/sort modelist, store original mode. */
+	ggi_modelist_restore restore;	/* Restore original mode and free list.    */
+	ggi_modelist_enter enter;	/* Enter given mode (called by setmode).   */
+	ggi_modelist_validate validate;	/* Check/complete a ggi_mode structure
+					 * based on a given mode. */
 } ggi_modelist_funcs;
 
 /* A structure for management of visual information */
 typedef struct {
-  XVisualInfo					*vi;
-  void								*evi;		/* ExtendedVisualInfo if Xevi found */
-  XPixmapFormatValues	*buf;		/* Buffer/wire format               */
-  unsigned int 				 flags;
+	XVisualInfo *vi;
+	void *evi;			/* ExtendedVisualInfo if Xevi found */
+	XPixmapFormatValues *buf;	/* Buffer/wire format */
+	unsigned int flags;
 #define GGI_X_VI_NON_FB 1
 } ggi_x_vi;
 
