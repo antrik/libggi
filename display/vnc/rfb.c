@@ -1,7 +1,7 @@
-/* $Id: rfb.c,v 1.13 2006/08/27 11:36:00 pekberg Exp $
+/* $Id: rfb.c,v 1.14 2006/08/27 11:45:17 pekberg Exp $
 ******************************************************************************
 
-   Display-vnc: RFB protocol
+   display-vnc: RFB protocol
 
    Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
@@ -37,7 +37,7 @@
 #include <unistd.h>
 #endif
 #ifdef HAVE_FCNTL_H
-#include <fcntl.h> 
+#include <fcntl.h>
 #endif
 
 #include <sys/types.h>
@@ -52,6 +52,7 @@
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
+#include "rect.h"
 
 #include "d3des.h"
 
@@ -263,35 +264,48 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 	return vnc_remove(vis, 4 + 4 * count);
 }
 
-static int
-vnc_client_update(struct ggi_visual *vis)
+static void
+do_client_update(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	unsigned char header[16];
+	ggi_graphtype gt;
 
-	DPRINT("client_update\n");
+	DPRINT("update %dx%d - %dx%d\n",
+		update->tl.x, update->tl.y,
+		update->br.x, update->br.y);
 
-	if (priv->buf_size < 10) {
-		/* wait for more data */
-		priv->client_action = vnc_client_update;
-		return 0;
-	}
+	ggi_rect_subtract(&priv->dirty, update);
+	priv->update.tl.x = priv->update.br.x = 0;
+
+	DPRINT("dirty %dx%d - %dx%d\n",
+		priv->dirty.tl.x, priv->dirty.tl.y,
+		priv->dirty.br.x, priv->dirty.br.y);
 
 	if (!priv->client_vis)
-		cvis = vis;
+		cvis = priv->fb;
 	else {
 		cvis = priv->client_vis;
-		ggiCrossBlit(vis->stem, 0, 0, LIBGGI_VIRTX(cvis), LIBGGI_VIRTY(cvis), cvis->stem, 0, 0);
+		_ggiCrossBlit(priv->fb,
+			update->tl.x, update->tl.y,
+			update->br.x - update->tl.x,
+			update->br.y - update->tl.y,
+			cvis,
+			update->tl.x, update->tl.y);
 	}
+
+	gt = LIBGGI_GT(cvis);
 
 	if (priv->palette_dirty) {
 		unsigned char *vnc_palette;
-		int colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
-		ggi_color ggi_palette[256];
+		unsigned char *dst;
+		int colors = 1 << GT_DEPTH(gt);
+		ggi_color *ggi_palette;
 		int i;
 
+		ggi_palette = malloc(colors * sizeof(*ggi_palette));
 		ggiGetPalette(priv->client_vis->stem, 0, colors, ggi_palette);
 
 		vnc_palette = malloc(6 + 6 * colors);
@@ -302,16 +316,18 @@ vnc_client_update(struct ggi_visual *vis)
 		vnc_palette[4] = colors >> 8;
 		vnc_palette[5] = colors & 0xff;
 
+		dst = &vnc_palette[6];
 		for (i = 0; i < colors; ++i) {
-			vnc_palette[6 + 6 * i + 0] = ggi_palette[i].r >> 8;
-			vnc_palette[6 + 6 * i + 1] = ggi_palette[i].r & 0xff;
-			vnc_palette[6 + 6 * i + 2] = ggi_palette[i].g >> 8;
-			vnc_palette[6 + 6 * i + 3] = ggi_palette[i].g & 0xff;
-			vnc_palette[6 + 6 * i + 4] = ggi_palette[i].b >> 8;
-			vnc_palette[6 + 6 * i + 5] = ggi_palette[i].b & 0xff;
+			*dst++ = ggi_palette[i].r >> 8;
+			*dst++ = ggi_palette[i].r & 0xff;
+			*dst++ = ggi_palette[i].g >> 8;
+			*dst++ = ggi_palette[i].g & 0xff;
+			*dst++ = ggi_palette[i].b >> 8;
+			*dst++ = ggi_palette[i].b & 0xff;
 		}
 
 		write(priv->cfd, vnc_palette, 6 + 6 * colors);
+		free(ggi_palette);
 		priv->palette_dirty = 0;
 	}
 
@@ -322,54 +338,146 @@ vnc_client_update(struct ggi_visual *vis)
 	header[ 1] = 0;
 	header[ 2] = 0;
 	header[ 3] = 1;
-	header[ 4] = 0;
-	header[ 5] = 0;
-	header[ 6] = 0;
-	header[ 7] = 0;
-	header[ 8] = LIBGGI_VIRTX(cvis) >> 8;
-	header[ 9] = LIBGGI_VIRTX(cvis) & 0xff;
-	header[10] = LIBGGI_VIRTY(cvis) >> 8;;
-	header[11] = LIBGGI_VIRTY(cvis) & 0xff;
+	header[ 4] = update->tl.x >> 8;
+	header[ 5] = update->tl.x & 0xff;
+	header[ 6] = update->tl.y >> 8;
+	header[ 7] = update->tl.y & 0xff;
+	header[ 8] = (update->br.x - update->tl.x) >> 8;
+	header[ 9] = (update->br.x - update->tl.x) & 0xff;
+	header[10] = (update->br.y - update->tl.y) >> 8;;
+	header[11] = (update->br.y - update->tl.y) & 0xff;
 	header[12] = 0;
 	header[13] = 0;
 	header[14] = 0;
 	header[15] = 0;
 	write(priv->cfd, &header, sizeof(header));
-	if (priv->reverse_endian && GT_SIZE(LIBGGI_GT(cvis)) > 8) {
-		int i;
-		int bpp = GT_SIZE(LIBGGI_GT(cvis)) / 8;
-		int count = GT_ByPPP(LIBGGI_VIRTX(cvis) * LIBGGI_VIRTY(cvis), LIBGGI_GT(cvis)) / bpp;
+	if (priv->reverse_endian && GT_SIZE(gt) > 8) {
+		int i, j;
+		int bpp = GT_ByPP(gt);
+		int count = (update->br.x - update->tl.x) *
+			(update->br.y - update->tl.y);
 		void *buf = malloc(count * bpp);
+		int stride = db->buffer.plb.stride / bpp;
+
 		if (bpp == 2) {
 			uint16_t *tmp = (uint16_t *)buf;
-			for (i = 0; i < count; ++i)
-				tmp[i] = GGI_BYTEREV16(*((uint16_t *)db->read + i));
-		}
-		else if (bpp == 3) {
-			uint8_t *tmp = (uint8_t *)buf;
-			for (i = 0; i < count; ++i) {
-				tmp[i * 3    ] = *((uint16_t *)db->read + i * 3 + 2);
-				tmp[i * 3 + 1] = *((uint16_t *)db->read + i * 3 + 1);
-				tmp[i * 3 + 2] = *((uint16_t *)db->read + i * 3    );
+			uint16_t *src = (uint16_t *)db->read +
+				update->tl.x + update->tl.y * stride;
+			for (j = 0; j < update->br.y - update->tl.y; ++j) {
+				for (i = 0; i < update->br.x - update->tl.x; ++i)
+					*tmp++ = GGI_BYTEREV16(src[i]);
+				src += stride;
 			}
 		}
 		else if (bpp == 4) {
 			uint32_t *tmp = (uint32_t *)buf;
-			for (i = 0; i < count; ++i)
-				tmp[i] = GGI_BYTEREV32(*((uint32_t *)db->read + i));
+			uint32_t *src = (uint32_t *)db->read +
+				update->tl.x + update->tl.y * stride;
+			for (j = 0; j < update->br.y - update->tl.y; ++j) {
+				for (i = 0; i < update->br.x - update->tl.x; ++i)
+					*tmp++ = GGI_BYTEREV32(src[i]);
+				src += stride;
+			}
 		}
-		else {
-			free(buf);
-			buf = db->read;
+		else { /* bpp == 3 */
+			uint8_t *tmp = (uint8_t *)buf;
+			uint8_t *src = (uint8_t *)db->read +
+				update->tl.x + update->tl.y * stride * bpp;
+			for (j = 0; j < update->br.y - update->tl.y; ++j) {
+				for (i = 0; i < update->br.x - update->tl.x; ++i) {
+					*tmp++ = src[i * 3 + 2];
+					*tmp++ = src[i * 3 + 1];
+					*tmp++ = src[i * 3];
+				}
+				src += stride * bpp;
+			}
 		}
 		write(priv->cfd, buf, count * bpp);
-		if (buf != db->read)
-			free(buf);
+		free(buf);
+	}
+	else if (update->br.x - update->tl.x != LIBGGI_VIRTX(cvis)) {
+		int i;
+		int bpp = GT_ByPP(gt);
+		int count = (update->br.x - update->tl.x) * (update->br.y - update->tl.y);
+		uint8_t *buf = malloc(count * bpp);
+		uint8_t *dst = buf;
+
+		for (i = update->tl.y; i < update->br.y; ++i, dst += (update->br.x - update->tl.x) * bpp)
+			memcpy(dst,
+				(uint8_t *)db->read + (update->tl.x + i * LIBGGI_VIRTX(cvis)) * bpp,
+				(update->br.x - update->tl.x) * bpp);
+
+		write(priv->cfd, buf, count * bpp);
+		free(buf);
 	}
 	else
-		write(priv->cfd, db->read, GT_ByPPP(LIBGGI_VIRTX(cvis) * LIBGGI_VIRTY(cvis), LIBGGI_GT(cvis)));
-	ggiResourceRelease(db->resource);
+		write(priv->cfd,
+			(uint8_t *)db->read + GT_ByPPP(LIBGGI_VIRTX(cvis) * update->tl.y, gt),
+			GT_ByPPP(LIBGGI_VIRTX(cvis) * (update->br.y - update->tl.y), gt));
 
+	ggiResourceRelease(db->resource);
+}
+
+static void
+pending_client_update(struct ggi_visual *vis)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_rect update;
+
+	update = priv->update;
+	ggi_rect_intersect(&update, &priv->dirty);
+
+	if (ggi_rect_isempty(&update))
+		return;
+
+	do_client_update(vis, &update);
+}
+
+static int
+vnc_client_update(struct ggi_visual *vis)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int incremental;
+	ggi_rect request, update;
+
+	if (priv->buf_size < 10) {
+		/* wait for more data */
+		priv->client_action = vnc_client_update;
+		return 0;
+	}
+
+	incremental = priv->buf[1];
+	memcpy(&request.tl.x, &priv->buf[2], sizeof(request.tl.x));
+	request.tl.x = ntohs(request.tl.x);
+	memcpy(&request.tl.y, &priv->buf[4], sizeof(request.tl.y));
+	request.tl.y = ntohs(request.tl.y);
+	memcpy(&request.br.x, &priv->buf[6], sizeof(request.br.x));
+	request.br.x = request.tl.x + ntohs(request.br.x);
+	memcpy(&request.br.y, &priv->buf[8], sizeof(request.br.y));
+	request.br.y = request.tl.y + ntohs(request.br.y);
+
+	DPRINT("client_update(%d, %dx%d - %dx%d)\n",
+		incremental,
+		request.tl.x, request.tl.y,
+		request.br.x, request.br.y);
+
+	if (ggi_rect_isempty(&request))
+		goto done;
+
+	ggi_rect_union(&request, &priv->update);
+	update = request;
+
+	if (incremental) {
+		ggi_rect_intersect(&update, &priv->dirty);
+		if (ggi_rect_isempty(&update)) {
+			priv->update = request;
+			goto done;
+		}
+	}
+
+	do_client_update(vis, &update);
+
+done:
 	return vnc_remove(vis, 10);
 }
 
@@ -532,6 +640,7 @@ vnc_client_init(struct ggi_visual *vis)
 	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
 	tmp16 = htons(LIBGGI_VIRTY(vis));
 	memcpy(&server_init[2],  &tmp16, sizeof(tmp16));
+	/* Only sizes 8, 16 and 32 allowed in RFB */
 	size = GT_SIZE(LIBGGI_GT(vis));
 	if (size <= 8)
 		size = 8;
@@ -724,7 +833,7 @@ vnc_client_version(struct ggi_visual *vis)
 
 	if (priv->protover <= 3) {
 		uint32_t security_v3;
-	
+
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
@@ -770,6 +879,8 @@ vnc_close_client(struct ggi_visual *vis, int cfd)
 	close(priv->cfd);
 	priv->cfd = -1;
 	priv->buf_size = 0;
+	priv->dirty.tl.x = priv->dirty.br.x = 0;
+	priv->update.tl.x = priv->update.br.x = 0;
 }
 
 void
@@ -804,7 +915,6 @@ GGI_vnc_new_client(void *arg)
 	int sa_len = sizeof(sa);
 #endif
 	int cfd;
-	long flags;
 
 	cfd = accept(priv->sfd, (struct sockaddr *)&sa, &sa_len);
 	if (cfd == -1) {
@@ -855,4 +965,29 @@ GGI_vnc_client_data(void *arg, int cfd)
 		vnc_close_client(vis, cfd);
 		return;
 	}
+}
+
+void
+GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
+	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
+{
+	ggi_vnc_priv *priv;
+
+	if (tlx < LIBGGI_GC(vis)->cliptl.x)
+		tlx = LIBGGI_GC(vis)->cliptl.x;
+	if (LIBGGI_GC(vis)->clipbr.x < brx)
+		brx = LIBGGI_GC(vis)->clipbr.x;
+	if (tly < LIBGGI_GC(vis)->cliptl.y)
+		tly = LIBGGI_GC(vis)->cliptl.y;
+	if (LIBGGI_GC(vis)->clipbr.y < bry)
+		bry = LIBGGI_GC(vis)->clipbr.y;
+
+	if (brx <= tlx || bry <= tly)
+		return;
+
+	priv = VNC_PRIV(vis);
+	ggi_rect_union_xyxy(&priv->dirty, tlx, tly, brx, bry);
+
+	if (priv->cfd != -1 && !ggi_rect_isempty(&priv->update))
+		pending_client_update(vis);
 }

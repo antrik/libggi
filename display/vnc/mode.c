@@ -1,7 +1,7 @@
-/* $Id: mode.c,v 1.3 2006/08/22 04:10:22 pekberg Exp $
+/* $Id: mode.c,v 1.4 2006/08/27 11:45:17 pekberg Exp $
 ******************************************************************************
 
-   Display-vnc: mode management
+   display-vnc: mode management
 
    Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
@@ -40,95 +40,22 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
-#include "../common/pixfmt-setup.inc"
-#include "../common/ggi-auto.inc"
-#include "../common/gt-auto.inc"
-
-/*
 static int
-vnc_acquire(ggi_resource *res, uint32_t actype)
+GGI_vnc_flush(struct ggi_visual *vis, 
+	int x, int y, int w, int h, int tryflag)
 {
-	ggi_directbuffer *dbuf;
-	struct ggi_visual *vis;
-	ggi_vnc_priv *priv;
-	int bufnum;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
-	DPRINT_MISC("acquire(%p, 0x%x) called\n", res, actype);
-
-	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE)) {
-		return GGI_EARGINVAL;
-	}
-	vis = res->priv;
-	priv = VNC_PRIV(vis);
-	dbuf = res->self;
-	bufnum = dbuf->frame;
-
-	if (res->count > 0) {
-		if (dbuf->write != NULL) {
-			dbuf->read = dbuf->write;
-		} else if (dbuf->read != NULL) {
-			dbuf->write = dbuf->read;
-		}
-		res->count++;
-		return 0;
-	}
-	dbuf->write = foo?
-	dbuf->read = dbuf->write;
-
-	res->curactype |= actype;
-	res->count++;
-
-	DPRINT_MISC("acquire - success, count: %d\n", res->count);
-
-	return 0;
+	return _ggiFlushRegion(priv->fb, x, y, w, h);
 }
 
-static int
-vnc_release(ggi_resource *res)
+int
+GGI_vnc_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
-	DPRINT_MISC("release(%p) called\n", res);
-
-	if (res->count < 1)
-		return GGI_ENOTALLOC;
-
-	res->count--;
-
-	return 0;
-}
-*/
-
-static int GGI_vnc_flush(struct ggi_visual *vis, 
-			int x, int y, int w, int h, int tryflag)
-{
-	/* ggi_vnc_priv *priv = VNC_PRIV(vis); */
-
-	return 0;
-}
-
-int GGI_vnc_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
-{
-	ggi_graphtype gt = LIBGGI_GT(vis);
-
 	*arguments = '\0';
 
-	switch(num) { 
-
-	case 0: strcpy(apiname, "display-vnc");
-		return 0;
-
-	case 1: strcpy(apiname, "generic-stubs");
-		return 0;
-		
-	case 2: strcpy(apiname, "generic-color");
-		return 0;
-
-	case 3: if (GT_SCHEME(gt) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%u", GT_SIZE(gt));
-			return 0;
-		}
-
-		sprintf(apiname, "generic-linear-%u%s", GT_SIZE(gt),
-			(gt & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
+	if (num == 0) { 
+		strcpy(apiname, "display-vnc");
 		return 0;
 	}
 
@@ -157,24 +84,21 @@ static int _ggi_domode(struct ggi_visual *vis)
 
 	DPRINT("_ggi_domode: zapped\n");
 
-	priv->fb = malloc(GT_ByPPP(
-				LIBGGI_VIRTX(vis) *
-				LIBGGI_VIRTY(vis) *
-				LIBGGI_MODE(vis)->frames, LIBGGI_GT(vis)));
-	if (!priv->fb)
-		return GGI_ENOMEM;
+	priv->dirty.tl.x = priv->dirty.tl.y = 0;
+	priv->dirty.br = priv->dirty.tl;
+
+	ggiSetMode(priv->fb->stem, LIBGGI_MODE(vis));
 
 	/* set up pixel format */
-	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
-	setup_pixfmt(LIBGGI_PIXFMT(vis), LIBGGI_GT(vis));
-	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
+	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(priv->fb), sizeof(ggi_pixelformat));
 
-	vis->d_frame_num = 0;
-	vis->r_frame_num = 0;
-	vis->w_frame_num = 0;
+	vis->d_frame_num = priv->fb->d_frame_num;
+	vis->r_frame_num = priv->fb->r_frame_num;
+	vis->w_frame_num = priv->fb->w_frame_num;
 
 	/* Set Up Direct Buffers */
 
+#if 0
 	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
 		/*
 		ggi_resource *res;
@@ -218,6 +142,7 @@ static int _ggi_domode(struct ggi_visual *vis)
 
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames - 1);
+#endif
 
 	/* Set up palette */
 	if (LIBGGI_PAL(vis)->clut.data) {
@@ -227,7 +152,8 @@ static int _ggi_domode(struct ggi_visual *vis)
 
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
 		int num_cols = 1 << GT_DEPTH(LIBGGI_GT(vis));
-		LIBGGI_PAL(vis)->clut.data = _ggi_malloc(sizeof(ggi_color) * num_cols);
+		LIBGGI_PAL(vis)->clut.data =
+			_ggi_malloc(sizeof(ggi_color) * num_cols);
 		LIBGGI_PAL(vis)->clut.size = num_cols;
 	}
 
@@ -244,11 +170,53 @@ static int _ggi_domode(struct ggi_visual *vis)
 		}
 	}
 
-	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->setPalette = GGI_vnc_setPalette;
-	}
-	vis->opdisplay->flush = GGI_vnc_flush;
-	
+	vis->opgc->gcchanged		= GGI_vnc_gcchanged;
+	vis->opdisplay->flush		= GGI_vnc_flush;
+
+	vis->opdraw->setdisplayframe	= GGI_vnc_setdisplayframe;
+	vis->opdraw->setreadframe	= GGI_vnc_setreadframe;
+	vis->opdraw->setwriteframe	= GGI_vnc_setwriteframe;
+	vis->opdraw->setorigin		= GGI_vnc_setorigin;
+
+	vis->opdraw->drawpixel		= GGI_vnc_drawpixel;
+	vis->opdraw->drawpixel_nc	= GGI_vnc_drawpixel_nc;
+	vis->opdraw->putpixel		= GGI_vnc_putpixel;
+	vis->opdraw->putpixel_nc	= GGI_vnc_putpixel_nc;
+	vis->opdraw->getpixel		= GGI_vnc_getpixel;
+
+	vis->opdraw->drawline		= GGI_vnc_drawline;
+	vis->opdraw->drawhline		= GGI_vnc_drawhline;
+	vis->opdraw->drawhline_nc	= GGI_vnc_drawhline_nc;
+	vis->opdraw->puthline		= GGI_vnc_puthline;
+	vis->opdraw->gethline		= GGI_vnc_gethline;
+	vis->opdraw->drawvline		= GGI_vnc_drawvline;
+	vis->opdraw->drawvline_nc	= GGI_vnc_drawvline_nc;
+	vis->opdraw->putvline		= GGI_vnc_putvline;
+	vis->opdraw->getvline		= GGI_vnc_getvline;
+
+	vis->opdraw->drawbox		= GGI_vnc_drawbox;
+	vis->opdraw->putbox		= GGI_vnc_putbox;
+	vis->opdraw->getbox		= GGI_vnc_getbox;
+	vis->opdraw->copybox		= GGI_vnc_copybox;
+	vis->opdraw->crossblit		= GGI_vnc_crossblit;
+	vis->opdraw->fillscreen		= GGI_vnc_fillscreen;
+
+	vis->opdraw->putc		= GGI_vnc_putc;
+	vis->opdraw->puts		= GGI_vnc_puts;
+	vis->opdraw->getcharsize	= GGI_vnc_getcharsize;
+
+	vis->opcolor->setpalvec		= GGI_vnc_setpalvec;
+	vis->opcolor->getpalvec		= GGI_vnc_getpalvec;
+	vis->opcolor->mapcolor		= GGI_vnc_mapcolor;
+	vis->opcolor->unmappixel	= GGI_vnc_unmappixel;
+	vis->opcolor->packcolors	= GGI_vnc_packcolors;
+	vis->opcolor->unpackpixels	= GGI_vnc_unpackpixels;
+
+	vis->opcolor->setgamma		= GGI_vnc_setgamma;
+	vis->opcolor->getgamma		= GGI_vnc_getgamma;
+	vis->opcolor->setgammamap	= GGI_vnc_setgammamap;
+	vis->opcolor->getgammamap	= GGI_vnc_getgammamap;
+
 	return 0;
 }
 
@@ -287,40 +255,15 @@ int GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int GGI_vnc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
-	/* ggi_vnc_priv *priv = VNC_PRIV(vis); */
-	int err = 0;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int err;
 
 	DPRINT_MODE("checkmode %dx%d#%dx%dF%d[0x%02x]\n",
 			mode->visible.x, mode->visible.y,
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	/* handle GT_AUTO and GGI_AUTO */
-	_GGIhandle_ggiauto(mode, 640, 400);
-
-	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
-
-	/* do some checks */
-	if (mode->virt.x < mode->visible.x) {
-		mode->virt.x = mode->visible.x;
-		err = -1;
-	}
-
-	if (mode->virt.y < mode->visible.y) {
-		mode->virt.y = mode->visible.y;
-		err = -1;
-	}
-
-	if (mode->frames != 1 && mode->frames != GGI_AUTO) {
-		err = -1;
-	}
-	mode->frames = 1;
-
-	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
-	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
-		err = -1;
-	}
-	mode->dpp.x = mode->dpp.y = 1;
+	err = ggiCheckMode(priv->fb->stem, mode);
 
 	DPRINT_MODE("result %d %dx%d#%dx%dF%d[0x%02x]\n",
 			err, mode->visible.x, mode->visible.y,
@@ -345,16 +288,11 @@ int GGI_vnc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
 	LIBGGI_FLAGS(vis) = flags;
 
-	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
+	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unknown flags don't take. */
 
-	return 0;
-}
-
-int GGI_vnc_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
-{
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
-
-	return 0;
+	return _ggiSetFlags(priv->fb, flags);
 }

@@ -1,7 +1,7 @@
-/* $Id: visual.c,v 1.6 2006/08/23 07:11:27 pekberg Exp $
+/* $Id: visual.c,v 1.7 2006/08/27 11:45:17 pekberg Exp $
 ******************************************************************************
 
-   Display-vnc: initialization
+   display-vnc: initialization
 
    Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
@@ -79,6 +79,7 @@ GGIopen(struct ggi_visual *vis,
 	int err = 0;
 	struct sockaddr_in sa;
 	gii_vnc_arg iargs;
+	struct gg_stem *stem;
 	struct gg_module *inp = NULL;
 	struct gg_api *gii;
 
@@ -147,11 +148,24 @@ GGIopen(struct ggi_visual *vis,
 	else
 		priv->passwd = 0;
 
+	stem = ggNewStem();
+	if (!stem) {
+		err = GGI_ENOMEM;
+		goto out_freegc;
+	}
+	err = ggiAttach(stem);
+	if (err != GGI_OK)
+		goto out_delstem;
+	err = ggiOpen(stem, "display-memory");
+	if (err != GGI_OK)
+		goto out_delstem;
+	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+
 	if (options[OPT_CLIENT].result[0] == '\0') {
 		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 		if (priv->sfd == -1) {
 			err = GGI_ENODEVICE;
-			goto out_freegc;
+			goto out_closefb;
 		}
 
 		memset(&sa, 0, sizeof(sa));
@@ -247,10 +261,16 @@ GGIopen(struct ggi_visual *vis,
 	return 0;
 
 out_closefds:
-	if (priv->sfd != -1)
-		close(priv->sfd);
 	if (priv->cfd != -1)
 		close(priv->cfd);
+	if (priv->inp)
+		ggCloseModule(inp);
+	if (priv->sfd != -1)
+		close(priv->sfd);
+out_closefb:
+	ggiClose(priv->fb->stem);
+out_delstem:
+	ggDelStem(stem);
 out_freegc:
 	free(LIBGGI_GC(vis));
 out_freepriv:
@@ -289,6 +309,16 @@ GGIclose(struct ggi_visual *vis,
 	if (priv->cfd != -1)
 		close(priv->sfd);
 	priv->cfd = -1;
+
+	if (priv->fb) {
+		ggiClose(priv->fb->stem);
+		ggDelStem(priv->fb->stem);
+	}
+
+	if (priv->client_vis) {
+		ggiClose(priv->client_vis->stem);
+		ggDelStem(priv->client_vis->stem);
+	}
 
 	free(priv);
 

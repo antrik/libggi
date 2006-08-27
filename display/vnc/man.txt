@@ -55,8 +55,7 @@ Bugs
 ----
 
 - The raw encoding is the only supported encoding.
-- Always updates the whole framebuffer, no matter what.
 - Special keys (i.e. shift, escape, etc) needs to be converted.
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.
-- Palettized modes don't appear to work...
+- Palette changes does not trigger a refresh on the client.
