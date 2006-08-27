@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.28 2006/03/11 18:49:12 soyt Exp $
+/* $Id: internal.c,v 1.29 2006/08/27 06:38:25 pekberg Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -342,10 +342,11 @@ int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 		ggi_pixelformat *pixfmt;
 		size_t tmp;
 		int idx;
+		unsigned count;
 
 		pixfmt = LIBGGI_PIXFMT(vis);
 		alpha_or_pad = (flags & GGI_PIXFMT_ALPHA_USED) ? 'a' : 'p';
-		idx = pixfmt->depth - 1;
+		idx = pixfmt->size - 1;
 		if (idx > 31) {		/* paranoia never hurts. */
 			return GGI_ENOMATCH;
 		}
@@ -374,16 +375,16 @@ int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 				break;
 			}
 
+			count = 1;
 			while ((pixfmt->bitmeaning[idx] & 0x00ffff00) ==
 			       (pixfmt->bitmeaning[idx - 1] & 0x00ffff00))
 			{
 				if (idx == 0) break;
 				idx--;
+				count++;
 			}
 
-			tmp = snprintf(ptr, pixfmtstr_len, "%u",
-				       256-(pixfmt->bitmeaning[idx] & 0xff)
-				       );
+			tmp = snprintf(ptr, pixfmtstr_len, "%u", count);
 			LIB_ASSERT(tmp < pixfmtstr_len,
 				"pixfmtstr_len too short. Not enough memory allocated for pixfmtstr.");
 			LIB_ASSERT(tmp <= pixfmtstr_len,
