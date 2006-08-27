@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.5 2006/08/23 07:11:27 pekberg Exp $
+/* $Id: vnc.h,v 1.6 2006/08/27 13:44:47 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -33,14 +33,19 @@
 
 typedef int (ggi_vnc_client_action)(struct ggi_visual *vis);
 
+/* Move to a central location? */
+typedef struct {
+	ggi_coord tl;
+	ggi_coord br;
+} ggi_rect;
+
 typedef struct {
 	int	display;
 	int	sfd;
 	int	cfd;
 	int	protover;
 
-	unsigned char *fb;
-
+	struct ggi_visual *fb;
 	struct gg_module *inp;
 
 	gii_vnc_add_cfd *add_cfd;
@@ -56,6 +61,8 @@ typedef struct {
 	struct ggi_visual *client_vis;
 	int palette_dirty;
 	int reverse_endian;
+	ggi_rect dirty;
+	ggi_rect update;
 
 	int           passwd;
 	unsigned long cooked_key[32];
@@ -68,7 +75,8 @@ gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
 
 void GGI_vnc_new_client_finish(struct ggi_visual *vis);
-
+void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
+	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 
 #define VNC_PRIV(vis)	((ggi_vnc_priv *) LIBGGI_PRIVATE(vis))
 
@@ -76,11 +84,63 @@ void GGI_vnc_new_client_finish(struct ggi_visual *vis);
 /* LibGGI Interface
  */
 
-ggifunc_getmode			GGI_vnc_getmode;
-ggifunc_setmode			GGI_vnc_setmode;
-ggifunc_checkmode		GGI_vnc_checkmode;
-ggifunc_getapi			GGI_vnc_getapi;
-ggifunc_setflags		GGI_vnc_setflags;
-ggifunc_setPalette		GGI_vnc_setPalette;
+ggifunc_gcchanged	GGI_vnc_gcchanged;
+
+/* mode */
+ggifunc_getmode		GGI_vnc_getmode;
+ggifunc_checkmode	GGI_vnc_checkmode;
+ggifunc_setmode		GGI_vnc_setmode;
+ggifunc_getapi		GGI_vnc_getapi;
+ggifunc_setflags	GGI_vnc_setflags;
+
+/* buffer */
+ggifunc_setdisplayframe	GGI_vnc_setdisplayframe;
+ggifunc_setreadframe	GGI_vnc_setreadframe;
+ggifunc_setwriteframe	GGI_vnc_setwriteframe;
+ggifunc_setorigin	GGI_vnc_setorigin;
+
+/* pixel */
+ggifunc_drawpixel	GGI_vnc_drawpixel;
+ggifunc_drawpixel	GGI_vnc_drawpixel_nc;
+ggifunc_putpixel	GGI_vnc_putpixel;
+ggifunc_putpixel	GGI_vnc_putpixel_nc;
+ggifunc_getpixel	GGI_vnc_getpixel;
+
+/* line */
+ggifunc_drawline	GGI_vnc_drawline;
+ggifunc_drawhline	GGI_vnc_drawhline;
+ggifunc_drawhline	GGI_vnc_drawhline_nc;
+ggifunc_puthline	GGI_vnc_puthline;
+ggifunc_gethline	GGI_vnc_gethline;
+ggifunc_drawvline	GGI_vnc_drawvline;
+ggifunc_drawvline	GGI_vnc_drawvline_nc;
+ggifunc_putvline	GGI_vnc_putvline;
+ggifunc_getvline	GGI_vnc_getvline;
+
+/* box */
+ggifunc_drawbox		GGI_vnc_drawbox;
+ggifunc_putbox		GGI_vnc_putbox;
+ggifunc_getbox		GGI_vnc_getbox;
+ggifunc_copybox		GGI_vnc_copybox;
+ggifunc_crossblit	GGI_vnc_crossblit;
+ggifunc_fillscreen	GGI_vnc_fillscreen;
+
+/* gtext */
+ggifunc_putc		GGI_vnc_putc;
+ggifunc_puts		GGI_vnc_puts;
+ggifunc_getcharsize	GGI_vnc_getcharsize;
+
+/* color */
+ggifunc_setpalvec	GGI_vnc_setpalvec;
+ggifunc_getpalvec	GGI_vnc_getpalvec;
+ggifunc_mapcolor	GGI_vnc_mapcolor;
+ggifunc_unmappixel	GGI_vnc_unmappixel;
+ggifunc_packcolors	GGI_vnc_packcolors;
+ggifunc_unpackpixels	GGI_vnc_unpackpixels;
+
+ggifunc_setgamma	GGI_vnc_setgamma;
+ggifunc_getgamma	GGI_vnc_getgamma;
+ggifunc_setgammamap	GGI_vnc_setgammamap;
+ggifunc_getgammamap	GGI_vnc_getgammamap;
 
 #endif /* _GGI_DISPLAY_VNC_H */
