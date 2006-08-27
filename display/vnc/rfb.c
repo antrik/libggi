@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.12 2006/08/26 07:20:19 pekberg Exp $
+/* $Id: rfb.c,v 1.13 2006/08/27 11:36:00 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: RFB protocol
@@ -73,6 +73,19 @@ vnc_remove(struct ggi_visual *vis, int count)
 }
 
 static int
+color_bits(uint16_t max)
+{
+	int bits = 0;
+
+	while (max) {
+		max >>= 1;
+		++bits;
+	}
+
+	return bits;
+}
+
+static int
 vnc_client_pixfmt(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -109,40 +122,54 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	blue_max = ntohs(blue_max);
 
 	DPRINT_MISC("Requested pixfmt:\n");
-	DPRINT_MISC("  size/depth %d/%d\n", priv->buf[4], priv->buf[5]);
+	DPRINT_MISC("  depth/size %d/%d\n", priv->buf[5], priv->buf[4]);
 #ifdef GGI_BIG_ENDIAN
 	priv->reverse_endian = !priv->buf[6];
 #else
 	priv->reverse_endian = priv->buf[6];
 #endif
-	DPRINT_MISC("  endian: %s\n", priv->reverse_endian ? "reverse" : "match");
-	DPRINT_MISC("  type: %s\n", priv->buf[7] ? "truecolor" : "palette");
-	DPRINT_MISC("  red max (shift):   %u (%d)\n", red_max,   priv->buf[14]);
-	DPRINT_MISC("  green max (shift): %u (%d)\n", green_max, priv->buf[15]);
-	DPRINT_MISC("  blue max (shift):  %u (%d)\n", blue_max,  priv->buf[16]);
+	DPRINT_MISC("  endian: %s\n",
+		priv->reverse_endian ? "reverse" : "match");
+	DPRINT_MISC("  type: %s\n",
+		priv->buf[7] ? "truecolor" : "palette");
+	DPRINT_MISC("  red max (shift):   %u (%d)\n",
+		red_max,   priv->buf[14]);
+	DPRINT_MISC("  green max (shift): %u (%d)\n",
+		green_max, priv->buf[15]);
+	DPRINT_MISC("  blue max (shift):  %u (%d)\n",
+		blue_max,  priv->buf[16]);
 
 	memset(&pixfmt, 0, sizeof(ggi_pixelformat));
 	pixfmt.size = priv->buf[4];
-	if (red_max == 3 && green_max == 3 && blue_max == 3)
-		pixfmt.depth = 6;
-	else if (red_max == 1 && green_max == 1 && blue_max == 1)
-		pixfmt.depth = 3;
-	else
-		pixfmt.depth = priv->buf[5];
+	/* Don't trust depth from the client, they often
+	 * ask for the wrong thing...
+	 */
 	if (priv->buf[7]) {
+		pixfmt.depth = color_bits(red_max) +
+			color_bits(green_max) +
+			color_bits(blue_max);
+		if (pixfmt.size < pixfmt.depth)
+			pixfmt.depth = priv->buf[5];
 		pixfmt.red_mask = red_max << priv->buf[14];
 		pixfmt.green_mask = green_max << priv->buf[15];
 		pixfmt.blue_mask = blue_max << priv->buf[16];
 	}
-	else
+	else {
+		pixfmt.depth = priv->buf[5];
 		pixfmt.clut_mask = (1 << pixfmt.depth) - 1;
-
-	/*
-	if (priv->reverse_endian)
-		pixfmt.flags |= GGI_PF_REVERSE_ENDIAN;
-	*/
+	}
 
 	_ggi_build_pixfmt(&pixfmt);
+	DPRINT_MISC("Evaluated as GGI pixfmt:\n");
+	DPRINT_MISC("  depth/size: %d/%d\n", pixfmt.depth, pixfmt.size);
+	DPRINT_MISC("  red mask (shift):   %08x (%d)\n",
+		pixfmt.red_mask,   pixfmt.red_shift);
+	DPRINT_MISC("  green mask (shift): %08x (%d)\n",
+		pixfmt.green_mask, pixfmt.green_shift);
+	DPRINT_MISC("  blue mask (shift):  %08x (%d)\n",
+		pixfmt.blue_mask,  pixfmt.blue_shift);
+	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
+		pixfmt.clut_mask,  pixfmt.clut_shift);
 
 	mode.frames = 1;
 	mode.visible.x = LIBGGI_VIRTX(vis);
@@ -155,25 +182,24 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		GT_SETSCHEME(mode.graphtype, GT_TRUECOLOR);
 	else
 		GT_SETSCHEME(mode.graphtype, GT_PALETTE);
-	/*
-	if (priv->reverse_endian)
-		GT_SETSUBSCHEME(mode.graphtype, GT_SUB_REVERSE_ENDIAN);
-	*/
 	mode.dpp.x = mode.dpp.y = 1;
 
-	i = 0;
 	if (priv->buf[7]) {
-		i += snprintf(target, GGI_MAX_APILEN, "display-memory:-pixfmt=");
-	
-		/* Need a visual to call _ggi_build_pixfmtstr, so fake one... */
+		i = snprintf(target,
+			GGI_MAX_APILEN, "display-memory:-pixfmt=");
+
+		/* Need a visual to call _ggi_build_pixfmtstr, so fake
+		 * one...
+		 */
 		fake_vis.pixfmt = &pixfmt;
 		fake_vis.mode = &mode;
 		memset(target + i, '\0', sizeof(target) - i);
-		_ggi_build_pixfmtstr(&fake_vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
+		_ggi_build_pixfmtstr(&fake_vis,
+			target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
 		i = strlen(target);
 	}
 	else
-		i += snprintf(target, GGI_MAX_APILEN, "display-memory");
+		i = snprintf(target, GGI_MAX_APILEN, "display-memory");
 
 	stem = ggNewStem();
 	if (stem == NULL) {
@@ -198,16 +224,6 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		DPRINT("ggiSetMode failed\n");
 		return -1;
 	}
-
-	/* fix endian mismatch behind the back of display-memory */
-	/* But this doesn't trigger a slow crossblit anyway, and
-	   even if it did, default-color does not support reverse
-	   endian modes anyway. So comment it out...
-	if (priv->reverse_endian) {
-		GT_SETSUBSCHEME(LIBGGI_GT(priv->client_vis), GT_SUB_REVERSE_ENDIAN);
-		LIBGGI_PIXFMT(priv->client_vis)->flags |= GGI_PF_REVERSE_ENDIAN;
-	}
-	*/
 
 	if (!priv->buf[7]) {
 		ggiSetColorfulPalette(priv->client_vis->stem);
