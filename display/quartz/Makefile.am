@@ -4,7 +4,7 @@ libquartz_la_LIBADD =
 
 noinst_LTLIBRARIES = libquartz.la
 
-libquartz_la_SOURCES = color.c gc.c mode.c visual.c
+libquartz_la_SOURCES = color.c gc.c listener.c mode.c visual.c
 libquartz_la_LDFLAGS = -framework ApplicationServices \
 		-framework Carbon
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/04/14 19:24:39 cegger Exp $
+/* $Id: visual.c,v 1.16 2006/08/27 22:31:53 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -228,18 +228,21 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("open input-quartz\n");
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
-				"input-quartz", NULL, &_args);
-			priv->publisher = ggGetPublisher(gii, vis->stem, GII_PUBLISHER_SOURCE_CHANGE);
-			//priv->observer = ggAddObserver(priv->publisher, GGI_quartz_listener, vis);
+		if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+			err = GGI_ENODEVICE;
+			fprintf(stderr,
+				"display-quartz: gii not attached to stem\n");
+			goto out;
 		}
+
+		inp = ggOpenModule(gii, vis->stem, "input-quartz", NULL, &_args);
+		priv->publisher = ggGetPublisher(gii, vis->stem, GII_PUBLISHER_SOURCE_CHANGE);
+		priv->observer = ggAddObserver(priv->publisher, GGI_quartz_listener, vis);
 
 		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 		if (inp == NULL) {
-			DPRINT_MISC("Unable to open quartz inputlib\n");
 			err = GGI_ENODEVICE;
-			fprintf(stderr, "Unable to open quartz inputlib\n");
+			fprintf(stderr, "display-quartz: Unable to open quartz inputlib\n");
 			goto out;
 		}	/* if */
 
