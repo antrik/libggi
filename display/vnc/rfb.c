@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.16 2006/08/27 20:19:15 pekberg Exp $
+/* $Id: rfb.c,v 1.17 2006/08/28 03:18:27 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -59,6 +59,41 @@
 static int vnc_client_run(struct ggi_visual *vis);
 
 static int
+color_bits(uint16_t max)
+{
+	int bits = 0;
+
+	while (max) {
+		max >>= 1;
+		++bits;
+	}
+
+	return bits;
+}
+
+static int
+color_max(ggi_pixel mask)
+{
+	while (!(mask & 1))
+		mask >>= 1;
+
+	return mask;
+}
+
+static int
+color_shift(ggi_pixel mask)
+{
+	int shift = 0;
+
+	while (!(mask & 1)) {
+		mask >>= 1;
+		++shift;
+	}
+
+	return shift;
+}
+
+static int
 vnc_remove(struct ggi_visual *vis, int count)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -71,19 +106,6 @@ vnc_remove(struct ggi_visual *vis, int count)
 
 	priv->client_action = vnc_client_run;
 	return vnc_client_run(vis);
-}
-
-static int
-color_bits(uint16_t max)
-{
-	int bits = 0;
-
-	while (max) {
-		max >>= 1;
-		++bits;
-	}
-
-	return bits;
 }
 
 static int
@@ -585,28 +607,6 @@ vnc_client_run(struct ggi_visual *vis)
 	}
 
 	return res;
-}
-
-static int
-color_max(ggi_pixel mask)
-{
-	while (!(mask & 1))
-		mask >>= 1;
-
-	return mask;
-}
-
-static int
-color_shift(ggi_pixel mask)
-{
-	int shift = 0;
-
-	while (!(mask & 1)) {
-		mask >>= 1;
-		++shift;
-	}
-
-	return shift;
 }
 
 static int
