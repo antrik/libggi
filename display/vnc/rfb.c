@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.21 2006/08/28 08:12:56 pekberg Exp $
+/* $Id: rfb.c,v 1.22 2006/08/28 09:09:42 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -48,6 +48,8 @@
 #include <netinet/in.h>
 #endif
 
+#include <errno.h>
+
 #include <ggi/gg.h>
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
@@ -91,6 +93,69 @@ color_shift(ggi_pixel mask)
 	}
 
 	return shift;
+}
+
+static void
+close_client(ggi_vnc_priv *priv, int cfd)
+{
+	if (priv->cfd == -1)
+		return;
+	if (cfd != priv->cfd)
+		return;
+
+	DPRINT("close_client.\n");
+	priv->del_cfd(priv->gii_ctx, cfd);
+	if (priv->write_pending)
+		priv->del_cwfd(priv->gii_ctx, priv->cfd);
+	priv->write_pending = 0;
+	close(priv->cfd);
+	priv->cfd = -1;
+	priv->buf_size = 0;
+	priv->dirty.tl.x = priv->dirty.br.x = 0;
+	priv->update.tl.x = priv->update.br.x = 0;
+}
+
+static int
+write_client(ggi_vnc_priv *priv, const void *buf, size_t count)
+{
+	int res;
+
+	if (priv->write_pending) {
+		DPRINT("impatient client...\n");
+		close_client(priv, priv->cfd);
+	}
+
+again:
+	res = write(priv->cfd, buf, count);
+
+	if (res == count) {
+		/* DPRINT("complete write\n"); */
+		return res;
+	}
+
+	if (res > 0) {
+		buf = (const char *)buf + res;
+		count -= res;
+		goto again;
+	}
+
+	switch (errno) {
+	case EINTR:
+		goto again;
+	case EAGAIN:
+#if EAGAIN != EWOULDBLOCK
+	case EWOULDBLOCK:
+#endif
+		/* queued it */
+		/* DPRINT("write would block\n"); */
+		priv->write_pending = 1;
+		priv->add_cwfd(priv->gii_ctx, priv->cfd);
+		return 0;
+	default:
+		DPRINT("write error.\n");
+		close_client(priv, priv->cfd);
+		return res;
+	}
 }
 
 static int
@@ -307,8 +372,11 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
-	unsigned char header[16];
 	ggi_graphtype gt;
+	int bpp;
+	int count;
+	void *buf;
+	unsigned char *header;
 
 	DPRINT("update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
@@ -363,7 +431,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 			*dst++ = ggi_palette[i].b & 0xff;
 		}
 
-		write(priv->cfd, vnc_palette, 6 + 6 * colors);
+		write_client(priv, vnc_palette, 6 + 6 * colors);
 		free(ggi_palette);
 		priv->palette_dirty = 0;
 	}
@@ -371,6 +439,12 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	db = ggiDBGetBuffer(cvis->stem, 0);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
+	bpp = GT_ByPP(gt);
+	count = (update->br.x - update->tl.x) *
+		(update->br.y - update->tl.y);
+	buf = malloc(16 + count * bpp);
+	header = (unsigned char *)buf;
+	buf = &header[16];
 	header[ 0] = 0;
 	header[ 1] = 0;
 	header[ 2] = 0;
@@ -387,13 +461,8 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	header[13] = 0;
 	header[14] = 0;
 	header[15] = 0;
-	write(priv->cfd, &header, sizeof(header));
 	if (priv->reverse_endian && GT_SIZE(gt) > 8) {
 		int i, j;
-		int bpp = GT_ByPP(gt);
-		int count = (update->br.x - update->tl.x) *
-			(update->br.y - update->tl.y);
-		void *buf = malloc(count * bpp);
 		int stride = db->buffer.plb.stride / bpp;
 
 		if (bpp == 2) {
@@ -429,28 +498,24 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 				src += stride * bpp;
 			}
 		}
-		write(priv->cfd, buf, count * bpp);
-		free(buf);
 	}
 	else if (update->br.x - update->tl.x != LIBGGI_VIRTX(cvis)) {
 		int i;
-		int bpp = GT_ByPP(gt);
-		int count = (update->br.x - update->tl.x) * (update->br.y - update->tl.y);
-		uint8_t *buf = malloc(count * bpp);
 		uint8_t *dst = buf;
 
 		for (i = update->tl.y; i < update->br.y; ++i, dst += (update->br.x - update->tl.x) * bpp)
 			memcpy(dst,
 				(uint8_t *)db->read + (update->tl.x + i * LIBGGI_VIRTX(cvis)) * bpp,
 				(update->br.x - update->tl.x) * bpp);
-
-		write(priv->cfd, buf, count * bpp);
-		free(buf);
 	}
-	else
-		write(priv->cfd,
+	else {
+		memcpy(buf, 
 			(uint8_t *)db->read + GT_ByPPP(LIBGGI_VIRTX(cvis) * update->tl.y, gt),
-			GT_ByPPP(LIBGGI_VIRTX(cvis) * (update->br.y - update->tl.y), gt));
+			count * bpp);
+	}
+
+	write_client(priv, header, 16 + count * bpp);
+	free(header);
 
 	ggiResourceRelease(db->resource);
 }
@@ -502,6 +567,17 @@ vnc_client_update(struct ggi_visual *vis)
 		goto done;
 
 	ggi_rect_union(&request, &priv->update);
+
+	if (priv->write_pending) {
+		/* overly anxious client, just remember the requested rect.
+		 * TODO: remember this event and send a new update request
+		 * when the outstanding write completes. Also remember if
+		 * any such anxious request were non-incremental.
+		 */
+		priv->update = update;
+		goto done;
+	}
+
 	update = request;
 
 	if (incremental) {
@@ -634,6 +710,9 @@ vnc_client_init(struct ggi_visual *vis)
 	ggi_pixelformat *pixfmt;
 	int size;
 
+	if (priv->write_pending)
+		return 0;
+
 	DPRINT("client_init\n");
 
 	if (priv->buf_size > 1) {
@@ -688,10 +767,8 @@ vnc_client_init(struct ggi_visual *vis)
 	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
 	memcpy(&server_init[24], "GGI on vnc", ntohl(tmp32));
 
-	/* block signals? */
-
 	/* desired pixel-format */
-	write(priv->cfd, server_init, sizeof(server_init));
+	write_client(priv, server_init, sizeof(server_init));
 
 	return 0;
 }
@@ -701,6 +778,9 @@ vnc_client_challenge(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	uint32_t result = htonl(0);
+
+	if (priv->write_pending)
+		return 0;
 
 	DPRINT("client_challenge\n");
 
@@ -729,10 +809,8 @@ vnc_client_challenge(struct ggi_visual *vis)
 	priv->buf_size = 0;
 	priv->client_action = vnc_client_init;
 
-	/* block signals? */
-
 	/* ok */
-	write(priv->cfd, &result, sizeof(result));
+	write_client(priv, &result, sizeof(result));
 
 	return 0;
 }
@@ -745,6 +823,9 @@ vnc_client_security(struct ggi_visual *vis)
 	uint32_t ok = htonl(0);
 	int i;
 	struct timeval now;
+
+	if (priv->write_pending)
+		return 0;
 
 	DPRINT("client_security\n");
 
@@ -765,10 +846,8 @@ vnc_client_security(struct ggi_visual *vis)
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
-		/* block signals? */
-
 		/* ok */
-		write(priv->cfd, &ok, sizeof(ok));
+		write_client(priv, &ok, sizeof(ok));
 		return 0;
 
 	case 2:
@@ -792,10 +871,8 @@ vnc_client_security(struct ggi_visual *vis)
 			priv->challenge[i + 8] ^= priv->challenge[i];
 		des(&priv->challenge[8], &priv->challenge[8]);
 
-		/* block signals? */
-
 		/* challenge client */
-		write(priv->cfd, priv->challenge, sizeof(priv->challenge));
+		write_client(priv, priv->challenge, sizeof(priv->challenge));
 		return 0;
 	}
 
@@ -810,6 +887,9 @@ vnc_client_version(struct ggi_visual *vis)
 	unsigned int major, minor;
 	char str[13];
 	unsigned char security[] = { 1, 0 };
+
+	if (priv->write_pending)
+		return 0;
 
 	if (priv->buf_size > 12) {
 		DPRINT("Too much data.\n");
@@ -852,11 +932,9 @@ vnc_client_version(struct ggi_visual *vis)
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
-		/* block signals? */
-
 		/* ok, decide security */
 		security_v3 = htonl(priv->passwd ? 2 : 1);
-		write(priv->cfd, &security_v3, sizeof(security_v3));
+		write_client(priv, &security_v3, sizeof(security_v3));
 		if (priv->passwd) {
 			/* fake a client request of vnc auth security type */
 			priv->buf[0] = 2;
@@ -871,31 +949,10 @@ vnc_client_version(struct ggi_visual *vis)
 
 	security[1] = priv->passwd ? 2 : 1;
 
-	/* block signals? */
-
 	/* supported security types */
-	write(priv->cfd, security, sizeof(security));
+	write_client(priv, security, sizeof(security));
 
 	return 0;
-}
-
-static void
-vnc_close_client(struct ggi_visual *vis, int cfd)
-{
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-
-	if (priv->cfd == -1)
-		return;
-	if (cfd != priv->cfd)
-		return;
-
-	DPRINT("close_client.\n");
-	priv->del_cfd(priv->gii_ctx, cfd);
-	close(priv->cfd);
-	priv->cfd = -1;
-	priv->buf_size = 0;
-	priv->dirty.tl.x = priv->dirty.br.x = 0;
-	priv->update.tl.x = priv->update.br.x = 0;
 }
 
 void
@@ -907,15 +964,15 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis)
 	DPRINT("new_client(%d)\n", priv->cfd);
 	priv->add_cfd(priv->gii_ctx, priv->cfd);
 
+	priv->write_pending = 0;
+
 	flags = fcntl(priv->cfd, F_GETFL);
 	fcntl(priv->cfd, F_SETFL, flags | O_NONBLOCK);
 
 	priv->client_action = vnc_client_version;
 
-	/* block signals? */
-
 	/* Support max protocol version 3.8 */
-	write(priv->cfd, "RFB 003.008\n", 12);
+	write_client(priv, "RFB 003.008\n", 12);
 }
 
 void
@@ -937,7 +994,7 @@ GGI_vnc_new_client(void *arg)
 		return;
 	}
 
-	vnc_close_client(vis, priv->cfd);
+	close_client(priv, priv->cfd);
 	priv->cfd = cfd;
 
 	GGI_vnc_new_client_finish(vis);
@@ -958,18 +1015,18 @@ GGI_vnc_client_data(void *arg, int cfd)
 
 	if (len < 0) {
 		DPRINT("Error reading\n");
-		vnc_close_client(vis, cfd);
+		close_client(priv, cfd);
 		return;
 	}
 
 	if (len == 0) {
-		vnc_close_client(vis, cfd);
+		close_client(priv, cfd);
 		return;
 	}
 
 	if (len + priv->buf_size > sizeof(priv->buf)) {
 		DPRINT("Avoiding buffer overrun\n");
-		vnc_close_client(vis, cfd);
+		close_client(priv, cfd);
 		return;
 	}
 
@@ -977,7 +1034,35 @@ GGI_vnc_client_data(void *arg, int cfd)
 	priv->buf_size += len;
 
 	if (priv->client_action(vis)) {
-		vnc_close_client(vis, cfd);
+		close_client(priv, cfd);
+		return;
+	}
+}
+
+void
+GGI_vnc_write_client(void *arg, int fd)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	if (fd != priv->cfd)
+		return;
+
+	if (!priv->write_pending) {
+		DPRINT("spurious write completed notification\n");
+		return;
+	}
+
+	/* DPRINT("write completed\n"); */
+
+	priv->write_pending = 0;
+	priv->del_cwfd(priv->gii_ctx, fd);
+
+	if (!priv->buf_size)
+		return;
+
+	if (priv->client_action(vis)) {
+		close_client(priv, fd);
 		return;
 	}
 }

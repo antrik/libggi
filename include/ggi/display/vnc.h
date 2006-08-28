@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.6 2006/08/27 13:44:47 pekberg Exp $
+/* $Id: vnc.h,v 1.7 2006/08/28 09:09:41 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -48,14 +48,17 @@ typedef struct {
 	struct ggi_visual *fb;
 	struct gg_module *inp;
 
-	gii_vnc_add_cfd *add_cfd;
-	gii_vnc_del_cfd *del_cfd;
-	gii_vnc_key     *key;
-	gii_vnc_pointer *pointer;
+	gii_vnc_add_cfd  *add_cfd;
+	gii_vnc_del_cfd  *del_cfd;
+	gii_vnc_add_cwfd *add_cwfd;
+	gii_vnc_del_cwfd *del_cwfd;
+	gii_vnc_key      *key;
+	gii_vnc_pointer  *pointer;
 	void *gii_ctx;
 
 	unsigned char buf[256];
 	int buf_size;
+	int write_pending;
 	ggi_vnc_client_action *client_action;
 
 	struct ggi_visual *client_vis;
@@ -73,6 +76,7 @@ typedef struct {
 
 gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
+gii_vnc_write_client		GGI_vnc_write_client;
 
 void GGI_vnc_new_client_finish(struct ggi_visual *vis);
 void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/08/28 05:44:55 cegger Exp $
+/* $Id: visual.c,v 1.9 2006/08/28 09:09:42 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -190,10 +190,11 @@ GGIopen(struct ggi_visual *vis,
 		DPRINT("Now listening for connections.\n");
 	}
 
-	iargs.sfd         = priv->sfd;
-	iargs.new_client  = GGI_vnc_new_client;
-	iargs.client_data = GGI_vnc_client_data;
-	iargs.usr_ctx     = vis;
+	iargs.sfd          = priv->sfd;
+	iargs.new_client   = GGI_vnc_new_client;
+	iargs.client_data  = GGI_vnc_client_data;
+	iargs.write_client = GGI_vnc_write_client;
+	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
 	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
@@ -217,6 +218,8 @@ GGIopen(struct ggi_visual *vis,
 	priv->inp         = inp;
 	priv->add_cfd     = iargs.add_cfd;
 	priv->del_cfd     = iargs.del_cfd;
+	priv->add_cwfd    = iargs.add_cwfd;
+	priv->del_cwfd    = iargs.del_cwfd;
 	priv->key         = iargs.key;
 	priv->pointer     = iargs.pointer;
 	priv->gii_ctx     = iargs.gii_ctx;
