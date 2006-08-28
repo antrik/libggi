@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.17 2006/08/28 03:18:27 pekberg Exp $
+/* $Id: rfb.c,v 1.18 2006/08/28 04:58:46 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -241,9 +241,11 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	}
 	priv->client_vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 	if (ggiSetMode(priv->client_vis->stem, &mode)) {
+		struct gg_stem *client_stem = priv->client_vis->stem;
+
 		DPRINT("ggiSetMode failed\n");
 		ggiClose(priv->client_vis->stem);
-		ggDelStem(stem);
+		ggDelStem(client_stem);
 		priv->client_vis = NULL;
 		return -1;
 	}
