@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.19 2006/08/28 05:10:10 cegger Exp $
+/* $Id: rfb.c,v 1.20 2006/08/28 05:27:26 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -241,18 +241,18 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	if (ggiOpen(stem, target, NULL) != GGI_OK) {
 		DPRINT("ggiOpen failed\n");
 		err = -1;
-		goto err1;
+		goto err2;
 	}
 	priv->client_vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 	client_stem = priv->client_vis->stem;
-	if (ggiSetMode(priv->client_vis->stem, &mode)) {
+	if (ggiSetMode(client_stem, &mode)) {
 		DPRINT("ggiSetMode failed\n");
 		err = -1;
-		goto err2;
+		goto err3;
 	}
 
 	if (!priv->buf[7]) {
-		ggiSetColorfulPalette(priv->client_vis->stem);
+		ggiSetColorfulPalette(client_stem);
 		priv->palette_dirty = 1;
 	}
 	else
@@ -260,13 +260,14 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 
 	return vnc_remove(vis, 20);
 
-err2:
+err3:
 	ggiClose(client_stem);
-	ggDelStem(client_stem);
-	priv->client_vis = NULL;
+err2:
+	ggiDetach(stem);
 err1:
 	ggDelStem(stem);
 err0:
+	priv->client_vis = NULL;
 	return err;
 
 }
