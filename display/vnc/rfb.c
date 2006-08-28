@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.18 2006/08/28 04:58:46 cegger Exp $
+/* $Id: rfb.c,v 1.19 2006/08/28 05:10:10 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -111,6 +111,7 @@ vnc_remove(struct ggi_visual *vis, int count)
 static int
 vnc_client_pixfmt(struct ggi_visual *vis)
 {
+	int err = 0;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	uint16_t red_max;
 	uint16_t green_max;
@@ -121,6 +122,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	int i;
 	char target[GGI_MAX_APILEN];
 	struct gg_stem *stem;
+	struct gg_stem *client_stem; /* accurate copy of the backpointer */
 
 	DPRINT("client_pixfmt\n");
 
@@ -132,6 +134,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 
 	if (priv->client_vis) {
 		stem = priv->client_vis->stem;
+		client_stem = priv->client_vis->stem;
 		ggiClose(stem);
 		ggDelStem(stem);
 		priv->client_vis = NULL;
@@ -227,27 +230,25 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	stem = ggNewStem();
 	if (stem == NULL) {
 		DPRINT("ggNewStem failed\n");
-		return -1;
+		err = -1;
+		goto err0;
 	}
 	if (ggiAttach(stem) != GGI_OK) {
 		DPRINT("ggiAttach failed\n");
-		ggDelStem(stem);
-		return -1;
+		err = -1;
+		goto err1;
 	}
 	if (ggiOpen(stem, target, NULL) != GGI_OK) {
 		DPRINT("ggiOpen failed\n");
-		ggDelStem(stem);
-		return -1;
+		err = -1;
+		goto err1;
 	}
 	priv->client_vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+	client_stem = priv->client_vis->stem;
 	if (ggiSetMode(priv->client_vis->stem, &mode)) {
-		struct gg_stem *client_stem = priv->client_vis->stem;
-
 		DPRINT("ggiSetMode failed\n");
-		ggiClose(priv->client_vis->stem);
-		ggDelStem(client_stem);
-		priv->client_vis = NULL;
-		return -1;
+		err = -1;
+		goto err2;
 	}
 
 	if (!priv->buf[7]) {
@@ -258,6 +259,16 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		priv->palette_dirty = 0;
 
 	return vnc_remove(vis, 20);
+
+err2:
+	ggiClose(client_stem);
+	ggDelStem(client_stem);
+	priv->client_vis = NULL;
+err1:
+	ggDelStem(stem);
+err0:
+	return err;
+
 }
 
 static int
