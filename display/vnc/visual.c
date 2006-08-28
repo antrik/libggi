@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.7 2006/08/27 11:45:17 pekberg Exp $
+/* $Id: visual.c,v 1.8 2006/08/28 05:44:55 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -123,7 +123,7 @@ GGIopen(struct ggi_visual *vis,
 		priv->display = 0;
 
 	if (options[OPT_PASSWD].result[0] != '\0') {
-		char passwd[8];
+		unsigned char passwd[8];
 		int i;
 
 		priv->passwd = 1;
@@ -294,6 +294,7 @@ GGIclose(struct ggi_visual *vis,
 	 struct ggi_dlhandle *dlh)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	struct gg_stem *tmp_stem;
 
 	if (!priv)
 		goto skip;
@@ -311,13 +312,15 @@ GGIclose(struct ggi_visual *vis,
 	priv->cfd = -1;
 
 	if (priv->fb) {
-		ggiClose(priv->fb->stem);
-		ggDelStem(priv->fb->stem);
+		tmp_stem = priv->fb->stem;
+		ggiClose(tmp_stem);
+		ggDelStem(tmp_stem);
 	}
 
 	if (priv->client_vis) {
-		ggiClose(priv->client_vis->stem);
-		ggDelStem(priv->client_vis->stem);
+		tmp_stem = priv->client_vis->stem;
+		ggiClose(tmp_stem);
+		ggDelStem(tmp_stem);
 	}
 
 	free(priv);
