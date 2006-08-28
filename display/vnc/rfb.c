@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.23 2006/08/28 19:53:19 cegger Exp $
+/* $Id: rfb.c,v 1.24 2006/08/28 20:07:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -335,11 +335,85 @@ err0:
 
 }
 
+static void
+set_encodings(int32_t *encodings, unsigned int count)
+{
+	while (count--) {
+		switch(ntohl(*encodings)) {
+		case 0:
+			DPRINT_MISC("Raw encoding\n");
+			break;
+		case 1:
+			DPRINT_MISC("CopyRect encoding\n");
+			break;
+		case 2:
+			DPRINT_MISC("RRE encoding\n");
+			break;
+		case 4:
+			DPRINT_MISC("CoRRE encoding\n");
+			break;
+		case 5:
+			DPRINT_MISC("Hextile encoding\n");
+			break;
+		case 16:
+			DPRINT_MISC("ZRLE encoding\n");
+			break;
+		case -239:
+			DPRINT_MISC("Cursor pseudo-encoding\n");
+			break;
+		case -223:
+			DPRINT_MISC("DesktopSize pseudo-encoding\n");
+			break;
+		case 6:
+			DPRINT_MISC("zlib encoding\n");
+			break;
+		case 7:
+			DPRINT_MISC("tight encoding\n");
+			break;
+		case 8:
+			DPRINT_MISC("zlibhex encoding\n");
+			break;
+		default:
+			DPRINT_MISC("Unknown (%i) encoding\n", ntohl(*encodings));
+			break;
+		}
+		++encodings;
+	}
+}
+
+static int
+vnc_client_set_encodings_cont(struct ggi_visual *vis)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT("client_set_encodings\n");
+
+	if (priv->buf_size < 4) {
+		/* wait for more data */
+		return 0;
+	}
+
+	if (priv->buf_size < 4 * priv->encoding_count) {
+		/* wait for more data */
+		int tail = priv->buf_size & 3;
+		unsigned int count = priv->buf_size / 4;
+		set_encodings((int32_t *)priv->buf, count);
+		priv->encoding_count -= count;
+		memcpy(priv->buf, &priv->buf[priv->buf_size - tail], tail);
+		priv->buf_size = tail;
+		/* wait for more data */
+		return 0;
+	}
+
+	set_encodings((int32_t *)priv->buf, priv->encoding_count);
+
+	return vnc_remove(vis, 4 * priv->encoding_count);
+}
+
 static int
 vnc_client_set_encodings(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	uint16_t count;
 
 	DPRINT("client_set_encodings\n");
 
@@ -349,18 +423,30 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 		return 0;
 	}
 
-	memcpy(&count, &priv->buf[2], sizeof(count));
-	count = ntohs(count);
+	memcpy(&priv->encoding_count,
+		&priv->buf[2],
+		sizeof(priv->encoding_count));
+	priv->encoding_count = ntohs(priv->encoding_count);
 
-	if (priv->buf_size < 4 + 4 * count) {
+	DPRINT("%d encodings\n", priv->encoding_count);
+
+	if (priv->buf_size < 4 + 4 * priv->encoding_count) {
 		/* wait for more data */
-		priv->client_action = vnc_client_set_encodings;
+		int tail = priv->buf_size & 3;
+		unsigned int count = priv->buf_size / 4 - 1;
+		set_encodings((int32_t *)&priv->buf[4], count);
+		priv->encoding_count -= count;
+		memcpy(priv->buf, &priv->buf[priv->buf_size - tail], tail);
+		priv->buf_size = tail;
+
+		/* wait for more data */
+		priv->client_action = vnc_client_set_encodings_cont;
 		return 0;
 	}
 
-	DPRINT("got %d encodings\n", count);
+	set_encodings((int32_t *)&priv->buf[4], priv->encoding_count);
 
-	return vnc_remove(vis, 4 + 4 * count);
+	return vnc_remove(vis, 4 + 4 * priv->encoding_count);
 }
 
 static void
