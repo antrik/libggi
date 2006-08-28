@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.20 2006/08/28 05:27:26 cegger Exp $
+/* $Id: rfb.c,v 1.21 2006/08/28 08:12:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -197,6 +197,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
 		pixfmt.clut_mask,  pixfmt.clut_shift);
 
+	memset(&mode, 0, sizeof(mode));
 	mode.frames = 1;
 	mode.visible.x = LIBGGI_VIRTX(vis);
 	mode.visible.y = LIBGGI_VIRTY(vis);
