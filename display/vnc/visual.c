@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/08/28 09:09:42 pekberg Exp $
+/* $Id: visual.c,v 1.10 2006/08/29 08:44:51 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -313,6 +313,9 @@ GGIclose(struct ggi_visual *vis,
 	if (priv->cfd != -1)
 		close(priv->sfd);
 	priv->cfd = -1;
+
+	if (priv->wbuf.buf)
+		free(priv->wbuf.buf);
 
 	if (priv->fb) {
 		tmp_stem = priv->fb->stem;

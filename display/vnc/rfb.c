@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.24 2006/08/28 20:07:50 pekberg Exp $
+/* $Id: rfb.c,v 1.25 2006/08/29 08:44:51 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -95,6 +95,31 @@ color_shift(ggi_pixel mask)
 	return shift;
 }
 
+static int
+buf_reserve(ggi_vnc_buf *buf, int limit)
+{
+	if (buf->limit >= limit)
+		return 0;
+
+	if (!buf->size) {
+		if (buf->buf != NULL)
+			free(buf->buf);
+		buf->buf = malloc(limit);
+	}
+	else {
+		unsigned char *tmp;
+		tmp = realloc(buf->buf, limit);
+		if (tmp == NULL)
+			return 1;
+		buf->buf = tmp;
+	}
+
+	if (buf->buf)
+		buf->limit = limit;
+
+	return 0;
+}
+
 static void
 close_client(ggi_vnc_priv *priv, int cfd)
 {
@@ -108,6 +133,7 @@ close_client(ggi_vnc_priv *priv, int cfd)
 	if (priv->write_pending)
 		priv->del_cwfd(priv->gii_ctx, priv->cfd);
 	priv->write_pending = 0;
+	priv->wbuf.size = priv->wbuf.pos = 0;
 	close(priv->cfd);
 	priv->cfd = -1;
 	priv->buf_size = 0;
@@ -116,7 +142,7 @@ close_client(ggi_vnc_priv *priv, int cfd)
 }
 
 static int
-write_client(ggi_vnc_priv *priv, const void *buf, size_t count)
+write_client(ggi_vnc_priv *priv, ggi_vnc_buf *buf)
 {
 	int res;
 
@@ -126,16 +152,17 @@ write_client(ggi_vnc_priv *priv, const void *buf, size_t count)
 	}
 
 again:
-	res = write(priv->cfd, buf, count);
+	res = write(priv->cfd, buf->buf + buf->pos, buf->size - buf->pos);
 
-	if (res == count) {
+	if (res == buf->size - buf->pos) {
 		/* DPRINT("complete write\n"); */
+		buf->size = buf->pos = 0;
 		return res;
 	}
 
 	if (res > 0) {
-		buf = (const char *)buf + res;
-		count -= res;
+		/* DPRINT("partial write\n"); */
+		buf->pos += res;
 		goto again;
 	}
 
@@ -146,7 +173,7 @@ again:
 #if EAGAIN != EWOULDBLOCK
 	case EWOULDBLOCK:
 #endif
-		/* queued it */
+		/* queue it */
 		/* DPRINT("write would block\n"); */
 		priv->write_pending = 1;
 		priv->add_cwfd(priv->gii_ctx, priv->cfd);
@@ -314,6 +341,10 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		goto err3;
 	}
 
+	DPRINT_MISC("fb stdformat 0x%x, cvis stdformat 0x%x\n",
+		priv->fb->pixfmt->stdformat,
+		priv->client_vis->pixfmt->stdformat);
+
 	if (!priv->buf[7]) {
 		ggiSetColorfulPalette(stem);
 		priv->palette_dirty = 1;
@@ -460,6 +491,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	int count;
 	void *buf;
 	unsigned char *header;
+	int pal_size;
 
 	DPRINT("update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
@@ -496,7 +528,9 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		ggi_palette = malloc(colors * sizeof(*ggi_palette));
 		ggiGetPalette(priv->client_vis->stem, 0, colors, ggi_palette);
 
-		vnc_palette = malloc(6 + 6 * colors);
+		buf_reserve(&priv->wbuf, 6 + 6 * colors);
+		priv->wbuf.size += 6 + 6 * colors;
+		vnc_palette = priv->wbuf.buf;
 		vnc_palette[0] = 1;
 		vnc_palette[1] = 0;
 		vnc_palette[2] = 0;
@@ -514,7 +548,6 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 			*dst++ = ggi_palette[i].b & 0xff;
 		}
 
-		write_client(priv, vnc_palette, 6 + 6 * colors);
 		free(ggi_palette);
 		priv->palette_dirty = 0;
 	}
@@ -525,8 +558,10 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	bpp = GT_ByPP(gt);
 	count = (update->br.x - update->tl.x) *
 		(update->br.y - update->tl.y);
-	buf = malloc(16 + count * bpp);
-	header = (unsigned char *)buf;
+	pal_size = priv->wbuf.size;
+	buf_reserve(&priv->wbuf, pal_size + 16 + count * bpp);
+	priv->wbuf.size += 16 + count * bpp;
+	header = &priv->wbuf.buf[pal_size];
 	buf = &header[16];
 	header[ 0] = 0;
 	header[ 1] = 0;
@@ -597,8 +632,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 			count * bpp);
 	}
 
-	write_client(priv, header, 16 + count * bpp);
-	free(header);
+	write_client(priv, &priv->wbuf);
 
 	ggiResourceRelease(db->resource);
 }
@@ -787,7 +821,7 @@ static int
 vnc_client_init(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	unsigned char server_init[34];
+	unsigned char *server_init;
 	uint16_t tmp16;
 	uint32_t tmp32;
 	ggi_pixelformat *pixfmt;
@@ -813,6 +847,9 @@ vnc_client_init(struct ggi_visual *vis)
 	priv->buf_size = 0;
 	priv->client_action = vnc_client_run;
 
+	buf_reserve(&priv->wbuf, 34);
+	priv->wbuf.size += 34;
+	server_init = priv->wbuf.buf;
 	tmp16 = htons(LIBGGI_VIRTX(vis));
 	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
 	tmp16 = htons(LIBGGI_VIRTY(vis));
@@ -851,7 +888,7 @@ vnc_client_init(struct ggi_visual *vis)
 	memcpy(&server_init[24], "GGI on vnc", ntohl(tmp32));
 
 	/* desired pixel-format */
-	write_client(priv, server_init, sizeof(server_init));
+	write_client(priv, &priv->wbuf);
 
 	return 0;
 }
@@ -860,7 +897,6 @@ static int
 vnc_client_challenge(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	uint32_t result = htonl(0);
 
 	if (priv->write_pending)
 		return 0;
@@ -893,7 +929,13 @@ vnc_client_challenge(struct ggi_visual *vis)
 	priv->client_action = vnc_client_init;
 
 	/* ok */
-	write_client(priv, &result, sizeof(result));
+	buf_reserve(&priv->wbuf, 4);
+	priv->wbuf.size += 4;
+	priv->wbuf.buf[0] = 0;
+	priv->wbuf.buf[1] = 0;
+	priv->wbuf.buf[2] = 0;
+	priv->wbuf.buf[3] = 0;
+	write_client(priv, &priv->wbuf);
 
 	return 0;
 }
@@ -903,7 +945,6 @@ vnc_client_security(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int security_type;
-	uint32_t ok = htonl(0);
 	int i;
 	struct timeval now;
 
@@ -930,7 +971,13 @@ vnc_client_security(struct ggi_visual *vis)
 		priv->client_action = vnc_client_init;
 
 		/* ok */
-		write_client(priv, &ok, sizeof(ok));
+		buf_reserve(&priv->wbuf, 4);
+		priv->wbuf.size += 4;
+		priv->wbuf.buf[0] = 0;
+		priv->wbuf.buf[1] = 0;
+		priv->wbuf.buf[2] = 0;
+		priv->wbuf.buf[3] = 0;
+		write_client(priv, &priv->wbuf);
 		return 0;
 
 	case 2:
@@ -955,7 +1002,10 @@ vnc_client_security(struct ggi_visual *vis)
 		des(&priv->challenge[8], &priv->challenge[8]);
 
 		/* challenge client */
-		write_client(priv, priv->challenge, sizeof(priv->challenge));
+		buf_reserve(&priv->wbuf, 16);
+		priv->wbuf.size += 16;
+		memcpy(priv->wbuf.buf, priv->challenge, 16);
+		write_client(priv, &priv->wbuf);
 		return 0;
 	}
 
@@ -969,7 +1019,6 @@ vnc_client_version(struct ggi_visual *vis)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int major, minor;
 	char str[13];
-	unsigned char security[] = { 1, 0 };
 
 	if (priv->write_pending)
 		return 0;
@@ -1010,14 +1059,17 @@ vnc_client_version(struct ggi_visual *vis)
 	priv->protover = minor;
 
 	if (priv->protover <= 3) {
-		uint32_t security_v3;
-
 		priv->buf_size = 0;
 		priv->client_action = vnc_client_init;
 
 		/* ok, decide security */
-		security_v3 = htonl(priv->passwd ? 2 : 1);
-		write_client(priv, &security_v3, sizeof(security_v3));
+		buf_reserve(&priv->wbuf, 4);
+		priv->wbuf.size += 4;
+		priv->wbuf.buf[0] = 0;
+		priv->wbuf.buf[1] = 0;
+		priv->wbuf.buf[2] = 0;
+		priv->wbuf.buf[3] = priv->passwd ? 2 : 1;
+		write_client(priv, &priv->wbuf);
 		if (priv->passwd) {
 			/* fake a client request of vnc auth security type */
 			priv->buf[0] = 2;
@@ -1030,10 +1082,12 @@ vnc_client_version(struct ggi_visual *vis)
 	priv->buf_size = 0;
 	priv->client_action = vnc_client_security;
 
-	security[1] = priv->passwd ? 2 : 1;
-
 	/* supported security types */
-	write_client(priv, security, sizeof(security));
+	buf_reserve(&priv->wbuf, 2);
+	priv->wbuf.size += 2;
+	priv->wbuf.buf[0] = 1;
+	priv->wbuf.buf[1] = priv->passwd ? 2 : 1;
+	write_client(priv, &priv->wbuf);
 
 	return 0;
 }
@@ -1055,7 +1109,10 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis)
 	priv->client_action = vnc_client_version;
 
 	/* Support max protocol version 3.8 */
-	write_client(priv, "RFB 003.008\n", 12);
+	buf_reserve(&priv->wbuf, 12);
+	priv->wbuf.size += 12;
+	memcpy(priv->wbuf.buf, "RFB 003.008\n", 12);
+	write_client(priv, &priv->wbuf);
 }
 
 void
@@ -1136,10 +1193,16 @@ GGI_vnc_write_client(void *arg, int fd)
 		return;
 	}
 
-	/* DPRINT("write completed\n"); */
+	/* DPRINT("write some more\n"); */
 
 	priv->write_pending = 0;
 	priv->del_cwfd(priv->gii_ctx, fd);
+
+	if (write_client(priv, &priv->wbuf) < 0)
+		return;
+
+	if (priv->write_pending)
+		return;
 
 	if (!priv->buf_size)
 		return;
