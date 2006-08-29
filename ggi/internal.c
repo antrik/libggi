@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.29 2006/08/27 06:38:25 pekberg Exp $
+/* $Id: internal.c,v 1.30 2006/08/29 08:37:52 pekberg Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -251,10 +251,10 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 	unsigned long nbits;
 
 	LIB_ASSERT(pixfmtstr_len > 0, "Invalid pixfmtstr_len");
-	LIB_ASSERT(r_mask != NULL, "r_mask doesn't have to be NULL");
-	LIB_ASSERT(g_mask != NULL, "g_mask doesn't have to be NULL");
-	LIB_ASSERT(b_mask != NULL, "b_mask doesn't have to be NULL");
-	LIB_ASSERT(a_mask != NULL, "a_mask doesn't have to be NULL");
+	LIB_ASSERT(r_mask != NULL, "r_mask cannot be NULL");
+	LIB_ASSERT(g_mask != NULL, "g_mask cannot be NULL");
+	LIB_ASSERT(b_mask != NULL, "b_mask cannot be NULL");
+	LIB_ASSERT(a_mask != NULL, "a_mask cannot be NULL");
 
 	*r_mask = *g_mask = *b_mask = *a_mask = 0;
 
@@ -263,6 +263,8 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 	{
 		switch (*ptr) {
 		case 'p':	/* pad */
+			curr = NULL;
+			break;
 		case 'a':	/* alpha */
 			curr = a_mask;
 			break;
