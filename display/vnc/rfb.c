@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.25 2006/08/29 08:44:51 pekberg Exp $
+/* $Id: rfb.c,v 1.26 2006/08/29 17:13:51 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -642,6 +642,9 @@ pending_client_update(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_rect update;
+
+	if (priv->write_pending)
+		return;
 
 	update = priv->update;
 	ggi_rect_intersect(&update, &priv->dirty);
