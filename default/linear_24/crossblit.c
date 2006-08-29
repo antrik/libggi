@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.14 2006/08/26 03:35:43 pekberg Exp $
+/* $Id: crossblit.c,v 1.15 2006/08/29 12:15:48 pekberg Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -778,8 +778,8 @@ static inline void cb32to24(struct ggi_visual *src, int sx, int sy, int w, int h
 
 	while (stoprow > dstp) {
 		uint8_t *stopcol;
-		
-		stopcol = dstp + w;
+
+		stopcol = dstp + w * 3;
 		while (stopcol > dstp) {
 			ggi_pixel tmp, cache;
 
