@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.27 2006/08/30 08:39:39 pekberg Exp $
+/* $Id: rfb.c,v 1.28 2006/08/30 12:48:15 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -288,6 +288,13 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
 		pixfmt.clut_mask,  pixfmt.clut_shift);
 
+	if (pixfmt.red_mask == LIBGGI_PIXFMT(vis)->red_mask &&
+		pixfmt.green_mask == LIBGGI_PIXFMT(vis)->green_mask &&
+		pixfmt.blue_mask == LIBGGI_PIXFMT(vis)->blue_mask &&
+		pixfmt.clut_mask == LIBGGI_PIXFMT(vis)->clut_mask &&
+		pixfmt.size == LIBGGI_PIXFMT(vis)->size)
+		goto done;
+
 	memset(&mode, 0, sizeof(mode));
 	mode.frames = 1;
 	mode.visible.x = LIBGGI_VIRTX(vis);
@@ -353,6 +360,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	else
 		priv->palette_dirty = 0;
 
+done:
 	return vnc_remove(vis, 20);
 
 err3:
