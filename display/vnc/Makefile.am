@@ -6,7 +6,7 @@ noinst_LTLIBRARIES = libvnc.la
 
 libvnc_la_SOURCES = box.c buffer.c color.c gtext.c line.c pixel.c \
 	mode.c visual.c \
-	d3des.c d3des.h rect.h rfb.c
+	d3des.c d3des.h encoding.h raw.c rect.h rfb.c
 
 EXTRA_DIST = EXPSYMS
 
