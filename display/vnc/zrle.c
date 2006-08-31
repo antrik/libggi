@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.1 2006/08/31 09:02:46 pekberg Exp $
+/* $Id: zrle.c,v 1.2 2006/08/31 19:58:49 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -43,9 +43,9 @@
 #include "encoding.h"
 
 #ifdef GGI_BIG_ENDIAN
-#define HTONL(x) (x)
+#define GGI_HTONL(x) (x)
 #else
-#define HTONL(x) GGI_BYTEREV32(x)
+#define GGI_HTONL(x) GGI_BYTEREV32(x)
 #endif
 
 
@@ -80,7 +80,7 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	}
 
 	zlen = (uint32_t *)&priv->wbuf.buf[start];
-	*zlen = HTONL(done);
+	*zlen = GGI_HTONL(done);
 	priv->wbuf.size += done;
 
 	DPRINT_MISC("raw %d z %d %d%%\n", len, done, done * 100 / len);
