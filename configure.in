@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.198 2006/08/22 04:10:22 pekberg Exp $
+dnl $Id: configure.in,v 1.199 2006/08/31 09:01:27 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -585,6 +585,14 @@ if test "x$ac_cv_func_gethostbyname" = "xno"; then
     AC_CHECK_LIB(nsl, gethostbyname, bsdsock_libs="$bsdsock_libs -lnsl")
   )
 fi
+
+AC_CHECK_LIB(z, deflate,
+	AC_CHECK_HEADER(zlib.h,
+	[AC_DEFINE(HAVE_ZLIB, 1, [Define to 1 if you have zlib.])],
+	[], [AC_INCLUDES_DEFAULT]))
+AM_CONDITIONAL(HAVE_ZLIB,
+		test "x$ac_cv_lib_z_deflate" = "xyes" -a \
+			"x$ac_cv_header_zlib_h" = "xyes")
 
 
 TESTSUBDIRS=""
