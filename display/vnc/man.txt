@@ -55,8 +55,8 @@ Bugs
 ----
 
 - The raw and ZRLE encodings are the only supported encodings, and
-  ZRLE only compresses raw tiles (i.e. palettization and RLE are not
-  supported).
+  ZRLE only compresses raw tiles (i.e. palettization and run length
+  encoding are not supported).
 - Special keys (i.e. shift, escape, etc) needs to be converted.
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.
