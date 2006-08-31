@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-08-27" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-08-31" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc clinet over a network
 .SH SYNOPSIS
@@ -44,7 +44,9 @@ Unaccelerated.
 .PP
 .SH BUGS
 .IP \(bu 4
-The raw encoding is the only supported encoding.
+The raw and ZRLE encodings are the only supported encodings, and
+ZRLE only compresses raw tiles (i.e. palettization and run length
+encoding are not supported).
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
 .IP \(bu 4
