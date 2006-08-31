@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.1 2006/08/30 08:39:39 pekberg Exp $
+/* $Id: encoding.h,v 1.2 2006/08/31 09:02:46 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -29,9 +29,23 @@
 #define _GGI_VNC_ENCODING_H
 
 #include <ggi/display/vnc.h>
+#ifdef HAVE_ZLIB
+#include <zlib.h>
+#endif
 
 int GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit);
 
 ggi_vnc_encode GGI_vnc_raw;
+
+#ifdef HAVE_ZLIB
+
+typedef struct {
+	z_stream zstr;
+} zrle_ctx_t;
+
+ggi_vnc_encode GGI_vnc_zrle;
+zrle_ctx_t *GGI_vnc_zrle_open(void);
+void GGI_vnc_zrle_close(zrle_ctx_t *ctx);
+#endif
 
 #endif /* _GGI_VNC_ENCODING_H */

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.28 2006/08/30 12:48:15 pekberg Exp $
+/* $Id: rfb.c,v 1.29 2006/08/31 09:02:46 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -140,6 +140,13 @@ close_client(ggi_vnc_priv *priv, int cfd)
 	priv->buf_size = 0;
 	priv->dirty.tl.x = priv->dirty.br.x = 0;
 	priv->update.tl.x = priv->update.br.x = 0;
+
+#ifdef HAVE_ZLIB
+	if (priv->zrle_ctx) {
+		GGI_vnc_zrle_close(priv->zrle_ctx);
+		priv->zrle_ctx = NULL;
+	}
+#endif
 }
 
 static int
@@ -402,6 +409,12 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 			break;
 		case 16:
 			DPRINT_MISC("ZRLE encoding\n");
+#ifdef HAVE_ZLIB
+			if (!priv->zrle_ctx)
+				priv->zrle_ctx = GGI_vnc_zrle_open();
+			if (priv->zrle_ctx)
+				encode = GGI_vnc_zrle;
+#endif
 			break;
 		case -239:
 			DPRINT_MISC("Cursor pseudo-encoding\n");
@@ -509,7 +522,10 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
-	priv->encode(vis, update);
+	if (priv->encode)
+		priv->encode(vis, update);
+	else
+		GGI_vnc_raw(vis, update);
 
 	write_client(priv, &priv->wbuf);
 }
