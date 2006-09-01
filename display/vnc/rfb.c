@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.31 2006/09/01 06:28:30 pekberg Exp $
+/* $Id: rfb.c,v 1.32 2006/09/01 06:32:37 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -523,14 +523,22 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
 	if (priv->palette_dirty) {
+		struct ggi_visual *cvis;
 		unsigned char *vnc_palette;
 		unsigned char *dst;
-		int colors = 1 << GT_DEPTH(LIBGGI_GT(priv->client_vis));
+		int colors;
 		ggi_color *ggi_palette;
 		int i;
 
+		if (!priv->client_vis)
+			cvis = priv->fb;
+		else
+			cvis = priv->client_vis;
+
+		colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
+
 		ggi_palette = malloc(colors * sizeof(*ggi_palette));
-		ggiGetPalette(priv->client_vis->stem, 0, colors, ggi_palette);
+		ggiGetPalette(cvis->stem, 0, colors, ggi_palette);
 
 		GGI_vnc_buf_reserve(&priv->wbuf, 6 + 6 * colors);
 		priv->wbuf.size += 6 + 6 * colors;
@@ -555,7 +563,6 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		free(ggi_palette);
 		priv->palette_dirty = 0;
 	}
-
 	if (priv->encode)
 		priv->encode(vis, update);
 	else
