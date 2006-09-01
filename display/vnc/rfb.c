@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.34 2006/09/01 07:21:35 pekberg Exp $
+/* $Id: rfb.c,v 1.35 2006/09/01 15:13:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -408,7 +408,9 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 		case 16:
 			DPRINT_MISC("ZRLE encoding\n");
 #ifdef HAVE_ZLIB
-			if (priv->zrle_level != -2 && !priv->zrle_ctx)
+			if (priv->encode || priv->zrle_level == -2)
+				break;
+			if (!priv->zrle_ctx)
 				priv->zrle_ctx = GGI_vnc_zrle_open(priv->zrle_level);
 			if (priv->zrle_ctx)
 				encode = GGI_vnc_zrle;
