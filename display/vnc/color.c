@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.1 2006/08/27 11:45:15 pekberg Exp $
+/* $Id: color.c,v 1.2 2006/09/01 18:42:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: color
@@ -62,14 +62,16 @@ GGI_vnc_setpalvec(struct ggi_visual *vis,
 	int start, int len, const ggi_color *colormap)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int res;
 
 	memcpy(LIBGGI_PAL(vis)->clut.data + start,
 		colormap,
 		len * sizeof(ggi_color));
 
-	priv->palette_dirty = 1;
+	res = _ggiSetPalette(priv->fb, start, len, colormap);
+	GGI_vnc_invalidate_palette(vis);
 
-	return _ggiSetPalette(priv->fb, start, len, colormap);
+	return res;
 }
 
 int

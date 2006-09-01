@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.37 2006/09/01 16:53:52 pekberg Exp $
+/* $Id: rfb.c,v 1.38 2006/09/01 18:42:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -597,11 +597,16 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		free(ggi_palette);
 		priv->palette_dirty = 0;
 	}
+
+	if (ggi_rect_isempty(update))
+		goto done;
+
 	if (priv->encode)
 		priv->encode(vis, update);
 	else
 		GGI_vnc_raw(vis, update);
 
+done:
 	write_client(priv, &priv->wbuf);
 }
 
@@ -617,7 +622,7 @@ pending_client_update(struct ggi_visual *vis)
 	update = priv->update;
 	ggi_rect_intersect(&update, &priv->dirty);
 
-	if (ggi_rect_isempty(&update))
+	if (ggi_rect_isempty(&update) && !priv->palette_dirty)
 		return;
 
 	do_client_update(vis, &update);
@@ -672,7 +677,8 @@ vnc_client_update(struct ggi_visual *vis)
 		ggi_rect_intersect(&update, &priv->dirty);
 		if (ggi_rect_isempty(&update)) {
 			priv->update = request;
-			goto done;
+			if (!priv->palette_dirty)
+				goto done;
 		}
 	}
 
@@ -1215,6 +1221,25 @@ GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 
 	priv = VNC_PRIV(vis);
 	ggi_rect_union_xyxy(&priv->dirty, tlx, tly, brx, bry);
+
+	if (priv->cfd != -1 && !ggi_rect_isempty(&priv->update))
+		pending_client_update(vis);
+}
+
+void
+GGI_vnc_invalidate_palette(struct ggi_visual *vis)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	if (priv->client_vis) {
+		/* non-matching client pixfmt, trigger crossblit */
+		priv->dirty.tl.x = 0;
+		priv->dirty.tl.y = 0;
+		priv->dirty.br.x = LIBGGI_MODE(vis)->visible.x;
+		priv->dirty.br.y = LIBGGI_MODE(vis)->visible.y;
+	}
+	else
+		priv->palette_dirty = 1;
 
 	if (priv->cfd != -1 && !ggi_rect_isempty(&priv->update))
 		pending_client_update(vis);
