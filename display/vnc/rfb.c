@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.36 2006/09/01 15:23:03 pekberg Exp $
+/* $Id: rfb.c,v 1.37 2006/09/01 16:53:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -438,6 +438,32 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 			break;
 		case 8:
 			DPRINT_MISC("zlibhex encoding\n");
+			break;
+		case -256:
+		case -255:
+		case -254:
+		case -253:
+		case -252:
+		case -251:
+		case -250:
+		case -249:
+		case -248:
+		case -247:
+			DPRINT_MISC("tight compression %d subencoding\n",
+				ntohl(*(encodings-1)) + 256);
+			break;
+		case -32:
+		case -31:
+		case -30:
+		case -29:
+		case -28:
+		case -27:
+		case -26:
+		case -25:
+		case -24:
+		case -23:
+			DPRINT_MISC("tight quality %d subencoding\n",
+				ntohl(*(encodings-1)) + 32);
 			break;
 		default:
 			DPRINT_MISC("Unknown (%i) encoding\n", ntohl(*encodings));
