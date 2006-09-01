@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.7 2006/09/01 15:24:35 pekberg Exp $
+/* $Id: zrle.c,v 1.8 2006/09/01 23:12:22 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -48,6 +48,9 @@
 #define GGI_HTONL(x) GGI_BYTEREV32(x)
 #endif
 
+struct zrle_ctx_t {
+	z_stream zstr;
+};
 
 typedef void (tile_func)(uint8_t **buf, uint8_t *src,
 	int xs, int ys, int stride, int bpp);
@@ -55,7 +58,7 @@ typedef void (tile_func)(uint8_t **buf, uint8_t *src,
 static void
 zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 {
-	zrle_ctx_t *ctx = priv->zrle_ctx;
+	struct zrle_ctx_t *ctx = priv->zrle_ctx;
 	int start = priv->wbuf.size;
 	int avail;
 	uint32_t *zlen;
@@ -384,10 +387,10 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	zip(priv, work, buf - work);
 }
 
-zrle_ctx_t *
+struct zrle_ctx_t *
 GGI_vnc_zrle_open(int level)
 {
-	zrle_ctx_t *ctx = malloc(sizeof(*ctx));
+	struct zrle_ctx_t *ctx = malloc(sizeof(*ctx));
 
 	memset(ctx, 0, sizeof(*ctx));
 
@@ -404,7 +407,7 @@ GGI_vnc_zrle_open(int level)
 }
 
 void
-GGI_vnc_zrle_close(zrle_ctx_t *ctx)
+GGI_vnc_zrle_close(struct zrle_ctx_t *ctx)
 {
 	deflateEnd(&ctx->zstr);
 	free(ctx);

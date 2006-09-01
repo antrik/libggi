@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.1 2006/09/01 15:23:03 pekberg Exp $
+/* $Id: zlib.c,v 1.2 2006/09/01 23:12:22 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -47,11 +47,15 @@
 #define GGI_HTONL(x) GGI_BYTEREV32(x)
 #endif
 
+struct zlib_ctx_t {
+	z_stream zstr;
+	ggi_vnc_buf wbuf;
+};
 
 static void
 zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 {
-	zlib_ctx_t *ctx = priv->zlib_ctx;
+	struct zlib_ctx_t *ctx = priv->zlib_ctx;
 	int start = priv->wbuf.size;
 	int avail;
 	uint32_t *zlen;
@@ -86,7 +90,7 @@ void
 GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	zlib_ctx_t *ctx = priv->zlib_ctx;
+	struct zlib_ctx_t *ctx = priv->zlib_ctx;
 	ggi_vnc_buf tmp_buf;
 
 	/* fake it for the raw encoder so that it renders the update
@@ -115,10 +119,10 @@ GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 	zip(priv, &ctx->wbuf.buf[16], ctx->wbuf.size - 16);
 }
 
-zlib_ctx_t *
+struct zlib_ctx_t *
 GGI_vnc_zlib_open(int level)
 {
-	zlib_ctx_t *ctx = malloc(sizeof(*ctx));
+	struct zlib_ctx_t *ctx = malloc(sizeof(*ctx));
 
 	memset(ctx, 0, sizeof(*ctx));
 
@@ -135,7 +139,7 @@ GGI_vnc_zlib_open(int level)
 }
 
 void
-GGI_vnc_zlib_close(zlib_ctx_t *ctx)
+GGI_vnc_zlib_close(struct zlib_ctx_t *ctx)
 {
 	if (ctx->wbuf.buf)
 		free(ctx->wbuf.buf);
