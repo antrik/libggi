@@ -48,13 +48,13 @@ Options
 ``-zlib=<level>``
     Specify the compression level to use for the zlib encoding. 0 for
     no compression and 9 for maximum compression. Saying :p:`no` here
-    disables the zlib encodig. If the option isn't specified, a default
+    disables the zlib encoding. If the option isn't specified, a default
     compromize between speed and compression is selected.
 
 ``-zrle=<level>``
     Specify the compression level to use for the ZRLE encoding. 0 for
     no compression and 9 for maximum compression. Saying :p:`no` here
-    disables the ZRLE encodig. If the option isn't specified, a default
+    disables the ZRLE encoding. If the option isn't specified, a default
     compromize between speed and compression is selected.
 
 
