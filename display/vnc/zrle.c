@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.6 2006/09/01 15:01:11 pekberg Exp $
+/* $Id: zrle.c,v 1.7 2006/09/01 15:24:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -83,7 +83,7 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	*zlen = GGI_HTONL(done);
 	priv->wbuf.size += done;
 
-	DPRINT_MISC("raw %d z %d %d%%\n", len, done, done * 100 / len);
+	DPRINT_MISC("rle %d z %d %d%%\n", len, done, done * 100 / len);
 }
 
 static void
