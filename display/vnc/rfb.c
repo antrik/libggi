@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.38 2006/09/01 18:42:26 pekberg Exp $
+/* $Id: rfb.c,v 1.39 2006/09/01 23:04:06 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -142,6 +142,11 @@ close_client(ggi_vnc_priv *priv, int cfd)
 	priv->update.tl.x = priv->update.br.x = 0;
 
 #ifdef HAVE_ZLIB
+	if (priv->zlib_ctx) {
+		GGI_vnc_zlib_close(priv->zlib_ctx);
+		priv->zlib_ctx = NULL;
+	}
+
 	if (priv->zrle_ctx) {
 		GGI_vnc_zrle_close(priv->zrle_ctx);
 		priv->zrle_ctx = NULL;
