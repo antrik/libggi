@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.30 2006/09/01 05:09:08 pekberg Exp $
+/* $Id: rfb.c,v 1.31 2006/09/01 06:28:30 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -521,6 +521,40 @@ static void
 do_client_update(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	if (priv->palette_dirty) {
+		unsigned char *vnc_palette;
+		unsigned char *dst;
+		int colors = 1 << GT_DEPTH(LIBGGI_GT(priv->client_vis));
+		ggi_color *ggi_palette;
+		int i;
+
+		ggi_palette = malloc(colors * sizeof(*ggi_palette));
+		ggiGetPalette(priv->client_vis->stem, 0, colors, ggi_palette);
+
+		GGI_vnc_buf_reserve(&priv->wbuf, 6 + 6 * colors);
+		priv->wbuf.size += 6 + 6 * colors;
+		vnc_palette = priv->wbuf.buf;
+		vnc_palette[0] = 1;
+		vnc_palette[1] = 0;
+		vnc_palette[2] = 0;
+		vnc_palette[3] = 0;
+		vnc_palette[4] = colors >> 8;
+		vnc_palette[5] = colors & 0xff;
+
+		dst = &vnc_palette[6];
+		for (i = 0; i < colors; ++i) {
+			*dst++ = ggi_palette[i].r >> 8;
+			*dst++ = ggi_palette[i].r & 0xff;
+			*dst++ = ggi_palette[i].g >> 8;
+			*dst++ = ggi_palette[i].g & 0xff;
+			*dst++ = ggi_palette[i].b >> 8;
+			*dst++ = ggi_palette[i].b & 0xff;
+		}
+
+		free(ggi_palette);
+		priv->palette_dirty = 0;
+	}
 
 	if (priv->encode)
 		priv->encode(vis, update);
