@@ -9,7 +9,7 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
-	       [-zrle=<level>]
+	       [-zlib=<level>] [-zrle=<level>]
 
 
 Description
@@ -45,25 +45,30 @@ Options
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
 
+``-zlib=<level>``
+    Specify the compression level to use for the zlib encoding. 0 for
+    no compression and 9 for maximum compression. Saying :p:`no` here
+    disables the zlib encodig. If the option isn't specified, a default
+    compromize between speed and compression is selected.
+
 ``-zrle=<level>``
-    Specify the copression level to use. 0 for no copression and 9 for
-    maximum compression. Saying :p:`no` here disables the ZRLE encodig.
-    If the option isn't specified, a default compromize between speed
-    and compression is selected.
+    Specify the compression level to use for the ZRLE encoding. 0 for
+    no compression and 9 for maximum compression. Saying :p:`no` here
+    disables the ZRLE encodig. If the option isn't specified, a default
+    compromize between speed and compression is selected.
 
 
 Features
 --------
 
+- raw, zlib (untested) and a subset (no palettization nor run length
+  encoding) of the ZRLE encoding.
 - Unaccelerated.
 
 
 Bugs
 ----
 
-- The raw and ZRLE encodings are the only supported encodings, and
-  ZRLE only compresses raw tiles (i.e. palettization and run length
-  encoding are not supported).
 - Special keys (i.e. shift, escape, etc) needs to be converted.
 - A DoS attack is easy as an existing client is disconnected as soon
   as a new one connects.

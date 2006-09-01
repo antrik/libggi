@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.35 2006/09/01 15:13:52 pekberg Exp $
+/* $Id: rfb.c,v 1.36 2006/09/01 15:23:03 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -424,6 +424,14 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 			break;
 		case 6:
 			DPRINT_MISC("zlib encoding\n");
+#ifdef HAVE_ZLIB
+			if (priv->encode || priv->zlib_level == -2)
+				break;
+			if (!priv->zlib_ctx)
+				priv->zlib_ctx = GGI_vnc_zlib_open(-1);
+			if (priv->zlib_ctx)
+				encode = GGI_vnc_zlib;
+#endif
 			break;
 		case 7:
 			DPRINT_MISC("tight encoding\n");

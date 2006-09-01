@@ -10,7 +10,7 @@ libvnc_la_SOURCES = box.c buffer.c color.c gtext.c line.c pixel.c \
 
 if HAVE_ZLIB
 libvnc_la_LIBADD  += -lz
-libvnc_la_SOURCES += zrle.c
+libvnc_la_SOURCES += zlib.c zrle.c
 endif
 
 EXTRA_DIST = EXPSYMS
