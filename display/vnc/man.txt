@@ -9,6 +9,7 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
+	       [-zrle=<level>]
 
 
 Description
@@ -43,6 +44,12 @@ Options
     with the stated :p:`password` in order to connect. In the
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
+
+``-zrle=<level>``
+    Specify the copression level to use. 0 for no copression and 9 for
+    maximum compression. Saying :p:`no` here disables the ZRLE encodig.
+    If the option isn't specified, a default compromize between speed
+    and compression is selected.
 
 
 Features

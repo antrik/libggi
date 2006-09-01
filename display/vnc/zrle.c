@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.2 2006/08/31 19:58:49 cegger Exp $
+/* $Id: zrle.c,v 1.3 2006/09/01 05:09:09 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -419,7 +419,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 }
 
 zrle_ctx_t *
-GGI_vnc_zrle_open(void)
+GGI_vnc_zrle_open(int level)
 {
 	zrle_ctx_t *ctx = malloc(sizeof(*ctx));
 
@@ -429,7 +429,10 @@ GGI_vnc_zrle_open(void)
 	ctx->zstr.zfree = Z_NULL;
 	ctx->zstr.opaque = Z_NULL;
 
-	deflateInit(&ctx->zstr, Z_DEFAULT_COMPRESSION);
+	if (level == -1)
+		level = Z_DEFAULT_COMPRESSION;
+
+	deflateInit(&ctx->zstr, level);
 	
 	return ctx;
 }
