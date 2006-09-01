@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.33 2006/09/01 07:03:18 pekberg Exp $
+/* $Id: rfb.c,v 1.34 2006/09/01 07:21:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -708,6 +708,13 @@ vnc_client_cut(struct ggi_visual *vis)
 	if (priv->buf_size < 8 + count) {
 		/* wait for more data */
 		priv->client_action = vnc_client_cut;
+
+		/* remove all received stuff so far and adjust
+		 * how much more is expected
+		 */
+		count = htonl(count - (priv->buf_size - 8));
+		priv->buf_size = 8;
+		memcpy(&priv->buf[4], &count, sizeof(count));
 		return 0;
 	}
 
