@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.5 2006/09/01 06:28:30 pekberg Exp $
+/* $Id: zrle.c,v 1.6 2006/09/01 15:01:11 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -325,7 +325,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	header[ 7] = update->tl.y & 0xff;
 	header[ 8] = (update->br.x - update->tl.x) >> 8;
 	header[ 9] = (update->br.x - update->tl.x) & 0xff;
-	header[10] = (update->br.y - update->tl.y) >> 8;;
+	header[10] = (update->br.y - update->tl.y) >> 8;
 	header[11] = (update->br.y - update->tl.y) & 0xff;
 	header[12] = 0;
 	header[13] = 0;
