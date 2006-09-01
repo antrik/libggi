@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.32 2006/09/01 06:32:37 pekberg Exp $
+/* $Id: rfb.c,v 1.33 2006/09/01 07:03:18 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -77,7 +77,7 @@ color_bits(uint16_t max)
 static int
 color_max(ggi_pixel mask)
 {
-	while (!(mask & 1))
+	while (mask && !(mask & 1))
 		mask >>= 1;
 
 	return mask;
@@ -88,7 +88,7 @@ color_shift(ggi_pixel mask)
 {
 	int shift = 0;
 
-	while (!(mask & 1)) {
+	while (mask && !(mask & 1)) {
 		mask >>= 1;
 		++shift;
 	}
@@ -295,6 +295,8 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
 		pixfmt.clut_mask,  pixfmt.clut_shift);
 
+	priv->palette_dirty = !priv->buf[7];
+
 	if (pixfmt.red_mask == LIBGGI_PIXFMT(vis)->red_mask &&
 		pixfmt.green_mask == LIBGGI_PIXFMT(vis)->green_mask &&
 		pixfmt.blue_mask == LIBGGI_PIXFMT(vis)->blue_mask &&
@@ -360,12 +362,8 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		priv->fb->pixfmt->stdformat,
 		priv->client_vis->pixfmt->stdformat);
 
-	if (!priv->buf[7]) {
+	if (!priv->buf[7])
 		ggiSetColorfulPalette(stem);
-		priv->palette_dirty = 1;
-	}
-	else
-		priv->palette_dirty = 0;
 
 done:
 	return vnc_remove(vis, 20);
@@ -538,7 +536,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
 
 		ggi_palette = malloc(colors * sizeof(*ggi_palette));
-		ggiGetPalette(cvis->stem, 0, colors, ggi_palette);
+		_ggiGetPalette(cvis, 0, colors, ggi_palette);
 
 		GGI_vnc_buf_reserve(&priv->wbuf, 6 + 6 * colors);
 		priv->wbuf.size += 6 + 6 * colors;
@@ -723,6 +721,8 @@ vnc_client_run(struct ggi_visual *vis)
 	int res = 0;
 
 	while (priv->buf_size) {
+		/* DPRINT("client_run size %d cmd %d\n",
+			priv->buf_size, priv->buf[0]); */
 		switch (priv->buf[0]) {
 		case 0:
 			res = vnc_client_pixfmt(vis);
@@ -826,6 +826,8 @@ vnc_client_init(struct ggi_visual *vis)
 
 	/* desired pixel-format */
 	write_client(priv, &priv->wbuf);
+
+	DPRINT("client_init done\n");
 
 	return 0;
 }
