@@ -1,10 +1,11 @@
-.TH "display-vnc" 7 "2006-08-31" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-01" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc clinet over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
+             [-zlib=<level>] [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -37,16 +38,29 @@ with the stated \fIpassword\fR in order to connect. In the
 \fIpassword\fR, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
 
+.TP
+\f(CW-zlib=<level>\fR
+Specify the compression level to use for the zlib encoding. 0 for
+no compression and 9 for maximum compression. Saying \fIno\fR here
+disables the zlib encoding. If the option isn't specified, a default
+compromize between speed and compression is selected.
+
+.TP
+\f(CW-zrle=<level>\fR
+Specify the compression level to use for the ZRLE encoding. 0 for
+no compression and 9 for maximum compression. Saying \fIno\fR here
+disables the ZRLE encoding. If the option isn't specified, a default
+compromize between speed and compression is selected.
+
 .PP
 .SH FEATURES
+.IP \(bu 4
+raw, zlib (untested) and a subset (no palettization nor run length
+encoding) of the ZRLE encoding.
 .IP \(bu 4
 Unaccelerated.
 .PP
 .SH BUGS
-.IP \(bu 4
-The raw and ZRLE encodings are the only supported encodings, and
-ZRLE only compresses raw tiles (i.e. palettization and run length
-encoding are not supported).
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
 .IP \(bu 4
