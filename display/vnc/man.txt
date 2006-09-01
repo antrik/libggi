@@ -61,8 +61,8 @@ Options
 Features
 --------
 
-- raw, zlib (untested) and a subset (no palettization nor run length
-  encoding) of the ZRLE encoding.
+- raw, zlib and a subset (no palettization nor run length encoding) of
+  the ZRLE encoding.
 - Unaccelerated.
 
 
