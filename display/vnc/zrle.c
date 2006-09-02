@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.16 2006/09/02 09:40:59 pekberg Exp $
+/* $Id: zrle.c,v 1.17 2006/09/02 11:35:55 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -106,164 +106,6 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	DPRINT_MISC("rle %d z %d %d%%\n", len, done, done * 100 / len);
 }
 
-static void
-do_tile(uint8_t **buf, uint8_t *src,
-	int xs, int ys, int stride, int bpp)
-{
-	int y;
-	uint8_t *dst = *buf;
-
-	*dst++ = ZRLE_RAW;
-	for (y = 0; y < ys; ++y) {
-		memcpy(dst, src, xs * bpp);
-		src += stride * bpp;
-		dst += xs * bpp;
-	}
-
-	*buf = dst;
-}
-
-static void
-do_ctile(uint8_t **buf, uint8_t *src,
-	int xs, int ys, int stride, int lower)
-{
-	int x, y;
-	uint8_t *dst = *buf;
-
-	*dst++ = ZRLE_RAW;
-
-	if (lower) {
-		uint32_t *src32 = (uint32_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x];
-#else
-				*dst++ = src32[x];
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x] >> 16;
-#endif
-			}
-			src32 += stride;
-		}
-	}
-	else {
-		uint32_t *src32 = (uint32_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src32[x] >> 24;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 8;
-#else
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 24;
-#endif
-			}
-			src32 += stride;
-		}
-	}
-
-	*buf = dst;
-}
-
-static void
-do_tile_rev(uint8_t **buf, uint8_t *src,
-	int xs, int ys, int stride, int bpp)
-{
-	int x, y;
-	uint8_t *dst = *buf;
-
-	*dst++ = ZRLE_RAW;
-
-	if (bpp == 2) {
-		uint16_t *src16 = (uint16_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src16[x];
-				*dst++ = src16[x] >> 8;
-#else
-				*dst++ = src16[x] >> 8;
-				*dst++ = src16[x];
-#endif
-			}
-			src16 += stride;
-		}
-	}
-	else {
-		uint32_t *src32 = (uint32_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src32[x];
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 24;
-#else
-				*dst++ = src32[x] >> 24;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x];
-#endif
-			}
-			src32 += stride;
-		}
-	}
-
-	*buf = dst;
-}
-
-static void
-do_ctile_rev(uint8_t **buf, uint8_t *src,
-	int xs, int ys, int stride, int lower)
-{
-	int x, y;
-	uint8_t *dst = *buf;
-
-	*dst++ = ZRLE_RAW;
-
-	if (lower) {
-		uint32_t *src32 = (uint32_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src32[x];
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x] >> 16;
-#else
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x];
-#endif
-			}
-			src32 += stride;
-		}
-	}
-	else {
-		uint32_t *src32 = (uint32_t *)src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = src32[x] >> 8;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 24;
-#else
-				*dst++ = src32[x] >> 24;
-				*dst++ = src32[x] >> 16;
-				*dst++ = src32[x] >> 8;
-#endif
-			}
-			src32 += stride;
-		}
-	}
-
-	*buf = dst;
-}
-
 static uint8_t
 select_subencoding(int xs, int ys, int cbpp,
 	int colors, int single, int multi, int *best)
@@ -350,6 +192,19 @@ palette_match_16(uint16_t *palette, int colors, uint16_t color)
 	return c;
 }
 
+static inline uint8_t
+palette_match_32(uint32_t *palette, int colors, uint32_t color)
+{
+	int c;
+
+	for (c = 0; c < colors; ++c) {
+		if (palette[c] == color)
+			break;
+	}
+
+	return c;
+}
+
 static inline uint8_t *
 insert_palrle_rl_8(uint8_t *dst,
 	uint8_t *palette, int colors, uint8_t color, int rl)
@@ -369,6 +224,20 @@ insert_palrle_rl_16(uint8_t *dst,
 	uint16_t *palette, int colors, uint16_t color, int rl)
 {
 	uint16_t c = palette_match_16(palette, colors, color);
+	if (!rl)
+		*dst++ = c;
+	else {
+		*dst++ = 128 + c;
+		dst = insert_rl(dst, rl);
+	}
+	return dst;
+}
+
+static inline uint8_t *
+insert_palrle_rl_32(uint8_t *dst,
+	uint32_t *palette, int colors, uint32_t color, int rl)
+{
+	uint32_t c = palette_match_32(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
@@ -429,8 +298,61 @@ packed_palette_16(uint8_t *dst, uint16_t *src,
 }
 
 static inline uint8_t *
+packed_palette_32(uint8_t *dst, uint32_t *src,
+	int xs, int ys, int stride, uint32_t *palette, int bits)
+{
+	int x, y;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 8 - bits;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			*dst |= palette_match_32(palette, 16, *src++) << pel;
+			pel -= bits;
+			if (pel < 0) {
+				pel = 8 - bits;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 8 - bits)
+			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
 insert_hilo_16(uint8_t *dst, uint16_t pixel)
 {
+	*dst++ = pixel >> 8;
+	*dst++ = pixel;
+	return dst;
+}
+
+static inline uint8_t *
+insert_hilo_24l(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel >> 16;
+	*dst++ = pixel >> 8;
+	*dst++ = pixel;
+	return dst;
+}
+
+static inline uint8_t *
+insert_hilo_24h(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel >> 24;
+	*dst++ = pixel >> 16;
+	*dst++ = pixel >> 8;
+	return dst;
+}
+
+static inline uint8_t *
+insert_hilo_32(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel >> 24;
+	*dst++ = pixel >> 16;
 	*dst++ = pixel >> 8;
 	*dst++ = pixel;
 	return dst;
@@ -445,12 +367,88 @@ insert_lohi_16(uint8_t *dst, uint16_t pixel)
 }
 
 static inline uint8_t *
+insert_lohi_24l(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel;
+	*dst++ = pixel >> 8;
+	*dst++ = pixel >> 16;
+	return dst;
+}
+
+static inline uint8_t *
+insert_lohi_24h(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel >> 8;
+	*dst++ = pixel >> 16;
+	*dst++ = pixel >> 24;
+	return dst;
+}
+
+static inline uint8_t *
+insert_lohi_24(uint8_t *dst, uint32_t pixel, int lower)
+{
+	if (lower)
+		return insert_lohi_24l(dst, pixel);
+	else
+		return insert_lohi_24h(dst, pixel);
+}
+
+static inline uint8_t *
+insert_hilo_24(uint8_t *dst, uint32_t pixel, int lower)
+{
+	if (lower)
+		return insert_hilo_24l(dst, pixel);
+	else
+		return insert_hilo_24h(dst, pixel);
+}
+
+static inline uint8_t *
+insert_lohi_32(uint8_t *dst, uint32_t pixel)
+{
+	*dst++ = pixel;
+	*dst++ = pixel >> 8;
+	*dst++ = pixel >> 16;
+	*dst++ = pixel >> 24;
+	return dst;
+}
+
+static inline uint8_t *
 insert_rev_16(uint8_t *dst, uint16_t pixel)
 {
 #ifdef GGI_BIG_ENDIAN
 	return insert_lohi_16(dst, pixel);
 #else
 	return insert_hilo_16(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_rev_24l(uint8_t *dst, uint32_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_lohi_24l(dst, pixel);
+#else
+	return insert_hilo_24l(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_rev_24h(uint8_t *dst, uint32_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_lohi_24h(dst, pixel);
+#else
+	return insert_hilo_24h(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_rev_32(uint8_t *dst, uint32_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_lohi_32(dst, pixel);
+#else
+	return insert_hilo_32(dst, pixel);
 #endif
 }
 
@@ -467,6 +465,42 @@ insert_16(uint8_t *dst, uint16_t pixel, int rev)
 		return insert_hilo_16(dst, pixel);
 	else
 		return insert_lohi_16(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_24l(uint8_t *dst, uint32_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_hilo_24l(dst, pixel);
+#else
+	return insert_lohi_24l(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_24h(uint8_t *dst, uint32_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_hilo_24h(dst, pixel);
+#else
+	return insert_lohi_24h(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_32(uint8_t *dst, uint32_t pixel, int rev)
+{
+#ifdef GGI_BIG_ENDIAN
+	if (rev)
+		return insert_lohi_32(dst, pixel);
+	else
+		return insert_hilo_32(dst, pixel);
+#else
+	if (rev)
+		return insert_hilo_32(dst, pixel);
+	else
+		return insert_lohi_32(dst, pixel);
 #endif
 }
 
@@ -762,6 +796,470 @@ done:
 	*buf = dst;
 }
 
+static void
+do_tile_24(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int lower)
+{
+	uint32_t *src = (uint32_t *)src8;
+	uint32_t palette[128];
+	int colors = 1;
+	int single = 0;
+	int multi = 0;
+	int rl = 0;
+	uint32_t here;
+	uint32_t last = *src;
+	int x, y;
+	uint32_t *scan = src;
+	palette[0] = *scan;
+	int c;
+	int subencoding;
+	int bytes;
+
+	uint8_t *dst = *buf;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *scan++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (colors == 128)
+				continue;
+			c = palette_match_32(palette, colors, here);
+			if (c == colors)
+				palette[colors++] = here;
+		}
+		scan += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	*dst++ = subencoding = select_subencoding(
+		xs, ys, 3, colors, single, multi, &bytes);
+
+	if (subencoding == ZRLE_RAW) {
+		/* raw */
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+#ifdef GGI_BIG_ENDIAN
+				dst = insert_hilo_24(dst, src[x], lower);
+#else
+				dst = insert_lohi_24(dst, src[x], lower);
+#endif
+			}
+			src += stride + xs;
+		}
+		goto done;
+	}
+
+	if (subencoding == ZRLE_RLE) {
+		/* plain rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				if (lower)
+					dst = insert_24l(dst, last);
+				else
+					dst = insert_24h(dst, last);
+				dst = insert_rl(dst, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		if (lower)
+			dst = insert_24l(dst, last);
+		else
+			dst = insert_24h(dst, last);
+		dst = insert_rl(dst, rl);
+		goto done;
+	}
+
+	/* palettized subencodings follows */
+	if (lower) {
+		for (c = 0; c < colors; ++c)
+			dst = insert_24l(dst, palette[c]);
+	}
+	else {
+		for (c = 0; c < colors; ++c)
+			dst = insert_24h(dst, palette[c]);
+	}
+
+	if (subencoding == ZRLE_SOLID)
+		/* solid */
+		goto done;
+
+	if (subencoding >= ZRLE_PRLE_START) {
+		/* palette rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert_palrle_rl_32(
+					dst, palette, colors, last, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		dst = insert_palrle_rl_32(dst, palette, colors, last, rl);
+		goto done;
+	}
+
+	if (subencoding == ZRLE_PACKED_1) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 1);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_2_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 2);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_4_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 4);
+		goto done;
+	}
+
+done:
+	*buf = dst;
+}
+
+static void
+do_tile_24r(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int lower)
+{
+	uint32_t *src = (uint32_t *)src8;
+	uint32_t palette[128];
+	int colors = 1;
+	int single = 0;
+	int multi = 0;
+	int rl = 0;
+	uint32_t here;
+	uint32_t last = *src;
+	int x, y;
+	uint32_t *scan = src;
+	palette[0] = *scan;
+	int c;
+	int subencoding;
+	int bytes;
+
+	uint8_t *dst = *buf;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *scan++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (colors == 128)
+				continue;
+			c = palette_match_32(palette, colors, here);
+			if (c == colors)
+				palette[colors++] = here;
+		}
+		scan += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	*dst++ = subencoding = select_subencoding(
+		xs, ys, 3, colors, single, multi, &bytes);
+
+	if (subencoding == ZRLE_RAW) {
+		/* raw */
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+#ifdef GGI_BIG_ENDIAN
+				dst = insert_lohi_24(dst, src[x], lower);
+#else
+				dst = insert_hilo_24(dst, src[x], lower);
+#endif
+			}
+			src += stride + xs;
+		}
+		goto done;
+	}
+
+	if (subencoding == ZRLE_RLE) {
+		/* plain rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				if (lower)
+					dst = insert_rev_24l(dst, last);
+				else
+					dst = insert_rev_24h(dst, last);
+				dst = insert_rl(dst, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		if (lower)
+			dst = insert_rev_24l(dst, last);
+		else
+			dst = insert_rev_24h(dst, last);
+		dst = insert_rl(dst, rl);
+		goto done;
+	}
+
+	/* palettized subencodings follows */
+	if (lower) {
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_24l(dst, palette[c]);
+	}
+	else {
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_24h(dst, palette[c]);
+	}
+
+	if (subencoding == ZRLE_SOLID)
+		/* solid */
+		goto done;
+
+	if (subencoding >= ZRLE_PRLE_START) {
+		/* palette rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert_palrle_rl_32(
+					dst, palette, colors, last, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		dst = insert_palrle_rl_32(dst, palette, colors, last, rl);
+		goto done;
+	}
+
+	if (subencoding == ZRLE_PACKED_1) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 1);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_2_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 2);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_4_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 4);
+		goto done;
+	}
+
+done:
+	*buf = dst;
+}
+
+static void
+do_tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
+{
+	uint32_t *src = (uint32_t *)src8;
+	uint32_t palette[128];
+	int colors = 1;
+	int single = 0;
+	int multi = 0;
+	int rl = 0;
+	uint32_t here;
+	uint32_t last = *src;
+	int x, y;
+	uint32_t *scan = src;
+	palette[0] = *scan;
+	int c;
+	int subencoding;
+	int bytes;
+
+	uint8_t *dst = *buf;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *scan++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (colors == 128)
+				continue;
+			c = palette_match_32(palette, colors, here);
+			if (c == colors)
+				palette[colors++] = here;
+		}
+		scan += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	*dst++ = subencoding = select_subencoding(
+		xs, ys, 4, colors, single, multi, &bytes);
+
+	if (subencoding == ZRLE_RAW) {
+		/* raw */
+		if (!rev) {
+			for (y = 0; y < ys; ++y) {
+				memcpy(dst, src, xs * 2);
+				src += stride + xs;
+				dst += xs * 4;
+			}
+			goto done;
+		}
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+#ifdef GGI_BIG_ENDIAN
+				dst = insert_lohi_32(dst, src[x]);
+#else
+				dst = insert_hilo_32(dst, src[x]);
+#endif
+			}
+			src += stride + xs;
+		}
+		goto done;
+	}
+
+	if (subencoding == ZRLE_RLE) {
+		/* plain rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert_32(dst, last, rev);
+				dst = insert_rl(dst, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		dst = insert_32(dst, last, rev);
+		dst = insert_rl(dst, rl);
+		goto done;
+	}
+
+	/* palettized subencodings follows */
+	if (!rev) {
+		memcpy(dst, palette, colors * 4);
+		dst += colors * 4;
+	}
+	else {
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_32(dst, palette[c]);
+	}
+
+	if (subencoding == ZRLE_SOLID)
+		/* solid */
+		goto done;
+
+	if (subencoding >= ZRLE_PRLE_START) {
+		/* palette rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert_palrle_rl_32(
+					dst, palette, colors, last, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		dst = insert_palrle_rl_32(dst, palette, colors, last, rl);
+		goto done;
+	}
+
+	if (subencoding == ZRLE_PACKED_1) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 1);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_2_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 2);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_4_END) {
+		/* packed palette */
+		dst = packed_palette_32(dst, src, xs, ys, stride, palette, 4);
+		goto done;
+	}
+
+done:
+	*buf = dst;
+}
+
 void
 GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 {
@@ -866,23 +1364,19 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		tile_param = priv->reverse_endian;
 		tile = do_tile_16;
 	}
-	else if (priv->reverse_endian && bpp != cbpp) {
+	else if (cbpp == 3 && !priv->reverse_endian) {
 		tile_param = lower;
-		tile = do_ctile_rev;
+		tile = do_tile_24;
 	}
-	else if (priv->reverse_endian) {
-		tile_param = bpp;
-		tile = do_tile_rev;
-	}
-	else if (bpp == cbpp) {
-		tile_param = bpp;
-		tile = do_tile;
+	else if (cbpp == 3) {
+		tile_param = lower;
+		tile = do_tile_24r;
 	}
 	else {
-		tile_param = lower;
-		tile = do_ctile;
+		tile_param = priv->reverse_endian;
+		tile = do_tile_32;
 	}
-	
+
 	stride = LIBGGI_VIRTX(cvis);
 
 	ys_last = (update->br.y - update->tl.y) & 0x3f;
