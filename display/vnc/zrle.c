@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.13 2006/09/02 08:52:00 pekberg Exp $
+/* $Id: zrle.c,v 1.14 2006/09/02 09:01:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -325,7 +325,7 @@ insert_rl(uint8_t *dst, int rl)
 }
 
 static inline uint8_t
-palette8_match(uint8_t *palette, int colors, uint8_t color)
+palette_match_8(uint8_t *palette, int colors, uint8_t color)
 {
 	int c;
 
@@ -338,7 +338,7 @@ palette8_match(uint8_t *palette, int colors, uint8_t color)
 }
 
 static inline uint8_t
-palette16_match(uint16_t *palette, int colors, uint16_t color)
+palette_match_16(uint16_t *palette, int colors, uint16_t color)
 {
 	int c;
 
@@ -351,10 +351,10 @@ palette16_match(uint16_t *palette, int colors, uint16_t color)
 }
 
 static inline uint8_t *
-insert8_palrle_rl(uint8_t *dst,
+insert_palrle_rl_8(uint8_t *dst,
 	uint8_t *palette, int colors, uint8_t color, int rl)
 {
-	uint8_t c = palette8_match(palette, colors, color);
+	uint8_t c = palette_match_8(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
@@ -365,10 +365,10 @@ insert8_palrle_rl(uint8_t *dst,
 }
 
 static inline uint8_t *
-insert16_palrle_rl(uint8_t *dst,
+insert_palrle_rl_16(uint8_t *dst,
 	uint16_t *palette, int colors, uint16_t color, int rl)
 {
-	uint16_t c = palette16_match(palette, colors, color);
+	uint16_t c = palette_match_16(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
@@ -379,8 +379,8 @@ insert16_palrle_rl(uint8_t *dst,
 }
 
 static inline uint8_t *
-packed8_palette(uint8_t *dst,
-	uint8_t *src, int xs, int ys, int stride, uint8_t *palette, int bits)
+packed_palette_8(uint8_t *dst, uint8_t *src,
+	int xs, int ys, int stride, uint8_t *palette, int bits)
 {
 	int x, y;
 
@@ -388,7 +388,7 @@ packed8_palette(uint8_t *dst,
 		int pel = 8 - bits;
 		*dst = 0;
 		for (x = 0; x < xs; ++x) {
-			*dst |= palette8_match(palette, 16, *src++) << pel;
+			*dst |= palette_match_8(palette, 16, *src++) << pel;
 			pel -= bits;
 			if (pel < 0) {
 				pel = 8 - bits;
@@ -404,7 +404,7 @@ packed8_palette(uint8_t *dst,
 }
 
 static inline uint8_t *
-packed16_palette(uint8_t *dst, uint16_t *src,
+packed_palette_16(uint8_t *dst, uint16_t *src,
 	int xs, int ys, int stride, uint16_t *palette, int bits)
 {
 	int x, y;
@@ -413,7 +413,7 @@ packed16_palette(uint8_t *dst, uint16_t *src,
 		int pel = 8 - bits;
 		*dst = 0;
 		for (x = 0; x < xs; ++x) {
-			*dst |= palette16_match(palette, 16, *src++) << pel;
+			*dst |= palette_match_16(palette, 16, *src++) << pel;
 			pel -= bits;
 			if (pel < 0) {
 				pel = 8 - bits;
@@ -429,7 +429,7 @@ packed16_palette(uint8_t *dst, uint16_t *src,
 }
 
 static void
-do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
+do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
 	uint8_t palette[128];
 	int colors = 1;
@@ -465,7 +465,7 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 			}
 			if (colors == 128)
 				continue;
-			c = palette8_match(palette, colors, here);
+			c = palette_match_8(palette, colors, here);
 			if (c == colors)
 				palette[colors++] = here;
 		}
@@ -535,32 +535,32 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 					++rl;
 					continue;
 				}
-				dst = insert8_palrle_rl(
+				dst = insert_palrle_rl_8(
 					dst, palette, colors, last, rl);
 				last = here;
 				rl = 0;
 			}
 			src += stride;
 		}
-		dst = insert8_palrle_rl(dst, palette, colors, last, rl);
+		dst = insert_palrle_rl_8(dst, palette, colors, last, rl);
 		goto done;
 	}
 
 	if (subencoding == ZRLE_PACKED_1) {
 		/* packed palette */
-		dst = packed8_palette(dst, src, xs, ys, stride, palette, 1);
+		dst = packed_palette_8(dst, src, xs, ys, stride, palette, 1);
 		goto done;
 	}
 
 	if (subencoding <= ZRLE_PACKED_2_END) {
 		/* packed palette */
-		dst = packed8_palette(dst, src, xs, ys, stride, palette, 2);
+		dst = packed_palette_8(dst, src, xs, ys, stride, palette, 2);
 		goto done;
 	}
 
 	if (subencoding <= ZRLE_PACKED_4_END) {
 		/* packed palette */
-		dst = packed8_palette(dst, src, xs, ys, stride, palette, 4);
+		dst = packed_palette_8(dst, src, xs, ys, stride, palette, 4);
 		goto done;
 	}
 
@@ -569,7 +569,7 @@ done:
 }
 
 static void
-do_tile16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
+do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 {
 	uint16_t *src = (uint16_t *)src8;
 	uint16_t palette[128];
@@ -606,7 +606,7 @@ do_tile16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 			}
 			if (colors == 128)
 				continue;
-			c = palette16_match(palette, colors, here);
+			c = palette_match_16(palette, colors, here);
 			if (c == colors)
 				palette[colors++] = here;
 		}
@@ -688,32 +688,32 @@ do_tile16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 					++rl;
 					continue;
 				}
-				dst = insert16_palrle_rl(
+				dst = insert_palrle_rl_16(
 					dst, palette, colors, last, rl);
 				last = here;
 				rl = 0;
 			}
 			src += stride;
 		}
-		dst = insert16_palrle_rl(dst, palette, colors, last, rl);
+		dst = insert_palrle_rl_16(dst, palette, colors, last, rl);
 		goto done;
 	}
 
 	if (subencoding == ZRLE_PACKED_1) {
 		/* packed palette */
-		dst = packed16_palette(dst, src, xs, ys, stride, palette, 1);
+		dst = packed_palette_16(dst, src, xs, ys, stride, palette, 1);
 		goto done;
 	}
 
 	if (subencoding <= ZRLE_PACKED_2_END) {
 		/* packed palette */
-		dst = packed16_palette(dst, src, xs, ys, stride, palette, 2);
+		dst = packed_palette_16(dst, src, xs, ys, stride, palette, 2);
 		goto done;
 	}
 
 	if (subencoding <= ZRLE_PACKED_4_END) {
 		/* packed palette */
-		dst = packed16_palette(dst, src, xs, ys, stride, palette, 4);
+		dst = packed_palette_16(dst, src, xs, ys, stride, palette, 4);
 		goto done;
 	}
 
@@ -819,11 +819,11 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 
 	if (bpp == 1) {
 		lower_or_bpp = bpp;
-		tile = do_tile8;
+		tile = do_tile_8;
 	}
 	if (bpp == 2 && !priv->reverse_endian) {
 		lower_or_bpp = bpp;
-		tile = do_tile16;
+		tile = do_tile_16;
 	}
 	else if (priv->reverse_endian && bpp != cbpp) {
 		lower_or_bpp = lower;
