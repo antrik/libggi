@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.12 2006/09/02 08:32:38 pekberg Exp $
+/* $Id: zrle.c,v 1.13 2006/09/02 08:52:00 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -337,11 +337,38 @@ palette8_match(uint8_t *palette, int colors, uint8_t color)
 	return c;
 }
 
+static inline uint8_t
+palette16_match(uint16_t *palette, int colors, uint16_t color)
+{
+	int c;
+
+	for (c = 0; c < colors; ++c) {
+		if (palette[c] == color)
+			break;
+	}
+
+	return c;
+}
+
 static inline uint8_t *
 insert8_palrle_rl(uint8_t *dst,
 	uint8_t *palette, int colors, uint8_t color, int rl)
 {
 	uint8_t c = palette8_match(palette, colors, color);
+	if (!rl)
+		*dst++ = c;
+	else {
+		*dst++ = 128 + c;
+		dst = insert_rl(dst, rl);
+	}
+	return dst;
+}
+
+static inline uint8_t *
+insert16_palrle_rl(uint8_t *dst,
+	uint16_t *palette, int colors, uint16_t color, int rl)
+{
+	uint16_t c = palette16_match(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
@@ -362,6 +389,31 @@ packed8_palette(uint8_t *dst,
 		*dst = 0;
 		for (x = 0; x < xs; ++x) {
 			*dst |= palette8_match(palette, 16, *src++) << pel;
+			pel -= bits;
+			if (pel < 0) {
+				pel = 8 - bits;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 8 - bits)
+			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
+packed16_palette(uint8_t *dst, uint16_t *src,
+	int xs, int ys, int stride, uint16_t *palette, int bits)
+{
+	int x, y;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 8 - bits;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			*dst |= palette16_match(palette, 16, *src++) << pel;
 			pel -= bits;
 			if (pel < 0) {
 				pel = 8 - bits;
@@ -516,6 +568,159 @@ done:
 	*buf = dst;
 }
 
+static void
+do_tile16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
+{
+	uint16_t *src = (uint16_t *)src8;
+	uint16_t palette[128];
+	int colors = 1;
+	int single = 0;
+	int multi = 0;
+	int rl = 0;
+	uint16_t here;
+	uint16_t last = *src;
+	int x, y;
+	uint16_t *scan = src;
+	palette[0] = *scan;
+	int c;
+	int subencoding;
+	int bytes;
+
+	uint8_t *dst = *buf;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *scan++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (colors == 128)
+				continue;
+			c = palette16_match(palette, colors, here);
+			if (c == colors)
+				palette[colors++] = here;
+		}
+		scan += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	*dst++ = subencoding = select_subencoding(
+		xs, ys, 2, colors, single, multi, &bytes);
+
+	if (subencoding == ZRLE_RAW) {
+		/* raw */
+		for (y = 0; y < ys; ++y) {
+			memcpy(dst, src, xs * 2);
+			src += stride + xs;
+			dst += xs * 2;
+		}
+		goto done;
+	}
+
+	if (subencoding == ZRLE_RLE) {
+		/* plain rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+#ifdef GGI_BIG_ENDIAN
+				*dst++ = last >> 8;
+				*dst++ = last;
+#else
+				*dst++ = last;
+				*dst++ = last >> 8;
+#endif
+				dst = insert_rl(dst, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+#ifdef GGI_BIG_ENDIAN
+		*dst++ = last >> 8;
+		*dst++ = last;
+#else
+		*dst++ = last;
+		*dst++ = last >> 8;
+#endif
+		while (rl > 254) {
+			*dst++ = 255;
+			rl -= 255;
+		}
+		*dst++ = rl;
+		goto done;
+	}
+
+	/* palettized subencodings follows */
+	memcpy(dst, palette, colors * 2);
+	dst += colors * 2;
+
+	if (subencoding == ZRLE_SOLID)
+		/* solid */
+		goto done;
+
+	if (subencoding >= ZRLE_PRLE_START) {
+		/* palette rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert16_palrle_rl(
+					dst, palette, colors, last, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride;
+		}
+		dst = insert16_palrle_rl(dst, palette, colors, last, rl);
+		goto done;
+	}
+
+	if (subencoding == ZRLE_PACKED_1) {
+		/* packed palette */
+		dst = packed16_palette(dst, src, xs, ys, stride, palette, 1);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_2_END) {
+		/* packed palette */
+		dst = packed16_palette(dst, src, xs, ys, stride, palette, 2);
+		goto done;
+	}
+
+	if (subencoding <= ZRLE_PACKED_4_END) {
+		/* packed palette */
+		dst = packed16_palette(dst, src, xs, ys, stride, palette, 4);
+		goto done;
+	}
+
+done:
+	*buf = dst;
+}
+
 void
 GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 {
@@ -615,6 +820,10 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	if (bpp == 1) {
 		lower_or_bpp = bpp;
 		tile = do_tile8;
+	}
+	if (bpp == 2 && !priv->reverse_endian) {
+		lower_or_bpp = bpp;
+		tile = do_tile16;
 	}
 	else if (priv->reverse_endian && bpp != cbpp) {
 		lower_or_bpp = lower;
