@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.24 2006/09/02 19:19:50 pekberg Exp $
+/* $Id: zrle.c,v 1.25 2006/09/02 19:23:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -667,6 +667,15 @@ insert_hilo_24h(uint8_t *dst, uint32_t pixel)
 }
 
 static inline uint8_t *
+insert_hilo_24(uint8_t *dst, uint32_t pixel, int lower)
+{
+	if (lower)
+		return insert_hilo_24l(dst, pixel);
+	else
+		return insert_hilo_24h(dst, pixel);
+}
+
+static inline uint8_t *
 insert_hilo_32(uint8_t *dst, uint32_t pixel)
 {
 	*dst++ = pixel >> 24;
@@ -709,15 +718,6 @@ insert_lohi_24(uint8_t *dst, uint32_t pixel, int lower)
 		return insert_lohi_24l(dst, pixel);
 	else
 		return insert_lohi_24h(dst, pixel);
-}
-
-static inline uint8_t *
-insert_hilo_24(uint8_t *dst, uint32_t pixel, int lower)
-{
-	if (lower)
-		return insert_hilo_24l(dst, pixel);
-	else
-		return insert_hilo_24h(dst, pixel);
 }
 
 static inline uint8_t *
