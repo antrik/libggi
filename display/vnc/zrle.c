@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.20 2006/09/02 17:53:37 pekberg Exp $
+/* $Id: zrle.c,v 1.21 2006/09/02 18:02:18 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -247,6 +247,62 @@ insert_palrle_rl_32(uint8_t *dst,
 		dst = insert_rl(dst, rl);
 	}
 	return dst;
+}
+
+static inline uint8_t *
+palette_rle_8(uint8_t *dst, uint8_t *src,
+	int xs, int ys, int stride, uint8_t *palette, int colors)
+{
+	int x, y;
+	uint8_t last;
+	uint8_t here;
+	int rl;
+
+	rl = -1;
+	last = *src;
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			dst = insert_palrle_rl_8(
+				dst, palette, colors, last, rl);
+			last = here;
+			rl = 0;
+		}
+		src += stride;
+	}
+	return insert_palrle_rl_8(dst, palette, colors, last, rl);
+}
+
+static inline uint8_t *
+palette_rle_16(uint8_t *dst, uint16_t *src,
+	int xs, int ys, int stride, uint16_t *palette, int colors)
+{
+	int x, y;
+	uint16_t last;
+	uint16_t here;
+	int rl;
+
+	rl = -1;
+	last = *src;
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			dst = insert_palrle_rl_16(
+				dst, palette, colors, last, rl);
+			last = here;
+			rl = 0;
+		}
+		src += stride;
+	}
+	return insert_palrle_rl_16(dst, palette, colors, last, rl);
 }
 
 static inline uint8_t *
@@ -628,23 +684,8 @@ do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 
 	if (subencoding >= ZRLE_PRLE_START) {
 		/* palette rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				dst = insert_palrle_rl_8(
-					dst, palette, colors, last, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
-		dst = insert_palrle_rl_8(dst, palette, colors, last, rl);
+		dst = palette_rle_8(
+			dst, src, xs, ys, stride, palette, colors);
 		goto done;
 	}
 
@@ -784,23 +825,8 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 
 	if (subencoding >= ZRLE_PRLE_START) {
 		/* palette rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				dst = insert_palrle_rl_16(
-					dst, palette, colors, last, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
-		dst = insert_palrle_rl_16(dst, palette, colors, last, rl);
+		dst = palette_rle_16(
+			dst, src, xs, ys, stride, palette, colors);
 		goto done;
 	}
 
