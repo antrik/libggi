@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.15 2006/09/02 09:36:29 pekberg Exp $
+/* $Id: zrle.c,v 1.16 2006/09/02 09:40:59 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -550,11 +550,7 @@ do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 			src += stride;
 		}
 		*dst++ = last;
-		while (rl > 254) {
-			*dst++ = 255;
-			rl -= 255;
-		}
-		*dst++ = rl;
+		dst = insert_rl(dst, rl);
 		goto done;
 	}
 
@@ -704,11 +700,7 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 			src += stride;
 		}
 		dst = insert_16(dst, last, rev);
-		while (rl > 254) {
-			*dst++ = 255;
-			rl -= 255;
-		}
-		*dst++ = rl;
+		dst = insert_rl(dst, rl);
 		goto done;
 	}
 
