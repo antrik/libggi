@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.10 2006/09/02 00:05:26 pekberg Exp $
+/* $Id: zrle.c,v 1.11 2006/09/02 00:12:23 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -275,7 +275,7 @@ select_subencoding(int xs, int ys, int cbpp,
 	}
 
 	/* plain rle */
-	bytes = (1 + cbpp) * single + (9 + 4 * cbpp) * multi / 4;
+	bytes = (1 + cbpp) * single + cbpp * multi + 9 * multi / 4;
 	if (bytes < *best) {
 		*best = bytes;
 		subencoding = 128;
