@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.17 2006/09/02 11:35:55 pekberg Exp $
+/* $Id: zrle.c,v 1.18 2006/09/02 15:26:13 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -75,8 +75,9 @@ typedef void (tile_func)(uint8_t **buf, uint8_t *src,
 static void
 zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 {
-	struct zrle_ctx_t *ctx = priv->zrle_ctx;
-	int start = priv->wbuf.size;
+	ggi_vnc_client *client = priv->client;
+	struct zrle_ctx_t *ctx = client->zrle_ctx;
+	int start = client->wbuf.size;
 	int avail;
 	uint32_t *zlen;
 	uint32_t done = 0;
@@ -84,24 +85,25 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	ctx->zstr.next_in = src;
 	ctx->zstr.avail_in = len;
 
-	priv->wbuf.size += 4;
+	client->wbuf.size += 4;
 	
-	avail = priv->wbuf.limit - priv->wbuf.size;
+	avail = client->wbuf.limit - client->wbuf.size;
 
 	for (;;) {
-		ctx->zstr.next_out = &priv->wbuf.buf[priv->wbuf.size + done];
+		ctx->zstr.next_out =
+			&client->wbuf.buf[client->wbuf.size + done];
 		ctx->zstr.avail_out = avail - done;
 		deflate(&ctx->zstr, Z_SYNC_FLUSH);
 		done = avail - ctx->zstr.avail_out;
 		if (ctx->zstr.avail_out)
 			break;
 		avail += 1000;
-		GGI_vnc_buf_reserve(&priv->wbuf, priv->wbuf.size + avail);
+		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + avail);
 	}
 
-	zlen = (uint32_t *)&priv->wbuf.buf[start];
+	zlen = (uint32_t *)&client->wbuf.buf[start];
 	*zlen = GGI_HTONL(done);
-	priv->wbuf.size += done;
+	client->wbuf.size += done;
 
 	DPRINT_MISC("rle %d z %d %d%%\n", len, done, done * 100 / len);
 }
@@ -797,7 +799,8 @@ done:
 }
 
 static void
-do_tile_24(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int lower)
+do_tile_24(uint8_t **buf,
+	uint8_t *src8, int xs, int ys, int stride, int lower)
 {
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
@@ -951,7 +954,8 @@ done:
 }
 
 static void
-do_tile_24r(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int lower)
+do_tile_24r(uint8_t **buf,
+	uint8_t *src8, int xs, int ys, int stride, int lower)
 {
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
@@ -1264,7 +1268,8 @@ void
 GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	struct zrle_ctx_t *ctx = priv->zrle_ctx;
+	ggi_vnc_client *client = priv->client;
+	struct zrle_ctx_t *ctx = client->zrle_ctx;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	ggi_graphtype gt;
@@ -1287,17 +1292,17 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
-	ggi_rect_subtract(&priv->dirty, update);
-	priv->update.tl.x = priv->update.br.x = 0;
+	ggi_rect_subtract(&client->dirty, update);
+	client->update.tl.x = client->update.br.x = 0;
 
 	DPRINT("dirty %dx%d - %dx%d\n",
-		priv->dirty.tl.x, priv->dirty.tl.y,
-		priv->dirty.br.x, priv->dirty.br.y);
+		client->dirty.tl.x, client->dirty.tl.y,
+		client->dirty.br.x, client->dirty.br.y);
 
-	if (!priv->client_vis)
+	if (!client->client_vis)
 		cvis = priv->fb;
 	else {
-		cvis = priv->client_vis;
+		cvis = client->client_vis;
 		_ggiCrossBlit(priv->fb,
 			update->tl.x, update->tl.y,
 			update->br.x - update->tl.x,
@@ -1331,8 +1336,8 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	ytiles = (update->br.y - update->tl.y + 63) / 64;
 	GGI_vnc_buf_reserve(&ctx->work, xtiles * ytiles + count * cbpp);
 	work = ctx->work.buf;
-	GGI_vnc_buf_reserve(&priv->wbuf, priv->wbuf.size + 20);
-	header = &priv->wbuf.buf[priv->wbuf.size];
+	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 20);
+	header = &client->wbuf.buf[client->wbuf.size];
 	header[ 0] = 0;
 	header[ 1] = 0;
 	header[ 2] = 0;
@@ -1350,7 +1355,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	header[14] = 0;
 	header[15] = 16; /* zrle */
 
-	priv->wbuf.size += 16;
+	client->wbuf.size += 16;
 	buf = work;
 
 	db = ggiDBGetBuffer(cvis->stem, 0);
@@ -1361,10 +1366,10 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		tile = do_tile_8;
 	}
 	else if (bpp == 2) {
-		tile_param = priv->reverse_endian;
+		tile_param = client->reverse_endian;
 		tile = do_tile_16;
 	}
-	else if (cbpp == 3 && !priv->reverse_endian) {
+	else if (cbpp == 3 && !client->reverse_endian) {
 		tile_param = lower;
 		tile = do_tile_24;
 	}
@@ -1373,7 +1378,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		tile = do_tile_24r;
 	}
 	else {
-		tile_param = priv->reverse_endian;
+		tile_param = client->reverse_endian;
 		tile = do_tile_32;
 	}
 

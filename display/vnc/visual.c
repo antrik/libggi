@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/09/01 15:23:03 pekberg Exp $
+/* $Id: visual.c,v 1.13 2006/09/02 15:26:13 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -102,7 +102,6 @@ GGIopen(struct ggi_visual *vis,
 
 	memset(priv, 0, sizeof(*priv));
 	priv->sfd = -1;
-	priv->cfd = -1;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
@@ -256,6 +255,7 @@ GGIopen(struct ggi_visual *vis,
 
 	if (options[OPT_CLIENT].result[0] != '\0') {
 		struct hostent *h;
+		int cfd;
 
 		h = gethostbyname(options[OPT_CLIENT].result);
 
@@ -265,8 +265,8 @@ GGIopen(struct ggi_visual *vis,
 			goto out_closefds;
 		}
 
-		priv->cfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
-		if (priv->cfd == -1) {
+		cfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+		if (cfd == -1) {
 			err = GGI_ENODEVICE;
 			goto out_closefds;
 		}
@@ -276,12 +276,13 @@ GGIopen(struct ggi_visual *vis,
 		sa.sin_addr        = *((struct in_addr *)h->h_addr);
 		sa.sin_port        = htons(5500 + priv->display);
 
-		if (connect(priv->cfd, (struct sockaddr *)&sa, sizeof(sa))) {
+		if (connect(cfd, (struct sockaddr *)&sa, sizeof(sa))) {
 			err = GGI_ENODEVICE;
+			close(cfd);
 			goto out_closefds;
 		}
 
-		GGI_vnc_new_client_finish(vis);
+		GGI_vnc_new_client_finish(vis, cfd);
 	}
 
 	vis->opdisplay->getmode=GGI_vnc_getmode;
@@ -294,8 +295,6 @@ GGIopen(struct ggi_visual *vis,
 	return 0;
 
 out_closefds:
-	if (priv->cfd != -1)
-		close(priv->cfd);
 	if (priv->inp)
 		ggCloseModule(inp);
 	if (priv->sfd != -1)
@@ -332,6 +331,8 @@ GGIclose(struct ggi_visual *vis,
 	if (!priv)
 		goto skip;
 
+	GGI_vnc_close_client(vis);
+
 	if (priv->inp)
 		ggCloseModule(priv->inp);
 	priv->inp = NULL;
@@ -340,21 +341,8 @@ GGIclose(struct ggi_visual *vis,
 		close(priv->sfd);
 	priv->sfd = -1;
 
-	if (priv->cfd != -1)
-		close(priv->sfd);
-	priv->cfd = -1;
-
-	if (priv->wbuf.buf)
-		free(priv->wbuf.buf);
-
 	if (priv->fb) {
 		tmp_stem = priv->fb->stem;
-		ggiClose(tmp_stem);
-		ggDelStem(tmp_stem);
-	}
-
-	if (priv->client_vis) {
-		tmp_stem = priv->client_vis->stem;
 		ggiClose(tmp_stem);
 		ggDelStem(tmp_stem);
 	}

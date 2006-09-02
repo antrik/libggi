@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.14 2006/09/01 18:42:25 pekberg Exp $
+/* $Id: vnc.h,v 1.15 2006/09/02 15:26:12 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -49,10 +49,32 @@ typedef struct {
 } ggi_vnc_buf;
 
 typedef struct {
+	int cfd;
+	int protover;
+
+	unsigned char buf[256];
+	int buf_size;
+	ggi_vnc_buf wbuf;
+	int write_pending;
+	ggi_vnc_client_action *client_action;
+	uint16_t encoding_count;
+	ggi_vnc_encode *encode;
+
+	void *zlib_ctx;
+	void *zrle_ctx;
+
+	struct ggi_visual *client_vis;
+	int palette_dirty;
+	int reverse_endian;
+	ggi_rect dirty;
+	ggi_rect update;
+
+	uint8_t challenge[16];
+} ggi_vnc_client;
+
+typedef struct {
 	int	display;
 	int	sfd;
-	int	cfd;
-	int	protover;
 
 	struct ggi_visual *fb;
 	struct gg_module *inp;
@@ -65,30 +87,14 @@ typedef struct {
 	gii_vnc_pointer  *pointer;
 	void *gii_ctx;
 
-	unsigned char buf[256];
-	int buf_size;
-	ggi_vnc_buf wbuf;
-	int write_pending;
-	ggi_vnc_client_action *client_action;
-	uint16_t encoding_count;
-	ggi_vnc_encode *encode;
-
-	int zlib_level;
-	void *zlib_ctx;
-
-	int zrle_level;
-	void *zrle_ctx;
-
-	struct ggi_visual *client_vis;
-	int palette_dirty;
-	int reverse_endian;
-	ggi_rect dirty;
-	ggi_rect update;
-
 	int           passwd;
 	unsigned long cooked_key[32];
-	uint8_t       challenge[16];
 	unsigned long randomizer[32];
+
+	int zlib_level;
+	int zrle_level;
+
+	ggi_vnc_client *client;
 } ggi_vnc_priv;
 
 
@@ -96,7 +102,8 @@ gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
 gii_vnc_write_client		GGI_vnc_write_client;
 
-void GGI_vnc_new_client_finish(struct ggi_visual *vis);
+void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd);
+void GGI_vnc_close_client(struct ggi_visual *vis);
 void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 void GGI_vnc_invalidate_palette(struct ggi_visual *vis);

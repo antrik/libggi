@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.4 2006/08/27 11:45:17 pekberg Exp $
+/* $Id: mode.c,v 1.5 2006/09/02 15:26:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -83,9 +83,6 @@ static int _ggi_domode(struct ggi_visual *vis)
 	_ggi_freedbs(vis);
 
 	DPRINT("_ggi_domode: zapped\n");
-
-	priv->dirty.tl.x = priv->dirty.tl.y = 0;
-	priv->dirty.br = priv->dirty.tl;
 
 	ggiSetMode(priv->fb->stem, LIBGGI_MODE(vis));
 

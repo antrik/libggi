@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.3 2006/09/01 15:01:11 pekberg Exp $
+/* $Id: raw.c,v 1.4 2006/09/02 15:26:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -44,6 +44,7 @@ void
 GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client = priv->client;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	ggi_graphtype gt;
@@ -57,17 +58,17 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
-	ggi_rect_subtract(&priv->dirty, update);
-	priv->update.tl.x = priv->update.br.x = 0;
+	ggi_rect_subtract(&client->dirty, update);
+	client->update.tl.x = client->update.br.x = 0;
 
 	DPRINT("dirty %dx%d - %dx%d\n",
-		priv->dirty.tl.x, priv->dirty.tl.y,
-		priv->dirty.br.x, priv->dirty.br.y);
+		client->dirty.tl.x, client->dirty.tl.y,
+		client->dirty.br.x, client->dirty.br.y);
 
-	if (!priv->client_vis)
+	if (!client->client_vis)
 		cvis = priv->fb;
 	else {
-		cvis = priv->client_vis;
+		cvis = client->client_vis;
 		_ggiCrossBlit(priv->fb,
 			update->tl.x, update->tl.y,
 			update->br.x - update->tl.x,
@@ -84,10 +85,10 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	bpp = GT_ByPP(gt);
 	count = (update->br.x - update->tl.x) *
 		(update->br.y - update->tl.y);
-	pal_size = priv->wbuf.size;
-	GGI_vnc_buf_reserve(&priv->wbuf, pal_size + 16 + count * bpp);
-	priv->wbuf.size += 16 + count * bpp;
-	header = &priv->wbuf.buf[pal_size];
+	pal_size = client->wbuf.size;
+	GGI_vnc_buf_reserve(&client->wbuf, pal_size + 16 + count * bpp);
+	client->wbuf.size += 16 + count * bpp;
+	header = &client->wbuf.buf[pal_size];
 	buf = &header[16];
 	header[ 0] = 0;
 	header[ 1] = 0;
@@ -105,7 +106,7 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	header[13] = 0;
 	header[14] = 0;
 	header[15] = 0;
-	if (priv->reverse_endian && GT_SIZE(gt) > 8) {
+	if (client->reverse_endian && GT_SIZE(gt) > 8) {
 		int i, j;
 		int stride = db->buffer.plb.stride / bpp;
 
