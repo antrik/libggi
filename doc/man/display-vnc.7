@@ -1,6 +1,6 @@
-.TH "display-vnc" 7 "2006-09-01" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-02" "libggi-current" GGI
 .SH NAME
-\fBdisplay-vnc\fR : Display on vnc clinet over a network
+\fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
@@ -55,8 +55,8 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-raw, zlib and a subset (no palettization nor run length encoding) of
-the ZRLE encoding.
+raw, zlib and ZRLE encodings, but only a subset (no palettization nor
+run length encoding) of the ZRLE encoding for 16 and 32 bit clients.
 .IP \(bu 4
 Unaccelerated.
 .PP
