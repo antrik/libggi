@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.25 2006/09/02 19:23:21 pekberg Exp $
+/* $Id: zrle.c,v 1.26 2006/09/02 19:28:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -837,7 +837,7 @@ do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		dst = plain_rle_8(dst, src, src, xs, ys, stride);
+		dst = plain_rle_8(dst, src, xs, ys, stride);
 		goto done;
 	}
 
