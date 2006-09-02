@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.8 2006/09/01 23:12:22 pekberg Exp $
+/* $Id: zrle.c,v 1.9 2006/09/02 00:01:39 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -50,6 +50,7 @@
 
 struct zrle_ctx_t {
 	z_stream zstr;
+	ggi_vnc_buf work;
 };
 
 typedef void (tile_func)(uint8_t **buf, uint8_t *src,
@@ -247,10 +248,277 @@ do_ctile_rev(uint8_t **buf, uint8_t *src,
 	*buf = dst;
 }
 
+static uint8_t
+select_subencoding(int xs, int ys, int cbpp,
+	int colors, int single, int multi, int *best)
+{
+	int bytes;
+	int subencoding;
+
+	/* solid */
+	if (colors == 1) {
+		*best = cbpp;
+		return 1;
+	}
+
+	/* raw */
+	*best = xs * ys;
+	subencoding = 0;
+
+	/* palette rle */
+	if (2 <= colors && colors <= 127) {
+		bytes = cbpp * colors + single + 9 * multi / 4;
+		if (bytes < *best) {
+			*best = bytes;
+			subencoding = 128 + colors;
+		}
+	}
+
+	/* plain rle */
+	bytes = (1 + cbpp) * single + (9 + 4 * cbpp) * multi / 4;
+	if (bytes < *best) {
+		*best = bytes;
+		subencoding = 128;
+	}
+
+	/* packet palette */
+	bytes = *best + 1;
+	if (colors == 2)
+		bytes = cbpp * colors + (xs + 7) / 8 * ys;
+	else if (colors == 3 || colors == 4)
+		bytes = cbpp * colors + (xs + 3) / 4 * ys;
+	else if (5 <= colors && colors <= 16)
+		bytes = cbpp * colors + (xs + 1) / 2 * ys;
+	if (bytes < *best) {
+		*best = bytes;
+		subencoding = colors;
+	}
+
+	return subencoding;
+}
+
+static inline uint8_t *
+insert_rl(uint8_t *dst, int rl)
+{
+	while (rl > 254) {
+		*dst++ = 255;
+		rl -= 255;
+	}
+	*dst++ = rl;
+	return dst;
+}
+
+static inline uint8_t
+palette8_match(uint8_t *palette, int colors, uint8_t color)
+{
+	int c;
+
+	for (c = 0; c < colors; ++c) {
+		if (palette[c] == color)
+			break;
+	}
+
+	return c;
+}
+
+static inline uint8_t *
+insert8_palrle_rl(uint8_t *dst,
+	uint8_t *palette, int colors, uint8_t color, int rl)
+{
+	uint8_t c = palette8_match(palette, colors, color);
+	if (!rl)
+		*dst++ = c;
+	else {
+		*dst++ = 128 + c;
+		dst = insert_rl(dst, rl);
+	}
+	return dst;
+}
+
+static void
+do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
+{
+	uint8_t palette[128];
+	int colors = 1;
+	int single = 0;
+	int multi = 0;
+	int rl = 0;
+	uint8_t here;
+	uint8_t last = *src;
+	int x, y;
+	uint8_t *scan = src;
+	palette[0] = *scan;
+	int c;
+	int subencoding;
+	int bytes;
+
+	uint8_t *dst = *buf;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *scan++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (colors == 128)
+				continue;
+			c = palette8_match(palette, colors, here);
+			if (c == colors)
+				palette[colors++] = here;
+		}
+		scan += stride - xs;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	*dst++ = subencoding = select_subencoding(
+		xs, ys, 1, colors, single, multi, &bytes);
+
+	if (subencoding == 0) {
+		/* raw */
+		for (y = 0; y < ys; ++y) {
+			memcpy(dst, src, xs);
+			src += stride;
+			dst += xs;
+		}
+		goto done;
+	}
+
+	if (subencoding == 128) {
+		/* plain rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				*dst++ = last;
+				dst = insert_rl(dst, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride - xs;
+		}
+		*dst++ = last;
+		while (rl > 254) {
+			*dst++ = 255;
+			rl -= 255;
+		}
+		*dst++ = rl;
+		goto done;
+	}
+
+	/* palettized subencodings follows */
+	memcpy(dst, palette, colors);
+	dst += colors;
+
+	if (subencoding == 1)
+		/* solid */
+		goto done;
+
+	if (subencoding >= 130) {
+		/* palette rle */
+		rl = -1;
+		last = *src;
+		for (y = 0; y < ys; ++y) {
+			for (x = 0; x < xs; ++x) {
+				here = *src++;
+				if (last == here) {
+					++rl;
+					continue;
+				}
+				dst = insert8_palrle_rl(
+					dst, palette, colors, last, rl);
+				last = here;
+				rl = 0;
+			}
+			src += stride - xs;
+		}
+		dst = insert8_palrle_rl(dst, palette, colors, last, rl);
+		goto done;
+	}
+
+	if (subencoding == 2) {
+		/* packed palette */
+		for (y = 0; y < ys; ++y) {
+			int pel = 7;
+			*dst = 0;
+			for (x = 0; x < xs; ++x) {
+				*dst |= palette8_match(palette, colors, *src++) << pel;
+				if (--pel < 0) {
+					pel = 7;
+					*++dst = 0;
+				}
+			}
+			src += stride - xs;
+			if (xs & 7)
+				++dst;
+		}
+		goto done;
+	}
+
+	if (subencoding <= 4) {
+		/* packed palette */
+		for (y = 0; y < ys; ++y) {
+			int pel = 6;
+			*dst = 0;
+			for (x = 0; x < xs; ++x) {
+				*dst |= palette8_match(palette, colors, *src++) << pel;
+				pel -= 2;
+				if (pel < 0) {
+					pel = 6;
+					*++dst = 0;
+				}
+			}
+			src += stride - xs;
+			if (xs & 3)
+				++dst;
+		}
+		goto done;
+	}
+
+	if (subencoding <= 16) {
+		/* packed palette */
+		for (y = 0; y < ys; ++y) {
+			int pel = 4;
+			*dst = 0;
+			for (x = 0; x < xs; ++x) {
+				*dst |= palette8_match(palette, colors, *src++) << pel;
+				pel -= 4;
+				if (pel < 0) {
+					pel = 4;
+					*++dst = 0;
+				}
+			}
+			src += stride - xs;
+			if (xs & 1)
+				++dst;
+		}
+		goto done;
+	}
+
+done:
+	*buf = dst;
+}
+
 void
 GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	struct zrle_ctx_t *ctx = priv->zrle_ctx;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	ggi_graphtype gt;
@@ -315,7 +583,8 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		(update->br.y - update->tl.y);
 	xtiles = (update->br.x - update->tl.x + 63) / 64;
 	ytiles = (update->br.y - update->tl.y + 63) / 64;
-	work = malloc(xtiles * ytiles + count * cbpp);
+	GGI_vnc_buf_reserve(&ctx->work, xtiles * ytiles + count * cbpp);
+	work = ctx->work.buf;
 	GGI_vnc_buf_reserve(&priv->wbuf, priv->wbuf.size + 20);
 	header = &priv->wbuf.buf[priv->wbuf.size];
 	header[ 0] = 0;
@@ -341,11 +610,15 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	db = ggiDBGetBuffer(cvis->stem, 0);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
-	if (priv->reverse_endian && bpp != cbpp) {
+	if (bpp == 1) {
+		lower_or_bpp = bpp;
+		tile = do_tile8;
+	}
+	else if (priv->reverse_endian && bpp != cbpp) {
 		lower_or_bpp = lower;
 		tile = do_ctile_rev;
 	}
-	else if (priv->reverse_endian && GT_SIZE(gt) > 8) {
+	else if (priv->reverse_endian) {
 		lower_or_bpp = bpp;
 		tile = do_tile_rev;
 	}
@@ -409,6 +682,8 @@ GGI_vnc_zrle_open(int level)
 void
 GGI_vnc_zrle_close(struct zrle_ctx_t *ctx)
 {
+	if (ctx->work.buf)
+		free(ctx->work.buf);
 	deflateEnd(&ctx->zstr);
 	free(ctx);
 }
