@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.28 2006/09/02 19:42:37 pekberg Exp $
+/* $Id: zrle.c,v 1.29 2006/09/02 19:58:47 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -122,7 +122,7 @@ select_subencoding(int xs, int ys, int cbpp,
 	}
 
 	/* raw */
-	*best = xs * ys;
+	*best = xs * ys * cbpp;
 	subencoding = ZRLE_RAW;
 
 	/* palette rle */
