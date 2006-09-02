@@ -62,7 +62,7 @@ Features
 --------
 
 - raw, zlib and ZRLE encodings, but only a subset (no palettization nor
-  run length encoding) of the ZRLE encoding for 16 and 32 bit clients.
+  run length encoding) of the ZRLE encoding for 32 bit clients.
 - Unaccelerated.
 
 

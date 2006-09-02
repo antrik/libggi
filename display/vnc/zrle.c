@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.14 2006/09/02 09:01:19 pekberg Exp $
+/* $Id: zrle.c,v 1.15 2006/09/02 09:36:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -428,6 +428,48 @@ packed_palette_16(uint8_t *dst, uint16_t *src,
 	return dst;
 }
 
+static inline uint8_t *
+insert_hilo_16(uint8_t *dst, uint16_t pixel)
+{
+	*dst++ = pixel >> 8;
+	*dst++ = pixel;
+	return dst;
+}
+
+static inline uint8_t *
+insert_lohi_16(uint8_t *dst, uint16_t pixel)
+{
+	*dst++ = pixel;
+	*dst++ = pixel >> 8;
+	return dst;
+}
+
+static inline uint8_t *
+insert_rev_16(uint8_t *dst, uint16_t pixel)
+{
+#ifdef GGI_BIG_ENDIAN
+	return insert_lohi_16(dst, pixel);
+#else
+	return insert_hilo_16(dst, pixel);
+#endif
+}
+
+static inline uint8_t *
+insert_16(uint8_t *dst, uint16_t pixel, int rev)
+{
+#ifdef GGI_BIG_ENDIAN
+	if (rev)
+		return insert_lohi_16(dst, pixel);
+	else
+		return insert_hilo_16(dst, pixel);
+#else
+	if (rev)
+		return insert_hilo_16(dst, pixel);
+	else
+		return insert_lohi_16(dst, pixel);
+#endif
+}
+
 static void
 do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
@@ -569,7 +611,7 @@ done:
 }
 
 static void
-do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
+do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 {
 	uint16_t *src = (uint16_t *)src8;
 	uint16_t palette[128];
@@ -622,10 +664,23 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 
 	if (subencoding == ZRLE_RAW) {
 		/* raw */
+		if (!rev) {
+			for (y = 0; y < ys; ++y) {
+				memcpy(dst, src, xs * 2);
+				src += stride + xs;
+				dst += xs * 2;
+			}
+			goto done;
+		}
 		for (y = 0; y < ys; ++y) {
-			memcpy(dst, src, xs * 2);
+			for (x = 0; x < xs; ++x) {
+#ifdef GGI_BIG_ENDIAN
+				dst = insert_lohi_16(dst, src[x]);
+#else
+				dst = insert_hilo_16(dst, src[x]);
+#endif
+			}
 			src += stride + xs;
-			dst += xs * 2;
 		}
 		goto done;
 	}
@@ -641,26 +696,14 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 					++rl;
 					continue;
 				}
-#ifdef GGI_BIG_ENDIAN
-				*dst++ = last >> 8;
-				*dst++ = last;
-#else
-				*dst++ = last;
-				*dst++ = last >> 8;
-#endif
+				dst = insert_16(dst, last, rev);
 				dst = insert_rl(dst, rl);
 				last = here;
 				rl = 0;
 			}
 			src += stride;
 		}
-#ifdef GGI_BIG_ENDIAN
-		*dst++ = last >> 8;
-		*dst++ = last;
-#else
-		*dst++ = last;
-		*dst++ = last >> 8;
-#endif
+		dst = insert_16(dst, last, rev);
 		while (rl > 254) {
 			*dst++ = 255;
 			rl -= 255;
@@ -670,8 +713,14 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int bpp)
 	}
 
 	/* palettized subencodings follows */
-	memcpy(dst, palette, colors * 2);
-	dst += colors * 2;
+	if (!rev) {
+		memcpy(dst, palette, colors * 2);
+		dst += colors * 2;
+	}
+	else {
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_16(dst, palette[c]);
+	}
 
 	if (subencoding == ZRLE_SOLID)
 		/* solid */
@@ -737,7 +786,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	int xtiles, ytiles;
 	unsigned char *work;
 	int lower = 1;
-	int lower_or_bpp;
+	int tile_param;
 	tile_func *tile;
 	int xt, yt;
 	int xs, ys;
@@ -818,27 +867,27 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	if (bpp == 1) {
-		lower_or_bpp = bpp;
+		tile_param = 0;
 		tile = do_tile_8;
 	}
-	if (bpp == 2 && !priv->reverse_endian) {
-		lower_or_bpp = bpp;
+	else if (bpp == 2) {
+		tile_param = priv->reverse_endian;
 		tile = do_tile_16;
 	}
 	else if (priv->reverse_endian && bpp != cbpp) {
-		lower_or_bpp = lower;
+		tile_param = lower;
 		tile = do_ctile_rev;
 	}
 	else if (priv->reverse_endian) {
-		lower_or_bpp = bpp;
+		tile_param = bpp;
 		tile = do_tile_rev;
 	}
 	else if (bpp == cbpp) {
-		lower_or_bpp = bpp;
+		tile_param = bpp;
 		tile = do_tile;
 	}
 	else {
-		lower_or_bpp = lower;
+		tile_param = lower;
 		tile = do_ctile;
 	}
 	
@@ -862,7 +911,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 			tile(&buf, (uint8_t *)db->read +
 				((update->tl.y + 64 * yt) * stride +
 				 update->tl.x + 64 * xt) * bpp,
-				xs, ys, stride, lower_or_bpp);
+				xs, ys, stride, tile_param);
 		}
 	}
 
