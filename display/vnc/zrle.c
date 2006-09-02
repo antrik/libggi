@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.23 2006/09/02 18:40:50 pekberg Exp $
+/* $Id: zrle.c,v 1.24 2006/09/02 19:19:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -349,6 +349,97 @@ insert_rl(uint8_t *dst, int rl)
 }
 
 static inline uint8_t *
+plain_rle_8(uint8_t *dst, uint8_t *src,
+	int xs, int ys, int stride)
+{
+	int rl;
+	uint8_t here;
+	uint8_t last;
+	int x, y;
+
+	rl = -1;
+	last = *src;
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			*dst++ = last;
+			dst = insert_rl(dst, rl);
+			last = here;
+			rl = 0;
+		}
+		src += stride;
+	}
+	*dst++ = last;
+	return insert_rl(dst, rl);
+}
+
+typedef uint8_t *(insert_16_t)(uint8_t *dst, uint16_t pixel);
+
+static inline uint8_t *
+plain_rle_16(uint8_t *dst, uint16_t *src,
+	int xs, int ys, int stride, insert_16_t *insert)
+{
+	int rl;
+	uint16_t here;
+	uint16_t last;
+	int x, y;
+
+	rl = -1;
+	last = *src;
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			dst = insert(dst, last);
+			dst = insert_rl(dst, rl);
+			last = here;
+			rl = 0;
+		}
+		src += stride;
+	}
+	dst = insert(dst, last);
+	return insert_rl(dst, rl);
+}
+
+typedef uint8_t *(insert_32_t)(uint8_t *dst, uint32_t pixel);
+
+static inline uint8_t *
+plain_rle_32(uint8_t *dst, uint32_t *src,
+	int xs, int ys, int stride, insert_32_t *insert)
+{
+	int rl;
+	uint32_t here;
+	uint32_t last;
+	int x, y;
+
+	rl = -1;
+	last = *src;
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			dst = insert(dst, last);
+			dst = insert_rl(dst, rl);
+			last = here;
+			rl = 0;
+		}
+		src += stride;
+	}
+	dst = insert(dst, last);
+	return insert_rl(dst, rl);
+}
+
+static inline uint8_t *
 insert_palrle_rl_8(uint8_t *dst,
 	uint8_t *palette, int colors, uint8_t color, int rl)
 {
@@ -680,18 +771,12 @@ insert_rev_32(uint8_t *dst, uint32_t pixel)
 }
 
 static inline uint8_t *
-insert_16(uint8_t *dst, uint16_t pixel, int rev)
+insert_16(uint8_t *dst, uint16_t pixel)
 {
 #ifdef GGI_BIG_ENDIAN
-	if (rev)
-		return insert_lohi_16(dst, pixel);
-	else
-		return insert_hilo_16(dst, pixel);
+	return insert_hilo_16(dst, pixel);
 #else
-	if (rev)
-		return insert_hilo_16(dst, pixel);
-	else
-		return insert_lohi_16(dst, pixel);
+	return insert_lohi_16(dst, pixel);
 #endif
 }
 
@@ -716,18 +801,12 @@ insert_24h(uint8_t *dst, uint32_t pixel)
 }
 
 static inline uint8_t *
-insert_32(uint8_t *dst, uint32_t pixel, int rev)
+insert_32(uint8_t *dst, uint32_t pixel)
 {
 #ifdef GGI_BIG_ENDIAN
-	if (rev)
-		return insert_lohi_32(dst, pixel);
-	else
-		return insert_hilo_32(dst, pixel);
+	return insert_hilo_32(dst, pixel);
 #else
-	if (rev)
-		return insert_hilo_32(dst, pixel);
-	else
-		return insert_lohi_32(dst, pixel);
+	return insert_lohi_32(dst, pixel);
 #endif
 }
 
@@ -736,10 +815,7 @@ do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
 	uint8_t palette[128];
 	int colors;
-	int rl;
-	uint8_t here;
-	uint8_t last;
-	int x, y;
+	int y;
 	int subencoding;
 
 	uint8_t *dst = *buf;
@@ -761,24 +837,7 @@ do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				*dst++ = last;
-				dst = insert_rl(dst, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
-		*dst++ = last;
-		dst = insert_rl(dst, rl);
+		dst = plain_rle_8(dst, src, src, xs, ys, stride);
 		goto done;
 	}
 
@@ -825,9 +884,6 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 	uint16_t *src = (uint16_t *)src8;
 	uint16_t palette[128];
 	int colors;
-	int rl;
-	uint16_t here;
-	uint16_t last;
 	int x, y;
 	int c;
 	int subencoding;
@@ -864,24 +920,12 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				dst = insert_16(dst, last, rev);
-				dst = insert_rl(dst, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
-		dst = insert_16(dst, last, rev);
-		dst = insert_rl(dst, rl);
+		if (!rev)
+			dst = plain_rle_16(
+				dst, src, xs, ys, stride, insert_16);
+		else
+			dst = plain_rle_16(
+				dst, src, xs, ys, stride, insert_rev_16);
 		goto done;
 	}
 
@@ -935,9 +979,6 @@ do_tile_24(uint8_t **buf,
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
 	int colors;
-	int rl;
-	uint32_t here;
-	uint32_t last;
 	int x, y;
 	int c;
 	int subencoding;
@@ -966,30 +1007,12 @@ do_tile_24(uint8_t **buf,
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				if (lower)
-					dst = insert_24l(dst, last);
-				else
-					dst = insert_24h(dst, last);
-				dst = insert_rl(dst, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
 		if (lower)
-			dst = insert_24l(dst, last);
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_24l);
 		else
-			dst = insert_24h(dst, last);
-		dst = insert_rl(dst, rl);
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_24h);
 		goto done;
 	}
 
@@ -1043,9 +1066,6 @@ do_tile_24r(uint8_t **buf,
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
 	int colors;
-	int rl;
-	uint32_t here;
-	uint32_t last;
 	int x, y;
 	int c;
 	int subencoding;
@@ -1074,30 +1094,12 @@ do_tile_24r(uint8_t **buf,
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				if (lower)
-					dst = insert_rev_24l(dst, last);
-				else
-					dst = insert_rev_24h(dst, last);
-				dst = insert_rl(dst, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
 		if (lower)
-			dst = insert_rev_24l(dst, last);
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_rev_24l);
 		else
-			dst = insert_rev_24h(dst, last);
-		dst = insert_rl(dst, rl);
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_rev_24h);
 		goto done;
 	}
 
@@ -1150,9 +1152,6 @@ do_tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
 	int colors;
-	int rl;
-	uint32_t here;
-	uint32_t last;
 	int x, y;
 	int c;
 	int subencoding;
@@ -1189,24 +1188,12 @@ do_tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 
 	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
-		rl = -1;
-		last = *src;
-		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-				here = *src++;
-				if (last == here) {
-					++rl;
-					continue;
-				}
-				dst = insert_32(dst, last, rev);
-				dst = insert_rl(dst, rl);
-				last = here;
-				rl = 0;
-			}
-			src += stride;
-		}
-		dst = insert_32(dst, last, rev);
-		dst = insert_rl(dst, rl);
+		if (!rev)
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_32);
+		else
+			dst = plain_rle_32(
+				dst, src, xs, ys, stride, insert_rev_32);
 		goto done;
 	}
 
