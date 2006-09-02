@@ -1,4 +1,4 @@
-Display on vnc clinet over a network
+Display on vnc client over a network
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. manpage:: 7 display-vnc

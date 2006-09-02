@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.9 2006/09/02 00:01:39 pekberg Exp $
+/* $Id: zrle.c,v 1.10 2006/09/02 00:05:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -281,7 +281,7 @@ select_subencoding(int xs, int ys, int cbpp,
 		subencoding = 128;
 	}
 
-	/* packet palette */
+	/* packed palette */
 	bytes = *best + 1;
 	if (colors == 2)
 		bytes = cbpp * colors + (xs + 7) / 8 * ys;
