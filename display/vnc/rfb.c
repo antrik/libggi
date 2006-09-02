@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.39 2006/09/01 23:04:06 pekberg Exp $
+/* $Id: rfb.c,v 1.40 2006/09/02 13:47:32 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -981,10 +981,8 @@ vnc_client_security(struct ggi_visual *vis)
 
 		/* Mix in some bits that will change with time */
 		ggCurTime(&now);
-		for (i = 0; i < sizeof(now.tv_sec); ++i)
-			priv->challenge[i & 7] ^= *(((uint8_t *)&now.tv_sec) + i);
-		for (i = 0; i < sizeof(now.tv_usec); ++i)
-			priv->challenge[i & 7] ^= *(((uint8_t *)&now.tv_usec) + i);
+		for (i = 0; i < sizeof(now); ++i)
+			priv->challenge[i & 7] ^= *(((uint8_t *)&now) + i);
 
 		/* scramble using des to get the final challenge */
 		usekey(priv->randomizer);
