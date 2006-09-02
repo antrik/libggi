@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.27 2006/09/02 19:35:30 pekberg Exp $
+/* $Id: zrle.c,v 1.28 2006/09/02 19:42:37 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -811,7 +811,7 @@ insert_32(uint8_t *dst, uint32_t pixel)
 }
 
 static void
-do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
+tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
 	uint8_t palette[128];
 	int colors;
@@ -879,7 +879,7 @@ done:
 }
 
 static void
-do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
+tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 {
 	uint16_t *src = (uint16_t *)src8;
 	uint16_t palette[128];
@@ -968,7 +968,7 @@ done:
 }
 
 static void
-do_tile_24(uint8_t **buf,
+tile_24(uint8_t **buf,
 	uint8_t *src8, int xs, int ys, int stride, int lower)
 {
 	uint32_t *src = (uint32_t *)src8;
@@ -1055,7 +1055,7 @@ done:
 }
 
 static void
-do_tile_24r(uint8_t **buf,
+tile_rev_24(uint8_t **buf,
 	uint8_t *src8, int xs, int ys, int stride, int lower)
 {
 	uint32_t *src = (uint32_t *)src8;
@@ -1142,7 +1142,7 @@ done:
 }
 
 static void
-do_tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
+tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 {
 	uint32_t *src = (uint32_t *)src8;
 	uint32_t palette[128];
@@ -1329,23 +1329,23 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 
 	if (bpp == 1) {
 		tile_param = 0;
-		tile = do_tile_8;
+		tile = tile_8;
 	}
 	else if (bpp == 2) {
 		tile_param = client->reverse_endian;
-		tile = do_tile_16;
+		tile = tile_16;
 	}
 	else if (cbpp == 3 && !client->reverse_endian) {
 		tile_param = lower;
-		tile = do_tile_24;
+		tile = tile_24;
 	}
 	else if (cbpp == 3) {
 		tile_param = lower;
-		tile = do_tile_24r;
+		tile = tile_rev_24;
 	}
 	else {
 		tile_param = client->reverse_endian;
-		tile = do_tile_32;
+		tile = tile_32;
 	}
 
 	stride = LIBGGI_VIRTX(cvis);
