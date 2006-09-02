@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.22 2006/09/02 18:31:08 pekberg Exp $
+/* $Id: zrle.c,v 1.23 2006/09/02 18:40:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -194,6 +194,100 @@ palette_match_32(uint32_t *palette, int colors, uint32_t color)
 	}
 
 	return c;
+}
+
+static inline uint8_t
+scan_8(uint8_t *src,
+	int xs, int ys, int stride, uint8_t *palette, int *colors)
+{
+	int x, y;
+	uint8_t last = *src;
+	uint8_t here;
+	int rl = 0;
+	int single = 0;
+	int multi = 0;
+	int bytes;
+	int c;
+
+	*colors = 1;
+	palette[0] = *src;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (*colors == 128)
+				continue;
+			c = palette_match_8(palette, *colors, here);
+			if (c == *colors)
+				palette[(*colors)++] = here;
+		}
+		src += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	return select_subencoding(
+		xs, ys, 1, *colors, single, multi, &bytes);
+}
+
+static inline uint8_t
+scan_16(uint16_t *src,
+	int xs, int ys, int stride, uint16_t *palette, int *colors)
+{
+	int x, y;
+	uint16_t last = *src;
+	uint16_t here;
+	int rl = 0;
+	int single = 0;
+	int multi = 0;
+	int bytes;
+	int c;
+
+	*colors = 1;
+	palette[0] = *src;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here) {
+				++rl;
+				continue;
+			}
+			last = here;
+			if (rl == 1)
+				++single;
+			else {
+				++multi;
+				rl = 1;
+			}
+			if (*colors == 128)
+				continue;
+			c = palette_match_16(palette, *colors, here);
+			if (c == *colors)
+				palette[(*colors)++] = here;
+		}
+		src += stride;
+	}
+	if (rl == 1)
+		++single;
+	else
+		++multi;
+
+	return select_subencoding(
+		xs, ys, 2, *colors, single, multi, &bytes);
 }
 
 static inline uint8_t
@@ -641,52 +735,19 @@ static void
 do_tile_8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
 	uint8_t palette[128];
-	int colors = 1;
-	int single = 0;
-	int multi = 0;
-	int rl = 0;
+	int colors;
+	int rl;
 	uint8_t here;
-	uint8_t last = *src;
+	uint8_t last;
 	int x, y;
-	uint8_t *scan = src;
-	palette[0] = *scan;
-	int c;
 	int subencoding;
-	int bytes;
 
 	uint8_t *dst = *buf;
 
 	stride -= xs;
 
-	for (y = 0; y < ys; ++y) {
-		for (x = 0; x < xs; ++x) {
-			here = *scan++;
-			if (last == here) {
-				++rl;
-				continue;
-			}
-			last = here;
-			if (rl == 1)
-				++single;
-			else {
-				++multi;
-				rl = 1;
-			}
-			if (colors == 128)
-				continue;
-			c = palette_match_8(palette, colors, here);
-			if (c == colors)
-				palette[colors++] = here;
-		}
-		scan += stride;
-	}
-	if (rl == 1)
-		++single;
-	else
-		++multi;
-
-	*dst++ = subencoding = select_subencoding(
-		xs, ys, 1, colors, single, multi, &bytes);
+	*dst++ = subencoding =
+		scan_8(src, xs, ys, stride, palette, &colors);
 
 	if (subencoding == ZRLE_RAW) {
 		/* raw */
@@ -763,52 +824,20 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 {
 	uint16_t *src = (uint16_t *)src8;
 	uint16_t palette[128];
-	int colors = 1;
-	int single = 0;
-	int multi = 0;
-	int rl = 0;
+	int colors;
+	int rl;
 	uint16_t here;
-	uint16_t last = *src;
+	uint16_t last;
 	int x, y;
-	uint16_t *scan = src;
-	palette[0] = *scan;
 	int c;
 	int subencoding;
-	int bytes;
 
 	uint8_t *dst = *buf;
 
 	stride -= xs;
 
-	for (y = 0; y < ys; ++y) {
-		for (x = 0; x < xs; ++x) {
-			here = *scan++;
-			if (last == here) {
-				++rl;
-				continue;
-			}
-			last = here;
-			if (rl == 1)
-				++single;
-			else {
-				++multi;
-				rl = 1;
-			}
-			if (colors == 128)
-				continue;
-			c = palette_match_16(palette, colors, here);
-			if (c == colors)
-				palette[colors++] = here;
-		}
-		scan += stride;
-	}
-	if (rl == 1)
-		++single;
-	else
-		++multi;
-
-	*dst++ = subencoding = select_subencoding(
-		xs, ys, 2, colors, single, multi, &bytes);
+	*dst++ = subencoding =
+		scan_16(src, xs, ys, stride, palette, &colors);
 
 	if (subencoding == ZRLE_RAW) {
 		/* raw */
