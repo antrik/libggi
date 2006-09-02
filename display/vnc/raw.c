@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.4 2006/09/02 15:26:12 pekberg Exp $
+/* $Id: raw.c,v 1.5 2006/09/02 16:21:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -65,10 +65,10 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 		client->dirty.tl.x, client->dirty.tl.y,
 		client->dirty.br.x, client->dirty.br.y);
 
-	if (!client->client_vis)
+	if (!client->vis)
 		cvis = priv->fb;
 	else {
-		cvis = client->client_vis;
+		cvis = client->vis;
 		_ggiCrossBlit(priv->fb,
 			update->tl.x, update->tl.y,
 			update->br.x - update->tl.x,

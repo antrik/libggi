@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.41 2006/09/02 15:26:12 pekberg Exp $
+/* $Id: rfb.c,v 1.42 2006/09/02 16:21:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -213,10 +213,10 @@ vnc_remove(struct ggi_visual *vis, int count)
 	memmove(client->buf, &client->buf[count], client->buf_size - count);
 	client->buf_size -= count;
 
-	if (client->client_action == vnc_client_run)
+	if (client->action == vnc_client_run)
 		return client->buf_size;
 
-	client->client_action = vnc_client_run;
+	client->action = vnc_client_run;
 	return vnc_client_run(vis);
 }
 
@@ -240,15 +240,15 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 
 	if (client->buf_size < 20) {
 		/* wait for more data */
-		client->client_action = vnc_client_pixfmt;
+		client->action = vnc_client_pixfmt;
 		return 0;
 	}
 
-	if (client->client_vis) {
-		stem = client->client_vis->stem;
+	if (client->vis) {
+		stem = client->vis->stem;
 		ggiClose(stem);
 		ggDelStem(stem);
-		client->client_vis = NULL;
+		client->vis = NULL;
 	}
 
 	memcpy(&red_max, &client->buf[8], sizeof(red_max));
@@ -364,7 +364,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 		err = -1;
 		goto err2;
 	}
-	client->client_vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+	client->vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 	if (ggiSetMode(stem, &mode)) {
 		DPRINT("ggiSetMode failed\n");
 		err = -1;
@@ -373,7 +373,7 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 
 	DPRINT_MISC("fb stdformat 0x%x, cvis stdformat 0x%x\n",
 		priv->fb->pixfmt->stdformat,
-		client->client_vis->pixfmt->stdformat);
+		client->vis->pixfmt->stdformat);
 
 	if (!client->buf[7])
 		ggiSetColorfulPalette(stem);
@@ -388,7 +388,7 @@ err2:
 err1:
 	ggDelStem(stem);
 err0:
-	client->client_vis = NULL;
+	client->vis = NULL;
 	return err;
 
 }
@@ -536,7 +536,7 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 
 	if (client->buf_size < 4) {
 		/* wait for more data */
-		client->client_action = vnc_client_set_encodings;
+		client->action = vnc_client_set_encodings;
 		return 0;
 	}
 
@@ -561,7 +561,7 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 		client->buf_size = tail;
 
 		/* wait for more data */
-		client->client_action = vnc_client_set_encodings_cont;
+		client->action = vnc_client_set_encodings_cont;
 		return 0;
 	}
 
@@ -589,10 +589,10 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		ggi_color *ggi_palette;
 		int i;
 
-		if (!client->client_vis)
+		if (!client->vis)
 			cvis = priv->fb;
 		else
-			cvis = client->client_vis;
+			cvis = client->vis;
 
 		colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
 
@@ -664,7 +664,7 @@ vnc_client_update(struct ggi_visual *vis)
 
 	if (client->buf_size < 10) {
 		/* wait for more data */
-		client->client_action = vnc_client_update;
+		client->action = vnc_client_update;
 		return 0;
 	}
 
@@ -726,7 +726,7 @@ vnc_client_key(struct ggi_visual *vis)
 
 	if (client->buf_size < 8) {
 		/* wait for more data */
-		client->client_action = vnc_client_key;
+		client->action = vnc_client_key;
 		return 0;
 	}
 
@@ -748,7 +748,7 @@ vnc_client_pointer(struct ggi_visual *vis)
 
 	if (client->buf_size < 6) {
 		/* wait for more data */
-		client->client_action = vnc_client_pointer;
+		client->action = vnc_client_pointer;
 		return 0;
 	}
 
@@ -770,7 +770,7 @@ vnc_client_cut(struct ggi_visual *vis)
 
 	if (client->buf_size < 8) {
 		/* wait for more data */
-		client->client_action = vnc_client_cut;
+		client->action = vnc_client_cut;
 		return 0;
 	}
 
@@ -779,7 +779,7 @@ vnc_client_cut(struct ggi_visual *vis)
 
 	if (client->buf_size < 8 + count) {
 		/* wait for more data */
-		client->client_action = vnc_client_cut;
+		client->action = vnc_client_cut;
 
 		/* remove all received stuff so far and adjust
 		 * how much more is expected
@@ -864,7 +864,7 @@ vnc_client_init(struct ggi_visual *vis)
 		DPRINT("Client want's to share connection. Not supported.\n");
 
 	client->buf_size = 0;
-	client->client_action = vnc_client_run;
+	client->action = vnc_client_run;
 
 	GGI_vnc_buf_reserve(&client->wbuf, 34);
 	client->wbuf.size += 34;
@@ -949,7 +949,7 @@ vnc_client_challenge(struct ggi_visual *vis)
 	}
 
 	client->buf_size = 0;
-	client->client_action = vnc_client_init;
+	client->action = vnc_client_init;
 
 	/* ok */
 	GGI_vnc_buf_reserve(&client->wbuf, 4);
@@ -992,7 +992,7 @@ vnc_client_security(struct ggi_visual *vis)
 		if (priv->passwd)
 			break;
 		client->buf_size = 0;
-		client->client_action = vnc_client_init;
+		client->action = vnc_client_init;
 
 		/* ok */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
@@ -1008,7 +1008,7 @@ vnc_client_security(struct ggi_visual *vis)
 		if (!priv->passwd)
 			break;
 		client->buf_size = 0;
-		client->client_action = vnc_client_challenge;
+		client->action = vnc_client_challenge;
 
 		/* Mix in some bits that will change with time */
 		ggCurTime(&now);
@@ -1083,7 +1083,7 @@ vnc_client_version(struct ggi_visual *vis)
 
 	if (client->protover <= 3) {
 		client->buf_size = 0;
-		client->client_action = vnc_client_init;
+		client->action = vnc_client_init;
 
 		/* ok, decide security */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
@@ -1103,7 +1103,7 @@ vnc_client_version(struct ggi_visual *vis)
 	}
 
 	client->buf_size = 0;
-	client->client_action = vnc_client_security;
+	client->action = vnc_client_security;
 
 	/* supported security types */
 	GGI_vnc_buf_reserve(&client->wbuf, 2);
@@ -1139,7 +1139,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd)
 	flags = fcntl(client->cfd, F_GETFL);
 	fcntl(client->cfd, F_SETFL, flags | O_NONBLOCK);
 
-	client->client_action = vnc_client_version;
+	client->action = vnc_client_version;
 
 	/* Support max protocol version 3.8 */
 	GGI_vnc_buf_reserve(&client->wbuf, 12);
@@ -1206,7 +1206,7 @@ GGI_vnc_client_data(void *arg, int cfd)
 	memcpy(client->buf + client->buf_size, buf, len);
 	client->buf_size += len;
 
-	if (client->client_action(vis)) {
+	if (client->action(vis)) {
 		close_client(priv, client);
 		return;
 	}
@@ -1241,7 +1241,7 @@ GGI_vnc_write_client(void *arg, int fd)
 	if (!client->buf_size)
 		return;
 
-	if (client->client_action(vis)) {
+	if (client->action(vis)) {
 		close_client(priv, client);
 		return;
 	}
@@ -1294,7 +1294,7 @@ GGI_vnc_invalidate_palette(struct ggi_visual *vis)
 	if (!client)
 		return;
 
-	if (client->client_vis) {
+	if (client->vis) {
 		/* non-matching client pixfmt, trigger crossblit */
 		client->dirty.tl.x = 0;
 		client->dirty.tl.y = 0;
