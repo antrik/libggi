@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/09/02 15:26:13 pekberg Exp $
+/* $Id: visual.c,v 1.14 2006/09/02 21:42:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -59,6 +59,7 @@ static const gg_option optlist[] =
 	{ "client",  "" },
 	{ "display", "no" },
 	{ "passwd",  "" },
+	{ "title",   "GGI on vnc" },
 	{ "zlib",    "" },
 	{ "zrle",    "" },
 };
@@ -66,8 +67,9 @@ static const gg_option optlist[] =
 #define OPT_CLIENT	0
 #define OPT_DISPLAY	1
 #define OPT_PASSWD	2
-#define OPT_ZLIB	3
-#define OPT_ZRLE	4
+#define OPT_TITLE	3
+#define OPT_ZLIB	4
+#define OPT_ZRLE	5
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -150,6 +152,9 @@ GGIopen(struct ggi_visual *vis,
 	}
 	else
 		priv->passwd = 0;
+
+	ggstrlcpy(priv->title,
+		options[OPT_TITLE].result, sizeof(priv->title));
 
 	if (options[OPT_ZLIB].result[0] == '\0')
 		priv->zlib_level = -1; /* default compression */

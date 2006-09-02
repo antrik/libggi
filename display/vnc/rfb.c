@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.42 2006/09/02 16:21:52 pekberg Exp $
+/* $Id: rfb.c,v 1.43 2006/09/02 21:42:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -866,8 +866,8 @@ vnc_client_init(struct ggi_visual *vis)
 	client->buf_size = 0;
 	client->action = vnc_client_run;
 
-	GGI_vnc_buf_reserve(&client->wbuf, 34);
-	client->wbuf.size += 34;
+	GGI_vnc_buf_reserve(&client->wbuf, 24 + strlen(priv->title));
+	client->wbuf.size += 24 + strlen(priv->title);
 	server_init = client->wbuf.buf;
 	tmp16 = htons(LIBGGI_VIRTX(vis));
 	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
@@ -902,9 +902,9 @@ vnc_client_init(struct ggi_visual *vis)
 	server_init[17] = 0;
 	server_init[18] = 0;
 	server_init[19] = 0;
-	tmp32 = htonl(10);
+	tmp32 = htonl(strlen(priv->title));
 	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
-	memcpy(&server_init[24], "GGI on vnc", ntohl(tmp32));
+	memcpy(&server_init[24], priv->title, ntohl(tmp32));
 
 	/* desired pixel-format */
 	write_client(priv, &client->wbuf);

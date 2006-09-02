@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.16 2006/09/02 16:21:52 pekberg Exp $
+/* $Id: vnc.h,v 1.17 2006/09/02 21:42:50 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -93,6 +93,8 @@ typedef struct {
 
 	int zlib_level;
 	int zrle_level;
+
+	char title[80];
 
 	ggi_vnc_client *client;
 } ggi_vnc_priv;
