@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.26 2006/09/02 19:28:21 pekberg Exp $
+/* $Id: zrle.c,v 1.27 2006/09/02 19:35:30 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -906,13 +906,8 @@ do_tile_16(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 			goto done;
 		}
 		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				dst = insert_lohi_16(dst, src[x]);
-#else
-				dst = insert_hilo_16(dst, src[x]);
-#endif
-			}
+			for (x = 0; x < xs; ++x)
+				dst = insert_rev_16(dst, src[x]);
 			src += stride + xs;
 		}
 		goto done;
@@ -1174,13 +1169,8 @@ do_tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 			goto done;
 		}
 		for (y = 0; y < ys; ++y) {
-			for (x = 0; x < xs; ++x) {
-#ifdef GGI_BIG_ENDIAN
-				dst = insert_lohi_32(dst, src[x]);
-#else
-				dst = insert_hilo_32(dst, src[x]);
-#endif
-			}
+			for (x = 0; x < xs; ++x)
+				dst = insert_rev_32(dst, src[x]);
 			src += stride + xs;
 		}
 		goto done;
