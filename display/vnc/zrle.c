@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.11 2006/09/02 00:12:23 pekberg Exp $
+/* $Id: zrle.c,v 1.12 2006/09/02 08:32:38 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -53,6 +53,22 @@ struct zrle_ctx_t {
 	ggi_vnc_buf work;
 };
 
+/* subencodings */
+#define ZRLE_RAW              0
+#define ZRLE_SOLID            1
+#define ZRLE_PACKED_1         2
+#define ZRLE_PACKED_2_START   3
+#define ZRLE_PACKED_2_END     4
+#define ZRLE_PACKED_4_START   5
+#define ZRLE_PACKED_4_END    16
+#define ZRLE_PACKED_BASE      0
+#define ZRLE_PACKED_START     2
+#define ZRLE_PACKED_END      16
+#define ZRLE_RLE            128
+#define ZRLE_PRLE_BASE      128
+#define ZRLE_PRLE_START     130
+#define ZRLE_PRLE_END       255
+
 typedef void (tile_func)(uint8_t **buf, uint8_t *src,
 	int xs, int ys, int stride, int bpp);
 
@@ -97,7 +113,7 @@ do_tile(uint8_t **buf, uint8_t *src,
 	int y;
 	uint8_t *dst = *buf;
 
-	*dst++ = 0; /* raw */
+	*dst++ = ZRLE_RAW;
 	for (y = 0; y < ys; ++y) {
 		memcpy(dst, src, xs * bpp);
 		src += stride * bpp;
@@ -114,7 +130,7 @@ do_ctile(uint8_t **buf, uint8_t *src,
 	int x, y;
 	uint8_t *dst = *buf;
 
-	*dst++ = 0; /* raw */
+	*dst++ = ZRLE_RAW;
 
 	if (lower) {
 		uint32_t *src32 = (uint32_t *)src;
@@ -161,7 +177,7 @@ do_tile_rev(uint8_t **buf, uint8_t *src,
 	int x, y;
 	uint8_t *dst = *buf;
 
-	*dst++ = 0; /* raw */
+	*dst++ = ZRLE_RAW;
 
 	if (bpp == 2) {
 		uint16_t *src16 = (uint16_t *)src;
@@ -208,7 +224,7 @@ do_ctile_rev(uint8_t **buf, uint8_t *src,
 	int x, y;
 	uint8_t *dst = *buf;
 
-	*dst++ = 0; /* raw */
+	*dst++ = ZRLE_RAW;
 
 	if (lower) {
 		uint32_t *src32 = (uint32_t *)src;
@@ -258,19 +274,19 @@ select_subencoding(int xs, int ys, int cbpp,
 	/* solid */
 	if (colors == 1) {
 		*best = cbpp;
-		return 1;
+		return ZRLE_SOLID;
 	}
 
 	/* raw */
 	*best = xs * ys;
-	subencoding = 0;
+	subencoding = ZRLE_RAW;
 
 	/* palette rle */
 	if (2 <= colors && colors <= 127) {
 		bytes = cbpp * colors + single + 9 * multi / 4;
 		if (bytes < *best) {
 			*best = bytes;
-			subencoding = 128 + colors;
+			subencoding = ZRLE_PRLE_BASE + colors;
 		}
 	}
 
@@ -278,7 +294,7 @@ select_subencoding(int xs, int ys, int cbpp,
 	bytes = (1 + cbpp) * single + cbpp * multi + 9 * multi / 4;
 	if (bytes < *best) {
 		*best = bytes;
-		subencoding = 128;
+		subencoding = ZRLE_RLE;
 	}
 
 	/* packed palette */
@@ -291,7 +307,7 @@ select_subencoding(int xs, int ys, int cbpp,
 		bytes = cbpp * colors + (xs + 1) / 2 * ys;
 	if (bytes < *best) {
 		*best = bytes;
-		subencoding = colors;
+		subencoding = ZRLE_PACKED_BASE + colors;
 	}
 
 	return subencoding;
@@ -335,6 +351,31 @@ insert8_palrle_rl(uint8_t *dst,
 	return dst;
 }
 
+static inline uint8_t *
+packed8_palette(uint8_t *dst,
+	uint8_t *src, int xs, int ys, int stride, uint8_t *palette, int bits)
+{
+	int x, y;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 8 - bits;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			*dst |= palette8_match(palette, 16, *src++) << pel;
+			pel -= bits;
+			if (pel < 0) {
+				pel = 8 - bits;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 8 - bits)
+			++dst;
+	}
+
+	return dst;
+}
+
 static void
 do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 {
@@ -353,6 +394,8 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 	int bytes;
 
 	uint8_t *dst = *buf;
+
+	stride -= xs;
 
 	for (y = 0; y < ys; ++y) {
 		for (x = 0; x < xs; ++x) {
@@ -374,7 +417,7 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 			if (c == colors)
 				palette[colors++] = here;
 		}
-		scan += stride - xs;
+		scan += stride;
 	}
 	if (rl == 1)
 		++single;
@@ -384,17 +427,17 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 	*dst++ = subencoding = select_subencoding(
 		xs, ys, 1, colors, single, multi, &bytes);
 
-	if (subencoding == 0) {
+	if (subencoding == ZRLE_RAW) {
 		/* raw */
 		for (y = 0; y < ys; ++y) {
 			memcpy(dst, src, xs);
-			src += stride;
+			src += stride + xs;
 			dst += xs;
 		}
 		goto done;
 	}
 
-	if (subencoding == 128) {
+	if (subencoding == ZRLE_RLE) {
 		/* plain rle */
 		rl = -1;
 		last = *src;
@@ -410,7 +453,7 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 				last = here;
 				rl = 0;
 			}
-			src += stride - xs;
+			src += stride;
 		}
 		*dst++ = last;
 		while (rl > 254) {
@@ -425,11 +468,11 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 	memcpy(dst, palette, colors);
 	dst += colors;
 
-	if (subencoding == 1)
+	if (subencoding == ZRLE_SOLID)
 		/* solid */
 		goto done;
 
-	if (subencoding >= 130) {
+	if (subencoding >= ZRLE_PRLE_START) {
 		/* palette rle */
 		rl = -1;
 		last = *src;
@@ -445,68 +488,27 @@ do_tile8(uint8_t **buf, uint8_t *src, int xs, int ys, int stride, int bpp)
 				last = here;
 				rl = 0;
 			}
-			src += stride - xs;
+			src += stride;
 		}
 		dst = insert8_palrle_rl(dst, palette, colors, last, rl);
 		goto done;
 	}
 
-	if (subencoding == 2) {
+	if (subencoding == ZRLE_PACKED_1) {
 		/* packed palette */
-		for (y = 0; y < ys; ++y) {
-			int pel = 7;
-			*dst = 0;
-			for (x = 0; x < xs; ++x) {
-				*dst |= palette8_match(palette, colors, *src++) << pel;
-				if (--pel < 0) {
-					pel = 7;
-					*++dst = 0;
-				}
-			}
-			src += stride - xs;
-			if (xs & 7)
-				++dst;
-		}
+		dst = packed8_palette(dst, src, xs, ys, stride, palette, 1);
 		goto done;
 	}
 
-	if (subencoding <= 4) {
+	if (subencoding <= ZRLE_PACKED_2_END) {
 		/* packed palette */
-		for (y = 0; y < ys; ++y) {
-			int pel = 6;
-			*dst = 0;
-			for (x = 0; x < xs; ++x) {
-				*dst |= palette8_match(palette, colors, *src++) << pel;
-				pel -= 2;
-				if (pel < 0) {
-					pel = 6;
-					*++dst = 0;
-				}
-			}
-			src += stride - xs;
-			if (xs & 3)
-				++dst;
-		}
+		dst = packed8_palette(dst, src, xs, ys, stride, palette, 2);
 		goto done;
 	}
 
-	if (subencoding <= 16) {
+	if (subencoding <= ZRLE_PACKED_4_END) {
 		/* packed palette */
-		for (y = 0; y < ys; ++y) {
-			int pel = 4;
-			*dst = 0;
-			for (x = 0; x < xs; ++x) {
-				*dst |= palette8_match(palette, colors, *src++) << pel;
-				pel -= 4;
-				if (pel < 0) {
-					pel = 4;
-					*++dst = 0;
-				}
-			}
-			src += stride - xs;
-			if (xs & 1)
-				++dst;
-		}
+		dst = packed8_palette(dst, src, xs, ys, stride, palette, 4);
 		goto done;
 	}
 
