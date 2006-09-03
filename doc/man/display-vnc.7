@@ -1,11 +1,11 @@
-.TH "display-vnc" 7 "2006-09-02" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-03" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
-             [-zlib=<level>] [-zrle=<level>]
+             [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -39,6 +39,11 @@ with the stated \fIpassword\fR in order to connect. In the
 significant bits of every character are used in the authentication.
 
 .TP
+\f(CW-title=<title>\fR
+The \fItitle\fR clients should use on their windows. If this option
+is not specified, the default is "GGI on vnc".
+
+.TP
 \f(CW-zlib=<level>\fR
 Specify the compression level to use for the zlib encoding. 0 for
 no compression and 9 for maximum compression. Saying \fIno\fR here
@@ -56,6 +61,13 @@ compromize between speed and compression is selected.
 .SH FEATURES
 .IP \(bu 4
 raw, zlib and ZRLE encodings.
+.IP \(bu 4
+DirectBuffer always available, including tidy buffer mode (see
+\f(CWggiSetFlags(3)\fR).
+.IP \(bu 4
+Multiple frames always available.
+.IP \(bu 4
+Panning always available.
 .IP \(bu 4
 Unaccelerated.
 .PP
