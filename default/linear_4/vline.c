@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.5 2006/09/03 22:11:33 pekberg Exp $
+/* $Id: vline.c,v 1.6 2006/09/03 22:18:53 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -38,7 +38,7 @@ do_drawvline(struct ggi_visual *vis, int x, int y, int h)
 	uint8_t *ptr;
 	int stride = LIBGGI_FB_W_STRIDE(vis);
 	uint8_t shift = (x & 0x01) << 2;
-	uint8_t color = LIBGGI_GC_FGCOLOR(vis) >> (shift^4);
+	uint8_t color = LIBGGI_GC_FGCOLOR(vis) << (shift^4);
 	uint8_t mask = 0x0f << shift;
 
 	PREPARE_FB(vis);
