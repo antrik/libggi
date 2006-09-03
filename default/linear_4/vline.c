@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.4 2006/03/12 23:15:08 soyt Exp $
+/* $Id: vline.c,v 1.5 2006/09/03 22:11:33 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -43,7 +43,7 @@ do_drawvline(struct ggi_visual *vis, int x, int y, int h)
 
 	PREPARE_FB(vis);
 
-	ptr = (uint8_t*)LIBGGI_CURWRITE(vis) + y*((stride+x)/2);
+	ptr = (uint8_t*)LIBGGI_CURWRITE(vis) + y*stride + x/2;
 
 	for(; h > 0; h--, ptr += stride) {
 		*ptr = color | (*ptr & mask);
@@ -79,7 +79,7 @@ int GGI_lin4_putvline(struct ggi_visual *vis,int x,int y,int h,const void *buffe
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf8, /2);
 	PREPARE_FB(vis);
 
-	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*((stride+x)>>1);
+	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*stride+(x>>1);
 
 	for(; h > 1; h-=2, ptr+=(stride<<1)) {
 		*ptr=(*buf8 >> shift) | (*ptr & mask);
@@ -103,7 +103,7 @@ int GGI_lin4_getvline(struct ggi_visual *vis,int x,int y,int h,void *buffer)
 	uint8_t antishift = shift ^ 4;
 	
 	PREPARE_FB(vis);
-	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*((stride+x)>>1);
+	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*stride+(x>>1);
 
 	/* Warning: unnecessary bit operations ahead! */
 	for (; h > 1; h-=2, ptr+=stride<<1) {
