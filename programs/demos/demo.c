@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.26 2006/04/08 08:37:59 cegger Exp $
+/* $Id: demo.c,v 1.27 2006/09/03 21:20:51 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -1247,8 +1247,8 @@ no_mem_targ2:
 			TestStart();
 
 			i = 0;
-			dx = (100 < vx) ? 100 : vx;
-			dy = (100 < vy) ? 100 : vy;
+			dx = (100 < sx) ? 100 : sx;
+			dy = (100 < sy) ? 100 : sy;
 
 			c = 0;
 			while (TestTime() < 10) {
@@ -1257,8 +1257,8 @@ no_mem_targ2:
 				if (ggiKbhit(vis)) goto dbuf_end;
 
 				i = random() % numplanes;
-				y = (vy - dy) / 2 + random() % dy;
-				x = (vx - dx) / 2 + random() % dx;
+				y = (sy - dy) / 2 + random() % dy;
+				x = (sx - dx) / 2 + random() % dx;
 				x *= GT_SIZE(type);
 				x /= wordsize;
 
@@ -1280,7 +1280,7 @@ no_mem_targ2:
 				c++;
 				if (c > 100) {
 					ggiFlushRegion(vis, 
-						       (vx-dx)/2,(vy-dy)/2,
+						       (sx-dx)/2,(sy-dy)/2,
 						       dx,dy);
 					c = 0;
 				}
