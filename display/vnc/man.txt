@@ -66,6 +66,10 @@ Features
 --------
 
 - raw, zlib and ZRLE encodings.
+- DirectBuffer always available, including tidy buffer mode (see
+  :man:`ggiSetFlags(3)`).
+- Multiple frames always available.
+- Panning always available.
 - Unaccelerated.
 
 

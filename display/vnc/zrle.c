@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.30 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: zrle.c,v 1.31 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1254,6 +1254,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	int xs_last, ys_last;
 	int stride;
 	ggi_rect vupdate, visible;
+	int d_frame_num;
 
 	DPRINT("update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
@@ -1275,9 +1276,14 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 		client->dirty.tl.x, client->dirty.tl.y,
 		client->dirty.br.x, client->dirty.br.y);
 
-	if (!client->vis)
+	if (!client->vis) {
 		cvis = priv->fb;
+		d_frame_num = vis->d_frame_num;
+	}
 	else {
+		int r_frame_num = _ggiGetReadFrame(priv->fb);
+		_ggiSetReadFrame(priv->fb, _ggiGetDisplayFrame(vis));
+
 		cvis = client->vis;
 		_ggiCrossBlit(priv->fb,
 			vupdate.tl.x, vupdate.tl.y,
@@ -1285,6 +1291,9 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 			ggi_rect_height(&vupdate),
 			cvis,
 			vupdate.tl.x, vupdate.tl.y);
+
+		_ggiSetReadFrame(priv->fb, r_frame_num);
+		d_frame_num = 0;
 	}
 
 	gt = LIBGGI_GT(cvis);
@@ -1333,7 +1342,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	client->wbuf.size += 16;
 	buf = work;
 
-	db = ggiDBGetBuffer(cvis->stem, 0);
+	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	if (bpp == 1) {

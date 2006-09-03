@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.18 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: vnc.h,v 1.19 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -67,6 +67,7 @@ typedef struct {
 	int palette_dirty;
 	int reverse_endian;
 	ggi_rect dirty;
+	ggi_rect fdirty;
 	ggi_rect update;
 
 	uint8_t challenge[16];

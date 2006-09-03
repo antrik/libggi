@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.5 2006/09/02 15:26:12 pekberg Exp $
+/* $Id: mode.c,v 1.6 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -40,13 +40,124 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
+#include "rect.h"
+
+static int
+vnc_acquire(ggi_resource *res, uint32_t actype)
+{
+	struct ggi_visual *vis = res->priv;
+	ggi_directbuffer *buf = res->self;
+
+	DPRINT_MISC("acquire(%p, 0x%x) called\n", res, actype);
+
+	if (actype & ~(GGI_ACTYPE_READ | GGI_ACTYPE_WRITE))
+		return GGI_EARGINVAL;
+
+	res->curactype |= actype;
+	res->count++;
+
+	DPRINT_MISC("acquire - success, count: %d\n", res->count);
+
+	if (LIBGGI_FLAGS(vis) & (GGIFLAG_ASYNC | GGIFLAG_TIDYBUF))
+		return 0;
+
+	/* sync mode and no tidy buffer, so trigger pending update.
+	 * could have used mansync instead, I suppose...
+	 */
+	if (vis->d_frame_num == buf->frame)
+		GGI_vnc_invalidate_nc_xyxy(vis,
+			vis->origin_x,
+			vis->origin_y,
+			vis->origin_x + LIBGGI_X(vis),
+			vis->origin_y + LIBGGI_Y(vis));
+
+	return 0;
+}
+
+static int
+vnc_release(ggi_resource *res)
+{
+	struct ggi_visual *vis = res->priv;
+	ggi_directbuffer *buf = res->self;
+
+	DPRINT_MISC("release(%p) called\n", res);
+
+	if (res->count < 1)
+		return GGI_ENOTALLOC;
+
+	if (--res->count)
+		return 0;
+
+	if (!(res->curactype & GGI_ACTYPE_WRITE))
+		goto out;
+
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF)
+		goto out;
+
+	/* no tidy buffer, so assume whole visible
+	 * area has been clobbered on release of
+	 * the visible frame
+	 */
+	if (vis->d_frame_num == buf->frame)
+		GGI_vnc_invalidate_nc_xyxy(vis,
+			vis->origin_x,
+			vis->origin_y,
+			vis->origin_x + LIBGGI_X(vis),
+			vis->origin_y + LIBGGI_Y(vis));
+
+out:
+	res->curactype = 0;
+	return 0;
+}
+
 static int
 GGI_vnc_flush(struct ggi_visual *vis, 
 	int x, int y, int w, int h, int tryflag)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client = priv->client;
+	ggi_directbuffer *buf = LIBGGI_APPBUFS(vis)[vis->d_frame_num];
+	ggi_rect flush;
 
-	return _ggiFlushRegion(priv->fb, x, y, w, h);
+	int res = _ggiFlushRegion(priv->fb, x, y, w, h);
+
+	if (vis->d_frame_num != vis->w_frame_num)
+		/* flushing invisible frame, who cares... */
+		return res;
+
+	if (!client)
+		return res;
+
+	if (!(LIBGGI_FLAGS(vis) & (GGIFLAG_ASYNC | GGIFLAG_TIDYBUF)))
+		return res;
+
+	flush.tl.x = x;
+	flush.tl.y = y;
+	flush.br.x = x + w;
+	flush.br.y = y + h;
+
+	if (ggi_rect_isempty(&flush))
+		return res;
+
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
+		if (buf->resource->curactype & GGI_ACTYPE_WRITE)
+			/* tidy buffer and buffer locked, update it */
+			goto doit;
+		return res;
+	}
+
+	ggi_rect_intersect(&flush, &client->fdirty);
+	if (ggi_rect_isempty(&flush))
+		return res;
+
+doit:
+	ggi_rect_subtract(&client->fdirty, &flush);
+
+	GGI_vnc_invalidate_nc_xyxy(vis,
+		flush.tl.x, flush.tl.y,
+		flush.br.x, flush.br.y);
+
+	return res;
 }
 
 int
@@ -62,17 +173,22 @@ GGI_vnc_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 	return GGI_ENOMATCH;
 }
 
-static void _ggi_freedbs(struct ggi_visual *vis) 
+static void
+_ggi_freedbs(struct ggi_visual *vis) 
 {
 	int i;
+	ggi_directbuffer *buf;
 
-	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
-		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
+	for (i = LIBGGI_APPLIST(vis)->num - 1; i >= 0; i--) {
+		buf = LIBGGI_APPBUFS(vis)[i];
+		free(buf->resource);
+		_ggi_db_free(buf);
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
 	}
 }
 
-static int _ggi_domode(struct ggi_visual *vis)
+static int
+_ggi_domode(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	int err, i;
@@ -95,43 +211,35 @@ static int _ggi_domode(struct ggi_visual *vis)
 
 	/* Set Up Direct Buffers */
 
-#if 0
 	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
-		/*
+		ggi_directbuffer *buf;
+		ggi_directbuffer *membuf;
 		ggi_resource *res;
 
 		res = malloc(sizeof(ggi_resource));
-		if (!res) {
+		if (!res)
 			return GGI_EFATAL;
-		}
-		*/
+
 		LIBGGI_APPLIST(vis)->last_targetbuf =
 			_ggi_db_add_buffer(LIBGGI_APPLIST(vis),
-							_ggi_db_get_new());
-		LIBGGI_APPBUFS(vis)[i]->resource = NULL; /* res; */
-/*		LIBGGI_APPBUFS(vis)[i]->resource->acquire = vnc_acquire;
-		LIBGGI_APPBUFS(vis)[i]->resource->release = vnc_release;
-		LIBGGI_APPBUFS(vis)[i]->resource->self =
-			LIBGGI_APPBUFS(vis)[i];
-		LIBGGI_APPBUFS(vis)[i]->resource->priv = vis;
-		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
-		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0; */
-		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type =
-			GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
-			priv->fb +
-			GT_ByPPP(LIBGGI_VIRTX(vis) * LIBGGI_VIRTY(vis) * i,
-				LIBGGI_GT(vis));
-		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride =
-			GT_ByPPP(LIBGGI_VIRTX(vis), LIBGGI_GT(vis));
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat =
-			LIBGGI_PIXFMT(vis);
+					   _ggi_db_get_new());
+		buf = LIBGGI_APPBUFS(vis)[i];
+		membuf = LIBGGI_APPBUFS(priv->fb)[i];
 
-		DPRINT_MODE("DB: %d, addr: %p, stride: %d\n", i,
-			       LIBGGI_APPBUFS(vis)[i]->read,
-			       LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride);
+		res->acquire = vnc_acquire;
+		res->release = vnc_release;
+		res->self = buf;
+		res->priv = vis;
+		res->count = 0;
+		res->curactype = 0;
+
+		buf->resource = res;
+		buf->frame = i;
+		buf->type = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		buf->read = buf->write = membuf->read;
+		buf->layout = blPixelLinearBuffer;
+		buf->buffer.plb.stride = membuf->buffer.plb.stride;
+		buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 	}
 
 	vis->r_frame = LIBGGI_APPBUFS(vis)[0];
@@ -139,7 +247,6 @@ static int _ggi_domode(struct ggi_visual *vis)
 
 	LIBGGI_APPLIST(vis)->first_targetbuf
 	    = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames - 1);
-#endif
 
 	/* Set up palette */
 	if (LIBGGI_PAL(vis)->clut.data) {
@@ -217,7 +324,8 @@ static int _ggi_domode(struct ggi_visual *vis)
 	return 0;
 }
 
-int GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
+int
+GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	/* ggi_vnc_priv *priv = VNC_PRIV(vis); */
 	int err;
@@ -250,7 +358,8 @@ int GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_vnc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
+int
+GGI_vnc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	int err;
@@ -270,7 +379,8 @@ int GGI_vnc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 	return err;	
 }
 
-int GGI_vnc_getmode(struct ggi_visual *vis, ggi_mode *mode)
+int
+GGI_vnc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	DPRINT("getmode(%p,%p)\n", vis, mode);
 
@@ -283,13 +393,33 @@ int GGI_vnc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
+int
+GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client = priv->client;
+	int invalidate;
+	int res = _ggiSetFlags(priv->fb, flags);
+
+	/* Unknown flags don't take. */
+	flags &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
+
+	if (!client) 
+		return res;
+
+	/* invalidate if going from async to sync */
+	invalidate =
+		!(flags & GGIFLAG_ASYNC) &&
+		(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC);
 
 	LIBGGI_FLAGS(vis) = flags;
 
-	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unknown flags don't take. */
+	if (!invalidate)
+		return res;
+		
+	GGI_vnc_invalidate_nc_xyxy(vis,
+		client->fdirty.tl.x, client->fdirty.tl.y,
+		client->fdirty.br.x, client->fdirty.br.y);
 
-	return _ggiSetFlags(priv->fb, flags);
+	return res;
 }

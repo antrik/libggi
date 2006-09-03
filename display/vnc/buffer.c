@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.2 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: buffer.c,v 1.3 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: direct buffer
@@ -59,12 +59,24 @@ GGI_vnc_setorigin(struct ggi_visual *vis, int x, int y)
 int
 GGI_vnc_setdisplayframe(struct ggi_visual *vis, int frameno)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int old_frame_num = vis->d_frame_num;
+	ggi_directbuffer *db = _ggi_db_find_frame(vis, frameno);
 
-	int res = _ggiSetDisplayFrame(priv->fb, frameno);
-	vis->d_frame_num = _ggiGetDisplayFrame(priv->fb);
+	if (!db)
+		return GGI_ENOSPACE;
 
-	return res;
+	vis->d_frame_num = frameno;
+
+	if (old_frame_num != vis->d_frame_num) {
+		DPRINT("New display frame %d\n", frameno);
+		GGI_vnc_invalidate_nc_xyxy(vis,
+			vis->origin_x,
+			vis->origin_y,
+			vis->origin_x + LIBGGI_X(vis),
+			vis->origin_y + LIBGGI_Y(vis));
+	}
+
+	return GGI_OK;
 }
 
 int
@@ -74,6 +86,7 @@ GGI_vnc_setreadframe(struct ggi_visual *vis, int frameno)
 
 	int res = _ggiSetReadFrame(priv->fb, frameno);
 	vis->r_frame_num = _ggiGetReadFrame(priv->fb);
+	vis->r_frame = LIBGGI_APPBUFS(vis)[vis->r_frame_num];
 
 	return res;
 }
@@ -85,6 +98,7 @@ GGI_vnc_setwriteframe(struct ggi_visual *vis, int frameno)
 
 	int res = _ggiSetWriteFrame(priv->fb, frameno);
 	vis->w_frame_num = _ggiGetWriteFrame(priv->fb);
+	vis->w_frame = LIBGGI_APPBUFS(vis)[vis->w_frame_num];
 
 	return res;
 }

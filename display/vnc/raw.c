@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.6 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: raw.c,v 1.7 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -54,6 +54,7 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	unsigned char *header;
 	int pal_size;
 	ggi_rect vupdate, visible;
+	int d_frame_num;
 
 	DPRINT("update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
@@ -75,9 +76,14 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 		client->dirty.tl.x, client->dirty.tl.y,
 		client->dirty.br.x, client->dirty.br.y);
 
-	if (!client->vis)
+	if (!client->vis) {
 		cvis = priv->fb;
+		d_frame_num = vis->d_frame_num;
+	}
 	else {
+		int r_frame_num = _ggiGetReadFrame(priv->fb);
+		_ggiSetReadFrame(priv->fb, _ggiGetDisplayFrame(vis));
+
 		cvis = client->vis;
 		_ggiCrossBlit(priv->fb,
 			vupdate.tl.x, vupdate.tl.y,
@@ -85,11 +91,14 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 			ggi_rect_height(&vupdate),
 			cvis,
 			vupdate.tl.x, vupdate.tl.y);
+
+		_ggiSetReadFrame(priv->fb, r_frame_num);
+		d_frame_num = 0;
 	}
 
 	gt = LIBGGI_GT(cvis);
 
-	db = ggiDBGetBuffer(cvis->stem, 0);
+	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	bpp = GT_ByPP(gt);

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.44 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: rfb.c,v 1.45 2006/09/03 21:00:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -636,6 +636,15 @@ done:
 	write_client(priv, &client->wbuf);
 }
 
+static int
+full_update(struct ggi_visual *vis)
+{
+	ggi_directbuffer *buf = LIBGGI_APPBUFS(vis)[vis->d_frame_num];
+	if (LIBGGI_FLAGS(vis) & (GGIFLAG_ASYNC | GGIFLAG_TIDYBUF))
+		return 0;
+	return buf->resource->curactype & GGI_ACTYPE_WRITE;
+}
+
 static void
 pending_client_update(struct ggi_visual *vis)
 {
@@ -647,12 +656,18 @@ pending_client_update(struct ggi_visual *vis)
 		return;
 
 	update = client->update;
-	dirty = client->dirty;
-	ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
-	ggi_rect_intersect(&update, &dirty);
+	if (!full_update(vis)) {
+		dirty = client->dirty;
+		ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
+		ggi_rect_intersect(&update, &dirty);
+	}
 
 	if (ggi_rect_isempty(&update) && !client->palette_dirty)
 		return;
+
+	dirty = update;
+	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
+	ggi_rect_subtract(&client->fdirty, &dirty);
 
 	do_client_update(vis, &update);
 }
@@ -704,15 +719,22 @@ vnc_client_update(struct ggi_visual *vis)
 	update = request;
 
 	if (incremental) {
-		dirty = client->dirty;
-		ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
-		ggi_rect_intersect(&update, &dirty);
+		if (!full_update(vis)) {
+			dirty = client->dirty;
+			ggi_rect_shift_xy(&dirty,
+				-vis->origin_x, -vis->origin_y);
+			ggi_rect_intersect(&update, &dirty);
+		}
 		if (ggi_rect_isempty(&update)) {
 			client->update = request;
 			if (!client->palette_dirty)
 				goto done;
 		}
 	}
+
+	dirty = update;
+	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
+	ggi_rect_subtract(&client->fdirty, &dirty);
 
 	do_client_update(vis, &update);
 
@@ -1283,6 +1305,10 @@ GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 	ggi_vnc_priv *priv;
 	ggi_vnc_client *client;
 
+	if (vis->w_frame_num != vis->d_frame_num)
+		/* invalidating invisible frame, who cares... */
+		return;
+
 	if (tlx < LIBGGI_GC(vis)->cliptl.x)
 		tlx = LIBGGI_GC(vis)->cliptl.x;
 	if (LIBGGI_GC(vis)->clipbr.x < brx)
@@ -1299,6 +1325,12 @@ GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 	client = priv->client;
 	if (!client)
 		return;
+
+	if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) {
+		ggi_rect_union_xyxy(&client->fdirty, tlx, tly, brx, bry);
+		return;
+	}
+
 	ggi_rect_union_xyxy(&client->dirty, tlx, tly, brx, bry);
 
 	if (client->cfd != -1 && !ggi_rect_isempty(&client->update))
