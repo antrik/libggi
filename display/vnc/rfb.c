@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.43 2006/09/02 21:42:50 pekberg Exp $
+/* $Id: rfb.c,v 1.44 2006/09/03 13:19:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -319,9 +319,10 @@ vnc_client_pixfmt(struct ggi_visual *vis)
 
 	memset(&mode, 0, sizeof(mode));
 	mode.frames = 1;
-	mode.visible.x = LIBGGI_VIRTX(vis);
-	mode.visible.y = LIBGGI_VIRTY(vis);
-	mode.virt = mode.visible;
+	mode.visible.x = LIBGGI_X(vis);
+	mode.visible.y = LIBGGI_Y(vis);
+	mode.virt.x    = LIBGGI_VIRTX(vis);
+	mode.virt.y    = LIBGGI_VIRTY(vis);
 	mode.size.x = mode.size.y = GGI_AUTO;
 	GT_SETDEPTH(mode.graphtype, pixfmt.depth);
 	GT_SETSIZE(mode.graphtype, pixfmt.size);
@@ -626,10 +627,10 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	if (ggi_rect_isempty(update))
 		goto done;
 
-	if (client->encode)
-		client->encode(vis, update);
-	else
-		GGI_vnc_raw(vis, update);
+	if (!client->encode)
+		client->encode = GGI_vnc_raw;
+
+	client->encode(vis, update);
 
 done:
 	write_client(priv, &client->wbuf);
@@ -640,13 +641,15 @@ pending_client_update(struct ggi_visual *vis)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client = priv->client;
-	ggi_rect update;
+	ggi_rect update, dirty;
 
 	if (client->write_pending)
 		return;
 
 	update = client->update;
-	ggi_rect_intersect(&update, &client->dirty);
+	dirty = client->dirty;
+	ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
+	ggi_rect_intersect(&update, &dirty);
 
 	if (ggi_rect_isempty(&update) && !client->palette_dirty)
 		return;
@@ -660,7 +663,7 @@ vnc_client_update(struct ggi_visual *vis)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client = priv->client;
 	int incremental;
-	ggi_rect request, update;
+	ggi_rect request, update, dirty;
 
 	if (client->buf_size < 10) {
 		/* wait for more data */
@@ -701,7 +704,9 @@ vnc_client_update(struct ggi_visual *vis)
 	update = request;
 
 	if (incremental) {
-		ggi_rect_intersect(&update, &client->dirty);
+		dirty = client->dirty;
+		ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
+		ggi_rect_intersect(&update, &dirty);
 		if (ggi_rect_isempty(&update)) {
 			client->update = request;
 			if (!client->palette_dirty)
@@ -869,9 +874,9 @@ vnc_client_init(struct ggi_visual *vis)
 	GGI_vnc_buf_reserve(&client->wbuf, 24 + strlen(priv->title));
 	client->wbuf.size += 24 + strlen(priv->title);
 	server_init = client->wbuf.buf;
-	tmp16 = htons(LIBGGI_VIRTX(vis));
+	tmp16 = htons(LIBGGI_X(vis));
 	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
-	tmp16 = htons(LIBGGI_VIRTY(vis));
+	tmp16 = htons(LIBGGI_Y(vis));
 	memcpy(&server_init[2],  &tmp16, sizeof(tmp16));
 	/* Only sizes 8, 16 and 32 allowed in RFB */
 	size = GT_SIZE(LIBGGI_GT(vis));
@@ -1129,8 +1134,8 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd)
 	client->cfd = cfd;
 	client->dirty.tl.x = 0;
 	client->dirty.tl.y = 0;
-	client->dirty.br.x = LIBGGI_MODE(vis)->virt.x;
-	client->dirty.br.y = LIBGGI_MODE(vis)->virt.y;
+	client->dirty.br.x = LIBGGI_VIRTX(vis);
+	client->dirty.br.y = LIBGGI_VIRTY(vis);
 
 	priv->add_cfd(priv->gii_ctx, client->cfd);
 
@@ -1257,6 +1262,21 @@ GGI_vnc_close_client(struct ggi_visual *vis)
 }
 
 void
+GGI_vnc_invalidate_nc_xyxy(struct ggi_visual *vis,
+	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
+{
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client = priv->client;
+
+	if (!client)
+		return;
+	ggi_rect_union_xyxy(&client->dirty, tlx, tly, brx, bry);
+
+	if (client->cfd != -1 && !ggi_rect_isempty(&client->update))
+		pending_client_update(vis);
+}
+
+void
 GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
 {
@@ -1296,10 +1316,10 @@ GGI_vnc_invalidate_palette(struct ggi_visual *vis)
 
 	if (client->vis) {
 		/* non-matching client pixfmt, trigger crossblit */
-		client->dirty.tl.x = 0;
-		client->dirty.tl.y = 0;
-		client->dirty.br.x = LIBGGI_MODE(vis)->visible.x;
-		client->dirty.br.y = LIBGGI_MODE(vis)->visible.y;
+		client->dirty.tl.x = vis->origin_x;
+		client->dirty.tl.y = vis->origin_y;
+		client->dirty.br.x = vis->origin_x + LIBGGI_X(vis);
+		client->dirty.br.y = vis->origin_y + LIBGGI_Y(vis);
 	}
 	else
 		client->palette_dirty = 1;

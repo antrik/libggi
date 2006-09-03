@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.29 2006/09/02 19:58:47 pekberg Exp $
+/* $Id: zrle.c,v 1.30 2006/09/03 13:19:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1253,12 +1253,22 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	int xs, ys;
 	int xs_last, ys_last;
 	int stride;
+	ggi_rect vupdate, visible;
 
 	DPRINT("update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
-	ggi_rect_subtract(&client->dirty, update);
+	vupdate = *update;
+	ggi_rect_shift_xy(&vupdate, vis->origin_x, vis->origin_y);
+
+	visible.tl.x = vis->origin_x;
+	visible.tl.y = vis->origin_y;
+	visible.br.x = vis->origin_x + LIBGGI_X(vis);
+	visible.br.y = vis->origin_y + LIBGGI_Y(vis);
+	ggi_rect_intersect(&client->dirty, &visible);
+
+	ggi_rect_subtract(&client->dirty, &vupdate);
 	client->update.tl.x = client->update.br.x = 0;
 
 	DPRINT("dirty %dx%d - %dx%d\n",
@@ -1270,11 +1280,11 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	else {
 		cvis = client->vis;
 		_ggiCrossBlit(priv->fb,
-			update->tl.x, update->tl.y,
-			update->br.x - update->tl.x,
-			update->br.y - update->tl.y,
+			vupdate.tl.x, vupdate.tl.y,
+			ggi_rect_width(&vupdate),
+			ggi_rect_height(&vupdate),
 			cvis,
-			update->tl.x, update->tl.y);
+			vupdate.tl.x, vupdate.tl.y);
 	}
 
 	gt = LIBGGI_GT(cvis);
@@ -1296,10 +1306,9 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	}
 	else
 		cbpp = bpp;
-	count = (update->br.x - update->tl.x) *
-		(update->br.y - update->tl.y);
-	xtiles = (update->br.x - update->tl.x + 63) / 64;
-	ytiles = (update->br.y - update->tl.y + 63) / 64;
+	count = ggi_rect_width(&vupdate) * ggi_rect_height(&vupdate);
+	xtiles = (ggi_rect_width(&vupdate) + 63) / 64;
+	ytiles = (ggi_rect_height(&vupdate) + 63) / 64;
 	GGI_vnc_buf_reserve(&ctx->work, xtiles * ytiles + count * cbpp);
 	work = ctx->work.buf;
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 20);
@@ -1312,10 +1321,10 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	header[ 5] = update->tl.x & 0xff;
 	header[ 6] = update->tl.y >> 8;
 	header[ 7] = update->tl.y & 0xff;
-	header[ 8] = (update->br.x - update->tl.x) >> 8;
-	header[ 9] = (update->br.x - update->tl.x) & 0xff;
-	header[10] = (update->br.y - update->tl.y) >> 8;
-	header[11] = (update->br.y - update->tl.y) & 0xff;
+	header[ 8] = ggi_rect_width(&vupdate) >> 8;
+	header[ 9] = ggi_rect_width(&vupdate) & 0xff;
+	header[10] = ggi_rect_height(&vupdate) >> 8;
+	header[11] = ggi_rect_height(&vupdate) & 0xff;
 	header[12] = 0;
 	header[13] = 0;
 	header[14] = 0;
@@ -1350,10 +1359,10 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 
 	stride = LIBGGI_VIRTX(cvis);
 
-	ys_last = (update->br.y - update->tl.y) & 0x3f;
+	ys_last = ggi_rect_height(&vupdate) & 0x3f;
 	if (!ys_last)
 		ys_last = 64;
-	xs_last = (update->br.x - update->tl.x) & 0x3f;
+	xs_last = ggi_rect_width(&vupdate) & 0x3f;
 	if (!xs_last)
 		xs_last = 64;
 
@@ -1366,8 +1375,8 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 			if (xt == xtiles - 1)
 				xs = xs_last;
 			tile(&buf, (uint8_t *)db->read +
-				((update->tl.y + 64 * yt) * stride +
-				 update->tl.x + 64 * xt) * bpp,
+				((vupdate.tl.y + 64 * yt) * stride +
+				 vupdate.tl.x + 64 * xt) * bpp,
 				xs, ys, stride, tile_param);
 		}
 	}

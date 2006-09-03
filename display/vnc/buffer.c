@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.1 2006/08/27 11:45:15 pekberg Exp $
+/* $Id: buffer.c,v 1.2 2006/09/03 13:19:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: direct buffer
@@ -34,12 +34,26 @@
 int
 GGI_vnc_setorigin(struct ggi_visual *vis, int x, int y)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	if (x < 0 || y < 0)
+		return GGI_EARGINVAL;
+	if (x > LIBGGI_VIRTX(vis) - LIBGGI_X(vis))
+		return GGI_EARGINVAL;
+	if (y > LIBGGI_VIRTY(vis) - LIBGGI_Y(vis))
+		return GGI_EARGINVAL;
 
-	int res = _ggiSetOrigin(priv->fb, x, y);
-	ggiGetOrigin(priv->fb->stem, &vis->origin_x, &vis->origin_y);
+	DPRINT("origin old %dx%d new %dx%d\n",
+		vis->origin_x, vis->origin_y, x, y);
 
-	return res;
+	vis->origin_x = x;
+	vis->origin_y = y;
+
+	GGI_vnc_invalidate_nc_xyxy(vis,
+		vis->origin_x,
+		vis->origin_y,
+		vis->origin_x + LIBGGI_X(vis),
+		vis->origin_y + LIBGGI_Y(vis));
+
+	return GGI_OK;
 }
 
 int

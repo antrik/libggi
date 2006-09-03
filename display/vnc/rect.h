@@ -1,4 +1,4 @@
-/* $Id: rect.h,v 1.1 2006/08/27 11:45:17 pekberg Exp $
+/* $Id: rect.h,v 1.2 2006/09/03 13:19:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: rectangles
@@ -150,6 +150,33 @@ ggi_rect_subtract(ggi_rect *r1, ggi_rect *r2)
 			return;
 		}
 	}
+}
+
+static inline void
+ggi_rect_shift_xy(ggi_rect *r, int x, int y)
+{
+	r->tl.x += x;
+	r->tl.y += y;
+	r->br.x += x;
+	r->br.y += y;
+}
+
+static inline void
+ggi_rect_shift(ggi_rect *r, ggi_coord *c)
+{
+	ggi_rect_shift_xy(r, c->x, c->y);
+}
+
+static inline int
+ggi_rect_width(ggi_rect *r)
+{
+	return r->br.x - r->tl.x;
+}
+
+static inline int
+ggi_rect_height(ggi_rect *r)
+{
+	return r->br.y - r->tl.y;
 }
 
 #endif /* _GGI_RECT_H */

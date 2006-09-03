@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.17 2006/09/02 21:42:50 pekberg Exp $
+/* $Id: vnc.h,v 1.18 2006/09/03 13:19:56 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -106,6 +106,8 @@ gii_vnc_write_client		GGI_vnc_write_client;
 
 void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd);
 void GGI_vnc_close_client(struct ggi_visual *vis);
+void GGI_vnc_invalidate_nc_xyxy(struct ggi_visual *vis,
+	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 void GGI_vnc_invalidate_palette(struct ggi_visual *vis);
