@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
+/* $Id: pixela.c,v 1.4 2006/09/04 00:56:36 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -129,8 +129,12 @@ int GGI_lin4_getpixela(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 
 	pel = *(uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
 
-	xs = (x & 1) << 2;
-	*pixel = (ggi_pixel)((pel & (0x0f << xs)) >> (xs ^ 4)); 
+        if (x & 1) {
+                *pixel = (ggi_pixel)(pel & 0x0f);
+        }
+        else {
+                *pixel = (ggi_pixel)(pel >> 4);
+        }
 
 	return 0;
 }
