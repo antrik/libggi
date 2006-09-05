@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.8 2006/09/04 07:02:11 pekberg Exp $
+/* $Id: hline.c,v 1.9 2006/09/05 09:25:42 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -105,13 +105,13 @@ int GGI_lin4_puthline(struct ggi_visual *vis, int x, int y, int w, const void *b
 
 	color = *fb >> 4;
 
-	while ((w-=2) >= -1) {
+	for (; w > 0; w -= 2) {
 		color <<= 8;
 		color |= *(buf++);
 		*(fb++) = color >> 4;
 	}
 
-	if (!(w & 1)) {
+	if (!w) {
 		*fb = (color << 4) | (*fb & 0x0F);
 	}
 	
@@ -140,12 +140,15 @@ int GGI_lin4_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 	/* x is odd. */
 	color = *fb & 0x0F;
 
-	while ((w-=2) >= -1) {
+	for (; w > 1; w -= 2) {
 		color <<= 8;
 		color |= *(++fb);
 		*(buf++) = color >> 4;
 	}
-	
+
+	if (w) {
+		*(buf++) = color << 4;
+	}
+
 	return 0;
 }
-
