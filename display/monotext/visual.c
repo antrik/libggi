@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/03/20 20:41:05 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/09/05 21:20:54 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -26,14 +26,18 @@
 ******************************************************************************
 */
 
-#include "config.h"
-#include <ggi/display/monotext.h>
-#include <ggi/internal/ggi_debug.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+#include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
+
+#include "config.h"
+#include <ggi/display/monotext.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 static const gg_option optlist[] =
@@ -50,14 +54,28 @@ static const gg_option optlist[] =
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
 
+static int
+transfer_gii_src(void *arg, int flag, void *data)
+{
+	struct gg_stem *stem = arg;
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(GGI_VISUAL(stem));
+	struct gii_source *src = data;
+
+	if (flag == GII_PUBLISH_SOURCE_OPENED)
+		giiTransfer(priv->parent, stem, src->origin);
+	return 0;
+}
+
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_monotext_priv *priv;
-	struct ggi_visual *parentvis;
 	gg_option options[NUM_OPTS];
 	char target[1024] = "";
-	int  val;
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
+	int val;
+	int err = 0;
 
 	DPRINT("display-monotext: GGIdlinit start.\n");
 
@@ -82,34 +100,97 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 
+	/* Find out the parent target */
+	while (args && *args && isspace((uint8_t)*args)) {
+		args++;
+	}
+
+	*target = '\0';
+	if (args) {
+		if (ggParseTarget(args, target, 1024) == NULL) {
+			return GGI_EARGINVAL;
+		}
+	}
+
 	if (*target == '\0') {
 		strcpy(target, "auto");
 	}
 
-	parentvis = ggiOpen(target, NULL);
-	if (parentvis == NULL) {
-		fprintf(stderr,
-			"display-monotext: Failed to open target: %s\n",
-			target);
-		return GGI_ENODEVICE;
-	}
-	ggiSetFlags(parentvis, GGIFLAG_ASYNC);
-
-	priv = malloc(sizeof(ggi_monotext_priv));
-	if (priv == NULL) {
-		ggiClose(parentvis);
-		return GGI_ENOMEM;
-	}
-
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
-		free(priv);
-		ggiClose(parentvis);
-		return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err0;
+	}
+	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(ggi_monotext_priv));
+	if (priv == NULL) {
+		err = GGI_ENOMEM;
+		goto err1;
 	}
 
+	DPRINT("display-monotext: opening target: %s\n", target);
+	priv->parent = ggNewStem();
+	if (priv->parent == NULL) {
+		fprintf(stderr,
+			"display-monotext: Failed to create stem for target: %s\n",
+			target);
+		err = GGI_ENODEVICE;
+		goto err2;
+	}
+	/* FIXME! Should iterate over the apis attached to vis->stem
+	 * instead of only looking for ggi and gii.
+	 */
+	if (ggiAttach(priv->parent) < 0) {
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		fprintf(stderr,
+			"display-monotext: Failed to attach ggi to stem for target: %s\n",
+			target);
+		err = GGI_ENODEVICE;
+		goto err2;
+	}	 
+
+	api = ggGetAPIByName("gii");
+	if (api != NULL) {
+		/* FIXME! This should probably be done in pseudo-stubs-gii */
+		if (STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, priv->parent) < 0) {
+				ggDelStem(priv->parent);
+				priv->parent = NULL;
+				fprintf(stderr,
+					"Failed to attach gii to stem for target: %s\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto err2;
+			}
+			obs = ggAddObserver(ggGetPublisher(api, priv->parent,
+					GII_PUBLISHER_SOURCE_CHANGE),
+				transfer_gii_src, vis->stem);
+		}
+	}
+
+	if (ggiOpen(priv->parent, target, NULL) < 0) {
+		if (obs) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
+		fprintf(stderr,
+			"display-monotext: Failed to open target: '%s'\n",
+			target);
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		err = GGI_ENODEVICE;
+		goto err2;
+	}
+	if (obs) {
+		ggDelObserver(obs);
+		obs = NULL;
+	}
+
+	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
+
+
+
 	/* set defaults */
-	priv->parent = parentvis;
 	priv->parent_gt = GT_TEXT16;
 	priv->flags = 0;
 	priv->squish.x = priv->squish.y = 1;
@@ -122,14 +203,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->accuracy.y = strtol(options[OPT_Y].result, NULL, 0);
 	}
 
-	/* add giiInputs, if we have them */
-	if (priv->parent->input) {
-		vis->input = giiJoinInputs(vis->input, priv->parent->input);
-		priv->parent->input = NULL; /* destroy old reference */
-	}
-	
-	LIBGGI_PRIVATE(vis) = priv;
-
 	vis->opdisplay->getmode   = GGI_monotext_getmode;
 	vis->opdisplay->setmode   = GGI_monotext_setmode;
 	vis->opdisplay->checkmode = GGI_monotext_checkmode;
@@ -141,6 +214,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
+
+err2:
+	free(priv);	
+err1:
+	free(LIBGGI_GC(vis));
+err0:
+	return err;
 }
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -157,8 +237,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->parent != NULL) {
 		ggiClose(priv->parent);
 
-		giiClose(vis->input);
-		vis->input = NULL;
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
 	}
 
 	free(priv);

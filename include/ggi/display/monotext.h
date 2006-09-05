@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.6 2006/03/20 20:35:14 cegger Exp $
+/* $Id: monotext.h,v 1.7 2006/09/05 21:20:53 cegger Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -95,7 +95,7 @@ ggifunc_setorigin	GGI_monotext_setorigin;
 ggifunc_setPalette	GGI_monotext_setPalette;
 
 typedef struct ggi_monotext_priv {
-	struct ggi_visual *parent;
+	ggi_visual_t parent;
 
 	int flags;
 	int parent_gt;

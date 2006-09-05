@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2006/03/20 20:41:05 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/09/05 21:20:54 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -368,5 +368,5 @@ GGI_monotext_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 		return err;
 	}
 
-	return _ggiInternFlush(priv->parent, x, y, w, h, tryflag);
+	return _ggiInternFlush(GGI_VISUAL(priv->parent), x, y, w, h, tryflag);
 }

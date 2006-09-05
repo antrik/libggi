@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.7 2006/03/22 05:41:28 cegger Exp $
+/* $Id: draw.c,v 1.8 2006/09/05 21:20:54 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -291,7 +291,7 @@ int GGI_monotext_setorigin(struct ggi_visual *vis, int x, int y)
 
 	int err;
 	
-	if ((err = ggiSetOrigin(priv->parent->stem, x, y)) != 0)
+	if ((err = ggiSetOrigin(priv->parent, x, y)) != 0)
 		return err;
 
 	vis->origin_x=x;
