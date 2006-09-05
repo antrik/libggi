@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2006/09/05 09:07:36 pekberg Exp $
+/* $Id: hline.c,v 1.8 2006/09/05 09:23:38 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -142,11 +142,15 @@ int GGI_lin4r_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 	/* x is odd. */
 	color = *fb & 0x0f;
 	
-	for (; w > 0; w -= 2) {
+	for (; w > 1; w -= 2) {
 		color |= *(++fb) << 4;
 		*(buf++) = color;
 		color >>= 8;
 	}
-	
+
+	if (w) {
+		*(buf++) = color;
+	}
+
 	return 0;
 }
