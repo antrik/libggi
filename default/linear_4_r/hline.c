@@ -1,10 +1,11 @@
-/* $Id: hline.c,v 1.6 2006/03/12 23:15:09 soyt Exp $
+/* $Id: hline.c,v 1.7 2006/09/05 09:07:36 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
 
    Copyright (C) 1995 Andreas Beck	[becka@ggi-project.org]
    Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -93,27 +94,27 @@ int GGI_lin4r_puthline(struct ggi_visual *vis, int x, int y, int w, const void *
 	if (!(x & 0x01)) {
 		memcpy(fb,buf, (size_t)(w/2));
 		if (w & 0x01)
-			*(fb+(w/2)) = ( *(fb+(w/2)) & 0x0F)
-				| (*(buf+(w/2)) << 4);
+			*(fb+(w/2)) = ( *(fb+(w/2)) & 0xF0)
+				| (*(buf+(w/2)) >> 4);
 		return 0;
 	}
 	
 	/* x is odd. */
-	/* Color is a 12-bit quantity.  Upper 8 bits hold the memory to copy.
-	 * Lower 4 bits hold the lower 4 bits of the buffer byte read; we'll
-	 * need it next loop. */
 	/* Could be optimized for multiple-byte copy. */
 
-	color = *fb >> 4;
+	color = *fb & 0x0f;
 	
-	while (w-=2 > 0) {
-		color <<= 8;
-		color |= *(buf++);
-		*(fb++) = color >> 4;
+	for (; w > 0; w -= 2) {
+		color |= *(buf++) << 4;
+		/* Color is now a 12-bit quantity.  Lower 8 bits hold the
+		 * memory to copy.  Upper 4 bits hold the upper 4 bits of the
+		 * buffer byte read; we'll need it next loop. */
+		*(fb++) = color;
+		color >>= 8;
 	}
 	
 	if (!w) {
-		*fb = (color << 4) | (*fb & 0x0F);
+		*fb = color | (*fb & 0xf0);
 	}
 	
 	return 0;
@@ -139,13 +140,12 @@ int GGI_lin4r_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 	}
 	
 	/* x is odd. */
-	color = *fb & 0x0F;
+	color = *fb & 0x0f;
 	
-	while (w-=2 > 0)
-	{
-		color <<= 8;
-		color |= *(++fb);
-		*(buf++) = color >> 4;
+	for (; w > 0; w -= 2) {
+		color |= *(++fb) << 4;
+		*(buf++) = color;
+		color >>= 8;
 	}
 	
 	return 0;

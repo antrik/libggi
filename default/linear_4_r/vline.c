@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.4 2006/03/12 23:15:09 soyt Exp $
+/* $Id: vline.c,v 1.5 2006/09/05 09:07:36 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -6,6 +6,7 @@
    Copyright (C) 1995 Andreas Beck	[becka@ggi-project.org]
    Copyright (C) 1997 Jason McMullan	[jmcc@ggi-project.org]
    Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -40,7 +41,7 @@ do_drawvline(struct ggi_visual *vis, int x, int y, int h)
 	int stride = LIBGGI_FB_W_STRIDE(vis);
 	uint8_t shift = (x & 1) ? 4 : 0;
 	uint8_t color = LIBGGI_GC_FGCOLOR(vis) << shift;
-	uint8_t mask = 0x0f << shift;
+	uint8_t mask = 0xf0 >> shift;
 
 	PREPARE_FB(vis);
 
@@ -74,22 +75,22 @@ int GGI_lin4r_putvline(struct ggi_visual *vis,int x,int y,int h,const void *buff
 	const uint8_t *buf8=(const uint8_t *)buffer;
 	int stride=LIBGGI_FB_W_STRIDE(vis);
 	uint8_t shift = (x & 0x01) << 2;
-	uint8_t mask = 0x0f << shift;
+	uint8_t mask = 0xf0 >> shift;
 	uint8_t antishift = shift ^ 4;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf8, /2);
 	PREPARE_FB(vis);
 
-	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*((stride+x)>>1);
+	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*stride+(x>>1);
 
 	for(; h > 1; h-=2, ptr+=(stride<<1)) {
-		*ptr=(*buf8 >> shift) | (*ptr & mask);
-		*(ptr+stride) = (*(buf8++) << antishift)
+		*ptr=((*buf8 & 0x0f) << shift) | (*ptr & mask);
+		*(ptr+stride) = ((*buf8++ & 0xf0) >> antishift)
 			| (*(ptr+stride) & mask);
 	}
 	
 	if (h) {
-		*ptr=(*buf8 >> shift) | (*ptr & mask);
+		*ptr=((*buf8 & 0x0f) << shift) | (*ptr & mask);
 	}
 		
 	return 0;
@@ -104,18 +105,18 @@ int GGI_lin4r_getvline(struct ggi_visual *vis,int x,int y,int h,void *buffer)
 	uint8_t antishift = shift ^ 4;
 	
 	PREPARE_FB(vis);
-	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*((stride+x)>>1);
+	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*stride+(x>>1);
 
 	/* Warning: unnecessary bit operations ahead! */
 	for (; h > 1; h-=2, ptr+=stride<<1) {
-		*buf8 = ((*ptr & mask) << shift)
-			| ((*(ptr+stride) & mask) >> antishift);
+		*buf8 = ((*ptr & mask) >> shift)
+			| ((*(ptr+stride) & mask) << antishift);
 	}
 	
 	/* Here we can't lazily stick the extra pixel into the buffer, since
 	 * it might be off the screen. */
 	if (h) {
-		*buf8 = ((*ptr & mask) << shift);
+		*buf8 = ((*ptr & mask) >> shift);
 	}
 	
 	return 0;

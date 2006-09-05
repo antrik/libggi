@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.3 2006/03/12 23:15:09 soyt Exp $
+/* $Id: pixela.c,v 1.4 2006/09/05 09:07:36 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -6,6 +6,7 @@
    Copyright (C) 1995 Andreas Beck	[becka@ggi-project.org]
    Copyright (C) 1997 Jason McMullan	[jmcc@ggi-project.org]
    Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -53,8 +54,8 @@ int GGI_lin4r_drawpixela(struct ggi_visual *vis,int x,int y)
 	 *    clr = (pel & 0xF0) | (LIBGGI_GC_FGCOLOR(vis) & 0x0f);
 	 * else clr = (pel & 0x0F) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << 4);
 	 */
-	xs = !(x & 1) << 2;
-	*fb = (pel & (0x0F << xs)) | (LIBGGI_GC_FGCOLOR(vis) << (xs ^ 4));
+	xs = (x & 1) << 2;
+	*fb = (pel & (0xf0 >> xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << xs);
 
 	return 0;
 }
@@ -78,8 +79,8 @@ int GGI_lin4r_drawpixel_nca(struct ggi_visual *vis,int x,int y)
 	 *    clr = (pel & 0xF0) | (LIBGGI_GC_FGCOLOR(vis) & 0x0f);
 	 * else clr = (pel & 0x0F) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << 4);
 	 */
-	xs = !(x & 1) << 2;
-	*fb = (pel & (0x0F << xs)) | (LIBGGI_GC_FGCOLOR(vis) << (xs ^ 4));
+	xs = (x & 1) << 2;
+	*fb = (pel & (0xf0 >> xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << xs);
 
 	return 0;
 }
@@ -95,9 +96,9 @@ int GGI_lin4r_putpixel_nca(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
-	xs = !(x & 1) << 2;
+	xs = (x & 1) << 2;
 	
-	*fb=(pel & (0x0F << xs)) | ((col & 0x0f) << (xs ^ 4));
+	*fb=(pel & (0xf0 >> xs)) | ((col & 0x0f) << xs);
 
 	return 0;
 }
@@ -114,24 +115,27 @@ int GGI_lin4r_putpixela(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 	fb = (uint8_t *)LIBGGI_CURWRITE(vis)+y*LIBGGI_FB_W_STRIDE(vis)+(x>>1);
 	pel = *fb;
 
-	xs = !(x & 1) << 2;
+	xs = (x & 1) << 2;
 	
-	*fb=(pel & (0x0F << xs)) | ((col & 0x0f) << (xs ^ 4));
+	*fb=(pel & (0xf0 >> xs)) | ((col & 0x0f) << xs);
 
 	return 0;
 }
 
 int GGI_lin4r_getpixela(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
-	int pel;
-	uint8_t xs;
+	uint8_t pel;
 	
 	PREPARE_FB(vis);
 
-	pel = *(uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
+	pel = *((uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1));
 
-	xs = (x & 1) << 2;
-	*pixel = (ggi_pixel)((pel & (0x0f << xs)) >> (xs ^ 4)); 
+	if (x & 1) {
+		*pixel = (ggi_pixel)(pel >> 4);
+	}
+	else {
+		*pixel = (ggi_pixel)(pel & 0x0f);
+	}
 
 	return 0;
 }

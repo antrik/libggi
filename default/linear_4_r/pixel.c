@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.4 2006/03/12 23:15:09 soyt Exp $
+/* $Id: pixel.c,v 1.5 2006/09/05 09:07:36 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -6,6 +6,7 @@
    Copyright (C) 1995 Andreas Beck	[becka@ggi-project.org]
    Copyright (C) 1997 Jason McMullan	[jmcc@ggi-project.org]
    Copyright (C) 1999 Marcus Sundberg	[marcus@ggi-project.org]
+   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -54,7 +55,7 @@ int GGI_lin4r_drawpixel(struct ggi_visual *vis,int x,int y)
 	 * else clr = (pel & 0x0F) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << 4);
 	 */
 	xs = (x & 1) << 2;
-	*fb = (pel & (0x0F << xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << (xs ^ 4));
+	*fb = (pel & (0xf0 >> xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << xs);
 
 	return 0;
 }
@@ -78,7 +79,7 @@ int GGI_lin4r_drawpixel_nc(struct ggi_visual *vis,int x,int y)
 	 * else clr = (pel & 0x0F) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << 4);
 	 */
 	xs = (x & 1) << 2;
-	*fb = (pel & (0x0F << xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << (xs ^ 4));
+	*fb = (pel & (0xf0 >> xs)) | ((LIBGGI_GC_FGCOLOR(vis) & 0x0f) << xs);
 
 	return 0;
 }
@@ -94,7 +95,7 @@ int GGI_lin4r_putpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 
 	xs = (x & 1) << 2;
 	
-	*fb=(pel & (0x0F << xs)) | ((col & 0x0f) << (xs ^ 4));
+	*fb=(pel & (0xf0 >> xs)) | ((col & 0x0f) << xs);
 
 	return 0;
 }
@@ -112,7 +113,7 @@ int GGI_lin4r_putpixel(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 
 	xs = (x & 1) << 2;
 	
-	*fb=(pel & (0x0F << xs)) | ((col & 0x0f) << (xs ^ 4));
+	*fb=(pel & (0xf0 >> xs)) | ((col & 0x0f) << xs);
 
 	return 0;
 }
@@ -121,7 +122,7 @@ int GGI_lin4r_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	uint8_t pel;
 	
-	pel = *(uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1);
+	pel = *((uint8_t *)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x>>1));
 
 	if (x & 1) {
 		*pixel = (ggi_pixel)(pel >> 4);
