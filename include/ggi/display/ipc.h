@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.7 2006/03/20 20:22:23 cegger Exp $
+/* $Id: ipc.h,v 1.8 2006/09/05 05:37:08 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -79,12 +79,16 @@ typedef struct
 {
 	PHYSZ_DATA
 
+	struct gg_module *inp;
+
+#if 1
 	void *memptr;
 	inpbuffer *inputbuffer;
 	int inputoffset;
 	int sockfd;
 	int semid;
 	int shmid;
+#endif
 } ggi_ipc_priv;
 
 #define IPC_PRIV(vis) ((ggi_ipc_priv *)LIBGGI_PRIVATE(vis))
