@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/09/05 21:20:54 cegger Exp $
+/* $Id: mode.c,v 1.19 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -206,6 +206,8 @@ int GGI_monotext_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	DPRINT_MODE("display-monotext: setmode %dx%d (gt=%d)\n",
 		       mode->visible.x, mode->visible.y, mode->graphtype);
 
+	MANSYNC_ignore(vis);
+
 	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
 		return err;
 	}
@@ -219,6 +221,9 @@ int GGI_monotext_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			       err);
 		return err;
 	}
+
+	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
+	MANSYNC_cont(vis);
 
 	DPRINT_MODE("display-monotext: setmode succeeded\n", vis, mode);
 
@@ -353,6 +358,8 @@ int GGI_monotext_getmode(struct ggi_visual *vis, ggi_mode *mode)
 int GGI_monotext_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
+
+	MANSYNC_SETFLAGS(vis, flags);
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;
@@ -364,9 +371,18 @@ GGI_monotext_flush(struct ggi_visual *vis, int x, int y, int w, int h, int tryfl
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int err;
 
-	if ((err = _ggi_monotextFlush(vis)) < 0) {
-		return err;
+	MANSYNC_ignore(vis);
+
+	ggLock(priv->flush_lock);
+
+	err = _ggi_monotextFlush(vis);
+	if (!err) {
+		err = _ggiInternFlush(GGI_VISUAL(priv->parent), x,y, w,h, tryflag);
 	}
 
-	return _ggiInternFlush(GGI_VISUAL(priv->parent), x, y, w, h, tryflag);
+	ggUnlock(priv->flush_lock);
+
+	MANSYNC_cont(vis);
+
+	return err;
 }

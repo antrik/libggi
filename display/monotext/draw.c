@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.8 2006/09/05 21:20:54 cegger Exp $
+/* $Id: draw.c,v 1.9 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -38,67 +38,42 @@
 int GGI_monotext_drawpixel_nc(struct ggi_visual *vis, int x, int y)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, 1);
+	UPDATE_MOD(vis, x, y, 1, 1);
 	
-	if ((err = priv->mem_opdraw->drawpixel_nc(vis, x, y)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->drawpixel_nc(vis, x, y);
 }
 
 int GGI_monotext_drawpixel(struct ggi_visual *vis, int x, int y)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, 1);
+	UPDATE_MOD(vis, x, y, 1, 1);
 	
-	if ((err = priv->mem_opdraw->drawpixel(vis, x, y)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->drawpixel(vis, x, y);
 }
 
 int GGI_monotext_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, 1);
+	UPDATE_MOD(vis, x, y, 1, 1);
 	
-	if ((err = priv->mem_opdraw->putpixel_nc(vis, x, y, col)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->putpixel_nc(vis, x, y, col);
 }
 
 int GGI_monotext_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, 1);
+	UPDATE_MOD(vis, x, y, 1, 1);
 	
-	if ((err = priv->mem_opdraw->putpixel(vis, x, y, col)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->putpixel(vis, x, y, col);
 }
 
 int GGI_monotext_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 { 
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 
 	int sx = MIN(x1, x2);
 	int sy = MIN(y1, y2);
@@ -106,14 +81,9 @@ int GGI_monotext_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2
 	int ex = MAX(x1, x2);
 	int ey = MAX(y1, y2);
 
-	UPDATE_MOD(priv, sx, sy, ex-sx, ey-sy);
+	UPDATE_MOD(vis, sx, sy, ex-sx, ey-sy);
 
-	if ((err = priv->mem_opdraw->drawline(vis, x1, y1, x2, y2)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->drawline(vis, x1, y1, x2, y2);
 }
 
 int GGI_monotext_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
@@ -122,12 +92,10 @@ int GGI_monotext_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 	int err;
 	
 	err = priv->mem_opdraw->drawhline_nc(vis, x, y, w);
-
-	if (! err) {
+	if (!err) {
 		_ggi_monotextUpdate(vis, x, y, w, 1);
 	}
 
-	UPDATE_SYNC;
 	return err;
 }
 
@@ -137,12 +105,10 @@ int GGI_monotext_drawhline(struct ggi_visual *vis, int x, int y, int w)
 	int err;
 	
 	err = priv->mem_opdraw->drawhline(vis, x, y, w);
-
-	if (! err) {
+	if (!err) {
 		_ggi_monotextUpdate(vis, x, y, w, 1);
 	}
 
-	UPDATE_SYNC;
 	return err;
 }
 
@@ -152,58 +118,38 @@ int GGI_monotext_puthline(struct ggi_visual *vis, int x, int y, int w, const voi
 	int err;
 	
 	err = priv->mem_opdraw->puthline(vis, x, y, w, buffer);
-	
-	if (! err) {
+	if (!err) {
 		_ggi_monotextUpdate(vis, x, y, w, 1);
 	}
 
-	UPDATE_SYNC;
 	return err;
 }
 
 int GGI_monotext_drawvline_nc(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, h);
+	UPDATE_MOD(vis, x, y, 1, h);
 	
-	if ((err = priv->mem_opdraw->drawvline_nc(vis, x, y, h)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->drawvline_nc(vis, x, y, h);
 }
 
 int GGI_monotext_drawvline(struct ggi_visual *vis, int x, int y, int h)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, h);
+	UPDATE_MOD(vis, x, y, 1, h);
 	
-	if ((err = priv->mem_opdraw->drawvline(vis, x, y, h)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->drawvline(vis, x, y, h);
 }
 
 int GGI_monotext_putvline(struct ggi_visual *vis, int x, int y, int h, const void *buffer)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-	int err;
 	
-	UPDATE_MOD(priv, x, y, 1, h);
+	UPDATE_MOD(vis, x, y, 1, h);
 	
-	if ((err = priv->mem_opdraw->putvline(vis, x, y, h, buffer)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->putvline(vis, x, y, h, buffer);
 }
 
 
@@ -294,8 +240,8 @@ int GGI_monotext_setorigin(struct ggi_visual *vis, int x, int y)
 	if ((err = ggiSetOrigin(priv->parent, x, y)) != 0)
 		return err;
 
-	vis->origin_x=x;
-	vis->origin_y=y;
+	vis->origin_x = x;
+	vis->origin_y = y;
 	
 	return 0;
 }

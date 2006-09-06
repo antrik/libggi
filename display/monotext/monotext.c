@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.12 2006/09/05 21:20:54 cegger Exp $
+/* $Id: monotext.c,v 1.13 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -458,7 +458,7 @@ int _ggi_monotextOpen(struct ggi_visual *vis)
 	/* set the parent mode */
 	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		(unsigned)(priv->parent_gt));
+		priv->parent_gt.graphtype);
 	if (rc < 0) {
 		DPRINT("Couldn't set child graphic mode.\n");
 		return rc;

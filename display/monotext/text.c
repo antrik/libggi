@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.4 2006/03/20 20:41:05 cegger Exp $
+/* $Id: text.c,v 1.5 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext: displaying text
@@ -37,18 +37,11 @@
 int GGI_monotext_putc(struct ggi_visual *vis, int x, int y, char c)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-
 	int char_w, char_h;
-	int err;
 	
 	ggiGetCharSize(vis->stem, &char_w, &char_h);
 
-	UPDATE_MOD(priv, x, y, char_w, char_h);
+	UPDATE_MOD(vis, x, y, char_w, char_h);
 	
-	if ((err = priv->mem_opdraw->putc(vis, x, y, c)) < 0) {
-		return err;
-	}
-
-	UPDATE_SYNC;
-	return 0;
+	return priv->mem_opdraw->putc(vis, x, y, c);
 }

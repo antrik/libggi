@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/09/05 21:20:54 cegger Exp $
+/* $Id: visual.c,v 1.16 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -66,6 +66,34 @@ transfer_gii_src(void *arg, int flag, void *data)
 	return 0;
 }
 
+static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+
+	DPRINT("display-monotext: GGIdlcleanup start.\n");
+
+	if (priv->fb_ptr != NULL) {
+		_ggi_monotextClose(vis);
+		free(priv->fb_ptr);
+	}
+
+	if (priv->parent != NULL) {
+		ggiClose(priv->parent);
+
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+	}
+
+	ggLockDestroy(priv->flush_lock);
+	free(priv->opmansync);
+	free(priv);
+	free(LIBGGI_GC(vis));
+
+	DPRINT("display-monotext: GGIdlcleanup done.\n");
+
+	return 0;
+}
+
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
@@ -127,6 +155,21 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto err1;
 	}
 
+	priv->flush_lock = ggLockCreate();
+	if (priv->flush_lock == NULL) {
+		err = GGI_ENOMEM;
+		goto err2;
+	}
+	priv->opmansync = malloc(sizeof(_ggi_opmansync));
+	if (priv->opmansync == NULL) {
+		err = GGI_ENOMEM;
+		goto err3;
+	}
+
+	priv->flags = 0;
+	priv->fb_ptr = NULL;
+
+
 	DPRINT("display-monotext: opening target: %s\n", target);
 	priv->parent = ggNewStem();
 	if (priv->parent == NULL) {
@@ -134,7 +177,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			"display-monotext: Failed to create stem for target: %s\n",
 			target);
 		err = GGI_ENODEVICE;
-		goto err2;
+		goto err3;
 	}
 	/* FIXME! Should iterate over the apis attached to vis->stem
 	 * instead of only looking for ggi and gii.
@@ -146,7 +189,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			"display-monotext: Failed to attach ggi to stem for target: %s\n",
 			target);
 		err = GGI_ENODEVICE;
-		goto err2;
+		goto err4;
 	}	 
 
 	api = ggGetAPIByName("gii");
@@ -160,7 +203,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					"Failed to attach gii to stem for target: %s\n",
 					target);
 				err = GGI_ENODEVICE;
-				goto err2;
+				goto err4;
 			}
 			obs = ggAddObserver(ggGetPublisher(api, priv->parent,
 					GII_PUBLISHER_SOURCE_CHANGE),
@@ -179,7 +222,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		ggDelStem(priv->parent);
 		priv->parent = NULL;
 		err = GGI_ENODEVICE;
-		goto err2;
+		goto err4;
 	}
 	if (obs) {
 		ggDelObserver(obs);
@@ -191,7 +234,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	/* set defaults */
-	priv->parent_gt = GT_TEXT16;
+	priv->parent_gt.graphtype = GT_TEXT16;
 	priv->flags = 0;
 	priv->squish.x = priv->squish.y = 1;
 
@@ -201,6 +244,21 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	} else {
 		priv->accuracy.x = strtol(options[OPT_X].result, NULL, 0);
 		priv->accuracy.y = strtol(options[OPT_Y].result, NULL, 0);
+	}
+
+	/* Setup mansync */
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+			"helper-mansync", NULL, priv->opmansync, 0);
+	if (err) {
+		fprintf(stderr,
+			"display-monotext: Cannot load helper-mansync!\n");
+		GGIclose(vis, dlh);
+		goto err4;
+	}
+
+	MANSYNC_init(vis);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_start(vis);
 	}
 
 	vis->opdisplay->getmode   = GGI_monotext_getmode;
@@ -215,6 +273,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
+err4:
+	free(priv->opmansync);
+err3:
+	ggLockDestroy(priv->flush_lock);
 err2:
 	free(priv);	
 err1:
@@ -223,31 +285,6 @@ err0:
 	return err;
 }
 
-static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
-{
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
-
-	DPRINT("display-monotext: GGIdlcleanup start.\n");
-
-	if (priv->fb_ptr != NULL) {
-		_ggi_monotextClose(vis);
-		free(priv->fb_ptr);
-	}
-
-	if (priv->parent != NULL) {
-		ggiClose(priv->parent);
-
-		ggDelStem(priv->parent);
-		priv->parent = NULL;
-	}
-
-	free(priv);
-	free(LIBGGI_GC(vis));
-
-	DPRINT("display-monotext: GGIdlcleanup done.\n");
-
-	return 0;
-}
 
 
 EXPORTFUNC

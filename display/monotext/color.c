@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2006/03/20 20:41:05 cegger Exp $
+/* $Id: color.c,v 1.10 2006/09/06 21:24:29 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -34,22 +34,24 @@
 #include <string.h>
 
 
-int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
+int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	const ggi_color *src = colormap;
-	size_t    end = start + size - 1;
+	size_t    end = start + len - 1;
 
- 	DPRINT("display-monotext: SetPalette(%d,%d)\n", start, size);
+ 	DPRINT("display-monotext: SetPalette(%d,%d)\n", start, len);
+
+	if (start < 0 || start + len > 256) {
+		return GGI_ENOSPACE;
+	}
 		
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
-		
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
 	if (end > start) {
-		UPDATE_MOD(priv, 0, 0, priv->size.x, priv->size.y);
+		UPDATE_MOD(vis, 0, 0, priv->size.x, priv->size.y);
 	}
 	
-	for (; start<=end; ++start, ++src) {
-
+	for (; start <= end; ++start, ++src) {
 		int r = (src->r >> 11) & 0x1f;
  		int g = (src->g >> 11) & 0x1f;
  		int b = (src->b >> 11) & 0x1f;
@@ -59,6 +61,5 @@ int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t size, c
 		priv->greymap[start] = priv->rgb_to_grey[(r << 10) | (g << 5) | b];
 	}
 	
-	UPDATE_SYNC;
 	return 0;
 }
