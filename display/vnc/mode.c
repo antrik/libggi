@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2006/09/03 21:00:29 pekberg Exp $
+/* $Id: mode.c,v 1.7 2006/09/07 07:51:14 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -120,10 +120,6 @@ GGI_vnc_flush(struct ggi_visual *vis,
 	ggi_rect flush;
 
 	int res = _ggiFlushRegion(priv->fb, x, y, w, h);
-
-	if (vis->d_frame_num != vis->w_frame_num)
-		/* flushing invisible frame, who cares... */
-		return res;
 
 	if (!client)
 		return res;
