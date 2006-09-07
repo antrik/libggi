@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.3 2006/09/02 15:26:13 pekberg Exp $
+/* $Id: zlib.c,v 1.4 2006/09/07 08:20:41 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -88,7 +88,7 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	DPRINT_MISC("raw %d z %d %d%%\n", len, done, done * 100 / len);
 }
 
-void
+int
 GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -110,16 +110,17 @@ GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 	client->wbuf = tmp_buf;
 
 	/* change header to zlib encoding */
-	ctx->wbuf.buf[15] = 6; /* zlib */
+	ctx->wbuf.buf[11] = 6; /* zlib */
 
 	/* copy the revised header to the real buffer */
-	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 20);
-	memcpy(&client->wbuf.buf[client->wbuf.size], ctx->wbuf.buf, 16);
+	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 16);
+	memcpy(&client->wbuf.buf[client->wbuf.size], ctx->wbuf.buf, 12);
 
-	client->wbuf.size += 16;
+	client->wbuf.size += 12;
 
 	/* zip up the intermediate buffer */
-	zip(priv, &ctx->wbuf.buf[16], ctx->wbuf.size - 16);
+	zip(priv, &ctx->wbuf.buf[12], ctx->wbuf.size - 12);
+	return 1;
 }
 
 struct zlib_ctx_t *

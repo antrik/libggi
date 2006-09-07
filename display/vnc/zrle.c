@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.31 2006/09/03 21:00:29 pekberg Exp $
+/* $Id: zrle.c,v 1.32 2006/09/07 08:20:40 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1230,7 +1230,7 @@ done:
 	*buf = dst;
 }
 
-void
+int
 GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -1253,21 +1253,15 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	int xs, ys;
 	int xs_last, ys_last;
 	int stride;
-	ggi_rect vupdate, visible;
+	ggi_rect vupdate;
 	int d_frame_num;
 
-	DPRINT("update %dx%d - %dx%d\n",
+	DPRINT("zrle update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
 	vupdate = *update;
 	ggi_rect_shift_xy(&vupdate, vis->origin_x, vis->origin_y);
-
-	visible.tl.x = vis->origin_x;
-	visible.tl.y = vis->origin_y;
-	visible.br.x = vis->origin_x + LIBGGI_X(vis);
-	visible.br.y = vis->origin_y + LIBGGI_Y(vis);
-	ggi_rect_intersect(&client->dirty, &visible);
 
 	ggi_rect_subtract(&client->dirty, &vupdate);
 	client->update.tl.x = client->update.br.x = 0;
@@ -1320,26 +1314,22 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	ytiles = (ggi_rect_height(&vupdate) + 63) / 64;
 	GGI_vnc_buf_reserve(&ctx->work, xtiles * ytiles + count * cbpp);
 	work = ctx->work.buf;
-	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 20);
+	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 16);
 	header = &client->wbuf.buf[client->wbuf.size];
-	header[ 0] = 0;
-	header[ 1] = 0;
-	header[ 2] = 0;
-	header[ 3] = 1;
-	header[ 4] = update->tl.x >> 8;
-	header[ 5] = update->tl.x & 0xff;
-	header[ 6] = update->tl.y >> 8;
-	header[ 7] = update->tl.y & 0xff;
-	header[ 8] = ggi_rect_width(&vupdate) >> 8;
-	header[ 9] = ggi_rect_width(&vupdate) & 0xff;
-	header[10] = ggi_rect_height(&vupdate) >> 8;
-	header[11] = ggi_rect_height(&vupdate) & 0xff;
-	header[12] = 0;
-	header[13] = 0;
-	header[14] = 0;
-	header[15] = 16; /* zrle */
+	header[ 0] = update->tl.x >> 8;
+	header[ 1] = update->tl.x & 0xff;
+	header[ 2] = update->tl.y >> 8;
+	header[ 3] = update->tl.y & 0xff;
+	header[ 4] = ggi_rect_width(&vupdate) >> 8;
+	header[ 5] = ggi_rect_width(&vupdate) & 0xff;
+	header[ 6] = ggi_rect_height(&vupdate) >> 8;
+	header[ 7] = ggi_rect_height(&vupdate) & 0xff;
+	header[ 8] = 0;
+	header[ 9] = 0;
+	header[10] = 0;
+	header[11] = 16; /* zrle */
 
-	client->wbuf.size += 16;
+	client->wbuf.size += 12;
 	buf = work;
 
 	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
@@ -1393,6 +1383,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 	ggiResourceRelease(db->resource);
 
 	zip(priv, work, buf - work);
+	return 1;
 }
 
 struct zrle_ctx_t *

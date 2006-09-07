@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.45 2006/09/03 21:00:29 pekberg Exp $
+/* $Id: rfb.c,v 1.46 2006/09/07 08:20:40 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -581,6 +581,10 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client = priv->client;
+	int rects = 0;
+	uint8_t *fb_update;
+	int fb_update_idx;
+	ggi_rect visible;
 
 	if (client->palette_dirty) {
 		struct ggi_visual *cvis;
@@ -603,7 +607,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		GGI_vnc_buf_reserve(&client->wbuf, 6 + 6 * colors);
 		client->wbuf.size += 6 + 6 * colors;
 		vnc_palette = client->wbuf.buf;
-		vnc_palette[0] = 1;
+		vnc_palette[0] = 1; /* set colormap */
 		vnc_palette[1] = 0;
 		vnc_palette[2] = 0;
 		vnc_palette[3] = 0;
@@ -627,13 +631,32 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	if (ggi_rect_isempty(update))
 		goto done;
 
+	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 4);
+	fb_update_idx = client->wbuf.size;
+	client->wbuf.size += 4;
+
+	ggi_rect_set_xyxy(&visible,
+		vis->origin_x, vis->origin_y,
+		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
+	ggi_rect_intersect(&client->dirty, &visible);
+
 	if (!client->encode)
 		client->encode = GGI_vnc_raw;
+	rects += client->encode(vis, update);
 
-	client->encode(vis, update);
+	if (rects) {
+		fb_update = &client->wbuf.buf[fb_update_idx];
+		fb_update[0] = 0; /* fb update */
+		fb_update[1] = 0;
+		fb_update[2] = rects >> 8;
+		fb_update[3] = rects;
+	}
+	else
+		client->wbuf.size -= 4;
 
 done:
-	write_client(priv, &client->wbuf);
+	if (client->wbuf.size)
+		write_client(priv, &client->wbuf);
 }
 
 static int

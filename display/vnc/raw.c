@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.7 2006/09/03 21:00:29 pekberg Exp $
+/* $Id: raw.c,v 1.8 2006/09/07 08:20:41 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -40,7 +40,7 @@
 #include "rect.h"
 #include "encoding.h"
 
-void
+int
 GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -53,21 +53,15 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	void *buf;
 	unsigned char *header;
 	int pal_size;
-	ggi_rect vupdate, visible;
+	ggi_rect vupdate;
 	int d_frame_num;
 
-	DPRINT("update %dx%d - %dx%d\n",
+	DPRINT("raw update %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
 	vupdate = *update;
 	ggi_rect_shift_xy(&vupdate, vis->origin_x, vis->origin_y);
-
-	visible.tl.x = vis->origin_x;
-	visible.tl.y = vis->origin_y;
-	visible.br.x = vis->origin_x + LIBGGI_X(vis);
-	visible.br.y = vis->origin_y + LIBGGI_Y(vis);
-	ggi_rect_intersect(&client->dirty, &visible);
 
 	ggi_rect_subtract(&client->dirty, &vupdate);
 	client->update.tl.x = client->update.br.x = 0;
@@ -104,26 +98,22 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	bpp = GT_ByPP(gt);
 	count = ggi_rect_width(&vupdate) * ggi_rect_height(&vupdate);
 	pal_size = client->wbuf.size;
-	GGI_vnc_buf_reserve(&client->wbuf, pal_size + 16 + count * bpp);
-	client->wbuf.size += 16 + count * bpp;
+	GGI_vnc_buf_reserve(&client->wbuf, pal_size + 12 + count * bpp);
+	client->wbuf.size += 12 + count * bpp;
 	header = &client->wbuf.buf[pal_size];
-	buf = &header[16];
-	header[ 0] = 0;
-	header[ 1] = 0;
-	header[ 2] = 0;
-	header[ 3] = 1;
-	header[ 4] = update->tl.x >> 8;
-	header[ 5] = update->tl.x & 0xff;
-	header[ 6] = update->tl.y >> 8;
-	header[ 7] = update->tl.y & 0xff;
-	header[ 8] = ggi_rect_width(&vupdate) >> 8;
-	header[ 9] = ggi_rect_width(&vupdate) & 0xff;
-	header[10] = ggi_rect_height(&vupdate) >> 8;
-	header[11] = ggi_rect_height(&vupdate) & 0xff;
-	header[12] = 0;
-	header[13] = 0;
-	header[14] = 0;
-	header[15] = 0;
+	buf = &header[12];
+	header[ 0] = update->tl.x >> 8;
+	header[ 1] = update->tl.x & 0xff;
+	header[ 2] = update->tl.y >> 8;
+	header[ 3] = update->tl.y & 0xff;
+	header[ 4] = ggi_rect_width(&vupdate) >> 8;
+	header[ 5] = ggi_rect_width(&vupdate) & 0xff;
+	header[ 6] = ggi_rect_height(&vupdate) >> 8;
+	header[ 7] = ggi_rect_height(&vupdate) & 0xff;
+	header[ 8] = 0;
+	header[ 9] = 0;
+	header[10] = 0;
+	header[11] = 0; /* raw */
 	if (client->reverse_endian && GT_SIZE(gt) > 8) {
 		int i, j;
 		int stride = db->buffer.plb.stride / bpp;
@@ -178,4 +168,5 @@ GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
 	}
 
 	ggiResourceRelease(db->resource);
+	return 1;
 }
