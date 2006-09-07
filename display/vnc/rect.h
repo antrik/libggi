@@ -1,4 +1,4 @@
-/* $Id: rect.h,v 1.3 2006/09/07 08:03:38 pekberg Exp $
+/* $Id: rect.h,v 1.4 2006/09/07 08:04:32 pekberg Exp $
 ******************************************************************************
 
    display-vnc: rectangles
@@ -169,6 +169,12 @@ static inline void
 ggi_rect_shift(ggi_rect *r, ggi_coord *c)
 {
 	ggi_rect_shift_xy(r, c->x, c->y);
+}
+
+static inline void
+ggi_rect_antishift(ggi_rect *r, ggi_coord *c)
+{
+	ggi_rect_shift_xy(r, -c->x, -c->y);
 }
 
 static inline int
