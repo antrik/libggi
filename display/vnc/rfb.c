@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.46 2006/09/07 08:20:40 pekberg Exp $
+/* $Id: rfb.c,v 1.47 2006/09/07 08:25:38 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -584,6 +584,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 	int rects = 0;
 	uint8_t *fb_update;
 	int fb_update_idx;
+	ggi_vnc_encode *encode = client->encode;
 	ggi_rect visible;
 
 	if (client->palette_dirty) {
@@ -640,9 +641,9 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
 	ggi_rect_intersect(&client->dirty, &visible);
 
-	if (!client->encode)
-		client->encode = GGI_vnc_raw;
-	rects += client->encode(vis, update);
+	if (!encode)
+		encode = GGI_vnc_raw;
+	rects += encode(vis, update);
 
 	if (rects) {
 		fb_update = &client->wbuf.buf[fb_update_idx];
