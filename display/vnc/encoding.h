@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.5 2006/09/01 23:12:22 pekberg Exp $
+/* $Id: encoding.h,v 1.6 2006/09/07 09:21:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -36,6 +36,7 @@
 int GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit);
 
 ggi_vnc_encode GGI_vnc_raw;
+ggi_vnc_encode GGI_vnc_copyrect_pan;
 
 #ifdef HAVE_ZLIB
 

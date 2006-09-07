@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.3 2006/09/03 21:00:29 pekberg Exp $
+/* $Id: buffer.c,v 1.4 2006/09/07 09:21:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: direct buffer
@@ -47,11 +47,10 @@ GGI_vnc_setorigin(struct ggi_visual *vis, int x, int y)
 	vis->origin_x = x;
 	vis->origin_y = y;
 
-	GGI_vnc_invalidate_nc_xyxy(vis,
-		vis->origin_x,
-		vis->origin_y,
-		vis->origin_x + LIBGGI_X(vis),
-		vis->origin_y + LIBGGI_Y(vis));
+	/* invalidate empty region, just trigger a pending update if
+	 * the origin has changed.
+	 */
+	GGI_vnc_invalidate_nc_xyxy(vis, 0, 0, 0, 0);
 
 	return GGI_OK;
 }

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.47 2006/09/07 08:25:38 pekberg Exp $
+/* $Id: rfb.c,v 1.48 2006/09/07 09:21:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -391,7 +391,6 @@ err1:
 err0:
 	client->vis = NULL;
 	return err;
-
 }
 
 static void
@@ -410,6 +409,9 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 			break;
 		case 1:
 			DPRINT_MISC("CopyRect encoding\n");
+			if (client->encode)
+				break;
+			client->copy_rect = 1;
 			break;
 		case 2:
 			DPRINT_MISC("RRE encoding\n");
@@ -542,6 +544,7 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 	}
 
 	client->encode = NULL;
+	client->copy_rect = 0;
 
 	memcpy(&client->encoding_count,
 		&client->buf[2],
@@ -577,7 +580,7 @@ vnc_client_set_encodings(struct ggi_visual *vis)
 }
 
 static void
-do_client_update(struct ggi_visual *vis, ggi_rect *update)
+do_client_update(struct ggi_visual *vis, ggi_rect *update, int pan)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client = priv->client;
@@ -629,7 +632,7 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		client->palette_dirty = 0;
 	}
 
-	if (ggi_rect_isempty(update))
+	if (ggi_rect_isempty(update) && !pan)
 		goto done;
 
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 4);
@@ -641,9 +644,24 @@ do_client_update(struct ggi_visual *vis, ggi_rect *update)
 		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
 	ggi_rect_intersect(&client->dirty, &visible);
 
-	if (!encode)
-		encode = GGI_vnc_raw;
-	rects += encode(vis, update);
+	if (pan) {
+		if (client->copy_rect)
+			rects += GGI_vnc_copyrect_pan(vis, update);
+		else {
+			update->tl.x = update->tl.y = 0;
+			update->br.x = LIBGGI_X(vis);
+			update->br.y = LIBGGI_Y(vis);
+		}
+	}
+
+	client->origin.x = vis->origin_x;
+	client->origin.y = vis->origin_y;
+
+	if (!ggi_rect_isempty(update)) {
+		if (!encode)
+			encode = GGI_vnc_raw;
+		rects += encode(vis, update);
+	}
 
 	if (rects) {
 		fb_update = &client->wbuf.buf[fb_update_idx];
@@ -675,9 +693,13 @@ pending_client_update(struct ggi_visual *vis)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client = priv->client;
 	ggi_rect update, dirty;
+	int pan;
 
 	if (client->write_pending)
 		return;
+
+	pan = vis->origin_x != client->origin.x ||
+		vis->origin_y != client->origin.y;
 
 	update = client->update;
 	if (!full_update(vis)) {
@@ -685,15 +707,20 @@ pending_client_update(struct ggi_visual *vis)
 		ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
 		ggi_rect_intersect(&update, &dirty);
 	}
+	else {
+		/* should region outside 'update' be dirtied? */
+		pan = 0;
+	}
 
-	if (ggi_rect_isempty(&update) && !client->palette_dirty)
+	if (ggi_rect_isempty(&update) && !client->palette_dirty && !pan)
 		return;
 
+	/* subtract updated rect from fdirty, use dirty as a tmp variable */
 	dirty = update;
 	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
 	ggi_rect_subtract(&client->fdirty, &dirty);
 
-	do_client_update(vis, &update);
+	do_client_update(vis, &update, pan);
 }
 
 static int
@@ -703,6 +730,7 @@ vnc_client_update(struct ggi_visual *vis)
 	ggi_vnc_client *client = priv->client;
 	int incremental;
 	ggi_rect request, update, dirty;
+	int pan;
 
 	if (client->buf_size < 10) {
 		/* wait for more data */
@@ -742,6 +770,9 @@ vnc_client_update(struct ggi_visual *vis)
 
 	update = request;
 
+	pan = vis->origin_x != client->origin.x ||
+		vis->origin_y != client->origin.y;
+
 	if (incremental) {
 		if (!full_update(vis)) {
 			dirty = client->dirty;
@@ -749,18 +780,23 @@ vnc_client_update(struct ggi_visual *vis)
 				-vis->origin_x, -vis->origin_y);
 			ggi_rect_intersect(&update, &dirty);
 		}
-		if (ggi_rect_isempty(&update)) {
+		else {
+			/* should region outside 'update' be dirtied? */
+			pan = 0;
+		}
+		if (ggi_rect_isempty(&update) && !pan) {
 			client->update = request;
 			if (!client->palette_dirty)
 				goto done;
 		}
 	}
 
+	/* subtract updated rect from fdirty, use dirty as a tmp variable */
 	dirty = update;
 	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
 	ggi_rect_subtract(&client->fdirty, &dirty);
 
-	do_client_update(vis, &update);
+	do_client_update(vis, &update, pan);
 
 done:
 	return vnc_remove(vis, 10);
