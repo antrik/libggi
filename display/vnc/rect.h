@@ -1,4 +1,4 @@
-/* $Id: rect.h,v 1.2 2006/09/03 13:19:56 pekberg Exp $
+/* $Id: rect.h,v 1.3 2006/09/07 08:03:38 pekberg Exp $
 ******************************************************************************
 
    display-vnc: rectangles
@@ -66,6 +66,8 @@ static inline void
 ggi_rect_union_xyxy(ggi_rect *rect,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
 {
+	if (brx <= tlx || bry <= tly)
+		return;
 	if (ggi_rect_isempty(rect))
 		ggi_rect_set_xyxy(rect, tlx, tly, brx, bry);
 	else
@@ -81,6 +83,8 @@ ggi_rect_union_ne(ggi_rect *r1, ggi_rect *r2)
 static inline void
 ggi_rect_union(ggi_rect *r1, ggi_rect *r2)
 {
+	if (ggi_rect_isempty(r2))
+		return;
 	if (ggi_rect_isempty(r1))
 		*r1 = *r2;
 	else
