@@ -16,17 +16,17 @@ Here's how it works:
 
     1)  First specify the target as "monotext", for example:
 
-        export LIBGGI_DISPLAY=monotext
+        export GGI_DISPLAY=monotext
 
 	You can also specify the parent target, as in :
 
-	export LIBGGI_DISPLAY=monotext:terminfo
+	export GGI_DISPLAY=monotext:terminfo
 	
     2)  There is an optional argument "-a" which specifies the Accuracy
         of the mapping from graphics -> text characters.  There are
 	currently five values, "1" .. "5".  For example:
 
-	export LIBGGI_DISPLAY=monotext:-a4:terminfo
+	export GGI_DISPLAY=monotext:-a4:terminfo
 
     3)	Next, run a program that uses GT_8BIT mode.  Other graphtypes
 	are currently not supported (but planned).  The width and height
