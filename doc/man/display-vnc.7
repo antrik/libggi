@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-03" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-08" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -60,7 +60,8 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-raw, zlib and ZRLE encodings.
+Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
+is only used for panning.
 .IP \(bu 4
 DirectBuffer always available, including tidy buffer mode (see
 \f(CWggiSetFlags(3)\fR).
