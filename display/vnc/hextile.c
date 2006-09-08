@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.1 2006/09/08 10:34:50 pekberg Exp $
+/* $Id: hextile.c,v 1.2 2006/09/08 19:43:00 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -59,7 +59,7 @@ struct hextile_ctx_t {
 #define HEXTILE_SUBRECTS (1<<3)
 #define HEXTILE_COLORED  (1<<4)
 
-typedef void (tile_func)(struct ggi_visual *vis, uint8_t **buf,
+typedef void (tile_func)(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride, int rev);
 
 static uint8_t
@@ -569,12 +569,9 @@ rectify_32(uint8_t *dst, uint32_t *data, int xs, int ys,
 }
 
 static void
-tile_8(struct ggi_visual *vis, uint8_t **buf,
+tile_8(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride, int rev)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
-	struct hextile_ctx_t *ctx = client->hextile_ctx;
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
 	uint8_t bg, fg;
@@ -636,12 +633,9 @@ done:
 }
 
 static void
-tile_16(struct ggi_visual *vis, uint8_t **buf,
+tile_16(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src8, int xs, int ys, int stride, int rev)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
-	struct hextile_ctx_t *ctx = client->hextile_ctx;
 	uint16_t *src = (uint16_t *)src8;
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
@@ -717,12 +711,9 @@ done:
 }
 
 static void
-tile_32(struct ggi_visual *vis, uint8_t **buf,
+tile_32(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src8, int xs, int ys, int stride, int rev)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
-	struct hextile_ctx_t *ctx = client->hextile_ctx;
 	uint32_t *src = (uint32_t *)src8;
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
@@ -798,10 +789,10 @@ done:
 }
 
 int
-GGI_vnc_hextile(struct ggi_visual *vis, ggi_rect *update)
+GGI_vnc_hextile(ggi_vnc_client *client, ggi_rect *update)
 {
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
 	struct hextile_ctx_t *ctx = client->hextile_ctx;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
@@ -908,7 +899,7 @@ GGI_vnc_hextile(struct ggi_visual *vis, ggi_rect *update)
 		for (xt = 0; xt < xtiles; ++xt) {
 			if (xt == xtiles - 1)
 				xs = xs_last;
-			tile(vis, &buf, (uint8_t *)db->read +
+			tile(ctx, &buf, (uint8_t *)db->read +
 				((vupdate.tl.y + 16 * yt) * stride +
 				 vupdate.tl.x + 16 * xt) * bpp,
 				xs, ys, stride, client->reverse_endian);

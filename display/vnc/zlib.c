@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.5 2006/09/08 08:27:08 pekberg Exp $
+/* $Id: zlib.c,v 1.6 2006/09/08 19:43:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -53,9 +53,8 @@ struct zlib_ctx_t {
 };
 
 static void
-zip(ggi_vnc_priv *priv, uint8_t *src, int len)
+zip(ggi_vnc_client *client, uint8_t *src, int len)
 {
-	ggi_vnc_client *client = priv->client;
 	struct zlib_ctx_t *ctx = client->zlib_ctx;
 	int start = client->wbuf.size;
 	int avail;
@@ -89,10 +88,8 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 }
 
 int
-GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
+GGI_vnc_zlib(ggi_vnc_client *client, ggi_rect *update)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
 	struct zlib_ctx_t *ctx = client->zlib_ctx;
 	ggi_vnc_buf tmp_buf;
 
@@ -103,7 +100,7 @@ GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 	client->wbuf = ctx->wbuf;
 	client->wbuf.pos = client->wbuf.size = 0;
 
-	GGI_vnc_raw(vis, update);
+	GGI_vnc_raw(client, update);
 
 	/* swap the buffers back */
 	ctx->wbuf = client->wbuf;
@@ -119,7 +116,7 @@ GGI_vnc_zlib(struct ggi_visual *vis, ggi_rect *update)
 	client->wbuf.size += 12;
 
 	/* zip up the intermediate buffer */
-	zip(priv, &ctx->wbuf.buf[12], ctx->wbuf.size - 12);
+	zip(client, &ctx->wbuf.buf[12], ctx->wbuf.size - 12);
 	return 1;
 }
 

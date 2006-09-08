@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.7 2006/09/07 07:51:14 pekberg Exp $
+/* $Id: mode.c,v 1.8 2006/09/08 19:43:00 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -115,13 +115,13 @@ GGI_vnc_flush(struct ggi_visual *vis,
 	int x, int y, int w, int h, int tryflag)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
+	ggi_vnc_client *client;
 	ggi_directbuffer *buf = LIBGGI_APPBUFS(vis)[vis->d_frame_num];
 	ggi_rect flush;
 
 	int res = _ggiFlushRegion(priv->fb, x, y, w, h);
 
-	if (!client)
+	if (GG_LIST_EMPTY(&priv->clients))
 		return res;
 
 	if (!(LIBGGI_FLAGS(vis) & (GGIFLAG_ASYNC | GGIFLAG_TIDYBUF)))
@@ -142,12 +142,14 @@ GGI_vnc_flush(struct ggi_visual *vis,
 		return res;
 	}
 
-	ggi_rect_intersect(&flush, &client->fdirty);
+	GG_LIST_FOREACH(client, &priv->clients, siblings)
+		ggi_rect_intersect(&flush, &client->fdirty);
 	if (ggi_rect_isempty(&flush))
 		return res;
 
 doit:
-	ggi_rect_subtract(&client->fdirty, &flush);
+	GG_LIST_FOREACH(client, &priv->clients, siblings)
+		ggi_rect_subtract(&client->fdirty, &flush);
 
 	GGI_vnc_invalidate_nc_xyxy(vis,
 		flush.tl.x, flush.tl.y,
@@ -393,15 +395,12 @@ int
 GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
+	ggi_vnc_client *client;
 	int invalidate;
 	int res = _ggiSetFlags(priv->fb, flags);
 
 	/* Unknown flags don't take. */
 	flags &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
-
-	if (!client) 
-		return res;
 
 	/* invalidate if going from async to sync */
 	invalidate =
@@ -412,10 +411,11 @@ GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
 
 	if (!invalidate)
 		return res;
-		
-	GGI_vnc_invalidate_nc_xyxy(vis,
-		client->fdirty.tl.x, client->fdirty.tl.y,
-		client->fdirty.br.x, client->fdirty.br.y);
+
+	GG_LIST_FOREACH(client, &priv->clients, siblings)
+		GGI_vnc_client_invalidate_nc_xyxy(client,
+			client->fdirty.tl.x, client->fdirty.tl.y,
+			client->fdirty.br.x, client->fdirty.br.y);
 
 	return res;
 }

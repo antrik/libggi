@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/09/02 21:42:50 pekberg Exp $
+/* $Id: visual.c,v 1.15 2006/09/08 19:43:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -104,6 +104,7 @@ GGIopen(struct ggi_visual *vis,
 
 	memset(priv, 0, sizeof(*priv));
 	priv->sfd = -1;
+	GG_LIST_INIT(&priv->clients);
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
@@ -336,7 +337,8 @@ GGIclose(struct ggi_visual *vis,
 	if (!priv)
 		goto skip;
 
-	GGI_vnc_close_client(vis);
+	while(!GG_LIST_EMPTY(&priv->clients))
+		GGI_vnc_close_client(GG_LIST_FIRST(&priv->clients));
 
 	if (priv->inp)
 		ggCloseModule(priv->inp);

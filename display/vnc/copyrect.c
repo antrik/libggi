@@ -1,4 +1,4 @@
-/* $Id: copyrect.c,v 1.1 2006/09/07 09:21:21 pekberg Exp $
+/* $Id: copyrect.c,v 1.2 2006/09/08 19:43:00 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB copyrect encoding for panning
@@ -41,10 +41,9 @@
 #include "encoding.h"
 
 int
-GGI_vnc_copyrect_pan(struct ggi_visual *vis, ggi_rect *update)
+GGI_vnc_copyrect_pan(ggi_vnc_client *client, ggi_rect *update)
 {
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_encode *encode = client->encode;
 	int rects = 0;
 	ggi_rect src;
@@ -118,7 +117,7 @@ GGI_vnc_copyrect_pan(struct ggi_visual *vis, ggi_rect *update)
 		upd.tl.y = 0;
 		upd.br.y = LIBGGI_Y(vis);
 
-		rects += encode(vis, &upd);
+		rects += encode(client, &upd);
 		ggi_rect_subtract(update, &upd);
 
 		if (ggi_rect_height(&csrc) == LIBGGI_Y(vis))
@@ -128,7 +127,7 @@ GGI_vnc_copyrect_pan(struct ggi_visual *vis, ggi_rect *update)
 			cdst.tl.x, 0, cdst.br.x, LIBGGI_Y(vis));
 		ggi_rect_subtract(&upd, &cdst);
 
-		rects += encode(vis, &upd);
+		rects += encode(client, &upd);
 		ggi_rect_subtract(update, &upd);
 	}
 	else {
@@ -139,7 +138,7 @@ GGI_vnc_copyrect_pan(struct ggi_visual *vis, ggi_rect *update)
 		upd.tl.x = 0;
 		upd.br.x = LIBGGI_X(vis);
 
-		rects += encode(vis, &upd);
+		rects += encode(client, &upd);
 		ggi_rect_subtract(update, &upd);
 
 		if (ggi_rect_width(&csrc) == LIBGGI_X(vis))
@@ -149,7 +148,7 @@ GGI_vnc_copyrect_pan(struct ggi_visual *vis, ggi_rect *update)
 			0, cdst.tl.y, LIBGGI_X(vis), cdst.br.y);
 		ggi_rect_subtract(&upd, &cdst);
 
-		rects += encode(vis, &upd);
+		rects += encode(client, &upd);
 		ggi_rect_subtract(update, &upd);
 	}
 

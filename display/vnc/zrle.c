@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.33 2006/09/08 08:27:09 pekberg Exp $
+/* $Id: zrle.c,v 1.34 2006/09/08 19:43:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -73,9 +73,8 @@ typedef void (tile_func)(uint8_t **buf, uint8_t *src,
 	int xs, int ys, int stride, int bpp);
 
 static void
-zip(ggi_vnc_priv *priv, uint8_t *src, int len)
+zip(ggi_vnc_client *client, uint8_t *src, int len)
 {
-	ggi_vnc_client *client = priv->client;
 	struct zrle_ctx_t *ctx = client->zrle_ctx;
 	int start = client->wbuf.size;
 	int avail;
@@ -1231,10 +1230,10 @@ done:
 }
 
 int
-GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
+GGI_vnc_zrle(ggi_vnc_client *client, ggi_rect *update)
 {
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
 	struct zrle_ctx_t *ctx = client->zrle_ctx;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
@@ -1382,7 +1381,7 @@ GGI_vnc_zrle(struct ggi_visual *vis, ggi_rect *update)
 
 	ggiResourceRelease(db->resource);
 
-	zip(priv, work, buf - work);
+	zip(client, work, buf - work);
 	return 1;
 }
 

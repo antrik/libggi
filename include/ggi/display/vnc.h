@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.22 2006/09/08 10:34:47 pekberg Exp $
+/* $Id: vnc.h,v 1.23 2006/09/08 19:43:00 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -31,7 +31,8 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/input/vnc.h>
 
-typedef int (ggi_vnc_client_action)(struct ggi_visual *vis);
+struct ggi_vnc_client_t;
+typedef int (ggi_vnc_client_action)(struct ggi_vnc_client_t *client);
 
 /* Move to a central location? */
 typedef struct {
@@ -39,7 +40,8 @@ typedef struct {
 	ggi_coord br;
 } ggi_rect;
 
-typedef int (ggi_vnc_encode)(struct ggi_visual *vis, ggi_rect *update);
+typedef int (ggi_vnc_encode)(
+	struct ggi_vnc_client_t *client, ggi_rect *update);
 
 typedef struct {
 	unsigned char *buf;
@@ -48,7 +50,11 @@ typedef struct {
 	int limit;
 } ggi_vnc_buf;
 
-typedef struct {
+typedef struct ggi_vnc_client_t {
+	GG_LIST_ENTRY(ggi_vnc_client_t) siblings;
+
+	struct ggi_visual *owner;
+
 	int cfd;
 	int protover;
 
@@ -100,7 +106,7 @@ typedef struct {
 
 	char title[80];
 
-	ggi_vnc_client *client;
+	GG_LIST_HEAD(clients, ggi_vnc_client_t) clients;
 } ggi_vnc_priv;
 
 
@@ -109,7 +115,9 @@ gii_vnc_client_data		GGI_vnc_client_data;
 gii_vnc_write_client		GGI_vnc_write_client;
 
 void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd);
-void GGI_vnc_close_client(struct ggi_visual *vis);
+void GGI_vnc_close_client(ggi_vnc_client *client);
+void GGI_vnc_client_invalidate_nc_xyxy(ggi_vnc_client *client,
+	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 void GGI_vnc_invalidate_nc_xyxy(struct ggi_visual *vis,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);
 void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,

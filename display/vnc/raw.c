@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.8 2006/09/07 08:20:41 pekberg Exp $
+/* $Id: raw.c,v 1.9 2006/09/08 19:43:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -41,10 +41,10 @@
 #include "encoding.h"
 
 int
-GGI_vnc_raw(struct ggi_visual *vis, ggi_rect *update)
+GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)
 {
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client = priv->client;
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	ggi_graphtype gt;
