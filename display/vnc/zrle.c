@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.32 2006/09/07 08:20:40 pekberg Exp $
+/* $Id: zrle.c,v 1.33 2006/09/08 08:27:09 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -86,7 +86,7 @@ zip(ggi_vnc_priv *priv, uint8_t *src, int len)
 	ctx->zstr.avail_in = len;
 
 	client->wbuf.size += 4;
-	
+
 	avail = client->wbuf.limit - client->wbuf.size;
 
 	for (;;) {
@@ -1401,15 +1401,14 @@ GGI_vnc_zrle_open(int level)
 		level = Z_DEFAULT_COMPRESSION;
 
 	deflateInit(&ctx->zstr, level);
-	
+
 	return ctx;
 }
 
 void
 GGI_vnc_zrle_close(struct zrle_ctx_t *ctx)
 {
-	if (ctx->work.buf)
-		free(ctx->work.buf);
+	free(ctx->work.buf);
 	deflateEnd(&ctx->zstr);
 	free(ctx);
 }

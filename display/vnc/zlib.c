@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.4 2006/09/07 08:20:41 pekberg Exp $
+/* $Id: zlib.c,v 1.5 2006/09/08 08:27:08 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -145,8 +145,7 @@ GGI_vnc_zlib_open(int level)
 void
 GGI_vnc_zlib_close(struct zlib_ctx_t *ctx)
 {
-	if (ctx->wbuf.buf)
-		free(ctx->wbuf.buf);
+	free(ctx->wbuf.buf);
 	deflateEnd(&ctx->zstr);
 	free(ctx);
 }
