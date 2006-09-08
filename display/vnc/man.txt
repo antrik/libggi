@@ -65,8 +65,8 @@ Options
 Features
 --------
 
-- Raw, CopyRect, zlib and ZRLE encodings. The CopyRect encoding is only
-  used for panning.
+- Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
+  is only used for panning.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
 - Multiple frames always available.

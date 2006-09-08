@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.48 2006/09/07 09:21:21 pekberg Exp $
+/* $Id: rfb.c,v 1.49 2006/09/08 10:34:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -143,6 +143,11 @@ close_client(ggi_vnc_priv *priv, ggi_vnc_client *client)
 	client->buf_size = 0;
 	client->dirty.tl.x = client->dirty.br.x = 0;
 	client->update.tl.x = client->update.br.x = 0;
+
+	if (client->hextile_ctx) {
+		GGI_vnc_hextile_close(client->hextile_ctx);
+		client->hextile_ctx = NULL;
+	}
 
 #ifdef HAVE_ZLIB
 	if (client->zlib_ctx) {
@@ -421,6 +426,13 @@ set_encodings(ggi_vnc_priv *priv, int32_t *encodings, unsigned int count)
 			break;
 		case 5:
 			DPRINT_MISC("Hextile encoding\n");
+			if (client->encode)
+				break;
+			if (!client->hextile_ctx)
+				client->hextile_ctx =
+					GGI_vnc_hextile_open();
+			if (client->hextile_ctx)
+				encode = GGI_vnc_hextile;
 			break;
 		case 16:
 			DPRINT_MISC("ZRLE encoding\n");
