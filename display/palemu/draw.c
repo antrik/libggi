@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.5 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: draw.c,v 1.6 2006/09/08 22:26:14 cegger Exp $
 ******************************************************************************
 
    Display-palemu: draw
@@ -26,8 +26,6 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
-
 #include <ggi/display/palemu.h>
 
 
