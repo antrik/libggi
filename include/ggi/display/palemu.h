@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.7 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: palemu.h,v 1.8 2006/09/08 21:58:19 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -47,20 +47,20 @@
 #define MAX(a, b)  ((a) > (b) ? (a) : (b))
 #endif
 
-#define UPDATE_MOD(vis, _x1, _y1, w, h)  \
-	do {                                                   \
-		ggi_palemu_priv *_priv = PALEMU_PRIV(vis);     \
-		int _x2=(_x1)+(w);                             \
-		int _y2=(_y1)+(h);                             \
-                                                               \
-		if ((_x1) < _priv->dirty_tl.x) _priv->dirty_tl.x =\
-			MAX((_x1), (vis)->gc->cliptl.x);        \
-		if ((_y1) < _priv->dirty_tl.y) _priv->dirty_tl.y =\
-			MAX((_y1), (vis)->gc->cliptl.y);        \
-		if ((_x2) > _priv->dirty_br.x) _priv->dirty_br.x =\
-			MIN((_x2), (vis)->gc->clipbr.x);        \
-		if ((_y2) > _priv->dirty_br.y) _priv->dirty_br.y =\
-			MIN((_y2), (vis)->gc->clipbr.y);        \
+#define UPDATE_MOD(vis, _x1, _y1, w, h) \
+	do {								\
+		ggi_palemu_priv *_priv = PALEMU_PRIV(vis);		\
+		int _x2 = (_x1) + (w);					\
+		int _y2 = (_y1) + (h);					\
+									\
+		if ((_x1) < _priv->dirty_tl.x) _priv->dirty_tl.x =	\
+			MAX((_x1), (vis)->gc->cliptl.x);		\
+		if ((_y1) < _priv->dirty_tl.y) _priv->dirty_tl.y =	\
+			MAX((_y1), (vis)->gc->cliptl.y);		\
+		if ((_x2) > _priv->dirty_br.x) _priv->dirty_br.x =	\
+			MIN((_x2), (vis)->gc->clipbr.x);		\
+		if ((_y2) > _priv->dirty_br.y) _priv->dirty_br.y =	\
+			MIN((_y2), (vis)->gc->clipbr.y);		\
 	} while (0)
 
 

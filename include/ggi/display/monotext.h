@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.8 2006/09/06 21:24:29 cegger Exp $
+/* $Id: monotext.h,v 1.9 2006/09/08 21:58:19 cegger Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -39,6 +39,7 @@
  **
  **************************************************/
 
+
 #ifndef MIN
 #define MIN(a, b)  ((a) < (b) ? (a) : (b))
 #endif
@@ -69,6 +70,7 @@
  **  MonoText private data
  **
  ****************************************************/
+
 
 typedef struct ggi_monotext_priv {
 	int flags;
