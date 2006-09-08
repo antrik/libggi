@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.2 2006/09/08 19:43:00 pekberg Exp $
+/* $Id: hextile.c,v 1.3 2006/09/08 21:00:24 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -574,7 +574,7 @@ tile_8(struct hextile_ctx_t *ctx, uint8_t **buf,
 {
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
-	uint8_t bg, fg;
+	uint8_t bg, fg = 0;
 	uint8_t data[256];
 	uint8_t *tdst;
 	uint8_t *tsrc;
@@ -639,7 +639,7 @@ tile_16(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint16_t *src = (uint16_t *)src8;
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
-	uint16_t bg, fg;
+	uint16_t bg, fg = 0;
 	uint16_t data[256];
 	uint16_t *tdst;
 	uint16_t *tsrc;
@@ -717,7 +717,7 @@ tile_32(struct hextile_ctx_t *ctx, uint8_t **buf,
 	uint32_t *src = (uint32_t *)src8;
 	uint8_t subencoding = 0;
 	uint8_t *dst = *buf;
-	uint32_t bg, fg;
+	uint32_t bg, fg = 0;
 	uint32_t data[256];
 	uint32_t *tdst;
 	uint32_t *tsrc;
