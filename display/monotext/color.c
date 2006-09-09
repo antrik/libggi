@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.10 2006/09/06 21:24:29 cegger Exp $
+/* $Id: color.c,v 1.11 2006/09/09 09:44:08 cegger Exp $
 ******************************************************************************
 
    Display-monotext: color management
@@ -38,7 +38,7 @@ int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t len, co
 {
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	const ggi_color *src = colormap;
-	size_t    end = start + len - 1;
+	size_t end = start + len;
 
  	DPRINT("display-monotext: SetPalette(%d,%d)\n", start, len);
 
@@ -46,12 +46,12 @@ int GGI_monotext_setPalette(struct ggi_visual *vis, size_t start, size_t len, co
 		return GGI_ENOSPACE;
 	}
 		
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, src, len*sizeof(ggi_color));
 	if (end > start) {
 		UPDATE_MOD(vis, 0, 0, priv->size.x, priv->size.y);
 	}
 	
-	for (; start <= end; ++start, ++src) {
+	for (; start < end; ++start, ++src) {
 		int r = (src->r >> 11) & 0x1f;
  		int g = (src->g >> 11) & 0x1f;
  		int b = (src->b >> 11) & 0x1f;
