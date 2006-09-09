@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2006/09/09 15:40:59 cegger Exp $
+/* $Id: visual.c,v 1.23 2006/09/09 16:55:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -155,7 +155,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	DPRINT("display-palemu: parent mode is '%s'\n",
 		  options[OPT_PARENT].result);
-	ggiParseMode(options[OPT_PARENT].result, &priv->mode);
+	ggiParseMode(options[OPT_PARENT].result, &priv->parent_mode);
 
 	DPRINT("display-palemu: opening target: %s\n", target);
 	priv->parent = ggNewStem();

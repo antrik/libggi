@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: mode.c,v 1.20 2006/09/09 16:55:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -236,11 +236,11 @@ int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	*LIBGGI_MODE(vis) = *mode;
 	
-	priv->mode.visible = mode->visible;
-	priv->mode.virt    = mode->virt;
-	priv->mode.dpp     = mode->dpp;
-	priv->mode.size    = mode->size;
-	priv->mode.frames  = 1;
+	priv->parent_mode.visible = mode->visible;
+	priv->parent_mode.virt    = mode->virt;
+	priv->parent_mode.dpp     = mode->dpp;
+	priv->parent_mode.size    = mode->size;
+	priv->parent_mode.frames  = 1;
 
 	if ((err = do_setmode(vis)) != 0) {
 		DPRINT_MODE("display-palemu: setmode failed (%d).\n", err);
@@ -319,28 +319,28 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* Handle geometry */
 	if (mode->visible.x == GGI_AUTO) {
-		mode->visible.x = priv->mode.visible.x;
+		mode->visible.x = priv->parent_mode.visible.x;
 	}
 	if (mode->visible.y == GGI_AUTO) {
-		mode->visible.y = priv->mode.visible.y;
+		mode->visible.y = priv->parent_mode.visible.y;
 	}
 	if (mode->virt.x == GGI_AUTO) {
-		mode->virt.x = priv->mode.virt.x;
+		mode->virt.x = priv->parent_mode.virt.x;
 	}
 	if (mode->virt.y == GGI_AUTO) {
-		mode->virt.y = priv->mode.virt.y;
+		mode->virt.y = priv->parent_mode.virt.y;
 	}
 	if (mode->dpp.x == GGI_AUTO) {
-		mode->dpp.x = priv->mode.dpp.x;
+		mode->dpp.x = priv->parent_mode.dpp.x;
 	}
 	if (mode->dpp.y == GGI_AUTO) {
-		mode->dpp.y = priv->mode.dpp.y;
+		mode->dpp.y = priv->parent_mode.dpp.y;
 	}
 	if (mode->size.x == GGI_AUTO) {
-		mode->size.x = priv->mode.size.x;
+		mode->size.x = priv->parent_mode.size.x;
 	}
 	if (mode->size.y == GGI_AUTO) {
-		mode->size.y = priv->mode.size.y;
+		mode->size.y = priv->parent_mode.size.y;
 	}
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;
@@ -351,7 +351,7 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 	 */
 	par_mode = *mode;
 
-	par_mode.graphtype = priv->mode.graphtype;
+	par_mode.graphtype = priv->parent_mode.graphtype;
 
 	tmperr = ggiCheckMode(priv->parent, &par_mode);
 	if (tmperr) err = tmperr;

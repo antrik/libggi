@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.11 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: palemu.c,v 1.12 2006/09/09 16:55:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -161,20 +161,20 @@ int _ggi_palemu_Open(struct ggi_visual *vis)
 
 	/* set the parent mode */
 	
-	rc = ggiSetMode(priv->parent, &priv->mode);
+	rc = ggiSetMode(priv->parent, &priv->parent_mode);
 	if (rc < 0) {
 		DPRINT("display-palemu: Couldn't set parent mode.\n");
 		return rc;
 	}
 
 	DPRINT("display-palemu: parent is %d/%d\n",
-		GT_DEPTH(priv->mode.graphtype), 
-		GT_SIZE(priv->mode.graphtype));
+		GT_DEPTH(priv->parent_mode.graphtype), 
+		GT_SIZE(priv->parent_mode.graphtype));
 	
 
 	/* setup tables and choose blitter function */
 
-	switch (GT_ByPP(priv->mode.graphtype)) {
+	switch (GT_ByPP(priv->parent_mode.graphtype)) {
 
 	case 1: priv->do_blit = &blitter_1;
 		break;
@@ -190,7 +190,7 @@ int _ggi_palemu_Open(struct ggi_visual *vis)
 		
 	default:
 		DPRINT("Unsupported pixel size '%d'.\n",
-			GT_SIZE(priv->mode.graphtype));
+			GT_SIZE(priv->parent_mode.graphtype));
 		return GGI_ENOMATCH;
 	}
 
