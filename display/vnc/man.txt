@@ -67,6 +67,7 @@ Features
 
 - Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
   is only used for panning.
+- Multiple simultaneous clients.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
 - Multiple frames always available.
@@ -78,5 +79,3 @@ Bugs
 ----
 
 - Special keys (i.e. shift, escape, etc) needs to be converted.
-- A DoS attack is easy as an existing client is disconnected as soon
-  as a new one connects.

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.50 2006/09/08 19:43:01 pekberg Exp $
+/* $Id: rfb.c,v 1.51 2006/09/09 04:35:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -947,8 +947,20 @@ vnc_client_init(ggi_vnc_client *client)
 		/* wait for more data */
 		return 0;
 
-	if (client->buf[0])
-		DPRINT("Client want's to share connection. Not supported.\n");
+	if (!client->buf[0]) {
+		/* I'm not sharing.
+		 * Kill'em all.
+		 */
+		ggi_vnc_client *i = GG_LIST_FIRST(&priv->clients);
+		ggi_vnc_client *next;
+		for (i = GG_LIST_FIRST(&priv->clients); i; i = next) {
+			next = GG_LIST_NEXT(i, siblings);
+			if (i == client)
+				/* Err, not *all*, not me, myself and I. */
+				continue;
+			close_client(i);
+		}
+	}
 
 	client->buf_size = 0;
 	client->action = vnc_client_run;
@@ -1258,9 +1270,6 @@ GGI_vnc_new_client(void *arg)
 		DPRINT("Error accept(2)ing connection\n");
 		return;
 	}
-
-	while (!GG_LIST_EMPTY(&priv->clients))
-		close_client(GG_LIST_FIRST(&priv->clients));
 
 	GGI_vnc_new_client_finish(vis, cfd);
 }
