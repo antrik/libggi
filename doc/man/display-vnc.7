@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-08" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-09" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -63,6 +63,8 @@ compromize between speed and compression is selected.
 Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
 is only used for panning.
 .IP \(bu 4
+Multiple simultaneous clients.
+.IP \(bu 4
 DirectBuffer always available, including tidy buffer mode (see
 \f(CWggiSetFlags(3)\fR).
 .IP \(bu 4
@@ -75,7 +77,4 @@ Unaccelerated.
 .SH BUGS
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
-.IP \(bu 4
-A DoS attack is easy as an existing client is disconnected as soon
-as a new one connects.
 .PP
