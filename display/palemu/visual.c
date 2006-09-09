@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/03/22 01:04:31 pekberg Exp $
+/* $Id: visual.c,v 1.22 2006/09/09 15:40:59 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -274,6 +274,35 @@ EXPORTFUNC
 int GGIdl_palemu(int func, void **funcptr);
 
 int GGIdl_palemu(int func, void **funcptr)
+{
+	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
+	ggifunc_close **closeptr;
+
+	switch (func) {
+	case GGIFUNC_open:
+		openptr = (ggifunc_open **)funcptr;
+		*openptr = GGIopen;
+		return 0;
+	case GGIFUNC_exit:
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
+		return 0;
+	case GGIFUNC_close:
+		closeptr = (ggifunc_close **)funcptr;
+		*closeptr = GGIclose;
+		return 0;
+	default:
+		*funcptr = NULL;
+	}
+
+	return GGI_ENOTFOUND;
+}
+
+EXPORTFUNC
+int GGIdl_monotext(int func, void **funcptr);
+
+int GGIdl_monotext(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
 	ggifunc_exit **exitptr;

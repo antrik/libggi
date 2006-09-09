@@ -68,9 +68,6 @@ endif
 if BUILTIN_DISPLAY_MEMORY
   builtins_libs += $(top_builddir)/display/memory/libmemory.la
 endif
-if BUILTIN_DISPLAY_MONOTEXT
-  builtins_libs += $(top_builddir)/display/monotext/libmonotext.la
-endif
 if BUILTIN_DISPLAY_PALEMU
   builtins_libs += $(top_builddir)/display/palemu/libpalemu.la
 endif

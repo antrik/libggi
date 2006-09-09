@@ -4,7 +4,7 @@ displaylibdir = ${libdir}/${ggi_subdir}/display
 EXTRA_LTLIBRARIES = aa.la auto.la directx.la fbdev.la file.la \
 	glide.la helper_x_dbe.la helper_x_dga.la helper_x_evi.la \
 	helper_x_shm.la helper_x_vidmode.la ipc.la kgi.la lcd823.la \
-	kgilib.la linvtsw.la mansync.la memory.la monotext.la \
+	kgilib.la linvtsw.la mansync.la memory.la \
 	palemu.la sub.la svgalib.la tele.la terminfo.la tile.la trueemu.la \
 	suidkgi.la vcsa.la vgagl.la vgl.la vnc.la wsfb.la quartz.la X.la
 
@@ -93,12 +93,6 @@ memory_la_SOURCES =
 memory_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/display/memory/EXPSYMS
-
-monotext_la_LIBADD = ${displaydir}/monotext/libmonotext.la ${libggi}
-monotext_la_SOURCES =
-monotext_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
-	-shared -module -no-undefined -avoid-version \
-	-export-symbols ${top_srcdir}/display/monotext/EXPSYMS
 
 palemu_la_LIBADD = ${displaydir}/palemu/libpalemu.la ${libggi}
 palemu_la_SOURCES =

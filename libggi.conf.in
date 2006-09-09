@@ -14,9 +14,9 @@ display-ipc			display/ipc.@DLLEXT@
 display-lcd823			display/lcd823.@DLLEXT@
 display-libkgi			display/kgilib.@DLLEXT@
 display-memory			display/memory.@DLLEXT@
-display-monotext		display/monotext.@DLLEXT@
+display-monotext		display/palemu.@DLLEXT@:GGIdl_monotext
 display-multi			display/tile.@DLLEXT@:GGIdl_multi
-display-palemu			display/palemu.@DLLEXT@
+display-palemu			display/palemu.@DLLEXT@:GGIdl_palemu
 display-quartz			display/quartz.@DLLEXT@
 display-sub			display/sub.@DLLEXT@
 display-suidkgi			display/suidkgi.@DLLEXT@

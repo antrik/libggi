@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.8 2006/08/19 23:31:31 pekberg Exp $
+/* $Id: builtins.c,v 1.9 2006/09/09 15:40:59 cegger Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -108,10 +108,8 @@ ggifunc_dlinit GGIdl_mansync;
 #ifdef BUILTIN_DISPLAY_MEMORY
 ggifunc_dlinit GGIdl_memory;
 #endif
-#ifdef BUILTIN_DISPLAY_MONOTEXT
-ggifunc_dlinit GGIdl_monotext;
-#endif
 #ifdef BUILTIN_DISPLAY_PALEMU
+ggifunc_dlinit GGIdl_monotext;
 ggifunc_dlinit GGIdl_palemu;
 #endif
 #ifdef BUILTIN_DISPLAY_QUARTZ
@@ -253,10 +251,8 @@ static struct target _targets[] = {
 #ifdef BUILTIN_DISPLAY_MEMORY
         { "GGIdl_memory", &GGIdl_memory },
 #endif
-#ifdef BUILTIN_DISPLAY_MONOTEXT
-        { "GGIdl_monotext", &GGIdl_monotext },
-#endif
 #ifdef BUILTIN_DISPLAY_PALEMU
+        { "GGIdl_monotext", &GGIdl_monotext },
         { "GGIdl_palemu", &GGIdl_palemu },
 #endif
 #ifdef BUILTIN_DISPLAY_QUARTZ
