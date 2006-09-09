@@ -37,3 +37,45 @@ Features
 
 - DirectBuffer never supported.
 - Unaccelerated.
+
+Emulate palettized modes on text-mode visuals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. manpage::  7 display-monotext
+
+
+Synopsis
+--------
+
+::
+
+  display-monotext: [ [-a=<acc>] | [ [-x=<acc>] [-y=<acc>] ] ] <target-spec>
+
+
+Description
+-----------
+
+
+Emulates palettized modes (`GT_PALETTE`) on another target which can
+only do text modes, by representing the graphics as ASCII characters.
+The effect is the much the same as the `AAlib` target, but does not
+depend on any external libraries.
+
+
+Options
+-------
+
+``-x=<acc>``, ``-y=<acc>``
+    A value between 1 and 5 which determines how accurately to map the
+    graphics to ASCII characters.  Lower values are less accurate, but
+    can represent a wider range of intensity levels.  The default is
+    x=2 and y=4.
+
+``-a=<acc>``
+    Same as above, but sets both the x and y accuracy to the specified
+    value.
+
+:p:`target-spec`
+    Specifies the target which to draw on (the *parent* target).  This
+    defaults to automatic selection (just like using
+    ``ggiOpen(NULL)`` when `GGI_DISPLAY` is not set).

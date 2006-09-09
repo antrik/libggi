@@ -112,8 +112,8 @@ man_MANS = \
            display-kgi.7 \
            display-mansync.7 \
            display-memory.7 \
-           display-monotext.7 \
            display-palemu.7 \
+           display-monotext.7 \
            display-quartz.7 \
            display-sub.7 \
            display-svgalib.7 \

@@ -10,7 +10,6 @@ LibGGI Libraries and utilities
 .. include:: ../display/kgi/man.txt
 .. include:: ../display/mansync/man.txt
 .. include:: ../display/memory/man.txt
-.. include:: ../display/monotext/man.txt
 .. include:: ../display/palemu/man.txt
 .. include:: ../display/quartz/man.txt
 .. include:: ../display/sub/man.txt
