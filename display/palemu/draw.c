@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.6 2006/09/08 22:26:14 cegger Exp $
+/* $Id: draw.c,v 1.7 2006/09/09 06:21:15 cegger Exp $
 ******************************************************************************
 
    Display-palemu: draw
@@ -87,7 +87,7 @@ int GGI_palemu_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 int GGI_palemu_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
-	
+
 	UPDATE_MOD(vis, x, y, w, 1);
 
 	return priv->mem_opdraw->drawhline_nc(vis, x, y, w);
@@ -105,7 +105,7 @@ int GGI_palemu_drawhline(struct ggi_visual *vis, int x, int y, int w)
 int GGI_palemu_puthline(struct ggi_visual *vis, int x, int y, int w, const void *buffer)
 { 
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
-	
+
 	UPDATE_MOD(vis, x, y, w, 1);
 
 	return priv->mem_opdraw->puthline(vis, x, y, w, buffer);
