@@ -4,7 +4,7 @@ libvcsa_la_LIBADD =
 
 noinst_LTLIBRARIES = libvcsa.la
 
-libvcsa_la_SOURCES = color.c draw.c mode.c visual.c
+libvcsa_la_SOURCES = color.c draw.c listener.c mode.c visual.c
 
 EXTRA_DIST = EXPSYMS
 

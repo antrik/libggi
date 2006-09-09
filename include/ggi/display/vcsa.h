@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
+/* $Id: vcsa.h,v 1.7 2006/09/09 15:20:12 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -42,6 +42,13 @@ typedef struct {
 	int inputs;
 	int flags;
 
+	struct gg_module *kbd_inp;
+	struct gg_publisher *kbd_publisher;
+	struct gg_observer *kbd_observer;
+
+	struct gg_module *ms_inp;
+	struct gg_publisher *ms_publisher;
+	struct gg_observer *ms_observer;	
 } ggi_vcsa_priv;
 
 #define VCSA_PRIV(vis) ((ggi_vcsa_priv *) LIBGGI_PRIVATE(vis))
@@ -76,6 +83,9 @@ ggifunc_mapcolor	GGI_vcsa_mapcolor;
 ggifunc_unmappixel	GGI_vcsa_unmappixel;
 
 extern int GGI_vcsa_resetmode(struct ggi_visual *vis);
+
+ggfunc_observer_update GGI_vcsa_kbd_listener;
+ggfunc_observer_update GGI_vcsa_ms_listener;
 
 
 #endif /* _GGI_DISPLAY_VCSA_H */

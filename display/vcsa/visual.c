@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/03/22 19:26:48 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/09/09 15:20:11 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -42,6 +42,8 @@
 #include "config.h"
 #include <ggi/display/vcsa.h>
 #include <ggi/internal/ggi_debug.h>
+
+#include <ggi/gii.h>
 
 
 static const gg_option optlist[] =
@@ -97,11 +99,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	ggi_vcsa_priv *priv;
 	gg_option options[NUM_OPTS];
-	gii_input *inp;
 	char filename[80];
 	unsigned char buf[4];
 	int vt = -1;
 	int err = GGI_ENOMEM;
+	struct gg_api *gii;
 
 	DPRINT_MISC("display-vcsa: GGIdlinit start.\n");
 
@@ -143,7 +145,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (vt < 0) {
 			goto out_freegc;
 		}
-		sprintf(filename, "/dev/vcsa%d", vt);
+		snprintf(filename, sizeof(filename), "/dev/vcsa%d", vt);
 	}
 
 	/* now open the vcsa device */
@@ -201,20 +203,48 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	lseek(LIBGGI_FD(vis), 0, SEEK_SET);
 	write(LIBGGI_FD(vis), buf, 4);
 
+	gii = ggGetAPIByName("gii");
+
 	/* Open keyboard and mouse input */
 	if (priv->inputs & VCSA_INP_KBD) {
-		vis->input = giiOpen("input-linux-kbd", NULL);
+		struct gg_module *inp = NULL;
 
-		if (vis->input == NULL) {
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+					"input-linux-kbd", NULL, NULL);
+			priv->kbd_publisher = ggGetPublisher(gii, vis->stem,
+					GII_PUBLISHER_SOURCE_CHANGE);
+			priv->kbd_observer = ggAddObserver(priv->kbd_publisher,
+					GGI_vcsa_kbd_listener, vis);
+		}	
+		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
+		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open kbd.\n");
 			goto out_closefd;
 		}
+		priv->kbd_inp = inp;
+	} else {
+		priv->kbd_inp = NULL;
 	}
 	if (priv->inputs & VCSA_INP_MOUSE) {
-		inp = giiOpen("linux-mouse:auto", &args, NULL);
-		if (inp != NULL) {
-			vis->input = giiJoinInputs(vis->input, inp);
+		struct gg_module *inp = NULL;
+
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+					"linux-mouse:auto", NULL, &args);
+			priv->ms_publisher = ggGetPublisher(gii, vis->stem,
+					GII_PUBLISHER_SOURCE_CHANGE);
+			priv->ms_observer = ggAddObserver(priv->ms_publisher,
+					GGI_vcsa_ms_listener, vis);
 		}
+		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
+		if (inp == NULL) {
+			fprintf(stderr, "display-vcsa: Couldn't open mouse.\n");
+			goto out_closefd;
+		}
+		priv->ms_inp = inp;
+	} else {
+		priv->ms_inp = NULL;
 	}
 
 	/* mode management */
@@ -248,9 +278,13 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (LIBGGI_FD(vis) >= 0) {
 		GGI_vcsa_resetmode(vis);
 
-		if (vis->input != NULL) {
-			giiClose(vis->input);
-			vis->input = NULL;
+		if (priv->kbd_inp != NULL) {
+			ggCloseModule(priv->kbd_inp);
+			priv->kbd_inp = NULL;
+		}
+		if (priv->ms_inp != NULL) {
+			ggCloseModule(priv->ms_inp);
+			priv->ms_inp = NULL;
 		}
 
 		close(LIBGGI_FD(vis));

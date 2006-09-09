@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
+/* $Id: mode.c,v 1.13 2006/09/09 15:20:11 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -62,7 +62,7 @@ int GGI_vcsa_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
 	int err, id;
 
-        if ((err = ggiCheckMode(vis, mode)) != 0) {
+        if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
 		return err;
 	}
 
@@ -101,7 +101,7 @@ int GGI_vcsa_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	vis->opcolor->unmappixel  = GGI_vcsa_unmappixel;
 
 	/* indicate API change */
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	DPRINT_MODE("display-vcsa: setmode Success.\n");
 

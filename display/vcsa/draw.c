@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.9 2006/03/22 19:26:48 cegger Exp $
+/* $Id: draw.c,v 1.10 2006/09/09 15:20:11 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -216,7 +216,7 @@ int GGI_vcsa_getcharsize(struct ggi_visual *vis, int *width, int *height)
 
 int GGI_vcsa_putc(struct ggi_visual *vis, int x, int y, char c)
 {
-	return ggiPutPixel(vis, x, y, (c & 0xff) |
+	return ggiPutPixel(vis->stem, x, y, (c & 0xff) |
 		((LIBGGI_GC_BGCOLOR(vis) & 0x0f00) << 4) |
 		 (LIBGGI_GC_FGCOLOR(vis) & 0x0f00));
 }
@@ -233,5 +233,5 @@ int GGI_vcsa_puts(struct ggi_visual *vis, int x, int y, const char *str)
 		 (LIBGGI_GC_FGCOLOR(vis) & 0x0f00);
 	}
 
-	return ggiPutHLine(vis, x, y, len, buf);
+	return ggiPutHLine(vis->stem, x, y, len, buf);
 }
