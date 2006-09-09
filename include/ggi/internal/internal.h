@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.34 2006/04/15 09:39:00 cegger Exp $
+/* $Id: internal.h,v 1.35 2006/09/09 11:49:10 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -274,9 +274,9 @@ __END_DECLS
 #define _ggiSetOrigin(vis, x,y)				\
 		(vis)->opdraw->setorigin((vis),(x),(y))
 #define _ggiPutc(vis, x,y,c)				\
-		(vis)->opdraw->putc((vis),(x),(y),(c))
+		((vis)->opdraw->putc)((vis),(x),(y),(c))
 #define _ggiPuts(vis, x,y, str)				\
-		(vis)->opdraw->puts((vis),(x),(y),(str))
+		((vis)->opdraw->puts)((vis),(x),(y),(str))
 #define _ggiGetCharSize(vis, width, height)		\
 		(vis)->opdraw->getcharsize((vis),(width),(height))
 #define _ggiFillscreen(vis)				\
