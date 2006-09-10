@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/03/20 20:44:53 cegger Exp $
+/* $Id: visual.c,v 1.19 2006/09/10 11:17:24 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -200,7 +200,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (args != NULL) {
 		args = ggParseOptions(args, options, NUM_OPTS);
 		if (args == NULL) {
-			fprintf(stderr, "display-x: error in arguments.\n");
+			fprintf(stderr, "display-terminfo: error in arguments.\n");
 			return GGI_EARGINVAL;
 		}
         }
@@ -217,8 +217,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			       &(priv->physzflags), &(priv->physz)); 
 	if (err != GGI_OK) {
-	  free(priv);
-	  return err;
+		free(priv);
+		return err;
 	}
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -307,7 +307,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->setflags  = GGI_terminfo_setflags;
 
 	/* event management */
-	{
+	do {
 		gii_input *inp;
 		inp = _giiInputAlloc();
 
@@ -338,7 +338,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		inp->flags|=GII_FLAGS_HASPOLLED;
 
 		vis->input = giiJoinInputs(vis->input, inp);
-	}
+	} while(0);
 
 	_terminfo_release_screen();
  
@@ -351,19 +351,19 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	struct TIhooks *priv;
 
 	priv = TERMINFO_PRIV(vis);
-	if ( priv != NULL ) {
-		if ( priv->scr != NULL ) {
+	if (priv != NULL) {
+		if (priv->scr != NULL) {
 			_terminfo_select_screen(priv->scr);
-			if ( !priv->virgin ) {
+			if (!priv->virgin) {
 				wclear(stdscr);
 				refresh();
 			}
 			_terminfo_destroy_screen();
 		}
-		if ( priv->f_in != NULL ) {
+		if (priv->f_in != NULL) {
 			fclose(priv->f_in);
 		}
-		if ( ( priv->f_out != NULL ) && ( priv->f_out != priv->f_in ) ) {
+		if ((priv->f_out != NULL) && (priv->f_out != priv->f_in)) {
 			fclose(priv->f_out);
 		}
 
