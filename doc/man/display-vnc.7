@@ -1,11 +1,12 @@
-.TH "display-vnc" 7 "2006-09-09" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-10" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
-             [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
+             [-hextile=no] [-passwd=<pass>] [-title=<title>] [-zlib=<level>]
+             [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -23,6 +24,14 @@ connect. A vnc viewer in listening mode is expected to be found on
 \fIhost\fR.
 
 .TP
+\f(CW-copyrect=no|always\fR
+Controls when the CopyRect encoding is used. Select \fIno\fR to disable
+it completely, and \fIalways\fR to enable it when suitable even if there
+is support for some other encoding the client has preferred. The default
+is to only use the CopyRect encoding if it is the most preferred
+encoding available.
+
+.TP
 \f(CW-display=<dpy>\fR
 The display number clients should connect to. Display number 0 is
 equivalent to tcp port 5900.
@@ -30,6 +39,10 @@ equivalent to tcp port 5900.
 If the \fI-client\fR option is also given, this is instead the display
 number this server connects to, and display number 0 is equivalent
 to tcp port 5500 in that case.
+
+.TP
+\f(CW-hextile=no\fR
+Disables the hextile encoding.
 
 .TP
 \f(CW-passwd=<password>\fR
