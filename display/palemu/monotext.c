@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.14 2006/09/10 06:53:13 cegger Exp $
+/* $Id: monotext.c,v 1.1 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -26,7 +26,7 @@
 */
 
 #include "config.h"
-#include <ggi/display/monotext.h>
+#include <ggi/display/palemu.h>
 #include <ggi/internal/ggi_debug.h>
 
 #include <stdio.h>
@@ -212,7 +212,7 @@ static void calc_accuracy_4x4(int _index, ggi_coord acc)
 	greyblock_to_ascii[_index] = find_closest_char(templ, acc);
 }
 
-static void blitter_1x1(ggi_monotext_priv *priv, void *dest, void *src, int w)
+static void blitter_1x1(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
 	uint8_t  *s = (uint8_t *)  src;
 	uint16_t *d = (uint16_t *) dest;
@@ -227,7 +227,7 @@ static void blitter_1x1(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	}
 }
 
-static void blitter_1x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
+static void blitter_1x2(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
 	uint8_t  *s = (uint8_t *)  src;
 	uint16_t *d = (uint16_t *) dest;
@@ -247,7 +247,7 @@ static void blitter_1x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	}
 }
 
-static void blitter_2x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
+static void blitter_2x2(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
 	uint8_t  *s = (uint8_t *)  src;
 	uint16_t *d = (uint16_t *) dest;
@@ -270,7 +270,7 @@ static void blitter_2x2(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	}
 }
 
-static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
+static void blitter_2x4(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
 	uint8_t  *s = (uint8_t *)  src;
 	uint16_t *d = (uint16_t *) dest;
@@ -298,7 +298,7 @@ static void blitter_2x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
 	}
 }
 
-static void blitter_4x4(ggi_monotext_priv *priv, void *dest, void *src, int w)
+static void blitter_4x4(ggi_palemu_priv *priv, void *dest, void *src, int w)
 {
 	uint8_t  *s = (uint8_t *)  src;
 	uint16_t *d = (uint16_t *) dest;
@@ -351,7 +351,7 @@ static uint8_t dest_buf[8192];
 static inline void get_source_lines(struct ggi_visual *vis, int x, int y, int w,
 				   uint8_t *src)
 {
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	int stride = priv->size.x * priv->accuracy.x * priv->squish.x;
 
@@ -368,9 +368,9 @@ static inline void get_source_lines(struct ggi_visual *vis, int x, int y, int w,
 	}
 }
 
-int _ggi_monotext_update(struct ggi_visual *vis, int x, int y, int w, int h)
+int _ggi_monotext_Update(struct ggi_visual *vis, int x, int y, int w, int h)
 {
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	int step_x = priv->accuracy.x * priv->squish.x;
 	int step_y = priv->accuracy.y * priv->squish.y;
@@ -406,9 +406,9 @@ int _ggi_monotext_update(struct ggi_visual *vis, int x, int y, int w, int h)
 	return 0;
 }
 
-int _ggi_monotext_flush(struct ggi_visual *vis)
+int _ggi_monotext_Flush(struct ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	int sx = MAX(priv->dirty_tl.x, vis->gc->cliptl.x);
 	int sy = MAX(priv->dirty_tl.y, vis->gc->cliptl.y);
@@ -426,16 +426,16 @@ int _ggi_monotext_flush(struct ggi_visual *vis)
 
 
 	if ((sx < ex) && (sy < ey)) {
-		return _ggi_monotextUpdate(vis, sx, sy, ex-sx, ey-sy);
+		return _ggi_monotext_Update(vis, sx, sy, ex-sx, ey-sy);
 	}
 
 	return 0;
 }
 
-int _ggi_monotext_open(struct ggi_visual *vis)
+int _ggi_monotext_Open(struct ggi_visual *vis)
 {
 	int rc;
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	ggi_coord child_size;
 
@@ -446,7 +446,7 @@ int _ggi_monotext_open(struct ggi_visual *vis)
 		priv->accuracy.x, priv->accuracy.y,
 		  priv->squish.x, priv->squish.y);
 
-	priv->colormap    = _ggi_malloc(256 * sizeof(ggi_color));
+	priv->palette    = _ggi_malloc(256 * sizeof(ggi_color));
 	priv->greymap     = _ggi_malloc(256);
 	priv->rgb_to_grey = _ggi_malloc(32 * 32 * 32);
 
@@ -458,7 +458,7 @@ int _ggi_monotext_open(struct ggi_visual *vis)
 	/* set the parent mode */
 	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		priv->parent_gt.graphtype);
+		priv->parent_mode.graphtype);
 	if (rc < 0) {
 		DPRINT("Couldn't set child graphic mode.\n");
 		return rc;
@@ -511,12 +511,12 @@ int _ggi_monotext_open(struct ggi_visual *vis)
 	return 0;
 }
 
-int _ggi_monotext_close(struct ggi_visual *vis)
+int _ggi_monotext_Close(struct ggi_visual *vis)
 {
-	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
-	if (priv->colormap != NULL) {
-		free(priv->colormap);
+	if (priv->palette != NULL) {
+		free(priv->palette);
 	}
 	if (priv->greymap != NULL) {
 		free(priv->greymap);

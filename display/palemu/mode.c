@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/09/09 16:55:13 cegger Exp $
+/* $Id: mode.c,v 1.21 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -49,25 +49,33 @@ static void _GGI_palemu_freedbs(struct ggi_visual *vis)
 
 int GGI_palemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *arguments)
 {
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	*arguments = '\0';
 
 	switch(num) {
-
-	case 0: strcpy(apiname, "display-palemu");
+	case 0:
+		if (priv->target == PALEMU_TARGET)
+			strcpy(apiname, "display-palemu");
+		else
+			strcpy(apiname, "display-monotext");
 		return 0;
 
-	case 1: strcpy(apiname, "generic-stubs");
+	case 1: 
+		strcpy(apiname, "generic-stubs");
 		return 0;
 
-	case 2: sprintf(apiname, "generic-linear-%u%s",
+	case 2: 
+		sprintf(apiname, "generic-linear-%u%s",
 			GT_DEPTH(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
 
-	case 3: strcpy(apiname, "generic-color");
+	case 3: 
+		strcpy(apiname, "generic-color");
 		return 0;
 		
-	case 4: strcpy(apiname, "generic-pseudo-stubs");
+	case 4: 
+		strcpy(apiname, "generic-pseudo-stubs");
 		sprintf(arguments, "%p", (void *)PALEMU_PRIV(vis)->parent);
 		return 0;
 	}
@@ -142,9 +150,7 @@ static int do_dbstuff(struct ggi_visual *vis)
 static int do_setmode(struct ggi_visual *vis)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
-
 	char libname[GGI_MAX_APILEN], libargs[GGI_MAX_APILEN];
-
 	int err, id;
 
 
@@ -154,7 +160,6 @@ static int do_setmode(struct ggi_visual *vis)
 		return err;
 	}
 	
-
 	/* load libraries */
 
 	for (id=1; GGI_palemu_getapi(vis, id, libname, libargs) == 0; id++) {
@@ -178,6 +183,20 @@ static int do_setmode(struct ggi_visual *vis)
 
 	*priv->mem_opdraw = *vis->opdraw;
 
+	if (priv->target == PALEMU_TARGET) {
+		vis->opdraw->putbox = GGI_palemu_putbox;
+		vis->opdraw->drawbox = GGI_palemu_drawbox;
+		vis->opdraw->copybox = GGI_palemu_copybox;
+		vis->opdraw->crossblit = GGI_palemu_crossblit;
+		vis->opdraw->fillscreen = GGI_palemu_fillscreen;
+	} else {
+		vis->opdraw->putbox = GGI_monotext_putbox;
+		vis->opdraw->drawbox = GGI_monotext_drawbox;
+		vis->opdraw->copybox = GGI_monotext_copybox;
+		vis->opdraw->crossblit = GGI_monotext_crossblit;
+		vis->opdraw->fillscreen = GGI_monotext_fillscreen;
+	}
+
 	vis->opdraw->drawpixel_nc=GGI_palemu_drawpixel_nc;
 	vis->opdraw->drawpixel=GGI_palemu_drawpixel;
 	vis->opdraw->drawhline_nc=GGI_palemu_drawhline_nc;
@@ -191,12 +210,7 @@ static int do_setmode(struct ggi_visual *vis)
 	vis->opdraw->putpixel=GGI_palemu_putpixel;
 	vis->opdraw->puthline=GGI_palemu_puthline;
 	vis->opdraw->putvline=GGI_palemu_putvline;
-	vis->opdraw->putbox=GGI_palemu_putbox;
 
-	vis->opdraw->drawbox=GGI_palemu_drawbox;
-	vis->opdraw->copybox=GGI_palemu_copybox;
-	vis->opdraw->crossblit=GGI_palemu_crossblit;
-	vis->opdraw->fillscreen=GGI_palemu_fillscreen;
 
 	vis->opdraw->setorigin=GGI_palemu_setorigin;
 
@@ -215,6 +229,10 @@ static int do_setmode(struct ggi_visual *vis)
 
 	return 0;
 }
+
+/* XXX Query target! */
+static int target_width = 80;
+static int target_height = 25;
 
 int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
@@ -247,10 +265,18 @@ int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
+	priv->squish.x = mode->visible.x / target_width;
+	priv->squish.y = mode->visible.y / target_height;
+
 	DPRINT_MODE("display-palemu: Attempting to setmode on parent "
 		"visual...\n");
 
-	if ((err = _ggi_palemu_Open(vis)) != 0) {
+	if (priv->target == PALEMU_TARGET) {
+		err = _ggi_palemu_Open(vis);
+	} else {
+		err = _ggi_monotext_Open(vis);
+	}
+	if (err != 0) {
 		return err;
 	}
 
@@ -283,6 +309,46 @@ int GGI_palemu_resetmode(struct ggi_visual *vis)
 
 	return 0;
 }
+
+
+static int calc_squish(ggi_palemu_priv *priv, ggi_mode *mode,
+			int _target_width, int _target_height)
+{
+	int sq_x, sq_y;
+	int totw = _target_width * priv->accuracy.x;
+	int toth = _target_height * priv->accuracy.y;
+
+#if 0	/* Preliminary mode-improvement code */
+	while ((mode->visible.x % totw) != 0) mode.visible.x++;
+	while ((mode->visible.y % toth) != 0) mode.visible.y++;
+	mode->virt.x = mode->visible.x;
+	mode->virt.y = mode->visible.y;
+#endif
+
+	if (((mode->visible.x % totw) != 0) ||
+	    ((mode->visible.y % toth) != 0)) {
+		DPRINT_MODE("display-monotext: visible size is not a "
+			"multiple of the target size.\n");
+		return GGI_ENOMATCH;
+	}
+
+	sq_x = mode->visible.x / totw;
+	sq_y = mode->visible.y / toth;
+
+	if (sq_x <= 0 || sq_y <= 0) {
+		DPRINT_MODE("display-monotext: visible size is not a "
+			"multiple of the target size.\n");
+		return GGI_ENOMATCH;
+	}
+
+	if (mode->visible.x / priv->accuracy.x / sq_x != totw ||
+	    mode->visible.y / priv->accuracy.y / sq_y != toth) {
+		return GGI_ENOMATCH;
+	}
+
+	return 0;
+}
+
 
 int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
@@ -382,6 +448,86 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
+
+int GGI_monotext_checkmode(struct ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err = 0;
+
+	if ((vis == NULL) || (mode == NULL)) {
+		DPRINT_MODE("display-monotext: vis/mode == NULL\n");
+		return GGI_EARGINVAL;
+	}
+
+	DPRINT_MODE("display-monotext: checkmode %dx%d (gt=%d)\n",
+		mode->visible.x, mode->visible.y, mode->graphtype);
+
+	/* Handle GGI_AUTO */
+	if (mode->graphtype == GGI_AUTO) {
+		mode->graphtype = GT_8BIT;
+	}
+
+	if ((mode->visible.x == GGI_AUTO) &&
+	    (mode->virt.x    == GGI_AUTO)) {
+		mode->visible.x = mode->virt.x = target_width * priv->accuracy.x;
+	} else if (mode->virt.x == GGI_AUTO) {
+		mode->virt.x = mode->visible.x;
+	} else if ((mode->visible.x == GGI_AUTO) ||
+		   (mode->visible.x > mode->virt.x)) {
+		mode->visible.x = mode->virt.y;
+	}
+
+
+	if ((mode->visible.y == GGI_AUTO) &&
+	    (mode->virt.y    == GGI_AUTO)) {
+		mode->visible.y = mode->virt.y = target_height * priv->accuracy.y;
+	} else if (mode->virt.y == GGI_AUTO) {
+		mode->virt.y = mode->visible.y;
+	} else if ((mode->visible.y == GGI_AUTO) ||
+		   (mode->visible.y > mode->virt.y)) {
+		mode->visible.y = mode->virt.y;
+	}
+
+	if (mode->frames != 1 && mode->frames != GGI_AUTO) {
+		err = -1;
+	}
+	mode->frames = 1;
+
+	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
+	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO)) {
+		err = -1;
+	}
+	mode->dpp.x = mode->dpp.y = 1;
+
+	if (mode->size.x != GGI_AUTO || mode->size.y != GGI_AUTO) {
+		err = -1;
+	}
+	mode->size.x = mode->size.y = GGI_AUTO;
+
+	/* Check stuff */
+	if (mode->graphtype != GT_8BIT) {
+		mode->graphtype = GT_8BIT;
+		err = -1;
+	}
+
+	if (mode->visible.x != mode->virt.x) {
+		mode->virt.x = mode->visible.x;
+		err = -1;
+	}
+	if (mode->visible.y != mode->virt.y) {
+		mode->virt.y = mode->visible.y;
+		err = -1;
+	}
+
+	if (calc_squish(priv, mode, target_width, target_height) != 0) {
+		mode->visible.x = target_width * priv->accuracy.x;
+		mode->visible.y = target_width * priv->accuracy.y;
+		err = -1;
+	}
+
+	return err;
+}
+
 int GGI_palemu_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	if ((vis == NULL) || (mode == NULL) || (LIBGGI_MODE(vis) == NULL)) {
@@ -415,7 +561,11 @@ int GGI_palemu_flush(struct ggi_visual *vis, int x, int y, int w, int h, int try
 
 	ggLock(priv->flush_lock);
 
-	err = _ggi_palemu_Flush(vis);
+	if (priv->target == PALEMU_TARGET) {
+		err = _ggi_palemu_Flush(vis);
+	} else {
+		err = _ggi_monotext_Flush(vis);
+	}
 
 	if (! err) {
 		err = _ggiInternFlush(GGI_VISUAL(priv->parent), x, y, w, h, tryflag);

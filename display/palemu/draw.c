@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.7 2006/09/09 06:21:15 cegger Exp $
+/* $Id: draw.c,v 1.8 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: draw
@@ -210,3 +210,81 @@ int GGI_palemu_setorigin(struct ggi_visual *vis, int x, int y)
 	
 	return 0;
 }
+
+
+
+/* ---------------------------------------------------------------------- */
+
+
+int GGI_monotext_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *buffer)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err;
+
+	err = priv->mem_opdraw->putbox(vis, x, y, w, h, buffer);
+	if (err < 0) {
+		return err;
+	}
+
+	return _ggi_monotext_Update(vis, x, y, w, h);
+}
+
+
+int GGI_monotext_drawbox(struct ggi_visual *vis, int x, int y, int w, int h)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err;
+
+	err = priv->mem_opdraw->drawbox(vis, x, y, w, h);
+	if (err < 0) {
+		return err;
+	}
+
+	return _ggi_monotext_Update(vis, x, y, w, h);
+}
+
+
+int GGI_monotext_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err;
+
+	err = priv->mem_opdraw->copybox(vis, x, y, w, h, nx, ny);
+	if (err < 0) {
+		return err;
+	}
+
+	return _ggi_monotext_Update(vis, nx, ny, w, h);
+}
+
+
+int GGI_monotext_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
+			struct ggi_visual *vis, int dx, int dy)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err;
+
+	err = priv->mem_opdraw->crossblit(src, sx, sy, w, h,
+					vis, dx, dy);
+	if (err < 0) {
+		return err;
+	}
+
+	return _ggi_monotext_Update(vis, dx, dy, w, h);
+}
+
+
+int GGI_monotext_fillscreen(struct ggi_visual *vis)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	int err;
+
+	err = priv->mem_opdraw->fillscreen(vis);
+	if (err < 0) {
+		return err;
+	}
+
+	return _ggi_monotext_Update(vis, 0, 0,
+			LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+}
+

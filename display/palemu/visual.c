@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2006/09/09 16:55:13 cegger Exp $
+/* $Id: visual.c,v 1.24 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -38,18 +38,31 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-static const gg_option optlist[] =
+static const gg_option palemu_optlist[] =
 {
 	{ "parent", "[]" }
 };
 
 #define OPT_PARENT	0
 
-#define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+#define PALEMU_NUM_OPTS	(sizeof(palemu_optlist)/sizeof(gg_option))
 
 
+static const gg_option monotext_optlist[] =
+{
+	{ "a", "0" },
+	{ "x", "2" },
+	{ "y", "4" }
+};
 
-static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+#define OPT_A		0
+#define OPT_X		1
+#define OPT_Y		2
+
+#define MONOTEXT_NUM_OPTS	(sizeof(monotext_optlist)/sizeof(gg_option))
+
+
+static int GGIclose_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
@@ -75,6 +88,36 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 }
 
 
+static int GGIclose_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+
+	DPRINT("display-monotext: GGIclose start.\n");
+
+	if (priv->fb_ptr != NULL) {
+		_ggi_monotext_Close(vis);
+		free(priv->fb_ptr);
+	}
+
+	if (priv->parent != NULL) {
+		ggiClose(priv->parent);
+
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+	}
+
+	ggLockDestroy(priv->flush_lock);
+	free(priv->opmansync);
+	free(priv);
+	free(LIBGGI_GC(vis));
+
+	DPRINT("display-monotext: GGIclose done.\n");
+
+	return 0;
+}
+
+
+
 static int
 transfer_gii_src(void *arg, int flag, void *data)
 {
@@ -87,11 +130,11 @@ transfer_gii_src(void *arg, int flag, void *data)
 	return 0;
 }
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_palemu_priv *priv;
-	gg_option options[NUM_OPTS];
+	gg_option options[PALEMU_NUM_OPTS];
 	char target[1024];
 	int err = GGI_ENOMEM;
 	struct gg_api *api;
@@ -100,9 +143,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT("display-palemu: GGIopen start.\n");
 
 	/* handle arguments */
-	memcpy(options, optlist, sizeof(options));
+	memcpy(options, palemu_optlist, sizeof(options));
 	if (args) {
-		args = ggParseOptions(args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, PALEMU_NUM_OPTS);
 
 		if (args == NULL) {
 			fprintf(stderr,
@@ -112,7 +155,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	if (getenv("GGI_PALEMU_OPTIONS") != NULL) {
 		if (ggParseOptions(getenv("GGI_PALEMU_OPTIONS"), options,
-				   NUM_OPTS) == NULL) {
+				   PALEMU_NUM_OPTS) == NULL) {
 			fprintf(stderr, "display-palemu: error in ""$GGI_PALEMU_OPTIONS.\n");
 			return GGI_EARGINVAL;
 		}
@@ -152,6 +195,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->flags  = 0;
 	priv->fb_ptr = NULL;
+	priv->target = PALEMU_TARGET;
 
 	DPRINT("display-palemu: parent mode is '%s'\n",
 		  options[OPT_PARENT].result);
@@ -222,7 +266,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (err) {
 		fprintf(stderr,
 			"display-palemu: Cannot load helper-mansync!\n");
-		GGIclose(vis, dlh);
+		GGIclose_palemu(vis, dlh);
 		return err;
 	}
 
@@ -257,6 +301,198 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 }
 
 
+static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+				const char *args, void *argptr, uint32_t *dlret)
+{
+	ggi_palemu_priv *priv;
+	gg_option options[MONOTEXT_NUM_OPTS];
+	char target[1024];
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
+	int val;
+	int err = 0;
+
+	DPRINT("display-monotext: GGIopen start.\n");
+
+	memcpy(options, monotext_optlist, sizeof(options));
+	if (args) {
+		args = ggParseOptions(args, options, MONOTEXT_NUM_OPTS);
+		if (args == NULL) {
+			fprintf(stderr,
+				"display-monotext: error in arguments\n");
+			return GGI_EARGINVAL;
+		}
+	}
+
+	/* open the parent visual */
+	DPRINT("display-monotext: opening target: %s\n", args);
+
+	if (args != NULL) {
+		if (ggParseTarget(args, target, sizeof(target)) == NULL) {
+			/* error occured */
+			return GGI_EARGINVAL;
+		}
+	}
+
+	/* Find out the parent target */
+	while (args && *args && isspace((uint8_t)*args)) {
+		args++;
+	}
+
+	*target = '\0';
+	if (args) {
+		if (ggParseTarget(args, target, sizeof(target)) == NULL) {
+			return GGI_EARGINVAL;
+		}
+	}
+
+	if (*target == '\0') {
+		strcpy(target, "auto");
+	}
+
+	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
+	if (LIBGGI_GC(vis) == NULL) {
+		err = GGI_ENOMEM;
+		goto err0;
+	}
+	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(ggi_palemu_priv));
+	if (priv == NULL) {
+		err = GGI_ENOMEM;
+		goto err1;
+	}
+
+	priv->flush_lock = ggLockCreate();
+	if (priv->flush_lock == NULL) {
+		err = GGI_ENOMEM;
+		goto err2;
+	}
+	priv->opmansync = malloc(sizeof(_ggi_opmansync));
+	if (priv->opmansync == NULL) {
+		err = GGI_ENOMEM;
+		goto err3;
+	}
+
+	priv->flags = 0;
+	priv->fb_ptr = NULL;
+	priv->target = MONOTEXT_TARGET;
+
+
+	DPRINT("display-monotext: opening target: %s\n", target);
+	priv->parent = ggNewStem();
+	if (priv->parent == NULL) {
+		fprintf(stderr,
+			"display-monotext: Failed to create stem for target: %s\n",
+			target);
+		err = GGI_ENODEVICE;
+		goto err3;
+	}
+
+	/* XXX Should iterate over the apis attached to vis->stem
+	 * instead of only looking for ggi and gii.
+	 */
+	if (ggiAttach(priv->parent) < 0) {
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		fprintf(stderr,
+			"display-monotext: Failed to attach ggi to stem for target: %s\n",
+			target);
+		err = GGI_ENODEVICE;
+		goto err4;
+	}
+
+	api = ggGetAPIByName("gii");
+	if (api != NULL) {
+		/* XXX This should probably be done in pseudo-stubs-gii */
+		if (STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, priv->parent) < 0) {
+				ggDelStem(priv->parent);
+				priv->parent = NULL;
+				fprintf(stderr,
+					"Failed to attach gii to stem for target: %s\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto err4;
+			}
+			obs = ggAddObserver(ggGetPublisher(api, priv->parent,
+					GII_PUBLISHER_SOURCE_CHANGE),
+					transfer_gii_src, vis->stem);
+		}
+	}
+
+	if (ggiOpen(priv->parent, target, NULL) < 0) {
+		if (obs) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
+		fprintf(stderr,
+			"display-monotext: Failed to open target: '%s'\n",
+			target);
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		err = GGI_ENODEVICE;
+		goto err4;
+	}
+	if (obs) {
+		ggDelObserver(obs);
+		obs = NULL;
+	}
+
+	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
+
+
+	/* set defaults */
+	priv->parent_mode.graphtype = GT_TEXT16;
+	priv->flags = 0;
+	priv->squish.x = priv->squish.y = 1;
+
+	val = strtol(options[OPT_A].result, NULL, 0);	
+	if (val != 0) {
+		priv->accuracy.x = priv->accuracy.y = val;
+	} else {
+		priv->accuracy.x = strtol(options[OPT_X].result, NULL, 0);
+		priv->accuracy.y = strtol(options[OPT_Y].result, NULL, 0);
+	}
+
+	/* Setup mansync */
+	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+			"helper-mansync", NULL, priv->opmansync, 0);
+	if (err) {
+		fprintf(stderr,
+			"display-monotext: Cannot load helper-mansync!\n");
+		GGIclose_monotext(vis, dlh);
+		goto err4;
+	}
+
+	MANSYNC_init(vis);
+	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+		MANSYNC_start(vis);
+	}
+
+	/* Has mode management */
+	vis->opdisplay->getmode   = GGI_palemu_getmode;
+	vis->opdisplay->setmode   = GGI_palemu_setmode;
+	vis->opdisplay->checkmode = GGI_monotext_checkmode;
+	vis->opdisplay->getapi    = GGI_palemu_getapi;
+	vis->opdisplay->flush     = GGI_palemu_flush;
+	vis->opdisplay->setflags  = GGI_palemu_setflags;
+
+	DPRINT("display-monotext: GGIopen succeeded.\n");
+
+	*dlret = GGI_DL_OPDISPLAY;
+	return 0;
+
+err4:
+	free(priv->opmansync);
+err3:
+	ggLockDestroy(priv->flush_lock);
+err2:
+	free(priv);
+err1:
+	free(LIBGGI_GC(vis));
+err0:
+	return err;
+}
+
 static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	if (PALEMU_PRIV(vis) && PALEMU_PRIV(vis)->opmansync) {
@@ -268,6 +504,8 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	return 0;
 }
+
+
 
 
 EXPORTFUNC
@@ -282,7 +520,7 @@ int GGIdl_palemu(int func, void **funcptr)
 	switch (func) {
 	case GGIFUNC_open:
 		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
+		*openptr = GGIopen_palemu;
 		return 0;
 	case GGIFUNC_exit:
 		exitptr = (ggifunc_exit **)funcptr;
@@ -290,7 +528,7 @@ int GGIdl_palemu(int func, void **funcptr)
 		return 0;
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
+		*closeptr = GGIclose_palemu;
 		return 0;
 	default:
 		*funcptr = NULL;
@@ -311,7 +549,7 @@ int GGIdl_monotext(int func, void **funcptr)
 	switch (func) {
 	case GGIFUNC_open:
 		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
+		*openptr = GGIopen_monotext;
 		return 0;
 	case GGIFUNC_exit:
 		exitptr = (ggifunc_exit **)funcptr;
@@ -319,7 +557,7 @@ int GGIdl_monotext(int func, void **funcptr)
 		return 0;
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
+		*closeptr = GGIclose_monotext;
 		return 0;
 	default:
 		*funcptr = NULL;

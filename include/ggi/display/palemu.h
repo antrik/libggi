@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.9 2006/09/09 16:55:13 cegger Exp $
+/* $Id: palemu.h,v 1.10 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -72,6 +72,8 @@
 
 
 typedef struct ggi_palemu_priv {
+	int target;
+
 	int flags;
 
 	ggi_visual_t parent;
@@ -89,6 +91,9 @@ typedef struct ggi_palemu_priv {
 	/* color info */
 	ggi_pixel *lookup;
 	ggi_color *palette;
+
+	uint8_t *greymap;
+	uint8_t *rgb_to_grey;	/* index = RGB 5:5:5 */
 
 	ggi_float red_gamma;
 	ggi_float green_gamma;
@@ -111,6 +116,8 @@ typedef struct ggi_palemu_priv {
 
 #define PALEMU_PRIV(vis)  ((ggi_palemu_priv *) LIBGGI_PRIVATE(vis))
 
+#define PALEMU_TARGET	0
+#define MONOTEXT_TARGET	1
 
 
 /****************************************************
@@ -124,6 +131,11 @@ extern int _ggi_palemu_Open(struct ggi_visual *vis);
 extern int _ggi_palemu_Close(struct ggi_visual *vis);
 extern int _ggi_palemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h);
 extern int _ggi_palemu_Flush(struct ggi_visual*vis);
+
+extern int _ggi_monotext_Open(struct ggi_visual *vis);
+extern int _ggi_monotext_Close(struct ggi_visual *vis);
+extern int _ggi_monotext_Update(struct ggi_visual *vis, int x, int y, int w, int h);
+extern int _ggi_monotext_Flush(struct ggi_visual *vis);
 
 
 /****************************************************
@@ -139,6 +151,8 @@ ggifunc_checkmode       GGI_palemu_checkmode;
 ggifunc_getapi          GGI_palemu_getapi;
 ggifunc_flush           GGI_palemu_flush;
 ggifunc_setflags        GGI_palemu_setflags;
+
+ggifunc_checkmode	GGI_monotext_checkmode;
 
 ggifunc_drawpixel	GGI_palemu_drawpixel;
 ggifunc_drawpixel_nc	GGI_palemu_drawpixel_nc;
@@ -162,6 +176,12 @@ ggifunc_crossblit	GGI_palemu_crossblit;
 ggifunc_fillscreen	GGI_palemu_fillscreen;
 ggifunc_setorigin	GGI_palemu_setorigin;
 ggifunc_setPalette	GGI_palemu_setPalette;
+
+ggifunc_putbox		GGI_monotext_putbox;
+ggifunc_drawbox		GGI_monotext_drawbox;
+ggifunc_copybox		GGI_monotext_copybox;
+ggifunc_crossblit	GGI_monotext_crossblit;
+ggifunc_fillscreen	GGI_monotext_fillscreen;
 
 ggifunc_setdisplayframe	GGI_palemu_setdisplayframe;
 ggifunc_setreadframe	GGI_palemu_setreadframe;

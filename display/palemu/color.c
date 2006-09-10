@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.13 2006/09/09 06:21:14 cegger Exp $
+/* $Id: color.c,v 1.14 2006/09/10 06:53:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: color
@@ -34,7 +34,8 @@
 #include <string.h>
 
 
-int GGI_palemu_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_color *colormap)
+int GGI_palemu_setPalette(struct ggi_visual *vis, size_t start, size_t len,
+			const ggi_color *colormap)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 	const ggi_color *src = colormap;
@@ -47,14 +48,30 @@ int GGI_palemu_setPalette(struct ggi_visual *vis, size_t start, size_t len, cons
 	}
 
 	memcpy(LIBGGI_PAL(vis)->clut.data+start, src, len*sizeof(ggi_color));
-	if (end > start) {
-		UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
-	}
 
-	for (; start < end; ++start, ++src) {
-		priv->palette[start] = *src;
-		priv->lookup[start] = ggiMapColor(priv->parent, src);
-	}
-	
+	if (priv->target == PALEMU_TARGET) {
+		if (end > start) {
+			UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+		}
+
+		for (; start < end; ++start, ++src) {
+			priv->palette[start] = *src;
+			priv->lookup[start] = ggiMapColor(priv->parent, src);
+		}
+	} else {
+		if (end > start) {
+			UPDATE_MOD(vis, 0, 0, priv->size.x, priv->size.y);
+		}
+
+		for (; start < end; ++start, ++src) {
+			int r = (src->r >> 11) & 0x1f;
+			int g = (src->g >> 11) & 0x1f;
+			int b = (src->b >> 11) & 0x1f;
+
+			priv->palette[start] = *src;
+
+			priv->greymap[start] = priv->rgb_to_grey[(r << 10) | (g << 5) | b];
+		}
+	}	
 	return 0;
 }
