@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/09/09 15:20:11 cegger Exp $
+/* $Id: visual.c,v 1.21 2006/09/10 07:39:25 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -156,7 +156,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (LIBGGI_FD(vis) < 0) {
 		if (vt > -1) {
 			/* Try devfs style device */
-			sprintf(filename, "/dev/vcc/a%d", vt);
+			snprintf(filename, sizeof(filename), "/dev/vcc/a%d", vt);
+			LIBGGI_FD(vis) = open(filename, O_RDWR);
+		}
+		if (LIBGGI_FD(vis) < 0) {
+			/* devfs style failed */
+			snprintf(filename, sizeof(filename), "/dev/vcsa%d", vt);
 			LIBGGI_FD(vis) = open(filename, O_RDWR);
 		}
 		if (LIBGGI_FD(vis) < 0) {
