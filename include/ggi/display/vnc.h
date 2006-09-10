@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.23 2006/09/08 19:43:00 pekberg Exp $
+/* $Id: vnc.h,v 1.24 2006/09/10 06:51:05 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -101,6 +101,8 @@ typedef struct {
 	unsigned long cooked_key[32];
 	unsigned long randomizer[32];
 
+	int copyrect;
+	int hextile;
 	int zlib_level;
 	int zrle_level;
 

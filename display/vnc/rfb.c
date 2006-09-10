@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.51 2006/09/09 04:35:52 pekberg Exp $
+/* $Id: rfb.c,v 1.52 2006/09/10 06:51:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -414,7 +414,9 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 			break;
 		case 1:
 			DPRINT_MISC("CopyRect encoding\n");
-			if (client->encode)
+			if (!priv->copyrect)
+				break;
+			if (client->encode && priv->copyrect == 1)
 				break;
 			client->copy_rect = 1;
 			break;
@@ -426,6 +428,8 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 			break;
 		case 5:
 			DPRINT_MISC("Hextile encoding\n");
+			if (!priv->hextile)
+				break;
 			if (client->encode)
 				break;
 			if (!client->hextile_ctx)

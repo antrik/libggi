@@ -8,8 +8,9 @@ Synopsis
 
 ::
 
-  display-vnc: [-client=<host>] [-display=<dpy>] [-passwd=<pass>]
-	       [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+  display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
+	       [-hextile=no] [-passwd=<pass>] [-title=<title>] [-zlib=<level>]
+	       [-zrle=<level>]
 
 
 Description
@@ -31,6 +32,13 @@ Options
     connect. A vnc viewer in listening mode is expected to be found on
     :p:`host`.
 
+``-copyrect=no|always``
+    Controls when the CopyRect encoding is used. Select :p:`no` to disable
+    it completely, and :p:`always` to enable it when suitable even if there
+    is support for some other encoding the client has preferred. The default
+    is to only use the CopyRect encoding if it is the most preferred
+    encoding available.
+
 ``-display=<dpy>``
     The display number clients should connect to. Display number 0 is
     equivalent to tcp port 5900.
@@ -38,6 +46,9 @@ Options
     If the :p:`-client` option is also given, this is instead the display
     number this server connects to, and display number 0 is equivalent
     to tcp port 5500 in that case.
+
+``-hextile=no``
+    Disables the hextile encoding.
 
 ``-passwd=<password>``
     The vnc client has to successfully encrypt a random challenge

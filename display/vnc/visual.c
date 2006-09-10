@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/09/08 19:43:01 pekberg Exp $
+/* $Id: visual.c,v 1.16 2006/09/10 06:51:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -54,24 +54,30 @@
 
 #include "d3des.h"
 
-static const gg_option optlist[] =
-{
-	{ "client",  "" },
-	{ "display", "no" },
-	{ "passwd",  "" },
-	{ "title",   "GGI on vnc" },
-	{ "zlib",    "" },
-	{ "zrle",    "" },
+#define VNC_OPTIONS \
+	VNC_OPTION(client,   "")           \
+	VNC_OPTION(copyrect, "")           \
+	VNC_OPTION(display,  "no")         \
+	VNC_OPTION(hextile,  "")           \
+	VNC_OPTION(passwd,   "")           \
+	VNC_OPTION(title,    "GGI on vnc") \
+	VNC_OPTION(zlib,     "")           \
+	VNC_OPTION(zrle,     "")
+
+#define VNC_OPTION(name, default) \
+	{ #name, default },
+static const gg_option optlist[] = {
+	VNC_OPTIONS
 };
+#undef VNC_OPTION
 
-#define OPT_CLIENT	0
-#define OPT_DISPLAY	1
-#define OPT_PASSWD	2
-#define OPT_TITLE	3
-#define OPT_ZLIB	4
-#define OPT_ZRLE	5
-
-#define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+#define VNC_OPTION(name, default) \
+	OPT_ ## name,
+enum {
+	VNC_OPTIONS
+	NUM_OPTS
+};
+#undef VNC_OPTION
 
 static int
 GGIopen(struct ggi_visual *vis,
@@ -123,18 +129,30 @@ GGIopen(struct ggi_visual *vis,
 		}
 	}
 
-	if (options[OPT_DISPLAY].result[0] != 'n')
-		priv->display = strtoul(options[OPT_DISPLAY].result, NULL, 0);
+	if (options[OPT_copyrect].result[0] == 'a') /* always */
+		priv->copyrect = 2;
+	else if (options[OPT_copyrect].result[0] == 'n') /* never */
+		priv->copyrect = 0;
+	else
+		priv->copyrect = 1;
+
+	if (options[OPT_display].result[0] != 'n')
+		priv->display = strtoul(options[OPT_display].result, NULL, 0);
 	else
 		priv->display = 0;
 
-	if (options[OPT_PASSWD].result[0] != '\0') {
+	if (options[OPT_hextile].result[0] == 'n') /* never */
+		priv->hextile = 0;
+	else
+		priv->hextile = 1;
+
+	if (options[OPT_passwd].result[0] != '\0') {
 		unsigned char passwd[8];
 		int i;
 
 		priv->passwd = 1;
 		memset(passwd, 0, sizeof(passwd));
-		strncpy(passwd, options[OPT_PASSWD].result, 8);
+		strncpy(passwd, options[OPT_passwd].result, 8);
 
 		/* Should apparently bitreverse the password bytes.
 		 * I just love undocumented quirks to standard algorithms...
@@ -155,28 +173,28 @@ GGIopen(struct ggi_visual *vis,
 		priv->passwd = 0;
 
 	ggstrlcpy(priv->title,
-		options[OPT_TITLE].result, sizeof(priv->title));
+		options[OPT_title].result, sizeof(priv->title));
 
-	if (options[OPT_ZLIB].result[0] == '\0')
+	if (options[OPT_zlib].result[0] == '\0')
 		priv->zlib_level = -1; /* default compression */
-	else if (options[OPT_ZLIB].result[0] == 'n')
+	else if (options[OPT_zlib].result[0] == 'n')
 		priv->zlib_level = -2; /* disable */
 	else {
 		priv->zlib_level =
-			strtoul(options[OPT_ZLIB].result, NULL, 0);
+			strtoul(options[OPT_zlib].result, NULL, 0);
 		if (priv->zlib_level < 0)
 			priv->zlib_level = 0;
 		else if (priv->zlib_level > 9)
 			priv->zlib_level = 9;
 	}
 
-	if (options[OPT_ZRLE].result[0] == '\0')
+	if (options[OPT_zrle].result[0] == '\0')
 		priv->zrle_level = -1; /* default compression */
-	else if (options[OPT_ZRLE].result[0] == 'n')
+	else if (options[OPT_zrle].result[0] == 'n')
 		priv->zrle_level = -2; /* disable */
 	else {
 		priv->zrle_level =
-			strtoul(options[OPT_ZRLE].result, NULL, 0);
+			strtoul(options[OPT_zrle].result, NULL, 0);
 		if (priv->zrle_level < 0)
 			priv->zrle_level = 0;
 		else if (priv->zrle_level > 9)
@@ -196,7 +214,7 @@ GGIopen(struct ggi_visual *vis,
 		goto out_delstem;
 	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 
-	if (options[OPT_CLIENT].result[0] == '\0') {
+	if (options[OPT_client].result[0] == '\0') {
 		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 		if (priv->sfd == -1) {
 			err = GGI_ENODEVICE;
@@ -259,11 +277,11 @@ GGIopen(struct ggi_visual *vis,
 	priv->pointer     = iargs.pointer;
 	priv->gii_ctx     = iargs.gii_ctx;
 
-	if (options[OPT_CLIENT].result[0] != '\0') {
+	if (options[OPT_client].result[0] != '\0') {
 		struct hostent *h;
 		int cfd;
 
-		h = gethostbyname(options[OPT_CLIENT].result);
+		h = gethostbyname(options[OPT_client].result);
 
 		if (!h) {
 			fprintf(stderr, "display-vnc: gethostbyname error\n");
