@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.28 2006/09/10 08:18:16 cegger Exp $
+/* $Id: demo.c,v 1.29 2006/09/10 08:28:02 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -168,7 +168,9 @@ static void waitabit(void)
 	if ((key == 'q') || (key == 'Q'))	/* Q pressed */
 	{	
 		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		exit(0);
 	}
 }
@@ -470,6 +472,7 @@ int main(int argc, char **argv)
 			prog);
 		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		exit(1);
 	}
 	/* Using ASYNC mode can give great performance improvements on
@@ -524,7 +527,9 @@ int main(int argc, char **argv)
 	if (err) {
 		fprintf(stderr,"Can't set mode\n");
 		ggiClose(vis);
+		ggDelStem(vis);
 		ggiExit();
+		giiExit();
 		return 2;
 	}
 
