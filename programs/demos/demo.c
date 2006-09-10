@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.27 2006/09/03 21:20:51 pekberg Exp $
+/* $Id: demo.c,v 1.28 2006/09/10 08:18:16 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -468,6 +468,7 @@ int main(int argc, char **argv)
 		fprintf(stderr,
 			"%s: unable to open default visual, exiting.\n",
 			prog);
+		ggDelStem(vis);
 		ggiExit();
 		exit(1);
 	}
