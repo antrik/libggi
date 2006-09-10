@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/09/10 07:39:25 cegger Exp $
+/* $Id: visual.c,v 1.22 2006/09/10 08:15:27 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -265,6 +265,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 
   out_closefd:
+	if (priv->kbd_inp != NULL)
+		ggCloseModule(priv->kbd_inp);
+	if (priv->ms_inp != NULL)
+		ggCloseModule(priv->ms_inp);
 	close(LIBGGI_FD(vis));
   out_freegc:
 	free(LIBGGI_GC(vis));
