@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2006/03/20 20:44:53 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/09/11 21:09:37 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -134,7 +134,7 @@ static int _GGI_terminfo_loadstubs(struct ggi_visual *vis)
 		}
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	return 0;
 }

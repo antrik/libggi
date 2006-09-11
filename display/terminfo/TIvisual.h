@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.8 2006/09/10 11:06:13 cegger Exp $
+/* $Id: TIvisual.h,v 1.9 2006/09/11 21:09:37 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -57,7 +57,7 @@ struct TIhooks {
 	int virgin;
 	chtype color16_table[256];
 	chtype charmap[256];
-	struct ggi_visual *vis;
+	struct gg_module *inp;
 
 	PHYSZ_DATA
 };
@@ -81,9 +81,6 @@ ggifunc_setmode		GGI_terminfo_setmode;
 ggifunc_checkmode	GGI_terminfo_checkmode;
 ggifunc_getapi		GGI_terminfo_getapi;
 ggifunc_setflags	GGI_terminfo_setflags;
-
-giifunc_eventpoll	GII_terminfo_eventpoll;
-giifunc_sendevent	GII_terminfo_sendevent;
 
 extern int paint_ncurses_window(struct ggi_visual *, WINDOW *, int, int);
 extern void _GGI_terminfo_freedbs(struct ggi_visual *);

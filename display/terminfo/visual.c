@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/09/10 11:17:24 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/09/11 21:09:37 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -32,6 +32,9 @@
 #include <unistd.h>
 
 #include "TIvisual.h"
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
+#include <ggi/input/terminfo.h>
 #include <ggi/internal/ggi_debug.h>
 
 
@@ -223,8 +226,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) {
+		err = GGI_ENOMEM;
 		free(priv);
-		return GGI_ENOMEM;
+		goto err1;
 	}
 
 	priv->splitline = 0;
@@ -244,11 +248,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->scr == NULL) {
 		fprintf(stderr, "display-terminfo: error creating ncurses"
 				" SCREEN\n");
-		fclose(priv->f_in);
-		fclose(priv->f_out);
-		free(LIBGGI_GC(vis));
-		free(priv);
-		return GGI_ENODEVICE;
+		err = GGI_ENODEVICE;
+		goto err3;
 	}
 
 	LIBGGI_FD(vis) = fileno(priv->f_out);
@@ -308,42 +309,44 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* event management */
 	do {
-		gii_input *inp;
-		inp = _giiInputAlloc();
+		struct gg_module *inp = NULL;
+		struct gg_api *api;
+		gii_terminfo_arg _args;
 
+		_args.scr = priv->scr;
+		_args.select_screen = _terminfo_select_screen;
+		_args.release_screen = _terminfo_release_screen;
+
+		api = ggGetAPIByName("gii");
+		if ((api != NULL) && (STEM_HAS_API(vis->stem, api))) {
+			inp = ggOpenModule(api, vis->stem,
+					"input-terminfo", NULL, &_args);
+		}			
+
+		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-terminfo: error allocating gii_input\n");
-			_terminfo_destroy_screen();
-			fclose(priv->f_in);
-			fclose(priv->f_out);
-			free(LIBGGI_GC(vis));
-			free(priv);
-			return GGI_ENOMEM;
+			err = GGI_ENOMEM;
+			goto err4;
 		}
 
-#if ( NCURSES_MOUSE_VERSION == 1 )
-		inp->targetcan =emKey | emPtrButton | emPtrAbsolute,
-#else
-		inp->targetcan =emKey, /* without mouse support */
-#endif
-		inp->GIIseteventmask(inp,inp->targetcan);
-
-		inp->GIIeventpoll = GII_terminfo_eventpoll;
-		inp->GIIsendevent = GII_terminfo_sendevent;
-
-		priv->vis = vis;
-		inp->priv = (void *)priv;
-
-		inp->maxfd=0;   /* This is polled. */
-		inp->flags|=GII_FLAGS_HASPOLLED;
-
-		vis->input = giiJoinInputs(vis->input, inp);
+		priv->inp = inp;
 	} while(0);
 
 	_terminfo_release_screen();
  
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
+
+err4:
+	_terminfo_destroy_screen();
+err3:
+	fclose(priv->f_in);
+	fclose(priv->f_out);
+	free(LIBGGI_GC(vis));
+err1:
+	free(priv);
+	return err;
 }
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
@@ -353,6 +356,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv = TERMINFO_PRIV(vis);
 	if (priv != NULL) {
 		if (priv->scr != NULL) {
+			ggCloseModule(priv->inp);
 			_terminfo_select_screen(priv->scr);
 			if (!priv->virgin) {
 				wclear(stdscr);

@@ -4,7 +4,7 @@ libterminfo_la_LIBADD = $(terminfolibs)
 
 noinst_LTLIBRARIES = libterminfo.la
 
-libterminfo_la_SOURCES = color.c input.c mode.c visual.c ncurses.c
+libterminfo_la_SOURCES = color.c mode.c visual.c ncurses.c
 
 EXTRA_DIST = EXPSYMS TIvisual.h
 
