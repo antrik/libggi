@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.34 2006/09/08 19:43:01 pekberg Exp $
+/* $Id: zrle.c,v 1.35 2006/09/11 12:32:22 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1161,7 +1161,7 @@ tile_32(uint8_t **buf, uint8_t *src8, int xs, int ys, int stride, int rev)
 		/* raw */
 		if (!rev) {
 			for (y = 0; y < ys; ++y) {
-				memcpy(dst, src, xs * 2);
+				memcpy(dst, src, xs * 4);
 				src += stride + xs;
 				dst += xs * 4;
 			}
