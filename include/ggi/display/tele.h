@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
+/* $Id: tele.h,v 1.7 2006/09/11 21:22:55 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -44,7 +44,7 @@ typedef struct {
 	long wait_type;
 	long wait_sequence;
 
-	gii_input *input;
+	struct gg_module *input;
 
 	int width, height;  /* for generating evExpose events */
 } ggi_tele_priv;
