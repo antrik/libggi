@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.6 2006/03/20 20:28:38 cegger Exp $
+/* $Id: trueemu.h,v 1.7 2006/09/12 21:31:58 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -85,7 +85,7 @@
 typedef struct ggi_trueemu_priv {
 	int flags;
 
-	struct ggi_visual *parent;
+	ggi_visual_t parent;
 	ggi_mode mode;
 
 	/* framebuffer */
@@ -93,13 +93,6 @@ typedef struct ggi_trueemu_priv {
 	void *fb_ptr;
 	long  fb_size;
 	long  frame_size;
-
-	/* 2D operations on memory buffer */
-
-	struct ggi_visual_opdraw *mem_opdraw;
-
-	ggi_coord dirty_tl;	/* dirty region */
-	ggi_coord dirty_br;
 
 	/* blit information */
 
@@ -115,14 +108,17 @@ typedef struct ggi_trueemu_priv {
 	uint16_t (* G)[4];
 	uint16_t (* B)[4];
 
-	/* palette dither table */
+	/* 2D operations on memory buffer */
+	struct ggi_visual_opdraw *mem_opdraw;
 
+	ggi_coord dirty_tl;	/* dirty region */
+	ggi_coord dirty_br;
+
+	/* palette dither table */
 	uint8_t (* T)[4];	/* actually [32768][4] */
 
 	/* mansync info */
-
 	void *flush_lock;
-
 	MANSYNC_DATA;
 } ggi_trueemu_priv;
 

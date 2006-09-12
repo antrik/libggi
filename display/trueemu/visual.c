@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/03/22 19:26:48 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/09/12 21:32:37 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <ggi/gg.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 
 #include "config.h"
 #include <ggi/display/trueemu.h>
@@ -47,6 +50,20 @@ static const gg_option optlist[] =
 #define OPT_MODEL	2
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+
+
+
+static int transfer_gii_src(void *arg, int flag, void *data)
+{
+	struct gg_stem *stem = arg;
+	ggi_trueemu_priv *priv = TRUEEMU_PRIV(GGI_VISUAL(stem));
+	struct gii_source *src = data;
+
+	if (flag == GII_PUBLISH_SOURCE_OPENED)
+		giiTransfer(priv->parent, stem, src->origin);
+
+	return 0;
+}
 
 
 
@@ -82,6 +99,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gg_option options[NUM_OPTS];
 	char target[1024];
 	int err = GGI_ENOMEM;
+	struct gg_api *api;
+	struct gg_observer *obs = NULL;
 
 	DPRINT("display-trueemu: GGIopen start.\n");
 
@@ -174,7 +193,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	DPRINT("display-trueemu: opening target: %s\n", target);
-	priv->parent = ggiOpen(target, NULL);
+	priv->parent = ggNewStem();
 	if (priv->parent == NULL) {
 		fprintf(stderr,
 			"display-trueemu: Failed to open target: '%s'\n",
@@ -182,6 +201,43 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENODEVICE;
 		goto out_freelock;
 	}
+	api = ggGetAPIByName("gii");
+	if (api != NULL) {
+		/* XXX This should probably be done in pseudo-stubs-gii */
+		if (STEM_HAS_API(vis->stem, api)) {
+			if (ggAttach(api, priv->parent) < 0) {
+				ggDelStem(priv->parent);
+				priv->parent = NULL;
+				fprintf(stderr,
+					"display-trueemu: Failed to attach gii to stem for target: '%s'\n",
+					target);
+				err = GGI_ENODEVICE;
+				goto out_freelock;
+			}
+			obs = ggAddObserver(
+				ggGetPublisher(api, priv->parent,
+					GII_PUBLISHER_SOURCE_CHANGE),
+				transfer_gii_src, vis->stem);
+		}
+	}
+	if (ggiOpen(priv->parent, target, NULL) < 0) {
+		if (obs) {
+			ggDelObserver(obs);
+			obs = NULL;
+		}
+		fprintf(stderr,
+			"display-palemu: Failed to open target: '%s'\n",
+			target);
+		ggDelStem(priv->parent);
+		priv->parent = NULL;
+		err = GGI_ENODEVICE;
+		goto out_freelock;
+	}
+	if (obs) {
+		ggDelObserver(obs);
+		obs = NULL;
+	}		
+
 
 	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
 
@@ -198,12 +254,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	MANSYNC_init(vis);
 	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 		MANSYNC_start(vis);
-	}
-
-	/* add giiInputs, if we have them */
-	if (priv->parent->input) {
-		vis->input = giiJoinInputs(vis->input, priv->parent->input);
-		priv->parent->input = NULL; /* destroy old reference */
 	}
 
 	/* Mode management */
