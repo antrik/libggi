@@ -1,12 +1,12 @@
-.TH "display-vnc" 7 "2006-09-10" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-13" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-             [-hextile=no] [-passwd=<pass>] [-title=<title>] [-zlib=<level>]
-             [-zrle=<level>]
+             [-hextile=no] [-passwd=<pass>] [-stdio] [-title=<title>]
+             [-zlib=<level>] [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -50,6 +50,13 @@ The vnc client has to successfully encrypt a random challenge
 with the stated \fIpassword\fR in order to connect. In the
 \fIpassword\fR, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
+
+.TP
+\f(CW-stdio\fR
+Talk the RFB protocol on stdin/stdout instead of waiting for clients
+to connect. Suitable for serving a GGI application as an inetd(8)
+:p:\f(CWnowait\fR type service. One requirement though, is that the served
+GGI application does not "chatter" on stdout and/or stderr.
 
 .TP
 \f(CW-title=<title>\fR
