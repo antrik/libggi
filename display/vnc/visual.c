@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/09/13 07:49:04 pekberg Exp $
+/* $Id: visual.c,v 1.18 2006/09/13 22:23:38 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -215,7 +215,7 @@ GGIopen(struct ggi_visual *vis,
 		goto out_delstem;
 	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 
-	if (options[OPT_client].result[0] == '\0' &&
+	if (options[OPT_client].result[0] == '\0' || 
 	    options[OPT_stdio].result[0] != 'n') {
 		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 		if (priv->sfd == -1) {
