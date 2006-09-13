@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/09/10 06:51:04 pekberg Exp $
+/* $Id: visual.c,v 1.17 2006/09/13 07:49:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -60,6 +60,7 @@
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(passwd,   "")           \
+	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(title,    "GGI on vnc") \
 	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zrle,     "")
@@ -214,7 +215,8 @@ GGIopen(struct ggi_visual *vis,
 		goto out_delstem;
 	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 
-	if (options[OPT_client].result[0] == '\0') {
+	if (options[OPT_client].result[0] == '\0' &&
+	    options[OPT_stdio].result[0] != 'n') {
 		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 		if (priv->sfd == -1) {
 			err = GGI_ENODEVICE;
@@ -306,8 +308,11 @@ GGIopen(struct ggi_visual *vis,
 			goto out_closefds;
 		}
 
-		GGI_vnc_new_client_finish(vis, cfd);
+		GGI_vnc_new_client_finish(vis, cfd, cfd);
 	}
+
+	if (options[OPT_stdio].result[0] != 'n')
+		GGI_vnc_new_client_finish(vis, 0, 1);
 
 	vis->opdisplay->getmode=GGI_vnc_getmode;
 	vis->opdisplay->setmode=GGI_vnc_setmode;

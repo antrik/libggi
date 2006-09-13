@@ -9,8 +9,8 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-passwd=<pass>] [-title=<title>] [-zlib=<level>]
-	       [-zrle=<level>]
+	       [-hextile=no] [-passwd=<pass>] [-stdio] [-title=<title>]
+	       [-zlib=<level>] [-zrle=<level>]
 
 
 Description
@@ -55,6 +55,12 @@ Options
     with the stated :p:`password` in order to connect. In the
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
+
+``-stdio``
+    Talk the RFB protocol on stdin/stdout instead of waiting for clients
+    to connect. Suitable for serving a GGI application as an inetd(8)
+    :p:``nowait`` type service. One requirement though, is that the served
+    GGI application does not "chatter" on stdout and/or stderr.
 
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option

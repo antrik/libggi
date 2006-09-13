@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.24 2006/09/10 06:51:05 pekberg Exp $
+/* $Id: vnc.h,v 1.25 2006/09/13 07:49:05 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -56,6 +56,7 @@ typedef struct ggi_vnc_client_t {
 	struct ggi_visual *owner;
 
 	int cfd;
+	int cwfd;
 	int protover;
 
 	unsigned char buf[256];
@@ -116,7 +117,7 @@ gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
 gii_vnc_write_client		GGI_vnc_write_client;
 
-void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd);
+void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd);
 void GGI_vnc_close_client(ggi_vnc_client *client);
 void GGI_vnc_client_invalidate_nc_xyxy(ggi_vnc_client *client,
 	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry);

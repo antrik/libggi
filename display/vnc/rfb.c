@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.52 2006/09/10 06:51:04 pekberg Exp $
+/* $Id: rfb.c,v 1.53 2006/09/13 07:49:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -131,14 +131,17 @@ close_client(ggi_vnc_client *client)
 		return;
 
 	DPRINT("close_client.\n");
-	priv->del_cfd(priv->gii_ctx, client->cfd);
+	priv->del_cfd(priv->gii_ctx, client, client->cfd);
 	if (client->write_pending)
-		priv->del_cwfd(priv->gii_ctx, client->cfd);
+		priv->del_cwfd(priv->gii_ctx, client, client->cfd);
 	client->write_pending = 0;
 	free(client->wbuf.buf);
 	memset(&client->wbuf, 0, sizeof(client->wbuf));
 	close(client->cfd);
+	if (client->cwfd != client->cfd)
+		close(client->cwfd);
 	client->cfd = -1;
+	client->cwfd = -1;
 	client->buf_size = 0;
 	client->dirty.tl.x = client->dirty.br.x = 0;
 	client->update.tl.x = client->update.br.x = 0;
@@ -202,7 +205,7 @@ again:
 		/* queue it */
 		/* DPRINT("write would block\n"); */
 		client->write_pending = 1;
-		priv->add_cwfd(priv->gii_ctx, client->cfd);
+		priv->add_cwfd(priv->gii_ctx, client, client->cwfd);
 		return 0;
 	default:
 		DPRINT("write error.\n");
@@ -1219,7 +1222,7 @@ vnc_client_version(ggi_vnc_client *client)
 }
 
 void
-GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd)
+GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client;
@@ -1234,12 +1237,13 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd)
 	client->owner = vis;
 
 	client->cfd = cfd;
+	client->cwfd = cwfd;
 	client->dirty.tl.x = 0;
 	client->dirty.tl.y = 0;
 	client->dirty.br.x = LIBGGI_VIRTX(vis);
 	client->dirty.br.y = LIBGGI_VIRTY(vis);
 
-	priv->add_cfd(priv->gii_ctx, client->cfd);
+	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
 
@@ -1260,7 +1264,6 @@ GGI_vnc_new_client(void *arg)
 {
 	struct ggi_visual *vis = arg;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client;
 	struct sockaddr_in sa;
 #ifdef HAVE_SOCKLEN_T
 	socklen_t sa_len = sizeof(sa);
@@ -1275,24 +1278,17 @@ GGI_vnc_new_client(void *arg)
 		return;
 	}
 
-	GGI_vnc_new_client_finish(vis, cfd);
+	GGI_vnc_new_client_finish(vis, cfd, cfd);
 }
 
 void
 GGI_vnc_client_data(void *arg, int cfd)
 {
-	struct ggi_visual *vis = arg;
+	ggi_vnc_client *client = arg;
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client;
 	unsigned char buf[100];
 	ssize_t len;
-
-	GG_LIST_FOREACH(client, &priv->clients, siblings) {
-		if (client->cfd == cfd)
-			break;
-	}
-	if (!client)
-		return;
 
 	len = read(cfd, buf, sizeof(buf));
 
@@ -1325,16 +1321,9 @@ GGI_vnc_client_data(void *arg, int cfd)
 void
 GGI_vnc_write_client(void *arg, int fd)
 {
-	struct ggi_visual *vis = arg;
+	ggi_vnc_client *client = arg;
+	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	ggi_vnc_client *client;
-
-	GG_LIST_FOREACH(client, &priv->clients, siblings) {
-		if (client->cfd == fd)
-			break;
-	}
-	if (!client)
-		return;
 
 	if (!client->write_pending) {
 		DPRINT("spurious write completed notification\n");
@@ -1344,7 +1333,7 @@ GGI_vnc_write_client(void *arg, int fd)
 	/* DPRINT("write some more\n"); */
 
 	client->write_pending = 0;
-	priv->del_cwfd(priv->gii_ctx, fd);
+	priv->del_cwfd(priv->gii_ctx, client, fd);
 
 	if (write_client(client, &client->wbuf) < 0)
 		return;
