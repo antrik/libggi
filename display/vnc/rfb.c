@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.55 2006/09/14 20:02:24 pekberg Exp $
+/* $Id: rfb.c,v 1.56 2006/09/14 20:03:59 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -209,7 +209,7 @@ again:
 		priv->add_cwfd(priv->gii_ctx, client, client->cwfd);
 		return 0;
 	default:
-		DPRINT("write error.\n");
+		DPRINT("write error (%d, \"%s\").\n", errno, strerror(errno));
 		close_client(client);
 		return res;
 	}
@@ -1229,7 +1229,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	ggi_vnc_client *client;
 	long flags;
 
-	DPRINT("new_client(%d)\n", cfd);
+	DPRINT("new_client(%d, %d)\n", cfd, cwfd);
 
 	client = malloc(sizeof(*client));
 	memset(client, 0, sizeof(*client));
