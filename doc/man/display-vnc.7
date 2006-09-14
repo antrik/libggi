@@ -1,12 +1,12 @@
-.TH "display-vnc" 7 "2006-09-13" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-14" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-             [-hextile=no] [-passwd=<pass>] [-stdio] [-title=<title>]
-             [-zlib=<level>] [-zrle=<level>]
+             [-hextile=no] [-kold] [-passwd=<pass>] [-stdio]
+             [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -43,6 +43,13 @@ to tcp port 5500 in that case.
 .TP
 \f(CW-hextile=no\fR
 Disables the hextile encoding.
+
+.TP
+\f(CW-kold\fR
+Kill On Last Disconnect. This option ends the application when the last
+client disconnects. It can be useful in conjunction with the \fI-client\fR
+and \fI-stdio\fR options so that the application does not linger without
+any user feedback.
 
 .TP
 \f(CW-passwd=<password>\fR
