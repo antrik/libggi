@@ -1,6 +1,6 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.trueemu"'
 INCLUDES = -I$(top_srcdir)/include
-libtrueemu_la_LIBADD =
+libtrueemu_la_LIBADD = -lgii -lgg
 
 noinst_LTLIBRARIES = libtrueemu.la
 
