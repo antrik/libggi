@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.54 2006/09/14 05:06:10 pekberg Exp $
+/* $Id: rfb.c,v 1.55 2006/09/14 20:02:24 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -182,7 +182,7 @@ write_client(ggi_vnc_client *client, ggi_vnc_buf *buf)
 	}
 
 again:
-	res = write(client->cfd, buf->buf + buf->pos, buf->size - buf->pos);
+	res = write(client->cwfd, buf->buf + buf->pos, buf->size - buf->pos);
 
 	if (res == buf->size - buf->pos) {
 		/* DPRINT("complete write\n"); */
