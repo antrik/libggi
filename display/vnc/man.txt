@@ -9,8 +9,8 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-passwd=<pass>] [-stdio] [-title=<title>]
-	       [-zlib=<level>] [-zrle=<level>]
+	       [-hextile=no] [-kold] [-passwd=<pass>] [-stdio]
+	       [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 
 
 Description
@@ -49,6 +49,12 @@ Options
 
 ``-hextile=no``
     Disables the hextile encoding.
+
+``-kold``
+    Kill On Last Disconnect. This option ends the application when the last
+    client disconnects. It can be useful in conjunction with the :p:`-client`
+    and :p:`stdio` options so that the application does not linger without
+    any user feedback.
 
 ``-passwd=<password>``
     The vnc client has to successfully encrypt a random challenge

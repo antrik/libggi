@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.58 2006/09/14 20:07:05 pekberg Exp $
+/* $Id: rfb.c,v 1.59 2006/09/14 20:10:41 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -166,6 +166,11 @@ close_client(ggi_vnc_client *client)
 	GG_LIST_REMOVE(client, siblings);
 
 	free(client);
+
+	if (priv->kill_on_last_disconnect) {
+		if (GG_LIST_EMPTY(&priv->clients))
+			ggPanic("No VNC clients, exiting...\n");
+	}
 }
 
 static int

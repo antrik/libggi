@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/09/14 04:34:54 pekberg Exp $
+/* $Id: visual.c,v 1.20 2006/09/14 20:10:41 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -59,6 +59,7 @@
 	VNC_OPTION(copyrect, "")           \
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(hextile,  "")           \
+	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(title,    "GGI on vnc") \
@@ -146,6 +147,11 @@ GGIopen(struct ggi_visual *vis,
 		priv->hextile = 0;
 	else
 		priv->hextile = 1;
+
+	if (options[OPT_kold].result[0] == 'n') /* no */
+		priv->kill_on_last_disconnect = 0;
+	else
+		priv->kill_on_last_disconnect = 1;
 
 	if (options[OPT_passwd].result[0] != '\0') {
 		unsigned char passwd[8];
@@ -360,6 +366,7 @@ GGIclose(struct ggi_visual *vis,
 	if (!priv)
 		goto skip;
 
+	priv->kill_on_last_disconnect = 0;
 	while(!GG_LIST_EMPTY(&priv->clients))
 		GGI_vnc_close_client(GG_LIST_FIRST(&priv->clients));
 

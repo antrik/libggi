@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.25 2006/09/13 07:49:05 pekberg Exp $
+/* $Id: vnc.h,v 1.26 2006/09/14 20:10:41 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -101,6 +101,8 @@ typedef struct {
 	int           passwd;
 	unsigned long cooked_key[32];
 	unsigned long randomizer[32];
+
+	int kill_on_last_disconnect;
 
 	int copyrect;
 	int hextile;
