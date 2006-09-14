@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.57 2006/09/14 20:05:44 pekberg Exp $
+/* $Id: rfb.c,v 1.58 2006/09/14 20:07:05 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1250,6 +1250,11 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	flags = fcntl(client->cfd, F_GETFL);
 	fcntl(client->cfd, F_SETFL, flags | O_NONBLOCK);
+
+	if (cfd != cwfd) {
+		flags = fcntl(client->cwfd, F_GETFL);
+		fcntl(client->cwfd, F_SETFL, flags | O_NONBLOCK);
+	}
 
 	client->action = vnc_client_version;
 
