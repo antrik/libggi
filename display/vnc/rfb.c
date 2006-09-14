@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.56 2006/09/14 20:03:59 pekberg Exp $
+/* $Id: rfb.c,v 1.57 2006/09/14 20:05:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -959,7 +959,7 @@ vnc_client_init(ggi_vnc_client *client)
 		/* I'm not sharing.
 		 * Kill'em all.
 		 */
-		ggi_vnc_client *i = GG_LIST_FIRST(&priv->clients);
+		ggi_vnc_client *i;
 		ggi_vnc_client *next;
 		for (i = GG_LIST_FIRST(&priv->clients); i; i = next) {
 			next = GG_LIST_NEXT(i, siblings);
@@ -1286,8 +1286,6 @@ int
 GGI_vnc_client_data(void *arg, int cfd)
 {
 	ggi_vnc_client *client = arg;
-	struct ggi_visual *vis = client->owner;
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned char buf[100];
 	ssize_t len;
 
