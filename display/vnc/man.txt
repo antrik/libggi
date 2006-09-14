@@ -53,7 +53,7 @@ Options
 ``-kold``
     Kill On Last Disconnect. This option ends the application when the last
     client disconnects. It can be useful in conjunction with the :p:`-client`
-    and :p:`stdio` options so that the application does not linger without
+    and :p:`-stdio` options so that the application does not linger without
     any user feedback.
 
 ``-passwd=<password>``
