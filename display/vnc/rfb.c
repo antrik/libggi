@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.53 2006/09/13 07:49:04 pekberg Exp $
+/* $Id: rfb.c,v 1.54 2006/09/14 05:06:10 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -178,6 +178,7 @@ write_client(ggi_vnc_client *client, ggi_vnc_buf *buf)
 	if (client->write_pending) {
 		DPRINT("impatient client...\n");
 		close_client(client);
+		return -1;
 	}
 
 again:
@@ -1281,7 +1282,7 @@ GGI_vnc_new_client(void *arg)
 	GGI_vnc_new_client_finish(vis, cfd, cfd);
 }
 
-void
+int
 GGI_vnc_client_data(void *arg, int cfd)
 {
 	ggi_vnc_client *client = arg;
@@ -1295,18 +1296,18 @@ GGI_vnc_client_data(void *arg, int cfd)
 	if (len < 0) {
 		DPRINT("Error reading\n");
 		close_client(client);
-		return;
+		return -1;
 	}
 
 	if (len == 0) {
 		close_client(client);
-		return;
+		return -1;
 	}
 
 	if (len + client->buf_size > sizeof(client->buf)) {
 		DPRINT("Avoiding buffer overrun\n");
 		close_client(client);
-		return;
+		return -1;
 	}
 
 	memcpy(client->buf + client->buf_size, buf, len);
@@ -1314,11 +1315,12 @@ GGI_vnc_client_data(void *arg, int cfd)
 
 	if (client->action(client)) {
 		close_client(client);
-		return;
+		return -1;
 	}
+	return 0;
 }
 
-void
+int
 GGI_vnc_write_client(void *arg, int fd)
 {
 	ggi_vnc_client *client = arg;
@@ -1327,7 +1329,7 @@ GGI_vnc_write_client(void *arg, int fd)
 
 	if (!client->write_pending) {
 		DPRINT("spurious write completed notification\n");
-		return;
+		return 0;
 	}
 
 	/* DPRINT("write some more\n"); */
@@ -1336,18 +1338,19 @@ GGI_vnc_write_client(void *arg, int fd)
 	priv->del_cwfd(priv->gii_ctx, client, fd);
 
 	if (write_client(client, &client->wbuf) < 0)
-		return;
+		return -1;
 
 	if (client->write_pending)
-		return;
+		return 0;
 
 	if (!client->buf_size)
-		return;
+		return 0;
 
 	if (client->action(client)) {
 		close_client(client);
-		return;
+		return -1;
 	}
+	return 0;
 }
 
 void
