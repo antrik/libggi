@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/09/14 20:10:41 pekberg Exp $
+/* $Id: visual.c,v 1.21 2006/09/15 15:29:51 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -61,6 +61,7 @@
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
+	VNC_OPTION(server,   "default")    \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(title,    "GGI on vnc") \
 	VNC_OPTION(zlib,     "")           \
@@ -221,8 +222,20 @@ GGIopen(struct ggi_visual *vis,
 		goto out_delstem;
 	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 
-	if (options[OPT_client].result[0] == '\0' &&
-	    options[OPT_stdio].result[0] == 'n') {
+	if (options[OPT_server].result[0] == 's')
+		priv->sfd = 0; /* stdio */
+	else if (options[OPT_server].result[0] != 'd' ||
+	         (options[OPT_client].result[0] == '\0' &&
+	          options[OPT_stdio].result[0] == 'n'))
+	{
+		/* default port, or override -display */
+	     	short port;
+
+		if (options[OPT_server].result[0] == 'd')
+			port = priv->display;
+		else
+			port = strtoul(options[OPT_server].result, NULL, 0);
+
 		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
 		if (priv->sfd == -1) {
 			err = GGI_ENODEVICE;
@@ -232,7 +245,7 @@ GGIopen(struct ggi_visual *vis,
 		memset(&sa, 0, sizeof(sa));
 		sa.sin_family = AF_INET;
 		sa.sin_addr.s_addr = htonl(INADDR_ANY);
-		sa.sin_port = htons(5900 + priv->display);
+		sa.sin_port = htons(5900 + port);
 
 		if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
 			err = GGI_ENODEVICE;

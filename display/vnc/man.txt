@@ -9,8 +9,8 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-kold] [-passwd=<pass>] [-stdio]
-	       [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+	       [-hextile=no] [-kold] [-passwd=<pass>] [-server[=<dpy>|stdio]]
+	       [-stdio] [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 
 
 Description
@@ -52,9 +52,9 @@ Options
 
 ``-kold``
     Kill On Last Disconnect. This option ends the application when the last
-    client disconnects. It can be useful in conjunction with the :p:`-client`
-    and :p:`-stdio` options so that the application does not linger without
-    any user feedback.
+    client disconnects. It can be useful in conjunction with the :p:`-client`,
+    :p:`-stdio` and :p:``-server=stdio`` options so that the application does
+    not linger without any user feedback.
 
 ``-passwd=<password>``
     The vnc client has to successfully encrypt a random challenge
@@ -62,11 +62,23 @@ Options
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
 
+``-server[=<dpy>|stdio]``
+    To run both a server and open a client at the same time, but with
+    different displays numbers, the server display number can be specified
+    using :p:`-server=<dpy>`. If no argument is given, the display number
+    is collected for the :p:`-display` option. Use :p:`-display=stdio` to
+    accept connections from the stdin file handle, which is suitable for
+    serving a GGI application as an inetd(8) :p:`wait` type service.
+    The :p:`-server=stdio` option is incompatible with the :p:`-stdio`
+    option.
+
 ``-stdio``
     Talk the RFB protocol on stdin/stdout instead of waiting for clients
     to connect. Suitable for serving a GGI application as an inetd(8)
     :p:``nowait`` type service. One requirement though, is that the served
     GGI application does not "chatter" on stdout and/or stderr.
+    The :p:`-stdio` option is incompatible with the :p:`-server=stdio`
+    option.
 
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
