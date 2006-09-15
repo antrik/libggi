@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.15 2006/09/15 23:03:54 pekberg Exp $
+/* $Id: inputdump.c,v 1.16 2006/09/15 23:18:35 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -925,6 +925,7 @@ int main(int argc, char **argv)
 		ggiFlush(vis);
 	} while (! quit);
 
+	ggiClose(vis);
 	ggDelStem(vis);
 	ggiExit();
 	giiExit();
