@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2317 2006/08/07 16:25:08) 2.1a
+# ltmain.sh (GNU libtool 1.2338 2006/09/12 18:02:31) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2317 2006/08/07 16:25:08) 2.1a
+#       $progname:		(GNU libtool 1.2338 2006/09/12 18:02:31) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2317 2006/08/07 16:25:08"
-package_revision=1.2317
+TIMESTAMP=" 1.2338 2006/09/12 18:02:31"
+package_revision=1.2338
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -1308,31 +1308,29 @@ extern \"C\" {
 	  $ECHO >> "$output_objdir/$my_dlsyms" "\
 
 /* The mapping between symbol names and symbols.  */
+typedef struct {
+  const char *name;
+  void *address;
+} lt_dlsymlist;
 "
 	  case $host in
 	  *cygwin* | *mingw* )
 	    $ECHO >> "$output_objdir/$my_dlsyms" "\
 /* DATA imports from DLLs on WIN32 con't be const, because
    runtime relocations are performed -- see ld's documentation
-   on pseudo-relocs.  */
-   struct {
-"
-	    ;;
+   on pseudo-relocs.  */"
+	    lt_dlsym_const= ;;
 	  *)
-	    $ECHO >> "$output_objdir/$my_dlsyms" "\
-const struct {
-"
-	    ;;
+	    lt_dlsym_const=const ;;
 	  esac
 
 	  $ECHO >> "$output_objdir/$my_dlsyms" "\
-   const char *name;
-   void *address;
-}
+extern $lt_dlsym_const lt_dlsymlist
+lt_${my_prefix}_LTX_preloaded_symbols[];
+$lt_dlsym_const lt_dlsymlist
 lt_${my_prefix}_LTX_preloaded_symbols[] =
 {\
-  { \"$my_originator\", (void *) 0 },
-"
+  { \"$my_originator\", (void *) 0 },"
 
 	  eval "$global_symbol_to_c_name_address" < "$nlist" >> "$output_objdir/$my_dlsyms"
 
@@ -3271,9 +3269,10 @@ func_mode_link ()
       # -q* pass through compiler args for the IBM compiler
       # -m*, -t[45]*, -txscale* pass through architecture-specific
       # compiler args for GCC
+      # -pg, --coverage pass through profiling flag for GCC
       # @file GCC response files
       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
-      -t[45]*|-txscale*|@*)
+      -t[45]*|-txscale*|-pg|--coverage|@*)
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
         func_append compile_command " $arg"
@@ -5599,7 +5598,7 @@ EOF
 	    $ECHO 'INPUT (' > $output
 	    for obj in $save_libobjs
 	    do
-	      $ECHO \""$obj"\" >> $output
+	      $ECHO "$obj" >> $output
 	    done
 	    $ECHO ')' >> $output
 	    delfiles="$delfiles $output"
