@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.14 2006/03/27 08:08:47 pekberg Exp $
+/* $Id: inputdump.c,v 1.15 2006/09/15 23:03:54 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -63,6 +63,7 @@ typedef struct mydev_info
 	
 	int32_t axes[MAX_NR_VAL+4];
 	int32_t buttons[MAX_NR_BUT];  /* labels */
+	int32_t syms[MAX_NR_BUT];  /* syms */
 	int32_t pbuttons[MAX_NR_BUT];  /* ptr-buttons */
 
 	ggi_coord top;
@@ -176,9 +177,12 @@ static void draw_inp_buttons(mydev_info *M)
 		if (label < 0) continue;
 
 		if ((label == GIIK_NIL) || (label == GIIK_VOID)) {
-			sprintf(buf, "button %03d        ", i);
+			sprintf(buf, "button %03d          ", i);
+		} else if (isprint(M->syms[i])) {
+			sprintf(buf, "button %03d 0x%04x %c ",
+				i, label, M->syms[i]);
 		} else {
-			sprintf(buf, "button %03d 0x%04x ", i, label);
+			sprintf(buf, "button %03d 0x%04x   ", i, label);
 		}
 		
 		ggiPuts(vis, x, y, buf);  y += vis_ch.y;
@@ -326,6 +330,7 @@ static mydev_info *find_input_device(uint32_t origin)
 	memset(InputDevices[i]->axes, 0, (MAX_NR_VAL+4) * sizeof(int32_t));
 	for (j = 0; j < MAX_NR_BUT; j++) {
 		InputDevices[i]->buttons[j] = -1;
+		InputDevices[i]->syms[j] = -1;
 		InputDevices[i]->pbuttons[j] = -1;
 	}
 	
@@ -395,8 +400,10 @@ static void show_key(gii_key_event *ev)
 
 		if (ev->type == evKeyRelease) {
 			cur_dev->buttons[b] = -1;
+			cur_dev->syms[b] = -1;
 		} else {
 			cur_dev->buttons[b] = ev->label;
+			cur_dev->syms[b] = ev->sym;
 		}
 
 		draw_inp_buttons(cur_dev);
