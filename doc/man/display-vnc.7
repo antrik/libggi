@@ -1,12 +1,12 @@
-.TH "display-vnc" 7 "2006-09-14" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-15" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-             [-hextile=no] [-kold] [-passwd=<pass>] [-stdio]
-             [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+             [-hextile=no] [-kold] [-passwd=<pass>] [-server[=<dpy>|stdio]]
+             [-stdio] [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 .fi
 
 .SH DESCRIPTION
@@ -47,9 +47,9 @@ Disables the hextile encoding.
 .TP
 \f(CW-kold\fR
 Kill On Last Disconnect. This option ends the application when the last
-client disconnects. It can be useful in conjunction with the \fI-client\fR
-and \fI-stdio\fR options so that the application does not linger without
-any user feedback.
+client disconnects. It can be useful in conjunction with the \fI-client\fR,
+\fI-stdio\fR and :p:\f(CW-server=stdio\fR options so that the application does
+not linger without any user feedback.
 
 .TP
 \f(CW-passwd=<password>\fR
@@ -59,11 +59,24 @@ with the stated \fIpassword\fR in order to connect. In the
 significant bits of every character are used in the authentication.
 
 .TP
+\f(CW-server[=<dpy>|stdio]\fR
+To run both a server and open a client at the same time, but with
+different displays numbers, the server display number can be specified
+using \fI-server=<dpy>\fR. If no argument is given, the display number
+is collected for the \fI-display\fR option. Use \fI-display=stdio\fR to
+accept connections from the stdin file handle, which is suitable for
+serving a GGI application as an inetd(8) \fIwait\fR type service.
+The \fI-server=stdio\fR option is incompatible with the \fI-stdio\fR
+option.
+
+.TP
 \f(CW-stdio\fR
 Talk the RFB protocol on stdin/stdout instead of waiting for clients
 to connect. Suitable for serving a GGI application as an inetd(8)
 :p:\f(CWnowait\fR type service. One requirement though, is that the served
 GGI application does not "chatter" on stdout and/or stderr.
+The \fI-stdio\fR option is incompatible with the \fI-server=stdio\fR
+option.
 
 .TP
 \f(CW-title=<title>\fR
