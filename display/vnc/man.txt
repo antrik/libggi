@@ -9,7 +9,8 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-kold] [-passwd=<pass>] [-server[=<dpy>|stdio]]
+	       [-hextile=no] [-kold] [-passwd=<pass>]
+	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
 	       [-stdio] [-title=<title>] [-zlib=<level>] [-zrle=<level>]
 
 
@@ -61,6 +62,13 @@ Options
     with the stated :p:`password` in order to connect. In the
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
+
+``-physz=<sizex>,<sizey>[dpi]``
+    This option will provide a physical screen size for applications
+    which wish to remain resolution independent. :p:`sizex`,:p:`sizey`
+    are the x,y size of the screen in millimeters, unless the optional
+    ``dpi`` string is affixed, in which case, they represent resolution
+    in dots-per-inch.
 
 ``-server[=<dpy>|stdio]``
     To run both a server and open a client at the same time, but with

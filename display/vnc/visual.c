@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/09/15 15:29:51 pekberg Exp $
+/* $Id: visual.c,v 1.22 2006/09/16 00:07:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -61,6 +61,7 @@
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
+	VNC_OPTION(physz,    "0,0")         \
 	VNC_OPTION(server,   "default")    \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(title,    "GGI on vnc") \
@@ -97,6 +98,7 @@ GGIopen(struct ggi_visual *vis,
 	struct gg_stem *stem;
 	struct gg_module *inp = NULL;
 	struct gg_api *gii;
+	char *display_memory;
 
 	DPRINT_MISC("coming up (args='%s').\n", args);
 
@@ -217,7 +219,17 @@ GGIopen(struct ggi_visual *vis,
 	err = ggiAttach(stem);
 	if (err != GGI_OK)
 		goto out_delstem;
-	err = ggiOpen(stem, "display-memory");
+
+	display_memory = malloc(22 + strlen(options[OPT_physz].result) + 1);
+	if (!display_memory) {
+		err = GGI_ENOMEM;
+		goto out_delstem;
+	}
+	strcpy(display_memory, "display-memory:-physz=");
+	strcat(display_memory, options[OPT_physz].result);
+
+	err = ggiOpen(stem, display_memory);
+	free(display_memory);
 	if (err != GGI_OK)
 		goto out_delstem;
 	priv->fb = STEM_API_DATA(stem, libggi, struct ggi_visual *);
