@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.4 2006/03/12 23:15:04 soyt Exp $
+/* $Id: box.c,v 1.5 2006/09/17 12:31:06 cegger Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -195,11 +195,13 @@ int GGI_3dlabs_pm2_getbox(struct ggi_visual *vis, int x, int y, int w, int h,
 	struct _3dlabs_pm2_priv *priv = PM2_PRIV(vis);
 	volatile uint8_t *mmioaddr = FBDEV_PRIV(vis)->mmioaddr;
 	int yadd = vis->r_frame_num * LIBGGI_VIRTY(vis);
-	int count;
 	uint32_t destwidth;
 	const uint32_t *src;
 	uint8_t *dest;
+#if 0
+	int count;
 	uint32_t *destp;
+#endif
 
 	/* 0 width is not OK! */
 	if (w == 0 || h == 0) return 0;
