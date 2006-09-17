@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.42 2006/09/17 14:09:13 cegger Exp $
+/* $Id: visual.c,v 1.43 2006/09/17 15:29:03 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -265,9 +265,10 @@ static int do_cleanup(struct ggi_visual *vis)
 	/* We may be called more than once due to the LibGG cleanup stuff */
 	if (priv == NULL) return 0;
 
-	DPRINT("display-fbdev: GGIdlcleanup start.\n");
+	DPRINT("display-fbdev: do_cleanup start.\n");
 
 	if (LIBGGI_FD(vis) >= 0) {
+		DPRINT_MISC("do_cleanup: restoring mode\n");
 #if 0
 #ifdef FBIOGET_CON2FBMAP
 		ioctl(LIBGGI_FD(vis), FBIOPUT_CON2FBMAP, &origconmap);
@@ -691,22 +692,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		char strbuf[64];
 		const char *inputstr = "input-linux-kbd";
 
+		memset(strbuf, 0, sizeof(strbuf));
 		if (vtnum != -1) {
 			snprintf(strbuf, sizeof(strbuf),
-				 "input-linux-kbd:/dev/tty%d", vtnum);
-			inputstr = strbuf;
+				 "/dev/tty%d", vtnum);
 		}
 
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-				inputstr, NULL, NULL);
+				inputstr, strbuf, NULL);
 			if (inp == NULL) {
 				if (vtnum != -1) {
 					snprintf(strbuf, sizeof(strbuf),
-						"input-linux-kbd:/dev/vc/%d",
+						"/dev/vc/%d",
 						vtnum);
 					inp = ggOpenModule(gii, vis->stem,
-						inputstr, NULL, NULL);
+						inputstr, strbuf, NULL);
 				}
 				if (inp == NULL) {
 					fprintf(stderr,
@@ -714,7 +715,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					/* We're on the Linux console so we want
 					   ansikey. */
 					inp = ggOpenModule(gii, vis->stem,
-						"stdin:ansikey", NULL, NULL);
+						"input-stdin", "ansikey", NULL);
 					if (inp == NULL) {
 						fprintf(stderr,
 	"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
@@ -730,7 +731,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_module *inp;
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-				"input-linux-mouse:auto", NULL, &args);
+				"input-linux-mouse", "auto", &args);
 			if (inp == NULL) {
 				fprintf(stderr,
 	"display-fbdev: Unable to open linux-mouse. Disable mouse support.\n");
