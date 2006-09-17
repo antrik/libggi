@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.16 2006/03/22 20:22:27 cegger Exp $
+/* $Id: color.c,v 1.17 2006/09/17 12:05:39 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -46,7 +46,7 @@ static int GGI_fbdev_setgammamap(struct ggi_visual *vis, int start, int len,
 				 const ggi_color *colormap);
 static int GGI_fbdev_setPalette(struct ggi_visual *vis, size_t start, size_t end, 
 			       const ggi_color *colormap);
-static size_t GGI_fbdev_getPrivSize(struct ggi_visual_t vis);
+static size_t GGI_fbdev_getPrivSize(struct ggi_visual *vis);
 
 
 /* Zeros out the palette/gamma entries.  Called before changing modes. */
