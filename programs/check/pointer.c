@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.5 2006/03/22 04:45:59 pekberg Exp $
+/* $Id: pointer.c,v 1.6 2006/09/17 18:25:38 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -228,6 +228,7 @@ main(int argc, char **argv)
 	}
 
 out:
+	ggiClose(vis);
 	if (vis)
 		ggDelStem(vis);
 	ggiExit();
