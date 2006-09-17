@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.41 2006/09/17 13:32:11 cegger Exp $
+/* $Id: visual.c,v 1.42 2006/09/17 14:09:13 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -730,7 +730,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_module *inp;
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-				"linux-mouse:auto", NULL, &args);
+				"input-linux-mouse:auto", NULL, &args);
+			if (inp == NULL) {
+				fprintf(stderr,
+	"display-fbdev: Unable to open linux-mouse. Disable mouse support.\n");
+			}
 			priv->ms_inp = inp;
 		}
 	}
