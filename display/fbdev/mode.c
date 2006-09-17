@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2006/08/20 15:54:05 cegger Exp $
+/* $Id: mode.c,v 1.31 2006/09/17 16:23:38 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -77,11 +77,11 @@ static void _GGI_free_dbs(struct ggi_visual *vis)
 
 static void clear_fbmem(void *mem, unsigned long len)
 {
-	unsigned long *memptr = mem;
-	long i = len / sizeof(long);
+	uint32_t *memptr = mem;
+	uint32_t i = len / sizeof(uint32_t);
 
 	while (i--) {
-		*memptr = 0;
+		*memptr++ = 0;
 	}
 }
 
