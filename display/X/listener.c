@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.3 2006/04/11 18:06:19 cegger Exp $
+/* $Id: listener.c,v 1.4 2006/09/17 11:51:51 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -48,7 +48,7 @@ int GGI_X_listener(void *arg, int flag, void *data)
 		 */
 	}
 
-	if (flag & GII_CMDCODE_EXPOSE) {
+	if (flag & GII_CMDCODE_XWINEXPOSE) {
 		struct gii_cmddata_expose *expose;
 
 		expose = (struct gii_cmddata_expose *)data;
