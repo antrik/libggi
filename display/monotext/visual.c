@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/09/06 21:24:29 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/09/17 13:32:11 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -105,7 +105,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int val;
 	int err = 0;
 
-	DPRINT("display-monotext: GGIdlinit start.\n");
+	DPRINT("display-monotext: GGIopen start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -268,7 +268,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->flush     = GGI_monotext_flush;
 	vis->opdisplay->setflags  = GGI_monotext_setflags;
 	
-	DPRINT("display-monotext: GGIdlinit succeeded.\n");
+	DPRINT("display-monotext: GGIopen succeeded.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

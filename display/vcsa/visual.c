@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2006/09/10 08:15:27 cegger Exp $
+/* $Id: visual.c,v 1.23 2006/09/17 13:32:11 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -105,7 +105,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = GGI_ENOMEM;
 	struct gg_api *gii;
 
-	DPRINT_MISC("display-vcsa: GGIdlinit start.\n");
+	DPRINT_MISC("display-vcsa: GGIopen start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -259,7 +259,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->getapi    = GGI_vcsa_getapi;
 	vis->opdisplay->setflags  = GGI_vcsa_setflags;
 
-	DPRINT_MISC("display-vcsa: GGIdlinit success.\n");
+	DPRINT_MISC("display-vcsa: GGIopen success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

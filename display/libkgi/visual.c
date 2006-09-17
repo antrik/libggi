@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/03/22 20:22:27 cegger Exp $
+/* $Id: visual.c,v 1.16 2006/09/17 13:32:11 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -313,7 +313,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 */
 	ggiGAInit();
 
-        DPRINT("display-libkgi: GGIdlinit start.\n");
+        DPRINT("display-libkgi: GGIopen start.\n");
 
         memcpy(options, optlist, sizeof(options));
         if (args) {
@@ -420,7 +420,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
         /* Register cleanup handler */
         ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-        DPRINT("display-libkgi: GGIdlinit success.\n");
+        DPRINT("display-libkgi: GGIopen success.\n");
 
         *dlret = GGI_DL_OPDISPLAY;
         return 0;

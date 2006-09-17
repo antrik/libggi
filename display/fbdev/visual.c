@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.40 2006/09/17 12:08:56 cegger Exp $
+/* $Id: visual.c,v 1.41 2006/09/17 13:32:11 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -546,7 +546,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_fbdev_priv *priv;
 	struct gg_api *gii, *ggi;
 
-	DPRINT("display-fbdev: GGIdlinit start.\n");
+	DPRINT("display-fbdev: GGIopen start.\n");
 
 	memcpy(options, optlist, sizeof(options));
 
@@ -863,7 +863,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Register cleanup handler */
 	ggRegisterCleanup((ggcleanup_func *)do_cleanup, vis);
 
-	DPRINT("display-fbdev: GGIdlinit success.\n");
+	DPRINT("display-fbdev: GGIopen success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
