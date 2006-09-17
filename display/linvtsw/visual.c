@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/03/22 20:22:28 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/09/17 09:27:13 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -62,6 +62,8 @@
 #endif
 #endif
 
+#include <ggi/gg-queue.h>
+
 
 /* We can only run on one VT at a time. */
 static ggi_linvtsw_arg vthandling;
@@ -73,32 +75,31 @@ static int	switchpending = 0;
 struct vislist {
 	struct ggi_visual	*vis;
 	ggi_linvtsw_arg  args;
-	struct vislist	*next;
+	GG_SLIST_ENTRY(vislist) next;
 };
 
 static int refcount = 0;
 static void *vt_lock;
-static struct vislist *vtvisuals = NULL;
+GG_SLIST_HEAD(vtvisuals, vislist) vtvisuals = GG_SLIST_HEAD_INITIALIZER(vtvisuals);
+
+#define VTLIST_INSERT(elm)	GG_SLIST_INSERT_HEAD(&vtvisuals, elm, next)
+#define VTLIST_REMOVE(elm)	GG_SLIST_REMOVE(&vtvisuals, elm, vislist, next)
+#define VTLIST_FOREACH(elm)	GG_SLIST_FOREACH(elm, &vtvisuals, next)
+
 
 
 static int
 vt_add_vis(struct ggi_visual *vis, ggi_linvtsw_arg *args)
 {
-	struct vislist *curr = vtvisuals, *newent;
+	struct vislist *newent;
 
 	newent = malloc(sizeof(struct vislist));
 	if (newent == NULL) return GGI_ENOMEM;
 
 	newent->vis = vis;
 	newent->args = *args;
-	newent->next = NULL;
 
-	if (curr == NULL) {
-		vtvisuals = newent;
-	} else {
-		while (curr->next != NULL) curr = curr->next;
-		curr->next = newent;
-	}
+	VTLIST_INSERT(newent);
 
 	return 0;
 }
@@ -107,20 +108,15 @@ vt_add_vis(struct ggi_visual *vis, ggi_linvtsw_arg *args)
 static int
 vt_del_vis(struct ggi_visual *vis)
 {
-	struct vislist *curr, *prev = NULL;
+	struct vislist *curr, *found = NULL;
 
-	curr = vtvisuals;
-	while (curr->vis != vis) {
-		prev = curr;
-		curr = curr->next;
-		if (curr == NULL) return GGI_ENOTFOUND;
+	VTLIST_FOREACH(curr) {
+		if (curr->vis == vis)
+			found = curr;
 	}
-	if (prev == NULL) {
-		vtvisuals = curr->next;
-	} else {
-		prev->next = curr->next;
-	}
-	free(curr);
+	if (found == NULL) return GGI_ENOTFOUND;
+	VTLIST_REMOVE(found);
+	free(found);
 
 	return 0;
 }
@@ -171,16 +167,15 @@ setsig(int sig, void (*func)(int))
 static void
 release_vt(void *arg)
 {
-	struct vislist *curr = vtvisuals;
+	struct vislist *curr = NULL;
 
 	if (vt_switched_away) return;
 
 	DPRINT_MISC("acknowledging VT-switch\n");
-	while (curr) {
+	VTLIST_FOREACH(curr) {
 		if (curr->args.switching) {
 			curr->args.switching(curr->args.funcarg);
 		}
-		curr = curr->next;
 	}
 	ioctl(vtfd, VT_RELDISP, 1);
 	switchpending = 0;
@@ -191,7 +186,7 @@ release_vt(void *arg)
 static void
 switching_handler(int signo)
 {
-	struct vislist *curr = vtvisuals;
+	struct vislist *curr = NULL;
 	sigset_t newset, oldset;
 	
 	/* Block all signals while executing handler */
@@ -204,11 +199,10 @@ switching_handler(int signo)
 		/* Acknowledge the VT */
 		ioctl(vtfd, VT_RELDISP, VT_ACKACQ);
 
-		while (curr) {
+		VTLIST_FOREACH(curr) {
 			if (curr->args.switchback) {
 				curr->args.switchback(curr->args.funcarg);
 			}
-			curr = curr->next;
 		}
 
 		vt_switched_away = 0;
@@ -243,11 +237,10 @@ switching_handler(int signo)
 				}
 			}
 		} else {
-			while (curr) {
+			VTLIST_FOREACH(curr) {
 				if (curr->args.switchreq) {
 				      curr->args.switchreq(curr->args.funcarg);
 				}
-				curr = curr->next;
 			}
 		}
 
