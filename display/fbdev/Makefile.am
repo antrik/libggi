@@ -4,7 +4,7 @@ libfbdev_la_LIBADD =
 
 noinst_LTLIBRARIES = libfbdev.la
 
-libfbdev_la_SOURCES = visual.c mode.c pan.c color.c
+libfbdev_la_SOURCES = color.c mode.c pan.c visual.c
 
 fbdevconfdir = $(sysconfdir)/$(ggi_subdir)/targets
 fbdevconf_DATA = fbdev.conf
