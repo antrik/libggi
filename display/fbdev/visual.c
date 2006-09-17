@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.39 2006/04/14 16:46:54 cegger Exp $
+/* $Id: visual.c,v 1.40 2006/09/17 12:08:56 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -88,9 +88,13 @@ struct kgi_driver {
 static int refcount = 0;
 static int vtnum;
 static void *_ggi_fbdev_lock = NULL;
+static struct gg_publisher linvt_publisher;
 #ifdef FBIOGET_CON2FBMAP
 static struct fb_con2fbmap origconmap;
 #endif
+
+ggfunc_observer_update _ggi_fbdev_listener;
+
 
 static const gg_option optlist[] =
 {
@@ -123,23 +127,13 @@ switchreq(void *arg)
 {
 	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
-	gii_event ev;
-	ggi_cmddata_switchrequest *data;
+	ggi_cmddata_switchrequest data;
 
 	DPRINT_MISC("display-fbdev: switchreq(%p) called\n", vis);
 
-	giiEventBlank(&ev, sizeof(gii_cmd_event));
+	data.request = GGI_REQSW_UNMAP;
 
-	data = (void *)ev.cmd.data;
-
-	ev.size   = sizeof(gii_cmd_event);
-	ev.cmd.type = evCommand;
-	ev.cmd.code = GGICMD_REQUEST_SWITCH;
-	data->request = GGI_REQSW_UNMAP;
-
-	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
-	giiSafeAdd(vis->input, &ev);
-
+	ggNotifyObservers(priv->linvt_publisher, GGICMD_REQUEST_SWITCH, &data);
 	priv->switchpending = 1;
 }
 
@@ -181,9 +175,7 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
-	LIB_ASSERT(vis != NULL, "invalid visual\n");
-	LIB_ASSERT(vis->input != NULL, "invalid input handler\n");
-	giiSafeAdd(vis->input, &ev);
+	ggNotifyObservers(priv->linvt_publisher, GII_CMDCODE_EXPOSE, &ev);
 	DPRINT_MISC("fbdev: EXPOSE sent.\n");
 
 #if 0
@@ -207,33 +199,28 @@ switchback(void *arg)
 }
 
 
-static int 
-GGI_fbdev_sendevent(struct ggi_visual *vis, gii_event *ev)
+int 
+_ggi_fbdev_listener(void *arg, int flag, void *data)
 {
+	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
 
 	DPRINT_MISC("GGI_fbdev_sendevent() called\n");
 
-	if (ev->any.type != evCommand) {
-		return GGI_EEVUNKNOWN;
-	}
-	switch (ev->cmd.code) {
-	case GGICMD_ACKNOWLEDGE_SWITCH:
+	if ((flag & GGICMD_ACKNOWLEDGE_SWITCH) == GGICMD_ACKNOWLEDGE_SWITCH) {
 		DPRINT_MISC("display-fbdev: switch acknowledge\n");
 		if (priv->switchpending) {
 			priv->doswitch(vis);
-			return 0;
-		} else {
-			/* No switch pending */
-			return GGI_EEVNOTARGET;
 		}
-		break;
-	case GGICMD_NOHALT_ON_UNMAP:
+	}
+
+	if ((flag & GGICMD_NOHALT_ON_UNMAP) == GGICMD_NOHALT_ON_UNMAP) {
 		DPRINT_MISC("display-fbdev: nohalt on\n");
 		priv->dohalt = 0;
 		priv->autoswitch = 0;
-		break;
-	case GGICMD_HALT_ON_UNMAP:
+	}
+
+	if ((flag & GGICMD_HALT_ON_UNMAP) == GGICMD_HALT_ON_UNMAP) { 
 		DPRINT_MISC("display-fbdev: halt on\n");
 		priv->dohalt = 1;
 		priv->autoswitch = 1;
@@ -242,10 +229,9 @@ GGI_fbdev_sendevent(struct ggi_visual *vis, gii_event *ev)
 			priv->doswitch(vis);
 			pause();
 		}
-		break;
 	}
 	
-	return GGI_EEVUNKNOWN;
+	return 0;
 }
 
 
@@ -291,10 +277,13 @@ static int do_cleanup(struct ggi_visual *vis)
 		GGI_fbdev_mode_reset(vis);
 	}
 
-	if (priv->inp != NULL) {
-		/* XXX how do we handle multiple input modules? */
-		ggCloseModule(priv->inp);
-		priv->inp = NULL;
+	if (priv->kbd_inp != NULL) {
+		ggCloseModule(priv->kbd_inp);
+		priv->kbd_inp = NULL;
+	}
+	if (priv->ms_inp != NULL) {
+		ggCloseModule(priv->ms_inp);
+		priv->ms_inp = NULL;
 	}
 
 	if (priv->normalgc) {
@@ -555,7 +544,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	const char *modedb = DEFAULT_MODEDB;
 	gg_option options[NUM_OPTS];
 	ggi_fbdev_priv *priv;
-	struct gg_api *gii;
+	struct gg_api *gii, *ggi;
 
 	DPRINT("display-fbdev: GGIdlinit start.\n");
 
@@ -580,12 +569,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	gii = ggGetAPIByName("gii");
-	priv = calloc(1, sizeof(ggi_fbdev_priv));
+	ggi = ggGetAPIByName("ggi");
+	LIBGGI_PRIVATE(vis) = priv = calloc(1, sizeof(ggi_fbdev_priv));
 	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
 	DPRINT("display-fbdev: Got private mem.\n");
-	LIBGGI_PRIVATE(vis) = priv;
 
 	priv->fb_ptr = NULL;
 	priv->need_timings = 1;
@@ -603,6 +592,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->mmioaddr = NULL;
 	priv->flush = NULL;
 	priv->idleaccel = NULL;
+
+	INIT_PUBLISHER(&linvt_publisher);
+	priv->observer = ggAddObserver(&linvt_publisher, _ggi_fbdev_listener,
+					vis);
+	priv->linvt_publisher = &linvt_publisher;
+	priv->kbd_inp = NULL;
+	priv->ms_inp = NULL;
 
 	if (strlen(options[OPT_DEV].result)) {
 		devfile = options[OPT_DEV].result;
@@ -696,7 +692,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		const char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
-			snprintf(strbuf, 64, "linux-kbd:/dev/tty%d", vtnum);
+			snprintf(strbuf, sizeof(strbuf),
+				 "input-linux-kbd:/dev/tty%d", vtnum);
 			inputstr = strbuf;
 		}
 
@@ -705,7 +702,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				inputstr, NULL, NULL);
 			if (inp == NULL) {
 				if (vtnum != -1) {
-					snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d",
+					snprintf(strbuf, sizeof(strbuf),
+						"input-linux-kbd:/dev/vc/%d",
 						vtnum);
 					inp = ggOpenModule(gii, vis->stem,
 						inputstr, NULL, NULL);
@@ -725,8 +723,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					}
 				}
 			}
-			/* XXX How do we handle multiple input modules? */
-			priv->inp = inp;
+			priv->kbd_inp = inp;
 		}
 	}
 	if (priv->inputs & FBDEV_INP_MOUSE) {
@@ -734,8 +731,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
 				"linux-mouse:auto", NULL, &args);
-			/* XXX How do we handle multiple input modules? */
-			priv->inp = inp;
+			priv->ms_inp = inp;
 		}
 	}
 
@@ -862,7 +858,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->flush     = GGI_fbdev_flush;
 	vis->opdisplay->idleaccel = GGI_fbdev_idleaccel;
 	vis->opdisplay->setflags  = GGI_fbdev_setflags;
-	vis->opdisplay->sendevent = GGI_fbdev_sendevent;
 	vis->opdisplay->kgicommand= GGI_fbdev_kgicommand;
 
 	/* Register cleanup handler */
