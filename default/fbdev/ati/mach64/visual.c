@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/03/12 23:15:04 soyt Exp $
+/* $Id: visual.c,v 1.19 2006/09/17 12:25:59 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev ATi Mach64 and Rage Pro acceleration
@@ -465,14 +465,14 @@ int GGIdl_fbdev_mach64(int func, void **funcptr)
 
 	switch (func) {
 	case GGIFUNC_open:
-		openptr = (ggifunc_open **)openptr;
+		openptr = (ggifunc_open **)funcptr;
 		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
 		*funcptr = NULL;
 		return 0;
 	case GGIFUNC_close:
-		closeptr = (ggifunc_close **)closeptr;
+		closeptr = (ggifunc_close **)funcptr;
 		*closeptr = GGIclose;
 		return 0;
 	default:
