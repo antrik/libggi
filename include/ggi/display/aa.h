@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.6 2006/06/15 12:10:51 cegger Exp $
+/* $Id: aa.h,v 1.7 2006/09/17 14:08:53 aldot Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -29,23 +29,23 @@
 #ifndef _GGI_DISPLAY_AA_H
 #define _GGI_DISPLAY_AA_H
 
-#include <aalib.h>
 #include <ggi/internal/ggi-dl.h>
+#include <ggi/gii-events.h>
 #include <ggi/display/mansync.h>
-
+#include <aalib.h>
 
 ggifunc_flush			GGI_aa_flush;
 ggifunc_getmode		GGI_aa_getmode;
 ggifunc_setmode		GGI_aa_setmode;
 ggifunc_checkmode	GGI_aa_checkmode;
-ggifunc_getapi 		GGI_aa_getapi;
+ggifunc_getapi		GGI_aa_getapi;
 ggifunc_setflags	GGI_aa_setflags;
 
 ggifunc_setPalette	GGI_aa_setPalette;
 size_t GGI_aa_getPrivSize(struct ggi_visual *vis);
 
-giifunc_eventpoll	GII_aa_poll;
 /*
+giifunc_eventpoll	GII_aa_poll;
 giifunc_sendevent	GII_aa_sendevent;
 */
 

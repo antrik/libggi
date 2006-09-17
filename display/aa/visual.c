@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/03/22 20:22:26 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/09/17 14:08:53 aldot Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -27,10 +27,12 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 
-#include "config.h"
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 #include <ggi/display/aa.h>
 #include <ggi/internal/ggi_debug.h>
 
@@ -149,13 +151,20 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	do {
-		gii_input *inp;
+		struct gg_module *inp = NULL;
+		struct gg_api *gii;
 		DPRINT_MISC("display-aa: gii starting\n");
 
+#if 0
 		/* First allocate a new gii_input descriptor. */
-		inp = _giiInputAlloc();
+		if ((gii = ggGetAPIByName("gii")) != NULL) {
+			if (STEM_HAS_API(vis->stem, gii)) {
+				inp = ggOpenModule(gii, vis->stem,
+					"input-aa", NULL, &_args);
+			}
+		}
 		if (inp == NULL) {
-			DPRINT_MISC("display-aa: _giiInputAlloc failed\n");
+			DPRINT_MISC("display-aa: ggOpenModule failed\n");
 			GGIclose(vis, dlh);
 			return GGI_ENOMEM;
 		}
@@ -176,11 +185,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   defaults are fine. */
 		inp->GIIeventpoll = GII_aa_poll;
 
-		/* Now join the new event source in. */
-		vis->input = giiJoinInputs(vis->input,inp);
-		
-		DPRINT_MISC("display-aa: input joined into %p\n",
-			       vis->input);
+#endif
 	} while(0);
 
 
