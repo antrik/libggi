@@ -1,4 +1,4 @@
-/* $Id: types.h,v 1.12 2005/08/12 18:48:23 cegger Exp $
+/* $Id: types.h,v 1.13 2006/09/17 11:45:12 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -251,15 +251,11 @@ typedef struct		/* requested by user and changed by driver    */
 ******************************************************************************
 */
 
-#define GGI_CMDFLAG_LIBGGI (GII_CMDFLAG_EXTERNAL>>1)
-
 /* Tell target that the application should not/should be halted when the
    display is unmapped.	The default is to halt the application.
 */
-#define GGICMD_NOHALT_ON_UNMAP (GII_CMDFLAG_EXTERNAL | GGI_CMDFLAG_LIBGGI \
-				| GII_CMDFLAG_NODATA | 0x01)
-#define GGICMD_HALT_ON_UNMAP (GII_CMDFLAG_EXTERNAL | GGI_CMDFLAG_LIBGGI \
-			      | GII_CMDFLAG_NODATA | 0x02)
+#define GGICMD_NOHALT_ON_UNMAP	0x01
+#define GGICMD_HALT_ON_UNMAP	0x02
 
 /* Requests the application to switch target/mode, or to stop drawing on
    the visual.
@@ -271,8 +267,7 @@ typedef struct		/* requested by user and changed by driver    */
    event, which tells the application that the visual is mapped back again.
 */
 
-#define GGICMD_REQUEST_SWITCH (GII_CMDFLAG_EXTERNAL \
-			       | GGI_CMDFLAG_LIBGGI | 0x01)
+#define GGICMD_REQUEST_SWITCH	0x04
 
 /* Used for 'request' field in ggi_cmddata_switchrequest */
 #define GGI_REQSW_UNMAP		0x01
@@ -286,7 +281,6 @@ typedef struct {
 } ggi_cmddata_switchrequest;
 
 
-#define GGICMD_ACKNOWLEDGE_SWITCH (GII_CMDFLAG_EXTERNAL | GGI_CMDFLAG_LIBGGI \
-				   | GII_CMDFLAG_NODATA | 0x03)
+#define GGICMD_ACKNOWLEDGE_SWITCH	0x08
 
 #endif /* _GGI_TYPES_H */
