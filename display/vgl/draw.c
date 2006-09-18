@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.10 2006/03/22 19:26:48 cegger Exp $
+/* $Id: draw.c,v 1.11 2006/09/18 05:13:57 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -39,7 +39,7 @@ GGI_vgl_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *b
 	LIBGGICLIP_PUTBOX(vis, x, y, w, h, buf, rowadd, * pixelsize);
 
 	while (h--) {
-		ggiPutHLine(vis, x, y, w, buf);
+		ggiPutHLine(vis->stem, x, y, w, buf);
 		y++;
 		buf += rowadd;
 	}

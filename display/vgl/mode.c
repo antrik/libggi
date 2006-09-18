@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/03/22 19:26:48 cegger Exp $
+/* $Id: mode.c,v 1.19 2006/09/18 05:13:57 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -191,7 +191,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		if (priv->savepalette == NULL) return GGI_EFATAL;
 
 		/* Set an initial palette */
-		ggiSetColorfulPalette(vis);
+		ggiSetColorfulPalette(vis->stem);
 	}
 
 	/* Set up pixel format */
@@ -279,7 +279,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 								LIBGGI_PIXFMT(vis);
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	return 0;
 }
