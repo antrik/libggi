@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.59 2006/09/14 20:10:41 pekberg Exp $
+/* $Id: rfb.c,v 1.60 2006/09/18 22:57:53 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -161,6 +161,13 @@ close_client(ggi_vnc_client *client)
 		GGI_vnc_zrle_close(client->zrle_ctx);
 		client->zrle_ctx = NULL;
 	}
+
+#ifdef HAVE_JPEG
+	if (client->tight_ctx) {
+		GGI_vnc_tight_close(client->tight_ctx);
+		client->tight_ctx = NULL;
+	}
+#endif
 #endif
 
 	GG_LIST_REMOVE(client, siblings);
@@ -234,28 +241,16 @@ vnc_remove(ggi_vnc_client *client, int count)
 }
 
 static int
-vnc_client_pixfmt(ggi_vnc_client *client)
+change_pixfmt(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	int err = 0;
-	uint16_t red_max;
-	uint16_t green_max;
-	uint16_t blue_max;
 	ggi_mode mode;
-	ggi_pixelformat pixfmt;
 	struct ggi_visual fake_vis;
 	int i;
 	char target[GGI_MAX_APILEN];
 	struct gg_stem *stem;
-
-	DPRINT("client_pixfmt\n");
-
-	if (client->buf_size < 20) {
-		/* wait for more data */
-		client->action = vnc_client_pixfmt;
-		return 0;
-	}
 
 	if (client->vis) {
 		stem = client->vis->stem;
@@ -264,71 +259,37 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 		client->vis = NULL;
 	}
 
-	memcpy(&red_max, &client->buf[8], sizeof(red_max));
-	red_max = ntohs(red_max);
-	memcpy(&green_max, &client->buf[10], sizeof(green_max));
-	green_max = ntohs(green_max);
-	memcpy(&blue_max, &client->buf[12], sizeof(blue_max));
-	blue_max = ntohs(blue_max);
-
-	DPRINT_MISC("Requested pixfmt:\n");
-	DPRINT_MISC("  depth/size %d/%d\n", client->buf[5], client->buf[4]);
+#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+	if (client->encode == GGI_vnc_tight) {
+		if (((client->pixfmt.red_mask << client->pixfmt.red_shift)
+			== 0xff000000) &&
+		    ((client->pixfmt.green_mask << client->pixfmt.green_shift)
+			== 0xff000000) &&
+		    ((client->pixfmt.blue_mask << client->pixfmt.blue_shift)
+			== 0xff000000))
+		{
 #ifdef GGI_BIG_ENDIAN
-	client->reverse_endian = !client->buf[6];
+			client->pixfmt.red_mask    = 0x00ff0000;
+			client->pixfmt.green_mask  = 0x0000ff00;
+			client->pixfmt.blue_mask   = 0x000000ff;
 #else
-	client->reverse_endian = client->buf[6];
+			client->pixfmt.red_mask    = 0x000000ff;
+			client->pixfmt.green_mask  = 0x0000ff00;
+			client->pixfmt.blue_mask   = 0x00ff0000;
 #endif
-	DPRINT_MISC("  endian: %s\n",
-		client->reverse_endian ? "reverse" : "match");
-	DPRINT_MISC("  type: %s\n",
-		client->buf[7] ? "truecolor" : "palette");
-	DPRINT_MISC("  red max (shift):   %u (%d)\n",
-		red_max,   client->buf[14]);
-	DPRINT_MISC("  green max (shift): %u (%d)\n",
-		green_max, client->buf[15]);
-	DPRINT_MISC("  blue max (shift):  %u (%d)\n",
-		blue_max,  client->buf[16]);
-
-	memset(&pixfmt, 0, sizeof(ggi_pixelformat));
-	pixfmt.size = client->buf[4];
-	/* Don't trust depth from the client, they often
-	 * ask for the wrong thing...
-	 */
-	if (client->buf[7]) {
-		pixfmt.depth = color_bits(red_max) +
-			color_bits(green_max) +
-			color_bits(blue_max);
-		if (pixfmt.size < pixfmt.depth)
-			pixfmt.depth = client->buf[5];
-		pixfmt.red_mask = red_max << client->buf[14];
-		pixfmt.green_mask = green_max << client->buf[15];
-		pixfmt.blue_mask = blue_max << client->buf[16];
+			client->pixfmt.size  = 24;
+			client->pixfmt.depth = 24;
+			_ggi_build_pixfmt(&client->pixfmt);
+		}
 	}
-	else {
-		pixfmt.depth = client->buf[5];
-		pixfmt.clut_mask = (1 << pixfmt.depth) - 1;
-	}
+#endif
 
-	_ggi_build_pixfmt(&pixfmt);
-	DPRINT_MISC("Evaluated as GGI pixfmt:\n");
-	DPRINT_MISC("  depth/size: %d/%d\n", pixfmt.depth, pixfmt.size);
-	DPRINT_MISC("  red mask (shift):   %08x (%d)\n",
-		pixfmt.red_mask,   pixfmt.red_shift);
-	DPRINT_MISC("  green mask (shift): %08x (%d)\n",
-		pixfmt.green_mask, pixfmt.green_shift);
-	DPRINT_MISC("  blue mask (shift):  %08x (%d)\n",
-		pixfmt.blue_mask,  pixfmt.blue_shift);
-	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
-		pixfmt.clut_mask,  pixfmt.clut_shift);
-
-	client->palette_dirty = !client->buf[7];
-
-	if (pixfmt.red_mask == LIBGGI_PIXFMT(vis)->red_mask &&
-		pixfmt.green_mask == LIBGGI_PIXFMT(vis)->green_mask &&
-		pixfmt.blue_mask == LIBGGI_PIXFMT(vis)->blue_mask &&
-		pixfmt.clut_mask == LIBGGI_PIXFMT(vis)->clut_mask &&
-		pixfmt.size == LIBGGI_PIXFMT(vis)->size)
-		goto done;
+	if (client->pixfmt.red_mask == LIBGGI_PIXFMT(vis)->red_mask &&
+		client->pixfmt.green_mask == LIBGGI_PIXFMT(vis)->green_mask &&
+		client->pixfmt.blue_mask == LIBGGI_PIXFMT(vis)->blue_mask &&
+		client->pixfmt.clut_mask == LIBGGI_PIXFMT(vis)->clut_mask &&
+		client->pixfmt.size == LIBGGI_PIXFMT(vis)->size)
+		return 0;
 
 	memset(&mode, 0, sizeof(mode));
 	mode.frames = 1;
@@ -337,22 +298,22 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 	mode.virt.x    = LIBGGI_VIRTX(vis);
 	mode.virt.y    = LIBGGI_VIRTY(vis);
 	mode.size.x = mode.size.y = GGI_AUTO;
-	GT_SETDEPTH(mode.graphtype, pixfmt.depth);
-	GT_SETSIZE(mode.graphtype, pixfmt.size);
-	if (client->buf[7])
+	GT_SETDEPTH(mode.graphtype, client->pixfmt.depth);
+	GT_SETSIZE(mode.graphtype, client->pixfmt.size);
+	if (!client->pixfmt.clut_mask)
 		GT_SETSCHEME(mode.graphtype, GT_TRUECOLOR);
 	else
 		GT_SETSCHEME(mode.graphtype, GT_PALETTE);
 	mode.dpp.x = mode.dpp.y = 1;
 
-	if (client->buf[7]) {
+	if (!client->pixfmt.clut_mask) {
 		i = snprintf(target,
 			GGI_MAX_APILEN, "display-memory:-pixfmt=");
 
 		/* Need a visual to call _ggi_build_pixfmtstr, so fake
 		 * one...
 		 */
-		fake_vis.pixfmt = &pixfmt;
+		fake_vis.pixfmt = &client->pixfmt;
 		fake_vis.mode = &mode;
 		memset(target + i, '\0', sizeof(target) - i);
 		_ggi_build_pixfmtstr(&fake_vis,
@@ -389,11 +350,10 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 		priv->fb->pixfmt->stdformat,
 		client->vis->pixfmt->stdformat);
 
-	if (!client->buf[7])
+	if (client->pixfmt.clut_mask)
 		ggiSetColorfulPalette(stem);
 
-done:
-	return vnc_remove(client, 20);
+	return 0;
 
 err3:
 	ggiClose(stem);
@@ -404,6 +364,87 @@ err1:
 err0:
 	client->vis = NULL;
 	return err;
+}
+
+static int
+vnc_client_pixfmt(ggi_vnc_client *client)
+{
+	uint16_t red_max;
+	uint16_t green_max;
+	uint16_t blue_max;
+
+	DPRINT("client_pixfmt\n");
+
+	if (client->buf_size < 20) {
+		/* wait for more data */
+		client->action = vnc_client_pixfmt;
+		return 0;
+	}
+
+	memcpy(&red_max, &client->buf[8], sizeof(red_max));
+	red_max = ntohs(red_max);
+	memcpy(&green_max, &client->buf[10], sizeof(green_max));
+	green_max = ntohs(green_max);
+	memcpy(&blue_max, &client->buf[12], sizeof(blue_max));
+	blue_max = ntohs(blue_max);
+
+	DPRINT_MISC("Requested pixfmt:\n");
+	DPRINT_MISC("  depth/size %d/%d\n", client->buf[5], client->buf[4]);
+#ifdef GGI_BIG_ENDIAN
+	client->reverse_endian = !client->buf[6];
+#else
+	client->reverse_endian = client->buf[6];
+#endif
+	DPRINT_MISC("  endian: %s\n",
+		client->reverse_endian ? "reverse" : "match");
+	DPRINT_MISC("  type: %s\n",
+		client->buf[7] ? "truecolor" : "palette");
+	DPRINT_MISC("  red max (shift):   %u (%d)\n",
+		red_max,   client->buf[14]);
+	DPRINT_MISC("  green max (shift): %u (%d)\n",
+		green_max, client->buf[15]);
+	DPRINT_MISC("  blue max (shift):  %u (%d)\n",
+		blue_max,  client->buf[16]);
+
+	memset(&client->pixfmt, 0, sizeof(ggi_pixelformat));
+	client->pixfmt.size = client->buf[4];
+	/* Don't trust depth from the client, they often
+	 * ask for the wrong thing...
+	 */
+	if (client->buf[7]) {
+		client->pixfmt.depth = color_bits(red_max) +
+			color_bits(green_max) +
+			color_bits(blue_max);
+		if (client->pixfmt.size < client->pixfmt.depth)
+			client->pixfmt.depth = client->buf[5];
+		client->pixfmt.red_mask = red_max << client->buf[14];
+		client->pixfmt.green_mask = green_max << client->buf[15];
+		client->pixfmt.blue_mask = blue_max << client->buf[16];
+	}
+	else {
+		client->pixfmt.depth = client->buf[5];
+		client->pixfmt.clut_mask = (1 << client->pixfmt.depth) - 1;
+	}
+
+	_ggi_build_pixfmt(&client->pixfmt);
+	DPRINT_MISC("Evaluated as GGI pixfmt:\n");
+	DPRINT_MISC("  depth/size: %d/%d\n",
+		client->pixfmt.depth, client->pixfmt.size);
+	DPRINT_MISC("  red mask (shift):   %08x (%d)\n",
+		client->pixfmt.red_mask,   client->pixfmt.red_shift);
+	DPRINT_MISC("  green mask (shift): %08x (%d)\n",
+		client->pixfmt.green_mask, client->pixfmt.green_shift);
+	DPRINT_MISC("  blue mask (shift):  %08x (%d)\n",
+		client->pixfmt.blue_mask,  client->pixfmt.blue_shift);
+	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
+		client->pixfmt.clut_mask,  client->pixfmt.clut_shift);
+
+	client->palette_dirty = !client->buf[7];
+
+	if (change_pixfmt(client))
+		return -1;
+
+	return vnc_remove(client, 20);
 }
 
 static void
@@ -478,6 +519,17 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 			break;
 		case 7:
 			DPRINT_MISC("tight encoding\n");
+#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+			if (client->encode || !priv->tight)
+				break;
+			if (!client->tight_ctx)
+				client->tight_ctx =
+					GGI_vnc_tight_open();
+			if (client->tight_ctx) {
+				client->encode = GGI_vnc_tight;
+				change_pixfmt(client);
+			}
+#endif
 			break;
 		case 8:
 			DPRINT_MISC("zlibhex encoding\n");
@@ -510,7 +562,7 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 			break;
 		default:
 			DPRINT_MISC("Unknown (%i) encoding\n",
-				ntohl(*encodings));
+				ntohl(*(encodings-1)));
 			break;
 		}
 
@@ -1017,6 +1069,9 @@ vnc_client_init(ggi_vnc_client *client)
 	tmp32 = htonl(strlen(priv->title));
 	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
 	memcpy(&server_init[24], priv->title, ntohl(tmp32));
+
+	client->pixfmt = *pixfmt;
+	change_pixfmt(client);
 
 	/* desired pixel-format */
 	write_client(client, &client->wbuf);

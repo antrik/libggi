@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.7 2006/09/08 10:34:48 pekberg Exp $
+/* $Id: encoding.h,v 1.8 2006/09/18 22:57:53 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -29,9 +29,6 @@
 #define _GGI_VNC_ENCODING_H
 
 #include <ggi/display/vnc.h>
-#ifdef HAVE_ZLIB
-#include <zlib.h>
-#endif
 
 int GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit);
 
@@ -54,6 +51,12 @@ struct zrle_ctx_t;
 ggi_vnc_encode GGI_vnc_zrle;
 struct zrle_ctx_t *GGI_vnc_zrle_open(int level);
 void GGI_vnc_zrle_close(struct zrle_ctx_t *ctx);
+
+#ifdef HAVE_JPEG
+ggi_vnc_encode GGI_vnc_tight;
+struct tight_ctx_t *GGI_vnc_tight_open(void);
+void GGI_vnc_tight_close(struct tight_ctx_t *ctx);
+#endif /* HAVE_JPEG */
 
 #endif /* HAVE_ZLIB */
 

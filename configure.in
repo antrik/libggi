@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.200 2006/09/09 15:40:59 cegger Exp $
+dnl $Id: configure.in,v 1.201 2006/09/18 22:57:53 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -589,6 +589,14 @@ AC_CHECK_LIB(z, deflate,
 AM_CONDITIONAL(HAVE_ZLIB,
 		test "x$ac_cv_lib_z_deflate" = "xyes" -a \
 			"x$ac_cv_header_zlib_h" = "xyes")
+
+AC_CHECK_LIB(jpeg, jpeg_start_compress,
+	AC_CHECK_HEADER(jpeglib.h,
+	[AC_DEFINE(HAVE_JPEG, 1, [Define to 1 if you have libjpeg.])],
+	[], [AC_INCLUDES_DEFAULT]))
+AM_CONDITIONAL(HAVE_JPEG,
+		test "x$ac_cv_lib_jpeg_jpeg_start_compress" = "xyes" -a \
+			"x$ac_cv_header_jpeglib_h" = "xyes")
 
 
 TESTSUBDIRS=""
