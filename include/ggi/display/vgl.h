@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.2 2005/07/30 10:57:03 cegger Exp $
+/* $Id: vgl.h,v 1.3 2006/09/18 22:27:43 cegger Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -62,6 +62,22 @@ ggifunc_putbox		GGI_vgl_putbox;
 ggifunc_setorigin	GGI_vgl_setorigin;
 
 typedef struct vgl_priv {
+	PHYSZ_DATA
+
+	/* observer */
+	struct gg_observer *observer;
+	struct gg_publisher *vt_publisher;
+
+	/* VT switching and inputs */
+	int dohalt;
+	int autoswitch;
+	int switchpending;
+	int ismapped;
+	ggi_linvtsw_func *doswitch;
+	int inputs;
+	struct gg_module *kbd_inp;	/* keyboard */
+	struct gg_module *ms_inp;	/* mouse */
+
 	ggi_modelistmode *availmodes;
 	uint8_t	         *memorigin;
 	int		 *savepalette;

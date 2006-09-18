@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/09/18 05:15:48 cegger Exp $
+/* $Id: visual.c,v 1.14 2006/09/18 22:27:43 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -36,6 +36,126 @@
 #include <ggi/internal/ggi_debug.h>
 
 static int usagecounter = 0;
+
+
+ggfunc_observer_update _ggi_vgl_listener;
+
+static const gg_option optlist[] =
+{
+	{ "nokbd", "no" },
+	{ "nomouse", "no" },
+	{ "noinput", "no" },
+	{ "novt", "no" },
+	{ "physz", "0,0" },
+	{ ":dev", "" }
+};
+
+#define OPT_NOKBD	0
+#define OPT_NOMOUSE	1
+#define OPT_NOINPUT	2
+#define OPT_NOVT	3
+#define OPT_PHYSZ	4
+#define OPT_DEV		5
+
+#define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
+
+#define MAX_DEV_LEN	63
+#define DEFAULT_FBNUM	0
+
+
+
+static void
+switchreq(void *arg)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	ggi_cmddata_switchrequest data;
+
+	DPRINT_MISC("switchreq(%p) called\n", vis);
+
+	data.request = GGI_REQSW_UNMAP;
+
+	ggNotifyObservers(priv->publisher, GGICMD_REQUEST_SWITCH, &data);
+	priv->switchpending = 1;
+}
+
+
+static void
+switching(void *arg)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vgl_priv *priv = VGL_PRIV(vis);
+
+	DPRINT_MISC(switching(%p) called\n", vis);
+
+	priv->ismapped = 0;
+	priv->switchpending = 0;
+}
+
+
+static void
+switchback(void *arg)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	gii_event ev;
+
+	DPRINT_MISC("switched_back(%p) called\n", vis);
+
+	giiEventBlank(&ev, sizeof(gii_expose_event));
+
+	ev.any.size = sizeof(gii_expose_event);
+	ev.any.type = evExpose;
+
+	ev.expose.x = ev.expose.y = 0;
+	ev.expose.w = LIBGGI_VIRTX(vis);
+	ev.expose.h = LIBGGI_VIRTY(vis);
+
+	ggNotifyObservers(priv->vt_publisher, GII_CMDCODE_EXPOSE, &ev);
+	DPRINT_MISC("EXPOSE sent.\n");
+
+
+	/* See notes about palette member reuse in color.c */
+	priv->ismapped = 1;
+}
+
+
+int
+_ggi_vgl_listener(void *arg, int flag, void *data)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vgl_priv *priv = VGL_PRIV(vis);
+
+	DPRINT_MISC("_ggi_vgl_listener() called\n");
+
+	if ((flag & GGICMD_ACKNOWLEDGE_SWITCH) == GGICMD_ACKNOWLEDGE_SWITCH) {
+		DPRINT_MISC("listener: switch acknowledge\n");
+		if (priv->switchpending) {
+			priv->doswitch(vis);
+		}
+	}
+
+	if ((flag & GGICMD_NOHALT_ON_UNMAP) == GGICMD_NOHALT_ON_UNMAP) {
+		DPRINT_MISC("listener: nohalt on\n");
+		priv->dohalt = 0;
+		priv->autoswitch = 0;
+	}
+
+	if ((flag & GGICMD_HALT_ON_UNMAP) == GGICMD_HALT_ON_UNMAP) {
+		DPRINT_MISC("listener: halt on\n");
+		priv->dohalt = 1;
+		priv->autoswitch = 1;
+		if (priv->switchpending) {
+			/* Do switch and halt */
+			priv->doswitch(vis);
+			pause();
+		}
+	}
+
+	return 0;
+}
+
+
 
 
 
@@ -111,47 +231,6 @@ static int _GGIcheckvglmodes(struct ggi_visual *vis)
 	return 0;
 }
 
-static int 
-GGI_vgl_sendevent(struct ggi_visual *vis, gii_event *ev)
-{
-	DPRINT_MISC("GGI_vgl_sendevent() called\n");
-
-	if (ev->any.type != evCommand) {
-		return GGI_EEVUNKNOWN;
-	}
-
-#ifdef notyet
-	switch (ev->cmd.code) {
-	case GGICMD_ACKNOWLEDGE_SWITCH:
-		DPRINT_MISC("display-vgl: switch acknowledge\n");
-		if (priv->switchpending) {
-			priv->doswitch(vis);
-			return 0;
-		} else {
-			/* No switch pending */
-			return GGI_EEVNOTARGET;
-		}
-		break;
-	case GGICMD_NOHALT_ON_UNMAP:
-		DPRINT_MISC("display-vgl: nohalt on\n");
-		priv->dohalt = 0;
-		priv->autoswitch = 0;
-		break;
-	case GGICMD_HALT_ON_UNMAP:
-		DPRINT_MISC("display-vgl: halt on\n");
-		priv->dohalt = 1;
-		priv->autoswitch = 1;
-		if (priv->switchpending) {
-			/* Do switch and halt */
-			priv->doswitch(vis);
-			pause();
-		}
-		break;
-	}
-#endif
-	
-	return GGI_EEVUNKNOWN;
-}
 
 static int do_cleanup(struct ggi_visual *vis)
 {
@@ -189,7 +268,25 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	vgl_priv *priv;
 	int error;
+	ggi_linvtsw_arg vtswarg;
+	gg_option options[NUM_OPTS];
+	struct gg_api *gii;
+	int novt = 0;
 	
+
+	DPRINT("GGIopen start.\n");
+
+	memcpy(options, optlist, sizeof(options));
+
+	if (args) {
+		args = ggParseOptions(args, options, NUM_OPTS);
+		if (args == NULL) {
+			fprintf(stderr, "display-vgl: error in arguments.\n");
+			return GGI_EARGINVAL;
+		}
+	}
+
+	gii = ggGetAPIByName("gii");
 	ggLock(_ggi_global_lock); /* Entering protected section */
 	if (usagecounter > 0) {
 		ggUnlock(_ggi_global_lock);
@@ -222,6 +319,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	memset(priv->vgl_palgreen, 0, sizeof(priv->vgl_palgreen));
 	memset(priv->vgl_palblue, 0, sizeof(priv->vgl_palblue));
 
+	priv->dohalt = 1;
+	priv->autoswitch = 1;
+	priv->switchpending = 0;
+	priv->ismapped = 1;
+	priv->doswitch = NULL;
+
 	/* Default is no DirectBuffer */
 	priv->vgl_use_db = 0;
 
@@ -253,35 +356,95 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto error;
 	}
 
+
+	INIT_PUBLISHER(&linvt_publisher);
+	priv->observer = ggAddObserver(&linvt_publisher, _ggi_vgl_listener,
+					vis);
+	priv->linvt_publisher = &linvt_publisher;
+	priv->kbd_inp = NULL;
+	priv->ms_inp = NULL;
+
+
+	priv->inputs = INP_KBD | INP_MOUSE;
+
+	if (toupper((uint8_t)options[OPT_NOKBD].result[0]) != 'N') {
+		priv->inputs &= ~INP_KBD;
+	}
+	if (toupper((uint8_t)options[OPT_NOMOUSE].result[0]) != 'N') {
+		priv->inputs &= ~INP_MOUSE;
+	}
+	if (toupper((uint8_t)options[OPT_NOINPUT].result[0]) != 'N') {
+		priv->inputs &= ~(INP_KBD | INP_MOUSE);
+	}
+	if (toupper((uint8_t)options[OPT_NOVT].result[0]) != 'N') {
+		priv->input = 0;
+		novt = 1;
+	}
+
+	DPRINT("Parsing phyzs options.\n");
+	do {
+		int err;
+		err = _ggi_physz_parse_option(option[OPT_PHYSZ].result,
+					&(priv->physzflags), &(priv->physz));
+		if (err != GGI_OK) {
+			do_cleanup(vis);
+			return err;
+		}
+	} while (0);
+ 
+
+	vtswarg.switchreq = switchreq;
+	vtswarg.switching = switching;
+	vtswarg.switchback = switchback;
+	vtswarg.funcarg = vis;
+
+	vtswarg.dohalt = &priv->dohalt;
+	vtswarg.autoswitch = &priv->autoswitch;
+	vtswarg.onconsole = 1;
+	if (getenv("GGI_NEWVT")) {
+		vtswarg.forcenew = 1;
+	} else {
+		vtswarg.forcenew = 0;
+	}
+	vtswarg.novt = novt;
+
+
 	/* Open keyboard and mouse input */
 	if (priv->inputs & INP_KBD) {
+		struct gg_module *inp;
 		char *inputstr = "input-vgl";
 
-		vis->input = giiOpen(inputstr, NULL);
-		if (vis->input == NULL) {
-			fprintf(stderr,
-"display-vgl: Unable to open vgl, trying stdin input.\n");
-			vis->input = giiOpen("stdin:ansikey", NULL);
-			if (vis->input == NULL) {
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+				inputstr, NULL, NULL);
+			if (inp == NULL) {
 				fprintf(stderr,
+"display-vgl: Unable to open vgl, trying stdin input.\n");
+				inp = ggOpenModule("stdin", "ansikey", NULL);
+				if (vis->input == NULL) {
+					fprintf(stderr,
 "display-vgl: Unable to open stdin input, try running with '-nokbd'.\n");
-				do_cleanup(vis);
-				error = GGI_ENODEVICE;
-				goto error;
+					do_cleanup(vis);
+					error = GGI_ENODEVICE;
+					goto error;
+				}
 			}
+			priv->kbd_inp = inp;
 		}
 	}
 	if (priv->inputs & INP_MOUSE) {
-		gii_input *inp;
-		if ((inp = giiOpen("linux-mouse:MouseSystems,/dev/sysmouse", &args, NULL)) != NULL) {
-			vis->input = giiJoinInputs(vis->input, inp);
-			if (vis->input == NULL) {
+		struct gg_module *inp;
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+					"input-linux-mouse", "MouseSystems,/dev/sysmouse", &args);
+			if (inp == NULL) {
 				fprintf(stderr, 
-"display-vgl: Unable to join inputs\n");
+		"display-vgl: Unable to join inputs\n");
 				do_cleanup(vis);
 				error = GGI_ENODEVICE;
 				goto error;
 			}
+			priv->ms_inp = inp;
 		}
 	}
 
