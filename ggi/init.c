@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.58 2006/03/21 15:51:53 pekberg Exp $
+/* $Id: init.c,v 1.59 2006/09/18 12:43:09 aldot Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -307,7 +307,7 @@ int ggiDetach(struct gg_stem *s)
 int ggiOpen(ggi_visual_t stem, const char *driver,...)
 {
 	va_list drivers;
-	int  success = 0;
+	int  success;
 	void *argptr = NULL;
 	struct gg_target_iter match;
 	struct ggi_visual *vis;
