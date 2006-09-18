@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/08/27 22:31:53 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/09/18 18:41:59 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -60,6 +60,12 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	if (priv->memvis != NULL) {
 		ggiClose(priv->memvis->stem);
 		free(priv->fb);
+		priv->memvis = NULL;
+	}
+
+	if (priv->inp) {
+		ggCloseModule(priv->inp);
+		priv->inp = NULL;
 	}
 
 	/* Restore original screen resolution/bpp */
