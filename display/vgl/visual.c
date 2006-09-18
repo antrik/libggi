@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
+/* $Id: visual.c,v 1.13 2006/09/18 05:15:48 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -210,13 +210,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		error = GGI_ENOMEM;
 		goto error;
 	}
-	VGL_PRIV(vis) = malloc(sizeof(struct vgl_priv));
-	if (VGL_PRIV(vis) == NULL) {
+	LIBGGI_PRIVATE(vis) = priv = malloc(sizeof(struct vgl_priv));
+	if (priv == NULL) {
 		do_cleanup(vis);
 		error = GGI_ENOMEM;
 		goto error;
 	}
-	priv = VGL_PRIV(vis);
 	memset(priv, 0, sizeof(*priv));
 
 	memset(priv->vgl_palred, 0, sizeof(priv->vgl_palred));
