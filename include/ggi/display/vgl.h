@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.3 2006/09/18 22:27:43 cegger Exp $
+/* $Id: vgl.h,v 1.4 2006/09/19 05:03:49 cegger Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -34,6 +34,7 @@
 
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/modelist.h>
+#include <ggi/display/linvtsw.h>
 
 ggifunc_flush		GGI_vgl_flush;
 ggifunc_getmode		GGI_vgl_getmode;
@@ -74,6 +75,9 @@ typedef struct vgl_priv {
 	int switchpending;
 	int ismapped;
 	ggi_linvtsw_func *doswitch;
+
+#define INP_KBD    0x01
+#define INP_MOUSE  0x02
 	int inputs;
 	struct gg_module *kbd_inp;	/* keyboard */
 	struct gg_module *ms_inp;	/* mouse */
@@ -94,10 +98,6 @@ typedef struct vgl_priv {
 	byte vgl_palred[256];
 	byte vgl_palgreen[256];
 	byte vgl_palblue[256];
-
-#define INP_KBD    0x01
-#define INP_MOUSE  0x02
-	int	inputs;
 
 } vgl_priv;
 
