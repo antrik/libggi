@@ -1,4 +1,4 @@
-/* $Id: copyrect.c,v 1.2 2006/09/08 19:43:00 pekberg Exp $
+/* $Id: copyrect.c,v 1.3 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB copyrect encoding for panning
@@ -39,6 +39,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include "rect.h"
 #include "encoding.h"
+#include "common.h"
 
 int
 GGI_vnc_copyrect_pan(ggi_vnc_client *client, ggi_rect *update)
@@ -91,22 +92,9 @@ GGI_vnc_copyrect_pan(ggi_vnc_client *client, ggi_rect *update)
 	copyrect = &client->wbuf.buf[client->wbuf.size];
 	client->wbuf.size += 16;
 
-	copyrect[ 0] = cdst.tl.x >> 8;
-	copyrect[ 1] = cdst.tl.x & 0xff;
-	copyrect[ 2] = cdst.tl.y >> 8;
-	copyrect[ 3] = cdst.tl.y & 0xff;
-	copyrect[ 4] = ggi_rect_width(&cdst) >> 8;
-	copyrect[ 5] = ggi_rect_width(&cdst) & 0xff;
-	copyrect[ 6] = ggi_rect_height(&cdst) >> 8;
-	copyrect[ 7] = ggi_rect_height(&cdst) & 0xff;
-	copyrect[ 8] = 0;
-	copyrect[ 9] = 0;
-	copyrect[10] = 0;
-	copyrect[11] = 1; /* copyrect */
-	copyrect[12] = csrc.tl.x >> 8;
-	copyrect[13] = csrc.tl.x & 0xff;
-	copyrect[14] = csrc.tl.y >> 8;
-	copyrect[15] = csrc.tl.y & 0xff;
+	copyrect = insert_header(copyrect, &cdst.tl, &cdst, 1); /* copyrect */
+	copyrect = insert_hilo_16(copyrect, csrc.tl.x);
+	copyrect = insert_hilo_16(copyrect, csrc.tl.y);
 
 	if (LIBGGI_X(vis) - ggi_rect_width(&csrc) >
 		LIBGGI_Y(vis) - ggi_rect_height(&csrc)) {

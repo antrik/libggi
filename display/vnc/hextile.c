@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.4 2006/09/20 08:02:28 pekberg Exp $
+/* $Id: hextile.c,v 1.5 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -773,18 +773,7 @@ GGI_vnc_hextile(ggi_vnc_client *client, ggi_rect *update)
 		client->wbuf.size + 12 + xtiles * ytiles + count * bpp);
 
 	header = &client->wbuf.buf[client->wbuf.size];
-	header[ 0] = update->tl.x >> 8;
-	header[ 1] = update->tl.x & 0xff;
-	header[ 2] = update->tl.y >> 8;
-	header[ 3] = update->tl.y & 0xff;
-	header[ 4] = ggi_rect_width(&vupdate) >> 8;
-	header[ 5] = ggi_rect_width(&vupdate) & 0xff;
-	header[ 6] = ggi_rect_height(&vupdate) >> 8;
-	header[ 7] = ggi_rect_height(&vupdate) & 0xff;
-	header[ 8] = 0;
-	header[ 9] = 0;
-	header[10] = 0;
-	header[11] = 5; /* hextile */
+	insert_header(header, &update->tl, &vupdate, 5); /* hextile */
 	client->wbuf.size += 12;
 
 	buf = &client->wbuf.buf[client->wbuf.size];

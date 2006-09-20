@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.1 2006/09/20 08:02:28 pekberg Exp $
+/* $Id: common.h,v 1.2 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -31,6 +31,7 @@
 #include <ggi/types.h>
 /* need display/vnc.h for ggi_rect typedef, not so pretty... */
 #include <ggi/display/vnc.h>
+#include "rect.h"
 
 static inline uint8_t
 palette_match_8(uint8_t *palette, int colors, uint8_t color)
@@ -247,5 +248,14 @@ insert_32(uint8_t *dst, uint32_t pixel)
 #endif
 }
 
+static inline uint8_t *
+insert_header(uint8_t *header, ggi_coord *tl, ggi_rect *size, uint32_t encoding)
+{
+	header = insert_hilo_16(header, tl->x);
+	header = insert_hilo_16(header, tl->y);
+	header = insert_hilo_16(header, ggi_rect_width(size));
+	header = insert_hilo_16(header, ggi_rect_height(size));
+	return   insert_hilo_32(header, encoding);
+}
 
 #endif /* _GGI_VNC_COMMON_H */

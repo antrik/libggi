@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.38 2006/09/20 08:21:27 pekberg Exp $
+/* $Id: zrle.c,v 1.39 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1099,18 +1099,7 @@ GGI_vnc_zrle(ggi_vnc_client *client, ggi_rect *update)
 	work = ctx->work.buf;
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 16);
 	header = &client->wbuf.buf[client->wbuf.size];
-	header[ 0] = update->tl.x >> 8;
-	header[ 1] = update->tl.x & 0xff;
-	header[ 2] = update->tl.y >> 8;
-	header[ 3] = update->tl.y & 0xff;
-	header[ 4] = ggi_rect_width(&vupdate) >> 8;
-	header[ 5] = ggi_rect_width(&vupdate) & 0xff;
-	header[ 6] = ggi_rect_height(&vupdate) >> 8;
-	header[ 7] = ggi_rect_height(&vupdate) & 0xff;
-	header[ 8] = 0;
-	header[ 9] = 0;
-	header[10] = 0;
-	header[11] = 16; /* zrle */
+	insert_header(header, &update->tl, &vupdate, 16); /* zrle */
 
 	client->wbuf.size += 12;
 	buf = work;

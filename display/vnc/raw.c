@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.11 2006/09/20 09:27:35 pekberg Exp $
+/* $Id: raw.c,v 1.12 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -102,19 +102,8 @@ GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)
 	GGI_vnc_buf_reserve(&client->wbuf, pal_size + 12 + count * bpp);
 	client->wbuf.size += 12 + count * bpp;
 	header = &client->wbuf.buf[pal_size];
-	buf = &header[12];
-	header[ 0] = update->tl.x >> 8;
-	header[ 1] = update->tl.x & 0xff;
-	header[ 2] = update->tl.y >> 8;
-	header[ 3] = update->tl.y & 0xff;
-	header[ 4] = ggi_rect_width(&vupdate) >> 8;
-	header[ 5] = ggi_rect_width(&vupdate) & 0xff;
-	header[ 6] = ggi_rect_height(&vupdate) >> 8;
-	header[ 7] = ggi_rect_height(&vupdate) & 0xff;
-	header[ 8] = 0;
-	header[ 9] = 0;
-	header[10] = 0;
-	header[11] = 0; /* raw */
+	buf = insert_header(header, &update->tl, &vupdate, 0); /* raw */
+
 	if (client->reverse_endian && GT_SIZE(gt) > 8) {
 		int i, j;
 		int stride = db->buffer.plb.stride / bpp;

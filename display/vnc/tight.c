@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.2 2006/09/20 08:02:28 pekberg Exp $
+/* $Id: tight.c,v 1.3 2006/09/20 09:29:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -242,18 +242,7 @@ rect(ggi_vnc_client *client, struct ggi_visual *cvis,
 		client->wbuf.size + 12 + 2);
 
 	header = &client->wbuf.buf[client->wbuf.size];
-	header[ 0] = update->tl.x >> 8;
-	header[ 1] = update->tl.x & 0xff;
-	header[ 2] = update->tl.y >> 8;
-	header[ 3] = update->tl.y & 0xff;
-	header[ 4] = ggi_rect_width(update) >> 8;
-	header[ 5] = ggi_rect_width(update) & 0xff;
-	header[ 6] = ggi_rect_height(update) >> 8;
-	header[ 7] = ggi_rect_height(update) & 0xff;
-	header[ 8] = 0;
-	header[ 9] = 0;
-	header[10] = 0;
-	header[11] = 7; /* tight */
+	insert_header(header, &update->tl, update, 7); /* tight */
 	client->wbuf.size += 12;
 
 	ctx->work[0].size = 1;
