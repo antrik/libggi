@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/09/20 04:57:38 cegger Exp $
+/* $Id: visual.c,v 1.16 2006/09/20 05:01:16 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -86,7 +86,7 @@ switching(void *arg)
 	struct ggi_visual *vis = arg;
 	vgl_priv *priv = VGL_PRIV(vis);
 
-	DPRINT_MISC(switching(%p) called\n", vis);
+	DPRINT_MISC("switching(%p) called\n", vis);
 
 	priv->ismapped = 0;
 	priv->switchpending = 0;
