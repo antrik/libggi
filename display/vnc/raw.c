@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.10 2006/09/20 08:02:28 pekberg Exp $
+/* $Id: raw.c,v 1.11 2006/09/20 09:27:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -120,36 +120,21 @@ GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)
 		int stride = db->buffer.plb.stride / bpp;
 
 		if (bpp == 2) {
-			uint16_t *tmp = (uint16_t *)buf;
 			uint16_t *src = (uint16_t *)db->read +
 				vupdate.tl.x + vupdate.tl.y * stride;
 			for (j = 0; j < ggi_rect_height(&vupdate); ++j) {
 				for (i = 0; i < ggi_rect_width(&vupdate); ++i)
-					*tmp++ = GGI_BYTEREV16(src[i]);
+					buf = insert_rev_16(buf, src[i]);
 				src += stride;
 			}
 		}
-		else if (bpp == 4) {
-			uint32_t *tmp = (uint32_t *)buf;
+		else { /* bpp == 4 */
 			uint32_t *src = (uint32_t *)db->read +
 				vupdate.tl.x + vupdate.tl.y * stride;
 			for (j = 0; j < ggi_rect_height(&vupdate); ++j) {
 				for (i = 0; i < ggi_rect_width(&vupdate); ++i)
-					*tmp++ = GGI_BYTEREV32(src[i]);
+					buf = insert_rev_32(buf, src[i]);
 				src += stride;
-			}
-		}
-		else { /* bpp == 3 */
-			uint8_t *tmp = (uint8_t *)buf;
-			uint8_t *src = (uint8_t *)db->read +
-				vupdate.tl.x + vupdate.tl.y * stride * bpp;
-			for (j = 0; j < ggi_rect_height(&vupdate); ++j) {
-				for (i = 0; i < ggi_rect_width(&vupdate); ++i) {
-					*tmp++ = src[i * 3 + 2];
-					*tmp++ = src[i * 3 + 1];
-					*tmp++ = src[i * 3];
-				}
-				src += stride * bpp;
 			}
 		}
 	}
