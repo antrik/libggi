@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.8 2006/09/20 08:05:29 pekberg Exp $
+/* $Id: zlib.c,v 1.9 2006/09/20 08:21:27 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -74,7 +74,7 @@ zip(ggi_vnc_client *client, uint8_t *src, int len)
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + avail);
 	}
 
-	insert_hilo_32(client->wbuf.buf[start], done);
+	insert_hilo_32(&client->wbuf.buf[start], done);
 	client->wbuf.size += done;
 
 	DPRINT_MISC("raw %d z %d %d%%\n", len, done, done * 100 / len);

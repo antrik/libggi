@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.37 2006/09/20 08:05:29 pekberg Exp $
+/* $Id: zrle.c,v 1.38 2006/09/20 08:21:27 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -94,7 +94,7 @@ zip(ggi_vnc_client *client, uint8_t *src, int len)
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + avail);
 	}
 
-	insert_hilo_32(client->wbuf.buf[start], done);
+	insert_hilo_32(&client->wbuf.buf[start], done);
 	client->wbuf.size += done;
 
 	DPRINT_MISC("rle %d z %d %d%%\n", len, done, done * 100 / len);
