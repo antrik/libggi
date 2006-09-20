@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.7 2006/09/20 08:02:28 pekberg Exp $
+/* $Id: zlib.c,v 1.8 2006/09/20 08:05:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -42,12 +42,6 @@
 #include "encoding.h"
 #include "common.h"
 
-#ifdef GGI_BIG_ENDIAN
-#define GGI_HTONL(x) (x)
-#else
-#define GGI_HTONL(x) GGI_BYTEREV32(x)
-#endif
-
 struct zlib_ctx_t {
 	z_stream zstr;
 	ggi_vnc_buf wbuf;
@@ -59,7 +53,6 @@ zip(ggi_vnc_client *client, uint8_t *src, int len)
 	struct zlib_ctx_t *ctx = client->zlib_ctx;
 	int start = client->wbuf.size;
 	int avail;
-	uint32_t *zlen;
 	uint32_t done = 0;
 
 	ctx->zstr.next_in = src;
@@ -81,8 +74,7 @@ zip(ggi_vnc_client *client, uint8_t *src, int len)
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + avail);
 	}
 
-	zlen = (uint32_t *)&client->wbuf.buf[start];
-	*zlen = GGI_HTONL(done);
+	insert_hilo_32(client->wbuf.buf[start], done);
 	client->wbuf.size += done;
 
 	DPRINT_MISC("raw %d z %d %d%%\n", len, done, done * 100 / len);
