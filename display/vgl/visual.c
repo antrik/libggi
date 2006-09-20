@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/09/18 22:27:43 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/09/20 04:57:38 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -68,7 +68,7 @@ static void
 switchreq(void *arg)
 {
 	struct ggi_visual *vis = arg;
-	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	vgl_priv *priv = VGL_PRIV(vis);
 	ggi_cmddata_switchrequest data;
 
 	DPRINT_MISC("switchreq(%p) called\n", vis);
@@ -84,7 +84,7 @@ static void
 switching(void *arg)
 {
 	struct ggi_visual *vis = arg;
-	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	vgl_priv *priv = VGL_PRIV(vis);
 
 	DPRINT_MISC(switching(%p) called\n", vis);
 
@@ -97,7 +97,7 @@ static void
 switchback(void *arg)
 {
 	struct ggi_visual *vis = arg;
-	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	vgl_priv *priv = VGL_PRIV(vis);
 	gii_event ev;
 
 	DPRINT_MISC("switched_back(%p) called\n", vis);
@@ -124,7 +124,7 @@ int
 _ggi_vgl_listener(void *arg, int flag, void *data)
 {
 	struct ggi_visual *vis = arg;
-	ggi_vgl_priv *priv = VGL_PRIV(vis);
+	vgl_priv *priv = VGL_PRIV(vis);
 
 	DPRINT_MISC("_ggi_vgl_listener() called\n");
 
