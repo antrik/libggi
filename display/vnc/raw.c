@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.9 2006/09/08 19:43:01 pekberg Exp $
+/* $Id: raw.c,v 1.10 2006/09/20 08:02:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -39,6 +39,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include "rect.h"
 #include "encoding.h"
+#include "common.h"
 
 int
 GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)

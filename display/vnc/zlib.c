@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.6 2006/09/08 19:43:01 pekberg Exp $
+/* $Id: zlib.c,v 1.7 2006/09/20 08:02:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zlib encoding
@@ -40,6 +40,7 @@
 #include <ggi/display/vnc.h>
 #include <ggi/internal/ggi_debug.h>
 #include "encoding.h"
+#include "common.h"
 
 #ifdef GGI_BIG_ENDIAN
 #define GGI_HTONL(x) (x)

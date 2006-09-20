@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.35 2006/09/11 12:32:22 pekberg Exp $
+/* $Id: zrle.c,v 1.36 2006/09/20 08:02:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -41,6 +41,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include "rect.h"
 #include "encoding.h"
+#include "common.h"
 
 #ifdef GGI_BIG_ENDIAN
 #define GGI_HTONL(x) (x)
@@ -154,45 +155,6 @@ select_subencoding(int xs, int ys, int cbpp,
 	}
 
 	return subencoding;
-}
-
-static inline uint8_t
-palette_match_8(uint8_t *palette, int colors, uint8_t color)
-{
-	int c;
-
-	for (c = 0; c < colors; ++c) {
-		if (palette[c] == color)
-			break;
-	}
-
-	return c;
-}
-
-static inline uint8_t
-palette_match_16(uint16_t *palette, int colors, uint16_t color)
-{
-	int c;
-
-	for (c = 0; c < colors; ++c) {
-		if (palette[c] == color)
-			break;
-	}
-
-	return c;
-}
-
-static inline uint8_t
-palette_match_32(uint32_t *palette, int colors, uint32_t color)
-{
-	int c;
-
-	for (c = 0; c < colors; ++c) {
-		if (palette[c] == color)
-			break;
-	}
-
-	return c;
 }
 
 static inline uint8_t
@@ -637,176 +599,6 @@ packed_palette_32(uint8_t *dst, uint32_t *src,
 	}
 
 	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_24l(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_24h(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 24;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_24(uint8_t *dst, uint32_t pixel, int lower)
-{
-	if (lower)
-		return insert_hilo_24l(dst, pixel);
-	else
-		return insert_hilo_24h(dst, pixel);
-}
-
-static inline uint8_t *
-insert_hilo_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 24;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_24l(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel >> 16;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_24h(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 8;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 24;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_24(uint8_t *dst, uint32_t pixel, int lower)
-{
-	if (lower)
-		return insert_lohi_24l(dst, pixel);
-	else
-		return insert_lohi_24h(dst, pixel);
-}
-
-static inline uint8_t *
-insert_lohi_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 24;
-	return dst;
-}
-
-static inline uint8_t *
-insert_rev_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_16(dst, pixel);
-#else
-	return insert_hilo_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_rev_24l(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_24l(dst, pixel);
-#else
-	return insert_hilo_24l(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_rev_24h(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_24h(dst, pixel);
-#else
-	return insert_hilo_24h(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_rev_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_32(dst, pixel);
-#else
-	return insert_hilo_32(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_16(dst, pixel);
-#else
-	return insert_lohi_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_24l(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_24l(dst, pixel);
-#else
-	return insert_lohi_24l(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_24h(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_24h(dst, pixel);
-#else
-	return insert_lohi_24h(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_32(dst, pixel);
-#else
-	return insert_lohi_32(dst, pixel);
-#endif
 }
 
 static void

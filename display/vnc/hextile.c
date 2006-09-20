@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.3 2006/09/08 21:00:24 cegger Exp $
+/* $Id: hextile.c,v 1.4 2006/09/20 08:02:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -39,12 +39,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include "rect.h"
 #include "encoding.h"
-
-#ifdef GGI_BIG_ENDIAN
-#define GGI_HTONL(x) (x)
-#else
-#define GGI_HTONL(x) GGI_BYTEREV32(x)
-#endif
+#include "common.h"
 
 struct hextile_ctx_t {
 	ggi_pixel bg;
@@ -270,82 +265,6 @@ scan_32(uint32_t *src,
 		*bg = color[2];
 
 	return HEXTILE_BG | HEXTILE_SUBRECTS | HEXTILE_COLORED;
-}
-
-static inline uint8_t *
-insert_hilo_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 24;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 24;
-	return dst;
-}
-
-static inline uint8_t *
-insert_rev_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_16(dst, pixel);
-#else
-	return insert_hilo_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_rev_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_32(dst, pixel);
-#else
-	return insert_hilo_32(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_16(dst, pixel);
-#else
-	return insert_lohi_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_32(dst, pixel);
-#else
-	return insert_lohi_32(dst, pixel);
-#endif
 }
 
 static uint8_t *

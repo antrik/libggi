@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.1 2006/09/18 22:57:53 pekberg Exp $
+/* $Id: tight.c,v 1.2 2006/09/20 08:02:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -43,6 +43,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include "rect.h"
 #include "encoding.h"
+#include "common.h"
 
 struct tight_ctx_t {
 	int reset;
@@ -116,91 +117,6 @@ insert_data_size(uint8_t *dst, uint32_t size)
 	}
 
 	return count;
-}
-
-static inline uint8_t *
-insert_hilo_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_hilo_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 24;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_16(uint8_t *dst, uint16_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	return dst;
-}
-
-static inline uint8_t *
-insert_lohi_32(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 24;
-	return dst;
-}
-
-static inline uint8_t *
-insert_rev_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_16(dst, pixel);
-#else
-	return insert_hilo_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_rev_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_lohi_32(dst, pixel);
-#else
-	return insert_hilo_32(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_16(uint8_t *dst, uint16_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_16(dst, pixel);
-#else
-	return insert_lohi_16(dst, pixel);
-#endif
-}
-
-static inline uint8_t *
-insert_888(uint8_t *dst, uint32_t pixel)
-{
-	*dst++ = pixel >> 16;
-	*dst++ = pixel >> 8;
-	*dst++ = pixel;
-	return dst;
-}
-
-static inline uint8_t *
-insert_32(uint8_t *dst, uint32_t pixel)
-{
-#ifdef GGI_BIG_ENDIAN
-	return insert_hilo_32(dst, pixel);
-#else
-	return insert_lohi_32(dst, pixel);
-#endif
 }
 
 static void
