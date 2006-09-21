@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/09/20 05:01:16 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/09/21 05:09:00 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -34,8 +34,11 @@
 
 #include <ggi/display/vgl.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 
 static int usagecounter = 0;
+struct gg_publisher linvt_publisher;
 
 
 ggfunc_observer_update _ggi_vgl_listener;
@@ -75,7 +78,7 @@ switchreq(void *arg)
 
 	data.request = GGI_REQSW_UNMAP;
 
-	ggNotifyObservers(priv->publisher, GGICMD_REQUEST_SWITCH, &data);
+	ggNotifyObservers(priv->vt_publisher, GGICMD_REQUEST_SWITCH, &data);
 	priv->switchpending = 1;
 }
 
@@ -455,7 +458,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->getapi		= GGI_vgl_getapi;
 	vis->opdisplay->checkmode	= GGI_vgl_checkmode;
 	vis->opdisplay->setflags	= GGI_vgl_setflags;
-	vis->opdisplay->sendevent	= GGI_vgl_sendevent;
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
