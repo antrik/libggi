@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.8 2006/09/22 19:45:22 pekberg Exp $
+/* $Id: tight.c,v 1.9 2006/09/22 20:10:34 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -238,6 +238,8 @@ scan_8(uint8_t *src,
 	int bytes;
 	int c;
 
+	stride -= xs;
+
 	*colors = 1;
 	palette[0] = last;
 
@@ -275,6 +277,8 @@ scan_16(uint8_t *src8,
 	int bytes;
 	int c;
 
+	stride -= xs;
+
 	*colors = 1;
 	palette[0] = last;
 
@@ -311,7 +315,7 @@ scan_888(uint8_t *src,
 	int bytes;
 	int c;
 
-	stride *= 3;
+	stride = (stride - xs) * 3;
 
 	*colors = 1;
 	palette[0] = last;
@@ -386,6 +390,7 @@ raw_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 	int y;
 
 	xs *= 3;
+	stride *= 3;
 
 	for (y = 0; y < ys; ++y) {
 		memcpy(dst, src, xs);
@@ -400,6 +405,8 @@ static uint8_t *
 jpeg_888(struct tight_ctx_t *ctx, uint8_t *src, int xs, int ys, int stride)
 {
 	int y;
+
+	stride *= 3;
 
 	ctx->cinfo.image_width = xs;
 	ctx->cinfo.image_height = ys;
@@ -424,6 +431,8 @@ packed_palette_8(uint8_t *dst, uint8_t *src,
 	int xs, int ys, int stride, uint8_t *palette)
 {
 	int x, y;
+
+	stride -= xs;
 
 	for (y = 0; y < ys; ++y) {
 		int pel = 7;
@@ -479,6 +488,8 @@ packed_palette_888(uint8_t *dst, uint8_t *src,
 	int x, y;
 	uint32_t pixel;
 
+	stride = (stride - xs) * 3;
+
 	for (y = 0; y < ys; ++y) {
 		int pel = 7;
 		*dst = 0;
@@ -525,6 +536,8 @@ palette_888(uint8_t *dst, uint8_t *src,
 {
 	int x, y;
 	uint32_t pixel;
+
+	stride = (stride - xs) * 3;
 
 	for (y = 0; y < ys; ++y) {
 		*dst = 0;
@@ -601,7 +614,7 @@ tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_8(src, xs, ys, stride - xs, palette, &colors);
+	subencoding = scan_8(src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -631,7 +644,7 @@ tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 		*dst++ = palette[c];
 
 	/* colors == 2 */
-	*buf = packed_palette_8(dst, src, xs, ys, stride - xs, palette);
+	*buf = packed_palette_8(dst, src, xs, ys, stride, palette);
 }
 
 static void
@@ -645,7 +658,7 @@ tile_16(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_16(src, xs, ys, stride - xs, palette, &colors);
+	subencoding = scan_16(src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -713,7 +726,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_888(src, xs, ys, stride - xs, palette, &colors);
+	subencoding = scan_888(src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -722,8 +735,6 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
-
-	stride *= 3;
 
 	if (subencoding == TIGHT_JPEG) {
 		*buf = jpeg_888(ctx, src, xs, ys, stride);
@@ -756,11 +767,9 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 		dst = insert_888(dst, palette[c]);
 
 	if (colors == 2)
-		*buf = packed_palette_888(dst, src, xs, ys,
-			stride - xs * 3, palette);
+		*buf = packed_palette_888(dst, src, xs, ys, stride, palette);
 	else
-		*buf = palette_888(dst, src, xs, ys,
-			stride - xs * 3, palette);
+		*buf = palette_888(dst, src, xs, ys, stride, palette);
 }
 
 static void
