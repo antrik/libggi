@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2006/09/18 22:57:53 pekberg Exp $
+/* $Id: visual.c,v 1.24 2006/09/22 07:15:28 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -61,7 +61,7 @@
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
-	VNC_OPTION(physz,    "0,0")         \
+	VNC_OPTION(physz,    "0,0")        \
 	VNC_OPTION(server,   "default")    \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "no")         \
