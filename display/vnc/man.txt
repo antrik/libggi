@@ -55,7 +55,7 @@ Options
 ``-kold``
     Kill On Last Disconnect. This option ends the application when the last
     client disconnects. It can be useful in conjunction with the :p:`-client`,
-    :p:`-stdio` and :p:``-server=stdio`` options so that the application does
+    :p:`-stdio` and :p:`-server=stdio` options so that the application does
     not linger without any user feedback.
 
 ``-passwd=<password>``
@@ -84,7 +84,7 @@ Options
 ``-stdio``
     Talk the RFB protocol on stdin/stdout instead of waiting for clients
     to connect. Suitable for serving a GGI application as an inetd(8)
-    :p:``nowait`` type service. One requirement though, is that the served
+    :p:`nowait` type service. One requirement though, is that the served
     GGI application does not "chatter" on stdout and/or stderr.
     The :p:`-stdio` option is incompatible with the :p:`-server=stdio`
     option.
