@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.4 2006/09/22 06:21:45 pekberg Exp $
+/* $Id: tight.c,v 1.5 2006/09/22 10:25:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -47,7 +47,7 @@
 
 struct tight_ctx_t {
 	int reset;
-	z_stream zstr[3];
+	z_stream zstr[4];
 	ggi_vnc_buf work[2];
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
@@ -193,7 +193,10 @@ select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
 	*best = xs * ys * cbpp;
 	subencoding = TIGHT_RAW | (0 << TIGHT_ZTREAM_SHIFT);
 
-	/* too many colors for anything but raw/jpeg/(gradient) */
+	/* FIXME: Should investigate if gradient is suitable */
+	/* TIGHT_FILTER | TIGHT_GRADIENT | (3 << TIGHT_ZTREAM_SHIFT) */
+
+	/* too many colors for anything but raw/jpeg/gradient */
 	if (!colors) {
 		if (xs >= 16 && ys >= 16 && *best > 3000)
 			subencoding = TIGHT_JPEG;
@@ -348,6 +351,54 @@ palette_888(uint8_t *dst, uint8_t *src,
 	return dst;
 }
 
+static inline uint8_t
+bound_888(int value)
+{
+	if (value < 0)
+		return 0;
+	if (value > 255)
+		return 255;
+	return value;
+}
+
+static inline uint8_t *
+gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
+{
+	int x, y;
+	uint8_t *prev;
+
+	/* first row */
+	/* first pixel */
+	for (x = 0; x < 3; ++x)
+		dst[x] = src[x];
+
+	/* rest of row */
+	for (; x < xs; ++x)
+		dst[x] = src[x] - bound_888(src[x - 3]);
+
+	dst += xs;
+	prev = src;
+	src += stride;
+
+	/* following rows */
+	for (y = 1; y < ys; ++y) {
+		/* first pixel */
+		for (x = 0; x < 3; ++x)
+			dst[x] = src[x] - bound_888(prev[x]);
+
+		/* rest of row */
+		for (; x < xs; ++x)
+			dst[x] = src[x] -
+				bound_888(src[x - 3] + prev[x] - prev[x - 3]);
+
+		dst += xs;
+		prev = src;
+		src += stride;
+	}
+
+	return dst;
+}
+
 static void
 tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride)
@@ -402,6 +453,7 @@ static void
 tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride)
 {
+	uint8_t *dst;
 	uint32_t palette[256];
 	int colors;
 	uint8_t subencoding;
@@ -416,6 +468,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	ctx->reset = 0;
 
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
+	dst = *buf;
 
 	stride *= 3;
 
@@ -425,31 +478,36 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	}
 
 	if (subencoding == TIGHT_RAW) {
-		*buf = raw_888(*buf, src, xs * 3, ys, stride);
+		*buf = raw_888(dst, src, xs * 3, ys, stride);
 		return;
 	}
 
 	if (subencoding == TIGHT_SOLID) {
-		*buf = insert_888(*buf, palette[0]);
+		*buf = insert_888(dst, palette[0]);
 		return;
 	}
 
-	if (subencoding & TIGHT_FILTER) {
-		uint8_t *dst = *buf;
+	/* subencoding & TIGHT_FILTER */
 
-		*dst++ = filter;
-		/* filter == TIGHT_PALETTE */
-		*dst++ = colors - 1;
-		for (c = 0; c < colors; ++c)
-			dst = insert_888(dst, palette[c]);
+	*dst++ = filter;
 
-		if (colors == 2)
-			*buf = packed_palette_888(dst, src, xs, ys,
-				stride - xs * 3, palette);
-		else
-			*buf = palette_888(dst, src, xs, ys,
-				stride - xs * 3, palette);
+	if (filter == TIGHT_GRADIENT) {
+		*buf = gradient_888(dst, src, xs * 3, ys, stride);
+		return;
 	}
+
+	/* filter == TIGHT_PALETTE */
+
+	*dst++ = colors - 1;
+	for (c = 0; c < colors; ++c)
+		dst = insert_888(dst, palette[c]);
+
+	if (colors == 2)
+		*buf = packed_palette_888(dst, src, xs, ys,
+			stride - xs * 3, palette);
+	else
+		*buf = palette_888(dst, src, xs, ys,
+			stride - xs * 3, palette);
 }
 
 static void
@@ -513,7 +571,7 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 	client->wbuf.size += 12;
 	s = client->wbuf.size;
 
-	GGI_vnc_buf_reserve(&ctx->work[0], 1 + count * bpp);
+	GGI_vnc_buf_reserve(&ctx->work[0], 2 + count * bpp);
 	ctx->work[0].size = ctx->work[0].pos = 0;
 	ctx->work[1].size = ctx->work[1].pos = 0;
 	buf = ctx->work[0].buf;
@@ -560,12 +618,14 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 				 ctx->work[0].buf[1];
 			++ctx->work[0].pos;
 
-			/* assume palette filter, copy it */
-			pal_size = 1 + bpp * (ctx->work[0].buf[2] + 1);
-			memcpy(&client->wbuf.buf[client->wbuf.size],
-				&ctx->work[0].buf[2], pal_size);
-			client->wbuf.size += pal_size;
-			ctx->work[0].pos += pal_size;
+			if (ctx->work[0].buf[1] == TIGHT_PALETTE) {
+				/* palette filter, copy palette */
+				pal_size = 1 + bpp * (ctx->work[0].buf[2] + 1);
+				memcpy(&client->wbuf.buf[client->wbuf.size],
+					&ctx->work[0].buf[2], pal_size);
+				client->wbuf.size += pal_size;
+				ctx->work[0].pos += pal_size;
+			}
 		}
 		if (ctx->work[0].size - ctx->work[0].pos < 12)
 			want_size = 0;
@@ -703,26 +763,19 @@ struct tight_ctx_t *
 GGI_vnc_tight_open(void)
 {
 	struct tight_ctx_t *ctx = malloc(sizeof(*ctx));
+	int i;
 
 	memset(ctx, 0, sizeof(*ctx));
 
 	ctx->reset = TIGHT_ZTREAM_RESET;
 	ctx->jpeg_quality = 65;
 
-	ctx->zstr[0].zalloc = Z_NULL;
-	ctx->zstr[0].zfree = Z_NULL;
-	ctx->zstr[0].opaque = Z_NULL;
-	deflateInit(&ctx->zstr[0], Z_DEFAULT_COMPRESSION);
-
-	ctx->zstr[1].zalloc = Z_NULL;
-	ctx->zstr[1].zfree = Z_NULL;
-	ctx->zstr[1].opaque = Z_NULL;
-	deflateInit(&ctx->zstr[1], Z_DEFAULT_COMPRESSION);
-
-	ctx->zstr[2].zalloc = Z_NULL;
-	ctx->zstr[2].zfree = Z_NULL;
-	ctx->zstr[2].opaque = Z_NULL;
-	deflateInit(&ctx->zstr[2], Z_DEFAULT_COMPRESSION);
+	for (i = 0; i < 4; ++i) {
+		ctx->zstr[i].zalloc = Z_NULL;
+		ctx->zstr[i].zfree = Z_NULL;
+		ctx->zstr[i].opaque = Z_NULL;
+		deflateInit(&ctx->zstr[i], Z_DEFAULT_COMPRESSION);
+	}
 
 	ctx->cinfo.client_data = ctx;
 	ctx->cinfo.err = jpeg_std_error(&ctx->jerr);
@@ -739,6 +792,7 @@ GGI_vnc_tight_close(struct tight_ctx_t *ctx)
 	jpeg_destroy_compress(&ctx->cinfo);
 	free(ctx->work[0].buf);
 	free(ctx->work[1].buf);
+	deflateEnd(&ctx->zstr[3]);
 	deflateEnd(&ctx->zstr[2]);
 	deflateEnd(&ctx->zstr[1]);
 	deflateEnd(&ctx->zstr[0]);
