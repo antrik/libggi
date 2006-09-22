@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.2 2006/09/20 09:29:36 pekberg Exp $
+/* $Id: common.h,v 1.3 2006/09/22 06:06:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -33,7 +33,7 @@
 #include <ggi/display/vnc.h>
 #include "rect.h"
 
-static inline uint8_t
+static inline int
 palette_match_8(uint8_t *palette, int colors, uint8_t color)
 {
 	int c;
@@ -46,7 +46,7 @@ palette_match_8(uint8_t *palette, int colors, uint8_t color)
 	return c;
 }
 
-static inline uint8_t
+static inline int
 palette_match_16(uint16_t *palette, int colors, uint16_t color)
 {
 	int c;
@@ -59,7 +59,7 @@ palette_match_16(uint16_t *palette, int colors, uint16_t color)
 	return c;
 }
 
-static inline uint8_t
+static inline int
 palette_match_32(uint32_t *palette, int colors, uint32_t color)
 {
 	int c;
