@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/09/21 05:09:00 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/09/22 05:51:26 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 
 #include <ggi/display/vgl.h>
 #include <ggi/internal/ggi_debug.h>
@@ -242,9 +243,13 @@ static int do_cleanup(struct ggi_visual *vis)
 	if (priv->vgl_use_db)
 		_GGI_vgl_freedbs(vis);
 
-	if (vis->input != NULL) {
-		giiClose(vis->input);
-		vis->input = NULL;
+	if (priv->kbd_inp != NULL) {
+		ggCloseModule(priv->kbd_inp);
+		priv->kbd_inp = NULL;
+	}
+	if (priv->ms_inp != NULL) {
+		ggCloseModule(priv->ms_inp);
+		priv->ms_inp = NULL;
 	}
 
 	if (priv->vgl_init_done) {
@@ -363,7 +368,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	INIT_PUBLISHER(&linvt_publisher);
 	priv->observer = ggAddObserver(&linvt_publisher, _ggi_vgl_listener,
 					vis);
-	priv->linvt_publisher = &linvt_publisher;
+	priv->vt_publisher = &linvt_publisher;
 	priv->kbd_inp = NULL;
 	priv->ms_inp = NULL;
 
@@ -380,7 +385,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->inputs &= ~(INP_KBD | INP_MOUSE);
 	}
 	if (toupper((uint8_t)options[OPT_NOVT].result[0]) != 'N') {
-		priv->input = 0;
+		priv->inputs = 0;
 		novt = 1;
 	}
 
@@ -419,12 +424,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-				inputstr, NULL, NULL);
+					inputstr, NULL, NULL);
 			if (inp == NULL) {
 				fprintf(stderr,
 "display-vgl: Unable to open vgl, trying stdin input.\n");
-				inp = ggOpenModule("stdin", "ansikey", NULL);
-				if (vis->input == NULL) {
+				inp = ggOpenModule(gii, vis->stem,
+						"stdin", "ansikey", NULL);
+				if (inp == NULL) {
 					fprintf(stderr,
 "display-vgl: Unable to open stdin input, try running with '-nokbd'.\n");
 					do_cleanup(vis);
