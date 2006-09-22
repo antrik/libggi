@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.8 2006/09/18 22:57:53 pekberg Exp $
+/* $Id: encoding.h,v 1.9 2006/09/22 06:21:45 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -56,6 +56,7 @@ void GGI_vnc_zrle_close(struct zrle_ctx_t *ctx);
 ggi_vnc_encode GGI_vnc_tight;
 struct tight_ctx_t *GGI_vnc_tight_open(void);
 void GGI_vnc_tight_close(struct tight_ctx_t *ctx);
+void GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality);
 #endif /* HAVE_JPEG */
 
 #endif /* HAVE_ZLIB */

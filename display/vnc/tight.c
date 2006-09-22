@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.3 2006/09/20 09:29:36 pekberg Exp $
+/* $Id: tight.c,v 1.4 2006/09/22 06:21:45 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -47,8 +47,11 @@
 
 struct tight_ctx_t {
 	int reset;
-	z_stream zstr;
+	z_stream zstr[3];
 	ggi_vnc_buf work[2];
+	struct jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr jerr;
+	int jpeg_quality;
 };
 
 /* compression control */
@@ -57,7 +60,10 @@ struct tight_ctx_t {
 #define TIGHT_ZTREAM2_RESET (0x04)
 #define TIGHT_ZTREAM3_RESET (0x08)
 #define TIGHT_ZTREAM_RESET  (0x0f)
+#define TIGHT_TYPE          (0xf0)
 #define TIGHT_ZTREAM_SHIFT  (4)
+#define TIGHT_ZTREAM_MASK   (0x30)
+#define TIGHT_RAW           (0x00)
 #define TIGHT_FILTER        (0x40)
 #define TIGHT_SOLID         (0x80)
 #define TIGHT_JPEG          (0x90)
@@ -68,29 +74,83 @@ struct tight_ctx_t {
 #define TIGHT_GRADIENT      (2)
 
 static void
-zip(ggi_vnc_client *client, uint8_t *src, int len)
+buf_dest_init_destination(j_compress_ptr cinfo)
+{
+	struct tight_ctx_t *ctx = cinfo->client_data;
+
+	GGI_vnc_buf_reserve(&ctx->work[0], ctx->work[0].size + 1000);
+
+	cinfo->dest->next_output_byte = &ctx->work[0].buf[ctx->work[0].size];
+	cinfo->dest->free_in_buffer = ctx->work[0].limit - ctx->work[0].size;
+}
+
+static boolean
+buf_dest_empty_output_buffer(j_compress_ptr cinfo)
+{
+	struct tight_ctx_t *ctx = cinfo->client_data;
+
+	ctx->work[0].size = ctx->work[0].limit;
+
+	GGI_vnc_buf_reserve(&ctx->work[0], ctx->work[0].size + 1000);
+
+	cinfo->dest->next_output_byte = &ctx->work[0].buf[ctx->work[0].size];
+	cinfo->dest->free_in_buffer = ctx->work[0].limit - ctx->work[0].size;
+
+	return TRUE;
+}
+
+static void
+buf_dest_term_destination(j_compress_ptr cinfo)
+{
+	struct tight_ctx_t *ctx = cinfo->client_data;
+
+	ctx->work[0].size = cinfo->dest->next_output_byte - ctx->work[0].buf;
+
+	DPRINT("jpeg (size %d)\n", ctx->work[0].size);
+}
+
+static void
+buf_dest(j_compress_ptr cinfo)
+{
+	struct jpeg_destination_mgr *dest;
+
+	if (cinfo->dest == NULL) {
+		cinfo->dest = (struct jpeg_destination_mgr *)
+			cinfo->mem->alloc_small((j_common_ptr) cinfo,
+				JPOOL_PERMANENT,
+				sizeof(*dest));
+	}
+	dest = cinfo->dest;
+
+	dest->init_destination    = buf_dest_init_destination;
+	dest->empty_output_buffer = buf_dest_empty_output_buffer;
+	dest->term_destination    = buf_dest_term_destination;
+
+	buf_dest_init_destination(cinfo);
+}
+
+static void
+zip(ggi_vnc_client *client, int ztream, uint8_t *src, int len)
 {
 	struct tight_ctx_t *ctx = client->tight_ctx;
 	int avail;
 	uint32_t done = 0;
 
-	ctx->zstr.next_in = src;
-	ctx->zstr.avail_in = len;
+	ctx->zstr[ztream].next_in = src;
+	ctx->zstr[ztream].avail_in = len;
 
 	avail = ctx->work[1].limit - ctx->work[1].size;
 
 	for (;;) {
-		ctx->zstr.next_out =
+		ctx->zstr[ztream].next_out =
 			&ctx->work[1].buf[ctx->work[1].size + done];
-		ctx->zstr.avail_out = avail - done;
-		deflate(&ctx->zstr, Z_SYNC_FLUSH);
-		done = avail - ctx->zstr.avail_out;
-		if (ctx->zstr.avail_out)
+		ctx->zstr[ztream].avail_out = avail - done;
+		deflate(&ctx->zstr[ztream], Z_SYNC_FLUSH);
+		done = avail - ctx->zstr[ztream].avail_out;
+		if (ctx->zstr[ztream].avail_out)
 			break;
 		avail += 1000;
-		++ctx->work[1].size;
 		GGI_vnc_buf_reserve(&ctx->work[1], ctx->work[1].size + avail);
-		--ctx->work[1].size;
 	}
 
 	ctx->work[1].size += done;
@@ -117,6 +177,175 @@ insert_data_size(uint8_t *dst, uint32_t size)
 	}
 
 	return count;
+}
+
+static inline uint8_t
+select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
+{
+	int bytes;
+	int subencoding;
+
+	if (colors == 1) {
+		*best = cbpp;
+		return TIGHT_SOLID;
+	}
+
+	*best = xs * ys * cbpp;
+	subencoding = TIGHT_RAW | (0 << TIGHT_ZTREAM_SHIFT);
+
+	/* too many colors for anything but raw/jpeg/(gradient) */
+	if (!colors) {
+		if (xs >= 16 && ys >= 16 && *best > 3000)
+			subencoding = TIGHT_JPEG;
+		return subencoding;
+	}
+
+	/* packed palette */
+	if (colors == 2) {
+		bytes = 1 + 1 + cbpp * colors + (xs + 7) / 8 * ys;
+		if (bytes < *best) {
+			*best = bytes;
+			subencoding = TIGHT_FILTER | TIGHT_PALETTE
+				| (1 << TIGHT_ZTREAM_SHIFT);
+		}
+	}
+
+	/* palette */
+	bytes = 1 + 1 + cbpp * colors + xs * ys;
+	if (bytes < *best) {
+		*best = bytes;
+		subencoding = TIGHT_FILTER | TIGHT_PALETTE
+			| (2 << TIGHT_ZTREAM_SHIFT);
+	}
+
+	return subencoding;
+}
+
+static inline uint8_t
+scan_888(uint8_t *src,
+	int xs, int ys, int stride, uint32_t *palette, int *colors)
+{
+	int x, y;
+	uint32_t last = (src[0] << 16) | (src[1] << 8) | src[2];
+	uint32_t here;
+	int bytes;
+	int c;
+
+	stride *= 3;
+
+	*colors = 1;
+	palette[0] = last;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++ << 16;
+			here |= *src++ << 8;
+			here |= *src++;
+			if (last == here)
+				continue;
+			last = here;
+			c = palette_match_32(palette, *colors, here);
+			if (c != *colors)
+				continue;
+			if (*colors < 256)
+				palette[(*colors)++] = here;
+			else {
+				*colors = 0;
+				y = ys;
+				break;
+			}
+		}
+		src += stride;
+	}
+
+	return select_subencoding(xs, ys, 3, *colors, &bytes);
+}
+
+static uint8_t *
+raw_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
+{
+	int y;
+
+	for (y = 0; y < ys; ++y) {
+		memcpy(dst, src, xs);
+		src += stride;
+		dst += xs;
+	}
+
+	return dst;
+}
+
+static uint8_t *
+jpeg_888(struct tight_ctx_t *ctx, uint8_t *src, int xs, int ys, int stride)
+{
+	int y;
+
+	ctx->cinfo.image_width = xs;
+	ctx->cinfo.image_height = ys;
+	ctx->cinfo.input_components = 3;
+	ctx->cinfo.in_color_space = JCS_RGB;
+	jpeg_set_defaults(&ctx->cinfo);
+	jpeg_set_quality(&ctx->cinfo, ctx->jpeg_quality, TRUE);
+	jpeg_start_compress(&ctx->cinfo, TRUE);
+
+	for (y = 0; y < ys; ++y) {
+		jpeg_write_scanlines(&ctx->cinfo, &src, 1);
+		src += stride;
+	}
+
+	jpeg_finish_compress(&ctx->cinfo);
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
+static inline uint8_t *
+packed_palette_888(uint8_t *dst, uint8_t *src,
+	int xs, int ys, int stride, uint32_t *palette)
+{
+	int x, y;
+	uint32_t pixel;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 7;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			pixel = *src++ << 16;
+			pixel |= *src++ << 8;
+			pixel |= *src++;
+			*dst |= palette_match_32(palette, 2, pixel) << pel;
+			pel -= 1;
+			if (pel < 0) {
+				pel = 7;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 7)
+			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
+palette_888(uint8_t *dst, uint8_t *src,
+	int xs, int ys, int stride, uint32_t *palette)
+{
+	int x, y;
+	uint32_t pixel;
+
+	for (y = 0; y < ys; ++y) {
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			pixel = *src++ << 16;
+			pixel |= *src++ << 8;
+			pixel |= *src++;
+			*dst++ = palette_match_32(palette, 256, pixel);
+		}
+		src += stride;
+	}
+
+	return dst;
 }
 
 static void
@@ -173,22 +402,54 @@ static void
 tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride)
 {
-	uint8_t *dst = *buf;
-	int y;
+	uint32_t palette[256];
+	int colors;
+	uint8_t subencoding;
+	uint8_t filter;
+	int c;
+
+	subencoding = scan_888(src, xs, ys, stride - xs, palette, &colors);
+
+	filter = subencoding & ~TIGHT_TYPE;
+	subencoding &= TIGHT_TYPE;
+	ctx->work[0].buf[ctx->work[0].size++] = subencoding | ctx->reset;
+	ctx->reset = 0;
+
+	*buf = &ctx->work[0].buf[ctx->work[0].size];
 
 	stride *= 3;
 
-	/* FIXME: retarded */
-	*dst++ = ctx->reset | (0 << TIGHT_ZTREAM_SHIFT);
-	ctx->reset = 0;
-
-	for (y = 0; y < ys; ++y) {
-		memcpy(dst, src, xs * 3);
-		src += stride;
-		dst += xs * 3;
+	if (subencoding == TIGHT_JPEG) {
+		*buf = jpeg_888(ctx, src, xs, ys, stride);
+		return;
 	}
 
-	*buf = dst;
+	if (subencoding == TIGHT_RAW) {
+		*buf = raw_888(*buf, src, xs * 3, ys, stride);
+		return;
+	}
+
+	if (subencoding == TIGHT_SOLID) {
+		*buf = insert_888(*buf, palette[0]);
+		return;
+	}
+
+	if (subencoding & TIGHT_FILTER) {
+		uint8_t *dst = *buf;
+
+		*dst++ = filter;
+		/* filter == TIGHT_PALETTE */
+		*dst++ = colors - 1;
+		for (c = 0; c < colors; ++c)
+			dst = insert_888(dst, palette[c]);
+
+		if (colors == 2)
+			*buf = packed_palette_888(dst, src, xs, ys,
+				stride - xs * 3, palette);
+		else
+			*buf = palette_888(dst, src, xs, ys,
+				stride - xs * 3, palette);
+	}
 }
 
 static void
@@ -222,7 +483,7 @@ done:
 }
 
 static int
-rect(ggi_vnc_client *client, struct ggi_visual *cvis,
+tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 	const ggi_directbuffer *db, ggi_rect *update)
 {
 	struct tight_ctx_t *ctx = client->tight_ctx;
@@ -233,21 +494,28 @@ rect(ggi_vnc_client *client, struct ggi_visual *cvis,
 	unsigned char *header;
 	int stride;
 	int work_buf;
+	int want_size;
+	int s;
+
+	DPRINT("tile %dx%d - %dx%d\n",
+		update->tl.x, update->tl.y,
+		update->br.x, update->br.y);
 
 	gt = LIBGGI_GT(cvis);
 
 	bpp = GT_ByPP(gt);
 	count = ggi_rect_width(update) * ggi_rect_height(update);
 	GGI_vnc_buf_reserve(&client->wbuf,
-		client->wbuf.size + 12 + 2);
+		client->wbuf.size + 12 + 2 + 1000);
 
 	header = &client->wbuf.buf[client->wbuf.size];
 	insert_header(header, &update->tl, update, 7); /* tight */
 	client->wbuf.size += 12;
+	s = client->wbuf.size;
 
-	ctx->work[0].size = 1;
 	GGI_vnc_buf_reserve(&ctx->work[0], 1 + count * bpp);
 	ctx->work[0].size = ctx->work[0].pos = 0;
+	ctx->work[1].size = ctx->work[1].pos = 0;
 	buf = ctx->work[0].buf;
 
 	stride = LIBGGI_VIRTX(cvis);
@@ -278,31 +546,47 @@ rect(ggi_vnc_client *client, struct ggi_visual *cvis,
 	LIB_ASSERT(ctx->work[0].size <= ctx->work[0].limit,
 		"buffer overrun");
 
-	if ((ctx->work[0].buf[0] & 0x80) || ctx->work[0].size < 12)
-		/* solid, jpeg or less than 12 -> no zip */
-		work_buf = 0;
-	else {
-		client->wbuf.buf[client->wbuf.size++] = ctx->work[0].buf[0];
-		++ctx->work[0].pos;
+	client->wbuf.buf[client->wbuf.size++] = ctx->work[0].buf[0];
+	++ctx->work[0].pos;
+
+	work_buf = 0;
+	want_size = 3;
+	if ((ctx->work[0].buf[0] & TIGHT_TYPE) != TIGHT_JPEG) {
 		if (ctx->work[0].buf[0] & TIGHT_FILTER) {
+			int pal_size;
+
+			/* copy filter type */
 			client->wbuf.buf[client->wbuf.size++] =
 				 ctx->work[0].buf[1];
 			++ctx->work[0].pos;
+
+			/* assume palette filter, copy it */
+			pal_size = 1 + bpp * (ctx->work[0].buf[2] + 1);
+			memcpy(&client->wbuf.buf[client->wbuf.size],
+				&ctx->work[0].buf[2], pal_size);
+			client->wbuf.size += pal_size;
+			ctx->work[0].pos += pal_size;
 		}
-		ctx->work[1].size = 1;
-		GGI_vnc_buf_reserve(&ctx->work[1], 1000);
-		ctx->work[1].size = 0;
-		zip(client, &ctx->work[0].buf[ctx->work[0].pos],
-			ctx->work[0].size - ctx->work[0].pos);
-		work_buf = 1;
+		if (ctx->work[0].size - ctx->work[0].pos < 12)
+			want_size = 0;
+		else {
+			GGI_vnc_buf_reserve(&ctx->work[1], 1000);
+			zip(client,
+				(ctx->work[0].buf[0] & TIGHT_ZTREAM_MASK) >>
+					TIGHT_ZTREAM_SHIFT,
+				&ctx->work[0].buf[ctx->work[0].pos],
+				ctx->work[0].size - ctx->work[0].pos);
+			work_buf = 1;
+		}
 	}
 
 	GGI_vnc_buf_reserve(&client->wbuf,
-		client->wbuf.size + 3 +
+		client->wbuf.size + want_size +
 		ctx->work[work_buf].size - ctx->work[work_buf].pos);
-	client->wbuf.size += insert_data_size(
-		&client->wbuf.buf[client->wbuf.size],
-		ctx->work[work_buf].size - ctx->work[work_buf].pos);
+	if (want_size) 
+		client->wbuf.size += insert_data_size(
+			&client->wbuf.buf[client->wbuf.size],
+			ctx->work[work_buf].size - ctx->work[work_buf].pos);
 	memcpy(&client->wbuf.buf[client->wbuf.size],
 		&ctx->work[work_buf].buf[ctx->work[work_buf].pos],
 		ctx->work[work_buf].size - ctx->work[work_buf].pos);
@@ -312,6 +596,9 @@ rect(ggi_vnc_client *client, struct ggi_visual *cvis,
 	return ggi_rect_height(update);
 }
 
+#define MAX_HEIGHT 48
+#define MAX_WIDTH  48
+
 static inline int
 column(ggi_vnc_client *client, struct ggi_visual *cvis,
 	const ggi_directbuffer *db, ggi_rect *update)
@@ -320,13 +607,17 @@ column(ggi_vnc_client *client, struct ggi_visual *cvis,
 	int y;
 	int vnc_rects = 0;
 
-	for (y = update->tl.y; y < update->br.y; y += 256) {
+	DPRINT("column %dx%d - %dx%d\n",
+		update->tl.x, update->tl.y,
+		update->br.x, update->br.y);
+
+	for (y = update->tl.y; y < update->br.y; y += MAX_HEIGHT) {
 		row_update.tl.y = y;
-		if (y + 256 > update->br.y)
+		if (y + MAX_HEIGHT > update->br.y)
 			row_update.br.y = update->br.y;
 		else
-			row_update.br.y = y + 256;
-		rect(client, cvis, db, &row_update);
+			row_update.br.y = y + MAX_HEIGHT;
+		tile(client, cvis, db, &row_update);
 		++vnc_rects;
 	}
 
@@ -383,19 +674,29 @@ GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
+	DPRINT("vupdate %dx%d - %dx%d\n",
+		vupdate.tl.x, vupdate.tl.y,
+		vupdate.br.x, vupdate.br.y);
 	col_update = vupdate;
-	for (x = vupdate.tl.x; x < vupdate.br.x; x += 2048) {
+	for (x = vupdate.tl.x; x < vupdate.br.x; x += MAX_WIDTH) {
 		col_update.tl.x = x;
-		if (x + 2048 > vupdate.br.x)
+		if (x + MAX_WIDTH > vupdate.br.x)
 			col_update.br.x = vupdate.br.x;
 		else
-			col_update.br.x = x + 2048;
+			col_update.br.x = x + MAX_WIDTH;
 		vnc_rects += column(client, cvis, db, &col_update);
 	}
 
 	ggiResourceRelease(db->resource);
 
 	return vnc_rects;
+}
+
+void
+GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
+{
+	ctx->jpeg_quality = 5 + 10 * quality;
+	DPRINT("jpeg quality %d\n", ctx->jpeg_quality);
 }
 
 struct tight_ctx_t *
@@ -406,12 +707,28 @@ GGI_vnc_tight_open(void)
 	memset(ctx, 0, sizeof(*ctx));
 
 	ctx->reset = TIGHT_ZTREAM_RESET;
+	ctx->jpeg_quality = 65;
 
-	ctx->zstr.zalloc = Z_NULL;
-	ctx->zstr.zfree = Z_NULL;
-	ctx->zstr.opaque = Z_NULL;
+	ctx->zstr[0].zalloc = Z_NULL;
+	ctx->zstr[0].zfree = Z_NULL;
+	ctx->zstr[0].opaque = Z_NULL;
+	deflateInit(&ctx->zstr[0], Z_DEFAULT_COMPRESSION);
 
-	deflateInit(&ctx->zstr, Z_DEFAULT_COMPRESSION);
+	ctx->zstr[1].zalloc = Z_NULL;
+	ctx->zstr[1].zfree = Z_NULL;
+	ctx->zstr[1].opaque = Z_NULL;
+	deflateInit(&ctx->zstr[1], Z_DEFAULT_COMPRESSION);
+
+	ctx->zstr[2].zalloc = Z_NULL;
+	ctx->zstr[2].zfree = Z_NULL;
+	ctx->zstr[2].opaque = Z_NULL;
+	deflateInit(&ctx->zstr[2], Z_DEFAULT_COMPRESSION);
+
+	ctx->cinfo.client_data = ctx;
+	ctx->cinfo.err = jpeg_std_error(&ctx->jerr);
+
+	jpeg_create_compress(&ctx->cinfo);
+	buf_dest(&ctx->cinfo);
 
 	return ctx;
 }
@@ -419,8 +736,11 @@ GGI_vnc_tight_open(void)
 void
 GGI_vnc_tight_close(struct tight_ctx_t *ctx)
 {
+	jpeg_destroy_compress(&ctx->cinfo);
 	free(ctx->work[0].buf);
 	free(ctx->work[1].buf);
-	deflateEnd(&ctx->zstr);
+	deflateEnd(&ctx->zstr[2]);
+	deflateEnd(&ctx->zstr[1]);
+	deflateEnd(&ctx->zstr[0]);
 	free(ctx);
 }

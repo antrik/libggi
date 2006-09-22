@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.61 2006/09/22 06:13:29 pekberg Exp $
+/* $Id: rfb.c,v 1.62 2006/09/22 06:21:45 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -558,6 +558,11 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 		case -23:
 			DPRINT_MISC("tight quality %d subencoding\n",
 				ntohl(*(encodings-1)) + 32);
+#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+			if (client->tight_ctx)
+				GGI_vnc_tight_quality(client->tight_ctx,
+					ntohl(*(encodings-1)) + 32);
+#endif
 			break;
 		default:
 			DPRINT_MISC("Unknown (%i) encoding\n",
