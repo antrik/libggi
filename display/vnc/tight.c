@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.6 2006/09/22 18:47:17 pekberg Exp $
+/* $Id: tight.c,v 1.7 2006/09/22 18:53:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -323,6 +323,8 @@ raw_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 {
 	int y;
 
+	xs *= 3;
+
 	for (y = 0; y < ys; ++y) {
 		memcpy(dst, src, xs);
 		src += stride;
@@ -445,6 +447,8 @@ gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 {
 	int x, y;
 	uint8_t *prev;
+
+	xs *= 3;
 
 	/* first row */
 	/* first pixel */
@@ -581,7 +585,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	}
 
 	if (subencoding == TIGHT_RAW) {
-		*buf = raw_888(dst, src, xs * 3, ys, stride);
+		*buf = raw_888(dst, src, xs, ys, stride);
 		return;
 	}
 
@@ -595,7 +599,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	*dst++ = filter;
 
 	if (filter == TIGHT_GRADIENT) {
-		*buf = gradient_888(dst, src, xs * 3, ys, stride);
+		*buf = gradient_888(dst, src, xs, ys, stride);
 		return;
 	}
 
