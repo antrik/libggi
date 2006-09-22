@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.60 2006/09/18 22:57:53 pekberg Exp $
+/* $Id: rfb.c,v 1.61 2006/09/22 06:13:29 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -102,9 +102,8 @@ GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit)
 	if (buf->limit >= limit)
 		return 0;
 
-	if (!buf->size) {
-		if (buf->buf != NULL)
-			free(buf->buf);
+	if (!buf->limit) {
+		free(buf->buf);
 		buf->buf = malloc(limit);
 	}
 	else {
