@@ -11,7 +11,8 @@ Synopsis
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
 	       [-hextile=no] [-kold] [-passwd=<pass>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-	       [-stdio] [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+	       [-stdio] [-tight] [-title=<title>] [-zlib=<level>|no]
+	       [-zrle=<level>|no]
 
 
 Description
@@ -88,6 +89,9 @@ Options
     The :p:`-stdio` option is incompatible with the :p:`-server=stdio`
     option.
 
+``-tight``
+    Enables the tight encoding.
+
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
     is not specified, the default is "GGI on vnc".
@@ -108,14 +112,22 @@ Options
 Features
 --------
 
-- Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
-  is only used for panning.
+- Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
+  encoding is only used for panning. The tight encoding only has sensible
+  support for 8 and 24 bits per pixel clients, which is why it is disabled
+  by default.
 - Multiple simultaneous clients.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
 - Multiple frames always available.
 - Panning always available.
 - Unaccelerated.
+
+
+Credits
+-------
+
+The tight encoding uses the jpeg library from the Independent JPEG Group.
 
 
 Bugs
