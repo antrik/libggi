@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.7 2006/09/22 18:53:26 pekberg Exp $
+/* $Id: tight.c,v 1.8 2006/09/22 19:45:22 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -212,7 +212,7 @@ select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
 
 	/* too many colors for anything but raw/jpeg/gradient */
 	if (!colors) {
-		if (cbpp >= 2 && xs >= 16 && ys >= 16 && *best > 3000)
+		if (cbpp == 3 && xs >= 16 && ys >= 16 && *best > 3000)
 			subencoding = TIGHT_JPEG;
 		return subencoding;
 	}
@@ -265,6 +265,43 @@ scan_8(uint8_t *src,
 }
 
 static inline uint8_t
+scan_16(uint8_t *src8,
+	int xs, int ys, int stride, uint16_t *palette, int *colors)
+{
+	int x, y;
+	uint16_t *src = (uint16_t *)src8;
+	uint16_t last = *src;
+	uint16_t here;
+	int bytes;
+	int c;
+
+	*colors = 1;
+	palette[0] = last;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here)
+				continue;
+			last = here;
+			c = palette_match_16(palette, *colors, here);
+			if (c != *colors)
+				continue;
+			if (*colors < 256)
+				palette[(*colors)++] = here;
+			else {
+				*colors = 0;
+				y = ys;
+				break;
+			}
+		}
+		src += stride;
+	}
+
+	return select_subencoding(xs, ys, 2, *colors, &bytes);
+}
+
+static inline uint8_t
 scan_888(uint8_t *src,
 	int xs, int ys, int stride, uint32_t *palette, int *colors)
 {
@@ -313,6 +350,31 @@ raw_8(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 		memcpy(dst, src, xs);
 		src += stride;
 		dst += xs;
+	}
+
+	return dst;
+}
+
+static uint8_t *
+raw_16(uint8_t *dst, uint8_t *src8, int xs, int ys, int stride, int rev)
+{
+	uint16_t *src = (uint16_t *)src8;
+	int x, y;
+
+	if (!rev) {
+		xs *= 2;
+		for (y = 0; y < ys; ++y) {
+			memcpy(dst, src, xs);
+			src += stride;
+			dst += xs;
+		}
+		return dst;
+	}
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x)
+			dst = insert_rev_16(dst, src[x]);
+		src += stride;
 	}
 
 	return dst;
@@ -383,6 +445,34 @@ packed_palette_8(uint8_t *dst, uint8_t *src,
 }
 
 static inline uint8_t *
+packed_palette_16(uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, uint16_t *palette)
+{
+	uint16_t *src = (uint16_t *)src8;
+	int x, y;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 7;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			*dst |= palette_match_16(palette, 2, *src++) << pel;
+			pel -= 1;
+			if (pel < 0) {
+				pel = 7;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 7)
+			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
 packed_palette_888(uint8_t *dst, uint8_t *src,
 	int xs, int ys, int stride, uint32_t *palette)
 {
@@ -406,6 +496,24 @@ packed_palette_888(uint8_t *dst, uint8_t *src,
 		src += stride;
 		if (pel != 7)
 			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
+palette_16(uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, uint16_t *palette)
+{
+	uint16_t *src = (uint16_t *)src8;
+	int x, y;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x)
+			*dst++ = palette_match_16(palette, 256, *src++);
+		src += stride;
 	}
 
 	return dst;
@@ -528,32 +636,70 @@ tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 
 static void
 tile_16(struct tight_ctx_t *ctx, uint8_t **buf,
-	uint8_t *src8, int xs, int ys, int stride, int rev)
+	uint8_t *src, int xs, int ys, int stride, int rev)
 {
-	uint8_t *dst = *buf;
-	uint16_t *src = (uint16_t *)src8;
-	int x, y;
+	uint8_t *dst;
+	uint16_t palette[256];
+	int colors;
+	uint8_t subencoding;
+	uint8_t filter;
+	int c;
 
-	/* FIXME: retarded */
-	*dst++ = ctx->reset | (0 << TIGHT_ZTREAM_SHIFT);
+	subencoding = scan_16(src, xs, ys, stride - xs, palette, &colors);
+
+	filter = subencoding & ~TIGHT_TYPE;
+	subencoding &= TIGHT_TYPE;
+	ctx->work[0].buf[ctx->work[0].size++] = subencoding | ctx->reset;
 	ctx->reset = 0;
 
-	if (!rev) {
-		for (y = 0; y < ys; ++y) {
-			memcpy(dst, src, xs * 2);
-			src += stride;
-			dst += xs * 2;
-		}
-		goto done;
+	*buf = &ctx->work[0].buf[ctx->work[0].size];
+	dst = *buf;
+
+	/* TODO
+	if (subencoding == TIGHT_JPEG) {
+		*buf = jpeg_16(ctx, src, xs, ys, stride);
+		return;
 	}
-	for (y = 0; y < ys; ++y) {
-		for (x = 0; x < xs; ++x)
-			dst = insert_rev_16(dst, src[x]);
-		src += stride + xs;
+	*/
+
+	if (subencoding == TIGHT_RAW) {
+		*buf = raw_16(dst, src, xs, ys, stride, rev);
+		return;
 	}
 
-done:
-	*buf = dst;
+	if (subencoding == TIGHT_SOLID) {
+		if (rev)
+			*buf = insert_rev_16(dst, palette[0]);
+		else
+			*buf = insert_16(dst, palette[0]);
+		return;
+	}
+
+	/* subencoding & TIGHT_FILTER */
+
+	*dst++ = filter;
+
+	/* TODO
+	if (filter == TIGHT_GRADIENT) {
+		*buf = gradient_16(dst, src, xs, ys, stride, rev);
+		return;
+	}
+	*/
+
+	/* filter == TIGHT_PALETTE */
+
+	*dst++ = colors - 1;
+	if (rev)
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_16(dst, palette[c]);
+	else
+		for (c = 0; c < colors; ++c)
+			dst = insert_16(dst, palette[c]);
+
+	if (colors == 2)
+		*buf = packed_palette_16(dst, src, xs, ys, stride, palette);
+	else
+		*buf = palette_16(dst, src, xs, ys, stride, palette);
 }
 
 static void
