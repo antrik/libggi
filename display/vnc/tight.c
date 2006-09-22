@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.9 2006/09/22 20:10:34 pekberg Exp $
+/* $Id: tight.c,v 1.10 2006/09/22 21:20:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -345,6 +345,45 @@ scan_888(uint8_t *src,
 	return select_subencoding(xs, ys, 3, *colors, &bytes);
 }
 
+static inline uint8_t
+scan_32(uint8_t *src8,
+	int xs, int ys, int stride, uint32_t *palette, int *colors)
+{
+	int x, y;
+	uint32_t *src = (uint32_t *)src8;
+	uint32_t last = *src;
+	uint32_t here;
+	int bytes;
+	int c;
+
+	stride -= xs;
+
+	*colors = 1;
+	palette[0] = last;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x) {
+			here = *src++;
+			if (last == here)
+				continue;
+			last = here;
+			c = palette_match_32(palette, *colors, here);
+			if (c != *colors)
+				continue;
+			if (*colors < 256)
+				palette[(*colors)++] = here;
+			else {
+				*colors = 0;
+				y = ys;
+				break;
+			}
+		}
+		src += stride;
+	}
+
+	return select_subencoding(xs, ys, 4, *colors, &bytes);
+}
+
 static uint8_t *
 raw_8(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 {
@@ -396,6 +435,31 @@ raw_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 		memcpy(dst, src, xs);
 		src += stride;
 		dst += xs;
+	}
+
+	return dst;
+}
+
+static uint8_t *
+raw_32(uint8_t *dst, uint8_t *src8, int xs, int ys, int stride, int rev)
+{
+	uint32_t *src = (uint32_t *)src8;
+	int x, y;
+
+	if (!rev) {
+		xs *= 4;
+		for (y = 0; y < ys; ++y) {
+			memcpy(dst, src, xs);
+			src += stride;
+			dst += xs;
+		}
+		return dst;
+	}
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x)
+			dst = insert_rev_32(dst, src[x]);
+		src += stride;
 	}
 
 	return dst;
@@ -513,6 +577,34 @@ packed_palette_888(uint8_t *dst, uint8_t *src,
 }
 
 static inline uint8_t *
+packed_palette_32(uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, uint32_t *palette)
+{
+	uint32_t *src = (uint32_t *)src8;
+	int x, y;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		int pel = 7;
+		*dst = 0;
+		for (x = 0; x < xs; ++x) {
+			*dst |= palette_match_32(palette, 2, *src++) << pel;
+			pel -= 1;
+			if (pel < 0) {
+				pel = 7;
+				*++dst = 0;
+			}
+		}
+		src += stride;
+		if (pel != 7)
+			++dst;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
 palette_16(uint8_t *dst, uint8_t *src8,
 	int xs, int ys, int stride, uint16_t *palette)
 {
@@ -547,6 +639,24 @@ palette_888(uint8_t *dst, uint8_t *src,
 			pixel |= *src++;
 			*dst++ = palette_match_32(palette, 256, pixel);
 		}
+		src += stride;
+	}
+
+	return dst;
+}
+
+static inline uint8_t *
+palette_32(uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, uint32_t *palette)
+{
+	uint32_t *src = (uint32_t *)src8;
+	int x, y;
+
+	stride -= xs;
+
+	for (y = 0; y < ys; ++y) {
+		for (x = 0; x < xs; ++x)
+			*dst++ = palette_match_32(palette, 256, *src++);
 		src += stride;
 	}
 
@@ -774,32 +884,70 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 
 static void
 tile_32(struct tight_ctx_t *ctx, uint8_t **buf,
-	uint8_t *src8, int xs, int ys, int stride, int rev)
+	uint8_t *src, int xs, int ys, int stride, int rev)
 {
-	uint8_t *dst = *buf;
-	uint32_t *src = (uint32_t *)src8;
-	int x, y;
+	uint8_t *dst;
+	uint32_t palette[256];
+	int colors;
+	uint8_t subencoding;
+	uint8_t filter;
+	int c;
 
-	/* FIXME: retarded */
-	*dst++ = ctx->reset | (0 << TIGHT_ZTREAM_SHIFT);
+	subencoding = scan_32(src, xs, ys, stride, palette, &colors);
+
+	filter = subencoding & ~TIGHT_TYPE;
+	subencoding &= TIGHT_TYPE;
+	ctx->work[0].buf[ctx->work[0].size++] = subencoding | ctx->reset;
 	ctx->reset = 0;
 
-	if (!rev) {
-		for (y = 0; y < ys; ++y) {
-			memcpy(dst, src, xs * 4);
-			src += stride;
-			dst += xs * 4;
-		}
-		goto done;
+	*buf = &ctx->work[0].buf[ctx->work[0].size];
+	dst = *buf;
+
+	/* TODO
+	if (subencoding == TIGHT_JPEG) {
+		*buf = jpeg_32(ctx, src, xs, ys, stride);
+		return;
 	}
-	for (y = 0; y < ys; ++y) {
-		for (x = 0; x < xs; ++x)
-			dst = insert_rev_32(dst, src[x]);
-		src += stride + xs;
+	*/
+
+	if (subencoding == TIGHT_RAW) {
+		*buf = raw_32(dst, src, xs, ys, stride, rev);
+		return;
 	}
 
-done:
-	*buf = dst;
+	if (subencoding == TIGHT_SOLID) {
+		if (rev)
+			*buf = insert_rev_32(dst, palette[0]);
+		else
+			*buf = insert_32(dst, palette[0]);
+		return;
+	}
+
+	/* subencoding & TIGHT_FILTER */
+
+	*dst++ = filter;
+
+	/* TODO
+	if (filter == TIGHT_GRADIENT) {
+		*buf = gradient_32(dst, src, xs, ys, stride, rev);
+		return;
+	}
+	*/
+
+	/* filter == TIGHT_PALETTE */
+
+	*dst++ = colors - 1;
+	if (rev)
+		for (c = 0; c < colors; ++c)
+			dst = insert_rev_32(dst, palette[c]);
+	else
+		for (c = 0; c < colors; ++c)
+			dst = insert_32(dst, palette[c]);
+
+	if (colors == 2)
+		*buf = packed_palette_32(dst, src, xs, ys, stride, palette);
+	else
+		*buf = palette_32(dst, src, xs, ys, stride, palette);
 }
 
 static int
@@ -815,7 +963,6 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 	int stride;
 	int work_buf;
 	int want_size;
-	int s;
 
 	DPRINT("tile %dx%d - %dx%d\n",
 		update->tl.x, update->tl.y,
@@ -826,14 +973,14 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 	bpp = GT_ByPP(gt);
 	count = ggi_rect_width(update) * ggi_rect_height(update);
 	GGI_vnc_buf_reserve(&client->wbuf,
-		client->wbuf.size + 12 + 2 + 1000);
+		client->wbuf.size + 12 + 3 + 256 * bpp);
 
 	header = &client->wbuf.buf[client->wbuf.size];
 	insert_header(header, &update->tl, update, 7); /* tight */
 	client->wbuf.size += 12;
-	s = client->wbuf.size;
 
 	GGI_vnc_buf_reserve(&ctx->work[0], 2 + count * bpp);
+	GGI_vnc_buf_reserve(&ctx->work[0], 3 + 256 * bpp + count);
 	ctx->work[0].size = ctx->work[0].pos = 0;
 	ctx->work[1].size = ctx->work[1].pos = 0;
 	buf = ctx->work[0].buf;
