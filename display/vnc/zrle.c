@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.39 2006/09/20 09:29:36 pekberg Exp $
+/* $Id: zrle.c,v 1.40 2006/09/22 06:08:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -410,7 +410,7 @@ static inline uint8_t *
 insert_palrle_rl_16(uint8_t *dst,
 	uint16_t *palette, int colors, uint16_t color, int rl)
 {
-	uint16_t c = palette_match_16(palette, colors, color);
+	uint8_t c = palette_match_16(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
@@ -424,7 +424,7 @@ static inline uint8_t *
 insert_palrle_rl_32(uint8_t *dst,
 	uint32_t *palette, int colors, uint32_t color, int rl)
 {
-	uint32_t c = palette_match_32(palette, colors, color);
+	uint8_t c = palette_match_32(palette, colors, color);
 	if (!rl)
 		*dst++ = c;
 	else {
