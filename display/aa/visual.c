@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/09/17 14:08:53 aldot Exp $
+/* $Id: visual.c,v 1.19 2006/09/22 19:31:17 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -127,7 +127,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->haverelease = 0;
 
 	if (args) {
-		args = ggParseOptions((char *)args, options, NUM_OPTS);
+		args = ggParseOptions(args, options, NUM_OPTS);
 		if (!args) {
 			fprintf(stderr, "display-aa: error in arguments\n");
 		}
@@ -150,12 +150,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		MANSYNC_start(vis);
 	}
 
+#if 0
 	do {
 		struct gg_module *inp = NULL;
 		struct gg_api *gii;
 		DPRINT_MISC("display-aa: gii starting\n");
 
-#if 0
 		/* First allocate a new gii_input descriptor. */
 		if ((gii = ggGetAPIByName("gii")) != NULL) {
 			if (STEM_HAS_API(vis->stem, gii)) {
@@ -170,12 +170,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		DPRINT_MISC("display-aa: gii inp=%p\n",inp);
 
-		/* Now fill in the blanks. */
-		inp->priv = priv; /* We need that in GII_aa_poll() */
-
-		inp->maxfd = 0;
-		inp->flags = GII_FLAGS_HASPOLLED;
-
 		/* What events _can_  we create at all ?
 		   Save useless polling time. */
 		inp->curreventmask = inp->targetcan = emKey |
@@ -185,8 +179,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   defaults are fine. */
 		inp->GIIeventpoll = GII_aa_poll;
 
-#endif
 	} while(0);
+#endif
 
 
 	/* Has mode management */
