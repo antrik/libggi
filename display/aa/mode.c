@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/03/22 20:22:26 cegger Exp $
+/* $Id: mode.c,v 1.20 2006/09/22 19:30:36 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -94,7 +94,7 @@ static int _GGIdomode(struct ggi_visual *vis)
   LIBGGI_PAL(vis)->getPrivSize = GGI_aa_getPrivSize;
   LIBGGI_PAL(vis)->setPalette  = GGI_aa_setPalette;
 	
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 
 	return 0;
 }
