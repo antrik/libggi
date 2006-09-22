@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-16" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-22" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -7,7 +7,8 @@
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
              [-hextile=no] [-kold] [-passwd=<pass>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-             [-stdio] [-title=<title>] [-zlib=<level>] [-zrle=<level>]
+             [-stdio] [-tight] [-title=<title>] [-zlib=<level>|no]
+             [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -88,19 +89,23 @@ The \fI-stdio\fR option is incompatible with the \fI-server=stdio\fR
 option.
 
 .TP
+\f(CW-tight\fR
+Enables the tight encoding.
+
+.TP
 \f(CW-title=<title>\fR
 The \fItitle\fR clients should use on their windows. If this option
 is not specified, the default is "GGI on vnc".
 
 .TP
-\f(CW-zlib=<level>\fR
+\f(CW-zlib=<level>|no\fR
 Specify the compression level to use for the zlib encoding. 0 for
 no compression and 9 for maximum compression. Saying \fIno\fR here
 disables the zlib encoding. If the option isn't specified, a default
 compromize between speed and compression is selected.
 
 .TP
-\f(CW-zrle=<level>\fR
+\f(CW-zrle=<level>|no\fR
 Specify the compression level to use for the ZRLE encoding. 0 for
 no compression and 9 for maximum compression. Saying \fIno\fR here
 disables the ZRLE encoding. If the option isn't specified, a default
@@ -109,8 +114,10 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-Raw, CopyRect, Hextile, zlib and ZRLE encodings. The CopyRect encoding
-is only used for panning.
+Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
+encoding is only used for panning. The tight encoding only has sensible
+support for 8 and 24 bits per pixel clients, which is why it is disabled
+by default.
 .IP \(bu 4
 Multiple simultaneous clients.
 .IP \(bu 4
@@ -123,6 +130,8 @@ Panning always available.
 .IP \(bu 4
 Unaccelerated.
 .PP
+.SH CREDITS
+The tight encoding uses the jpeg library from the Independent JPEG Group.
 .SH BUGS
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
