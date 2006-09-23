@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.32 2006/09/23 08:40:28 cegger Exp $
+/* $Id: buffer.c,v 1.33 2006/09/23 16:08:53 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -224,14 +224,8 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer", 
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	stem = ggNewStem(NULL);
+	stem = ggNewStem(libggi, NULL);
 	if (stem == NULL) {
-		free(priv->fb);
-		priv->fb = NULL;
-		return GGI_ENOMEM;
-	}
-	if (ggiAttach(stem) != GGI_OK) {
-		ggDelStem(stem);
 		free(priv->fb);
 		priv->fb = NULL;
 		return GGI_ENOMEM;
