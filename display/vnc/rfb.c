@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.62 2006/09/22 06:21:45 pekberg Exp $
+/* $Id: rfb.c,v 1.63 2006/09/23 07:23:30 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -446,132 +446,217 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 	return vnc_remove(client, 20);
 }
 
-static void
-set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
+typedef ggi_vnc_encode * (vnc_encoding)
+	(ggi_vnc_client *client, int32_t encoding, char *format);
+
+static ggi_vnc_encode *
+print_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	DPRINT_MISC(format, encoding);
+	return NULL;
+}
+
+static ggi_vnc_encode *
+raw_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	DPRINT_MISC(format);
+	return GGI_vnc_raw;
+}
+
+static ggi_vnc_encode *
+copyrect_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->copyrect)
+		return NULL;
+	if (client->encode && priv->copyrect == 1)
+		return NULL;
+	client->copy_rect = 1;
+
+	return NULL;
+}
+
+static ggi_vnc_encode *
+hextile_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->hextile)
+		return NULL;
+	if (client->encode)
+		return NULL;
+	if (!client->hextile_ctx)
+		client->hextile_ctx =
+			GGI_vnc_hextile_open();
+	if (!client->hextile_ctx)
+		return NULL;
+
+	return GGI_vnc_hextile;
+}
+
+#ifdef HAVE_ZLIB
+static ggi_vnc_encode *
+zlib_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (client->encode || priv->zlib_level == -2)
+		return NULL;
+	if (!client->zlib_ctx)
+		client->zlib_ctx = GGI_vnc_zlib_open(-1);
+	if (!client->zlib_ctx)
+		return NULL;
+
+	return GGI_vnc_zlib;
+}
+#else
+#define zlib_enc print_enc
+#endif
+
+#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+static ggi_vnc_encode *
+tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (client->encode || !priv->tight)
+		return NULL;
+	if (!client->tight_ctx)
+		client->tight_ctx =
+			GGI_vnc_tight_open();
+	if (!client->tight_ctx)
+		return NULL;
+
+	/* a wee bit ugly... */
+	client->encode = GGI_vnc_tight;
+	change_pixfmt(client);
+	client->encode = NULL;
+
+	return GGI_vnc_tight;
+}
+
+static ggi_vnc_encode *
+tight_quality_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	DPRINT_MISC(format, encoding);
+
+	if (client->tight_ctx)
+		GGI_vnc_tight_quality(client->tight_ctx,
+			encoding);
+
+	return NULL;
+}
+#else
+#define tight_enc print_enc
+#define tight_quality_enc print_enc
+#endif
+
+#ifdef HAVE_ZLIB
+static ggi_vnc_encode *
+zrle_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (client->encode || priv->zrle_level == -2)
+		return NULL;
+	if (!client->zrle_ctx)
+		client->zrle_ctx =
+			GGI_vnc_zrle_open(priv->zrle_level);
+	if (!client->zrle_ctx)
+		return NULL;
+
+	return GGI_vnc_zrle;
+}
+#else
+#define zrle_enc print_enc   
+#endif
+
+
+struct encodings {
+	int32_t encoding;
+	int32_t base;
+	char format[40];
+	vnc_encoding *action;
+};
+
+struct encodings encode_tbl[] = {
+	{      0,    0, "Raw encoding\n",                 raw_enc },
+	{      1,    0, "CopyRect encoding\n",            copyrect_enc },
+	{      2,    0, "RRE encoding\n",                 print_enc },
+	{      4,    0, "CoRRE encoding\n",               print_enc },
+	{      5,    0, "Hextile encoding\n",             hextile_enc },
+	{      6,    0, "Zlib encoding\n",                zlib_enc },
+	{      7,    0, "Tight encoding\n",               tight_enc },
+	{      8,    0, "ZlibHex encoding\n",             print_enc },
+	{      9,    0, "Ultra encoding\n",               print_enc },
+	{     16,    0, "ZRLE encoding\n",                zrle_enc },
+	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
+	{   -223,    0, "DesktopSize pseudo-encoding\n",  print_enc },
+	{   -224,    0, "LastRect pseudo-encoding\n",     print_enc },
+	{   -232,    0, "PointerPos pseudo-encoding\n",   print_enc },
+	{   -239,    0, "Cursor pseudo-encoding\n",       print_enc },
+	{   -240,    0, "XCursor pseudo-encoding\n",      print_enc },
+	{   -247, -256, "Tight compress %d subencoding\n",print_enc },
+	{ -65536,    0, "Cache encoding\n",               print_enc },
+	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
+	{ -65534,    0, "XOR_Zlib encoding\n",            print_enc },
+	{ -65533,    0, "XORMonoColor_Zlib encoding\n",   print_enc },
+	{ -65532,    0, "XORMultiColor_Zlib encoding\n",  print_enc },
+	{ -65531,    0, "SolidColor encoding\n",          print_enc },
+	{ -65530,    0, "XOREnable encoding\n",           print_enc },
+	{ -65529,    0, "CacheZip encoding\n",            print_enc },
+	{ -65528,    0, "SolMonoZip encoding\n",          print_enc },
+	{ -65527,    0, "UltraZip encoding\n",            print_enc },
+	{      0,    0, "Unknown (%d) encoding\n",        NULL }
+};
+
+static void
+set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
+{
 	ggi_vnc_encode *encode;
+	int32_t encoding = 0;
+	int i;
 
 	while (count--) {
 		encode = NULL;
 
-		switch(ntohl(*encodings++)) {
-		case 0:
-			DPRINT_MISC("Raw encoding\n");
-			encode = GGI_vnc_raw;
-			break;
-		case 1:
-			DPRINT_MISC("CopyRect encoding\n");
-			if (!priv->copyrect)
-				break;
-			if (client->encode && priv->copyrect == 1)
-				break;
-			client->copy_rect = 1;
-			break;
-		case 2:
-			DPRINT_MISC("RRE encoding\n");
-			break;
-		case 4:
-			DPRINT_MISC("CoRRE encoding\n");
-			break;
-		case 5:
-			DPRINT_MISC("Hextile encoding\n");
-			if (!priv->hextile)
-				break;
-			if (client->encode)
-				break;
-			if (!client->hextile_ctx)
-				client->hextile_ctx =
-					GGI_vnc_hextile_open();
-			if (client->hextile_ctx)
-				encode = GGI_vnc_hextile;
-			break;
-		case 16:
-			DPRINT_MISC("ZRLE encoding\n");
-#ifdef HAVE_ZLIB
-			if (client->encode || priv->zrle_level == -2)
-				break;
-			if (!client->zrle_ctx)
-				client->zrle_ctx =
-					GGI_vnc_zrle_open(priv->zrle_level);
-			if (client->zrle_ctx)
-				encode = GGI_vnc_zrle;
-#endif
-			break;
-		case -239:
-			DPRINT_MISC("Cursor pseudo-encoding\n");
-			break;
-		case -223:
-			DPRINT_MISC("DesktopSize pseudo-encoding\n");
-			break;
-		case 6:
-			DPRINT_MISC("zlib encoding\n");
-#ifdef HAVE_ZLIB
-			if (client->encode || priv->zlib_level == -2)
-				break;
-			if (!client->zlib_ctx)
-				client->zlib_ctx = GGI_vnc_zlib_open(-1);
-			if (client->zlib_ctx)
-				encode = GGI_vnc_zlib;
-#endif
-			break;
-		case 7:
-			DPRINT_MISC("tight encoding\n");
-#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
-			if (client->encode || !priv->tight)
-				break;
-			if (!client->tight_ctx)
-				client->tight_ctx =
-					GGI_vnc_tight_open();
-			if (client->tight_ctx) {
-				client->encode = GGI_vnc_tight;
-				change_pixfmt(client);
+		encoding = ntohl(*encodings++);
+		for (i = 0; encode_tbl[i].action; ++i) {
+			if (encode_tbl[i].base) {
+				if (encoding < encode_tbl[i].base)
+					continue;
+				if (encode_tbl[i].encoding < encoding)
+					continue;
 			}
-#endif
-			break;
-		case 8:
-			DPRINT_MISC("zlibhex encoding\n");
-			break;
-		case -256:
-		case -255:
-		case -254:
-		case -253:
-		case -252:
-		case -251:
-		case -250:
-		case -249:
-		case -248:
-		case -247:
-			DPRINT_MISC("tight compression %d subencoding\n",
-				ntohl(*(encodings-1)) + 256);
-			break;
-		case -32:
-		case -31:
-		case -30:
-		case -29:
-		case -28:
-		case -27:
-		case -26:
-		case -25:
-		case -24:
-		case -23:
-			DPRINT_MISC("tight quality %d subencoding\n",
-				ntohl(*(encodings-1)) + 32);
-#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
-			if (client->tight_ctx)
-				GGI_vnc_tight_quality(client->tight_ctx,
-					ntohl(*(encodings-1)) + 32);
-#endif
-			break;
-		default:
-			DPRINT_MISC("Unknown (%i) encoding\n",
-				ntohl(*(encodings-1)));
+			else if (encoding != encode_tbl[i].encoding)
+				continue;
+
+			encode = encode_tbl[i].action(client,
+				encoding - encode_tbl[i].base,
+				encode_tbl[i].format);
 			break;
 		}
+		if (!encode_tbl[i].action) {
+			print_enc(client, encoding, encode_tbl[i - 1].format);
+			continue;
+		}
 
-		if (client->encode == NULL)
+		if (!client->encode && encode) {
+			DPRINT_MISC("Selected %s", encode_tbl[i].format);
 			client->encode = encode;
+		}
 	}
 }
 
