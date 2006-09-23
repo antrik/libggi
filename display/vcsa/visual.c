@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2006/09/17 13:32:11 cegger Exp $
+/* $Id: visual.c,v 1.24 2006/09/23 07:38:36 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -236,7 +236,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-					"linux-mouse:auto", NULL, &args);
+					"input-linux-mouse", NULL, &args);
 			priv->ms_publisher = ggGetPublisher(gii, vis->stem,
 					GII_PUBLISHER_SOURCE_CHANGE);
 			priv->ms_observer = ggAddObserver(priv->ms_publisher,
