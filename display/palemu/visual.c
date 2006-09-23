@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/09/10 06:53:13 cegger Exp $
+/* $Id: visual.c,v 1.25 2006/09/23 08:43:40 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -202,7 +202,7 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggiParseMode(options[OPT_PARENT].result, &priv->parent_mode);
 
 	DPRINT("display-palemu: opening target: %s\n", target);
-	priv->parent = ggNewStem();
+	priv->parent = ggNewStem(NULL);
 	if (priv->parent == NULL) {
 		fprintf(stderr,
 			"display-palemu: Failed to create stem for target: '%s'\n",
@@ -378,7 +378,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	DPRINT("display-monotext: opening target: %s\n", target);
-	priv->parent = ggNewStem();
+	priv->parent = ggNewStem(NULL);
 	if (priv->parent == NULL) {
 		fprintf(stderr,
 			"display-monotext: Failed to create stem for target: %s\n",

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/09/12 21:32:37 cegger Exp $
+/* $Id: visual.c,v 1.19 2006/09/23 08:50:00 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -193,7 +193,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	DPRINT("display-trueemu: opening target: %s\n", target);
-	priv->parent = ggNewStem();
+	priv->parent = ggNewStem(NULL);
 	if (priv->parent == NULL) {
 		fprintf(stderr,
 			"display-trueemu: Failed to open target: '%s'\n",

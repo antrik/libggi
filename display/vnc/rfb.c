@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.63 2006/09/23 07:23:30 pekberg Exp $
+/* $Id: rfb.c,v 1.64 2006/09/23 08:45:58 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -322,7 +322,7 @@ change_pixfmt(ggi_vnc_client *client)
 	else
 		i = snprintf(target, GGI_MAX_APILEN, "display-memory");
 
-	stem = ggNewStem();
+	stem = ggNewStem(NULL);
 	if (stem == NULL) {
 		DPRINT("ggNewStem failed\n");
 		err = -1;

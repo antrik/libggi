@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2006/08/07 20:40:09 pekberg Exp $
+/* $Id: visual.c,v 1.31 2006/09/23 08:47:56 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -177,7 +177,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT_MISC("display-tile: visual #%d is %s (%d,%d)[%dx%d]\n",
 			i, target, sx, sy, vx, vy);
 
-		mvis->vis = ggNewStem();
+		mvis->vis = ggNewStem(NULL);
 		if (mvis->vis == NULL) {
 			fprintf(stderr,
 				"display-tile: Failed to create stem for target '%s'\n",
@@ -370,7 +370,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		mvis->size.y = 0;
 
 
-		mvis->vis = ggNewStem();
+		mvis->vis = ggNewStem(NULL);
 		if (mvis->vis == NULL) {
 			fprintf(stderr,
 				"display-multi: Failed to create stem for target '%s'\n",

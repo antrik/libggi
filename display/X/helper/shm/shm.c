@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.41 2006/04/28 07:41:40 cegger Exp $
+/* $Id: shm.c,v 1.42 2006/09/23 08:38:49 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -296,7 +296,7 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	stem = ggNewStem();
+	stem = ggNewStem(NULL);
 	if (stem == NULL) {
 		_ggi_xshm_free_ximage(vis);
 		return GGI_ENOMEM;

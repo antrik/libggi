@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/09/22 21:30:36 pekberg Exp $
+/* $Id: visual.c,v 1.26 2006/09/23 08:45:58 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -217,7 +217,7 @@ GGIopen(struct ggi_visual *vis,
 			priv->zrle_level = 9;
 	}
 
-	stem = ggNewStem();
+	stem = ggNewStem(NULL);
 	if (!stem) {
 		err = GGI_ENOMEM;
 		goto out_freegc;
