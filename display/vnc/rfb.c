@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.64 2006/09/23 08:45:58 cegger Exp $
+/* $Id: rfb.c,v 1.65 2006/09/23 09:05:17 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -267,15 +267,9 @@ change_pixfmt(ggi_vnc_client *client)
 		    ((client->pixfmt.blue_mask << client->pixfmt.blue_shift)
 			== 0xff000000))
 		{
-#ifdef GGI_BIG_ENDIAN
-			client->pixfmt.red_mask    = 0x00ff0000;
-			client->pixfmt.green_mask  = 0x0000ff00;
-			client->pixfmt.blue_mask   = 0x000000ff;
-#else
 			client->pixfmt.red_mask    = 0x000000ff;
 			client->pixfmt.green_mask  = 0x0000ff00;
 			client->pixfmt.blue_mask   = 0x00ff0000;
-#endif
 			client->pixfmt.size  = 24;
 			client->pixfmt.depth = 24;
 			_ggi_build_pixfmt(&client->pixfmt);
