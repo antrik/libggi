@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.6 2006/09/23 09:01:14 cegger Exp $
+/* $Id: exttest1.c,v 1.7 2006/09/23 16:03:20 cegger Exp $
 ******************************************************************************
 
    Test extension test.
@@ -41,13 +41,11 @@ main(void)
 	ggi_visual_t vis1,vis2;
 	int temp;
 	ggInit();
-	vis1 = ggNewStem(NULL);
-	ggiInit();
-	ggiAttach(vis1);
+	vis1 = ggNewStem(libggi, NULL);
 	printf("O.K.\n");
 
-	temp=ggiTest1Init();printf("Init1 : %i\n",temp);
-	temp=ggiTest1Init();printf("Init1b: %i\n",temp);
+	temp = ggiTest1Init(); printf("Init1 : %i\n",temp);
+	temp = ggiTest1Init(); printf("Init1b: %i\n",temp);
 
 	ggiOpen(vis1, "display-memory",NULL);
 	ggiSetSimpleMode(vis1, 320, 200, 1, GT_8BIT);
@@ -64,10 +62,9 @@ main(void)
 	ggiTest1Detach(vis1);
 	ggiTest1Detach(vis1);
 
-	vis2 = ggNewStem(NULL);
-	temp=ggiTest2Init();printf("Init2 : %i\n",temp);
+	vis2 = ggNewStem(libggi, NULL);
+	temp = ggiTest2Init(); printf("Init2 : %i\n",temp);
 
-	ggiAttach(vis2);
 	ggiOpen(vis2, "display-memory",NULL);
 	ggiSetSimpleMode(vis2, 320, 200, 1, GT_8BIT);
 
@@ -82,9 +79,6 @@ main(void)
 
 	ggiClose(vis1);
 	ggiClose(vis2);
-
-	ggiDetach(vis1);
-	ggiDetach(vis2);
 
 	ggiTest2Exit();
 	ggiTest2Exit();
