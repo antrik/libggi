@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2006/09/23 16:06:55 cegger Exp $
+/* $Id: visual.c,v 1.28 2006/09/23 16:14:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -217,14 +217,11 @@ GGIopen(struct ggi_visual *vis,
 			priv->zrle_level = 9;
 	}
 
-	stem = ggNewStem(NULL);
+	stem = ggNewStem(libggi, NULL);
 	if (!stem) {
 		err = GGI_ENOMEM;
 		goto out_freegc;
 	}
-	err = ggiAttach(stem);
-	if (err != GGI_OK)
-		goto out_delstem;
 
 	display_memory = malloc(22 + strlen(options[OPT_physz].result) + 1);
 	if (!display_memory) {
@@ -369,6 +366,7 @@ out_closefb:
 	ggiClose(priv->fb->stem);
 out_delstem:
 	ggDelStem(stem);
+	ggiExit();
 out_freegc:
 	free(LIBGGI_GC(vis));
 out_freepriv:
@@ -392,7 +390,7 @@ GGIclose(struct ggi_visual *vis,
 	 struct ggi_dlhandle *dlh)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
-	struct gg_stem *tmp_stem;
+	struct gg_stem *stem;
 
 	if (!priv)
 		goto skip;
@@ -410,9 +408,10 @@ GGIclose(struct ggi_visual *vis,
 	priv->sfd = -1;
 
 	if (priv->fb) {
-		tmp_stem = priv->fb->stem;
-		ggiClose(tmp_stem);
-		ggDelStem(tmp_stem);
+		stem = priv->fb->stem;
+		ggiClose(stem);
+		ggDelStem(stem);
+		ggiExit();
 	}
 
 	free(priv);

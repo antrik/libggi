@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.65 2006/09/23 09:05:17 pekberg Exp $
+/* $Id: rfb.c,v 1.66 2006/09/23 16:14:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -255,6 +255,7 @@ change_pixfmt(ggi_vnc_client *client)
 		stem = client->vis->stem;
 		ggiClose(stem);
 		ggDelStem(stem);
+		ggiExit();
 		client->vis = NULL;
 	}
 
@@ -316,27 +317,22 @@ change_pixfmt(ggi_vnc_client *client)
 	else
 		i = snprintf(target, GGI_MAX_APILEN, "display-memory");
 
-	stem = ggNewStem(NULL);
+	stem = ggNewStem(libggi, NULL);
 	if (stem == NULL) {
 		DPRINT("ggNewStem failed\n");
 		err = -1;
-		goto err0;
-	}
-	if (ggiAttach(stem) != GGI_OK) {
-		DPRINT("ggiAttach failed\n");
-		err = -1;
-		goto err1;
+		goto out;
 	}
 	if (ggiOpen(stem, target, NULL) != GGI_OK) {
 		DPRINT("ggiOpen failed\n");
 		err = -1;
-		goto err2;
+		goto del_stem;
 	}
 	client->vis = STEM_API_DATA(stem, libggi, struct ggi_visual *);
 	if (ggiSetMode(stem, &mode)) {
 		DPRINT("ggiSetMode failed\n");
 		err = -1;
-		goto err3;
+		goto close_vis;
 	}
 
 	DPRINT_MISC("fb stdformat 0x%x, cvis stdformat 0x%x\n",
@@ -348,13 +344,12 @@ change_pixfmt(ggi_vnc_client *client)
 
 	return 0;
 
-err3:
+close_vis:
 	ggiClose(stem);
-err2:
-	ggiDetach(stem);
-err1:
+del_stem:
 	ggDelStem(stem);
-err0:
+	ggiExit();
+out:
 	client->vis = NULL;
 	return err;
 }
