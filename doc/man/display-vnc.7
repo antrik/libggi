@@ -7,7 +7,7 @@
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
              [-hextile=no] [-kold] [-passwd=<pass>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-             [-stdio] [-tight] [-title=<title>] [-zlib=<level>|no]
+             [-stdio] [-tight=no] [-title=<title>] [-zlib=<level>|no]
              [-zrle=<level>|no]
 .fi
 
@@ -50,7 +50,7 @@ Disables the hextile encoding.
 \f(CW-kold\fR
 Kill On Last Disconnect. This option ends the application when the last
 client disconnects. It can be useful in conjunction with the \fI-client\fR,
-\fI-stdio\fR and :p:\f(CW-server=stdio\fR options so that the application does
+\fI-stdio\fR and \fI-server=stdio\fR options so that the application does
 not linger without any user feedback.
 
 .TP
@@ -83,14 +83,14 @@ option.
 \f(CW-stdio\fR
 Talk the RFB protocol on stdin/stdout instead of waiting for clients
 to connect. Suitable for serving a GGI application as an inetd(8)
-:p:\f(CWnowait\fR type service. One requirement though, is that the served
+\fInowait\fR type service. One requirement though, is that the served
 GGI application does not "chatter" on stdout and/or stderr.
 The \fI-stdio\fR option is incompatible with the \fI-server=stdio\fR
 option.
 
 .TP
-\f(CW-tight\fR
-Enables the tight encoding.
+\f(CW-tight=no\fR
+Disables the tight encoding.
 
 .TP
 \f(CW-title=<title>\fR
@@ -115,9 +115,8 @@ compromize between speed and compression is selected.
 .SH FEATURES
 .IP \(bu 4
 Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
-encoding is only used for panning. The tight encoding only has sensible
-support for 8 and 24 bits per pixel clients, which is why it is disabled
-by default.
+encoding is only used for panning. The tight encoding does not have
+JPEG support for all client bit depths (only 24).
 .IP \(bu 4
 Multiple simultaneous clients.
 .IP \(bu 4
