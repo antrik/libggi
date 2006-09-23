@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.22 2006/03/27 13:10:42 pekberg Exp $
+/* $Id: cube3d.c,v 1.23 2006/09/23 09:11:12 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -742,7 +742,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 
 	if (vis == NULL) {
 		fprintf(stderr,
@@ -867,7 +867,7 @@ int main(int argc, char **argv)
 		 */
 		sprintf(text, "display-memory:-input:shmid:%d", shmid[x]);
 
-		if ((memvis[x] = ggNewStem()) == NULL) {
+		if ((memvis[x] = ggNewStem(NULL)) == NULL) {
 			ggPanic("Ouch - can't create shmem stem %d !",
 				 x);
 		}

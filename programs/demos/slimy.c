@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.11 2006/03/27 14:50:34 pekberg Exp $
+/* $Id: slimy.c,v 1.12 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -222,7 +222,7 @@ static void InitGraphics(void)
 		exit(1);
 	}
 
-	if (!(disp = ggNewStem())) {
+	if (!(disp = ggNewStem(NULL))) {
 		ggPanic("Unable to create stem, exiting.\n");
 	}
 

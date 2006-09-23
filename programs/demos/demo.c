@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.29 2006/09/10 08:28:02 cegger Exp $
+/* $Id: demo.c,v 1.30 2006/09/23 09:11:12 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -421,7 +421,7 @@ int main(int argc, char **argv)
 
 	/* Create a new stem
 	 */
-	if((vis = ggNewStem()) == NULL) {
+	if((vis = ggNewStem(NULL)) == NULL) {
 		fprintf(stderr, "%s: unable to create new stem, exiting.\n",
 			argv[0]);
 		exit(1);
@@ -718,7 +718,7 @@ int main(int argc, char **argv)
 	 * in memory. You can draw on it as you would on a screen.
 	 * Nifty for preparing things in the background.
 	 */
-	if ((memvis = ggNewStem()) == NULL)
+	if ((memvis = ggNewStem(NULL)) == NULL)
 		goto no_mem_targ;
 
 	/* Bless that stem with the LibGGI API.

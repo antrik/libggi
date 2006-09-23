@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.11 2006/04/08 08:37:59 cegger Exp $
+/* $Id: textdemo.c,v 1.12 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 			argv[0]);
 		exit(1);
 	}
-	if ((vis = ggNewStem()) == NULL) {
+	if ((vis = ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"%s: unable to create stem, exiting.\n",
 			argv[0]);

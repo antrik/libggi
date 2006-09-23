@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.14 2006/03/27 13:10:43 pekberg Exp $
+/* $Id: flying_ggis.c,v 1.15 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -467,7 +467,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-        vis = ggNewStem();
+        vis = ggNewStem(NULL);
 
         if (vis == NULL) {
                 ggPanic("Failed to open visual.\n");

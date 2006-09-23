@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.12 2006/08/07 20:18:49 pekberg Exp $
+/* $Id: pageflip.c,v 1.13 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (!vis) {
 		fprintf(stderr, "Cannot open create stem!\n");
 		ggiExit();

@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.13 2006/03/27 14:50:34 pekberg Exp $
+/* $Id: saver.c,v 1.14 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -478,7 +478,7 @@ static void blank_screen2(int interactive)
 	int c;
 	char hlpbuf[128];
 
-	if ((visual = ggNewStem()) == NULL) {
+	if ((visual = ggNewStem(NULL)) == NULL) {
 		fprintf(stderr, "cannot create stem.\n");
 		exit(1);
 	}
@@ -614,7 +614,7 @@ int main(int argc, char *argv[])
 			if ((ic2 = getic()) == ic) {
 				if (++cnt >= timeout) {
 					if ((visual =
-					     ggNewStem()) == NULL) {
+					     ggNewStem(NULL)) == NULL) {
 						ggPanic
 						    ("cannot create stem.\n");
 					}

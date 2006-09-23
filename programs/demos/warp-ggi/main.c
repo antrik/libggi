@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.9 2006/03/27 11:39:40 pekberg Exp $
+/* $Id: main.c,v 1.10 2006/09/23 09:07:25 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 				fail("Error initializing LibGII.\n");
 				break;
 			}
-			if (!(disp = ggNewStem())) {
+			if (!(disp = ggNewStem(NULL))) {
 				ggiExit();
 				giiExit();
 				fail("Error creating stem.\n");

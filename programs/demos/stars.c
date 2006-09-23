@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.10 2006/04/08 08:37:59 cegger Exp $
+/* $Id: stars.c,v 1.11 2006/09/23 09:11:15 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -278,7 +278,7 @@ ggi_visual_t InitVisual(const char *visname)
 {
 	ggi_visual_t newvis;
 
-	if ((newvis = ggNewStem()) == NULL) {
+	if ((newvis = ggNewStem(NULL)) == NULL) {
 		return NULL;
 	}
 	if (giiAttach(newvis) < 0) {
