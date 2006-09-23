@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/09/22 05:51:26 cegger Exp $
+/* $Id: visual.c,v 1.19 2006/09/23 06:03:11 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -392,7 +392,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT("Parsing phyzs options.\n");
 	do {
 		int err;
-		err = _ggi_physz_parse_option(option[OPT_PHYSZ].result,
+		err = _ggi_physz_parse_option(options[OPT_PHYSZ].result,
 					&(priv->physzflags), &(priv->physz));
 		if (err != GGI_OK) {
 			do_cleanup(vis);
@@ -420,11 +420,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Open keyboard and mouse input */
 	if (priv->inputs & INP_KBD) {
 		struct gg_module *inp;
-		char *inputstr = "input-vgl";
 
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
-					inputstr, NULL, NULL);
+					"input-vgl", NULL, NULL);
 			if (inp == NULL) {
 				fprintf(stderr,
 "display-vgl: Unable to open vgl, trying stdin input.\n");
