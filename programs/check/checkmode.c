@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.10 2006/03/21 12:38:16 pekberg Exp $
+/* $Id: checkmode.c,v 1.11 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -505,7 +505,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.10 2006/03/21 12:38:16 pekberg Exp $\n");
+	printf("$Id: checkmode.c,v 1.11 2006/09/23 09:05:22 cegger Exp $\n");
 	exit(0);
 }
 
@@ -571,7 +571,7 @@ int main(int argc, char **argv)
 			argv[0]);
 		exit(1);
 	}
-	if ((vis=ggNewStem()) == NULL) {
+	if ((vis=ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"%s: unable to create stem, exiting.\n",
 			argv[0]);

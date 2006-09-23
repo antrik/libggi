@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.5 2006/03/20 17:51:21 pekberg Exp $
+/* $Id: exttest1.c,v 1.6 2006/09/23 09:01:14 cegger Exp $
 ******************************************************************************
 
    Test extension test.
@@ -41,7 +41,7 @@ main(void)
 	ggi_visual_t vis1,vis2;
 	int temp;
 	ggInit();
-	vis1 = ggNewStem();
+	vis1 = ggNewStem(NULL);
 	ggiInit();
 	ggiAttach(vis1);
 	printf("O.K.\n");
@@ -64,7 +64,7 @@ main(void)
 	ggiTest1Detach(vis1);
 	ggiTest1Detach(vis1);
 
-	vis2 = ggNewStem();
+	vis2 = ggNewStem(NULL);
 	temp=ggiTest2Init();printf("Init2 : %i\n",temp);
 
 	ggiAttach(vis2);

@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.12 2006/04/08 08:34:02 cegger Exp $
+/* $Id: showaccel.c,v 1.13 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    showaccel.c
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 			argv[0]);
 		exit(1);
 	}
-	if ((vis=ggNewStem()) == NULL) {
+	if ((vis=ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"%s: unable to create stem, exiting.\n",
 			argv[0]);

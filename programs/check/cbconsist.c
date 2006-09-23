@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.20 2006/03/22 04:04:05 pekberg Exp $
+/* $Id: cbconsist.c,v 1.21 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -252,7 +252,7 @@ static int mkmemvis(int i, const char **str,
 	if (i > MAX_MEMVIS_FMTS - 1)
 		return -1;
 	*str = memvis_fmts[i];
-	if ((*vis=ggNewStem()) == NULL) {
+	if ((*vis=ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"unable to create stem, exiting.\n");
 		return -1;
@@ -363,7 +363,7 @@ int main(int argc, char **argv)
 		BAILOUT("Unable to initialize LibGGI, exiting.\n", err0);
 
 	if (s.flags & CBC_REALSRC) {
-		if ((s.svis=ggNewStem()) == NULL)
+		if ((s.svis=ggNewStem(NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err1);
 		if (ggiAttach(s.svis) < 0)
 			BAILOUT("unable to attach ggi api, exiting.\n", err2);
@@ -386,7 +386,7 @@ int main(int argc, char **argv)
 	}
 
 	if (s.flags & CBC_REALDST) {
-		if ((s.dvis=ggNewStem()) == NULL)
+		if ((s.dvis=ggNewStem(NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err2);
 		if (ggiAttach(s.dvis) < 0)
 			BAILOUT("unable to attach ggi api, exiting.\n", err3);

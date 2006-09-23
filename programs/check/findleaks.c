@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.13 2006/03/21 12:38:16 pekberg Exp $
+/* $Id: findleaks.c,v 1.14 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 	acurr = _get_ggi_alloced();
 	inform_mem("\nggiInit()\n", prev, curr, aprev, acurr);
 
-	if ((vis = ggNewStem()) == NULL)
+	if ((vis = ggNewStem(NULL)) == NULL)
 		err("first ggNewStem() failed!\n");
 
 	prev = get_size();
@@ -161,7 +161,7 @@ main(int argc, char *argv[])
 		putchar('.');
 		fflush(stdout);
 		ggDelStem(vis);
-		if ((vis = ggNewStem()) == NULL)
+		if ((vis = ggNewStem(NULL)) == NULL)
 			err("ggNewStem() number %d failed\n", i);
 	}
 	curr = get_size();

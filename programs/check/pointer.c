@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.7 2006/09/17 21:43:11 pekberg Exp $
+/* $Id: pointer.c,v 1.8 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -65,7 +65,7 @@ main(int argc, char **argv)
 		goto out;
 	}
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (!vis) {
 		fprintf(stderr, "%s: unable to creat stem, exiting.\n",
 			argv[0]);

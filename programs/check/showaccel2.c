@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.12 2006/04/08 08:34:02 cegger Exp $
+/* $Id: showaccel2.c,v 1.13 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 			argv[0]);
 		exit(1);
 	}
-	if ((vis=ggNewStem()) == NULL) {
+	if ((vis=ggNewStem(NULL)) == NULL) {
 		ggiExit();
 		giiExit();
 		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",

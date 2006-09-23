@@ -1,4 +1,4 @@
-/* $Id: palette.c,v 1.3 2006/03/22 04:45:59 pekberg Exp $
+/* $Id: palette.c,v 1.4 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    This is a test program for palette handling.
@@ -35,7 +35,7 @@ static void testcase1(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	printassert(vis != NULL, "ggNewStem() failed\n");
 
 	err = ggiAttach(vis);

@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.7 2006/03/22 04:04:05 pekberg Exp $
+/* $Id: structs.c,v 1.8 2006/09/23 09:05:23 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -177,7 +177,7 @@ static int setup_mode(void)
 	const ggi_directbuffer *buf;
 	ggi_mode gmode;
 
-	if ((visual=ggNewStem()) == NULL) {
+	if ((visual=ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"unable to create stem, exiting.\n");
 		return -1;

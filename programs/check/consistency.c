@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.9 2006/03/22 04:04:05 pekberg Exp $
+/* $Id: consistency.c,v 1.10 2006/09/23 09:05:22 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -619,7 +619,7 @@ static int setup_mode(void)
 	ggi_color map[256];
 	ggi_mode gmode;
 
-	if ((mode.vis=ggNewStem()) == NULL) {
+	if ((mode.vis=ggNewStem(NULL)) == NULL) {
 		fprintf(stderr,
 			"unable to create stem, exiting.\n");
 		exit(1);
