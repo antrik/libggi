@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2338 2006/09/12 18:02:31) 2.1a
+# ltmain.sh (GNU libtool 1.2345 2006/09/20 19:08:21) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2338 2006/09/12 18:02:31) 2.1a
+#       $progname:		(GNU libtool 1.2345 2006/09/20 19:08:21) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2338 2006/09/12 18:02:31"
-package_revision=1.2338
+TIMESTAMP=" 1.2345 2006/09/20 19:08:21"
+package_revision=1.2345
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -1680,7 +1680,7 @@ func_mode_compile ()
     *.class) xform=class ;;
     *.cpp) xform=cpp ;;
     *.cxx) xform=cxx ;;
-    *.f90) xform=f90 ;;
+    *.f9?) xform=f9. ;;
     *.for) xform=for ;;
     *.java) xform=java ;;
     *.obj) xform=obj ;;
@@ -7141,7 +7141,7 @@ func_mode_uninstall ()
       *.la)
 	# Possibly a libtool archive, so verify it.
 	if func_lalib_p "$file"; then
-	  . $dir/$name
+	  func_source $dir/$name
 
 	  # Delete the libtool libraries and symlinks.
 	  for n in $library_names; do
@@ -7179,7 +7179,7 @@ func_mode_uninstall ()
 	if func_lalib_p "$file"; then
 
 	  # Read the .lo file
-	  . $dir/$name
+	  func_source $dir/$name
 
 	  # Add PIC object to the list of files to remove.
 	  if test -n "$pic_object" &&
@@ -7212,7 +7212,7 @@ func_mode_uninstall ()
 	  # Do a test to see if this is a libtool program.
 	  if func_ltwrapper_p "$file"; then
 	    relink_command=
-	    . $dir/$noexename
+	    func_source $dir/$noexename
 
 	    # note $name still contains .exe if it was in $file originally
 	    # as does the version of $file that was added into $rmfiles
