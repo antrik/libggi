@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.33 2006/09/23 16:08:53 cegger Exp $
+/* $Id: buffer.c,v 1.34 2006/09/24 18:09:48 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -199,10 +199,8 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 
 	_ggi_x_freefb(vis);
 
-	priv->fb = malloc(GT_ByPPP(
-				LIBGGI_VIRTX(vis)*
-				LIBGGI_VIRTY(vis)*
-				LIBGGI_MODE(vis)->frames,LIBGGI_GT(vis)));
+	priv->fb = malloc(GT_ByPPP(LIBGGI_VIRTX(vis),LIBGGI_GT(vis))
+			* LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
 	if (priv->fb == NULL) return GGI_ENOMEM;
 
 	/* We assume LIBGGI_MODE(vis) structure has already been filled out */

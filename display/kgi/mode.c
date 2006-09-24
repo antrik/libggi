@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2006/03/22 20:22:27 cegger Exp $
+/* $Id: mode.c,v 1.29 2006/09/24 18:09:48 pekberg Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -497,7 +497,7 @@ int GGI_kgi_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 
 		/* Most targets benefit from or require page-aligned frames. */
 		virty = mode.virt.y;
-		pad = GT_ByPPP(mode.virt.y * mode.virt.x, tm->graphtype);
+		pad = GT_ByPPP(mode.virt.x, tm->graphtype) * mode.virt.y;
 		if (pad & 4095) { pad /= 4096; pad++; pad *= 4096; }
 		pad *= frames;
 		mode.virt.y = pad / GT_ByPPP(mode.virt.x, tm->graphtype);

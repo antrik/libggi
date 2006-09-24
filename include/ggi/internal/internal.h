@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.35 2006/09/09 11:49:10 cegger Exp $
+/* $Id: internal.h,v 1.36 2006/09/24 18:09:49 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -227,7 +227,7 @@ __END_DECLS
 #define LIBGGI_VIRTY(vis)	(LIBGGI_MODE(vis)->virt.y)
 #define LIBGGI_GT(vis)		(LIBGGI_MODE(vis)->graphtype)
 
-#define LIBGGI_FB_SIZE(mode)	(GT_ByPPP((mode)->virt.x * (mode)->virt.y, (mode)->graphtype))
+#define LIBGGI_FB_SIZE(mode)	(GT_ByPPP((mode)->virt.x, (mode)->graphtype) * (mode)->virt.y)
 #define LIBGGI_FB_R_STRIDE(vis)	((vis)->r_frame->buffer.plb.stride)
 #define LIBGGI_FB_W_STRIDE(vis)	((vis)->w_frame->buffer.plb.stride)
 
