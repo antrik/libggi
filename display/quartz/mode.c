@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2006/08/27 22:31:53 cegger Exp $
+/* $Id: mode.c,v 1.18 2006/09/24 09:01:38 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -184,8 +184,8 @@ int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 	mode.visible.x = width;
 	mode.visible.y = height;
 
-	fb_size = GT_ByPPP(mode.visible.x * mode.visible.y * mode.frames,
-			mode.graphtype);
+	fb_size = GT_ByPPP(mode.visible.x, mode.graphtype)
+			* mode.visible.y * mode.frames;
 
 	if (manualrefresh) {
 		fb = realloc(priv->fb, fb_size);
