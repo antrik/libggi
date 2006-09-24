@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.12 2006/09/20 09:29:36 pekberg Exp $
+/* $Id: raw.c,v 1.13 2006/09/24 18:10:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -138,7 +138,8 @@ GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)
 	}
 	else {
 		memcpy(buf, 
-			(uint8_t *)db->read + GT_ByPPP(LIBGGI_VIRTX(cvis) * vupdate.tl.y, gt),
+			(uint8_t *)db->read + GT_ByPPP(LIBGGI_VIRTX(cvis), gt)
+				* vupdate.tl.y,
 			count * bpp);
 	}
 
