@@ -113,8 +113,7 @@ Features
 --------
 
 - Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
-  encoding is only used for panning. The tight encoding does not have
-  JPEG support for all client bit depths (only 24).
+  encoding is only used for panning.
 - Multiple simultaneous clients.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).

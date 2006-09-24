@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.10 2006/09/22 21:20:16 pekberg Exp $
+/* $Id: tight.c,v 1.11 2006/09/24 21:42:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -212,7 +212,7 @@ select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
 
 	/* too many colors for anything but raw/jpeg/gradient */
 	if (!colors) {
-		if (cbpp == 3 && xs >= 16 && ys >= 16 && *best > 3000)
+		if (cbpp > 1 && xs >= 16 && ys >= 16 && *best > 3000)
 			subencoding = TIGHT_JPEG;
 		return subencoding;
 	}
@@ -465,6 +465,63 @@ raw_32(uint8_t *dst, uint8_t *src8, int xs, int ys, int stride, int rev)
 	return dst;
 }
 
+static inline void
+crossblit_row_16(ggi_pixelformat *pixfmt, uint8_t *dst, uint16_t *src, int xs)
+{
+	while (xs--) {
+		/* should fix lower order bits to be nonzero for
+		 * bright colors.
+		 */
+		*dst++ = ((*src & pixfmt->red_mask)
+			<< pixfmt->red_shift) >> 24;
+		*dst++ = ((*src & pixfmt->green_mask)
+			<< pixfmt->green_shift) >> 24;
+		*dst++ = ((*src++ & pixfmt->blue_mask)
+			<< pixfmt->blue_shift) >> 24;
+	}
+}
+
+static inline void
+crossblit_row_32(ggi_pixelformat *pixfmt, uint8_t *dst, uint32_t *src, int xs)
+{
+	while (xs--) {
+		*dst++ = ((*src & pixfmt->red_mask)
+			<< pixfmt->red_shift) >> 24;
+		*dst++ = ((*src & pixfmt->green_mask)
+			<< pixfmt->green_shift) >> 24;
+		*dst++ = ((*src++ & pixfmt->blue_mask)
+			<< pixfmt->blue_shift) >> 24;
+	}
+}
+
+static uint8_t *
+jpeg_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
+	uint8_t *src8, int xs, int ys, int stride)
+{
+	uint16_t *src = (uint16_t *)src8;
+	int y;
+
+	GGI_vnc_buf_reserve(&ctx->work[1], xs * 3);
+
+	ctx->cinfo.image_width = xs;
+	ctx->cinfo.image_height = ys;
+	ctx->cinfo.input_components = 3;
+	ctx->cinfo.in_color_space = JCS_RGB;
+	jpeg_set_defaults(&ctx->cinfo);
+	jpeg_set_quality(&ctx->cinfo, ctx->jpeg_quality, TRUE);
+	jpeg_start_compress(&ctx->cinfo, TRUE);
+
+	for (y = 0; y < ys; ++y) {
+		crossblit_row_16(pixfmt, ctx->work[1].buf, src, xs);
+		jpeg_write_scanlines(&ctx->cinfo, &ctx->work[1].buf, 1);
+		src += stride;
+	}
+
+	jpeg_finish_compress(&ctx->cinfo);
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
 static uint8_t *
 jpeg_888(struct tight_ctx_t *ctx, uint8_t *src, int xs, int ys, int stride)
 {
@@ -482,6 +539,34 @@ jpeg_888(struct tight_ctx_t *ctx, uint8_t *src, int xs, int ys, int stride)
 
 	for (y = 0; y < ys; ++y) {
 		jpeg_write_scanlines(&ctx->cinfo, &src, 1);
+		src += stride;
+	}
+
+	jpeg_finish_compress(&ctx->cinfo);
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
+static uint8_t *
+jpeg_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
+	uint8_t *src8, int xs, int ys, int stride)
+{
+	uint32_t *src = (uint32_t *)src8;
+	int y;
+
+	GGI_vnc_buf_reserve(&ctx->work[1], xs * 3);
+
+	ctx->cinfo.image_width = xs;
+	ctx->cinfo.image_height = ys;
+	ctx->cinfo.input_components = 3;
+	ctx->cinfo.in_color_space = JCS_RGB;
+	jpeg_set_defaults(&ctx->cinfo);
+	jpeg_set_quality(&ctx->cinfo, ctx->jpeg_quality, TRUE);
+	jpeg_start_compress(&ctx->cinfo, TRUE);
+
+	for (y = 0; y < ys; ++y) {
+		crossblit_row_32(pixfmt, ctx->work[1].buf, src, xs);
+		jpeg_write_scanlines(&ctx->cinfo, &ctx->work[1].buf, 1);
 		src += stride;
 	}
 
@@ -758,7 +843,7 @@ tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 }
 
 static void
-tile_16(struct tight_ctx_t *ctx, uint8_t **buf,
+tile_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride, int rev)
 {
 	uint8_t *dst;
@@ -778,12 +863,10 @@ tile_16(struct tight_ctx_t *ctx, uint8_t **buf,
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
 
-	/* TODO
 	if (subencoding == TIGHT_JPEG) {
-		*buf = jpeg_16(ctx, src, xs, ys, stride);
+		*buf = jpeg_16(ctx, pixfmt, src, xs, ys, stride);
 		return;
 	}
-	*/
 
 	if (subencoding == TIGHT_RAW) {
 		*buf = raw_16(dst, src, xs, ys, stride, rev);
@@ -883,7 +966,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 }
 
 static void
-tile_32(struct tight_ctx_t *ctx, uint8_t **buf,
+tile_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	uint8_t *src, int xs, int ys, int stride, int rev)
 {
 	uint8_t *dst;
@@ -903,12 +986,10 @@ tile_32(struct tight_ctx_t *ctx, uint8_t **buf,
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
 
-	/* TODO
 	if (subencoding == TIGHT_JPEG) {
-		*buf = jpeg_32(ctx, src, xs, ys, stride);
+		*buf = jpeg_32(ctx, pixfmt, src, xs, ys, stride);
 		return;
 	}
-	*/
 
 	if (subencoding == TIGHT_RAW) {
 		*buf = raw_32(dst, src, xs, ys, stride, rev);
@@ -993,7 +1074,7 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 			ggi_rect_width(update), ggi_rect_height(update),
 			stride);
 	else if (bpp == 2)
-		tile_16(ctx, &buf, (uint8_t *)db->read +
+		tile_16(ctx, LIBGGI_PIXFMT(cvis), &buf, (uint8_t *)db->read +
 			(update->tl.y * stride + update->tl.x) * bpp,
 			ggi_rect_width(update), ggi_rect_height(update),
 			stride, client->reverse_endian);
@@ -1003,7 +1084,7 @@ tile(ggi_vnc_client *client, struct ggi_visual *cvis,
 			ggi_rect_width(update), ggi_rect_height(update),
 			stride);
 	else
-		tile_32(ctx, &buf, (uint8_t *)db->read +
+		tile_32(ctx, LIBGGI_PIXFMT(cvis), &buf, (uint8_t *)db->read +
 			(update->tl.y * stride + update->tl.x) * bpp,
 			ggi_rect_width(update), ggi_rect_height(update),
 			stride, client->reverse_endian);
