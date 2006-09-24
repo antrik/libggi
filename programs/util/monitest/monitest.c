@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.14 2006/09/24 08:12:37 cegger Exp $
+/* $Id: monitest.c,v 1.15 2006/09/24 08:21:52 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -56,6 +56,9 @@
 #define is_kgicondev(x) (0)
 #define kgitune(x)	do{}while(0)
 #endif
+
+
+#define __UNCONST(a)	((void *)(uintptr_t)(const void *)(a))
 
 static ggi_visual_t vis;
 static int kgidevice;
@@ -261,7 +264,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.14 2006/09/24 08:12:37 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.15 2006/09/24 08:21:52 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -401,13 +404,13 @@ static int changeresmenu(void)
 	cm.w.title = " Change Screen resolution ";
 
 	cm.lastentry = 8;
-	cm.entry[0].text = "1 Increase X";
-	cm.entry[1].text = "2 Decrease X";
-	cm.entry[2].text = "3 Increase Y";
-	cm.entry[3].text = "4 Decrease Y";
-	cm.entry[8].text = "9 Back";
+	cm.entry[0].text = __UNCONST("1 Increase X");
+	cm.entry[1].text = __UNCONST("2 Decrease X");
+	cm.entry[2].text = __UNCONST("3 Increase Y");
+	cm.entry[3].text = __UNCONST("4 Decrease Y");
+	cm.entry[8].text = __UNCONST("9 Back");
 
-	sprintf(bottom, "  ");
+	snprintf(bottom, sizeof(bottom), "  ");
 
 	for (;;) {
 
@@ -529,18 +532,18 @@ static int mainmenu(void)
 	default_menu(&mainm, vis);
 	mainm.w.title = " * Main menu * ";
 
-	mainm.entry[0].text = "1 Geometry and Colors";
-	mainm.entry[1].text = "2 Convergence";
-	mainm.entry[2].text = "3 Resolution";
-	mainm.entry[3].text = "4 Moiree";
-	mainm.entry[4].text = "5 Change Resolution";
-	mainm.entry[5].text = "6 Flat panel check";
+	mainm.entry[0].text = __UNCONST("1 Geometry and Colors");
+	mainm.entry[1].text = __UNCONST("2 Convergence");
+	mainm.entry[2].text = __UNCONST("3 Resolution");
+	mainm.entry[3].text = __UNCONST("4 Moiree");
+	mainm.entry[4].text = __UNCONST("5 Change Resolution");
+	mainm.entry[5].text = __UNCONST("6 Flat panel check");
 	if (kgidevice) {
-		mainm.entry[6].text = "7 Tune KGIcon monitor timings";
-		mainm.entry[7].text = "8 Exit";
+		mainm.entry[6].text = __UNCONST("7 Tune KGIcon monitor timings");
+		mainm.entry[7].text = __UNCONST("8 Exit");
 		mainm.lastentry = 7;
 	} else {
-		mainm.entry[6].text = "7 Exit";
+		mainm.entry[6].text = __UNCONST("7 Exit");
 		mainm.lastentry = 6;
 	}
 
