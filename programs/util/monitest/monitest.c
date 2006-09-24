@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.12 2006/03/27 19:46:31 pekberg Exp $
+/* $Id: monitest.c,v 1.13 2006/09/24 08:10:48 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -261,7 +261,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.12 2006/03/27 19:46:31 pekberg Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.13 2006/09/24 08:10:48 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -618,17 +618,9 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	vis = ggNewStem();
+	vis = ggNewStem(libgii, libggi, NULL);
 	if (vis == NULL) {
 		ggPanic("unable to create stem, exiting.\n");
-	}
-
-	if (giiAttach(vis) < 0) {
-		ggPanic("unable to attach LibGII, exiting.\n");
-	}
-
-	if (ggiAttach(vis) < 0) {
-		ggPanic("unable to attach LibGGI, exiting.\n");
 	}
 
 	if (ggiOpen(vis, NULL) < 0) { /* Null gives the default visual */
