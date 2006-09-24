@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.201 2006/09/18 22:57:53 pekberg Exp $
+dnl $Id: configure.in,v 1.202 2006/09/24 15:26:28 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -1328,11 +1328,6 @@ GGI_CHECK_TARGET(display-tele, build_tele_target,
 		BUILTIN_DISPLAY_TELE)
 
 
-GGI_CHECK_TARGET(display-vnc, build_vnc_target,
-		DISPLAYSUBDIRS, DISPLAYMODULES, vnc, vnc.la,
-		BUILTIN_DISPLAY_VNC)
-
-
 GGI_CHECK_TARGET(display-terminfo, build_terminfo_target,
 		DISPLAYSUBDIRS, DISPLAYMODULES, terminfo, terminfo.la,
 		BUILTIN_DISPLAY_TERMINFO)
@@ -1355,6 +1350,12 @@ GGI_CHECK_TARGET(display-trueemu, build_trueemu_target,
 GGI_CHECK_TARGET(display-vcsa, build_vcsa_target,
 		DISPLAYSUBDIRS, DISPLAYMODULES, vcsa, vcsa.la,
 		BUILTIN_DISPLAY_VCSA)
+
+
+GGI_CHECK_TARGET(display-vnc, build_vnc_target,
+		DISPLAYSUBDIRS, DISPLAYMODULES, vnc, vnc.la,
+		BUILTIN_DISPLAY_VNC)
+
 
 GGI_CHECK_TARGET(helper-linvtsw, build_linvtsw_helper,
 		DISPLAYSUBDIRS, DISPLAYMODULES, linvtsw, linvtsw.la,
@@ -1555,7 +1556,6 @@ display/X/helper/shm/Makefile
 display/aa/Makefile
 display/common/Makefile
 display/directx/Makefile
-display/quartz/Makefile
 display/fbdev/Makefile
 display/file/Makefile
 display/glide/Makefile
@@ -1567,11 +1567,12 @@ display/linvtsw/Makefile
 display/mansync/Makefile
 display/memory/Makefile
 display/palemu/Makefile
+display/quartz/Makefile
 display/sub/Makefile
 display/svgalib/Makefile
+display/tele/Makefile
 display/vgl/Makefile
 display/wsfb/Makefile
-display/tele/Makefile
 display/vnc/Makefile
 display/terminfo/Makefile
 display/tile/Makefile
