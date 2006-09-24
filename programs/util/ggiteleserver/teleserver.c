@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.2 2006/03/27 19:46:30 pekberg Exp $
+/* $Id: teleserver.c,v 1.3 2006/09/24 08:05:38 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -118,37 +118,16 @@ static void handle_connection(void)
 		return;
 	}
 
-	vis = ggNewStem();
-
+	vis = ggNewStem(libgii, libggi, NULL);
 	if (vis == NULL) {
-		fprintf(stderr, "teleserver: Couldn't create stem.\n");
-		ggiExit();
-		giiExit();
-		exit(2);
-	}
-
-	if (giiAttach(vis) < 0) {
-		fprintf(stderr, "teleserver: Couldn't attach LibGII.\n");
-		ggDelStem(vis);
-		ggiExit();
-		giiExit();
-		exit(2);
-	}
-
-	if (ggiAttach(vis) < 0) {
-		fprintf(stderr, "teleserver: Couldn't attach LibGGI.\n");
-		ggDelStem(vis);
-		ggiExit();
-		giiExit();
-		exit(2);
+		fprintf(stderr, "teleserver: Couldn't create stem with libgii and libggi.\n");
+		goto err;
 	}
 
 	if (ggiOpen(vis, target_name, NULL) < 0) {
 		fprintf(stderr, "teleserver: Couldn't open GGI visual.\n");
 		ggDelStem(vis);
-		ggiExit();
-		giiExit();
-		exit(2);
+		goto err;
 	}
 
 	if (tserver_open(&serv, u) < 0) {
@@ -158,6 +137,12 @@ static void handle_connection(void)
 	}
 
 	user = u;
+
+
+err:
+	ggiExit();
+	giiExit();
+	exit(2);
 }
 
 /* pretty crap. oh well */
