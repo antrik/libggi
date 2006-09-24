@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.16 2006/09/15 23:18:35 pekberg Exp $
+/* $Id: inputdump.c,v 1.17 2006/09/24 21:32:11 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -826,46 +826,16 @@ int main(int argc, char **argv)
 
 	/* setup graphics mode */
 
-	if (giiInit() != 0) {
-		fprintf(stderr, "Unable to initialize LibGII, exiting.\n");
-		exit(1);
-	}
-
-	if (ggiInit() != 0) {
-		fprintf(stderr, "Unable to initialize LibGGI, exiting.\n");
-		exit(1);
-	}
-
-	vis = ggNewStem();
+	vis = ggNewStem(libgii, libggi, NULL);
 
 	if (vis == NULL) {
 		fprintf(stderr, "Failed to create stem.\n");
-		ggiExit();
-		giiExit();
-		exit(1);
-	}
-
-	if (giiAttach(vis) < 0) {
-		fprintf(stderr, "Failed to attach libgii to stem.\n");
-		ggDelStem(vis);
-		ggiExit();
-		giiExit();
-		exit(1);
-	}
-
-	if (ggiAttach(vis) < 0) {
-		fprintf(stderr, "Failed to attach libgii to stem.\n");
-		ggDelStem(vis);
-		ggiExit();
-		giiExit();
 		exit(1);
 	}
 
 	if (ggiOpen(vis, target_str, NULL) < 0) {
 		fprintf(stderr, "Failed to open visual.\n");
 		ggDelStem(vis);
-		ggiExit();
-		giiExit();
 		exit(1);
 	}
 
@@ -876,8 +846,6 @@ int main(int argc, char **argv)
 	if (ggiSetMode(vis, &vis_mode) < 0) {
 		fprintf(stderr, "Could not set mode.\n");
 		ggDelStem(vis);
-		ggiExit();
-		giiExit();
 		exit(1);
 	}
 
@@ -927,8 +895,6 @@ int main(int argc, char **argv)
 
 	ggiClose(vis);
 	ggDelStem(vis);
-	ggiExit();
-	giiExit();
 
 	exit(0);
 }

@@ -1,4 +1,4 @@
-/* $Id: mapcolor.c,v 1.3 2006/03/28 07:21:22 pekberg Exp $
+/* $Id: mapcolor.c,v 1.4 2006/09/24 21:31:05 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for color (un)mapping
@@ -49,14 +49,8 @@ static void testcase1(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -81,7 +75,6 @@ static void testcase1(const char *desc)
 	ggiUnmapPixel(vis, blue_pixel, &blue_color2);
 
 	ggDelStem(vis);
-	ggiExit();
 
 
 	fprintf(stderr, "white_color: %X,%X,%X  , white_pixel: %X , white_color2: %X,%X,%X\n",

@@ -1,4 +1,4 @@
-/* $Id: mansync.inc.c,v 1.5 2006/03/28 07:17:08 pekberg Exp $
+/* $Id: mansync.inc.c,v 1.6 2006/09/24 21:31:05 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for correct mansync usage.
@@ -43,15 +43,9 @@ static void testcase1(const char *desc)
 	if (dontrun) return;
 
 
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	if (vis == NULL) {
 		printfailure("Couldn't create stem for %s", DISPLAYSTR);
-		return;
-	}
-
-	ret = ggiAttach(vis);
-	if (ret != 0) {
-		printfailure("Couldn't attach LibGGI to %s stem", DISPLAYSTR);
 		return;
 	}
 
@@ -146,7 +140,6 @@ static void testcase1(const char *desc)
 
 exit_testcase:
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;

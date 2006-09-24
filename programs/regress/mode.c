@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2006/03/28 07:37:53 pekberg Exp $
+/* $Id: mode.c,v 1.14 2006/09/24 21:31:05 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -42,14 +42,8 @@ static void testcase1(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -100,7 +94,6 @@ static void testcase1(const char *desc)
 
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;
@@ -117,14 +110,8 @@ static void testcase2(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -139,7 +126,6 @@ static void testcase2(const char *desc)
 	}
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;
@@ -156,14 +142,8 @@ static void testcase3(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -172,7 +152,6 @@ static void testcase3(const char *desc)
 	printassert(err == GGI_OK, "frames are apparently not supported\n");
 	if (err != GGI_OK) {
 		ggDelStem(vis);
-		ggiExit();
 		printsuccess();
 		return;
 	}
@@ -185,7 +164,6 @@ static void testcase3(const char *desc)
 	}
 
 	ggDelStem(vis);
-	ggiExit();
 
 
 	printsuccess();
@@ -203,14 +181,8 @@ static void testcase4(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -220,7 +192,6 @@ static void testcase4(const char *desc)
 	printassert(err == GGI_OK, "ggiCheckSimpleMode: can't find a mode\n");
 	if(err != GGI_OK) {
 		ggDelStem(vis);
-		ggiExit();
 		printsuccess();
 		return;
 	}
@@ -229,7 +200,6 @@ static void testcase4(const char *desc)
 		"physical size is apparently not supported\n");
 	if(mode.size.x == GGI_AUTO || mode.size.y == GGI_AUTO) {
 		ggDelStem(vis);
-		ggiExit();
 		printsuccess();
 		return;
 	}
@@ -249,7 +219,6 @@ static void testcase4(const char *desc)
 	/* This mode should be there */
 	err = ggiCheckMode(vis, &mode);
 	ggDelStem(vis);
-	ggiExit();
 
 	if (err != GGI_OK) {
 		printfailure("ggiCheckMode: expected return value: GGI_OK\n"
@@ -287,14 +256,8 @@ static void testcase5(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -307,7 +270,6 @@ static void testcase5(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: No graphic mode available\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -332,12 +294,10 @@ static void testcase5(const char *desc)
 	if (err) {
 		printfailure("ggiSetMode() failed although ggiCheckGraphMode() was OK!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;
@@ -356,11 +316,8 @@ static void testcase6(const char *desc)
 	err = ggiInit();
 	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
 
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -374,7 +331,6 @@ static void testcase6(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -382,7 +338,6 @@ static void testcase6(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -392,7 +347,6 @@ static void testcase6(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -400,13 +354,11 @@ static void testcase6(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;
@@ -422,14 +374,8 @@ static void testcase7(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -442,7 +388,6 @@ static void testcase7(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #1: No 640x480 mode available\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -450,7 +395,6 @@ static void testcase7(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #1: failed although ggiCheckGraphMode() was OK!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -460,7 +404,6 @@ static void testcase7(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiCheckGraphMode: #2: No 320x200 mode available\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
@@ -468,13 +411,11 @@ static void testcase7(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() #2: resetting a mode failed although ggiCheckGraphMode() was OK!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;
@@ -490,14 +431,8 @@ static void testcase8(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
-
-	vis = ggNewStem();
+	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
-
-	err = ggiAttach(vis);
-	printassert(err == GGI_OK, "ggiAttach failed with %i\n", err);
 
 	err = ggiOpen(vis, NULL);
 	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
@@ -517,12 +452,10 @@ static void testcase8(const char *desc)
 	if (err != GGI_OK) {
 		printfailure("ggiSetMode() failed even though ggiCheckMode() was called!\n");
 		ggDelStem(vis);
-		ggiExit();
 		return;
 	}
 
 	ggDelStem(vis);
-	ggiExit();
 
 	printsuccess();
 	return;

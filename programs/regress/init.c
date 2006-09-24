@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.8 2006/03/28 08:59:45 pekberg Exp $
+/* $Id: init.c,v 1.9 2006/09/24 21:31:05 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for init/exit handling.
@@ -94,7 +94,7 @@ static void testcase3(const char *desc)
 		return;
 	}
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (vis == NULL) {
 		printfailure("ggiOpen: Couldn\'t create stem.\n");
 		return;
@@ -203,7 +203,7 @@ static void testcase5(const char *desc)
 	}
 
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (vis == NULL) {
 		printfailure("ggiOpen: Attempt 1: Couldn\'t create stem.\n");
 		return;
@@ -238,7 +238,7 @@ static void testcase5(const char *desc)
 	ggDelStem(vis);
 
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (vis == NULL) {
 		printfailure("ggiOpen: Attempt 2: Couldn\'t create stem.\n");
 		return;
@@ -300,7 +300,7 @@ static void testcase6(const char *desc)
 		return;
 	}
 
-	vis2 = ggNewStem();
+	vis2 = ggNewStem(NULL);
 	if (vis2 == NULL) {
 		printfailure("ggiOpen: visual 2: Couldn\'t create stem.\n");
 		return;
@@ -319,7 +319,7 @@ static void testcase6(const char *desc)
 	}
 
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (vis == NULL) {
 		printfailure("ggiOpen: visual 1: Attempt 1: Couldn\'t create stem.\n");
 		return;
@@ -354,7 +354,7 @@ static void testcase6(const char *desc)
 	ggDelStem(vis);
 
 
-	vis = ggNewStem();
+	vis = ggNewStem(NULL);
 	if (vis == NULL) {
 		printfailure("ggiOpen: visual 1: Attempt 2: Couldn\'t create stem.\n");
 		return;
