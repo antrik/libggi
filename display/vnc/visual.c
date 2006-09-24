@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2006/09/23 16:14:16 pekberg Exp $
+/* $Id: visual.c,v 1.29 2006/09/24 08:18:34 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -366,7 +366,6 @@ out_closefb:
 	ggiClose(priv->fb->stem);
 out_delstem:
 	ggDelStem(stem);
-	ggiExit();
 out_freegc:
 	free(LIBGGI_GC(vis));
 out_freepriv:
@@ -411,7 +410,6 @@ GGIclose(struct ggi_visual *vis,
 		stem = priv->fb->stem;
 		ggiClose(stem);
 		ggDelStem(stem);
-		ggiExit();
 	}
 
 	free(priv);

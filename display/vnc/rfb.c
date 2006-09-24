@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.66 2006/09/23 16:14:16 pekberg Exp $
+/* $Id: rfb.c,v 1.67 2006/09/24 08:18:34 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -255,7 +255,6 @@ change_pixfmt(ggi_vnc_client *client)
 		stem = client->vis->stem;
 		ggiClose(stem);
 		ggDelStem(stem);
-		ggiExit();
 		client->vis = NULL;
 	}
 
@@ -348,7 +347,6 @@ close_vis:
 	ggiClose(stem);
 del_stem:
 	ggDelStem(stem);
-	ggiExit();
 out:
 	client->vis = NULL;
 	return err;
