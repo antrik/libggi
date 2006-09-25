@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.11 2006/09/24 21:42:19 pekberg Exp $
+/* $Id: tight.c,v 1.12 2006/09/25 07:31:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -748,6 +748,22 @@ palette_32(uint8_t *dst, uint8_t *src8,
 	return dst;
 }
 
+static inline uint16_t
+bound_16(ggi_pixel mask, ggi_pixel left, ggi_pixel up, ggi_pixel left_up)
+{
+	ggi_pixel predict;
+
+	predict = (left & mask) + (up & mask) - (left_up & mask);
+
+	if (predict & ~mask) {
+		if (predict & ~(mask | (mask << 1)))
+			return 0;
+		return mask;
+	}
+
+	return predict;
+}
+
 static inline uint8_t
 bound_888(int value)
 {
@@ -758,6 +774,77 @@ bound_888(int value)
 	return value;
 }
 
+typedef uint8_t *(insert_16_t)(uint8_t *dst, uint16_t pixel);
+
+static inline uint8_t *
+gradient_16(ggi_pixelformat *pixfmt, uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, int rev)
+{
+	uint16_t *src = (uint16_t *)src8;
+	int x, y;
+	uint16_t *prev;
+	uint16_t pixel;
+	insert_16_t *insert = rev ? insert_rev_16 : insert_16;
+
+	/* first row */
+	/* first pixel */
+	dst = insert(dst, src[0]);
+
+	/* rest of row */
+	for (x = 1; x < xs; ++x) {
+		pixel = ((src[x] & pixfmt->red_mask) - 
+			(src[x - 1] & pixfmt->red_mask))
+			& pixfmt->red_mask;
+		pixel |= ((src[x] & pixfmt->green_mask) - 
+			(src[x - 1] & pixfmt->green_mask))
+			& pixfmt->green_mask;
+		pixel |= ((src[x] & pixfmt->blue_mask) - 
+			(src[x - 1] & pixfmt->blue_mask))
+			& pixfmt->blue_mask;
+		dst = insert(dst, pixel);
+	}
+
+	prev = src;
+	src += stride;
+
+	/* following rows */
+	for (y = 1; y < ys; ++y) {
+		/* first pixel */
+		pixel = ((src[0] & pixfmt->red_mask) - 
+			(prev[0] & pixfmt->red_mask))
+			& pixfmt->red_mask;
+		pixel |= ((src[0] & pixfmt->green_mask) - 
+			(prev[0] & pixfmt->green_mask))
+			& pixfmt->green_mask;
+		pixel |= ((src[0] & pixfmt->blue_mask) - 
+			(prev[0] & pixfmt->blue_mask))
+			& pixfmt->blue_mask;
+		dst = insert(dst, pixel);
+
+		/* rest of row */
+		for (x = 1; x < xs; ++x) {
+			pixel = ((src[x] & pixfmt->red_mask) - 
+				bound_16(pixfmt->red_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->red_mask;
+			pixel |= ((src[x] & pixfmt->green_mask) - 
+				bound_16(pixfmt->green_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->green_mask;
+			pixel |= ((src[x] & pixfmt->blue_mask) - 
+				bound_16(pixfmt->blue_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->blue_mask;
+			dst = insert(dst, pixel);
+		}
+
+		prev = src;
+		src += stride;
+	}
+
+	return dst;
+}
+
 static inline uint8_t *
 gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 {
@@ -765,6 +852,7 @@ gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 	uint8_t *prev;
 
 	xs *= 3;
+	stride *= 3;
 
 	/* first row */
 	/* first pixel */
@@ -773,7 +861,7 @@ gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 
 	/* rest of row */
 	for (; x < xs; ++x)
-		dst[x] = src[x] - bound_888(src[x - 3]);
+		dst[x] = src[x] - src[x - 3];
 
 	dst += xs;
 	prev = src;
@@ -783,7 +871,7 @@ gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 	for (y = 1; y < ys; ++y) {
 		/* first pixel */
 		for (x = 0; x < 3; ++x)
-			dst[x] = src[x] - bound_888(prev[x]);
+			dst[x] = src[x] - prev[x];
 
 		/* rest of row */
 		for (; x < xs; ++x)
@@ -885,12 +973,10 @@ tile_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 
 	*dst++ = filter;
 
-	/* TODO
 	if (filter == TIGHT_GRADIENT) {
-		*buf = gradient_16(dst, src, xs, ys, stride, rev);
+		*buf = gradient_16(pixfmt, dst, src, xs, ys, stride, rev);
 		return;
 	}
-	*/
 
 	/* filter == TIGHT_PALETTE */
 
@@ -1010,7 +1096,7 @@ tile_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 
 	/* TODO
 	if (filter == TIGHT_GRADIENT) {
-		*buf = gradient_32(dst, src, xs, ys, stride, rev);
+		*buf = gradient_32(pixfmt, dst, src, xs, ys, stride, rev);
 		return;
 	}
 	*/
