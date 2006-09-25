@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.68 2006/09/25 21:38:51 pekberg Exp $
+/* $Id: rfb.c,v 1.69 2006/09/25 22:19:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1210,7 +1210,7 @@ vnc_client_security(ggi_vnc_client *client)
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int security_type;
-	int i;
+	unsigned int i;
 	struct timeval now;
 
 	if (client->write_pending)
