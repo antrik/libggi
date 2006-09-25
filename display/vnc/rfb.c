@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.67 2006/09/24 08:18:34 pekberg Exp $
+/* $Id: rfb.c,v 1.68 2006/09/25 21:38:51 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -901,17 +901,15 @@ vnc_client_update(ggi_vnc_client *client)
 	if (ggi_rect_isempty(&request))
 		goto done;
 
-	ggi_rect_union(&request, &client->update);
-
 	if (client->write_pending) {
-		/* overly anxious client, just remember the requested rect.
-		 * TODO: remember this event and send a new update request
-		 * when the outstanding write completes. Also remember if
-		 * any such anxious request were non-incremental.
-		 */
-		client->update = update;
+		/* overly anxious client, just remember the requested rect. */
+		if (!incremental)
+			ggi_rect_union(&client->dirty, &request);
+		ggi_rect_union(&client->update, &request);
 		goto done;
 	}
+
+	ggi_rect_union(&request, &client->update);
 
 	update = request;
 
@@ -1482,13 +1480,16 @@ GGI_vnc_write_client(void *arg, int fd)
 	if (client->write_pending)
 		return 0;
 
-	if (!client->buf_size)
-		return 0;
-
-	if (client->action(client)) {
-		close_client(client);
-		return -1;
+	if (client->buf_size) {
+		if (client->action(client)) {
+			close_client(client);
+			return -1;
+		}
 	}
+
+	if (!ggi_rect_isempty(&client->update))
+		pending_client_update(client);
+
 	return 0;
 }
 
