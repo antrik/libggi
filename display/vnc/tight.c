@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.12 2006/09/25 07:31:16 pekberg Exp $
+/* $Id: tight.c,v 1.13 2006/09/25 08:08:57 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -774,6 +774,31 @@ bound_888(int value)
 	return value;
 }
 
+static inline uint32_t
+bound_32(ggi_pixel mask, ggi_pixel left, ggi_pixel up, ggi_pixel left_up)
+{
+	ggi_pixel predict;
+	unsigned int shift = 0U;
+
+	if (mask & 0xc0000000) {
+		shift = 2U;
+		mask >>= 2U;
+		left >>= 2U;
+		up >>= 2U;
+		left_up >>= 2U;
+	}
+
+	predict = (left & mask) + (up & mask) - (left_up & mask);
+
+	if (predict & ~mask) {
+		if (predict & ~(mask | (mask << 1)))
+			return 0;
+		return mask << shift;
+	}
+
+	return predict << shift;
+}
+
 typedef uint8_t *(insert_16_t)(uint8_t *dst, uint16_t pixel);
 
 static inline uint8_t *
@@ -879,6 +904,77 @@ gradient_888(uint8_t *dst, uint8_t *src, int xs, int ys, int stride)
 				bound_888(src[x - 3] + prev[x] - prev[x - 3]);
 
 		dst += xs;
+		prev = src;
+		src += stride;
+	}
+
+	return dst;
+}
+
+typedef uint8_t *(insert_32_t)(uint8_t *dst, uint32_t pixel);
+
+static inline uint8_t *
+gradient_32(ggi_pixelformat *pixfmt, uint8_t *dst, uint8_t *src8,
+	int xs, int ys, int stride, int rev)
+{
+	uint32_t *src = (uint32_t *)src8;
+	int x, y;
+	uint32_t *prev;
+	uint32_t pixel;
+	insert_32_t *insert = rev ? insert_rev_32 : insert_32;
+
+	/* first row */
+	/* first pixel */
+	dst = insert(dst, src[0]);
+
+	/* rest of row */
+	for (x = 1; x < xs; ++x) {
+		pixel = ((src[x] & pixfmt->red_mask) - 
+			(src[x - 1] & pixfmt->red_mask))
+			& pixfmt->red_mask;
+		pixel |= ((src[x] & pixfmt->green_mask) - 
+			(src[x - 1] & pixfmt->green_mask))
+			& pixfmt->green_mask;
+		pixel |= ((src[x] & pixfmt->blue_mask) - 
+			(src[x - 1] & pixfmt->blue_mask))
+			& pixfmt->blue_mask;
+		dst = insert(dst, pixel);
+	}
+
+	prev = src;
+	src += stride;
+
+	/* following rows */
+	for (y = 1; y < ys; ++y) {
+		/* first pixel */
+		pixel = ((src[0] & pixfmt->red_mask) - 
+			(prev[0] & pixfmt->red_mask))
+			& pixfmt->red_mask;
+		pixel |= ((src[0] & pixfmt->green_mask) - 
+			(prev[0] & pixfmt->green_mask))
+			& pixfmt->green_mask;
+		pixel |= ((src[0] & pixfmt->blue_mask) - 
+			(prev[0] & pixfmt->blue_mask))
+			& pixfmt->blue_mask;
+		dst = insert(dst, pixel);
+
+		/* rest of row */
+		for (x = 1; x < xs; ++x) {
+			pixel = ((src[x] & pixfmt->red_mask) - 
+				bound_32(pixfmt->red_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->red_mask;
+			pixel |= ((src[x] & pixfmt->green_mask) - 
+				bound_32(pixfmt->green_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->green_mask;
+			pixel |= ((src[x] & pixfmt->blue_mask) - 
+				bound_32(pixfmt->blue_mask,
+					src[x - 1], prev[x], prev[x - 1]))
+				& pixfmt->blue_mask;
+			dst = insert(dst, pixel);
+		}
+
 		prev = src;
 		src += stride;
 	}
@@ -1094,12 +1190,10 @@ tile_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 
 	*dst++ = filter;
 
-	/* TODO
 	if (filter == TIGHT_GRADIENT) {
 		*buf = gradient_32(pixfmt, dst, src, xs, ys, stride, rev);
 		return;
 	}
-	*/
 
 	/* filter == TIGHT_PALETTE */
 
