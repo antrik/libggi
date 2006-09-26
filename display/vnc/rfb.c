@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.70 2006/09/26 08:38:54 pekberg Exp $
+/* $Id: rfb.c,v 1.71 2006/09/26 13:48:25 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1027,6 +1027,24 @@ vnc_client_cut(ggi_vnc_client *client)
 }
 
 static int
+vnc_client_scale(ggi_vnc_client *client)
+{
+	uint8_t scale;
+
+	DPRINT("client_scale\n");
+
+	if (client->buf_size < 4) {
+		/* wait for more data */
+		client->action = vnc_client_scale;
+		return 0;
+	}
+
+	scale = client->buf[1];
+
+	return vnc_remove(client, 4);
+}
+
+static int
 vnc_client_run(ggi_vnc_client *client)
 {
 	int res = 0;
@@ -1053,9 +1071,12 @@ vnc_client_run(ggi_vnc_client *client)
 		case 6:
 			res = vnc_client_cut(client);
 			break;
+		case 8:
+			res = vnc_client_scale(client);
+			break;
 		default:
-			DPRINT("client_run unknown type %d\n",
-				client->buf[0]);
+			DPRINT("client_run unknown type %d (size %d)\n",
+				client->buf[0], client->buf_size);
 			return 1;
 		}
 
@@ -1331,13 +1352,19 @@ vnc_client_version(ggi_vnc_client *client)
 	}
 
 	DPRINT("Client wants protocol version RFB %03u.%03u\n", major, minor);
+	if (major == 3 && minor == 4)
+		/* Interpret 3.4 as 3.3, 3.4 is UltraVNC specific, but
+		 * apparently works just like 3.3. Unsure though...
+		 */
+		minor = 3;
+
 	if (major == 3 && minor == 5)
 		/* Interpret 3.5 as 3.3, 3.5 was never published */
 		minor = 3;
 
 	if ((major != 3) || (minor != 8 && minor != 7 && minor != 3)) {
 		DPRINT("Can't handle requested protocol version "
-			"(only 3.3, 3.7 and 3.8).\n");
+			"(only 3.3 (3.4, 3.5), 3.7 and 3.8).\n");
 		return -1;
 	}
 
