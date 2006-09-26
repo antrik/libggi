@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2006/09/25 22:17:08 pekberg Exp $
+/* $Id: visual.c,v 1.31 2006/09/26 05:11:24 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -158,12 +158,12 @@ GGIopen(struct ggi_visual *vis,
 		priv->kill_on_last_disconnect = 1;
 
 	if (options[OPT_passwd].result[0] != '\0') {
-		unsigned char passwd[8];
+		unsigned char passwd[9];
 		int i;
 
 		priv->passwd = 1;
 		memset(passwd, 0, sizeof(passwd));
-		strncpy(passwd, options[OPT_passwd].result, sizeof(passwd));
+		ggstrlcpy(passwd, options[OPT_passwd].result, sizeof(passwd));
 
 		/* Should apparently bitreverse the password bytes.
 		 * I just love undocumented quirks to standard algorithms...
