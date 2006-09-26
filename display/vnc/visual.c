@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2006/09/26 05:11:24 cegger Exp $
+/* $Id: visual.c,v 1.32 2006/09/26 08:38:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -66,6 +66,7 @@
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "")           \
 	VNC_OPTION(title,    "GGI on vnc") \
+	VNC_OPTION(viewpw,   "")           \
 	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zrle,     "")
 
@@ -172,7 +173,7 @@ GGIopen(struct ggi_visual *vis,
 			passwd[i] = GGI_BITREV1(passwd[i]);
 
 		deskey(passwd, EN0);
-		cpkey(priv->cooked_key);
+		cpkey(priv->passwd_key);
 
 		/* Pick some random password, and use the des algorithm to
 		 * generate pseudo random numbers.
@@ -182,6 +183,32 @@ GGIopen(struct ggi_visual *vis,
 	}
 	else
 		priv->passwd = 0;
+
+	if (options[OPT_viewpw].result[0] != '\0') {
+		unsigned char viewpw[9];
+		int i;
+
+		priv->viewpw = 1;
+		memset(viewpw, 0, sizeof(viewpw));
+		ggstrlcpy(viewpw, options[OPT_viewpw].result, sizeof(viewpw));
+
+		/* Should apparently bitreverse the password bytes.
+		 * I just love undocumented quirks to standard algorithms...
+		 */
+		for (i = 0; i < 8; ++i)
+			viewpw[i] = GGI_BITREV1(viewpw[i]);
+
+		deskey(viewpw, EN0);
+		cpkey(priv->viewpw_key);
+
+		/* Pick some random password, and use the des algorithm to
+		 * generate pseudo random numbers.
+		 */
+		deskey("random17", EN0);
+		cpkey(priv->randomizer);
+	}
+	else
+		priv->viewpw = 0;
 
 	if (options[OPT_tight].result[0] == 'n') /* no */
 		priv->tight = 0;

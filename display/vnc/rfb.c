@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.69 2006/09/25 22:19:01 pekberg Exp $
+/* $Id: rfb.c,v 1.70 2006/09/26 08:38:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -952,16 +952,18 @@ vnc_client_key(ggi_vnc_client *client)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	uint32_t key;
 
-	DPRINT("client_key\n");
-
 	if (client->buf_size < 8) {
 		/* wait for more data */
 		client->action = vnc_client_key;
 		return 0;
 	}
 
-	memcpy(&key, &client->buf[4], sizeof(key));
-	priv->key(priv->gii_ctx, client->buf[1], ntohl(key));
+	if (client->input) {
+		DPRINT("client_key\n");
+
+		memcpy(&key, &client->buf[4], sizeof(key));
+		priv->key(priv->gii_ctx, client->buf[1], ntohl(key));
+	}
 
 	return vnc_remove(client, 8);
 }
@@ -974,17 +976,20 @@ vnc_client_pointer(ggi_vnc_client *client)
 	uint16_t x;
 	uint16_t y;
 
-	DPRINT("client_pointer\n");
-
 	if (client->buf_size < 6) {
 		/* wait for more data */
 		client->action = vnc_client_pointer;
 		return 0;
 	}
 
-	memcpy(&x, &client->buf[2], sizeof(x));
-	memcpy(&y, &client->buf[4], sizeof(y));
-	priv->pointer(priv->gii_ctx, client->buf[1], ntohs(x), ntohs(y));
+	if (client->input) {
+		DPRINT("client_pointer\n");
+
+		memcpy(&x, &client->buf[2], sizeof(x));
+		memcpy(&y, &client->buf[4], sizeof(y));
+		priv->pointer(priv->gii_ctx,
+			client->buf[1], ntohs(x), ntohs(y));
+	}
 
 	return vnc_remove(client, 6);
 }
@@ -1160,6 +1165,7 @@ vnc_client_challenge(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int ok = 0;
 
 	if (client->write_pending)
 		return 0;
@@ -1178,15 +1184,30 @@ vnc_client_challenge(ggi_vnc_client *client)
 	if (priv->passwd) {
 		uint8_t good_response[16];
 
-		usekey(priv->cooked_key);
+		usekey(priv->passwd_key);
 		des(&client->challenge[0], &good_response[0]);
 		des(&client->challenge[8], &good_response[8]);
 
-		if (memcmp(good_response,
+		if (!memcmp(good_response,
+				client->buf, sizeof(good_response)))
+			ok = 1;
+	}
+	if (!ok && priv->viewpw) {
+		uint8_t good_response[16];
+
+		usekey(priv->viewpw_key);
+		des(&client->challenge[0], &good_response[0]);
+		des(&client->challenge[8], &good_response[8]);
+
+		if (!memcmp(good_response,
 				client->buf, sizeof(good_response))) {
-			DPRINT("bad password.\n");
-			return -1;
+			ok = 1;
+			client->input = 0;
 		}
+	}
+	if (!ok && (priv->passwd || priv->viewpw)) {
+		DPRINT("bad password.\n");
+		return -1;
 	}
 
 	client->buf_size = 0;
@@ -1230,7 +1251,7 @@ vnc_client_security(ggi_vnc_client *client)
 	security_type = client->buf[0];
 	switch (security_type) {
 	case 1:
-		if (priv->passwd)
+		if (priv->passwd || priv->viewpw)
 			break;
 		client->buf_size = 0;
 		client->action = vnc_client_init;
@@ -1246,7 +1267,7 @@ vnc_client_security(ggi_vnc_client *client)
 		return 0;
 
 	case 2:
-		if (!priv->passwd)
+		if (!priv->passwd && !priv->viewpw)
 			break;
 		client->buf_size = 0;
 		client->action = vnc_client_challenge;
@@ -1332,9 +1353,9 @@ vnc_client_version(ggi_vnc_client *client)
 		client->wbuf.buf[0] = 0;
 		client->wbuf.buf[1] = 0;
 		client->wbuf.buf[2] = 0;
-		client->wbuf.buf[3] = priv->passwd ? 2 : 1;
+		client->wbuf.buf[3] = (priv->passwd || priv->viewpw) ? 2 : 1;
 		write_client(client, &client->wbuf);
-		if (priv->passwd) {
+		if (priv->passwd || priv->viewpw) {
 			/* fake a client request of vnc auth security type */
 			client->buf[0] = 2;
 			client->buf_size = 1;
@@ -1350,7 +1371,7 @@ vnc_client_version(ggi_vnc_client *client)
 	GGI_vnc_buf_reserve(&client->wbuf, 2);
 	client->wbuf.size += 2;
 	client->wbuf.buf[0] = 1;
-	client->wbuf.buf[1] = priv->passwd ? 2 : 1;
+	client->wbuf.buf[1] = (priv->passwd || priv->viewpw) ? 2 : 1;
 	write_client(client, &client->wbuf);
 
 	return 0;
@@ -1373,6 +1394,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	client->cfd = cfd;
 	client->cwfd = cwfd;
+	client->input = 1;
 	client->dirty.tl.x = 0;
 	client->dirty.tl.y = 0;
 	client->dirty.br.x = LIBGGI_VIRTX(vis);

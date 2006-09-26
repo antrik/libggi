@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.27 2006/09/18 22:57:53 pekberg Exp $
+/* $Id: vnc.h,v 1.28 2006/09/26 08:38:55 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -59,6 +59,8 @@ typedef struct ggi_vnc_client_t {
 	int cwfd;
 	int protover;
 
+	int input;
+
 	unsigned char buf[256];
 	int buf_size;
 	ggi_vnc_buf wbuf;
@@ -101,7 +103,9 @@ typedef struct {
 	void *gii_ctx;
 
 	int           passwd;
-	unsigned long cooked_key[32];
+	int           viewpw;
+	unsigned long passwd_key[32];
+	unsigned long viewpw_key[32];
 	unsigned long randomizer[32];
 
 	int kill_on_last_disconnect;

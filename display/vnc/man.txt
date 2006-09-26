@@ -9,10 +9,10 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-kold] [-passwd=<pass>]
+	       [-hextile=no] [-kold] [-passwd=<password>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-	       [-stdio] [-tight=no] [-title=<title>] [-zlib=<level>|no]
-	       [-zrle=<level>|no]
+	       [-stdio] [-tight=no] [-title=<title>] [-viewpw=<password>]
+	       [-zlib=<level>|no] [-zrle=<level>|no]
 
 
 Description
@@ -63,6 +63,9 @@ Options
     with the stated :p:`password` in order to connect. In the
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
+    If this :p:`password` is given, the client is allowed to send input
+    events such as keys and pointer movements to the application. See
+    the option :p:`-viewpw` for comparison.
 
 ``-physz=<sizex>,<sizey>[dpi]``
     This option will provide a physical screen size for applications
@@ -95,6 +98,15 @@ Options
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
     is not specified, the default is "GGI on vnc".
+
+``-viewpw=<pass>``
+    The vnc client has to successfully encrypt a random challenge
+    with the stated :p:`password` in order to connect. In the
+    :p:`password`, only the eight first characters and the seven least
+    significant bits of every character are used in the authentication.
+    If this :p:`password` is given, the client is *not* allowed to send
+    input events such as keys and pointer movements to the application.
+    See the option :p:`-passwd` for comparison.
 
 ``-zlib=<level>|no``
     Specify the compression level to use for the zlib encoding. 0 for
