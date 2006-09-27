@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.8 2006/09/08 19:43:00 pekberg Exp $
+/* $Id: mode.c,v 1.9 2006/09/27 05:33:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -136,24 +136,25 @@ GGI_vnc_flush(struct ggi_visual *vis,
 		return res;
 
 	if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
-		if (buf->resource->curactype & GGI_ACTYPE_WRITE)
+		if (buf->resource->curactype & GGI_ACTYPE_WRITE) {
 			/* tidy buffer and buffer locked, update it */
-			goto doit;
-		return res;
+			GG_LIST_FOREACH(client, &priv->clients, siblings)
+				GGI_vnc_invalidate_nc_xyxy(vis,
+					flush.tl.x, flush.tl.y,
+					flush.br.x, flush.br.y);
+			return res;
+		}
 	}
 
-	GG_LIST_FOREACH(client, &priv->clients, siblings)
-		ggi_rect_intersect(&flush, &client->fdirty);
-	if (ggi_rect_isempty(&flush))
-		return res;
-
-doit:
-	GG_LIST_FOREACH(client, &priv->clients, siblings)
+	GG_LIST_FOREACH(client, &priv->clients, siblings) {
+		ggi_rect flush_client = flush;
+		ggi_rect_intersect(&flush_client, &client->fdirty);
 		ggi_rect_subtract(&client->fdirty, &flush);
 
-	GGI_vnc_invalidate_nc_xyxy(vis,
-		flush.tl.x, flush.tl.y,
-		flush.br.x, flush.br.y);
+		GGI_vnc_client_invalidate_nc_xyxy(client,
+			flush_client.tl.x, flush_client.tl.y,
+			flush_client.br.x, flush_client.br.y);
+	}
 
 	return res;
 }
