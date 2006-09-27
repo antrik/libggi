@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.13 2006/09/25 08:08:57 pekberg Exp $
+/* $Id: tight.c,v 1.14 2006/09/27 21:15:47 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -180,7 +180,8 @@ insert_data_size(uint8_t *dst, uint32_t size)
 }
 
 static inline uint8_t
-select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
+select_subencoding(struct tight_ctx_t *ctx,
+	int xs, int ys, int cbpp, int colors, int *best)
 {
 	int bytes;
 	int subencoding;
@@ -212,7 +213,8 @@ select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
 
 	/* too many colors for anything but raw/jpeg/gradient */
 	if (!colors) {
-		if (cbpp > 1 && xs >= 16 && ys >= 16 && *best > 3000)
+		if (ctx->jpeg_quality && cbpp > 1 &&
+			xs >= 16 && ys >= 16 && *best > 3000)
 			subencoding = TIGHT_JPEG;
 		return subencoding;
 	}
@@ -229,7 +231,7 @@ select_subencoding(int xs, int ys, int cbpp, int colors, int *best)
 }
 
 static inline uint8_t
-scan_8(uint8_t *src,
+scan_8(struct tight_ctx_t *ctx, uint8_t *src,
 	int xs, int ys, int stride, uint8_t *palette, int *colors)
 {
 	int x, y;
@@ -263,11 +265,11 @@ scan_8(uint8_t *src,
 		src += stride;
 	}
 
-	return select_subencoding(xs, ys, 1, *colors, &bytes);
+	return select_subencoding(ctx, xs, ys, 1, *colors, &bytes);
 }
 
 static inline uint8_t
-scan_16(uint8_t *src8,
+scan_16(struct tight_ctx_t *ctx, uint8_t *src8,
 	int xs, int ys, int stride, uint16_t *palette, int *colors)
 {
 	int x, y;
@@ -302,11 +304,11 @@ scan_16(uint8_t *src8,
 		src += stride;
 	}
 
-	return select_subencoding(xs, ys, 2, *colors, &bytes);
+	return select_subencoding(ctx, xs, ys, 2, *colors, &bytes);
 }
 
 static inline uint8_t
-scan_888(uint8_t *src,
+scan_888(struct tight_ctx_t *ctx, uint8_t *src,
 	int xs, int ys, int stride, uint32_t *palette, int *colors)
 {
 	int x, y;
@@ -342,11 +344,11 @@ scan_888(uint8_t *src,
 		src += stride;
 	}
 
-	return select_subencoding(xs, ys, 3, *colors, &bytes);
+	return select_subencoding(ctx, xs, ys, 3, *colors, &bytes);
 }
 
 static inline uint8_t
-scan_32(uint8_t *src8,
+scan_32(struct tight_ctx_t *ctx, uint8_t *src8,
 	int xs, int ys, int stride, uint32_t *palette, int *colors)
 {
 	int x, y;
@@ -381,7 +383,7 @@ scan_32(uint8_t *src8,
 		src += stride;
 	}
 
-	return select_subencoding(xs, ys, 4, *colors, &bytes);
+	return select_subencoding(ctx, xs, ys, 4, *colors, &bytes);
 }
 
 static uint8_t *
@@ -993,7 +995,7 @@ tile_8(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_8(src, xs, ys, stride, palette, &colors);
+	subencoding = scan_8(ctx, src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -1037,7 +1039,7 @@ tile_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_16(src, xs, ys, stride, palette, &colors);
+	subencoding = scan_16(ctx, src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -1101,7 +1103,7 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_888(src, xs, ys, stride, palette, &colors);
+	subencoding = scan_888(ctx, src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -1158,7 +1160,7 @@ tile_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	uint8_t filter;
 	int c;
 
-	subencoding = scan_32(src, xs, ys, stride, palette, &colors);
+	subencoding = scan_32(ctx, src, xs, ys, stride, palette, &colors);
 
 	filter = subencoding & ~TIGHT_TYPE;
 	subencoding &= TIGHT_TYPE;
@@ -1425,6 +1427,11 @@ GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 void
 GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
 {
+	if (!ctx->jpeg_quality) {
+		jpeg_create_compress(&ctx->cinfo);
+		buf_dest(&ctx->cinfo);
+	}
+
 	ctx->jpeg_quality = 5 + 10 * quality;
 	DPRINT("jpeg quality %d\n", ctx->jpeg_quality);
 }
@@ -1438,7 +1445,7 @@ GGI_vnc_tight_open(void)
 	memset(ctx, 0, sizeof(*ctx));
 
 	ctx->reset = TIGHT_ZTREAM_RESET;
-	ctx->jpeg_quality = 65;
+	ctx->jpeg_quality = 0;
 
 	for (i = 0; i < 4; ++i) {
 		ctx->zstr[i].zalloc = Z_NULL;
@@ -1450,16 +1457,15 @@ GGI_vnc_tight_open(void)
 	ctx->cinfo.client_data = ctx;
 	ctx->cinfo.err = jpeg_std_error(&ctx->jerr);
 
-	jpeg_create_compress(&ctx->cinfo);
-	buf_dest(&ctx->cinfo);
-
 	return ctx;
 }
 
 void
 GGI_vnc_tight_close(struct tight_ctx_t *ctx)
 {
-	jpeg_destroy_compress(&ctx->cinfo);
+	if (ctx->jpeg_quality)
+		jpeg_destroy_compress(&ctx->cinfo);
+
 	free(ctx->work[0].buf);
 	free(ctx->work[1].buf);
 	deflateEnd(&ctx->zstr[3]);
