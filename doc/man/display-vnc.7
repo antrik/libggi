@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-26" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-28" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -7,8 +7,8 @@
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
              [-hextile=no] [-kold] [-passwd=<password>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-             [-stdio] [-tight=no] [-title=<title>] [-viewpw=<password>]
-             [-zlib=<level>|no] [-zrle=<level>|no]
+             [-stdio] [-tight=no] [-title=<title>] [-viewonly]
+             [-viewpw=<password>] [-zlib=<level>|no] [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -60,8 +60,9 @@ with the stated \fIpassword\fR in order to connect. In the
 \fIpassword\fR, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
 If this \fIpassword\fR is given, the client is allowed to send input
-events such as keys and pointer movements to the application. See
-the option \fI-viewpw\fR for comparison.
+events such as keys and pointer movements to the application. However,
+this allowance may be overridden with the \fI-viewonly\fR option. See
+the options \fI-viewonly\fR and \fI-viewpw\fR for comparison.
 
 .TP
 \f(CW-physz=<sizex>,<sizey>[dpi]\fR
@@ -101,14 +102,23 @@ The \fItitle\fR clients should use on their windows. If this option
 is not specified, the default is "GGI on vnc".
 
 .TP
-\f(CW-viewpw=<pass>\fR
+\f(CW-viewonly\fR
+If this option is given, no client is allowed to send input events
+such as keys and pointer movements to the application. If the
+\fI-passwd\fR option has also been given, the given \fIpassword\fR is
+effectively reduced to a \fI-viewpw\fR \fIpassword\fR. This option is
+intended for use together with e.g. the \f(CWdisplay-multi(7)\fR
+target.
+
+.TP
+\f(CW-viewpw=<password>\fR
 The vnc client has to successfully encrypt a random challenge
 with the stated \fIpassword\fR in order to connect. In the
 \fIpassword\fR, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
 If this \fIpassword\fR is given, the client is \fInot\fR allowed to send
 input events such as keys and pointer movements to the application.
-See the option \fI-passwd\fR for comparison.
+See the options \fI-passwd\fR and \fI-viewonly\fR for comparison.
 
 .TP
 \f(CW-zlib=<level>|no\fR
