@@ -11,8 +11,8 @@ Synopsis
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
 	       [-hextile=no] [-kold] [-passwd=<password>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-	       [-stdio] [-tight=no] [-title=<title>] [-viewpw=<password>]
-	       [-zlib=<level>|no] [-zrle=<level>|no]
+	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
+	       [-viewpw=<password>] [-zlib=<level>|no] [-zrle=<level>|no]
 
 
 Description
@@ -64,8 +64,9 @@ Options
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
     If this :p:`password` is given, the client is allowed to send input
-    events such as keys and pointer movements to the application. See
-    the option :p:`-viewpw` for comparison.
+    events such as keys and pointer movements to the application. However,
+    this allowance may be overridden with the :p:`-viewonly` option. See
+    the options :p:`-viewonly` and :p:`-viewpw` for comparison.
 
 ``-physz=<sizex>,<sizey>[dpi]``
     This option will provide a physical screen size for applications
@@ -99,14 +100,22 @@ Options
     The :p:`title` clients should use on their windows. If this option
     is not specified, the default is "GGI on vnc".
 
-``-viewpw=<pass>``
+``-viewonly``
+    If this option is given, no client is allowed to send input events
+    such as keys and pointer movements to the application. If the
+    :p:`-passwd` option has also been given, the given :p:`password` is
+    effectively reduced to a :p:`-viewpw` :p:`password`. This option is
+    intended for use together with e.g. the :man:`display-multi(7)`
+    target.
+
+``-viewpw=<password>``
     The vnc client has to successfully encrypt a random challenge
     with the stated :p:`password` in order to connect. In the
     :p:`password`, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
     If this :p:`password` is given, the client is *not* allowed to send
     input events such as keys and pointer movements to the application.
-    See the option :p:`-passwd` for comparison.
+    See the options :p:`-passwd` and :p:`-viewonly` for comparison.
 
 ``-zlib=<level>|no``
     Specify the compression level to use for the zlib encoding. 0 for

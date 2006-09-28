@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2006/09/26 08:38:54 pekberg Exp $
+/* $Id: visual.c,v 1.33 2006/09/28 05:50:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -66,6 +66,7 @@
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "")           \
 	VNC_OPTION(title,    "GGI on vnc") \
+	VNC_OPTION(viewonly, "no")         \
 	VNC_OPTION(viewpw,   "")           \
 	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zrle,     "")
@@ -183,6 +184,11 @@ GGIopen(struct ggi_visual *vis,
 	}
 	else
 		priv->passwd = 0;
+
+	if (options[OPT_viewonly].result[0] == 'n') /* no */
+		priv->view_only = 0;
+	else
+		priv->view_only = 1;
 
 	if (options[OPT_viewpw].result[0] != '\0') {
 		unsigned char viewpw[9];

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.72 2006/09/28 05:13:21 pekberg Exp $
+/* $Id: rfb.c,v 1.73 2006/09/28 05:50:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1419,7 +1419,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	client->cfd = cfd;
 	client->cwfd = cwfd;
-	client->input = 1;
+	client->input = !priv->view_only;
 	client->dirty.tl.x = 0;
 	client->dirty.tl.y = 0;
 	client->dirty.br.x = LIBGGI_VIRTX(vis);
