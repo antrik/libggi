@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.71 2006/09/26 13:48:25 pekberg Exp $
+/* $Id: rfb.c,v 1.72 2006/09/28 05:13:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -161,12 +161,10 @@ close_client(ggi_vnc_client *client)
 		client->zrle_ctx = NULL;
 	}
 
-#ifdef HAVE_JPEG
 	if (client->tight_ctx) {
 		GGI_vnc_tight_close(client->tight_ctx);
 		client->tight_ctx = NULL;
 	}
-#endif
 #endif
 
 	GG_LIST_REMOVE(client, siblings);
@@ -258,7 +256,7 @@ change_pixfmt(ggi_vnc_client *client)
 		client->vis = NULL;
 	}
 
-#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+#ifdef HAVE_ZLIB
 	if (client->encode == GGI_vnc_tight) {
 		if (((client->pixfmt.red_mask << client->pixfmt.red_shift)
 			== 0xff000000) &&
@@ -507,7 +505,7 @@ zlib_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 #define zlib_enc print_enc
 #endif
 
-#if defined(HAVE_ZLIB) && defined(HAVE_JPEG)
+#ifdef HAVE_ZLIB
 static ggi_vnc_encode *
 tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 {

@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.14 2006/09/27 21:15:47 pekberg Exp $
+/* $Id: tight.c,v 1.15 2006/09/28 05:13:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -37,7 +37,9 @@
 #endif
 
 #include <zlib.h>
+#ifdef HAVE_JPEG
 #include <jpeglib.h>
+#endif
 
 #include <ggi/display/vnc.h>
 #include <ggi/internal/ggi_debug.h>
@@ -49,9 +51,11 @@ struct tight_ctx_t {
 	int reset;
 	z_stream zstr[4];
 	ggi_vnc_buf work[2];
+#ifdef HAVE_JPEG
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
 	int jpeg_quality;
+#endif
 };
 
 /* compression control */
@@ -72,6 +76,8 @@ struct tight_ctx_t {
 #define TIGHT_COPY          (0)
 #define TIGHT_PALETTE       (1)
 #define TIGHT_GRADIENT      (2)
+
+#ifdef HAVE_JPEG
 
 static void
 buf_dest_init_destination(j_compress_ptr cinfo)
@@ -128,6 +134,8 @@ buf_dest(j_compress_ptr cinfo)
 
 	buf_dest_init_destination(cinfo);
 }
+
+#endif /* HAVE_JPEG */
 
 static void
 zip(ggi_vnc_client *client, int ztream, uint8_t *src, int len)
@@ -213,9 +221,11 @@ select_subencoding(struct tight_ctx_t *ctx,
 
 	/* too many colors for anything but raw/jpeg/gradient */
 	if (!colors) {
+#ifdef HAVE_JPEG
 		if (ctx->jpeg_quality && cbpp > 1 &&
 			xs >= 16 && ys >= 16 && *best > 3000)
 			subencoding = TIGHT_JPEG;
+#endif
 		return subencoding;
 	}
 
@@ -467,6 +477,8 @@ raw_32(uint8_t *dst, uint8_t *src8, int xs, int ys, int stride, int rev)
 	return dst;
 }
 
+#ifdef HAVE_JPEG
+
 static inline void
 crossblit_row_16(ggi_pixelformat *pixfmt, uint8_t *dst, uint16_t *src, int xs)
 {
@@ -576,6 +588,8 @@ jpeg_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
 
 	return &ctx->work[0].buf[ctx->work[0].size];
 }
+
+#endif /* HAVE_JPEG */
 
 static inline uint8_t *
 packed_palette_8(uint8_t *dst, uint8_t *src,
@@ -1049,10 +1063,12 @@ tile_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
 
+#ifdef HAVE_JPEG
 	if (subencoding == TIGHT_JPEG) {
 		*buf = jpeg_16(ctx, pixfmt, src, xs, ys, stride);
 		return;
 	}
+#endif
 
 	if (subencoding == TIGHT_RAW) {
 		*buf = raw_16(dst, src, xs, ys, stride, rev);
@@ -1113,10 +1129,12 @@ tile_888(struct tight_ctx_t *ctx, uint8_t **buf,
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
 
+#ifdef HAVE_JPEG
 	if (subencoding == TIGHT_JPEG) {
 		*buf = jpeg_888(ctx, src, xs, ys, stride);
 		return;
 	}
+#endif
 
 	if (subencoding == TIGHT_RAW) {
 		*buf = raw_888(dst, src, xs, ys, stride);
@@ -1170,10 +1188,12 @@ tile_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt, uint8_t **buf,
 	*buf = &ctx->work[0].buf[ctx->work[0].size];
 	dst = *buf;
 
+#ifdef HAVE_JPEG
 	if (subencoding == TIGHT_JPEG) {
 		*buf = jpeg_32(ctx, pixfmt, src, xs, ys, stride);
 		return;
 	}
+#endif
 
 	if (subencoding == TIGHT_RAW) {
 		*buf = raw_32(dst, src, xs, ys, stride, rev);
@@ -1427,6 +1447,7 @@ GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 void
 GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
 {
+#ifdef HAVE_JPEG
 	if (!ctx->jpeg_quality) {
 		jpeg_create_compress(&ctx->cinfo);
 		buf_dest(&ctx->cinfo);
@@ -1434,6 +1455,9 @@ GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
 
 	ctx->jpeg_quality = 5 + 10 * quality;
 	DPRINT("jpeg quality %d\n", ctx->jpeg_quality);
+#else
+	DPRINT("Tight jpeg subencoding disabled\n");
+#endif
 }
 
 struct tight_ctx_t *
@@ -1445,7 +1469,9 @@ GGI_vnc_tight_open(void)
 	memset(ctx, 0, sizeof(*ctx));
 
 	ctx->reset = TIGHT_ZTREAM_RESET;
+#ifdef HAVE_JPEG
 	ctx->jpeg_quality = 0;
+#endif
 
 	for (i = 0; i < 4; ++i) {
 		ctx->zstr[i].zalloc = Z_NULL;
@@ -1454,8 +1480,10 @@ GGI_vnc_tight_open(void)
 		deflateInit(&ctx->zstr[i], Z_DEFAULT_COMPRESSION);
 	}
 
+#ifdef HAVE_JPEG
 	ctx->cinfo.client_data = ctx;
 	ctx->cinfo.err = jpeg_std_error(&ctx->jerr);
+#endif
 
 	return ctx;
 }
@@ -1463,8 +1491,10 @@ GGI_vnc_tight_open(void)
 void
 GGI_vnc_tight_close(struct tight_ctx_t *ctx)
 {
+#ifdef HAVE_JPEG
 	if (ctx->jpeg_quality)
 		jpeg_destroy_compress(&ctx->cinfo);
+#endif
 
 	free(ctx->work[0].buf);
 	free(ctx->work[1].buf);

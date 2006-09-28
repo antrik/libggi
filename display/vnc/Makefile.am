@@ -10,10 +10,9 @@ libvnc_la_SOURCES = box.c buffer.c color.c gtext.c line.c pixel.c \
 
 if HAVE_ZLIB
 libvnc_la_LIBADD  += -lz
-libvnc_la_SOURCES += zlib.c zrle.c
+libvnc_la_SOURCES += tight.c zlib.c zrle.c
 if HAVE_JPEG
 libvnc_la_LIBADD  += -ljpeg
-libvnc_la_SOURCES += tight.c
 endif
 endif
 
