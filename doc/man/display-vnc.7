@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-28" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-09-29" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -8,7 +8,8 @@ display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
              [-hextile=no] [-kold] [-passwd=<password>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
              [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-             [-viewpw=<password>] [-zlib=<level>|no] [-zrle=<level>|no]
+             [-viewpw=<password>] [-zlib=<level>|no] [-zlibhex=<level>|no]
+             [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -94,7 +95,7 @@ option.
 
 .TP
 \f(CW-tight=no\fR
-Disables the tight encoding.
+Disables the Tight encoding.
 
 .TP
 \f(CW-title=<title>\fR
@@ -122,9 +123,16 @@ See the options \fI-passwd\fR and \fI-viewonly\fR for comparison.
 
 .TP
 \f(CW-zlib=<level>|no\fR
-Specify the compression level to use for the zlib encoding. 0 for
+Specify the compression level to use for the Zlib encoding. 0 for
 no compression and 9 for maximum compression. Saying \fIno\fR here
-disables the zlib encoding. If the option isn't specified, a default
+disables the Zlib encoding. If the option isn't specified, a default
+compromize between speed and compression is selected.
+
+.TP
+\f(CW-zlibhex=<level>|no\fR
+Specify the compression level to use for the ZlibHex encoding. 0 for
+no compression and 9 for maximum compression. Saying \fIno\fR here
+disables the ZlibHex encoding. If the option isn't specified, a default
 compromize between speed and compression is selected.
 
 .TP
@@ -137,8 +145,8 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
-encoding is only used for panning.
+Raw, CopyRect, Hextile, Tight, Zlib, ZlibHex and ZRLE encodings. The
+CopyRect encoding is only used for panning.
 .IP \(bu 4
 Multiple simultaneous clients.
 .IP \(bu 4
@@ -151,9 +159,49 @@ Panning always available.
 .IP \(bu 4
 Unaccelerated.
 .PP
+.SH EXAMPLES
+To launch a GGI application for each connection made to a TCP port, you
+may use inetd. Just add a line like this to \f(CW/etc/inetd.conf\fR:
+
+.nb
+.nf
+vnc stream tcp nowait nobody /path/to/app app -t vnc:-stdio:-kold
+.fi
+
+You also need to define what port the service \f(CWvnc\fR should use in the
+file \f(CW/etc/services\fR:
+
+.nb
+.nf
+vnc            5900/tcp
+.fi
+
+After you make inetd reread its configuration (e.g. send the -HUP signal
+to it), you should be able to run the application with a VNC viewer
+of your choice.
+
+If you instead want to have all subsequent connections share one
+application instance, change the line in \f(CW/etc/inetd.conf\fR to:
+
+.nb
+.nf
+vnc stream tcp wait nobody /path/to/app app -t vnc:-server=stdio:-kold
+.fi
+
+.RS
+\fBNote:\fR
+This assumes that the application supports the \f(CW-t\fR option to set the
+display target, and that it does not output anything at all on
+stdout/stderr. The application will run as the user \f(CWnobody\fR.
+.RE
 .SH CREDITS
-The tight encoding uses the jpeg library from the Independent JPEG Group.
+The Tight encoding uses the jpeg library from the Independent JPEG Group.
 .SH BUGS
+.IP \(bu 4
+If the application does not give control to libgii with regular
+intervals (i.e. \f(CWgiiEventRead(3)\fR, \f(CWgiiEventPoll(3)\fR
+or some wrapper that in turn calls one of these functions) this
+display target will not work, or at least not work well.
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
 .PP
