@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.33 2006/09/28 05:50:26 pekberg Exp $
+/* $Id: visual.c,v 1.34 2006/09/29 04:54:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -69,6 +69,7 @@
 	VNC_OPTION(viewonly, "no")         \
 	VNC_OPTION(viewpw,   "")           \
 	VNC_OPTION(zlib,     "")           \
+	VNC_OPTION(zlibhex,  "")           \
 	VNC_OPTION(zrle,     "")
 
 #define VNC_OPTION(name, default) \
@@ -235,6 +236,19 @@ GGIopen(struct ggi_visual *vis,
 			priv->zlib_level = 0;
 		else if (priv->zlib_level > 9)
 			priv->zlib_level = 9;
+	}
+
+	if (options[OPT_zlibhex].result[0] == '\0')
+		priv->zlibhex_level = -1; /* default compression */
+	else if (options[OPT_zlibhex].result[0] == 'n')
+		priv->zlibhex_level = -2; /* disable */
+	else {
+		priv->zlibhex_level =
+			strtoul(options[OPT_zlibhex].result, NULL, 0);
+		if (priv->zlibhex_level < 0)
+			priv->zlibhex_level = 0;
+		else if (priv->zlibhex_level > 9)
+			priv->zlibhex_level = 9;
 	}
 
 	if (options[OPT_zrle].result[0] == '\0')

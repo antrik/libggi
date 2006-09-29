@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.73 2006/09/28 05:50:26 pekberg Exp $
+/* $Id: rfb.c,v 1.74 2006/09/29 04:54:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -154,6 +154,11 @@ close_client(ggi_vnc_client *client)
 	if (client->zlib_ctx) {
 		GGI_vnc_zlib_close(client->zlib_ctx);
 		client->zlib_ctx = NULL;
+	}
+
+	if (client->zlibhex_ctx) {
+		GGI_vnc_zlibhex_close(client->zlibhex_ctx);
+		client->zlibhex_ctx = NULL;
 	}
 
 	if (client->zrle_ctx) {
@@ -470,7 +475,8 @@ hextile_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
-	DPRINT_MISC(format);
+	if (format)
+		DPRINT_MISC(format);
 	if (!priv->hextile)
 		return NULL;
 	if (client->encode)
@@ -503,6 +509,30 @@ zlib_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 #else
 #define zlib_enc print_enc
+#endif
+
+#ifdef HAVE_ZLIB
+static ggi_vnc_encode *
+zlibhex_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (client->encode || priv->zlibhex_level == -2)
+		return NULL;
+	if (!client->zlibhex_ctx)
+		client->zlibhex_ctx = GGI_vnc_zlibhex_open(-1);
+	if (!client->zlibhex_ctx)
+		return NULL;
+
+	if (!hextile_enc(client, encoding, NULL))
+		return NULL;
+
+	return GGI_vnc_zlibhex;
+}
+#else
+#define zlibhex_enc print_enc
 #endif
 
 #ifdef HAVE_ZLIB
@@ -584,7 +614,7 @@ struct encodings encode_tbl[] = {
 	{      5,    0, "Hextile encoding\n",             hextile_enc },
 	{      6,    0, "Zlib encoding\n",                zlib_enc },
 	{      7,    0, "Tight encoding\n",               tight_enc },
-	{      8,    0, "ZlibHex encoding\n",             print_enc },
+	{      8,    0, "ZlibHex encoding\n",             zlibhex_enc },
 	{      9,    0, "Ultra encoding\n",               print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },

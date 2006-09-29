@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.10 2006/09/28 05:13:21 pekberg Exp $
+/* $Id: encoding.h,v 1.11 2006/09/29 04:54:35 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -46,6 +46,11 @@ struct zlib_ctx_t;
 ggi_vnc_encode GGI_vnc_zlib;
 struct zlib_ctx_t *GGI_vnc_zlib_open(int level);
 void GGI_vnc_zlib_close(struct zlib_ctx_t *ctx);
+
+struct zlibhex_ctx_t;
+ggi_vnc_encode GGI_vnc_zlibhex;
+struct zlibhex_ctx_t *GGI_vnc_zlibhex_open(int level);
+void GGI_vnc_zlibhex_close(struct zlibhex_ctx_t *ctx);
 
 struct zrle_ctx_t;
 ggi_vnc_encode GGI_vnc_zrle;

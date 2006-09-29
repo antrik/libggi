@@ -12,7 +12,8 @@ Synopsis
 	       [-hextile=no] [-kold] [-passwd=<password>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
 	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-	       [-viewpw=<password>] [-zlib=<level>|no] [-zrle=<level>|no]
+	       [-viewpw=<password>] [-zlib=<level>|no] [-zlibhex=<level>|no]
+	       [-zrle=<level>|no]
 
 
 Description
@@ -94,7 +95,7 @@ Options
     option.
 
 ``-tight=no``
-    Disables the tight encoding.
+    Disables the Tight encoding.
 
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
@@ -118,9 +119,15 @@ Options
     See the options :p:`-passwd` and :p:`-viewonly` for comparison.
 
 ``-zlib=<level>|no``
-    Specify the compression level to use for the zlib encoding. 0 for
+    Specify the compression level to use for the Zlib encoding. 0 for
     no compression and 9 for maximum compression. Saying :p:`no` here
-    disables the zlib encoding. If the option isn't specified, a default
+    disables the Zlib encoding. If the option isn't specified, a default
+    compromize between speed and compression is selected.
+
+``-zlibhex=<level>|no``
+    Specify the compression level to use for the ZlibHex encoding. 0 for
+    no compression and 9 for maximum compression. Saying :p:`no` here
+    disables the ZlibHex encoding. If the option isn't specified, a default
     compromize between speed and compression is selected.
 
 ``-zrle=<level>|no``
@@ -133,8 +140,8 @@ Options
 Features
 --------
 
-- Raw, CopyRect, Hextile, zlib, ZRLE and tight encodings. The CopyRect
-  encoding is only used for panning.
+- Raw, CopyRect, Hextile, Tight, Zlib, ZlibHex and ZRLE encodings. The
+  CopyRect encoding is only used for panning.
 - Multiple simultaneous clients.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
@@ -146,7 +153,7 @@ Features
 Credits
 -------
 
-The tight encoding uses the jpeg library from the Independent JPEG Group.
+The Tight encoding uses the jpeg library from the Independent JPEG Group.
 
 
 Bugs
