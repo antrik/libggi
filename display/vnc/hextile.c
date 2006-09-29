@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.5 2006/09/20 09:29:36 pekberg Exp $
+/* $Id: hextile.c,v 1.6 2006/09/29 04:25:47 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -543,7 +543,13 @@ tile_8(struct hextile_ctx_t *ctx, uint8_t **buf,
 		ctx->flags |= HEXTILE_FG;
 		ctx->fg = fg;
 	}
-	else
+	if (subencoding & HEXTILE_COLORED)
+		/* ah, when the client draws any colored subrect,
+		 * it updates its foreground color.
+		 * could set ctx->fg to the color of the last
+		 * subrect instead of (potentially) specifying that
+		 * color again in a future tile.
+		 */
 		ctx->flags &= ~HEXTILE_FG;
 
 done:
@@ -621,7 +627,13 @@ tile_16(struct hextile_ctx_t *ctx, uint8_t **buf,
 		ctx->flags |= HEXTILE_FG;
 		ctx->fg = fg;
 	}
-	else
+	if (subencoding & HEXTILE_COLORED)
+		/* ah, when the client draws any colored subrect,
+		 * it updates its foreground color.
+		 * could set ctx->fg to the color of the last
+		 * subrect instead of (potentially) specifying that
+		 * color again in a future tile.
+		 */
 		ctx->flags &= ~HEXTILE_FG;
 
 done:
@@ -699,7 +711,13 @@ tile_32(struct hextile_ctx_t *ctx, uint8_t **buf,
 		ctx->flags |= HEXTILE_FG;
 		ctx->fg = fg;
 	}
-	else
+	if (subencoding & HEXTILE_COLORED)
+		/* ah, when the client draws any colored subrect,
+		 * it updates its foreground color.
+		 * could set ctx->fg to the color of the last
+		 * subrect instead of (potentially) specifying that
+		 * color again in a future tile.
+		 */
 		ctx->flags &= ~HEXTILE_FG;
 
 done:
