@@ -159,4 +159,8 @@ The Tight encoding uses the jpeg library from the Independent JPEG Group.
 Bugs
 ----
 
+- If the application does not give control to libgii with regular
+  intervals (i.e. :man:`giiEventRead(3)`, :man:`giiEventPoll(3)`
+  or some wrapper that in turn calls one of these functions) this
+  display target will not work, or at least not work well.
 - Special keys (i.e. shift, escape, etc) needs to be converted.
