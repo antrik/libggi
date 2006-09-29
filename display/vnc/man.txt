@@ -150,6 +150,35 @@ Features
 - Unaccelerated.
 
 
+Examples
+--------
+
+To launch a GGI application for each connection made to a TCP port, you
+may use inetd. Just add a line like this to ``/etc/inetd.conf``::
+
+  vnc stream tcp nowait nobody /path/to/app app -t vnc:-stdio:-kold
+
+You also need to define what port the service ``vnc`` should use in the
+file ``/etc/services``::
+
+  vnc            5900/tcp
+
+After you make inetd reread its configuration (e.g. send the -HUP signal
+to it), you should be able to run the application with a VNC viewer
+of your choise.
+
+If you instead want to have all subsequent connections share one
+application instance, change the line in ``/etc/inetd.conf`` to::
+
+  vnc stream tcp wait nobody /path/to/app app -t vnc:-server=stdio:-kold
+
+.. note::
+
+  This assumes that the application supports the ``-t`` option to set the
+  display target, and that it does not output anything at all on
+  stdout/stderr. The application will run as the user ``nobody``.
+
+
 Credits
 -------
 
