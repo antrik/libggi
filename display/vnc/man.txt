@@ -165,7 +165,7 @@ file ``/etc/services``::
 
 After you make inetd reread its configuration (e.g. send the -HUP signal
 to it), you should be able to run the application with a VNC viewer
-of your choise.
+of your choice.
 
 If you instead want to have all subsequent connections share one
 application instance, change the line in ``/etc/inetd.conf`` to::
