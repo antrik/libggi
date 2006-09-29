@@ -1,7 +1,7 @@
-/* $Id: zlib.c,v 1.9 2006/09/20 08:21:27 pekberg Exp $
+/* $Id: zlib.c,v 1.10 2006/09/29 05:05:21 pekberg Exp $
 ******************************************************************************
 
-   display-vnc: RFB zlib encoding
+   display-vnc: RFB Zlib encoding
 
    Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
 
@@ -99,8 +99,8 @@ GGI_vnc_zlib(ggi_vnc_client *client, ggi_rect *update)
 	ctx->wbuf = client->wbuf;
 	client->wbuf = tmp_buf;
 
-	/* change header to zlib encoding */
-	ctx->wbuf.buf[11] = 6; /* zlib */
+	/* change header to Zlib encoding */
+	ctx->wbuf.buf[11] = 6; /* Zlib */
 
 	/* copy the revised header to the real buffer */
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 16);
