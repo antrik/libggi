@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.202 2006/09/24 15:26:28 cegger Exp $
+dnl $Id: configure.in,v 1.203 2006/09/29 05:12:05 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -307,7 +307,7 @@ AC_CHECK_HEADERS(ggi/gg.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
 sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
 sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
-sys/socket.h netinet/in.h netdb.h windows.h linux/h3600_ts.h \
+sys/socket.h netinet/in.h arpa/inet.h netdb.h windows.h linux/h3600_ts.h \
 asm/sharp_ts.h \
 ApplicationServices/ApplicationServices.h, [], [], [AC_INCLUDES_DEFAULT])
 

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.74 2006/09/29 04:54:35 pekberg Exp $
+/* $Id: rfb.c,v 1.75 2006/09/29 05:12:05 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -46,6 +46,9 @@
 #endif
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
 #endif
 
 #include <errno.h>
@@ -1494,6 +1497,12 @@ GGI_vnc_new_client(void *arg)
 		DPRINT("Error accept(2)ing connection\n");
 		return;
 	}
+
+#ifdef HAVE_ARPA_INET_H
+	DPRINT("fd %d connecting from %s:%d\n",
+		cfd, inet_ntoa(sa.sin_addr),
+		ntohs(sa.sin_port));
+#endif
 
 	GGI_vnc_new_client_finish(vis, cfd, cfd);
 }
