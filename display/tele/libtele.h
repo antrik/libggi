@@ -1,4 +1,4 @@
-/* $Id: libtele.h,v 1.5 2005/07/31 15:30:37 soyt Exp $
+/* $Id: libtele.h,v 1.6 2006/09/30 05:02:49 cegger Exp $
 ******************************************************************************
 
    libtele.h
@@ -29,7 +29,7 @@
 #ifndef _LIBTELE_H
 #define _LIBTELE_H
 
-#include <ggi/ggi.h>
+#include <ggi/gg.h>
 
 
 /*** TYPES ***/
