@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/03/22 20:22:29 cegger Exp $
+/* $Id: visual.c,v 1.14 2006/09/30 00:05:00 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -34,6 +34,7 @@
 #include <ggi/internal/ggi_debug.h>
 
 #include "libtele.h"
+#include <ggi/input/tele.h>
 #include <ggi/display/tele.h>
 
 
@@ -45,9 +46,9 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		GGI_tele_resetmode(vis);
 	}
 
-	if (vis->input) {
-		giiClose(vis->input);
-		vis->input = NULL;
+	if (priv->input) {
+		ggCloseModule(priv->input);
+		priv->input = NULL;
 	}
 
 	if (priv->connected) {
@@ -66,6 +67,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_tele_priv *priv;
+	gii_tele_arg iargs;
+	struct gg_api *gii;
 	int err = GGI_ENOMEM;
 
 	/* initialize */
@@ -84,7 +87,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->connected = 0;
 	priv->mode_up = 0;
-	priv->wait_event = NULL;
 
 	/* connect to the server */
 	fprintf(stderr, "Connecting to the TeleServer...\n");
@@ -105,28 +107,23 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* set up GII */
 	DPRINT_MISC("gii starting\n");
-
-	/* first allocate a new gii_input descriptor */
-	if ((priv->input = _giiInputAlloc()) == NULL) {
-		DPRINT_MISC("giiInputAlloc failure.\n");
-		GGIclose(vis, dlh);
-		return GGI_ENOMEM;
+	gii = ggGetAPIByName("gii");
+	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+		err = GGI_ENODEVICE;
+		fprintf(stderr,
+			"display-tele: gii not attached to stem\n");
+		goto out_close;
 	}
+
+
+	iargs.tclient_poll = tclient_poll;
+	iargs.tclient_read = tclient_read;
+
+	priv->input = ggOpenModule(gii, vis->stem, "input-tele", NULL,
+				&iargs);
+
 	DPRINT_MISC("gii input=%p\n", priv->input);
 
-	/* now fill in the blanks */
-	priv->input->priv = priv;
-	priv->input->targetcan = emAll;
-	priv->input->GIIseteventmask(priv->input, priv->input->targetcan);
-	priv->input->maxfd = 0;	/* this is polled */
-	priv->input->flags |= GII_FLAGS_HASPOLLED;
-
-	/* We only need the "poll" function.  For all others, the
-	 * defaults are fine.
-	 */
-	priv->input->GIIeventpoll = GII_tele_poll;
-	/* now join the new event source in */
-	vis->input = giiJoinInputs(vis->input, priv->input);
 
 	/* set up function pointers */
 	vis->opdisplay->getmode=GGI_tele_getmode;
@@ -137,6 +134,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
+  out_close:
+	GGIclose(vis, dlh);
   out_freeclient:
 	free(priv->client);
   out_freegc:
