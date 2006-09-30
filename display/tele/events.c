@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.9 2006/09/29 23:07:54 cegger Exp $
+/* $Id: events.c,v 1.10 2006/09/30 00:23:46 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -39,16 +39,25 @@
 
 #define MINSLEEPTIME  (20*1000)  /* microseconds */
 
+
+struct tele_wait_event {
+	TeleEvent *wait_event;
+	long wait_type;
+	long wait_sequence;
+};
+
+
 int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev, 
 			   long type, long seq)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
+	struct tele_wait_event we;
 
 	ev->size = 0;
 
-	priv->wait_event = ev;
-	priv->wait_type  = type;
-	priv->wait_sequence = seq;
+	we.wait_event = ev;
+	we.wait_type  = type;
+	we.wait_sequence = seq;
 
 	DPRINT_EVENTS("display-tele: WAITING FOR (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
@@ -70,7 +79,7 @@ int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev,
 	DPRINT_EVENTS("display-tele: WAIT OVER (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
 
-	priv->wait_event = NULL;
+	we.wait_event = NULL;
 
 	return 0;
 }

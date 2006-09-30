@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/09/30 00:05:00 cegger Exp $
+/* $Id: visual.c,v 1.15 2006/09/30 00:23:46 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -115,7 +115,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto out_close;
 	}
 
-
+	iargs.client = priv->client;
 	iargs.tclient_poll = tclient_poll;
 	iargs.tclient_read = tclient_read;
 

@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.8 2006/09/29 23:07:54 cegger Exp $
+/* $Id: tele.h,v 1.9 2006/09/30 00:23:46 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -38,11 +38,6 @@ typedef struct {
 
 	int connected;
 	int mode_up;
-
-	TeleEvent *wait_event;
-
-	long wait_type;
-	long wait_sequence;
 
 	struct gg_module *input;
 
