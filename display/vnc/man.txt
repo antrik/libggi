@@ -12,8 +12,8 @@ Synopsis
 	       [-hextile=no] [-kold] [-passwd=<password>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
 	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-	       [-viewpw=<password>] [-zlib=<level>|no] [-zlibhex=<level>|no]
-	       [-zrle=<level>|no]
+	       [-viewpw=<password>] [-zlib=<level>|no]
+	       [-zlibhex=<level>|no] [-zrle=<level>|no]
 
 
 Description
@@ -82,17 +82,17 @@ Options
     using :p:`-server=<dpy>`. If no argument is given, the display number
     is collected for the :p:`-display` option. Use :p:`-display=stdio` to
     accept connections from the stdin file handle, which is suitable for
-    serving a GGI application as an inetd(8) :p:`wait` type service.
-    The :p:`-server=stdio` option is incompatible with the :p:`-stdio`
-    option.
+    serving a GGI application as an inetd(8) :p:`wait` type service (see
+    the example below). The :p:`-server=stdio` option is incompatible with
+    the :p:`-stdio` option.
 
 ``-stdio``
     Talk the RFB protocol on stdin/stdout instead of waiting for clients
     to connect. Suitable for serving a GGI application as an inetd(8)
-    :p:`nowait` type service. One requirement though, is that the served
-    GGI application does not "chatter" on stdout and/or stderr.
-    The :p:`-stdio` option is incompatible with the :p:`-server=stdio`
-    option.
+    :p:`nowait` type service (see the example below). One requirement
+    though, is that the served GGI application does not "chatter" on
+    stdout and/or stderr. The :p:`-stdio` option is incompatible with the
+    :p:`-server=stdio` option.
 
 ``-tight=no``
     Disables the Tight encoding.
@@ -154,7 +154,7 @@ Examples
 --------
 
 To launch a GGI application for each connection made to a TCP port, you
-may use inetd. Just add a line like this to ``/etc/inetd.conf``::
+may use inetd(8). Just add a line like this to ``/etc/inetd.conf``::
 
   vnc stream tcp nowait nobody /path/to/app app -t vnc:-stdio:-kold
 
@@ -163,9 +163,9 @@ file ``/etc/services``::
 
   vnc            5900/tcp
 
-After you make inetd reread its configuration (e.g. send the -HUP signal
-to it), you should be able to run the application with a VNC viewer
-of your choice.
+After you make inetd(8) reread its configuration (e.g. send the -HUP
+signal to it), you should be able to run the application with a VNC
+viewer of your choice.
 
 If you instead want to have all subsequent connections share one
 application instance, change the line in ``/etc/inetd.conf`` to::
