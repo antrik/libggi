@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.11 2006/10/02 06:34:18 cegger Exp $
+/* $Id: events.c,v 1.12 2006/10/02 07:29:38 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -29,6 +29,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/tele.h>
+#include <ggi/input/tele.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -40,13 +41,6 @@
 #define MINSLEEPTIME  (20*1000)  /* microseconds */
 
 
-struct tele_wait_event {
-	TeleEvent *wait_event;
-	long wait_type;
-	long wait_sequence;
-};
-
-
 int GGI_tele_listener(void *arg, int flag, void *data)
 {
 	struct ggi_visual *vis = arg;
@@ -56,6 +50,12 @@ int GGI_tele_listener(void *arg, int flag, void *data)
 		DPRINT("listener: EXPOSE event received\n");
 	}
 
+	if ((flag & GII_CMDCODE_TELE_UNLOCK) == GII_CMDCODE_TELE_UNLOCK) {
+		DPRINT("listener: TELE_UNLOCK event received\n");
+
+		priv->reply = 1;
+	}
+
 	return 0;
 }
 
@@ -63,35 +63,31 @@ int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev,
 			   long type, long seq)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
-	struct tele_wait_event we;
+	struct gii_cmddata_tele_event w4e;
 
 	ev->size = 0;
 
-	we.wait_event = ev;
-	we.wait_type  = type;
-	we.wait_sequence = seq;
+	memcpy(&w4e.ev, ev, sizeof(w4e.ev));
+	w4e.type = type;
+	w4e.sequence = seq;
+	priv->reply = 0;
 
 	DPRINT_EVENTS("display-tele: WAITING FOR (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
+	ggNotifyObservers(priv->publisher, GII_CMDCODE_TELE_WAIT4EVENT,
+			&w4e);
 
 	for (;;) {
-		struct timeval tv;
-
-		tv.tv_sec = tv.tv_usec = 0;
-
-		GII_tele_poll(priv->input, NULL);
-
-		if (ev->size != 0) {
-			break;
+		if (!priv->reply) {
+			ggUSleep(MINSLEEPTIME);
+			continue;
 		}
 
-		ggUSleep(MINSLEEPTIME);
+		break;
 	}
 
 	DPRINT_EVENTS("display-tele: WAIT OVER (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
-
-	we.wait_event = NULL;
 
 	return 0;
 }

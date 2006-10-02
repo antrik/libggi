@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.10 2006/10/02 06:34:18 cegger Exp $
+/* $Id: tele.h,v 1.11 2006/10/02 07:29:37 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -42,6 +42,7 @@ typedef struct {
 	struct gg_module *input;
 
 	int width, height;  /* for generating evExpose events */
+	int reply;
 
 	struct gg_publisher *publisher;
 	struct gg_observer *observer;
