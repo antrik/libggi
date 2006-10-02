@@ -15,7 +15,7 @@ helperlibdir = ${libdir}/${ggi_subdir}/helper
 
 libggi = ${top_builddir}/ggi/libggi.la
 
-aa_la_LIBADD = ${displaydir}/aa/libaa.la ${libggi}
+aa_la_LIBADD = ${displaydir}/aa/libgaa.la ${libggi}
 aa_la_SOURCES =
 aa_la_LDFLAGS = -rpath $(displaylibdir) ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \

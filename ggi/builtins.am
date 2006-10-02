@@ -33,7 +33,7 @@ if BUILTIN_DEFAULT_KGI_ACCEL
   builtins_libs += $(top_builddir)/default/kgi/Matrox/Gx00/libGx00.la
 endif
 if BUILTIN_DISPLAY_AA
-  builtins_libs += $(top_builddir)/display/aa/libaa.la
+  builtins_libs += $(top_builddir)/display/aa/libgaa.la
 endif
 if BUILTIN_DISPLAY_DIRECTX
   builtins_libs += $(top_builddir)/display/directx/libdirectx.la
