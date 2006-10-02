@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/10/02 06:34:18 cegger Exp $
+/* $Id: visual.c,v 1.17 2006/10/02 07:24:14 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -36,6 +36,7 @@
 #include "libtele.h"
 #include <ggi/input/tele.h>
 #include <ggi/display/tele.h>
+#include <ggi/gii.h>
 
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
