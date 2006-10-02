@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.5 2006/03/27 19:46:31 pekberg Exp $
+/* $Id: menu.c,v 1.6 2006/10/02 09:40:51 cegger Exp $
 ******************************************************************************
 
    Universal menu for ggi
@@ -34,7 +34,8 @@ static struct menu _defaultmenu = {
 #else
 	{NULL },   /* Window */
 #endif
-	1,{{"firstentry"}},
+	1,
+	{{"firstentry"}},
 	{0xffff,0xffff,0x0000}, /* entry */
 
 	{0x0000,0x0000,0xffff}, /* selected fg */
