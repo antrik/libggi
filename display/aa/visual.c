@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/09/22 19:31:17 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/10/02 16:55:51 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -118,13 +118,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	priv->aalock = lock;
-	priv->context = 0;
-	priv->lx = 0;
-	priv->ly = 0;
-	priv->lb = 0;
-	priv->lastkey = 0;
-	priv->lastkeyticks = 0;
-	priv->haverelease = 0;
+	priv->context = NULL;
 
 	if (args) {
 		args = ggParseOptions(args, options, NUM_OPTS);
@@ -150,18 +144,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		MANSYNC_start(vis);
 	}
 
-#if 0
 	do {
 		struct gg_module *inp = NULL;
 		struct gg_api *gii;
+
 		DPRINT_MISC("display-aa: gii starting\n");
 
 		/* First allocate a new gii_input descriptor. */
-		if ((gii = ggGetAPIByName("gii")) != NULL) {
-			if (STEM_HAS_API(vis->stem, gii)) {
-				inp = ggOpenModule(gii, vis->stem,
-					"input-aa", NULL, &_args);
-			}
+		gii = ggGetAPIByName("gii");
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem,
+				"input-aa", NULL, NULL);
 		}
 		if (inp == NULL) {
 			DPRINT_MISC("display-aa: ggOpenModule failed\n");
@@ -170,17 +163,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		DPRINT_MISC("display-aa: gii inp=%p\n",inp);
 
-		/* What events _can_  we create at all ?
-		   Save useless polling time. */
-		inp->curreventmask = inp->targetcan = emKey |
-			emPtrButtonPress | emPtrButtonRelease |	emPtrAbsolute ;
-
-		/* We only need the "poll" function. For all others,
-		   defaults are fine. */
-		inp->GIIeventpoll = GII_aa_poll;
-
 	} while(0);
-#endif
 
 
 	/* Has mode management */
