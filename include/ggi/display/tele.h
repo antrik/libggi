@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.9 2006/09/30 00:23:46 cegger Exp $
+/* $Id: tele.h,v 1.10 2006/10/02 06:34:18 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -42,6 +42,9 @@ typedef struct {
 	struct gg_module *input;
 
 	int width, height;  /* for generating evExpose events */
+
+	struct gg_publisher *publisher;
+	struct gg_observer *observer;
 } ggi_tele_priv;
 
 #define TELE_PRIV(vis)  ((ggi_tele_priv *) LIBGGI_PRIVATE(vis))
@@ -58,7 +61,10 @@ typedef struct {
 
 int GGI_tele_resetmode(struct ggi_visual *vis);
 
-int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev, long type, long seq);
+int tele_receive_reply(struct ggi_visual *vis,
+			TeleEvent *ev, long type, long seq);
+
+int GGI_tele_listener(void *arg, int flag, void *data);
 
 
 /* Prototypes

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/09/30 00:23:46 cegger Exp $
+/* $Id: visual.c,v 1.16 2006/10/02 06:34:18 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -72,7 +72,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = GGI_ENOMEM;
 
 	/* initialize */
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_tele_priv));
+	priv = LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_tele_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
@@ -112,7 +112,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENODEVICE;
 		fprintf(stderr,
 			"display-tele: gii not attached to stem\n");
-		goto out_close;
+		goto out_freeclient;
 	}
 
 	iargs.client = priv->client;
@@ -121,6 +121,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->input = ggOpenModule(gii, vis->stem, "input-tele", NULL,
 				&iargs);
+
+	priv->publisher = ggGetPublisher(gii, vis->stem,
+				GII_PUBLISHER_SOURCE_CHANGE);
+	priv->observer = ggAddObserver(priv->publisher, GGI_tele_listener,
+				vis);
 
 	DPRINT_MISC("gii input=%p\n", priv->input);
 
@@ -134,8 +139,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
-  out_close:
-	GGIclose(vis, dlh);
   out_freeclient:
 	free(priv->client);
   out_freegc:

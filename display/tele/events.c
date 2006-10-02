@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.10 2006/09/30 00:23:46 cegger Exp $
+/* $Id: events.c,v 1.11 2006/10/02 06:34:18 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -46,6 +46,18 @@ struct tele_wait_event {
 	long wait_sequence;
 };
 
+
+int GGI_tele_listener(void *arg, int flag, void *data)
+{
+	struct ggi_visual *vis = arg;
+	ggi_tele_priv *priv = TELE_PRIV(vis);
+
+	if ((flag & GII_CMDCODE_EXPOSE) == GII_CMDCODE_EXPOSE) {
+		DPRINT("listener: EXPOSE event received\n");
+	}
+
+	return 0;
+}
 
 int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev, 
 			   long type, long seq)
