@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-09-29" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-10-02" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -8,8 +8,8 @@ display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
              [-hextile=no] [-kold] [-passwd=<password>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
              [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-             [-viewpw=<password>] [-zlib=<level>|no] [-zlibhex=<level>|no]
-             [-zrle=<level>|no]
+             [-viewpw=<password>] [-zlib=<level>|no]
+             [-zlibhex=<level>|no] [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -80,18 +80,18 @@ different displays numbers, the server display number can be specified
 using \fI-server=<dpy>\fR. If no argument is given, the display number
 is collected for the \fI-display\fR option. Use \fI-display=stdio\fR to
 accept connections from the stdin file handle, which is suitable for
-serving a GGI application as an inetd(8) \fIwait\fR type service.
-The \fI-server=stdio\fR option is incompatible with the \fI-stdio\fR
-option.
+serving a GGI application as an inetd(8) \fIwait\fR type service (see
+the example below). The \fI-server=stdio\fR option is incompatible with
+the \fI-stdio\fR option.
 
 .TP
 \f(CW-stdio\fR
 Talk the RFB protocol on stdin/stdout instead of waiting for clients
 to connect. Suitable for serving a GGI application as an inetd(8)
-\fInowait\fR type service. One requirement though, is that the served
-GGI application does not "chatter" on stdout and/or stderr.
-The \fI-stdio\fR option is incompatible with the \fI-server=stdio\fR
-option.
+\fInowait\fR type service (see the example below). One requirement
+though, is that the served GGI application does not "chatter" on
+stdout and/or stderr. The \fI-stdio\fR option is incompatible with the
+\fI-server=stdio\fR option.
 
 .TP
 \f(CW-tight=no\fR
@@ -161,7 +161,7 @@ Unaccelerated.
 .PP
 .SH EXAMPLES
 To launch a GGI application for each connection made to a TCP port, you
-may use inetd. Just add a line like this to \f(CW/etc/inetd.conf\fR:
+may use inetd(8). Just add a line like this to \f(CW/etc/inetd.conf\fR:
 
 .nb
 .nf
@@ -176,9 +176,9 @@ file \f(CW/etc/services\fR:
 vnc            5900/tcp
 .fi
 
-After you make inetd reread its configuration (e.g. send the -HUP signal
-to it), you should be able to run the application with a VNC viewer
-of your choice.
+After you make inetd(8) reread its configuration (e.g. send the -HUP
+signal to it), you should be able to run the application with a VNC
+viewer of your choice.
 
 If you instead want to have all subsequent connections share one
 application instance, change the line in \f(CW/etc/inetd.conf\fR to:
