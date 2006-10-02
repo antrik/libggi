@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.7 2006/09/17 14:08:53 aldot Exp $
+/* $Id: aa.h,v 1.8 2006/10/02 16:54:36 cegger Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -69,10 +69,6 @@ typedef struct {
 	void *aalock;
 
 	int fastrender;
-
-	int lx, ly, lb;
-	unsigned int lastkey, lastkeyticks;
-	int haverelease;
 } ggi_aa_priv;
 
 void _GGI_aa_freedbs(struct ggi_visual *vis);
