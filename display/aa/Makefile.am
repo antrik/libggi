@@ -7,7 +7,7 @@ libgaa_la_LIBADD = -laa
 
 noinst_LTLIBRARIES = libgaa.la
 
-libgaa_la_SOURCES = color.c giievents.c mode.c visual.c
+libgaa_la_SOURCES = color.c mode.c visual.c
 
 EXTRA_DIST = EXPSYMS
 
