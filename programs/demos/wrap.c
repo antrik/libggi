@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.17 2006/10/03 06:01:36 cegger Exp $
+/* $Id: wrap.c,v 1.18 2006/10/03 06:10:58 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -129,8 +129,12 @@ static void init_client(client_t * client, ggi_mode * mode,
 	snprintf(text, sizeof(text),
 		"display-memory:-input:shmid:%d", client->shmid);
 
+	client->visual = ggNewStem(libggi, NULL);
+	if (client->visual == NULL) {
+		ggPanic("Ouch - can't initialize stem with libggi !\n");
+	}
 	if ((ggiOpen(client->visual, text, NULL)) < 0) {
-		ggPanic("Ouch - can't open the shmem target !");
+		ggPanic("Ouch - can't open the shmem target !\n");
 	}	/* if */
 
 	mode->frames = 1;
@@ -170,6 +174,7 @@ static void init_client(client_t * client, ggi_mode * mode,
 static void exit_client(client_t * client)
 {
 	ggiClose(client->visual);
+	ggDelStem(client->visual);
 	shmctl(client->shmid, IPC_RMID, NULL);
 	unlink(client->socket);
 }	/* exit_client */
