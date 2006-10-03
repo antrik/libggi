@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.16 2006/10/03 05:56:52 cegger Exp $
+/* $Id: wrap.c,v 1.17 2006/10/03 06:01:36 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -260,9 +260,10 @@ int main(int argc, char **argv)
 
 	/* Open up GGI and a visual.
 	 */
-	if (ggiInit() != 0) {
-		fprintf(stderr, "unable to initialize LibGGI, exiting.\n");
-		exit(1);
+	visual = ggNewStem(libggi, NULL);
+	if (visual == NULL) {
+		fprintf(stderr, "unable to initialize stem with libggi\n");
+		exit (1);
 	}	/* if */
 
 	rc = ggiOpen(visual, NULL);
@@ -283,7 +284,7 @@ int main(int argc, char **argv)
 	if (ggiSetMode(visual, &mode)) {
 		fprintf(stderr, "Can't set mode\n");
 		ggiClose(visual);
-		ggiExit();
+		ggDelStem(visual);
 		return 2;
 	}	/* if */
 
@@ -302,7 +303,7 @@ int main(int argc, char **argv)
 	kill(client.pid, SIGHUP);
 	exit_client(&client);
 	ggiClose(visual);
-	ggiExit();
+	ggDelStem(visual);
 
 	return 0;
 }	/* main */
