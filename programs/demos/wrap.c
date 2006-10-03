@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.15 2006/04/08 08:51:18 cegger Exp $
+/* $Id: wrap.c,v 1.16 2006/10/03 05:56:52 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -126,7 +126,8 @@ static void init_client(client_t * client, ggi_mode * mode,
 	/* Open a shared "memory-visual" which is simply a simulated 
 	 * display in shared memory.
 	 */
-	sprintf(text, "display-memory:-input:shmid:%d", client->shmid);
+	snprintf(text, sizeof(text),
+		"display-memory:-input:shmid:%d", client->shmid);
 
 	if ((ggiOpen(client->visual, text, NULL)) < 0) {
 		ggPanic("Ouch - can't open the shmem target !");
@@ -139,13 +140,13 @@ static void init_client(client_t * client, ggi_mode * mode,
 
 	/* start the program
 	 */
-	sprintf(text, "display-ipc:-input -socket=%s -semid=%d -shmid=%d",
+	snprintf(text, sizeof(text), "display-ipc:-input -socket=%s -semid=%d -shmid=%d",
 		client->socket, client->semid, client->shmid);
-	sprintf(envtext, "GGI_DISPLAY=%s", text);
+	snprintf(envtext, sizeof(envtext), "GGI_DISPLAY=%s", text);
 	putenv(envtext);
 
 	ggiSPrintMode(text, mode);
-	sprintf(envtext, "GGI_DEFMODE=%s", text);
+	snprintf(envtext, sizeof(envtext), "GGI_DEFMODE=%s", text);
 	putenv(envtext);
 	client->pid = fork();
 	if (client->pid == -1) {
