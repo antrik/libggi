@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.59 2006/09/18 12:43:09 aldot Exp $
+/* $Id: init.c,v 1.60 2006/10/04 19:42:26 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -224,6 +224,9 @@ _ggiInit(struct gg_api* api)
 	sprintf(conffile + CONF_OFFSET, CONF_FORMAT, confdir, GGICONFFILE);
 
 	err = ggLoadConfig(conffile, &_ggiConfigHandle);
+	if (err != GGI_OK)
+		fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
+
 	free(conffile);
 #else /* HAVE_CONFFILE */
 	{
@@ -242,8 +245,6 @@ _ggiInit(struct gg_api* api)
 		DPRINT_CORE("ggiInit() successful\n");
 		return GGI_OK;
 	}
-	fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
-
 
 err3:
 	ggLockDestroy(_ggi_global_lock);
