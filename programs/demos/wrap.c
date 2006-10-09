@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.18 2006/10/03 06:10:58 cegger Exp $
+/* $Id: wrap.c,v 1.19 2006/10/09 22:21:07 pekberg Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -21,9 +21,9 @@
 
 /* Include the LibGGI declarations.
  */
+#include <ggi/gg.h>
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
-#include <ggi/gii-unix.h>
 
 /* Include the necessary headers used for e.g. error-reporting.
  */
@@ -179,6 +179,24 @@ static void exit_client(client_t * client)
 	unlink(client->socket);
 }	/* exit_client */
 
+static struct gg_module *init_fdselect(struct gg_stem *stem, int fd)
+{
+	char arg[128];
+	struct gg_module *inp;
+
+	sprintf(arg, "-read=%d", fd);
+	inp = ggOpenModule(libgii, stem, "input-fdselect", arg, NULL);
+	if (!inp) {
+		ggPanic("Ouch - can't open the fdselect inputlib !");
+	}	/* if */
+	return inp;
+}	/* init_fdselect */
+
+static void exit_fdselect(struct gg_module *inp)
+{
+	ggCloseModule(inp);
+}	/* exit_fdselect */
+
 /* return 1 if we got called by the client
  * return 0 if nothing is to do (either because we got
  *		interrupted by a signal, or because we
@@ -194,6 +212,17 @@ static int wait_for_something(ggi_visual_t master, client_t * client)
 	gii_event_mask mask;
 	int nfds;
 
+	giiEventRead(master, &event, emAll);
+	if (event.any.type == evInformation &&
+		event.cmd.code == GII_CMDFLAG_PRIVATE)
+	{
+		return 1;
+	}	/* if */
+	giiEventSend(client->visual, &event);
+	return 0;
+
+	/* What about errors ??? */
+#if 0
 	FD_SET(client->sockfd, &fds);
 	mask = emAll;
 	nfds =
@@ -212,7 +241,7 @@ static int wait_for_something(ggi_visual_t master, client_t * client)
 	} else {
 		return -1;
 	}	/* if */
-
+#endif
 }	/* wait_for_something */
 
 
@@ -251,6 +280,7 @@ int main(int argc, char **argv)
 
 	const char *command;
 	client_t client;
+	struct gg_module *fdselect;
 
 	/* Get the arguments from the command line. 
 	 * Set defaults for optional arguments.
@@ -275,7 +305,7 @@ int main(int argc, char **argv)
 	if (rc < 0) {
 		fprintf(stderr,
 			"unable to open default visual, exiting.\n");
-		ggiExit();
+		ggDelStem(visual);
 		exit(1);
 	}	/* if */
 
@@ -294,6 +324,7 @@ int main(int argc, char **argv)
 	}	/* if */
 
 	init_client(&client, &mode, command);
+	fdselect = init_fdselect(visual, client.sockfd);
 
 	/* run
 	 */
@@ -306,6 +337,7 @@ int main(int argc, char **argv)
 	};
 
 	kill(client.pid, SIGHUP);
+	exit_fdselect(fdselect);
 	exit_client(&client);
 	ggiClose(visual);
 	ggDelStem(visual);
