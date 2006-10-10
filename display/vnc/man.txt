@@ -174,8 +174,8 @@ application instance, change the line in ``/etc/inetd.conf`` to::
 
 .. note::
 
-  This assumes that the application supports the ``-t`` option to set the
-  display target, and that it does not output anything at all on
+  This assumes that the application supports the ``-t`` option to set
+  the display target, and that it does not output anything at all on
   stdout/stderr. The application will run as the user ``nobody``.
 
 
@@ -189,7 +189,13 @@ Bugs
 ----
 
 - If the application does not give control to libgii with regular
-  intervals (i.e. :man:`giiEventRead(3)`, :man:`giiEventPoll(3)`
-  or some wrapper that in turn calls one of these functions) this
-  display target will not work, or at least not work well.
+  intervals (i.e. :man:`giiEventRead(3)`, :man:`giiEventPoll(3)` or some
+  wrapper that in turn calls one of these functions) this display target
+  will not work, or at least not work well.
+- For the Tight encoding there are a few tunables left. 1) The "weigth"
+  of the different subencodings needs to be tuned. E.g. the gradient
+  filter subencoding is never used, even if it should be very good on
+  "blocky" data. 2) The jpeg quality selection could probably also be
+  better tuned. 3) The client should be able to select the zlib
+  compression level.
 - Special keys (i.e. shift, escape, etc) needs to be converted.
