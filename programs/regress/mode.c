@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2006/09/24 21:31:05 pekberg Exp $
+/* $Id: mode.c,v 1.15 2006/10/10 07:46:02 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -314,7 +314,7 @@ static void testcase6(const char *desc)
 	if (dontrun) return;
 
 	err = ggiInit();
-	printassert(err == GGI_OK, "ggiInit failed with %i\n", err);
+	printassert(err >= 0, "ggiInit failed with %i\n", err);
 
 	vis = ggNewStem(libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
