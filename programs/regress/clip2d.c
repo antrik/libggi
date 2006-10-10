@@ -1,4 +1,4 @@
-/* $Id: clip2d.c,v 1.29 2006/03/17 21:55:42 cegger Exp $
+/* $Id: clip2d.c,v 1.30 2006/10/10 07:35:43 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test and for LibGGI clipping operations.
@@ -17,6 +17,7 @@
 
 
 #include "config.h"
+#include <ggi/gg.h>
 #include <ggi/internal/internal.h>
 #include <ggi/ggi.h>
 
@@ -51,7 +52,7 @@ static int checkresult(int x0, int y0, int x1, int y1,
 	int clip_last_expect  = (x1 != x1_expect) || (y1 != y1_expect);
 	int ret;
 
-	ret = _ggi_clip2d(vis, &x0, &y0, &x1, &y1,
+	ret = _ggi_clip2d(GGI_VISUAL(vis), &x0, &y0, &x1, &y1,
 			&clip_first, &clip_last);
 
 	if (ret != ret_expect) {
@@ -335,7 +336,7 @@ static int endpoint_checker(int dx, int dy)
 		x1 += 100; y1 += 100;
 		x0t = x0; y0t = y0; x1t = x1; y1t = y1;
 		ggiSetGCClipping(vis, 100, 100, 200, 200);
-		ret = _ggi_clip2d(vis, &x0t, &y0t, &x1t, &y1t,
+		ret = _ggi_clip2d(GGI_VISUAL(vis), &x0t, &y0t, &x1t, &y1t,
 				&clip_first, &clip_last);
 		ggiSetGCClipping(vis, 0, 0, MODE_SIZE_X, MODE_SIZE_Y);
 		if(!ret)
@@ -471,10 +472,10 @@ int main(int argc, char * const argv[])
 	parseopts(argc, argv);
 	printdesc("Regression testsuite for _ggi_clip2d().\n\n");
 
-	rc = ggiInit();
-	if (rc < 0) return 1;
-	vis = ggiOpen("display-memory", NULL);
+	vis = ggNewStem(libggi, NULL);
 	if (!vis) return 1;
+	rc = ggiOpen(vis, "display-memory", NULL);
+	if (rc < 0) return 1;
 
 	rc = ggiCheckSimpleMode(vis, MODE_SIZE_X, MODE_SIZE_Y, 1, GT_AUTO, &tm);
 	rc = ggiSetMode(vis, &tm);
@@ -500,8 +501,8 @@ int main(int argc, char * const argv[])
 	testcase9("Check algorithm on a line within the clipping area.");
 	testcase10("Tests line that fails even if doubling the precision.");
 
-	rc = ggiClose(vis);
-	ggiExit();
+	ggiClose(vis);
+	ggDelStem(vis);
 
 	printsummary();
 
