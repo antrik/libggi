@@ -1,7 +1,7 @@
-/* $Id: clipdb.inc.c,v 1.3 2004/09/18 10:35:29 cegger Exp $
+/* $Id: clipdb.inc.c,v 1.4 2006/10/10 07:38:59 pekberg Exp $
 ******************************************************************************
 
-   This is a regression-test and for LibGGI clipping operations.
+   This is a database for regression-tests of the LibGGI clipping operations.
 
    Written in 2004 by Peter Ekberg
 
