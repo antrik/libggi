@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2006-10-02" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-10-10" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -190,8 +190,8 @@ vnc stream tcp wait nobody /path/to/app app -t vnc:-server=stdio:-kold
 
 .RS
 \fBNote:\fR
-This assumes that the application supports the \f(CW-t\fR option to set the
-display target, and that it does not output anything at all on
+This assumes that the application supports the \f(CW-t\fR option to set
+the display target, and that it does not output anything at all on
 stdout/stderr. The application will run as the user \f(CWnobody\fR.
 .RE
 .SH CREDITS
@@ -199,9 +199,16 @@ The Tight encoding uses the jpeg library from the Independent JPEG Group.
 .SH BUGS
 .IP \(bu 4
 If the application does not give control to libgii with regular
-intervals (i.e. \f(CWgiiEventRead(3)\fR, \f(CWgiiEventPoll(3)\fR
-or some wrapper that in turn calls one of these functions) this
-display target will not work, or at least not work well.
+intervals (i.e. \f(CWgiiEventRead(3)\fR, \f(CWgiiEventPoll(3)\fR or some
+wrapper that in turn calls one of these functions) this display target
+will not work, or at least not work well.
+.IP \(bu 4
+For the Tight encoding there are a few tunables left. 1) The "weigth"
+of the different subencodings needs to be tuned. E.g. the gradient
+filter subencoding is never used, even if it should be very good on
+"blocky" data. 2) The jpeg quality selection could probably also be
+better tuned. 3) The client should be able to select the zlib
+compression level.
 .IP \(bu 4
 Special keys (i.e. shift, escape, etc) needs to be converted.
 .PP
