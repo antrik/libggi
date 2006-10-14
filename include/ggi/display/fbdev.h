@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.12 2006/09/17 12:08:54 cegger Exp $
+/* $Id: fbdev.h,v 1.13 2006/10/14 15:01:11 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -90,8 +90,7 @@ typedef struct {
 	struct fb_fix_screeninfo fix;
 
 	/* observer */
-	struct gg_observer *observer;
-	struct gg_publisher *linvt_publisher;
+	struct gg_channel *linvt_channel;
 
 	/* We shadow vis->palette in this format as well, as
 	 * it is what fbdev uses.  Note palette and gamma are

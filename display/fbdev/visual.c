@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.43 2006/09/17 15:29:03 cegger Exp $
+/* $Id: visual.c,v 1.44 2006/10/14 15:01:11 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -88,12 +88,11 @@ struct kgi_driver {
 static int refcount = 0;
 static int vtnum;
 static void *_ggi_fbdev_lock = NULL;
-static struct gg_publisher linvt_publisher;
 #ifdef FBIOGET_CON2FBMAP
 static struct fb_con2fbmap origconmap;
 #endif
 
-ggfunc_observer_update _ggi_fbdev_listener;
+ggfunc_channel_control_cb _ggi_fbdev_listener;
 
 
 static const gg_option optlist[] =
@@ -133,7 +132,7 @@ switchreq(void *arg)
 
 	data.request = GGI_REQSW_UNMAP;
 
-	ggNotifyObservers(priv->linvt_publisher, GGICMD_REQUEST_SWITCH, &data);
+	ggBroadcast(priv->linvt_channel, GGICMD_REQUEST_SWITCH, &data);
 	priv->switchpending = 1;
 }
 
@@ -175,7 +174,7 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
-	ggNotifyObservers(priv->linvt_publisher, GII_CMDCODE_EXPOSE, &ev);
+	ggBroadcast(priv->linvt_channel, GII_CMDCODE_EXPOSE, &ev);
 	DPRINT_MISC("fbdev: EXPOSE sent.\n");
 
 #if 0
@@ -200,7 +199,7 @@ switchback(void *arg)
 
 
 int 
-_ggi_fbdev_listener(void *arg, int flag, void *data)
+_ggi_fbdev_listener(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = arg;
 	ggi_fbdev_priv *priv = FBDEV_PRIV(vis);
@@ -594,10 +593,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush = NULL;
 	priv->idleaccel = NULL;
 
-	INIT_PUBLISHER(&linvt_publisher);
-	priv->observer = ggAddObserver(&linvt_publisher, _ggi_fbdev_listener,
-					vis);
-	priv->linvt_publisher = &linvt_publisher;
+	priv->linvt_channel = ggNewChannel(vis, _ggi_fbdev_listener);
 	priv->kbd_inp = NULL;
 	priv->ms_inp = NULL;
 
