@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.13 2006/10/14 12:54:41 cegger Exp $
+/* $Id: events.c,v 1.14 2006/10/14 13:42:28 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -74,8 +74,9 @@ int tele_receive_reply(struct ggi_visual *vis, TeleEvent *ev,
 
 	DPRINT_EVENTS("display-tele: WAITING FOR (type=0x%08lx "
 	              "seq=0x%08lx)\n", type, seq);
-	ggNotifyObservers(priv->publisher, GII_CMDCODE_TELE_WAIT4EVENT,
-			&w4e);
+
+	ggControl(priv->input->channel,
+	    GII_CMDCODE_TELE_WAIT4EVENT, &w4e);
 
 	for (;;) {
 		if (!priv->reply) {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/09/23 08:43:40 cegger Exp $
+/* $Id: visual.c,v 1.26 2006/10/14 13:42:28 soyt Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -119,13 +119,13 @@ static int GGIclose_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 
 static int
-transfer_gii_src(void *arg, int flag, void *data)
+transfer_gii_src(void *arg, uint32_t flag, void *data)
 {
 	struct gg_stem *stem = arg;
 	ggi_palemu_priv *priv = PALEMU_PRIV(GGI_VISUAL(stem));
 	struct gii_source *src = data;
 
-	if (flag == GII_PUBLISH_SOURCE_OPENED)
+	if (flag == GII_OBSERVE_SOURCE_OPENED)
 		giiTransfer(priv->parent, stem, src->origin);
 	return 0;
 }
@@ -234,10 +234,8 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freeopmansync;
 			}
-			obs = ggAddObserver(
-				ggGetPublisher(api, priv->parent,
-					GII_PUBLISHER_SOURCE_CHANGE),
-				transfer_gii_src, vis->stem);
+			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
+			    transfer_gii_src, vis->stem);
 		}
 	}
 	if (ggiOpen(priv->parent, target, NULL) < 0) {
@@ -413,8 +411,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto err4;
 			}
-			obs = ggAddObserver(ggGetPublisher(api, priv->parent,
-					GII_PUBLISHER_SOURCE_CHANGE),
+			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
 					transfer_gii_src, vis->stem);
 		}
 	}

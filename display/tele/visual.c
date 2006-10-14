@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/10/02 07:24:14 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/10/14 13:42:28 soyt Exp $
 ******************************************************************************
 
    Teletarget.
@@ -123,10 +123,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->input = ggOpenModule(gii, vis->stem, "input-tele", NULL,
 				&iargs);
 
-	priv->publisher = ggGetPublisher(gii, vis->stem,
-				GII_PUBLISHER_SOURCE_CHANGE);
-	priv->observer = ggAddObserver(priv->publisher, GGI_tele_listener,
-				vis);
+	priv->observer = ggObserve(priv->input->channel,
+	    GGI_tele_listener, vis);
 
 	DPRINT_MISC("gii input=%p\n", priv->input);
 
