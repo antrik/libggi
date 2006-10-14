@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/03/11 18:49:12 soyt Exp $
+/* $Id: visual.c,v 1.13 2006/10/14 12:03:15 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -189,8 +189,11 @@ struct ggi_visual *_ggiNewVisual(void)
 	vis = malloc(sizeof(*vis));
 	if (vis == NULL) return NULL;
 
+	vis->channel = ggNewChannel(vis, NULL);
+	if (vis->channel == NULL) goto out_freevis;
+
 	vis->mutex = ggLockCreate();
-	if (vis->mutex == NULL) goto out_freevis;
+	if (vis->mutex == NULL) goto out_delchannel;
 
 	vis->version = GGI_VERSION_VISUAL;
 	vis->numknownext = 0;
@@ -277,6 +280,8 @@ struct ggi_visual *_ggiNewVisual(void)
 	free(LIBGGI_MODE(vis));
   out_destroylock:
 	ggLockDestroy(vis->mutex);
+  out_delchannel:
+	ggDelChannel(vis->channel);
   out_freevis:
 	free(vis);
 
@@ -304,5 +309,6 @@ void _ggiDestroyVisual(struct ggi_visual *vis)
 	free(LIBGGI_PIXFMT(vis));
 	free(LIBGGI_MODE(vis));
 	ggLockDestroy(vis->mutex);
+	ggDelChannel(vis->channel);
 	free(vis);
 }

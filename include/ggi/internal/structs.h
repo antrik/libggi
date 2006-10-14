@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.21 2006/03/14 18:20:47 cegger Exp $
+/* $Id: structs.h,v 1.22 2006/10/14 12:03:48 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -277,6 +277,7 @@ struct ggi_visual {
 
 	/* API */
 	struct gg_stem *stem;		/* backpointer to where this visual is attached to */
+	struct gg_channel *channel; /* XXX this structure should be a module?*/
 };
 
 #define GGI_DL_ERROR		0x80000000
