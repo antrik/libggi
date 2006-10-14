@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.19 2006/10/09 22:21:07 pekberg Exp $
+/* $Id: wrap.c,v 1.20 2006/10/14 14:09:14 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -207,10 +207,12 @@ static int wait_for_something(ggi_visual_t master, client_t * client)
 {
 	/* wait for the client to notify us
 	 */
-	fd_set fds;
 	gii_event event;
+#if 0
+	fd_set fds;
 	gii_event_mask mask;
 	int nfds;
+#endif
 
 	giiEventRead(master, &event, emAll);
 	if (event.any.type == evInformation &&
