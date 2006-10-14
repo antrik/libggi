@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.12 2006/08/27 22:31:53 cegger Exp $
+/* $Id: quartz.h,v 1.13 2006/10/14 12:52:11 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -104,7 +104,7 @@ typedef struct {
 
 
 /* listener.c prototype */
-int GGI_quartz_listener(void *arg, int flag, void *data);
+int GGI_quartz_listener(void *arg, uint32_t flag, void *data);
 
 /* functions for use of extensions */
 #define GGI_quartz_updateWindowContext(vis, refresh)	\

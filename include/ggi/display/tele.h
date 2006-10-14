@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.11 2006/10/02 07:29:37 cegger Exp $
+/* $Id: tele.h,v 1.12 2006/10/14 12:52:11 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -65,7 +65,7 @@ int GGI_tele_resetmode(struct ggi_visual *vis);
 int tele_receive_reply(struct ggi_visual *vis,
 			TeleEvent *ev, long type, long seq);
 
-int GGI_tele_listener(void *arg, int flag, void *data);
+int GGI_tele_listener(void *arg, uint32_t flag, void *data);
 
 
 /* Prototypes

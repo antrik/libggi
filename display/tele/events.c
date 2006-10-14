@@ -1,4 +1,4 @@
-/* $Id: events.c,v 1.12 2006/10/02 07:29:38 cegger Exp $
+/* $Id: events.c,v 1.13 2006/10/14 12:54:41 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -41,7 +41,7 @@
 #define MINSLEEPTIME  (20*1000)  /* microseconds */
 
 
-int GGI_tele_listener(void *arg, int flag, void *data)
+int GGI_tele_listener(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = arg;
 	ggi_tele_priv *priv = TELE_PRIV(vis);
