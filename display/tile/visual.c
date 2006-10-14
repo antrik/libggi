@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2006/09/23 08:47:56 cegger Exp $
+/* $Id: visual.c,v 1.32 2006/10/14 13:49:06 soyt Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -55,12 +55,12 @@ struct transfer {
 };
 
 static int
-transfer_gii_src(void *arg, int flag, void *data)
+transfer_gii_src(void *arg, uint32_t flag, void *data)
 {
 	struct transfer *xfer = arg;
 	struct gii_source *src = data;
 
-	if (flag == GII_PUBLISH_SOURCE_OPENED) {
+	if (flag == GII_OBSERVE_SOURCE_OPENED) {
 		giiTransfer(xfer->src, xfer->dst, src->origin);
 	}
 	return 0;
@@ -209,8 +209,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			}
 			xfer.src = mvis->vis;
 			xfer.dst = vis->stem;
-			obs = ggAddObserver(ggGetPublisher(api, mvis->vis,
-						GII_PUBLISHER_SOURCE_CHANGE),
+			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}
 
@@ -402,8 +401,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			}
 			xfer.src = mvis->vis;
 			xfer.dst = vis->stem;
-			obs = ggAddObserver(ggGetPublisher(api, mvis->vis,
-						GII_PUBLISHER_SOURCE_CHANGE),
+			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}
 
