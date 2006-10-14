@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/09/23 07:38:36 cegger Exp $
+/* $Id: visual.c,v 1.25 2006/10/14 15:14:02 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -217,16 +217,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
 					"input-linux-kbd", NULL, NULL);
-			priv->kbd_publisher = ggGetPublisher(gii, vis->stem,
-					GII_PUBLISHER_SOURCE_CHANGE);
-			priv->kbd_observer = ggAddObserver(priv->kbd_publisher,
-					GGI_vcsa_kbd_listener, vis);
 		}	
 		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open kbd.\n");
 			goto out_closefd;
 		}
+		ggObserve(inp->channel, GGI_vcsa_kbd_listener, vis);
 		priv->kbd_inp = inp;
 	} else {
 		priv->kbd_inp = NULL;
@@ -237,16 +234,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			inp = ggOpenModule(gii, vis->stem,
 					"input-linux-mouse", NULL, &args);
-			priv->ms_publisher = ggGetPublisher(gii, vis->stem,
-					GII_PUBLISHER_SOURCE_CHANGE);
-			priv->ms_observer = ggAddObserver(priv->ms_publisher,
-					GGI_vcsa_ms_listener, vis);
 		}
 		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open mouse.\n");
 			goto out_closefd;
 		}
+		ggObserve(inp->channel, GGI_vcsa_ms_listener, vis);
 		priv->ms_inp = inp;
 	} else {
 		priv->ms_inp = NULL;

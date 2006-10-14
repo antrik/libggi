@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.1 2006/09/09 15:20:11 cegger Exp $
+/* $Id: listener.c,v 1.2 2006/10/14 15:14:02 cegger Exp $
 ******************************************************************************
 
    LIBGGI: listener for display-vcsa
@@ -31,7 +31,7 @@
 #include <ggi/display/vcsa.h>
 #include <ggi/internal/ggi_debug.h>
 
-int GGI_vcsa_kbd_listener(void *arg, int flag, void *data)
+int GGI_vcsa_kbd_listener(void *arg, uint32_t flag, void *data)
 {
 #if 0
 	struct ggi_visual *vis = arg;
@@ -43,7 +43,7 @@ int GGI_vcsa_kbd_listener(void *arg, int flag, void *data)
 	return 0;
 }
 
-int GGI_vcsa_ms_listener(void *arg, int flag, void *data)
+int GGI_vcsa_ms_listener(void *arg, uint32_t flag, void *data)
 {
 
 	DPRINT_MISC("GGI_vcsa_ms_listener: received event, flag 0x%X\n",
