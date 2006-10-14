@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/09/23 08:50:00 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/10/14 13:52:35 soyt Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -53,13 +53,13 @@ static const gg_option optlist[] =
 
 
 
-static int transfer_gii_src(void *arg, int flag, void *data)
+static int transfer_gii_src(void *arg, uint32_t flag, void *data)
 {
 	struct gg_stem *stem = arg;
 	ggi_trueemu_priv *priv = TRUEEMU_PRIV(GGI_VISUAL(stem));
 	struct gii_source *src = data;
 
-	if (flag == GII_PUBLISH_SOURCE_OPENED)
+	if (flag == GII_OBSERVE_SOURCE_OPENED)
 		giiTransfer(priv->parent, stem, src->origin);
 
 	return 0;
@@ -214,9 +214,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freelock;
 			}
-			obs = ggAddObserver(
-				ggGetPublisher(api, priv->parent,
-					GII_PUBLISHER_SOURCE_CHANGE),
+			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
 				transfer_gii_src, vis->stem);
 		}
 	}
