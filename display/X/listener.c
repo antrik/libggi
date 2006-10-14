@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.5 2006/09/18 19:42:42 cegger Exp $
+/* $Id: listener.c,v 1.6 2006/10/14 12:38:32 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -32,7 +32,7 @@
 #include <ggi/display/x.h>
 
 
-int GGI_X_listener(void *arg, int flag, void *data)
+int GGI_X_listener(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = arg;
 	ggi_x_priv *priv = GGIX_PRIV(vis);

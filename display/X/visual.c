@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.64 2006/10/14 11:23:41 soyt Exp $
+/* $Id: visual.c,v 1.65 2006/10/14 12:38:32 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -587,7 +587,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			inp = ggOpenModule(gii, vis->stem,
 			    "input-xwin", NULL, &_args);
 			
-			ggObserve(inp->module.channel, GGI_X_listener, vis);
+			ggObserve(inp->channel, GGI_X_listener, vis);
 		}
 
 		DPRINT_MISC("X: ggOpenModule returned with %p\n", inp);

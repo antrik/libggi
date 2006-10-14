@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.30 2006/10/14 11:31:27 soyt Exp $
+/* $Id: x.h,v 1.31 2006/10/14 12:38:32 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -215,7 +215,7 @@ int _ggi_x_is_better_fmt(XVisualInfo *than, XVisualInfo *cthis);
 int _ggi_x_is_better_screen(Screen *than, Screen *cthis);
 
 /* listener.c prototype */
-int GGI_X_listener(void *arg, int flag, void *data);
+int GGI_X_listener(void *arg, uint32_t flag, void *data);
 
 /* buffer.c prototypes */
 ggifunc_resacquire GGI_X_db_acquire;

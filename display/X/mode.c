@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.63 2006/10/14 11:23:41 soyt Exp $
+/* $Id: mode.c,v 1.64 2006/10/14 12:38:32 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -709,7 +709,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		}
 		data.parentwin = priv->parentwin;
 		
-		ggControl(priv->inp->module.channel, GII_CMDCODE_XWINSETPARAM,
+		ggControl(priv->inp->channel, GII_CMDCODE_XWINSETPARAM,
 		    &data);
 		
 #if 0
