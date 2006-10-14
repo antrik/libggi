@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/09/18 18:41:59 cegger Exp $
+/* $Id: visual.c,v 1.18 2006/10/14 13:03:28 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -242,8 +242,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		inp = ggOpenModule(gii, vis->stem, "input-quartz", NULL, &_args);
-		priv->publisher = ggGetPublisher(gii, vis->stem, GII_PUBLISHER_SOURCE_CHANGE);
-		priv->observer = ggAddObserver(priv->publisher, GGI_quartz_listener, vis);
 
 		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 		if (inp == NULL) {
@@ -252,6 +250,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out;
 		}	/* if */
 
+		ggObserve(inp->channel, GGI_quartz_listener, vis);
 		priv->inp = inp;
 	} else {
 

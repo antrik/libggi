@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/09/24 09:01:38 cegger Exp $
+/* $Id: mode.c,v 1.19 2006/10/14 13:03:28 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -645,7 +645,7 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 
 			data.theWindow = priv->theWindow;
 
-			ggNotifyObservers(priv->publisher, GII_CMDCODE_QZSETPARAM,
+			ggControl(priv->inp->channel, GII_CMDCODE_QZSETPARAM,
 					&data);
 		}
 	}
