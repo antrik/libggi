@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2006/09/23 06:03:11 cegger Exp $
+/* $Id: visual.c,v 1.20 2006/10/15 07:28:45 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -39,10 +39,9 @@
 #include <ggi/gii-module.h>
 
 static int usagecounter = 0;
-struct gg_publisher linvt_publisher;
 
 
-ggfunc_observer_update _ggi_vgl_listener;
+ggfunc_channel_control_cb _ggi_vgl_listener;
 
 static const gg_option optlist[] =
 {
@@ -125,7 +124,7 @@ switchback(void *arg)
 
 
 int
-_ggi_vgl_listener(void *arg, int flag, void *data)
+_ggi_vgl_listener(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = arg;
 	vgl_priv *priv = VGL_PRIV(vis);
@@ -365,10 +364,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 
-	INIT_PUBLISHER(&linvt_publisher);
-	priv->observer = ggAddObserver(&linvt_publisher, _ggi_vgl_listener,
-					vis);
-	priv->vt_publisher = &linvt_publisher;
+	priv->linvt_channel = ggNewChannel(vis, _ggi_vgl_listener));
 	priv->kbd_inp = NULL;
 	priv->ms_inp = NULL;
 

@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.4 2006/09/19 05:03:49 cegger Exp $
+/* $Id: vgl.h,v 1.5 2006/10/15 07:28:45 cegger Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -66,8 +66,7 @@ typedef struct vgl_priv {
 	PHYSZ_DATA
 
 	/* observer */
-	struct gg_observer *observer;
-	struct gg_publisher *vt_publisher;
+	struct gg_channel *linvt_channel;
 
 	/* VT switching and inputs */
 	int dohalt;
