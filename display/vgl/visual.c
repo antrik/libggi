@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/10/15 07:28:45 cegger Exp $
+/* $Id: visual.c,v 1.21 2006/10/16 05:34:11 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -78,7 +78,7 @@ switchreq(void *arg)
 
 	data.request = GGI_REQSW_UNMAP;
 
-	ggNotifyObservers(priv->vt_publisher, GGICMD_REQUEST_SWITCH, &data);
+	ggBroadcast(priv->linvt_channel, GGICMD_REQUEST_SWITCH, &data);
 	priv->switchpending = 1;
 }
 
@@ -114,7 +114,7 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
-	ggNotifyObservers(priv->vt_publisher, GII_CMDCODE_EXPOSE, &ev);
+	ggBroadcast(priv->linvt_channel, GII_CMDCODE_EXPOSE, &ev);
 	DPRINT_MISC("EXPOSE sent.\n");
 
 
