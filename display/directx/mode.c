@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.41 2006/03/17 14:37:17 pekberg Exp $
+/* $Id: mode.c,v 1.42 2006/10/18 12:09:34 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -456,7 +456,7 @@ GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	GGI_directx_Unlock(priv->cs);
 
-	ggiIndicateChange(vis, change);
+	ggiIndicateChange(vis->stem, change);
 
 	return 0;
 }
