@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2006/10/25 20:57:15 pekberg Exp $
+/* $Id: mode.c,v 1.18 2006/10/25 21:07:49 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -515,12 +515,18 @@ static void testcase9(const char *desc)
 	_GGI_modelist_destroy(ml);
 
 	if (err != GGI_OK) {
-		printfailure("_GGI_modelist_checkmode() failed even though there is a match!\n");
+		char buf[256];
+		ggiSPrintMode(buf, &mp.mode);
+		printfailure("_GGI_modelist_checkmode() failed even though "
+			"there is a match!\nSuggested: %s\n", buf);
 		return;
 	}
 
 	if (mp.mode.size.x != 200 || mp.mode.size.y != 200) {
-		printfailure("_GGI_modelist_checkmode() suggested the wrong mode!\n");
+		char buf[256];
+		ggiSPrintMode(buf, &mp.mode);
+		printfailure("_GGI_modelist_checkmode() suggested the "
+			"wrong mode!\nReturned: %s\n", buf);
 		return;
 	}
 
@@ -582,12 +588,18 @@ static void testcase10(const char *desc)
 	_GGI_modelist_destroy(ml);
 
 	if (err != GGI_OK) {
-		printfailure("_GGI_modelist_checkmode() failed even though there is a match!\n");
+		char buf[256];
+		ggiSPrintMode(buf, &mp.mode);
+		printfailure("_GGI_modelist_checkmode() failed even though "
+			"there is a match!\nSuggested: %s\n", buf);
 		return;
 	}
 
 	if (mp.mode.size.x != 100 || mp.mode.size.y != 100) {
-		printfailure("_GGI_modelist_checkmode() suggested the wrong mode!\n");
+		char buf[256];
+		ggiSPrintMode(buf, &mp.mode);
+		printfailure("_GGI_modelist_checkmode() suggested the "
+			"wrong mode!\nReturned: %s\n", buf);
 		return;
 	}
 
