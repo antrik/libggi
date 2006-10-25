@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.19 2006/10/25 11:16:43 orzo Exp $
+/* $Id: modelist.inc,v 1.20 2006/10/25 13:17:48 pekberg Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -362,18 +362,17 @@ static int _GGI_score_gt_scheme(ggi_graphtype req, ggi_graphtype a)
 	return score;
 }
 
-static void _GGI_score_resolution(int16_t  req, int16_t a, int *tmp)
+static void _GGI_score_resolution(ggi_coord req, ggi_coord a, int *tmp)
 {
-	int score;
-  int ix,iy;
+	int ix,iy;
 
-  ix = req.x==GGI_AUTO;
-  iy = req.y==GGI_AUTO;
-  if ( ix ) req.x = 0xFFFF;
-  if ( iy ) req.y = 0xFFFF;
-  int tmp[2] = {0,0}
-  tmp[ix] += abs(req.x-a.x);
-  tmp[iy] += abs(req.y-a.y);
+	ix = req.x==GGI_AUTO;
+	iy = req.y==GGI_AUTO;
+	if ( ix ) req.x = INT16_MAX;
+	if ( iy ) req.y = INT16_MAX;
+	tmp[0] = tmp[1] = 0;
+	tmp[ix] += abs(req.x-a.x);
+	tmp[iy] += abs(req.y-a.y);
 }
 
 static int _GGI_score_frames(int32_t req, int32_t a)
@@ -402,49 +401,53 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 	 * or maybe let the user override the default_mode_cmp function
 	 * entirely and chain to it only if they want. */
 
-  int i;
-  int score[2] = {0,0};
-  int tmpa[2] = {0,0}
-  int tmpb[2] = {0,0}
+	int i;
+	int score[2] = {0,0};
+	int tmpa[2] = {0,0};
+	int tmpb[2] = {0,0};
 
-  /* score[0] = score based on user-specified fields
-   * score[1] = score based on unspecified fields
-   */
+	/* score[0] = score based on user-specified fields
+	 * score[1] = score based on unspecified fields
+	 */
 
-  i = requested->graphtype==GT_AUTO;
+	i = requested->graphtype==GT_AUTO;
 	score[i] = _GGI_score_gt_depth(requested->graphtype, a->graphtype)
-             - _GGI_score_gt_depth(requested->graphtype, b->graphtype);
+		- _GGI_score_gt_depth(requested->graphtype, b->graphtype);
   
-  i = requested->graphtype==GGI_AUTO;
-  if(!score[i]) 
-    score[i] = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
-                   - _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
+	i = requested->graphtype==GGI_AUTO;
+	if(!score[i]) 
+		score[i] = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
+			- _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
 
 
-  _GGI_score_resolution( requested->visible, a->visible, &tmpa );
-  _GGI_score_resolution( requested->visible, b->visible, &tmpb );
+	_GGI_score_resolution( requested->visible, a->visible, tmpa );
+	_GGI_score_resolution( requested->visible, b->visible, tmpb );
 
-  if(!score[ix])
-    score[ix] = tmpa[ix]-tmpb[ix];
-  if(!score[iy])
-    score[iy] = tmpa[iy]-tmpb[iy];
+	i = requested->visible.x==GGI_AUTO;
+	if(!score[i])
+		score[i] = tmpa[i]-tmpb[i];
+	i = requested->visible.y==GGI_AUTO;
+	if(!score[i])
+		score[i] = tmpa[i]-tmpb[i];
 
-  _GGI_score_resolution( requested->virt, a->virt, tmpa );
-  _GGI_score_resolution( requested->virt, b->virt, tmpb );
+	_GGI_score_resolution( requested->virt, a->virt, tmpa );
+	_GGI_score_resolution( requested->virt, b->virt, tmpb );
 
-  if(!score[ix])
-    score[ix] = tmpa[ix]-tmpb[ix];
-  if(!score[iy])
-    score[iy] = tmpa[iy]-tmpb[iy];
+	i = requested->virt.x==GGI_AUTO;
+	if(!score[i])
+		score[i] = tmpa[i]-tmpb[i];
+	i = requested->virt.y==GGI_AUTO;
+	if(!score[i])
+		score[i] = tmpa[i]-tmpb[i];
 
-  i = requested->frames==GGI_AUTO;
-  if(!score[i])
-    score[i] = _GGI_score_frames(requested->frames, a->frames)
-               - _GGI_score_frames(requested->frames, b->frames);
+	i = requested->frames==GGI_AUTO;
+	if(!score[i])
+		score[i] = _GGI_score_frames(requested->frames, a->frames)
+			- _GGI_score_frames(requested->frames, b->frames);
 
 	/* Prefer larger physical sizes to smaller ones */
-  if(!score[1])
-	  score[1] = b->size.x * b->size.y  -  a->size.x * a->size.y;
+	if(!score[1])
+		score[1] = b->size.x * b->size.y  -  a->size.x * a->size.y;
 
 	return score[0] ? score[0] : score[1];
 }
