@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2006/10/25 20:26:27 pekberg Exp $
+/* $Id: mode.c,v 1.17 2006/10/25 20:57:15 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -529,6 +529,73 @@ static void testcase9(const char *desc)
 }
 
 
+static void testcase10(const char *desc)
+{
+	int err;
+	ggi_modelist *ml;
+	ggi_mode_padded mp;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	ml = _GGI_modelist_create(2);
+
+	mp.mode.frames = 1;
+	mp.mode.visible.x = 100;
+	mp.mode.visible.y = 100;
+	mp.mode.virt.x = 100;
+	mp.mode.virt.y = 100;
+	mp.mode.size.x = 100;
+	mp.mode.size.x = 100;
+	mp.mode.graphtype = GT_32BIT;
+	mp.mode.dpp.x = 1;
+	mp.mode.dpp.y = 1;
+	mp.user_data = NULL;
+	_GGI_modelist_append(ml, &mp);
+
+	mp.mode.frames = 1;
+	mp.mode.visible.x = 200;
+	mp.mode.visible.y = 200;
+	mp.mode.virt.x = 200;
+	mp.mode.virt.y = 200;
+	mp.mode.size.x = 200;
+	mp.mode.size.y = 200;
+	mp.mode.graphtype = GT_16BIT;
+	mp.mode.dpp.x = 1;
+	mp.mode.dpp.y = 1;
+	mp.user_data = NULL;
+	_GGI_modelist_append(ml, &mp);
+
+	mp.mode.frames = GGI_AUTO;
+	mp.mode.visible.x = GGI_AUTO;
+	mp.mode.visible.y = GGI_AUTO;
+	mp.mode.virt.x = GGI_AUTO;
+	mp.mode.virt.y = GGI_AUTO;
+	mp.mode.size.x = 100;
+	mp.mode.size.y = 100;
+	mp.mode.graphtype = GT_AUTO;
+	mp.mode.dpp.x = GGI_AUTO;
+	mp.mode.dpp.y = GGI_AUTO;
+	mp.user_data = NULL;
+	err = _GGI_modelist_checkmode(ml, &mp);
+
+	_GGI_modelist_destroy(ml);
+
+	if (err != GGI_OK) {
+		printfailure("_GGI_modelist_checkmode() failed even though there is a match!\n");
+		return;
+	}
+
+	if (mp.mode.size.x != 100 || mp.mode.size.y != 100) {
+		printfailure("_GGI_modelist_checkmode() suggested the wrong mode!\n");
+		return;
+	}
+
+	printsuccess();
+	return;
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -542,7 +609,8 @@ int main(int argc, char * const argv[])
 	testcase6("Check that re-setting of a different mode works [async mode]");
 	testcase7("Check that re-setting of a different mode works [sync mode]");
 	testcase8("Check checking then setting a mode with braindamaged visual size");
-	testcase9("Check modelist");
+	testcase9("Check modelist for 200x200 mode");
+	testcase10("Check modelist for 100x100 mode");
 
 	printsummary();
 
