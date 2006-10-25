@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.20 2006/10/25 13:17:48 pekberg Exp $
+/* $Id: modelist.inc,v 1.21 2006/10/25 13:19:02 pekberg Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -622,5 +622,3 @@ int _GGI_modelist_checkmode(ggi_modelist * ml, ggi_mode_padded * tm)
 	return retv;
 }
 #endif
-
-// vim: ft=c
