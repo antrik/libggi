@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.17 2006/03/22 20:22:27 cegger Exp $
+/* $Id: modelist.inc,v 1.18 2006/10/25 09:32:06 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -400,46 +400,46 @@ static int _GGI_score_frames(int32_t req, int32_t a)
 static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 				 ggi_mode * b)
 {
-	int tmp;
-
 	/* Perhaps there should be a user mode-compare hook called here 
 	 * or maybe let the user override the default_mode_cmp function
 	 * entirely and chain to it only if they want. */
 
-	tmp = _GGI_score_gt_depth(requested->graphtype, a->graphtype)
-	    - _GGI_score_gt_depth(requested->graphtype, b->graphtype);
+  int i;
+  int score[2] = {0,0};
 
-	if (tmp != 0)
-		return tmp;
+  /* score[0] = score based on user-specified fields
+   * score[1] = score based on unspecified fields
+   */
 
-	tmp = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
-	    - _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
+  i = requested->graphtype==GT_AUTO;
+	score[i] = _GGI_score_gt_depth(requested->graphtype, a->graphtype)
+             - _GGI_score_gt_depth(requested->graphtype, b->graphtype);
+  
+  i = requested->graphtype==GGI_AUTO;
+  if(!score[i]) 
+    score[i] = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
+                   - _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
 
-	if (tmp != 0)
-		return tmp;
+  i = requested->visible==GGI_AUTO;
+  if(!score[i])
+    score[i] = _GGI_score_resolution(requested->visible, a->visible)
+                   - _GGI_score_resolution(requested->visible, b->visible); 
 
-	tmp = _GGI_score_resolution(requested->visible, a->visible)
-	    - _GGI_score_resolution(requested->visible, b->visible);
+  i = requested->virt==GGI_AUTO;
+  if(!score[i])
+    score[i] = _GGI_score_resolution(requested->virt, a->virt)
+                   - _GGI_score_resolution(requested->virt, b->virt);
 
-	if (tmp != 0)
-		return tmp;
-
-	tmp = _GGI_score_resolution(requested->virt, a->virt)
-	    - _GGI_score_resolution(requested->virt, b->virt);
-
-	if (tmp != 0)
-		return tmp;
-
-	tmp = _GGI_score_frames(requested->frames, a->frames)
-	    - _GGI_score_frames(requested->frames, b->frames);
-
-	if (tmp != 0)
-		return tmp;
+  i = requested->frames==GGI_AUTO;
+  if(!score[i])
+    score[i] = _GGI_score_frames(requested->frames, a->frames)
+               - _GGI_score_frames(requested->frames, b->frames);
 
 	/* Prefer larger physical sizes to smaller ones */
-	tmp = b->size.x * b->size.y  -  a->size.x * a->size.y;
+  if(!score[1])
+	  score[1] = b->size.x * b->size.y  -  a->size.x * a->size.y;
 
-	return tmp;
+	return score[0] ? score[0] : score[1];
 }
 
 static int _ret0( ggi_mode *mode, intptr_t mode_extra1, intptr_t mode_extra2, 
@@ -612,3 +612,5 @@ int _GGI_modelist_checkmode(ggi_modelist * ml, ggi_mode_padded * tm)
 	return retv;
 }
 #endif
+
+// vim: ft=c
