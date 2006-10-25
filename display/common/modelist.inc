@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.21 2006/10/25 13:19:02 pekberg Exp $
+/* $Id: modelist.inc,v 1.22 2006/10/25 20:19:45 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -185,6 +185,18 @@ void _GGI_modelist_append(ggi_modelist * ml, ggi_mode_padded * m)
 		ml->list =
 		    realloc(ml->list, ml->max_n * sizeof(ggi_mode_padded));
 	}
+
+	//printf("_append: m->mode.size.y = %i\n", m->mode.size.y );
+	//printf( "appending   mp.mode.frames = %i\n", m->mode.frames );
+	//printf( "appending   mp.mode.visible.x = %i\n", m->mode.visible.x );
+	//printf( "appending   mp.mode.visible.y = %i\n", m->mode.visible.y );
+	//printf( "appending   mp.mode.virt.x = %i \n", m->mode.virt.x );
+	//printf( "appending   mp.mode.virt.y = %i\n", m->mode.virt.y );
+	//printf( "appending   mp.mode.size.x = %i\n", m->mode.size.x );
+	//printf( "appending   mp.mode.size.x = %i\n", m->mode.size.y );
+	//printf( "appending   mp.mode.graphtype = %i\n", m->mode.graphtype );
+	//printf( "appending   mp.mode.dpp.x = %i\n", m->mode.dpp.x );
+	//printf( "appending   mp.mode.dpp.y = %i\n", m->mode.dpp.y );
 
 	memcpy(&ml->list[ml->n], m, sizeof(ggi_mode_padded));
 	ml->n++;
@@ -409,46 +421,91 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 	/* score[0] = score based on user-specified fields
 	 * score[1] = score based on unspecified fields
 	 */
+	
+	//printf("\nmode_cmp:\n");
 
-	i = requested->graphtype==GT_AUTO;
+	//printf(" GT_DEPTH(req)=%i  GT_DEPTH(GT_AUTO)=%i\n",  GT_DEPTH(requested->graphtype), GT_DEPTH(GT_AUTO) );
+	i = GT_DEPTH(requested->graphtype)==GT_DEPTH(GT_AUTO);
 	score[i] = _GGI_score_gt_depth(requested->graphtype, a->graphtype)
 		- _GGI_score_gt_depth(requested->graphtype, b->graphtype);
+	//printf("  Storing depth score[%i] = %i\n", i, score[i]);
+	
   
-	i = requested->graphtype==GGI_AUTO;
-	if(!score[i]) 
+	i = GT_SCHEME(requested->graphtype)==GT_SCHEME(GT_AUTO);
+	if(!score[i]) {
 		score[i] = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
 			- _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
+		//printf("  Storing scheme score[%i] = %i\n", i, score[i]);
+	}
 
 
 	_GGI_score_resolution( requested->visible, a->visible, tmpa );
 	_GGI_score_resolution( requested->visible, b->visible, tmpb );
 
-	i = requested->visible.x==GGI_AUTO;
-	if(!score[i])
+	//printf( "  requested->visible.x == %i\n", requested->visible.x );
+
+	i=0;
+	if(!score[i]) {
 		score[i] = tmpa[i]-tmpb[i];
-	i = requested->visible.y==GGI_AUTO;
-	if(!score[i])
+		//printf("  Storing visible score[%i] = %i\n", i, score[i]);
+	}
+	i=1;
+	if(!score[i]) {
 		score[i] = tmpa[i]-tmpb[i];
+		//printf("  Storing visible score[%i] = %i\n", i, score[i]);
+	}
+
 
 	_GGI_score_resolution( requested->virt, a->virt, tmpa );
 	_GGI_score_resolution( requested->virt, b->virt, tmpb );
 
-	i = requested->virt.x==GGI_AUTO;
-	if(!score[i])
+	i=0;
+	if(!score[i]) {
 		score[i] = tmpa[i]-tmpb[i];
-	i = requested->virt.y==GGI_AUTO;
-	if(!score[i])
+		//printf("  Storing virt score[%i] = %i\n", i, score[i]);
+	}
+	i=1;
+	if(!score[i]) {
 		score[i] = tmpa[i]-tmpb[i];
+		//printf("  Storing virt score[%i] = %i\n", i, score[i]);
+	}
 
 	i = requested->frames==GGI_AUTO;
-	if(!score[i])
+	if(!score[i]) {
 		score[i] = _GGI_score_frames(requested->frames, a->frames)
 			- _GGI_score_frames(requested->frames, b->frames);
+		//printf("  Storing frames score[%i] = %i\n", i, score[i]);
+	}
 
+	_GGI_score_resolution( requested->size, a->size, tmpa );
+	_GGI_score_resolution( requested->size, b->size, tmpb );
+
+	/*
+	printf( "  req.size=(%i,%i)  a.size=(%i,%i) b.size(%i,%i)\n",
+		(int)requested->size.x, (int)requested->size.y, 
+		(int)a->size.x, (int)a->size.y,
+		(int)b->size.x, (int)b->size.y );
+	*/
+
+	i=0;
+	if(!score[i]) {
+		score[i] = tmpa[i]-tmpb[i];
+		//printf("  Storing size score[%i] = %i\n", i, score[i]);
+	}
+	i=1;
+	if(!score[i]) {
+		score[i] = tmpa[i]-tmpb[i];
+		//printf("  Storing size score[%i] = %i\n", i, score[i]);
+	}
+
+#if 0
 	/* Prefer larger physical sizes to smaller ones */
-	if(!score[1])
+	if(!score[1]) {
 		score[1] = b->size.x * b->size.y  -  a->size.x * a->size.y;
-
+		//printf("  Storing phys size  score[%i] = %i\n", 1, score[1]);
+	}
+#endif
+	//printf("  returning %i\n", score[0] ? score[0] : score[1] );
 	return score[0] ? score[0] : score[1];
 }
 
@@ -480,6 +537,7 @@ void _GGI_generic_checkmode_init(ggi_checkmode_t *cm, ggi_mode *tm)
 	/* copy requested mode */
 	memcpy( &cm->req, tm, sizeof(ggi_mode) );
 	cm->mode_extra = 0;
+	//printf("mode_init:\nreq.graphtype=%i\n", cm->req.graphtype);
 }
 
 static 
@@ -488,12 +546,10 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 				   intptr_t mode_extra)
 {
 	int ret;
-	int maxamize_x, maxamize_y, maxamize_depth;
+	//int maxamize_x, maxamize_y, maxamize_depth;
 
-	/* make the default to maximize the resolution... */
-	maxamize_x = (cm->req.visible.x == GGI_AUTO);
-	maxamize_y = (cm->req.visible.y == GGI_AUTO);
-	maxamize_depth = ( cm->req.graphtype == GT_AUTO);
+	//printf("mode_update:\nreq.graphtype=%i  GT_AUTO=%i\n", cm->req.graphtype, GT_AUTO);
+	//printf("mode_update:\nreq.size=(%i,%i) \n", cm->req.size.x, cm->req.size.y );
 
 	/* First time... nothing to compare. */
 	if( cm->sug.graphtype == GT_INVALID )  {
@@ -502,6 +558,13 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		cm->mode_extra = mode_extra;
 		return;
 	}
+
+#if 0
+
+	/* make the default to maximize the resolution... */
+	maxamize_x = (cm->req.visible.x == GGI_AUTO);
+	maxamize_y = (cm->req.visible.y == GGI_AUTO);
+	maxamize_depth = ( cm->req.graphtype == GT_AUTO);
 
 	if( maxamize_x ) {
 		if (p->visible.x > cm->sug.visible.x)
@@ -521,8 +584,10 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		else
 			cm->req.graphtype = cm->sug.graphtype;
 	}
-
+#endif
 	ret =_GGI_default_mode_cmp(&cm->req, p, &cm->sug);
+	
+
 
 	/* If the modes are indistinguishable, let the user
 	 * decide with the user_cmp hook... */
@@ -536,6 +601,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		cm->mode_extra = mode_extra;
 	}
 
+#if 0
 	/* restore to GGI_AUTO after maximizing */
 	if (maxamize_x)
 		cm->req.visible.x = GGI_AUTO;
@@ -543,6 +609,7 @@ void _GGI_generic_checkmode_update(ggi_checkmode_t * cm,
 		cm->req.visible.y = GGI_AUTO;
 	if( maxamize_depth ) 
 		cm->req.graphtype = GT_AUTO;
+#endif
 }
 
 static
