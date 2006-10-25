@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/10/25 21:07:49 pekberg Exp $
+/* $Id: mode.c,v 1.19 2006/10/25 22:33:45 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -608,6 +608,106 @@ static void testcase10(const char *desc)
 }
 
 
+static void testcase11(const char *desc)
+{
+	int err;
+	unsigned int i;
+	char request_mode[256];
+	char expect_mode[256];
+	char return_mode[256];
+	ggi_modelist *ml;
+	ggi_mode_padded mp;
+	/* database of modes */
+	ggi_mode modes[] = {
+		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
+		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
+	};
+	/* list of modes to test */
+	ggi_mode tests[] = {
+		{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
+	};
+	/* is a perfect match expected for above tests? */
+	int match[] = {
+		1,
+		0,
+		1
+	};
+	/* what mode should be returned/suggested for above tests? */
+	int exp_mode[] = {
+		0,
+		1,
+		1
+	};
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	ml = _GGI_modelist_create(sizeof(modes) / sizeof(modes[0]));
+
+	for (i = 0; i < sizeof(modes) / sizeof(modes[0]); ++i) {
+		mp.mode = modes[i];
+		mp.user_data = NULL;
+		_GGI_modelist_append(ml, &mp);
+	}
+
+	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i) {
+		int matched;
+		mp.mode = tests[i];
+		mp.user_data = NULL;
+		err = _GGI_modelist_checkmode(ml, &mp);
+
+		matched = err == GGI_OK;
+		if (matched != match[i]) {
+			ggiSPrintMode(request_mode, &tests[i]);
+			ggiSPrintMode(expect_mode, &modes[exp_mode[i]]);
+			ggiSPrintMode(return_mode, &mp.mode);
+			printfailure("_GGI_modelist_checkmode() %s\n"
+				"Test:      %d\n"
+				"Requested: %s\n"
+				"Expected:  %s\n"
+				"%s %s\n",
+				i,
+				matched ? "succeeded without a match!" :
+					"failed when there is a match!",
+				request_mode,
+				expect_mode,
+				matched ? "Returned: " : "Suggested:",
+				return_mode);
+			break;
+		}
+
+		if (memcmp(&mp.mode, &modes[exp_mode[i]], sizeof(ggi_mode))) {
+			ggiSPrintMode(request_mode, &tests[i]);
+			ggiSPrintMode(expect_mode, &modes[exp_mode[i]]);
+			ggiSPrintMode(return_mode, &mp.mode);
+			printfailure("_GGI_modelist_checkmode() %s "
+				"the wrong mode!\n"
+				"Test:      %d\n"
+				"Requested: %s\n"
+				"Expected:  %s\n"
+				"%s %s\n",
+				matched ? "returned" : "suggested",
+				i,
+				request_mode,
+				expect_mode,
+				matched ? "Returned: " : "Suggested:",
+				return_mode);
+			break;
+		}
+	}
+
+	_GGI_modelist_destroy(ml);
+
+	if (i == sizeof(tests) / sizeof(tests[0]))
+		printsuccess();
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -623,6 +723,7 @@ int main(int argc, char * const argv[])
 	testcase8("Check checking then setting a mode with braindamaged visual size");
 	testcase9("Check modelist for 200x200 mode");
 	testcase10("Check modelist for 100x100 mode");
+	testcase11("Check modelist for list of modes");
 
 	printsummary();
 
