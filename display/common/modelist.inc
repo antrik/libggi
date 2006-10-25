@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.18 2006/10/25 09:32:06 orzo Exp $
+/* $Id: modelist.inc,v 1.19 2006/10/25 11:16:43 orzo Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -362,20 +362,18 @@ static int _GGI_score_gt_scheme(ggi_graphtype req, ggi_graphtype a)
 	return score;
 }
 
-static int _GGI_score_resolution(ggi_coord req, ggi_coord a)
+static void _GGI_score_resolution(int16_t  req, int16_t a, int *tmp)
 {
 	int score;
-	if (req.x == a.x && req.y == a.y)
-		score = 0;
-	else if (a.x >= req.x && a.y >= req.y)
-		score = 1;
-	else
-		score = 2;
+  int ix,iy;
 
-	_GGI_write_subscore(&score,
-			    abs(req.x - a.x) + abs(req.y - a.y));
-
-	return score;
+  ix = req.x==GGI_AUTO;
+  iy = req.y==GGI_AUTO;
+  if ( ix ) req.x = 0xFFFF;
+  if ( iy ) req.y = 0xFFFF;
+  int tmp[2] = {0,0}
+  tmp[ix] += abs(req.x-a.x);
+  tmp[iy] += abs(req.y-a.y);
 }
 
 static int _GGI_score_frames(int32_t req, int32_t a)
@@ -406,6 +404,8 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
 
   int i;
   int score[2] = {0,0};
+  int tmpa[2] = {0,0}
+  int tmpb[2] = {0,0}
 
   /* score[0] = score based on user-specified fields
    * score[1] = score based on unspecified fields
@@ -420,15 +420,22 @@ static int _GGI_default_mode_cmp(ggi_mode * requested, ggi_mode * a,
     score[i] = _GGI_score_gt_scheme(requested->graphtype, a->graphtype)
                    - _GGI_score_gt_scheme(requested->graphtype, b->graphtype);
 
-  i = requested->visible==GGI_AUTO;
-  if(!score[i])
-    score[i] = _GGI_score_resolution(requested->visible, a->visible)
-                   - _GGI_score_resolution(requested->visible, b->visible); 
 
-  i = requested->virt==GGI_AUTO;
-  if(!score[i])
-    score[i] = _GGI_score_resolution(requested->virt, a->virt)
-                   - _GGI_score_resolution(requested->virt, b->virt);
+  _GGI_score_resolution( requested->visible, a->visible, &tmpa );
+  _GGI_score_resolution( requested->visible, b->visible, &tmpb );
+
+  if(!score[ix])
+    score[ix] = tmpa[ix]-tmpb[ix];
+  if(!score[iy])
+    score[iy] = tmpa[iy]-tmpb[iy];
+
+  _GGI_score_resolution( requested->virt, a->virt, tmpa );
+  _GGI_score_resolution( requested->virt, b->virt, tmpb );
+
+  if(!score[ix])
+    score[ix] = tmpa[ix]-tmpb[ix];
+  if(!score[iy])
+    score[iy] = tmpa[iy]-tmpb[iy];
 
   i = requested->frames==GGI_AUTO;
   if(!score[i])
