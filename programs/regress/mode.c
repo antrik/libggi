@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2006/10/26 07:44:49 pekberg Exp $
+/* $Id: mode.c,v 1.24 2006/10/26 08:04:47 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -543,6 +543,8 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 		printsuccess();
 }
 
+#define AUTOXY { GGI_AUTO, GGI_AUTO }
+
 static void testcase9(const char *desc)
 {
 	/* database of modes */
@@ -552,20 +554,15 @@ static void testcase9(const char *desc)
 	};
 	/* list of modes to test */
 	test_mode tests[] = {
-		{{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
-			{200,200}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{{ GGI_AUTO, AUTOXY, AUTOXY, {200,200}, GT_AUTO, AUTOXY },
 			1, 1 },
-		{{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
-			{100,100}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{{ GGI_AUTO, AUTOXY, AUTOXY, {100,100}, GT_AUTO, AUTOXY },
 			1, 0 },
-		{{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{{ GGI_AUTO, {100,100}, AUTOXY, AUTOXY, GT_AUTO, AUTOXY },
 			1, 0 },
-		{{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{{ GGI_AUTO, {101,101}, AUTOXY, AUTOXY, GT_AUTO, AUTOXY },
 			0, 1 },
-		{{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{{ GGI_AUTO, {200,200}, AUTOXY, AUTOXY, GT_AUTO, AUTOXY },
 			1, 1 }
 	};
 
