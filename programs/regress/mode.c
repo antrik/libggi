@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/10/25 22:33:45 pekberg Exp $
+/* $Id: mode.c,v 1.20 2006/10/26 07:14:02 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -479,7 +479,7 @@ static void testcase9(const char *desc)
 	mp.mode.virt.x = 100;
 	mp.mode.virt.y = 100;
 	mp.mode.size.x = 100;
-	mp.mode.size.x = 100;
+	mp.mode.size.y = 100;
 	mp.mode.graphtype = GT_32BIT;
 	mp.mode.dpp.x = 1;
 	mp.mode.dpp.y = 1;
@@ -552,7 +552,7 @@ static void testcase10(const char *desc)
 	mp.mode.virt.x = 100;
 	mp.mode.virt.y = 100;
 	mp.mode.size.x = 100;
-	mp.mode.size.x = 100;
+	mp.mode.size.y = 100;
 	mp.mode.graphtype = GT_32BIT;
 	mp.mode.dpp.x = 1;
 	mp.mode.dpp.y = 1;
