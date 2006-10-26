@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/10/26 07:14:02 pekberg Exp $
+/* $Id: mode.c,v 1.21 2006/10/26 07:25:24 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -462,153 +462,8 @@ static void testcase8(const char *desc)
 }
 
 
-static void testcase9(const char *desc)
-{
-	int err;
-	ggi_modelist *ml;
-	ggi_mode_padded mp;
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	ml = _GGI_modelist_create(2);
-
-	mp.mode.frames = 1;
-	mp.mode.visible.x = 100;
-	mp.mode.visible.y = 100;
-	mp.mode.virt.x = 100;
-	mp.mode.virt.y = 100;
-	mp.mode.size.x = 100;
-	mp.mode.size.y = 100;
-	mp.mode.graphtype = GT_32BIT;
-	mp.mode.dpp.x = 1;
-	mp.mode.dpp.y = 1;
-	mp.user_data = NULL;
-	_GGI_modelist_append(ml, &mp);
-
-	mp.mode.frames = 1;
-	mp.mode.visible.x = 200;
-	mp.mode.visible.y = 200;
-	mp.mode.virt.x = 200;
-	mp.mode.virt.y = 200;
-	mp.mode.size.x = 200;
-	mp.mode.size.y = 200;
-	mp.mode.graphtype = GT_16BIT;
-	mp.mode.dpp.x = 1;
-	mp.mode.dpp.y = 1;
-	mp.user_data = NULL;
-	_GGI_modelist_append(ml, &mp);
-
-	mp.mode.frames = GGI_AUTO;
-	mp.mode.visible.x = GGI_AUTO;
-	mp.mode.visible.y = GGI_AUTO;
-	mp.mode.virt.x = GGI_AUTO;
-	mp.mode.virt.y = GGI_AUTO;
-	mp.mode.size.x = 200;
-	mp.mode.size.y = 200;
-	mp.mode.graphtype = GT_AUTO;
-	mp.mode.dpp.x = GGI_AUTO;
-	mp.mode.dpp.y = GGI_AUTO;
-	mp.user_data = NULL;
-	err = _GGI_modelist_checkmode(ml, &mp);
-
-	_GGI_modelist_destroy(ml);
-
-	if (err != GGI_OK) {
-		char buf[256];
-		ggiSPrintMode(buf, &mp.mode);
-		printfailure("_GGI_modelist_checkmode() failed even though "
-			"there is a match!\nSuggested: %s\n", buf);
-		return;
-	}
-
-	if (mp.mode.size.x != 200 || mp.mode.size.y != 200) {
-		char buf[256];
-		ggiSPrintMode(buf, &mp.mode);
-		printfailure("_GGI_modelist_checkmode() suggested the "
-			"wrong mode!\nReturned: %s\n", buf);
-		return;
-	}
-
-	printsuccess();
-	return;
-}
-
-
-static void testcase10(const char *desc)
-{
-	int err;
-	ggi_modelist *ml;
-	ggi_mode_padded mp;
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	ml = _GGI_modelist_create(2);
-
-	mp.mode.frames = 1;
-	mp.mode.visible.x = 100;
-	mp.mode.visible.y = 100;
-	mp.mode.virt.x = 100;
-	mp.mode.virt.y = 100;
-	mp.mode.size.x = 100;
-	mp.mode.size.y = 100;
-	mp.mode.graphtype = GT_32BIT;
-	mp.mode.dpp.x = 1;
-	mp.mode.dpp.y = 1;
-	mp.user_data = NULL;
-	_GGI_modelist_append(ml, &mp);
-
-	mp.mode.frames = 1;
-	mp.mode.visible.x = 200;
-	mp.mode.visible.y = 200;
-	mp.mode.virt.x = 200;
-	mp.mode.virt.y = 200;
-	mp.mode.size.x = 200;
-	mp.mode.size.y = 200;
-	mp.mode.graphtype = GT_16BIT;
-	mp.mode.dpp.x = 1;
-	mp.mode.dpp.y = 1;
-	mp.user_data = NULL;
-	_GGI_modelist_append(ml, &mp);
-
-	mp.mode.frames = GGI_AUTO;
-	mp.mode.visible.x = GGI_AUTO;
-	mp.mode.visible.y = GGI_AUTO;
-	mp.mode.virt.x = GGI_AUTO;
-	mp.mode.virt.y = GGI_AUTO;
-	mp.mode.size.x = 100;
-	mp.mode.size.y = 100;
-	mp.mode.graphtype = GT_AUTO;
-	mp.mode.dpp.x = GGI_AUTO;
-	mp.mode.dpp.y = GGI_AUTO;
-	mp.user_data = NULL;
-	err = _GGI_modelist_checkmode(ml, &mp);
-
-	_GGI_modelist_destroy(ml);
-
-	if (err != GGI_OK) {
-		char buf[256];
-		ggiSPrintMode(buf, &mp.mode);
-		printfailure("_GGI_modelist_checkmode() failed even though "
-			"there is a match!\nSuggested: %s\n", buf);
-		return;
-	}
-
-	if (mp.mode.size.x != 100 || mp.mode.size.y != 100) {
-		char buf[256];
-		ggiSPrintMode(buf, &mp.mode);
-		printfailure("_GGI_modelist_checkmode() suggested the "
-			"wrong mode!\nReturned: %s\n", buf);
-		return;
-	}
-
-	printsuccess();
-	return;
-}
-
-
-static void testcase11(const char *desc)
+static void modelist_helper(unsigned int mcount, ggi_mode *modes,
+	unsigned int tcount, ggi_mode *tests, int *match, int *exp_mode)
 {
 	int err;
 	unsigned int i;
@@ -617,45 +472,16 @@ static void testcase11(const char *desc)
 	char return_mode[256];
 	ggi_modelist *ml;
 	ggi_mode_padded mp;
-	/* database of modes */
-	ggi_mode modes[] = {
-		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
-		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
-	};
-	/* list of modes to test */
-	ggi_mode tests[] = {
-		{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
-	};
-	/* is a perfect match expected for above tests? */
-	int match[] = {
-		1,
-		0,
-		1
-	};
-	/* what mode should be returned/suggested for above tests? */
-	int exp_mode[] = {
-		0,
-		1,
-		1
-	};
 
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
+	ml = _GGI_modelist_create(mcount);
 
-	ml = _GGI_modelist_create(sizeof(modes) / sizeof(modes[0]));
-
-	for (i = 0; i < sizeof(modes) / sizeof(modes[0]); ++i) {
+	for (i = 0; i < mcount; ++i) {
 		mp.mode = modes[i];
 		mp.user_data = NULL;
 		_GGI_modelist_append(ml, &mp);
 	}
 
-	for (i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i) {
+	for (i = 0; i < tcount; ++i) {
 		int matched;
 		mp.mode = tests[i];
 		mp.user_data = NULL;
@@ -703,8 +529,102 @@ static void testcase11(const char *desc)
 
 	_GGI_modelist_destroy(ml);
 
-	if (i == sizeof(tests) / sizeof(tests[0]))
+	if (i == tcount)
 		printsuccess();
+}
+
+static void testcase9(const char *desc)
+{
+	/* database of modes */
+	ggi_mode modes[] = {
+		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
+		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
+	};
+	/* list of modes to test */
+	ggi_mode tests[] = {
+		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
+			{200,200}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
+	};
+	/* is a perfect match expected for above tests? */
+	int match[] = {
+		1
+	};
+	/* what mode should be returned/suggested for above tests? */
+	int exp_mode[] = {
+		1
+	};
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
+		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
+}
+
+
+static void testcase10(const char *desc)
+{
+	/* database of modes */
+	ggi_mode modes[] = {
+		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
+		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
+	};
+	/* list of modes to test */
+	ggi_mode tests[] = {
+		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
+			{100,100}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
+	};
+	/* is a perfect match expected for above tests? */
+	int match[] = {
+		1
+	};
+	/* what mode should be returned/suggested for above tests? */
+	int exp_mode[] = {
+		0
+	};
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
+		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
+}
+
+
+static void testcase11(const char *desc)
+{
+	/* database of modes */
+	ggi_mode modes[] = {
+		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
+		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
+	};
+	/* list of modes to test */
+	ggi_mode tests[] = {
+		{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+		{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
+	};
+	/* is a perfect match expected for above tests? */
+	int match[] = {
+		1,
+		0,
+		1
+	};
+	/* what mode should be returned/suggested for above tests? */
+	int exp_mode[] = {
+		0,
+		1,
+		1
+	};
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
+		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
 }
 
 
