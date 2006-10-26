@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2006/10/26 08:04:47 pekberg Exp $
+/* $Id: mode.c,v 1.25 2006/10/26 08:11:52 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -574,6 +574,34 @@ static void testcase9(const char *desc)
 }
 
 
+static void testcase10(const char *desc)
+{
+	/* database of modes */
+	ggi_mode modes[] = {
+		{ 1, { 600, 200}, { 600, 200}, { 200, 200}, GT_32BIT, {1,1} },
+		{ 2, { 200, 400}, { 200, 400}, { 200, 200}, GT_16BIT, {1,1} },
+		{ 1, { 800, 600}, { 800, 600}, { 200, 200}, GT_16BIT, {1,1} }
+	};
+	/* list of modes to test */
+	test_mode tests[] = {
+		{{ GGI_AUTO, AUTOXY, AUTOXY, AUTOXY, GT_32BIT, AUTOXY },
+			1, 0 },
+		{{ GGI_AUTO, AUTOXY, AUTOXY, AUTOXY, GT_16BIT, AUTOXY },
+			1, 2 },
+		{{ 2,        AUTOXY, AUTOXY, AUTOXY, GT_AUTO, AUTOXY },
+			1, 1 },
+		{{ GGI_AUTO, {600,400}, AUTOXY, AUTOXY, GT_AUTO, AUTOXY },
+			0, 2 }
+	};
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
+		sizeof(tests)/sizeof(tests[0]), tests);
+}
+
+
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
@@ -588,6 +616,7 @@ int main(int argc, char * const argv[])
 	testcase7("Check that re-setting of a different mode works [sync mode]");
 	testcase8("Check checking then setting a mode with braindamaged visual size");
 	testcase9("Check modelist for list of modes");
+	testcase10("Check modelist for list of modes 2");
 
 	printsummary();
 
