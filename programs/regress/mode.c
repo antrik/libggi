@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2006/10/26 07:31:30 pekberg Exp $
+/* $Id: mode.c,v 1.23 2006/10/26 07:44:49 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -461,9 +461,14 @@ static void testcase8(const char *desc)
 	return;
 }
 
+typedef struct {
+	ggi_mode mode;  /* mode to check */
+	int match;      /* perfect match expected */
+	int exp_mode;   /* expected mode returned/suggested */
+} test_mode;
 
 static void modelist_helper(unsigned int mcount, ggi_mode *modes,
-	unsigned int tcount, ggi_mode *tests, int *match, int *exp_mode)
+	unsigned int tcount, test_mode *tests)
 {
 	int err;
 	unsigned int i;
@@ -482,15 +487,16 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 	}
 
 	for (i = 0; i < tcount; ++i) {
-		int matched;
-		mp.mode = tests[i];
+		int match;
+		int exp_mode;
+		mp.mode = tests[i].mode;
 		mp.user_data = NULL;
 		err = _GGI_modelist_checkmode(ml, &mp);
 
-		matched = err == GGI_OK;
-		if (matched != match[i]) {
-			ggiSPrintMode(request_mode, &tests[i]);
-			ggiSPrintMode(expect_mode, &modes[exp_mode[i]]);
+		match = err == GGI_OK;
+		if (match != tests[i].match) {
+			ggiSPrintMode(request_mode, &tests[i].mode);
+			ggiSPrintMode(expect_mode, &modes[tests[i].exp_mode]);
 			ggiSPrintMode(return_mode, &mp.mode);
 			printfailure("_GGI_modelist_checkmode() %s\n"
 				"Test:      %d\n"
@@ -498,18 +504,22 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 				"Expected:  %s\n"
 				"%s %s\n",
 				i,
-				matched ? "succeeded without a match!" :
+				match ? "succeeded without a match!" :
 					"failed when there is a match!",
 				request_mode,
 				expect_mode,
-				matched ? "Returned: " : "Suggested:",
+				match ? "Returned: " : "Suggested:",
 				return_mode);
 			break;
 		}
 
-		if (memcmp(&mp.mode, &modes[exp_mode[i]], sizeof(ggi_mode))) {
-			ggiSPrintMode(request_mode, &tests[i]);
-			ggiSPrintMode(expect_mode, &modes[exp_mode[i]]);
+		exp_mode = !memcmp(&mp.mode,
+			&modes[tests[i].exp_mode],
+			sizeof(ggi_mode));
+
+		if (!exp_mode) {
+			ggiSPrintMode(request_mode, &tests[i].mode);
+			ggiSPrintMode(expect_mode, &modes[tests[i].exp_mode]);
 			ggiSPrintMode(return_mode, &mp.mode);
 			printfailure("_GGI_modelist_checkmode() %s "
 				"the wrong mode!\n"
@@ -517,11 +527,11 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 				"Requested: %s\n"
 				"Expected:  %s\n"
 				"%s %s\n",
-				matched ? "returned" : "suggested",
+				match ? "returned" : "suggested",
 				i,
 				request_mode,
 				expect_mode,
-				matched ? "Returned: " : "Suggested:",
+				match ? "Returned: " : "Suggested:",
 				return_mode);
 			break;
 		}
@@ -541,40 +551,29 @@ static void testcase9(const char *desc)
 		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
 	};
 	/* list of modes to test */
-	ggi_mode tests[] = {
-		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
+	test_mode tests[] = {
+		{{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
 			{200,200}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
+			1, 1 },
+		{{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
 			{100,100}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
+			1, 0 },
+		{{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
 			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
+			1, 0 },
+		{{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
 			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
-		{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
-			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
-	};
-	/* is a perfect match expected for above tests? */
-	int match[] = {
-		1,
-		1,
-		1,
-		0,
-		1
-	};
-	/* what mode should be returned/suggested for above tests? */
-	int exp_mode[] = {
-		1,
-		0,
-		0,
-		1,
-		1
+			0, 1 },
+		{{ GGI_AUTO, {200,200}, {GGI_AUTO,GGI_AUTO},
+			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
+			1, 1 }
 	};
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
-		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
+		sizeof(tests)/sizeof(tests[0]), tests);
 }
 
 
