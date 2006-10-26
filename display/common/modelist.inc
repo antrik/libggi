@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.22 2006/10/25 20:19:45 orzo Exp $
+/* $Id: modelist.inc,v 1.23 2006/10/26 09:27:08 pekberg Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -380,11 +380,21 @@ static void _GGI_score_resolution(ggi_coord req, ggi_coord a, int *tmp)
 
 	ix = req.x==GGI_AUTO;
 	iy = req.y==GGI_AUTO;
-	if ( ix ) req.x = INT16_MAX;
-	if ( iy ) req.y = INT16_MAX;
 	tmp[0] = tmp[1] = 0;
-	tmp[ix] += abs(req.x-a.x);
-	tmp[iy] += abs(req.y-a.y);
+
+	if ( ix )
+		tmp[ix] += INT16_MAX - a.x;
+	else if ( req.x > a.x )
+		tmp[ix] += (int)INT16_MAX + req.x - a.x;
+	else
+		tmp[ix] += a.x - req.x;
+
+	if ( iy )
+		tmp[iy] += INT16_MAX - a.y;
+	else if ( req.y > a.y )
+		tmp[iy] += (int)INT16_MAX + req.y - a.y;
+	else
+		tmp[iy] += a.y - req.y;
 }
 
 static int _GGI_score_frames(int32_t req, int32_t a)
