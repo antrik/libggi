@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2006/10/26 07:25:24 pekberg Exp $
+/* $Id: mode.c,v 1.22 2006/10/26 07:31:30 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -543,63 +543,9 @@ static void testcase9(const char *desc)
 	/* list of modes to test */
 	ggi_mode tests[] = {
 		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
-			{200,200}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
-	};
-	/* is a perfect match expected for above tests? */
-	int match[] = {
-		1
-	};
-	/* what mode should be returned/suggested for above tests? */
-	int exp_mode[] = {
-		1
-	};
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
-		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
-}
-
-
-static void testcase10(const char *desc)
-{
-	/* database of modes */
-	ggi_mode modes[] = {
-		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
-		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
-	};
-	/* list of modes to test */
-	ggi_mode tests[] = {
+			{200,200}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
 		{ GGI_AUTO, {GGI_AUTO,GGI_AUTO}, {GGI_AUTO,GGI_AUTO},
-			{100,100}, GT_AUTO, {GGI_AUTO,GGI_AUTO} }
-	};
-	/* is a perfect match expected for above tests? */
-	int match[] = {
-		1
-	};
-	/* what mode should be returned/suggested for above tests? */
-	int exp_mode[] = {
-		0
-	};
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	modelist_helper(sizeof(modes)/sizeof(modes[0]), modes,
-		sizeof(tests)/sizeof(tests[0]), tests, match, exp_mode);
-}
-
-
-static void testcase11(const char *desc)
-{
-	/* database of modes */
-	ggi_mode modes[] = {
-		{ 1, { 100, 100}, { 100, 100}, { 100, 100}, GT_32BIT, {1,1} },
-		{ 1, { 200, 200}, { 200, 200}, { 200, 200}, GT_16BIT, {1,1} }
-	};
-	/* list of modes to test */
-	ggi_mode tests[] = {
+			{100,100}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
 		{ GGI_AUTO, {100,100}, {GGI_AUTO,GGI_AUTO},
 			{GGI_AUTO,GGI_AUTO}, GT_AUTO, {GGI_AUTO,GGI_AUTO} },
 		{ GGI_AUTO, {101,101}, {GGI_AUTO,GGI_AUTO},
@@ -610,11 +556,15 @@ static void testcase11(const char *desc)
 	/* is a perfect match expected for above tests? */
 	int match[] = {
 		1,
+		1,
+		1,
 		0,
 		1
 	};
 	/* what mode should be returned/suggested for above tests? */
 	int exp_mode[] = {
+		1,
+		0,
 		0,
 		1,
 		1
@@ -641,9 +591,7 @@ int main(int argc, char * const argv[])
 	testcase6("Check that re-setting of a different mode works [async mode]");
 	testcase7("Check that re-setting of a different mode works [sync mode]");
 	testcase8("Check checking then setting a mode with braindamaged visual size");
-	testcase9("Check modelist for 200x200 mode");
-	testcase10("Check modelist for 100x100 mode");
-	testcase11("Check modelist for list of modes");
+	testcase9("Check modelist for list of modes");
 
 	printsummary();
 
