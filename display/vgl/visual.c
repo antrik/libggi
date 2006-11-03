@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2006/10/16 05:34:11 cegger Exp $
+/* $Id: visual.c,v 1.22 2006/11/03 04:07:26 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -364,7 +364,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 
-	priv->linvt_channel = ggNewChannel(vis, _ggi_vgl_listener));
+	priv->linvt_channel = ggNewChannel(vis, _ggi_vgl_listener);
 	priv->kbd_inp = NULL;
 	priv->ms_inp = NULL;
 
