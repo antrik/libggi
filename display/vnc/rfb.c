@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.75 2006/09/29 05:12:05 pekberg Exp $
+/* $Id: rfb.c,v 1.76 2006/11/08 14:12:32 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -217,8 +217,15 @@ again:
 	case EINTR:
 		goto again;
 	case EAGAIN:
+#ifdef EWOULDBLOCK
 #if EAGAIN != EWOULDBLOCK
 	case EWOULDBLOCK:
+#endif
+#endif
+#ifdef WSAEWOULDBLOCK
+#if EAGAIN != WSAEWOULDBLOCK
+	case WSAEWOULDBLOCK:
+#endif
 #endif
 		/* queue it */
 		/* DPRINT("write would block\n"); */
@@ -1462,6 +1469,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	client->write_pending = 0;
 
+#if defined(F_GETFL)
 	flags = fcntl(client->cfd, F_GETFL);
 	fcntl(client->cfd, F_SETFL, flags | O_NONBLOCK);
 
@@ -1469,6 +1477,13 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 		flags = fcntl(client->cwfd, F_GETFL);
 		fcntl(client->cwfd, F_SETFL, flags | O_NONBLOCK);
 	}
+#elif defined(FIONBIO)
+	flags = 1;
+	ioctlsocket(client->cfd, FIONBIO, &flags);
+
+	if (cfd != cwfd)
+		ioctlsocket(client->cwfd, FIONBIO, &flags);
+#endif
 
 	client->action = vnc_client_version;
 

@@ -1,6 +1,6 @@
 AM_CPPFLAGS += -DDEBUG_NAMESPACE='"libggi.display.vnc"'
 INCLUDES = -I$(top_srcdir)/include
-libvnc_la_LIBADD =
+libvnc_la_LIBADD = $(bsdsock_libs)
 
 noinst_LTLIBRARIES = libvnc.la
 
