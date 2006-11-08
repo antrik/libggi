@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.34 2006/09/29 04:54:35 pekberg Exp $
+/* $Id: visual.c,v 1.35 2006/11/08 20:26:38 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -87,6 +87,45 @@ enum {
 };
 #undef VNC_OPTION
 
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+static int
+socket_init(void)
+{
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	int err;
+
+	wVersionRequested = MAKEWORD(2, 0);
+
+	err = WSAStartup(wVersionRequested, &wsaData);
+	if (err != 0)
+		return GGI_ENODEVICE;
+
+	if (LOBYTE(wsaData.wVersion) < 1) {
+		WSACleanup();
+		return GGI_ENODEVICE;
+	}
+
+	if (LOBYTE(wsaData.wVersion) == 1 && HIBYTE(wsaData.wVersion) < 1) {
+		WSACleanup();
+		return GGI_ENODEVICE;
+	}
+
+	if (LOBYTE(wsaData.wVersion) > 2) {
+		WSACleanup();
+		return GGI_ENODEVICE;
+	}
+
+	return GGI_OK;
+}
+
+static void
+socket_cleanup(void)
+{
+	WSACleanup(); 
+}
+#endif
+
 static int
 GGIopen(struct ggi_visual *vis,
 	struct ggi_dlhandle *dlh,
@@ -113,9 +152,17 @@ GGIopen(struct ggi_visual *vis,
 		return GGI_EARGINVAL;
 	}
 
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+	err = socket_init();
+	if (err != GGI_OK)
+		return err;
+#endif
+
 	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_vnc_priv));
-	if (priv == NULL)
-		return GGI_ENOMEM;
+	if (priv == NULL) {
+		err = GGI_ENOMEM;
+		goto out_socketcleanup;
+	}
 
 	memset(priv, 0, sizeof(*priv));
 	priv->sfd = -1;
@@ -417,6 +464,10 @@ out_freegc:
 	free(LIBGGI_GC(vis));
 out_freepriv:
 	free(priv);
+out_socketcleanup:
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+	socket_cleanup();
+#endif
 
 	return err;
 }
@@ -464,6 +515,10 @@ GGIclose(struct ggi_visual *vis,
 skip:
 	if (LIBGGI_GC(vis))
 		free(LIBGGI_GC(vis));
+
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+	socket_cleanup();
+#endif
 
 	return 0;
 }
