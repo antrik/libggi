@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.76 2006/11/08 14:12:32 pekberg Exp $
+/* $Id: rfb.c,v 1.77 2006/11/08 20:52:18 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -199,7 +199,11 @@ write_client(ggi_vnc_client *client, ggi_vnc_buf *buf)
 	}
 
 again:
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+	res = send(client->cwfd, buf->buf + buf->pos, buf->size - buf->pos, 0);
+#else
 	res = write(client->cwfd, buf->buf + buf->pos, buf->size - buf->pos);
+#endif
 
 	if (res == buf->size - buf->pos) {
 		/* DPRINT("complete write\n"); */
@@ -1529,7 +1533,11 @@ GGI_vnc_client_data(void *arg, int cfd)
 	unsigned char buf[100];
 	ssize_t len;
 
+#if defined(__WIN32__) && !defined(__CYGWIN__)
+	len = recv(cfd, buf, sizeof(buf), 0);
+#else
 	len = read(cfd, buf, sizeof(buf));
+#endif
 
 	if (len < 0) {
 		DPRINT("Error reading\n");
