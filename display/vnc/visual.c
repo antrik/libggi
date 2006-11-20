@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.36 2006/11/20 01:55:02 pekberg Exp $
+/* $Id: visual.c,v 1.37 2006/11/20 02:02:55 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -148,7 +148,7 @@ GGIopen(struct ggi_visual *vis,
 	memcpy(options, optlist, sizeof(options));
 	args = ggParseOptions(args, options, NUM_OPTS);
 	if (args == NULL) {
-		fprintf(stderr, "display-vnc: error in arguments.\n");
+		DPRINT_MISC("error in arguments.\n");
 		return GGI_EARGINVAL;
 	}
 
@@ -178,8 +178,7 @@ GGIopen(struct ggi_visual *vis,
 	if (getenv("GGI_VNC_OPTIONS") != NULL) {
 		if (ggParseOptions(getenv("GGI_VNC_OPTIONS"), options,
 				   NUM_OPTS) == NULL) {
-			fprintf(stderr,
-				"display-vnc: error in $GGI_VNC_OPTIONS.\n");
+			DPRINT_MISC("error in $GGI_VNC_OPTIONS.\n");
 			err = GGI_EARGINVAL;
 			goto out_freegc;
 		}
@@ -392,15 +391,13 @@ GGIopen(struct ggi_visual *vis,
 
 		if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
 			err = GGI_ENODEVICE;
-			fprintf(stderr,
-				"display-vnc: bind failed\n");
+			DPRINT_MISC("bind failed\n");
 			goto out_closefds;
 		}
 
 		if (listen(priv->sfd, 3)) {
 			err = GGI_ENODEVICE;
-			fprintf(stderr,
-				"display-vnc: listen failed\n");
+			DPRINT_MISC("listen failed\n");
 			goto out_closefds;
 		}
 
@@ -416,8 +413,7 @@ GGIopen(struct ggi_visual *vis,
 	gii = ggGetAPIByName("gii");
 	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
 		err = GGI_ENODEVICE;
-		fprintf(stderr,
-			"display-vnc: gii not attached to stem\n");
+		DPRINT_MISC("gii not attached to stem\n");
 		goto out_closefds;
 	}
 
@@ -426,8 +422,7 @@ GGIopen(struct ggi_visual *vis,
 	DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 
 	if (inp == NULL) {
-		fprintf(stderr,
-			"display-vnc: unable to open vnc inputlib\n");
+		DPRINT_MISC("unable to open vnc inputlib\n");
 		err = GGI_ENODEVICE;
 		goto out_closefds;
 	}
@@ -448,7 +443,7 @@ GGIopen(struct ggi_visual *vis,
 		h = gethostbyname(options[OPT_client].result);
 
 		if (!h) {
-			fprintf(stderr, "display-vnc: gethostbyname error\n");
+			DPRINT_MISC("gethostbyname error\n");
 			err = GGI_ENODEVICE;
 			goto out_closefds;
 		}

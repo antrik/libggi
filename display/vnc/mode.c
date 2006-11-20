@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.9 2006/09/27 05:33:54 pekberg Exp $
+/* $Id: mode.c,v 1.10 2006/11/20 02:02:55 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -264,8 +264,8 @@ _ggi_domode(struct ggi_visual *vis)
 		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
 				name, args, NULL);
 		if (err) {
-			fprintf(stderr,"display-vnc: Can't open the "
-				"%s (%s) library.\n", name, args);
+			DPRINT_LIBS("Can't open the %s (%s) library.\n",
+				name, args);
 			return GGI_EFATAL;
 		} else {
 			DPRINT_LIBS("Success in loading "
