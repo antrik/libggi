@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.77 2006/11/08 20:52:18 pekberg Exp $
+/* $Id: rfb.c,v 1.78 2006/11/20 02:17:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1052,7 +1052,7 @@ vnc_client_cut(ggi_vnc_client *client)
 	memcpy(&count, &client->buf[4], sizeof(count));
 	count = ntohl(count);
 
-	if (client->buf_size < 8 + count) {
+	if ((uint32_t)client->buf_size < 8 + count) {
 		/* wait for more data */
 		client->action = vnc_client_cut;
 
@@ -1550,7 +1550,7 @@ GGI_vnc_client_data(void *arg, int cfd)
 		return -1;
 	}
 
-	if (len + client->buf_size > sizeof(client->buf)) {
+	if (len + client->buf_size > (ssize_t)sizeof(client->buf)) {
 		DPRINT("Avoiding buffer overrun\n");
 		close_client(client);
 		return -1;
