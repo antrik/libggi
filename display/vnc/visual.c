@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.37 2006/11/20 02:02:55 pekberg Exp $
+/* $Id: visual.c,v 1.38 2006/11/20 02:07:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -86,6 +86,8 @@ enum {
 	NUM_OPTS
 };
 #undef VNC_OPTION
+
+static unsigned char random17[] = "random17";
 
 #if defined(__WIN32__) && !defined(__CYGWIN__)
 static int
@@ -243,7 +245,7 @@ GGIopen(struct ggi_visual *vis,
 		/* Pick some random password, and use the des algorithm to
 		 * generate pseudo random numbers.
 		 */
-		deskey("random17", EN0);
+		deskey(random17, EN0);
 		cpkey(priv->randomizer);
 	}
 	else
@@ -291,7 +293,7 @@ GGIopen(struct ggi_visual *vis,
 		/* Pick some random password, and use the des algorithm to
 		 * generate pseudo random numbers.
 		 */
-		deskey("random17", EN0);
+		deskey(random17, EN0);
 		cpkey(priv->randomizer);
 	}
 	else
