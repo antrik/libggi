@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2006/11/08 20:26:38 pekberg Exp $
+/* $Id: visual.c,v 1.36 2006/11/20 01:55:02 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -208,12 +208,29 @@ GGIopen(struct ggi_visual *vis,
 		priv->kill_on_last_disconnect = 1;
 
 	if (options[OPT_passwd].result[0] != '\0') {
-		unsigned char passwd[9];
+		FILE *f;
+		char passwd[9];
 		int i;
 
 		priv->passwd = 1;
 		memset(passwd, 0, sizeof(passwd));
-		ggstrlcpy(passwd, options[OPT_passwd].result, sizeof(passwd));
+		f = fopen(options[OPT_passwd].result, "rt");
+		if (!f) {
+			DPRINT_MISC("error opening passwd file.\n");
+			err = GGI_EARGINVAL;
+			goto out_freegc;
+		}
+		if (!fgets(passwd, sizeof(passwd), f)) {
+			if (ferror(f)) {
+				fclose(f);
+				DPRINT_MISC("error reading passwd file.\n");
+				err = GGI_EARGINVAL;
+				goto out_freegc;
+			}
+		}
+		fclose(f);
+		if (passwd[0] && passwd[strlen(passwd) - 1] == '\n')
+			passwd[strlen(passwd) - 1] = '\0';
 
 		/* Should apparently bitreverse the password bytes.
 		 * I just love undocumented quirks to standard algorithms...
@@ -221,7 +238,7 @@ GGIopen(struct ggi_visual *vis,
 		for (i = 0; i < 8; ++i)
 			passwd[i] = GGI_BITREV1(passwd[i]);
 
-		deskey(passwd, EN0);
+		deskey((unsigned char *)passwd, EN0);
 		cpkey(priv->passwd_key);
 
 		/* Pick some random password, and use the des algorithm to
@@ -239,12 +256,29 @@ GGIopen(struct ggi_visual *vis,
 		priv->view_only = 1;
 
 	if (options[OPT_viewpw].result[0] != '\0') {
-		unsigned char viewpw[9];
+		FILE *f;
+		char viewpw[9];
 		int i;
 
 		priv->viewpw = 1;
 		memset(viewpw, 0, sizeof(viewpw));
-		ggstrlcpy(viewpw, options[OPT_viewpw].result, sizeof(viewpw));
+		f = fopen(options[OPT_viewpw].result, "rt");
+		if (!f) {
+			DPRINT_MISC("error opening viewpw file.\n");
+			err = GGI_EARGINVAL;
+			goto out_freegc;
+		}
+		if (!fgets(viewpw, sizeof(viewpw), f)) {
+			if (ferror(f)) {
+				fclose(f);
+				DPRINT_MISC("error reading viewpw file.\n");
+				err = GGI_EARGINVAL;
+				goto out_freegc;
+			}
+		}
+		fclose(f);
+		if (viewpw[0] && viewpw[strlen(viewpw) - 1] == '\n')
+			viewpw[strlen(viewpw) - 1] = '\0';
 
 		/* Should apparently bitreverse the password bytes.
 		 * I just love undocumented quirks to standard algorithms...
@@ -252,7 +286,7 @@ GGIopen(struct ggi_visual *vis,
 		for (i = 0; i < 8; ++i)
 			viewpw[i] = GGI_BITREV1(viewpw[i]);
 
-		deskey(viewpw, EN0);
+		deskey((unsigned char *)viewpw, EN0);
 		cpkey(priv->viewpw_key);
 
 		/* Pick some random password, and use the des algorithm to

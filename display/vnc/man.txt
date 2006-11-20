@@ -9,10 +9,10 @@ Synopsis
 ::
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-kold] [-passwd=<password>]
+	       [-hextile=no] [-kold] [-passwd=<file>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
 	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-	       [-viewpw=<password>] [-zlib=<level>|no]
+	       [-viewpw=<file>] [-zlib=<level>|no]
 	       [-zlibhex=<level>|no] [-zrle=<level>|no]
 
 
@@ -59,15 +59,15 @@ Options
     :p:`-stdio` and :p:`-server=stdio` options so that the application does
     not linger without any user feedback.
 
-``-passwd=<password>``
-    The vnc client has to successfully encrypt a random challenge
-    with the stated :p:`password` in order to connect. In the
-    :p:`password`, only the eight first characters and the seven least
+``-passwd=<file>``
+    The vnc client has to successfully encrypt a random challenge with
+    the password stated on the first line of :p:`file` in order to connect.
+    In the password, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
-    If this :p:`password` is given, the client is allowed to send input
-    events such as keys and pointer movements to the application. However,
-    this allowance may be overridden with the :p:`-viewonly` option. See
-    the options :p:`-viewonly` and :p:`-viewpw` for comparison.
+    If this password is given, the client is allowed to send input events
+    such as keys and pointer movements to the application. However, this
+    allowance may be overridden with the :p:`-viewonly` option. See the
+    options :p:`-viewonly` and :p:`-viewpw` for comparison.
 
 ``-physz=<sizex>,<sizey>[dpi]``
     This option will provide a physical screen size for applications
@@ -104,19 +104,19 @@ Options
 ``-viewonly``
     If this option is given, no client is allowed to send input events
     such as keys and pointer movements to the application. If the
-    :p:`-passwd` option has also been given, the given :p:`password` is
-    effectively reduced to a :p:`-viewpw` :p:`password`. This option is
+    :p:`-passwd` option has also been given, the given password is
+    effectively reduced to a :p:`-viewpw` password. This option is
     intended for use together with e.g. the :man:`display-multi(7)`
     target.
 
-``-viewpw=<password>``
-    The vnc client has to successfully encrypt a random challenge
-    with the stated :p:`password` in order to connect. In the
-    :p:`password`, only the eight first characters and the seven least
+``-viewpw=<file>``
+    The vnc client has to successfully encrypt a random challenge with
+    the password stated on the first line of :p:`file` in order to connect.
+    In the password, only the eight first characters and the seven least
     significant bits of every character are used in the authentication.
-    If this :p:`password` is given, the client is *not* allowed to send
-    input events such as keys and pointer movements to the application.
-    See the options :p:`-passwd` and :p:`-viewonly` for comparison.
+    If this password is given, the client is *not* allowed to send input
+    events such as keys and pointer movements to the application. See
+    the options :p:`-passwd` and :p:`-viewonly` for comparison.
 
 ``-zlib=<level>|no``
     Specify the compression level to use for the Zlib encoding. 0 for
