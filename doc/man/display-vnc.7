@@ -1,14 +1,14 @@
-.TH "display-vnc" 7 "2006-10-10" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-11-20" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-             [-hextile=no] [-kold] [-passwd=<password>]
+             [-hextile=no] [-kold] [-passwd=<file>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
              [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-             [-viewpw=<password>] [-zlib=<level>|no]
+             [-viewpw=<file>] [-zlib=<level>|no]
              [-zlibhex=<level>|no] [-zrle=<level>|no]
 .fi
 
@@ -55,15 +55,15 @@ client disconnects. It can be useful in conjunction with the \fI-client\fR,
 not linger without any user feedback.
 
 .TP
-\f(CW-passwd=<password>\fR
-The vnc client has to successfully encrypt a random challenge
-with the stated \fIpassword\fR in order to connect. In the
-\fIpassword\fR, only the eight first characters and the seven least
+\f(CW-passwd=<file>\fR
+The vnc client has to successfully encrypt a random challenge with
+the password stated on the first line of \fIfile\fR in order to connect.
+In the password, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
-If this \fIpassword\fR is given, the client is allowed to send input
-events such as keys and pointer movements to the application. However,
-this allowance may be overridden with the \fI-viewonly\fR option. See
-the options \fI-viewonly\fR and \fI-viewpw\fR for comparison.
+If this password is given, the client is allowed to send input events
+such as keys and pointer movements to the application. However, this
+allowance may be overridden with the \fI-viewonly\fR option. See the
+options \fI-viewonly\fR and \fI-viewpw\fR for comparison.
 
 .TP
 \f(CW-physz=<sizex>,<sizey>[dpi]\fR
@@ -106,20 +106,20 @@ is not specified, the default is "GGI on vnc".
 \f(CW-viewonly\fR
 If this option is given, no client is allowed to send input events
 such as keys and pointer movements to the application. If the
-\fI-passwd\fR option has also been given, the given \fIpassword\fR is
-effectively reduced to a \fI-viewpw\fR \fIpassword\fR. This option is
+\fI-passwd\fR option has also been given, the given password is
+effectively reduced to a \fI-viewpw\fR password. This option is
 intended for use together with e.g. the \f(CWdisplay-multi(7)\fR
 target.
 
 .TP
-\f(CW-viewpw=<password>\fR
-The vnc client has to successfully encrypt a random challenge
-with the stated \fIpassword\fR in order to connect. In the
-\fIpassword\fR, only the eight first characters and the seven least
+\f(CW-viewpw=<file>\fR
+The vnc client has to successfully encrypt a random challenge with
+the password stated on the first line of \fIfile\fR in order to connect.
+In the password, only the eight first characters and the seven least
 significant bits of every character are used in the authentication.
-If this \fIpassword\fR is given, the client is \fInot\fR allowed to send
-input events such as keys and pointer movements to the application.
-See the options \fI-passwd\fR and \fI-viewonly\fR for comparison.
+If this password is given, the client is \fInot\fR allowed to send input
+events such as keys and pointer movements to the application. See
+the options \fI-passwd\fR and \fI-viewonly\fR for comparison.
 
 .TP
 \f(CW-zlib=<level>|no\fR
