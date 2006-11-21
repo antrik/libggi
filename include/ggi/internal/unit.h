@@ -1,4 +1,4 @@
-/* $Id: unit.h,v 1.5 2004/11/27 23:10:39 soyt Exp $
+/* $Id: unit.h,v 1.6 2006/11/21 18:13:30 cegger Exp $
 ******************************************************************************
 
    LibGGI core - conversion between units
@@ -28,7 +28,6 @@
 #ifndef _GGI_INTERNAL_UNIT_H
 #define _GGI_INTERNAL_UNIT_H
 
-#include "config.h"
 #include <ggi/internal/internal.h>
 
 
