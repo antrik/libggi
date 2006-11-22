@@ -1,4 +1,4 @@
-/* $Id: zlibhex.c,v 1.1 2006/09/29 04:54:35 pekberg Exp $
+/* $Id: zlibhex.c,v 1.2 2006/11/22 17:32:21 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB ZlibHex encoding
@@ -43,7 +43,7 @@
 #include "common.h"
 
 struct zlibhex_ctx_t {
-	z_stream zstr;
+	z_stream zstr[2];
 	ggi_vnc_buf wbuf;
 };
 
@@ -54,30 +54,30 @@ struct zlibhex_ctx_t {
 #define ZLIBHEX_SUBRECTS (1<<3)
 #define ZLIBHEX_COLORED  (1<<4)
 #define ZLIBHEX_ZRAW     (1<<5)
-#define ZLIBHEX_ZHEX     (1<<6) /* What's this? */
+#define ZLIBHEX_ZHEX     (1<<6)
 
 static void
-zip(ggi_vnc_client *client, uint8_t *src, int len)
+zip(ggi_vnc_client *client, int ztream, uint8_t *src, int len)
 {
 	struct zlibhex_ctx_t *ctx = client->zlibhex_ctx;
 	int start = client->wbuf.size;
 	int avail;
 	uint16_t done = 0;
 
-	ctx->zstr.next_in = src;
-	ctx->zstr.avail_in = len;
+	ctx->zstr[ztream].next_in = src;
+	ctx->zstr[ztream].avail_in = len;
 
 	client->wbuf.size += 2;
 
 	avail = client->wbuf.limit - client->wbuf.size;
 
 	for (;;) {
-		ctx->zstr.next_out =
+		ctx->zstr[ztream].next_out =
 			&client->wbuf.buf[client->wbuf.size + done];
-		ctx->zstr.avail_out = avail - done;
-		deflate(&ctx->zstr, Z_SYNC_FLUSH);
-		done = avail - ctx->zstr.avail_out;
-		if (ctx->zstr.avail_out)
+		ctx->zstr[ztream].avail_out = avail - done;
+		deflate(&ctx->zstr[ztream], Z_SYNC_FLUSH);
+		done = avail - ctx->zstr[ztream].avail_out;
+		if (ctx->zstr[ztream].avail_out)
 			break;
 		avail += 1000;
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + avail);
@@ -98,7 +98,7 @@ tile(ggi_vnc_client *client, uint8_t *src, int xs, int ys, int bpp)
 		size = 1 + xs * ys * bpp;
 		if (size >= 20) {
 			client->wbuf.buf[client->wbuf.size++] = ZLIBHEX_ZRAW;
-			zip(client, src + 1, size - 1);
+			zip(client, 0, src + 1, size - 1);
 			return size;
 		}
 		goto copy;
@@ -118,6 +118,13 @@ tile(ggi_vnc_client *client, uint8_t *src, int xs, int ys, int bpp)
 		size += 1 + 2 * rects;
 		if (subencoding & ZLIBHEX_COLORED)
 			size += bpp * rects;
+	}
+
+	if (size >= 20) {
+		client->wbuf.buf[client->wbuf.size++] =
+			subencoding | ZLIBHEX_ZHEX;
+		zip(client, 1, src + 1, size - 1);
+		return size;
 	}
 
 copy:
@@ -214,17 +221,19 @@ struct zlibhex_ctx_t *
 GGI_vnc_zlibhex_open(int level)
 {
 	struct zlibhex_ctx_t *ctx = malloc(sizeof(*ctx));
+	int i;
 
 	memset(ctx, 0, sizeof(*ctx));
-
-	ctx->zstr.zalloc = Z_NULL;
-	ctx->zstr.zfree = Z_NULL;
-	ctx->zstr.opaque = Z_NULL;
 
 	if (level == -1)
 		level = Z_DEFAULT_COMPRESSION;
 
-	deflateInit(&ctx->zstr, level);
+	for (i = 0; i < 2; ++i) {
+		ctx->zstr[i].zalloc = Z_NULL;
+		ctx->zstr[i].zfree = Z_NULL;
+		ctx->zstr[i].opaque = Z_NULL;
+		deflateInit(&ctx->zstr[i], level);
+	}
 
 	return ctx;
 }
@@ -233,6 +242,7 @@ void
 GGI_vnc_zlibhex_close(struct zlibhex_ctx_t *ctx)
 {
 	free(ctx->wbuf.buf);
-	deflateEnd(&ctx->zstr);
+	deflateEnd(&ctx->zstr[1]);
+	deflateEnd(&ctx->zstr[0]);
 	free(ctx);
 }
