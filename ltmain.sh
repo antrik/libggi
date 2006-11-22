@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2345 2006/09/20 19:08:21) 2.1a
+# ltmain.sh (GNU libtool 1.2356 2006/11/07 17:53:22) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006
@@ -64,7 +64,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2345 2006/09/20 19:08:21) 2.1a
+#       $progname:		(GNU libtool 1.2356 2006/11/07 17:53:22) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -73,8 +73,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2345 2006/09/20 19:08:21"
-package_revision=1.2345
+TIMESTAMP=" 1.2356 2006/11/07 17:53:22"
+package_revision=1.2356
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -3269,10 +3269,11 @@ func_mode_link ()
       # -q* pass through compiler args for the IBM compiler
       # -m*, -t[45]*, -txscale* pass through architecture-specific
       # compiler args for GCC
+      # -F/path gives path to uninstalled frameworks, gcc on darwin
       # -pg, --coverage pass through profiling flag for GCC
       # @file GCC response files
       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
-      -t[45]*|-txscale*|-pg|--coverage|@*)
+      -t[45]*|-txscale*|-pg|--coverage|-F*|@*)
         func_quote_for_eval "$arg"
 	arg="$func_quote_for_eval_result"
         func_append compile_command " $arg"
