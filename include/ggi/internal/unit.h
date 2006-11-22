@@ -1,4 +1,4 @@
-/* $Id: unit.h,v 1.6 2006/11/21 18:13:30 cegger Exp $
+/* $Id: unit.h,v 1.7 2006/11/22 06:54:13 cegger Exp $
 ******************************************************************************
 
    LibGGI core - conversion between units
@@ -28,8 +28,11 @@
 #ifndef _GGI_INTERNAL_UNIT_H
 #define _GGI_INTERNAL_UNIT_H
 
-#include <ggi/internal/internal.h>
 
+/*
+ * Make sure, you #include <ggi/types.h> before this file
+ * for ggi_coord definition.
+ */
 
 static inline void _ggi_unit_dpi2pix(ggi_coord *pix, const ggi_coord *dpi,
 			const ggi_coord *dpp)
