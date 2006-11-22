@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.78 2006/11/20 02:17:04 pekberg Exp $
+/* $Id: rfb.c,v 1.79 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -107,11 +107,11 @@ GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit)
 
 	if (!buf->limit) {
 		free(buf->buf);
-		buf->buf = malloc(limit);
+		buf->buf = _ggi_malloc(limit);
 	}
 	else {
 		unsigned char *tmp;
-		tmp = realloc(buf->buf, limit);
+		tmp = _ggi_realloc(buf->buf, limit);
 		if (tmp == NULL)
 			return 1;
 		buf->buf = tmp;
@@ -794,7 +794,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 
 		colors = 1 << GT_DEPTH(LIBGGI_GT(cvis));
 
-		ggi_palette = malloc(colors * sizeof(*ggi_palette));
+		ggi_palette = _ggi_malloc(colors * sizeof(*ggi_palette));
 		_ggiGetPalette(cvis, 0, colors, ggi_palette);
 
 		GGI_vnc_buf_reserve(&client->wbuf, 6 + 6 * colors);
@@ -1455,8 +1455,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	DPRINT("new_client(%d, %d)\n", cfd, cwfd);
 
-	client = malloc(sizeof(*client));
-	memset(client, 0, sizeof(*client));
+	client = _ggi_calloc(sizeof(*client));
 
 	GG_LIST_INSERT_HEAD(&priv->clients, client, siblings);
 	client->owner = vis;

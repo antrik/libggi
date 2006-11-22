@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.40 2006/09/22 06:08:54 pekberg Exp $
+/* $Id: zrle.c,v 1.41 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1161,9 +1161,7 @@ GGI_vnc_zrle(ggi_vnc_client *client, ggi_rect *update)
 struct zrle_ctx_t *
 GGI_vnc_zrle_open(int level)
 {
-	struct zrle_ctx_t *ctx = malloc(sizeof(*ctx));
-
-	memset(ctx, 0, sizeof(*ctx));
+	struct zrle_ctx_t *ctx = _ggi_calloc(sizeof(*ctx));
 
 	ctx->zstr.zalloc = Z_NULL;
 	ctx->zstr.zfree = Z_NULL;

@@ -1,4 +1,4 @@
-/* $Id: zlibhex.c,v 1.2 2006/11/22 17:32:21 pekberg Exp $
+/* $Id: zlibhex.c,v 1.3 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB ZlibHex encoding
@@ -220,10 +220,8 @@ GGI_vnc_zlibhex(ggi_vnc_client *client, ggi_rect *update)
 struct zlibhex_ctx_t *
 GGI_vnc_zlibhex_open(int level)
 {
-	struct zlibhex_ctx_t *ctx = malloc(sizeof(*ctx));
+	struct zlibhex_ctx_t *ctx = _ggi_calloc(sizeof(*ctx));
 	int i;
-
-	memset(ctx, 0, sizeof(*ctx));
 
 	if (level == -1)
 		level = Z_DEFAULT_COMPRESSION;

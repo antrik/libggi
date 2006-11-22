@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.15 2006/09/28 05:13:21 pekberg Exp $
+/* $Id: tight.c,v 1.16 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -1463,10 +1463,8 @@ GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
 struct tight_ctx_t *
 GGI_vnc_tight_open(void)
 {
-	struct tight_ctx_t *ctx = malloc(sizeof(*ctx));
+	struct tight_ctx_t *ctx = _ggi_calloc(sizeof(*ctx));
 	int i;
-
-	memset(ctx, 0, sizeof(*ctx));
 
 	ctx->reset = TIGHT_ZTREAM_RESET;
 #ifdef HAVE_JPEG

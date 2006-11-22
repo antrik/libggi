@@ -1,4 +1,4 @@
-/* $Id: zlib.c,v 1.10 2006/09/29 05:05:21 pekberg Exp $
+/* $Id: zlib.c,v 1.11 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB Zlib encoding
@@ -116,9 +116,7 @@ GGI_vnc_zlib(ggi_vnc_client *client, ggi_rect *update)
 struct zlib_ctx_t *
 GGI_vnc_zlib_open(int level)
 {
-	struct zlib_ctx_t *ctx = malloc(sizeof(*ctx));
-
-	memset(ctx, 0, sizeof(*ctx));
+	struct zlib_ctx_t *ctx = _ggi_calloc(sizeof(*ctx));
 
 	ctx->zstr.zalloc = Z_NULL;
 	ctx->zstr.zfree = Z_NULL;

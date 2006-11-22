@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.6 2006/09/29 04:25:47 pekberg Exp $
+/* $Id: hextile.c,v 1.7 2006/11/22 22:32:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -845,8 +845,8 @@ GGI_vnc_hextile(ggi_vnc_client *client, ggi_rect *update)
 struct hextile_ctx_t *
 GGI_vnc_hextile_open(void)
 {
-	struct hextile_ctx_t *ctx = malloc(sizeof(*ctx));
-	memset(ctx, 0, sizeof(*ctx));
+	struct hextile_ctx_t *ctx = _ggi_calloc(sizeof(*ctx));
+
 	return ctx;
 }
 
