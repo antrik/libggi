@@ -320,7 +320,7 @@ static unsigned long SP8[64] = {
 static void desfunc(unsigned long *block, unsigned long *keys)
 {
 	unsigned long fval, work, right, leftt;
-	int round;
+	int i;
 	
 	leftt = block[0];
 	right = block[1];
@@ -342,7 +342,7 @@ static void desfunc(unsigned long *block, unsigned long *keys)
 	right ^= work;
 	leftt = ((leftt << 1) | ((leftt >> 31) & 1L)) & 0xffffffffL;
 	
-	for( round = 0; round < 8; round++ ) {
+	for( i = 0; i < 8; i++ ) {
 		work  = (right << 28) | (right >> 4);
 		work ^= *keys++;
 		fval  = SP7[ work		 & 0x3fL];
