@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.27 2006/04/14 14:36:35 cegger Exp $
+/* $Id: dga.c,v 1.28 2006/11/22 07:37:22 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -254,6 +254,13 @@ static void ggi_xdga_checkmode_adapt(ggi_mode * m, XDGAMode * dgamode,
 #undef SCREENH
 
 }
+
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
 #include <ggi/display/modelist.h>
 #define WANT_GENERIC_CHECKMODE
