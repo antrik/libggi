@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.30 2006/09/23 09:11:12 cegger Exp $
+/* $Id: demo.c,v 1.31 2006/11/22 21:34:28 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -942,14 +942,17 @@ no_mem_targ2:
 	TestName("Hline Get");
 	memset(get_buf, 0, sizeof(get_buf)); /* clear get_buf */
 	x = 0; /* count wrong gets */
+	w = vx * (signed)GT_SIZE(type)/8;
+	if (!w)
+		w = 1;
 
 	for(y=15; y<vy; y++) {
 		ggiGetHLine(vis, 0, y, vx, get_buf);
-		if (get_buf[y] != put_buf[y]) {
+		if (get_buf[y%w] != put_buf[y%w]) {
 			x += 1;
 #if 0
 			fprintf(stderr,"Error: Hline[%i]: put %x != get %x\n",
-					y, put_buf[y], get_buf[y]);
+					y, put_buf[y%w], get_buf[y%w]);
 #endif
 		}
 	}
@@ -970,14 +973,17 @@ no_mem_targ2:
 	TestName("Vline Get");
 	memset(get_buf, 0, sizeof(get_buf)); /* clear get_buf */
 	y = 0; /* count wrong gets */
+	h = (vy - 15) * (signed)GT_SIZE(type) / 8;
+	if (!h)
+		h = 1;
 
 	for(x=0; x<vx; x++) {
 		ggiGetVLine(vis, x, 15, vy - 15, get_buf);
-		if (get_buf[x] != put_buf[x]) {
+		if (get_buf[x%h] != put_buf[x%h]) {
 			y += 1;
 #if 0
 			fprintf(stderr,"Error: Vline[%i]: put %x != get %x\n",
-					x, put_buf[x], get_buf[x]);
+					x, put_buf[x%h], get_buf[x%h]);
 #endif
 		}
 	}
