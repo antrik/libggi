@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.38 2006/11/20 02:07:21 pekberg Exp $
+/* $Id: visual.c,v 1.39 2006/12/07 22:46:37 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -413,7 +413,7 @@ GGIopen(struct ggi_visual *vis,
 	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
-	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+	if (gii == NULL || !STEM_HAS_API(vis->stem, gii)) {
 		err = GGI_ENODEVICE;
 		DPRINT_MISC("gii not attached to stem\n");
 		goto out_closefds;
