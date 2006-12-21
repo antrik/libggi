@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.30 2006/09/29 04:54:35 pekberg Exp $
+/* $Id: vnc.h,v 1.31 2006/12/21 22:04:52 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -114,6 +114,7 @@ typedef struct {
 	int kill_on_last_disconnect;
 
 	int copyrect;
+	int corre;
 	int hextile;
 	int zlib_level;
 	int zlibhex_level;

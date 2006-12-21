@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.39 2006/12/07 22:46:37 pekberg Exp $
+/* $Id: visual.c,v 1.40 2006/12/21 22:04:52 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -57,6 +57,7 @@
 #define VNC_OPTIONS \
 	VNC_OPTION(client,   "")           \
 	VNC_OPTION(copyrect, "")           \
+	VNC_OPTION(corre,    "no")         \
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
@@ -192,6 +193,11 @@ GGIopen(struct ggi_visual *vis,
 		priv->copyrect = 0;
 	else
 		priv->copyrect = 1;
+
+	if (options[OPT_corre].result[0] == 'n') /* never */
+		priv->corre = 0;
+	else
+		priv->corre = 1;
 
 	if (options[OPT_display].result[0] != 'n')
 		priv->display = strtoul(options[OPT_display].result, NULL, 0);

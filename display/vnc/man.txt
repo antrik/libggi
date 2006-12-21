@@ -8,8 +8,8 @@ Synopsis
 
 ::
 
-  display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-	       [-hextile=no] [-kold] [-passwd=<file>]
+  display-vnc: [-client=<host>] [-copyrect=no|always] [-corre]
+	       [-display=<dpy>] [-hextile=no] [-kold] [-passwd=<file>]
 	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
 	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
 	       [-viewpw=<file>] [-zlib=<level>|no]
@@ -41,6 +41,9 @@ Options
     is support for some other encoding the client has preferred. The default
     is to only use the CopyRect encoding if it is the most preferred
     encoding available.
+
+``-corre``
+    Enables the CoRRE encoding.
 
 ``-display=<dpy>``
     The display number clients should connect to. Display number 0 is
@@ -140,8 +143,8 @@ Options
 Features
 --------
 
-- Raw, CopyRect, Hextile, Tight, Zlib, ZlibHex and ZRLE encodings. The
-  CopyRect encoding is only used for panning.
+- Raw, CopyRect, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
+  encodings. The CopyRect encoding is only used for panning.
 - Multiple simultaneous clients.
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
@@ -198,4 +201,6 @@ Bugs
   "blocky" data. 2) The jpeg quality selection could probably also be
   better tuned. 3) The client should be able to select the zlib
   compression level.
+- The CoRRE encoding is not fully working and has significant visual
+  glitches.
 - Special keys (i.e. shift, escape, etc) needs to be converted.
