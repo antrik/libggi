@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.40 2006/12/21 22:04:52 pekberg Exp $
+/* $Id: visual.c,v 1.41 2006/12/21 23:16:15 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -57,7 +57,7 @@
 #define VNC_OPTIONS \
 	VNC_OPTION(client,   "")           \
 	VNC_OPTION(copyrect, "")           \
-	VNC_OPTION(corre,    "no")         \
+	VNC_OPTION(corre,    "")           \
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
