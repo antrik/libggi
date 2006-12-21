@@ -1,4 +1,4 @@
-/* $Id: corre.c,v 1.1 2006/12/21 22:04:52 pekberg Exp $
+/* $Id: corre.c,v 1.2 2006/12/21 22:33:15 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB compact rre encoding
@@ -41,8 +41,8 @@
 #include "encoding.h"
 #include "common.h"
 
-#define MAX_HEIGHT 64
-#define MAX_WIDTH  64
+#define MAX_HEIGHT 48
+#define MAX_WIDTH  48
 
 typedef void (tile_func)(ggi_vnc_buf *buf,
 	uint8_t *src, int xs, int ys, int stride, int rev);
