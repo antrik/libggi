@@ -1,11 +1,11 @@
-.TH "display-vnc" 7 "2006-11-20" "libggi-current" GGI
+.TH "display-vnc" 7 "2006-12-22" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-client=<host>] [-copyrect=no|always] [-display=<dpy>]
-             [-hextile=no] [-kold] [-passwd=<file>]
+display-vnc: [-client=<host>] [-copyrect=no|always] [-corre=no]
+             [-display=<dpy>] [-hextile=no] [-kold] [-passwd=<file>]
              [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
              [-stdio] [-tight=no] [-title=<title>] [-viewonly]
              [-viewpw=<file>] [-zlib=<level>|no]
@@ -33,6 +33,10 @@ it completely, and \fIalways\fR to enable it when suitable even if there
 is support for some other encoding the client has preferred. The default
 is to only use the CopyRect encoding if it is the most preferred
 encoding available.
+
+.TP
+\f(CW-corre=no\fR
+Disables the CoRRE encoding.
 
 .TP
 \f(CW-display=<dpy>\fR
@@ -145,8 +149,8 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-Raw, CopyRect, Hextile, Tight, Zlib, ZlibHex and ZRLE encodings. The
-CopyRect encoding is only used for panning.
+Raw, CopyRect, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
+encodings. The CopyRect encoding is only used for panning.
 .IP \(bu 4
 Multiple simultaneous clients.
 .IP \(bu 4
