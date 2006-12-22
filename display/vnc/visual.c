@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.41 2006/12/21 23:16:15 pekberg Exp $
+/* $Id: visual.c,v 1.42 2006/12/22 00:43:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -69,8 +69,8 @@
 	VNC_OPTION(title,    "GGI on vnc") \
 	VNC_OPTION(viewonly, "no")         \
 	VNC_OPTION(viewpw,   "")           \
-	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zlibhex,  "")           \
+	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zrle,     "")
 
 #define VNC_OPTION(name, default) \
