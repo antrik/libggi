@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.6 2005/07/30 11:58:39 cegger Exp $
+/* $Id: input.c,v 1.7 2006/12/25 22:25:19 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -31,8 +31,8 @@ ggi_visual_t vis;
 ggi_mode mode;
 gii_input_t inp;
 
-static int ggi_findorigin(ggi_visual_t visual,ggi_originbounds_t *origins) {
-
+static int ggi_findorigin(ggi_visual_t visual,ggi_originbounds_t *origins)
+{
 	gii_input_t     input;
 	gii_cmddata_getdevinfo dummy;
 	uint32_t n;
@@ -40,9 +40,9 @@ static int ggi_findorigin(ggi_visual_t visual,ggi_originbounds_t *origins) {
 	
 	input=ggiGetInput(visual);
 	origins->first=0xffffffff;origins->last=0x00000000;
-	for(n=0;0==giiQueryDeviceInfoByNumber(input,n,&origin,&dummy);n++) {
-		if (origins->first>origin) origins->first=origin;
-		if (origins->last <origin) origins->last =origin;
+	for(n = 0; 0== giiQueryDeviceInfoByNumber(input,n,&origin,&dummy); n++) {
+		if (origins->first>origin) origins->first = origin;
+		if (origins->last <origin) origins->last  = origin;
 	}
 	return (origins->first>origins->last);
 }
@@ -80,14 +80,11 @@ static void testcase1(const char *desc)
 	if (dontrun) return;
 
 	inp = ggiDetachInput(vis);
-
-
 	if (inp == NULL) {
 		printfailure("expected return value: \"non-NULL\"\n"
 			"actual return value: \"NULL\"\n");
 		return;
 	}
-
 
 	printsuccess();
 	return;
@@ -112,8 +109,8 @@ static void testcase2(const char *desc)
 }
 
 static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, const char *visname) {
-
+			    gii_input_t *input, const char *visname)
+{
 	*visual=ggiOpen(NULL);
 	if (*visual == NULL) {
 		printfailure("expected return value for ggiOpen: \"non-NULL\"\n"
@@ -137,8 +134,8 @@ static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 }
 
 static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, const char *visname,int islast) {
-
+			    gii_input_t *input, const char *visname,int islast)
+{
 	uint32_t origins;
 	gii_input_t newhand;
 	int haveone=0;
@@ -146,18 +143,18 @@ static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 
 	for(origins=ori->first;origins<=ori->last;origins++) {
 		switch(errcode=giiSplitInputs(*input,&newhand,origins,0)) {
-			case 0:
-				giiClose(newhand);
-				haveone=1;
-				break;
-			case 1:
-				giiClose(*input);
-				*input=newhand;
-				haveone=1;
-				break;
-			default:
-				// fprintf(stderr,"ERROR: %d\n",errcode);
-				break;
+		case 0:
+			giiClose(newhand);
+			haveone=1;
+			break;
+		case 1:
+			giiClose(*input);
+			*input=newhand;
+			haveone=1;
+			break;
+		default:
+			// fprintf(stderr,"ERROR: %d\n",errcode);
+			break;
 		}
 	}
 	if (islast) {
@@ -208,7 +205,7 @@ static void testcase4(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	joinedinps=NULL;
+	joinedinps = NULL;
 	
 	if (ggi_opentestvis(&vis1,&oris1,&joinedinps,"vis1")) return;
 	if (ggi_opentestvis(&vis2,&oris2,&joinedinps,"vis2")) return;
