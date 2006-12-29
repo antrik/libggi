@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.20 2006/03/20 09:25:09 soyt Exp $
+/* $Id: ggi.h,v 1.21 2006/12/29 15:26:59 cegger Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -349,7 +349,7 @@ typedef struct {
 */
 __BEGIN_DECLS
 
-extern struct gg_api *libggi;
+GGIAPIVAR struct gg_api *libggi;
 
 /* Get the master config dir
  */
