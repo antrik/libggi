@@ -1,4 +1,4 @@
-/* $Id: input.c,v 1.7 2006/12/25 22:25:19 cegger Exp $
+/* $Id: input.c,v 1.8 2006/12/30 16:17:06 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for visual <-> input association.
@@ -17,7 +17,9 @@
 
 
 #include "config.h"
+#include <ggi/gg.h>
 #include <ggi/ggi.h>
+#include <ggi/gii.h>
 
 #include <string.h>
 
@@ -29,32 +31,54 @@ typedef struct ggi_originbounds {
 
 ggi_visual_t vis;
 ggi_mode mode;
-gii_input_t inp;
+gii_input inp;
 
 static int ggi_findorigin(ggi_visual_t visual,ggi_originbounds_t *origins)
 {
-	gii_input_t     input;
-	gii_cmddata_getdevinfo dummy;
-	uint32_t n;
+	struct gii_source_iter src_iter;
+	struct gii_device_iter dev_iter;
 	uint32_t origin;
-	
-	input=ggiGetInput(visual);
-	origins->first=0xffffffff;origins->last=0x00000000;
-	for(n = 0; 0== giiQueryDeviceInfoByNumber(input,n,&origin,&dummy); n++) {
-		if (origins->first>origin) origins->first = origin;
-		if (origins->last <origin) origins->last  = origin;
+
+	origins->first = 0xffffffff;
+	origins->last  = 0x00000000;
+
+	src_iter.stem = visual;
+	giiIterSources(&src_iter);
+	GG_ITER_FOREACH(&src_iter) {
+		dev_iter.stem = visual;
+		dev_iter.src = src_iter.src;
+		giiIterDevices(&dev_iter);
+		GG_ITER_FOREACH(&dev_iter) {
+			origin = dev_iter.origin;
+			if (origins->first > origin) origins->first = origin;
+			if (origins->last  < origin) origins->last  = origin;
+		}
+		GG_ITER_DONE(&dev_iter);
 	}
-	return (origins->first>origins->last);
+	GG_ITER_DONE(&src_iter);
+	return (origins->first > origins->last);
 }
 
 
 static int precase(void)
 {
+	int err;
+
 	if (dontrun) return 0;
 
 	ggiInit();
 
-	vis = ggiOpen(NULL);
+	vis = ggNewStem(libggi, NULL);
+	if (vis == NULL) {
+		printfailure("ggiOpen: Couldn\'t create and attach LibGGI to stem.\n");
+		return err;
+	}
+
+	err = ggiOpen(vis, NULL);
+	if (err < 0) {
+		printfailure("ggiOpen: Couldn\'t open default visual.\n");
+		return err;
+	}
 
 	ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
 
@@ -65,66 +89,48 @@ static int precase(void)
 
 static int postcase(void)
 {
+	int err;
+
 	if (dontrun) return 0;
 
-	ggiClose(vis);
-	ggiExit();
+	err = ggiClose(vis);
+	if (err < 0) {
+		printfailure("ggiClose: Couldn\'t close default visual.\n");
+		return err;
+	}
+	ggDelStem(vis);
+
+	err = ggiExit();
 
 	return 0;
 }
 
 
-static void testcase1(const char *desc)
+static int ggi_opentestvis(ggi_visual_t *visual, ggi_originbounds_t *ori, 
+			   gii_input *input, const char *visname)
 {
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
+	int err;
 
-	inp = ggiDetachInput(vis);
-	if (inp == NULL) {
-		printfailure("expected return value: \"non-NULL\"\n"
-			"actual return value: \"NULL\"\n");
-		return;
-	}
+	*visual = ggNewStem(libggi, NULL);
+	printassert(*visual != NULL, "ggNewStem failed\n");
 
-	printsuccess();
-	return;
-}
-
-
-static void testcase2(const char *desc)
-{
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	inp = ggiJoinInputs(vis, inp);
-
-	if (inp == NULL) {
-		printfailure("expected return value: \"non-NULL\"\n"
-			"actual return value: \"NULL\"\n");
-		return;
-	}
-
-	printsuccess();
-	return;
-}
-
-static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, const char *visname)
-{
-	*visual=ggiOpen(NULL);
-	if (*visual == NULL) {
-		printfailure("expected return value for ggiOpen: \"non-NULL\"\n"
-			"actual return value: \"NULL\"\n");
+	err = ggiOpen(*visual, NULL);
+	if (err != GGI_OK) {
+		printfailure("expected return value for ggiOpen: \"GGI_OK\"\n"
+			"actual return value: \"%i\"\n", err);
 		return -1;
 	}
-	ggiCheckSimpleMode(*visual, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
-	ggiSetMode(*visual, &mode);
-	if (ggi_findorigin(*visual,ori)) {
+
+	err = ggiCheckSimpleMode(*visual, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
+	err = ggiSetMode(*visual, &mode);
+	err = ggi_findorigin(*visual, ori);
+	if (err != GGI_OK) {
 		printfailure("expected return value for findorigin: 0\n"
-			"actual return value: !=0\n");
+			"actual return value: %i\n", err);
 		return -1;
 	}
-	*input = giiJoinInputs(*input,ggiDetachInput(*visual));
+
+	*input = giiJoinInputs(*input, ggiDetachInput(*visual));
 	if (*input == NULL) {
 		printfailure("joined inps: expected return value: \"non-NULL\"\n"
 			"actual return value: \"NULL\"\n");
@@ -134,23 +140,24 @@ static int ggi_opentestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 }
 
 static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori, 
-			    gii_input_t *input, const char *visname,int islast)
+			    gii_input *input, const char *visname,int islast)
 {
 	uint32_t origins;
-	gii_input_t newhand;
-	int haveone=0;
+	gii_input newhand;
+	int haveone = 0;
 	int errcode;
 
-	for(origins=ori->first;origins<=ori->last;origins++) {
-		switch(errcode=giiSplitInputs(*input,&newhand,origins,0)) {
+	for (origins = ori->first; origins <= ori->last; origins++) {
+		errcode = giiSplitInputs(*input, &newhand, origins, 0);
+		switch (errcode) {
 		case 0:
-			giiClose(newhand);
-			haveone=1;
+			giiClose(newhand, GII_EV_TARGET_ALL);
+			haveone = 1;
 			break;
 		case 1:
-			giiClose(*input);
-			*input=newhand;
-			haveone=1;
+			giiClose(*input, GII_EV_TARGET_ALL);
+			*input = newhand;
+			haveone = 1;
 			break;
 		default:
 			// fprintf(stderr,"ERROR: %d\n",errcode);
@@ -163,7 +170,7 @@ static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 				"actual return value: !=0\n");
 			return -1;
 		}
-		giiClose(*input);
+		giiClose(*input, GII_EV_TARGET_ALL);
 	} else {
 		if (!haveone) {
 			printfailure("haveone expected return value: !=0\n"
@@ -175,43 +182,43 @@ static int ggi_closetestvis(ggi_visual_t *visual,ggi_originbounds_t *ori,
 	return 0;
 }
 
-static void testcase3(const char *desc)
+static void testcase1(const char *desc)
 {
 	ggi_visual_t vis1,vis2;
 	ggi_originbounds_t oris1,oris2;
-	gii_input_t joinedinps;
-
-	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
-	if (dontrun) return;
-
-	joinedinps=NULL;
-	
-	if (ggi_opentestvis(&vis1,&oris1,&joinedinps,"vis1")) return;
-	if (ggi_opentestvis(&vis2,&oris2,&joinedinps,"vis2")) return;
-
-	if (ggi_closetestvis(&vis1,&oris1,&joinedinps,"vis1",0)) return;
-	if (ggi_closetestvis(&vis2,&oris2,&joinedinps,"vis2",1)) return;
-
-	printsuccess();
-	return;
-}
-
-static void testcase4(const char *desc)
-{
-	ggi_visual_t vis1,vis2;
-	ggi_originbounds_t oris1,oris2;
-	gii_input_t joinedinps;
+	gii_input joinedinps;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
 	joinedinps = NULL;
 	
-	if (ggi_opentestvis(&vis1,&oris1,&joinedinps,"vis1")) return;
-	if (ggi_opentestvis(&vis2,&oris2,&joinedinps,"vis2")) return;
+	if (ggi_opentestvis(&vis1, &oris1, &joinedinps, "vis1")) return;
+	if (ggi_opentestvis(&vis2, &oris2, &joinedinps, "vis2")) return;
 
-	if (ggi_closetestvis(&vis2,&oris2,&joinedinps,"vis2",0)) return;
-	if (ggi_closetestvis(&vis1,&oris1,&joinedinps,"vis1",1)) return;
+	if (ggi_closetestvis(&vis1, &oris1, &joinedinps, "vis1", 0)) return;
+	if (ggi_closetestvis(&vis2, &oris2, &joinedinps, "vis2", 1)) return;
+
+	printsuccess();
+	return;
+}
+
+static void testcase2(const char *desc)
+{
+	ggi_visual_t vis1,vis2;
+	ggi_originbounds_t oris1,oris2;
+	gii_input joinedinps;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	joinedinps = NULL;
+	
+	if (ggi_opentestvis(&vis1, &oris1, &joinedinps, "vis1")) return;
+	if (ggi_opentestvis(&vis2, &oris2, &joinedinps, "vis2")) return;
+
+	if (ggi_closetestvis(&vis2, &oris2, &joinedinps, "vis2", 0)) return;
+	if (ggi_closetestvis(&vis1, &oris1, &joinedinps, "vis1", 1)) return;
 
 	printsuccess();
 	return;
@@ -228,10 +235,8 @@ int main(int argc, char * const argv[])
 	rc = precase();
 	if (rc != 0) exit(rc);
 
-	testcase1("Check that input detaches from visual correctly.");
-	testcase2("Check that input attaches to visual correctly.");
-	testcase3("Check that joining/splitting multiple visuals works (overlapping).");
-	testcase4("Check that joining/splitting multiple visuals works (bracketed).");
+	testcase1("Check that joining/splitting multiple visuals works (overlapping).");
+	testcase2("Check that joining/splitting multiple visuals works (bracketed).");
 
 	rc = postcase();
 	if (rc != 0) exit(rc);
