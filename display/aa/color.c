@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.11 2006/09/17 14:08:52 aldot Exp $
+/* $Id: color.c,v 1.12 2006/12/31 08:43:21 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Palette functions for AA target.
@@ -26,9 +26,9 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi_debug.h>
 #include <string.h>
 #include <ggi/display/aa.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int GGI_aa_setPalette(struct ggi_visual *vis,size_t start,size_t size, const ggi_color *colormap)
