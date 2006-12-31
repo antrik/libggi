@@ -1,4 +1,4 @@
-/* $Id: ggi_debug.h,v 1.10 2005/07/31 15:30:40 soyt Exp $
+/* $Id: ggi_debug.h,v 1.11 2006/12/31 03:20:33 pekberg Exp $
 ******************************************************************************
 
    LibGGI debugging macros
@@ -32,6 +32,8 @@
 #include <ggi/ggi-defs.h>
 #include <ggi/internal/debug_macros.h>
 
+#define _ggiDebug (libggi->debug)
+
 #define DEBUG_ISSYNC   (_ggiDebug&DEBUG_SYNC)
 
 #define DEBUG_CORE     (1<<1)	/*   2 */
@@ -43,8 +45,6 @@
 #define DEBUG_EVENTS   (1<<7)	/* 128 */
 
 __BEGIN_DECLS
-
-GGIAPIVAR uint32_t _ggiDebug;
 
 static inline void DPRINT(const char *form,...)        { DPRINTIF(_ggiDebug,DEBUG_ALL);    }
 static inline void DPRINT_CORE(const char *form,...)   { DPRINTIF(_ggiDebug,DEBUG_CORE);   }

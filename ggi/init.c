@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.61 2006/10/10 21:32:31 pekberg Exp $
+/* $Id: init.c,v 1.62 2006/12/31 03:20:33 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -40,7 +40,6 @@
 
 
 /* Exported variables */
-uint32_t             _ggiDebug         = 0;
 void                 *_ggi_global_lock = NULL;
 
 /* The libggi API */
