@@ -33,6 +33,9 @@ if test $have_major_version -lt $wanted_major_version; then
 	echo "$TOOL $required_version is required"
 	exit 63
 fi
+if test $have_major_version -gt $wanted_major_version; then
+        exit 0
+fi
 
 # Test minor version
 have_minor_version=`echo $have_version | cut -d"." -f2`
@@ -45,6 +48,9 @@ wanted_minor_version=`echo $wanted_version | cut -d"." -f2`
 if test $have_minor_version -lt $wanted_minor_version; then
 	echo "$TOOL $required_version is required"
 	exit 63
+fi
+if test $have_minor_version -gt $wanted_minor_version; then
+        exit 0
 fi
 
 # Test patch version
@@ -65,6 +71,9 @@ fi
 if test $have_patch_version -lt $wanted_patch_version; then
 	echo "$TOOL $required_version is required"
 	exit 63
+fi
+if test $have_patch_version -gt $wanted_patch_version; then
+        exit 0
 fi
 
 exit 0
