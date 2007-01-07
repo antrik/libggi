@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.12 2006/09/23 09:05:22 cegger Exp $
+/* $Id: speed.c,v 1.13 2007/01/07 17:19:14 pekberg Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -24,7 +24,13 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#ifdef HAVE_SYS_RESOURCE_H
+#include <sys/resource.h>
+#else
 #include <sys/times.h>
+#endif
+
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
@@ -42,7 +48,11 @@ static struct {
 
 /**********************************************************************/
 
+#ifdef HAVE_SYS_RESOURCE_H
+static struct rusage timer;
+#else
 static struct tms timer;
+#endif
 static double u_time, s_time;
 
 /* A few simple timing routines. Note that this is Unixish and might need
@@ -53,7 +63,13 @@ static double u_time, s_time;
  */
 static void time_start(void)
 {
+#ifdef HAVE_SYS_RESOURCE_H
+	getrusage(RUSAGE_SELF, &timer);
+#else
 	times(&timer);
+#endif
+	u_time = 0.0;
+	s_time = 0.0;
 }
 
 /* Sample an intermediate result. This is done for later correction for
@@ -61,10 +77,19 @@ static void time_start(void)
  */
 static void time_offset(void)
 {
+#ifdef HAVE_SYS_RESOURCE_H
+	struct rusage end; 
+	getrusage(RUSAGE_SELF, &end);
+	u_time = -((double)end.ru_utime.tv_sec - timer.ru_utime.tv_sec)
+		- ((double)end.ru_utime.tv_usec - timer.ru_utime.tv_usec) / 1000000.0;
+	s_time = -((double)end.ru_stime.tv_sec - timer.ru_stime.tv_sec)
+		- ((double)end.ru_stime.tv_usec - timer.ru_stime.tv_usec) / 1000000.0;
+#else
 	struct tms end; 
 	times(&end);
-	u_time = (double) -(end.tms_utime - timer.tms_utime) / CLK_TCK;
-	s_time = (double) -(end.tms_stime - timer.tms_stime) / CLK_TCK;
+	u_time = -((double)end.tms_utime - timer.tms_utime) / CLK_TCK;
+	s_time = -((double)end.tms_stime - timer.tms_stime) / CLK_TCK;
+#endif
 	time_start();
 }
 
@@ -74,10 +99,19 @@ static void time_offset(void)
  */
 static void time_stop(void)
 {
+#ifdef HAVE_SYS_RESOURCE_H
+	struct rusage end; 
+	getrusage(RUSAGE_SELF, &end);
+	u_time += ((double)end.ru_utime.tv_sec - timer.ru_utime.tv_sec)
+		+ ((double)end.ru_utime.tv_usec - timer.ru_utime.tv_usec) / 1000000.0;
+	s_time += ((double)end.ru_stime.tv_sec - timer.ru_stime.tv_sec)
+		+ ((double)end.ru_stime.tv_usec - timer.ru_stime.tv_usec) / 1000000.0;
+#else
 	struct tms end; 
 	times(&end);
-	u_time += (double) (end.tms_utime - timer.tms_utime) / CLK_TCK;
-	s_time += (double) (end.tms_stime - timer.tms_stime) / CLK_TCK;
+	u_time += ((double)end.tms_utime - timer.tms_utime) / CLK_TCK;
+	s_time += ((double)end.tms_stime - timer.tms_stime) / CLK_TCK;
+#endif
 }
 
 /* The pixelvalue for the color white.
