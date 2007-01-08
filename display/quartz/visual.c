@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/10/14 13:03:28 cegger Exp $
+/* $Id: visual.c,v 1.19 2007/01/08 21:16:38 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -199,8 +199,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	priv->windowAttrs = kWindowCollapseBoxAttribute
-				| kWindowStandardHandlerAttribute
-				| kWindowCompositingAttribute;
+				| kWindowStandardHandlerAttribute;
 
 	vis->opdisplay->checkmode	= GGI_quartz_checkmode;
 	vis->opdisplay->setmode		= GGI_quartz_setmode;
