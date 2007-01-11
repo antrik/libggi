@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.81 2007/01/11 01:05:12 pekberg Exp $
+/* $Id: rfb.c,v 1.82 2007/01/11 07:38:30 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -151,6 +151,11 @@ close_client(ggi_vnc_client *client)
 	if (client->hextile_ctx) {
 		GGI_vnc_hextile_close(client->hextile_ctx);
 		client->hextile_ctx = NULL;
+	}
+
+	if (client->rre_ctx) {
+		GGI_vnc_rre_close(client->rre_ctx);
+		client->rre_ctx = NULL;
 	}
 
 #ifdef HAVE_ZLIB
