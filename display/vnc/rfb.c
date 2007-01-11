@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.80 2006/12/21 22:04:52 pekberg Exp $
+/* $Id: rfb.c,v 1.81 2007/01/11 01:05:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -484,6 +484,25 @@ copyrect_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 
 static ggi_vnc_encode *
+rre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->rre)
+		return NULL;
+	if (client->encode)
+		return NULL;
+	if (!client->rre_ctx)
+		client->rre_ctx = GGI_vnc_rre_open();
+	if (!client->rre_ctx)
+		return NULL;
+
+	return GGI_vnc_rre;
+}
+
+static ggi_vnc_encode *
 corre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 {
 	struct ggi_visual *vis = client->owner;
@@ -638,7 +657,7 @@ struct encodings {
 struct encodings encode_tbl[] = {
 	{      0,    0, "Raw encoding\n",                 raw_enc },
 	{      1,    0, "CopyRect encoding\n",            copyrect_enc },
-	{      2,    0, "RRE encoding\n",                 print_enc },
+	{      2,    0, "RRE encoding\n",                 rre_enc },
 	{      4,    0, "CoRRE encoding\n",               corre_enc },
 	{      5,    0, "Hextile encoding\n",             hextile_enc },
 	{      6,    0, "Zlib encoding\n",                zlib_enc },

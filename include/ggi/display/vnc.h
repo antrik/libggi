@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.31 2006/12/21 22:04:52 pekberg Exp $
+/* $Id: vnc.h,v 1.32 2007/01/11 01:05:12 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -70,6 +70,7 @@ typedef struct ggi_vnc_client_t {
 	ggi_vnc_encode *encode;
 
 	int copy_rect;
+	void *rre_ctx;
 	void *hextile_ctx;
 	void *zlib_ctx;
 	void *zlibhex_ctx;
@@ -114,6 +115,7 @@ typedef struct {
 	int kill_on_last_disconnect;
 
 	int copyrect;
+	int rre;
 	int corre;
 	int hextile;
 	int zlib_level;

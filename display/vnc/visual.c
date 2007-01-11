@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.42 2006/12/22 00:43:12 pekberg Exp $
+/* $Id: visual.c,v 1.43 2007/01/11 01:05:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -63,6 +63,7 @@
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
 	VNC_OPTION(physz,    "0,0")        \
+	VNC_OPTION(rre,      "")           \
 	VNC_OPTION(server,   "default")    \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "")           \
@@ -213,6 +214,11 @@ GGIopen(struct ggi_visual *vis,
 		priv->kill_on_last_disconnect = 0;
 	else
 		priv->kill_on_last_disconnect = 1;
+
+	if (options[OPT_rre].result[0] == 'n') /* never */
+		priv->rre = 0;
+	else
+		priv->rre = 1;
 
 	if (options[OPT_passwd].result[0] != '\0') {
 		FILE *f;

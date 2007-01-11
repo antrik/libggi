@@ -10,10 +10,11 @@ Synopsis
 
   display-vnc: [-client=<host>] [-copyrect=no|always] [-corre=no]
 	       [-display=<dpy>] [-hextile=no] [-kold] [-passwd=<file>]
-	       [-physz=<sizex>,<sizey>[dpi]] [-server[=<dpy>|stdio]]
-	       [-stdio] [-tight=no] [-title=<title>] [-viewonly]
-	       [-viewpw=<file>] [-zlib=<level>|no]
-	       [-zlibhex=<level>|no] [-zrle=<level>|no]
+	       [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
+	       [-server[=<dpy>|stdio]] [-stdio] [-tight=no]
+	       [-title=<title>] [-viewonly] [-viewpw=<file>]
+	       [-zlib=<level>|no] [-zlibhex=<level>|no]
+	       [-zrle=<level>|no]
 
 
 Description
@@ -79,6 +80,9 @@ Options
     ``dpi`` string is affixed, in which case, they represent resolution
     in dots-per-inch.
 
+``-rre=no``
+    Disables the RRE encoding.
+
 ``-server[=<dpy>|stdio]``
     To run both a server and open a client at the same time, but with
     different displays numbers, the server display number can be specified
@@ -143,9 +147,9 @@ Options
 Features
 --------
 
-- Raw, CopyRect, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
+- Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
   encodings. The CopyRect encoding is only used for panning.
-- Multiple simultaneous clients.
+- Multiple simultaneous clients (shared session).
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
 - Multiple frames always available.
@@ -195,7 +199,7 @@ Bugs
   intervals (i.e. :man:`giiEventRead(3)`, :man:`giiEventPoll(3)` or some
   wrapper that in turn calls one of these functions) this display target
   will not work, or at least not work well.
-- For the Tight encoding there are a few tunables left. 1) The "weigth"
+- For the Tight encoding there are a few tunables left. 1) The "weight"
   of the different subencodings needs to be tuned. E.g. the gradient
   filter subencoding is never used, even if it should be very good on
   "blocky" data. 2) The jpeg quality selection could probably also be

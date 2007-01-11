@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.12 2006/12/21 22:04:52 pekberg Exp $
+/* $Id: encoding.h,v 1.13 2007/01/11 01:05:12 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -34,6 +34,12 @@ int GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit);
 
 ggi_vnc_encode GGI_vnc_raw;
 ggi_vnc_encode GGI_vnc_copyrect_pan;
+
+struct rre_ctx_t;
+ggi_vnc_encode GGI_vnc_rre;
+struct rre_ctx_t *GGI_vnc_rre_open(void);
+void GGI_vnc_rre_close(struct rre_ctx_t *ctx);
+
 ggi_vnc_encode GGI_vnc_corre;
 
 struct hextile_ctx_t;
