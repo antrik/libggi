@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2006/03/20 19:56:27 cegger Exp $
+/* $Id: color.c,v 1.4 2007/01/16 21:14:15 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -45,7 +45,6 @@ int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_colo
 
 	DPRINT("quartz setpalette.\n");
 
-	fprintf(stderr, "setpalvec (1)\n");
 	if (start == GGI_PALETTE_DONTCARE) {
 		if (len > priv->ncols) {
 			return GGI_ENOSPACE;
@@ -54,24 +53,16 @@ int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_colo
 		start = priv->ncols - len;
 	}	/* if */
 
-	fprintf(stderr, "setpalvec (2)\n");
-
 	if (start+len > priv->ncols || start < 0)
 		return GGI_ENOSPACE;
 
-	fprintf(stderr, "setpalvec (3)\n");
-
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
 
 	for (i = (unsigned)start; i < (unsigned)start+len; i++) {
 		/* Clamp colors between 0.0 and 1.0 */
 		color.red   = colormap->r / 65535.0;
 		color.green = colormap->g / 65535.0;
 		color.blue  = colormap->b / 65535.0;
-
-		fprintf(stderr, "%i. colormap (%X, %X, %X), color (%.02f, %.02f, %.02f)\n",
-			i, colormap->r, colormap->g, colormap->b,
-			color.red, color.green, color.blue);
 
 		colormap++;
 

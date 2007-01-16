@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/10/14 13:03:28 cegger Exp $
+/* $Id: mode.c,v 1.20 2007/01/16 21:14:15 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -523,6 +523,14 @@ static int GGI_quartz_setmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 	/* some elements of the mode setup rely on this. */
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
+	if (GT_SCHEME(mode->graphtype) == GT_PALETTE) {
+		if (LIBGGI_PAL(vis)->clut.data) {
+			free(LIBGGI_PAL(vis)->clut.data);
+			LIBGGI_PAL(vis)->clut.data = NULL;
+			LIBGGI_PAL(vis)->clut.size = 0;
+		}
+	}
+
 	err = CGDisplaySwitchToMode(priv->display_id, priv->suggest_mode);
 	if ( err != CGDisplayNoErr ) {
 		/* FIXME: I don't know, whether err is positive or negative */
@@ -552,7 +560,8 @@ static int GGI_quartz_setmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 	priv->ncols = 1 << GT_DEPTH(mode->graphtype);
 	if (GT_SCHEME(mode->graphtype) == GT_PALETTE) {
 		fprintf(stderr, "setmode: palette mode\n");
-		vis->palette = _ggi_malloc(sizeof(ggi_color) * priv->ncols);
+		LIBGGI_PAL(vis)->clut.size = priv->ncols;
+		LIBGGI_PAL(vis)->clut.data = calloc(1, sizeof(ggi_color) * priv->ncols);
 		vis->opcolor->setpalvec = GGI_quartz_setpalvec;
 	}	/* if */
 
