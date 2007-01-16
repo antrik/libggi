@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2007/01/16 21:30:45 cegger Exp $
+/* $Id: mode.c,v 1.21 2007/01/16 21:33:31 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -171,7 +171,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	}
 
 	/* Save mode info returned by the VESA driver */
-	bcopy(&modeinfo, &priv->modeinfo, sizeof(priv->modeinfo));
+	memcpy(&priv->modeinfo, &modeinfo, sizeof(priv->modeinfo));
 
 	/* Palette */
 	if (vis->palette) {
