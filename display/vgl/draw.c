@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.11 2006/09/18 05:13:57 cegger Exp $
+/* $Id: draw.c,v 1.12 2007/01/16 21:30:45 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -123,7 +123,7 @@ int
 GGI_vgl_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *colormap)
 {
 	vgl_priv *priv = VGL_PRIV(vis);
-	int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
+	unsigned int maxlen = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	int i;
 
 	if (start == GGI_PALETTE_DONTCARE) start = 0;
@@ -138,8 +138,7 @@ GGI_vgl_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *c
 		return GGI_ENOSPACE;
 	}
 
-	/* XXX Why should we modify vis from here? */
-	memcpy(vis->palette+start, colormap, len*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, len*sizeof(ggi_color));
 
 	/* VGLSetPalette takes 8-bit r,g,b,
 	   so we need to scale ggi_color's 16-bit values. */

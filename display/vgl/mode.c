@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/09/18 05:13:57 cegger Exp $
+/* $Id: mode.c,v 1.20 2007/01/16 21:30:45 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -175,23 +175,13 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 
 	/* Palette */
 	if (vis->palette) {
-		free(vis->palette);
-		vis->palette = NULL;
+		free(LIBGGI_PAL(vis)->clut.data);
+		LIBGGI_PAL(vis)->clut.size = 0;
+		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (priv->savepalette) {
 		free(priv->savepalette);
 		priv->savepalette = NULL;
-	}
-	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
-		int len = 1 << GT_DEPTH(tm->graphtype);
-
-		vis->palette = malloc(len * sizeof(ggi_color));
-		if (vis->palette == NULL) return GGI_EFATAL;
-		priv->savepalette = malloc(sizeof(int) * (len*3));
-		if (priv->savepalette == NULL) return GGI_EFATAL;
-
-		/* Set an initial palette */
-		ggiSetColorfulPalette(vis->stem);
 	}
 
 	/* Set up pixel format */
@@ -270,7 +260,17 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	}
 
 	if (GT_SCHEME(tm->graphtype) == GT_PALETTE) {
+		unsigned int len = 1 << GT_DEPTH(gt);
+
+		LIBGGI_PAL(vis)->clut.size = len;
+		LIBGGI_PAL(vis)->clut.data = calloc(1, sizeof(ggi_color) * len);
+		if (LIBGGI_PAL(vis)->clut.data == NULL) return GGI_EFATAL;
+		priv->savepalette = calloc(1, sizeof(int) * (len*3));
+		if (priv->savepalette == NULL) return GGI_EFATAL;
 		vis->opcolor->setpalvec = GGI_vgl_setpalvec;
+
+		/* Set an initial palette */
+		ggiSetColorfulPalette(vis->stem);
 	}
 
 	if(priv->vgl_use_db) {
