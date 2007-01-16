@@ -1,11 +1,11 @@
-dnl $Id: configure.in,v 1.206 2007/01/07 17:19:14 pekberg Exp $
+dnl $Id: configure.in,v 1.207 2007/01/16 21:49:17 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
 
 dnl Should perhaps add the ggi-develop ML as the 3rd argument
 dnl to AC_INIT but someone has to take care of the spam...
-AC_INIT([libggi],[2.3.0],[http://www.ggi-project.org/contact.html])
+AC_INIT([libggi],[3.0.0],[http://www.ggi-project.org/contact.html])
 AC_CONFIG_SRCDIR([include/ggi/ggi.h])
 AC_CONFIG_MACRO_DIR(m4)
 

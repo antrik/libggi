@@ -12,7 +12,7 @@ libggi_la_SOURCES = builtins.c colormap.c db.c dl.c ext.c \
 	gc.c init.c internal.c mode.c stubs.c swar.c \
 	visual.c
 BUILT_SOURCES = $(top_builddir)/ggi/builtins.inc
-libggi_la_LDFLAGS = $(extra_libraries) -version-info 2:3:0 -no-undefined \
+libggi_la_LDFLAGS = $(extra_libraries) -version-info 3:0:0 -no-undefined \
 	-export-symbols $(srcdir)/EXPSYMS
 
 EXTRA_DIST = EXPSYMS ext.h swar.h
