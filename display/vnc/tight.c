@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.16 2006/11/22 22:32:44 pekberg Exp $
+/* $Id: tight.c,v 1.17 2007/01/17 17:12:55 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -38,6 +38,7 @@
 
 #include <zlib.h>
 #ifdef HAVE_JPEG
+#undef HAVE_STDLIB_H /* redefined by jconfig.h */
 #include <jpeglib.h>
 #endif
 
