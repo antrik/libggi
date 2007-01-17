@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.207 2007/01/16 21:49:17 cegger Exp $
+dnl $Id: configure.in,v 1.208 2007/01/17 13:48:01 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -603,7 +603,7 @@ AM_CONDITIONAL(HAVE_JPEG,
 
 TESTSUBDIRS=""
 DISPLAYSUBDIRS=""
-DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
+DEFAULTSUBDIRS="stubs pseudo_stubs color text_16 text_32 linear_1 linear_1_r linear_2 linear_2_r linear_4 linear_4_r linear_8 linear_16 linear_24 linear_32 planar ilbm iplanar_2p"
 XSUBDIRS=""
 FBDEVSUBDIRS=""
 DISPLAYMODULES=""
@@ -614,7 +614,7 @@ DEFAULTKGIMODULES=""
 
 if test "$enable_shared" = "yes"; then
   DISPLAYMODULES=""
-  DEFAULTMODULES="stubs.la pseudo_stubs.la color.la text_16.la text_32.la linear_1.la linear_1_r.la linear_2.la linear_4.la linear_4_r.la linear_8.la linear_16.la linear_24.la linear_32.la planar.la ilbm.la iplanar_2p.la"
+  DEFAULTMODULES="stubs.la pseudo_stubs.la color.la text_16.la text_32.la linear_1.la linear_1_r.la linear_2.la linear_2_r.la linear_4.la linear_4_r.la linear_8.la linear_16.la linear_24.la linear_32.la planar.la ilbm.la iplanar_2p.la"
 fi
 if test "$enable_static" = "yes"; then
   AC_DEFINE(BUILTIN_DEFAULT, 1, [Support for builtin default renderers])
@@ -1598,6 +1598,7 @@ default/kgi/Matrox/Gx00/Makefile
 default/linear_1/Makefile
 default/linear_1_r/Makefile
 default/linear_2/Makefile
+default/linear_2_r/Makefile
 default/linear_4/Makefile
 default/linear_4_r/Makefile
 default/linear_8/Makefile

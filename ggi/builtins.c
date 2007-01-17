@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.10 2006/12/31 03:20:33 pekberg Exp $
+/* $Id: builtins.c,v 1.11 2007/01/17 13:48:02 pekberg Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -42,6 +42,7 @@ ggifunc_dlinit GGIdl_linear_16;
 ggifunc_dlinit GGIdl_linear_1_r;
 ggifunc_dlinit GGIdl_linear_2;
 ggifunc_dlinit GGIdl_linear_24;
+ggifunc_dlinit GGIdl_linear_2_r;
 ggifunc_dlinit GGIdl_linear_32;
 ggifunc_dlinit GGIdl_linear_4;
 ggifunc_dlinit GGIdl_linear_4_r;
@@ -185,6 +186,7 @@ static struct target _targets[] = {
         { "GGIdl_linear_1_r", &GGIdl_linear_1_r },
         { "GGIdl_linear_2", &GGIdl_linear_2 },
         { "GGIdl_linear_24", &GGIdl_linear_24 },
+        { "GGIdl_linear_2_r", &GGIdl_linear_2_r },
         { "GGIdl_linear_32", &GGIdl_linear_32 },
         { "GGIdl_linear_4", &GGIdl_linear_4 },
         { "GGIdl_linear_4_r", &GGIdl_linear_4_r },

@@ -9,6 +9,7 @@ if BUILTIN_DEFAULT
   builtins_libs += $(top_builddir)/default/linear_1_r/liblinear_1_r.la
   builtins_libs += $(top_builddir)/default/linear_2/liblinear_2.la
   builtins_libs += $(top_builddir)/default/linear_24/liblinear_24.la
+  builtins_libs += $(top_builddir)/default/linear_2_r/liblinear_2_r.la
   builtins_libs += $(top_builddir)/default/linear_32/liblinear_32.la
   builtins_libs += $(top_builddir)/default/linear_4/liblinear_4.la
   builtins_libs += $(top_builddir)/default/linear_4_r/liblinear_4_r.la

@@ -6,7 +6,7 @@ EXTRA_LTLIBRARIES = color.la fbdev_3dlabs_pm2.la \
 	fbdev_m2164w.la fbdev_mach64.la fbdev_mga_g400.la \
 	ilbm.la ioctl.la iplanar_2p.la kgi_Gx00.la kgi_mach64.la \
 	kgi_radeon.la linear_1.la linear_16.la linear_1_r.la \
-	linear_2.la linear_24.la linear_32.la linear_4.la \
+	linear_2.la linear_24.la linear_2_r.la linear_32.la linear_4.la \
 	linear_4_r.la linear_8.la linmm_banked.la planar.la \
 	pseudo_stubs.la ramdac.la stubs.la text_16.la text_32.la
 
@@ -127,6 +127,12 @@ linear_24_la_SOURCES =
 linear_24_la_LDFLAGS = -rpath ${defaultlibdir} ${extra_libraries} \
 	-shared -module -no-undefined -avoid-version \
 	-export-symbols ${top_srcdir}/default/linear_24/EXPSYMS
+
+linear_2_r_la_LIBADD = $(defaultdir)/linear_2_r/liblinear_2_r.la ${libggi}
+linear_2_r_la_SOURCES =
+linear_2_r_la_LDFLAGS = -rpath ${defaultlibdir} ${extra_libraries} \
+	-shared -module -no-undefined -avoid-version \
+	-export-symbols ${top_srcdir}/default/linear_2_r/EXPSYMS
 
 linear_32_la_LIBADD = $(defaultdir)/linear_32/liblinear_32.la ${libggi}
 linear_32_la_SOURCES =

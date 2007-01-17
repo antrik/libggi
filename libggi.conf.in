@@ -103,6 +103,7 @@ generic-text-32			default/text_32.@DLLEXT@
 generic-linear-1 		default/linear_1.@DLLEXT@
 generic-linear-1-r 		default/linear_1_r.@DLLEXT@
 generic-linear-2 		default/linear_2.@DLLEXT@
+generic-linear-2-r 		default/linear_2_r.@DLLEXT@
 generic-linear-4 		default/linear_4.@DLLEXT@
 generic-linear-4-r 		default/linear_4_r.@DLLEXT@
 generic-linear-8 		default/linear_8.@DLLEXT@
@@ -148,6 +149,7 @@ generic-stubs		@libggi:GGIdl_stubs
 generic-linear-1	@libggi:GGIdl_linear_1
 generic-linear-1-r	@libggi:GGIdl_linear_1_r
 generic-linear-2	@libggi:GGIdl_linear_2
+generic-linear-2-r	@libggi:GGIdl_linear_2_r
 generic-linear-4	@libggi:GGIdl_linear_4
 generic-linear-4-r	@libggi:GGIdl_linear_4_r
 generic-linear-8	@libggi:GGIdl_linear_8
