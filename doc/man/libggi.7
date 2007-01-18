@@ -1,4 +1,4 @@
-.TH "libggi" 7 "2006-12-30" "libggi-current" GGI
+.TH "libggi" 7 "2007-01-18" "libggi-current" GGI
 .SH NAME
 \fBlibggi\fR : A fast, simple, small and flexible user-space graphics library
 .SH DESCRIPTION
@@ -67,7 +67,7 @@ values from \fBGGI_DEFMODE\fR before calling the target's own
 \fBggiSetMode(3)\fR implementation.
 
 The format is: (all on one line)
-\f(CWS w x h x depth V w x h D w x h F frames [scheme depth size]\fR
+\f(CWS w x h x depth V w x h D w x h F frames [scheme depth size subscheme]\fR
 Anything and everything can be omitted, except tokens indicating
 what the next token is.
 
@@ -129,9 +129,23 @@ Pixel depth in number of bits.
 \fIsize\fR   
 Size of pixel in number of bits, including padding.
 
+.TP
+\fIsubscheme\fR
+List of:
+.RS
+.IP \(bu 4
+R : GT_SUB_REVERSE_ENDIAN
+.IP \(bu 4
+H : GT_SUB_HIGHBIT_RIGHT
+.IP \(bu 4
+G : GT_SUB_PACKED_GETPUT
 .PP
-Instead of \fIscheme\fR, \fIdepth\fR, \fIsize\fR, it is also possible
-to specify the graphtype by using one of the following:
+
+.RE
+.PP
+Instead of \fIscheme\fR, \fIdepth\fR, \fIsize\fR, \fIsubscheme\fR, it
+is also possible to specify the graphtype by using one of the
+following:
 .IP \(bu 4
 GT_1BIT
 .IP \(bu 4
