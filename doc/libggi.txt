@@ -89,7 +89,7 @@ user, which affect the behaviour of LibGGI:
    `ggiSetMode` implementation.
 
    The format is: (all on one line)
-   ``S w x h x depth V w x h D w x h F frames [scheme depth size]``
+   ``S w x h x depth V w x h D w x h F frames [scheme depth size subscheme]``
    Anything and everything can be omitted, except tokens indicating
    what the next token is.
 
@@ -137,8 +137,16 @@ user, which affect the behaviour of LibGGI:
        :p:`size`   
            Size of pixel in number of bits, including padding.
 
-       Instead of :p:`scheme`, :p:`depth`, :p:`size`, it is also possible
-       to specify the graphtype by using one of the following:
+       :p:`subscheme`
+           List of:
+	   
+	   - R : GT_SUB_REVERSE_ENDIAN
+	   - H : GT_SUB_HIGHBIT_RIGHT
+	   - G : GT_SUB_PACKED_GETPUT
+
+       Instead of :p:`scheme`, :p:`depth`, :p:`size`, :p:`subscheme`, it
+       is also possible to specify the graphtype by using one of the
+       following:
 
        - GT_1BIT
        - GT_2BIT

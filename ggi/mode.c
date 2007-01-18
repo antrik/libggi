@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/03/11 18:49:12 soyt Exp $
+/* $Id: mode.c,v 1.21 2007/01/18 12:42:37 pekberg Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -381,6 +381,13 @@ int ggiSPrintMode(char *s, const ggi_mode *m)
 		s += n;
 	}
 
+	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_REVERSE_ENDIAN)
+		*s++ = 'R';
+	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_HIGHBIT_RIGHT)
+		*s++ = 'H';
+	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_PACKED_GETPUT)
+		*s++ = 'G';
+
 	*s++ = ']';  *s = 0;
 
 	return 0;
@@ -404,11 +411,12 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m)
  * format = size virt dpp frames graphtype.   (in any order)
  *
  * size = ['S'] X 'x' Y [ 'x' depth ]    
- * virt = 'V' X 'x' Y    
- * dpp  = 'D' X 'x' Y  
+ * virt = 'V' X 'x' Y
+ * dpp  = 'D' X 'x' Y
  * frames = 'F' frames
- * graphtype = '[' scheme depth '/' size ']'  |  scheme depth
+ * graphtype = '[' scheme [depth] ['/' size] [subscheme] ']'  |  scheme depth
  * scheme = 'C' | 'P' | 'K' | 'T'
+ * subscheme = ['R'] ['H'] ['G']     (in any order)
  *
  * Anything and Everything (!) can be omitted, all ommitted values
  * default to GGI_AUTO (and GT_AUTO for the graphtype).  
@@ -429,6 +437,7 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m)
  * 320x200[C/16]     320x200 with 16 bit pixels (also hicolor)
  * 320x200[C24/32]   320x200, 32 bit pixels, 16777216 colors (truecolor)
  * 320x200[GT_32BIT] same as above
+ * 320x200[K2H]      320x200, 2 bit pixels, greyscale, high bit right
  *
  * The only way of specifying GGI_AUTO is omitting the parameter;
  *
@@ -467,6 +476,7 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m)
 int ggiParseMode(const char * s, ggi_mode * m)
 {
 	int depth;
+	int subscheme;
 
 	if (s == NULL) s = "";
 
@@ -584,6 +594,25 @@ int ggiParseMode(const char * s, ggi_mode * m)
 			s++; SCANINT(depth, GT_AUTO);
 			GT_SETSIZE(m->graphtype, depth);
 		}
+
+		subscheme = GT_AUTO;
+next_subscheme:
+		if (tolower((uint8_t) *s) == 'r') {  /* reverse endian */
+			s++; SKIPSPACE;
+			subscheme |= GT_SUB_REVERSE_ENDIAN;
+			goto next_subscheme;
+		}
+		if (tolower((uint8_t) *s) == 'h') {  /* high bit right */
+			s++; SKIPSPACE;
+			subscheme |= GT_SUB_HIGHBIT_RIGHT;
+			goto next_subscheme;
+		}
+		if (tolower((uint8_t) *s) == 'g') {  /* packed get/put */
+			s++; SKIPSPACE;
+			subscheme |= GT_SUB_PACKED_GETPUT;
+			goto next_subscheme;
+		}
+		GT_SETSUBSCHEME(m->graphtype, subscheme);
 
 		if (*s == ']') {
 			s++;
