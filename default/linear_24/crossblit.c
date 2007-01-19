@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.15 2006/08/29 12:15:48 pekberg Exp $
+/* $Id: crossblit.c,v 1.16 2007/01/19 09:14:38 pekberg Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -138,6 +138,98 @@ cb4to24(struct ggi_visual *src, int sx, int sy, int w, int h,
 
 	dststride -= w*3;
 
+	if (((sx ^ w) & 1) && (GT_SUBSCHEME(LIBGGI_GT(src)) & GT_SUB_HIGHBIT_RIGHT)) {
+		for (; h > 0; h--) {
+			uint8_t  *srcpb = srcp;
+			
+			int i = (w + 7) / 8;
+
+			/* Unroll manually. */
+			switch (w & 0x7) {
+			default:
+				for (; i > 0; i--) {
+				case 0:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 7:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 6:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 5:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 4:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 3:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 2:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 1:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				}
+			}
+			
+			srcp += srcstride;
+			dstp += dststride;
+		}
+		return;
+	}
+	if (GT_SUBSCHEME(LIBGGI_GT(src)) & GT_SUB_HIGHBIT_RIGHT) {
+		for (; h > 0; h--) {
+			uint8_t *srcpb = srcp;
+			
+			int i = (w + 7) / 8;
+
+			/* Unroll manually. */			
+			switch (w & 0x7) {
+			default:
+				for (; i > 0; i--) {
+				case 0:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 7:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 6:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 5:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 4:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 3:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				case 2:
+				  put24(dstp, conv_tab[(*srcpb & 0x0f)]);
+				  dstp += 3;
+				case 1:
+				  put24(dstp, conv_tab[(*srcpb & 0xf0) >> 4]);
+				  srcpb++;
+				  dstp += 3;
+				}
+			}
+			
+			srcp += srcstride;
+			dstp += dststride;
+		}
+		return;
+	}
 	if ((sx ^ w) & 1) {
 		for (; h > 0; h--) {
 			uint8_t  *srcpb = srcp;

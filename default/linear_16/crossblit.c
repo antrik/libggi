@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.20 2006/05/19 07:11:42 pekberg Exp $
+/* $Id: crossblit.c,v 1.21 2007/01/19 09:14:38 pekberg Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -125,6 +125,76 @@ cb4to16(struct ggi_visual *src, int sx, int sy, int w, int h,
 	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx/2;
 	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
 
+	if (((sx ^ w) & 1) && (GT_SUBSCHEME(LIBGGI_GT(src)) & GT_SUB_HIGHBIT_RIGHT)) {
+		for (; h > 0; --h) {
+			uint16_t *dstpw = (uint16_t*) dstp;
+			uint8_t  *srcpb = srcp;
+
+			int i = (w + 7) / 8;
+
+			/* Unroll manually. */
+			switch (w & 0x7) {
+			default:
+				for (; i > 0; --i) {
+				case 0:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 7:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 6:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 5:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 4:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 3:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 2:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 1:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				}
+			}
+
+			srcp += srcstride;
+			dstp += dststride;
+		}
+		return;
+	}
+	if (GT_SUBSCHEME(LIBGGI_GT(src)) & GT_SUB_HIGHBIT_RIGHT) {
+		for (; h > 0; --h) {
+			uint16_t *dstpw = (uint16_t*) dstp;
+			uint8_t  *srcpb = srcp;
+
+			int i = (w + 7) / 8;
+
+			/* Unroll manually. */			
+			switch (w & 0x7) {
+			default:
+				for (; i > 0; --i) {
+				case 0:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 7:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 6:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 5:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 4:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 3:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				case 2:
+				*dstpw++ = conv_tab[(*srcpb & 0x0f)];
+				case 1:
+				*dstpw++ = conv_tab[(*srcpb++ & 0xf0) >> 4];
+				}
+			}
+
+			srcp += srcstride;
+			dstp += dststride;
+		}
+		return;
+	}
 	if ((sx ^ w) & 1) {
 		for (; h > 0; h--) {
 	    		uint16_t *dstpw = (uint16_t*) dstp;
