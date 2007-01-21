@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.8 2006/03/14 18:15:30 cegger Exp $
+/* $Id: copybox.c,v 1.9 2007/01/21 09:12:20 pekberg Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -33,17 +33,17 @@
 static inline void
 do_copy(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void *buf)
 {
-		if (ny > y) {
-			for (y+=h-1, ny+=h-1; h > 0; h--, y--, ny--) {
-				ggiGetHLine(vis->stem, x,  y,  w, buf);
-				ggiPutHLine(vis->stem, nx, ny, w, buf);
-			}
-		} else {
-			for (; h > 0; h--, y++, ny++) {
-				ggiGetHLine(vis->stem, x,  y,  w, buf);
-				ggiPutHLine(vis->stem, nx, ny, w, buf);
-			}
+	if (ny > y) {
+		for (y+=h-1, ny+=h-1; h > 0; h--, y--, ny--) {
+			ggiGetHLine(vis->stem, x,  y,  w, buf);
+			ggiPutHLine(vis->stem, nx, ny, w, buf);
 		}
+	} else {
+		for (; h > 0; h--, y++, ny++) {
+			ggiGetHLine(vis->stem, x,  y,  w, buf);
+			ggiPutHLine(vis->stem, nx, ny, w, buf);
+		}
+	}
 }
 
 
@@ -54,7 +54,12 @@ GGI_stubs_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, in
 
 	LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
 
-	size = GT_ByPPP(w, LIBGGI_GT(vis));
+	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT) {
+		size = GT_ByPPP(w, LIBGGI_GT(vis));
+	} else {
+		size = w * GT_ByPP(LIBGGI_GT(vis));
+	}
+
 	if (size <= MAX_STACKBYTES) {
 		uint8_t buf[MAX_STACKBYTES];
 
