@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.6 2006/03/14 18:15:27 cegger Exp $
+/* $Id: gtext.c,v 1.7 2007/01/21 23:18:50 pekberg Exp $
 ******************************************************************************
 
    Linear 1 character drawing (high-bit-right)
@@ -120,7 +120,7 @@ int GGI_lin1r_putc(struct ggi_visual *vis, int x, int y, char c)
 	}
 	
 	shift0 = x & 7; 	   /* shift to the left */
-	shift1 = (7 - (x & 7));    /* shift to the right */
+	shift1 = (8 - (x & 7));    /* shift to the right */
 
 	mask0 = mask << shift0;
 	mask1 = mask >> shift1;
