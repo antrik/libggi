@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2007/01/22 12:23:46 pekberg Exp $
+/* $Id: color.c,v 1.6 2007/01/22 19:19:51 pekberg Exp $
 ******************************************************************************
 
    Linear 1 pixel handling
@@ -59,6 +59,8 @@ int GGI_lin1_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *c
 			mask=7;
 		}
 	}
+	if (mask != 7)
+		*obuf = tmp;
 
 	return 0;
 }	
