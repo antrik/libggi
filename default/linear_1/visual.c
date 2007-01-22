@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2007/01/22 11:11:46 pekberg Exp $
+/* $Id: visual.c,v 1.12 2007/01/22 12:23:46 pekberg Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-left)
@@ -35,8 +35,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	/* Color mapping 
 	 */
-/* !!!	vis->opcolor->packcolors	= GGI_lin1_packcolors; */
-/* !!!	vis->opcolor->unpackpixels	= GGI_lin1_unpackpixels; */
+	vis->opcolor->packcolors	= GGI_lin1_packcolors;
+	vis->opcolor->unpackpixels	= GGI_lin1_unpackpixels;
 
 	/* Frame handling
 	 */

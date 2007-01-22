@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2006/03/12 23:15:06 soyt Exp $
+/* $Id: color.c,v 1.5 2007/01/22 12:23:46 pekberg Exp $
 ******************************************************************************
 
    Linear 1 pixel handling
@@ -28,6 +28,17 @@
 
 #include "lin1lib.h"
 
+static inline int
+unpacked_packcolors(struct ggi_visual *vis,
+	uint8_t *obuf, const ggi_color *cols, int len)
+{
+	int i;
+
+	for (i = 0; i < len; ++i)
+		*obuf++ = ggiMapColor(vis->stem, cols++);
+
+	return 0;
+}
 
 /* Pack the colors into an array
  */
@@ -36,9 +47,12 @@ int GGI_lin1_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *c
 	uint8_t tmp=0,*obuf=(uint8_t *)outbuf;
 	int mask,i;
 
+	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
+		return unpacked_packcolors(vis, obuf, cols, len);
+
 	mask=7;
 	for (i=0;i<len;i++) {
-		tmp |= ggiMapColor(vis,(cols++)) << mask--;
+		tmp |= ggiMapColor(vis->stem,(cols++)) << mask--;
 		if (mask<0) {
 			*(obuf++)=tmp;
 			tmp=0;
@@ -49,18 +63,33 @@ int GGI_lin1_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *c
 	return 0;
 }	
 	
+static inline int
+unpacked_unpackpixels(struct ggi_visual *vis,
+	const uint8_t *ibuf, ggi_color *cols, int len)
+{
+	int i;
+
+	for (i = 0; i < len; ++i)
+		ggiUnmapPixel(vis->stem, *ibuf++ & 1, cols++);
+
+	return 0;
+}
+
 /* Unpack into the ggi_color array the values of the pixels
  */
 int GGI_lin1_unpackpixels(struct ggi_visual *vis,const void *inbuf,ggi_color *cols,int len)
 {
-	uint8_t *ibuf=(uint8_t *)inbuf;
+	const uint8_t *ibuf=(const uint8_t *)inbuf;
 	int i,mask;
 	ggi_pixel tmp;
+
+	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
+		return unpacked_unpackpixels(vis, ibuf, cols, len);
 
 	mask=7;
 	for (i=0;i<len;i++) {
 		tmp=((*ibuf) >> mask--)&1;
-		ggiUnmapPixel(vis,tmp,(cols++));
+		ggiUnmapPixel(vis->stem,tmp,(cols++));
 		if (mask<0) {
 			ibuf++;
 			mask=7;
