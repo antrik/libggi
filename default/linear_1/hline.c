@@ -1,10 +1,11 @@
-/* $Id: hline.c,v 1.4 2006/03/12 23:15:06 soyt Exp $
+/* $Id: hline.c,v 1.5 2007/01/22 08:30:34 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
 
    Copyright (C) 1995 Andreas Beck   [becka@ggi-project.org]
-   Copyright (C) 1998 Andrew Apted  [andrew@ggi-project.org]
+   Copyright (C) 1998 Andrew Apted   [andrew@ggi-project.org]
+   Copyright (C) 2007 Peter Rosin    [peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -26,6 +27,7 @@
 ******************************************************************************
 */
 
+#include <string.h>
 #include "lin1lib.h"
 
 
@@ -67,12 +69,45 @@ int GGI_lin1_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 	return 0;
 }
 
+static int
+unpacked_puthline(struct ggi_visual *vis,
+	int x, int y, int w, const uint8_t *buff)
+{
+	uint8_t *adr;
+	int i;
+	uint8_t bm;
+
+	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buff, >> 3);
+	PREPARE_FB(vis);
+
+	adr = (uint8_t *)LIBGGI_CURWRITE(vis) +
+		x / 8 + y * LIBGGI_FB_W_STRIDE(vis);
+
+	bm = 0x80 >> (x & 7);
+	for (i = 0; i < w; ++i, bm >>= 1) {
+		if (!bm) {
+			bm = 0x80;
+			++adr;
+		}
+		if (*buff++ & 1)
+			*adr |= bm;
+		else
+			*adr &= ~bm;
+	}
+
+	return 0;
+}
+
 int GGI_lin1_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
 { 
 	uint8_t *adr;
 	const uint8_t *buff=(const uint8_t *)buffer;
 	int mask,i,j,diff=0;
-	uint8_t foo,color;
+	uint8_t foo;
+	uint16_t color;
+
+	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
+		return unpacked_puthline(vis, x, y, w, buff);
 
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) return 0;
@@ -99,74 +134,111 @@ int GGI_lin1_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffe
 			mask=0xff>>i;
 		}
 
-		foo = (*adr & ~mask);
-		*adr = foo | ((color >> (i+=diff)) & mask);
+		i -= diff;
+		if (i <= 0) {
+			i += 8;
+			color <<= 8;
+			if (diff + w > 8)
+				color |= *(++buff);
+		}
+		
+		foo = *adr & ~mask;
+		*adr = foo | ((color >> i) & mask);
 
 		if (j<0)
 			return 0;
 		else
 			adr++;
-	} else
-		j=w;i+=diff;
-
-	while ((j-=8)>=0) {
-		color <<= (8-i);
-		color |= *(++buff) >> i;
-		*adr = color;
+	} else {
+		j = w;
+		i = 8 - diff;
 	}
 
-    
-	if (j&=7) {
-		color <<= (8-i);
-		color |= *(++buff) >> i;
-
-		mask=~(0xff>>j);
-		foo = (*adr & ~mask);
-		*adr = foo | ((color >> i) & mask);
+	while ((j -= 8) > 0) {
+		color <<= 8;
+		color |= *(++buff);
+		*adr++ = color >> i;
 	}
-  
+
+	color <<= 8;
+	if (!j) {
+		if (i != 8)
+			color |= *(++buff);
+		*adr++ = color >> i;
+		return 0;
+	}
+
+	if (i > j + 8)
+		color |= *(++buff);
+
+	mask = ~(0xff >> (j + 8));
+	foo = *adr & ~mask;
+	*adr = foo | ((color >> i) & mask);
+
 	return 0;
+}
+
+static int
+unpacked_gethline(struct ggi_visual *vis,
+	int x, int y, int w, uint8_t *buff)
+{ 
+	uint8_t *adr;
+	int i, bm;
+
+	PREPARE_FB(vis);
+
+	adr = (uint8_t *)LIBGGI_CURREAD(vis) +
+		x / 8 + y * LIBGGI_FB_R_STRIDE(vis);
+
+	bm = 0x80 >> (x & 7);
+	for (i = 0; i < w; ++i, bm >>= 1) {
+		if (!bm) {
+			bm = 0x80;
+			++adr;
+		}
+		*buff++ = !!(*adr & bm);
+	}
+
+  	return 0;
 }
 
 int GGI_lin1_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
 	uint8_t *adr,*buff=(uint8_t *)buffer;
-	int mask,i,j;
+	int i,j;
 	uint8_t color;
 
+	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
+		return unpacked_gethline(vis, x, y, w, buff);
+
+	if (w <= 0)
+		return 0;
+	
 	PREPARE_FB(vis);
 
 	adr=((uint8_t *)(LIBGGI_CURREAD(vis)));
 	adr+=(x/8+y*LIBGGI_FB_R_STRIDE(vis));
 
-	if ((i=x&7)) {
-		if ((j=w+i-8)<0) {
-			mask=(0xff>>i)&(0xff<<-j); 
-		} else {
-			mask=0xff>>i;
-		}
+	i = x & 7;
+	if (!i) {
+		memcpy(buff, adr, (w + 7) >> 3);
+		return 0;
+	}
 
-		*buff = (*adr & mask) << (8-i);
+	j = i + w - 8;
+	*buff = *adr++ << i;
 
-		if (j<0)
-			return 0;
-		else
-			adr++;
-	} else
-		j=w;
+	if (j <= 0)
+		return 0;
 	
-
-	while ((j-=8)>=0) {
-		color = *adr;
-		*(buff++) |= color >> i;
-		*(buff) = (color << (8-i));
+	for (; j > 0; j -= 8) {
+		color = *adr++;
+		*buff++ |= color >> (8 - i);
+		*buff = color << i;
 	}
 
-    
-	if (j&=7) {
-		mask=~(0xff>>j);
-		*buff |= (*adr & mask) >> i;
-	}
+	if (j&=7)
+		*buff |= *adr >> (8 - i);
   
 	return 0;
 }
