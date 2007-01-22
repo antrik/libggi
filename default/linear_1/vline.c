@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.6 2007/01/22 11:11:46 pekberg Exp $
+/* $Id: vline.c,v 1.7 2007/01/22 12:20:43 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -51,16 +51,16 @@ do_drawvline(struct ggi_visual *vis, int x, int y, int height)
 
 int GGI_lin1_drawvline(struct ggi_visual *vis, int x, int y, int height)
 {
-	LIBGGICLIP_XYH(vis, x, y, heigth);
+	LIBGGICLIP_XYH(vis, x, y, height);
 
-	do_drawvline(vis, x, y, heigth);
+	do_drawvline(vis, x, y, height);
 
 	return 0;
 }
 
 int GGI_lin1_drawvline_nc(struct ggi_visual *vis, int x, int y, int height)
 {
-	do_drawvline(vis, x, y, heigth);
+	do_drawvline(vis, x, y, height);
 
 	return 0;
 }
