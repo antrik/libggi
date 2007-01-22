@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.5 2007/01/22 08:30:34 pekberg Exp $
+/* $Id: hline.c,v 1.6 2007/01/22 11:11:46 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -31,7 +31,8 @@
 #include "lin1lib.h"
 
 
-int GGI_lin1_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
+static inline void
+do_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	uint8_t *adr;
 	int i,j,mask,color;
@@ -49,12 +50,12 @@ int GGI_lin1_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 		if ((j=j+i-8)<=0) {
 			mask=(0xff>>i)&(0xff<<-j); 
 			*adr   = (*adr & ~mask) | (color & mask);
-			return 0;
-		} else {
-			mask=(0xff>>i);
-			*adr = (*adr & ~mask) | (color & mask);
-			adr++;
+			return;
 		}
+
+		mask=(0xff>>i);
+		*adr = (*adr & ~mask) | (color & mask);
+		adr++;
 	}
 	
 	while ((j-=8)>=0) {
@@ -65,7 +66,21 @@ int GGI_lin1_drawhline_nc(struct ggi_visual *vis,int x,int y,int w)
 	/* Draw `back` pixels if necessary */
 	mask=~(0xff>>(j&7));
 	*adr = (*adr & ~mask) | (color & mask);
+}
 
+int GGI_lin1_drawhline(struct ggi_visual *vis, int x, int y, int w)
+{
+	LIBGGICLIP_XYW(vis, x, y, w);
+
+	do_drawhline(vis, x, y, w);
+		
+	return 0;
+}
+
+int GGI_lin1_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
+{
+	do_drawhline(vis, x, y, w);
+		
 	return 0;
 }
 

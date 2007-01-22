@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.5 2007/01/19 20:45:44 pekberg Exp $
+/* $Id: vline.c,v 1.6 2007/01/22 11:11:46 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -30,7 +30,8 @@
 #include "lin1lib.h"
 
 
-int GGI_lin1_drawvline_nc(struct ggi_visual *vis,int x,int y,int height)
+static inline void
+do_drawvline(struct ggi_visual *vis, int x, int y, int height)
 {
 	uint8_t *adr;
 	int i,sw,bm;
@@ -46,7 +47,21 @@ int GGI_lin1_drawvline_nc(struct ggi_visual *vis,int x,int y,int height)
 		for (i=height;i--;adr+=sw) *adr |= bm;
 	else
 		for (i=height;i--;adr+=sw) *adr &= ~bm;
-  
+}
+
+int GGI_lin1_drawvline(struct ggi_visual *vis, int x, int y, int height)
+{
+	LIBGGICLIP_XYH(vis, x, y, heigth);
+
+	do_drawvline(vis, x, y, heigth);
+
+	return 0;
+}
+
+int GGI_lin1_drawvline_nc(struct ggi_visual *vis, int x, int y, int height)
+{
+	do_drawvline(vis, x, y, heigth);
+
 	return 0;
 }
 

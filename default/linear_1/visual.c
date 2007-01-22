@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2007/01/22 08:30:34 pekberg Exp $
+/* $Id: visual.c,v 1.11 2007/01/22 11:11:46 pekberg Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-left)
@@ -62,10 +62,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->getpixel		= GGI_lin1_getpixel;
 	}
 
+	vis->opdraw->drawhline		= GGI_lin1_drawhline;
 	vis->opdraw->drawhline_nc	= GGI_lin1_drawhline_nc;
 	vis->opdraw->puthline		= GGI_lin1_puthline;
 	vis->opdraw->gethline		= GGI_lin1_gethline;
 
+	vis->opdraw->drawvline		= GGI_lin1_drawvline;
 	vis->opdraw->drawvline_nc	= GGI_lin1_drawvline_nc;
 	vis->opdraw->putvline		= GGI_lin1_putvline;
 	vis->opdraw->getvline		= GGI_lin1_getvline;
