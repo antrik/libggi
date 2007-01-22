@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.6 2007/01/22 11:11:46 pekberg Exp $
+/* $Id: hline.c,v 1.7 2007/01/22 20:43:08 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -84,11 +84,12 @@ int GGI_lin1_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 	return 0;
 }
 
-static int
-unpacked_puthline(struct ggi_visual *vis,
-	int x, int y, int w, const uint8_t *buff)
+int
+GGI_lin1_unpacked_puthline(struct ggi_visual *vis,
+	int x, int y, int w, const void *buffer)
 {
 	uint8_t *adr;
+	const uint8_t *buff = (const uint8_t *)buffer;
 	int i;
 	uint8_t bm;
 
@@ -113,16 +114,15 @@ unpacked_puthline(struct ggi_visual *vis,
 	return 0;
 }
 
-int GGI_lin1_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffer)
+int
+GGI_lin1_packed_puthline(struct ggi_visual *vis,
+	int x, int y, int w, const void *buffer)
 { 
 	uint8_t *adr;
 	const uint8_t *buff=(const uint8_t *)buffer;
 	int mask,i,j,diff=0;
 	uint8_t foo;
 	uint16_t color;
-
-	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
-		return unpacked_puthline(vis, x, y, w, buff);
 
 	/* Clipping */
 	if (y<(LIBGGI_GC(vis)->cliptl.y) || y>=(LIBGGI_GC(vis)->clipbr.y)) return 0;
@@ -193,11 +193,12 @@ int GGI_lin1_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffe
 	return 0;
 }
 
-static int
-unpacked_gethline(struct ggi_visual *vis,
-	int x, int y, int w, uint8_t *buff)
+int
+GGI_lin1_unpacked_gethline(struct ggi_visual *vis,
+	int x, int y, int w, void *buffer)
 { 
 	uint8_t *adr;
+	uint8_t *buff = (uint8_t *)buffer;
 	int i, bm;
 
 	PREPARE_FB(vis);
@@ -217,14 +218,13 @@ unpacked_gethline(struct ggi_visual *vis,
   	return 0;
 }
 
-int GGI_lin1_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
+int
+GGI_lin1_packed_gethline(struct ggi_visual *vis,
+	int x, int y, int w, void *buffer)
 { 
 	uint8_t *adr,*buff=(uint8_t *)buffer;
 	int i,j;
 	uint8_t color;
-
-	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
-		return unpacked_gethline(vis, x, y, w, buff);
 
 	if (w <= 0)
 		return 0;

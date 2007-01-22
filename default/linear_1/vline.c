@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.7 2007/01/22 12:20:43 pekberg Exp $
+/* $Id: vline.c,v 1.8 2007/01/22 20:43:08 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -65,11 +65,12 @@ int GGI_lin1_drawvline_nc(struct ggi_visual *vis, int x, int y, int height)
 	return 0;
 }
 
-static int
-unpacked_putvline(struct ggi_visual *vis,
-	int x, int y, int height, const uint8_t *buff)
+int
+GGI_lin1_unpacked_putvline(struct ggi_visual *vis,
+	int x, int y, int height, const void *buffer)
 {
 	uint8_t *adr;
+	const uint8_t *buff=(const uint8_t *)buffer;
 	int sw, i, bm;
 
 	LIBGGICLIP_XYH_BUFMOD(vis, x, y, height, buff, >> 3);
@@ -91,15 +92,12 @@ unpacked_putvline(struct ggi_visual *vis,
 }
 
 int
-GGI_lin1_putvline(struct ggi_visual *vis,
+GGI_lin1_packed_putvline(struct ggi_visual *vis,
 	int x, int y, int height, const void *buffer)
 { 
 	uint8_t *adr;
 	const uint8_t *buff=(const uint8_t *)buffer;
 	int mask=0x80,sw,i,bm;
-
-	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
-		return unpacked_putvline(vis, x, y, height, buff);
 
 	/* Clipping */
 	if (x< (LIBGGI_GC(vis)->cliptl.x) ||
@@ -138,11 +136,12 @@ GGI_lin1_putvline(struct ggi_visual *vis,
   	return 0;
 }
 
-static int
-unpacked_getvline(struct ggi_visual *vis,
-	int x, int y, int height, uint8_t *buff)
+int
+GGI_lin1_unpacked_getvline(struct ggi_visual *vis,
+	int x, int y, int height, void *buffer)
 { 
 	uint8_t *adr;
+	uint8_t *buff = (uint8_t *)buffer;
 	int sw, i, bm;
 
 	PREPARE_FB(vis);
@@ -159,14 +158,11 @@ unpacked_getvline(struct ggi_visual *vis,
 }
 
 int
-GGI_lin1_getvline(struct ggi_visual *vis,
+GGI_lin1_packed_getvline(struct ggi_visual *vis,
 	int x, int y, int height, void *buffer)
 { 
 	uint8_t *adr,*buff=(uint8_t *)buffer;
 	int mask,sw,i,bm;
-
-	if (!(GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT))
-		return unpacked_getvline(vis, x, y, height, buff);
 
 	PREPARE_FB(vis);
 
