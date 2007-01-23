@@ -1,4 +1,4 @@
-/* $Id: lin1rlib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: lin1rlib.h,v 1.3 2007/01/23 01:01:38 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -49,12 +49,16 @@ ggifunc_getpixel	GGI_lin1r_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin1r_drawhline_nc;
 ggifunc_drawhline	GGI_lin1r_drawhline;
-ggifunc_puthline	GGI_lin1r_puthline;
-ggifunc_gethline	GGI_lin1r_gethline;
+ggifunc_puthline	GGI_lin1r_packed_puthline;
+ggifunc_gethline	GGI_lin1r_packed_gethline;
+ggifunc_puthline	GGI_lin1r_unpacked_puthline;
+ggifunc_gethline	GGI_lin1r_unpacked_gethline;
 
 ggifunc_drawvline_nc	GGI_lin1r_drawvline_nc;
 ggifunc_drawvline	GGI_lin1r_drawvline;
-ggifunc_putvline	GGI_lin1r_putvline;
-ggifunc_getvline	GGI_lin1r_getvline;
+ggifunc_putvline	GGI_lin1r_packed_putvline;
+ggifunc_getvline	GGI_lin1r_packed_getvline;
+ggifunc_putvline	GGI_lin1r_unpacked_putvline;
+ggifunc_getvline	GGI_lin1r_unpacked_getvline;
 
 ggifunc_copybox		GGI_lin1r_copybox;

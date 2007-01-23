@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2007/01/22 22:33:35 pekberg Exp $
+/* $Id: visual.c,v 1.10 2007/01/23 01:01:38 pekberg Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-right)
@@ -60,6 +60,27 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->drawpixel_nc	= GGI_lin1r_drawpixel_nc;
 		vis->opdraw->drawpixel		= GGI_lin1r_drawpixel;
 		vis->opdraw->getpixel		= GGI_lin1r_getpixel;
+	}
+
+	vis->opdraw->drawhline		= GGI_lin1r_drawhline;
+	vis->opdraw->drawhline_nc	= GGI_lin1r_drawhline_nc;
+
+	vis->opdraw->drawvline		= GGI_lin1r_drawvline;
+	vis->opdraw->drawvline_nc	= GGI_lin1r_drawvline_nc;
+
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->puthline		= GGI_lin1r_packed_puthline;
+		vis->opdraw->gethline		= GGI_lin1r_packed_gethline;
+
+		vis->opdraw->putvline		= GGI_lin1r_packed_putvline;
+		vis->opdraw->getvline		= GGI_lin1r_packed_getvline;
+	}
+	else {
+		vis->opdraw->puthline		= GGI_lin1r_unpacked_puthline;
+		vis->opdraw->gethline		= GGI_lin1r_unpacked_gethline;
+
+		vis->opdraw->putvline		= GGI_lin1r_unpacked_putvline;
+		vis->opdraw->getvline		= GGI_lin1r_unpacked_getvline;
 	}
 
 	*dlret = GGI_DL_OPCOLOR | GGI_DL_OPDRAW;
