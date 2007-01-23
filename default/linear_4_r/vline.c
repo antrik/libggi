@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.5 2006/09/05 09:07:36 pekberg Exp $
+/* $Id: vline.c,v 1.6 2007/01/23 09:43:13 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -109,7 +109,7 @@ int GGI_lin4r_getvline(struct ggi_visual *vis,int x,int y,int h,void *buffer)
 
 	/* Warning: unnecessary bit operations ahead! */
 	for (; h > 1; h-=2, ptr+=stride<<1) {
-		*buf8 = ((*ptr & mask) >> shift)
+		*buf8++ = ((*ptr & mask) >> shift)
 			| ((*(ptr+stride) & mask) << antishift);
 	}
 	
