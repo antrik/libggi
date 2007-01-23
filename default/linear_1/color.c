@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.8 2007/01/23 09:59:13 pekberg Exp $
+/* $Id: color.c,v 1.9 2007/01/23 12:52:34 pekberg Exp $
 ******************************************************************************
 
    Linear 1 pixel handling
@@ -37,7 +37,7 @@ int GGI_lin1_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *c
 
 	mask=7;
 	for (i=0;i<len;i++) {
-		tmp |= LIBGGIMapColor(vis->stem,(cols++)) << mask--;
+		tmp |= LIBGGIMapColor(vis,(cols++)) << mask--;
 		if (mask<0) {
 			*(obuf++)=tmp;
 			tmp=0;
@@ -61,7 +61,7 @@ int GGI_lin1_unpackpixels(struct ggi_visual *vis,const void *inbuf,ggi_color *co
 	mask=7;
 	for (i=0;i<len;i++) {
 		tmp=((*ibuf) >> mask--)&1;
-		LIBGGIUnmapPixel(vis->stem,tmp,(cols++));
+		LIBGGIUnmapPixel(vis,tmp,(cols++));
 		if (mask<0) {
 			ibuf++;
 			mask=7;
