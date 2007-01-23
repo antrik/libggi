@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.1 2007/01/17 13:48:02 pekberg Exp $
+/* $Id: visual.c,v 1.2 2007/01/23 13:07:29 pekberg Exp $
 ******************************************************************************
 
    Linear 2 bit graphics (high-bit-right)
@@ -53,6 +53,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->drawpixel_nc	= GGI_lin2r_drawpixel_nc;
 		vis->opdraw->drawpixel		= GGI_lin2r_drawpixel;
 		vis->opdraw->getpixel		= GGI_lin2r_getpixel;
+	}
+
+	vis->opdraw->drawvline_nc	= GGI_lin2r_drawvline_nc;
+	vis->opdraw->drawvline		= GGI_lin2r_drawvline;
+
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->putvline		= GGI_lin2r_packed_putvline;
+		vis->opdraw->getvline		= GGI_lin2r_packed_getvline;
 	}
 
 	*dlret = GGI_DL_OPCOLOR | GGI_DL_OPDRAW;
