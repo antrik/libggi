@@ -1,4 +1,4 @@
-/* $Id: lin4lib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: lin4lib.h,v 1.3 2007/01/23 10:57:22 pekberg Exp $
 ******************************************************************************
 
    linear-4 sublib function prototypes
@@ -47,12 +47,16 @@ ggifunc_getpixel	GGI_lin4_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin4_drawhline_nc;
 ggifunc_drawhline	GGI_lin4_drawhline;
-ggifunc_puthline	GGI_lin4_puthline;
-ggifunc_gethline	GGI_lin4_gethline;
+ggifunc_puthline	GGI_lin4_packed_puthline;
+ggifunc_gethline	GGI_lin4_packed_gethline;
+ggifunc_puthline	GGI_lin4_unpacked_puthline;
+ggifunc_gethline	GGI_lin4_unpacked_gethline;
 
 ggifunc_drawvline_nc	GGI_lin4_drawvline_nc;
 ggifunc_drawvline	GGI_lin4_drawvline;
-ggifunc_putvline	GGI_lin4_putvline;
-ggifunc_getvline	GGI_lin4_getvline;
+ggifunc_putvline	GGI_lin4_packed_putvline;
+ggifunc_getvline	GGI_lin4_packed_getvline;
+ggifunc_putvline	GGI_lin4_unpacked_putvline;
+ggifunc_getvline	GGI_lin4_unpacked_getvline;
 
 ggifunc_copybox		GGI_lin4_copybox;

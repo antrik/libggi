@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2007/01/23 10:40:54 pekberg Exp $
+/* $Id: visual.c,v 1.11 2007/01/23 10:57:22 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -67,11 +67,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawvline		= GGI_lin4_drawvline;
 
 	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
-		vis->opdraw->puthline		= GGI_lin4_puthline;
-		vis->opdraw->gethline		= GGI_lin4_gethline;
+		vis->opdraw->puthline		= GGI_lin4_packed_puthline;
+		vis->opdraw->gethline		= GGI_lin4_packed_gethline;
 
-		vis->opdraw->putvline		= GGI_lin4_putvline;
-		vis->opdraw->getvline		= GGI_lin4_getvline;
+		vis->opdraw->putvline		= GGI_lin4_packed_putvline;
+		vis->opdraw->getvline		= GGI_lin4_packed_getvline;
 	}
 
 	/* this copybox implementation is too naive. memmove cannot
