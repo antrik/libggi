@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.31 2006/11/22 21:34:28 pekberg Exp $
+/* $Id: demo.c,v 1.32 2007/01/23 19:04:54 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -287,6 +287,8 @@ int main(int argc, char **argv)
 	 
 	int depth=0;
 
+	uint8_t mask = 0xff;
+	
 	/* Demonstrate clipping ? */
 
 	int doclip=0;
@@ -932,7 +934,16 @@ no_mem_targ2:
 	TestName("Hline Put");
 	waitabit();
 
-	for(x = 0; x < (signed)sizeof(put_buf); x++) put_buf[x]=x&0xff;
+	/* For unpacked subschemes and sub-byte modes, the upper bits
+	 * are lost in the conversion, so zero them out to not trigger
+	 * failures.
+	 */
+	if (!(GT_SUBSCHEME(type) & GT_SUB_PACKED_GETPUT)) {
+		if (GT_SIZE(type) < 8)
+			mask = 0xff >> (8 - GT_SIZE(type));
+	}
+
+	for(x = 0; x < (signed)sizeof(put_buf); x++) put_buf[x]=x&mask;
 
 	for(y=15; y<vy; y++) {
 		ggiPutHLine(vis, 0, y, vx, put_buf);
