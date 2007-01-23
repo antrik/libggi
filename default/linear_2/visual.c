@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2007/01/23 14:52:56 pekberg Exp $
+/* $Id: visual.c,v 1.11 2007/01/23 16:08:56 pekberg Exp $
 ******************************************************************************
 
   Linear 2 bit graphics (high-pair-left)
@@ -31,6 +31,13 @@
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
+	/* Color mapping 
+	 */
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opcolor->packcolors	= GGI_lin2_packcolors;
+		vis->opcolor->unpackpixels	= GGI_lin2_unpackpixels;
+	}
+
 	/* Frame handling
 	 */
 
@@ -61,7 +68,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->getvline		= GGI_lin2_packed_getvline;
 	}
 
-	*dlret = GGI_DL_OPDRAW;
+	*dlret = GGI_DL_OPCOLOR | GGI_DL_OPDRAW;
 	return 0;
 }
 
