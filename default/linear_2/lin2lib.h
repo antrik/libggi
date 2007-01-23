@@ -1,4 +1,4 @@
-/* $Id: lin2lib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: lin2lib.h,v 1.3 2007/01/23 13:42:29 pekberg Exp $
 ******************************************************************************
 
    linear-2 sublib function prototypes
@@ -28,6 +28,13 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
+ggifunc_putc		GGI_lin2_putc;
+
+ggifunc_mapcolor	GGI_lin2_mapcolor;
+ggifunc_unmappixel	GGI_lin2_unmappixel;
+ggifunc_packcolors	GGI_lin2_packcolors;
+ggifunc_unpackpixels	GGI_lin2_unpackpixels;
+
 ggifunc_drawpixel_nc	GGI_lin2_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin2_drawpixel;
 ggifunc_putpixel_nc	GGI_lin2_putpixel_nc;
@@ -39,3 +46,19 @@ ggifunc_drawpixel	GGI_lin2_drawpixela;
 ggifunc_putpixel_nc	GGI_lin2_putpixel_nca;
 ggifunc_putpixel	GGI_lin2_putpixela;
 ggifunc_getpixel	GGI_lin2_getpixela;
+
+ggifunc_drawhline_nc	GGI_lin2_drawhline_nc;
+ggifunc_drawhline	GGI_lin2_drawhline;
+ggifunc_puthline	GGI_lin2_packed_puthline;
+ggifunc_gethline	GGI_lin2_packed_gethline;
+ggifunc_puthline	GGI_lin2_unpacked_puthline;
+ggifunc_gethline	GGI_lin2_unpacked_gethline;
+
+ggifunc_drawvline_nc	GGI_lin2_drawvline_nc;
+ggifunc_drawvline	GGI_lin2_drawvline;
+ggifunc_putvline	GGI_lin2_packed_putvline;
+ggifunc_getvline	GGI_lin2_packed_getvline;
+ggifunc_putvline	GGI_lin2_unpacked_putvline;
+ggifunc_getvline	GGI_lin2_unpacked_getvline;
+
+ggifunc_copybox		GGI_lin2_copybox;

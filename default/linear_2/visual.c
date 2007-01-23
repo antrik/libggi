@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/03/12 23:15:07 soyt Exp $
+/* $Id: visual.c,v 1.9 2007/01/23 13:42:29 pekberg Exp $
 ******************************************************************************
 
   Linear 2 bit graphics (high-pair-left)
@@ -45,6 +45,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	} else {
 		vis->opdraw->putpixel_nc	= GGI_lin2_putpixel_nc;
 		vis->opdraw->getpixel		= GGI_lin2_getpixel;
+	}
+
+	vis->opdraw->drawvline		= GGI_lin2_drawvline;
+	vis->opdraw->drawvline_nc	= GGI_lin2_drawvline_nc;
+
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->putvline		= GGI_lin2_packed_putvline;
+		vis->opdraw->getvline		= GGI_lin2_packed_getvline;
 	}
 
 	*dlret = GGI_DL_OPDRAW;
