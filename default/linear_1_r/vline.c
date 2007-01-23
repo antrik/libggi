@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2007/01/23 01:01:38 pekberg Exp $
+/* $Id: vline.c,v 1.2 2007/01/23 12:54:47 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines (high-bit-right).
@@ -167,14 +167,19 @@ GGI_lin1r_packed_getvline(struct ggi_visual *vis,
 	uint8_t mask;
 	int sw, i, bm;
 
+	if (height <= 0)
+		return 0;
+
 	PREPARE_FB(vis);
 
 	sw = LIBGGI_FB_R_STRIDE(vis);
 	adr = (uint8_t *)LIBGGI_CURREAD(vis) + (x >> 3) + y * sw;
 
+	*buff = 0;
+
 	bm = 1 << (x & 7);
 	mask = 1;
-	for (i = 1 ; i < height; ++i, adr += sw) {
+	for (i = 1; i < height; ++i, adr += sw) {
 		*buff |= (*adr & bm) ? mask : 0;
 		mask <<= 1;
 		if (!mask) {
@@ -182,8 +187,8 @@ GGI_lin1r_packed_getvline(struct ggi_visual *vis,
 			*++buff = 0;
 		}
 	}
-	if (height > 0)
-		*buff |= (*adr & bm) ? mask : 0;
+
+	*buff |= (*adr & bm) ? mask : 0;
 
   	return 0;
 }
