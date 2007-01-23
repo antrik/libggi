@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2007/01/22 20:43:08 pekberg Exp $
+/* $Id: hline.c,v 1.8 2007/01/23 00:50:40 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -179,14 +179,14 @@ GGI_lin1_packed_puthline(struct ggi_visual *vis,
 	if (!j) {
 		if (i != 8)
 			color |= *(++buff);
-		*adr++ = color >> i;
+		*adr = color >> i;
 		return 0;
 	}
 
-	if (i > j + 8)
+	if (i < j + 8)
 		color |= *(++buff);
 
-	mask = ~(0xff >> (j + 8));
+	mask = 0xff << -j;
 	foo = *adr & ~mask;
 	*adr = foo | ((color >> i) & mask);
 
