@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.9 2007/01/21 09:12:20 pekberg Exp $
+/* $Id: copybox.c,v 1.10 2007/01/23 09:19:03 pekberg Exp $
 ******************************************************************************
    Graphics library for GGI.
 
@@ -35,13 +35,13 @@ do_copy(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny, void
 {
 	if (ny > y) {
 		for (y+=h-1, ny+=h-1; h > 0; h--, y--, ny--) {
-			ggiGetHLine(vis->stem, x,  y,  w, buf);
-			ggiPutHLine(vis->stem, nx, ny, w, buf);
+			_ggiGetHLine(vis, x,  y,  w, buf);
+			_ggiPutHLine(vis, nx, ny, w, buf);
 		}
 	} else {
 		for (; h > 0; h--, y++, ny++) {
-			ggiGetHLine(vis->stem, x,  y,  w, buf);
-			ggiPutHLine(vis->stem, nx, ny, w, buf);
+			_ggiGetHLine(vis, x,  y,  w, buf);
+			_ggiPutHLine(vis, nx, ny, w, buf);
 		}
 	}
 }
