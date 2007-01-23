@@ -1,7 +1,7 @@
-/* $Id: visual.c,v 1.2 2007/01/23 13:07:29 pekberg Exp $
+/* $Id: visual.c,v 1.3 2007/01/23 15:43:46 pekberg Exp $
 ******************************************************************************
 
-   Linear 2 bit graphics (high-bit-right)
+   Linear 2 bit graphics (high-pair-right)
 
    Copyright (C) 1998 Andrew Apted  [andrew@ggi-project.org]
    Copyright (C) 2007 Peter Rosin    [peda@lysator.liu.se]
@@ -55,10 +55,16 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->getpixel		= GGI_lin2r_getpixel;
 	}
 
+	vis->opdraw->drawhline_nc	= GGI_lin2r_drawhline_nc;
+	vis->opdraw->drawhline		= GGI_lin2r_drawhline;
+
 	vis->opdraw->drawvline_nc	= GGI_lin2r_drawvline_nc;
 	vis->opdraw->drawvline		= GGI_lin2r_drawvline;
 
 	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->puthline		= GGI_lin2r_packed_puthline;
+		vis->opdraw->gethline		= GGI_lin2r_packed_gethline;
+
 		vis->opdraw->putvline		= GGI_lin2r_packed_putvline;
 		vis->opdraw->getvline		= GGI_lin2r_packed_getvline;
 	}

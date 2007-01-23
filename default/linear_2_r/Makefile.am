@@ -4,7 +4,7 @@ liblinear_2_r_la_LIBADD =
 
 noinst_LTLIBRARIES = liblinear_2_r.la
 
-liblinear_2_r_la_SOURCES = pixel.c pixela.c visual.c vline.c
+liblinear_2_r_la_SOURCES = hline.c pixel.c pixela.c visual.c vline.c
 
 EXTRA_DIST = EXPSYMS lin2rlib.h
 
