@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/09/04 07:03:48 pekberg Exp $
+/* $Id: visual.c,v 1.10 2007/01/23 10:40:54 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -33,8 +33,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	/* Color mapping 
 	 */
-	vis->opcolor->packcolors	= GGI_lin4_packcolors;
-	vis->opcolor->unpackpixels	= GGI_lin4_unpackpixels;
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opcolor->packcolors	= GGI_lin4_packcolors;
+		vis->opcolor->unpackpixels	= GGI_lin4_unpackpixels;
+	}
 
 	/* Frame handling
 	 */
@@ -60,13 +62,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	vis->opdraw->drawhline_nc	= GGI_lin4_drawhline_nc;
 	vis->opdraw->drawhline		= GGI_lin4_drawhline;
-	vis->opdraw->puthline		= GGI_lin4_puthline;
-	vis->opdraw->gethline		= GGI_lin4_gethline;
 
 	vis->opdraw->drawvline_nc	= GGI_lin4_drawvline_nc;
 	vis->opdraw->drawvline		= GGI_lin4_drawvline;
-	vis->opdraw->putvline		= GGI_lin4_putvline;
-	vis->opdraw->getvline		= GGI_lin4_getvline;
+
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->puthline		= GGI_lin4_puthline;
+		vis->opdraw->gethline		= GGI_lin4_gethline;
+
+		vis->opdraw->putvline		= GGI_lin4_putvline;
+		vis->opdraw->getvline		= GGI_lin4_getvline;
+	}
 
 	/* this copybox implementation is too naive. memmove cannot
 	 * be used when the src x and dst x are not both even/odd.

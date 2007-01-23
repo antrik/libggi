@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/03/12 23:15:09 soyt Exp $
+/* $Id: visual.c,v 1.10 2007/01/23 10:40:55 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -33,8 +33,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	/* Color mapping 
 	 */
-	vis->opcolor->packcolors	= GGI_lin4r_packcolors;
-	vis->opcolor->unpackpixels	= GGI_lin4r_unpackpixels;
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opcolor->packcolors	= GGI_lin4r_packcolors;
+		vis->opcolor->unpackpixels	= GGI_lin4r_unpackpixels;
+	}
 
 	/* Frame handling
 	 */
@@ -60,13 +62,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	vis->opdraw->drawhline_nc	= GGI_lin4r_drawhline_nc;
 	vis->opdraw->drawhline		= GGI_lin4r_drawhline;
-	vis->opdraw->puthline		= GGI_lin4r_puthline;
-	vis->opdraw->gethline		= GGI_lin4r_gethline;
 
 	vis->opdraw->drawvline_nc	= GGI_lin4r_drawvline_nc;
 	vis->opdraw->drawvline		= GGI_lin4r_drawvline;
-	vis->opdraw->putvline		= GGI_lin4r_putvline;
-	vis->opdraw->getvline		= GGI_lin4r_getvline;
+
+	if (GT_SUBSCHEME(LIBGGI_GT(vis)) & GT_SUB_PACKED_GETPUT) {
+		vis->opdraw->puthline		= GGI_lin4r_puthline;
+		vis->opdraw->gethline		= GGI_lin4r_gethline;
+
+		vis->opdraw->putvline		= GGI_lin4r_putvline;
+		vis->opdraw->getvline		= GGI_lin4r_getvline;
+	}
 
 	/*	vis->opdraw->copybox		= GGI_lin4r_copybox; */
 
