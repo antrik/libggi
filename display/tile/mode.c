@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2006/08/14 06:57:26 pekberg Exp $
+/* $Id: mode.c,v 1.31 2007/01/27 21:57:12 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -130,27 +130,27 @@ int GGI_tile_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 {
 	*arguments = '\0';
 	switch(num) {
-		case 0:
-			strcpy(apiname, "display-tile");
-			return 0;
-		case 1:
-			strcpy(apiname, "generic-stubs");
-			return 0;
-		case 2:
-			if(!TILE_PRIV(vis)->use_db)
-				return GGI_ENOMATCH;
+	case 0:
+		strcpy(apiname, "display-tile");
+		return 0;
+	case 1:
+		strcpy(apiname, "generic-stubs");
+		return 0;
+	case 2:
+		if(!TILE_PRIV(vis)->use_db)
+			return GGI_ENOMATCH;
 
-			if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-				sprintf(apiname, "generic-text-%u",
-					GT_SIZE(LIBGGI_GT(vis))); 
-				return 0;
-			}
-
-			sprintf(apiname, "generic-linear-%u%s", 
-				GT_SIZE(LIBGGI_GT(vis)),
-				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
-				? "-r" : "");
+		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
+			sprintf(apiname, "generic-text-%u",
+				GT_SIZE(LIBGGI_GT(vis))); 
 			return 0;
+		}
+
+		sprintf(apiname, "generic-linear-%u%s", 
+			GT_SIZE(LIBGGI_GT(vis)),
+			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
+			? "-r" : "");
+		return 0;
 	}
 
 	return GGI_ENOMATCH;
@@ -476,6 +476,7 @@ static int try_checkmode_multi(struct ggi_visual *vis, ggi_mode *tm, int count)
 	}
 
 	tile_FOREACH(priv, elm) {
+		tm->size.x = tm->size.y = GGI_AUTO;
 		err = ggiCheckMode(elm->vis, tm);
 		if (err) {
 			try_checkmode_multi(vis, tm, count);
@@ -483,6 +484,7 @@ static int try_checkmode_multi(struct ggi_visual *vis, ggi_mode *tm, int count)
 		}
 	}
 
+	tm->size.x = tm->size.y = GGI_AUTO;
 	return 0;
 }
 
