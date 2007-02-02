@@ -94,8 +94,27 @@ fi
 
 ])
 
-
-
+AC_DEFUN([GGI_CC_SET_DEFAULT_OPTIONS],
+[
+   GGI_CC_CHECK4_OPTION([Wall])
+   GGI_CC_CHECK4_OPTION([pedantic])
+   GGI_CHECK_IMPLICIT_DECLARATIONS
+   GGI_CC_CHECK4_OPTION([std=c99])
+   GGI_CC_CHECK4_OPTION([Wpointer-arith])
+   GGI_CC_CHECK4_OPTION([Wsign-compare])
+   GGI_CC_CHECK4_OPTION([Wstrict-prototypes])
+   GGI_CC_CHECK4_OPTION([Wswitch])
+   GGI_CC_CHECK4_OPTION([Wmissing-prototypes])
+   GGI_CC_CHECK4_OPTION([Wreturn-type])
+   GGI_CC_CHECK4_OPTION([Wshadow])
+   GGI_CC_CHECK4_OPTION([Wnested-externs])
+   GGI_CC_CHECK4_OPTION([Wredundant-decls])
+   GGI_CC_CHECK4_OPTION([Wuninitialized])
+   GGI_CC_CHECK4_OPTION([Wcast-qual])
+   GGI_CC_CHECK4_OPTION([Wwrite-strings])
+   GGI_CC_CHECK4_OPTION([Wmissing-include-dirs])
+   GGI_CC_CHECK4_OPTION([Wdeclaration-after-statement])
+])
 
 dnl ----- dllext.m4 -----
 dnl Suffix detection for runtime loadable libraries.
