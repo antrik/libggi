@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.208 2007/01/17 13:48:01 pekberg Exp $
+dnl $Id: configure.in,v 1.209 2007/02/02 21:09:54 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -294,8 +294,7 @@ dnl ========================================================================
 dnl Checks for platform specificas
 
 GGI_CHECK_STRING_FUNCS
-GGI_CC_CHECK4_OPTION([pedantic])
-GGI_CHECK_IMPLICIT_DECLARATIONS
+GGI_CC_SET_DEFAULT_OPTIONS
 
 dnl ========================================================================
 dnl Checks for header files.
@@ -1388,28 +1387,6 @@ if test "x$use_debug" != "xno"; then
     *) AM_CFLAGS="$AM_CFLAGS -g" ;;
     esac
   fi
-fi
-
-if test "$ac_cv_c_compiler_gnu" = "yes"; then
-    GGI_CC_CHECK4_OPTION([std=gnu99])
-
-    # Common warning flags
-    AM_CFLAGS="$AM_CFLAGS -Wall -Wpointer-arith -Wsign-compare"
-    AM_CFLAGS="$AM_CFLAGS -Wstrict-prototypes -Wswitch"
-    AM_CFLAGS="$AM_CFLAGS -Wmissing-prototypes -Wreturn-type -Wshadow"
-
-    # Advanced warning flags
-    AM_CFLAGS="$AM_CFLAGS -Wnested-externs -Wredundant-decls"
-    AM_CFLAGS="$AM_CFLAGS -Wuninitialized -Wcast-qual -Wwrite-strings"
-    if test "x$cc_has_werror_implicit_function_declaration" = "xyes"; then
-      AM_CFLAGS="$AM_CFLAGS -Werror-implicit-function-declaration"
-    fi
-
-     # Buggy warning flag
-    # AM_CFLAGS="$AM_CFLAGS -Wconversion"
-
-    # Super advanced (only used for building releases)
-    # AM_CFLAGS="$AM_CFLAGS -Werror"
 fi
 
 
