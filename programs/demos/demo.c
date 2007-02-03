@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.32 2007/01/23 19:04:54 pekberg Exp $
+/* $Id: demo.c,v 1.33 2007/02/03 21:56:25 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -733,7 +733,18 @@ int main(int argc, char **argv)
 
 	/* Set it to a small 32 bit mode. 
 	 */
-	err = ggiSetSimpleMode(memvis, 160, 40, 1, GT_32BIT);
+	{
+		ggi_mode small;
+		small.frames = 1;
+		small.visible.x = 160;
+		small.visible.y = 40;
+		small.virt.x = 160;
+		small.virt.y = 40;
+		small.size.x = small.size.y = GGI_AUTO;
+		small.graphtype = GT_32BIT;
+		small.dpp.x = small.dpp.y = GGI_AUTO;
+		err = ggiSetMode(memvis, &small);
+	}
 		
 	/* Check for errors
 	 */
