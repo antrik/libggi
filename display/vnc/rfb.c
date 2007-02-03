@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.82 2007/01/11 07:38:30 pekberg Exp $
+/* $Id: rfb.c,v 1.83 2007/02/03 21:17:17 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -670,6 +670,7 @@ struct encodings encode_tbl[] = {
 	{      8,    0, "ZlibHex encoding\n",             zlibhex_enc },
 	{      9,    0, "Ultra encoding\n",               print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
+	{     17,    0, "ZYWRLE encoding\n",              print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
 	{   -223,    0, "DesktopSize pseudo-encoding\n",  print_enc },
 	{   -224,    0, "LastRect pseudo-encoding\n",     print_enc },
