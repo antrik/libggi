@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2006/03/12 09:45:45 soyt Exp $
+/* $Id: mode.c,v 1.29 2007/02/03 21:44:11 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -43,13 +43,15 @@
 /* Used to prevent ggiSetMode core code from destroying data
  * by calling fillscreen when -noblank option is specified.
  */
-static int _strawman_fillscreen(struct ggi_visual *vis) {
+static int _strawman_fillscreen(struct ggi_visual *vis)
+{
 	if (vis->w_frame_num == LIBGGI_MODE(vis)->frames - 1) 
 		vis->opdraw->fillscreen = MEMORY_PRIV(vis)->oldfillscreen;
 	return GGI_OK;
 }
 
-static int _dummy_setdisplayframe(struct ggi_visual *vis, int frame) {
+static int _dummy_setdisplayframe(struct ggi_visual *vis, int frame)
+{
 	return GGI_OK;
 }
 
@@ -57,8 +59,8 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 {
 	int i;
 
-	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
-		if ((0==i) && (MEMORY_PRIV(vis)->memtype==MT_MALLOC))
+	for (i = LIBGGI_APPLIST(vis)->num - 1; i >= 0; i--) {
+		if ((0 == i) && (MEMORY_PRIV(vis)->memtype == MT_MALLOC))
 			free(LIBGGI_APPBUFS(vis)[0]->write);
 		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
@@ -92,8 +94,7 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 		else 
 			fstride = lstride * mode->virt.y;
 		fstride = priv->fstride ? priv->fstride : fstride;
-	}
-	else {
+	} else {
 		lstride = priv->buffer.plb.stride ?
 			priv->buffer.plb.stride : 
 			(int)GT_ByPPP(mode->virt.x, mode->graphtype);
@@ -137,8 +138,7 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 			buf->buffer.plb.stride = lstride;
 			buf->buffer.plb.pixelformat = LIBGGI_PIXFMT(vis);
 		}
-	}
-	else {
+	} else {
 		for (i = 0; i < mode->frames; i++) {
 			ggi_directbuffer *buf;
 			_ggi_db_add_buffer(LIBGGI_APPLIST(vis),
@@ -162,22 +162,23 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 		LIBGGI_PAL(vis)->clut.data = NULL;
 	}
 	if (GT_SCHEME(LIBGGI_GT(vis)) == GT_PALETTE) {
-		LIBGGI_PAL(vis)->clut.data = _ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis)))*
-					   	sizeof(ggi_color));
-		LIBGGI_PAL(vis)->clut.size     = 1 << GT_DEPTH(LIBGGI_GT(vis));
+		LIBGGI_PAL(vis)->clut.data =
+			_ggi_malloc((1 << GT_DEPTH(LIBGGI_GT(vis))) *
+				sizeof(ggi_color));
+		LIBGGI_PAL(vis)->clut.size = 1 << GT_DEPTH(LIBGGI_GT(vis));
 	}
 
 	return 0;
 }
 
-int GGI_memory_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_memory_getapi(struct ggi_visual *vis,int num,
+			char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
 	*arguments = '\0';
 
 	switch(num) { 
-
 	case 0: strcpy(apiname, "display-memory");
 		return 0;
 
@@ -191,7 +192,7 @@ int GGI_memory_getapi(struct ggi_visual *vis,int num, char *apiname ,char *argum
 		return 0;
 
 	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%u",
+			snprintf(apiname, GGI_MAX_APILEN, "generic-text-%u",
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
@@ -199,7 +200,7 @@ int GGI_memory_getapi(struct ggi_visual *vis,int num, char *apiname ,char *argum
 			sprintf(apiname, "generic-planar");
 			return 0;
 		}
-		sprintf(apiname, "generic-linear-%u%s", 
+		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
@@ -221,12 +222,12 @@ static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 
 	DPRINT("display-memory: _GGIdomode: zap\n");
 
-	if ((err=alloc_fb(vis,mode)) != 0)
+	if ((err =alloc_fb(vis,mode)) != 0)
 		return err;
 
 	DPRINT("display-memory: _GGIdomode: got framebuffer memory\n");
 
-	for(i=1; 0==GGI_memory_getapi(vis, i, name, args); i++) {
+	for(i = 1; 0 == GGI_memory_getapi(vis, i, name, args); i++) {
 		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
 				name, args, NULL);
 		if (err) {
@@ -282,13 +283,13 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 
 	if (priv->inputbuffer) {
-		priv->inputbuffer->visx=mode->visible.x;
-		priv->inputbuffer->visy=mode->visible.y;
-		priv->inputbuffer->virtx=mode->virt.x;
-		priv->inputbuffer->virty=mode->virt.y;
-		priv->inputbuffer->frames=mode->frames;
-		priv->inputbuffer->type=mode->graphtype;
-		priv->inputbuffer->visframe=0;
+		priv->inputbuffer->visx = mode->visible.x;
+		priv->inputbuffer->visy = mode->visible.y;
+		priv->inputbuffer->virtx = mode->virt.x;
+		priv->inputbuffer->virty = mode->virt.y;
+		priv->inputbuffer->frames = mode->frames;
+		priv->inputbuffer->type = mode->graphtype;
+		priv->inputbuffer->visframe = 0;
 	}
 
 	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
@@ -384,16 +385,18 @@ int _GGI_memory_resetmode(struct ggi_visual *vis)
 
 int GGI_memory_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
-	LIBGGI_FLAGS(vis)=flags;
+	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 	return 0;
 }
 
-int GGI_memory_setPalette(struct ggi_visual *vis,size_t start,size_t size,const ggi_color *colormap)
+int GGI_memory_setPalette(struct ggi_visual *vis,size_t start,size_t size,
+			const ggi_color *colormap)
 {
 	DPRINT("memory setpalette.\n");
 
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data + start, colormap,
+		size * sizeof(ggi_color));
 
 	return 0;
 }
