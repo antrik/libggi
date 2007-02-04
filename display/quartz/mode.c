@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2007/01/16 21:14:15 cegger Exp $
+/* $Id: mode.c,v 1.21 2007/02/04 18:13:24 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -184,7 +184,7 @@ int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 	mode.visible.x = width;
 	mode.visible.y = height;
 
-	fb_size = GT_ByPPP(mode.visible.x, mode.graphtype)
+	fb_size = mode.visible.x * GT_ByPP(mode.graphtype)
 			* mode.visible.y * mode.frames;
 
 	if (manualrefresh) {
@@ -283,7 +283,7 @@ static void _GGIallocdbs(struct ggi_visual *vis)
 		goto err2;
 	}
 #endif
-	stride = GT_ByPPP(tm.visible.x, tm.graphtype);
+	stride = tm.visible.x * GT_ByPP(tm.graphtype);
 
 	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
 	priv->dataProviderRef = CGDataProviderCreateWithData(NULL, priv->fb,
