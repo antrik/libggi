@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2007/02/03 21:44:11 cegger Exp $
+/* $Id: mode.c,v 1.30 2007/02/04 15:31:20 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -282,6 +282,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	if (err)
 		return err;
 
+#if 0
 	if (priv->inputbuffer) {
 		priv->inputbuffer->visx = mode->visible.x;
 		priv->inputbuffer->visy = mode->visible.y;
@@ -291,6 +292,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		priv->inputbuffer->type = mode->graphtype;
 		priv->inputbuffer->visframe = 0;
 	}
+#endif
 
 	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
 	DPRINT("display-memory:GGIsetmode: change indicated\n",err);
@@ -361,6 +363,7 @@ int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 	priv = MEMORY_PRIV(vis);
 
 	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+#if 0
 	if (priv->inputbuffer) {
 		mymode.visible.x = priv->inputbuffer->visx;
 		mymode.visible.y = priv->inputbuffer->visy;
@@ -369,6 +372,7 @@ int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 		mymode.frames    = priv->inputbuffer->frames;
 		mymode.graphtype = priv->inputbuffer->type;
 	}
+#endif
 	memcpy(mode, &mymode, sizeof(ggi_mode));
 
 	return 0;

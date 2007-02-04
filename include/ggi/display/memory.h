@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.10 2006/03/12 08:42:22 cegger Exp $
+/* $Id: memory.h,v 1.11 2007/02/04 15:31:20 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -82,14 +82,17 @@ enum memtype {
 };
 
 typedef struct {
+#if 0
 	int writeoffset;	/* We should lock access to that one ... */
 	int visx,visy,virtx,virty,frames,visframe,type;
+#endif
 	char buffer[1];		/* This index will be used "overflowing" */
 } inpbuffer;
 
 typedef struct {
 	PHYSZ_DATA
 
+	struct gg_module *inp;
 	enum memtype   	memtype;
 	void	       *memptr;
 	inpbuffer      *inputbuffer;
