@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.83 2007/02/03 21:17:17 pekberg Exp $
+/* $Id: rfb.c,v 1.84 2007/02/05 13:49:47 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -669,12 +669,15 @@ struct encodings encode_tbl[] = {
 	{      7,    0, "Tight encoding\n",               tight_enc },
 	{      8,    0, "ZlibHex encoding\n",             zlibhex_enc },
 	{      9,    0, "Ultra encoding\n",               print_enc },
+	{     15,    0, "BackChannel encoding\n",         print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
+	{   -219,    0, "Background pseudo-encoding\n",   print_enc },
 	{   -223,    0, "DesktopSize pseudo-encoding\n",  print_enc },
 	{   -224,    0, "LastRect pseudo-encoding\n",     print_enc },
 	{   -232,    0, "PointerPos pseudo-encoding\n",   print_enc },
+	{   -238,    0, "SoftCursor pseudo-encoding\n",   print_enc },
 	{   -239,    0, "Cursor pseudo-encoding\n",       print_enc },
 	{   -240,    0, "XCursor pseudo-encoding\n",      print_enc },
 	{   -247, -256, "Tight compress %d subencoding\n",print_enc },
