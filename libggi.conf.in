@@ -81,6 +81,10 @@ alias   display-auto-win32_mingw	display-auto-win32
 alias	display-auto-darwin	(quartz):(try-x):(aa)
 alias   display-auto-linux	(try-x):(fbdev):(svga):(aa)
 alias	display-auto-freebsd	(try-x):(kgi:/dev/graphic):(vgl):(aa)
+alias	display-auto-netbsd	(try-x):(aa)
+alias	display-auto-openbsd	(try-x):(aa)
+alias	display-auto-solaris	(try-x):(aa)
+alias	display-auto-aix	(try-x):(aa)
 alias	display-auto-default	(try-x):(aa)
 
 # Config should set one. The other solution is to use
