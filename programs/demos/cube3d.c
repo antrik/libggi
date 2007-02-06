@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.23 2006/09/23 09:11:12 cegger Exp $
+/* $Id: cube3d.c,v 1.24 2007/02/06 19:41:29 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -94,7 +94,7 @@ static void usage(const char *prog)
 {
 	fprintf(stderr, "Usage:\n\n"
 		"%s [[-slavex,slavey] [program]]* \n\n"
-		"Example: %s -320,200 nixterm -160,100 ./demo", prog,
+		"Example: %s -320,200 nixterm -160,100 ./demo\n", prog,
 		prog);
 	exit(EXIT_FAILURE);
 }
