@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.11 2007/02/04 15:31:20 cegger Exp $
+/* $Id: memory.h,v 1.12 2007/02/09 23:54:27 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -86,7 +86,7 @@ typedef struct {
 	int writeoffset;	/* We should lock access to that one ... */
 	int visx,visy,virtx,virty,frames,visframe,type;
 #endif
-	char buffer[1];		/* This index will be used "overflowing" */
+	uint8_t buffer[1];	/* This index will be used "overflowing" */
 } inpbuffer;
 
 typedef struct {
