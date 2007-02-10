@@ -1,4 +1,4 @@
-.TH "display-memory" 7 "2004-10-14" "libggi-current" GGI
+.TH "display-memory" 7 "2007-02-10" "libggi-current" GGI
 .SH NAME
 \fBdisplay-memory\fR : Display on buffer in main memory
 .SH SYNOPSIS
@@ -18,13 +18,14 @@ area allocated by \fBdisplay-memory\fR itself.
 .TP
 \f(CW-input\fR
 If the \f(CW-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
-(default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
+(default are 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
 allocated at the start of the requested memory area.
 
 When running on shared memory, this option enables you to give
 input (using \f(CWgiiEventSend(3)\fR) to other processes sharing
 that segment. This technique is demonstrated in \f(CWcube3d(1)\fR
 and can be used for things like GGI multiplexers.
+libgii's \f(CWinput-memory(7)\fR is internally used for input handling.
 
 .TP
 \f(CW-noblank\fR
