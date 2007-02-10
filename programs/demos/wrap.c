@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.21 2007/02/10 07:10:45 cegger Exp $
+/* $Id: wrap.c,v 1.22 2007/02/10 07:18:25 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -182,7 +182,7 @@ static struct gg_module *init_fdselect(struct gg_stem *stem, int fd)
 	char arg[128];
 	struct gg_module *inp;
 
-	sprintf(arg, "-read=%d", fd);
+	snprintf(arg, sizeof(arg), "-read=%d", fd);
 	inp = ggOpenModule(libgii, stem, "input-fdselect", arg, NULL);
 	if (!inp) {
 		ggPanic("Ouch - can't open the fdselect inputlib !");
@@ -265,7 +265,7 @@ static int repair_screen(struct client_t * client, ggi_visual_t visual)
 }	/* repair_screen */
 
 
-int main(int argc, char **argv)
+int main(int argc, const char * const argv[])
 {
 	int rc;
 	ggi_visual_t visual;
