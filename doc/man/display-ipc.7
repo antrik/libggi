@@ -1,0 +1,46 @@
+.TH "display-ipc" 7 "2004-10-14" "libggi-current" GGI
+.SH NAME
+\fBdisplay-ipc\fR : Display using IPC
+.SH SYNOPSIS
+.nb
+.nf
+display-ipc: [-input] [-physz=<sizex>,<sizey>[dpi]]
+             -semid=<semid> -shmid=<shmid> -socket=<socket>
+.fi
+
+.SH DESCRIPTION
+Uses a shared memory segment for inter-process communication.
+Expects the client to specify the socket, semid and shmid options.
+.SH OPTIONS
+.TP
+\f(CW-input\fR
+If the \f(CW-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
+(default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
+allocated at the start of the requested memory area.
+
+When running on shared memory, this option enables you to give
+input (using \f(CWgiiEventSend(3)\fR) to other processes sharing
+that segment. This technique is demonstrated in \f(CWcube3d(1)\fR
+and can be used for things like GGI multiplexers.
+
+.TP
+\f(CW-physz=<sizex>,<sizey>[dpi]\fR
+This option will provide a physical screen size for applications
+which wish to remain resolution independent.  \fIsizex\fR,
+\fIsizey\fR are the x,y size of the screen in millimeters, unless
+the optional \f(CWdpi\fR string is affixed, in which case, they
+represent resolution in dots-per-inch.
+
+.TP
+\f(CW-socket=<socket>\fR
+Specify the path to the socket.
+
+.TP
+\f(CW-semid=<semid>\fR
+Specify the sem id. Seem to be not used anywhere
+
+.TP
+\f(CW-shmid=<shmid>\fR
+Specify the shared memory identifier to use.
+
+.PP
