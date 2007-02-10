@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.22 2007/02/10 07:18:25 cegger Exp $
+/* $Id: wrap.c,v 1.23 2007/02/10 07:27:50 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -125,7 +125,7 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 	 * display in shared memory.
 	 */
 	snprintf(text, sizeof(text),
-		"display-memory:-input:shmid:%d", client->shmid);
+		"display-memory:-input:shmid:%i", client->shmid);
 
 	client->visual = ggNewStem(libggi, NULL);
 	if (client->visual == NULL) {
@@ -142,7 +142,7 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 
 	/* start the program
 	 */
-	snprintf(text, sizeof(text), "display-ipc:-input -socket=%s -semid=%d -shmid=%d",
+	snprintf(text, sizeof(text), "display-ipc:-input -socket=%s -semid=%i -shmid=%i",
 		client->socket, client->semid, client->shmid);
 	snprintf(envtext, sizeof(envtext), "GGI_DISPLAY=%s", text);
 	putenv(envtext);
@@ -182,7 +182,7 @@ static struct gg_module *init_fdselect(struct gg_stem *stem, int fd)
 	char arg[128];
 	struct gg_module *inp;
 
-	snprintf(arg, sizeof(arg), "-read=%d", fd);
+	snprintf(arg, sizeof(arg), "-read=%i", fd);
 	inp = ggOpenModule(libgii, stem, "input-fdselect", arg, NULL);
 	if (!inp) {
 		ggPanic("Ouch - can't open the fdselect inputlib !");
