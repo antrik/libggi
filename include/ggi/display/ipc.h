@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.8 2006/09/05 05:37:08 cegger Exp $
+/* $Id: ipc.h,v 1.9 2007/02/10 00:29:59 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -68,12 +68,13 @@ ggifunc_checkmode	 GGI_ipc_checkmode;
 ggifunc_setflags	 GGI_ipc_setflags;
 ggifunc_setPalette       GGI_ipc_setPalette;
 
-typedef struct
-{
-  int writeoffset;	/* We should lock access to that one ... */
-  int visx,visy,virtx,virty,frames,visframe,type;
-  char buffer[1];		/* This index will be used "overflowing" */
-} inpbuffer;
+struct inpbuffer {
+#if 0
+	int writeoffset;	/* We should lock access to that one ... */
+	int visx,visy,virtx,virty,frames,visframe,type;
+#endif
+	uint8_t buffer[1];	/* This index will be used "overflowing" */
+};
 
 typedef struct
 {
@@ -81,17 +82,14 @@ typedef struct
 
 	struct gg_module *inp;
 
-#if 1
 	void *memptr;
-	inpbuffer *inputbuffer;
-	int inputoffset;
+	struct inpbuffer *inputbuffer;
 	int sockfd;
 	int semid;
 	int shmid;
-#endif
-} ggi_ipc_priv;
+} ipc_priv;
 
-#define IPC_PRIV(vis) ((ggi_ipc_priv *)LIBGGI_PRIVATE(vis))
+#define IPC_PRIV(vis) ((ipc_priv *)LIBGGI_PRIVATE(vis))
 
 int _GGI_ipc_resetmode(struct ggi_visual *vis);
 

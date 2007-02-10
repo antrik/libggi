@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2006/09/04 21:25:16 cegger Exp $
+/* $Id: visual.c,v 1.25 2007/02/10 00:29:59 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -60,7 +60,7 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 		  int tryflag)
 {
 	char buffer[32];
-	ggi_ipc_priv *priv = IPC_PRIV(vis);
+	ipc_priv *priv = IPC_PRIV(vis);
 
 	if (priv->sockfd == -1) return 0;
 
@@ -83,33 +83,33 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
-	ggi_ipc_priv *priv;
+	ipc_priv *priv;
 	gg_option options[NUM_OPTS];
 	struct sockaddr_un address;
 	struct gg_module *inp;
 	struct gg_api *gii;
 	int err = 0;
-
+	int rc;
 
 	DPRINT_MISC("display-ipc coming up.\n");
 	memcpy(options, optlist, sizeof(options));
 
 	if (!args) {
-		DPRINT("display-ipc: required arguments missing\n");
+		fprintf(stderr, "display-ipc: required arguments missing\n");
 		return GGI_EARGREQ;
 	}	/* if */
 
 	args = ggParseOptions(args, options, NUM_OPTS);
 	if (args == NULL) {
-		DPRINT("display-ipc: error in arguments.\n");
-		return GGI_EARGREQ;
+		fprintf(stderr, "display-ipc: error in arguments.\n");
+		return GGI_EARGINVAL;
 	}	/* if */
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
 	/* Allocate descriptor for screen memory */
-	priv = malloc(sizeof(ggi_ipc_priv));
+	priv = malloc(sizeof(ipc_priv));
 
 	if (!priv) {
 		err = GGI_ENOMEM;
@@ -118,7 +118,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	LIBGGI_PRIVATE(vis) = priv;
 	priv->inputbuffer = NULL;	/* Default to no input */
-	priv->inputoffset = 0;		/* Setup offset. */
+
+	gii = ggGetAPIByName("gii");
+	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+		err = GGI_ENODEVICE;
+		fprintf(stderr,
+			"display-ipc: gii not attached to stem\n");
+		goto err1;
+	}
 
 	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
 			     &(priv->physzflags), &(priv->physz)))
@@ -131,7 +138,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	   && !options[OPT_SEMID].result[0]
 	   && !options[OPT_SHMID].result[0])
 	{
-		DPRINT("display-ipc: required arguments missing\n");
+		DPRINT("required arguments missing\n");
 		err = GGI_EARGREQ;
 		goto err1;
 	}	/* if */
@@ -140,28 +147,40 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	   && sscanf(options[OPT_SEMID].result,"%d", &(priv->semid))
 	   && sscanf(options[OPT_SHMID].result,"%d", &(priv->shmid))))
 	{
-		DPRINT("display-ipc: argument format error\n");
-		err = GGI_EARGREQ;
+		DPRINT("argument format error\n");
+		err = GGI_EARGINVAL;
 		goto err1;
 	}	/* if */
 
-	DPRINT("display-ipc parsed args: socket: %s semid: %d shmid: %d\n",
+	DPRINT("parsed args: socket: %s semid: %i shmid: %i\n",
 		   address.sun_path, priv->semid, priv->shmid);
 	address.sun_family = AF_UNIX;
-	if ((priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0)) == -1
-	   || connect(priv->sockfd, (const struct sockaddr *)(&address),
-		sizeof(struct sockaddr_un)) == -1
-	   || (priv->memptr = (char *)shmat(priv->shmid, 0, 0)) == (char *)-1)
-	{
-		DPRINT("display-ipc initialization failed : %s\n", strerror(errno));
+	priv->sockfd = socket(PF_UNIX, SOCK_STREAM, 0);
+	if (priv->sockfd == -1) {
+		DPRINT("could not open stream socket\n");
 		err = GGI_ENODEVICE;
 		goto err1;
+	}
+
+	rc = connect(priv->sockfd, (const struct sockaddr *)(&address),
+			sizeof(struct sockaddr_un));
+	if (rc == -1) {
+		DPRINT("could not connect to socket\n");
+		err = GGI_ENODEVICE;
+		goto err2;
+	}
+
+	priv->memptr = (char *)shmat(priv->shmid, NULL, 0);
+	if (priv->memptr == (char *)-1) {
+		DPRINT("initialization failed : %s\n", strerror(errno));
+		err = GGI_ENODEVICE;
+		goto err2;
 	}	/* if */
 
 	if (options[OPT_INPUT].result[0]) {
-		priv->inputbuffer=priv->memptr;
-		priv->memptr=(char *)priv->memptr+INPBUFSIZE;
-		DPRINT("display-ipc: moved mem to %p for input-buffer.\n",
+		priv->inputbuffer = priv->memptr;
+		priv->memptr=(char *)priv->memptr + INPBUFSIZE;
+		DPRINT("moved mem to %p for input-buffer.\n",
 			priv->memptr);
 	}	/* if */
 
@@ -172,24 +191,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->checkmode = GGI_ipc_checkmode;
 	vis->opdisplay->setflags  = GGI_ipc_setflags;
 
-	gii = ggGetAPIByName("gii");
-	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
-		err = GGI_ENODEVICE;
-		fprintf(stderr,
-			"display-ipc: gii not attached to stem\n");
-		goto err1;
-	}
 
-#if 0
-	inp = ggOpenModule(gii, vis->stem, "input-ipc", NULL, &iargs);
-#endif
-	inp = ggOpenModule(gii, vis->stem, "input-ipc", NULL, NULL);
+	inp = ggOpenModule(gii, vis->stem, "input-memory", "-pointer",
+			priv->inputbuffer->buffer);
 
 	DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 
 	if (inp == NULL) {
 		fprintf(stderr,
-			"display-ipc: unable to open ipc inputlib\n");
+			"display-ipc: unable to open input-memory\n");
 		err = GGI_ENODEVICE;
 		goto err1;
 	}
@@ -200,6 +210,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
 
+err2:
+	close(priv->sockfd);
 err1:
 	free(priv);
 err0:

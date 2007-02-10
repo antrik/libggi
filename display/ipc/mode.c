@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/03/20 20:31:43 cegger Exp $
+/* $Id: mode.c,v 1.19 2007/02/10 00:29:59 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -165,8 +165,10 @@ static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	int err;
+	ipc_priv *priv;
 
-	DPRINT("display-ipc: GGIsetmode: called\n");
+	priv = IPC_PRIV(vis);
+	DPRINT("GGIsetmode: called\n");
 
 	APP_ASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
 	
@@ -180,18 +182,20 @@ int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	if (err)
 		return err;
 
-	if (IPC_PRIV(vis)->inputbuffer) {
-		IPC_PRIV(vis)->inputbuffer->visx=mode->visible.x;
-		IPC_PRIV(vis)->inputbuffer->visy=mode->visible.y;
-		IPC_PRIV(vis)->inputbuffer->virtx=mode->virt.x;
-		IPC_PRIV(vis)->inputbuffer->virty=mode->virt.y;
-		IPC_PRIV(vis)->inputbuffer->frames=mode->frames;
-		IPC_PRIV(vis)->inputbuffer->type=mode->graphtype;
-		IPC_PRIV(vis)->inputbuffer->visframe=0;
+#if 0
+	if (priv->inputbuffer) {
+		priv->inputbuffer->visx = mode->visible.x;
+		priv->inputbuffer->visy = mode->visible.y;
+		priv->inputbuffer->virtx = mode->virt.x;
+		priv->inputbuffer->virty = mode->virt.y;
+		priv->inputbuffer->frames = mode->frames;
+		priv->inputbuffer->type = mode->graphtype;
+		priv->inputbuffer->visframe = 0;
 	}
+#endif
 
 	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
-	DPRINT("display-ipc:GGIsetmode: change indicated\n",err);
+	DPRINT("GGIsetmode: change indicated\n",err);
 
 	return 0;
 }
@@ -258,17 +262,22 @@ int GGI_ipc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 int GGI_ipc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_mode mymode;
-	DPRINT("display-ipc: GGIgetmode(%p,%p)\n", vis, mode);
+	ipc_priv *priv;
+
+	priv = IPC_PRIV(vis);
+	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
 
 	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
-	if (IPC_PRIV(vis)->inputbuffer) {
-		mymode.visible.x=IPC_PRIV(vis)->inputbuffer->visx;
-		mymode.visible.y=IPC_PRIV(vis)->inputbuffer->visy;
-		mymode.virt.x   =IPC_PRIV(vis)->inputbuffer->virtx;
-		mymode.virt.y   =IPC_PRIV(vis)->inputbuffer->virty;
-		mymode.frames   =IPC_PRIV(vis)->inputbuffer->frames;
-		mymode.graphtype=IPC_PRIV(vis)->inputbuffer->type;
+#if 0
+	if (priv->inputbuffer) {
+		mymode.visible.x = priv->inputbuffer->visx;
+		mymode.visible.y = priv->inputbuffer->visy;
+		mymode.virt.x    = priv->inputbuffer->virtx;
+		mymode.virt.y    = priv->inputbuffer->virty;
+		mymode.frames    = priv->inputbuffer->frames;
+		mymode.graphtype = priv->inputbuffer->type;
 	}
+#endif
 	memcpy(mode, &mymode, sizeof(ggi_mode));
 
 	return 0;
@@ -276,7 +285,7 @@ int GGI_ipc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int _GGI_ipc_resetmode(struct ggi_visual *vis)
 {
-	DPRINT("display-ipc: GGIresetmode(%p)\n", vis);
+	DPRINT("GGIresetmode(%p)\n", vis);
 
 	_GGIfreedbs(vis);
 
@@ -292,11 +301,13 @@ int GGI_ipc_setflags(struct ggi_visual *vis,ggi_flags flags)
 	return 0;
 }
 
-int GGI_ipc_setPalette(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *colormap)
+int GGI_ipc_setPalette(struct ggi_visual *vis, size_t start, size_t size,
+			const ggi_color *colormap)
 {
 	DPRINT("ipc setpalette.\n");
 	              
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap, size*sizeof(ggi_color));
+	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap,
+		size*sizeof(ggi_color));
 		
 	return 0;
 }
