@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2007/01/08 21:16:38 cegger Exp $
+/* $Id: visual.c,v 1.20 2007/02/10 07:46:27 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -233,14 +233,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("open input-quartz\n");
 		gii = ggGetAPIByName("gii");
-		if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			inp = ggOpenModule(gii, vis->stem, "input-quartz", NULL, &_args);
+		} else {
 			err = GGI_ENODEVICE;
 			fprintf(stderr,
 				"display-quartz: gii not attached to stem\n");
 			goto out;
 		}
-
-		inp = ggOpenModule(gii, vis->stem, "input-quartz", NULL, &_args);
 
 		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 		if (inp == NULL) {
