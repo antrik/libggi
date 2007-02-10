@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.20 2006/10/14 14:09:14 cegger Exp $
+/* $Id: wrap.c,v 1.21 2007/02/10 07:10:45 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -84,9 +84,7 @@ struct client_t {
 	pid_t pid;
 };
 
-typedef struct client_t client_t;
-
-static void init_client(client_t * client, ggi_mode * mode,
+static void init_client(struct client_t * client, ggi_mode * mode,
 			const char *command)
 {
 	struct sockaddr_un address;
@@ -171,7 +169,7 @@ static void init_client(client_t * client, ggi_mode * mode,
 }	/* init_client */
 
 
-static void exit_client(client_t * client)
+static void exit_client(struct client_t * client)
 {
 	ggiClose(client->visual);
 	ggDelStem(client->visual);
@@ -203,7 +201,7 @@ static void exit_fdselect(struct gg_module *inp)
  *		just forwarded an event)
  * return -1 on error
  */
-static int wait_for_something(ggi_visual_t master, client_t * client)
+static int wait_for_something(ggi_visual_t master, struct client_t * client)
 {
 	/* wait for the client to notify us
 	 */
@@ -247,7 +245,7 @@ static int wait_for_something(ggi_visual_t master, client_t * client)
 }	/* wait_for_something */
 
 
-static int repair_screen(client_t * client, ggi_visual_t visual)
+static int repair_screen(struct client_t * client, ggi_visual_t visual)
 {
 	char tag;
 	int region[4];
@@ -281,7 +279,7 @@ int main(int argc, char **argv)
 	};
 
 	const char *command;
-	client_t client;
+	struct client_t client;
 	struct gg_module *fdselect;
 
 	/* Get the arguments from the command line. 
