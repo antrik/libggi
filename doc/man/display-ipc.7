@@ -1,4 +1,4 @@
-.TH "display-ipc" 7 "2004-10-14" "libggi-current" GGI
+.TH "display-ipc" 7 "2007-02-10" "libggi-current" GGI
 .SH NAME
 \fBdisplay-ipc\fR : Display using IPC
 .SH SYNOPSIS
@@ -15,13 +15,14 @@ Expects the client to specify the socket, semid and shmid options.
 .TP
 \f(CW-input\fR
 If the \f(CW-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
-(default is 8192 bytes) as #define'd in \fBggi/display/memory.h\fR is
+(default are 8192 bytes) as #define'd in \fBggi/display/ipc.h\fR is
 allocated at the start of the requested memory area.
 
 When running on shared memory, this option enables you to give
 input (using \f(CWgiiEventSend(3)\fR) to other processes sharing
 that segment. This technique is demonstrated in \f(CWcube3d(1)\fR
 and can be used for things like GGI multiplexers.
+libgii's \f(CWinput-memory(7)\fR is internally used for input handling.
 
 .TP
 \f(CW-physz=<sizex>,<sizey>[dpi]\fR
@@ -43,4 +44,13 @@ Specify the sem id. Seem to be not used anywhere
 \f(CW-shmid=<shmid>\fR
 Specify the shared memory identifier to use.
 
+On win32, \fIsid\fR is the HANDLE returned by a call to
+\f(CWCreateFileMapping\fR in decimal form.
+
+.PP
+.SH FEATURES
+.IP \(bu 4
+DirectBuffer support always available.
+.IP \(bu 4
+Unaccelerated.
 .PP
