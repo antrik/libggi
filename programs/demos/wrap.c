@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.23 2007/02/10 07:27:50 cegger Exp $
+/* $Id: wrap.c,v 1.24 2007/02/10 13:41:13 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -127,7 +127,7 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 	snprintf(text, sizeof(text),
 		"display-memory:-input:shmid:%i", client->shmid);
 
-	client->visual = ggNewStem(libggi, NULL);
+	client->visual = ggNewStem(libgii, libggi, NULL);
 	if (client->visual == NULL) {
 		ggPanic("Ouch - can't initialize stem with libggi !\n");
 	}
@@ -295,7 +295,7 @@ int main(int argc, const char * const argv[])
 
 	/* Open up GGI and a visual.
 	 */
-	visual = ggNewStem(libggi, NULL);
+	visual = ggNewStem(libgii, libggi, NULL);
 	if (visual == NULL) {
 		fprintf(stderr, "unable to initialize stem with libggi\n");
 		exit (1);
