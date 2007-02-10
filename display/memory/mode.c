@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2007/02/04 15:31:20 cegger Exp $
+/* $Id: mode.c,v 1.31 2007/02/10 10:10:14 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -216,16 +216,16 @@ static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 	char	name[GGI_MAX_APILEN];
 	char	args[GGI_MAX_APILEN];
 	
-	DPRINT("display-memory: _GGIdomode: called\n");
+	DPRINT("_GGIdomode: called\n");
 
 	_ggiZapMode(vis, 0);
 
-	DPRINT("display-memory: _GGIdomode: zap\n");
+	DPRINT("_GGIdomode: zap\n");
 
 	if ((err =alloc_fb(vis,mode)) != 0)
 		return err;
 
-	DPRINT("display-memory: _GGIdomode: got framebuffer memory\n");
+	DPRINT("_GGIdomode: got framebuffer memory\n");
 
 	for(i = 1; 0 == GGI_memory_getapi(vis, i, name, args); i++) {
 		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
@@ -264,7 +264,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	priv = MEMORY_PRIV(vis);
 
-	DPRINT("display-memory: GGIsetmode: called\n");
+	DPRINT("GGIsetmode: called\n");
 
 	APP_ASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
 	
@@ -278,7 +278,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
 	err = _GGIdomode(vis, mode);
-	DPRINT("display-memory: GGIsetmode: domode=%d\n",err);
+	DPRINT("GGIsetmode: domode=%d\n",err);
 	if (err)
 		return err;
 
@@ -295,7 +295,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 #endif
 
 	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
-	DPRINT("display-memory:GGIsetmode: change indicated\n",err);
+	DPRINT("GGIsetmode: change indicated\n",err);
 
 	return 0;
 }
@@ -358,7 +358,7 @@ int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_memory_priv *priv;
 	ggi_mode mymode;
-	DPRINT("display-memory: GGIgetmode(%p,%p)\n", vis, mode);
+	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
 
 	priv = MEMORY_PRIV(vis);
 
@@ -380,7 +380,7 @@ int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int _GGI_memory_resetmode(struct ggi_visual *vis)
 {
-	DPRINT("display-memory: GGIresetmode(%p)\n", vis);
+	DPRINT("GGIresetmode(%p)\n", vis);
 
 	_GGIfreedbs(vis);
 

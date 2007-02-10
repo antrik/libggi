@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2007/02/04 15:31:20 cegger Exp $
+/* $Id: visual.c,v 1.36 2007/02/10 10:10:14 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -85,7 +85,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	gg_option options[NUM_OPTS];
 	char inputstr[1024];
 
-	DPRINT_MISC("display-memory coming up.\n");
+	DPRINT_MISC("GGIopen: coming up.\n");
 
 	memcpy(options, optlist, sizeof(options));
 	memset(inputstr, 0, sizeof(inputstr));
@@ -123,12 +123,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	if (args && *args) {	/* We have parameters. Analyze them. */
-		DPRINT("display-memory has args.\n");
+		DPRINT("has args: \"%s\"\n", args);
 #ifdef HAVE_SHM
 		if (strncmp(args, "shmid:", 6) == 0) {
 			sscanf(args + 6, "%i", &(priv->shmid));
-			DPRINT("has shmid-arg: %d.\n",
-				priv->shmid);
+			DPRINT("has shmid-arg: %d.\n", priv->shmid);
 			priv->memptr = shmat(priv->shmid, NULL, 0);
 			DPRINT("shmat at %p.\n", priv->memptr);
 			if (priv->memptr != (void *)-1) {
@@ -149,24 +148,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			char filename[1024];
 
 			sscanf(args + 8, "%u:%c:%s", &size, &id, filename);
-			DPRINT("display-memory has keyfile-arg:%d:%c:%s.\n",
+			DPRINT("has keyfile-arg:%d:%c:%s.\n",
 				size, id, filename);
 
 			priv->shmid = shmget(ftok(filename,id), size,
 						IPC_CREAT|0666);
-			DPRINT("display-memory has shmid:%d.\n",
-				priv->shmid);
+			DPRINT("has shmid:%d.\n", priv->shmid);
 
 			priv->memptr = shmat(priv->shmid,NULL,0);
-			DPRINT("display-memory: shmat at %p.\n",
-				priv->memptr);
+			DPRINT("shmat at %p.\n", priv->memptr);
 			if (priv->memptr != (void *)-1) {
 				priv->memtype = MT_SHMID;
 				if (options[OPT_INPUT].result[0]) {
 					priv->inputbuffer = priv->memptr;
 					priv->memptr = (char *)priv->memptr
 							+ INPBUFSIZE;
-					DPRINT("display-memory: moved mem to %p for input-buffer.\n",
+					DPRINT("moved mem to %p for input-buffer.\n",
 						priv->memptr);
 				}
 				snprintf(inputstr, sizeof(inputstr),
@@ -247,16 +244,19 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			DPRINT("opening input-memory %p\n",
-				priv->inputbuffer->buffer);
-#if 0
+#if 0	/* Both ways actually work in cube3d */
+			DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
+				inputstr, priv->inputbuffer->buffer);
 			priv->inp = ggOpenModule(gii, vis->stem,
 						"input-memory", inputstr,
 						priv->inputbuffer->buffer);
-#endif
+#else
+			DPRINT("input-memory:-pointer with memory at %p\n",
+				priv->inputbuffer->buffer);
 			priv->inp = ggOpenModule(gii, vis->stem,
 						"input-memory", "-pointer",
 						priv->inputbuffer->buffer);
+#endif
 			DPRINT("ggOpenModule for input-memory returned %p\n",
 				priv->inp);
 		}
