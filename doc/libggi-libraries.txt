@@ -7,6 +7,7 @@ LibGGI Libraries and utilities
 .. include:: ../display/fbdev/man.txt
 .. include:: ../display/file/man.txt
 .. include:: ../display/glide/man.txt
+.. include:: ../display/ipc/man.txt
 .. include:: ../display/kgi/man.txt
 .. include:: ../display/mansync/man.txt
 .. include:: ../display/memory/man.txt
