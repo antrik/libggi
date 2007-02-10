@@ -16,13 +16,13 @@ Expects the client to specify the socket, semid and shmid options.
 \f(CW-input\fR
 If the \f(CW-input\fR option is set, an input buffer of \fBINPBUFSIZE\fR
 (default are 8192 bytes) as #define'd in \fBggi/display/ipc.h\fR is
-allocated at the start of the requested memory area.
+allocated at the start of the requested memory area. libgii's
+\f(CWinput-memory(7)\fR is internally used for the real input handling.
 
 When running on shared memory, this option enables you to give
 input (using \f(CWgiiEventSend(3)\fR) to other processes sharing
 that segment. This technique is demonstrated in \f(CWcube3d(1)\fR
 and can be used for things like GGI multiplexers.
-libgii's \f(CWinput-memory(7)\fR is internally used for input handling.
 
 .TP
 \f(CW-physz=<sizex>,<sizey>[dpi]\fR
