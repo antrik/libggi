@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.43 2007/01/11 01:05:12 pekberg Exp $
+/* $Id: visual.c,v 1.44 2007/02/11 18:14:45 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -143,7 +143,6 @@ GGIopen(struct ggi_visual *vis,
 	struct sockaddr_in sa;
 	gii_vnc_arg iargs;
 	struct gg_stem *stem;
-	struct gg_module *inp = NULL;
 	struct gg_api *gii;
 	char *display_memory;
 
@@ -162,13 +161,12 @@ GGIopen(struct ggi_visual *vis,
 		return err;
 #endif
 
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(ggi_vnc_priv));
+	priv = LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_vnc_priv));
 	if (priv == NULL) {
 		err = GGI_ENOMEM;
 		goto out_socketcleanup;
 	}
 
-	memset(priv, 0, sizeof(*priv));
 	priv->sfd = -1;
 	GG_LIST_INIT(&priv->clients);
 
@@ -425,23 +423,23 @@ GGIopen(struct ggi_visual *vis,
 	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
-	if (gii == NULL || !STEM_HAS_API(vis->stem, gii)) {
+	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+		priv->inp = ggOpenModule(gii, vis->stem,
+					"input-vnc", NULL, &iargs);
+		DPRINT_MISC("ggOpenModule returned with %p\n",
+			priv->inp);
+	} else {
 		err = GGI_ENODEVICE;
 		DPRINT_MISC("gii not attached to stem\n");
 		goto out_closefds;
 	}
 
-	inp = ggOpenModule(gii, vis->stem, "input-vnc", NULL, &iargs);
-
-	DPRINT_MISC("ggOpenModule returned with %p\n", inp);
-
-	if (inp == NULL) {
+	if (priv->inp == NULL) {
 		DPRINT_MISC("unable to open vnc inputlib\n");
 		err = GGI_ENODEVICE;
 		goto out_closefds;
 	}
 
-	priv->inp         = inp;
 	priv->add_cfd     = iargs.add_cfd;
 	priv->del_cfd     = iargs.del_cfd;
 	priv->add_cwfd    = iargs.add_cwfd;
@@ -496,7 +494,7 @@ GGIopen(struct ggi_visual *vis,
 
 out_closefds:
 	if (priv->inp)
-		ggCloseModule(inp);
+		ggCloseModule(priv->inp);
 	if (priv->sfd != -1)
 		close(priv->sfd);
 out_closefb:
