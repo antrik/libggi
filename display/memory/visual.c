@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.36 2007/02/10 10:10:14 cegger Exp $
+/* $Id: visual.c,v 1.37 2007/02/11 16:50:46 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -139,8 +139,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					DPRINT("moved mem to %p for input-buffer.\n",
 						priv->memptr);
 				} 
-				snprintf(inputstr, sizeof(inputstr),
-					"-input:shmid:%i", priv->shmid);
 			}
 		} else if (strncmp(args, "keyfile:", 8) == 0) {
 			unsigned int size;
@@ -166,9 +164,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					DPRINT("moved mem to %p for input-buffer.\n",
 						priv->memptr);
 				}
-				snprintf(inputstr, sizeof(inputstr),
-					"-input:keyfile:%u:%c:%s",
-					size, id, filename);
 			}
 		} else 
 #endif
@@ -176,8 +171,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			priv->memptr = argptr;
 			if (priv->memptr) {
 				priv->memtype = MT_EXTERN;
-				snprintf(inputstr, sizeof(inputstr),
-					"-pointer");
 			}
 		}
 	}
@@ -244,19 +237,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-#if 0	/* Both ways actually work in cube3d */
+			snprintf(inputstr, sizeof(inputstr),
+				"-size=%i:-pointer", INPBUFSIZE);
 			DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
 				inputstr, priv->inputbuffer->buffer);
 			priv->inp = ggOpenModule(gii, vis->stem,
 						"input-memory", inputstr,
 						priv->inputbuffer->buffer);
-#else
-			DPRINT("input-memory:-pointer with memory at %p\n",
-				priv->inputbuffer->buffer);
-			priv->inp = ggOpenModule(gii, vis->stem,
-						"input-memory", "-pointer",
-						priv->inputbuffer->buffer);
-#endif
 			DPRINT("ggOpenModule for input-memory returned %p\n",
 				priv->inp);
 		}
