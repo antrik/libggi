@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.40 2006/03/20 08:52:11 pekberg Exp $
+/* $Id: visual.c,v 1.41 2007/02/11 18:01:11 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -214,21 +214,18 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	       specified */
 	    (!priv->hParent ||
 	     getenv("GGI_INPUT") || getenv("GGI_INPUT_directx"))) {
-		struct gg_module *inp = NULL;
 		struct gg_api *gii;
 
-		if ((gii = ggGetAPIByName("gii")) != NULL) {
-			if (STEM_HAS_API(vis->stem, gii)) {
-				inp = ggOpenModule(gii, vis->stem,
-					"input-directx", NULL, &inputdx);
-			}
+		gii = ggGetAPIByName("gii");
+		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+			priv->inp = ggOpenModule(gii, vis->stem,
+				"input-directx", NULL, &inputdx);
 		}
 
-		if (!inp)
+		if (priv->inp == NULL) {
 			DPRINT_MISC("Unable to open input-directx, "
 				"going on without it\n");
-
-		priv->inp = inp;
+		}
 	}
 	else
 		priv->inp = NULL;
