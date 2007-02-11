@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2006/10/14 13:42:28 soyt Exp $
+/* $Id: visual.c,v 1.19 2007/02/11 18:04:09 cegger Exp $
 ******************************************************************************
 
    Teletarget.
@@ -105,23 +105,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->connected = 1;
 
 	fprintf(stderr, "... connection established.\n");
+	iargs.client = priv->client;
+	iargs.tclient_poll = tclient_poll;
+	iargs.tclient_read = tclient_read;
 
 	/* set up GII */
 	DPRINT_MISC("gii starting\n");
 	gii = ggGetAPIByName("gii");
-	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
+	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+		priv->input = ggOpenModule(gii, vis->stem,
+				"input-tele", NULL, &iargs);
+	} else {
 		err = GGI_ENODEVICE;
 		fprintf(stderr,
 			"display-tele: gii not attached to stem\n");
 		goto out_freeclient;
 	}
-
-	iargs.client = priv->client;
-	iargs.tclient_poll = tclient_poll;
-	iargs.tclient_read = tclient_read;
-
-	priv->input = ggOpenModule(gii, vis->stem, "input-tele", NULL,
-				&iargs);
 
 	priv->observer = ggObserve(priv->input->channel,
 	    GGI_tele_listener, vis);
