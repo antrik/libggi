@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2007/02/10 00:29:59 cegger Exp $
+/* $Id: visual.c,v 1.26 2007/02/11 07:46:48 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -119,14 +119,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	LIBGGI_PRIVATE(vis) = priv;
 	priv->inputbuffer = NULL;	/* Default to no input */
 
-	gii = ggGetAPIByName("gii");
-	if (gii == NULL && !STEM_HAS_API(vis->stem, gii)) {
-		err = GGI_ENODEVICE;
-		fprintf(stderr,
-			"display-ipc: gii not attached to stem\n");
-		goto err1;
-	}
-
 	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result,
 			     &(priv->physzflags), &(priv->physz)))
 	{
@@ -191,19 +183,21 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->checkmode = GGI_ipc_checkmode;
 	vis->opdisplay->setflags  = GGI_ipc_setflags;
 
+	gii = ggGetAPIByName("gii");
+	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+		inp = ggOpenModule(gii, vis->stem, "input-memory", "-pointer",
+				priv->inputbuffer->buffer);
+		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
 
-	inp = ggOpenModule(gii, vis->stem, "input-memory", "-pointer",
-			priv->inputbuffer->buffer);
-
-	DPRINT_MISC("ggOpenModule returned with %p\n", inp);
-
-	if (inp == NULL) {
-		fprintf(stderr,
-			"display-ipc: unable to open input-memory\n");
-		err = GGI_ENODEVICE;
-		goto err1;
+		if (inp == NULL) {
+			fprintf(stderr,
+				"display-ipc: unable to open input-memory\n");
+			err = GGI_ENODEVICE;
+			goto err2;
+		}
+	} else {
+		inp = NULL;
 	}
-
 
 	priv->inp = inp;
   
