@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2007/02/11 08:01:42 cegger Exp $
+/* $Id: visual.c,v 1.28 2007/02/11 17:37:19 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -184,10 +184,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	gii = ggGetAPIByName("gii");
 	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
+		char inputstr[512];
+
+		snprintf(inputstr, sizeof(inputstr),
+			"-size=%i:-pointer", INPBUFSIZE);
+		DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
+			inputstr, priv->inputbuffer->buffer);
 		priv->inp = ggOpenModule(gii, vis->stem,
-				"input-memory", "-pointer",
+				"input-memory", inputstr,
 				priv->inputbuffer->buffer);
-		DPRINT_MISC("ggOpenModule returned with %p\n", priv->inp);
+		DPRINT("ggOpenModule returned with %p\n",
+			priv->inp);
 
 		if (priv->inp == NULL) {
 			fprintf(stderr,
