@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.12 2007/02/09 23:54:27 cegger Exp $
+/* $Id: memory.h,v 1.13 2007/02/13 06:00:15 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -33,7 +33,6 @@
 
 
 #define INPBUFSIZE	8192
-#define MEMINPMAGIC	'M'
 
 #ifdef HAVE_SYS_SHM_H
 

@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.9 2007/02/10 00:29:59 cegger Exp $
+/* $Id: ipc.h,v 1.10 2007/02/13 06:00:15 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -33,7 +33,6 @@
 
 
 #define INPBUFSIZE	8192
-#define MEMINPMAGIC	'M'
 
 #if defined(__WIN32__) && !defined(__CYGWIN__)
 # ifdef HAVE_WINSOCK2_H
