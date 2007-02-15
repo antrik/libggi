@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.10 2006/09/23 09:05:22 cegger Exp $
+/* $Id: consistency.c,v 1.11 2007/02/15 20:35:57 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -16,6 +16,7 @@
 */
 
 #include "config.h"
+#include <ggi/gii.h>
 #include <ggi/ggi.h>
 
 #include <stdio.h>
@@ -619,15 +620,9 @@ static int setup_mode(void)
 	ggi_color map[256];
 	ggi_mode gmode;
 
-	if ((mode.vis=ggNewStem(NULL)) == NULL) {
+	if ((mode.vis=ggNewStem(libgii, libggi, NULL)) == NULL) {
 		fprintf(stderr,
 			"unable to create stem, exiting.\n");
-		exit(1);
-	}
-
-	if (ggiAttach(mode.vis) < 0) {
-		fprintf(stderr,
-			"unable to attach ggi api, exiting.\n");
 		exit(1);
 	}
 
