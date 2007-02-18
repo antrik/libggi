@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.8 2006/10/02 16:54:36 cegger Exp $
+/* $Id: aa.h,v 1.9 2007/02/18 16:01:39 cegger Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -63,6 +63,7 @@ giifunc_sendevent	GII_aa_sendevent;
 #define MANSYNC_cont(vis)   MANSYNC_DECL_CONT(AA_PRIV(vis), vis)
 
 typedef struct {
+	struct gg_module *inp;
 	aa_context *context;
 
 	MANSYNC_DATA;

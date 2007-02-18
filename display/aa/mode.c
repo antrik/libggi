@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2006/09/22 19:30:36 cegger Exp $
+/* $Id: mode.c,v 1.21 2007/02/18 16:01:39 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -257,7 +257,7 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 	priv = AA_PRIV(vis);
 
-	MANSYNC_ignore(vis);
+	if (priv->opmansync) MANSYNC_ignore(vis);
 
 	_GGI_aa_freedbs(vis);
 
@@ -328,8 +328,7 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 	aa_autoinitkbd(priv->context,AA_SENDRELEASE);
 	aa_autoinitmouse(priv->context,AA_MOUSEALLMASK);
 	
-	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
-	MANSYNC_cont(vis);
+	if (priv->opmansync) MANSYNC_cont(vis);
 	
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));
 
@@ -409,10 +408,13 @@ int GGI_aa_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 int GGI_aa_setflags(struct ggi_visual *vis,ggi_flags flags)
 {
+	ggi_aa_priv *priv = AA_PRIV(vis);
+
 	LIBGGI_FLAGS(vis)=flags;
 
-	MANSYNC_SETFLAGS(vis,flags);
-
+	if (priv->opmansync) {
+		MANSYNC_SETFLAGS(vis,flags);
+	}
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
 
 	return 0;

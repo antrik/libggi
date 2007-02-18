@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/10/02 16:55:51 cegger Exp $
+/* $Id: visual.c,v 1.21 2007/02/18 16:01:39 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -62,6 +62,11 @@ void _GGI_aa_freedbs(struct ggi_visual *vis)
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_aa_priv *priv = AA_PRIV(vis);
+
+	if (priv->inp) {
+		ggCloseModule(priv->inp);
+		priv->inp = NULL;
+	}
 
 	_GGI_aa_freedbs(vis);
 
@@ -139,13 +144,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	LIBGGI_PRIVATE(vis) = priv;
 
-	MANSYNC_init(vis);
-	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
-		MANSYNC_start(vis);
+	if (priv->opmansync) {
+		MANSYNC_init(vis);
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_start(vis);
+		}
 	}
 
 	do {
-		struct gg_module *inp = NULL;
 		struct gg_api *gii;
 
 		DPRINT_MISC("display-aa: gii starting\n");
@@ -153,15 +159,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* First allocate a new gii_input descriptor. */
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+			priv->inp = ggOpenModule(gii, vis->stem,
 				"input-aa", NULL, NULL);
 		}
-		if (inp == NULL) {
+		if (priv->inp == NULL) {
 			DPRINT_MISC("display-aa: ggOpenModule failed\n");
 			GGIclose(vis, dlh);
 			return GGI_ENOMEM;
 		}
-		DPRINT_MISC("display-aa: gii inp=%p\n",inp);
+		DPRINT_MISC("display-aa: gii inp=%p\n",priv->inp);
 
 	} while(0);
 
@@ -191,8 +197,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	MANSYNC_deinit(vis);
+	ggi_aa_priv *priv = AA_PRIV(vis);
 
+	if (priv->opmansync) {
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_stop(vis);
+		}
+		MANSYNC_deinit(vis);
+	}
 	return 0;
 }
 
