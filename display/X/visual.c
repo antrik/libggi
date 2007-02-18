@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.65 2006/10/14 12:38:32 cegger Exp $
+/* $Id: visual.c,v 1.66 2007/02/18 18:44:08 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -594,8 +594,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open xwin inputlib\n");
-			GGIclose(vis, dlh);
-			return GGI_ENODEVICE;
+			err = GGI_ENODEVICE;
+			goto out;
 		}
 
 		priv->inp = inp;
