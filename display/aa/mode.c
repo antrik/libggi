@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/02/18 16:01:39 cegger Exp $
+/* $Id: mode.c,v 1.22 2007/02/18 18:56:30 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -33,6 +33,8 @@
 #include "config.h"
 #include <ggi/display/aa.h>
 #include <ggi/internal/ggi_debug.h>
+
+#include <ggi/input/aa.h>
 
 
 int GGI_aa_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
@@ -249,22 +251,22 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 	struct aa_hardware_params ap = aa_defparams;
 	int nx, ny, err;
 
+	priv = AA_PRIV(vis);
+
 	err = _GGIcursorycheckmode(vis, tm);
 	if (err) {
 		DPRINT_MODE("display-aa: setmode: cursory checkmode failed\n");
 		return err;
 	}
 
-	priv = AA_PRIV(vis);
-
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
 	_GGI_aa_freedbs(vis);
 
-    	if(priv->context)
+    	if (priv->context)
     		aa_close(priv->context);
     	
-	if(tm->visible.x != GGI_AUTO) {
+	if (tm->visible.x != GGI_AUTO) {
 		ap.width = 
 #if 0 /* for some reason this doesn't work */
 		ap.minwidth =
@@ -272,7 +274,7 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 #endif
 		tm->visible.x / AA_SCRMULT_X;
 	}
-	if(tm->visible.y != GGI_AUTO) {
+	if (tm->visible.y != GGI_AUTO) {
 		ap.height = 
 #if 0
 		ap.minheight =
@@ -282,7 +284,7 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 	}
 
 	priv->context = aa_autoinit(&ap);
-	if(!priv->context) {
+	if (!priv->context) {
 		DPRINT_MODE("display-aa: setmode: aa_autoinit failed\n");
 		/* If user is negotiating with setmode, assume: */
 		tm->visible.x = tm->virt.x = 80*AA_SCRMULT_X;
@@ -327,6 +329,15 @@ int GGI_aa_setmode(struct ggi_visual *vis,ggi_mode *tm)
 
 	aa_autoinitkbd(priv->context,AA_SENDRELEASE);
 	aa_autoinitmouse(priv->context,AA_MOUSEALLMASK);
+
+	if (priv->inp) {
+		struct gii_aa_cmddata_setparam data;
+
+		data.context = priv->context;
+
+		ggControl(priv->inp->channel, GII_CMDCODE_AASETPARAM,
+			&data);
+	}
 	
 	if (priv->opmansync) MANSYNC_cont(vis);
 	

@@ -1,4 +1,4 @@
-/* $Id: aa.h,v 1.9 2007/02/18 16:01:39 cegger Exp $
+/* $Id: aa.h,v 1.10 2007/02/18 18:56:29 cegger Exp $
 ******************************************************************************
 
    Headers for AA target.
@@ -73,5 +73,6 @@ typedef struct {
 } ggi_aa_priv;
 
 void _GGI_aa_freedbs(struct ggi_visual *vis);
+int GGI_aa_listener(void *arg, uint32_t flag, void *data);
 
 #endif /* _GGI_DISPLAY_AA_H */

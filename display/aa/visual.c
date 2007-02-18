@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2007/02/18 16:01:39 cegger Exp $
+/* $Id: visual.c,v 1.22 2007/02/18 18:56:30 cegger Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -161,6 +161,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
 			priv->inp = ggOpenModule(gii, vis->stem,
 				"input-aa", NULL, NULL);
+			if (priv->inp != NULL) {
+				ggObserve(priv->inp->channel, GGI_aa_listener, vis);
+			}
 		}
 		if (priv->inp == NULL) {
 			DPRINT_MISC("display-aa: ggOpenModule failed\n");
