@@ -42,8 +42,8 @@ AC_ARG_WITH([uninst-gg],
        AM_CPPFLAGS="-I$gg_top_srcdir/include -I$gg_top_builddir/include $AM_CPPFLAGS"
        CPPFLAGS="-I$gg_top_srcdir/include -I$gg_top_builddir/include $CPPFLAGS"
      fi
-     AM_LDFLAGS="-L$gg_top_builddir/gg -L$gg_top_builddir/gg $AM_LDFLAGS"
-     LDFLAGS="-L$gg_top_builddir/gg -L$gg_top_builddir/gg $LDFLAGS"
+     AM_LDFLAGS="-L$gg_top_builddir/gg $AM_LDFLAGS"
+     LDFLAGS="-L$gg_top_builddir/gg $LDFLAGS"
    fi
 ]])
 
