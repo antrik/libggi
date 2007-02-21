@@ -24,8 +24,6 @@ AC_DEFUN([GG_UNINST_PATH],
 # This is for building against an uninstalled libgg for
 # both $(top_builddir) == $(top_srcdir)
 # and $(top_builddir) != $(top_srcdir)
-# I'd like the sed expression to be more robust, but
-# character set matching '[]' is stripped by m4
 AC_ARG_WITH([uninst-gg],
 [  --with-uninst-gg=DIR   use uninstalled copy of LibGG found in DIR],
 [[if test -d "$withval" ; then

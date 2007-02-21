@@ -24,8 +24,6 @@ AC_DEFUN([GII_UNINST_PATH],
 # This is for building against an uninstalled libgii for
 # both $(top_builddir) == $(top_srcdir)
 # and $(top_builddir) != $(top_srcdir)
-# I'd like the sed expression to be more robust, but
-# character set matching '[]' is stripped by m4
 AC_ARG_WITH([uninst-gii],
 [  --with-uninst-gii=DIR   use uninstalled copy of LibGII found in DIR],
 [[if test -d "$withval" ; then
