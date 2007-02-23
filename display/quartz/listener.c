@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.3 2007/02/23 21:51:45 cegger Exp $
+/* $Id: listener.c,v 1.4 2007/02/23 23:06:08 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -45,6 +45,10 @@ int GGI_quartz_listener(void *arg, uint32_t flag, void *data)
 		GGI_quartz_updateWindowContext(vis, 1);
 	}
 
+	if (flag & GII_CMDCODE_QZWINCLOSE) {
+		/* unregister when window closes */
+		return 1;
+	}
 
 	return 0;
 }
