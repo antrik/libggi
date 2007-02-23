@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2007/02/10 07:46:27 cegger Exp $
+/* $Id: visual.c,v 1.21 2007/02/23 22:24:18 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -139,11 +139,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (err != GGI_OK) goto out;
 
 	if (tolower((uint8_t)options[OPT_NOMANSYNC].result[0]) == 'n') {
+		struct gg_api *ggi;
+
 		priv->opmansync = malloc(sizeof(_ggi_opmansync));
 		if (priv->opmansync == NULL) {
 			err = GGI_ENOMEM;
 			goto out;
 		}	/* if */
+#if 1
 		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
 				"helper-mansync", NULL, priv->opmansync, 0);
 		if (err != GGI_OK) {
@@ -151,6 +154,18 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				"display-quartz: Cannot load required helper-mansync!\n");
 			goto out;
 		}	/* if */
+#else
+		priv->mod_mansync = ggOpenModule(libggi, vis->stem,
+					"helper-mansync", NULL,
+					priv->opmansync);
+		if (priv->mod_mansync == NULL) {
+			fprintf(stderr, "module loading failed?\n");
+			free(priv->opmansync);
+			priv->opmansync = NULL;
+			err = GGI_ENODEVICE;
+			goto out;
+		}
+#endif
 	}	/* if */
 
 	/* windowed mode is default */
@@ -179,10 +194,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		SetFrontProcess(&myProc);
 	} while(0);
 #endif
-
-	/* export functions */
-	priv->updateWindowContext = _GGI_quartz_updateWindowContext;
-
 
 	/* Initialize the video settings; this data persists between mode switches */
 	priv->display_id = CGMainDisplayID();

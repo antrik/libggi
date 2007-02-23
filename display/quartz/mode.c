@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/02/04 18:13:24 cegger Exp $
+/* $Id: mode.c,v 1.22 2007/02/23 22:24:18 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -155,7 +155,7 @@ static int _ggi_load_slaveops(struct ggi_visual *vis)
 
 
 
-int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
+int GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 {
 	int width, height;
 	ggi_mode mode;
@@ -186,6 +186,12 @@ int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 
 	fb_size = mode.visible.x * GT_ByPP(mode.graphtype)
 			* mode.visible.y * mode.frames;
+	if (fb_size == 0) {
+		/* hmm... no mode set.
+		 * Nothing to do then.
+		 */
+		return GGI_OK;
+	}
 
 	if (manualrefresh) {
 		fb = realloc(priv->fb, fb_size);
@@ -206,7 +212,7 @@ int _GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 	CGContextClearRect(priv->context, tmpBounds);
 
 	return GGI_OK;
-}	/* _GGI_quartz_updateWindowContext */
+}	/* GGI_quartz_updateWindowContext */
 
 
 static void _GGIfreedbs(struct ggi_visual *vis)

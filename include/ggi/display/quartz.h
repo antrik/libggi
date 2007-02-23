@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.13 2006/10/14 12:52:11 cegger Exp $
+/* $Id: quartz.h,v 1.14 2007/02/23 22:24:17 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -39,6 +39,7 @@
 typedef struct {
 	PHYSZ_DATA
 	MANSYNC_DATA;	/* mansync helper hooks */
+	struct gg_module *mod_mansync;
 
 	int fullscreen;
 
@@ -82,9 +83,6 @@ typedef struct {
 	struct gg_observer *observer;
 
 	int enableUserResize;
-
-	/* functions for use of extensions */
-	int (*updateWindowContext)(struct ggi_visual *vis, int manualrefresh);
 } ggi_quartz_priv;
 
 
@@ -105,10 +103,5 @@ typedef struct {
 
 /* listener.c prototype */
 int GGI_quartz_listener(void *arg, uint32_t flag, void *data);
-
-/* functions for use of extensions */
-#define GGI_quartz_updateWindowContext(vis, refresh)	\
-		QUARTZ_PRIV(vis)->updateWindowContext(vis, refresh)
-
 
 #endif /* _GGI_DISPLAY_QUARTZ_H */
