@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.7 2006/03/11 18:49:12 soyt Exp $
+/* $Id: ext.c,v 1.8 2007/02/23 23:26:43 cegger Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -164,6 +164,7 @@ int ggiExtensionAttach(ggi_visual_t v, ggi_extid id)
 	ggi_extension *tmp = NULL;
 
 	DPRINT_CORE("ggiExtensionAttach(%p, %d) called\n", vis, id);
+	LIB_ASSERT(vis != NULL, "invalid visual");
 
 	if (HAVE_EXTENSIONS) {
 		FOREACH_EXTENSION(tmp) {
