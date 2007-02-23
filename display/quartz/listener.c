@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.2 2006/10/14 12:54:41 cegger Exp $
+/* $Id: listener.c,v 1.3 2007/02/23 21:51:45 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -35,19 +35,14 @@
 
 int GGI_quartz_listener(void *arg, uint32_t flag, void *data)
 {
-#if 0
 	struct ggi_visual *vis = arg;
-#endif
 
 	if (flag & GII_CMDCODE_RESIZE) {
 		struct gii_cmddata_resize *resize;
 
 		resize = (struct gii_cmddata_resize *)data;
 
-		/* todo: update priv structure here.
-		 *  Don't resize the window itself.
-		 *  This is libggiwmh's job.
-		 */
+		GGI_quartz_updateWindowContext(vis, 1);
 	}
 
 
