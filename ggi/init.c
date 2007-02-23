@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.62 2006/12/31 03:20:33 pekberg Exp $
+/* $Id: init.c,v 1.63 2007/02/23 20:48:17 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -217,10 +217,8 @@ _ggiInit(struct gg_api* api)
 #ifndef PIC
 	snprintf(conffile, CONF_OFFSET, "string@%p", conffile + CONF_OFFSET);
 #endif
-	/* Note, sprintf() is safe here since conffile is dynamically
-	 * allocated
-	 */
-	sprintf(conffile + CONF_OFFSET, CONF_FORMAT, confdir, GGICONFFILE);
+	snprintf(conffile + CONF_OFFSET, CONF_SIZE - CONF_OFFSET,
+		CONF_FORMAT, confdir, GGICONFFILE);
 
 	err = ggLoadConfig(conffile, &_ggiConfigHandle);
 	if (err != GGI_OK)
@@ -230,7 +228,8 @@ _ggiInit(struct gg_api* api)
 #else /* HAVE_CONFFILE */
 	{
 		char arrayconf[40];
-		snprintf(arrayconf, 40, "array@%p", _ggibuiltinconf);
+		snprintf(arrayconf, sizeof(arrayconf),
+			"array@%p", (const void *)_ggibuiltinconf);
 		err = ggLoadConfig(arrayconf, &_ggiConfigHandle);
 		if (err != GGI_OK) {
 			fprintf(stderr, "LibGGI: fatal error - "
