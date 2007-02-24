@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.4 2007/02/23 23:06:08 cegger Exp $
+/* $Id: listener.c,v 1.5 2007/02/24 14:22:40 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -42,7 +42,7 @@ int GGI_quartz_listener(void *arg, uint32_t flag, void *data)
 
 		resize = (struct gii_cmddata_resize *)data;
 
-		GGI_quartz_updateWindowContext(vis, 1);
+		GGI_quartz_updateWindowContext(vis);
 	}
 
 	if (flag & GII_CMDCODE_QZWINCLOSE) {

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2007/02/23 22:24:18 cegger Exp $
+/* $Id: mode.c,v 1.23 2007/02/24 14:22:40 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -155,7 +155,7 @@ static int _ggi_load_slaveops(struct ggi_visual *vis)
 
 
 
-int GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
+int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 {
 	int width, height;
 	ggi_mode mode;
@@ -193,14 +193,11 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis, int manualrefresh)
 		return GGI_OK;
 	}
 
-	if (manualrefresh) {
-		fb = realloc(priv->fb, fb_size);
-		if (fb == NULL) {
-			return GGI_ENOMEM;
-		}
-
-		priv->fb = fb;
+	fb = realloc(priv->fb, fb_size);
+	if (fb == NULL) {
+		return GGI_ENOMEM;
 	}
+	priv->fb = fb;
 	priv->fb_size = fb_size;
 
 	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
