@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.5 2007/02/24 14:22:40 cegger Exp $
+/* $Id: listener.c,v 1.6 2007/02/24 14:32:26 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -31,6 +31,7 @@
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/quartz.h>
 #include <ggi/input/quartz.h>
+#include "quartz.h"
 
 
 int GGI_quartz_listener(void *arg, uint32_t flag, void *data)
