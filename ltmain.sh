@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2373 2007/01/29 21:59:58) 2.1a
+# ltmain.sh (GNU libtool 1.2419 2007/02/25 19:18:35) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2373 2007/01/29 21:59:58) 2.1a
+#       $progname:		(GNU libtool 1.2419 2007/02/25 19:18:35) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2373 2007/01/29 21:59:58"
-package_revision=1.2373
+TIMESTAMP=" 1.2419 2007/02/25 19:18:35"
+package_revision=1.2419
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -108,10 +108,10 @@ $lt_unset CDPATH
 
 : ${CP="cp -f"}
 : ${ECHO="echo"}
-: ${EGREP=""}
-: ${FGREP=""}
-: ${GREP=""}
-: ${LN_S=""}
+: ${EGREP="egrep"}
+: ${FGREP="fgrep"}
+: ${GREP="grep"}
+: ${LN_S="ln -s"}
 : ${MAKE="make"}
 : ${MKDIR="mkdir"}
 : ${MV="mv -f"}
@@ -181,10 +181,17 @@ double_quote_subst='s/\(["`\\]\)/\\\1/g'
 # `\'-ed in input to the same.  If an odd number of `\' preceded a '$'
 # in input to double_quote_subst, that '$' was protected from expansion.
 # Since each input `\' is now two `\'s, look for any number of runs of
-# four `\'s followed by two `\'s and then a '$'.  `\' that '$'.  Note
-# that the embedded single quotes serve only to enhance readability.
-sed_double_backslash='s/^\(\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/;
-                s/\([^\\]\(''\\\\''\\\\''\)*''\\\\''\)\$/\1\\$/g'
+# four `\'s followed by two `\'s and then a '$'.  `\' that '$'.
+bs='\\'
+bs2='\\\\'
+bs4='\\\\\\\\'
+dollar='\$'
+sed_double_backslash="\
+  s/$bs4/&\\
+/g
+  s/^$bs2$dollar/$bs&/
+  s/\\([^$bs]\\)$bs2$dollar/\\1$bs2$bs$dollar/g
+  s/\n//g"
 
 # Standard options:
 opt_dry_run=false
@@ -793,15 +800,12 @@ Otherwise, only FILE itself is deleted using RM."
     exit $?
 }
 
-# TEST SUITE MARKER ## NON-FUNCTION
+# Generated shell functions inserted here.
+
+
 # Parse options once, thoroughly.  This comes as soon as possible in
 # the script to make things like `libtool --version' happen quickly.
 {
-  # sed scripts:
-  my_sed_single_opt='1s/^\(..\).*$/\1/;q'
-  my_sed_single_rest='1s/^..\(.*\)$/\1/;q'
-  my_sed_long_opt='1s/^\(-[^=]*\)=.*/\1/;q'
-  my_sed_long_arg='1s/^-[^=]*=//'
 
   # Shorthand for --mode=foo, only valid as the first argument
   case $1 in
@@ -893,27 +897,10 @@ Otherwise, only FILE itself is deleted using RM."
 
       # Separate optargs to long options:
       -dlopen=*|--mode=*|--tag=*)
-			arg=`$ECHO "X$opt" | $Xsed -e "$my_sed_long_arg"`
-			opt=`$ECHO "X$opt" | $Xsed -e "$my_sed_long_opt"`
-			set dummy "$opt" "$arg" ${1+"$@"}
+			func_opt_split "$opt"
+			set dummy "$func_opt_split_opt" "$func_opt_split_arg" ${1+"$@"}
 			shift
 			;;
-
-      # Separate optargs to short options:
-#      -x*|-y*)
-#			arg=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_rest"`
-#			opt=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_opt"`
-#			set dummy "$opt" "$arg" ${1+"$@"}
-#			shift
-#			;;
-
-      # Separate non-argument short options:
-#      -z*|-z*|-y*)
-#			rest=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_rest"`
-#			opt=`$ECHO "X$opt" |$Xsed -e "$my_sed_single_opt"`
-#			set dummy "$opt" "-$rest" ${1+"$@"}
-#			shift
-#			;;
 
       -\?|-h)		func_usage					;;
       --help)		opt_help=:					;;
@@ -944,7 +931,6 @@ Otherwise, only FILE itself is deleted using RM."
   # anything was wrong.
   $exit_cmd $EXIT_FAILURE
 }
-# TEST SUITE MARKER ## BEGIN SOURCABLE
 
 # func_check_version_match
 # Ensure that we are using m4 macros, and libtool script from the same
@@ -979,6 +965,38 @@ _LT_EOF
 
     exit $EXIT_MISMATCH
   fi
+}
+
+
+## ----------- ##
+##    Main.    ##
+## ----------- ##
+
+{
+  # Sanity checks first:
+  func_check_version_match
+
+  if test "$build_libtool_libs" != yes && test "$build_old_libs" != yes; then
+    func_fatal_configuration "not configured to build any kind of library"
+  fi
+
+  test -z "$mode" && func_fatal_error "error: you must specify a MODE."
+
+
+  # Darwin sucks
+  eval std_shrext=\"$shrext_cmds\"
+
+
+  # Only execute mode is allowed to have -dlopen flags.
+  if test -n "$execute_dlfiles" && test "$mode" != execute; then
+    func_error "unrecognized option \`-dlopen'"
+    $ECHO "$help" 1>&2
+    exit $EXIT_FAILURE
+  fi
+
+  # Change the help message to a mode-specific one.
+  generic_help="$help"
+  help="Try \`$progname --help --mode=$mode' for more information."
 }
 
 
@@ -1056,9 +1074,6 @@ func_source ()
     *)		. "./$1" ;;
     esac
 }
-
-
-# Generated shell functions inserted here.
 
 
 # func_win32_libid arg
@@ -1318,6 +1333,10 @@ typedef struct {
 /* DATA imports from DLLs on WIN32 con't be const, because
    runtime relocations are performed -- see ld's documentation
    on pseudo-relocs.  */"
+	    lt_dlsym_const= ;;
+	  *osf5*)
+	    echo >> "$output_objdir/$my_dlsyms" "\
+/* This system does not cope well with relocations in const data */"
 	    lt_dlsym_const= ;;
 	  *)
 	    lt_dlsym_const=const ;;
@@ -1688,7 +1707,7 @@ func_mode_compile ()
     libobj=`$ECHO "X$libobj" | $Xsed -e "s/\.$xform$/.lo/"`
 
     case $libobj in
-    *.lo) obj=`$ECHO "X$libobj" | $Xsed -e "$lo2o"` ;;
+    *.lo) func_lo2o "$libobj"; obj=$func_lo2o_result ;;
     *)
       func_fatal_error "cannot determine name of library object from \`$libobj'"
       ;;
@@ -1917,6 +1936,8 @@ compiler."
     exit $EXIT_SUCCESS
 }
 
+test "$mode" = compile && func_mode_compile ${1+"$@"}
+
 
 # func_mode_execute arg...
 func_mode_execute ()
@@ -2042,6 +2063,8 @@ func_mode_execute ()
     fi
 }
 
+test "$mode" = execute && func_mode_execute ${1+"$@"}
+
 
 # func_mode_finish arg...
 func_mode_finish ()
@@ -2119,6 +2142,8 @@ func_mode_finish ()
     $ECHO "X----------------------------------------------------------------------" | $Xsed
     exit $EXIT_SUCCESS
 }
+
+test "$mode" = finish && func_mode_finish ${1+"$@"}
 
 
 # func_mode_install arg...
@@ -2379,7 +2404,8 @@ func_mode_install ()
 	# Deduce the name of the destination old-style object file.
 	case $destfile in
 	*.lo)
-	  staticdest=`$ECHO "X$destfile" | $Xsed -e "$lo2o"`
+	  func_lo2o "$destfile"
+	  staticdest=$func_lo2o_result
 	  ;;
 	*.$objext)
 	  staticdest="$destfile"
@@ -2397,7 +2423,8 @@ func_mode_install ()
 	# Install the old object if enabled.
 	if test "$build_old_libs" = yes; then
 	  # Deduce the name of the old-style object file.
-	  staticobj=`$ECHO "X$file" | $Xsed -e "$lo2o"`
+	  func_lo2o "$file"
+	  staticobj=$func_lo2o_result
 	  func_show_eval "$install_prog \$staticobj \$staticdest" 'exit $?'
 	fi
 	exit $EXIT_SUCCESS
@@ -2550,6 +2577,8 @@ func_mode_install ()
       exit $EXIT_SUCCESS
     fi
 }
+
+test "$mode" = install && func_mode_install ${1+"$@"}
 
 
 # func_mode_link arg...
@@ -2840,8 +2869,9 @@ func_mode_link ()
 		  func_dirname "$arg" "/" ""
 		  xdir="$func_dirname_result"
 
-		  pic_object=`$ECHO "X${xdir}${objdir}/${arg}" | $Xsed -e "$lo2o"`
-		  non_pic_object=`$ECHO "X${xdir}${arg}" | $Xsed -e "$lo2o"`
+		  func_lo2o "$arg"
+		  pic_object=$xdir$objdir/$func_lo2o_result
+		  non_pic_object=$xdir$func_lo2o_result
 		  func_append libobjs " $pic_object"
 		  func_append non_pic_objects " $non_pic_object"
 	        else
@@ -3364,8 +3394,9 @@ func_mode_link ()
 	    func_dirname "$arg" "/" ""
 	    xdir="$func_dirname_result"
 
-	    pic_object=`$ECHO "X${xdir}${objdir}/${arg}" | $Xsed -e "$lo2o"`
-	    non_pic_object=`$ECHO "X${xdir}${arg}" | $Xsed -e "$lo2o"`
+	    func_lo2o "$arg"
+	    pic_object=$xdir$objdir/$func_lo2o_result
+	    non_pic_object=$xdir$func_lo2o_result
 	    func_append libobjs " $pic_object"
 	    func_append non_pic_objects " $non_pic_object"
 	  else
@@ -3721,7 +3752,7 @@ func_mode_link ()
 	    # Linking convenience modules into shared libraries is allowed,
 	    # but linking other static libraries is non-portable.
 	    case " $dlpreconveniencelibs " in
-	    *" $lib "*) ;;
+	    *" $deplib "*) ;;
 	    *)
 	      valid_a_lib=no
 	      case $deplibs_check_method in
@@ -4877,6 +4908,7 @@ func_mode_link ()
 
       func_generate_dlsyms "$libname" "$libname" "yes"
       libobjs="$libobjs $symfileobj"
+      test "X$libobjs" = "X " && libobjs=
 
       if test "$mode" != relink; then
 	# Remove our outputs, but don't remove object files since they
@@ -5432,6 +5464,7 @@ EOF
 
 	# Use standard objects if they are pic
 	test -z "$pic_flag" && libobjs=`$ECHO "X$libobjs" | $SP2NL | $Xsed -e "$lo2o" | $NL2SP`
+	test "X$libobjs" = "X " && libobjs=
 
 	delfiles=
 	if test -n "$export_symbols" && test -n "$include_expsyms"; then
@@ -5485,7 +5518,7 @@ EOF
 	      fi
 	    done
 	    IFS="$save_ifs"
-	    if test -n "$export_symbols_regex"; then
+	    if test -n "$export_symbols_regex" && test "X$skipped_export" != "X:"; then
 	      func_show_eval '$EGREP -e "$export_symbols_regex" "$export_symbols" > "${export_symbols}T"'
 	      func_show_eval '$MV "${export_symbols}T" "$export_symbols"'
 	    fi
@@ -5524,15 +5557,24 @@ EOF
 	deplibs="$tmp_deplibs"
 
 	if test -n "$convenience"; then
+	  if test -n "$whole_archive_flag_spec" &&
+	    test "$compiler_needs_object" = yes &&
+	    test -z "$libobjs"; then
+	    # extract the archives, so we have objects to list.
+	    # TODO: could optimize this to just extract one archive.
+	    whole_archive_flag_spec=
+	  fi
 	  if test -n "$whole_archive_flag_spec"; then
 	    save_libobjs=$libobjs
 	    eval libobjs=\"\$libobjs $whole_archive_flag_spec\"
+	    test "X$libobjs" = "X " && libobjs=
 	  else
 	    gentop="$output_objdir/${outputname}x"
 	    generated="$generated $gentop"
 
 	    func_extract_archives $gentop $convenience
 	    libobjs="$libobjs $func_extract_archives_result"
+	    test "X$libobjs" = "X " && libobjs=
 	  fi
 	fi
 
@@ -5596,7 +5638,7 @@ EOF
 	  last_robj=
 	  k=1
 
-	  if test "X$skipped_export" != "X:" && test "$with_gnu_ld" = yes; then
+	  if test -n "$save_libobjs" && test "X$skipped_export" != "X:" && test "$with_gnu_ld" = yes; then
 	    output=${output_objdir}/${output_la}.lnkscript
 	    func_echo "creating GNU ld script: $output"
 	    $ECHO 'INPUT (' > $output
@@ -5606,50 +5648,70 @@ EOF
 	    done
 	    $ECHO ')' >> $output
 	    delfiles="$delfiles $output"
-	  elif test "X$skipped_export" != "X:" && test "X$file_list_spec" != X; then
+	  elif test -n "$save_libobjs" && test "X$skipped_export" != "X:" && test "X$file_list_spec" != X; then
 	    output=${output_objdir}/${output_la}.lnk
 	    func_echo "creating linker input file list: $output"
 	    : > $output
-	    for obj in $save_libobjs
+	    set x $save_libobjs
+	    shift
+	    firstobj=
+	    if test "$compiler_needs_object" = yes; then
+	      firstobj="$1 "
+	      shift
+	    fi
+	    for obj
 	    do
 	      $ECHO "$obj" >> $output
 	    done
 	    delfiles="$delfiles $output"
-	    output=\"$file_list_spec$output\"
+	    output=$firstobj\"$file_list_spec$output\"
 	  else
-	    func_echo "creating reloadable object files..."
-	    output=$output_objdir/$output_la-${k}.$objext
-	    # Loop over the list of objects to be linked.
-	    for obj in $save_libobjs
-	    do
-	      eval test_cmds=\"$reload_cmds $objlist $last_robj\"
-	      if test "X$objlist" = X ||
-		 { len=`expr "X$test_cmds" : ".*" 2>/dev/null` &&
-		   test "$len" -le "$max_cmd_len"; }; then
-		objlist="$objlist $obj"
-	      else
-		# The command $test_cmds is almost too long, add a
-		# command to the queue.
-		if test "$k" -eq 1 ; then
-		  # The first file doesn't have a previous command to add.
-		  eval concat_cmds=\"$reload_cmds $objlist $last_robj\"
+	    if test -n "$save_libobjs"; then
+	      func_echo "creating reloadable object files..."
+	      output=$output_objdir/$output_la-${k}.$objext
+	      # Loop over the list of objects to be linked.
+	      for obj in $save_libobjs
+	      do
+		eval test_cmds=\"$reload_cmds $objlist $last_robj\"
+		if test "X$objlist" = X ||
+		   { len=`expr "X$test_cmds" : ".*" 2>/dev/null` &&
+		     test "$len" -le "$max_cmd_len"; }; then
+		  objlist="$objlist $obj"
 		else
-		  # All subsequent reloadable object files will link in
-		  # the last one created.
-		  eval concat_cmds=\"\$concat_cmds~$reload_cmds $objlist $last_robj\"
+		  # The command $test_cmds is almost too long, add a
+		  # command to the queue.
+		  if test "$k" -eq 1 ; then
+		    # The first file doesn't have a previous command to add.
+		    eval concat_cmds=\"$reload_cmds $objlist $last_robj\"
+		  else
+		    # All subsequent reloadable object files will link in
+		    # the last one created.
+		    eval concat_cmds=\"\$concat_cmds~$reload_cmds $objlist $last_robj\"
+		  fi
+		  last_robj=$output_objdir/$output_la-${k}.$objext
+		  k=`expr $k + 1`
+		  output=$output_objdir/$output_la-${k}.$objext
+		  objlist=$obj
+		  len=1
 		fi
-		last_robj=$output_objdir/$output_la-${k}.$objext
-		k=`expr $k + 1`
-		output=$output_objdir/$output_la-${k}.$objext
-		objlist=$obj
-		len=1
-	      fi
-	    done
-	    # Handle the remaining objects by creating one last
-	    # reloadable object file.  All subsequent reloadable object
-	    # files will link in the last one created.
-	    test -z "$concat_cmds" || concat_cmds=$concat_cmds~
-	    eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj\"
+	      done
+	      # Handle the remaining objects by creating one last
+	      # reloadable object file.  All subsequent reloadable object
+	      # files will link in the last one created.
+	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
+	      eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj\"
+
+	      # Set up a command to remove the reloadable object files
+	      # after they are used.
+	      i=0
+	      while test "$i" -lt "$k"
+	      do
+		i=`expr $i + 1`
+		delfiles="$delfiles $output_objdir/$output_la-${i}.$objext"
+	      done
+	    else
+	      output=
+	    fi
 
 	    if ${skipped_export-false}; then
 	      func_echo "generating symbol list for \`$libname.la'"
@@ -5657,26 +5719,19 @@ EOF
 	      $opt_dry_run || $RM $export_symbols
 	      libobjs=$output
 	      # Append the command to create the export file.
-	      eval concat_cmds=\"\$concat_cmds~$export_symbols_cmds\"
+	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
+	      eval concat_cmds=\"\$concat_cmds$export_symbols_cmds\"
 	    fi
 
-	    # Set up a command to remove the reloadable object files
-	    # after they are used.
-	    i=0
-	    while test "$i" -lt "$k"
-	    do
-	      i=`expr $i + 1`
-	      delfiles="$delfiles $output_objdir/$output_la-${i}.$objext"
-	    done
-
-	    func_echo "creating a temporary reloadable object file: $output"
+	    test -n "$save_libobjs" &&
+	      func_echo "creating a temporary reloadable object file: $output"
 
 	    # Loop through the commands generated above and execute them.
 	    save_ifs="$IFS"; IFS='~'
 	    for cmd in $concat_cmds; do
 	      IFS="$save_ifs"
 	      $opt_silent || {
-	          func_quote_for_expand "$cmd"
+		  func_quote_for_expand "$cmd"
 		  eval "func_echo $func_quote_for_expand_result"
 	      }
 	      $opt_dry_run || eval "$cmd" || {
@@ -5693,6 +5748,11 @@ EOF
 	      }
 	    done
 	    IFS="$save_ifs"
+
+	    if test -n "$export_symbols_regex" && ${skipped_export-false}; then
+	      func_show_eval '$EGREP -e "$export_symbols_regex" "$export_symbols" > "${export_symbols}T"'
+	      func_show_eval '$MV "${export_symbols}T" "$export_symbols"'
+	    fi
 	  fi
 
 	  libobjs=$output
@@ -5701,6 +5761,7 @@ EOF
 
 	  if test -n "$convenience" && test -n "$whole_archive_flag_spec"; then
 	    eval libobjs=\"\$libobjs $whole_archive_flag_spec\"
+	    test "X$libobjs" = "X " && libobjs=
 	  fi
 	  # Expand the library linking commands again to reset the
 	  # value of $libobjs for piecewise linking.
@@ -5733,6 +5794,7 @@ EOF
 
 	  func_extract_archives $gentop $dlprefiles
 	  libobjs="$libobjs $func_extract_archives_result"
+	  test "X$libobjs" = "X " && libobjs=
 	fi
 
 	save_ifs="$IFS"; IFS='~'
@@ -5811,8 +5873,9 @@ EOF
 	test -n "$objs$old_deplibs" && \
 	  func_fatal_error "cannot build library object \`$output' from non-libtool objects"
 
-	libobj="$output"
-	obj=`$ECHO "X$output" | $Xsed -e "$lo2o"`
+	libobj=$output
+	func_lo2o "$libobj"
+	obj=$func_lo2o_result
 	;;
       *)
 	libobj=
@@ -7078,6 +7141,9 @@ relink_command=\"$relink_command\""
     exit $EXIT_SUCCESS
 }
 
+{ test "$mode" = link || test "$mode" = relink; } &&
+    func_mode_link ${1+"$@"}
+
 
 # func_mode_uninstall arg...
 func_mode_uninstall ()
@@ -7245,59 +7311,21 @@ func_mode_uninstall ()
     exit $exit_status
 }
 
+{ test "$mode" = uninstall || test "$mode" = clean; } &&
+    func_mode_uninstall ${1+"$@"}
 
-# TEST SUITE MARKER ## NON-FUNCTION
-## ----------- ##
-##    Main.    ##
-## ----------- ##
-
-{
-  # Sanity checks first:
-  func_check_version_match
-
-  if test "$build_libtool_libs" != yes && test "$build_old_libs" != yes; then
-    func_fatal_configuration "not configured to build any kind of library"
-  fi
-
-  test -z "$mode" && func_fatal_error "error: you must specify a MODE."
-
-
-  # Darwin sucks
-  eval std_shrext=\"$shrext_cmds\"
-
-
-  # Only execute mode is allowed to have -dlopen flags.
-  if test -n "$execute_dlfiles" && test "$mode" != execute; then
-    func_error "unrecognized option \`-dlopen'"
-    $ECHO "$help" 1>&2
-    exit $EXIT_FAILURE
-  fi
-
-  # Change the help message to a mode-specific one.
-  generic_help="$help"
-  help="Try \`$progname --help --mode=$mode' for more information."
-
-  case $mode in
-    compile)		func_mode_compile ${1+"$@"}		;;
-    execute)		func_mode_execute ${1+"$@"}		;;
-    finish)		func_mode_finish ${1+"$@"}		;;
-    install)		func_mode_install ${1+"$@"}		;;
-    link|relink)	func_mode_link ${1+"$@"}		;;
-    uninstall|clean)	func_mode_uninstall ${1+"$@"}		;;
-
-    "")			help="$generic_help"
-    			func_fatal_help "you must specify a MODE"
-			;;
-  esac
-
-  test -z "$exec_cmd" && \
-    func_fatal_help "invalid operation mode \`$mode'"
-
-  if test -n "$exec_cmd"; then
-    eval exec "$exec_cmd"
-    exit $EXIT_FAILURE
-  fi
+test -z "$mode" && {
+  help="$generic_help"
+  func_fatal_help "you must specify a MODE"
 }
+
+test -z "$exec_cmd" && \
+  func_fatal_help "invalid operation mode \`$mode'"
+
+if test -n "$exec_cmd"; then
+  eval exec "$exec_cmd"
+  exit $EXIT_FAILURE
+fi
 
 exit $exit_status
 
