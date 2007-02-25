@@ -1,4 +1,4 @@
-/* $Id: lin16lib.h,v 1.4 2002/10/28 04:57:04 skids Exp $
+/* $Id: lin16lib.h,v 1.5 2007/02/25 18:13:11 cegger Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -25,7 +25,6 @@
 ******************************************************************************
 */
 
-#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 ggifunc_putc		GGI_lin16_putc;

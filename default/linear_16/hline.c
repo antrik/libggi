@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.6 2006/03/12 23:15:07 soyt Exp $
+/* $Id: hline.c,v 1.7 2007/02/25 18:13:11 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "lin16lib.h"
 
 

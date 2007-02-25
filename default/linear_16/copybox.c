@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.4 2006/03/12 23:15:07 soyt Exp $
+/* $Id: copybox.c,v 1.5 2007/02/25 18:13:10 cegger Exp $
 ******************************************************************************
 
    LibGGI linear 16 - copybox
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "lin16lib.h"
 
 

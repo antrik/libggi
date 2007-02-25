@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
+/* $Id: fillscreen.c,v 1.4 2007/02/25 18:13:11 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -28,6 +28,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "lin16lib.h"
 
 

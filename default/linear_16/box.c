@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.6 2006/03/12 23:15:07 soyt Exp $
+/* $Id: box.c,v 1.7 2007/02/25 18:13:10 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Boxes.
@@ -27,6 +27,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "lin16lib.h"
 
 
