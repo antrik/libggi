@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.10 2006/03/14 18:15:21 cegger Exp $
+/* $Id: gamma.c,v 1.11 2007/02/25 17:21:06 cegger Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -34,6 +34,7 @@
 #include <unistd.h>
 #endif
 
+#include "config.h"
 #include "color.h"
 #include <ggi/internal/ggi_debug.h>
 

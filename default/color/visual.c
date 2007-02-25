@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/03/12 23:15:04 soyt Exp $
+/* $Id: visual.c,v 1.13 2007/02/25 17:21:06 cegger Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 
+#include "config.h"
 #include "color.h"
 
 

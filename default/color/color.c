@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.21 2006/03/12 23:15:04 soyt Exp $
+/* $Id: color.c,v 1.22 2007/02/25 17:21:06 cegger Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -27,6 +27,8 @@
 */
 
 #include <string.h>
+
+#include "config.h"
 #include "color.h"
 #include <ggi/internal/ggi_debug.h>
 
