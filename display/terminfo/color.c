@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.9 2006/03/20 20:44:53 cegger Exp $
+/* $Id: color.c,v 1.10 2007/02/25 18:58:30 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "TIvisual.h"
 
 #define GGI_COLOR_COMPONENT_TYPE uint16_t

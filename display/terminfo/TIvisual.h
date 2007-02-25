@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.9 2006/09/11 21:09:37 cegger Exp $
+/* $Id: TIvisual.h,v 1.10 2007/02/25 18:58:30 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -20,7 +20,6 @@
    CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 
 #ifdef __GNUC__

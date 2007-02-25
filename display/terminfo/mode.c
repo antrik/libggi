@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2006/09/11 21:09:37 cegger Exp $
+/* $Id: mode.c,v 1.19 2007/02/25 18:58:30 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "TIvisual.h"
 #include <ggi/internal/ggi_debug.h>
 

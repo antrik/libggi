@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/09/11 21:09:37 cegger Exp $
+/* $Id: visual.c,v 1.21 2007/02/25 18:58:30 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -31,6 +31,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "config.h"
 #include "TIvisual.h"
 #include <ggi/gii.h>
 #include <ggi/gii-module.h>
