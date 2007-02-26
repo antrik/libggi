@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.8 2007/02/23 23:26:43 cegger Exp $
+/* $Id: ext.c,v 1.9 2007/02/26 22:54:42 pekberg Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -245,6 +245,8 @@ int ggiIndicateChange(ggi_visual_t v, int whatchanged)
 			}
 		}
 	}
+
+	ggBroadcast(libggi->channel, whatchanged, vis);
 
 	return 0;
 }
