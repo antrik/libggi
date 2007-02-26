@@ -25,8 +25,8 @@
 #
 #*****************************************************************************
 
-if test $# != 2; then
-  echo "$0: Usage $0 root file" 1>&2
+if test $# != 3; then
+  echo "$0: Usage $0 root file os" 1>&2
   exit 1
 fi
 
@@ -44,6 +44,7 @@ ESC2NL="tr ^ \n"
 sedroot=`echo "$1" | $SED -e 's,\\\\,/,g'`
 
 conf=`cat "$1/$2" | $NL2ESC`
+os=$3
 
 # support 20 levels of .includes
 for count in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
@@ -87,5 +88,6 @@ echo "$conf" | $ESC2NL | $SED -e '
 /@DLLEXT@/d
 s/[ 	][ 	]*/ /g
 s/\(["\\]\)/\\\1/g
+s/@OS@/'"$os"'/g
 s/\(.*\)/"\1",/
 '
