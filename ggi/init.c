@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.63 2007/02/23 20:48:17 cegger Exp $
+/* $Id: init.c,v 1.64 2007/02/26 01:04:36 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -354,19 +354,22 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 	}
 	GG_ITER_DONE(&match);
 
-	if (success) {
-		ggLock(_ggiVisuals.mutex);
-		GG_SLIST_INSERT_HEAD(&_ggiVisuals.visual, vis, vislist);
-		_ggiVisuals.visuals++;
-		ggUnlock(_ggiVisuals.mutex);
-		DPRINT_CORE("ggiOpen: success\n");
-	} else {
+	if (!success) {
 		_ggiDestroyVisual(vis);
 		GGI_PRIV(stem) = NULL;
 		DPRINT_CORE("ggiOpen: failure\n");
 		return GGI_ENOTFOUND;
 	}
-	
+
+	ggLock(_ggiVisuals.mutex);
+	GG_SLIST_INSERT_HEAD(&_ggiVisuals.visual, vis, vislist);
+	_ggiVisuals.visuals++;
+	ggUnlock(_ggiVisuals.mutex);
+
+	ggBroadcast(libggi->channel, GGI_OBSERVE_VISUAL_OPENED, vis);
+
+	DPRINT_CORE("ggiOpen: success\n");
+
 	return GGI_OK;
 }
 	
@@ -394,6 +397,8 @@ int ggiClose(ggi_visual_t v)
 	}
 
 	if (vis == NULL) return GGI_EARGINVAL;
+
+	ggBroadcast(libggi->channel, GGI_OBSERVE_VISUAL_CLOSED, vis);
 
 	ggLock(_ggiVisuals.mutex);
 

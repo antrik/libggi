@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.21 2006/12/29 15:26:59 cegger Exp $
+/* $Id: ggi.h,v 1.22 2007/02/26 01:04:36 pekberg Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -341,6 +341,10 @@ typedef struct {
 #define GGI_ACTYPE_READ		(1U<<0U)
 #define GGI_ACTYPE_WRITE	(1U<<1U)
 
+
+
+#define GGI_OBSERVE_VISUAL_OPENED 0
+#define GGI_OBSERVE_VISUAL_CLOSED 1
 
 /*
 ******************************************************************************
