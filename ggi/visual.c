@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2006/10/14 12:03:15 soyt Exp $
+/* $Id: visual.c,v 1.14 2007/02/27 08:53:24 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -292,6 +292,7 @@ struct ggi_visual *_ggiNewVisual(void)
 void _ggiDestroyVisual(struct ggi_visual *vis)
 {
 	_ggiCloseDL(vis, 1);
+	vis->stem = NULL;
 
 	if (LIBGGI_PAL(vis)) {
 		if (LIBGGI_PAL(vis)->priv) free(LIBGGI_PAL(vis)->priv);

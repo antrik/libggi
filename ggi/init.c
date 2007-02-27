@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.64 2007/02/26 01:04:36 pekberg Exp $
+/* $Id: init.c,v 1.65 2007/02/27 08:53:24 pekberg Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -412,7 +412,6 @@ int ggiClose(ggi_visual_t v)
 	
 	ggUnlock(_ggiVisuals.mutex);
 
-	vis->stem = NULL;
 	_ggiDestroyVisual(vis);
 	GGI_PRIV(v) = NULL;
 
