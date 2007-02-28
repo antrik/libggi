@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.42 2006/10/18 12:09:34 pekberg Exp $
+/* $Id: mode.c,v 1.43 2007/02/28 10:38:09 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -343,7 +343,7 @@ GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	int i, id, ret;
 	char lib[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 	int compatible;
-	int change = 0;
+	int change = -1;
 
 	ret = do_checkmode(vis, mode);
 	if (ret != 0) {
@@ -365,7 +365,7 @@ GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			LIBGGI_PAL(vis)->rw_stop  = 0;
 			vis->opcolor->setpalvec = NULL;
 		}
-		change |= GGI_CHG_APILIST;
+		change = GGI_CHG_APILIST;
 	}
 
 	/* Fill in ggi_pixelformat */
@@ -456,7 +456,8 @@ GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	GGI_directx_Unlock(priv->cs);
 
-	ggiIndicateChange(vis->stem, change);
+	if (change != -1)
+		ggiIndicateChange(vis->stem, change);
 
 	return 0;
 }
