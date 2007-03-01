@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.7 2006/03/20 17:50:01 pekberg Exp $
+/* $Id: test1.c,v 1.8 2007/03/01 10:59:10 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -26,20 +26,25 @@
 ******************************************************************************
 */
 
-#include "config.h"
-#include <ggi/internal/internal.h>
-
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
+#include <ggi/internal/internal.h>
+#include <ggi/gg.h>
 #include "test1.h"
 
 /*
  * The API of Extension #1 looks a bit like this :
  */
 
-/* Extension ID. Defaulting to -1 should make segfault on abuse more likely ... */
-ggi_extid ggiTest1ID=-1;
+static int _ggitest1Init(struct gg_api *);
+static struct gg_api _ggitest1 = GG_API("test1", GG_VERSION(1,0,0,0),
+					_ggitest1Init);
+struct gg_api *ggitest1 = &_ggitest1;
+
+static struct gg_observer *observer;
+
 
 static int changed(struct ggi_visual *vis,int whatchanged)
 {
@@ -66,59 +71,144 @@ static int changed(struct ggi_visual *vis,int whatchanged)
 	return 0;
 }
 
+static void
+_test1_attach_finalize(struct gg_stem *stem)
+{
+	struct ggi_visual *vis = GGI_VISUAL(stem);
+
+	printf("_test1_attach_finalize %p\n", (void *)stem);
+
+	strcpy(STEM_API_PRIV(stem, ggitest1), "Test 1 private Data !");
+
+	/* Now fake an "API change" so the right libs get loaded */
+	changed(vis, GGI_CHG_APILIST);
+}
+
+static int
+_test1_attach(struct gg_api *api, struct gg_stem *stem)
+{
+	struct ggi_visual *vis;
+	int rc;
+
+	rc = ggiAttach(stem);
+	if (rc < 0) {
+		printf("_test1_attach: ggiAttach failed. rc %i\n", rc);
+		return rc;
+	}
+
+	vis = GGI_VISUAL(stem);
+
+	if (!vis) {
+		printf("_test1_attach: defer until visual is opened.\n");
+		return 0;
+	}
+
+	_test1_attach_finalize(stem);
+
+	return 0;
+}
+
+static void
+_test1_detach(struct gg_api *api, struct gg_stem *stem)
+{
+	ggiDetach(stem);
+}
+
+
+static int
+observe_visuals(void *arg, uint32_t flag, void *data)
+{
+	struct ggi_visual *vis = data;
+
+	if (!STEM_HAS_API(vis->stem, ggitest1))
+		return 0;
+
+	switch (flag) {
+	case GGI_OBSERVE_VISUAL_OPENED:
+		_test1_attach_finalize(vis->stem);
+		break;
+
+	case GGI_OBSERVE_VISUAL_APILIST:
+		changed(vis, flag);
+		break;
+	}
+
+	return 0;
+}
+
+
 int ggiTest1Init(void)
 {
-	ggiTest1ID=ggiExtensionRegister("Ext1",123,changed);
-	printf("Initialized Test1 extension. ID: %i\n",ggiTest1ID);
+	int rc;
 
-	return ggiTest1ID >= 0 ? 0 : -1;
+	rc = ggInitAPI(ggitest1);
+	printf("Initialized Test1 extension. Return value: %i\n", rc);
+	return rc;
+}
+
+
+static void _ggitest1Exit(struct gg_api *api);
+
+static int
+_ggitest1Init(struct gg_api *api)
+{
+	api->ops.exit = _ggitest1Exit;
+	api->ops.attach = _test1_attach;
+	api->ops.detach = _test1_detach;
+
+	ggiInit();
+	observer = ggObserve(libggi->channel, observe_visuals, NULL);
+
+	return GGI_OK;
 }
 
 int ggiTest1Exit(void)
 {
 	int rc;
-	rc=ggiExtensionUnregister(ggiTest1ID);
+
+	rc = ggExitAPI(ggitest1);
 	printf("DeInitailized Test1 extension. rc=%i\n", rc);
 
 	return rc;
 }
 
-int ggiTest1Attach(ggi_visual_t v)
+static void _ggitest1Exit(struct gg_api *api)
+{
+	ggDelObserver(observer);
+	ggiExit();
+
+	return;
+}
+
+
+int ggiTest1Attach(struct gg_stem *stem)
 {
 	int rc;
-	struct ggi_visual *vis;
-	rc=ggiExtensionAttach(v,ggiTest1ID);
+
+	rc = ggAttach(ggitest1, stem);
 	printf("Attached Test1 extension to %p. rc=%i\n",
-		(void *)v, rc);
-
-	if (rc==0) {	/* We are actually creating the primary instance. */
-		vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
-		strcpy(LIBGGI_EXT(vis,ggiTest1ID),"Test 1 private Data !");
-		/* Now fake an "API change" so the right libs get loaded */
-		changed(vis,GGI_CHG_APILIST);
-	}
+		(void *)stem, rc);
 
 	return rc;
 }
 
-int ggiTest1Detach(ggi_visual_t v)
+int ggiTest1Detach(struct gg_stem *stem)
 {
 	int rc;
-	rc=ggiExtensionDetach(v,ggiTest1ID);
+
+	rc = ggDetach(ggitest1, stem);
 	printf("Detached Test1 extension from %p. rc=%i\n",
-		(void *)v, rc);
+		(void *)stem, rc);
 
 	return rc;
 }
 
-void ggiTest1PrintLocaldata(ggi_visual_t v)
+void ggiTest1PrintLocaldata(struct gg_stem *stem)
 {
-	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
-	printf("%s\n",(char *)LIBGGI_EXT(vis,ggiTest1ID));
+	printf("%s\n",(char *)STEM_API_PRIV(stem,ggitest1));
 }
 
-void ggiTest1SetLocaldata  (ggi_visual_t v,const char *content)
+void ggiTest1SetLocaldata(struct gg_stem *stem, const char *content)
 {
-	struct ggi_visual *vis = STEM_API_DATA(v,libggi,struct ggi_visual *);
-	strcpy(LIBGGI_EXT(vis,ggiTest1ID),content);
+	ggstrlcpy(STEM_API_PRIV(stem,ggitest1),content, strlen(content)+1);
 }

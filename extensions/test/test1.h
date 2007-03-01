@@ -1,4 +1,4 @@
-/* $Id: test1.h,v 1.3 2005/06/09 18:40:45 cegger Exp $
+/* $Id: test1.h,v 1.4 2007/03/01 10:59:10 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -29,8 +29,8 @@
 int ggiTest1Init(void);
 int ggiTest1Exit(void);
 
-int ggiTest1Attach(ggi_visual_t vis);
-int ggiTest1Detach(ggi_visual_t vis);
+int ggiTest1Attach(struct gg_stem *);
+int ggiTest1Detach(struct gg_stem *);
 
-void ggiTest1PrintLocaldata(ggi_visual_t vis);
-void ggiTest1SetLocaldata  (ggi_visual_t vis,const char *content);
+void ggiTest1PrintLocaldata(struct gg_stem *);
+void ggiTest1SetLocaldata  (struct gg_stem *,const char *content);
