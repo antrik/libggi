@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.8 2007/03/01 10:59:10 cegger Exp $
+/* $Id: test1.c,v 1.9 2007/03/01 22:16:55 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -74,11 +74,13 @@ static int changed(struct ggi_visual *vis,int whatchanged)
 static void
 _test1_attach_finalize(struct gg_stem *stem)
 {
+	const char *str;
 	struct ggi_visual *vis = GGI_VISUAL(stem);
 
 	printf("_test1_attach_finalize %p\n", (void *)stem);
 
-	strcpy(STEM_API_PRIV(stem, ggitest1), "Test 1 private Data !");
+	str = (const char *)STEM_API_PRIV(stem, ggitest1);
+	str = strdup("Test 1 private Data !");
 
 	/* Now fake an "API change" so the right libs get loaded */
 	changed(vis, GGI_CHG_APILIST);
@@ -210,5 +212,10 @@ void ggiTest1PrintLocaldata(struct gg_stem *stem)
 
 void ggiTest1SetLocaldata(struct gg_stem *stem, const char *content)
 {
-	ggstrlcpy(STEM_API_PRIV(stem,ggitest1),content, strlen(content)+1);
+	const char *str;
+
+	str = (const char *)STEM_API_PRIV(stem, ggitest1);
+	if (str != NULL) free(str);
+
+	str = strdup(content);
 }
