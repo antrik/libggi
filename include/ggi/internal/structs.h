@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.22 2006/10/14 12:03:48 soyt Exp $
+/* $Id: structs.h,v 1.23 2007/03/01 11:28:41 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -180,15 +180,6 @@ typedef struct ggi_dlhandle_l {
 
 	GG_SLIST_ENTRY(ggi_dlhandle_l) dllist;
 } ggi_dlhandle_l;
-
-typedef struct ggi_extension {
-	char name[32];
-	int id;
-	int initcount;
-	size_t size;
-	int (*paramchange)(struct ggi_visual*,int whatchanged);
-	GG_TAILQ_ENTRY(ggi_extension) extlist;
-} ggi_extension;
 
 typedef struct {
 	int   attachcount;

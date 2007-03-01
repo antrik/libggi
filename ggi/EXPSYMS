@@ -49,11 +49,7 @@ ggiDrawLine
 ggiDrawPixel
 ggiDrawVLine
 ggiExit
-ggiExtensionAttach
-ggiExtensionDetach
 ggiExtensionLoadDL
-ggiExtensionRegister
-ggiExtensionUnregister
 ggiFPrintMode
 ggiFillscreen
 ggiFlush

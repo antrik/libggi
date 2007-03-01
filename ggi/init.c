@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.65 2007/02/27 08:53:24 pekberg Exp $
+/* $Id: init.c,v 1.66 2007/03/01 11:28:41 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -161,12 +161,6 @@ _ggiInit(struct gg_api* api)
 	err = _ggiSwarInit();
 	if (err) return err;
 
-	err = ggiExtensionInit();
-	if (err) {
-		fprintf(stderr, "LibGGI: unable to initialize extension manager\n");
-		goto err0;
-	}
-
 	_ggiLibIsUp = 1;
 
 	_ggiVisuals.visuals = 0;
@@ -194,13 +188,13 @@ _ggiInit(struct gg_api* api)
 	if (_ggiVisuals.mutex == NULL) {
 		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
 		err = GGI_EUNKNOWN;
-		goto err1;
+		goto err0;
 	}
 	_ggi_global_lock = ggLockCreate();
 	if (_ggi_global_lock == NULL) {
 		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
 		err = GGI_EUNKNOWN;
-		goto err2;
+		goto err1;
 	}
 
 
@@ -211,7 +205,7 @@ _ggiInit(struct gg_api* api)
 	if (!conffile) {
 		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
 		err = GGI_ENOMEM;
-		goto err3;
+		goto err2;
 	}
 
 #ifndef PIC
@@ -234,7 +228,7 @@ _ggiInit(struct gg_api* api)
 		if (err != GGI_OK) {
 			fprintf(stderr, "LibGGI: fatal error - "
 					"could not load builtin config\n");
-			goto err3;
+			goto err2;
 		}
 	}
 #endif /* HAVE_CONFFILE */
@@ -244,14 +238,12 @@ _ggiInit(struct gg_api* api)
 		return GGI_OK;
 	}
 
-err3:
-	ggLockDestroy(_ggi_global_lock);
 err2:
-	ggLockDestroy(_ggiVisuals.mutex);
+	ggLockDestroy(_ggi_global_lock);
 err1:
-	_ggiLibIsUp = 0;
-	ggiExtensionExit();
+	ggLockDestroy(_ggiVisuals.mutex);
 err0:
+	_ggiLibIsUp = 0;
 	return err;
 }
 
@@ -272,8 +264,6 @@ void _ggiExit(struct gg_api *api)
 
 	ggLockDestroy(_ggiVisuals.mutex);
 	ggLockDestroy(_ggi_global_lock);
-
-	ggiExtensionExit();
 
 	_ggiExitBuiltins();
 
