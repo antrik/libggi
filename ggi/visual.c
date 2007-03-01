@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2007/02/27 08:53:24 pekberg Exp $
+/* $Id: visual.c,v 1.15 2007/03/01 15:04:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -162,14 +162,12 @@ static void _ggi_init_allops(struct ggi_visual *vis, int initall)
 static void _ggiCloseDL(struct ggi_visual *vis, int zapall)
 {
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->generic_ext));
-	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
 	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
 	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
 
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->generic_ext));
-	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
@@ -197,7 +195,6 @@ struct ggi_visual *_ggiNewVisual(void)
 
 	vis->version = GGI_VERSION_VISUAL;
 	vis->numknownext = 0;
-	vis->extlist = NULL;
 
 	LIBGGI_MODE(vis) = calloc(1, sizeof(ggi_mode));
 	if (LIBGGI_MODE(vis) == NULL) {
@@ -237,7 +234,6 @@ struct ggi_visual *_ggiNewVisual(void)
 	LIBGGI_FD(vis) = -1;
 
 	GG_SLIST_INIT(&LIBGGI_DLHANDLE(vis));
-	GG_SLIST_INIT(&vis->extlib);
 	GG_SLIST_INIT(&vis->generic_ext);
 
 	vis->d_frame_num = vis->r_frame_num = vis->w_frame_num = 0;

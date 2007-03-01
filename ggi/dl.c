@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.28 2007/02/24 12:14:16 cegger Exp $
+/* $Id: dl.c,v 1.29 2007/03/01 15:04:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -202,9 +202,7 @@ ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, const void *conffilehandle,
 
 	tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
 	tmp->handle = dlh;
-	if (dlret & GGI_DL_OPDISPLAY)
-		GG_SLIST_INSERT_HEAD(&vis->extlib, tmp, dllist);
-	else
+	if (!(dlret & GGI_DL_OPDISPLAY))
 		GG_SLIST_INSERT_HEAD(&vis->generic_ext, tmp, dllist);
 
 	tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
@@ -271,8 +269,6 @@ int _ggiAddDL(struct ggi_visual *vis, const void *conffilehandle,
 		dlh->usecnt = 1;
 		tmp = _ggi_malloc(sizeof(ggi_dlhandle_l));
 		tmp->handle = dlh;
-
-		GG_SLIST_INSERT_HEAD(&vis->extlib, tmp, dllist);
 	}
 
 	if (dlh->usecnt == 0) {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.66 2007/02/18 18:44:08 cegger Exp $
+/* $Id: visual.c,v 1.67 2007/03/01 15:04:40 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -197,13 +197,6 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	DPRINT_MISC("GGIclose: call freefb hook\n");
 	if (priv->freefb) priv->freefb(vis);
-
-	/* Exit any initialized helper libs if called from GGIopen. */
-	DPRINT_MISC("GGIclose: close any helpers\n");
-	if (!GG_SLIST_EMPTY(&vis->extlib)) {
-		_ggiExitDL(vis, GG_SLIST_FIRST(&vis->extlib));
-		_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->extlib));
-	}
 
 	if (priv->win != priv->parentwin) {
 		/* Don't destroy window, when not created */

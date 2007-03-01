@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.23 2007/03/01 11:28:41 cegger Exp $
+/* $Id: structs.h,v 1.24 2007/03/01 15:04:40 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -36,7 +36,7 @@ typedef struct ggi_dlhandle *ggi_lib_id;
 typedef struct ggi_resource *ggi_resource_t;
 
 #include <ggi/types.h>
-#include <ggi/ggi_ext.h>
+#include <ggi/ggi.h>
 
 #include <ggi/internal/dltypes.h>
 
@@ -181,11 +181,6 @@ typedef struct ggi_dlhandle_l {
 	GG_SLIST_ENTRY(ggi_dlhandle_l) dllist;
 } ggi_dlhandle_l;
 
-typedef struct {
-	int   attachcount;
-	void *priv;
-} ggi_extlist;
-
 /*
 ******************************************************************************
  ggi_visual structure and operations
@@ -255,10 +250,6 @@ struct ggi_visual {
 	ggi_db_list	 *priv_dbs;	/* List of private DBs */
 
 	GG_SLIST_HEAD(dlhandle,ggi_dlhandle_l) dlhandle; /* Handles to dynamic libs */
-
-	/* Extension stuff */
-	GG_SLIST_HEAD(extlib,ggi_dlhandle_l) extlib;   /* Dynamic libs from extensions */
-	ggi_extlist	 *extlist;	/* Pointer to array of private data */
 
 	void	*drvpriv[_GGI_NROF_HELPERS];	/* Driver private data */
 
