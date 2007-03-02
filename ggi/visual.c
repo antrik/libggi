@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2007/03/01 15:04:40 cegger Exp $
+/* $Id: visual.c,v 1.16 2007/03/02 05:34:58 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -184,7 +184,7 @@ struct ggi_visual *_ggiNewVisual(void)
 {
 	struct ggi_visual *vis;
 
-	vis = malloc(sizeof(*vis));
+	vis = calloc(1, sizeof(*vis));
 	if (vis == NULL) return NULL;
 
 	vis->channel = ggNewChannel(vis, NULL);
