@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.67 2007/03/01 15:04:40 cegger Exp $
+/* $Id: visual.c,v 1.68 2007/03/03 15:53:15 ggibecka Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -202,6 +202,18 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		/* Don't destroy window, when not created */
 		if (priv->win != 0) XDestroyWindow(priv->disp,priv->win);
 	}
+
+	/* free saved titles
+	 */
+	if (priv->windowtitle) {
+		free((void *)priv->windowtitle);
+		priv->windowtitle=NULL;
+	}
+	if (priv->icontitle) {
+		free((void *)priv->icontitle);
+		priv->icontitle=NULL;
+	}
+
 	if (!priv->parentwin) goto skip3;
 
 	/* Do special cleanup for -inwin and root windows */
@@ -307,6 +319,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv == NULL) goto out;
 	LIBGGI_PRIVATE(vis) = priv;
 	vis->gamma = &(priv->gamma);
+	
+	/* Init the title defaults */
+	priv->windowtitle=NULL;
+	priv->icontitle  =NULL;
 
 	/* Create a lock to regularly flush */
 	lock = ggLockCreate();

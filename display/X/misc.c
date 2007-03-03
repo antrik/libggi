@@ -1,10 +1,10 @@
-/* $Id: misc.c,v 1.42 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: misc.c,v 1.43 2007/03/03 15:53:15 ggibecka Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
 
    Copyright (C) 1997      Jason McMullan	[jmcc@ggi-project.org]
-   Copyright (C) 1998      Andreas Beck		[becka@ggi-project.org]
+   Copyright (C) 2007      Andreas Beck		[becka@ggi-project.org]
    Copyright (C) 1998      Steve Cheng		[steve@ggi-project.org]
    Copyright (C) 1998-2000 Marcus Sundberg	[marcus@ggi-project.org]
    Copyright (C) 2002      Brian S. Julin	[bri@tull.umassp.edu]
@@ -408,9 +408,13 @@ int _ggi_x_dress_parentwin(struct ggi_visual *vis, ggi_mode *tm)
 	int rc;
 	XSizeHints      hint;
 	ggi_x_priv      *priv;
-	const char *name = "GGI-on-X";
+	const char *winname = "GGI-on-X";
+	const char *iconname = winname;
 
 	priv = GGIX_PRIV(vis);
+
+	if (priv->windowtitle) winname =priv->windowtitle;
+	if (priv->icontitle  ) iconname=priv->icontitle;
 
 	/* Fill in hint structure. */
 	hint.x = hint.y         = 0;
@@ -423,7 +427,7 @@ int _ggi_x_dress_parentwin(struct ggi_visual *vis, ggi_mode *tm)
 	hint.max_height         = tm->visible.y;
 	
 	/* Set WM hints and titles */
-	rc = XSetStandardProperties(priv->disp, priv->parentwin, name, name,
+	rc = XSetStandardProperties(priv->disp, priv->parentwin, winname, iconname,
 			       None, NULL, 0, &hint);
 	return rc;
 }

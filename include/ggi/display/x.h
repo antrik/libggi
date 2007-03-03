@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.31 2006/10/14 12:38:32 cegger Exp $
+/* $Id: x.h,v 1.32 2007/03/03 15:53:16 ggibecka Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -173,6 +173,10 @@ typedef struct ggi_x_priv {
 	   gracefully.
 	*/
 	void			(*shmhack_free_cmaps)(struct ggi_visual *vis);
+
+	/* These are here to support early setting of window titles
+	 */
+	const char *windowtitle,*icontitle;
 
 } ggi_x_priv;
 
