@@ -1,4 +1,4 @@
-/* $Id: ipaq_ggicalibrate.c,v 1.7 2006/03/17 21:55:43 cegger Exp $
+/* $Id: ipaq_ggicalibrate.c,v 1.8 2007/03/03 19:10:53 cegger Exp $
 ******************************************************************************
 
    h3600 GGI calibration Application
@@ -504,7 +504,7 @@ int initGGI()
 
 #define DEV_NODE "/dev/tsraw"
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	int k, fd, err;
 	char dummychar;

@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.17 2006/09/24 21:32:11 pekberg Exp $
+/* $Id: inputdump.c,v 1.18 2007/03/03 19:10:53 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -754,7 +754,7 @@ static void usage(void)
 		"    -h --help\n\n");
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 { 
 	char *prog;
 	char *target_str = NULL;

@@ -1,4 +1,4 @@
-/* $Id: mousedemo.c,v 1.2 2004/02/02 19:22:02 cegger Exp $
+/* $Id: mousedemo.c,v 1.3 2007/03/03 19:10:54 cegger Exp $
 ******************************************************************************
 
    Written in 1998 by Andreas Beck	[becka@ggi-project.org]
@@ -70,7 +70,7 @@ static void Setup_Palette(void)
  * do an extensive test using about all graphics primitives LibGGI
  * knows.
  */
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	/* This is an enum holding the requested type of graphics mode.
 	 * See the mode setting code below for details.

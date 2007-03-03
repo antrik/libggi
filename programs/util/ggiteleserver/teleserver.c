@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.3 2006/09/24 08:05:38 cegger Exp $
+/* $Id: teleserver.c,v 1.4 2007/03/03 19:10:53 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -763,7 +763,7 @@ static void usage(void)
 		"	-V --version\n\n");
 }
 
-static int handle_args(int argc, char **argv)
+static int handle_args(int argc, const char *argv[])
 {
 	argc--; argv++;
 
@@ -808,7 +808,7 @@ static int handle_args(int argc, char **argv)
 	return 0;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	struct timeval cur_time;
 	struct timeval flush_time;

@@ -1,4 +1,4 @@
-/* $Id: ggicalibrate.c,v 1.6 2006/03/17 21:55:43 cegger Exp $
+/* $Id: ggicalibrate.c,v 1.7 2007/03/03 19:10:53 cegger Exp $
 ******************************************************************************
 
    h3600 GGI calibration Application
@@ -442,7 +442,7 @@ static int initGGI(void)
 	return 1;
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	if (initGGI() < 0) {
 		printf("Unable to GGIinit\n");

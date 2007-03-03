@@ -1,4 +1,4 @@
-/* $Id: tunemode.c,v 1.8 2006/03/17 21:55:43 cegger Exp $
+/* $Id: tunemode.c,v 1.9 2007/03/03 19:10:53 cegger Exp $
 ***********************************************************************
 
    Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
@@ -577,7 +577,7 @@ void save(char *name)
 }
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	int x, y;
 
