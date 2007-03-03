@@ -1,4 +1,4 @@
-/* $Id: patchlib.c,v 1.4 2005/06/20 06:27:41 cegger Exp $
+/* $Id: patchlib.c,v 1.5 2007/03/03 18:55:32 cegger Exp $
 ******************************************************************************
 
    Alter the path to the config file in binary libggi
@@ -42,16 +42,17 @@
 #include <sys/stat.h>
 
 
-static void print_usage(char *fname)
+static void print_usage(const char *fname)
 {
-        fprintf(stderr, "Usage : %s libggi.so-filename [new_path_to_patch_in]\n", fname);
-        fprintf(stderr, "        Output will be located in libggi.so.patched\n");
+        fprintf(stderr, "Usage: %s libggi.so-filename [new_path_to_patch_in]\n",
+		fname);
+        fprintf(stderr, "       Output will be located in libggi.so.patched\n");
 }
 
-static char tag[]=GGIPATHTAG;
+static char tag[] = GGIPATHTAG;
 static const char *newname = "libggi.so.patched";
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
         int size;
         int fd;
