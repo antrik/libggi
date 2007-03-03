@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.23 2007/02/26 22:53:38 pekberg Exp $
+/* $Id: ggi.h,v 1.24 2007/03/03 07:36:50 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -35,7 +35,7 @@
 
 #include <ggi/gg.h>
 #include <ggi/gg-api.h>
-#include <ggi/types.h>
+#include <ggi/ggi-types.h>
 #include <ggi/ggi-defs.h>
 
 #include <stdio.h>     /* need FILE for ggiFPrintMode */
