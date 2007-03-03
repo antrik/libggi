@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.15 2006/09/23 09:11:15 cegger Exp $
+/* $Id: flying_ggis.c,v 1.16 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -74,7 +74,7 @@ static int fixed_speed=0;
 static int speed;
 static int async = 1;
 
-static char *target_str = NULL;
+static const char *target_str = NULL;
 static ggi_visual_t vis;
 static ggi_mode vis_mode;
 
@@ -320,7 +320,7 @@ static void update_all_textures(int millis)
         }
 }
 
-static void show_usage(char *progname)
+static void show_usage(const char *progname)
 {
 	/* remove leading paths */
 
@@ -343,7 +343,7 @@ static void show_usage(char *progname)
 		progname);
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 { 
         int gen_millis;
 

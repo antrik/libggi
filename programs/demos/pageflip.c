@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.13 2006/09/23 09:11:15 cegger Exp $
+/* $Id: pageflip.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -127,7 +127,7 @@ static void animate(ggi_visual_t vis, ggi_mode * mode, int j)
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	ggi_visual_t vis;
 	ggi_mode mode;

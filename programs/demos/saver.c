@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.15 2007/03/03 18:19:15 soyt Exp $
+/* $Id: saver.c,v 1.16 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -572,7 +572,7 @@ static void blank_screen2(int interactive)
 
 /* Main function. Wait for timeout, then activate the saver.
  */
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	int ic, ic2, cnt;
 	uint32_t x;

@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.13 2007/03/03 18:19:15 soyt Exp $
+/* $Id: textdemo.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -40,7 +40,7 @@ myGetc(ggi_visual_t _vis)
 	return ev.key.sym;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	const char hex[] = { '0', '1', '2', '3', '4', '5', '6', '7',
 		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'

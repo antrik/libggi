@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.35 2007/03/03 18:19:14 soyt Exp $
+/* $Id: demo.c,v 1.36 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -260,7 +260,7 @@ static int TestTime(void)	/* result is in seconds */
  * do an extensive test using about all graphics primitives LibGGI
  * knows.
  */
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	/* First we define a bunch of variables we will access throughout the
 	 * main() function. Most of them are pretty meaningless loop-counters
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
 	/* Use a different target than the default ? */
 
-	char *target_name=NULL;
+	const char *target_name=NULL;
 
 	/* These holde the visible screen size (sx,sy) and
 	 * the virtual size (vx,vy). On most targets you can 

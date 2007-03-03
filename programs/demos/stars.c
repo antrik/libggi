@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.12 2007/03/03 18:19:15 soyt Exp $
+/* $Id: stars.c,v 1.13 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -89,7 +89,7 @@ myGetc(ggi_visual_t _vis)
 	return ev.key.sym;
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	int i, quit = 0;
 	double fps = 0.0;

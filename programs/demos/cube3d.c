@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.24 2007/02/06 19:41:29 cegger Exp $
+/* $Id: cube3d.c,v 1.25 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -569,7 +569,7 @@ static void highlight_face(Polygon3D * poly)
 	}
 }
 
-static int spawn_bg(char *what)
+static int spawn_bg(const char *what)
 {
 #ifdef HAVE_FORK
 	int pid;
@@ -655,7 +655,7 @@ static void CheckDB(Texture * tex)
 	}
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	/* First we define a bunch of variables we will access throughout the
 	 * main() function. Most of them are pretty meaningless loop-counters

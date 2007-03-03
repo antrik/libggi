@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.13 2007/03/03 18:19:15 soyt Exp $
+/* $Id: slimy.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -364,7 +364,7 @@ static void RunSpinner(void)
 	printf(" %f fps\n", fps);
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 
 	InitGraphics();

@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.11 2007/03/03 18:19:15 soyt Exp $
+/* $Id: main.c,v 1.12 2007/03/03 19:36:16 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -126,7 +126,7 @@ typedef void (func_warpfunc) (struct warp * w, int32_t xw, int32_t yw,
 
 /* main program	*/
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	ggi_visual_t disp = NULL;
 	const ggi_directbuffer *dbuf = NULL;
