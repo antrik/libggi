@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.14 2007/02/23 22:24:17 cegger Exp $
+/* $Id: quartz.h,v 1.15 2007/03/03 17:41:02 cegger Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -83,6 +83,7 @@ typedef struct {
 	struct gg_observer *observer;
 
 	int enableUserResize;
+	const char *windowtitle;
 } ggi_quartz_priv;
 
 

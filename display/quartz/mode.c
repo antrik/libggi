@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2007/02/24 14:22:40 cegger Exp $
+/* $Id: mode.c,v 1.24 2007/03/03 17:41:03 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -601,6 +601,7 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	CFStringRef titleKey;
 	CFStringRef windowTitle;
 	OSStatus result;
+	const char *winname = "GGI-on-quartz";
 
 	priv = QUARTZ_PRIV(vis);
 
@@ -643,7 +644,10 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 		CreateWindowGroup(0, &priv->winGroup);
 		SetWindowGroup(priv->theWindow, priv->winGroup);
 
-		titleKey = CFSTR("GGI-on-QZ");
+		if (priv->windowtitle) winname = priv->windowtitle;
+
+		titleKey = CFStringCreateWithCString(NULL, winname,
+					kCFStringEncodingASCII);
 		windowTitle = CFCopyLocalizedString(titleKey, NULL);
 		result = SetWindowTitleWithCFString(priv->theWindow, windowTitle);
 		CFRelease(titleKey);
