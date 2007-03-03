@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.8 2006/09/23 09:05:23 cegger Exp $
+/* $Id: structs.c,v 1.9 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -78,7 +78,7 @@ static void list_tests(void)
 
 /* Check arguments.
  */
-static int parse_args(int argc,char **argv)
+static int parse_args(int argc, const char *argv[])
 {
 	int x,testnum;
 
@@ -271,7 +271,7 @@ static int setup_mode(void)
 /* Main function. Check parameters. Set up mode. Run tests.
  */
 int
-main(int argc,char **argv)
+main(int argc,const char *argv[])
 {
 	int testnum;
 

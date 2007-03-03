@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.14 2007/03/03 18:19:14 soyt Exp $
+/* $Id: speed.c,v 1.15 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -509,7 +509,7 @@ static void list_tests(void)
 
 /* Check arguments.
  */
-static int parse_args(int argc,char **argv)
+static int parse_args(int argc, const char *argv[])
 {
 	int x,testnum;
 
@@ -593,7 +593,7 @@ static int setup_mode(void)
 /* Main function. Check parameters. Set up default mode. Run all tests.
  */
 int
-main(int argc,char **argv)
+main(int argc, const char *argv[])
 {
 	int testnum;
 

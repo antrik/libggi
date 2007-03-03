@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.12 2007/03/03 18:19:14 soyt Exp $
+/* $Id: consistency.c,v 1.13 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -578,7 +578,7 @@ static void list_tests(void)
 
 /* Parse arguments
  */
-static int parse_args(int argc,char **argv)
+static int parse_args(int argc, const char *argv[])
 {
 	int x,testnum;
 
@@ -662,7 +662,7 @@ static int setup_mode(void)
 /* The main function. Check arguments, then run the tests.
  */
 int
-main(int argc,char **argv)
+main(int argc, const char *argv[])
 {
 	int testnum;
 

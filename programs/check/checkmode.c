@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.12 2007/03/03 18:19:14 soyt Exp $
+/* $Id: checkmode.c,v 1.13 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -476,7 +476,7 @@ static void checkallresolutions(void)
 	}
 }
 
-static void usage(char * s)
+static void usage(const char * s)
 {
 	printf("Usage: %s [options]\n"
 	       "     available options:\n"
@@ -505,14 +505,14 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.12 2007/03/03 18:19:14 soyt Exp $\n");
+	printf("$Id: checkmode.c,v 1.13 2007/03/03 19:26:01 cegger Exp $\n");
 	exit(0);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char * const argv[])
 {
 #ifdef HAVE_GETOPT
-	char * myself = argv[0];
+	const char * myself = argv[0];
 	int op;
 #endif
 	int longtest=0;

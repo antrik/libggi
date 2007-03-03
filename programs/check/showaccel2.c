@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.14 2007/03/03 18:19:14 soyt Exp $
+/* $Id: showaccel2.c,v 1.15 2007/03/03 19:27:34 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -79,7 +79,7 @@ static inline int slow_drawbox(int x,int y,int w,int h)
 /* The main function. Draw boxes with two different methods from two different
  * processes.
  */
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	/* Loop counters and other helpers
 	 */

@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.15 2007/03/03 18:19:14 soyt Exp $
+/* $Id: findleaks.c,v 1.16 2007/03/03 19:27:34 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -109,7 +109,7 @@ static void inform_mem(const char *info, long prev, long now, long allocprev, lo
 
 
 int
-main(int argc, char *argv[])
+main(int argc, const char *argv[])
 {
 	int i;
 	long binit, a_binit;

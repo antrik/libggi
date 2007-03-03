@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.8 2006/09/23 09:05:22 cegger Exp $
+/* $Id: pointer.c,v 1.9 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -35,7 +35,7 @@
 #include <stdio.h>
 
 int
-main(int argc, char **argv)
+main(int argc, const char *argv[])
 {
 	ggi_visual_t vis = NULL;
 	ggi_mode mode;

@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.21 2006/09/23 09:05:22 cegger Exp $
+/* $Id: cbconsist.c,v 1.22 2007/03/03 19:26:01 cegger Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -297,7 +297,7 @@ static int mkmemvis(int i, const char **str,
 
 static const char optstring[] = "s:d:haftc";
 
-int main(int argc, char **argv)
+int main(int argc, char * const argv[])
 {
 	ggi_color color;
 	cbcstate s;

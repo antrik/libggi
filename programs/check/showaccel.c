@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.14 2007/03/03 18:19:14 soyt Exp $
+/* $Id: showaccel.c,v 1.15 2007/03/03 19:27:34 cegger Exp $
 ******************************************************************************
 
    showaccel.c
@@ -81,7 +81,7 @@ static inline int slow_drawbox(int x,int y,int w,int h)
 /* The main function. Draw boxes with two different methods and measure the
  * difference in performance.
  */
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
 	/* Loop counters and other helpers
 	 */
