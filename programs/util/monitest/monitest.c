@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.15 2006/09/24 08:21:52 cegger Exp $
+/* $Id: monitest.c,v 1.16 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -264,7 +264,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screntest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.15 2006/09/24 08:21:52 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.16 2007/03/03 18:19:15 soyt Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -505,8 +505,8 @@ static int changeresmenu(void)
 			/* failed */
 			sprintf(bottom, "mode set failed");
 		} else {
-			if (ggiSetSimpleMode(vis, xres, yres, 1,
-					     graphtypes[gtindex]) != 0) {
+			
+			if (ggiSetMode(vis, &suggmode) != 0) {
 				fprintf(stderr, "Set may not fail!!\n");
 			} else {
 				sprintf(bottom, "mode set succeeded");

@@ -97,13 +97,10 @@ ggiSetGCClipping
 ggiSetGCForeground
 ggiSetGamma
 ggiSetGammaMap
-ggiSetGraphMode
 ggiSetMode
 ggiSetOrigin
 ggiSetPalette
 ggiSetReadFrame
-ggiSetSimpleMode
-ggiSetTextMode
 ggiSetWriteFrame
 ggiUnmapPixel
 ggiUnpackPixels

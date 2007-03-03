@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.14 2006/09/23 09:11:15 cegger Exp $
+/* $Id: saver.c,v 1.15 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -477,6 +477,7 @@ static void blank_screen2(int interactive)
 {
 	int c;
 	char hlpbuf[128];
+	ggi_mode mode;
 
 	if ((visual = ggNewStem(NULL)) == NULL) {
 		fprintf(stderr, "cannot create stem.\n");
@@ -498,12 +499,11 @@ static void blank_screen2(int interactive)
 		exit(1);
 	}
 
-	if (ggiSetSimpleMode
-	    (visual, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT)) {
+	ggiCheckSimpleMode(visual, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT,
+			   &mode);
+	if (ggiSetMode(visual, &mode)) {
 		ggPanic("Cannot open one of the default modes.");
 	} else {
-		ggi_mode mode;
-
 		ggiGetMode(visual, &mode);
 		xsize = mode.visible.x;
 		ysize = mode.visible.y;
@@ -576,7 +576,8 @@ int main(int argc, char *argv[])
 {
 	int ic, ic2, cnt;
 	uint32_t x;
-
+	ggi_mode mode;
+	
 	if (giiInit() != 0) {
 		fprintf(stderr,
 			"%s: unable to initialize LibGII, exiting.\n",
@@ -634,14 +635,13 @@ int main(int argc, char *argv[])
 						    ("cannot open default visual.\n");
 					}
 
-					if (ggiSetSimpleMode
-					    (visual, GGI_AUTO, GGI_AUTO,
-					     GGI_AUTO, GT_8BIT)) {
+					ggiCheckSimpleMode
+						(visual, GGI_AUTO, GGI_AUTO,
+						 GGI_AUTO, GT_8BIT, &mode);
+					if (ggiSetMode(visual, &mode)) {
 						ggPanic
 						    ("cannot set 8bpp mode.");
 					} else {
-						ggi_mode mode;
-
 						ggiGetMode(visual, &mode);
 						xsize = mode.visible.x;
 						ysize = mode.visible.y;

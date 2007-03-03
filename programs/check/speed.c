@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.13 2007/01/07 17:19:14 pekberg Exp $
+/* $Id: speed.c,v 1.14 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -567,8 +567,8 @@ static int setup_mode(void)
 		exit(1);
 	}
 
-	if ((err = ggiSetSimpleMode(mode.vis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO))
-	    == 0) {
+	ggiCheckSimpleMode(mode.vis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO, &gmode);
+	if ((err = ggiSetMode(mode.vis, &gmode)) == 0) {
 		ggiGetMode(mode.vis,&gmode);
 		mode.sx=gmode.visible.x;
 		mode.sy=gmode.visible.y;

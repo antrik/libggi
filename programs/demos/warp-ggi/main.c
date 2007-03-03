@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.10 2006/09/23 09:07:25 cegger Exp $
+/* $Id: main.c,v 1.11 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -137,6 +137,7 @@ int main(int argc, char **argv)
 	uint32_t width, height, udepth = 0, stride;
 	int32_t err, step = 0, done = 0;
 	int32_t nextarg, i, tval;
+	ggi_mode mode;
 
 	func_warpfunc	*warpfunc;
 	swidth = sheight = smode = spixsize = 0;
@@ -252,10 +253,11 @@ int main(int argc, char **argv)
 			break;
 
 		case 4:
-			if (!(err = ggiSetSimpleMode(disp,
-						(signed)swidth, 
-						(signed)sheight,
-						GGI_AUTO, smode)))
+			ggiCheckSimpleMode(disp,
+					   (signed)swidth, 
+					   (signed)sheight,
+					   GGI_AUTO, smode, &mode);
+			if (!(err = ggiSetMode(disp, &mode)))
 				step++;
 			else {
 				fprintf(stderr,

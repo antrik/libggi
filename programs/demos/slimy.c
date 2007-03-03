@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.12 2006/09/23 09:11:15 cegger Exp $
+/* $Id: slimy.c,v 1.13 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -240,7 +240,8 @@ static void InitGraphics(void)
 
 	ggiSetFlags(disp, GGIFLAG_ASYNC);
 
-	if (ggiSetSimpleMode(disp, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT)) {
+	ggiCheckSimpleMode(disp, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT, &m);
+	if (ggiSetMode(disp, &m)) {
 		fail("Error switching to 8bpp mode.\n"
 		     "You may want to try using GGI_DISPLAY=\"tile:0,0,640,480,(palemu:auto)\" ./slimy\n"
 		     "if you think the problem is due to running on a truecolor-only target.\n");

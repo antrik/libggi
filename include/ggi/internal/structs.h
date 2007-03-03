@@ -1,4 +1,4 @@
-/* $Id: structs.h,v 1.24 2007/03/01 15:04:40 cegger Exp $
+/* $Id: structs.h,v 1.25 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -126,7 +126,7 @@ typedef struct ggi_colormap {
 /* Gamma state structure. */
 typedef struct ggi_gammastate
 {
-	ggi_float	gamma_r, gamma_g, gamma_b; /* gamma factors */
+	double	gamma_r, gamma_g, gamma_b; /* gamma factors */
 	ggi_color	*map;		 /* Explicitly provided map */
 	/* Number of writeable/readable entries in map. */
 	/* maxwrite_* == -1 means only factors usable.  */
@@ -203,7 +203,7 @@ struct ggi_visual {
 	ggi_flags	flags;		/* Flags */
 
         /* used to be gamma. pad for binary compat until next major release. */
-        ggi_float	dummy1, dummy2, dummy3;
+        double	dummy1, dummy2, dummy3;
 
 	/*
 	  Integer values [9/15]

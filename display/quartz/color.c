@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2007/02/25 16:36:46 cegger Exp $
+/* $Id: color.c,v 1.6 2007/03/03 18:19:09 soyt Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -80,7 +80,7 @@ int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_colo
 /* Gamma correction
  */
 
-int GGI_quartz_setgamma(struct ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b)
+int GGI_quartz_setgamma(struct ggi_visual *vis,double r,double g,double b)
 {
 	ggi_quartz_priv *priv;
 	const CGGammaValue min = 0.0, max = 1.0;
@@ -116,7 +116,7 @@ int GGI_quartz_setgamma(struct ggi_visual *vis,ggi_float r,ggi_float g,ggi_float
 }	/* GGI_quartz_setgamma */
 
 
-int GGI_quartz_getgamma(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_float *b)
+int GGI_quartz_getgamma(struct ggi_visual *vis,double *r,double *g,double *b)
 {
 	ggi_quartz_priv *priv;
 	CGGammaValue dummy;

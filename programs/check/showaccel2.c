@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.13 2006/09/23 09:05:22 cegger Exp $
+/* $Id: showaccel2.c,v 1.14 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -110,6 +110,8 @@ int main(int argc, char *argv[])
 	 */
 	ggi_pixel paletteval[256];
 
+	ggi_mode mode;
+
 	/* Initialize GGI. Error out, if it fails.
 	 */
 	if (giiInit() != 0) {
@@ -160,13 +162,12 @@ int main(int argc, char *argv[])
 
         /* If mode setup fails, fall through to the end.
          */
-	if (ggiSetSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO)
-	    == 0) {
+	ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO, &mode);
+	if (ggiSetMode(vis, &mode) == 0) {
 		/* We asked for automatic setup. So we better ask what we got.
 		 * We will need the visible dimensions.
 		 */
 		{
-			ggi_mode mode;
 			ggiGetMode(vis,&mode);
 			sx=mode.visible.x;
 			sy=mode.visible.y;

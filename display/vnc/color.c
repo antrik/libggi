@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.3 2006/12/08 22:32:23 pekberg Exp $
+/* $Id: color.c,v 1.4 2007/03/03 18:19:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: color
@@ -113,7 +113,7 @@ GGI_vnc_packcolors(struct ggi_visual *vis,
 
 int
 GGI_vnc_unpackpixels(struct ggi_visual *vis,
-	const void *buf, ggi_color *cols, int len)
+		     const void *buf, ggi_color *cols, int len)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
@@ -122,7 +122,7 @@ GGI_vnc_unpackpixels(struct ggi_visual *vis,
 
 int
 GGI_vnc_getgamma(struct ggi_visual *vis,
-	ggi_float *r, ggi_float *g, ggi_float *b)
+		 double *r, double *g, double *b)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
@@ -131,7 +131,7 @@ GGI_vnc_getgamma(struct ggi_visual *vis,
 
 int
 GGI_vnc_setgamma(struct ggi_visual *vis,
-	ggi_float r, ggi_float g, ggi_float b)
+		 double r, double g, double b)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 

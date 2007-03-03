@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.11 2006/09/23 09:05:22 cegger Exp $
+/* $Id: checkmode.c,v 1.12 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -109,8 +109,8 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
                         /* has illegally changed virt but succeeded */
 		} else if (setmod){
 			/*ggiFlush(vis); -- segfaults on the first test */
-			if (ggiSetGraphMode(vis,x,y,xvir,yvir,
-					    defaultgraphtypes[j])){
+			
+			if (ggiSetMode(vis, &suggest)) {
 				/* failed */
 				iswrong = 1;
 				printf("S");
@@ -505,7 +505,7 @@ static void usage(char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.11 2006/09/23 09:05:22 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.12 2007/03/03 18:19:14 soyt Exp $\n");
 	exit(0);
 }
 

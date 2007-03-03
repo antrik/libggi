@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.10 2006/09/10 06:53:13 cegger Exp $
+/* $Id: palemu.h,v 1.11 2007/03/03 18:19:12 soyt Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -95,9 +95,9 @@ typedef struct ggi_palemu_priv {
 	uint8_t *greymap;
 	uint8_t *rgb_to_grey;	/* index = RGB 5:5:5 */
 
-	ggi_float red_gamma;
-	ggi_float green_gamma;
-	ggi_float blue_gamma;
+	double red_gamma;
+	double green_gamma;
+	double blue_gamma;
 
 	/* 2D operations on memory buffer */
 	struct ggi_visual_opdraw *mem_opdraw;

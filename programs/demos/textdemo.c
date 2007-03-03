@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.12 2006/09/23 09:11:15 cegger Exp $
+/* $Id: textdemo.c,v 1.13 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -90,8 +90,9 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
-	if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
-			   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
+	ggiCheckTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
+			 GGI_AUTO, GGI_AUTO, GT_TEXT16, &mode);
+	if (ggiSetMode(vis, &mode) != 0) {
 		fprintf(stderr,
 			"%s: unable to set text mode, retrying with terminfo.\n",
 			argv[0]);
@@ -102,9 +103,9 @@ int main(int argc, char *argv[])
 				argv[0]);
 			exit(1);
 		}
-		if (ggiSetTextMode(vis, GGI_AUTO, GGI_AUTO,
-				   GGI_AUTO, GGI_AUTO,
-				   GGI_AUTO, GGI_AUTO, GT_TEXT16) != 0) {
+		ggiCheckTextMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
+				 GGI_AUTO, GGI_AUTO, GT_TEXT16, &mode);
+		if (ggiSetMode(vis, &mode) != 0) {
 			fprintf(stderr,
 				"%s: unable to set text mode, exiting.\n",
 				argv[0]);

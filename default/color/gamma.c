@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.11 2007/02/25 17:21:06 cegger Exp $
+/* $Id: gamma.c,v 1.12 2007/03/03 18:19:08 soyt Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -38,7 +38,7 @@
 #include "color.h"
 #include <ggi/internal/ggi_debug.h>
 
-int GGI_color_getgamma(struct ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
+int GGI_color_getgamma(struct ggi_visual *vis, double *r, double *g, double *b)
 {
 	if (!vis->gamma) {
 		*r = *g = *b = 1.0;	/* principal of least surprise */
@@ -51,12 +51,12 @@ int GGI_color_getgamma(struct ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_f
 	return GGI_OK;
 }
 
-int GGI_color_setgamma(struct ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
+int GGI_color_setgamma(struct ggi_visual *vis, double r, double g, double b)
 {
 	int err, i;
-	ggi_float ir, ig, ib;
-	ggi_float intensity_r, intensity_g, intensity_b;
-	ggi_float delta_r, delta_g, delta_b;
+	double ir, ig, ib;
+	double intensity_r, intensity_g, intensity_b;
+	double delta_r, delta_g, delta_b;
 	ggi_color map[256]; /* This gets most visuals in one function call */
 
 	if (!vis->gamma) return GGI_ENOFUNC;

@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.1 2006/09/10 06:53:13 cegger Exp $
+/* $Id: monotext.c,v 1.2 2007/03/03 18:19:08 soyt Exp $
 ******************************************************************************
 
    Display-monotext
@@ -438,6 +438,8 @@ int _ggi_monotext_Open(struct ggi_visual *vis)
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
 
 	ggi_coord child_size;
+	ggi_mode mode;
+
 
 	priv->size = LIBGGI_MODE(vis)->visible;
 
@@ -456,11 +458,16 @@ int _ggi_monotext_Open(struct ggi_visual *vis)
 	priv->red_gamma = priv->green_gamma = priv->blue_gamma = 1.0;
 
 	/* set the parent mode */
-	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
-		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		priv->parent_mode.graphtype);
+	rc = ggiCheckTextMode(priv->parent, child_size.x, child_size.y, 
+			      child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
+			      priv->parent_mode.graphtype, &mode);
 	if (rc < 0) {
-		DPRINT("Couldn't set child graphic mode.\n");
+		DPRINT("Couldn't get a valid text mode for parent.\n");
+		return rc;
+	}
+	rc = ggiSetMode(priv->parent, &mode);
+	if (rc < 0) {
+		DPRINT("Couldn't set parent mode.\n");
 		return rc;
 	}
 

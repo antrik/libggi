@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.15 2006/03/12 22:54:31 cegger Exp $
+/* $Id: dltypes.h,v 1.16 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -93,8 +93,8 @@ typedef int (ggifunc_getpalvec)(struct ggi_visual *vis,int start,int len,ggi_col
 typedef int (ggifunc_setPalette)(struct ggi_visual *vis, size_t start, size_t size, const ggi_color *cmap);
 
 /* Gamma correction */
-typedef int (ggifunc_getgamma)(struct ggi_visual *vis,ggi_float *r,ggi_float *g,ggi_float *b);
-typedef int (ggifunc_setgamma)(struct ggi_visual *vis,ggi_float r,ggi_float g,ggi_float b);
+typedef int (ggifunc_getgamma)(struct ggi_visual *vis,double *r,double *g,double *b);
+typedef int (ggifunc_setgamma)(struct ggi_visual *vis,double r,double g,double b);
 typedef int (ggifunc_setgammamap)(struct ggi_visual *vis,int start,int len,const ggi_color *gammamap);
 typedef int (ggifunc_getgammamap)(struct ggi_visual *vis,int start,int len,ggi_color *gammamap);
 

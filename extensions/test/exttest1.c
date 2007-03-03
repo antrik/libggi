@@ -1,4 +1,4 @@
-/* $Id: exttest1.c,v 1.7 2006/09/23 16:03:20 cegger Exp $
+/* $Id: exttest1.c,v 1.8 2007/03/03 18:19:11 soyt Exp $
 ******************************************************************************
 
    Test extension test.
@@ -39,6 +39,7 @@ int
 main(void)
 {
 	ggi_visual_t vis1,vis2;
+	ggi_mode mode;
 	int temp;
 	ggInit();
 	vis1 = ggNewStem(libggi, NULL);
@@ -48,11 +49,14 @@ main(void)
 	temp = ggiTest1Init(); printf("Init1b: %i\n",temp);
 
 	ggiOpen(vis1, "display-memory",NULL);
-	ggiSetSimpleMode(vis1, 320, 200, 1, GT_8BIT);
-	ggiSetSimpleMode(vis1, 320, 400, 1, GT_8BIT);
+	ggiCheckSimpleMode(vis1, 320, 200, 1, GT_8BIT, &mode);
+	ggiSetMode(vis1, &mode);
+	ggiCheckSimpleMode(vis1, 320, 400, 1, GT_8BIT, &mode);
+	ggiSetMode(vis1, &mode);
 
 	ggiTest1Attach(vis1);
-	ggiSetSimpleMode(vis1, 320, 400, 1, GT_8BIT);
+	ggiCheckSimpleMode(vis1, 320, 400, 1, GT_8BIT, &mode);
+	ggiSetMode(vis1, &mode);
 	ggiTest1Attach(vis1);
 	ggiTest1PrintLocaldata(vis1);
 /*	ggiTest2PrintLocaldata(vis1); This is illegal. Should hopefully segfault. */
@@ -66,7 +70,8 @@ main(void)
 	temp = ggiTest2Init(); printf("Init2 : %i\n",temp);
 
 	ggiOpen(vis2, "display-memory",NULL);
-	ggiSetSimpleMode(vis2, 320, 200, 1, GT_8BIT);
+	ggiCheckSimpleMode(vis2, 320, 200, 1, GT_8BIT, &mode);
+	ggiSetMode(vis1, &mode);
 
 	ggiTest2Attach(vis2);
 	ggiTest2Attach(vis2);

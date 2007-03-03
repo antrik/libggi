@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.11 2006/03/20 20:20:39 cegger Exp $
+/* $Id: stubs.c,v 1.12 2007/03/03 18:19:09 soyt Exp $
 ******************************************************************************
 
    Display-sub: stubs
@@ -364,14 +364,14 @@ int GGI_sub_getgammamap(struct ggi_visual *vis, int start, int len, ggi_color *c
 }
 
 
-int GGI_sub_getgamma(struct ggi_visual *vis, ggi_float *r, ggi_float *g, ggi_float *b)
+int GGI_sub_getgamma(struct ggi_visual *vis, double *r, double *g, double *b)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
 	return ggiGetGamma(priv->parent->stem,r,g,b);
 }
 
-int GGI_sub_setgamma(struct ggi_visual *vis, ggi_float r, ggi_float g, ggi_float b)
+int GGI_sub_setgamma(struct ggi_visual *vis, double r, double g, double b)
 {
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 

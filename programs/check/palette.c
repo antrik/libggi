@@ -1,4 +1,4 @@
-/* $Id: palette.c,v 1.4 2006/09/23 09:05:22 cegger Exp $
+/* $Id: palette.c,v 1.5 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    This is a test program for palette handling.
@@ -27,6 +27,7 @@ static void testcase1(const char *desc)
 {
 	ggi_visual_t vis;
 	ggi_color green, back;
+	ggi_mode mode;
 	int err;
 
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
@@ -44,7 +45,9 @@ static void testcase1(const char *desc)
 	err = ggiOpen(vis, NULL);
 	printassert(err >= 0, "ggiOpen() failed\n");
 
-	err = ggiSetGraphMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT);
+	ggiCheckGraphMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_8BIT,
+			  &mode);
+	err = ggiSetMode(vis, &mode);
 	if(err < 0) {
 		printassert(0, "Palettized mode not available.\n");
 		printsuccess();

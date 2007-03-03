@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.34 2007/03/01 15:07:04 pekberg Exp $
+/* $Id: demo.c,v 1.35 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -1389,7 +1389,7 @@ no_mem_targ2:
 		ggiSetPalette(vis, 0, 1<<depth, pal);
 	}
 	if (!ggiGammaMax(vis, GGI_BM_TYPE_COLOR | GGI_BM_SUB_RED, &i, &i)) {
-		ggi_float gr, gb, gg;
+		double gr, gb, gg;
 		TestName("Gamma ");
 		waitabit();
 

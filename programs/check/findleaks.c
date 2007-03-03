@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.14 2006/09/23 09:05:22 cegger Exp $
+/* $Id: findleaks.c,v 1.15 2007/03/03 18:19:14 soyt Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -115,6 +115,7 @@ main(int argc, char *argv[])
 	long binit, a_binit;
 	long prev, curr;
 	long aprev, acurr;
+	ggi_mode mode;
 
 	fill_info();
 
@@ -222,7 +223,7 @@ main(int argc, char *argv[])
 		putchar('.');
 		fflush(stdout);
 		ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO,
-				   NULL);
+				   &mode);
 	}
 	curr = get_size();
 	acurr = _get_ggi_alloced();
@@ -230,7 +231,7 @@ main(int argc, char *argv[])
 
 	ggiSetFlags(vis, GGIFLAG_ASYNC);
 
-	if (ggiSetSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO) != 0) {
+	if (ggiSetMode(vis, &mode) != 0) {
 		err("Unable to set default mode!\n");
 	}
 	prev = get_size();
@@ -238,14 +239,16 @@ main(int argc, char *argv[])
 	for (i=2; i < 20; i++) {
 		putchar('.');
 		fflush(stdout);
-		if (ggiSetSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO)
+		ggiCheckSimpleMode(vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO,
+				   &mode);
+		if (ggiSetMode(vis, &mode)
 		    != 0) {
 			err("Unable to set default mode %d!\n", i);
 		}
 	}
 	curr = get_size();
 	acurr = _get_ggi_alloced();
-	inform_mem("\nggiSetSimpleMode()\n", prev, curr, aprev, acurr);
+	inform_mem("\nggiSetMode()\n", prev, curr, aprev, acurr);
 
 	ggDelStem(vis);
 	ggiExit();

@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.11 2006/09/23 09:11:15 cegger Exp $
+/* $Id: stars.c,v 1.12 2007/03/03 18:19:15 soyt Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -277,7 +277,8 @@ void SetupNewVisual(ggi_visual_t setvis)
 ggi_visual_t InitVisual(const char *visname)
 {
 	ggi_visual_t newvis;
-
+	ggi_mode mode;
+	
 	if ((newvis = ggNewStem(NULL)) == NULL) {
 		return NULL;
 	}
@@ -296,8 +297,9 @@ ggi_visual_t InitVisual(const char *visname)
 	}
 	ggiSetFlags(newvis, GGIFLAG_ASYNC);
 
-	if (ggiSetSimpleMode(newvis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO)
-	    != 0) {
+	ggiCheckSimpleMode(newvis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GT_AUTO,
+			   &mode);
+	if (ggiSetMode(newvis, &mode) != 0) {
 		ggPanic("Cannot set default mode!\n");
 	}
 

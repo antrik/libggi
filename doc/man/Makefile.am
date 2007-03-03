@@ -13,9 +13,6 @@ man_MANS = \
            ggiCheckSimpleMode.3 \
            ggiSetMode.3 \
            ggiGetMode.3 \
-           ggiSetTextMode.3 \
-           ggiSetGraphMode.3 \
-           ggiSetSimpleMode.3 \
            ggiParseMode.3 \
            ggiPrintMode.3 \
            ggiSPrintMode.3 \

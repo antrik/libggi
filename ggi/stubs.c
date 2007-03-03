@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.19 2006/04/28 08:56:02 cegger Exp $
+/* $Id: stubs.c,v 1.20 2007/03/03 18:19:11 soyt Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -207,14 +207,14 @@ int ggiSetColorfulPalette(ggi_visual_t v)
 /* Gamma mapping ...
  */
 
-int  ggiGetGamma(ggi_visual_t v,ggi_float *r,ggi_float *g,ggi_float *b)
+int  ggiGetGamma(ggi_visual_t v,double *r,double *g,double *b)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiGetGamma(vis, r,g,b);
 }
 
-int  ggiSetGamma(ggi_visual_t v,ggi_float  r,ggi_float  g,ggi_float  b)
+int  ggiSetGamma(ggi_visual_t v,double  r,double  g,double  b)
 {
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");

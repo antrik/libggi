@@ -1,4 +1,4 @@
-/* $Id: monotext.h,v 1.9 2006/09/08 21:58:19 cegger Exp $
+/* $Id: monotext.h,v 1.10 2007/03/03 18:19:12 soyt Exp $
 ******************************************************************************
 
    Display-monotext: graphics emulation on text modes
@@ -92,9 +92,9 @@ typedef struct ggi_monotext_priv {
 
 	uint8_t *rgb_to_grey;	/* index = RGB 5:5:5 */
 
-	ggi_float red_gamma;
-	ggi_float green_gamma;
-	ggi_float blue_gamma;
+	double red_gamma;
+	double green_gamma;
+	double blue_gamma;
 
 	/* 2D operations on memory buffer */
 	struct ggi_visual_opdraw *mem_opdraw;
