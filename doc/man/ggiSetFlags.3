@@ -1,4 +1,4 @@
-.TH "ggiSetFlags" 3 "2006-12-30" "libggi-current" GGI
+.TH "ggiSetFlags" 3 "2007-03-04" "libggi-current" GGI
 .SH NAME
 \fBggiSetFlags\fR, \fBggiGetFlags\fR, \fBggiAddFlags\fR, \fBggiRemoveFlags\fR : Set or get flags affecting operation on a visual
 .SH SYNOPSIS
@@ -6,9 +6,9 @@
 .nf
 #include <ggi/ggi.h>
 
-int ggiSetFlags(ggi_visual_t vis, ggi_flags flags);
+int ggiSetFlags(ggi_visual_t vis, uint32_t flags);
 
-ggi_flags ggiGetFlags(ggi_visual_t vis);
+uint32_t ggiGetFlags(ggi_visual_t vis);
 
 #define ggiAddFlags(vis,flags)  \e
               ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
@@ -18,8 +18,8 @@ ggi_flags ggiGetFlags(ggi_visual_t vis);
 .fi
 
 .SH DESCRIPTION
-\fBggiSetFlags\fR sets the specified flags (bitwise
-OR'd together) on a visual.
+\fBggiSetFlags\fR sets the specified flags (bitwise OR'd together) on a
+visual.
 
 \fBggiGetFlags\fR obtains the flags currently in effect.
 
