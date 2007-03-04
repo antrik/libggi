@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2006/09/10 06:53:13 cegger Exp $
+/* $Id: mode.c,v 1.22 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -542,7 +542,7 @@ int GGI_palemu_getmode(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_palemu_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_palemu_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2007/03/03 17:41:03 cegger Exp $
+/* $Id: mode.c,v 1.25 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -722,7 +722,7 @@ int GGI_quartz_getmode(struct ggi_visual *vis, ggi_mode *mode)
 }	/* GGI_quartz_getmode */
 
 
-int GGI_quartz_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_quartz_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	ggi_quartz_priv *priv;
 

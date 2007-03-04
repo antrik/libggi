@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2006/03/20 20:06:32 cegger Exp $
+/* $Id: mode.c,v 1.23 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -464,7 +464,7 @@ int GGI_file_getmode(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_file_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_file_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

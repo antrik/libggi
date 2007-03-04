@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.41 2007/02/11 18:01:11 cegger Exp $
+/* $Id: visual.c,v 1.42 2007/03/04 18:26:42 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -59,7 +59,7 @@ static const gg_option optlist[] = {
 
 
 static int
-GGI_directx_setflags(struct ggi_visual *vis, ggi_flags flags)
+GGI_directx_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 

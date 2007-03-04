@@ -1495,9 +1495,9 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  int ggiSetFlags(ggi_visual_t vis, ggi_flags flags);
+  int ggiSetFlags(ggi_visual_t vis, uint32_t flags);
 
-  ggi_flags ggiGetFlags(ggi_visual_t vis);
+  uint32_t ggiGetFlags(ggi_visual_t vis);
 
   #define ggiAddFlags(vis,flags)  \
 		ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
@@ -1510,8 +1510,8 @@ Description
 -----------
 
 
-`ggiSetFlags` sets the specified flags (bitwise
-OR'd together) on a visual.
+`ggiSetFlags` sets the specified flags (bitwise OR'd together) on a
+visual.
 
 
 `ggiGetFlags` obtains the flags currently in effect.

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.68 2007/03/03 15:53:15 ggibecka Exp $
+/* $Id: visual.c,v 1.69 2007/03/04 18:26:42 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -140,7 +140,7 @@ void GGI_X_gcchanged(struct ggi_visual *vis, int mask)
 	}
 }
 
-static int GGI_X_setflags(struct ggi_visual *vis, ggi_flags flags) {
+static int GGI_X_setflags(struct ggi_visual *vis, uint32_t flags) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))

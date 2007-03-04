@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2006/09/17 16:23:38 cegger Exp $
+/* $Id: mode.c,v 1.32 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -909,7 +909,7 @@ int GGI_fbdev_getmode(struct ggi_visual *vis, ggi_mode *mode)
 }
 
 
-int GGI_fbdev_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_fbdev_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

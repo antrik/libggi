@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
+/* $Id: ggi-visual.h,v 1.3 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -189,7 +189,7 @@ struct ggi_visual {
 	void		  *mutex;	/* Lock when changing.. */
 	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
 
-	ggi_flags	flags;		/* Flags */
+	uint32_t	flags;		/* Flags */
 
         /* used to be gamma. pad for binary compat until next major release. */
         double	dummy1, dummy2, dummy3;

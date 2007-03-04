@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2006/03/27 21:06:14 cegger Exp $
+/* $Id: mode.c,v 1.11 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -78,7 +78,7 @@ int GGI_sub_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_sub_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_sub_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	int rc;
 	ggi_sub_priv *priv = SUB_PRIV(vis);

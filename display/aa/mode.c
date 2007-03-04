@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2007/02/18 18:56:30 cegger Exp $
+/* $Id: mode.c,v 1.23 2007/03/04 18:26:42 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -417,7 +417,7 @@ int GGI_aa_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_aa_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_aa_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	ggi_aa_priv *priv = AA_PRIV(vis);
 

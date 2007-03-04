@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.27 2007/03/04 15:49:22 soyt Exp $
+/* $Id: ggi.h,v 1.28 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -46,20 +46,6 @@ typedef struct gg_stem * ggi_visual_t;
 
 /* This is opaque */
 struct ggi_resource;
-
-
-/*
- * Flags & Frames
- */
-
-typedef unsigned int ggi_flags;
-
-/* SYNC/ASYNC mode. Draw instantly or when thw HW likes to. Default is sync */
-#define GGIFLAG_ASYNC	0x0001U
-/* TIDYBUF mode (default off) is for applications which use directbuffer and
- * manage there own dirty regions.  See ggiSetFlags manpage.
- */
-#define GGIFLAG_TIDYBUF	0x0002U
 
 
 /*
@@ -371,13 +357,29 @@ GGIAPIFUNC int  ggiClose(ggi_visual_t vis);
 
 /* Get/Set info
  */
-GGIAPIFUNC int        ggiSetFlags(ggi_visual_t vis, ggi_flags flags);
-GGIAPIFUNC ggi_flags  ggiGetFlags(ggi_visual_t vis);
-#define ggiAddFlags(vis,flags)  \
-		ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
-#define ggiRemoveFlags(vis,flags)  \
-		ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
+
+/*
+ * SYNC/ASYNC mode. Draw instantly or when thw HW likes to. Default is
+ * sync
+ */
+#define GGIFLAG_ASYNC	0x0001U
+
+/*
+ * TIDYBUF mode (default off) is for applications which use
+ * directbuffer and manage there own dirty regions.  See ggiSetFlags
+ * manpage.
+ */
+#define GGIFLAG_TIDYBUF	0x0002U
+
+GGIAPIFUNC int      ggiSetFlags(ggi_visual_t vis, uint32_t flags);
+GGIAPIFUNC uint32_t ggiGetFlags(ggi_visual_t vis);
+#define ggiAddFlags(vis, flags) \
+                      ggiSetFlags((vis), ggiGetFlags((vis)) | (flags))
+#define ggiRemoveFlags(vis, flags) \
+                      ggiSetFlags((vis), ggiGetFlags((vis)) & ~(flags))
+
 GGIAPIFUNC const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t vis);
+
 
 /* DB functions
  */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/09/17 13:32:11 cegger Exp $
+/* $Id: visual.c,v 1.17 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -82,7 +82,7 @@ int GGI_libkgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
         return GGI_ENOMATCH;
 }
 
-int GGI_libkgi_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_libkgi_setflags(struct ggi_visual *vis, uint32_t flags)
 {
   fprintf(stderr, "GGI_libkgi_setflags\n");
         LIBGGI_FLAGS(vis) = flags;

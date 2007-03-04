@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2007/02/10 00:29:59 cegger Exp $
+/* $Id: mode.c,v 1.20 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -292,7 +292,7 @@ int _GGI_ipc_resetmode(struct ggi_visual *vis)
 	return 0;
 }
 
-int GGI_ipc_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_ipc_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 

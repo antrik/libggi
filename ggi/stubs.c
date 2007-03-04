@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.23 2007/03/04 15:49:22 soyt Exp $
+/* $Id: stubs.c,v 1.24 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -34,13 +34,13 @@
 
 /************** Mode info ****************/
 
-int ggiSetFlags(ggi_visual_t v,ggi_flags flags)
+int ggiSetFlags(ggi_visual_t v, uint32_t flags)
 {  
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
 	return _ggiSetFlags(vis, flags);
 }
-ggi_flags ggiGetFlags(ggi_visual_t v)
+uint32_t ggiGetFlags(ggi_visual_t v)
 {  
 	struct ggi_visual *vis = GGI_VISUAL(v);
 	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");

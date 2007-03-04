@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2006/09/12 21:32:37 cegger Exp $
+/* $Id: mode.c,v 1.18 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -358,7 +358,7 @@ int GGI_trueemu_resetmode(struct ggi_visual *vis)
 }
 
 
-int GGI_trueemu_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_trueemu_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

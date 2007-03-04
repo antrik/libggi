@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.10 2006/11/20 02:02:55 pekberg Exp $
+/* $Id: mode.c,v 1.11 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -393,7 +393,7 @@ GGI_vnc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 }
 
 int
-GGI_vnc_setflags(struct ggi_visual *vis, ggi_flags flags)
+GGI_vnc_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client;

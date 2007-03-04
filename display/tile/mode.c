@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2007/01/27 21:57:12 cegger Exp $
+/* $Id: mode.c,v 1.32 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -506,7 +506,7 @@ int GGI_tile_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_tile_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_tile_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	struct multi_vis *elm;

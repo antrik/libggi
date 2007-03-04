@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2006/03/22 20:22:28 cegger Exp $
+/* $Id: mode.c,v 1.30 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -403,7 +403,7 @@ int GGI_svga_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_svga_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_svga_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */

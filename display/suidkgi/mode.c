@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.6 2006/03/22 20:22:28 cegger Exp $
+/* $Id: mode.c,v 1.7 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Display-SUID
@@ -347,7 +347,7 @@ int GGI_suidkgi_getmode(struct ggi_visual *vis,ggi_mode *tm)
 }
 
 
-int GGI_suidkgi_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_suidkgi_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

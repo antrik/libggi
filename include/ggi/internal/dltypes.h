@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.18 2007/03/04 15:49:22 soyt Exp $
+/* $Id: dltypes.h,v 1.19 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -62,7 +62,7 @@ typedef int (ggifunc_setmode)(struct ggi_visual *vis,ggi_mode *tm);
 typedef int (ggifunc_checkmode)(struct ggi_visual *vis,ggi_mode *tm);
 
 /* Flag settings */
-typedef int (ggifunc_setflags)(struct ggi_visual *vis,ggi_flags flags);
+typedef int (ggifunc_setflags)(struct ggi_visual *vis, uint32_t flags);
 
 /* Flushing the display
  */

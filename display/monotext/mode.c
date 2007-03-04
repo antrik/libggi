@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2006/09/06 21:24:29 cegger Exp $
+/* $Id: mode.c,v 1.20 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -355,7 +355,7 @@ int GGI_monotext_getmode(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_monotext_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_monotext_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 

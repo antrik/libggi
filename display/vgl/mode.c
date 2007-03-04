@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/01/16 21:33:31 cegger Exp $
+/* $Id: mode.c,v 1.22 2007/03/04 18:26:45 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -366,7 +366,7 @@ int GGI_vgl_getmode(struct ggi_visual *vis,ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_vgl_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_vgl_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis)=flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */

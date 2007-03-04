@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2006/09/24 18:09:48 pekberg Exp $
+/* $Id: mode.c,v 1.30 2007/03/04 18:26:43 soyt Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -543,7 +543,7 @@ int GGI_kgi_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 /*************************/
 /* set the current flags */
 /*************************/
-int GGI_kgi_setflags(struct ggi_visual *vis,ggi_flags flags)
+int GGI_kgi_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	LIBGGI_FLAGS(vis) = flags;
 	/* Only raise supported flags */

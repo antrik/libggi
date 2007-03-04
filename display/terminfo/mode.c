@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2007/02/25 18:58:30 cegger Exp $
+/* $Id: mode.c,v 1.20 2007/03/04 18:26:44 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -280,7 +280,7 @@ int GGI_terminfo_getmode(struct ggi_visual *vis, ggi_mode *tm)
 	return 0;
 }
 
-int GGI_terminfo_setflags(struct ggi_visual *vis, ggi_flags flags)
+int GGI_terminfo_setflags(struct ggi_visual *vis, uint32_t flags)
 {
 	/* Doesn't support sync mode */
 	LIBGGI_FLAGS(vis) = flags;
