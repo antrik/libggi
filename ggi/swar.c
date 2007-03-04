@@ -1,4 +1,4 @@
-/* $Id: swar.c,v 1.1 2005/01/13 22:46:50 cegger Exp $
+/* $Id: swar.c,v 1.2 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    LibGGI SWAR support.
@@ -28,7 +28,7 @@
 */
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
 

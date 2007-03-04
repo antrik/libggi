@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.31 2007/03/04 09:44:24 soyt Exp $
+/* $Id: dl.c,v 1.32 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -27,7 +27,7 @@
 */
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */

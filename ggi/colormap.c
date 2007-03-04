@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.6 2006/03/11 18:49:12 soyt Exp $
+/* $Id: colormap.c,v 1.7 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -26,7 +26,7 @@
 */
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 
 

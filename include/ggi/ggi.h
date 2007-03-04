@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.25 2007/03/03 18:19:12 soyt Exp $
+/* $Id: ggi.h,v 1.26 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -35,6 +35,7 @@
 
 #include <ggi/gg.h>
 #include <ggi/gg-api.h>
+
 #include <ggi/ggi-types.h>
 #include <ggi/ggi-defs.h>
 

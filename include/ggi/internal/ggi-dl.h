@@ -1,4 +1,4 @@
-/* $Id: ggi-dl.h,v 1.4 2006/03/11 18:49:12 soyt Exp $
+/* $Id: ggi-dl.h,v 1.5 2007/03/04 14:44:54 soyt Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
@@ -30,8 +30,7 @@
 #ifndef _GGI_INTERNAL_GGI_DL_H
 #define _GGI_INTERNAL_GGI_DL_H
 
-#include <ggi/types.h>
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/dltypes.h>
 
 #define PREPARE_FB(vis) if (vis->accelactive) { LIBGGIIdleAccel(vis); }

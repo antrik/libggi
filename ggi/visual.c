@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2007/03/02 05:34:58 cegger Exp $
+/* $Id: visual.c,v 1.17 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -29,7 +29,7 @@
 #include <stdlib.h>
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 
 

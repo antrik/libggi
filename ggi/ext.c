@@ -1,4 +1,4 @@
-/* $Id: ext.c,v 1.10 2007/03/01 11:28:41 cegger Exp $
+/* $Id: ext.c,v 1.11 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    LibGGI extension support.
@@ -28,7 +28,7 @@
 */
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
 

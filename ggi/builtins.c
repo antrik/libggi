@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.11 2007/01/17 13:48:02 pekberg Exp $
+/* $Id: builtins.c,v 1.12 2007/03/04 14:44:53 soyt Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -27,7 +27,7 @@
 
 #include "config.h"
 #include <ggi/gg.h>
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <string.h>
 
