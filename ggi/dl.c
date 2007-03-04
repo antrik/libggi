@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.30 2007/03/04 01:57:46 pekberg Exp $
+/* $Id: dl.c,v 1.31 2007/03/04 09:44:24 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -110,7 +110,7 @@ getsymbol:
 
 /* Probe a DL
  */
-int _ggiProbeDL(struct ggi_visual *vis, const void *conffilehandle,
+int _ggiProbeDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 		const char *api, const char *args, void *argptr,
 		int type, ggi_dlhandle **dlh, uint32_t *dlret)
 {
@@ -158,7 +158,7 @@ int _ggiProbeDL(struct ggi_visual *vis, const void *conffilehandle,
 
 /* Add an extension DL
  */
-ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, const void *conffilehandle,
+ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 			   const char *api,
 			   const char *args, void *argptr,
 			   const char *symprefix)
@@ -214,7 +214,7 @@ ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, const void *conffilehandle,
 }
 
 /****** Open and Close a DL *********/
-int _ggiAddDL(struct ggi_visual *vis, const void *conffilehandle,
+int _ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 	      const char *api, const char *args, void *argptr,
 	      int type)
 {
@@ -291,7 +291,7 @@ int _ggiAddDL(struct ggi_visual *vis, const void *conffilehandle,
 	return 0;
 }
 
-int _ggiOpenDL(struct ggi_visual *vis, const void *conffilehandle,
+int _ggiOpenDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 		const char *api, const char *args, void *argptr)
 {
 	return _ggiAddDL(vis, conffilehandle,

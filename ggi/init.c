@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.66 2007/03/01 11:28:41 cegger Exp $
+/* $Id: init.c,v 1.67 2007/03/04 09:44:24 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -47,9 +47,6 @@ static int _ggiInit(struct gg_api*);
 static struct gg_api _libggi = GG_API("ggi", GG_VERSION(3,0,0,0), _ggiInit);
 struct gg_api * libggi = &_libggi;
 
-/* Global variables */
-void                 *_ggiConfigHandle = NULL;
-
 /* Static variables */
 static struct {
 	void		*mutex;		/* Lock when changing.. */
@@ -89,9 +86,10 @@ void _ggiExitBuiltins(void);
  */
 
 
-const void *_ggiGetConfigHandle(void)
+struct gg_config*
+_ggiGetConfigHandle(void)
 {
-	return _ggiConfigHandle;
+	return _libggi.config;
 }
 
 
@@ -214,7 +212,7 @@ _ggiInit(struct gg_api* api)
 	snprintf(conffile + CONF_OFFSET, CONF_SIZE - CONF_OFFSET,
 		CONF_FORMAT, confdir, GGICONFFILE);
 
-	err = ggLoadConfig(conffile, &_ggiConfigHandle);
+	err = ggLoadConfig(conffile, &_libggi.config);
 	if (err != GGI_OK)
 		fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
 
@@ -224,7 +222,7 @@ _ggiInit(struct gg_api* api)
 		char arrayconf[40];
 		snprintf(arrayconf, sizeof(arrayconf),
 			"array@%p", (const void *)_ggibuiltinconf);
-		err = ggLoadConfig(arrayconf, &_ggiConfigHandle);
+		err = ggLoadConfig(arrayconf, &_libggi.config);
 		if (err != GGI_OK) {
 			fprintf(stderr, "LibGGI: fatal error - "
 					"could not load builtin config\n");
@@ -267,13 +265,13 @@ void _ggiExit(struct gg_api *api)
 
 	_ggiExitBuiltins();
 
-	ggFreeConfig(_ggiConfigHandle);
+	ggFreeConfig(_libggi.config);
 	_ggiLibIsUp = 0;
 
 	/* Reset global variables to initialization value.
 	 * Otherwise there's a memory corruption when libggi
 	 * is re-initialized within an application. */
-	_ggiConfigHandle = NULL;
+	_libggi.config = NULL;
 	_ggi_global_lock = NULL;
 
 	DPRINT_CORE("ggiExit: done!\n");
@@ -332,11 +330,11 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 	success = 0;
 
 	match.input  = driver;
-	match.config = _ggiConfigHandle;
+	match.config = _libggi.config;
 	ggConfigIterTarget(&match);
 	GG_ITER_FOREACH(&match) {
 		DPRINT_CORE("Trying %s with options \"%s\"\n", match.target, match.options);
-		if (_ggiOpenDL(vis, _ggiConfigHandle,
+		if (_ggiOpenDL(vis, _libggi.config,
 			       match.target,match.options,argptr) == 0) {
 			success = 1;
 			break;

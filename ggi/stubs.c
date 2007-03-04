@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.20 2007/03/03 18:19:11 soyt Exp $
+/* $Id: stubs.c,v 1.21 2007/03/04 09:44:24 soyt Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -26,6 +26,7 @@
 */
 
 #include "config.h"
+
 #include <ggi/internal/internal.h>
 #include <ggi/internal/ggi_debug.h>
 
@@ -55,7 +56,8 @@ const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t v)
 
 /*************** Lib management ***********************/
 
-ggi_lib_id ggiExtensionLoadDL(ggi_visual_t v, const void *conffilehandle,
+ggi_lib_id ggiExtensionLoadDL(ggi_visual_t v,
+			      struct gg_config *conffilehandle,
 			      const char *api,
 			      const char *args, void *argptr,
 			      const char *symprefix)

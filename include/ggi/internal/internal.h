@@ -1,4 +1,4 @@
-/* $Id: internal.h,v 1.37 2007/03/01 11:28:41 cegger Exp $
+/* $Id: internal.h,v 1.38 2007/03/04 09:44:24 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -63,23 +63,26 @@ GGIAPIFUNC ggi_directbuffer *_ggi_db_find_frame(struct ggi_visual *vis,
 
 /* dl.c */
 GGIAPIFUNC ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis,
-				      const void *conffilehandle,
+				      struct gg_config *conffilehandle,
 				      const char *api,
 				      const char *args, void *argptr,
 				      const char *symprefix);
-GGIAPIFUNC int _ggiOpenDL(struct ggi_visual *vis, const void *conffilehandle,
+GGIAPIFUNC int _ggiOpenDL(struct ggi_visual *vis,
+			  struct gg_config *conffilehandle,
 			const char *api, const char *args, void *argptr);
 GGIAPIFUNC void _ggiExitDL(struct ggi_visual *vis, ggi_dlhandle_l * lib);
 GGIAPIFUNC void _ggiZapDL(struct ggi_visual *vis, ggi_dlhandle_l ** lib);
-GGIAPIFUNC int _ggiAddDL(struct ggi_visual *vis, const void *conffilehandle,
+GGIAPIFUNC int _ggiAddDL(struct ggi_visual *vis,
+			 struct gg_config *conffilehandle,
 			const char *api, const char *args, void *argptr,
 			int type);
-GGIAPIFUNC int _ggiProbeDL(struct ggi_visual *vis, const void *conffilehandle,
-		const char * api, const char * args, void * argptr,
-		int type, ggi_dlhandle ** dlh, uint32_t * dlret);
+GGIAPIFUNC int _ggiProbeDL(struct ggi_visual *vis,
+			   struct gg_config *conffilehandle,
+			   const char * api, const char * args, void * argptr,
+			   int type, ggi_dlhandle ** dlh, uint32_t * dlret);
 
 /* init.c */
-GGIAPIFUNC const void *_ggiGetConfigHandle(void);
+GGIAPIFUNC struct gg_config * _ggiGetConfigHandle(void);
 
 /* internal.c */
 GGIAPIFUNC int _ggi_countbits(uint32_t val);
