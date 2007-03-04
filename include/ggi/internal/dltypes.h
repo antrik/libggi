@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.17 2007/03/04 14:44:54 soyt Exp $
+/* $Id: dltypes.h,v 1.18 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -27,8 +27,6 @@
 
 #ifndef _GGI_INTERNAL_DLTYPES_H
 #define _GGI_INTERNAL_DLTYPES_H
-
-#include <ggi/ggi-types.h>
 
 /*
 ******************************************************************************

@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.22 2007/03/04 14:44:53 soyt Exp $
+/* $Id: stubs.c,v 1.23 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -493,12 +493,12 @@ int ggiGetWriteFrame(ggi_visual_t v)
 /* Resource management
  */
 
-int ggiResourceFastAcquire(ggi_resource_t res, uint32_t actype)
+int ggiResourceFastAcquire(struct ggi_resource *res, uint32_t actype)
 {
 	return res->acquire(res, actype);
 }
 
-int ggiResourceFastRelease(ggi_resource_t res)
+int ggiResourceFastRelease(struct ggi_resource *res)
 {
 	return res->release(res);
 }

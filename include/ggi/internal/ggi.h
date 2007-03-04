@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.1 2007/03/04 14:44:54 soyt Exp $
+/* $Id: ggi.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -30,14 +30,19 @@
 
 #define _INTERNAL_LIBGGI
 
+#include <ggi/system.h>
 #include <ggi/gg.h>
-#include <ggi/ggi-types.h>
-#include <ggi/ggi-defs.h>
+#include <ggi/gg-queue.h>
 
+#include <ggi/ggi.h>
+
+struct ggi_visual;
+struct ggi_dlhandle;
+
+#include <ggi/internal/dltypes.h>
 #include <ggi/internal/ggi-visual.h>
 
-
-#define GGI_VISUAL(stem) STEM_API_DATA(stem,(libggi),struct ggi_visual*)
+#define GGI_VISUAL(stem) STEM_API_DATA(stem,(libggi), struct ggi_visual*)
 #define GGI_PRIV(stem) STEM_API_PRIV(stem,(libggi))
 
 

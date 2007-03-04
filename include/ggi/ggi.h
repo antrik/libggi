@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.26 2007/03/04 14:44:53 soyt Exp $
+/* $Id: ggi.h,v 1.27 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -36,24 +36,17 @@
 #include <ggi/gg.h>
 #include <ggi/gg-api.h>
 
-#include <ggi/ggi-types.h>
 #include <ggi/ggi-defs.h>
+#include <ggi/ggi-types.h>
 
 #include <stdio.h>     /* need FILE for ggiFPrintMode */
 
 
 typedef struct gg_stem * ggi_visual_t;
 
+/* This is opaque */
+struct ggi_resource;
 
-#ifndef _INTERNAL_LIBGGI
-/* Opaque pointer types.
-   This little magic gains us some type checking.
-   ANSI warning: If you have a really really weird machine (one that has
-   different pointer sizes or types for different pointed-to objects),
-   you might need to typedef void *ggi_*_t; instead.
- */
-typedef void *ggi_resource_t;
-#endif
 
 /*
  * Flags & Frames
@@ -300,7 +293,7 @@ typedef struct {
 	int		frame;		/* framenumber (GGI_DB_NORMAL) */
 
 	/*	access info	*/
-	ggi_resource_t	resource;	/* If non-NULL you must acquire the
+	struct ggi_resource *resource;	/* If non-NULL you must acquire the
 					   buffer before using it */
 	void		*read;		/* buffer address for reads	*/
 	void		*write;		/* buffer address for writes	*/
@@ -399,8 +392,9 @@ GGIAPIFUNC const ggi_directbuffer *ggiDBGetBuffer(ggi_visual_t vis,
 #define ggiResourceRelease(res) \
 	(((res) == NULL) ? 0 : ggiResourceFastRelease((res)))
 #define ggiResourceMustAcquire(res)	((res) != NULL)
-GGIAPIFUNC int ggiResourceFastAcquire(ggi_resource_t res, uint32_t actype);
-GGIAPIFUNC int ggiResourceFastRelease(ggi_resource_t res);
+GGIAPIFUNC int ggiResourceFastAcquire(struct ggi_resource *res,
+				      uint32_t actype);
+GGIAPIFUNC int ggiResourceFastRelease(struct ggi_resource *res);
 
 /* Library management
  */

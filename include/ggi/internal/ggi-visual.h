@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.1 2007/03/04 14:44:54 soyt Exp $
+/* $Id: ggi-visual.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -30,16 +30,7 @@
 #ifndef _GGI_INTERNAL_GGI_VISUAL_H
 #define _GGI_INTERNAL_GGI_VISUAL_H
 
-struct ggi_visual;
-struct ggi_resource;
 typedef struct ggi_dlhandle *ggi_lib_id;
-typedef struct ggi_resource *ggi_resource_t;
-
-#include <ggi/ggi.h>
-
-#include <ggi/internal/dltypes.h>
-
-#include <ggi/gg-queue.h>
 
 #define GGI_VERSION_DLL	1
 
@@ -137,7 +128,6 @@ typedef struct ggi_gammastate
 } ggi_gammastate;
 
 /* Resource structure */
-struct ggi_resource;
 typedef struct ggi_resource {
 	ggifunc_resacquire *acquire;
 	ggifunc_resrelease *release;

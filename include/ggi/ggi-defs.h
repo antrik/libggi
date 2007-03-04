@@ -1,4 +1,4 @@
-/* $Id: ggi-defs.h,v 1.2 2005/07/31 15:30:38 soyt Exp $
+/* $Id: ggi-defs.h,v 1.3 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -27,9 +27,6 @@
 
 #ifndef _GGI_GGI_DEFS_H
 #define _GGI_GGI_DEFS_H
-
-#include <ggi/system.h>
-
 
 #ifdef BUILDING_LIBGGI
 # define GGIAPIFUNC EXPORTFUNC

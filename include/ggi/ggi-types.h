@@ -1,4 +1,4 @@
-/* $Id: ggi-types.h,v 1.1 2007/03/03 07:36:50 soyt Exp $
+/* $Id: ggi-types.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -30,8 +30,6 @@
 
 #ifndef	_GGI_GGI_TYPES_H
 #define	_GGI_GGI_TYPES_H
-
-#include <ggi/system.h>
 
 /*
 ******************************************************************************
