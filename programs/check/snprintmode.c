@@ -2,7 +2,7 @@
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
 
-#include <strings.h>
+#include <string.h>
 
 int
 main(void)
@@ -25,7 +25,7 @@ main(void)
 
 	for(i=0; i<50; i++) {
 		r = ggiSNPrintMode(buf, i, &mode);
-		printf("s=%i r=%i buf=\"%s\" (strlen=%i)\n",
+		printf("s=%i r=%i buf=\"%s\" (strlen=%lu)\n",
 		       i, r, buf, strlen(buf));
 	}
 
