@@ -1,4 +1,4 @@
-/* $Id: ggi-auto.inc,v 1.3 2004/10/14 09:08:41 cegger Exp $
+/* $Id: ggi-auto.inc,v 1.4 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    Common GGI_AUTO handling code.
@@ -27,7 +27,7 @@
 
 /* ASSUMPTION:
  *
- * <ggi/internal/internal.h> has been included before
+ * <ggi/internal/ggi.h> has been included before
  */
 
 static void _GGIhandle_ggiauto(ggi_mode *mode, int def_x, int def_y)

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.4 2007/03/03 18:19:10 soyt Exp $
+/* $Id: color.c,v 1.5 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    display-vnc: color
@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include <ggi/display/vnc.h>
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 
 

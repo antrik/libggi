@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2006/10/26 08:11:52 pekberg Exp $
+/* $Id: mode.c,v 1.26 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -17,7 +17,7 @@
 
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/ggi.h>
 #include <ggi/errors.h>

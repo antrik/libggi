@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.4 2006/09/07 09:21:21 pekberg Exp $
+/* $Id: buffer.c,v 1.5 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    display-vnc: direct buffer
@@ -28,7 +28,7 @@
 #include "config.h"
 
 #include <ggi/display/vnc.h>
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 
 int

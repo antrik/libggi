@@ -1,4 +1,4 @@
-/* $Id: kgitune.c,v 1.1 2001/05/12 23:03:53 cegger Exp $
+/* $Id: kgitune.c,v 1.2 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    Tuning of KGIcon monitor timings
@@ -17,7 +17,7 @@
 */
 
 /* We need to get vis->fd here, so <ggi/ggi.h> won't do. */
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 
 #include <kgimon.h>
 

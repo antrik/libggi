@@ -1,4 +1,4 @@
-/* $Id: ggi-auto-physz.inc,v 1.1 2004/10/14 11:01:33 cegger Exp $
+/* $Id: ggi-auto-physz.inc,v 1.2 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    Common GGI_AUTO handling code.
@@ -27,7 +27,7 @@
 
 /* ASSUMPTION:
  *
- * <ggi/internal/internal.h> has been included before
+ * <ggi/internal/ggi.h> has been included before
  */
 
 static int _GGIhandle_ggiauto_physz(ggi_mode *mode, int def_x, int def_y,

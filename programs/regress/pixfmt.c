@@ -1,4 +1,4 @@
-/* $Id: pixfmt.c,v 1.7 2004/08/08 20:55:15 cegger Exp $
+/* $Id: pixfmt.c,v 1.8 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI pixelformat operations.
@@ -17,7 +17,7 @@
 
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/ggi.h>
 
 #include <string.h>

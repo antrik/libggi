@@ -1,4 +1,4 @@
-/* $Id: mansync.c,v 1.2 2004/10/10 22:14:36 cegger Exp $
+/* $Id: mansync.c,v 1.3 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI display-palemu - mansync usage.
@@ -17,7 +17,7 @@
 
 
 #include "config.h"
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/display/palemu.h>
 #include <ggi/ggi.h>
 

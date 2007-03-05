@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.1 2006/08/27 11:45:14 pekberg Exp $
+/* $Id: box.c,v 1.2 2007/03/05 19:49:59 cegger Exp $
 ******************************************************************************
 
    display-vnc: boxes
@@ -28,7 +28,7 @@
 #include "config.h"
 
 #include <ggi/display/vnc.h>
-#include <ggi/internal/internal.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 
 int
