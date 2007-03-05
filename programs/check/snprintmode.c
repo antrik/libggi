@@ -5,7 +5,7 @@
 #include <strings.h>
 
 int
-main()
+main(void)
 {
 	int r, i;
 	struct gg_stem *vis;
@@ -19,8 +19,8 @@ main()
 		
 	ggiOpen(vis, NULL);
 
-	bzero(&mode, sizeof(mode));
-	bzero(&buf, sizeof(buf));
+	memset(&mode, 0, sizeof(mode));
+	memset(&buf, 0, sizeof(buf));
 	ggiCheckMode(vis, &mode);
 
 	for(i=0; i<50; i++) {
