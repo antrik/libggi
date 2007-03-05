@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2007/03/04 14:44:53 soyt Exp $
+/* $Id: mode.c,v 1.24 2007/03/05 18:59:40 soyt Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -261,55 +261,92 @@ ggiCheckSimpleMode(ggi_visual_t visual, int xsize, int ysize, int frames,
 
 
 int
-ggiSPrintMode(char *s, const ggi_mode *m)
+ggiSNPrintMode(char *s, size_t size, const ggi_mode *m)
 {
-	int n;
+	int n, t;
+	size_t l;
 	
-	if (m->visible.x != GGI_AUTO || m->visible.y != GGI_AUTO) {
-		sprintf(s, "%dx%d.%n", m->visible.x, m->visible.y, &n);
-		s += n;
-	}
-	if (m->virt.x != GGI_AUTO || m->virt.y != GGI_AUTO) {
-		sprintf(s, "V%dx%d.%n", m->virt.x, m->virt.y, &n);
-		s += n;
-	}
-	if (m->frames != GGI_AUTO) {
-		sprintf(s, "F%d.%n", m->frames, &n);
-		s += n;
-	}
-	if (m->dpp.x != GGI_AUTO || m->dpp.y != GGI_AUTO) {
-		sprintf(s, "D%dx%d.%n", m->dpp.x, m->dpp.y, &n);
-		s += n;
-	}
+#define SNPRINTF(a)                \
+	do {                       \
+		n = snprintf a;    \
+		if (n >= l) {      \
+			s = NULL;  \
+			l = 0;     \
+		} else {           \
+			s += n;    \
+			l -= n;    \
+		}                  \
+                t += n;            \
+	} while(0)
+
+#define PUTC(c)                    \
+	do {                       \
+		t += 1;            \
+		if (l <= 1) {      \
+			s = NULL;  \
+			l = 0;     \
+		} else {           \
+			*s++ = c;  \
+			*s = 0;    \
+			l -= 1;    \
+		}                  \
+	} while(0)
 	
-	*s++ = '[';
+	t = 0;
+	l = (s == NULL) ? 0 : size;
+	
+	if (m->visible.x != GGI_AUTO || m->visible.y != GGI_AUTO)
+		SNPRINTF((s, l, "%dx%d.", m->visible.x, m->visible.y));
+	
+	if (m->virt.x != GGI_AUTO || m->virt.y != GGI_AUTO)
+		SNPRINTF((s, l, "V%dx%d.", m->virt.x, m->virt.y));
+	
+	if (m->frames != GGI_AUTO)
+		SNPRINTF((s, l, "F%d.", m->frames));
+	
+	if (m->dpp.x != GGI_AUTO || m->dpp.y != GGI_AUTO)
+		SNPRINTF((s, l, "D%dx%d.", m->dpp.x, m->dpp.y));
+	
+	PUTC('[');
 
 	switch (GT_SCHEME(m->graphtype)) {
 		case GT_AUTO: break;
-		case GT_TEXT:      *s++ = 'T'; break;
-		case GT_TRUECOLOR: *s++ = 'C'; break;
-		case GT_GREYSCALE: *s++ = 'K'; break;
-		case GT_PALETTE:   *s++ = 'P'; break;
-		default:           *s++ = '?'; break;
+		case GT_TEXT:      PUTC('T'); break;
+		case GT_TRUECOLOR: PUTC('C'); break;
+		case GT_GREYSCALE: PUTC('K'); break;
+		case GT_PALETTE:   PUTC('P'); break;
+		default:           PUTC('?'); break;
 	}
 
-	if (GT_DEPTH(m->graphtype) != GT_AUTO) {
-		sprintf(s, "%u%n", GT_DEPTH(m->graphtype), &n);
-		s += n;
-	}
-	if (GT_SIZE(m->graphtype) != GT_AUTO) {
-		sprintf(s, "/%u%n", GT_SIZE(m->graphtype), &n);
-		s += n;
-	}
-
+	if (GT_DEPTH(m->graphtype) != GT_AUTO)
+		SNPRINTF((s, l, "%u", GT_DEPTH(m->graphtype)));
+	
+	if (GT_SIZE(m->graphtype) != GT_AUTO)
+		SNPRINTF((s, l, "/%u", GT_SIZE(m->graphtype)));
+	
 	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_REVERSE_ENDIAN)
-		*s++ = 'R';
+		PUTC('R');
 	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_HIGHBIT_RIGHT)
-		*s++ = 'H';
+		PUTC('H');
 	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_PACKED_GETPUT)
-		*s++ = 'G';
+		PUTC('G');
 
-	*s++ = ']';  *s = 0;
+	PUTC(']');
+
+#undef SNPRINTF
+#undef PUTC
+
+	return t;
+}
+
+
+int
+ggiSPrintMode(char *s, const ggi_mode *m)
+{
+	char buf[256];
+	
+	ggiSNPrintMode(buf, sizeof(buf), m);
+	strcpy(s, buf);
 
 	return 0;
 }

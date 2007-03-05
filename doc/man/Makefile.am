@@ -16,6 +16,7 @@ man_MANS = \
            ggiParseMode.3 \
            ggiPrintMode.3 \
            ggiSPrintMode.3 \
+           ggiSNPrintMode.3 \
            ggiFPrintMode.3 \
            ggiSetDisplayFrame.3 \
            ggiSetWriteFrame.3 \

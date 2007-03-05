@@ -421,7 +421,7 @@ See Also
 Parse and print formatted strings specifying modes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 ggiParseMode ggiPrintMode ggiSPrintMode ggiFPrintMode
+.. manpage:: 3 ggiParseMode ggiPrintMode ggiSPrintMode ggiSNPrintMode ggiFPrintMode
 
 
 Synopsis
@@ -437,6 +437,9 @@ Synopsis
   #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
   int ggiSPrintMode(char *s, const ggi_mode *m);
+
+  int ggiSNPrintMode(char *s, size_t n, const ggi_mode *m);
+
   int ggiFPrintMode(FILE *s, const ggi_mode *m);
 
 
@@ -449,9 +452,11 @@ Description
 The `ggi*PrintMode` functions print all the members of `ggi_mode` in a
 human-readable form.  `ggiSPrintMode` outputs to a preallocated string
 buffer, `ggiFPrintMode` outputs to a stdio `FILE`, and `ggiPrintMode`
-outputs to standard output.  These functions correspond to
-:man:`sprintf(3)`, :man:`fprintf(3)` and :man:`printf(3)`
-respectively.
+outputs to standard output.  `ggiSNPrintMode` works like
+`ggiSNPrintMode` but it will make sure that no more than :p:`n` chars
+are written, including the trailing 0. These functions correspond to
+:man:`sprintf(3)`, :man:`fprintf(3)`, :man:`printf(3)`
+:man:`snprintf(3)` respectively.
 
 
 The format of the string used by these functions is exactly the same
@@ -482,6 +487,10 @@ Return value
 So :p:`m` contains all parameters that have been successfully
 parsed. For most applications there will be no need for testing
 `ggiParseMode` for failure.
+
+`ggiSNPrintMode` returns the total number of chars that would have
+been written (excluding the trailing 0) if the buffer was large
+enough.
 
 
 See Also

@@ -89,6 +89,7 @@ ggiPuts
 ggiResourceFastAcquire
 ggiResourceFastRelease
 ggiSPrintMode
+ggiSNPrintMode
 ggiSetColorfulPalette
 ggiSetDisplayFrame
 ggiSetFlags
