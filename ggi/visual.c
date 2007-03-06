@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2007/03/04 14:44:53 soyt Exp $
+/* $Id: visual.c,v 1.18 2007/03/06 17:00:40 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -43,47 +43,6 @@ static int _default_error(void)
 {
         DPRINT_MISC("_default_error() called\n");
 	return GGI_ENOFUNC;
-}
-
-
-/*
-******************************************************************************
- Memory allocation
-******************************************************************************
-*/
-
-void _ggi_mem_error(void) {
-	ggPanic("LibGGI is out of memory!\n");
-}
-
-void *_ggi_malloc(size_t siz)
-{
-	void *mem = calloc(1, siz);
-
-	if (mem == NULL) {
-		_ggi_mem_error();
-	}
-	return mem;
-}
-
-void *_ggi_calloc(size_t siz)
-{
-	void *mem = calloc(1, siz);
-
-	if (mem == NULL) {
-		_ggi_mem_error();
-	}
-	return mem;
-}
-
-void *_ggi_realloc(void *ptr, size_t siz)
-{
-	void *mem = realloc(ptr, siz);
-
-	if (mem == NULL) {
-		_ggi_mem_error();
-	}
-	return mem;
 }
 
 

@@ -11,7 +11,6 @@ _ggiSendKGICommand
 _ggiZapMode
 _ggi_alloc_drvpriv
 _ggi_build_pixfmt
-_ggi_calloc
 _ggi_countbits
 _ggi_db_add_buffer
 _ggi_db_del_buffer
@@ -22,12 +21,10 @@ _ggi_db_move_buffer
 _ggi_default_setreadframe
 _ggi_default_setwriteframe
 _ggi_free_drvpriv
-_ggi_malloc
 _ggi_mask2shift
 _ggi_match_palette
 _ggi_parse_pixfmtstr
 _ggi_build_pixfmtstr
-_ggi_realloc
 _ggi_smart_match_palettes
 _ggi_physz_parse_option
 _ggi_physz_figure_visible

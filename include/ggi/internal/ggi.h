@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
+/* $Id: ggi.h,v 1.3 2007/03/06 17:00:41 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -55,6 +55,29 @@ struct ggi_dlhandle;
 __BEGIN_DECLS
 /* Exported variables */
 GGIAPIVAR void *_ggi_global_lock;
+
+
+/* This will die someday */
+static inline void * _ggi_malloc(size_t siz) {
+	void *mem = calloc(1, siz);
+	if (mem == NULL)
+		ggPanic("LibGGI: out of memory!");
+   	return mem;
+}
+
+static inline void *_ggi_calloc(size_t siz) {
+    	void *mem = calloc(1, siz);
+    	if (mem == NULL)
+		ggPanic("LibGGI: out of memory!");
+    	return mem;
+}
+
+static inline void *_ggi_realloc(void *ptr, size_t siz) {
+    	void *mem = realloc(ptr, siz);
+    	if (mem == NULL)
+		ggPanic("LibGGI: out of memory!");
+	return mem;
+}
 
 /* db.c */
 GGIAPIFUNC ggi_directbuffer *_ggi_db_get_new(void);
@@ -177,10 +200,7 @@ _ggi_unit_pix2dpi(ggi_coord *dpi, const ggi_coord *pix,
 
 
 /* visual.c */
-GGIAPIFUNC void *_ggi_malloc(size_t siz);
-GGIAPIFUNC void *_ggi_calloc(size_t siz);
-GGIAPIFUNC void *_ggi_realloc(void *ptr, size_t siz);
-GGIAPIFUNC void _ggi_mem_error(void);
+
 GGIAPIFUNC int _ggi_alloc_drvpriv(void);
 GGIAPIFUNC void _ggi_free_drvpriv(int id);
 GGIAPIFUNC void _ggiZapMode(struct ggi_visual *vis, int zapall);
