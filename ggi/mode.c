@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2007/03/05 18:59:40 soyt Exp $
+/* $Id: mode.c,v 1.25 2007/03/07 09:09:32 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -266,17 +266,20 @@ ggiSNPrintMode(char *s, size_t size, const ggi_mode *m)
 	int n, t;
 	size_t l;
 	
-#define SNPRINTF(a)                \
-	do {                       \
-		n = snprintf a;    \
-		if (n >= l) {      \
-			s = NULL;  \
-			l = 0;     \
-		} else {           \
-			s += n;    \
-			l -= n;    \
-		}                  \
-                t += n;            \
+#define SNPRINTF(a)                           \
+	do {                                  \
+		n = snprintf a;               \
+		if (n == -1) {                \
+			s = NULL;             \
+			l = 0;                \
+		} else if ((size_t)n >= l) {  \
+			s = NULL;             \
+			l = 0;                \
+		} else {                      \
+			s += n;               \
+			l -= n;               \
+		}                             \
+                t += n;                       \
 	} while(0)
 
 #define PUTC(c)                    \
