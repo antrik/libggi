@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2007/03/08 18:54:37 antrik Exp $
+/* $Id: mode.c,v 1.32 2007/03/08 21:06:09 antrik Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -412,7 +412,7 @@ int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		LIBGGI_PAL(vis)->getPrivSize = GGI_kgi_getPrivSize;
 
 		/* Set an initial palette. */
-		ggiSetColorfulPalette(vis);
+		ggiSetColorfulPalette(vis->module.stem);
 	}
 
 	/* Load generic frame/origin handling functions */
@@ -422,7 +422,7 @@ int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
         vis->opdraw->setreadframe = GGI_kgi_set_read_frame;
         vis->opdraw->setwriteframe = GGI_kgi_set_write_frame;
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
 	return 0;
 }
