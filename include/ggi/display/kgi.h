@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.20 2007/03/08 18:47:46 antrik Exp $
+/* $Id: kgi.h,v 1.21 2007/03/08 20:10:45 antrik Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -99,7 +99,7 @@ ggifunc_getapi		GGI_kgi_getapi;
 ggifunc_setflags        GGI_kgi_setflags;
 
 ggifunc_setPalette	GGI_kgi_setPalette;
-size_t GGI_kgi_getPrivSize(struct ggi_visual);
+size_t GGI_kgi_getPrivSize(struct ggi_visual *);
 ggifunc_map_accel       GGI_kgi_map_accelerator;
 
 #define KGI_PRIV(vis) ((ggi_kgi_priv *)LIBGGI_PRIVATE(vis))
