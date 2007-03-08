@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.12 2006/03/22 20:22:27 cegger Exp $
+/* $Id: color.c,v 1.13 2007/03/08 18:20:42 antrik Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -81,7 +81,7 @@ GGI_kgi_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_c
 	return 0;
 }
 
-size_t GGI_kgi_getPrivSize(struct ggi_visual_t vis)
+size_t GGI_kgi_getPrivSize(struct ggi_visual vis)
 {
   return (3 * LIBGGI_PAL(vis)->clut.size * sizeof(int));
 }
