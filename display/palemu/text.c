@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.6 2006/03/22 00:17:52 pekberg Exp $
+/* $Id: text.c,v 1.7 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-palemu: text
@@ -42,7 +42,7 @@ int GGI_palemu_putc(struct ggi_visual *vis, int x, int y, char c)
 	int char_w;
 	int char_h;
 
-	ggiGetCharSize(vis->stem, &char_w, &char_h);
+	ggiGetCharSize(vis->module.stem, &char_w, &char_h);
 
 	UPDATE_MOD(vis, x, y, char_w, char_h);
 

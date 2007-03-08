@@ -1,4 +1,4 @@
-/* $Id: corre.c,v 1.2 2006/12/21 22:33:15 pekberg Exp $
+/* $Id: corre.c,v 1.3 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB compact rre encoding
@@ -698,7 +698,7 @@ GGI_vnc_corre(ggi_vnc_client *client, ggi_rect *update)
 		d_frame_num = 0;
 	}
 
-	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	DPRINT("vupdate %dx%d - %dx%d\n",

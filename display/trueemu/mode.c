@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2007/03/04 18:26:45 soyt Exp $
+/* $Id: mode.c,v 1.19 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -182,7 +182,7 @@ static int do_setmode(struct ggi_visual *vis)
 	vis->opdraw->setwriteframe=GGI_trueemu_setwriteframe;
 	vis->opdraw->setdisplayframe=GGI_trueemu_setdisplayframe;
 
-	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
 
 	/* set initial frames */
@@ -205,7 +205,7 @@ int GGI_trueemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	MANSYNC_ignore(vis);
 
-	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) {
 		return err;
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.7 2007/01/21 23:18:50 pekberg Exp $
+/* $Id: gtext.c,v 1.8 2007/03/08 20:54:04 soyt Exp $
 ******************************************************************************
 
    Linear 1 character drawing (high-bit-right)
@@ -45,7 +45,7 @@ int GGI_lin1r_putc(struct ggi_visual *vis, int x, int y, char c)
 
 	if ((LIBGGI_GC_FGCOLOR(vis)&1) == (LIBGGI_GC_BGCOLOR(vis)&1)) {
 		/* Just a solid box when fg == bg */
-		return ggiDrawBox(vis->stem, x, y, 8, 8);
+		return ggiDrawBox(vis->module.stem, x, y, 8, 8);
 	}
 
 	src = (uint8_t *)(font) + ((int) (uint8_t) c << 3);

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2007/03/05 19:49:59 cegger Exp $
+/* $Id: color.c,v 1.6 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: color
@@ -49,7 +49,7 @@ GGI_vnc_gcchanged(struct ggi_visual *vis, int mask)
 		LIBGGI_GC(priv->fb)->bg_color = gc->bg_color;
 
 	if (mask & GGI_GCCHANGED_CLIP)
-		ggiSetGCClipping(priv->fb->stem,
+		ggiSetGCClipping(priv->fb->module.stem,
 			gc->cliptl.x, gc->cliptl.y,
 			gc->clipbr.x, gc->clipbr.y);
 

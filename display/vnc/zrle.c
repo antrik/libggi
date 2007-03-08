@@ -1,4 +1,4 @@
-/* $Id: zrle.c,v 1.41 2006/11/22 22:32:44 pekberg Exp $
+/* $Id: zrle.c,v 1.42 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB zrle encoding
@@ -1104,7 +1104,7 @@ GGI_vnc_zrle(ggi_vnc_client *client, ggi_rect *update)
 	client->wbuf.size += 12;
 	buf = work;
 
-	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	if (bpp == 1) {

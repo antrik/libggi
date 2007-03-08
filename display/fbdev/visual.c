@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.44 2006/10/14 15:01:11 cegger Exp $
+/* $Id: visual.c,v 1.45 2007/03/08 20:54:06 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -694,24 +694,29 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				 "/dev/tty%d", vtnum);
 		}
 
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
 				inputstr, strbuf, NULL);
 			if (inp == NULL) {
 				if (vtnum != -1) {
 					snprintf(strbuf, sizeof(strbuf),
 						"/dev/vc/%d",
 						vtnum);
-					inp = ggOpenModule(gii, vis->stem,
-						inputstr, strbuf, NULL);
+					inp = ggOpenModule(gii,
+							   vis->module.stem,
+							   inputstr, strbuf,
+							   NULL);
 				}
 				if (inp == NULL) {
 					fprintf(stderr,
 	"display-fbdev: Unable to open linux-kbd, trying stdin input.\n");
 					/* We're on the Linux console so we want
 					   ansikey. */
-					inp = ggOpenModule(gii, vis->stem,
-						"input-stdin", "ansikey", NULL);
+					inp = ggOpenModule(gii,
+							   vis->module.stem,
+							   "input-stdin",
+							   "ansikey",
+							   NULL);
 					if (inp == NULL) {
 						fprintf(stderr,
 	"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
@@ -725,8 +730,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	if (priv->inputs & FBDEV_INP_MOUSE) {
 		struct gg_module *inp;
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
 				"input-linux-mouse", "auto", &args);
 			if (inp == NULL) {
 				fprintf(stderr,

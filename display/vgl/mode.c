@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2007/03/04 18:26:45 soyt Exp $
+/* $Id: mode.c,v 1.23 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -270,7 +270,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		vis->opcolor->setpalvec = GGI_vgl_setpalvec;
 
 		/* Set an initial palette */
-		ggiSetColorfulPalette(vis->stem);
+		ggiSetColorfulPalette(vis->module.stem);
 	}
 
 	if(priv->vgl_use_db) {
@@ -279,7 +279,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 								LIBGGI_PIXFMT(vis);
 	}
 
-	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2007/03/06 17:00:40 soyt Exp $
+/* $Id: visual.c,v 1.19 2007/03/08 20:54:11 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -146,8 +146,9 @@ struct ggi_visual *_ggiNewVisual(void)
 	vis = calloc(1, sizeof(*vis));
 	if (vis == NULL) return NULL;
 
-	vis->channel = ggNewChannel(vis, NULL);
-	if (vis->channel == NULL) goto out_freevis;
+	vis->module.api = libggi;
+	vis->module.channel = ggNewChannel(vis, NULL);
+	if (vis->module.channel == NULL) goto out_freevis;
 
 	vis->mutex = ggLockCreate();
 	if (vis->mutex == NULL) goto out_delchannel;
@@ -236,7 +237,7 @@ struct ggi_visual *_ggiNewVisual(void)
   out_destroylock:
 	ggLockDestroy(vis->mutex);
   out_delchannel:
-	ggDelChannel(vis->channel);
+	ggDelChannel(vis->module.channel);
   out_freevis:
 	free(vis);
 
@@ -247,7 +248,7 @@ struct ggi_visual *_ggiNewVisual(void)
 void _ggiDestroyVisual(struct ggi_visual *vis)
 {
 	_ggiCloseDL(vis, 1);
-	vis->stem = NULL;
+	vis->module.stem = NULL;
 
 	if (LIBGGI_PAL(vis)) {
 		if (LIBGGI_PAL(vis)->priv) free(LIBGGI_PAL(vis)->priv);
@@ -265,6 +266,6 @@ void _ggiDestroyVisual(struct ggi_visual *vis)
 	free(LIBGGI_PIXFMT(vis));
 	free(LIBGGI_MODE(vis));
 	ggLockDestroy(vis->mutex);
-	ggDelChannel(vis->channel);
+	ggDelChannel(vis->module.channel);
 	free(vis);
 }

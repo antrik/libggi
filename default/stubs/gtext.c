@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.5 2006/03/14 18:15:30 cegger Exp $
+/* $Id: gtext.c,v 1.6 2007/03/08 20:54:05 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -52,7 +52,7 @@ GGIblit2c(struct ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *fi
 		for(xp=0,bp=0x80;xp<xwidth;xp++) {
 			color=(*(char *)field & bp) ? LIBGGI_GC_FGCOLOR(vis) 
 						    : LIBGGI_GC_BGCOLOR(vis);
-			ggiPutPixel(vis->stem,x+xp,y,color);
+			ggiPutPixel(vis->module.stem, x + xp, y, color);
       			if (!(bp>>=1)) {
 				bp=0x80;
 				field = ((uint8_t *) field) + 1;
@@ -77,7 +77,7 @@ int GGI_stubs_puts(struct ggi_visual *vis, int x, int y, const char *str)
 	int count;
 	int char_w, char_h;
 
-	ggiGetCharSize(vis->stem, &char_w, &char_h);
+	ggiGetCharSize(vis->module.stem, &char_w, &char_h);
 	
 	/* vertically out of the clipping area ? */
 
@@ -95,7 +95,7 @@ int GGI_stubs_puts(struct ggi_visual *vis, int x, int y, const char *str)
 		if ((x+char_w >= LIBGGI_GC(vis)->cliptl.x) &&
 		    (x < LIBGGI_GC(vis)->clipbr.x)) {
 
-			ggiPutc(vis->stem, x, y, *str); 
+			ggiPutc(vis->module.stem, x, y, *str); 
 			count++;
 		}
 	}

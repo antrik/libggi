@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.11 2007/03/04 18:26:44 soyt Exp $
+/* $Id: mode.c,v 1.12 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -83,7 +83,7 @@ int GGI_sub_setflags(struct ggi_visual *vis, uint32_t flags)
 	int rc;
 	ggi_sub_priv *priv = SUB_PRIV(vis);
 
-	rc = ggiSetFlags(priv->parent->stem, flags);
+	rc = ggiSetFlags(priv->parent->module.stem, flags);
 	if (rc < 0) return rc;
 
 	LIBGGI_FLAGS(vis) = flags;

@@ -1,4 +1,4 @@
-/* $Id: hextile.c,v 1.7 2006/11/22 22:32:44 pekberg Exp $
+/* $Id: hextile.c,v 1.8 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB hextile encoding
@@ -814,7 +814,7 @@ GGI_vnc_hextile(ggi_vnc_client *client, ggi_rect *update)
 	if (!xs_last)
 		xs_last = 16;
 
-	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	ys = 16;

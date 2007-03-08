@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2007/03/04 18:26:44 soyt Exp $
+/* $Id: mode.c,v 1.26 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -88,7 +88,7 @@ static int _ggi_quartz_load_mode_libs(struct ggi_visual *vis)
 				"%s (%s)\n", sugname, args);
 		}
 	}
-	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
 	return 0;
 }	/* _ggi_quartz_load_mode_libs */
@@ -225,7 +225,7 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 	}	/* for */
 
 	if (priv->memvis != NULL) {
-		ggiClose(priv->memvis->stem);
+		ggiClose(priv->memvis->module.stem);
 		priv->memvis = NULL;
 	}
 	if (priv->fb != NULL) {
@@ -685,7 +685,7 @@ int GGI_quartz_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	DPRINT_MODE("GGI_quartz_setmode: called\n");
 	APP_ASSERT(vis != NULL, "GGI_quartz_setmode: Visual == NULL");
 
-	if ((err = ggiCheckMode(vis->stem, mode)) != 0) return err;
+	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) return err;
 
 	if (priv->opmansync) MANSYNC_ignore(vis);
 
@@ -730,7 +730,7 @@ int GGI_quartz_setflags(struct ggi_visual *vis, uint32_t flags)
 
 	priv = QUARTZ_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->stem);
+		ggiFlush(vis->module.stem);
 
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */

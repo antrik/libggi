@@ -1,4 +1,4 @@
-/* $Id: palemu.c,v 1.12 2006/09/09 16:55:13 cegger Exp $
+/* $Id: palemu.c,v 1.13 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true-color modes
@@ -108,7 +108,7 @@ int _ggi_palemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 	/* do transfer */
 	for (; h > 0; h--, y++) {
 
-		ggiGetHLine(vis->stem, x, y, w, src_buf);
+		ggiGetHLine(vis->module.stem, x, y, w, src_buf);
 			
 		(* priv->do_blit)(priv, dest_buf, src_buf, w);
 

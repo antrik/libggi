@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2007/02/23 22:24:18 cegger Exp $
+/* $Id: visual.c,v 1.22 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -58,7 +58,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv = QUARTZ_PRIV(vis);
 
 	if (priv->memvis != NULL) {
-		ggiClose(priv->memvis->stem);
+		ggiClose(priv->memvis->module.stem);
 		free(priv->fb);
 		priv->memvis = NULL;
 	}
@@ -155,7 +155,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out;
 		}	/* if */
 #else
-		priv->mod_mansync = ggOpenModule(libggi, vis->stem,
+		priv->mod_mansync = ggOpenModule(libggi, vis->module.stem,
 					"helper-mansync", NULL,
 					priv->opmansync);
 		if (priv->mod_mansync == NULL) {
@@ -244,8 +244,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("open input-quartz\n");
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem, "input-quartz", NULL, &_args);
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem, "input-quartz", NULL, &_args);
 		} else {
 			err = GGI_ENODEVICE;
 			fprintf(stderr,

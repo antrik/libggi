@@ -1,4 +1,4 @@
-/* $Id: gamma.c,v 1.12 2007/03/03 18:19:08 soyt Exp $
+/* $Id: gamma.c,v 1.13 2007/03/08 20:54:03 soyt Exp $
 ******************************************************************************
 
   Generic gamma correction library
@@ -109,7 +109,7 @@ int GGI_color_setgamma(struct ggi_visual *vis, double r, double g, double b)
 		  intensity_b += delta_b;
 		}
 		if (maxj < j) maxj = j;
-		if ((err = ggiSetGammaMap(vis->stem, i, maxj, map)) != 0) {
+		if ((err = ggiSetGammaMap(vis->module.stem, i, maxj, map)) != 0) {
 		  return err;
 		}
 		i += maxj;

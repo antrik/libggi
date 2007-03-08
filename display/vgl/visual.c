@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2006/11/03 04:07:26 cegger Exp $
+/* $Id: visual.c,v 1.23 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -417,13 +417,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->inputs & INP_KBD) {
 		struct gg_module *inp;
 
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
 					"input-vgl", NULL, NULL);
 			if (inp == NULL) {
 				fprintf(stderr,
 "display-vgl: Unable to open vgl, trying stdin input.\n");
-				inp = ggOpenModule(gii, vis->stem,
+				inp = ggOpenModule(gii, vis->module.stem,
 						"stdin", "ansikey", NULL);
 				if (inp == NULL) {
 					fprintf(stderr,
@@ -438,9 +438,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	if (priv->inputs & INP_MOUSE) {
 		struct gg_module *inp;
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
-					"input-linux-mouse", "MouseSystems,/dev/sysmouse", &args);
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
+					   "input-linux-mouse",
+					   "MouseSystems,/dev/sysmouse",
+					   &args);
 			if (inp == NULL) {
 				fprintf(stderr, 
 		"display-vgl: Unable to join inputs\n");

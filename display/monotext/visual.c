@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2006/09/17 13:32:11 cegger Exp $
+/* $Id: visual.c,v 1.18 2007/03/08 20:54:07 soyt Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -179,7 +179,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENODEVICE;
 		goto err3;
 	}
-	/* FIXME! Should iterate over the apis attached to vis->stem
+	/* FIXME! Should iterate over the apis attached to vis->module.stem
 	 * instead of only looking for ggi and gii.
 	 */
 	if (ggiAttach(priv->parent) < 0) {
@@ -195,7 +195,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	api = ggGetAPIByName("gii");
 	if (api != NULL) {
 		/* FIXME! This should probably be done in pseudo-stubs-gii */
-		if (STEM_HAS_API(vis->stem, api)) {
+		if (STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, priv->parent) < 0) {
 				ggDelStem(priv->parent);
 				priv->parent = NULL;
@@ -207,7 +207,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			}
 			obs = ggAddObserver(ggGetPublisher(api, priv->parent,
 					GII_PUBLISHER_SOURCE_CHANGE),
-				transfer_gii_src, vis->stem);
+				transfer_gii_src, vis->module.stem);
 		}
 	}
 

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2007/02/25 18:58:30 cegger Exp $
+/* $Id: visual.c,v 1.22 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -319,8 +319,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.release_screen = _terminfo_release_screen;
 
 		api = ggGetAPIByName("gii");
-		if ((api != NULL) && (STEM_HAS_API(vis->stem, api))) {
-			inp = ggOpenModule(api, vis->stem,
+		if ((api != NULL) && (STEM_HAS_API(vis->module.stem, api))) {
+			inp = ggOpenModule(api, vis->module.stem,
 					"input-terminfo", NULL, &_args);
 		}			
 

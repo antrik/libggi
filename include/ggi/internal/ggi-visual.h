@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.3 2007/03/04 18:26:45 soyt Exp $
+/* $Id: ggi-visual.h,v 1.4 2007/03/08 20:54:11 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -185,6 +185,12 @@ typedef struct ggi_dlhandle_l {
 
 #define GGI_VERSION_VISUAL	GGI_VERSION_MK(1)
 struct ggi_visual {
+	struct gg_module  module;
+	/*
+	 *  If we are opened indirectly by a "container" visual
+	 */
+	struct ggi_visual *parent;
+
 	unsigned int       version;
 	void		  *mutex;	/* Lock when changing.. */
 	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
@@ -246,9 +252,6 @@ struct ggi_visual {
 	ggi_gammastate	*gamma;		/* was genericpriv (obselete) */
 	void		*colorpriv;	/* Color library private data */
 
-	/* API */
-	struct gg_stem *stem;		/* backpointer to where this visual is attached to */
-	struct gg_channel *channel; /* XXX this structure should be a module?*/
 };
 
 #define GGI_DL_ERROR		0x80000000

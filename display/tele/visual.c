@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2007/02/11 18:04:09 cegger Exp $
+/* $Id: visual.c,v 1.20 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Teletarget.
@@ -112,8 +112,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* set up GII */
 	DPRINT_MISC("gii starting\n");
 	gii = ggGetAPIByName("gii");
-	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-		priv->input = ggOpenModule(gii, vis->stem,
+	if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+		priv->input = ggOpenModule(gii, vis->module.stem,
 				"input-tele", NULL, &iargs);
 	} else {
 		err = GGI_ENODEVICE;

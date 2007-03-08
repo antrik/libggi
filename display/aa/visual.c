@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2007/02/18 18:56:30 cegger Exp $
+/* $Id: visual.c,v 1.23 2007/03/08 20:54:06 soyt Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -158,8 +158,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		/* First allocate a new gii_input descriptor. */
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			priv->inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			priv->inp = ggOpenModule(gii, vis->module.stem,
 				"input-aa", NULL, NULL);
 			if (priv->inp != NULL) {
 				ggObserve(priv->inp->channel, GGI_aa_listener, vis);

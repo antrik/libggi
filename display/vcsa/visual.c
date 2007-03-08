@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/10/14 15:14:02 cegger Exp $
+/* $Id: visual.c,v 1.26 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -214,9 +214,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->inputs & VCSA_INP_KBD) {
 		struct gg_module *inp = NULL;
 
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
-					"input-linux-kbd", NULL, NULL);
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
+					   "input-linux-kbd", NULL, NULL);
 		}	
 		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
 		if (inp == NULL) {
@@ -231,9 +231,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->inputs & VCSA_INP_MOUSE) {
 		struct gg_module *inp = NULL;
 
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
-					"input-linux-mouse", NULL, &args);
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
+					   "input-linux-mouse", NULL, &args);
 		}
 		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
 		if (inp == NULL) {

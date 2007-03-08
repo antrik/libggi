@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.44 2007/02/11 18:14:45 cegger Exp $
+/* $Id: visual.c,v 1.45 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -423,8 +423,8 @@ GGIopen(struct ggi_visual *vis,
 	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
-	if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-		priv->inp = ggOpenModule(gii, vis->stem,
+	if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+		priv->inp = ggOpenModule(gii, vis->module.stem,
 					"input-vnc", NULL, &iargs);
 		DPRINT_MISC("ggOpenModule returned with %p\n",
 			priv->inp);
@@ -498,7 +498,7 @@ out_closefds:
 	if (priv->sfd != -1)
 		close(priv->sfd);
 out_closefb:
-	ggiClose(priv->fb->stem);
+	ggiClose(priv->fb->module.stem);
 out_delstem:
 	ggDelStem(stem);
 out_freegc:
@@ -546,7 +546,7 @@ GGIclose(struct ggi_visual *vis,
 	priv->sfd = -1;
 
 	if (priv->fb) {
-		stem = priv->fb->stem;
+		stem = priv->fb->module.stem;
 		ggiClose(stem);
 		ggDelStem(stem);
 	}

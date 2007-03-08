@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.14 2006/09/11 21:21:39 cegger Exp $
+/* $Id: box.c,v 1.15 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -298,12 +298,12 @@ int GGI_tele_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 		goto err1;
 	}	/* if */
 
-	ggiGetBox(src->stem, sx, sy, w, h, packed_buf);
+	ggiGetBox(src->module.stem, sx, sy, w, h, packed_buf);
 
-	ggiUnpackPixels(src->stem, packed_buf, buf, w * h);
-	ggiPackColors(vis->stem, packed_buf, buf, w * h);
+	ggiUnpackPixels(src->module.stem, packed_buf, buf, w * h);
+	ggiPackColors(vis->module.stem, packed_buf, buf, w * h);
 
-	err = ggiPutBox(vis->stem, dx, dy, w, h, packed_buf);
+	err = ggiPutBox(vis->module.stem, dx, dy, w, h, packed_buf);
 
 	free(packed_buf);
 	free(buf);

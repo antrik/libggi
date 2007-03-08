@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2007/03/04 18:26:44 soyt Exp $
+/* $Id: mode.c,v 1.23 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -221,7 +221,7 @@ static int do_setmode(struct ggi_visual *vis)
 	vis->opdraw->setwriteframe=GGI_palemu_setwriteframe;
 	vis->opdraw->setdisplayframe=GGI_palemu_setdisplayframe;
 
-	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
 	/* set initial frames */
 	priv->mem_opdraw->setreadframe(vis, 0);
@@ -246,7 +246,7 @@ int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	MANSYNC_ignore(vis);
 
-	if ((err = ggiCheckMode(vis->stem, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) {
 		return err;
 	}
 
@@ -281,7 +281,7 @@ int GGI_palemu_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	}
 
 	/* Initialize palette */
-	ggiSetColorfulPalette(vis->stem);
+	ggiSetColorfulPalette(vis->module.stem);
 
 	MANSYNC_SETFLAGS(vis, LIBGGI_FLAGS(vis));
 	MANSYNC_cont(vis);

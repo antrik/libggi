@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.19 2006/08/14 06:38:42 pekberg Exp $
+/* $Id: stubs.c,v 1.20 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -101,15 +101,15 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 
 		if (mask & GGI_GCCHANGED_CLIP) {
 			if (priv->multi_mode)
-				ggiSetGCClipping(currvis->stem,
+				ggiSetGCClipping(currvis->module.stem,
 					gc->cliptl.x, gc->cliptl.y,
 					gc->clipbr.x, gc->clipbr.y);
 			else
-				ggiSetGCClipping(currvis->stem,
-					max(elm->origin.x, gc->cliptl.x) - elm->origin.x,
-					max(elm->origin.y, gc->cliptl.y) - elm->origin.y,
-					min(elm->clipbr.x, gc->clipbr.x) - elm->origin.x,
-					min(elm->clipbr.y, gc->clipbr.y) - elm->origin.y);
+				ggiSetGCClipping(currvis->module.stem,
+						 max(elm->origin.x, gc->cliptl.x) - elm->origin.x,
+						 max(elm->origin.y, gc->cliptl.y) - elm->origin.y,
+						 min(elm->clipbr.x, gc->clipbr.x) - elm->origin.x,
+						 min(elm->clipbr.y, gc->clipbr.y) - elm->origin.y);
 		}
 
 		gc->version++;
@@ -298,8 +298,8 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 		return GGI_ENOMEM;
 	}
 
-	ggiGetBox(vis->stem, x, y, width, height, buf);
-	ggiPutBox(vis->stem, nx, ny, width, height, buf);
+	ggiGetBox(vis->module.stem, x, y, width, height, buf);
+	ggiPutBox(vis->module.stem, nx, ny, width, height, buf);
 
 	free(buf);
 

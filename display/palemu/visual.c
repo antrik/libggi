@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2007/03/08 16:45:37 cegger Exp $
+/* $Id: visual.c,v 1.29 2007/03/08 20:54:08 soyt Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -223,7 +223,7 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		err = GGI_ENODEVICE;
 		goto out_freeopmansync;
 	}
-	/* FIXME! Should iterate over the apis attached to vis->stem
+	/* FIXME! Should iterate over the apis attached to vis->module.stem
 	 * instead of only looking for ggi and gii.
 	 */
 	if (ggiAttach(priv->parent) < 0) {
@@ -237,7 +237,7 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	if ((api = ggGetAPIByName("gii")) != NULL) {
 		/* FIXME! This should probably be done in pseudo-stubs-gii */
-		if (STEM_HAS_API(vis->stem, api)) {
+		if (STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, priv->parent) < 0) {
 				ggDelStem(priv->parent);
 				priv->parent = NULL;
@@ -248,7 +248,7 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				goto out_freeopmansync;
 			}
 			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
-			    transfer_gii_src, vis->stem);
+			    transfer_gii_src, vis->module.stem);
 		}
 	}
 	if (ggiOpen(priv->parent, target, NULL) < 0) {
@@ -398,7 +398,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		goto err3;
 	}
 
-	/* XXX Should iterate over the apis attached to vis->stem
+	/* XXX Should iterate over the apis attached to vis->module.stem
 	 * instead of only looking for ggi and gii.
 	 */
 	if (ggiAttach(priv->parent) < 0) {
@@ -414,7 +414,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	api = ggGetAPIByName("gii");
 	if (api != NULL) {
 		/* XXX This should probably be done in pseudo-stubs-gii */
-		if (STEM_HAS_API(vis->stem, api)) {
+		if (STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, priv->parent) < 0) {
 				ggDelStem(priv->parent);
 				priv->parent = NULL;
@@ -425,7 +425,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				goto err4;
 			}
 			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
-					transfer_gii_src, vis->stem);
+					transfer_gii_src, vis->module.stem);
 		}
 	}
 

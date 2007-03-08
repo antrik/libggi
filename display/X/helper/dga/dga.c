@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.29 2007/02/11 17:58:02 cegger Exp $
+/* $Id: dga.c,v 1.30 2007/03/08 20:54:06 soyt Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -192,8 +192,8 @@ static int ggi_xdga_enter_mode(struct ggi_visual * vis, int num)
 		dga_args.screen = priv->vilist[priv->viidx].vi->screen;
 
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
 					"input-xf86dga", NULL, &dga_args);
 		}
 

@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.9 2006/03/14 18:15:30 cegger Exp $
+/* $Id: box.c,v 1.10 2007/03/08 20:54:04 soyt Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -90,7 +90,7 @@ int GGI_stubs_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const v
 	}
 	
 	for (; h > 0; h--, y++, src += rowadd) {
-		ggiPutHLine(vis->stem, x, y, w, src);
+		ggiPutHLine(vis->module.stem, x, y, w, src);
 	}
 
 	return 0;
@@ -111,7 +111,7 @@ int GGI_stubs_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *b
 	}
 
 	for (; h > 0; h--, y++, dest += rowadd) {
-		ggiGetHLine(vis->stem, x, y, w, dest);
+		ggiGetHLine(vis->module.stem, x, y, w, dest);
 	}
 
 	return 0;

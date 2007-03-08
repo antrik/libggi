@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2006/10/14 13:52:35 soyt Exp $
+/* $Id: visual.c,v 1.21 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -204,7 +204,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	api = ggGetAPIByName("gii");
 	if (api != NULL) {
 		/* XXX This should probably be done in pseudo-stubs-gii */
-		if (STEM_HAS_API(vis->stem, api)) {
+		if (STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, priv->parent) < 0) {
 				ggDelStem(priv->parent);
 				priv->parent = NULL;
@@ -215,7 +215,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				goto out_freelock;
 			}
 			obs = ggObserve(GG_STEM_API_CHANNEL(priv->parent, api),
-				transfer_gii_src, vis->stem);
+				transfer_gii_src, vis->module.stem);
 		}
 	}
 	if (ggiOpen(priv->parent, target, NULL) < 0) {

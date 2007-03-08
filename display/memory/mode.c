@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.32 2007/03/04 18:26:43 soyt Exp $
+/* $Id: mode.c,v 1.33 2007/03/08 20:54:07 soyt Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -268,7 +268,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_memory_setmode: Visual == NULL");
 	
-	err = ggiCheckMode(vis->stem, mode);
+	err = ggiCheckMode(vis->module.stem, mode);
 	if (err < 0) {
 		DPRINT("GGI_memory_setmode: ggiCheckMode() failed with error %i\n", err);
 		return err;
@@ -294,7 +294,7 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	}
 #endif
 
-	ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 	DPRINT("GGIsetmode: change indicated\n",err);
 
 	return 0;

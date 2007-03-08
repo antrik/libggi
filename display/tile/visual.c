@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2006/10/14 13:49:06 soyt Exp $
+/* $Id: visual.c,v 1.33 2007/03/08 20:54:09 soyt Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -185,7 +185,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
-		/* XXX Should iterate over the apis attached to vis->stem
+		/* XXX Should iterate over the apis attached to vis->module.stem
 		 * instead of only looking for ggi and gii.
 		 */
 		if (ggiAttach(mvis->vis) < 0) {
@@ -197,7 +197,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
-		if (api != NULL && STEM_HAS_API(vis->stem, api)) {
+		if (api != NULL && STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, mvis->vis) < 0) {
 				ggDelStem(mvis->vis);
 				mvis->vis = NULL;
@@ -208,7 +208,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				goto out_freeopmansync;
 			}
 			xfer.src = mvis->vis;
-			xfer.dst = vis->stem;
+			xfer.dst = vis->module.stem;
 			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}
@@ -377,7 +377,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out_freeall;
 		}
-		/* XXX Should iterate over the apis attached to vis->stem
+		/* XXX Should iterate over the apis attached to vis->module.stem
 		 * instead of only looking for ggi and gii.
 		 */
 		if (ggiAttach(mvis->vis) < 0) {
@@ -389,7 +389,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out_freeall;
 		}
-		if (api != NULL && STEM_HAS_API(vis->stem, api)) {
+		if (api != NULL && STEM_HAS_API(vis->module.stem, api)) {
 			if (ggAttach(api, mvis->vis) < 0) {
 				ggDelStem(mvis->vis);
 				mvis->vis = NULL;
@@ -400,7 +400,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				goto out_freeall;
 			}
 			xfer.src = mvis->vis;
-			xfer.dst = vis->stem;
+			xfer.dst = vis->module.stem;
 			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.64 2006/10/14 12:38:32 cegger Exp $
+/* $Id: mode.c,v 1.65 2007/03/08 20:54:06 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -384,7 +384,7 @@ static int ggi_x_load_mode_libs(struct ggi_visual *vis)
 				       "%s (%s)\n", sugname, args);
 		}
         }
-        ggiIndicateChange(vis->stem, GGI_CHG_APILIST);
+        ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
 
         return 0;
 }

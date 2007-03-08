@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.17 2007/01/17 17:12:55 cegger Exp $
+/* $Id: tight.c,v 1.18 2007/03/08 20:54:10 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -1424,7 +1424,7 @@ GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 		d_frame_num = 0;
 	}
 
-	db = ggiDBGetBuffer(cvis->stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	DPRINT("vupdate %dx%d - %dx%d\n",

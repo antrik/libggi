@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.69 2007/03/04 18:26:42 soyt Exp $
+/* $Id: visual.c,v 1.70 2007/03/08 20:54:06 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -101,17 +101,17 @@ void GGI_X_gcchanged(struct ggi_visual *vis, int mask)
 
 	if (!priv->slave) goto noslave;
 	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggiSetGCClipping(priv->slave->stem,
+		ggiSetGCClipping(priv->slave->module.stem,
 				 LIBGGI_GC(vis)->cliptl.x,
 				 LIBGGI_GC(vis)->cliptl.y, 
 				 LIBGGI_GC(vis)->clipbr.x,
 				 LIBGGI_GC(vis)->clipbr.y);
 	}
 	if ((mask & GGI_GCCHANGED_FG)) {
-		ggiSetGCForeground(priv->slave->stem, LIBGGI_GC_FGCOLOR(vis));
+		ggiSetGCForeground(priv->slave->module.stem, LIBGGI_GC_FGCOLOR(vis));
 	}
 	if ((mask & GGI_GCCHANGED_BG)) {
-		ggiSetGCBackground(priv->slave->stem, LIBGGI_GC_BGCOLOR(vis));
+		ggiSetGCBackground(priv->slave->module.stem, LIBGGI_GC_BGCOLOR(vis));
 	}
 
 	if (priv->drawable == None) return; /* No Xlib clipping */
@@ -144,7 +144,7 @@ static int GGI_X_setflags(struct ggi_visual *vis, uint32_t flags) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->stem);
+		ggiFlush(vis->module.stem);
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
@@ -191,7 +191,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv->inp = NULL;
 
 	if (priv->slave) {
-		ggiClose(priv->slave->stem);
+		ggiClose(priv->slave->module.stem);
 	}
 	priv->slave = NULL;
 
@@ -592,8 +592,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
                 _args.unlockarg = vis;
                 
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->stem, gii)) {
-			inp = ggOpenModule(gii, vis->stem,
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			inp = ggOpenModule(gii, vis->module.stem,
 			    "input-xwin", NULL, &_args);
 			
 			ggObserve(inp->channel, GGI_X_listener, vis);
