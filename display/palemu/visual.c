@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2006/10/14 13:42:28 soyt Exp $
+/* $Id: visual.c,v 1.27 2007/03/08 16:32:03 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -65,6 +65,7 @@ static const gg_option monotext_optlist[] =
 static int GGIclose_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	struct gg_api *api;
 
 	DPRINT("display-palemu: GGIclose start.\n");
 
@@ -74,6 +75,13 @@ static int GGIclose_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->parent != NULL) {
 		ggiClose(priv->parent);
+		ggiDetach(priv->parent);
+		/* XXX What if gii has been detached before close? */
+		api = ggGetAPIByName("gii");
+		if (api) {
+			if (STEM_HAS_API(priv->parent, api))
+				ggDetach(api, priv->parent);
+		}
 		ggDelStem(priv->parent);
 	}
 
@@ -91,6 +99,7 @@ static int GGIclose_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 static int GGIclose_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_palemu_priv *priv = PALEMU_PRIV(vis);
+	struct gg_api *api;
 
 	DPRINT("display-monotext: GGIclose start.\n");
 
@@ -101,7 +110,13 @@ static int GGIclose_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->parent != NULL) {
 		ggiClose(priv->parent);
-
+		ggiDetach(priv->parent);
+		/* XXX What if gii has been detached before close? */
+		api = ggGetAPIByName("gii");
+		if (api) {
+			if (STEM_HAS_API(priv->parent, api))
+				ggDetach(api, priv->parent);
+		}
 		ggDelStem(priv->parent);
 		priv->parent = NULL;
 	}
