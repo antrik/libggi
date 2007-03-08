@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2419 2007/02/25 19:18:35) 2.1a
+# ltmain.sh (GNU libtool 1.2431 2007/03/06 22:31:09) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -63,7 +63,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2419 2007/02/25 19:18:35) 2.1a
+#       $progname:		(GNU libtool 1.2431 2007/03/06 22:31:09) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -72,8 +72,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2419 2007/02/25 19:18:35"
-package_revision=1.2419
+TIMESTAMP=" 1.2431 2007/03/06 22:31:09"
+package_revision=1.2431
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -103,6 +103,8 @@ do
 done
 
 $lt_unset CDPATH
+
+
 
 
 
@@ -421,6 +423,9 @@ func_show_eval ()
 }
 
 
+
+
+
 # func_version
 # Echo version message to standard output and exit.
 func_version ()
@@ -480,6 +485,9 @@ func_missing_arg ()
 }
 
 exit_cmd=:
+
+
+
 
 
 # Check that we have a working $ECHO.
@@ -5755,6 +5763,28 @@ EOF
 	    fi
 	  fi
 
+          if ${skipped_export-false}; then
+	    if test -n "$export_symbols" && test -n "$include_expsyms"; then
+	      tmp_export_symbols="$export_symbols"
+	      test -n "$orig_export_symbols" && tmp_export_symbols="$orig_export_symbols"
+	      $opt_dry_run || eval '$ECHO "X$include_expsyms" | $Xsed | $SP2NL >> "$tmp_export_symbols"'
+	    fi
+
+	    if test -n "$orig_export_symbols"; then
+	      # The given exports_symbols file has to be filtered, so filter it.
+	      func_echo "filter symbol list for \`$libname.la' to tag DATA exports"
+	      # FIXME: $output_objdir/$libname.filter potentially contains lots of
+	      # 's' commands which not all seds can handle. GNU sed should be fine
+	      # though. Also, the filter scales superlinearly with the number of
+	      # global variables. join(1) would be nice here, but unfortunately
+	      # isn't a blessed tool.
+	      $opt_dry_run || $SED -e '/[ ,]DATA/!d;s,\(.*\)\([ \,].*\),s|^\1$|\1\2|,' < $export_symbols > $output_objdir/$libname.filter
+	      delfiles="$delfiles $export_symbols $output_objdir/$libname.filter"
+	      export_symbols=$output_objdir/$libname.def
+	      $opt_dry_run || $SED -f $output_objdir/$libname.filter < $orig_export_symbols > $export_symbols
+	    fi
+	  fi
+
 	  libobjs=$output
 	  # Restore the value of output.
 	  output=$save_output
@@ -7355,3 +7385,5 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # sh-indentation:2
 # End:
 # vi:sw=2
+
+
