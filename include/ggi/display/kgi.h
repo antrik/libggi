@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.19 2007/03/08 18:20:42 antrik Exp $
+/* $Id: kgi.h,v 1.20 2007/03/08 18:47:46 antrik Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -127,8 +127,8 @@ typedef struct {
 	ggifunc_map_accel *map_accel;
 
 	/* Accelerator callbacks for frames/origin. */
-	int (*origin_changed)(struct ggi_visual vis);
-	int (*rwframes_changed)(struct ggi_visual vis);
+	int (*origin_changed)(struct ggi_visual *vis);
+	int (*rwframes_changed)(struct ggi_visual *vis);
 
 	/* Accelerator target private data pointer */
 	void *accel_priv;
