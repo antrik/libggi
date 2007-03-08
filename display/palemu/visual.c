@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2007/03/08 16:32:03 pekberg Exp $
+/* $Id: visual.c,v 1.28 2007/03/08 16:45:37 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -78,9 +78,8 @@ static int GGIclose_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		ggiDetach(priv->parent);
 		/* XXX What if gii has been detached before close? */
 		api = ggGetAPIByName("gii");
-		if (api) {
-			if (STEM_HAS_API(priv->parent, api))
-				ggDetach(api, priv->parent);
+		if (api && STEM_HAS_API(priv->parent, api)) {
+			ggDetach(api, priv->parent);
 		}
 		ggDelStem(priv->parent);
 	}
@@ -113,9 +112,8 @@ static int GGIclose_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		ggiDetach(priv->parent);
 		/* XXX What if gii has been detached before close? */
 		api = ggGetAPIByName("gii");
-		if (api) {
-			if (STEM_HAS_API(priv->parent, api))
-				ggDetach(api, priv->parent);
+		if (api && STEM_HAS_API(priv->parent, api)) {
+			ggDetach(api, priv->parent);
 		}
 		ggDelStem(priv->parent);
 		priv->parent = NULL;
