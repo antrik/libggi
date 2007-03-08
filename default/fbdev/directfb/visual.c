@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2006/03/12 23:15:05 soyt Exp $
+/* $Id: visual.c,v 1.26 2007/03/08 09:12:53 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -276,7 +276,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_ENOFUNC;
 	}
 
-	/* sprintf/strlen is safe here because driver_dir is compiled in, 
+	/* strlen is safe here because driver_dir is compiled in, 
 	 * and points to a root-owned/controlled system directory 
 	 * which should have known good filenames even if readdir untrusted.
 	 * (We have bigger problems if either assumption isn't true :-)
@@ -292,7 +292,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		    entry->d_name[strlen(entry->d_name)-2] != 's')
 			continue;
 
-		sprintf(buf, "%s/%s", driver_dir, entry->d_name);
+		snprintf(buf, buf_len, "%s/%s", driver_dir, entry->d_name);
 
 		DPRINT("Opening '%s'.\n", buf);
 
