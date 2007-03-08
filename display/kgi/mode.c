@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2007/03/04 18:26:43 soyt Exp $
+/* $Id: mode.c,v 1.31 2007/03/08 18:54:37 antrik Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -342,7 +342,7 @@ int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 			if (priv->swatch_size > avail) {
 				fprintf(stderr, "No space for swatch:"
 					" need %d have %d\n",
-					priv->swatch_size, avail);
+					(int)priv->swatch_size, (int)avail);
 				return GGI_ENOMEM;
 			}
 		}
@@ -357,7 +357,7 @@ int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 				fprintf(stderr, "No space for swatch:"
 					" need %d have %d\n",
 					GGI_KGI_MINSWATCH + GGI_KGI_FONTSIZE,
-					priv->swatch_size);
+					(int)priv->swatch_size);
 				return GGI_EARGINVAL;
 			}
 		}
