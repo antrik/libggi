@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.22 2007/03/09 08:22:17 antrik Exp $
+/* $Id: kgi.h,v 1.23 2007/03/09 09:23:16 antrik Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -88,7 +88,7 @@ kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource);
 
 typedef union ggi_accel ggi_accel_t;
 
-typedef ggi_accel_t *ggifunc_map_accel(struct ggi_visual vis, kgi_u_t resource,
+typedef ggi_accel_t *ggifunc_map_accel(struct ggi_visual *vis, kgi_u_t resource,
                                        kgi_u_t min, kgi_u_t max,
 				       kgi_u_t buf, kgi_u_t priority);
 
