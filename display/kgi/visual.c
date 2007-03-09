@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2007/03/09 08:22:17 antrik Exp $
+/* $Id: visual.c,v 1.30 2007/03/09 08:27:51 antrik Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -61,7 +61,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	
 	memcpy(options, optlist, sizeof(options));
 	if (args) {
-		args = ggParseOptions((char*)args, options, KGI_NUM_OPTS);
+		args = ggParseOptions(args, options, KGI_NUM_OPTS);
 		if (args == NULL) {
 			DPRINT_LIBS("Error in arguments\n");
 			goto err_freepriv;
