@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2006/03/22 20:22:27 cegger Exp $
+/* $Id: visual.c,v 1.29 2007/03/09 08:22:17 antrik Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -50,8 +50,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	kgi_version_t version = { 0, 0, 1, 0 };
 	gg_option options[KGI_NUM_OPTS];
-	gii_input *inp;
-	char *eventname[32];
 
 	LIBGGI_PRIVATE(vis) = calloc(1, sizeof(ggi_kgi_priv));
 	if (KGI_PRIV(vis) == NULL)
@@ -104,17 +102,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 * try to open the /dev/event corresponding to ower /dev/graphic
 	 */
 	if (tolower((uint8_t)options[KGI_OPT_NOINPUT].result[0]) == 'n') {
+		struct gg_api *gii;
+		char eventname[32];
 
-		snprintf(eventname, 32, "kii:-device=/dev/event%i",
+		snprintf(eventname, sizeof(eventname), "-device=/dev/event%i",
 			 KGI_CTX(vis).mapper.graphic);
 
-		if ((inp = giiOpen(eventname, NULL)) == NULL) {
+		gii = ggGetAPIByName("gii");
+		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+			KGI_PRIV(vis)->inp = ggOpenModule(gii,
+				vis->module.stem, "input-kii", eventname,
+				NULL);
+		}
+		if (KGI_PRIV(vis)->inp == NULL) {
 			DPRINT_MISC("Unable to open KII inputlib\n");
 			goto err_freegc;
 		}
-		
-		/* Now join the new event source in. */
-		vis->input = giiJoinInputs(vis->input, inp);
 	}
 
 	KGI_PRIV(vis)->ilut_touched = 1;
@@ -134,6 +137,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	if (LIBGGI_FD(vis) > -1)
 		close(LIBGGI_FD(vis));
+
+	if (KGI_PRIV(vis)->inp) {
+		ggCloseModule(KGI_PRIV(vis)->inp);
+		KGI_PRIV(vis)->inp = NULL;
+	}
 
 	return 0;
 }

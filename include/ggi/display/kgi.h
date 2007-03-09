@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.21 2007/03/08 20:10:45 antrik Exp $
+/* $Id: kgi.h,v 1.22 2007/03/09 08:22:17 antrik Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -107,6 +107,9 @@ ggifunc_map_accel       GGI_kgi_map_accelerator;
 #define KGI_ACCEL_PRIV(vis) (KGI_PRIV(vis)->accel_priv)
 
 typedef struct {
+	/* Associated input-kii */
+	struct gg_module *inp;
+
 	/* KGI context used to communicate with KGI */
 	kgi_context_t ctx;
 
