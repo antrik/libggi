@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.45 2007/03/08 20:54:10 soyt Exp $
+/* $Id: visual.c,v 1.46 2007/03/09 22:44:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -55,6 +55,7 @@
 #include "d3des.h"
 
 #define VNC_OPTIONS \
+	VNC_OPTION(bind,     "")           \
 	VNC_OPTION(client,   "")           \
 	VNC_OPTION(copyrect, "")           \
 	VNC_OPTION(corre,    "")           \
@@ -400,6 +401,19 @@ GGIopen(struct ggi_visual *vis,
 		sa.sin_family = AF_INET;
 		sa.sin_addr.s_addr = htonl(INADDR_ANY);
 		sa.sin_port = htons(5900 + port);
+
+		if (options[OPT_bind].result[0] != '\0') {
+			struct hostent *h;
+			DPRINT_MISC("bind to %s\n", options[OPT_bind].result);
+			h = gethostbyname(options[OPT_bind].result);
+			if (!h) {
+				DPRINT_MISC("gethostbyname error\n");
+				err = GGI_ENODEVICE;
+				goto out_closefds;
+			}
+
+			sa.sin_addr = *((struct in_addr *)h->h_addr);
+		}
 
 		if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
 			err = GGI_ENODEVICE;
