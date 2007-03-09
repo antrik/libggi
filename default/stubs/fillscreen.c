@@ -1,4 +1,4 @@
-/* $Id: fillscreen.c,v 1.4 2007/03/08 20:54:04 soyt Exp $
+/* $Id: fillscreen.c,v 1.5 2007/03/09 09:16:38 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -35,10 +35,10 @@
 int GGI_stubs_fillscreen(struct ggi_visual *vis)
 {
 	/* Clipping is simple here */
-	return ggiDrawBox(vis->module.stem,
-		LIBGGI_GC(vis)->cliptl.x,
-		LIBGGI_GC(vis)->cliptl.y,
-		LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
-		LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y);
+	return _ggiDrawBox(vis,
+			   LIBGGI_GC(vis)->cliptl.x,
+			   LIBGGI_GC(vis)->cliptl.y,
+			   LIBGGI_GC(vis)->clipbr.x-LIBGGI_GC(vis)->cliptl.x,
+			   LIBGGI_GC(vis)->clipbr.y-LIBGGI_GC(vis)->cliptl.y);
 }
 
