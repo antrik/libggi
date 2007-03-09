@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.7 2006/03/12 23:15:06 soyt Exp $
+/* $Id: crossblit.c,v 1.8 2007/03/09 15:57:43 antrik Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -169,7 +169,7 @@ static inline int blit3d(struct ggi_visual *vis, radeon_context_t *ctx,
 }
 
 
-static inline int blit3d_pack(struct ggi_visual *src, ggi_visual *dst, 
+static inline int blit3d_pack(struct ggi_visual *src, struct ggi_visual *dst, 
 			      radeon_context_t *ctx, 
 			      int x, int y, int w, int h, void *buf, 
 			      int sb, int sb32, int h2)
@@ -286,7 +286,7 @@ static inline int blit3d_pack(struct ggi_visual *src, ggi_visual *dst,
 }
 
 
-static inline int blit3d_get(struct ggi_visual *src, ggi_visual *dst, 
+static inline int blit3d_get(struct ggi_visual *src, struct ggi_visual *dst, 
 			     radeon_context_t *ctx, 
 			     int x, int y, int w, int h,
 			     int wg, int sx, int sy, int sb32, int h2)
