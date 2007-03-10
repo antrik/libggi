@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.3 2006/09/22 06:06:21 pekberg Exp $
+/* $Id: common.h,v 1.4 2007/03/10 12:02:45 cegger Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -28,7 +28,7 @@
 #ifndef _GGI_VNC_COMMON_H
 #define _GGI_VNC_COMMON_H
 
-#include <ggi/types.h>
+#include <ggi/ggi-types.h>
 /* need display/vnc.h for ggi_rect typedef, not so pretty... */
 #include <ggi/display/vnc.h>
 #include "rect.h"

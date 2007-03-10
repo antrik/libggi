@@ -1,4 +1,4 @@
-/* $Id: rect.h,v 1.4 2006/09/07 08:04:32 pekberg Exp $
+/* $Id: rect.h,v 1.5 2007/03/10 12:02:45 cegger Exp $
 ******************************************************************************
 
    display-vnc: rectangles
@@ -28,7 +28,7 @@
 #ifndef _GGI_RECT_H
 #define _GGI_RECT_H
 
-#include <ggi/types.h>
+#include <ggi/ggi-types.h>
 /* need display/vnc.h for ggi_rect typedef, not so pretty... */
 #include <ggi/display/vnc.h>
 
