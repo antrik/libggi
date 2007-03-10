@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.4 2007/03/08 20:54:11 soyt Exp $
+/* $Id: ggi-visual.h,v 1.5 2007/03/10 11:52:35 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -153,7 +153,7 @@ typedef struct ggi_resource {
 */
 
 typedef struct ggi_dlhandle {
-	gg_scope *handle;
+	struct gg_scope *handle;
 	char   *name;
 	int	usecnt;
 	int 	type;

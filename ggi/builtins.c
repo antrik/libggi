@@ -1,4 +1,4 @@
-/* $Id: builtins.c,v 1.12 2007/03/04 14:44:53 soyt Exp $
+/* $Id: builtins.c,v 1.13 2007/03/10 11:52:34 soyt Exp $
 ******************************************************************************
 
    Libggi builtin targets bindings.
@@ -327,7 +327,7 @@ static void * _builtins_get(void * _, const char *symbol) {
 	return NULL;
 }
 
-static gg_scope _builtins;
+static struct gg_scope *_builtins;
 
 void _ggiInitBuiltins(void);
 void _ggiExitBuiltins(void);
