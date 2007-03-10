@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.31 2007/03/04 14:44:53 soyt Exp $
+/* $Id: internal.c,v 1.32 2007/03/10 23:12:50 pekberg Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -138,25 +138,41 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		if (pixfmt->red_mask	== 0x00ff0000 &&
 		    pixfmt->green_mask	== 0x0000ff00 &&
 		    pixfmt->blue_mask	== 0x000000ff) {
-			pixfmt->stdformat = GGI_DB_STD_24a32p8r8g8b8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a32b8g8r8p8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a32p8r8g8b8;
+			}
 			break;
 		}
 		if (pixfmt->red_mask	== 0x0000ff00 &&
 		    pixfmt->green_mask	== 0x00ff0000 &&
 		    pixfmt->blue_mask	== 0xff000000) {
-			pixfmt->stdformat = GGI_DB_STD_24a32b8g8r8p8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a32p8r8g8b8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a32b8g8r8p8;
+			}
 			break;
 		}
 		if (pixfmt->red_mask	== 0xff000000 &&
 		    pixfmt->green_mask	== 0x00ff0000 &&
 		    pixfmt->blue_mask	== 0x0000ff00) {
-			pixfmt->stdformat = GGI_DB_STD_24a32r8g8b8p8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a32p8b8g8r8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a32r8g8b8p8;
+			}
 			break;
 		}
 		if (pixfmt->red_mask	== 0x000000ff &&
 		    pixfmt->green_mask	== 0x0000ff00 &&
 		    pixfmt->blue_mask	== 0x00ff0000) {
-			pixfmt->stdformat = GGI_DB_STD_24a32p8b8g8r8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a32r8g8b8p8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a32p8b8g8r8;
+			}
 			break;
 		}
 		break;
@@ -165,13 +181,21 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 		if (pixfmt->red_mask	== 0xff0000 &&
 		    pixfmt->green_mask	== 0x00ff00 &&
 		    pixfmt->blue_mask	== 0x0000ff) {
-			pixfmt->stdformat = GGI_DB_STD_24a24r8g8b8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a24b8g8r8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a24r8g8b8;
+			}
 			break;
 		}
 		if (pixfmt->red_mask	== 0x0000ff &&
 		    pixfmt->green_mask	== 0x00ff00 &&
 		    pixfmt->blue_mask	== 0xff0000) {
-			pixfmt->stdformat = GGI_DB_STD_24a24b8g8r8;
+			if (revendian) {
+				pixfmt->stdformat = GGI_DB_STD_24a24r8g8b8;
+			} else {
+				pixfmt->stdformat = GGI_DB_STD_24a24b8g8r8;
+			}
 			break;
 		}
 		break;
