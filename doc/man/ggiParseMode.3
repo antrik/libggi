@@ -1,6 +1,6 @@
-.TH "ggiParseMode" 3 "2007-03-04" "libggi-current" GGI
+.TH "ggiParseMode" 3 "2007-03-05" "libggi-current" GGI
 .SH NAME
-\fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
+\fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiSNPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
 .SH SYNOPSIS
 .nb
 .nf
@@ -12,6 +12,9 @@ int ggiParseMode(const char *s, ggi_mode *m);
 #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
 int ggiSPrintMode(char *s, const ggi_mode *m);
+
+int ggiSNPrintMode(char *s, size_t n, const ggi_mode *m);
+
 int ggiFPrintMode(FILE *s, const ggi_mode *m);
 .fi
 
@@ -21,9 +24,11 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m);
 The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode(3)\fR in a
 human-readable form.  \fBggiSPrintMode\fR outputs to a preallocated string
 buffer, \fBggiFPrintMode\fR outputs to a stdio \fBFILE\fR, and \fBggiPrintMode\fR
-outputs to standard output.  These functions correspond to
-\f(CWsprintf(3)\fR, \f(CWfprintf(3)\fR and \f(CWprintf(3)\fR
-respectively.
+outputs to standard output.  \fBggiSNPrintMode\fR works like
+\fBggiSNPrintMode\fR but it will make sure that no more than \fIn\fR chars
+are written, including the trailing 0. These functions correspond to
+\f(CWsprintf(3)\fR, \f(CWfprintf(3)\fR, \f(CWprintf(3)\fR
+\f(CWsnprintf(3)\fR respectively.
 
 The format of the string used by these functions is exactly the same
 as the one used in the \fBGGI_DEFMODE\fR environment variable described in
@@ -50,5 +55,9 @@ All parameters parsed so far are written into \fIm\fR.
 So \fIm\fR contains all parameters that have been successfully
 parsed. For most applications there will be no need for testing
 \fBggiParseMode\fR for failure.
+
+\fBggiSNPrintMode\fR returns the total number of chars that would have
+been written (excluding the trailing 0) if the buffer was large
+enough.
 .SH SEE ALSO
 \f(CWlibggi(7)\fR, \f(CWggi-error(3)\fR

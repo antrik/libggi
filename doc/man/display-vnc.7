@@ -1,13 +1,13 @@
-.TH "display-vnc" 7 "2007-01-11" "libggi-current" GGI
+.TH "display-vnc" 7 "2007-03-10" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-client=<host>] [-copyrect=no|always] [-corre=no]
-             [-display=<dpy>] [-hextile=no] [-kold] [-passwd=<file>]
-             [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
-             [-server[=<dpy>|stdio]] [-stdio] [-tight=no]
+display-vnc: [-bind=<iface>] [-client=<host>] [-copyrect=no|always]
+             [-corre=no] [-display=<dpy>] [-hextile=no] [-kold]
+             [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
+             [-rre=no] [-server[=<dpy>|stdio]] [-stdio] [-tight=no]
              [-title=<title>] [-viewonly] [-viewpw=<file>]
              [-zlib=<level>|no] [-zlibhex=<level>|no]
              [-zrle=<level>|no]
@@ -21,6 +21,11 @@ short.
 
 The supported RFB protocol versions are 3.3, 3.7 and 3.8.
 .SH OPTIONS
+.TP
+\f(CW-bind=<iface>\fR
+Bind the server socket to the specific \fIiface\fR, e.g. 127.0.0.1 in
+case display-vnc should only accept connections from an ssh tunnel.
+
 .TP
 \f(CW-client=<host>\fR
 Make a connection to \fIhost\fR, instead of waiting for clients to
