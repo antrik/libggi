@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.7 2006/03/12 07:24:57 cegger Exp $
+/* $Id: mansync.h,v 1.8 2007/03/11 11:01:26 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -30,10 +30,10 @@
 
    MANSYNC_TASK: A task which periodically flushes the framebuffer
 
-   A target wishing to use mansync should open mansync with _ggiAddDL()
+   A target wishing to use mansync should open mansync with MANSYNC_open()
    in it's own GGIopen().
    It must pass a pointer to a _ggi_opmansync structure as the argument
-   to _ggiAddDL(), and must define the following macros:
+   to ggCreateModuleInstance(), and must define the following macros:
 
    MANSYNC_init(vis)
    MANSYNC_deinit(vis)
@@ -63,6 +63,11 @@
 
 	MANSYNC_SETFLAGS(vis,flags)
 		mansync management in ggiSetFlags().
+
+	MANSYNC_open(vis, priv)
+	MANSYNC_close(priv)
+		Loads/Unloads mansync. Load it in GGIopen() and
+		unload it in GGIexit() or GGIclose().
 
    (The above functions return 0 if successful, -1 if not.)
 
@@ -147,7 +152,8 @@ do {									\
 
 
 /* helpers */
-#define MANSYNC_DATA		_ggi_opmansync *opmansync
+#define MANSYNC_DATA		_ggi_opmansync *opmansync;		\
+				struct gg_instance *mod_mansync
 
 #define MANSYNC_DECL_INIT(priv, vis)	(priv)->opmansync->init((vis))
 #define MANSYNC_DECL_DEINIT(priv, vis)	(priv)->opmansync->deinit((vis))
@@ -156,5 +162,12 @@ do {									\
 #define MANSYNC_DECL_IGNORE(priv, vis)	(priv)->opmansync->ignore((vis))
 #define MANSYNC_DECL_CONT(priv, vis)	(priv)->opmansync->cont((vis))
 
+#define MANSYNC_open(vis, priv)						\
+	(priv)->mod_mansync = ggCreateModuleInstance(libggi,		\
+					(vis)->instance.stem,		\
+					"helper-mansync", NULL,		\
+					(priv)->opmansync)
+
+#define MANSYNC_close(priv)	ggDelInstance((priv)->mod_mansync)
 
 #endif /* _GGI_DISPLAY_MANSYNC_H */
