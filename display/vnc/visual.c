@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.46 2007/03/09 22:44:16 pekberg Exp $
+/* $Id: visual.c,v 1.47 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -437,10 +437,10 @@ GGIopen(struct ggi_visual *vis,
 	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
-	if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-		priv->inp = ggOpenModule(gii, vis->module.stem,
+	if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+		priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
 					"input-vnc", NULL, &iargs);
-		DPRINT_MISC("ggOpenModule returned with %p\n",
+		DPRINT_MISC("ggCreateModuleInstance returned with %p\n",
 			priv->inp);
 	} else {
 		err = GGI_ENODEVICE;
@@ -508,11 +508,11 @@ GGIopen(struct ggi_visual *vis,
 
 out_closefds:
 	if (priv->inp)
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 	if (priv->sfd != -1)
 		close(priv->sfd);
 out_closefb:
-	ggiClose(priv->fb->module.stem);
+	ggiClose(priv->fb->instance.stem);
 out_delstem:
 	ggDelStem(stem);
 out_freegc:
@@ -552,7 +552,7 @@ GGIclose(struct ggi_visual *vis,
 		GGI_vnc_close_client(GG_LIST_FIRST(&priv->clients));
 
 	if (priv->inp)
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->sfd != -1)
@@ -560,7 +560,7 @@ GGIclose(struct ggi_visual *vis,
 	priv->sfd = -1;
 
 	if (priv->fb) {
-		stem = priv->fb->module.stem;
+		stem = priv->fb->instance.stem;
 		ggiClose(stem);
 		ggDelStem(stem);
 	}

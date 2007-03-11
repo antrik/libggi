@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.15 2007/03/08 20:54:07 soyt Exp $
+/* $Id: monotext.c,v 1.16 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-monotext
@@ -360,7 +360,7 @@ static inline void get_source_lines(struct ggi_visual *vis, int x, int y, int w,
 
 	for (j=0; j < priv->accuracy.y; j++, y+=priv->squish.y, src+=stride) {
 
-		ggiGetHLine(vis->module.stem, x, y, w, src);
+		ggiGetHLine(vis->instance.stem, x, y, w, src);
 		
 		for (i=0; i < num_w; i++) {
 			src[i] = priv->greymap[src[i * priv->squish.x]];

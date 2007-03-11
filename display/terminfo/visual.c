@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2007/03/08 20:54:08 soyt Exp $
+/* $Id: visual.c,v 1.23 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -310,7 +310,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* event management */
 	do {
-		struct gg_module *inp = NULL;
+		struct gg_instance *inp = NULL;
 		struct gg_api *api;
 		gii_terminfo_arg _args;
 
@@ -319,12 +319,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_args.release_screen = _terminfo_release_screen;
 
 		api = ggGetAPIByName("gii");
-		if ((api != NULL) && (STEM_HAS_API(vis->module.stem, api))) {
-			inp = ggOpenModule(api, vis->module.stem,
-					"input-terminfo", NULL, &_args);
+		if ((api != NULL) && (STEM_HAS_API(vis->instance.stem, api))) {
+			inp = ggCreateModuleInstance(api,
+						     vis->instance.stem,
+						     "input-terminfo",
+						     NULL,
+						     &_args);
 		}			
-
-		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
+		DPRINT_MISC("ggCreateModuleInstance() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-terminfo: error allocating gii_input\n");
 			err = GGI_ENOMEM;
@@ -357,7 +359,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv = TERMINFO_PRIV(vis);
 	if (priv != NULL) {
 		if (priv->scr != NULL) {
-			ggCloseModule(priv->inp);
+			ggDelInstance(priv->inp);
 			_terminfo_select_screen(priv->scr);
 			if (!priv->virgin) {
 				wclear(stdscr);

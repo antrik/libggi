@@ -1,4 +1,4 @@
-/* $Id: text.c,v 1.6 2007/03/08 20:54:07 soyt Exp $
+/* $Id: text.c,v 1.7 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-monotext: displaying text
@@ -39,7 +39,7 @@ int GGI_monotext_putc(struct ggi_visual *vis, int x, int y, char c)
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 	int char_w, char_h;
 	
-	ggiGetCharSize(vis->module.stem, &char_w, &char_h);
+	ggiGetCharSize(vis->instance.stem, &char_w, &char_h);
 
 	UPDATE_MOD(vis, x, y, char_w, char_h);
 	

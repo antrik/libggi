@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.5 2006/10/15 07:28:45 cegger Exp $
+/* $Id: vgl.h,v 1.6 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -78,8 +78,8 @@ typedef struct vgl_priv {
 #define INP_KBD    0x01
 #define INP_MOUSE  0x02
 	int inputs;
-	struct gg_module *kbd_inp;	/* keyboard */
-	struct gg_module *ms_inp;	/* mouse */
+	struct gg_instance *kbd_inp;	/* keyboard */
+	struct gg_instance *ms_inp;	/* mouse */
 
 	ggi_modelistmode *availmodes;
 	uint8_t	         *memorigin;

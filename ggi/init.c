@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.69 2007/03/08 20:54:11 soyt Exp $
+/* $Id: init.c,v 1.70 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -258,7 +258,7 @@ void _ggiExit(struct gg_api *api)
 
 	DPRINT_CORE("ggiExit: really destroying.\n");
 	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
-		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual)->module.stem);
+		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual)->instance.stem);
 	}
 
 	ggLockDestroy(_ggiVisuals.mutex);
@@ -310,7 +310,7 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 		return GGI_ENOMEM;
 	}
 	
-	vis->module.stem = stem;
+	vis->instance.stem = stem;
 	GGI_PRIV(stem) = vis;
 	
 	if (driver == NULL) {

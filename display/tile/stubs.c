@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.20 2007/03/08 20:54:09 soyt Exp $
+/* $Id: stubs.c,v 1.21 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -101,11 +101,11 @@ void GGI_tile_gcchanged(struct ggi_visual *vis, int mask)
 
 		if (mask & GGI_GCCHANGED_CLIP) {
 			if (priv->multi_mode)
-				ggiSetGCClipping(currvis->module.stem,
+				ggiSetGCClipping(currvis->instance.stem,
 					gc->cliptl.x, gc->cliptl.y,
 					gc->clipbr.x, gc->clipbr.y);
 			else
-				ggiSetGCClipping(currvis->module.stem,
+				ggiSetGCClipping(currvis->instance.stem,
 						 max(elm->origin.x, gc->cliptl.x) - elm->origin.x,
 						 max(elm->origin.y, gc->cliptl.y) - elm->origin.y,
 						 min(elm->clipbr.x, gc->clipbr.x) - elm->origin.x,
@@ -298,8 +298,8 @@ int GGI_tile_copybox(struct ggi_visual *vis, int x, int y, int width, int height
 		return GGI_ENOMEM;
 	}
 
-	ggiGetBox(vis->module.stem, x, y, width, height, buf);
-	ggiPutBox(vis->module.stem, nx, ny, width, height, buf);
+	ggiGetBox(vis->instance.stem, x, y, width, height, buf);
+	ggiPutBox(vis->instance.stem, nx, ny, width, height, buf);
 
 	free(buf);
 

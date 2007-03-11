@@ -1,4 +1,4 @@
-/* $Id: test2.c,v 1.10 2007/03/08 20:54:11 soyt Exp $
+/* $Id: test2.c,v 1.11 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Test extension test2.c
@@ -108,12 +108,12 @@ observe_visuals(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = data;
 
-	if (!STEM_HAS_API(vis->module.stem, ggitest2))
+	if (!STEM_HAS_API(vis->instance.stem, ggitest2))
 		return 0;
 
 	switch (flag) {
 	case GGI_OBSERVE_VISUAL_OPENED:
-		_test2_attach_finalize(vis->module.stem);
+		_test2_attach_finalize(vis->instance.stem);
 		break;
 
 	case GGI_OBSERVE_VISUAL_APILIST:

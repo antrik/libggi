@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.11 2007/03/08 20:54:11 soyt Exp $
+/* $Id: test1.c,v 1.12 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -57,7 +57,7 @@ static int changed(struct ggi_visual *vis,int whatchanged)
 			char api[GGI_MAX_APILEN];
 			char args[GGI_MAX_APILEN];
 			for (temp=0;
-			    0 == ggiGetAPI(vis->module.stem, temp, api, args);
+			    0 == ggiGetAPI(vis->instance.stem, temp, api, args);
 			    temp++)
 			{
 				ggstrlcat(api,"-test1", sizeof(api));
@@ -122,12 +122,12 @@ observe_visuals(void *arg, uint32_t flag, void *data)
 {
 	struct ggi_visual *vis = data;
 
-	if (!STEM_HAS_API(vis->module.stem, ggitest1))
+	if (!STEM_HAS_API(vis->instance.stem, ggitest1))
 		return 0;
 
 	switch (flag) {
 	case GGI_OBSERVE_VISUAL_OPENED:
-		_test1_attach_finalize(vis->module.stem);
+		_test1_attach_finalize(vis->instance.stem);
 		break;
 
 	case GGI_OBSERVE_VISUAL_APILIST:

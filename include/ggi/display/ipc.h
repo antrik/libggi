@@ -1,4 +1,4 @@
-/* $Id: ipc.h,v 1.10 2007/02/13 06:00:15 cegger Exp $
+/* $Id: ipc.h,v 1.11 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -79,7 +79,7 @@ typedef struct
 {
 	PHYSZ_DATA
 
-	struct gg_module *inp;
+	struct gg_instance *inp;
 
 	void *memptr;
 	struct inpbuffer *inputbuffer;

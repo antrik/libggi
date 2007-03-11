@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.45 2007/03/08 20:54:06 soyt Exp $
+/* $Id: shm.c,v 1.46 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -130,7 +130,7 @@ static void _ggi_xshm_free_ximage(struct ggi_visual *vis) {
 	if (myshminfo == NULL) return;
 
 	if (priv->slave) {
-		ggiClose(priv->slave->module.stem);
+		ggiClose(priv->slave->instance.stem);
 	}
 	priv->slave = NULL;
 
@@ -307,9 +307,9 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->module.stem, &tm)) {
-		ggiClose(priv->slave->module.stem);
-		ggDelStem(priv->slave->module.stem);
+	if (ggiSetMode(priv->slave->instance.stem, &tm)) {
+		ggiClose(priv->slave->instance.stem);
+		ggDelStem(priv->slave->instance.stem);
 		priv->slave = NULL;
 		_ggi_xshm_free_ximage(vis);
 		return GGI_ENOMEM;
@@ -362,11 +362,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	XSync(priv->disp,0);
 
 	if (priv->inp)
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->slave) {
-		ggiClose(priv->slave->module.stem);
+		ggiClose(priv->slave->instance.stem);
 	}
 	priv->slave = NULL;
 

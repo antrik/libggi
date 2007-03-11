@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.32 2007/01/11 01:05:12 pekberg Exp $
+/* $Id: vnc.h,v 1.33 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -96,7 +96,7 @@ typedef struct {
 	int	view_only;
 
 	struct ggi_visual *fb;
-	struct gg_module *inp;
+	struct gg_instance *inp;
 
 	gii_vnc_add_cfd  *add_cfd;
 	gii_vnc_del_cfd  *del_cfd;

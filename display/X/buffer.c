@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.36 2007/03/08 20:54:05 soyt Exp $
+/* $Id: buffer.c,v 1.37 2007/03/11 00:48:56 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -57,7 +57,7 @@ int GGI_X_db_release(struct ggi_resource *res) {
 		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
 			if (GGIX_PRIV(vis)->opmansync) MANSYNC_start(vis);
 		} else {
-			ggiFlush(vis->module.stem);
+			ggiFlush(vis->instance.stem);
 		}
 	}
 	res->curactype = 0;
@@ -136,7 +136,7 @@ int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 			vis->w_frame = db;
 		}
 	} else {
-	  	ggiFlush(vis->module.stem);
+	  	ggiFlush(vis->instance.stem);
 		vis->w_frame_num = num;
 		vis->w_frame = db;
 	}
@@ -154,8 +154,8 @@ void _ggi_x_freefb(struct ggi_visual *vis) {
 	priv = GGIX_PRIV(vis);
 
 	if (priv->slave) {
-		ggiClose(priv->slave->module.stem);
-		ggDelStem(priv->slave->module.stem);
+		ggiClose(priv->slave->instance.stem);
+		ggDelStem(priv->slave->instance.stem);
 	}
 	priv->slave = NULL;
 	if (priv->ximage) {
@@ -235,9 +235,9 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->module.stem, &tm)) {
-		ggiClose(priv->slave->module.stem);
-		ggDelStem(priv->slave->module.stem);
+	if (ggiSetMode(priv->slave->instance.stem, &tm)) {
+		ggiClose(priv->slave->instance.stem);
+		ggDelStem(priv->slave->instance.stem);
 		free(priv->fb);
 		priv->fb = NULL;
 		return GGI_ENOMEM;
@@ -247,8 +247,8 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 					     LIBGGI_VIRTX(vis), 
 					     LIBGGI_VIRTY(vis) );
 	if (priv->ximage == NULL) {
-		ggiClose(priv->slave->module.stem);
-		ggDelStem(priv->slave->module.stem);
+		ggiClose(priv->slave->instance.stem);
+		ggDelStem(priv->slave->instance.stem);
 		priv->slave = NULL;
 		free(priv->fb);
 		priv->fb = NULL;

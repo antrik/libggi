@@ -1,4 +1,4 @@
-/* $Id: raw.c,v 1.14 2007/03/08 20:54:10 soyt Exp $
+/* $Id: raw.c,v 1.15 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB raw encoding
@@ -93,7 +93,7 @@ GGI_vnc_raw(ggi_vnc_client *client, ggi_rect *update)
 
 	gt = LIBGGI_GT(cvis);
 
-	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->instance.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	bpp = GT_ByPP(gt);

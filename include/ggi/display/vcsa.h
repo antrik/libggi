@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.8 2006/10/14 15:14:02 cegger Exp $
+/* $Id: vcsa.h,v 1.9 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -42,8 +42,8 @@ typedef struct {
 	int inputs;
 	int flags;
 
-	struct gg_module *kbd_inp;
-	struct gg_module *ms_inp;
+	struct gg_instance *kbd_inp;
+	struct gg_instance *ms_inp;
 } ggi_vcsa_priv;
 
 #define VCSA_PRIV(vis) ((ggi_vcsa_priv *) LIBGGI_PRIVATE(vis))

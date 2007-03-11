@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.70 2007/03/08 20:54:06 soyt Exp $
+/* $Id: visual.c,v 1.71 2007/03/11 00:48:56 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -101,17 +101,17 @@ void GGI_X_gcchanged(struct ggi_visual *vis, int mask)
 
 	if (!priv->slave) goto noslave;
 	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggiSetGCClipping(priv->slave->module.stem,
+		ggiSetGCClipping(priv->slave->instance.stem,
 				 LIBGGI_GC(vis)->cliptl.x,
 				 LIBGGI_GC(vis)->cliptl.y, 
 				 LIBGGI_GC(vis)->clipbr.x,
 				 LIBGGI_GC(vis)->clipbr.y);
 	}
 	if ((mask & GGI_GCCHANGED_FG)) {
-		ggiSetGCForeground(priv->slave->module.stem, LIBGGI_GC_FGCOLOR(vis));
+		ggiSetGCForeground(priv->slave->instance.stem, LIBGGI_GC_FGCOLOR(vis));
 	}
 	if ((mask & GGI_GCCHANGED_BG)) {
-		ggiSetGCBackground(priv->slave->module.stem, LIBGGI_GC_BGCOLOR(vis));
+		ggiSetGCBackground(priv->slave->instance.stem, LIBGGI_GC_BGCOLOR(vis));
 	}
 
 	if (priv->drawable == None) return; /* No Xlib clipping */
@@ -144,7 +144,7 @@ static int GGI_X_setflags(struct ggi_visual *vis, uint32_t flags) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->module.stem);
+		ggiFlush(vis->instance.stem);
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
@@ -187,11 +187,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	XSync(priv->disp,0);
 
 	if (priv->inp)
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->slave) {
-		ggiClose(priv->slave->module.stem);
+		ggiClose(priv->slave->instance.stem);
 	}
 	priv->slave = NULL;
 
@@ -579,7 +579,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		struct gii_inputxwin_arg _args;
-		struct gg_module *inp = NULL;
+		struct gg_instance *inp = NULL;
 		struct gg_api *gii;
 
 		_args.disp = priv->disp;
@@ -592,14 +592,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
                 _args.unlockarg = vis;
                 
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-			    "input-xwin", NULL, &_args);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-xwin",
+						     NULL,
+						     &_args);
 			
 			ggObserve(inp->channel, GGI_X_listener, vis);
 		}
 
-		DPRINT_MISC("X: ggOpenModule returned with %p\n", inp);
+		DPRINT_MISC("X: ggCreateModuleInstance returned with %p\n", inp);
 
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open xwin inputlib\n");

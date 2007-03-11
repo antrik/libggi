@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.43 2007/03/08 20:54:06 soyt Exp $
+/* $Id: visual.c,v 1.44 2007/03/11 00:48:57 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -64,7 +64,7 @@ GGI_directx_setflags(struct ggi_visual *vis, uint32_t flags)
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->module.stem);
+		ggiFlush(vis->instance.stem);
 	/* Clear out unknown flags */
 	LIBGGI_FLAGS(vis) = flags & GGIFLAG_ASYNC;
 
@@ -87,7 +87,7 @@ GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv->settings_changed = NULL;
 	GGI_directx_Unlock(priv->cs);
 	if (priv->inp) {
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 		priv->inp = NULL;
 	}
 
@@ -217,8 +217,8 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_api *gii;
 
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			priv->inp = ggOpenModule(gii, vis->module.stem,
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
 				"input-directx", NULL, &inputdx);
 		}
 

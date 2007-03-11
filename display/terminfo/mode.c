@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/03/08 20:54:08 soyt Exp $
+/* $Id: mode.c,v 1.22 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Terminfo target
@@ -135,7 +135,7 @@ static int _GGI_terminfo_loadstubs(struct ggi_visual *vis)
 		}
 	}
 
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 
 	return 0;
 }

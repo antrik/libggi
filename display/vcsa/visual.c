@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2007/03/08 20:54:09 soyt Exp $
+/* $Id: visual.c,v 1.27 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -212,13 +212,16 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Open keyboard and mouse input */
 	if (priv->inputs & VCSA_INP_KBD) {
-		struct gg_module *inp = NULL;
+		struct gg_instance *inp = NULL;
 
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-					   "input-linux-kbd", NULL, NULL);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-linux-kbd",
+						     NULL,
+						     NULL);
 		}	
-		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
+		DPRINT_MISC("ggCreateModuleInstance() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open kbd.\n");
 			goto out_closefd;
@@ -229,13 +232,16 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->kbd_inp = NULL;
 	}
 	if (priv->inputs & VCSA_INP_MOUSE) {
-		struct gg_module *inp = NULL;
+		struct gg_instance *inp = NULL;
 
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-					   "input-linux-mouse", NULL, &args);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-linux-mouse",
+						     NULL,
+						     &args);
 		}
-		DPRINT_MISC("ggOpenModule() returned with %p\n", inp);
+		DPRINT_MISC("ggCreateModuleInstance() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open mouse.\n");
 			goto out_closefd;
@@ -260,9 +266,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_closefd:
 	if (priv->kbd_inp != NULL)
-		ggCloseModule(priv->kbd_inp);
+		ggDelInstance(priv->kbd_inp);
 	if (priv->ms_inp != NULL)
-		ggCloseModule(priv->ms_inp);
+		ggDelInstance(priv->ms_inp);
 	close(LIBGGI_FD(vis));
   out_freegc:
 	free(LIBGGI_GC(vis));
@@ -282,11 +288,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		GGI_vcsa_resetmode(vis);
 
 		if (priv->kbd_inp != NULL) {
-			ggCloseModule(priv->kbd_inp);
+			ggDelInstance(priv->kbd_inp);
 			priv->kbd_inp = NULL;
 		}
 		if (priv->ms_inp != NULL) {
-			ggCloseModule(priv->ms_inp);
+			ggDelInstance(priv->ms_inp);
 			priv->ms_inp = NULL;
 		}
 

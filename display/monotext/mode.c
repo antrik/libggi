@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/03/08 20:54:07 soyt Exp $
+/* $Id: mode.c,v 1.22 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-monotext: mode management
@@ -186,7 +186,7 @@ static int do_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	
 	LIBGGI_PAL(vis)->setPalette=GGI_monotext_setPalette;
 	
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 
 	DPRINT_MODE("display-monotext: Attempting to setmode on parent "
 		       "visual...\n");
@@ -208,7 +208,7 @@ int GGI_monotext_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	MANSYNC_ignore(vis);
 
-	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->instance.stem, mode)) != 0) {
 		return err;
 	}
 

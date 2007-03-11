@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.29 2007/03/08 20:54:07 soyt Exp $
+/* $Id: visual.c,v 1.30 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -183,17 +183,17 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->setflags  = GGI_ipc_setflags;
 
 	gii = ggGetAPIByName("gii");
-	if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+	if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
 		char inputstr[512];
 
 		snprintf(inputstr, sizeof(inputstr),
 			 "-size=%i:-pointer", INPBUFSIZE);
 		DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
 		       inputstr, priv->inputbuffer->buffer);
-		priv->inp = ggOpenModule(gii, vis->module.stem,
+		priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
 					 "input-memory", inputstr,
 					 priv->inputbuffer->buffer);
-		DPRINT("ggOpenModule returned with %p\n",
+		DPRINT("ggCreateModuleInstance returned with %p\n",
 		       priv->inp);
 
 		if (priv->inp == NULL) {

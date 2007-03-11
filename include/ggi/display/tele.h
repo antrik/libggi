@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.13 2006/10/14 13:42:28 soyt Exp $
+/* $Id: tele.h,v 1.14 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    TELE target.
@@ -39,7 +39,7 @@ typedef struct {
 	int connected;
 	int mode_up;
 
-	struct gg_module *input;
+	struct gg_instance *input;
 
 	int width, height;  /* for generating evExpose events */
 	int reply;

@@ -1,4 +1,4 @@
-/* $Id: kgi.h,v 1.23 2007/03/09 09:23:16 antrik Exp $
+/* $Id: kgi.h,v 1.24 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Headers for KGI target.
@@ -108,7 +108,7 @@ ggifunc_map_accel       GGI_kgi_map_accelerator;
 
 typedef struct {
 	/* Associated input-kii */
-	struct gg_module *inp;
+	struct gg_instance *inp;
 
 	/* KGI context used to communicate with KGI */
 	kgi_context_t ctx;

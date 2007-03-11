@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.12 2007/03/08 20:54:10 soyt Exp $
+/* $Id: mode.c,v 1.13 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -199,7 +199,7 @@ _ggi_domode(struct ggi_visual *vis)
 
 	DPRINT("_ggi_domode: zapped\n");
 
-	ggiSetMode(priv->fb->module.stem, LIBGGI_MODE(vis));
+	ggiSetMode(priv->fb->instance.stem, LIBGGI_MODE(vis));
 
 	/* set up pixel format */
 	memcpy(LIBGGI_PIXFMT(vis), LIBGGI_PIXFMT(priv->fb), sizeof(ggi_pixelformat));
@@ -338,7 +338,7 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->instance.stem, mode)) != 0) {
 		return err;
 	}
 
@@ -351,7 +351,7 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 	DPRINT("change indicated\n",err);
 
 	return 0;
@@ -368,7 +368,7 @@ GGI_vnc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	err = ggiCheckMode(priv->fb->module.stem, mode);
+	err = ggiCheckMode(priv->fb->instance.stem, mode);
 
 	DPRINT_MODE("result %d %dx%d#%dx%dF%d[0x%02x]\n",
 			err, mode->visible.x, mode->visible.y,

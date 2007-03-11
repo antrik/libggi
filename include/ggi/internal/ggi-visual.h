@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.5 2007/03/10 11:52:35 soyt Exp $
+/* $Id: ggi-visual.h,v 1.6 2007/03/11 00:49:00 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -185,7 +185,7 @@ typedef struct ggi_dlhandle_l {
 
 #define GGI_VERSION_VISUAL	GGI_VERSION_MK(1)
 struct ggi_visual {
-	struct gg_module  module;
+	struct gg_instance  instance;
 	/*
 	 *  If we are opened indirectly by a "container" visual
 	 */

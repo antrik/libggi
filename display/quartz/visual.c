@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2007/03/08 20:54:08 soyt Exp $
+/* $Id: visual.c,v 1.23 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -58,13 +58,13 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv = QUARTZ_PRIV(vis);
 
 	if (priv->memvis != NULL) {
-		ggiClose(priv->memvis->module.stem);
+		ggiClose(priv->memvis->instance.stem);
 		free(priv->fb);
 		priv->memvis = NULL;
 	}
 
 	if (priv->inp) {
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 		priv->inp = NULL;
 	}
 
@@ -155,7 +155,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out;
 		}	/* if */
 #else
-		priv->mod_mansync = ggOpenModule(libggi, vis->module.stem,
+		priv->mod_mansync = ggCreateModuleInstance(libggi, vis->instance.stem,
 					"helper-mansync", NULL,
 					priv->opmansync);
 		if (priv->mod_mansync == NULL) {
@@ -234,7 +234,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 #endif
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
-		struct gg_module *inp = NULL;
+		struct gg_instance *inp = NULL;
 		gii_inputquartz_arg _args;
 		struct gg_api *gii;
 
@@ -244,8 +244,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("open input-quartz\n");
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem, "input-quartz", NULL, &_args);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-quartz",
+						     NULL,
+						     &_args);
 		} else {
 			err = GGI_ENODEVICE;
 			fprintf(stderr,
@@ -253,7 +257,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			goto out;
 		}
 
-		DPRINT_MISC("ggOpenModule returned with %p\n", inp);
+		DPRINT_MISC("ggCreateModuleInstance returned with %p\n", inp);
 		if (inp == NULL) {
 			err = GGI_ENODEVICE;
 			fprintf(stderr, "display-quartz: Unable to open quartz inputlib\n");

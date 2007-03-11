@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.18 2006/03/17 14:37:15 pekberg Exp $
+/* $Id: directx.h,v 1.19 2007/03/11 00:48:59 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -78,7 +78,7 @@ typedef struct directx_priv
 	int cursortype;
 	HCURSOR hCursor;
 	UINT timer_id;
-	struct gg_module *inp;
+	struct gg_instance *inp;
 	HANDLE cs;
 	HANDLE spincs;
 	int redraw;

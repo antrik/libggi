@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2007/03/08 20:54:07 soyt Exp $
+/* $Id: mode.c,v 1.25 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -341,7 +341,7 @@ int GGI_file_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			mode->virt.x, mode->virt.y, 
 			mode->frames, mode->graphtype);
 
-	if ((err = ggiCheckMode(vis->module.stem, mode)) != 0) {
+	if ((err = ggiCheckMode(vis->instance.stem, mode)) != 0) {
 		return err;
 	}
 
@@ -354,7 +354,7 @@ int GGI_file_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 	DPRINT("change indicated\n",err);
 
 	priv->flushtotal = 0;

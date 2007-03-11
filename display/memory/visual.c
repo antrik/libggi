@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.38 2007/03/08 20:54:07 soyt Exp $
+/* $Id: visual.c,v 1.39 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -236,15 +236,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
 			snprintf(inputstr, sizeof(inputstr),
 				"-size=%i:-pointer", INPBUFSIZE);
 			DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
 				inputstr, priv->inputbuffer->buffer);
-			priv->inp = ggOpenModule(gii, vis->module.stem,
+			priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
 						"input-memory", inputstr,
 						priv->inputbuffer->buffer);
-			DPRINT("ggOpenModule for input-memory returned %p\n",
+			DPRINT("ggCreateModuleInstance for input-memory returned %p\n",
 				priv->inp);
 		}
 	}
@@ -261,7 +261,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	_GGI_memory_resetmode(vis);
 
 	if (priv->inp) {
-		ggCloseModule(priv->inp);
+		ggDelInstance(priv->inp);
 		priv->inp = NULL;
 	}
 

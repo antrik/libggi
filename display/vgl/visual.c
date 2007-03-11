@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2007/03/08 20:54:10 soyt Exp $
+/* $Id: visual.c,v 1.24 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -243,11 +243,11 @@ static int do_cleanup(struct ggi_visual *vis)
 		_GGI_vgl_freedbs(vis);
 
 	if (priv->kbd_inp != NULL) {
-		ggCloseModule(priv->kbd_inp);
+		ggDelInstance(priv->kbd_inp);
 		priv->kbd_inp = NULL;
 	}
 	if (priv->ms_inp != NULL) {
-		ggCloseModule(priv->ms_inp);
+		ggDelInstance(priv->ms_inp);
 		priv->ms_inp = NULL;
 	}
 
@@ -415,16 +415,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Open keyboard and mouse input */
 	if (priv->inputs & INP_KBD) {
-		struct gg_module *inp;
+		struct gg_instance *inp;
 
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-					"input-vgl", NULL, NULL);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-vgl",
+						     NULL,
+						     NULL);
 			if (inp == NULL) {
 				fprintf(stderr,
 "display-vgl: Unable to open vgl, trying stdin input.\n");
-				inp = ggOpenModule(gii, vis->module.stem,
-						"stdin", "ansikey", NULL);
+				inp = ggCreateModuleInstance(gii,
+							     vis->instance.stem,
+							     "stdin",
+							     "ansikey",
+							     NULL);
 				if (inp == NULL) {
 					fprintf(stderr,
 "display-vgl: Unable to open stdin input, try running with '-nokbd'.\n");
@@ -437,12 +443,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 	if (priv->inputs & INP_MOUSE) {
-		struct gg_module *inp;
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-					   "input-linux-mouse",
-					   "MouseSystems,/dev/sysmouse",
-					   &args);
+		struct gg_instance *inp;
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-linux-mouse",
+						     "MouseSystems,/dev/sysmouse",
+						     &args);
 			if (inp == NULL) {
 				fprintf(stderr, 
 		"display-vgl: Unable to join inputs\n");

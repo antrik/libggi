@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2007/03/09 08:27:51 antrik Exp $
+/* $Id: visual.c,v 1.31 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-kgi: initialization
@@ -109,9 +109,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			 KGI_CTX(vis).mapper.graphic);
 
 		gii = ggGetAPIByName("gii");
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			KGI_PRIV(vis)->inp = ggOpenModule(gii,
-				vis->module.stem, "input-kii", eventname,
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			KGI_PRIV(vis)->inp = ggCreateModuleInstance(gii,
+				vis->instance.stem, "input-kii", eventname,
 				NULL);
 		}
 		if (KGI_PRIV(vis)->inp == NULL) {
@@ -139,7 +139,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		close(LIBGGI_FD(vis));
 
 	if (KGI_PRIV(vis)->inp) {
-		ggCloseModule(KGI_PRIV(vis)->inp);
+		ggDelInstance(KGI_PRIV(vis)->inp);
 		KGI_PRIV(vis)->inp = NULL;
 	}
 

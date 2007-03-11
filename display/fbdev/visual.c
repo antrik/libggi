@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.45 2007/03/08 20:54:06 soyt Exp $
+/* $Id: visual.c,v 1.46 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -278,11 +278,11 @@ static int do_cleanup(struct ggi_visual *vis)
 	}
 
 	if (priv->kbd_inp != NULL) {
-		ggCloseModule(priv->kbd_inp);
+		ggDelInstance(priv->kbd_inp);
 		priv->kbd_inp = NULL;
 	}
 	if (priv->ms_inp != NULL) {
-		ggCloseModule(priv->ms_inp);
+		ggDelInstance(priv->ms_inp);
 		priv->ms_inp = NULL;
 	}
 
@@ -684,7 +684,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Open keyboard and mouse input */
 	if (priv->inputs & FBDEV_INP_KBD) {
-		struct gg_module *inp;
+		struct gg_instance *inp;
 		char strbuf[64];
 		const char *inputstr = "input-linux-kbd";
 
@@ -694,29 +694,33 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				 "/dev/tty%d", vtnum);
 		}
 
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-				inputstr, strbuf, NULL);
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     inputstr,
+						     strbuf,
+						     NULL);
 			if (inp == NULL) {
 				if (vtnum != -1) {
 					snprintf(strbuf, sizeof(strbuf),
 						"/dev/vc/%d",
 						vtnum);
-					inp = ggOpenModule(gii,
-							   vis->module.stem,
-							   inputstr, strbuf,
-							   NULL);
+					inp = ggCreateModuleInstance(gii,
+								     vis->instance.stem,
+								     inputstr,
+								     strbuf,
+								     NULL);
 				}
 				if (inp == NULL) {
 					fprintf(stderr,
 	"display-fbdev: Unable to open linux-kbd, trying stdin input.\n");
 					/* We're on the Linux console so we want
 					   ansikey. */
-					inp = ggOpenModule(gii,
-							   vis->module.stem,
-							   "input-stdin",
-							   "ansikey",
-							   NULL);
+					inp = ggCreateModuleInstance(gii,
+								     vis->instance.stem,
+								     "input-stdin",
+								     "ansikey",
+								     NULL);
 					if (inp == NULL) {
 						fprintf(stderr,
 	"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
@@ -729,10 +733,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 	}
 	if (priv->inputs & FBDEV_INP_MOUSE) {
-		struct gg_module *inp;
-		if (gii != NULL && STEM_HAS_API(vis->module.stem, gii)) {
-			inp = ggOpenModule(gii, vis->module.stem,
-				"input-linux-mouse", "auto", &args);
+		struct gg_instance *inp;
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggCreateModuleInstance(gii,
+						     vis->instance.stem,
+						     "input-linux-mouse",
+						     "auto",
+						     &args);
 			if (inp == NULL) {
 				fprintf(stderr,
 	"display-fbdev: Unable to open linux-mouse. Disable mouse support.\n");

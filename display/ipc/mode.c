@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2007/03/08 20:54:07 soyt Exp $
+/* $Id: mode.c,v 1.22 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -172,7 +172,7 @@ int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
 	
-	if ((err=ggiCheckMode(vis->module.stem, mode)) != 0)	return err;
+	if ((err=ggiCheckMode(vis->instance.stem, mode)) != 0)	return err;
 
 	/* some elements of the mode setup rely on this. */
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
@@ -194,7 +194,7 @@ int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	}
 #endif
 
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 	DPRINT("GGIsetmode: change indicated\n",err);
 
 	return 0;

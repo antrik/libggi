@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.6 2007/03/08 20:54:09 soyt Exp $
+/* $Id: stubs.c,v 1.7 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Display-trueemu : stubs
@@ -123,7 +123,7 @@ int GGI_trueemu_putc(struct ggi_visual *vis, int x, int y, char c)
 	int char_w;
 	int char_h;
 	
-	ggiGetCharSize(vis->module.stem, &char_w, &char_h);
+	ggiGetCharSize(vis->instance.stem, &char_w, &char_h);
 
 	UPDATE_MOD(vis, x, y, char_w, char_h);
 	

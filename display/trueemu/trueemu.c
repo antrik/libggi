@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.12 2007/03/08 20:54:09 soyt Exp $
+/* $Id: trueemu.c,v 1.13 2007/03/11 00:48:58 soyt Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -829,7 +829,7 @@ int _ggi_trueemu_Transfer(struct ggi_visual *vis, int x, int y, int w, int h)
 	/* do transfer, one horizontal line at a time */
 	for (; h > 0; h--, y++) {
 		/* !!! FIX for FRAMES */
-		ggiGetHLine(vis->module.stem, x, y, w, priv->src_buf);
+		ggiGetHLine(vis->instance.stem, x, y, w, priv->src_buf);
 
 		if (y & 1) {
 			priv->blitter_odd(priv,  priv->dest_buf,

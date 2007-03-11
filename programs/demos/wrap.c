@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.24 2007/02/10 13:41:13 cegger Exp $
+/* $Id: wrap.c,v 1.25 2007/03/11 00:49:00 soyt Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -177,22 +177,22 @@ static void exit_client(struct client_t * client)
 	unlink(client->socket);
 }	/* exit_client */
 
-static struct gg_module *init_fdselect(struct gg_stem *stem, int fd)
+static struct gg_instance *init_fdselect(struct gg_stem *stem, int fd)
 {
 	char arg[128];
-	struct gg_module *inp;
+	struct gg_instance *inp;
 
 	snprintf(arg, sizeof(arg), "-read=%i", fd);
-	inp = ggOpenModule(libgii, stem, "input-fdselect", arg, NULL);
+	inp = ggCreateModuleInstance(libgii, stem, "input-fdselect", arg,NULL);
 	if (!inp) {
 		ggPanic("Ouch - can't open the fdselect inputlib !");
 	}	/* if */
 	return inp;
 }	/* init_fdselect */
 
-static void exit_fdselect(struct gg_module *inp)
+static void exit_fdselect(struct gg_instance *inp)
 {
-	ggCloseModule(inp);
+	ggDelInstance(inp);
 }	/* exit_fdselect */
 
 /* return 1 if we got called by the client
@@ -280,7 +280,7 @@ int main(int argc, const char * const argv[])
 
 	const char *command;
 	struct client_t client;
-	struct gg_module *fdselect;
+	struct gg_instance *fdselect;
 
 	/* Get the arguments from the command line. 
 	 * Set defaults for optional arguments.

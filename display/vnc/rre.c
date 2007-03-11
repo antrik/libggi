@@ -1,4 +1,4 @@
-/* $Id: rre.c,v 1.2 2007/03/08 20:54:10 soyt Exp $
+/* $Id: rre.c,v 1.3 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    display-vnc: RFB rre encoding
@@ -679,7 +679,7 @@ GGI_vnc_rre(ggi_vnc_client *client, ggi_rect *update)
 		d_frame_num = 0;
 	}
 
-	db = ggiDBGetBuffer(cvis->module.stem, d_frame_num);
+	db = ggiDBGetBuffer(cvis->instance.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);
 
 	DPRINT("vupdate %dx%d - %dx%d\n",

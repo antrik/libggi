@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.33 2007/03/08 20:54:06 soyt Exp $
+/* $Id: mode.c,v 1.34 2007/03/11 00:48:57 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -586,14 +586,14 @@ static int do_setmode(struct ggi_visual *vis, struct fb_var_screeninfo *var)
 
 	GGI_fbdev_color_setup(vis);
 	if (vis->opcolor->setpalvec)
-		ggiSetColorfulPalette(vis->module.stem);
+		ggiSetColorfulPalette(vis->instance.stem);
 	if (vis->opcolor->setgammamap)
-		ggiSetGamma(vis->module.stem, 1.0, 1.0, 1.0);
+		ggiSetGamma(vis->instance.stem, 1.0, 1.0, 1.0);
 
 	vis->opdraw->setorigin = GGI_fbdev_setorigin;
 	vis->opdraw->setdisplayframe = GGI_fbdev_setdisplayframe;
 
-	ggiIndicateChange(vis->module.stem, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 
 	DPRINT_MODE("display-fbdev: do_setmode SUCCESS\n");
 

@@ -1,4 +1,4 @@
-/* $Id: quartz.h,v 1.15 2007/03/03 17:41:02 cegger Exp $
+/* $Id: quartz.h,v 1.16 2007/03/11 00:48:59 soyt Exp $
 ******************************************************************************
 
    Display-quartz: headers
@@ -39,7 +39,7 @@
 typedef struct {
 	PHYSZ_DATA
 	MANSYNC_DATA;	/* mansync helper hooks */
-	struct gg_module *mod_mansync;
+	struct gg_instance *mod_mansync;
 
 	int fullscreen;
 
@@ -78,7 +78,7 @@ typedef struct {
 	ggi_color	*gammamap;
 	ggi_gammastate	gamma;
 
-	struct gg_module *inp;
+	struct gg_instance *inp;
 	struct gg_publisher *publisher;
 	struct gg_observer *observer;
 
