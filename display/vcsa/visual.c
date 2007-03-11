@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.28 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    Display-VCSA: visual management
@@ -215,13 +215,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_instance *inp = NULL;
 
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     "input-linux-kbd",
 						     NULL,
 						     NULL);
 		}	
-		DPRINT_MISC("ggCreateModuleInstance() returned with %p\n", inp);
+		DPRINT_MISC("ggPlugModule() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open kbd.\n");
 			goto out_closefd;
@@ -235,13 +235,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_instance *inp = NULL;
 
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     "input-linux-mouse",
 						     NULL,
 						     &args);
 		}
-		DPRINT_MISC("ggCreateModuleInstance() returned with %p\n", inp);
+		DPRINT_MISC("ggPlugModule() returned with %p\n", inp);
 		if (inp == NULL) {
 			fprintf(stderr, "display-vcsa: Couldn't open mouse.\n");
 			goto out_closefd;
@@ -266,9 +266,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
   out_closefd:
 	if (priv->kbd_inp != NULL)
-		ggDelInstance(priv->kbd_inp);
+		ggClosePlugin(priv->kbd_inp);
 	if (priv->ms_inp != NULL)
-		ggDelInstance(priv->ms_inp);
+		ggClosePlugin(priv->ms_inp);
 	close(LIBGGI_FD(vis));
   out_freegc:
 	free(LIBGGI_GC(vis));
@@ -288,11 +288,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		GGI_vcsa_resetmode(vis);
 
 		if (priv->kbd_inp != NULL) {
-			ggDelInstance(priv->kbd_inp);
+			ggClosePlugin(priv->kbd_inp);
 			priv->kbd_inp = NULL;
 		}
 		if (priv->ms_inp != NULL) {
-			ggDelInstance(priv->ms_inp);
+			ggClosePlugin(priv->ms_inp);
 			priv->ms_inp = NULL;
 		}
 

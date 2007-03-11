@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.46 2007/03/11 00:48:57 soyt Exp $
+/* $Id: visual.c,v 1.47 2007/03/11 21:54:43 soyt Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -278,11 +278,11 @@ static int do_cleanup(struct ggi_visual *vis)
 	}
 
 	if (priv->kbd_inp != NULL) {
-		ggDelInstance(priv->kbd_inp);
+		ggClosePlugin(priv->kbd_inp);
 		priv->kbd_inp = NULL;
 	}
 	if (priv->ms_inp != NULL) {
-		ggDelInstance(priv->ms_inp);
+		ggClosePlugin(priv->ms_inp);
 		priv->ms_inp = NULL;
 	}
 
@@ -695,7 +695,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     inputstr,
 						     strbuf,
@@ -705,7 +705,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					snprintf(strbuf, sizeof(strbuf),
 						"/dev/vc/%d",
 						vtnum);
-					inp = ggCreateModuleInstance(gii,
+					inp = ggPlugModule(gii,
 								     vis->instance.stem,
 								     inputstr,
 								     strbuf,
@@ -716,7 +716,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	"display-fbdev: Unable to open linux-kbd, trying stdin input.\n");
 					/* We're on the Linux console so we want
 					   ansikey. */
-					inp = ggCreateModuleInstance(gii,
+					inp = ggPlugModule(gii,
 								     vis->instance.stem,
 								     "input-stdin",
 								     "ansikey",
@@ -735,7 +735,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->inputs & FBDEV_INP_MOUSE) {
 		struct gg_instance *inp;
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     "input-linux-mouse",
 						     "auto",

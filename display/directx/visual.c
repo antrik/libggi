@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.44 2007/03/11 00:48:57 soyt Exp $
+/* $Id: visual.c,v 1.45 2007/03/11 21:54:43 soyt Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -87,7 +87,7 @@ GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	priv->settings_changed = NULL;
 	GGI_directx_Unlock(priv->cs);
 	if (priv->inp) {
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 		priv->inp = NULL;
 	}
 
@@ -218,7 +218,7 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
+			priv->inp = ggPlugModule(gii, vis->instance.stem,
 				"input-directx", NULL, &inputdx);
 		}
 

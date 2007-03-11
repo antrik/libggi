@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.71 2007/03/11 00:48:56 soyt Exp $
+/* $Id: visual.c,v 1.72 2007/03/11 21:54:43 soyt Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -187,7 +187,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	XSync(priv->disp,0);
 
 	if (priv->inp)
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->slave) {
@@ -593,16 +593,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
                 
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
-						     vis->instance.stem,
-						     "input-xwin",
-						     NULL,
-						     &_args);
-			
+			inp = ggPlugModule(gii,
+					   vis->instance.stem,
+					   "input-xwin",
+					   NULL,
+					   &_args);
 			ggObserve(inp->channel, GGI_X_listener, vis);
 		}
 
-		DPRINT_MISC("X: ggCreateModuleInstance returned with %p\n", inp);
+		DPRINT_MISC("X: ggPlugModule returned with %p\n", inp);
 
 		if (inp == NULL) {
 			DPRINT_MISC("Unable to open xwin inputlib\n");

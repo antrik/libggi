@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2007/03/11 00:48:59 soyt Exp $
+/* $Id: visual.c,v 1.25 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -243,11 +243,11 @@ static int do_cleanup(struct ggi_visual *vis)
 		_GGI_vgl_freedbs(vis);
 
 	if (priv->kbd_inp != NULL) {
-		ggDelInstance(priv->kbd_inp);
+		ggClosePlugin(priv->kbd_inp);
 		priv->kbd_inp = NULL;
 	}
 	if (priv->ms_inp != NULL) {
-		ggDelInstance(priv->ms_inp);
+		ggClosePlugin(priv->ms_inp);
 		priv->ms_inp = NULL;
 	}
 
@@ -418,7 +418,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_instance *inp;
 
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     "input-vgl",
 						     NULL,
@@ -426,7 +426,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			if (inp == NULL) {
 				fprintf(stderr,
 "display-vgl: Unable to open vgl, trying stdin input.\n");
-				inp = ggCreateModuleInstance(gii,
+				inp = ggPlugModule(gii,
 							     vis->instance.stem,
 							     "stdin",
 							     "ansikey",
@@ -445,7 +445,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->inputs & INP_MOUSE) {
 		struct gg_instance *inp;
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			inp = ggCreateModuleInstance(gii,
+			inp = ggPlugModule(gii,
 						     vis->instance.stem,
 						     "input-linux-mouse",
 						     "MouseSystems,/dev/sysmouse",

@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.71 2007/03/11 12:31:36 cegger Exp $
+/* $Id: init.c,v 1.72 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -44,9 +44,29 @@
 void                 *_ggi_global_lock = NULL;
 
 /* The libggi API */
-static int _ggiInit(struct gg_api*);
-static struct gg_api _libggi = GG_API("ggi", GG_VERSION(3,0,0,0), _ggiInit);
-struct gg_api * libggi = &_libggi;
+static ggfunc_api_op_init ggi_init;
+static ggfunc_api_op_exit ggi_exit;
+static ggfunc_api_op_attach ggi_attach;
+static ggfunc_api_op_detach ggi_detach;
+/*
+static ggfunc_api_op_getenv ggi_getenv;
+*/
+static ggfunc_api_op_plug ggi_plug;
+static ggfunc_api_op_unplug ggi_unplug;
+
+static struct gg_api_ops ggi_ops = {
+	ggi_init,
+	ggi_exit,
+	ggi_attach,
+	ggi_detach,
+	NULL, /* ggi_getenv, */
+	ggi_plug,
+	ggi_unplug
+};
+
+static struct gg_api ggi = GG_API_INIT("ggi", 3, 0, &ggi_ops);
+
+struct gg_api * libggi = &ggi;
 
 /* Static variables */
 static struct {
@@ -90,7 +110,7 @@ void _ggiExitBuiltins(void);
 struct gg_config*
 _ggiGetConfigHandle(void)
 {
-	return _libggi.config;
+	return ggi.config;
 }
 
 
@@ -114,19 +134,6 @@ const char *ggiGetConfDir(void)
 }
 
 
-static int
-_ggiAttach(struct gg_api* api, struct gg_stem *stem)
-{
-	return GGI_OK;
-}
-
-static void
-_ggiDetach(struct gg_api* api, struct gg_stem *stem)
-{
-	if (GGI_PRIV(stem))
-		ggiClose(stem);
-}
-
 /*
  * Initialize the structures for the library
  */
@@ -136,153 +143,12 @@ int ggiInit(void)
 	return ggInitAPI(libggi);
 }
 
-static void _ggiExit(struct gg_api*);
-
-extern int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
-			struct gg_stem *stem, const char *argstr,
-			void *argptr,
-			struct gg_instance **res);
-extern int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance);
-
-
-static int
-_ggiInit(struct gg_api* api)
-{
-	int err;
-	const char *str, *confdir;
-	char *conffile;
-	
-	api->ops.exit   = _ggiExit;
-	api->ops.attach = _ggiAttach;
-	api->ops.detach = _ggiDetach;
-	api->ops.open   = _ggiOpenModule;
-	api->ops.close  = _ggiCloseModule;
-#if 0
-	api->ops.env       = _ggiGetEnv;
-	api->ops.publisher = _ggiGetPublisher;
-	api->ops.dump      = _ggiDump;
-#endif
-
-	err = _ggiSwarInit();
-	if (err) return err;
-
-	_ggiLibIsUp = 1;
-
-	_ggiVisuals.visuals = 0;
-	GG_SLIST_INIT(&_ggiVisuals.visual);
-
-	str = getenv("GGI_DEBUGSYNC");
-	if (str != NULL) {
-		_ggiDebug |= DEBUG_SYNC;
-	}
-
-	str = getenv("GGI_DEBUG");
-	if (str != NULL) {
-		_ggiDebug |= atoi(str) & DEBUG_ALL;
-		DPRINT_CORE("%s Debugging=%d\n",
-				DEBUG_ISSYNC ? "sync" : "async",
-				_ggiDebug);
-	}
-
-	str = getenv("GGI_DEFMODE");
-	if (str != NULL) {
-		_ggiSetDefaultMode(str);
-	}
-
-	_ggiVisuals.mutex = ggLockCreate();
-	if (_ggiVisuals.mutex == NULL) {
-		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
-		err = GGI_EUNKNOWN;
-		goto err0;
-	}
-	_ggi_global_lock = ggLockCreate();
-	if (_ggi_global_lock == NULL) {
-		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
-		err = GGI_EUNKNOWN;
-		goto err1;
-	}
-
-
-#ifdef HAVE_CONFFILE
-	confdir = ggiGetConfDir();
-	/* two extra bytes needed. One for the slash and one for the terminator (\0) */
-	conffile = malloc(CONF_SIZE);
-	if (!conffile) {
-		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
-		err = GGI_ENOMEM;
-		goto err2;
-	}
-
-#ifndef PIC
-	snprintf(conffile, CONF_OFFSET, "string@%p", conffile + CONF_OFFSET);
-#endif
-	snprintf(conffile + CONF_OFFSET, CONF_SIZE - CONF_OFFSET,
-		CONF_FORMAT, confdir, GGICONFFILE);
-
-	err = ggLoadConfig(conffile, &_libggi.config);
-	if (err != GGI_OK)
-		fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
-
-	free(conffile);
-#else /* HAVE_CONFFILE */
-	{
-		char arrayconf[40];
-		snprintf(arrayconf, sizeof(arrayconf),
-			"array@%p", (const void *)_ggibuiltinconf);
-		err = ggLoadConfig(arrayconf, &_libggi.config);
-		if (err != GGI_OK) {
-			fprintf(stderr, "LibGGI: fatal error - "
-					"could not load builtin config\n");
-			goto err2;
-		}
-	}
-#endif /* HAVE_CONFFILE */
-	if (err == GGI_OK) {
-		_ggiInitBuiltins();
-		DPRINT_CORE("ggiInit() successful\n");
-		return GGI_OK;
-	}
-
-err2:
-	ggLockDestroy(_ggi_global_lock);
-err1:
-	ggLockDestroy(_ggiVisuals.mutex);
-err0:
-	_ggiLibIsUp = 0;
-	return err;
-}
 
 int ggiExit(void)
 {
 	return ggExitAPI(libggi);
 }
 
-void _ggiExit(struct gg_api *api)
-{
-
-	DPRINT_CORE("ggiExit called\n");
-
-	DPRINT_CORE("ggiExit: really destroying.\n");
-	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
-		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual)->instance.stem);
-	}
-
-	ggLockDestroy(_ggiVisuals.mutex);
-	ggLockDestroy(_ggi_global_lock);
-
-	_ggiExitBuiltins();
-
-	ggFreeConfig(_libggi.config);
-	_ggiLibIsUp = 0;
-
-	/* Reset global variables to initialization value.
-	 * Otherwise there's a memory corruption when libggi
-	 * is re-initialized within an application. */
-	_libggi.config = NULL;
-	_ggi_global_lock = NULL;
-
-	DPRINT_CORE("ggiExit: done!\n");
-}
 
 
 int ggiAttach(struct gg_stem *s)
@@ -294,6 +160,8 @@ int ggiDetach(struct gg_stem *s)
 {
 	return ggDetach(libggi, s);
 }
+
+
 
 
 /* Opens a visual.
@@ -337,11 +205,11 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 	success = 0;
 
 	match.input  = driver;
-	match.config = _libggi.config;
+	match.config = ggi.config;
 	ggConfigIterTarget(&match);
 	GG_ITER_FOREACH(&match) {
 		DPRINT_CORE("Trying %s with options \"%s\"\n", match.target, match.options);
-		if (_ggiOpenDL(vis, _libggi.config,
+		if (_ggiOpenDL(vis, ggi.config,
 			       match.target,match.options,argptr) == 0) {
 			success = 1;
 			break;
@@ -413,4 +281,179 @@ int ggiClose(ggi_visual_t v)
 	DPRINT_CORE("ggiClose: done!\n");
 
 	return 0;
+}
+
+
+
+/* API ops */
+
+static int
+ggi_init(struct gg_api* api)
+{
+	int err;
+	const char *str, *confdir;
+	char *conffile;
+
+/*
+	api->ops.open   = _ggiOpenModule;
+	api->ops.close  = _ggiCloseModule;
+	api->ops.env       = _ggiGetEnv;
+	api->ops.publisher = _ggiGetPublisher;
+	api->ops.dump      = _ggiDump;
+*/
+
+	err = _ggiSwarInit();
+	if (err) return err;
+
+	_ggiLibIsUp = 1;
+
+	_ggiVisuals.visuals = 0;
+	GG_SLIST_INIT(&_ggiVisuals.visual);
+
+	str = getenv("GGI_DEBUGSYNC");
+	if (str != NULL) {
+		_ggiDebug |= DEBUG_SYNC;
+	}
+
+	str = getenv("GGI_DEBUG");
+	if (str != NULL) {
+		_ggiDebug |= atoi(str) & DEBUG_ALL;
+		DPRINT_CORE("%s Debugging=%d\n",
+				DEBUG_ISSYNC ? "sync" : "async",
+				_ggiDebug);
+	}
+
+	str = getenv("GGI_DEFMODE");
+	if (str != NULL) {
+		_ggiSetDefaultMode(str);
+	}
+
+	_ggiVisuals.mutex = ggLockCreate();
+	if (_ggiVisuals.mutex == NULL) {
+		fprintf(stderr, "LibGGI: unable to initialize core mutex.\n");
+		err = GGI_EUNKNOWN;
+		goto err0;
+	}
+	_ggi_global_lock = ggLockCreate();
+	if (_ggi_global_lock == NULL) {
+		fprintf(stderr,"LibGGI: unable to initialize global mutex.\n");
+		err = GGI_EUNKNOWN;
+		goto err1;
+	}
+
+
+#ifdef HAVE_CONFFILE
+	confdir = ggiGetConfDir();
+	/* two extra bytes needed. One for the slash and one for the terminator (\0) */
+	conffile = malloc(CONF_SIZE);
+	if (!conffile) {
+		fprintf(stderr, "LibGGI: unable to allocate memory for config filename.\n");
+		err = GGI_ENOMEM;
+		goto err2;
+	}
+
+#ifndef PIC
+	snprintf(conffile, CONF_OFFSET, "string@%p", conffile + CONF_OFFSET);
+#endif
+	snprintf(conffile + CONF_OFFSET, CONF_SIZE - CONF_OFFSET,
+		CONF_FORMAT, confdir, GGICONFFILE);
+
+	err = ggLoadConfig(conffile, &ggi.config);
+	if (err != GGI_OK)
+		fprintf(stderr,"LibGGI: couldn't open %s.\n", conffile);
+
+	free(conffile);
+#else /* HAVE_CONFFILE */
+	{
+		char arrayconf[40];
+		snprintf(arrayconf, sizeof(arrayconf),
+			"array@%p", (const void *)_ggibuiltinconf);
+		err = ggLoadConfig(arrayconf, &ggi.config);
+		if (err != GGI_OK) {
+			fprintf(stderr, "LibGGI: fatal error - "
+					"could not load builtin config\n");
+			goto err2;
+		}
+	}
+#endif /* HAVE_CONFFILE */
+	if (err == GGI_OK) {
+		_ggiInitBuiltins();
+		DPRINT_CORE("ggiInit() successful\n");
+		return GGI_OK;
+	}
+
+err2:
+	ggLockDestroy(_ggi_global_lock);
+err1:
+	ggLockDestroy(_ggiVisuals.mutex);
+err0:
+	_ggiLibIsUp = 0;
+	return err;
+}
+
+
+static void
+ggi_exit(struct gg_api *api)
+{
+
+	DPRINT_CORE("ggiExit called\n");
+
+	DPRINT_CORE("ggiExit: really destroying.\n");
+	while (!GG_SLIST_EMPTY(&_ggiVisuals.visual)) {
+		ggiClose(GG_SLIST_FIRST(&_ggiVisuals.visual)->instance.stem);
+	}
+
+	ggLockDestroy(_ggiVisuals.mutex);
+	ggLockDestroy(_ggi_global_lock);
+
+	_ggiExitBuiltins();
+
+	ggFreeConfig(ggi.config);
+	_ggiLibIsUp = 0;
+
+	/* Reset global variables to initialization value.
+	 * Otherwise there's a memory corruption when libggi
+	 * is re-initialized within an application. */
+	ggi.config = NULL;
+	_ggi_global_lock = NULL;
+
+	DPRINT_CORE("ggiExit: done!\n");
+}
+
+
+static int
+ggi_attach(struct gg_api* api, struct gg_stem *stem)
+{
+	return GGI_OK;
+}
+
+static void
+ggi_detach(struct gg_api* api, struct gg_stem *stem)
+{
+	if (GGI_PRIV(stem))
+		ggiClose(stem);
+}
+
+int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
+			struct gg_stem *stem, const char *argstr,
+			void *argptr,
+			struct gg_instance **res);
+int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance);
+
+
+static int
+ggi_plug(struct gg_api * api,
+	 struct gg_module *_module,
+	 struct gg_stem *stem,
+	 const char * argstr,
+	 void *argptr,
+	 struct gg_instance **res)
+{
+	return _ggiOpenModule(api, _module, stem, argstr, argptr, res);
+}
+
+static int
+ggi_unplug(struct gg_api * api, struct gg_instance *instance)
+{
+	return _ggiCloseModule(api, instance);
 }

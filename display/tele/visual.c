@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.22 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    Teletarget.
@@ -48,7 +48,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	}
 
 	if (priv->input) {
-		ggDelInstance(priv->input);
+		ggClosePlugin(priv->input);
 		priv->input = NULL;
 	}
 
@@ -113,7 +113,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("gii starting\n");
 	gii = ggGetAPIByName("gii");
 	if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-		priv->input = ggCreateModuleInstance(gii, vis->instance.stem,
+		priv->input = ggPlugModule(gii, vis->instance.stem,
 				"input-tele", NULL, &iargs);
 	} else {
 		err = GGI_ENODEVICE;

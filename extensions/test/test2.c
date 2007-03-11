@@ -1,4 +1,4 @@
-/* $Id: test2.c,v 1.11 2007/03/11 00:48:59 soyt Exp $
+/* $Id: test2.c,v 1.12 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    Test extension test2.c
@@ -41,11 +41,29 @@
  * It happens to need Extension #1 internally.
  */
 
+static ggfunc_api_op_init test2_init;
+static ggfunc_api_op_exit test2_exit;
+static ggfunc_api_op_attach test2_attach;
+static ggfunc_api_op_detach test2_detach;
+/*
+static ggfunc_api_op_getenv test2_getenv;
+static ggfunc_api_op_plug test2_plug;
+static ggfunc_api_op_unplug test2_unplug;
+*/
 
-static int _ggitest2Init(struct gg_api *);
-static struct gg_api _ggitest2 = GG_API("test2", GG_VERSION(1,0,0,0),
-					_ggitest2Init);
-struct gg_api *ggitest2 = &_ggitest2;
+static struct gg_api_ops test2_ops = {
+	test2_init,
+	test2_exit,
+	test2_attach,
+	test2_detach,
+	NULL, /* test2_getenv, */
+	NULL, /* test2_plug, */
+	NULL  /* test2_unplug */
+};
+
+static struct gg_api test2 = GG_API_INIT("test2", 1, 0, &test2_ops);
+
+struct gg_api *ggitest2 = &test2;
 
 static struct gg_observer *observer;
 
@@ -74,7 +92,7 @@ _test2_attach_finalize(struct gg_stem *stem)
 }
 
 static int
-_test2_attach(struct gg_api *api, struct gg_stem *stem)
+test2_attach(struct gg_api *api, struct gg_stem *stem)
 {
 	struct ggi_visual *vis;
 	int rc;
@@ -98,7 +116,7 @@ _test2_attach(struct gg_api *api, struct gg_stem *stem)
 }
 
 static void
-_test2_detach(struct gg_api *api, struct gg_stem *stem)
+test2_detach(struct gg_api *api, struct gg_stem *stem)
 {
 	ggiDetach(stem);
 }
@@ -138,15 +156,9 @@ int ggiTest2Init(void)
 	return rc;
 }
 
-
-static void _ggitest2Exit(struct gg_api *api);
-
 static int
-_ggitest2Init(struct gg_api *api)
+test2_init(struct gg_api *api)
 {
-	api->ops.exit = _ggitest2Exit;
-	api->ops.attach = _test2_attach;
-	api->ops.detach = _test2_detach;
 
 	ggiInit();
 	observer = ggObserve(libggi->channel, observe_visuals, NULL);
@@ -167,7 +179,8 @@ int ggiTest2Exit(void)
 	return rc;
 }
 
-static void _ggitest2Exit(struct gg_api *api)
+static void
+test2_exit(struct gg_api *api)
 {
 	ggDelObserver(observer);
 	ggiExit();

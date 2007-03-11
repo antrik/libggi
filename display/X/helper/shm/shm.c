@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.46 2007/03/11 00:48:57 soyt Exp $
+/* $Id: shm.c,v 1.47 2007/03/11 21:54:43 soyt Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -362,7 +362,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	XSync(priv->disp,0);
 
 	if (priv->inp)
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->slave) {

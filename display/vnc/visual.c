@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.47 2007/03/11 00:48:59 soyt Exp $
+/* $Id: visual.c,v 1.48 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -438,9 +438,9 @@ GGIopen(struct ggi_visual *vis,
 
 	gii = ggGetAPIByName("gii");
 	if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-		priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
+		priv->inp = ggPlugModule(gii, vis->instance.stem,
 					"input-vnc", NULL, &iargs);
-		DPRINT_MISC("ggCreateModuleInstance returned with %p\n",
+		DPRINT_MISC("ggPlugModule returned with %p\n",
 			priv->inp);
 	} else {
 		err = GGI_ENODEVICE;
@@ -508,7 +508,7 @@ GGIopen(struct ggi_visual *vis,
 
 out_closefds:
 	if (priv->inp)
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 	if (priv->sfd != -1)
 		close(priv->sfd);
 out_closefb:
@@ -552,7 +552,7 @@ GGIclose(struct ggi_visual *vis,
 		GGI_vnc_close_client(GG_LIST_FIRST(&priv->clients));
 
 	if (priv->inp)
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
 
 	if (priv->sfd != -1)

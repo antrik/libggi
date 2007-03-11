@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.25 2007/03/11 00:49:00 soyt Exp $
+/* $Id: wrap.c,v 1.26 2007/03/11 21:54:44 soyt Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -183,7 +183,7 @@ static struct gg_instance *init_fdselect(struct gg_stem *stem, int fd)
 	struct gg_instance *inp;
 
 	snprintf(arg, sizeof(arg), "-read=%i", fd);
-	inp = ggCreateModuleInstance(libgii, stem, "input-fdselect", arg,NULL);
+	inp = ggPlugModule(libgii, stem, "input-fdselect", arg,NULL);
 	if (!inp) {
 		ggPanic("Ouch - can't open the fdselect inputlib !");
 	}	/* if */
@@ -192,7 +192,7 @@ static struct gg_instance *init_fdselect(struct gg_stem *stem, int fd)
 
 static void exit_fdselect(struct gg_instance *inp)
 {
-	ggDelInstance(inp);
+	ggClosePlugin(inp);
 }	/* exit_fdselect */
 
 /* return 1 if we got called by the client

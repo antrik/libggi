@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.39 2007/03/11 00:48:57 soyt Exp $
+/* $Id: visual.c,v 1.40 2007/03/11 21:54:43 soyt Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -241,10 +241,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				"-size=%i:-pointer", INPBUFSIZE);
 			DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
 				inputstr, priv->inputbuffer->buffer);
-			priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
+			priv->inp = ggPlugModule(gii, vis->instance.stem,
 						"input-memory", inputstr,
 						priv->inputbuffer->buffer);
-			DPRINT("ggCreateModuleInstance for input-memory returned %p\n",
+			DPRINT("ggPlugModule for input-memory returned %p\n",
 				priv->inp);
 		}
 	}
@@ -261,7 +261,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	_GGI_memory_resetmode(vis);
 
 	if (priv->inp) {
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 		priv->inp = NULL;
 	}
 

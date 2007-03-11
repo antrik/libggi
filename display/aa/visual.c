@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2007/03/11 00:48:57 soyt Exp $
+/* $Id: visual.c,v 1.25 2007/03/11 21:54:43 soyt Exp $
 ******************************************************************************
 
    AAlib target for GGI.
@@ -64,7 +64,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	ggi_aa_priv *priv = AA_PRIV(vis);
 
 	if (priv->inp) {
-		ggDelInstance(priv->inp);
+		ggClosePlugin(priv->inp);
 		priv->inp = NULL;
 	}
 
@@ -159,14 +159,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		/* First allocate a new gii_input descriptor. */
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
-			priv->inp = ggCreateModuleInstance(gii, vis->instance.stem,
-				"input-aa", NULL, NULL);
+			priv->inp = ggPlugModule(gii, vis->instance.stem,
+						 "input-aa", NULL, NULL);
 			if (priv->inp != NULL) {
 				ggObserve(priv->inp->channel, GGI_aa_listener, vis);
 			}
 		}
 		if (priv->inp == NULL) {
-			DPRINT_MISC("display-aa: ggCreateModuleInstance failed\n");
+			DPRINT_MISC("display-aa: ggPlugModule failed\n");
 			GGIclose(vis, dlh);
 			return GGI_ENOMEM;
 		}
