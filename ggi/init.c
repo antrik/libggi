@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.70 2007/03/11 00:48:59 soyt Exp $
+/* $Id: init.c,v 1.71 2007/03/11 12:31:36 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -138,6 +138,12 @@ int ggiInit(void)
 
 static void _ggiExit(struct gg_api*);
 
+extern int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
+			struct gg_stem *stem, const char *argstr,
+			void *argptr,
+			struct gg_instance **res);
+extern int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance);
+
 
 static int
 _ggiInit(struct gg_api* api)
@@ -149,13 +155,13 @@ _ggiInit(struct gg_api* api)
 	api->ops.exit   = _ggiExit;
 	api->ops.attach = _ggiAttach;
 	api->ops.detach = _ggiDetach;
-/*
 	api->ops.open   = _ggiOpenModule;
 	api->ops.close  = _ggiCloseModule;
+#if 0
 	api->ops.env       = _ggiGetEnv;
 	api->ops.publisher = _ggiGetPublisher;
 	api->ops.dump      = _ggiDump;
-*/
+#endif
 
 	err = _ggiSwarInit();
 	if (err) return err;

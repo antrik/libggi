@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.32 2007/03/04 14:44:53 soyt Exp $
+/* $Id: dl.c,v 1.33 2007/03/11 12:31:35 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -367,3 +367,27 @@ void _ggiZapDL(struct ggi_visual *vis, ggi_dlhandle_l **lib)
 
 	*lib = NULL;
 }
+
+
+
+int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
+			struct gg_stem *stem, const char *argstr,
+			void *argptr,
+			struct gg_instance **res);
+int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance);
+
+
+int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
+			struct gg_stem *stem, const char *argstr,
+			void *argptr,
+			struct gg_instance **res)
+{
+	LIB_ASSERT(1, "not yet implemented");
+}
+
+
+int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance)
+{
+	LIB_ASSERT(1, "not yet implemented");
+}
+
