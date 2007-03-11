@@ -1,4 +1,4 @@
-/* $Id: mansync.h,v 1.8 2007/03/11 11:01:26 cegger Exp $
+/* $Id: mansync.h,v 1.9 2007/03/11 22:30:39 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -33,7 +33,7 @@
    A target wishing to use mansync should open mansync with MANSYNC_open()
    in it's own GGIopen().
    It must pass a pointer to a _ggi_opmansync structure as the argument
-   to ggCreateModuleInstance(), and must define the following macros:
+   to ggPlugModule(), and must define the following macros:
 
    MANSYNC_init(vis)
    MANSYNC_deinit(vis)
@@ -163,11 +163,11 @@ do {									\
 #define MANSYNC_DECL_CONT(priv, vis)	(priv)->opmansync->cont((vis))
 
 #define MANSYNC_open(vis, priv)						\
-	(priv)->mod_mansync = ggCreateModuleInstance(libggi,		\
+	(priv)->mod_mansync = ggPlugModule(libggi,			\
 					(vis)->instance.stem,		\
 					"helper-mansync", NULL,		\
 					(priv)->opmansync)
 
-#define MANSYNC_close(priv)	ggDelInstance((priv)->mod_mansync)
+#define MANSYNC_close(priv)	ggClosePlugin((priv)->mod_mansync)
 
 #endif /* _GGI_DISPLAY_MANSYNC_H */
