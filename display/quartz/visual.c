@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2007/03/11 11:16:14 cegger Exp $
+/* $Id: visual.c,v 1.26 2007/03/11 11:30:00 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -152,6 +152,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}	/* if */
 
 		DPRINT_LIBS("loading helper-mansync\n");
+#if 1
+		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
+				"helper-mansync", NULL, priv->opmansync, 0);
+		if (err != GGI_OK) {
+			fprintf(stderr,
+				"display-quartz: Cannot load requrired helper-mansync\n");
+			goto out;
+		}	/* if */
+#else
 		MANSYNC_open(vis, priv);
 		if (priv->mod_mansync == NULL) {
 			DPRINT_LIBS("loading helper-mansync failed\n");
@@ -160,6 +169,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out;
 		}
+#endif
 	}	/* if */
 
 	/* windowed mode is default */
@@ -308,7 +318,9 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
+#if 0
 		MANSYNC_close(priv);
+#endif
 	}
 
 	return 0;
