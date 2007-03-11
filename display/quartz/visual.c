@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.24 2007/03/11 10:05:26 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -57,6 +57,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	priv = QUARTZ_PRIV(vis);
 
+	DPRINT_LIBS("GGIclose(%p, %p) called\n", vis, dlh);
+
 	if (priv->memvis != NULL) {
 		ggiClose(priv->memvis->instance.stem);
 		free(priv->fb);
@@ -101,6 +103,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_quartz_priv *priv;
 	gg_option options[NUM_OPTS];
 
+	DPRINT_LIBS("GGIopen(%p, %p, \"%s\", %p) called\n",
+		vis, dlh, args, argptr);
+
 	memcpy(options, optlist, sizeof(options));
 
 	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
@@ -139,33 +144,25 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (err != GGI_OK) goto out;
 
 	if (tolower((uint8_t)options[OPT_NOMANSYNC].result[0]) == 'n') {
-		struct gg_api *ggi;
 
 		priv->opmansync = malloc(sizeof(_ggi_opmansync));
 		if (priv->opmansync == NULL) {
 			err = GGI_ENOMEM;
 			goto out;
 		}	/* if */
-#if 1
-		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-				"helper-mansync", NULL, priv->opmansync, 0);
-		if (err != GGI_OK) {
-			fprintf(stderr,
-				"display-quartz: Cannot load required helper-mansync!\n");
-			goto out;
-		}	/* if */
-#else
-		priv->mod_mansync = ggCreateModuleInstance(libggi, vis->instance.stem,
+
+		DPRINT_LIBS("loading helper-mansync\n");
+		priv->mod_mansync = ggCreateModuleInstance(libggi,
+					vis->instance.stem,
 					"helper-mansync", NULL,
 					priv->opmansync);
 		if (priv->mod_mansync == NULL) {
-			fprintf(stderr, "module loading failed?\n");
+			DPRINT_LIBS("loading helper-mansync failed\n");
 			free(priv->opmansync);
 			priv->opmansync = NULL;
 			err = GGI_ENODEVICE;
 			goto out;
 		}
-#endif
 	}	/* if */
 
 	/* windowed mode is default */
@@ -300,14 +297,21 @@ err0:
 
 static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
-	LIB_ASSERT(QUARTZ_PRIV(vis) != NULL, "GGIexit: QUARTZ_PRIV(vis) == NULL\n");
+	ggi_quartz_priv *priv;
 
-	if (QUARTZ_PRIV(vis)->opmansync) {
+	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
+
+	priv = QUARTZ_PRIV(vis);
+	LIB_ASSERT(priv != NULL, "GGIexit: QUARTZ_PRIV(vis) == NULL\n");
+	DPRINT_LIBS("GGIexit(%p, %p) called\n", vis, dlh);
+
+	if (priv->opmansync) {
+		DPRINT_LIBS("deinitializing and unloading helper-mansync\n");
 		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
+		ggDelInstance(priv->mod_mansync);
 	}
 
 	return 0;
