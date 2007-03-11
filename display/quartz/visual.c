@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2007/03/11 10:05:26 cegger Exp $
+/* $Id: visual.c,v 1.25 2007/03/11 11:16:14 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -152,10 +152,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}	/* if */
 
 		DPRINT_LIBS("loading helper-mansync\n");
-		priv->mod_mansync = ggCreateModuleInstance(libggi,
-					vis->instance.stem,
-					"helper-mansync", NULL,
-					priv->opmansync);
+		MANSYNC_open(vis, priv);
 		if (priv->mod_mansync == NULL) {
 			DPRINT_LIBS("loading helper-mansync failed\n");
 			free(priv->opmansync);
@@ -311,7 +308,7 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
-		ggDelInstance(priv->mod_mansync);
+		MANSYNC_close(priv);
 	}
 
 	return 0;
