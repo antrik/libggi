@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.22 2007/02/25 17:21:06 cegger Exp $
+/* $Id: color.c,v 1.23 2007/03/13 18:15:44 pekberg Exp $
 ******************************************************************************
 
    Generic color mapping
@@ -150,6 +150,46 @@ ggi_pixel GGI_color_TRUE16_mapcolor(struct ggi_visual *vis, const ggi_color *col
 	return ret;
 }
 
+ggi_pixel
+GGI_color_TRUE16r_mapcolor(struct ggi_visual *vis, const ggi_color *col)
+{
+	ggi_pixel ret;
+	color_truepriv *priv = vis->colorpriv;
+
+	DPRINT2_COLOR("TRUE16r_mapcolor(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
+
+	ret = ((col->r >> priv->red_unmap) & priv->red_mask) |
+	  ((col->g >> priv->green_unmap) & priv->green_mask) |
+	  ((col->b >> priv->blue_unmap) & priv->blue_mask);
+	ret = GGI_BYTEREV16(ret);
+
+	DPRINT2_COLOR("TRUE16r_mapcolor returning 0x%x\n", ret);
+
+	return ret;
+}
+
+ggi_pixel
+GGI_color_TRUE24r_mapcolor(struct ggi_visual *vis, const ggi_color *col)
+{
+	ggi_pixel ret;
+	color_truepriv *priv = vis->colorpriv;
+
+	DPRINT2_COLOR("TRUE24r_mapcolor(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
+
+	ret = (SSHIFT(col->r, priv->red_map) & priv->red_mask) |
+	  (SSHIFT(col->g, priv->green_map) & priv->green_mask) |
+	  (SSHIFT(col->b, priv->blue_map) & priv->blue_mask);
+	ret = GGI_BYTEREV32(ret) >> 8;
+
+	DPRINT2_COLOR("TRUE24r_mapcolor returning 0x%x\n", ret);
+	
+	return ret;
+}
+
 ggi_pixel GGI_color_TRUE_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 {
 	ggi_pixel ret;
@@ -164,6 +204,26 @@ ggi_pixel GGI_color_TRUE_mapcolor(struct ggi_visual *vis, const ggi_color *col)
 	  (SSHIFT(col->b, priv->blue_map) & priv->blue_mask);
 
 	DPRINT2_COLOR("TRUE_mapcolor returning 0x%x\n", ret);
+	
+	return ret;
+}
+
+ggi_pixel
+GGI_color_TRUE32r_mapcolor(struct ggi_visual *vis, const ggi_color *col)
+{
+	ggi_pixel ret;
+	color_truepriv *priv = vis->colorpriv;
+
+	DPRINT2_COLOR("TRUE32r_mapcolor(%p, "
+		      "{r=0x%x, g=0x%x, b=0x%x}) called\n",
+		      vis, col->r, col->g, col->b);
+
+	ret = (SSHIFT(col->r, priv->red_map) & priv->red_mask) |
+	  (SSHIFT(col->g, priv->green_map) & priv->green_mask) |
+	  (SSHIFT(col->b, priv->blue_map) & priv->blue_mask);
+	ret = GGI_BYTEREV32(ret);
+
+	DPRINT2_COLOR("TRUE32r_mapcolor returning 0x%x\n", ret);
 	
 	return ret;
 }
@@ -223,11 +283,68 @@ int GGI_color_TRUE16_unmappixel_4to7(struct ggi_visual *vis, ggi_pixel pixel,
 	return 0;
 }
 
+int
+GGI_color_TRUE16r_unmappixel_4to7(struct ggi_visual *vis, ggi_pixel pixel,
+				  ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	pixel = GGI_BYTEREV16(pixel);
+
+	col->r = (pixel & priv->red_mask) << priv->red_unmap;
+	col->r |= col->r >> priv->red_nbits;
+	col->r |= col->r >> (priv->red_nbits << 1);
+	col->g = (pixel & priv->green_mask) << priv->green_unmap;
+	col->g |= col->g >> priv->green_nbits;
+	col->g |= col->g >> (priv->green_nbits << 1);
+	col->b = (pixel & priv->blue_mask) << priv->blue_unmap;
+	col->b |= col->b >> priv->blue_nbits;
+	col->b |= col->b >> (priv->blue_nbits << 1);
+
+	return 0;
+}
+
 
 int GGI_color_TRUE_unmappixel_gte8(struct ggi_visual *vis, ggi_pixel pixel, 
 	  ggi_color *col)
 {
 	color_truepriv *priv = vis->colorpriv;
+
+	col->r = SSHIFT(pixel & priv->red_mask, priv->red_unmap);
+	col->r |= col->r >> priv->red_nbits;
+	col->g = SSHIFT(pixel & priv->green_mask, priv->green_unmap);
+	col->g |= col->g >> priv->green_nbits;
+	col->b = SSHIFT(pixel & priv->blue_mask, priv->blue_unmap);
+	col->b |= col->b >> priv->blue_nbits;
+
+	return 0;
+}
+
+int
+GGI_color_TRUE24r_unmappixel_gte8(struct ggi_visual *vis, ggi_pixel pixel,
+				  ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	pixel = GGI_BYTEREV32(pixel) >> 8;
+
+	col->r = SSHIFT(pixel & priv->red_mask, priv->red_unmap);
+	col->r |= col->r >> priv->red_nbits;
+	col->g = SSHIFT(pixel & priv->green_mask, priv->green_unmap);
+	col->g |= col->g >> priv->green_nbits;
+	col->b = SSHIFT(pixel & priv->blue_mask, priv->blue_unmap);
+	col->b |= col->b >> priv->blue_nbits;
+
+	return 0;
+}
+
+int
+GGI_color_TRUE32r_unmappixel_gte8(struct ggi_visual *vis, ggi_pixel pixel,
+				  ggi_color *col)
+{
+	color_truepriv *priv = vis->colorpriv;
+
+	pixel = GGI_BYTEREV32(pixel);
 
 	col->r = SSHIFT(pixel & priv->red_mask, priv->red_unmap);
 	col->r |= col->r >> priv->red_nbits;
@@ -257,6 +374,25 @@ int GGI_color_TRUE_unmappixel_gte4(struct ggi_visual *vis, ggi_pixel pixel,
 	return 0;
 }
 
+int
+GGI_color_TRUEr_unmappixel_gte4(struct ggi_visual *vis, ggi_pixel pixel,
+				ggi_color *col)
+{
+	switch (GT_ByPP(LIBGGI_GT(vis))) {
+	case 2:
+		pixel = GGI_BYTEREV16(pixel);
+		break;
+	case 3:
+		pixel = GGI_BYTEREV32(pixel) >> 8;
+		break;
+	default:
+		pixel = GGI_BYTEREV32(pixel);
+		break;
+	}
+
+	return GGI_color_TRUE_unmappixel_gte4(vis, pixel, col);
+}
+
 
 int GGI_color_TRUE_unmappixel_gte2(struct ggi_visual *vis, ggi_pixel pixel, 
 				   ggi_color *col)
@@ -277,6 +413,25 @@ int GGI_color_TRUE_unmappixel_gte2(struct ggi_visual *vis, ggi_pixel pixel,
 	col->b |= col->b >> (priv->blue_nbits << 2);
 
 	return 0;
+}
+
+int
+GGI_color_TRUEr_unmappixel_gte2(struct ggi_visual *vis, ggi_pixel pixel,
+				ggi_color *col)
+{
+	switch (GT_ByPP(LIBGGI_GT(vis))) {
+	case 2:
+		pixel = GGI_BYTEREV16(pixel);
+		break;
+	case 3:
+		pixel = GGI_BYTEREV32(pixel) >> 8;
+		break;
+	default:
+		pixel = GGI_BYTEREV32(pixel);
+		break;
+	}
+
+	return GGI_color_TRUE_unmappixel_gte2(vis, pixel, col);
 }
 
 /* For the rare but extremely painful cases. */
@@ -307,6 +462,25 @@ int GGI_color_TRUE_unmappixel_gte1(struct ggi_visual *vis, ggi_pixel pixel,
 	} else col->b = (pixel & priv->blue_mask) ? 0xffff : 0x0000;
 
 	return 0;
+}
+
+int
+GGI_color_TRUEr_unmappixel_gte1(struct ggi_visual *vis, ggi_pixel pixel,
+				ggi_color *col)
+{
+	switch (GT_ByPP(LIBGGI_GT(vis))) {
+	case 2:
+		pixel = GGI_BYTEREV16(pixel);
+		break;
+	case 3:
+		pixel = GGI_BYTEREV32(pixel) >> 8;
+		break;
+	default:
+		pixel = GGI_BYTEREV32(pixel);
+		break;
+	}
+
+	return GGI_color_TRUE_unmappixel_gte1(vis, pixel, col);
 }
 
 int GGI_color_GREY_unmappixel(struct ggi_visual *vis, ggi_pixel pixel, ggi_color *col)

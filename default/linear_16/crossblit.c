@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.22 2007/02/25 18:13:10 cegger Exp $
+/* $Id: crossblit.c,v 1.23 2007/03/13 18:15:44 pekberg Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -903,6 +903,7 @@ int GGI_lin16_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 
 	/* No optimizations yet for reverse endian and other such weirdness */
 	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
 
 	PREPARE_FB(src);
 
@@ -1251,6 +1252,7 @@ int GGI_lin16_crossblit_64bitc(struct ggi_visual *src, int sx, int sy, int w, in
 
 	/* No optimizations yet for reverse endian and other such weirdness */
 	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
 
 	PREPARE_FB(src);
 
@@ -1640,6 +1642,7 @@ int GGI_lin16_crossblit_mmx(struct ggi_visual *src, int sx, int sy, int w, int h
 
 	/* No optimizations yet for reverse endian and other such weirdness */
 	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
 
 	PREPARE_FB(src);
 

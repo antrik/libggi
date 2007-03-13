@@ -1,4 +1,4 @@
-/* $Id: color.h,v 1.8 2007/02/25 17:21:06 cegger Exp $
+/* $Id: color.h,v 1.9 2007/03/13 18:15:44 pekberg Exp $
 ******************************************************************************
 
    Generic color library defines
@@ -34,6 +34,9 @@
 ggifunc_mapcolor	GGI_color_PAL_mapcolor;
 ggifunc_mapcolor	GGI_color_TRUE16_mapcolor;
 ggifunc_mapcolor	GGI_color_TRUE_mapcolor;
+ggifunc_mapcolor	GGI_color_TRUE16r_mapcolor;
+ggifunc_mapcolor	GGI_color_TRUE24r_mapcolor;
+ggifunc_mapcolor	GGI_color_TRUE32r_mapcolor;
 ggifunc_mapcolor	GGI_color_GREY_mapcolor;
 
 ggifunc_unmappixel	GGI_color_PAL_unmappixel;
@@ -42,6 +45,12 @@ ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte8;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte4;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte2;
 ggifunc_unmappixel	GGI_color_TRUE_unmappixel_gte1;
+ggifunc_unmappixel	GGI_color_TRUE16r_unmappixel_4to7;
+ggifunc_unmappixel	GGI_color_TRUE24r_unmappixel_gte8;
+ggifunc_unmappixel	GGI_color_TRUE32r_unmappixel_gte8;
+ggifunc_unmappixel	GGI_color_TRUEr_unmappixel_gte4;
+ggifunc_unmappixel	GGI_color_TRUEr_unmappixel_gte2;
+ggifunc_unmappixel	GGI_color_TRUEr_unmappixel_gte1;
 ggifunc_unmappixel	GGI_color_GREY_unmappixel;
 
 ggifunc_packcolors	GGI_color_L1_packcolors;

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.16 2007/01/19 09:14:38 pekberg Exp $
+/* $Id: crossblit.c,v 1.17 2007/03/13 18:15:44 pekberg Exp $
 ******************************************************************************
 
    24-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1021,6 +1021,7 @@ int GGI_lin24_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 
 	/* No optimizations yet for reverse endian and other such weirdness */
 	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
 
 	PREPARE_FB(src);
 

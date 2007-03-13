@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2007/02/25 17:21:06 cegger Exp $
+/* $Id: visual.c,v 1.14 2007/03/13 18:15:44 pekberg Exp $
 ******************************************************************************
 
    Generic color handling library
@@ -89,6 +89,71 @@ static void do_setup_color_info(struct ggi_visual *vis)
 	}
 }
 
+static void
+do_setup_true_revendian(struct ggi_visual *vis)
+{
+	switch (GT_ByPP(LIBGGI_GT(vis))) {
+	case 1:
+		vis->opcolor->mapcolor   = GGI_color_TRUE_mapcolor;
+		break;
+	case 2:
+		vis->opcolor->mapcolor   = GGI_color_TRUE16r_mapcolor;
+		break;
+	case 3:
+		vis->opcolor->mapcolor   = GGI_color_TRUE24r_mapcolor;
+		break;
+	case 4:
+		vis->opcolor->mapcolor   = GGI_color_TRUE32r_mapcolor;
+		break;
+	}
+
+	if (COLOR_TRUEPRIV(vis)->red_nbits >= 8 &&
+		COLOR_TRUEPRIV(vis)->green_nbits >= 8 &&
+		COLOR_TRUEPRIV(vis)->blue_nbits >= 8)
+	{
+		if (GT_ByPP(LIBGGI_GT(vis)) == 3)
+			vis->opcolor->unmappixel =
+				GGI_color_TRUE24r_unmappixel_gte8;
+		else
+			vis->opcolor->unmappixel =
+				GGI_color_TRUE32r_unmappixel_gte8;
+		return;
+	}
+
+	if (COLOR_TRUEPRIV(vis)->red_nbits >= 4 &&
+		COLOR_TRUEPRIV(vis)->green_nbits >= 4 &&
+		COLOR_TRUEPRIV(vis)->blue_nbits >= 4)
+	{
+		if (GT_ByPP(LIBGGI_GT(vis)) == 2 &&
+			COLOR_TRUEPRIV(vis)->red_nbits < 8 &&
+			COLOR_TRUEPRIV(vis)->green_nbits < 8 &&
+			COLOR_TRUEPRIV(vis)->blue_nbits < 8)
+			vis->opcolor->unmappixel =
+				GGI_color_TRUE16r_unmappixel_4to7;
+		else
+			vis->opcolor->unmappixel =
+				GGI_color_TRUEr_unmappixel_gte4;
+		return;
+	}
+
+	if (COLOR_TRUEPRIV(vis)->red_nbits >= 2 &&
+		COLOR_TRUEPRIV(vis)->green_nbits >= 2 &&
+		COLOR_TRUEPRIV(vis)->blue_nbits >= 2)
+	{
+		if (GT_ByPP(LIBGGI_GT(vis)) == 1)
+			vis->opcolor->unmappixel =
+				GGI_color_TRUE_unmappixel_gte2;
+		else
+			vis->opcolor->unmappixel =
+				GGI_color_TRUEr_unmappixel_gte2;
+		return;
+	}
+
+	if (GT_ByPP(LIBGGI_GT(vis)) == 1)
+		vis->opcolor->unmappixel = GGI_color_TRUE_unmappixel_gte1;
+	else
+		vis->opcolor->unmappixel = GGI_color_TRUEr_unmappixel_gte1;
+}
 
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
@@ -110,6 +175,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			break;
 
 		case GT_TRUECOLOR:
+			if (GT_SUBSCHEME(LIBGGI_GT(vis)) &
+				GT_SUB_REVERSE_ENDIAN)
+			{
+				do_setup_true_revendian(vis);
+				break;
+			}
 			vis->opcolor->mapcolor   = GGI_color_TRUE_mapcolor;
 			if (COLOR_TRUEPRIV(vis)->red_nbits >= 8 &&
 			    COLOR_TRUEPRIV(vis)->green_nbits >= 8 &&
