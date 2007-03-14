@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.14 2007/03/11 00:48:59 soyt Exp $
+/* $Id: memory.h,v 1.15 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -97,6 +97,7 @@ typedef struct {
 	inpbuffer      *inputbuffer;
 	int		inputoffset;
 	ggi_pixel	r_mask, g_mask, b_mask, a_mask;
+	uint32_t	pixfmt_flags;
 	int		fstride;
 	int		noblank;
 	ggifunc_fillscreen     *oldfillscreen;

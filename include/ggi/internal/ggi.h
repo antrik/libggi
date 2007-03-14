@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.3 2007/03/06 17:00:41 soyt Exp $
+/* $Id: ggi.h,v 1.4 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -124,7 +124,8 @@ GGIAPIFUNC int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 		char separator, const char **endptr,
 		size_t pixfmtstr_len,
 		ggi_pixel *r_mask, ggi_pixel *g_mask,
-		ggi_pixel *b_mask, ggi_pixel *a_mask);
+		ggi_pixel *b_mask, ggi_pixel *a_mask,
+		uint32_t *pixfmt_flags);
 GGIAPIFUNC int _ggi_build_pixfmtstr(struct ggi_visual *vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags);
 

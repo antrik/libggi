@@ -1,4 +1,4 @@
-/* $Id: pixfmt.c,v 1.8 2007/03/05 19:49:59 cegger Exp $
+/* $Id: pixfmt.c,v 1.9 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for LibGGI pixelformat operations.
@@ -25,11 +25,11 @@
 #include "testsuite.inc.c"
 
 
-static void testcase1(const char *desc)
+static void pixfmt_parse_check(const char *desc, const char *pixfmt,
+			uint32_t pixfmt_flags_expect)
 {
-	const char *pixfmt="r5g6b5";
-
 	ggi_pixel r_mask, g_mask, b_mask, a_mask;
+	uint32_t pixfmt_flags;
 	int ret;
 
 	ggi_pixel r_mask_expect = 0xF800;
@@ -43,7 +43,8 @@ static void testcase1(const char *desc)
 
 	ret = _ggi_parse_pixfmtstr(pixfmt, '\0', NULL,
 				strlen(pixfmt)+1,
-				&r_mask, &g_mask, &b_mask, &a_mask);
+				&r_mask, &g_mask, &b_mask, &a_mask,
+				&pixfmt_flags);
 
 	if (ret != ret_expect) {
 		printfailure("expected return value: \"%i\"\n"
@@ -77,9 +78,30 @@ static void testcase1(const char *desc)
 			a_mask_expect, a_mask);
 		return;
 	}
+	if (pixfmt_flags != pixfmt_flags_expect) {
+		printfailure("expected pixfmt_flags value: \"%X\"\n"
+			"actual pixfmt_flags value: \"%X\"\n",
+			pixfmt_flags_expect, pixfmt_flags);
+	}
 
 	printsuccess();
 	return;
+}
+
+static void testcase1(const char *desc)
+{
+	pixfmt_parse_check(desc, "r5g6b5", 0);
+}
+
+static void testcase2(const char *desc)
+{
+	pixfmt_parse_check(desc, "r5g6b5[R]", GGI_PF_REVERSE_ENDIAN);
+}
+
+static void testcase3(const char *desc)
+{
+	pixfmt_parse_check(desc, "r5g6b5[H,ham,E]",
+		GGI_PF_HIGHBIT_RIGHT | GGI_PF_HAM | GGI_PF_EXTENDED);
 }
 
 
@@ -89,6 +111,8 @@ int main(int argc, char * const argv[])
 	printdesc("Regression testsuite for _ggi_parse_pixfmtstr().\n\n");
 
 	testcase1("Check for correct parsing of \"r5g6b5\" pixfmt string.");
+	testcase2("Check for correct parsing of \"r5g6b5[R]\" pixfmt string.");
+	testcase3("Check for correct parsing of \"r5g6b5[H,ham,E]\" pixfmt string");
 
 	printsummary();
 

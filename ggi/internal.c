@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.32 2007/03/10 23:12:50 pekberg Exp $
+/* $Id: internal.c,v 1.33 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -30,6 +30,8 @@
 #include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>
+
+#include <string.h>
 
 
 int _ggi_countbits(uint32_t val)
@@ -264,13 +266,30 @@ void _ggi_build_pixfmt(ggi_pixelformat *pixfmt)
 }
 
 
+static size_t
+_get_token(const char *str, const char **endstr,
+	char sep1, char sep2)
+{
+	size_t len = 0;
+	const char *s = str;
+
+	while (*s && *s != sep1 && *s != sep2) {
+		s++;
+		len++;
+	}
+
+	*endstr = s;
+	return len;
+}
 
 int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 		char separator, const char **endptr,
 		size_t pixfmtstr_len,
 		ggi_pixel *r_mask, ggi_pixel *g_mask,
-		ggi_pixel *b_mask, ggi_pixel *a_mask)
+		ggi_pixel *b_mask, ggi_pixel *a_mask,
+		uint32_t *pixfmt_flags)
 {
+	int parse_flags = 0;
 	ggi_pixel *curr = NULL;
 	const char *ptr = pixfmtstr;
 	unsigned long nbits;
@@ -280,12 +299,50 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 	LIB_ASSERT(g_mask != NULL, "g_mask cannot be NULL");
 	LIB_ASSERT(b_mask != NULL, "b_mask cannot be NULL");
 	LIB_ASSERT(a_mask != NULL, "a_mask cannot be NULL");
+	LIB_ASSERT(pixfmt_flags != NULL, "pixfmt_flags cannot be NULL");
 
 	*r_mask = *g_mask = *b_mask = *a_mask = 0;
+	*pixfmt_flags = 0;
 
 	while (pixfmtstr_len--
 		&& (*ptr != '\0' || *ptr != separator))
 	{
+		if (parse_flags) {
+			size_t len;
+			const char *s;
+
+			len = _get_token(ptr, &s, ',', ']');
+			pixfmtstr_len -= len;
+			LIB_ASSERT(pixfmtstr_len > 0, "invalid pixfmtstr");
+
+			if (strncmp(ptr, "H", len) == 0) {
+				*pixfmt_flags |= GGI_PF_HIGHBIT_RIGHT;
+			}
+			if (strncmp(ptr, "R", len) == 0) {
+				*pixfmt_flags |= GGI_PF_REVERSE_ENDIAN;
+			}
+			if (strncmp(ptr, "ham", len) == 0) {
+				*pixfmt_flags |= GGI_PF_HAM;
+			}
+			if (strncmp(ptr, "E", len) == 0) {
+				*pixfmt_flags |= GGI_PF_EXTENDED;
+			}
+
+			ptr = s;
+
+			switch (*ptr) {
+			case ']':
+				parse_flags = 0;
+				ptr++;
+				break;
+			case ',':
+				ptr++;
+				break;
+			}
+
+			continue;
+		}
+
 		switch (*ptr) {
 		case 'p':	/* pad */
 			curr = NULL;
@@ -322,6 +379,10 @@ int _ggi_parse_pixfmtstr(const char *pixfmtstr,
 				*curr |= ((1 << nbits) - 1);
 			break;
 
+		case '[':
+			parse_flags = 1;
+			break;
+
 		default:
 			DPRINT("_ggi_parse_pixfmtstr: Detected invalid character: %c\n",
 					*ptr);
@@ -349,6 +410,8 @@ err0:
 int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 			size_t pixfmtstr_len, int flags)
 {
+	ggi_pixelformat *pixfmt;
+
 	LIB_ASSERT(vis != NULL, "Invalid visual");
 	LIB_ASSERT(pixfmtstr != NULL, "Invalid string pointer");
 	LIB_ASSERT(pixfmtstr_len > 0, "Invalid string length");
@@ -360,18 +423,18 @@ int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 		return GGI_EARGINVAL;
 	}
 
+	pixfmt = LIBGGI_PIXFMT(vis);
+
 	/* Now, we can assume there's at least room
 	 * for the terminating \0.
 	 */
 
 	if (flags & GGI_PIXFMT_CHANNEL) {
 		char alpha_or_pad, *ptr;
-		ggi_pixelformat *pixfmt;
 		size_t tmp;
 		int idx;
 		unsigned count;
 
-		pixfmt = LIBGGI_PIXFMT(vis);
 		alpha_or_pad = (flags & GGI_PIXFMT_ALPHA_USED) ? 'a' : 'p';
 		idx = pixfmt->size - 1;
 		if (idx > 31) {		/* paranoia never hurts. */
@@ -428,8 +491,81 @@ int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 	} else {
 		size_t tmp;
 
-		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u", GT_SIZE(LIBGGI_GT(vis)));
+		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u",
+				GT_SIZE(LIBGGI_GT(vis)));
 		LIB_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
+	}
+
+	/* Pixelformat flags */
+	if (pixfmt->flags) {
+		char *ptr;
+		int comma = 0;
+		LIB_ASSERT(pixfmtstr_len >= 4,
+				"pixfmtstr too short for flags.");
+		ptr = pixfmtstr + strlen(pixfmtstr);
+		LIB_ASSERT(*ptr == '\0', "something is wrong with pixfmtstr.");
+		*(ptr++) = '[';
+		pixfmtstr_len--;
+
+		if (pixfmt->flags & GGI_PF_REVERSE_ENDIAN) {
+			LIB_ASSERT(pixfmtstr_len >= 1,
+				"pixfmtstr too short for flags.");
+			if (comma) {
+				LIB_ASSERT(pixfmtstr_len >= 2,
+					"pixfmtstr too short for flags.");
+				*(ptr++) = ',';
+				pixfmtstr_len--;
+			}
+			*(ptr++) = 'R';
+			pixfmtstr_len--;
+			comma = 1;
+		}
+		if (pixfmt->flags & GGI_PF_HIGHBIT_RIGHT) {
+			LIB_ASSERT(pixfmtstr_len >= 1,
+				"pixfmtstr too short for flags.");
+			if (comma) {
+				LIB_ASSERT(pixfmtstr_len >= 2,
+					"pixfmtstr too short for flags.");
+				*(ptr++) = ',';
+				pixfmtstr_len--;
+			}
+			*(ptr++) = 'H';
+			pixfmtstr_len--;
+			comma = 1;
+		}
+		if (pixfmt->flags & GGI_PF_HAM) {
+			LIB_ASSERT(pixfmtstr_len >= 3,
+				"pixfmtstr too short for flags.");
+			if (comma) {
+				LIB_ASSERT(pixfmtstr_len >= 4,
+					"pixfmtstr_len too short for flags.");
+				*(ptr++) = ',';
+				pixfmtstr_len--;
+			}
+			*(ptr++) = 'h';
+			*(ptr++) = 'a';
+			*(ptr++) = 'm';
+			pixfmtstr_len -= 3;
+			comma = 1;
+		}
+		if (pixfmt->flags & GGI_PF_EXTENDED) {
+			LIB_ASSERT(pixfmtstr_len >= 1,
+				"pixfmtstr too short for flags.");
+			if (comma) {
+				LIB_ASSERT(pixfmtstr_len >= 2,
+					"pixfmtstr too short for flags.");
+				*(ptr++) = ',';
+				pixfmtstr_len--;
+			}
+			*(ptr++) = 'E';
+			pixfmtstr_len--;
+			comma = 1;
+		}
+
+		LIB_ASSERT(pixfmtstr_len >= 2,
+			"pixfmtstr too short for flags.");
+		*(ptr++) = ']';
+		*ptr = '\0';
 	}
 
 	return GGI_OK;

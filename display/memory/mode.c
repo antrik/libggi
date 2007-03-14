@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2007/03/11 00:48:57 soyt Exp $
+/* $Id: mode.c,v 1.35 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -121,6 +121,7 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 		LIBGGI_PIXFMT(vis)->green_mask = priv->g_mask;
 		LIBGGI_PIXFMT(vis)->blue_mask  = priv->b_mask;
 		LIBGGI_PIXFMT(vis)->alpha_mask  = priv->a_mask;
+		LIBGGI_PIXFMT(vis)->flags = priv->pixfmt_flags;
 	}
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 

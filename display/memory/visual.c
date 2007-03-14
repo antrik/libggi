@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.40 2007/03/11 21:54:43 soyt Exp $
+/* $Id: visual.c,v 1.41 2007/03/14 23:01:18 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -180,7 +180,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		_ggi_parse_pixfmtstr(options[OPT_PIXFMT].result, '\0', NULL,
 				strlen(options[OPT_PIXFMT].result)+1,
 				&priv->r_mask, &priv->g_mask, &priv->b_mask,
-				&priv->a_mask);
+				&priv->a_mask, &priv->pixfmt_flags);
 	}
 
 	/* Explicit layout for preallocated buffers with nontrivial layouts. */
