@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.24 2007/03/04 18:26:45 soyt Exp $
+/* $Id: stubs.c,v 1.25 2007/03/14 23:40:11 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -29,6 +29,7 @@
 
 #include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/ggi_ext.h>
 
 #undef putc
 
