@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.43 2007/03/03 15:53:15 ggibecka Exp $
+/* $Id: misc.c,v 1.44 2007/03/15 15:14:58 pekberg Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -640,6 +640,7 @@ noswab:
 XImage *_ggi_x_create_ximage( struct ggi_visual *vis, char *data, int w, int h )
 {
 	ggi_x_priv *priv;
+	ggi_pixelformat *fmt;
 	XImage *img0;
 
 	priv = GGIX_PRIV(vis);
@@ -654,8 +655,21 @@ XImage *_ggi_x_create_ximage( struct ggi_visual *vis, char *data, int w, int h )
 		return NULL;
 	}
 
-	/* Take Bit and Byte order information from the Xserver */
-	img0->byte_order = ImageByteOrder(priv->disp);
+	fmt = LIBGGI_PIXFMT(vis);
+
+	/* Don't take Byte order information from the Xserver */
+#ifdef GGI_LITTLE_ENDIAN
+	if (fmt->flags & GGI_PF_REVERSE_ENDIAN)
+		img0->byte_order = MSBFirst;
+	else
+		img0->byte_order = LSBFirst;
+#else
+	if (fmt->flags & GGI_PF_REVERSE_ENDIAN)
+		img0->byte_order = LSBFirst;
+	else
+		img0->byte_order = MSBFirst;
+#endif
+	/* Take Bit order information from the Xserver. Why??? */
 	img0->bitmap_bit_order = BitmapBitOrder(priv->disp);
 	DPRINT_MISC("byte order = %i\n", img0->byte_order);
 	DPRINT_MISC("bit order = %i\n", img0->bitmap_bit_order);
@@ -685,13 +699,24 @@ XImage *_ggi_x_create_ximage( struct ggi_visual *vis, char *data, int w, int h )
 	img0->format = ZPixmap;    /* XYBitmap, XYPixmap, ZPixmap */
 	img0->data = data;         /* pointer to image data */
 
-	/* Take Bit and Byte order information from the Xserver */
-	img0->byte_order = ImageByteOrder(priv->disp);
+	fmt = LIBGGI_PIXFMT(vis);
+
+	/* Don't take Byte order information from the Xserver */
+#ifdef GGI_LITTLE_ENDIAN
+	if (fmt->flags & GGI_PF_REVERSE_ENDIAN)
+		img0->byte_order = MSBFirst;
+	else
+		img0->byte_order = LSBFirst;
+#else
+	if (fmt->flags & GGI_PF_REVERSE_ENDIAN)
+		img0->byte_order = LSBFirst;
+	else
+		img0->byte_order = MSBFirst;
+#endif
+	/* Take Bit order information from the Xserver. Why??? */
 	img0->bitmap_bit_order = BitmapBitOrder(priv->disp);
 	DPRINT_MISC("byte order = %i\n", img0->byte_order);
 	DPRINT_MISC("bit order = %i\n", img0->bitmap_bit_order);
-
-	fmt = LIBGGI_PIXFMT(vis);
 
 #if 0
 	img0->bitmap_unit = BitmapUnit(priv->disp);	
