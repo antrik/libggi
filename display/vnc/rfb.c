@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.86 2007/03/11 00:48:59 soyt Exp $
+/* $Id: rfb.c,v 1.87 2007/03/20 00:50:25 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -449,6 +449,7 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 
 	client->palette_dirty = !client->buf[7];
 
+	client->requested_pixfmt = client->pixfmt;
 	if (change_pixfmt(client))
 		return -1;
 
@@ -604,10 +605,7 @@ tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 	if (!client->tight_ctx)
 		return NULL;
 
-	/* a wee bit ugly... */
-	client->encode = GGI_vnc_tight;
-	change_pixfmt(client);
-	client->encode = NULL;
+	client->update_pixfmt ^= 1;
 
 	return GGI_vnc_tight;
 }
@@ -728,6 +726,10 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 		if (!client->encode && encode) {
 			DPRINT_MISC("Selected %s", encode_tbl[i].format);
 			client->encode = encode;
+			if (client->update_pixfmt) {
+				client->pixfmt = client->requested_pixfmt;
+				change_pixfmt(client);
+			}
 		}
 	}
 }
@@ -775,6 +777,11 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		return 0;
 	}
 
+	client->update_pixfmt = 0;
+#ifdef HAVE_ZLIB
+	if (client->encode == GGI_vnc_tight)
+		client->update_pixfmt = 1;
+#endif
 	client->encode = NULL;
 	client->copy_rect = 0;
 
@@ -1256,6 +1263,7 @@ vnc_client_init(ggi_vnc_client *client)
 	memcpy(&server_init[24], priv->title, ntohl(tmp32));
 
 	client->pixfmt = *pixfmt;
+	client->requested_pixfmt = client->pixfmt;
 	change_pixfmt(client);
 
 	/* desired pixel-format */

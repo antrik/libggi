@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.33 2007/03/11 00:48:59 soyt Exp $
+/* $Id: vnc.h,v 1.34 2007/03/20 00:50:25 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -78,6 +78,8 @@ typedef struct ggi_vnc_client_t {
 	void *tight_ctx;
 
 	ggi_pixelformat pixfmt;
+	ggi_pixelformat requested_pixfmt;
+	int update_pixfmt;
 	struct ggi_visual *vis;
 	int palette_dirty;
 	int reverse_endian;
