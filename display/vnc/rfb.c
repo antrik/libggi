@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.87 2007/03/20 00:50:25 pekberg Exp $
+/* $Id: rfb.c,v 1.88 2007/03/22 10:15:09 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1660,7 +1660,7 @@ GGI_vnc_close_client(ggi_vnc_client *client)
 
 void
 GGI_vnc_client_invalidate_nc_xyxy(ggi_vnc_client *client,
-	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
+	int tlx, int tly, int brx, int bry)
 {
 	ggi_rect_union_xyxy(&client->dirty, tlx, tly, brx, bry);
 
@@ -1670,7 +1670,7 @@ GGI_vnc_client_invalidate_nc_xyxy(ggi_vnc_client *client,
 
 void
 GGI_vnc_invalidate_nc_xyxy(struct ggi_visual *vis,
-	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
+	int tlx, int tly, int brx, int bry)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client;
@@ -1685,7 +1685,7 @@ GGI_vnc_invalidate_nc_xyxy(struct ggi_visual *vis,
 
 void
 GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
-	uint16_t tlx, uint16_t tly, uint16_t brx, uint16_t bry)
+	int tlx, int tly, int brx, int bry)
 {
 	ggi_vnc_priv *priv;
 	ggi_vnc_client *client;
