@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2006/03/22 19:26:48 cegger Exp $
+/* $Id: mode.c,v 1.14 2007/03/27 18:20:30 soyt Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -35,10 +35,13 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/display/wsfb.h>
 
 #include "../common/pixfmt-setup.inc"
+
+#include <ggi/internal/ggi_debug.h>
+
 
 static int do_mmap(struct ggi_visual *);
 
@@ -109,7 +112,8 @@ int GGI_wsfb_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		vis->palette = _ggi_malloc(nocols * sizeof(ggi_color));
 		vis->opcolor->setpalvec = GGI_wsfb_setpalvec;
 		/* Initialize palette */
-		ggiSetColorfulPalette(vis);
+		/* let the user do this if he wants to - eric */
+		/* ggiSetColorfulPalette(vis); */
 	}
 
 	memcpy(LIBGGI_MODE(vis),tm,sizeof(ggi_mode));

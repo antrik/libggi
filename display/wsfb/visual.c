@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2006/03/22 19:26:48 cegger Exp $
+/* $Id: visual.c,v 1.13 2007/03/27 18:20:30 soyt Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -26,9 +26,11 @@
 */
 
 #include "config.h"
-#include <ggi/internal/ggi-dl.h>
 
+#include <ggi/internal/ggi.h>
+#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/wsfb.h>
+
 
 static int usagecounter = 0;
 
@@ -39,11 +41,12 @@ static int do_cleanup(struct ggi_visual *vis)
 
 	DPRINT("do_cleanup\n");
 
+	/*
 	if (vis->input != NULL) {
 		giiClose(vis->input);
 		vis->input = NULL;
-	}	/* if */
-
+	}
+	*/
 	if (priv->availmodes != NULL) {
 		free(priv->availmodes);
 	}	/* if */
@@ -180,6 +183,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->mapsize = ((int)priv->size  + priv->pagemask) & ~(priv->pagemask);
 
 	/* Open keyboard and mouse input */
+	/*
 	vis->input = giiOpen("stdin:ansikey", NULL);
 	if (vis->input == NULL) {
 		DPRINT(
@@ -188,7 +192,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			error = GGI_ENODEVICE;
 			goto error;
 	}
-
+	*/
 	vis->opdisplay->getmode		= GGI_wsfb_getmode;
 	vis->opdisplay->setmode		= GGI_wsfb_setmode;
 	vis->opdisplay->getapi		= GGI_wsfb_getapi;

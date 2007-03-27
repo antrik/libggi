@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.209 2007/02/02 21:09:54 cegger Exp $
+dnl $Id: configure.in,v 1.210 2007/03/27 18:20:29 soyt Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -62,6 +62,9 @@ build_directx_target="auto"
 
 dnl MacOS X specific Targets
 build_quartz_target="auto"
+
+dnl OpenBSD(NetBSD?) specific Targets
+build_wsfb_target="auto"
 
 dnl PseudoTargets
 build_tile_target="auto"
@@ -211,6 +214,12 @@ AC_ARG_ENABLE(quartz,
 build_quartz_target=$enableval)
 
 
+dnl OpenBSD(NetBSD?) specific Targets
+AC_ARG_ENABLE(wsfb,
+[  --disable-wsfb          don't build the wsfb target],
+build_wsfb_target=$enableval)
+
+
 dnl PseudoTargets
 AC_ARG_ENABLE(tile,
 [  --disable-tile          don't build the tile target],
@@ -324,6 +333,8 @@ AC_CHECK_HEADERS([vgl.h], [], [],
 	 #ifdef HAVE_SYS_FBIO_H
 	 # include <sys/fbio.h>
 	 #endif])
+
+AC_CHECK_HEADERS([dev/wscons/wsconsio.h], [], [], [AC_INCLUDES_DEFAULT])
 
 
 dnl ========================================================================
@@ -903,6 +914,12 @@ if test "x$build_vcsa_target" != "xno"; then
   fi
 fi
 
+if test "x$build_wsfb_target" != "xno"; then
+  if test "$ac_cv_header_dev_wscons_wsconsio_h" != yes; then
+    build_wsfb_target="no"
+  fi
+fi
+
 if test "x$build_linvtsw_helper" != "xno"; then
   if test "$ac_cv_header_linux_vt_h" != yes -o \
 	"$ac_cv_header_linux_kd_h" != yes ; then
@@ -1361,6 +1378,11 @@ GGI_CHECK_TARGET(display-vcsa, build_vcsa_target,
 GGI_CHECK_TARGET(display-vnc, build_vnc_target,
 		DISPLAYSUBDIRS, DISPLAYMODULES, vnc, vnc.la,
 		BUILTIN_DISPLAY_VNC)
+
+
+GGI_CHECK_TARGET(display-wsfb, build_wsfb_target,
+		DISPLAYSUBDIRS, DISPLAYMODULES, wsfb, wsfb.la,
+		BUILTIN_DISPLAY_WSFB)
 
 
 GGI_CHECK_TARGET(helper-linvtsw, build_linvtsw_helper,
