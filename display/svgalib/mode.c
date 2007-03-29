@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2007/03/04 18:26:44 soyt Exp $
+/* $Id: mode.c,v 1.31 2007/03/29 22:21:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -33,9 +33,9 @@
 #include <termios.h>
 
 #include "config.h"
-#include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 #include <ggi/display/svgalib.h>
+#include <ggi/internal/ggi_debug.h>
 
 #include "../common/pixfmt-setup.inc"
 
@@ -195,7 +195,7 @@ int GGI_svga_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		if (LIBGGI_PAL(vis)->priv == NULL) return GGI_EFATAL;
 
 		/* Set an initial palette. */
-		ggiSetColorfulPalette(vis);
+		ggiSetColorfulPalette(vis->instance.stem);
 	}
 
 	/* Layout of display */
@@ -307,7 +307,7 @@ int GGI_svga_setmode(struct ggi_visual *vis, ggi_mode *tm)
 		LIBGGI_PAL(vis)->getPrivSize = GGI_svga_getPrivSize;
 	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 
 	return 0;
 }

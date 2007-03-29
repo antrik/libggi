@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.9 2006/03/20 20:28:38 cegger Exp $
+/* $Id: svgalib.h,v 1.10 2007/03/29 22:22:24 cegger Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -78,6 +78,9 @@ void _GGI_svga_freedbs(struct ggi_visual *);
 typedef struct svga_priv {
 	PHYSZ_DATA
 
+	/* observer */
+	struct gg_channel *linvt_channel;
+
 	ggi_modelistmode *availmodes;
 	uint8_t	         *memorigin;
 	uint32_t pixperframe;
@@ -85,6 +88,9 @@ typedef struct svga_priv {
 	int	ismodex;
 	int	isbanked;
 	int	inputs;
+	struct gg_instance *kbd_inp;	/* keyboard */
+	struct gg_instance *ms_inp;	/* mouse */
+
 	int	dohalt;
 	int	autoswitch;
 	int	switchpending;

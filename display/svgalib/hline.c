@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.8 2006/03/22 20:22:28 cegger Exp $
+/* $Id: hline.c,v 1.9 2007/03/29 22:21:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: horizontal lines
@@ -61,11 +61,11 @@ int GGI_svga_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffe
 	if (SVGA_PRIV(vis)->ismodex && x%4 != 0) {
 		/* ModeX is always 8bpp */
 		for (;x%4 != 0; x++,w--) {
-			ggiPutPixel(vis, x, y, *buf);
+			_ggiPutPixel(vis, x, y, *buf);
 			buf++;
 		}
 		for (;w%4 != 0; w--) {
-			ggiPutPixel(vis, x, y, *(buf+w));
+			_ggiPutPixel(vis, x, y, *(buf+w));
 		}
 	}
         vga_drawscansegment((uint8_t *)buf, x, y, w*pixelsize);

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2006/03/22 20:22:28 cegger Exp $
+/* $Id: visual.c,v 1.28 2007/03/29 22:21:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -27,9 +27,12 @@
 */
 
 #include "config.h"
+#include <ggi/display/svgalib.h>
+#include <ggi/display/linvtsw.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
-#include <ggi/display/svgalib.h>
+#include <ggi/gii.h>
+#include <ggi/gii-module.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,6 +89,8 @@ static const int vga_signals[] = {
 };
 #define NUMVGASIGS	(sizeof(vga_signals)/sizeof(int))
 
+
+ggfunc_channel_control_cb _ggi_svga_listener;
 
 static const gg_option optlist[] =
 {
@@ -188,9 +193,12 @@ switching(void *arg)
 	struct ggi_visual *vis = arg;
 	svga_priv *priv = SVGA_PRIV(vis);
 
+	DPRINT_MISC("display-svgalib: switching(%p) called\n", vis);
+
 #if 0
 	save_palette(vis);
 #endif
+
 	priv->ismapped = 0;
 	priv->switchpending = 0;
 	priv->gfxmode = vga_getcurrentmode();
@@ -202,22 +210,13 @@ switchreq(void *arg)
 {
 	struct ggi_visual *vis = arg;
 	svga_priv *priv = SVGA_PRIV(vis);
-	gii_event ev;
-	ggi_cmddata_switchrequest *data;
+	ggi_cmddata_switchrequest data;
 
-	DPRINT_MISC("display-svga: switched_away() called\n");
-		
-	_giiEventBlank(&ev, sizeof(gii_cmd_event));
+	DPRINT_MISC("display-svga: switchedreq(%p) called\n", vis);
 
-	data = (void *)ev.cmd.data;
+	data.request = GGI_REQSW_UNMAP;
 
-	ev.size   = sizeof(gii_cmd_event);
-	ev.cmd.type = evCommand;
-	ev.cmd.code = GGICMD_REQUEST_SWITCH;
-	data->request = GGI_REQSW_UNMAP;
-
-	_giiSafeAdd(vis->input, &ev);
-		
+	ggBroadcast(priv->linvt_channel, GGICMD_REQUEST_SWITCH, &data);	
 	priv->switchpending = 1;
 }
 
@@ -225,11 +224,12 @@ static void
 switchback(void *arg)
 {
 	struct ggi_visual *vis = arg;
+	svga_priv *priv = SVGA_PRIV(vis);
 	gii_event ev;
 
 	DPRINT_MISC("display-svga: switched_back() called\n");
 
-	_giiEventBlank(&ev, sizeof(gii_expose_event));
+	giiEventBlank(&ev, sizeof(gii_expose_event));
 
 	ev.any.size   = sizeof(gii_expose_event);
 	ev.any.type   = evExpose;
@@ -238,42 +238,37 @@ switchback(void *arg)
 	ev.expose.w = LIBGGI_VIRTX(vis);
 	ev.expose.h = LIBGGI_VIRTY(vis);
 
-	_giiSafeAdd(vis->input, &ev);
+	ggBroadcast(priv->linvt_channel, GII_CMDCODE_EXPOSE, &ev);
 	DPRINT_MISC("svga: EXPOSE sent.\n");
 
 	_ggi_svgalib_setmode(SVGA_PRIV(vis)->gfxmode);
 	do_setpalette(vis);
-	SVGA_PRIV(vis)->ismapped = 1;
+	priv->ismapped = 1;
 }
 
 
-static int 
-GGI_svga_sendevent(struct ggi_visual *vis, gii_event *ev)
+int
+_ggi_svga_listener(void *arg, uint32_t flag, void *data)
 {
+	struct ggi_visual *vis = arg;
 	svga_priv *priv = SVGA_PRIV(vis);
 
-	DPRINT_MISC("GGI_svga_sendevent() called\n");
+	DPRINT_MISC("_ggi_svga_listener() called\n");
 
-	if (ev->any.type != evCommand) {
-		return GGI_EEVUNKNOWN;
-	}
-	switch (ev->cmd.code) {
-	case GGICMD_ACKNOWLEDGE_SWITCH:
+	if ((flag & GGICMD_ACKNOWLEDGE_SWITCH) == GGICMD_ACKNOWLEDGE_SWITCH) {
 		DPRINT_MISC("display-svga: switch acknowledge\n");
 		if (priv->switchpending) {
 			priv->doswitch(vis);
-			return 0;
-		} else {
-			/* No switch pending */
-			return GGI_EEVNOTARGET;
 		}
-		break;
-	case GGICMD_NOHALT_ON_UNMAP:
+	}
+
+	if ((flag & GGICMD_NOHALT_ON_UNMAP) == GGICMD_NOHALT_ON_UNMAP) {
 		DPRINT_MISC("display-svga: nohalt on\n");
 		priv->dohalt = 0;
 		priv->autoswitch = 0;
-		break;
-	case GGICMD_HALT_ON_UNMAP:
+	}
+
+	if ((flag & GGICMD_HALT_ON_UNMAP) == GGICMD_HALT_ON_UNMAP) {
 		DPRINT_MISC("display-svga: halt on\n");
 		priv->dohalt = 1;
 		priv->autoswitch = 1;
@@ -282,10 +277,9 @@ GGI_svga_sendevent(struct ggi_visual *vis, gii_event *ev)
 			priv->doswitch(vis);
 			pause();
 		}
-		break;
 	}
 	
-	return GGI_EEVUNKNOWN;
+	return 0;
 }
 
 
@@ -305,9 +299,13 @@ static int do_cleanup(struct ggi_visual *vis)
 
 	_GGI_svga_freedbs(vis);
 
-	if (vis->input != NULL) {
-		giiClose(vis->input);
-		vis->input = NULL;
+	if (priv->kbd_inp != NULL) {
+		ggClosePlugin(priv->kbd_inp);
+		priv->kbd_inp = NULL;
+	}
+	if (priv->ms_inp != NULL) {
+		ggClosePlugin(priv->ms_inp);
+		priv->ms_inp = NULL;
 	}
 
 	if (priv) {
@@ -338,8 +336,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 #ifdef HAVE_VTSTUFF
 	struct vt_mode temp_vtmode;
 #endif
+	struct gg_api *gii, *ggi;
 	unsigned int i;
 	int err;
+
+	DPRINT("display-svgalib: GGIopen start.\n");
 
 	memcpy(options, optlist, sizeof(options));
         if (args != NULL) {
@@ -416,7 +417,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		usagecounter--;
 		return GGI_ENOMEM;
 	}
-	priv = LIBGGI_PRIVATE(vis) = malloc(sizeof(struct svga_priv));
+
+	gii = ggGetAPIByName("gii");
+	ggi = ggGetAPIByName("ggi");
+	LIBGGI_PRIVATE(vis) = priv = calloc(1, sizeof(struct svga_priv));
 	if (priv == NULL) {
 		do_cleanup(vis);
 		return GGI_ENOMEM;
@@ -446,6 +450,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (_GGIchecksvgamodes(vis) != 0) {
 		return GGI_ENODEVICE;
 	}
+
+	priv->linvt_channel = ggNewChannel(vis, _ggi_svga_listener);
+	priv->kbd_inp = NULL;
+	priv->ms_inp = NULL;
 
 	do {
 		vtswarg.switchreq = switchreq;
@@ -484,39 +492,61 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Open keyboard and mouse input */
 	if (priv->inputs & INP_KBD) {
+		struct gg_instance *inp;
 		char strbuf[64];
 		const char *inputstr = "input-linux-kbd";
 
 		if (vtnum != -1) {
-			snprintf(strbuf, 64, "linux-kbd:/dev/tty%d", vtnum);
-			inputstr = strbuf;
+			snprintf(strbuf, sizeof(strbuf),
+				"/dev/tty%d", vtnum);
 		}
 
-		vis->input = giiOpen(inputstr, NULL);
-		if (vis->input == NULL) {
-			if (vtnum != -1) {
-				snprintf(strbuf, 64, "linux-kbd:/dev/vc/%d", vtnum);
-				vis->input = giiOpen(inputstr, NULL);
-			}
-			if (vis->input == NULL) {
-				fprintf(stderr,
-"display-svga: Unable to open linux-kbd, trying stdin input.\n");
-				/* We're on the Linux console so we want
-				   ansikey. */
-				vis->input = giiOpen("stdin:ansikey", NULL);
-				if (vis->input == NULL) {
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggPlugModule(gii,
+					vis->instance.stem,
+					inputstr, strbuf,
+					NULL);
+			if (inp == NULL) {
+				if (vtnum != -1) {
+					snprintf(strbuf, sizeof(strbuf),
+						"/dev/vc/%d", vtnum);
+					inp = ggPlugModule(gii,
+							vis->instance.stem,
+							inputstr, strbuf,
+							NULL);
+				}
+				if (inp == NULL) {
 					fprintf(stderr,
-"display-svga: Unable to open stdin input, try running with '-nokbd'.\n");
-					do_cleanup(vis);
-					return GGI_ENODEVICE;
+	"display-svga: Unable to open linux-kbd, trying stdin input.\n");
+					/* We're on the Linux console so we want
+					   ansikey. */
+					inp = ggPlugModule(gii,
+							vis->instance.stem,
+							"input-stdin", "ansikey",
+							NULL);
+					if (inp == NULL) {
+						fprintf(stderr,
+	"display-svga: Unable to open stdin input, try running with '-nokbd'.\n");
+						do_cleanup(vis);
+						return GGI_ENODEVICE;
+					}
 				}
 			}
+			priv->kbd_inp = inp;
 		}
 	}
 	if (priv->inputs & INP_MOUSE) {
-		gii_input *inp;
-		if ((inp = giiOpen("linux-mouse:auto", &args, NULL)) != NULL) {
-			vis->input = giiJoinInputs(vis->input, inp);
+		struct gg_instance *inp;
+		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			inp = ggPlugModule(gii,
+					vis->instance.stem,
+					"input-linux-mouse", "auto",
+					&args);
+			if (inp == NULL) {
+				fprintf(stderr,
+	"display-svga: Unable to open linux-mouse. Disable mouse support.\n");
+			}
+			priv->ms_inp = inp;
 		}
 	}
 
@@ -527,7 +557,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdisplay->getapi		= GGI_svga_getapi;
 	vis->opdisplay->checkmode	= GGI_svga_checkmode;
 	vis->opdisplay->setflags	= GGI_svga_setflags;
-	vis->opdisplay->sendevent	= GGI_svga_sendevent;
+
+	DPRINT("display-svga: GGIopen success.\n");
 
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;

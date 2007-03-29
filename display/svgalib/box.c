@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.8 2006/03/22 20:22:28 cegger Exp $
+/* $Id: box.c,v 1.9 2007/03/29 22:21:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: vgagl box implementation
@@ -64,7 +64,7 @@ GGI_svga_putbox(struct ggi_visual *vis, int x, int y, int w, int h, const void *
 				    LIBGGI_VIRTX(vis)/4, w, h);
 	} else {
 		while (h--) {
-			ggiPutHLine(vis, x, y, w, buf);
+			_ggiPutHLine(vis, x, y, w, buf);
 			y++;
 			buf += rowadd;
 		}

@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.13 2006/03/22 20:22:28 cegger Exp $
+/* $Id: color.c,v 1.14 2007/03/29 22:21:53 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: palette driver
@@ -30,8 +30,8 @@
 #include <string.h>
 
 #include "config.h"
-#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/svgalib.h>
+#include <ggi/internal/ggi_debug.h>
 
 
 int
