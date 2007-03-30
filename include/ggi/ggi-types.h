@@ -1,4 +1,4 @@
-/* $Id: ggi-types.h,v 1.2 2007/03/04 15:49:22 soyt Exp $
+/* $Id: ggi-types.h,v 1.3 2007/03/30 13:18:26 cegger Exp $
 ******************************************************************************
 
    LibGGI general definitions, data structures, etc.
@@ -264,6 +264,24 @@ typedef struct		/* requested by user and changed by driver    */
    application must not draw onto the visual until it receives an evExpose
    event, which tells the application that the visual is mapped back again.
 */
+
+/*
+ * GGI_REQSW_UNMAP is intended to be sent on whenever the app might want to
+ *     stop drawing. This is for example on switchaway of virtual consoles,
+ *     so the app can stop drawing before the switch happens.
+ *     Another example is iconifying on display-x.
+ * GGI_REQSW_MODE is intended for cases where an external event changes the
+ *     mode. This is basically when resizing.
+ *     Another use would be X in fullscreen with Ctrl-Alt-+/-
+ *     GGI_REQSW_MODE can of course also mean that an external request to
+ *     change e.g. DEPTH was received. It is assumed that the external source
+ *     is able to fill in the mode struct in a way that checking and setting
+ *     it should succeed.
+ * GGI_REQSW_TARGET is intended for allowing the application to be switched
+ *     to a different target remotely. This might be useful for automatically
+ *     transferring an application from svgalib to X as soon as an X server
+ *     is started.
+ */
 
 #define GGICMD_REQUEST_SWITCH	0x04
 
