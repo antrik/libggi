@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.54 2006/03/20 08:52:11 pekberg Exp $
+/* $Id: ddinit.c,v 1.55 2007/03/30 11:21:59 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -358,14 +358,15 @@ GGI_directx_DDRedrawAll(struct ggi_visual *vis)
 static void
 DDNotifyResize(struct ggi_visual *vis, int xsize, int ysize)
 {
-#if 0
-FIXME
-	ggi_event ev;
+	gii_event ev;
 	ggi_cmddata_switchrequest *swreq;
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	DPRINT_DRAW("DDNotifyResize(%p, %dx%d) called\n",
 		       vis, xsize, ysize);
+
+	if (!priv->inp)
+		return;
 
 	/* This is racy, what if window is resized and
 	 * resized back before the app gets to react
@@ -383,8 +384,6 @@ FIXME
 	}
 	DPRINT_DRAW("DDNotifyResize: Old size %ux%u\n",
 		LIBGGI_X(vis), LIBGGI_Y(vis));
-
-	_giiEventBlank(&ev, sizeof(gii_cmd_event));
 
 	ev.any.size=	sizeof(gii_cmd_nodata_event) +
 			sizeof(ggi_cmddata_switchrequest);
@@ -404,8 +403,7 @@ FIXME
 	swreq->mode.size.x = GGI_AUTO;
 	swreq->mode.size.y = GGI_AUTO;
 
-	_giiSafeAdd(priv->inp, &ev);
-#endif
+	ggControl(priv->inp->channel, GII_CMDCODE_RESIZE, &ev);
 }
 
 
