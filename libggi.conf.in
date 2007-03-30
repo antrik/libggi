@@ -21,7 +21,7 @@ display-quartz			display/quartz.@DLLEXT@
 display-sub			display/sub.@DLLEXT@
 display-suidkgi			display/suidkgi.@DLLEXT@
 display-svga			display/svgalib.@DLLEXT@
-display-svgalib			display/svgalib.@DLLEXT@
+alias display-svgalib		display-svga
 display-terminfo		display/terminfo.@DLLEXT@
 display-tele			display/tele.@DLLEXT@
 display-tile			display/tile.@DLLEXT@:GGIdl_tile
