@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.47 2007/03/11 21:54:43 soyt Exp $
+/* $Id: shm.c,v 1.48 2007/03/31 08:35:08 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -120,7 +120,8 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 }
 
 /* XImage allocation for normal client-side buffer */
-static void _ggi_xshm_free_ximage(struct ggi_visual *vis) {
+static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	int i, first, last;
 	XShmSegmentInfo *myshminfo;
@@ -169,10 +170,11 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	ggi_mode tm;
 	ggi_x_priv *priv;
 	struct gg_stem *stem;
-	int i;
+	int err, i;
 	XShmSegmentInfo *myshminfo;
 
 
+	err = GGI_OK;
 	i = 0; /* ??? Cranky GCC */
 
 	priv = GGIX_PRIV(vis);
@@ -193,6 +195,11 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 				myshminfo,	/* shm object */
 				(unsigned)LIBGGI_VIRTX(vis), 
 				(unsigned)(LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames));
+	if (priv->ximage == NULL) {
+		DPRINT("XShmCreateImage() failed.");
+		err = GGI_ENOMEM;
+		goto err0;
+	}
 
 	myshminfo->shmid = 
 		shmget(IPC_PRIVATE,
@@ -201,6 +208,12 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		       IPC_CREAT | 0777);
 
 	priv->fb = shmat(myshminfo->shmid,0,0);
+	if (priv->fb == (void *)-1) {
+		DPRINT("shmat() failed.\n");
+		priv->fb = NULL;
+		err = GGI_ENOMEM;
+		goto err1;
+	}
 	myshminfo->shmaddr = priv->ximage->data = (char *)priv->fb;
 	DPRINT_MODE("X: MIT-SHM: shmat success at %p.\n", priv->fb);
 
@@ -217,19 +230,10 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	DPRINT_MODE("X: MIT-SHM: restore error handler\n");
 	XSetErrorHandler(oldshmerrorhandler);
 	if (shmerror) {
-		if (priv->ximage) {
-			/* Seems OK to destroy image before fb for SHM */
-			XDestroyImage(priv->ximage);
-			priv->ximage = NULL;
-		}
-		if (priv->fb != NULL) {
-			shmdt(priv->fb);
-			/* The shmid has already been removed, see below. */
-			priv->fb = NULL;
-		}
-		fprintf(stderr, "XSHM extension failed to initialize. Retry with -noshm\n");
 		ggUnlock(_ggi_global_lock); /* Exiting protected section */
-		return GGI_ENOMEM;
+		DPRINT("can not access XSHM.\n");
+		err = GGI_ENOMEM;
+		goto err2;
 	} else {
 		/* Take the shmid away so noone else can get it. */
 		shmctl(myshminfo->shmid, IPC_RMID, 0);
@@ -244,8 +248,9 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 
 		db = _ggi_db_get_new();
 		if (!db) {
-			_ggi_xshm_free_ximage(vis);
-			return GGI_ENOMEM;
+			DPRINT("frame %u allocation failed.\n", i);
+			err = GGI_ENOMEM;
+			goto err3;
 		}
 
 		LIBGGI_APPLIST(vis)->last_targetbuf
@@ -302,17 +307,21 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		return GGI_ENOMEM;
 	}
 	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
+		DPRINT("ggiOpen(%p, \"%s\", %p) failed\n",
+			stem, target, priv->fb);
 		ggDelStem(stem);
-		_ggi_xshm_free_ximage(vis);
-		return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err3;
 	}
 	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->instance.stem, &tm)) {
+	if (ggiSetMode(priv->slave->instance.stem, &tm) < 0) {
+		DPRINT("ggiSetMode(%p, %p) failed.\n",
+			priv->slave->instance.stem, &tm); 
 		ggiClose(priv->slave->instance.stem);
 		ggDelStem(priv->slave->instance.stem);
 		priv->slave = NULL;
-		_ggi_xshm_free_ximage(vis);
-		return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err3;
 	}
 
 	priv->ximage->byte_order = ImageByteOrder(priv->disp);
@@ -324,6 +333,24 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		       priv->slave, priv->fb);
 
 	return GGI_OK;
+
+err3:
+	fprintf(stderr,
+		"XSHM extension failed to initialize. Retry with -noshm\n");
+	_ggi_xshm_free_ximage(vis);
+	return err;
+
+err2:
+	XShmDetach(priv->disp, myshminfo);
+	shmdt(priv->fb);
+	priv->fb = NULL;
+err1:
+	XDestroyImage(priv->ximage);
+	priv->ximage = NULL;
+err0:
+	fprintf(stderr,
+		"XSHM extension failed to initialize. Retry with -noshm\n");
+	return err;
 }
 
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
