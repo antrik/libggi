@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.37 2007/03/11 00:48:56 soyt Exp $
+/* $Id: buffer.c,v 1.38 2007/03/31 11:28:00 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -147,7 +147,8 @@ int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 }
 
 /* XImage allocation for normal client-side buffer */
-void _ggi_x_freefb(struct ggi_visual *vis) {
+void _ggi_x_freefb(struct ggi_visual *vis)
+{
 	ggi_x_priv *priv;
 	int i, first, last;
 
@@ -189,19 +190,25 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	ggi_mode tm;
 	ggi_x_priv *priv;
 	struct gg_stem *stem;
-	int i;
+	int err, i;
 
+	err = GGI_OK;
 	priv = GGIX_PRIV(vis);
 
+	DPRINT_MODE("_ggi_x_createfb(%p) called\n", vis);
 	DPRINT("viidx = %i\n", priv->viidx);
-
-	DPRINT_MODE("X: Creating vanilla XImage client-side buffer\n");
 
 	_ggi_x_freefb(vis);
 
-	priv->fb = malloc(GT_ByPPP(LIBGGI_VIRTX(vis),LIBGGI_GT(vis))
+	DPRINT_MODE("Creating vanilla XImage client-side buffer\n");
+
+	priv->fb = calloc(1, GT_ByPPP(LIBGGI_VIRTX(vis),LIBGGI_GT(vis))
 			* LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames);
-	if (priv->fb == NULL) return GGI_ENOMEM;
+	if (priv->fb == NULL) {
+		DPRINT("_ggi_x_createfb: XImage buffer allocation failed.\n");
+		err = GGI_ENOMEM;
+		goto err0;
+	}
 
 	/* We assume LIBGGI_MODE(vis) structure has already been filled out */
 	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
@@ -213,9 +220,10 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
-	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-noblank:-pixfmt=");
+	memset(target, '\0', sizeof(target));
+	i += snprintf(target, GGI_MAX_APILEN,
+			"display-memory:-noblank:-pixfmt=");
 
-	memset(target+i, '\0', 64);
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 
@@ -224,35 +232,32 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 
 	stem = ggNewStem(libggi, NULL);
 	if (stem == NULL) {
-		free(priv->fb);
-		priv->fb = NULL;
-		return GGI_ENOMEM;
+		DPRINT("_ggi_x_createfb: ggNewStem\n");
+		err = GGI_ENOMEM;
+		goto err1;
 	}
 	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
+		DPRINT("_ggi_x_createfb: ggiOpen(%p, \"%s\", %p) failed\n",
+			stem, target, priv->fb);
 		ggDelStem(stem);
-		free(priv->fb);
-		priv->fb = NULL;
-		return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err1;
 	}
 	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->instance.stem, &tm)) {
-		ggiClose(priv->slave->instance.stem);
-		ggDelStem(priv->slave->instance.stem);
-		free(priv->fb);
-		priv->fb = NULL;
-		return GGI_ENOMEM;
+	if (ggiSetMode(priv->slave->instance.stem, &tm) < 0) {
+		DPRINT("_ggi_x_createfb: ggiSetMode(%p, %p) failed\n",
+			priv->slave->instance.stem, &tm);
+		err = GGI_ENOMEM;
+		goto err2;
 	}
 
 	priv->ximage = _ggi_x_create_ximage( vis, (char*)priv->fb,
 					     LIBGGI_VIRTX(vis), 
 					     LIBGGI_VIRTY(vis) );
 	if (priv->ximage == NULL) {
-		ggiClose(priv->slave->instance.stem);
-		ggDelStem(priv->slave->instance.stem);
-		priv->slave = NULL;
-		free(priv->fb);
-		priv->fb = NULL;
-		return GGI_ENOMEM;
+		DPRINT("_ggi_x_createfb: _ggi_x_create_ximage() failed\n");
+		err = GGI_ENOMEM;
+		goto err2;
 	}
 
 
@@ -261,8 +266,10 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 
 		db = _ggi_db_get_new();
 		if (!db) {
-			_ggi_x_freefb(vis);
-			return GGI_ENOMEM;
+			DPRINT("_ggi_x_createfb: frame %u allocation failed\n",
+				i);
+			err = GGI_ENOMEM;
+			goto err3;
 		}
 
 		LIBGGI_APPLIST(vis)->last_targetbuf
@@ -297,6 +304,20 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 		       priv->ximage, priv->slave, priv->fb);
 
 	return GGI_OK;
+
+err3:
+	_ggi_x_freefb(vis);
+	return err;
+
+err2:
+	ggiClose(priv->slave->instance.stem);
+	ggDelStem(priv->slave->instance.stem);
+	priv->slave = NULL;
+err1:
+	free(priv->fb);
+	priv->fb = NULL;
+err0:
+	return err;
 }
 
 static int GGI_X_flush_draw(struct ggi_visual *vis, 
