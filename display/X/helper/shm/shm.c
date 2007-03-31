@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.48 2007/03/31 08:35:08 cegger Exp $
+/* $Id: shm.c,v 1.49 2007/03/31 11:25:36 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -303,8 +303,9 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 
 	stem = ggNewStem(libggi, NULL);
 	if (stem == NULL) {
-		_ggi_xshm_free_ximage(vis);
-		return GGI_ENOMEM;
+		DPRINT("ggNewStem() failed.\n");
+		err = GGI_ENOMEM;
+		goto err3;
 	}
 	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
 		DPRINT("ggiOpen(%p, \"%s\", %p) failed\n",
@@ -317,9 +318,6 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	if (ggiSetMode(priv->slave->instance.stem, &tm) < 0) {
 		DPRINT("ggiSetMode(%p, %p) failed.\n",
 			priv->slave->instance.stem, &tm); 
-		ggiClose(priv->slave->instance.stem);
-		ggDelStem(priv->slave->instance.stem);
-		priv->slave = NULL;
 		err = GGI_ENOMEM;
 		goto err3;
 	}
