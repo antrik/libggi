@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.38 2007/03/31 11:28:00 cegger Exp $
+/* $Id: buffer.c,v 1.39 2007/03/31 11:59:35 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -155,8 +155,9 @@ void _ggi_x_freefb(struct ggi_visual *vis)
 	priv = GGIX_PRIV(vis);
 
 	if (priv->slave) {
+		struct gg_stem *stem = priv->slave->instance.stem;
 		ggiClose(priv->slave->instance.stem);
-		ggDelStem(priv->slave->instance.stem);
+		ggDelStem(stem);
 	}
 	priv->slave = NULL;
 	if (priv->ximage) {
@@ -310,8 +311,11 @@ err3:
 	return err;
 
 err2:
-	ggiClose(priv->slave->instance.stem);
-	ggDelStem(priv->slave->instance.stem);
+	do {
+		struct gg_stem *_stem = priv->slave->instance.stem;
+		ggiClose(priv->slave->instance.stem);
+		ggDelStem(_stem);
+	} while (0);
 	priv->slave = NULL;
 err1:
 	free(priv->fb);
