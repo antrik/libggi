@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.28 2007/04/01 09:17:56 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -263,9 +263,9 @@ static void _GGIallocdbs(struct ggi_visual *vis)
 	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
+	memset(target, '\0', sizeof(target));
 	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-noblank:-pixfmt=");
 
-	memset(target+i, '\0', (GGI_MAX_APILEN - i) * sizeof(char));
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
 
 	i = strlen(target);
@@ -667,7 +667,9 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	}
 
 	DPRINT_MODE("Show the window\n");
-	SetThemeWindowBackground(priv->theWindow, kThemeBrushModelessDialogBackgroundActive, TRUE);
+	SetThemeWindowBackground(priv->theWindow,
+				kThemeBrushModelessDialogBackgroundActive,
+				TRUE);
 	RepositionWindow(priv->theWindow, NULL, kWindowCenterOnMainScreen);
 	ShowWindow(priv->theWindow);
 
