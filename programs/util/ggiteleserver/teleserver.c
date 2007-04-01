@@ -1,4 +1,4 @@
-/* $Id: teleserver.c,v 1.4 2007/03/03 19:10:53 cegger Exp $
+/* $Id: teleserver.c,v 1.5 2007/04/01 05:24:49 cegger Exp $
 ******************************************************************************
 
    TELE SERVER.
@@ -65,7 +65,7 @@ static int mode_up = 0;
 static ggi_visual_t vis;
 static ggi_mode vis_mode;
 
-static char *target_name = NULL;
+static const char *target_name = NULL;
 
 static TeleServer serv;
 static TeleUser *user;
