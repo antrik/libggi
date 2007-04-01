@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.32 2007/04/01 21:55:36 cegger Exp $
+/* $Id: mode.c,v 1.33 2007/04/01 22:29:52 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -774,6 +774,7 @@ int GGI_quartz_flush(struct ggi_visual *vis,
 		int x, int y, int w, int h, int tryflag)
 {
 	ggi_quartz_priv *priv;
+	CGImageRef subimage;
 	CGRect bounds;
 
 	priv = QUARTZ_PRIV(vis);
@@ -806,6 +807,17 @@ int GGI_quartz_flush(struct ggi_visual *vis,
 	bounds = CGRectMake(0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	CGContextDrawImage(priv->context, bounds, priv->image);
 	CGContextFlush(priv->context);
+
+#if 0
+	/* That at least does not perform image scaling, but the
+	 * y-coord is wrong, what I do not understand.
+	 */
+	bounds = CGRectMake(x,y, w,h);
+	subimage = CGImageCreateWithImageInRect(priv->image, bounds);
+	bounds = CGRectMake(x,y, w,h);
+	CGContextDrawImage(priv->context, bounds, subimage);
+	CGContextFlush(priv->context);
+#endif
 
 	if (tryflag != 0) {
 		if (priv->opmansync) MANSYNC_cont(vis);
