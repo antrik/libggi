@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2007/04/01 11:28:45 cegger Exp $
+/* $Id: mode.c,v 1.32 2007/04/01 21:55:36 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -42,7 +42,8 @@
 
 
 
-int GGI_quartz_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_quartz_getapi(struct ggi_visual *vis,int num,
+			char *apiname, char *arguments)
 {
 	*arguments = '\0';
 
@@ -775,12 +776,10 @@ int GGI_quartz_flush(struct ggi_visual *vis,
 	ggi_quartz_priv *priv;
 	CGRect bounds;
 
-#if 0
-	fprintf(stderr, "GGI_quartz_flush (%p, %i, %i, %i, %i, %i) called\n",
-		(void *)vis, x, y, w, h, tryflag);
-#endif
-
 	priv = QUARTZ_PRIV(vis);
+
+	DPRINT("GGI_quartz_flush (%p, %i, %i, %i, %i, %i) called\n",
+		(void *)vis, x, y, w, h, tryflag);
 
 	/* do not flush on a invalid context
 	 * This happens at startup when we are in
@@ -797,8 +796,14 @@ int GGI_quartz_flush(struct ggi_visual *vis,
 		if (priv->opmansync) MANSYNC_ignore(vis);
 	}
 
-	bounds = CGRectMake(x, y, w, h);
-
+	/* XXX CGContextDrawImage() performs scaling, which I
+	 * don't understand how to control.
+	 * Until someone comes up with an idea/solution how to update
+	 * the specified area pixel by pixel _without_ image scaling,
+	 * we always update the whole window/screen. That works at least.
+	 * -- Christoph
+	 */
+	bounds = CGRectMake(0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	CGContextDrawImage(priv->context, bounds, priv->image);
 	CGContextFlush(priv->context);
 
