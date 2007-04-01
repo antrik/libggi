@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2007/03/11 21:54:44 soyt Exp $
+/* $Id: visual.c,v 1.28 2007/04/01 08:33:27 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -250,10 +250,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
 			inp = ggPlugModule(gii,
-						     vis->instance.stem,
-						     "input-quartz",
-						     NULL,
-						     &_args);
+					vis->instance.stem,
+					"input-quartz",
+					NULL, &_args);
 		} else {
 			err = GGI_ENODEVICE;
 			fprintf(stderr,
