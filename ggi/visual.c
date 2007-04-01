@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.20 2007/03/11 00:48:59 soyt Exp $
+/* $Id: visual.c,v 1.21 2007/04/01 07:14:15 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -120,17 +120,33 @@ static void _ggi_init_allops(struct ggi_visual *vis, int initall)
 
 static void _ggiCloseDL(struct ggi_visual *vis, int zapall)
 {
-	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->generic_ext));
-	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
-	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
-	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
-	if (zapall) _ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
+	DPRINT_LIBS("_ggiCloseDL(%p, %i) called\n", vis, zapall);
 
+	DPRINT_LIBS("_ggiCloseDL: call _ggiExitDL on generic_ext\n");
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->generic_ext));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiExitDL on opdraw\n");
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiExitDL on opcolor\n");
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiExitDL on opgc\n");
+	_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
+	if (zapall) {
+		DPRINT_LIBS("_ggiCloseDL: call _ggiExitDL on opdisplay (zapall)\n");
+		_ggiExitDL(vis, GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
+	}
+
+	DPRINT_LIBS("_ggiCloseDL: call _ggiZapDL on generic_ext\n");
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->generic_ext));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiZapDL on opdraw\n");
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdraw->head.dlhandle));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiZapDL on opcolor\n");
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opcolor->head.dlhandle));
+	DPRINT_LIBS("_ggiCloseDL: call _ggiZapDL on opgc\n");
 	_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opgc->head.dlhandle));
-	if (zapall) _ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
+	if (zapall) {
+		DPRINT_LIBS("_ggiCloseDL: call _ggiZapDL on opdisplay (zapall)\n");
+		_ggiZapDL(vis, &GG_SLIST_FIRST(&vis->opdisplay->head.dlhandle));
+	}
 }
 
 void _ggiZapMode(struct ggi_visual *vis, int zapall)
