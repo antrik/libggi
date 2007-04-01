@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2007/04/01 11:10:50 cegger Exp $
+/* $Id: mode.c,v 1.31 2007/04/01 11:28:45 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -451,12 +451,24 @@ static int
 GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_quartz_priv *priv;
+	int default_width, default_height;
 	int err = 0;
 
 	priv = QUARTZ_PRIV(vis);
 
 	/* handle GGI_AUTO */
-	_GGIhandle_ggiauto(mode, 640, 480);
+	default_width = _ggi_screenwidth(priv->cur_mode) * 9 / 10;
+	default_height = _ggi_screenheight(priv->cur_mode) * 9 / 10;
+	_GGIhandle_ggiauto(mode, default_width, default_height);
+
+	if (mode->visible.x > _ggi_screenwidth(priv->cur_mode)) {
+		err = GGI_ENOMATCH;
+		mode->visible.x = default_width;
+	}
+	if (mode->visible.y > _ggi_screenheight(priv->cur_mode)) {
+		err = GGI_ENOMATCH;
+		mode->visible.y = default_height;
+	}
 
 	if (mode->graphtype == GT_AUTO) {
 		switch (_ggi_screen_gtdepth(priv->cur_mode)) {
