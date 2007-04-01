@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.7 2007/03/09 09:16:38 soyt Exp $
+/* $Id: gtext.c,v 1.8 2007/04/01 16:44:02 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -48,13 +48,13 @@ GGIblit2c(struct ggi_visual *vis, int x, int y, int xwidth, int ywidth, void *fi
 
 	/* Clipping is done via the PutPixel call ... we should pre-clip */
 
-	for(;ywidth--;y++) {
-		for(xp=0,bp=0x80;xp<xwidth;xp++) {
+	for (; ywidth--; y++) {
+		for (xp = 0, bp = 0x80; xp < xwidth; xp++) {
 			color=(*(char *)field & bp) ? LIBGGI_GC_FGCOLOR(vis) 
 						    : LIBGGI_GC_BGCOLOR(vis);
 			_ggiPutPixel(vis, x + xp, y, color);
-      			if (!(bp>>=1)) {
-				bp=0x80;
+      			if (!(bp >>= 1)) {
+				bp = 0x80;
 				field = ((uint8_t *) field) + 1;
 			}
     		}
