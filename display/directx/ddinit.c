@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.55 2007/03/30 11:21:59 pekberg Exp $
+/* $Id: ddinit.c,v 1.56 2007/04/01 06:06:33 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -291,11 +291,9 @@ GGI_directx_DDRedraw(struct ggi_visual *vis, int x, int y, int w, int h)
 	RECT SrcWinPos, DestWinPos;
 	HRESULT hr;
 
-	if (priv->fullscreen) {
-		hr = IDirectDrawSurface_IsLost(priv->lppdds);
-		if (FAILED(hr))
-			return;
-	}
+	hr = IDirectDrawSurface_IsLost(priv->lppdds);
+	if (FAILED(hr))
+		return;
 
 	SrcWinPos.left   = x;
 	SrcWinPos.right  = x + w;
@@ -333,11 +331,9 @@ GGI_directx_DDRedrawAll(struct ggi_visual *vis)
 	RECT SrcWinPos, DestWinPos;
 	HRESULT hr;
 
-	if (priv->fullscreen) {
-		hr = IDirectDrawSurface_IsLost(priv->lppdds);
-		if (FAILED(hr))
-			return;
-	}
+	hr = IDirectDrawSurface_IsLost(priv->lppdds);
+	if (FAILED(hr))
+		return;
 
 	GetClientRect(priv->hWnd, &SrcWinPos);
 	SrcWinPos.left   += vis->origin_x;
@@ -572,12 +568,11 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				giiEventSend(priv->inp, &ev);
 			}
 			*/
-			if (priv->fullscreen) {
-				hr = IDirectDrawSurface_IsLost(priv->lppdds);
-				if (hr == DDERR_SURFACELOST)
-					hr = IDirectDrawSurface_Restore(
-						priv->lppdds);
-			}
+			hr = IDirectDrawSurface_IsLost(priv->lppdds);
+			if (hr == DDERR_SURFACELOST)
+				hr = IDirectDrawSurface_Restore(
+					priv->lppdds);
+
 			hdc = BeginPaint(hWnd, &ps);
 			GGI_directx_DDRedraw(
 				vis,
