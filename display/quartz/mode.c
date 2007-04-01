@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2007/04/01 09:17:56 cegger Exp $
+/* $Id: mode.c,v 1.29 2007/04/01 10:47:53 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -106,6 +106,10 @@ static int _GGInumberForKey( CFDictionaryRef desc, CFStringRef key )
 	return num;
 }	/* _GGInumberForKey */
 
+#define _ggi_screenwidth(desc)  _GGInumberForKey((desc), kCGDisplayWidth)
+#define _ggi_screenheight(desc) _GGInumberForKey((desc), kCGDisplayHeight)
+#define _ggi_screen_gtdepth(desc) _GGInumberForKey((desc), kCGDisplayBitsPerPixel)
+#define _ggi_screen_gtsize(desc) ((_ggi_screen_gtdepth(desc)+7)/8)
 
 static int _ggi_load_slaveops(struct ggi_visual *vis)
 {
@@ -338,7 +342,8 @@ err0:
 
 
 
-static int GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
+static int
+GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 {
 	int err = 0;
 	ggi_quartz_priv *priv;
@@ -349,11 +354,11 @@ static int GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mod
 
 	/* Take care of automatic graphtype selection */
 	_GGIhandle_ggiauto(mode,
-			_GGInumberForKey(priv->cur_mode, kCGDisplayWidth),
-			_GGInumberForKey(priv->cur_mode, kCGDisplayHeight));
+			_ggi_screenwidth(priv->cur_mode),
+			_ggi_screenheight(priv->cur_mode));
 
 	if (mode->graphtype == GT_AUTO) {
-		switch (_GGInumberForKey(priv->cur_mode, kCGDisplayBitsPerPixel)) {
+		switch (_ggi_screen_gtdepth(priv->cur_mode)) {
 		case 1: mode->graphtype = GT_1BIT; break;
 		case 2: mode->graphtype = GT_2BIT; break;
 		case 4: mode->graphtype = GT_4BIT; break;
@@ -399,10 +404,10 @@ static int GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mod
 
 	/* do some checks */
 	if (!exactMatch) {
-		mode->visible.x = _GGInumberForKey(bestmode, kCGDisplayWidth);
-		mode->visible.y = _GGInumberForKey(bestmode, kCGDisplayHeight);
+		mode->visible.x = _ggi_screenwidth(bestmode);
+		mode->visible.y = _ggi_screenheight(bestmode);
 
-		switch (_GGInumberForKey(bestmode, kCGDisplayBitsPerPixel)) {
+		switch (_ggi_screen_gtdepth(bestmode)) {
 		case 1: mode->graphtype = GT_1BIT; break;
 		case 2: mode->graphtype = GT_2BIT; break;
 		case 4: mode->graphtype = GT_4BIT; break;
@@ -442,15 +447,19 @@ static int GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mod
 }	/* GGI_quartz_checkmode_fullscreen */
 
 
-static int GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
+static int
+GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 {
+	ggi_quartz_priv *priv;
 	int err = 0;
+
+	priv = QUARTZ_PRIV(vis);
 
 	/* handle GGI_AUTO */
 	_GGIhandle_ggiauto(mode, 640, 480);
 
 	if (mode->graphtype == GT_AUTO) {
-		switch (_GGInumberForKey(QUARTZ_PRIV(vis)->cur_mode, kCGDisplayBitsPerPixel)) {
+		switch (_ggi_screen_gtdepth(priv->cur_mode)) {
 		case 1: mode->graphtype = GT_1BIT; break;
 		case 2: mode->graphtype = GT_2BIT; break;
 		case 4: mode->graphtype = GT_4BIT; break;
@@ -544,7 +553,7 @@ static int GGI_quartz_setmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 
 	priv->cur_mode = CGDisplayCurrentMode(priv->display_id);
 
-	switch (_GGInumberForKey(priv->cur_mode, kCGDisplayBitsPerPixel)) {
+	switch (_ggi_screen_gtdepth(priv->cur_mode)) {
 	case 1: mode->graphtype = GT_1BIT; break;
 	case 2: mode->graphtype = GT_2BIT; break;
 	case 4: mode->graphtype = GT_4BIT; break;
