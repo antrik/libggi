@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.29 2007/04/01 10:47:53 cegger Exp $
+/* $Id: mode.c,v 1.30 2007/04/01 11:10:50 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -618,11 +618,13 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 
 	_GGIfreedbs(vis);
 
-	DPRINT_MODE("GGI_quartz_setmode_windowed: framebuffer size = GT_ByPPP(%i * %i * %i, %i)\n",
-		mode->visible.x, mode->visible.y, mode->frames, GT_SIZE(mode->graphtype));
-	priv->fb_size = GT_ByPPP(mode->visible.x * mode->visible.y * mode->frames,
-				mode->graphtype);
+	priv->fb_size = mode->visible.x * GT_ByPP(mode->graphtype)
+				* mode->visible.y * mode->frames;
 
+	DPRINT_MODE("GGI_quartz_setmode_windowed: framebuffer size (%u) = %i * GT_ByPP(%u) * %i * %i\n",
+		priv->fb_size,
+		mode->visible.x, GT_SIZE(mode->graphtype),
+		mode->visible.y, mode->frames);
 
 	if (priv->theWindow != NULL) {
 		/* Happens when we re-set the mode */
