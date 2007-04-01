@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.18 2007/03/03 19:10:53 cegger Exp $
+/* $Id: inputdump.c,v 1.19 2007/04/01 05:26:43 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -756,9 +756,9 @@ static void usage(void)
 
 int main(int argc, const char *argv[])
 { 
-	char *prog;
-	char *target_str = NULL;
-	char *input_str  = NULL;
+	const char *prog;
+	const char *target_str = NULL;
+	const char *input_str = NULL;
 	int   quit = 0;
 	gii_event ev;
 	int ch_w, ch_h;
