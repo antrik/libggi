@@ -1,4 +1,4 @@
-/* $Id: lin16lib.h,v 1.5 2007/02/25 18:13:11 cegger Exp $
+/* $Id: lin16lib.h,v 1.6 2007/04/04 13:58:20 ggibecka Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -44,6 +44,7 @@ ggifunc_getpixel	GGI_lin16_getpixela;
 ggifunc_drawhline_nc	GGI_lin16_drawhline_nc;
 ggifunc_drawhline	GGI_lin16_drawhline;
 ggifunc_puthline	GGI_lin16_puthline;
+ggifunc_gethline_nc	GGI_lin16_gethline_nc;
 ggifunc_gethline	GGI_lin16_gethline;
 
 ggifunc_drawvline_nc	GGI_lin16_drawvline_nc;

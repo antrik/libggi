@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2007/04/04 13:08:40 ggibecka Exp $
+/* $Id: hline.c,v 1.8 2007/04/04 13:58:21 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -107,8 +107,8 @@ int GGI_lin32_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer
 	}
 	if (x+w>LIBGGI_VIRTX(vis)) {
 		w=LIBGGI_VIRTX(vis)-x;
-		if (w<0) return 0;
 	}
+	if (w<0) return 0;
 
 	mem = (uint8_t *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x*4;
 

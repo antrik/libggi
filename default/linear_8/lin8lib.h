@@ -1,4 +1,4 @@
-/* $Id: lin8lib.h,v 1.2 2002/09/08 21:37:43 soyt Exp $
+/* $Id: lin8lib.h,v 1.3 2007/04/04 13:58:21 ggibecka Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -45,6 +45,7 @@ ggifunc_getpixel	GGI_lin8_getpixela;
 ggifunc_drawhline_nc	GGI_lin8_drawhline_nc;
 ggifunc_drawhline	GGI_lin8_drawhline;
 ggifunc_puthline	GGI_lin8_puthline;
+ggifunc_gethline_nc	GGI_lin8_gethline_nc;
 ggifunc_gethline	GGI_lin8_gethline;
 
 ggifunc_drawvline_nc	GGI_lin8_drawvline_nc;

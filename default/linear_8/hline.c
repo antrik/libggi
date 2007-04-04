@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.6 2006/03/12 23:15:09 soyt Exp $
+/* $Id: hline.c,v 1.7 2007/04/04 13:58:21 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -65,11 +65,36 @@ int GGI_lin8_puthline(struct ggi_visual *vis,int x,int y,int w,const void *buffe
 	return 0;
 }
 
+int GGI_lin8_gethline_nc(struct ggi_visual *vis,int x,int y,int w,void *buffer)
+{ 
+	uint8_t *mem;
+
+	PREPARE_FB(vis);
+
+	mem = (uint8_t *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x;
+
+	memcpy(buffer, mem, (size_t)(w));
+
+	return 0;
+}
+
 int GGI_lin8_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
 	uint8_t *mem;
 
 	PREPARE_FB(vis);
+
+	/* clip to virtual size */
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;	/* x is negative. w will _de_crease */
+		buffer=(void *)((uint8_t *)buffer-x);
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<0) return 0;
 
 	mem = (uint8_t *)LIBGGI_CURREAD(vis) + y*LIBGGI_FB_R_STRIDE(vis) + x;
 
