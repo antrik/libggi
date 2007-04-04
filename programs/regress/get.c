@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.3 2007/04/04 17:30:50 ggibecka Exp $
+/* $Id: get.c,v 1.4 2007/04/04 20:07:30 ggibecka Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -31,8 +31,8 @@
 #define REPEATS 100
 struct teststruct {
 	unsigned char *changed_pixels;
-	ggi_color *getcol,*refcol;
-	ggi_pixel *getpix,*reference;
+	ggi_color *getcol,*refcol,*putcol;
+	ggi_pixel *getpix,*refpix,*putpix;
 };
 
 static void free_teststruct(struct teststruct *ts) 
@@ -40,8 +40,10 @@ static void free_teststruct(struct teststruct *ts)
 	if (ts->changed_pixels) free(ts->changed_pixels);
 	if (ts->getcol) free(ts->getcol);
 	if (ts->refcol) free(ts->refcol);
+	if (ts->putcol) free(ts->putcol);
 	if (ts->getpix) free(ts->getpix);
-	if (ts->reference) free(ts->reference);
+	if (ts->refpix) free(ts->refpix);
+	if (ts->putpix) free(ts->putpix);
 }
 
 static int allocate_teststruct(struct teststruct *ts,int size) 
@@ -49,22 +51,26 @@ static int allocate_teststruct(struct teststruct *ts,int size)
 	/* Preset all fields to NULL so freeing is easy
 	 */
 	ts->changed_pixels=NULL;
-	ts->getcol=ts->refcol=NULL;
-	ts->getpix=ts->reference=NULL;
+	ts->getcol=ts->refcol=ts->putcol=NULL;
+	ts->getpix=ts->refpix=ts->putpix=NULL;
 	/* Allocate all fields
 	 */
 	ts->changed_pixels=malloc(size*sizeof(ts->changed_pixels[0]));
 	ts->getcol=malloc(size*sizeof(ts->getcol[0]));
 	ts->refcol=malloc(size*sizeof(ts->refcol[0]));
+	ts->putcol=malloc(size*sizeof(ts->putcol[0]));
 	ts->getpix=malloc(size*sizeof(ts->getpix[0]));
-	ts->reference=malloc(size*sizeof(ts->reference[0]));
+	ts->refpix=malloc(size*sizeof(ts->refpix[0]));
+	ts->putpix=malloc(size*sizeof(ts->putpix[0]));
 	/* If anything failed, free and fail.
 	 */
 	if (!ts->changed_pixels || 
 	    !ts->getcol ||
 	    !ts->refcol ||
+	    !ts->putcol ||
 	    !ts->getpix ||
-	    !ts->reference) {
+	    !ts->refpix ||
+	    !ts->putpix) {
 	    	free_teststruct(ts);
 		return 1;
 	}
@@ -82,17 +88,22 @@ static void randomize_teststruct(ggi_visual_t vis,struct teststruct *ts,int size
 		ts->getcol[i].r=ts->refcol[i].r=random();
 		ts->getcol[i].g=ts->refcol[i].g=random();
 		ts->getcol[i].b=ts->refcol[i].b=random();
+		ts->putcol[i].r=random();
+		ts->putcol[i].g=random();
+		ts->putcol[i].b=random();
 	}
-	ggiPackColors(vis,ts->getpix   ,ts->getcol,size);
-	ggiPackColors(vis,ts->reference,ts->refcol,size);
+	ggiPackColors(vis,ts->getpix,ts->getcol,size);
+	ggiPackColors(vis,ts->refpix,ts->refcol,size);
+	ggiPackColors(vis,ts->putpix,ts->putcol,size);
 }
 
 static void check_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) 
 {
 	int i;
 	
-	ggiUnpackPixels(vis,ts->getpix   ,ts->getcol,size);
-	ggiUnpackPixels(vis,ts->reference,ts->refcol,size);
+	ggiUnpackPixels(vis,ts->getpix,ts->getcol,size);
+	ggiUnpackPixels(vis,ts->refpix,ts->refcol,size);
+	ggiUnpackPixels(vis,ts->putpix,ts->putcol,size);
 	for(i=0;i<size;i++) {
 		if (ts->getcol[i].r!=ts->refcol[i].r ||
 		    ts->getcol[i].g!=ts->refcol[i].g ||
@@ -116,12 +127,13 @@ static int checkhlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int width)
 	 * There should be no changes in the to-be-clipped areas.
 	 */
 
-	int i,j,rc,rc2;
+	int i,j,rc,rc2,rc3;
 	struct teststruct ts;
 
 	allocate_teststruct(&ts,width);
 	for(i=0;i<REPEATS;i++) {
 		randomize_teststruct(vis,&ts,width);
+		ggiPutHLine(vis,x,y,width,ts.putpix);
 		ggiGetHLine(vis,x,y,width,ts.getpix);
 		check_teststruct(vis,&ts,width);
 	}
@@ -143,14 +155,20 @@ static int checkhlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int width)
 		rc2+=rc;
 	}
 
-	for(rc=0;i<mode->virt.x&&j<width;i++,j++) {
+	for(rc=rc3=0;i<mode->virt.x&&j<width;i++,j++) {
 		if (ts.changed_pixels[j]==0) {
 			rc++;
+		} else {
+			if (ts.getcol[j].r!=ts.putcol[j].r ||
+			    ts.getcol[j].g!=ts.putcol[j].g ||
+			    ts.getcol[j].b!=ts.putcol[j].b ) {
+				rc3++;
+			}
 		}
 	}
-	if (rc) {
-		if (verbose) fprintf(stderr,"%d pixels unchanged inside screen.\n",rc);
-		rc2+=rc;
+	if (rc||rc3) {
+		if (verbose) fprintf(stderr,"%d pixels unchanged inside screen. %d pixels not matching put.\n",rc,rc3);
+		rc2+=rc+rc3;
 	}
 
 	for(rc=0;j<width;i++,j++) {

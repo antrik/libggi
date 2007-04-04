@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.10 2007/04/04 18:25:21 ggibecka Exp $
+/* $Id: hline.c,v 1.11 2007/04/04 20:07:30 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -140,7 +140,7 @@ int GGI_lin4r_packed_gethline_nc(struct ggi_visual *vis,int x,int y,int w,void *
 	}
 	
 	/* x is odd. */
-	color = *fb & 0x0f;
+	color = (*fb & 0xf0)>>4;
 	
 	for (; w > 1; w -= 2) {
 		color |= *(++fb) << 4;
