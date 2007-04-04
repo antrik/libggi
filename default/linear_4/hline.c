@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.10 2007/01/23 10:57:22 pekberg Exp $
+/* $Id: hline.c,v 1.11 2007/04/04 17:30:50 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. Horizontal lines.
@@ -119,7 +119,7 @@ int GGI_lin4_packed_puthline(struct ggi_visual *vis, int x, int y, int w, const 
 }
 
 
-int GGI_lin4_packed_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
+int GGI_lin4_packed_gethline_nc(struct ggi_visual *vis,int x,int y,int w,void *buffer)
 { 
 	uint8_t *fb;
 	uint16_t color;
@@ -148,6 +148,71 @@ int GGI_lin4_packed_gethline(struct ggi_visual *vis,int x,int y,int w,void *buff
 
 	if (w) {
 		*(buf++) = color << 4;
+	}
+
+	return 0;
+}
+
+int GGI_lin4_packed_gethline(struct ggi_visual *vis,int x,int y,int w,void *buffer)
+{ 
+	uint8_t *fb;
+	uint16_t color;
+	uint8_t *buf = (uint8_t *)buffer;
+	int odd=0;
+
+	PREPARE_FB(vis);
+
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;   /* x is negative. w will _de_crease */
+		buf-=x/2;
+		odd=x&1;
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<=0) return 0;
+
+	fb = (uint8_t*)LIBGGI_CURREAD(vis)+y*LIBGGI_FB_R_STRIDE(vis)+(x/2);
+	
+	/* If memory is aligned just memcpy. 
+	 * Note, that if odd&1, x=0 is guaranteed.
+	 */
+	if (!((x+odd) & 0x01)) {
+		memcpy(buf, fb, (size_t)(w>>1));
+		/* If length is odd, we need to copy one more nibble */
+		if (w&1) {
+			buf[(w>>1)]&=0x0f;
+			buf[(w>>1)]|=fb[(w>>1)]&0xf0;
+		}
+		return 0;
+	}
+
+	if (odd) {	
+		/* we start at an odd place in the buffer. Thus we need 
+		 * to copy the high nibble of the first fb byte to the low
+		 * nibble the first buffer byte.
+		 */
+		buf[0]&=0xf0;
+		buf[0]|=((fb[0]&0xf0)>>4);
+		x++;buf++;w--;
+	}
+	/* Now the buffer is aligned, but x is odd. 
+	 * We use a 12 bit shift register to copy to the buffer.
+	 */
+	
+	color = *fb & 0x0F;
+
+	for (; w > 1; w -= 2) {
+		color <<= 8;
+		color |= *(++fb);
+		*(buf++) = color >> 4;
+	}
+
+	if (w) {
+		*buf&=0x0f;
+		*buf|= color << 4;
 	}
 
 	return 0;

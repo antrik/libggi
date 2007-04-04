@@ -1,4 +1,4 @@
-/* $Id: lin4lib.h,v 1.3 2007/01/23 10:57:22 pekberg Exp $
+/* $Id: lin4lib.h,v 1.4 2007/04/04 17:30:50 ggibecka Exp $
 ******************************************************************************
 
    linear-4 sublib function prototypes
@@ -48,6 +48,7 @@ ggifunc_getpixel	GGI_lin4_getpixela;
 ggifunc_drawhline_nc	GGI_lin4_drawhline_nc;
 ggifunc_drawhline	GGI_lin4_drawhline;
 ggifunc_puthline	GGI_lin4_packed_puthline;
+ggifunc_gethline_nc	GGI_lin4_packed_gethline_nc;
 ggifunc_gethline	GGI_lin4_packed_gethline;
 ggifunc_puthline	GGI_lin4_unpacked_puthline;
 ggifunc_gethline	GGI_lin4_unpacked_gethline;

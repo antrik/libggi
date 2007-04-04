@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.5 2006/03/12 23:15:08 soyt Exp $
+/* $Id: color.c,v 1.6 2007/04/04 17:30:50 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. pack/unpack
@@ -69,7 +69,7 @@ int GGI_lin4_unpackpixels(struct ggi_visual *vis, const void *outbuf, ggi_color 
 	
 	if (len & 1) {
 		tmp = *obuf >> 4;
-		LIBGGIUnmapPixel(vis, tmp, cols++);
+		LIBGGIUnmapPixel(vis, tmp, cols);
 	}
 
 	return 0;

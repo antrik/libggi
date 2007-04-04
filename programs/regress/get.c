@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.2 2007/04/04 13:56:32 ggibecka Exp $
+/* $Id: get.c,v 1.3 2007/04/04 17:30:50 ggibecka Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -169,7 +169,7 @@ static int checkhlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int width)
 
 static void testcase1(const char *desc)
 {
-	int err;
+	int err,i,j;
 	ggi_visual_t vis;
 	ggi_mode mode;
 
@@ -210,20 +210,24 @@ static void testcase1(const char *desc)
 	ggiSetColorfulPalette(vis);
 
 	err=0;
-	/* Check a line that is fully gettable */
-	err|=checkhlineclip(vis,&mode, mode.virt.x/4,  mode.virt.y/2,mode.virt.x/2);
 	/* Check a line that is fully gettable, full width */
-	err|=checkhlineclip(vis,&mode, 0,              mode.virt.y/2,mode.virt.x);
-	/* Check a line that is partially left of gettable area */
-	err|=checkhlineclip(vis,&mode,-mode.virt.x/4,  mode.virt.y/2,mode.virt.x/2);
-	/* Check a line that is partially right of gettable area */
-	err|=checkhlineclip(vis,&mode, mode.virt.x*3/4,mode.virt.y/2,mode.virt.x/2);
-	/* Check a line that is totally left of gettable area */
-	err|=checkhlineclip(vis,&mode,-mode.virt.x/2,  mode.virt.y/2,mode.virt.x/2);
-	/* Check a line that is totally right of gettable area */
-	err|=checkhlineclip(vis,&mode, mode.virt.x,    mode.virt.y/2,mode.virt.x/2);
-	/* Check a line that crosses gettable area */
-	err|=checkhlineclip(vis,&mode,-mode.virt.x/2,  mode.virt.y/2,mode.virt.x*2);
+	err+=checkhlineclip(vis,&mode, 0,              mode.virt.y/2,mode.virt.x);
+	for(i=-8;i<=8;i++) {
+		for(j=0;j<16;j++) {
+			/* Check a line that is fully gettable */
+			err+=checkhlineclip(vis,&mode, mode.virt.x/4  +i,mode.virt.y/2,mode.virt.x/2+j);
+			/* Check a line that is partially left of gettable area */
+			err+=checkhlineclip(vis,&mode,-mode.virt.x/4  +i,mode.virt.y/2,mode.virt.x/2+j);
+			/* Check a line that is partially right of gettable area */
+			err+=checkhlineclip(vis,&mode, mode.virt.x*3/4+i,mode.virt.y/2,mode.virt.x/2+j);
+			/* Check a line that is totally left of gettable area */
+			err+=checkhlineclip(vis,&mode,-mode.virt.x/2  +i,mode.virt.y/2,mode.virt.x/2+j);
+			/* Check a line that is totally right of gettable area */
+			err+=checkhlineclip(vis,&mode, mode.virt.x    +i,mode.virt.y/2,mode.virt.x/2+j);
+			/* Check a line that crosses gettable area */
+			err+=checkhlineclip(vis,&mode,-mode.virt.x/2  +i,mode.virt.y/2,mode.virt.x*2+j);
+		}
+	}
 
 	ggDelStem(vis);
 
