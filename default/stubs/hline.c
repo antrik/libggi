@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.6 2006/03/12 23:15:12 soyt Exp $
+/* $Id: hline.c,v 1.7 2007/04/04 18:45:40 ggibecka Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -105,7 +105,7 @@ int _GGI_stubs_L4_puthline(struct ggi_visual *vis, int x, int y, int w, const vo
 
 
 
-int _GGI_stubs_L1_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L1_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 {
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
@@ -118,7 +118,32 @@ int _GGI_stubs_L1_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	return 0;
 }
 
-int _GGI_stubs_L2_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L1_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+{
+	uint8_t *dest = (uint8_t *) buffer;
+	ggi_pixel pix;
+
+	/* clip to virtual size */
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;	/* x is negative. w will _de_crease */
+		dest-=x;
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<0) return 0;
+
+	for (; w > 0; w--, x++) {
+		LIBGGIGetPixel(vis, x, y, &pix);
+		*dest++ = (uint8_t) pix;
+	}
+
+	return 0;
+}
+
+int _GGI_stubs_L2_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 {
 	uint16_t *dest = (uint16_t *) buffer;
 	ggi_pixel pix;
@@ -131,7 +156,32 @@ int _GGI_stubs_L2_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	return 0;
 }
 
-int _GGI_stubs_L3_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+int _GGI_stubs_L2_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+{
+	uint16_t *dest = (uint16_t *) buffer;
+	ggi_pixel pix;
+
+	/* clip to virtual size */
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;	/* x is negative. w will _de_crease */
+		dest-=x;
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<0) return 0;
+
+	for (; w > 0; w--, x++) {
+		LIBGGIGetPixel(vis, x, y, &pix);
+		*dest++ = (uint16_t) pix;
+	}
+
+	return 0;
+}
+
+int _GGI_stubs_L3_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 {
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
@@ -146,10 +196,62 @@ int _GGI_stubs_L3_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	return 0;
 }
 
+int _GGI_stubs_L3_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+{
+	uint8_t *dest = (uint8_t *) buffer;
+	ggi_pixel pix;
+
+	/* clip to virtual size */
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;	/* x is negative. w will _de_crease */
+		dest-=3*x;
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<0) return 0;
+
+	for (; w > 0; w--, x++) {
+		LIBGGIGetPixel(vis, x, y, &pix);
+		*dest++ = (uint8_t) pix; pix >>= 8;
+		*dest++ = (uint8_t) pix; pix >>= 8;
+		*dest++ = (uint8_t) pix;
+	}
+
+	return 0;
+}
+
+int _GGI_stubs_L4_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void *buffer)
+{
+	uint32_t *dest = (uint32_t *) buffer;
+	ggi_pixel pix;
+
+	for (; w > 0; w--, x++) {
+		LIBGGIGetPixel(vis, x, y, &pix);
+		*dest++ = (uint32_t) pix;
+	}
+
+	return 0;
+}
+
 int _GGI_stubs_L4_gethline(struct ggi_visual *vis, int x, int y, int w, void *buffer)
 {
 	uint32_t *dest = (uint32_t *) buffer;
 	ggi_pixel pix;
+
+	/* clip to virtual size */
+	if (y<0||y>=LIBGGI_VIRTY(vis)) return 0;
+	if (x<0) {
+		w+=x;	/* x is negative. w will _de_crease */
+		dest-=x;
+		x=0;
+	}
+	if (x+w>LIBGGI_VIRTX(vis)) {
+		w=LIBGGI_VIRTX(vis)-x;
+	}
+	if (w<0) return 0;
 
 	for (; w > 0; w--, x++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
