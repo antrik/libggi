@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.19 2007/03/04 18:26:45 soyt Exp $
+/* $Id: dltypes.h,v 1.20 2007/04/04 13:08:40 ggibecka Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -117,6 +117,7 @@ typedef int (ggifunc_drawline)(struct ggi_visual *vis,int x,int y,int xe,int ye)
 typedef int (ggifunc_drawhline_nc)(struct ggi_visual *vis,int x,int y,int w);
 typedef int (ggifunc_drawhline)(struct ggi_visual *vis,int x,int y,int w);
 typedef int (ggifunc_puthline)(struct ggi_visual *vis,int x,int y,int w,const void *buf);
+typedef int (ggifunc_gethline_nc)(struct ggi_visual *vis,int x,int y,int w,void *buf);
 typedef int (ggifunc_gethline)(struct ggi_visual *vis,int x,int y,int w,void *buf);
 
 typedef int (ggifunc_drawvline_nc)(struct ggi_visual *vis,int x,int y,int h);
