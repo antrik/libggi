@@ -1,4 +1,4 @@
-/* $Id: ll.h,v 1.10 2005/07/31 15:30:38 soyt Exp $
+/* $Id: ll.h,v 1.11 2007/04/04 12:18:03 ggibecka Exp $
 ******************************************************************************
 
    Private structures common to lowlevel libraries.
@@ -462,7 +462,7 @@ struct ggi_llobj {
 #define GGI_LL_FIT(obj, shift, num) \
 do { \
   fprintf(stderr, "Tell skids to implement GGI_LL_FIT."); \
-} while (0);
+} while (0)
 
 
 #endif /* _GGI_LL_H */
