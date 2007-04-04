@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.19 2007/03/11 00:48:59 soyt Exp $
+/* $Id: directx.h,v 1.20 2007/04/04 21:43:20 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -92,6 +92,8 @@ typedef struct directx_priv
 	long maxY;
 	DWORD ColorDepth;
 	int fullscreen;
+	int grab_hotkeys;
+	int focus;
 
 	/* resizing info */
 	HANDLE sizingcs;
@@ -116,6 +118,8 @@ typedef struct directx_priv
 } directx_priv;
 
 #define GGIDIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
+
+#define GGI_DIRECTX_GRAB_HOTKEYS (0)
 
 #define GGI_directx_LockCreate() \
 	CreateMutex(NULL, FALSE, NULL)

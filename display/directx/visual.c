@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.45 2007/03/11 21:54:43 soyt Exp $
+/* $Id: visual.c,v 1.46 2007/04/04 21:43:20 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -75,6 +75,34 @@ GGI_directx_setflags(struct ggi_visual *vis, uint32_t flags)
 	}
 	else
 		priv->timer_id = SetTimer(priv->hWnd, 1, 33, NULL);
+	return GGI_OK;
+}
+
+static int
+dx_controller(void *arg, uint32_t flag, void *data)
+{
+	struct ggi_visual *vis = arg;
+	directx_priv *priv = GGIDIRECTX_PRIV(vis);
+	uint32_t *grab_hotkeys = data;
+
+	switch (flag) {
+	case GGI_DIRECTX_GRAB_HOTKEYS:
+		priv->grab_hotkeys = *grab_hotkeys;
+		if (!priv->hWnd)
+			break;
+		if (priv->grab_hotkeys && priv->focus) {
+			DPRINT("Grab hotkeys (flag)\n");
+			PostThreadMessage(priv->nThreadID,
+				WM_DDHOTKEY, 1, 0);
+		}
+		else {
+			DPRINT("Ungrab hotkeys (flag, or focus)\n");
+			PostThreadMessage(priv->nThreadID,
+				WM_DDHOTKEY, 0, 0);
+		}
+		break;
+	}
+
 	return GGI_OK;
 }
 
@@ -229,6 +257,8 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 	else
 		priv->inp = NULL;
+
+	ggSetController(vis->instance.channel, dx_controller);
 
 	priv->settings_changed = inputdx.settings_changed;
 	priv->settings_changed_arg = inputdx.settings_changed_arg;

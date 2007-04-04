@@ -1,4 +1,4 @@
-/* $Id: ddinit.h,v 1.20 2006/03/17 14:37:17 pekberg Exp $
+/* $Id: ddinit.h,v 1.21 2007/04/04 21:43:20 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -39,6 +39,7 @@
 #define WM_DDEND		0x7FFD
 #define WM_DDFULLSCREEN		0x7FFC
 #define WM_DDSETPALETTE		0x7FFB
+#define WM_DDHOTKEY		0x7FFA
 
 typedef struct directx_fullscreen
 {

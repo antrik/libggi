@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.56 2007/04/01 06:06:33 pekberg Exp $
+/* $Id: ddinit.c,v 1.57 2007/04/04 21:43:20 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -655,6 +655,35 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		GGI_directx_Unlock(priv->cs);
 		break;
+
+	case WM_SETFOCUS:
+		if (priv->grab_hotkeys) {
+			DPRINT("Grab hotkeys (focus)\n");
+			PostThreadMessage(priv->nThreadID, WM_DDHOTKEY, 1, 0);
+		}
+		priv->focus = 1;
+		break;
+
+	case WM_KILLFOCUS:
+		if (priv->grab_hotkeys) {
+			DPRINT("Ungrab hotkeys (unfocus)\n");
+			PostThreadMessage(priv->nThreadID, WM_DDHOTKEY, 0, 0);
+		}
+		priv->focus = 0;
+		break;
+
+	case WM_HOTKEY:
+		if (priv->grab_hotkeys && priv->inp) {
+			gii_inputdx_hotkey hotkey;
+			hotkey.id = wParam;
+			hotkey.mod = LOWORD(lParam);
+			hotkey.vk = HIWORD(lParam);
+			DPRINT("WM_HOTKEY id=%d, mod=%04x, vk=%d\n",
+				hotkey.id, hotkey.mod, hotkey.vk);
+			ggControl(priv->inp->channel, GII_INPUTDX_HOTKEY,
+				&hotkey);
+		}
+		break;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
@@ -814,6 +843,21 @@ DDEventLoop(void *lpParm)
 				DPRINT_MODE("SetDisplayMode failed %x\n",
 					dxfull->hr);
 			SetEvent(dxfull->event);
+			continue;
+		}
+		if (msg.hwnd == NULL && msg.message == WM_DDHOTKEY) {
+			if (msg.wParam) {
+				DPRINT("Grab hotkeys\n");
+				RegisterHotKey(priv->hWnd, 0x0000,
+					MOD_ALT, VK_TAB);
+				RegisterHotKey(priv->hWnd, 0x0001,
+					MOD_ALT | MOD_SHIFT, VK_TAB);
+			}
+			else {
+				DPRINT("Ungrab hotkeys\n");
+				UnregisterHotKey(priv->hWnd, 0x0000);
+				UnregisterHotKey(priv->hWnd, 0x0001);
+			}
 			continue;
 		}
 
