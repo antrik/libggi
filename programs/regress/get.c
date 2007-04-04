@@ -1,9 +1,10 @@
-/* $Id: get.c,v 1.1 2007/04/04 13:08:41 ggibecka Exp $
+/* $Id: get.c,v 1.2 2007/04/04 13:56:32 ggibecka Exp $
 ******************************************************************************
 
-   This is a regression-test for mode handling.
+   This is a regression-test for Get function handling.
 
-   Written in 2004 by Christoph Egger
+   Adapted from mode regression test written in 2004 by Christoph Egger
+   Written in 2007 by Andreas Beck
 
    This software is placed in the public domain and can be used freely
    for any purpose. It comes without any kind of warranty, either
@@ -34,7 +35,8 @@ struct teststruct {
 	ggi_pixel *getpix,*reference;
 };
 
-static void free_teststruct(struct teststruct *ts) {
+static void free_teststruct(struct teststruct *ts) 
+{
 	if (ts->changed_pixels) free(ts->changed_pixels);
 	if (ts->getcol) free(ts->getcol);
 	if (ts->refcol) free(ts->refcol);
@@ -42,7 +44,8 @@ static void free_teststruct(struct teststruct *ts) {
 	if (ts->reference) free(ts->reference);
 }
 
-static int allocate_teststruct(struct teststruct *ts,int size) {
+static int allocate_teststruct(struct teststruct *ts,int size) 
+{
 	/* Preset all fields to NULL so freeing is easy
 	 */
 	ts->changed_pixels=NULL;
@@ -71,7 +74,8 @@ static int allocate_teststruct(struct teststruct *ts,int size) {
 	return 0;
 }
 
-static void randomize_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) {
+static void randomize_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) 
+{
 	int i;
 	
 	for(i=0;i<size;i++) {
@@ -83,7 +87,8 @@ static void randomize_teststruct(ggi_visual_t vis,struct teststruct *ts,int size
 	ggiPackColors(vis,ts->reference,ts->refcol,size);
 }
 
-static void check_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) {
+static void check_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) 
+{
 	int i;
 	
 	ggiUnpackPixels(vis,ts->getpix   ,ts->getcol,size);
@@ -96,7 +101,8 @@ static void check_teststruct(ggi_visual_t vis,struct teststruct *ts,int size) {
 	}
 }
 
-static int checkhlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int width) {
+static int checkhlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int width) 
+{
 	
 	/* The tests work like this:
 	 * Allocate a large enough buffer for the Get (getpix) and fill 
@@ -199,6 +205,9 @@ static void testcase1(const char *desc)
 		ggDelStem(vis);
 		return;
 	}
+
+	/* Set up some palette so that palettized modes have a chance to work. */
+	ggiSetColorfulPalette(vis);
 
 	err=0;
 	/* Check a line that is fully gettable */
