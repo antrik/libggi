@@ -1,4 +1,4 @@
-/* $Id: ggi-dl.h,v 1.6 2007/03/04 15:49:22 soyt Exp $
+/* $Id: ggi-dl.h,v 1.7 2007/04/04 12:07:53 ggibecka Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
@@ -47,7 +47,7 @@ do { \
 	    (cy) >= LIBGGI_GC((vis))->clipbr.y) { \
 		    return 0; \
 	    } \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_XYW(vis,cx,cy,w) \
@@ -65,7 +65,7 @@ do { \
 		(w) = LIBGGI_GC(vis)->clipbr.x - (cx); \
 	} \
 	if ((w) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_XYW_BUFMOD(vis,cx,cy,w,buf,bufmod) \
@@ -84,7 +84,7 @@ do { \
 		(w) = LIBGGI_GC(vis)->clipbr.x - (cx); \
 	} \
 	if ((w) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_XYH(vis,cx,cy,h) \
@@ -102,7 +102,7 @@ do { \
 		(h) = LIBGGI_GC(vis)->clipbr.y - (cy); \
 	} \
 	if ((h) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_XYH_BUFMOD(vis,cx,cy,h,buf,bufmod) \
@@ -121,7 +121,7 @@ do { \
 		(h) = LIBGGI_GC(vis)->clipbr.y - (cy); \
 	} \
 	if ((h) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_XYWH(vis,cx,cy,w,h) \
@@ -144,7 +144,7 @@ do {  \
 		(h) = LIBGGI_GC((vis))->clipbr.y - (cy); \
 	} \
 	if ((h) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_PUTBOX(vis,cx,cy,w,h,src,srcwidth,srcmod) \
@@ -170,7 +170,7 @@ do { \
 	diff = LIBGGI_GC(vis)->clipbr.x - (cx); \
 	if ((w) > diff) (w) = diff; \
 	if ((w) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_COPYBOX(vis,xsrc,ysrc,w,h,xdest,ydest) \
@@ -195,7 +195,7 @@ do {  \
 		(h) = LIBGGI_GC((vis))->clipbr.y - (ydest); \
 	} \
 	if ((h) <= 0) return 0; \
-} while (0);
+} while (0)
 
 
 #define LIBGGICLIP_FULLSCREEN(vis) \
