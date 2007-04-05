@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.4 2007/04/04 20:07:30 ggibecka Exp $
+/* $Id: get.c,v 1.5 2007/04/05 10:59:23 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -194,11 +194,8 @@ static void testcase1(const char *desc)
 	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
 	if (dontrun) return;
 
-	err = giiInit();
-	printassert(err >= 0, "giiInit failed with %i\n", err);
-
-	err = ggiInit();
-	printassert(err >= 0, "ggiInit failed with %i\n", err);
+	err = ggInit();
+	printassert(err >= 0, "ggInit failed with %i\n", err);
 
 	vis = ggNewStem(libgii, libggi, NULL);
 	printassert(vis != NULL, "ggNewStem failed\n");
@@ -247,7 +244,9 @@ static void testcase1(const char *desc)
 		}
 	}
 
+	ggiClose(vis);
 	ggDelStem(vis);
+	ggExit();
 
 	if (err) printfailure("One of the HLine tests returned unexpected results.");
 	else printsuccess();
