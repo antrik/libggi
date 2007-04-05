@@ -7,6 +7,7 @@ DIST_SUBDIRS = display.aa display.mansync display.palemu \
 INCLUDES = -I${top_srcdir}/include
 LDADD = ${top_builddir}/ggi/libggi.la
 
+get_LDADD =   ${top_builddir}/ggi/libggi.la -lgii
 input_LDADD = ${top_builddir}/ggi/libggi.la -lgii
 
 EXTRA_PROGRAMS =
