@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.57 2007/04/04 21:43:20 pekberg Exp $
+/* $Id: ddinit.c,v 1.58 2007/04/05 20:30:24 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -852,11 +852,14 @@ DDEventLoop(void *lpParm)
 					MOD_ALT, VK_TAB);
 				RegisterHotKey(priv->hWnd, 0x0001,
 					MOD_ALT | MOD_SHIFT, VK_TAB);
+				RegisterHotKey(priv->hWnd, 0x0002,
+					MOD_ALT, VK_F4);
 			}
 			else {
 				DPRINT("Ungrab hotkeys\n");
 				UnregisterHotKey(priv->hWnd, 0x0000);
 				UnregisterHotKey(priv->hWnd, 0x0001);
+				UnregisterHotKey(priv->hWnd, 0x0002);
 			}
 			continue;
 		}
