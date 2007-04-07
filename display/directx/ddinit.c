@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.58 2007/04/05 20:30:24 pekberg Exp $
+/* $Id: ddinit.c,v 1.59 2007/04/07 21:07:27 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -987,8 +987,8 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 				       &priv->lppdds, NULL);
 	if (hr != 0) {
 		fprintf(stderr,
-			"Init Primary Surface Failed RC = %ld. Exiting\n",
-			hr & 0xffff);
+			"Init Primary Surface Failed RC = %lx. Exiting\n",
+			hr);
 		exit(-1);
 	}
 	IDirectDraw2_CreateClipper(priv->lpddext, 0, &pClipper, NULL);
@@ -997,6 +997,17 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 	IDirectDrawClipper_Release(pClipper);
 	pddsd.dwSize = sizeof(pddsd);
 	IDirectDrawSurface_GetSurfaceDesc(priv->lppdds, &pddsd);
+
+	DPRINT_MISC("DDraw pixel format:\n");
+	DPRINT_MISC("  Size %u\n", pddsd.ddpfPixelFormat.dwSize);
+	DPRINT_MISC("  Flags %08x\n", pddsd.ddpfPixelFormat.dwFlags);
+	DPRINT_MISC("  FourCC %08x\n", pddsd.ddpfPixelFormat.dwFourCC);
+	DPRINT_MISC("  Count %u\n", pddsd.ddpfPixelFormat.dwRGBBitCount);
+	DPRINT_MISC("  R-Mask(etc) %08x\n", pddsd.ddpfPixelFormat.dwRBitMask);
+	DPRINT_MISC("  G-Mask(etc) %08x\n", pddsd.ddpfPixelFormat.dwGBitMask);
+	DPRINT_MISC("  B-Mask(etc) %08x\n", pddsd.ddpfPixelFormat.dwBBitMask);
+	DPRINT_MISC("  Z-Mask(etc) %08x\n",
+		pddsd.ddpfPixelFormat.dwRGBZBitMask);
 
 	/* create the back storages */
 	for (i = 0; i < mode->frames; ++i) {
@@ -1028,8 +1039,7 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 					       NULL);
 		if (hr) {
 			fprintf(stderr,
-				"Init Backup Failed RC = %ld. Exiting\n",
-				hr & 0xffff);
+				"Init Backup Failed RC = %lx. Exiting\n", hr);
 			exit(-1);
 		}
 		IDirectDrawSurface2_Lock(priv->lpbdds[i], NULL, &bddsd,
