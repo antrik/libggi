@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.59 2007/04/07 21:07:27 pekberg Exp $
+/* $Id: ddinit.c,v 1.60 2007/04/07 21:09:56 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -1025,6 +1025,8 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 		bddsd.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
 		bddsd.ddpfPixelFormat.dwFlags =
 		    pddsd.ddpfPixelFormat.dwFlags;
+		bddsd.ddpfPixelFormat.dwFourCC =
+		    pddsd.ddpfPixelFormat.dwFourCC;
 		bddsd.ddpfPixelFormat.dwRGBBitCount =
 		    pddsd.ddpfPixelFormat.dwRGBBitCount;
 		bddsd.ddpfPixelFormat.dwRBitMask =
@@ -1033,6 +1035,8 @@ DDCreateSurface(directx_priv *priv, ggi_mode *mode)
 		    pddsd.ddpfPixelFormat.dwGBitMask;
 		bddsd.ddpfPixelFormat.dwBBitMask =
 		    pddsd.ddpfPixelFormat.dwBBitMask;
+		bddsd.ddpfPixelFormat.dwRGBAlphaBitMask =
+		    pddsd.ddpfPixelFormat.dwRGBAlphaBitMask;
 
 		hr = IDirectDraw2_CreateSurface(priv->lpddext,
 					       &bddsd, &priv->lpbdds[i],
