@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2007/04/08 13:59:36 cegger Exp $
+/* $Id: visual.c,v 1.15 2007/04/08 14:07:27 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -108,13 +108,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		error = GGI_ENOMEM;
 		goto error;
 	}
-	WSFB_PRIV(vis) = malloc(sizeof(struct wsfb_priv));
-	if (WSFB_PRIV(vis) == NULL) {
+	priv = LIBGGI_PRIVATE(vis) = calloc(1, sizeof(struct wsfb_priv));
+	if (priv == NULL) {
 		do_cleanup(vis);
 		error = GGI_ENOMEM;
 		goto error;
 	}
-	priv = WSFB_PRIV(vis);
 	memset(priv, 0, sizeof(*priv));
 
 	priv->devname = strdup("/dev/ttyC0");
