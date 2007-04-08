@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2007/03/27 18:20:30 soyt Exp $
+/* $Id: visual.c,v 1.14 2007/04/08 13:59:36 cegger Exp $
 ******************************************************************************
 
    wsconsole(4) wsfb target: initialization
@@ -84,7 +84,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	wsfb_priv *priv = NULL;
-	int error = 0, i;
+	int error = 0;
 
 	DPRINT("GGIopen\n");
 	
