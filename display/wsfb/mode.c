@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2007/03/27 18:20:30 soyt Exp $
+/* $Id: mode.c,v 1.15 2007/04/08 13:58:11 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -77,12 +77,12 @@ int GGI_wsfb_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 int GGI_wsfb_setmode(struct ggi_visual *vis, ggi_mode *tm)
 { 
 	struct wsfb_priv *priv = WSFB_PRIV(vis);
-	//ggi_graphtype gt = tm->graphtype;
 	//unsigned long modenum = 0;
 	//char sugname[GGI_MAX_APILEN];
 	//char args[GGI_MAX_APILEN];
 	int err = 0;
-	//int id, i;
+	unsigned int i;
+	//int id;
 	//int pixelBytes;
 
 	if (vis == NULL) {
@@ -122,19 +122,15 @@ int GGI_wsfb_setmode(struct ggi_visual *vis, ggi_mode *tm)
 
 	do_mmap(vis);
 
-	{
-		int i;
-		/* show some data */
-		for(i=0; i<priv->size/4/16; i++) {
-			priv->base[i]=0;
-		}
-		for(; i < priv->size/4/8; i++) {
-			priv->base[i]=0xffffffff;
-		}
+	/* show some data */
+	for(i=0; i<priv->size/4/16; i++) {
+		priv->base[i]=0;
 	}
-   
+	for(; i < priv->size/4/8; i++) {
+		priv->base[i]=0xffffffff;
+	}
 
-	ggiIndicateChange(vis, GGI_CHG_APILIST);
+	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 
 	return 0;
 }
@@ -154,17 +150,17 @@ int GGI_wsfb_checkmode(struct ggi_visual *vis, ggi_mode *tm)
 	if (vis == NULL)
 		return GGI_EARGINVAL;
 
-	if(tm->visible.x != priv->info.width && tm->visible.x != GGI_AUTO)
+	if ((unsigned int)tm->visible.x != priv->info.width && tm->visible.x != GGI_AUTO)
 		err = GGI_ENOMATCH;
-	else if(tm->virt.x != priv->info.width && tm->virt.x != GGI_AUTO)
-		err = GGI_ENOMATCH;
-
-	if(tm->visible.y != priv->info.height && tm->visible.y != GGI_AUTO)
-		err = GGI_ENOMATCH;
-	else if(tm->virt.y != priv->info.height && tm->virt.y != GGI_AUTO)
+	else if ((unsigned int)tm->virt.x != priv->info.width && tm->virt.x != GGI_AUTO)
 		err = GGI_ENOMATCH;
 
-	if(tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT) {
+	if ((unsigned int)tm->visible.y != priv->info.height && tm->visible.y != GGI_AUTO)
+		err = GGI_ENOMATCH;
+	else if ((unsigned int)tm->virt.y != priv->info.height && tm->virt.y != GGI_AUTO)
+		err = GGI_ENOMATCH;
+
+	if (tm->graphtype != GGI_AUTO && tm->graphtype != GT_8BIT) {
 		err = GGI_ENOMATCH;
 	}
 
@@ -274,16 +270,15 @@ do_mmap(struct ggi_visual *vis)
 {
 	wsfb_priv *priv = WSFB_PRIV(vis);
 	ggi_mode *mode = LIBGGI_MODE(vis);
-	ggi_graphtype gt = mode->graphtype;
 	ggi_directbuffer *buf;
 
 	if (ioctl(priv->fd, WSDISPLAYIO_GETCMAP, &priv->ocmap) < 0) {
 		DPRINT("getcmap failed\n");
 		return -1;
 	}
-	priv->cmap.red   = (char *)malloc(256);
-	priv->cmap.green = (char *)malloc(256);
-	priv->cmap.blue  = (char *)malloc(256);
+	priv->cmap.red   = (uint8_t *)malloc(256U);
+	priv->cmap.green = (uint8_t *)malloc(256U);
+	priv->cmap.blue  = (uint8_t *)malloc(256U);
 	
 	priv->base = mmap(0, priv->mapsize, PROT_READ|PROT_WRITE, MAP_SHARED,
 		priv->fd, priv->Base);
@@ -294,7 +289,7 @@ do_mmap(struct ggi_visual *vis)
 		return GGI_ENODEVICE;
 	}
 
-	fprintf(stderr,"mmap offset: %p\n", priv->base);
+	fprintf(stderr, "mmap offset: %p\n", (void *)priv->base);
 
 	memset(LIBGGI_PIXFMT(vis), 0, sizeof(ggi_pixelformat));
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
