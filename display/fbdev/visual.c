@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.47 2007/03/11 21:54:43 soyt Exp $
+/* $Id: visual.c,v 1.48 2007/04/08 00:21:56 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -696,20 +696,20 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
 			inp = ggPlugModule(gii,
-						     vis->instance.stem,
-						     inputstr,
-						     strbuf,
-						     NULL);
+					vis->instance.stem,
+					inputstr,
+					strbuf,
+					NULL);
 			if (inp == NULL) {
 				if (vtnum != -1) {
 					snprintf(strbuf, sizeof(strbuf),
 						"/dev/vc/%d",
 						vtnum);
 					inp = ggPlugModule(gii,
-								     vis->instance.stem,
-								     inputstr,
-								     strbuf,
-								     NULL);
+							vis->instance.stem,
+							inputstr,
+							strbuf,
+							NULL);
 				}
 				if (inp == NULL) {
 					fprintf(stderr,
@@ -717,10 +717,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 					/* We're on the Linux console so we want
 					   ansikey. */
 					inp = ggPlugModule(gii,
-								     vis->instance.stem,
-								     "input-stdin",
-								     "ansikey",
-								     NULL);
+							vis->instance.stem,
+							"input-stdin",
+							"ansikey",
+							NULL);
 					if (inp == NULL) {
 						fprintf(stderr,
 	"display-fbdev: Unable to open stdin input, try running with '-nokbd'.\n");
@@ -736,10 +736,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		struct gg_instance *inp;
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
 			inp = ggPlugModule(gii,
-						     vis->instance.stem,
-						     "input-linux-mouse",
-						     "auto",
-						     &args);
+					vis->instance.stem,
+					"input-linux-mouse",
+					"auto",
+					&args);
 			if (inp == NULL) {
 				fprintf(stderr,
 	"display-fbdev: Unable to open linux-mouse. Disable mouse support.\n");
