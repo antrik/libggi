@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.72 2007/03/11 21:54:44 soyt Exp $
+/* $Id: init.c,v 1.73 2007/04/09 15:50:26 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -177,7 +177,7 @@ int ggiOpen(ggi_visual_t stem, const char *driver,...)
 	DPRINT_CORE("ggiOpen(\"%s\") called\n", driver);
 
 	if (GGI_PRIV(stem))
-		/* anther visual is already opened on this stem */
+		/* another visual is already opened on this stem */
 		return GGI_EBUSY;
 
 	if((vis = _ggiNewVisual()) == NULL) {
