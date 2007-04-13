@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.66 2007/03/11 00:48:56 soyt Exp $
+/* $Id: mode.c,v 1.67 2007/04/13 10:01:41 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -486,6 +486,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 
 	if ( createparent ) {
 
+		Atom wm_del_win;
 		/* Parent windows are merely clipping frames, 
 		 * just use defaults. */
 
@@ -519,6 +520,10 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		XNextEvent(priv->disp, &event);
 		DPRINT_MODE("X: Window Mapped\n");
 
+		/* register the WM_DELETE protocol */
+		wm_del_win = XInternAtom(priv->disp, "WM_DELETE_WINDOW", False);
+		XSetWMProtocols(priv->disp, priv->parentwin, &wm_del_win, 1);
+
 		/* We let the parent window listen for the keyboard.
 		 * this allows to have the windowmanager decide about keyboard 
 		 * focus as usual.
@@ -528,8 +533,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		 */
 		XSelectInput(priv->disp, priv->parentwin,
 			     KeymapStateMask | KeyPressMask |
-			     KeyReleaseMask);
-
+			     KeyReleaseMask |
+			     FocusChangeMask | PropertyChangeMask |
+			     StructureNotifyMask | VisibilityChangeMask);
 	}
 
 	DPRINT_MODE("X: running in parent window 0x%x\n", priv->parentwin);
@@ -627,7 +633,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 			     KeymapStateMask | KeyPressMask | KeyReleaseMask |
 			     ButtonPressMask | ButtonReleaseMask |
 			     EnterWindowMask | LeaveWindowMask |
-			     ExposureMask | PointerMotionMask);
+			     ExposureMask | PointerMotionMask |
+			     PropertyChangeMask |
+			     StructureNotifyMask | VisibilityChangeMask);
 
 	}
 
