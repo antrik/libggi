@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.50 2007/04/13 22:54:11 cegger Exp $
+/* $Id: shm.c,v 1.51 2007/04/14 06:40:00 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -172,6 +172,7 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	struct gg_stem *stem;
 	int err, i;
 	XShmSegmentInfo *myshminfo;
+	size_t shmsize;
 
 
 	err = GGI_OK;
@@ -201,15 +202,13 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		goto err0;
 	}
 
-	DPRINT_MODE("X: MIT-SHM: Try to shmget() a buffer of 0x%lx size bytes\n",
-		(unsigned)(priv->ximage->bytes_per_line *
-		LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames));
+	shmsize = priv->ximage->bytes_per_line
+			* LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames;
 
-	myshminfo->shmid = 
-		shmget(IPC_PRIVATE,
-		       (unsigned)(priv->ximage->bytes_per_line * 
-		       LIBGGI_VIRTY(vis) * LIBGGI_MODE(vis)->frames),
-		       IPC_CREAT | 0777);
+	DPRINT_MODE("X: MIT-SHM: Try to shmget() a buffer of %lu (0x%lx) size bytes\n",
+		shmsize, shmsize);
+
+	myshminfo->shmid = shmget(IPC_PRIVATE, shmsize, IPC_CREAT | 0777);
 	if (myshminfo->shmid == -1) {
 		DPRINT("shmget() failed.\n");
 		priv->fb = NULL;
