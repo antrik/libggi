@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.25 2007/03/03 19:36:16 cegger Exp $
+/* $Id: cube3d.c,v 1.26 2007/04/16 22:56:52 ggibecka Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -909,10 +909,12 @@ int main(int argc, const char *argv[])
 			(unsigned long)memlen, x, "/dev/null");
 		sprintf(envtext, "GGI_DISPLAY=%s", text);
 		putenv(envtext);
+		setenv("GGI_DISPLAY",text,1);
 
 		ggiSPrintMode(text, &submode[x]);
 		sprintf(envtext, "GGI_DEFMODE=%s", text);
 		putenv(envtext);
+		setenv("GGI_DEFMODE",text,1);
 
 		if (progarg < argc) {
 			printf("face %d execing: %s\n", x, argv[progarg]);
@@ -939,19 +941,19 @@ int main(int argc, const char *argv[])
 				   ggiMapColor(memvis[0], &white_col));
 		ggiSetGCBackground(memvis[0],
 				   ggiMapColor(memvis[0], &black_col));
-		ggiPuts(memvis[0], 0, 0, "Keyboard:");
-		ggiPuts(memvis[0], 0, 10, "#: Go to Cube control");
-		ggiPuts(memvis[0], 0, 20, "Cursor,Home,End: Rotate");
-		ggiPuts(memvis[0], 0, 30, "PgUp/PgDown    : Resize");
-		ggiPuts(memvis[0], 0, 40, "q: quit s:stop b:backfaces");
+		ggiPuts(memvis[0], 10, 10, "Keyboard:");
+		ggiPuts(memvis[0], 10, 20, "#: Go to Cube control");
+		ggiPuts(memvis[0], 10, 30, "Cursor,Home,End: Rotate");
+		ggiPuts(memvis[0], 10, 40, "PgUp/PgDown    : Resize");
+		ggiPuts(memvis[0], 10, 50, "q: quit s:stop b:backfaces");
 		ggiSetGCForeground(memvis[0],
 				   ggiMapColor(memvis[0], &red_col));
-		ggiDrawHLine(memvis[0], 0, 0, submode[x].visible.x);
-		ggiDrawHLine(memvis[0], 0, submode[x].visible.y - 1,
-			     submode[x].visible.x);
-		ggiDrawVLine(memvis[0], 0, 0, submode[x].visible.y);
-		ggiDrawVLine(memvis[0], submode[x].visible.x - 1, 0,
-			     submode[x].visible.y);
+		ggiDrawHLine(memvis[0], 5, 5, submode[0].visible.x-10);
+		ggiDrawHLine(memvis[0], 5, submode[0].visible.y - 6,
+			     submode[0].visible.x-10);
+		ggiDrawVLine(memvis[0], 5, 5, submode[0].visible.y-10);
+		ggiDrawVLine(memvis[0], submode[0].visible.x - 6, 5,
+			     submode[0].visible.y-10);
 	}
 
 	ggiFlush(vis);
