@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.9 2007/03/03 19:26:01 cegger Exp $
+/* $Id: pointer.c,v 1.10 2007/04/16 07:26:09 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -54,30 +54,15 @@ main(int argc, const char *argv[])
 	ggi_color color;
 	char tmpstr[2000];
 
-	if (giiInit() != 0) {
-		fprintf(stderr, "%s: unable to initialize LibGII, exiting.\n",
-			argv[0]);
-		goto out;
-	}
-	if (ggiInit() != 0) {
-		fprintf(stderr, "%s: unable to initialize LibGGI, exiting.\n",
+	if (ggInit() != 0) {
+		fprintf(stderr, "%s: unable to initialize LibGG, exiting.\n",
 			argv[0]);
 		goto out;
 	}
 
-	vis = ggNewStem(NULL);
+	vis = ggNewStem(libgii, libggi, NULL);
 	if (!vis) {
 		fprintf(stderr, "%s: unable to creat stem, exiting.\n",
-			argv[0]);
-		goto out;
-	}
-	if (ggiAttach(vis) < 0) {
-		fprintf(stderr, "%s: unable to attach ggi, exiting.\n",
-			argv[0]);
-		goto out;
-	}
-	if (giiAttach(vis) < 0) {
-		fprintf(stderr, "%s: unable to attach gii, exiting.\n",
 			argv[0]);
 		goto out;
 	}
@@ -232,8 +217,7 @@ out:
 		ggiClose(vis);
 		ggDelStem(vis);
 	}
-	ggiExit();
-	giiExit();
+	ggExit();
 
 	return 0;
 }
