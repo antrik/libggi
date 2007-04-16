@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.60 2007/04/07 21:09:56 pekberg Exp $
+/* $Id: ddinit.c,v 1.61 2007/04/16 12:54:14 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -640,9 +640,15 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_CLOSE:
-		if (!priv->hParent)
-			exit(1);
-		break;
+		DPRINT_EVENTS("WM_CLOSE\n");
+		if (priv->hParent)
+			break;
+
+		ggBroadcast(vis->instance.channel, GGI_CMDCODE_CLOSE, NULL);
+
+		if (priv->exit_on_close_window)
+			exit(0);
+		return 0;
 
 	case WM_SETTINGCHANGE:
 		GGI_directx_Lock(priv->cs);

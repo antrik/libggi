@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.20 2007/04/04 21:43:20 pekberg Exp $
+/* $Id: directx.h,v 1.21 2007/04/16 12:54:14 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -94,6 +94,7 @@ typedef struct directx_priv
 	int fullscreen;
 	int grab_hotkeys;
 	int focus;
+	int exit_on_close_window;
 
 	/* resizing info */
 	HANDLE sizingcs;
@@ -120,6 +121,12 @@ typedef struct directx_priv
 #define GGIDIRECTX_PRIV(vis) ((directx_priv *)LIBGGI_PRIVATE(vis))
 
 #define GGI_DIRECTX_GRAB_HOTKEYS (0)
+#define GGI_CMDCODE_CLOSE        (1 | GII_CMDFLAG_PRIVATE)
+#define GGI_DIRECTX_EXITONCLOSE  (2 | GII_CMDFLAG_PRIVATE)
+struct ggi_directx_cmddata_exitonclose {
+	int exitonclose;
+};
+
 
 #define GGI_directx_LockCreate() \
 	CreateMutex(NULL, FALSE, NULL)

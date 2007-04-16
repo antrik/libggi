@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.46 2007/04/04 21:43:20 pekberg Exp $
+/* $Id: visual.c,v 1.47 2007/04/16 12:54:14 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -79,13 +79,13 @@ GGI_directx_setflags(struct ggi_visual *vis, uint32_t flags)
 }
 
 static int
-dx_controller(void *arg, uint32_t flag, void *data)
+dx_controller(void *arg, uint32_t ctl, void *data)
 {
 	struct ggi_visual *vis = arg;
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 	uint32_t *grab_hotkeys = data;
 
-	switch (flag) {
+	switch (ctl) {
 	case GGI_DIRECTX_GRAB_HOTKEYS:
 		priv->grab_hotkeys = *grab_hotkeys;
 		if (!priv->hWnd)
@@ -99,6 +99,14 @@ dx_controller(void *arg, uint32_t flag, void *data)
 			DPRINT("Ungrab hotkeys (flag, or focus)\n");
 			PostThreadMessage(priv->nThreadID,
 				WM_DDHOTKEY, 0, 0);
+		}
+		break;
+
+	case GGI_DIRECTX_EXITONCLOSE:
+		{
+			struct ggi_directx_cmddata_exitonclose *eoc;
+			eoc = (struct ggi_directx_cmddata_exitonclose *)data;
+			priv->exit_on_close_window = eoc->exitonclose;
 		}
 		break;
 	}
@@ -184,6 +192,8 @@ GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->ymax = 0;
 	priv->xstep = -1;
 	priv->ystep = -1;
+
+	priv->exit_on_close_window = 1;
 
 	if (args) {
 		args = ggParseOptions(args, options, NUM_OPTS);
