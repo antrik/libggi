@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.26 2007/04/16 22:56:52 ggibecka Exp $
+/* $Id: cube3d.c,v 1.27 2007/04/17 04:54:15 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -865,7 +865,8 @@ int main(int argc, const char *argv[])
 		/* Open a shared "memory-visual" which is simply a simulated 
 		 * display in shared memory.
 		 */
-		sprintf(text, "display-memory:-input:shmid:%d", shmid[x]);
+		snprintf(text, sizeof(text),
+			"display-memory:-input:shmid:%d", shmid[x]);
 
 		if ((memvis[x] = ggNewStem(NULL)) == NULL) {
 			ggPanic("Ouch - can't create shmem stem %d !",
@@ -905,14 +906,15 @@ int main(int argc, const char *argv[])
 		the_textures[x].mapper = PatNomap;
 		CheckDB(&the_textures[x]);
 
-		sprintf(text, "display-memory:-input:keyfile:%lu:%d:%s",
+		snprintf(text, sizeof(text),
+			 "display-memory:-input:keyfile:%lu:%d:%s",
 			(unsigned long)memlen, x, "/dev/null");
-		sprintf(envtext, "GGI_DISPLAY=%s", text);
+		snprintf(envtext, sizeof(envtext), "GGI_DISPLAY=%s", text);
 		putenv(envtext);
 		setenv("GGI_DISPLAY",text,1);
 
-		ggiSPrintMode(text, &submode[x]);
-		sprintf(envtext, "GGI_DEFMODE=%s", text);
+		ggiSNPrintMode(text, sizeof(text), &submode[x]);
+		snprintf(envtext, sizeof(envtext), "GGI_DEFMODE=%s", text);
 		putenv(envtext);
 		setenv("GGI_DEFMODE",text,1);
 
@@ -921,7 +923,7 @@ int main(int argc, const char *argv[])
 			the_textures[x].pid = spawn_bg(argv[progarg++]);
 		} else {
 			printf("GGI_DEFMODE=\"%s\"\n", text);
-			sprintf(text,
+			snprintf(text, sizeof(text),
 				"display-memory:-input:keyfile:%lu:%d:%s",
 				(unsigned long)memlen, x, "/dev/null");
 			printf("GGI_DISPLAY=%s\n", text);
