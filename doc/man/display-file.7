@@ -1,11 +1,11 @@
-.TH "display-file" 7 "2003-04-02" "libggi-current" GGI
+.TH "display-file" 7 "2007-04-17" "libggi-current" GGI
 .SH NAME
 \fBdisplay-file\fR : Render display into image file
 .SH SYNOPSIS
 .nb
 .nf
 display-file: [-flushcmd=<command>] [-flushframe=<n>]
-              [-flushtime=<t>] <filename>
+              [-flushtime=<t>] [-ppm] [-yuv] <filename>
 .fi
 
 .SH DESCRIPTION
@@ -21,15 +21,23 @@ normal target) and then generate a snapshot when the program
 exits.
 .RE
 .SH OPTIONS
-\fIfilename\fR is the file to render the images to.  If the filename is
-a PPM file (has the extension \fB.ppm\fR), then the image will be
-generated at \fBggiClose(3)\fR time.  Otherwise the file is a custom
-\fIGGIFILE\fR format and is generated continuously.
+\fIfilename\fR is the file to render the images to.  If a non-default
+file type (ppm or yuv) is specified in other options, then the image will 
+be generated at \fBggiClose(3)\fR time (unless \f(CW-flushtime\fR or \f(CW-flushframe\fR
+are specified).  Otherwise the file is a custom \fIGGIFILE\fR format and is 
+generated continuously.
+
+\fI-ppm\fR write the file as PPM pixmap. PPM can be easily converted to
+other formats using pbmtools, cjpeg and other converters.
+
+\fI-yuv\fR write a movie file as YUV stream suitable for processing with
+e.g. mpeg2enc or ffmpeg. A frame will be written at the times specified 
+in \f(CW-flushtime\fR or \f(CW-flushframe\fR.
 
 The \fBdisplay-file\fR target can be used to generate movies from running
-LibGGI applications. To do this, set \f(CW-flushcmd\fR to a shell command
-to execute at the times given by one of the two other parameters. This
-looks typically like:
+LibGGI applications. To do this, either use the yuv format, or set 
+\f(CW-flushcmd\fR to a shell command to execute at the times given 
+by one of the two other parameters. This looks typically like:
 
 .nb
 .nf
@@ -40,16 +48,13 @@ The command is passed through a \f(CWprintf(3)\fR which has the current
 count of saved frames as an argument (or rather as 10 arguments to
 allow a few more complex commands).
 
-This shell command is either executed at every \fIn\fR-th invocation
-of ggiFlush or every \fIt\fR seconds, where \fIt\fR can have fractional
-components (specified as decimal).
+The primary file is updated at every \fIn\fR-th invocation of ggiFlush 
+or every \fIt\fR seconds, where \fIt\fR can have fractional components 
+(specified as decimal) before the shell command (if given) is run.
 
 Note, that the invocation of the shell command will slow down the
 program, so make sure you use a reasonable value, if you use the
 \f(CW-flushtime\fR argument.
-
-The primary file is updated before every invocation of the shell
-command.
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer always available.
