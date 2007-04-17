@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2006/03/20 20:06:32 cegger Exp $
+/* $Id: visual.c,v 1.16 2007/04/17 00:27:49 ggibecka Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -39,12 +39,16 @@ static const gg_option optlist[] =
 {
 	{ "flushcmd", "" },
 	{ "flushframe",  "0" },
-	{ "flushtime",  "0.0" }
+	{ "flushtime",  "0.0" },
+	{ "ppm",	"n" },
+	{ "yuv",	"n" }
 };
 
 #define OPT_FLUSHCMD	0
 #define OPT_FLUSHFRAME	1
 #define OPT_FLUSHTIME	2
+#define OPT_PPM		3
+#define OPT_YUV		4
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
@@ -105,8 +109,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flushstep.tv_sec  = fltime;
 	priv->flushstep.tv_usec = (fltime-priv->flushstep.tv_sec)*1000000;
 
-	if (_ggi_file_ppm_detect(priv->filename)) {
+	if (options[OPT_PPM].result[0]!='n') {
 		priv->writer = &_ggi_file_ppm_write;
+	} else if (options[OPT_YUV].result[0]!='n') {
+		priv->writer = &_ggi_file_yuv_write;
 	} else {
 		priv->flags |= FILEFLAG_RAW;
 	}

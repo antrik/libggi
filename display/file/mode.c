@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2007/03/11 00:48:57 soyt Exp $
+/* $Id: mode.c,v 1.26 2007/04/17 00:27:49 ggibecka Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -61,17 +61,18 @@ static void dowritefile(struct ggi_visual *vis)
 	char cmdbuf[1024];
 
        	if (!(priv->flags & FILEFLAG_RAW)) {
-		_ggi_file_rewind(vis);
 		(* priv->writer)(vis);
 	}
 
-	snprintf(cmdbuf, 1024, priv->flushcmd,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt,
-		priv->flushcnt,priv->flushcnt,priv->flushcnt);
+	if (priv->flushcmd) {
+		snprintf(cmdbuf, 1024, priv->flushcmd,
+			priv->flushcnt,priv->flushcnt,priv->flushcnt,
+			priv->flushcnt,priv->flushcnt,priv->flushcnt,
+			priv->flushcnt,priv->flushcnt,priv->flushcnt,
+			priv->flushcnt,priv->flushcnt,priv->flushcnt);
 
-	system(cmdbuf);
+		system(cmdbuf);
+	}
 	priv->flushcnt++;
 }
 
@@ -81,23 +82,21 @@ static int GGI_file_flush(struct ggi_visual *vis,
 	ggi_file_priv *priv = FILE_PRIV(vis);
 	struct timeval now;
 
-	if (priv->flushcmd) { 
-		if ( priv->flushevery && (priv->flushtotal%priv->flushevery) == 0) {
-			dowritefile(vis);
-		}
-		if (priv->flushstep.tv_sec || priv->flushstep.tv_usec) {
-			gettimeofday(&now,NULL);
-			if (   now.tv_sec >  priv->flushlast.tv_sec || 
-			     ( now.tv_sec == priv->flushlast.tv_sec &&
-			       now.tv_usec > priv->flushlast.tv_usec) ) {
-				priv->flushlast.tv_sec +=priv->flushstep.tv_sec;
-				priv->flushlast.tv_usec+=priv->flushstep.tv_usec;
-				if (priv->flushlast.tv_usec    >=1000000) {
-					priv->flushlast.tv_usec-=1000000;
-					priv->flushlast.tv_sec++;
-				}
-				dowritefile(vis);
+	if ( priv->flushevery && (priv->flushtotal%priv->flushevery) == 0) {
+		dowritefile(vis);
+	}
+	if (priv->flushstep.tv_sec || priv->flushstep.tv_usec) {
+		gettimeofday(&now,NULL);
+		if (   now.tv_sec >  priv->flushlast.tv_sec || 
+		     ( now.tv_sec == priv->flushlast.tv_sec &&
+		       now.tv_usec > priv->flushlast.tv_usec) ) {
+			priv->flushlast.tv_sec +=priv->flushstep.tv_sec;
+			priv->flushlast.tv_usec+=priv->flushstep.tv_usec;
+			if (priv->flushlast.tv_usec    >=1000000) {
+				priv->flushlast.tv_usec-=1000000;
+				priv->flushlast.tv_sec++;
 			}
+			dowritefile(vis);
 		}
 	}
 	priv->flushtotal++;
@@ -358,6 +357,8 @@ int GGI_file_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	DPRINT("change indicated\n",err);
 
 	priv->flushtotal = 0;
+	priv->mode_reset = 1;	/* signal the writer that the mode was reset. */
+
 	gettimeofday(&priv->flushlast,NULL);
 	return 0;
 }

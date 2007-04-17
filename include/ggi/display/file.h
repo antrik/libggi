@@ -1,4 +1,4 @@
-/* $Id: file.h,v 1.7 2006/03/20 20:01:17 cegger Exp $
+/* $Id: file.h,v 1.8 2007/04/17 00:27:49 ggibecka Exp $
 ******************************************************************************
 
    Display-file: definitions
@@ -68,6 +68,9 @@ typedef struct {
 	int   flushcnt;
 	struct timeval	flushlast;
 	struct timeval	flushstep;
+	
+	/* signal mode-resets for streaming output targets */
+        int	mode_reset;
 
 } ggi_file_priv;
 
@@ -98,6 +101,7 @@ extern void _ggi_file_write_zeros(struct ggi_visual *vis, int count);
 
 extern file_detect_func _ggi_file_ppm_detect;
 extern file_writer_func _ggi_file_ppm_write;
+extern file_writer_func _ggi_file_yuv_write;
 
 /* Misc
  */

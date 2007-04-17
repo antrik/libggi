@@ -4,7 +4,7 @@ libfile_la_LIBADD =
 
 noinst_LTLIBRARIES = libfile.la
 
-libfile_la_SOURCES = fileio.c mode.c ppm.c visual.c
+libfile_la_SOURCES = fileio.c mode.c ppm.c yuv.c visual.c
 
 EXTRA_DIST = EXPSYMS
 
