@@ -1,4 +1,4 @@
-/* $Id: yuv.c,v 1.2 2007/04/18 15:04:16 ggibecka Exp $
+/* $Id: yuv.c,v 1.3 2007/04/18 17:27:21 cegger Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -54,7 +54,9 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 	/* write file header info, if mode was reset */
 
 	if (priv->mode_reset) {
-		snprintf((char *)buf, sizeof(buf), "YUV4MPEG2 W%d H%d F25:1 Ip A1:1\n", LIBGGI_VIRTX(vis)&~1, LIBGGI_VIRTY(vis)&~1);
+		snprintf((char *)buf, sizeof(buf),
+			"YUV4MPEG2 W%d H%d F25:1 Ip A1:1\n",
+			LIBGGI_VIRTX(vis)&~1, LIBGGI_VIRTY(vis)&~1);
 		_ggi_file_write_string(vis, (const unsigned char *)buf);
 		priv->mode_reset=0;	/* ok, we have it. */
 	}
@@ -64,7 +66,7 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 
 	/* write out the pixels */
 
-	ggiGetPixel(vis->instance.stem, 0, 0, &last);
+	_ggiGetPixel(vis, 0, 0, &last);
 	last = ~last;	/* must be different from first pixel */
 
 	/* This is quite inefficient, gettng pixels individually and 
@@ -78,10 +80,10 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 		ggi_pixel pix;
 		int Y;
 
-		ggiGetPixel(vis->instance.stem, x, y, &pix);
+		_ggiGetPixel(vis, x, y, &pix);
 
 		if (pix != last) {
-			ggiUnmapPixel(vis->instance.stem, pix, &col);
+			_ggiUnmapPixel(vis, pix, &col);
 		}
 
 		Y=(299*col.r+587*col.g+114*col.b)/257000;
@@ -99,10 +101,10 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 		U=0;
 		for(yy=0;yy<2;yy++) {
 			for(xx=0;xx<2;xx++) {
-				ggiGetPixel(vis->instance.stem, x+xx, y+yy, &pix);
+				_ggiGetPixel(vis, x+xx, y+yy, &pix);
 
 				if (pix != last) {
-					ggiUnmapPixel(vis->instance.stem, pix, &col);
+					_ggiUnmapPixel(vis, pix, &col);
 					last = pix;
 				}
 				U+=(-1687*col.r-3313*col.g+5000*col.b);
@@ -122,10 +124,10 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 		V=0;
 		for(yy=0;yy<2;yy++) {
 			for(xx=0;xx<2;xx++) {
-				ggiGetPixel(vis->instance.stem, x+xx, y+yy, &pix);
+				_ggiGetPixel(vis, x+xx, y+yy, &pix);
 
 				if (pix != last) {
-					ggiUnmapPixel(vis->instance.stem, pix, &col);
+					_ggiUnmapPixel(vis, pix, &col);
 					last = pix;
 				}
 				V+=(5000*col.r-4187*col.g- 813*col.b);
