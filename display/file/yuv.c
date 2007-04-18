@@ -1,4 +1,4 @@
-/* $Id: yuv.c,v 1.1 2007/04/17 00:27:49 ggibecka Exp $
+/* $Id: yuv.c,v 1.2 2007/04/18 15:04:16 ggibecka Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -93,35 +93,47 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 	for (x=0; x < LIBGGI_VIRTX(vis); x+=2) {
 
 		ggi_pixel pix;
-		int U,V;
+		int xx,yy;
+		int U;
 
-		ggiGetPixel(vis->instance.stem, x, y, &pix);
+		U=0;
+		for(yy=0;yy<2;yy++) {
+			for(xx=0;xx<2;xx++) {
+				ggiGetPixel(vis->instance.stem, x+xx, y+yy, &pix);
 
-		if (pix != last) {
-			ggiUnmapPixel(vis->instance.stem, pix, &col);
+				if (pix != last) {
+					ggiUnmapPixel(vis->instance.stem, pix, &col);
+					last = pix;
+				}
+				U+=(-1687*col.r-3313*col.g+5000*col.b);
+			}
 		}
 
-		U=(-1687*col.r-3313*col.g+5000*col.b)/2570000+128;
+		U=U/(4*2570000)+128;
 		_ggi_file_write_byte(vis, (unsigned)U);
-
-		last = pix;
 	}
 	for (y=0; y < LIBGGI_VIRTY(vis); y+=2)
 	for (x=0; x < LIBGGI_VIRTX(vis); x+=2) {
 
 		ggi_pixel pix;
-		int U,V;
+		int xx,yy;
+		int V;
 
-		ggiGetPixel(vis->instance.stem, x, y, &pix);
+		V=0;
+		for(yy=0;yy<2;yy++) {
+			for(xx=0;xx<2;xx++) {
+				ggiGetPixel(vis->instance.stem, x+xx, y+yy, &pix);
 
-		if (pix != last) {
-			ggiUnmapPixel(vis->instance.stem, pix, &col);
+				if (pix != last) {
+					ggiUnmapPixel(vis->instance.stem, pix, &col);
+					last = pix;
+				}
+				V+=(5000*col.r-4187*col.g- 813*col.b);
+			}
 		}
 
-		V=( 5000*col.r-4187*col.g- 813*col.b)/2570000+128;
+		V=V/(4*2570000)+128;
 		_ggi_file_write_byte(vis, (unsigned)V);
-
-		last = pix;
 	}
 
 	_ggi_file_flush(vis);
