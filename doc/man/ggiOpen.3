@@ -1,4 +1,4 @@
-.TH "ggiOpen" 3 "2007-03-05" "libggi-current" GGI
+.TH "ggiOpen" 3 "2007-04-19" "libggi-current" GGI
 .SH NAME
 \fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
@@ -6,27 +6,26 @@
 .nf
 #include <ggi/ggi.h>
 
-ggi_visual_t ggiOpen(const char *display, ...);
+int ggiOpen(ggi_visual_t vis, const char *display, ...);
 
 int ggiClose(ggi_visual_t vis);
 .fi
 
 .SH DESCRIPTION
-\fBggiOpen\fR opens a visual.  The visual is specified as a display
-string, followed by \fBNULL\fR.  If only \fBNULL\fR is specified, the default
-display target is opened, which means first examining \fBGGI_DISPLAY\fR,
-then invoking \f(CWdisplay-auto(7)\fR.  The other arguments are for internal
-purposes only, such as \fIargptr\fR, used to pass driver-specific,
-non-textual information to the driver.
+\fBggiOpen\fR opens a visual.  \fIvis\fR is a stem created by \f(CWggNewStem(3)\fR.
+The visual is specified as a display string, followed by \fBNULL\fR. 
+If only \fBNULL\fR is specified, the default display target is opened,
+which means first examining \fBGGI_DISPLAY\fR, then invoking
+\f(CWdisplay-auto(7)\fR.  The other arguments are for internal purposes only,
+such as \fIargptr\fR, used to pass driver-specific, non-textual information to
+the driver.
 
 \fBggiClose\fR releases and destroys an open visual.  This will close X
 windows, return consoles to text-mode, etc.
 .SH RETURN VALUE
-\fBggiOpen\fR returns the opened visual or \fBNULL\fR for error.  The
-\fBggi_visual_t\fR is opaque to the programmer and should only be used
-through GGI functions.
+\fBggiOpen\fR returns \fB0\fR for OK, otherwise a \f(CWgg-error(3)\fR code.
 
-\fBggiClose\fR returns \fB0\fR for OK, otherwise a \f(CWggi-error(3)\fR code.
+\fBggiClose\fR returns \fB0\fR for OK, otherwise a \f(CWgg-error(3)\fR code.
 .SH EXAMPLES
 Open and closing default visual:
 
