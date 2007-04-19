@@ -146,7 +146,7 @@ Synopsis
 
   #include <ggi/ggi.h>
 
-  ggi_visual_t ggiOpen(const char *display, ...);
+  int ggiOpen(ggi_visual_t vis, const char *display, ...);
 
   int ggiClose(ggi_visual_t vis);
 
@@ -154,12 +154,13 @@ Synopsis
 Description
 -----------
 
-`ggiOpen` opens a visual.  The visual is specified as a display
-string, followed by `NULL`.  If only `NULL` is specified, the default
-display target is opened, which means first examining `GGI_DISPLAY`,
-then invoking :man:`display-auto(7)`.  The other arguments are for internal
-purposes only, such as :p:`argptr`, used to pass driver-specific,
-non-textual information to the driver.
+`ggiOpen` opens a visual.  :p:`vis` is a stem created by :man:`ggNewStem(3)`.
+The visual is specified as a display string, followed by `NULL`. 
+If only `NULL` is specified, the default display target is opened,
+which means first examining `GGI_DISPLAY`, then invoking
+:man:`display-auto(7)`.  The other arguments are for internal purposes only,
+such as :p:`argptr`, used to pass driver-specific, non-textual information to
+the driver.
 
 `ggiClose` releases and destroys an open visual.  This will close X
 windows, return consoles to text-mode, etc.
@@ -169,12 +170,9 @@ Return value
 ------------
 
 
-`ggiOpen` returns the opened visual or `NULL` for error.  The
-`ggi_visual_t` is opaque to the programmer and should only be used
-through GGI functions.
+`ggiOpen` returns `0` for OK, otherwise a :man:`gg-error(3)` code.
 
-
-`ggiClose` returns `0` for OK, otherwise a :man:`ggi-error(3)` code.
+`ggiClose` returns `0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 Examples
