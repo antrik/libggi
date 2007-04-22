@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.33 2007/03/11 00:48:59 soyt Exp $
+/* $Id: x.h,v 1.34 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -75,7 +75,9 @@ typedef struct {
 
 typedef int  (*ggi_x_createfb)(struct ggi_visual *vis);	/* MMAP/alloc fb/db  */
 typedef void (*ggi_x_freefb)(struct ggi_visual *vis);		/* clean up fb/db    */
-typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* prepare renderer  */
+typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* create renderer  */
+typedef int  (*ggi_x_initdrawable)(struct ggi_visual *vis);	/* prepare renderer  */
+typedef void (*ggi_x_swapdrawable)(struct ggi_visual *vis);	/* swap drawables */
 typedef void (*ggi_x_createcursor)(struct ggi_visual *vis);	/* load mouse sprite */
 
 struct ggi_x_priv;
@@ -137,7 +139,9 @@ typedef struct ggi_x_priv {
 	Drawable	 drawable;	/* Xlib/accel access */
 
 	/* Overloadables: */
-	ggi_x_createdrawable	createdrawable;	/* overload init .drawable */
+	ggi_x_createdrawable	createdrawable;	/* overload create .drawable */
+	ggi_x_initdrawable	initdrawable;	/* overload init .drawable */
+	ggi_x_swapdrawable swapdrawable;	/* overload swap .drawable */
 	ggi_x_createfb	 createfb;	/* overload init .fb */
 	ggi_x_freefb	 freefb;	/* overload init .fb */
 	ggi_x_checkmode_adapt cm_adapt; /* visual to ggi_mode conversion */
@@ -232,6 +236,7 @@ XImage *_ggi_x_create_ximage(struct ggi_visual *vis, char *data, int w, int h);
 int _ggi_x_createfb(struct ggi_visual *vis);
 void _ggi_x_freefb(struct ggi_visual *vis);
 int GGI_X_create_window_drawable (struct ggi_visual *vis);
+int GGI_X_init_window_drawable (struct ggi_visual *vis);
 int GGI_X_expose(void *arg, int x, int y, int w, int h);
 ggifunc_flush GGI_X_flush_ximage_child;
 

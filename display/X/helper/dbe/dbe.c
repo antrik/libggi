@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.12 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: dbe.c,v 1.13 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -31,13 +31,56 @@
 #include <ggi/display/x.h>
 #include <X11/extensions/Xdbe.h>
 
+static int GGI_DBE_swap(struct ggi_visual *vis)
+{
+	ggi_x_priv   *priv;
+	XdbeSwapInfo swapInfo;
+
+	priv = GGIX_PRIV(vis);
+
+	/* Set swapping informations */
+	swapInfo.swap_window = priv->win;
+	swapInfo.swap_action = XdbeUndefined;
+	
+	XdbeSwapBuffers(priv->disp, &swapInfo, 1); /* Swap buffer */
+}
+
+int GGI_DBE_create_window_drawable (struct ggi_visual *vis) {
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+	Window win;
+	XdbeBackBuffer  backBuffer;
+
+	if(priv->win == None)
+		return GGI_ENODEVICE;
+
+	priv->drawable = priv->win;
+
+   	/* Allocate back buffer */
+	backBuffer = XdbeAllocateBackBufferName(priv->disp, 
+											priv->win,
+											XdbeUndefined);
+
+	if (backBuffer != None)
+	{
+		priv->drawable = backBuffer;
+		
+	} else { 
+		DPRINT_LIBS("X: DOUBLE-BUFFER: Back buffer allocation failed\n");
+		return GGI_EFATAL;
+	}
+  
+    priv->swapdrawable = GGI_DBE_swap;
+    
+    return 0;
+}
+
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 	int major_version, minor_version;
 	Status rc;
-
+	
 	/* Check if DBE is present before initialising */
 	rc = XdbeQueryExtension(priv->disp, &major_version, &minor_version);
 	if (rc != True) return GGI_ENOFUNC;
@@ -45,6 +88,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_LIBS("X: DOUBLE-BUFFER: DBE version %i.%i\n",
 			major_version, minor_version);
 
+	priv->createdrawable = GGI_DBE_create_window_drawable;
 
 	*dlret = 0;
 	return GGI_OK;
@@ -52,6 +96,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
+	XdbeBackBuffer  backBuffer;	/* Back buffer */
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+	/* Deallocate back buffer */
+	if(!XdbeDeallocateBackBufferName(priv->disp, priv->drawable)) {
+		DPRINT_LIBS("X: DOUBLE-BUFFER: Unable to deallocate back buffer.\n");
+		return GGI_EFATAL;
+	}
 	return GGI_OK;
 }
 

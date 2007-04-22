@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.68 2007/04/17 07:03:19 pekberg Exp $
+/* $Id: mode.c,v 1.69 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -657,6 +657,13 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 
 	if (priv->createdrawable) {
 		err = priv->createdrawable(vis);
+		if (err)
+			goto err1;
+		
+		if(priv->initdrawable == NULL)
+			goto err1;
+			
+		err = priv->initdrawable(vis);
 		if (err)
 			goto err1;
 	}

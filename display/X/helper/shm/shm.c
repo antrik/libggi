@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.51 2007/04/14 06:40:00 cegger Exp $
+/* $Id: shm.c,v 1.52 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -84,7 +84,7 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 			GGI_X_CLEAN(vis, x, y, w, h);
 			y = GGI_X_WRITE_Y;
 		} /* else it's a non-translated exposure event. */
-		XShmPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage,
+		XShmPutImage(priv->disp, priv->drawable, priv->tempgc, priv->ximage,
 			  x, y, x, y, (unsigned)w, (unsigned)h, 0);
 	} else {
 		/* Just flush the intersection with the dirty region */
@@ -105,11 +105,14 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 		h = y2 - y + 1;
 		if ((w <= 0) || (h <= 0)) goto clean;
 
-		XShmPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage,
+		XShmPutImage(priv->disp, priv->drawable, priv->tempgc, priv->ximage,
 			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y,
 			  (unsigned)w, (unsigned)h, 0);
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
+
+	if(priv->swapdrawable)
+		priv->swapdrawable(vis);
 
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);

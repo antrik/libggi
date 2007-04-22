@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.72 2007/03/11 21:54:43 soyt Exp $
+/* $Id: visual.c,v 1.73 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -525,7 +525,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GGI_X_TEST_XEXT(GGI_X_USE_DBE, "helper-x-dbe", nodbe);
 
  nodbe:
-	priv->createdrawable = GGI_X_create_window_drawable;
+    if(priv->createdrawable == NULL)
+		priv->createdrawable = GGI_X_create_window_drawable;
+
+	priv->initdrawable = GGI_X_init_window_drawable;
 
 	if (options[OPT_NOBUFFER].result[0] != 'n') {
 		priv->createfb = NULL;
@@ -564,9 +567,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		DPRINT("disabling drawable\n");
 		priv->createdrawable = NULL;
+		priv->initdrawable = NULL;
 	}
 
-	if (priv->createdrawable != NULL) {
+	if ((priv->createdrawable != NULL) &&
+		(priv->initdrawable != NULL)) 
+	{
 		priv->textfont = XLoadQueryFont(disp, "fixed");
 		if (priv->textfont != NULL) {
 			DPRINT_MISC("Xlib: using font with "
@@ -575,7 +581,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				       priv->textfont->max_bounds.ascent
 				       + priv->textfont->max_bounds.descent);
 		}
-        }
+    }
 
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		struct gii_inputxwin_arg _args;

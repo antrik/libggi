@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.39 2007/03/31 11:59:35 cegger Exp $
+/* $Id: buffer.c,v 1.40 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -342,6 +342,9 @@ static int GGI_X_flush_draw(struct ggi_visual *vis,
 
 	_ggi_x_flush_cmap(vis);		/* Update the palette/gamma */
 
+	if(priv->swapdrawable)
+		priv->swapdrawable(vis);
+
 	/* Flush any pending Xlib operations. */
 	XFlush(priv->disp);
 
@@ -355,6 +358,13 @@ int GGI_X_create_window_drawable (struct ggi_visual *vis) {
 
 	priv->drawable = priv->win;
 	if (priv->drawable == None) priv->drawable = priv->parentwin;
+	
+	return 0;
+}
+
+int GGI_X_init_window_drawable (struct ggi_visual *vis) {
+	ggi_x_priv *priv;
+	priv = GGIX_PRIV(vis);
 
 	vis->opdraw->drawpixel		= GGI_X_drawpixel_slave_draw;
 	vis->opdraw->drawpixel_nc	= GGI_X_drawpixel_nc_slave_draw;
@@ -380,7 +390,7 @@ int GGI_X_create_window_drawable (struct ggi_visual *vis) {
 	vis->opdraw->setorigin		= GGI_X_setorigin_child;
 	vis->opdraw->setdisplayframe	= GGI_X_setdisplayframe_child;
 
-	vis->opdisplay->flush		= GGI_X_flush_draw;
+	vis->opdisplay->flush	= GGI_X_flush_draw;
 	vis->opdraw->drawpixel		= GGI_X_drawpixel_draw;
 	vis->opdraw->drawpixel_nc	= GGI_X_drawpixel_draw;
 	vis->opdraw->putpixel		= GGI_X_putpixel_draw;
@@ -460,7 +470,7 @@ int GGI_X_flush_ximage_child(struct ggi_visual *vis,
 			GGI_X_CLEAN(vis, x, y, w, h);
 			y = GGI_X_WRITE_Y;
 		} /* else it's a non-translated exposure event. */
-		XPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage, 
+		XPutImage(priv->disp, priv->drawable, priv->tempgc, priv->ximage, 
 			  x, y, x, y, (unsigned)w, (unsigned)h);
 		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) mansync = 0;
 	} else {
@@ -482,11 +492,14 @@ int GGI_X_flush_ximage_child(struct ggi_visual *vis,
 		h = y2 - y + 1;
 		if ((w <= 0) || (h <= 0)) goto clean;
 
-		XPutImage(priv->disp, priv->win, priv->tempgc, priv->ximage, 
+		XPutImage(priv->disp, priv->drawable, priv->tempgc, priv->ximage, 
 			  x, GGI_X_WRITE_Y, x, GGI_X_WRITE_Y,
 			  (unsigned)w, (unsigned)h);
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
+
+	if(priv->swapdrawable)
+		priv->swapdrawable(vis);
 
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);

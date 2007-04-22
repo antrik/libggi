@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.16 2007/03/03 19:36:16 cegger Exp $
+/* $Id: flying_ggis.c,v 1.17 2007/04/22 17:55:04 mooz Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -205,8 +205,9 @@ static void update_frame(void)
 		}
 	}
 
-	if(async)
+	if(async) {
 		ggiFlush(vis);
+	}
 }
 
 static void init_textures(void)
