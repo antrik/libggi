@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.13 2007/04/22 17:55:04 mooz Exp $
+/* $Id: dbe.c,v 1.14 2007/04/23 07:59:43 cegger Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -31,7 +31,7 @@
 #include <ggi/display/x.h>
 #include <X11/extensions/Xdbe.h>
 
-static int GGI_DBE_swap(struct ggi_visual *vis)
+static void GGI_DBE_swap(struct ggi_visual *vis)
 {
 	ggi_x_priv   *priv;
 	XdbeSwapInfo swapInfo;
@@ -45,9 +45,9 @@ static int GGI_DBE_swap(struct ggi_visual *vis)
 	XdbeSwapBuffers(priv->disp, &swapInfo, 1); /* Swap buffer */
 }
 
-int GGI_DBE_create_window_drawable (struct ggi_visual *vis) {
+static int GGI_DBE_create_window_drawable (struct ggi_visual *vis)
+{
 	ggi_x_priv *priv = GGIX_PRIV(vis);
-	Window win;
 	XdbeBackBuffer  backBuffer;
 
 	if(priv->win == None)
@@ -55,13 +55,11 @@ int GGI_DBE_create_window_drawable (struct ggi_visual *vis) {
 
 	priv->drawable = priv->win;
 
-   	/* Allocate back buffer */
+	/* Allocate back buffer */
 	backBuffer = XdbeAllocateBackBufferName(priv->disp, 
-											priv->win,
-											XdbeUndefined);
+			priv->win, XdbeUndefined);
 
-	if (backBuffer != None)
-	{
+	if (backBuffer != None) {
 		priv->drawable = backBuffer;
 		
 	} else { 
@@ -69,9 +67,9 @@ int GGI_DBE_create_window_drawable (struct ggi_visual *vis) {
 		return GGI_EFATAL;
 	}
   
-    priv->swapdrawable = GGI_DBE_swap;
-    
-    return 0;
+	priv->swapdrawable = GGI_DBE_swap;
+	    
+	return 0;
 }
 
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
