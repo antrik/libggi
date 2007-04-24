@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.34 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.35 2007/04/24 20:03:19 pekberg Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -36,6 +36,7 @@
 #include <ggi/gg.h>
 #include <ggi/gii.h>
 #include <ggi/gii-module.h>
+#include <ggi/filter/tile.h>
 
 
 void _GGI_tile_freedbs(struct ggi_visual *vis)
@@ -50,8 +51,10 @@ void _GGI_tile_freedbs(struct ggi_visual *vis)
 }
 
 struct transfer {
+	ggi_tile_priv *priv;
 	struct gg_stem *src;
 	struct gg_stem *dst;
+	ggi_coord shift;
 };
 
 static int
@@ -59,10 +62,20 @@ transfer_gii_src(void *arg, uint32_t flag, void *data)
 {
 	struct transfer *xfer = arg;
 	struct gii_source *src = data;
+	struct gii_tile_rule rule;
 
 	if (flag == GII_OBSERVE_SOURCE_OPENED) {
+		if (xfer->shift.x || xfer->shift.y) {
+			rule.origin = src->origin;
+			rule.shift_x = xfer->shift.x;
+			rule.shift_y = xfer->shift.y;
+
+			ggControl(xfer->priv->filter->channel,
+				GII_TILE_ADD_RULE, &rule);
+		}
 		giiTransfer(xfer->src, xfer->dst, src->origin);
 	}
+
 	return 0;
 }
 
@@ -117,6 +130,9 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->multi_mode = 0;
 
 	api = ggGetAPIByName("gii");
+	if (api)
+		priv->filter = ggPlugModule(api,
+			vis->instance.stem, "filter-tile", NULL, NULL);
 
 	/* parse each visual */
 	for (;;) {
@@ -207,8 +223,10 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freeopmansync;
 			}
+			xfer.priv = priv;
 			xfer.src = mvis->vis;
 			xfer.dst = vis->instance.stem;
+			xfer.shift = mvis->origin;
 			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}
@@ -224,6 +242,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			err = GGI_ENODEVICE;
 			goto out_freeopmansync;
 		}
+
 		if (obs != NULL) {
 			ggDelObserver(obs);
 			obs = NULL;
@@ -399,8 +418,10 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 				err = GGI_ENODEVICE;
 				goto out_freeall;
 			}
+			xfer.priv = priv;
 			xfer.src = mvis->vis;
 			xfer.dst = vis->instance.stem;
+			xfer.shift.x = xfer.shift.y = 0;
 			obs = ggObserve(GG_STEM_API_CHANNEL(mvis->vis, api),
 					transfer_gii_src, &xfer);
 		}
@@ -495,6 +516,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		free(elm);		
 	}
 
+	if (priv->filter)
+		ggClosePlugin(priv->filter);
 	free(priv->opmansync);
 	free(priv);
 	free(LIBGGI_GC(vis));

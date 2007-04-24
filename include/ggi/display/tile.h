@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.13 2006/08/13 18:36:46 pekberg Exp $
+/* $Id: tile.h,v 1.14 2007/04/24 20:03:19 pekberg Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -105,6 +105,7 @@ typedef struct {
 
 	void *buf;			/* Blitting buffer */
 	ggi_directbuffer *d_frame;	/* Current display frame */
+	struct gg_instance *filter;
 
 	MANSYNC_DATA;
 } ggi_tile_priv;
