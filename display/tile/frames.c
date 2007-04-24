@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.9 2006/04/28 06:05:37 cegger Exp $
+/* $Id: frames.c,v 1.10 2007/04/24 22:12:02 pekberg Exp $
 ******************************************************************************
 
    Tile target: frame handling functions
@@ -62,6 +62,7 @@ int GGI_tile_setdisplayframe(struct ggi_visual *vis, int num)
 		if (rc < 0) return rc;
 	}
 
+	vis->d_frame_num = num;
 	return 0;
 }
 
@@ -76,6 +77,7 @@ int GGI_tile_setreadframe(struct ggi_visual *vis, int num)
 		if (rc < 0) return rc;
 	}
 
+	vis->r_frame_num = num;
 	return 0;
 }
 
@@ -90,6 +92,7 @@ int GGI_tile_setwriteframe(struct ggi_visual *vis, int num)
 		if (rc < 0) return rc;
 	}
 
+	vis->w_frame_num = num;
 	return 0;
 }
 
