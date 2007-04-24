@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.7 2007/03/11 00:48:58 soyt Exp $
+/* $Id: stubs.c,v 1.8 2007/04/24 23:38:23 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu : stubs
@@ -82,7 +82,7 @@ int GGI_trueemu_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2)
 	int ex=MAX(x1,x2);
 	int ey=MAX(y1,y2);
 
-	UPDATE_MOD(vis, sx, sy, ex-sx, ey-sy);
+	UPDATE_MOD(vis, sx, sy, ex-sx+1, ey-sy+1);
 
 	return priv->mem_opdraw->drawline(vis, x1, y1, x2, y2);
 }
