@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.9 2006/09/06 21:24:29 cegger Exp $
+/* $Id: draw.c,v 1.10 2007/04/25 05:23:27 cegger Exp $
 ******************************************************************************
 
    Display-monotext: drawing operations
@@ -81,7 +81,7 @@ int GGI_monotext_drawline(struct ggi_visual *vis, int x1, int y1, int x2, int y2
 	int ex = MAX(x1, x2);
 	int ey = MAX(y1, y2);
 
-	UPDATE_MOD(vis, sx, sy, ex-sx, ey-sy);
+	UPDATE_MOD(vis, sx, sy, ex-sx+1, ey-sy+1);
 
 	return priv->mem_opdraw->drawline(vis, x1, y1, x2, y2);
 }
