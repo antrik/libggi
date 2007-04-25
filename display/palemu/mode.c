@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.25 2007/04/25 00:28:24 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -385,28 +385,28 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* Handle geometry */
 	if (mode->visible.x == GGI_AUTO) {
-		mode->visible.x = priv->parent_mode.visible.x;
+		mode->visible.x = priv->parent_defmode.visible.x;
 	}
 	if (mode->visible.y == GGI_AUTO) {
-		mode->visible.y = priv->parent_mode.visible.y;
+		mode->visible.y = priv->parent_defmode.visible.y;
 	}
 	if (mode->virt.x == GGI_AUTO) {
-		mode->virt.x = priv->parent_mode.virt.x;
+		mode->virt.x = priv->parent_defmode.virt.x;
 	}
 	if (mode->virt.y == GGI_AUTO) {
-		mode->virt.y = priv->parent_mode.virt.y;
+		mode->virt.y = priv->parent_defmode.virt.y;
 	}
 	if (mode->dpp.x == GGI_AUTO) {
-		mode->dpp.x = priv->parent_mode.dpp.x;
+		mode->dpp.x = priv->parent_defmode.dpp.x;
 	}
 	if (mode->dpp.y == GGI_AUTO) {
-		mode->dpp.y = priv->parent_mode.dpp.y;
+		mode->dpp.y = priv->parent_defmode.dpp.y;
 	}
 	if (mode->size.x == GGI_AUTO) {
-		mode->size.x = priv->parent_mode.size.x;
+		mode->size.x = priv->parent_defmode.size.x;
 	}
 	if (mode->size.y == GGI_AUTO) {
-		mode->size.y = priv->parent_mode.size.y;
+		mode->size.y = priv->parent_defmode.size.y;
 	}
 	if (mode->frames == GGI_AUTO) {
 		mode->frames = 1;
@@ -417,7 +417,7 @@ int GGI_palemu_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 	 */
 	par_mode = *mode;
 
-	par_mode.graphtype = priv->parent_mode.graphtype;
+	par_mode.graphtype = priv->parent_defmode.graphtype;
 
 	tmperr = ggiCheckMode(priv->parent, &par_mode);
 	if (tmperr) err = tmperr;

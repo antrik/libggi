@@ -1,4 +1,4 @@
-/* $Id: palemu.h,v 1.11 2007/03/03 18:19:12 soyt Exp $
+/* $Id: palemu.h,v 1.12 2007/04/25 00:28:24 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: palette emulation on true color modes
@@ -78,6 +78,7 @@ typedef struct ggi_palemu_priv {
 
 	ggi_visual_t parent;
 	ggi_mode parent_mode;
+	ggi_mode parent_defmode;
 
 	ggi_coord size;
 	ggi_coord accuracy;

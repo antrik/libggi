@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.30 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.31 2007/04/25 00:28:24 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -212,7 +212,7 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	DPRINT("display-palemu: parent mode is '%s'\n",
 		  options[OPT_PARENT].result);
-	ggiParseMode(options[OPT_PARENT].result, &priv->parent_mode);
+	ggiParseMode(options[OPT_PARENT].result, &priv->parent_defmode);
 
 	DPRINT("display-palemu: opening target: %s\n", target);
 	priv->parent = ggNewStem(NULL);
@@ -451,7 +451,7 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 
 	/* set defaults */
-	priv->parent_mode.graphtype = GT_TEXT16;
+	priv->parent_defmode.graphtype = GT_TEXT16;
 	priv->flags = 0;
 	priv->squish.x = priv->squish.y = 1;
 
