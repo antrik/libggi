@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.14 2006/08/25 12:52:33 pekberg Exp $
+/* $Id: crossblit.c,v 1.15 2007/04/25 07:29:12 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -99,7 +99,7 @@ crossblit_8_to_8(struct ggi_visual *src, int sx, int sy, int w, int h,
 	} while (0);
 
 	srcp = (uint8_t*)LIBGGI_CURREAD(src)  + srcstride*sy + sx;
-	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx*2;
+	dstp = (uint8_t*)LIBGGI_CURWRITE(dst) + dststride*dy + dx;
 
 	srcstride -= w;
 	dststride -= w;
