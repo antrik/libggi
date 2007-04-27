@@ -632,7 +632,7 @@ Every colormap function respect the standard ggi return policy which
 is:
 - 0 on normal completion
 - >0 when giving additional hints or returning nonnegative integer data
-- <0 for errors, see :man:`ggi-error(3)`
+- <0 for errors, see :man:`gg-error(3)`
 
 
 Structure Members

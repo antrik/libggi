@@ -43,7 +43,7 @@ be called as many times as `ggiInit` has been called beforehand.
 Return value
 ------------
 
-`ggiInit` returns `0` for OK, otherwise a :man:`ggi-error(3)` code.
+`ggiInit` returns `0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 `ggiExit` returns:
@@ -58,7 +58,7 @@ Return value
     `ggiInit`'s will return `1`.
 
 `<0`
-    :man:`ggi-error(3)`, especially if more `ggiExit` calls have been done than
+    :man:`gg-error(3)`, especially if more `ggiExit` calls have been done than
     `ggiInit` calls.
     
 
@@ -397,7 +397,7 @@ Return value
 ------------
 
 `ggiSetMode` returns `0` if the mode is set successfully, otherwise an
-:man:`ggi-error(3)` code.
+:man:`gg-error(3)` code.
 
 
 Notes
@@ -494,7 +494,7 @@ enough.
 See Also
 --------
 
-:man:`libggi(7)`, :man:`ggi-error(3)`
+:man:`libggi(7)`, :man:`gg-error(3)`
 
 
 
@@ -560,7 +560,7 @@ Return value
 ------------
 
 The `ggiSet*Frame` functions return `0` if they succeed, and an
-:man:`ggi-error(3)` on failure.
+:man:`gg-error(3)` on failure.
 
 
 The `ggiGet*Frame` functions never fail.
@@ -661,7 +661,7 @@ Return value
 
 
 `ggiUnmapPixel`, `ggiPackColors` and `ggiUnpackPixels` returns `0`
-for OK, otherwise a :man:`ggi-error(3)` code.
+for OK, otherwise a :man:`gg-error(3)` code.
 
 
 See Also
@@ -714,10 +714,10 @@ Return value
 ------------
 
 `ggiSetPalette` returns the number of the first entry changed.
-`<0` indicate a :man:`ggi-error(3)`.
+`<0` indicate a :man:`gg-error(3)`.
 
 
-`ggiGetPalette` returns `0` for OK, otherwise a :man:`ggi-error(3)`
+`ggiGetPalette` returns `0` for OK, otherwise a :man:`gg-error(3)`
 code. When called with len=0 this function will not automatically
 succeed, but the return code will indicate whether there is a
 readable CLUT.
@@ -774,7 +774,7 @@ Return value
 
 
 `ggiSetColorfulPalette` returns the number of the first entry changed.
-`<0` indicate a :man:`ggi-error(3)`.
+`<0` indicate a :man:`gg-error(3)`.
 
 
 See Also
@@ -838,7 +838,7 @@ integers referenced by :p:`max_w` and :p:`max_r`).  This must be
 done once for each channel.  The parameter :p:`bitmeaning` should be
 set to the bit meaning (e.g. `GGI_BM_TYPE_COLOR` | `GGI_BM_SUB_BLUE`) of
 the channel of which you are inquiring.  If `ggiGammaMax` returns an
-:man:`ggi-error(3)`, you cannot set the gamma map on this visual. 
+:man:`gg-error(3)`, you cannot set the gamma map on this visual. 
 If `ggiGammaMax` succeeds, but :p:`max_w` is -1 on return, this means
 that `ggiSetGamma` will work, but that `ggiSetGammaMap` will not.
 
@@ -852,7 +852,7 @@ Return value
 ------------
 
 
-All five functions `0` for OK, otherwise a :man:`ggi-error(3)` code.
+All five functions `0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 
@@ -987,7 +987,7 @@ Return value
 ------------
 
 
-Both functions `0` for OK, ggiSetGCClipping returns a :man:`ggi-error(3)`.
+Both functions `0` for OK, ggiSetGCClipping returns a :man:`gg-error(3)`.
 
 
 
@@ -1289,7 +1289,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise a :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 See Also
@@ -1336,7 +1336,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise a :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 See Also
@@ -1405,7 +1405,7 @@ Return value
 ------------
 
 
-`0` for OK, otherwise a :man:`ggi-error(3)` code.
+`0` for OK, otherwise a :man:`gg-error(3)` code.
 
 
 Examples
@@ -1544,7 +1544,7 @@ Return Value
 
 
 `ggiSetFlags`, `ggiAddFlags`, and `ggiRemoveFlags` return `0` on
-success, a :man:`ggi-error(3)` code on failure.  This will only
+success, a :man:`gg-error(3)` code on failure.  This will only
 happen if the failure of a target to support the addition or
 removal of a flag will cause the target to behave in a way that
 the application is not expecting.  As of this writing there are no
@@ -1791,7 +1791,7 @@ Return Value
 
 
 `ggiResourceAcquire` and `ggiResourceRelease` return `0` on success,
-an :man:`ggi-error(3)` code on failure.
+an :man:`gg-error(3)` code on failure.
 
 
 `ggiResourceMustAcquire` is simply a macro that returns true if the
