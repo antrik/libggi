@@ -1,4 +1,4 @@
-.TH "ggiResourceAcquire" 3 "2007-04-19" "libggi-current" GGI
+.TH "ggiResourceAcquire" 3 "2007-04-27" "libggi-current" GGI
 .SH NAME
 \fBggiResourceAcquire\fR, \fBggiResourceRelease\fR, \fBggiResourceMustAcquire\fR : Acquire and release a LibGGI resource
 .SH SYNOPSIS
@@ -33,7 +33,7 @@ write access to the resource
 resource needs to be acquired before using.
 .SH RETURN VALUE
 \fBggiResourceAcquire\fR and \fBggiResourceRelease\fR return \fB0\fR on success,
-an \f(CWggi-error(3)\fR code on failure.
+an \f(CWgg-error(3)\fR code on failure.
 
 \fBggiResourceMustAcquire\fR is simply a macro that returns true if the
 resource must be explicitly acquired and released, or false if not.
