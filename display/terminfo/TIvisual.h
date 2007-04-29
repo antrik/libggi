@@ -1,4 +1,4 @@
-/* $Id: TIvisual.h,v 1.10 2007/02/25 18:58:30 cegger Exp $
+/* $Id: TIvisual.h,v 1.11 2007/04/29 06:58:06 cegger Exp $
  *
  * Copyright 1998 MenTaLguY - mentalg@geocities.com
  *
@@ -56,7 +56,7 @@ struct TIhooks {
 	int virgin;
 	chtype color16_table[256];
 	chtype charmap[256];
-	struct gg_module *inp;
+	struct gg_plugin *inp;
 
 	PHYSZ_DATA
 };

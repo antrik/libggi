@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.24 2007/03/11 21:54:44 soyt Exp $
+/* $Id: visual.c,v 1.25 2007/04/29 06:58:06 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -310,7 +310,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* event management */
 	do {
-		struct gg_instance *inp = NULL;
+		struct gg_plugin *inp = NULL;
 		struct gg_api *api;
 		gii_terminfo_arg _args;
 
