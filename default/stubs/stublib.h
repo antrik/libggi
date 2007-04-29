@@ -1,4 +1,4 @@
-/* $Id: stublib.h,v 1.2 2002/09/08 21:37:44 soyt Exp $
+/* $Id: stublib.h,v 1.3 2007/04/29 07:02:41 cegger Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -42,6 +42,11 @@ ggifunc_gethline	_GGI_stubs_L1_gethline;
 ggifunc_gethline	_GGI_stubs_L2_gethline;
 ggifunc_gethline	_GGI_stubs_L3_gethline;
 ggifunc_gethline	_GGI_stubs_L4_gethline;
+
+ggifunc_gethline	_GGI_stubs_L1_gethline_nc;
+ggifunc_gethline	_GGI_stubs_L2_gethline_nc;
+ggifunc_gethline	_GGI_stubs_L3_gethline_nc;
+ggifunc_gethline	_GGI_stubs_L4_gethline_nc;
 
 ggifunc_getvline	_GGI_stubs_L1_getvline;
 ggifunc_getvline	_GGI_stubs_L2_getvline;
