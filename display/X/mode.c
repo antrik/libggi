@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.69 2007/04/22 17:55:04 mooz Exp $
+/* $Id: mode.c,v 1.70 2007/04/29 06:53:37 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -707,8 +707,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	/* Tell inputlib about the new window */
 	if (priv->inp) {
 		struct gii_xwin_cmddata_setparam data;
+#if 0
 		struct gii_xwin_cmddata_pointer  dataptr;
-
+#endif
 
 
 		if(priv->use_Xext & GGI_X_USE_VIDMODE) {	
@@ -727,41 +728,6 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		
 		ggControl(priv->inp->channel, GII_CMDCODE_XWINSETPARAM,
 		    &data);
-		
-#if 0
-FIXME
-		gii_event ev;
-		gii_xwin_cmddata_setparam data;
-
-		DPRINT_MODE("X (setmode): tell inputlib about new window\n");
-
-		ev.cmd.size = sizeof(gii_cmd_event);
-		ev.cmd.type = evCommand;
-		ev.cmd.target = priv->inp->origin;
-		ev.cmd.code = GII_CMDCODE_XWINSETPARAM;
-		data.win = priv->win;
-		if (data.win == None) {
-			data.win = priv->parentwin;
-		}
-		data.ptralwaysrel = 0;
-		data.parentwin = priv->parentwin;
-
-		/* Assure aligned memory access. Some platforms
-		 * (i.e. NetBSD/sparc64) rely on this.
-		 */
-		memcpy(ev.cmd.data, &data,
-		       sizeof(gii_xwin_cmddata_setparam));
-
-		DPRINT_MODE("X (setmode): sending event to gii\n");
-		giiEventSend(priv->inp, &ev);
-
-		if(priv->use_Xext & GGI_X_USE_VIDMODE) {	
-			/* Grab pointers */
-			DPRINT_MODE("X (setmode): grab pointers\n");
-			ev.cmd.code = GII_CMDCODE_PREFER_RELPTR;
-			giiEventSend(priv->inp, &ev);
-		}
-#endif
 	}
 
 	DPRINT_MODE("X (setmode): set dirty region\n");
