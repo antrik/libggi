@@ -1,4 +1,4 @@
-/* $Id: lin4rlib.h,v 1.3 2007/01/23 10:57:22 pekberg Exp $
+/* $Id: lin4rlib.h,v 1.4 2007/04/29 07:05:06 cegger Exp $
 ******************************************************************************
 
    linear-4 sublib function prototypes
@@ -49,6 +49,7 @@ ggifunc_drawhline_nc	GGI_lin4r_drawhline_nc;
 ggifunc_drawhline	GGI_lin4r_drawhline;
 ggifunc_puthline	GGI_lin4r_packed_puthline;
 ggifunc_gethline	GGI_lin4r_packed_gethline;
+ggifunc_gethline	GGI_lin4r_packed_gethline_nc;
 ggifunc_puthline	GGI_lin4r_unpacked_puthline;
 ggifunc_gethline	GGI_lin4r_unpacked_gethline;
 
