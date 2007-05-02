@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2007/05/02 07:12:17 pekberg Exp $
+/* $Id: hline.c,v 1.4 2007/05/02 07:14:15 pekberg Exp $
 ******************************************************************************
 
    Linear 2 horizontal lines.
@@ -193,6 +193,9 @@ GGI_lin2_packed_gethline_nc(struct ggi_visual *vis,
 		memcpy(buff, adr, (w + 3) >> 2);
 		return 0;
 	}
+
+	if (x < 0)
+		--adr;
 
 	j = i + (w << 1) - 8;
 	*buff = *adr++ << i;
