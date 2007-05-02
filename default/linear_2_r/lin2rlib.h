@@ -1,4 +1,4 @@
-/* $Id: lin2rlib.h,v 1.2 2007/01/23 13:07:29 pekberg Exp $
+/* $Id: lin2rlib.h,v 1.3 2007/05/02 07:23:15 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -51,6 +51,7 @@ ggifunc_getpixel	GGI_lin2r_getpixela;
 ggifunc_drawhline_nc	GGI_lin2r_drawhline_nc;
 ggifunc_drawhline	GGI_lin2r_drawhline;
 ggifunc_puthline	GGI_lin2r_packed_puthline;
+ggifunc_gethline_nc	GGI_lin2r_packed_gethline_nc;
 ggifunc_gethline	GGI_lin2r_packed_gethline;
 ggifunc_puthline	GGI_lin2r_unpacked_puthline;
 ggifunc_gethline	GGI_lin2r_unpacked_gethline;
