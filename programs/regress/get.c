@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.5 2007/04/05 10:59:23 pekberg Exp $
+/* $Id: get.c,v 1.6 2007/05/02 14:06:06 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -18,12 +18,19 @@
 
 
 #include "config.h"
+
+#ifndef HAVE_RANDOM
+#define random  rand
+#define srandom srand
+#endif
+
 #include <ggi/internal/ggi.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
 #include <ggi/errors.h>
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "testsuite.inc.c"
