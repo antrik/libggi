@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2007/01/23 14:58:49 pekberg Exp $
+/* $Id: hline.c,v 1.3 2007/05/02 07:12:17 pekberg Exp $
 ******************************************************************************
 
    Linear 2 horizontal lines.
@@ -172,7 +172,7 @@ GGI_lin2_packed_puthline(struct ggi_visual *vis,
 }
 
 int
-GGI_lin2_packed_gethline(struct ggi_visual *vis,
+GGI_lin2_packed_gethline_nc(struct ggi_visual *vis,
 	int x, int y, int w, void *buffer)
 { 
 	uint8_t *adr;
@@ -209,5 +209,85 @@ GGI_lin2_packed_gethline(struct ggi_visual *vis,
 	if (j)
 		*buff |= *adr >> (8 - i);
   
+	return 0;
+}
+
+int
+GGI_lin2_packed_gethline(struct ggi_visual *vis,
+	int x, int y, int w, void *buffer)
+{ 
+	uint8_t *adr;
+	uint8_t *buff = (uint8_t *)buffer;
+	int i, j;
+	uint8_t pixels;
+	uint8_t mask;
+
+	if (y < 0 || y >= LIBGGI_VIRTY(vis))
+		return 0;
+
+	i = (x & 3) << 1;
+	if (x < 0) {
+		w -= -x;
+		buff += -x >> 2;
+		x = 0;
+	}
+	if (x + w > LIBGGI_VIRTX(vis))
+		w = LIBGGI_VIRTX(vis) - x;
+	if (w <= 0)
+		return 0;
+	
+	PREPARE_FB(vis);
+
+	adr = (uint8_t *)LIBGGI_CURREAD(vis) +
+		(x >> 2) + y * LIBGGI_FB_R_STRIDE(vis);
+
+	if (!i) {
+		j = (w & 3) << 1;
+		memcpy(buff, adr, w >> 2);
+		if (j) {
+			buff += w >> 2;
+			adr += w >> 2;
+			mask = 0xff >> j;
+			*buff &= mask;
+			*buff |= *adr & ~mask;
+		}
+		return 0;
+	}
+
+	if (!x) {
+		/* unaligned clipping to the left */
+		j = (w << 1) - 8;
+		mask = 0xff << i;
+		if (j + 8 <= i) {
+			mask ^= 0xff << (i - j - 8);
+			*buff &= ~mask;
+			*buff |= (*adr >> (8 - i)) & mask;
+			return 0;
+		}
+		*buff &= mask;
+		pixels = *adr++;
+		*buff++ |= (pixels >> (8 - i)) & ~mask;
+	}
+	else {
+		j = i + (w << 1) - 8;
+		pixels = *adr++;
+	}
+
+	for (; j >= i; j -= 8) {
+		*buff = pixels << i;
+		pixels = *adr++;
+		*buff++ |= pixels >> (8 - i);
+	}
+
+	if (j + 8 == i)
+		return 0;
+
+	mask = 0xff << (i - j);
+	*buff &= ~mask;
+	*buff |= (pixels << i) & mask;
+
+	if (j > 0)
+		*buff |= (*adr >> (8 - i)) & mask;
+
 	return 0;
 }
