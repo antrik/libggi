@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.12 2007/03/03 19:36:16 cegger Exp $
+/* $Id: main.c,v 1.13 2007/05/05 08:34:49 cegger Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -30,16 +30,6 @@
 
 #include "rawpict.h"
 #include "warp.h"
-
-static int
-myKbhit(ggi_visual_t vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
-
 
 /* Selects the best display mode for the picture, if possible */
 
@@ -312,11 +302,11 @@ int main(int argc, const char *argv[])
 			else
 				warpfunc = doWarp32bpp;
 
-			while (myKbhit(disp));
+			while (giiKbhit(disp));
 
 			tval = 0;
 
-			while (!myKbhit(disp)) {
+			while (!giiKbhit(disp)) {
 				int32_t xw, yw, cw;
 				char *src, *dest;
 

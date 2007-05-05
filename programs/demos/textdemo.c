@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
+/* $Id: textdemo.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -28,17 +28,6 @@
 
 
 static ggi_visual_t vis;
-
-static int
-myGetc(ggi_visual_t _vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(_vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
 
 int main(int argc, const char *argv[])
 {
@@ -138,7 +127,7 @@ int main(int argc, const char *argv[])
 	ggiPuts(vis, (mode.visible.x - 7) / 2, mode.visible.y / 2, hello);
 	ggiFlush(vis);
 
-	myGetc(vis);
+	giiGetc(vis);
 
 	for (a = 0; a <= 0xff; a++) {
 		ggiSetGCForeground(vis, (unsigned) (a) << 8);
@@ -149,7 +138,7 @@ int main(int argc, const char *argv[])
 		ggUSleep(20000);
 	}
 
-	myGetc(vis);
+	giiGetc(vis);
 
 	ggiSetGCForeground(vis, 1 << 8);
 	for (a = 0; a < mode.visible.y; a++) {
@@ -211,7 +200,7 @@ int main(int argc, const char *argv[])
 	}
 #endif
 
-	myGetc(vis);
+	giiGetc(vis);
 
 	ggDelStem(vis);
 	ggiExit();

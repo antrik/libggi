@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.13 2007/03/03 19:36:16 cegger Exp $
+/* $Id: stars.c,v 1.14 2007/05/05 08:34:48 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -68,26 +68,6 @@ static ggi_visual_t InitVisual(const char *visname);
 static void CleanUp(void);
 static void InitStars(void);
 static void Transform(int *ta, int *tb);
-
-static int
-myKbhit(ggi_visual_t _vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
-
-static int
-myGetc(ggi_visual_t _vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(_vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
 
 int main(int argc, const char *argv[])
 {
@@ -161,8 +141,8 @@ int main(int argc, const char *argv[])
 		angle += speed;
 		head = (head + 1) % 60;
 		tail = (tail + 1) % 60;
-		if (myKbhit(curvis)) {
-			int key = myGetc(curvis);
+		if (giiKbhit(curvis)) {
+			int key = giiGetc(curvis);
 
 			switch (key) {
 			case ' ':

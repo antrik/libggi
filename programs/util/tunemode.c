@@ -1,4 +1,4 @@
-/* $Id: tunemode.c,v 1.9 2007/03/03 19:10:53 cegger Exp $
+/* $Id: tunemode.c,v 1.10 2007/05/05 08:34:49 cegger Exp $
 ***********************************************************************
 
    Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
@@ -314,7 +314,7 @@ void interactive(int wantx, int wanty)
 
 		testpic(&trymode, mmode);
 	      retry:
-		switch ((y = ggiGetc(vis)) | mmode) {
+		switch ((y = giiGetc(vis)) | mmode) {
 		case MM_MOVE | GIIK_Left:
 			if (trymode.x.syncend + 8 < trymode.x.total) {
 				trymode.x.syncstart += 8;

@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.15 2007/03/03 19:27:34 cegger Exp $
+/* $Id: showaccel2.c,v 1.16 2007/05/05 08:34:43 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -47,14 +47,6 @@ TODO: notify on exit (terminate with single keystroke then print final ratio.
 #include <unistd.h>
 
 static ggi_visual_t vis;
-
-static int myKbhit(ggi_visual_t _vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
 
 /* wrapper function for easy porting. returns a number between
  * 0 and max-1 (including borders).
@@ -255,8 +247,7 @@ int main(int argc, const char *argv[])
 					}
 					/* bail out if user hit a key
 					 */
-					if (myKbhit(vis))
-					{
+					if (giiKbhit(vis)) {
 						break;
 					}
 				}
@@ -295,8 +286,7 @@ int main(int argc, const char *argv[])
 					}
 					/* bail out if user hit a key
 					 */
-					if (myKbhit(vis))
-					{
+					if (giiKbhit(vis)) {
 						break;
 					}
 				}

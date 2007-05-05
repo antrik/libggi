@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.16 2007/03/03 19:36:16 cegger Exp $
+/* $Id: saver.c,v 1.17 2007/05/05 08:34:48 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -28,27 +28,6 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-
-
-static int
-myKbhit(ggi_visual_t vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
-
-static int
-myGetc(ggi_visual_t vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
 
 
 
@@ -141,7 +120,7 @@ static void ge_stars(void)
 	y = 0;
 	da = nda = 0.0;
 	dz = ndz = 0.0;
-	while (!myKbhit(visual)) {
+	while (!giiKbhit(visual)) {
 
 		if (rand01() < 0.001)
 			nda = (rand01() - 0.5) / 200.0;
@@ -212,7 +191,7 @@ static void ge_stars3d(void)
 	y = 0;
 	da = nda = 0.0;
 	dz = ndz = 0.0;
-	while (!myKbhit(visual)) {
+	while (!giiKbhit(visual)) {
 		if (rand01() < 0.001)
 			nda = (rand01() - 0.5) / 500.0;
 		da = (nda + 999.0 * da) / 1000.0;
@@ -281,10 +260,10 @@ static void ge_bounce(void)
 	c = 0;
 	ggiSetGCForeground(visual, c);
 	ggiFillscreen(visual);
-	while (!myKbhit(visual)) {
+	while (!giiKbhit(visual)) {
 		dx = (rand() % 0x1ff) / 255.0 - 1;
 		dy = (rand() % 0x3ff) / 511.0 - 0.3;
-		while (!myKbhit(visual)) {
+		while (!giiKbhit(visual)) {
 			x += dx;
 			y += dy;
 			if (x < 10 || x > xsize - 11) {
@@ -329,7 +308,7 @@ static void ge_crazy(void)
 
 	for (x = -(ysize - 1);;) {
 
-		if (myKbhit(visual))
+		if (giiKbhit(visual))
 			break;
 
 		y = x;
@@ -364,7 +343,7 @@ static void ge_pong(void)
 	dx = 1;
 	dy = 1;
 	while (1) {
-		if (myKbhit(visual))
+		if (giiKbhit(visual))
 			break;
 
 		if (!(x & 3))
@@ -419,7 +398,7 @@ static void ge_pong(void)
 static void ge_vesa_blank(void)
 {
 	ggiMonPower(PWR_STANDBY);
-	while (!myKbhit(visual));
+	while (!giiKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -428,7 +407,7 @@ static void ge_vesa_blank(void)
 static void ge_vesa_blank2(void)
 {
 	ggiMonPower(PWR_SUSPEND);
-	while (!myKbhit(visual));
+	while (!giiKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -437,7 +416,7 @@ static void ge_vesa_blank2(void)
 static void ge_vesa_blank3(void)
 {
 	ggiMonPower(PWR_OFF);
-	while (!myKbhit(visual));
+	while (!giiKbhit(visual));
 	ggiMonPower(PWR_ON);
 }
 
@@ -467,8 +446,8 @@ static void do_saver(void)
 	ggiSetGCForeground(visual, 0);
 	ggiFillscreen(visual);
 	SaverActive->func();
-	while (myKbhit(visual))
-		myGetc(visual);
+	while (giiKbhit(visual))
+		giiGetc(visual);
 }
 
 /* Show the setup-menu.
@@ -532,7 +511,7 @@ static void blank_screen2(int interactive)
 		sprintf(hlpbuf, "+/- Time: %4d minutes", timeout);
 		ggiPuts(visual, 10, 70, hlpbuf);
 		ggiPuts(visual, 10, 100, "Switch away to activate");
-		c = myGetc(visual);
+		c = giiGetc(visual);
 		switch (c) {
 		case '+':
 			if (timeout < 1440)

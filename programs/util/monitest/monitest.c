@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.18 2007/03/03 19:10:54 cegger Exp $
+/* $Id: monitest.c,v 1.19 2007/05/05 08:34:50 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -73,21 +73,10 @@ static void usage(const char *prog)
 	exit(1);
 }
 
-static int
-myGetc(ggi_visual_t _vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(_vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
-
 int waitabit(ggi_visual_t _vis)
 {
 	int key;
-	key = myGetc(_vis);
+	key = giiGetc(_vis);
 
 	if (toupper((uint8_t)key) == 'Q') {
 		/* Q pressed */
@@ -264,7 +253,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screentest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.18 2007/03/03 19:10:54 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.19 2007/05/05 08:34:50 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };

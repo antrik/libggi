@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
+/* $Id: pageflip.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -44,16 +44,6 @@
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
 static ggi_color white = { 0xffff, 0xffff, 0xffff };
-
-static int myGetc(ggi_visual_t vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
 
 static void animate_one_frame(ggi_visual_t vis, int x, int y, int w, int h,
 			      ggi_pixel * buf, int x2)
@@ -278,7 +268,7 @@ int main(int argc, const char *argv[])
 
 			key = giiEventPoll(vis, emKeyPress, &tv);
 			if (key & emKeyPress)
-				c = myGetc(vis);
+				c = giiGetc(vis);
 			ggUSleep(50000);
 			animate(vis, &mode, j);
 			j++;

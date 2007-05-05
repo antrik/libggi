@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.14 2007/03/03 19:36:16 cegger Exp $
+/* $Id: slimy.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -41,27 +41,6 @@ static int height;		/* Visible screen height, in pixels */
 static int show_fps = 0;
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000 };
-
-static int
-myKbhit(ggi_visual_t vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
-
-static int
-myGetc(ggi_visual_t vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead(vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
-
 
 
 static void fail(const char *reason)
@@ -295,8 +274,8 @@ static void RunSpinner(void)
 	a = 0;
 	tt = time(NULL);
 	do {
-		if (myKbhit(disp)) {
-			int key = myGetc(disp);
+		if (giiKbhit(disp)) {
+			int key = giiGetc(disp);
 			if ((key == 'f') || (key == 'F'))
 				show_fps = !show_fps;
 			else

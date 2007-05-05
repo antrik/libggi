@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.36 2007/03/03 19:36:16 cegger Exp $
+/* $Id: demo.c,v 1.37 2007/05/05 08:34:47 cegger Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -106,26 +106,6 @@ static void usage(const char *prog)
 }
 
 
-static int
-ggiKbhit(ggi_visual_t _vis)
-{
-	struct timeval t={0,0};
-
-	return (giiEventPoll((gii_input)_vis, emKeyPress | emKeyRepeat, &t)
-		!= emZero);
-}
-
-static int
-ggiGetc(ggi_visual_t _vis)
-{
-	gii_event ev;
-
-	/* Block until we get a key. */
-	giiEventRead((gii_input)_vis, &ev, emKeyPress | emKeyRepeat);
-
-	return ev.key.sym;
-}
-
 /* Wait for a keypress. Shut down everything, if "q" is pressed.
  */
 static void waitabit(void)
@@ -146,7 +126,7 @@ static void waitabit(void)
 		struct timeval tv={5,0};
 		key=giiEventPoll((gii_input)vis,emKeyPress,&tv);
 		if (! (key & emKeyPress)) return;
-		key = ggiGetc(vis);
+		key = giiGetc(vis);
 #else
 		gii_event ev;
 		ggUSleep(5000000);
@@ -156,11 +136,11 @@ static void waitabit(void)
 		key = ev.key.sym;
 #endif
 	} else {
-		/* ggiGetc will blocking-wait for a keypress.
+		/* giiGetc will blocking-wait for a keypress.
 		 * we ignore modifier keys.
 		 */
 		do {
-			key = ggiGetc(vis);
+			key = giiGetc(vis);
 
 		} while ((key == GIIK_VOID) || (GII_KTYP(key) == GII_KT_MOD));
 	}
@@ -643,10 +623,10 @@ int main(int argc, const char *argv[])
 		ggiPuts(vis, x, y, "ggiPuts test!");
 
 		/* If the user hits a key abort this demo. The key will
-		 * be available for fetching with ggiGetc() what will
+		 * be available for fetching with giiGetc() what will
 		 * happen in waitabit().
 		 */
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("Puts(): %d strings\n", i);
 	ggiSetGCBackground(vis, black);	
@@ -779,7 +759,7 @@ int main(int argc, const char *argv[])
 		 * Take care, this might be expensive ...
 		 */
 		ggiCrossBlit(memvis, 0, 0, 160, 40, vis, x, y);
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("CrossBlit(): %d blits\n", i);
 
@@ -820,7 +800,7 @@ no_mem_targ2:
 		if (y<0) { y=0; dy=-dy; }
 		if (x>(vx-sy_5)) { x=vx-sy_5-1; dx=-dx; }
 		if (y>(vy-sy_5)) { y=vy-sy_5-1; dy=-dy; }
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("DrawBox(): %d boxes\n", i);
 
@@ -844,7 +824,7 @@ no_mem_targ2:
 		{
 			ggiSetOrigin(vis,0,dy);
 			ggUSleep(2000);
-			if (ggiKbhit(vis) || (dx = TestTime()) > 9) break;
+			if (giiKbhit(vis) || (dx = TestTime()) > 9) break;
 		}
 		dx = TestTime();
 		ggiSetOrigin(vis,0,0);
@@ -867,7 +847,7 @@ no_mem_targ2:
 		{
 			ggiSetOrigin(vis,dx,0);
 			ggUSleep(2000);
-			if (ggiKbhit(vis) || (dy = TestTime()) > 9) break;
+			if (giiKbhit(vis) || (dy = TestTime()) > 9) break;
 		}
 		dy = TestTime();
 		ggiSetOrigin(vis,0,0);
@@ -901,7 +881,7 @@ no_mem_targ2:
 			 */
 			ggiDrawHLine(vis, i, i, sx/2);
 		}
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("DrawHLine(): %d lines\n", c);
 
@@ -930,7 +910,7 @@ no_mem_targ2:
 			 */
 			ggiDrawVLine(vis, sx-i-1, i, sy_5);
 		}
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("DrawVLine(): %d lines\n", c);
 
@@ -1052,7 +1032,7 @@ no_mem_targ2:
 
 		ggiSetGCForeground(vis, ggiMapColor(vis, &col));
 		ggiDrawBox(vis, x, y, w, h);
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("Boxes(): %d boxes\n", i);
 
@@ -1076,7 +1056,7 @@ no_mem_targ2:
 
 		ggiSetGCForeground(vis, ggiMapColor(vis, &col));
 		ggiDrawLine(vis, x, y, w, h);
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 	printf("Lines(): %d lines\n", i);
 
@@ -1091,7 +1071,7 @@ no_mem_targ2:
 		for (i=0; (i < sy_5) && (TestTime() < 4); i++) {
 			ggiCopyBox(vis, /* from */ sx_5*2, sy_5*2, sx_5*2, sy_5*2,
 				   /* to */ sx_5*2, sy_5*2 - 1);
-			if (ggiKbhit(vis)) goto copybox_end;
+			if (giiKbhit(vis)) goto copybox_end;
 		}
 		count += i;
 		if (TestTime() >= 4) break;
@@ -1099,7 +1079,7 @@ no_mem_targ2:
 		for (i=0; (i < sx_5) && (TestTime() < 4); i++) {
 			ggiCopyBox(vis, /* from */ sx_5, sy_5, sx_5*2, sy_5*2,
 				   /* to */ sx_5 - 1, sy_5);
-			if (ggiKbhit(vis)) goto copybox_end;
+			if (giiKbhit(vis)) goto copybox_end;
 		}
 		count += i;
 		if (TestTime() >= 4) break;
@@ -1107,7 +1087,7 @@ no_mem_targ2:
 		for (i=0; (i < sx_5) && (TestTime() < 4); i++) {
 			ggiCopyBox(vis, /* from */ 10, sy_5*2, sx_5*2, sy_5*2,
 				   /* to */ 11, sy_5*2);
-			if (ggiKbhit(vis)) goto copybox_end;
+			if (giiKbhit(vis)) goto copybox_end;
 		}
 		count += i;
 		if (TestTime() >= 4) break;
@@ -1115,7 +1095,7 @@ no_mem_targ2:
 		for (i=0; (i < sy_5) && (TestTime() < 4); i++) {
 			ggiCopyBox(vis, /* from */ sx_5, 0, sx_5*2, sy_5*2,
 				   /* to */ sx_5, 1);
-			if (ggiKbhit(vis)) goto copybox_end;
+			if (giiKbhit(vis)) goto copybox_end;
 		}
 		count += i;
 	}
@@ -1228,7 +1208,7 @@ no_mem_targ2:
 				linestart = (uint8_t *)dbuf->write + 
 					stride2 * i + stride * y;
 				x = 0;
-				if (ggiKbhit(vis)) goto dbuf_tidy;
+				if (giiKbhit(vis)) goto dbuf_tidy;
 				while (x < vx * (signed)GT_SIZE(type)/wordsize) {
 					switch(wordsize) {
 					case 32:
@@ -1250,7 +1230,7 @@ no_mem_targ2:
 		while (TestTime() < 10) {
 			uint8_t *linestart;
 
-			if (ggiKbhit(vis)) goto dbuf_tidy;
+			if (giiKbhit(vis)) goto dbuf_tidy;
 
 			i = random() % numplanes;
 			y = random() % vy;
@@ -1288,7 +1268,7 @@ no_mem_targ2:
 			while (TestTime() < 10) {
 				uint8_t *linestart;
 
-				if (ggiKbhit(vis)) goto dbuf_end;
+				if (giiKbhit(vis)) goto dbuf_end;
 
 				i = random() % numplanes;
 				y = (sy - dy) / 2 + random() % dy;
@@ -1362,7 +1342,7 @@ no_mem_targ2:
 		/* This will only _force_ an update every 1024 boxes.
 		 */
 		if ((i & 0x3ff)==0x3ff) ggiFlush(vis);
-		if (ggiKbhit(vis)) break;
+		if (giiKbhit(vis)) break;
 	}
 
  palette:
@@ -1383,7 +1363,7 @@ no_mem_targ2:
 			ggiSetPalette(vis, 0, 1<<depth, cols+(i&0xff));
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) break;
+			if (giiKbhit(vis)) break;
 		}
 
 		ggiSetPalette(vis, 0, 1<<depth, pal);
@@ -1401,7 +1381,7 @@ no_mem_targ2:
 			ggiSetGamma(vis, gr, gb, gg);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) goto gamma_done;
+			if (giiKbhit(vis)) goto gamma_done;
 		}
 		for (gr = 0.1; 
 		     (gr < 1.0) && (TestTime() < 10); 
@@ -1409,7 +1389,7 @@ no_mem_targ2:
 			ggiSetGamma(vis, gr, 0.1, 0.1);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) goto gamma_done;
+			if (giiKbhit(vis)) goto gamma_done;
 		}
 		for (gb = 0.1; 
 		     (gb < 1.0) && (TestTime() < 10); 
@@ -1417,7 +1397,7 @@ no_mem_targ2:
 			ggiSetGamma(vis, 1.0, gb, 0.1);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) goto gamma_done;
+			if (giiKbhit(vis)) goto gamma_done;
 		}
 		for (gg = 0.1; 
 		     (gg < 1.0) && (TestTime() < 10); 
@@ -1425,7 +1405,7 @@ no_mem_targ2:
 			ggiSetGamma(vis, 1.0, 1.0, gg);
 			ggiFlush(vis);
 			ggUSleep(20000);
-			if (ggiKbhit(vis)) goto gamma_done;
+			if (giiKbhit(vis)) goto gamma_done;
 		}
 	gamma_done:
 		ggiSetGamma(vis, 1.0, 1.0, 1.0);

@@ -1,4 +1,4 @@
-/* $Id: kgitune.c,v 1.2 2007/03/05 19:49:59 cegger Exp $
+/* $Id: kgitune.c,v 1.3 2007/05/05 08:34:49 cegger Exp $
 ******************************************************************************
 
    Tuning of KGIcon monitor timings
@@ -272,7 +272,7 @@ interactive(ggi_visual *vis)
 	trymode = origmode = curtiming;
 
 	do {
-		c = ggiGetc(vis);
+		c = giiGetc(vis);
 		if (calc_change(&trymode, mode, c)) {
 			do_change(vis, &trymode);
 		} else {
