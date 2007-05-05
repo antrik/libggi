@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.14 2007/04/23 07:59:43 cegger Exp $
+/* $Id: dbe.c,v 1.15 2007/05/05 18:59:47 mooz Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -41,7 +41,7 @@ static void GGI_DBE_swap(struct ggi_visual *vis)
 	/* Set swapping informations */
 	swapInfo.swap_window = priv->win;
 	swapInfo.swap_action = XdbeUndefined;
-	
+
 	XdbeSwapBuffers(priv->disp, &swapInfo, 1); /* Swap buffer */
 }
 

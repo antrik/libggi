@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.52 2007/04/22 17:55:04 mooz Exp $
+/* $Id: shm.c,v 1.53 2007/05/05 18:59:47 mooz Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -111,12 +111,12 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
 
-	if(priv->swapdrawable)
-		priv->swapdrawable(vis);
-
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
+	if(priv->swapdrawable)
+		priv->swapdrawable(vis);
+
 	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	if (priv->opmansync) MANSYNC_cont(vis);
 	return 0;

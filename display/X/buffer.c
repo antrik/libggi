@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.40 2007/04/22 17:55:04 mooz Exp $
+/* $Id: buffer.c,v 1.41 2007/05/05 18:59:47 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -498,12 +498,12 @@ int GGI_X_flush_ximage_child(struct ggi_visual *vis,
 		GGI_X_CLEAN(vis, x, y, w, h);
 	}
 
-	if(priv->swapdrawable)
-		priv->swapdrawable(vis);
-
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
+	if(priv->swapdrawable)
+		priv->swapdrawable(vis);
+
 	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	if (priv->opmansync && mansync) MANSYNC_cont(vis);
 	return 0;
