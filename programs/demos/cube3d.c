@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.27 2007/04/17 04:54:15 cegger Exp $
+/* $Id: cube3d.c,v 1.28 2007/05/05 15:04:28 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -832,7 +832,8 @@ int main(int argc, const char *argv[])
 
 	for (x = 0; x < 6; x++) {
 		char text[1024];
-		char envtext[1024];
+		static char display[1024];
+		static char defmode[1024];
 		size_t memlen;
 
 		/* First check for arguments.
@@ -909,14 +910,12 @@ int main(int argc, const char *argv[])
 		snprintf(text, sizeof(text),
 			 "display-memory:-input:keyfile:%lu:%d:%s",
 			(unsigned long)memlen, x, "/dev/null");
-		snprintf(envtext, sizeof(envtext), "GGI_DISPLAY=%s", text);
-		putenv(envtext);
-		setenv("GGI_DISPLAY",text,1);
+		snprintf(display, sizeof(display), "GGI_DISPLAY=%s", text);
+		putenv(display);
 
 		ggiSNPrintMode(text, sizeof(text), &submode[x]);
-		snprintf(envtext, sizeof(envtext), "GGI_DEFMODE=%s", text);
-		putenv(envtext);
-		setenv("GGI_DEFMODE",text,1);
+		snprintf(defmode, sizeof(defmode), "GGI_DEFMODE=%s", text);
+		putenv(defmode);
 
 		if (progarg < argc) {
 			printf("face %d execing: %s\n", x, argv[progarg]);
