@@ -75,20 +75,6 @@ man_MANS = \
            ggiResourceMustAcquire.3 \
            ggiDBGetNumBuffers.3 \
            ggiDBGetBuffer.3 \
-           ggiJoinInputs.3 \
-           ggiEventPoll.3 \
-           ggiEventSelect.3 \
-           ggiEventsQueued.3 \
-           ggiEventRead.3 \
-           ggiSetEventMask.3 \
-           ggiGetEventMask.3 \
-           ggiAddEventMask.3 \
-           ggiRemoveEventMask.3 \
-           ggiGetInput.3 \
-           ggiDetachInput.3 \
-           ggiEventSend.3 \
-           ggiGetc.3 \
-           ggiKbhit.3 \
            ggi_mode.3 \
            ggi_coord.3 \
            ggi_graphtype.3 \
