@@ -1,6 +1,6 @@
-.TH "ggiParseMode" 3 "2007-05-05" "libggi-current" GGI
+.TH "ggiParseMode" 3 "2007-05-06" "libggi-current" GGI
 .SH NAME
-\fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSPrintMode\fR, \fBggiSNPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
+\fBggiParseMode\fR, \fBggiPrintMode\fR, \fBggiSNPrintMode\fR, \fBggiFPrintMode\fR : Parse and print formatted strings specifying modes
 .SH SYNOPSIS
 .nb
 .nf
@@ -11,8 +11,6 @@ int ggiParseMode(const char *s, ggi_mode *m);
 
 #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
-int ggiSPrintMode(char *s, const ggi_mode *m);
-
 int ggiSNPrintMode(char *s, size_t n, const ggi_mode *m);
 
 int ggiFPrintMode(FILE *s, const ggi_mode *m);
@@ -22,19 +20,17 @@ int ggiFPrintMode(FILE *s, const ggi_mode *m);
 \fBggiParseMode\fR parses a string into a \fBggi_mode(3)\fR.
 
 The \fBggi*PrintMode\fR functions print all the members of \fBggi_mode(3)\fR in a
-human-readable form.  \fBggiSPrintMode\fR outputs to a preallocated string
+human-readable form.  \fBggiSNPrintMode\fR outputs to a preallocated string
 buffer, \fBggiFPrintMode\fR outputs to a stdio \fBFILE\fR, and \fBggiPrintMode\fR
-outputs to standard output.  \fBggiSNPrintMode\fR works like
-\fBggiSNPrintMode\fR but it will make sure that no more than \fIn\fR chars
-are written, including the trailing 0. These functions correspond to
-\f(CWsprintf(3)\fR, \f(CWfprintf(3)\fR, \f(CWprintf(3)\fR
-\f(CWsnprintf(3)\fR respectively.
+outputs to standard output.  \fBggiSNPrintMode\fR makes sure that no more
+than \fIn\fR chars are written, including the trailing 0. These functions
+correspond to \f(CWsnprintf(3)\fR, \f(CWfprintf(3)\fR, \f(CWprintf(3)\fR.
 
 The format of the string used by these functions is exactly the same
 as the one used in the \fBGGI_DEFMODE\fR environment variable described in
 \f(CWlibggi(7)\fR.
 
-The string returned by both \fBggiSPrintMode\fR and \fBggiFPrintMode\fR
+The string returned by both \fBggiSNPrintMode\fR and \fBggiFPrintMode\fR
 does \fInot\fR contain a trailing newline.
 .SH RETURN VALUE
 \fBggiParseMode\fR returns:
