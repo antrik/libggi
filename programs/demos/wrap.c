@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.26 2007/03/11 21:54:44 soyt Exp $
+/* $Id: wrap.c,v 1.27 2007/05/06 05:27:32 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -95,7 +95,8 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 #endif
 	size_t bufsize;
 	char text[128];
-	char envtext[182 + 14];
+	static char display[182 + 14];
+	static char defmode[182 + 14];
 
 	/* initialize the connection
 	 */
@@ -142,14 +143,16 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 
 	/* start the program
 	 */
-	snprintf(text, sizeof(text), "display-ipc:-input -socket=%s -semid=%i -shmid=%i",
+	snprintf(text, sizeof(text),
+		"display-ipc:-input -socket=%s -semid=%i -shmid=%i",
 		client->socket, client->semid, client->shmid);
-	snprintf(envtext, sizeof(envtext), "GGI_DISPLAY=%s", text);
-	putenv(envtext);
+	snprintf(display, sizeof(display), "GGI_DISPLAY=%s", text);
+	putenv(display);
 
-	ggiSPrintMode(text, mode);
-	snprintf(envtext, sizeof(envtext), "GGI_DEFMODE=%s", text);
-	putenv(envtext);
+	ggiSNPrintMode(text, sizeof(text), mode);
+	snprintf(defmode, sizeof(defmode), "GGI_DEFMODE=%s", text);
+	putenv(defmode);
+
 	client->pid = fork();
 	if (client->pid == -1) {
 		perror("fork");
