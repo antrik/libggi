@@ -419,7 +419,7 @@ See Also
 Parse and print formatted strings specifying modes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. manpage:: 3 ggiParseMode ggiPrintMode ggiSPrintMode ggiSNPrintMode ggiFPrintMode
+.. manpage:: 3 ggiParseMode ggiPrintMode ggiSNPrintMode ggiFPrintMode
 
 
 Synopsis
@@ -434,8 +434,6 @@ Synopsis
 
   #define ggiPrintMode(m) ggiFPrintMode(stdout,(m))
 
-  int ggiSPrintMode(char *s, const ggi_mode *m);
-
   int ggiSNPrintMode(char *s, size_t n, const ggi_mode *m);
 
   int ggiFPrintMode(FILE *s, const ggi_mode *m);
@@ -448,20 +446,18 @@ Description
 
 
 The `ggi*PrintMode` functions print all the members of `ggi_mode` in a
-human-readable form.  `ggiSPrintMode` outputs to a preallocated string
+human-readable form.  `ggiSNPrintMode` outputs to a preallocated string
 buffer, `ggiFPrintMode` outputs to a stdio `FILE`, and `ggiPrintMode`
-outputs to standard output.  `ggiSNPrintMode` works like
-`ggiSNPrintMode` but it will make sure that no more than :p:`n` chars
-are written, including the trailing 0. These functions correspond to
-:man:`sprintf(3)`, :man:`fprintf(3)`, :man:`printf(3)`
-:man:`snprintf(3)` respectively.
+outputs to standard output.  `ggiSNPrintMode` makes sure that no more
+than :p:`n` chars are written, including the trailing 0. These functions
+correspond to :man:`snprintf(3)`, :man:`fprintf(3)`, :man:`printf(3)`.
 
 
 The format of the string used by these functions is exactly the same
 as the one used in the `GGI_DEFMODE` environment variable described in
 :man:`libggi(7)`.
 
-The string returned by both `ggiSPrintMode` and `ggiFPrintMode`
+The string returned by both `ggiSNPrintMode` and `ggiFPrintMode`
 does *not* contain a trailing newline.
 
 Return value
