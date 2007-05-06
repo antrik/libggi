@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2007/03/05 19:49:59 cegger Exp $
+/* $Id: mode.c,v 1.27 2007/05/06 05:43:45 cegger Exp $
 ******************************************************************************
 
    This is a regression-test for mode handling.
@@ -495,9 +495,12 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 
 		match = err == GGI_OK;
 		if (match != tests[i].match) {
-			ggiSPrintMode(request_mode, &tests[i].mode);
-			ggiSPrintMode(expect_mode, &modes[tests[i].exp_mode]);
-			ggiSPrintMode(return_mode, &mp.mode);
+			ggiSNPrintMode(request_mode, sizeof(request_mode),
+					&tests[i].mode);
+			ggiSNPrintMode(expect_mode, sizeof(expect_mode),
+					&modes[tests[i].exp_mode]);
+			ggiSNPrintMode(return_mode, sizeof(return_mode),
+					&mp.mode);
 			printfailure("_GGI_modelist_checkmode() %s\n"
 				"Test:      %d\n"
 				"Requested: %s\n"
@@ -518,9 +521,12 @@ static void modelist_helper(unsigned int mcount, ggi_mode *modes,
 			sizeof(ggi_mode));
 
 		if (!exp_mode) {
-			ggiSPrintMode(request_mode, &tests[i].mode);
-			ggiSPrintMode(expect_mode, &modes[tests[i].exp_mode]);
-			ggiSPrintMode(return_mode, &mp.mode);
+			ggiSNPrintMode(request_mode, sizeof(request_mode),
+					&tests[i].mode);
+			ggiSNPrintMode(expect_mode, sizeof(expect_mode),
+					&modes[tests[i].exp_mode]);
+			ggiSNPrintMode(return_mode, sizeof(return_mode),
+					&mp.mode);
 			printfailure("_GGI_modelist_checkmode() %s "
 				"the wrong mode!\n"
 				"Test:      %d\n"

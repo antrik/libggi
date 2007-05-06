@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2007/03/07 09:09:32 cegger Exp $
+/* $Id: mode.c,v 1.26 2007/05/06 05:46:25 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -360,7 +360,7 @@ ggiFPrintMode(FILE *s, const ggi_mode *m)
 {
 	char buf[256];
 	
-	ggiSPrintMode(buf, m);
+	ggiSNPrintMode(buf, sizeof(buf), m);
 
 	return fprintf(s, buf);
 }
