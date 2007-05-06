@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2007/05/06 05:46:25 cegger Exp $
+/* $Id: mode.c,v 1.27 2007/05/06 06:07:46 cegger Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -340,18 +340,6 @@ ggiSNPrintMode(char *s, size_t size, const ggi_mode *m)
 #undef PUTC
 
 	return t;
-}
-
-
-int
-ggiSPrintMode(char *s, const ggi_mode *m)
-{
-	char buf[256];
-	
-	ggiSNPrintMode(buf, sizeof(buf), m);
-	strcpy(s, buf);
-
-	return 0;
 }
 
 
