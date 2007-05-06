@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.2 2007/05/05 18:30:49 pekberg Exp $
+/* $Id: hline.c,v 1.3 2007/05/06 05:03:22 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines (high-bit-right).
@@ -245,6 +245,9 @@ GGI_lin1r_packed_gethline_nc(struct ggi_visual *vis,
 		memcpy(buff, adr, (w + 7) >> 3);
 		return 0;
 	}
+
+	if (x < 0)
+		--adr;
 
 	j = i + w - 8;
 	*buff = *adr++ >> i;
