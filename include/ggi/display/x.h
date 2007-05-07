@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.34 2007/04/22 17:55:04 mooz Exp $
+/* $Id: x.h,v 1.35 2007/05/07 21:35:31 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -76,8 +76,6 @@ typedef struct {
 typedef int  (*ggi_x_createfb)(struct ggi_visual *vis);	/* MMAP/alloc fb/db  */
 typedef void (*ggi_x_freefb)(struct ggi_visual *vis);		/* clean up fb/db    */
 typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* create renderer  */
-typedef int  (*ggi_x_initdrawable)(struct ggi_visual *vis);	/* prepare renderer  */
-typedef void (*ggi_x_swapdrawable)(struct ggi_visual *vis);	/* swap drawables */
 typedef void (*ggi_x_createcursor)(struct ggi_visual *vis);	/* load mouse sprite */
 
 struct ggi_x_priv;
@@ -140,8 +138,6 @@ typedef struct ggi_x_priv {
 
 	/* Overloadables: */
 	ggi_x_createdrawable	createdrawable;	/* overload create .drawable */
-	ggi_x_initdrawable	initdrawable;	/* overload init .drawable */
-	ggi_x_swapdrawable swapdrawable;	/* overload swap .drawable */
 	ggi_x_createfb	 createfb;	/* overload init .fb */
 	ggi_x_freefb	 freefb;	/* overload init .fb */
 	ggi_x_checkmode_adapt cm_adapt; /* visual to ggi_mode conversion */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.73 2007/04/22 17:55:04 mooz Exp $
+/* $Id: visual.c,v 1.74 2007/05/07 21:35:31 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -523,12 +523,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
  novidmode:
 	GGI_X_TEST_XEXT(GGI_X_USE_DBE, "helper-x-dbe", nodbe);
-
+	
  nodbe:
-    if(priv->createdrawable == NULL)
-		priv->createdrawable = GGI_X_create_window_drawable;
-
-	priv->initdrawable = GGI_X_init_window_drawable;
+	priv->createdrawable = GGI_X_create_window_drawable;
 
 	if (options[OPT_NOBUFFER].result[0] != 'n') {
 		priv->createfb = NULL;
@@ -567,11 +564,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		DPRINT("disabling drawable\n");
 		priv->createdrawable = NULL;
-		priv->initdrawable = NULL;
 	}
 
-	if ((priv->createdrawable != NULL) &&
-		(priv->initdrawable != NULL)) 
+	if (priv->createdrawable != NULL)
 	{
 		priv->textfont = XLoadQueryFont(disp, "fixed");
 		if (priv->textfont != NULL) {

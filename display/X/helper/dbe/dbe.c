@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.15 2007/05/05 18:59:47 mooz Exp $
+/* $Id: dbe.c,v 1.16 2007/05/07 21:35:31 mooz Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -31,6 +31,7 @@
 #include <ggi/display/x.h>
 #include <X11/extensions/Xdbe.h>
 
+#if 0
 static void GGI_DBE_swap(struct ggi_visual *vis)
 {
 	ggi_x_priv   *priv;
@@ -41,7 +42,7 @@ static void GGI_DBE_swap(struct ggi_visual *vis)
 	/* Set swapping informations */
 	swapInfo.swap_window = priv->win;
 	swapInfo.swap_action = XdbeUndefined;
-
+	
 	XdbeSwapBuffers(priv->disp, &swapInfo, 1); /* Swap buffer */
 }
 
@@ -57,7 +58,7 @@ static int GGI_DBE_create_window_drawable (struct ggi_visual *vis)
 
 	/* Allocate back buffer */
 	backBuffer = XdbeAllocateBackBufferName(priv->disp, 
-			priv->win, XdbeUndefined);
+			priv->win, XdbeUntouched);
 
 	if (backBuffer != None) {
 		priv->drawable = backBuffer;
@@ -66,11 +67,10 @@ static int GGI_DBE_create_window_drawable (struct ggi_visual *vis)
 		DPRINT_LIBS("X: DOUBLE-BUFFER: Back buffer allocation failed\n");
 		return GGI_EFATAL;
 	}
-  
-	priv->swapdrawable = GGI_DBE_swap;
-	    
+      
 	return 0;
 }
+#endif /* 0 */
 
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
@@ -86,21 +86,21 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_LIBS("X: DOUBLE-BUFFER: DBE version %i.%i\n",
 			major_version, minor_version);
 
-	priv->createdrawable = GGI_DBE_create_window_drawable;
-
 	*dlret = 0;
 	return GGI_OK;
 }
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	XdbeBackBuffer  backBuffer;	/* Back buffer */
 	ggi_x_priv *priv = GGIX_PRIV(vis);
+#if 0
+	XdbeBackBuffer  backBuffer;	/* Back buffer */
 	/* Deallocate back buffer */
 	if(!XdbeDeallocateBackBufferName(priv->disp, priv->drawable)) {
 		DPRINT_LIBS("X: DOUBLE-BUFFER: Unable to deallocate back buffer.\n");
 		return GGI_EFATAL;
 	}
+#endif /* 0 */
 	return GGI_OK;
 }
 

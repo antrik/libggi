@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.41 2007/05/05 18:59:47 mooz Exp $
+/* $Id: buffer.c,v 1.42 2007/05/07 21:35:30 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -329,7 +329,7 @@ static int GGI_X_flush_draw(struct ggi_visual *vis,
 {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
-
+	
 	if (tryflag == 0) {
 		/* flush later, this is in signal handler context
 		 * when using the signal based scheduler
@@ -342,13 +342,14 @@ static int GGI_X_flush_draw(struct ggi_visual *vis,
 
 	_ggi_x_flush_cmap(vis);		/* Update the palette/gamma */
 
-	if(priv->swapdrawable)
-		priv->swapdrawable(vis);
-
 	/* Flush any pending Xlib operations. */
 	XFlush(priv->disp);
 
-	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
+	if (tryflag != 2)
+	{
+ 		GGI_X_UNLOCK_XLIB(vis);
+	}
+
 	return 0;
 }
 
@@ -358,13 +359,6 @@ int GGI_X_create_window_drawable (struct ggi_visual *vis) {
 
 	priv->drawable = priv->win;
 	if (priv->drawable == None) priv->drawable = priv->parentwin;
-	
-	return 0;
-}
-
-int GGI_X_init_window_drawable (struct ggi_visual *vis) {
-	ggi_x_priv *priv;
-	priv = GGIX_PRIV(vis);
 
 	vis->opdraw->drawpixel		= GGI_X_drawpixel_slave_draw;
 	vis->opdraw->drawpixel_nc	= GGI_X_drawpixel_nc_slave_draw;
@@ -501,8 +495,6 @@ int GGI_X_flush_ximage_child(struct ggi_visual *vis,
 	/* Tell X Server to start blitting */
 	XFlush(priv->disp);
  clean:
-	if(priv->swapdrawable)
-		priv->swapdrawable(vis);
 
 	if (tryflag != 2) GGI_X_UNLOCK_XLIB(vis);
 	if (priv->opmansync && mansync) MANSYNC_cont(vis);
