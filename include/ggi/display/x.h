@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.35 2007/05/07 21:35:31 mooz Exp $
+/* $Id: x.h,v 1.36 2007/05/08 22:43:48 ggibecka Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -177,6 +177,11 @@ typedef struct ggi_x_priv {
 	/* These are here to support early setting of window titles
 	 */
 	const char *windowtitle,*icontitle;
+	
+	/* Remember the y offset of the window when pageflipping.
+	 * Needed for translating mouse events
+	 */
+	int pf_offset;
 
 } ggi_x_priv;
 

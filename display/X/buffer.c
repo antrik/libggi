@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.42 2007/05/07 21:35:30 mooz Exp $
+/* $Id: buffer.c,v 1.43 2007/05/08 22:43:47 ggibecka Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -68,13 +68,19 @@ int GGI_X_db_release(struct ggi_resource *res) {
 int GGI_X_setdisplayframe_child(struct ggi_visual *vis, int num) {
 
 	ggi_x_priv *priv;
+	struct gii_xwin_cmddata_set_page_offset data;
 	priv = GGIX_PRIV(vis);
 
         if (_ggi_db_find_frame(vis, num) == NULL) return GGI_EARGINVAL;
 	vis->d_frame_num = num;
+	priv->pf_offset  = num*LIBGGI_VIRTY(vis);
+	                                    
 	XMoveWindow(priv->disp, priv->win, -vis->origin_x, 
-		    - vis->origin_y - LIBGGI_VIRTY(vis) * num);
+		    - vis->origin_y - priv->pf_offset);
 	GGI_X_MAYBE_SYNC(vis);
+
+	data.yoffset=priv->pf_offset;
+	ggControl(priv->inp->channel, GII_CMDCODE_SET_PAGE_OFFSET, &data);
 	return 0;
 }
 
@@ -90,7 +96,7 @@ int GGI_X_setorigin_child(struct ggi_visual *vis, int x, int y) {
 	vis->origin_x = x;
 	vis->origin_y = y;
 	XMoveWindow(priv->disp, priv->win, -x, 
-		    - y - LIBGGI_VIRTY(vis) * (vis->d_frame_num));
+		    - y - priv->pf_offset);
 	GGI_X_MAYBE_SYNC(vis);
 
 	return 0;

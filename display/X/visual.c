@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.74 2007/05/07 21:35:31 mooz Exp $
+/* $Id: visual.c,v 1.75 2007/05/08 22:43:48 ggibecka Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -323,6 +323,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Init the title defaults */
 	priv->windowtitle=NULL;
 	priv->icontitle  =NULL;
+	
+	/* Init the flipping offset */
+	priv->pf_offset=0;
 
 	/* Create a lock to regularly flush */
 	lock = ggLockCreate();

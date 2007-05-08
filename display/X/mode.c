@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.71 2007/05/07 21:35:30 mooz Exp $
+/* $Id: mode.c,v 1.72 2007/05/08 22:43:48 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -728,6 +728,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	/* ggiOpen will dirty the whole screen for us by calling fillscreen */
 	priv->dirtytl.x = 1;
 	priv->dirtybr.x = 0;
+	
+	/* Reset displayed frame offset to 0 */
+	priv->pf_offset = 0;
 
 	if (priv->opmansync)
 		MANSYNC_cont(vis);
