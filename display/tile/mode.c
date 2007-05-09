@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.35 2007/05/09 07:54:51 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -427,6 +427,12 @@ int GGI_tile_checkmode(struct ggi_visual *vis,ggi_mode *tm)
 
 	if (tm->frames == GGI_AUTO)
 		tm->frames = 1;
+
+	if (GT_SUBSCHEME(tm->graphtype) & GT_SUB_PACKED_GETPUT) {
+		err = GGI_ENOMATCH;
+		GT_SETSUBSCHEME(tm->graphtype,
+			GT_SUBSCHEME(tm->graphtype) & ~GT_SUB_PACKED_GETPUT);
+	}
 
 	tm->size.x = tm->size.y = GGI_AUTO;
 
