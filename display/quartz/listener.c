@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.9 2007/04/06 07:32:23 cegger Exp $
+/* $Id: listener.c,v 1.10 2007/05/10 23:37:01 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -33,23 +33,28 @@
 #include <ggi/internal/ggi_debug.h>
 
 
-int GGI_quartz_listener(void *arg, uint32_t flag, void *data)
+int GGI_quartz_listener(void *arg, uint32_t ctl, void *data)
 {
 	struct ggi_visual *vis = arg;
+	ggi_quartz_priv *priv;
 
-	if ((flag & GII_CMDCODE_RESIZE) == GII_CMDCODE_RESIZE) {
-		struct gii_cmddata_resize *resize;
+	switch (ctl) {
+	case GII_CMDCODE_RESIZE:
+		do {
+			struct gii_cmddata_resize *resize;
 
-		resize = (struct gii_cmddata_resize *)data;
-		DPRINT_MISC("GGI_quartz_listener: received GII_CMDCODE_RESIZE event\n"); 
+			resize = (struct gii_cmddata_resize *)data;
+			DPRINT_MISC("GGI_quartz_listener: received GII_CMDCODE_RESIZE event\n"); 
 
-		GGI_quartz_updateWindowContext(vis);
-	}
+			GGI_quartz_updateWindowContext(vis);
+		} while (0);
+		break;
 
-	if ((flag & GII_CMDCODE_QZWINCLOSE) == GII_CMDCODE_QZWINCLOSE) {
-		/* unregister when window closes */
-		DPRINT_MISC("GGI_quartz_listener: received GII_CMDCODE_QZWINCLOSE event\n"); 
-		return 1;
+	case GII_CMDCODE_QZWINCLOSE:
+		do {
+			DPRINT_MISC("GGI_quartz_listener: received GII_CMDCODE_QZWINCLOSE event\n"); 
+		} while (0);
+		break;
 	}
 
 	return 0;
