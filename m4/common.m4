@@ -433,3 +433,40 @@ AC_DEFUN([GGI_RESTORE_USER_VARS],
 	CPPFLAGS="$ggi_save_user_CPPFLAGS"
 	LDFLAGS="$ggi_save_user_LDFLAGS"
 ])
+
+
+dnl ------ checktarget.m4 ---- 
+dnl Check how to handle getaddrinfo
+
+AC_DEFUN([GGI_FUNC_GETADDRINFO],
+[
+
+AC_SEARCH_LIBS(getaddrinfo, [socket])
+AC_CHECK_FUNCS(getaddrinfo, , [
+	AC_CACHE_CHECK(for getaddrinfo in -lws2_32,
+		[pr_cv_ws2_32_getaddrinfo],
+		[pr_cv_ws2_32_getaddrinfo=no
+		old_LIBS="$LIBS"
+		LIBS="$LIBS -lws2_32"
+		AC_TRY_LINK([
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+#include <ws2tcpip.h>
+#endif],
+			[getaddrinfo(0, 0, 0, 0);],
+			[pr_cv_ws2_32_getaddrinfo=yes])
+		LIBS="$old_LIBS"])
+	if test "$pr_cv_ws2_32_getaddrinfo" = yes; then
+		LIBS="$LIBS -lws2_32"
+		AC_DEFINE(HAVE_GETADDRINFO, 1,
+			[Define to 1 if you have getaddrinfo])
+	fi
+])
+if test "$ac_cv_func_getaddrinfo" = yes -o \
+	"$pr_cv_ws2_32_getaddrinfo" = yes; then
+	AC_REPLACE_FUNCS(gai_strerror)
+fi
+
+])
