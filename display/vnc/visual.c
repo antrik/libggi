@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.48 2007/03/11 21:54:44 soyt Exp $
+/* $Id: visual.c,v 1.49 2007/05/13 08:28:35 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -37,6 +37,16 @@
 #include <unistd.h>
 #endif
 
+#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
+# include <windows.h>
+# include <io.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
+#endif
+
 #include <sys/types.h>
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -51,6 +61,8 @@
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
+
+#include <ggi/internal/gg_replace.h> /* for gai_strerror */
 
 #include "d3des.h"
 
@@ -131,6 +143,218 @@ socket_cleanup(void)
 }
 #endif
 
+#define MAXSOCK	3
+
+#ifdef HAVE_GETADDRINFO
+
+static int
+vnc_listen(const char *bind_if, int port)
+{
+	struct addrinfo *ai, *gai;
+	struct addrinfo hints;
+	int s[MAXSOCK];
+	int nsock;
+	int rc, fd;
+	char str_port[20];
+
+	snprintf(str_port, sizeof(str_port), "%d", port);
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+#ifdef AI_ADDRCONFIG
+	hints.ai_flags |= AI_ADDRCONFIG;
+#endif
+
+	fd = -1;
+	rc = getaddrinfo(bind_if, str_port, &hints, &gai);
+	if (rc) {
+		DPRINT_MISC("getaddrinfo: %s\n", gai_strerror(rc));
+		return fd;
+	}
+
+	nsock = 0;
+	for (ai = gai; ai && nsock < MAXSOCK; ai = ai->ai_next) {
+		s[nsock] = fd = socket(ai->ai_family, ai->ai_socktype,
+					ai->ai_protocol);
+		if (fd == -1) {
+			DPRINT_MISC("socket failed\n");
+			continue;
+		}
+
+		if (bind(fd, ai->ai_addr, ai->ai_addrlen) < 0) {
+			DPRINT_MISC("bind failed\n");
+			close(fd);
+			s[nsock] = fd = -1;
+			continue;
+		}
+
+		if (listen(fd, 3) < 0) {
+			DPRINT_MISC("listen failed\n");
+			close(fd);
+			s[nsock] = fd = -1;
+			continue;
+		}
+
+		nsock++;
+
+		/* display-vnc can deal with only one fd.
+		 * So we take the first.
+		 */
+		break;
+	}
+
+	if (nsock == 0) {
+		DPRINT_MISC("No socket available\n");
+	}
+
+	freeaddrinfo(gai);
+	return fd;
+}
+
+
+static int
+vnc_connect(const char *server, int port)
+{
+	struct addrinfo *ai, *gai;
+	struct addrinfo hints;
+	int res, fd;
+	char str_port[20];
+
+	fd = -1;
+	memset(&hints, 0, sizeof(hints));
+#ifdef AI_ADDRCONFIG
+	hints.ai_flags = AI_ADDRCONFIG;
+#endif
+	hints.ai_socktype = SOCK_STREAM;
+
+	snprintf(str_port, sizeof(str_port), "%d", port);
+
+	res = getaddrinfo(server, str_port, &hints, &gai);
+	if (res) {
+		DPRINT_MISC("getaddrinfo: %s\n", gai_strerror(res));
+		return fd;
+	}
+
+	ai = gai;
+	for (ai = gai; ai; ai = ai->ai_next) {
+		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+		if (fd == -1) {
+			DPRINT_MISC("socket failed\n");
+			continue;
+		}
+		res = connect(fd, ai->ai_addr, ai->ai_addrlen);
+		if (res < 0) {
+			close(fd);
+			fd = -1;
+			continue;
+		}
+
+		break; /* we got a connection */
+	}
+
+	if (fd == -1) {
+		DPRINT_MISC("connection failed\n");
+	}
+
+	freeaddrinfo(gai);
+	return fd;
+}
+
+#else /* HAVE_GETADDRINFO */
+
+static int
+vnc_listen(const char *bind_if, int port)
+{
+	int fd;
+	struct hostent *h;
+	struct sockaddr_in sa;
+
+	fd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+	if (fd == -1) {
+		return fd;
+	}
+
+	memset(&sa, 0, sizeof(sa));
+	sa.sin_family = AF_INET;
+	sa.sin_addr.s_addr = htonl(INADDR_ANY);
+	sa.sin_port = htons(port);
+
+	if (bind_if != NULL) {
+		h = gethostbyname(bind_if);
+		if (!h) {
+			DPRINT_MISC("gethostbyname error\n");
+			goto closefd;
+		}
+		if (h->h_addrtype != sa.sin_family) {
+			DPRINT_MISC("address family does not match\n");
+			goto closefd;
+		}
+		sa.sin_addr = *((struct in_addr *)h->h_addr);
+	}
+
+	if (bind(fd, (struct sockaddr *)&sa, sizeof(sa))) {
+		DPRINT_MISC("bind failed\n");
+		goto closefd;
+	}
+
+	if (listen(fd, 3)) {
+		DPRINT_MISC("listen failed\n");
+		goto closefd;
+	}
+
+	return fd;
+
+closefd:
+	close(fd);
+	fd = -1;
+	return fd;
+}
+
+static int
+vnc_connect(const char *server, int port)
+{
+	int fd;
+	struct hostent *h;
+	struct sockaddr_in sa;
+
+	fd = -1;
+	h = gethostbyname(server);
+
+	if (!h) {
+		DPRINT_MISC("gethostbyname error\n");
+		return fd;
+	}
+	if (h->h_addrtype != AF_INET) {
+		DPRINT_MISC("host not reachable via IPv4\n");
+		return fd;
+	}
+
+	fd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+	if (fd == -1) {
+		DPRINT_MISC("socket failed\n");
+		return fd;
+	}
+
+	memset(&sa, 0, sizeof(sa));
+	sa.sin_family = AF_INET;
+	sa.sin_addr = *((struct in_addr *)h->h_addr);
+	sa.sin_port = htons(port);
+
+	if (connect(fd, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+		DPRINT_MISC("connect failed\n");
+		close(fd);
+		fd = -1;
+		return fd;
+	}
+
+	return fd;
+}
+
+#endif /* HAVE_GETADDRINFO */
+
+
 static int
 GGIopen(struct ggi_visual *vis,
 	struct ggi_dlhandle *dlh,
@@ -141,7 +365,6 @@ GGIopen(struct ggi_visual *vis,
 	ggi_vnc_priv *priv;
 	gg_option options[NUM_OPTS];
 	int err = 0;
-	struct sockaddr_in sa;
 	gii_vnc_arg iargs;
 	struct gg_stem *stem;
 	struct gg_api *gii;
@@ -385,46 +608,21 @@ GGIopen(struct ggi_visual *vis,
 	{
 		/* default port, or override -display */
 	     	short port;
+		const char *bind_if = NULL;
 
 		if (options[OPT_server].result[0] == 'd')
 			port = priv->display;
 		else
 			port = strtoul(options[OPT_server].result, NULL, 0);
 
-		priv->sfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+		if (options[OPT_bind].result[0] != '\0') {
+			bind_if = options[OPT_bind].result;
+		}
+
+		priv->sfd = vnc_listen(bind_if, 5900 + port);
 		if (priv->sfd == -1) {
 			err = GGI_ENODEVICE;
 			goto out_closefb;
-		}
-
-		memset(&sa, 0, sizeof(sa));
-		sa.sin_family = AF_INET;
-		sa.sin_addr.s_addr = htonl(INADDR_ANY);
-		sa.sin_port = htons(5900 + port);
-
-		if (options[OPT_bind].result[0] != '\0') {
-			struct hostent *h;
-			DPRINT_MISC("bind to %s\n", options[OPT_bind].result);
-			h = gethostbyname(options[OPT_bind].result);
-			if (!h) {
-				DPRINT_MISC("gethostbyname error\n");
-				err = GGI_ENODEVICE;
-				goto out_closefds;
-			}
-
-			sa.sin_addr = *((struct in_addr *)h->h_addr);
-		}
-
-		if (bind(priv->sfd, (struct sockaddr *)&sa, sizeof(sa))) {
-			err = GGI_ENODEVICE;
-			DPRINT_MISC("bind failed\n");
-			goto out_closefds;
-		}
-
-		if (listen(priv->sfd, 3)) {
-			err = GGI_ENODEVICE;
-			DPRINT_MISC("listen failed\n");
-			goto out_closefds;
 		}
 
 		DPRINT("Now listening for connections.\n");
@@ -463,31 +661,12 @@ GGIopen(struct ggi_visual *vis,
 	priv->gii_ctx     = iargs.gii_ctx;
 
 	if (options[OPT_client].result[0] != '\0') {
-		struct hostent *h;
 		int cfd;
 
-		h = gethostbyname(options[OPT_client].result);
-
-		if (!h) {
-			DPRINT_MISC("gethostbyname error\n");
-			err = GGI_ENODEVICE;
-			goto out_closefds;
-		}
-
-		cfd = socket(PF_INET, SOCK_STREAM, IPPROTO_IP);
+		cfd = vnc_connect(options[OPT_client].result,
+				5500 + priv->display);
 		if (cfd == -1) {
 			err = GGI_ENODEVICE;
-			goto out_closefds;
-		}
-
-		memset(&sa, 0, sizeof(sa));
-		sa.sin_family      = AF_INET;
-		sa.sin_addr        = *((struct in_addr *)h->h_addr);
-		sa.sin_port        = htons(5500 + priv->display);
-
-		if (connect(cfd, (struct sockaddr *)&sa, sizeof(sa))) {
-			err = GGI_ENODEVICE;
-			close(cfd);
 			goto out_closefds;
 		}
 
