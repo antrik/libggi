@@ -89,7 +89,7 @@ Options
 
 ``-server[=<dpy>|stdio]``
     To run both a server and open a client at the same time, but with
-    different displays numbers, the server display number can be specified
+    different display numbers, the server display number can be specified
     using :p:`-server=<dpy>`. If no argument is given, the display number
     is collected for the :p:`-display` option. Use :p:`-display=stdio` to
     accept connections from the stdin file handle, which is suitable for
