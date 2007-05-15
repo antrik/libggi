@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.88 2007/03/22 10:15:09 pekberg Exp $
+/* $Id: rfb.c,v 1.89 2007/05/15 10:02:37 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1353,22 +1353,33 @@ vnc_client_security(ggi_vnc_client *client)
 
 	DPRINT("client_security\n");
 
-	if (client->buf_size > 1) {
-		DPRINT("Too much data.\n");
-		return -1;
-	}
-
 	if (client->buf_size < 1)
 		/* wait for more data */
 		return 0;
 
 	security_type = client->buf[0];
+
+	if (client->protover == 7 && security_type == 1)
+		/* Client init msg may follow */
+		memmove(client->buf, client->buf + 1, --client->buf_size);
+	else if (client->buf_size > 1) {
+		DPRINT("Too much data.\n");
+		return -1;
+	}
+
 	switch (security_type) {
 	case 1:
 		if (priv->passwd || priv->viewpw)
 			break;
-		client->buf_size = 0;
 		client->action = vnc_client_init;
+
+		if (client->protover == 7) {
+			if (client->buf_size)
+				return vnc_client_init(client);
+			client->buf_size = 0;
+			return 0;
+		}
+		client->buf_size = 0;
 
 		/* ok */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
