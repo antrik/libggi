@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.1 2007/01/23 13:42:29 pekberg Exp $
+/* $Id: vline.c,v 1.2 2007/05/18 08:14:31 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -124,8 +124,20 @@ GGI_lin2_packed_getvline(struct ggi_visual *vis,
 	uint8_t *adr;
 	uint8_t *buff = (uint8_t *)buffer;
 	int shift = 6;
-	int sw, i, bm, xshift;
+	int sw, i, j, bm, xshift;
+	uint8_t pix;
 
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		height -= -y;
+		buff += -y >> 2;
+		shift = ((y - 1) & 3) << 1;
+		y = 0;
+	}
+	if (y + height > LIBGGI_VIRTY(vis))
+		height = LIBGGI_VIRTY(vis) - y;
 	if (height <= 0)
 		return 0;
 
@@ -134,26 +146,41 @@ GGI_lin2_packed_getvline(struct ggi_visual *vis,
 	sw = LIBGGI_FB_R_STRIDE(vis);
 	adr = (uint8_t *)LIBGGI_CURREAD(vis) + (x >> 2) + y * sw;
 
-	*buff = 0;
-
 	xshift = 6 - ((x & 3) << 1);
 	bm = 3 << xshift;
-	for (i = 1 ; i < height; ++i, adr += sw) {
-		if (xshift > shift)
-			*buff |= (*adr & bm) >> (xshift - shift);
-		else
-			*buff |= (*adr & bm) << (shift - xshift);
-		shift -= 2;
-		if (shift < 0) {
-			shift = 6;
-			*++buff = 0;
+
+	j = (height << 1) - ((2 + shift) & 7);
+
+	if (shift != 6) {
+		/* Uneven clipping above */
+		if (j <= 0) {
+			/* Get from one byte only */
+			pix = *buff &
+				((0xff << (shift + 2)) | (0xff >> (j + 8)));
+			for (; height > 0; --height, shift -= 2, adr += sw)
+				pix |= SSHIFT(*adr & bm, shift - xshift);
+			*buff = pix;
+			return 0;
 		}
+
+		pix = *buff & (0xff << (shift + 2));
+		for (; shift >= 0; shift -= 2, adr += sw)
+			pix |= SSHIFT(*adr & bm, shift - xshift);
+		*buff++ = pix;
+		shift = 6;
 	}
 
-	if (xshift > shift)
-		*buff |= (*adr & bm) >> (xshift - shift);
-	else
-		*buff |= (*adr & bm) << (shift - xshift);
+	for (; j > 8; j -= 8) {
+		pix = 0;
+		for (i = 0; i < 4; ++i, shift -= 2, adr += sw)
+			pix |= SSHIFT(*adr & bm, shift - xshift);
+		*buff++ = pix;
+		shift = 6;
+	}
 
+	pix = *buff & (0xff >> j);
+	for (; j > 0; j -= 2, shift -= 2, adr += sw)
+		pix |= SSHIFT(*adr & bm, shift - xshift);
+	*buff = pix;
   	return 0;
 }
