@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.9 2007/01/23 12:54:47 pekberg Exp $
+/* $Id: vline.c,v 1.10 2007/05/18 20:01:24 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -161,32 +161,64 @@ int
 GGI_lin1_packed_getvline(struct ggi_visual *vis,
 	int x, int y, int height, void *buffer)
 { 
-	uint8_t *adr,*buff=(uint8_t *)buffer;
-	int mask,sw,i,bm;
+	uint8_t *adr, *buff = (uint8_t *)buffer;
+	uint8_t pix, mask, bm;
+	int sw, i, j, shift=7;
 
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		height -= -y;
+		buff += -y >> 3;
+		shift = (y - 1) & 7;
+		y = 0;
+	}
+	if (y + height > LIBGGI_VIRTY(vis))
+		height = LIBGGI_VIRTY(vis) - y;
 	if (height <= 0)
 		return 0;
 
 	PREPARE_FB(vis);
 
-	sw=LIBGGI_FB_R_STRIDE(vis);
-	adr=((uint8_t *)(LIBGGI_CURREAD(vis)));
-	adr+=(x>>3)+y*sw;
+	sw = LIBGGI_FB_R_STRIDE(vis);
+	adr = (uint8_t *)LIBGGI_CURREAD(vis) + (x >> 3) + y * sw;
 
-	*buff = 0;
+	mask = 1 << shift;
+	bm = 0x80 >> (x & 7);
 
-	bm=(0x80>>(x&7));
-	mask=0x80;
-	for (i=1;i<height;i++,adr+=sw) {
-		*buff |= (*adr & bm) ? mask : 0;
-		mask>>=1;
-		if (mask==0) {
-			mask=0x80;
-			*++buff = 0;
+	j = height - ((shift + 1) & 7);
+
+	if (shift != 7) {
+		/* Uneven clipping above */
+		if (j <= 0) {
+			/* Get to one byte only */
+			pix = *buff &
+				((0xff << (shift + 1)) | (0xff >> (j + 8)));
+			for (; height > 0; --height, mask >>= 1, adr += sw)
+				pix |= (*adr & bm) ? mask : 0;
+			*buff = pix;
+			return 0;
 		}
+
+		pix = *buff & (0xff << (shift + 1));
+		for (; mask; mask >>= 1, adr += sw)
+			pix |= (*adr & bm) ? mask : 0;
+		*buff++ = pix;
+		mask = 0x80;
 	}
 
-	*buff |= (*adr & bm) ? mask : 0;
+	for (; j > 8; j -= 8) {
+		pix = 0;
+		for (i = 0; i < 8; ++i, mask >>= 1, adr += sw)
+			pix |= (*adr & bm) ? mask : 0;
+		*buff++ = pix;
+		mask = 0x80;
+	}
 
+	pix = *buff & (0xff >> j);
+	for (; j > 0; --j, mask >>= 1, adr += sw)
+		pix |= (*adr & bm) ? mask : 0;
+	*buff = pix;
   	return 0;
 }
