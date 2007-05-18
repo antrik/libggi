@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.2 2007/05/18 08:14:31 pekberg Exp $
+/* $Id: vline.c,v 1.3 2007/05/18 14:42:32 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -154,7 +154,7 @@ GGI_lin2_packed_getvline(struct ggi_visual *vis,
 	if (shift != 6) {
 		/* Uneven clipping above */
 		if (j <= 0) {
-			/* Get from one byte only */
+			/* Get to one byte only */
 			pix = *buff &
 				((0xff << (shift + 2)) | (0xff >> (j + 8)));
 			for (; height > 0; --height, shift -= 2, adr += sw)
