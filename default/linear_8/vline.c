@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.5 2006/03/12 23:15:09 soyt Exp $
+/* $Id: vline.c,v 1.6 2007/05/18 21:53:45 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -82,13 +82,25 @@ int GGI_lin8_putvline(struct ggi_visual *vis, int x, int y, int h, const void *b
 
 int GGI_lin8_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
-	uint8_t *ptr, *buf8;
+	uint8_t *ptr, *buf8 = buffer;
 	int stride = LIBGGI_FB_R_STRIDE(vis);
+
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		h += y;
+		buf8 -= y;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
+	if (h <= 0)
+		return 0;
 
 	PREPARE_FB(vis);
 
 	ptr = ((uint8_t *)LIBGGI_CURREAD(vis)) + y*stride + x;
-	buf8  = buffer;
 
 	for (; h > 0; h--, ptr += stride) {
 		*(buf8++) = *ptr; 
