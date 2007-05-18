@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2007/05/18 14:42:06 pekberg Exp $
+/* $Id: vline.c,v 1.4 2007/05/18 20:46:37 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -133,7 +133,7 @@ GGI_lin2r_packed_getvline(struct ggi_visual *vis,
 	if (y < 0) {
 		height -= -y;
 		buff += -y >> 2;
-		shift = 6 - (((y - 1) & 3) << 1);
+		shift = (-y & 3) << 1;
 		y = 0;
 	}
 	if (y + height > LIBGGI_VIRTY(vis))

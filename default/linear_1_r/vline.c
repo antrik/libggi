@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.3 2007/05/18 20:21:46 pekberg Exp $
+/* $Id: vline.c,v 1.4 2007/05/18 20:45:50 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines (high-bit-right).
@@ -172,7 +172,7 @@ GGI_lin1r_packed_getvline(struct ggi_visual *vis,
 	if (y < 0) {
 		height -= -y;
 		buff += -y >> 3;
-		shift = 7 - ((y - 1) & 7);
+		shift = -y & 7;
 		y = 0;
 	}
 	if (y + height > LIBGGI_VIRTY(vis))
