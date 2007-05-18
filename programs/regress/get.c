@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.6 2007/05/02 14:06:06 pekberg Exp $
+/* $Id: get.c,v 1.7 2007/05/18 08:09:53 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -261,35 +261,155 @@ static void testcase1(const char *desc)
 }
 
 
+static int checkvlineclip(ggi_visual_t vis,ggi_mode *mode,int x,int y,int height) 
+{
+	
+	/* The tests work like this:
+	 * Allocate a large enough buffer for the Get (getpix) and fill 
+	 * it as well as the reference buffer with random color values.
+	 * Then do the get, map back both buffers to colors and compare
+	 * which pixels changed.
+	 * This of course only yields probabilistic results, so the test 
+	 * is repeated several times and all pixels that changed in _any_
+	 * test run are noted.
+	 * The result is then checked against the expected pattern. I.e.
+	 * There should be no changes in the to-be-clipped areas.
+	 */
+
+	int i,j,rc,rc2,rc3;
+	struct teststruct ts;
+
+	allocate_teststruct(&ts,height);
+	for(i=0;i<REPEATS;i++) {
+		randomize_teststruct(vis,&ts,height);
+		ggiPutVLine(vis,x,y,height,ts.putpix);
+		ggiGetVLine(vis,x,y,height,ts.getpix);
+		check_teststruct(vis,&ts,height);
+	}
+	if (verbose) {
+		fprintf(stderr,"VLine(%d,%d,%d) at mode.virt.y=%d\nChanges: ",x,y,height,mode->virt.y);
+		for(i=0;i<height;i++) {
+			fprintf(stderr,"%d",ts.changed_pixels[i]);
+		}
+		fprintf(stderr,"\n");
+	}
+	rc=rc2=0;
+	for(i=y,j=0;i<0&&j<height;i++,j++) {
+		if (ts.changed_pixels[j]) {
+			rc++;
+		}
+	}
+	if (rc) {
+		if (verbose) fprintf(stderr,"%d pixels changed above screen.\n",rc);
+		rc2+=rc;
+	}
+
+	for(rc=rc3=0;i<mode->virt.y&&j<height;i++,j++) {
+		if (ts.changed_pixels[j]==0) {
+			rc++;
+		} else {
+			if (ts.getcol[j].r!=ts.putcol[j].r ||
+			    ts.getcol[j].g!=ts.putcol[j].g ||
+			    ts.getcol[j].b!=ts.putcol[j].b ) {
+				rc3++;
+			}
+		}
+	}
+	if (rc||rc3) {
+		if (verbose) fprintf(stderr,"%d pixels unchanged inside screen. %d pixels not matching put.\n",rc,rc3);
+		rc2+=rc+rc3;
+	}
+
+	for(rc=0;j<height;i++,j++) {
+		if (ts.changed_pixels[j]) {
+			rc++;
+		}
+	}
+	if (rc) {
+		if (verbose) fprintf(stderr,"%d pixels changed below screen.\n",rc);
+		rc2+=rc;
+	}
+
+	free_teststruct(&ts);
+	return rc2;
+}
+
 static void testcase2(const char *desc)
 {
+	int err,i,j;
+	ggi_visual_t vis;
+	ggi_mode mode;
+
+	printteststart(__FILE__, __PRETTY_FUNCTION__, EXPECTED2PASS, desc);
+	if (dontrun) return;
+
+	err = ggInit();
+	printassert(err >= 0, "ggInit failed with %i\n", err);
+
+	vis = ggNewStem(libgii, libggi, NULL);
+	printassert(vis != NULL, "ggNewStem failed\n");
+
+	err = ggiOpen(vis, NULL);
+	printassert(err == GGI_OK, "ggiOpen() failed with %i\n", err);
+
+	ggiSetFlags(vis, GGIFLAG_ASYNC);
+
+	/* Get the default mode */
+	err = ggiCheckGraphMode (vis, GGI_AUTO, GGI_AUTO, GGI_AUTO, GGI_AUTO,
+				GT_AUTO, &mode);
+	if (err != GGI_OK) {
+		printfailure("ggiCheckGraphMode: No graphic mode available\n");
+		ggDelStem(vis);
+		return;
+	}
+
+	err = ggiSetMode(vis, &mode);
+	if (err) {
+		printfailure("ggiSetMode() failed although ggiCheckGraphMode() was OK!\n");
+		ggDelStem(vis);
+		return;
+	}
+
+	/* Set up some palette so that palettized modes have a chance to work. */
+	ggiSetColorfulPalette(vis);
+
+	err=0;
+	/* Check a line that is fully gettable, full height */
+	err+=checkvlineclip(vis,&mode, 0,              mode.virt.y/2,mode.virt.x);
+	for(i=-8;i<=8;i++) {
+		for(j=0;j<16;j++) {
+			/* Check a line that is fully gettable */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2, mode.virt.y/4  +i,mode.virt.y/2+j);
+			/* Check a line that is partially above gettable area */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2,-mode.virt.y/4  +i,mode.virt.y/2+j);
+			/* Check a line that is partially below gettable area */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2, mode.virt.y*3/4+i,mode.virt.y/2+j);
+			/* Check a line that is totally above gettable area */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2,-mode.virt.y/2  +i,mode.virt.y/2+j);
+			/* Check a line that is totally below gettable area */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2, mode.virt.y    +i,mode.virt.y/2+j);
+			/* Check a line that crosses gettable area */
+			err+=checkvlineclip(vis,&mode,mode.virt.x/2,-mode.virt.y/2  +i,mode.virt.y*2+j);
+		}
+	}
+
+	ggiClose(vis);
+	ggDelStem(vis);
+	ggExit();
+
+	if (err) printfailure("One of the VLine tests returned unexpected results.");
+	else printsuccess();
+	return;
 }
 
-
-static void testcase3(const char *desc)
-{
-}
-
-
-static void testcase4(const char *desc)
-{
-}
-
-
-static void testcase5(const char *desc)
-{
-}
 
 int main(int argc, char * const argv[])
 {
 	parseopts(argc, argv);
 	printdesc("Regression testsuite get handling clipping\n\n");
 
-	testcase1("Check that gets fill full buffer on noclip.");
-	testcase2("Check clipping at left/right in middle");
-	testcase3("Check clipping at top/bottom in middle");
-	testcase4("Check fully outside clipping");
-	testcase5("Check box clipping");
+	testcase1("Check that gethline gets and clips correctly.");
+	testcase2("Check that getvline gets and clips correctly.");
 
 	printsummary();
 
