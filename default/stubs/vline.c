@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.6 2006/03/12 23:15:12 soyt Exp $
+/* $Id: vline.c,v 1.7 2007/05/18 21:59:52 pekberg Exp $
 ******************************************************************************
 
    Generic vertical lines.
@@ -110,6 +110,17 @@ int _GGI_stubs_L1_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
 		
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		h += y;
+		dest -= y;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
+
 	for (; h > 0; h--, y++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix;
@@ -122,6 +133,17 @@ int _GGI_stubs_L2_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 {
 	uint16_t *dest = (uint16_t *) buffer;
 	ggi_pixel pix;
+
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		h += y;
+		dest -= y;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
@@ -136,6 +158,17 @@ int _GGI_stubs_L3_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 	uint8_t *dest = (uint8_t *) buffer;
 	ggi_pixel pix;
 
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		h += y;
+		dest -= y * 3;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
+
 	for (; h > 0; h--, y++) {
 		LIBGGIGetPixel(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix; pix >>= 8;
@@ -149,6 +182,17 @@ int _GGI_stubs_L3_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 int _GGI_stubs_L4_getvline(struct ggi_visual *vis, int x, int y, int h, void *buffer)
 {
 	uint32_t *dest = (uint32_t *) buffer;
+
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		h += y;
+		dest -= y;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++) {
 		ggi_pixel pix;
