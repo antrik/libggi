@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.7 2007/05/18 08:09:53 pekberg Exp $
+/* $Id: get.c,v 1.8 2007/05/18 22:08:33 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -375,7 +375,7 @@ static void testcase2(const char *desc)
 
 	err=0;
 	/* Check a line that is fully gettable, full height */
-	err+=checkvlineclip(vis,&mode, 0,              mode.virt.y/2,mode.virt.x);
+	err+=checkvlineclip(vis,&mode, mode.virt.x/2,              0,mode.virt.y);
 	for(i=-8;i<=8;i++) {
 		for(j=0;j<16;j++) {
 			/* Check a line that is fully gettable */
