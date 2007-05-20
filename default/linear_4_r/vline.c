@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.7 2007/01/23 10:57:22 pekberg Exp $
+/* $Id: vline.c,v 1.8 2007/05/20 09:40:53 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -77,11 +77,30 @@ int GGI_lin4r_packed_putvline(struct ggi_visual *vis,int x,int y,int h,const voi
 	uint8_t shift = (x & 0x01) << 2;
 	uint8_t mask = 0xf0 >> shift;
 	uint8_t antishift = shift ^ 4;
+	int diff = 0;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, h, buf8, /2);
+	if (x < LIBGGI_GC(vis)->cliptl.x || x >= LIBGGI_GC(vis)->clipbr.x)
+		return 0;
+	if (y < LIBGGI_GC(vis)->cliptl.y) {
+		diff = LIBGGI_GC(vis)->cliptl.y - y;
+		y += diff;
+		buf8 += diff >> 1;
+		h -= diff;
+	}
+	if (y + h > LIBGGI_GC(vis)->clipbr.y)
+		h = LIBGGI_GC(vis)->clipbr.y - y;
+	if (h <= 0)
+		return 0;
+
 	PREPARE_FB(vis);
 
 	ptr=(uint8_t *)LIBGGI_CURWRITE(vis)+y*stride+(x>>1);
+
+	if (diff & 1) {
+		*ptr = ((*buf8++ & 0xf0) >> antishift) | (*ptr & mask);
+		ptr += stride;
+		--h;
+	}
 
 	for(; h > 1; h-=2, ptr+=(stride<<1)) {
 		*ptr=((*buf8 & 0x0f) << shift) | (*ptr & mask);
