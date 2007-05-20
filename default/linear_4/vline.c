@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.12 2007/05/20 08:27:31 pekberg Exp $
+/* $Id: vline.c,v 1.13 2007/05/20 10:55:55 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -120,9 +120,31 @@ int GGI_lin4_packed_getvline(struct ggi_visual *vis,int x,int y,int h,void *buff
 	uint8_t shift = (x & 0x01) << 2;
 	uint8_t mask = 0xf0 >> shift;
 	uint8_t antishift = shift ^ 4;
-	
+	int diff = 0;
+
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+
+	if (y < 0) {
+		diff = -y;
+		y = 0;
+		buf8 += diff >> 1;
+		h -= diff;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
+	if (h <= 0)
+		return 0;
+
 	PREPARE_FB(vis);
 	ptr = (uint8_t *)LIBGGI_CURREAD(vis)+y*stride+(x>>1);
+
+	if (diff & 1) {
+		uint8_t pix = *buf8 & 0xf0;
+		*buf8++ = pix | ((*ptr & mask) >> antishift);
+		ptr += stride;
+		--h;
+	}
 
 	/* Warning: unnecessary bit operations ahead! */
 	for (; h > 1; h-=2, ptr+=stride<<1) {
@@ -133,7 +155,7 @@ int GGI_lin4_packed_getvline(struct ggi_visual *vis,int x,int y,int h,void *buff
 	/* Here we can't lazily stick the extra pixel into the buffer, since
 	 * it might be off the screen. */
 	if (h) {
-		*buf8 = ((*ptr & mask) << shift);
+		*buf8 = (*buf8 & 0x0f) | ((*ptr & mask) << shift);
 	}
 	
 	return 0;
