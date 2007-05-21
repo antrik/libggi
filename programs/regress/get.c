@@ -1,4 +1,4 @@
-/* $Id: get.c,v 1.8 2007/05/18 22:08:33 pekberg Exp $
+/* $Id: get.c,v 1.9 2007/05/21 08:07:17 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for Get function handling.
@@ -255,7 +255,7 @@ static void testcase1(const char *desc)
 	ggDelStem(vis);
 	ggExit();
 
-	if (err) printfailure("One of the HLine tests returned unexpected results.");
+	if (err) printfailure("One of the HLine tests returned unexpected results.\n");
 	else printsuccess();
 	return;
 }
@@ -397,7 +397,7 @@ static void testcase2(const char *desc)
 	ggDelStem(vis);
 	ggExit();
 
-	if (err) printfailure("One of the VLine tests returned unexpected results.");
+	if (err) printfailure("One of the VLine tests returned unexpected results.\n");
 	else printsuccess();
 	return;
 }
