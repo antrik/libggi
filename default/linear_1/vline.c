@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.10 2007/05/18 20:01:24 pekberg Exp $
+/* $Id: vline.c,v 1.11 2007/05/21 07:57:04 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -73,7 +73,7 @@ GGI_lin1_unpacked_putvline(struct ggi_visual *vis,
 	const uint8_t *buff=(const uint8_t *)buffer;
 	int sw, i, bm;
 
-	LIBGGICLIP_XYH_BUFMOD(vis, x, y, height, buff, >> 3);
+	LIBGGICLIP_XYH_BUFMOD(vis, x, y, height, buff, *1);
 	PREPARE_FB(vis);
 
 	bm = 0x80 >> (x & 7);
