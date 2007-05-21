@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.11 2007/05/21 07:57:04 pekberg Exp $
+/* $Id: vline.c,v 1.12 2007/05/21 08:02:41 pekberg Exp $
 ******************************************************************************
 
    Linear 1 vertical lines.
@@ -143,6 +143,18 @@ GGI_lin1_unpacked_getvline(struct ggi_visual *vis,
 	uint8_t *adr;
 	uint8_t *buff = (uint8_t *)buffer;
 	int sw, i, bm;
+
+	if (x < 0 || x >= LIBGGI_VIRTX(vis))
+		return 0;
+	if (y < 0) {
+		height -= -y;
+		buff += -y;
+		y = 0;
+	}
+	if (y + height > LIBGGI_VIRTY(vis))
+		height = LIBGGI_VIRTY(vis) - y;
+	if (height <= 0)
+		return 0;
 
 	PREPARE_FB(vis);
 
