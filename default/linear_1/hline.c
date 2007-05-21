@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.11 2007/05/21 08:13:18 pekberg Exp $
+/* $Id: hline.c,v 1.12 2007/05/21 08:17:28 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -200,6 +200,18 @@ GGI_lin1_unpacked_gethline(struct ggi_visual *vis,
 	uint8_t *adr;
 	uint8_t *buff = (uint8_t *)buffer;
 	int i, bm;
+
+	if (y < 0 || y >= LIBGGI_VIRTY(vis))
+		return 0;
+	if (x < 0) {
+		w -= -x;
+		buff += -x;
+		x = 0;
+	}
+	if (x + w > LIBGGI_VIRTX(vis))
+		w = LIBGGI_VIRTX(vis) - x;
+	if (w <= 0)
+		return 0;
 
 	PREPARE_FB(vis);
 
