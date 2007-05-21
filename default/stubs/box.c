@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.11 2007/03/09 09:16:38 soyt Exp $
+/* $Id: box.c,v 1.12 2007/05/21 09:37:12 pekberg Exp $
 ******************************************************************************
 
    Generic box drawing
@@ -109,6 +109,14 @@ int GGI_stubs_getbox(struct ggi_visual *vis, int x, int y, int w, int h, void *b
 	} else {
 		rowadd = w * GT_ByPP(LIBGGI_GT(vis));
 	}
+
+	if (y < 0) {
+		dest += -y * rowadd;
+		h += y;
+		y = 0;
+	}
+	if (y + h > LIBGGI_VIRTY(vis))
+		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++, dest += rowadd) {
 		_ggiGetHLine(vis, x, y, w, dest);
