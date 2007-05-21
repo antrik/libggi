@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.10 2007/05/06 05:02:50 pekberg Exp $
+/* $Id: hline.c,v 1.11 2007/05/21 08:13:18 pekberg Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -93,7 +93,7 @@ GGI_lin1_unpacked_puthline(struct ggi_visual *vis,
 	int i;
 	uint8_t bm;
 
-	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buff, >> 3);
+	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, buff, *1);
 	PREPARE_FB(vis);
 
 	adr = (uint8_t *)LIBGGI_CURWRITE(vis) +
