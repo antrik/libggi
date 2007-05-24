@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2007/04/17 00:27:49 ggibecka Exp $
+/* $Id: visual.c,v 1.17 2007/05/24 07:49:33 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -105,7 +105,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	fltime         = atof(options[OPT_FLUSHTIME].result);
 	priv->flushcnt   = 0;
 	priv->flushtotal = 0;
-	gettimeofday(&priv->flushlast,NULL);
+	ggCurTime(&priv->flushlast);
 	priv->flushstep.tv_sec  = fltime;
 	priv->flushstep.tv_usec = (fltime-priv->flushstep.tv_sec)*1000000;
 

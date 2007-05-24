@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2007/04/17 00:27:49 ggibecka Exp $
+/* $Id: mode.c,v 1.27 2007/05/24 07:49:33 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -86,7 +86,7 @@ static int GGI_file_flush(struct ggi_visual *vis,
 		dowritefile(vis);
 	}
 	if (priv->flushstep.tv_sec || priv->flushstep.tv_usec) {
-		gettimeofday(&now,NULL);
+		ggCurTime(&now);
 		if (   now.tv_sec >  priv->flushlast.tv_sec || 
 		     ( now.tv_sec == priv->flushlast.tv_sec &&
 		       now.tv_usec > priv->flushlast.tv_usec) ) {
@@ -359,7 +359,7 @@ int GGI_file_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	priv->flushtotal = 0;
 	priv->mode_reset = 1;	/* signal the writer that the mode was reset. */
 
-	gettimeofday(&priv->flushlast,NULL);
+	ggCurTime(&priv->flushlast);
 	return 0;
 }
 
