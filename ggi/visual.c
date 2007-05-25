@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.21 2007/04/01 07:14:15 cegger Exp $
+/* $Id: visual.c,v 1.22 2007/05/25 21:22:19 soyt Exp $
 ******************************************************************************
 
    Graphics library for GGI. Handles visuals.
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi.h>
+#include <ggi/internal/ggi-module.h>
 #include <ggi/internal/ggi_debug.h>
 
 
@@ -208,6 +209,8 @@ struct ggi_visual *_ggiNewVisual(void)
 	LIBGGI_FLAGS(vis) = 0;
 	LIBGGI_FD(vis) = -1;
 
+	GG_LIST_INIT(&vis->helpers);
+
 	GG_SLIST_INIT(&LIBGGI_DLHANDLE(vis));
 	GG_SLIST_INIT(&vis->generic_ext);
 
@@ -283,4 +286,131 @@ void _ggiDestroyVisual(struct ggi_visual *vis)
 	ggLockDestroy(vis->mutex);
 	ggDelChannel(vis->instance.channel);
 	free(vis);
+}
+
+
+int
+_ggiVisualOpenDisplay(struct ggi_visual *vis,
+		      const char* name,
+		      const char * args,
+		      void *argp)
+{
+	int err;
+	union {
+		struct gg_module *any;
+		struct ggi_module_display *display;
+	} module;
+	
+	LIB_ASSERT(vis->instance.module == NULL, "already opened!");
+	
+	module.any = ggOpenModule(libggi, name);
+	
+	if (module.any == NULL)
+		return GGI_ENOTFOUND;
+	
+	if (module.any->klass != GGI_MODULE_DISPLAY) {
+		ggCloseModule(module.any);
+		return GGI_ENOMATCH;
+	}
+	
+	vis->instance.module = module.any;
+	err = module.display->open(vis, args, argp);
+	
+	if(err) {
+		vis->instance.module = NULL;
+		ggCloseModule(module.any);
+	}
+
+	return err;
+}
+
+void
+_ggiVisualCloseDisplay(struct ggi_visual *vis)
+{
+	union {
+		struct gg_module *any;
+		struct ggi_module_display *display;
+	} module;
+	
+	LIB_ASSERT(vis->instance.module != NULL, "no display!");
+	
+	module.any = vis->instance.module;
+	
+	if(module.display->close)
+		module.display->close(vis);
+	
+	vis->instance.module = NULL;
+	ggCloseModule(module.any);
+}
+
+int
+_ggiVisualLoadHelper(struct ggi_visual *vis,
+		     const char *name,
+		     const char *args,
+		     void *argp,
+		     struct ggi_helper **res)
+{
+	int err;
+	union {
+		struct gg_module *any;
+		struct ggi_module_helper *helper;
+	} module;
+	struct ggi_helper *helper;
+	
+	LIB_ASSERT(vis->instance.module != NULL, "not opened!");
+	
+	module.any = NULL;
+	err = GGI_ENOMEM;
+	
+	helper = calloc(1, sizeof(*helper));
+	if (helper == NULL)
+		goto end;
+	
+	err = GGI_ENOTFOUND;
+	module.any = ggOpenModule(libggi, name);
+	if (module.any == NULL)
+		goto end;
+	
+	err = GGI_ENOMATCH;
+	if (module.any->klass != GGI_MODULE_HELPER)
+		goto end;
+	
+	helper->plugin.module = module.any;
+	helper->visual = vis;
+	err = module.helper->setup(helper, args, argp);
+ end:
+	if(err) {
+		free(helper);
+		if(module.any)
+			ggCloseModule(module.any);
+		if(res)
+			*res = NULL;
+	} else {
+		GG_LIST_INSERT_HEAD(&vis->helpers, helper, h_list);
+		if(res)
+			*res = helper;
+	}
+	
+	return err;
+}
+
+
+void
+_ggiVisualTeardownHelper(struct ggi_helper *helper)
+{
+	struct ggi_visual *vis;
+	union {
+		struct gg_module *any;
+		struct ggi_module_helper *helper;
+	} module;
+	
+	module.any = helper->plugin.module;
+	vis = helper->visual;
+	
+	GG_LIST_REMOVE(helper, h_list);
+	if(module.helper->teardown)
+		module.helper->teardown(helper);
+	
+	free(helper);
+	ggCloseModule(module.any);
 }

@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.6 2007/03/11 00:49:00 soyt Exp $
+/* $Id: ggi-visual.h,v 1.7 2007/05/25 21:22:19 soyt Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -178,6 +178,8 @@ typedef struct ggi_dlhandle_l {
 
 #define _GGI_NROF_HELPERS	20
 
+struct ggi_helper;
+
 /*
  * Increment the version number every time you add
  * new features.
@@ -194,12 +196,10 @@ struct ggi_visual {
 	unsigned int       version;
 	void		  *mutex;	/* Lock when changing.. */
 	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
+	GG_LIST_HEAD(, ggi_helper) helpers;
 
 	uint32_t	flags;		/* Flags */
-
-        /* used to be gamma. pad for binary compat until next major release. */
-        double	dummy1, dummy2, dummy3;
-
+	
 	/*
 	  Integer values [9/15]
 	*/
