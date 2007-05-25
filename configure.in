@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.212 2007/05/24 07:51:46 cegger Exp $
+dnl $Id: configure.in,v 1.213 2007/05/25 11:39:26 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -395,7 +395,7 @@ AC_FUNC_MEMCMP
 GGI_FUNC_MMAP_FILEIO
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(select strdup strerror setenv putenv getopt \
-	random herror gethostbyname sigpending fork kill)
+	random herror getaddrinfo gethostbyname sigpending fork kill)
 
 dnl ========================================================================
 dnl LibGII must be built
@@ -586,8 +586,6 @@ AC_CHECK_LIB(socket, connect,
     CC="$SAVECC"
   )
 )
-
-GGI_FUNC_GETADDRINFO
 
 if test "x$ac_cv_func_gethostbyname" = "xno"; then
   AC_CHECK_LIB(c, gethostbyname, ,
