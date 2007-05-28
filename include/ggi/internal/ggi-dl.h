@@ -1,4 +1,4 @@
-/* $Id: ggi-dl.h,v 1.8 2007/05/28 09:28:56 pekberg Exp $
+/* $Id: ggi-dl.h,v 1.9 2007/05/28 10:06:57 pekberg Exp $
 ******************************************************************************
 
    LibGGI - clipping macros and inclusion of stuff needed by sublibs
@@ -203,6 +203,41 @@ do {  \
 	} \
 	if ((ysrc)+(h) > LIBGGI_VIRTY(vis)) { \
 		(h) = LIBGGI_VIRTY(vis) - (ysrc); \
+	} \
+	if ((h) <= 0) return 0; \
+} while (0)
+
+
+#define LIBGGICLIP_CROSSBLIT(src,xsrc,ysrc,w,h,dst,xdest,ydest) \
+do {  \
+	int diff = LIBGGI_GC((dst))->cliptl.x - (xdest); \
+	if (-(xsrc) > diff) \
+		diff = -(xsrc); \
+	if (diff > 0) { \
+		(xdest) += diff; \
+		(xsrc)  += diff; \
+		(w)  -= diff; \
+	} \
+	if ((xdest)+(w) > LIBGGI_GC((dst))->clipbr.x) { \
+		(w) = LIBGGI_GC((dst))->clipbr.x - (xdest); \
+	} \
+	if ((xsrc)+(w) > LIBGGI_VIRTX(src)) { \
+		(w) = LIBGGI_VIRTX(src) - (xsrc); \
+	} \
+	if ((w) <= 0) return 0; \
+	diff = LIBGGI_GC((dst))->cliptl.y - (ydest); \
+	if (-(ysrc) > diff) \
+		diff = -(ysrc); \
+	if (diff > 0) { \
+		(ydest) += diff; \
+		(ysrc)  += diff; \
+		(h)  -= diff; \
+	} \
+	if ((ydest)+(h) > LIBGGI_GC((dst))->clipbr.y) { \
+		(h) = LIBGGI_GC((dst))->clipbr.y - (ydest); \
+	} \
+	if ((ysrc)+(h) > LIBGGI_VIRTY(src)) { \
+		(h) = LIBGGI_VIRTY(src) - (ysrc); \
 	} \
 	if ((h) <= 0) return 0; \
 } while (0)

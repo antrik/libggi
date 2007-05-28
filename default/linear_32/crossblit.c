@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.20 2007/03/13 18:15:44 pekberg Exp $
+/* $Id: crossblit.c,v 1.21 2007/05/28 10:06:57 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1008,7 +1008,7 @@ static inline void cb32to32(struct ggi_visual *src, int sx, int sy, int w, int h
 int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
 			struct ggi_visual *dst, int dx, int dy)
 {
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 
 	PREPARE_FB(dst);
 

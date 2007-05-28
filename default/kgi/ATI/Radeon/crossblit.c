@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.8 2007/03/09 15:57:43 antrik Exp $
+/* $Id: crossblit.c,v 1.9 2007/05/28 10:06:54 pekberg Exp $
 ******************************************************************************
    ATI Radeon crossblit acceleration
 
@@ -416,7 +416,7 @@ int GGI_kgi_radeon_crossblit_3d (struct ggi_visual *src, int sx, int sy, int w,
 	char *buf;
 	pp_txformat_t txformat;
 
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 
 	ctx = RADEON_CONTEXT(dst);
 

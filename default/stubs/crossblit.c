@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.4 2006/03/12 23:15:12 soyt Exp $
+/* $Id: crossblit.c,v 1.5 2007/05/28 10:06:57 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -38,7 +38,7 @@ int GGI_stubs_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 	ggi_pixel cur_src;
 	ggi_pixel cur_dst = 0;
 
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 	
 	LIBGGIGetPixel(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */

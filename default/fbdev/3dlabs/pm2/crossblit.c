@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
+/* $Id: crossblit.c,v 1.3 2007/05/28 10:06:52 pekberg Exp $
 ******************************************************************************
 
    LibGGI - 3Dlabs Permedia 2 acceleration for fbdev target
@@ -130,7 +130,7 @@ int GGI_3dlabs_pm2_crossblit(struct ggi_visual *src, int sx, int sy, int w, int 
 			 struct ggi_visual *dst, int dx, int dy)
 {
 	/* Software clip so we don't read/write unused data. */
-	LIBGGICLIP_COPYBOX(dst, sx, sy, w, h, dx, dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 
 	if (src->r_frame && src->r_frame->layout == dst->w_frame->layout) {
 		uint32_t srcformat

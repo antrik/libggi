@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.23 2007/03/13 18:15:44 pekberg Exp $
+/* $Id: crossblit.c,v 1.24 2007/05/28 10:06:56 pekberg Exp $
 ******************************************************************************
 
    16-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -893,7 +893,7 @@ static inline void cb32to16(struct ggi_visual *src, int sx, int sy, int w, int h
 int GGI_lin16_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
 			struct ggi_visual *dst, int dx, int dy)
 {
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 
 	PREPARE_FB(dst);
 
@@ -1243,7 +1243,7 @@ static inline void cb32to16_64bitc(struct ggi_visual *src, int sx, int sy, int w
 int GGI_lin16_crossblit_64bitc(struct ggi_visual *src, int sx, int sy, int w, int h, 
 			    struct ggi_visual *dst, int dx, int dy)
 {
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 	PREPARE_FB(dst);
 
 	/* Check if src read buffer is also a blPixelLinearBuffer. */
@@ -1633,7 +1633,7 @@ static inline void cb32to16_mmx(struct ggi_visual *src, int sx, int sy, int w, i
 int GGI_lin16_crossblit_mmx(struct ggi_visual *src, int sx, int sy, int w, int h, 
 			    struct ggi_visual *dst, int dx, int dy)
 {
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 	PREPARE_FB(dst);
 
 	/* Check if src read buffer is also a blPixelLinearBuffer. */

@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.15 2007/04/25 07:29:12 pekberg Exp $
+/* $Id: crossblit.c,v 1.16 2007/05/28 10:06:57 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -154,7 +154,7 @@ crossblit_same(struct ggi_visual *src, int sx, int sy, int w, int h,
 int GGI_lin8_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h, 
 			struct ggi_visual *dst, int dx, int dy)
 {
-	LIBGGICLIP_COPYBOX(dst,sx,sy,w,h,dx,dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 	PREPARE_FB(dst);
 
 	/* Check if the src-read and dst-write buffers are in the same layout

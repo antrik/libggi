@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2006/03/12 23:15:05 soyt Exp $
+/* $Id: crossblit.c,v 1.7 2007/05/28 10:06:54 pekberg Exp $
 ******************************************************************************
 
    LibGGI - Millennium II acceleration for fbdev target
@@ -130,7 +130,7 @@ int GGI_m2164w_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 			 struct ggi_visual *dst, int dx, int dy)
 {
 	/* Software clip so we don't read/write unused data. */
-	LIBGGICLIP_COPYBOX(dst, sx, sy, w, h, dx, dy);
+	LIBGGICLIP_CROSSBLIT(src, sx, sy, w, h, dst, dx, dy);
 
 	if (src->r_frame && src->r_frame->layout == dst->w_frame->layout) {
 		uint32_t srcformat
