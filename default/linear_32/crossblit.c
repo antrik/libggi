@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.21 2007/05/28 10:06:57 pekberg Exp $
+/* $Id: crossblit.c,v 1.22 2007/05/28 11:54:39 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -1016,11 +1016,26 @@ int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 	if (src->r_frame == NULL) goto fallback;
 	if (src->r_frame->layout != blPixelLinearBuffer) goto fallback;
 
-	/* No optimizations yet for reverse endian and other such weirdness */
-	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
-	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
+	/* No optimizations yet for non-endian weirdness */
+	if (LIBGGI_PIXFMT(src)->flags & ~GGI_PF_REVERSE_ENDIAN) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags & ~GGI_PF_REVERSE_ENDIAN) goto fallback;
 
 	PREPARE_FB(src);
+
+	if (GT_SIZE(LIBGGI_GT(src)) == 32) {
+		/* Even with different endian, it could still be the same */
+		if (dst->w_frame->buffer.plb.pixelformat->stdformat &&
+			(dst->w_frame->buffer.plb.pixelformat->stdformat ==
+			 src->r_frame->buffer.plb.pixelformat->stdformat))
+		{
+			crossblit_same(src, sx, sy, w, h, dst, dx, dy);
+			return 0;
+		}
+	}
+
+	/* Only above trivial optimizations for endian weirdness */
+	if (LIBGGI_PIXFMT(src)->flags) goto fallback;
+	if (LIBGGI_PIXFMT(dst)->flags) goto fallback;
 
 	switch (GT_SIZE(LIBGGI_GT(src))) {
 	case 1:
@@ -1047,14 +1062,6 @@ int GGI_lin32_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 		else goto fallback;
 		return 0;
 	case 32:
-		if (!dst->w_frame->buffer.plb.pixelformat->stdformat) 
-		  goto notsame;
-		if (dst->w_frame->buffer.plb.pixelformat->stdformat !=
-		    src->r_frame->buffer.plb.pixelformat->stdformat) 
-		  goto notsame;
-		crossblit_same(src, sx, sy, w, h, dst, dx, dy);
-		return 0;
-	notsame:
 		if (GT_SCHEME(LIBGGI_GT(src)) == GT_TRUECOLOR)
 		  cb32to32(src, sx, sy, w, h, dst, dx, dy);
 		else goto fallback;
