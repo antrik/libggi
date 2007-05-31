@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.89 2007/05/15 10:02:37 pekberg Exp $
+/* $Id: rfb.c,v 1.90 2007/05/31 12:59:38 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -679,6 +679,7 @@ struct encodings encode_tbl[] = {
 	{   -239,    0, "Cursor pseudo-encoding\n",       print_enc },
 	{   -240,    0, "XCursor pseudo-encoding\n",      print_enc },
 	{   -247, -256, "Tight compress %d subencoding\n",print_enc },
+	{   -257, -272, "Liguori %d pseudo-encoding\n",   print_enc },
 	{ -65536,    0, "Cache encoding\n",               print_enc },
 	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
 	{ -65534,    0, "XOR_Zlib encoding\n",            print_enc },
