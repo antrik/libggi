@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.19 2007/04/01 05:26:43 cegger Exp $
+/* $Id: inputdump.c,v 1.20 2007/06/01 19:50:01 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -45,7 +45,6 @@ static int no_pmove = 0;
 static ggi_visual_t vis;
 static ggi_mode vis_mode;
 static ggi_coord vis_ch;
-static int placement = 0;
 
 
 #define MAX_NR_DEV	128
@@ -271,11 +270,9 @@ static void draw_inp_device(mydev_info *M)
 	}
 }
 
-static void calc_placement(ggi_coord *c)
+static void calc_placement(ggi_coord *c, int p)
 {
 	ggi_coord t;
-
-	int p = placement;
 
 	t.x = vis_mode.virt.x / 2;
 	t.y = vis_mode.virt.y / 2;
@@ -324,8 +321,7 @@ static mydev_info *find_input_device(uint32_t origin)
 	InputDevices[i]->origin = origin;
 	InputDevices[i]->known  = 0;
 
-	calc_placement(& InputDevices[i]->top);
-	placement++; 
+	calc_placement(& InputDevices[i]->top, i);
 
 	memset(InputDevices[i]->axes, 0, (MAX_NR_VAL+4) * sizeof(int32_t));
 	for (j = 0; j < MAX_NR_BUT; j++) {
@@ -625,6 +621,32 @@ static void show_valinfo(gii_cmd_event *ev)
 	}
 }
 
+static void show_devclose(gii_cmd_event *ev)
+{
+	int i;
+
+	if (!cur_dev)
+		/* belt ... */
+		return;
+
+	for (i=0; i < MAX_NR_DEV; i++) {
+		if (cur_dev == InputDevices[i])
+			/* found it */
+			break;
+	}
+	if (cur_dev != InputDevices[i])
+		/* ... and suspenders */
+		return;
+
+	InputDevices[i] = NULL;
+
+	for (i=0; i < MAX_NR_VAL; i++)
+		if (cur_dev->VI[i])
+			free(cur_dev->VI[i]);
+	free(cur_dev);
+	cur_dev = NULL;
+}
+
 static void show_command(gii_cmd_event *ev)
 {
 	int s = (do_show != SHOW_NIL);
@@ -638,6 +660,11 @@ static void show_command(gii_cmd_event *ev)
 		case GII_CMDCODE_VALUATOR_INFO:
 			if (s) fprintf(stderr, "ValInfo: ");
 			show_valinfo(ev);
+			return;
+
+		case GII_CMDCODE_DEVICE_CLOSE:
+			if (s) fprintf(stderr, "Device close\n");
+			show_devclose(ev);
 			return;
 	}
 
