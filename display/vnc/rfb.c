@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.91 2007/06/04 14:13:37 pekberg Exp $
+/* $Id: rfb.c,v 1.92 2007/06/04 17:35:58 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1535,7 +1535,6 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
-	client->gii = priv->gii;
 
 #if defined(F_GETFL)
 	flags = fcntl(client->cfd, F_GETFL);
