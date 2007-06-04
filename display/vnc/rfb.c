@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.90 2007/05/31 12:59:38 pekberg Exp $
+/* $Id: rfb.c,v 1.91 2007/06/04 14:13:37 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1515,6 +1515,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	ggi_vnc_client *client;
 	long flags;
+	struct linger linger;
 
 	DPRINT("new_client(%d, %d)\n", cfd, cwfd);
 
@@ -1534,6 +1535,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
+	client->gii = priv->gii;
 
 #if defined(F_GETFL)
 	flags = fcntl(client->cfd, F_GETFL);
@@ -1550,6 +1552,12 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	if (cfd != cwfd)
 		ioctlsocket(client->cwfd, FIONBIO, &flags);
 #endif
+
+	/* Don't linger on close, shutdown harshly */
+	linger.l_onoff = 1;
+	linger.l_linger = 0;
+	setsockopt(client->cwfd, SOL_SOCKET,
+		SO_LINGER, &linger, sizeof(linger));
 
 	client->action = vnc_client_version;
 
