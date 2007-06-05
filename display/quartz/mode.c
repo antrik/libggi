@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.33 2007/04/01 22:29:52 cegger Exp $
+/* $Id: mode.c,v 1.34 2007/06/05 21:01:19 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -209,7 +209,8 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 	memcpy(&priv->winRect, &contentRect, sizeof(Rect));
 
 	/* Clear Background */
-	tmpBounds = CGRectMake(0, titleborder, priv->winRect.right, priv->winRect.bottom);
+	tmpBounds = CGRectMake(0, titleborder,
+			priv->winRect.right, priv->winRect.bottom);
 	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
 	CGContextClearRect(priv->context, tmpBounds);
 
