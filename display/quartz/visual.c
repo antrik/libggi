@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2007/04/01 08:33:27 cegger Exp $
+/* $Id: visual.c,v 1.29 2007/06/06 18:58:04 cegger Exp $
 ******************************************************************************
 
    Display-quartz: initialization
@@ -83,6 +83,13 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	/* Restore gamma settings */
 	CGDisplayRestoreColorSyncSettings ();
+
+	if (priv->image != NULL) {
+		CGImageRelease(priv->image);
+		CGDataProviderRelease(priv->dataProviderRef);
+		priv->image = NULL;
+		priv->dataProviderRef = NULL;
+	}
 
 	if (vis->gamma) free(vis->gamma);
 	if (priv->opmansync) free(priv->opmansync);
