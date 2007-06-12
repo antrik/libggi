@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.20 2007/06/01 19:50:01 pekberg Exp $
+/* $Id: inputdump.c,v 1.21 2007/06/12 09:48:19 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -20,7 +20,7 @@
 
    USAGE:  inputdump  [ --mode <mode> ]  [ --target <target> ]
                       [ --input <input> ]  [ --long ]  [ --short ]
-                      [ --no-pmove ]
+                      [ --no-pmove ]  [ --no-val ]
 
 ******************************************************************************
 */
@@ -41,6 +41,7 @@ static struct timeval start_time;
 static int firstevent = 1;
 static enum { SHOW_NIL, SHOW_SHORT, SHOW_LONG } do_show = SHOW_NIL;
 static int no_pmove = 0;
+static int no_val = 0;
 
 static ggi_visual_t vis;
 static ggi_mode vis_mode;
@@ -317,6 +318,10 @@ static mydev_info *find_input_device(uint32_t origin)
 	}
 
 	InputDevices[i] = (mydev_info *) malloc(sizeof(mydev_info));
+	if (!InputDevices[i]) {
+		fprintf(stderr, "malloc failure\n");
+		return NULL;
+	}
 
 	InputDevices[i]->origin = origin;
 	InputDevices[i]->known  = 0;
@@ -329,6 +334,9 @@ static mydev_info *find_input_device(uint32_t origin)
 		InputDevices[i]->syms[j] = -1;
 		InputDevices[i]->pbuttons[j] = -1;
 	}
+	
+	for (j = 0; j < MAX_NR_VAL; ++j)
+		InputDevices[i]->VI[j] = NULL;
 	
 	InputDevices[i]->val_h = 0;
 	InputDevices[i]->ptr_h = 0;
@@ -466,7 +474,7 @@ static void show_valuator(gii_val_event *ev)
 {
 	uint32_t i;
 
-	if (do_show != SHOW_NIL) {
+	if (!no_val && do_show != SHOW_NIL) {
 		fprintf(stderr, "0x%02x..0x%02x =", ev->first,
 			ev->first+ev->count-1);
 
@@ -520,8 +528,7 @@ static void show_devinfo(gii_cmd_event *ev)
 	if (DI->num_valuators > 0) {
 		qev.any.size   = sizeof(gii_cmd_event);
 		qev.any.type   = evCommand;
-		qev.any.origin = GII_EV_ORIGIN_NONE;
-		qev.any.target = GII_EV_TARGET_ALL;
+		qev.any.target = ev->origin;
 		qev.cmd.code   = GII_CMDCODE_VALUATOR_INFO;
 
 		VI->number = GII_VAL_QUERY_ALL;
@@ -593,7 +600,7 @@ static void show_valinfo(gii_cmd_event *ev)
 	    case GII_PT_TEMPERATURE:     fprintf(stderr, "K");       break;
 	    case GII_PT_CURRENT:         fprintf(stderr, "A");       break;
 	    case GII_PT_VOLTAGE:         fprintf(stderr, "V");       break;
-	    case GII_PT_RESISTANCE:      fprintf(stderr, "ohm)");    break;
+	    case GII_PT_RESISTANCE:      fprintf(stderr, "ohm");     break;
 	    case GII_PT_CAPACITY:        fprintf(stderr, "farad");   break;
 	    case GII_PT_INDUCTIVITY:     fprintf(stderr, "henry");   break;
 	    default:                     fprintf(stderr, "???");     break;
@@ -612,6 +619,11 @@ static void show_valinfo(gii_cmd_event *ev)
 
 		cur_dev->VI[VI->number] =
 			malloc(sizeof(struct gii_cmddata_valinfo));
+
+		if (!cur_dev->VI[VI->number]) {
+			fprintf(stderr, "malloc failure\n");
+			return;
+		}
 
 		*cur_dev->VI[VI->number] = *VI;
 
@@ -712,12 +724,12 @@ static void show_event(gii_event *ev)
 			break;
 
 		case evValAbsolute:
-			if (s) fprintf(stderr, "ValAbsolute: ");
+			if (!no_val && s) fprintf(stderr, "ValAbsolute: ");
 			show_valuator(&ev->val);
 			break;
 
 		case evValRelative:
-			if (s) fprintf(stderr, "ValRelative: ");
+			if (!no_val && s) fprintf(stderr, "ValRelative: ");
 			show_valuator(&ev->val);
 			break;
 
@@ -778,6 +790,7 @@ static void usage(void)
 		"    -s --short\n"
 		"    -l --long\n"
 		"    -p --no-pmove\n"
+		"    -v --no-val\n"
 		"    -h --help\n\n");
 }
 
@@ -839,6 +852,12 @@ int main(int argc, const char *argv[])
 			
 		if (CMP_OPT("-p", "--no-pmove", 0)) {
 			no_pmove = 1;
+			argv++; argc--;
+			continue;
+		}
+
+		if (CMP_OPT("-v", "--no-val", 0)) {
+			no_val = 1;
 			argv++; argc--;
 			continue;
 		}
