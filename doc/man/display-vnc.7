@@ -1,12 +1,12 @@
-.TH "display-vnc" 7 "2007-05-14" "libggi-current" GGI
+.TH "display-vnc" 7 "2007-06-13" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
 display-vnc: [-bind=<iface>] [-client=<host>] [-copyrect=no|always]
-             [-corre=no] [-display=<dpy>] [-hextile=no] [-kold]
-             [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
+             [-corre=no] [-display=<dpy>] [-gii=no] [-hextile=no]
+             [-kold] [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
              [-rre=no] [-server[=<dpy>|stdio]] [-stdio] [-tight=no]
              [-title=<title>] [-viewonly] [-viewpw=<file>]
              [-zlib=<level>|no] [-zlibhex=<level>|no]
@@ -52,6 +52,10 @@ equivalent to tcp port 5900.
 If the \fI-client\fR option is also given, this is instead the display
 number this server connects to, and display number 0 is equivalent
 to tcp port 5500 in that case.
+
+.TP
+\f(CW-gii=no\fR
+Disables the gii pseudo-encoding.
 
 .TP
 \f(CW-hextile=no\fR
