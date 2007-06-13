@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.92 2007/06/04 17:35:58 pekberg Exp $
+/* $Id: rfb.c,v 1.93 2007/06/13 09:39:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -191,7 +191,7 @@ close_client(ggi_vnc_client *client)
 }
 
 static int
-write_client(ggi_vnc_client *client, ggi_vnc_buf *buf)
+write_client(ggi_vnc_client *client, ggi_vnc_buf *buf, int close_on_error)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -199,7 +199,8 @@ write_client(ggi_vnc_client *client, ggi_vnc_buf *buf)
 
 	if (client->write_pending) {
 		DPRINT("impatient client...\n");
-		close_client(client);
+		if (close_on_error)
+			close_client(client);
 		return -1;
 	}
 
@@ -243,7 +244,8 @@ again:
 		return 0;
 	default:
 		DPRINT("write error (%d, \"%s\").\n", errno, strerror(errno));
-		close_client(client);
+		if (close_on_error)
+			close_client(client);
 		return res;
 	}
 }
@@ -646,8 +648,36 @@ zrle_enc(ggi_vnc_client *client,
 	return GGI_vnc_zrle;
 }
 #else
-#define zrle_enc print_enc   
+#define zrle_enc print_enc
 #endif
+
+static ggi_vnc_encode *
+gii_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	DPRINT_MISC(format);
+	if (client->gii == 1) {
+		client->gii = 2;
+
+		/* ack gii.
+		 * XXX send a pseudo-rect instead?
+		 */
+		DPRINT("enabling gii events\n");
+		GGI_vnc_buf_reserve(&client->wbuf, 8);
+		client->wbuf.size += 8;
+		client->wbuf.buf[0] = 253;
+		client->wbuf.buf[1] = 0x81;
+		client->wbuf.buf[2] = 0;
+		client->wbuf.buf[3] = 4;
+		client->wbuf.buf[4] = 0;
+		client->wbuf.buf[5] = 1;
+		client->wbuf.buf[6] = 0;
+		client->wbuf.buf[7] = 1;
+		write_client(client, &client->wbuf, 0);
+	}
+
+	return NULL;
+}
 
 
 struct encodings {
@@ -680,6 +710,7 @@ struct encodings encode_tbl[] = {
 	{   -240,    0, "XCursor pseudo-encoding\n",      print_enc },
 	{   -247, -256, "Tight compress %d subencoding\n",print_enc },
 	{   -257, -272, "Liguori %d pseudo-encoding\n",   print_enc },
+	{   -305,    0, "gii pseudo-encoding\n",          gii_enc },
 	{ -65536,    0, "Cache encoding\n",               print_enc },
 	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
 	{ -65534,    0, "XOR_Zlib encoding\n",            print_enc },
@@ -915,7 +946,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 
 done:
 	if (client->wbuf.size)
-		write_client(client, &client->wbuf);
+		write_client(client, &client->wbuf, 1);
 }
 
 static int
@@ -1138,6 +1169,68 @@ vnc_client_scale(ggi_vnc_client *client)
 }
 
 static int
+vnc_client_inject_gii(ggi_vnc_client *client)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	uint16_t count;
+	uint8_t reverse;
+	int zap = 0;
+
+	DPRINT("client_inject_gii\n");
+
+	if (client->buf_size < 4) {
+		/* wait for more data */
+		client->action = vnc_client_inject_gii;
+		return 0;
+	}
+
+#ifdef GG_BIG_ENDIAN
+	reverse = ~client->buf[1] & 0x80;
+#else
+	reverse = client->buf[1] & 0x80;
+#endif
+
+	memcpy(&count, &client->buf[2], sizeof(count));
+	if (reverse)
+		count = GGI_BYTEREV16(count);
+
+	if (client->input && priv->inject && client->gii == 2) {
+		zap = priv->inject(priv->gii_ctx, client,
+			client->buf[1], count,
+			&client->buf[4], client->buf_size - 4);
+		if (zap < 0) {
+			DPRINT("gii extension failure\n");
+			return zap;
+		}
+	}
+	else if (client->buf_size < 4 + count)
+		zap = client->buf_size - 4;
+	else
+		zap = count;
+
+	if (zap < count) {
+		/* remove all received stuff so far and adjust
+		 * how much more is expected
+		 */
+		count -= zap;
+		if (reverse)
+			count = GGI_BYTEREV16(count);
+		client->buf_size -= zap;
+		memmove(&client->buf[4],
+			&client->buf[4 + zap], client->buf_size - 4);
+		memcpy(&client->buf[2], &count, sizeof(count));
+
+		/* wait for more data */
+		client->action = vnc_client_inject_gii;
+		return 0;
+	}
+
+	DPRINT("removing gii message\n");
+	return vnc_remove(client, 4 + zap);
+}
+
+static int
 vnc_client_run(ggi_vnc_client *client)
 {
 	int res = 0;
@@ -1166,6 +1259,9 @@ vnc_client_run(ggi_vnc_client *client)
 			break;
 		case 8:
 			res = vnc_client_scale(client);
+			break;
+		case 253:
+			res = vnc_client_inject_gii(client);
 			break;
 		default:
 			DPRINT("client_run unknown type %d (size %d)\n",
@@ -1268,7 +1364,7 @@ vnc_client_init(ggi_vnc_client *client)
 	change_pixfmt(client);
 
 	/* desired pixel-format */
-	write_client(client, &client->wbuf);
+	write_client(client, &client->wbuf, 1);
 
 	DPRINT("client_init done\n");
 
@@ -1335,7 +1431,7 @@ vnc_client_challenge(ggi_vnc_client *client)
 	client->wbuf.buf[1] = 0;
 	client->wbuf.buf[2] = 0;
 	client->wbuf.buf[3] = 0;
-	write_client(client, &client->wbuf);
+	write_client(client, &client->wbuf, 1);
 
 	return 0;
 }
@@ -1389,7 +1485,7 @@ vnc_client_security(ggi_vnc_client *client)
 		client->wbuf.buf[1] = 0;
 		client->wbuf.buf[2] = 0;
 		client->wbuf.buf[3] = 0;
-		write_client(client, &client->wbuf);
+		write_client(client, &client->wbuf, 1);
 		return 0;
 
 	case 2:
@@ -1415,7 +1511,7 @@ vnc_client_security(ggi_vnc_client *client)
 		GGI_vnc_buf_reserve(&client->wbuf, 16);
 		client->wbuf.size += 16;
 		memcpy(client->wbuf.buf, client->challenge, 16);
-		write_client(client, &client->wbuf);
+		write_client(client, &client->wbuf, 1);
 		return 0;
 	}
 
@@ -1486,7 +1582,7 @@ vnc_client_version(ggi_vnc_client *client)
 		client->wbuf.buf[1] = 0;
 		client->wbuf.buf[2] = 0;
 		client->wbuf.buf[3] = (priv->passwd || priv->viewpw) ? 2 : 1;
-		write_client(client, &client->wbuf);
+		write_client(client, &client->wbuf, 1);
 		if (priv->passwd || priv->viewpw) {
 			/* fake a client request of vnc auth security type */
 			client->buf[0] = 2;
@@ -1504,7 +1600,7 @@ vnc_client_version(ggi_vnc_client *client)
 	client->wbuf.size += 2;
 	client->wbuf.buf[0] = 1;
 	client->wbuf.buf[1] = (priv->passwd || priv->viewpw) ? 2 : 1;
-	write_client(client, &client->wbuf);
+	write_client(client, &client->wbuf, 1);
 
 	return 0;
 }
@@ -1535,6 +1631,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
+	client->gii = priv->gii;
 
 #if defined(F_GETFL)
 	flags = fcntl(client->cfd, F_GETFL);
@@ -1564,7 +1661,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	GGI_vnc_buf_reserve(&client->wbuf, 12);
 	client->wbuf.size += 12;
 	memcpy(client->wbuf.buf, "RFB 003.008\n", 12);
-	write_client(client, &client->wbuf);
+	write_client(client, &client->wbuf, 1);
 }
 
 void
@@ -1652,7 +1749,7 @@ GGI_vnc_write_client(void *arg, int fd)
 	client->write_pending = 0;
 	priv->del_cwfd(priv->gii_ctx, client, fd);
 
-	if (write_client(client, &client->wbuf) < 0)
+	if (write_client(client, &client->wbuf, 1) < 0)
 		return -1;
 
 	if (client->write_pending)
@@ -1669,6 +1766,21 @@ GGI_vnc_write_client(void *arg, int fd)
 		pending_client_update(client);
 
 	return 0;
+}
+
+int
+GGI_vnc_safe_write(void *arg, const uint8_t *data, int count)
+{
+	ggi_vnc_client *client = arg;
+
+	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + count);
+	memcpy(client->wbuf.buf + client->wbuf.size, data, count);
+	client->wbuf.size += count;
+
+	if (client->write_pending)
+		return 0;
+
+	return write_client(client, &client->wbuf, 0);
 }
 
 void

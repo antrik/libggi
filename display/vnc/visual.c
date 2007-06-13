@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.49 2007/05/13 08:28:35 cegger Exp $
+/* $Id: visual.c,v 1.50 2007/06/13 09:39:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -72,6 +72,7 @@
 	VNC_OPTION(copyrect, "")           \
 	VNC_OPTION(corre,    "")           \
 	VNC_OPTION(display,  "no")         \
+	VNC_OPTION(gii,      "")           \
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
@@ -139,7 +140,7 @@ socket_init(void)
 static void
 socket_cleanup(void)
 {
-	WSACleanup(); 
+	WSACleanup();
 }
 #endif
 
@@ -427,6 +428,11 @@ GGIopen(struct ggi_visual *vis,
 	else
 		priv->display = 0;
 
+	if (options[OPT_gii].result[0] == 'n') /* no */
+		priv->gii = 0;
+	else
+		priv->gii = 1;
+
 	if (options[OPT_hextile].result[0] == 'n') /* never */
 		priv->hextile = 0;
 	else
@@ -632,6 +638,7 @@ GGIopen(struct ggi_visual *vis,
 	iargs.new_client   = GGI_vnc_new_client;
 	iargs.client_data  = GGI_vnc_client_data;
 	iargs.write_client = GGI_vnc_write_client;
+	iargs.safe_write   = GGI_vnc_safe_write;
 	iargs.usr_ctx      = vis;
 
 	gii = ggGetAPIByName("gii");
@@ -658,6 +665,7 @@ GGIopen(struct ggi_visual *vis,
 	priv->del_cwfd    = iargs.del_cwfd;
 	priv->key         = iargs.key;
 	priv->pointer     = iargs.pointer;
+	priv->inject      = iargs.inject;
 	priv->gii_ctx     = iargs.gii_ctx;
 
 	if (options[OPT_client].result[0] != '\0') {

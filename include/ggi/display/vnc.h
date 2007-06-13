@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.35 2007/03/22 10:15:08 pekberg Exp $
+/* $Id: vnc.h,v 1.36 2007/06/13 09:39:19 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -76,6 +76,7 @@ typedef struct ggi_vnc_client_t {
 	void *zlibhex_ctx;
 	void *zrle_ctx;
 	void *tight_ctx;
+	int gii;
 
 	ggi_pixelformat pixfmt;
 	ggi_pixelformat requested_pixfmt;
@@ -106,6 +107,7 @@ typedef struct {
 	gii_vnc_del_cwfd *del_cwfd;
 	gii_vnc_key      *key;
 	gii_vnc_pointer  *pointer;
+	gii_vnc_inject   *inject;
 	void *gii_ctx;
 
 	int           passwd;
@@ -124,6 +126,7 @@ typedef struct {
 	int zlibhex_level;
 	int zrle_level;
 	int tight;
+	int gii;
 
 	char title[80];
 
@@ -134,6 +137,7 @@ typedef struct {
 gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
 gii_vnc_write_client		GGI_vnc_write_client;
+gii_vnc_safe_write		GGI_vnc_safe_write;
 
 void GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd);
 void GGI_vnc_close_client(ggi_vnc_client *client);
