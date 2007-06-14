@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.93 2007/06/13 09:39:19 pekberg Exp $
+/* $Id: rfb.c,v 1.94 2007/06/14 08:50:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -700,6 +700,8 @@ struct encodings encode_tbl[] = {
 	{     15,    0, "BackChannel encoding\n",         print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
+	{ 0x574d56ff, 0x574d5600,
+	                "VMW %d encoding\n",              print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
 	{   -219,    0, "Background pseudo-encoding\n",   print_enc },
 	{   -223,    0, "DesktopSize pseudo-encoding\n",  print_enc },
@@ -710,6 +712,7 @@ struct encodings encode_tbl[] = {
 	{   -240,    0, "XCursor pseudo-encoding\n",      print_enc },
 	{   -247, -256, "Tight compress %d subencoding\n",print_enc },
 	{   -257, -272, "Liguori %d pseudo-encoding\n",   print_enc },
+	{   -273, -304, "VMWare %d pseudo-encoding\n",    print_enc },
 	{   -305,    0, "gii pseudo-encoding\n",          gii_enc },
 	{ -65536,    0, "Cache encoding\n",               print_enc },
 	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
