@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.96 2007/06/14 08:54:54 pekberg Exp $
+/* $Id: rfb.c,v 1.97 2007/06/14 09:27:07 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -715,16 +715,16 @@ struct encodings encode_tbl[] = {
 	{   -257, -272, "Liguori %d pseudo-encoding\n",   print_enc },
 	{   -273, -304, "VMWare %d pseudo-encoding\n",    print_enc },
 	{   -305,    0, "gii pseudo-encoding\n",          gii_enc },
-	{ -65536,    0, "Cache encoding\n",               print_enc },
-	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
-	{ -65534,    0, "XOR_Zlib encoding\n",            print_enc },
-	{ -65533,    0, "XORMonoColor_Zlib encoding\n",   print_enc },
-	{ -65532,    0, "XORMultiColor_Zlib encoding\n",  print_enc },
-	{ -65531,    0, "SolidColor encoding\n",          print_enc },
-	{ -65530,    0, "XOREnable encoding\n",           print_enc },
-	{ -65529,    0, "CacheZip encoding\n",            print_enc },
-	{ -65528,    0, "SolMonoZip encoding\n",          print_enc },
 	{ -65527,    0, "UltraZip encoding\n",            print_enc },
+	{ -65528,    0, "SolMonoZip encoding\n",          print_enc },
+	{ -65529,    0, "CacheZip encoding\n",            print_enc },
+	{ -65530,    0, "XOREnable encoding\n",           print_enc },
+	{ -65531,    0, "SolidColor encoding\n",          print_enc },
+	{ -65532,    0, "XORMultiColor_Zlib encoding\n",  print_enc },
+	{ -65533,    0, "XORMonoColor_Zlib encoding\n",   print_enc },
+	{ -65534,    0, "XOR_Zlib encoding\n",            print_enc },
+	{ -65535,    0, "CacheEnable encoding\n",         print_enc },
+	{ -65536,    0, "Cache encoding\n",               print_enc },
 	{      0,    0, "Unknown (%d) encoding\n",        NULL }
 };
 
