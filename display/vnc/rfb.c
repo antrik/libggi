@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.95 2007/06/14 08:52:48 pekberg Exp $
+/* $Id: rfb.c,v 1.96 2007/06/14 08:54:54 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -697,7 +697,7 @@ struct encodings encode_tbl[] = {
 	{      7,    0, "Tight encoding\n",               tight_enc },
 	{      8,    0, "ZlibHex encoding\n",             zlibhex_enc },
 	{      9,    0, "Ultra encoding\n",               print_enc },
-	{     15,    0, "BackChannel encoding\n",         print_enc },
+	{     15,    0, "TRLE encoding\n",                print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
 	{ 0x574d56ff, 0x574d5600,
