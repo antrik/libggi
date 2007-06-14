@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2007/06/05 21:01:19 cegger Exp $
+/* $Id: mode.c,v 1.35 2007/06/14 19:07:27 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -270,9 +270,11 @@ static void _GGIallocdbs(struct ggi_visual *vis)
 
 	i = 0;
 	memset(target, '\0', sizeof(target));
-	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-noblank:-pixfmt=");
+	i += snprintf(target, GGI_MAX_APILEN,
+		"display-memory:-noblank:-pixfmt=");
 
-	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, GGI_PIXFMT_CHANNEL);
+	_ggi_build_pixfmtstr(vis, target + i,
+		sizeof(target) - i, GGI_PIXFMT_CHANNEL);
 
 	i = strlen(target);
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer",
