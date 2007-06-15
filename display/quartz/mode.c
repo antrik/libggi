@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2007/06/14 19:07:27 cegger Exp $
+/* $Id: mode.c,v 1.36 2007/06/15 17:48:17 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -238,6 +238,13 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 		free(priv->fb);
 		priv->fb = NULL;
 	}
+
+	if (priv->image != NULL) {
+		CGImageRelease(priv->image);
+		CGDataProviderRelease(priv->dataProviderRef);
+		priv->dataProviderRef = NULL;
+		priv->image = NULL;
+	}
 }	/* _GGIfreedbs */
 
 
@@ -296,9 +303,11 @@ static void _GGIallocdbs(struct ggi_visual *vis)
 #endif
 	stride = tm.visible.x * GT_ByPP(tm.graphtype);
 
-	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
-	priv->dataProviderRef = CGDataProviderCreateWithData(NULL, priv->fb,
-						priv->fb_size, NULL);
+	LIB_ASSERT(priv->image == NULL, "don't override previous image");
+	CreateCGContextForPort(GetWindowPort(priv->theWindow),
+				&priv->context);
+	priv->dataProviderRef = CGDataProviderCreateWithData(NULL,
+				priv->fb, priv->fb_size, NULL);
 	priv->image = CGImageCreate(tm.visible.x, tm.visible.y,
 				8 /* bits per component */,
 				GT_SIZE(tm.graphtype),
