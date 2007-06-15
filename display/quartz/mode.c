@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.36 2007/06/15 17:48:17 cegger Exp $
+/* $Id: mode.c,v 1.37 2007/06/15 18:46:50 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -208,11 +208,14 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
 	memcpy(&priv->winRect, &contentRect, sizeof(Rect));
 
-	/* Clear Background */
+	/* Create drawing context */
 	tmpBounds = CGRectMake(0, titleborder,
-			priv->winRect.right, priv->winRect.bottom);
-	CreateCGContextForPort(GetWindowPort(priv->theWindow), &priv->context);
-	CGContextClearRect(priv->context, tmpBounds);
+		priv->winRect.right, priv->winRect.bottom);
+	CreateCGContextForPort(GetWindowPort(priv->theWindow),
+		&priv->context);
+	
+	/* Refresh content */
+	_ggiFlush(vis);
 
 	return GGI_OK;
 }	/* GGI_quartz_updateWindowContext */
