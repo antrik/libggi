@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.37 2007/06/15 18:46:50 cegger Exp $
+/* $Id: mode.c,v 1.38 2007/06/15 22:15:29 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -198,12 +198,33 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 		return GGI_OK;
 	}
 
-	fb = realloc(priv->fb, fb_size);
-	if (fb == NULL) {
-		return GGI_ENOMEM;
+	if (priv->fb_size < fb_size) {
+		size_t stride;
+
+		fb = realloc(priv->fb, fb_size);
+		if (fb == NULL) {
+			return GGI_ENOMEM;
+		}
+		priv->fb = fb;
+		priv->fb_size = fb_size;
+
+		stride = mode.visible.x * GT_ByPP(mode.graphtype);
+		if (priv->image != NULL) {
+			CGImageRelease(priv->image);
+			CGDataProviderRelease(priv->dataProviderRef);
+			priv->dataProviderRef = CGDataProviderCreateWithData(NULL,
+					priv->fb, priv->fb_size, NULL);
+			priv->image = CGImageCreate(mode.visible.x,
+					mode.visible.y,
+					8 /* bits per component */,
+					GT_SIZE(mode.graphtype),
+					stride,
+					CGColorSpaceCreateDeviceRGB(),
+					kCGImageAlphaNoneSkipFirst,
+					priv->dataProviderRef,
+					NULL, 0, kCGRenderingIntentDefault);
+		}
 	}
-	priv->fb = fb;
-	priv->fb_size = fb_size;
 
 	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
 	memcpy(&priv->winRect, &contentRect, sizeof(Rect));
