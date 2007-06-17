@@ -38,7 +38,7 @@ struct ggi_module_display {
 };
 
 /*
- * A helper module is one that provides additionnal features to (or
+ * A helper module is one that provides additional features to (or
  * support for) a visual.
  */
 struct ggi_module_helper {
