@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.35 2007/05/04 02:04:14 cegger Exp $
+/* $Id: dl.c,v 1.36 2007/06/19 22:37:33 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -31,6 +31,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
+#include <ggi/internal/ggi-module.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -380,11 +381,39 @@ int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
 		   void *argptr,
 		   struct gg_instance **res)
 {
-	LIB_ASSERT(1, "not yet implemented");
+	struct ggi_helper *helper;
+	struct ggi_visual *vis;
+
+	LIB_ASSERT(api == libggi, "API mismatch!");
+	LIB_ASSERT(_module->klass == GGI_MODULE_HELPER,
+		"module is not a helper!");
+	LIB_ASSERT(res != NULL, "invalid res");
+
+	helper = calloc(1, sizeof(*helper));
+	if (helper == NULL)
+		return GGI_ENOMEM;
+
+	vis = GGI_VISUAL(stem);
+
+	helper->plugin.module = _module;
+	helper->visual = vis;
+	 
+	GG_LIST_INSERT_HEAD(&vis->helpers, helper, h_list);
+	*res = &(helper->plugin);
+
+	return GGI_OK;
 }
 
 
 int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance)
 {
-	LIB_ASSERT(1, "not yet implemented");
+	struct ggi_helper *helper;
+
+	LIB_ASSERT(api == libggi, "api mismatch!");
+
+	helper = (struct ggi_helper *)instance;
+	GG_LIST_REMOVE(helper, h_list);
+
+	free(helper);
+	return GGI_OK;
 }
