@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.36 2007/06/19 22:37:33 cegger Exp $
+/* $Id: dl.c,v 1.37 2007/06/20 06:42:16 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -381,6 +381,8 @@ int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
 		   void *argptr,
 		   struct gg_instance **res)
 {
+	int err;
+	struct ggi_module_helper *mod_helper;
 	struct ggi_helper *helper;
 	struct ggi_visual *vis;
 
@@ -394,25 +396,41 @@ int _ggiOpenModule(struct gg_api *api, struct gg_module *_module,
 		return GGI_ENOMEM;
 
 	vis = GGI_VISUAL(stem);
+	mod_helper = (struct ggi_module_helper *)_module;
 
 	helper->plugin.module = _module;
 	helper->visual = vis;
-	 
+
+	err = GGI_OK;
+	if (mod_helper->setup)
+		err = mod_helper->setup(helper, argstr, argptr);
+	if (err)
+		goto err0;
+
 	GG_LIST_INSERT_HEAD(&vis->helpers, helper, h_list);
 	*res = &(helper->plugin);
 
 	return GGI_OK;
+err0:
+	free(helper);
+	return err;
 }
 
 
 int _ggiCloseModule(struct gg_api *api, struct gg_instance *instance)
 {
+	struct ggi_module_helper *mod_helper;
 	struct ggi_helper *helper;
 
 	LIB_ASSERT(api == libggi, "api mismatch!");
 
 	helper = (struct ggi_helper *)instance;
+	mod_helper = (struct ggi_module_helper *)helper->plugin.module;
+
 	GG_LIST_REMOVE(helper, h_list);
+
+	if (mod_helper->teardown)
+		mod_helper->teardown(helper);
 
 	free(helper);
 	return GGI_OK;
