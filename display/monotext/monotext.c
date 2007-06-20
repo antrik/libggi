@@ -1,4 +1,4 @@
-/* $Id: monotext.c,v 1.16 2007/03/11 00:48:57 soyt Exp $
+/* $Id: monotext.c,v 1.17 2007/06/20 07:31:08 cegger Exp $
 ******************************************************************************
 
    Display-monotext
@@ -435,6 +435,7 @@ int _ggi_monotext_flush(struct ggi_visual *vis)
 int _ggi_monotext_open(struct ggi_visual *vis)
 {
 	int rc;
+	ggi_mode sug_mode;
 	ggi_monotext_priv *priv = MONOTEXT_PRIV(vis);
 
 	ggi_coord child_size;
@@ -456,9 +457,10 @@ int _ggi_monotext_open(struct ggi_visual *vis)
 	priv->red_gamma = priv->green_gamma = priv->blue_gamma = 1.0;
 
 	/* set the parent mode */
-	rc = ggiSetTextMode(priv->parent, child_size.x, child_size.y, 
+	rc = ggiCheckTextMode(priv->parent, child_size.x, child_size.y, 
 		child_size.x, child_size.y, GGI_AUTO, GGI_AUTO,
-		priv->parent_gt.graphtype);
+		priv->parent_gt.graphtype, &sug_mode);
+	rc = ggiSetMode(priv->parent, &sug_mode);
 	if (rc < 0) {
 		DPRINT("Couldn't set child graphic mode.\n");
 		return rc;
