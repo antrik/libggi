@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2006/03/12 07:24:58 cegger Exp $
+/* $Id: visual.c,v 1.11 2007/06/20 06:40:14 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -37,13 +37,18 @@
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/mansync.h>
+#include <ggi/internal/ggi-module.h>
+#include <ggi/internal/ggi_debug.h>
 
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32_t *dlret)
+static int
+GGI_quartz_setup(struct ggi_helper *helper, const char *args, void *argptr)
 {
 	_ggi_opmansync *ops = (_ggi_opmansync *) argptr;
-	
+
+	DPRINT_LIBS("GGI_quartz_setup(%p, %s, %p) called\n",
+		helper, args, argptr);
+
 	if (ops == NULL) {
 		ggPanic("Target tried to use mansync helper in a wrong way!\n");
 	}
@@ -55,9 +60,26 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ops->ignore = _GGI_mansync_ignore;
 	ops->cont   = _GGI_mansync_cont;
 
-	*dlret = 0;
-	return 0;
+	return GGI_OK;
 }
+
+static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
+			const char *args, void *argptr, uint32_t *dlret)
+{
+	*dlret = 0;
+	return GGI_quartz_setup(NULL, args, argptr);
+}
+
+struct ggi_module_helper GGI_mansync = {
+	GG_MODULE_INIT("helper-mansync", 0, 1, GGI_MODULE_HELPER),
+	GGI_quartz_setup,
+	NULL /* teardown */
+};
+
+static struct ggi_module_helper *_GGIdl_mansync[] = {
+	&GGI_mansync,
+	NULL
+};
 
 EXPORTFUNC
 int GGIdl_mansync(int func, void **funcptr);
@@ -65,6 +87,7 @@ int GGIdl_mansync(int func, void **funcptr);
 int GGIdl_mansync(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
+	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
 	case GGIFUNC_open:
@@ -75,6 +98,10 @@ int GGIdl_mansync(int func, void **funcptr)
 	case GGIFUNC_close:
 		*funcptr = NULL;
 		return 0;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_mansync;
+		return GGI_OK;
 	default:
 		*funcptr = NULL;
 	}
