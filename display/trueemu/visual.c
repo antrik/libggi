@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.22 2007/03/11 00:48:58 soyt Exp $
+/* $Id: visual.c,v 1.23 2007/06/20 07:53:05 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -240,11 +240,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
 
 	/* Setup mansync */
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-			"helper-mansync", NULL, priv->opmansync, 0);
-	if (err) {
+	MANSYNC_open(vis, priv);
+	if (priv->mod_mansync == NULL) {
 		fprintf(stderr,
 			"display-trueemu: Cannot load helper-mansync!\n");
+		err = GGI_ENODEVICE;
 		GGIclose(vis, dlh);
 		return err;
 	}
@@ -284,10 +284,22 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
-	if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
-		MANSYNC_stop(vis);
+	ggi_trueemu_priv *priv;
+
+	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
+
+	priv = TRUEEMU_PRIV(vis);
+	LIB_ASSERT(priv != NULL, "GGIexit: TRUEEMU_PRIV(vis) == NULL\n");
+	DPRINT_LIBS("GGIexit(%p, %p) called\n", vis, dlh);
+
+	if (priv->opmansync) {
+		DPRINT_LIBS("deinitializing and unloading helper-mansync\n");
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_stop(vis);
+		}
+		MANSYNC_deinit(vis);
+		MANSYNC_close(priv);
 	}
-	MANSYNC_deinit(vis);
 
 	return 0;
 }
