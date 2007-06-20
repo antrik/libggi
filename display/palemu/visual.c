@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2007/04/25 00:28:24 pekberg Exp $
+/* $Id: visual.c,v 1.32 2007/06/20 07:43:13 cegger Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -272,9 +272,8 @@ static int GGIopen_palemu(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggiSetFlags(priv->parent, GGIFLAG_ASYNC);
 
 	/* Setup mansync */
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-			"helper-mansync", NULL, priv->opmansync, 0);
-	if (err) {
+	MANSYNC_open(vis, priv);
+	if (priv->mod_mansync == NULL) {
 		fprintf(stderr,
 			"display-palemu: Cannot load helper-mansync!\n");
 		GGIclose_palemu(vis, dlh);
@@ -464,9 +463,8 @@ static int GGIopen_monotext(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Setup mansync */
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-			"helper-mansync", NULL, priv->opmansync, 0);
-	if (err) {
+	MANSYNC_open(vis, priv);
+	if (priv->mod_mansync == NULL) {
 		fprintf(stderr,
 			"display-monotext: Cannot load helper-mansync!\n");
 		GGIclose_monotext(vis, dlh);
@@ -510,6 +508,7 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
+		MANSYNC_close(PALEMU_PRIV(vis));
 	}
 
 	return 0;

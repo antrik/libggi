@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.35 2007/04/24 20:03:19 pekberg Exp $
+/* $Id: visual.c,v 1.36 2007/06/20 07:47:07 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -278,13 +278,11 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	if (priv->use_db) {
-		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-				"helper-mansync", NULL,
-				priv->opmansync, 0);
-		if (err) {
+		MANSYNC_open(vis, priv);
+		if (priv->mod_mansync == NULL) {
 			fprintf(stderr, "display-tile: Cannot load required helper-mansync! (for DB mode)\n");
+			err = GGI_ENODEVICE;
 			goto out_closevisuals;
-
 		}
 
 		DPRINT_LIBS("GGIopen: initialize mansync\n");
@@ -540,6 +538,7 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
+		MANSYNC_close(priv);
 	}
 
 	return 0;
