@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2007/06/20 06:40:14 cegger Exp $
+/* $Id: visual.c,v 1.12 2007/06/20 08:17:21 pekberg Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -42,11 +42,11 @@
 
 
 static int
-GGI_quartz_setup(struct ggi_helper *helper, const char *args, void *argptr)
+GGI_mansync_setup(struct ggi_helper *helper, const char *args, void *argptr)
 {
 	_ggi_opmansync *ops = (_ggi_opmansync *) argptr;
 
-	DPRINT_LIBS("GGI_quartz_setup(%p, %s, %p) called\n",
+	DPRINT_LIBS("GGI_mansync_setup(%p, %s, %p) called\n",
 		helper, args, argptr);
 
 	if (ops == NULL) {
@@ -67,12 +67,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
 	*dlret = 0;
-	return GGI_quartz_setup(NULL, args, argptr);
+	return GGI_mansync_setup(NULL, args, argptr);
 }
 
 struct ggi_module_helper GGI_mansync = {
 	GG_MODULE_INIT("helper-mansync", 0, 1, GGI_MODULE_HELPER),
-	GGI_quartz_setup,
+	GGI_mansync_setup,
 	NULL /* teardown */
 };
 
