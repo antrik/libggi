@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.54 2007/05/07 21:35:31 mooz Exp $
+/* $Id: shm.c,v 1.55 2007/06/20 22:15:07 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -36,6 +36,7 @@
 #include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <sys/shm.h>
 #include <X11/extensions/XShm.h>
+#include <ggi/internal/ggi-module.h>
 
 #include <string.h>
 
@@ -500,6 +501,63 @@ skip:
 	return 0;
 }
 
+static int
+GGI_helper_x_shm_setup(struct ggi_helper *helper,
+			const char *args, void *argptr)
+{
+	ggi_x_priv *priv;
+	int major, minor;
+	Bool pixmaps;
+
+	DPRINT_LIBS("GGI_helper_x_shm_setup(%p, %s, %p) called\n",
+		helper, args, argptr);
+
+	priv = GGIX_PRIV(helper->visual);
+
+	if (XShmQueryExtension(priv->disp) != True)
+		return GGI_ENOFUNC;
+	if (XShmQueryVersion(priv->disp, &major, &minor, &pixmaps) != True)
+		return GGI_ENOFUNC;
+
+	DPRINT_LIBS("X: MIT-SHM: SHM version %i.%i %s pixmap support\n",
+		major, minor, pixmaps ? "with" : "without");
+
+	priv->createfb = _ggi_xshm_create_ximage;
+	priv->freefb = _ggi_xshm_free_ximage;
+
+	return GGI_OK;
+}
+
+static void
+GGI_helper_x_shm_teardown(struct ggi_helper *helper)
+{
+	ggi_x_priv *priv;
+
+	DPRINT_LIBS("GGI_helper_x_shm_teardown(%p) called\n",
+		helper);
+
+	priv = GGIX_PRIV(helper->visual);
+
+	if (priv && priv->freefb) {
+		priv->freefb(helper->visual);
+		priv->freefb = NULL;
+	}
+
+	return;
+}
+
+
+struct ggi_module_helper GGI_helper_x_shm = {
+	GG_MODULE_INIT("helper-x-shm", 0, 1, GGI_MODULE_HELPER),
+	GGI_helper_x_shm_setup,
+	GGI_helper_x_shm_teardown
+};
+
+static struct ggi_module_helper *_GGIdl_helper_x_shm[] = {
+	&GGI_helper_x_shm,
+	NULL
+};
+
 EXPORTFUNC
 int GGIdl_helper_x_shm(int func, void **funcptr);
 
@@ -507,6 +565,7 @@ int GGIdl_helper_x_shm(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
 	ggifunc_close **closeptr;
+	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
 	case GGIFUNC_open:
@@ -520,6 +579,10 @@ int GGIdl_helper_x_shm(int func, void **funcptr)
 		closeptr = (ggifunc_close **)funcptr;
 		*closeptr = GGIclose;
 		return 0;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_helper_x_shm;
+		return GGI_OK;
 	default:
 		*funcptr = NULL;
 	}
