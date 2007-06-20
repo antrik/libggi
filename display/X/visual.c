@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.75 2007/05/08 22:43:48 ggibecka Exp $
+/* $Id: visual.c,v 1.76 2007/06/20 07:08:01 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -550,11 +550,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (priv->opmansync == NULL) {
 		goto out;
 	}
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-			"helper-mansync", NULL, priv->opmansync, 0);
-	if (err) {
+	MANSYNC_open(vis, priv);
+	if (priv->mod_mansync == NULL) {
 		fprintf(stderr,
 			"display-X: Cannot load required helper-mansync!\n");
+		err = GGI_ENODEVICE;
 		goto out;
 	}
 
@@ -648,6 +648,7 @@ static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			MANSYNC_stop(vis);
 		}
 		MANSYNC_deinit(vis);
+		MANSYNC_close(GGIX_PRIV(vis));
 	}
 	return 0;
 }
