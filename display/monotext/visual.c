@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.19 2007/03/11 00:48:57 soyt Exp $
+/* $Id: visual.c,v 1.20 2007/06/20 07:33:11 cegger Exp $
 ******************************************************************************
 
    Display-monotext: visual management
@@ -247,12 +247,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Setup mansync */
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-			"helper-mansync", NULL, priv->opmansync, 0);
-	if (err) {
+	MANSYNC_open(vis, priv);
+	if (priv->mod_mansync == NULL) {
 		fprintf(stderr,
 			"display-monotext: Cannot load helper-mansync!\n");
-		GGIclose(vis, dlh);
+		err = GGI_ENODEVICE;
 		goto err4;
 	}
 
@@ -286,6 +285,28 @@ err0:
 }
 
 
+static int GGIexit(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+{
+	ggi_monotext_priv *priv;
+
+	LIB_ASSERT(vis != NULL, "GGIexit: vis == NULL\n");
+
+	priv = MONOTEXT_PRIV(vis);
+	LIB_ASSERT(priv != NULL, "GGIexit: MONOTEXT_PRIV(vis) == NULL\n");
+	DPRINT_LIBS("GGIexit(%p, %p) called\n", vis, dlh);
+
+	if (priv->opmansync) {
+		DPRINT_LIBS("deinitializing and unloading helper-mansync\n");
+		if (!(LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC)) {
+			MANSYNC_stop(vis);
+		}
+		MANSYNC_deinit(vis);
+		MANSYNC_close(priv);
+	}
+
+	return GGI_OK;
+}	/* GGIexit */
+
 
 EXPORTFUNC
 int GGIdl_monotext(int func, void **funcptr);
@@ -293,6 +314,7 @@ int GGIdl_monotext(int func, void **funcptr);
 int GGIdl_monotext(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
+	ggifunc_exit **exitptr;
 	ggifunc_close **closeptr;
 
 	switch (func) {
@@ -301,7 +323,8 @@ int GGIdl_monotext(int func, void **funcptr)
 		*openptr = GGIopen;
 		return 0;
 	case GGIFUNC_exit:
-		*funcptr = NULL;
+		exitptr = (ggifunc_exit **)funcptr;
+		*exitptr = GGIexit;
 		return 0;
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
