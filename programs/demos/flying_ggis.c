@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.17 2007/04/22 17:55:04 mooz Exp $
+/* $Id: flying_ggis.c,v 1.18 2007/06/21 21:54:18 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -603,6 +603,8 @@ int main(int argc, const char *argv[])
         }
 
         free_textures();
+
+	ggiClose(vis);
 
         ggDelStem(vis);
         ggiExit();

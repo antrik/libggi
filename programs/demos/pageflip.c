@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
+/* $Id: pageflip.c,v 1.16 2007/06/21 21:52:31 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -278,6 +278,8 @@ int main(int argc, const char *argv[])
 
 	} while (c != 'q' && c != 'Q' && c != 'x' && c != 'X' &&
 		 c != GIIUC_Escape);
+
+	ggiClose(vis);
 
 	ggDelStem(vis);
 	ggiExit();

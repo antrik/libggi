@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.14 2007/05/05 08:34:48 cegger Exp $
+/* $Id: stars.c,v 1.15 2007/06/21 21:57:06 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -188,9 +188,11 @@ void Transform(int *ta, int *tb)
 void CleanUp(void)
 {
 	if (dgavis) {
+		ggiClose(dgavis);
 		ggDelStem(dgavis);
 	}
 	if (vis) {
+		ggiClose(vis);
 		ggDelStem(vis);
 	}
 	ggiExit();
@@ -259,15 +261,8 @@ ggi_visual_t InitVisual(const char *visname)
 	ggi_visual_t newvis;
 	ggi_mode mode;
 	
-	if ((newvis = ggNewStem(NULL)) == NULL) {
-		return NULL;
-	}
-	if (giiAttach(newvis) < 0) {
-		ggDelStem(newvis);
-		return NULL;
-	}
-	if (ggiAttach(newvis) < 0) {
-		ggDelStem(newvis);
+	newvis = ggNewStem(libgii, libggi, NULL);
+	if (newvis == NULL) {
 		return NULL;
 	}
 	/* Adding an extra NULL when visname is NULL doesn't hurt */
