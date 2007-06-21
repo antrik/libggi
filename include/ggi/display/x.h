@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.36 2007/05/08 22:43:48 ggibecka Exp $
+/* $Id: x.h,v 1.37 2007/06/21 22:03:50 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -111,6 +111,12 @@ typedef struct ggi_x_priv {
 #define GGI_X_USE_DGA		4
 #define GGI_X_USE_EVI		8
 #define GGI_X_USE_VIDMODE	16
+
+	struct gg_plugin *helper_shm;
+	struct gg_plugin *helper_dbe;
+	struct gg_plugin *helper_dga;
+	struct gg_plugin *helper_evi;
+	struct gg_plugin *helper_vidmode;
 
 	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
 	int         activecmap;

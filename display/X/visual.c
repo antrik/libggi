@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.76 2007/06/20 07:08:01 cegger Exp $
+/* $Id: visual.c,v 1.77 2007/06/21 22:03:50 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -186,6 +186,22 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
+	if (priv->helper_shm)
+		ggClosePlugin(priv->helper_shm);
+	priv->helper_shm = NULL;
+	if (priv->helper_dbe)
+		ggClosePlugin(priv->helper_dbe);
+	priv->helper_dbe = NULL;
+	if (priv->helper_dga)
+		ggClosePlugin(priv->helper_dga);
+	priv->helper_dga = NULL;
+	if (priv->helper_evi)
+		ggClosePlugin(priv->helper_evi);
+	priv->helper_evi = NULL;
+	if (priv->helper_vidmode)
+		ggClosePlugin(priv->helper_vidmode);
+	priv->helper_vidmode = NULL;
+
 	if (priv->inp)
 		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
@@ -238,7 +254,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			XFreeCursor(priv->disp, priv->oldcursor);
 	} else {
 		/* Don't destroy window, when not created */
-		if (priv->parentwin != 0) XDestroyWindow(priv->disp, priv->parentwin);
+		if (priv->parentwin != 0)
+			XDestroyWindow(priv->disp, priv->parentwin);
 	}
 
 skip3:
@@ -482,11 +499,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->cm_adjust = _GGI_X_checkmode_adjust;
 
 	/* Try the extensions that haven't been disabled. */
-#define GGI_X_TEST_XEXT(flag, helper, abort_label)		\
+#define GGI_X_TEST_XEXT(mod, flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
-	err = _ggiAddDL(vis, _ggiGetConfigHandle(),		\
-			helper, NULL, NULL, 0);			\
-	if (err) {						\
+	priv->mod = ggPlugModule(libggi, vis->instance.stem,	\
+			helper, NULL, NULL);			\
+	if (priv->mod == NULL) {				\
 		fprintf(stderr, "X: Cannot load %s\n", helper);	\
 		priv->use_Xext &= ~flag;			\
 		goto abort_label;				\
@@ -497,19 +514,19 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	/* Order is important here -- XCloseDisplay has sharp hooks! */
 
-	GGI_X_TEST_XEXT(GGI_X_USE_DGA, "helper-x-dga", nodga);
+	GGI_X_TEST_XEXT(helper_dga,GGI_X_USE_DGA, "helper-x-dga", nodga);
 	priv->use_Xext &=~GGI_X_USE_VIDMODE; /* DGA has own mode support */
 	priv->use_Xext &=~GGI_X_USE_SHM;     /* DGA precludes SHM */
 
  nodga:
 	if (options[OPT_NOBUFFER].result[0] != 'n') goto noshm;
-	GGI_X_TEST_XEXT(GGI_X_USE_SHM, "helper-x-shm", noshm);
+	GGI_X_TEST_XEXT(helper_shm, GGI_X_USE_SHM, "helper-x-shm", noshm);
 	priv->shmhack_free_cmaps = _ggi_x_free_colormaps;
 
  noshm:
 	priv->use_Xext &= ~GGI_X_USE_EVI;
 	goto noevi; /* Xevi disabled until EVIGetVisualInfo BadLength fixed. */
-	GGI_X_TEST_XEXT(GGI_X_USE_EVI, "helper-x-evi", noevi);
+	GGI_X_TEST_XEXT(helper_evi, GGI_X_USE_EVI, "helper-x-evi", noevi);
 	/* See if Xevi disqualified all the visuals (should not happen) */
 	tmp1 = tmp2 = 0;
 	while (tmp1 < priv->nvisuals) {
@@ -522,10 +539,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
  noevi:
-	GGI_X_TEST_XEXT(GGI_X_USE_VIDMODE, "helper-x-vidmode", novidmode);
+	GGI_X_TEST_XEXT(helper_vidmode, GGI_X_USE_VIDMODE,
+			"helper-x-vidmode", novidmode);
 
  novidmode:
-	GGI_X_TEST_XEXT(GGI_X_USE_DBE, "helper-x-dbe", nodbe);
+	GGI_X_TEST_XEXT(helper_dbe, GGI_X_USE_DBE, "helper-x-dbe", nodbe);
 	
  nodbe:
 	priv->createdrawable = GGI_X_create_window_drawable;
