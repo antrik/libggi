@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.32 2007/03/11 21:54:43 soyt Exp $
+/* $Id: dga.c,v 1.33 2007/06/21 07:51:09 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -34,6 +34,7 @@
 #include <X11/extensions/xf86dga.h>
 #include <string.h>
 #include <ggi/input/xf86dga.h>
+#include <ggi/internal/ggi-module.h>
 
 static int ggi_xdga_getmodelist(struct ggi_visual * vis)
 {
@@ -420,12 +421,78 @@ static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
 }
 
 
+static int
+GGI_helper_x_dga_setup(struct ggi_helper *helper,
+			const char *args, void *argptr)
+{
+        ggi_x_priv *priv;
+        int dgafeat, i, j;
+
+        priv = GGIX_PRIV(helper->visual);
+
+        XF86DGAQueryVersion(priv->disp, &i, &j);
+        DPRINT("display-DGA version %d.%d\n", i, j);
+        if (i < 1) {
+                fprintf(stderr, "Your XF86DGA is too old (%d.%d).\n", i,
+                        j);
+                return GGI_ENODEVICE;
+        }
+
+        XF86DGAQueryDirectVideo(priv->disp, DefaultScreen(priv->disp),
+                                &dgafeat);
+        if (!(dgafeat & XF86DGADirectPresent)) {
+                fprintf(stderr,
+                        "helper-x-dga: No direct video capability!\n");
+                return GGI_ENODEVICE;
+        }
+#if 0
+        priv->createfb = ggi_xdga_mmap;
+        priv->createdrawable = ggi_xdga_makerenderer;
+#endif
+        priv->ok_to_resize = 0;
+
+        ggi_xdga_getmodelist(helper->visual);
+
+        /* provide mode handling */
+        priv->mlfuncs.validate = ggi_xdga_validate_mode;
+        priv->mlfuncs.enter = ggi_xdga_enter_mode;
+        priv->mlfuncs.getlist = ggi_xdga_getmodelist;
+        priv->mlfuncs.restore = ggi_xdga_restore_mode;
+
+        /* TODO: if we can open the frame buffer or /dev/mem,
+         * then we should override x drawing primitives.. */
+
+        return GGI_OK;
+}
+
+static void
+GGI_helper_x_dga_teardown(struct ggi_helper *helper)
+{
+	ggi_x_priv *priv = GGIX_PRIV(helper->visual);
+
+	if (priv->modes_num > 0)
+		XFree(priv->modes_priv);
+}
+
+struct ggi_module_helper GGI_helper_x_dga = {
+	GG_MODULE_INIT("helper-x-dga", 0, 1, GGI_MODULE_HELPER),
+	GGI_helper_x_dga_setup,
+	GGI_helper_x_dga_teardown
+};
+
+static struct ggi_module_helper *_GGIdl_helper_x_dga[] = {
+	&GGI_helper_x_dga,
+	NULL
+};
+
+
 EXPORTFUNC int GGIdl_helper_x_dga(int func, void **funcptr);
 
 int GGIdl_helper_x_dga(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
 	ggifunc_close **closeptr;
+	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
 	case GGIFUNC_open:
@@ -438,6 +505,10 @@ int GGIdl_helper_x_dga(int func, void **funcptr)
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
 		*closeptr = GGIclose;
+		return GGI_OK;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_helper_x_dga;
 		return GGI_OK;
 	default:
 		*funcptr = NULL;
