@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.30 2006/03/20 14:47:01 neiljp Exp $
+/* $Id: vidmode.c,v 1.31 2007/06/21 08:09:16 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -34,6 +34,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <X11/extensions/xf86vmode.h>
+#include <ggi/internal/ggi-module.h>
 
 /*
  *  Private vimode structure
@@ -508,12 +509,64 @@ static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
 	return GGI_OK;
 }
 
+
+static int
+GGI_helper_x_vidmode_setup(struct ggi_helper *helper,
+				const char *args, void *argptr)
+{
+        ggi_x_priv *priv;
+        int x, y;
+
+        priv = GGIX_PRIV(helper->visual);
+
+        if (!XF86VidModeQueryVersion(priv->disp, &x, &y)) {
+                DPRINT_MODE("\tXF86VidModeQueryVersion failed\n");
+                return GGI_ENOFUNC;
+        }
+        DPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", x, y);
+
+        priv->ok_to_resize = 0;
+        ggi_xvidmode_getmodelist(helper->visual);
+
+        /*
+           overload mode list functions
+         */
+
+        priv->mlfuncs.getlist = ggi_xvidmode_getmodelist;
+        priv->mlfuncs.restore = ggi_xvidmode_restore_mode;
+        priv->mlfuncs.enter = ggi_xvidmode_enter_mode;
+        priv->mlfuncs.validate = ggi_xvidmode_validate_mode;
+
+        return GGI_OK;
+}
+
+static void
+GGI_helper_x_vidmode_teardown(struct ggi_helper *helper)
+{
+	ggi_xvidmode_restore_mode(helper->visual);
+	ggi_xvidmode_cleanup(helper->visual);
+}
+
+
+struct ggi_module_helper GGI_helper_x_vidmode = {
+	GG_MODULE_INIT("helper-x-vidmode", 0, 1, GGI_MODULE_HELPER),
+	GGI_helper_x_vidmode_setup,
+	GGI_helper_x_vidmode_teardown
+};
+
+static struct ggi_module_helper *_GGIdl_helper_x_vidmode[] = {
+	&GGI_helper_x_vidmode,
+	NULL
+};
+
+
 EXPORTFUNC int GGIdl_helper_x_vidmode(int func, void **funcptr);
 
 int GGIdl_helper_x_vidmode(int func, void **funcptr)
 {
 	ggifunc_open **openptr;
 	ggifunc_close **closeptr;
+	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
 	case GGIFUNC_open:
@@ -526,6 +579,10 @@ int GGIdl_helper_x_vidmode(int func, void **funcptr)
 	case GGIFUNC_close:
 		closeptr = (ggifunc_close **)funcptr;
 		*closeptr = GGIclose;
+		return GGI_OK;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_helper_x_vidmode;
 		return GGI_OK;
 	default:
 		*funcptr = NULL;
