@@ -17,10 +17,11 @@ Description
 Helper library for the implementation of SYNC mode on targets which are
 inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
 
-A target wishing to use mansync should open mansync with _ggiAddDL()
+A target wishing to use mansync should open mansync with MANSYNC_open()
 in it's own GGIopen().
-It must pass a pointer to a _ggi_opmansync structure as the argument
-to _ggiAddDL(), and must define the following macros::
+It must pass a pointer of a structure containing a pointer to _ggi_opmansync
+structure as the 2nd argument to MANSYNC_open(),
+and must define the following macros::
 
   MANSYNC_init(vis)
   MANSYNC_deinit(vis)
@@ -53,8 +54,13 @@ Mansync provides the following functions::
 
 (The above functions return 0 if successful, -1 if not.)
 
-Please see display/X, display/aa or display/tile to see how mansync is
-used.  The functions should be transparent enough.
+  MANSYNC_open(vis,priv);
+	loads helper-mansync. On success, priv->mod_mansync != NULL
+  MANSYNC_close(priv);
+	unloads helper-mansync.
+
+Please see display/X, display/aa, display/quartz or display/tile
+to see how mansync is used.  The functions should be transparent enough.
 
 .. important::
 
