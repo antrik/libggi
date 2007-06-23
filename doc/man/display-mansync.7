@@ -1,4 +1,4 @@
-.TH "display-mansync" 7 "2004-06-05" "libggi-current" GGI
+.TH "display-mansync" 7 "2007-06-23" "libggi-current" GGI
 .SH NAME
 \fBdisplay-mansync\fR : sync mode emulation
 .SH SYNOPIS
@@ -11,10 +11,11 @@ display-mansync
 Helper library for the implementation of SYNC mode on targets which are
 inherently ASYNC (e.g. X) and require manual flushes of the framebuffer.
 
-A target wishing to use mansync should open mansync with _ggiAddDL()
+A target wishing to use mansync should open mansync with MANSYNC_open()
 in it's own GGIopen().
-It must pass a pointer to a _ggi_opmansync structure as the argument
-to _ggiAddDL(), and must define the following macros:
+It must pass a pointer of a structure containing a pointer to _ggi_opmansync
+structure as the 2nd argument to MANSYNC_open(),
+and must define the following macros:
 
 .nb
 .nf
@@ -52,9 +53,19 @@ MANSYNC_SETFLAGS(vis,flags)
 .fi
 
 (The above functions return 0 if successful, -1 if not.)
+.RS
+.TP
+MANSYNC_open(vis,priv);
+loads helper-mansync. On success, priv->mod_mansync != NULL
 
-Please see display/X, display/aa or display/tile to see how mansync is
-used.  The functions should be transparent enough.
+.TP
+MANSYNC_close(priv);
+unloads helper-mansync.
+
+.PP
+.RE
+Please see display/X, display/aa, display/quartz or display/tile
+to see how mansync is used.  The functions should be transparent enough.
 .RS
 \fBImportant:\fR
 You're responsible for locking your own visual, not mansync!
