@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2007/03/29 22:21:53 cegger Exp $
+/* $Id: visual.c,v 1.29 2007/06/23 16:37:36 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: initialization
@@ -308,6 +308,11 @@ static int do_cleanup(struct ggi_visual *vis)
 		priv->ms_inp = NULL;
 	}
 
+	if (priv->mod_linvtsw != NULL) {
+		ggClosePlugin(priv->mod_linvtsw);
+		priv->mod_linvtsw = NULL;
+	}
+
 	if (priv) {
 		if (priv->availmodes != NULL) {
 			free(priv->availmodes);
@@ -471,10 +476,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-				"helper-linux-vtswitch", NULL,
-				&vtswarg, 0);
-		if (!err) {
+		priv->mod_linvtsw = ggPlugModule(libggi,
+					vis->instance.stem,
+					"helper-linux-vtswitch",
+					NULL, &vtswarg);
+		if (priv->mod_linvtsw != NULL) {
 			vtnum = vtswarg.vtnum;
 			priv->doswitch = vtswarg.doswitch;
 		} else {

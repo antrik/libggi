@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.10 2007/03/29 22:22:24 cegger Exp $
+/* $Id: svgalib.h,v 1.11 2007/06/23 16:37:36 cegger Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -88,9 +88,10 @@ typedef struct svga_priv {
 	int	ismodex;
 	int	isbanked;
 	int	inputs;
-	struct gg_instance *kbd_inp;	/* keyboard */
-	struct gg_instance *ms_inp;	/* mouse */
+	struct gg_plugin *kbd_inp;	/* keyboard */
+	struct gg_plugin *ms_inp;	/* mouse */
 
+	struct gg_plugin *mod_linvtsw;	/* helper-linux-vtswitch */
 	int	dohalt;
 	int	autoswitch;
 	int	switchpending;
