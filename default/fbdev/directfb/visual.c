@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.26 2007/03/08 09:12:53 cegger Exp $
+/* $Id: visual.c,v 1.27 2007/06/23 16:44:50 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -153,8 +153,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Get the global symbols that DirectFB drivers need
 	 * by loading our helper lib as a global symbol source.
 	 */
-	if(_ggiAddDL(vis, "helper-fbdev-directfb-global", 
-		NULL, &(priv->globals), GGI_DLTYPE_GLOBAL)) {
+	if(_ggiAddDL(vis, _ggiGetConfigHandle(),
+		"helper-fbdev-directfb-global", 
+		NULL, &(priv->globals), GGI_DLTYPE_GLOBAL) != 0)
+	{
 		free(priv);
 		return GGI_ENOFUNC;
 	}
