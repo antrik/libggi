@@ -1013,7 +1013,7 @@ Description
 
 
 Draw, put, or get a single pixelvalue at (:p:`x`, :p:`y`).
-
+The ggiDrawPixel function uses the currently set GCForeground color.
 
 Return value
 ------------
@@ -1021,6 +1021,11 @@ Return value
 
 All three functions return `0` to indicate success.
 
+See Also
+--------
+
+:man:`ggiSetGCForeground(3)`, :man:`ggiGetGCForeground(3)`,
+:man:`ggiMapColor(3)`, :man:`ggi_pixelformat(3)`
 
 
 
