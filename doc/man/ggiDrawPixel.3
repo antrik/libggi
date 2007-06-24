@@ -1,4 +1,4 @@
-.TH "ggiDrawPixel" 3 "2007-05-06" "libggi-current" GGI
+.TH "ggiDrawPixel" 3 "2007-06-24" "libggi-current" GGI
 .SH NAME
 \fBggiDrawPixel\fR, \fBggiPutPixel\fR, \fBggiGetPixel\fR : Draw, put, and get a single pixel from a visual
 .SH SYNOPSIS
@@ -15,5 +15,9 @@ int ggiGetPixel(ggi_visual_t vis, int x, int y, ggi_pixel *pixel);
 
 .SH DESCRIPTION
 Draw, put, or get a single pixelvalue at (\fIx\fR, \fIy\fR).
+The ggiDrawPixel function uses the currently set GCForeground color.
 .SH RETURN VALUE
 All three functions return \fB0\fR to indicate success.
+.SH SEE ALSO
+\f(CWggiSetGCForeground(3)\fR, \f(CWggiGetGCForeground(3)\fR,
+\f(CWggiMapColor(3)\fR, \f(CWggi_pixelformat(3)\fR

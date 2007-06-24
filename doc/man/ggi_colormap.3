@@ -1,4 +1,4 @@
-.TH "ggi_colormap" 3 "2007-04-27" "libggi-current" GGI
+.TH "ggi_colormap" 3 "2007-06-24" "libggi-current" GGI
 .SH NAME
 \fBggi_colormap\fR, \fBggi_colormap_region\fR : LIBGGI colormap
 .SH SYNOPSIS
@@ -172,7 +172,7 @@ int GGI_my_target_setmode(ggi_visual *vis,ggi_mode *tm) {
       */
       LIBGGI_PAL(vis)->clut.size = 1 << priv->bits_per_pixel;
 
-      /* Let's allocate the the clut data */
+      /* Let's allocate the clut data */
       LIBGGI_PAL(vis)->clut.data = _ggi_malloc(LIBGGI_PAL(vis)->clut.size * sizeof(ggi_color));
 
       /* Set up function pointers */
