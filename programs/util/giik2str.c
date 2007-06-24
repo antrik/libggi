@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.7 2006/02/13 19:22:06 soyt Exp $
+/* $Id: giik2str.c,v 1.8 2007/06/24 13:10:11 cegger Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -33,7 +33,7 @@
 #include "giik2str.h"
 
 /* Hey, this function never claimed to be threadsafe... */
-static char retbuffer[32]; /* More than enough to hold an hex 32bit int */
+static char retbuffer[32]; /* More than enough to hold a hex 32bit int */
 
 const char *giik2str(uint32_t giik, int issym)
 {
