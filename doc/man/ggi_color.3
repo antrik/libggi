@@ -26,13 +26,13 @@ Since libggi does not deal with alpha compositing, the
 libggi. Setting this value has no effect in libggi itself, and it will
 most probably not be unmapped correctly from \fBggi_pixel\fRs. However,
 some extensions might make use of it, in which case you should refer
-to their documentation.
+to the respective extension's documentation.
 
 \fBggi_pixel\fRs format depends on the actual display and mode. For those
 who want to operate directly on pixel values, this format is described
 in the \fBggi_pixelformat(3)\fR structure.
 .SH PIXEL ARRAYS
-Although individual pixels are kept into 32 bits \fBggi_pixel\fR, arrays
+Although individual pixels are kept in 32 bits \fBggi_pixel\fR, arrays
 of pixels, as used in \fBggi[Get|Put]*\fR functions, \fBggiPackColors(3)\fR and
 \fBggiUnpackPixels(3)\fR, are stored in the display specific format, thus
 packed according to the actual pixel size.  This size is given by the
