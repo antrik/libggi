@@ -963,7 +963,7 @@ Description
 -----------
 
 
-`ggiSetGCClipping` sets the the current clipping rectangle to
+`ggiSetGCClipping` sets the current clipping rectangle to
 (:p:`left`, :p:`top`) - (:p:`right`-1, :p:`bottom`-1), inclusive.
 
 

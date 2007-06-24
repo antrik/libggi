@@ -9,7 +9,7 @@ To make use of these functions, you must include the following
 	#include "../common/modelist.inc"
 
 (Here ../common/modelist.inc will have to be replaced, of course, with
-whatever the the path to modelist.inc happens to be for you.)
+whatever the path to modelist.inc happens to be for you.)
 
 Using these helper functions, a typical checkmode() implementation for
 a target will look something like this:

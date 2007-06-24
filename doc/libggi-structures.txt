@@ -707,7 +707,7 @@ display/my_target/mode.c::
         */
         LIBGGI_PAL(vis)->clut.size = 1 << priv->bits_per_pixel;
 
-        /* Let's allocate the the clut data */
+        /* Let's allocate the clut data */
         LIBGGI_PAL(vis)->clut.data = _ggi_malloc(LIBGGI_PAL(vis)->clut.size * sizeof(ggi_color));
 
         /* Set up function pointers */
