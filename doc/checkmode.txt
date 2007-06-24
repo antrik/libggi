@@ -138,7 +138,7 @@ Before you make any calls to _GGI_checkmode_update(), set the hook:
 	 cm->user_cmp = (ggi_user_cmp *)_GGI_X_checkmode_compare_visuals;
 	 cm->user_param = priv;
 
-This example is taken from display-x.  It's modes are based on an xlib
+This example is taken from display-x.  It's modes are based on a xlib
 struct called Visual.  The mode_extra parameter in this case is an
 index into an array of such structs.  The user_param is typically a
 pointer to a ggi_visual or your own private struct.  It's passed to

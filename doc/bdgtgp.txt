@@ -205,7 +205,7 @@ Thus most programmers are used to it and most image formats are based on it
 as well. This is why LibGGI uses it by default as well.
 
 First of all, you need to know what color you want to display and how to
-describe it as an (R,G,B) triplet. To give you a place to start, I'll list a
+describe it as a (R,G,B) triplet. To give you a place to start, I'll list a
 few common colors as such triplets:
 
 (  0%,  0%,  0%) - Black
