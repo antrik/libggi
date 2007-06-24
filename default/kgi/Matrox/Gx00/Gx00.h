@@ -18,7 +18,7 @@
 ** ----------------------------------------------------------------------------
 **	MAINTAINER	Rodolphe_Ortalo
 **
-**	$Id: Gx00.h,v 1.3 2007/06/24 13:37:15 aldot Exp $
+**	$Id: Gx00.h,v 1.4 2007/06/24 13:51:52 aldot Exp $
 */
 #ifndef _Matrox_Gx00_h_2
 #define _Matrox_Gx00_h_2
@@ -973,7 +973,7 @@
 #define WARPREG_BASE				(MGAG_DWGREG1+0x100)
 #define WARPREG(x)   (WARPREG_BASE | ((x) << 2))
 
-/* Back-end Scaler defintions */
+/* Back-end Scaler definitions */
 
 #define BESA1ORG				(MGAG_BESREG+0x00)	/* WO */
 #define BESA2ORG				(MGAG_BESREG+0x04)	/* WO */
