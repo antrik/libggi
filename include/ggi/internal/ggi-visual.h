@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.7 2007/05/25 21:22:19 soyt Exp $
+/* $Id: ggi-visual.h,v 1.8 2007/06/24 13:37:16 aldot Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -35,7 +35,7 @@ typedef struct ggi_dlhandle *ggi_lib_id;
 #define GGI_VERSION_DLL	1
 
 /* Create a OP version number from the library and structure revisions
- * for (ABI compatability)
+ * for (ABI compatibility)
  */
 #define	GGI_VERSION_MK(st_rev)		((GGI_VERSION_DLL<<16)|st_rev)
 #define GGI_LIBRARY_REVISION(vers)	(((uint32_t)vers)>>16)

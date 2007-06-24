@@ -1,4 +1,4 @@
-/* $Id: colormap.c,v 1.7 2007/03/04 14:44:53 soyt Exp $
+/* $Id: colormap.c,v 1.8 2007/06/24 13:37:16 aldot Exp $
 ******************************************************************************
 
    LibGGI core - target independent colormap implementation
@@ -48,7 +48,7 @@ int _ggiColormapSetRW(struct ggi_visual *vis, size_t start, size_t end)
 	_ggiColormapGetRO(vis, &ro_start, &ro_stop);
 
 	if (ro_stop > 0) {
-		/* there's an RO range, RW range is
+		/* there's a RO range, RW range is
 		 * not allowed to overlap
 		 */
 		if (!(start > ro_stop)) return GGI_EARGINVAL;
@@ -84,7 +84,7 @@ int _ggiColormapSetRO(struct ggi_visual *vis, size_t start, size_t end)
 	_ggiColormapGetRW(vis, &rw_start, &rw_stop);
 
 	if (rw_stop > 0) {
-		/* there's an RW range, RO range is
+		/* there's a RW range, RO range is
 		 * not allowed to overlap
 		 */
 		if (!(start > rw_stop)) return GGI_EARGINVAL;

@@ -18,7 +18,7 @@
 ** ----------------------------------------------------------------------------
 **	MAINTAINER	Rodolphe_Ortalo
 **
-**	$Id: Gx00.h,v 1.2 2005/07/31 15:30:36 soyt Exp $
+**	$Id: Gx00.h,v 1.3 2007/06/24 13:37:15 aldot Exp $
 */
 #ifndef _Matrox_Gx00_h_2
 #define _Matrox_Gx00_h_2
@@ -629,7 +629,7 @@
 
 #define	XPWRCTRL				0xA0	/* Gx50+ */
 
-/* drawiung engine defintions */
+/* drawing engine definitions */
 
 #define DWGCTL					(MGAG_DWGREG0+0x00) /* WO */
 #	define DWGCTL_OPCOD_SHIFT		0

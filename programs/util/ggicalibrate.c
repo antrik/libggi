@@ -1,4 +1,4 @@
-/* $Id: ggicalibrate.c,v 1.7 2007/03/03 19:10:53 cegger Exp $
+/* $Id: ggicalibrate.c,v 1.8 2007/06/24 13:37:17 aldot Exp $
 ******************************************************************************
 
    h3600 GGI calibration Application
@@ -131,7 +131,7 @@ static int CalcTransformationCoefficientsBest(CALIBRATION_PAIR * cp,
 	 *
 	 * We could do the matrix solution in code, but that leads to several
 	 * divide by 0 conditions for cases where the data is truly solvable
-	 * (becuase those terms cancel out of the final solution), so we just
+	 * (because those terms cancel out of the final solution), so we just
 	 * give the final solution instread.  t1 through t6 and q are just
 	 * convenience variables for terms that are used repeatedly - we could
 	 * calculate each of the coefficients directly at this point with a

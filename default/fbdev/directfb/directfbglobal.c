@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.16 2006/03/12 23:15:05 soyt Exp $ */
+/* $Id: directfbglobal.c,v 1.17 2007/06/24 13:37:14 aldot Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -94,18 +94,18 @@ void dfb_gfxcard_unmap_mmio( GraphicsDevice *device,
 ModuleDirectory dfb_graphics_drivers;
 
 void dfb_modules_register(ModuleDirectory *directory,
-                      	  unsigned int     abi_version,
+			  unsigned int     abi_version,
                           const char      *name,
                           const void      *funcs )
 {
-	/* Abuse unused field in a global to retreive 
+	/* Abuse unused field in a global to retrieve
 	   driver-library-local pointer */
 	(GraphicsDriverFuncs *)(dfb_config->mouse_protocol) = funcs;
 }
 
 void dfb_graphics_register_module( GraphicsDriverFuncs *funcs )
 {
-	/* Abuse unused field in a global to retreive 
+	/* Abuse unused field in a global to retrieve
 	   driver-library-local pointer */
 	(GraphicsDriverFuncs *)(dfb_config->mouse_protocol) = funcs;
 }
