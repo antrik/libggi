@@ -168,7 +168,7 @@ Since libggi does not deal with alpha compositing, the
 libggi. Setting this value has no effect in libggi itself, and it will
 most probably not be unmapped correctly from `ggi_pixel`\ s. However,
 some extensions might make use of it, in which case you should refer
-to their documentation.
+to the respective extension's documentation.
 
 
 `ggi_pixel`\ s format depends on the actual display and mode. For those
@@ -179,7 +179,7 @@ in the `ggi_pixelformat` structure.
 Pixel Arrays
 ------------
 
-Although individual pixels are kept into 32 bits `ggi_pixel`, arrays
+Although individual pixels are kept in 32 bits `ggi_pixel`, arrays
 of pixels, as used in `ggi[Get|Put]*` functions, `ggiPackColors` and
 `ggiUnpackPixels`, are stored in the display specific format, thus
 packed according to the actual pixel size.  This size is given by the
