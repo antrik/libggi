@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.22 2007/03/03 19:26:01 cegger Exp $
+/* $Id: cbconsist.c,v 1.23 2007/06/24 13:59:12 aldot Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -58,7 +58,7 @@ struct cbcstate_s {
 #define CBC_FLUSHALOT	8	/* Do extra (slow) flushing to work 
 				   around any races. */
 #define CBC_NOTIMING	16	/* Don't time. */
-#define CBC_NOCONSIST	32	/* Don't run consistancy tests. */
+#define CBC_NOCONSIST	32	/* Don't run consistency tests. */
 };
 
 #define BAILOUT(string, label) \

@@ -6,7 +6,7 @@ consider yourself warned.
 
 Second Note:  This code _does_ work (for 8bpp),
 and I'm only uploading the primitives as they
-pass speed.c and my own consistancy checks.
+pass speed.c and my own consistency checks.
 But in it's current form it only works with 
 1 or 2 32K banks.
 

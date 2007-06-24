@@ -204,12 +204,12 @@ improvements made in display-memory, and instead it opens and loads a
 child display-memory visual which takes care of finding software
 renderers for the RAM buffer.  The main drawops of the new target
 dispatch the the X server commands and call the child's corresponding
-software drawops to ensure consistant state of the RAM buffer vs the X
+software drawops to ensure consistent state of the RAM buffer vs the X
 window.  This must be done such that any requests to get data from the
 RAM backbuffer are not processed until the RAM backbuffer is up to
 date, and any flushes from the backbuffer are not processed until the
 backbuffer is up to date.  There's a lot of locking intracacy to
-ensure this level of consistancy.
+ensure this level of consistency.
 
 
 The basic syncronization operation is accomplished by the flush
