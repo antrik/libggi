@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.213 2007/05/25 11:39:26 cegger Exp $
+dnl $Id: configure.in,v 1.214 2007/06/28 09:27:35 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -746,9 +746,12 @@ dnl includes (/usr/X11R6/include on most systems).
     dnl XFree86 3.x has broken dga support
     cflags_old="$CFLAGS"
     cppflags_old="$CPPFLAGS"
+    if test -z "$x_includes" -o "x$x_includes" = "xNONE"; then
+        x_includes="$ac_x_includes"
+    fi
     if test -n "$x_includes" -a "x$x_includes" != "xNONE"; then
-	CFLAGS="$CFLAGS -I$x_includes"
-	CPPFLAGS="$CPPFLAGS -I$x_includes"
+        CFLAGS="$CFLAGS -I$x_includes"
+        CPPFLAGS="$CPPFLAGS -I$x_includes"
     fi
     if test "x$build_x_xf86dga_target" != "xno"
     then
