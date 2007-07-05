@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.9 2007/05/20 15:27:03 pekberg Exp $
+/* $Id: vline.c,v 1.10 2007/07/05 04:41:26 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -118,7 +118,7 @@ int GGI_lin4r_packed_putvline(struct ggi_visual *vis,int x,int y,int h,const voi
 int GGI_lin4r_packed_getvline(struct ggi_visual *vis,int x,int y,int h,void *buffer)
 {
 	uint8_t *ptr,*buf8=(uint8_t *)buffer;
-	int stride=LIBGGI_FB_W_STRIDE(vis);
+	int stride=LIBGGI_FB_R_STRIDE(vis);
 	uint8_t shift = (x & 0x01) << 2;
 	uint8_t mask = 0x0f << shift;
 	uint8_t antishift = shift ^ 4;
