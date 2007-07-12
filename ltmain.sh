@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh; do not edit by hand
 
-# ltmain.sh (GNU libtool 1.2473 2007/06/19 06:22:02) 2.1a
+# ltmain.sh (GNU libtool 1.2485 2007/07/12 06:47:05) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -65,7 +65,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2473 2007/06/19 06:22:02) 2.1a
+#       $progname:		(GNU libtool 1.2485 2007/07/12 06:47:05) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -74,8 +74,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2473 2007/06/19 06:22:02"
-package_revision=1.2473
+TIMESTAMP=" 1.2485 2007/07/12 06:47:05"
+package_revision=1.2485
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -1402,8 +1402,14 @@ lt_${my_prefix}_LTX_preloaded_symbols[] =
 {\
   { \"$my_originator\", (void *) 0 },"
 
-	  eval "$global_symbol_to_c_name_address" < "$nlist" >> "$output_objdir/$my_dlsyms"
-
+	  case $need_lib_prefix in
+	  no)
+	    eval "$global_symbol_to_c_name_address" < "$nlist" >> "$output_objdir/$my_dlsyms"
+	    ;;
+	  *)
+	    eval "$global_symbol_to_c_name_address_lib_prefix" < "$nlist" >> "$output_objdir/$my_dlsyms"
+	    ;;
+	  esac
 	  $ECHO >> "$output_objdir/$my_dlsyms" "\
   {0, (void *) 0}
 };
@@ -4131,6 +4137,12 @@ func_mode_link ()
 	continue
 	;;
 
+      # -msg_* for osf cc
+      -msg_*)
+	func_quote_for_eval "$arg"
+	arg="$func_quote_for_eval_result"
+	;;
+
       # -64, -mips[0-9] enable 64-bit mode on the SGI compiler
       # -r[0-9][0-9]* specifies the processor on the SGI compiler
       # -xarch=*, -xtarget=* enable 64-bit mode on the Sun compiler
@@ -5571,9 +5583,10 @@ func_mode_link ()
 	    age="0"
 	    ;;
 	  irix|nonstopux)
-	    current=`expr $number_major + $number_minor - 1`
+	    current=`expr $number_major + $number_minor`
 	    age="$number_minor"
 	    revision="$number_minor"
+	    lt_irix_increment=no
 	    ;;
 	  esac
 	  ;;
@@ -5643,7 +5656,11 @@ func_mode_link ()
 	  ;;
 
 	irix | nonstopux)
-	  major=`expr $current - $age + 1`
+	  if test "X$lt_irix_increment" = "Xno"; then
+	    major=`expr $current - $age`
+	  else
+	    major=`expr $current - $age + 1`
+	  fi
 
 	  case $version_type in
 	    nonstopux) verstring_prefix=nonstopux ;;
@@ -7169,7 +7186,10 @@ EOF
 	    # are only useful if you want to execute the "real" binary.
 	    # Since the "real" binary is built for $host, then this
 	    # wrapper might as well be built for $host, too.
-	    $opt_dry_run || $LTCC $LTCFLAGS -s -o $cwrapper $cwrappersource
+	    $opt_dry_run || {
+	      $LTCC $LTCFLAGS -o $cwrapper $cwrappersource
+	      $STRIP $cwrapper
+	    }
 
 	    # Now, create the wrapper script for func_source use:
 	    func_ltwrapper_scriptname $cwrapper
