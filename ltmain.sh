@@ -1,6 +1,6 @@
-# Generated from ltmain.m4sh; do not edit by hand
+# Generated from ltmain.m4sh.
 
-# ltmain.sh (GNU libtool 1.2485 2007/07/12 06:47:05) 2.1a
+# ltmain.sh (GNU libtool 1.2504 2007/08/18 09:18:43) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -65,7 +65,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2485 2007/07/12 06:47:05) 2.1a
+#       $progname:		(GNU libtool 1.2504 2007/08/18 09:18:43) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -74,8 +74,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2485 2007/07/12 06:47:05"
-package_revision=1.2485
+TIMESTAMP=" 1.2504 2007/08/18 09:18:43"
+package_revision=1.2504
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -848,11 +848,11 @@ Otherwise, only FILE itself is deleted using RM."
     shift
 
     case $opt in
-      --config)		func_config 					;;
+      --config)		func_config					;;
 
       --debug)		preserve_args="$preserve_args $opt"
-	    		func_echo "enabling shell trace mode"
-	    		opt_debug='set -x'
+			func_echo "enabling shell trace mode"
+			opt_debug='set -x'
 			$opt_debug
 			;;
 
@@ -866,7 +866,7 @@ Otherwise, only FILE itself is deleted using RM."
       --finish)		mode="finish"					;;
 
       --mode)		test "$#" -eq 0 && func_missing_arg "$opt" && break
-	    		case $1 in
+			case $1 in
 			  # Valid mode arguments:
 			  clean)	;;
 			  compile)	;;
@@ -884,19 +884,19 @@ Otherwise, only FILE itself is deleted using RM."
 			     ;;
 		        esac
 
-	    		mode="$1"
+			mode="$1"
 			shift
 			;;
 
       --preserve-dup-deps)
-      			opt_duplicate_deps=:				;;
+			opt_duplicate_deps=:				;;
 
       --quiet|--silent)	preserve_args="$preserve_args $opt"
-	    		opt_silent=:
+			opt_silent=:
 			;;
 
       --verbose| -v)	preserve_args="$preserve_args $opt"
-	    		opt_silent=false
+			opt_silent=false
 			;;
 
       --tag)		test "$#" -eq 0 && func_missing_arg "$opt" && break
@@ -919,7 +919,7 @@ Otherwise, only FILE itself is deleted using RM."
       -*)		func_fatal_help "unrecognized option \`$opt'"	;;
 
       *)		nonopt="$opt"
-      			break
+			break
 			;;
     esac
   done
@@ -1074,14 +1074,9 @@ func_ltwrapper_scriptname ()
 {
     func_ltwrapper_scriptname_result=""
     if func_ltwrapper_executable_p "$1"; then
-	func_dirname "$1"
-	func_basename "$1"
+	func_dirname_and_basename "$1" "" "."
 	func_stripname '' '.exe' "$func_basename_result"
-	if test -z "$func_dirname_result"; then
-	    func_ltwrapper_scriptname_result="./$objdir/${func_stripname_result}_ltshwrapper"
-	else
-	    func_ltwrapper_scriptname_result="$func_dirname_result/$objdir/${func_stripname_result}_ltshwrapper"
-	fi
+	func_ltwrapper_scriptname_result="$func_dirname_result/$objdir/${func_stripname_result}_ltshwrapper"
     fi
 }
 
@@ -1427,7 +1422,7 @@ static const void *lt_preloaded_setup() {
 "
 	} # !$opt_dry_run
 
-  	pic_flag_for_symtable=
+	pic_flag_for_symtable=
 	case "$compile_command " in
 	*" -static "*) ;;
 	*)
@@ -1802,11 +1797,10 @@ func_mode_compile ()
 
     func_quote_for_eval "$libobj"
     test "X$libobj" != "X$func_quote_for_eval_result" \
-      && $ECHO "X$libobj" | $GREP '[]~#^*{};<>?"'"'"' 	&()|`$[]' \
+      && $ECHO "X$libobj" | $GREP '[]~#^*{};<>?"'"'"'	 &()|`$[]' \
       && func_warning "libobj name \`$libobj' may not contain shell special characters."
-    func_basename "$obj"
+    func_dirname_and_basename "$obj" "/" ""
     objname="$func_basename_result"
-    func_dirname "$obj" "/" ""
     xdir="$func_dirname_result"
     lobj=${xdir}$objdir/$objname
 
@@ -2249,7 +2243,7 @@ func_mode_install ()
       case $arg in
       -d) isdir=yes ;;
       -f)
-      	case " $install_prog " in
+	case " $install_prog " in
 	*[\\\ /]cp\ *) ;;
 	*) prev=$arg ;;
 	esac
@@ -2303,9 +2297,8 @@ func_mode_install ()
       destdir="$dest"
       destname=
     else
-      func_dirname "$dest" "" "."
+      func_dirname_and_basename "$dest" "" "."
       destdir="$func_dirname_result"
-      func_basename "$dest"
       destname="$func_basename_result"
 
       # Not a directory, so check to see that there is only one file specified.
@@ -2896,7 +2889,13 @@ EOF
 	    cat <<"EOF"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef _MSC_VER
+# include <direct.h>
+# include <process.h>
+#else
+# include <unistd.h>
+# include <stdint.h>
+#endif
 #include <malloc.h>
 #include <stdarg.h>
 #include <assert.h>
@@ -2918,6 +2917,14 @@ EOF
 #endif
 #ifndef S_IXGRP
 # define S_IXGRP 0
+#endif
+
+#ifdef _MSC_VER
+# define S_IXUSR _S_IEXEC
+# define stat _stat
+# ifndef _INTPTR_T_DEFINED
+#  define intptr_t int
+# endif
 #endif
 
 #ifndef DIR_SEPARATOR
@@ -3334,7 +3341,6 @@ chase_symlinks (const char *pathspec)
 #else
   char buf[LT_PATHMAX];
   struct stat s;
-  int rv = 0;
   char *tmp_pathspec = xstrdup (pathspec);
   char *p;
   int has_symlinks = 0;
@@ -3627,7 +3633,7 @@ func_mode_link ()
 		   ;;
 	      esac
 	      ;;
-   	  esac
+	  esac
 	  prev=
 	  continue
 	  ;;
@@ -3765,7 +3771,7 @@ func_mode_link ()
 	  continue
 	  ;;
 	shrext)
-  	  shrext_cmds="$arg"
+	  shrext_cmds="$arg"
 	  prev=
 	  continue
 	  ;;
@@ -5866,8 +5872,8 @@ func_mode_link ()
 	    ;;
 	  *-*-sysv4.2uw2* | *-*-sysv5* | *-*-unixware* | *-*-OpenUNIX*)
 	    # Compiler inserts libc in the correct place for threads to work
- 	    ;;
- 	  *)
+	    ;;
+	  *)
 	    # Add libc to deplibs on all other systems if necessary.
 	    if test "$build_libtool_need_lc" = "yes"; then
 	      deplibs="$deplibs -lc"
@@ -6125,7 +6131,7 @@ EOF
 	      tmp_deplibs=`$ECHO "X $tmp_deplibs" | $Xsed -e "s,$i,,"`
 	    done
 	  fi
-	  if $ECHO "X $tmp_deplibs" | $Xsed -e 's/[ 	]//g' |
+	  if $ECHO "X $tmp_deplibs" | $Xsed -e 's/[	 ]//g' |
 	     $GREP . >/dev/null; then
 	    $ECHO
 	    if test "X$deplibs_check_method" = "Xnone"; then
@@ -6546,7 +6552,7 @@ EOF
 		  else
 		    # All subsequent reloadable object files will link in
 		    # the last one created.
-		    eval concat_cmds=\"\$concat_cmds~$reload_cmds $objlist $last_robj\"
+		    eval concat_cmds=\"\$concat_cmds~$reload_cmds $objlist $last_robj~\$RM $last_robj\"
 		  fi
 		  last_robj=$output_objdir/$output_la-${k}.$objext
 		  k=`expr $k + 1`
@@ -6559,16 +6565,9 @@ EOF
 	      # reloadable object file.  All subsequent reloadable object
 	      # files will link in the last one created.
 	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
-	      eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj\"
+	      eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj~\$RM $last_robj\"
+	      delfiles="$delfiles $output"
 
-	      # Set up a command to remove the reloadable object files
-	      # after they are used.
-	      i=0
-	      while test "$i" -lt "$k"
-	      do
-		i=`expr $i + 1`
-		delfiles="$delfiles $output_objdir/$output_la-${i}.$objext"
-	      done
 	    else
 	      output=
 	    fi
@@ -6581,6 +6580,9 @@ EOF
 	      # Append the command to create the export file.
 	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
 	      eval concat_cmds=\"\$concat_cmds$export_symbols_cmds\"
+	      if test -n "$output"; then
+		eval concat_cmds=\"\$concat_cmds~\$RM $last_robj\"
+	      fi
 	    fi
 
 	    test -n "$save_libobjs" &&
@@ -7167,13 +7169,9 @@ EOF
 	esac
 	case $host in
 	  *cygwin* | *mingw* )
-	    func_basename "$output"
+	    func_dirname_and_basename "$output" "" "."
 	    output_name=$func_basename_result
-	    func_dirname "$output"
 	    output_path=$func_dirname_result
-	    if test -z "$output_path"; then
-	      output_path=.
-	    fi
 	    cwrappersource="$output_path/$objdir/lt-$output_name.c"
 	    cwrapper="$output_path/$output_name.exe"
 	    $RM $cwrappersource $cwrapper
@@ -7737,5 +7735,4 @@ build_old_libs=`case $build_libtool_libs in yes) echo no;; *) echo yes;; esac`
 # sh-indentation:2
 # End:
 # vi:sw=2
-
 
