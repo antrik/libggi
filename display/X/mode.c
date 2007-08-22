@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.72 2007/05/08 22:43:48 ggibecka Exp $
+/* $Id: mode.c,v 1.73 2007/08/22 17:10:58 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -90,7 +90,7 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 	screenwmm = DisplayWidthMM(priv->disp, vi->vi->screen);
 	screenhmm = DisplayHeightMM(priv->disp, vi->vi->screen);
 
-	/* Let's store this physical size data for the benifit 
+	/* Let's store this physical size data for the benefit 
 	 * of _GGI_X_checkmode_adjust() which will calculate 
 	 * the proper values after the visible.x and visible.y 
 	 * are known for certain. */
