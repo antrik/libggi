@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.73 2007/08/22 17:10:58 cegger Exp $
+/* $Id: mode.c,v 1.74 2007/08/22 17:34:30 ggibecka Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -121,9 +121,11 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 
 	if( priv->ok_to_resize ) {
 		/* Not a root window...
-		 * Don't create a window who's handles/borders are offscreen */
-		m->visible.x = screenw * 9 / 10;
-		m->visible.y = screenh * 9 / 10;
+		 * We do not restrict sizes, if the user has requested them. 
+		 * With virtual window managers even sizes larger than
+		 * screen width make sense. */
+		m->visible.x = 16384;	/* X internal limits may be at 32767, */
+		m->visible.y = 16384;	/* so we just keep it reasonable. */
 
 		/* We only support virtual widths that are multiples
 		 * of four, so let's make it likely that the visible 
@@ -193,10 +195,25 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 	/* Let's fixup our resolution to match what they want 
 	 * if we can.  It's assumed that sug->visible is 
 	 * maximized on entry to this function. */
-	if( priv->ok_to_resize && reqx != GGI_AUTO && reqx < sug->visible.x )
-		sug->visible.x = reqx;
-	if( priv->ok_to_resize && reqy != GGI_AUTO && reqy < sug->visible.y )
-		sug->visible.y = reqy;
+	if (priv->ok_to_resize) {
+		if (reqx != GGI_AUTO) {
+			if ( reqx < sug->visible.x ) {
+				sug->visible.x = reqx;
+			}
+		} else {
+			/* If GGI_AUTO was requested, keep 10% for borders 
+			 * so we don't create a window who's handles/borders 
+			 * are offscreen. */
+			 sug->visible.x = screenw * 9 / 10;
+		}
+		if (reqy != GGI_AUTO) {
+			if ( reqy < sug->visible.y ) {
+				sug->visible.y = reqy;
+			}
+		} else {
+			sug->visible.y = screenh * 9 / 10;
+		}
+	}
 
 	/* Minimums for the virtual dimensions... */
 	sug->virt.x = FourMultiple( sug->visible.x );
