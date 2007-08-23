@@ -34,13 +34,13 @@ display-wsfb			display/wsfb.@DLLEXT@
 display-x			display/X.@DLLEXT@
 alias	display-dga		display-x:-fullscreen
 alias	display-xf86dga		display-dga
-helper-x-evi			helper/helper_x_evi.@DLLEXT@
-helper-x-dbe			helper/helper_x_dbe.@DLLEXT@
-helper-x-dga			helper/helper_x_dga.@DLLEXT@
-helper-x-shm			helper/helper_x_shm.@DLLEXT@
-helper-x-vidmode		helper/helper_x_vidmode.@DLLEXT@
-helper-mansync			display/mansync.@DLLEXT@
-helper-linux-vtswitch		display/linvtsw.@DLLEXT@
+helper-x-evi			helper/helper_x_evi.@DLLEXT@:GGIdl_helper_x_evi
+helper-x-dbe			helper/helper_x_dbe.@DLLEXT@:GGIdl_helper_x_dbe
+helper-x-dga			helper/helper_x_dga.@DLLEXT@:GGIdl_helper_x_dga
+helper-x-shm			helper/helper_x_shm.@DLLEXT@:GGIdl_helper_x_shm
+helper-x-vidmode		helper/helper_x_vidmode.@DLLEXT@:GGIdl_helper_x_vidmode
+helper-mansync			display/mansync.@DLLEXT@:GGIdl_mansync
+helper-linux-vtswitch		display/linvtsw.@DLLEXT@:GGIdl_linvtsw
 
 # Display abbreviations
 alias	aa		display-aa
