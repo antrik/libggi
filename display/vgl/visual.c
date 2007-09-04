@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.25 2007/03/11 21:54:44 soyt Exp $
+/* $Id: visual.c,v 1.26 2007/09/04 01:37:14 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: initialization
@@ -352,7 +352,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	priv->inputs = INP_KBD | INP_MOUSE;
 
-	priv->availmodes = malloc(M_VESA_MODE_MAX*sizeof(ggi_modelistmode));
+	priv->availmodes = calloc(M_VESA_MODE_MAX, sizeof(ggi_modelistmode));
 	if (priv->availmodes == NULL) {
 		do_cleanup(vis);
 		error = GGI_ENOMEM;

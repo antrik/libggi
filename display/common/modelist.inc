@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.23 2006/10/26 09:27:08 pekberg Exp $
+/* $Id: modelist.inc,v 1.24 2007/09/04 01:32:40 cegger Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -162,7 +162,7 @@ ggi_modelist *_GGI_modelist_create(int n)
 {
 	ggi_modelist *retv;
 	retv = malloc(sizeof(ggi_modelist));
-	retv->list = malloc(n * sizeof(ggi_mode_padded));
+	retv->list = calloc(n, sizeof(ggi_mode_padded));
 	retv->n = 0;
 	retv->max_n = n;
 	retv->adjust = _GGI_modelist_default_adjust;

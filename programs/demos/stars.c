@@ -1,4 +1,4 @@
-/* $Id: stars.c,v 1.15 2007/06/21 21:57:06 cegger Exp $
+/* $Id: stars.c,v 1.16 2007/09/04 01:39:08 cegger Exp $
 ******************************************************************************
 
    stars.c - rotating startfield
@@ -226,7 +226,7 @@ void SetupNewVisual(ggi_visual_t setvis)
 
 		int nocols = 1 << GT_DEPTH(mode.graphtype);
 
-		ggi_color *Palette = malloc(sizeof(ggi_color) * nocols);
+		ggi_color *Palette = calloc(nocols, sizeof(ggi_color));
 
 		if (Palette == NULL) {
 			ggPanic("Unable to allocate temporary memory!\n");
