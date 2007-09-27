@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.30 2007/05/06 06:07:46 cegger Exp $
+/* $Id: ggi.h,v 1.31 2007/09/27 05:04:05 pekberg Exp $
 ******************************************************************************
 
    LibGGI API header file
@@ -61,11 +61,15 @@ struct ggi_resource;
 
 /* Swap the bitgroups in an 8 bit unsigned number */
 #define GGI_BITREV4(x) (((x)>>4) | ((x)<<4))
+/* Bit-pair reverser inspired by below bit reverser */
 #define GGI_BITREV2(x)  \
-	((x)>>6 | ((x)&0x30)>>2 | ((x)&0x0c)<<2 | (x)<<6)
+	(((x) * 0x4004UL & 0xcc330UL) * 0x10101UL >> 16)
+/* Below is a bit reverser taken from
+ * http://graphics.stanford.edu/~seander/bithacks.html
+ */
 #define GGI_BITREV1(x)  \
-	((x)>>7 | ((x)&0x40)>>5 | ((x)&0x20)>>3 | ((x)&0x10)>>1 |  \
-	 ((x)&0x08)<<1 | ((x)&0x04)<<3 | ((x)&0x02)<<5 | (x)<<7)
+	((((x) * 0x0802UL & 0x22110UL) | ((x) * 0x8020UL & 0x88440UL)) \
+	 * 0x10101UL >> 16)
 
 
 /*
