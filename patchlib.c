@@ -1,10 +1,10 @@
-/* $Id: patchlib.c,v 1.5 2007/03/03 18:55:32 cegger Exp $
+/* $Id: patchlib.c,v 1.6 2007/11/07 08:00:55 pekberg Exp $
 ******************************************************************************
 
    Alter the path to the config file in binary libggi
 
    Copyright (C) 1998 Marcus Sundberg	[marcus@ggi-project.org]
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
    to deal in the Software without restriction, including without limitation
@@ -37,7 +37,7 @@
 #include <unistd.h>
 #endif
 #ifdef HAVE_FCNTL_H
-#include <fcntl.h> 
+#include <fcntl.h>
 #endif
 #include <sys/stat.h>
 
@@ -46,11 +46,12 @@ static void print_usage(const char *fname)
 {
         fprintf(stderr, "Usage: %s libggi.so-filename [new_path_to_patch_in]\n",
 		fname);
-        fprintf(stderr, "       Output will be located in libggi.so.patched\n");
+        fprintf(stderr,
+                "    Output will be located in a file named as the original\n"
+                "    with \".patched\" appended, e.g. libggi.so.patched\n");
 }
 
 static char tag[] = GGIPATHTAG;
-static const char *newname = "libggi.so.patched";
 
 int main(int argc, const char *argv[])
 {
@@ -59,8 +60,9 @@ int main(int argc, const char *argv[])
         struct stat st;
         char *solib;
         char *path;
+        char *newname;
         int   offset=0;;
-        
+
         if (argc<2) {
                 print_usage(argv[0]);
                 exit(0);
@@ -84,6 +86,13 @@ int main(int argc, const char *argv[])
                 path++;
                 offset = path-solib;
         }
+
+        if (path == NULL) {
+                fprintf(stderr,
+                        "Could not locate the path tag, bailing out...\n");
+                exit(1);
+       	}
+
         printf("Currently compiled in path (at %d) is :\n%s\n", offset, path);
 
         if (argc == 2) {
@@ -91,12 +100,20 @@ int main(int argc, const char *argv[])
                 exit(1);
         }
         strncpy(path, argv[2], 256);
-        
+
+        newname=malloc(strlen(argv[1]) + strlen(".patched") + 1);
+        if (newname == NULL) {
+                fprintf(stderr, "Memory allocation error\n");
+                exit(1);
+        }
+        strcpy(newname, argv[1]);
+        strcat(newname, ".patched");
+
         if ((fd=creat(newname, st.st_mode)) < 0 ||
              write(fd, solib, size) < size) {
                 perror(newname);
                 exit(1);
         }
-        printf("New path (at %d) in libggi.so.patched is :\n%s\n", offset, argv[2]);
+        printf("New path (at %d) in %s is :\n%s\n", offset, newname, argv[2]);
         return 0;
 }
