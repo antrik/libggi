@@ -1,4 +1,4 @@
-/* $Id: patchlib.c,v 1.6 2007/11/07 08:00:55 pekberg Exp $
+/* $Id: patchlib.c,v 1.7 2007/11/07 10:26:31 pekberg Exp $
 ******************************************************************************
 
    Alter the path to the config file in binary libggi
@@ -53,6 +53,8 @@ static void print_usage(const char *fname)
 
 static char tag[] = GGIPATHTAG;
 
+#define PATH_SPACE (256)
+
 int main(int argc, const char *argv[])
 {
         int size;
@@ -61,7 +63,8 @@ int main(int argc, const char *argv[])
         char *solib;
         char *path;
         char *newname;
-        int   offset=0;;
+        int   offset=0;
+        int   i;
 
         if (argc<2) {
                 print_usage(argv[0]);
@@ -95,11 +98,32 @@ int main(int argc, const char *argv[])
 
         printf("Currently compiled in path (at %d) is :\n%s\n", offset, path);
 
+        if (offset > size - PATH_SPACE) {
+                fprintf(stderr,
+                        "Not enough space after tag, bailing out...\n");
+                exit(1);
+        }
+
+        for (i = 0; i < PATH_SPACE; ++i) {
+                if (!path[i])
+                        /* first nul found */
+                        break;
+        }
+        for (; i < PATH_SPACE; ++i) {
+                if (path[i]) {
+                        /* ouch, found non-nul character */
+                        fprintf(stderr,
+                                "Non-empty tail after the existing path, "
+                                "bailing out...\n");
+                        exit(1);
+                }
+        }
+
         if (argc == 2) {
                 fprintf(stderr, "No new path given. No new file generated.\n");
                 exit(1);
         }
-        strncpy(path, argv[2], 256);
+        strncpy(path, argv[2], PATH_SPACE);
 
         newname=malloc(strlen(argv[1]) + strlen(".patched") + 1);
         if (newname == NULL) {
