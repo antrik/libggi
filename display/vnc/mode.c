@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2007/03/11 00:48:59 soyt Exp $
+/* $Id: mode.c,v 1.14 2007/11/12 10:59:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -328,6 +328,7 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
 	/* ggi_vnc_priv *priv = VNC_PRIV(vis); */
 	int err;
+	int desktop_size = 0;
 
 	if (vis==NULL || mode==NULL || LIBGGI_MODE(vis)==NULL) {
 		return GGI_EARGINVAL;
@@ -342,6 +343,12 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
+	if (mode->visible.x != LIBGGI_MODE(vis)->visible.x ||
+		mode->visible.y != LIBGGI_MODE(vis)->visible.y)
+	{
+		desktop_size = 1;
+	}
+
 	*LIBGGI_MODE(vis) = *mode;
 
 	err = _ggi_domode(vis);
@@ -349,6 +356,61 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	if (err) {
 		DPRINT("domode failed (%d)\n",err);
 		return err;
+	}
+
+	if (desktop_size) {
+		/* "Incompatible" mode change, send desktop size. */
+		ggi_vnc_priv *priv = VNC_PRIV(vis);
+		ggi_vnc_client *client;
+		ggi_vnc_client *next;
+		ggi_rect visible;
+		ggi_rect virt;
+		client = GG_LIST_FIRST(&priv->clients);
+		for (; client; client = next) {
+			next = GG_LIST_NEXT(client, siblings);
+
+			if (!(client->desktop_size & DESKSIZE_OK_INIT)) {
+				/* ouch, no support */
+				GGI_vnc_close_client(client);
+				continue;
+			}
+
+			if (client->desktop_size & DESKSIZE_PENDING) {
+				/* fix it later */
+				client->desktop_size |= DESKSIZE_PIXFMT_SEND;
+				continue;
+			}
+
+			/* inform client of size change, later */
+			/* but update any client visual right away */
+			client->desktop_size |= DESKSIZE_SEND;
+			GGI_vnc_change_pixfmt(client);
+		}
+
+		visible.tl.x = visible.tl.y = 0;
+		visible.br = mode->visible;
+		virt.tl.x = virt.tl.y = 0;
+		virt.br = mode->virt;
+
+		if (LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) {
+			GG_LIST_FOREACH(client, &priv->clients, siblings) {
+				client->fdirty = virt;
+				ggi_rect_intersect(&client->dirty, &virt);
+				ggi_rect_intersect(&client->update, &virt);
+			}
+		}
+		else {
+			GG_LIST_FOREACH(client, &priv->clients, siblings) {
+				client->dirty.tl.x = 0;
+				client->dirty.tl.y = 0;
+				client->dirty.br.x = 0;
+				client->dirty.br.y = 0;
+				ggi_rect_intersect(&client->fdirty, &virt);
+				ggi_rect_intersect(&client->update, &virt);
+				GGI_vnc_client_invalidate_nc_xyxy(client,
+					0, 0, mode->virt.x, mode->virt.y);
+			}
+		}
 	}
 
 	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);

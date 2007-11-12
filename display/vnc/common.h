@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.4 2007/03/10 12:02:45 cegger Exp $
+/* $Id: common.h,v 1.5 2007/11/12 10:59:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -32,6 +32,18 @@
 /* need display/vnc.h for ggi_rect typedef, not so pretty... */
 #include <ggi/display/vnc.h>
 #include "rect.h"
+
+#define DESKSIZE_INIT           (1<<4)
+#define DESKSIZE_PENDING        (1<<3)
+#define DESKSIZE_OK             (1<<2)
+#define DESKSIZE_PIXFMT         (1<<1)
+#define DESKSIZE_SEND           (1<<0)
+#define DESKSIZE_PENDING_PIXFMT (DESKSIZE_PENDING | DESKSIZE_PIXFMT)
+#define DESKSIZE_PENDING_SEND   (DESKSIZE_PENDING | DESKSIZE_SEND)
+#define DESKSIZE_ACTIVATE       (~(DESKSIZE_INIT | DESKSIZE_PENDING))
+#define DESKSIZE_OK_SEND        (DESKSIZE_OK | DESKSIZE_SEND)
+#define DESKSIZE_OK_INIT        (DESKSIZE_OK | DESKSIZE_INIT)
+#define DESKSIZE_PIXFMT_SEND    (DESKSIZE_PIXFMT | DESKSIZE_SEND)
 
 static inline int
 palette_match_8(uint8_t *palette, int colors, uint8_t color)

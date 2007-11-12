@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.97 2007/06/14 09:27:07 pekberg Exp $
+/* $Id: rfb.c,v 1.98 2007/11/12 10:59:19 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -652,6 +652,27 @@ zrle_enc(ggi_vnc_client *client,
 #endif
 
 static ggi_vnc_encode *
+desktop_size_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->desktop)
+		return NULL;
+	if ((client->desktop_size & DESKSIZE_PENDING_PIXFMT)
+		== DESKSIZE_PENDING_PIXFMT)
+	{
+		change_pixfmt(client);
+	}
+	client->desktop_size &= DESKSIZE_SEND;
+	client->desktop_size |= DESKSIZE_OK;
+
+	return NULL;
+}
+
+static ggi_vnc_encode *
 gii_enc(ggi_vnc_client *client,
 	int32_t encoding, char *format)
 {
@@ -704,7 +725,7 @@ struct encodings encode_tbl[] = {
 	                "VMW %d encoding\n",              print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
 	{   -219,    0, "Background pseudo-encoding\n",   print_enc },
-	{   -223,    0, "DesktopSize pseudo-encoding\n",  print_enc },
+	{   -223,    0, "DesktopSize pseudo-encoding\n",  desktop_size_enc },
 	{   -224,    0, "LastRect pseudo-encoding\n",     print_enc },
 	{   -232,    0, "PointerPos pseudo-encoding\n",   print_enc },
 	{   -238,    0, "SoftCursor pseudo-encoding\n",   print_enc },
@@ -796,6 +817,14 @@ vnc_client_set_encodings_cont(ggi_vnc_client *client)
 
 	set_encodings(client, (int32_t *)client->buf, client->encoding_count);
 
+	if ((client->desktop_size & DESKSIZE_PENDING_SEND)
+		== DESKSIZE_PENDING_SEND)
+	{
+		/* pending desktop size no longer allowed, die */
+		return 1;
+	}
+	client->desktop_size &= DESKSIZE_ACTIVATE;
+
 	if (client->encode == NULL)
 		client->encode = GGI_vnc_raw;
 
@@ -812,6 +841,8 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		client->action = vnc_client_set_encodings;
 		return 0;
 	}
+
+	client->desktop_size |= DESKSIZE_PENDING;
 
 	client->update_pixfmt = 0;
 #ifdef HAVE_ZLIB
@@ -848,13 +879,21 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		(int32_t *)&client->buf[4],
 		client->encoding_count);
 
+	if ((client->desktop_size & DESKSIZE_PENDING_SEND)
+		== DESKSIZE_PENDING_SEND)
+	{
+		/* pending desktop size no longer allowed, die */
+		return 1;
+	}
+	client->desktop_size &= DESKSIZE_ACTIVATE;
+
 	if (client->encode == NULL)
 		client->encode = GGI_vnc_raw;
 
 	return vnc_remove(client, 4 + 4 * client->encoding_count);
 }
 
-static void
+static int
 do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 {
 	struct ggi_visual *vis = client->owner;
@@ -864,6 +903,15 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 	int fb_update_idx;
 	ggi_vnc_encode *encode = client->encode;
 	ggi_rect visible;
+
+	if ((client->desktop_size & DESKSIZE_OK_SEND) == DESKSIZE_SEND)
+		/* A pending send sits there, but is not ok, die */
+		return -1;
+
+	if (client->desktop_size & DESKSIZE_PIXFMT) {
+		change_pixfmt(client);
+		client->desktop_size &= ~DESKSIZE_PIXFMT;
+	}
 
 	if (client->palette_dirty) {
 		struct ggi_visual *cvis;
@@ -938,6 +986,29 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		rects += encode(client, update);
 	}
 
+	if (client->desktop_size & DESKSIZE_SEND) {
+		unsigned char *desktop_size;
+		desktop_size = &client->wbuf.buf[client->wbuf.size];
+		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 12);
+		client->wbuf.size += 12;
+		desktop_size[0] = 0;
+		desktop_size[1] = 0;
+		desktop_size[2] = 0;
+		desktop_size[3] = 0;
+		desktop_size[4] = LIBGGI_X(vis) >> 8;
+		desktop_size[5] = LIBGGI_X(vis);
+		desktop_size[6] = LIBGGI_Y(vis) >> 8;
+		desktop_size[7] = LIBGGI_Y(vis);
+		desktop_size[8] = 0xff;
+		desktop_size[9] = 0xff;
+		desktop_size[10] = 0xff;
+		desktop_size[11] = (unsigned char)-223;
+
+		++rects;
+
+		client->desktop_size &= ~DESKSIZE_SEND;
+	}
+
 	if (rects) {
 		fb_update = &client->wbuf.buf[fb_update_idx];
 		fb_update[0] = 0; /* fb update */
@@ -951,6 +1022,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 done:
 	if (client->wbuf.size)
 		write_client(client, &client->wbuf, 1);
+	return 0;
 }
 
 static int
@@ -962,7 +1034,7 @@ full_update(struct ggi_visual *vis)
 	return buf->resource->curactype & GGI_ACTYPE_WRITE;
 }
 
-static void
+static int
 pending_client_update(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
@@ -970,7 +1042,7 @@ pending_client_update(ggi_vnc_client *client)
 	int pan;
 
 	if (client->write_pending)
-		return;
+		return 0;
 
 	pan = vis->origin_x != client->origin.x ||
 		vis->origin_y != client->origin.y;
@@ -987,14 +1059,14 @@ pending_client_update(ggi_vnc_client *client)
 	}
 
 	if (ggi_rect_isempty(&update) && !client->palette_dirty && !pan)
-		return;
+		return 0;
 
 	/* subtract updated rect from fdirty, use dirty as a tmp variable */
 	dirty = update;
 	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
 	ggi_rect_subtract(&client->fdirty, &dirty);
 
-	do_client_update(client, &update, pan);
+	return do_client_update(client, &update, pan);
 }
 
 static int
@@ -1002,7 +1074,7 @@ vnc_client_update(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	int incremental;
-	ggi_rect request, update, dirty;
+	ggi_rect request, update, dirty, visible;
 	int pan;
 
 	if (client->buf_size < 10) {
@@ -1010,6 +1082,8 @@ vnc_client_update(ggi_vnc_client *client)
 		client->action = vnc_client_update;
 		return 0;
 	}
+
+	client->desktop_size &= ~DESKSIZE_INIT;
 
 	incremental = client->buf[1];
 	memcpy(&request.tl.x, &client->buf[2], sizeof(request.tl.x));
@@ -1025,6 +1099,11 @@ vnc_client_update(ggi_vnc_client *client)
 		incremental,
 		request.tl.x, request.tl.y,
 		request.br.x, request.br.y);
+
+	visible.tl.x = visible.tl.y = 0;
+	visible.br.x = LIBGGI_X(vis);
+	visible.br.y = LIBGGI_Y(vis);
+	ggi_rect_intersect(&request, &visible);
 
 	if (ggi_rect_isempty(&request))
 		goto done;
@@ -1067,7 +1146,8 @@ vnc_client_update(ggi_vnc_client *client)
 	ggi_rect_shift_xy(&dirty, vis->origin_x, vis->origin_y);
 	ggi_rect_subtract(&client->fdirty, &dirty);
 
-	do_client_update(client, &update, pan);
+	if (do_client_update(client, &update, pan))
+		return 1;
 
 done:
 	return vnc_remove(client, 10);
@@ -1635,6 +1715,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
+	client->desktop_size = priv->desktop_size ? DESKSIZE_INIT : 0;
 	client->gii = priv->gii;
 
 #if defined(F_GETFL)
@@ -1791,6 +1872,12 @@ void
 GGI_vnc_close_client(ggi_vnc_client *client)
 {
 	close_client(client);
+}
+
+int
+GGI_vnc_change_pixfmt(ggi_vnc_client *client)
+{
+	return change_pixfmt(client);
 }
 
 void
