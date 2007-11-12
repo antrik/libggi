@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.214 2007/06/28 09:27:35 cegger Exp $
+dnl $Id: configure.in,v 1.215 2007/11/12 21:30:38 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -23,7 +23,7 @@ dnl Set some defaults
 PATHTAG="pAtHTAg"
 TAGLEN="7"
 ggi_conffile="libggi.conf"
-ggi_subdir="ggi"
+ggi_subdir="ggi3"
 
 use_debug="yes"
 
