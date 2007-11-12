@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.98 2007/11/12 10:59:19 pekberg Exp $
+/* $Id: rfb.c,v 1.99 2007/11/12 13:56:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -57,7 +57,7 @@
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
-#include "rect.h"
+#include "common.h"
 
 #include "d3des.h"
 #include "encoding.h"
@@ -659,7 +659,7 @@ desktop_size_enc(ggi_vnc_client *client,
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
 	DPRINT_MISC(format);
-	if (!priv->desktop)
+	if (!priv->desktop_size)
 		return NULL;
 	if ((client->desktop_size & DESKSIZE_PENDING_PIXFMT)
 		== DESKSIZE_PENDING_PIXFMT)

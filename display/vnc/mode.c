@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2007/11/12 10:59:19 pekberg Exp $
+/* $Id: mode.c,v 1.15 2007/11/12 13:56:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -40,7 +40,7 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
-#include "rect.h"
+#include "common.h"
 
 static int
 vnc_acquire(ggi_resource *res, uint32_t actype)

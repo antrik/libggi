@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.51 2007/11/12 10:59:19 pekberg Exp $
+/* $Id: visual.c,v 1.52 2007/11/12 13:56:16 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -425,9 +425,9 @@ GGIopen(struct ggi_visual *vis,
 		priv->corre = 1;
 
 	if (options[OPT_desksize].result[0] == 'n') /* never */
-		priv->desksize = 0;
+		priv->desktop_size = 0;
 	else
-		priv->desksize = 1;
+		priv->desktop_size = 1;
 
 	if (options[OPT_display].result[0] != 'n')
 		priv->display = strtoul(options[OPT_display].result, NULL, 0);
