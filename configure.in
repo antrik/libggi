@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.215 2007/11/12 21:30:38 pekberg Exp $
+dnl $Id: configure.in,v 1.216 2007/12/04 08:01:57 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -321,7 +321,7 @@ sys/socket.h netinet/in.h arpa/inet.h netdb.h windows.h linux/h3600_ts.h \
 asm/sharp_ts.h sys/resource.h \
 ApplicationServices/ApplicationServices.h, [], [], [AC_INCLUDES_DEFAULT])
 
-AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h, [], [],
+AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h ws2tcpip.h, [], [],
 	[AC_INCLUDES_DEFAULT
 	 #ifdef HAVE_WINDOWS_H
 	 # include <windows.h>
@@ -394,8 +394,9 @@ AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
 GGI_FUNC_MMAP_FILEIO
 AC_FUNC_VPRINTF
+GGI_FUNC_GETADDRINFO
 AC_CHECK_FUNCS(select strdup strerror setenv putenv getopt \
-	random herror getaddrinfo gethostbyname sigpending fork kill)
+	random herror gethostbyname sigpending fork kill)
 
 dnl ========================================================================
 dnl LibGII must be built
@@ -591,6 +592,13 @@ if test "x$ac_cv_func_gethostbyname" = "xno"; then
   AC_CHECK_LIB(c, gethostbyname, ,
     AC_CHECK_LIB(nsl, gethostbyname, bsdsock_libs="$bsdsock_libs -lnsl")
   )
+fi
+
+if test -n "$GAI_LIB"; then
+	case " $bsdsock_libs " in
+	*" $GAI_LIB "*) ;; # GAI_LIB already present
+	*) bsdsock_libs="$bsdsock_libs $GAI_LIB" ;;
+	esac
 fi
 
 AC_CHECK_LIB(z, deflate,
