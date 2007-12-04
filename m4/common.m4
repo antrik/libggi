@@ -435,34 +435,62 @@ AC_DEFUN([GGI_RESTORE_USER_VARS],
 ])
 
 
+# GGI_REPEAT(COUNT, VALUE)
+# --------------------------------------------------------
+# Repeat VALUE COUNT times, with a comma between each invocation
+AC_DEFUN([GGI_REPEAT],
+[m4_for([index],[0],[$1],[+1],[m4_case(m4_eval(index),[$1],[],m4_eval([$1 - 1]),[$2],[$2,])])])
+
+
+# GGI_SEARCH_LIBS(FUNCTION, ARG-COUNT, SEARCH-LIBS,
+#                 [OTHER-LIBRARIES], [PROLOGUE])
+# --------------------------------------------------------
+# Search for a library defining FUNC, if it's not already available.
+AC_DEFUN([GGI_SEARCH_LIBS],
+[AS_VAR_PUSHDEF([ggi_Search], [ggi_cv_search_$1])dnl
+AC_CACHE_CHECK([for library containing $1], [ggi_Search],
+[ggi_func_search_save_LIBS=$LIBS
+AC_LANG_CONFTEST([AC_LANG_PROGRAM([$5
+#ifdef __cplusplus
+extern "C"
+#endif
+char $1( GGI_REPEAT([$2], [int]) );],
+[return $1( GGI_REPEAT([$2], [0]) );])])
+for ggi_lib in '' $3; do
+	if test -z "$ggi_lib"; then
+		ggi_res="none required"
+	else
+		ggi_res=-l$ggi_lib
+		LIBS="-l$ggi_lib $4 $ggi_func_search_save_LIBS"
+	fi
+	AC_LINK_IFELSE([], [AS_VAR_SET([ggi_Search], [$ggi_res])])
+	AS_VAR_SET_IF([ggi_Search], [break])dnl
+done
+AS_VAR_SET_IF([ggi_Search], , [AS_VAR_SET([ggi_Search], [no])])dnl
+rm conftest.$ac_ext
+LIBS=$ggi_func_search_save_LIBS])
+AS_VAR_POPDEF([ggi_Search])dnl
+])
+
+
 dnl ------ checktarget.m4 ---- 
 dnl Check how to handle getaddrinfo
 
 AC_DEFUN([GGI_FUNC_GETADDRINFO],
 [
 
-AC_SEARCH_LIBS(getaddrinfo, [socket])
-AC_CHECK_FUNCS(getaddrinfo, , [
-	AC_CACHE_CHECK(for getaddrinfo in -lws2_32,
-		[ggi_cv_ws2_32_getaddrinfo],
-		[ggi_cv_ws2_32_getaddrinfo=no
-		old_LIBS="$LIBS"
-		LIBS="$LIBS -lws2_32"
-		AC_TRY_LINK([
-#ifdef HAVE_WINDOWS_H
-#include <windows.h>
+GGI_SEARCH_LIBS(getaddrinfo, 4, [socket ws2_32], [], [
+#ifdef _WIN32
+__stdcall
 #endif
-#ifdef HAVE_WS2TCPIP_H
-#include <ws2tcpip.h>
-#endif],
-			[getaddrinfo(0, 0, 0, 0);],
-			[ggi_cv_ws2_32_getaddrinfo=yes])
-		LIBS="$old_LIBS"])
-	if test "$ggi_cv_ws2_32_getaddrinfo" = yes; then
-		LIBS="$LIBS -lws2_32"
-		AC_DEFINE(HAVE_GETADDRINFO, 1,
-			[Define to 1 if you have getaddrinfo])
-	fi
 ])
+
+if test "$ggi_cv_search_getaddrinfo" != "no"; then
+	AC_DEFINE(HAVE_GETADDRINFO, 1,
+		[Define to 1 if you have getaddrinfo])
+	if test "$ggi_cv_search_getaddrinfo" != "none required"; then
+		GAI_LIB="$ggi_cv_search_getaddrinfo"
+	fi
+fi
 
 ])
