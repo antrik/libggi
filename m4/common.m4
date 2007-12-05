@@ -10,7 +10,9 @@ dnl    Defaults to true, if not specified
 AC_DEFUN([GGI_CC_CHECK4_OPTION],
 [
 
-AC_MSG_CHECKING([if $CC has -$1 option])
+AS_VAR_PUSHDEF([ggi_Option], [AS_TR_SH(m4_tolower([ggi_cv_cc_has_$1]))])dnl
+AC_CACHE_CHECK([if $CC has -$1 option], [ggi_Option],
+[
 save_CFLAGS="$CFLAGS"
 
 CFLAGS="$CFLAGS -$1"
@@ -19,21 +21,22 @@ AC_COMPILE_IFELSE([
 			[[printf("Hello World\n");]])
 	], [cc_tmp=yes],
 	[cc_tmp=no])
+AS_VAR_SET([ggi_Option], [$cc_tmp])
+CFLAGS="$save_CFLAGS"
+])
 
 activate=1
 if test -n "$2"; then
 	activate=$2
 fi
 
-if test $activate -ne 0 -a "$cc_tmp" = "yes"; then
+if test $activate -ne 0 -a AS_VAR_GET([ggi_Option]) = yes; then
 	AM_CFLAGS="$AM_CFLAGS -$1"
 fi
-CFLAGS="$save_CFLAGS"
 
+AS_VAR_SET(AS_TR_SH(m4_tolower([cc_has_$1])), AS_VAR_GET([ggi_Option]))
 
-AC_MSG_RESULT([$cc_tmp])
-
-AS_VAR_SET(AS_TR_SH(m4_tolower([cc_has_$1])), $cc_tmp)
+AS_VAR_POPDEF([ggi_Option])dnl
 
 ])
 
