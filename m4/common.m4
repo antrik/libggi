@@ -438,33 +438,29 @@ AC_DEFUN([GGI_RESTORE_USER_VARS],
 ])
 
 
-# GGI_REPEAT(COUNT, VALUE)
-# --------------------------------------------------------
-# Repeat VALUE COUNT times, with a comma between each invocation
-AC_DEFUN([GGI_REPEAT],
-[m4_for([index],[0],[$1],[+1],[m4_case(m4_eval(index),[$1],[],m4_eval([$1 - 1]),[$2],[$2,])])])
-
-
-# GGI_SEARCH_LIBS(FUNCTION, ARG-COUNT, SEARCH-LIBS,
-#                 [OTHER-LIBRARIES], [PROLOGUE])
+# GGI_SEARCH_LIBS(FUNCTION, SEARCH-LIBS,
+#                 [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND],
+#                 [OTHER-LIBRARIES], [PROLOGUE], [ARGS])
 # --------------------------------------------------------
 # Search for a library defining FUNC, if it's not already available.
 AC_DEFUN([GGI_SEARCH_LIBS],
 [AS_VAR_PUSHDEF([ggi_Search], [ggi_cv_search_$1])dnl
 AC_CACHE_CHECK([for library containing $1], [ggi_Search],
 [ggi_func_search_save_LIBS=$LIBS
-AC_LANG_CONFTEST([AC_LANG_PROGRAM([$5
+AC_LANG_CONFTEST([AC_LANG_PROGRAM([$6
+m4_ifval([$7], , [
 #ifdef __cplusplus
 extern "C"
 #endif
-char $1( GGI_REPEAT([$2], [int]) );],
-[return $1( GGI_REPEAT([$2], [0]) );])])
-for ggi_lib in '' $3; do
+char $1();])
+],
+[return $1( $7 );])])
+for ggi_lib in '' $2; do
 	if test -z "$ggi_lib"; then
 		ggi_res="none required"
 	else
 		ggi_res=-l$ggi_lib
-		LIBS="-l$ggi_lib $4 $ggi_func_search_save_LIBS"
+		LIBS="-l$ggi_lib $5 $ggi_func_search_save_LIBS"
 	fi
 	AC_LINK_IFELSE([], [AS_VAR_SET([ggi_Search], [$ggi_res])])
 	AS_VAR_SET_IF([ggi_Search], [break])dnl
@@ -472,6 +468,11 @@ done
 AS_VAR_SET_IF([ggi_Search], , [AS_VAR_SET([ggi_Search], [no])])dnl
 rm conftest.$ac_ext
 LIBS=$ggi_func_search_save_LIBS])
+ggi_res=AS_VAR_GET([ggi_Search])
+AS_IF([test "$ggi_res" != no],
+	[test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+	$3],
+		[$4])dnl
 AS_VAR_POPDEF([ggi_Search])dnl
 ])
 
@@ -482,18 +483,33 @@ dnl Check how to handle getaddrinfo
 AC_DEFUN([GGI_FUNC_GETADDRINFO],
 [
 
-GGI_SEARCH_LIBS(getaddrinfo, 4, [socket ws2_32], [], [
-#ifdef _WIN32
-__stdcall
-#endif
-])
+save_LIBS=$LIBS
 
-if test "$ggi_cv_search_getaddrinfo" != "no"; then
+GGI_SEARCH_LIBS(getaddrinfo, [socket ws2_32],
+[
 	AC_DEFINE(HAVE_GETADDRINFO, 1,
 		[Define to 1 if you have getaddrinfo])
 	if test "$ggi_cv_search_getaddrinfo" != "none required"; then
 		GAI_LIB="$ggi_cv_search_getaddrinfo"
 	fi
-fi
+], [], [], [
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
+#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
+# include <windows.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
+#endif
+], [NULL, NULL, NULL, NULL])
+
+LIBS=$save_LIBS
 
 ])
