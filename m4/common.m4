@@ -493,6 +493,9 @@ GGI_SEARCH_LIBS(getaddrinfo, [socket ws2_32],
 		GAI_LIB="$ggi_cv_search_getaddrinfo"
 	fi
 ], [], [], [
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
