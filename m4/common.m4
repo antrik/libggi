@@ -64,7 +64,7 @@ if test "$cc_has_werror_implicit_function_declaration" = "yes"; then
 	dnl ... for the declarations
 	for func in $ggi_test_funcs; do
 		AC_CHECK_DECLS($func,[],[],
-			[$ac_includes_default
+			[AC_INCLUDES_DEFAULT
 			 #ifdef HAVE_SIGNAL_H
 			 #include <signal.h>
 			 #endif])
