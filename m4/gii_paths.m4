@@ -28,7 +28,7 @@ AC_ARG_WITH([uninst-gii],
 [  --with-uninst-gii=DIR   use uninstalled copy of LibGII found in DIR],
 [[if test -d "$withval" ; then
      gii_top_builddir="`cd "$withval" ; pwd`"
-     gii_top_srcdir="$gii_top_builddir/`cd "$withval" ; sed -n -e 's/^top_srcdir[       ]*=[    ]*//p' Makefile`"
+     gii_top_srcdir="$gii_top_builddir/`cd "$withval" ; sed -n -e 's/^top_srcdir[ 	]*=[ 	]*//p' Makefile`"
      gii_top_srcdir="`cd $gii_top_srcdir ; pwd`"
      DISTCHECK_CONFIGURE_FLAGS="$DISTCHECK_CONFIGURE_FLAGS --with-uninst-gii=$gii_top_builddir"
    fi
