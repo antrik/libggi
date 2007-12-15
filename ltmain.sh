@@ -1,6 +1,6 @@
 # Generated from ltmain.m4sh.
 
-# ltmain.sh (GNU libtool 1.2504 2007/08/18 09:18:43) 2.1a
+# ltmain.sh (GNU libtool 1.2533 2007/11/30 04:18:40) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
@@ -65,7 +65,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2504 2007/08/18 09:18:43) 2.1a
+#       $progname:		(GNU libtool 1.2533 2007/11/30 04:18:40) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -74,8 +74,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2504 2007/08/18 09:18:43"
-package_revision=1.2504
+TIMESTAMP=" 1.2533 2007/11/30 04:18:40"
+package_revision=1.2533
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -95,7 +95,7 @@ DUALCASE=1; export DUALCASE # for MKS sh
 # Only set LANG and LC_ALL to C if already set.
 # These must not be set unconditionally because not all systems understand
 # e.g. LANG=C (notably SCO).
-for lt_var in LANG LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
+for lt_var in LANG LANGUAGE LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
 do
   eval "if test \"\${$lt_var+set}\" = set; then
           save_$lt_var=\$$lt_var
@@ -1497,7 +1497,7 @@ func_extract_an_archive ()
     $opt_debug
     f_ex_an_ar_dir="$1"; shift
     f_ex_an_ar_oldlib="$1"
-    func_show_eval "(cd \$f_ex_an_ar_dir && $AR x \$f_ex_an_ar_oldlib)" 'exit $?'
+    func_show_eval "(cd \$f_ex_an_ar_dir && $AR x \"\$f_ex_an_ar_oldlib\")" 'exit $?'
     if ($AR t "$f_ex_an_ar_oldlib" | sort | sort -uc >/dev/null 2>&1); then
      :
     else
@@ -1548,7 +1548,7 @@ func_extract_archives ()
 	  cd $my_xdir || exit $?
 	  darwin_archive=$my_xabs
 	  darwin_curdir=`pwd`
-	  darwin_base_archive=`basename $darwin_archive`
+	  darwin_base_archive=`basename "$darwin_archive"`
 	  darwin_arches=`lipo -info "$darwin_archive" 2>/dev/null | $GREP Architectures 2>/dev/null || true`
 	  if test -n "$darwin_arches"; then
 	    darwin_arches=`$ECHO "$darwin_arches" | $SED -e 's/.*are://'`
@@ -1755,6 +1755,7 @@ func_mode_compile ()
     *.for) xform=for ;;
     *.java) xform=java ;;
     *.obj) xform=obj ;;
+    *.sx) xform=sx ;;
     esac
 
     libobj=`$ECHO "X$libobj" | $Xsed -e "s/\.$xform$/.lo/"`
@@ -2095,7 +2096,7 @@ func_mode_execute ()
       fi
 
       # Restore saved environment variables
-      for lt_var in LANG LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
+      for lt_var in LANG LANGUAGE LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES
       do
 	eval "if test \"\${save_$lt_var+set}\" = set; then
                 $lt_var=\$save_$lt_var; export $lt_var

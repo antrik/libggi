@@ -51,12 +51,24 @@ m4_defun([LT_PREREQ],
        [$2])])
 
 
+# _LT_CHECK_BUILDDIR
+# ------------------
+# Complain if the absolute build directory name contains unusual characters
+m4_defun([_LT_CHECK_BUILDDIR],
+[case `pwd` in
+  *\ * | *\	*)
+    AC_MSG_WARN([Libtool does not cope well with whitespace in \`pwd\`]) ;;
+esac
+])
+
+
 # LT_INIT([OPTIONS])
 # ------------------
 AC_DEFUN([LT_INIT],
 [AC_PREREQ([2.58])dnl We use AC_INCLUDES_DEFAULT
 AC_BEFORE([$0], [LT_LANG])dnl
 AC_BEFORE([$0], [LT_OUTPUT])dnl
+AC_REQUIRE([_LT_CHECK_BUILDDIR])dnl
 
 dnl Autoconf doesn't catch unexpanded LT_ macros by default:
 m4_pattern_forbid([^_?LT_[A-Z_]+$])dnl
@@ -81,7 +93,7 @@ _LT_SETUP
 
 # Only expand once:
 m4_define([LT_INIT])
-])# _LT_INIT
+])# LT_INIT
 
 # Old names:
 AU_ALIAS([AC_PROG_LIBTOOL], [LT_INIT])
@@ -318,7 +330,7 @@ m4_bpatsubst([m4_bpatsubst([$1], [^ *], [# ])],
 # VALUE may be 0, 1 or 2 for a computed quote escaped value based on
 # VARNAME.  Any other value will be used directly.
 m4_define([_LT_DECL],
-[lt_if_append_uniq([lt_decl_varnames], [$2], [[, ]],
+[lt_if_append_uniq([lt_decl_varnames], [$2], [, ],
     [lt_dict_add_subkey([lt_decl_dict], [$2], [libtool_name],
 	[m4_ifval([$1], [$1], [$2])])
     lt_dict_add_subkey([lt_decl_dict], [$2], [value], [$3])
@@ -870,7 +882,7 @@ ac_outfile=conftest.$ac_objext
 echo "$lt_simple_link_test_code" >conftest.$ac_ext
 eval "$ac_link" 2>&1 >/dev/null | $SED '/^$/d; /^ *+/d' >conftest.err
 _lt_linker_boilerplate=`cat conftest.err`
-$RM conftest*
+$RM -r conftest*
 ])# _LT_LINKER_BOILERPLATE
 
 
@@ -1338,7 +1350,7 @@ AC_CACHE_CHECK([$1], [$2],
        $2=yes
      fi
    fi
-   $RM conftest*
+   $RM -r conftest*
    LDFLAGS="$save_LDFLAGS"
 ])
 
@@ -2143,7 +2155,7 @@ darwin* | rhapsody*)
   shlibpath_var=DYLD_LIBRARY_PATH
   shrext_cmds='`test .$module = .yes && echo .so || echo .dylib`'
 m4_if([$1], [],[
-  sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/local/lib"]) 
+  sys_lib_search_path_spec="$sys_lib_search_path_spec /usr/local/lib"])
   sys_lib_dlsearch_path_spec='/usr/local/lib /lib /usr/lib'
   ;;
 
@@ -2324,7 +2336,7 @@ linux* | k*bsd*-gnu)
   finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
   shlibpath_var=LD_LIBRARY_PATH
   shlibpath_overrides_runpath=no
-  # Some binutils ld are patched to set DT_RUNPATH 
+  # Some binutils ld are patched to set DT_RUNPATH
   save_LDFLAGS=$LDFLAGS
   save_libdir=$libdir
   eval "libdir=/foo; wl=\"$_LT_TAGVAR(lt_prog_compiler_wl, $1)\"; \
@@ -3355,7 +3367,7 @@ _LT_EOF
     echo "$progname: failed program was:" >&AS_MESSAGE_LOG_FD
     cat conftest.$ac_ext >&5
   fi
-  rm -f conftest* conftst*
+  rm -rf conftest* conftst*
 
   # Do not use the global_symbol_pipe unless it works.
   if test "$pipe_works" = yes; then
@@ -3577,6 +3589,12 @@ m4_if([$1], [CXX], [
 	    # Linux and Compaq Tru64 Unix objects are PIC.
 	    _LT_TAGVAR(lt_prog_compiler_pic, $1)=
 	    _LT_TAGVAR(lt_prog_compiler_static, $1)='-non_shared'
+	    ;;
+	  xlc* | xlC*)
+	    # IBM XL 8.0 on PPC
+	    _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+	    _LT_TAGVAR(lt_prog_compiler_pic, $1)='-qpic'
+	    _LT_TAGVAR(lt_prog_compiler_static, $1)='-qstaticlink'
 	    ;;
 	  *)
 	    case `$CC -V 2>&1 | sed 5q` in
@@ -3845,6 +3863,12 @@ m4_if([$1], [CXX], [
         # All Alpha code is PIC.
         _LT_TAGVAR(lt_prog_compiler_static, $1)='-non_shared'
         ;;
+      xl*)
+	# IBM XL C 8.0/Fortran 10.1 on PPC
+	_LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+	_LT_TAGVAR(lt_prog_compiler_pic, $1)='-qpic'
+	_LT_TAGVAR(lt_prog_compiler_static, $1)='-qstaticlink'
+	;;
       *)
 	case `$CC -V 2>&1 | sed 5q` in
 	*Sun\ C*)
@@ -3955,7 +3979,7 @@ _LT_TAGDECL([wl], [lt_prog_compiler_wl], [1],
 #
 if test -n "$_LT_TAGVAR(lt_prog_compiler_pic, $1)"; then
   _LT_COMPILER_OPTION([if $compiler PIC flag $_LT_TAGVAR(lt_prog_compiler_pic, $1) works],
-    [_LT_TAGVAR(lt_prog_compiler_pic_works, $1)],
+    [_LT_TAGVAR(lt_cv_prog_compiler_pic_works, $1)],
     [$_LT_TAGVAR(lt_prog_compiler_pic, $1)@&t@m4_if([$1],[],[ -DPIC],[m4_if([$1],[CXX],[ -DPIC],[])])], [],
     [case $_LT_TAGVAR(lt_prog_compiler_pic, $1) in
      "" | " "*) ;;
@@ -3972,7 +3996,7 @@ _LT_TAGDECL([pic_flag], [lt_prog_compiler_pic], [1],
 #
 wl=$_LT_TAGVAR(lt_prog_compiler_wl, $1) eval lt_tmp_static_flag=\"$_LT_TAGVAR(lt_prog_compiler_static, $1)\"
 _LT_LINKER_OPTION([if $compiler static flag $lt_tmp_static_flag works],
-  _LT_TAGVAR(lt_prog_compiler_static_works, $1),
+  _LT_TAGVAR(lt_cv_prog_compiler_static_works, $1),
   $lt_tmp_static_flag,
   [],
   [_LT_TAGVAR(lt_prog_compiler_static, $1)=])
@@ -4196,6 +4220,7 @@ _LT_EOF
 	 && test "$tmp_diet" = no
       then
 	tmp_addflag=
+	tmp_sharedflag='-shared'
 	case $cc_basename,$host_cpu in
         pgcc*)				# Portland Group C compiler
 	  _LT_TAGVAR(whole_archive_flag_spec, $1)='${wl}--whole-archive`for conv in $convenience\"\"; do test  -n \"$conv\" && new_convenience=\"$new_convenience,$conv\"; done; $ECHO \"$new_convenience\"` ${wl}--no-whole-archive'
@@ -4210,6 +4235,9 @@ _LT_EOF
 	  tmp_addflag=' -i_dynamic -nofor_main' ;;
 	ifc* | ifort*)			# Intel Fortran compiler
 	  tmp_addflag=' -nofor_main' ;;
+	xl[[cC]]*)			# IBM XL C 8.0 on PPC (deal with xlf below)
+	  tmp_sharedflag='-qmkshrobj'
+	  tmp_addflag= ;;
 	esac
 	case `$CC -V 2>&1 | sed 5q` in
 	*Sun\ C*)			# Sun C 5.9
@@ -4218,8 +4246,6 @@ _LT_EOF
 	  tmp_sharedflag='-G' ;;
 	*Sun\ F*)			# Sun Fortran 8.3
 	  tmp_sharedflag='-G' ;;
-	*)
-	  tmp_sharedflag='-shared' ;;
 	esac
 	_LT_TAGVAR(archive_cmds, $1)='$CC '"$tmp_sharedflag""$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
 
@@ -4229,6 +4255,22 @@ _LT_EOF
 	    echo "local: *; };" >> $output_objdir/$libname.ver~
 	    $CC '"$tmp_sharedflag""$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
         fi
+
+	case $cc_basename in
+	xlf*)
+	  # IBM XL Fortran 10.1 on PPC cannot create shared libs itself
+	  _LT_TAGVAR(whole_archive_flag_spec, $1)='--whole-archive$convenience --no-whole-archive'
+	  _LT_TAGVAR(hardcode_libdir_flag_spec, $1)=
+	  _LT_TAGVAR(hardcode_libdir_flag_spec_ld, $1)='-rpath $libdir'
+	  _LT_TAGVAR(archive_cmds, $1)='$LD -shared $libobjs $deplibs $compiler_flags -soname $soname -o $lib'
+	  if test "x$supports_anon_versioning" = xyes; then
+	    _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $output_objdir/$libname.ver~
+	      cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+	      echo "local: *; };" >> $output_objdir/$libname.ver~
+	      $LD -shared $libobjs $deplibs $compiler_flags -soname $soname -version-script $output_objdir/$libname.ver -o $lib'
+	  fi
+	  ;;
+	esac
       else
         _LT_TAGVAR(ld_shlibs, $1)=no
       fi
@@ -5869,6 +5911,18 @@ if test "$_lt_caught_CXX_error" != yes; then
 	    # dependencies.
 	    output_verbose_link_cmd='templist=`$CC -shared $CFLAGS -v conftest.$objext 2>&1 | $GREP "ld"`; templist=`$ECHO "X$templist" | $Xsed -e "s/\(^.*ld.*\)\( .*ld .*$\)/\1/"`; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; $ECHO "X$list" | $Xsed'
 	    ;;
+	  xl*)
+	    # IBM XL 8.0 on PPC, with GNU ld
+	    _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='${wl}-rpath ${wl}$libdir'
+	    _LT_TAGVAR(export_dynamic_flag_spec, $1)='${wl}--export-dynamic'
+	    _LT_TAGVAR(archive_cmds, $1)='$CC -qmkshrobj $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+	    if test "x$supports_anon_versioning" = xyes; then
+	      _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $output_objdir/$libname.ver~
+		cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+		echo "local: *; };" >> $output_objdir/$libname.ver~
+		$CC -qmkshrobj $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+	    fi
+	    ;;
 	  *)
 	    case `$CC -V 2>&1 | sed 5q` in
 	    *Sun\ C*)
@@ -6317,12 +6371,7 @@ if AC_TRY_EVAL(ac_compile); then
   # the conftest object file.
   pre_test_object_deps_done=no
 
-  # The `*' in the case matches for architectures that use `case' in
-  # $output_verbose_cmd can trigger glob expansion during the loop
-  # eval without this substitution.
-  output_verbose_link_cmd=`$ECHO "X$output_verbose_link_cmd" | $Xsed -e "$no_glob_subst"`
-
-  for p in `eval $output_verbose_link_cmd`; do
+  for p in `eval "$output_verbose_link_cmd"`; do
     case $p in
 
     -L* | -R* | -l*)
@@ -7063,7 +7112,7 @@ func_basename ()
 # perform func_basename and func_dirname in a single function
 # call:
 #   dirname:  Compute the dirname of FILE.  If nonempty,
-#             add APPEND to the result, otherwise set result 
+#             add APPEND to the result, otherwise set result
 #             to NONDIR_REPLACEMENT.
 #             value returned in "$func_dirname_result"
 #   basename: Compute filename of FILE.
@@ -7137,7 +7186,7 @@ func_basename ()
 # perform func_basename and func_dirname in a single function
 # call:
 #   dirname:  Compute the dirname of FILE.  If nonempty,
-#             add APPEND to the result, otherwise set result 
+#             add APPEND to the result, otherwise set result
 #             to NONDIR_REPLACEMENT.
 #             value returned in "$func_dirname_result"
 #   basename: Compute filename of FILE.
