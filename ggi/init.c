@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.73 2007/04/09 15:50:26 cegger Exp $
+/* $Id: init.c,v 1.74 2007/12/17 23:00:27 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -33,7 +33,6 @@
 #include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
-#include "ext.h"
 #include "swar.h"
 
 #include <string.h>

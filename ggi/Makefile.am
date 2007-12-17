@@ -15,7 +15,7 @@ BUILT_SOURCES = $(top_builddir)/ggi/builtins.inc
 libggi_la_LDFLAGS = $(extra_libraries) -version-info 3:0:0 -no-undefined \
 	-export-symbols $(srcdir)/EXPSYMS
 
-EXTRA_DIST = EXPSYMS ext.h swar.h
+EXTRA_DIST = EXPSYMS swar.h
 
 MOSTLYCLEANFILES = builtins.inc
 MAINTAINERCLEANFILES = Makefile.in
