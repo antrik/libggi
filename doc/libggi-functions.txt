@@ -158,7 +158,7 @@ Description
 The visual is specified as a display string, followed by `NULL`. 
 If only `NULL` is specified, the default display target is opened,
 which means first examining `GGI_DISPLAY`, then invoking
-:man:`display-auto(7)`.  The other arguments are for internal purposes only,
+display-auto.  The other arguments are for internal purposes only,
 such as :p:`argptr`, used to pass driver-specific, non-textual information to
 the driver.
 
