@@ -37,7 +37,7 @@ ggi_visual_t vis;
 err = ggiOpen(vis, NULL);
 
 if(err != GGI_OK) {
-      ggiPanic("Couldn't open default visual!\en");
+      ggPanic("Couldn't open default visual!\en");
 }
 
 /* do stuff */
@@ -45,7 +45,7 @@ if(err != GGI_OK) {
 err = ggiClose(vis);
 
 if(err != GGI_OK) {
-      ggiPanic("Couldn't close default visual!\en");
+      ggPanic("Couldn't close default visual!\en");
 }
 
 .fi
