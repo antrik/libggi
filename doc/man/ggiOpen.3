@@ -1,4 +1,4 @@
-.TH "ggiOpen" 3 "2007-06-24" "libggi-current" GGI
+.TH "ggiOpen" 3 "2007-12-17" "libggi-current" GGI
 .SH NAME
 \fBggiOpen\fR, \fBggiClose\fR : Open and close a visual
 .SH SYNOPSIS
@@ -34,20 +34,25 @@ Open and closing default visual:
 int          err;
 ggi_visual_t vis;
 
-err = ggiOpen(vis, NULL);
+vis = ggNewStem(libggi, NULL);
+if (vis == NULL) {
+      ggPanic("Couldn't create stem!\en");
+}
 
-if(err != GGI_OK) {
+err = ggiOpen(vis, NULL);
+if (err != GGI_OK) {
       ggPanic("Couldn't open default visual!\en");
 }
 
 /* do stuff */
 
 err = ggiClose(vis);
-
-if(err != GGI_OK) {
+if (err != GGI_OK) {
       ggPanic("Couldn't close default visual!\en");
 }
 
+ggDelStem(vis);
+ggExit();
 .fi
 
 Open and closing a memory visual:
@@ -57,20 +62,26 @@ Open and closing a memory visual:
 int          err;
 ggi_visual_t memvis;
 
-err = ggiOpen(memvis, "display-memory", NULL);
+memvis = ggNewStem(libggi, NULL);
+if (memvis == NULL) {
+      ggPanic("Could not create stem!\en");
+}
 
-if(err != GGI_OK) {
+err = ggiOpen(memvis, "display-memory", NULL);
+if (err != GGI_OK) {
       return -1;
 }
 
 /* do stuff */
 
 err = ggiClose(memvis);
-
-if(err != GGI_OK) {
+if (err != GGI_OK) {
       return -1;
 }
+
+ggDelStem(memvis);
+ggExit();
 .fi
 
 .SH SEE ALSO
-\f(CWdisplay-auto(7)\fR, \f(CWggiInit(3)\fR, \f(CWlibggi(7)\fR
+\f(CWggNewStem(3)\fR, \f(CWggiInit(3)\fR, \f(CWlibggi(7)\fR
