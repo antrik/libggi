@@ -31,30 +31,45 @@ Open and closing default visual:
 
 .nb
 .nf
-ggi_visual_t vis = ggiOpen(NULL);
+int          err;
+ggi_visual_t vis;
 
-if(vis==NULL) {
+err = ggiOpen(vis, NULL);
+
+if(err != GGI_OK) {
       ggPanic("Couldn't open default visual!\en");
 }
 
 /* do stuff */
 
-ggiClose(vis);
+err = ggiClose(vis);
+
+if(err != GGI_OK) {
+      ggPanic("Couldn't close default visual!\en");
+}
+
 .fi
 
 Open and closing a memory visual:
 
 .nb
 .nf
-ggi_visual_t memvis = ggiOpen("display-memory", NULL);
+int          err;
+ggi_visual_t memvis;
 
-if(memvis==NULL) {
+err = ggiOpen(memvis, "display-memory", NULL);
+
+if(err != GGI_OK) {
       return -1;
 }
 
 /* do stuff */
 
-ggiClose(memvis);
+err = ggiClose(memvis);
+
+if(err != GGI_OK) {
+      return -1;
+}
 .fi
 
 .SH SEE ALSO
