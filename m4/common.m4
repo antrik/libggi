@@ -117,6 +117,15 @@ AC_DEFUN([GGI_CC_SET_DEFAULT_OPTIONS],
    GGI_CC_CHECK4_OPTION([Wwrite-strings])
    GGI_CC_CHECK4_OPTION([Wmissing-include-dirs])
    GGI_CC_CHECK4_OPTION([Wdeclaration-after-statement])
+   GGI_CC_CHECK4_OPTION([Wextra-tokens])
+   GGI_CC_CHECK4_OPTION([Wnewline-eof])
+   GGI_CC_CHECK4_OPTION([Wextra])
+   GGI_CC_CHECK4_OPTION([Wno-unused-parameter])
+   GGI_CC_CHECK4_OPTION([Winit-self])
+   GGI_CC_CHECK4_OPTION([Wfloat-equal])
+   GGI_CC_CHECK4_OPTION([Wundef])
+   GGI_CC_CHECK4_OPTION([Wshorten-64-to-32])
+   GGI_CC_CHECK4_OPTION([Wold-style-definition])
 
    if test "x$cc_has_werror_implicit_function_declaration" = "xyes"; then
       AM_CFLAGS="$AM_CFLAGS -Werror-implicit-function-declaration"
