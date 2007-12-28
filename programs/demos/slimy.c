@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
+/* $Id: slimy.c,v 1.16 2007/12/28 15:55:28 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -40,7 +40,7 @@ static int height;		/* Visible screen height, in pixels */
 
 static int show_fps = 0;
 
-static ggi_color black = { 0x0000, 0x0000, 0x0000 };
+static ggi_color black = { 0x0000, 0x0000, 0x0000, 0x0000 };
 
 
 static void fail(const char *reason)
@@ -255,7 +255,8 @@ static void RunSpinner(void)
 	int a, x, y, xdir, ydir, adir, vx, vy, vxdir, vydir;
 	int z, g;
 	ggi_color e[4], c[4], d[4] =
-	    { {0, 0, 0}, {0, 127, 255}, {255, 127, 0}, {255, 255, 255} };
+	    { {0, 0, 0, 0}, {0, 127, 255, 0},
+		{255, 127, 0, 0}, {255, 255, 255, 0} };
 
 	x = rand() % width;
 	y = rand() % height;
