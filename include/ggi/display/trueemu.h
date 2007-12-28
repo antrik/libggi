@@ -1,4 +1,4 @@
-/* $Id: trueemu.h,v 1.7 2006/09/12 21:31:58 cegger Exp $
+/* $Id: trueemu.h,v 1.8 2007/12/28 13:07:56 cegger Exp $
 ******************************************************************************
 
    Display-trueemu: truecolor emulation target for GGI
@@ -44,8 +44,9 @@
 #define TC_RED(tc)	(((tc) >> 16) & 0xff)
 #define TC_GREEN(tc)	(((tc) >>  8) & 0xff)
 #define TC_BLUE(tc)	(((tc)      ) & 0xff)
+#define TC_ALPHA(tc)	(0)
 
-#define T2GGI(tc)  { TC_RED(tc) << 8, TC_GREEN(tc) << 8, TC_BLUE(tc) << 8 }
+#define T2GGI(tc)  { TC_RED(tc) << 8, TC_GREEN(tc) << 8, TC_BLUE(tc) << 8, TC_ALPHA(tcc) >> 8 }
 
 
 #define BLITFUNC(def)	void def(struct ggi_trueemu_priv *priv,  \
