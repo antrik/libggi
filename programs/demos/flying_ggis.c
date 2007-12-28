@@ -1,4 +1,4 @@
-/* $Id: flying_ggis.c,v 1.18 2007/06/21 21:54:18 cegger Exp $
+/* $Id: flying_ggis.c,v 1.19 2007/12/28 13:38:37 cegger Exp $
 ******************************************************************************
 
    Flying-GGIs - Another neat GGI demo...
@@ -359,7 +359,7 @@ int main(int argc, const char *argv[])
 
         banner_size(&banner_width, &banner_height);
 
-        banner_diag = sqrt((double)(banner_width * banner_width +
+        banner_diag = (int)sqrt((double)(banner_width * banner_width +
                               banner_height * banner_height));
 
         screen_width  = DEFAULT_WIDTH;
@@ -500,7 +500,7 @@ int main(int argc, const char *argv[])
 	screen_width  = vis_mode.visible.x;
 	screen_height = vis_mode.visible.y;
 
-        screen_diag = sqrt((double)(screen_width  * screen_width +
+        screen_diag = (int)sqrt((double)(screen_width  * screen_width +
 			   screen_height * screen_height));
 
         image_size = screen_width * screen_height * 1;
