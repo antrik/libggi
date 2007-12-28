@@ -1,4 +1,4 @@
-/* $Id: ncurses.c,v 1.3 2003/07/06 10:25:23 cegger Exp $
+/* $Id: ncurses.c,v 1.4 2007/12/28 12:59:59 cegger Exp $
 ******************************************************************************
 
    Terminfo target - miscellaneous ncurses stuff
@@ -39,7 +39,7 @@ static void *ncurses_lock;
 static SCREEN *ncurses_screen;
 static int count=0;
 
-void _terminfo_init_ncurses()
+void _terminfo_init_ncurses(void)
 {
 	if (!(count++)) { /* FIXME !!! race condition */
 		ncurses_lock = ggLockCreate();
@@ -51,7 +51,7 @@ void _terminfo_init_ncurses()
 	}
 }
 
-void _terminfo_finalize_ncurses()
+void _terminfo_finalize_ncurses(void)
 {
 	ggLock(ncurses_lock);
 	if (!(--count)) {
@@ -71,7 +71,7 @@ void _terminfo_select_screen(SCREEN *scr)
 	}
 }
 
-void _terminfo_release_screen()
+void _terminfo_release_screen(void)
 {
 	ggUnlock(ncurses_lock);
 }
@@ -108,7 +108,7 @@ SCREEN *_terminfo_new_screen(const char *term_type, FILE *out, FILE *in)
 	return _newscr;
 }
 
-void _terminfo_destroy_screen()
+void _terminfo_destroy_screen(void)
 {
 	endwin();
 	delscreen(ncurses_screen);
