@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.28 2007/05/05 15:04:28 pekberg Exp $
+/* $Id: cube3d.c,v 1.29 2007/12/28 13:33:18 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -388,9 +388,9 @@ static void doblit(Polygon3D * poly, int transp)
 	x = poly->numedges;
 	while (x--) {
 		if (poly->points[x].projected[1] < miny)
-			miny = poly->points[x].projected[1];
+			miny = (int)poly->points[x].projected[1];
 		if (poly->points[x].projected[1] > maxy)
-			maxy = poly->points[x].projected[1];
+			maxy = (int)poly->points[x].projected[1];
 	}
 	if (miny < 0)
 		miny = 0;
@@ -469,8 +469,11 @@ static void doblit(Polygon3D * poly, int transp)
 			patyadd = (max.paty - min.paty) / xx;
 			min.patx += FIX_HALF;
 			min.paty += FIX_HALF;
-			for (x = min.xpos; x <= max.xpos; x++,
-			     min.patx += patxadd, min.paty += patyadd) {
+			for (x = min.xpos; x <= max.xpos;
+				x++,
+				min.patx += (int)patxadd,
+				min.paty += (int)patyadd)
+			{
 				if (x < 0)
 					continue;
 				if (x > vissizex)
@@ -935,9 +938,9 @@ int main(int argc, const char *argv[])
 		/* black, white and red are already defined
 		 * at the top of this file
 		 */
-		ggi_color black_col = { 0x0000, 0x0000, 0x0000 };
-		ggi_color white_col = { 0xffff, 0xffff, 0xffff };
-		ggi_color red_col = { 0xffff, 0x0000, 0x0000 };
+		ggi_color black_col = { 0x0000, 0x0000, 0x0000, 0x0000 };
+		ggi_color white_col = { 0xffff, 0xffff, 0xffff, 0x0000 };
+		ggi_color red_col = { 0xffff, 0x0000, 0x0000, 0x0000 };
 		ggiSetGCForeground(memvis[0],
 				   ggiMapColor(memvis[0], &white_col));
 		ggiSetGCBackground(memvis[0],
