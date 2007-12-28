@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.16 2007/06/21 21:52:31 cegger Exp $
+/* $Id: pageflip.c,v 1.17 2007/12/28 13:41:44 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -42,8 +42,8 @@
 #include <time.h>
 #include <math.h>
 
-static ggi_color black = { 0x0000, 0x0000, 0x0000 };
-static ggi_color white = { 0xffff, 0xffff, 0xffff };
+static ggi_color black = { 0x0000, 0x0000, 0x0000, 0x0000 };
+static ggi_color white = { 0xffff, 0xffff, 0xffff, 0x0000 };
 
 static void animate_one_frame(ggi_visual_t vis, int x, int y, int w, int h,
 			      ggi_pixel * buf, int x2)
@@ -104,7 +104,7 @@ static void animate(ggi_visual_t vis, ggi_mode * mode, int j)
 		y %= yspan * 2;
 		if (y >= yspan)
 			y = yspan * 2 - y;
-		x += (sin(3.14159264 * 4 * y / yspan) + 1) * (w * 1 / 10);
+		x += (int)(sin(3.14159264 * 4 * y / yspan) + 1) * (w * 1 / 10);
 		ggiSetWriteFrame(vis, f);
 		ggiSetReadFrame(vis, (f + 1) % mode->frames);
 		animate_one_frame(vis, x, y, w * 4 / 5, h, buf,
