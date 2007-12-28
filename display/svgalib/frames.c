@@ -1,4 +1,4 @@
-/* $Id: frames.c,v 1.4 2006/03/22 20:22:28 cegger Exp $
+/* $Id: frames.c,v 1.5 2007/12/28 15:48:57 cegger Exp $
 ******************************************************************************
 
    SVGA target: frame handling functions
@@ -58,5 +58,5 @@ GGI_svga_setdisplayframe(struct ggi_visual *vis, int num)
 	}
 	vis->d_frame_num = num;
 	
-	return(ggiSetOrigin(vis, vis->origin_x, vis->origin_y));
+	return (_ggiSetOrigin(vis, vis->origin_x, vis->origin_y));
 }
