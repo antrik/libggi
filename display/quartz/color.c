@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2007/03/03 18:19:09 soyt Exp $
+/* $Id: color.c,v 1.7 2007/12/28 15:43:58 cegger Exp $
 ******************************************************************************
 
    Display quartz : color management
@@ -59,9 +59,9 @@ int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_colo
 
 	for (i = (unsigned)start; i < (unsigned)start+len; i++) {
 		/* Clamp colors between 0.0 and 1.0 */
-		color.red   = colormap->r / 65535.0;
-		color.green = colormap->g / 65535.0;
-		color.blue  = colormap->b / 65535.0;
+		color.red   = (uint16_t)(colormap->r / 65535.0);
+		color.green = (uint16_t)(colormap->g / 65535.0);
+		color.blue  = (uint16_t)(colormap->b / 65535.0);
 
 		colormap++;
 
@@ -83,14 +83,14 @@ int GGI_quartz_setpalvec(struct ggi_visual *vis,int start,int len,const ggi_colo
 int GGI_quartz_setgamma(struct ggi_visual *vis,double r,double g,double b)
 {
 	ggi_quartz_priv *priv;
-	const CGGammaValue min = 0.0, max = 1.0;
+	const CGGammaValue min = 0.0f, max = 1.0f;
 
 	priv = QUARTZ_PRIV(vis);
 
 	if (r == 0.0) {
 		r = FLT_MAX;
 	} else {
-		r = 1.0 / r;
+		r = 1.0f / r;
 	}	/* if */
 
 	if (g == 0.0) {
@@ -107,7 +107,8 @@ int GGI_quartz_setgamma(struct ggi_visual *vis,double r,double g,double b)
 
 
 	if ( CGDisplayNoErr == CGSetDisplayTransferByFormula
-		(priv->display_id, min, max, r, min, max, g, min, max, b) )
+		(priv->display_id, min, max, (CGGammaValue)r,
+		min, max, (CGGammaValue)g, min, max, (CGGammaValue)b) )
 	{
 		return 0;
 	} else {
@@ -175,9 +176,9 @@ int GGI_quartz_setgammamap(struct ggi_visual *vis, int start, int len, const ggi
 
 	i = 0;
 	do {
-		redTable[i] = colormap[i].r / 65535.0;
-		greenTable[i] = colormap[i].g / 65535.0;
-		blueTable[i] = colormap[i].b / 65535.0;
+		redTable[i] = (uint16_t)(colormap[i].r / 65535.0);
+		greenTable[i] = (uint16_t)(colormap[i].g / 65535.0);
+		blueTable[i] = (uint16_t)(colormap[i].b / 65535.0);
 	} while (i++ < len);
 
 	if ( CGDisplayNoErr != CGSetDisplayTransferByTable
