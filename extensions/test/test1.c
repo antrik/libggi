@@ -1,4 +1,4 @@
-/* $Id: test1.c,v 1.13 2007/03/11 21:54:44 soyt Exp $
+/* $Id: test1.c,v 1.14 2007/12/28 13:18:51 cegger Exp $
 ******************************************************************************
 
    Test extension test1.c
@@ -227,9 +227,9 @@ void ggiTest1PrintLocaldata(struct gg_stem *stem)
 
 void ggiTest1SetLocaldata(struct gg_stem *stem, const char *content)
 {
-	const char *str;
+	char *str;
 
-	str = (const char *)STEM_API_PRIV(stem, ggitest1);
+	str = (char *)STEM_API_PRIV(stem, ggitest1);
 	if (str != NULL) free(str);
 
 	str = strdup(content);
