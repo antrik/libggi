@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.21 2007/06/12 09:48:19 pekberg Exp $
+/* $Id: inputdump.c,v 1.22 2007/12/28 15:58:26 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -81,14 +81,14 @@ static mydev_info *InputDevices[MAX_NR_DEV] = { NULL, };
 static mydev_info *cur_dev = NULL;
 
 
-static ggi_color black  = { 0x0000, 0x0000, 0x0000 };
-static ggi_color blue   = { 0x0000, 0x0000, 0xffff };
-static ggi_color green  = { 0x0000, 0xffff, 0x0000 };
-static ggi_color cyan   = { 0x0000, 0xffff, 0xffff };
-static ggi_color red    = { 0xffff, 0x0000, 0x0000 };
-static ggi_color yellow = { 0xffff, 0xffff, 0x0000 };
-static ggi_color orange = { 0xffff, 0x8888, 0x0000 };
-static ggi_color white  = { 0xffff, 0xffff, 0xffff };
+static ggi_color black  = { 0x0000, 0x0000, 0x0000, 0x0000 };
+static ggi_color blue   = { 0x0000, 0x0000, 0xffff, 0x0000 };
+static ggi_color green  = { 0x0000, 0xffff, 0x0000, 0x0000 };
+static ggi_color cyan   = { 0x0000, 0xffff, 0xffff, 0x0000 };
+static ggi_color red    = { 0xffff, 0x0000, 0x0000, 0x0000 };
+static ggi_color yellow = { 0xffff, 0xffff, 0x0000, 0x0000 };
+static ggi_color orange = { 0xffff, 0x8888, 0x0000, 0x0000 };
+static ggi_color white  = { 0xffff, 0xffff, 0xffff, 0x0000 };
 
 
 /* ------------------------------------------------------------------------ */
