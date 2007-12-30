@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.216 2007/12/04 08:01:57 pekberg Exp $
+dnl $Id: configure.in,v 1.217 2007/12/30 15:27:40 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -319,7 +319,8 @@ sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
 linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
 sys/socket.h netinet/in.h arpa/inet.h netdb.h windows.h linux/h3600_ts.h \
 asm/sharp_ts.h sys/resource.h \
-ApplicationServices/ApplicationServices.h, [], [], [AC_INCLUDES_DEFAULT])
+ApplicationServices/ApplicationServices.h Carbon/Carbon.h,
+[], [], [AC_INCLUDES_DEFAULT])
 
 AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h ws2tcpip.h, [], [],
 	[AC_INCLUDES_DEFAULT
@@ -825,25 +826,28 @@ if test "x$build_libkgi_driver" != "xno"; then
   AC_CHECK_LIB(ggigalloc, ggiGAInit, foo=bar, build_libkgi_target="no")
 fi
 
-if test "x$build_kgi_target" != "xno"; then
-   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+GGI_TEST_TARGET([kgi], [build_kgi_target],
+[
 #include "kgi/config.h"
 #include <kgi/system.h>
 #include <kgi/kgi.h>
-   ]], [[
+], [
 kgi_u32_t i;
-   ]])],[build_kgi_target="yes"],[build_kgi_target="no"
-   ])
-fi
+])
 
-if test "x$build_quartz_target" != "xno"; then
-  AC_CHECK_HEADER(ApplicationServices/ApplicationServices.h,
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+GGI_TEST_TARGET([quartz], [build_quartz_target],
+[
+#ifdef HAVE_APPLICATIONSERVICES_APPLICATIONSERVICES_H
 #include <ApplicationServices/ApplicationServices.h>
-]], [[
-CGDirectDisplayID id;
-]])],[foo=bar],[]), build_quartz_target="no")
-fi
+#endif
+#ifdef HAVE_CARBON_CARBON_H
+#include <Carbon/Carbon.h>
+#endif
+], [
+WindowRef win;
+Rect contentRgn;
+GetWindowBounds(win, kWindowContentRgn, &contentRgn);
+])
 
 if test "x$build_glide_target" != "xno"; then
   if test "x$ac_cv_header_glide_h" = "xno" -a \
