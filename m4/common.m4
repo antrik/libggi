@@ -385,8 +385,56 @@ if test "$ac_cv_header_inttypes_h" != "yes"; then
 fi
 ])
 
+dnl ------ checktarget.m4 ----
+dnl User variables
+dnl We want to use AM_CFLAGS et al during configure, but
+dnl autoconf is not fully automake aware. So, we have to
+dnl reuse CFLAGS et al during configure to mimic what
+dnl happens during build.
+AC_DEFUN([GGI_SAVE_USER_VARS],
+[
+	ggi_save_user_CFLAGS="$CFLAGS"
+	ggi_save_user_CPPFLAGS="$CPPFLAGS"
+	ggi_save_user_LDFLAGS="$LDFLAGS"
+])
+
+dnl User variables
+AC_DEFUN([GGI_RESTORE_USER_VARS],
+[
+	CFLAGS="$ggi_save_user_CFLAGS"
+	CPPFLAGS="$ggi_save_user_CPPFLAGS"
+	LDFLAGS="$ggi_save_user_LDFLAGS"
+])
+
 
 dnl ------ checktarget.m4 ----
+dnl Test if we can build a target
+dnl $1: target name
+dnl $2: build_ variable
+dnl $3: prologue passed through to AC_LANG_PROGRAM
+dnl $4: body passed through to AC_LANG_PROGRAM
+
+AC_DEFUN([GGI_TEST_TARGET],
+[
+  if test "x$$2" != "xno"; then
+    AC_MSG_CHECKING([if we can build ]$1)
+
+    GGI_SAVE_USER_VARS
+    CFLAGS="$CFLAGS $AM_CFLAGS"
+
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+    $3
+    ]], [[
+    $4
+    ]])],
+    [$2=yes],[$2=no])
+
+    GGI_RESTORE_USER_VARS
+    AC_MSG_RESULT([$$2])
+  fi
+])
+
+
 dnl Check whether to build a target
 dnl Requires 7 arguments
 dnl $1: target name
@@ -425,26 +473,6 @@ AC_DEFUN([GGI_CHECK_TARGET],
 ])
 
 
-
-dnl User variables
-dnl We want to use AM_CFLAGS et al during configure, but
-dnl autoconf is not fully automake aware. So, we have to
-dnl reuse CFLAGS et al during configure to mimic what
-dnl happens during build.
-AC_DEFUN([GGI_SAVE_USER_VARS],
-[
-	ggi_save_user_CFLAGS="$CFLAGS"
-	ggi_save_user_CPPFLAGS="$CPPFLAGS"
-	ggi_save_user_LDFLAGS="$LDFLAGS"
-])
-
-dnl User variables
-AC_DEFUN([GGI_RESTORE_USER_VARS],
-[
-	CFLAGS="$ggi_save_user_CFLAGS"
-	CPPFLAGS="$ggi_save_user_CPPFLAGS"
-	LDFLAGS="$ggi_save_user_LDFLAGS"
-])
 
 
 # GGI_SEARCH_LIBS(FUNCTION, SEARCH-LIBS,
