@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.217 2007/12/30 15:27:40 cegger Exp $
+dnl $Id: configure.in,v 1.218 2007/12/31 18:29:40 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -313,13 +313,12 @@ AC_HEADER_STDC
 
 GGI_NEED_INTTYPES
 
-AC_CHECK_HEADERS(ggi/gg.h limits.h unistd.h fcntl.h getopt.h sys/times.h \
-sys/select.h sys/ioctl.h signal.h sys/time.h sys/shm.h sys/ipc.h \
-sys/kd.h linux/kd.h sys/vt.h linux/vt.h \
-linux/kdev_t.h linux/major.h glide.h glide/glide.h kgimon.h sys/un.h \
-sys/socket.h netinet/in.h arpa/inet.h netdb.h windows.h linux/h3600_ts.h \
-asm/sharp_ts.h sys/resource.h \
-ApplicationServices/ApplicationServices.h Carbon/Carbon.h,
+AC_CHECK_HEADERS(ApplicationServices/ApplicationServices.h arpa/inet.h \
+asm/sharp_ts.h Carbon/Carbon.h fcntl.h getopt.h ggi/gg.h glide.h glide/glide.h \
+kgimon.h limits.h linux/h3600_ts.h linux/kd.h linux/kdev_t.h linux/major.h \
+linux/vt.h netdb.h netinet/in.h signal.h sys/ioctl.h sys/ipc.h sys/kd.h \
+sys/resource.h sys/select.h sys/shm.h sys/socket.h sys/time.h sys/times.h \
+sys/un.h sys/vt.h unistd.h windows.h,
 [], [], [AC_INCLUDES_DEFAULT])
 
 AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h ws2tcpip.h, [], [],
