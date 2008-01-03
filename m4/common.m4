@@ -419,7 +419,7 @@ AC_DEFUN([GGI_TEST_TARGET],
   if test "x$$2" != "xno"; then
     AC_MSG_CHECKING([if we can build ]$1)
 
-    GGI_SAVE_USER_VARS
+    save_CFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS $AM_CFLAGS"
 
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -429,7 +429,7 @@ AC_DEFUN([GGI_TEST_TARGET],
     ]])],
     [$2=yes],[$2=no])
 
-    GGI_RESTORE_USER_VARS
+    CFLAGS="$save_CFLAGS"
     AC_MSG_RESULT([$$2])
   fi
 ])
