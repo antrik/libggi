@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.53 2008/01/08 13:33:33 pekberg Exp $
+/* $Id: visual.c,v 1.54 2008/01/08 14:20:35 cegger Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -377,7 +377,7 @@ vnc_controller(void *arg, uint32_t ctl, void *data)
 		GG_LIST_FOREACH(client, &priv->clients, siblings) {
 			client->desktop_name |= DESKNAME_PENDING;
 			GGI_vnc_client_invalidate_nc_xyxy(client,
-				0, 0, 0, 0);*/
+				0, 0, 0, 0);
 		}
 		break;
 	}
