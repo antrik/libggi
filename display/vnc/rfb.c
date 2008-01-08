@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.101 2008/01/08 13:33:33 pekberg Exp $
+/* $Id: rfb.c,v 1.102 2008/01/08 13:47:04 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1041,8 +1041,8 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 
 	if (client->desktop_size & DESKSIZE_SEND) {
 		unsigned char *desktop_size;
-		desktop_size = &client->wbuf.buf[client->wbuf.size];
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 12);
+		desktop_size = &client->wbuf.buf[client->wbuf.size];
 		client->wbuf.size += 12;
 		desktop_size[0] = 0;
 		desktop_size[1] = 0;
