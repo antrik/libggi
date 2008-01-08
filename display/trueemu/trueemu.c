@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.13 2007/03/11 00:48:58 soyt Exp $
+/* $Id: trueemu.c,v 1.14 2008/01/08 14:22:48 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -128,7 +128,7 @@ static int col16_greys [C16_GREYS+1]  = { 0,8,9,10,11,12,7 };
 static int col16_browns[C16_BROWNS+1] = { 0,14,15 };
 static int col16_greens[C16_GREENS+1] = { 0,13,2 };
 
-static ggi_color black = { 0,0,0 };
+static ggi_color black = { 0,0,0,0 };
 
 
 /**************************************************
