@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.52 2007/11/12 13:56:16 pekberg Exp $
+/* $Id: visual.c,v 1.53 2008/01/08 13:33:33 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -65,12 +65,14 @@
 #include <ggi/internal/gg_replace.h> /* for gai_strerror */
 
 #include "d3des.h"
+#include "common.h"
 
 #define VNC_OPTIONS \
 	VNC_OPTION(bind,     "")           \
 	VNC_OPTION(client,   "")           \
 	VNC_OPTION(copyrect, "")           \
 	VNC_OPTION(corre,    "")           \
+	VNC_OPTION(deskname, "")           \
 	VNC_OPTION(desksize, "")           \
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(gii,      "")           \
@@ -356,6 +358,33 @@ vnc_connect(const char *server, int port)
 
 #endif /* HAVE_GETADDRINFO */
 
+static int
+vnc_controller(void *arg, uint32_t ctl, void *data)
+{
+	struct ggi_visual *vis = arg;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client;
+
+	switch (ctl) {
+	case GGI_VNC_DESKTOP_NAME:
+		ggstrlcpy(priv->title, (const char *)data,
+			sizeof(priv->title));
+		DPRINT_MISC("New title: \"%s\"\n", priv->title);
+
+		if (!priv->desktop_name)
+			break;
+
+		GG_LIST_FOREACH(client, &priv->clients, siblings) {
+			client->desktop_name |= DESKNAME_PENDING;
+			GGI_vnc_client_invalidate_nc_xyxy(client,
+				0, 0, 0, 0);*/
+		}
+		break;
+	}
+
+	return GGI_OK;
+}
+
 
 static int
 GGIopen(struct ggi_visual *vis,
@@ -423,6 +452,11 @@ GGIopen(struct ggi_visual *vis,
 		priv->corre = 0;
 	else
 		priv->corre = 1;
+
+	if (options[OPT_deskname].result[0] == 'n') /* never */
+		priv->desktop_name = 0;
+	else
+		priv->desktop_name = 1;
 
 	if (options[OPT_desksize].result[0] == 'n') /* never */
 		priv->desktop_size = 0;
@@ -689,6 +723,8 @@ GGIopen(struct ggi_visual *vis,
 
 	if (options[OPT_stdio].result[0] != 'n')
 		GGI_vnc_new_client_finish(vis, 0, 1);
+
+	ggSetController(vis->instance.channel, vnc_controller);
 
 	vis->opdisplay->getmode=GGI_vnc_getmode;
 	vis->opdisplay->setmode=GGI_vnc_setmode;

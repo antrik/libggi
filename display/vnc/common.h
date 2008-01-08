@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.5 2007/11/12 10:59:19 pekberg Exp $
+/* $Id: common.h,v 1.6 2008/01/08 13:33:33 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -44,6 +44,10 @@
 #define DESKSIZE_OK_SEND        (DESKSIZE_OK | DESKSIZE_SEND)
 #define DESKSIZE_OK_INIT        (DESKSIZE_OK | DESKSIZE_INIT)
 #define DESKSIZE_PIXFMT_SEND    (DESKSIZE_PIXFMT | DESKSIZE_SEND)
+
+#define DESKNAME_OK             (1<<0)
+#define DESKNAME_PENDING        (1<<1)
+#define DESKNAME_SEND           (DESKNAME_PENDING | DESKNAME_OK)
 
 static inline int
 palette_match_8(uint8_t *palette, int colors, uint8_t color)

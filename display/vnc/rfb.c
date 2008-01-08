@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.100 2008/01/07 21:57:37 pekberg Exp $
+/* $Id: rfb.c,v 1.101 2008/01/08 13:33:33 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -700,6 +700,22 @@ gii_enc(ggi_vnc_client *client,
 	return NULL;
 }
 
+static ggi_vnc_encode *
+desktop_name_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->desktop_name)
+		return NULL;
+
+	client->desktop_name |= DESKNAME_OK;
+
+	return NULL;
+}
+
 
 struct encodings {
 	int32_t encoding;
@@ -736,7 +752,7 @@ struct encodings encode_tbl[] = {
 	{   -257, -272, "Liguori %d pseudo-encoding\n",   print_enc },
 	{   -273, -304, "VMWare %d pseudo-encoding\n",    print_enc },
 	{   -305,    0, "gii pseudo-encoding\n",          gii_enc },
-	{   -307,    0, "DesktopName pseudo-encoding\n",  print_enc },
+	{   -307,    0, "DesktopName pseudo-encoding\n",  desktop_name_enc },
 	{ -65527,    0, "UltraZip encoding\n",            print_enc },
 	{ -65528,    0, "SolMonoZip encoding\n",          print_enc },
 	{ -65529,    0, "CacheZip encoding\n",            print_enc },
@@ -844,6 +860,7 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	}
 
 	client->desktop_size |= DESKSIZE_PENDING;
+	client->desktop_name &= ~DESKNAME_OK;
 
 	client->update_pixfmt = 0;
 #ifdef HAVE_ZLIB
@@ -956,8 +973,11 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		client->palette_dirty = 0;
 	}
 
-	if (ggi_rect_isempty(update) && !pan)
+	if (ggi_rect_isempty(update) && !pan
+		&& (client->desktop_name & DESKNAME_SEND) != DESKNAME_SEND)
+	{
 		goto done;
+	}
 
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 4);
 	fb_update_idx = client->wbuf.size;
@@ -967,6 +987,38 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		vis->origin_x, vis->origin_y,
 		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
 	ggi_rect_intersect(&client->dirty, &visible);
+
+	if ((client->desktop_name & DESKNAME_SEND) == DESKNAME_SEND) {
+		unsigned char *desktop_name;
+		uint32_t length = strlen(priv->title);
+		DPRINT_MISC("Sending desktop name \"%s\"\n", priv->title);
+		DPRINT_MISC("- length %u\n", length);
+		GGI_vnc_buf_reserve(&client->wbuf,
+			client->wbuf.size + 16 + length);
+		desktop_name = &client->wbuf.buf[client->wbuf.size];
+		client->wbuf.size += 16 + length;
+		desktop_name[0] = 0;
+		desktop_name[1] = 0;
+		desktop_name[2] = 0;
+		desktop_name[3] = 0;
+		desktop_name[4] = 0;
+		desktop_name[5] = 0;
+		desktop_name[6] = 0;
+		desktop_name[7] = 0;
+		desktop_name[8] = 0xff;
+		desktop_name[9] = 0xff;
+		desktop_name[10] = -307 >> 8;
+		desktop_name[11] = -307 & 0xff;
+		desktop_name[12] = length >> 24;
+		desktop_name[13] = length >> 16;
+		desktop_name[14] = length >> 8;
+		desktop_name[15] = length & 0xff;
+		memcpy(&desktop_name[16], priv->title, length);
+
+		++rects;
+
+		client->desktop_name &= ~DESKNAME_PENDING;
+	}
 
 	if (pan) {
 		if (client->copy_rect)
@@ -1059,8 +1111,11 @@ pending_client_update(ggi_vnc_client *client)
 		pan = 0;
 	}
 
-	if (ggi_rect_isempty(&update) && !client->palette_dirty && !pan)
+	if (ggi_rect_isempty(&update) && !client->palette_dirty && !pan
+		&& (client->desktop_name & DESKNAME_SEND) != DESKNAME_SEND)
+	{
 		return 0;
+	}
 
 	/* subtract updated rect from fdirty, use dirty as a tmp variable */
 	dirty = update;
@@ -1443,6 +1498,7 @@ vnc_client_init(ggi_vnc_client *client)
 	tmp32 = htonl(strlen(priv->title));
 	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
 	memcpy(&server_init[24], priv->title, ntohl(tmp32));
+	client->desktop_name &= ~DESKNAME_PENDING;
 
 	client->pixfmt = *pixfmt;
 	client->requested_pixfmt = client->pixfmt;
@@ -1718,6 +1774,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	client->write_pending = 0;
 	client->desktop_size = priv->desktop_size ? DESKSIZE_INIT : 0;
 	client->gii = priv->gii;
+	client->desktop_name = 0;
 
 #if defined(F_GETFL)
 	flags = fcntl(client->cfd, F_GETFL);

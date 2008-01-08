@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.37 2007/11/12 10:59:19 pekberg Exp $
+/* $Id: vnc.h,v 1.38 2008/01/08 13:33:33 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -78,6 +78,7 @@ typedef struct ggi_vnc_client_t {
 	void *tight_ctx;
 	int desktop_size;
 	int gii;
+	int desktop_name;
 
 	ggi_pixelformat pixfmt;
 	ggi_pixelformat requested_pixfmt;
@@ -129,12 +130,14 @@ typedef struct {
 	int tight;
 	int desktop_size;
 	int gii;
+	int desktop_name;
 
 	char title[80];
 
 	GG_LIST_HEAD(clients, ggi_vnc_client_t) clients;
 } ggi_vnc_priv;
 
+#define GGI_VNC_DESKTOP_NAME (0)
 
 gii_vnc_new_client		GGI_vnc_new_client;
 gii_vnc_client_data		GGI_vnc_client_data;
