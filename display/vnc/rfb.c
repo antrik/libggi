@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.102 2008/01/08 13:47:04 pekberg Exp $
+/* $Id: rfb.c,v 1.103 2008/01/09 13:27:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -688,12 +688,9 @@ gii_enc(ggi_vnc_client *client,
 		client->wbuf.size += 8;
 		client->wbuf.buf[0] = 253;
 		client->wbuf.buf[1] = 0x81;
-		client->wbuf.buf[2] = 0;
-		client->wbuf.buf[3] = 4;
-		client->wbuf.buf[4] = 0;
-		client->wbuf.buf[5] = 1;
-		client->wbuf.buf[6] = 0;
-		client->wbuf.buf[7] = 1;
+		insert_hilo_16(&client->wbuf.buf[2], 4);
+		insert_hilo_16(&client->wbuf.buf[4], 1);
+		insert_hilo_16(&client->wbuf.buf[6], 1);
 		write_client(client, &client->wbuf, 0);
 	}
 
@@ -954,19 +951,14 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		vnc_palette = client->wbuf.buf;
 		vnc_palette[0] = 1; /* set colormap */
 		vnc_palette[1] = 0;
-		vnc_palette[2] = 0;
-		vnc_palette[3] = 0;
-		vnc_palette[4] = colors >> 8;
-		vnc_palette[5] = colors & 0xff;
+		insert_hilo_16(&vnc_palette[2], 0);
+		insert_hilo_16(&vnc_palette[4], colors);
 
 		dst = &vnc_palette[6];
 		for (i = 0; i < colors; ++i) {
-			*dst++ = ggi_palette[i].r >> 8;
-			*dst++ = ggi_palette[i].r & 0xff;
-			*dst++ = ggi_palette[i].g >> 8;
-			*dst++ = ggi_palette[i].g & 0xff;
-			*dst++ = ggi_palette[i].b >> 8;
-			*dst++ = ggi_palette[i].b & 0xff;
+			dst = insert_hilo_16(dst, ggi_palette[i].r);
+			dst = insert_hilo_16(dst, ggi_palette[i].g);
+			dst = insert_hilo_16(dst, ggi_palette[i].b);
 		}
 
 		free(ggi_palette);
@@ -997,22 +989,12 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 			client->wbuf.size + 16 + length);
 		desktop_name = &client->wbuf.buf[client->wbuf.size];
 		client->wbuf.size += 16 + length;
-		desktop_name[0] = 0;
-		desktop_name[1] = 0;
-		desktop_name[2] = 0;
-		desktop_name[3] = 0;
-		desktop_name[4] = 0;
-		desktop_name[5] = 0;
-		desktop_name[6] = 0;
-		desktop_name[7] = 0;
-		desktop_name[8] = 0xff;
-		desktop_name[9] = 0xff;
-		desktop_name[10] = -307 >> 8;
-		desktop_name[11] = -307 & 0xff;
-		desktop_name[12] = length >> 24;
-		desktop_name[13] = length >> 16;
-		desktop_name[14] = length >> 8;
-		desktop_name[15] = length & 0xff;
+		insert_hilo_16(&desktop_name[0], 0);
+		insert_hilo_16(&desktop_name[2], 0);
+		insert_hilo_16(&desktop_name[4], 0);
+		insert_hilo_16(&desktop_name[6], 0);
+		insert_hilo_32(&desktop_name[8], -307);
+		insert_hilo_32(&desktop_name[12], length);
 		memcpy(&desktop_name[16], priv->title, length);
 
 		++rects;
@@ -1044,18 +1026,11 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 12);
 		desktop_size = &client->wbuf.buf[client->wbuf.size];
 		client->wbuf.size += 12;
-		desktop_size[0] = 0;
-		desktop_size[1] = 0;
-		desktop_size[2] = 0;
-		desktop_size[3] = 0;
-		desktop_size[4] = LIBGGI_X(vis) >> 8;
-		desktop_size[5] = LIBGGI_X(vis);
-		desktop_size[6] = LIBGGI_Y(vis) >> 8;
-		desktop_size[7] = LIBGGI_Y(vis);
-		desktop_size[8] = 0xff;
-		desktop_size[9] = 0xff;
-		desktop_size[10] = 0xff;
-		desktop_size[11] = (unsigned char)-223;
+		insert_hilo_16(&desktop_size[0], 0);
+		insert_hilo_16(&desktop_size[2], 0);
+		insert_hilo_16(&desktop_size[4], LIBGGI_X(vis));
+		insert_hilo_16(&desktop_size[6], LIBGGI_Y(vis));
+		insert_hilo_32(&desktop_size[8], -223);
 
 		++rects;
 
@@ -1066,8 +1041,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		fb_update = &client->wbuf.buf[fb_update_idx];
 		fb_update[0] = 0; /* fb update */
 		fb_update[1] = 0;
-		fb_update[2] = rects >> 8;
-		fb_update[3] = rects;
+		insert_hilo_16(&fb_update[2], rects);
 	}
 	else
 		client->wbuf.size -= 4;
@@ -1462,10 +1436,8 @@ vnc_client_init(ggi_vnc_client *client)
 	GGI_vnc_buf_reserve(&client->wbuf, 24 + strlen(priv->title));
 	client->wbuf.size += 24 + strlen(priv->title);
 	server_init = client->wbuf.buf;
-	tmp16 = htons(LIBGGI_X(vis));
-	memcpy(&server_init[0],  &tmp16, sizeof(tmp16));
-	tmp16 = htons(LIBGGI_Y(vis));
-	memcpy(&server_init[2],  &tmp16, sizeof(tmp16));
+	insert_hilo_16(&server_init[0], LIBGGI_X(vis));
+	insert_hilo_16(&server_init[2], LIBGGI_Y(vis));
 	/* Only sizes 8, 16 and 32 allowed in RFB */
 	size = GT_SIZE(LIBGGI_GT(vis));
 	if (size <= 8)
@@ -1483,21 +1455,18 @@ vnc_client_init(ggi_vnc_client *client)
 #endif
 	server_init[7] = GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR;
 	pixfmt = LIBGGI_PIXFMT(vis);
-	tmp16 = htons(color_max(pixfmt->red_mask));
-	memcpy(&server_init[8],  &tmp16, sizeof(tmp16));
-	tmp16 = htons(color_max(pixfmt->green_mask));
-	memcpy(&server_init[10], &tmp16, sizeof(tmp16));
-	tmp16 = htons(color_max(pixfmt->blue_mask));
-	memcpy(&server_init[12], &tmp16, sizeof(tmp16));
+	insert_hilo_16(&server_init[8], color_max(pixfmt->red_mask));
+	insert_hilo_16(&server_init[10], color_max(pixfmt->green_mask));
+	insert_hilo_16(&server_init[12], color_max(pixfmt->blue_mask));
 	server_init[14] = color_shift(pixfmt->red_mask);
 	server_init[15] = color_shift(pixfmt->green_mask);
 	server_init[16] = color_shift(pixfmt->blue_mask);
 	server_init[17] = 0;
 	server_init[18] = 0;
 	server_init[19] = 0;
-	tmp32 = htonl(strlen(priv->title));
-	memcpy(&server_init[20], &tmp32, sizeof(tmp32));
-	memcpy(&server_init[24], priv->title, ntohl(tmp32));
+	tmp32 = strlen(priv->title);
+	insert_hilo_32(&server_init[20], tmp32);
+	memcpy(&server_init[24], priv->title, tmp32);
 	client->desktop_name &= ~DESKNAME_PENDING;
 
 	client->pixfmt = *pixfmt;
@@ -1568,10 +1537,7 @@ vnc_client_challenge(ggi_vnc_client *client)
 	/* ok */
 	GGI_vnc_buf_reserve(&client->wbuf, 4);
 	client->wbuf.size += 4;
-	client->wbuf.buf[0] = 0;
-	client->wbuf.buf[1] = 0;
-	client->wbuf.buf[2] = 0;
-	client->wbuf.buf[3] = 0;
+	insert_hilo_32(&client->wbuf.buf[0], 0);
 	write_client(client, &client->wbuf, 1);
 
 	return 0;
@@ -1622,10 +1588,7 @@ vnc_client_security(ggi_vnc_client *client)
 		/* ok */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
 		client->wbuf.size += 4;
-		client->wbuf.buf[0] = 0;
-		client->wbuf.buf[1] = 0;
-		client->wbuf.buf[2] = 0;
-		client->wbuf.buf[3] = 0;
+		insert_hilo_32(&client->wbuf.buf[0], 0);
 		write_client(client, &client->wbuf, 1);
 		return 0;
 
@@ -1719,10 +1682,8 @@ vnc_client_version(ggi_vnc_client *client)
 		/* ok, decide security */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
 		client->wbuf.size += 4;
-		client->wbuf.buf[0] = 0;
-		client->wbuf.buf[1] = 0;
-		client->wbuf.buf[2] = 0;
-		client->wbuf.buf[3] = (priv->passwd || priv->viewpw) ? 2 : 1;
+		insert_hilo_32(&client->wbuf.buf[0],
+			(priv->passwd || priv->viewpw) ? 2 : 1);
 		write_client(client, &client->wbuf, 1);
 		if (priv->passwd || priv->viewpw) {
 			/* fake a client request of vnc auth security type */
