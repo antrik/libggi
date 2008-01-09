@@ -1,9 +1,9 @@
 # Generated from ltmain.m4sh.
 
-# ltmain.sh (GNU libtool 1.2533 2007/11/30 04:18:40) 2.1a
+# ltmain.sh (GNU libtool 1.2546 2008/01/08 19:43:29) 2.1a
 # Written by Gordon Matzigkeit <gord@gnu.ai.mit.edu>, 1996
 
-# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006, 2007 2008 Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -65,7 +65,7 @@
 #       compiler:		$LTCC
 #       compiler flags:		$LTCFLAGS
 #       linker:		$LD (gnu? $with_gnu_ld)
-#       $progname:		(GNU libtool 1.2533 2007/11/30 04:18:40) 2.1a
+#       $progname:		(GNU libtool 1.2546 2008/01/08 19:43:29) 2.1a
 #       automake:		$automake_version
 #       autoconf:		$autoconf_version
 #
@@ -74,8 +74,8 @@
 PROGRAM=ltmain.sh
 PACKAGE=libtool
 VERSION=2.1a
-TIMESTAMP=" 1.2533 2007/11/30 04:18:40"
-package_revision=1.2533
+TIMESTAMP=" 1.2546 2008/01/08 19:43:29"
+package_revision=1.2546
 
 # Be Bourne compatible
 if test -n "${ZSH_VERSION+set}" && (emulate sh) >/dev/null 2>&1; then
@@ -6566,7 +6566,10 @@ EOF
 	      # reloadable object file.  All subsequent reloadable object
 	      # files will link in the last one created.
 	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
-	      eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj~\$RM $last_robj\"
+	      eval concat_cmds=\"\${concat_cmds}$reload_cmds $objlist $last_robj\"
+	      if test -n "$last_robj"; then
+	        eval concat_cmds=\"\${concat_cmds}~\$RM $last_robj\"
+	      fi
 	      delfiles="$delfiles $output"
 
 	    else
@@ -6581,7 +6584,7 @@ EOF
 	      # Append the command to create the export file.
 	      test -z "$concat_cmds" || concat_cmds=$concat_cmds~
 	      eval concat_cmds=\"\$concat_cmds$export_symbols_cmds\"
-	      if test -n "$output"; then
+	      if test -n "$last_robj"; then
 		eval concat_cmds=\"\$concat_cmds~\$RM $last_robj\"
 	      fi
 	    fi
