@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.104 2008/01/09 13:42:32 pekberg Exp $
+/* $Id: rfb.c,v 1.105 2008/01/09 14:02:26 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1397,7 +1397,6 @@ vnc_client_init(ggi_vnc_client *client)
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned char *server_init;
-	uint16_t tmp16;
 	uint32_t tmp32;
 	ggi_pixelformat *pixfmt;
 	int size;
