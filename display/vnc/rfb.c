@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.103 2008/01/09 13:27:26 pekberg Exp $
+/* $Id: rfb.c,v 1.104 2008/01/09 13:42:32 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -908,6 +908,13 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	return vnc_remove(client, 4 + 4 * client->encoding_count);
 }
 
+static inline int
+client_update_needed(ggi_vnc_client *client, ggi_rect *update, int pan)
+{
+	return !ggi_rect_isempty(update) || pan
+		|| (client->desktop_name & DESKNAME_SEND) == DESKNAME_SEND;
+}
+
 static int
 do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 {
@@ -965,11 +972,8 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		client->palette_dirty = 0;
 	}
 
-	if (ggi_rect_isempty(update) && !pan
-		&& (client->desktop_name & DESKNAME_SEND) != DESKNAME_SEND)
-	{
+	if (!client_update_needed(client, update, pan))
 		goto done;
-	}
 
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 4);
 	fb_update_idx = client->wbuf.size;
@@ -1085,11 +1089,8 @@ pending_client_update(ggi_vnc_client *client)
 		pan = 0;
 	}
 
-	if (ggi_rect_isempty(&update) && !client->palette_dirty && !pan
-		&& (client->desktop_name & DESKNAME_SEND) != DESKNAME_SEND)
-	{
+	if (!client_update_needed(client, &update, pan))
 		return 0;
-	}
 
 	/* subtract updated rect from fdirty, use dirty as a tmp variable */
 	dirty = update;
@@ -1164,7 +1165,7 @@ vnc_client_update(ggi_vnc_client *client)
 			/* should region outside 'update' be dirtied? */
 			pan = 0;
 		}
-		if (ggi_rect_isempty(&update) && !pan) {
+		if (!client_update_needed(client, &update, pan)) {
 			client->update = request;
 			if (!client->palette_dirty)
 				goto done;
