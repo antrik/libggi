@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.105 2008/01/09 14:02:26 pekberg Exp $
+/* $Id: rfb.c,v 1.106 2008/01/09 23:21:42 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -908,13 +908,6 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	return vnc_remove(client, 4 + 4 * client->encoding_count);
 }
 
-static inline int
-client_update_needed(ggi_vnc_client *client, ggi_rect *update, int pan)
-{
-	return !ggi_rect_isempty(update) || pan
-		|| (client->desktop_name & DESKNAME_SEND) == DESKNAME_SEND;
-}
-
 static int
 do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 {
@@ -972,8 +965,11 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		client->palette_dirty = 0;
 	}
 
-	if (!client_update_needed(client, update, pan))
+	if (ggi_rect_isempty(update) && !pan
+		&& client->desktop_name != DESKNAME_SEND)
+	{
 		goto done;
+	}
 
 	GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 4);
 	fb_update_idx = client->wbuf.size;
@@ -984,7 +980,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
 	ggi_rect_intersect(&client->dirty, &visible);
 
-	if ((client->desktop_name & DESKNAME_SEND) == DESKNAME_SEND) {
+	if (client->desktop_name == DESKNAME_SEND) {
 		unsigned char *desktop_name;
 		uint32_t length = strlen(priv->title);
 		DPRINT_MISC("Sending desktop name \"%s\"\n", priv->title);
@@ -1089,7 +1085,7 @@ pending_client_update(ggi_vnc_client *client)
 		pan = 0;
 	}
 
-	if (!client_update_needed(client, &update, pan))
+	if (ggi_rect_isempty(&update) && !pan)
 		return 0;
 
 	/* subtract updated rect from fdirty, use dirty as a tmp variable */
@@ -1165,10 +1161,13 @@ vnc_client_update(ggi_vnc_client *client)
 			/* should region outside 'update' be dirtied? */
 			pan = 0;
 		}
-		if (!client_update_needed(client, &update, pan)) {
+		if (ggi_rect_isempty(&update) && !pan) {
 			client->update = request;
-			if (!client->palette_dirty)
+			if (!client->palette_dirty &&
+				client->desktop_name != DESKNAME_SEND)
+			{
 				goto done;
+			}
 		}
 	}
 
