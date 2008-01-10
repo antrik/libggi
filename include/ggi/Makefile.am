@@ -1,7 +1,6 @@
 SUBDIRS = internal display default
 
 ggiincludedir = ${includedir}/ggi
-ggiinclude_HEADERS = types.h ggi-types.h ggi.h ggi_ext.h \
-		ll.h ggi-defs.h
+ggiinclude_HEADERS = ggi.h ggi-defs.h ggi-types.h ll.h types.h
 
 MAINTAINERCLEANFILES = Makefile.in

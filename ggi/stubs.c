@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.25 2007/03/14 23:40:11 cegger Exp $
+/* $Id: stubs.c,v 1.26 2008/01/10 00:41:34 cegger Exp $
 ******************************************************************************
 
    Function call stubs.
@@ -56,19 +56,6 @@ const ggi_pixelformat *ggiGetPixelFormat(ggi_visual_t v)
 }
 
 /*************** Lib management ***********************/
-
-ggi_lib_id ggiExtensionLoadDL(ggi_visual_t v,
-			      struct gg_config *conffilehandle,
-			      const char *api,
-			      const char *args, void *argptr,
-			      const char *symprefix)
-{
-	struct ggi_visual *vis = GGI_VISUAL(v);
-	LIB_ASSERT(vis != NULL, "broken/invalid visual\n");
-	return (ggi_lib_id)_ggiAddExtDL(vis, conffilehandle,
-					api, args, argptr,
-					symprefix);
-}
 
 int ggiGetAPI(ggi_visual_t v, int num, char *apiname, char *arguments)
 {

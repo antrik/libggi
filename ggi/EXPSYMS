@@ -46,7 +46,6 @@ ggiDrawLine
 ggiDrawPixel
 ggiDrawVLine
 ggiExit
-ggiExtensionLoadDL
 ggiFPrintMode
 ggiFillscreen
 ggiFlush
