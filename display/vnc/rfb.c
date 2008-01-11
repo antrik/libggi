@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.106 2008/01/09 23:21:42 pekberg Exp $
+/* $Id: rfb.c,v 1.107 2008/01/11 12:07:55 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1020,9 +1020,12 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 			encode = GGI_vnc_raw;
 		rects += encode(client, update);
 	}
+	client->update.tl.x = client->update.br.x = 0;
 
 	if (client->desktop_size & DESKSIZE_SEND) {
 		unsigned char *desktop_size;
+		DPRINT_MISC("Sending desktop size %dx%d\n",
+			LIBGGI_X(vis), LIBGGI_Y(vis));
 		GGI_vnc_buf_reserve(&client->wbuf, client->wbuf.size + 12);
 		desktop_size = &client->wbuf.buf[client->wbuf.size];
 		client->wbuf.size += 12;
@@ -1066,26 +1069,31 @@ pending_client_update(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_rect update, dirty;
-	int pan;
+	int pan = 0;
+	int pseudo = 0;
 
 	if (client->write_pending)
 		return 0;
 
-	pan = vis->origin_x != client->origin.x ||
-		vis->origin_y != client->origin.y;
-
 	update = client->update;
+
 	if (!full_update(vis)) {
+		if (!ggi_rect_isempty(&update)) {
+			pan = vis->origin_x != client->origin.x ||
+				vis->origin_y != client->origin.y;
+
+			pseudo = client->desktop_name == DESKNAME_SEND;
+		}
+
 		dirty = client->dirty;
 		ggi_rect_shift_xy(&dirty, -vis->origin_x, -vis->origin_y);
 		ggi_rect_intersect(&update, &dirty);
 	}
 	else {
 		/* should region outside 'update' be dirtied? */
-		pan = 0;
 	}
 
-	if (ggi_rect_isempty(&update) && !pan)
+	if (ggi_rect_isempty(&update) && !pan && !pseudo)
 		return 0;
 
 	/* subtract updated rect from fdirty, use dirty as a tmp variable */
