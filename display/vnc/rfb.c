@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.107 2008/01/11 12:07:55 pekberg Exp $
+/* $Id: rfb.c,v 1.108 2008/01/17 21:49:10 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -906,6 +906,44 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		client->encode = GGI_vnc_raw;
 
 	return vnc_remove(client, 4 + 4 * client->encoding_count);
+}
+
+struct ggi_visual *
+GGI_vnc_encode_init(ggi_vnc_client *client, ggi_rect *update,
+	ggi_rect *vupdate, int *d_frame_num)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	int r_frame_num;
+
+	*vupdate = *update;
+	ggi_rect_shift_xy(vupdate, vis->origin_x, vis->origin_y);
+
+	ggi_rect_subtract(&client->dirty, vupdate);
+	client->update.tl.x = client->update.br.x = 0;
+
+	DPRINT("dirty %dx%d - %dx%d\n",
+		client->dirty.tl.x, client->dirty.tl.y,
+		client->dirty.br.x, client->dirty.br.y);
+
+	if (!client->vis) {
+		*d_frame_num = vis->d_frame_num;
+		return priv->fb;
+	}
+
+	r_frame_num = _ggiGetReadFrame(priv->fb);
+	_ggiSetReadFrame(priv->fb, _ggiGetDisplayFrame(vis));
+
+	_ggiCrossBlit(priv->fb,
+		vupdate->tl.x, vupdate->tl.y,
+		ggi_rect_width(vupdate),
+		ggi_rect_height(vupdate),
+		client->vis,
+		vupdate->tl.x, vupdate->tl.y);
+
+	_ggiSetReadFrame(priv->fb, r_frame_num);
+	*d_frame_num = 0;
+	return client->vis;
 }
 
 static int

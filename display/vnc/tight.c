@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.19 2007/03/11 00:48:59 soyt Exp $
+/* $Id: tight.c,v 1.20 2008/01/17 21:49:10 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -1380,8 +1380,6 @@ column(ggi_vnc_client *client, struct ggi_visual *cvis,
 int
 GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 {
-	struct ggi_visual *vis = client->owner;
-	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	struct ggi_visual *cvis;
 	const ggi_directbuffer *db;
 	ggi_rect vupdate;
@@ -1394,35 +1392,7 @@ GGI_vnc_tight(ggi_vnc_client *client, ggi_rect *update)
 		update->tl.x, update->tl.y,
 		update->br.x, update->br.y);
 
-	vupdate = *update;
-	ggi_rect_shift_xy(&vupdate, vis->origin_x, vis->origin_y);
-
-	ggi_rect_subtract(&client->dirty, &vupdate);
-	client->update.tl.x = client->update.br.x = 0;
-
-	DPRINT("dirty %dx%d - %dx%d\n",
-		client->dirty.tl.x, client->dirty.tl.y,
-		client->dirty.br.x, client->dirty.br.y);
-
-	if (!client->vis) {
-		cvis = priv->fb;
-		d_frame_num = vis->d_frame_num;
-	}
-	else {
-		int r_frame_num = _ggiGetReadFrame(priv->fb);
-		_ggiSetReadFrame(priv->fb, _ggiGetDisplayFrame(vis));
-
-		cvis = client->vis;
-		_ggiCrossBlit(priv->fb,
-			vupdate.tl.x, vupdate.tl.y,
-			ggi_rect_width(&vupdate),
-			ggi_rect_height(&vupdate),
-			cvis,
-			vupdate.tl.x, vupdate.tl.y);
-
-		_ggiSetReadFrame(priv->fb, r_frame_num);
-		d_frame_num = 0;
-	}
+	cvis = GGI_vnc_encode_init(client, update, &vupdate, &d_frame_num);
 
 	db = ggiDBGetBuffer(cvis->instance.stem, d_frame_num);
 	ggiResourceAcquire(db->resource, GGI_ACTYPE_READ);

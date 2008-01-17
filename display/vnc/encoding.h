@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.13 2007/01/11 01:05:12 pekberg Exp $
+/* $Id: encoding.h,v 1.14 2008/01/17 21:49:10 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -31,6 +31,8 @@
 #include <ggi/display/vnc.h>
 
 int GGI_vnc_buf_reserve(ggi_vnc_buf *buf, int limit);
+struct ggi_visual *GGI_vnc_encode_init(ggi_vnc_client *client,
+	ggi_rect *update, ggi_rect *vupdate, int *d_frame_num);
 
 ggi_vnc_encode GGI_vnc_raw;
 ggi_vnc_encode GGI_vnc_copyrect_pan;
