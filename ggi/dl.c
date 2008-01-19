@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.37 2007/06/20 06:42:16 cegger Exp $
+/* $Id: dl.c,v 1.38 2008/01/19 10:55:06 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -156,63 +156,6 @@ int _ggiProbeDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 	return 0;
 }
 
-
-/* Add an extension DL
- */
-ggi_dlhandle *_ggiAddExtDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
-			   const char *api,
-			   const char *args, void *argptr,
-			   const char *symprefix)
-{
-	ggi_dlhandle_l *tmp;
-	ggi_dlhandle *dlh;
-	uint32_t dlret = 0;
-	int err;
-	struct gg_location_iter match;
-
-
-	match.config = conffilehandle;
-	match.name = api;
-	ggConfigIterLocation(&match);
-	err = GGI_ENOMATCH;
-	GG_ITER_FOREACH(&match) {
-		DPRINT_LIBS("Try to load %s\n", match.location);
-		err = _ggiLoadDL(match.location, symprefix,
-				GGI_DLTYPE_EXTENSION, &dlh,
-				match.symbol);
-		DPRINT_LIBS("_ggiLoadDL returned %d (%p)\n", err, dlh);
-		if (!err) break;
-	}
-	GG_ITER_DONE(&match);
-	if (err) return NULL;
-
-
-	err = dlh->open(vis, dlh, args, argptr, &dlret);
-	DPRINT_LIBS("%d = dlh->open(%p, %p, \"%s\", %p, %d)\n",
-		       err, vis, dlh, args ? args : "(null)", argptr, dlret);
-	if (err) {
-		ggDelScope(dlh->handle);
-		free(dlh);
-		return NULL;
-	}
-
-	dlh->name = strdup(api);
-	dlh->usecnt = 1;
-	dlh->type = GGI_DLTYPE_EXTENSION;
-	dlh->visual = vis;
-
-	if (!(dlret & GGI_DL_OPDISPLAY)) {
-		tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
-		tmp->handle = dlh;
-		GG_SLIST_INSERT_HEAD(&vis->generic_ext, tmp, dllist);
-	}
-
-	tmp = (ggi_dlhandle_l *)_ggi_malloc(sizeof(ggi_dlhandle_l));
-	tmp->handle = dlh;
-	GG_SLIST_INSERT_HEAD(&LIBGGI_DLHANDLE(vis), tmp, dllist);
-
-	return dlh;
-}
 
 /****** Open and Close a DL *********/
 int _ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
