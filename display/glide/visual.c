@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/03/22 20:22:27 cegger Exp $
+/* $Id: visual.c,v 1.15 2008/01/19 23:03:50 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -87,7 +87,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int vtnum = -1, novt = 0, useinput = 1;
 	int on_linux_cons;
 	gii_input *inp;
-	int err;
 	
 	DPRINT("GLIDE-lib starting\n");
 
@@ -148,10 +147,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		err = _ggiAddDL(vis, _ggiGetConfigHandle(),
-				"helper-linux-vtswitch", NULL,
-				&vtswarg, 0);
-		if (err) {
+		priv->module_vtswitch = ggPlugModule(libggi,
+						vis->instance.stem,
+						"helper-linux-vtswitch",
+						NULL, &vtswarg);
+		if (priv->module_vtswitch) == NULL) {
 			vtnum = -1;
 		} else {
 			vtnum = vtswarg.vtnum;
@@ -239,6 +239,11 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	giiClose(vis->input);
 	vis->input = NULL;
+
+	if (priv->module_vtswitch != NULL) {
+		ggClosePlugin(priv->module_vtswitch);
+		priv->module_vtswitch = NULL;
+	}
 
 	free(priv);
 	free(LIBGGI_GC(vis));

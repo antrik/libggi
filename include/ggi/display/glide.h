@@ -1,4 +1,4 @@
-/* $Id: glide.h,v 1.4 2006/03/20 20:28:38 cegger Exp $
+/* $Id: glide.h,v 1.5 2008/01/19 23:03:50 cegger Exp $
 ******************************************************************************
 
    LibGGI GLIDE target
@@ -56,6 +56,8 @@ typedef struct {
 	unsigned int  fbmem;
 	GrHwConfiguration hwconf;
 	int setmodesuccess;
+
+	struct gg_instance *module_vtswitch;
 	int		dohalt;
 	int		autoswitch;
 } glide_priv;
