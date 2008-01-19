@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.16 2006/09/17 13:32:11 cegger Exp $
+/* $Id: visual.c,v 1.17 2008/01/19 18:54:27 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -93,7 +93,7 @@ vt_add_vis(struct ggi_visual *vis, ggi_linvtsw_arg *args)
 {
 	struct vislist *newent;
 
-	newent = malloc(sizeof(struct vislist));
+	newent = calloc(1, sizeof(struct vislist));
 	if (newent == NULL) return GGI_ENOMEM;
 
 	newent->vis = vis;
@@ -269,7 +269,7 @@ get_newcons(int fd)
 	if (ioctl(fd, VT_OPENQRY, &vtnum) < 0 ||
 	    vtnum <= 0) {
 		fprintf(stderr,
-"L/vtswitch: Unable to get a new virtual console\n");
+			"L/vtswitch: Unable to get a new virtual console\n");
 		return GGI_ENODEVICE;
 	}
 	
@@ -299,7 +299,8 @@ vtswitch_open(struct ggi_visual *vis)
 		vthandling.vtnum = -1;
 		dodetach = 1;
 	} else if (vthandling.forcenew) {
-		if ((vthandling.vtnum = get_newcons(fd)) < 0) {
+		vthandling.vtnum = get_newcons(fd);
+		if (vthandling.vtnum < 0) {
 			close(fd);
 			return vthandling.vtnum;
 		}
@@ -312,7 +313,8 @@ vtswitch_open(struct ggi_visual *vis)
 			fprintf(stderr, nopermstring);
 			return GGI_ENODEVICE;
 		}
-		if ((vthandling.vtnum = get_newcons(fd)) < 0) {
+		vthandling.vtnum = get_newcons(fd);
+		if (vthandling.vtnum < 0) {
 			close(fd);
 			return GGI_ENODEVICE;
 		}
@@ -364,12 +366,13 @@ vtswitch_open(struct ggi_visual *vis)
 	}
 
 	/* Open VT */
-	sprintf(filename, "/dev/tty%d", vthandling.vtnum);
+	snprintf(filename, sizeof(filename), "/dev/tty%d", vthandling.vtnum);
 
 	vtfd = open(filename, O_WRONLY);
 	if (vtfd < 0) {
 		/* Try devfs style device */
-		sprintf(filename, "/dev/vc/%d", vthandling.vtnum);
+		snprintf(filename, sizeof(filename),
+			"/dev/vc/%d", vthandling.vtnum);
 		vtfd = open(filename, O_WRONLY);
 		if (vtfd < 0) {
 			fprintf(stderr, "L/vtswitch: open %s: %s\n",
@@ -392,8 +395,7 @@ vtswitch_open(struct ggi_visual *vis)
 			vtfd = -1;
 			return GGI_ENODEVICE;
 		}
-		while (ioctl(vtfd, VT_WAITACTIVE,
-			     vthandling.vtnum) < 0) {
+		while (ioctl(vtfd, VT_WAITACTIVE, vthandling.vtnum) < 0) {
 			ggUSleep(150000);
 		}
 	}
