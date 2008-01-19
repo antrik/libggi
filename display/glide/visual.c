@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.15 2008/01/19 23:03:50 cegger Exp $
+/* $Id: visual.c,v 1.16 2008/01/19 23:18:39 cegger Exp $
 ******************************************************************************
 
    GLIDE target - Initialization
@@ -81,7 +81,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	GrHwConfiguration hwconf;
 	int currentcard = 0;
 	glide_priv *priv;
-	char strbuf[32];
+	char strbuf[64];
 	const char *inputname;
 	char *str;
 	int vtnum = -1, novt = 0, useinput = 1;
@@ -111,10 +111,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		return GGI_ENODEVICE;
 	}
 
-	if ((priv = malloc(sizeof(glide_priv))) == NULL) {
+	priv = calloc(1, sizeof(glide_priv));
+	if (priv == NULL) {
 		return GGI_ENOMEM;
 	}
-	if ((LIBGGI_GC(vis) = malloc(sizeof(ggi_gc))) == NULL) {
+	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
+	if (LIBGGI_GC(vis) == NULL) {
 		free(priv);
 		return GGI_ENOMEM;
 	}
@@ -122,9 +124,9 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (getenv("DISPLAY") != NULL) {
 		inputname = "x";
 	} else {
-		inputname = "linux-kbd";
+		inputname = "input-linux-kbd";
 	}
-	if (strstr(inputname, "linux-kbd") != NULL) {
+	if (strstr(inputname, "input-linux-kbd") != NULL) {
 		priv->autoswitch = 1;
 
 		vtswarg.switchreq = NULL;
@@ -163,7 +165,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 
 		if (vtnum != -1) {
-			snprintf(strbuf, 32, "linux-kbd:/dev/tty%d", vtnum);
+			snprintf(strbuf, sizeof(strbuf),
+				"input-linux-kbd:/dev/tty%d", vtnum);
 			inputname = strbuf;
 		}
 		on_linux_cons = 1;
@@ -176,7 +179,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->input = giiOpen(inputname, NULL);
 		if (vis->input == NULL) {
 			if (vtnum != -1) {
-				snprintf(strbuf, 32, "linux-kbd:/dev/vc/%d", vtnum);
+				snprintf(strbuf, sizeof(strbuf),
+					"linux-kbd:/dev/vc/%d", vtnum);
 				vis->input = giiOpen(inputname, NULL);
 			}
 			if (vis->input == NULL) {
@@ -188,8 +192,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			}
 		}
 		if (on_linux_cons) {
-			if ((inp = giiOpen("linux-mouse:auto", &args, NULL))
-			    != NULL) {
+			inp = giiOpen("linux-mouse:auto", &args, NULL);
+			if (inp != NULL) {
 				vis->input = giiJoinInputs(vis->input, inp);
 			}
 		}
@@ -203,12 +207,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	grGlideInit();
 	grSstSelect(currentcard);
 	
-	if ((str = getenv("GGI_GLIDE_MAXFREQ")) != NULL) {
+	str = getenv("GGI_GLIDE_MAXFREQ");
+	if (str != NULL) {
 		priv->maxvfreq = strtol(str, NULL, 0);
 	} else {
 		priv->maxvfreq = GGIGLIDE_DEFAULT_VFREQ;
 	}
-	if ((str = getenv("GGI_GLIDE_MAXHFREQ")) != NULL) {
+	str = getenv("GGI_GLIDE_MAXHFREQ");
+	if (str != NULL) {
 		priv->maxhfreq = strtol(str, NULL, 0);
 	} else {
 		priv->maxhfreq = GGIGLIDE_DEFAULT_HFREQ;
