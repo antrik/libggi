@@ -1,8 +1,6 @@
 _ggiGetConfigHandle
 _ggi_global_lock
 _ggiAddDL
-_ggiExitDL
-_ggiZapDL
 _ggiGetSwarType
 _ggiIdleAccel
 _ggiInternFlush
