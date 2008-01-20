@@ -1,4 +1,4 @@
-/* $Id: ggidirectfb.h,v 1.10 2006/03/22 20:29:10 cegger Exp $
+/* $Id: ggidirectfb.h,v 1.11 2008/01/20 16:06:25 cegger Exp $
 ******************************************************************************
 
    LibGGI - DirectFB chipset driver support.
@@ -160,6 +160,7 @@ struct fbdev_directfb_global {
 };
 
 struct directfb_priv {
+  struct gg_instance *module_directfb;
   struct fbdev_directfb_global	globals;
 
   DFBConfig			dfbconfig;
@@ -178,7 +179,6 @@ struct directfb_priv {
   ggi_pixel	oldfg;
   ggi_pixel	oldbg;
   CoreSurface	*oldsource;
-
 };
 
 /* Update GC components if needed */

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.28 2008/01/20 08:37:51 cegger Exp $
+/* $Id: visual.c,v 1.29 2008/01/20 16:06:26 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -105,6 +105,12 @@ static int do_cleanup(struct ggi_visual *vis)
 							priv->device.driver_data
 							);
 	}
+
+	if (priv->module_directfb != NULL) {
+		ggClosePlugin(priv->module_directfb);
+		priv->module_directfb = NULL;
+	}
+
 	/* Free DB resource structures */
 	for (i = LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
 		if (LIBGGI_APPBUFS(vis)[i]->resource) {
@@ -153,10 +159,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Get the global symbols that DirectFB drivers need
 	 * by loading our helper lib as a global symbol source.
 	 */
-	if(_ggiAddDL(vis, _ggiGetConfigHandle(),
-		"helper-fbdev-directfb-global", 
-		NULL, &(priv->globals), GGI_DLTYPE_GLOBAL) != 0)
-	{
+	priv->module_directfb = ggPlugModule(libggi,
+					vis->instance.stem,
+					"helper-fbdev-directfb-global",
+					NULL, &(priv->globals));
+	if (priv->module_directfb == NULL) {
 		free(priv);
 		return GGI_ENOFUNC;
 	}
