@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2007/06/20 08:17:21 pekberg Exp $
+/* $Id: visual.c,v 1.13 2008/01/20 10:00:37 cegger Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -63,13 +63,6 @@ GGI_mansync_setup(struct ggi_helper *helper, const char *args, void *argptr)
 	return GGI_OK;
 }
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32_t *dlret)
-{
-	*dlret = 0;
-	return GGI_mansync_setup(NULL, args, argptr);
-}
-
 struct ggi_module_helper GGI_mansync = {
 	GG_MODULE_INIT("helper-mansync", 0, 1, GGI_MODULE_HELPER),
 	GGI_mansync_setup,
@@ -86,18 +79,9 @@ int GGIdl_mansync(int func, void **funcptr);
 
 int GGIdl_mansync(int func, void **funcptr)
 {
-	ggifunc_open **openptr;
 	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
-	case GGIFUNC_open:
-		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
-		return 0;
-	case GGIFUNC_exit:
-	case GGIFUNC_close:
-		*funcptr = NULL;
-		return 0;
 	case GG_DLENTRY_MODULES:
 		modulesptr = (struct ggi_module_helper ***)funcptr;
 		*modulesptr = _GGIdl_mansync;
