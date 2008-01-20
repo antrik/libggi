@@ -1,14 +1,17 @@
-/* $Id: directfbglobal.c,v 1.18 2008/01/20 15:39:12 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.19 2008/01/20 16:05:08 cegger Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
 #include "ggidirectfb.h"
+#include <ggi/internal/ggi-module.h>
 
 /* Needed for memory_virtual/memory_physical functions */
 static void *ggi_fbdev_dfb_framebuffer_base;
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32_t * dlret)
+
+static int
+GGI_directfbglobal_init(struct ggi_helper *helper,
+			const char *args, void *argptr)
 {
 	struct fbdev_directfb_global *globals;
 
@@ -17,29 +20,39 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	globals->dfb_fbdev_ptr = &dfb_fbdev;
 	ggi_fbdev_dfb_framebuffer_base = FBDEV_PRIV(vis)->fb_ptr;
 
-	return 0;
+	return GGI_OK;
 }
 
-static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+static void
+GGI_directfbglobal_exit(struct ggi_helper *helper)
 {
-	return 0;
+	return;
 }
+
+
+struct ggi_module_helper GGI_directfbglobal = {
+	GG_MODULE_INIT("helper-fbdev-directfb-global", 0, 1, GGI_MODULE_HELPER),
+	GGI_directfbglobal_init,
+	GGI_directfbglobal_exit,
+};
+
+static struct ggi_module_helper *_GGIdl_directfbglobal[] = {
+	&GGI_directfbglobal,
+	NULL
+};
 
 
 EXPORTFUNC int GGIdl_fbdev_directfbglobal(int func, void **funcptr);
 
 int GGIdl_fbdev_directfbglobal(int func, void **funcptr)
 {
+	struct ggi_module_helper ***modulesptr;
+
 	switch (func) {
-	case GGIFUNC_open:
-		*funcptr = (void *) GGIopen;
-		return 0;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return 0;
-	case GGIFUNC_close:
-		*funcptr = (void *) GGIclose;
-		return 0;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_directfbglobal;
+		return GGI_OK;
 	default:
 		*funcptr = NULL;
 	}
