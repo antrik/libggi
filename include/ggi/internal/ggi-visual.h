@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.9 2008/01/20 19:22:58 pekberg Exp $
+/* $Id: ggi-visual.h,v 1.10 2008/01/20 19:26:45 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -384,11 +384,11 @@ struct ggi_visual_opdraw {
 /*------- Section: Pixel graphics (6/10 slots) -------------*/
 	ggifunc_drawpixel *drawpixel;
 	ggifunc_putpixel *putpixel;
-	ggifunc_getpixel *getpixel;
+	ggifunc_getpixel_nc *getpixel_nc;
 
 	ggifunc_drawpixel_nc *drawpixel_nc;
 	ggifunc_putpixel_nc *putpixel_nc;
-	ggifunc_getpixel_c *getpixel_c;
+	ggifunc_getpixel *getpixel;
 
 	void	*dummy_pixel[4];	/* Place holders */
 

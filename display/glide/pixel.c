@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.5 2006/03/22 20:22:27 cegger Exp $
+/* $Id: pixel.c,v 1.6 2008/01/20 19:26:39 pekberg Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Pixel functions
@@ -67,7 +67,7 @@ GGI_glide_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel pix)
 }
 
 int
-GGI_glide_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+GGI_glide_getpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 {
 	/* This is needed to handle big/little endianess */
 	switch (GLIDE_PRIV(vis)->bytes_per_pixel) {

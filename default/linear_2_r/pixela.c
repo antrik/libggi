@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.1 2007/01/17 13:48:02 pekberg Exp $
+/* $Id: pixela.c,v 1.2 2008/01/20 19:26:26 pekberg Exp $
 ******************************************************************************
 
    Linear 2 pixel drawing (high-bit-right)
@@ -107,7 +107,8 @@ int GGI_lin2r_putpixela(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin2r_getpixela(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_lin2r_getpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	int xs;
 

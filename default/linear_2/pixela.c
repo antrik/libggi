@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
+/* $Id: pixela.c,v 1.4 2008/01/20 19:26:24 pekberg Exp $
 ******************************************************************************
 
    Linear 2 pixel drawing (high-pair-left)
@@ -47,7 +47,8 @@ int GGI_lin2_putpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin2_getpixela(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_lin2_getpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	int shift = (3 - (x & 3)) << 1;
 

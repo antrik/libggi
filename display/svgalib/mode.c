@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2007/03/29 22:21:53 cegger Exp $
+/* $Id: mode.c,v 1.32 2008/01/20 19:26:40 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -288,7 +288,7 @@ int GGI_svga_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	if (priv->ismodex) {
 		vis->opdraw->putpixel_nc	= GGI_svga_putpixel_nc;
 		vis->opdraw->putpixel		= GGI_svga_putpixel;
-		vis->opdraw->getpixel		= GGI_svga_getpixel;
+		vis->opdraw->getpixel_nc	= GGI_svga_getpixel_nc;
 		vis->opdraw->drawpixel_nc	= GGI_svga_drawpixel_nc;
 		vis->opdraw->drawpixel		= GGI_svga_drawpixel;
 		vis->opdraw->drawhline_nc	= GGI_svga_drawhline_nc;

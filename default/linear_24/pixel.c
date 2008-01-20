@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:25 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -90,7 +90,8 @@ int GGI_lin24_putpixel(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin24_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int
+GGI_lin24_getpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	uint8_t *adr;
 

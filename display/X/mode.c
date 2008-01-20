@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.74 2007/08/22 17:34:30 ggibecka Exp $
+/* $Id: mode.c,v 1.75 2008/01/20 19:26:38 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -420,7 +420,7 @@ static void _ggi_x_load_slaveops(struct ggi_visual *vis) {
 	vis->opdraw->drawpixel_nc	= GGI_X_drawpixel_nc_slave;
 	vis->opdraw->putpixel		= GGI_X_putpixel_slave;
 	vis->opdraw->putpixel_nc	= GGI_X_putpixel_nc_slave;
-	vis->opdraw->getpixel		= GGI_X_getpixel_slave;
+	vis->opdraw->getpixel_nc	= GGI_X_getpixel_nc_slave;
 	vis->opdraw->drawhline		= GGI_X_drawhline_slave;
 	vis->opdraw->drawhline_nc	= GGI_X_drawhline_nc_slave;
 	vis->opdraw->puthline		= GGI_X_puthline_slave;

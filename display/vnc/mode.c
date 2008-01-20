@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2008/01/20 19:22:57 pekberg Exp $
+/* $Id: mode.c,v 1.17 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -285,8 +285,8 @@ _ggi_domode(struct ggi_visual *vis)
 	vis->opdraw->drawpixel_nc	= GGI_vnc_drawpixel_nc;
 	vis->opdraw->putpixel		= GGI_vnc_putpixel;
 	vis->opdraw->putpixel_nc	= GGI_vnc_putpixel_nc;
-	vis->opdraw->getpixel_c		= GGI_vnc_getpixel_c;
 	vis->opdraw->getpixel		= GGI_vnc_getpixel;
+	vis->opdraw->getpixel_nc	= GGI_vnc_getpixel_nc;
 
 	vis->opdraw->drawline		= GGI_vnc_drawline;
 	vis->opdraw->drawhline		= GGI_vnc_drawhline;

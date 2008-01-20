@@ -1,4 +1,4 @@
-/* $Id: lin1lib.h,v 1.4 2007/05/05 18:19:09 pekberg Exp $
+/* $Id: lin1lib.h,v 1.5 2008/01/20 19:26:21 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -39,12 +39,14 @@ ggifunc_drawpixel_nc	GGI_lin1_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin1_drawpixel;
 ggifunc_putpixel_nc	GGI_lin1_putpixel_nc;
 ggifunc_putpixel	GGI_lin1_putpixel;
+ggifunc_getpixel_nc	GGI_lin1_getpixel_nc;
 ggifunc_getpixel	GGI_lin1_getpixel;
 
 ggifunc_drawpixel_nc	GGI_lin1_drawpixel_nca;
 ggifunc_drawpixel	GGI_lin1_drawpixela;
 ggifunc_putpixel_nc	GGI_lin1_putpixel_nca;
 ggifunc_putpixel	GGI_lin1_putpixela;
+ggifunc_getpixel_nc	GGI_lin1_getpixel_nca;
 ggifunc_getpixel	GGI_lin1_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin1_drawhline_nc;

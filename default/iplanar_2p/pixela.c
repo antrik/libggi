@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.3 2006/03/12 23:15:06 soyt Exp $
+/* $Id: pixela.c,v 1.4 2008/01/20 19:26:21 pekberg Exp $
 ******************************************************************************
 
    Interleave planar pixels (2 byte interleave).
@@ -62,7 +62,8 @@ int GGI_ipl2_putpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_ipl2_getpixela(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_ipl2_getpixel_nca(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	ggi_pixel col = 0;
 	uint16_t *dest;

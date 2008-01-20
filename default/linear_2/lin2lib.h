@@ -1,4 +1,4 @@
-/* $Id: lin2lib.h,v 1.4 2007/05/02 07:12:17 pekberg Exp $
+/* $Id: lin2lib.h,v 1.5 2008/01/20 19:26:24 pekberg Exp $
 ******************************************************************************
 
    linear-2 sublib function prototypes
@@ -39,12 +39,14 @@ ggifunc_drawpixel_nc	GGI_lin2_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin2_drawpixel;
 ggifunc_putpixel_nc	GGI_lin2_putpixel_nc;
 ggifunc_putpixel	GGI_lin2_putpixel;
+ggifunc_getpixel_nc	GGI_lin2_getpixel_nc;
 ggifunc_getpixel	GGI_lin2_getpixel;
 
 ggifunc_drawpixel_nc	GGI_lin2_drawpixel_nca;
 ggifunc_drawpixel	GGI_lin2_drawpixela;
 ggifunc_putpixel_nc	GGI_lin2_putpixel_nca;
 ggifunc_putpixel	GGI_lin2_putpixela;
+ggifunc_getpixel_nc	GGI_lin2_getpixel_nca;
 ggifunc_getpixel	GGI_lin2_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin2_drawhline_nc;

@@ -1,4 +1,4 @@
-/* $Id: t16lib.h,v 1.2 2002/09/08 21:37:44 soyt Exp $
+/* $Id: t16lib.h,v 1.3 2008/01/20 19:26:37 pekberg Exp $
 ******************************************************************************
 
    text-16 sublib function prototypes
@@ -38,10 +38,12 @@ ggifunc_drawpixel_nc	GGI_t16_drawpixel_nc;
 ggifunc_drawpixel	GGI_t16_drawpixel;
 ggifunc_putpixel_nc	GGI_t16_putpixel_nc;
 ggifunc_putpixel	GGI_t16_putpixel;
+ggifunc_getpixel_nc	GGI_t16_getpixel_nc;
 ggifunc_getpixel	GGI_t16_getpixel;
 
 ggifunc_drawpixel_nc	GGI_t16_drawpixel_nca;
 ggifunc_drawpixel	GGI_t16_drawpixela;
 ggifunc_putpixel_nc	GGI_t16_putpixel_nca;
 ggifunc_putpixel	GGI_t16_putpixela;
+ggifunc_getpixel_nc	GGI_t16_getpixel_nca;
 ggifunc_getpixel	GGI_t16_getpixela;

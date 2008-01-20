@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2006/03/12 23:15:08 soyt Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:27 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -73,7 +73,8 @@ int GGI_lin32_putpixel(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin32_getpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int
+GGI_lin32_getpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	*pixel = *((uint32_t *) ((uint8_t *)LIBGGI_CURREAD(vis)
 	   + y*LIBGGI_FB_R_STRIDE(vis)+x*sizeof(uint32_t)));

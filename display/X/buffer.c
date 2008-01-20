@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.43 2007/05/08 22:43:47 ggibecka Exp $
+/* $Id: buffer.c,v 1.44 2008/01/20 19:26:38 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -395,7 +395,7 @@ int GGI_X_create_window_drawable (struct ggi_visual *vis) {
 	vis->opdraw->drawpixel_nc	= GGI_X_drawpixel_draw;
 	vis->opdraw->putpixel		= GGI_X_putpixel_draw;
 	vis->opdraw->putpixel_nc	= GGI_X_putpixel_draw;
-	vis->opdraw->getpixel		= GGI_X_getpixel_draw;
+	vis->opdraw->getpixel_nc	= GGI_X_getpixel_nc_draw;
 	vis->opdraw->drawhline		= GGI_X_drawhline_draw;
 	vis->opdraw->drawhline_nc	= GGI_X_drawhline_draw;
 	vis->opdraw->puthline		= GGI_X_puthline_draw;

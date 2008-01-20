@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2006/07/26 17:51:57 cegger Exp $
+/* $Id: mode.c,v 1.16 2008/01/20 19:26:39 pekberg Exp $
 ******************************************************************************
 
    LibGGI GLIDE target - Mode management.
@@ -501,7 +501,7 @@ int GGI_glide_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	vis->opdraw->drawpixel    = GGI_glide_drawpixel;
 	vis->opdraw->putpixel_nc  = GGI_glide_putpixel;
 	vis->opdraw->putpixel     = GGI_glide_putpixel;
-	vis->opdraw->getpixel     = GGI_glide_getpixel;
+	vis->opdraw->getpixel_nc  = GGI_glide_getpixel;
 		/* lines */
 	vis->opdraw->drawline     = GGI_glide_drawline;
 	vis->opdraw->drawhline_nc = GGI_glide_drawhline;

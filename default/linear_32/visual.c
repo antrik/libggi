@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/03/12 23:15:08 soyt Exp $
+/* $Id: visual.c,v 1.9 2008/01/20 19:26:27 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -44,13 +44,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->drawpixel		= GGI_lin32_drawpixela;
 		vis->opdraw->putpixel_nc	= GGI_lin32_putpixel_nca;
 		vis->opdraw->putpixel		= GGI_lin32_putpixela;
-		vis->opdraw->getpixel		= GGI_lin32_getpixela;
+		vis->opdraw->getpixel_nc	= GGI_lin32_getpixel_nca;
 	} else {
 		vis->opdraw->drawpixel_nc	= GGI_lin32_drawpixel_nc;
 		vis->opdraw->drawpixel		= GGI_lin32_drawpixel;
 		vis->opdraw->putpixel_nc	= GGI_lin32_putpixel_nc;
 		vis->opdraw->putpixel		= GGI_lin32_putpixel;
-		vis->opdraw->getpixel		= GGI_lin32_getpixel;
+		vis->opdraw->getpixel_nc	= GGI_lin32_getpixel_nc;
 	}
 
 	vis->opdraw->drawhline_nc = GGI_lin32_drawhline_nc;

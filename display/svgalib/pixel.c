@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.5 2006/03/22 20:22:28 cegger Exp $
+/* $Id: pixel.c,v 1.6 2008/01/20 19:26:41 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target: pixels
@@ -66,7 +66,8 @@ int GGI_svga_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_svga_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_svga_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 { 
 	*pixel = 
 		vga_getpixel(x, y+vis->r_frame_num * LIBGGI_VIRTY(vis));

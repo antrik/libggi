@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2008/01/20 19:22:52 pekberg Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:33 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixel Stubs.
@@ -48,7 +48,8 @@ int GGI_stubs_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return LIBGGIPutPixelNC(vis, x, y, col);
 }
 
-int GGI_stubs_getpixel_c(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+int
+GGI_stubs_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	if (y < 0 || y >= LIBGGI_VIRTY(vis))
 		return 0;

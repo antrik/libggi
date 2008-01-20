@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2008/01/20 19:22:52 pekberg Exp $
+/* $Id: visual.c,v 1.11 2008/01/20 19:26:33 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -40,7 +40,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->getcharsize=GGI_stubs_getcharsize;
 
 	vis->opdraw->putpixel=GGI_stubs_putpixel;
-	vis->opdraw->getpixel_c=GGI_stubs_getpixel_c;
+	vis->opdraw->getpixel=GGI_stubs_getpixel;
 	vis->opdraw->drawpixel=GGI_stubs_drawpixel;
 	vis->opdraw->drawpixel_nc=GGI_stubs_drawpixel_nc;
 	vis->opdraw->drawhline=GGI_stubs_drawhline;

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.17 2008/01/20 19:26:42 pekberg Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -89,7 +89,7 @@ int GGI_vcsa_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* setup drawing primitives */
 	vis->opdraw->putpixel_nc  = GGI_vcsa_putpixel_nc;
-	vis->opdraw->getpixel     = GGI_vcsa_getpixel;
+	vis->opdraw->getpixel_nc  = GGI_vcsa_getpixel_nc;
 	vis->opdraw->putc         = GGI_vcsa_putc;
 	vis->opdraw->puts         = GGI_vcsa_puts;
 	vis->opdraw->getcharsize  = GGI_vcsa_getcharsize;

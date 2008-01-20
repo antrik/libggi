@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.7 2006/03/20 14:12:14 pekberg Exp $
+/* $Id: pixel.c,v 1.8 2008/01/20 19:26:39 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Pixels for display-X.
@@ -78,13 +78,14 @@ int GGI_X_putpixel_nc_slave(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_X_getpixel_slave(struct ggi_visual *vis,int x, int y, ggi_pixel *pixel)
+int
+GGI_X_getpixel_nc_slave(struct ggi_visual *vis,int x, int y, ggi_pixel *pixel)
 {	
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 
 	/* Slave is always up to date */
-	return (priv->slave->opdraw->getpixel(priv->slave, x, y, pixel));
+	return (priv->slave->opdraw->getpixel_nc(priv->slave, x, y, pixel));
 }
 
 int GGI_X_drawpixel_slave_draw(struct ggi_visual *vis, int x, int y)
@@ -151,7 +152,8 @@ static int errorhandler (Display * disp, XErrorEvent * event)
   return 0;
 }
 
-int GGI_X_getpixel_draw(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_X_getpixel_nc_draw(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {	
 	ggi_x_priv *priv;
 	XImage *ximg;

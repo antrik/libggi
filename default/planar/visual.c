@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/03/12 23:15:11 soyt Exp $
+/* $Id: visual.c,v 1.9 2008/01/20 19:26:33 pekberg Exp $
 ******************************************************************************
 
   Planar graphics library.
@@ -40,10 +40,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	 */
 	if (vis->needidleaccel) {
 		vis->opdraw->putpixel_nc	= GGI_pl_putpixel_nca;
-		vis->opdraw->getpixel		= GGI_pl_getpixela;
+		vis->opdraw->getpixel_nc	= GGI_pl_getpixel_nca;
 	} else {
 		vis->opdraw->putpixel_nc	= GGI_pl_putpixel_nc;
-		vis->opdraw->getpixel		= GGI_pl_getpixel;
+		vis->opdraw->getpixel_nc	= GGI_pl_getpixel_nc;
 	}
 
 	*dlret = GGI_DL_OPDRAW;

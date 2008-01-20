@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.9 2008/01/20 19:22:59 pekberg Exp $
+/* $Id: ggi.h,v 1.10 2008/01/20 19:26:46 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -239,8 +239,8 @@ __END_DECLS
 #define LIBGGIDrawPixelNC(vis,x,y)	(vis->opdraw->drawpixel_nc(vis,x,y))
 #define LIBGGIPutPixel(vis,x,y,col)	(vis->opdraw->putpixel(vis,x,y,col))
 #define LIBGGIPutPixelNC(vis,x,y,col)	(vis->opdraw->putpixel_nc(vis,x,y,col))
-#define LIBGGIGetPixel(vis,x,y,col)	(vis->opdraw->getpixel_c(vis,x,y,col))
-#define LIBGGIGetPixelNC(vis,x,y,col)	(vis->opdraw->getpixel(vis,x,y,col))
+#define LIBGGIGetPixel(vis,x,y,col)	(vis->opdraw->getpixel(vis,x,y,col))
+#define LIBGGIGetPixelNC(vis,x,y,col)	(vis->opdraw->getpixel_nc(vis,x,y,col))
 
 #define LIBGGIIdleAccel(vis)		(vis->opdisplay->idleaccel(vis))
 
@@ -341,9 +341,9 @@ __END_DECLS
 #define _ggiPutPixel(vis, x,y, col)			\
 		(vis)->opdraw->putpixel((vis),(x),(y),(col))
 #define _ggiGetPixelNC(vis, x,y, col)			\
-		(vis)->opdraw->getpixel((vis),(x),(y),(col))
+		(vis)->opdraw->getpixel_nc((vis),(x),(y),(col))
 #define _ggiGetPixel(vis, x,y, col)			\
-		(vis)->opdraw->getpixel_c((vis),(x),(y),(col))
+		(vis)->opdraw->getpixel((vis),(x),(y),(col))
 
 #define _ggiDrawLine(vis, x,y, xe,ye)			\
 		(vis)->opdraw->drawline((vis),(x),(y),(xe),(ye))

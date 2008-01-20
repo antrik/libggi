@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.4 2008/01/20 19:24:25 pekberg Exp $
+/* $Id: pixel.c,v 1.5 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: pixel
@@ -77,7 +77,7 @@ GGI_vnc_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 }
 
 int
-GGI_vnc_getpixel_c(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+GGI_vnc_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
@@ -85,7 +85,7 @@ GGI_vnc_getpixel_c(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 }
 
 int
-GGI_vnc_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+GGI_vnc_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 

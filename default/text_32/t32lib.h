@@ -1,4 +1,4 @@
-/* $Id: t32lib.h,v 1.2 2002/09/08 21:37:44 soyt Exp $
+/* $Id: t32lib.h,v 1.3 2008/01/20 19:26:38 pekberg Exp $
 ******************************************************************************
 
    text-32 sublib function prototypes
@@ -38,10 +38,12 @@ ggifunc_drawpixel_nc	GGI_t32_drawpixel_nc;
 ggifunc_drawpixel	GGI_t32_drawpixel;
 ggifunc_putpixel_nc	GGI_t32_putpixel_nc;
 ggifunc_putpixel	GGI_t32_putpixel;
+ggifunc_getpixel_nc	GGI_t32_getpixel_nc;
 ggifunc_getpixel	GGI_t32_getpixel;
 
 ggifunc_drawpixel_nc	GGI_t32_drawpixel_nca;
 ggifunc_drawpixel	GGI_t32_drawpixela;
 ggifunc_putpixel_nc	GGI_t32_putpixel_nca;
 ggifunc_putpixel	GGI_t32_putpixela;
+ggifunc_getpixel_nc	GGI_t32_getpixel_nca;
 ggifunc_getpixel	GGI_t32_getpixela;

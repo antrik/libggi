@@ -1,4 +1,4 @@
-/* $Id: tele.h,v 1.14 2007/03/11 00:48:59 soyt Exp $
+/* $Id: tele.h,v 1.15 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -81,6 +81,7 @@ ggifunc_putpixel	GGI_tele_putpixel;
 ggifunc_puthline	GGI_tele_puthline;
 ggifunc_putvline	GGI_tele_putvline;
 ggifunc_putbox		GGI_tele_putbox;
+ggifunc_getpixel_nc	GGI_tele_getpixel_nc;
 ggifunc_getpixel	GGI_tele_getpixel;
 ggifunc_gethline	GGI_tele_gethline;
 ggifunc_getvline	GGI_tele_getvline;

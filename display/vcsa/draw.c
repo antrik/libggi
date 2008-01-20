@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.12 2007/03/11 00:48:58 soyt Exp $
+/* $Id: draw.c,v 1.13 2008/01/20 19:26:42 pekberg Exp $
 ******************************************************************************
 
    Display-VCSA: drawing primitives
@@ -182,7 +182,7 @@ int GGI_vcsa_gethline(struct ggi_visual *vis, int x, int y, int w, void *buf)
 /* ---------------------------------------------------------------------- */
 
 
-int GGI_vcsa_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *p)
+int GGI_vcsa_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *p)
 {
 	ggi_vcsa_priv *priv = VCSA_PRIV(vis);
 

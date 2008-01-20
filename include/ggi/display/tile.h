@@ -1,4 +1,4 @@
-/* $Id: tile.h,v 1.14 2007/04/24 20:03:19 pekberg Exp $
+/* $Id: tile.h,v 1.15 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    Tile target for LibGGI, header.
@@ -47,6 +47,7 @@ ggifunc_drawpixel	GGI_tile_drawpixel_nc;
 ggifunc_drawpixel	GGI_tile_drawpixel;
 ggifunc_putpixel	GGI_tile_putpixel_nc;
 ggifunc_putpixel	GGI_tile_putpixel;
+ggifunc_getpixel_nc	GGI_tile_getpixel_nc;
 ggifunc_getpixel	GGI_tile_getpixel;
 
 ggifunc_drawhline	GGI_tile_drawhline_nc;

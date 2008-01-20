@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.9 2006/03/12 23:15:06 soyt Exp $
+/* $Id: visual.c,v 1.10 2008/01/20 19:26:21 pekberg Exp $
 ******************************************************************************
 
    ATI Mach64 acceleration sublib for kgi display target
@@ -65,6 +65,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/*vis->opdraw->drawpixel	  = _ggi_default_drawpixel;*/
 	/*vis->opdraw->putpixel_nc  = _ggi_default_putpixel_nc;*/
 	/*vis->opdraw->putpixel	  = _ggi_default_putpixel;*/
+	/*vis->opdraw->getpixel_nc  = _ggi_default_getpixel_nc;*/
 	/*vis->opdraw->getpixel	  = _ggi_default_getpixel;*/
 
 	vis->opdraw->drawhline_nc = GGI_kgi_mach64_drawhline;

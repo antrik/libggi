@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2006/03/12 23:15:07 soyt Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:23 pekberg Exp $
 ******************************************************************************
 
    Linear 1 pixel drawing (high-bit-right)
@@ -83,7 +83,8 @@ int GGI_lin1r_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin1r_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_lin1r_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	*pixel = !! (*PIXEL_RADDR(vis,x,y) & (0x01 << (x & 7)));
 

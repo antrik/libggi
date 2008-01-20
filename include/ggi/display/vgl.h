@@ -1,4 +1,4 @@
-/* $Id: vgl.h,v 1.6 2007/03/11 00:48:59 soyt Exp $
+/* $Id: vgl.h,v 1.7 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    LibGGI FreeBSD vgl(3) target
@@ -46,6 +46,7 @@ ggifunc_setflags	GGI_vgl_setflags;
 ggifunc_putpixel	GGI_vgl_putpixel;
 ggifunc_putpixel	GGI_vgl_putpixel_nc;
 ggifunc_getpixel	GGI_vgl_getpixel;
+ggifunc_getpixel_nc	GGI_vgl_getpixel_nc;
 ggifunc_drawpixel	GGI_vgl_drawpixel;
 ggifunc_drawpixel	GGI_vgl_drawpixel_nc;
 ggifunc_drawhline	GGI_vgl_drawhline;

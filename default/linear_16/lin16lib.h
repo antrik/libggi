@@ -1,4 +1,4 @@
-/* $Id: lin16lib.h,v 1.6 2007/04/04 13:58:20 ggibecka Exp $
+/* $Id: lin16lib.h,v 1.7 2008/01/20 19:26:23 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -33,12 +33,14 @@ ggifunc_drawpixel_nc	GGI_lin16_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin16_drawpixel;
 ggifunc_putpixel_nc	GGI_lin16_putpixel_nc;
 ggifunc_putpixel	GGI_lin16_putpixel;
+ggifunc_getpixel_nc	GGI_lin16_getpixel_nc;
 ggifunc_getpixel	GGI_lin16_getpixel;
 
 ggifunc_drawpixel_nc	GGI_lin16_drawpixel_nca;
 ggifunc_drawpixel	GGI_lin16_drawpixela;
 ggifunc_putpixel_nc	GGI_lin16_putpixel_nca;
 ggifunc_putpixel	GGI_lin16_putpixela;
+ggifunc_getpixel_nc	GGI_lin16_getpixel_nca;
 ggifunc_getpixel	GGI_lin16_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin16_drawhline_nc;

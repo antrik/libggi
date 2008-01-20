@@ -1,4 +1,4 @@
-/* $Id: svgalib.h,v 1.11 2007/06/23 16:37:36 cegger Exp $
+/* $Id: svgalib.h,v 1.12 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    LibGGI SVGAlib target
@@ -53,6 +53,7 @@ ggifunc_setflags	GGI_svga_setflags;
 ggifunc_putpixel	GGI_svga_putpixel;
 ggifunc_putpixel	GGI_svga_putpixel_nc;
 ggifunc_getpixel	GGI_svga_getpixel;
+ggifunc_getpixel	GGI_svga_getpixel_nc;
 ggifunc_drawpixel	GGI_svga_drawpixel;
 ggifunc_drawpixel	GGI_svga_drawpixel_nc;
 ggifunc_drawhline	GGI_svga_drawhline;

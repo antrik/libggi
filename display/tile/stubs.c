@@ -1,4 +1,4 @@
-/* $Id: stubs.c,v 1.21 2007/03/11 00:48:58 soyt Exp $
+/* $Id: stubs.c,v 1.22 2008/01/20 19:26:42 pekberg Exp $
 ******************************************************************************
 
    Code stolen from the graphics library for GGI.
@@ -678,7 +678,7 @@ int GGI_tile_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return GGI_tile_putpixel_nc(vis, x, y, col);
 }
 
-int GGI_tile_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_tile_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_tile_priv *priv = TILE_PRIV(vis);
 	struct multi_vis *elm;

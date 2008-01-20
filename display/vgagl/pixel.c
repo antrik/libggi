@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2006/03/22 19:26:48 cegger Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:42 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: pixels
@@ -62,7 +62,8 @@ int GGI_vgagl_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_vgagl_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_vgagl_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 { 
 	*pixel = gl_getpixel(x, y);
 	

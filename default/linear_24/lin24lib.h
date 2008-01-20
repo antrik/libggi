@@ -1,4 +1,4 @@
-/* $Id: lin24lib.h,v 1.3 2007/04/04 13:58:21 ggibecka Exp $
+/* $Id: lin24lib.h,v 1.4 2008/01/20 19:26:25 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -32,12 +32,14 @@ ggifunc_drawpixel_nc	GGI_lin24_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin24_drawpixel;
 ggifunc_putpixel_nc	GGI_lin24_putpixel_nc;
 ggifunc_putpixel	GGI_lin24_putpixel;
+ggifunc_getpixel_nc	GGI_lin24_getpixel_nc;
 ggifunc_getpixel	GGI_lin24_getpixel;
 
 ggifunc_drawpixel_nc	GGI_lin24_drawpixel_nca;
 ggifunc_drawpixel	GGI_lin24_drawpixela;
 ggifunc_putpixel_nc	GGI_lin24_putpixel_nca;
 ggifunc_putpixel	GGI_lin24_putpixela;
+ggifunc_getpixel_nc	GGI_lin24_getpixel_nca;
 ggifunc_getpixel	GGI_lin24_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin24_drawhline_nc;

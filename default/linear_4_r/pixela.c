@@ -1,4 +1,4 @@
-/* $Id: pixela.c,v 1.4 2006/09/05 09:07:36 pekberg Exp $
+/* $Id: pixela.c,v 1.5 2008/01/20 19:26:31 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Pixels.
@@ -122,7 +122,8 @@ int GGI_lin4r_putpixela(struct ggi_visual *vis,int x,int y,ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin4r_getpixela(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int
+GGI_lin4r_getpixel_nca(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	uint8_t pel;
 	

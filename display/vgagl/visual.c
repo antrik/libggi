@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.8 2006/03/22 19:26:48 cegger Exp $
+/* $Id: visual.c,v 1.9 2008/01/20 19:26:43 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper: initialization
@@ -48,7 +48,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawpixel		= GGI_vgagl_drawpixel;
 	vis->opdraw->putpixel_nc	= GGI_vgagl_putpixel_nc;
 	vis->opdraw->putpixel		= GGI_vgagl_putpixel;
-	vis->opdraw->getpixel		= GGI_vgagl_getpixel;
+	vis->opdraw->getpixel_nc	= GGI_vgagl_getpixel_nc;
 
 	vis->opdraw->drawhline_nc	= GGI_vgagl_drawhline_nc;
 	vis->opdraw->drawhline		= GGI_vgagl_drawhline;

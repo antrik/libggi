@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.14 2006/03/20 20:20:39 cegger Exp $
+/* $Id: visual.c,v 1.15 2008/01/20 19:26:40 pekberg Exp $
 ******************************************************************************
 
    Display-sub
@@ -76,6 +76,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawpixel = GGI_sub_drawpixel;
 	vis->opdraw->putpixel_nc = GGI_sub_putpixel;
 	vis->opdraw->putpixel = GGI_sub_putpixel;
+	vis->opdraw->getpixel_nc = GGI_sub_getpixel;
 	vis->opdraw->getpixel = GGI_sub_getpixel;
 
 	vis->opdraw->drawhline = GGI_sub_drawhline;

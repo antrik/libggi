@@ -1,4 +1,4 @@
-/* $Id: vcsa.h,v 1.9 2007/03/11 00:48:59 soyt Exp $
+/* $Id: vcsa.h,v 1.10 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    Display-VCSA: definitions
@@ -66,7 +66,7 @@ ggifunc_getapi		GGI_vcsa_getapi;
 ggifunc_setflags	GGI_vcsa_setflags;
 
 ggifunc_putpixel_nc	GGI_vcsa_putpixel_nc;
-ggifunc_getpixel	GGI_vcsa_getpixel;
+ggifunc_getpixel_nc	GGI_vcsa_getpixel_nc;
 ggifunc_putc		GGI_vcsa_putc;
 ggifunc_puts		GGI_vcsa_puts;
 ggifunc_getcharsize	GGI_vcsa_getcharsize;

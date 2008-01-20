@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.39 2008/01/20 19:22:53 pekberg Exp $
+/* $Id: mode.c,v 1.40 2008/01/20 19:26:39 pekberg Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -139,8 +139,8 @@ static int _ggi_load_slaveops(struct ggi_visual *vis)
 	vis->opdraw->drawpixel_nc = priv->memvis->opdraw->drawpixel_nc;
 	vis->opdraw->putpixel = priv->memvis->opdraw->putpixel;
 	vis->opdraw->putpixel_nc = priv->memvis->opdraw->putpixel_nc;
-	vis->opdraw->getpixel_c = priv->memvis->opdraw->getpixel_c;
 	vis->opdraw->getpixel = priv->memvis->opdraw->getpixel;
+	vis->opdraw->getpixel_nc = priv->memvis->opdraw->getpixel_nc;
 	vis->opdraw->drawhline = priv->memvis->opdraw->drawhline;
 	vis->opdraw->drawhline_nc = priv->memvis->opdraw->drawhline_nc;
 	vis->opdraw->puthline = priv->memvis->opdraw->puthline;

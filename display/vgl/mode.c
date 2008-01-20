@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2007/03/11 00:48:59 soyt Exp $
+/* $Id: mode.c,v 1.25 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -244,7 +244,7 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	if (!priv->vgl_use_db) {
 		vis->opdraw->putpixel		= GGI_vgl_putpixel;
 		vis->opdraw->putpixel_nc	= GGI_vgl_putpixel_nc;
-		vis->opdraw->getpixel		= GGI_vgl_getpixel;
+		vis->opdraw->getpixel_nc	= GGI_vgl_getpixel_nc;
 		vis->opdraw->drawpixel		= GGI_vgl_drawpixel;
 		vis->opdraw->drawpixel_nc	= GGI_vgl_drawpixel_nc;
 		vis->opdraw->drawhline		= GGI_vgl_drawhline;

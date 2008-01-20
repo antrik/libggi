@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2006/03/22 20:22:29 cegger Exp $
+/* $Id: mode.c,v 1.17 2008/01/20 19:26:41 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -231,7 +231,7 @@ int GGI_tele_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	vis->opdraw->putvline=GGI_tele_putvline;
 	vis->opdraw->putbox=GGI_tele_putbox;
 
-	vis->opdraw->getpixel=GGI_tele_getpixel;
+	vis->opdraw->getpixel_nc=GGI_tele_getpixel_nc;
 	vis->opdraw->gethline=GGI_tele_gethline;
 	vis->opdraw->getvline=GGI_tele_getvline;
 	vis->opdraw->getbox=GGI_tele_getbox;

@@ -1,4 +1,4 @@
-/* $Id: vgaglvis.h,v 1.2 2005/07/31 15:30:37 soyt Exp $
+/* $Id: vgaglvis.h,v 1.3 2008/01/20 19:26:43 pekberg Exp $
 ******************************************************************************
 
    SVGAlib target vgagl helper
@@ -35,6 +35,7 @@ ggifunc_drawpixel_nc	GGI_vgagl_drawpixel_nc;
 ggifunc_drawpixel	GGI_vgagl_drawpixel;
 ggifunc_putpixel_nc	GGI_vgagl_putpixel_nc;
 ggifunc_putpixel	GGI_vgagl_putpixel;
+ggifunc_getpixel_nc	GGI_vgagl_getpixel_nc;
 ggifunc_getpixel	GGI_vgagl_getpixel;
 ggifunc_drawhline_nc	GGI_vgagl_drawhline_nc;
 ggifunc_drawhline	GGI_vgagl_drawhline;

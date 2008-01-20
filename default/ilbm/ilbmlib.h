@@ -1,4 +1,4 @@
-/* $Id: ilbmlib.h,v 1.2 2002/09/08 21:37:42 soyt Exp $
+/* $Id: ilbmlib.h,v 1.3 2008/01/20 19:26:20 pekberg Exp $
 ******************************************************************************
 
    ilbm sublib function prototypes
@@ -39,12 +39,14 @@ ggifunc_drawpixel_nc	GGI_ilbm_drawpixel_nc;
 ggifunc_drawpixel	GGI_ilbm_drawpixel;
 ggifunc_putpixel_nc	GGI_ilbm_putpixel_nc;
 ggifunc_putpixel	GGI_ilbm_putpixel;
+ggifunc_getpixel_nc	GGI_ilbm_getpixel_nc;
 ggifunc_getpixel	GGI_ilbm_getpixel;
 
 ggifunc_drawpixel_nc	GGI_ilbm_drawpixel_nca;
 ggifunc_drawpixel	GGI_ilbm_drawpixela;
 ggifunc_putpixel_nc	GGI_ilbm_putpixel_nca;
 ggifunc_putpixel	GGI_ilbm_putpixela;
+ggifunc_getpixel_nc	GGI_ilbm_getpixel_nca;
 ggifunc_getpixel	GGI_ilbm_getpixela;
 
 ggifunc_drawhline_nc	GGI_ilbm_drawhline_nc;

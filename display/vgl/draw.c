@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.14 2007/03/11 00:48:59 soyt Exp $
+/* $Id: draw.c,v 1.15 2008/01/20 19:26:43 pekberg Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: vgl drawing
@@ -156,7 +156,7 @@ GGI_vgl_setpalvec(struct ggi_visual *vis, int start, int len, const ggi_color *c
 	return 0;
 }
 
-int GGI_vgl_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_vgl_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 
 	*col = (ggi_pixel)VGLGetXY(VGLDisplay, x, y);

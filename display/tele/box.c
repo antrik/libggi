@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.17 2008/01/20 19:22:53 pekberg Exp $
+/* $Id: box.c,v 1.18 2008/01/20 19:26:41 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -66,7 +66,7 @@ int GGI_tele_putpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 
 
 
-int GGI_tele_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
+int GGI_tele_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 {
 	ggi_tele_priv *priv = TELE_PRIV(vis);
 	TeleCmdGetPutData *p;

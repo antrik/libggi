@@ -1,4 +1,4 @@
-/* $Id: glide.h,v 1.5 2008/01/19 23:03:50 cegger Exp $
+/* $Id: glide.h,v 1.6 2008/01/20 19:26:44 pekberg Exp $
 ******************************************************************************
 
    LibGGI GLIDE target
@@ -78,6 +78,7 @@ ggifunc_fillscreen	GGI_glide_fillscreen;
 ggifunc_drawpixel	GGI_glide_drawpixel;
 ggifunc_putpixel	GGI_glide_putpixel;
 ggifunc_getpixel	GGI_glide_getpixel;
+ggifunc_getpixel_nc	GGI_glide_getpixel_nc;
 
 ggifunc_drawline	GGI_glide_drawline;
 ggifunc_drawhline	GGI_glide_drawhline;

@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.1 2007/01/17 13:48:02 pekberg Exp $
+/* $Id: pixel.c,v 1.2 2008/01/20 19:26:26 pekberg Exp $
 ******************************************************************************
 
    Linear 2 pixel drawing (high-bit-right)
@@ -102,7 +102,8 @@ int GGI_lin2r_putpixel(struct ggi_visual *vis, int x, int y, ggi_pixel col)
 	return 0;
 }
 
-int GGI_lin2r_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
+int
+GGI_lin2r_getpixel_nc(struct ggi_visual *vis, int x, int y, ggi_pixel *pixel)
 {
 	int xs;
 

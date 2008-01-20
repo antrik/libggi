@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2007/05/09 07:54:51 pekberg Exp $
+/* $Id: mode.c,v 1.36 2008/01/20 19:26:41 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -180,7 +180,7 @@ static int _GGIdomode(struct ggi_visual *vis)
 		vis->opdraw->drawpixel=GGI_tile_drawpixel;
 		vis->opdraw->putpixel_nc=GGI_tile_putpixel_nc;
 		vis->opdraw->putpixel=GGI_tile_putpixel;
-		vis->opdraw->getpixel=GGI_tile_getpixel;
+		vis->opdraw->getpixel_nc=GGI_tile_getpixel_nc;
 
 		vis->opdraw->drawhline_nc=GGI_tile_drawhline_nc;
 		vis->opdraw->drawhline=GGI_tile_drawhline;

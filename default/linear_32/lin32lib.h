@@ -1,4 +1,4 @@
-/* $Id: lin32lib.h,v 1.3 2007/04/04 13:08:40 ggibecka Exp $
+/* $Id: lin32lib.h,v 1.4 2008/01/20 19:26:27 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -34,12 +34,14 @@ ggifunc_drawpixel_nc	GGI_lin32_drawpixel_nc;
 ggifunc_drawpixel	GGI_lin32_drawpixel;
 ggifunc_putpixel_nc	GGI_lin32_putpixel_nc;
 ggifunc_putpixel	GGI_lin32_putpixel;
+ggifunc_getpixel_nc	GGI_lin32_getpixel_nc;
 ggifunc_getpixel	GGI_lin32_getpixel;
 
 ggifunc_drawpixel_nc	GGI_lin32_drawpixel_nca;
 ggifunc_drawpixel	GGI_lin32_drawpixela;
 ggifunc_putpixel_nc	GGI_lin32_putpixel_nca;
 ggifunc_putpixel	GGI_lin32_putpixela;
+ggifunc_getpixel_nc	GGI_lin32_getpixel_nca;
 ggifunc_getpixel	GGI_lin32_getpixela;
 
 ggifunc_drawhline_nc	GGI_lin32_drawhline_nc;

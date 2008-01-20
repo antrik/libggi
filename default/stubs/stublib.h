@@ -1,4 +1,4 @@
-/* $Id: stublib.h,v 1.4 2008/01/20 19:22:52 pekberg Exp $
+/* $Id: stublib.h,v 1.5 2008/01/20 19:26:33 pekberg Exp $
 ******************************************************************************
 
    Generic drawing library
@@ -58,7 +58,7 @@ ggifunc_puts		GGI_stubs_puts;
 ggifunc_getcharsize	GGI_stubs_getcharsize;
 
 ggifunc_putpixel	GGI_stubs_putpixel;
-ggifunc_getpixel_c	GGI_stubs_getpixel_c;
+ggifunc_getpixel	GGI_stubs_getpixel;
 ggifunc_drawpixel	GGI_stubs_drawpixel;
 ggifunc_drawpixel	GGI_stubs_drawpixel_nc;
 ggifunc_drawhline	GGI_stubs_drawhline;

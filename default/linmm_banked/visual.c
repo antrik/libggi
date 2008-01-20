@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.11 2006/03/17 21:55:42 cegger Exp $
+/* $Id: visual.c,v 1.12 2008/01/20 19:26:32 pekberg Exp $
 ******************************************************************************
 
    Banked Access Graphics library for GGI.
@@ -183,7 +183,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	vis->opdraw->drawpixel		= GGIdrawpixel;
 	vis->opdraw->putpixel_nc	= GGIputpixel_nc;
 	vis->opdraw->putpixel		= GGIputpixel;
-	vis->opdraw->getpixel		= GGIgetpixel;
+	vis->opdraw->getpixel_nc	= GGIgetpixel_nc;
 	
 	vis->opdraw->drawhline_nc = GGIdrawhline_nc;
 	vis->opdraw->drawhline	= GGIdrawhline;

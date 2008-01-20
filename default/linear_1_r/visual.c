@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.10 2007/01/23 01:01:38 pekberg Exp $
+/* $Id: visual.c,v 1.11 2008/01/20 19:26:24 pekberg Exp $
 ******************************************************************************
 
    Linear 1 bit graphics (high-bit-right)
@@ -53,13 +53,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->putpixel		= GGI_lin1r_putpixela;
 		vis->opdraw->drawpixel_nc	= GGI_lin1r_drawpixel_nca;
 		vis->opdraw->drawpixel		= GGI_lin1r_drawpixela;
-		vis->opdraw->getpixel		= GGI_lin1r_getpixela;
+		vis->opdraw->getpixel_nc	= GGI_lin1r_getpixel_nca;
 	} else {
 		vis->opdraw->putpixel_nc	= GGI_lin1r_putpixel_nc;
 		vis->opdraw->putpixel		= GGI_lin1r_putpixel;
 		vis->opdraw->drawpixel_nc	= GGI_lin1r_drawpixel_nc;
 		vis->opdraw->drawpixel		= GGI_lin1r_drawpixel;
-		vis->opdraw->getpixel		= GGI_lin1r_getpixel;
+		vis->opdraw->getpixel_nc	= GGI_lin1r_getpixel_nc;
 	}
 
 	vis->opdraw->drawhline		= GGI_lin1r_drawhline;

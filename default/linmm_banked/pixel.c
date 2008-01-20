@@ -1,4 +1,4 @@
-/* $Id: pixel.c,v 1.3 2006/03/12 23:15:09 soyt Exp $
+/* $Id: pixel.c,v 1.4 2008/01/20 19:26:32 pekberg Exp $
 ******************************************************************************
 
    Generic Banked 8,16,32Bpp MMAP Graphics library for GGI. Pixels.
@@ -81,7 +81,8 @@ int GGIputpixel(struct ggi_visual *vis,int x, int y, ggi_pixel color)
 	return 0;
 }
 
-int GGIgetpixel(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
+int
+GGIgetpixel_nc(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel)
 { 
 	/* Supports only 8, 16, 32 bit modes -- 
 	   impossible to pixel nonaligned */

@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.37 2007/06/21 22:03:50 cegger Exp $
+/* $Id: x.h,v 1.38 2008/01/20 19:26:45 pekberg Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -297,8 +297,8 @@ ggifunc_putpixel	GGI_X_putpixel_draw;
 
 ggifunc_putpixel	GGI_X_putpixel_nc_slave;
 
-ggifunc_getpixel	GGI_X_getpixel_slave;
-ggifunc_getpixel	GGI_X_getpixel_draw;
+ggifunc_getpixel	GGI_X_getpixel_nc_slave;
+ggifunc_getpixel	GGI_X_getpixel_nc_draw;
 
 ggifunc_drawhline	GGI_X_drawhline_slave;
 ggifunc_drawhline	GGI_X_drawhline_slave_draw;
