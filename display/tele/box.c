@@ -1,4 +1,4 @@
-/* $Id: box.c,v 1.16 2007/03/11 00:48:58 soyt Exp $
+/* $Id: box.c,v 1.17 2008/01/20 19:22:53 pekberg Exp $
 ******************************************************************************
 
    TELE target.
@@ -73,15 +73,6 @@ int GGI_tele_getpixel(struct ggi_visual *vis, int x, int y, ggi_pixel *col)
 	TeleEvent ev;
 
 	int err;
-
-	if ((x < 0) || (y < 0)
-	  || (x >= LIBGGI_VIRTX(vis))
-	  || (y >= LIBGGI_VIRTY(vis)))
-	{
-	    	/* illegal coordinates */
-		return GGI_ENOSPACE;
-	}	/* if */
-
 
 	p = tclient_new_event(priv->client, &ev, TELE_CMD_GETBOX,
 				sizeof(TeleCmdGetPutData)-4, 1);

@@ -1,4 +1,4 @@
-/* $Id: dltypes.h,v 1.20 2007/04/04 13:08:40 ggibecka Exp $
+/* $Id: dltypes.h,v 1.21 2008/01/20 19:22:58 pekberg Exp $
 ******************************************************************************
 
    LibGGI - typedefs for internal API functions
@@ -111,6 +111,7 @@ typedef int (ggifunc_drawpixel)(struct ggi_visual *vis,int x,int y);
 typedef int (ggifunc_putpixel_nc)(struct ggi_visual *vis,int x,int y,ggi_pixel pixel);
 typedef int (ggifunc_putpixel)(struct ggi_visual *vis,int x,int y,ggi_pixel pixel);
 typedef int (ggifunc_getpixel)(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel);
+typedef int (ggifunc_getpixel_c)(struct ggi_visual *vis,int x,int y,ggi_pixel *pixel);
 
 typedef int (ggifunc_drawline)(struct ggi_visual *vis,int x,int y,int xe,int ye);
 

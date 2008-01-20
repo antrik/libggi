@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.38 2008/01/08 13:33:33 pekberg Exp $
+/* $Id: vnc.h,v 1.39 2008/01/20 19:22:58 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -181,6 +181,7 @@ ggifunc_drawpixel	GGI_vnc_drawpixel;
 ggifunc_drawpixel	GGI_vnc_drawpixel_nc;
 ggifunc_putpixel	GGI_vnc_putpixel;
 ggifunc_putpixel	GGI_vnc_putpixel_nc;
+ggifunc_getpixel_c	GGI_vnc_getpixel_c;
 ggifunc_getpixel	GGI_vnc_getpixel;
 
 /* line */

@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.8 2007/06/24 13:37:16 aldot Exp $
+/* $Id: ggi-visual.h,v 1.9 2008/01/20 19:22:58 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -358,7 +358,7 @@ struct ggi_visual_opcolor {
 /* Drawing functions
  * Increment the version number every time you change/add a function.
  */
-#define GGI_VERSION_VISUAL_OPDRAW	GGI_VERSION_MK(1)
+#define GGI_VERSION_VISUAL_OPDRAW	GGI_VERSION_MK(2)
 #define GGI_OPDRAW_NUMFUNCS 55
 struct ggi_visual_opdraw {
 	struct ggi_op_head head;
@@ -381,15 +381,16 @@ struct ggi_visual_opdraw {
 
 	void	*dummy_misc[6];		/* Place holders */
 
-/*------- Section: Pixel graphics (5/10 slots) -------------*/
+/*------- Section: Pixel graphics (6/10 slots) -------------*/
 	ggifunc_drawpixel *drawpixel;
 	ggifunc_putpixel *putpixel;
 	ggifunc_getpixel *getpixel;
 
 	ggifunc_drawpixel_nc *drawpixel_nc;
 	ggifunc_putpixel_nc *putpixel_nc;
+	ggifunc_getpixel_c *getpixel_c;
 
-	void	*dummy_pixel[5];	/* Place holders */
+	void	*dummy_pixel[4];	/* Place holders */
 
 /*------- Section: Simple Line graphics (9/15 slots) -------------*/
 	ggifunc_drawline *drawline;
