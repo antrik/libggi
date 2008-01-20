@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.39 2008/01/19 11:25:46 cegger Exp $
+/* $Id: dl.c,v 1.40 2008/01/20 16:26:24 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -158,7 +158,8 @@ static int _ggiProbeDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 
 
 /****** Open and Close a DL *********/
-int _ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
+static int
+_ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 	      const char *api, const char *args, void *argptr,
 	      int type)
 {

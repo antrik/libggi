@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.7 2008/01/19 13:52:56 cegger Exp $
+/* $Id: ggi.h,v 1.8 2008/01/20 16:26:24 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -95,10 +95,6 @@ GGIAPIFUNC int _ggiOpenDL(struct ggi_visual *vis,
 			const char *api, const char *args, void *argptr);
 void _ggiExitDL(struct ggi_visual *vis, ggi_dlhandle_l * lib);
 void _ggiZapDL(struct ggi_visual *vis, ggi_dlhandle_l ** lib);
-GGIAPIFUNC int _ggiAddDL(struct ggi_visual *vis,
-			 struct gg_config *conffilehandle,
-			const char *api, const char *args, void *argptr,
-			int type);
 
 /* init.c */
 GGIAPIFUNC struct gg_config * _ggiGetConfigHandle(void);
