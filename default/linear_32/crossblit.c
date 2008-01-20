@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.23 2008/01/20 19:24:23 pekberg Exp $
+/* $Id: crossblit.c,v 1.24 2008/01/20 22:14:56 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -61,9 +61,9 @@ fallback(struct ggi_visual *src, int sx, int sy, int w, int h,
 			_ggiGetPixelNC(src, sx+x, sy, &pixel);
 			if (pixel != cur_src) {
 				ggi_color col;
-				LIBGGIUnmapPixel(src, pixel, &col);
+				_ggiUnmapPixel(src, pixel, &col);
 
-				cur_dst = LIBGGIMapColor(dst, &col);
+				cur_dst = _ggiMapColor(dst, &col);
 				cur_src = pixel;
 			}
 			*(dstptr+x) = cur_dst;
@@ -123,8 +123,8 @@ cb4to32(struct ggi_visual *src, int sx, int sy, int w, int h,
 		for (i = 0; i < 16; i++) {
 			ggi_color col;
 
-			LIBGGIUnmapPixel(src, i, &col);
-			conv_tab[i] = LIBGGIMapColor(dst, &col);
+			_ggiUnmapPixel(src, i, &col);
+			conv_tab[i] = _ggiMapColor(dst, &col);
 		}
 	} while (0);
 
@@ -291,8 +291,8 @@ cb8to32(struct ggi_visual *src, int sx, int sy, int w, int h,
 		for (i = 0; i < 256; i++) {
 			ggi_color col;
 
-			LIBGGIUnmapPixel(src, i, &col);
-			conv_tab[i] = LIBGGIMapColor(dst, &col);
+			_ggiUnmapPixel(src, i, &col);
+			conv_tab[i] = _ggiMapColor(dst, &col);
 		}
 	} while (0);
 

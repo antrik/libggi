@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.8 2008/01/20 19:24:24 pekberg Exp $
+/* $Id: hline.c,v 1.9 2008/01/20 22:14:57 pekberg Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -34,7 +34,7 @@ int GGI_stubs_drawhline(struct ggi_visual *vis, int x, int y, int w)
 	LIBGGICLIP_XYW(vis, x, y, w);
 
 	for (; w > 0; w--, x++) {
-		LIBGGIDrawPixelNC(vis, x, y);
+		_ggiDrawPixelNC(vis, x, y);
 	}
 
 	return 0;
@@ -43,7 +43,7 @@ int GGI_stubs_drawhline(struct ggi_visual *vis, int x, int y, int w)
 int GGI_stubs_drawhline_nc(struct ggi_visual *vis, int x, int y, int w)
 {
 	for (; w > 0; w--, x++) {
-		LIBGGIDrawPixelNC(vis, x, y);
+		_ggiDrawPixelNC(vis, x, y);
 	}
 
 	return 0;
@@ -57,7 +57,7 @@ int _GGI_stubs_L1_puthline(struct ggi_visual *vis, int x, int y, int w, const vo
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
 	for (; w > 0; w--, x++, src++) {
-		LIBGGIPutPixelNC(vis, x, y, *src);
+		_ggiPutPixelNC(vis, x, y, *src);
 	}
 
 	return 0;
@@ -70,7 +70,7 @@ int _GGI_stubs_L2_puthline(struct ggi_visual *vis, int x, int y, int w, const vo
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
 	for (; w > 0; w--, x++, src++) {
-		LIBGGIPutPixelNC(vis, x, y, *src);
+		_ggiPutPixelNC(vis, x, y, *src);
 	}
 
 	return 0;
@@ -83,7 +83,7 @@ int _GGI_stubs_L3_puthline(struct ggi_visual *vis, int x, int y, int w, const vo
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *3);
 
 	for (; w > 0; w--, x++, src += 3) {
-		LIBGGIPutPixelNC(vis, x, y,
+		_ggiPutPixelNC(vis, x, y,
 			(unsigned)(src[0] | (src[1] << 8U) | (src[2] << 16U)));
 	}
 
@@ -97,7 +97,7 @@ int _GGI_stubs_L4_puthline(struct ggi_visual *vis, int x, int y, int w, const vo
 	LIBGGICLIP_XYW_BUFMOD(vis, x, y, w, src, *1);
 
 	for (; w > 0; w--, x++, src++) {
-		LIBGGIPutPixelNC(vis, x, y, *src);
+		_ggiPutPixelNC(vis, x, y, *src);
 	}
 
 	return 0;

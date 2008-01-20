@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.6 2008/01/20 19:24:24 pekberg Exp $
+/* $Id: crossblit.c,v 1.7 2008/01/20 22:14:57 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -51,13 +51,13 @@ int GGI_stubs_crossblit(struct ggi_visual *src, int sx, int sy, int w, int h,
 			_ggiGetPixelNC(src, sx+x, sy, &pixel);
 			if (pixel != cur_src) {
 				ggi_color col;
-				LIBGGIUnmapPixel(src, pixel, &col);
+				_ggiUnmapPixel(src, pixel, &col);
 
-				cur_dst = LIBGGIMapColor(dst, &col);
+				cur_dst = _ggiMapColor(dst, &col);
 				cur_src = pixel;
 			}
 			
-			LIBGGIPutPixelNC(dst, dx+x, dy, cur_dst);
+			_ggiPutPixelNC(dst, dx+x, dy, cur_dst);
 		}
 	}
 

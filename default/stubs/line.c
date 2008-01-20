@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.2 2006/03/12 23:15:12 soyt Exp $
+/* $Id: line.c,v 1.3 2008/01/20 22:14:57 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -87,7 +87,7 @@ int GGI_stubs_drawline(struct ggi_visual *vis, int orig_x1, int orig_y1,
 
 	if (orig_dx == orig_dy) {
 		for (i=dx; i >= 0; i--) {
-			LIBGGIDrawPixelNC(vis, x1, y1);
+			_ggiDrawPixelNC(vis, x1, y1);
 			x1 += sx;
 			y1 += sy;
 		}

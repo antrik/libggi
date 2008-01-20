@@ -1,4 +1,4 @@
-/* $Id: gtext.c,v 1.2 2006/03/12 23:15:04 soyt Exp $
+/* $Id: gtext.c,v 1.3 2008/01/20 22:14:55 pekberg Exp $
 ******************************************************************************
 
    LibGGI - 3DLabs Permedia 2 acceleration for fbdev target
@@ -48,7 +48,7 @@ blitchar(struct ggi_visual *vis, int x, int y, ggi_pixel color, uint8_t *field)
 	while (ywidth--) {
 		for (xp=0, bp=0x80; xp < FWIDTH; xp++) {
 			if ((*field & bp)) {
-				LIBGGIPutPixel(vis, x+xp, y, color);
+				_ggiPutPixel(vis, x+xp, y, color);
 			}
       			if (!(bp >>= 1)) {
 				bp = 0x80;

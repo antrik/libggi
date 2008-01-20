@@ -1,4 +1,4 @@
-/* $Id: color.c,v 1.6 2007/04/04 17:30:50 ggibecka Exp $
+/* $Id: color.c,v 1.7 2008/01/20 22:14:56 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. pack/unpack
@@ -38,14 +38,14 @@ int GGI_lin4_packcolors(struct ggi_visual *vis, void *outbuf, const ggi_color *c
 
 	for (i=0; i < len/2; i++) {
 		register uint8_t val;
-		val = (uint8_t)(LIBGGIMapColor(vis, (cols++)) << 4);
-		val |= (uint8_t)(LIBGGIMapColor(vis, (cols++)));
+		val = (uint8_t)(_ggiMapColor(vis, (cols++)) << 4);
+		val |= (uint8_t)(_ggiMapColor(vis, (cols++)));
 		*obuf = val;
 		obuf++;
 	}
 	
 	if (len & 1) {
-		*obuf = LIBGGIMapColor(vis, cols) << 4;
+		*obuf = _ggiMapColor(vis, cols) << 4;
 	}
 	
 	return 0;
@@ -62,14 +62,14 @@ int GGI_lin4_unpackpixels(struct ggi_visual *vis, const void *outbuf, ggi_color 
 	
 	for (i=0; i < len/2; i++) {
 		tmp = *obuf >> 4;
-		LIBGGIUnmapPixel(vis, tmp, cols++);
+		_ggiUnmapPixel(vis, tmp, cols++);
 		tmp = *(obuf++) & 0x0F;
-		LIBGGIUnmapPixel(vis, tmp, cols++);
+		_ggiUnmapPixel(vis, tmp, cols++);
 	}
 	
 	if (len & 1) {
 		tmp = *obuf >> 4;
-		LIBGGIUnmapPixel(vis, tmp, cols);
+		_ggiUnmapPixel(vis, tmp, cols);
 	}
 
 	return 0;
