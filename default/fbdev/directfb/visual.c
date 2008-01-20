@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.27 2007/06/23 16:44:50 cegger Exp $
+/* $Id: visual.c,v 1.28 2008/01/20 08:37:51 cegger Exp $
 ******************************************************************************
 
    LibGGI - fbdev directfb acceleration
@@ -147,7 +147,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	DPRINT("GGIopen for DirectFB started!\n");
 
-	priv = calloc(sizeof(struct directfb_priv), 1);
+	priv = calloc(1, sizeof(struct directfb_priv));
 	if (priv == NULL) return GGI_ENOMEM;
 
 	/* Get the global symbols that DirectFB drivers need
