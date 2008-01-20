@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2008/01/19 18:54:27 cegger Exp $
+/* $Id: visual.c,v 1.18 2008/01/20 11:39:51 cegger Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <ggi/display/linvtsw.h>
+#include <ggi/internal/ggi-module.h>
 #include <ggi/internal/ggi_debug.h>
 
 #include <string.h>
@@ -458,8 +459,9 @@ vtswitch_close(struct ggi_visual *vis)
 	DPRINT_MISC("L/vtswitch: close OK.\n");
 }
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-			const char *args, void *argptr, uint32_t *dlret)
+
+static int
+GGI_linvtsw_init(struct ggi_helper *helper, const char *args, void *argptr)
 {
 	ggi_linvtsw_arg *myargs = (ggi_linvtsw_arg *) argptr;
 	int err;
@@ -468,7 +470,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		ggPanic("Target tried to use linvtsw helper in a wrong way!\n");
 	}
 
-	DPRINT_MISC("L/vtswitch: GGIopen(%p,...) called\n", vis);
+	DPRINT_MISC("L/vtswitch: GGIopen(%p,...) called\n",
+		helper);
 
 	myargs->vtnum = -1;
 
@@ -485,7 +488,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	DPRINT_MISC("L/vtswitch: have private mutex\n");
 
 	ggLock(vt_lock);
-	err = vt_add_vis(vis, myargs);
+	err = vt_add_vis(helper->visual, myargs);
 	if (err) {
 		ggUnlock(vt_lock);
 		return err;
@@ -502,10 +505,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	
 	vthandling = *myargs;
 
-	err = vtswitch_open(vis);
+	err = vtswitch_open(helper->visual);
 	if (err) {
 		refcount--;
-		vt_del_vis(vis);
+		vt_del_vis(helper->visual);
 		ggUnlock(vt_lock);
 		return err;
 	}
@@ -517,43 +520,48 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	return 0;
 }
 
-static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
+
+static void
+GGI_linvtsw_exit(struct ggi_helper *helper)
 {
 	/* Make sure we're only called once */
-	if (refcount == 0) return 0;
+	if (refcount == 0) return;
 	
 	ggLock(vt_lock);
 	refcount--;
-	vt_del_vis(vis);
+	vt_del_vis(helper->visual);
 	if (refcount == 0) {
-		vtswitch_close(vis);
+		vtswitch_close(helper->visual);
 	}
 	ggUnlock(vt_lock);
 
-	return 0;
+	return;
 }
-		
+
+
+struct ggi_module_helper GGI_linvtsw = {
+	GG_MODULE_INIT("helper-linux-vtswitch", 0, 1, GGI_MODULE_HELPER),
+	GGI_linvtsw_init,
+	GGI_linvtsw_exit
+};
+
+static struct ggi_module_helper *_GGIdl_linvtsw[] = {
+	&GGI_linvtsw,
+	NULL
+};
 
 EXPORTFUNC
 int GGIdl_linvtsw(int func, void **funcptr);
 
 int GGIdl_linvtsw(int func, void **funcptr)
 {
-	ggifunc_open **openptr;
-	ggifunc_close **closeptr;
+	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
-	case GGIFUNC_open:
-		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
-		return 0;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return 0;
-	case GGIFUNC_close:
-		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
-		return 0;
+	case GG_DLENTRY_MODULES:
+		modulesptr = (struct ggi_module_helper ***)funcptr;
+		*modulesptr = _GGIdl_linvtsw;
+		return GGI_OK;
 	default:
 		*funcptr = NULL;
 	}

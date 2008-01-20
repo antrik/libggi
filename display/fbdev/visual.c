@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.48 2007/04/08 00:21:56 cegger Exp $
+/* $Id: visual.c,v 1.49 2008/01/20 11:39:51 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV: visual handling
@@ -275,6 +275,11 @@ static int do_cleanup(struct ggi_visual *vis)
 #endif
 		GGI_fbdev_color_free(vis);
 		GGI_fbdev_mode_reset(vis);
+	}
+
+	if (priv->module_vtswitch != NULL) {
+		ggClosePlugin(priv->module_vtswitch);
+		priv->module_vtswitch = NULL;
 	}
 
 	if (priv->kbd_inp != NULL) {
@@ -666,9 +671,11 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
 		vtswarg.novt = novt;
 
-		if (_ggiAddDL(vis, _ggiGetConfigHandle(),
-				"helper-linux-vtswitch", NULL, &vtswarg, 0)
-		    == 0) {
+		priv->module_vtswitch = ggPlugModule(libggi,
+						vis->instance.stem,
+						"helper-linux-vtswitch",
+						NULL, &vtswarg);
+		if (priv->module_vtswitch != NULL) {
 			vtnum = vtswarg.vtnum;
 			priv->doswitch = vtswarg.doswitch;
 		} else {

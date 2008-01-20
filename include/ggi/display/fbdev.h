@@ -1,4 +1,4 @@
-/* $Id: fbdev.h,v 1.14 2007/03/11 00:48:59 soyt Exp $
+/* $Id: fbdev.h,v 1.15 2008/01/20 11:39:51 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -108,6 +108,7 @@ typedef struct {
 	struct fb_fix_screeninfo orig_fix;
 
 	/* VT switching and inputs */
+	struct gg_instance *module_vtswitch;
 	int dohalt;
 	int autoswitch;
 	int switchpending;
