@@ -1,4 +1,4 @@
-/* $Id: yuv.c,v 1.3 2007/04/18 17:27:21 cegger Exp $
+/* $Id: yuv.c,v 1.4 2008/01/20 19:24:25 pekberg Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -66,7 +66,7 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 
 	/* write out the pixels */
 
-	_ggiGetPixel(vis, 0, 0, &last);
+	_ggiGetPixelNC(vis, 0, 0, &last);
 	last = ~last;	/* must be different from first pixel */
 
 	/* This is quite inefficient, gettng pixels individually and 
@@ -80,7 +80,7 @@ void _ggi_file_yuv_write(struct ggi_visual *vis)
 		ggi_pixel pix;
 		int Y;
 
-		_ggiGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 
 		if (pix != last) {
 			_ggiUnmapPixel(vis, pix, &col);

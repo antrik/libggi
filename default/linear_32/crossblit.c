@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.22 2007/05/28 11:54:39 pekberg Exp $
+/* $Id: crossblit.c,v 1.23 2008/01/20 19:24:23 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -47,7 +47,7 @@ fallback(struct ggi_visual *src, int sx, int sy, int w, int h,
 
 	DPRINT_DRAW("linear-32: fallback to slow crossblit.\n");
 
-	LIBGGIGetPixel(src, sx, sy, &cur_src);
+	_ggiGetPixelNC(src, sx, sy, &cur_src);
 	cur_src++; /* assure safe init */
 	
 	stride = LIBGGI_FB_W_STRIDE(dst);
@@ -58,7 +58,7 @@ fallback(struct ggi_visual *src, int sx, int sy, int w, int h,
 		for (x=0; x < w; x++) {
 			ggi_pixel pixel;
 
-			LIBGGIGetPixel(src, sx+x, sy, &pixel);
+			_ggiGetPixelNC(src, sx+x, sy, &pixel);
 			if (pixel != cur_src) {
 				ggi_color col;
 				LIBGGIUnmapPixel(src, pixel, &col);

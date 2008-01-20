@@ -1,4 +1,4 @@
-/* $Id: vline.c,v 1.7 2007/05/18 21:59:52 pekberg Exp $
+/* $Id: vline.c,v 1.8 2008/01/20 19:24:24 pekberg Exp $
 ******************************************************************************
 
    Generic vertical lines.
@@ -122,7 +122,7 @@ int _GGI_stubs_L1_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix;
 	}
 
@@ -146,7 +146,7 @@ int _GGI_stubs_L2_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint16_t) pix;
 	}
 
@@ -170,7 +170,7 @@ int _GGI_stubs_L3_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 		h = LIBGGI_VIRTY(vis) - y;
 
 	for (; h > 0; h--, y++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix;
@@ -197,7 +197,7 @@ int _GGI_stubs_L4_getvline(struct ggi_visual *vis, int x, int y, int h, void *bu
 	for (; h > 0; h--, y++) {
 		ggi_pixel pix;
 		
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint32_t) pix;
 	}
 

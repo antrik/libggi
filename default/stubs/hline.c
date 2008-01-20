@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.7 2007/04/04 18:45:40 ggibecka Exp $
+/* $Id: hline.c,v 1.8 2008/01/20 19:24:24 pekberg Exp $
 ******************************************************************************
 
    Generic horizontal lines.
@@ -111,7 +111,7 @@ int _GGI_stubs_L1_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void 
 	ggi_pixel pix;
 		
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix;
 	}
 
@@ -136,7 +136,7 @@ int _GGI_stubs_L1_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	if (w<0) return 0;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix;
 	}
 
@@ -149,7 +149,7 @@ int _GGI_stubs_L2_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void 
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint16_t) pix;
 	}
 
@@ -174,7 +174,7 @@ int _GGI_stubs_L2_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	if (w<0) return 0;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint16_t) pix;
 	}
 
@@ -187,7 +187,7 @@ int _GGI_stubs_L3_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void 
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix;
@@ -214,7 +214,7 @@ int _GGI_stubs_L3_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	if (w<0) return 0;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix; pix >>= 8;
 		*dest++ = (uint8_t) pix;
@@ -229,7 +229,7 @@ int _GGI_stubs_L4_gethline_nc(struct ggi_visual *vis, int x, int y, int w, void 
 	ggi_pixel pix;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint32_t) pix;
 	}
 
@@ -254,7 +254,7 @@ int _GGI_stubs_L4_gethline(struct ggi_visual *vis, int x, int y, int w, void *bu
 	if (w<0) return 0;
 
 	for (; w > 0; w--, x++) {
-		LIBGGIGetPixel(vis, x, y, &pix);
+		_ggiGetPixelNC(vis, x, y, &pix);
 		*dest++ = (uint32_t) pix;
 	}
 
