@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2007/04/25 00:28:24 pekberg Exp $
+/* $Id: mode.c,v 1.26 2008/01/21 22:56:46 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -163,8 +163,7 @@ static int do_setmode(struct ggi_visual *vis)
 	/* load libraries */
 
 	for (id=1; GGI_palemu_getapi(vis, id, libname, libargs) == 0; id++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
-				libname, libargs, NULL);
+		err = _ggiOpenDL(vis, libggi->config, libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr, "display-palemu: Error opening "
 				" %s (%s) library.\n", libname, libargs);

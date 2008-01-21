@@ -1,4 +1,4 @@
-/* $Id: init.c,v 1.74 2007/12/17 23:00:27 cegger Exp $
+/* $Id: init.c,v 1.75 2008/01/21 22:56:53 cegger Exp $
 ******************************************************************************
 
    LibGGI initialization.
@@ -99,18 +99,6 @@ void _ggiExitBuiltins(void);
 		   strlen(confdir) + 1 + strlen(GGICONFFILE) + 2)
 #define CONF_FORMAT CONF_STUB "%s/%s\n"
 #endif /* PIC */
-
-
-/* 
- * Returns the handle of the config file
- */
-
-
-struct gg_config*
-_ggiGetConfigHandle(void)
-{
-	return ggi.config;
-}
 
 
 /* 

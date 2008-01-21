@@ -1,4 +1,4 @@
-/* $Id: ggi.h,v 1.10 2008/01/20 19:26:46 pekberg Exp $
+/* $Id: ggi.h,v 1.11 2008/01/21 22:56:53 cegger Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -95,9 +95,6 @@ GGIAPIFUNC int _ggiOpenDL(struct ggi_visual *vis,
 			const char *api, const char *args, void *argptr);
 void _ggiExitDL(struct ggi_visual *vis, ggi_dlhandle_l * lib);
 void _ggiZapDL(struct ggi_visual *vis, ggi_dlhandle_l ** lib);
-
-/* init.c */
-GGIAPIFUNC struct gg_config * _ggiGetConfigHandle(void);
 
 /* internal.c */
 GGIAPIFUNC int _ggi_countbits(uint32_t val);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2008/01/20 19:26:41 pekberg Exp $
+/* $Id: mode.c,v 1.18 2008/01/21 22:56:48 cegger Exp $
 ******************************************************************************
 
    TELE target.
@@ -212,8 +212,7 @@ int GGI_tele_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* load libraries */
 	for (id=1; 0==GGI_tele_getapi(vis, id, libname, libargs); id++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
-				libname, libargs, NULL);
+		err = _ggiOpenDL(vis, libggi->config, libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr,"display-tele: Can't open the "
 				"%s (%s) library.\n", libname, libargs);

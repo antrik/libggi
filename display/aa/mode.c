@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2007/03/11 00:48:57 soyt Exp $
+/* $Id: mode.c,v 1.26 2008/01/21 22:56:44 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -81,8 +81,7 @@ static int _GGIdomode(struct ggi_visual *vis)
 	LIBGGI_PAL(vis)->clut.size = 256;	
 
 	for(id=1;0==GGI_aa_getapi(vis,id,sugname,args);id++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
-				sugname, args, NULL);
+		err = _ggiOpenDL(vis, libggi->config, sugname, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-aa: Can't open the %s (%s) library.\n",
 				sugname,args);

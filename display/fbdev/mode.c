@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2007/03/11 00:48:57 soyt Exp $
+/* $Id: mode.c,v 1.35 2008/01/21 22:56:44 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -564,7 +564,7 @@ static int do_setmode(struct ggi_visual *vis, struct fb_var_screeninfo *var)
 	vis->accelactive = 0;   /* new changed() traversal for renderers */
 
 	for (id=1; GGI_fbdev_getapi(vis, id, libname, libargs) == 0; id++) {
-		if (_ggiOpenDL(vis, _ggiGetConfigHandle(), libname, libargs, NULL)) {
+		if (_ggiOpenDL(vis, libggi->config, libname, libargs, NULL)) {
 			DPRINT_LIBS("display-fbdev: Error opening the "
 				       "%s (%s) library.\n", libname, libargs);
 			if (id < 4) {

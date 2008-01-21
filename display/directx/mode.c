@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.45 2007/03/11 00:48:57 soyt Exp $
+/* $Id: mode.c,v 1.46 2008/01/21 22:56:44 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -425,7 +425,7 @@ GGI_directx_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 	if (!compatible) {
 		for (id = 1; !GGI_directx_getapi(vis, id, lib, args); id++) {
-			int rc = _ggiOpenDL(vis, _ggiGetConfigHandle(),
+			int rc = _ggiOpenDL(vis, libggi->config,
 					lib, args, NULL);
 			if (rc != 0) {
 				fprintf(stderr,

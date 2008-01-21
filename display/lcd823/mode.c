@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2007/03/04 18:26:43 soyt Exp $
+/* $Id: mode.c,v 1.16 2008/01/21 22:56:46 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -137,7 +137,7 @@ static int do_setmode(struct ggi_visual *vis)
 
 	_ggiZapMode(vis, 0);
 	for (id=1; GGI_lcd823_getapi(vis, id, libname, libargs) == 0; id++) {
-		if (_ggiOpenDL(vis, _ggiGetConfigHandle(), libname, libargs, NULL) != 0) {
+		if (_ggiOpenDL(vis, libggi->config, libname, libargs, NULL) != 0) {
 			fprintf(stderr,"display-lcd823: Error opening the "
 				"%s (%s) library.\n", libname, libargs);
 			return GGI_EFATAL;

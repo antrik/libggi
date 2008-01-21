@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2007/03/14 23:01:18 cegger Exp $
+/* $Id: mode.c,v 1.36 2008/01/21 22:56:46 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -229,8 +229,7 @@ static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 	DPRINT("_GGIdomode: got framebuffer memory\n");
 
 	for(i = 1; 0 == GGI_memory_getapi(vis, i, name, args); i++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
-				name, args, NULL);
+		err = _ggiOpenDL(vis, libggi->config, name, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-memory: Can't open the "
 				"%s (%s) library.\n", name, args);

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.23 2008/01/21 22:56:48 cegger Exp $
 ******************************************************************************
 
    Terminfo target
@@ -124,7 +124,7 @@ static int _GGI_terminfo_loadstubs(struct ggi_visual *vis)
 	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 
 	for (i = 1; GGI_terminfo_getapi(vis, i, sugname, args)==0; i++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), sugname, args, NULL);
+		err = _ggiOpenDL(vis, libggi->config, sugname, args, NULL);
 		if (err) {
 			fprintf(stderr, "display-terminfo: Unable to load an "
 					"appropriate library for %s (%s)\n", sugname,

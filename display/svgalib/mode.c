@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.32 2008/01/20 19:26:40 pekberg Exp $
+/* $Id: mode.c,v 1.33 2008/01/21 22:56:47 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -269,8 +269,7 @@ int GGI_svga_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	_ggiZapMode(vis, 0);
 
 	for(id=1;0==GGI_svga_getapi(vis,id,sugname,args);id++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(),
-				sugname, args, NULL);
+		err = _ggiOpenDL(vis, libggi->config, sugname, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-svga: "
 				"Can't open the %s (%s) library.\n",

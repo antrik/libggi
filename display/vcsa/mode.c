@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.17 2008/01/20 19:26:42 pekberg Exp $
+/* $Id: mode.c,v 1.18 2008/01/21 22:56:52 cegger Exp $
 ******************************************************************************
 
    Display-VCSA: mode management
@@ -77,7 +77,7 @@ int GGI_vcsa_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* load API libraries */
 	for (id=1; GGI_vcsa_getapi(vis, id, libname, libargs) == 0; id++) {
-		err = _ggiOpenDL(vis, _ggiGetConfigHandle(), libname, libargs, NULL);
+		err = _ggiOpenDL(vis, libggi->config, libname, libargs, NULL);
 		if (err) {
 			fprintf(stderr,"display-vcsa: Error opening the "
 				"%s (%s) library.\n", libname, libargs);
