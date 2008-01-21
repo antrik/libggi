@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.31 2007/06/21 08:09:16 cegger Exp $
+/* $Id: vidmode.c,v 1.32 2008/01/21 23:10:41 cegger Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -470,46 +470,6 @@ static int ggi_xvidmode_restore_mode(struct ggi_visual * vis)
 	return GGI_OK;
 }
 
-static int GGIopen(struct ggi_visual * vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32_t * dlret)
-{
-	ggi_x_priv *priv;
-	int x, y;
-
-	priv = GGIX_PRIV(vis);
-
-	if (!XF86VidModeQueryVersion(priv->disp, &x, &y)) {
-		DPRINT_MODE("\tXF86VidModeQueryVersion failed\n");
-		return GGI_ENOFUNC;
-	}
-	DPRINT_MODE("XFree86 VideoMode Extension version %d.%d\n", x, y);
-
-	priv->ok_to_resize = 0;
-	ggi_xvidmode_getmodelist(vis);
-
-	/*
-	   overload mode list functions
-	 */
-
-	priv->mlfuncs.getlist = ggi_xvidmode_getmodelist;
-	priv->mlfuncs.restore = ggi_xvidmode_restore_mode;
-	priv->mlfuncs.enter = ggi_xvidmode_enter_mode;
-	priv->mlfuncs.validate = ggi_xvidmode_validate_mode;
-
-
-	*dlret = 0;
-	return GGI_OK;
-}
-
-static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
-{
-	ggi_xvidmode_restore_mode(vis);
-	ggi_xvidmode_cleanup(vis);
-
-	return GGI_OK;
-}
-
-
 static int
 GGI_helper_x_vidmode_setup(struct ggi_helper *helper,
 				const char *args, void *argptr)
@@ -564,22 +524,9 @@ EXPORTFUNC int GGIdl_helper_x_vidmode(int func, void **funcptr);
 
 int GGIdl_helper_x_vidmode(int func, void **funcptr)
 {
-	ggifunc_open **openptr;
-	ggifunc_close **closeptr;
 	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
-	case GGIFUNC_open:
-		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
-		return GGI_OK;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return GGI_OK;
-	case GGIFUNC_close:
-		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
-		return GGI_OK;
 	case GG_DLENTRY_MODULES:
 		modulesptr = (struct ggi_module_helper ***)funcptr;
 		*modulesptr = _GGIdl_helper_x_vidmode;

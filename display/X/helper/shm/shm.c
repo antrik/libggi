@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.55 2007/06/20 22:15:07 cegger Exp $
+/* $Id: shm.c,v 1.56 2008/01/21 23:10:12 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -361,146 +361,6 @@ err0:
 	return err;
 }
 
-static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32_t *dlret)
-{
-	ggi_x_priv *priv;
-	int major, minor;
-	Bool pixmaps;
-
-	priv = GGIX_PRIV(vis);
-
-	if (XShmQueryExtension(priv->disp) != True) return GGI_ENOFUNC;
-	if (XShmQueryVersion(priv->disp, &major, &minor, &pixmaps)
-	    != True) return GGI_ENOFUNC;
-
-	DPRINT_LIBS("X: MIT-SHM: SHM version %i.%i %s pixmap support\n",
-		       major, minor, pixmaps ? "with" : "without");
-
-	priv->createfb = _ggi_xshm_create_ximage;
-	priv->freefb = _ggi_xshm_free_ximage;
-
-	*dlret = 0;
-	return GGI_OK;
-}
-
-static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
-{
-	ggi_x_priv *priv;
-	priv = GGIX_PRIV(vis);
-
-	if (priv && priv->freefb) priv->freefb(vis);
-	priv->freefb = NULL;
-
-	/* Hack.  close the display now, because otherwise callback segv's */
-
-	XSync(priv->disp,0);
-
-	if (priv->inp)
-		ggClosePlugin(priv->inp);
-	priv->inp = NULL;
-
-	if (priv->slave) {
-		ggiClose(priv->slave->instance.stem);
-	}
-	priv->slave = NULL;
-
-	if (priv->freefb) priv->freefb(vis);
-
-	if (priv->win != priv->parentwin) {
-		if (priv->win != 0) XDestroyWindow(priv->disp,priv->win);
-	}
-	if (!priv->parentwin) goto skip;
-
-	/* Do special cleanup for -inwin and root windows */
-	if ( ! priv->ok_to_resize ) {
-		unsigned int dummy;
-		Window root;
-		int screen;
-		XSetWindowAttributes wa;
-
-		screen = priv->vilist[priv->viidx].vi->screen;
-		XGetGeometry(priv->disp, priv->parentwin, &root, (int *)&dummy,
-			     (int *)&dummy, &dummy, &dummy, &dummy, &dummy);
-		if (priv->parentwin == root) 
-			XSetWindowColormap(priv->disp, priv->parentwin,
-					   DefaultColormap(priv->disp,screen));
-		wa.cursor = priv->oldcursor;
-		XChangeWindowAttributes(priv->disp, priv->parentwin,
-					CWCursor, &wa);
-	} else {
-		XDestroyWindow(priv->disp, priv->parentwin);
-	}
-
-skip:
-	/* BIG UGLY HACK!!!
-	 *
-	 * helper-x-shm is NOT responsible for
-	 * cleaning up things from others, because
-	 * things get freed multiple times...
-	 * TODO: Only and only cleanup stuff XShm initiated.
-	 */
-
-	priv->shmhack_free_cmaps(vis);
-
-	DPRINT_MISC("XSHM: GGIclose: free cursor\n");
-	if (priv->cursor != None) {
-		XFreeCursor(priv->disp,priv->cursor);
-		priv->cursor = None;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free textfont\n");
-	if (priv->textfont != None) {
-		XFreeFont(priv->disp, priv->textfont);
-		priv->textfont = None;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free fontimg\n");
-	if (priv->fontimg) {
-		XDestroyImage(priv->fontimg);
-		priv->fontimg = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free visual\n");
-	if (priv->visual) {
-		XFree(priv->visual);
-		priv->visual = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free buflist\n");
-	if (priv->buflist) {
-		XFree(priv->buflist);
-		priv->buflist = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIClose: close display\n");
-	if (priv->disp)	{
-		XCloseDisplay(priv->disp);
-		priv->disp = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free X visual list\n");
-	if (priv->vilist) {
-		free(priv->vilist);
-		priv->vilist = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free mode list\n");
-	if (priv->modes) {
-		free(priv->modes);
-		priv->modes = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: free opmansync\n");
-	if (priv->opmansync) {
-		free(priv->opmansync);
-		priv->opmansync = NULL;
-	}
-
-	DPRINT_MISC("XSHM: GGIclose: done\n");
-	return 0;
-}
-
 static int
 GGI_helper_x_shm_setup(struct ggi_helper *helper,
 			const char *args, void *argptr)
@@ -563,22 +423,9 @@ int GGIdl_helper_x_shm(int func, void **funcptr);
 
 int GGIdl_helper_x_shm(int func, void **funcptr)
 {
-	ggifunc_open **openptr;
-	ggifunc_close **closeptr;
 	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
-	case GGIFUNC_open:
-		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
-		return 0;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return 0;
-	case GGIFUNC_close:
-		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
-		return 0;
 	case GG_DLENTRY_MODULES:
 		modulesptr = (struct ggi_module_helper ***)funcptr;
 		*modulesptr = _GGIdl_helper_x_shm;

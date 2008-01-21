@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.33 2007/06/21 07:51:09 cegger Exp $
+/* $Id: dga.c,v 1.34 2008/01/21 23:09:10 cegger Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -366,60 +366,6 @@ static int ggi_xdga_makerenderer(struct ggi_visual * vis)
 
 #endif
 
-static int GGIopen(struct ggi_visual * vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32_t * dlret)
-{
-	ggi_x_priv *priv;
-	int dgafeat, i, j;
-
-	priv = GGIX_PRIV(vis);
-
-	XF86DGAQueryVersion(priv->disp, &i, &j);
-	DPRINT("display-DGA version %d.%d\n", i, j);
-	if (i < 1) {
-		fprintf(stderr, "Your XF86DGA is too old (%d.%d).\n", i,
-			j);
-		return GGI_ENODEVICE;
-	}
-
-	XF86DGAQueryDirectVideo(priv->disp, DefaultScreen(priv->disp),
-				&dgafeat);
-	if (!(dgafeat & XF86DGADirectPresent)) {
-		fprintf(stderr,
-			"helper-x-dga: No direct video capability!\n");
-		return GGI_ENODEVICE;
-	}
-#if 0
-	priv->createfb = ggi_xdga_mmap;
-	priv->createdrawable = ggi_xdga_makerenderer;
-#endif
-	priv->ok_to_resize = 0;
-
-	ggi_xdga_getmodelist(vis);
-
-	/* provide mode handling */
-	priv->mlfuncs.validate = ggi_xdga_validate_mode;
-	priv->mlfuncs.enter = ggi_xdga_enter_mode;
-	priv->mlfuncs.getlist = ggi_xdga_getmodelist;
-	priv->mlfuncs.restore = ggi_xdga_restore_mode;
-
-	/* TODO: if we can open the frame buffer or /dev/mem,
-	 * then we should override x drawing primitives.. */
-
-	*dlret = 0;
-	return GGI_OK;
-}
-
-static int GGIclose(struct ggi_visual * vis, struct ggi_dlhandle *dlh)
-{
-	ggi_x_priv *priv = GGIX_PRIV(vis);
-
-	if (priv->modes_num > 0)
-		XFree(priv->modes_priv);
-
-	return GGI_OK;
-}
-
 
 static int
 GGI_helper_x_dga_setup(struct ggi_helper *helper,
@@ -490,22 +436,9 @@ EXPORTFUNC int GGIdl_helper_x_dga(int func, void **funcptr);
 
 int GGIdl_helper_x_dga(int func, void **funcptr)
 {
-	ggifunc_open **openptr;
-	ggifunc_close **closeptr;
 	struct ggi_module_helper ***modulesptr;
 
 	switch (func) {
-	case GGIFUNC_open:
-		openptr = (ggifunc_open **)funcptr;
-		*openptr = GGIopen;
-		return GGI_OK;
-	case GGIFUNC_exit:
-		*funcptr = NULL;
-		return GGI_OK;
-	case GGIFUNC_close:
-		closeptr = (ggifunc_close **)funcptr;
-		*closeptr = GGIclose;
-		return GGI_OK;
 	case GG_DLENTRY_MODULES:
 		modulesptr = (struct ggi_module_helper ***)funcptr;
 		*modulesptr = _GGIdl_helper_x_dga;
