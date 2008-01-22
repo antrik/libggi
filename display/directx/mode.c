@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.46 2008/01/21 22:56:44 cegger Exp $
+/* $Id: mode.c,v 1.47 2008/01/22 08:20:49 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -317,7 +317,7 @@ compatible_mode(struct ggi_visual *vis, ggi_mode *mode)
 
 	if (mode->frames != LIBGGI_MODE(vis)->frames)
 		return 0;
-	if (mode->graphtype != LIBGGI_MODE(vis)->graphtype)
+	if (mode->graphtype != LIBGGI_GT(vis))
 		return 0;
 	if (memcmp(&mode->dpp, &LIBGGI_MODE(vis)->dpp, sizeof(ggi_coord)))
 		return 0;
