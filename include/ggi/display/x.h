@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.38 2008/01/20 19:26:45 pekberg Exp $
+/* $Id: x.h,v 1.39 2008/01/30 21:30:26 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -38,6 +38,29 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+
+/* List of supported X extension (implemented via helpers).
+ * The order the extension names are stored is very important.
+ * The offset in this array must match the bit offset
+ * in the ggi_x_priv extension flag.
+ */
+static const char *ggi_x_extensions_names[] = 
+{
+	"MIT-SHM",                        /* X11/extensions/shmstr.h     SHM-NAME          */
+	"DOUBLE-BUFFER",                  /* X11/extensions/Xdbeproto.h  DBE_PROTOCOL_NAME */
+	"XFree86-DGA",                    /* X11/extensions/xf86dgastr.h XF86DGANAME       */
+	"Extended-Visual-Information",    /* X11/extensions/XEVIstr.h    EVINAME           */
+	"XFree86-VidModeExtension",       /* X11/extensions/xf86vmstr.h  XF86VIDMODENAME   */
+	NULL
+	/* Next to come : RANDR */
+};
+
+/* X extension flags */
+#define GGI_X_USE_SHM		1
+#define GGI_X_USE_DBE		2
+#define GGI_X_USE_DGA		4
+#define GGI_X_USE_EVI		8
+#define GGI_X_USE_VIDMODE	16
 
 /* These may later be moved into an improved modelist.inc to allow
  * targets that have more then one option for getting modelists
@@ -105,12 +128,7 @@ typedef struct ggi_x_priv {
 	XPixmapFormatValues     *buflist;	/* master handle for XFree() */
 	int                     nbufs;
 
-	unsigned int		use_Xext;	/* Extensions available/used */
-#define GGI_X_USE_SHM		1
-#define GGI_X_USE_DBE		2
-#define GGI_X_USE_DGA		4
-#define GGI_X_USE_EVI		8
-#define GGI_X_USE_VIDMODE	16
+	unsigned int		use_Xext;	/* Extensions available/used (see above) */
 
 	struct gg_plugin *helper_shm;
 	struct gg_plugin *helper_dbe;

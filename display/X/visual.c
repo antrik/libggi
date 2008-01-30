@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.77 2007/06/21 22:03:50 cegger Exp $
+/* $Id: visual.c,v 1.78 2008/01/30 21:30:25 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -76,7 +76,9 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
+/*
+ * Check if the user wants to use the x target
+ */ 
 static int GGI_X_getapi(struct ggi_visual *vis,int num,
 			char *apiname ,char *arguments)
 {
@@ -95,28 +97,34 @@ static int GGI_X_getapi(struct ggi_visual *vis,int num,
 	return GGI_ENOMATCH;
 }
 
+/*
+ * Update GC (graphical context) w/r mask value 
+ */
 void GGI_X_gcchanged(struct ggi_visual *vis, int mask)
 {
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
-	if (!priv->slave) goto noslave;
-	if ((mask & GGI_GCCHANGED_CLIP)) {
-		ggiSetGCClipping(priv->slave->instance.stem,
-				 LIBGGI_GC(vis)->cliptl.x,
-				 LIBGGI_GC(vis)->cliptl.y, 
-				 LIBGGI_GC(vis)->clipbr.x,
-				 LIBGGI_GC(vis)->clipbr.y);
-	}
-	if ((mask & GGI_GCCHANGED_FG)) {
-		ggiSetGCForeground(priv->slave->instance.stem, LIBGGI_GC_FGCOLOR(vis));
-	}
-	if ((mask & GGI_GCCHANGED_BG)) {
-		ggiSetGCBackground(priv->slave->instance.stem, LIBGGI_GC_BGCOLOR(vis));
-	}
+	/* Handle slave */
+	if (priv->slave)
+	{
+		if ((mask & GGI_GCCHANGED_CLIP)) {
+			ggiSetGCClipping(priv->slave->instance.stem,
+					 LIBGGI_GC(vis)->cliptl.x,
+					 LIBGGI_GC(vis)->cliptl.y, 
+					 LIBGGI_GC(vis)->clipbr.x,
+					 LIBGGI_GC(vis)->clipbr.y);
+		}
+		if ((mask & GGI_GCCHANGED_FG)) {
+			ggiSetGCForeground(priv->slave->instance.stem, LIBGGI_GC_FGCOLOR(vis));
+		}
+		if ((mask & GGI_GCCHANGED_BG)) {
+			ggiSetGCBackground(priv->slave->instance.stem, LIBGGI_GC_BGCOLOR(vis));
+		}
 
-	if (priv->drawable == None) return; /* No Xlib clipping */
-
- noslave:
+		if (priv->drawable == None) return; /* No Xlib clipping */
+	}
+	
+	/* No slave/standard case */
 	if ((mask & GGI_GCCHANGED_CLIP)) {
 		GGI_X_LOCK_XLIB(vis);
 		_ggi_x_set_xclip(vis, priv->disp, priv->gc,
@@ -174,6 +182,9 @@ static void GGI_X_unlock_xlib(struct ggi_visual *vis)
 	ggUnlock(priv->xliblock);
 }
 
+/*
+ * Close X display
+ */
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv;
@@ -304,19 +315,21 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 			      ggi_mode *sug,
 			      ggi_x_priv *priv );
 
-
+/*
+ * Open X target
+ */
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		   const char *args, void *argptr, uint32_t *dlret)
 
 {
-	int err, tmp1, tmp2, tmp3;  /* Return value, scratch variables */
+	int err, i, tmp1, tmp2, tmp3;  /* Return value, scratch variables */
 	XVisualInfo	vi_template;
 	long		vi_mask;
 	gg_option 	options[NUM_OPTS];
 	ggi_x_priv 	*priv;
 	Display 	*disp;
 	void 		*lock;
-
+	Bool        xerr;
 	memcpy(options, optlist, sizeof(options));
 
 	if (args) {
@@ -333,7 +346,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	LIBGGI_GC(vis) = calloc(1, sizeof(ggi_gc));
 	if (LIBGGI_GC(vis) == NULL) goto out;
 	priv = calloc(1, sizeof(ggi_x_priv));
-	if (priv == NULL) goto out;
+	if (priv == NULL) goto out; /* Allocation failed */
 	LIBGGI_PRIVATE(vis) = priv;
 	vis->gamma = &(priv->gamma);
 	
@@ -375,23 +388,19 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush_cmap = _ggi_x_flush_cmap;
 
 	/* See what extensions are available on this display. */
-#define GGI_X_CHECK_XEXT(extname, flag)					\
-	XQueryExtension(disp, extname, &tmp1, &tmp2, &tmp3);		\
-	if (tmp1) {							\
-		DPRINT_MISC("%s X extension found\n", extname);		\
-		priv->use_Xext |= flag;					\
-	} else {							\
-		DPRINT_MISC("no %s extension\n", extname);		\
+	for(i=0; ggi_x_extensions_names[i]!=NULL; ++i)
+	{
+		xerr = XQueryExtension(disp, ggi_x_extensions_names[i], &tmp1, &tmp2, &tmp3);
+		if (tmp1 && (xerr == True)) {
+			DPRINT_MISC("%s X extension found\n", ggi_x_extensions_names[i]);
+			priv->use_Xext |= 1 << i;
+		} else {
+			DPRINT_MISC("no %s extension\n", ggi_x_extensions_names[i]);
+		}
 	}
-	
-	GGI_X_CHECK_XEXT("Extended-Visual-Information",	GGI_X_USE_EVI);
-	GGI_X_CHECK_XEXT("MIT-SHM",			GGI_X_USE_SHM);
-	GGI_X_CHECK_XEXT("DOUBLE-BUFFER",		GGI_X_USE_DBE);
-	GGI_X_CHECK_XEXT("XFree86-DGA",			GGI_X_USE_DGA);
-	GGI_X_CHECK_XEXT("XFree86-VidModeExtension",	GGI_X_USE_VIDMODE);
-#undef  GGI_X_CHECK_XEXT
 
 	if (options[OPT_FULLSCREEN].result[0] == 'n') {
+		/* Don't use DGA and VIDMODE if fullscreen is not requested */
 		priv->use_Xext &= ~GGI_X_USE_DGA;
 		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
 	} else {
@@ -408,7 +417,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->use_Xext &= ~GGI_X_USE_DGA;
 	if (options[OPT_NOVIDMODE].result[0] != 'n') 
 		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
-
+	/* DGA and Vidmode are exclusive to each other
+	 * Some cards don't handle DGA (namely nvidia).
+	 * And it seems this extension is less and less used.
+	 * This case is handled below.
+	 */
+	
 	/* Get a list of possibly compatible X11 visuals */
 	memset(&vi_template, 0, sizeof(XVisualInfo));
 	vi_mask = VisualNoMask;
@@ -419,25 +433,29 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	    options[OPT_INWIN].result[3] != 't' ||
 	    options[OPT_INWIN].result[4] != '\0'
 	    ) {
-		/* DGA and Vidmode are exclusive to each other
-		 * Most people prefer DGA over VidMode,
-		 * when both available. This is handled below.
-		 */
 
 		priv->ok_to_resize = 1;
 		if (options[OPT_INWIN].result[0] != 'n') {
+			/* We will be using an already existing window */
 			XWindowAttributes wa;
 			priv->parentwin = priv->win =
 				strtol(options[OPT_INWIN].result, NULL, 0);
 			DPRINT_MISC("X: using window id 0x%x\n", 
 				       priv->parentwin);
+
+			/* Get window attributes */
 			vi_mask = VisualScreenMask;
 			XGetWindowAttributes(priv->disp, priv->parentwin, &wa);
 			vi_template.screen = XScreenNumberOfScreen(wa.screen);
+
+			/* The windows is not resizable */
 			priv->ok_to_resize = 0;
 		}
 	} else {
+		/* We will be using the root window */
 		XWindowAttributes wa;
+		
+		/* Was the screen explicitely specified? */
 		if (options[OPT_SCREEN].result[0] != 'n') {
 			vi_template.screen =
 				strtoul(options[OPT_SCREEN].result, NULL, 0);
@@ -450,12 +468,15 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		XGetWindowAttributes(priv->disp, priv->win, &wa);
 		vi_mask = VisualIDMask | VisualScreenMask;
 		vi_template.visualid = XVisualIDFromVisual(wa.visual);
-		priv->ok_to_resize = 0;
+		priv->ok_to_resize = 0; /* The root window is not resizable */
 
 		DPRINT_MISC("X: using root window of screen %u\n", 
 			       vi_template.screen);
 	}
 
+	/*
+	 * Todo : add a hook to get the visual info list (usefull for some target, and ggigl) 
+	 */
 	priv->visual = XGetVisualInfo(priv->disp, vi_mask, 
 				      &vi_template, &priv->nvisuals);
 	if (priv->visual == NULL || priv->nvisuals <= 0) {
@@ -498,6 +519,12 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->cm_adapt = _GGI_X_checkmode_adapt;
 	priv->cm_adjust = _GGI_X_checkmode_adjust;
 
+	/*
+	 * TODO : find a way to automate this in order to ease the add of a 
+	 *        new helper (and make it more readable).
+	 *
+	 */
+	
 	/* Try the extensions that haven't been disabled. */
 #define GGI_X_TEST_XEXT(mod, flag, helper, abort_label)		\
 	if (!(priv->use_Xext & flag)) goto abort_label;		\
@@ -548,6 +575,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
  nodbe:
 	priv->createdrawable = GGI_X_create_window_drawable;
 
+	/* Use no intermediate drawable? */
 	if (options[OPT_NOBUFFER].result[0] != 'n') {
 		priv->createfb = NULL;
 		priv->freefb = NULL;
@@ -587,6 +615,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->createdrawable = NULL;
 	}
 
+	/* Load default font */
 	if (priv->createdrawable != NULL)
 	{
 		priv->textfont = XLoadQueryFont(disp, "fixed");
@@ -599,6 +628,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		}
     }
 
+	/* Plug input */
 	if (tolower((uint8_t)options[OPT_NOINPUT].result[0]) == 'n') {
 		struct gii_inputxwin_arg _args;
 		struct gg_instance *inp = NULL;
