@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.108 2008/01/17 21:49:10 pekberg Exp $
+/* $Id: rfb.c,v 1.109 2008/02/02 17:33:27 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -38,6 +38,15 @@
 #endif
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
+#endif
+
+#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
+# include <windows.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
 #endif
 
 #include <sys/types.h>
@@ -1818,7 +1827,13 @@ GGI_vnc_new_client(void *arg)
 {
 	struct ggi_visual *vis = arg;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+#ifdef HAVE_GETADDRINFO
+	struct sockaddr_storage sa;
+	char address[100];
+	char service[50];
+#else
 	struct sockaddr_in sa;
+#endif
 #ifdef HAVE_SOCKLEN_T
 	socklen_t sa_len = sizeof(sa);
 #else
@@ -1832,7 +1847,17 @@ GGI_vnc_new_client(void *arg)
 		return;
 	}
 
-#ifdef HAVE_ARPA_INET_H
+#if defined(HAVE_GETADDRINFO)
+	if (getnameinfo((struct sockaddr *)&sa, sa_len,
+		address, sizeof(address), service, sizeof(service),
+		NI_NUMERICHOST | NI_NUMERICSERV) != 0)
+	{
+		ggstrlcpy(address, "???", sizeof(address));
+		ggstrlcpy(service, "???", sizeof(service));
+	}
+	DPRINT("fd %d connecting from %s service %s\n",
+		cfd, address, service);
+#elif defined(HAVE_ARPA_INET_H)
 	DPRINT("fd %d connecting from %s:%d\n",
 		cfd, inet_ntoa(sa.sin_addr),
 		ntohs(sa.sin_port));
