@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.109 2008/02/02 17:33:27 pekberg Exp $
+/* $Id: rfb.c,v 1.110 2008/02/03 11:04:51 mooz Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -58,6 +58,9 @@
 #endif
 #ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
+#endif
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
 #endif
 
 #include <errno.h>
