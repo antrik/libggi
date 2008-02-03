@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.39 2008/01/30 21:30:26 mooz Exp $
+/* $Id: x.h,v 1.40 2008/02/03 17:31:30 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -44,23 +44,27 @@
  * The offset in this array must match the bit offset
  * in the ggi_x_priv extension flag.
  */
-static const char *ggi_x_extensions_names[] = 
-{
-	"MIT-SHM",                        /* X11/extensions/shmstr.h     SHM-NAME          */
-	"DOUBLE-BUFFER",                  /* X11/extensions/Xdbeproto.h  DBE_PROTOCOL_NAME */
-	"XFree86-DGA",                    /* X11/extensions/xf86dgastr.h XF86DGANAME       */
-	"Extended-Visual-Information",    /* X11/extensions/XEVIstr.h    EVINAME           */
-	"XFree86-VidModeExtension",       /* X11/extensions/xf86vmstr.h  XF86VIDMODENAME   */
-	NULL
-	/* Next to come : RANDR */
-};
 
-/* X extension flags */
-#define GGI_X_USE_SHM		1
-#define GGI_X_USE_DBE		2
-#define GGI_X_USE_DGA		4
-#define GGI_X_USE_EVI		8
-#define GGI_X_USE_VIDMODE	16
+/* Corresponding index in both extension and helper arrays.
+ * This is also the bit number in the X entension flag. */
+#define GGI_X_SHM      0
+#define GGI_X_DBE      1 
+#define GGI_X_DGA      2
+#define GGI_X_EVI      3
+#define GGI_X_VIDMODE  4 
+/* Number of X helpers */
+#define GGI_X_HELPER_COUNT 5
+
+/* X extension flags bit mask */
+#define GGI_X_USE_SHM		(1 << GGI_X_SHM)
+#define GGI_X_USE_DBE		(1 << GGI_X_DBE)
+#define GGI_X_USE_DGA		(1 << GGI_X_DGA)
+#define GGI_X_USE_EVI		(1 << GGI_X_EVI)
+#define GGI_X_USE_VIDMODE	(1 << GGI_X_VIDMODE)
+
+/* See visual.c for values */
+const char *ggi_x_extensions_name[GGI_X_HELPER_COUNT];
+const char *ggi_x_helper_name[GGI_X_HELPER_COUNT];
 
 /* These may later be moved into an improved modelist.inc to allow
  * targets that have more then one option for getting modelists
@@ -130,11 +134,7 @@ typedef struct ggi_x_priv {
 
 	unsigned int		use_Xext;	/* Extensions available/used (see above) */
 
-	struct gg_plugin *helper_shm;
-	struct gg_plugin *helper_dbe;
-	struct gg_plugin *helper_dga;
-	struct gg_plugin *helper_evi;
-	struct gg_plugin *helper_vidmode;
+	struct gg_plugin *helper[GGI_X_HELPER_COUNT]; /* Extension helpers */
 
 	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
 	int         activecmap;
@@ -200,7 +200,7 @@ typedef struct ggi_x_priv {
 
 	/* These are here to support early setting of window titles
 	 */
-	const char *windowtitle,*icontitle;
+	char *windowtitle,*icontitle;
 	
 	/* Remember the y offset of the window when pageflipping.
 	 * Needed for translating mouse events

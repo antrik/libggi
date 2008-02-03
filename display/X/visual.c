@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.78 2008/01/30 21:30:25 mooz Exp $
+/* $Id: visual.c,v 1.79 2008/02/03 17:31:29 mooz Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -39,6 +39,26 @@
 #include <ggi/gii.h>
 #include <ggi/internal/gg_replace.h>
 
+/* X extension names */
+const char *ggi_x_extensions_name[GGI_X_HELPER_COUNT] = 
+{
+	"MIT-SHM",                        /* X11/extensions/shmstr.h     SHM-NAME          */
+	"DOUBLE-BUFFER",                  /* X11/extensions/Xdbeproto.h  DBE_PROTOCOL_NAME */
+	"XFree86-DGA",                    /* X11/extensions/xf86dgastr.h XF86DGANAME       */
+	"Extended-Visual-Information",    /* X11/extensions/XEVIstr.h    EVINAME           */
+	"XFree86-VidModeExtension"        /* X11/extensions/xf86vmstr.h  XF86VIDMODENAME   */
+	/* Next to come : RANDR, Render, etc... */
+};
+
+/* Helper names */
+const char *ggi_x_helper_name[GGI_X_HELPER_COUNT] = 
+{
+	"helper-x-shm",
+	"helper-x-dbe",
+	"helper-x-dga",
+	"helper-x-evi",
+	"helper-x-vidmode"
+};
 
 /* Options honored by this target */
 static const gg_option optlist[] =
@@ -188,6 +208,7 @@ static void GGI_X_unlock_xlib(struct ggi_visual *vis)
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
 	ggi_x_priv *priv;
+	int        i;
 	priv = GGIX_PRIV(vis);
 
 	DPRINT_MISC("GGIclose(%p, %p) called\n", vis, dlh);
@@ -197,22 +218,15 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
-	if (priv->helper_shm)
-		ggClosePlugin(priv->helper_shm);
-	priv->helper_shm = NULL;
-	if (priv->helper_dbe)
-		ggClosePlugin(priv->helper_dbe);
-	priv->helper_dbe = NULL;
-	if (priv->helper_dga)
-		ggClosePlugin(priv->helper_dga);
-	priv->helper_dga = NULL;
-	if (priv->helper_evi)
-		ggClosePlugin(priv->helper_evi);
-	priv->helper_evi = NULL;
-	if (priv->helper_vidmode)
-		ggClosePlugin(priv->helper_vidmode);
-	priv->helper_vidmode = NULL;
-
+	for(i=0; i<GGI_X_HELPER_COUNT; ++i)
+	{
+		if (priv->helper[i])
+		{
+			ggClosePlugin(priv->helper[i]);
+			priv->helper[i] = NULL;
+		}
+	}
+	
 	if (priv->inp)
 		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
@@ -388,14 +402,14 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush_cmap = _ggi_x_flush_cmap;
 
 	/* See what extensions are available on this display. */
-	for(i=0; ggi_x_extensions_names[i]!=NULL; ++i)
+	for(i=0; ggi_x_extensions_name[i]!=NULL; ++i)
 	{
-		xerr = XQueryExtension(disp, ggi_x_extensions_names[i], &tmp1, &tmp2, &tmp3);
+		xerr = XQueryExtension(disp, ggi_x_extensions_name[i], &tmp1, &tmp2, &tmp3);
 		if (tmp1 && (xerr == True)) {
-			DPRINT_MISC("%s X extension found\n", ggi_x_extensions_names[i]);
+			DPRINT_MISC("%s X extension found\n", ggi_x_extensions_name[i]);
 			priv->use_Xext |= 1 << i;
 		} else {
-			DPRINT_MISC("no %s extension\n", ggi_x_extensions_names[i]);
+			DPRINT_MISC("no %s extension\n", ggi_x_extensions_name[i]);
 		}
 	}
 
@@ -409,7 +423,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	}
 
 	/* Turn off extensions which the user does not want */
-	if (options[OPT_NOSHM].result[0] != 'n') 
+	if ((options[OPT_NOSHM].result[0] != 'n') ||
+	    (options[OPT_NOBUFFER].result[0] != 'n'))
 		priv->use_Xext &= ~GGI_X_USE_SHM;
 	if (options[OPT_NODBE].result[0] != 'n')
 		priv->use_Xext &= ~GGI_X_USE_DBE;
@@ -417,11 +432,25 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		priv->use_Xext &= ~GGI_X_USE_DGA;
 	if (options[OPT_NOVIDMODE].result[0] != 'n') 
 		priv->use_Xext &= ~GGI_X_USE_VIDMODE;
+	/* Xevi disabled until EVIGetVisualInfo BadLength fixed. */
+	priv->use_Xext &= ~GGI_X_USE_EVI;
+
 	/* DGA and Vidmode are exclusive to each other
 	 * Some cards don't handle DGA (namely nvidia).
 	 * And it seems this extension is less and less used.
 	 * This case is handled below.
 	 */
+	if(priv->use_Xext & GGI_X_USE_VIDMODE)
+	{
+		priv->use_Xext &=~GGI_X_USE_DGA;
+	}
+	
+	if(priv->use_Xext & GGI_X_USE_DGA)
+	{
+		priv->use_Xext &=~GGI_X_USE_VIDMODE; /* DGA has own mode support */
+		priv->use_Xext &=~GGI_X_USE_SHM;     /* DGA precludes SHM */
+	}
+
 	
 	/* Get a list of possibly compatible X11 visuals */
 	memset(&vi_template, 0, sizeof(XVisualInfo));
@@ -519,61 +548,43 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->cm_adapt = _GGI_X_checkmode_adapt;
 	priv->cm_adjust = _GGI_X_checkmode_adjust;
 
-	/*
-	 * TODO : find a way to automate this in order to ease the add of a 
-	 *        new helper (and make it more readable).
-	 *
-	 */
-	
 	/* Try the extensions that haven't been disabled. */
-#define GGI_X_TEST_XEXT(mod, flag, helper, abort_label)		\
-	if (!(priv->use_Xext & flag)) goto abort_label;		\
-	priv->mod = ggPlugModule(libggi, vis->instance.stem,	\
-			helper, NULL, NULL);			\
-	if (priv->mod == NULL) {				\
-		fprintf(stderr, "X: Cannot load %s\n", helper);	\
-		priv->use_Xext &= ~flag;			\
-		goto abort_label;				\
-	}
-
-
 	DPRINT_MISC("X: Load X extensions.\n");
 
 	/* Order is important here -- XCloseDisplay has sharp hooks! */
-
-	GGI_X_TEST_XEXT(helper_dga,GGI_X_USE_DGA, "helper-x-dga", nodga);
-	priv->use_Xext &=~GGI_X_USE_VIDMODE; /* DGA has own mode support */
-	priv->use_Xext &=~GGI_X_USE_SHM;     /* DGA precludes SHM */
-
- nodga:
-	if (options[OPT_NOBUFFER].result[0] != 'n') goto noshm;
-	GGI_X_TEST_XEXT(helper_shm, GGI_X_USE_SHM, "helper-x-shm", noshm);
-	priv->shmhack_free_cmaps = _ggi_x_free_colormaps;
-
- noshm:
-	priv->use_Xext &= ~GGI_X_USE_EVI;
-	goto noevi; /* Xevi disabled until EVIGetVisualInfo BadLength fixed. */
-	GGI_X_TEST_XEXT(helper_evi, GGI_X_USE_EVI, "helper-x-evi", noevi);
-	/* See if Xevi disqualified all the visuals (should not happen) */
-	tmp1 = tmp2 = 0;
-	while (tmp1 < priv->nvisuals) {
-		tmp2 += !(priv->vilist[tmp1++].flags && GGI_X_VI_NON_FB);
-	}
-	if (!tmp2) {
-		DPRINT("X: No acceptable X11 visuals.\n");
-		err = GGI_ENOFUNC;
-		goto out;
+	for(i=0; i<GGI_X_HELPER_COUNT; ++i)
+	{
+		if(!(priv->use_Xext & (1<<i))) continue;
+		priv->helper[i] = ggPlugModule(libggi, vis->instance.stem, 
+		                               ggi_x_helper_name[i], NULL, NULL);
+		if(priv->helper[i] == NULL)
+		{
+			fprintf(stderr, "X: Cannot load %s\n", ggi_x_helper_name[i]);
+			priv->use_Xext &= ~(1<<i);
+		}
 	}
 
- noevi:
-	GGI_X_TEST_XEXT(helper_vidmode, GGI_X_USE_VIDMODE,
-			"helper-x-vidmode", novidmode);
+	/* Make the unavoidable adjustements */
+	if(priv->use_Xext & GGI_X_USE_SHM)
+	{
+		priv->shmhack_free_cmaps = _ggi_x_free_colormaps;
+	}
 
- novidmode:
-	GGI_X_TEST_XEXT(helper_dbe, GGI_X_USE_DBE, "helper-x-dbe", nodbe);
+	if(priv->use_Xext & GGI_X_USE_EVI)
+	{
+		/* See if Xevi disqualified all the visuals (should not happen) */
+		tmp1 = tmp2 = 0;
+		while (tmp1 < priv->nvisuals) {
+			tmp2 += !(priv->vilist[tmp1++].flags && GGI_X_VI_NON_FB);
+		}
+		if (!tmp2) {
+			DPRINT("X: No acceptable X11 visuals.\n");
+			err = GGI_ENOFUNC;
+			goto out;
+		}
+	}
 	
- nodbe:
-	priv->createdrawable = GGI_X_create_window_drawable;
+ 	priv->createdrawable = GGI_X_create_window_drawable;
 
 	/* Use no intermediate drawable? */
 	if (options[OPT_NOBUFFER].result[0] != 'n') {
