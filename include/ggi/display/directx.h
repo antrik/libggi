@@ -1,4 +1,4 @@
-/* $Id: directx.h,v 1.21 2007/04/16 12:54:14 pekberg Exp $
+/* $Id: directx.h,v 1.22 2008/02/07 11:39:06 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Header for internal functions
@@ -126,6 +126,12 @@ typedef struct directx_priv
 struct ggi_directx_cmddata_exitonclose {
 	int exitonclose;
 };
+#define GGI_DIRECTX_RENDERCLIPBOARD  (3 | GII_CMDFLAG_PRIVATE)
+struct ggi_directx_cmddata_render_cb {
+	UINT format;
+};
+#define GGI_DIRECTX_DESTROYCLIPBOARD (4 | GII_CMDFLAG_PRIVATE)
+#define GGI_DIRECTX_CLIPBOARDUPDATE  (5 | GII_CMDFLAG_PRIVATE)
 
 
 #define GGI_directx_LockCreate() \

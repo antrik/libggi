@@ -1,4 +1,4 @@
-/* $Id: ddinit.c,v 1.61 2007/04/16 12:54:14 pekberg Exp $
+/* $Id: ddinit.c,v 1.62 2008/02/07 11:39:06 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Internal functions
@@ -649,6 +649,29 @@ WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (priv->exit_on_close_window)
 			exit(0);
 		return 0;
+
+	case WM_RENDERFORMAT:
+	case WM_RENDERALLFORMATS:
+		{
+			struct ggi_directx_cmddata_render_cb format;
+			format.format = wParam;
+
+			ggBroadcast(vis->instance.channel,
+				GGI_DIRECTX_RENDERCLIPBOARD, &format);
+			return 0;
+		}
+
+	case WM_DESTROYCLIPBOARD:
+		ggBroadcast(vis->instance.channel,
+			GGI_DIRECTX_DESTROYCLIPBOARD, NULL);
+		return 0;
+
+#if 0 /* WM_CLIPBOARDUPDATE is >= Vista :-( */
+	case WM_CLIPBOARDUPDATE:
+		ggBroadcast(vis->instance.channel,
+			GGI_DIRECTX_CLIPBOARDUPDATE, NULL);
+		return 0;
+#endif
 
 	case WM_SETTINGCHANGE:
 		GGI_directx_Lock(priv->cs);
