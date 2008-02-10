@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.32 2008/01/21 23:10:41 cegger Exp $
+/* $Id: vidmode.c,v 1.33 2008/02/10 16:37:05 mooz Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -211,7 +211,6 @@ static int ggi_xvidmode_enter_mode(struct ggi_visual * vis, int num)
 	/* 
 	 * Here we translate window origin to Root window origin 
 	 * in order to get the viewport centered on the window.
-	 * So no need to use override-redirect nor iCCM.
 	 */
 	root = DefaultRootWindow(priv->disp);
 
@@ -356,6 +355,8 @@ static int ggi_xvidmode_validate_mode(struct ggi_visual * vis, intptr_t num,
 				}
 			}
 
+/* Prevent log pollution */
+#if 0
 			/* Debug display */
 			DPRINT_MODE("\tmodes[%d]:\n", num);
 			DPRINT_MODE("\tdotclock    %d\n",
@@ -384,7 +385,7 @@ static int ggi_xvidmode_validate_mode(struct ggi_visual * vis, intptr_t num,
 				    vidmode->modes[num]->private);
 			DPRINT_MODE("\tdx: %d dy: %d\n", delta_x, delta_y);
 			DPRINT_MODE("\tmx: %d my: %d\n\n", min_x, min_y);
-
+#endif
 		}
 
 		if ((min_x > 0) && (min_y > 0)) {

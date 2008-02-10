@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.41 2008/02/03 18:18:08 cegger Exp $
+/* $Id: x.h,v 1.42 2008/02/10 16:37:05 mooz Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -88,21 +88,21 @@ typedef struct {
 	ggi_modelist_restore restore;	/* Restore original mode and free list.    */
 	ggi_modelist_enter enter;	/* Enter given mode (called by setmode).   */
 	ggi_modelist_validate validate;	/* Check/complete a ggi_mode structure
-					 * based on a given mode. */
+					 * based on a given mode.                  */
 } ggi_modelist_funcs;
 
 /* A structure for management of visual information */
 typedef struct {
 	XVisualInfo *vi;
 	void *evi;			/* ExtendedVisualInfo if Xevi found */
-	XPixmapFormatValues *buf;	/* Buffer/wire format */
+	XPixmapFormatValues *buf;	/* Buffer/wire format               */
 	unsigned int flags;
 #define GGI_X_VI_NON_FB 1
 } ggi_x_vi;
 
-typedef int  (*ggi_x_createfb)(struct ggi_visual *vis);	/* MMAP/alloc fb/db  */
+typedef int  (*ggi_x_createfb)(struct ggi_visual *vis);		/* MMAP/alloc fb/db  */
 typedef void (*ggi_x_freefb)(struct ggi_visual *vis);		/* clean up fb/db    */
-typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* create renderer  */
+typedef int  (*ggi_x_createdrawable)(struct ggi_visual *vis);	/* create renderer   */
 typedef void (*ggi_x_createcursor)(struct ggi_visual *vis);	/* load mouse sprite */
 
 struct ggi_x_priv;
@@ -117,10 +117,10 @@ typedef void (*ggi_x_checkmode_adjust)( ggi_mode *req,
 typedef struct ggi_x_priv {
 	PHYSZ_DATA
 
-	Display	*disp;		/* One display per instance  */
+	Display	*disp;			/* One display per instance  */
 
 	MANSYNC_DATA;			/* mansync helper hooks     */
-	ggi_coord  dirtytl,dirtybr;	/* Simple dirty region */
+	ggi_coord  dirtytl,dirtybr;	/* Simple dirty region      */
 	int fullflush;			/* Flush all visible area?  */
 
 	/* Pixelformat and colorspace management */
@@ -132,19 +132,18 @@ typedef struct ggi_x_priv {
 	XPixmapFormatValues     *buflist;	/* master handle for XFree() */
 	int                     nbufs;
 
-	unsigned int		use_Xext;	/* Extensions available/used (see above) */
+	unsigned int      use_Xext;			/* Extensions available/used (see above) */
+	struct gg_plugin *helper[GGI_X_HELPER_COUNT];	/* Extension helpers                     */
 
-	struct gg_plugin *helper[GGI_X_HELPER_COUNT]; /* Extension helpers */
-
-	Colormap    cmap, cmap2;/* Need second for DGA bug workaround */
+	Colormap    cmap, cmap2;	/* Need second for DGA bug workaround */
 	int         activecmap;
 	unsigned int ncols;		/* Number of colors in the colormap */
-	XColor      *gammamap;
+	XColor        *gammamap;
 	ggi_gammastate gamma;
 
 	GC           gc, tempgc;
 
-	Cursor      oldcursor, cursor;
+	Cursor                  oldcursor, cursor;
 	ggi_x_createcursor	createcursor;	/* overload init .drawable */
 	XFontStruct *textfont;
 	XImage	    *fontimg;
@@ -157,25 +156,25 @@ typedef struct ggi_x_priv {
 	int         wintype;
 	Window      parentwin, win;
 
-	unsigned char		*fb;	/* direct access */
+	unsigned char    *fb;		/* direct access */
 	Drawable	 drawable;	/* Xlib/accel access */
 
 	/* Overloadables: */
-	ggi_x_createdrawable	createdrawable;	/* overload create .drawable */
-	ggi_x_createfb	 createfb;	/* overload init .fb */
-	ggi_x_freefb	 freefb;	/* overload init .fb */
-	ggi_x_checkmode_adapt cm_adapt; /* visual to ggi_mode conversion */
-	ggi_x_checkmode_adjust cm_adjust; /* adjust ggi_mode to meet request */
+	ggi_x_createdrawable	createdrawable;	/* overload create .drawable       */
+	ggi_x_createfb	 createfb;		/* overload init .fb               */
+	ggi_x_freefb	 freefb;		/* overload init .fb               */
+	ggi_x_checkmode_adapt cm_adapt; 	/* visual to ggi_mode conversion   */
+	ggi_x_checkmode_adjust cm_adjust; 	/* adjust ggi_mode to meet request */
 
 	XImage	    *ximage;
 	struct ggi_visual	*slave;
 
 	/* Modelist management */
-	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads */
-	ggi_modelistmode	*modes;		/* modelist helper modes     */
-	void		 	*modes_priv;	/* DGA or VideoMode modelist */
-	int	cur_mode;			/* Current used mode from the modelist */
-	int	 modes_num;			/* number of modes in list.  */
+	ggi_modelist_funcs	mlfuncs;	/* modelist helper overloads           */
+	ggi_modelistmode	*modes;		/* modelist helper modes               */
+	void			*modes_priv;	/* DGA or VideoMode modelist           */
+	int			cur_mode;	/* Current used mode from the modelist */
+	int			modes_num;	/* number of modes in list.            */
 
 	struct gg_instance   *inp;
 
