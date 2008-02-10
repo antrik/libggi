@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.77 2008/02/10 16:37:05 mooz Exp $
+/* $Id: mode.c,v 1.78 2008/02/10 17:42:46 mooz Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -443,8 +443,6 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	int err, viidx;
 	XEvent event;
 	XSetWindowAttributes attrib;
-	XSetWindowAttributes parentwin_attr;
-	unsigned long parentwin_attr_mask = 0;
 	XWindowAttributes attrib2;
 	XVisualInfo *vi;
 	ggi_x_priv *priv;
