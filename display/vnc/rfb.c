@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.110 2008/02/03 11:04:51 mooz Exp $
+/* $Id: rfb.c,v 1.111 2008/02/11 22:18:40 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -194,6 +194,8 @@ close_client(ggi_vnc_client *client)
 
 	GG_LIST_REMOVE(client, siblings);
 
+	if (client->buf)
+		free(client->buf);
 	free(client);
 
 	if (priv->kill_on_last_disconnect) {
@@ -1291,9 +1293,50 @@ vnc_client_pointer(ggi_vnc_client *client)
 }
 
 static int
+vnc_client_drain_cut(ggi_vnc_client *client)
+{
+	const int max_chunk = 0x100000;
+	uint32_t rest;
+	uint32_t limit;
+	int chunk;
+
+	DPRINT("client_drain_cut\n");
+
+	if (client->buf_size < 4) {
+		client->action = vnc_client_drain_cut;
+		return 0;
+	}
+
+	memcpy(&rest, client->buf, sizeof(rest));
+	rest = ntohl(rest);
+
+	limit = max_chunk;
+	if (client->buf_size - 4 < max_chunk)
+		limit = client->buf_size - 4;
+
+	chunk = rest < limit ? rest : limit;
+
+	if (rest > limit) {
+		memmove(&client->buf[4], &client->buf[4 + chunk],
+			client->buf_size - (4 + chunk));
+		client->buf_size -= chunk;
+		rest -= limit;
+		insert_hilo_32(client->buf, rest);
+		if (chunk > 0)
+			return vnc_client_drain_cut(client);
+		client->action = vnc_client_drain_cut;
+		return 0;
+	}
+
+	return vnc_remove(client, 4 + chunk);
+}
+
+static int
 vnc_client_cut(ggi_vnc_client *client)
 {
+	const uint32_t max_count = 0x10000;
 	uint32_t count;
+	int len;
 
 	DPRINT("client_cut\n");
 
@@ -1305,18 +1348,42 @@ vnc_client_cut(ggi_vnc_client *client)
 
 	memcpy(&count, &client->buf[4], sizeof(count));
 	count = ntohl(count);
+	len = count < max_count ? count : max_count;
 
-	if ((uint32_t)client->buf_size < 8 + count) {
+	if (client->buf_size < 8 + len) {
 		/* wait for more data */
+		if (client->buf_limit < 8 + len) {
+			/* need more space */
+			uint8_t *buf = malloc(8 + len + 100);
+			if (!buf)
+				return 1;
+			memcpy(buf, client->buf, client->buf_size);
+			free(client->buf);
+			client->buf = buf;
+			client->buf_limit = 8 + len + 100;
+		}
 		client->action = vnc_client_cut;
+		return 0;
+	}
 
+	if (client->input) {
+		struct ggi_vnc_cmddata_clipboard clip;
+		clip.data = &client->buf[8];
+		clip.size = len;
+		ggBroadcast(client->owner->instance.channel,
+			GGI_VNC_CLIPBOARD, &clip);
+	}
+
+	if (count > max_count) {
 		/* remove all received stuff so far and adjust
 		 * how much more is expected
 		 */
-		count = htonl(count - (client->buf_size - 8));
-		client->buf_size = 8;
-		memcpy(&client->buf[4], &count, sizeof(count));
-		return 0;
+		memmove(&client->buf[4], &client->buf[8 + len],
+			client->buf_size - (8 + len));
+		client->buf_size -= 4 + len;
+		count -= max_count;
+		insert_hilo_32(client->buf, count);
+		return vnc_client_drain_cut(client);
 	}
 
 	return vnc_remove(client, 8 + count);
@@ -1775,6 +1842,8 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	DPRINT("new_client(%d, %d)\n", cfd, cwfd);
 
 	client = _ggi_calloc(sizeof(*client));
+	client->buf_limit = 256;
+	client->buf = _ggi_malloc(client->buf_limit);
 
 	GG_LIST_INSERT_HEAD(&priv->clients, client, siblings);
 	client->owner = vis;
@@ -1893,7 +1962,7 @@ GGI_vnc_client_data(void *arg, int cfd)
 		return -1;
 	}
 
-	if (len + client->buf_size > (ssize_t)sizeof(client->buf)) {
+	if (len + client->buf_size > client->buf_limit) {
 		DPRINT("Avoiding buffer overrun\n");
 		close_client(client);
 		return -1;

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.54 2008/01/08 14:20:35 cegger Exp $
+/* $Id: visual.c,v 1.55 2008/02/11 22:18:42 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -378,6 +378,43 @@ vnc_controller(void *arg, uint32_t ctl, void *data)
 			client->desktop_name |= DESKNAME_PENDING;
 			GGI_vnc_client_invalidate_nc_xyxy(client,
 				0, 0, 0, 0);
+		}
+		break;
+
+	case GGI_VNC_CLIPBOARD:
+		{
+			struct ggi_vnc_cmddata_clipboard *clip = data;
+			uint8_t *buf;
+
+			if (clip->size > 0x10000)
+				clip->size = 0x10000;
+
+			buf = malloc(8 + clip->size);
+			if (!buf)
+				break;
+
+			buf[0] = 3;
+			buf[1] = 0;
+			buf[2] = 0;
+			buf[3] = 0;
+			insert_hilo_32(&buf[4], clip->size);
+			memcpy(&buf[8], clip->data, clip->size);
+
+			client = GG_LIST_FIRST(&priv->clients);
+			while (client) {
+				ggi_vnc_client *next;
+				int res;
+
+				next = GG_LIST_NEXT(client, siblings);
+				res = GGI_vnc_safe_write(client,
+					buf, 8 + clip->size);
+
+				if (res < 0)
+					GGI_vnc_close_client(client);
+				client = next;
+			}
+
+			free(buf);
 		}
 		break;
 	}

@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.40 2008/01/20 19:26:45 pekberg Exp $
+/* $Id: vnc.h,v 1.41 2008/02/11 22:18:42 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -61,8 +61,9 @@ typedef struct ggi_vnc_client_t {
 
 	int input;
 
-	unsigned char buf[256];
+	unsigned char *buf;
 	int buf_size;
+	int buf_limit;
 	ggi_vnc_buf wbuf;
 	int write_pending;
 	ggi_vnc_client_action *action;
@@ -156,6 +157,13 @@ void GGI_vnc_invalidate_xyxy(struct ggi_visual *vis,
 void GGI_vnc_invalidate_palette(struct ggi_visual *vis);
 
 #define VNC_PRIV(vis)	((ggi_vnc_priv *) LIBGGI_PRIVATE(vis))
+
+
+struct ggi_vnc_cmddata_clipboard {
+	uint8_t *data;
+	int size;
+};
+#define GGI_VNC_CLIPBOARD (0 | GII_CMDFLAG_PRIVATE)
 
 
 /* LibGGI Interface
