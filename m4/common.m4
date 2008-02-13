@@ -545,6 +545,9 @@ AC_INCLUDES_DEFAULT
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
+#ifdef HAVE_WSPIAPI_H
+# include <wspiapi.h>
+#endif
 #endif
 ], [NULL, NULL, NULL, NULL])
 
