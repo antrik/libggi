@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.218 2007/12/31 18:29:40 cegger Exp $
+dnl $Id: configure.in,v 1.219 2008/02/13 09:53:00 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -321,7 +321,7 @@ sys/resource.h sys/select.h sys/shm.h sys/socket.h sys/time.h sys/times.h \
 sys/un.h sys/vt.h unistd.h windows.h,
 [], [], [AC_INCLUDES_DEFAULT])
 
-AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h ws2tcpip.h, [], [],
+AC_CHECK_HEADERS(winsock.h winsock2.h ddraw.h ws2tcpip.h wspiapi.h, [], [],
 	[AC_INCLUDES_DEFAULT
 	 #ifdef HAVE_WINDOWS_H
 	 # include <windows.h>

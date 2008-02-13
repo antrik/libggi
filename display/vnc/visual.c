@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.55 2008/02/11 22:18:42 pekberg Exp $
+/* $Id: visual.c,v 1.56 2008/02/13 09:53:00 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -44,6 +44,9 @@
 #endif
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
+#endif
+#ifdef HAVE_WSPIAPI_H
+# include <wspiapi.h>
 #endif
 #endif
 
