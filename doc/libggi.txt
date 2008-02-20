@@ -245,13 +245,14 @@ See Also
 --------
 
 :man:`libgii(7)`, :man:`ggiInit(3)`,
-:man:`display-aa(7)`,
-:man:`display-directx(7)`, :man:`display-fbdev(7)`,
-:man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-macosx(7)`,
-:man:`display-memory(7)`, :man:`display-monotext(7)`, :man:`display-multi(7)`,
-:man:`display-palemu(7)`, :man:`display-sub(7)`, :man:`display-svgalib(7)`,
-:man:`display-tele(7)`, :man:`display-tile(7)`, :man:`display-trueemu(7)`,
-:man:`display-vcsa(7)`, :man:`display-vgl(7)`, :man:`display-x(7)`
+:man:`display-aa(7)`, :man:`display-directx(7)`, :man:`display-fbdev(7)`,
+:man:`display-file(7)`, :man:`display-glide(7)`, :man:`display-ipc(7)`,
+:man:`display-kgi(7)`, :man:`display-memory(7)`, :man:`display-monotext(7)`,
+:man:`display-multi(7)`, :man:`display-palemu(7)`, :man:`display-quartz(7)`,
+:man:`display-sub(7)`, :man:`display-svgalib(7)`, :man:`display-tele(7)`,
+:man:`display-terminfo(7)`, :man:`display-tile(7)`, :man:`display-trueemu(7)`,
+:man:`display-vcsa(7)`, :man:`display-vgl(7)`, :man:`display-vnc(7)`,
+:man:`display-x(7)`
 
 
 .. include:: libggi-functions.txt
