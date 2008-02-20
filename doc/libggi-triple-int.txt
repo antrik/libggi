@@ -207,7 +207,7 @@ Description
 
 `eq_3` tests if `l` and `r` are equal. Equivalent to l==r.
 
-`ge_3` tests if `l` is greater than or equal to `l`. Equivalent to l>=r.
+`ge_3` tests if `l` is greater than or equal to `r`. Equivalent to l>=r.
 
 
 Return value
