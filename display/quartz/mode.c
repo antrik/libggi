@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.41 2008/01/21 22:56:47 cegger Exp $
+/* $Id: mode.c,v 1.42 2008/02/21 07:41:03 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -70,31 +70,6 @@ int GGI_quartz_getapi(struct ggi_visual *vis,int num,
 	return GGI_ENOMATCH;
 }	/* GGI_quartz_getapi */
 
-
-static int _ggi_quartz_load_mode_libs(struct ggi_visual *vis)
-{
-	int err, id;
-	char sugname[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
-
-	_ggiZapMode(vis, 0);
-	for (id = 1; 0 == vis->opdisplay->getapi(vis, id, sugname, args); id++) {
-		err = _ggiOpenDL(vis, libggi->config, sugname, args, NULL);
-		if (err) {
-			fprintf(stderr,
-				"display-quartz: Can't open the %s (%s) library.\n",
-				sugname, args);
-			return err;
-		} else {
-			DPRINT_LIBS("GGI_quartz_setmode: success in loading "
-				"%s (%s)\n", sugname, args);
-		}
-	}
-	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
-
-	return 0;
-}	/* _ggi_quartz_load_mode_libs */
-
-
 static int _GGInumberForKey( CFDictionaryRef desc, CFStringRef key )
 {
 	CFNumberRef value;
@@ -112,6 +87,7 @@ static int _GGInumberForKey( CFDictionaryRef desc, CFStringRef key )
 #define _ggi_screen_gtdepth(desc) _GGInumberForKey((desc), kCGDisplayBitsPerPixel)
 #define _ggi_screen_gtsize(desc) ((_ggi_screen_gtdepth(desc)+7)/8)
 
+#if 0
 static int _ggi_load_slaveops(struct ggi_visual *vis)
 {
 	ggi_quartz_priv *priv;
@@ -158,15 +134,15 @@ static int _ggi_load_slaveops(struct ggi_visual *vis)
 
 	return 0;
 }
+#endif
 
 
-
-int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
+static int
+GGI_quartz_updateWindowContext(struct ggi_visual *vis, ggi_mode *mode)
 {
-	int width, height;
-	ggi_mode mode;
 	size_t fb_size;
 	uint8_t *fb;
+	size_t stride;
 	CGRect tmpBounds;
 	Rect contentRect;
 	int titleborder;
@@ -176,22 +152,14 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 
 	GetWindowBounds( priv->theWindow, kWindowContentRgn, &contentRect);
 
-	width = contentRect.right - contentRect.left;
-	height = contentRect.bottom - contentRect.top;
-
 	if (priv->fullscreen) {
 		titleborder = GGI_FULLSCREEN_TITLEBORDER;
 	} else {
 		titleborder = GGI_WINDOW_TITLEBORDER;
 	}
 
-	memcpy(&mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
-
-	mode.visible.x = width;
-	mode.visible.y = height;
-
-	fb_size = mode.visible.x * GT_ByPP(mode.graphtype)
-			* mode.visible.y * mode.frames;
+	fb_size = mode->visible.x * GT_ByPP(mode->graphtype)
+			* mode->visible.y * mode->frames;
 	if (fb_size == 0) {
 		/* hmm... no mode set.
 		 * Nothing to do then.
@@ -199,32 +167,37 @@ int GGI_quartz_updateWindowContext(struct ggi_visual *vis)
 		return GGI_OK;
 	}
 
-	if (priv->fb_size < fb_size) {
-		size_t stride;
+	if ((priv->fb == NULL) || (priv->fb_size != fb_size)) {
 
-		fb = realloc(priv->fb, fb_size);
+		if (priv->fb == NULL) {
+			fb = calloc(1, fb_size);
+		} else {
+			fb = realloc(priv->fb, fb_size);
+		}
 		if (fb == NULL) {
 			return GGI_ENOMEM;
 		}
 		priv->fb = fb;
 		priv->fb_size = fb_size;
 
-		stride = mode.visible.x * GT_ByPP(mode.graphtype);
-		if (priv->image != NULL) {
-			CGImageRelease(priv->image);
-			CGDataProviderRelease(priv->dataProviderRef);
-			priv->dataProviderRef = CGDataProviderCreateWithData(NULL,
-					priv->fb, priv->fb_size, NULL);
-			priv->image = CGImageCreate(mode.visible.x,
-					mode.visible.y,
-					8 /* bits per component */,
-					GT_SIZE(mode.graphtype),
-					stride,
-					CGColorSpaceCreateDeviceRGB(),
-					kCGImageAlphaNoneSkipFirst,
-					priv->dataProviderRef,
-					NULL, 0, kCGRenderingIntentDefault);
-		}
+		stride = mode->visible.x * GT_ByPP(mode->graphtype);
+
+		LIB_ASSERT(priv->image == NULL,
+			"priv->image is leaking\n");
+		LIB_ASSERT(priv->dataProviderRef == NULL,
+			"priv->dataProvider is leaking\n");
+
+		priv->dataProviderRef = CGDataProviderCreateWithData(NULL,
+				priv->fb, priv->fb_size, NULL);
+		priv->image = CGImageCreate(mode->visible.x,
+				mode->visible.y,
+				8 /* bits per component */,
+				GT_SIZE(mode->graphtype),
+				stride,
+				CGColorSpaceCreateDeviceRGB(),
+				kCGImageAlphaNoneSkipFirst,
+				priv->dataProviderRef,
+				NULL, 0, kCGRenderingIntentDefault);
 	}
 
 	memcpy(LIBGGI_MODE(vis), &mode, sizeof(ggi_mode));
@@ -255,10 +228,12 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
 	}	/* for */
 
+#if 0
 	if (priv->memvis != NULL) {
 		ggiClose(priv->memvis->instance.stem);
 		priv->memvis = NULL;
 	}
+#endif
 	if (priv->fb != NULL) {
 		free(priv->fb);
 		priv->fb = NULL;
@@ -273,78 +248,20 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 }	/* _GGIfreedbs */
 
 
-static void _GGIallocdbs(struct ggi_visual *vis)
+static int _GGIallocdbs(struct ggi_visual *vis, int reload_api)
 {
-	char target[GGI_MAX_APILEN];
+	char target[GGI_MAX_APILEN], args[GGI_MAX_APILEN];
 	int i;
 	uint8_t *fb_ptr;
+	ggi_quartz_priv *priv = QUARTZ_PRIV(vis);
 	size_t stride;
 	ggi_mode tm;
-	ggi_quartz_priv *priv;
 
-	priv = QUARTZ_PRIV(vis);
-
-	/* We assume, LIBGGI_MODE(vis) structure has already been filled */
 	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
-
-	DPRINT_MODE("_GGIallocdbs: allocate %lu bytes for framebuffer\n",
-		(unsigned long)priv->fb_size);
-	priv->fb = malloc(priv->fb_size);
-	if (priv->fb == NULL) {
-		DPRINT_MODE("_GGIallocdbs: framebuffer allocation failed\n");
-		goto err0;
-	}
-
-	/* Make sure we do not fail due to physical size constraints,
-	 * which are meaningless on a memory visual.
-	 */
-	tm.size.x = tm.size.y = GGI_AUTO;
-
-	i = 0;
-	memset(target, '\0', sizeof(target));
-	i += snprintf(target, GGI_MAX_APILEN,
-		"display-memory:-noblank:-pixfmt=");
-
-	_ggi_build_pixfmtstr(vis, target + i,
-		sizeof(target) - i, GGI_PIXFMT_CHANNEL);
-
-	i = strlen(target);
-	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer",
-		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
-
-#if 0
-	DPRINT_MODE("_GGIallocdbs: open memory target (%s) with pre-allocated buffer\n",
-			target);
-	priv->memvis = ggiOpen(target, priv->fb);
-	if (priv->memvis == NULL) {
-		DPRINT_MODE("_GGIallocdbs: opening memory visual for backbuffer failed\n");
-		goto err1;
-	}
-
-	DPRINT_MODE("Set mode for backbuffer\n");
-	if (ggiSetMode(priv->memvis, &tm) < 0) {
-		goto err2;
-	}
-#endif
 	stride = tm.visible.x * GT_ByPP(tm.graphtype);
 
-	LIB_ASSERT(priv->image == NULL, "don't override previous image");
-	CreateCGContextForPort(GetWindowPort(priv->theWindow),
-				&priv->context);
-	priv->dataProviderRef = CGDataProviderCreateWithData(NULL,
-				priv->fb, priv->fb_size, NULL);
-	priv->image = CGImageCreate(tm.visible.x, tm.visible.y,
-				8 /* bits per component */,
-				GT_SIZE(tm.graphtype),
-				stride,
-				CGColorSpaceCreateDeviceRGB(),
-				kCGImageAlphaNoneSkipFirst,
-				priv->dataProviderRef,
-				NULL, 0, kCGRenderingIntentDefault);
-
-#if 1
 	fb_ptr = priv->fb;
-	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
+	for (i = 0; i < tm.frames; i++) {
 
 		_ggi_db_add_buffer(LIBGGI_APPLIST(vis), _ggi_db_get_new());
 		LIBGGI_APPBUFS(vis)[i]->frame = i;
@@ -358,24 +275,25 @@ static void _GGIallocdbs(struct ggi_visual *vis)
 
 		fb_ptr += LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride * tm.virt.y;
 	}	/* for */
-#endif
 
-	_ggi_quartz_load_mode_libs(vis);
-#if 0
-	_ggi_load_slaveops(vis);
-#endif
-	return;
+	if (reload_api) {
+		for (i = 1; 0 == GGI_quartz_getapi(vis, i, target, args); i++) {
+			int err = _ggiOpenDL(vis, libggi->config,
+						target, args, NULL);
+			if (err) {
+				fprintf(stderr,
+					"display-quartz: Can't open the %s (%s) library.\n",
+					target, args);
+				return err;
+			} else {
+				DPRINT_LIBS("GGI_quartz_setmode: success in loading "
+					"%s (%s)\n", target, args);
+			}
+		}
+		ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
+	}
 
-#if 0
-err2:
-	ggiClose(priv->memvis);
-	priv->memvis = NULL;
-err1:
-	free(priv->fb);
-	priv->fb = NULL;
-#endif
-err0:
-	return;
+	return GGI_OK;
 }	/* _GGIallocdbs */
 
 
@@ -522,7 +440,8 @@ GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	}	/* if */
 
 
-	if (mode->frames == GGI_AUTO) mode->frames = 1;
+	if (mode->frames == GGI_AUTO)
+		mode->frames = 1;
 
 	if (mode->frames != 1) {
 		err = GGI_ENOMATCH;
@@ -551,6 +470,23 @@ GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	return err;
 }
 
+static int
+compatible_mode(struct ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_quartz_priv *priv = QUARTZ_PRIV(vis);
+
+	if (priv->fullscreen)
+		return !memcmp(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+
+	if (mode->frames != LIBGGI_MODE(vis)->frames)
+		return 0;
+	if (mode->graphtype != LIBGGI_GT(vis))
+		return 0;
+	if (memcmp(&mode->dpp, &LIBGGI_MODE(vis)->dpp, sizeof(ggi_coord)))
+		return 0;
+
+	return 1;
+}
 
 int GGI_quartz_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 {
@@ -598,8 +534,6 @@ static int GGI_quartz_setmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 		/* FIXME: I don't know, whether err is positive or negative */
 		return (err >= 0) ? -err : err;
 	}	/* if */
-
-	_GGIfreedbs(vis);
 
 	priv->cur_mode = CGDisplayCurrentMode(priv->display_id);
 
@@ -664,30 +598,19 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 
 	priv = QUARTZ_PRIV(vis);
 
-	SetRect(&priv->winRect, 0,0, mode->visible.x, mode->visible.y);
-
-	_GGIfreedbs(vis);
-
-	priv->fb_size = mode->visible.x * GT_ByPP(mode->graphtype)
-				* mode->visible.y * mode->frames;
-
-	DPRINT_MODE("GGI_quartz_setmode_windowed: framebuffer size (%u) = %i * GT_ByPP(%u) * %i * %i\n",
-		priv->fb_size,
-		mode->visible.x, GT_SIZE(mode->graphtype),
-		mode->visible.y, mode->frames);
-
 	if (priv->theWindow != NULL) {
 		/* Happens when we re-set the mode */
 		DPRINT_MODE("Re-Set the window\n");
-#if 0
-		_GGI_quartz_updateWindowContext(vis);
-#endif
-		DPRINT_MODE("Resize the window\n");
-		HideWindow(priv->theWindow);
+		//HideWindow(priv->theWindow);
 		ChangeWindowAttributes(priv->theWindow,
 			~priv->windowAttrs, priv->windowAttrs);
 		SizeWindow(priv->theWindow, mode->visible.x, mode->visible.y, 1);
+		GGI_quartz_updateWindowContext(vis, mode);
+		return GGI_OK;
 	} else {
+		SetRect(&priv->winRect, 0, 0,
+			mode->visible.x, mode->visible.y);
+
 #if 1
 		_create_menu(vis);
 #endif
@@ -705,7 +628,8 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 		CreateWindowGroup(0, &priv->winGroup);
 		SetWindowGroup(priv->theWindow, priv->winGroup);
 
-		if (priv->windowtitle) winname = priv->windowtitle;
+		if (priv->windowtitle)
+			winname = priv->windowtitle;
 
 		titleKey = CFStringCreateWithCString(NULL, winname,
 					kCFStringEncodingASCII);
@@ -713,6 +637,8 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 		result = SetWindowTitleWithCFString(priv->theWindow, windowTitle);
 		CFRelease(titleKey);
 		CFRelease(windowTitle);
+
+		GGI_quartz_updateWindowContext(vis, mode);
 
 		if (priv->inp == NULL) {
 			/* Install event handler */
@@ -723,16 +649,21 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 			data.theWindow = priv->theWindow;
 
 			ggControl(priv->inp->channel, GII_CMDCODE_QZSETPARAM,
-					&data);
+				&data);
 		}
-	}
 
-	DPRINT_MODE("Show the window\n");
-	SetThemeWindowBackground(priv->theWindow,
+		DPRINT_MODE("Show the window\n");
+		SetThemeWindowBackground(priv->theWindow,
 				kThemeBrushModelessDialogBackgroundActive,
 				TRUE);
-	RepositionWindow(priv->theWindow, NULL, kWindowCenterOnMainScreen);
-	ShowWindow(priv->theWindow);
+#if 0
+		RepositionWindow(priv->theWindow, NULL,
+				kWindowCascadeOnParentWindow);
+#endif
+		MoveWindowStructure(priv->theWindow,
+				0, GGI_WINDOW_TITLEBORDER * 2); 
+		ShowWindow(priv->theWindow);
+	}
 
 	return 0;
 }	/* GGI_quartz_setmode_windowed */
@@ -742,15 +673,28 @@ int GGI_quartz_setmode(struct ggi_visual *vis, ggi_mode *mode)
 {
 	ggi_quartz_priv *priv;
 	int err;
+	int compatible;
+	int reload_api = 0;
 
 	priv = QUARTZ_PRIV(vis);
 
 	DPRINT_MODE("GGI_quartz_setmode: called\n");
 	APP_ASSERT(vis != NULL, "GGI_quartz_setmode: Visual == NULL");
 
-	if ((err = ggiCheckMode(vis->instance.stem, mode)) != 0) return err;
+	err = GGI_quartz_checkmode(vis, mode);
+	if (err != 0)
+		return err;
 
-	if (priv->opmansync) MANSYNC_ignore(vis);
+	if (priv->opmansync)
+		MANSYNC_ignore(vis);
+
+	_GGIfreedbs(vis);
+
+	compatible = compatible_mode(vis, mode);
+	if (!compatible) {
+		_ggiZapMode(vis, 0);
+		reload_api = 1;
+	}
 
 	if (priv->fullscreen) {
 		err = GGI_quartz_setmode_fullscreen(vis, mode);
@@ -765,9 +709,10 @@ int GGI_quartz_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	setup_pixfmt(LIBGGI_PIXFMT(vis), mode->graphtype);
 	_ggi_build_pixfmt(LIBGGI_PIXFMT(vis));
 
-	_GGIallocdbs(vis);
+	_GGIallocdbs(vis, reload_api);
 
-	if (priv->opmansync) MANSYNC_cont(vis);
+	if (priv->opmansync)
+		MANSYNC_cont(vis);
 
 	DPRINT_MODE("GGI_quartz_setmode returns = %i\n", err);
 
