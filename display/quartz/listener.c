@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.10 2007/05/10 23:37:01 cegger Exp $
+/* $Id: listener.c,v 1.11 2008/02/21 07:48:15 cegger Exp $
 ******************************************************************************
 
    LibGGI - listener for display-quartz
@@ -36,17 +36,41 @@
 int GGI_quartz_listener(void *arg, uint32_t ctl, void *data)
 {
 	struct ggi_visual *vis = arg;
-	ggi_quartz_priv *priv;
+	ggi_quartz_priv *priv = QUARTZ_PRIV(vis);
 
 	switch (ctl) {
 	case GII_CMDCODE_RESIZE:
 		do {
+			gii_event ev;
 			struct gii_cmddata_resize *resize;
+			ggi_cmddata_switchrequest *swreq;
+			int xsize, ysize;
 
 			resize = (struct gii_cmddata_resize *)data;
 			DPRINT_MISC("GGI_quartz_listener: received GII_CMDCODE_RESIZE event\n"); 
 
-			GGI_quartz_updateWindowContext(vis);
+			xsize = resize->curRect.right - resize->curRect.left;
+			ysize = resize->curRect.bottom - resize->curRect.top;
+
+			ev.any.size = sizeof(gii_cmd_nodata_event) +
+				sizeof(ggi_cmddata_switchrequest);
+			ev.any.type = evCommand;
+			ev.cmd.code = GGICMD_REQUEST_SWITCH;
+
+			swreq = (ggi_cmddata_switchrequest *)ev.cmd.data;
+			swreq->request = GGI_REQSW_MODE;
+			swreq->mode = *LIBGGI_MODE(vis);
+
+			swreq->mode.visible.x = xsize;
+			swreq->mode.visible.y = ysize;
+			if (swreq->mode.virt.x < xsize)
+				swreq->mode.virt.x = xsize;
+			if (swreq->mode.virt.y < ysize)
+				swreq->mode.virt.y = ysize;
+			swreq->mode.size.x = GGI_AUTO;
+			swreq->mode.size.y = GGI_AUTO;
+
+			ggControl(priv->inp->channel, GII_CMDCODE_RESIZE, &ev);
 		} while (0);
 		break;
 
