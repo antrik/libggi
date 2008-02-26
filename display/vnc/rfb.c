@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.114 2008/02/26 09:16:10 pekberg Exp $
+/* $Id: rfb.c,v 1.115 2008/02/26 09:21:01 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -748,6 +748,7 @@ struct encodings encode_tbl[] = {
 	{     15,    0, "TRLE encoding\n",                print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
+	{ 0x574d5669,0, "WMVi pseudo-encoding\n",         print_enc },
 	{ 0x574d56ff, 0x574d5600,
 	                "VMWare %d encoding\n",           print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
