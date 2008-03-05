@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.115 2008/02/26 09:21:01 pekberg Exp $
+/* $Id: rfb.c,v 1.116 2008/03/05 14:06:56 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -66,6 +66,7 @@
 #include <errno.h>
 
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>
 #include <ggi/display/vnc.h>
 #include <ggi/input/vnc.h>
 #include <ggi/internal/ggi_debug.h>
