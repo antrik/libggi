@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2007/06/20 07:43:13 cegger Exp $
+/* $Id: visual.c,v 1.33 2008/03/05 14:06:10 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: initialization
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

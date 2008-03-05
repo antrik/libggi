@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.23 2007/06/20 07:53:05 cegger Exp $
+/* $Id: visual.c,v 1.24 2008/03/05 14:06:10 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu: initialization
@@ -26,6 +26,7 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
