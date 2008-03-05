@@ -1,4 +1,4 @@
-/* $Id: modelist.inc,v 1.24 2007/09/04 01:32:40 cegger Exp $
+/* $Id: modelist.inc,v 1.25 2008/03/05 14:04:09 pekberg Exp $
 ******************************************************************************
 
    Functions to handle GGI_AUTO for targets with a list of modes.
@@ -30,6 +30,10 @@
 #define WANT_CHECKONEBPP
 #define WANT_GETHIGHBPP
 #define WANT_CHECKAUTOBPP
+#endif
+
+#ifndef INT16_MAX
+#define INT16_MAX 0x7fff /* wild guess */
 #endif
 
 #ifdef WANT_CHECKONEBPP
