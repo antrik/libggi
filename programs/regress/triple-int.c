@@ -1,4 +1,4 @@
-/* $Id: triple-int.c,v 1.3 2004/10/20 14:19:30 pekberg Exp $
+/* $Id: triple-int.c,v 1.4 2008/03/05 14:10:10 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for triple precision int math.
@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include <ggi/ggi.h>
+#include <ggi/internal/gg_replace.h>
 #include <ggi/errors.h>
 #include <time.h>
 

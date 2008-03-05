@@ -9,6 +9,7 @@ LDADD = ${top_builddir}/ggi/libggi.la
 
 get_LDADD =   ${top_builddir}/ggi/libggi.la -lgii
 input_LDADD = ${top_builddir}/ggi/libggi.la -lgii
+triple_int_LDADD = ${top_builddir}/ggi/libggi.la -lgg
 
 EXTRA_PROGRAMS =
 man_MANS =
