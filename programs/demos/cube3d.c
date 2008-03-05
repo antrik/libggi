@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.29 2007/12/28 13:33:18 cegger Exp $
+/* $Id: cube3d.c,v 1.30 2008/03/05 14:12:28 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -22,6 +22,7 @@
 /* Include the LibGGI declarations.
  */
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>
 #include <ggi/gii.h>
 #include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
