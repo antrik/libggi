@@ -1,4 +1,4 @@
-/* $Id: ggi-visual.h,v 1.10 2008/01/20 19:26:45 pekberg Exp $
+/* $Id: ggi-visual.h,v 1.11 2008/03/05 14:07:59 pekberg Exp $
 ******************************************************************************
 
    LibGGI internal functions and macros
@@ -196,7 +196,7 @@ struct ggi_visual {
 	unsigned int       version;
 	void		  *mutex;	/* Lock when changing.. */
 	GG_SLIST_ENTRY(ggi_visual) vislist;	/* Single visual list */
-	GG_LIST_HEAD(, ggi_helper) helpers;
+	GG_LIST_HEAD(_ggi_visual_dummy, ggi_helper) helpers;
 
 	uint32_t	flags;		/* Flags */
 	
