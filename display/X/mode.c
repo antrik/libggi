@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.78 2008/02/10 17:42:46 mooz Exp $
+/* $Id: mode.c,v 1.79 2008/03/09 12:36:19 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -489,8 +489,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		destroychild = 0;
 
 	if( ! priv->ok_to_resize ) {
-		/* XXX: Cleanup question: is this check neccessary? */
+		/* This check is necessary if -inwin option is used. */
 		destroychild = destroychild && priv->win != priv->parentwin;
+		destroyparent = destroyparent && priv->win != priv->parentwin;
 		if (priv->parentwin == None) destroyparent = 0;
 		if (priv->parentwin != None) createparent = 0;
 	}
