@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.79 2008/03/09 12:36:19 cegger Exp $
+/* $Id: mode.c,v 1.80 2008/03/10 23:06:12 agraef Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -132,27 +132,29 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 		 * width will equal the virtual one. */
 		m->visible.x = FourMultiple( m->visible.x );
 	}
-	else if( priv->parentwin != None && priv->parentwin == priv->win ) {
-		/* This case is for -inwin=(some window other than root).. */
-		XGetGeometry(priv->disp, priv->parentwin, 
-				&dummywin, 
-				(int *) &dummy, (int *) &dummy,
-				&w, &h,
-				&dummy, &dummy );
-		m->visible.x = w;
-		m->visible.y = h;
-	}
 	else {
-		/* Root window or fullscreen.. */
-	        char inroot = 0; 
+		char inroot = 0; 
 		if(priv->parentwin == RootWindow(priv->disp, vi->vi->screen))
 		  inroot = 1;
+		if( priv->parentwin != None && !inroot ) {
+			/* This case is for -inwin=(some window other than root).. */
+			XGetGeometry(priv->disp, priv->parentwin, 
+					&dummywin, 
+					(int *) &dummy, (int *) &dummy,
+					&w, &h,
+					&dummy, &dummy );
+			m->visible.x = w;
+			m->visible.y = h;
+		}
+		else {
+			/* Root window or fullscreen.. */
                 
-		if( (m->visible.x == GGI_AUTO) || inroot )
-		  m->visible.x = screenw;
+			if( (m->visible.x == GGI_AUTO) || inroot )
+			  m->visible.x = screenw;
 	
-		if( (m->visible.y == GGI_AUTO) || inroot )
-		  m->visible.y = screenh;
+			if( (m->visible.y == GGI_AUTO) || inroot )
+			  m->visible.y = screenh;
+		}
 	}
 	
 }
@@ -491,8 +493,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	if( ! priv->ok_to_resize ) {
 		/* This check is necessary if -inwin option is used. */
 		destroychild = destroychild && priv->win != priv->parentwin;
-		destroyparent = destroyparent && priv->win != priv->parentwin;
-		if (priv->parentwin == None) destroyparent = 0;
+		destroyparent = 0;
 		if (priv->parentwin != None) createparent = 0;
 	}
 
