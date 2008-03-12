@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.38 2008/03/12 09:52:27 pekberg Exp $
+/* $Id: mode.c,v 1.39 2008/03/12 10:17:00 pekberg Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -309,22 +309,6 @@ int GGI_memory_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 	_GGIhandle_ggiauto(mode, 640, 400);
 
 	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
-
-	/* do some checks */
-	if (GT_SIZE(mode->graphtype) < 8) {
-	
-		int align = 8 / GT_SIZE(mode->graphtype);
-
-		if (mode->visible.x % align != 0) {
-			mode->visible.x += align-(mode->visible.x % align);
-			err = -1;
-		}
-		
-		if (mode->virt.x % align != 0) {
-			mode->virt.x += align-(mode->virt.x % align);
-			err = -1;
-		}
-	}
 
 	if (mode->virt.x < mode->visible.x) {
 		mode->virt.x = mode->visible.x;
