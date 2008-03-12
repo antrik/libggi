@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.25 2008/03/12 10:44:00 cegger Exp $
+/* $Id: mode.c,v 1.26 2008/03/12 11:02:57 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -45,7 +45,7 @@ static void _GGIfreedbs(struct ggi_visual *vis)
 {
 	int i;
 
-	for (i=LIBGGI_APPLIST(vis)->num-1; i >= 0; i--) {
+	for (i = LIBGGI_APPLIST(vis)->num - 1; i >= 0; i--) {
 		_ggi_db_free(LIBGGI_APPBUFS(vis)[i]);
 		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i);
 	}
@@ -90,14 +90,14 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 	return 0;
 }
 
-int GGI_ipc_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments)
+int GGI_ipc_getapi(struct ggi_visual *vis, int num,
+			char *apiname ,char *arguments)
 {
 	ggi_mode *mode = LIBGGI_MODE(vis);
 
 	*arguments = '\0';
 
 	switch(num) { 
-
 	case 0: strcpy(apiname, "display-ipc");
 		return 0;
 
@@ -105,12 +105,12 @@ int GGI_ipc_getapi(struct ggi_visual *vis,int num, char *apiname ,char *argument
 		return 0;
 		
 	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%u",
+			snprintf(apiname, GGI_MAX_APILEN, "generic-text-%u",
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%u%s", 
+		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
@@ -131,18 +131,18 @@ static int _GGIdomode(struct ggi_visual *vis, ggi_mode *mode)
 	char	name[GGI_MAX_APILEN];
 	char	args[GGI_MAX_APILEN];
 	
-	DPRINT("display-ipc: _GGIdomode: called\n");
+	DPRINT("_GGIdomode: called\n");
 
 	_ggiZapMode(vis, 0);
 
-	DPRINT("display-ipc: _GGIdomode: zap\n");
+	DPRINT("_GGIdomode: zap\n");
 
-	if ((err=alloc_fb(vis,mode)) != 0)
+	if ((err = alloc_fb(vis,mode)) != 0)
 		return err;
 
-	DPRINT("display-ipc: _GGIdomode: got framebuffer memory\n");
+	DPRINT("_GGIdomode: got framebuffer memory\n");
 
-	for(i=1; 0==GGI_ipc_getapi(vis, i, name, args); i++) {
+	for(i = 1; 0 == GGI_ipc_getapi(vis, i, name, args); i++) {
 		err = _ggiOpenDL(vis, libggi->config, name, args, NULL);
 		if (err) {
 			fprintf(stderr,"display-ipc: Can't open the "
@@ -171,13 +171,17 @@ int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	APP_ASSERT(vis != NULL, "GGI_ipc_setmode: Visual == NULL");
 	
-	if ((err=ggiCheckMode(vis->instance.stem, mode)) != 0)	return err;
+	err = ggiCheckMode(vis->instance.stem, mode);
+	if (err < 0) {
+		DPRINT("GGI_ipc_setmode: ggiCheckMode() failed with error %i\n", err);
+		return err;
+	}
 
 	/* some elements of the mode setup rely on this. */
 	memcpy(LIBGGI_MODE(vis), mode, sizeof(ggi_mode));
 
-	err=_GGIdomode(vis, mode);
-	DPRINT("display-ipc: GGIsetmode: domode=%d\n",err);
+	err = _GGIdomode(vis, mode);
+	DPRINT("GGIsetmode: domode=%d\n",err);
 	if (err)
 		return err;
 
@@ -266,10 +270,8 @@ int _GGI_ipc_resetmode(struct ggi_visual *vis)
 
 int GGI_ipc_setflags(struct ggi_visual *vis, uint32_t flags)
 {
-	LIBGGI_FLAGS(vis)=flags;
-
+	LIBGGI_FLAGS(vis) = flags;
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC; /* Unkown flags don't take. */
-
 	return 0;
 }
 
@@ -277,9 +279,9 @@ int GGI_ipc_setPalette(struct ggi_visual *vis, size_t start, size_t size,
 			const ggi_color *colormap)
 {
 	DPRINT("ipc setpalette.\n");
-	              
-	memcpy(LIBGGI_PAL(vis)->clut.data+start, colormap,
-		size*sizeof(ggi_color));
-		
+
+	memcpy(LIBGGI_PAL(vis)->clut.data + start, colormap,
+		size * sizeof(ggi_color));
+
 	return 0;
 }
