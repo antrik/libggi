@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.18 2008/01/21 22:56:52 cegger Exp $
+/* $Id: mode.c,v 1.19 2008/03/12 08:52:27 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -326,7 +326,9 @@ _ggi_domode(struct ggi_visual *vis)
 int
 GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 { 
-	/* ggi_vnc_priv *priv = VNC_PRIV(vis); */
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_client *client;
+	ggi_vnc_client *next;
 	int err;
 	int desktop_size = 0;
 
@@ -343,8 +345,8 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	if (mode->visible.x != LIBGGI_MODE(vis)->visible.x ||
-		mode->visible.y != LIBGGI_MODE(vis)->visible.y)
+	if (mode->visible.x != LIBGGI_X(vis) ||
+		mode->visible.y != LIBGGI_Y(vis))
 	{
 		desktop_size = 1;
 	}
@@ -358,16 +360,12 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		return err;
 	}
 
-	if (desktop_size) {
-		/* "Incompatible" mode change, send desktop size. */
-		ggi_vnc_priv *priv = VNC_PRIV(vis);
-		ggi_vnc_client *client;
-		ggi_vnc_client *next;
-		ggi_rect visible;
-		ggi_rect virt;
-		client = GG_LIST_FIRST(&priv->clients);
-		for (; client; client = next) {
-			next = GG_LIST_NEXT(client, siblings);
+	client = GG_LIST_FIRST(&priv->clients);
+	for (; client; client = next) {
+		next = GG_LIST_NEXT(client, siblings);
+
+		if (desktop_size) {
+			/* "Incompatible" mode change, send desktop size. */
 
 			if (!(client->desktop_size & DESKSIZE_OK_INIT)) {
 				/* ouch, no support */
@@ -384,8 +382,13 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			/* inform client of size change, later */
 			/* but update any client visual right away */
 			client->desktop_size |= DESKSIZE_SEND;
-			GGI_vnc_change_pixfmt(client);
 		}
+		GGI_vnc_change_pixfmt(client);
+	}
+
+	if (desktop_size) {
+		ggi_rect visible;
+		ggi_rect virt;
 
 		visible.tl.x = visible.tl.y = 0;
 		visible.br = mode->visible;
