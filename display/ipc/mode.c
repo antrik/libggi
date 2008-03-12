@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.24 2008/03/12 10:39:45 cegger Exp $
+/* $Id: mode.c,v 1.25 2008/03/12 10:44:00 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -248,24 +248,9 @@ int GGI_ipc_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int GGI_ipc_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
-	ggi_mode mymode;
-	ipc_priv *priv;
+	DPRINT("ggiGetMode(%p,%p)\n", vis, mode);
 
-	priv = IPC_PRIV(vis);
-	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
-
-	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
-#if 0
-	if (priv->inputbuffer) {
-		mymode.visible.x = priv->inputbuffer->visx;
-		mymode.visible.y = priv->inputbuffer->visy;
-		mymode.virt.x    = priv->inputbuffer->virtx;
-		mymode.virt.y    = priv->inputbuffer->virty;
-		mymode.frames    = priv->inputbuffer->frames;
-		mymode.graphtype = priv->inputbuffer->type;
-	}
-#endif
-	memcpy(mode, &mymode, sizeof(ggi_mode));
+	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
 	return 0;
 }
