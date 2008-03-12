@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.41 2007/03/14 23:01:18 cegger Exp $
+/* $Id: visual.c,v 1.42 2008/03/12 12:27:23 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -84,6 +84,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	ggi_memory_priv *priv;
 	gg_option options[NUM_OPTS];
 	char inputstr[1024];
+	int err = 0;
 
 	DPRINT_MISC("GGIopen: coming up.\n");
 
@@ -96,8 +97,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	/* Allocate descriptor for screen memory */
 	priv = calloc(1, sizeof(ggi_memory_priv));
 	if (!priv) {
-		free(LIBGGI_GC(vis));
-		return GGI_ENOMEM;
+		err = GGI_ENOMEM;
+		goto err0;
 	}
 	LIBGGI_PRIVATE(vis) = priv;
 
@@ -117,9 +118,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (_ggi_physz_parse_option(options[OPT_PHYSZ].result, 
 			     &(priv->physzflags), &(priv->physz)))
 	{ 
-		free(priv);
-		free(LIBGGI_GC(vis));
-		return GGI_EARGINVAL;
+		err = GGI_EARGINVAL;
+		goto err1;
 	}
 
 	if (args && *args) {	/* We have parameters. Analyze them. */
@@ -246,11 +246,26 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 						priv->inputbuffer->buffer);
 			DPRINT("ggPlugModule for input-memory returned %p\n",
 				priv->inp);
+
+			if (priv->inp == NULL) {
+				fprintf(stderr,
+					"display-memory: unable to open input-memory\n");
+				err = GGI_ENODEVICE;
+				goto err1;
+			}
 		}
 	}
 	
 	*dlret = GGI_DL_OPDISPLAY;
 	return 0;
+
+err1:
+	free(priv);
+err0:
+	free(LIBGGI_GC(vis));
+
+	*dlret = GGI_DL_OPDISPLAY;
+	return err;
 }
 
 
