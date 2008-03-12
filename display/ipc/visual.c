@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.31 2007/03/11 21:54:43 soyt Exp $
+/* $Id: visual.c,v 1.32 2008/03/12 12:14:13 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -55,9 +55,8 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-
-int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
-		  int tryflag)
+static int GGI_ipc_flush(struct ggi_visual *vis,
+			int x, int y, int w, int h, int tryflag)
 {
 	char buffer[32];
 	ipc_priv *priv = IPC_PRIV(vis);
@@ -79,9 +78,8 @@ int GGI_ipc_flush(struct ggi_visual *vis, int x, int y, int w, int h,
 }	/* GGI_ipc_flush */
 
 
-
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
-		   const char *args, void *argptr, uint32_t *dlret)
+			const char *args, void *argptr, uint32_t *dlret)
 {
 	ipc_priv *priv;
 	gg_option options[NUM_OPTS];
@@ -90,7 +88,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	int err = 0;
 	int rc;
 
-	DPRINT_MISC("display-ipc coming up.\n");
+	DPRINT_MISC("GGIopen: coming up.\n");
 	memcpy(options, optlist, sizeof(options));
 
 	if (!args) {
@@ -108,8 +106,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
 
 	/* Allocate descriptor for screen memory */
-	priv = malloc(sizeof(ipc_priv));
-
+	priv = calloc(1, sizeof(ipc_priv));
 	if (!priv) {
 		err = GGI_ENOMEM;
 		goto err0;
