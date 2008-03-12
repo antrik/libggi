@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.42 2008/03/12 12:27:23 cegger Exp $
+/* $Id: visual.c,v 1.43 2008/03/12 13:17:21 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -83,13 +83,10 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 {
 	ggi_memory_priv *priv;
 	gg_option options[NUM_OPTS];
-	char inputstr[1024];
 	int err = 0;
 
 	DPRINT_MISC("GGIopen: coming up.\n");
-
 	memcpy(options, optlist, sizeof(options));
-	memset(inputstr, 0, sizeof(inputstr));
 
 	LIBGGI_GC(vis) = malloc(sizeof(ggi_gc));
 	if (!LIBGGI_GC(vis)) return GGI_ENOMEM;
@@ -237,6 +234,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		DPRINT_MISC("Adding gii to shmem-memtarget\n");
 		gii = ggGetAPIByName("gii");
 		if (gii != NULL && STEM_HAS_API(vis->instance.stem, gii)) {
+			char inputstr[1024];
+
 			snprintf(inputstr, sizeof(inputstr),
 				"-size=%i:-pointer", INPBUFSIZE);
 			DPRINT("\"input-memory\" inputstr \"%s\" at %p\n",
