@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.39 2008/03/12 10:17:00 pekberg Exp $
+/* $Id: mode.c,v 1.40 2008/03/12 11:02:23 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -283,18 +283,6 @@ int GGI_memory_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	if (err)
 		return err;
 
-#if 0
-	if (priv->inputbuffer) {
-		priv->inputbuffer->visx = mode->visible.x;
-		priv->inputbuffer->visy = mode->visible.y;
-		priv->inputbuffer->virtx = mode->virt.x;
-		priv->inputbuffer->virty = mode->virt.y;
-		priv->inputbuffer->frames = mode->frames;
-		priv->inputbuffer->type = mode->graphtype;
-		priv->inputbuffer->visframe = 0;
-	}
-#endif
-
 	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 	DPRINT("GGIsetmode: change indicated\n",err);
 
@@ -341,24 +329,9 @@ int GGI_memory_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 int GGI_memory_getmode(struct ggi_visual *vis, ggi_mode *mode)
 {
-	ggi_memory_priv *priv;
-	ggi_mode mymode;
 	DPRINT("GGIgetmode(%p,%p)\n", vis, mode);
 
-	priv = MEMORY_PRIV(vis);
-
-	memcpy(&mymode, LIBGGI_MODE(vis), sizeof(ggi_mode));
-#if 0
-	if (priv->inputbuffer) {
-		mymode.visible.x = priv->inputbuffer->visx;
-		mymode.visible.y = priv->inputbuffer->visy;
-		mymode.virt.x    = priv->inputbuffer->virtx;
-		mymode.virt.y    = priv->inputbuffer->virty;
-		mymode.frames    = priv->inputbuffer->frames;
-		mymode.graphtype = priv->inputbuffer->type;
-	}
-#endif
-	memcpy(mode, &mymode, sizeof(ggi_mode));
+	memcpy(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
 
 	return 0;
 }
