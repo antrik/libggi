@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.43 2008/03/12 13:17:21 cegger Exp $
+/* $Id: visual.c,v 1.44 2008/03/12 13:26:50 cegger Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -102,7 +102,6 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->inp = NULL;
 	priv->memtype = MT_MALLOC;	/* Default to mallocing. */
 	priv->inputbuffer = NULL;	/* Default to no input */
-	priv->inputoffset = 0;		/* Setup offset. */
 
 	if (args) {
 		args = ggParseOptions(args, options, NUM_OPTS);

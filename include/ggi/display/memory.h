@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.15 2007/03/14 23:01:18 cegger Exp $
+/* $Id: memory.h,v 1.16 2008/03/12 13:26:50 cegger Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -95,7 +95,6 @@ typedef struct {
 	enum memtype   	memtype;
 	void	       *memptr;
 	inpbuffer      *inputbuffer;
-	int		inputoffset;
 	ggi_pixel	r_mask, g_mask, b_mask, a_mask;
 	uint32_t	pixfmt_flags;
 	int		fstride;
