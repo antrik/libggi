@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.37 2008/03/05 14:05:03 pekberg Exp $
+/* $Id: mode.c,v 1.38 2008/03/12 09:52:27 pekberg Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -86,7 +86,7 @@ static int alloc_fb(struct ggi_visual *vis, ggi_mode *mode)
 	if (priv->layout == blPixelPlanarBuffer) {
 		lstride = priv->buffer.plan.next_line ?
 			priv->buffer.plan.next_line : 
-			(mode->virt.x + 7) / 8;
+			(mode->virt.x + 15) / 16;
 		pstride = priv->buffer.plan.next_plane ?
 			priv->buffer.plan.next_plane : 
 			(lstride * mode->virt.y);
