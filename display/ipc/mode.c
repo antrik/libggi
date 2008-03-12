@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.23 2008/01/21 22:56:45 cegger Exp $
+/* $Id: mode.c,v 1.24 2008/03/12 10:39:45 cegger Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -180,18 +180,6 @@ int GGI_ipc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	DPRINT("display-ipc: GGIsetmode: domode=%d\n",err);
 	if (err)
 		return err;
-
-#if 0
-	if (priv->inputbuffer) {
-		priv->inputbuffer->visx = mode->visible.x;
-		priv->inputbuffer->visy = mode->visible.y;
-		priv->inputbuffer->virtx = mode->virt.x;
-		priv->inputbuffer->virty = mode->virt.y;
-		priv->inputbuffer->frames = mode->frames;
-		priv->inputbuffer->type = mode->graphtype;
-		priv->inputbuffer->visframe = 0;
-	}
-#endif
 
 	ggiIndicateChange(vis->instance.stem, GGI_CHG_APILIST);
 	DPRINT("GGIsetmode: change indicated\n",err);
