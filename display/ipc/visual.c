@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.32 2008/03/12 12:14:13 cegger Exp $
+/* $Id: visual.c,v 1.33 2008/03/12 12:31:54 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -219,10 +219,20 @@ err0:
 
 static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 {
+	ipc_priv *priv = IPC_PRIV(vis);
+
 	_GGI_ipc_resetmode(vis);
-	shmdt(IPC_PRIV(vis)->memptr); 
-	free(IPC_PRIV(vis));
+
+	if (priv->inp) {
+		ggClosePlugin(priv->inp);
+		priv->inp = NULL;
+	}
+
+	shmdt(priv->memptr); 
+	free(priv);
 	free(LIBGGI_GC(vis));
+	LIBGGI_PRIVATE(vis) = NULL;
+	LIBGGI_GC(vis) = NULL;
 
 	return 0;
 }	/* GGIclose */
