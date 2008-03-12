@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.20 2008/03/05 14:13:56 pekberg Exp $
+/* $Id: monitest.c,v 1.21 2008/03/12 10:25:21 cegger Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -254,7 +254,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screentest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.20 2008/03/05 14:13:56 pekberg Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.21 2008/03/12 10:25:21 cegger Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -421,25 +421,29 @@ static int changeresmenu(void)
 		if (prevgtindex < 0) {
 			prevgtindex = 0;
 		}
-		sprintf(cm.entry[4].text = nextgtline,
+		snprintf(cm.entry[4].text = nextgtline,
+			sizeof(nextgtline),
 			"5 Increase depth: %u/%u",
 			GT_DEPTH(graphtypes[nextgtindex]),
 			GT_SIZE(graphtypes[nextgtindex]));
-		sprintf(cm.entry[5].text = prevgtline,
+		snprintf(cm.entry[5].text = prevgtline,
+			sizeof(prevgtline),
 			"6 Decrease depth: %u/%u",
 			GT_DEPTH(graphtypes[prevgtindex]),
 			GT_SIZE(graphtypes[prevgtindex]));
-		sprintf(cm.entry[6].text =
-			nextmodeline, "7 next res.:  %dx%d",
+		snprintf(cm.entry[6].text = nextmodeline,
+			sizeof(nextmodeline),
+			"7 next res.:  %dx%d",
 			resolutions[nextresindex].x,
 			resolutions[nextresindex].y);
-		sprintf(cm.entry[7].text =
-			prevmodeline, "8 prev. res.: %dx%d",
+		snprintf(cm.entry[7].text = prevmodeline,
+			sizeof(prevmodeline),
+			"8 prev. res.: %dx%d",
 			resolutions[prevresindex].x,
 			resolutions[prevresindex].y);
 
 
-		sprintf(s, "current: %4dx%3dx%u/%u", xres, yres,
+		snprintf(s, sizeof(s), "current: %4dx%3dx%u/%u", xres, yres,
 			GT_DEPTH(graphtypes[gtindex]),
 			GT_SIZE(graphtypes[gtindex]));
 
@@ -493,7 +497,7 @@ static int changeresmenu(void)
 		    (vis, xres, yres, 1, graphtypes[gtindex],
 		     &suggmode) != 0) {
 			/* failed */
-			sprintf(bottom, "mode set failed");
+			snprintf(bottom, sizeof(bottom), "mode set failed");
 		} else {
 			
 			if (ggiSetMode(vis, &suggmode) != 0) {

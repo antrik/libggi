@@ -1,4 +1,4 @@
-/* $Id: pattern.c,v 1.4 2005/07/30 08:43:03 soyt Exp $
+/* $Id: pattern.c,v 1.5 2008/03/12 10:25:21 cegger Exp $
 ******************************************************************************
 
    Monitest core pattern routine
@@ -16,6 +16,7 @@
 */
 
 #include "config.h"
+#include <ggi/internal/gg_replace.h>
 #include <ggi/ggi.h>
 
 #include "monitest.h"
@@ -201,12 +202,12 @@ void testpattern(ggi_visual_t vis)
 	ggiPuts(vis, MIDX-(15*FONTX)/2, MIDY-2*FONTY,"GGI screen test");
 	
 	/* -visible resolution */
-	sprintf(s,"%4dx%3d %u/%u", currmode.visible.x, currmode.visible.y,
+	snprintf(s,sizeof(s), "%4dx%3d %u/%u", currmode.visible.x, currmode.visible.y,
 		GT_DEPTH(currmode.graphtype), GT_SIZE(currmode.graphtype));
 	ggiPuts(vis, MIDX-(11*FONTX)/2, MIDY-1*FONTY, s);
 	
 	/* -virtual resolution */
-	sprintf(s,"virtual %4dx%3d", currmode.virt.x, currmode.virt.y);
+	snprintf(s,sizeof(s),"virtual %4dx%3d", currmode.virt.x, currmode.virt.y);
 	ggiPuts(vis, MIDX-(16*FONTX)/2, MIDY+0*FONTY, s);
 	
 	ggiPuts(vis, MIDX-(13*FONTX)/2, MIDY+1*FONTY,"Press <Space>");
