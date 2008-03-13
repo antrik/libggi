@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.17 2006/02/05 14:20:59 soyt Exp $
+/* $Id: libtele.c,v 1.18 2008/03/13 20:03:25 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -830,7 +830,7 @@ int tserver_exit(TeleServer *s)
 	if (! s->inet) {
 		char filename[200];
 
-		snprintf(filename, 200, "%s%d",
+		snprintf(filename, sizeof(filename), "%s%d",
 			TELE_FIFO_BASE, s->display);
 
 		unlink(filename);
