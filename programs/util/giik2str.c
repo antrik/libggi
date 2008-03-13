@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.8 2007/06/24 13:10:11 cegger Exp $
+/* $Id: giik2str.c,v 1.9 2008/03/13 19:43:37 cegger Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -31,6 +31,7 @@
 #include <ctype.h>
 
 #include "giik2str.h"
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 
 /* Hey, this function never claimed to be threadsafe... */
 static char retbuffer[32]; /* More than enough to hold a hex 32bit int */
@@ -456,7 +457,7 @@ const char *giik2str(uint32_t giik, int issym)
 		}
 
 		/* Return hex integer string */
-		sprintf(retbuffer, "0x%04x", giik);
+		snprintf(retbuffer, sizeof(retbuffer), "0x%04x", giik);
 		return retbuffer;
 	}
 }
