@@ -1,4 +1,4 @@
-/* $Id: kgi.c,v 1.18 2005/01/23 21:57:20 nsouch Exp $
+/* $Id: kgi.c,v 1.19 2008/03/13 20:27:23 cegger Exp $
 ******************************************************************************
 
 
@@ -98,7 +98,7 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 	close(ctx->mapper.fd);
 
 	ctx->mapper.graphic = get_unit.result.unit - 1;
-	sprintf(fname, "/dev/graphic%i", get_unit.result.unit);
+	snprintf(fname, sizeof(fopt), "/dev/graphic%i", get_unit.result.unit);
 	ctx->mapper.fd = open(fname, O_RDWR | O_NONBLOCK);
 	if (ctx->mapper.fd < 0) {
 		perror("failed to open /dev/graphicX");

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.15 2007/04/08 13:58:11 cegger Exp $
+/* $Id: mode.c,v 1.16 2008/03/13 20:19:21 cegger Exp $
 ******************************************************************************
  *
  * wsfb(3) target: mode management
@@ -62,7 +62,8 @@ int GGI_wsfb_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 		strcpy(apiname, "generic-color");
 		return 0;
 	case 3:
-		sprintf(apiname, "generic-linear-%d%s", 
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%d%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 				? "-r" : "");

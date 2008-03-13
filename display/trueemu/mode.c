@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2008/01/21 22:56:52 cegger Exp $
+/* $Id: mode.c,v 1.22 2008/03/13 20:23:33 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -60,7 +60,7 @@ int GGI_trueemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *arg
 	case 1: strcpy(apiname, "generic-stubs");
 		return 0;
 
-	case 2: sprintf(apiname, "generic-linear-%u%s",
+	case 2: snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s",
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
@@ -69,7 +69,8 @@ int GGI_trueemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *arg
 		return 0;
 		
 	case 4: strcpy(apiname, "generic-pseudo-stubs");
-		sprintf(arguments, "%p", (void *)TRUEEMU_PRIV(vis)->parent);
+		snprintf(arguments, GGI_MAX_APILEN,
+			"%p", (void *)TRUEEMU_PRIV(vis)->parent);
 		return 0;
 	}
 

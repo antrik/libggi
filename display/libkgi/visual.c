@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2007/03/04 18:26:43 soyt Exp $
+/* $Id: visual.c,v 1.18 2008/03/13 20:30:40 cegger Exp $
 ******************************************************************************
 
    Display-libkgi: visual handling
@@ -58,11 +58,11 @@ int GGI_libkgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
 
         switch(num) {
         case 0:
-                sprintf(apiname, "display-libkgi");
+                snprintf(apiname, GGI_MAX_APILEN, "display-libkgi");
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 1:
-                sprintf(apiname, "display-libkgi-%s", 
+                snprintf(apiname, GGI_MAX_APILEN, "display-libkgi-%s", 
 			LIBKGI_PRIV(vis)->suggest);
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
@@ -71,7 +71,8 @@ int GGI_libkgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 3:
-                sprintf(apiname, "generic-linear-%d",GT_DEPTH(LIBGGI_GT(vis)));
+                snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%d",GT_DEPTH(LIBGGI_GT(vis)));
   fprintf(stderr, "libkgi getapi returned %s\n", apiname);
                 return 0;
         case 4: strcpy(apiname, "generic-color");
@@ -335,7 +336,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
         priv->flush = NULL;
         priv->idleaccel = NULL;
 
-	sprintf(priv->suggest, "foodrv");
+	snprintf(priv->suggest, sizeof(priv->suggest), "foodrv");
 
         DPRINT("display-libkgi: Parsing physz options.\n");
 	err = _ggi_physz_parse_option(options[OPT_PHYSZ].result, 

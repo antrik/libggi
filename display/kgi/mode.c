@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.34 2008/01/21 22:56:45 cegger Exp $
+/* $Id: mode.c,v 1.35 2008/03/13 20:27:23 cegger Exp $
 ******************************************************************************
 
    Display-kgi: mode management
@@ -194,11 +194,13 @@ int GGI_kgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *argumen
 		return 0;
 	case 3:
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%d",
 				GT_SIZE(LIBGGI_GT(vis)));
 		}
 		else {
-			sprintf(apiname, "generic-linear-%d%s",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-linear-%d%s",
 				GT_SIZE(LIBGGI_GT(vis)),
 				(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT)
 				? "-r" : "");

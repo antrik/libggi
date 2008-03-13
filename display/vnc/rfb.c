@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.116 2008/03/05 14:06:56 pekberg Exp $
+/* $Id: rfb.c,v 1.117 2008/03/13 20:18:25 cegger Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1777,7 +1777,7 @@ vnc_client_version(ggi_vnc_client *client)
 		DPRINT("Invalid protocol version requested\n");
 		return -1;
 	}
-	sprintf(str, "RFB %03u.%03u\n", major, minor);
+	snprintf(str, sizeof(str), "RFB %03u.%03u\n", major, minor);
 	if (strcmp(str, (char *)client->buf)) {
 		DPRINT("Invalid protocol version requested\n");
 		return -1;

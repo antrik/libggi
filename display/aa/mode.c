@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2008/01/21 22:56:44 cegger Exp $
+/* $Id: mode.c,v 1.27 2008/03/13 20:21:45 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI.  Events for AA target.
@@ -51,7 +51,7 @@ int GGI_aa_getapi(struct ggi_visual *vis,int num, char *apiname ,char *arguments
 			if (LIBGGI_GT(vis) != GT_8BIT)
 				return GGI_ENOMATCH;
 
-			sprintf(apiname, "generic-linear-8");
+			snprintf(apiname, GGI_MAX_APILEN, "generic-linear-8");
 			return 0;
 	}
 	return GGI_ENOMATCH;

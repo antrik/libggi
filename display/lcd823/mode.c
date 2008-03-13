@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.16 2008/01/21 22:56:46 cegger Exp $
+/* $Id: mode.c,v 1.17 2008/03/13 20:28:21 cegger Exp $
 ******************************************************************************
 
    Display-lcd823
@@ -74,11 +74,13 @@ int GGI_lcd823_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
 
 	case 3:
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d", size);
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%d", size);
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%d", size);
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%d", size);
 		return 0;
 	}
 

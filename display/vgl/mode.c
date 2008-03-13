@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2008/01/21 22:56:52 cegger Exp $
+/* $Id: mode.c,v 1.27 2008/03/13 20:20:29 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -62,10 +62,12 @@ int GGI_vgl_getapi(struct ggi_visual *vis, int num, char *apiname, char *argumen
 				break;
 
 			if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-				sprintf(apiname, "generic-text-%d",
+				snprintf(apiname, sizeof(apiname),
+					"generic-text-%d",
 					GT_SIZE(LIBGGI_GT(vis))); 
 			} else {
-				sprintf(apiname, "generic-linear-%d%s", 
+				snprintf(apiname, sizeof(apiname),
+					"generic-linear-%d%s", 
 					GT_SIZE(LIBGGI_GT(vis)),
 					(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 					? "-r" : "");
