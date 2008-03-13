@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2008/01/21 22:56:44 cegger Exp $
+/* $Id: mode.c,v 1.36 2008/03/13 20:13:34 cegger Exp $
 ******************************************************************************
 
    Display-FBDEV
@@ -111,7 +111,8 @@ int GGI_fbdev_getapi(struct ggi_visual *vis, int num, char *apiname, char *argum
 		return 0;
 
 	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%d", size);
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%d", size);
 			return 0;
 		} 
 
@@ -121,13 +122,13 @@ int GGI_fbdev_getapi(struct ggi_visual *vis, int num, char *apiname, char *argum
 		}
 
 		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
-			sprintf(apiname, "generic-%s",
+			snprintf(apiname, GGI_MAX_APILEN, "generic-%s",
 				(priv->fix.type_aux == 2) ? 
 				"iplanar-2p" : "ilbm");
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%d", size);
+		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%d", size);
 		return 0;
 
 	case 4:
@@ -136,53 +137,61 @@ int GGI_fbdev_getapi(struct ggi_visual *vis, int num, char *apiname, char *argum
 		   in question wants a generic-linear-4r instead of 
 		   a generic-linear-4r */
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "fb-generic-%2.2x-text-%d", 
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-generic-%2.2x-text-%d", 
 				priv->orig_fix.accel, size);
 			return 0;
 		} 
 		
 		if (priv->fix.type == FB_TYPE_PLANES) {
-			sprintf(apiname, "fb-generic-%2.2x-planar",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-generic-%2.2x-planar",
 				priv->orig_fix.accel);
 			return 0;
 		}
 		
 		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
-			sprintf(apiname, "fb-generic-%2.2x-%s",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-generic-%2.2x-%s",
 				priv->orig_fix.accel ,
 				(priv->fix.type_aux == 2) ? 
 				"iplanar-2p" : "ilbm");
 			return 0;
 		}
 
-		sprintf(apiname, "fb-generic-%2.2x-linear-%d", 
-				priv->orig_fix.accel, size);
+		snprintf(apiname, GGI_MAX_APILEN,
+			"fb-generic-%2.2x-linear-%d", 
+			priv->orig_fix.accel, size);
 		return 0;
 		break;
 
 	case 5:
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "fb-accel-%2.2x-text-%d", 
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-accel-%2.2x-text-%d", 
 				priv->orig_fix.accel, size);
 			return 0;
 		} 
 
 		if (priv->fix.type == FB_TYPE_PLANES) {
-			sprintf(apiname, "fb-accel-%2.2x-planar",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-accel-%2.2x-planar",
 				priv->orig_fix.accel);
 			return 0;
 		}
 
 		if (priv->fix.type == FB_TYPE_INTERLEAVED_PLANES) {
-			sprintf(apiname, "fb-accel-%2.2x-%s",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"fb-accel-%2.2x-%s",
 				priv->orig_fix.accel ,
 				(priv->fix.type_aux == 2) ? 
 				"iplanar-2p" : "ilbm");
 			return 0;
 		}
 
-		sprintf(apiname, "fb-accel-%2.2x-linear-%d", 
-				priv->orig_fix.accel, size);
+		snprintf(apiname, GGI_MAX_APILEN,
+			"fb-accel-%2.2x-linear-%d", 
+			priv->orig_fix.accel, size);
 		return 0;
 		break;
 	}

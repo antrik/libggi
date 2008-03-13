@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.33 2008/01/21 22:56:47 cegger Exp $
+/* $Id: mode.c,v 1.35 2008/03/13 20:16:01 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -116,7 +116,8 @@ int GGI_svga_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 			}
 
 			/* else islinear */
-			sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
 			return 0;
 	}
 			
@@ -144,7 +145,7 @@ static int GGI_svga_make_modeline(ggi_mode *tm)
 
 	/* Form a SVGAlib mode number */
 
-	snprintf(modestr, 64, "G%dx%dx%s",
+	snprintf(modestr, sizeof(modestr), "G%dx%dx%s",
 		tm->visible.x, tm->visible.y, colors);
 	DPRINT("SVGAlib trying modeline=%s.\n", modestr);
 
