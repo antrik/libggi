@@ -1,4 +1,4 @@
-/* $Id: ppm.c,v 1.11 2007/04/17 00:27:49 ggibecka Exp $
+/* $Id: ppm.c,v 1.12 2008/03/13 15:16:19 cegger Exp $
 ******************************************************************************
 
    Display-file: ppm writer
@@ -69,7 +69,7 @@ void _ggi_file_ppm_write(struct ggi_visual *vis)
 	_ggi_file_write_string(vis, (const unsigned char *)"P6\n");
 	_ggi_file_write_string(vis, (const unsigned char *)PPM_INFO_STRING);
 
-	snprintf((char *)buf, 200, "%d %d\n255\n", LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
+	snprintf((char *)buf, sizeof(buf), "%d %d\n255\n", LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 	_ggi_file_write_string(vis, buf);
 
 
