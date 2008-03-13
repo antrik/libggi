@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.37 2008/03/13 16:12:49 cegger Exp $
+/* $Id: visual.c,v 1.38 2008/03/13 17:18:16 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -313,6 +313,7 @@ static int GGIopen_tile(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		mvis = tile_FIRST(priv);
 		tile_REMOVE(priv, mvis);
 		ggiClose(mvis->vis);
+		ggDelStem(mvis->vis);
 		free(mvis);
 	}
   out_freeopmansync:
@@ -479,6 +480,7 @@ static int GGIopen_multi(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	while (!tile_EMPTY(priv)) {
 		mvis = tile_FIRST(priv);
 		tile_REMOVE(priv, mvis);
+		ggiClose(mvis->vis);
 		ggDelStem(mvis->vis);
 		free(mvis);
 	}
