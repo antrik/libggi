@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.36 2007/06/20 07:47:07 cegger Exp $
+/* $Id: visual.c,v 1.37 2008/03/13 16:12:49 cegger Exp $
 ******************************************************************************
 
    Initializing tiles
@@ -510,6 +510,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	while (!tile_EMPTY(priv)) {
 		elm = tile_FIRST(priv);
 		tile_REMOVE(priv, elm);
+		ggiClose(elm->vis);
 		ggDelStem(elm->vis);
 		free(elm);		
 	}
