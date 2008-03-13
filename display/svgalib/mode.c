@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.35 2008/03/13 20:16:01 cegger Exp $
+/* $Id: mode.c,v 1.34 2008/03/13 20:15:10 cegger Exp $
 ******************************************************************************
 
    SVGAlib target: mode management
@@ -116,8 +116,7 @@ int GGI_svga_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 			}
 
 			/* else islinear */
-			snprintf(apiname, GGI_MAX_APILEN,
-				"generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
+			sprintf(apiname, "generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
 			return 0;
 	}
 			
