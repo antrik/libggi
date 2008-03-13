@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.22 2007/12/28 15:58:26 cegger Exp $
+/* $Id: inputdump.c,v 1.23 2008/03/13 19:48:37 cegger Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -36,6 +36,7 @@
 #include <ctype.h>
 
 #include "giik2str.h"
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 
 static struct timeval start_time;
 static int firstevent = 1;
@@ -177,12 +178,13 @@ static void draw_inp_buttons(mydev_info *M)
 		if (label < 0) continue;
 
 		if ((label == GIIK_NIL) || (label == GIIK_VOID)) {
-			sprintf(buf, "button %03d          ", i);
+			snprintf(buf, sizeof(buf), "button %03d          ", i);
 		} else if (isprint(M->syms[i])) {
-			sprintf(buf, "button %03d 0x%04x %c ",
+			snprintf(buf, sizeof(buf), "button %03d 0x%04x %c ",
 				i, label, M->syms[i]);
 		} else {
-			sprintf(buf, "button %03d 0x%04x   ", i, label);
+			snprintf(buf, sizeof(buf), "button %03d 0x%04x   ",
+				i, label);
 		}
 		
 		ggiPuts(vis, x, y, buf);  y += vis_ch.y;
@@ -193,7 +195,7 @@ static void draw_inp_buttons(mydev_info *M)
 
 		if (label < 0) continue;
 
-		sprintf(buf, "ptrbtn %03d        ", i);
+		snprintf(buf, sizeof(buf), "ptrbtn %03d        ", i);
 		
 		ggiPuts(vis, x, y, buf);  y += vis_ch.y;
 	}
@@ -208,7 +210,7 @@ static void draw_inp_device(mydev_info *M)
 	int i;
 	int w = 0;
 
-	sprintf(buf, "Unknown 0x%04x", M->origin);
+	snprintf(buf, sizeof(buf), "Unknown 0x%04x", M->origin);
 	
 	ggiSetGCBackground(vis, ggiMapColor(vis, &black));
 	ggiSetGCForeground(vis, ggiMapColor(vis, &yellow));
@@ -220,7 +222,7 @@ static void draw_inp_device(mydev_info *M)
 		for (i=0; i < M->val_h; i++) {
 			int tmp;
 			if (!M->VI[i]) {
-				sprintf(buf, "? %d", i);
+				snprintf(buf, sizeof(buf), "? %d", i);
 				tmp = strlen(buf);
 			}
 			else
@@ -250,7 +252,7 @@ static void draw_inp_device(mydev_info *M)
 			memset(buf, ' ', M->val_x);
 			buf[M->val_x] = '\0';
 			ggiPuts(vis, M->top.x, y, buf);
-			sprintf(buf, "? %d", i);
+			snprintf(buf, sizeof(buf), "? %d", i);
 			ggiPuts(vis, M->top.x, y, M->VI[i] ? 
 				M->VI[i]->longname : buf);
 

@@ -1,4 +1,4 @@
-/* $Id: slimy.c,v 1.16 2007/12/28 15:55:28 cegger Exp $
+/* $Id: slimy.c,v 1.17 2008/03/13 19:49:58 cegger Exp $
 ******************************************************************************
 
    Slimy Plasma Spinner by WolfWings ShadowFlight
@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <ggi/internal/gg_replace.h> /* for snprintf */
 
 #ifndef M_PI
 # define M_PI	3.141592654
@@ -330,7 +331,7 @@ static void RunSpinner(void)
 		if (show_fps) {
 			char str[18];
 			ggi_pixel _bg;
-			sprintf(str, "FPS : %f", fps);
+			snprintf(str, sizeof(str), "FPS : %f", fps);
 			ggiGetGCBackground(disp, &_bg);
 			ggiSetGCBackground(disp,
 					   ggiMapColor(disp, &black));

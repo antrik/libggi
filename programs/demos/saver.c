@@ -1,4 +1,4 @@
-/* $Id: saver.c,v 1.17 2007/05/05 08:34:48 cegger Exp $
+/* $Id: saver.c,v 1.18 2008/03/13 19:54:44 cegger Exp $
 ******************************************************************************
 
    speed.c - screensaver like application
@@ -29,7 +29,7 @@
 # include <unistd.h>
 #endif
 
-
+#include <ggi/internal/gg_replace.h>
 
 /* The time in minutes till activation
  */
@@ -506,9 +506,11 @@ static void blank_screen2(int interactive)
 		ggiSetGCForeground(visual, 128);
 		ggiPuts(visual, 10, 10, "*** Screen - Saver ***");
 		ggiPuts(visual, 10, 30, "Configuration Screen :");
-		sprintf(hlpbuf, "n/p Type: %15s", SaverActive->name);
+		snprintf(hlpbuf, sizeof(hlpbuf),
+			"n/p Type: %15s", SaverActive->name);
 		ggiPuts(visual, 10, 50, hlpbuf);
-		sprintf(hlpbuf, "+/- Time: %4d minutes", timeout);
+		snprintf(hlpbuf, sizeof(hlpbuf),
+			"+/- Time: %4d minutes", timeout);
 		ggiPuts(visual, 10, 70, hlpbuf);
 		ggiPuts(visual, 10, 100, "Switch away to activate");
 		c = giiGetc(visual);

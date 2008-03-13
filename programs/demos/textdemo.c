@@ -1,4 +1,4 @@
-/* $Id: textdemo.c,v 1.15 2007/05/05 08:34:48 cegger Exp $
+/* $Id: textdemo.c,v 1.16 2008/03/13 19:54:44 cegger Exp $
 ******************************************************************************
 
    textdemo.c - demonstrate text mode on apropriate targets
@@ -26,6 +26,7 @@
 # include <unistd.h>
 #endif
 
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 
 static ggi_visual_t vis;
 
@@ -151,7 +152,7 @@ int main(int argc, const char *argv[])
 	ggiPuts(vis, 0, 1, "BG0");
 	for (a = 1; a < 16; a++) {
 		char str[4];
-		sprintf(str, "BG%c", hex[a]);
+		snprintf(str, sizeof(str), "BG%c", hex[a]);
 		ggiSetGCForeground(vis, (unsigned) (a) << 12);
 		ggiPuts(vis, 0, a + 1, str);
 	}
@@ -160,7 +161,7 @@ int main(int argc, const char *argv[])
 	ggiPuts(vis, 3, 0, "FG0");
 	for (a = 1; a < 16; a++) {
 		char str[4];
-		sprintf(str, "FG%c", hex[a]);
+		snprintf(str, sizeof(str), "FG%c", hex[a]);
 		ggiSetGCForeground(vis, (unsigned) (a) << 8);
 		ggiPuts(vis, (a + 1) * 3, 0, str);
 	}

@@ -1,4 +1,4 @@
-/* $Id: pageflip.c,v 1.17 2007/12/28 13:41:44 cegger Exp $
+/* $Id: pageflip.c,v 1.18 2008/03/13 19:54:44 cegger Exp $
 ******************************************************************************
 
    pageflip.c - test the multiple buffering functions of LibGGI
@@ -41,6 +41,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 
 static ggi_color black = { 0x0000, 0x0000, 0x0000, 0x0000 };
 static ggi_color white = { 0xffff, 0xffff, 0xffff, 0x0000 };
@@ -226,7 +228,7 @@ int main(int argc, const char *argv[])
 		ggiSetGCForeground(vis, ggiMapColor(vis, &black));
 		ggiFillscreen(vis);
 
-		sprintf(buf, "Hello World #%d!", i);
+		snprintf(buf, sizeof(buf), "Hello World #%d!", i);
 
 		for (j = 0; j < mode.virt.y; j += cy) {
 

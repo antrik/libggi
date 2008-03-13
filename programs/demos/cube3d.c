@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.30 2008/03/05 14:12:28 pekberg Exp $
+/* $Id: cube3d.c,v 1.31 2008/03/13 19:54:43 cegger Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -624,7 +624,8 @@ static const char *ftok(const char *pathname, int id)
 {
 	static char object[MAX_PATH+50];
 	char *ptr;
-	sprintf(object, "ggi-display-memory-shm:%s:%d", pathname, id);
+	snprintf(object, sizeof(object),
+		"ggi-display-memory-shm:%s:%d", pathname, id);
 	ptr = object;
 	while((ptr = strchr(ptr, '\\')) != NULL)
 		*ptr++ = '/';
