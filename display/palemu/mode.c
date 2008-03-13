@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.26 2008/01/21 22:56:46 cegger Exp $
+/* $Id: mode.c,v 1.27 2008/03/13 20:33:47 cegger Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -65,7 +65,7 @@ int GGI_palemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
 		return 0;
 
 	case 2: 
-		sprintf(apiname, "generic-linear-%u%s",
+		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s",
 			GT_DEPTH(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
@@ -76,7 +76,8 @@ int GGI_palemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
 		
 	case 4: 
 		strcpy(apiname, "generic-pseudo-stubs");
-		sprintf(arguments, "%p", (void *)PALEMU_PRIV(vis)->parent);
+		snprintf(arguments, GGI_MAX_APILEN,
+			"%p", (void *)PALEMU_PRIV(vis)->parent);
 		return 0;
 	}
 

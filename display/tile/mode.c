@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.37 2008/01/21 22:56:49 cegger Exp $
+/* $Id: mode.c,v 1.38 2008/03/13 20:34:59 cegger Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -141,12 +141,14 @@ int GGI_tile_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 			return GGI_ENOMATCH;
 
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			sprintf(apiname, "generic-text-%u",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%u",
 				GT_SIZE(LIBGGI_GT(vis))); 
 			return 0;
 		}
 
-		sprintf(apiname, "generic-linear-%u%s", 
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%u%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 			? "-r" : "");

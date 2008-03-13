@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.40 2008/03/12 11:02:23 cegger Exp $
+/* $Id: mode.c,v 1.41 2008/03/13 20:32:40 cegger Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -199,7 +199,7 @@ int GGI_memory_getapi(struct ggi_visual *vis,int num,
 			return 0;
 		}
 		if (MEMORY_PRIV(vis)->layout == blPixelPlanarBuffer) {
-			sprintf(apiname, "generic-planar");
+			snprintf(apiname, GGI_MAX_APILEN, "generic-planar");
 			return 0;
 		}
 		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s", 
