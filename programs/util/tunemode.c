@@ -1,4 +1,4 @@
-/* $Id: tunemode.c,v 1.10 2007/05/05 08:34:49 cegger Exp $
+/* $Id: tunemode.c,v 1.11 2008/03/13 19:37:05 cegger Exp $
 ***********************************************************************
 
    Copyright (C) 1998 Andreas Beck   becka@ggi-project.org
@@ -198,8 +198,12 @@ void parse_file(char *name)
 	}
 }
 
-#define ggiPrintf(vis,x,y,args...) \
-	do { char buffer[1024]; sprintf(buffer,args); ggiPuts(vis,x,y,buffer); } while(0)
+#define ggiPrintf(vis, x, y, ...)				\
+	do {							\
+		char buffer[1024];				\
+		snprintf(buffer, sizeof(buffer), __VA_ARGS__);	\
+		ggiPuts(vis, x, y, buffer);			\
+	} while(0)
 
 enum movemode { MM_MOVE = 0x000000,
 	MM_RESIZE = 0x010000,
