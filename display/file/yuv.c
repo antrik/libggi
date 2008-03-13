@@ -1,7 +1,7 @@
-/* $Id: yuv.c,v 1.4 2008/01/20 19:24:25 pekberg Exp $
+/* $Id: yuv.c,v 1.5 2008/03/13 15:20:14 cegger Exp $
 ******************************************************************************
 
-   Display-file: ppm writer
+   Display-file: yuv writer
 
    Copyright (C) 2007 Andreas Beck [becka-ggi@bedatec.de]
 
