@@ -1,4 +1,4 @@
-/* $Id: libtele.c,v 1.18 2008/03/13 20:03:25 cegger Exp $
+/* $Id: libtele.c,v 1.19 2008/03/13 20:42:08 cegger Exp $
 ******************************************************************************
 
    libtele.c
@@ -790,7 +790,8 @@ int tserver_init(TeleServer *s, int display)
 
 		me_un.sun_family = AF_UNIX;
 
-		sprintf(me_un.sun_path, "%s%d", TELE_FIFO_BASE,
+		snprintf(me_un.sun_path, sizeof(me_un.sun_path),
+			"%s%d", TELE_FIFO_BASE,
 			s->display);
 
 		me = (struct sockaddr *) &me_un;
