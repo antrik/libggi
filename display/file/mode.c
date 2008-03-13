@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2008/01/21 22:56:45 cegger Exp $
+/* $Id: mode.c,v 1.29 2008/03/13 14:42:53 cegger Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -46,7 +46,7 @@
 #include "../common/gt-auto.inc"
 
 #ifndef MAP_FAILED
-#define MAP_FAILED ((void*)-1)
+#define MAP_FAILED ((void *)-1)
 #endif
 
 #define write_byte	_ggi_file_write_byte
@@ -65,7 +65,7 @@ static void dowritefile(struct ggi_visual *vis)
 	}
 
 	if (priv->flushcmd) {
-		snprintf(cmdbuf, 1024, priv->flushcmd,
+		snprintf(cmdbuf, sizeof(cmdbuf), priv->flushcmd,
 			priv->flushcnt,priv->flushcnt,priv->flushcnt,
 			priv->flushcnt,priv->flushcnt,priv->flushcnt,
 			priv->flushcnt,priv->flushcnt,priv->flushcnt,
@@ -103,6 +103,7 @@ static int GGI_file_flush(struct ggi_visual *vis,
 	return 0;
 }
 
+#ifdef HAVE_MMAP
 static int _ggi_rawstuff(struct ggi_visual *vis)
 {
 	ggi_file_priv *priv = FILE_PRIV(vis);
@@ -171,6 +172,7 @@ static int _ggi_rawstuff(struct ggi_visual *vis)
 
 	return 0;
 }
+#endif
 
 static int _ggi_getmmap(struct ggi_visual *vis)
 {
@@ -200,12 +202,15 @@ static int _ggi_getmmap(struct ggi_visual *vis)
 
 	/* map the file into memory */
 
+#ifdef HAVE_MMAP
 	if (priv->flags & FILEFLAG_RAW) {
 		rc = _ggi_rawstuff(vis);
 		if (rc < 0) {
 			return rc;
 		}
-	} else {
+	} else
+#endif
+	{
 		priv->fb_ptr = malloc((size_t)priv->fb_size);
 
 		if (priv->fb_ptr == NULL) {
@@ -368,9 +373,12 @@ int GGI_file_resetmode(struct ggi_visual *vis)
 
 	DPRINT("GGIresetmode(%p)\n", vis);
 
+#ifdef HAVE_MMAP
 	if (priv->flags & FILEFLAG_RAW) {
 		munmap((void *)priv->file_mmap, (unsigned)priv->file_size);
-	} else {
+	} else
+#endif
+	{
 		/* This is where we write the non-raw file */
 
        		_ggi_file_rewind(vis);
@@ -487,11 +495,15 @@ int GGI_file_setPalette(struct ggi_visual *vis, size_t start, size_t size, const
  	for (; start<size; ++start, ++src, ++dest) {
 		*dest = *src;
 		
+		/* In case of not having mmap, compilers can generate
+		 * better code. */
+#ifdef HAVE_MMAP
 		if (priv->flags & FILEFLAG_RAW) {
 			*(file_pal++) = dest->r >> 8;
  			*(file_pal++) = dest->g >> 8;
  			*(file_pal++) = dest->b >> 8;
 		}
+#endif
 	}
 
 	return 0;

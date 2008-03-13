@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.219 2008/02/13 09:53:00 pekberg Exp $
+dnl $Id: configure.in,v 1.220 2008/03/13 14:42:53 cegger Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -794,7 +794,6 @@ fi
 
 if test "x$ggi_cv_func_mmap_fileio" != "xyes"; then 
   build_fbdev_target="no"
-  build_file_target="no"
   build_kgi_target="no"
 fi
 

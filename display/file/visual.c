@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.17 2007/05/24 07:49:33 cegger Exp $
+/* $Id: visual.c,v 1.18 2008/03/13 14:42:54 cegger Exp $
 ******************************************************************************
 
    Display-file: initialization
@@ -114,7 +114,13 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	} else if (options[OPT_YUV].result[0]!='n') {
 		priv->writer = &_ggi_file_yuv_write;
 	} else {
+#ifdef HAVE_MMAP
 		priv->flags |= FILEFLAG_RAW;
+#else
+		fprintf(stderr, "display-file: raw rendering into a framebuffer"
+			" is not possible due to missing or buggy mmap(2)\n");
+		goto out_freegc;
+#endif
 	}
 
 	vis->opdisplay->getmode=GGI_file_getmode;
