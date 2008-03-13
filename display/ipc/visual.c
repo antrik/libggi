@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.33 2008/03/12 12:31:54 cegger Exp $
+/* $Id: visual.c,v 1.34 2008/03/13 17:34:58 cegger Exp $
 ******************************************************************************
 
    display-ipc: transfer drawing commands to other processes
@@ -55,7 +55,7 @@ static const gg_option optlist[] =
 
 #define NUM_OPTS	(sizeof(optlist)/sizeof(gg_option))
 
-static int GGI_ipc_flush(struct ggi_visual *vis,
+int GGI_ipc_flush(struct ggi_visual *vis,
 			int x, int y, int w, int h, int tryflag)
 {
 	char buffer[32];
