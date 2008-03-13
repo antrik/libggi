@@ -1,4 +1,4 @@
-/* $Id: pointer.c,v 1.11 2007/04/16 07:27:03 pekberg Exp $
+/* $Id: pointer.c,v 1.12 2008/03/13 20:00:21 cegger Exp $
 ******************************************************************************
 
    This is a GGI test application. It is only valid for targets that can
@@ -28,6 +28,8 @@
 */
 
 #include "config.h"
+#include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <ggi/gii.h>
 #include <ggi/gii-keyboard.h>
 #include <ggi/ggi.h>
@@ -122,7 +124,8 @@ main(int argc, const char *argv[])
 				old_type = 0;
 				rx += event.pmove.x;
 				ry += event.pmove.y;
-				sprintf(tmpstr, " rel(%-4d,%-4d)   ",
+				snprintf(tmpstr, sizeof(tmpstr),
+					" rel(%-4d,%-4d)   ",
 					rx, ry);
 				ggiPuts(vis, 0, 1 * ch_y, tmpstr);
 			}
@@ -133,7 +136,8 @@ main(int argc, const char *argv[])
 				old_type = 1;
 				ax = event.pmove.x;
 				ay = event.pmove.y;
-				sprintf(tmpstr, " abs(%-4d,%-4d)   ",
+				snprintf(tmpstr, sizeof(tmpstr),
+					" abs(%-4d,%-4d)   ",
 					ax, ay);
 				ggiPuts(vis, 0, 0 * ch_y, tmpstr);
 			}
@@ -144,7 +148,8 @@ main(int argc, const char *argv[])
 				old_type = 0;
 				rx = ax;
 				ry = ay;
-				sprintf(tmpstr, " rel(%-4d,%-4d)   ",
+				snprintf(tmpstr, sizeof(tmpstr),
+					" rel(%-4d,%-4d)   ",
 					rx, ry);
 				ggiPuts(vis, 0, 1 * ch_y, tmpstr);
 			}
@@ -160,7 +165,8 @@ main(int argc, const char *argv[])
 			else
 				continue;
 
-			sprintf(tmpstr, "diff(%-4d,%-4d)   ",
+			snprintf(tmpstr, sizeof(tmpstr),
+				"diff(%-4d,%-4d)   ",
 				rx-ax, ry-ay);
 			ggiPuts(vis, 0, 2 * ch_y, tmpstr);
 

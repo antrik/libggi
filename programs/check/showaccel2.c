@@ -1,4 +1,4 @@
-/* $Id: showaccel2.c,v 1.16 2007/05/05 08:34:43 cegger Exp $
+/* $Id: showaccel2.c,v 1.17 2008/03/13 20:00:21 cegger Exp $
 ******************************************************************************
 
    showaccel2.c - same as showaccel.c but uses fork() instead of
@@ -40,6 +40,7 @@ TODO: notify on exit (terminate with single keystroke then print final ratio.
 
 #include "config.h"
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
 
@@ -242,7 +243,8 @@ int main(int argc, const char *argv[])
 						/* Make string with the number
 						 * and print it.
 						 */
-						sprintf(str,"%8d",c1);
+						snprintf(str, sizeof(str),
+							"%8d", c1);
 						ggiPuts(vis,sx  /4,0,str);
 					}
 					/* bail out if user hit a key
@@ -281,7 +283,8 @@ int main(int argc, const char *argv[])
 						/* Make string with the number
 						 * and print it.
 						 */
-						sprintf(str,"%8d",c2);
+						snprintf(str, sizeof(str),
+							"%8d", c2);
 						ggiPuts(vis,sx*3/4,0,str);
 					}
 					/* bail out if user hit a key

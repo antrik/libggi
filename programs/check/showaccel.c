@@ -1,4 +1,4 @@
-/* $Id: showaccel.c,v 1.16 2007/05/05 08:34:43 cegger Exp $
+/* $Id: showaccel.c,v 1.17 2008/03/13 20:00:21 cegger Exp $
 ******************************************************************************
 
    showaccel.c
@@ -37,6 +37,7 @@
 
 #include "config.h"
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
 
@@ -242,9 +243,9 @@ int main(int argc, const char *argv[])
 
 				/* Make strings with the numbers and print them.
 				 */
-				sprintf(str,"%8d",c1);
+				snprintf(str, sizeof(str), "%8d", c1);
 				ggiPuts(vis,sx  /4,0,str);
-				sprintf(str,"%8d",c2);
+				snprintf(str, sizeof(str), "%8d", c2);
 				ggiPuts(vis,sx*3/4,0,str);
 
 				/* In case the user hit a key, he wants to quit.

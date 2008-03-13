@@ -1,4 +1,4 @@
-/* $Id: findleaks.c,v 1.16 2007/03/03 19:27:34 cegger Exp $
+/* $Id: findleaks.c,v 1.17 2008/03/13 20:00:21 cegger Exp $
 ******************************************************************************
 
    Helps to find memory leaks in LibGGI and targets.
@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include <ggi/gg.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf */
 #include <ggi/gii.h>
 #include <ggi/ggi.h>
 #include <stdio.h>
@@ -51,7 +52,7 @@ static char statpath[1024];
 static void fill_info(void)
 {
 	pid = getpid();
-	sprintf(statpath, "/proc/%d/status", pid);
+	snprintf(statpath, sizeof(statpath), "/proc/%d/status", pid);
 }
 
 static long get_size(void)
