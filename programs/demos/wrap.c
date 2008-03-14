@@ -1,4 +1,4 @@
-/* $Id: wrap.c,v 1.27 2007/05/06 05:27:32 cegger Exp $
+/* $Id: wrap.c,v 1.28 2008/03/14 13:44:35 cegger Exp $
 ******************************************************************************
 
    wrap.c - run a libGGI application inside our own visual, essential for
@@ -106,7 +106,7 @@ static void init_client(struct client_t * client, ggi_mode * mode,
 	}	/* if */
 
 	address.sun_family = AF_UNIX;
-	strcpy(address.sun_path, tmpnam(0));
+	ggstrlcpy(address.sun_path, tmpnam(0), sizeof(address.sun_path));
 	ggstrlcpy(client->socket, address.sun_path, sizeof(client->socket));
 
 	if (bind(client->sockfd, (const struct sockaddr *) (&address),
