@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.19 2008/03/12 08:52:27 pekberg Exp $
+/* $Id: mode.c,v 1.20 2008/03/17 05:55:14 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -387,11 +387,8 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	}
 
 	if (desktop_size) {
-		ggi_rect visible;
 		ggi_rect virt;
 
-		visible.tl.x = visible.tl.y = 0;
-		visible.br = mode->visible;
 		virt.tl.x = virt.tl.y = 0;
 		virt.br = mode->virt;
 
