@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.117 2008/03/13 20:18:25 cegger Exp $
+/* $Id: rfb.c,v 1.118 2008/03/17 12:22:02 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -823,52 +823,35 @@ set_encodings(ggi_vnc_client *client, int32_t *encodings, unsigned int count)
 }
 
 static int
-vnc_client_set_encodings_cont(ggi_vnc_client *client)
-{
-	DPRINT("client_set_encodings (cont)\n");
-
-	if (client->buf_size < 4) {
-		/* wait for more data */
-		return 0;
-	}
-
-	if (client->buf_size < 4 * client->encoding_count) {
-		/* wait for more data */
-		int tail = client->buf_size & 3;
-		unsigned int count = client->buf_size / 4;
-		set_encodings(client, (int32_t *)client->buf, count);
-		client->encoding_count -= count;
-		memcpy(client->buf,
-			&client->buf[client->buf_size - tail],
-			tail);
-		client->buf_size = tail;
-		/* wait for more data */
-		return 0;
-	}
-
-	set_encodings(client, (int32_t *)client->buf, client->encoding_count);
-
-	if ((client->desktop_size & DESKSIZE_PENDING_SEND)
-		== DESKSIZE_PENDING_SEND)
-	{
-		/* pending desktop size no longer allowed, die */
-		return 1;
-	}
-	client->desktop_size &= DESKSIZE_ACTIVATE;
-
-	if (client->encode == NULL)
-		client->encode = GGI_vnc_raw;
-
-	return vnc_remove(client, 4 * client->encoding_count);
-}
-
-static int
 vnc_client_set_encodings(ggi_vnc_client *client)
 {
+	uint16_t encoding_count;
+
 	DPRINT("client_set_encodings\n");
 
 	if (client->buf_size < 4) {
 		/* wait for more data */
+		client->action = vnc_client_set_encodings;
+		return 0;
+	}
+
+	memcpy(&encoding_count,
+		&client->buf[2],
+		sizeof(encoding_count));
+	encoding_count = ntohs(encoding_count);
+
+	if (client->buf_size < 4 + 4 * encoding_count) {
+		/* wait for more data */
+		if (client->buf_limit < 4 + 4 * encoding_count) {
+			/* need more space */
+			uint8_t *buf = malloc(4 + 4 * encoding_count + 100);
+			if (!buf)
+				return 1;
+			memcpy(buf, client->buf, client->buf_size);
+			free(client->buf);
+			client->buf = buf;
+			client->buf_limit = 4 + 4 * encoding_count + 100;
+		}
 		client->action = vnc_client_set_encodings;
 		return 0;
 	}
@@ -884,32 +867,11 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	client->encode = NULL;
 	client->copy_rect = 0;
 
-	memcpy(&client->encoding_count,
-		&client->buf[2],
-		sizeof(client->encoding_count));
-	client->encoding_count = ntohs(client->encoding_count);
-
-	DPRINT("%d encodings\n", client->encoding_count);
-
-	if (client->buf_size < 4 + 4 * client->encoding_count) {
-		/* wait for more data */
-		int tail = client->buf_size & 3;
-		unsigned int count = client->buf_size / 4 - 1;
-		set_encodings(client, (int32_t *)&client->buf[4], count);
-		client->encoding_count -= count;
-		memcpy(client->buf,
-			&client->buf[client->buf_size - tail],
-			tail);
-		client->buf_size = tail;
-
-		/* wait for more data */
-		client->action = vnc_client_set_encodings_cont;
-		return 0;
-	}
+	DPRINT("%d encodings\n", encoding_count);
 
 	set_encodings(client,
 		(int32_t *)&client->buf[4],
-		client->encoding_count);
+		encoding_count);
 
 	if ((client->desktop_size & DESKSIZE_PENDING_SEND)
 		== DESKSIZE_PENDING_SEND)
@@ -922,7 +884,7 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	if (client->encode == NULL)
 		client->encode = GGI_vnc_raw;
 
-	return vnc_remove(client, 4 + 4 * client->encoding_count);
+	return vnc_remove(client, 4 + 4 * encoding_count);
 }
 
 struct ggi_visual *
