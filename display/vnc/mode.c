@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.20 2008/03/17 05:55:14 pekberg Exp $
+/* $Id: mode.c,v 1.21 2008/03/17 12:24:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -370,12 +370,6 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 			if (!(client->desktop_size & DESKSIZE_OK_INIT)) {
 				/* ouch, no support */
 				GGI_vnc_close_client(client);
-				continue;
-			}
-
-			if (client->desktop_size & DESKSIZE_PENDING) {
-				/* fix it later */
-				client->desktop_size |= DESKSIZE_PIXFMT_SEND;
 				continue;
 			}
 

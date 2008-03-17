@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.118 2008/03/17 12:22:02 pekberg Exp $
+/* $Id: rfb.c,v 1.119 2008/03/17 12:24:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -676,11 +676,7 @@ desktop_size_enc(ggi_vnc_client *client,
 	DPRINT_MISC(format);
 	if (!priv->desktop_size)
 		return NULL;
-	if ((client->desktop_size & DESKSIZE_PENDING_PIXFMT)
-		== DESKSIZE_PENDING_PIXFMT)
-	{
-		change_pixfmt(client);
-	}
+
 	client->desktop_size &= DESKSIZE_SEND;
 	client->desktop_size |= DESKSIZE_OK;
 
@@ -856,7 +852,7 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		return 0;
 	}
 
-	client->desktop_size |= DESKSIZE_PENDING;
+	client->desktop_size &= ~DESKSIZE_OK;
 	client->desktop_name &= ~DESKNAME_OK;
 
 	client->update_pixfmt = 0;
@@ -873,12 +869,10 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		(int32_t *)&client->buf[4],
 		encoding_count);
 
-	if ((client->desktop_size & DESKSIZE_PENDING_SEND)
-		== DESKSIZE_PENDING_SEND)
-	{
+	if ((client->desktop_size & DESKSIZE_OK_SEND) == DESKSIZE_SEND)
 		/* pending desktop size no longer allowed, die */
 		return 1;
-	}
+
 	client->desktop_size &= DESKSIZE_ACTIVATE;
 
 	if (client->encode == NULL)
@@ -939,11 +933,6 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 	if ((client->desktop_size & DESKSIZE_OK_SEND) == DESKSIZE_SEND)
 		/* A pending send sits there, but is not ok, die */
 		return -1;
-
-	if (client->desktop_size & DESKSIZE_PIXFMT) {
-		change_pixfmt(client);
-		client->desktop_size &= ~DESKSIZE_PIXFMT;
-	}
 
 	if (client->palette_dirty) {
 		struct ggi_visual *cvis;
