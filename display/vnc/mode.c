@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.21 2008/03/17 12:24:36 pekberg Exp $
+/* $Id: mode.c,v 1.22 2008/03/17 12:26:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -372,6 +372,10 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 				GGI_vnc_close_client(client);
 				continue;
 			}
+
+			if (client->desktop_size == DESKSIZE_OK_INIT)
+				/* still ok to resize freely */
+				continue;
 
 			/* inform client of size change, later */
 			/* but update any client visual right away */

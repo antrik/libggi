@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.119 2008/03/17 12:24:36 pekberg Exp $
+/* $Id: rfb.c,v 1.120 2008/03/17 12:26:36 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -677,7 +677,6 @@ desktop_size_enc(ggi_vnc_client *client,
 	if (!priv->desktop_size)
 		return NULL;
 
-	client->desktop_size &= DESKSIZE_SEND;
 	client->desktop_size |= DESKSIZE_OK;
 
 	return NULL;
@@ -852,7 +851,7 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 		return 0;
 	}
 
-	client->desktop_size &= ~DESKSIZE_OK;
+	client->desktop_size &= DESKSIZE_SEND;
 	client->desktop_name &= ~DESKNAME_OK;
 
 	client->update_pixfmt = 0;
@@ -872,8 +871,6 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 	if ((client->desktop_size & DESKSIZE_OK_SEND) == DESKSIZE_SEND)
 		/* pending desktop size no longer allowed, die */
 		return 1;
-
-	client->desktop_size &= DESKSIZE_ACTIVATE;
 
 	if (client->encode == NULL)
 		client->encode = GGI_vnc_raw;
@@ -1545,6 +1542,8 @@ vnc_client_init(ggi_vnc_client *client)
 	tmp32 = strlen(priv->title);
 	insert_hilo_32(&server_init[20], tmp32);
 	memcpy(&server_init[24], priv->title, tmp32);
+
+	client->desktop_size &= ~DESKSIZE_OK;
 	client->desktop_name &= ~DESKNAME_PENDING;
 
 	client->pixfmt = *pixfmt;
@@ -1813,7 +1812,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
 	client->write_pending = 0;
-	client->desktop_size = priv->desktop_size ? DESKSIZE_INIT : 0;
+	client->desktop_size = priv->desktop_size ? DESKSIZE_OK_INIT : 0;
 	client->gii = priv->gii;
 	client->desktop_name = 0;
 
