@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.57 2008/03/14 09:11:43 cegger Exp $
+/* $Id: visual.c,v 1.58 2008/03/18 16:56:41 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -440,7 +440,6 @@ GGIopen(struct ggi_visual *vis,
 	struct gg_stem *stem;
 	struct gg_api *gii;
 	char *display_memory;
-	size_t display_memory_len;
 
 	DPRINT_MISC("coming up (args='%s').\n", args);
 
@@ -673,16 +672,13 @@ GGIopen(struct ggi_visual *vis,
 		goto out_freegc;
 	}
 
-	display_memory_len = 22 + strlen(options[OPT_physz].result) + 1;
-	display_memory = malloc(display_memory_len);
+	display_memory = malloc(22 + strlen(options[OPT_physz].result) + 1);
 	if (!display_memory) {
 		err = GGI_ENOMEM;
 		goto out_delstem;
 	}
-	ggstrlcpy(display_memory, "display-memory:-physz=",
-		sizeof(display_memory_len));
-	ggstrlcat(display_memory, options[OPT_physz].result,
-		sizeof(display_memory_len));
+	strcpy(display_memory, "display-memory:-physz=");
+	strcat(display_memory, options[OPT_physz].result);
 
 	err = ggiOpen(stem, display_memory);
 	free(display_memory);
