@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.58 2008/03/18 16:56:41 pekberg Exp $
+/* $Id: visual.c,v 1.59 2008/03/19 21:44:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -90,6 +90,7 @@
 	VNC_OPTION(title,    "GGI on vnc") \
 	VNC_OPTION(viewonly, "no")         \
 	VNC_OPTION(viewpw,   "")           \
+	VNC_OPTION(wmvi,     "")           \
 	VNC_OPTION(zlibhex,  "")           \
 	VNC_OPTION(zlib,     "")           \
 	VNC_OPTION(zrle,     "")
@@ -626,6 +627,11 @@ GGIopen(struct ggi_visual *vis,
 
 	ggstrlcpy(priv->title,
 		options[OPT_title].result, sizeof(priv->title));
+
+	if (options[OPT_wmvi].result[0] == 'n') /* never */
+		priv->wmvi = 0;
+	else
+		priv->wmvi = 1;
 
 	if (options[OPT_zlib].result[0] == '\0')
 		priv->zlib_level = -1; /* default compression */

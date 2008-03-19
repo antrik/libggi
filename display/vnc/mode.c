@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2008/03/17 12:26:36 pekberg Exp $
+/* $Id: mode.c,v 1.23 2008/03/19 21:44:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: mode management
@@ -331,6 +331,7 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	ggi_vnc_client *next;
 	int err;
 	int desktop_size = 0;
+	int pixfmt = 0;
 
 	if (vis==NULL || mode==NULL || LIBGGI_MODE(vis)==NULL) {
 		return GGI_EARGINVAL;
@@ -351,6 +352,9 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 		desktop_size = 1;
 	}
 
+	if (mode->graphtype != LIBGGI_GT(vis))
+		pixfmt = 1;
+
 	*LIBGGI_MODE(vis) = *mode;
 
 	err = _ggi_domode(vis);
@@ -363,6 +367,27 @@ GGI_vnc_setmode(struct ggi_visual *vis, ggi_mode *mode)
 	client = GG_LIST_FIRST(&priv->clients);
 	for (; client; client = next) {
 		next = GG_LIST_NEXT(client, siblings);
+
+		if (pixfmt) {
+			if (client->desktop_size == DESKSIZE_OK_INIT)
+				/* still ok to change mode freely */
+				continue;
+
+			client->desktop_size |= DESKSIZE_PIXFMT;
+
+			if (client->desktop_size & DESKSIZE_WMVI) {
+				DPRINT("WMVi ok, propagate to client\n");
+				/* change requested and actual wire mode */
+				client->pixfmt = *LIBGGI_PIXFMT(vis);
+				if (client->pixfmt.size <= 8)
+					client->pixfmt.size = 8;
+				else if (client->pixfmt.size <= 16)
+					client->pixfmt.size = 16;
+				else
+					client->pixfmt.size = 32;
+				client->requested_pixfmt = client->pixfmt;
+			}
+		}
 
 		if (desktop_size) {
 			/* "Incompatible" mode change, send desktop size. */

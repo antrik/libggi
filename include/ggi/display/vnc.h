@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.42 2008/03/17 12:22:05 pekberg Exp $
+/* $Id: vnc.h,v 1.43 2008/03/19 21:44:40 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -131,6 +131,7 @@ typedef struct {
 	int desktop_size;
 	int gii;
 	int desktop_name;
+	int wmvi;
 
 	char title[80];
 

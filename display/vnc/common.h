@@ -1,4 +1,4 @@
-/* $Id: common.h,v 1.7 2008/03/17 12:24:35 pekberg Exp $
+/* $Id: common.h,v 1.8 2008/03/19 21:44:42 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
@@ -33,12 +33,18 @@
 #include <ggi/display/vnc.h>
 #include "rect.h"
 
-#define DESKSIZE_INIT           (1<<2)
+#define DESKSIZE_INIT           (1<<4)
+#define DESKSIZE_WMVI           (1<<3)
+#define DESKSIZE_PIXFMT         (1<<2)
 #define DESKSIZE_OK             (1<<1)
 #define DESKSIZE_SEND           (1<<0)
 #define DESKSIZE_ACTIVATE       (~DESKSIZE_INIT)
+#define DESKSIZE_WMVI_PIXFMT    (DESKSIZE_WMVI | DESKSIZE_PIXFMT)
+#define DESKSIZE_PIXFMT_SEND    (DESKSIZE_PIXFMT | DESKSIZE_SEND)
 #define DESKSIZE_OK_SEND        (DESKSIZE_OK | DESKSIZE_SEND)
+#define DESKSIZE_WMVI_OK_SEND   (DESKSIZE_WMVI | DESKSIZE_OK_SEND)
 #define DESKSIZE_OK_INIT        (DESKSIZE_OK | DESKSIZE_INIT)
+#define DESKSIZE_WMVI_OK_INIT   (DESKSIZE_WMVI | DESKSIZE_OK_INIT)
 
 #define DESKNAME_OK             (1<<0)
 #define DESKNAME_PENDING        (1<<1)

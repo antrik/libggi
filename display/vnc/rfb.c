@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.120 2008/03/17 12:26:36 pekberg Exp $
+/* $Id: rfb.c,v 1.121 2008/03/19 21:44:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -290,6 +290,18 @@ change_pixfmt(ggi_vnc_client *client)
 	char target[GGI_MAX_APILEN];
 	struct gg_stem *stem;
 
+	DPRINT_MISC("change_pixfmt:\n");
+	DPRINT_MISC("  depth/size: %d/%d\n",
+		client->pixfmt.depth, client->pixfmt.size);
+	DPRINT_MISC("  red mask (shift):   %08x (%d)\n",
+		client->pixfmt.red_mask,   client->pixfmt.red_shift);
+	DPRINT_MISC("  green mask (shift): %08x (%d)\n",
+		client->pixfmt.green_mask, client->pixfmt.green_shift);
+	DPRINT_MISC("  blue mask (shift):  %08x (%d)\n",
+		client->pixfmt.blue_mask,  client->pixfmt.blue_shift);
+	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
+		client->pixfmt.clut_mask,  client->pixfmt.clut_shift);
+
 	if (client->vis) {
 		stem = client->vis->instance.stem;
 		ggiClose(stem);
@@ -452,17 +464,6 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 	}
 
 	_ggi_build_pixfmt(&client->pixfmt);
-	DPRINT_MISC("Evaluated as GGI pixfmt:\n");
-	DPRINT_MISC("  depth/size: %d/%d\n",
-		client->pixfmt.depth, client->pixfmt.size);
-	DPRINT_MISC("  red mask (shift):   %08x (%d)\n",
-		client->pixfmt.red_mask,   client->pixfmt.red_shift);
-	DPRINT_MISC("  green mask (shift): %08x (%d)\n",
-		client->pixfmt.green_mask, client->pixfmt.green_shift);
-	DPRINT_MISC("  blue mask (shift):  %08x (%d)\n",
-		client->pixfmt.blue_mask,  client->pixfmt.blue_shift);
-	DPRINT_MISC("  clut mask (shift):  %08x (%d)\n",
-		client->pixfmt.clut_mask,  client->pixfmt.clut_shift);
 
 	client->palette_dirty = !client->buf[7];
 
@@ -667,6 +668,36 @@ zrle_enc(ggi_vnc_client *client,
 #endif
 
 static ggi_vnc_encode *
+wmvi_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	DPRINT_MISC(format);
+	if (!priv->wmvi)
+		return NULL;
+
+	if ((client->desktop_size & DESKSIZE_WMVI_PIXFMT)
+		== DESKSIZE_PIXFMT)
+	{
+		client->pixfmt = *LIBGGI_PIXFMT(vis);
+		if (client->pixfmt.size <= 8)
+			client->pixfmt.size = 8;
+		else if (client->pixfmt.size <= 16)
+			client->pixfmt.size = 16;
+		else
+			client->pixfmt.size = 32;
+		client->requested_pixfmt = client->pixfmt;
+		change_pixfmt(client);
+	}
+
+	client->desktop_size |= DESKSIZE_OK | DESKSIZE_WMVI;
+
+	return NULL;
+}
+
+static ggi_vnc_encode *
 desktop_size_enc(ggi_vnc_client *client,
 	int32_t encoding, char *format)
 {
@@ -744,7 +775,7 @@ struct encodings encode_tbl[] = {
 	{     15,    0, "TRLE encoding\n",                print_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
-	{ 0x574d5669,0, "WMVi pseudo-encoding\n",         print_enc },
+	{ 0x574d5669,0, "WMVi pseudo-encoding\n",         wmvi_enc },
 	{ 0x574d56ff, 0x574d5600,
 	                "VMWare %d encoding\n",           print_enc },
 	{    -23,  -32, "Tight quality %d subencoding\n", tight_quality_enc },
@@ -927,7 +958,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 	ggi_vnc_encode *encode = client->encode;
 	ggi_rect visible;
 
-	if ((client->desktop_size & DESKSIZE_OK_SEND) == DESKSIZE_SEND)
+	if ((client->desktop_size & DESKSIZE_WMVI_OK_SEND) == DESKSIZE_SEND)
 		/* A pending send sits there, but is not ok, die */
 		return -1;
 
@@ -982,6 +1013,58 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		vis->origin_x, vis->origin_y,
 		vis->origin_x + LIBGGI_X(vis), vis->origin_y + LIBGGI_Y(vis));
 	ggi_rect_intersect(&client->dirty, &visible);
+
+	if ((client->desktop_size & DESKSIZE_WMVI)
+		&& (client->desktop_size & DESKSIZE_PIXFMT_SEND))
+	{
+		unsigned char *wmvi;
+		ggi_pixelformat *pixfmt;
+		int size;
+
+		DPRINT_MISC("Sending WMVi\n");
+		GGI_vnc_buf_reserve(&client->wbuf,
+			client->wbuf.size + 28);
+		wmvi = &client->wbuf.buf[client->wbuf.size];
+		client->wbuf.size += 28;
+		insert_hilo_16(&wmvi[0], 0);
+		insert_hilo_16(&wmvi[2], 0);
+		insert_hilo_16(&wmvi[4], LIBGGI_X(vis));
+		insert_hilo_16(&wmvi[6], LIBGGI_Y(vis));
+		insert_hilo_32(&wmvi[8], 0x574d5669);
+
+		/* Only sizes 8, 16 and 32 allowed in RFB */
+		size = GT_SIZE(LIBGGI_GT(vis));
+		if (size <= 8)
+			size = 8;
+		else if (size <= 16)
+			size = 16;
+		else
+			size = 32;
+		wmvi[12] = size;
+		wmvi[13] = GT_DEPTH(LIBGGI_GT(vis));
+#ifdef GGI_BIG_ENDIAN
+		wmvi[14] = 1;
+#else
+		wmvi[14] = 0;
+#endif
+		wmvi[15] = GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR;
+		pixfmt = LIBGGI_PIXFMT(vis);
+		insert_hilo_16(&wmvi[16], color_max(pixfmt->red_mask));
+		insert_hilo_16(&wmvi[18], color_max(pixfmt->green_mask));
+		insert_hilo_16(&wmvi[20], color_max(pixfmt->blue_mask));
+		wmvi[22] = color_shift(pixfmt->red_mask);
+		wmvi[23] = color_shift(pixfmt->green_mask);
+		wmvi[24] = color_shift(pixfmt->blue_mask);
+		wmvi[25] = 0;
+		wmvi[26] = 0;
+		wmvi[27] = 0;
+
+		++rects;
+
+		client->desktop_size &= ~DESKSIZE_PIXFMT_SEND;
+
+		client->palette_dirty = !wmvi[15];
+	}
 
 	if (client->desktop_name == DESKNAME_SEND) {
 		unsigned char *desktop_name;

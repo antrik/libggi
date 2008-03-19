@@ -13,7 +13,7 @@ Synopsis
   	       [-gii=no] [-hextile=no] [-kold] [-passwd=<file>]
   	       [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
   	       [-server[=<dpy>|stdio]] [-stdio] [-tight=no] [-title=<title>]
-  	       [-viewonly] [-viewpw=<file>] [-zlib=<level>|no]
+  	       [-viewonly] [-viewpw=<file>] [-wmvi=no] [-zlib=<level>|no]
   	       [-zlibhex=<level>|no] [-zrle=<level>|no]
 
 
@@ -138,6 +138,9 @@ Options
     events such as keys and pointer movements to the application. See
     the options :p:`-passwd` and :p:`-viewonly` for comparison.
 
+``-wmvi=no``
+    Disables the WMVi pseudo-encoding.
+
 ``-zlib=<level>|no``
     Specify the compression level to use for the Zlib encoding. 0 for
     no compression and 9 for maximum compression. Saying :p:`no` here
@@ -162,7 +165,7 @@ Features
 
 - Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
   encodings. The CopyRect encoding is only used for panning.
-- DesktopName, DesktopSize and GII pseudo-encodings.
+- DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
 - Multiple simultaneous clients (shared session).
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
