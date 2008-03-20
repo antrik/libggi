@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.14 2008/03/20 13:55:26 cegger Exp $
+/* $Id: hline.c,v 1.15 2008/03/20 14:15:53 cegger Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -60,13 +60,13 @@ do_drawhline(struct ggi_visual *vis, int x, int y, int w)
 		adr++;
 	}
 	
-	while ((j -= 8) > 0) {
+	while ((j -= 8) >= 0) {
 		*adr = color;
 		adr++;
 	}
     
 	/* Draw `back` pixels if necessary */
-	if (j) {
+	if (j + 8) {
 		mask = ~(0xff >> (j & 7));
 		*adr = (*adr & ~mask) | (color & mask);
 	}
