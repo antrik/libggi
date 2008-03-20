@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.42 2008/02/21 07:41:03 cegger Exp $
+/* $Id: mode.c,v 1.43 2008/03/20 19:21:50 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -495,6 +495,7 @@ int GGI_quartz_checkmode(struct ggi_visual *vis, ggi_mode *mode)
 
 	priv = QUARTZ_PRIV(vis);
 
+	LIB_ASSERT(mode != NULL, "invalid mode\n");
 	if (priv->fullscreen) {
 		err = GGI_quartz_checkmode_fullscreen(vis, mode);
 	} else {
