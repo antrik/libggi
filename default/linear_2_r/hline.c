@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.3 2007/05/02 07:26:37 pekberg Exp $
+/* $Id: hline.c,v 1.4 2008/03/20 14:23:33 cegger Exp $
 ******************************************************************************
 
    Linear 2 horizontal lines (high-pair-right).
@@ -64,8 +64,10 @@ do_drawhline(struct ggi_visual *vis, int x, int y, int w)
 		*adr++ = color;
     
 	/* Draw `back` pixels if necessary */
-	mask = ~(0xff << (j & 7));
-	*adr = (*adr & ~mask) | (color & mask);
+	if (j + 8) {
+		mask = ~(0xff << (j & 7));
+		*adr = (*adr & ~mask) | (color & mask);
+	}
 }
 
 int
