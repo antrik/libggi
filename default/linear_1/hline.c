@@ -1,4 +1,4 @@
-/* $Id: hline.c,v 1.13 2008/03/20 13:40:28 cegger Exp $
+/* $Id: hline.c,v 1.14 2008/03/20 13:55:26 cegger Exp $
 ******************************************************************************
 
    Linear 1 horizontal lines.
@@ -35,25 +35,27 @@ static inline void
 do_drawhline(struct ggi_visual *vis, int x, int y, int w)
 {
 	uint8_t *adr;
-	int i,j,mask,color;
+	int i, j, mask, color;
 
 	PREPARE_FB(vis);
 
-	color=(LIBGGI_GC_FGCOLOR(vis)&1)*0xFF;
+	color = (LIBGGI_GC_FGCOLOR(vis) & 1) * 0xFF;
 
-	adr=((uint8_t *)(LIBGGI_CURWRITE(vis)));
-	adr+=(x/8+y*LIBGGI_FB_W_STRIDE(vis));
+	adr = (uint8_t *)(LIBGGI_CURWRITE(vis)) +
+		x / 8 + y * LIBGGI_FB_W_STRIDE(vis);
 
 	/* Draw 'front' pixels */ 
-	j=w;
-	if ((i=x&7)) {
-		if ((j=j+i-8)<=0) {
-			mask=(0xff>>i)&(0xff<<-j); 
-			*adr   = (*adr & ~mask) | (color & mask);
+	j = w;
+	i = x & 7;
+	if (i) {
+		j += i - 8;
+		if (j <= 0) {
+			mask = (0xff >> i) & (0xff << -j); 
+			*adr = (*adr & ~mask) | (color & mask);
 			return;
 		}
 
-		mask=(0xff>>i);
+		mask = (0xff >> i);
 		*adr = (*adr & ~mask) | (color & mask);
 		adr++;
 	}
