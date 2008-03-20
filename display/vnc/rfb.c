@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.121 2008/03/19 21:44:44 pekberg Exp $
+/* $Id: rfb.c,v 1.122 2008/03/20 12:16:58 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1017,9 +1017,12 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 	if ((client->desktop_size & DESKSIZE_WMVI)
 		&& (client->desktop_size & DESKSIZE_PIXFMT_SEND))
 	{
+		struct ggi_visual *cvis;
 		unsigned char *wmvi;
 		ggi_pixelformat *pixfmt;
 		int size;
+
+		cvis = client->vis ? client->vis : priv->fb;
 
 		DPRINT_MISC("Sending WMVi\n");
 		GGI_vnc_buf_reserve(&client->wbuf,
@@ -1033,7 +1036,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		insert_hilo_32(&wmvi[8], 0x574d5669);
 
 		/* Only sizes 8, 16 and 32 allowed in RFB */
-		size = GT_SIZE(LIBGGI_GT(vis));
+		size = GT_SIZE(LIBGGI_GT(cvis));
 		if (size <= 8)
 			size = 8;
 		else if (size <= 16)
@@ -1041,14 +1044,14 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 		else
 			size = 32;
 		wmvi[12] = size;
-		wmvi[13] = GT_DEPTH(LIBGGI_GT(vis));
+		wmvi[13] = GT_DEPTH(LIBGGI_GT(cvis));
 #ifdef GGI_BIG_ENDIAN
 		wmvi[14] = 1;
 #else
 		wmvi[14] = 0;
 #endif
-		wmvi[15] = GT_SCHEME(LIBGGI_GT(vis)) == GT_TRUECOLOR;
-		pixfmt = LIBGGI_PIXFMT(vis);
+		wmvi[15] = GT_SCHEME(LIBGGI_GT(cvis)) == GT_TRUECOLOR;
+		pixfmt = LIBGGI_PIXFMT(cvis);
 		insert_hilo_16(&wmvi[16], color_max(pixfmt->red_mask));
 		insert_hilo_16(&wmvi[18], color_max(pixfmt->green_mask));
 		insert_hilo_16(&wmvi[20], color_max(pixfmt->blue_mask));
