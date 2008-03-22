@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.45 2008/03/22 21:36:42 cegger Exp $
+/* $Id: buffer.c,v 1.46 2008/03/22 23:25:13 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -152,13 +152,28 @@ int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 	return err;
 }
 
+static void
+free_dbs(struct ggi_visual *vis)
+{
+	int i, first, last;
+
+	first = LIBGGI_APPLIST(vis)->first_targetbuf;
+	last = LIBGGI_APPLIST(vis)->last_targetbuf;
+	if (first < 0) {
+		return;
+	}
+	for (i = (last - first); i >= 0; i--) {
+		free(LIBGGI_APPBUFS(vis)[i]->resource);
+		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i + first]);
+		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i + first);
+	}
+	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
+}
+
 /* XImage allocation for normal client-side buffer */
 void _ggi_x_freefb(struct ggi_visual *vis)
 {
-	ggi_x_priv *priv;
-	int i, first, last;
-
-	priv = GGIX_PRIV(vis);
+	ggi_x_priv *priv = GGIX_PRIV(vis);
 
 	if (priv->slave) {
 		struct gg_stem *stem = priv->slave->instance.stem;
@@ -173,22 +188,14 @@ void _ggi_x_freefb(struct ggi_visual *vis)
 		free(priv->ximage);
 #endif
 		free(priv->fb);
+
+	} else if (priv->fb) {
+		free(priv->fb);
 	}
-	else if (priv->fb) free(priv->fb);
 	priv->ximage = NULL;
 	priv->fb = NULL;
 
-	first = LIBGGI_APPLIST(vis)->first_targetbuf;
-	last = LIBGGI_APPLIST(vis)->last_targetbuf;
-	if (first < 0) {
-		return;
-	}
-	for (i = (last - first); i >= 0; i--) {
-		free(LIBGGI_APPBUFS(vis)[i]->resource);
-		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i+first]);
-		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i+first);
-	}
-	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
+	free_dbs(vis);
 }
 
 int _ggi_x_createfb(struct ggi_visual *vis)

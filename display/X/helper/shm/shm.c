@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.57 2008/03/22 20:59:36 cegger Exp $
+/* $Id: shm.c,v 1.58 2008/03/22 23:25:14 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -120,11 +120,28 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 	return 0;
 }
 
+static void
+free_dbs(struct ggi_visual *vis)
+{
+	int i, first, last;
+
+	first = LIBGGI_APPLIST(vis)->first_targetbuf;
+	last = LIBGGI_APPLIST(vis)->last_targetbuf;
+	if (first < 0) {
+		return;
+	}
+	for (i = (last - first); i >= 0; i--) {
+		free(LIBGGI_APPBUFS(vis)[i]->resource);
+		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i + first]);
+		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i + first);
+	}
+	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
+}
+
 /* XImage allocation for normal client-side buffer */
 static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
 {
 	ggi_x_priv *priv;
-	int i, first, last;
 	XShmSegmentInfo *myshminfo;
 
 	priv = GGIX_PRIV(vis);
@@ -154,17 +171,7 @@ static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
 	free(myshminfo);
 	priv->priv = NULL;
 
-	first = LIBGGI_APPLIST(vis)->first_targetbuf;
-	last = LIBGGI_APPLIST(vis)->last_targetbuf;
-	if (first < 0) {
-		return;
-	}
-	for (i = (last - first); i >= 0; i--) {
-		free(LIBGGI_APPBUFS(vis)[i]->resource);
-		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i+first]);
-		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i+first);
-	}
-	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
+	free_dbs(vis);
 }
 
 static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
