@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.81 2008/03/22 18:57:24 cegger Exp $
+/* $Id: mode.c,v 1.82 2008/03/22 20:37:27 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -439,6 +439,24 @@ static void _ggi_x_load_slaveops(struct ggi_visual *vis) {
 	vis->opdraw->fillscreen		= GGI_X_fillscreen_slave;
 }
 
+static int
+compatible_mode(struct ggi_visual *vis, ggi_mode *mode)
+{
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+
+	if (!priv->ok_to_resize)
+		/* fullscreen or -inwin */
+		return !memcmp(mode, LIBGGI_MODE(vis), sizeof(ggi_mode));
+
+	if (mode->frames != LIBGGI_MODE(vis)->frames)
+		return 0;
+	if (mode->graphtype != LIBGGI_GT(vis))
+		return 0;
+	if (memcmp(&mode->dpp, &LIBGGI_MODE(vis)->dpp, sizeof(ggi_coord)))
+		return 0;
+
+	return 1;
+}
 
 int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 {
@@ -448,6 +466,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	XWindowAttributes attrib2;
 	XVisualInfo *vi;
 	ggi_x_priv *priv;
+	int compatible;
 
 	Window root = 0;
 
@@ -466,13 +485,14 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 	} else 
 		root = None;
 
-	if ((err = GGI_X_checkmode_internal(vis, tm, &viidx)))
+	err = GGI_X_checkmode_internal(vis, tm, &viidx);
+	if (err)
 		return err;
 
+	compatible = compatible_mode(vis, tm);
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
+	DPRINT("* change viidx = %i -> %i\n", priv->viidx, viidx);
 	priv->viidx = viidx;
-
-	DPRINT("* viidx = %i\n", priv->viidx);
 
 	if (priv->opmansync)
 		MANSYNC_ignore(vis);
