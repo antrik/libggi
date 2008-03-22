@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.46 2008/03/22 23:25:13 cegger Exp $
+/* $Id: buffer.c,v 1.47 2008/03/22 23:42:08 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -179,21 +179,26 @@ void _ggi_x_freefb(struct ggi_visual *vis)
 		struct gg_stem *stem = priv->slave->instance.stem;
 		ggiClose(priv->slave->instance.stem);
 		ggDelStem(stem);
+		priv->slave = NULL;
 	}
-	priv->slave = NULL;
+
 	if (priv->ximage) {
 #ifndef HAVE_XINITIMAGE
 		XFree(priv->ximage);
 #else
 		free(priv->ximage);
 #endif
-		free(priv->fb);
-
-	} else if (priv->fb) {
-		free(priv->fb);
+		priv->ximage = NULL;
 	}
-	priv->ximage = NULL;
-	priv->fb = NULL;
+
+	if (priv->fb) {
+		free(priv->fb);
+		priv->fb = NULL;
+	}
+
+	LIB_ASSERT(priv->slave != NULL, "priv->slave: wild pointer\n");
+	LIB_ASSERT(priv->ximage != NULL, "priv->ximage: wild pointer\n");
+	LIB_ASSERT(priv->fb != NULL, "priv->fb: wild pointer\n");
 
 	free_dbs(vis);
 }
