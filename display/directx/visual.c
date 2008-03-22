@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.47 2007/04/16 12:54:14 pekberg Exp $
+/* $Id: visual.c,v 1.48 2008/03/22 21:46:40 cegger Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Initialization
@@ -64,7 +64,7 @@ GGI_directx_setflags(struct ggi_visual *vis, uint32_t flags)
 	directx_priv *priv = GGIDIRECTX_PRIV(vis);
 
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->instance.stem);
+		_ggiFlush(vis);
 	/* Clear out unknown flags */
 	LIBGGI_FLAGS(vis) = flags & GGIFLAG_ASYNC;
 
