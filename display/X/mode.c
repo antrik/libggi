@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.80 2008/03/10 23:06:12 agraef Exp $
+/* $Id: mode.c,v 1.81 2008/03/22 18:57:24 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -134,9 +134,11 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 	}
 	else {
 		char inroot = 0; 
-		if(priv->parentwin == RootWindow(priv->disp, vi->vi->screen))
-		  inroot = 1;
-		if( priv->parentwin != None && !inroot ) {
+
+		if (priv->parentwin == RootWindow(priv->disp, vi->vi->screen))
+			inroot = 1;
+
+		if ( priv->parentwin != None && !inroot ) {
 			/* This case is for -inwin=(some window other than root).. */
 			XGetGeometry(priv->disp, priv->parentwin, 
 					&dummywin, 
@@ -149,14 +151,13 @@ void _GGI_X_checkmode_adapt( ggi_mode * m,
 		else {
 			/* Root window or fullscreen.. */
                 
-			if( (m->visible.x == GGI_AUTO) || inroot )
-			  m->visible.x = screenw;
+			if ( (m->visible.x == GGI_AUTO) || inroot )
+				m->visible.x = screenw;
 	
-			if( (m->visible.y == GGI_AUTO) || inroot )
-			  m->visible.y = screenh;
+			if ( (m->visible.y == GGI_AUTO) || inroot )
+				m->visible.y = screenh;
 		}
 	}
-	
 }
 
 /* Adjust our suggested mode sug to make it more closely match
@@ -206,7 +207,7 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 			/* If GGI_AUTO was requested, keep 10% for borders 
 			 * so we don't create a window who's handles/borders 
 			 * are offscreen. */
-			 sug->visible.x = screenw * 9 / 10;
+			sug->visible.x = screenw * 9 / 10;
 		}
 		if (reqy != GGI_AUTO) {
 			if ( reqy < sug->visible.y ) {
@@ -243,8 +244,7 @@ void _GGI_X_checkmode_adjust( ggi_mode *req,
 
 
 	/* Want frames? You bet! */
-	sug->frames = 
-		req->frames==GGI_AUTO ? 1 : req->frames;
+	sug->frames = (req->frames == GGI_AUTO) ? 1 : req->frames;
 }
 
 /* If two modes are equivelent as far as the generic checkmode
