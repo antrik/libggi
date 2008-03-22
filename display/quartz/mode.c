@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.43 2008/03/20 19:21:50 cegger Exp $
+/* $Id: mode.c,v 1.44 2008/03/22 20:35:47 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -602,7 +602,6 @@ static int GGI_quartz_setmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	if (priv->theWindow != NULL) {
 		/* Happens when we re-set the mode */
 		DPRINT_MODE("Re-Set the window\n");
-		//HideWindow(priv->theWindow);
 		ChangeWindowAttributes(priv->theWindow,
 			~priv->windowAttrs, priv->windowAttrs);
 		SizeWindow(priv->theWindow, mode->visible.x, mode->visible.y, 1);
