@@ -1,4 +1,4 @@
-/* $Id: trueemu.c,v 1.14 2008/01/08 14:22:48 cegger Exp $
+/* $Id: trueemu.c,v 1.15 2008/03/22 21:57:38 cegger Exp $
 ******************************************************************************
 
    Display-trueemu : truecolor emulation library.
@@ -965,7 +965,7 @@ int _ggi_trueemu_NewMode(struct ggi_visual *vis)
 
 	UPDATE_MOD(vis, 0, 0, LIBGGI_VIRTX(vis), LIBGGI_VIRTY(vis));
 
-	return ggiFlush(vis);
+	return _ggiFlush(vis);
 }
 
 static void cycle_dither(struct ggi_visual *vis)
