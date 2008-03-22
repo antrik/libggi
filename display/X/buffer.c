@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.44 2008/01/20 19:26:38 pekberg Exp $
+/* $Id: buffer.c,v 1.45 2008/03/22 21:36:42 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -57,7 +57,7 @@ int GGI_X_db_release(struct ggi_resource *res) {
 		if (LIBGGI_FLAGS(vis) & GGIFLAG_TIDYBUF) {
 			if (GGIX_PRIV(vis)->opmansync) MANSYNC_start(vis);
 		} else {
-			ggiFlush(vis->instance.stem);
+			_ggiFlush(vis);
 		}
 	}
 	res->curactype = 0;
@@ -142,7 +142,7 @@ int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 			vis->w_frame = db;
 		}
 	} else {
-	  	ggiFlush(vis->instance.stem);
+	  	_ggiFlush(vis);
 		vis->w_frame_num = num;
 		vis->w_frame = db;
 	}

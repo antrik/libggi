@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.44 2008/03/22 20:35:47 cegger Exp $
+/* $Id: mode.c,v 1.45 2008/03/22 21:40:33 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -738,7 +738,7 @@ int GGI_quartz_setflags(struct ggi_visual *vis, uint32_t flags)
 
 	priv = QUARTZ_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->instance.stem);
+		_ggiFlush(vis);
 
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */

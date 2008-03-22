@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.79 2008/02/03 17:31:29 mooz Exp $
+/* $Id: visual.c,v 1.80 2008/03/22 21:36:42 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -172,7 +172,7 @@ static int GGI_X_setflags(struct ggi_visual *vis, uint32_t flags) {
 	ggi_x_priv *priv;
 	priv = GGIX_PRIV(vis);
 	if ((LIBGGI_FLAGS(vis) & GGIFLAG_ASYNC) && !(flags & GGIFLAG_ASYNC))
-		ggiFlush(vis->instance.stem);
+		_ggiFlush(vis);
 	LIBGGI_FLAGS(vis) = flags;
 	/* Unknown flags don't take. */
 	LIBGGI_FLAGS(vis) &= GGIFLAG_ASYNC | GGIFLAG_TIDYBUF;
