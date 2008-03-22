@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2008-02-20" "libggi-current" GGI
+.TH "display-vnc" 7 "2008-03-19" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -9,7 +9,7 @@ display-vnc: [-bind=<iface>] [-client=<host>] [-copyrect=no|always]
              [-gii=no] [-hextile=no] [-kold] [-passwd=<file>]
              [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
              [-server[=<dpy>|stdio]] [-stdio] [-tight=no] [-title=<title>]
-             [-viewonly] [-viewpw=<file>] [-zlib=<level>|no]
+             [-viewonly] [-viewpw=<file>] [-wmvi=no] [-zlib=<level>|no]
              [-zlibhex=<level>|no] [-zrle=<level>|no]
 .fi
 
@@ -148,6 +148,10 @@ events such as keys and pointer movements to the application. See
 the options \fI-passwd\fR and \fI-viewonly\fR for comparison.
 
 .TP
+\f(CW-wmvi=no\fR
+Disables the WMVi pseudo-encoding.
+
+.TP
 \f(CW-zlib=<level>|no\fR
 Specify the compression level to use for the Zlib encoding. 0 for
 no compression and 9 for maximum compression. Saying \fIno\fR here
@@ -174,7 +178,7 @@ compromize between speed and compression is selected.
 Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
 encodings. The CopyRect encoding is only used for panning.
 .IP \(bu 4
-DesktopName, DesktopSize and GII pseudo-encodings.
+DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
 .IP \(bu 4
 Multiple simultaneous clients (shared session).
 .IP \(bu 4
