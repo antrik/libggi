@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.80 2008/03/22 21:36:42 cegger Exp $
+/* $Id: visual.c,v 1.81 2008/03/23 00:48:07 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -40,24 +40,26 @@
 #include <ggi/internal/gg_replace.h>
 
 /* X extension names */
-const char *ggi_x_extensions_name[GGI_X_HELPER_COUNT] = 
+const char *ggi_x_extensions_name[] = 
 {
 	"MIT-SHM",                        /* X11/extensions/shmstr.h     SHM-NAME          */
 	"DOUBLE-BUFFER",                  /* X11/extensions/Xdbeproto.h  DBE_PROTOCOL_NAME */
 	"XFree86-DGA",                    /* X11/extensions/xf86dgastr.h XF86DGANAME       */
 	"Extended-Visual-Information",    /* X11/extensions/XEVIstr.h    EVINAME           */
-	"XFree86-VidModeExtension"        /* X11/extensions/xf86vmstr.h  XF86VIDMODENAME   */
+	"XFree86-VidModeExtension",       /* X11/extensions/xf86vmstr.h  XF86VIDMODENAME   */
 	/* Next to come : RANDR, Render, etc... */
+	NULL	/* terminate list */
 };
 
 /* Helper names */
-const char *ggi_x_helper_name[GGI_X_HELPER_COUNT] = 
+const char *ggi_x_helper_name[] = 
 {
 	"helper-x-shm",
 	"helper-x-dbe",
 	"helper-x-dga",
 	"helper-x-evi",
-	"helper-x-vidmode"
+	"helper-x-vidmode",
+	NULL
 };
 
 /* Options honored by this target */
@@ -402,8 +404,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 	priv->flush_cmap = _ggi_x_flush_cmap;
 
 	/* See what extensions are available on this display. */
-	for(i=0; ggi_x_extensions_name[i]!=NULL; ++i)
-	{
+	for(i = 0; ggi_x_extensions_name[i] != NULL; ++i) {
 		xerr = XQueryExtension(disp, ggi_x_extensions_name[i], &tmp1, &tmp2, &tmp3);
 		if (tmp1 && (xerr == True)) {
 			DPRINT_MISC("%s X extension found\n", ggi_x_extensions_name[i]);

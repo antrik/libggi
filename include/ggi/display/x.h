@@ -1,4 +1,4 @@
-/* $Id: x.h,v 1.42 2008/02/10 16:37:05 mooz Exp $
+/* $Id: x.h,v 1.43 2008/03/23 00:48:07 cegger Exp $
 ******************************************************************************
 
    Internal header for GGI display-X target
@@ -63,8 +63,8 @@
 #define GGI_X_USE_VIDMODE	(1 << GGI_X_VIDMODE)
 
 /* See visual.c for values */
-extern const char *ggi_x_extensions_name[GGI_X_HELPER_COUNT];
-extern const char *ggi_x_helper_name[GGI_X_HELPER_COUNT];
+extern const char *ggi_x_extensions_name[];
+extern const char *ggi_x_helper_name[];
 
 /* These may later be moved into an improved modelist.inc to allow
  * targets that have more then one option for getting modelists
