@@ -9,7 +9,7 @@ noinst_LTLIBRARIES = libx.la
 libx_la_SOURCES = pixel.c hline.c vline.c box.c line.c fillscreen.c gtext.c \
 	       visual.c mode.c buffer.c color.c misc.c listener.c
 
-EXTRA_DIST = EXPSYMS
+EXTRA_DIST = EXPSYMS dbs.inc
 
 MAINTAINERCLEANFILES = Makefile.in
 
