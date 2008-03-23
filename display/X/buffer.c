@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.51 2008/03/23 13:05:45 cegger Exp $
+/* $Id: buffer.c,v 1.52 2008/03/23 14:14:59 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -192,7 +192,6 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
 	ggi_x_priv *priv;
-	struct gg_stem *stem;
 	int err, i;
 
 	err = GGI_OK;
@@ -233,26 +232,9 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer", 
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	stem = ggNewStem(libggi, NULL);
-	if (stem == NULL) {
-		DPRINT("_ggi_x_createfb: ggNewStem\n");
-		err = GGI_ENOMEM;
+	err = _ggi_openslave(vis, target, &tm);
+	if (err)
 		goto err1;
-	}
-	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
-		DPRINT("_ggi_x_createfb: ggiOpen(%p, \"%s\", %p) failed\n",
-			stem, target, priv->fb);
-		ggDelStem(stem);
-		err = GGI_ENOMEM;
-		goto err1;
-	}
-	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->instance.stem, &tm) < 0) {
-		DPRINT("_ggi_x_createfb: ggiSetMode(%p, %p) failed\n",
-			priv->slave->instance.stem, &tm);
-		err = GGI_ENOMEM;
-		goto err1;
-	}
 
 	priv->ximage = _ggi_x_create_ximage( vis, (char*)priv->fb,
 					     LIBGGI_VIRTX(vis), 

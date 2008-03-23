@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.61 2008/03/23 12:56:10 cegger Exp $
+/* $Id: shm.c,v 1.62 2008/03/23 14:15:11 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -170,7 +170,6 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	char target[GGI_MAX_APILEN];
 	ggi_mode tm;
 	ggi_x_priv *priv;
-	struct gg_stem *stem;
 	int err, i;
 	XShmSegmentInfo *myshminfo;
 	size_t shmsize;
@@ -276,26 +275,9 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
-	stem = ggNewStem(libggi, NULL);
-	if (stem == NULL) {
-		DPRINT("ggNewStem() failed.\n");
-		err = GGI_ENOMEM;
+	err = _ggi_openslave(vis, target, &tm);
+	if (err)
 		goto err3;
-	}
-	if (ggiOpen(stem, target, priv->fb) != GGI_OK) {
-		DPRINT("ggiOpen(%p, \"%s\", %p) failed\n",
-			stem, target, priv->fb);
-		ggDelStem(stem);
-		err = GGI_ENOMEM;
-		goto err3;
-	}
-	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
-	if (ggiSetMode(priv->slave->instance.stem, &tm) < 0) {
-		DPRINT("ggiSetMode(%p, %p) failed.\n",
-			priv->slave->instance.stem, &tm); 
-		err = GGI_ENOMEM;
-		goto err3;
-	}
 
 	priv->ximage->byte_order = ImageByteOrder(priv->disp);
 	priv->ximage->bitmap_bit_order = BitmapBitOrder(priv->disp);

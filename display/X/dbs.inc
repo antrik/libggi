@@ -1,4 +1,4 @@
-/* $Id: dbs.inc,v 1.2 2008/03/23 12:56:09 cegger Exp $
+/* $Id: dbs.inc,v 1.3 2008/03/23 14:15:00 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: directbuffer functions shared with helper-x-*
@@ -102,5 +102,52 @@ _ggi_create_dbs(struct ggi_visual *vis)
 
 err0:
 	_ggi_free_dbs(vis);
+	return err;
+}
+
+
+static int
+_ggi_openslave(struct ggi_visual *vis, const char *target, ggi_mode *mode)
+{
+	ggi_x_priv *priv;
+	struct gg_stem *stem;
+	int err;
+
+	DPRINT_MODE("_ggi_openslave(%p) called\n", vis);
+
+	err = GGI_OK;
+	priv = GGIX_PRIV(vis);
+
+	stem = ggNewStem(libggi, NULL);
+	if (stem == NULL) {
+		DPRINT("ggNewStem() failed.\n");
+		err = GGI_ENOMEM;
+		goto err0;
+	}
+
+	err = ggiOpen(stem, target, priv->fb);
+	if (err < GGI_OK) {
+		DPRINT("ggiOpen(%p, \"%s\", %p) failed\n",
+			stem, target, priv->fb);
+		err = GGI_ENOMEM;
+		goto err1;
+	}
+
+	priv->slave = STEM_API_DATA(stem, libggi, struct ggi_visual *);
+	err = ggiSetMode(priv->slave->instance.stem, mode);
+	if (err < GGI_OK) {
+		DPRINT("ggiSetMode(%p, %p) failed.\n",
+			priv->slave->instance.stem, mode);
+		err = GGI_ENOMEM;
+		goto err2;
+	}
+
+	return err;
+
+err2:
+	ggiClose(stem);
+err1:
+	ggDelStem(stem);
+err0:
 	return err;
 }
