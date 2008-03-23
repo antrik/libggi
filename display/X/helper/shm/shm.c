@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.58 2008/03/22 23:25:14 cegger Exp $
+/* $Id: shm.c,v 1.59 2008/03/23 00:37:42 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -146,27 +146,34 @@ static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
 
 	priv = GGIX_PRIV(vis);
 	myshminfo = priv->priv;
-	if (myshminfo == NULL) return;
+	if (myshminfo == NULL)
+		return;
 
 	if (priv->slave) {
 		struct gg_stem *stem = priv->slave->instance.stem;
 		ggiClose(priv->slave->instance.stem);
 		ggDelStem(stem);
+		priv->slave = NULL;
 	}
-	priv->slave = NULL;
 
 	if (priv->ximage) {
-
 		XShmDetach(priv->disp, myshminfo);
 		/* Seems OK to destroy image before fb for SHM */
 	  	XDestroyImage(priv->ximage);
 	  	shmdt(myshminfo->shmaddr);
 		/* shmid has already been removed, see below. */
+		priv->ximage = NULL;
 		priv->fb = NULL;
 	}
-	if (priv->fb) free(priv->fb);
-	priv->ximage = NULL;
-	priv->fb = NULL;
+
+	if (priv->fb) {
+		free(priv->fb);
+		priv->fb = NULL;
+	}
+
+	LIB_ASSERT(priv->slave == NULL, "priv->slave: wild pointer\n");
+	LIB_ASSERT(priv->ximage == NULL, "priv->ximage: wild pointer\n");
+	LIB_ASSERT(priv->fb == NULL, "priv->fb: wild pointer\n");
 
 	free(myshminfo);
 	priv->priv = NULL;
