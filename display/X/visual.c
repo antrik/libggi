@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.81 2008/03/23 00:48:07 cegger Exp $
+/* $Id: visual.c,v 1.82 2008/03/23 07:40:31 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -233,13 +233,12 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
 
-	if (priv->slave) {
-		ggiClose(priv->slave->instance.stem);
-	}
-	priv->slave = NULL;
-
 	DPRINT_MISC("GGIclose: call freefb hook\n");
-	if (priv->freefb) priv->freefb(vis);
+	if (priv->freefb) {
+		priv->freefb(vis);
+		priv->freefb = NULL;
+	}
+	LIB_ASSERT(priv->slave == NULL, "leaking slave target\n");
 
 	if (priv->win != priv->parentwin) {
 		/* Don't destroy window, when not created */
