@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.52 2008/03/23 14:14:59 cegger Exp $
+/* $Id: buffer.c,v 1.53 2008/03/23 14:23:17 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -223,13 +223,13 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 
 	i = 0;
 	memset(target, '\0', sizeof(target));
-	i += snprintf(target, GGI_MAX_APILEN,
+	i += snprintf(target, sizeof(target),
 			"display-memory:-noblank:-pixfmt=");
 
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 
-	snprintf(target + i, GGI_MAX_APILEN - i, ":-physz=%i,%i:pointer", 
+	snprintf(target + i, sizeof(target) - i, ":-physz=%i,%i:pointer", 
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
 
 	err = _ggi_openslave(vis, target, &tm);

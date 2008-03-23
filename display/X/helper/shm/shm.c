@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.62 2008/03/23 14:15:11 cegger Exp $
+/* $Id: shm.c,v 1.63 2008/03/23 14:23:18 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -261,16 +261,17 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	/* Make sure we do not fail due to physical size constraints,
 	 * which are meaningless on a memory visual.
 	 */
-	tm.size.x=tm.size.y=GGI_AUTO;
+	tm.size.x = tm.size.y = GGI_AUTO;
 
 	i = 0;
-	i += snprintf(target, GGI_MAX_APILEN, "display-memory:-pixfmt=");
+	memset(target, '\0', sizeof(target));
+	i += snprintf(target, sizeof(target), "display-memory:-pixfmt=");
 
-	memset(target+i, '\0', 64);
 	_ggi_build_pixfmtstr(vis, target + i, sizeof(target) - i, 1);
 	i = strlen(target);
 
-	snprintf(target + i, GGI_MAX_APILEN - i, ":-layout=%iplb%i:-physz=%i,%i:pointer",
+	snprintf(target + i, sizeof(target) - i,
+		":-layout=%iplb%i:-physz=%i,%i:pointer",
 		priv->ximage->bytes_per_line * LIBGGI_VIRTY(vis),
 		priv->ximage->bytes_per_line,
 		LIBGGI_MODE(vis)->size.x, LIBGGI_MODE(vis)->size.y);
