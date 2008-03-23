@@ -1,4 +1,4 @@
-/* $Id: dbs.inc,v 1.1 2008/03/23 12:11:25 cegger Exp $
+/* $Id: dbs.inc,v 1.2 2008/03/23 12:56:09 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: directbuffer functions shared with helper-x-*
@@ -34,6 +34,8 @@ _ggi_free_dbs(struct ggi_visual *vis)
 {
 	int i, first, last;
 
+	DPRINT_MODE("_ggi_free_dbs(%p) called\n", vis);
+
 	first = LIBGGI_APPLIST(vis)->first_targetbuf;
 	last = LIBGGI_APPLIST(vis)->last_targetbuf;
 	if (first < 0) {
@@ -47,3 +49,58 @@ _ggi_free_dbs(struct ggi_visual *vis)
 	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
 }
 
+static int
+_ggi_create_dbs(struct ggi_visual *vis)
+{
+	int i, err = GGI_OK;
+	ggi_mode *mode;
+	ggi_directbuffer *db;
+	ggi_x_priv *priv = GGIX_PRIV(vis);
+
+	DPRINT_MODE("_ggi_create_dbs(%p) called\n", vis);
+
+	mode = LIBGGI_MODE(vis);
+	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
+	for (i = 0; i < mode->frames; i++) {
+		db = _ggi_db_get_new();
+		if (!db) {
+			DPRINT("_ggi_create_dbs: frame %u allocation failed.\n", i);
+			err = GGI_ENOMEM;
+			goto err0;
+		}
+		LIBGGI_APPLIST(vis)->last_targetbuf
+			= _ggi_db_add_buffer(LIBGGI_APPLIST(vis), db);
+		LIBGGI_APPBUFS(vis)[i]->frame = i;
+		LIBGGI_APPBUFS(vis)[i]->type
+			= GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
+		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
+			priv->fb + i * LIBGGI_VIRTY(vis) * 
+			priv->ximage->bytes_per_line;
+		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
+			= priv->ximage->bytes_per_line;
+		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
+			= LIBGGI_PIXFMT(vis);
+		LIBGGI_APPBUFS(vis)[i]->resource = 
+			_ggi_malloc(sizeof(struct ggi_resource));
+		LIBGGI_APPBUFS(vis)[i]->resource->priv = vis;
+		LIBGGI_APPBUFS(vis)[i]->resource->acquire = priv->acquire;
+		LIBGGI_APPBUFS(vis)[i]->resource->release = priv->release;
+		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
+		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
+
+		LIBGGI_APPLIST(vis)->first_targetbuf
+			= LIBGGI_APPLIST(vis)->last_targetbuf -
+			  (mode->frames - 1);
+	}
+
+	/* The core doesn't init this soon enough for us. */
+	vis->r_frame = LIBGGI_APPBUFS(vis)[0];
+	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+
+	return err;
+
+err0:
+	_ggi_free_dbs(vis);
+	return err;
+}

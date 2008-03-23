@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.49 2008/03/23 12:11:25 cegger Exp $
+/* $Id: buffer.c,v 1.50 2008/03/23 12:56:09 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -263,45 +263,9 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 		goto err2;
 	}
 
-
-	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
-		ggi_directbuffer *db;
-
-		db = _ggi_db_get_new();
-		if (!db) {
-			DPRINT("_ggi_x_createfb: frame %u allocation failed\n",
-				i);
-			err = GGI_ENOMEM;
-			goto err3;
-		}
-
-		LIBGGI_APPLIST(vis)->last_targetbuf
-		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis), db);
-		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type
-		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write
-		  = priv->fb + i * LIBGGI_VIRTY(vis) * 
-		  priv->ximage->bytes_per_line;
-		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-		  = priv->ximage->bytes_per_line;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
-		  = LIBGGI_PIXFMT(vis);
-		LIBGGI_APPBUFS(vis)[i]->resource = 
-		  _ggi_malloc(sizeof(struct ggi_resource));
-		LIBGGI_APPBUFS(vis)[i]->resource->priv = vis;
-		LIBGGI_APPBUFS(vis)[i]->resource->acquire = GGI_X_db_acquire;
-		LIBGGI_APPBUFS(vis)[i]->resource->release = GGI_X_db_release;
-		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
-		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
-
-		LIBGGI_APPLIST(vis)->first_targetbuf
-		  = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames-1);
-	}
-
-	/* The core doesn't init this soon enough for us. */
-	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+	err = _ggi_create_dbs(vis);
+	if (err)
+		goto err3;
 
 	DPRINT_MODE("X: XImage %p and slave visual %p share buffer at %p\n",
 		       priv->ximage, priv->slave, priv->fb);

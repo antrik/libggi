@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.60 2008/03/23 12:11:26 cegger Exp $
+/* $Id: shm.c,v 1.61 2008/03/23 12:56:10 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -252,44 +252,9 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	ggUnlock(_ggi_global_lock); /* Exiting protected section */
 
 
-	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
-	for (i = 0; i < LIBGGI_MODE(vis)->frames; i++) {
-		ggi_directbuffer *db;
-
-		db = _ggi_db_get_new();
-		if (!db) {
-			DPRINT("frame %u allocation failed.\n", i);
-			err = GGI_ENOMEM;
-			goto err3;
-		}
-
-		LIBGGI_APPLIST(vis)->last_targetbuf
-		  = _ggi_db_add_buffer(LIBGGI_APPLIST(vis), db);
-		LIBGGI_APPBUFS(vis)[i]->frame = i;
-		LIBGGI_APPBUFS(vis)[i]->type
-		  = GGI_DB_NORMAL | GGI_DB_SIMPLE_PLB;
-		LIBGGI_APPBUFS(vis)[i]->read = LIBGGI_APPBUFS(vis)[i]->write =
-		  priv->fb + i * LIBGGI_VIRTY(vis) * 
-                  priv->ximage->bytes_per_line;
-		LIBGGI_APPBUFS(vis)[i]->layout = blPixelLinearBuffer;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.stride
-		  = priv->ximage->bytes_per_line;
-		LIBGGI_APPBUFS(vis)[i]->buffer.plb.pixelformat
-		  = LIBGGI_PIXFMT(vis);
-		LIBGGI_APPBUFS(vis)[i]->resource = 
-		  _ggi_malloc(sizeof(struct ggi_resource));
-		LIBGGI_APPBUFS(vis)[i]->resource->priv = vis;
-		LIBGGI_APPBUFS(vis)[i]->resource->acquire = priv->acquire;
-		LIBGGI_APPBUFS(vis)[i]->resource->release = priv->release;
-		LIBGGI_APPBUFS(vis)[i]->resource->curactype = 0;
-		LIBGGI_APPBUFS(vis)[i]->resource->count = 0;
-
-		LIBGGI_APPLIST(vis)->first_targetbuf
-		  = LIBGGI_APPLIST(vis)->last_targetbuf - (LIBGGI_MODE(vis)->frames-1);
-	}
-
-	/* The core doesn't init this soon enough for us. */
-	vis->w_frame = LIBGGI_APPBUFS(vis)[0];
+	err = _ggi_create_dbs(vis);
+	if (err)
+		goto err3;
 
 	/* We assume LIBGGI_MODE(vis) structure has already been filled out */
 	memcpy(&tm, LIBGGI_MODE(vis), sizeof(ggi_mode));
