@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.48 2008/03/23 00:37:21 cegger Exp $
+/* $Id: buffer.c,v 1.49 2008/03/23 12:11:25 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -35,6 +35,8 @@
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/display/x.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
+
+#include "./dbs.inc"
 
 int GGI_X_db_acquire(struct ggi_resource *res, uint32_t actype) {
 	struct ggi_visual *vis;
@@ -152,24 +154,6 @@ int GGI_X_setwriteframe_slave(struct ggi_visual *vis, int num) {
 	return err;
 }
 
-static void
-free_dbs(struct ggi_visual *vis)
-{
-	int i, first, last;
-
-	first = LIBGGI_APPLIST(vis)->first_targetbuf;
-	last = LIBGGI_APPLIST(vis)->last_targetbuf;
-	if (first < 0) {
-		return;
-	}
-	for (i = (last - first); i >= 0; i--) {
-		free(LIBGGI_APPBUFS(vis)[i]->resource);
-		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i + first]);
-		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i + first);
-	}
-	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
-}
-
 /* XImage allocation for normal client-side buffer */
 void _ggi_x_freefb(struct ggi_visual *vis)
 {
@@ -200,7 +184,7 @@ void _ggi_x_freefb(struct ggi_visual *vis)
 	LIB_ASSERT(priv->ximage == NULL, "priv->ximage: wild pointer\n");
 	LIB_ASSERT(priv->fb == NULL, "priv->fb: wild pointer\n");
 
-	free_dbs(vis);
+	_ggi_free_dbs(vis);
 }
 
 int _ggi_x_createfb(struct ggi_visual *vis)

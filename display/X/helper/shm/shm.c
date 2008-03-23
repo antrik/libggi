@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.59 2008/03/23 00:37:42 cegger Exp $
+/* $Id: shm.c,v 1.60 2008/03/23 12:11:26 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -39,6 +39,8 @@
 #include <ggi/internal/ggi-module.h>
 
 #include <string.h>
+
+#include "../../dbs.inc"
 
 /* Hack to fall back when shm is not working. */
 static int      shmerror;
@@ -120,24 +122,6 @@ static int GGI_XSHM_flush_ximage_child(struct ggi_visual *vis,
 	return 0;
 }
 
-static void
-free_dbs(struct ggi_visual *vis)
-{
-	int i, first, last;
-
-	first = LIBGGI_APPLIST(vis)->first_targetbuf;
-	last = LIBGGI_APPLIST(vis)->last_targetbuf;
-	if (first < 0) {
-		return;
-	}
-	for (i = (last - first); i >= 0; i--) {
-		free(LIBGGI_APPBUFS(vis)[i]->resource);
-		_ggi_db_free(LIBGGI_APPLIST(vis)->bufs[i + first]);
-		_ggi_db_del_buffer(LIBGGI_APPLIST(vis), i + first);
-	}
-	LIBGGI_APPLIST(vis)->first_targetbuf = -1;
-}
-
 /* XImage allocation for normal client-side buffer */
 static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
 {
@@ -178,7 +162,7 @@ static void _ggi_xshm_free_ximage(struct ggi_visual *vis)
 	free(myshminfo);
 	priv->priv = NULL;
 
-	free_dbs(vis);
+	_ggi_free_dbs(vis);
 }
 
 static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
