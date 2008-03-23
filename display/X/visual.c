@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.82 2008/03/23 07:40:31 cegger Exp $
+/* $Id: visual.c,v 1.83 2008/03/23 07:50:55 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -220,10 +220,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
-	for(i=0; i<GGI_X_HELPER_COUNT; ++i)
-	{
-		if (priv->helper[i])
-		{
+	for (i = 0; ggi_x_helper_name[i] != NULL; i++) {
+		if (priv->helper[i]) {
 			ggClosePlugin(priv->helper[i]);
 			priv->helper[i] = NULL;
 		}
