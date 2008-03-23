@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.50 2008/03/23 12:56:09 cegger Exp $
+/* $Id: buffer.c,v 1.51 2008/03/23 13:05:45 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: buffer and buffer syncronization handling.
@@ -251,7 +251,7 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 		DPRINT("_ggi_x_createfb: ggiSetMode(%p, %p) failed\n",
 			priv->slave->instance.stem, &tm);
 		err = GGI_ENOMEM;
-		goto err2;
+		goto err1;
 	}
 
 	priv->ximage = _ggi_x_create_ximage( vis, (char*)priv->fb,
@@ -260,32 +260,20 @@ int _ggi_x_createfb(struct ggi_visual *vis)
 	if (priv->ximage == NULL) {
 		DPRINT("_ggi_x_createfb: _ggi_x_create_ximage() failed\n");
 		err = GGI_ENOMEM;
-		goto err2;
+		goto err1;
 	}
 
 	err = _ggi_create_dbs(vis);
 	if (err)
-		goto err3;
+		goto err1;
 
 	DPRINT_MODE("X: XImage %p and slave visual %p share buffer at %p\n",
 		       priv->ximage, priv->slave, priv->fb);
 
 	return GGI_OK;
 
-err3:
-	_ggi_x_freefb(vis);
-	return err;
-
-err2:
-	do {
-		struct gg_stem *_stem = priv->slave->instance.stem;
-		ggiClose(priv->slave->instance.stem);
-		ggDelStem(_stem);
-	} while (0);
-	priv->slave = NULL;
 err1:
-	free(priv->fb);
-	priv->fb = NULL;
+	_ggi_x_freefb(vis);
 err0:
 	return err;
 }
