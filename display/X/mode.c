@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.83 2008/03/23 23:20:45 cegger Exp $
+/* $Id: mode.c,v 1.84 2008/03/23 23:44:39 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -491,7 +491,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 
 	compatible = compatible_mode(vis, tm);
 	memcpy(LIBGGI_MODE(vis), tm, sizeof(ggi_mode));
-	DPRINT("* change viidx = %i -> %i\n", priv->viidx, viidx);
+	DPRINT_MODE("* change viidx = %i -> %i\n", priv->viidx, viidx);
 	priv->viidx = viidx;
 
 	if (priv->opmansync)
@@ -524,12 +524,9 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		XDestroyWindow(priv->disp, priv->parentwin);
 
 	if ( createparent ) {
-		
 		XSetWindowAttributes parentwin_attr;
 		unsigned long parentwin_attr_mask;
-		
-		int screen;
-		
+
 		Atom wm_del_win;
 		/* Parent windows are merely clipping frames, 
 		 * just use defaults. */
@@ -539,9 +536,8 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		parentwin_attr.backing_store = Always;
 		parentwin_attr.save_under    = True;
 		parentwin_attr_mask = CWBackingStore | CWSaveUnder;
-		
-		if(!priv->ok_to_resize)
-		{
+
+		if (!priv->ok_to_resize) {
 			/* Fullscreen windows don't have any wm decorations.
 			 * So we'll set the override redirect attribute and
 			 * don't attach any WM_ATOM to it. */
@@ -553,31 +549,20 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 			parentwin_attr_mask |= CWOverrideRedirect;
 		}
 
-		/*
-		priv->parentwin =
-		    XCreateSimpleWindow(priv->disp,
-					RootWindow(priv->disp, vi->screen),
-					0, 0,
-					(unsigned int) tm->visible.x,
-					(unsigned int) tm->visible.y, 0,
-					0, 0);
-		
-		*/	
-		screen = DefaultScreen(priv->disp);
 		priv->parentwin =
 			XCreateWindow(priv->disp,
-				      RootWindow(priv->disp, vi->screen),
-				      0, 0,
-				      (unsigned int) tm->visible.x,
-				      (unsigned int) tm->visible.y,
-				      0,
-				      DefaultDepth(priv->disp, screen),
-				      InputOutput, DefaultVisual(priv->disp, screen),
-				      parentwin_attr_mask,
-				      &parentwin_attr);
+				RootWindow(priv->disp, vi->screen),
+				0, 0,
+				(unsigned int) tm->visible.x,
+				(unsigned int) tm->visible.y,
+				0,
+				DefaultDepth(priv->disp, vi->screen),
+				InputOutput,
+				DefaultVisual(priv->disp, vi->screen),
+				parentwin_attr_mask,
+				&parentwin_attr);
 
-		if(priv->parentwin == None)
-		{
+		if (priv->parentwin == None) {
 			DPRINT("X: Parent window creation failed.\n", err);
 			GGI_X_UNLOCK_XLIB(vis);
 			goto err0;
@@ -605,11 +590,12 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 		XNextEvent(priv->disp, &event);
 		DPRINT_MODE("X: Window Mapped\n");
 
-		if(priv->ok_to_resize)
-		{
+		if (priv->ok_to_resize) {
 			/* register the WM_DELETE protocol */
-			wm_del_win = XInternAtom(priv->disp, "WM_DELETE_WINDOW", False);
-			XSetWMProtocols(priv->disp, priv->parentwin, &wm_del_win, 1);
+			wm_del_win = XInternAtom(priv->disp,
+						"WM_DELETE_WINDOW", False);
+			XSetWMProtocols(priv->disp, priv->parentwin,
+					&wm_del_win, 1);
 		}
 		
 		/* We let the parent window listen for the keyboard.
