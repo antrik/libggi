@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.83 2008/03/23 07:50:55 cegger Exp $
+/* $Id: visual.c,v 1.84 2008/03/23 08:32:52 cegger Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -240,7 +240,10 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	if (priv->win != priv->parentwin) {
 		/* Don't destroy window, when not created */
-		if (priv->win != 0) XDestroyWindow(priv->disp,priv->win);
+		if (priv->win != 0) {
+			DPRINT_MISC("GGIclose: destroying child window\n");
+		 	XDestroyWindow(priv->disp, priv->win);
+		}
 	}
 
 	/* free saved titles
@@ -278,8 +281,10 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			XFreeCursor(priv->disp, priv->oldcursor);
 	} else {
 		/* Don't destroy window, when not created */
-		if (priv->parentwin != 0)
+		if (priv->parentwin != 0) {
+			DPRINT_MISC("GGIclose: destroying parent window\n");
 			XDestroyWindow(priv->disp, priv->parentwin);
+		}
 	}
 
 skip3:
