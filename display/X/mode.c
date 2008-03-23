@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.82 2008/03/22 20:37:27 cegger Exp $
+/* $Id: mode.c,v 1.83 2008/03/23 23:20:45 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. X target.
@@ -499,7 +499,7 @@ int GGI_X_setmode(struct ggi_visual * vis, ggi_mode * tm)
 
 	GGI_X_LOCK_XLIB(vis);
 
-	vi = (priv->vilist + viidx)->vi;
+	vi = priv->vilist[viidx].vi;
 
 	_ggi_x_build_pixfmt(vis, tm, vi);	/* Fill in ggi_pixelformat */
 

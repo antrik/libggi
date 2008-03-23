@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.44 2007/03/15 15:14:58 pekberg Exp $
+/* $Id: misc.c,v 1.45 2008/03/23 23:20:50 cegger Exp $
 ******************************************************************************
 
    X target for GGI, utility functions.
@@ -122,8 +122,8 @@ void _ggi_x_build_vilist(struct ggi_visual *vis)
 		ggi_x_vi *vi;
 		int bufidx;
 
-		vi = priv->vilist + viidx;
-		vi->vi = priv->visual + viidx;
+		vi = &priv->vilist[viidx];
+		vi->vi = &priv->visual[viidx];
 
 		for (bufidx = 0; bufidx < priv->nbufs; bufidx++) {
 			if (priv->buflist[bufidx].depth == vi->vi->depth)
@@ -163,8 +163,8 @@ void _ggi_x_build_vilist(struct ggi_visual *vis)
 		int restmp;
 		XVisualInfo *via, *vib;
 
-		via = (priv->vilist + viidx)->vi;
-		vib = (priv->vilist + viidx + 1)->vi;
+		via = priv->vilist[viidx].vi;
+		vib = priv->vilist[viidx + 1].vi;
 
 		restmp = _ggi_x_is_better_fmt(vib, via);
 		if (restmp > 0) {
@@ -184,10 +184,10 @@ void _ggi_x_build_vilist(struct ggi_visual *vis)
 		viidx++;
 		continue;
 	swap:
-		memcpy (&tmp, priv->vilist + viidx + 1, sizeof(ggi_x_vi));
-		memcpy (priv->vilist + viidx + 1, priv->vilist + viidx, 
+		memcpy (&tmp, &priv->vilist[viidx + 1], sizeof(ggi_x_vi));
+		memcpy (&priv->vilist[viidx + 1], &priv->vilist[viidx], 
 			sizeof(ggi_x_vi));
-		memcpy (priv->vilist + viidx, &tmp, sizeof(ggi_x_vi));
+		memcpy (&priv->vilist[viidx], &tmp, sizeof(ggi_x_vi));
 		more = 1;
 		viidx++;
 	}
