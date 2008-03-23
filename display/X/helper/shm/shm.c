@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.63 2008/03/23 14:23:18 cegger Exp $
+/* $Id: shm.c,v 1.64 2008/03/23 15:39:13 cegger Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -176,8 +176,6 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 
 
 	err = GGI_OK;
-	i = 0; /* ??? Cranky GCC */
-
 	priv = GGIX_PRIV(vis);
 
 	DPRINT_MODE("X: MIT-SHM: Creating shared MIT-SHM buffer\n");
@@ -246,7 +244,7 @@ static int _ggi_xshm_create_ximage(struct ggi_visual *vis)
 	} else {
 		/* Take the shmid away so noone else can get it. */
 		shmctl(myshminfo->shmid, IPC_RMID, 0);
-		DPRINT_MODE("X: MIT-SHM: ShmImage #%d allocated\n", i);
+		DPRINT_MODE("X: MIT-SHM: ShmImage allocated\n");
 	}
 	ggUnlock(_ggi_global_lock); /* Exiting protected section */
 
