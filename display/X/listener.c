@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.6 2006/10/14 12:38:32 cegger Exp $
+/* $Id: listener.c,v 1.7 2008/04/02 13:41:24 pekberg Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -39,13 +39,37 @@ int GGI_X_listener(void *arg, uint32_t flag, void *data)
 
 	if (flag & GII_CMDCODE_RESIZE) {
 		struct gii_cmddata_resize *resize;
+		gii_event ev;
+		ggi_cmddata_switchrequest *swreq;
 
 		resize = (struct gii_cmddata_resize *)data;
 
-		/* todo: update priv structure here.
-		 *  Don't resize the window itself.
-		 *  This is libggiwmh's job.
-		 */
+		if (LIBGGI_X(vis) == resize->width &&
+			LIBGGI_Y(vis) == resize->height)
+		{
+			/* same size, optimize */
+			return 0;
+		}
+
+		ev.any.size = sizeof(gii_cmd_nodata_event) +
+			sizeof(ggi_cmddata_switchrequest);
+		ev.any.type = evCommand;
+		ev.cmd.code = GGICMD_REQUEST_SWITCH;
+
+		swreq = (ggi_cmddata_switchrequest *)ev.cmd.data;
+		swreq->request = GGI_REQSW_MODE;
+		swreq->mode = *LIBGGI_MODE(vis);
+
+		swreq->mode.visible.x = resize->width;
+		swreq->mode.visible.y = resize->height;
+		if (swreq->mode.virt.x < resize->width)
+			swreq->mode.virt.x = resize->width;
+		if (swreq->mode.virt.y < resize->height)
+			swreq->mode.virt.y = resize->height;
+		swreq->mode.size.x = GGI_AUTO;
+		swreq->mode.size.y = GGI_AUTO;
+
+		ggControl(priv->inp->channel, GII_CMDCODE_RESIZE, &ev);
 	}
 
 	if ((flag & GII_CMDCODE_XWINEXPOSE) == GII_CMDCODE_XWINEXPOSE) {
