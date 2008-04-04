@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.22 2008/03/13 20:23:33 cegger Exp $
+/* $Id: mode.c,v 1.23 2008/04/04 08:06:20 pekberg Exp $
 ******************************************************************************
 
    Display-trueemu : mode management
@@ -29,6 +29,7 @@
 #include "config.h"
 #include <ggi/display/trueemu.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.38 2008/03/13 20:34:59 cegger Exp $
+/* $Id: mode.c,v 1.39 2008/04/04 08:05:19 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -29,6 +29,7 @@
 #include "config.h"
 #include <ggi/display/tile.h>
 #include <ggi/internal/ggi_debug.h>
+#include <ggi/internal/gg_replace.h>	/* for snprintf() */
 
 #include <stdio.h>
 #include <stdlib.h>
