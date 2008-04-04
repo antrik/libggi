@@ -1,4 +1,4 @@
-/* $Id: fileio.c,v 1.7 2006/03/20 20:06:32 cegger Exp $
+/* $Id: fileio.c,v 1.8 2008/04/04 08:12:21 pekberg Exp $
 ******************************************************************************
 
    Display-file: file primitives
@@ -25,16 +25,18 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/file.h>
 

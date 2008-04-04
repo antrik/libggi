@@ -1,4 +1,4 @@
-/* $Id: yuv.c,v 1.5 2008/03/13 15:20:14 cegger Exp $
+/* $Id: yuv.c,v 1.6 2008/04/04 08:12:21 pekberg Exp $
 ******************************************************************************
 
    Display-file: yuv writer
@@ -25,13 +25,15 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 
-#include "config.h"
 #include <ggi/internal/ggi-dl.h>
 #include <ggi/display/file.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */

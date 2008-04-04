@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.30 2008/03/13 20:24:44 cegger Exp $
+/* $Id: mode.c,v 1.31 2008/04/04 08:12:21 pekberg Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -26,17 +26,21 @@
 ******************************************************************************
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
 
-#include "config.h"
 #include <ggi/display/file.h>
 #include <ggi/internal/ggi_debug.h>
 #include <ggi/internal/gg_replace.h>	/* for snprintf() */
