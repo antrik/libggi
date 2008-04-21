@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.14 2008/04/21 07:53:59 pekberg Exp $
+/* $Id: mode.c,v 1.15 2008/04/21 08:06:52 pekberg Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -45,9 +45,9 @@ int GGI_sub_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_sub_priv *subinfo = SUB_PRIV(vis);
 	if (tm->visible.x == -1)
-		tm->visible.x = 0)
+		tm->visible.x = 0;
 	if (tm->visible.y == -1)
-		tm->visible.y = 0)
+		tm->visible.y = 0;
 	subinfo->position.x = tm->visible.x;
 	subinfo->position.y = tm->visible.y;
 	subinfo->botright.x = tm->virt.x + tm->visible.x;
