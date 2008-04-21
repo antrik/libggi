@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.13 2007/03/11 00:48:58 soyt Exp $
+/* $Id: mode.c,v 1.14 2008/04/21 07:53:59 pekberg Exp $
 ******************************************************************************
 
    Display-sub: mode management
@@ -44,6 +44,10 @@ int GGI_sub_getapi(struct ggi_visual *vis, int num, char *apiname, char *argumen
 int GGI_sub_setmode(struct ggi_visual *vis,ggi_mode *tm)
 { 
 	ggi_sub_priv *subinfo = SUB_PRIV(vis);
+	if (tm->visible.x == -1)
+		tm->visible.x = 0)
+	if (tm->visible.y == -1)
+		tm->visible.y = 0)
 	subinfo->position.x = tm->visible.x;
 	subinfo->position.y = tm->visible.y;
 	subinfo->botright.x = tm->virt.x + tm->visible.x;
