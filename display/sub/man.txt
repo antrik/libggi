@@ -8,7 +8,7 @@ Synopsis
 
 ::
 
-  display-sub: <target-spec>
+  display-sub
 
 
 Description
@@ -17,9 +17,6 @@ Description
 Creates a "child" visual within a "parent". This can be thought of as
 a window and the `display-sub` target is intended for simple windowing
 systems.
-
-No textual arguments, since this target can only be used by
-applications. :p:`argptr` must contain the parent visual.
 
 The sub target behaves a bit special with respect to (i.e. abuses the
 semantics of :) the :man:`ggiSetMode(3)` call. It uses the "visible"
@@ -42,10 +39,8 @@ for window system canvases to be about any GGI program.
 Options
 -------
 
-:p:`target-spec`
-    Specifies the target which to draw on (the *parent* target).  This
-    defaults to automatic selection (just like using
-    ``ggiOpen(NULL)`` when `GGI_DISPLAY` is not set).
+No textual arguments, since this target can only be used by
+applications. :p:`argptr` must contain the parent visual.
 
 
 Features
