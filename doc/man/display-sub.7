@@ -1,19 +1,16 @@
-.TH "display-sub" 7 "2008-04-21" "libggi-current" GGI
+.TH "display-sub" 7 "2008-04-25" "libggi-current" GGI
 .SH NAME
 \fBdisplay-sub\fR : Make a child visual that is a window to the parent
 .SH SYNOPSIS
 .nb
 .nf
-display-sub: <target-spec>
+display-sub
 .fi
 
 .SH DESCRIPTION
 Creates a "child" visual within a "parent". This can be thought of as
 a window and the \fBdisplay-sub\fR target is intended for simple windowing
 systems.
-
-No textual arguments, since this target can only be used by
-applications. \fIargptr\fR must contain the parent visual.
 
 The sub target behaves a bit special with respect to (i.e. abuses the
 semantics of :) the \f(CWggiSetMode(3)\fR call. It uses the "visible"
@@ -32,13 +29,8 @@ upper, left corner, say (\fB-1\fR, \fB-1\fR) instead, otherwise you may get
 unintended results.
 .RE
 .SH OPTIONS
-.TP
-\fItarget-spec\fR
-Specifies the target which to draw on (the \fIparent\fR target).  This
-defaults to automatic selection (just like using
-\f(CWggiOpen(NULL)\fR when \fBGGI_DISPLAY\fR is not set).
-
-.PP
+No textual arguments, since this target can only be used by
+applications. \fIargptr\fR must contain the parent visual.
 .SH FEATURES
 .IP \(bu 4
 DirectBuffer not supported.
