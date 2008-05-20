@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.221 2008/04/04 08:12:21 pekberg Exp $
+dnl $Id: configure.in,v 1.222 2008/05/20 21:10:08 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -609,13 +609,39 @@ AM_CONDITIONAL(HAVE_ZLIB,
 		test "x$ac_cv_lib_z_deflate" = "xyes" -a \
 			"x$ac_cv_header_zlib_h" = "xyes")
 
-AC_CHECK_LIB(jpeg, jpeg_start_compress,
-	AC_CHECK_HEADER(jpeglib.h,
-	[AC_DEFINE(HAVE_JPEG, 1, [Define to 1 if you have libjpeg.])],
-	[], [AC_INCLUDES_DEFAULT]))
-AM_CONDITIONAL(HAVE_JPEG,
-		test "x$ac_cv_lib_jpeg_jpeg_start_compress" = "xyes" -a \
-			"x$ac_cv_header_jpeglib_h" = "xyes")
+GGI_CHECK_LIB(turbojpeg, tjInitCompress,
+	AC_CHECK_HEADER(turbojpeg.h, [], [], [AC_INCLUDES_DEFAULT]))
+if test "x$ac_cv_lib_turbojpeg_tjInitCompress" = "xyes" -a \
+	"x$ac_cv_header_turbojpeg_h" = "xyes"
+then
+	ggi_turbojpeg=yes
+	AC_DEFINE(HAVE_TURBOJPEG, 1, [Define to 1 if you have turbojpeg.])
+else
+	ggi_turbojpeg=no
+fi
+AM_CONDITIONAL(HAVE_TURBOJPEG, test $ggi_turbojpeg = yes)
+
+GGI_CHECK_LIB(jpeg, jpeg_start_compress,
+	AC_CHECK_HEADER(jpeglib.h, [], [], [AC_INCLUDES_DEFAULT]))
+if test "x$ac_cv_lib_jpeg_jpeg_start_compress" = "xyes" -a \
+	"x$ac_cv_header_jpeglib_h" = "xyes"
+then
+	ggi_jpeglib=yes
+	AC_DEFINE(HAVE_JPEGLIB, 1, [Define to 1 if you have jpeglib.])
+else
+	ggi_jpeglib=no
+fi
+AM_CONDITIONAL(HAVE_JPEGLIB, test $ggi_jpeglib = yes)
+
+if test $ggi_turbojpeg = yes -o \
+	$ggi_jpeglib = yes
+then
+	ggi_jpeg=yes
+	AC_DEFINE(HAVE_JPEG, 1, [Define to 1 to compile with jpeg support.])
+else
+	ggi_jpeg=no
+fi
+AM_CONDITIONAL(HAVE_JPEG, test $ggi_jpeg = yes)
 
 
 TESTSUBDIRS=""

@@ -13,7 +13,13 @@ if HAVE_ZLIB
 libvnc_la_SOURCES += tight.c zlib.c zlibhex.c zrle.c
 libvnc_la_LIBADD  += -lz
 if HAVE_JPEG
+if HAVE_TURBOJPEG
+libvnc_la_LIBADD  += -lturbojpeg
+else
+if HAVE_JPEGLIB
 libvnc_la_LIBADD  += -ljpeg
+endif
+endif
 endif
 endif
 

@@ -1,4 +1,4 @@
-/* $Id: tight.c,v 1.20 2008/01/17 21:49:10 pekberg Exp $
+/* $Id: tight.c,v 1.21 2008/05/20 21:10:11 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB tight encoding
@@ -38,9 +38,13 @@
 
 #include <zlib.h>
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+#include <turbojpeg.h>
+#elif defined HAVE_JPEGLIB
 #undef HAVE_STDLIB_H /* redefined by jconfig.h */
 #include <jpeglib.h>
 #endif
+#endif /* HAVE_JPEG */
 
 #include <ggi/display/vnc.h>
 #include <ggi/internal/ggi_debug.h>
@@ -53,10 +57,14 @@ struct tight_ctx_t {
 	z_stream zstr[4];
 	ggi_vnc_buf work[2];
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+	tjhandle tj;
+#elif defined HAVE_JPEGLIB
 	struct jpeg_compress_struct cinfo;
 	struct jpeg_error_mgr jerr;
-	int jpeg_quality;
 #endif
+	int jpeg_quality;
+#endif /* HAVE_JPEG */
 };
 
 /* compression control */
@@ -79,6 +87,8 @@ struct tight_ctx_t {
 #define TIGHT_GRADIENT      (2)
 
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+#elif defined HAVE_JPEGLIB
 
 static void
 buf_dest_init_destination(j_compress_ptr cinfo)
@@ -136,6 +146,7 @@ buf_dest(j_compress_ptr cinfo)
 	buf_dest_init_destination(cinfo);
 }
 
+#endif
 #endif /* HAVE_JPEG */
 
 static void
@@ -509,6 +520,88 @@ crossblit_row_32(ggi_pixelformat *pixfmt, uint8_t *dst, uint32_t *src, int xs)
 	}
 }
 
+#if defined HAVE_TURBOJPEG
+
+static uint8_t *
+jpeg_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
+	uint8_t *src8, int xs, int ys, int stride)
+{
+	uint16_t *src = (uint16_t *)src8;
+	uint8_t *src888;
+	int y;
+	unsigned long size;
+
+	GGI_vnc_buf_reserve(&ctx->work[0],
+		ctx->work[0].size + TJBUFSIZE(xs, ys));
+	GGI_vnc_buf_reserve(&ctx->work[1], 3 * xs * ys);
+
+	src888 = ctx->work[1].buf;
+	for (y = 0; y < ys; ++y) {
+		crossblit_row_16(pixfmt, src888, src, xs);
+		src888 += 3 * xs;
+		src += stride;
+	}
+
+	size = ctx->work[0].limit - ctx->work[0].size;
+	tjCompress(ctx->tj, ctx->work[1].buf, xs, 3 * xs, ys, 3,
+		&ctx->work[0].buf[ctx->work[0].size], &size,
+		TJ_422, ctx->jpeg_quality, TJ_BGR);
+	ctx->work[0].size += size;
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
+static uint8_t *
+jpeg_888(struct tight_ctx_t *ctx,
+	uint8_t *src, int xs, int ys, int stride)
+{
+	unsigned long size;
+
+	stride *= 3;
+
+	GGI_vnc_buf_reserve(&ctx->work[0],
+		ctx->work[0].size + TJBUFSIZE(xs, ys));
+
+	size = ctx->work[0].limit - ctx->work[0].size;
+	tjCompress(ctx->tj, src, xs, stride, ys, 3,
+		&ctx->work[0].buf[ctx->work[0].size], &size,
+		TJ_422, ctx->jpeg_quality, TJ_BGR);
+	ctx->work[0].size += size;
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
+static uint8_t *
+jpeg_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
+	uint8_t *src8, int xs, int ys, int stride)
+{
+	uint32_t *src = (uint32_t *)src8;
+	uint8_t *src888;
+	int y;
+	unsigned long size;
+
+	GGI_vnc_buf_reserve(&ctx->work[0],
+		ctx->work[0].size + TJBUFSIZE(xs, ys));
+	GGI_vnc_buf_reserve(&ctx->work[1], 3 * xs * ys);
+
+	src888 = ctx->work[1].buf;
+	for (y = 0; y < ys; ++y) {
+		crossblit_row_32(pixfmt, src888, src, xs);
+		src888 += 3 * xs;
+		src += stride;
+	}
+
+	size = ctx->work[0].limit - ctx->work[0].size;
+	tjCompress(ctx->tj, ctx->work[1].buf, xs, 3 * xs, ys, 3,
+		&ctx->work[0].buf[ctx->work[0].size], &size,
+		TJ_422, ctx->jpeg_quality, TJ_BGR);
+	ctx->work[0].size += size;
+
+	return &ctx->work[0].buf[ctx->work[0].size];
+}
+
+#elif defined HAVE_JPEGLIB
+
 static uint8_t *
 jpeg_16(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
 	uint8_t *src8, int xs, int ys, int stride)
@@ -590,6 +683,7 @@ jpeg_32(struct tight_ctx_t *ctx, ggi_pixelformat *pixfmt,
 	return &ctx->work[0].buf[ctx->work[0].size];
 }
 
+#endif
 #endif /* HAVE_JPEG */
 
 static inline uint8_t *
@@ -1419,16 +1513,21 @@ void
 GGI_vnc_tight_quality(struct tight_ctx_t *ctx, int quality)
 {
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+	if (!ctx->jpeg_quality)
+		ctx->tj = tjInitCompress();
+#elif defined HAVE_JPEGLIB
 	if (!ctx->jpeg_quality) {
 		jpeg_create_compress(&ctx->cinfo);
 		buf_dest(&ctx->cinfo);
 	}
+#endif
 
 	ctx->jpeg_quality = 5 + 10 * quality;
 	DPRINT("jpeg quality %d\n", ctx->jpeg_quality);
 #else
 	DPRINT("Tight jpeg subencoding disabled\n");
-#endif
+#endif /* HAVE_JPEG */
 }
 
 struct tight_ctx_t *
@@ -1450,9 +1549,12 @@ GGI_vnc_tight_open(void)
 	}
 
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+#elif defined HAVE_JPEGLIB
 	ctx->cinfo.client_data = ctx;
 	ctx->cinfo.err = jpeg_std_error(&ctx->jerr);
 #endif
+#endif /* HAVE_JPEG */
 
 	return ctx;
 }
@@ -1461,9 +1563,14 @@ void
 GGI_vnc_tight_close(struct tight_ctx_t *ctx)
 {
 #ifdef HAVE_JPEG
+#if defined HAVE_TURBOJPEG
+	if (ctx->jpeg_quality)
+		tjDestroy(ctx->tj);
+#elif defined HAVE_JPEGLIB
 	if (ctx->jpeg_quality)
 		jpeg_destroy_compress(&ctx->cinfo);
 #endif
+#endif /* HAVE_JPEG */
 
 	free(ctx->work[0].buf);
 	free(ctx->work[1].buf);
