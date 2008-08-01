@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2008/03/13 20:20:29 cegger Exp $
+/* $Id: mode.c,v 1.28 2008/08/01 08:42:43 cegger Exp $
 ******************************************************************************
 
    FreeBSD vgl(3) target: mode management
@@ -24,6 +24,10 @@
 
 ******************************************************************************
 */
+
+#if defined(__DragonFly__)
+#include <sys/param.h>
+#endif
 
 #include <sys/ioccom.h>
 
@@ -131,8 +135,10 @@ int GGI_vgl_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	/* XXX should be in VGL */
 	if ((modeinfo.vi_mode >= M_B40x25) && (modeinfo.vi_mode <= M_VGA_M90x60))
 		modenum = _IO('S', modeinfo.vi_mode);
+#if !(defined(__DragonFly__) && __DragonFly_version >= 180000)
 	if ((modeinfo.vi_mode >= M_TEXT_80x25) && (modeinfo.vi_mode <= M_TEXT_132x60))
 		modenum = _IO('S', modeinfo.vi_mode);
+#endif
 	if ((modeinfo.vi_mode >= M_VESA_CG640x400) &&
 		(modeinfo.vi_mode <= M_VESA_FULL_1280))
 		modenum = _IO('V', modeinfo.vi_mode - M_VESA_BASE);
