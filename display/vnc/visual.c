@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.59 2008/03/19 21:44:44 pekberg Exp $
+/* $Id: visual.c,v 1.60 2008/08/07 12:55:03 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -622,8 +622,14 @@ GGIopen(struct ggi_visual *vis,
 
 	if (options[OPT_tight].result[0] == 'n') /* no */
 		priv->tight = 0;
+	else if (options[OPT_tight].result[0] == 'e') { /* ext/enc */
+		if (options[OPT_tight].result[1] == 'x') /* ext */
+			priv->tight = 1;
+		if (options[OPT_tight].result[1] == 'n') /* encoding */
+			priv->tight = 2;
+	}
 	else
-		priv->tight = 1;
+		priv->tight = 3;
 
 	ggstrlcpy(priv->title,
 		options[OPT_title].result, sizeof(priv->title));

@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.122 2008/03/20 12:16:58 pekberg Exp $
+/* $Id: rfb.c,v 1.123 2008/08/07 12:55:03 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -615,7 +615,7 @@ tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
 	DPRINT_MISC(format);
-	if (client->encode || !priv->tight)
+	if (client->encode || !(priv->tight & 2))
 		return NULL;
 	if (!client->tight_ctx)
 		client->tight_ctx =
@@ -1552,6 +1552,14 @@ vnc_client_run(ggi_vnc_client *client)
 	return res;
 }
 
+static inline uint8_t *
+insert_cap(uint8_t *buf, uint32_t code, const char *vendor_name)
+{
+	buf = insert_hilo_32(buf, code);
+	memcpy(buf, vendor_name, 12);
+	return buf + 12;
+}
+
 static int
 vnc_client_init(ggi_vnc_client *client)
 {
@@ -1636,6 +1644,125 @@ vnc_client_init(ggi_vnc_client *client)
 	client->requested_pixfmt = client->pixfmt;
 	change_pixfmt(client);
 
+	if (client->tight_extension) {
+		int idx = client->wbuf.size;
+		unsigned char *tight_init;
+		uint16_t server_messages = 0;
+		uint16_t client_messages = 0;
+		uint16_t encodings = 0;
+
+		if (priv->gii) {
+			++server_messages;
+			++client_messages;
+			++encodings;
+		}
+		encodings +=
+			(priv->copyrect != 0) +
+			priv->rre +
+			priv->corre +
+			priv->hextile +
+#ifdef HAVE_ZLIB
+			(priv->zlib_level != -2) +
+			(priv->tight & 2) +
+#ifdef HAVE_JPEG
+			!!(priv->tight & 2) +
+#endif /* HAVE_JPEG */
+			(priv->zlibhex_level != -2) +
+			(priv->zrle_level != -2) +
+#endif /* HAVE_ZLIB */
+			priv->desktop_size +
+			priv->desktop_name;
+
+		GGI_vnc_buf_reserve(&client->wbuf,
+			idx + 8 + (server_messages + client_messages +
+			encodings) * 16);
+		tight_init = &client->wbuf.buf[idx];
+		insert_hilo_16(&tight_init[0], server_messages);
+		insert_hilo_16(&tight_init[2], client_messages);
+		insert_hilo_16(&tight_init[4], encodings);
+		tight_init[6] = 0;
+		tight_init[7] = 0;
+		idx = 8;
+
+		if (priv->gii) {
+			/* server message */
+			insert_cap(&tight_init[idx], 253, "GGI_" "GII_SERV");
+			idx += 16;
+			/* client message */
+			insert_cap(&tight_init[idx], 253, "GGI_" "GII_CLNT");
+			idx += 16;
+		}
+
+		/* encodings */
+		if (priv->copyrect) {
+			insert_cap(&tight_init[idx], 1, "STDV" "COPYRECT");
+			idx += 16;
+		}
+
+		if (priv->rre) {
+			insert_cap(&tight_init[idx], 2, "STDV" "RRE_____");
+			idx += 16;
+		}
+
+		if (priv->corre) {
+			insert_cap(&tight_init[idx], 4, "STDV" "CORRE___");
+			idx += 16;
+		}
+
+		if (priv->hextile) {
+			insert_cap(&tight_init[idx], 5, "STDV" "HEXTILE_");
+			idx += 16;
+		}
+
+#ifdef HAVE_ZLIB
+		if (priv->zlib_level != -2) {
+			insert_cap(&tight_init[idx], 6, "TRDV" "ZLIB____");
+			idx += 16;
+		}
+
+		if (priv->tight & 2) {
+			insert_cap(&tight_init[idx], 7, "TGHT" "TIGHT___");
+			idx += 16;
+		}
+
+		if (priv->zlibhex_level != -2) {
+			insert_cap(&tight_init[idx], 8, "TRDV" "ZLIBHEX_");
+			idx += 16;
+		}
+
+		if (priv->zrle_level != -2) {
+			insert_cap(&tight_init[idx], 16, "STDV" "ZRLE____");
+			idx += 16;
+		}
+
+		if (priv->tight & 2) {
+			insert_cap(&tight_init[idx], -256, "TGHT" "COMPRLVL");
+			idx += 16;
+#ifdef HAVE_JPEG
+			insert_cap(&tight_init[idx], -32, "TGHT" "JPEGQLVL");
+			idx += 16;
+#endif /* HAVE_JPEG */
+		}
+#endif /* HAVE_ZLIB */
+
+		if (priv->desktop_size) {
+			insert_cap(&tight_init[idx], -224, "TGHT" "NEWFBSIZ");
+			idx += 16;
+		}
+
+		if (priv->gii) {
+			insert_cap(&tight_init[idx], -305, "GGI_" "GII_____");
+			idx += 16;
+		}
+
+		if (priv->desktop_name) {
+			insert_cap(&tight_init[idx], -307, "TGHT" "DESKNAME");
+			idx += 16;
+		}
+
+		client->wbuf.size += idx;
+	}
+
 	/* desired pixel-format */
 	write_client(client, &client->wbuf, 1);
 
@@ -1707,13 +1834,81 @@ vnc_client_challenge(ggi_vnc_client *client)
 }
 
 static int
+vnc_client_vnc_auth(ggi_vnc_client *client)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	unsigned int i;
+	struct timeval now;
+
+	DPRINT("client_vnc_auth\n");
+
+	if (!priv->passwd && !priv->viewpw)
+		return -1;
+
+	client->buf_size = 0;
+	client->action = vnc_client_challenge;
+
+	/* Mix in some bits that will change with time */
+	ggCurTime(&now);
+	for (i = 0; i < sizeof(now); ++i)
+		client->challenge[i & 7] ^= *(((uint8_t *)&now) + i);
+
+	/* scramble using des to get the final challenge */
+	usekey(priv->randomizer);
+	des(&client->challenge[0], &client->challenge[0]);
+	/* chain the two blocks to propagate the "randomness" */
+	for (i = 0; i < 8; ++i)
+		client->challenge[i + 8] ^= client->challenge[i];
+	des(&client->challenge[8], &client->challenge[8]);
+
+	/* challenge client */
+	GGI_vnc_buf_reserve(&client->wbuf, 16);
+	client->wbuf.size += 16;
+	memcpy(client->wbuf.buf, client->challenge, 16);
+	write_client(client, &client->wbuf, 1);
+	return 0;
+}
+
+static int
+vnc_client_tight_security(ggi_vnc_client *client)
+{
+	uint32_t security_type;
+
+	if (client->write_pending)
+		return 0;
+
+	DPRINT("client_tight_security\n");
+
+	if (client->buf_size < 4)
+		/* wait for more data */
+		return 0;
+
+	memcpy(&security_type, &client->buf[0], sizeof(security_type));
+	security_type = ntohl(security_type);
+
+	if (client->buf_size > 4) {
+		DPRINT("Too much data.\n");
+		return -1;
+	}
+
+	switch (security_type) {
+	case 2:
+		if (vnc_client_vnc_auth(client))
+			break;
+		return 0;
+	}
+
+	DPRINT("Invalid security type requested (%u)\n", security_type);
+	return -1;
+}
+
+static int
 vnc_client_security(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int security_type;
-	unsigned int i;
-	struct timeval now;
 
 	if (client->write_pending)
 		return 0;
@@ -1756,28 +1951,44 @@ vnc_client_security(ggi_vnc_client *client)
 		return 0;
 
 	case 2:
-		if (!priv->passwd && !priv->viewpw)
+		if (vnc_client_vnc_auth(client))
 			break;
+		return 0;
+
+	case 16:
+		if (!(priv->tight & 1))
+			break;
+		client->tight_extension = 1;
 		client->buf_size = 0;
-		client->action = vnc_client_challenge;
 
-		/* Mix in some bits that will change with time */
-		ggCurTime(&now);
-		for (i = 0; i < sizeof(now); ++i)
-			client->challenge[i & 7] ^= *(((uint8_t *)&now) + i);
+		GGI_vnc_buf_reserve(&client->wbuf, 12);
+		client->wbuf.size += 8;
+		/* No tunnels supported */
+		insert_hilo_32(&client->wbuf.buf[0], 0);
 
-		/* scramble using des to get the final challenge */
-		usekey(priv->randomizer);
-		des(&client->challenge[0], &client->challenge[0]);
-		/* chain the two blocks to propagate the "randomness" */
-		for (i = 0; i < 8; ++i)
-			client->challenge[i + 8] ^= client->challenge[i];
-		des(&client->challenge[8], &client->challenge[8]);
+		if (priv->passwd || priv->viewpw) {
+			/* One auth type supported */
+			insert_hilo_32(&client->wbuf.buf[4], 1);
+			/* vnc-auth supported */
+			GGI_vnc_buf_reserve(&client->wbuf,
+				client->wbuf.size + 16);
+			client->wbuf.size += 16;
+			insert_hilo_32(&client->wbuf.buf[8], 2);
+			memcpy(&client->wbuf.buf[12], "STDV" "VNCAUTH_", 12);
+			client->action = vnc_client_tight_security;
+		}
+		else {
+			/* No authentication supported */
+			insert_hilo_32(&client->wbuf.buf[4], 0);
+			client->action = vnc_client_init;
+			client->buf_size = 0;
 
-		/* challenge client */
-		GGI_vnc_buf_reserve(&client->wbuf, 16);
-		client->wbuf.size += 16;
-		memcpy(client->wbuf.buf, client->challenge, 16);
+			if (client->protover > 7) {
+				/* ok */
+				client->wbuf.size += 4;
+				insert_hilo_32(&client->wbuf.buf[8], 0);
+			}
+		}
 		write_client(client, &client->wbuf, 1);
 		return 0;
 	}
@@ -1861,10 +2072,12 @@ vnc_client_version(ggi_vnc_client *client)
 	client->action = vnc_client_security;
 
 	/* supported security types */
-	GGI_vnc_buf_reserve(&client->wbuf, 2);
-	client->wbuf.size += 2;
-	client->wbuf.buf[0] = 1;
+	GGI_vnc_buf_reserve(&client->wbuf, 3);
+	client->wbuf.size += 2 + (priv->tight & 1);
+	client->wbuf.buf[0] = 1 + (priv->tight & 1);
 	client->wbuf.buf[1] = (priv->passwd || priv->viewpw) ? 2 : 1;
+	if (priv->tight & 1)
+		client->wbuf.buf[2] = 16;
 	write_client(client, &client->wbuf, 1);
 
 	return 0;
@@ -1897,6 +2110,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
 
+	client->tight_extension = 0;
 	client->write_pending = 0;
 	client->desktop_size = priv->desktop_size ? DESKSIZE_OK_INIT : 0;
 	client->gii = priv->gii;

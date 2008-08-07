@@ -12,9 +12,9 @@ Synopsis
   	       [-corre=no] [-deskname=no] [-desksize=no] [-display=<dpy>]
   	       [-gii=no] [-hextile=no] [-kold] [-passwd=<file>]
   	       [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
-  	       [-server[=<dpy>|stdio]] [-stdio] [-tight=no] [-title=<title>]
-  	       [-viewonly] [-viewpw=<file>] [-wmvi=no] [-zlib=<level>|no]
-  	       [-zlibhex=<level>|no] [-zrle=<level>|no]
+  	       [-server[=<dpy>|stdio]] [-stdio] [-tight=enc|ext|no]
+  	       [-title=<title>] [-viewonly] [-viewpw=<file>] [-wmvi=no]
+  	       [-zlib=<level>|no] [-zlibhex=<level>|no] [-zrle=<level>|no]
 
 
 Description
@@ -114,8 +114,12 @@ Options
     stdout and/or stderr. The :p:`-stdio` option is incompatible with the
     :p:`-server=stdio` option.
 
-``-tight=no``
-    Disables the Tight encoding.
+``-tight=enc|ext|no``
+    Control the Tight encoding and the Tight protocol extension. Using
+    :p:`-tight=enc` enables the Tight encoding, using :p:`-tight=ext`
+    enables the Tight protocol extension, and :p:`-tight=no` disables
+    them both. The default is to enable both the Tight encoding and the
+    Tight protocol extension.
 
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
@@ -166,6 +170,7 @@ Features
 - Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
   encodings. The CopyRect encoding is only used for panning.
 - DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
+- Support for the Tight protocol extension from the TightVNC project.
 - Multiple simultaneous clients (shared session).
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).
