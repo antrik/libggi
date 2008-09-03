@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.13 2007/03/03 19:26:01 cegger Exp $
+/* $Id: consistency.c,v 1.14 2008/09/03 09:55:05 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -646,6 +646,8 @@ static int setup_mode(void)
 		fprintf(stderr,"Can't set mode\n");
 		return 1;
 	}
+
+	ggiSetColorfulPalette(mode.vis);
 
 	map[0].r = 0x0000;
 	map[0].g = 0x0000;
