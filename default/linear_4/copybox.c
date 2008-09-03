@@ -1,4 +1,4 @@
-/* $Id: copybox.c,v 1.4 2006/03/12 23:15:08 soyt Exp $
+/* $Id: copybox.c,v 1.5 2008/09/03 10:00:50 pekberg Exp $
 ******************************************************************************
 
    LibGGI linear 4 - copybox
@@ -29,63 +29,112 @@
 
 #include "lin4lib.h"
 
+/* Maximum amount of bytes to allocate on the stack */
+#define MAX_STACKBYTES	4096
+
+static inline void
+do_copy(struct ggi_visual *vis, int x, int y, int w, int h,
+	int nx, int ny, void *buf)
+{
+	int step = 1;
+
+	if (ny > y) {
+		step = -1;
+		y += h - 1;
+		ny += h - 1;
+	}
+
+	for (; h > 0; --h, y += step, ny += step) {
+		_ggiGetHLine(vis, x,  y,  w, buf);
+		_ggiPutHLine(vis, nx, ny, w, buf);
+	}
+}
+
+
+static inline int
+fallback(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+{
+	size_t size;
+
+	if (LIBGGI_GT(vis) & GT_SUB_PACKED_GETPUT)
+		size = GT_ByPPP(w, LIBGGI_GT(vis));
+	else
+		size = w * GT_ByPP(LIBGGI_GT(vis));
+
+	if (size <= MAX_STACKBYTES) {
+		uint8_t buf[MAX_STACKBYTES];
+
+		do_copy(vis, x, y, w, h, nx, ny, buf);
+	}
+	else {
+		uint8_t *buf = malloc(size);
+		if (!buf)
+			return GGI_ENOMEM;
+		do_copy(vis, x, y, w, h, nx, ny, buf);
+		free(buf);
+	}
+
+	return 0;
+}
 
 int
-GGI_lin4_copybox(struct ggi_visual *vis, int x, int y, int w, int h, int nx, int ny)
+GGI_lin4_copybox(struct ggi_visual *vis, int x, int y, int w, int h,
+	int nx, int ny)
 {
-	uint8_t *src, *dest;
+	uint8_t *src, *dst;
 	int linew = LIBGGI_FB_W_STRIDE(vis);
 	int line;
-	int left, right;
-	
+	int first, last;
+	int f, l, fm, lm;
+
 	LIBGGICLIP_COPYBOX(vis, x, y, w, h, nx, ny);
+	if ((x ^ nx) & 1)
+		return fallback(vis, x, y, w, h, nx, ny);
 	PREPARE_FB(vis);
 
 	/* if x is odd, left pixel dangles. */
 	/* if x is odd and w is even, right dangles. */
 	/* if x is even and w is odd, right dangles. */
 
-	left  = (x & 0x01);
-	right = (x ^ w) & 0x01;
-	w -= left + right;
-	
-	if (ny < y) {
-		src  = (uint8_t *)LIBGGI_CURWRITE(vis) + y*linew  + (x/2);
-		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + ny*linew + (nx/2);
-		if (left) {
-			dest++;
-			src++;
-		}
-		for (line=0; line < h; line++, src += linew, dest += linew) {
-			if (left) {
-				*(dest-1) = (*(dest-1) & 0xF0) | *(src-1);
-			}
-			memmove(dest, src, (size_t)(w/2));
-			if (right) {
-				*(dest+w) = (*(dest+w) & 0x0F)
-					| (*(src+w) << 4);
-			}
-		}
-	} else {
-		src  = (uint8_t *)LIBGGI_CURWRITE(vis) + (y+h-1)*linew + (x/2);
-		dest = (uint8_t *)LIBGGI_CURWRITE(vis) + (ny+h-1)*linew+ (nx/2);
-		if (left) {
-			dest++;
-			src++;
-		}
-		for (line=0; line < h; line++, src -= linew, dest -= linew) {
-			if (left) {
-				*(dest-1) = (*(dest-1) & 0xF0) | *(src-1);
-			}
-			memmove(dest, src, (size_t)(w/2));
-			if (right) {
-				*(dest+w) = (*(dest+w) & 0x0F)
-					| (*(src+w) << 4);
-			}
-		}
+	first = x & 0x01;
+	last  = (x ^ w) & 0x01;
+	w -= first + last;
+
+	src = (uint8_t *)LIBGGI_CURWRITE(vis) + y * linew  + (x / 2);
+	dst = (uint8_t *)LIBGGI_CURWRITE(vis) + ny * linew + (nx / 2);
+	if (first) {
+		++dst;
+		++src;
+	}
+	if (ny > y) {
+		/* go from bottom up */
+		src += (h - 1) * linew;
+		dst += (h - 1) * linew;
+		linew = -linew;
+	}
+	if (nx > x) {
+		/* go from right to left (swap first and last) */
+		l = first;
+		first = last;
+		last = l;
+		f = w / 2;
+		fm = 0x0f;
+		l = -1;
+		lm = 0xf0;
+	}
+	else {
+		f = -1;
+		fm = 0xf0;
+		l = w / 2;
+		lm = 0x0f;
+	}
+	for (line=0; line < h; line++, src += linew, dst += linew) {
+		if (first)
+			*(dst + f) = (*(dst + f) & fm) | (*(src + f) & lm);
+		memmove(dst, src, (size_t)(w / 2));
+		if (last)
+			*(dst + l) = (*(dst + l) & lm) | (*(src + l) & fm);
 	}
 
 	return 0;
 }
-
-

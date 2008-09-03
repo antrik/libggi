@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.12 2008/01/20 19:26:28 pekberg Exp $
+/* $Id: visual.c,v 1.13 2008/09/03 10:00:50 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI.
@@ -74,11 +74,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 		vis->opdraw->getvline		= GGI_lin4_packed_getvline;
 	}
 
-	/* this copybox implementation is too naive. memmove cannot
-	 * be used when the src x and dst x are not both even/odd.
-	 * Disable and failover to the implementation from stubs.
 	vis->opdraw->copybox		= GGI_lin4_copybox;
-	 */
 
 	*dlret = GGI_DL_OPCOLOR|GGI_DL_OPDRAW;
 	return 0;
