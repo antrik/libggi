@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.23 2007/06/24 13:59:12 aldot Exp $
+/* $Id: cbconsist.c,v 1.24 2008/09/03 12:24:37 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -185,7 +185,7 @@ static void cbtime(cbcstate * s)
 
 	num = box.x * box.y;
 	while (num--) {
-		curr = (rand() % 0x10000) | ((rand() & 0x10000) << 16);
+		curr = (rand() % 0x10000) | ((rand() & 0xffff) << 16);
 		ggiPutPixel(s->svis, num % box.x, num / box.x, curr);
 		if (s->flags & CBC_FLUSHALOT)
 			ggiFlush(s->svis);
