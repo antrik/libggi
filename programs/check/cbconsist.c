@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.26 2008/09/04 08:34:44 pekberg Exp $
+/* $Id: cbconsist.c,v 1.27 2008/09/04 10:51:35 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -59,6 +59,8 @@ struct cbcstate_s {
 				   around any races. */
 #define CBC_NOTIMING	16	/* Don't time. */
 #define CBC_NOCONSIST	32	/* Don't run consistency tests. */
+#define CBC_NOPADDING	64      /* Don't check how any padding bits in
+				   the source affects the consistency. */
 };
 
 #define BAILOUT(string, label) \
@@ -70,33 +72,33 @@ do {                           \
 #define PROGNAME "cbconsist"
 #define CBC_VERSION "1.0"
 
+#define CBC_USAGE \
+PROGNAME ", version " CBC_VERSION "\n\
+Check the pixel correctness and speed of GGI crossblits.\n\
+\n\
+Synopsis: " PROGNAME " -h | [options]\n\
+Available options: (default values are in parenthesis)\n\
+  -s srcvis        The source visual (display-memory)\n\
+  -d dstvis        The destination visual (display-memory)\n\
+  -a               Abort when first inconsistency found.\n\
+  -f               Flush a lot (for buggy targets. Very slow).\n\
+  -t               Run without timing tests.\n\
+  -c               Run without consistency tests.\n\
+  -p               Ignore padding bits in source during consistency tests.\n\
+\n\
+Note that this application depends on bug-free color ops.\n\
+Also note timing measurements don't account for system load.\n\
+\n"
+
 static void usage(FILE * fp)
 {
-	fprintf(fp,
-		PROGNAME ", version %s\n"
-		"Check the pixel correctness and speed of GGI crossblits.\n"
-		"\n"
-		"Synopsis: " PROGNAME " -h | [options]\n"
-		"Available options: (default values are in parenthesis)\n"
-		"  -s srcvis        The source visual (display-memory)\n"
-		"  -d dstvis        The destination visual (display-memory)\n"
-		"  -a               Abort when first inconsiatancy found.\n"
-		"  -f               Flush a lot (for buggy targets. Very slow).\n"
-		"  -t               Run without timing tests.\n"
-		"  -c               Run without consistency tests.\n"
-		"\nNote that this application depends on bug-free color ops.\n"
-		"Also note timing measurements don't account for system load.\n\n",
-		CBC_VERSION);
+	fprintf(fp, CBC_USAGE);
 }
 
-static ggi_pixel cbconsist(cbcstate * s)
+static ggi_pixel full_mask(ggi_visual_t vis)
 {
-	ggi_pixel bad;
-	ggi_coord box;
-	ggi_pixel count;
-	const ggi_pixelformat *pixfmt = ggiGetPixelFormat(s->dvis);
-	ggi_pixel mask =
-		pixfmt->red_mask |
+	const ggi_pixelformat *pixfmt = ggiGetPixelFormat(vis);
+	return  pixfmt->red_mask |
 		pixfmt->green_mask |
 		pixfmt->blue_mask |
 		pixfmt->alpha_mask |
@@ -104,6 +106,15 @@ static ggi_pixel cbconsist(cbcstate * s)
 		pixfmt->fg_mask |
 		pixfmt->bg_mask |
 		pixfmt->texture_mask;
+}
+
+static ggi_pixel cbconsist(cbcstate * s)
+{
+	ggi_pixel bad;
+	ggi_coord box;
+	ggi_pixel count;
+	int shift = 0;
+	ggi_pixel mask = full_mask(s->dvis);
 
 	box = s->smode.virt;
 	if (box.x > s->dmode.virt.x)
@@ -111,7 +122,19 @@ static ggi_pixel cbconsist(cbcstate * s)
 	if (box.y > s->dmode.virt.y)
 		box.y = s->dmode.virt.y;
 	bad = 0;
-	count = 0xffffffff >> (32 - GT_SIZE(s->smode.graphtype));
+
+	if (s->flags & CBC_NOPADDING) {
+		count = full_mask(s->svis);
+		if (!count)
+			count = 1;
+
+		while (!(count & 1)) {
+			count >>= 1;
+			++shift;
+		}
+	}
+	else
+		count = 0xffffffff >> (32 - GT_SIZE(s->smode.graphtype));
 
 	do {
 		uint32_t num;
@@ -125,7 +148,7 @@ static ggi_pixel cbconsist(cbcstate * s)
 			ggiPutPixel(s->svis,
 				(signed)(num % box.x),
 				(signed)(num / box.x),
-				curr);
+				curr << shift);
 			if (s->flags & CBC_FLUSHALOT)
 				ggiFlush(s->svis);
 			curr--;
@@ -149,7 +172,7 @@ static ggi_pixel cbconsist(cbcstate * s)
 				(signed)(num % box.x),
 				(signed)(num / box.x),
 				&res);
-			ggiUnmapPixel(s->svis, curr, &col);
+			ggiUnmapPixel(s->svis, curr << shift, &col);
 			correct = ggiMapColor(s->dvis, &col);
 
 			if (correct != res & mask) {
@@ -171,7 +194,7 @@ static ggi_pixel cbconsist(cbcstate * s)
 		if (count < (unsigned) box.x * box.y)
 			count = 0;
 		else
-			(count -= box.x * box.y);
+			count -= box.x * box.y;
 	} while (count);
 
 	return bad;
@@ -305,7 +328,7 @@ static int mkmemvis(int i, const char **str,
 	return i;
 }
 
-static const char optstring[] = "s:d:haftc";
+static const char optstring[] = "s:d:haftcp";
 
 int main(int argc, char * const argv[])
 {
@@ -351,6 +374,10 @@ int main(int argc, char * const argv[])
 
 		case 'c':
 			s.flags |= CBC_NOCONSIST;
+			break;
+
+		case 'p':
+			s.flags |= CBC_NOPADDING;
 			break;
 
 		case '?':
