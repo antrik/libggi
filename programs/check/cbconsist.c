@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.24 2008/09/03 12:24:37 pekberg Exp $
+/* $Id: cbconsist.c,v 1.25 2008/09/04 08:31:17 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include <ggi/ggi.h>
+#include <ggi/internal/ggi.h>
 #include <ggi/gg.h> 
 #include <ggi/internal/gg_replace.h>
 
@@ -363,11 +363,12 @@ int main(int argc, char * const argv[])
 		BAILOUT("Unable to initialize LibGGI, exiting.\n", err0);
 
 	if (s.flags & CBC_REALSRC) {
+		char pixfmt[200];
 		if ((s.svis=ggNewStem(NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err1);
 		if (ggiAttach(s.svis) < 0)
 			BAILOUT("unable to attach ggi api, exiting.\n", err2);
-		if (ggiOpen(s.svis, NULL) < 0)
+		if (ggiOpen(s.svis, s.svisstr, NULL) < 0)
 			BAILOUT("unable to open source visual, exiting.\n", err2);
 		ggiSetFlags(s.svis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.svis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
@@ -376,6 +377,9 @@ int main(int argc, char * const argv[])
 			ggPanic("Source Visual: Mode setting failed!\n");
 			exit(1);
 		}
+		_ggi_build_pixfmtstr(GGI_VISUAL(s.svis),
+			pixfmt, sizeof(pixfmt), GGI_PIXFMT_CHANNEL);
+		printf("Source pixfmt:%s\n", pixfmt);
 		if (GT_SCHEME(s.smode.graphtype) == GT_PALETTE)
 			ggiSetColorfulPalette(s.svis);
 		color.r = color.b = color.g = color.a = 0;
@@ -386,12 +390,13 @@ int main(int argc, char * const argv[])
 	}
 
 	if (s.flags & CBC_REALDST) {
+		char pixfmt[200];
 		if ((s.dvis=ggNewStem(NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err2);
 		if (ggiAttach(s.dvis) < 0)
 			BAILOUT("unable to attach ggi api, exiting.\n", err3);
-		if (ggiOpen(s.dvis, NULL) < 0)
-			BAILOUT("unable to open source visual, exiting.\n", err3);
+		if (ggiOpen(s.dvis, s.dvisstr, NULL) < 0)
+			BAILOUT("unable to open dest visual, exiting.\n", err3);
 		ggiSetFlags(s.dvis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.dvis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.dmode);
@@ -399,6 +404,9 @@ int main(int argc, char * const argv[])
 			ggPanic("Destination Visual: Mode setting failed!\n");
 			exit(1);
 		}
+		_ggi_build_pixfmtstr(GGI_VISUAL(s.dvis),
+			pixfmt, sizeof(pixfmt), GGI_PIXFMT_CHANNEL);
+		printf("Dest pixfmt:%s\n", pixfmt);
 		if (GT_SCHEME(s.dmode.graphtype) == GT_PALETTE)
 			ggiSetColorfulPalette(s.dvis);
 		color.r = color.b = color.g = color.a = 0;
