@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.25 2008/09/04 08:31:17 pekberg Exp $
+/* $Id: cbconsist.c,v 1.26 2008/09/04 08:34:44 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -94,6 +94,16 @@ static ggi_pixel cbconsist(cbcstate * s)
 	ggi_pixel bad;
 	ggi_coord box;
 	ggi_pixel count;
+	const ggi_pixelformat *pixfmt = ggiGetPixelFormat(s->dvis);
+	ggi_pixel mask =
+		pixfmt->red_mask |
+		pixfmt->green_mask |
+		pixfmt->blue_mask |
+		pixfmt->alpha_mask |
+		pixfmt->clut_mask |
+		pixfmt->fg_mask |
+		pixfmt->bg_mask |
+		pixfmt->texture_mask;
 
 	box = s->smode.virt;
 	if (box.x > s->dmode.virt.x)
@@ -142,7 +152,7 @@ static ggi_pixel cbconsist(cbcstate * s)
 			ggiUnmapPixel(s->svis, curr, &col);
 			correct = ggiMapColor(s->dvis, &col);
 
-			if (correct != res) {
+			if (correct != res & mask) {
 				if (s->flags & CBC_ABORT) {
 					if (curr == 0) {
 						/* This will be a pretty rare occurance. */
