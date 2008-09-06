@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.28 2008/09/06 19:07:53 pekberg Exp $
+/* $Id: cbconsist.c,v 1.29 2008/09/06 20:05:36 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -282,6 +282,10 @@ static int mkmemvis(int i, const char **str,
 {
 	ggi_color color;
 
+	if (*vis) {
+		ggDelStem(*vis);
+		*vis = NULL;
+	}
 	if (i > MAX_MEMVIS_FMTS - 1)
 		return -1;
 	*str = memvis_fmts[i];
@@ -333,6 +337,8 @@ int main(int argc, char * const argv[])
 
 	/* Default values */
 	s.flags = 0;
+	s.svis = NULL;
+	s.dvis = NULL;
 
 	/* Handle command-line options. */
 	opterr = 0;
@@ -397,7 +403,7 @@ int main(int argc, char * const argv[])
 		if ((s.svis=ggNewStem(libggi, NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err1);
 		if (ggiOpen(s.svis, s.svisstr, NULL) < 0)
-			BAILOUT("unable to open source visual, exiting.\n", err2);
+			BAILOUT("unable to open source visual, exiting.\n", err1);
 		ggiSetFlags(s.svis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.svis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.smode);
@@ -420,9 +426,9 @@ int main(int argc, char * const argv[])
 	if (s.flags & CBC_REALDST) {
 		char pixfmt[200];
 		if ((s.dvis=ggNewStem(libggi, NULL)) == NULL)
-			BAILOUT("unable to create stem, exiting.\n", err2);
+			BAILOUT("unable to create stem, exiting.\n", err1);
 		if (ggiOpen(s.dvis, s.dvisstr, NULL) < 0)
-			BAILOUT("unable to open dest visual, exiting.\n", err3);
+			BAILOUT("unable to open dest visual, exiting.\n", err1);
 		ggiSetFlags(s.dvis, GGIFLAG_ASYNC);
 		ggiCheckSimpleMode(s.dvis, GGI_AUTO, GGI_AUTO, 1, GT_AUTO,
 				   &s.dmode);
@@ -459,7 +465,7 @@ int main(int argc, char * const argv[])
 				fprintf(stdout,
 					"\nBad value converting pixel value %x.\n",
 					res);
-				goto err3;
+				goto err1;
 			}
 			fprintf(stdout, "%i bad values.\n", res);
 		}
@@ -486,10 +492,9 @@ int main(int argc, char * const argv[])
 					fprintf(stdout,
 						"\nBad value converting pixel value %x.\n",
 						res);
-					goto err2;
+					goto err1;
 				}
 				fprintf(stdout, "%i bad values.\n", res);
-				ggDelStem(s.svis);
 			}
 			i++;
 		}
@@ -516,10 +521,9 @@ int main(int argc, char * const argv[])
 					fprintf(stdout,
 						"\nBad value converting pixel value %x.\n",
 						res);
-					goto err4;
+					goto err1;
 				}
 				fprintf(stdout, "%i bad values.\n", res);
-				ggDelStem(s.dvis);
 			}
 			i++;
 		}
@@ -553,33 +557,23 @@ int main(int argc, char * const argv[])
 						fprintf(stdout,
 							"\nBad value converting pixel value %x.\n",
 							res);
-						goto err4;
+						goto err1;
 					}
 					fprintf(stdout, "%i bad values.\n",
 						res);
-					ggDelStem(s.svis);
 				}
 				j++;
 			}
-			ggDelStem(s.dvis);
 			i++;
 		}
 	}
 
-      err4:
-	if (!(s.flags & CBC_REALDST))
-		ggDelStem(s.dvis);
-	if (!(s.flags & CBC_REALSRC))
-		ggDelStem(s.svis);
-	goto err1;
-
-      err3:
-	if (s.flags & CBC_REALDST)
-		ggDelStem(s.dvis);
-      err2:
-	if (s.flags & CBC_REALSRC)
-		ggDelStem(s.svis);
       err1:
+	if (s.dvis)
+		ggDelStem(s.dvis);
+	if (s.svis)
+		ggDelStem(s.svis);
+
 	ggiExit();
       err0:
 	exit(1);
