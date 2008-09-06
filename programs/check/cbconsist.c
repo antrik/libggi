@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.29 2008/09/06 20:05:36 pekberg Exp $
+/* $Id: cbconsist.c,v 1.30 2008/09/06 20:51:02 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -52,7 +52,7 @@ struct cbcstate_s {
 	ggi_pixel sblack, dblack;
 	int flags;
 
-#define CBC_ABORT	1	/* Whether to halt at first consistency */
+#define CBC_ABORT	1	/* Whether to halt at first inconsistency */
 #define CBC_REALSRC	2	/* Use a real visual as the source */
 #define CBC_REALDST	4	/* Use a real visual as the destination */
 #define CBC_FLUSHALOT	8	/* Do extra (slow) flushing to work 
