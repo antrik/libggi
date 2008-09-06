@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.27 2008/09/04 10:51:35 pekberg Exp $
+/* $Id: cbconsist.c,v 1.28 2008/09/06 19:07:53 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -28,7 +28,7 @@
 
 #include "config.h"
 #include <ggi/internal/ggi.h>
-#include <ggi/gg.h> 
+#include <ggi/gg.h>
 #include <ggi/internal/gg_replace.h>
 
 #include <stdio.h>
@@ -285,16 +285,9 @@ static int mkmemvis(int i, const char **str,
 	if (i > MAX_MEMVIS_FMTS - 1)
 		return -1;
 	*str = memvis_fmts[i];
-	if ((*vis=ggNewStem(NULL)) == NULL) {
+	if ((*vis=ggNewStem(libggi, NULL)) == NULL) {
 		fprintf(stderr,
 			"unable to create stem, exiting.\n");
-		return -1;
-	}
-
-	if (ggiAttach(*vis) < 0) {
-		ggDelStem(*vis);
-		fprintf(stderr,
-			"unable to attach ggi api, exiting.\n");
 		return -1;
 	}
 
@@ -401,10 +394,8 @@ int main(int argc, char * const argv[])
 
 	if (s.flags & CBC_REALSRC) {
 		char pixfmt[200];
-		if ((s.svis=ggNewStem(NULL)) == NULL)
+		if ((s.svis=ggNewStem(libggi, NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err1);
-		if (ggiAttach(s.svis) < 0)
-			BAILOUT("unable to attach ggi api, exiting.\n", err2);
 		if (ggiOpen(s.svis, s.svisstr, NULL) < 0)
 			BAILOUT("unable to open source visual, exiting.\n", err2);
 		ggiSetFlags(s.svis, GGIFLAG_ASYNC);
@@ -428,10 +419,8 @@ int main(int argc, char * const argv[])
 
 	if (s.flags & CBC_REALDST) {
 		char pixfmt[200];
-		if ((s.dvis=ggNewStem(NULL)) == NULL)
+		if ((s.dvis=ggNewStem(libggi, NULL)) == NULL)
 			BAILOUT("unable to create stem, exiting.\n", err2);
-		if (ggiAttach(s.dvis) < 0)
-			BAILOUT("unable to attach ggi api, exiting.\n", err3);
 		if (ggiOpen(s.dvis, s.dvisstr, NULL) < 0)
 			BAILOUT("unable to open dest visual, exiting.\n", err3);
 		ggiSetFlags(s.dvis, GGIFLAG_ASYNC);
