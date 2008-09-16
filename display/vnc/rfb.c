@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.124 2008/09/16 06:53:43 pekberg Exp $
+/* $Id: rfb.c,v 1.125 2008/09/16 19:50:30 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -1863,6 +1863,7 @@ GGI_vnc_client_vnc_auth(ggi_vnc_client *client)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int i;
 	struct timeval now;
+	DES_key_schedule random_ks;
 
 	DPRINT("client_vnc_auth\n");
 
@@ -1876,19 +1877,24 @@ GGI_vnc_client_vnc_auth(ggi_vnc_client *client)
 
 	/* Mix in some bits that will change with time */
 	ggCurTime(&now);
-	for (i = 0; i < sizeof(now); ++i)
+	for (i = 0; i < sizeof(now); ++i) {
+		priv->random17[i & 7] += *(((uint8_t *)&now) + i);
 		client->challenge[i & 7] ^= *(((uint8_t *)&now) + i);
+		client->challenge[15 - (i & 7)] ^= *(((uint8_t *)&now) + i);
+	}
+
+	DES_set_key_unchecked((DES_cblock *)priv->random17, &random_ks);
 
 	/* scramble using des to get the final challenge */
 	DES_ecb_encrypt((DES_cblock *)&client->challenge[0],
 		(DES_cblock *)&client->challenge[0],
-		priv->random_ks, DES_ENCRYPT);
-	/* chain the two blocks to propagate the "randomness" */
+		&random_ks, DES_ENCRYPT);
+	/* chain the two blocks to to make them more dissimilar */
 	for (i = 0; i < 8; ++i)
 		client->challenge[i + 8] ^= client->challenge[i];
 	DES_ecb_encrypt((DES_cblock *)&client->challenge[8],
 		(DES_cblock *)&client->challenge[8],
-		priv->random_ks, DES_ENCRYPT);
+		&random_ks, DES_ENCRYPT);
 
 	/* challenge client */
 	GGI_vnc_buf_reserve(&client->wbuf, 16);

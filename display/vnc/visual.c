@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.61 2008/09/16 06:53:43 pekberg Exp $
+/* $Id: visual.c,v 1.62 2008/09/16 19:50:31 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -122,8 +122,6 @@ enum {
 	NUM_OPTS
 };
 #undef VNC_OPTION
-
-static unsigned char random17[] = "random17";
 
 #if defined(__WIN32__) && !defined(__CYGWIN__)
 static int
@@ -580,16 +578,7 @@ GGIopen(struct ggi_visual *vis,
 		}
 		DES_set_key_unchecked((DES_cblock *)passwd, priv->passwd_ks);
 
-		/* Pick some random password, and use the des algorithm to
-		 * generate pseudo random numbers.
-		 */
-		priv->random_ks = malloc(sizeof(DES_key_schedule));
-		if (!priv->random_ks) {
-			err = GGI_ENOMEM;
-			goto out_freegc;
-		}
-		DES_set_key_unchecked((DES_cblock *)random17,
-			priv->random_ks);
+		ggstrlcpy(priv->random17, "random17", sizeof(priv->random17));
 	}
 	else
 		priv->passwd = 0;
@@ -685,18 +674,7 @@ GGIopen(struct ggi_visual *vis,
 		}
 		DES_set_key_unchecked((DES_cblock *)viewpw, priv->viewpw_ks);
 
-		/* Pick some random password, and use the des algorithm to
-		 * generate pseudo random numbers.
-		 */
-		if (!priv->random_ks) {
-			priv->random_ks = malloc(sizeof(DES_key_schedule));
-			if (!priv->random_ks) {
-				err = GGI_ENOMEM;
-				goto out_freegc;
-			}
-			DES_set_key_unchecked((DES_cblock *)random17,
-				priv->random_ks);
-		}
+		ggstrlcpy(priv->random17, "random17", sizeof(priv->random17));
 	}
 	else
 		priv->viewpw = 0;
@@ -887,8 +865,6 @@ out_freepriv:
 		free(priv->passwd_ks);
 	if (priv->viewpw_ks)
 		free(priv->viewpw_ks);
-	if (priv->random_ks)
-		free(priv->random_ks);
 	free(priv);
 out_socketcleanup:
 #if defined(__WIN32__) && !defined(__CYGWIN__)
@@ -940,8 +916,6 @@ GGIclose(struct ggi_visual *vis,
 		free(priv->passwd_ks);
 	if (priv->viewpw_ks)
 		free(priv->viewpw_ks);
-	if (priv->random_ks)
-		free(priv->random_ks);
 	free(priv);
 
 skip:

@@ -1,4 +1,4 @@
-/* $Id: vnc.h,v 1.45 2008/09/16 06:53:43 pekberg Exp $
+/* $Id: vnc.h,v 1.46 2008/09/16 19:50:30 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
@@ -124,7 +124,7 @@ typedef struct {
 	int           viewpw;
 	void         *passwd_ks;
 	void         *viewpw_ks;
-	void         *random_ks;
+	char          random17[9];
 
 	int kill_on_last_disconnect;
 
