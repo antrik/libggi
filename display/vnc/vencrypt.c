@@ -1,4 +1,4 @@
-/* $Id: vencrypt.c,v 1.1 2008/09/16 06:53:43 pekberg Exp $
+/* $Id: vencrypt.c,v 1.2 2008/09/16 19:29:15 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB VeNCrypt protocol extension
@@ -843,7 +843,7 @@ GGI_vnc_vencrypt_init(void)
 	ERR_load_BIO_strings();
 	SSL_library_init();
 
-	opt->ssl_ctx = SSL_CTX_new(SSLv23_server_method());
+	opt->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
 
 	if (!opt->ssl_ctx) {
 		DPRINT("Failed to create SSL context\n");

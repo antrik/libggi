@@ -142,8 +142,8 @@ Options
 
 ``-sslver=<method>``
     This option is only in effect if the :p:`-vencrypt` option is also given.
-    The SSL :p:`method` can be one of SSLv2, SSLv3, TLSv1 or SSLv23. SSLv23
-    is the default and allows any of TLSv1, SSLv2 and SSLv3.
+    The SSL :p:`method` can be one of SSLv2, SSLv3, TLSv1 or SSLv23 (allows
+    a mix). TLSv1 is the default, since SSLv2 has security issues.
 
 ``-stdio``
     Talk the RFB protocol on stdin/stdout instead of waiting for clients
