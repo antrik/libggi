@@ -1,16 +1,20 @@
-.TH "display-vnc" 7 "2008-03-19" "libggi-current" GGI
+.TH "display-vnc" 7 "2008-09-16" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
 .nb
 .nf
-display-vnc: [-bind=<iface>] [-client=<host>] [-copyrect=no|always]
-             [-corre=no] [-deskname=no] [-desksize=no] [-display=<dpy>]
-             [-gii=no] [-hextile=no] [-kold] [-passwd=<file>]
-             [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
-             [-server[=<dpy>|stdio]] [-stdio] [-tight=no] [-title=<title>]
-             [-viewonly] [-viewpw=<file>] [-wmvi=no] [-zlib=<level>|no]
-             [-zlibhex=<level>|no] [-zrle=<level>|no]
+display-vnc: [-bind=<iface>] [-cert=<file>] [-ciphers=<list>]
+             [-client=<host>] [-copyrect=no|always] [-corre=no]
+             [-deskname=no] [-desksize=no] [-dh=<file>]
+             [-display=<dpy>] [-gii=no] [-hextile=no] [-kold]
+             [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
+             [-privkey=<file>] [-rre=no] [-server[=<dpy>|stdio]]
+             [-sslver=<method>] [-stdio] [-tight=enc|ext|no]
+             [-title=<title>] [-vencrypt] [-vrfydir=<dir>]
+             [-vrfyfile=<file>] [-viewonly] [-viewpw=<file>]
+             [-wmvi=no] [-zlib=<level>|no] [-zlibhex=<level>|no]
+             [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -25,6 +29,24 @@ The supported RFB protocol versions are 3.3, 3.7 and 3.8.
 \f(CW-bind=<iface>\fR
 Bind the server socket to the specific \fIiface\fR, e.g. 127.0.0.1 in
 case display-vnc should only accept connections from an ssh tunnel.
+
+.TP
+\f(CW-cert=<file>\fR
+This option is only in effect if the \fI-vencrypt\fR option is also given.
+PEM-format \fIfile\fR with the certificate chain to use. By giving this
+option you also switch from using anonymous TLS to using x509
+certificates. In order to use the certificate chain, you may also have to
+load a private key, using the \fI-privkey\fR option.
+
+.TP
+\f(CW-ciphers=<list>\fR
+This option is only in effect if the \fI-vencrypt\fR option is also given.
+Explicitely specify the allowed cipher suites (in the same format OpenSSL
+uses, see the openssl ciphers manpage). The default allowed ciphers are
+\fBaNULL:!eNULL:@STRENGTH\fR (all anonymous ciphers that provides encryption),
+unless the \fI-cert\fR option is also given in which case the default is
+instead \fBALL:!aNULL:@STRENGTH\fR (all encrypting ciphers that are not
+anonymous).
 
 .TP
 \f(CW-client=<host>\fR
@@ -51,6 +73,14 @@ Disables the DesktopName pseudo-encoding.
 .TP
 \f(CW-desksize=no\fR
 Disables the DesktopSize pseudo-encoding.
+
+.TP
+\f(CW-dh=<file>\fR
+This option is only in effect if the \fI-vencrypt\fR option is also given.
+Specify a PEM file with diffie-hellman parameters to use. If this option
+is not used, DH parameters will be generated on-the-fly which may be
+somewhat time consuming. See the openssl dhparam manpage for how to
+generate a DH PEM file.
 
 .TP
 \f(CW-display=<dpy>\fR
@@ -96,6 +126,14 @@ are the x,y size of the screen in millimeters, unless the optional
 in dots-per-inch.
 
 .TP
+\f(CW-privkey=<file>\fR
+This option is only in effect if the \fI-vencrypt\fR option is also given.
+PEM-format \fIfile\fR with the private key for the certificate chain given
+with the \fI-cert\fR option. The private key may (unfortunately) not be
+protected with a pass phrase, since there is no good way to pass the
+key to display-vnc.
+
+.TP
 \f(CW-rre=no\fR
 Disables the RRE encoding.
 
@@ -111,6 +149,12 @@ the example below). The \fI-server=stdio\fR option is incompatible with
 the \fI-stdio\fR option.
 
 .TP
+\f(CW-sslver=<method>\fR
+This option is only in effect if the \fI-vencrypt\fR option is also given.
+The SSL \fImethod\fR can be one of SSLv2, SSLv3, TLSv1 or SSLv23 (allows
+a mix). TLSv1 is the default, since SSLv2 has security issues.
+
+.TP
 \f(CW-stdio\fR
 Talk the RFB protocol on stdin/stdout instead of waiting for clients
 to connect. Suitable for serving a GGI application as an inetd(8)
@@ -120,13 +164,46 @@ stdout and/or stderr. The \fI-stdio\fR option is incompatible with the
 \fI-server=stdio\fR option.
 
 .TP
-\f(CW-tight=no\fR
-Disables the Tight encoding.
+\f(CW-tight=enc|ext|no\fR
+Control the Tight encoding and the Tight protocol extension. Using
+\fI-tight=enc\fR enables the Tight encoding, using \fI-tight=ext\fR
+enables the Tight protocol extension, and \fI-tight=no\fR disables
+them both. The default is to enable both the Tight encoding and the
+Tight protocol extension.
 
 .TP
 \f(CW-title=<title>\fR
 The \fItitle\fR clients should use on their windows. If this option
 is not specified, the default is "GGI on vnc".
+
+.TP
+\f(CW-vencrypt\fR
+Enable the VeNCrypt protocol extension and require that it is used. By
+default the VeNCrypt extension will use anonymous encryption (susceptible
+to man in the middle attacks). If the \fI-cert\fR option is given VeNCrypt
+will instead issue an x509 certificate for the client to verify. In
+addition to that, display-vnc will require the client to provide an x509
+certificate if any or both of the \fI-vrfyfile\fR or \fI-vrfydir\fR options
+are given. If the VeNCrypt extension is enabled, the Tight extension will
+be disabled.
+
+.TP
+\f(CW-vrfydir=<dir>\fR
+This option is only in effect if the \fI-vencrypt\fR and \fI-cert\fR options
+are also given.
+Directory with PEM-format certificate authorities. The CA are used when
+verifying the client certificate. If this option (or the \fI-vrfydir\fR
+option) is not given, the client is not required to provide a valid
+certificate).
+
+.TP
+\f(CW-vrfyfile=<file>\fR
+This option is only in effect if the \fI-vencrypt\fR and \fI-cert\fR options
+are also given.
+PEM-format file with certificate authorities. The CA are used when
+verifying the client certificate. If this option (or the \fI-vrfyfile\fR
+option) is not given, the client is not required to provide a valid
+certificate).
 
 .TP
 \f(CW-viewonly\fR
@@ -179,6 +256,11 @@ Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
 encodings. The CopyRect encoding is only used for panning.
 .IP \(bu 4
 DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
+.IP \(bu 4
+Support for the Tight protocol extension from the TightVNC project.
+.IP \(bu 4
+Support for the VeNCrypt protocol extension from the VeNCrypt project.
+However, the VeNCrypt \fBplain\fR authentication is not supported.
 .IP \(bu 4
 Multiple simultaneous clients (shared session).
 .IP \(bu 4
