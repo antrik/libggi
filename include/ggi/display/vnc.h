@@ -1,9 +1,9 @@
-/* $Id: vnc.h,v 1.44 2008/08/07 12:55:02 pekberg Exp $
+/* $Id: vnc.h,v 1.45 2008/09/16 06:53:43 pekberg Exp $
 ******************************************************************************
 
    Display-vnc: definitions
 
-   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
+   Copyright (C) 2008 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -61,6 +61,10 @@ typedef struct ggi_vnc_client_t {
 
 	int input;
 
+	int (*read_ready)(struct ggi_vnc_client_t *client);
+	int (*write_ready)(struct ggi_vnc_client_t *client);
+	int (*safe_write)(struct ggi_vnc_client_t *client,
+		int close_on_error);
 	unsigned char *buf;
 	int buf_size;
 	int buf_limit;
@@ -70,6 +74,7 @@ typedef struct ggi_vnc_client_t {
 	ggi_vnc_encode *encode;
 
 	int tight_extension;
+	void *vencrypt;
 	int copy_rect;
 	void *rre_ctx;
 	void *hextile_ctx;
@@ -108,6 +113,8 @@ typedef struct {
 	gii_vnc_del_cfd  *del_cfd;
 	gii_vnc_add_cwfd *add_cwfd;
 	gii_vnc_del_cwfd *del_cwfd;
+	gii_vnc_add_crfd *add_crfd;
+	gii_vnc_del_crfd *del_crfd;
 	gii_vnc_key      *key;
 	gii_vnc_pointer  *pointer;
 	gii_vnc_inject   *inject;
@@ -115,9 +122,9 @@ typedef struct {
 
 	int           passwd;
 	int           viewpw;
-	unsigned long passwd_key[32];
-	unsigned long viewpw_key[32];
-	unsigned long randomizer[32];
+	void         *passwd_ks;
+	void         *viewpw_ks;
+	void         *random_ks;
 
 	int kill_on_last_disconnect;
 
@@ -133,6 +140,7 @@ typedef struct {
 	int gii;
 	int desktop_name;
 	int wmvi;
+	void *vencrypt;
 
 	char title[80];
 

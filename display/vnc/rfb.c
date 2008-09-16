@@ -1,9 +1,9 @@
-/* $Id: rfb.c,v 1.123 2008/08/07 12:55:03 pekberg Exp $
+/* $Id: rfb.c,v 1.124 2008/09/16 06:53:43 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
 
-   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
+   Copyright (C) 2008 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -72,10 +72,24 @@
 #include <ggi/internal/ggi_debug.h>
 #include "common.h"
 
+#ifdef HAVE_OPENSSL
+#include <openssl/des.h>
+#else
 #include "d3des.h"
+#endif /* HAVE_OPENSSL */
+
 #include "encoding.h"
 
 static int vnc_client_run(ggi_vnc_client *client);
+int GGI_vnc_read_ready(ggi_vnc_client *client);
+int GGI_vnc_write_ready(ggi_vnc_client *client);
+int GGI_vnc_client_init(ggi_vnc_client *client);
+int GGI_vnc_client_vnc_auth(ggi_vnc_client *client);
+int GGI_vnc_client_vencrypt_security(ggi_vnc_client *client);
+
+#ifndef HAVE_OPENSSL
+#define GGI_vnc_client_vencrypt_security(client) -1
+#endif
 
 static int
 color_bits(uint16_t max)
@@ -150,6 +164,7 @@ close_client(ggi_vnc_client *client)
 	if (client->write_pending)
 		priv->del_cwfd(priv->gii_ctx, client, client->cfd);
 	client->write_pending = 0;
+	GGI_vnc_vencrypt_stop_tls(client);
 	free(client->wbuf.buf);
 	memset(&client->wbuf, 0, sizeof(client->wbuf));
 	close(client->cfd);
@@ -206,10 +221,11 @@ close_client(ggi_vnc_client *client)
 }
 
 static int
-write_client(ggi_vnc_client *client, ggi_vnc_buf *buf, int close_on_error)
+vnc_safe_write(ggi_vnc_client *client, int close_on_error)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
+	ggi_vnc_buf *buf = &client->wbuf;
 	int res;
 
 	if (client->write_pending) {
@@ -221,7 +237,8 @@ write_client(ggi_vnc_client *client, ggi_vnc_buf *buf, int close_on_error)
 
 again:
 #if defined(__WIN32__) && !defined(__CYGWIN__)
-	res = send(client->cwfd, buf->buf + buf->pos, buf->size - buf->pos, 0);
+	res = send(client->cwfd,
+		buf->buf + buf->pos, buf->size - buf->pos, 0);
 #else
 	res = write(client->cwfd, buf->buf + buf->pos, buf->size - buf->pos);
 #endif
@@ -732,7 +749,7 @@ gii_enc(ggi_vnc_client *client,
 		insert_hilo_16(&client->wbuf.buf[2], 4);
 		insert_hilo_16(&client->wbuf.buf[4], 1);
 		insert_hilo_16(&client->wbuf.buf[6], 1);
-		write_client(client, &client->wbuf, 0);
+		client->safe_write(client, 0);
 	}
 
 	return NULL;
@@ -1140,7 +1157,7 @@ do_client_update(ggi_vnc_client *client, ggi_rect *update, int pan)
 
 done:
 	if (client->wbuf.size)
-		write_client(client, &client->wbuf, 1);
+		client->safe_write(client, 1);
 	return 0;
 }
 
@@ -1560,8 +1577,8 @@ insert_cap(uint8_t *buf, uint32_t code, const char *vendor_name)
 	return buf + 12;
 }
 
-static int
-vnc_client_init(ggi_vnc_client *client)
+int
+GGI_vnc_client_init(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -1764,7 +1781,7 @@ vnc_client_init(ggi_vnc_client *client)
 	}
 
 	/* desired pixel-format */
-	write_client(client, &client->wbuf, 1);
+	client->safe_write(client, 1);
 
 	DPRINT("client_init done\n");
 
@@ -1795,9 +1812,12 @@ vnc_client_challenge(ggi_vnc_client *client)
 	if (priv->passwd) {
 		uint8_t good_response[16];
 
-		usekey(priv->passwd_key);
-		des(&client->challenge[0], &good_response[0]);
-		des(&client->challenge[8], &good_response[8]);
+		DES_ecb_encrypt((DES_cblock *)&client->challenge[0],
+			(DES_cblock *)&good_response[0],
+			priv->passwd_ks, DES_ENCRYPT);
+		DES_ecb_encrypt((DES_cblock *)&client->challenge[8],
+			(DES_cblock *)&good_response[8],
+			priv->passwd_ks, DES_ENCRYPT);
 
 		if (!memcmp(good_response,
 				client->buf, sizeof(good_response)))
@@ -1806,9 +1826,12 @@ vnc_client_challenge(ggi_vnc_client *client)
 	if (!ok && priv->viewpw) {
 		uint8_t good_response[16];
 
-		usekey(priv->viewpw_key);
-		des(&client->challenge[0], &good_response[0]);
-		des(&client->challenge[8], &good_response[8]);
+		DES_ecb_encrypt((DES_cblock *)&client->challenge[0],
+			(DES_cblock *)&good_response[0],
+			priv->viewpw_ks, DES_ENCRYPT);
+		DES_ecb_encrypt((DES_cblock *)&client->challenge[8],
+			(DES_cblock *)&good_response[8],
+			priv->viewpw_ks, DES_ENCRYPT);
 
 		if (!memcmp(good_response,
 				client->buf, sizeof(good_response))) {
@@ -1822,19 +1845,19 @@ vnc_client_challenge(ggi_vnc_client *client)
 	}
 
 	client->buf_size = 0;
-	client->action = vnc_client_init;
+	client->action = GGI_vnc_client_init;
 
 	/* ok */
 	GGI_vnc_buf_reserve(&client->wbuf, 4);
 	client->wbuf.size += 4;
 	insert_hilo_32(&client->wbuf.buf[0], 0);
-	write_client(client, &client->wbuf, 1);
+	client->safe_write(client, 1);
 
 	return 0;
 }
 
-static int
-vnc_client_vnc_auth(ggi_vnc_client *client)
+int
+GGI_vnc_client_vnc_auth(ggi_vnc_client *client)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -1843,6 +1866,8 @@ vnc_client_vnc_auth(ggi_vnc_client *client)
 
 	DPRINT("client_vnc_auth\n");
 
+	if (priv->vencrypt && !client->vencrypt)
+		return -1;
 	if (!priv->passwd && !priv->viewpw)
 		return -1;
 
@@ -1855,24 +1880,29 @@ vnc_client_vnc_auth(ggi_vnc_client *client)
 		client->challenge[i & 7] ^= *(((uint8_t *)&now) + i);
 
 	/* scramble using des to get the final challenge */
-	usekey(priv->randomizer);
-	des(&client->challenge[0], &client->challenge[0]);
+	DES_ecb_encrypt((DES_cblock *)&client->challenge[0],
+		(DES_cblock *)&client->challenge[0],
+		priv->random_ks, DES_ENCRYPT);
 	/* chain the two blocks to propagate the "randomness" */
 	for (i = 0; i < 8; ++i)
 		client->challenge[i + 8] ^= client->challenge[i];
-	des(&client->challenge[8], &client->challenge[8]);
+	DES_ecb_encrypt((DES_cblock *)&client->challenge[8],
+		(DES_cblock *)&client->challenge[8],
+		priv->random_ks, DES_ENCRYPT);
 
 	/* challenge client */
 	GGI_vnc_buf_reserve(&client->wbuf, 16);
 	client->wbuf.size += 16;
 	memcpy(client->wbuf.buf, client->challenge, 16);
-	write_client(client, &client->wbuf, 1);
+	client->safe_write(client, 1);
 	return 0;
 }
 
 static int
 vnc_client_tight_security(ggi_vnc_client *client)
 {
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	uint32_t security_type;
 
 	if (client->write_pending)
@@ -1894,9 +1924,17 @@ vnc_client_tight_security(ggi_vnc_client *client)
 
 	switch (security_type) {
 	case 2:
-		if (vnc_client_vnc_auth(client))
+		if (priv->vencrypt && !client->vencrypt)
+			break;
+		if (GGI_vnc_client_vnc_auth(client))
 			break;
 		return 0;
+
+	case 19:
+		if (!priv->vencrypt || client->vencrypt)
+			break;
+
+		return GGI_vnc_client_vencrypt_security(client);
 	}
 
 	DPRINT("Invalid security type requested (%u)\n", security_type);
@@ -1931,13 +1969,15 @@ vnc_client_security(ggi_vnc_client *client)
 
 	switch (security_type) {
 	case 1:
+		if (priv->vencrypt && !client->vencrypt)
+			break;
 		if (priv->passwd || priv->viewpw)
 			break;
-		client->action = vnc_client_init;
+		client->action = GGI_vnc_client_init;
 
 		if (client->protover == 7) {
 			if (client->buf_size)
-				return vnc_client_init(client);
+				return GGI_vnc_client_init(client);
 			client->buf_size = 0;
 			return 0;
 		}
@@ -1947,11 +1987,13 @@ vnc_client_security(ggi_vnc_client *client)
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
 		client->wbuf.size += 4;
 		insert_hilo_32(&client->wbuf.buf[0], 0);
-		write_client(client, &client->wbuf, 1);
+		client->safe_write(client, 1);
 		return 0;
 
 	case 2:
-		if (vnc_client_vnc_auth(client))
+		if (priv->vencrypt && !client->vencrypt)
+			break;
+		if (GGI_vnc_client_vnc_auth(client))
 			break;
 		return 0;
 
@@ -1966,7 +2008,18 @@ vnc_client_security(ggi_vnc_client *client)
 		/* No tunnels supported */
 		insert_hilo_32(&client->wbuf.buf[0], 0);
 
-		if (priv->passwd || priv->viewpw) {
+		if (priv->vencrypt && !client->vencrypt) {
+			/* One security type supported */
+			insert_hilo_32(&client->wbuf.buf[4], 1);
+			/* vencrypt supported */
+			GGI_vnc_buf_reserve(&client->wbuf,
+				client->wbuf.size + 16);
+			client->wbuf.size += 16;
+			insert_hilo_32(&client->wbuf.buf[8], 19);
+			memcpy(&client->wbuf.buf[12], "VENC" "VENCRYPT", 12);
+			client->action = vnc_client_tight_security;
+		}
+		else if (priv->passwd || priv->viewpw) {
 			/* One auth type supported */
 			insert_hilo_32(&client->wbuf.buf[4], 1);
 			/* vnc-auth supported */
@@ -1980,7 +2033,7 @@ vnc_client_security(ggi_vnc_client *client)
 		else {
 			/* No authentication supported */
 			insert_hilo_32(&client->wbuf.buf[4], 0);
-			client->action = vnc_client_init;
+			client->action = GGI_vnc_client_init;
 			client->buf_size = 0;
 
 			if (client->protover > 7) {
@@ -1989,8 +2042,14 @@ vnc_client_security(ggi_vnc_client *client)
 				insert_hilo_32(&client->wbuf.buf[8], 0);
 			}
 		}
-		write_client(client, &client->wbuf, 1);
+		client->safe_write(client, 1);
 		return 0;
+
+	case 19:
+		if (!priv->vencrypt || client->vencrypt)
+			break;
+
+		return GGI_vnc_client_vencrypt_security(client);
 	}
 
 	DPRINT("Invalid security type requested (%u)\n", security_type);
@@ -2004,6 +2063,7 @@ vnc_client_version(ggi_vnc_client *client)
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 	unsigned int major, minor;
 	char str[13];
+	uint8_t idx;
 
 	if (client->write_pending)
 		return 0;
@@ -2051,16 +2111,20 @@ vnc_client_version(ggi_vnc_client *client)
 
 	if (client->protover <= 3) {
 		client->buf_size = 0;
-		client->action = vnc_client_init;
+		client->action = GGI_vnc_client_init;
 
 		/* ok, decide security */
 		GGI_vnc_buf_reserve(&client->wbuf, 4);
 		client->wbuf.size += 4;
-		insert_hilo_32(&client->wbuf.buf[0],
-			(priv->passwd || priv->viewpw) ? 2 : 1);
-		write_client(client, &client->wbuf, 1);
+		if (priv->vencrypt)
+			return -1;
+		if (priv->passwd || priv->viewpw)
+			insert_hilo_32(&client->wbuf.buf[0], 2);
+		else
+			insert_hilo_32(&client->wbuf.buf[0], 1);
+		client->safe_write(client, 1);
 		if (priv->passwd || priv->viewpw) {
-			/* fake a client request of vnc auth security type */
+			/* fake a client request */
 			client->buf[0] = 2;
 			client->buf_size = 1;
 			return vnc_client_security(client);
@@ -2073,12 +2137,27 @@ vnc_client_version(ggi_vnc_client *client)
 
 	/* supported security types */
 	GGI_vnc_buf_reserve(&client->wbuf, 3);
-	client->wbuf.size += 2 + (priv->tight & 1);
-	client->wbuf.buf[0] = 1 + (priv->tight & 1);
-	client->wbuf.buf[1] = (priv->passwd || priv->viewpw) ? 2 : 1;
+	idx = 0;
+#if 1
+	/* XXX For now, don't allow Tight if VeNCrypt is required.
+	 * The VeNCrypt security type needs to be registered with
+	 * the TightVNC project first.
+	 */
+	if (!priv->vencrypt && priv->tight & 1)
+		client->wbuf.buf[++idx] = 16;
+#else
 	if (priv->tight & 1)
-		client->wbuf.buf[2] = 16;
-	write_client(client, &client->wbuf, 1);
+		client->wbuf.buf[++idx] = 16;
+#endif
+	if (priv->vencrypt)
+		client->wbuf.buf[++idx] = 19;
+	else if (priv->passwd || priv->viewpw)
+		client->wbuf.buf[++idx] = 2;
+	else
+		client->wbuf.buf[++idx] = 1;
+	client->wbuf.size += 1 + idx;
+	client->wbuf.buf[0] = idx;
+	client->safe_write(client, 1);
 
 	return 0;
 }
@@ -2109,6 +2188,10 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	client->dirty.br.y = LIBGGI_VIRTY(vis);
 
 	priv->add_cfd(priv->gii_ctx, client, client->cfd);
+
+	client->write_ready = GGI_vnc_write_ready;
+	client->read_ready = GGI_vnc_read_ready;
+	client->safe_write = vnc_safe_write;
 
 	client->tight_extension = 0;
 	client->write_pending = 0;
@@ -2144,7 +2227,7 @@ GGI_vnc_new_client_finish(struct ggi_visual *vis, int cfd, int cwfd)
 	GGI_vnc_buf_reserve(&client->wbuf, 12);
 	client->wbuf.size += 12;
 	memcpy(client->wbuf.buf, "RFB 003.008\n", 12);
-	write_client(client, &client->wbuf, 1);
+	client->safe_write(client, 1);
 }
 
 void
@@ -2192,16 +2275,15 @@ GGI_vnc_new_client(void *arg)
 }
 
 int
-GGI_vnc_client_data(void *arg, int cfd)
+GGI_vnc_read_ready(ggi_vnc_client *client)
 {
-	ggi_vnc_client *client = arg;
 	unsigned char buf[100];
 	ssize_t len;
 
 #if defined(__WIN32__) && !defined(__CYGWIN__)
-	len = recv(cfd, buf, sizeof(buf), 0);
+	len = recv(client->cfd, buf, sizeof(buf), 0);
 #else
-	len = read(cfd, buf, sizeof(buf));
+	len = read(client->cfd, buf, sizeof(buf));
 #endif
 
 	if (len < 0) {
@@ -2232,9 +2314,8 @@ GGI_vnc_client_data(void *arg, int cfd)
 }
 
 int
-GGI_vnc_write_client(void *arg, int fd)
+GGI_vnc_write_ready(ggi_vnc_client *client)
 {
-	ggi_vnc_client *client = arg;
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
 
@@ -2246,9 +2327,9 @@ GGI_vnc_write_client(void *arg, int fd)
 	/* DPRINT("write some more\n"); */
 
 	client->write_pending = 0;
-	priv->del_cwfd(priv->gii_ctx, client, fd);
+	priv->del_cwfd(priv->gii_ctx, client, client->cwfd);
 
-	if (write_client(client, &client->wbuf, 1) < 0)
+	if (client->safe_write(client, 1) < 0)
 		return -1;
 
 	if (client->write_pending)
@@ -2268,6 +2349,20 @@ GGI_vnc_write_client(void *arg, int fd)
 }
 
 int
+GGI_vnc_client_data(void *arg, int cfd)
+{
+	ggi_vnc_client *client = arg;
+	return client->read_ready(client);
+}
+
+int
+GGI_vnc_write_client(void *arg, int fd)
+{
+	ggi_vnc_client *client = arg;
+	return client->write_ready(client);
+}
+
+int
 GGI_vnc_safe_write(void *arg, const uint8_t *data, int count)
 {
 	ggi_vnc_client *client = arg;
@@ -2279,7 +2374,7 @@ GGI_vnc_safe_write(void *arg, const uint8_t *data, int count)
 	if (client->write_pending)
 		return 0;
 
-	return write_client(client, &client->wbuf, 0);
+	return client->safe_write(client, 0);
 }
 
 void

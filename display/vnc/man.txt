@@ -8,13 +8,17 @@ Synopsis
 
 ::
 
-  display-vnc: [-bind=<iface>] [-client=<host>] [-copyrect=no|always]
-  	       [-corre=no] [-deskname=no] [-desksize=no] [-display=<dpy>]
-  	       [-gii=no] [-hextile=no] [-kold] [-passwd=<file>]
-  	       [-physz=<sizex>,<sizey>[dpi]] [-rre=no]
-  	       [-server[=<dpy>|stdio]] [-stdio] [-tight=enc|ext|no]
-  	       [-title=<title>] [-viewonly] [-viewpw=<file>] [-wmvi=no]
-  	       [-zlib=<level>|no] [-zlibhex=<level>|no] [-zrle=<level>|no]
+  display-vnc: [-bind=<iface>] [-cert=<file>] [-ciphers=<list>]
+  	       [-client=<host>] [-copyrect=no|always] [-corre=no]
+  	       [-deskname=no] [-desksize=no] [-dh=<file>]
+  	       [-display=<dpy>] [-gii=no] [-hextile=no] [-kold]
+  	       [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
+  	       [-privkey=<file>] [-rre=no] [-server[=<dpy>|stdio]]
+  	       [-sslver=<method>] [-stdio] [-tight=enc|ext|no]
+  	       [-title=<title>] [-vencrypt] [-vrfydir=<dir>]
+  	       [-vrfyfile=<file>] [-viewonly] [-viewpw=<file>]
+  	       [-wmvi=no] [-zlib=<level>|no] [-zlibhex=<level>|no]
+  	       [-zrle=<level>|no]
 
 
 Description
@@ -34,6 +38,22 @@ Options
 ``-bind=<iface>``
     Bind the server socket to the specific :p:`iface`, e.g. 127.0.0.1 in
     case display-vnc should only accept connections from an ssh tunnel.
+
+``-cert=<file>``
+    This option is only in effect if the :p:`-vencrypt` option is also given.
+    PEM-format :p:`file` with the certificate chain to use. By giving this
+    option you also switch from using anonymous TLS to using x509
+    certificates. In order to use the certificate chain, you may also have to
+    load a private key, using the :p:`-privkey` option.
+
+``-ciphers=<list>``
+    This option is only in effect if the :p:`-vencrypt` option is also given.
+    Explicitely specify the allowed cipher suites (in the same format OpenSSL
+    uses, see the openssl ciphers manpage). The default allowed ciphers are
+    `aNULL:!eNULL:@STRENGTH` (all anonymous ciphers that provides encryption),
+    unless the :p:`-cert` option is also given in which case the default is
+    instead `ALL:!aNULL:@STRENGTH` (all encrypting ciphers that are not
+    anonymous).
 
 ``-client=<host>``
     Make a connection to :p:`host`, instead of waiting for clients to
@@ -55,6 +75,13 @@ Options
 
 ``-desksize=no``
     Disables the DesktopSize pseudo-encoding.
+
+``-dh=<file>``
+    This option is only in effect if the :p:`-vencrypt` option is also given.
+    Specify a PEM file with diffie-hellman parameters to use. If this option
+    is not used, DH parameters will be generated on-the-fly which may be
+    somewhat time consuming. See the openssl dhparam manpage for how to
+    generate a DH PEM file.
 
 ``-display=<dpy>``
     The display number clients should connect to. Display number 0 is
@@ -93,6 +120,13 @@ Options
     ``dpi`` string is affixed, in which case, they represent resolution
     in dots-per-inch.
 
+``-privkey=<file>``
+    This option is only in effect if the :p:`-vencrypt` option is also given.
+    PEM-format :p:`file` with the private key for the certificate chain given
+    with the :p:`-cert` option. The private key may (unfortunately) not be
+    protected with a pass phrase, since there is no good way to pass the
+    key to display-vnc.
+
 ``-rre=no``
     Disables the RRE encoding.
 
@@ -105,6 +139,11 @@ Options
     serving a GGI application as an inetd(8) :p:`wait` type service (see
     the example below). The :p:`-server=stdio` option is incompatible with
     the :p:`-stdio` option.
+
+``-sslver=<method>``
+    This option is only in effect if the :p:`-vencrypt` option is also given.
+    The SSL :p:`method` can be one of SSLv2, SSLv3, TLSv1 or SSLv23. SSLv23
+    is the default and allows any of TLSv1, SSLv2 and SSLv3.
 
 ``-stdio``
     Talk the RFB protocol on stdin/stdout instead of waiting for clients
@@ -124,6 +163,32 @@ Options
 ``-title=<title>``
     The :p:`title` clients should use on their windows. If this option
     is not specified, the default is "GGI on vnc".
+
+``-vencrypt``
+    Enable the VeNCrypt protocol extension and require that it is used. By
+    default the VeNCrypt extension will use anonymous encryption (susceptible
+    to man in the middle attacks). If the :p:`-cert` option is given VeNCrypt
+    will instead issue an x509 certificate for the client to verify. In
+    addition to that, display-vnc will require the client to provide an x509
+    certificate if any or both of the :p:`-vrfyfile` or :p:`-vrfydir` options
+    are given. If the VeNCrypt extension is enabled, the Tight extension will
+    be disabled.
+
+``-vrfydir=<dir>``
+    This option is only in effect if the :p:`-vencrypt` and :p:`-cert` options
+    are also given.
+    Directory with PEM-format certificate authorities. The CA are used when
+    verifying the client certificate. If this option (or the :p:`-vrfydir`
+    option) is not given, the client is not required to provide a valid
+    certificate).
+
+``-vrfyfile=<file>``
+    This option is only in effect if the :p:`-vencrypt` and :p:`-cert` options
+    are also given.
+    PEM-format file with certificate authorities. The CA are used when
+    verifying the client certificate. If this option (or the :p:`-vrfyfile`
+    option) is not given, the client is not required to provide a valid
+    certificate).
 
 ``-viewonly``
     If this option is given, no client is allowed to send input events
@@ -171,6 +236,8 @@ Features
   encodings. The CopyRect encoding is only used for panning.
 - DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
 - Support for the Tight protocol extension from the TightVNC project.
+- Support for the VeNCrypt protocol extension from the VeNCrypt project.
+  However, the VeNCrypt `plain` authentication is not supported.
 - Multiple simultaneous clients (shared session).
 - DirectBuffer always available, including tidy buffer mode (see
   :man:`ggiSetFlags(3)`).

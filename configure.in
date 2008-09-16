@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.222 2008/05/20 21:10:08 pekberg Exp $
+dnl $Id: configure.in,v 1.223 2008/09/16 06:53:43 pekberg Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -600,6 +600,33 @@ if test -n "$GAI_LIB"; then
 	*) bsdsock_libs="$bsdsock_libs $GAI_LIB" ;;
 	esac
 fi
+
+save_LIBS=$LIBS
+GGI_SEARCH_LIBS([SSL_library_init], [ssl], [
+	ggi_openssl=yes
+	openssl_CFLAGS=
+	AC_DEFINE(HAVE_OPENSSL, 1, [Define to 1 if you have openssl.])
+	if test "$ggi_cv_search_SSL_library_init" != "none required"; then
+		openssl_LIBS="$ggi_cv_search_SSL_library_init -lcrypto"
+	else
+		openssl_LIBS="-lcrypto"
+	fi
+], [ggi_openssl=no], [-lcrypto], [
+AC_INCLUDES_DEFAULT
+#include <openssl/ssl.h>
+], [ ])
+LIBS=$save_LIBS
+if test $ggi_openssl = no; then
+	PKG_CHECK_MODULES([openssl], [openssl], [
+		ggi_openssl=yes
+	], [
+		ggi_openssl=no
+	])
+fi
+if test $ggi_openssl = yes; then
+	AC_DEFINE(HAVE_OPENSSL, 1, [Define to 1 if you have openssl.])
+fi
+AM_CONDITIONAL(HAVE_OPENSSL, test $ggi_openssl = yes)
 
 AC_CHECK_LIB(z, deflate,
 	AC_CHECK_HEADER(zlib.h,

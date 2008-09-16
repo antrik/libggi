@@ -1,9 +1,9 @@
-/* $Id: visual.c,v 1.60 2008/08/07 12:55:03 pekberg Exp $
+/* $Id: visual.c,v 1.61 2008/09/16 06:53:43 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
 
-   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
+   Copyright (C) 2008 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -67,27 +67,40 @@
 
 #include <ggi/internal/gg_replace.h> /* for gai_strerror */
 
-#include "d3des.h"
 #include "common.h"
+
+#ifdef HAVE_OPENSSL
+#include <openssl/des.h>
+#else
+#include "d3des.h"
+#endif
 
 #define VNC_OPTIONS \
 	VNC_OPTION(bind,     "")           \
+	VNC_OPTION(cert,     "")           \
+	VNC_OPTION(ciphers,  "")           \
 	VNC_OPTION(client,   "")           \
 	VNC_OPTION(copyrect, "")           \
 	VNC_OPTION(corre,    "")           \
 	VNC_OPTION(deskname, "")           \
 	VNC_OPTION(desksize, "")           \
+	VNC_OPTION(dh,       "")           \
 	VNC_OPTION(display,  "no")         \
 	VNC_OPTION(gii,      "")           \
 	VNC_OPTION(hextile,  "")           \
 	VNC_OPTION(kold,     "no")         \
 	VNC_OPTION(passwd,   "")           \
 	VNC_OPTION(physz,    "0,0")        \
+	VNC_OPTION(privkey,  "")           \
 	VNC_OPTION(rre,      "")           \
 	VNC_OPTION(server,   "default")    \
+	VNC_OPTION(sslver,   "")           \
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "")           \
 	VNC_OPTION(title,    "GGI on vnc") \
+	VNC_OPTION(vencrypt, "no")         \
+	VNC_OPTION(vrfydir,  "")           \
+	VNC_OPTION(vrfyfile, "")           \
 	VNC_OPTION(viewonly, "no")         \
 	VNC_OPTION(viewpw,   "")           \
 	VNC_OPTION(wmvi,     "")           \
@@ -560,17 +573,74 @@ GGIopen(struct ggi_visual *vis,
 		for (i = 0; i < 8; ++i)
 			passwd[i] = GGI_BITREV1(passwd[i]);
 
-		deskey((unsigned char *)passwd, EN0);
-		cpkey(priv->passwd_key);
+		priv->passwd_ks = malloc(sizeof(DES_key_schedule));
+		if (!priv->passwd_ks) {
+			err = GGI_ENOMEM;
+			goto out_freegc;
+		}
+		DES_set_key_unchecked((DES_cblock *)passwd, priv->passwd_ks);
 
 		/* Pick some random password, and use the des algorithm to
 		 * generate pseudo random numbers.
 		 */
-		deskey(random17, EN0);
-		cpkey(priv->randomizer);
+		priv->random_ks = malloc(sizeof(DES_key_schedule));
+		if (!priv->random_ks) {
+			err = GGI_ENOMEM;
+			goto out_freegc;
+		}
+		DES_set_key_unchecked((DES_cblock *)random17,
+			priv->random_ks);
 	}
 	else
 		priv->passwd = 0;
+
+	if (options[OPT_vencrypt].result[0] == 'n') /* no */
+		priv->vencrypt = NULL;
+	else {
+#ifdef HAVE_OPENSSL
+		priv->vencrypt = GGI_vnc_vencrypt_init();
+		if (!priv->vencrypt) {
+			err = GGI_ENOTFOUND;
+			goto out_freegc;
+		}
+#else
+		DPRINT("VeNCrypt not available\n");
+		err = GGI_ENOTFOUND;
+		goto out_freegc;
+#endif
+	}
+
+	if (priv->vencrypt) {
+		err = GGI_vnc_vencrypt_set_method(priv,
+			options[OPT_sslver].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+
+		err = GGI_vnc_vencrypt_set_cert(priv,
+			options[OPT_cert].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+
+		err = GGI_vnc_vencrypt_set_ciphers(priv,
+			options[OPT_ciphers].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+
+		err = GGI_vnc_vencrypt_set_priv_key(priv,
+			options[OPT_privkey].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+
+		err = GGI_vnc_vencrypt_set_verify_locations(priv,
+			options[OPT_vrfyfile].result,
+			options[OPT_vrfydir].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+
+		err = GGI_vnc_vencrypt_set_dh(priv, options[OPT_dh].result);
+		if (err != GGI_OK)
+			goto out_freegc;
+	}
 
 	if (options[OPT_viewonly].result[0] == 'n') /* no */
 		priv->view_only = 0;
@@ -608,14 +678,25 @@ GGIopen(struct ggi_visual *vis,
 		for (i = 0; i < 8; ++i)
 			viewpw[i] = GGI_BITREV1(viewpw[i]);
 
-		deskey((unsigned char *)viewpw, EN0);
-		cpkey(priv->viewpw_key);
+		priv->viewpw_ks = malloc(sizeof(DES_key_schedule));
+		if (!priv->viewpw_ks) {
+			err = GGI_ENOMEM;
+			goto out_freegc;
+		}
+		DES_set_key_unchecked((DES_cblock *)viewpw, priv->viewpw_ks);
 
 		/* Pick some random password, and use the des algorithm to
 		 * generate pseudo random numbers.
 		 */
-		deskey(random17, EN0);
-		cpkey(priv->randomizer);
+		if (!priv->random_ks) {
+			priv->random_ks = malloc(sizeof(DES_key_schedule));
+			if (!priv->random_ks) {
+				err = GGI_ENOMEM;
+				goto out_freegc;
+			}
+			DES_set_key_unchecked((DES_cblock *)random17,
+				priv->random_ks);
+		}
 	}
 	else
 		priv->viewpw = 0;
@@ -755,6 +836,8 @@ GGIopen(struct ggi_visual *vis,
 	priv->del_cfd     = iargs.del_cfd;
 	priv->add_cwfd    = iargs.add_cwfd;
 	priv->del_cwfd    = iargs.del_cwfd;
+	priv->add_crfd    = iargs.add_crfd;
+	priv->del_crfd    = iargs.del_crfd;
 	priv->key         = iargs.key;
 	priv->pointer     = iargs.pointer;
 	priv->inject      = iargs.inject;
@@ -798,7 +881,14 @@ out_delstem:
 	ggDelStem(stem);
 out_freegc:
 	free(LIBGGI_GC(vis));
+	GGI_vnc_vencrypt_fini(priv);
 out_freepriv:
+	if (priv->passwd_ks)
+		free(priv->passwd_ks);
+	if (priv->viewpw_ks)
+		free(priv->viewpw_ks);
+	if (priv->random_ks)
+		free(priv->random_ks);
 	free(priv);
 out_socketcleanup:
 #if defined(__WIN32__) && !defined(__CYGWIN__)
@@ -846,6 +936,12 @@ GGIclose(struct ggi_visual *vis,
 		ggDelStem(stem);
 	}
 
+	if (priv->passwd_ks)
+		free(priv->passwd_ks);
+	if (priv->viewpw_ks)
+		free(priv->viewpw_ks);
+	if (priv->random_ks)
+		free(priv->random_ks);
 	free(priv);
 
 skip:

@@ -1,9 +1,9 @@
-/* $Id: common.h,v 1.8 2008/03/19 21:44:42 pekberg Exp $
+/* $Id: common.h,v 1.9 2008/09/16 06:53:43 pekberg Exp $
 ******************************************************************************
 
    display-vnc: common encoder operations
 
-   Copyright (C) 2006 Peter Rosin	[peda@lysator.liu.se]
+   Copyright (C) 2008 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -49,6 +49,27 @@
 #define DESKNAME_OK             (1<<0)
 #define DESKNAME_PENDING        (1<<1)
 #define DESKNAME_SEND           (DESKNAME_PENDING | DESKNAME_OK)
+
+#ifndef HAVE_OPENSSL
+typedef unsigned long DES_key_schedule[32];
+#define DES_cblock uint8_t
+#define DES_set_key_unchecked(key, ks) \
+	do { deskey((key), 0); cpkey(ks); } while(0)
+#define DES_ecb_encrypt(in, out, ks, flag) \
+	do { usekey(ks); des((in), (out)); } while(0)
+#endif
+
+void *GGI_vnc_vencrypt_init(void);
+void GGI_vnc_vencrypt_fini(ggi_vnc_priv *priv);
+int GGI_vnc_vencrypt_set_method(ggi_vnc_priv *priv, const char *method);
+int GGI_vnc_vencrypt_set_cert(ggi_vnc_priv *priv, const char *cert);
+int GGI_vnc_vencrypt_set_dh(ggi_vnc_priv *priv, const char *dh_file);
+int GGI_vnc_vencrypt_set_ciphers(ggi_vnc_priv *priv, const char *ciphers);
+int GGI_vnc_vencrypt_set_priv_key(ggi_vnc_priv *priv, const char *priv_key);
+int GGI_vnc_vencrypt_set_verify_locations(ggi_vnc_priv *priv,
+	const char *file, const char *dir);
+void GGI_vnc_vencrypt_stop_tls(ggi_vnc_client *client);
+
 
 static inline int
 palette_match_8(uint8_t *palette, int colors, uint8_t color)
