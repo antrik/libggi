@@ -180,7 +180,7 @@ Options
     Directory with PEM-format certificate authorities. The CA are used when
     verifying the client certificate. If this option (or the :p:`-vrfydir`
     option) is not given, the client is not required to provide a valid
-    certificate).
+    certificate.
 
 ``-vrfyfile=<file>``
     This option is only in effect if the :p:`-vencrypt` and :p:`-cert` options
@@ -188,7 +188,7 @@ Options
     PEM-format file with certificate authorities. The CA are used when
     verifying the client certificate. If this option (or the :p:`-vrfyfile`
     option) is not given, the client is not required to provide a valid
-    certificate).
+    certificate.
 
 ``-viewonly``
     If this option is given, no client is allowed to send input events
