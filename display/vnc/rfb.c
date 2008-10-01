@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.126 2008/10/01 23:31:50 pekberg Exp $
+/* $Id: rfb.c,v 1.127 2008/10/01 23:37:25 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -298,7 +298,7 @@ vnc_remove(ggi_vnc_client *client, int count)
 static int
 vnc_reserve(ggi_vnc_client *client, int count)
 {
-	if (client->buf_limit < count) {
+	if (client->buf_limit < count + 100) {
 		/* need more space */
 		uint8_t *buf = malloc(count + 100);
 		if (!buf)
