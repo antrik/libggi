@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.125 2008/09/16 19:50:30 pekberg Exp $
+/* $Id: rfb.c,v 1.126 2008/10/01 23:31:50 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -293,6 +293,23 @@ vnc_remove(ggi_vnc_client *client, int count)
 
 	client->action = vnc_client_run;
 	return vnc_client_run(client);
+}
+
+static int
+vnc_reserve(ggi_vnc_client *client, int count)
+{
+	if (client->buf_limit < count) {
+		/* need more space */
+		uint8_t *buf = malloc(count + 100);
+		if (!buf)
+			return 1;
+		memcpy(buf, client->buf, client->buf_size);
+		free(client->buf);
+		client->buf = buf;
+		client->buf_limit = count + 100;
+	}
+
+	return 0;
 }
 
 static int
@@ -885,16 +902,8 @@ vnc_client_set_encodings(ggi_vnc_client *client)
 
 	if (client->buf_size < 4 + 4 * encoding_count) {
 		/* wait for more data */
-		if (client->buf_limit < 4 + 4 * encoding_count) {
-			/* need more space */
-			uint8_t *buf = malloc(4 + 4 * encoding_count + 100);
-			if (!buf)
-				return 1;
-			memcpy(buf, client->buf, client->buf_size);
-			free(client->buf);
-			client->buf = buf;
-			client->buf_limit = 4 + 4 * encoding_count + 100;
-		}
+		if (vnc_reserve(client, 4 + 4 * encoding_count))
+			return 1;
 		client->action = vnc_client_set_encodings;
 		return 0;
 	}
@@ -1406,16 +1415,8 @@ vnc_client_cut(ggi_vnc_client *client)
 
 	if (client->buf_size < 8 + len) {
 		/* wait for more data */
-		if (client->buf_limit < 8 + len) {
-			/* need more space */
-			uint8_t *buf = malloc(8 + len + 100);
-			if (!buf)
-				return 1;
-			memcpy(buf, client->buf, client->buf_size);
-			free(client->buf);
-			client->buf = buf;
-			client->buf_limit = 8 + len + 100;
-		}
+		if (vnc_reserve(client, 8 + len))
+			return 1;
 		client->action = vnc_client_cut;
 		return 0;
 	}
