@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.23 2008/03/13 19:48:37 cegger Exp $
+/* $Id: inputdump.c,v 1.24 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -181,7 +181,7 @@ static void draw_inp_buttons(mydev_info *M)
 			snprintf(buf, sizeof(buf), "button %03d          ", i);
 		} else if (isprint(M->syms[i])) {
 			snprintf(buf, sizeof(buf), "button %03d 0x%04x %c ",
-				i, label, M->syms[i]);
+				i, label, (int)M->syms[i]);
 		} else {
 			snprintf(buf, sizeof(buf), "button %03d 0x%04x   ",
 				i, label);
@@ -210,7 +210,7 @@ static void draw_inp_device(mydev_info *M)
 	int i;
 	int w = 0;
 
-	snprintf(buf, sizeof(buf), "Unknown 0x%04x", M->origin);
+	snprintf(buf, sizeof(buf), "Unknown 0x%04"PRIx32, M->origin);
 	
 	ggiSetGCBackground(vis, ggiMapColor(vis, &black));
 	ggiSetGCForeground(vis, ggiMapColor(vis, &yellow));
@@ -382,7 +382,7 @@ static void show_common(gii_event *ev)
 		sec--;
 	}
 
-	fprintf(stderr, "    size=0x%02x origin=0x%08x "
+	fprintf(stderr, "    size=0x%02x origin=0x%08"PRIx32" "
 		"time=%d.%06d err=%d\n", ev->any.size, ev->any.origin,
 		sec, usec, ev->any.error);
 }
@@ -390,8 +390,8 @@ static void show_common(gii_event *ev)
 static void show_key(gii_key_event *ev)
 {
 	if (do_show != SHOW_NIL) {
-		fprintf(stderr, "button=0x%02x label=%s sym=%s "
-			"modifiers=0x%02x\n", ev->button,
+		fprintf(stderr, "button=0x%02"PRIx32" label=%s sym=%s "
+			"modifiers=0x%02"PRIx32"\n", ev->button,
 			giik2str(ev->label, 0),	giik2str(ev->sym, 1),
 			ev->modifiers);
 	}
@@ -419,7 +419,8 @@ static void show_key(gii_key_event *ev)
 static void show_pmove(gii_pmove_event *ev)
 {
 	if (!no_pmove && do_show != SHOW_NIL) {
-		fprintf(stderr, "x=%-3d y=%-3d z=%-3d wheel=%-3d\n",
+		fprintf(stderr, "x=%-3"PRId32" y=%-3"PRId32" "
+			"z=%-3"PRId32" wheel=%-3"PRId32"\n",
 			ev->x, ev->y, ev->z, ev->wheel);
 	}
 
@@ -454,7 +455,7 @@ static void show_pmove(gii_pmove_event *ev)
 static void show_pbutton(gii_pbutton_event *ev)
 {
 	if (do_show != SHOW_NIL) {
-		fprintf(stderr, "ptrbutton=0x%02x\n", ev->button);
+		fprintf(stderr, "ptrbutton=0x%02"PRIx32"\n", ev->button);
 	}
 
 	/* update display */
@@ -477,11 +478,11 @@ static void show_valuator(gii_val_event *ev)
 	uint32_t i;
 
 	if (!no_val && do_show != SHOW_NIL) {
-		fprintf(stderr, "0x%02x..0x%02x =", ev->first,
+		fprintf(stderr, "0x%02"PRIx32"..0x%02"PRIx32" =", ev->first,
 			ev->first+ev->count-1);
 
 		for(i=0; i < ev->count; i++) {
-			fprintf(stderr, " %-6d", ev->value[i]);
+			fprintf(stderr, " %-6"PRId32"", ev->value[i]);
 		}
 
 		fprintf(stderr, "\n");
@@ -520,7 +521,7 @@ static void show_devinfo(gii_cmd_event *ev)
 	
 	if (s) {
 	  fprintf(stderr, "name='%s'\n"
-		"    valuators=%u buttons=%u generate=0x%06x\n", 
+		"    valuators=%"PRIu32" buttons=%"PRIu32" generate=0x%06x\n",
 		DI->devname,
 		DI->num_valuators, DI->num_buttons, DI->can_generate);
 	}
@@ -577,8 +578,8 @@ static void show_valinfo(gii_cmd_event *ev)
 	}
 	
 	if (s) {
-	  fprintf(stderr, "num=0x%02x short='%s' long='%s'\n"
-		"    raw_range=%d..%d..%d unit=",
+	  fprintf(stderr, "num=0x%02"PRIx32" short='%s' long='%s'\n"
+		"    raw_range=%"PRId32"..%"PRId32"..%"PRId32" unit=",
 		VI->number, VI->shortname, VI->longname,
 		VI->range.min, VI->range.center, VI->range.max);
 
@@ -682,14 +683,15 @@ static void show_command(gii_cmd_event *ev)
 			return;
 	}
 
-	if (s) fprintf(stderr, "code=%0x08x\n", ev->code);
+	if (s) fprintf(stderr, "code=0x%08"PRIx32"\n", ev->code);
 }
 
 static void show_expose(gii_expose_event *ev)
 {
 	int i, s = (do_show != SHOW_NIL);
 
-	if (s) fprintf(stderr, "Expose: from=(%u,%u) size=(%u,%u)\n", 
+	if (s) fprintf(stderr, "Expose: from=(%"PRIu32",%"PRIu32") "
+			"size=(%"PRIu32",%"PRIu32")\n", 
 			ev->x, ev->y, ev->w, ev->h);
 
 	/* update display */

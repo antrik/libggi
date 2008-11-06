@@ -1,4 +1,4 @@
-/* $Id: checkmode.c,v 1.13 2007/03/03 19:26:01 cegger Exp $
+/* $Id: checkmode.c,v 1.14 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Checkmode - Test for all available modes and output a list of them.
@@ -90,7 +90,8 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 	int broken;   /* testing, if the suggested mode works */
 
 	if (verbose){
-		printf ("\n %d/%d:", GT_DEPTH(defaultgraphtypes[j]),
+		printf ("\n %"PRId32"/%"PRId32":",
+			GT_DEPTH(defaultgraphtypes[j]),
                         GT_SIZE(defaultgraphtypes[j]));
 	}
 	/*printf("Checking %d %d %d %d ", x,y,xvir,yvir);*/
@@ -130,7 +131,7 @@ static void checkoneresolution(int j, int x, int y, int xvir, int yvir )
 		}
 
 		if (verbose){
-			printf("- (%dx%d*%dx%d %u/%u %s)",
+			printf("- (%dx%d*%dx%d %"PRIu32"/%"PRIu32" %s)",
 			       suggest.visible.x,suggest.visible.y,
 			       suggest.virt.x,suggest.virt.y,
 			       GT_DEPTH(suggest.graphtype),
@@ -187,7 +188,7 @@ static void checkstandardresolutions(void)
 	if (!verbose){
 		printf("\t\t");
 		for (j=0;defaultgraphtypes[j]!=GT_INVALID;j++){
-			printf("%u/%u\t",
+			printf("%"PRIu32"/%"PRIu32"\t",
 			       GT_DEPTH(defaultgraphtypes[j]),
 			       GT_SIZE(defaultgraphtypes[j]));
 		}
@@ -273,7 +274,7 @@ static void scanarea(struct area * a,
 	if (fail){
 		if (GT_DEPTH(sugg.graphtype) !=
 		    GT_DEPTH(defaultgraphtypes[gti]) ) {
-			printf("Depth %u is not supported at all.\n",
+			printf("Depth %"PRIu32" is not supported at all.\n",
 			       GT_DEPTH(defaultgraphtypes[gti]));
 			return;
 		}
@@ -465,7 +466,7 @@ static void checkallresolutions(void)
 	const int ymax=/* 9 */ 2048 ;
 
 	for (j=0;defaultgraphtypes[j]!=GT_INVALID;j++){
-		printf (" %u/%u:  ",
+		printf (" %"PRIu32"/%"PRIu32":  ",
 			GT_DEPTH(defaultgraphtypes[j]),
 			GT_SIZE(defaultgraphtypes[j]));
 		a.x1=xmin;
@@ -505,7 +506,7 @@ static void usage(const char * s)
 	       " o failing for other reasons.\n");
 	printf(" S checking the mode succeeded, but setting it failed.\n"
 	       "   (note that the original mode is set, not the suggested one.)\n");
-	printf("$Id: checkmode.c,v 1.13 2007/03/03 19:26:01 cegger Exp $\n");
+	printf("$Id: checkmode.c,v 1.14 2008/11/06 20:45:13 pekberg Exp $\n");
 	exit(0);
 }
 

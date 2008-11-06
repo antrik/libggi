@@ -1,4 +1,4 @@
-/* $Id: mapcolor.c,v 1.4 2006/09/24 21:31:05 pekberg Exp $
+/* $Id: mapcolor.c,v 1.5 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    This is a regression-test for color (un)mapping
@@ -77,20 +77,20 @@ static void testcase1(const char *desc)
 	ggDelStem(vis);
 
 
-	fprintf(stderr, "white_color: %X,%X,%X  , white_pixel: %X , white_color2: %X,%X,%X\n",
+	fprintf(stderr, "white_color: %X,%X,%X  , white_pixel: %"PRIx32" , white_color2: %X,%X,%X\n",
 		white_color.r, white_color.g, white_color.b, white_pixel,
 		white_color2.r, white_color2.g, white_color2.b);
-	fprintf(stderr, "black_color: %X,%X,%X  , black_pixel: %X , black_color2: %X,%X,%X\n",
+	fprintf(stderr, "black_color: %X,%X,%X  , black_pixel: %"PRIx32" , black_color2: %X,%X,%X\n",
 		black_color.r, black_color.g, black_color.b, black_pixel,
 		black_color2.r, black_color2.g, black_color2.b);
 
-	fprintf(stderr, "red_color: %X,%X,%X  , red_pixel: %X , red_color2: %X,%X,%X\n",
+	fprintf(stderr, "red_color: %X,%X,%X  , red_pixel: %"PRIx32" , red_color2: %X,%X,%X\n",
 		red_color.r, red_color.g, red_color.b, red_pixel,
 		red_color2.r, red_color2.g, red_color2.b);
-	fprintf(stderr, "green_color: %X,%X,%X  , green_pixel: %X , green_color2: %X,%X,%X\n",
+	fprintf(stderr, "green_color: %X,%X,%X  , green_pixel: %"PRIx32" , green_color2: %X,%X,%X\n",
 		green_color.r, green_color.g, green_color.b, green_pixel,
 		green_color2.r, green_color2.g, green_color2.b);
-	fprintf(stderr, "blue_color: %X,%X,%X  , blue_pixel: %X , blue_color2: %X,%X,%X\n",
+	fprintf(stderr, "blue_color: %X,%X,%X  , blue_pixel: %"PRIx32" , blue_color2: %X,%X,%X\n",
 		blue_color.r, blue_color.g, blue_color.b, blue_pixel,
 		blue_color2.r, blue_color2.g, blue_color2.b);
 

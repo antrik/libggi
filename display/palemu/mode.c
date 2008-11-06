@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.28 2008/04/04 08:00:44 pekberg Exp $
+/* $Id: mode.c,v 1.29 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Display-palemu: mode management
@@ -66,7 +66,8 @@ int GGI_palemu_getapi(struct ggi_visual *vis, int num, char *apiname, char *argu
 		return 0;
 
 	case 2: 
-		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s",
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%"PRIu32"%s",
 			GT_DEPTH(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;

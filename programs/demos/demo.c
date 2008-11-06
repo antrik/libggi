@@ -1,4 +1,4 @@
-/* $Id: demo.c,v 1.37 2007/05/05 08:34:47 cegger Exp $
+/* $Id: demo.c,v 1.38 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    demo.c - the main LibGGI demo
@@ -553,11 +553,11 @@ int main(int argc, const char *argv[])
 	map[0].b=0xFFFF;
 	
 	white=ggiMapColor(vis, &map[0]);
-	printf("white=%u\n", white);
+	printf("white=%"PRIu32"\n", white);
 
 	map[0].r= map[0].g= map[0].b= 0x0;
 	black=ggiMapColor(vis, &map[0]);
-	printf("black=%u\n", black);
+	printf("black=%"PRIu32"\n", black);
 
 	/* Set the drawing color to black and clear the screen.
 	   (The screen is cleared to black at setmode time, but the

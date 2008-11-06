@@ -1,4 +1,4 @@
-/* $Id: structs.c,v 1.9 2007/03/03 19:26:01 cegger Exp $
+/* $Id: structs.c,v 1.10 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    This is a GGI test application.
@@ -125,16 +125,16 @@ static void print_pixfmt(const ggi_pixelformat *pixfmt)
 		return;
 	}
 
-	printf("  depth = %2d, size = %2d, flags = 0x%08x\n"
-	       "  stdformat = 0x%08x\n"
-	       "  red_mask     = 0x%08x, red_shift     = %2d\n"
-	       "  green_mask   = 0x%08x, green_shift   = %2d\n"
-	       "  blue_mask    = 0x%08x, blue_shift    = %2d\n"
-	       "  alpha_mask   = 0x%08x, alpha_shift   = %2d\n"
-	       "  clut_mask    = 0x%08x, clut_shift    = %2d\n"
-	       "  fg_mask      = 0x%08x, fg_shift      = %2d\n"
-	       "  bg_mask      = 0x%08x, bg_shift      = %2d\n"
-	       "  texture_mask = 0x%08x, texture_shift = %2d\n",
+	printf("  depth = %2d, size = %2d, flags = 0x%08"PRIx32"\n"
+	       "  stdformat = 0x%08"PRIx32"\n"
+	       "  red_mask     = 0x%08"PRIx32", red_shift     = %2d\n"
+	       "  green_mask   = 0x%08"PRIx32", green_shift   = %2d\n"
+	       "  blue_mask    = 0x%08"PRIx32", blue_shift    = %2d\n"
+	       "  alpha_mask   = 0x%08"PRIx32", alpha_shift   = %2d\n"
+	       "  clut_mask    = 0x%08"PRIx32", clut_shift    = %2d\n"
+	       "  fg_mask      = 0x%08"PRIx32", fg_shift      = %2d\n"
+	       "  bg_mask      = 0x%08"PRIx32", bg_shift      = %2d\n"
+	       "  texture_mask = 0x%08"PRIx32", texture_shift = %2d\n",
 	       pixfmt->depth, pixfmt->size, pixfmt->flags,
 	       pixfmt->stdformat,
 	       pixfmt->red_mask, pixfmt->red_shift,
@@ -146,7 +146,7 @@ static void print_pixfmt(const ggi_pixelformat *pixfmt)
 	       pixfmt->bg_mask, pixfmt->bg_shift,
 	       pixfmt->texture_mask, pixfmt->texture_shift);
 	for (i = 0; i < pixfmt->size; i++) {
-		printf("Bit %d: 0x%08x\n", i, pixfmt->bitmeaning[i]);
+		printf("Bit %d: 0x%08"PRIx32"\n", i, pixfmt->bitmeaning[i]);
 	}
 }
 
@@ -210,12 +210,12 @@ static int setup_mode(void)
 	col.r = 0xFFFF;
 	col.g = 0xFFFF;
 	col.b = 0xFFFF;
-	printf("white = 0x%x\n", ggiMapColor(visual, &col));
+	printf("white = 0x%"PRIx32"\n", ggiMapColor(visual, &col));
 
 	col.r = 0x0000;
 	col.g = 0x0000;
 	col.b = 0x0000;
-	printf("black = 0x%x\n", ggiMapColor(visual, &col));
+	printf("black = 0x%"PRIx32"\n", ggiMapColor(visual, &col));
 
 	printf("Pixelformat for Get/Put buffers:\n");
 	print_pixfmt(ggiGetPixelFormat(visual));

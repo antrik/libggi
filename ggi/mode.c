@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2007/05/06 06:07:46 cegger Exp $
+/* $Id: mode.c,v 1.28 2008/11/06 20:45:12 pekberg Exp $
 ******************************************************************************
 
    LibGGI Mode management.
@@ -305,7 +305,7 @@ ggiSNPrintMode(char *s, size_t size, const ggi_mode *m)
 		SNPRINTF((s, l, "V%dx%d.", m->virt.x, m->virt.y));
 	
 	if (m->frames != GGI_AUTO)
-		SNPRINTF((s, l, "F%d.", m->frames));
+		SNPRINTF((s, l, "F%"PRId32".", m->frames));
 	
 	if (m->dpp.x != GGI_AUTO || m->dpp.y != GGI_AUTO)
 		SNPRINTF((s, l, "D%dx%d.", m->dpp.x, m->dpp.y));
@@ -322,10 +322,10 @@ ggiSNPrintMode(char *s, size_t size, const ggi_mode *m)
 	}
 
 	if (GT_DEPTH(m->graphtype) != GT_AUTO)
-		SNPRINTF((s, l, "%u", GT_DEPTH(m->graphtype)));
+		SNPRINTF((s, l, "%"PRIu32, GT_DEPTH(m->graphtype)));
 	
 	if (GT_SIZE(m->graphtype) != GT_AUTO)
-		SNPRINTF((s, l, "/%u", GT_SIZE(m->graphtype)));
+		SNPRINTF((s, l, "/%"PRIu32, GT_SIZE(m->graphtype)));
 	
 	if (GT_SUBSCHEME(m->graphtype) & GT_SUB_REVERSE_ENDIAN)
 		PUTC('R');

@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.27 2008/03/12 11:04:09 cegger Exp $
+/* $Id: mode.c,v 1.28 2008/11/06 20:45:12 pekberg Exp $
 ******************************************************************************
 
    display-ipc : mode management
@@ -106,12 +106,14 @@ int GGI_ipc_getapi(struct ggi_visual *vis, int num,
 		return 0;
 		
 	case 2: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			snprintf(apiname, GGI_MAX_APILEN, "generic-text-%u",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%"PRIu32,
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
 
-		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s", 
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%"PRIu32"%s",
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;

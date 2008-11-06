@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.13 2007/05/05 08:34:49 cegger Exp $
+/* $Id: main.c,v 1.14 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
   
    Warp-GGI
@@ -251,7 +251,7 @@ int main(int argc, const char *argv[])
 				step++;
 			else {
 				fprintf(stderr,
-					"Error switching to %ux%u %u bpp mode.\n"
+					"Error switching to %"PRIu32"x%"PRIu32" %"PRIu32" bpp mode.\n"
 					"Under X, try using -d depth_of_your_screen.\n",
 					swidth, sheight, udepth);
 				done = -1;

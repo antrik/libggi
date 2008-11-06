@@ -1,4 +1,4 @@
-/* $Id: speed.c,v 1.15 2007/03/03 19:26:01 cegger Exp $
+/* $Id: speed.c,v 1.16 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    speed.c - LibGGI speed-test application.
@@ -585,7 +585,7 @@ static int setup_mode(void)
 	map[0].g=0xFFFF;
 	map[0].b=0xFFFF;
 	white_pixel=ggiMapColor(mode.vis, &map[0]);
-	printf("white=%u\n",white_pixel);
+	printf("white=%"PRIu32"\n",white_pixel);
 
 	return 0;
 }

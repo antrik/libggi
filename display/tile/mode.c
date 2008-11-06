@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.39 2008/04/04 08:05:19 pekberg Exp $
+/* $Id: mode.c,v 1.40 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Tile target: setting modes
@@ -143,13 +143,13 @@ int GGI_tile_getapi(struct ggi_visual *vis, int num, char *apiname, char *argume
 
 		if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
 			snprintf(apiname, GGI_MAX_APILEN,
-				"generic-text-%u",
+				"generic-text-%"PRIu32,
 				GT_SIZE(LIBGGI_GT(vis))); 
 			return 0;
 		}
 
 		snprintf(apiname, GGI_MAX_APILEN,
-			"generic-linear-%u%s", 
+			"generic-linear-%"PRIu32"%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) 
 			? "-r" : "");

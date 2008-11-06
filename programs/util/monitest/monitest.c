@@ -1,4 +1,4 @@
-/* $Id: monitest.c,v 1.22 2008/03/13 19:41:25 cegger Exp $
+/* $Id: monitest.c,v 1.23 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Monitor test pattern generator
@@ -254,7 +254,7 @@ static void moiree(ggi_visual_t _vis)
 #if 0	/* defined but not used */
 char *helptext = {
 	"GGI screentest program               \n"
-	    "(c) H. Niemann, $Id: monitest.c,v 1.22 2008/03/13 19:41:25 cegger Exp $               \n"
+	    "(c) H. Niemann, $Id: monitest.c,v 1.23 2008/11/06 20:45:13 pekberg Exp $               \n"
 	    "h:   this help screen               \n"
 	    "q:   quit this testscreen           \n" ""
 };
@@ -324,7 +324,7 @@ static int guessmode(void)
 	int i;
 
 	ggiGetMode(vis, &currmode);
-	fprintf(stderr, "Current mode is %dx%d %u/%u.\n",
+	fprintf(stderr, "Current mode is %dx%d %"PRIu32"/%"PRIu32".\n",
 		currmode.visible.x, currmode.visible.y,
 		GT_DEPTH(currmode.graphtype), GT_SIZE(currmode.graphtype));
 
@@ -353,7 +353,8 @@ static int guessmode(void)
 	while (graphtypes[i] != GT_INVALID) {
 		if (graphtypes[i] == currmode.graphtype) {
 			gtindex = i;
-			fprintf(stderr, "Detected graphtype %u/%u\n",
+			fprintf(stderr,
+				"Detected graphtype %"PRIu32"/%"PRIu32"\n",
 				GT_DEPTH(graphtypes[gtindex]),
 				GT_SIZE(graphtypes[gtindex]));
 			break;
@@ -423,12 +424,12 @@ static int changeresmenu(void)
 		}
 		snprintf(cm.entry[4].text = nextgtline,
 			sizeof(nextgtline),
-			"5 Increase depth: %u/%u",
+			"5 Increase depth: %"PRIu32"/%"PRIu32,
 			GT_DEPTH(graphtypes[nextgtindex]),
 			GT_SIZE(graphtypes[nextgtindex]));
 		snprintf(cm.entry[5].text = prevgtline,
 			sizeof(prevgtline),
-			"6 Decrease depth: %u/%u",
+			"6 Decrease depth: %"PRIu32"/%"PRIu32,
 			GT_DEPTH(graphtypes[prevgtindex]),
 			GT_SIZE(graphtypes[prevgtindex]));
 		snprintf(cm.entry[6].text = nextmodeline,
@@ -443,7 +444,8 @@ static int changeresmenu(void)
 			resolutions[prevresindex].y);
 
 
-		snprintf(s, sizeof(s), "current: %4dx%3dx%u/%u", xres, yres,
+		snprintf(s, sizeof(s), "current: %4dx%3dx%"PRIu32"/%"PRIu32,
+			xres, yres,
 			GT_DEPTH(graphtypes[gtindex]),
 			GT_SIZE(graphtypes[gtindex]));
 

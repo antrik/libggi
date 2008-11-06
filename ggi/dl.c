@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.40 2008/01/20 16:26:24 cegger Exp $
+/* $Id: dl.c,v 1.41 2008/11/06 20:45:12 pekberg Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -217,7 +217,7 @@ _ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 
 	if (dlh->usecnt == 0) {
 		fprintf(stderr,
-			"LibGGI: %s (%s) -> 0x%.8x - no operations in this library\n",
+			"LibGGI: %s (%s) -> 0x%.8"PRIx32" - no operations in this library\n",
 			api, args ? args : "(null)", dlret);
 		ggDelScope(dlh->handle);
 		free(dlh);

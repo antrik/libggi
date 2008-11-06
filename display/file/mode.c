@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.31 2008/04/04 08:12:21 pekberg Exp $
+/* $Id: mode.c,v 1.32 2008/11/06 20:45:12 pekberg Exp $
 ******************************************************************************
 
    Display-file: mode management
@@ -269,12 +269,12 @@ int GGI_file_getapi(struct ggi_visual *vis,int num, char *apiname ,char *argumen
 		
 	case 2: if (GT_SCHEME(gt) == GT_TEXT) {
 			snprintf(apiname, GGI_MAX_APILEN,
-				"generic-text-%u", GT_SIZE(gt));
+				"generic-text-%"PRIu32, GT_SIZE(gt));
 			return 0;
 		}
 
 		snprintf(apiname, GGI_MAX_APILEN,
-			"generic-linear-%u%s", GT_SIZE(gt),
+			"generic-linear-%"PRIu32"%s", GT_SIZE(gt),
 			(gt & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;
 

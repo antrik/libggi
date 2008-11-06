@@ -1,4 +1,4 @@
-/* $Id: internal.c,v 1.33 2007/03/14 23:01:18 cegger Exp $
+/* $Id: internal.c,v 1.34 2008/11/06 20:45:12 pekberg Exp $
 ******************************************************************************
 
    Misc internal-only functions
@@ -491,7 +491,7 @@ int _ggi_build_pixfmtstr (struct ggi_visual *vis, char *pixfmtstr,
 	} else {
 		size_t tmp;
 
-		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%u",
+		tmp = snprintf(pixfmtstr, pixfmtstr_len, "%"PRIu32,
 				GT_SIZE(LIBGGI_GT(vis)));
 		LIB_ASSERT(tmp < pixfmtstr_len, "pixfmtstr has been truncated");
 	}

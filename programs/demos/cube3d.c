@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.31 2008/03/13 19:54:43 cegger Exp $
+/* $Id: cube3d.c,v 1.32 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -1229,7 +1229,8 @@ int main(int argc, const char *argv[])
 						break;
 					default:
 						printf
-						    ("Unknown command key %d\n",
+						    ("Unknown command key "
+						     "%"PRId32"\n",
 						     event.key.sym);
 					case GIIK_Enter:
 						is_escape = 0;

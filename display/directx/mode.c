@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.48 2008/03/13 20:36:39 cegger Exp $
+/* $Id: mode.c,v 1.49 2008/11/06 20:45:12 pekberg Exp $
 *****************************************************************************
 
    LibGGI DirectX target - Mode management
@@ -118,7 +118,7 @@ GGI_directx_getapi(struct ggi_visual * vis, int num, char *apiname, char *argume
 		return 0;
 	case 3:
 		snprintf(apiname, GGI_MAX_APILEN,
-			"generic-linear-%d", GT_SIZE(LIBGGI_GT(vis)));
+			"generic-linear-%"PRId32, GT_SIZE(LIBGGI_GT(vis)));
 		return 0;
 	}
 

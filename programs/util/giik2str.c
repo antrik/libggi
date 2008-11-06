@@ -1,4 +1,4 @@
-/* $Id: giik2str.c,v 1.9 2008/03/13 19:43:37 cegger Exp $
+/* $Id: giik2str.c,v 1.10 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Conversion routine from GII sym/label to string.
@@ -457,7 +457,7 @@ const char *giik2str(uint32_t giik, int issym)
 		}
 
 		/* Return hex integer string */
-		snprintf(retbuffer, sizeof(retbuffer), "0x%04x", giik);
+		snprintf(retbuffer, sizeof(retbuffer), "0x%04"PRIx32, giik);
 		return retbuffer;
 	}
 }

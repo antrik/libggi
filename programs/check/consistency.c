@@ -1,4 +1,4 @@
-/* $Id: consistency.c,v 1.14 2008/09/03 09:55:05 pekberg Exp $
+/* $Id: consistency.c,v 1.15 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test application.
@@ -140,7 +140,7 @@ static void BasicConsistency(void)
 			ggiGetPixel(mode.vis, x, y, &pix);
 			if (pix != 0) {
 				fprintf(stderr,
-					"Warning: Screen not blank at %d,%d (%x)\n",
+					"Warning: Screen not blank at %d,%d (%"PRIx32")\n",
 					x,y,pix);
 				c++;
 				if (c > 16) {
@@ -168,7 +168,7 @@ static void ColorWrap(void)
 		ggiPutPixel(mode.vis, 0, 0, pix);
 		ggiGetPixel(mode.vis, 0, 0, &pix2);
 		if (pix != pix2) {
-			fprintf(stderr, "at %08x.\n", pix);
+			fprintf(stderr, "at %08"PRIx32".\n", pix);
 			break;
 		}
 	}
@@ -264,7 +264,7 @@ static int CheckLine(ggi_visual_t vis,int x1,int y1,int x2,int y2)
 	}
 	if ((pix = getnumpixels(0,0,120,120)) != black_pixel) {
 		fprintf(stderr,
-			"Line: %d surplus pixels in line(%d,%d,%d,%d).\n",
+			"Line: %"PRId32" surplus pixels in line(%d,%d,%d,%d).\n",
 			pix,x1,y1,x2,y2);
 		ggiFillscreen(vis);
 		fail=1;

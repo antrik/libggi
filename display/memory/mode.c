@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.41 2008/03/13 20:32:40 cegger Exp $
+/* $Id: mode.c,v 1.42 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Display memory : mode management
@@ -194,7 +194,8 @@ int GGI_memory_getapi(struct ggi_visual *vis,int num,
 		return 0;
 
 	case 3: if (GT_SCHEME(LIBGGI_GT(vis)) == GT_TEXT) {
-			snprintf(apiname, GGI_MAX_APILEN, "generic-text-%u",
+			snprintf(apiname, GGI_MAX_APILEN,
+				"generic-text-%"PRIu32,
 				GT_SIZE(mode->graphtype));
 			return 0;
 		}
@@ -202,7 +203,8 @@ int GGI_memory_getapi(struct ggi_visual *vis,int num,
 			snprintf(apiname, GGI_MAX_APILEN, "generic-planar");
 			return 0;
 		}
-		snprintf(apiname, GGI_MAX_APILEN, "generic-linear-%u%s", 
+		snprintf(apiname, GGI_MAX_APILEN,
+			"generic-linear-%"PRIu32"%s", 
 			GT_SIZE(LIBGGI_GT(vis)),
 			(LIBGGI_GT(vis) & GT_SUB_HIGHBIT_RIGHT) ? "-r" : "");
 		return 0;

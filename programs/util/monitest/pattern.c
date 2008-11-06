@@ -1,4 +1,4 @@
-/* $Id: pattern.c,v 1.5 2008/03/12 10:25:21 cegger Exp $
+/* $Id: pattern.c,v 1.6 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    Monitest core pattern routine
@@ -202,7 +202,8 @@ void testpattern(ggi_visual_t vis)
 	ggiPuts(vis, MIDX-(15*FONTX)/2, MIDY-2*FONTY,"GGI screen test");
 	
 	/* -visible resolution */
-	snprintf(s,sizeof(s), "%4dx%3d %u/%u", currmode.visible.x, currmode.visible.y,
+	snprintf(s, sizeof(s), "%4dx%3d %"PRIu32"/%"PRIu32,
+		currmode.visible.x, currmode.visible.y,
 		GT_DEPTH(currmode.graphtype), GT_SIZE(currmode.graphtype));
 	ggiPuts(vis, MIDX-(11*FONTX)/2, MIDY-1*FONTY, s);
 	

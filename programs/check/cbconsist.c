@@ -1,4 +1,4 @@
-/* $Id: cbconsist.c,v 1.30 2008/09/06 20:51:02 pekberg Exp $
+/* $Id: cbconsist.c,v 1.31 2008/11/06 20:45:13 pekberg Exp $
 ******************************************************************************
 
    This is a consistency-test and benchmark application for LibGGI
@@ -305,13 +305,15 @@ static int mkmemvis(int i, const char **str,
 	if (ggiCheckSimpleMode
 	    (*vis, GGI_AUTO, GGI_AUTO, 1, memvis_gts[i], mode)) {
 		fprintf(stderr,
-			"Could not find memory visual mode for gt %x!\n",
+			"Could not find memory visual mode "
+			"for gt %"PRIx32"!\n",
 			memvis_gts[i]);
 		return -1;
 	}
 	if (ggiSetMode(*vis, mode)) {
 		fprintf(stderr,
-			"Could not set up memory visual mode with gt %x!\n",
+			"Could not set up memory visual mode "
+			"with gt %"PRIx32"!\n",
 			memvis_gts[i]);
 		return -1;
 	}
@@ -463,11 +465,12 @@ int main(int argc, char * const argv[])
 			res = cbconsist(&s);
 			if (res && (s.flags & CBC_ABORT)) {
 				fprintf(stdout,
-					"\nBad value converting pixel value %x.\n",
+					"\nBad value converting pixel "
+					"value %"PRIx32".\n",
 					res);
 				goto err1;
 			}
-			fprintf(stdout, "%i bad values.\n", res);
+			fprintf(stdout, "%"PRId32" bad values.\n", res);
 		}
 	} else if (s.flags & CBC_REALDST) {
 		int i;
@@ -490,11 +493,13 @@ int main(int argc, char * const argv[])
 				res = cbconsist(&s);
 				if (res && (s.flags & CBC_ABORT)) {
 					fprintf(stdout,
-						"\nBad value converting pixel value %x.\n",
+						"\nBad value converting "
+						"pixel value %"PRIx32".\n",
 						res);
 					goto err1;
 				}
-				fprintf(stdout, "%i bad values.\n", res);
+				fprintf(stdout,
+					"%"PRId32" bad values.\n", res);
 			}
 			i++;
 		}
@@ -519,11 +524,11 @@ int main(int argc, char * const argv[])
 				res = cbconsist(&s);
 				if (res && (s.flags & CBC_ABORT)) {
 					fprintf(stdout,
-						"\nBad value converting pixel value %x.\n",
+						"\nBad value converting pixel value %"PRIx32".\n",
 						res);
 					goto err1;
 				}
-				fprintf(stdout, "%i bad values.\n", res);
+				fprintf(stdout, "%"PRId32" bad values.\n", res);
 			}
 			i++;
 		}
@@ -555,11 +560,12 @@ int main(int argc, char * const argv[])
 					res = cbconsist(&s);
 					if (res && (s.flags & CBC_ABORT)) {
 						fprintf(stdout,
-							"\nBad value converting pixel value %x.\n",
+							"\nBad value converting pixel value %"PRIx32".\n",
 							res);
 						goto err1;
 					}
-					fprintf(stdout, "%i bad values.\n",
+					fprintf(stdout,
+						"%"PRId32" bad values.\n",
 						res);
 				}
 				j++;
