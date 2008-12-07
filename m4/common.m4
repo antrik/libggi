@@ -507,7 +507,7 @@ rm conftest.$ac_ext
 LIBS=$ggi_func_search_save_LIBS])
 ggi_res=AS_VAR_GET([ggi_Search])
 AS_IF([test "$ggi_res" != no],
-	[test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+	[test "$ggi_res" = "none required" || LIBS="$ggi_res $LIBS"
 	$3],
 		[$4])dnl
 AS_VAR_POPDEF([ggi_Search])dnl
