@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.44 2008/03/12 13:26:50 cegger Exp $
+/* $Id: visual.c,v 1.45 2008/12/12 03:53:10 pekberg Exp $
 ******************************************************************************
 
    Display-memory: mode management
@@ -60,24 +60,6 @@ static int GGI_memory_flush(struct ggi_visual *vis,
 	return 0;
 }
 
-#if defined(HAVE_SHM) && !defined(HAVE_SYS_SHM_H) && defined(HAVE_WINDOWS_H)
-
-static const char *ftok(const char *pathname, int id)
-{
-	static char object[MAX_PATH];
-	char *ptr;
-
-	snprintf(object, sizeof(object),
-		"ggi-display-memory-shm:%s:%d", pathname, id);
-
-	ptr = object;
-	while(ptr = strchr(ptr, '\\'))
-		*ptr++ = '/';
-	return object;
-}
-
-#endif /* HAVE_SHM && !HAVE_SYS_SHM_H && HAVE_WINDOWS_H */
-
 static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 			const char *args, void *argptr, uint32_t *dlret)
 {
@@ -120,7 +102,7 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 
 	if (args && *args) {	/* We have parameters. Analyze them. */
 		DPRINT("has args: \"%s\"\n", args);
-#ifdef HAVE_SHM
+#ifdef _GG_HAVE_SHM
 		if (strncmp(args, "shmid:", 6) == 0) {
 			sscanf(args + 6, "%i", &(priv->shmid));
 			DPRINT("has shmid-arg: %d.\n", priv->shmid);
@@ -161,8 +143,8 @@ static int GGIopen(struct ggi_visual *vis, struct ggi_dlhandle *dlh,
 						priv->memptr);
 				}
 			}
-		} else 
-#endif
+		} else
+#endif /* _GG_HAVE_SHM */
 		if (strncmp(args, "pointer", 7) == 0) {
 			priv->memptr = argptr;
 			if (priv->memptr) {
@@ -282,7 +264,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 	case MT_MALLOC:
 	case MT_EXTERN:	/* Nothing to be done. */
 		break;
-#ifdef HAVE_SHM
+#ifdef _GG_HAVE_SHM
 	case MT_SHMKEYFILE:
 		if (priv->inputbuffer)
 			shmdt((void *)priv->inputbuffer);
@@ -299,7 +281,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 		else
 			shmdt(priv->memptr);
 	  	break;
-#endif /* HAVE_SHM */
+#endif /* _GG_HAVE_SHM */
 	default:
 		break;
 	}

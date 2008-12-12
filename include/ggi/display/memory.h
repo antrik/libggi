@@ -1,4 +1,4 @@
-/* $Id: memory.h,v 1.16 2008/03/12 13:26:50 cegger Exp $
+/* $Id: memory.h,v 1.17 2008/12/12 03:53:10 pekberg Exp $
 ******************************************************************************
 
    Display-memory: headers
@@ -35,34 +35,9 @@
 #define INPBUFSIZE	8192
 
 #ifdef HAVE_SYS_SHM_H
-
-#define HAVE_SHM
 #include <sys/shm.h>
-
-#elif defined(HAVE_WINDOWS_H)
-
-#define HAVE_SHM
-
-/* Very rudimentary mapping from unix shm api to win32 file mapping api */
-
-#include <windows.h>
-
-#define shmget(key, size, shmflg) \
-    (int)CreateFileMapping( \
-	INVALID_HANDLE_VALUE, \
-	NULL, \
-	PAGE_READWRITE | SEC_COMMIT, \
-	0, /* size not larger than 2^32, I hope. */ \
-	size, \
-	key)
-#define shmat(shmid, shmaddr, shmflg) \
-	MapViewOfFile((HANDLE)shmid, FILE_MAP_WRITE, 0, 0, 0)
-#define shmdt(shmaddr) \
-	UnmapViewOfFile(shmaddr)
-#define shmctl(shmid, cmd, buf) \
-	CloseHandle((HANDLE)shmid)
-
 #endif /* HAVE_SYS_SHM_H */
+#include <ggi/internal/gg_replace.h>
 
 ggifunc_getmode			GGI_memory_getmode;
 ggifunc_setmode			GGI_memory_setmode;
@@ -106,7 +81,7 @@ typedef struct {
                 ggi_pixelplanarbuffer plan;
         } buffer;
 
-#ifdef HAVE_SHM
+#ifdef _GG_HAVE_SHM
 	int		shmid;
 #endif
 } ggi_memory_priv;

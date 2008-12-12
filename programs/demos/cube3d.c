@@ -1,4 +1,4 @@
-/* $Id: cube3d.c,v 1.32 2008/11/06 20:45:13 pekberg Exp $
+/* $Id: cube3d.c,v 1.33 2008/12/12 03:53:10 pekberg Exp $
 ******************************************************************************
 
    cube3d.c - display up top 6 other LibGGI applications on the sides of
@@ -53,32 +53,11 @@
 #include <sys/ipc.h>
 #endif
 #ifdef HAVE_SYS_SHM_H
-
 #include <sys/shm.h>
-
-#elif defined(HAVE_WINDOWS_H)
-
-/* Very rudimentary mapping from unix shm api to win32 file mapping api */
-
-#include <windows.h>
-
-#define shmget(key, size, shmflg) \
-    (int)CreateFileMapping( \
-	INVALID_HANDLE_VALUE, \
-	NULL, \
-	PAGE_READWRITE | SEC_COMMIT, \
-	0, /* size not larger than 2^32, I hope. */ \
-	size, \
-	key)
-#define shmat(shmid, shmaddr, shmflg) \
-	MapViewOfFile((HANDLE)shmid, FILE_MAP_WRITE, 0, 0, 0)
-#define shmdt(shmaddr) \
-	UnmapViewOfFile(shmaddr)
-#define shmctl(shmid, cmd, buf) \
-	CloseHandle((HANDLE)shmid)
-
 #endif
 #include <signal.h>
+
+#include <ggi/internal/gg_replace.h> /* for shmget et al */
 
 static ggi_visual_t vis;
 static int vissizex, vissizey;
@@ -618,21 +597,6 @@ static int spawn_bg(const char *what)
 #endif
 }
 
-#if defined(HAVE_SYS_SHM_H)
-#elif defined(HAVE_WINDOWS_H)
-static const char *ftok(const char *pathname, int id)
-{
-	static char object[MAX_PATH+50];
-	char *ptr;
-	snprintf(object, sizeof(object),
-		"ggi-display-memory-shm:%s:%d", pathname, id);
-	ptr = object;
-	while((ptr = strchr(ptr, '\\')) != NULL)
-		*ptr++ = '/';
-	return object;
-}
-#endif
-
 static void CheckDB(Texture * tex)
 {
 	int maxdb, x;
@@ -863,7 +827,9 @@ int main(int argc, const char *argv[])
 		    (GT_ByPP(mode.graphtype)) + 64 * 1024;
 		/* Add some slack for the -input queues */
 
-		/* Allocate space for the shmem visuals. */
+		/* Allocate space for the shmem visuals.
+		 * shmget and ftok might use internal implementations in libgg
+		 */
 		shmid[x] =
 		    shmget(ftok("/dev/null", '0' + x), memlen,
 			   IPC_CREAT | 0666);
@@ -1268,6 +1234,7 @@ int main(int argc, const char *argv[])
 		 * Calling before our own shmat() will destroy _instantly_,
 		 * calling before the other programs are running will deny
 		 * the shmem to them.
+		 * shmctl might use an internal implementation in libgg.
 		 */
 		shmctl(shmid[x], IPC_RMID, NULL);
 	}
