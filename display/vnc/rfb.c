@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.127 2008/10/01 23:37:25 pekberg Exp $
+/* $Id: rfb.c,v 1.128 2009/03/11 12:12:31 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -2145,17 +2145,8 @@ vnc_client_version(ggi_vnc_client *client)
 	/* supported security types */
 	GGI_vnc_buf_reserve(&client->wbuf, 3);
 	idx = 0;
-#if 1
-	/* XXX For now, don't allow Tight if VeNCrypt is required.
-	 * The VeNCrypt security type needs to be registered with
-	 * the TightVNC project first.
-	 */
-	if (!priv->vencrypt && priv->tight & 1)
-		client->wbuf.buf[++idx] = 16;
-#else
 	if (priv->tight & 1)
 		client->wbuf.buf[++idx] = 16;
-#endif
 	if (priv->vencrypt)
 		client->wbuf.buf[++idx] = 19;
 	else if (priv->passwd || priv->viewpw)
