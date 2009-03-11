@@ -171,8 +171,7 @@ Options
     will instead issue an x509 certificate for the client to verify. In
     addition to that, display-vnc will require the client to provide an x509
     certificate if any or both of the :p:`-vrfyfile` or :p:`-vrfydir` options
-    are given. If the VeNCrypt extension is enabled, the Tight extension will
-    be disabled.
+    are given.
 
 ``-vrfydir=<dir>``
     This option is only in effect if the :p:`-vencrypt` and :p:`-cert` options
