@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.129 2009/04/28 16:25:00 pekberg Exp $
+/* $Id: rfb.c,v 1.130 2009/04/28 16:36:55 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -830,6 +830,7 @@ struct encodings encode_tbl[] = {
 	{   -307,    0, "DesktopName pseudo-encoding\n",  desktop_name_enc },
 	{   -308,    0, "ExtendedDesktopSize pseudo-encoding\n",
 	                                                  print_enc },
+	{   -309,    0, "xvp pseudo-encoding\n",          print_enc },
 	{ -65527,    0, "UltraZip encoding\n",            print_enc },
 	{ -65528,    0, "SolMonoZip encoding\n",          print_enc },
 	{ -65529,    0, "CacheZip encoding\n",            print_enc },
