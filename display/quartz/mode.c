@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.45 2008/03/22 21:40:33 cegger Exp $
+/* $Id: mode.c,v 1.46 2009/05/09 13:20:10 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -418,10 +418,14 @@ GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	_GGIhandle_ggiauto(mode, default_width, default_height);
 
 	if (mode->visible.x > _ggi_screenwidth(priv->cur_mode)) {
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"visible.x doesn't match screen width\n");
 		err = GGI_ENOMATCH;
 		mode->visible.x = default_width;
 	}
 	if (mode->visible.y > _ggi_screenheight(priv->cur_mode)) {
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"visible.y doesn't match screen height\n");
 		err = GGI_ENOMATCH;
 		mode->visible.y = default_height;
 	}
@@ -444,17 +448,25 @@ GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 		mode->frames = 1;
 
 	if (mode->frames != 1) {
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"multi-frame support not implemented\n");
 		err = GGI_ENOMATCH;
 		mode->frames = 1;
 	}	/* if */
 
 	/* Quartz has no virtual resolutions. */
 	if (mode->virt.x != mode->visible.x) {
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"no virtual resolutions support. "
+			"virt.x must match visible.x\n");
 		mode->virt.x = mode->visible.x;
 		err = GGI_ENOMATCH;
 	}	/* if */
 
 	if (mode->virt.y != mode->visible.y) {
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"no virtual resolutions support. "
+			"virt.y must match visible.y\n");
 		mode->virt.y = mode->visible.y;
 		err = GGI_ENOMATCH;
 	}	/* if */
@@ -462,6 +474,8 @@ GGI_quartz_checkmode_windowed(struct ggi_visual *vis, ggi_mode *mode)
 	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
 	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
 	{
+		DPRINT_MODE("GGI_quartz_checkmode_windowed: "
+			"dpp != 1 or != GGI_AUTO\n");
 		err = GGI_ENOMATCH;
 	}	/* if */
 	mode->dpp.x = mode->dpp.y = 1;
