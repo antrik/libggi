@@ -1,4 +1,4 @@
-/* $Id: mode.c,v 1.46 2009/05/09 13:20:10 cegger Exp $
+/* $Id: mode.c,v 1.47 2009/05/09 13:53:07 cegger Exp $
 ******************************************************************************
 
    Display quartz : mode management
@@ -328,17 +328,22 @@ GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 
 	mode->graphtype = _GGIhandle_gtauto(mode->graphtype);
 
-	if (mode->frames == GGI_AUTO) mode->frames = 1;
+	if (mode->frames == GGI_AUTO)
+		mode->frames = 1;
 
 	if (mode->frames != 1) {
-		err = -1;
+		DPRINT_MODE("GGI_quartz_checkmode_fullscreen: "
+			"multi-frame support not implemented\n");
+		err = GGI_ENOMATCH;
 		mode->frames = 1;
 	}	/* if */
 
 	if ((mode->dpp.x != 1 && mode->dpp.x != GGI_AUTO) ||
 	    (mode->dpp.y != 1 && mode->dpp.y != GGI_AUTO))
 	{
-		err = -1;
+		DPRINT_MODE("GGI_quartz_checkmode_fullscreen: "
+			"dpp != 1 or != GGI_AUTO\n");
+		err = GGI_ENOMATCH;
 	}	/* if */
 	mode->dpp.x = mode->dpp.y = 1;
 
@@ -384,13 +389,19 @@ GGI_quartz_checkmode_fullscreen(struct ggi_visual *vis, ggi_mode *mode)
 
 	/* Quartz has no virtual resolutions. */
 	if (mode->virt.x != mode->visible.x) {
+		DPRINT_MODE("GGI_quartz_checkmode_fullscreen: "
+			"no virtual resolutions support. "
+			"virt.x must match visible.x\n");
 		mode->virt.x = mode->visible.x;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}	/* if */
 
 	if (mode->virt.y != mode->visible.y) {
+		DPRINT_MODE("GGI_quartz_checkmode_fullscreen: "
+			"no virtual resolutions support. "
+			"virt.y must match visible.y\n");
 		mode->virt.y = mode->visible.y;
-		err = -1;
+		err = GGI_ENOMATCH;
 	}	/* if */
 
 #if 1
