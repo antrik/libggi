@@ -1,4 +1,4 @@
-/* $Id: accel.c,v 1.5 2006/03/22 20:22:27 cegger Exp $
+/* $Id: accel.c,v 1.6 2009/05/24 18:19:38 antrik Exp $
 ******************************************************************************
 
 
@@ -25,8 +25,8 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include "kgi/config.h"
-#include <ggi/internal/ggi_debug.h>
 #include <ggi/display/kgi.h>
+#include <ggi/internal/ggi_debug.h>
 
 ggi_accel_t *GGI_kgi_map_accelerator(struct ggi_visual *vis, kgi_u_t resource,
 				     kgi_u_t min, kgi_u_t max,
