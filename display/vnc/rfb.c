@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.130 2009/04/28 16:36:55 pekberg Exp $
+/* $Id: rfb.c,v 1.131 2009/05/25 07:09:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -164,7 +164,9 @@ close_client(ggi_vnc_client *client)
 	if (client->write_pending)
 		priv->del_cwfd(priv->gii_ctx, client, client->cfd);
 	client->write_pending = 0;
+#ifdef HAVE_OPENSSL
 	GGI_vnc_vencrypt_stop_tls(client);
+#endif
 	free(client->wbuf.buf);
 	memset(&client->wbuf, 0, sizeof(client->wbuf));
 	close(client->cfd);

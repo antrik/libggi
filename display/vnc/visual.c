@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.62 2008/09/16 19:50:31 pekberg Exp $
+/* $Id: visual.c,v 1.63 2009/05/25 07:09:44 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -859,7 +859,9 @@ out_delstem:
 	ggDelStem(stem);
 out_freegc:
 	free(LIBGGI_GC(vis));
+#ifdef HAVE_OPENSSL
 	GGI_vnc_vencrypt_fini(priv);
+#endif
 out_freepriv:
 	if (priv->passwd_ks)
 		free(priv->passwd_ks);
