@@ -357,3 +357,14 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 	}
 	return KGI_EOK;
 }
+
+kgi_error_t kgiSetIlut(kgi_context_t *ctx, const kgic_ilut_set_request_t *ilut)
+{
+	if ((NULL == ctx) || (ctx->mapper.fd < 0) || (NULL == ilut)) {
+
+		return -KGI_INVAL;
+	}
+
+	return ioctl(ctx->mapper.fd, KGIC_RESOURCE_CLUT_SET, ilut)
+		? errno : KGI_EOK;
+}

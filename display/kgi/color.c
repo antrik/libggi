@@ -29,7 +29,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
 
 #include "config.h"
 #include <ggi/internal/ggi-dl.h>
@@ -73,7 +72,7 @@ GGI_kgi_setPalette(struct ggi_visual *vis, size_t start, size_t len, const ggi_c
 		ilut.data[start*3 + 2] = colormap->b;
 	}
 
-	if (ioctl(KGI_CTX(vis).mapper.fd, KGIC_RESOURCE_CLUT_SET, &ilut) < 0) {
+	if(kgiSetIlut(&KGI_CTX(vis), &ilut) != KGI_EOK) {
 		DPRINT_COLOR("display-kgi: PUTCMAP failed.");
 		return -1;
 	}

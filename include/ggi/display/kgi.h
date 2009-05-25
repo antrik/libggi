@@ -84,6 +84,7 @@ kgiGetResource(kgi_context_t *ctx, kgi_u_t start, kgi_resource_type_t type);
 kgi_error_t kgiSetupMmapAccel(kgi_context_t *ctx, kgi_u_t resource,
 	kgi_u_t min, kgi_u_t max, kgi_u_t buf, kgi_u_t priority);
 kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource);
+kgi_error_t kgiSetIlut(kgi_context_t *ctx, const kgic_ilut_set_request_t *ilut);
 
 
 typedef union ggi_accel ggi_accel_t;
