@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.24 2008/11/06 20:45:13 pekberg Exp $
+/* $Id: inputdump.c,v 1.25 2009/05/29 13:27:30 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -369,13 +369,13 @@ static void show_common(gii_event *ev)
 	int sec, usec;
 
 	if (firstevent) {
-		start_time.tv_sec = ev->any.time.tv_sec;
-		start_time.tv_usec = ev->any.time.tv_usec;
+		start_time.tv_sec = ev->any.sec;
+		start_time.tv_usec = ev->any.usec;
 		firstevent = 0;
 	}
 
-	sec  = ev->any.time.tv_sec  - start_time.tv_sec;
-	usec = ev->any.time.tv_usec - start_time.tv_usec;
+	sec  = ev->any.sec  - start_time.tv_sec;
+	usec = ev->any.usec - start_time.tv_usec;
 
 	while (usec < 0) {
 		usec += 1000000;
