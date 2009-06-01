@@ -6,7 +6,7 @@ noinst_LTLIBRARIES = libkgi.la
 
 libkgi_la_SOURCES = mode.c visual.c color.c accel.c
 if OS_GNU
-libkgi_la_SOURCES += kgi_hurd.c
+libkgi_la_SOURCES += kgi_hurd.c kgiUser.c kgiUser.h
 else
 libkgi_la_SOURCES += kgi.c
 endif
