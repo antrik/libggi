@@ -79,8 +79,9 @@ kgi_error_t kgiSetMode(kgi_context_t *ctx);
 kgi_error_t kgiUnsetMode(kgi_context_t *ctx);
 void kgiPrintImageMode(kgi_image_mode_t *mode);
 kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource);
-const kgic_mapper_resource_info_result_t *
-kgiGetResource(kgi_context_t *ctx, kgi_u_t start, kgi_resource_type_t type);
+kgi_error_t kgiGetResource(kgi_context_t *ctx, kgi_u_t start,
+	kgi_resource_type_t type,
+	kgic_mapper_resource_info_result_t const **info);
 kgi_error_t kgiSetupMmapAccel(kgi_context_t *ctx, kgi_u_t resource,
 	kgi_u_t min, kgi_u_t max, kgi_u_t buf, kgi_u_t priority);
 kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource);

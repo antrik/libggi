@@ -222,14 +222,17 @@ kgi_error_t kgiUnsetMode(kgi_context_t *ctx)
 		? errno : KGI_EOK;
 }
 
-const kgic_mapper_resource_info_result_t *
-kgiGetResource(kgi_context_t *ctx, kgi_u_t start, kgi_resource_type_t type)
+kgi_error_t kgiGetResource(kgi_context_t *ctx, kgi_u_t start,
+	kgi_resource_type_t type,
+	const kgic_mapper_resource_info_result_t **info)
 {
 	kgi_error_t err;
 	static union {
 		kgic_mapper_resource_info_request_t	request;
 		kgic_mapper_resource_info_result_t	result;
 	} cb;
+
+	*info = &cb.result;
     
 	cb.request.image = -1;
 	cb.request.resource = start;
@@ -241,14 +244,14 @@ kgiGetResource(kgi_context_t *ctx, kgi_u_t start, kgi_resource_type_t type)
 		    ((cb.result.type) == type ||
 		     (((cb.result.type & KGI_RT_MASK) == KGI_RT_MMIO) &&
 		      ((cb.result.type & type) == type))))
-			return &cb.result;
+			return KGI_EOK;
 
 		++cb.request.resource;
 		
 		
 	} while (!err);
 	
-	return NULL;
+	return err;
 }
 
 kgi_error_t kgiSetupMmapAccel(kgi_context_t *ctx, kgi_u_t resource,

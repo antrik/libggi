@@ -212,8 +212,7 @@ int GGI_kgi_getapi(struct ggi_visual *vis, int num, char *apiname, char *argumen
 		int name_size;
 		char *space;
 
-		accel = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL);
-		if (! accel) {
+		if(kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_ACCEL, &accel) != KGI_EOK) {
 
 			DPRINT("Didn't find an accelerator\n");
 			return GGI_ENOTFOUND;
@@ -279,8 +278,7 @@ int GGI_kgi_setmode(struct ggi_visual *vis, ggi_mode *tm)
 	if(priv->fb)
 		munmap(priv->fb, priv->fb_size);
 
-	fb = kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO);
-	if (! fb) {
+	if(kgiGetResource(&KGI_CTX(vis), 0, KGI_RT_MMIO, &fb) != KGI_EOK) {
 		DPRINT_LIBS("No framebuffer resource available\n");
 		return GGI_ENOTFOUND;
 	}
