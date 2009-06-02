@@ -22,35 +22,22 @@
 ******************************************************************************
 */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
+#define _GNU_SOURCE
+
+#include <assert.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <sys/mman.h>
-#include <sys/ioctl.h>
+#include <hurd/fd.h>
+#include <string.h>
 
 #include <ggi/display/kgi.h>
 #include <ggi/internal/ggi_debug.h>
+
+#include "kgiUser.h"
 
 kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		    const kgi_version_t *version, const gg_option *options)
 {
 	char fopt[2048], *fname;
-	union {
-		kgic_mapper_identify_request_t	request;
-		kgic_mapper_identify_result_t	result;
-	} cb;
-#ifdef __FreeBSD__
-	union {
-		kgic_mapper_attach_request_t	request;
-		kgic_mapper_attach_result_t	result;
-	} at;
-	union {
-		kgic_mapper_get_unit_request_t	request;
-		kgic_mapper_get_unit_result_t	result;
-	} get_unit;
-#endif
 
 	if (NULL == ctx) {
 		return -KGI_NOMEM;
@@ -73,73 +60,11 @@ kgi_error_t kgiInit(kgi_context_t *ctx, const char *client,
 		fprintf(stderr, "failed to open device %s\n", fname);
 		fname += strlen(fname) + 1;
 	}
-#ifdef __FreeBSD__
-
-	memset(&get_unit, 0, sizeof(get_unit));
-
-	/* If the device id is specified, take it */
-	if (sscanf(fname, "/dev/graphic%d", &get_unit.request.unit) != 1) {
-		/* Pass an invalid device id to force auto attachement */
-		get_unit.request.unit = -1;
-	}
-		
-	ctx->mapper.fd = open("/dev/graphic", O_RDWR);
-	if (ctx->mapper.fd <0) {
-		fprintf(stderr, "failed to open device %s.\n", fname);
-		return -KGI_INVAL;
-	}
-
-	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_GET_UNIT, &get_unit)) {
-		perror("failed to get free unit");
-		return errno;
-	}
-
-	/* Close /dev/graphic then open the true one */
-	close(ctx->mapper.fd);
-
-	ctx->mapper.graphic = get_unit.result.unit - 1;
-	snprintf(fname, sizeof(fopt), "/dev/graphic%i", get_unit.result.unit);
-	ctx->mapper.fd = open(fname, O_RDWR | O_NONBLOCK);
-	if (ctx->mapper.fd < 0) {
-		perror("failed to open /dev/graphicX");
-		return errno;
-	}
-
-	memset(&at, 0, sizeof(at));
-
-	/* Pass an invalid device id to force auto attachement */
-	at.request.device_id = -1;
-	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_ATTACH, &at)) {
-
-		perror("failed to attach to device");
-		return errno;
-	}
-#else
 	ctx->mapper.fd = open(fname, O_RDWR);
 	if (ctx->mapper.fd >= 0) goto found;
 	fprintf(stderr, "failed to open device %s.\n", fname);
 	return -KGI_INVAL;
-#endif
  found:
-
-	memset(&cb, 0, sizeof(cb));
-	ggstrlcpy(cb.request.client, client, sizeof(cb.request.client));
-	cb.request.client_version = *version;
-
-	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_IDENTIFY, &cb)) {
-
-		fprintf(stderr, "failed to identify to mapper\n");
-		return errno;
-	}
-	DPRINT("identified to mapper %s-%i.%i.%i-%i\n",
-		  cb.result.mapper,
-		  cb.result.mapper_version.major,
-		  cb.result.mapper_version.minor,
-		  cb.result.mapper_version.patch,
-		  cb.result.mapper_version.extra);
-	ctx->mapper.resources =
-		cb.result.resources;
-
 	return KGI_EOK;
 }
 
@@ -149,47 +74,34 @@ kgi_error_t kgiSetImages(kgi_context_t *ctx, kgi_u_t images)
 
 		return -KGI_INVAL;
 	}
-	return ioctl(ctx->mapper.fd, KGIC_MAPPER_SET_IMAGES, &images) 
-		? errno : KGI_EOK; 
+
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_set_images(port, images));
 }
 
 kgi_error_t kgiSetImageMode(kgi_context_t *ctx, kgi_u_t image,
 	const kgi_image_mode_t *mode)
 {
-	kgic_mapper_set_image_mode_request_t	cb;
-
 	if ((NULL == ctx) || (ctx->mapper.fd < 0) || (NULL == mode)) {
 
 		return -KGI_INVAL;
 	}
 
-	cb.image = image;
-	memcpy(&cb.mode, mode, sizeof(cb.mode));
-	return ioctl(ctx->mapper.fd, KGIC_MAPPER_SET_IMAGE_MODE, &cb)
-		? errno : KGI_EOK;
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_set_image_mode(port, image, *mode));
 }
 
 kgi_error_t kgiGetImageMode(kgi_context_t *ctx, kgi_u_t image,
 	kgi_image_mode_t *mode)
 {
-	union {
-		kgic_mapper_get_image_mode_request_t	request;
-		kgic_mapper_get_image_mode_result_t	result;
-	} cb;
+	kgi_error_t err;
 
 	if ((NULL == ctx) || (ctx->mapper.fd < 0) || (NULL == mode)) {
 
 		return -KGI_INVAL;
 	}
 
-	cb.request.image = image;
-	if (ioctl(ctx->mapper.fd, KGIC_MAPPER_GET_IMAGE_MODE, &cb)) {
-
-		return errno;
-	}
-	memcpy(mode, &cb.result, sizeof(*mode));
+	err = HURD_DPORT_USE(ctx->mapper.fd, kgi_get_image_mode(port, image, mode));
 	mode->out = NULL;
-	return KGI_EOK;
+	return err;
 }
 
 kgi_error_t kgiCheckMode(kgi_context_t *ctx)
@@ -198,8 +110,8 @@ kgi_error_t kgiCheckMode(kgi_context_t *ctx)
 
 		return -KGI_INVAL;
 	}
-	return ioctl(ctx->mapper.fd, KGIC_MAPPER_MODE_CHECK, 0)
-		? errno : KGI_EOK;
+
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_check_mode(port));
 }
 
 kgi_error_t kgiSetMode(kgi_context_t *ctx)
@@ -208,8 +120,8 @@ kgi_error_t kgiSetMode(kgi_context_t *ctx)
 
 		return -KGI_INVAL;
 	}
-	return ioctl(ctx->mapper.fd, KGIC_MAPPER_MODE_SET, 0)
-		? errno : KGI_EOK;
+
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_set_mode(port));
 }
 
 kgi_error_t kgiUnsetMode(kgi_context_t *ctx)
@@ -218,45 +130,40 @@ kgi_error_t kgiUnsetMode(kgi_context_t *ctx)
 
 		return -KGI_INVAL;
 	}
-	return ioctl(ctx->mapper.fd, KGIC_MAPPER_MODE_DONE, 0)
-		? errno : KGI_EOK;
+
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_unset_mode(port));
 }
 
 kgi_error_t kgiGetResource(kgi_context_t *ctx, kgi_u_t start,
 	kgi_resource_type_t type,
 	const kgic_mapper_resource_info_result_t **info)
 {
-	kgi_error_t err;
-	static union {
-		kgic_mapper_resource_info_request_t	request;
-		kgic_mapper_resource_info_result_t	result;
-	} cb;
+	static kgic_mapper_resource_info_result_t result;
 
-	*info = &cb.result;
-    
-	cb.request.image = -1;
-	cb.request.resource = start;
-    
-	do {
-		err = ioctl(ctx->mapper.fd, KGIC_MAPPER_RESOURCE_INFO, &cb);
+	*info = &result;
 
-		if (!err && 
-		    ((cb.result.type) == type ||
-		     (((cb.result.type & KGI_RT_MASK) == KGI_RT_MMIO) &&
-		      ((cb.result.type & type) == type))))
-			return KGI_EOK;
+	if (NULL == ctx) {
 
-		++cb.request.resource;
-		
-		
-	} while (!err);
-	
-	return err;
+		return -KGI_INVAL;
+	}
+
+	assert(!start);    /* we assume nobody ever uses that, but make sure */
+
+	switch (type) {
+
+	case KGI_RT_MMIO:
+		return HURD_DPORT_USE(ctx->mapper.fd, kgi_get_fb_resource(port, &result));
+
+	default:
+		return EOPNOTSUPP;
+	}
 }
 
 kgi_error_t kgiSetupMmapAccel(kgi_context_t *ctx, kgi_u_t resource,
 	kgi_u_t min, kgi_u_t max, kgi_u_t buf, kgi_u_t priority)
 {
+	return EOPNOTSUPP;
+#if 0
 	static union {
 		kgic_mapper_mmap_setup_request_t	request;
 		kgic_mapper_mmap_setup_result_t		result;
@@ -272,23 +179,17 @@ kgi_error_t kgiSetupMmapAccel(kgi_context_t *ctx, kgi_u_t resource,
     
 	return ioctl(ctx->mapper.fd, KGIC_MAPPER_MMAP_SETUP, &cb)
 		? errno : KGI_EOK;
+#endif
 }
 
 kgi_error_t kgiSetupMmapFB(kgi_context_t *ctx, kgi_u_t resource)
 {
-	kgi_error_t err;
-	static union {
-		kgic_mapper_mmap_setup_request_t	request;
-		kgic_mapper_mmap_setup_result_t		result;
-	} cb;
-    
-	cb.request.type = KGI_RT_MMIO;
-	cb.request.image = -1;
-	cb.request.resource = resource;
-    
-	err = ioctl(ctx->mapper.fd, KGIC_MAPPER_MMAP_SETUP, &cb)
-		? errno : KGI_EOK;
-	return err;
+	if (NULL == ctx) {
+
+		return -KGI_INVAL;
+	}
+
+	return HURD_DPORT_USE(ctx->mapper.fd, kgi_setup_mmap_fb(port));
 }
 
 /*
@@ -319,6 +220,8 @@ void kgiPrintImageMode(kgi_image_mode_t *mode)
 
 kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 {
+	return EOPNOTSUPP;
+#if 0
 	union {
 		kgic_mapper_resource_info_request_t	request;
 		kgic_mapper_resource_info_result_t	result;
@@ -359,10 +262,13 @@ kgi_error_t kgiPrintResourceInfo(kgi_context_t *ctx, kgi_u_t resource)
 		DPRINT_MISC("of unknown type\n");
 	}
 	return KGI_EOK;
+#endif
 }
 
 kgi_error_t kgiSetIlut(kgi_context_t *ctx, const kgic_ilut_set_request_t *ilut)
 {
+	return EOPNOTSUPP;
+#if 0
 	if ((NULL == ctx) || (ctx->mapper.fd < 0) || (NULL == ilut)) {
 
 		return -KGI_INVAL;
@@ -370,4 +276,5 @@ kgi_error_t kgiSetIlut(kgi_context_t *ctx, const kgic_ilut_set_request_t *ilut)
 
 	return ioctl(ctx->mapper.fd, KGIC_RESOURCE_CLUT_SET, ilut)
 		? errno : KGI_EOK;
+#endif
 }
