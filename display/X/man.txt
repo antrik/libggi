@@ -29,7 +29,7 @@ been exposed after being concealed by another window.
 ``Ctrl-Alt-m`` toggles mouse grabbing in the new window.  It will try
 to emulate a *relative* mouse device, i.e. one that can be moved
 arbitrarily far in any direction without ever leaving the window.
-This is useful for game controls, where loosing focus is generally
+This is useful for game controls, where losing focus is generally
 undesireable.  Note that grabbing must be turned off in order to leave
 the window.
 
@@ -53,7 +53,7 @@ Options
     sent to the server; no server-side accelerated graphics
     operations are used.  This will signifigantly slow down certain
     graphics applications, but for applications that use directbuffer
-    and asyncronous mode extensively the effect will not be
+    and asynchronous mode extensively the effect will not be
     noticeable.  The only real reason to use this option, however, is
     to eliminate artifacts caused by incorrectly implemented X11
     hardware drivers.
@@ -110,7 +110,7 @@ Options
 ``-nomansync``
     Use of the mansync helper library to periodically flush backbuffer
     contents to the X11 server is disabled.  This, of course, will
-    result in incorrect behavior of applications that use syncronous
+    result in incorrect behavior of applications that use synchronous
     mode.
 
 ``-noshm``
@@ -182,10 +182,10 @@ on the client side, and uses Xlib primitives to draw on the server
 side.  When a primitive, such as a drawbox, can use an Xlib function,
 the command is dispatched to the X server and the data in the RAM
 buffer is updated using a software renderer.  For operations such as
-putbox, the RAM buffer is updated first, and the synced to the X
+putbox, the RAM buffer is updated first, and then synced to the X
 server.  Unlike the old target, the new target keeps track of a "dirty
 region" and only syncs the area affected since the last time a
-syncronization occured.  This dirty-region tracking only keeps track
+synchronization occured.  This dirty-region tracking only keeps track
 of one rectangular dirty area.  A helper library that keeps track of
 more than one rectangle could be implemented to improve performance of
 display-X and any other similarly designed display target.  To be most
@@ -208,16 +208,16 @@ software drawops to ensure consistent state of the RAM buffer vs the X
 window.  This must be done such that any requests to get data from the
 RAM backbuffer are not processed until the RAM backbuffer is up to
 date, and any flushes from the backbuffer are not processed until the
-backbuffer is up to date.  There's a lot of locking intracacy to
+backbuffer is up to date.  There's a lot of locking intricacy to
 ensure this level of consistency.
 
 
-The basic syncronization operation is accomplished by the flush
+The basic synchronization operation is accomplished by the flush
 function, which is the function loaded on the xpriv `flush` member
 hook.  The flush hook function is called:
 
 1. When the mansync helper decides it is time to refresh the screen.
-2. After a primitive, if the visual is in syncronous rendering mode.
+2. After a primitive, if the visual is in synchronous rendering mode.
 3. When an expose or graphicsexpose event is sent from the server.
    This means the server has discarded data that was concealed by
    another window or by the edge of the screen, and the data must be
@@ -228,8 +228,8 @@ again by the client.  In the first two cases only the dirty area is
 sent, except when the application is holding the directbuffer writing
 resource, in which case the whole area must be synced because there is
 no way for the target to tell what the user has modified.  Holding the
-directbuffer write resource open when the display is in syncronous
-mode or when also sending primitives will result in bad perfomance.
+directbuffer write resource open when the display is in synchronous
+mode or when also sending primitives will result in bad performance.
 There's no reason to do so on any target, so don't.
 
 
@@ -248,9 +248,9 @@ targets.
 The new X target is best used with backing store turned on in the
 server.  When backing store is not turned on, primitives which are
 clipped to the visual area but still in the virtual area may be slower
-then the old target, since data will be sent to the server hoping it
+than the old target, since data will be sent to the server hoping it
 will be stored in the backing store.  Likewise when a full-screen
-flush occurrs the entire virtual area data is sent.  The target could
+flush occurs the entire virtual area data is sent.  The target could
 be optimized not to send this data when it detects that there is no
 backing store available in the server.
 
@@ -276,7 +276,7 @@ Xlib (``-nobuffer``) targets, with a couple of notable exceptions:
 Unfortunately many window managers seem to be buggy, and do not
 install the colormap of a child window when a mouse enters it.  This
 causes palette and gammamap to be messed up.  Since so many
-windowmanagers fail to implement the behavior described in the Xlib
+window managers fail to implement the behavior described in the Xlib
 manpages, a workaround needs to be added which will not use the child
 window (this part is easy enough since the -inwin=root option already
 implements a child-less rendering) and either disables ggiSetOrigin
