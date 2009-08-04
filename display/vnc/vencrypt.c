@@ -1,4 +1,4 @@
-/* $Id: vencrypt.c,v 1.2 2008/09/16 19:29:15 pekberg Exp $
+/* $Id: vencrypt.c,v 1.3 2009/08/04 07:44:32 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB VeNCrypt protocol extension
@@ -345,7 +345,7 @@ get_vencrypt(ggi_vnc_client *client)
 }
 
 static void
-info_callback(SSL *ssl, int where, int ret)
+info_callback(const SSL *ssl, int where, int ret)
 {
 	const char *str;
 	int w = where & ~SSL_ST_MASK;
