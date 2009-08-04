@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.84 2008/03/23 08:32:52 cegger Exp $
+/* $Id: visual.c,v 1.85 2009/08/04 12:06:31 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -38,6 +38,7 @@
 #include <ggi/display/x.h>
 #include <ggi/gii.h>
 #include <ggi/internal/gg_replace.h>
+#include <ggi/internal/ggi-module.h>
 
 /* X extension names */
 const char *ggi_x_extensions_name[] = 
@@ -220,13 +221,21 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
+	DPRINT_MISC("GGIclose: tearing down helper modules\n");
 	for (i = 0; ggi_x_helper_name[i] != NULL; i++) {
 		if (priv->helper[i]) {
-			ggClosePlugin(priv->helper[i]);
-			priv->helper[i] = NULL;
+			struct ggi_module_helper *mod_helper;
+			struct ggi_helper *helper;
+
+			helper = (struct ggi_helper *)priv->helper[i];
+			mod_helper = (struct ggi_module_helper *)helper->plugin.module;
+
+			if (mod_helper->teardown)
+				mod_helper->teardown(helper);
+			mod_helper->teardown = NULL;
 		}
 	}
-	
+
 	if (priv->inp)
 		ggClosePlugin(priv->inp);
 	priv->inp = NULL;
@@ -304,6 +313,14 @@ skip3:
 
 	DPRINT_MISC("GGIclose: close display\n");
 	if (priv->disp)		    XCloseDisplay(priv->disp);
+
+	DPRINT_MISC("GGIclose: finally closing helper modules\n");
+	for (i = 0; ggi_x_helper_name[i] != NULL; i++) {
+		if (priv->helper[i]) {
+			ggClosePlugin(priv->helper[i]);
+			priv->helper[i] = NULL;
+		}
+	}
 
 	DPRINT_MISC("GGIclose: free visual and mode list\n");
 	if (priv->vilist)	    free(priv->vilist);
