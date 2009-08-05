@@ -1,4 +1,4 @@
-/* $Id: dl.c,v 1.41 2008/11/06 20:45:12 pekberg Exp $
+/* $Id: dl.c,v 1.42 2009/08/05 07:59:40 cegger Exp $
 ******************************************************************************
 
    Graphics library for GGI. Library extensions dynamic loading.
@@ -164,7 +164,7 @@ _ggiAddDL(struct ggi_visual *vis, struct gg_config *conffilehandle,
 	      int type)
 {
 	ggi_dlhandle_l *tmp;
-	ggi_dlhandle *dlh;
+	ggi_dlhandle *dlh = NULL;
 	uint32_t dlret = 0;
 	int err;
 
