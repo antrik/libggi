@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.85 2009/08/04 12:06:31 pekberg Exp $
+/* $Id: visual.c,v 1.86 2009/08/05 07:44:10 pekberg Exp $
 ******************************************************************************
 
    LibGGI Display-X target: initialization
@@ -221,7 +221,7 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 
 	XSync(priv->disp,0);
 
-	DPRINT_MISC("GGIclose: tearing down helper modules\n");
+	DPRINT_MISC("GGIclose: finishing helper modules\n");
 	for (i = 0; ggi_x_helper_name[i] != NULL; i++) {
 		if (priv->helper[i]) {
 			struct ggi_module_helper *mod_helper;
@@ -230,9 +230,8 @@ static int GGIclose(struct ggi_visual *vis, struct ggi_dlhandle *dlh)
 			helper = (struct ggi_helper *)priv->helper[i];
 			mod_helper = (struct ggi_module_helper *)helper->plugin.module;
 
-			if (mod_helper->teardown)
-				mod_helper->teardown(helper);
-			mod_helper->teardown = NULL;
+			if (mod_helper->finish)
+				mod_helper->finish(helper);
 		}
 	}
 
@@ -314,7 +313,7 @@ skip3:
 	DPRINT_MISC("GGIclose: close display\n");
 	if (priv->disp)		    XCloseDisplay(priv->disp);
 
-	DPRINT_MISC("GGIclose: finally closing helper modules\n");
+	DPRINT_MISC("GGIclose: tearing down helper modules\n");
 	for (i = 0; ggi_x_helper_name[i] != NULL; i++) {
 		if (priv->helper[i]) {
 			ggClosePlugin(priv->helper[i]);

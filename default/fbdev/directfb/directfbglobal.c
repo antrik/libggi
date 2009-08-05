@@ -1,4 +1,4 @@
-/* $Id: directfbglobal.c,v 1.19 2008/01/20 16:05:08 cegger Exp $ */
+/* $Id: directfbglobal.c,v 1.20 2009/08/05 07:44:09 pekberg Exp $ */
 /* Get the global variables needed to make the card drivers happy */
 
 #define _FBDEV_DIRECTFB_GLOBALS
@@ -33,6 +33,7 @@ GGI_directfbglobal_exit(struct ggi_helper *helper)
 struct ggi_module_helper GGI_directfbglobal = {
 	GG_MODULE_INIT("helper-fbdev-directfb-global", 0, 1, GGI_MODULE_HELPER),
 	GGI_directfbglobal_init,
+	NULL,
 	GGI_directfbglobal_exit,
 };
 

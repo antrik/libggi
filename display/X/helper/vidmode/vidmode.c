@@ -1,4 +1,4 @@
-/* $Id: vidmode.c,v 1.33 2008/02/10 16:37:05 mooz Exp $
+/* $Id: vidmode.c,v 1.34 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    XFree86-VidMode extension support for display-x
@@ -502,7 +502,7 @@ GGI_helper_x_vidmode_setup(struct ggi_helper *helper,
 }
 
 static void
-GGI_helper_x_vidmode_teardown(struct ggi_helper *helper)
+GGI_helper_x_vidmode_finish(struct ggi_helper *helper)
 {
 	ggi_xvidmode_restore_mode(helper->visual);
 	ggi_xvidmode_cleanup(helper->visual);
@@ -512,7 +512,8 @@ GGI_helper_x_vidmode_teardown(struct ggi_helper *helper)
 struct ggi_module_helper GGI_helper_x_vidmode = {
 	GG_MODULE_INIT("helper-x-vidmode", 0, 1, GGI_MODULE_HELPER),
 	GGI_helper_x_vidmode_setup,
-	GGI_helper_x_vidmode_teardown
+	GGI_helper_x_vidmode_finish,
+	NULL
 };
 
 static struct ggi_module_helper *_GGIdl_helper_x_vidmode[] = {

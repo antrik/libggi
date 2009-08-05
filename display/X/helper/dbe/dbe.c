@@ -1,4 +1,4 @@
-/* $Id: dbe.c,v 1.18 2008/01/21 23:08:41 cegger Exp $
+/* $Id: dbe.c,v 1.19 2009/08/05 07:44:10 pekberg Exp $
 ******************************************************************************
 
    DBE extension support for display-x
@@ -92,7 +92,7 @@ GGI_helper_x_dbe_setup(struct ggi_helper *helper,
 }
 
 static void
-GGI_helper_x_dbe_teardown(struct ggi_helper *helper)
+GGI_helper_x_dbe_finish(struct ggi_helper *helper)
 {
 #if 0
 	ggi_x_priv *priv = GGIX_PRIV(helper->visual);
@@ -109,7 +109,8 @@ GGI_helper_x_dbe_teardown(struct ggi_helper *helper)
 struct ggi_module_helper GGI_helper_x_dbe = {
 	GG_MODULE_INIT("helper-x-dbe", 0, 1, GGI_MODULE_HELPER),
 	GGI_helper_x_dbe_setup,
-	GGI_helper_x_dbe_teardown
+	GGI_helper_x_dbe_finish,
+	NULL
 };
 
 static struct ggi_module_helper *_GGIdl_helper_x_dbe[] = {

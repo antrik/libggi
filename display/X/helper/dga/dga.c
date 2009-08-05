@@ -1,4 +1,4 @@
-/* $Id: dga.c,v 1.34 2008/01/21 23:09:10 cegger Exp $
+/* $Id: dga.c,v 1.35 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    XFree86-DGA extension support for display-x
@@ -412,7 +412,7 @@ GGI_helper_x_dga_setup(struct ggi_helper *helper,
 }
 
 static void
-GGI_helper_x_dga_teardown(struct ggi_helper *helper)
+GGI_helper_x_dga_finish(struct ggi_helper *helper)
 {
 	ggi_x_priv *priv = GGIX_PRIV(helper->visual);
 
@@ -423,7 +423,8 @@ GGI_helper_x_dga_teardown(struct ggi_helper *helper)
 struct ggi_module_helper GGI_helper_x_dga = {
 	GG_MODULE_INIT("helper-x-dga", 0, 1, GGI_MODULE_HELPER),
 	GGI_helper_x_dga_setup,
-	GGI_helper_x_dga_teardown
+	GGI_helper_x_dga_finish,
+	NULL
 };
 
 static struct ggi_module_helper *_GGIdl_helper_x_dga[] = {

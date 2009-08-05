@@ -1,4 +1,4 @@
-/* $Id: shm.c,v 1.64 2008/03/23 15:39:13 cegger Exp $
+/* $Id: shm.c,v 1.65 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    MIT-SHM extension support for display-x
@@ -335,7 +335,7 @@ GGI_helper_x_shm_setup(struct ggi_helper *helper,
 }
 
 static void
-GGI_helper_x_shm_teardown(struct ggi_helper *helper)
+GGI_helper_x_shm_finish(struct ggi_helper *helper)
 {
 	ggi_x_priv *priv;
 
@@ -356,7 +356,8 @@ GGI_helper_x_shm_teardown(struct ggi_helper *helper)
 struct ggi_module_helper GGI_helper_x_shm = {
 	GG_MODULE_INIT("helper-x-shm", 0, 1, GGI_MODULE_HELPER),
 	GGI_helper_x_shm_setup,
-	GGI_helper_x_shm_teardown
+	GGI_helper_x_shm_finish,
+	NULL
 };
 
 static struct ggi_module_helper *_GGIdl_helper_x_shm[] = {

@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.18 2008/01/20 11:39:51 cegger Exp $
+/* $Id: visual.c,v 1.19 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    VT switch handling for Linux console
@@ -542,6 +542,7 @@ GGI_linvtsw_exit(struct ggi_helper *helper)
 struct ggi_module_helper GGI_linvtsw = {
 	GG_MODULE_INIT("helper-linux-vtswitch", 0, 1, GGI_MODULE_HELPER),
 	GGI_linvtsw_init,
+	NULL,
 	GGI_linvtsw_exit
 };
 

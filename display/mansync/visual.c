@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.13 2008/01/20 10:00:37 cegger Exp $
+/* $Id: visual.c,v 1.14 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    Helper library for the implementation of SYNC mode on targets which are
@@ -66,6 +66,7 @@ GGI_mansync_setup(struct ggi_helper *helper, const char *args, void *argptr)
 struct ggi_module_helper GGI_mansync = {
 	GG_MODULE_INIT("helper-mansync", 0, 1, GGI_MODULE_HELPER),
 	GGI_mansync_setup,
+	NULL,
 	NULL /* teardown */
 };
 

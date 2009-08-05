@@ -1,4 +1,4 @@
-/* $Id: evi.c,v 1.14 2008/01/21 23:09:41 cegger Exp $
+/* $Id: evi.c,v 1.15 2009/08/05 07:44:11 pekberg Exp $
 ******************************************************************************
 
    Extended Visual Information extension support for display-x
@@ -97,7 +97,7 @@ GGI_helper_x_evi_setup(struct ggi_helper *helper,
 }
 
 static void
-GGI_helper_x_evi_teardown(struct ggi_helper *helper)
+GGI_helper_x_evi_finish(struct ggi_helper *helper)
 {
 	ggi_x_priv *xpriv = GGIX_PRIV(helper->visual);
 	ggi_xevi_priv *priv = xpriv->evilist;
@@ -112,7 +112,8 @@ GGI_helper_x_evi_teardown(struct ggi_helper *helper)
 struct ggi_module_helper GGI_helper_x_evi = {
 	GG_MODULE_INIT("helper-x-evi", 0, 1, GGI_MODULE_HELPER),
 	GGI_helper_x_evi_setup,
-	GGI_helper_x_evi_teardown
+	GGI_helper_x_evi_finish,
+	NULL
 };
 
 static struct ggi_module_helper *_GGIdl_helper_x_evi[] = {

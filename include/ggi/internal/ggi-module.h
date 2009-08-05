@@ -45,6 +45,7 @@ struct ggi_module_helper {
 	struct gg_module module;
 
 	int (*setup)(struct ggi_helper *, const char *, void *);
+	void (*finish)(struct ggi_helper *);
 	void (*teardown)(struct ggi_helper *);
 };
 
