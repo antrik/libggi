@@ -1,4 +1,4 @@
-/* $Id: listener.c,v 1.7 2008/04/02 13:41:24 pekberg Exp $
+/* $Id: listener.c,v 1.8 2009/08/06 20:46:51 ggibecka Exp $
 ******************************************************************************
 
    LibGGI - listener for display-x
@@ -37,10 +37,10 @@ int GGI_X_listener(void *arg, uint32_t flag, void *data)
 	struct ggi_visual *vis = arg;
 	ggi_x_priv *priv = GGIX_PRIV(vis);
 
-	if (flag & GII_CMDCODE_RESIZE) {
+	if ( flag == GII_CMDCODE_RESIZE) {
 		struct gii_cmddata_resize *resize;
 		gii_event ev;
-		ggi_cmddata_switchrequest *swreq;
+		ggi_cmddata_switchrequest swreq;
 
 		resize = (struct gii_cmddata_resize *)data;
 
@@ -56,19 +56,19 @@ int GGI_X_listener(void *arg, uint32_t flag, void *data)
 		ev.any.type = evCommand;
 		ev.cmd.code = GGICMD_REQUEST_SWITCH;
 
-		swreq = (ggi_cmddata_switchrequest *)ev.cmd.data;
-		swreq->request = GGI_REQSW_MODE;
-		swreq->mode = *LIBGGI_MODE(vis);
+		swreq.request = GGI_REQSW_MODE;
+		swreq.mode    = *LIBGGI_MODE(vis);
 
-		swreq->mode.visible.x = resize->width;
-		swreq->mode.visible.y = resize->height;
-		if (swreq->mode.virt.x < resize->width)
-			swreq->mode.virt.x = resize->width;
-		if (swreq->mode.virt.y < resize->height)
-			swreq->mode.virt.y = resize->height;
-		swreq->mode.size.x = GGI_AUTO;
-		swreq->mode.size.y = GGI_AUTO;
+		swreq.mode.visible.x = resize->width;
+		swreq.mode.visible.y = resize->height;
+		if (swreq.mode.virt.x < resize->width)
+			swreq.mode.virt.x = resize->width;
+		if (swreq.mode.virt.y < resize->height)
+			swreq.mode.virt.y = resize->height;
+		swreq.mode.size.x = GGI_AUTO;
+		swreq.mode.size.y = GGI_AUTO;
 
+		memcpy(&ev.cmd.data, &swreq, sizeof(swreq));
 		ggControl(priv->inp->channel, GII_CMDCODE_RESIZE, &ev);
 	}
 
