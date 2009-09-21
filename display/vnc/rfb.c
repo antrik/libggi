@@ -1,9 +1,9 @@
-/* $Id: rfb.c,v 1.131 2009/05/25 07:09:44 pekberg Exp $
+/* $Id: rfb.c,v 1.132 2009/09/21 12:20:20 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
 
-   Copyright (C) 2008 Peter Rosin	[peda@lysator.liu.se]
+   Copyright (C) 2008-2009 Peter Rosin	[peda@lysator.liu.se]
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -186,6 +186,11 @@ close_client(ggi_vnc_client *client)
 	if (client->rre_ctx) {
 		GGI_vnc_rre_close(client->rre_ctx);
 		client->rre_ctx = NULL;
+	}
+
+	if (client->trle_ctx) {
+		GGI_vnc_trle_close(client->trle_ctx);
+		client->trle_ctx = NULL;
 	}
 
 #ifdef HAVE_ZLIB
@@ -680,6 +685,27 @@ tight_quality_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 #define tight_quality_enc print_enc
 #endif
 
+static ggi_vnc_encode *
+trle_enc(ggi_vnc_client *client,
+	int32_t encoding, char *format)
+{
+	struct ggi_visual *vis = client->owner;
+	ggi_vnc_priv *priv = VNC_PRIV(vis);
+
+	if (format)
+		DPRINT_MISC(format);
+	if (!priv->trle)
+		return NULL;
+	if (client->encode)
+		return NULL;
+	if (!client->trle_ctx)
+		client->trle_ctx = GGI_vnc_trle_open();
+	if (!client->trle_ctx)
+		return NULL;
+
+	return GGI_vnc_trle;
+}
+
 #ifdef HAVE_ZLIB
 static ggi_vnc_encode *
 zrle_enc(ggi_vnc_client *client,
@@ -808,7 +834,7 @@ struct encodings encode_tbl[] = {
 	{      7,    0, "Tight encoding\n",               tight_enc },
 	{      8,    0, "ZlibHex encoding\n",             zlibhex_enc },
 	{      9,    0, "Ultra encoding\n",               print_enc },
-	{     15,    0, "TRLE encoding\n",                print_enc },
+	{     15,    0, "TRLE encoding\n",                trle_enc },
 	{     16,    0, "ZRLE encoding\n",                zrle_enc },
 	{     17,    0, "ZYWRLE encoding\n",              print_enc },
 	{ 0x574d5669,0, "WMVi pseudo-encoding\n",         wmvi_enc },
@@ -1692,6 +1718,9 @@ GGI_vnc_client_init(ggi_vnc_client *client)
 			!!(priv->tight & 2) +
 #endif /* HAVE_JPEG */
 			(priv->zlibhex_level != -2) +
+#endif /* HAVE_ZLIB */
+			priv->trle +
+#ifdef HAVE_ZLIB
 			(priv->zrle_level != -2) +
 #endif /* HAVE_ZLIB */
 			priv->desktop_size +
@@ -1751,6 +1780,11 @@ GGI_vnc_client_init(ggi_vnc_client *client)
 
 		if (priv->zlibhex_level != -2) {
 			insert_cap(&tight_init[idx], 8, "TRDV" "ZLIBHEX_");
+			idx += 16;
+		}
+
+		if (priv->trle) {
+			insert_cap(&tight_init[idx], 15, "STDV" "TRLE____");
 			idx += 16;
 		}
 

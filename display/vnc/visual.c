@@ -1,4 +1,4 @@
-/* $Id: visual.c,v 1.63 2009/05/25 07:09:44 pekberg Exp $
+/* $Id: visual.c,v 1.64 2009/09/21 12:20:20 pekberg Exp $
 ******************************************************************************
 
    display-vnc: initialization
@@ -98,6 +98,7 @@
 	VNC_OPTION(stdio,    "no")         \
 	VNC_OPTION(tight,    "")           \
 	VNC_OPTION(title,    "GGI on vnc") \
+	VNC_OPTION(trle,     "")           \
 	VNC_OPTION(vencrypt, "no")         \
 	VNC_OPTION(vrfydir,  "")           \
 	VNC_OPTION(vrfyfile, "")           \
@@ -692,6 +693,11 @@ GGIopen(struct ggi_visual *vis,
 
 	ggstrlcpy(priv->title,
 		options[OPT_title].result, sizeof(priv->title));
+
+	if (options[OPT_trle].result[0] == 'n') /* never */
+		priv->trle = 0;
+	else
+		priv->trle = 1;
 
 	if (options[OPT_wmvi].result[0] == 'n') /* never */
 		priv->wmvi = 0;

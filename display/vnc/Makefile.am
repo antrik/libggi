@@ -6,7 +6,8 @@ noinst_LTLIBRARIES = libvnc.la
 
 libvnc_la_SOURCES = box.c buffer.c color.c gtext.c line.c pixel.c \
 	mode.c visual.c \
-	encoding.h rect.h rfb.c copyrect.c corre.c hextile.c raw.c rre.c
+	encoding.h rect.h rfb.c \
+	copyrect.c corre.c hextile.c raw.c rre.c trle.c
 
 if HAVE_ZLIB
 libvnc_la_SOURCES += tight.c zlib.c zlibhex.c zrle.c

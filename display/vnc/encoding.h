@@ -1,4 +1,4 @@
-/* $Id: encoding.h,v 1.14 2008/01/17 21:49:10 pekberg Exp $
+/* $Id: encoding.h,v 1.15 2009/09/21 12:20:20 pekberg Exp $
 ******************************************************************************
 
    display-vnc: encoding interface
@@ -48,6 +48,11 @@ struct hextile_ctx_t;
 ggi_vnc_encode GGI_vnc_hextile;
 struct hextile_ctx_t *GGI_vnc_hextile_open(void);
 void GGI_vnc_hextile_close(struct hextile_ctx_t *ctx);
+
+struct trle_ctx_t;
+ggi_vnc_encode GGI_vnc_trle;
+struct trle_ctx_t *GGI_vnc_trle_open(void);
+void GGI_vnc_trle_close(struct trle_ctx_t *ctx);
 
 #ifdef HAVE_ZLIB
 
