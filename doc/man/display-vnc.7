@@ -1,4 +1,4 @@
-.TH "display-vnc" 7 "2009-04-13" "libggi-current" GGI
+.TH "display-vnc" 7 "2009-09-22" "libggi-current" GGI
 .SH NAME
 \fBdisplay-vnc\fR : Display on vnc client over a network
 .SH SYNOPSIS
@@ -11,10 +11,10 @@ display-vnc: [-bind=<iface>] [-cert=<file>] [-ciphers=<list>]
              [-passwd=<file>] [-physz=<sizex>,<sizey>[dpi]]
              [-privkey=<file>] [-rre=no] [-server[=<dpy>|stdio]]
              [-sslver=<method>] [-stdio] [-tight=enc|ext|no]
-             [-title=<title>] [-vencrypt] [-vrfydir=<dir>]
-             [-vrfyfile=<file>] [-viewonly] [-viewpw=<file>]
-             [-wmvi=no] [-zlib=<level>|no] [-zlibhex=<level>|no]
-             [-zrle=<level>|no]
+             [-title=<title>] [-trle=no] [-vencrypt]
+             [-vrfydir=<dir>] [-vrfyfile=<file>] [-viewonly]
+             [-viewpw=<file>] [-wmvi=no] [-zlib=<level>|no]
+             [-zlibhex=<level>|no] [-zrle=<level>|no]
 .fi
 
 .SH DESCRIPTION
@@ -177,6 +177,10 @@ The \fItitle\fR clients should use on their windows. If this option
 is not specified, the default is "GGI on vnc".
 
 .TP
+\f(CW-trle=no\fR
+Disables the TRLE encoding.
+
+.TP
 \f(CW-vencrypt\fR
 Enable the VeNCrypt protocol extension and require that it is used. By
 default the VeNCrypt extension will use anonymous encryption (susceptible
@@ -251,7 +255,7 @@ compromize between speed and compression is selected.
 .PP
 .SH FEATURES
 .IP \(bu 4
-Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex and ZRLE
+Raw, CopyRect, RRE, CoRRE, Hextile, Tight, Zlib, ZlibHex, TRLE and ZRLE
 encodings. The CopyRect encoding is only used for panning.
 .IP \(bu 4
 DesktopName, DesktopSize, GII and WMVi pseudo-encodings.
