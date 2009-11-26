@@ -504,9 +504,9 @@ for ggi_lib in '' $2; do
 		LIBS="-l$ggi_lib $5 $ggi_func_search_save_LIBS"
 	fi
 	AC_LINK_IFELSE([], [AS_VAR_SET([ggi_Search], [$ggi_res])])
-	AS_VAR_SET_IF([ggi_Search], [break])dnl
+	AS_VAR_SET_IF([ggi_Search], [break])
 done
-AS_VAR_SET_IF([ggi_Search], , [AS_VAR_SET([ggi_Search], [no])])dnl
+AS_VAR_SET_IF([ggi_Search], , [AS_VAR_SET([ggi_Search], [no])])
 rm conftest.$ac_ext
 LIBS=$ggi_func_search_save_LIBS])
 ggi_res=AS_VAR_GET([ggi_Search])
