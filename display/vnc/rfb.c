@@ -1,4 +1,4 @@
-/* $Id: rfb.c,v 1.133 2009/10/09 06:54:52 pekberg Exp $
+/* $Id: rfb.c,v 1.134 2009/12/04 10:25:40 pekberg Exp $
 ******************************************************************************
 
    display-vnc: RFB protocol
@@ -516,24 +516,24 @@ vnc_client_pixfmt(ggi_vnc_client *client)
 }
 
 typedef ggi_vnc_encode * (vnc_encoding)
-	(ggi_vnc_client *client, int32_t encoding, char *format);
+	(ggi_vnc_client *client, int32_t encoding, const char *format);
 
 static ggi_vnc_encode *
-print_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+print_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	DPRINT_MISC(format, encoding);
 	return NULL;
 }
 
 static ggi_vnc_encode *
-raw_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+raw_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	DPRINT_MISC(format);
 	return GGI_vnc_raw;
 }
 
 static ggi_vnc_encode *
-copyrect_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+copyrect_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -549,7 +549,7 @@ copyrect_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 
 static ggi_vnc_encode *
-rre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+rre_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -568,7 +568,7 @@ rre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 
 static ggi_vnc_encode *
-corre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+corre_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -583,7 +583,7 @@ corre_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 
 static ggi_vnc_encode *
-hextile_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+hextile_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -605,7 +605,7 @@ hextile_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 
 #ifdef HAVE_ZLIB
 static ggi_vnc_encode *
-zlib_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+zlib_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -626,7 +626,7 @@ zlib_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 
 #ifdef HAVE_ZLIB
 static ggi_vnc_encode *
-zlibhex_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+zlibhex_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -650,7 +650,7 @@ zlibhex_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 
 #ifdef HAVE_ZLIB
 static ggi_vnc_encode *
-tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+tight_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -670,7 +670,7 @@ tight_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 }
 
 static ggi_vnc_encode *
-tight_quality_enc(ggi_vnc_client *client, int32_t encoding, char *format)
+tight_quality_enc(ggi_vnc_client *client, int32_t encoding, const char *format)
 {
 	DPRINT_MISC(format, encoding);
 
@@ -687,7 +687,7 @@ tight_quality_enc(ggi_vnc_client *client, int32_t encoding, char *format)
 
 static ggi_vnc_encode *
 trle_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -709,7 +709,7 @@ trle_enc(ggi_vnc_client *client,
 #ifdef HAVE_ZLIB
 static ggi_vnc_encode *
 zrle_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -731,7 +731,7 @@ zrle_enc(ggi_vnc_client *client,
 
 static ggi_vnc_encode *
 wmvi_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -761,7 +761,7 @@ wmvi_enc(ggi_vnc_client *client,
 
 static ggi_vnc_encode *
 desktop_size_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -777,7 +777,7 @@ desktop_size_enc(ggi_vnc_client *client,
 
 static ggi_vnc_encode *
 gii_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	DPRINT_MISC(format);
 	if (client->gii == 1) {
@@ -802,7 +802,7 @@ gii_enc(ggi_vnc_client *client,
 
 static ggi_vnc_encode *
 desktop_name_enc(ggi_vnc_client *client,
-	int32_t encoding, char *format)
+	int32_t encoding, const char *format)
 {
 	struct ggi_visual *vis = client->owner;
 	ggi_vnc_priv *priv = VNC_PRIV(vis);
@@ -820,7 +820,7 @@ desktop_name_enc(ggi_vnc_client *client,
 struct encodings {
 	int32_t encoding;
 	int32_t base;
-	char format[40];
+	const char *format;
 	vnc_encoding *action;
 };
 
