@@ -1,4 +1,4 @@
-/* $Id: crossblit.c,v 1.24 2008/01/20 22:14:56 pekberg Exp $
+/* $Id: crossblit.c,v 1.25 2009/12/04 11:20:54 pekberg Exp $
 ******************************************************************************
 
    32-bpp linear direct-access framebuffer renderer for LibGGI:
@@ -593,22 +593,6 @@ static inline void cb24to32(struct ggi_visual *src, int sx, int sy, int w, int h
 			}
 			if (masks[nl]) { tmp |= cache & masks[nl]; }
 			switch (nr) {
-			case 31:
-				tmp |= (cache & rmasks[30]) >> rshifts[30];
-			case 30:
-				tmp |= (cache & rmasks[29]) >> rshifts[29];
-			case 29:
-				tmp |= (cache & rmasks[28]) >> rshifts[28];
-			case 28:
-				tmp |= (cache & rmasks[27]) >> rshifts[27];
-			case 27:
-				tmp |= (cache & rmasks[26]) >> rshifts[26];
-			case 26:
-				tmp |= (cache & rmasks[25]) >> rshifts[25];
-			case 25:
-				tmp |= (cache & rmasks[24]) >> rshifts[24];
-			case 24:
-				tmp |= (cache & rmasks[23]) >> rshifts[23];
 			case 23:
 				tmp |= (cache & rmasks[22]) >> rshifts[22];
 			case 22:
