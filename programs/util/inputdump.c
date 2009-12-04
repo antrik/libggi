@@ -1,4 +1,4 @@
-/* $Id: inputdump.c,v 1.25 2009/05/29 13:27:30 pekberg Exp $
+/* $Id: inputdump.c,v 1.26 2009/12/04 10:18:25 pekberg Exp $
 ******************************************************************************
 
    inputdump.c - display input events
@@ -649,7 +649,7 @@ static void show_devclose(gii_cmd_event *ev)
 			/* found it */
 			break;
 	}
-	if (cur_dev != InputDevices[i])
+	if (i >= MAX_NR_DEV)
 		/* ... and suspenders */
 		return;
 
